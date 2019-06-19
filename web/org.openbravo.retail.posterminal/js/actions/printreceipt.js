@@ -9,16 +9,15 @@
 
 /*global OB */
 
-(function () {
-
+(function() {
   OB.MobileApp.actionsRegistry.register(
-  new OB.Actions.ViewMethodAction({
-    window: 'retail.pointofsale',
-    name: 'printReceipt',
-    permission: 'OBPOS_print.receipt',
-    properties: {
-      i18nContent: 'OBPOS_LblPrintReceipt'
-    }
-  }));
-
-}());
+    new OB.Actions.ViewMethodAction({
+      window: 'retail.pointofsale',
+      name: 'printReceipt',
+      permission: 'OBPOS_print.receipt',
+      properties: {
+        i18nContent: 'OBPOS_LblPrintReceipt'
+      }
+    })
+  );
+})();

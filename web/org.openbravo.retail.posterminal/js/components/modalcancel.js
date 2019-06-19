@@ -21,15 +21,18 @@ enyo.kind({
   },
   bodyButtons: {
     classes: 'obUiModalCancel-bodyButtons',
-    components: [{
-      //OK button
-      classes: 'obUiModalCancel-bodyButtons-obUiModalCancelOkButton',
-      kind: 'OB.UI.ModalCancel_OkButton'
-    }, {
-      //Cancel button
-      classes: 'obUiModalCancel-bodyButtons-obUiModalCancelCancelButton',
-      kind: 'OB.UI.ModalCancel_CancelButton'
-    }]
+    components: [
+      {
+        //OK button
+        classes: 'obUiModalCancel-bodyButtons-obUiModalCancelOkButton',
+        kind: 'OB.UI.ModalCancel_OkButton'
+      },
+      {
+        //Cancel button
+        classes: 'obUiModalCancel-bodyButtons-obUiModalCancelCancelButton',
+        kind: 'OB.UI.ModalCancel_CancelButton'
+      }
+    ]
   }
 });
 
@@ -40,7 +43,7 @@ enyo.kind({
   i18nContent: 'OBMOBC_LblOk',
   isDefaultAction: true,
   popup: 'modalCancel',
-  tap: function () {
+  tap: function() {
     this.doHideThisPopup();
     OB.POS.navigate('retail.pointofsale');
   }
@@ -52,7 +55,7 @@ enyo.kind({
   classes: 'obUiModalCancelCancelButton',
   i18nContent: 'OBMOBC_LblCancel',
   popup: 'modalCancel',
-  tap: function () {
+  tap: function() {
     this.doHideThisPopup();
   }
 });

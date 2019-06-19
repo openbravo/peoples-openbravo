@@ -9,37 +9,39 @@
 
 /*global OB */
 
-(function () {
-
+(function() {
   OB.MobileApp.actionsRegistry.register(
-  new OB.Actions.CommandAction({
-    window: 'retail.pointofsale',
-    name: 'createQuotation',
-    permission: 'OBPOS_receipt.quotation',
-    properties: {
-      i18nContent: 'OBPOS_CreateQuotation'
-    },
-    isActive: function (view) {
-      var isQuotation = view.state.readState({
-        name: 'receipt.isQuotation'
-      });
-      return !isQuotation;
-    },
-    command: function (view) {
-      if (OB.MobileApp.model.get('terminal').terminalType.documentTypeForQuotations) {
-        if (OB.MobileApp.model.hasPermission(this.permission)) {
-          if (view.model.get('leftColumnViewManager').isMultiOrder()) {
-            if (view.model.get('multiorders')) {
-              view.model.get('multiorders').resetValues();
+    new OB.Actions.CommandAction({
+      window: 'retail.pointofsale',
+      name: 'createQuotation',
+      permission: 'OBPOS_receipt.quotation',
+      properties: {
+        i18nContent: 'OBPOS_CreateQuotation'
+      },
+      isActive: function(view) {
+        var isQuotation = view.state.readState({
+          name: 'receipt.isQuotation'
+        });
+        return !isQuotation;
+      },
+      command: function(view) {
+        if (
+          OB.MobileApp.model.get('terminal').terminalType
+            .documentTypeForQuotations
+        ) {
+          if (OB.MobileApp.model.hasPermission(this.permission)) {
+            if (view.model.get('leftColumnViewManager').isMultiOrder()) {
+              if (view.model.get('multiorders')) {
+                view.model.get('multiorders').resetValues();
+              }
+              view.model.get('leftColumnViewManager').setOrderMode();
             }
-            view.model.get('leftColumnViewManager').setOrderMode();
+            view.createQuotation();
           }
-          view.createQuotation();
+        } else {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationNoDocType'));
         }
-      } else {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationNoDocType'));
       }
-    }
-  }));
-
-}());
+    })
+  );
+})();

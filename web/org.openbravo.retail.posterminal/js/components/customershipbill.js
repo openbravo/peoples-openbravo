@@ -11,7 +11,6 @@
 
 /*global OB, enyo*/
 
-
 enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OB.UI.Customer',
@@ -25,16 +24,22 @@ enyo.kind({
     onShowPopup: '',
     onHidePopup: ''
   },
-  tap: function () {
+  tap: function() {
     if (!this.disabled) {
       var qty = 0;
-      enyo.forEach(this.order.get('lines').models, function (l) {
+      enyo.forEach(this.order.get('lines').models, function(l) {
         if (l.get('originalOrderLineId')) {
           qty = qty + 1;
           return;
         }
       });
-      if (qty !== 0 && !OB.MobileApp.model.hasPermission('OBPOS_AllowChangeCustomerVerifiedReturns', true)) {
+      if (
+        qty !== 0 &&
+        !OB.MobileApp.model.hasPermission(
+          'OBPOS_AllowChangeCustomerVerifiedReturns',
+          true
+        )
+      ) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_Cannot_Change_BPartner'));
         return;
       }
@@ -54,27 +59,31 @@ enyo.kind({
       });
     }
   },
-  init: function (model) {
+  init: function(model) {
     this.setOrder(model.get('order'));
     this.hiddenPopup = false;
   },
-  renderCustomer: function (newCustomer) {
+  renderCustomer: function(newCustomer) {
     this.setContent(newCustomer);
   },
-  orderChanged: function (oldValue) {
+  orderChanged: function(oldValue) {
     if (this.order.get('bp')) {
       this.renderCustomer(this.order.get('bp').get('_identifier'));
     } else {
       this.renderCustomer('');
     }
 
-    this.order.on('change:bp', function (model) {
-      if (model.get('bp')) {
-        this.renderCustomer(model.get('bp').get('_identifier'));
-      } else {
-        this.renderCustomer('');
-      }
-    }, this);
+    this.order.on(
+      'change:bp',
+      function(model) {
+        if (model.get('bp')) {
+          this.renderCustomer(model.get('bp').get('_identifier'));
+        } else {
+          this.renderCustomer('');
+        }
+      },
+      this
+    );
   }
 });
 
@@ -91,7 +100,7 @@ enyo.kind({
     onShowPopup: '',
     onHidePopup: ''
   },
-  tap: function () {
+  tap: function() {
     if (!this.disabled) {
       this.hiddenPopup = true;
       this.doHidePopup({
@@ -106,26 +115,30 @@ enyo.kind({
       });
     }
   },
-  init: function (model) {
+  init: function(model) {
     this.setOrder(model.get('order'));
     this.hiddenPopup = false;
   },
-  renderAddrShip: function (newAddr) {
+  renderAddrShip: function(newAddr) {
     this.setContent(newAddr);
   },
-  orderChanged: function (oldValue) {
+  orderChanged: function(oldValue) {
     if (this.order.get('bp')) {
       this.renderAddrShip(this.order.get('bp').get('shipLocName'));
     } else {
       this.renderAddrShip('');
     }
-    this.order.on('change:bp', function (model) {
-      if (model.get('bp')) {
-        this.renderAddrShip(model.get('bp').get('shipLocName'));
-      } else {
-        this.renderAddrShip('');
-      }
-    }, this);
+    this.order.on(
+      'change:bp',
+      function(model) {
+        if (model.get('bp')) {
+          this.renderAddrShip(model.get('bp').get('shipLocName'));
+        } else {
+          this.renderAddrShip('');
+        }
+      },
+      this
+    );
   }
 });
 
@@ -142,7 +155,7 @@ enyo.kind({
     onShowPopup: '',
     onHidePopup: ''
   },
-  tap: function () {
+  tap: function() {
     if (!this.disabled) {
       this.hiddenPopup = true;
       this.doHidePopup({
@@ -157,25 +170,29 @@ enyo.kind({
       });
     }
   },
-  init: function (model) {
+  init: function(model) {
     this.setOrder(model.get('order'));
     this.hiddenPopup = false;
   },
-  renderAddrBill: function (newAddr) {
+  renderAddrBill: function(newAddr) {
     this.setContent(newAddr);
   },
-  orderChanged: function (oldValue) {
+  orderChanged: function(oldValue) {
     if (this.order.get('bp')) {
       this.renderAddrBill(this.order.get('bp').get('locName'));
     } else {
       this.renderAddrBill('');
     }
-    this.order.on('change:bp', function (model) {
-      if (model.get('bp')) {
-        this.renderAddrBill(model.get('bp').get('locName'));
-      } else {
-        this.renderAddrBill('');
-      }
-    }, this);
+    this.order.on(
+      'change:bp',
+      function(model) {
+        if (model.get('bp')) {
+          this.renderAddrBill(model.get('bp').get('locName'));
+        } else {
+          this.renderAddrBill('');
+        }
+      },
+      this
+    );
   }
 });

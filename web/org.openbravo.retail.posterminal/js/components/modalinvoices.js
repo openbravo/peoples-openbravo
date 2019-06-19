@@ -23,15 +23,15 @@ enyo.kind({
     onPopupClosed: 'popupClosed'
   },
   components: [],
-  popupOpened: function (inSender, inEvent) {
+  popupOpened: function(inSender, inEvent) {
     this.searchAction();
     return true;
   },
-  popupClosed: function (inSender, inEvent) {
+  popupClosed: function(inSender, inEvent) {
     this.clearAction();
     return true;
   },
-  searchAction: function () {
+  searchAction: function() {
     this.filters = {
       pos: OB.MobileApp.model.get('terminal').id,
       client: OB.MobileApp.model.get('terminal').client,
@@ -44,7 +44,7 @@ enyo.kind({
     });
     return true;
   },
-  clearAction: function () {
+  clearAction: function() {
     this.doClearAction();
   }
 });
@@ -54,28 +54,45 @@ enyo.kind({
   name: 'OB.UI.ListInvoicesLine',
   kind: 'OB.UI.CheckboxButton',
   classes: 'obUiListInvoicesLine',
-  tap: function () {
+  tap: function() {
     this.inherited(arguments);
     this.model.set('checked', !this.model.get('checked'));
     this.model.trigger('verifyDoneButton', this.model);
   },
-  components: [{
-    name: 'line',
-    classes: 'obUiListInvoicesLine-line',
-    components: [{
-      name: 'topLine',
-      classes: 'obUiListInvoicesLine-line-topLine'
-    }, {
-      name: 'bottonLine',
-      classes: 'obUiListInvoicesLine-line-bottonLine'
-    }, {
-      classes: 'obUiListInvoicesLine-line-element1'
-    }]
-  }],
-  create: function () {
+  components: [
+    {
+      name: 'line',
+      classes: 'obUiListInvoicesLine-line',
+      components: [
+        {
+          name: 'topLine',
+          classes: 'obUiListInvoicesLine-line-topLine'
+        },
+        {
+          name: 'bottonLine',
+          classes: 'obUiListInvoicesLine-line-bottonLine'
+        },
+        {
+          classes: 'obUiListInvoicesLine-line-element1'
+        }
+      ]
+    }
+  ],
+  create: function() {
     this.inherited(arguments);
-    this.$.topLine.setContent(this.model.get('documentNo') + ' - ' + (this.model.get('bp') ? this.model.get('bp').get('_identifier') : this.model.get('businessPartner')));
-    this.$.bottonLine.setContent(this.model.get('totalamount') + ' (' + OB.I18N.formatDate(new Date(this.model.get('orderDate'))) + ') ');
+    this.$.topLine.setContent(
+      this.model.get('documentNo') +
+        ' - ' +
+        (this.model.get('bp')
+          ? this.model.get('bp').get('_identifier')
+          : this.model.get('businessPartner'))
+    );
+    this.$.bottonLine.setContent(
+      this.model.get('totalamount') +
+        ' (' +
+        OB.I18N.formatDate(new Date(this.model.get('orderDate'))) +
+        ') '
+    );
     if (this.model.get('checked')) {
       this.addClass('active');
     } else {
@@ -93,67 +110,92 @@ enyo.kind({
     onSearchAction: 'searchAction',
     onClearAction: 'clearAction'
   },
-  components: [{
-    classes: 'obUiListInvoices-container1',
-    components: [{
-      classes: 'obUiListInvoices-container1-container1',
-      components: [{
-        classes: 'obUiListInvoices-container1-container1-container1',
-        components: [{
-          name: 'invoiceslistitemprinter',
-          kind: 'OB.UI.ScrollableTable',
-          classes: 'obUiListInvoices-container1-container1-container1-invoiceslistitemprinter',
-          renderHeader: 'OB.UI.ModalInvoicesHeader',
-          renderLine: 'OB.UI.ListInvoicesLine',
-          renderEmpty: 'OB.UI.RenderEmpty'
-        }]
-      }]
-    }, {
-      kind: 'OB.UI.ModalInvoicesFooter',
-      name: 'footer',
-      classes: 'obUiListInvoices-container1-footer'
-    }]
-  }],
-  clearAction: function (inSender, inEvent) {
+  components: [
+    {
+      classes: 'obUiListInvoices-container1',
+      components: [
+        {
+          classes: 'obUiListInvoices-container1-container1',
+          components: [
+            {
+              classes: 'obUiListInvoices-container1-container1-container1',
+              components: [
+                {
+                  name: 'invoiceslistitemprinter',
+                  kind: 'OB.UI.ScrollableTable',
+                  classes:
+                    'obUiListInvoices-container1-container1-container1-invoiceslistitemprinter',
+                  renderHeader: 'OB.UI.ModalInvoicesHeader',
+                  renderLine: 'OB.UI.ListInvoicesLine',
+                  renderEmpty: 'OB.UI.RenderEmpty'
+                }
+              ]
+            }
+          ]
+        },
+        {
+          kind: 'OB.UI.ModalInvoicesFooter',
+          name: 'footer',
+          classes: 'obUiListInvoices-container1-footer'
+        }
+      ]
+    }
+  ],
+  clearAction: function(inSender, inEvent) {
     this.invoicesList.reset();
     return true;
   },
-  searchAction: function (inSender, inEvent) {
+  searchAction: function(inSender, inEvent) {
     var me = this,
-        processHeader = new OB.DS.Process('org.openbravo.retail.posterminal.InvoicesHeader');
+      processHeader = new OB.DS.Process(
+        'org.openbravo.retail.posterminal.InvoicesHeader'
+      );
     me.filters = inEvent.filters;
     var limit = OB.Model.Order.prototype.dataLimit;
     this.clearAction();
-    processHeader.exec({
-      filters: me.filters,
-      _limit: limit
-    }, function (data) {
-      if (data && data.exception) {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_ErrorGettingInvoices') + ': ' + data.exception.message);
-      } else if (data) {
-        _.each(data, function (iter) {
-          me.invoicesList.add(iter);
-        });
-      } else {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_ErrorGettingInvoices'));
+    processHeader.exec(
+      {
+        filters: me.filters,
+        _limit: limit
+      },
+      function(data) {
+        if (data && data.exception) {
+          OB.UTIL.showWarning(
+            OB.I18N.getLabel('OBPOS_ErrorGettingInvoices') +
+              ': ' +
+              data.exception.message
+          );
+        } else if (data) {
+          _.each(data, function(iter) {
+            me.invoicesList.add(iter);
+          });
+        } else {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_ErrorGettingInvoices'));
+        }
       }
-    });
+    );
     return true;
   },
   invoicesList: null,
-  init: function (model) {
+  init: function(model) {
     var me = this;
     this.model = model;
     this.invoicesList = new Backbone.Collection();
     this.$.invoiceslistitemprinter.setCollection(this.invoicesList);
-    this.invoicesList.on('verifyDoneButton', function (item) {
+    this.invoicesList.on('verifyDoneButton', function(item) {
       if (item.get('checked')) {
-        me.parent.parent.$.body.$.listInvoices.$.footer.disablePrintInvoicesButton(false);
+        me.parent.parent.$.body.$.listInvoices.$.footer.disablePrintInvoicesButton(
+          false
+        );
       } else {
-        me.parent.parent.$.body.$.listInvoices.$.footer.disablePrintInvoicesButton(true);
-        _.each(me.invoicesList.models, function (e) {
+        me.parent.parent.$.body.$.listInvoices.$.footer.disablePrintInvoicesButton(
+          true
+        );
+        _.each(me.invoicesList.models, function(e) {
           if (e.get('checked')) {
-            me.parent.parent.$.body.$.listInvoices.$.footer.disablePrintInvoicesButton(false);
+            me.parent.parent.$.body.$.listInvoices.$.footer.disablePrintInvoicesButton(
+              false
+            );
             return;
           }
         });
@@ -174,26 +216,31 @@ enyo.kind({
     onPopupOpened: 'popupOpened'
   },
   processesToListen: ['invoicesPrintReceipt', 'invoicesPrintInvoices'],
-  buttons: [{
-    classes: 'obUiModalInvoicesFooter-printReceipt',
-    name: 'printReceipt',
-    kind: 'OB.UI.SmallButton',
-    ontap: 'printReceiptAction',
-    i18nContent: 'OBPOS_LblPrintOneReceipt',
-    position: 10
-  }, {
-    classes: 'obUiModalInvoicesFooter-printInvoices',
-    name: 'printInvoices',
-    kind: 'OB.UI.SmallButton',
-    ontap: 'printInvoiceAction',
-    i18nContent: 'OBPOS_LblPrintInvoices',
-    position: 20
-  }],
-  components: [{
-    classes: 'obUiModalInvoicesFooter-buttonsContainer',
-    name: 'modalInvoicesFooter__buttonsContainer'
-  }],
-  initComponents: function () {
+  buttons: [
+    {
+      classes: 'obUiModalInvoicesFooter-printReceipt',
+      name: 'printReceipt',
+      kind: 'OB.UI.SmallButton',
+      ontap: 'printReceiptAction',
+      i18nContent: 'OBPOS_LblPrintOneReceipt',
+      position: 10
+    },
+    {
+      classes: 'obUiModalInvoicesFooter-printInvoices',
+      name: 'printInvoices',
+      kind: 'OB.UI.SmallButton',
+      ontap: 'printInvoiceAction',
+      i18nContent: 'OBPOS_LblPrintInvoices',
+      position: 20
+    }
+  ],
+  components: [
+    {
+      classes: 'obUiModalInvoicesFooter-buttonsContainer',
+      name: 'modalInvoicesFooter__buttonsContainer'
+    }
+  ],
+  initComponents: function() {
     var strProto = '__proto__';
     var cancelButton = {
       classes: 'obUiModalInvoicesFooter-cancelButton',
@@ -204,11 +251,11 @@ enyo.kind({
     };
     // Sort buttons by positions
     if (this.buttons && _.isArray(this.buttons)) {
-      this.buttons.sort(function (a, b) {
+      this.buttons.sort(function(a, b) {
         return a.position - b.position;
       });
       // Add cancel button
-      var cancel = _.find(this.buttons, function (b) {
+      var cancel = _.find(this.buttons, function(b) {
         return b.name === 'cancelButton';
       });
       if (!cancel) {
@@ -216,16 +263,24 @@ enyo.kind({
       }
     }
     // Create components
-    if (this[strProto].kindComponents && _.isArray(this[strProto].kindComponents) && this[strProto].kindComponents.length > 0) {
+    if (
+      this[strProto].kindComponents &&
+      _.isArray(this[strProto].kindComponents) &&
+      this[strProto].kindComponents.length > 0
+    ) {
       this[strProto].kindComponents[0].components = [];
-      _.each(this.buttons, function (btnToAdd, index) {
-        this[strProto].kindComponents[0].components.push(btnToAdd);
-        if (OB.UTIL.isNullOrUndefined(btnToAdd.ontap)) {
-          var ontapFunctionName = btnToAdd.name + '_ontap';
-          btnToAdd.ontap = ontapFunctionName;
-          this[strProto][ontapFunctionName] = btnToAdd.buttonPressedFunction;
-        }
-      }, this);
+      _.each(
+        this.buttons,
+        function(btnToAdd, index) {
+          this[strProto].kindComponents[0].components.push(btnToAdd);
+          if (OB.UTIL.isNullOrUndefined(btnToAdd.ontap)) {
+            var ontapFunctionName = btnToAdd.name + '_ontap';
+            btnToAdd.ontap = ontapFunctionName;
+            this[strProto][ontapFunctionName] = btnToAdd.buttonPressedFunction;
+          }
+        },
+        this
+      );
     }
     // Build the component
     this.inherited(arguments);
@@ -233,26 +288,35 @@ enyo.kind({
     if (this.buttons && _.isArray(this.buttons) && this.buttons.length > 1) {
       // Apply CSS class based on number of buttons
       if (this.buttons.length === 4) {
-        this.$.modalInvoicesFooter__buttonsContainer.addClass('obUiModalInvoicesFooter-buttonsContainer-button_comfortable');
+        this.$.modalInvoicesFooter__buttonsContainer.addClass(
+          'obUiModalInvoicesFooter-buttonsContainer-button_comfortable'
+        );
       } else if (this.buttons.length === 5) {
-        this.$.modalInvoicesFooter__buttonsContainer.addClass('obUiModalInvoicesFooter-buttonsContainer-button_cozy');
+        this.$.modalInvoicesFooter__buttonsContainer.addClass(
+          'obUiModalInvoicesFooter-buttonsContainer-button_cozy'
+        );
       } else if (this.buttons.length >= 6) {
-        this.$.modalInvoicesFooter__buttonsContainer.addClass('obUiModalInvoicesFooter-buttonsContainer-button_compact');
+        this.$.modalInvoicesFooter__buttonsContainer.addClass(
+          'obUiModalInvoicesFooter-buttonsContainer-button_compact'
+        );
       }
-
     } else {
-      OB.warn('OB.UI.ModalInvoicesFooter component requires at least one button');
+      OB.warn(
+        'OB.UI.ModalInvoicesFooter component requires at least one button'
+      );
     }
     OB.UTIL.ProcessController.subscribe(this.processesToListen, this);
   },
-  destroyComponents: function () {
+  destroyComponents: function() {
     this.inherited(arguments);
     OB.UTIL.ProcessController.unSubscribe(this.processesToListen, this);
   },
-  popupOpened: function (inSender, inEvent) {
+  popupOpened: function(inSender, inEvent) {
     var me = this;
     this.disablePrintInvoicesButton(true);
-    _.each(this.$.modalInvoicesFooter__buttonsContainer.children, function (btnComponent) {
+    _.each(this.$.modalInvoicesFooter__buttonsContainer.children, function(
+      btnComponent
+    ) {
       if (btnComponent.popupOpenedFunction) {
         var bindOpenedFunction = btnComponent.popupOpenedFunction.bind(me);
         bindOpenedFunction(inEvent.model);
@@ -260,126 +324,156 @@ enyo.kind({
     });
     return true;
   },
-  processStarted: function (process, execution, processesInExec) {
-    if (processesInExec.models.length === 1 && process.get('executions').models.length === 1) {
+  processStarted: function(process, execution, processesInExec) {
+    if (
+      processesInExec.models.length === 1 &&
+      process.get('executions').models.length === 1
+    ) {
       this.disableButtons();
     }
   },
-  processFinished: function (process, execution, processesInExec) {
+  processFinished: function(process, execution, processesInExec) {
     if (processesInExec.models.length === 0) {
       this.enableButtons();
     }
   },
-  disableButtons: function () {
+  disableButtons: function() {
     this.$.printReceipt.setDisabled(true);
     this.$.printInvoices.setDisabled(true);
     this.$.cancelButton.setDisabled(true);
   },
-  enableButtons: function () {
-    var checkedInvoices = _.compact(this.parent.parent.parent.parent.$.body.$.listInvoices.invoicesList.map(function (e) {
-      if (e.get('checked')) {
-        return e;
-      }
-    }));
+  enableButtons: function() {
+    var checkedInvoices = _.compact(
+      this.parent.parent.parent.parent.$.body.$.listInvoices.invoicesList.map(
+        function(e) {
+          if (e.get('checked')) {
+            return e;
+          }
+        }
+      )
+    );
     this.$.printReceipt.setDisabled(false);
     this.$.printInvoices.setDisabled(checkedInvoices.length === 0);
     this.$.cancelButton.setDisabled(false);
   },
-  printReceiptAction: function () {
+  printReceiptAction: function() {
     var execution = OB.UTIL.ProcessController.start('invoicesPrintReceipt');
     this.owner.model.get('order').set('forceReceiptTemplate', true);
     this.doPrintSingleReceipt({
-      callback: function () {
+      callback: function() {
         OB.UTIL.ProcessController.finish('invoicesPrintReceipt', execution);
       }
     });
   },
-  disablePrintInvoicesButton: function (value) {
+  disablePrintInvoicesButton: function(value) {
     this.$.printInvoices.setDisabled(value);
   },
-  printInvoiceAction: function () {
+  printInvoiceAction: function() {
     var me = this,
-        process = new OB.DS.Process('org.openbravo.retail.posterminal.OpenInvoices'),
-        checkedInvoices = _.compact(this.parent.parent.parent.parent.$.body.$.listInvoices.invoicesList.map(function (e) {
-        if (e.get('checked')) {
-          return e;
-        }
-      }));
+      process = new OB.DS.Process(
+        'org.openbravo.retail.posterminal.OpenInvoices'
+      ),
+      checkedInvoices = _.compact(
+        this.parent.parent.parent.parent.$.body.$.listInvoices.invoicesList.map(
+          function(e) {
+            if (e.get('checked')) {
+              return e;
+            }
+          }
+        )
+      );
     if (checkedInvoices.length === 0) {
       return true;
     }
     var execution = OB.UTIL.ProcessController.start('invoicesPrintInvoices');
 
-    process.exec({
-      invoices: checkedInvoices,
-      originServer: undefined
-    }, function (data) {
-      if (data && data.exception) {
-        OB.error('Error getting invoices: ' + data.exception.message);
-        OB.UTIL.ProcessController.finish('invoicesPrintInvoices', execution);
-      } else if (data) {
-
-        var printInvoice, finishPrintInvoices = _.after(data.length, function () {
+    process.exec(
+      {
+        invoices: checkedInvoices,
+        originServer: undefined
+      },
+      function(data) {
+        if (data && data.exception) {
+          OB.error('Error getting invoices: ' + data.exception.message);
           OB.UTIL.ProcessController.finish('invoicesPrintInvoices', execution);
-        });
+        } else if (data) {
+          var printInvoice,
+            finishPrintInvoices = _.after(data.length, function() {
+              OB.UTIL.ProcessController.finish(
+                'invoicesPrintInvoices',
+                execution
+              );
+            });
 
-        printInvoice = function (indx) {
-          if (data.length === indx) {
-            return;
-          }
-          if (data[indx].receiptLines.length === 0) {
-            finishPrintInvoices();
-            printInvoice(++indx);
-          } else {
-            me.owner.model.get('orderList').newPaidReceipt(data[indx], function (invoice) {
-              invoice.set('loadedFromServer', true);
-              invoice.set('checked', true);
-              invoice.set('belongsToMultiOrder', true);
-              invoice.set('isInvoice', true);
-              invoice.calculateGrossAndSave(false, function () {
-                try {
-                  OB.UTIL.HookManager.executeHooks('OBPOS_PrePrintPaidReceipt', {
-                    context: this.model,
-                    receipt: invoice
-                  }, function (args) {
-                    if (args && args.cancelOperation && args.cancelOperation === true) {
+          printInvoice = function(indx) {
+            if (data.length === indx) {
+              return;
+            }
+            if (data[indx].receiptLines.length === 0) {
+              finishPrintInvoices();
+              printInvoice(++indx);
+            } else {
+              me.owner.model
+                .get('orderList')
+                .newPaidReceipt(data[indx], function(invoice) {
+                  invoice.set('loadedFromServer', true);
+                  invoice.set('checked', true);
+                  invoice.set('belongsToMultiOrder', true);
+                  invoice.set('isInvoice', true);
+                  invoice.calculateGrossAndSave(false, function() {
+                    try {
+                      OB.UTIL.HookManager.executeHooks(
+                        'OBPOS_PrePrintPaidReceipt',
+                        {
+                          context: this.model,
+                          receipt: invoice
+                        },
+                        function(args) {
+                          if (
+                            args &&
+                            args.cancelOperation &&
+                            args.cancelOperation === true
+                          ) {
+                            finishPrintInvoices();
+                            printInvoice(++indx);
+                            return;
+                          }
+                          me.model.printReceipt.print(invoice, {
+                            callback: function() {
+                              finishPrintInvoices();
+                              printInvoice(++indx);
+                            }
+                          });
+                        }
+                      );
+                    } catch (e) {
+                      OB.error('Error printing the receipt:' + e);
                       finishPrintInvoices();
                       printInvoice(++indx);
-                      return;
                     }
-                    me.model.printReceipt.print(invoice, {
-                      callback: function () {
-                        finishPrintInvoices();
-                        printInvoice(++indx);
-                      }
-                    });
                   });
-                } catch (e) {
-                  OB.error('Error printing the receipt:' + e);
-                  finishPrintInvoices();
-                  printInvoice(++indx);
-                }
-              });
-            });
-          }
-        };
+                });
+            }
+          };
 
-        printInvoice(0);
-      } else {
+          printInvoice(0);
+        } else {
+          //error or offline
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_ErrorGettingInvoices'));
+          OB.UTIL.ProcessController.finish('invoicesPrintInvoices', execution);
+        }
+      },
+      function(err) {
         //error or offline
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_ErrorGettingInvoices'));
         OB.UTIL.ProcessController.finish('invoicesPrintInvoices', execution);
       }
-    }, function (err) {
-      //error or offline
-      OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_ErrorGettingInvoices'));
-      OB.UTIL.ProcessController.finish('invoicesPrintInvoices', execution);
-    });
+    );
   },
-  cancelAction: function () {
+  cancelAction: function() {
     this.doHideThisPopup();
   },
-  init: function (model) {
+  init: function(model) {
     this.model = model;
   }
 });
@@ -389,10 +483,10 @@ enyo.kind({
   name: 'OB.UI.ModalInvoices',
   kind: 'OB.UI.Modal',
   classes: 'obUiModalInvoices',
-  executeOnHide: function () {
+  executeOnHide: function() {
     this.waterfall('onPopupClosed');
   },
-  executeOnShow: function () {
+  executeOnShow: function() {
     this.waterfall('onPopupOpened', {
       model: this.model
     });
@@ -401,11 +495,11 @@ enyo.kind({
   body: {
     kind: 'OB.UI.ListInvoices'
   },
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
     this.$.closebutton.hide();
   },
-  init: function (model) {
+  init: function(model) {
     this.model = model;
   }
 });

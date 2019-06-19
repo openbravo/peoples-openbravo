@@ -17,31 +17,40 @@ enyo.kind({
   handlers: {
     onSelectLine: 'selectLine'
   },
-  components: [{
-    classes: 'selectPrinterLine-container1',
-    components: [{
-      classes: 'selectPrinterLine-container1-container1',
-      components: [{
-        kind: 'OB.UI.RadioButton',
-        name: 'selected',
-        classes: 'selectPrinterLine-container1-container1-selected',
-        components: [{
-          name: 'printer',
-          classes: 'selectPrinterLine-selected-printer'
-        }],
-        tap: function () {
-          this.bubble('onSelectLine');
+  components: [
+    {
+      classes: 'selectPrinterLine-container1',
+      components: [
+        {
+          classes: 'selectPrinterLine-container1-container1',
+          components: [
+            {
+              kind: 'OB.UI.RadioButton',
+              name: 'selected',
+              classes: 'selectPrinterLine-container1-container1-selected',
+              components: [
+                {
+                  name: 'printer',
+                  classes: 'selectPrinterLine-selected-printer'
+                }
+              ],
+              tap: function() {
+                this.bubble('onSelectLine');
+              }
+            }
+          ]
+        },
+        {
+          classes: 'selectPrinterLine-container1-container2'
         }
-      }]
-    }, {
-      classes: 'selectPrinterLine-container1-container2'
-    }]
-  }],
-  initComponents: function () {
+      ]
+    }
+  ],
+  initComponents: function() {
     this.inherited(arguments);
     this.$.printer.setContent(this.printer._identifier);
   },
-  selectLine: function (inSender, inEvent) {
+  selectLine: function(inSender, inEvent) {
     this.printerscontainer.selectURL(this.printer.id);
   }
 });
@@ -55,7 +64,7 @@ enyo.kind({
   events: {
     onApplyChanges: ''
   },
-  tap: function () {
+  tap: function() {
     if (this.doApplyChanges()) {
       this.doHideThisPopup();
     }
@@ -70,7 +79,7 @@ enyo.kind({
   events: {
     onCancelChanges: ''
   },
-  tap: function () {
+  tap: function() {
     this.doCancelChanges();
     this.doHideThisPopup();
   }
@@ -88,44 +97,56 @@ enyo.kind({
     kind: 'Scroller',
     thumb: true,
     classes: 'obUiModalSelectPrinters-bodyContent',
-    components: [{
-      name: 'printerslist',
-      classes: 'obUiModalSelectPrinters-bodyContent-printerslist',
-      selectURL: function (hardwareId) {
-        var isalreadychecked = false;
+    components: [
+      {
+        name: 'printerslist',
+        classes: 'obUiModalSelectPrinters-bodyContent-printerslist',
+        selectURL: function(hardwareId) {
+          var isalreadychecked = false;
 
-        // check radio of activeurl radio
-        _.each(this.$, function (value, key, list) {
-          if (!isalreadychecked && value.printer.id === hardwareId) {
-            value.$.selected.activeRadio();
-            isalreadychecked = true;
-          } else {
-            value.$.selected.disableRadio();
-          }
-        }, this);
-      },
-      getActiveURL: function () {
-
-        // check radio of activeurl radio
-        var selected = _.find(this.$, function (value, key, list) {
-          return value.$.selected.checked;
-        }, this);
-        return selected.printer.id;
+          // check radio of activeurl radio
+          _.each(
+            this.$,
+            function(value, key, list) {
+              if (!isalreadychecked && value.printer.id === hardwareId) {
+                value.$.selected.activeRadio();
+                isalreadychecked = true;
+              } else {
+                value.$.selected.disableRadio();
+              }
+            },
+            this
+          );
+        },
+        getActiveURL: function() {
+          // check radio of activeurl radio
+          var selected = _.find(
+            this.$,
+            function(value, key, list) {
+              return value.$.selected.checked;
+            },
+            this
+          );
+          return selected.printer.id;
+        }
       }
-    }]
+    ]
   },
   bodyButtons: {
     classes: 'obUiModalSelectPrinters-bodyButtons',
-    components: [{
-      classes: 'obUiModalSelectPrinters-bodyButtons-selectPrinterApply',
-      kind: 'SelectPrintersApply'
-    }, {
-      classes: 'obUiModalSelectPrinters-bodyButtons-selectPrinterCancel',
-      kind: 'SelectPrintersCancel'
-    }]
+    components: [
+      {
+        classes: 'obUiModalSelectPrinters-bodyButtons-selectPrinterApply',
+        kind: 'SelectPrintersApply'
+      },
+      {
+        classes: 'obUiModalSelectPrinters-bodyButtons-selectPrinterCancel',
+        kind: 'SelectPrintersCancel'
+      }
+    ]
   },
 
-  applyChanges: function (inSender, inEvent) {
+  applyChanges: function(inSender, inEvent) {
     OB.POS.hwserver.setActiveURL(this.printerscontainer.getActiveURL());
     this.args.actionExecuted = true;
     while (this.successCallbackArray.length !== 0) {
@@ -134,14 +155,14 @@ enyo.kind({
     return true;
   },
 
-  cancelChanges: function (inSender, inEvent) {
+  cancelChanges: function(inSender, inEvent) {
     this.args.actionExecuted = true;
     while (this.cancellCallbackArray.length !== 0) {
       this.cancellCallbackArray.pop()();
     }
   },
 
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
     this.printerscontainer = this.$.bodyContent.$.printerslist;
     this.autoDismiss = false;
@@ -154,45 +175,58 @@ enyo.kind({
     var printers = OB.POS.modelterminal.get('hardwareURL');
 
     // Add Main URL
-    if (!_.find(printers, function (printer) {
-      return printer.hasReceiptPrinter && printer.hardwareURL === OB.POS.hwserver.mainurl;
-    })) {
-      this.printerscontainer.createComponent({
-        kind: 'SelectPrintersLine',
-        name: 'printerMain',
-        printerscontainer: this.printerscontainer,
-        printer: {
-          _identifier: OB.I18N.getLabel('OBPOS_MainPrinter'),
-          id: OB.MobileApp.model.get('terminal').id,
-          hardwareURL: OB.POS.hwserver.mainurl
-        }
-      }).render();
+    if (
+      !_.find(printers, function(printer) {
+        return (
+          printer.hasReceiptPrinter &&
+          printer.hardwareURL === OB.POS.hwserver.mainurl
+        );
+      })
+    ) {
+      this.printerscontainer
+        .createComponent({
+          kind: 'SelectPrintersLine',
+          name: 'printerMain',
+          printerscontainer: this.printerscontainer,
+          printer: {
+            _identifier: OB.I18N.getLabel('OBPOS_MainPrinter'),
+            id: OB.MobileApp.model.get('terminal').id,
+            hardwareURL: OB.POS.hwserver.mainurl
+          }
+        })
+        .render();
     }
 
     // Add the rest of URLs
-    _.each(printers, function (printer) {
-      if (printer.hasReceiptPrinter) {
-        this.printerscontainer.createComponent({
-          kind: 'SelectPrintersLine',
-          name: 'printerLine' + printer.id,
-          printerscontainer: this.printerscontainer,
-          printer: printer
-        }).render();
-      }
-    }, this);
+    _.each(
+      printers,
+      function(printer) {
+        if (printer.hasReceiptPrinter) {
+          this.printerscontainer
+            .createComponent({
+              kind: 'SelectPrintersLine',
+              name: 'printerLine' + printer.id,
+              printerscontainer: this.printerscontainer,
+              printer: printer
+            })
+            .render();
+        }
+      },
+      this
+    );
 
     // Select the active URL
     this.printerscontainer.selectURL(OB.POS.hwserver.activeurl_id);
   },
 
-  executeOnHide: function () {
+  executeOnHide: function() {
     while (!this.args.actionExecuted && this.hideCallbackArray.length !== 0) {
       this.hideCallbackArray.pop()();
     }
     this.cleanBuffers();
   },
 
-  executeOnShow: function () {
+  executeOnShow: function() {
     if (this.args.onHide) {
       this.hideCallbackArray.push(this.args.onHide);
     }
@@ -202,7 +236,10 @@ enyo.kind({
     if (this.args.onSuccess) {
       this.successCallbackArray.push(this.args.onSuccess);
     }
-    if (OB.MobileApp.model.get('terminal').terminalType.selectprinteralways && !this.args.isRetry) {
+    if (
+      OB.MobileApp.model.get('terminal').terminalType.selectprinteralways &&
+      !this.args.isRetry
+    ) {
       this.closeOnEscKey = false;
       this.autoDismiss = false;
       this.$.bodyButtons.$.selectPrintersCancel.hide();
@@ -219,7 +256,7 @@ enyo.kind({
     }
   },
 
-  cleanBuffers: function () {
+  cleanBuffers: function() {
     this.hideCallbackArray.length = 0;
     this.cancellCallbackArray.length = 0;
     this.successCallbackArray.length = 0;
@@ -238,46 +275,60 @@ enyo.kind({
     classes: 'obUiModalSelectPDFPrinters-bodyContent',
     kind: 'Scroller',
     thumb: true,
-    components: [{
-      name: 'printerslist',
-      classes: 'obUiModalSelectPDFPrinters-bodyContent-printerslist',
-      selectURL: function (hardwareId) {
-        var isalreadychecked = false;
+    components: [
+      {
+        name: 'printerslist',
+        classes: 'obUiModalSelectPDFPrinters-bodyContent-printerslist',
+        selectURL: function(hardwareId) {
+          var isalreadychecked = false;
 
-        // check radio of activeurl radio
-        _.each(this.$, function (value, key, list) {
-          if (!isalreadychecked && value.printer.id === hardwareId) {
-            value.$.selected.activeRadio();
-            isalreadychecked = true;
-          } else {
-            value.$.selected.disableRadio();
-          }
-        }, this);
-      },
-      getActiveURL: function () {
-
-        // check radio of activeurl radio
-        var selected = _.find(this.$, function (value, key, list) {
-          return value.$.selected.checked;
-        }, this);
-        return selected.printer.id;
+          // check radio of activeurl radio
+          _.each(
+            this.$,
+            function(value, key, list) {
+              if (!isalreadychecked && value.printer.id === hardwareId) {
+                value.$.selected.activeRadio();
+                isalreadychecked = true;
+              } else {
+                value.$.selected.disableRadio();
+              }
+            },
+            this
+          );
+        },
+        getActiveURL: function() {
+          // check radio of activeurl radio
+          var selected = _.find(
+            this.$,
+            function(value, key, list) {
+              return value.$.selected.checked;
+            },
+            this
+          );
+          return selected.printer.id;
+        }
       }
-    }]
+    ]
   },
   bodyButtons: {
     classes: 'obUiModalSelectPDFPrinters-bodyButtons',
-    components: [{
-      classes: 'obUiModalSelectPDFPrinters-bodyButtons-selectPDFPrintersApply',
-      name: "SelectPDFPrintersApply",
-      kind: 'SelectPrintersApply'
-    }, {
-      classes: 'obUiModalSelectPDFPrinters-bodyButtons-selectPDFPrintersCancel',
-      name: "SelectPDFPrintersCancel",
-      kind: 'SelectPrintersCancel'
-    }]
+    components: [
+      {
+        classes:
+          'obUiModalSelectPDFPrinters-bodyButtons-selectPDFPrintersApply',
+        name: 'SelectPDFPrintersApply',
+        kind: 'SelectPrintersApply'
+      },
+      {
+        classes:
+          'obUiModalSelectPDFPrinters-bodyButtons-selectPDFPrintersCancel',
+        name: 'SelectPDFPrintersCancel',
+        kind: 'SelectPrintersCancel'
+      }
+    ]
   },
 
-  applyChanges: function (inSender, inEvent) {
+  applyChanges: function(inSender, inEvent) {
     OB.POS.hwserver.setActivePDFURL(this.printerscontainer.getActiveURL());
     this.args.actionExecuted = true;
     while (this.successCallbackArray.length !== 0) {
@@ -286,14 +337,14 @@ enyo.kind({
     return true;
   },
 
-  cancelChanges: function (inSender, inEvent) {
+  cancelChanges: function(inSender, inEvent) {
     this.args.actionExecuted = true;
     while (this.cancellCallbackArray.length !== 0) {
       this.cancellCallbackArray.pop()();
     }
   },
 
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
     this.printerscontainer = this.$.bodyContent.$.printerslist;
     this.autoDismiss = false;
@@ -306,45 +357,58 @@ enyo.kind({
     var printers = OB.POS.modelterminal.get('hardwareURL');
 
     // Add Main URL
-    if (!_.find(printers, function (printer) {
-      return printer.hasPDFPrinter && printer.hardwareURL === OB.POS.hwserver.mainurl;
-    })) {
-      this.printerscontainer.createComponent({
-        kind: 'SelectPrintersLine',
-        name: 'PDFprinterMain',
-        printerscontainer: this.printerscontainer,
-        printer: {
-          _identifier: OB.I18N.getLabel('OBPOS_MainPrinter'),
-          id: OB.MobileApp.model.get('terminal').id,
-          hardwareURL: OB.POS.hwserver.mainurl
-        }
-      }).render();
+    if (
+      !_.find(printers, function(printer) {
+        return (
+          printer.hasPDFPrinter &&
+          printer.hardwareURL === OB.POS.hwserver.mainurl
+        );
+      })
+    ) {
+      this.printerscontainer
+        .createComponent({
+          kind: 'SelectPrintersLine',
+          name: 'PDFprinterMain',
+          printerscontainer: this.printerscontainer,
+          printer: {
+            _identifier: OB.I18N.getLabel('OBPOS_MainPrinter'),
+            id: OB.MobileApp.model.get('terminal').id,
+            hardwareURL: OB.POS.hwserver.mainurl
+          }
+        })
+        .render();
     }
 
     // Add the rest of URLs
-    _.each(printers, function (printer) {
-      if (printer.hasPDFPrinter) {
-        this.printerscontainer.createComponent({
-          kind: 'SelectPrintersLine',
-          name: 'PDFprinterLine' + printer.id,
-          printerscontainer: this.printerscontainer,
-          printer: printer
-        }).render();
-      }
-    }, this);
+    _.each(
+      printers,
+      function(printer) {
+        if (printer.hasPDFPrinter) {
+          this.printerscontainer
+            .createComponent({
+              kind: 'SelectPrintersLine',
+              name: 'PDFprinterLine' + printer.id,
+              printerscontainer: this.printerscontainer,
+              printer: printer
+            })
+            .render();
+        }
+      },
+      this
+    );
 
     // Select the active URL
     this.printerscontainer.selectURL(OB.POS.hwserver.activepdfurl_id);
   },
 
-  executeOnHide: function () {
+  executeOnHide: function() {
     while (!this.args.actionExecuted && this.hideCallbackArray.length !== 0) {
       this.hideCallbackArray.pop()();
     }
     this.cleanBuffers();
   },
 
-  executeOnShow: function () {
+  executeOnShow: function() {
     if (this.args.onHide) {
       this.hideCallbackArray.push(this.args.onHide);
     }
@@ -354,7 +418,10 @@ enyo.kind({
     if (this.args.onSuccess) {
       this.successCallbackArray.push(this.args.onSuccess);
     }
-    if (OB.MobileApp.model.get('terminal').terminalType.selectprinteralways && !this.args.isRetry) {
+    if (
+      OB.MobileApp.model.get('terminal').terminalType.selectprinteralways &&
+      !this.args.isRetry
+    ) {
       this.closeOnEscKey = false;
       this.autoDismiss = false;
       this.$.bodyButtons.$.SelectPDFPrintersCancel.hide();
@@ -367,7 +434,7 @@ enyo.kind({
     }
   },
 
-  cleanBuffers: function () {
+  cleanBuffers: function() {
     this.hideCallbackArray.length = 0;
     this.cancellCallbackArray.length = 0;
     this.successCallbackArray.length = 0;

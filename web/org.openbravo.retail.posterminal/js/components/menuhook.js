@@ -7,11 +7,17 @@
  ************************************************************************************
  */
 
-OB.UTIL.HookManager.registerHook('OBMOBC_PreWindowNavigate', function (args, callbacks) {
+OB.UTIL.HookManager.registerHook('OBMOBC_PreWindowNavigate', function(
+  args,
+  callbacks
+) {
   var destWindow = args.window;
   if (destWindow.approvalType) {
-    OB.UTIL.Approval.requestApproval(
-    null, destWindow.approvalType, function (approved, supervisor, approvalType) {
+    OB.UTIL.Approval.requestApproval(null, destWindow.approvalType, function(
+      approved,
+      supervisor,
+      approvalType
+    ) {
       if (approved) {
         args.cancellation = false;
       } else {
@@ -24,7 +30,10 @@ OB.UTIL.HookManager.registerHook('OBMOBC_PreWindowNavigate', function (args, cal
   }
 });
 
-OB.UTIL.HookManager.registerHook('OBMOBC_PostWindowNavigate', function (args, callbacks) {
+OB.UTIL.HookManager.registerHook('OBMOBC_PostWindowNavigate', function(
+  args,
+  callbacks
+) {
   // Refresh Master Data
   OB.UTIL.checkRefreshMasterDataOnNavigate();
 });

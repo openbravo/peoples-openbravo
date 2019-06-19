@@ -15,21 +15,27 @@ enyo.kind({
   classes: 'obUiModalModulesInDev',
   bodyContent: {
     classes: 'obUiModalModulesInDev-bodyContent',
-    components: [{
-      name: 'message',
-      classes: 'obUiModalModulesInDev-bodyContent-message',
-      content: ''
-    }, {
-      name: 'link',
-      classes: 'obUiModalModulesInDev-bodyContent-link',
-      tag: 'a href="http://wiki.openbravo.com/wiki/WebPOS_and_HTTPS" target="_blank"',
-      content: '',
-      showing: false
-    }]
+    components: [
+      {
+        name: 'message',
+        classes: 'obUiModalModulesInDev-bodyContent-message',
+        content: ''
+      },
+      {
+        name: 'link',
+        classes: 'obUiModalModulesInDev-bodyContent-link',
+        tag:
+          'a href="http://wiki.openbravo.com/wiki/WebPOS_and_HTTPS" target="_blank"',
+        content: '',
+        showing: false
+      }
+    ]
   },
-  executeOnShow: function () {
+  executeOnShow: function() {
     if (!OB.UTIL.isHTTPSAvailable()) {
-      this.$.bodyContent.$.message.setContent(OB.I18N.getLabel('OBPOS_NonSecureModalPopup'));
+      this.$.bodyContent.$.message.setContent(
+        OB.I18N.getLabel('OBPOS_NonSecureModalPopup')
+      );
       this.$.bodyContent.$.link.setContent(OB.I18N.getLabel('OBPOS_link'));
       this.$.bodyContent.$.link.setShowing(true);
     } else if (OB.UTIL.Debug.isDebug()) {

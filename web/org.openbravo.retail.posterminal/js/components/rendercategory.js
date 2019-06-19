@@ -13,32 +13,44 @@ enyo.kind({
   name: 'OB.UI.RenderCategory',
   kind: 'OB.UI.listItemButton',
   classes: 'obUiRenderCategory',
-  components: [{
-    classes: 'obUiRenderCategory-container1',
-    components: [{
-      classes: 'obUiRenderCategory-container1-thumbnail',
-      kind: 'OB.UI.Thumbnail',
-      name: 'thumbnail'
-    }]
-  }, {
-    classes: 'obUiRenderCategory-container2',
-    components: [{
-      name: 'identifier',
-      classes: 'obUiRenderCategory-container2-identifier'
-    }, {
-      classes: 'obUiRenderCategory-container2-element1'
-    }]
-  }],
-  initComponents: function () {
+  components: [
+    {
+      classes: 'obUiRenderCategory-container1',
+      components: [
+        {
+          classes: 'obUiRenderCategory-container1-thumbnail',
+          kind: 'OB.UI.Thumbnail',
+          name: 'thumbnail'
+        }
+      ]
+    },
+    {
+      classes: 'obUiRenderCategory-container2',
+      components: [
+        {
+          name: 'identifier',
+          classes: 'obUiRenderCategory-container2-identifier'
+        },
+        {
+          classes: 'obUiRenderCategory-container2-element1'
+        }
+      ]
+    }
+  ],
+  initComponents: function() {
     this.inherited(arguments);
     this.$.identifier.setContent(this.model.get('_identifier'));
     this.$.thumbnail.setImg(this.model.get('img'));
 
-    OB.UTIL.HookManager.executeHooks('OBPOS_RenderCategory', {
-      context: this
-    }, function (args) {
-      return this;
-    });
+    OB.UTIL.HookManager.executeHooks(
+      'OBPOS_RenderCategory',
+      {
+        context: this
+      },
+      function(args) {
+        return this;
+      }
+    );
   }
 });
 
@@ -66,13 +78,15 @@ enyo.kind({
   handlers: {
     onkeydown: 'keydownHandler'
   },
-  keydownHandler: function (inSender, inEvent) {
+  keydownHandler: function(inSender, inEvent) {
     var keyCode = inEvent.keyCode;
-    if (keyCode === 13) { // Handle ENTER key in list item
+    if (keyCode === 13) {
+      // Handle ENTER key in list item
       this.tap();
       return true;
     }
-    if (keyCode === 32) { // Handle SPACE key in list item
+    if (keyCode === 32) {
+      // Handle SPACE key in list item
       if (this.model.get('issummary')) {
         this.categoryExpandCollapse();
       } else {
@@ -82,50 +96,72 @@ enyo.kind({
     }
     return false;
   },
-  categoryExpandCollapse: function () {
+  categoryExpandCollapse: function() {
     this.bubble('onCategoryExpandCollapse', {
       categoryId: this.model.get('id'),
       expand: this.$.expand.getShowing()
     });
   },
-  isExpanded: function () {
+  isExpanded: function() {
     return !(this.$.expand && this.$.expand.getShowing() === true);
   },
-  components: [{
-    classes: 'obUiRenderCategoryTree-container1',
-    components: [{
-      classes: 'obUiRenderCategoryTree-container1-identifier',
-      name: 'identifier'
-    }]
-  }, {
-    classes: 'obUiRenderCategoryTree-container2',
-    components: [{
-      name: 'expandCollapse',
-      classes: 'obUiRenderCategoryTree-container2-expandCollapse',
-      components: [{
-        classes: 'obUiRenderCategoryTree-expandCollapse-expand',
-        kind: 'OB.UI.RenderCategoryExpand',
-        name: 'expand'
-      }, {
-        classes: 'obUiRenderCategoryTree-expandCollapse-collapse',
-        kind: 'OB.UI.RenderCategoryCollapse',
-        name: 'collapse'
-      }],
-      tap: function () {
-        this.owner.categoryExpandCollapse();
-        return true;
-      }
-    }]
-  }],
+  components: [
+    {
+      classes: 'obUiRenderCategoryTree-container1',
+      components: [
+        {
+          classes: 'obUiRenderCategoryTree-container1-identifier',
+          name: 'identifier'
+        }
+      ]
+    },
+    {
+      classes: 'obUiRenderCategoryTree-container2',
+      components: [
+        {
+          name: 'expandCollapse',
+          classes: 'obUiRenderCategoryTree-container2-expandCollapse',
+          components: [
+            {
+              classes: 'obUiRenderCategoryTree-expandCollapse-expand',
+              kind: 'OB.UI.RenderCategoryExpand',
+              name: 'expand'
+            },
+            {
+              classes: 'obUiRenderCategoryTree-expandCollapse-collapse',
+              kind: 'OB.UI.RenderCategoryCollapse',
+              name: 'collapse'
+            }
+          ],
+          tap: function() {
+            this.owner.categoryExpandCollapse();
+            return true;
+          }
+        }
+      ]
+    }
+  ],
 
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
     this.$.identifier.setContent(this.model.get('_identifier'));
-    this.$.identifier.setStyle('padding-left: ' + (14 * this.model.get('level')) + 'px; ' + (this.model.id === '__all__' ? 'font-weight: bold; ' : ''));
+    this.$.identifier.setStyle(
+      'padding-left: ' +
+        14 * this.model.get('level') +
+        'px; ' +
+        (this.model.id === '__all__' ? 'font-weight: bold; ' : '')
+    );
     this.$.expandCollapse.setShowing(this.model.get('issummary'));
     this.$.expand.setShowing(this.model.get('treeNode') !== 'EXPANDED');
     this.$.collapse.setShowing(this.model.get('treeNode') === 'EXPANDED');
-    var showOnlyReal = (this.owner.owner.owner.owner.owner.owner.args && this.owner.owner.owner.owner.owner.owner.args.showOnlyReal) || false;
-    this.owner.setShowing((this.model.get('realCategory') === 'N' && showOnlyReal) ? false : this.model.get('display'));
+    var showOnlyReal =
+      (this.owner.owner.owner.owner.owner.owner.args &&
+        this.owner.owner.owner.owner.owner.owner.args.showOnlyReal) ||
+      false;
+    this.owner.setShowing(
+      this.model.get('realCategory') === 'N' && showOnlyReal
+        ? false
+        : this.model.get('display')
+    );
   }
 });

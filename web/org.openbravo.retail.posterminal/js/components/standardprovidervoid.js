@@ -14,7 +14,7 @@ enyo.kind({
   classes: 'obposStandardProviderVoid',
   voidConfirmation: true,
   providerComponent: null,
-  processVoid: function (voidpaymentinfo) {
+  processVoid: function(voidpaymentinfo) {
     // This function is invoked to void a payment transaction
     //
     // The parameter voidpaymentinfo is a plain js object with the following fields
@@ -35,20 +35,21 @@ enyo.kind({
     //   });
     // },
     var request = {
-      'type': OBPOS_StandardProvider.TYPE_VOID,
-      'currency': voidpaymentinfo.payment.get('isocode'),
-      'amount': voidpaymentinfo.payment.get('amount'),
-      'properties': voidpaymentinfo.payment.get('paymentData').properties.voidproperties
+      type: OBPOS_StandardProvider.TYPE_VOID,
+      currency: voidpaymentinfo.payment.get('isocode'),
+      amount: voidpaymentinfo.payment.get('amount'),
+      properties: voidpaymentinfo.payment.get('paymentData').properties
+        .voidproperties
     };
 
     request = this.populateVoidRequest(request, voidpaymentinfo);
 
     return OBPOS_StandardProvider.remoteRequest(request);
   },
-  populateVoidRequest: function (request, voidpaymentinfo) {
+  populateVoidRequest: function(request, voidpaymentinfo) {
     return request;
   },
-  getErrorMessage: function (exceptioninfo) {
+  getErrorMessage: function(exceptioninfo) {
     // This function is invoked when processInfo function is rejected.
     // It is invoked with the parameter exceptioninfo that contains the exception
     // object of the reject, and must return the error message to display to the cashier

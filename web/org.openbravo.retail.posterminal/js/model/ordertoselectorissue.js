@@ -9,7 +9,7 @@
 
 /*global Backbone, _ */
 
-(function () {
+(function() {
   OB.Model.OBRDM_OrderToSelectorIssue = OB.Data.ExtensibleModel.extend({
     modelName: 'OrderToSelectorIssue',
     entityName: 'OrderToSelectorIssue',
@@ -17,23 +17,27 @@
     source: ''
   });
 
-  OB.Model.OBRDM_OrderToSelectorIssue.addProperties([{
-    name: 'id',
-    column: 'c_order_id',
-    primaryKey: true,
-    type: 'TEXT'
-  }, {
-    name: 'documentNo',
-    column: 'documentNo',
-    type: 'TEXT'
-  }, {
-    name: 'orderedDate',
-    column: 'orderedDate',
-    type: 'TEXT'
-  }, {
-    name: 'bpName',
-    column: 'bpName',
-    type: 'TEXT'
-  }]);
-
-}());
+  OB.Model.OBRDM_OrderToSelectorIssue.addProperties([
+    {
+      name: 'id',
+      column: 'c_order_id',
+      primaryKey: true,
+      type: 'TEXT'
+    },
+    {
+      name: 'documentNo',
+      column: 'documentNo',
+      type: 'TEXT'
+    },
+    {
+      name: 'orderedDate',
+      column: 'orderedDate',
+      type: 'TEXT'
+    },
+    {
+      name: 'bpName',
+      column: 'bpName',
+      type: 'TEXT'
+    }
+  ]);
+})();

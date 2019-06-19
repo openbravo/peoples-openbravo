@@ -12,25 +12,38 @@
 OB.POS = window.OB.POS || {};
 OB.POS.UnlinkDevice = window.OB.POS.UnlinkDevice || {};
 
-OB.POS.UnlinkDevice.validation = function (view, actionHandlerCall, failureCallback) {
-  var callback = function (rpcResponse, data, rpcRequest) {
-      if (data.hasNotClosedCashup !== "Y") {
-        actionHandlerCall();
-      } else {
-        isc.confirm(OB.I18N.getLabel('OBPOS_CashupNotProcessed'), {
+OB.POS.UnlinkDevice.validation = function(
+  view,
+  actionHandlerCall,
+  failureCallback
+) {
+  var callback = function(rpcResponse, data, rpcRequest) {
+    if (data.hasNotClosedCashup !== 'Y') {
+      actionHandlerCall();
+    } else {
+      isc.confirm(
+        OB.I18N.getLabel('OBPOS_CashupNotProcessed'),
+        {
           isModal: true,
           showModalMask: true,
           title: OB.I18N.getLabel('OBPOS_CashupNotProcessedTitle')
-        }, function (clickedOK) {
+        },
+        function(clickedOK) {
           if (clickedOK) {
             actionHandlerCall();
           } else {
             failureCallback();
           }
-        });
-      }
-      };
-  OB.RemoteCallManager.call('org.openbravo.retail.posterminal.process.ValidationUnlinkDeviceActionHandler', {
-    id: view.parentWindow.view.viewGrid.getSelectedRecord().id
-  }, {}, callback);
+        }
+      );
+    }
+  };
+  OB.RemoteCallManager.call(
+    'org.openbravo.retail.posterminal.process.ValidationUnlinkDeviceActionHandler',
+    {
+      id: view.parentWindow.view.viewGrid.getSelectedRecord().id
+    },
+    {},
+    callback
+  );
 };

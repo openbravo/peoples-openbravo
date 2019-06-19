@@ -7,8 +7,7 @@
  ************************************************************************************
  */
 
-(function () {
-
+(function() {
   var DiscountBusinessPartnerSet = OB.Data.ExtensibleModel.extend({
     modelName: 'DiscountBusinessPartnerSet',
     tableName: 'm_offer_bp_set',
@@ -16,20 +15,24 @@
     source: 'org.openbravo.retail.posterminal.master.DiscountBusinessPartnerSet'
   });
 
-  DiscountBusinessPartnerSet.addProperties([{
-    name: 'id',
-    column: 'm_offer_bp_set_id',
-    primaryKey: true,
-    type: 'TEXT'
-  }, {
-    name: 'discount',
-    column: 'm_offer_id',
-    type: 'TEXT'
-  }, {
-    name: 'bpSet',
-    column: 'c_bp_set_id',
-    type: 'TEXT'
-  }]);
+  DiscountBusinessPartnerSet.addProperties([
+    {
+      name: 'id',
+      column: 'm_offer_bp_set_id',
+      primaryKey: true,
+      type: 'TEXT'
+    },
+    {
+      name: 'discount',
+      column: 'm_offer_id',
+      type: 'TEXT'
+    },
+    {
+      name: 'bpSet',
+      column: 'c_bp_set_id',
+      type: 'TEXT'
+    }
+  ]);
 
   OB.Data.Registry.registerModel(DiscountBusinessPartnerSet);
-}());
+})();

@@ -13,20 +13,28 @@
 enyo.kind({
   name: 'OB.OBPOSCashMgmt.UI.CashMgmtInfo',
   classes: 'obObposcashmgmtUiCashMgmtInfo',
-  components: [{
-    classes: 'obObposcashmgmtUiCashMgmtInfo-container1',
-    components: [{ //clock here
-      kind: 'OB.UI.Clock',
-      classes: 'obObposcashmgmtUiCashMgmtInfo-container1-obUiClock'
-    }, {
-      // process info
-      name: 'infoLbl',
-      classes: 'obObposcashmgmtUiCashMgmtInfo-container1-obUiClock-infoLbl'
-    }]
-  }],
-  initComponents: function () {
+  components: [
+    {
+      classes: 'obObposcashmgmtUiCashMgmtInfo-container1',
+      components: [
+        {
+          //clock here
+          kind: 'OB.UI.Clock',
+          classes: 'obObposcashmgmtUiCashMgmtInfo-container1-obUiClock'
+        },
+        {
+          // process info
+          name: 'infoLbl',
+          classes: 'obObposcashmgmtUiCashMgmtInfo-container1-obUiClock-infoLbl'
+        }
+      ]
+    }
+  ],
+  initComponents: function() {
     this.inherited(arguments);
-    this.$.infoLbl.setContent(OB.I18N.getLabel('OBPOS_LblDepositsWithdrawalsMsg'));
+    this.$.infoLbl.setContent(
+      OB.I18N.getLabel('OBPOS_LblDepositsWithdrawalsMsg')
+    );
   }
 });
 
@@ -35,7 +43,7 @@ enyo.kind({
   kind: 'OB.UI.RegularButton',
   classes: 'obObposcashmgmtUiDoneButton',
   i18nContent: 'OBPOS_LblDone',
-  tap: function () {
+  tap: function() {
     this.owner.owner.model.depsdropstosave.trigger('makeDeposits');
   }
 });

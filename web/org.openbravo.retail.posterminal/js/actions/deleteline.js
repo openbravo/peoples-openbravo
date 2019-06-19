@@ -9,23 +9,22 @@
 
 /*global OB */
 
-(function () {
-
+(function() {
   OB.MobileApp.actionsRegistry.register(
-  new OB.Actions.ViewMethodAction({
-    window: 'retail.pointofsale',
-    name: 'deleteLine',
-    permission: 'OBPOS_ActionButtonDelete',
-    properties: {
-      i18nContent: 'OBPOS_ButtonDelete'
-    },
-    viewMethodArgs: ['selectedReceiptLines'],
-    isActive: function (view) {
-      var selectedReceiptLine = view.state.readState({
-        name: 'selectedReceiptLine'
-      });
-      return selectedReceiptLine && selectedReceiptLine.get('isDeletable');
-    }
-  }));
-
-}());
+    new OB.Actions.ViewMethodAction({
+      window: 'retail.pointofsale',
+      name: 'deleteLine',
+      permission: 'OBPOS_ActionButtonDelete',
+      properties: {
+        i18nContent: 'OBPOS_ButtonDelete'
+      },
+      viewMethodArgs: ['selectedReceiptLines'],
+      isActive: function(view) {
+        var selectedReceiptLine = view.state.readState({
+          name: 'selectedReceiptLine'
+        });
+        return selectedReceiptLine && selectedReceiptLine.get('isDeletable');
+      }
+    })
+  );
+})();

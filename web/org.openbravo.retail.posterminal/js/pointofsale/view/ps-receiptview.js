@@ -24,51 +24,73 @@ enyo.kind({
     onToggleSelectionMode: 'toggleSelectionMode',
     onTableMultiSelectAll: 'tableMultiSelectAll'
   },
-  components: [{
-    classes: 'obObposPointOfSaleUiReceiptView-container1',
-    components: [{
-      classes: 'obObposPointOfSaleUiReceiptView-container1-container1',
-      components: [{
-        kind: 'OB.UI.ReceiptsCounter',
-        name: 'receiptcounter',
-        classes: 'obObposPointOfSaleUiReceiptView-container1-container1-receiptcounter'
-      }, {
-        classes: 'obObposPointOfSaleUiReceiptView-container1-container1-container2',
-        components: [{
-          kind: 'OB.UI.OrderHeader',
-          name: 'receiptheader',
-          classes: 'obObposPointOfSaleUiReceiptView-container1-container1-container2-receiptheader'
-        }, {
-          classes: 'obObposPointOfSaleUiReceiptView-container1-container1-container2-container2',
-          components: [{
-            classes: 'obObposPointOfSaleUiReceiptView-container1-container1-container2-container2-container1 span12',
-            components: [{
-              kind: 'OB.UI.OrderView',
-              name: 'orderview',
-              classes: 'obObposPointOfSaleUiReceiptView-container1-container1-container2-container2-container1-orderview'
-            }]
-          }]
-        }, {
-          kind: 'OB.UI.OrderFooter',
-          name: 'receiptfooter',
-          classes: 'obObposPointOfSaleUiReceiptView-container1-container1-container2-receiptfooter'
-        }]
-      }]
-    }]
-  }],
-  orderChanged: function (oldValue) {
+  components: [
+    {
+      classes: 'obObposPointOfSaleUiReceiptView-container1',
+      components: [
+        {
+          classes: 'obObposPointOfSaleUiReceiptView-container1-container1',
+          components: [
+            {
+              kind: 'OB.UI.ReceiptsCounter',
+              name: 'receiptcounter',
+              classes:
+                'obObposPointOfSaleUiReceiptView-container1-container1-receiptcounter'
+            },
+            {
+              classes:
+                'obObposPointOfSaleUiReceiptView-container1-container1-container2',
+              components: [
+                {
+                  kind: 'OB.UI.OrderHeader',
+                  name: 'receiptheader',
+                  classes:
+                    'obObposPointOfSaleUiReceiptView-container1-container1-container2-receiptheader'
+                },
+                {
+                  classes:
+                    'obObposPointOfSaleUiReceiptView-container1-container1-container2-container2',
+                  components: [
+                    {
+                      classes:
+                        'obObposPointOfSaleUiReceiptView-container1-container1-container2-container2-container1 span12',
+                      components: [
+                        {
+                          kind: 'OB.UI.OrderView',
+                          name: 'orderview',
+                          classes:
+                            'obObposPointOfSaleUiReceiptView-container1-container1-container2-container2-container1-orderview'
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  kind: 'OB.UI.OrderFooter',
+                  name: 'receiptfooter',
+                  classes:
+                    'obObposPointOfSaleUiReceiptView-container1-container1-container2-receiptfooter'
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  orderChanged: function(oldValue) {
     this.$.receiptheader.setOrder(this.order);
     this.$.orderview.setOrder(this.order);
     this.$.receiptfooter.setOrder(this.order);
   },
-  orderListChanged: function (oldValue) {
+  orderListChanged: function(oldValue) {
     this.$.receiptcounter.setOrderList(this.orderList);
   },
-  toggleSelectionMode: function (inSender, inEvent) {
+  toggleSelectionMode: function(inSender, inEvent) {
     this.waterfall('onToggleSelectionTable', inEvent);
     this.doChangeSelectionMode(inEvent);
   },
-  tableMultiSelectAll: function (inSender, inEvent) {
+  tableMultiSelectAll: function(inSender, inEvent) {
     this.waterfall('onMultiSelectAllTable');
   }
 });

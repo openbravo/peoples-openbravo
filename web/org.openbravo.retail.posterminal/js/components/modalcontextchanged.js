@@ -17,11 +17,10 @@ enyo.kind({
   events: {
     onHideThisPopup: ''
   },
-  tap: function () {
+  tap: function() {
     OB.MobileApp.model.logout();
   }
 });
-
 
 enyo.kind({
   kind: 'OB.UI.ModalAction',
@@ -33,14 +32,18 @@ enyo.kind({
   i18nHeader: 'OBPOS_ContextChanged',
   bodyButtons: {
     classes: 'obUiModalContextChanged-bodyButtons',
-    components: [{
-      classes: 'obUiModalContextChanged-bodyButtons-element1',
-      initComponents: function () {
-        this.setContent(OB.I18N.getLabel('OBPOS_ContextChangedMessage'));
+    components: [
+      {
+        classes: 'obUiModalContextChanged-bodyButtons-element1',
+        initComponents: function() {
+          this.setContent(OB.I18N.getLabel('OBPOS_ContextChangedMessage'));
+        }
+      },
+      {
+        classes:
+          'obUiModalContextChanged-bodyButtons-obObpospointofsaleUiModalsBtnModaContextChangedAccept',
+        kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModaContextChangedAccept'
       }
-    }, {
-      classes: 'obUiModalContextChanged-bodyButtons-obObpospointofsaleUiModalsBtnModaContextChangedAccept',
-      kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModaContextChangedAccept'
-    }]
+    ]
   }
 });

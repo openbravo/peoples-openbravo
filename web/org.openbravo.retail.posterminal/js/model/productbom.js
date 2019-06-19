@@ -7,8 +7,7 @@
  ************************************************************************************
  */
 
-(function () {
-
+(function() {
   var ProductBOM = OB.Data.ExtensibleModel.extend({
     modelName: 'ProductBOM',
     tableName: 'm_product_bom',
@@ -16,40 +15,51 @@
     source: 'org.openbravo.retail.posterminal.master.ProductBOM'
   });
 
-  ProductBOM.addProperties([{
-    name: 'id',
-    column: 'id',
-    primaryKey: true,
-    type: 'TEXT'
-  }, {
-    name: 'product',
-    column: 'product',
-    type: 'TEXT'
-  }, {
-    name: 'bomproduct',
-    column: 'bomproduct',
-    type: 'TEXT'
-  }, {
-    name: 'bomtaxcategory',
-    column: 'bomtaxcategory',
-    type: 'TEXT'
-  }, {
-    name: 'bomquantity',
-    column: 'bomquantity',
-    type: 'NUMERIC'
-  }, {
-    name: 'bomprice',
-    column: 'bomprice',
-    type: 'NUMERIC'
-  }]);
-
-  ProductBOM.addIndex([{
-    name: 'obpos_productbom',
-    columns: [{
+  ProductBOM.addProperties([
+    {
+      name: 'id',
+      column: 'id',
+      primaryKey: true,
+      type: 'TEXT'
+    },
+    {
       name: 'product',
-      sort: 'asc'
-    }]
-  }]);
+      column: 'product',
+      type: 'TEXT'
+    },
+    {
+      name: 'bomproduct',
+      column: 'bomproduct',
+      type: 'TEXT'
+    },
+    {
+      name: 'bomtaxcategory',
+      column: 'bomtaxcategory',
+      type: 'TEXT'
+    },
+    {
+      name: 'bomquantity',
+      column: 'bomquantity',
+      type: 'NUMERIC'
+    },
+    {
+      name: 'bomprice',
+      column: 'bomprice',
+      type: 'NUMERIC'
+    }
+  ]);
+
+  ProductBOM.addIndex([
+    {
+      name: 'obpos_productbom',
+      columns: [
+        {
+          name: 'product',
+          sort: 'asc'
+        }
+      ]
+    }
+  ]);
 
   OB.Data.Registry.registerModel(ProductBOM);
-}());
+})();

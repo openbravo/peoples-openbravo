@@ -16,18 +16,21 @@ enyo.kind({
   published: {
     orderList: null
   },
-  components: [{
-    kind: 'OB.UI.ReceiptsCounterButton',
-    name: 'receiptsCounterButton',
-    classes: 'obUiReceiptsCounter-receiptsCounterButton'
-  }],
+  components: [
+    {
+      kind: 'OB.UI.ReceiptsCounterButton',
+      name: 'receiptsCounterButton',
+      classes: 'obUiReceiptsCounter-receiptsCounterButton'
+    }
+  ],
   events: {
     onSetReceiptsList: ''
   },
-  renderNrItems: function (nrItems) {
+  renderNrItems: function(nrItems) {
     var receiptLabels;
     try {
-      receiptLabels = OB.POS.terminal.$.containerWindow.getRoot().$.multiColumn.$.leftPanel.$.receiptview.$.receiptheader.$.receiptLabels;
+      receiptLabels = OB.POS.terminal.$.containerWindow.getRoot().$.multiColumn
+        .$.leftPanel.$.receiptview.$.receiptheader.$.receiptLabels;
     } catch (e) {
       OB.error('receiptLabels not found');
     }
@@ -36,14 +39,24 @@ enyo.kind({
       if (receiptLabels) {
         // If the receipt counter button is shown, the receipt top labels should have a right padding to avoid overlapping
         // [TODO] Change at the same time as component/order.js
-        receiptLabels.addClass('obUiReceiptsCounter-receiptsCounterButton-receiptLabel_multiLine');
+        receiptLabels.addClass(
+          'obUiReceiptsCounter-receiptsCounterButton-receiptLabel_multiLine'
+        );
       }
       if (nrItems > 100) {
-        this.$.receiptsCounterButton.$.counter.removeClass('obUiReceiptsCounterButton_mediumLargeFont');
-        this.$.receiptsCounterButton.$.counter.addClass('obUiReceiptsCounterButton_smallFont');
+        this.$.receiptsCounterButton.$.counter.removeClass(
+          'obUiReceiptsCounterButton_mediumLargeFont'
+        );
+        this.$.receiptsCounterButton.$.counter.addClass(
+          'obUiReceiptsCounterButton_smallFont'
+        );
       } else {
-        this.$.receiptsCounterButton.$.counter.removeClass('obUiReceiptsCounterButton_smallFont');
-        this.$.receiptsCounterButton.$.counter.addClass('obUiReceiptsCounterButton_mediumLargeFont');
+        this.$.receiptsCounterButton.$.counter.removeClass(
+          'obUiReceiptsCounterButton_smallFont'
+        );
+        this.$.receiptsCounterButton.$.counter.addClass(
+          'obUiReceiptsCounterButton_mediumLargeFont'
+        );
       }
       this.show();
     } else {
@@ -51,26 +64,31 @@ enyo.kind({
       if (receiptLabels) {
         // If the receipt counter button is not shown, the receipt top labels should reach the right of the receipt area
         // [TODO] Change at the same time as component/order.js
-        receiptLabels.addClass('obUiReceiptsCounter-receiptsCounterButton-receiptLabel_singleLine');
+        receiptLabels.addClass(
+          'obUiReceiptsCounter-receiptsCounterButton-receiptLabel_singleLine'
+        );
       }
       this.hide();
     }
   },
-  orderListChanged: function (oldValue) {
+  orderListChanged: function(oldValue) {
     var me = this;
     this.doSetReceiptsList({
       orderList: this.orderList
     });
     this.renderNrItems(this.orderList.length);
-    this.orderList.on('add remove reset', function () {
-      me.renderNrItems(me.orderList.length);
-    }, this);
+    this.orderList.on(
+      'add remove reset',
+      function() {
+        me.renderNrItems(me.orderList.length);
+      },
+      this
+    );
   },
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
   }
 });
-
 
 enyo.kind({
   name: 'OB.UI.ReceiptsCounterButton',
@@ -82,21 +100,24 @@ enyo.kind({
   handlers: {
     onOrderSelectionDisabled: 'orderDisabled'
   },
-  orderDisabled: function (inSender, inEvent) {
+  orderDisabled: function(inSender, inEvent) {
     this.setDisabled(inEvent.status);
     this.addRemoveClass('disabled', inEvent.status);
   },
-  tap: function () {
+  tap: function() {
     if (!this.disabled) {
       this.doShowPopup({
         popup: 'modalreceipts'
       });
     }
   },
-  components: [{
-    classes: 'obUiReceiptsCounterButton-element1'
-  }, {
-    name: 'counter',
-    classes: 'obUiReceiptsCounterButton-counter'
-  }]
+  components: [
+    {
+      classes: 'obUiReceiptsCounterButton-element1'
+    },
+    {
+      name: 'counter',
+      classes: 'obUiReceiptsCounterButton-counter'
+    }
+  ]
 });

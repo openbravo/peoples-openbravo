@@ -14,36 +14,52 @@
 enyo.kind({
   name: 'OB.UI.ModalQuotationProductAttributesScroller.QuotationLines',
   classes: 'obUiModalQuotationProductAttributesScrollerQuotationLines',
-  components: [{
-    classes: 'obUiModalQuotationProductAttributesScrollerQuotationLines-container1',
-    components: [{
-      name: 'productName',
-      type: 'text',
-      classes: 'obUiModalQuotationProductAttributesScrollerQuotationLines-container1-productName',
-      content: ''
-    }]
-  }, {
-    classes: 'obUiModalQuotationProductAttributesScrollerQuotationLines-container2',
-    components: [{
-      name: 'newAttribute',
-      classes: 'obUiModalQuotationProductAttributesScrollerQuotationLines-container2-newAttribute',
-      components: [{
-        kind: 'OB.UI.renderTextProperty',
-        name: 'valueAttribute',
-        classes: 'obUiModalQuotationProductAttributesScrollerQuotationLines-newAttribute-valueAttribute',
-        maxlength: '70',
-        handlers: {
-          oninput: 'blur'
-        },
-        blur: function () {
-          this.bubble('onFieldChanged');
-        },
-        placeholder: 'Scan attribute'
-      }]
-    }]
-  }, {
-    classes: 'obUiModalQuotationProductAttributesScrollerQuotationLines-container3'
-  }]
+  components: [
+    {
+      classes:
+        'obUiModalQuotationProductAttributesScrollerQuotationLines-container1',
+      components: [
+        {
+          name: 'productName',
+          type: 'text',
+          classes:
+            'obUiModalQuotationProductAttributesScrollerQuotationLines-container1-productName',
+          content: ''
+        }
+      ]
+    },
+    {
+      classes:
+        'obUiModalQuotationProductAttributesScrollerQuotationLines-container2',
+      components: [
+        {
+          name: 'newAttribute',
+          classes:
+            'obUiModalQuotationProductAttributesScrollerQuotationLines-container2-newAttribute',
+          components: [
+            {
+              kind: 'OB.UI.renderTextProperty',
+              name: 'valueAttribute',
+              classes:
+                'obUiModalQuotationProductAttributesScrollerQuotationLines-newAttribute-valueAttribute',
+              maxlength: '70',
+              handlers: {
+                oninput: 'blur'
+              },
+              blur: function() {
+                this.bubble('onFieldChanged');
+              },
+              placeholder: 'Scan attribute'
+            }
+          ]
+        }
+      ]
+    },
+    {
+      classes:
+        'obUiModalQuotationProductAttributesScrollerQuotationLines-container3'
+    }
+  ]
 });
 
 enyo.kind({
@@ -56,10 +72,13 @@ enyo.kind({
     kind: 'Scroller',
     classses: 'obUiModalQuotationProductAttributes-scroller',
     thumb: true,
-    components: [{
-      name: 'quotationLinesComponent',
-      classses: 'obUiModalQuotationProductAttributes-scroller-quotationLinesComponent'
-    }]
+    components: [
+      {
+        name: 'quotationLinesComponent',
+        classses:
+          'obUiModalQuotationProductAttributes-scroller-quotationLinesComponent'
+      }
+    ]
   },
   header: {
     classes: 'obUiModalQuotationProductAttributes-header'
@@ -69,55 +88,72 @@ enyo.kind({
   },
   bodyButtons: {
     classes: 'obUiModalQuotationProductAttributes-bodyButtons',
-    components: [{
-      kind: 'OB.UI.ModalDialogButton',
-      classes: 'obUiModalQuotationProductAttributes-bodyButtons-obUiModalDialogButton1',
-      i18nContent: 'OBMOBC_LblOk',
-      tap: function () {
-        this.owner.owner.saveAction();
+    components: [
+      {
+        kind: 'OB.UI.ModalDialogButton',
+        classes:
+          'obUiModalQuotationProductAttributes-bodyButtons-obUiModalDialogButton1',
+        i18nContent: 'OBMOBC_LblOk',
+        tap: function() {
+          this.owner.owner.saveAction();
+        }
+      },
+      {
+        kind: 'OB.UI.ModalDialogButton',
+        classes:
+          'obUiModalQuotationProductAttributes-bodyButtons-obUiModalDialogButton2',
+        i18nContent: 'OBPOS_LblClear',
+        tap: function() {
+          this.owner.owner.clearAction();
+        }
+      },
+      {
+        kind: 'OB.UI.ModalDialogButton',
+        classes:
+          'obUiModalQuotationProductAttributes-bodyButtons-obUiModalDialogButton3',
+        i18nContent: 'OBMOBC_LblCancel',
+        tap: function() {
+          this.owner.owner.cancelAction();
+        }
       }
-    }, {
-      kind: 'OB.UI.ModalDialogButton',
-      classes: 'obUiModalQuotationProductAttributes-bodyButtons-obUiModalDialogButton2',
-      i18nContent: 'OBPOS_LblClear',
-      tap: function () {
-        this.owner.owner.clearAction();
-      }
-    }, {
-      kind: 'OB.UI.ModalDialogButton',
-      classes: 'obUiModalQuotationProductAttributes-bodyButtons-obUiModalDialogButton3',
-      i18nContent: 'OBMOBC_LblCancel',
-      tap: function () {
-        this.owner.owner.cancelAction();
-      }
-    }]
+    ]
   },
-  clearAction: function () {
+  clearAction: function() {
     var me = this,
-        i, line = me.args.lines;
+      i,
+      line = me.args.lines;
     for (i = 0; i < line.length; i++) {
-      me.$.bodyContent.$.quotationLinesComponent.$['quotationLine' + i].$.valueAttribute.setValue(null);
-      me.$.bodyContent.$.quotationLinesComponent.$['quotationLine' + i].$.valueAttribute.addClass('obUiModalQuotationProductAttributes-quotationLinesComponent-quotationLine_clear');
+      me.$.bodyContent.$.quotationLinesComponent.$[
+        'quotationLine' + i
+      ].$.valueAttribute.setValue(null);
+      me.$.bodyContent.$.quotationLinesComponent.$[
+        'quotationLine' + i
+      ].$.valueAttribute.addClass(
+        'obUiModalQuotationProductAttributes-quotationLinesComponent-quotationLine_clear'
+      );
     }
     me.$.bodyButtons.$.modalDialogButton.setDisabled(true);
     return;
   },
-  cancelAction: function () {
+  cancelAction: function() {
     var me = this,
-        lines = me.args.lines,
-        order = me.args.quotationProductAttribute;
+      lines = me.args.lines,
+      order = me.args.quotationProductAttribute;
     order.deleteOrder(lines);
     this.hide();
     return;
   },
-  saveAction: function () {
+  saveAction: function() {
     var me = this,
-        lines = me.args.lines,
-        order = me.args.quotationProductAttribute,
-        lineIndex, inpAttribute;
+      lines = me.args.lines,
+      order = me.args.quotationProductAttribute,
+      lineIndex,
+      inpAttribute;
     lineIndex = 0;
-    lines.forEach(function (theLine) {
-      inpAttribute = me.$.bodyContent.$.quotationLinesComponent.$['quotationLine' + lineIndex].$.valueAttribute.getValue();
+    lines.forEach(function(theLine) {
+      inpAttribute = me.$.bodyContent.$.quotationLinesComponent.$[
+        'quotationLine' + lineIndex
+      ].$.valueAttribute.getValue();
       if (inpAttribute) {
         theLine.set('attributeValue', inpAttribute);
         order.save();
@@ -129,19 +165,26 @@ enyo.kind({
     this.hide();
     return;
   },
-  fieldChanged: function (inSender, inEvent) {
+  fieldChanged: function(inSender, inEvent) {
     var me = this,
-        lines = me.args.lines,
-        enteredAttribute, inpAttribute, lineIndex, focusIndex;
+      lines = me.args.lines,
+      enteredAttribute,
+      inpAttribute,
+      lineIndex,
+      focusIndex;
     lineIndex = 0;
-    lines.forEach(function (theLine) {
+    lines.forEach(function(theLine) {
       enteredAttribute = false;
-      inpAttribute = me.$.bodyContent.$.quotationLinesComponent.$['quotationLine' + lineIndex].$.valueAttribute.getValue();
+      inpAttribute = me.$.bodyContent.$.quotationLinesComponent.$[
+        'quotationLine' + lineIndex
+      ].$.valueAttribute.getValue();
       if (inpAttribute) {
         enteredAttribute = true;
         focusIndex = lines.length === 0 ? 0 : lineIndex + 1;
         if (focusIndex < lines.length) {
-          me.$.bodyContent.$.quotationLinesComponent.$['quotationLine' + focusIndex].$.valueAttribute.focus();
+          me.$.bodyContent.$.quotationLinesComponent.$[
+            'quotationLine' + focusIndex
+          ].$.valueAttribute.focus();
         }
       } else {
         enteredAttribute = false;
@@ -153,35 +196,44 @@ enyo.kind({
     }
     return true;
   },
-  executeOnShow: function () {
+  executeOnShow: function() {
     var me = this,
-        lines = me.args.lines,
-        i;
-    me.$.header.$.headerTitle.setContent(OB.I18N.getLabel('OBPOS_QuotationProductAttributeDesc'));
+      lines = me.args.lines,
+      i;
+    me.$.header.$.headerTitle.setContent(
+      OB.I18N.getLabel('OBPOS_QuotationProductAttributeDesc')
+    );
     i = 0;
     me.$.bodyContent.$.quotationLinesComponent.destroyComponents();
-    lines.forEach(function (theLine) {
-      var quotationLine = me.$.bodyContent.$.quotationLinesComponent.createComponent({
-        kind: 'OB.UI.ModalQuotationProductAttributesScroller.QuotationLines',
-        classes: 'obUiModalQuotationProductAttributes-quotationLinesComponent-quotationLine',
-        name: 'quotationLine' + i
-      });
+    lines.forEach(function(theLine) {
+      var quotationLine = me.$.bodyContent.$.quotationLinesComponent.createComponent(
+        {
+          kind: 'OB.UI.ModalQuotationProductAttributesScroller.QuotationLines',
+          classes:
+            'obUiModalQuotationProductAttributes-quotationLinesComponent-quotationLine',
+          name: 'quotationLine' + i
+        }
+      );
       quotationLine.$.valueAttribute.focus();
-      quotationLine.$.productName.setContent(theLine.get('product').get('_identifier'));
+      quotationLine.$.productName.setContent(
+        theLine.get('product').get('_identifier')
+      );
       i++;
     });
     me.$.bodyButtons.$.modalDialogButton.setDisabled(true);
     this.$.headerCloseButton.hide();
     me.$.bodyContent.render();
   },
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
     this.$.header.createComponent({
-      components: [{
-        name: 'headerTitle',
-        classes: 'obUiModalQuotationProductAttributes-header-headerTitle',
-        type: 'text'
-      }]
+      components: [
+        {
+          name: 'headerTitle',
+          classes: 'obUiModalQuotationProductAttributes-header-headerTitle',
+          type: 'text'
+        }
+      ]
     });
   }
 });

@@ -7,8 +7,7 @@
  ************************************************************************************
  */
 
-(function () {
-
+(function() {
   var ServiceProductCategory = OB.Data.ExtensibleModel.extend({
     modelName: 'ServiceProductCategory',
     tableName: 'm_product_category_service',
@@ -19,34 +18,45 @@
     remote: 'OBPOS_remote.product'
   });
 
-  ServiceProductCategory.addProperties([{
-    name: 'id',
-    column: 'm_product_category_service_id',
-    primaryKey: true,
-    type: 'TEXT'
-  }, {
-    name: 'service',
-    column: 'm_product_id',
-    type: 'TEXT'
-  }, {
-    name: 'relatedCategory',
-    column: 'm_product_category_id',
-    type: 'TEXT'
-  }]);
+  ServiceProductCategory.addProperties([
+    {
+      name: 'id',
+      column: 'm_product_category_service_id',
+      primaryKey: true,
+      type: 'TEXT'
+    },
+    {
+      name: 'service',
+      column: 'm_product_id',
+      type: 'TEXT'
+    },
+    {
+      name: 'relatedCategory',
+      column: 'm_product_category_id',
+      type: 'TEXT'
+    }
+  ]);
 
-  ServiceProductCategory.addIndex([{
-    name: 'obpos_servicecat_service',
-    columns: [{
-      name: 'm_product_id',
-      sort: 'asc'
-    }]
-  }, {
-    name: 'obpos_servicecat_category',
-    columns: [{
-      name: 'm_product_category_id',
-      sort: 'asc'
-    }]
-  }]);
+  ServiceProductCategory.addIndex([
+    {
+      name: 'obpos_servicecat_service',
+      columns: [
+        {
+          name: 'm_product_id',
+          sort: 'asc'
+        }
+      ]
+    },
+    {
+      name: 'obpos_servicecat_category',
+      columns: [
+        {
+          name: 'm_product_category_id',
+          sort: 'asc'
+        }
+      ]
+    }
+  ]);
 
   OB.Data.Registry.registerModel(ServiceProductCategory);
-}());
+})();

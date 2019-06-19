@@ -12,7 +12,7 @@
 OB.Model.WindowModel = Backbone.Model.extend({
   data: {},
 
-  load: function () {
+  load: function() {
     var me = this;
     if (!this.models) {
       this.models = [];
@@ -21,7 +21,7 @@ OB.Model.WindowModel = Backbone.Model.extend({
     _.extend(this.models, Backbone.Events);
 
     if (!OB.MobileApp.model.get('loggedOffline')) {
-      OB.Dal.loadModels(true, this.models, this.data, undefined, function () {
+      OB.Dal.loadModels(true, this.models, this.data, undefined, function() {
         if (me.init) {
           me.init();
         }
@@ -36,7 +36,7 @@ OB.Model.WindowModel = Backbone.Model.extend({
     //TODO: load offline models when regesitering window
   },
 
-  setAllOff: function (model) {
+  setAllOff: function(model) {
     var p;
     if (model.off) {
       model.off();
@@ -50,23 +50,31 @@ OB.Model.WindowModel = Backbone.Model.extend({
     }
   },
 
-  setOff: function () {
+  setOff: function() {
     if (!this.data) {
       return;
     }
     if (this.data) {
-      _.forEach(this.data, function (model) {
-        this.setAllOff(model);
-      }, this);
+      _.forEach(
+        this.data,
+        function(model) {
+          this.setAllOff(model);
+        },
+        this
+      );
     }
     this.data = null;
 
     if (this.models) {
-      _.forEach(this.models, function (model) {
-        if (model.off) {
-          model.off();
-        }
-      }, this);
+      _.forEach(
+        this.models,
+        function(model) {
+          if (model.off) {
+            model.off();
+          }
+        },
+        this
+      );
       if (this.models.off) {
         this.models.off();
       }
@@ -74,7 +82,7 @@ OB.Model.WindowModel = Backbone.Model.extend({
     this.models = null;
   },
 
-  getData: function (dsName) {
+  getData: function(dsName) {
     return this.data[dsName];
   }
 });

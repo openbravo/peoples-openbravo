@@ -23,48 +23,66 @@ enyo.kind({
   body: {
     kind: 'OB.OBPOSPointOfSale.UI.customers.editcustomers_impl'
   },
-  pressedButton: function () {
+  pressedButton: function() {
     this.pressedBtn = true;
     this.hide();
   },
-  executeOnShow: function () {
+  executeOnShow: function() {
     var component;
     var me = this;
     me.pressedBtn = false;
     me.$.body.$.editcustomers_impl.setCustomer(this.args.businessPartner);
-    var customerHeader = this.$.body.$.editcustomers_impl.$.bodyheader.$.editCustomerHeader;
+    var customerHeader = this.$.body.$.editcustomers_impl.$.bodyheader.$
+      .editCustomerHeader;
     var buttonContainer = customerHeader.$.buttonContainer;
-    Object.keys(buttonContainer.$).forEach(function (key, index) {
-      if (OB.OBPOSPointOfSale.UI.customers.EditCustomerHeader.prototype.customerHeaderButtons.find(function (headerButton) {
-        return headerButton.name === key;
-      })) {
+    Object.keys(buttonContainer.$).forEach(function(key, index) {
+      if (
+        OB.OBPOSPointOfSale.UI.customers.EditCustomerHeader.prototype.customerHeaderButtons.find(
+          function(headerButton) {
+            return headerButton.name === key;
+          }
+        )
+      ) {
         buttonContainer.$[key].customer = me.args.businessPartner;
         buttonContainer.$[key].navigationPath = me.args.navigationPath;
         buttonContainer.$[key].target = me.args.target;
         if (buttonContainer.$[key].permission) {
-          buttonContainer.$[key].children[0].putDisabled(!OB.MobileApp.model.hasPermission(buttonContainer.$[key].permission, true));
+          buttonContainer.$[key].children[0].putDisabled(
+            !OB.MobileApp.model.hasPermission(
+              buttonContainer.$[key].permission,
+              true
+            )
+          );
         }
       }
     });
     // Hide components depending on its displayLogic function
-    _.each(this.$.body.$.editcustomers_impl.$.customerAttributes.$, function (attribute) {
+    _.each(this.$.body.$.editcustomers_impl.$.customerAttributes.$, function(
+      attribute
+    ) {
       if (attribute.name !== 'strategy') {
-        _.each(attribute.$.newAttribute.$, function (attrObject) {
-          if (attrObject.displayLogic && !attrObject.displayLogic()) {
-            this.hide();
-          }
-        }, attribute);
+        _.each(
+          attribute.$.newAttribute.$,
+          function(attrObject) {
+            if (attrObject.displayLogic && !attrObject.displayLogic()) {
+              this.hide();
+            }
+          },
+          attribute
+        );
       }
     });
     return true;
   },
-  executeOnHide: function () {
+  executeOnHide: function() {
     if (!this.pressedBtn) {
       this.doShowPopup({
         popup: this.args.navigationPath[this.args.navigationPath.length - 1],
         args: {
           target: this.args.target,
-          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPop(this.args.navigationPath),
+          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPop(
+            this.args.navigationPath
+          ),
           makeSearch: this.args.makeSearch
         }
       });
@@ -80,7 +98,7 @@ enyo.kind({
     onChangeBusinessPartner: '',
     onPressedButton: ''
   },
-  tap: function () {
+  tap: function() {
     var orderBP = this.model.get('order').get('bp');
     var customer = this.parent.customer;
     if (customer.get('id') === orderBP.get('id')) {
@@ -106,10 +124,10 @@ enyo.kind({
     });
     this.doPressedButton();
   },
-  init: function (model) {
+  init: function(model) {
     this.model = model;
   },
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
     this.setContent(OB.I18N.getLabel('OBPOS_LblAssignToTicket'));
   }
@@ -123,25 +141,30 @@ enyo.kind({
     onShowPopup: '',
     onPressedButton: ''
   },
-  tap: function () {
+  tap: function() {
     if (this.disabled) {
       return true;
     }
     this.doPressedButton();
     var me = this;
-    OB.Dal.get(OB.Model.BusinessPartner, me.parent.customer.get('id'), function (bp) {
+    OB.Dal.get(OB.Model.BusinessPartner, me.parent.customer.get('id'), function(
+      bp
+    ) {
       me.doShowPopup({
         popup: 'modalcustomeraddress',
         args: {
           target: 'order',
           businessPartner: bp,
-          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(me.parent.navigationPath, 'customerView'),
+          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(
+            me.parent.navigationPath,
+            'customerView'
+          ),
           manageAddress: true
         }
       });
     });
   },
-  putDisabled: function (status) {
+  putDisabled: function(status) {
     if (status === false) {
       this.setDisabled(false);
       this.removeClass('disabled');
@@ -152,10 +175,10 @@ enyo.kind({
     this.addClass('disabled');
     this.disabled = true;
   },
-  init: function (model) {
+  init: function(model) {
     this.model = model;
   },
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
     this.setContent(OB.I18N.getLabel('OBPOS_BPAddress'));
   }
@@ -169,17 +192,19 @@ enyo.kind({
     onShowPopup: '',
     onPressedButton: ''
   },
-  setCustomer: function (customer) {
+  setCustomer: function(customer) {
     this.customer = customer;
-    if (!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomerButton', true)) {
+    if (
+      !OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomerButton', true)
+    ) {
       this.disabled = true;
-      this.setAttribute("disabled", "disabled");
+      this.setAttribute('disabled', 'disabled');
     } else {
       this.disabled = false;
-      this.setAttribute("disabled", null);
+      this.setAttribute('disabled', null);
     }
   },
-  tap: function () {
+  tap: function() {
     if (this.disabled === false) {
       var parent = this.parent;
       this.doPressedButton();
@@ -188,12 +213,15 @@ enyo.kind({
         args: {
           businessPartner: parent.customer,
           target: parent.target,
-          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(parent.navigationPath, 'customerView')
+          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(
+            parent.navigationPath,
+            'customerView'
+          )
         }
       });
     }
   },
-  putDisabled: function (status) {
+  putDisabled: function(status) {
     if (status === false) {
       this.setDisabled(false);
       this.removeClass('disabled');
@@ -204,10 +232,10 @@ enyo.kind({
     this.addClass('disabled');
     this.disabled = true;
   },
-  init: function (model) {
+  init: function(model) {
     this.model = model;
   },
-  initComponents: function () {
+  initComponents: function() {
     this.setContent(OB.I18N.getLabel('OBPOS_LblEdit'));
   }
 });
@@ -221,7 +249,7 @@ enyo.kind({
     onShowPopup: '',
     onPressedButton: ''
   },
-  tap: function () {
+  tap: function() {
     if (this.disabled === false) {
       var parent = this.parent;
       this.doPressedButton();
@@ -232,8 +260,14 @@ enyo.kind({
           clean: true,
           target: parent.target,
           businessPartner: parent.customer,
-          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(parent.navigationPath, 'customerView'),
-          customHeaderContent: (parent.customer.get('_identifier') + "'s " + OB.I18N.getLabel('OBPOS_Cus360LblLastActivity')),
+          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(
+            parent.navigationPath,
+            'customerView'
+          ),
+          customHeaderContent:
+            parent.customer.get('_identifier') +
+            "'s " +
+            OB.I18N.getLabel('OBPOS_Cus360LblLastActivity'),
           hideBusinessPartnerColumn: true
         }
       });
@@ -245,41 +279,58 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.EditCustomerHeader',
   classes: 'obObPosPointOfSaleUiCustomersEditCustomerHeader',
-  customerHeaderButtons: [{
-    name: 'editbp',
-    permission: 'OBPOS_retail.editCustomerButton',
-    classes: 'obObPosPointOfSaleUiCustomersEditCustomerHeader-editbp',
-    components: [{
-      kind: 'OB.OBPOSPointOfSale.UI.customers.editbp'
-    }]
-  }, {
-    name: 'assigncustomertoticket',
-    classes: 'obObPosPointOfSaleUiCustomersEditCustomerHeader-assigncustomertoticket',
-    components: [{
-      kind: 'OB.OBPOSPointOfSale.UI.customers.assigncustomertoticket'
-    }]
-  }, {
-    name: 'managebpaddress',
-    classes: 'obObPosPointOfSaleUiCustomersEditCustomerHeader-managebpaddress',
-    permission: 'OBPOS_retail.editCustomerLocationButton',
-    components: [{
-      kind: 'OB.OBPOSPointOfSale.UI.customers.managebpaddress'
-    }]
-  }, {
-    name: 'lastactivity',
-    classes: 'obObPosPointOfSaleUiCustomersEditCustomerHeader-lastactivity',
-    components: [{
-      kind: 'OB.OBPOSPointOfSale.UI.customers.lastactivity'
-    }]
-  }],
-  components: [{
-    name: 'buttonContainer',
-    classes: 'obObPosPointOfSaleUiCustomersEditCustomerHeader-buttonContainer'
-  }],
-  initComponents: function () {
+  customerHeaderButtons: [
+    {
+      name: 'editbp',
+      permission: 'OBPOS_retail.editCustomerButton',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomerHeader-editbp',
+      components: [
+        {
+          kind: 'OB.OBPOSPointOfSale.UI.customers.editbp'
+        }
+      ]
+    },
+    {
+      name: 'assigncustomertoticket',
+      classes:
+        'obObPosPointOfSaleUiCustomersEditCustomerHeader-assigncustomertoticket',
+      components: [
+        {
+          kind: 'OB.OBPOSPointOfSale.UI.customers.assigncustomertoticket'
+        }
+      ]
+    },
+    {
+      name: 'managebpaddress',
+      classes:
+        'obObPosPointOfSaleUiCustomersEditCustomerHeader-managebpaddress',
+      permission: 'OBPOS_retail.editCustomerLocationButton',
+      components: [
+        {
+          kind: 'OB.OBPOSPointOfSale.UI.customers.managebpaddress'
+        }
+      ]
+    },
+    {
+      name: 'lastactivity',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomerHeader-lastactivity',
+      components: [
+        {
+          kind: 'OB.OBPOSPointOfSale.UI.customers.lastactivity'
+        }
+      ]
+    }
+  ],
+  components: [
+    {
+      name: 'buttonContainer',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomerHeader-buttonContainer'
+    }
+  ],
+  initComponents: function() {
     this.inherited(arguments);
     var container = this.$.buttonContainer;
-    this.customerHeaderButtons.forEach(function (button) {
+    this.customerHeaderButtons.forEach(function(button) {
       container.createComponent(button);
     });
   }
@@ -290,200 +341,263 @@ enyo.kind({
   kind: 'OB.OBPOSPointOfSale.UI.customers.edit_createcustomers',
   classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl',
   windowHeader: 'OB.OBPOSPointOfSale.UI.customers.EditCustomerHeader',
-  newAttributes: [{
-    kind: 'OB.UI.CustomerTextProperty',
-    name: 'greeting',
-    classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-greeting',
-    modelProperty: 'greetingName',
-    i18nLabel: 'OBPOS_LblGreetings',
-    readOnly: true,
-    displayLogic: function () {
-      return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowGreetings', true);
-    }
-  }, {
-    kind: 'OB.UI.CustomerTextProperty',
-    name: 'customerName',
-    classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-customerName',
-    modelProperty: 'firstName',
-    i18nLabel: 'OBPOS_LblName',
-    readOnly: true
-  }, {
-    kind: 'OB.UI.CustomerTextProperty',
-    name: 'customerLastName',
-    classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-customerLastName',
-    modelProperty: 'lastName',
-    i18nLabel: 'OBPOS_LblLastName',
-    readOnly: true
-  }, {
-    kind: 'OB.UI.CustomerTextProperty',
-    name: 'customerBpCat',
-    classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-customerBpCat',
-    modelProperty: 'businessPartnerCategory_name',
-    i18nLabel: 'OBPOS_BPCategory',
-    readOnly: true,
-    displayLogic: function () {
-      return OB.MobileApp.model.get('terminal').bp_showcategoryselector;
-    }
-  }, {
-    kind: 'OB.UI.CustomerTextProperty',
-    name: 'customerTaxId',
-    classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-customerTaxId',
-    modelProperty: 'taxID',
-    i18nLabel: 'OBPOS_LblTaxId',
-    readOnly: true,
-    displayLogic: function () {
-      return OB.MobileApp.model.get('terminal').bp_showtaxid;
-    }
-  }, {
-    kind: 'OB.UI.CustomerTextProperty',
-    name: 'customerPhone',
-    classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-customerPhone',
-    modelProperty: 'phone',
-    i18nLabel: 'OBPOS_LblPhone',
-    readOnly: true
-  }, {
-    kind: 'OB.UI.CustomerTextProperty',
-    name: 'alternativePhone',
-    classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-alternativePhone',
-    modelProperty: 'alternativePhone',
-    i18nLabel: 'OBPOS_LblAlternativePhone',
-    readOnly: true
-  }, {
-    kind: 'OB.UI.CustomerTextProperty',
-    name: 'customerEmail',
-    classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-customerEmail',
-    modelProperty: 'email',
-    i18nLabel: 'OBPOS_LblEmail',
-    readOnly: true
-  }, {
-    kind: 'OB.UI.CustomerTextProperty',
-    name: 'birthPlace',
-    classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-birthPlace',
-    modelProperty: 'birthPlace',
-    i18nLabel: 'OBPOS_LblBirthplace',
-    readOnly: true,
-    displayLogic: function () {
-      return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowBirthplace', true);
-    }
-  }, {
-    kind: 'OB.UI.CustomerTextProperty',
-    name: 'birthDay',
-    classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-birthDay',
-    modelProperty: 'birthDay',
-    i18nLabel: 'OBPOS_LblBirthdate',
-    readOnly: true,
-    displayLogic: function () {
-      return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowBirthdate', true);
+  newAttributes: [
+    {
+      kind: 'OB.UI.CustomerTextProperty',
+      name: 'greeting',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-greeting',
+      modelProperty: 'greetingName',
+      i18nLabel: 'OBPOS_LblGreetings',
+      readOnly: true,
+      displayLogic: function() {
+        return OB.MobileApp.model.hasPermission(
+          'OBPOS_Cus360ShowGreetings',
+          true
+        );
+      }
     },
-    loadValue: function (inSender, inEvent) {
-      if (inEvent.customer !== undefined) {
-        if (!OB.UTIL.isNullOrUndefined(inEvent.customer.get(this.modelProperty)) && inEvent.customer.get(this.modelProperty) !== '') {
-          this.setValue(OB.I18N.formatDate(new Date(inEvent.customer.get(this.modelProperty))));
+    {
+      kind: 'OB.UI.CustomerTextProperty',
+      name: 'customerName',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-customerName',
+      modelProperty: 'firstName',
+      i18nLabel: 'OBPOS_LblName',
+      readOnly: true
+    },
+    {
+      kind: 'OB.UI.CustomerTextProperty',
+      name: 'customerLastName',
+      classes:
+        'obObPosPointOfSaleUiCustomersEditCustomersImpl-customerLastName',
+      modelProperty: 'lastName',
+      i18nLabel: 'OBPOS_LblLastName',
+      readOnly: true
+    },
+    {
+      kind: 'OB.UI.CustomerTextProperty',
+      name: 'customerBpCat',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-customerBpCat',
+      modelProperty: 'businessPartnerCategory_name',
+      i18nLabel: 'OBPOS_BPCategory',
+      readOnly: true,
+      displayLogic: function() {
+        return OB.MobileApp.model.get('terminal').bp_showcategoryselector;
+      }
+    },
+    {
+      kind: 'OB.UI.CustomerTextProperty',
+      name: 'customerTaxId',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-customerTaxId',
+      modelProperty: 'taxID',
+      i18nLabel: 'OBPOS_LblTaxId',
+      readOnly: true,
+      displayLogic: function() {
+        return OB.MobileApp.model.get('terminal').bp_showtaxid;
+      }
+    },
+    {
+      kind: 'OB.UI.CustomerTextProperty',
+      name: 'customerPhone',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-customerPhone',
+      modelProperty: 'phone',
+      i18nLabel: 'OBPOS_LblPhone',
+      readOnly: true
+    },
+    {
+      kind: 'OB.UI.CustomerTextProperty',
+      name: 'alternativePhone',
+      classes:
+        'obObPosPointOfSaleUiCustomersEditCustomersImpl-alternativePhone',
+      modelProperty: 'alternativePhone',
+      i18nLabel: 'OBPOS_LblAlternativePhone',
+      readOnly: true
+    },
+    {
+      kind: 'OB.UI.CustomerTextProperty',
+      name: 'customerEmail',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-customerEmail',
+      modelProperty: 'email',
+      i18nLabel: 'OBPOS_LblEmail',
+      readOnly: true
+    },
+    {
+      kind: 'OB.UI.CustomerTextProperty',
+      name: 'birthPlace',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-birthPlace',
+      modelProperty: 'birthPlace',
+      i18nLabel: 'OBPOS_LblBirthplace',
+      readOnly: true,
+      displayLogic: function() {
+        return OB.MobileApp.model.hasPermission(
+          'OBPOS_Cus360ShowBirthplace',
+          true
+        );
+      }
+    },
+    {
+      kind: 'OB.UI.CustomerTextProperty',
+      name: 'birthDay',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-birthDay',
+      modelProperty: 'birthDay',
+      i18nLabel: 'OBPOS_LblBirthdate',
+      readOnly: true,
+      displayLogic: function() {
+        return OB.MobileApp.model.hasPermission(
+          'OBPOS_Cus360ShowBirthdate',
+          true
+        );
+      },
+      loadValue: function(inSender, inEvent) {
+        if (inEvent.customer !== undefined) {
+          if (
+            !OB.UTIL.isNullOrUndefined(
+              inEvent.customer.get(this.modelProperty)
+            ) &&
+            inEvent.customer.get(this.modelProperty) !== ''
+          ) {
+            this.setValue(
+              OB.I18N.formatDate(
+                new Date(inEvent.customer.get(this.modelProperty))
+              )
+            );
+          } else {
+            this.setValue('');
+          }
         } else {
           this.setValue('');
         }
-      } else {
-        this.setValue('');
       }
-    }
-  }, {
-    kind: 'OB.UI.CustomerTextProperty',
-    name: 'language',
-    classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-language',
-    modelProperty: 'language_name',
-    readOnly: true,
-    i18nLabel: 'OBPOS_LblLanguage',
-    displayLogic: function () {
-      return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowLanguage', true);
-    }
-  }, {
-    kind: 'OB.UI.CustomerTextProperty',
-    name: 'availableCredit',
-    classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-availableCredit',
-    modelProperty: 'availableCredit',
-    i18nLabel: 'OBPOS_LblAvailableCredit',
-    readOnly: true,
-    displayLogic: function () {
-      return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowAvailableCredit', true);
-    }
-  }, {
-    kind: 'OB.UI.CustomerTextProperty',
-    name: 'comments',
-    classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-comments',
-    modelProperty: 'comments',
-    i18nLabel: 'OBPOS_LblComments',
-    readOnly: true,
-    displayLogic: function () {
-      return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowComments', true);
-    }
-  }, {
-    kind: 'OB.UI.CustomerTextProperty',
-    name: 'customerPriceList',
-    classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-customerPriceList',
-    modelProperty: 'priceList',
-    i18nLabel: 'OBPOS_PriceList',
-    readOnly: true,
-    loadValue: function (inSender, inEvent) {
-      if (inEvent.customer !== undefined) {
-        if (inEvent.customer.get(this.modelProperty) !== undefined) {
-          var me = this;
-          OB.UTIL.getPriceListName(inEvent.customer.get(this.modelProperty), function (name) {
-            me.setValue(name);
-          });
+    },
+    {
+      kind: 'OB.UI.CustomerTextProperty',
+      name: 'language',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-language',
+      modelProperty: 'language_name',
+      readOnly: true,
+      i18nLabel: 'OBPOS_LblLanguage',
+      displayLogic: function() {
+        return OB.MobileApp.model.hasPermission(
+          'OBPOS_Cus360ShowLanguage',
+          true
+        );
+      }
+    },
+    {
+      kind: 'OB.UI.CustomerTextProperty',
+      name: 'availableCredit',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-availableCredit',
+      modelProperty: 'availableCredit',
+      i18nLabel: 'OBPOS_LblAvailableCredit',
+      readOnly: true,
+      displayLogic: function() {
+        return OB.MobileApp.model.hasPermission(
+          'OBPOS_Cus360ShowAvailableCredit',
+          true
+        );
+      }
+    },
+    {
+      kind: 'OB.UI.CustomerTextProperty',
+      name: 'comments',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-comments',
+      modelProperty: 'comments',
+      i18nLabel: 'OBPOS_LblComments',
+      readOnly: true,
+      displayLogic: function() {
+        return OB.MobileApp.model.hasPermission(
+          'OBPOS_Cus360ShowComments',
+          true
+        );
+      }
+    },
+    {
+      kind: 'OB.UI.CustomerTextProperty',
+      name: 'customerPriceList',
+      classes:
+        'obObPosPointOfSaleUiCustomersEditCustomersImpl-customerPriceList',
+      modelProperty: 'priceList',
+      i18nLabel: 'OBPOS_PriceList',
+      readOnly: true,
+      loadValue: function(inSender, inEvent) {
+        if (inEvent.customer !== undefined) {
+          if (inEvent.customer.get(this.modelProperty) !== undefined) {
+            var me = this;
+            OB.UTIL.getPriceListName(
+              inEvent.customer.get(this.modelProperty),
+              function(name) {
+                me.setValue(name);
+              }
+            );
+          }
+        } else {
+          this.setValue('');
         }
-      } else {
-        this.setValue('');
+      },
+      displayLogic: function() {
+        return OB.MobileApp.model.hasPermission('EnableMultiPriceList', true);
       }
     },
-    displayLogic: function () {
-      return OB.MobileApp.model.hasPermission('EnableMultiPriceList', true);
-    }
-  }, {
-    kind: 'OB.UI.CustomerConsentCheckProperty',
-    name: 'isCustomerConsent',
-    classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-isCustomerConsent',
-    modelProperty: 'isCustomerConsent',
-    i18nLabel: 'OBPOS_CustomerConsent',
-    readOnly: true
-  }, {
-    kind: 'OB.UI.CustomerCheckCommercialAuth',
-    name: 'commercialauth',
-    classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-commercialauth',
-    modelProperty: 'commercialauth',
-    i18nLabel: 'OBPOS_CommercialAuth',
-    readOnly: true,
-    displayLogic: function () {
-      return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowCommercialAuth', true);
-    }
-  }, {
-    kind: 'OB.UI.CustomerCheckComboProperty',
-    name: 'contactpreferences',
-    classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-contactpreferences',
-    modelProperty: 'contactpreferences',
-    i18nLabel: 'OBPOS_ContactPreferences',
-    readOnly: true,
-    setEditedProperties: function (oldBp, editedBp) {
-      editedBp.set('viasms', oldBp.get('viasms'));
-      editedBp.set('viaemail', oldBp.get('viaemail'));
+    {
+      kind: 'OB.UI.CustomerConsentCheckProperty',
+      name: 'isCustomerConsent',
+      classes:
+        'obObPosPointOfSaleUiCustomersEditCustomersImpl-isCustomerConsent',
+      modelProperty: 'isCustomerConsent',
+      i18nLabel: 'OBPOS_CustomerConsent',
+      readOnly: true
     },
-    displayLogic: function () {
-      return OB.MobileApp.model.hasPermission('OBPOS_Cus360ShowContactPreferences', true);
+    {
+      kind: 'OB.UI.CustomerCheckCommercialAuth',
+      name: 'commercialauth',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-commercialauth',
+      modelProperty: 'commercialauth',
+      i18nLabel: 'OBPOS_CommercialAuth',
+      readOnly: true,
+      displayLogic: function() {
+        return OB.MobileApp.model.hasPermission(
+          'OBPOS_Cus360ShowCommercialAuth',
+          true
+        );
+      }
+    },
+    {
+      kind: 'OB.UI.CustomerCheckComboProperty',
+      name: 'contactpreferences',
+      classes:
+        'obObPosPointOfSaleUiCustomersEditCustomersImpl-contactpreferences',
+      modelProperty: 'contactpreferences',
+      i18nLabel: 'OBPOS_ContactPreferences',
+      readOnly: true,
+      setEditedProperties: function(oldBp, editedBp) {
+        editedBp.set('viasms', oldBp.get('viasms'));
+        editedBp.set('viaemail', oldBp.get('viaemail'));
+      },
+      displayLogic: function() {
+        return OB.MobileApp.model.hasPermission(
+          'OBPOS_Cus360ShowContactPreferences',
+          true
+        );
+      }
     }
-  }]
+  ]
 });
 
 enyo.kind({
   name: 'OBPOS.UI.ReceiptSelectorCustomerView',
   kind: 'OBPOS.UI.ReceiptSelector',
   classes: 'obposUiReceiptSelectorCustomerView',
-  executeOnShow: function () {
+  executeOnShow: function() {
     if (!this.initialized || (this.args && _.keys(this.args).length > 0)) {
       this.selectorHide = false;
       this.initialized = true;
       this.initializedArgs = this.args;
-      var column = _.find(OB.Model.OrderFilter.getProperties(), function (prop) {
-        return prop.name === 'businessPartner';
-      }, this);
+      var column = _.find(
+        OB.Model.OrderFilter.getProperties(),
+        function(prop) {
+          return prop.name === 'businessPartner';
+        },
+        this
+      );
       var bp = this.args.businessPartner;
       if (!OB.UTIL.isNullOrUndefined(bp)) {
         column.preset.id = bp.get('id');
@@ -494,16 +608,22 @@ enyo.kind({
       }
       this.initSelector();
       var filterSelector = this.getFilterSelectorTableHeader();
-      var id = _.find(OB.Model.OrderFilter.getProperties(), function (prop) {
-        return prop.name === 'id';
-      }, this);
+      var id = _.find(
+        OB.Model.OrderFilter.getProperties(),
+        function(prop) {
+          return prop.name === 'id';
+        },
+        this
+      );
       filterSelector.fixedColumn = id;
       filterSelector.searchAction();
       filterSelector.fixedColumn = '';
     }
     var isMultiselect = this.args.multiselect === true;
     this.$.body.$.receiptsList.$.openreceiptslistitemprinter.multiselect = isMultiselect;
-    this.$.body.$.receiptsList.$.openreceiptslistitemprinter.$.theader.$.modalReceiptsScrollableHeader.$.btnOpenSelected.setShowing(isMultiselect);
+    this.$.body.$.receiptsList.$.openreceiptslistitemprinter.$.theader.$.modalReceiptsScrollableHeader.$.btnOpenSelected.setShowing(
+      isMultiselect
+    );
     if (this.args.customHeaderContent) {
       this.$.header.setContent(this.args.customHeaderContent);
     } else {
@@ -511,11 +631,19 @@ enyo.kind({
     }
     this.$.body.$.receiptsList.$.openreceiptslistitemprinter.hideBusinessPartnerColumn = this.args.hideBusinessPartnerColumn;
   },
-  executeOnHide: function () {
-    if (!this.pressedBtn && this.args.navigationPath && this.args.navigationPath.length > 0) {
-      var column = _.find(OB.Model.OrderFilter.getProperties(), function (prop) {
-        return prop.name === 'businessPartner';
-      }, this);
+  executeOnHide: function() {
+    if (
+      !this.pressedBtn &&
+      this.args.navigationPath &&
+      this.args.navigationPath.length > 0
+    ) {
+      var column = _.find(
+        OB.Model.OrderFilter.getProperties(),
+        function(prop) {
+          return prop.name === 'businessPartner';
+        },
+        this
+      );
       column.preset.id = '';
       column.preset.name = '';
       this.doShowPopup({
@@ -523,10 +651,11 @@ enyo.kind({
         args: {
           businessPartner: this.args.businessPartner,
           target: this.args.target,
-          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPop(this.args.navigationPath)
+          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPop(
+            this.args.navigationPath
+          )
         }
       });
     }
   }
-
 });

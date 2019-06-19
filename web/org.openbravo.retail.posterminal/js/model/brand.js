@@ -7,8 +7,7 @@
  ************************************************************************************
  */
 
-(function () {
-
+(function() {
   var Brand = OB.Data.ExtensibleModel.extend({
     modelName: 'Brand',
     tableName: 'm_brand',
@@ -18,29 +17,37 @@
     dataLimit: OB.Dal.DATALIMIT
   });
 
-  Brand.addProperties([{
-    name: 'id',
-    column: 'm_product_id',
-    primaryKey: true,
-    type: 'TEXT'
-  }, {
-    name: 'name',
-    column: 'name',
-    type: 'TEXT'
-  }, {
-    name: '_identifier',
-    column: '_identifier',
-    filter: true,
-    type: 'TEXT'
-  }]);
+  Brand.addProperties([
+    {
+      name: 'id',
+      column: 'm_product_id',
+      primaryKey: true,
+      type: 'TEXT'
+    },
+    {
+      name: 'name',
+      column: 'name',
+      type: 'TEXT'
+    },
+    {
+      name: '_identifier',
+      column: '_identifier',
+      filter: true,
+      type: 'TEXT'
+    }
+  ]);
 
-  Brand.addIndex([{
-    name: 'obpos_in_brandproduct',
-    columns: [{
-      name: 'm_product_id',
-      sort: 'asc'
-    }]
-  }]);
+  Brand.addIndex([
+    {
+      name: 'obpos_in_brandproduct',
+      columns: [
+        {
+          name: 'm_product_id',
+          sort: 'asc'
+        }
+      ]
+    }
+  ]);
 
   OB.Data.Registry.registerModel(Brand);
-}());
+})();

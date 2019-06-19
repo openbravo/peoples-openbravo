@@ -10,111 +10,122 @@
 /*global OB, Promise */
 
 OB.MobileApp.statesRegistry.register(
-new OB.State.BackboneProperty({
-  window: 'retail.pointofsale',
-  name: 'receipt.isEditable',
-  object: function (view) {
-    return view.model.get('order');
-  },
-  property: 'isEditable'
-}));
+  new OB.State.BackboneProperty({
+    window: 'retail.pointofsale',
+    name: 'receipt.isEditable',
+    object: function(view) {
+      return view.model.get('order');
+    },
+    property: 'isEditable'
+  })
+);
 
 OB.MobileApp.statesRegistry.register(
-new OB.State.BackboneProperty({
-  window: 'retail.pointofsale',
-  name: 'receipt.generateInvoice',
-  object: function (view) {
-    return view.model.get('order');
-  },
-  property: 'generateInvoice'
-}));
+  new OB.State.BackboneProperty({
+    window: 'retail.pointofsale',
+    name: 'receipt.generateInvoice',
+    object: function(view) {
+      return view.model.get('order');
+    },
+    property: 'generateInvoice'
+  })
+);
 
 OB.MobileApp.statesRegistry.register(
-new OB.State.BackboneProperty({
-  window: 'retail.pointofsale',
-  name: 'receipt.bp',
-  object: function (view) {
-    return view.model.get('order');
-  },
-  property: 'bp'
-}));
+  new OB.State.BackboneProperty({
+    window: 'retail.pointofsale',
+    name: 'receipt.bp',
+    object: function(view) {
+      return view.model.get('order');
+    },
+    property: 'bp'
+  })
+);
 
 OB.MobileApp.statesRegistry.register(
-new OB.State.BackboneProperty({
-  window: 'retail.pointofsale',
-  name: 'receipt.isQuotation',
-  object: function (view) {
-    return view.model.get('order');
-  },
-  property: 'isQuotation'
-}));
+  new OB.State.BackboneProperty({
+    window: 'retail.pointofsale',
+    name: 'receipt.isQuotation',
+    object: function(view) {
+      return view.model.get('order');
+    },
+    property: 'isQuotation'
+  })
+);
 
 OB.MobileApp.statesRegistry.register(
-new OB.State.BackboneProperty({
-  window: 'retail.pointofsale',
-  name: 'receipt.isLayaway',
-  object: function (view) {
-    return view.model.get('order');
-  },
-  property: 'isLayaway'
-}));
+  new OB.State.BackboneProperty({
+    window: 'retail.pointofsale',
+    name: 'receipt.isLayaway',
+    object: function(view) {
+      return view.model.get('order');
+    },
+    property: 'isLayaway'
+  })
+);
 
 OB.MobileApp.statesRegistry.register(
-new OB.State.BackboneProperty({
-  window: 'retail.pointofsale',
-  name: 'receipt.isPaid',
-  object: function (view) {
-    return view.model.get('order');
-  },
-  property: 'isPaid'
-}));
+  new OB.State.BackboneProperty({
+    window: 'retail.pointofsale',
+    name: 'receipt.isPaid',
+    object: function(view) {
+      return view.model.get('order');
+    },
+    property: 'isPaid'
+  })
+);
 
 OB.MobileApp.statesRegistry.register(
-new OB.State.BackboneProperty({
-  window: 'retail.pointofsale',
-  name: 'receipt.hasBeenPaid',
-  object: function (view) {
-    return view.model.get('order');
-  },
-  property: 'hasbeenpaid'
-}));
+  new OB.State.BackboneProperty({
+    window: 'retail.pointofsale',
+    name: 'receipt.hasBeenPaid',
+    object: function(view) {
+      return view.model.get('order');
+    },
+    property: 'hasbeenpaid'
+  })
+);
 
 OB.MobileApp.statesRegistry.register(
-new OB.State.BackboneProperty({
-  window: 'retail.pointofsale',
-  name: 'receipt.orderType',
-  object: function (view) {
-    return view.model.get('order');
-  },
-  property: 'orderType'
-}));
+  new OB.State.BackboneProperty({
+    window: 'retail.pointofsale',
+    name: 'receipt.orderType',
+    object: function(view) {
+      return view.model.get('order');
+    },
+    property: 'orderType'
+  })
+);
 
 OB.MobileApp.statesRegistry.register(
-new OB.State.BackboneProperty({
-  window: 'retail.pointofsale',
-  name: 'receipt.hasServices',
-  object: function (view) {
-    return view.model.get('order');
-  },
-  property: 'hasServices'
-}));
+  new OB.State.BackboneProperty({
+    window: 'retail.pointofsale',
+    name: 'receipt.hasServices',
+    object: function(view) {
+      return view.model.get('order');
+    },
+    property: 'hasServices'
+  })
+);
 
 OB.MobileApp.statesRegistry.register(
-new OB.State.BackboneProperty({
-  window: 'retail.pointofsale',
-  name: 'receipt.gross',
-  object: function (view) {
-    return view.model.get('order');
-  },
-  property: 'gross'
-}));
+  new OB.State.BackboneProperty({
+    window: 'retail.pointofsale',
+    name: 'receipt.gross',
+    object: function(view) {
+      return view.model.get('order');
+    },
+    property: 'gross'
+  })
+);
 
 OB.MobileApp.statesRegistry.register(
-new OB.State.BackboneProperty({
-  window: 'retail.pointofsale',
-  name: 'receipt.replacedOrder',
-  object: function (view) {
-    return view.model.get('order');
-  },
-  property: 'replacedorder'
-}));
+  new OB.State.BackboneProperty({
+    window: 'retail.pointofsale',
+    name: 'receipt.replacedOrder',
+    object: function(view) {
+      return view.model.get('order');
+    },
+    property: 'replacedorder'
+  })
+);

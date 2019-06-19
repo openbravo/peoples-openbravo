@@ -14,7 +14,7 @@ enyo.kind({
   kind: 'Image',
   classes: 'obUiOrderMultiSelect',
   src: '../org.openbravo.retail.posterminal/img/iconPinSelected.svg',
-  sizing: "cover",
+  sizing: 'cover',
   showing: false,
   events: {
     onToggleSelection: ''
@@ -22,7 +22,7 @@ enyo.kind({
   published: {
     disabled: false
   },
-  tap: function () {
+  tap: function() {
     this.doToggleSelection({
       multiselection: false
     });
@@ -34,14 +34,14 @@ enyo.kind({
   kind: 'Image',
   classes: 'obUiOrderSingleSelect',
   src: '../org.openbravo.retail.posterminal/img/iconPinUnselected.svg',
-  sizing: "cover",
+  sizing: 'cover',
   events: {
     onToggleSelection: ''
   },
   published: {
     disabled: false
   },
-  tap: function () {
+  tap: function() {
     this.doToggleSelection({
       multiselection: true
     });
@@ -60,7 +60,7 @@ enyo.kind({
   published: {
     disabled: false
   },
-  tap: function () {
+  tap: function() {
     this.doMultiSelectAll();
   }
 });
@@ -80,80 +80,103 @@ enyo.kind({
     onToggleSelection: 'toggleSelection',
     onMultiSelectAll: 'multiSelectAll'
   },
-  newLabelComponents: [{
-    classes: 'obUiOrderHeader-labelComponents-orderdetails',
-    kind: 'OB.UI.OrderDetails',
-    name: 'orderdetails'
-  }, {
-    classes: 'obUiOrderHeader-labelComponents-btnMultiSelection',
-    kind: 'OB.UI.OrderMultiSelect',
-    name: 'btnMultiSelection'
-  }, {
-    classes: 'obUiOrderHeader-labelComponents-btnMultiSelectAll',
-    kind: 'OB.UI.OrderMultiSelectAll',
-    name: 'btnMultiSelectAll'
-  }, {
-    classes: 'obUiOrderHeader-labelComponents-btnSingleSelection',
-    kind: 'OB.UI.OrderSingleSelect',
-    name: 'btnSingleSelection'
-  }],
-  newButtonComponents: [{
-    classes: 'obUiOrderHeader-buttonComponents-bpbutton',
-    kind: 'OB.UI.BusinessPartnerSelector',
-    name: 'bpbutton'
-  }, {
-    name: 'separator',
-    classes: 'obUiOrderHeader-buttonComponents-separator'
-  }, {
-    classes: 'obUiOrderHeader-buttonComponents-bplocbutton',
-    kind: 'OB.UI.BPLocation',
-    name: 'bplocbutton'
-  }, {
-    classes: 'obUiOrderHeader-buttonComponents-bplocshipbutton',
-    kind: 'OB.UI.BPLocationShip',
-    name: 'bplocshipbutton'
-  }],
-  components: [{
-    name: 'receiptLabels',
-    classes: 'obUiOrderHeader-receiptLabels'
-  }, {
-    kind: 'OB.UI.ActionButtonArea',
-    name: 'obpos_pointofsale-receipttoolbar1',
-    abaIdentifier: 'obpos_pointofsale-receipttoolbar1',
-    classes: 'obpos_pointofsale-receipttoolbar1'
-  }, {
-    name: 'receiptButtons',
-    classes: 'obUiOrderHeader-receiptButtons'
-  }],
-  resizeHandler: function () {
+  newLabelComponents: [
+    {
+      classes: 'obUiOrderHeader-labelComponents-orderdetails',
+      kind: 'OB.UI.OrderDetails',
+      name: 'orderdetails'
+    },
+    {
+      classes: 'obUiOrderHeader-labelComponents-btnMultiSelection',
+      kind: 'OB.UI.OrderMultiSelect',
+      name: 'btnMultiSelection'
+    },
+    {
+      classes: 'obUiOrderHeader-labelComponents-btnMultiSelectAll',
+      kind: 'OB.UI.OrderMultiSelectAll',
+      name: 'btnMultiSelectAll'
+    },
+    {
+      classes: 'obUiOrderHeader-labelComponents-btnSingleSelection',
+      kind: 'OB.UI.OrderSingleSelect',
+      name: 'btnSingleSelection'
+    }
+  ],
+  newButtonComponents: [
+    {
+      classes: 'obUiOrderHeader-buttonComponents-bpbutton',
+      kind: 'OB.UI.BusinessPartnerSelector',
+      name: 'bpbutton'
+    },
+    {
+      name: 'separator',
+      classes: 'obUiOrderHeader-buttonComponents-separator'
+    },
+    {
+      classes: 'obUiOrderHeader-buttonComponents-bplocbutton',
+      kind: 'OB.UI.BPLocation',
+      name: 'bplocbutton'
+    },
+    {
+      classes: 'obUiOrderHeader-buttonComponents-bplocshipbutton',
+      kind: 'OB.UI.BPLocationShip',
+      name: 'bplocshipbutton'
+    }
+  ],
+  components: [
+    {
+      name: 'receiptLabels',
+      classes: 'obUiOrderHeader-receiptLabels'
+    },
+    {
+      kind: 'OB.UI.ActionButtonArea',
+      name: 'obpos_pointofsale-receipttoolbar1',
+      abaIdentifier: 'obpos_pointofsale-receipttoolbar1',
+      classes: 'obpos_pointofsale-receipttoolbar1'
+    },
+    {
+      name: 'receiptButtons',
+      classes: 'obUiOrderHeader-receiptButtons'
+    }
+  ],
+  resizeHandler: function() {
     this.inherited(arguments);
     this.setOrderDetailWidth(this.showPin, this.showSelectAll);
   },
-  orderChanged: function (oldValue) {
-    _.each(this.$.receiptLabels.$, function (comp) {
-      if (comp.setOrder) {
-        comp.setOrder(this.order);
-      }
-    }, this);
-    _.each(this.$.receiptButtons.$, function (comp) {
-      if (comp.setOrder) {
-        comp.setOrder(this.order);
-      }
-    }, this);
+  orderChanged: function(oldValue) {
+    _.each(
+      this.$.receiptLabels.$,
+      function(comp) {
+        if (comp.setOrder) {
+          comp.setOrder(this.order);
+        }
+      },
+      this
+    );
+    _.each(
+      this.$.receiptButtons.$,
+      function(comp) {
+        if (comp.setOrder) {
+          comp.setOrder(this.order);
+        }
+      },
+      this
+    );
   },
-  setOrderDetailWidth: function (pin, selectAll) {
+  setOrderDetailWidth: function(pin, selectAll) {
     this.showPin = pin;
     this.showSelectAll = selectAll;
-    var w = $("#" + this.$.receiptLabels.id).width() - 25;
+    var w = $('#' + this.$.receiptLabels.id).width() - 25;
     if (pin) {
-      w = w - $("#" + this.$.receiptLabels.$.btnSingleSelection.id).width() - 20;
+      w =
+        w - $('#' + this.$.receiptLabels.$.btnSingleSelection.id).width() - 20;
     }
     if (selectAll) {
-      w = w - $("#" + this.$.receiptLabels.$.btnMultiSelectAll.id).width() - 20;
+      w = w - $('#' + this.$.receiptLabels.$.btnMultiSelectAll.id).width() - 20;
     }
-    $("#" + this.$.receiptLabels.$.orderdetails.id).width(w + 'px');
+    $('#' + this.$.receiptLabels.$.orderdetails.id).width(w + 'px');
   },
-  showMultiSelected: function (inSender, inEvent) {
+  showMultiSelected: function(inSender, inEvent) {
     if (inEvent.show) {
       this.$.receiptLabels.$.btnSingleSelection.setShowing(true);
     } else {
@@ -166,7 +189,7 @@ enyo.kind({
       multiselection: false
     });
   },
-  toggleSelection: function (inSender, inEvent) {
+  toggleSelection: function(inSender, inEvent) {
     if (inEvent.multiselection) {
       this.$.receiptLabels.$.btnSingleSelection.setShowing(false);
       this.$.receiptLabels.$.btnMultiSelection.setShowing(true);
@@ -179,19 +202,27 @@ enyo.kind({
     this.setOrderDetailWidth(true, inEvent.multiselection);
     this.doToggleSelectionMode(inEvent);
   },
-  multiSelectAll: function (inSender, inEvent) {
+  multiSelectAll: function(inSender, inEvent) {
     this.doTableMultiSelectAll();
   },
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
     this.showPin = false;
     this.showSelectAll = false;
-    enyo.forEach(this.newLabelComponents, function (comp) {
-      this.$.receiptLabels.createComponent(comp);
-    }, this);
-    enyo.forEach(this.newButtonComponents, function (comp) {
-      this.$.receiptButtons.createComponent(comp);
-    }, this);
+    enyo.forEach(
+      this.newLabelComponents,
+      function(comp) {
+        this.$.receiptLabels.createComponent(comp);
+      },
+      this
+    );
+    enyo.forEach(
+      this.newButtonComponents,
+      function(comp) {
+        this.$.receiptButtons.createComponent(comp);
+      },
+      this
+    );
   }
 });
 
@@ -202,43 +233,56 @@ enyo.kind({
     order: null
   },
   newComponents: [],
-  orderChanged: function () {
-    _.each(this.$, function (comp) {
-      if (comp.setOrder) {
-        comp.setOrder(this.order);
-      }
-    }, this);
+  orderChanged: function() {
+    _.each(
+      this.$,
+      function(comp) {
+        if (comp.setOrder) {
+          comp.setOrder(this.order);
+        }
+      },
+      this
+    );
   },
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
-    enyo.forEach(this.newComponents, function (comp) {
-      this.createComponent(comp);
-    }, this);
+    enyo.forEach(
+      this.newComponents,
+      function(comp) {
+        this.createComponent(comp);
+      },
+      this
+    );
   }
 });
 
 enyo.kind({
   name: 'OB.UI.TotalMultiReceiptLine',
   classes: 'obUiTotalMultiReceiptLine',
-  components: [{
-    name: 'lblTotal',
-    classes: 'obUiTotalMultiReceiptLine-lblTotal'
-  }, {
-    name: 'totalqty',
-    classes: 'obUiTotalMultiReceiptLine-totalqty'
-  }, {
-    name: 'totalgross',
-    classes: 'obUiTotalMultiReceiptLine-totalgross'
-  }, {
-    classes: 'obUiTotalMultiReceiptLine-element1'
-  }],
-  renderTotal: function (newTotal) {
+  components: [
+    {
+      name: 'lblTotal',
+      classes: 'obUiTotalMultiReceiptLine-lblTotal'
+    },
+    {
+      name: 'totalqty',
+      classes: 'obUiTotalMultiReceiptLine-totalqty'
+    },
+    {
+      name: 'totalgross',
+      classes: 'obUiTotalMultiReceiptLine-totalgross'
+    },
+    {
+      classes: 'obUiTotalMultiReceiptLine-element1'
+    }
+  ],
+  renderTotal: function(newTotal) {
     this.$.totalgross.setContent(OB.I18N.formatCurrency(newTotal));
   },
-  renderQty: function (newQty) {
+  renderQty: function(newQty) {
     this.$.totalqty.setContent(newQty);
   },
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
     this.$.lblTotal.setContent(OB.I18N.getLabel('OBPOS_LblTotal'));
   }
@@ -249,29 +293,38 @@ enyo.kind({
   handlers: {
     onCheckBoxBehaviorForTicketLine: 'checkBoxForTicketLines'
   },
-  components: [{
-    name: 'lblTotal',
-    classes: 'obUiTotalReceiptLine-lblTotal'
-  }, {
-    kind: 'OB.UI.FitText',
-    classes: 'obUiTotalReceiptLine-obUiFitTextQty fitText',
-    components: [{
-      tag: 'span',
-      classes: 'obUiTotalReceiptLine-obUiFitTextQty-totalqty',
-      name: 'totalqty'
-    }]
-  }, {
-    kind: 'OB.UI.FitText',
-    classes: 'obUiTotalReceiptLine-obUiFitTextGross fitText',
-    components: [{
-      tag: 'span',
-      classes: 'obUiTotalReceiptLine-obUiFitTextGross-totalgross',
-      name: 'totalgross'
-    }]
-  }, {
-    classes: 'obUiTotalReceiptLine-element1'
-  }],
-  renderTotal: function (newTotal) {
+  components: [
+    {
+      name: 'lblTotal',
+      classes: 'obUiTotalReceiptLine-lblTotal'
+    },
+    {
+      kind: 'OB.UI.FitText',
+      classes: 'obUiTotalReceiptLine-obUiFitTextQty fitText',
+      components: [
+        {
+          tag: 'span',
+          classes: 'obUiTotalReceiptLine-obUiFitTextQty-totalqty',
+          name: 'totalqty'
+        }
+      ]
+    },
+    {
+      kind: 'OB.UI.FitText',
+      classes: 'obUiTotalReceiptLine-obUiFitTextGross fitText',
+      components: [
+        {
+          tag: 'span',
+          classes: 'obUiTotalReceiptLine-obUiFitTextGross-totalgross',
+          name: 'totalgross'
+        }
+      ]
+    },
+    {
+      classes: 'obUiTotalReceiptLine-element1'
+    }
+  ],
+  renderTotal: function(newTotal) {
     if (newTotal !== this.$.totalgross.getContent()) {
       this.$.totalgross.setContent(OB.I18N.formatCurrency(newTotal));
       OB.UTIL.HookManager.executeHooks('OBPOS_UpdateTotalReceiptLine', {
@@ -279,21 +332,29 @@ enyo.kind({
       });
     }
   },
-  renderQty: function (newQty) {
+  renderQty: function(newQty) {
     this.$.totalqty.setContent(newQty);
   },
-  checkBoxForTicketLines: function (inSender, inEvent) {
+  checkBoxForTicketLines: function(inSender, inEvent) {
     if (inEvent.status) {
       this.$.lblTotal.addClass('obUiTotalReceiptLine-lblTotal_large');
-      this.$.totalqty.addClass('obUiTotalReceiptLine-obUiFitTextQty-totalqty_small');
-      this.$.totalgross.addClass('obUiTotalReceiptLine-obUiFitTextGross-totalgross_small');
+      this.$.totalqty.addClass(
+        'obUiTotalReceiptLine-obUiFitTextQty-totalqty_small'
+      );
+      this.$.totalgross.addClass(
+        'obUiTotalReceiptLine-obUiFitTextGross-totalgross_small'
+      );
     } else {
       this.$.lblTotal.addClass('obUiTotalReceiptLine-lblTotal_small');
-      this.$.totalqty.addClass('obUiTotalReceiptLine-obUiFitTextQty-totalqty_large');
-      this.$.totalgross.addClass('obUiTotalReceiptLine-obUiFitTextGross-totalgross_large');
+      this.$.totalqty.addClass(
+        'obUiTotalReceiptLine-obUiFitTextQty-totalqty_large'
+      );
+      this.$.totalgross.addClass(
+        'obUiTotalReceiptLine-obUiFitTextGross-totalgross_large'
+      );
     }
   },
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
     this.$.lblTotal.setContent(OB.I18N.getLabel('OBPOS_LblTotal'));
     OB.UTIL.HookManager.executeHooks('OBPOS_RenderTotalReceiptLine', {
@@ -305,22 +366,27 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.TotalTaxLine',
   classes: 'obUiTotalTaxLine',
-  components: [{
-    name: 'lblTotalTax',
-    classes: 'obUiTotalTaxLine-lblTotalTax'
-  }, {
-    name: 'totalbase',
-    classes: 'obUiTotalTaxLine-totalbase'
-  }, {
-    name: 'totaltax',
-    classes: 'obUiTotalTaxLine-totaltax'
-  }, {
-    classes: 'obUiTotalTaxLine-element1'
-  }],
-  renderTax: function (newTax) {
+  components: [
+    {
+      name: 'lblTotalTax',
+      classes: 'obUiTotalTaxLine-lblTotalTax'
+    },
+    {
+      name: 'totalbase',
+      classes: 'obUiTotalTaxLine-totalbase'
+    },
+    {
+      name: 'totaltax',
+      classes: 'obUiTotalTaxLine-totaltax'
+    },
+    {
+      classes: 'obUiTotalTaxLine-element1'
+    }
+  ],
+  renderTax: function(newTax) {
     this.$.totaltax.setContent(OB.I18N.formatCurrency(newTax));
   },
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
     this.$.lblTotalTax.setContent(OB.I18N.getLabel('OBPOS_LblTotalTax'));
   }
@@ -329,15 +395,20 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.TaxBreakdown',
   classes: 'obUiTaxBreakdown',
-  components: [{
-    classes: 'obUiTaxBreakdown-lblTotalTaxBreakdown',
-    name: 'lblTotalTaxBreakdown'
-  }, {
-    classes: 'obUiTaxBreakdown-element1'
-  }],
-  initComponents: function () {
+  components: [
+    {
+      classes: 'obUiTaxBreakdown-lblTotalTaxBreakdown',
+      name: 'lblTotalTaxBreakdown'
+    },
+    {
+      classes: 'obUiTaxBreakdown-element1'
+    }
+  ],
+  initComponents: function() {
     this.inherited(arguments);
-    this.$.lblTotalTaxBreakdown.setContent(OB.I18N.getLabel('OBPOS_LblTaxBreakdown'));
+    this.$.lblTotalTaxBreakdown.setContent(
+      OB.I18N.getLabel('OBPOS_LblTaxBreakdown')
+    );
   }
 });
 
@@ -348,7 +419,7 @@ enyo.kind({
     onCancelReceiptToInvoice: ''
   },
   classes: 'obUiBtnReceiptToInvoice',
-  tap: function () {
+  tap: function() {
     this.doCancelReceiptToInvoice();
   }
 });
@@ -357,21 +428,27 @@ enyo.kind({
   name: 'btninvoice',
   classes: 'btnInvoice',
   showing: false,
-  components: [{
-    classes: 'btnInvoice-obUiBtnReceiptToInvoice',
-    kind: 'OB.UI.BtnReceiptToInvoice'
-  }, {
-    classes: 'btnInvoice-element1',
-    tag: 'span',
-    content: ' '
-  }, {
-    tag: 'span',
-    classes: 'btnInvoice-lblInvoiceReceipt',
-    name: 'lblInvoiceReceipt'
-  }],
-  initComponents: function () {
+  components: [
+    {
+      classes: 'btnInvoice-obUiBtnReceiptToInvoice',
+      kind: 'OB.UI.BtnReceiptToInvoice'
+    },
+    {
+      classes: 'btnInvoice-element1',
+      tag: 'span',
+      content: ' '
+    },
+    {
+      tag: 'span',
+      classes: 'btnInvoice-lblInvoiceReceipt',
+      name: 'lblInvoiceReceipt'
+    }
+  ],
+  initComponents: function() {
     this.inherited(arguments);
-    this.$.lblInvoiceReceipt.setContent(OB.I18N.getLabel('OBPOS_LblInvoiceReceipt'));
+    this.$.lblInvoiceReceipt.setContent(
+      OB.I18N.getLabel('OBPOS_LblInvoiceReceipt')
+    );
   }
 });
 
@@ -381,15 +458,26 @@ enyo.kind({
   showing: false,
   content: '',
 
-  changeHasbeenpaid: function (model) {
-    if (model.get('isQuotation') && model.get('hasbeenpaid') === 'Y' && !model.get('obposIsDeleted') && this.content && (this.content === OB.I18N.getLabel('OBPOS_QuotationNew') || this.content === OB.I18N.getLabel('OBPOS_QuotationDraft'))) {
+  changeHasbeenpaid: function(model) {
+    if (
+      model.get('isQuotation') &&
+      model.get('hasbeenpaid') === 'Y' &&
+      !model.get('obposIsDeleted') &&
+      this.content &&
+      (this.content === OB.I18N.getLabel('OBPOS_QuotationNew') ||
+        this.content === OB.I18N.getLabel('OBPOS_QuotationDraft'))
+    ) {
       this.setContent(OB.I18N.getLabel('OBPOS_QuotationUnderEvaluation'));
-    } else if (model.get('isQuotation') && model.get('hasbeenpaid') === 'N' && !model.get('isLayaway')) {
+    } else if (
+      model.get('isQuotation') &&
+      model.get('hasbeenpaid') === 'N' &&
+      !model.get('isLayaway')
+    ) {
       this.setContent(OB.I18N.getLabel('OBPOS_QuotationDraft'));
     }
   },
 
-  setQuotationLabel: function (model) {
+  setQuotationLabel: function(model) {
     this.addClass('obUiOrderViewDivText_quotation');
     if (model.get('hasbeenpaid') === 'Y') {
       this.setContent(OB.I18N.getLabel('OBPOS_QuotationUnderEvaluation'));
@@ -399,17 +487,24 @@ enyo.kind({
     this.show();
   },
 
-  setPaidLabel: function (model) {
+  setPaidLabel: function(model) {
     this.addClass('obUiOrderViewDivText_paid');
     if (model.get('iscancelled')) {
       this.setContent(OB.I18N.getLabel('OBPOS_Cancelled'));
     } else if (model.get('paidOnCredit')) {
       if (model.get('paidPartiallyOnCredit')) {
-        this.setContent(OB.I18N.getLabel('OBPOS_paidPartiallyOnCredit', [OB.I18N.formatCurrency(model.get('creditAmount'))]));
+        this.setContent(
+          OB.I18N.getLabel('OBPOS_paidPartiallyOnCredit', [
+            OB.I18N.formatCurrency(model.get('creditAmount'))
+          ])
+        );
       } else {
         this.setContent(OB.I18N.getLabel('OBPOS_paidOnCredit'));
       }
-    } else if (model.get('documentType') === OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns) {
+    } else if (
+      model.get('documentType') ===
+      OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns
+    ) {
       this.setContent(OB.I18N.getLabel('OBPOS_paidReturn'));
     } else {
       this.setContent(OB.I18N.getLabel('OBPOS_paid'));
@@ -417,7 +512,7 @@ enyo.kind({
     this.show();
   },
 
-  setLayawayLabel: function (model) {
+  setLayawayLabel: function(model) {
     this.addClass('obUiOrderViewDivText_layaway');
     if (model.get('iscancelled')) {
       this.setContent(OB.I18N.getLabel('OBPOS_Cancelled'));
@@ -427,18 +522,28 @@ enyo.kind({
     this.show();
   },
 
-  setCancelAndReplaceLabel: function (model) {
+  setCancelAndReplaceLabel: function(model) {
     if (model.get('orderType') === 2) {
       this.addClass('obUiOrderViewDivText_CancelAndReplaceType1');
-      this.setContent(OB.I18N.getLabel('OBPOS_ToBeLaidaway') + ': ' + OB.I18N.getLabel('OBPOS_CancelAndReplaceOf', [model.get('replacedorder_documentNo')]));
+      this.setContent(
+        OB.I18N.getLabel('OBPOS_ToBeLaidaway') +
+          ': ' +
+          OB.I18N.getLabel('OBPOS_CancelAndReplaceOf', [
+            model.get('replacedorder_documentNo')
+          ])
+      );
     } else {
       this.addClass('obUiOrderViewDivText_CancelAndReplaceType2');
-      this.setContent(OB.I18N.getLabel('OBPOS_CancelAndReplaceOf', [model.get('replacedorder_documentNo')]));
+      this.setContent(
+        OB.I18N.getLabel('OBPOS_CancelAndReplaceOf', [
+          model.get('replacedorder_documentNo')
+        ])
+      );
     }
     this.show();
   },
 
-  setCancelLayawayLabel: function (model) {
+  setCancelLayawayLabel: function(model) {
     if (model.get('fromLayaway')) {
       this.addClass('obUiOrderViewDivText_CancelLayawayFromLayaway');
       this.setContent(OB.I18N.getLabel('OBPOS_CancelLayaway'));
@@ -449,13 +554,13 @@ enyo.kind({
     this.show();
   },
 
-  setToBeReturnedLabel: function (model) {
+  setToBeReturnedLabel: function(model) {
     this.addClass('obUiOrderViewDivText_ToBeReturned');
     this.setContent(OB.I18N.getLabel('OBPOS_ToBeReturned'));
     this.show();
   },
 
-  setToBeLaidawayLabel: function (model) {
+  setToBeLaidawayLabel: function(model) {
     this.addClass('obUiOrderViewDivText_ToBeLaidaway');
     this.setContent(OB.I18N.getLabel('OBPOS_ToBeLaidaway'));
     this.show();
@@ -480,198 +585,278 @@ enyo.kind({
     onTableMultiSelectedItems: 'tableMultiSelectedItems'
   },
   processesToListen: ['calculateReceipt'],
-  processStarted: function () {},
-  processFinished: function (process, execution, processesInExec) {
+  processStarted: function() {},
+  processFinished: function(process, execution, processesInExec) {
     var removedServices = [],
-        servicesToBeDeleted = [];
+      servicesToBeDeleted = [];
     removedServices.push(OB.I18N.getLabel('OBPOS_ServiceRemoved'));
-    _.each(OB.MobileApp.model.receipt.get('lines').models, function (line) {
-      var trancheValues = [],
+    _.each(
+      OB.MobileApp.model.receipt.get('lines').models,
+      function(line) {
+        var trancheValues = [],
           totalAmountSelected = 0,
           minimumSelected = Infinity,
           maximumSelected = 0,
-          uniqueQuantityServiceToBeDeleted, asPerProductServiceToBeDeleted;
+          uniqueQuantityServiceToBeDeleted,
+          asPerProductServiceToBeDeleted;
 
-      if (line.get('obposIsDeleted')) {
-        return;
-      }
-
-      if (line.has('relatedLines') && line.get('relatedLines').length > 0) {
-        _.each(line.get('relatedLines'), function (line2) {
-          if (!line2.deferred && !line.get('originalOrderLineId')) {
-            line2 = OB.MobileApp.model.receipt.attributes.lines.get(line2.orderlineId).attributes;
-          }
-          trancheValues = OB.UI.SearchServicesFilter.prototype.calculateTranche(line2, trancheValues);
-        }, this);
-        totalAmountSelected = trancheValues[0];
-        minimumSelected = trancheValues[1];
-        maximumSelected = trancheValues[2];
-        uniqueQuantityServiceToBeDeleted = line.get('product').get('quantityRule') === 'UQ' && ((line.has('serviceTrancheMaximum') && totalAmountSelected > line.get('serviceTrancheMaximum')) || (line.has('serviceTrancheMinimum') && totalAmountSelected < line.get('serviceTrancheMinimum')));
-        asPerProductServiceToBeDeleted = line.get('product').get('quantityRule') === 'PP' && ((line.has('serviceTrancheMaximum') && maximumSelected > line.get('serviceTrancheMaximum')) || (line.has('serviceTrancheMinimum') && minimumSelected < line.get('serviceTrancheMinimum')));
-        if ((!line.has('deliveredQuantity') || line.get('deliveredQuantity') <= 0) && (uniqueQuantityServiceToBeDeleted || asPerProductServiceToBeDeleted)) {
-          servicesToBeDeleted.push(line);
-          removedServices.push(line.get('product').get('_identifier'));
+        if (line.get('obposIsDeleted')) {
+          return;
         }
-      }
-    }, this);
+
+        if (line.has('relatedLines') && line.get('relatedLines').length > 0) {
+          _.each(
+            line.get('relatedLines'),
+            function(line2) {
+              if (!line2.deferred && !line.get('originalOrderLineId')) {
+                line2 = OB.MobileApp.model.receipt.attributes.lines.get(
+                  line2.orderlineId
+                ).attributes;
+              }
+              trancheValues = OB.UI.SearchServicesFilter.prototype.calculateTranche(
+                line2,
+                trancheValues
+              );
+            },
+            this
+          );
+          totalAmountSelected = trancheValues[0];
+          minimumSelected = trancheValues[1];
+          maximumSelected = trancheValues[2];
+          uniqueQuantityServiceToBeDeleted =
+            line.get('product').get('quantityRule') === 'UQ' &&
+            ((line.has('serviceTrancheMaximum') &&
+              totalAmountSelected > line.get('serviceTrancheMaximum')) ||
+              (line.has('serviceTrancheMinimum') &&
+                totalAmountSelected < line.get('serviceTrancheMinimum')));
+          asPerProductServiceToBeDeleted =
+            line.get('product').get('quantityRule') === 'PP' &&
+            ((line.has('serviceTrancheMaximum') &&
+              maximumSelected > line.get('serviceTrancheMaximum')) ||
+              (line.has('serviceTrancheMinimum') &&
+                minimumSelected < line.get('serviceTrancheMinimum')));
+          if (
+            (!line.has('deliveredQuantity') ||
+              line.get('deliveredQuantity') <= 0) &&
+            (uniqueQuantityServiceToBeDeleted || asPerProductServiceToBeDeleted)
+          ) {
+            servicesToBeDeleted.push(line);
+            removedServices.push(line.get('product').get('_identifier'));
+          }
+        }
+      },
+      this
+    );
     if (servicesToBeDeleted.length > 0) {
       OB.MobileApp.model.receipt.deleteLinesFromOrder(servicesToBeDeleted);
       OB.MobileApp.model.receipt.set('undo', null);
-      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_ServiceRemovedHeader'), removedServices);
+      OB.UTIL.showConfirmation.display(
+        OB.I18N.getLabel('OBPOS_ServiceRemovedHeader'),
+        removedServices
+      );
     }
-
   },
-  components: [{
-    kind: 'OB.UI.ScrollableTable',
-    name: 'listOrderLines',
-    classes: 'obUiOrderView-listOrderLines',
-    columns: ['product', 'quantity', 'price', 'gross'],
-    scrollWhenSelected: true,
-    renderLine: 'OB.UI.RenderOrderLine',
-    renderEmpty: 'OB.UI.RenderOrderLineEmpty',
-    //defined on redenderorderline.js
-    listStyle: 'edit',
-    isSelectableLine: function (model) {
-      if (!OB.UTIL.isNullOrUndefined(model) && !OB.UTIL.isNullOrUndefined(model.attributes) && !model.attributes.isEditable) {
-        return false;
+  components: [
+    {
+      kind: 'OB.UI.ScrollableTable',
+      name: 'listOrderLines',
+      classes: 'obUiOrderView-listOrderLines',
+      columns: ['product', 'quantity', 'price', 'gross'],
+      scrollWhenSelected: true,
+      renderLine: 'OB.UI.RenderOrderLine',
+      renderEmpty: 'OB.UI.RenderOrderLineEmpty',
+      //defined on redenderorderline.js
+      listStyle: 'edit',
+      isSelectableLine: function(model) {
+        if (
+          !OB.UTIL.isNullOrUndefined(model) &&
+          !OB.UTIL.isNullOrUndefined(model.attributes) &&
+          !model.attributes.isEditable
+        ) {
+          return false;
+        }
+        return true;
       }
-      return true;
+    },
+    {
+      tag: 'ul',
+      classes: 'obUiOrderView-container1',
+      components: [
+        {
+          tag: 'li',
+          classes: 'obUiOrderView-container1-container1',
+          components: [
+            {
+              classes: 'obUiOrderView-container1-container1-totalTaxLine',
+              kind: 'OB.UI.TotalTaxLine',
+              name: 'totalTaxLine'
+            },
+            {
+              classes: 'obUiOrderView-container1-container1-totalReceiptLine',
+              kind: 'OB.UI.TotalReceiptLine',
+              name: 'totalReceiptLine'
+            }
+          ]
+        },
+        {
+          tag: 'li',
+          classes: 'obUiOrderView-container1-container2',
+          components: [
+            {
+              classes: 'obUiOrderView-container1-container2-injectedFooter',
+              name: 'injectedFooter'
+            },
+            {
+              classes: 'obUiOrderView-container1-container2-container1',
+              components: [
+                {
+                  kind: 'btninvoice',
+                  classes:
+                    'obUiOrderView-container1-container2-container1-divbtninvoice',
+                  name: 'divbtninvoice',
+                  showing: false
+                },
+                {
+                  kind: 'OB.UI.OrderViewDivText',
+                  classes:
+                    'obUiOrderView-container1-container2-container1-divText',
+                  name: 'divText'
+                },
+                {
+                  classes:
+                    'obUiOrderView-container1-container2-container1-element1'
+                }
+              ]
+            }
+          ]
+        },
+        {
+          tag: 'li',
+          classes: 'obUiOrderView-container1-container3',
+          components: [
+            {
+              name: 'taxBreakdownDiv',
+              classes: 'obUiOrderView-container1-container3-taxBreakdownDiv',
+              components: [
+                {
+                  kind: 'OB.UI.TaxBreakdown',
+                  classes:
+                    'obUiOrderView-container1-container3-taxBreakdownDiv-taxBreakdown',
+                  name: 'taxBreakdown'
+                }
+              ]
+            }
+          ]
+        },
+        {
+          kind: 'OB.UI.ScrollableTable',
+          classes: 'obUiOrderView-container1-listTaxLines',
+          name: 'listTaxLines',
+          scrollAreaClasses:
+            'obUiOrderView-container1-listTaxLines-scrollAreaClasses',
+          renderLine: 'OB.UI.RenderTaxLine',
+          renderEmpty: 'OB.UI.RenderTaxLineEmpty',
+          //defined on redenderorderline.js
+          listStyle: 'nonselectablelist',
+          columns: ['tax', 'base', 'totaltax']
+        },
+        {
+          tag: 'li',
+          classes: 'obUiOrderView-container1-container5',
+          components: [
+            {
+              name: 'paymentBreakdown',
+              classes: 'obUiOrderView-container1-container5-paymentBreakdown',
+              showing: false,
+              components: [
+                {
+                  classes: 'obUiOrderView-paymentBreakdown-container1',
+                  components: [
+                    {
+                      classes:
+                        'obUiOrderView-paymentBreakdown-container1-lblTotalPayment',
+                      name: 'lblTotalPayment'
+                    },
+                    {
+                      classes:
+                        'obUiOrderView-paymentBreakdown-container1-element1'
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          kind: 'OB.UI.ScrollableTable',
+          classes: 'obUiOrderView-container1-listPaymentLines',
+          name: 'listPaymentLines',
+          showing: false,
+          scrollAreaClasses:
+            'obUiOrderView-container1-listPaymentLines-scrollArea',
+          renderLine: 'OB.UI.RenderPaymentLine',
+          renderEmpty: 'OB.UI.RenderPaymentLineEmpty',
+          //defined on redenderorderline.js
+          listStyle: 'nonselectablelist'
+        }
+      ]
     }
-  }, {
-    tag: 'ul',
-    classes: 'obUiOrderView-container1',
-    components: [{
-      tag: 'li',
-      classes: 'obUiOrderView-container1-container1',
-      components: [{
-        classes: 'obUiOrderView-container1-container1-totalTaxLine',
-        kind: 'OB.UI.TotalTaxLine',
-        name: 'totalTaxLine'
-      }, {
-        classes: 'obUiOrderView-container1-container1-totalReceiptLine',
-        kind: 'OB.UI.TotalReceiptLine',
-        name: 'totalReceiptLine'
-      }]
-    }, {
-      tag: 'li',
-      classes: 'obUiOrderView-container1-container2',
-      components: [{
-        classes: 'obUiOrderView-container1-container2-injectedFooter',
-        name: 'injectedFooter'
-      }, {
-        classes: 'obUiOrderView-container1-container2-container1',
-        components: [{
-          kind: 'btninvoice',
-          classes: 'obUiOrderView-container1-container2-container1-divbtninvoice',
-          name: 'divbtninvoice',
-          showing: false
-        }, {
-          kind: 'OB.UI.OrderViewDivText',
-          classes: 'obUiOrderView-container1-container2-container1-divText',
-          name: 'divText'
-        }, {
-          classes: 'obUiOrderView-container1-container2-container1-element1'
-        }]
-      }]
-    }, {
-      tag: 'li',
-      classes: 'obUiOrderView-container1-container3',
-      components: [{
-        name: 'taxBreakdownDiv',
-        classes: 'obUiOrderView-container1-container3-taxBreakdownDiv',
-        components: [{
-          kind: 'OB.UI.TaxBreakdown',
-          classes: 'obUiOrderView-container1-container3-taxBreakdownDiv-taxBreakdown',
-          name: 'taxBreakdown'
-        }]
-      }]
-    }, {
-      kind: 'OB.UI.ScrollableTable',
-      classes: 'obUiOrderView-container1-listTaxLines',
-      name: 'listTaxLines',
-      scrollAreaClasses: 'obUiOrderView-container1-listTaxLines-scrollAreaClasses',
-      renderLine: 'OB.UI.RenderTaxLine',
-      renderEmpty: 'OB.UI.RenderTaxLineEmpty',
-      //defined on redenderorderline.js
-      listStyle: 'nonselectablelist',
-      columns: ['tax', 'base', 'totaltax']
-    }, {
-      tag: 'li',
-      classes: 'obUiOrderView-container1-container5',
-      components: [{
-        name: 'paymentBreakdown',
-        classes: 'obUiOrderView-container1-container5-paymentBreakdown',
-        showing: false,
-        components: [{
-          classes: 'obUiOrderView-paymentBreakdown-container1',
-          components: [{
-            classes: 'obUiOrderView-paymentBreakdown-container1-lblTotalPayment',
-            name: 'lblTotalPayment'
-          }, {
-            classes: 'obUiOrderView-paymentBreakdown-container1-element1'
-          }]
-        }]
-      }]
-    }, {
-      kind: 'OB.UI.ScrollableTable',
-      classes: 'obUiOrderView-container1-listPaymentLines',
-      name: 'listPaymentLines',
-      showing: false,
-      scrollAreaClasses: 'obUiOrderView-container1-listPaymentLines-scrollArea',
-      renderLine: 'OB.UI.RenderPaymentLine',
-      renderEmpty: 'OB.UI.RenderPaymentLineEmpty',
-      //defined on redenderorderline.js
-      listStyle: 'nonselectablelist'
-    }]
-  }],
-  initComponents: function () {
+  ],
+  initComponents: function() {
     this.inherited(arguments);
     if (!OB.MobileApp.model.get('terminal').terminalType.showtaxbreakdown) {
       this.$.listOrderLines.addClass('obUiOrderView-listOrderLines-bigger');
     }
-    this.$.lblTotalPayment.setContent(OB.I18N.getLabel('OBPOS_LblPaymentBreakdown'));
+    this.$.lblTotalPayment.setContent(
+      OB.I18N.getLabel('OBPOS_LblPaymentBreakdown')
+    );
 
     // Inject the footer components
     var prop;
     for (prop in OB.POS.ORDERFOOTER) {
       if (OB.POS.ORDERFOOTER.hasOwnProperty(prop)) {
-        this.$.injectedFooter.createComponent({
-          kind: OB.POS.ORDERFOOTER[prop],
-          name: prop
-        }).render();
+        this.$.injectedFooter
+          .createComponent({
+            kind: OB.POS.ORDERFOOTER[prop],
+            name: prop
+          })
+          .render();
       }
     }
     OB.UTIL.ProcessController.subscribe(this.processesToListen, this);
   },
-  destroyComponents: function () {
+  destroyComponents: function() {
     this.inherited(arguments);
     OB.UTIL.ProcessController.unSubscribe(this.processesToListen, this);
   },
-  checkBoxBehavior: function (inSender, inEvent) {
+  checkBoxBehavior: function(inSender, inEvent) {
     if (inEvent.status) {
       this.$.listOrderLines.setListStyle('checkboxlist');
     } else {
       this.$.listOrderLines.setListStyle('edit');
     }
   },
-  allTicketLinesChecked: function (inSender, inEvent) {
+  allTicketLinesChecked: function(inSender, inEvent) {
     if (inEvent.status) {
       this.order.get('lines').trigger('checkAll');
     } else {
       this.order.get('lines').trigger('unCheckAll');
     }
   },
-  setTaxes: function () {
+  setTaxes: function() {
     if (OB.UTIL.isNullOrUndefined(OB.MobileApp.model.get('terminal'))) {
       return;
     }
     if (OB.MobileApp.model.get('terminal').terminalType.showtaxbreakdown) {
-      var prop, taxList = new Backbone.Collection(),
-          taxes = this.order.get('taxes');
+      var prop,
+        taxList = new Backbone.Collection(),
+        taxes = this.order.get('taxes');
 
-      if (_.filter(this.order.get('lines').models, function (line) {
-        return !line.get('obposIsDeleted');
-      }).length > 0) {
+      if (
+        _.filter(this.order.get('lines').models, function(line) {
+          return !line.get('obposIsDeleted');
+        }).length > 0
+      ) {
         for (prop in taxes) {
           if (taxes.hasOwnProperty(prop)) {
             taxList.add(new OB.Model.TaxLine(taxes[prop]));
@@ -684,7 +869,7 @@ enyo.kind({
         this.$.taxBreakdown.show();
       }
 
-      taxList.models = _.sortBy(taxList.models, function (taxLine) {
+      taxList.models = _.sortBy(taxList.models, function(taxLine) {
         return taxLine.get('name');
       });
 
@@ -693,506 +878,765 @@ enyo.kind({
       this.$.taxBreakdownDiv.hide();
     }
   },
-  toggleSelectionTable: function (inSender, inEvent) {
-    this.$.listOrderLines.setSelectionMode(inEvent.multiselection ? 'multiple' : 'single');
+  toggleSelectionTable: function(inSender, inEvent) {
+    this.$.listOrderLines.setSelectionMode(
+      inEvent.multiselection ? 'multiple' : 'single'
+    );
   },
-  multiSelectAllTable: function () {
+  multiSelectAllTable: function() {
     this.$.listOrderLines.selectAll();
     this.doReceiptLineSelected();
   },
-  tableMultiSelectedItems: function (inSender, inEvent) {
+  tableMultiSelectedItems: function(inSender, inEvent) {
     this.$.listOrderLines.setSelectedModels(inEvent.selection);
   },
-  orderChanged: function (oldValue) {
+  orderChanged: function(oldValue) {
     var me = this;
     this.$.totalReceiptLine.renderTotal(this.order.getTotal());
     this.$.totalReceiptLine.renderQty(this.order.getQty());
-    this.$.totalTaxLine.renderTax(OB.DEC.sub(this.order.getTotal(), this.order.getNet()));
+    this.$.totalTaxLine.renderTax(
+      OB.DEC.sub(this.order.getTotal(), this.order.getNet())
+    );
     this.$.listOrderLines.setCollection(this.order.get('lines'));
     this.$.listPaymentLines.setCollection(this.order.get('payments'));
     this.setTaxes();
-    this.order.on('change:isNegative', function (model) {
-      if (model.get('doCancelAndReplace')) {
-        // Render the payments because it's possible that the amount must be shown with another
-        // sign (depends on the gross and the isNegative properties)
-        this.$.listPaymentLines.waterfall('onRenderPaymentLine');
-      }
-    }, this);
-    this.order.on('change:gross change:net', function (model) {
-      this.$.totalReceiptLine.renderTotal(model.getTotal());
-      this.$.totalTaxLine.renderTax(OB.DEC.sub(model.getTotal(), model.getNet()));
-    }, this);
-    this.order.on('paintTaxes', function () {
-      this.setTaxes();
-    }, this);
-    this.order.on('change:priceIncludesTax ', function (model) {
-      if (this.order.get('priceIncludesTax')) {
-        this.$.totalTaxLine.hide();
-      } else {
-        this.$.totalTaxLine.show();
-      }
-    }, this);
-    this.order.on('change:qty', function (model) {
-      this.$.totalReceiptLine.renderQty(model.getQty());
-    }, this);
-    this.order.on('change:generateInvoice', function (model) {
-      if (model.get('generateInvoice')) {
-        this.$.divbtninvoice.show();
-      } else {
-        this.$.divbtninvoice.hide();
-      }
-    }, this);
-    this.order.on('change:hasbeenpaid', function (model) {
-      this.$.divText.changeHasbeenpaid(model);
-    }, this);
-    this.order.on('change:isPaid change:isLayaway change:isQuotation change:documentNo change:orderType change:doCancelAndReplace change:cancelLayaway change:replacedorder_documentNo change:paidOnCredit change:paidPartiallyOnCredit change:fromLayaway change:documentType change:iscancelled', function (model) {
-      // Unified the logic to show/hide the 'divText', the 'listPaymentLines' and the 'paymentBreakdown' panels
-      if (model.get('doCancelAndReplace')) {
-        // Set the label for C&R
-        this.$.divText.setCancelAndReplaceLabel(model);
-      } else if (model.get('cancelLayaway')) {
-        // Set the label for CL
-        this.$.divText.setCancelLayawayLabel(model);
-      } else if (model.get('isQuotation')) {
-        // Set the label for quotations
-        this.$.divText.setQuotationLabel(model);
-      } else if (model.get('isLayaway')) {
-        // Set the label for layaways
-        this.$.divText.setLayawayLabel(model);
-      } else if (model.get('isPaid')) {
-        // Set the label for paid receipts (also on credit and canceled)
-        this.$.divText.setPaidLabel(model);
-      } else {
-        if (model.get('orderType') === 1) {
-          // Set the label for draft returns
-          this.$.divText.setToBeReturnedLabel(model);
-        } else if (model.get('orderType') === 2) {
-          // Set the label for draft layaways
-          this.$.divText.setToBeLaidawayLabel(model);
-        } else {
-          this.$.divText.hide();
+    this.order.on(
+      'change:isNegative',
+      function(model) {
+        if (model.get('doCancelAndReplace')) {
+          // Render the payments because it's possible that the amount must be shown with another
+          // sign (depends on the gross and the isNegative properties)
+          this.$.listPaymentLines.waterfall('onRenderPaymentLine');
         }
-      }
-
-      // Set the 'New receipt'/'New quotation' labels when converting to a quotation or receipt
-      if (!_.isUndefined(model.changed.isQuotation)) {
-        if (model.get('isQuotation')) {
-          this.$.listOrderLines.children[4].children[0].setContent(OB.I18N.getLabel('OBPOS_QuotationNew'));
+      },
+      this
+    );
+    this.order.on(
+      'change:gross change:net',
+      function(model) {
+        this.$.totalReceiptLine.renderTotal(model.getTotal());
+        this.$.totalTaxLine.renderTax(
+          OB.DEC.sub(model.getTotal(), model.getNet())
+        );
+      },
+      this
+    );
+    this.order.on(
+      'paintTaxes',
+      function() {
+        this.setTaxes();
+      },
+      this
+    );
+    this.order.on(
+      'change:priceIncludesTax ',
+      function(model) {
+        if (this.order.get('priceIncludesTax')) {
+          this.$.totalTaxLine.hide();
         } else {
-          this.$.listOrderLines.children[4].children[0].setContent(OB.I18N.getLabel('OBPOS_ReceiptNew'));
+          this.$.totalTaxLine.show();
         }
-      }
+      },
+      this
+    );
+    this.order.on(
+      'change:qty',
+      function(model) {
+        this.$.totalReceiptLine.renderQty(model.getQty());
+      },
+      this
+    );
+    this.order.on(
+      'change:generateInvoice',
+      function(model) {
+        if (model.get('generateInvoice')) {
+          this.$.divbtninvoice.show();
+        } else {
+          this.$.divbtninvoice.hide();
+        }
+      },
+      this
+    );
+    this.order.on(
+      'change:hasbeenpaid',
+      function(model) {
+        this.$.divText.changeHasbeenpaid(model);
+      },
+      this
+    );
+    this.order.on(
+      'change:isPaid change:isLayaway change:isQuotation change:documentNo change:orderType change:doCancelAndReplace change:cancelLayaway change:replacedorder_documentNo change:paidOnCredit change:paidPartiallyOnCredit change:fromLayaway change:documentType change:iscancelled',
+      function(model) {
+        // Unified the logic to show/hide the 'divText', the 'listPaymentLines' and the 'paymentBreakdown' panels
+        if (model.get('doCancelAndReplace')) {
+          // Set the label for C&R
+          this.$.divText.setCancelAndReplaceLabel(model);
+        } else if (model.get('cancelLayaway')) {
+          // Set the label for CL
+          this.$.divText.setCancelLayawayLabel(model);
+        } else if (model.get('isQuotation')) {
+          // Set the label for quotations
+          this.$.divText.setQuotationLabel(model);
+        } else if (model.get('isLayaway')) {
+          // Set the label for layaways
+          this.$.divText.setLayawayLabel(model);
+        } else if (model.get('isPaid')) {
+          // Set the label for paid receipts (also on credit and canceled)
+          this.$.divText.setPaidLabel(model);
+        } else {
+          if (model.get('orderType') === 1) {
+            // Set the label for draft returns
+            this.$.divText.setToBeReturnedLabel(model);
+          } else if (model.get('orderType') === 2) {
+            // Set the label for draft layaways
+            this.$.divText.setToBeLaidawayLabel(model);
+          } else {
+            this.$.divText.hide();
+          }
+        }
 
-      // Show the payment list only in synchronized tickets and in C&R
-      if (model.get('isLayaway') || model.get('isPaid') || model.get('doCancelAndReplace')) {
-        this.$.listPaymentLines.show();
-        this.$.paymentBreakdown.show();
-      } else {
-        this.$.listPaymentLines.hide();
-        this.$.paymentBreakdown.hide();
-      }
-    }, this);
+        // Set the 'New receipt'/'New quotation' labels when converting to a quotation or receipt
+        if (!_.isUndefined(model.changed.isQuotation)) {
+          if (model.get('isQuotation')) {
+            this.$.listOrderLines.children[4].children[0].setContent(
+              OB.I18N.getLabel('OBPOS_QuotationNew')
+            );
+          } else {
+            this.$.listOrderLines.children[4].children[0].setContent(
+              OB.I18N.getLabel('OBPOS_ReceiptNew')
+            );
+          }
+        }
+
+        // Show the payment list only in synchronized tickets and in C&R
+        if (
+          model.get('isLayaway') ||
+          model.get('isPaid') ||
+          model.get('doCancelAndReplace')
+        ) {
+          this.$.listPaymentLines.show();
+          this.$.paymentBreakdown.show();
+        } else {
+          this.$.listPaymentLines.hide();
+          this.$.paymentBreakdown.hide();
+        }
+      },
+      this
+    );
     // Change Document No based on return lines
-    this.order.get('lines').on('add change:qty change:relatedLines updateRelations', function () {
-      if (this.order.get('isEditable') && !this.order.get('isModified') && !this.order.get('isLayaway') && !this.order.get('isQuotation') && !this.order.get('doCancelAndReplace') && !this.order.get('cancelLayaway')) {
-        var negativeLinesLength = _.filter(this.order.get('lines').models, function (line) {
-          return line.get('qty') < 0;
-        }).length;
-        if ((negativeLinesLength > 0 && negativeLinesLength === this.order.get('lines').models.length) || (negativeLinesLength > 0 && OB.MobileApp.model.get('permissions').OBPOS_SalesWithOneLineNegativeAsReturns)) {
-          //isReturn
-          this.order.setDocumentNo(true, false);
-        } else {
-          //isOrder
-          this.order.setDocumentNo(false, true);
+    this.order.get('lines').on(
+      'add change:qty change:relatedLines updateRelations',
+      function() {
+        if (
+          this.order.get('isEditable') &&
+          !this.order.get('isModified') &&
+          !this.order.get('isLayaway') &&
+          !this.order.get('isQuotation') &&
+          !this.order.get('doCancelAndReplace') &&
+          !this.order.get('cancelLayaway')
+        ) {
+          var negativeLinesLength = _.filter(
+            this.order.get('lines').models,
+            function(line) {
+              return line.get('qty') < 0;
+            }
+          ).length;
+          if (
+            (negativeLinesLength > 0 &&
+              negativeLinesLength === this.order.get('lines').models.length) ||
+            (negativeLinesLength > 0 &&
+              OB.MobileApp.model.get('permissions')
+                .OBPOS_SalesWithOneLineNegativeAsReturns)
+          ) {
+            //isReturn
+            this.order.setDocumentNo(true, false);
+          } else {
+            //isOrder
+            this.order.setDocumentNo(false, true);
+          }
         }
-      }
-    }, this);
+      },
+      this
+    );
 
-    this.order.get('lines').on('add change:qty change:relatedLines updateRelations', function () {
-      var approvalNeeded = false,
+    this.order.get('lines').on(
+      'add change:qty change:relatedLines updateRelations',
+      function() {
+        var approvalNeeded = false,
           linesToRemove = [],
           servicesToApprove = '',
-          line, k, oldUndo = this.order.get('undo');
+          line,
+          k,
+          oldUndo = this.order.get('undo');
 
-      if (!this.order.get('hasServices') || this.updating || this.order.get('preventServicesUpdate') || !this.order.get('isEditable')) {
-        return;
-      }
-      this.updating = true;
+        if (
+          !this.order.get('hasServices') ||
+          this.updating ||
+          this.order.get('preventServicesUpdate') ||
+          !this.order.get('isEditable')
+        ) {
+          return;
+        }
+        this.updating = true;
 
-      function getServiceLines(service) {
-        var serviceLines;
-        if (service.get('groupService')) {
-          serviceLines = _.filter(me.order.get('lines').models, function (l) {
-            return (l.get('product').get('id') === service.get('product').get('id')) && !l.get('originalOrderLineId');
+        function getServiceLines(service) {
+          var serviceLines;
+          if (service.get('groupService')) {
+            serviceLines = _.filter(me.order.get('lines').models, function(l) {
+              return (
+                l.get('product').get('id') ===
+                  service.get('product').get('id') &&
+                !l.get('originalOrderLineId')
+              );
+            });
+          }
+          serviceLines = [service];
+          return serviceLines;
+        }
+
+        function filterLines(newRelatedLines, lines) {
+          return _.filter(newRelatedLines, function(rl) {
+            return _.indexOf(_.pluck(lines, 'id'), rl.orderlineId) !== -1;
           });
         }
-        serviceLines = [service];
-        return serviceLines;
-      }
 
-      function filterLines(newRelatedLines, lines) {
-        return _.filter(newRelatedLines, function (rl) {
-          return _.indexOf(_.pluck(lines, 'id'), rl.orderlineId) !== -1;
-        });
-      }
+        function getSiblingServicesLines(productId, orderlineId) {
+          var serviceLines = _.filter(me.order.get('lines').models, function(
+            l
+          ) {
+            return (
+              l.has('relatedLines') &&
+              l.get('relatedLines').length > 0 &&
+              !l.get('originalOrderLineId') && //
+              l.get('product').id === productId &&
+              l.get('relatedLines')[0].orderlineId === orderlineId
+            );
+          });
+          return serviceLines;
+        }
 
-      function getSiblingServicesLines(productId, orderlineId) {
-        var serviceLines = _.filter(me.order.get('lines').models, function (l) {
-          return l.has('relatedLines') && l.get('relatedLines').length > 0 && !l.get('originalOrderLineId') //
-          && l.get('product').id === productId && l.get('relatedLines')[0].orderlineId === orderlineId;
-        });
-        return serviceLines;
-      }
-
-      function adjustNotGroupedServices(line, qty) {
-        if (line.get('product').get('quantityRule') === 'PP' && !line.get('groupService')) {
-          var qtyService = OB.DEC.abs(qty),
+        function adjustNotGroupedServices(line, qty) {
+          if (
+            line.get('product').get('quantityRule') === 'PP' &&
+            !line.get('groupService')
+          ) {
+            var qtyService = OB.DEC.abs(qty),
               qtyLineServ = qty > 0 ? 1 : -1;
 
-          // Split/Remove services lines
-          var siblingServicesLines = getSiblingServicesLines(line.get('product').id, line.get('relatedLines')[0].orderlineId);
-          if (!me.order.get('deleting') && siblingServicesLines.length < qtyService) {
-            var i, p, newLine;
-            for (i = 0; i < qtyService - siblingServicesLines.length; i++) {
-              p = line.get('product').clone();
-              p.set('groupProduct', false);
-              newLine = me.order.createLine(p, qtyLineServ);
-              newLine.set('relatedLines', siblingServicesLines[0].get('relatedLines'));
-              newLine.set('groupService', false);
+            // Split/Remove services lines
+            var siblingServicesLines = getSiblingServicesLines(
+              line.get('product').id,
+              line.get('relatedLines')[0].orderlineId
+            );
+            if (
+              !me.order.get('deleting') &&
+              siblingServicesLines.length < qtyService
+            ) {
+              var i, p, newLine;
+              for (i = 0; i < qtyService - siblingServicesLines.length; i++) {
+                p = line.get('product').clone();
+                p.set('groupProduct', false);
+                newLine = me.order.createLine(p, qtyLineServ);
+                newLine.set(
+                  'relatedLines',
+                  siblingServicesLines[0].get('relatedLines')
+                );
+                newLine.set('groupService', false);
+              }
+            } else if (siblingServicesLines.length > qtyService) {
+              linesToRemove = OB.UTIL.mergeArrays(
+                linesToRemove,
+                _.initial(siblingServicesLines, qtyService)
+              );
             }
-          } else if (siblingServicesLines.length > qtyService) {
-            linesToRemove = OB.UTIL.mergeArrays(linesToRemove, _.initial(siblingServicesLines, qtyService));
+
+            return qtyLineServ;
           }
-
-          return qtyLineServ;
+          return qty;
         }
-        return qty;
-      }
 
-      if (!this.order.get('notApprove')) {
-        // First check if there is any service modified to negative quantity amount in order to know if approval will be required
-        var prod, i, j, l, newqtyplus, newqtyminus, serviceLines, positiveLines, negativeLines, newRelatedLines;
-        for (k = 0; k < this.order.get('lines').length; k++) {
-          line = this.order.get('lines').models[k];
-          prod = line.get('product');
-          newqtyplus = 0;
-          newqtyminus = 0;
-          serviceLines = [];
-          positiveLines = [];
-          negativeLines = [];
-          newRelatedLines = [];
+        if (!this.order.get('notApprove')) {
+          // First check if there is any service modified to negative quantity amount in order to know if approval will be required
+          var prod,
+            i,
+            j,
+            l,
+            newqtyplus,
+            newqtyminus,
+            serviceLines,
+            positiveLines,
+            negativeLines,
+            newRelatedLines;
+          for (k = 0; k < this.order.get('lines').length; k++) {
+            line = this.order.get('lines').models[k];
+            prod = line.get('product');
+            newqtyplus = 0;
+            newqtyminus = 0;
+            serviceLines = [];
+            positiveLines = [];
+            negativeLines = [];
+            newRelatedLines = [];
 
-          if (line.has('relatedLines') && line.get('relatedLines').length > 0 && !line.get('originalOrderLineId')) {
+            if (
+              line.has('relatedLines') &&
+              line.get('relatedLines').length > 0 &&
+              !line.get('originalOrderLineId')
+            ) {
+              serviceLines = getServiceLines(line);
 
-            serviceLines = getServiceLines(line);
+              for (i = 0; i < serviceLines.length; i++) {
+                newRelatedLines = OB.UTIL.mergeArrays(
+                  newRelatedLines,
+                  serviceLines[i].get('relatedLines') || []
+                );
+              }
+              for (j = 0; j < newRelatedLines.length; j++) {
+                l = me.order.get('lines').get(newRelatedLines[j].orderlineId);
+                if (l && l.get('qty') > 0) {
+                  newqtyplus += l.get('qty');
+                  positiveLines.push(l);
+                } else if (l && l.get('qty') < 0) {
+                  newqtyminus += l.get('qty');
+                  negativeLines.push(l);
+                }
+              }
 
-            for (i = 0; i < serviceLines.length; i++) {
-              newRelatedLines = OB.UTIL.mergeArrays(newRelatedLines, (serviceLines[i].get('relatedLines') || []));
-            }
-            for (j = 0; j < newRelatedLines.length; j++) {
-              l = me.order.get('lines').get(newRelatedLines[j].orderlineId);
-              if (l && l.get('qty') > 0) {
-                newqtyplus += l.get('qty');
-                positiveLines.push(l);
-              } else if (l && l.get('qty') < 0) {
-                newqtyminus += l.get('qty');
-                negativeLines.push(l);
+              if (prod.get('quantityRule') === 'UQ') {
+                newqtyplus = newqtyplus ? 1 : 0;
+                newqtyminus = newqtyminus ? -1 : 0;
+              }
+
+              for (i = 0; i < serviceLines.length; i++) {
+                l = serviceLines[i];
+                if (
+                  l.get('qty') > 0 &&
+                  serviceLines.length === 1 &&
+                  newqtyminus
+                ) {
+                  if (!l.get('product').get('returnable')) {
+                    // Cannot add not returnable service to a negative product
+                    me.order.get('lines').remove(l);
+                    OB.UTIL.showConfirmation.display(
+                      OB.I18N.getLabel('OBPOS_UnreturnableProduct'),
+                      OB.I18N.getLabel('OBPOS_UnreturnableProductMessage', [
+                        l.get('product').get('_identifier')
+                      ])
+                    );
+                    this.updating = false;
+                    return;
+                  }
+                  if (!approvalNeeded) {
+                    approvalNeeded = true;
+                  }
+                  servicesToApprove +=
+                    '<br>' +
+                    OB.I18N.getLabel('OBMOBC_Character')[1] +
+                    ' ' +
+                    line.get('product').get('_identifier');
+                }
               }
             }
-
-            if (prod.get('quantityRule') === 'UQ') {
-              newqtyplus = (newqtyplus ? 1 : 0);
-              newqtyminus = (newqtyminus ? -1 : 0);
-            }
-
-            for (i = 0; i < serviceLines.length; i++) {
-              l = serviceLines[i];
-              if (l.get('qty') > 0 && serviceLines.length === 1 && newqtyminus) {
-                if (!l.get('product').get('returnable')) { // Cannot add not returnable service to a negative product
-                  me.order.get('lines').remove(l);
-                  OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableProduct'), OB.I18N.getLabel('OBPOS_UnreturnableProductMessage', [l.get('product').get('_identifier')]));
-                  this.updating = false;
-                  return;
-                }
-                if (!approvalNeeded) {
-                  approvalNeeded = true;
-                }
-                servicesToApprove += '<br>' + OB.I18N.getLabel('OBMOBC_Character')[1] + ' ' + line.get('product').get('_identifier');
-              }
-            }
           }
         }
-      }
 
-      function fixServiceOrderLines(approved) {
-        linesToRemove = [];
-        me.order.get('lines').forEach(function (line) {
-          var prod = line.get('product'),
-              newLine, i, j, l, rlp, rln, deferredLines, deferredQty, notDeferredRelatedLines, positiveLine, newqtyplus = 0,
+        function fixServiceOrderLines(approved) {
+          linesToRemove = [];
+          me.order.get('lines').forEach(function(line) {
+            var prod = line.get('product'),
+              newLine,
+              i,
+              j,
+              l,
+              rlp,
+              rln,
+              deferredLines,
+              deferredQty,
+              notDeferredRelatedLines,
+              positiveLine,
+              newqtyplus = 0,
               newqtyminus = 0,
               serviceLines = [],
               positiveLines = [],
               negativeLines = [],
               newRelatedLines = [];
 
-          if (line.has('relatedLines') && line.get('relatedLines').length > 0 && !line.get('originalOrderLineId')) {
+            if (
+              line.has('relatedLines') &&
+              line.get('relatedLines').length > 0 &&
+              !line.get('originalOrderLineId')
+            ) {
+              serviceLines = getServiceLines(line);
 
-            serviceLines = getServiceLines(line);
-
-            for (i = 0; i < serviceLines.length; i++) {
-              newRelatedLines = OB.UTIL.mergeArrays(newRelatedLines, (serviceLines[i].get('relatedLines') || []));
-            }
-            for (j = 0; j < newRelatedLines.length; j++) {
-              l = me.order.get('lines').get(newRelatedLines[j].orderlineId);
-              if (l && l.get('qty') > 0) {
-                newqtyplus += l.get('qty');
-                positiveLines.push(l);
-              } else if (l && l.get('qty') < 0) {
-                newqtyminus += l.get('qty');
-                negativeLines.push(l);
+              for (i = 0; i < serviceLines.length; i++) {
+                newRelatedLines = OB.UTIL.mergeArrays(
+                  newRelatedLines,
+                  serviceLines[i].get('relatedLines') || []
+                );
               }
-            }
-            rlp = filterLines(newRelatedLines, positiveLines);
+              for (j = 0; j < newRelatedLines.length; j++) {
+                l = me.order.get('lines').get(newRelatedLines[j].orderlineId);
+                if (l && l.get('qty') > 0) {
+                  newqtyplus += l.get('qty');
+                  positiveLines.push(l);
+                } else if (l && l.get('qty') < 0) {
+                  newqtyminus += l.get('qty');
+                  negativeLines.push(l);
+                }
+              }
+              rlp = filterLines(newRelatedLines, positiveLines);
 
-            rln = filterLines(newRelatedLines, negativeLines);
+              rln = filterLines(newRelatedLines, negativeLines);
 
-            if (prod.get('quantityRule') === 'UQ') {
-              newqtyplus = (newqtyplus ? 1 : 0);
-              newqtyminus = (newqtyminus ? -1 : 0);
-            }
+              if (prod.get('quantityRule') === 'UQ') {
+                newqtyplus = newqtyplus ? 1 : 0;
+                newqtyminus = newqtyminus ? -1 : 0;
+              }
 
-            serviceLines.forEach(function (l) {
-              if (l.get('qty') > 0) {
-                if (serviceLines.length === 1 && newqtyminus && newqtyplus) {
-                  deferredLines = l.get('relatedLines').filter(function getDeferredServices(relatedLine) {
-                    return relatedLine.deferred === true;
-                  });
-                  if (deferredLines) {
-                    deferredQty = 0;
-                    if (line.get('product').get('quantityRule') === 'PP') {
-                      _.each(deferredLines, function (deferredLine) {
-                        deferredQty += deferredLine.qty;
+              serviceLines.forEach(function(l) {
+                if (l.get('qty') > 0) {
+                  if (serviceLines.length === 1 && newqtyminus && newqtyplus) {
+                    deferredLines = l
+                      .get('relatedLines')
+                      .filter(function getDeferredServices(relatedLine) {
+                        return relatedLine.deferred === true;
                       });
-                    }
-                    rlp = OB.UTIL.mergeArrays(rlp, (deferredLines || []));
-                    newqtyplus += deferredQty;
-                  }
-                  newLine = me.order.createLine(prod, newqtyminus);
-                  newLine.set('relatedLines', rln);
-                  newLine.set('groupService', newLine.get('product').get('groupProduct'));
-                  l.set('relatedLines', rlp);
-                  l.set('qty', newqtyplus);
-                } else if (serviceLines.length === 1 && newqtyminus) {
-                  if (approved) {
-                    deferredLines = l.get('relatedLines').filter(function getDeferredServices(relatedLine) {
-                      return relatedLine.deferred === true;
-                    });
-                    if (deferredLines.length) {
+                    if (deferredLines) {
                       deferredQty = 0;
                       if (line.get('product').get('quantityRule') === 'PP') {
-                        _.each(deferredLines, function (deferredLine) {
+                        _.each(deferredLines, function(deferredLine) {
+                          deferredQty += deferredLine.qty;
+                        });
+                      }
+                      rlp = OB.UTIL.mergeArrays(rlp, deferredLines || []);
+                      newqtyplus += deferredQty;
+                    }
+                    newLine = me.order.createLine(prod, newqtyminus);
+                    newLine.set('relatedLines', rln);
+                    newLine.set(
+                      'groupService',
+                      newLine.get('product').get('groupProduct')
+                    );
+                    l.set('relatedLines', rlp);
+                    l.set('qty', newqtyplus);
+                  } else if (serviceLines.length === 1 && newqtyminus) {
+                    if (approved) {
+                      deferredLines = l
+                        .get('relatedLines')
+                        .filter(function getDeferredServices(relatedLine) {
+                          return relatedLine.deferred === true;
+                        });
+                      if (deferredLines.length) {
+                        deferredQty = 0;
+                        if (line.get('product').get('quantityRule') === 'PP') {
+                          _.each(deferredLines, function(deferredLine) {
+                            deferredQty += deferredLine.qty;
+                          });
+                        } else {
+                          deferredQty = 1;
+                        }
+                        newLine = me.order.createLine(prod, deferredQty);
+                        newLine.set('relatedLines', deferredLines);
+                        newLine.set('qty', deferredQty);
+                      }
+                      l.set('relatedLines', rln);
+                      newqtyminus = adjustNotGroupedServices(
+                        l,
+                        newqtyminus,
+                        linesToRemove
+                      );
+                      l.set('qty', newqtyminus);
+                    } else {
+                      linesToRemove.push(l);
+                    }
+                  } else if (newqtyplus && !me.positiveLineUpdated) {
+                    me.positiveLineUpdated = true;
+                    deferredLines = l
+                      .get('relatedLines')
+                      .filter(function getDeferredServices(relatedLine) {
+                        return relatedLine.deferred === true;
+                      });
+                    rlp = OB.UTIL.mergeArrays(rlp, deferredLines || []);
+                    l.set('relatedLines', rlp);
+                    if (line.get('product').get('quantityRule') === 'PP') {
+                      if (line.get('groupService')) {
+                        _.each(deferredLines, function(deferredLine) {
+                          newqtyplus += deferredLine.qty;
+                        });
+                      } else {
+                        newqtyplus = adjustNotGroupedServices(
+                          line,
+                          newqtyplus,
+                          linesToRemove
+                        );
+                      }
+                    }
+                    l.set('qty', newqtyplus);
+                  } else if (
+                    newqtyplus &&
+                    newqtyminus &&
+                    me.positiveLineUpdated
+                  ) {
+                    newLine = me.order.createLine(prod, newqtyminus);
+                    newLine.set('relatedLines', rln);
+                    newLine.set(
+                      'groupService',
+                      newLine.get('product').get('groupProduct')
+                    );
+                    me.order.get('lines').remove(l);
+                  } else {
+                    deferredLines = l
+                      .get('relatedLines')
+                      .filter(function getDeferredServices(relatedLine) {
+                        return relatedLine.deferred === true;
+                      });
+                    if (!deferredLines.length) {
+                      me.order.get('lines').remove(l);
+                    } else {
+                      deferredQty = 0;
+                      if (
+                        line.get('product').get('quantityRule') === 'PP' &&
+                        line.get('product').get('groupProduct')
+                      ) {
+                        _.each(deferredLines, function(deferredLine) {
                           deferredQty += deferredLine.qty;
                         });
                       } else {
                         deferredQty = 1;
                       }
-                      newLine = me.order.createLine(prod, deferredQty);
-                      newLine.set('relatedLines', deferredLines);
-                      newLine.set('qty', deferredQty);
-                    }
-                    l.set('relatedLines', rln);
-                    newqtyminus = adjustNotGroupedServices(l, newqtyminus, linesToRemove);
-                    l.set('qty', newqtyminus);
-                  } else {
-                    linesToRemove.push(l);
-                  }
-                } else if (newqtyplus && !me.positiveLineUpdated) {
-                  me.positiveLineUpdated = true;
-                  deferredLines = l.get('relatedLines').filter(function getDeferredServices(relatedLine) {
-                    return relatedLine.deferred === true;
-                  });
-                  rlp = OB.UTIL.mergeArrays(rlp, (deferredLines || []));
-                  l.set('relatedLines', rlp);
-                  if (line.get('product').get('quantityRule') === 'PP') {
-                    if (line.get('groupService')) {
-                      _.each(deferredLines, function (deferredLine) {
-                        newqtyplus += deferredLine.qty;
-                      });
-                    } else {
-                      newqtyplus = adjustNotGroupedServices(line, newqtyplus, linesToRemove);
+                      l.set('relatedLines', deferredLines);
+                      l.set('qty', deferredQty);
                     }
                   }
-                  l.set('qty', newqtyplus);
-                } else if (newqtyplus && newqtyminus && me.positiveLineUpdated) {
-                  newLine = me.order.createLine(prod, newqtyminus);
-                  newLine.set('relatedLines', rln);
-                  newLine.set('groupService', newLine.get('product').get('groupProduct'));
-                  me.order.get('lines').remove(l);
                 } else {
-                  deferredLines = l.get('relatedLines').filter(function getDeferredServices(relatedLine) {
-                    return relatedLine.deferred === true;
-                  });
-                  if (!deferredLines.length) {
-                    me.order.get('lines').remove(l);
-                  } else {
-                    deferredQty = 0;
-                    if (line.get('product').get('quantityRule') === 'PP' && line.get('product').get('groupProduct')) {
-                      _.each(deferredLines, function (deferredLine) {
-                        deferredQty += deferredLine.qty;
-                      });
-                    } else {
-                      deferredQty = 1;
-                    }
-                    l.set('relatedLines', deferredLines);
-                    l.set('qty', deferredQty);
-                  }
-                }
-              } else {
-                if (serviceLines.length === 1 && newqtyminus && newqtyplus) {
-                  newLine = me.order.createLine(prod, newqtyplus);
-                  newLine.set('relatedLines', rlp);
-                  l.set('relatedLines', rln);
-                  l.set('qty', newqtyminus);
-                } else if (serviceLines.length === 1 && newqtyplus) {
-                  l.set('relatedLines', rlp);
-                  newqtyplus = adjustNotGroupedServices(l, newqtyplus, linesToRemove);
-                  l.set('qty', newqtyplus);
-                } else if (newqtyminus && !me.negativeLineUpdated) {
-                  me.negativeLineUpdated = true;
-                  l.set('relatedLines', rln);
-                  newqtyminus = adjustNotGroupedServices(l, newqtyminus, linesToRemove);
-                  l.set('qty', newqtyminus);
-                } else if (newqtyplus && newqtyminus && me.negativeLineUpdated) {
-                  positiveLine = me.order.get('lines').filter(function getLine(currentLine) {
-                    return currentLine.get('product').id === l.get('product').id && currentLine.get('qty') > 0;
-                  });
-                  if (positiveLine) {
-                    deferredLines = l.get('relatedLines').filter(function getDeferredServices(relatedLine) {
-                      return relatedLine.deferred === true;
-                    });
-                    rlp = OB.UTIL.mergeArrays(rlp, (deferredLines || []));
-                    positiveLine.set('relatedLines', rlp);
-                    positiveLine.set('qty', newqtyplus);
-                  } else {
+                  if (serviceLines.length === 1 && newqtyminus && newqtyplus) {
                     newLine = me.order.createLine(prod, newqtyplus);
                     newLine.set('relatedLines', rlp);
-                  }
-                  me.order.get('lines').remove(l);
-                } else {
-                  deferredLines = l.get('relatedLines').filter(function getDeferredServices(relatedLine) {
-                    return relatedLine.deferred === true;
-                  });
-                  if (!deferredLines.length && !l.get('obposIsDeleted')) {
+                    l.set('relatedLines', rln);
+                    l.set('qty', newqtyminus);
+                  } else if (serviceLines.length === 1 && newqtyplus) {
+                    l.set('relatedLines', rlp);
+                    newqtyplus = adjustNotGroupedServices(
+                      l,
+                      newqtyplus,
+                      linesToRemove
+                    );
+                    l.set('qty', newqtyplus);
+                  } else if (newqtyminus && !me.negativeLineUpdated) {
+                    me.negativeLineUpdated = true;
+                    l.set('relatedLines', rln);
+                    newqtyminus = adjustNotGroupedServices(
+                      l,
+                      newqtyminus,
+                      linesToRemove
+                    );
+                    l.set('qty', newqtyminus);
+                  } else if (
+                    newqtyplus &&
+                    newqtyminus &&
+                    me.negativeLineUpdated
+                  ) {
+                    positiveLine = me.order
+                      .get('lines')
+                      .filter(function getLine(currentLine) {
+                        return (
+                          currentLine.get('product').id ===
+                            l.get('product').id && currentLine.get('qty') > 0
+                        );
+                      });
+                    if (positiveLine) {
+                      deferredLines = l
+                        .get('relatedLines')
+                        .filter(function getDeferredServices(relatedLine) {
+                          return relatedLine.deferred === true;
+                        });
+                      rlp = OB.UTIL.mergeArrays(rlp, deferredLines || []);
+                      positiveLine.set('relatedLines', rlp);
+                      positiveLine.set('qty', newqtyplus);
+                    } else {
+                      newLine = me.order.createLine(prod, newqtyplus);
+                      newLine.set('relatedLines', rlp);
+                    }
                     me.order.get('lines').remove(l);
+                  } else {
+                    deferredLines = l
+                      .get('relatedLines')
+                      .filter(function getDeferredServices(relatedLine) {
+                        return relatedLine.deferred === true;
+                      });
+                    if (!deferredLines.length && !l.get('obposIsDeleted')) {
+                      me.order.get('lines').remove(l);
+                    }
                   }
                 }
-              }
-            });
-            me.positiveLineUpdated = false;
-            me.negativeLineUpdated = false;
-
-            notDeferredRelatedLines = line.get('relatedLines').filter(function getNotDeferredLines(rl) {
-              if (OB.UTIL.isNullOrUndefined(rl.deferred)) {
-                return false;
-              }
-              return !rl.deferred;
-            });
-            if (!line.get('groupService') && notDeferredRelatedLines.length > 1) {
-              notDeferredRelatedLines.forEach(function (rl) {
-                newLine = me.order.createLine(prod, me.order.get('lines').get(rl.orderlineId).get('qty'));
-                newLine.set('relatedLines', [rl]);
-                newLine.set('groupService', false);
               });
-              me.order.get('lines').remove(line);
-            }
-          }
-        });
-        linesToRemove.forEach(function (l) {
-          me.order.get('lines').remove(l);
-          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_DeletedService', [l.get('product').get('_identifier')]));
-        });
-        me.order.setUndo('FixOrderLines', oldUndo);
-        me.updating = false;
-        me.order.trigger('updateServicePrices');
-      }
+              me.positiveLineUpdated = false;
+              me.negativeLineUpdated = false;
 
-      if (approvalNeeded) {
-        OB.UTIL.Approval.requestApproval(
-        OB.MobileApp.view.$.containerWindow.getRoot().model, [{
-          approval: 'OBPOS_approval.returnService',
-          message: 'OBPOS_approval.returnService',
-          params: [servicesToApprove]
-        }], function (approved, supervisor, approvalType) {
-          if (approved) {
-            fixServiceOrderLines(true);
-          } else {
-            fixServiceOrderLines(false);
-          }
-        });
-      } else {
-        fixServiceOrderLines(true);
-      }
-    }, this);
-    this.order.on('calculatedReceipt updateServicePrices', function () {
-      var me = this,
-          setPriceCallback, changePriceCallback, handleError, serviceLines, i;
-
-      if (!this.order.get('hasServices') || this.updating || this.order.get('preventServicesUpdate') || !this.order.get('isEditable') || (this.order.get('isQuotation') && this.order.get('hasbeenpaid') === 'Y') || OB.UTIL.ProcessController.isProcessActive('calculateReceipt')) {
-        return;
-      }
-
-      setPriceCallback = function (line, newprice, priceChanged) {
-        OB.UTIL.HookManager.executeHooks('OBPOS_ServicePriceRules_PreSetPriceToLine', {
-          newprice: newprice,
-          line: line,
-          priceChanged: priceChanged
-        }, function (args) {
-          if (args.newprice !== line.get('price')) {
-            me.order.setPrice(args.line, args.newprice, {
-              setUndo: false
-            });
-          }
-        });
-      };
-
-      changePriceCallback = function (line, newprice) {
-        setPriceCallback(line, newprice, true);
-      };
-
-      handleError = function (line, message) {
-        if (OB.MobileApp.view.openedPopup === null) {
-          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_ErrorGettingServicePrice'), OB.I18N.getLabel(message, [line.get('product').get('_identifier')]), [{
-            label: OB.I18N.getLabel('OBMOBC_LblOk'),
-            isConfirmButton: true
-          }], {
-            onHideFunction: function () {
-              me.order.get('lines').remove(line);
-              me.order.set('undo', null);
-              me.$.totalReceiptLine.renderQty();
+              notDeferredRelatedLines = line
+                .get('relatedLines')
+                .filter(function getNotDeferredLines(rl) {
+                  if (OB.UTIL.isNullOrUndefined(rl.deferred)) {
+                    return false;
+                  }
+                  return !rl.deferred;
+                });
+              if (
+                !line.get('groupService') &&
+                notDeferredRelatedLines.length > 1
+              ) {
+                notDeferredRelatedLines.forEach(function(rl) {
+                  newLine = me.order.createLine(
+                    prod,
+                    me.order
+                      .get('lines')
+                      .get(rl.orderlineId)
+                      .get('qty')
+                  );
+                  newLine.set('relatedLines', [rl]);
+                  newLine.set('groupService', false);
+                });
+                me.order.get('lines').remove(line);
+              }
             }
           });
+          linesToRemove.forEach(function(l) {
+            me.order.get('lines').remove(l);
+            OB.UTIL.showWarning(
+              OB.I18N.getLabel('OBPOS_DeletedService', [
+                l.get('product').get('_identifier')
+              ])
+            );
+          });
+          me.order.setUndo('FixOrderLines', oldUndo);
+          me.updating = false;
+          me.order.trigger('updateServicePrices');
         }
-      };
 
-      serviceLines = this.order.get('lines').filter(function (l) {
-        return l.get('product').get('productType') === 'S';
-      });
-
-      for (i = 0; i < serviceLines.length; i++) {
-        var line = serviceLines[i];
-        if (line.get('product').get('isPriceRuleBased')) {
-          OB.UTIL.getCalculatedPriceForService(line, line.get('product'), line.get('relatedLines'), line.get('qty'), changePriceCallback, handleError);
+        if (approvalNeeded) {
+          OB.UTIL.Approval.requestApproval(
+            OB.MobileApp.view.$.containerWindow.getRoot().model,
+            [
+              {
+                approval: 'OBPOS_approval.returnService',
+                message: 'OBPOS_approval.returnService',
+                params: [servicesToApprove]
+              }
+            ],
+            function(approved, supervisor, approvalType) {
+              if (approved) {
+                fixServiceOrderLines(true);
+              } else {
+                fixServiceOrderLines(false);
+              }
+            }
+          );
         } else {
-          setPriceCallback(line, line.get('price'), false);
+          fixServiceOrderLines(true);
         }
-      }
-    }, this);
-    this.order.on('change:selectedPayment', function (model) {
-      OB.UTIL.HookManager.executeHooks('OBPOS_PaymentSelected', {
-        order: this.order,
-        paymentSelected: OB.MobileApp.model.paymentnames[model.get('selectedPayment')]
-      });
-    }, this);
+      },
+      this
+    );
+    this.order.on(
+      'calculatedReceipt updateServicePrices',
+      function() {
+        var me = this,
+          setPriceCallback,
+          changePriceCallback,
+          handleError,
+          serviceLines,
+          i;
+
+        if (
+          !this.order.get('hasServices') ||
+          this.updating ||
+          this.order.get('preventServicesUpdate') ||
+          !this.order.get('isEditable') ||
+          (this.order.get('isQuotation') &&
+            this.order.get('hasbeenpaid') === 'Y') ||
+          OB.UTIL.ProcessController.isProcessActive('calculateReceipt')
+        ) {
+          return;
+        }
+
+        setPriceCallback = function(line, newprice, priceChanged) {
+          OB.UTIL.HookManager.executeHooks(
+            'OBPOS_ServicePriceRules_PreSetPriceToLine',
+            {
+              newprice: newprice,
+              line: line,
+              priceChanged: priceChanged
+            },
+            function(args) {
+              if (args.newprice !== line.get('price')) {
+                me.order.setPrice(args.line, args.newprice, {
+                  setUndo: false
+                });
+              }
+            }
+          );
+        };
+
+        changePriceCallback = function(line, newprice) {
+          setPriceCallback(line, newprice, true);
+        };
+
+        handleError = function(line, message) {
+          if (OB.MobileApp.view.openedPopup === null) {
+            OB.UTIL.showConfirmation.display(
+              OB.I18N.getLabel('OBPOS_ErrorGettingServicePrice'),
+              OB.I18N.getLabel(message, [
+                line.get('product').get('_identifier')
+              ]),
+              [
+                {
+                  label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                  isConfirmButton: true
+                }
+              ],
+              {
+                onHideFunction: function() {
+                  me.order.get('lines').remove(line);
+                  me.order.set('undo', null);
+                  me.$.totalReceiptLine.renderQty();
+                }
+              }
+            );
+          }
+        };
+
+        serviceLines = this.order.get('lines').filter(function(l) {
+          return l.get('product').get('productType') === 'S';
+        });
+
+        for (i = 0; i < serviceLines.length; i++) {
+          var line = serviceLines[i];
+          if (line.get('product').get('isPriceRuleBased')) {
+            OB.UTIL.getCalculatedPriceForService(
+              line,
+              line.get('product'),
+              line.get('relatedLines'),
+              line.get('qty'),
+              changePriceCallback,
+              handleError
+            );
+          } else {
+            setPriceCallback(line, line.get('price'), false);
+          }
+        }
+      },
+      this
+    );
+    this.order.on(
+      'change:selectedPayment',
+      function(model) {
+        OB.UTIL.HookManager.executeHooks('OBPOS_PaymentSelected', {
+          order: this.order,
+          paymentSelected:
+            OB.MobileApp.model.paymentnames[model.get('selectedPayment')]
+        });
+      },
+      this
+    );
   }
 });
 enyo.kind({
@@ -1204,44 +1648,60 @@ enyo.kind({
   events: {
     onChangeTotal: ''
   },
-  components: [{
-    kind: 'OB.UI.ScrollableTable',
-    classes: 'obUiMultiOrderView-listMultiOrderLines',
-    name: 'listMultiOrderLines',
-    scrollAreaClasses: 'obUiMultiOrderView-listMultiOrderLines-scrollArea',
-    renderLine: 'OB.UI.RenderMultiOrdersLine',
-    renderEmpty: 'OB.UI.RenderMultiOrdersLineEmpty',
-    //defined on redenderorderline.js
-    listStyle: 'edit'
-  }, {
-    tag: 'ul',
-    classes: 'obUiMultiOrderView-container1',
-    components: [{
-      classes: 'obUiMultiOrderView-container1-container1',
-      tag: 'li',
-      components: [{
-        classes: 'obUiMultiOrderView-container1-container1-totalMultiReceiptLine',
-        kind: 'OB.UI.TotalMultiReceiptLine',
-        name: 'totalMultiReceiptLine'
-      }]
-    }, {
-      tag: 'li',
-      classes: 'obUiMultiOrderView-container1-container2',
-      components: [{
-        classes: 'obUiMultiOrderView-container1-container2-container1',
-        components: [{
-          classes: 'obUiMultiOrderView-container1-container2-container1-multiOrderBtnInvoice',
-          kind: 'btninvoice',
-          name: 'multiOrder_btninvoice',
-          showing: false
-        }, {
-          classes: 'obUiMultiOrderView-container1-container2-container1-element1'
-        }]
-      }]
-    }]
-  }],
+  components: [
+    {
+      kind: 'OB.UI.ScrollableTable',
+      classes: 'obUiMultiOrderView-listMultiOrderLines',
+      name: 'listMultiOrderLines',
+      scrollAreaClasses: 'obUiMultiOrderView-listMultiOrderLines-scrollArea',
+      renderLine: 'OB.UI.RenderMultiOrdersLine',
+      renderEmpty: 'OB.UI.RenderMultiOrdersLineEmpty',
+      //defined on redenderorderline.js
+      listStyle: 'edit'
+    },
+    {
+      tag: 'ul',
+      classes: 'obUiMultiOrderView-container1',
+      components: [
+        {
+          classes: 'obUiMultiOrderView-container1-container1',
+          tag: 'li',
+          components: [
+            {
+              classes:
+                'obUiMultiOrderView-container1-container1-totalMultiReceiptLine',
+              kind: 'OB.UI.TotalMultiReceiptLine',
+              name: 'totalMultiReceiptLine'
+            }
+          ]
+        },
+        {
+          tag: 'li',
+          classes: 'obUiMultiOrderView-container1-container2',
+          components: [
+            {
+              classes: 'obUiMultiOrderView-container1-container2-container1',
+              components: [
+                {
+                  classes:
+                    'obUiMultiOrderView-container1-container2-container1-multiOrderBtnInvoice',
+                  kind: 'btninvoice',
+                  name: 'multiOrder_btninvoice',
+                  showing: false
+                },
+                {
+                  classes:
+                    'obUiMultiOrderView-container1-container2-container1-element1'
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
   listMultiOrders: null,
-  init: function (model) {
+  init: function(model) {
     this.multiOrders = model.get('multiOrders');
     this.orderList = this.multiOrders.get('multiOrdersList');
     this.orderListPayment = this.multiOrders.get('payments');
@@ -1250,68 +1710,111 @@ enyo.kind({
     this.listMultiOrders = new Backbone.Collection();
     this.$.listMultiOrderLines.setCollection(this.listMultiOrders);
 
-    this.multiOrders.on('change:additionalInfo', function (changedModel) {
-      this.$.multiOrder_btninvoice.setShowing(changedModel.get('additionalInfo') === 'I');
-    }, this);
-    this.multiOrders.on('change:total', function (model) {
-      this.doChangeTotal({
-        newTotal: model.get('total')
-      });
-    }, this);
-    this.orderList.on('reset add remove amountToLayaway', function () {
-      var total = OB.DEC.Zero,
+    this.multiOrders.on(
+      'change:additionalInfo',
+      function(changedModel) {
+        this.$.multiOrder_btninvoice.setShowing(
+          changedModel.get('additionalInfo') === 'I'
+        );
+      },
+      this
+    );
+    this.multiOrders.on(
+      'change:total',
+      function(model) {
+        this.doChangeTotal({
+          newTotal: model.get('total')
+        });
+      },
+      this
+    );
+    this.orderList.on(
+      'reset add remove amountToLayaway',
+      function() {
+        var total = OB.DEC.Zero,
           prepayment = OB.DEC.Zero,
           prepaymentLimit = OB.DEC.Zero,
           existingPayment = OB.DEC.Zero,
           amountToLayaway = OB.DEC.Zero;
-      _.each(this.orderList.models, function (order) {
-        if (OB.UTIL.isNullOrUndefined(order.get('amountToLayaway'))) {
-          total = OB.DEC.add(total, order.getPending());
-        } else {
-          total = OB.DEC.add(total, order.get('amountToLayaway'));
-          amountToLayaway = OB.DEC.add(amountToLayaway, order.get('amountToLayaway'));
-        }
-        prepayment = OB.DEC.add(prepayment, order.get('obposPrepaymentamt'));
-        if (order.get('amountToLayaway') && order.get('amountToLayaway') < order.getGross()) {
-          prepaymentLimit = OB.DEC.add(prepaymentLimit, order.get('obposPrepaymentlaylimitamt'));
-        } else {
-          prepaymentLimit = OB.DEC.add(prepaymentLimit, order.get('obposPrepaymentlimitamt'));
-        }
-        existingPayment = OB.DEC.add(existingPayment, order.get('payment'));
-      });
-      this.total = total;
-      this.prepayment = prepayment;
-      this.prepaymentLimit = prepaymentLimit;
-      this.amountToLayaway = amountToLayaway;
-      this.existingPayment = existingPayment;
-      this.multiOrders.set('total', this.total);
-      this.multiOrders.set('obposPrepaymentamt', this.prepayment);
-      this.multiOrders.set('obposPrepaymentlimitamt', this.prepaymentLimit);
-      this.multiOrders.set('amountToLayaway', this.amountToLayaway);
-      this.multiOrders.set('existingPayment', this.existingPayment);
-      this.$.totalMultiReceiptLine.renderTotal(this.total);
-      this.listMultiOrders.reset(this.orderList.models);
-      if (model.get('leftColumnViewManager').isMultiOrder()) {
-        this.doChangeTotal({
-          newTotal: this.total
+        _.each(this.orderList.models, function(order) {
+          if (OB.UTIL.isNullOrUndefined(order.get('amountToLayaway'))) {
+            total = OB.DEC.add(total, order.getPending());
+          } else {
+            total = OB.DEC.add(total, order.get('amountToLayaway'));
+            amountToLayaway = OB.DEC.add(
+              amountToLayaway,
+              order.get('amountToLayaway')
+            );
+          }
+          prepayment = OB.DEC.add(prepayment, order.get('obposPrepaymentamt'));
+          if (
+            order.get('amountToLayaway') &&
+            order.get('amountToLayaway') < order.getGross()
+          ) {
+            prepaymentLimit = OB.DEC.add(
+              prepaymentLimit,
+              order.get('obposPrepaymentlaylimitamt')
+            );
+          } else {
+            prepaymentLimit = OB.DEC.add(
+              prepaymentLimit,
+              order.get('obposPrepaymentlimitamt')
+            );
+          }
+          existingPayment = OB.DEC.add(existingPayment, order.get('payment'));
         });
-      }
-      this.$.totalMultiReceiptLine.renderQty(this.orderList.length);
-    }, this);
-    this.multiOrders.on('change:selectedPayment', function (model) {
-      OB.UTIL.HookManager.executeHooks('OBPOS_PayOpenTicketsPaymentSelected', {
-        order: OB.MobileApp.view.$.containerWindow.getRoot().model.get('multiOrders'),
-        paymentSelected: OB.MobileApp.model.paymentnames[model.get('selectedPayment')]
-      });
-    }, this);
-    this.orderListPayment.on('add remove', function () {
-      OB.UTIL.localStorage.setItem('multiOrdersPayment', JSON.stringify(this.multiOrders.get('payments').toJSON()));
-    }, this);
+        this.total = total;
+        this.prepayment = prepayment;
+        this.prepaymentLimit = prepaymentLimit;
+        this.amountToLayaway = amountToLayaway;
+        this.existingPayment = existingPayment;
+        this.multiOrders.set('total', this.total);
+        this.multiOrders.set('obposPrepaymentamt', this.prepayment);
+        this.multiOrders.set('obposPrepaymentlimitamt', this.prepaymentLimit);
+        this.multiOrders.set('amountToLayaway', this.amountToLayaway);
+        this.multiOrders.set('existingPayment', this.existingPayment);
+        this.$.totalMultiReceiptLine.renderTotal(this.total);
+        this.listMultiOrders.reset(this.orderList.models);
+        if (model.get('leftColumnViewManager').isMultiOrder()) {
+          this.doChangeTotal({
+            newTotal: this.total
+          });
+        }
+        this.$.totalMultiReceiptLine.renderQty(this.orderList.length);
+      },
+      this
+    );
+    this.multiOrders.on(
+      'change:selectedPayment',
+      function(model) {
+        OB.UTIL.HookManager.executeHooks(
+          'OBPOS_PayOpenTicketsPaymentSelected',
+          {
+            order: OB.MobileApp.view.$.containerWindow
+              .getRoot()
+              .model.get('multiOrders'),
+            paymentSelected:
+              OB.MobileApp.model.paymentnames[model.get('selectedPayment')]
+          }
+        );
+      },
+      this
+    );
+    this.orderListPayment.on(
+      'add remove',
+      function() {
+        OB.UTIL.localStorage.setItem(
+          'multiOrdersPayment',
+          JSON.stringify(this.multiOrders.get('payments').toJSON())
+        );
+      },
+      this
+    );
   },
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
   },
-  destroyComponents: function () {
+  destroyComponents: function() {
     this.inherited(arguments);
     if (this.multiOrders) {
       this.multiOrders.off('change:additionalInfo', null, this);

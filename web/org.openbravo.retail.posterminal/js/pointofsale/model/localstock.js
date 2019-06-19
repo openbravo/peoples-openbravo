@@ -9,8 +9,7 @@
 
 /*global OB, Backbone, _ */
 
-(function () {
-
+(function() {
   OB.OBPOSPointOfSale = OB.OBPOSPointOfSale || {};
   OB.OBPOSPointOfSale.UsedModels = OB.OBPOSPointOfSale.UsedModels || {};
 
@@ -20,17 +19,19 @@
       qty: 0,
       warehouses: OB.OBPOSPointOfSale.UsedModels.WarehouseStockDetailList
     },
-    initialize: function (serverData) {
+    initialize: function(serverData) {
       var warehouses;
       if (serverData.product) {
         this.set('product', serverData.product);
       }
       this.set('qty', serverData.qty);
-      warehouses = new OB.OBPOSPointOfSale.UsedModels.WarehouseStockDetailList(serverData.warehouses);
+      warehouses = new OB.OBPOSPointOfSale.UsedModels.WarehouseStockDetailList(
+        serverData.warehouses
+      );
       this.set('warehouses', warehouses);
     },
-    getWarehouseById: function (warId) {
-      return _.find(this.get('warehouses').models, function (whmodel) {
+    getWarehouseById: function(warId) {
+      return _.find(this.get('warehouses').models, function(whmodel) {
         if (whmodel.get('warehouseid') === warId) {
           return warId;
         }
@@ -45,9 +46,11 @@
       warehouseqty: 0,
       bins: OB.OBPOSPointOfSale.UsedModels.BinStockDetailList
     },
-    initialize: function (warehouse) {
+    initialize: function(warehouse) {
       var bins;
-      bins = new OB.OBPOSPointOfSale.UsedModels.BinStockDetailList(warehouse.bins);
+      bins = new OB.OBPOSPointOfSale.UsedModels.BinStockDetailList(
+        warehouse.bins
+      );
       this.set('warehouseid', warehouse.warehouseid);
       this.set('warehousename', warehouse.warehousename);
       this.set('warehouseqty', warehouse.warehouseqty);
@@ -61,18 +64,22 @@
       binname: null,
       binqty: 0
     },
-    initialize: function (bin) {
+    initialize: function(bin) {
       this.set('binid', bin.binid);
       this.set('binname', bin.binname);
       this.set('binqty', bin.binqty);
     }
   });
 
-  OB.OBPOSPointOfSale.UsedModels.WarehouseStockDetailList = Backbone.Collection.extend({
-    model: OB.OBPOSPointOfSale.UsedModels.WarehouseStockDetail
-  });
+  OB.OBPOSPointOfSale.UsedModels.WarehouseStockDetailList = Backbone.Collection.extend(
+    {
+      model: OB.OBPOSPointOfSale.UsedModels.WarehouseStockDetail
+    }
+  );
 
-  OB.OBPOSPointOfSale.UsedModels.BinStockDetailList = Backbone.Collection.extend({
-    model: OB.OBPOSPointOfSale.UsedModels.BinStockDetail
-  });
-}());
+  OB.OBPOSPointOfSale.UsedModels.BinStockDetailList = Backbone.Collection.extend(
+    {
+      model: OB.OBPOSPointOfSale.UsedModels.BinStockDetail
+    }
+  );
+})();

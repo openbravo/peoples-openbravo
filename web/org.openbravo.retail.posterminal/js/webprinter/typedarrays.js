@@ -9,12 +9,11 @@
 
 /*global OB, Promise, Uint8Array */
 
-(function () {
-
+(function() {
   window.OB = window.OB || {};
 
   OB.ARRAYS = {
-    printArray: function (printChunk, size, data) {
+    printArray: function(printChunk, size, data) {
       var i, result;
 
       result = Promise.resolve();
@@ -23,11 +22,11 @@
       }
       return result;
     },
-    append: function (a1, a2) {
+    append: function(a1, a2) {
       var tmp = new Uint8Array(a1.length + a2.length);
       tmp.set(a1, 0);
       tmp.set(a2, a1.byteLength);
       return tmp;
     }
   };
-}());
+})();

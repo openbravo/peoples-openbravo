@@ -9,10 +9,10 @@
 
 /*global _ */
 
-OB.UTIL.HookManager.registerHook('OBPOS_PreDeleteLine', function (args, c) {
+OB.UTIL.HookManager.registerHook('OBPOS_PreDeleteLine', function(args, c) {
   if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
     var undoDeliveryModes = [];
-    _.each(args.selectedLines, function (line) {
+    _.each(args.selectedLines, function(line) {
       undoDeliveryModes.push({
         id: line.get('id'),
         prodcutId: line.get('product').get('id'),

@@ -7,8 +7,7 @@
  ************************************************************************************
  */
 
-(function () {
-
+(function() {
   var CurrencyPanel = OB.Data.ExtensibleModel.extend({
     modelName: 'CurrencyPanel',
     tableName: 'obpos_currency_panel',
@@ -16,44 +15,56 @@
     source: 'org.openbravo.retail.posterminal.master.CurrencyPanel'
   });
 
-  CurrencyPanel.addProperties([{
-    name: 'id',
-    column: 'obpos_currency_panel_id',
-    primaryKey: true,
-    type: 'TEXT'
-  }, {
-    name: 'currency',
-    column: 'c_currency_id',
-    type: 'TEXT'
-  }, {
-    name: 'amount',
-    column: 'amount',
-    type: 'NUMERIC'
-  }, {
-    name: 'backcolor',
-    column: 'backcolor',
-    type: 'TEXT'
-  }, {
-    name: 'bordercolor',
-    column: 'bordercolor',
-    type: 'TEXT'
-  }, {
-    name: 'lineNo',
-    column: 'line',
-    type: 'NUMERIC'
-  }, {
-    name: '_identifier',
-    column: '_identifier',
-    type: 'TEXT'
-  }]);
+  CurrencyPanel.addProperties([
+    {
+      name: 'id',
+      column: 'obpos_currency_panel_id',
+      primaryKey: true,
+      type: 'TEXT'
+    },
+    {
+      name: 'currency',
+      column: 'c_currency_id',
+      type: 'TEXT'
+    },
+    {
+      name: 'amount',
+      column: 'amount',
+      type: 'NUMERIC'
+    },
+    {
+      name: 'backcolor',
+      column: 'backcolor',
+      type: 'TEXT'
+    },
+    {
+      name: 'bordercolor',
+      column: 'bordercolor',
+      type: 'TEXT'
+    },
+    {
+      name: 'lineNo',
+      column: 'line',
+      type: 'NUMERIC'
+    },
+    {
+      name: '_identifier',
+      column: '_identifier',
+      type: 'TEXT'
+    }
+  ]);
 
-  CurrencyPanel.addIndex([{
-    name: 'currency_panel_idx',
-    columns: [{
-      name: 'c_currency_id',
-      sort: 'desc'
-    }]
-  }]);
+  CurrencyPanel.addIndex([
+    {
+      name: 'currency_panel_idx',
+      columns: [
+        {
+          name: 'c_currency_id',
+          sort: 'desc'
+        }
+      ]
+    }
+  ]);
 
   OB.Data.Registry.registerModel(CurrencyPanel);
-}());
+})();

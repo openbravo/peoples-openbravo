@@ -25,20 +25,22 @@ enyo.kind({
   handlers: {
     onkeydown: 'keydownHandler'
   },
-  keydownHandler: function (inSender, inEvent) {
+  keydownHandler: function(inSender, inEvent) {
     var keyCode = inEvent.keyCode;
-    if (keyCode === 27 && this.showing) { //Handle ESC key to hide the popup
+    if (keyCode === 27 && this.showing) {
+      //Handle ESC key to hide the popup
       //TODO: Improve the way the "close" action is defined
       this.$.subWindowHeader.getComponents()[0].onTapCloseButton();
       return true;
     }
-    if (keyCode === 13 && this.defaultActionButton) { //Handle ENTER key to execute the default action (if exists)
+    if (keyCode === 13 && this.defaultActionButton) {
+      //Handle ENTER key to execute the default action (if exists)
       this.defaultActionButton.executeTapAction();
       return true;
     }
     return false;
   },
-  showingChanged: function () {
+  showingChanged: function() {
     this.inherited(arguments);
     if (this.showing) {
       OB.MobileApp.view.setOriginalScanMode(OB.MobileApp.view.scanMode);
@@ -50,17 +52,26 @@ enyo.kind({
       OB.MobileApp.view.openedSubwindow = null;
     }
   },
-  focusInPopup: function () {
+  focusInPopup: function() {
     var allChildsArray = OB.UTIL.getAllChildsSorted(this),
-        isFirstFocusableElementObtained = false,
-        tagName, element, i;
+      isFirstFocusableElementObtained = false,
+      tagName,
+      element,
+      i;
     for (i = 0; i < allChildsArray.length; i++) {
       if (allChildsArray[i].hasNode() && allChildsArray[i].hasNode().tagName) {
         tagName = allChildsArray[i].hasNode().tagName.toUpperCase();
       } else {
         tagName = '';
       }
-      if ((tagName === 'INPUT' || tagName === 'SELECT' || tagName === 'TEXTAREA' || tagName === 'BUTTON') && allChildsArray[i].showing && !isFirstFocusableElementObtained) {
+      if (
+        (tagName === 'INPUT' ||
+          tagName === 'SELECT' ||
+          tagName === 'TEXTAREA' ||
+          tagName === 'BUTTON') &&
+        allChildsArray[i].showing &&
+        !isFirstFocusableElementObtained
+      ) {
         element = allChildsArray[i];
         isFirstFocusableElementObtained = true;
       } else if (allChildsArray[i].isFirstFocus) {
@@ -71,13 +82,13 @@ enyo.kind({
     if (element && element.isDefaultAction) {
       this.element = element;
       var me = this;
-      setTimeout(function () {
+      setTimeout(function() {
         me.element.focus();
       }, 100);
     }
     return true;
   },
-  setDefaultActionButton: function (element) {
+  setDefaultActionButton: function(element) {
     var allChildsArray, tagName, i;
     if (element) {
       allChildsArray = [element];
@@ -101,7 +112,7 @@ enyo.kind({
     }
     return true;
   },
-  mainBeforeSetShowing: function (args) {
+  mainBeforeSetShowing: function(args) {
     var valueToReturn = true;
     if (args.caller) {
       this.caller = args.caller;
@@ -117,13 +128,13 @@ enyo.kind({
 
     return valueToReturn;
   },
-  mainAfterShow: function (args) {
+  mainAfterShow: function(args) {
     this.focusInPopup();
     if (this.afterShow) {
       this.afterShow(args);
     }
   },
-  mainBeforeClose: function (dest) {
+  mainBeforeClose: function(dest) {
     var valueToReturn = true;
     if (dest) {
       this.lastLeaveTo = dest;
@@ -136,23 +147,26 @@ enyo.kind({
   },
   header: {},
   body: {},
-  components: [{
-    name: 'subWindowHeader',
-    classes: 'obUiSubwindow-subWindowHeader'
-  }, {
-    name: 'subWindowBody',
-    classes: 'obUiSubwindow-subWindowBody'
-  }],
-  relComponentsWithSubWindow: function (comp, subWin) {
+  components: [
+    {
+      name: 'subWindowHeader',
+      classes: 'obUiSubwindow-subWindowHeader'
+    },
+    {
+      name: 'subWindowBody',
+      classes: 'obUiSubwindow-subWindowBody'
+    }
+  ],
+  relComponentsWithSubWindow: function(comp, subWin) {
     if (!comp || !comp.getComponents) {
       return;
     }
-    enyo.forEach(comp.getComponents(), function (child) {
+    enyo.forEach(comp.getComponents(), function(child) {
       subWin.relComponentsWithSubWindow(child, subWin);
       child.subWindow = subWin;
     });
   },
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
     //set header
     this.$.subWindowHeader.createComponent(this.header);
@@ -166,28 +180,35 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.SubwindowHeader',
   classes: 'obUiSubwindowHeader',
-  components: [{
-    name: "closebutton",
-    tag: 'div',
-    classes: 'obUiSubwindowHeader-closebutton',
-    components: [{
-      tag: 'span',
-      classes: 'obUiSubwindowHeader-closebutton-element1',
-      allowHtml: true,
-      content: '&times;'
-    }]
-  }, {
-    classes: 'obUiSubwindowHeader-headermessage',
-    name: 'headermessage'
-  }],
-  initComponents: function () {
+  components: [
+    {
+      name: 'closebutton',
+      tag: 'div',
+      classes: 'obUiSubwindowHeader-closebutton',
+      components: [
+        {
+          tag: 'span',
+          classes: 'obUiSubwindowHeader-closebutton-element1',
+          allowHtml: true,
+          content: '&times;'
+        }
+      ]
+    },
+    {
+      classes: 'obUiSubwindowHeader-headermessage',
+      name: 'headermessage'
+    }
+  ],
+  initComponents: function() {
     this.inherited(arguments);
     if (this.i18nHeaderMessage) {
       this.$.headermessage.setContent(OB.I18N.getLabel(this.i18nHeaderMessage));
     } else if (this.headerMessage) {
       this.$.headermessage.setContent(this.headermessage);
     } else {
-      this.$.headermessage.setContent(OB.I18N.getLabel('OBPOS_TitleCustomerAdvancedSearch'));
+      this.$.headermessage.setContent(
+        OB.I18N.getLabel('OBPOS_TitleCustomerAdvancedSearch')
+      );
     }
     this.$.closebutton.headerContainer = this.$.closebutton.parent;
     this.$.closebutton.tap = this.onTapCloseButton;

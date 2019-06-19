@@ -16,7 +16,7 @@ enyo.kind({
   providerComponent: {
     content: 'Voiding payment'
   },
-  processVoid: function (voidpaymentinfo) {
+  processVoid: function(voidpaymentinfo) {
     // This function is invoked to void a payment transaction
     //
     // The parameter voidpaymentinfo is a plain js object with the following fields
@@ -36,25 +36,33 @@ enyo.kind({
     //     message: 'Error from somewhere'
     //   });
     // },
-    return new Promise(function (resolve, reject) {
-      setTimeout(function () {
-        if (voidpaymentinfo.payment.get('paymentData').properties.voidproperties.info === 'VISA OK') {
-          this.resolveTransaction(resolve, reject);
-        } else {
-          this.rejectTransaction(resolve, reject);
-        }
-      }.bind(this), 2000);
-    }.bind(this));
+    return new Promise(
+      function(resolve, reject) {
+        setTimeout(
+          function() {
+            if (
+              voidpaymentinfo.payment.get('paymentData').properties
+                .voidproperties.info === 'VISA OK'
+            ) {
+              this.resolveTransaction(resolve, reject);
+            } else {
+              this.rejectTransaction(resolve, reject);
+            }
+          }.bind(this),
+          2000
+        );
+      }.bind(this)
+    );
   },
-  resolveTransaction: function (resolve, reject) {
+  resolveTransaction: function(resolve, reject) {
     resolve({});
   },
-  rejectTransaction: function (resolve, reject) {
+  rejectTransaction: function(resolve, reject) {
     reject({
       message: 'Void transaction has been rejected'
     });
   },
-  getErrorMessage: function (exceptioninfo) {
+  getErrorMessage: function(exceptioninfo) {
     // This function is invoked when processInfo function is rejected.
     // It is invoked with the parameter exceptioninfo that contains the exception
     // object of the reject, and must return the error message to display to the cashier

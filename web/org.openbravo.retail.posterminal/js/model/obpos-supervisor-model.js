@@ -12,23 +12,35 @@
 /**
  * Local model to keep the supervisor and which type of approval can do each of them
  */
-OB.Data.Registry.registerModel(Backbone.Model.extend({
-  modelName: 'Supervisor',
-  tableName: 'supervisor',
-  entityName: 'Supervisor',
-  properties: ['id', 'name', 'password', 'permissions', 'created', '_identifier', '_idx'],
-  propertyMap: {
-    'id': 'supervisor_id',
-    'name': 'name',
-    'password': 'password',
-    'permissions': 'permissions',
-    'created': 'created',
-    '_identifier': '_identifier',
-    '_idx': '_idx'
-  },
-  createStatement: 'CREATE TABLE IF NOT EXISTS supervisor (supervisor_id TEXT PRIMARY KEY , name TEXT , password TEXT , permissions TEXT, created TEXT, _identifier TEXT , _idx NUMERIC)',
-  dropStatement: 'DROP TABLE IF EXISTS supervisor',
-  insertStatement: 'INSERT INTO supervisor(supervisor_id, name, password, permissions, created, _identifier, _idx)  VALUES (?, ?, ?, ?, ?, ?, ?)',
-  updateStatement: '',
-  local: true
-}));
+OB.Data.Registry.registerModel(
+  Backbone.Model.extend({
+    modelName: 'Supervisor',
+    tableName: 'supervisor',
+    entityName: 'Supervisor',
+    properties: [
+      'id',
+      'name',
+      'password',
+      'permissions',
+      'created',
+      '_identifier',
+      '_idx'
+    ],
+    propertyMap: {
+      id: 'supervisor_id',
+      name: 'name',
+      password: 'password',
+      permissions: 'permissions',
+      created: 'created',
+      _identifier: '_identifier',
+      _idx: '_idx'
+    },
+    createStatement:
+      'CREATE TABLE IF NOT EXISTS supervisor (supervisor_id TEXT PRIMARY KEY , name TEXT , password TEXT , permissions TEXT, created TEXT, _identifier TEXT , _idx NUMERIC)',
+    dropStatement: 'DROP TABLE IF EXISTS supervisor',
+    insertStatement:
+      'INSERT INTO supervisor(supervisor_id, name, password, permissions, created, _identifier, _idx)  VALUES (?, ?, ?, ?, ?, ?, ?)',
+    updateStatement: '',
+    local: true
+  })
+);

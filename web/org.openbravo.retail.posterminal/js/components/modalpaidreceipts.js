@@ -9,7 +9,6 @@
 
 /*global OB, _, moment, enyo*/
 
-
 /*header of scrollable table*/
 enyo.kind({
   name: 'OB.UI.ModalPRScrollableHeader',
@@ -22,120 +21,172 @@ enyo.kind({
   handlers: {
     onFiltered: 'searchAction'
   },
-  components: [{
-    classes: 'obUiModalPRScrollableHeader-container1',
-    components: [{
-      classes: 'obUiModalPRScrollableHeader-container1-container1',
-      components: [{
-        classes: 'obUiModalPRScrollableHeader-container1-container1-container1',
-        components: [{
-          kind: 'OB.UI.SearchInputAutoFilter',
-          name: 'filterText',
-          classes: 'obUiModalPRScrollableHeader-container1-container1-container1-filterText',
-          skipAutoFilterPref: 'OBPOS_remote.order'
-
-        }]
-      }, {
-        classes: 'obUiModalPRScrollableHeader-container1-container1-container2',
-        components: [{
-          kind: 'OB.UI.SmallButton',
-          name: 'clearButton',
-          classes: 'obUiModalPRScrollableHeader-container1-container1-container2-clearAction',
-          ontap: 'clearAction'
-        }]
-      }, {
-        classes: 'obUiModalPRScrollableHeader-container1-container1-container3',
-        components: [{
-          kind: 'OB.UI.SmallButton',
-          name: 'searchButton',
-          classes: 'obUiModalPRScrollableHeader-container1-container1-container3-searchButton',
-          ontap: 'searchAction'
-        }]
-      }]
-    }, {
-      classes: 'obUiModalPRScrollableHeader-container1-container2',
-      components: [{
-        classes: 'obUiModalPRScrollableHeader-container1-container2-container1',
-        components: [{
-          tag: 'h4',
-          initComponents: function () {
-            this.setContent(OB.I18N.getLabel('OBPOS_LblStartDate'));
-          },
-          classes: 'obUiModalPRScrollableHeader-container1-container2-container1-element1'
-        }]
-      }, {
-        classes: 'obUiModalPRScrollableHeader-container1-container2-container2',
-        components: [{
-          tag: 'h4',
-          initComponents: function () {
-            this.setContent(OB.I18N.getLabel('OBPOS_LblEndDate'));
-          },
-          classes: 'obUiModalPRScrollableHeader-container1-container2-container2-element1'
-        }]
-      }]
-    }, {
-      classes: 'obUiModalPRScrollableHeader-container1-container3',
-      components: [{
-        classes: 'obUiModalPRScrollableHeader-container1-container3-container1',
-        components: [{
-          kind: 'enyo.Input',
-          name: 'startDate',
-          size: '10',
-          type: 'text',
-          classes: 'obUiModalPRScrollableHeader-container1-container3-container1-startDate',
-          onchange: 'searchAction'
-        }]
-      }, {
-        classes: 'obUiModalPRScrollableHeader-container1-container3-container2',
-        components: [{
-          tag: 'h4',
-          initComponents: function () {
-            this.setContent(OB.I18N.getDateFormatLabel());
-          },
-          classes: 'obUiModalPRScrollableHeader-container1-container3-container2-element1'
-        }]
-      }, {
-        kind: 'enyo.Input',
-        name: 'endDate',
-        size: '10',
-        type: 'text',
-        classes: 'obUiModalPRScrollableHeader-container1-container3-endDate',
-        onchange: 'searchAction'
-      }, {
-        classes: 'obUiModalPRScrollableHeader-container1-container3-container4',
-        components: [{
-          tag: 'h4',
-          initComponents: function () {
-            this.setContent(OB.I18N.getDateFormatLabel());
-          },
-          classes: 'obUiModalPRScrollableHeader-container1-container3-container4-element1'
-        }]
-      }]
-    }]
-  }],
-  showValidationErrors: function (stDate, endDate) {
+  components: [
+    {
+      classes: 'obUiModalPRScrollableHeader-container1',
+      components: [
+        {
+          classes: 'obUiModalPRScrollableHeader-container1-container1',
+          components: [
+            {
+              classes:
+                'obUiModalPRScrollableHeader-container1-container1-container1',
+              components: [
+                {
+                  kind: 'OB.UI.SearchInputAutoFilter',
+                  name: 'filterText',
+                  classes:
+                    'obUiModalPRScrollableHeader-container1-container1-container1-filterText',
+                  skipAutoFilterPref: 'OBPOS_remote.order'
+                }
+              ]
+            },
+            {
+              classes:
+                'obUiModalPRScrollableHeader-container1-container1-container2',
+              components: [
+                {
+                  kind: 'OB.UI.SmallButton',
+                  name: 'clearButton',
+                  classes:
+                    'obUiModalPRScrollableHeader-container1-container1-container2-clearAction',
+                  ontap: 'clearAction'
+                }
+              ]
+            },
+            {
+              classes:
+                'obUiModalPRScrollableHeader-container1-container1-container3',
+              components: [
+                {
+                  kind: 'OB.UI.SmallButton',
+                  name: 'searchButton',
+                  classes:
+                    'obUiModalPRScrollableHeader-container1-container1-container3-searchButton',
+                  ontap: 'searchAction'
+                }
+              ]
+            }
+          ]
+        },
+        {
+          classes: 'obUiModalPRScrollableHeader-container1-container2',
+          components: [
+            {
+              classes:
+                'obUiModalPRScrollableHeader-container1-container2-container1',
+              components: [
+                {
+                  tag: 'h4',
+                  initComponents: function() {
+                    this.setContent(OB.I18N.getLabel('OBPOS_LblStartDate'));
+                  },
+                  classes:
+                    'obUiModalPRScrollableHeader-container1-container2-container1-element1'
+                }
+              ]
+            },
+            {
+              classes:
+                'obUiModalPRScrollableHeader-container1-container2-container2',
+              components: [
+                {
+                  tag: 'h4',
+                  initComponents: function() {
+                    this.setContent(OB.I18N.getLabel('OBPOS_LblEndDate'));
+                  },
+                  classes:
+                    'obUiModalPRScrollableHeader-container1-container2-container2-element1'
+                }
+              ]
+            }
+          ]
+        },
+        {
+          classes: 'obUiModalPRScrollableHeader-container1-container3',
+          components: [
+            {
+              classes:
+                'obUiModalPRScrollableHeader-container1-container3-container1',
+              components: [
+                {
+                  kind: 'enyo.Input',
+                  name: 'startDate',
+                  size: '10',
+                  type: 'text',
+                  classes:
+                    'obUiModalPRScrollableHeader-container1-container3-container1-startDate',
+                  onchange: 'searchAction'
+                }
+              ]
+            },
+            {
+              classes:
+                'obUiModalPRScrollableHeader-container1-container3-container2',
+              components: [
+                {
+                  tag: 'h4',
+                  initComponents: function() {
+                    this.setContent(OB.I18N.getDateFormatLabel());
+                  },
+                  classes:
+                    'obUiModalPRScrollableHeader-container1-container3-container2-element1'
+                }
+              ]
+            },
+            {
+              kind: 'enyo.Input',
+              name: 'endDate',
+              size: '10',
+              type: 'text',
+              classes:
+                'obUiModalPRScrollableHeader-container1-container3-endDate',
+              onchange: 'searchAction'
+            },
+            {
+              classes:
+                'obUiModalPRScrollableHeader-container1-container3-container4',
+              components: [
+                {
+                  tag: 'h4',
+                  initComponents: function() {
+                    this.setContent(OB.I18N.getDateFormatLabel());
+                  },
+                  classes:
+                    'obUiModalPRScrollableHeader-container1-container3-container4-element1'
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  showValidationErrors: function(stDate, endDate) {
     var me = this;
     if (stDate === false) {
       this.$.startDate.addClass('obUiModalPRScrollableHeader-enyoInput_error');
-      setTimeout(function () {
-        me.$.startDate.removeClass('obUiModalPRScrollableHeader-enyoInput_error');
+      setTimeout(function() {
+        me.$.startDate.removeClass(
+          'obUiModalPRScrollableHeader-enyoInput_error'
+        );
       }, 5000);
     }
     if (endDate === false) {
       this.$.endDate.addClass('obUiModalPRScrollableHeader-enyoInput_error');
-      setTimeout(function () {
+      setTimeout(function() {
         me.$.endDate.removeClass('obUiModalPRScrollableHeader-enyoInput_error');
       }, 5000);
     }
   },
-  disableFilterText: function (value) {
+  disableFilterText: function(value) {
     this.$.filterText.setDisabled(value);
   },
-  disableFilterButtons: function (value) {
+  disableFilterButtons: function(value) {
     this.$.searchButton.setDisabled(value);
     this.$.clearButton.setDisabled(value);
   },
-  clearAction: function () {
+  clearAction: function() {
     if (!this.$.filterText.disabled) {
       this.$.filterText.setValue('');
     }
@@ -144,29 +195,42 @@ enyo.kind({
     this.doClearAction();
   },
 
-  getDateFilters: function () {
-    var startDate, endDate, startDateValidated = true,
-        endDateValidated = true,
-        formattedStartDate = '',
-        formattedEndDate = '';
+  getDateFilters: function() {
+    var startDate,
+      endDate,
+      startDateValidated = true,
+      endDateValidated = true,
+      formattedStartDate = '',
+      formattedEndDate = '';
     startDate = this.$.startDate.getValue();
     endDate = this.$.endDate.getValue();
 
     if (startDate !== '') {
       startDateValidated = OB.Utilities.Date.OBToJS(startDate, OB.Format.date);
       if (startDateValidated) {
-        formattedStartDate = OB.Utilities.Date.JSToOB(startDateValidated, 'yyyy-MM-dd');
+        formattedStartDate = OB.Utilities.Date.JSToOB(
+          startDateValidated,
+          'yyyy-MM-dd'
+        );
       }
     }
 
     if (endDate !== '') {
       endDateValidated = OB.Utilities.Date.OBToJS(endDate, OB.Format.date);
       if (endDateValidated) {
-        formattedEndDate = OB.Utilities.Date.JSToOB(endDateValidated, 'yyyy-MM-dd');
+        formattedEndDate = OB.Utilities.Date.JSToOB(
+          endDateValidated,
+          'yyyy-MM-dd'
+        );
       }
     }
 
-    if (startDate !== '' && startDateValidated && endDate !== '' && endDateValidated) {
+    if (
+      startDate !== '' &&
+      startDateValidated &&
+      endDate !== '' &&
+      endDateValidated
+    ) {
       if (moment(endDateValidated).diff(moment(startDateValidated)) < 0) {
         endDateValidated = null;
         startDateValidated = null;
@@ -174,7 +238,10 @@ enyo.kind({
     }
 
     if (startDateValidated === null || endDateValidated === null) {
-      this.showValidationErrors(startDateValidated !== null, endDateValidated !== null);
+      this.showValidationErrors(
+        startDateValidated !== null,
+        endDateValidated !== null
+      );
       return false;
     }
     this.$.startDate.removeClass('obUiModalPRScrollableHeader-enyoInput_error');
@@ -188,11 +255,21 @@ enyo.kind({
     return true;
   },
 
-  searchAction: function () {
-    var params = this.parent.parent.parent.parent.parent.parent.parent.parent.params;
+  searchAction: function() {
+    var params = this.parent.parent.parent.parent.parent.parent.parent.parent
+      .params;
 
     this.filters = {
-      documentType: params.isQuotation ? ([OB.MobileApp.model.get('terminal').terminalType.documentTypeForQuotations]) : ([OB.MobileApp.model.get('terminal').terminalType.documentType, OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns]),
+      documentType: params.isQuotation
+        ? [
+            OB.MobileApp.model.get('terminal').terminalType
+              .documentTypeForQuotations
+          ]
+        : [
+            OB.MobileApp.model.get('terminal').terminalType.documentType,
+            OB.MobileApp.model.get('terminal').terminalType
+              .documentTypeForReturns
+          ],
       docstatus: params.isQuotation ? 'UE' : null,
       isQuotation: params.isQuotation ? true : false,
       isLayaway: params.isLayaway ? true : false,
@@ -227,22 +304,27 @@ enyo.kind({
     kind: 'OB.UI.ReceiptsForVerifiedReturnsList',
     classes: 'obUiModalVerifiedReturns-body-obUiReceiptsForVerifiedReturnsList'
   },
-  getFilterSelectorTableHeader: function () {
-    return this.$.body.$.receiptsForVerifiedReturnsList.$.verifiedReturnsReceiptsListItemPrinter.$.theader.$.modalVerifiedReturnsScrollableHeader.$.filterSelector;
+  getFilterSelectorTableHeader: function() {
+    return this.$.body.$.receiptsForVerifiedReturnsList.$
+      .verifiedReturnsReceiptsListItemPrinter.$.theader.$
+      .modalVerifiedReturnsScrollableHeader.$.filterSelector;
   },
-  getAdvancedFilterBtn: function () {
-    return this.$.body.$.receiptsForVerifiedReturnsList.$.verifiedReturnsReceiptsListItemPrinter.$.theader.$.modalVerifiedReturnsScrollableHeader.$.advancedFilterWindowButtonVerifiedReturns;
+  getAdvancedFilterBtn: function() {
+    return this.$.body.$.receiptsForVerifiedReturnsList.$
+      .verifiedReturnsReceiptsListItemPrinter.$.theader.$
+      .modalVerifiedReturnsScrollableHeader.$
+      .advancedFilterWindowButtonVerifiedReturns;
   },
-  getAdvancedFilterDialog: function () {
+  getAdvancedFilterDialog: function() {
     return 'modalAdvancedFilterVerifiedReturns';
   },
-  executeOnShow: function () {
+  executeOnShow: function() {
     if (!this.initialized) {
       this.inherited(arguments);
       this.getFilterSelectorTableHeader().clearFilter();
     }
   },
-  init: function (model) {
+  init: function(model) {
     this.model = model;
   }
 });

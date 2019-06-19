@@ -10,65 +10,72 @@
 /*global enyo, _, Backbone */
 
 OB.SplitLine = OB.SplitLine || {};
-(function () {
+(function() {
   OB.SplitLine.MAX_SPLITLINE = 20;
-}());
+})();
 
 enyo.kind({
   name: 'OB.UI.ModalNumberEditor',
   events: {
     onNumberChange: ''
   },
-  components: [{
-    kind: 'OB.UI.SmallButton',
-    name: 'btnQtyMinus',
-    classes: 'obUiModalNumberEditor-btnQtyMinus obUiModalNumberEditor-button-generic',
-    tap: function () {
-      var qty = parseInt(this.owner.$.numberQty.getValue(), 10),
+  components: [
+    {
+      kind: 'OB.UI.SmallButton',
+      name: 'btnQtyMinus',
+      classes:
+        'obUiModalNumberEditor-btnQtyMinus obUiModalNumberEditor-button-generic',
+      tap: function() {
+        var qty = parseInt(this.owner.$.numberQty.getValue(), 10),
           min = this.owner.$.numberQty.getMin();
-      if (isNaN(qty) && !isNaN(min)) {
-        qty = min + 1;
-      }
-      if (qty > min) {
-        this.owner.$.numberQty.setValue(qty - 1);
-        this.owner.doNumberChange({
-          numberId: this.owner.name,
-          value: parseInt(this.owner.$.numberQty.getValue(), 10)
-        });
+        if (isNaN(qty) && !isNaN(min)) {
+          qty = min + 1;
+        }
+        if (qty > min) {
+          this.owner.$.numberQty.setValue(qty - 1);
+          this.owner.doNumberChange({
+            numberId: this.owner.name,
+            value: parseInt(this.owner.$.numberQty.getValue(), 10)
+          });
+        }
+      },
+      initComponents: function() {
+        this.setContent(OB.I18N.getLabel('OBMOBC_Character')[3]);
       }
     },
-    initComponents: function () {
-      this.setContent(OB.I18N.getLabel('OBMOBC_Character')[3]);
-    }
-  }, {
-    kind: 'OB.UI.EditNumber',
-    name: 'numberQty',
-    classes: 'obUiModalNumberEditor-numberQty obUiModalNumberEditor-button-generic',
-    min: 1
-  }, {
-    kind: 'OB.UI.SmallButton',
-    name: 'btnQtyPlus',
-    classes: 'obUiModalNumberEditor-btnQtyPlus obUiModalNumberEditor-button-generic',
-    tap: function () {
-      var qty = parseInt(this.owner.$.numberQty.getValue(), 10),
+    {
+      kind: 'OB.UI.EditNumber',
+      name: 'numberQty',
+      classes:
+        'obUiModalNumberEditor-numberQty obUiModalNumberEditor-button-generic',
+      min: 1
+    },
+    {
+      kind: 'OB.UI.SmallButton',
+      name: 'btnQtyPlus',
+      classes:
+        'obUiModalNumberEditor-btnQtyPlus obUiModalNumberEditor-button-generic',
+      tap: function() {
+        var qty = parseInt(this.owner.$.numberQty.getValue(), 10),
           min = this.owner.$.numberQty.getMin(),
           max = this.owner.$.numberQty.getMax();
-      if (isNaN(qty) && !isNaN(min)) {
-        qty = min - 1;
+        if (isNaN(qty) && !isNaN(min)) {
+          qty = min - 1;
+        }
+        if (!max || qty < max) {
+          this.owner.$.numberQty.setValue(qty + 1);
+          this.owner.doNumberChange({
+            numberId: this.owner.name,
+            value: parseInt(this.owner.$.numberQty.getValue(), 10)
+          });
+        }
+      },
+      initComponents: function() {
+        this.setContent(OB.I18N.getLabel('OBMOBC_Character')[4]);
       }
-      if (!max || qty < max) {
-        this.owner.$.numberQty.setValue(qty + 1);
-        this.owner.doNumberChange({
-          numberId: this.owner.name,
-          value: parseInt(this.owner.$.numberQty.getValue(), 10)
-        });
-      }
-    },
-    initComponents: function () {
-      this.setContent(OB.I18N.getLabel('OBMOBC_Character')[4]);
     }
-  }],
-  initComponents: function () {
+  ],
+  initComponents: function() {
     this.inherited(arguments);
     this.$.numberQty.setNumberId(this.name);
     if (this.isDisabled) {
@@ -83,43 +90,53 @@ enyo.kind({
   name: 'OB.UI.ModalSplitLinesTable',
   kind: 'Scroller',
   classes: 'obUiModalSplitLinesTable',
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
     this.lines = [];
   },
-  createLine: function (qty, deliveredLine) {
+  createLine: function(qty, deliveredLine) {
     var lineNum = this.lines.length,
-        line = this.createComponent({
+      line = this.createComponent({
         classes: 'obUiModalSplitLinesTable-line',
-        components: [{
-          classes: 'obUiModalSplitLinesTable-line-lineNum',
-          name: 'lineNum_' + lineNum,
-          content: (deliveredLine ? OB.I18N.getLabel('OBPOS_lblSplitLinesQtyDelivered', [lineNum + 1]) : OB.I18N.getLabel('OBPOS_lblSplitLinesQty', [lineNum + 1]))
-        }, {
-          classes: 'obUiModalSplitLinesTable-line-container2',
-          components: [{
-            kind: 'OB.UI.ModalNumberEditor',
-            name: 'qty_' + lineNum,
-            classes: 'obUiModalSplitLinesTable-line-container2-qty',
-            isDisabled: deliveredLine
-          }, {
-            kind: 'OB.UI.SmallButton',
-            name: 'btnRemove_' + lineNum,
-            lineNum: lineNum,
-            classes: 'obUiModalSplitLinesTable-line-container2-btnRemove',
-            content: 'x',
-            tap: function () {
-              this.owner.removeLine(this.lineNum, true);
-            },
-            disabled: deliveredLine
-          }]
-        }]
+        components: [
+          {
+            classes: 'obUiModalSplitLinesTable-line-lineNum',
+            name: 'lineNum_' + lineNum,
+            content: deliveredLine
+              ? OB.I18N.getLabel('OBPOS_lblSplitLinesQtyDelivered', [
+                  lineNum + 1
+                ])
+              : OB.I18N.getLabel('OBPOS_lblSplitLinesQty', [lineNum + 1])
+          },
+          {
+            classes: 'obUiModalSplitLinesTable-line-container2',
+            components: [
+              {
+                kind: 'OB.UI.ModalNumberEditor',
+                name: 'qty_' + lineNum,
+                classes: 'obUiModalSplitLinesTable-line-container2-qty',
+                isDisabled: deliveredLine
+              },
+              {
+                kind: 'OB.UI.SmallButton',
+                name: 'btnRemove_' + lineNum,
+                lineNum: lineNum,
+                classes: 'obUiModalSplitLinesTable-line-container2-btnRemove',
+                content: 'x',
+                tap: function() {
+                  this.owner.removeLine(this.lineNum, true);
+                },
+                disabled: deliveredLine
+              }
+            ]
+          }
+        ]
       });
     line.owner.$['qty_' + lineNum].$.numberQty.setValue(qty);
     line.render();
     this.lines.push(line);
   },
-  setValues: function (values) {
+  setValues: function(values) {
     var i;
     for (i = 0; i < values.length && i < this.lines.length; i++) {
       if (values[i] instanceof Object) {
@@ -129,29 +146,36 @@ enyo.kind({
       }
     }
   },
-  getValues: function () {
+  getValues: function() {
     var result = [];
-    _.each(this.lines, function (line, index) {
-      result.push(parseInt(line.owner.$['qty_' + index].$.numberQty.getValue(), 10));
+    _.each(this.lines, function(line, index) {
+      result.push(
+        parseInt(line.owner.$['qty_' + index].$.numberQty.getValue(), 10)
+      );
     });
     return result;
   },
-  countLines: function () {
+  countLines: function() {
     return this.lines.length;
   },
-  sumLines: function () {
+  sumLines: function() {
     var sum = 0;
-    _.each(this.lines, function (line, indx) {
-      var val = parseInt(line.owner.$['qty_' + indx].$.numberQty.getValue(), 10);
-      sum += (isNaN(val) ? 0 : val);
+    _.each(this.lines, function(line, indx) {
+      var val = parseInt(
+        line.owner.$['qty_' + indx].$.numberQty.getValue(),
+        10
+      );
+      sum += isNaN(val) ? 0 : val;
     });
     return sum;
   },
-  removeLine: function (lineNum, modified) {
+  removeLine: function(lineNum, modified) {
     if (this.lines.length > 2 && lineNum >= 0 && lineNum < this.lines.length) {
       var i;
       for (i = lineNum; i < this.lines.length - 1; i++) {
-        this.lines[i].owner.$['qty_' + i].$.numberQty.setValue(this.lines[i + 1].owner.$['qty_' + (i + 1)].$.numberQty.getValue());
+        this.lines[i].owner.$['qty_' + i].$.numberQty.setValue(
+          this.lines[i + 1].owner.$['qty_' + (i + 1)].$.numberQty.getValue()
+        );
       }
       this.lines[this.lines.length - 1].destroy();
       this.lines.pop();
@@ -163,8 +187,8 @@ enyo.kind({
       }
     }
   },
-  removeAllLine: function () {
-    _.each(this.lines, function (line) {
+  removeAllLine: function() {
+    _.each(this.lines, function(line) {
       line.destroy();
     });
     this.lines = [];
@@ -177,7 +201,7 @@ enyo.kind({
   classes: 'obUiModalSplitLineBtnApply',
   isDefaultAction: true,
   i18nContent: 'OBPOS_LblApplyButton',
-  tap: function () {
+  tap: function() {
     this.owner.owner.splitLines();
     this.doHideThisPopup();
   }
@@ -189,7 +213,7 @@ enyo.kind({
   classes: 'obUiModalSplitLineBtnCancel',
   isDefaultAction: false,
   i18nContent: 'OBMOBC_LblCancel',
-  tap: function () {
+  tap: function() {
     this.doHideThisPopup();
   }
 });
@@ -210,131 +234,176 @@ enyo.kind({
   //body of the popup
   bodyContent: {
     classes: 'obUiModalSplitLine-bodyContent',
-    components: [{
-      classes: 'obUiModalSplitLine-bodyContent-splitlineMessage',
-      name: 'splitlineMessage',
-      initComponents: function () {
-        this.setContent(OB.I18N.getLabel('OBPOS_lblSplitWarning'));
+    components: [
+      {
+        classes: 'obUiModalSplitLine-bodyContent-splitlineMessage',
+        name: 'splitlineMessage',
+        initComponents: function() {
+          this.setContent(OB.I18N.getLabel('OBPOS_lblSplitWarning'));
+        }
+      },
+      {
+        classes: 'obUiModalSplitLine-bodyContent-container2',
+        components: [
+          {
+            classes: 'obUiModalSplitLine-bodyContent-container2-element1',
+            initComponents: function() {
+              this.setContent(OB.I18N.getLabel('OBPOS_lblSplitOriginalQty'));
+            }
+          },
+          {
+            classes: 'obUiModalSplitLine-bodyContent-container2-element2',
+            initComponents: function() {
+              this.setContent(OB.I18N.getLabel('OBPOS_lblSplitQty'));
+            }
+          },
+          {
+            classes: 'obUiModalSplitLine-bodyContent-container2-element3',
+            initComponents: function() {
+              this.setContent(OB.I18N.getLabel('OBPOS_lblSplitDifference'));
+            }
+          },
+          {
+            classes: 'obUiModalSplitLine-bodyContent-container2-element4',
+            initComponents: function() {
+              this.setContent(OB.I18N.getLabel('OBPOS_lblSplitNumberLines'));
+            }
+          }
+        ]
+      },
+      {
+        classes: 'obUiModalSplitLine-bodyContent-container3',
+        components: [
+          {
+            classes: 'obUiModalSplitLine-bodyContent-container3-container1',
+            components: [
+              {
+                kind: 'OB.UI.EditNumber',
+                name: 'originalQty',
+                classes:
+                  'obUiModalSplitLine-bodyContent-container3-container1-originalQty',
+                initComponents: function() {
+                  this.setDisabled(true);
+                }
+              }
+            ]
+          },
+          {
+            classes: 'obUiModalSplitLine-bodyContent-container3-container2',
+            components: [
+              {
+                kind: 'OB.UI.EditNumber',
+                name: 'splitQty',
+                classes:
+                  'obUiModalSplitLine-bodyContent-container3-container2-splitQty',
+                initComponents: function() {
+                  this.setDisabled(true);
+                }
+              }
+            ]
+          },
+          {
+            classes: 'obUiModalSplitLine-bodyContent-container3-container3',
+            components: [
+              {
+                kind: 'OB.UI.EditNumber',
+                name: 'differenceQty',
+                classes:
+                  'obUiModalSplitLine-bodyContent-container3-container3-differenceQty',
+                initComponents: function() {
+                  this.setDisabled(true);
+                }
+              }
+            ]
+          },
+          {
+            classes: 'obUiModalSplitLine-bodyContent-container3-container4',
+            components: [
+              {
+                kind: 'OB.UI.ModalNumberEditor',
+                name: 'numberlinesQty',
+                classes:
+                  'obUiModalSplitLine-bodyContent-container3-container4-numberlinesQty',
+                maxLines: OB.SplitLine.MAX_SPLITLINE
+              }
+            ]
+          }
+        ]
+      },
+      {
+        classes: 'obUiModalSplitLine-bodyContent-element4'
+      },
+      {
+        classes: 'obUiModalSplitLine-bodyContent-container5',
+        components: [
+          {
+            classes: 'obUiModalSplitLine-bodyContent-container5-element1',
+            initComponents: function() {
+              this.setContent(OB.I18N.getLabel('OBPOS_lblSplitNumberLines'));
+            }
+          },
+          {
+            classes: 'obUiModalSplitLine-bodyContent-container5-container2',
+            components: [
+              {
+                kind: 'OB.UI.ModalNumberEditor',
+                name: 'numberlinesQtyMobile',
+                classes:
+                  'obUiModalSplitLine-bodyContent-container5-container2-numberlinesQtyMobile',
+                maxLines: 100
+              }
+            ]
+          }
+        ]
+      },
+      {
+        classes: 'obUiModalSplitLine-bodyContent-container6'
+      },
+      {
+        kind: 'OB.UI.ModalSplitLinesTable',
+        name: 'qtyLines',
+        classes: 'obUiModalSplitLine-bodyContent-qtyLines'
+      },
+      {
+        classes: 'obUiModalSplitLine-bodyContent-labelError',
+        name: 'labelError',
+        showing: false,
+        initComponents: function() {
+          this.setContent(OB.I18N.getLabel('OBPOS_lblSplitErrorQty'));
+        }
       }
-    }, {
-      classes: 'obUiModalSplitLine-bodyContent-container2',
-      components: [{
-        classes: 'obUiModalSplitLine-bodyContent-container2-element1',
-        initComponents: function () {
-          this.setContent(OB.I18N.getLabel('OBPOS_lblSplitOriginalQty'));
-        }
-      }, {
-        classes: 'obUiModalSplitLine-bodyContent-container2-element2',
-        initComponents: function () {
-          this.setContent(OB.I18N.getLabel('OBPOS_lblSplitQty'));
-        }
-      }, {
-        classes: 'obUiModalSplitLine-bodyContent-container2-element3',
-        initComponents: function () {
-          this.setContent(OB.I18N.getLabel('OBPOS_lblSplitDifference'));
-        }
-      }, {
-        classes: 'obUiModalSplitLine-bodyContent-container2-element4',
-        initComponents: function () {
-          this.setContent(OB.I18N.getLabel('OBPOS_lblSplitNumberLines'));
-        }
-      }]
-    }, {
-      classes: 'obUiModalSplitLine-bodyContent-container3',
-      components: [{
-        classes: 'obUiModalSplitLine-bodyContent-container3-container1',
-        components: [{
-          kind: 'OB.UI.EditNumber',
-          name: 'originalQty',
-          classes: 'obUiModalSplitLine-bodyContent-container3-container1-originalQty',
-          initComponents: function () {
-            this.setDisabled(true);
-          }
-        }]
-      }, {
-        classes: 'obUiModalSplitLine-bodyContent-container3-container2',
-        components: [{
-          kind: 'OB.UI.EditNumber',
-          name: 'splitQty',
-          classes: 'obUiModalSplitLine-bodyContent-container3-container2-splitQty',
-          initComponents: function () {
-            this.setDisabled(true);
-          }
-        }]
-      }, {
-        classes: 'obUiModalSplitLine-bodyContent-container3-container3',
-        components: [{
-          kind: 'OB.UI.EditNumber',
-          name: 'differenceQty',
-          classes: 'obUiModalSplitLine-bodyContent-container3-container3-differenceQty',
-          initComponents: function () {
-            this.setDisabled(true);
-          }
-        }]
-      }, {
-        classes: 'obUiModalSplitLine-bodyContent-container3-container4',
-        components: [{
-          kind: 'OB.UI.ModalNumberEditor',
-          name: 'numberlinesQty',
-          classes: 'obUiModalSplitLine-bodyContent-container3-container4-numberlinesQty',
-          maxLines: OB.SplitLine.MAX_SPLITLINE
-        }]
-      }]
-    }, {
-      classes: 'obUiModalSplitLine-bodyContent-element4'
-    }, {
-      classes: 'obUiModalSplitLine-bodyContent-container5',
-      components: [{
-        classes: 'obUiModalSplitLine-bodyContent-container5-element1',
-        initComponents: function () {
-          this.setContent(OB.I18N.getLabel('OBPOS_lblSplitNumberLines'));
-        }
-      }, {
-        classes: 'obUiModalSplitLine-bodyContent-container5-container2',
-        components: [{
-          kind: 'OB.UI.ModalNumberEditor',
-          name: 'numberlinesQtyMobile',
-          classes: 'obUiModalSplitLine-bodyContent-container5-container2-numberlinesQtyMobile',
-          maxLines: 100
-        }]
-      }]
-    }, {
-      classes: 'obUiModalSplitLine-bodyContent-container6'
-    }, {
-      kind: 'OB.UI.ModalSplitLinesTable',
-      name: 'qtyLines',
-      classes: 'obUiModalSplitLine-bodyContent-qtyLines'
-    }, {
-      classes: 'obUiModalSplitLine-bodyContent-labelError',
-      name: 'labelError',
-      showing: false,
-      initComponents: function () {
-        this.setContent(OB.I18N.getLabel('OBPOS_lblSplitErrorQty'));
-      }
-    }]
+    ]
   },
   //buttons of the popup
   bodyButtons: {
     classes: 'obUiModalSplitLine-bodyButtons',
-    components: [{
-      kind: 'OB.UI.ModalSplitLine_btnApply',
-      name: 'btnApply',
-      classes: 'obUiModalSplitLine-bodyButtons-btnApply'
-    }, {
-      kind: 'OB.UI.ModalSplitLine_btnCancel',
-      classes: 'obUiModalSplitLine-bodyButtons-obUiModalSplitLineBtnCancel'
-    }]
+    components: [
+      {
+        kind: 'OB.UI.ModalSplitLine_btnApply',
+        name: 'btnApply',
+        classes: 'obUiModalSplitLine-bodyButtons-btnApply'
+      },
+      {
+        kind: 'OB.UI.ModalSplitLine_btnCancel',
+        classes: 'obUiModalSplitLine-bodyButtons-obUiModalSplitLineBtnCancel'
+      }
+    ]
   },
 
-  executeOnShow: function () {
-
+  executeOnShow: function() {
     var maxRows, mobileMaxRows;
 
     this.orderline = this.args.model;
     this.receipt = this.args.receipt;
 
-    maxRows = Math.min(this.orderline.get('qty'), this.$.bodyContent.$.numberlinesQty.maxLines);
-    mobileMaxRows = Math.min(this.orderline.get('qty'), this.$.bodyContent.$.numberlinesQtyMobile.maxLines);
+    maxRows = Math.min(
+      this.orderline.get('qty'),
+      this.$.bodyContent.$.numberlinesQty.maxLines
+    );
+    mobileMaxRows = Math.min(
+      this.orderline.get('qty'),
+      this.$.bodyContent.$.numberlinesQtyMobile.maxLines
+    );
 
     this.$.bodyContent.$.originalQty.setValue(this.orderline.get('qty'));
     this.$.bodyContent.$.numberlinesQty.$.numberQty.setValue(2);
@@ -344,33 +413,65 @@ enyo.kind({
     this.$.bodyContent.$.numberlinesQtyMobile.$.numberQty.setMin(2);
     this.$.bodyContent.$.numberlinesQtyMobile.$.numberQty.setMax(mobileMaxRows);
     this.$.bodyContent.$.qtyLines.removeAllLine();
-    _.each(this.getSplitProposal(), function (qty) {
-      if (qty instanceof Object) {
-        this.$.bodyContent.$.qtyLines.createLine(qty.qty, true);
-      } else {
-        this.$.bodyContent.$.qtyLines.createLine(qty);
-      }
-    }, this);
+    _.each(
+      this.getSplitProposal(),
+      function(qty) {
+        if (qty instanceof Object) {
+          this.$.bodyContent.$.qtyLines.createLine(qty.qty, true);
+        } else {
+          this.$.bodyContent.$.qtyLines.createLine(qty);
+        }
+      },
+      this
+    );
     this.updateDifference();
     this.modified = false;
   },
 
-  setModified: function () {
+  setModified: function() {
     this.modified = true;
   },
 
-  excludeFromCopy: [ //
-  '_gross', 'discountedNet', 'gross', 'grossListPrice', 'id', 'linerate', 'net', 'noDiscountCandidates', //
-  'price', 'priceIncludesTax', 'priceList', 'pricenet', 'product', 'productidentifier', //
-  'promotionCandidates', 'promotionMessages', 'promotions', 'qty', 'qtyToApplyDiscount', 'splitline', //
-  'tax', 'taxAmount', 'taxLines', 'uOM', 'warehouse', 'deliveredQuantity', 'replacedorderline'],
+  excludeFromCopy: [
+    //
+    '_gross',
+    'discountedNet',
+    'gross',
+    'grossListPrice',
+    'id',
+    'linerate',
+    'net',
+    'noDiscountCandidates', //
+    'price',
+    'priceIncludesTax',
+    'priceList',
+    'pricenet',
+    'product',
+    'productidentifier', //
+    'promotionCandidates',
+    'promotionMessages',
+    'promotions',
+    'qty',
+    'qtyToApplyDiscount',
+    'splitline', //
+    'tax',
+    'taxAmount',
+    'taxLines',
+    'uOM',
+    'warehouse',
+    'deliveredQuantity',
+    'replacedorderline'
+  ],
 
   splittedLines: [],
 
-  getAdjustedPromotion: function (promo, qty) {
+  getAdjustedPromotion: function(promo, qty) {
     var clonedPromotion = JSON.parse(JSON.stringify(promo));
-    if (clonedPromotion.discountType === 'D1D193305A6443B09B299259493B272A' || promo.discountType === '7B49D8CC4E084A75B7CB4D85A6A3A578') {
-      var amount = clonedPromotion.amt / clonedPromotion.originalQty * qty;
+    if (
+      clonedPromotion.discountType === 'D1D193305A6443B09B299259493B272A' ||
+      promo.discountType === '7B49D8CC4E084A75B7CB4D85A6A3A578'
+    ) {
+      var amount = (clonedPromotion.amt / clonedPromotion.originalQty) * qty;
       clonedPromotion.amt = amount;
       clonedPromotion.displayedTotalAmount = amount;
       clonedPromotion.fullAmt = amount;
@@ -380,7 +481,7 @@ enyo.kind({
     return clonedPromotion;
   },
 
-  addManualPromotionSplit: function (line, promo) {
+  addManualPromotionSplit: function(line, promo) {
     var adjustedPromotion = this.getAdjustedPromotion(promo, line.get('qty'));
     OB.Model.Discounts.addManualPromotion(this.receipt, [line], {
       definition: adjustedPromotion,
@@ -388,7 +489,7 @@ enyo.kind({
     });
   },
 
-  addProductSplit: function (success, addline) {
+  addProductSplit: function(success, addline) {
     if (success && addline && addline.id !== this.orderline.id) {
       if (addline.get('price') !== this.orderline.get('price')) {
         this.receipt.setPrice(addline, this.orderline.get('price'));
@@ -408,14 +509,14 @@ enyo.kind({
     if (this.indexToAdd < this.qtysToAdd.length) {
       if (success) {
         var originalQty = 0;
-        _.each(this.qtysToAdd, function (qtyToAdd) {
+        _.each(this.qtysToAdd, function(qtyToAdd) {
           originalQty += qtyToAdd;
         });
         this.doAddProduct({
           product: this.orderline.get('product'),
           qty: this.qtysToAdd[this.indexToAdd++],
           attrs: {
-            'splitline': true,
+            splitline: true,
             originalLine: this.orderline
           },
           options: {
@@ -424,16 +525,23 @@ enyo.kind({
             isSplitLinesAction: true
           },
           context: this,
-          callback: function (success, addline) {
+          callback: function(success, addline) {
             this.splittedLines.push(addline);
             addline.set('promotions', []);
-            var promotionManual = _.filter(this.orderline.get('promotions'), function (promo) {
-              return promo.manual;
-            });
-            _.forEach(promotionManual, function (promo) {
-              promo.originalQty = originalQty;
-              this.addManualPromotionSplit(addline, promo);
-            }, this);
+            var promotionManual = _.filter(
+              this.orderline.get('promotions'),
+              function(promo) {
+                return promo.manual;
+              }
+            );
+            _.forEach(
+              promotionManual,
+              function(promo) {
+                promo.originalQty = originalQty;
+                this.addManualPromotionSplit(addline, promo);
+              },
+              this
+            );
             this.addProductSplit(success, addline);
           }
         });
@@ -441,46 +549,77 @@ enyo.kind({
         OB.log('error', 'Can not add product to receipt');
       }
     } else {
-      var promotionManual = _.filter(this.orderline.get('promotions'), function (promo) {
+      var promotionManual = _.filter(this.orderline.get('promotions'), function(
+        promo
+      ) {
         return promo.manual;
       });
-      _.forEach(promotionManual, function (promo, index) {
-        if (promo.discountType === 'D1D193305A6443B09B299259493B272A' || promo.discountType === '7B49D8CC4E084A75B7CB4D85A6A3A578' || promo.discountType === 'F3B0FB45297844549D9E6B5F03B23A82') {
-          var adjustedPromotion = this.getAdjustedPromotion(promo, this.orderline.get('qty'));
-          var splittedAmount = _.reduce(this.splittedLines, function (sum, line) {
-            var linePromo = _.find(line.get('promotions'), function (lp) {
-              return lp.discountType === promo.discountType;
-            });
-            if (linePromo) {
-              return sum + OB.DEC.toNumber(OB.DEC.toBigDecimal(linePromo.amt));
-            }
-            return sum;
-          }, 0);
-          var bdSplittedAmount = OB.DEC.toBigDecimal(splittedAmount),
+      _.forEach(
+        promotionManual,
+        function(promo, index) {
+          if (
+            promo.discountType === 'D1D193305A6443B09B299259493B272A' ||
+            promo.discountType === '7B49D8CC4E084A75B7CB4D85A6A3A578' ||
+            promo.discountType === 'F3B0FB45297844549D9E6B5F03B23A82'
+          ) {
+            var adjustedPromotion = this.getAdjustedPromotion(
+              promo,
+              this.orderline.get('qty')
+            );
+            var splittedAmount = _.reduce(
+              this.splittedLines,
+              function(sum, line) {
+                var linePromo = _.find(line.get('promotions'), function(lp) {
+                  return lp.discountType === promo.discountType;
+                });
+                if (linePromo) {
+                  return (
+                    sum + OB.DEC.toNumber(OB.DEC.toBigDecimal(linePromo.amt))
+                  );
+                }
+                return sum;
+              },
+              0
+            );
+            var bdSplittedAmount = OB.DEC.toBigDecimal(splittedAmount),
               bdPromoAmount = OB.DEC.toBigDecimal(promo.amt);
-          if (bdPromoAmount.compareTo(bdSplittedAmount.add(OB.DEC.toBigDecimal(adjustedPromotion.amt))) !== 0) {
-            var amount = OB.DEC.toNumber(bdPromoAmount.subtract(bdSplittedAmount));
-            adjustedPromotion.amt = amount;
-            adjustedPromotion.displayedTotalAmount = amount;
-            adjustedPromotion.fullAmt = amount;
-            adjustedPromotion.userAmt = amount;
+            if (
+              bdPromoAmount.compareTo(
+                bdSplittedAmount.add(OB.DEC.toBigDecimal(adjustedPromotion.amt))
+              ) !== 0
+            ) {
+              var amount = OB.DEC.toNumber(
+                bdPromoAmount.subtract(bdSplittedAmount)
+              );
+              adjustedPromotion.amt = amount;
+              adjustedPromotion.displayedTotalAmount = amount;
+              adjustedPromotion.fullAmt = amount;
+              adjustedPromotion.userAmt = amount;
+            }
+            this.orderline
+              .get('promotions')
+              .splice(index, 1, adjustedPromotion);
           }
-          this.orderline.get('promotions').splice(index, 1, adjustedPromotion);
-        }
-      }, this);
+        },
+        this
+      );
       var me = this;
-      OB.UTIL.HookManager.executeHooks('OBPOS_PostSplitLine', {
-        receipt: this.receipt,
-        line: this.orderline,
-        splittedLines: this.splittedLines
-      }, function (args) {
-        me.receipt.set('skipCalculateReceipt', false);
-        me.receipt.calculateReceipt();
-      });
+      OB.UTIL.HookManager.executeHooks(
+        'OBPOS_PostSplitLine',
+        {
+          receipt: this.receipt,
+          line: this.orderline,
+          splittedLines: this.splittedLines
+        },
+        function(args) {
+          me.receipt.set('skipCalculateReceipt', false);
+          me.receipt.calculateReceipt();
+        }
+      );
     }
   },
 
-  splitLines: function () {
+  splitLines: function() {
     this.indexToAdd = 1;
     this.qtysToAdd = this.$.bodyContent.$.qtyLines.getValues();
     this.orderline.set('splitline', true);
@@ -494,7 +633,7 @@ enyo.kind({
       product: this.orderline.get('product'),
       qty: this.qtysToAdd[0] - this.orderline.get('qty'),
       context: this,
-      callback: function (success, orderline) {
+      callback: function(success, orderline) {
         if (success) {
           this.splittedLines = [];
           this.addProductSplit(true, orderline);
@@ -507,13 +646,17 @@ enyo.kind({
     });
   },
 
-  getSplitProposal: function () {
-    var i, sum = 0,
-        proposal = [],
-        qty = this.orderline.get('qty'),
-        lines = parseInt(this.$.bodyContent.$.numberlinesQty.$.numberQty.getValue(), 10),
-        proposed = Math.floor(qty / lines),
-        remainingQuantity = this.orderline.get('remainingQuantity');
+  getSplitProposal: function() {
+    var i,
+      sum = 0,
+      proposal = [],
+      qty = this.orderline.get('qty'),
+      lines = parseInt(
+        this.$.bodyContent.$.numberlinesQty.$.numberQty.getValue(),
+        10
+      ),
+      proposed = Math.floor(qty / lines),
+      remainingQuantity = this.orderline.get('remainingQuantity');
     if (proposed < 1) {
       proposed = 1;
     }
@@ -550,21 +693,27 @@ enyo.kind({
     return proposal;
   },
 
-  numberChange: function (inSender, inEvent) {
-    if (inEvent.numberId === 'numberlinesQty' || inEvent.numberId === 'numberlinesQtyMobile') {
+  numberChange: function(inSender, inEvent) {
+    if (
+      inEvent.numberId === 'numberlinesQty' ||
+      inEvent.numberId === 'numberlinesQtyMobile'
+    ) {
       if (inEvent.numberId === 'numberlinesQty') {
-        this.$.bodyContent.$.numberlinesQtyMobile.$.numberQty.setValue(inEvent.value);
+        this.$.bodyContent.$.numberlinesQtyMobile.$.numberQty.setValue(
+          inEvent.value
+        );
       } else {
         this.$.bodyContent.$.numberlinesQty.$.numberQty.setValue(inEvent.value);
       }
-      var i, countLines = this.$.bodyContent.$.qtyLines.countLines();
+      var i,
+        countLines = this.$.bodyContent.$.qtyLines.countLines();
       if (inEvent.value < countLines) {
         for (i = 0; i < countLines - inEvent.value; i++) {
           this.$.bodyContent.$.qtyLines.removeLine(countLines - i - 1, false);
         }
       } else if (inEvent.value > countLines) {
         var qty = 1;
-        if (this.modified && (inEvent.value - 1) === countLines) {
+        if (this.modified && inEvent.value - 1 === countLines) {
           var sumLines = this.$.bodyContent.$.qtyLines.sumLines();
           if (sumLines < this.orderline.get('qty')) {
             qty = this.orderline.get('qty') - sumLines;
@@ -583,13 +732,12 @@ enyo.kind({
     this.updateDifference();
   },
 
-  updateDifference: function () {
+  updateDifference: function() {
     var sumLines = this.$.bodyContent.$.qtyLines.sumLines(),
-        difference = this.orderline.get('qty') - sumLines;
+      difference = this.orderline.get('qty') - sumLines;
     this.$.bodyContent.$.splitQty.setValue(sumLines);
     this.$.bodyContent.$.differenceQty.setValue(difference);
     this.$.bodyContent.$.labelError.setShowing(difference !== 0);
     this.$.bodyButtons.$.btnApply.setDisabled(difference !== 0);
   }
-
 });

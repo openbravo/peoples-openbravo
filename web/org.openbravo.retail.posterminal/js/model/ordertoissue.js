@@ -9,7 +9,7 @@
 
 /*global Backbone, _ */
 
-(function () {
+(function() {
   var OrderToIssue = OB.Data.ExtensibleModel.extend({
     modelName: 'OrderToIssue',
     tableName: 'ordertoissue',
@@ -19,18 +19,23 @@
     source: ''
   });
 
-  OrderToIssue.addProperties([{
-    name: 'id',
-    column: 'ordertoissue_id',
-    primaryKey: true,
-    type: 'TEXT'
-  }, {
-    name: 'json',
-    column: 'json',
-    type: 'TEXT'
-  }]);
+  OrderToIssue.addProperties([
+    {
+      name: 'id',
+      column: 'ordertoissue_id',
+      primaryKey: true,
+      type: 'TEXT'
+    },
+    {
+      name: 'json',
+      column: 'json',
+      type: 'TEXT'
+    }
+  ]);
 
   OB.Data.Registry.registerModel(OrderToIssue);
 
-  OB.OBPOSPointOfSale.Model.PointOfSale.prototype.models.push(OB.Model.OrderToIssue);
-}());
+  OB.OBPOSPointOfSale.Model.PointOfSale.prototype.models.push(
+    OB.Model.OrderToIssue
+  );
+})();

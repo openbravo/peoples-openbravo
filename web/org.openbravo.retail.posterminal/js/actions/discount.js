@@ -9,63 +9,61 @@
 
 /*global OB */
 
-(function () {
-
+(function() {
   OB.MobileApp.actionsRegistry.register(
-  new OB.Actions.CommandAction({
-    window: 'retail.pointofsale',
-    name: 'discount',
-    permission: 'OBPOS_order.discount',
-    properties: {
-      i18nContent: 'OBMOBC_KbDiscount'
-    },
-    isActive: function (view) {
-      var currentView = view.state.readState({
-        name: 'window.currentView'
-      }).name;
-      var isEditable = view.state.readState({
-        name: 'receipt.isEditable'
-      });
-
-      var active = isEditable && currentView === 'order';
-      active = active && view.model.get('order').get('lines').length > 0;
-      active = active && view.model.get('manualDiscounts');
-      return active;
-    },
-    command: function (view) {
-
-      var receipt = view.model.get('order');
-      var selectedReceiptLine = view.state.readCommandState({
-        name: 'selectedReceiptLine'
-      });
-
-      if (receipt.get('isEditable') === false) {
-        view.doShowPopup({
-          popup: 'modalNotEditableOrder'
+    new OB.Actions.CommandAction({
+      window: 'retail.pointofsale',
+      name: 'discount',
+      permission: 'OBPOS_order.discount',
+      properties: {
+        i18nContent: 'OBMOBC_KbDiscount'
+      },
+      isActive: function(view) {
+        var currentView = view.state.readState({
+          name: 'window.currentView'
+        }).name;
+        var isEditable = view.state.readState({
+          name: 'receipt.isEditable'
         });
-        return;
-      }
 
-      if (!selectedReceiptLine) {
-        return false;
-      }
-
-      if (selectedReceiptLine.get('product').get('isEditableQty') === false) {
-        view.doShowPopup({
-          popup: 'modalNotEditableLine'
+        var active = isEditable && currentView === 'order';
+        active = active && view.model.get('order').get('lines').length > 0;
+        active = active && view.model.get('manualDiscounts');
+        return active;
+      },
+      command: function(view) {
+        var receipt = view.model.get('order');
+        var selectedReceiptLine = view.state.readCommandState({
+          name: 'selectedReceiptLine'
         });
-        return;
-      }
 
-      view.discountsMode(view, {
-        tabPanel: 'edit',
-        keyboard: 'toolbardiscounts',
-        edit: false,
-        options: {
-          discounts: true
+        if (receipt.get('isEditable') === false) {
+          view.doShowPopup({
+            popup: 'modalNotEditableOrder'
+          });
+          return;
         }
-      });
-    }
-  }));
 
-}());
+        if (!selectedReceiptLine) {
+          return false;
+        }
+
+        if (selectedReceiptLine.get('product').get('isEditableQty') === false) {
+          view.doShowPopup({
+            popup: 'modalNotEditableLine'
+          });
+          return;
+        }
+
+        view.discountsMode(view, {
+          tabPanel: 'edit',
+          keyboard: 'toolbardiscounts',
+          edit: false,
+          options: {
+            discounts: true
+          }
+        });
+      }
+    })
+  );
+})();

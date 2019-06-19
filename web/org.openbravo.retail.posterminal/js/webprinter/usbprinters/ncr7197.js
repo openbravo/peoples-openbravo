@@ -8,43 +8,41 @@
  */
 
 /*global OB, Uint8Array */
-(function () {
+(function() {
+  var ESCPOSNCR = function() {
+    OB.ESCPOS.Standard.call(this);
 
-  var ESCPOSNCR = function () {
-      OB.ESCPOS.Standard.call(this);
+    this.transImage = function(imagedata) {
+      var line = new Uint8Array();
+      var result = [];
+      var i, j, p, d;
 
-      this.transImage = function (imagedata) {
+      var width = (imagedata.width + 7) / 8;
+      var height = imagedata.height;
 
-        var line = new Uint8Array();
-        var result = [];
-        var i, j, p, d;
-
-        var width = (imagedata.width + 7) / 8;
-        var height = imagedata.height;
-
-        // Raw data
-        for (i = 0; i < imagedata.height; i++) {
-          result.push(0x1B, 0x4B, width & 255, width >> 8);
-          for (j = 0; j < imagedata.width; j = j + 8) {
-            p = 0x00;
-            for (d = 0; d < 8; d++) {
-              p = p << 1;
-              if (this.isBlack(imagedata, j + d, i)) {
-                p = p | 0x01;
-              }
+      // Raw data
+      for (i = 0; i < imagedata.height; i++) {
+        result.push(0x1b, 0x4b, width & 255, width >> 8);
+        for (j = 0; j < imagedata.width; j = j + 8) {
+          p = 0x00;
+          for (d = 0; d < 8; d++) {
+            p = p << 1;
+            if (this.isBlack(imagedata, j + d, i)) {
+              p = p | 0x01;
             }
-            result.push(p);
           }
-          result.push(0x0D, 0x0A);
+          result.push(p);
         }
+        result.push(0x0d, 0x0a);
+      }
 
-        line = OB.ARRAYS.append(line, this.CENTER_JUSTIFICATION);
-        line = OB.ARRAYS.append(line, this.IMAGE_HEADER);
-        line = OB.ARRAYS.append(line, new Uint8Array(result));
-        line = OB.ARRAYS.append(line, this.LEFT_JUSTIFICATION);
-        return line;
-      };
-      };
+      line = OB.ARRAYS.append(line, this.CENTER_JUSTIFICATION);
+      line = OB.ARRAYS.append(line, this.IMAGE_HEADER);
+      line = OB.ARRAYS.append(line, new Uint8Array(result));
+      line = OB.ARRAYS.append(line, this.LEFT_JUSTIFICATION);
+      return line;
+    };
+  };
 
   OB.PRINTERTYPES.GENERICUSB.register({
     name: 'NCR 7197',
@@ -52,5 +50,4 @@
     productId: 0x0312,
     ESCPOS: ESCPOSNCR
   });
-
-}());
+})();

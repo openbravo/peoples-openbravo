@@ -12,39 +12,49 @@
 enyo.kind({
   name: 'OB.UI.ModalChangeLine',
   classes: 'obUiModalChangeLine',
-  components: [{
-    name: 'labelLine',
-    classes: 'obUiModalChangeLine-labelLine',
-    content: ''
-  }, {
-    classes: 'obUiModalChangeLine-container2',
-    components: [{
-      name: 'textline',
-      kind: 'enyo.Input',
-      type: 'text',
-      classes: 'obUiModalChangeLine-container2-textline',
-      oninput: 'actionInput',
-      attributes: {
-        maxlength: 22
-      }
-    }]
-  }, {
-    classes: 'obUiModalChangeLine-container3',
-    components: [{
-      name: 'infomax',
-      classes: 'obUiModalChangeLine-container3-infomax'
-    }, {
-      name: 'inforemaining',
-      classes: 'obUiModalChangeLine-container3-inforemaining'
-    }]
-  }, {
-    classes: 'obUiModalChangeLine-element4 u-clearBoth'
-  }],
-  initComponents: function () {
+  components: [
+    {
+      name: 'labelLine',
+      classes: 'obUiModalChangeLine-labelLine',
+      content: ''
+    },
+    {
+      classes: 'obUiModalChangeLine-container2',
+      components: [
+        {
+          name: 'textline',
+          kind: 'enyo.Input',
+          type: 'text',
+          classes: 'obUiModalChangeLine-container2-textline',
+          oninput: 'actionInput',
+          attributes: {
+            maxlength: 22
+          }
+        }
+      ]
+    },
+    {
+      classes: 'obUiModalChangeLine-container3',
+      components: [
+        {
+          name: 'infomax',
+          classes: 'obUiModalChangeLine-container3-infomax'
+        },
+        {
+          name: 'inforemaining',
+          classes: 'obUiModalChangeLine-container3-inforemaining'
+        }
+      ]
+    },
+    {
+      classes: 'obUiModalChangeLine-element4 u-clearBoth'
+    }
+  ],
+  initComponents: function() {
     this.inherited(arguments);
     this.$.labelLine.content = this.payment.payment.commercialName;
   },
-  getParsedValue: function () {
+  getParsedValue: function() {
     var value = this.$.textline.getValue();
     try {
       if (!OB.I18N.isValidNumber(value)) {
@@ -56,14 +66,22 @@ enyo.kind({
       return NaN;
     }
   },
-  actionInput: function (inSender, inEvent) {
+  actionInput: function(inSender, inEvent) {
     var value = this.getParsedValue();
     this.edited = true;
 
     if (_.isNaN(value) || value < 0) {
       this.hasErrors = true;
       this.labelError = OB.I18N.getLabel('OBPOS_InvalidNumber');
-    } else if (OB.DEC.compare(OB.DEC.sub(value, this.calculateAmount(value), this.payment.obposPosprecision))) {
+    } else if (
+      OB.DEC.compare(
+        OB.DEC.sub(
+          value,
+          this.calculateAmount(value),
+          this.payment.obposPosprecision
+        )
+      )
+    ) {
       this.hasErrors = true;
       this.labelError = OB.I18N.getLabel('OBPOS_InvalidRounding');
     } else {
@@ -82,65 +100,106 @@ enyo.kind({
 
     return true;
   },
-  showRemaining: function (changeremaining, partialremaining) {
+  showRemaining: function(changeremaining, partialremaining) {
     var partialremainingconverted, remainingconverted, currentvalue;
 
     currentvalue = this.hasErrors ? 0 : this.getParsedValue();
-    partialremainingconverted = this.calculateAmount(OB.DEC.mul(partialremaining, this.payment.mulrate, this.payment.obposPosprecision));
-    remainingconverted = OB.DEC.sub(partialremainingconverted, currentvalue, this.payment.obposPosprecision);
+    partialremainingconverted = this.calculateAmount(
+      OB.DEC.mul(
+        partialremaining,
+        this.payment.mulrate,
+        this.payment.obposPosprecision
+      )
+    );
+    remainingconverted = OB.DEC.sub(
+      partialremainingconverted,
+      currentvalue,
+      this.payment.obposPosprecision
+    );
 
     // Overpayment label depends only on changeremaining BEFORE converting
     switch (OB.DEC.compare(changeremaining)) {
-    case -1:
-      this.$.inforemaining.setContent(OB.I18N.getLabel('OBPOS_RemainingOverpaid'));
-      this.isComplete = false;
-      this.isOverpaid = true;
-      break;
-    case 0:
-      this.$.inforemaining.setContent('');
-      this.isComplete = true;
-      this.isOverpaid = false;
-      break;
-    default:
-      this.$.inforemaining.setContent(OB.I18N.getLabel('OBPOS_RemainingChange', [OB.I18N.formatCurrencyWithSymbol(remainingconverted, this.payment.symbol, this.payment.currencySymbolAtTheRight)]));
-      this.isComplete = false;
-      this.isOverpaid = false;
-      break;
+      case -1:
+        this.$.inforemaining.setContent(
+          OB.I18N.getLabel('OBPOS_RemainingOverpaid')
+        );
+        this.isComplete = false;
+        this.isOverpaid = true;
+        break;
+      case 0:
+        this.$.inforemaining.setContent('');
+        this.isComplete = true;
+        this.isOverpaid = false;
+        break;
+      default:
+        this.$.inforemaining.setContent(
+          OB.I18N.getLabel('OBPOS_RemainingChange', [
+            OB.I18N.formatCurrencyWithSymbol(
+              remainingconverted,
+              this.payment.symbol,
+              this.payment.currencySymbolAtTheRight
+            )
+          ])
+        );
+        this.isComplete = false;
+        this.isOverpaid = false;
+        break;
     }
     this.displayStatus();
   },
-  executeOnShow: function (args) {
+  executeOnShow: function(args) {
     var value, currentChange;
 
-    value = OB.DEC.mul(args.change, this.payment.mulrate, this.payment.obposPosprecision);
+    value = OB.DEC.mul(
+      args.change,
+      this.payment.mulrate,
+      this.payment.obposPosprecision
+    );
     this.maxValue = this.calculateAmount(value);
-    this.$.infomax.setContent(OB.I18N.getLabel('OBPOS_MaxChange', [OB.I18N.formatCurrencyWithSymbol(this.maxValue, this.payment.symbol, this.payment.currencySymbolAtTheRight)]));
+    this.$.infomax.setContent(
+      OB.I18N.getLabel('OBPOS_MaxChange', [
+        OB.I18N.formatCurrencyWithSymbol(
+          this.maxValue,
+          this.payment.symbol,
+          this.payment.currencySymbolAtTheRight
+        )
+      ])
+    );
     this.$.inforemaining.setContent('');
     this.edited = false;
     this.isComplete = true;
     this.isOverpaid = false;
 
-    currentChange = args.activemodel.get('changePayments').find(function (item) {
+    currentChange = args.activemodel.get('changePayments').find(function(item) {
       return item.key === this.payment.payment.searchKey;
     }, this);
 
     this.assignValidValue(currentChange ? currentChange.amountRounded : 0);
   },
-  assignValidValue: function (amountRounded) {
+  assignValidValue: function(amountRounded) {
     this.$.textline.setValue(OB.I18N.formatCurrency(amountRounded));
     this.hasErrors = false;
     this.labelError = '';
     this.displayStatus();
-    setTimeout(function () {
-      this.$.textline.hasNode().setSelectionRange(0, this.$.textline.getValue().length);
-    }.bind(this), 100);
+    setTimeout(
+      function() {
+        this.$.textline
+          .hasNode()
+          .setSelectionRange(0, this.$.textline.getValue().length);
+      }.bind(this),
+      100
+    );
   },
-  calculateAmount: function (value) {
+  calculateAmount: function(value) {
     var changeLessThan;
 
     changeLessThan = this.payment.paymentMethod.changeLessThan;
     if (changeLessThan) {
-      return OB.DEC.mul(changeLessThan, Math.trunc(OB.DEC.div(value, changeLessThan, 5)), this.payment.obposPosprecision);
+      return OB.DEC.mul(
+        changeLessThan,
+        Math.trunc(OB.DEC.div(value, changeLessThan, 5)),
+        this.payment.obposPosprecision
+      );
     } else {
       return OB.Payments.Change.getChangeRounded({
         payment: this.payment,
@@ -148,9 +207,13 @@ enyo.kind({
       });
     }
   },
-  displayStatus: function () {
+  displayStatus: function() {
     this.$.textline.removeClass('obUiModalChangeLine-textline_validationOk');
     this.$.textline.removeClass('obUiModalChangeLine-textline_validationError');
-    this.$.textline.addClass(this.hasErrors || this.isOverpaid ? 'obUiModalChangeLine-textline_validationError' : 'obUiModalChangeLine-textline_validationOk');
+    this.$.textline.addClass(
+      this.hasErrors || this.isOverpaid
+        ? 'obUiModalChangeLine-textline_validationError'
+        : 'obUiModalChangeLine-textline_validationOk'
+    );
   }
 });

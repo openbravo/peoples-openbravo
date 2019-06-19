@@ -9,7 +9,6 @@
 
 /*global OB, enyo, Backbone, _ */
 
-
 enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OB.UI.SalesRepresentative',
@@ -20,14 +19,14 @@ enyo.kind({
   events: {
     onShowPopup: ''
   },
-  tap: function () {
+  tap: function() {
     if (!this.disabled) {
       this.doShowPopup({
         popup: 'modalsalesrepresentative'
       });
     }
   },
-  init: function (model) {
+  init: function(model) {
     if (!OB.MobileApp.model.hasPermission(this.permission)) {
       this.parent.parent.parent.hide();
     } else {
@@ -37,23 +36,32 @@ enyo.kind({
     }
     this.setOrder(model.get('order'));
   },
-  renderSalesRepresentative: function (newSalesRepresentative) {
+  renderSalesRepresentative: function(newSalesRepresentative) {
     this.setContent(newSalesRepresentative);
   },
-  orderChanged: function (oldValue) {
+  orderChanged: function(oldValue) {
     if (this.order.get('salesRepresentative')) {
       this.renderSalesRepresentative(this.order.get('salesRepresentative'));
     } else {
       this.renderSalesRepresentative('');
     }
 
-    this.order.on('change:salesRepresentative$_identifier change:salesRepresentative', function (model) {
-      if (!_.isUndefined(model.get('salesRepresentative$_identifier')) && !_.isNull(model.get('salesRepresentative$_identifier'))) {
-        this.renderSalesRepresentative(model.get('salesRepresentative$_identifier'));
-      } else {
-        this.renderSalesRepresentative('');
-      }
-    }, this);
+    this.order.on(
+      'change:salesRepresentative$_identifier change:salesRepresentative',
+      function(model) {
+        if (
+          !_.isUndefined(model.get('salesRepresentative$_identifier')) &&
+          !_.isNull(model.get('salesRepresentative$_identifier'))
+        ) {
+          this.renderSalesRepresentative(
+            model.get('salesRepresentative$_identifier')
+          );
+        } else {
+          this.renderSalesRepresentative('');
+        }
+      },
+      this
+    );
   }
 });
 
@@ -71,39 +79,59 @@ enyo.kind({
     onSearchActionByKey: 'searchAction',
     onFiltered: 'searchAction'
   },
-  components: [{
-    classes: 'obUiModalSrScrollableHeader-container1',
-    components: [{
-      classes: 'obUiModalSrScrollableHeader-container1-container1',
-      components: [{
-        classes: 'obUiModalSrScrollableHeader-container1-container1-container1',
-        components: [{
-          kind: 'OB.UI.SearchInputAutoFilter',
-          name: 'filterText',
-          classes: 'obUiModalSrScrollableHeader-container1-container1-container1-filterText'
-        }]
-      }, {
-        classes: 'obUiModalSrScrollableHeader-container1-container1-container2',
-        components: [{
-          kind: 'OB.UI.SmallButton',
-          classes: 'obUiModalSrScrollableHeader-container1-container1-container2-obUiSmallButton',
-          ontap: 'clearAction'
-        }]
-      }, {
-        classes: 'obUiModalSrScrollableHeader-container1-container1-container3',
-        components: [{
-          kind: 'OB.UI.SmallButton',
-          classes: 'obUiModalSrScrollableHeader-container1-container1-container3-obUiSmallButton',
-          ontap: 'searchAction'
-        }]
-      }]
-    }]
-  }],
-  clearAction: function () {
+  components: [
+    {
+      classes: 'obUiModalSrScrollableHeader-container1',
+      components: [
+        {
+          classes: 'obUiModalSrScrollableHeader-container1-container1',
+          components: [
+            {
+              classes:
+                'obUiModalSrScrollableHeader-container1-container1-container1',
+              components: [
+                {
+                  kind: 'OB.UI.SearchInputAutoFilter',
+                  name: 'filterText',
+                  classes:
+                    'obUiModalSrScrollableHeader-container1-container1-container1-filterText'
+                }
+              ]
+            },
+            {
+              classes:
+                'obUiModalSrScrollableHeader-container1-container1-container2',
+              components: [
+                {
+                  kind: 'OB.UI.SmallButton',
+                  classes:
+                    'obUiModalSrScrollableHeader-container1-container1-container2-obUiSmallButton',
+                  ontap: 'clearAction'
+                }
+              ]
+            },
+            {
+              classes:
+                'obUiModalSrScrollableHeader-container1-container1-container3',
+              components: [
+                {
+                  kind: 'OB.UI.SmallButton',
+                  classes:
+                    'obUiModalSrScrollableHeader-container1-container1-container3-obUiSmallButton',
+                  ontap: 'searchAction'
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  clearAction: function() {
     this.$.filterText.setValue('');
     this.doClearAction();
   },
-  searchAction: function () {
+  searchAction: function() {
     this.doSearchAction({
       srName: this.$.filterText.getValue()
     });
@@ -116,24 +144,29 @@ enyo.kind({
   name: 'OB.UI.ListSrsLine',
   kind: 'OB.UI.SelectButton',
   classes: 'obUiListSrsLine',
-  components: [{
-    name: 'line',
-    classes: 'obUiListSrsLine-line',
-    components: [{
-      name: 'name',
-      classes: 'obUiListSrsLine-line-name'
-    }, {
-      classes: 'obUiListSrsLine-line-element2 u-clearBoth'
-    }]
-  }],
+  components: [
+    {
+      name: 'line',
+      classes: 'obUiListSrsLine-line',
+      components: [
+        {
+          name: 'name',
+          classes: 'obUiListSrsLine-line-name'
+        },
+        {
+          classes: 'obUiListSrsLine-line-element2 u-clearBoth'
+        }
+      ]
+    }
+  ],
   events: {
     onHideThisPopup: ''
   },
-  tap: function () {
+  tap: function() {
     this.inherited(arguments);
     this.doHideThisPopup();
   },
-  create: function () {
+  create: function() {
     this.inherited(arguments);
     this.$.name.setContent(this.model.get('name'));
   }
@@ -150,30 +183,39 @@ enyo.kind({
   events: {
     onChangeSalesRepresentative: ''
   },
-  components: [{
-    classes: 'obUiListSrs-container1 span12',
-    components: [{
-      classes: 'obUiListSrs-container1-container1 row-fluid',
-      components: [{
-        classes: 'obUiListSrs-container1-container1-container1 span12',
-        components: [{
-          name: 'srslistitemprinter',
-          kind: 'OB.UI.ScrollableTable',
-          classes: 'obUiListSrs-container1-container1-container1-srslistitemprinter',
-          renderHeader: 'OB.UI.ModalSrScrollableHeader',
-          renderLine: 'OB.UI.ListSrsLine',
-          renderEmpty: 'OB.UI.RenderEmpty'
-        }]
-      }]
-    }]
-  }],
-  clearAction: function (inSender, inEvent) {
+  components: [
+    {
+      classes: 'obUiListSrs-container1 span12',
+      components: [
+        {
+          classes: 'obUiListSrs-container1-container1 row-fluid',
+          components: [
+            {
+              classes: 'obUiListSrs-container1-container1-container1 span12',
+              components: [
+                {
+                  name: 'srslistitemprinter',
+                  kind: 'OB.UI.ScrollableTable',
+                  classes:
+                    'obUiListSrs-container1-container1-container1-srslistitemprinter',
+                  renderHeader: 'OB.UI.ModalSrScrollableHeader',
+                  renderLine: 'OB.UI.ListSrsLine',
+                  renderEmpty: 'OB.UI.RenderEmpty'
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  clearAction: function(inSender, inEvent) {
     this.srsList.reset();
     return true;
   },
-  searchAction: function (inSender, inEvent) {
+  searchAction: function(inSender, inEvent) {
     var me = this,
-        filter = inEvent.srName;
+      filter = inEvent.srName;
 
     function errorCallback(tx, error) {
       OB.UTIL.showError(error);
@@ -200,21 +242,33 @@ enyo.kind({
       };
     }
 
-    OB.Dal.find(OB.Model.SalesRepresentative, criteria, successCallbackBPs, errorCallback, null, null, true);
+    OB.Dal.find(
+      OB.Model.SalesRepresentative,
+      criteria,
+      successCallbackBPs,
+      errorCallback,
+      null,
+      null,
+      true
+    );
     return true;
   },
   srsList: null,
-  init: function (model) {
+  init: function(model) {
     this.srsList = new Backbone.Collection();
     this.$.srslistitemprinter.setCollection(this.srsList);
-    this.srsList.on('click', function (model) {
-      if (model.attributes.name === OB.I18N.getLabel('OBPOS_None')) {
-        model.attributes.name = null;
-      }
-      this.doChangeSalesRepresentative({
-        salesRepresentative: model
-      });
-    }, this);
+    this.srsList.on(
+      'click',
+      function(model) {
+        if (model.attributes.name === OB.I18N.getLabel('OBPOS_None')) {
+          model.attributes.name = null;
+        }
+        this.doChangeSalesRepresentative({
+          salesRepresentative: model
+        });
+      },
+      this
+    );
   }
 });
 
@@ -224,7 +278,7 @@ enyo.kind({
   topPosition: '125px',
   kind: 'OB.UI.Modal',
   classes: 'obUiModalSalesRepresentative',
-  executeOnHide: function () {
+  executeOnHide: function() {
     this.$.body.$.listSrs.$.srslistitemprinter.$.theader.$.modalSrScrollableHeader.clearAction();
   },
   i18nHeader: 'OBPOS_LblAssignSalesRepresentative',
@@ -232,7 +286,7 @@ enyo.kind({
     kind: 'OB.UI.ListSrs',
     classes: 'obUiModalSalesRepresentative-body-obUiListSrs'
   },
-  init: function (model) {
+  init: function(model) {
     this.model = model;
     this.waterfall('onSetModel', {
       model: this.model

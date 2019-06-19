@@ -10,13 +10,16 @@
 /*global enyo, _*/
 
 enyo.kind({
-  name: 'OB.OBPOSPointOfSale.UI.customers.ModalConfigurationRequiredForCreateCustomers',
+  name:
+    'OB.OBPOSPointOfSale.UI.customers.ModalConfigurationRequiredForCreateCustomers',
   kind: 'OB.UI.ModalInfo',
-  classes: 'obObposPointOfSaleUiCustomersModalConfigurationRequiredForCreateCustomers',
+  classes:
+    'obObposPointOfSaleUiCustomersModalConfigurationRequiredForCreateCustomers',
   i18nHeader: 'OBPOS_configurationRequired',
   bodyContent: {
     i18nContent: 'OBPOS_configurationNeededToCreateCustomers',
-    classes: 'obObposPointOfSaleUiCustomersModalConfigurationRequiredForCreateCustomers-bodyContent'
+    classes:
+      'obObposPointOfSaleUiCustomersModalConfigurationRequiredForCreateCustomers-bodyContent'
   }
 });
 
@@ -28,7 +31,7 @@ enyo.kind({
   handlers: {
     onDisableButton: 'disableButton'
   },
-  disableButton: function (inSender, inEvent) {
+  disableButton: function(inSender, inEvent) {
     this.setDisabled(inEvent.disabled);
     if (inEvent.disabled) {
       this.addClass(this.classButtonDisabled);
@@ -36,7 +39,7 @@ enyo.kind({
       this.removeClass(this.classButtonDisabled);
     }
   },
-  tap: function () {
+  tap: function() {
     this.bubble('onCancelClose');
   }
 });
@@ -44,19 +47,25 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.CustomerPropertyLine',
   classes: 'obUiCustomerPropertyLine',
-  components: [{
-    classes: 'obUiCustomerPropertyLine-labelLine',
-    name: 'labelLine'
-  }, {
-    classes: 'obUiCustomerPropertyLine-newAttribute',
-    name: 'newAttribute'
-  }, {
-    classes: 'obUiCustomerPropertyLine-element3 u-clearBoth'
-  }],
-  initComponents: function () {
+  components: [
+    {
+      classes: 'obUiCustomerPropertyLine-labelLine',
+      name: 'labelLine'
+    },
+    {
+      classes: 'obUiCustomerPropertyLine-newAttribute',
+      name: 'newAttribute'
+    },
+    {
+      classes: 'obUiCustomerPropertyLine-element3 u-clearBoth'
+    }
+  ],
+  initComponents: function() {
     this.inherited(arguments);
     this.$.newAttribute.createComponent(this.newAttribute);
-    this.$.labelLine.content = this.newAttribute.i18nLabel ? OB.I18N.getLabel(this.newAttribute.i18nLabel) : this.newAttribute.label;
+    this.$.labelLine.content = this.newAttribute.i18nLabel
+      ? OB.I18N.getLabel(this.newAttribute.i18nLabel)
+      : this.newAttribute.label;
     if (this.newAttribute.mandatory) {
       this.$.labelLine.content = this.$.labelLine.content + ' *';
     }
@@ -82,18 +91,18 @@ enyo.kind({
     onRetrieveCustomer: '',
     onSetValues: ''
   },
-  valueSet: function (inSender, inEvent) {
+  valueSet: function(inSender, inEvent) {
     if (inEvent.data.hasOwnProperty(this.modelProperty)) {
       this.setValue(inEvent.data[this.modelProperty]);
     }
   },
-  retrieveValue: function (inSender, inEvent) {
+  retrieveValue: function(inSender, inEvent) {
     inEvent[this.modelProperty] = this.getValue();
   },
-  blur: function () {},
-  input: function () {},
-  change: function () {},
-  loadValue: function (inSender, inEvent) {
+  blur: function() {},
+  input: function() {},
+  change: function() {},
+  loadValue: function(inSender, inEvent) {
     if (inEvent.customer !== undefined) {
       if (inEvent.customer.get(this.modelProperty) !== undefined) {
         this.setValue(inEvent.customer.get(this.modelProperty));
@@ -102,10 +111,10 @@ enyo.kind({
       this.setValue('');
     }
   },
-  saveChange: function (inSender, inEvent) {
+  saveChange: function(inSender, inEvent) {
     inEvent.customer.set(this.modelProperty, this.getValue());
   },
-  initComponents: function () {
+  initComponents: function() {
     if (this.readOnly) {
       this.setAttribute('readonly', 'readonly');
     }
@@ -123,7 +132,7 @@ enyo.kind({
     onLoadValue: 'loadValue',
     onHideShow: 'hideShow'
   },
-  loadValue: function (inSender, inEvent) {
+  loadValue: function(inSender, inEvent) {
     if (inEvent.customer !== undefined) {
       if (inEvent.customer.get(this.modelProperty) !== undefined) {
         if (_.isNull(inEvent.customer.get(this.modelProperty))) {
@@ -155,28 +164,36 @@ enyo.kind({
   events: {
     onHideShowFields: ''
   },
-  components: [{
-    name: 'useSameCheck',
-    classes: 'obUiSwitchShippingInvoicingAddr-useSameCheck',
-    components: [{
-      name: 'btnUseSameCheck',
-      kind: 'OB.UI.CheckboxButton',
-      classes: 'obUiSwitchShippingInvoicingAddr-useSameCheck-btnUseSameCheck'
-    }]
-  }, {
-    name: 'info',
-    classes: 'obUiSwitchShippingInvoicingAddr-info',
-    components: [{
-      name: 'infotext',
-      classes: 'obUiSwitchShippingInvoicingAddr-info-infotext'
-    }]
-  }],
-  initComponents: function () {
+  components: [
+    {
+      name: 'useSameCheck',
+      classes: 'obUiSwitchShippingInvoicingAddr-useSameCheck',
+      components: [
+        {
+          name: 'btnUseSameCheck',
+          kind: 'OB.UI.CheckboxButton',
+          classes:
+            'obUiSwitchShippingInvoicingAddr-useSameCheck-btnUseSameCheck'
+        }
+      ]
+    },
+    {
+      name: 'info',
+      classes: 'obUiSwitchShippingInvoicingAddr-info',
+      components: [
+        {
+          name: 'infotext',
+          classes: 'obUiSwitchShippingInvoicingAddr-info-infotext'
+        }
+      ]
+    }
+  ],
+  initComponents: function() {
     this.inherited(arguments);
     this.owner.owner.$.labelLine.hide();
     this.$.infotext.setContent(OB.I18N.getLabel('OBPOS_SameAddrInfo'));
   },
-  valueSet: function (inSender, inEvent) {
+  valueSet: function(inSender, inEvent) {
     if (inEvent.data.hasOwnProperty('btnUseSameCheck')) {
       this.doHideShowFields({
         checked: inEvent.data.btnUseSameCheck
@@ -188,30 +205,35 @@ enyo.kind({
       }
     }
   },
-  retrieveValue: function (inSender, inEvent) {
+  retrieveValue: function(inSender, inEvent) {
     inEvent.btnUseSameCheck = this.$.btnUseSameCheck.checked;
   },
-  rendered: function () {
+  rendered: function() {
     this.inherited(arguments);
     // This inline style is allowed
     this.owner.applyStyle('width', '100%');
   },
-  loadValue: function (inSender, inEvent) {
+  loadValue: function(inSender, inEvent) {
     if (inEvent.customer !== undefined) {
       this.hide();
     } else {
       this.show();
       this.$.btnUseSameCheck.checked = true;
-      this.$.btnUseSameCheck.addClass('obUiSwitchShippingInvoicingAddr-useSameCheck-btnUseSameCheck_active');
+      this.$.btnUseSameCheck.addClass(
+        'obUiSwitchShippingInvoicingAddr-useSameCheck-btnUseSameCheck_active'
+      );
       this.doHideShowFields({
         checked: this.$.btnUseSameCheck.checked
       });
     }
   },
-  saveChange: function (inSender, inEvent) {
-    inEvent.customer.set('useSameAddrForShipAndInv', this.$.btnUseSameCheck.checked);
+  saveChange: function(inSender, inEvent) {
+    inEvent.customer.set(
+      'useSameAddrForShipAndInv',
+      this.$.btnUseSameCheck.checked
+    );
   },
-  tap: function () {
+  tap: function() {
     this.doHideShowFields({
       checked: this.$.btnUseSameCheck.checked
     });
@@ -232,43 +254,53 @@ enyo.kind({
     onSaveProperty: '',
     onSetValues: ''
   },
-  components: [{
-    kind: 'OB.UI.List',
-    name: 'customerCombo',
-    classes: 'obUiCustomerComboProperty-customerCombo',
-    renderLine: enyo.kind({
-      kind: 'enyo.Option',
-      classes: 'obUiCustomerComboProperty-customerCombo-renderLine-enyoOption',
-      initComponents: function () {
-        this.inherited(arguments);
-        this.setValue(this.model.get(this.parent.parent.retrievedPropertyForValue));
-        this.setContent(this.model.get(this.parent.parent.retrievedPropertyForText));
-      }
-    }),
-    renderEmpty: 'enyo.Control'
-  }],
-  valueSet: function (inSender, inEvent) {
+  components: [
+    {
+      kind: 'OB.UI.List',
+      name: 'customerCombo',
+      classes: 'obUiCustomerComboProperty-customerCombo',
+      renderLine: enyo.kind({
+        kind: 'enyo.Option',
+        classes:
+          'obUiCustomerComboProperty-customerCombo-renderLine-enyoOption',
+        initComponents: function() {
+          this.inherited(arguments);
+          this.setValue(
+            this.model.get(this.parent.parent.retrievedPropertyForValue)
+          );
+          this.setContent(
+            this.model.get(this.parent.parent.retrievedPropertyForText)
+          );
+        }
+      }),
+      renderEmpty: 'enyo.Control'
+    }
+  ],
+  valueSet: function(inSender, inEvent) {
     var i;
     if (inEvent.data.hasOwnProperty(this.modelProperty)) {
       for (i = 0; i < this.$.customerCombo.getCollection().length; i++) {
-        if (this.$.customerCombo.getCollection().models[i].get('id') === inEvent.data[this.modelProperty]) {
+        if (
+          this.$.customerCombo.getCollection().models[i].get('id') ===
+          inEvent.data[this.modelProperty]
+        ) {
           this.$.customerCombo.setSelected(i);
           break;
         }
       }
     }
   },
-  retrieveValue: function (inSender, inEvent) {
+  retrieveValue: function(inSender, inEvent) {
     inEvent[this.modelProperty] = this.$.customerCombo.getValue();
   },
-  loadValue: function (inSender, inEvent) {
+  loadValue: function(inSender, inEvent) {
     this.$.customerCombo.setCollection(this.collection);
     this.fetchDataFunction(inEvent);
   },
-  change: function () {},
-  dataReadyFunction: function (data, inEvent) {
+  change: function() {},
+  dataReadyFunction: function(data, inEvent) {
     var index = 0,
-        result = null;
+      result = null;
     if (this.destroyed) {
       return;
     }
@@ -279,37 +311,57 @@ enyo.kind({
       return;
     }
 
-    result = _.find(this.collection.models, function (categ) {
-      if (inEvent.customer) {
-        //Edit: select actual value
-        if (categ.get(this.retrievedPropertyForValue) === inEvent.customer.get(this.modelProperty)) {
-          return true;
+    result = _.find(
+      this.collection.models,
+      function(categ) {
+        if (inEvent.customer) {
+          //Edit: select actual value
+          if (
+            categ.get(this.retrievedPropertyForValue) ===
+            inEvent.customer.get(this.modelProperty)
+          ) {
+            return true;
+          }
+        } else {
+          //New: select default value
+          if (
+            categ.get(this.retrievedPropertyForValue) === this.defaultValue()
+          ) {
+            return true;
+          }
         }
-      } else {
-        //New: select default value
-        if (categ.get(this.retrievedPropertyForValue) === this.defaultValue()) {
-          return true;
-        }
-      }
-      index += 1;
-    }, this);
+        index += 1;
+      },
+      this
+    );
     if (result) {
       this.$.customerCombo.setSelected(index);
     } else {
       this.$.customerCombo.setSelected(0);
     }
   },
-  saveChange: function (inSender, inEvent) {
+  saveChange: function(inSender, inEvent) {
     var selected = this.collection.at(this.$.customerCombo.getSelected());
     if (selected) {
-      inEvent.customer.set(this.modelProperty, selected.get(this.retrievedPropertyForValue));
+      inEvent.customer.set(
+        this.modelProperty,
+        selected.get(this.retrievedPropertyForValue)
+      );
       if (this.modelPropertyText) {
-        inEvent.customer.set(this.modelPropertyText, selected.get(this.retrievedPropertyForText));
+        inEvent.customer.set(
+          this.modelPropertyText,
+          selected.get(this.retrievedPropertyForText)
+        );
       }
     }
   },
-  initComponents: function () {
-    if (this.collectionName && OB && OB.Collection && OB.Collection[this.collectionName]) {
+  initComponents: function() {
+    if (
+      this.collectionName &&
+      OB &&
+      OB.Collection &&
+      OB.Collection[this.collectionName]
+    ) {
       this.collection = new OB.Collection[this.collectionName]();
     } else {
       OB.info('OB.UI.CustomerComboProperty: Collection is required');
@@ -329,93 +381,131 @@ enyo.kind({
     onHideShowFields: 'hideShowFields'
   },
   events: {},
-  components: [{
-    name: 'bodyheader',
-    classes: 'obObposPointOfSaleUiCustomersEditCreatecustomers-bodyheader'
-  }, {
-    name: 'customerAttributes',
-    kind: 'Scroller',
-    classes: 'obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes',
-    components: [{
-      name: 'customerOnlyFields',
-      classes: 'obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields'
-    }, {
-      name: 'shipAddress',
-      classes: 'obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-shipAddress',
-      components: [{
-        name: 'shipLbl',
-        showing: false,
-        classes: 'obObposPointOfSaleUiCustomersEditCreatecustomers-shipAddress-shipLbl'
-      }, {
-        name: 'shippingAddrFields',
-        classes: 'obObposPointOfSaleUiCustomersEditCreatecustomers-shipAddress-shippingAddrFields u-clearBoth'
-      }]
-    }, {
-      name: 'invAddress',
-      classes: 'obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-invAddress',
-      components: [{
-        name: 'invLbl',
-        showing: false,
-        classes: 'obObposPointOfSaleUiCustomersEditCreatecustomers-invAddress-invLbl'
-      }, {
-        style: 'clear:both',
-        name: 'invoicingAddrFields',
-        classes: 'obObposPointOfSaleUiCustomersEditCreatecustomers-invAddress-invoicingAddrFields u-clearBoth'
-      }]
-    }]
-  }],
-  hideShowFields: function (inSender, inEvent) {
+  components: [
+    {
+      name: 'bodyheader',
+      classes: 'obObposPointOfSaleUiCustomersEditCreatecustomers-bodyheader'
+    },
+    {
+      name: 'customerAttributes',
+      kind: 'Scroller',
+      classes:
+        'obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes',
+      components: [
+        {
+          name: 'customerOnlyFields',
+          classes:
+            'obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields'
+        },
+        {
+          name: 'shipAddress',
+          classes:
+            'obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-shipAddress',
+          components: [
+            {
+              name: 'shipLbl',
+              showing: false,
+              classes:
+                'obObposPointOfSaleUiCustomersEditCreatecustomers-shipAddress-shipLbl'
+            },
+            {
+              name: 'shippingAddrFields',
+              classes:
+                'obObposPointOfSaleUiCustomersEditCreatecustomers-shipAddress-shippingAddrFields u-clearBoth'
+            }
+          ]
+        },
+        {
+          name: 'invAddress',
+          classes:
+            'obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-invAddress',
+          components: [
+            {
+              name: 'invLbl',
+              showing: false,
+              classes:
+                'obObposPointOfSaleUiCustomersEditCreatecustomers-invAddress-invLbl'
+            },
+            {
+              style: 'clear:both',
+              name: 'invoicingAddrFields',
+              classes:
+                'obObposPointOfSaleUiCustomersEditCreatecustomers-invAddress-invoicingAddrFields u-clearBoth'
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  hideShowFields: function(inSender, inEvent) {
     this.$.shipLbl.setShowing(!inEvent.checked);
     this.$.invLbl.setShowing(!inEvent.checked);
-    this.$.shipAddress.addRemoveClass('obObposPointOfSaleUiCustomersEditCreatecustomers-shipAddress-shipLbl', !inEvent.checked);
-    this.$.invAddress.addRemoveClass('obObposPointOfSaleUiCustomersEditCreatecustomers-invAddress-invLbl', !inEvent.checked);
+    this.$.shipAddress.addRemoveClass(
+      'obObposPointOfSaleUiCustomersEditCreatecustomers-shipAddress-shipLbl',
+      !inEvent.checked
+    );
+    this.$.invAddress.addRemoveClass(
+      'obObposPointOfSaleUiCustomersEditCreatecustomers-invAddress-invLbl',
+      !inEvent.checked
+    );
     this.waterfall('onHideShow', {
       checked: inEvent.checked
     });
     return true;
   },
-  setCustomer: function (customer) {
+  setCustomer: function(customer) {
     this.customer = customer;
     this.waterfall('onLoadValue', {
       customer: this.customer
     });
   },
-  preSaveCustomer: function (inSender, inEvent) {
+  preSaveCustomer: function(inSender, inEvent) {
     var me = this,
-        inSenderOriginal = inSender,
-        inEventOriginal = inEvent;
+      inSenderOriginal = inSender,
+      inEventOriginal = inEvent;
 
     //Validate anonymous customer edit allowed
-    if (this.customer && OB.MobileApp.model.get('terminal').businessPartner === this.customer.id && OB.MobileApp.model.hasPermission('OBPOS_NotAllowEditAnonymousCustomer', true)) {
+    if (
+      this.customer &&
+      OB.MobileApp.model.get('terminal').businessPartner === this.customer.id &&
+      OB.MobileApp.model.hasPermission(
+        'OBPOS_NotAllowEditAnonymousCustomer',
+        true
+      )
+    ) {
       OB.UTIL.showError(OB.I18N.getLabel('OBPOS_CannotEditAnonymousCustomer'));
       return;
     }
 
-    OB.UTIL.HookManager.executeHooks('OBPOS_PreCustomerSave', {
-      inSender: inSenderOriginal,
-      inEvent: inEventOriginal,
-      passValidation: true,
-      error: '',
-      meObject: me,
-      validations: inEvent.validations
-    }, function (args) {
-      if (args.cancellation) {
-        return;
+    OB.UTIL.HookManager.executeHooks(
+      'OBPOS_PreCustomerSave',
+      {
+        inSender: inSenderOriginal,
+        inEvent: inEventOriginal,
+        passValidation: true,
+        error: '',
+        meObject: me,
+        validations: inEvent.validations
+      },
+      function(args) {
+        if (args.cancellation) {
+          return;
+        }
+        if (args.passValidation) {
+          args.meObject.saveCustomer(args.inSender, args.inEvent);
+        } else {
+          OB.UTIL.showError(args.error);
+          me.waterfall('onDisableButton', {
+            disabled: false
+          });
+        }
       }
-      if (args.passValidation) {
-        args.meObject.saveCustomer(args.inSender, args.inEvent);
-      } else {
-        OB.UTIL.showError(args.error);
-        me.waterfall('onDisableButton', {
-          disabled: false
-        });
-      }
-    });
+    );
     return true;
   },
-  saveCustomer: function (inSender, inEvent) {
+  saveCustomer: function(inSender, inEvent) {
     var me = this,
-        customerEdited;
+      customerEdited;
 
     function enableButtonsCallback(disable) {
       me.waterfall('onDisableButton', {
@@ -431,7 +521,7 @@ enyo.kind({
 
     function checkMandatoryFields(items, customer) {
       var errors = '';
-      _.each(items, function (item) {
+      _.each(items, function(item) {
         if (item.newAttribute.mandatory) {
           var value = customer.get(item.newAttribute.modelProperty);
           if (!value) {
@@ -471,30 +561,61 @@ enyo.kind({
     function validateForm(form) {
       if (inEvent.validations) {
         var customer = form.model.get('customer'),
-            errors = checkMandatoryFields(form.$.customerOnlyFields.children, customer);
+          errors = checkMandatoryFields(
+            form.$.customerOnlyFields.children,
+            customer
+          );
         if (form.$.invoicingAddrFields.showing) {
-          var invoicingErrors = checkMandatoryFields(form.$.invoicingAddrFields.children, customer);
+          var invoicingErrors = checkMandatoryFields(
+            form.$.invoicingAddrFields.children,
+            customer
+          );
           if (invoicingErrors) {
             if (errors) {
               errors += ', ';
             }
-            errors += (form.$.invoicingAddrFields.getClassAttribute().indexOf("twoAddrLayout") === 0 ? OB.I18N.getLabel('OBPOS_LblBillAddr') + ' [' + invoicingErrors + ']' : invoicingErrors);
+            errors +=
+              form.$.invoicingAddrFields
+                .getClassAttribute()
+                .indexOf('twoAddrLayout') === 0
+                ? OB.I18N.getLabel('OBPOS_LblBillAddr') +
+                  ' [' +
+                  invoicingErrors +
+                  ']'
+                : invoicingErrors;
           }
         }
-        if (form.$.shippingAddrFields.showing && form.$.shippingAddrFields.getClassAttribute().indexOf("twoAddrLayout") === 0) {
-          var shippingErrors = checkMandatoryFields(form.$.shippingAddrFields.children, customer);
+        if (
+          form.$.shippingAddrFields.showing &&
+          form.$.shippingAddrFields
+            .getClassAttribute()
+            .indexOf('twoAddrLayout') === 0
+        ) {
+          var shippingErrors = checkMandatoryFields(
+            form.$.shippingAddrFields.children,
+            customer
+          );
           if (shippingErrors) {
             if (errors) {
               errors += ', ';
             }
-            errors += OB.I18N.getLabel('OBPOS_LblShipAddr') + ' [' + shippingErrors + ']';
+            errors +=
+              OB.I18N.getLabel('OBPOS_LblShipAddr') +
+              ' [' +
+              shippingErrors +
+              ']';
           }
         }
         if (errors) {
-          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BPartnerRequiredFields', [errors]));
+          OB.UTIL.showWarning(
+            OB.I18N.getLabel('OBPOS_BPartnerRequiredFields', [errors])
+          );
           return false;
         }
-        if (customer.get('firstName').length + customer.get('lastName').length >= 60) {
+        if (
+          customer.get('firstName').length + customer.get('lastName').length >=
+          60
+        ) {
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_TooLongName'));
           return false;
         }
@@ -513,33 +634,49 @@ enyo.kind({
     function beforeCustomerSave(customer, isNew) {
       customer.adjustNames();
       if (customer.get('locationModel')) {
-        customer.set('countryId', customer.get('locationModel').get('countryId'));
-        customer.set('shipCountryId', customer.get('locationModel').get('shipCountryId'));
-        customer.set('countryName', customer.get('locationModel').get('countryName'));
-        customer.set('shipCountryName', customer.get('locationModel').get('shipCountryName'));
+        customer.set(
+          'countryId',
+          customer.get('locationModel').get('countryId')
+        );
+        customer.set(
+          'shipCountryId',
+          customer.get('locationModel').get('shipCountryId')
+        );
+        customer.set(
+          'countryName',
+          customer.get('locationModel').get('countryName')
+        );
+        customer.set(
+          'shipCountryName',
+          customer.get('locationModel').get('shipCountryName')
+        );
       }
-      OB.UTIL.HookManager.executeHooks('OBPOS_BeforeCustomerSave', {
-        customer: customer,
-        isNew: isNew,
-        validations: inEvent.validations,
-        windowComponent: me
-      }, function (args) {
-        if (args && args.cancellation && args.cancellation === true) {
-          enableButtonsCallback(false);
-          return true;
-        }
-        customerEdited = args.customer;
-        args.customer.saveCustomer(function (result) {
-          me.waterfall('onDisableButton', {
-            disabled: false
-          });
-          if (result && !inEvent.silent) {
-            me.bubble('onCancelClose', {
-              customer: customerEdited
-            });
+      OB.UTIL.HookManager.executeHooks(
+        'OBPOS_BeforeCustomerSave',
+        {
+          customer: customer,
+          isNew: isNew,
+          validations: inEvent.validations,
+          windowComponent: me
+        },
+        function(args) {
+          if (args && args.cancellation && args.cancellation === true) {
+            enableButtonsCallback(false);
+            return true;
           }
-        });
-      });
+          customerEdited = args.customer;
+          args.customer.saveCustomer(function(result) {
+            me.waterfall('onDisableButton', {
+              disabled: false
+            });
+            if (result && !inEvent.silent) {
+              me.bubble('onCancelClose', {
+                customer: customerEdited
+              });
+            }
+          });
+        }
+      );
     }
     if (this.customer === undefined) {
       this.model.get('customer').newCustomer();
@@ -548,12 +685,11 @@ enyo.kind({
       });
       if (validateForm(this)) {
         beforeCustomerSave(this.model.get('customer'), true);
-
       } else {
         enableButtonsCallback(false);
       }
     } else {
-      this.model.get('customer').loadModel(this.customer, function (customer) {
+      this.model.get('customer').loadModel(this.customer, function(customer) {
         getCustomerValues({
           customer: customer
         });
@@ -565,7 +701,7 @@ enyo.kind({
       });
     }
   },
-  initComponents: function () {
+  initComponents: function() {
     var me = this;
     this.inherited(arguments);
     this.$.bodyheader.createComponent({
@@ -576,11 +712,17 @@ enyo.kind({
     this.attributeContainer = this.$.customerAttributes;
     //Sort Attributes
     if (OB.MobileApp.model.get('permissions').OBPOS_CustomerCompSortOrder) {
-      var prefIndex, sortOrder, sortedAttr = [],
-          prefAttr = [];
+      var prefIndex,
+        sortOrder,
+        sortedAttr = [],
+        prefAttr = [];
       try {
-        sortOrder = JSON.parse(OB.MobileApp.model.get('permissions').OBPOS_CustomerCompSortOrder.replace(/'/g, "\""));
-        _.each(this.newAttributes, function (attr) {
+        sortOrder = JSON.parse(
+          OB.MobileApp.model
+            .get('permissions')
+            .OBPOS_CustomerCompSortOrder.replace(/'/g, '"')
+        );
+        _.each(this.newAttributes, function(attr) {
           prefIndex = sortOrder.indexOf(attr.modelProperty);
           if (prefIndex >= 0) {
             prefAttr[prefIndex] = attr;
@@ -588,7 +730,7 @@ enyo.kind({
             sortedAttr.push(attr);
           }
         });
-        prefAttr = _.filter(prefAttr, function (attr) {
+        prefAttr = _.filter(prefAttr, function(attr) {
           return !OB.UTIL.isNullOrUndefined(attr);
         });
         this.newAttributes = prefAttr.concat(sortedAttr);
@@ -596,38 +738,62 @@ enyo.kind({
         // Don't do anything if exception is thrown
       }
     }
-    enyo.forEach(this.newAttributes, function (natt) {
-      this.$.customerOnlyFields.createComponent({
-        kind: 'OB.UI.CustomerPropertyLine',
-        name: 'line_' + natt.name,
-        classes: 'obObposPointOfSaleUiCustomersEditCreatecustomers-customerOnlyFields-obUiCustomerPropertyLine',
-        newAttribute: natt
-      }, {
-        owner: me.attributeContainer
-      });
-    }, this);
-    enyo.forEach(this.shipAddrAttributes, function (natt) {
-      this.$.shippingAddrFields.createComponent({
-        kind: 'OB.UI.CustomerPropertyLine',
-        name: 'line_' + natt.name,
-        classes: 'obObposPointOfSaleUiCustomersEditCreatecustomers-shippingAddrFields-obUiCustomerPropertyLine',
-        newAttribute: natt
-      }, {
-        owner: me.attributeContainer
-      });
-    }, this);
-    enyo.forEach(this.invAddrAttributes, function (natt) {
-      this.$.invoicingAddrFields.createComponent({
-        kind: 'OB.UI.CustomerPropertyLine',
-        name: 'line_' + natt.name,
-        classes: 'obObposPointOfSaleUiCustomersEditCreatecustomers-invoicingAddrFields-obUiCustomerPropertyLine',
-        newAttribute: natt
-      }, {
-        owner: me.attributeContainer
-      });
-    }, this);
+    enyo.forEach(
+      this.newAttributes,
+      function(natt) {
+        this.$.customerOnlyFields.createComponent(
+          {
+            kind: 'OB.UI.CustomerPropertyLine',
+            name: 'line_' + natt.name,
+            classes:
+              'obObposPointOfSaleUiCustomersEditCreatecustomers-customerOnlyFields-obUiCustomerPropertyLine',
+            newAttribute: natt
+          },
+          {
+            owner: me.attributeContainer
+          }
+        );
+      },
+      this
+    );
+    enyo.forEach(
+      this.shipAddrAttributes,
+      function(natt) {
+        this.$.shippingAddrFields.createComponent(
+          {
+            kind: 'OB.UI.CustomerPropertyLine',
+            name: 'line_' + natt.name,
+            classes:
+              'obObposPointOfSaleUiCustomersEditCreatecustomers-shippingAddrFields-obUiCustomerPropertyLine',
+            newAttribute: natt
+          },
+          {
+            owner: me.attributeContainer
+          }
+        );
+      },
+      this
+    );
+    enyo.forEach(
+      this.invAddrAttributes,
+      function(natt) {
+        this.$.invoicingAddrFields.createComponent(
+          {
+            kind: 'OB.UI.CustomerPropertyLine',
+            name: 'line_' + natt.name,
+            classes:
+              'obObposPointOfSaleUiCustomersEditCreatecustomers-invoicingAddrFields-obUiCustomerPropertyLine',
+            newAttribute: natt
+          },
+          {
+            owner: me.attributeContainer
+          }
+        );
+      },
+      this
+    );
   },
-  init: function (model) {
+  init: function(model) {
     this.model = model;
   }
 });
@@ -645,7 +811,7 @@ enyo.kind({
   events: {
     onSaveProperty: ''
   },
-  valueSet: function (inSender, inEvent) {
+  valueSet: function(inSender, inEvent) {
     if (inEvent.data.hasOwnProperty(this.modelProperty)) {
       if (inEvent.data[this.modelProperty]) {
         this.check();
@@ -654,10 +820,10 @@ enyo.kind({
       }
     }
   },
-  retrieveValue: function (inSender, inEvent) {
+  retrieveValue: function(inSender, inEvent) {
     inEvent[this.modelProperty] = this.checked;
   },
-  loadValue: function (inSender, inEvent) {
+  loadValue: function(inSender, inEvent) {
     var me = this;
     if (inEvent.customer !== undefined) {
       if (inEvent.customer.get(me.modelProperty) !== undefined) {
@@ -673,11 +839,11 @@ enyo.kind({
       me.removeClass('obUiCustomerConsentCheckProperty_active');
     }
   },
-  saveChange: function (inSender, inEvent) {
+  saveChange: function(inSender, inEvent) {
     var me = this;
     inEvent.customer.set(me.modelProperty, me.checked);
   },
-  initComponents: function () {
+  initComponents: function() {
     if (this.readOnly) {
       this.setAttribute('readonly', 'readonly');
     }
@@ -689,7 +855,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.CustomerCheckCommercialAuth',
   kind: 'OB.UI.CustomerConsentCheckProperty',
-  loadValue: function (inSender, inEvent) {
+  loadValue: function(inSender, inEvent) {
     var me = this;
     var i;
     if (inEvent.customer !== undefined) {
@@ -702,7 +868,9 @@ enyo.kind({
         me.removeClass('active');
       }
       for (i = 0; i < me.parent.parent.parent.children.length; i++) {
-        if (me.parent.parent.parent.children[i].name === 'line_contactpreferences') {
+        if (
+          me.parent.parent.parent.children[i].name === 'line_contactpreferences'
+        ) {
           var contactpreferences = me.parent.parent.parent.children[i];
           var commercialauth = inEvent.customer.attributes.commercialauth;
           if (commercialauth) {
@@ -717,7 +885,7 @@ enyo.kind({
       me.removeClass('active');
     }
   },
-  tap: function () {
+  tap: function() {
     if (this.readOnly) {
       return;
     }
@@ -725,10 +893,14 @@ enyo.kind({
     this.checked = !this.checked;
     this.addRemoveClass('active', this.checked);
     for (i = 0; i < this.parent.parent.parent.children.length; i++) {
-      if (this.parent.parent.parent.children[i].name === 'line_contactpreferences') {
+      if (
+        this.parent.parent.parent.children[i].name === 'line_contactpreferences'
+      ) {
         var contactpreferences = this.parent.parent.parent.children[i];
-        var smsCheck = contactpreferences.$.newAttribute.$.contactpreferences.$.smsCheck;
-        var emailCheck = contactpreferences.$.newAttribute.$.contactpreferences.$.emailCheck;
+        var smsCheck =
+          contactpreferences.$.newAttribute.$.contactpreferences.$.smsCheck;
+        var emailCheck =
+          contactpreferences.$.newAttribute.$.contactpreferences.$.emailCheck;
         if (this.checked) {
           contactpreferences.show();
         } else {
@@ -740,52 +912,79 @@ enyo.kind({
       }
     }
   },
-  saveChange: function (inSender, inEvent) {
+  saveChange: function(inSender, inEvent) {
     var me = this;
     var i;
     inEvent.customer.set(me.modelProperty, me.checked);
     for (i = 0; i < me.parent.parent.parent.children.length; i++) {
-      if (me.parent.parent.parent.children[i].name === 'line_contactpreferences') {
+      if (
+        me.parent.parent.parent.children[i].name === 'line_contactpreferences'
+      ) {
         var contactpreferences = me.parent.parent.parent.children[i];
-        inEvent.customer.set('viasms', contactpreferences.$.newAttribute.$.contactpreferences.$.smsCheck.checked);
-        inEvent.customer.set('viaemail', contactpreferences.$.newAttribute.$.contactpreferences.$.emailCheck.checked);
+        inEvent.customer.set(
+          'viasms',
+          contactpreferences.$.newAttribute.$.contactpreferences.$.smsCheck
+            .checked
+        );
+        inEvent.customer.set(
+          'viaemail',
+          contactpreferences.$.newAttribute.$.contactpreferences.$.emailCheck
+            .checked
+        );
       }
     }
   }
 });
 enyo.kind({
   name: 'OB.UI.CustomerCheckComboProperty',
-  components: [{
-    components: [{
-      name: 'checkoptions',
-      style: 'display: flex; flex-wrap: wrap;',
-      components: [{
-        name: 'smsField',
-        style: 'display: table; height: 40px; border: 1px solid #CCC; ',
-        components: [{
-          kind: 'OB.UI.CheckboxButton',
-          name: 'smsCheck',
-          style: 'background-position: 0px 5px; height: 38px; margin-left: 5px; '
-        }, {
-          name: 'smsLabel',
-          classes: 'input',
-          style: 'width: 80%; display: table-cell; vertical-align: middle; border: none; '
-        }]
-      }, {
-        name: 'emailField',
-        style: 'display: table; height: 40px; border: 1px solid #CCC; ',
-        components: [{
-          kind: 'OB.UI.CheckboxButton',
-          name: 'emailCheck',
-          style: 'background-position: 0px 5px; height: 38px; margin-left: 5px; '
-        }, {
-          name: 'emailLabel',
-          classes: 'input',
-          style: 'width: 80%; display: table-cell; vertical-align: middle; border: none; '
-        }]
-      }]
-    }]
-  }],
+  components: [
+    {
+      components: [
+        {
+          name: 'checkoptions',
+          style: 'display: flex; flex-wrap: wrap;',
+          components: [
+            {
+              name: 'smsField',
+              style: 'display: table; height: 40px; border: 1px solid #CCC; ',
+              components: [
+                {
+                  kind: 'OB.UI.CheckboxButton',
+                  name: 'smsCheck',
+                  style:
+                    'background-position: 0px 5px; height: 38px; margin-left: 5px; '
+                },
+                {
+                  name: 'smsLabel',
+                  classes: 'input',
+                  style:
+                    'width: 80%; display: table-cell; vertical-align: middle; border: none; '
+                }
+              ]
+            },
+            {
+              name: 'emailField',
+              style: 'display: table; height: 40px; border: 1px solid #CCC; ',
+              components: [
+                {
+                  kind: 'OB.UI.CheckboxButton',
+                  name: 'emailCheck',
+                  style:
+                    'background-position: 0px 5px; height: 38px; margin-left: 5px; '
+                },
+                {
+                  name: 'emailLabel',
+                  classes: 'input',
+                  style:
+                    'width: 80%; display: table-cell; vertical-align: middle; border: none; '
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
   handlers: {
     onLoadValue: 'loadValue',
     onSaveChange: 'saveChange'
@@ -793,7 +992,7 @@ enyo.kind({
   events: {
     onSaveProperty: ''
   },
-  loadValue: function (inSender, inEvent) {
+  loadValue: function(inSender, inEvent) {
     var me = this;
     var commertialauth, i;
 
@@ -819,8 +1018,11 @@ enyo.kind({
         me.$.emailCheck.removeClass('active');
       }
       for (i = 0; i < me.parent.parent.parent.children.length; i++) {
-        if (me.parent.parent.parent.children[i].name === 'line_commercialauth') {
-          commertialauth = me.parent.parent.parent.children[i].$.newAttribute.$.commercialauth;
+        if (
+          me.parent.parent.parent.children[i].name === 'line_commercialauth'
+        ) {
+          commertialauth =
+            me.parent.parent.parent.children[i].$.newAttribute.$.commercialauth;
           if (commertialauth.checked) {
             if (me.$.smsCheck.checked) {
               me.$.smsCheck.addClass('active');
@@ -837,12 +1039,12 @@ enyo.kind({
       }
     }
   },
-  saveChange: function (inSender, inEvent) {
+  saveChange: function(inSender, inEvent) {
     var me = this;
     inEvent.customer.set('viasms', me.$.smsCheck.checked);
     inEvent.customer.set('viaemail', me.$.emailCheck.checked);
   },
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
     this.$.smsLabel.setContent(OB.I18N.getLabel('OBPOS_LblSms'));
     this.$.emailLabel.setContent(OB.I18N.getLabel('OBPOS_LblEmail'));

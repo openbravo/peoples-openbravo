@@ -20,43 +20,58 @@ enyo.kind({
   },
   body: {
     classes: 'obObposPointOfSaleUiPaymentMethods-body',
-    components: [{
-      classes: 'obObposPointOfSaleUiPaymentMethods-body-container1',
-      components: [{
-        classes: 'obObposPointOfSaleUiPaymentMethods-body-container1-container1',
-        components: [{
-          name: 'buttonslist',
-          classes: 'obObposPointOfSaleUiPaymentMethods-body-container1-container1-buttonslist'
-        }]
-      }]
-    }]
+    components: [
+      {
+        classes: 'obObposPointOfSaleUiPaymentMethods-body-container1',
+        components: [
+          {
+            classes:
+              'obObposPointOfSaleUiPaymentMethods-body-container1-container1',
+            components: [
+              {
+                name: 'buttonslist',
+                classes:
+                  'obObposPointOfSaleUiPaymentMethods-body-container1-container1-buttonslist'
+              }
+            ]
+          }
+        ]
+      }
+    ]
   },
-  registerMorePaymentMethod: function (inSender, inEvent) {
+  registerMorePaymentMethod: function(inSender, inEvent) {
     this.args.toolbar.bubbleUp('onRegisterButton', inEvent, inSender);
     return true;
   },
-  createPaymentButtons: function (toolbar) {
-    enyo.forEach(this.sideButtons, function (sidebutton) {
-      if (sidebutton.active) {
-        sidebutton.btn.definition.includedInPopUp = true;
-        this.$.body.$.buttonslist.createComponent(sidebutton);
-      }
-    }, this);
+  createPaymentButtons: function(toolbar) {
+    enyo.forEach(
+      this.sideButtons,
+      function(sidebutton) {
+        if (sidebutton.active) {
+          sidebutton.btn.definition.includedInPopUp = true;
+          this.$.body.$.buttonslist.createComponent(sidebutton);
+        }
+      },
+      this
+    );
   },
-  executeOnShow: function () {
-    var sideButtonLength = _.filter(this.sideButtons, function (sideButton) {
+  executeOnShow: function() {
+    var sideButtonLength = _.filter(this.sideButtons, function(sideButton) {
       return sideButton.active;
     }).length;
     if (this.$.body.$.buttonslist.children.length === 0) {
       this.createPaymentButtons(this.args.toolbar);
-    } else if (this.$.body.$.buttonslist.children.length > 0 && this.$.body.$.buttonslist.children.length !== sideButtonLength) {
+    } else if (
+      this.$.body.$.buttonslist.children.length > 0 &&
+      this.$.body.$.buttonslist.children.length !== sideButtonLength
+    ) {
       this.$.body.$.buttonslist.destroyComponents();
       this.createPaymentButtons();
       this.$.body.$.buttonslist.render();
     }
     return true;
   },
-  init: function (model) {
+  init: function(model) {
     this.model = model;
   }
 });

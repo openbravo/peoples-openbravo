@@ -9,14 +9,13 @@
 
 /*global OB, Promise, Uint8Array  */
 
-(function () {
-
-  var WincorCODE128Encoder = function () {
-      OB.ESCPOS.CODE128Encoder.call(this);
-      this.encodechar = function (c) {
-        switch (c) {
+(function() {
+  var WincorCODE128Encoder = function() {
+    OB.ESCPOS.CODE128Encoder.call(this);
+    this.encodechar = function(c) {
+      switch (c) {
         case '/':
-          return 0x0F;
+          return 0x0f;
         case '0':
           return 0x10;
         case '1':
@@ -56,17 +55,17 @@
         case 'I':
           return 0x29;
         case 'J':
-          return 0x2A;
+          return 0x2a;
         case 'K':
-          return 0x2B;
+          return 0x2b;
         case 'L':
-          return 0x2C;
+          return 0x2c;
         case 'M':
-          return 0x2D;
+          return 0x2d;
         case 'N':
-          return 0x2E;
+          return 0x2e;
         case 'O':
-          return 0x2F;
+          return 0x2f;
         case 'P':
           return 0x30;
         case 'Q':
@@ -88,18 +87,18 @@
         case 'Y':
           return 0x39;
         case 'Z':
-          return 0x3A;
+          return 0x3a;
         case '[':
-          return 0x3B;
+          return 0x3b;
         case '\\':
-          return 0x3C;
+          return 0x3c;
         case ']':
-          return 0x3D;
+          return 0x3d;
         case '^':
-          return 0x3E;
+          return 0x3e;
         case '_':
-          return 0x3F;
-        case '\'':
+          return 0x3f;
+        case "'":
           return 0x40;
         case 'a':
           return 0x41;
@@ -120,17 +119,17 @@
         case 'i':
           return 0x49;
         case 'j':
-          return 0x4A;
+          return 0x4a;
         case 'k':
-          return 0x4B;
+          return 0x4b;
         case 'l':
-          return 0x4C;
+          return 0x4c;
         case 'm':
-          return 0x4D;
+          return 0x4d;
         case 'n':
-          return 0x4E;
+          return 0x4e;
         case 'o':
-          return 0x4F;
+          return 0x4f;
         case 'p':
           return 0x50;
         case 'q':
@@ -152,48 +151,50 @@
         case 'y':
           return 0x59;
         case 'z':
-          return 0x5A;
+          return 0x5a;
         case '{':
-          return 0x5B;
+          return 0x5b;
         case '|':
-          return 0x5C;
+          return 0x5c;
         case '}':
-          return 0x5D;
+          return 0x5d;
         case '~':
-          return 0x5E;
+          return 0x5e;
         default:
           return 0x00;
-        }
-      };
-      };
+      }
+    };
+  };
 
-  var ESCPOSWincor = function () {
-      OB.ESCPOS.StandardImageAlt.call(this);
+  var ESCPOSWincor = function() {
+    OB.ESCPOS.StandardImageAlt.call(this);
 
-      this.PARTIAL_CUT_1 = new Uint8Array([0x1D, 0x56, 0x41, 0x30]);
-      this.BAR_CODE128TYPE = new Uint8Array([0x68]);
-      this.encoderCODE128 = new WincorCODE128Encoder();
+    this.PARTIAL_CUT_1 = new Uint8Array([0x1d, 0x56, 0x41, 0x30]);
+    this.BAR_CODE128TYPE = new Uint8Array([0x68]);
+    this.encoderCODE128 = new WincorCODE128Encoder();
 
-      this.transCODE128 = function (code, position) {
-        var line = new Uint8Array();
-        line = OB.ARRAYS.append(line, this.transBarcodeHeader(code, position));
+    this.transCODE128 = function(code, position) {
+      var line = new Uint8Array();
+      line = OB.ARRAYS.append(line, this.transBarcodeHeader(code, position));
 
-        line = OB.ARRAYS.append(line, this.BAR_CODE128);
-        var barcode128 = this.encoderCODE128.encode(code);
-        line = OB.ARRAYS.append(line, new Uint8Array([this.BAR_CODE128TYPE.length + barcode128.length]));
-        line = OB.ARRAYS.append(line, this.BAR_CODE128TYPE);
-        line = OB.ARRAYS.append(line, barcode128);
+      line = OB.ARRAYS.append(line, this.BAR_CODE128);
+      var barcode128 = this.encoderCODE128.encode(code);
+      line = OB.ARRAYS.append(
+        line,
+        new Uint8Array([this.BAR_CODE128TYPE.length + barcode128.length])
+      );
+      line = OB.ARRAYS.append(line, this.BAR_CODE128TYPE);
+      line = OB.ARRAYS.append(line, barcode128);
 
-        line = OB.ARRAYS.append(line, this.transBarcodeFooter(code, position));
-        return line;
-      };
-      };
+      line = OB.ARRAYS.append(line, this.transBarcodeFooter(code, position));
+      return line;
+    };
+  };
 
   OB.PRINTERTYPES.GENERICUSB.register({
     name: 'Wincor Nixdorf TH230+',
-    vendorId: 0x0AA7,
+    vendorId: 0x0aa7,
     productId: 0x0304,
     ESCPOS: ESCPOSWincor
   });
-
-}());
+})();

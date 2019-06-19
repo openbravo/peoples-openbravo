@@ -22,7 +22,7 @@ enyo.kind({
     name: 'listreceipts',
     classes: 'obUiModalReceipts-listreceipts'
   },
-  receiptsListChanged: function (oldValue) {
+  receiptsListChanged: function(oldValue) {
     this.$.body.$.listreceipts.setReceiptsList(this.receiptsList);
   }
 });
@@ -33,22 +33,30 @@ enyo.kind({
   published: {
     receiptsList: null
   },
-  components: [{
-    classes: 'obUiListReceipt-container1 span12',
-    components: [{
-      classes: 'obUiListReceipt-container1-element1'
-    }, {
-      classes: 'obUiListReceipt-container1-container1',
-      components: [{
-        name: 'receiptslistitemprinter',
-        kind: 'OB.UI.ScrollableTable',
-        classes: 'obUiListReceipt-container1-container1-receiptslistitemprinter',
-        renderLine: 'OB.UI.ListReceiptLine',
-        renderEmpty: 'OB.UI.RenderEmpty'
-      }]
-    }]
-  }],
-  receiptsListChanged: function (oldValue) {
+  components: [
+    {
+      classes: 'obUiListReceipt-container1 span12',
+      components: [
+        {
+          classes: 'obUiListReceipt-container1-element1'
+        },
+        {
+          classes: 'obUiListReceipt-container1-container1',
+          components: [
+            {
+              name: 'receiptslistitemprinter',
+              kind: 'OB.UI.ScrollableTable',
+              classes:
+                'obUiListReceipt-container1-container1-receiptslistitemprinter',
+              renderLine: 'OB.UI.ListReceiptLine',
+              renderEmpty: 'OB.UI.RenderEmpty'
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  receiptsListChanged: function(oldValue) {
     this.$.receiptslistitemprinter.setCollection(this.receiptsList);
   }
 });
@@ -61,7 +69,7 @@ enyo.kind({
     onHideThisPopup: '',
     onChangeCurrentOrder: ''
   },
-  tap: function () {
+  tap: function() {
     var execution = OB.UTIL.ProcessController.start('changeCurrentOrder');
     this.inherited(arguments);
     this.doHideThisPopup();
@@ -70,48 +78,74 @@ enyo.kind({
     });
     OB.UTIL.ProcessController.finish('changeCurrentOrder', execution);
   },
-  components: [{
-    name: 'line',
-    classes: 'obUiListReceiptLine-line',
-    components: [{
-      classes: 'obUiListReceiptLine-line-container1',
-      components: [{
-        classes: 'obUiListReceiptLine-container1-date',
-        name: 'date'
-      }, {
-        classes: 'obUiListReceiptLine-container1-element1'
-      }, {
-        classes: 'obUiListReceiptLine-container1-time',
-        name: 'time'
-      }]
-    }, {
-      classes: 'obUiListReceiptLine-line-container2',
-      components: [{
-        classes: 'obUiListReceiptLine-container2-orderNo',
-        name: 'orderNo'
-      }, {
-        classes: 'obUiListReceiptLine-container2-element1'
-      }, {
-        classes: 'obUiListReceiptLine-container2-bp',
-        name: 'bp'
-      }]
-    }, {
-      name: 'lineTotalContainer',
-      classes: 'obUiListReceiptLine-line-lineTotalContainer',
-      components: [{
-        classes: 'obUiListReceiptLine-lineTotalContainer-total',
-        name: 'total'
-      }, {
-        classes: 'obUiListReceiptLine-lineTotalContainer-element1'
-      }]
-    }, {
-      classes: 'obUiListReceiptLine-line-container3'
-    }]
-  }],
-  create: function () {
+  components: [
+    {
+      name: 'line',
+      classes: 'obUiListReceiptLine-line',
+      components: [
+        {
+          classes: 'obUiListReceiptLine-line-container1',
+          components: [
+            {
+              classes: 'obUiListReceiptLine-container1-date',
+              name: 'date'
+            },
+            {
+              classes: 'obUiListReceiptLine-container1-element1'
+            },
+            {
+              classes: 'obUiListReceiptLine-container1-time',
+              name: 'time'
+            }
+          ]
+        },
+        {
+          classes: 'obUiListReceiptLine-line-container2',
+          components: [
+            {
+              classes: 'obUiListReceiptLine-container2-orderNo',
+              name: 'orderNo'
+            },
+            {
+              classes: 'obUiListReceiptLine-container2-element1'
+            },
+            {
+              classes: 'obUiListReceiptLine-container2-bp',
+              name: 'bp'
+            }
+          ]
+        },
+        {
+          name: 'lineTotalContainer',
+          classes: 'obUiListReceiptLine-line-lineTotalContainer',
+          components: [
+            {
+              classes: 'obUiListReceiptLine-lineTotalContainer-total',
+              name: 'total'
+            },
+            {
+              classes: 'obUiListReceiptLine-lineTotalContainer-element1'
+            }
+          ]
+        },
+        {
+          classes: 'obUiListReceiptLine-line-container3'
+        }
+      ]
+    }
+  ],
+  create: function() {
     this.inherited(arguments);
-    this.$.date.setContent(OB.I18N.formatDate(new Date(this.model.get('orderDate'))));
-    this.$.time.setContent(OB.I18N.formatHour(OB.I18N.normalizeDate(this.model.get('creationDate') || this.model.get('orderDate'))));
+    this.$.date.setContent(
+      OB.I18N.formatDate(new Date(this.model.get('orderDate')))
+    );
+    this.$.time.setContent(
+      OB.I18N.formatHour(
+        OB.I18N.normalizeDate(
+          this.model.get('creationDate') || this.model.get('orderDate')
+        )
+      )
+    );
     this.$.orderNo.setContent(this.model.get('documentNo'));
     this.$.bp.setContent(this.model.get('bp').get('_identifier'));
     this.$.total.setContent(this.model.printTotal());
@@ -136,20 +170,23 @@ enyo.kind({
   },
   bodyButtons: {
     classes: 'obUiModalDeleteReceipt-bodyButtons',
-    components: [{
-      classes: 'obUiModalDeleteReceipt-bodyButtons-obUiBtnModalApplyDelete',
-      kind: 'OB.UI.btnModalApplyDelete'
-    }, {
-      classes: 'obUiModalDeleteReceipt-bodyButtons-obUiBtnModalCancelDelete',
-      kind: 'OB.UI.btnModalCancelDelete'
-    }]
+    components: [
+      {
+        classes: 'obUiModalDeleteReceipt-bodyButtons-obUiBtnModalApplyDelete',
+        kind: 'OB.UI.btnModalApplyDelete'
+      },
+      {
+        classes: 'obUiModalDeleteReceipt-bodyButtons-obUiBtnModalCancelDelete',
+        kind: 'OB.UI.btnModalCancelDelete'
+      }
+    ]
   },
-  executeOnHide: function () {
+  executeOnHide: function() {
     this.doDisableLeftToolbar({
       status: false
     });
   },
-  initComponents: function () {
+  initComponents: function() {
     this.header = OB.I18N.getLabel('OBPOS_ConfirmDeletion');
     this.inherited(arguments);
   }
@@ -164,7 +201,7 @@ enyo.kind({
   events: {
     onDeleteOrder: ''
   },
-  tap: function () {
+  tap: function() {
     this.doHideThisPopup();
     this.doDeleteOrder({
       notSavedOrder: true
@@ -177,7 +214,7 @@ enyo.kind({
   name: 'OB.UI.btnModalCancelDelete',
   i18nContent: 'OBMOBC_LblCancel',
   classes: 'obUiBtnModalCancelDelete',
-  tap: function () {
+  tap: function() {
     this.doHideThisPopup();
   }
 });

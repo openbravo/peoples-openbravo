@@ -12,19 +12,23 @@
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonStockThisStore',
   kind: 'OB.UI.SmallButton',
-  classes: 'obObposPointOfSaleUiProductDetailsViewButtonStockThisStore obpos-product-details-view-buttons',
+  classes:
+    'obObposPointOfSaleUiProductDetailsViewButtonStockThisStore obpos-product-details-view-buttons',
   events: {
     onOpenLocalStockModal: '',
     onOpenLocalStockClickableModal: ''
   },
-  tap: function () {
-    if (!OB.MobileApp.model.get('permissions').OBPOS_warehouseselectionforline || !this.model.get('order').get('isEditable')) {
+  tap: function() {
+    if (
+      !OB.MobileApp.model.get('permissions').OBPOS_warehouseselectionforline ||
+      !this.model.get('order').get('isEditable')
+    ) {
       this.doOpenLocalStockModal();
     } else {
       this.doOpenLocalStockClickableModal();
     }
   },
-  init: function (model) {
+  init: function(model) {
     this.model = model;
   }
 });
@@ -32,31 +36,56 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonStockOtherStore',
   kind: 'OB.UI.SmallButton',
-  classes: 'obObposPointOfSaleUiProductDetailsViewButtonStockOtherStore obpos-product-details-view-buttons',
+  classes:
+    'obObposPointOfSaleUiProductDetailsViewButtonStockOtherStore obpos-product-details-view-buttons',
   events: {
     onOpenOtherStoresStockModal: ''
   },
-  tap: function () {
+  tap: function() {
     var me = this,
-        leftSubWindow = me.parent.leftSubWindow;
-    if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true) && !OB.UTIL.isCrossStoreOrganization(leftSubWindow.organization)) {
-      var serverCallStoreDetailedStock = new OB.DS.Process('org.openbravo.retail.posterminal.stock.OtherStoresDetailedStock');
-      leftSubWindow.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_loadingStock'));
-      serverCallStoreDetailedStock.exec({
-        organization: OB.MobileApp.model.get('terminal').organization,
-        product: leftSubWindow.product.get('id')
-      }, function (data) {
-        if (data && data.exception) {
-          leftSubWindow.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_stockCannotBeRetrieved'));
-          leftSubWindow.bodyComponent.$.stockOthers.addClass('obObposPointOfSaleUiProductDetailsViewButtonStockOtherStore_error');
-        } else if (data.product === leftSubWindow.product.get('id') && leftSubWindow.showing && (data.qty || data.qty === 0)) {
-          data.product = leftSubWindow.product;
-          leftSubWindow.otherStoresStockModel = new OB.OBPOSPointOfSale.UsedModels.OtherStoresWarehousesStock(data);
-          me.doOpenOtherStoresStockModal();
-          leftSubWindow.bodyComponent.$.stockOthers.removeClass('obObposPointOfSaleUiProductDetailsViewButtonStockOtherStore_error');
-          leftSubWindow.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_otherStoresStock') + data.qty);
+      leftSubWindow = me.parent.leftSubWindow;
+    if (
+      OB.MobileApp.model.hasPermission('OBPOS_remote.product', true) &&
+      !OB.UTIL.isCrossStoreOrganization(leftSubWindow.organization)
+    ) {
+      var serverCallStoreDetailedStock = new OB.DS.Process(
+        'org.openbravo.retail.posterminal.stock.OtherStoresDetailedStock'
+      );
+      leftSubWindow.bodyComponent.$.stockOthers.setContent(
+        OB.I18N.getLabel('OBPOS_loadingStock')
+      );
+      serverCallStoreDetailedStock.exec(
+        {
+          organization: OB.MobileApp.model.get('terminal').organization,
+          product: leftSubWindow.product.get('id')
+        },
+        function(data) {
+          if (data && data.exception) {
+            leftSubWindow.bodyComponent.$.stockOthers.setContent(
+              OB.I18N.getLabel('OBPOS_stockCannotBeRetrieved')
+            );
+            leftSubWindow.bodyComponent.$.stockOthers.addClass(
+              'obObposPointOfSaleUiProductDetailsViewButtonStockOtherStore_error'
+            );
+          } else if (
+            data.product === leftSubWindow.product.get('id') &&
+            leftSubWindow.showing &&
+            (data.qty || data.qty === 0)
+          ) {
+            data.product = leftSubWindow.product;
+            leftSubWindow.otherStoresStockModel = new OB.OBPOSPointOfSale.UsedModels.OtherStoresWarehousesStock(
+              data
+            );
+            me.doOpenOtherStoresStockModal();
+            leftSubWindow.bodyComponent.$.stockOthers.removeClass(
+              'obObposPointOfSaleUiProductDetailsViewButtonStockOtherStore_error'
+            );
+            leftSubWindow.bodyComponent.$.stockOthers.setContent(
+              OB.I18N.getLabel('OBPOS_otherStoresStock') + data.qty
+            );
+          }
         }
-      });
+      );
     } else {
       this.doOpenOtherStoresStockModal();
     }
@@ -73,117 +102,144 @@ enyo.kind({
     onSetLineProperty: '',
     onCloseLeftSubWindow: ''
   },
-  setLabel: function () {
+  setLabel: function() {
     if (this.leftSubWindow && this.leftSubWindow.line) {
       this.setContent(OB.I18N.getLabel('OBMOBC_LblApply'));
     } else {
       this.setContent(OB.I18N.getLabel('OBPOS_addToTicket'));
     }
   },
-  tap: function () {
+  tap: function() {
     var product = this.leftSubWindow.product,
-        me = this;
+      me = this;
 
     if (product) {
       var line = null;
       if (me.leftSubWindow && me.leftSubWindow.line) {
         line = me.leftSubWindow.line;
       }
-      var attrs = (me.leftSubWindow.inEvent && me.leftSubWindow.inEvent.attrs) ? me.leftSubWindow.inEvent.attrs : {};
+      var attrs =
+        me.leftSubWindow.inEvent && me.leftSubWindow.inEvent.attrs
+          ? me.leftSubWindow.inEvent.attrs
+          : {};
       attrs.organization = me.leftSubWindow.organization || {
         id: OB.MobileApp.model.get('terminal').organization,
-        name: OB.I18N.getLabel('OBPOS_LblThisStore', [OB.MobileApp.model.get('terminal').organization$_identifier])
+        name: OB.I18N.getLabel('OBPOS_LblThisStore', [
+          OB.MobileApp.model.get('terminal').organization$_identifier
+        ])
       };
       attrs.warehouse = {
-        id: me.leftSubWindow.warehouse.warehouseid ? this.leftSubWindow.warehouse.warehouseid : this.leftSubWindow.warehouse.id,
+        id: me.leftSubWindow.warehouse.warehouseid
+          ? this.leftSubWindow.warehouse.warehouseid
+          : this.leftSubWindow.warehouse.id,
         warehousename: me.leftSubWindow.warehouse.warehousename,
         warehouseqty: me.leftSubWindow.warehouse.warehouseqty
       };
       if (me.leftSubWindow.documentType) {
         attrs.documentType = me.leftSubWindow.documentType;
       }
-      if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true) && line && line.get('obrdmDeliveryMode') !== product.get('obrdmDeliveryMode')) {
+      if (
+        OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true) &&
+        line &&
+        line.get('obrdmDeliveryMode') !== product.get('obrdmDeliveryMode')
+      ) {
         attrs.obrdmDeliveryMode = product.get('obrdmDeliveryMode');
         attrs.obrdmDeliveryDate = product.get('obrdmDeliveryDate');
         attrs.obrdmDeliveryTime = product.get('obrdmDeliveryTime');
-        attrs.nameDelivery = _.find(OB.MobileApp.model.get('deliveryModes'), function (mode) {
-          return mode.id === attrs.obrdmDeliveryMode;
-        }).name;
+        attrs.nameDelivery = _.find(
+          OB.MobileApp.model.get('deliveryModes'),
+          function(mode) {
+            return mode.id === attrs.obrdmDeliveryMode;
+          }
+        ).name;
       }
 
-      OB.UTIL.HookManager.executeHooks('OBPOS_PreTapStockAddReceipt', {
-        context: me,
-        params: attrs,
-        line: line
-      }, function (args) {
-        if (args && args.cancelOperation && args.cancelOperation === true) {
-          return;
-        }
-        if (line) {
-          if (attrs.warehouse.id !== line.get('warehouse').id) {
-            me.doSetLineProperty({
-              line: line,
-              property: 'warehouse',
-              value: attrs.warehouse
-            });
+      OB.UTIL.HookManager.executeHooks(
+        'OBPOS_PreTapStockAddReceipt',
+        {
+          context: me,
+          params: attrs,
+          line: line
+        },
+        function(args) {
+          if (args && args.cancelOperation && args.cancelOperation === true) {
+            return;
           }
-          if (attrs.organization.id !== line.get('organization').id) {
-            me.doSetLineProperty({
-              line: line,
-              property: 'organization',
-              value: attrs.organization
-            });
-          }
-          if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true) && attrs.obrdmDeliveryMode) {
-            me.doSetLineProperty({
-              line: line,
-              property: 'obrdmDeliveryMode',
-              value: attrs.obrdmDeliveryMode
-            });
-            me.doSetLineProperty({
-              line: line,
-              property: 'nameDelivery',
-              value: attrs.nameDelivery
-            });
-            if (attrs.obrdmDeliveryDate) {
+          if (line) {
+            if (attrs.warehouse.id !== line.get('warehouse').id) {
               me.doSetLineProperty({
                 line: line,
-                property: 'obrdmDeliveryDate',
-                value: attrs.obrdmDeliveryDate
+                property: 'warehouse',
+                value: attrs.warehouse
               });
             }
-            if (attrs.obrdmDeliveryTime) {
+            if (attrs.organization.id !== line.get('organization').id) {
               me.doSetLineProperty({
                 line: line,
-                property: 'obrdmDeliveryTime',
-                value: attrs.obrdmDeliveryTime
+                property: 'organization',
+                value: attrs.organization
               });
             }
-          }
-          if (OB.UTIL.isCrossStoreEnabled()) {
-            line.set({
-              priceList: product.get('currentPrice').price,
-              price: product.get('currentPrice').price
-            }, {
-              silent: true
+            if (
+              OB.MobileApp.model.hasPermission(
+                'OBRDM_EnableDeliveryModes',
+                true
+              ) &&
+              attrs.obrdmDeliveryMode
+            ) {
+              me.doSetLineProperty({
+                line: line,
+                property: 'obrdmDeliveryMode',
+                value: attrs.obrdmDeliveryMode
+              });
+              me.doSetLineProperty({
+                line: line,
+                property: 'nameDelivery',
+                value: attrs.nameDelivery
+              });
+              if (attrs.obrdmDeliveryDate) {
+                me.doSetLineProperty({
+                  line: line,
+                  property: 'obrdmDeliveryDate',
+                  value: attrs.obrdmDeliveryDate
+                });
+              }
+              if (attrs.obrdmDeliveryTime) {
+                me.doSetLineProperty({
+                  line: line,
+                  property: 'obrdmDeliveryTime',
+                  value: attrs.obrdmDeliveryTime
+                });
+              }
+            }
+            if (OB.UTIL.isCrossStoreEnabled()) {
+              line.set(
+                {
+                  priceList: product.get('currentPrice').price,
+                  price: product.get('currentPrice').price
+                },
+                {
+                  silent: true
+                }
+              );
+              OB.MobileApp.model.receipt.calculateReceipt();
+            }
+            me.doCloseLeftSubWindow();
+          } else {
+            me.doAddProduct({
+              attrs: attrs,
+              options: {
+                line: line,
+                blockAddProduct: true,
+                stockScreen: true
+              },
+              product: product,
+              qty: args.qty ? args.qty : OB.DEC.One,
+              ignoreStockTab: true
             });
-            OB.MobileApp.model.receipt.calculateReceipt();
           }
-          me.doCloseLeftSubWindow();
-        } else {
-          me.doAddProduct({
-            attrs: attrs,
-            options: {
-              line: line,
-              blockAddProduct: true,
-              stockScreen: true
-            },
-            product: product,
-            qty: args.qty ? args.qty : OB.DEC.One,
-            ignoreStockTab: true
-          });
         }
-      });
+      );
     }
   }
 });
@@ -191,10 +247,10 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonClose',
   classes: 'obObposPointOfSaleUiProductDetailsViewButtonClose',
-  init: function () {
+  init: function() {
     this.setContent(OB.I18N.getLabel('OBMOBC_Character')[2]);
   },
-  tap: function () {
+  tap: function() {
     this.leftSubWindow.doCloseLeftSubWindow();
   }
 });
@@ -202,14 +258,17 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ProductDetailsView_header',
   classes: 'obObposPointOfSaleUiProductDetailsViewHeader',
-  components: [{
-    name: 'productName',
-    classes: 'obObposPointOfSaleUiProductDetailsViewHeader-productName'
-  }, {
-    kind: 'OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonClose',
-    name: 'buttonClose',
-    classes: 'obObposPointOfSaleUiProductDetailsViewHeader-buttonClose'
-  }]
+  components: [
+    {
+      name: 'productName',
+      classes: 'obObposPointOfSaleUiProductDetailsViewHeader-productName'
+    },
+    {
+      kind: 'OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonClose',
+      name: 'buttonClose',
+      classes: 'obObposPointOfSaleUiProductDetailsViewHeader-buttonClose'
+    }
+  ]
 });
 
 enyo.kind({
@@ -223,7 +282,7 @@ enyo.kind({
   events: {
     onShowPopup: ''
   },
-  openLocalStockModal: function () {
+  openLocalStockModal: function() {
     if (this.leftSubWindow.localStockModel) {
       this.doShowPopup({
         popup: 'modalLocalStock',
@@ -234,7 +293,7 @@ enyo.kind({
     }
     return true;
   },
-  openLocalStockClickableModal: function () {
+  openLocalStockClickableModal: function() {
     if (this.leftSubWindow.localStockModel) {
       this.doShowPopup({
         popup: 'modalLocalStockClickable',
@@ -245,40 +304,60 @@ enyo.kind({
     }
     return true;
   },
-  openOtherStoresStockModal: function () {
+  openOtherStoresStockModal: function() {
     if (OB.UTIL.isCrossStoreEnabled()) {
       var me = this;
-      var selectedStoreCallBack = function (data) {
-          var warehouse = data.warehouse ? data.warehouse : {
-            warehouseid: data.warehouseid,
-            warehousename: data.warehousename,
-            warehouseqty: data.stock
-          },
-              organization = data.organization ? data.organization : {
-              id: data.orgId,
-              name: data.orgName
+      var selectedStoreCallBack = function(data) {
+        var warehouse = data.warehouse
+            ? data.warehouse
+            : {
+                warehouseid: data.warehouseid,
+                warehousename: data.warehousename,
+                warehouseqty: data.stock
+              },
+          organization = data.organization
+            ? data.organization
+            : {
+                id: data.orgId,
+                name: data.orgName
               };
-          me.$.stockHere.removeClass('error');
-          me.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_storeStock_NotCalculated'));
-          me.$.productPrice.setContent(OB.I18N.getLabel('OBPOS_priceInfo') + '<b>' + OB.I18N.formatCurrency(data.currentPrice.price) + '</b>');
-          me.$.productAddToReceipt.setLabel();
-          me.$.productAddToReceipt.setDisabled(false);
-          me.leftSubWindow.documentType = data.documentType;
-          me.leftSubWindow.organization = organization;
-          if (organization.id !== OB.MobileApp.model.get('terminal').organization) {
-            me.leftSubWindow.setDefaultDeliveryMode();
-          }
-          me.leftSubWindow.changeWarehouseInfo(null, warehouse);
-          me.leftSubWindow.product.set('listPrice', data.currentPrice.price);
-          me.leftSubWindow.product.set('standardPrice', data.currentPrice.price);
-          me.leftSubWindow.product.set('organization', organization);
-          if (data.productPrices) {
-            me.leftSubWindow.product.set('productPrices', data.productPrices);
-          } else {
-            me.leftSubWindow.product.set('currentPrice', data.currentPrice);
-          }
-          };
-      if (!this.leftSubWindow.forceSelectStore && event && event.target.getAttribute('id') !== 'terminal_containerWindow_pointOfSale_multiColumn_leftPanel_productdetailsview_leftSubWindowBody_body_stockOthers' && (this.leftSubWindow.line || !OB.UTIL.isCrossStoreProduct(this.leftSubWindow.product))) {
+        me.$.stockHere.removeClass('error');
+        me.$.stockHere.setContent(
+          OB.I18N.getLabel('OBPOS_storeStock_NotCalculated')
+        );
+        me.$.productPrice.setContent(
+          OB.I18N.getLabel('OBPOS_priceInfo') +
+            '<b>' +
+            OB.I18N.formatCurrency(data.currentPrice.price) +
+            '</b>'
+        );
+        me.$.productAddToReceipt.setLabel();
+        me.$.productAddToReceipt.setDisabled(false);
+        me.leftSubWindow.documentType = data.documentType;
+        me.leftSubWindow.organization = organization;
+        if (
+          organization.id !== OB.MobileApp.model.get('terminal').organization
+        ) {
+          me.leftSubWindow.setDefaultDeliveryMode();
+        }
+        me.leftSubWindow.changeWarehouseInfo(null, warehouse);
+        me.leftSubWindow.product.set('listPrice', data.currentPrice.price);
+        me.leftSubWindow.product.set('standardPrice', data.currentPrice.price);
+        me.leftSubWindow.product.set('organization', organization);
+        if (data.productPrices) {
+          me.leftSubWindow.product.set('productPrices', data.productPrices);
+        } else {
+          me.leftSubWindow.product.set('currentPrice', data.currentPrice);
+        }
+      };
+      if (
+        !this.leftSubWindow.forceSelectStore &&
+        event &&
+        event.target.getAttribute('id') !==
+          'terminal_containerWindow_pointOfSale_multiColumn_leftPanel_productdetailsview_leftSubWindowBody_body_stockOthers' &&
+        (this.leftSubWindow.line ||
+          !OB.UTIL.isCrossStoreProduct(this.leftSubWindow.product))
+      ) {
         var data = null;
         if (this.leftSubWindow.line) {
           data = {
@@ -286,8 +365,15 @@ enyo.kind({
             warehouse: this.leftSubWindow.line.get('warehouse'),
             organization: this.leftSubWindow.line.get('organization')
           };
-          if (OB.UTIL.isCrossStoreOrganization(this.leftSubWindow.line.get('organization')) || OB.UTIL.isCrossStoreProduct(this.leftSubWindow.line.get('product'))) {
-            data.currentPrice = this.leftSubWindow.line.get('product').get('currentPrice');
+          if (
+            OB.UTIL.isCrossStoreOrganization(
+              this.leftSubWindow.line.get('organization')
+            ) ||
+            OB.UTIL.isCrossStoreProduct(this.leftSubWindow.line.get('product'))
+          ) {
+            data.currentPrice = this.leftSubWindow.line
+              .get('product')
+              .get('currentPrice');
           } else {
             data.currentPrice = {
               priceListId: OB.MobileApp.model.get('terminal').priceList,
@@ -304,7 +390,9 @@ enyo.kind({
             },
             organization: {
               id: OB.MobileApp.model.get('terminal').organization,
-              name: OB.I18N.getLabel('OBPOS_LblThisStore', [OB.MobileApp.model.get('terminal').organization$_identifier])
+              name: OB.I18N.getLabel('OBPOS_LblThisStore', [
+                OB.MobileApp.model.get('terminal').organization$_identifier
+              ])
             }
           };
           selectedStoreCallBack(data);
@@ -331,67 +419,110 @@ enyo.kind({
     }
     return true;
   },
-  components: [{
-    name: 'contextImage',
-    classes: 'obObposPointOfSaleUiProductDetailsViewBody-contextImage',
-    components: [{
-      kind: 'OB.UI.Thumbnail',
-      name: 'productImage',
-      classes: 'obObposPointOfSaleUiProductDetailsViewBody-contextImage-productImage'
-    }]
-  }, {
-    classes: 'obObposPointOfSaleUiProductDetailsViewBody-container2',
-    components: [{
-      name: 'warehouseToGet',
-      allowHtml: true,
-      classes: 'obObposPointOfSaleUiProductDetailsViewBody-container2-warehouseToGet'
-    }]
-  }, {
-    classes: 'obObposPointOfSaleUiProductDetailsViewBody-container3',
-    components: [{
-      classes: 'obObposPointOfSaleUiProductDetailsViewBody-container3-container1',
-      components: [{
-        classes: 'obObposPointOfSaleUiProductDetailsViewBody-container3-container1-container1',
-        components: [{
-          kind: 'OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonStockThisStore',
-          name: 'stockHere',
-          classes: 'obObposPointOfSaleUiProductDetailsViewBody-container3-container1-container1-stockHere'
-        }]
-      }, {
-        classes: 'obObposPointOfSaleUiProductDetailsViewBody-container3-container1-container2',
-        components: [{
-          kind: 'OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonStockOtherStore',
-          name: 'stockOthers',
-          classes: 'obObposPointOfSaleUiProductDetailsViewBody-container3-container1-container2-stockOthers'
-        }]
-      }, {
-        name: 'productDeliveryModes',
-        kind: 'OB.OBPOSPointOfSale.UI.EditLine.DeliveryModesButton',
-        classes: 'obObposPointOfSaleUiProductDetailsViewBody-container3-container1-productDeliveryModes'
-      }]
-    }, {
-      classes: 'obObposPointOfSaleUiProductDetailsViewBody-container3-container2',
-      components: [{
-        name: 'productPrice',
-        allowHtml: true,
-        classes: 'obObposPointOfSaleUiProductDetailsViewBody-container3-container2-productPrice'
-      }, {
-        classes: 'obObposPointOfSaleUiProductDetailsViewBody-container3-container2-container2',
-        components: [{
-          name: 'productAddToReceipt',
-          kind: 'OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonAddToTicket',
-          classes: 'obObposPointOfSaleUiProductDetailsViewBody-container3-container2-container2-productAddToReceipt'
-        }]
-      }]
-    }]
-  }, {
-    kind: 'Scroller',
-    classes: 'obObposPointOfSaleUiProductDetailsViewBody-scroller',
-    components: [{
-      name: 'descriptionArea',
-      classes: 'obObposPointOfSaleUiProductDetailsViewBody-scroller-descriptionArea'
-    }]
-  }]
+  components: [
+    {
+      name: 'contextImage',
+      classes: 'obObposPointOfSaleUiProductDetailsViewBody-contextImage',
+      components: [
+        {
+          kind: 'OB.UI.Thumbnail',
+          name: 'productImage',
+          classes:
+            'obObposPointOfSaleUiProductDetailsViewBody-contextImage-productImage'
+        }
+      ]
+    },
+    {
+      classes: 'obObposPointOfSaleUiProductDetailsViewBody-container2',
+      components: [
+        {
+          name: 'warehouseToGet',
+          allowHtml: true,
+          classes:
+            'obObposPointOfSaleUiProductDetailsViewBody-container2-warehouseToGet'
+        }
+      ]
+    },
+    {
+      classes: 'obObposPointOfSaleUiProductDetailsViewBody-container3',
+      components: [
+        {
+          classes:
+            'obObposPointOfSaleUiProductDetailsViewBody-container3-container1',
+          components: [
+            {
+              classes:
+                'obObposPointOfSaleUiProductDetailsViewBody-container3-container1-container1',
+              components: [
+                {
+                  kind:
+                    'OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonStockThisStore',
+                  name: 'stockHere',
+                  classes:
+                    'obObposPointOfSaleUiProductDetailsViewBody-container3-container1-container1-stockHere'
+                }
+              ]
+            },
+            {
+              classes:
+                'obObposPointOfSaleUiProductDetailsViewBody-container3-container1-container2',
+              components: [
+                {
+                  kind:
+                    'OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonStockOtherStore',
+                  name: 'stockOthers',
+                  classes:
+                    'obObposPointOfSaleUiProductDetailsViewBody-container3-container1-container2-stockOthers'
+                }
+              ]
+            },
+            {
+              name: 'productDeliveryModes',
+              kind: 'OB.OBPOSPointOfSale.UI.EditLine.DeliveryModesButton',
+              classes:
+                'obObposPointOfSaleUiProductDetailsViewBody-container3-container1-productDeliveryModes'
+            }
+          ]
+        },
+        {
+          classes:
+            'obObposPointOfSaleUiProductDetailsViewBody-container3-container2',
+          components: [
+            {
+              name: 'productPrice',
+              allowHtml: true,
+              classes:
+                'obObposPointOfSaleUiProductDetailsViewBody-container3-container2-productPrice'
+            },
+            {
+              classes:
+                'obObposPointOfSaleUiProductDetailsViewBody-container3-container2-container2',
+              components: [
+                {
+                  name: 'productAddToReceipt',
+                  kind:
+                    'OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonAddToTicket',
+                  classes:
+                    'obObposPointOfSaleUiProductDetailsViewBody-container3-container2-container2-productAddToReceipt'
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      kind: 'Scroller',
+      classes: 'obObposPointOfSaleUiProductDetailsViewBody-scroller',
+      components: [
+        {
+          name: 'descriptionArea',
+          classes:
+            'obObposPointOfSaleUiProductDetailsViewBody-scroller-descriptionArea'
+        }
+      ]
+    }
+  ]
 });
 
 enyo.kind({
@@ -404,103 +535,185 @@ enyo.kind({
   handlers: {
     onModifyWarehouse: 'changeWarehouseInfo'
   },
-  changeWarehouseInfo: function (inSender, inEvent) {
+  changeWarehouseInfo: function(inSender, inEvent) {
     var me = this;
-    OB.UTIL.HookManager.executeHooks('OBPOS_BeforeWarehouseChange', {
-      oldWarehouse: me.warehouse,
-      newWarehouse: inEvent,
-      currentLine: me.line
-    }, function (args) {
-      if (args && args.cancelOperation) {
-        return;
+    OB.UTIL.HookManager.executeHooks(
+      'OBPOS_BeforeWarehouseChange',
+      {
+        oldWarehouse: me.warehouse,
+        newWarehouse: inEvent,
+        currentLine: me.line
+      },
+      function(args) {
+        if (args && args.cancelOperation) {
+          return;
+        }
+        inEvent.warehouseqty = inEvent.warehouseqty
+          ? inEvent.warehouseqty
+          : '0';
+        me.bodyComponent.$.warehouseToGet.setContent(
+          OB.I18N.getLabel('OBPOS_warehouseSelected', [
+            inEvent.warehousename,
+            inEvent.warehouseqty
+          ])
+        );
+        me.warehouse = inEvent;
       }
-      inEvent.warehouseqty = inEvent.warehouseqty ? inEvent.warehouseqty : '0';
-      me.bodyComponent.$.warehouseToGet.setContent(OB.I18N.getLabel('OBPOS_warehouseSelected', [inEvent.warehousename, inEvent.warehouseqty]));
-      me.warehouse = inEvent;
-    });
+    );
   },
-  loadDefaultWarehouseData: function (defaultWarehouse) {
+  loadDefaultWarehouseData: function(defaultWarehouse) {
     if (defaultWarehouse) {
-      this.bodyComponent.$.warehouseToGet.setContent(OB.I18N.getLabel('OBPOS_warehouseSelected', [defaultWarehouse.get('warehousename'), defaultWarehouse.get('warehouseqty') ? defaultWarehouse.get('warehouseqty') : '0']));
+      this.bodyComponent.$.warehouseToGet.setContent(
+        OB.I18N.getLabel('OBPOS_warehouseSelected', [
+          defaultWarehouse.get('warehousename'),
+          defaultWarehouse.get('warehouseqty')
+            ? defaultWarehouse.get('warehouseqty')
+            : '0'
+        ])
+      );
     } else {
-      this.bodyComponent.$.warehouseToGet.setContent(OB.I18N.getLabel('OBPOS_warehouseSelected', [OB.MobileApp.model.get('warehouses')[0].warehousename, '0']));
+      this.bodyComponent.$.warehouseToGet.setContent(
+        OB.I18N.getLabel('OBPOS_warehouseSelected', [
+          OB.MobileApp.model.get('warehouses')[0].warehousename,
+          '0'
+        ])
+      );
     }
   },
-  getStoreStock: function (params) {
+  getStoreStock: function(params) {
     var me = this;
     if (OB.UTIL.isCrossStoreEnabled()) {
-      me.bodyComponent.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_storeStock_NotCalculated'));
-      me.bodyComponent.$.stockHere.setDisabled(OB.UTIL.isNullOrUndefined(me.organization) || ((OB.UTIL.isCrossStoreOrganization(me.organization) || OB.UTIL.isCrossStoreProduct(me.product)) && (!me.line || OB.DEC.compare(me.line.get('qty')) > 0)));
+      me.bodyComponent.$.stockHere.setContent(
+        OB.I18N.getLabel('OBPOS_storeStock_NotCalculated')
+      );
+      me.bodyComponent.$.stockHere.setDisabled(
+        OB.UTIL.isNullOrUndefined(me.organization) ||
+          ((OB.UTIL.isCrossStoreOrganization(me.organization) ||
+            OB.UTIL.isCrossStoreProduct(me.product)) &&
+            (!me.line || OB.DEC.compare(me.line.get('qty')) > 0))
+      );
       me.bodyComponent.$.productAddToReceipt.setDisabled(true);
       if (params.checkStockCallback) {
         params.checkStockCallback();
       }
     } else {
-      me.bodyComponent.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_loadingStock'));
+      me.bodyComponent.$.stockHere.setContent(
+        OB.I18N.getLabel('OBPOS_loadingStock')
+      );
       me.bodyComponent.$.stockHere.setDisabled(false);
       me.bodyComponent.$.productAddToReceipt.setDisabled(true);
     }
-    if (OB.UTIL.isNullOrUndefined(me.organization) || !OB.UTIL.isCrossStoreOrganization(me.organization)) {
-      OB.UTIL.StockUtils.getReceiptLineStock(me.product.get('id'), undefined, function (data) {
-        if (data && data.exception) {
-          me.bodyComponent.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_stockCannotBeRetrieved'));
-          me.bodyComponent.$.stockHere.addClass('error');
-        } else if (data.product === me.product.get('id')) {
-          if (data.qty || data.qty === 0) {
-            data.product = me.product;
-            var currentWarehouse;
-            if (!_.find(data.warehouses, function (warehouse) {
-              return warehouse.warehouseid === OB.MobileApp.model.get('warehouses')[0].warehouseid;
-            })) {
-              data.warehouses.unshift({
-                warehouseid: OB.MobileApp.model.get('warehouses')[0].warehouseid,
-                warehousename: OB.MobileApp.model.get('warehouses')[0].warehousename,
-                warehouseqty: OB.DEC.Zero
-              });
+    if (
+      OB.UTIL.isNullOrUndefined(me.organization) ||
+      !OB.UTIL.isCrossStoreOrganization(me.organization)
+    ) {
+      OB.UTIL.StockUtils.getReceiptLineStock(
+        me.product.get('id'),
+        undefined,
+        function(data) {
+          if (data && data.exception) {
+            me.bodyComponent.$.stockHere.setContent(
+              OB.I18N.getLabel('OBPOS_stockCannotBeRetrieved')
+            );
+            me.bodyComponent.$.stockHere.addClass('error');
+          } else if (data.product === me.product.get('id')) {
+            if (data.qty || data.qty === 0) {
+              data.product = me.product;
+              var currentWarehouse;
+              if (
+                !_.find(data.warehouses, function(warehouse) {
+                  return (
+                    warehouse.warehouseid ===
+                    OB.MobileApp.model.get('warehouses')[0].warehouseid
+                  );
+                })
+              ) {
+                data.warehouses.unshift({
+                  warehouseid: OB.MobileApp.model.get('warehouses')[0]
+                    .warehouseid,
+                  warehousename: OB.MobileApp.model.get('warehouses')[0]
+                    .warehousename,
+                  warehouseqty: OB.DEC.Zero
+                });
+              }
+              me.localStockModel = new OB.OBPOSPointOfSale.UsedModels.LocalStock(
+                data
+              );
+              currentWarehouse = me.localStockModel.getWarehouseById(
+                me.warehouse.warehouseid || me.warehouse.id
+              );
+              me.warehouse.warehouseqty = currentWarehouse.get('warehouseqty');
+              me.loadDefaultWarehouseData(currentWarehouse);
+              me.bodyComponent.$.stockHere.removeClass('error');
+              me.bodyComponent.$.stockHere.setContent(
+                OB.I18N.getLabel('OBPOS_storeStock') + data.qty
+              );
             }
-            me.localStockModel = new OB.OBPOSPointOfSale.UsedModels.LocalStock(data);
-            currentWarehouse = me.localStockModel.getWarehouseById(me.warehouse.warehouseid || me.warehouse.id);
-            me.warehouse.warehouseqty = currentWarehouse.get('warehouseqty');
-            me.loadDefaultWarehouseData(currentWarehouse);
-            me.bodyComponent.$.stockHere.removeClass('error');
-            me.bodyComponent.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_storeStock') + data.qty);
+            me.bodyComponent.$.productAddToReceipt.setDisabled(false);
           }
-          me.bodyComponent.$.productAddToReceipt.setDisabled(false);
+          if (params.checkStockCallback) {
+            params.checkStockCallback();
+          }
         }
-        if (params.checkStockCallback) {
-          params.checkStockCallback();
-        }
-      });
+      );
     }
   },
-  getOtherStock: function () {
-    var serverCallStoreDetailedStock = new OB.DS.Process('org.openbravo.retail.posterminal.stock.OtherStoresDetailedStock'),
-        me = this;
+  getOtherStock: function() {
+    var serverCallStoreDetailedStock = new OB.DS.Process(
+        'org.openbravo.retail.posterminal.stock.OtherStoresDetailedStock'
+      ),
+      me = this;
     if (OB.UTIL.isCrossStoreEnabled()) {
-      me.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_SelectStore'));
-      me.bodyComponent.$.stockOthers.setDisabled(me.line && OB.DEC.compare(me.line.get('qty')) < 0);
+      me.bodyComponent.$.stockOthers.setContent(
+        OB.I18N.getLabel('OBPOS_SelectStore')
+      );
+      me.bodyComponent.$.stockOthers.setDisabled(
+        me.line && OB.DEC.compare(me.line.get('qty')) < 0
+      );
       me.bodyComponent.$.stockOthers.doOpenOtherStoresStockModal();
     } else if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-      me.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_otherStoresStock_NotCalculated'));
+      me.bodyComponent.$.stockOthers.setContent(
+        OB.I18N.getLabel('OBPOS_otherStoresStock_NotCalculated')
+      );
     } else {
-      me.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_loadingStock'));
-      serverCallStoreDetailedStock.exec({
-        organization: OB.MobileApp.model.get('terminal').organization,
-        product: me.product.get('id')
-      }, function (data) {
-        if (data && data.exception) {
-          me.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_stockCannotBeRetrieved'));
-          me.bodyComponent.$.stockOthers.addClass('obObposPointOfSaleUiProductDetailsViewBody-stockOthers_error');
-        } else if (data.product === me.product.get('id') && (data.qty || data.qty === 0)) {
-          data.product = me.product;
-          me.otherStoresStockModel = new OB.OBPOSPointOfSale.UsedModels.OtherStoresWarehousesStock(data);
-          me.bodyComponent.$.stockOthers.removeClass('obObposPointOfSaleUiProductDetailsViewBody-stockOthers_error');
-          me.bodyComponent.$.stockOthers.setContent(OB.UTIL.isCrossStoreEnabled() ? OB.I18N.getLabel('OBPOS_SelectStore') : OB.I18N.getLabel('OBPOS_otherStoresStock') + data.qty);
+      me.bodyComponent.$.stockOthers.setContent(
+        OB.I18N.getLabel('OBPOS_loadingStock')
+      );
+      serverCallStoreDetailedStock.exec(
+        {
+          organization: OB.MobileApp.model.get('terminal').organization,
+          product: me.product.get('id')
+        },
+        function(data) {
+          if (data && data.exception) {
+            me.bodyComponent.$.stockOthers.setContent(
+              OB.I18N.getLabel('OBPOS_stockCannotBeRetrieved')
+            );
+            me.bodyComponent.$.stockOthers.addClass(
+              'obObposPointOfSaleUiProductDetailsViewBody-stockOthers_error'
+            );
+          } else if (
+            data.product === me.product.get('id') &&
+            (data.qty || data.qty === 0)
+          ) {
+            data.product = me.product;
+            me.otherStoresStockModel = new OB.OBPOSPointOfSale.UsedModels.OtherStoresWarehousesStock(
+              data
+            );
+            me.bodyComponent.$.stockOthers.removeClass(
+              'obObposPointOfSaleUiProductDetailsViewBody-stockOthers_error'
+            );
+            me.bodyComponent.$.stockOthers.setContent(
+              OB.UTIL.isCrossStoreEnabled()
+                ? OB.I18N.getLabel('OBPOS_SelectStore')
+                : OB.I18N.getLabel('OBPOS_otherStoresStock') + data.qty
+            );
+          }
         }
-      });
+      );
     }
   },
-  beforeSetShowing: function (params) {
+  beforeSetShowing: function(params) {
     if (!params.product || OB.MobileApp.model.get('warehouses').length === 0) {
       this.doShowPopup({
         popup: 'modalConfigurationRequiredForCrossStore'
@@ -510,9 +723,16 @@ enyo.kind({
     this.line = params.line || null;
     this.product = params.product;
     this.forceSelectStore = params.forceSelectStore || false;
-    this.$.leftSubWindowBody.leftSubWindow.bodyComponent.$.productDeliveryModes.setShowing(OB.UTIL.isNullOrUndefined(this.line) && OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true));
-    this.$.leftSubWindowBody.leftSubWindow.bodyComponent.$.productDeliveryModes.setDetailsView(this.$.leftSubWindowBody.$.body);
-    this.$.leftSubWindowBody.leftSubWindow.bodyComponent.$.productDeliveryModes.removeClass('btnlink-orange');
+    this.$.leftSubWindowBody.leftSubWindow.bodyComponent.$.productDeliveryModes.setShowing(
+      OB.UTIL.isNullOrUndefined(this.line) &&
+        OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)
+    );
+    this.$.leftSubWindowBody.leftSubWindow.bodyComponent.$.productDeliveryModes.setDetailsView(
+      this.$.leftSubWindowBody.$.body
+    );
+    this.$.leftSubWindowBody.leftSubWindow.bodyComponent.$.productDeliveryModes.removeClass(
+      'btnlink-orange'
+    );
     this.localStockModel = null;
     this.otherStoresStockModel = null;
     if (params.warehouse) {
@@ -523,32 +743,72 @@ enyo.kind({
     } else {
       this.warehouse = OB.MobileApp.model.get('warehouses')[0];
     }
-    this.headerComponent.$.productName.setContent(params.product.get('_identifier') + ' (' + params.product.get('uOMsymbol') + ')');
+    this.headerComponent.$.productName.setContent(
+      params.product.get('_identifier') +
+        ' (' +
+        params.product.get('uOMsymbol') +
+        ')'
+    );
     if (OB.MobileApp.model.hasPermission('OBPOS_HideProductImages', true)) {
       this.bodyComponent.$.contextImage.hide();
     } else {
       this.bodyComponent.$.contextImage.show();
     }
-    if (OB.MobileApp.model.get('permissions')["OBPOS_retail.productImages"]) {
-      this.bodyComponent.$.productImage.setSrc(OB.UTIL.getImageURL(params.product.get('id')));
-      this.bodyComponent.$.productImage.setAttribute('onerror', 'if (this.src != "../org.openbravo.mobile.core/assets/img/box.png") this.src = "../org.openbravo.mobile.core/assets/img/box.png"; ');
+    if (OB.MobileApp.model.get('permissions')['OBPOS_retail.productImages']) {
+      this.bodyComponent.$.productImage.setSrc(
+        OB.UTIL.getImageURL(params.product.get('id'))
+      );
+      this.bodyComponent.$.productImage.setAttribute(
+        'onerror',
+        'if (this.src != "../org.openbravo.mobile.core/assets/img/box.png") this.src = "../org.openbravo.mobile.core/assets/img/box.png"; '
+      );
     } else {
       this.bodyComponent.$.productImage.setImg(params.product.get('img'));
     }
-    this.bodyComponent.$.warehouseToGet.setContent(OB.UTIL.isCrossStoreProduct(this.product) ? OB.I18N.getLabel('OBPOS_loadingFromCrossStoreWarehouses') : OB.I18N.getLabel('OBPOS_loadingFromWarehouse', [this.warehouse.warehousename]));
-    this.bodyComponent.$.productPrice.setContent(params.product.has('standardPrice') ? OB.I18N.getLabel('OBPOS_priceInfo') + '<b>' + OB.I18N.formatCurrency(params.product.get('standardPrice')) + '</b>' : OB.I18N.getLabel('OBPOS_priceInfo'));
-    this.bodyComponent.$.descriptionArea.setContent(params.product.get('description'));
+    this.bodyComponent.$.warehouseToGet.setContent(
+      OB.UTIL.isCrossStoreProduct(this.product)
+        ? OB.I18N.getLabel('OBPOS_loadingFromCrossStoreWarehouses')
+        : OB.I18N.getLabel('OBPOS_loadingFromWarehouse', [
+            this.warehouse.warehousename
+          ])
+    );
+    this.bodyComponent.$.productPrice.setContent(
+      params.product.has('standardPrice')
+        ? OB.I18N.getLabel('OBPOS_priceInfo') +
+            '<b>' +
+            OB.I18N.formatCurrency(params.product.get('standardPrice')) +
+            '</b>'
+        : OB.I18N.getLabel('OBPOS_priceInfo')
+    );
+    this.bodyComponent.$.descriptionArea.setContent(
+      params.product.get('description')
+    );
     this.bodyComponent.$.productAddToReceipt.setLabel();
     this.getOtherStock();
     this.getStoreStock(params);
     return true;
   },
-  setDefaultDeliveryMode: function () {
+  setDefaultDeliveryMode: function() {
     if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
-      var defaultOrderDeliveryMode = OB.MobileApp.model.receipt.get('obrdmDeliveryModeProperty');
-      this.product.set('obrdmDeliveryMode', this.organization.id !== OB.MobileApp.model.get('terminal').organization && defaultOrderDeliveryMode === 'PickAndCarry' ? 'PickupInStore' : defaultOrderDeliveryMode);
-      this.product.set('obrdmDeliveryDate', OB.MobileApp.model.receipt.get('obrdmDeliveryDateProperty'));
-      this.product.set('obrdmDeliveryTime', OB.MobileApp.model.receipt.get('obrdmDeliveryTimeProperty'));
+      var defaultOrderDeliveryMode = OB.MobileApp.model.receipt.get(
+        'obrdmDeliveryModeProperty'
+      );
+      this.product.set(
+        'obrdmDeliveryMode',
+        this.organization.id !==
+          OB.MobileApp.model.get('terminal').organization &&
+          defaultOrderDeliveryMode === 'PickAndCarry'
+          ? 'PickupInStore'
+          : defaultOrderDeliveryMode
+      );
+      this.product.set(
+        'obrdmDeliveryDate',
+        OB.MobileApp.model.receipt.get('obrdmDeliveryDateProperty')
+      );
+      this.product.set(
+        'obrdmDeliveryTime',
+        OB.MobileApp.model.receipt.get('obrdmDeliveryTimeProperty')
+      );
     }
   },
   header: {

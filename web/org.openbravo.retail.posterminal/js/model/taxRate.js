@@ -7,8 +7,7 @@
  ************************************************************************************
  */
 
-(function () {
-
+(function() {
   var taxRate = OB.Data.ExtensibleModel.extend({
     modelName: 'TaxRate',
     generatedStructure: true,
@@ -17,4 +16,4 @@
   });
 
   OB.Data.Registry.registerModel(taxRate);
-}());
+})();

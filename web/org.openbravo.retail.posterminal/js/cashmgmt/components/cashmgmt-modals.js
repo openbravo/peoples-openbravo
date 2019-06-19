@@ -20,13 +20,16 @@ enyo.kind({
   },
   bodyButtons: {
     classes: 'obObposCashMgmtUiModalFinished-bodyButtons',
-    components: [{
-      //OK button
-      kind: 'OB.OBPOSCashMgmt.UI.modalFinished_OkButton',
-      classes: 'obObposCashMgmtUiModalFinished-bodyButtons-obObposCashMgmtUiModalFinishedOkButton'
-    }]
+    components: [
+      {
+        //OK button
+        kind: 'OB.OBPOSCashMgmt.UI.modalFinished_OkButton',
+        classes:
+          'obObposCashMgmtUiModalFinished-bodyButtons-obObposCashMgmtUiModalFinishedOkButton'
+      }
+    ]
   },
-  executeOnHide: function () {
+  executeOnHide: function() {
     OB.POS.navigate('retail.pointofsale');
   }
 });
@@ -36,11 +39,10 @@ enyo.kind({
   name: 'OB.OBPOSCashMgmt.UI.modalFinished_OkButton',
   classes: 'obObposCashMgmtUiModalFinishedOkButton',
   i18nContent: 'OBMOBC_LblOk',
-  tap: function () {
+  tap: function() {
     this.doHideThisPopup();
   }
 });
-
 
 enyo.kind({
   kind: 'OB.UI.ModalAction',
@@ -53,13 +55,16 @@ enyo.kind({
   },
   bodyButtons: {
     classes: 'obObposCashMgmtUiModalFinishedWrongly-bodyButtons',
-    components: [{
-      //OK button
-      kind: 'OB.OBPOSCashMgmt.UI.modalFinishedWrongly_OkButton',
-      classes: 'obObposCashMgmtUiModalFinishedWrongly-bodyButtons-obObposCashMgmtUiModalFinishedWronglyOkButton'
-    }]
+    components: [
+      {
+        //OK button
+        kind: 'OB.OBPOSCashMgmt.UI.modalFinishedWrongly_OkButton',
+        classes:
+          'obObposCashMgmtUiModalFinishedWrongly-bodyButtons-obObposCashMgmtUiModalFinishedWronglyOkButton'
+      }
+    ]
   },
-  executeOnHide: function () {
+  executeOnHide: function() {
     OB.POS.navigate('retail.pointofsale');
   }
 });
@@ -69,7 +74,7 @@ enyo.kind({
   name: 'OB.OBPOSCashMgmt.UI.modalFinishedWrongly_OkButton',
   classes: 'obObposCashMgmtUiModalFinishedWronglyOkButton',
   i18nContent: 'OBMOBC_LblOk',
-  tap: function () {
+  tap: function() {
     this.doHideThisPopup();
   }
 });

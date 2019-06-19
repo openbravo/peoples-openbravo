@@ -25,37 +25,59 @@ enyo.kind({
     tableName: 'searchCategoryTable'
   },
 
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
-    this.$.body.$.listCategories.$[this.$.body.$.listCategories.tableName].$.theader.hide();
+    this.$.body.$.listCategories.$[
+      this.$.body.$.listCategories.tableName
+    ].$.theader.hide();
     this.$.closebutton.hide();
     this.$.header.hide();
   },
 
-  executeOnShow: function () {
+  executeOnShow: function() {
     var me = this;
     this.startShowing = true;
-    this.$.body.$.listCategories.loadCategories(function () {
-      me.$.body.$.listCategories.addClass('obUiModalCategoryTree-body-listCategory');
+    this.$.body.$.listCategories.loadCategories(function() {
+      me.$.body.$.listCategories.addClass(
+        'obUiModalCategoryTree-body-listCategory'
+      );
       var showOnlyReal = me.args.showOnlyReal || false;
-      _.each(me.$.body.$.listCategories.$[me.$.body.$.listCategories.tableName].$.tbody.children, function (item) {
-        if (item.renderline.model.get('realCategory') === 'N') {
-          item.setShowing(!showOnlyReal);
-        }
-      }, me);
-      if (me.$.body.$.listCategories.$[me.$.body.$.listCategories.tableName].selected) {
+      _.each(
+        me.$.body.$.listCategories.$[me.$.body.$.listCategories.tableName].$
+          .tbody.children,
+        function(item) {
+          if (item.renderline.model.get('realCategory') === 'N') {
+            item.setShowing(!showOnlyReal);
+          }
+        },
+        me
+      );
+      if (
+        me.$.body.$.listCategories.$[me.$.body.$.listCategories.tableName]
+          .selected
+      ) {
         me.$.body.$.listCategories.categoryCollapseSibling('0');
         me.$.body.$.listCategories.categoryExpandSelected();
         me.$.body.$.listCategories.categoryExpandCollapse(this, {
-          categoryId: me.$.body.$.listCategories.$[me.$.body.$.listCategories.tableName].selected.renderline.model.id,
+          categoryId:
+            me.$.body.$.listCategories.$[me.$.body.$.listCategories.tableName]
+              .selected.renderline.model.id,
           expand: true
         });
         if (me.args.selectCategory) {
-          setTimeout(function () {
-            me.$.body.$.listCategories.categoryAdjustScroll(me.args.selectCategory, 5, 0);
-            var category = me.$.body.$.listCategories.categories.get(me.args.selectCategory);
+          setTimeout(function() {
+            me.$.body.$.listCategories.categoryAdjustScroll(
+              me.args.selectCategory,
+              5,
+              0
+            );
+            var category = me.$.body.$.listCategories.categories.get(
+              me.args.selectCategory
+            );
             if (category) {
-              me.$.body.$.listCategories.$[me.$.body.$.listCategories.tableName].setSelectedModels([category], true);
+              me.$.body.$.listCategories.$[
+                me.$.body.$.listCategories.tableName
+              ].setSelectedModels([category], true);
             }
           }, 200);
         }
@@ -64,37 +86,47 @@ enyo.kind({
     });
   },
 
-  init: function () {
-    this.$.body.$.listCategories.categories.on('selected', function (category) {
-      if (category && !this.startShowing) {
-        if (this.args && this.args.notSelectSummary && category.get('issummary')) {
-          this.$.body.$.listCategories.categoryExpandCollapse(this, {
-            categoryId: category.get('id'),
-            expand: category.get('treeNode') === 'COLLAPSED'
+  init: function() {
+    this.$.body.$.listCategories.categories.on(
+      'selected',
+      function(category) {
+        if (category && !this.startShowing) {
+          if (
+            this.args &&
+            this.args.notSelectSummary &&
+            category.get('issummary')
+          ) {
+            this.$.body.$.listCategories.categoryExpandCollapse(this, {
+              categoryId: category.get('id'),
+              expand: category.get('treeNode') === 'COLLAPSED'
+            });
+            return;
+          }
+          var me = this;
+          this.loadSubTreeIds(category.id, "'" + category.id + "'", function(
+            childrenIds
+          ) {
+            me.doSelectCategoryTreeItem({
+              category: category,
+              children: childrenIds,
+              origin: me.args ? me.args.origin : null
+            });
+            me.doHideThisPopup();
           });
-          return;
         }
-        var me = this;
-        this.loadSubTreeIds(category.id, "'" + category.id + "'", function (childrenIds) {
-          me.doSelectCategoryTreeItem({
-            category: category,
-            children: childrenIds,
-            origin: me.args ? me.args.origin : null
-          });
-          me.doHideThisPopup();
-        });
-      }
-    }, this);
+      },
+      this
+    );
   },
 
-  loadSubTreeIds: function (parentCategoryId, childrenIds, callbackTreeIds) {
+  loadSubTreeIds: function(parentCategoryId, childrenIds, callbackTreeIds) {
     var me = this,
-        treeProcessed = [];
+      treeProcessed = [];
 
     function getSubTreeIds(models, index, callback) {
       if (models.length <= index) {
         if (callback === callbackTreeIds) {
-          var pending = _.find(treeProcessed, function (t) {
+          var pending = _.find(treeProcessed, function(t) {
             return !t.processed;
           });
           if (!pending) {
@@ -107,31 +139,36 @@ enyo.kind({
       }
 
       var categoryId = models[index].get('categoryId'),
-          processed = {
+        processed = {
           category: categoryId,
           processed: models[index].get('childs') === 0
-          };
+        };
       childrenIds += ", '" + categoryId + "'";
       treeProcessed.push(processed);
       if (models[index].get('childs') > 0) {
-        me.$.body.$.listCategories.loadCategoryTreeLevel(models[index].get('categoryId'), function (categories) {
-          getSubTreeIds(categories.models, 0, function () {
-            processed.processed = true;
-            getSubTreeIds(models, index + 1, callback);
-          });
-        });
+        me.$.body.$.listCategories.loadCategoryTreeLevel(
+          models[index].get('categoryId'),
+          function(categories) {
+            getSubTreeIds(categories.models, 0, function() {
+              processed.processed = true;
+              getSubTreeIds(models, index + 1, callback);
+            });
+          }
+        );
       } else {
         getSubTreeIds(models, index + 1, callback);
       }
     }
 
-    this.$.body.$.listCategories.loadCategoryTreeLevel(parentCategoryId, function (categories) {
-      if (categories.models.length !== 0) {
-        getSubTreeIds(categories.models, 0, callbackTreeIds);
-      } else {
-        callbackTreeIds(childrenIds);
+    this.$.body.$.listCategories.loadCategoryTreeLevel(
+      parentCategoryId,
+      function(categories) {
+        if (categories.models.length !== 0) {
+          getSubTreeIds(categories.models, 0, callbackTreeIds);
+        } else {
+          callbackTreeIds(childrenIds);
+        }
       }
-    });
+    );
   }
-
 });

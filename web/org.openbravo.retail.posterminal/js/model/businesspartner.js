@@ -9,8 +9,7 @@
 
 /*global OB, Backbone, _ */
 
-(function () {
-
+(function() {
   var BusinessPartner = OB.Data.ExtensibleModel.extend({
     modelName: 'BusinessPartner',
     tableName: 'c_bpartner',
@@ -19,10 +18,14 @@
     dataLimit: OB.Dal.DATALIMIT,
     remoteDataLimit: OB.Dal.REMOTE_DATALIMIT,
     remote: 'OBPOS_remote.customer',
-    saveCustomer: function (callback) {
-      var nameLength, newSk, saveCallback, finalCallback, me = this;
+    saveCustomer: function(callback) {
+      var nameLength,
+        newSk,
+        saveCallback,
+        finalCallback,
+        me = this;
 
-      finalCallback = function (result) {
+      finalCallback = function(result) {
         if (callback) {
           callback(result);
         }
@@ -38,7 +41,9 @@
         if (this.get('useSameAddrForShipAndInv')) {
           //Create 1 address for shipping and invoicing
           if (!this.get('locName')) {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerAddressRequired'));
+            OB.UTIL.showError(
+              OB.I18N.getLabel('OBPOS_BPartnerAddressRequired')
+            );
             finalCallback(false);
             return false;
           }
@@ -52,7 +57,9 @@
         } else {
           //Create 1 address for shipping and 1 for invoicing
           if (!this.get('locName') || !this.get('shipLocName')) {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerAddressRequired'));
+            OB.UTIL.showError(
+              OB.I18N.getLabel('OBPOS_BPartnerAddressRequired')
+            );
             finalCallback(false);
             return false;
           }
@@ -83,7 +90,10 @@
         return;
       }
 
-      if (this.get('birthDay') && !OB.UTIL.isInThePast(OB.I18N.formatDate(this.get('birthDay')))) {
+      if (
+        this.get('birthDay') &&
+        !OB.UTIL.isInThePast(OB.I18N.formatDate(this.get('birthDay')))
+      ) {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerBirthDayIncorrect'));
         finalCallback(false);
         return false;
@@ -91,86 +101,123 @@
 
       this.set('_identifier', this.get('name'));
 
-      saveCallback = function () {
+      saveCallback = function() {
         // in case of synchronized then directly call customer save with the callback
         OB.DATA.executeCustomerSave(me, callback);
       };
 
       if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
         if (OB.MobileApp.model.get('pricelist').id === me.get('priceList')) {
-          me.set('priceIncludesTax', OB.MobileApp.model.get('pricelist').priceIncludesTax);
+          me.set(
+            'priceIncludesTax',
+            OB.MobileApp.model.get('pricelist').priceIncludesTax
+          );
           saveCallback();
         } else {
-          OB.Dal.get(OB.Model.PriceList, me.get('priceList'), function (pList) {
-            me.set('priceIncludesTax', pList.get('priceIncludesTax'));
-            saveCallback();
-          }, function () {
-            saveCallback();
-          }, function () {
-            saveCallback();
-          });
+          OB.Dal.get(
+            OB.Model.PriceList,
+            me.get('priceList'),
+            function(pList) {
+              me.set('priceIncludesTax', pList.get('priceIncludesTax'));
+              saveCallback();
+            },
+            function() {
+              saveCallback();
+            },
+            function() {
+              saveCallback();
+            }
+          );
         }
       } else {
         saveCallback();
       }
       return true;
     },
-    loadById: function (CusId, userCallback) {
+    loadById: function(CusId, userCallback) {
       //search data in local DB and load it to this
       var me = this;
-      OB.Dal.get(OB.Model.BusinessPartner, CusId, function (customerCol) { //OB.Dal.get success
+      OB.Dal.get(OB.Model.BusinessPartner, CusId, function(customerCol) {
+        //OB.Dal.get success
         if (!customerCol || customerCol.length === 0) {
           me.clearModelWith(null);
           userCallback(me);
         } else if (!_.isNull(customerCol.get('shipLocId'))) {
-          OB.Dal.get(OB.Model.BPLocation, customerCol.get('shipLocId'), function (location) { //OB.Dal.find success
-            customerCol.set('locationModel', location);
-            me.clearModelWith(customerCol);
-            userCallback(me);
-          });
+          OB.Dal.get(
+            OB.Model.BPLocation,
+            customerCol.get('shipLocId'),
+            function(location) {
+              //OB.Dal.find success
+              customerCol.set('locationModel', location);
+              me.clearModelWith(customerCol);
+              userCallback(me);
+            }
+          );
         } else {
           me.clearModelWith(customerCol);
           userCallback(me);
         }
       });
     },
-    loadModel: function (customerCol, userCallback) {
+    loadModel: function(customerCol, userCallback) {
       //search data in local DB and load it to this
       var me = this;
       if (!customerCol || customerCol.length === 0) {
         me.clearModelWith(null);
         userCallback(me);
       } else {
-        this.loadBPLocations(null, null, function (shipping, billing, locations) {
-          customerCol.set('locationModel', shipping || billing);
-          me.clearModelWith(customerCol);
-          userCallback(me);
-        }, customerCol.get('id'));
+        this.loadBPLocations(
+          null,
+          null,
+          function(shipping, billing, locations) {
+            customerCol.set('locationModel', shipping || billing);
+            me.clearModelWith(customerCol);
+            userCallback(me);
+          },
+          customerCol.get('id')
+        );
       }
     },
-    loadByModel: function (cusToLoad) {
+    loadByModel: function(cusToLoad) {
       //copy data from model to this
     },
-    newCustomer: function () {
+    newCustomer: function() {
       //set values of new attrs in bp model
       //this values will be copied to the created one
       //in the next instruction
       this.trigger('beforeChangeCustomerForNewOne', this);
       this.clearModelWith(null);
     },
-    clearModelWith: function (cusToLoad) {
+    clearModelWith: function(cusToLoad) {
       if (cusToLoad === null) {
-
         OB.UTIL.clone(new OB.Model.BusinessPartner(), this);
 
-        this.set('paymentMethod', OB.MobileApp.model.get('terminal').defaultbp_paymentmethod);
-        this.set('businessPartnerCategory', OB.MobileApp.model.get('terminal').defaultbp_bpcategory);
-        this.set('businessPartnerCategory_name', OB.MobileApp.model.get('terminal').defaultbp_bpcategory_name);
-        this.set('paymentTerms', OB.MobileApp.model.get('terminal').defaultbp_paymentterm);
-        this.set('invoiceTerms', OB.MobileApp.model.get('terminal').defaultbp_invoiceterm);
+        this.set(
+          'paymentMethod',
+          OB.MobileApp.model.get('terminal').defaultbp_paymentmethod
+        );
+        this.set(
+          'businessPartnerCategory',
+          OB.MobileApp.model.get('terminal').defaultbp_bpcategory
+        );
+        this.set(
+          'businessPartnerCategory_name',
+          OB.MobileApp.model.get('terminal').defaultbp_bpcategory_name
+        );
+        this.set(
+          'paymentTerms',
+          OB.MobileApp.model.get('terminal').defaultbp_paymentterm
+        );
+        this.set(
+          'invoiceTerms',
+          OB.MobileApp.model.get('terminal').defaultbp_invoiceterm
+        );
         this.set('priceList', OB.MobileApp.model.get('pricelist').id);
         this.set('client', OB.MobileApp.model.get('terminal').client);
-        this.set('organization', OB.MobileApp.model.get('terminal').defaultbp_bporg);
+        this.set(
+          'organization',
+          OB.MobileApp.model.get('terminal').defaultbp_bporg
+        );
         this.set('creditLimit', OB.DEC.Zero);
         this.set('creditUsed', OB.DEC.Zero);
         this.set('availableCredit', OB.DEC.Zero);
@@ -180,10 +227,10 @@
         OB.UTIL.clone(cusToLoad, this);
       }
     },
-    loadByJSON: function (obj) {
+    loadByJSON: function(obj) {
       var me = this,
-          undf;
-      _.each(_.keys(me.attributes), function (key) {
+        undf;
+      _.each(_.keys(me.attributes), function(key) {
         if (obj[key] !== undf) {
           if (obj[key] === null) {
             me.set(key, null);
@@ -193,10 +240,10 @@
         }
       });
     },
-    adjustNames: function () {
+    adjustNames: function() {
       var firstName = this.get('firstName'),
-          lastName = this.get('lastName'),
-          fullName;
+        lastName = this.get('lastName'),
+        fullName;
       if (firstName) {
         firstName = firstName.trim();
       }
@@ -212,9 +259,9 @@
       }
       this.set('name', fullName);
     },
-    serializeEditedToJSON: function () {
+    serializeEditedToJSON: function() {
       var me = this,
-          editedBp = new OB.Model.BusinessPartner();
+        editedBp = new OB.Model.BusinessPartner();
       //Set entities ids: BusinessPartner, Location and User
       editedBp.set('id', this.get('id'));
       editedBp.set('locId', this.get('locId'));
@@ -223,27 +270,34 @@
       editedBp.set('loaded', this.get('loaded'));
       editedBp.set('posTerminal', this.get('posTerminal'));
       //Set only form attributes
-      _.each(OB.OBPOSPointOfSale.UI.customers.edit_createcustomers_impl.prototype.newAttributes, function (model) {
-        if (model.setEditedProperties) {
-          model.setEditedProperties(me, editedBp);
-        } else {
-          editedBp.set(model.modelProperty, me.get(model.modelProperty));
+      _.each(
+        OB.OBPOSPointOfSale.UI.customers.edit_createcustomers_impl.prototype
+          .newAttributes,
+        function(model) {
+          if (model.setEditedProperties) {
+            model.setEditedProperties(me, editedBp);
+          } else {
+            editedBp.set(model.modelProperty, me.get(model.modelProperty));
+          }
         }
-      });
+      );
       editedBp.adjustNames();
       return JSON.parse(JSON.stringify(editedBp.toJSON()));
     },
-    serializeToJSON: function () {
+    serializeToJSON: function() {
       return JSON.parse(JSON.stringify(this.toJSON()));
     },
-    loadBPLocations: function (shipping, billing, callback, bpId) {
-      var getLocation, errorCallback, criteria, checkInLocalDB = false;
+    loadBPLocations: function(shipping, billing, callback, bpId) {
+      var getLocation,
+        errorCallback,
+        criteria,
+        checkInLocalDB = false;
       criteria = {
         bpartner: {
           operator: OB.Dal.EQ,
           value: bpId || this.get('id')
         },
-        '_orderByClause': 'c_bpartner_location_id desc'
+        _orderByClause: 'c_bpartner_location_id desc'
       };
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
         var filterBpartnerId = {
@@ -254,54 +308,75 @@
         };
         criteria.remoteFilters = [filterBpartnerId];
       }
-      errorCallback = function () {
-        OB.error(OB.I18N.getLabel('OBPOS_BPInfoErrorTitle') + '. Message: ' + OB.I18N.getLabel('OBPOS_BPInfoErrorMessage'));
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_BPInfoErrorTitle'), OB.I18N.getLabel('OBPOS_BPInfoErrorMessage'), [{
-          label: OB.I18N.getLabel('OBPOS_Reload')
-        }], {
-          onShowFunction: function (popup) {
-            popup.$.headerCloseButton.hide();
-            OB.UTIL.localStorage.removeItem('POSLastTotalRefresh');
-            OB.UTIL.localStorage.removeItem('POSLastIncRefresh');
-          },
-          onHideFunction: function () {
-            OB.UTIL.localStorage.removeItem('POSLastTotalRefresh');
-            OB.UTIL.localStorage.removeItem('POSLastIncRefresh');
-            window.location.reload();
-          },
-          autoDismiss: false
-        });
+      errorCallback = function() {
+        OB.error(
+          OB.I18N.getLabel('OBPOS_BPInfoErrorTitle') +
+            '. Message: ' +
+            OB.I18N.getLabel('OBPOS_BPInfoErrorMessage')
+        );
+        OB.UTIL.showConfirmation.display(
+          OB.I18N.getLabel('OBPOS_BPInfoErrorTitle'),
+          OB.I18N.getLabel('OBPOS_BPInfoErrorMessage'),
+          [
+            {
+              label: OB.I18N.getLabel('OBPOS_Reload')
+            }
+          ],
+          {
+            onShowFunction: function(popup) {
+              popup.$.headerCloseButton.hide();
+              OB.UTIL.localStorage.removeItem('POSLastTotalRefresh');
+              OB.UTIL.localStorage.removeItem('POSLastIncRefresh');
+            },
+            onHideFunction: function() {
+              OB.UTIL.localStorage.removeItem('POSLastTotalRefresh');
+              OB.UTIL.localStorage.removeItem('POSLastIncRefresh');
+              window.location.reload();
+            },
+            autoDismiss: false
+          }
+        );
       };
-      getLocation = function (checkLocal) {
-        OB.Dal.find(OB.Model.BPLocation, criteria, function (collection) {
-          if (!billing) {
-            billing = _.find(collection.models, function (loc) {
-              return loc.get('isBillTo');
-            });
-          }
-          if (!shipping) {
-            shipping = _.find(collection.models, function (loc) {
-              return loc.get('isShipTo');
-            });
-          }
-          if (!shipping && !billing) {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerNoShippingAddress', [bpId]));
-            return;
-          }
-          callback(shipping, billing, collection.models);
-        }, function () {
-          if (checkInLocalDB) {
-            errorCallback();
-            return;
-          }
-          checkInLocalDB = true;
-          delete criteria.remoteFilters;
-          getLocation(true);
-        }, null, null, checkLocal);
+      getLocation = function(checkLocal) {
+        OB.Dal.find(
+          OB.Model.BPLocation,
+          criteria,
+          function(collection) {
+            if (!billing) {
+              billing = _.find(collection.models, function(loc) {
+                return loc.get('isBillTo');
+              });
+            }
+            if (!shipping) {
+              shipping = _.find(collection.models, function(loc) {
+                return loc.get('isShipTo');
+              });
+            }
+            if (!shipping && !billing) {
+              OB.UTIL.showError(
+                OB.I18N.getLabel('OBPOS_BPartnerNoShippingAddress', [bpId])
+              );
+              return;
+            }
+            callback(shipping, billing, collection.models);
+          },
+          function() {
+            if (checkInLocalDB) {
+              errorCallback();
+              return;
+            }
+            checkInLocalDB = true;
+            delete criteria.remoteFilters;
+            getLocation(true);
+          },
+          null,
+          null,
+          checkLocal
+        );
       };
       getLocation(false);
     },
-    setBPLocations: function (shipping, billing, locationModel) {
+    setBPLocations: function(shipping, billing, locationModel) {
       if (shipping) {
         this.set('shipLocId', shipping.get('id'));
         this.set('shipLocName', shipping.get('name'));
@@ -314,15 +389,15 @@
         this.set('shipPostalCode', null);
       }
       if (billing) {
-        this.set("locId", billing.get("id"));
-        this.set("locName", billing.get("name"));
+        this.set('locId', billing.get('id'));
+        this.set('locName', billing.get('name'));
         this.set('cityName', billing.get('cityName'));
         this.set('postalCode', billing.get('postalCode'));
         this.set('countryName', billing.get('countryName'));
         this.set('locationBillModel', billing);
       } else {
-        this.set("locId", null);
-        this.set("locName", null);
+        this.set('locId', null);
+        this.set('locName', null);
         this.set('cityName', null);
         this.set('postalCode', null);
         this.set('countryName', null);
@@ -345,191 +420,239 @@
     }
   });
 
-  BusinessPartner.addProperties([{
-    name: 'id',
-    column: 'c_bpartner_id',
-    primaryKey: true,
-    type: 'TEXT'
-  }, {
-    name: 'organization',
-    column: 'ad_org_id',
-    type: 'TEXT'
-  }, {
-    name: 'searchKey',
-    column: 'value',
-    filter: true,
-    type: 'TEXT'
-  }, {
-    name: 'greetingId',
-    column: 'greetingId',
-    type: 'TEXT'
-  }, {
-    name: 'greetingName',
-    column: 'greetingName',
-    type: 'TEXT'
-  }, {
-    name: '_identifier',
-    column: '_identifier',
-    filter: true,
-    type: 'NUMERIC'
-  }, {
-    name: 'name',
-    column: 'name',
-    type: 'TEXT'
-  }, {
-    name: 'firstName',
-    column: 'first_name',
-    type: 'TEXT'
-  }, {
-    name: 'lastName',
-    column: 'last_name',
-    type: 'TEXT'
-  }, {
-    name: 'description',
-    column: 'description',
-    type: 'TEXT'
-  }, {
-    name: 'taxID',
-    column: 'taxID',
-    filter: true,
-    skipremote: true,
-    type: 'TEXT'
-  }, {
-    name: 'taxCategory',
-    column: 'so_bp_taxcategory_id',
-    type: 'TEXT'
-  }, {
-    name: 'paymentMethod',
-    column: 'FIN_Paymentmethod_ID',
-    type: 'TEXT'
-  }, {
-    name: 'paymentTerms',
-    column: 'c_paymentterm_id',
-    type: 'TEXT'
-  }, {
-    name: 'priceList',
-    column: 'm_pricelist_id',
-    type: 'TEXT '
-  }, {
-    name: 'invoiceTerms',
-    column: 'invoicerule',
-    type: 'TEXT'
-  }, {
-    name: 'contactId',
-    column: 'ad_user_id',
-    type: 'TEXT'
-  }, {
-    name: 'phone',
-    column: 'phone',
-    filter: true,
-    skipremote: true,
-    type: 'TEXT'
-  }, {
-    name: 'alternativePhone',
-    column: 'alternativePhone',
-    type: 'TEXT'
-  }, {
-    name: 'email',
-    column: 'email',
-    filter: true,
-    skipremote: true,
-    type: 'TEXT'
-  }, {
-    name: 'businessPartnerCategory',
-    column: 'c_bp_group_id',
-    type: 'TEXT'
-  }, {
-    name: 'businessPartnerCategory_name',
-    column: 'c_bp_group_name',
-    type: 'TEXT'
-  }, {
-    name: 'creditLimit',
-    column: 'creditLimit',
-    type: 'NUMERIC'
-  }, {
-    name: 'creditUsed',
-    column: 'creditUsed',
-    type: 'NUMERIC'
-  }, {
-    name: 'taxExempt',
-    column: 'taxExempt',
-    type: 'TEXT'
-  }, {
-    name: 'customerBlocking',
-    column: 'customerBlocking',
-    type: 'TEXT'
-  }, {
-    name: 'salesOrderBlocking',
-    column: 'salesOrderBlocking',
-    type: 'TEXT'
-  }, {
-    name: 'priceIncludesTax',
-    column: 'priceIncludesTax',
-    type: 'TEXT'
-  }, {
-    name: 'priceListName',
-    column: 'priceListName',
-    type: 'TEXT'
-  }, {
-    name: 'loaded',
-    column: 'loaded',
-    type: 'TEXT'
-  }, {
-    name: 'birthDay',
-    column: 'birthDay',
-    type: 'TEXT'
-  }, {
-    name: 'birthPlace',
-    column: 'birthPlace',
-    type: 'TEXT'
-  }, {
-    name: 'isCustomerConsent',
-    column: 'isCustomerConsent',
-    type: 'TEXT'
-  }, {
-    name: 'language',
-    column: 'language',
-    type: 'TEXT'
-  }, {
-    name: 'language_name',
-    column: 'language_name',
-    type: 'TEXT'
-  }, {
-    name: 'comments',
-    column: 'comments',
-    type: 'TEXT'
-  }, {
-    name: 'availableCredit',
-    column: 'availableCredit',
-    type: 'NUMERIC'
-  }, {
-    name: 'commercialauth',
-    column: 'commercialauth',
-    type: 'TEXT'
-  }, {
-    name: 'viaemail',
-    column: 'viaemail',
-    type: 'TEXT'
-  }, {
-    name: 'viasms',
-    column: 'viasms',
-    type: 'TEXT'
-  }]);
-
-  BusinessPartner.addIndex([{
-    name: 'bp_filter_idx',
-    columns: [{
-      name: '_filter',
-      sort: 'desc'
-    }]
-  }, {
-    name: 'bp_name_idx',
-    columns: [{
+  BusinessPartner.addProperties([
+    {
+      name: 'id',
+      column: 'c_bpartner_id',
+      primaryKey: true,
+      type: 'TEXT'
+    },
+    {
+      name: 'organization',
+      column: 'ad_org_id',
+      type: 'TEXT'
+    },
+    {
+      name: 'searchKey',
+      column: 'value',
+      filter: true,
+      type: 'TEXT'
+    },
+    {
+      name: 'greetingId',
+      column: 'greetingId',
+      type: 'TEXT'
+    },
+    {
+      name: 'greetingName',
+      column: 'greetingName',
+      type: 'TEXT'
+    },
+    {
+      name: '_identifier',
+      column: '_identifier',
+      filter: true,
+      type: 'NUMERIC'
+    },
+    {
       name: 'name',
-      sort: 'desc'
-    }]
-  }]);
+      column: 'name',
+      type: 'TEXT'
+    },
+    {
+      name: 'firstName',
+      column: 'first_name',
+      type: 'TEXT'
+    },
+    {
+      name: 'lastName',
+      column: 'last_name',
+      type: 'TEXT'
+    },
+    {
+      name: 'description',
+      column: 'description',
+      type: 'TEXT'
+    },
+    {
+      name: 'taxID',
+      column: 'taxID',
+      filter: true,
+      skipremote: true,
+      type: 'TEXT'
+    },
+    {
+      name: 'taxCategory',
+      column: 'so_bp_taxcategory_id',
+      type: 'TEXT'
+    },
+    {
+      name: 'paymentMethod',
+      column: 'FIN_Paymentmethod_ID',
+      type: 'TEXT'
+    },
+    {
+      name: 'paymentTerms',
+      column: 'c_paymentterm_id',
+      type: 'TEXT'
+    },
+    {
+      name: 'priceList',
+      column: 'm_pricelist_id',
+      type: 'TEXT '
+    },
+    {
+      name: 'invoiceTerms',
+      column: 'invoicerule',
+      type: 'TEXT'
+    },
+    {
+      name: 'contactId',
+      column: 'ad_user_id',
+      type: 'TEXT'
+    },
+    {
+      name: 'phone',
+      column: 'phone',
+      filter: true,
+      skipremote: true,
+      type: 'TEXT'
+    },
+    {
+      name: 'alternativePhone',
+      column: 'alternativePhone',
+      type: 'TEXT'
+    },
+    {
+      name: 'email',
+      column: 'email',
+      filter: true,
+      skipremote: true,
+      type: 'TEXT'
+    },
+    {
+      name: 'businessPartnerCategory',
+      column: 'c_bp_group_id',
+      type: 'TEXT'
+    },
+    {
+      name: 'businessPartnerCategory_name',
+      column: 'c_bp_group_name',
+      type: 'TEXT'
+    },
+    {
+      name: 'creditLimit',
+      column: 'creditLimit',
+      type: 'NUMERIC'
+    },
+    {
+      name: 'creditUsed',
+      column: 'creditUsed',
+      type: 'NUMERIC'
+    },
+    {
+      name: 'taxExempt',
+      column: 'taxExempt',
+      type: 'TEXT'
+    },
+    {
+      name: 'customerBlocking',
+      column: 'customerBlocking',
+      type: 'TEXT'
+    },
+    {
+      name: 'salesOrderBlocking',
+      column: 'salesOrderBlocking',
+      type: 'TEXT'
+    },
+    {
+      name: 'priceIncludesTax',
+      column: 'priceIncludesTax',
+      type: 'TEXT'
+    },
+    {
+      name: 'priceListName',
+      column: 'priceListName',
+      type: 'TEXT'
+    },
+    {
+      name: 'loaded',
+      column: 'loaded',
+      type: 'TEXT'
+    },
+    {
+      name: 'birthDay',
+      column: 'birthDay',
+      type: 'TEXT'
+    },
+    {
+      name: 'birthPlace',
+      column: 'birthPlace',
+      type: 'TEXT'
+    },
+    {
+      name: 'isCustomerConsent',
+      column: 'isCustomerConsent',
+      type: 'TEXT'
+    },
+    {
+      name: 'language',
+      column: 'language',
+      type: 'TEXT'
+    },
+    {
+      name: 'language_name',
+      column: 'language_name',
+      type: 'TEXT'
+    },
+    {
+      name: 'comments',
+      column: 'comments',
+      type: 'TEXT'
+    },
+    {
+      name: 'availableCredit',
+      column: 'availableCredit',
+      type: 'NUMERIC'
+    },
+    {
+      name: 'commercialauth',
+      column: 'commercialauth',
+      type: 'TEXT'
+    },
+    {
+      name: 'viaemail',
+      column: 'viaemail',
+      type: 'TEXT'
+    },
+    {
+      name: 'viasms',
+      column: 'viasms',
+      type: 'TEXT'
+    }
+  ]);
+
+  BusinessPartner.addIndex([
+    {
+      name: 'bp_filter_idx',
+      columns: [
+        {
+          name: '_filter',
+          sort: 'desc'
+        }
+      ]
+    },
+    {
+      name: 'bp_name_idx',
+      columns: [
+        {
+          name: 'name',
+          sort: 'desc'
+        }
+      ]
+    }
+  ]);
   window.OB.Collection.languageList = Backbone.Collection;
   window.OB.Collection.greetingsList = Backbone.Collection;
   OB.Data.Registry.registerModel(BusinessPartner);
-}());
+})();

@@ -11,56 +11,81 @@
 
 OB.UTIL = window.OB.UTIL || {};
 
-
-OB.UTIL.sendLastTerminalStatusValues = function (callback) {
-  var process = new OB.DS.Process('org.openbravo.retail.posterminal.process.LastTerminalStatusTimestamps');
-  process.exec({
-    posterminalId: OB.MobileApp.model.get('terminal').id,
-    terminalLastfullrefresh: OB.UTIL.localStorage.getItem('POSLastTotalRefresh'),
-    terminalLastincrefresh: OB.UTIL.localStorage.getItem('POSLastIncRefresh'),
-    terminalLastcachegeneration: OB.UTIL.localStorage.getItem("LastCacheGeneration"),
-    terminalLastjsgeneration: OB.UTIL.localStorage.getItem("LastJSGeneration_" + OB.MobileApp.model.get('appName')),
-    terminalLastbenchmark: OB.UTIL.localStorage.getItem("benchmarkScore"),
-    terminalLastlogindate: OB.UTIL.localStorage.getItem("lastLogInDate"),
-    terminalLastloginuser: OB.UTIL.localStorage.getItem("lastUserIdLogin"),
-    terminalLasttimeinoffline: OB.UTIL.localStorage.getItem("lastTransitionToOffline"),
-    terminalLasttimeinonline: OB.UTIL.localStorage.getItem("lastTransitionToOnline"),
-    terminalLasthwmversion: OB.UTIL.localStorage.getItem("hardwareManagerVersion"),
-    terminalLasthwmrevision: OB.UTIL.localStorage.getItem("hardwareManagerRevision"),
-    terminalLasthwmjavainfo: OB.UTIL.localStorage.getItem("hardwareManagerJavaInfo")
-  }, function (data, message) {
-    if (callback instanceof Function) {
-      callback();
+OB.UTIL.sendLastTerminalStatusValues = function(callback) {
+  var process = new OB.DS.Process(
+    'org.openbravo.retail.posterminal.process.LastTerminalStatusTimestamps'
+  );
+  process.exec(
+    {
+      posterminalId: OB.MobileApp.model.get('terminal').id,
+      terminalLastfullrefresh: OB.UTIL.localStorage.getItem(
+        'POSLastTotalRefresh'
+      ),
+      terminalLastincrefresh: OB.UTIL.localStorage.getItem('POSLastIncRefresh'),
+      terminalLastcachegeneration: OB.UTIL.localStorage.getItem(
+        'LastCacheGeneration'
+      ),
+      terminalLastjsgeneration: OB.UTIL.localStorage.getItem(
+        'LastJSGeneration_' + OB.MobileApp.model.get('appName')
+      ),
+      terminalLastbenchmark: OB.UTIL.localStorage.getItem('benchmarkScore'),
+      terminalLastlogindate: OB.UTIL.localStorage.getItem('lastLogInDate'),
+      terminalLastloginuser: OB.UTIL.localStorage.getItem('lastUserIdLogin'),
+      terminalLasttimeinoffline: OB.UTIL.localStorage.getItem(
+        'lastTransitionToOffline'
+      ),
+      terminalLasttimeinonline: OB.UTIL.localStorage.getItem(
+        'lastTransitionToOnline'
+      ),
+      terminalLasthwmversion: OB.UTIL.localStorage.getItem(
+        'hardwareManagerVersion'
+      ),
+      terminalLasthwmrevision: OB.UTIL.localStorage.getItem(
+        'hardwareManagerRevision'
+      ),
+      terminalLasthwmjavainfo: OB.UTIL.localStorage.getItem(
+        'hardwareManagerJavaInfo'
+      )
+    },
+    function(data, message) {
+      if (callback instanceof Function) {
+        callback();
+      }
+    },
+    function(error) {
+      if (callback instanceof Function) {
+        callback();
+      }
     }
-  }, function (error) {
-    if (callback instanceof Function) {
-      callback();
-    }
-  });
+  );
 };
 
-OB.UTIL.getImageURL = function (id) {
+OB.UTIL.getImageURL = function(id) {
   var imageUrl = 'productImages/';
   var i;
   for (i = 0; i < id.length; i += 3) {
     if (i !== 0) {
-      imageUrl += "/";
+      imageUrl += '/';
     }
-    imageUrl += id.substring(i, ((i + 3) < id.length) ? (i + 3) : id.length);
+    imageUrl += id.substring(i, i + 3 < id.length ? i + 3 : id.length);
   }
-  imageUrl += "/" + id;
+  imageUrl += '/' + id;
   return imageUrl;
 };
 
-OB.UTIL.getMinimizedImageURL = function (id) {
+OB.UTIL.getMinimizedImageURL = function(id) {
   return this.getImageURL(id) + '_min';
 };
 
-OB.UTIL.getNumberOfSequence = function (documentNo, isQuotation) {
-  if (!OB.UTIL.isNullOrUndefined(OB.MobileApp.model.get('terminal')) && !OB.UTIL.isNullOrUndefined(OB.MobileApp.model.get('terminal')).docNoPrefix) {
+OB.UTIL.getNumberOfSequence = function(documentNo, isQuotation) {
+  if (
+    !OB.UTIL.isNullOrUndefined(OB.MobileApp.model.get('terminal')) &&
+    !OB.UTIL.isNullOrUndefined(OB.MobileApp.model.get('terminal')).docNoPrefix
+  ) {
     var posDocumentNoPrefix = OB.MobileApp.model.get('terminal').docNoPrefix;
     if (isQuotation) {
-      posDocumentNoPrefix = OB.MobileApp.model.get('terminal').quotationDocNoPrefix;
+      posDocumentNoPrefix = OB.MobileApp.model.get('terminal')
+        .quotationDocNoPrefix;
     }
     return parseInt(documentNo.substr(posDocumentNoPrefix.length + 1), 10);
   } else {
@@ -68,7 +93,7 @@ OB.UTIL.getNumberOfSequence = function (documentNo, isQuotation) {
   }
 };
 
-OB.UTIL.getPaymentByKey = function (key) {
+OB.UTIL.getPaymentByKey = function(key) {
   var i;
   var terminalPayments = OB.MobileApp.model.get('payments');
   for (i = 0; i < terminalPayments.length; i++) {
@@ -106,12 +131,15 @@ OB.UTIL.getPaymentByKey = function (key) {
  */
 OB.UTIL.currency = {
   conversions: [],
-  webPOSDefaultCurrencyId: function () {
+  webPOSDefaultCurrencyId: function() {
     return OB.MobileApp.model.get('currency').id.toString();
   },
-  isDefaultCurrencyId: function (currencyId) {
+  isDefaultCurrencyId: function(currencyId) {
     // argument checks
-    OB.UTIL.Debug.isDefined(currencyId, "Missing required argument 'currencyId' in OB.UTIL.currency.isDefaultCurrencyId");
+    OB.UTIL.Debug.isDefined(
+      currencyId,
+      "Missing required argument 'currencyId' in OB.UTIL.currency.isDefaultCurrencyId"
+    );
 
     currencyId = currencyId.toString();
 
@@ -123,11 +151,20 @@ OB.UTIL.currency = {
    * @param {currencyId}    toCurrencyId      currencyId of the resulting amount
    * @param {float}         rate              exchange rate to calculate the resulting amount
    */
-  addConversion: function (fromCurrencyId, toCurrencyId, rate) {
+  addConversion: function(fromCurrencyId, toCurrencyId, rate) {
     // argument checks
-    OB.UTIL.Debug.isDefined(fromCurrencyId, "Missing required argument 'fromCurrencyId' in OB.UTIL.currency.addConversion");
-    OB.UTIL.Debug.isDefined(toCurrencyId, "Missing required argument 'toCurrencyId' in OB.UTIL.currency.addConversion");
-    OB.UTIL.Debug.isDefined(rate, "Missing required argument 'rate' in OB.UTIL.currency.addConversion");
+    OB.UTIL.Debug.isDefined(
+      fromCurrencyId,
+      "Missing required argument 'fromCurrencyId' in OB.UTIL.currency.addConversion"
+    );
+    OB.UTIL.Debug.isDefined(
+      toCurrencyId,
+      "Missing required argument 'toCurrencyId' in OB.UTIL.currency.addConversion"
+    );
+    OB.UTIL.Debug.isDefined(
+      rate,
+      "Missing required argument 'rate' in OB.UTIL.currency.addConversion"
+    );
 
     fromCurrencyId = fromCurrencyId.toString();
     toCurrencyId = toCurrencyId.toString();
@@ -138,10 +175,15 @@ OB.UTIL.currency = {
       return;
     }
 
-    var conversionAlreadyExists = this.findConverter(fromCurrencyId, toCurrencyId);
+    var conversionAlreadyExists = this.findConverter(
+      fromCurrencyId,
+      toCurrencyId
+    );
     if (conversionAlreadyExists) {
       if (conversionAlreadyExists.rate !== rate) {
-        OB.error('The rate for a currency is trying to be changed. If you are not trying to change the rate, something needs critical and inmediate fixing. If you really want to change the rate and know what you are doing, clean the OB.UTIL.currency.conversions array and fill it again.');
+        OB.error(
+          'The rate for a currency is trying to be changed. If you are not trying to change the rate, something needs critical and inmediate fixing. If you really want to change the rate and know what you are doing, clean the OB.UTIL.currency.conversions array and fill it again.'
+        );
       }
       return; // the conversor is already present. this is fine, unless a lot of calls are finishing here
     }
@@ -151,19 +193,26 @@ OB.UTIL.currency = {
       rate: rate,
       toCurrencyIdPrecision: OB.DEC.getScale(),
       // TODO: get, from the backend, the precisions for the currency with the id = toCurrencyId
-      isToCurrencyIdForeign: toCurrencyId !== OB.UTIL.currency.webPOSDefaultCurrencyId(),
+      isToCurrencyIdForeign:
+        toCurrencyId !== OB.UTIL.currency.webPOSDefaultCurrencyId(),
       /**
        * Get a rounded exchanged amount that indicates the amount in the real world, say money, card tickets, etc
        *   e.g: the Avalanche Transceiver in sampledata cost 150.5€ or getTangibleOf(150.5) = 197.81$
        * @param  {float}     amountToRound  the amount to be converted to toCurrencyId
        * @return {float}     the converted amount using the exchange rate rounded to the precision set in preferences for toCurrencyId
        */
-      getTangibleOf: function (amountToRound) {
+      getTangibleOf: function(amountToRound) {
         if (this.toCurrencyId === OB.UTIL.currency.webPOSDefaultCurrencyId()) {
-          OB.error('You cannot get a tangible of a foreign currency because it has already a value in local currency. If you are trying to get the amount for a financial account, use the getFinancialAmountOf function');
+          OB.error(
+            'You cannot get a tangible of a foreign currency because it has already a value in local currency. If you are trying to get the amount for a financial account, use the getFinancialAmountOf function'
+          );
           return;
         }
-        return OB.DEC.mul(amountToRound, rate, OB.UTIL.currency.toCurrencyIdPrecision);
+        return OB.DEC.mul(
+          amountToRound,
+          rate,
+          OB.UTIL.currency.toCurrencyIdPrecision
+        );
       },
       /**
        * Get a full precision converted amount which origin is real money and will and will be added to a local currency financial account
@@ -171,15 +220,25 @@ OB.UTIL.currency = {
        * @param  {float}     amountToRound  the amount to be converted to toCurrencyId
        * @return {float}     the converted amount using the exchange rate rounded to the precision set in preferences for toCurrencyId
        */
-      getFinancialAmountOf: function (amount) {
-        if (this.fromCurrencyId === OB.UTIL.currency.webPOSDefaultCurrencyId()) {
-          OB.error('You are trying to get a financial amount value that is not from a foreign currency');
+      getFinancialAmountOf: function(amount) {
+        if (
+          this.fromCurrencyId === OB.UTIL.currency.webPOSDefaultCurrencyId()
+        ) {
+          OB.error(
+            'You are trying to get a financial amount value that is not from a foreign currency'
+          );
           return;
         }
         return OB.DEC.mul(amount, rate);
       },
-      toString: function () {
-        return this.fromCurrencyId + ' -> ' + this.toCurrencyId + '; rate:' + this.rate.toFixed(5);
+      toString: function() {
+        return (
+          this.fromCurrencyId +
+          ' -> ' +
+          this.toCurrencyId +
+          '; rate:' +
+          this.rate.toFixed(5)
+        );
       }
     });
   },
@@ -187,23 +246,31 @@ OB.UTIL.currency = {
    * get all the converters available in the internal converters array
    * @return {array of converters}  the converters available in the internal converters array
    */
-  getConversions: function () {
+  getConversions: function() {
     return this.conversions;
   },
   /**
    * Find the converter with the indicated fromCurrencyId and toCurrencyId in the internal converters array
    * Developer: you, most likely, won't need this function. If so, change this comment
    */
-  findConverter: function (fromCurrencyId, toCurrencyId) {
+  findConverter: function(fromCurrencyId, toCurrencyId) {
     // argument checks
-    OB.UTIL.Debug.isDefined(fromCurrencyId, "Missing required argument 'fromCurrencyId' in OB.UTIL.currency.findConverter");
-    OB.UTIL.Debug.isDefined(toCurrencyId, "Missing required argument 'toCurrencyId' in OB.UTIL.currency.findConverter");
+    OB.UTIL.Debug.isDefined(
+      fromCurrencyId,
+      "Missing required argument 'fromCurrencyId' in OB.UTIL.currency.findConverter"
+    );
+    OB.UTIL.Debug.isDefined(
+      toCurrencyId,
+      "Missing required argument 'toCurrencyId' in OB.UTIL.currency.findConverter"
+    );
 
     fromCurrencyId = fromCurrencyId.toString();
     toCurrencyId = toCurrencyId.toString();
 
-    return _.find(this.conversions, function (c) {
-      return (c.fromCurrencyId === fromCurrencyId) && (c.toCurrencyId === toCurrencyId);
+    return _.find(this.conversions, function(c) {
+      return (
+        c.fromCurrencyId === fromCurrencyId && c.toCurrencyId === toCurrencyId
+      );
     });
   },
   /**
@@ -212,30 +279,44 @@ OB.UTIL.currency = {
    * @param  {currencyId} toCurrencyId   the destination currencyId
    * @return {converter}                 the converter to convert amounts from the fromCurrencyId currency to the toCurrencyId currency
    */
-  getConverter: function (fromCurrencyId, toCurrencyId) {
+  getConverter: function(fromCurrencyId, toCurrencyId) {
     // argument checks
-    OB.UTIL.Debug.isDefined(fromCurrencyId, "Missing required argument 'fromCurrencyId' in OB.UTIL.currency.getConverter");
-    OB.UTIL.Debug.isDefined(toCurrencyId, "Missing required argument 'toCurrencyId' in OB.UTIL.currency.getConverter");
+    OB.UTIL.Debug.isDefined(
+      fromCurrencyId,
+      "Missing required argument 'fromCurrencyId' in OB.UTIL.currency.getConverter"
+    );
+    OB.UTIL.Debug.isDefined(
+      toCurrencyId,
+      "Missing required argument 'toCurrencyId' in OB.UTIL.currency.getConverter"
+    );
 
     fromCurrencyId = fromCurrencyId.toString();
     toCurrencyId = toCurrencyId.toString();
 
     var found = this.findConverter(fromCurrencyId, toCurrencyId);
     if (!found) {
-      OB.error('Currency converter not added: ' + fromCurrencyId + ' -> ' + toCurrencyId);
+      OB.error(
+        'Currency converter not added: ' +
+          fromCurrencyId +
+          ' -> ' +
+          toCurrencyId
+      );
     }
     return found;
   },
-/**
+  /**
    * Returns a converter whose original currency is not the WebPOS currency. e.g: USD in sampledata
    * and whose destiny curency is the WebPOS default currency. i.e: OB.MobileApp.model.get('currency').id
     return this.getConverter(webPOSDefaultCurrencyId(), toCurrencyId);
    * @param  {currencyId} fromCurrencyId  the currencyId of the original currency
    * @return {converter}                  the converter to convert amounts from fromCurrencyId to the WebPOS default currency
    */
-  getToLocalConverter: function (fromCurrencyId) {
+  getToLocalConverter: function(fromCurrencyId) {
     // argument checks
-    OB.UTIL.Debug.isDefined(fromCurrencyId, "Missing required argument 'fromCurrencyId' in OB.UTIL.currency.getToLocalConverter");
+    OB.UTIL.Debug.isDefined(
+      fromCurrencyId,
+      "Missing required argument 'fromCurrencyId' in OB.UTIL.currency.getToLocalConverter"
+    );
 
     fromCurrencyId = fromCurrencyId.toString();
 
@@ -247,9 +328,12 @@ OB.UTIL.currency = {
    * @param  {currencyId} toCurrencyId  the currencyId of the destiny currency
    * @return {converter}                the converter to convert amounts from WebPOS default currency to toCurrencyId
    */
-  getFromLocalConverter: function (toCurrencyId) {
+  getFromLocalConverter: function(toCurrencyId) {
     // argument checks
-    OB.UTIL.Debug.isDefined(toCurrencyId, "Missing required argument 'toCurrencyId' in OB.UTIL.currency.getFromLocalConverter");
+    OB.UTIL.Debug.isDefined(
+      toCurrencyId,
+      "Missing required argument 'toCurrencyId' in OB.UTIL.currency.getFromLocalConverter"
+    );
 
     toCurrencyId = toCurrencyId.toString();
 
@@ -261,10 +345,16 @@ OB.UTIL.currency = {
    * @param  {float}      amount            the amount to be converted
    * @return {float}                        the converted amount
    */
-  toDefaultCurrency: function (fromCurrencyId, amount) {
+  toDefaultCurrency: function(fromCurrencyId, amount) {
     // argument checks
-    OB.UTIL.Debug.isDefined(fromCurrencyId, "Missing required argument 'fromCurrencyId' in OB.UTIL.currency.toDefaultCurrency");
-    OB.UTIL.Debug.isDefined(amount, "Missing required argument 'amount' in OB.UTIL.currency.toDefaultCurrency");
+    OB.UTIL.Debug.isDefined(
+      fromCurrencyId,
+      "Missing required argument 'fromCurrencyId' in OB.UTIL.currency.toDefaultCurrency"
+    );
+    OB.UTIL.Debug.isDefined(
+      amount,
+      "Missing required argument 'amount' in OB.UTIL.currency.toDefaultCurrency"
+    );
 
     fromCurrencyId = fromCurrencyId.toString();
 
@@ -281,10 +371,16 @@ OB.UTIL.currency = {
    * @param  {float}      amount            the amount to be converted
    * @return {float}                        the converted amount
    */
-  toForeignCurrency: function (toCurrencyId, amount) {
+  toForeignCurrency: function(toCurrencyId, amount) {
     // argument checks
-    OB.UTIL.Debug.isDefined(toCurrencyId, "Missing required argument 'toCurrencyId' in OB.UTIL.currency.toForeignCurrency");
-    OB.UTIL.Debug.isDefined(amount, "Missing required argument 'amount' in OB.UTIL.currency.toForeignCurrency");
+    OB.UTIL.Debug.isDefined(
+      toCurrencyId,
+      "Missing required argument 'toCurrencyId' in OB.UTIL.currency.toForeignCurrency"
+    );
+    OB.UTIL.Debug.isDefined(
+      amount,
+      "Missing required argument 'amount' in OB.UTIL.currency.toForeignCurrency"
+    );
 
     toCurrencyId = toCurrencyId.toString();
 
@@ -295,13 +391,12 @@ OB.UTIL.currency = {
     var foreignAmount = converter.getTangibleOf(amount);
     return foreignAmount;
   }
-
 };
 
 // Experimental method that could be introduced in ECMAScript 6. If this happens, this method should be removed and the calling methods should replace it with 'Math.sign'
 // As of now, Nov 2014, Math.sign is supported by chrome v38 but not by Safari
 OB.UTIL.Math = window.OB.UTIL.Math || {};
-OB.UTIL.Math.sign = function (x) {
+OB.UTIL.Math.sign = function(x) {
   x = +x; // convert to a number
   if (x === 0 || isNaN(x)) {
     return x;
@@ -309,19 +404,18 @@ OB.UTIL.Math.sign = function (x) {
   return x > 0 ? 1 : -1;
 };
 
-OB.UTIL.getPriceListName = function (priceListId, callback) {
+OB.UTIL.getPriceListName = function(priceListId, callback) {
   if (priceListId) {
     if (OB.MobileApp.model.get('pricelist').id === priceListId) {
       callback(OB.MobileApp.model.get('pricelist').name);
     } else {
-      OB.Dal.get(OB.Model.PriceList, priceListId, function (pList) {
+      OB.Dal.get(OB.Model.PriceList, priceListId, function(pList) {
         callback(pList.get('name'));
       });
     }
   } else {
     callback('');
   }
-
 };
 
 /**
@@ -329,160 +423,285 @@ OB.UTIL.getPriceListName = function (priceListId, callback) {
  * It can work online in case that user has done at least once the same approvalType
  * in this same browser. Data regarding privileged users is stored in supervisor table
  */
-OB.UTIL.checkApproval = function (approvalType, username, password, callback, windowModel, attrs) {
+OB.UTIL.checkApproval = function(
+  approvalType,
+  username,
+  password,
+  callback,
+  windowModel,
+  attrs
+) {
   OB.Dal.initCache(OB.Model.Supervisor, [], null, null);
   var approvalList = [];
-  approvalType.forEach(function (approvalType) {
-    approvalList.push(typeof (approvalType) === 'object' ? approvalType.approval : approvalType);
+  approvalType.forEach(function(approvalType) {
+    approvalList.push(
+      typeof approvalType === 'object' ? approvalType.approval : approvalType
+    );
   });
   var execution = OB.UTIL.ProcessController.start('checkApproval');
 
-  var rr, checkApprovalRequest = new enyo.Ajax({
-    url: '../../org.openbravo.retail.posterminal.utility.CheckApproval',
-    cacheBust: false,
-    method: 'GET',
-    handleAs: 'json',
-    timeout: 20000,
-    data: {
-      terminal: OB.MobileApp.model.get('terminalName'),
-      user: username,
-      password: password,
-      approvalType: JSON.stringify(approvalList),
-      attributes: JSON.stringify(attrs)
-    },
-    contentType: 'application/json;charset=utf-8',
-    success: function (inSender, inResponse) {
-      OB.UTIL.ProcessController.finish('checkApproval', execution);
-      var approved = false;
-      if (inResponse.error) {
-        callback(false, null, null, true, inResponse.error.message);
-      } else {
-        approved = inResponse.data.canApprove;
-        if (!approved) {
-          callback(false, null, null, false, OB.I18N.getLabel('OBPOS_UserCannotApprove', [username]));
-        }
-        // saving supervisor in local so next time it is possible to approve offline
-        OB.Dal.find(OB.Model.Supervisor, {
-          'id': inResponse.data.userId
-        }, enyo.bind(this, function (users) {
-          var supervisor, date, permissions = [];
-          if (users.models.length === 0) {
-            // new user
-            if (inResponse.data.canApprove) {
-              // insert in local db only in case it is supervisor for current type
-              date = new Date().toString();
-              supervisor = new OB.Model.Supervisor();
-              supervisor.set('id', inResponse.data.userId);
-              supervisor.set('name', username);
-              supervisor.set('password', OB.MobileApp.model.generate_sha1(password + date));
-              supervisor.set('created', date);
-              // Set all permissions
-              if (inResponse.data.preference) {
-                _.each(inResponse.data.preference, function (perm) {
-                  permissions.push(perm);
-                }, this);
-                supervisor.set('permissions', JSON.stringify(permissions));
-              } else {
-                supervisor.set('permissions', JSON.stringify(approvalType));
-              }
-              OB.Dal.save(supervisor, null, null, true);
-            }
-          } else {
-            // update existent user granting or revoking permission
-            supervisor = users.models[0];
-            supervisor.set('password', OB.MobileApp.model.generate_sha1(password + supervisor.get('created')));
-            if (supervisor.get('permissions')) {
-              permissions = JSON.parse(supervisor.get('permissions'));
-            }
-            if (inResponse.data.canApprove) {
-              // grant permission if it does not exist
-              _.each(approvalType, function (perm) {
-                if (!_.contains(permissions, perm)) {
-                  permissions.push(perm);
-                }
-              }, this);
-            } else {
-              // revoke permission if it exists
-              _.each(approvalType, function (perm) {
-                if (_.contains(permissions, perm)) {
-                  permissions = _.without(permissions, perm);
-                }
-              }, this);
-            }
-            supervisor.set('permissions', JSON.stringify(permissions));
-            OB.Dal.save(supervisor);
-          }
-          callback(approved, supervisor, approvalType, true, null);
-        }));
-      }
-    },
-    fail: function (inSender, inResponse) {
-      // offline
-      OB.UTIL.ProcessController.finish('checkApproval', execution);
-      OB.Dal.find(OB.Model.Supervisor, {
-        'name': username
-      }, enyo.bind(this, function (users) {
-        var supervisor, countApprovals = 0,
-            approved = false;
-        if (users.models.length === 0) {
-          countApprovals = 0;
-          OB.Dal.find(OB.Model.User, null, enyo.bind(this, function (users) {
-            _.each(users.models, function (user) {
-              if (username === user.get('name') && user.get('password') === OB.MobileApp.model.generate_sha1(password + user.get('created'))) {
-                _.each(approvalType, function (perm) {
-                  if (JSON.parse(user.get('terminalinfo')).permissions[perm]) {
-                    countApprovals += 1;
-                    supervisor = user;
-                  }
-                }, this);
-              }
-            });
-            if (countApprovals === approvalType.length) {
-              approved = true;
-              callback(approved, supervisor, approvalType, true, null);
-            } else {
-              callback(false, null, null, false, OB.I18N.getLabel('OBPOS_UserCannotApprove', [username]));
-            }
-          }), function () {});
+  var rr,
+    checkApprovalRequest = new enyo.Ajax({
+      url: '../../org.openbravo.retail.posterminal.utility.CheckApproval',
+      cacheBust: false,
+      method: 'GET',
+      handleAs: 'json',
+      timeout: 20000,
+      data: {
+        terminal: OB.MobileApp.model.get('terminalName'),
+        user: username,
+        password: password,
+        approvalType: JSON.stringify(approvalList),
+        attributes: JSON.stringify(attrs)
+      },
+      contentType: 'application/json;charset=utf-8',
+      success: function(inSender, inResponse) {
+        OB.UTIL.ProcessController.finish('checkApproval', execution);
+        var approved = false;
+        if (inResponse.error) {
+          callback(false, null, null, true, inResponse.error.message);
         } else {
-          supervisor = users.models[0];
-          if (supervisor.get('password') === OB.MobileApp.model.generate_sha1(password + supervisor.get('created'))) {
-            _.each(approvalType, function (perm) {
-              if (_.contains(JSON.parse(supervisor.get('permissions')), perm)) {
-                countApprovals += 1;
-              }
-            }, this);
-            if (countApprovals === approvalType.length) {
-              approved = true;
-              callback(approved, supervisor, approvalType, true, null);
-            } else {
-              countApprovals = 0;
-              OB.Dal.find(OB.Model.User, null, enyo.bind(this, function (users) {
-                _.each(users.models, function (user) {
-                  if (username === user.get('name') && user.get('password') === OB.MobileApp.model.generate_sha1(password + user.get('created'))) {
-                    _.each(approvalType, function (perm) {
-                      if (JSON.parse(user.get('terminalinfo')).permissions[perm]) {
-                        countApprovals += 1;
-                        supervisor = user;
-                      }
-                    }, this);
+          approved = inResponse.data.canApprove;
+          if (!approved) {
+            callback(
+              false,
+              null,
+              null,
+              false,
+              OB.I18N.getLabel('OBPOS_UserCannotApprove', [username])
+            );
+          }
+          // saving supervisor in local so next time it is possible to approve offline
+          OB.Dal.find(
+            OB.Model.Supervisor,
+            {
+              id: inResponse.data.userId
+            },
+            enyo.bind(this, function(users) {
+              var supervisor,
+                date,
+                permissions = [];
+              if (users.models.length === 0) {
+                // new user
+                if (inResponse.data.canApprove) {
+                  // insert in local db only in case it is supervisor for current type
+                  date = new Date().toString();
+                  supervisor = new OB.Model.Supervisor();
+                  supervisor.set('id', inResponse.data.userId);
+                  supervisor.set('name', username);
+                  supervisor.set(
+                    'password',
+                    OB.MobileApp.model.generate_sha1(password + date)
+                  );
+                  supervisor.set('created', date);
+                  // Set all permissions
+                  if (inResponse.data.preference) {
+                    _.each(
+                      inResponse.data.preference,
+                      function(perm) {
+                        permissions.push(perm);
+                      },
+                      this
+                    );
+                    supervisor.set('permissions', JSON.stringify(permissions));
+                  } else {
+                    supervisor.set('permissions', JSON.stringify(approvalType));
                   }
-                });
+                  OB.Dal.save(supervisor, null, null, true);
+                }
+              } else {
+                // update existent user granting or revoking permission
+                supervisor = users.models[0];
+                supervisor.set(
+                  'password',
+                  OB.MobileApp.model.generate_sha1(
+                    password + supervisor.get('created')
+                  )
+                );
+                if (supervisor.get('permissions')) {
+                  permissions = JSON.parse(supervisor.get('permissions'));
+                }
+                if (inResponse.data.canApprove) {
+                  // grant permission if it does not exist
+                  _.each(
+                    approvalType,
+                    function(perm) {
+                      if (!_.contains(permissions, perm)) {
+                        permissions.push(perm);
+                      }
+                    },
+                    this
+                  );
+                } else {
+                  // revoke permission if it exists
+                  _.each(
+                    approvalType,
+                    function(perm) {
+                      if (_.contains(permissions, perm)) {
+                        permissions = _.without(permissions, perm);
+                      }
+                    },
+                    this
+                  );
+                }
+                supervisor.set('permissions', JSON.stringify(permissions));
+                OB.Dal.save(supervisor);
+              }
+              callback(approved, supervisor, approvalType, true, null);
+            })
+          );
+        }
+      },
+      fail: function(inSender, inResponse) {
+        // offline
+        OB.UTIL.ProcessController.finish('checkApproval', execution);
+        OB.Dal.find(
+          OB.Model.Supervisor,
+          {
+            name: username
+          },
+          enyo.bind(this, function(users) {
+            var supervisor,
+              countApprovals = 0,
+              approved = false;
+            if (users.models.length === 0) {
+              countApprovals = 0;
+              OB.Dal.find(
+                OB.Model.User,
+                null,
+                enyo.bind(this, function(users) {
+                  _.each(users.models, function(user) {
+                    if (
+                      username === user.get('name') &&
+                      user.get('password') ===
+                        OB.MobileApp.model.generate_sha1(
+                          password + user.get('created')
+                        )
+                    ) {
+                      _.each(
+                        approvalType,
+                        function(perm) {
+                          if (
+                            JSON.parse(user.get('terminalinfo')).permissions[
+                              perm
+                            ]
+                          ) {
+                            countApprovals += 1;
+                            supervisor = user;
+                          }
+                        },
+                        this
+                      );
+                    }
+                  });
+                  if (countApprovals === approvalType.length) {
+                    approved = true;
+                    callback(approved, supervisor, approvalType, true, null);
+                  } else {
+                    callback(
+                      false,
+                      null,
+                      null,
+                      false,
+                      OB.I18N.getLabel('OBPOS_UserCannotApprove', [username])
+                    );
+                  }
+                }),
+                function() {}
+              );
+            } else {
+              supervisor = users.models[0];
+              if (
+                supervisor.get('password') ===
+                OB.MobileApp.model.generate_sha1(
+                  password + supervisor.get('created')
+                )
+              ) {
+                _.each(
+                  approvalType,
+                  function(perm) {
+                    if (
+                      _.contains(
+                        JSON.parse(supervisor.get('permissions')),
+                        perm
+                      )
+                    ) {
+                      countApprovals += 1;
+                    }
+                  },
+                  this
+                );
                 if (countApprovals === approvalType.length) {
                   approved = true;
                   callback(approved, supervisor, approvalType, true, null);
                 } else {
-                  callback(false, null, null, false, OB.I18N.getLabel('OBPOS_UserCannotApprove', [username]));
+                  countApprovals = 0;
+                  OB.Dal.find(
+                    OB.Model.User,
+                    null,
+                    enyo.bind(this, function(users) {
+                      _.each(users.models, function(user) {
+                        if (
+                          username === user.get('name') &&
+                          user.get('password') ===
+                            OB.MobileApp.model.generate_sha1(
+                              password + user.get('created')
+                            )
+                        ) {
+                          _.each(
+                            approvalType,
+                            function(perm) {
+                              if (
+                                JSON.parse(user.get('terminalinfo'))
+                                  .permissions[perm]
+                              ) {
+                                countApprovals += 1;
+                                supervisor = user;
+                              }
+                            },
+                            this
+                          );
+                        }
+                      });
+                      if (countApprovals === approvalType.length) {
+                        approved = true;
+                        callback(
+                          approved,
+                          supervisor,
+                          approvalType,
+                          true,
+                          null
+                        );
+                      } else {
+                        callback(
+                          false,
+                          null,
+                          null,
+                          false,
+                          OB.I18N.getLabel('OBPOS_UserCannotApprove', [
+                            username
+                          ])
+                        );
+                      }
+                    }),
+                    function() {}
+                  );
                 }
-              }), function () {});
+              } else {
+                callback(
+                  false,
+                  null,
+                  null,
+                  false,
+                  OB.I18N.getLabel('OBPOS_InvalidUserPassword')
+                );
+              }
             }
-          } else {
-            callback(false, null, null, false, OB.I18N.getLabel('OBPOS_InvalidUserPassword'));
-          }
-        }
-      }), function () {});
-    }
-  });
+          }),
+          function() {}
+        );
+      }
+    });
 
   rr = new OB.RR.Request({
     ajaxRequest: checkApprovalRequest
@@ -490,32 +709,41 @@ OB.UTIL.checkApproval = function (approvalType, username, password, callback, wi
   rr.exec(checkApprovalRequest.url);
 };
 
-OB.UTIL.setScanningFocus = function (focus) {
+OB.UTIL.setScanningFocus = function(focus) {
   OB.MobileApp.view.scanningFocus(focus);
 };
 
-OB.UTIL.clearFlagAndTimersRefreshMasterData = function () {
+OB.UTIL.clearFlagAndTimersRefreshMasterData = function() {
   OB.MobileApp.model.set('refreshMasterdataShowPopup', true);
   OB.MobileApp.model.set('refreshMasterdata', false);
 };
 
-OB.UTIL.checkRefreshMasterData = function () {
-  if (OB.MobileApp.model.get('refreshMasterdata') === true && OB.UTIL.refreshMasterDataGetProperty('allowedIncrementalRefresh')) {
+OB.UTIL.checkRefreshMasterData = function() {
+  if (
+    OB.MobileApp.model.get('refreshMasterdata') === true &&
+    OB.UTIL.refreshMasterDataGetProperty('allowedIncrementalRefresh')
+  ) {
     OB.UTIL.clearFlagAndTimersRefreshMasterData();
     OB.UTIL.refreshMasterData();
   }
 };
 
-OB.UTIL.checkRefreshMasterDataOnNavigate = function () {
-  if (OB.MobileApp.model.get('refreshMasterdata') === true && OB.UTIL.refreshMasterDataGetProperty('incrementalRefreshOnNavigate')) {
+OB.UTIL.checkRefreshMasterDataOnNavigate = function() {
+  if (
+    OB.MobileApp.model.get('refreshMasterdata') === true &&
+    OB.UTIL.refreshMasterDataGetProperty('incrementalRefreshOnNavigate')
+  ) {
     OB.UTIL.checkRefreshMasterData();
   }
 };
-OB.UTIL.refreshMasterData = function () {
+OB.UTIL.refreshMasterData = function() {
   OB.MobileApp.model.set('secondsToRefreshMasterdata', 3);
   var counterIntervalId = null;
-  counterIntervalId = setInterval(function () {
-    OB.MobileApp.model.set('secondsToRefreshMasterdata', OB.MobileApp.model.get('secondsToRefreshMasterdata') - 1);
+  counterIntervalId = setInterval(function() {
+    OB.MobileApp.model.set(
+      'secondsToRefreshMasterdata',
+      OB.MobileApp.model.get('secondsToRefreshMasterdata') - 1
+    );
     if (OB.MobileApp.model.get('secondsToRefreshMasterdata') === 0) {
       OB.MobileApp.model.set('refreshMasterdataShowPopup', false);
       clearInterval(counterIntervalId);
@@ -525,7 +753,7 @@ OB.UTIL.refreshMasterData = function () {
       OB.UTIL.startLoadingSteps();
       OB.MobileApp.model.set('isLoggingIn', true);
       OB.UTIL.showLoading(true);
-      OB.MobileApp.model.loadModels(null, true, function () {
+      OB.MobileApp.model.loadModels(null, true, function() {
         OB.UTIL.showLoading(false);
         if (OB.UTIL.RfidController.isRfidConfigured()) {
           OB.UTIL.RfidController.connectRFIDDevice();
@@ -535,43 +763,58 @@ OB.UTIL.refreshMasterData = function () {
     }
   }, 1000);
 
-  OB.MobileApp.view.$.dialogsContainer.createComponent({
-    kind: 'OB.UI.ModalAction',
-    header: OB.I18N.getLabel('OBMOBC_MasterdataNeedsToBeRefreshed'),
-    bodyContent: {
-      content: OB.I18N.getLabel('OBMOBC_MasterdataNeedsToBeRefreshedMessage', [OB.MobileApp.model.get('secondsToRefreshMasterdata')])
-    },
-    bodyButtons: {
-      kind: 'OB.UI.ModalDialogButton',
-      content: OB.I18N.getLabel('OBMOBC_LblCancel'),
-      tap: function () {
-        OB.MobileApp.model.set('refreshMasterdataShowPopup', false);
-        OB.MobileApp.model.off('change:secondsToRefreshMasterdata');
-        clearInterval(counterIntervalId);
-        this.doHideThisPopup();
-      }
-    },
-    autoDismiss: false,
-    hideCloseButton: true,
-    executeOnShow: function () {
-      var reloadPopup = this;
-      OB.MobileApp.model.on('change:secondsToRefreshMasterdata', function () {
-        reloadPopup.$.bodyContent.$.control.setContent(OB.I18N.getLabel('OBMOBC_MasterdataNeedsToBeRefreshedMessage', [OB.MobileApp.model.get('secondsToRefreshMasterdata')]));
-        if (OB.MobileApp.model.get('secondsToRefreshMasterdata') === 0) {
-          reloadPopup.hide();
+  OB.MobileApp.view.$.dialogsContainer
+    .createComponent({
+      kind: 'OB.UI.ModalAction',
+      header: OB.I18N.getLabel('OBMOBC_MasterdataNeedsToBeRefreshed'),
+      bodyContent: {
+        content: OB.I18N.getLabel(
+          'OBMOBC_MasterdataNeedsToBeRefreshedMessage',
+          [OB.MobileApp.model.get('secondsToRefreshMasterdata')]
+        )
+      },
+      bodyButtons: {
+        kind: 'OB.UI.ModalDialogButton',
+        content: OB.I18N.getLabel('OBMOBC_LblCancel'),
+        tap: function() {
+          OB.MobileApp.model.set('refreshMasterdataShowPopup', false);
           OB.MobileApp.model.off('change:secondsToRefreshMasterdata');
+          clearInterval(counterIntervalId);
+          this.doHideThisPopup();
         }
-      });
-    }
-  }).show();
+      },
+      autoDismiss: false,
+      hideCloseButton: true,
+      executeOnShow: function() {
+        var reloadPopup = this;
+        OB.MobileApp.model.on('change:secondsToRefreshMasterdata', function() {
+          reloadPopup.$.bodyContent.$.control.setContent(
+            OB.I18N.getLabel('OBMOBC_MasterdataNeedsToBeRefreshedMessage', [
+              OB.MobileApp.model.get('secondsToRefreshMasterdata')
+            ])
+          );
+          if (OB.MobileApp.model.get('secondsToRefreshMasterdata') === 0) {
+            reloadPopup.hide();
+            OB.MobileApp.model.off('change:secondsToRefreshMasterdata');
+          }
+        });
+      }
+    })
+    .show();
 
   OB.info(OB.I18N.getLabel('OBMOBC_MasterdataNeedsToBeRefreshed'));
   clearInterval(OB.MobileApp.model.get('refreshMasterdataIntervalHandler'));
-  OB.MobileApp.model.set('refreshMasterdataIntervalHandler', setInterval(OB.UTIL.loadModelsIncFunc, OB.MobileApp.model.get('refreshMasterdataInterval')));
+  OB.MobileApp.model.set(
+    'refreshMasterdataIntervalHandler',
+    setInterval(
+      OB.UTIL.loadModelsIncFunc,
+      OB.MobileApp.model.get('refreshMasterdataInterval')
+    )
+  );
 };
 
-OB.UTIL.refreshMasterDataGetProperty = function (prop) {
-  var currentWindow = _.find(OB.MobileApp.model.windows.models, function (win) {
+OB.UTIL.refreshMasterDataGetProperty = function(prop) {
+  var currentWindow = _.find(OB.MobileApp.model.windows.models, function(win) {
     return win.get('route') === OB.MobileApp.view.currentWindow;
   });
   if (currentWindow) {
@@ -583,20 +826,29 @@ OB.UTIL.refreshMasterDataGetProperty = function (prop) {
   return false;
 };
 
-OB.UTIL.loadModelsIncFunc = function () {
-  var msg = OB.I18N.getLabel(OB.MobileApp.view.currentWindow === 'retail.pointofsale' ? 'OBPOS_MasterdataWillHappenOnCloseTicket' : 'OBPOS_MasterdataWillHappenOnReturnToWebPOS'),
-      minutesToShowRefreshDataInc = OB.MobileApp.model.get('terminal').terminalType.minutesToShowRefreshDataInc,
-      minShowIncRefresh = OB.UTIL.isNullOrUndefined(minutesToShowRefreshDataInc) ? undefined : minutesToShowRefreshDataInc * 60 * 1000;
+OB.UTIL.loadModelsIncFunc = function() {
+  var msg = OB.I18N.getLabel(
+      OB.MobileApp.view.currentWindow === 'retail.pointofsale'
+        ? 'OBPOS_MasterdataWillHappenOnCloseTicket'
+        : 'OBPOS_MasterdataWillHappenOnReturnToWebPOS'
+    ),
+    minutesToShowRefreshDataInc = OB.MobileApp.model.get('terminal')
+      .terminalType.minutesToShowRefreshDataInc,
+    minShowIncRefresh = OB.UTIL.isNullOrUndefined(minutesToShowRefreshDataInc)
+      ? undefined
+      : minutesToShowRefreshDataInc * 60 * 1000;
   if (OB.UTIL.isNullOrUndefined(minShowIncRefresh) || minShowIncRefresh > 0) {
     OB.info(msg);
     OB.UTIL.showWarning(msg);
   }
   OB.MobileApp.model.set('refreshMasterdata', true);
   if (!OB.UTIL.isNullOrUndefined(minShowIncRefresh) && minShowIncRefresh >= 0) {
-    var noActivityTimeout = OB.MobileApp.model.get('refreshMasterdataNoActivityTimeout');
+    var noActivityTimeout = OB.MobileApp.model.get(
+      'refreshMasterdataNoActivityTimeout'
+    );
     if (OB.UTIL.isNullOrUndefined(noActivityTimeout)) {
       OB.MobileApp.model.set('refreshMasterdataNoActivityTimeout', true);
-      setTimeout(function () {
+      setTimeout(function() {
         // Refresh Master Data
         OB.MobileApp.model.unset('refreshMasterdataNoActivityTimeout');
         OB.UTIL.checkRefreshMasterData();
@@ -605,14 +857,22 @@ OB.UTIL.loadModelsIncFunc = function () {
   }
 };
 
-OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, serviceLineQty, callback, errorCallback) {
+OB.UTIL.getCalculatedPriceForService = function(
+  line,
+  product,
+  relatedLines,
+  serviceLineQty,
+  callback,
+  errorCallback
+) {
   var amountBeforeDiscounts = 0,
-      amountAfterDiscounts = 0,
-      rangeAmountBeforeDiscounts = 0,
-      rangeAmountAfterDiscounts = 0,
-      relatedQuantity = 0,
-      relatedLinesMap = {},
-      execution, finishExecution = _.once(function () {
+    amountAfterDiscounts = 0,
+    rangeAmountBeforeDiscounts = 0,
+    rangeAmountAfterDiscounts = 0,
+    relatedQuantity = 0,
+    relatedLinesMap = {},
+    execution,
+    finishExecution = _.once(function() {
       OB.UTIL.ProcessController.finish('servicePriceCalculation', execution);
     });
 
@@ -621,9 +881,17 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, se
     finishExecution();
   }
 
-  function getPriceRuleVersion(product, relatedLine, totalRelatedAmount, callback, errorCallback) {
-    var relatedLineMap, relatedAmt, criteria = {},
-        isUniqueQuantity = product.get('quantityRule') === 'UQ';
+  function getPriceRuleVersion(
+    product,
+    relatedLine,
+    totalRelatedAmount,
+    callback,
+    errorCallback
+  ) {
+    var relatedLineMap,
+      relatedAmt,
+      criteria = {},
+      isUniqueQuantity = product.get('quantityRule') === 'UQ';
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
       criteria.remoteFilters = [];
       criteria.remoteFilters.push({
@@ -638,7 +906,11 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, se
           columns: [],
           operator: 'filter',
           value: 'ServicePriceRuleVersion_RangeFilter',
-          params: [(isUniqueQuantity ? totalRelatedAmount : OB.DEC.div(relatedLineMap.linePrice, relatedLineMap.qty))]
+          params: [
+            isUniqueQuantity
+              ? totalRelatedAmount
+              : OB.DEC.div(relatedLineMap.linePrice, relatedLineMap.qty)
+          ]
         });
         criteria.remoteFilters.push({
           columns: [],
@@ -659,63 +931,116 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, se
         relatedLineMap = relatedLinesMap[relatedLine.orderlineId];
         relatedAmt = OB.DEC.div(relatedLineMap.linePrice, relatedLineMap.qty);
         var includedProducts = product.get('includeProducts'),
-            includedProductCategories = product.get('includeProductCategories');
+          includedProductCategories = product.get('includeProductCategories');
         criteria._whereClause = "where product = '" + product.get('id');
-        criteria._whereClause += "' and validFromDate = (select max(validFromDate)" + " from m_servicepricerule_version sprv " + " where sprv.product = '" + product.get('id') + "'";
+        criteria._whereClause +=
+          "' and validFromDate = (select max(validFromDate)" +
+          ' from m_servicepricerule_version sprv ' +
+          " where sprv.product = '" +
+          product.get('id') +
+          "'";
         criteria._whereClause += " and sprv.validFromDate <= date('now')";
         if (includedProducts === 'N') {
-          criteria._whereClause += " and (sprv.relatedProduct is null or sprv.relatedProduct = '" + relatedLineMap.product + "')";
+          criteria._whereClause +=
+            " and (sprv.relatedProduct is null or sprv.relatedProduct = '" +
+            relatedLineMap.product +
+            "')";
         }
         if (includedProductCategories === 'N') {
-          criteria._whereClause += " and (sprv.relatedProductCategory is null or sprv.relatedProductCategory = '" + relatedLineMap.productCategory + "')";
+          criteria._whereClause +=
+            " and (sprv.relatedProductCategory is null or sprv.relatedProductCategory = '" +
+            relatedLineMap.productCategory +
+            "')";
         }
-        criteria._whereClause += ")";
+        criteria._whereClause += ')';
         if (isUniqueQuantity) {
-          criteria._whereClause += ' and (minimum is null or minimum <= ' + totalRelatedAmount + ') and (maximum is null or maximum >= ' + totalRelatedAmount + ')';
+          criteria._whereClause +=
+            ' and (minimum is null or minimum <= ' +
+            totalRelatedAmount +
+            ') and (maximum is null or maximum >= ' +
+            totalRelatedAmount +
+            ')';
         } else {
-          criteria._whereClause += ' and (minimum is null or minimum <= ' + relatedAmt + ') and (maximum is null or maximum >= ' + relatedAmt + ')';
+          criteria._whereClause +=
+            ' and (minimum is null or minimum <= ' +
+            relatedAmt +
+            ') and (maximum is null or maximum >= ' +
+            relatedAmt +
+            ')';
         }
         if (includedProducts === 'N') {
-          criteria._whereClause += " and (relatedProduct is null or relatedProduct = '" + relatedLineMap.product + "')";
+          criteria._whereClause +=
+            " and (relatedProduct is null or relatedProduct = '" +
+            relatedLineMap.product +
+            "')";
         }
         if (includedProductCategories === 'N') {
-          criteria._whereClause += " and (relatedProductCategory is null or relatedProductCategory = '" + relatedLineMap.productCategory + "')";
+          criteria._whereClause +=
+            " and (relatedProductCategory is null or relatedProductCategory = '" +
+            relatedLineMap.productCategory +
+            "')";
         }
       } else {
-        criteria._whereClause = "where product = '" + product.get('id') + "' and validFromDate <= date('now')";
+        criteria._whereClause =
+          "where product = '" +
+          product.get('id') +
+          "' and validFromDate <= date('now')";
       }
       criteria._orderByClause = 'validFromDate desc';
     }
-    OB.Dal.find(OB.Model.ServicePriceRuleVersion, criteria, function (sprvs) {
-      if (sprvs && sprvs.length > 0) {
-        sprvs.comparator = function (a, b) {
-          if (a.get('relatedProduct') || (a.get('relatedProductCategory') && !b.get('relatedProduct')) || (!a.get('relatedProductCategory') && !b.get('relatedProductCategory') && !b.get('relatedProduct'))) {
-            return -1;
-          } else {
-            return 1;
-          }
-        };
-        sprvs.sort();
-        callback(sprvs.at(0));
-      } else {
-        errorCallback('OBPOS_ErrorPriceRuleVersionNotFound');
+    OB.Dal.find(
+      OB.Model.ServicePriceRuleVersion,
+      criteria,
+      function(sprvs) {
+        if (sprvs && sprvs.length > 0) {
+          sprvs.comparator = function(a, b) {
+            if (
+              a.get('relatedProduct') ||
+              (a.get('relatedProductCategory') && !b.get('relatedProduct')) ||
+              (!a.get('relatedProductCategory') &&
+                !b.get('relatedProductCategory') &&
+                !b.get('relatedProduct'))
+            ) {
+              return -1;
+            } else {
+              return 1;
+            }
+          };
+          sprvs.sort();
+          callback(sprvs.at(0));
+        } else {
+          errorCallback('OBPOS_ErrorPriceRuleVersionNotFound');
+        }
+      },
+      function() {
+        errorCallback('OBPOS_ErrorGettingPriceRuleVersion');
       }
-    }, function () {
-      errorCallback('OBPOS_ErrorGettingPriceRuleVersion');
-    });
+    );
   }
 
   function getPriceRule(servicePriceRuleVersion, callback, errorCallback) {
-    OB.Dal.get(OB.Model.ServicePriceRule, servicePriceRuleVersion.get('servicePriceRule'), function (spr) {
-      callback(spr);
-    }, function () {
-      errorCallback('OBPOS_ErrorGettingPriceRule');
-    }, function () {
-      errorCallback('OBPOS_ErrorGettingPriceRule');
-    });
+    OB.Dal.get(
+      OB.Model.ServicePriceRule,
+      servicePriceRuleVersion.get('servicePriceRule'),
+      function(spr) {
+        callback(spr);
+      },
+      function() {
+        errorCallback('OBPOS_ErrorGettingPriceRule');
+      },
+      function() {
+        errorCallback('OBPOS_ErrorGettingPriceRule');
+      }
+    );
   }
 
-  function getPriceRuleRange(servicePriceRule, rangeAmountBeforeDiscounts, rangeAmountAfterDiscounts, callback, errorCallback) {
+  function getPriceRuleRange(
+    servicePriceRule,
+    rangeAmountBeforeDiscounts,
+    rangeAmountAfterDiscounts,
+    callback,
+    errorCallback
+  ) {
     var rangeCriteria = {};
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
       rangeCriteria.remoteFilters = [];
@@ -729,32 +1054,65 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, se
         columns: [],
         operator: 'filter',
         value: 'ServicePriceRuleRange_AmountFilter',
-        params: [servicePriceRule.get('afterdiscounts') ? rangeAmountAfterDiscounts : rangeAmountBeforeDiscounts]
+        params: [
+          servicePriceRule.get('afterdiscounts')
+            ? rangeAmountAfterDiscounts
+            : rangeAmountBeforeDiscounts
+        ]
       });
     } else {
-      rangeCriteria._whereClause = "where servicepricerule = '" + servicePriceRule.get('id') + "' and (( amountUpTo >= " + (servicePriceRule.get('afterdiscounts') ? rangeAmountAfterDiscounts : rangeAmountBeforeDiscounts) + ") or (amountUpTo is null))";
+      rangeCriteria._whereClause =
+        "where servicepricerule = '" +
+        servicePriceRule.get('id') +
+        "' and (( amountUpTo >= " +
+        (servicePriceRule.get('afterdiscounts')
+          ? rangeAmountAfterDiscounts
+          : rangeAmountBeforeDiscounts) +
+        ') or (amountUpTo is null))';
       rangeCriteria._orderByClause = 'amountUpTo is null, amountUpTo';
       rangeCriteria._limit = 1;
     }
-    OB.Dal.find(OB.Model.ServicePriceRuleRange, rangeCriteria, function (sprr) {
-      var range, priceCriteria = {};
-      if (sprr && sprr.length > 0) {
-        callback(sprr.at(0));
-      } else {
-        errorCallback('OBPOS_ErrorPriceRuleRangeNotFound');
+    OB.Dal.find(
+      OB.Model.ServicePriceRuleRange,
+      rangeCriteria,
+      function(sprr) {
+        var range,
+          priceCriteria = {};
+        if (sprr && sprr.length > 0) {
+          callback(sprr.at(0));
+        } else {
+          errorCallback('OBPOS_ErrorPriceRuleRangeNotFound');
+        }
+      },
+      function() {
+        errorCallback('OBPOS_ErrorGettingPriceRuleRange');
       }
-    }, function () {
-      errorCallback('OBPOS_ErrorGettingPriceRuleRange');
-    });
+    );
   }
 
-  function calculatePercentageAmount(product, amount, percentage, partialPrice, callback) {
-    var newprice, oldprice = (partialPrice ? 0 : product.get('listPrice'));
-    newprice = OB.DEC.add(oldprice, OB.DEC.mul(amount, OB.DEC.div(percentage, 100)));
+  function calculatePercentageAmount(
+    product,
+    amount,
+    percentage,
+    partialPrice,
+    callback
+  ) {
+    var newprice,
+      oldprice = partialPrice ? 0 : product.get('listPrice');
+    newprice = OB.DEC.add(
+      oldprice,
+      OB.DEC.mul(amount, OB.DEC.div(percentage, 100))
+    );
     callback(newprice);
   }
 
-  function calculateRangePriceAmount(product, range, partialPrice, callback, errorCallback) {
+  function calculateRangePriceAmount(
+    product,
+    range,
+    partialPrice,
+    callback,
+    errorCallback
+  ) {
     var priceCriteria = {};
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
       priceCriteria.remoteFilters = [];
@@ -774,24 +1132,38 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, se
       priceCriteria.product = product.get('id');
       priceCriteria.priceList = range.get('priceList');
     }
-    OB.Dal.find(OB.Model.ServicePriceRuleRangePrices, priceCriteria, function (price) {
-      var oldprice = (partialPrice ? 0 : product.get('listPrice')),
+    OB.Dal.find(
+      OB.Model.ServicePriceRuleRangePrices,
+      priceCriteria,
+      function(price) {
+        var oldprice = partialPrice ? 0 : product.get('listPrice'),
           newprice;
-      if (price && price.length > 0) {
-        newprice = OB.Utilities.Number.roundJSNumber(OB.DEC.add(oldprice, price.at(0).get('listPrice')), 2);
-        callback(newprice);
-      } else {
-        errorCallback('OBPOS_ErrorPriceRuleRangePriceNotFound');
+        if (price && price.length > 0) {
+          newprice = OB.Utilities.Number.roundJSNumber(
+            OB.DEC.add(oldprice, price.at(0).get('listPrice')),
+            2
+          );
+          callback(newprice);
+        } else {
+          errorCallback('OBPOS_ErrorPriceRuleRangePriceNotFound');
+        }
+      },
+      function() {
+        errorCallback('OBPOS_ErrorGettingPriceRuleRangePrice');
       }
-    }, function () {
-      errorCallback('OBPOS_ErrorGettingPriceRuleRangePrice');
-    });
+    );
   }
 
-  if (product.get('productType') === 'S' && product.get('isPriceRuleBased') && (!line || !line.get('originalOrderLineId'))) {
-    relatedLines.forEach(function (rl) {
-      var partialAmtAfterDiscounts, partialAmtBeforeDiscounts, lineMap = {},
-          l = OB.MobileApp.model.receipt.get('lines').get(rl.orderlineId);
+  if (
+    product.get('productType') === 'S' &&
+    product.get('isPriceRuleBased') &&
+    (!line || !line.get('originalOrderLineId'))
+  ) {
+    relatedLines.forEach(function(rl) {
+      var partialAmtAfterDiscounts,
+        partialAmtBeforeDiscounts,
+        lineMap = {},
+        l = OB.MobileApp.model.receipt.get('lines').get(rl.orderlineId);
       if (l) {
         relatedQuantity += l.get('qty');
         lineMap.qty = l.get('qty');
@@ -808,73 +1180,212 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, se
       if (OB.MobileApp.model.receipt.get('priceIncludesTax')) {
         if (l) {
           partialAmtBeforeDiscounts = Math.abs(l.get('gross'));
-          partialAmtAfterDiscounts = Math.abs(OB.DEC.sub(l.get('gross'), _.reduce(l.get('promotions'), function (memo, promo) {
-            return OB.DEC.add(memo, promo.amt);
-          }, 0)));
-          amountBeforeDiscounts = OB.DEC.add(amountBeforeDiscounts, partialAmtBeforeDiscounts);
-          amountAfterDiscounts = OB.DEC.add(amountAfterDiscounts, partialAmtAfterDiscounts);
+          partialAmtAfterDiscounts = Math.abs(
+            OB.DEC.sub(
+              l.get('gross'),
+              _.reduce(
+                l.get('promotions'),
+                function(memo, promo) {
+                  return OB.DEC.add(memo, promo.amt);
+                },
+                0
+              )
+            )
+          );
+          amountBeforeDiscounts = OB.DEC.add(
+            amountBeforeDiscounts,
+            partialAmtBeforeDiscounts
+          );
+          amountAfterDiscounts = OB.DEC.add(
+            amountAfterDiscounts,
+            partialAmtAfterDiscounts
+          );
           lineMap.linePriceBeforeDiscounts = partialAmtBeforeDiscounts;
           lineMap.linePrice = partialAmtAfterDiscounts;
           if (product.get('quantityRule') === 'PP') {
-            partialAmtBeforeDiscounts = Math.abs(OB.DEC.div(l.get('gross'), l.get('qty')));
-            partialAmtAfterDiscounts = Math.abs(OB.DEC.div(OB.DEC.sub(l.get('gross'), _.reduce(l.get('promotions'), function (memo, promo) {
-              return OB.DEC.add(memo, promo.amt);
-            }, 0)), l.get('qty')));
-            rangeAmountBeforeDiscounts = OB.DEC.add(rangeAmountBeforeDiscounts, partialAmtBeforeDiscounts);
-            rangeAmountAfterDiscounts = OB.DEC.add(rangeAmountAfterDiscounts, partialAmtAfterDiscounts);
+            partialAmtBeforeDiscounts = Math.abs(
+              OB.DEC.div(l.get('gross'), l.get('qty'))
+            );
+            partialAmtAfterDiscounts = Math.abs(
+              OB.DEC.div(
+                OB.DEC.sub(
+                  l.get('gross'),
+                  _.reduce(
+                    l.get('promotions'),
+                    function(memo, promo) {
+                      return OB.DEC.add(memo, promo.amt);
+                    },
+                    0
+                  )
+                ),
+                l.get('qty')
+              )
+            );
+            rangeAmountBeforeDiscounts = OB.DEC.add(
+              rangeAmountBeforeDiscounts,
+              partialAmtBeforeDiscounts
+            );
+            rangeAmountAfterDiscounts = OB.DEC.add(
+              rangeAmountAfterDiscounts,
+              partialAmtAfterDiscounts
+            );
           }
         } else {
           partialAmtBeforeDiscounts = Math.abs(rl.gross);
-          partialAmtAfterDiscounts = Math.abs(OB.DEC.sub(rl.gross, _.reduce(rl.promotions, function (memo, promo) {
-            return OB.DEC.add(memo, promo.amt);
-          }, 0)));
-          amountBeforeDiscounts = OB.DEC.add(amountBeforeDiscounts, partialAmtBeforeDiscounts);
-          amountAfterDiscounts = OB.DEC.add(amountAfterDiscounts, partialAmtAfterDiscounts);
+          partialAmtAfterDiscounts = Math.abs(
+            OB.DEC.sub(
+              rl.gross,
+              _.reduce(
+                rl.promotions,
+                function(memo, promo) {
+                  return OB.DEC.add(memo, promo.amt);
+                },
+                0
+              )
+            )
+          );
+          amountBeforeDiscounts = OB.DEC.add(
+            amountBeforeDiscounts,
+            partialAmtBeforeDiscounts
+          );
+          amountAfterDiscounts = OB.DEC.add(
+            amountAfterDiscounts,
+            partialAmtAfterDiscounts
+          );
           lineMap.linePriceBeforeDiscounts = partialAmtBeforeDiscounts;
           lineMap.linePrice = partialAmtAfterDiscounts;
           if (product.get('quantityRule') === 'PP') {
             partialAmtBeforeDiscounts = Math.abs(OB.DEC.div(rl.gross, rl.qty));
-            partialAmtAfterDiscounts = Math.abs(OB.DEC.div(OB.DEC.sub(rl.gross, _.reduce(rl.promotions, function (memo, promo) {
-              return OB.DEC.add(memo, promo.amt);
-            }, 0)), rl.qty));
-            rangeAmountBeforeDiscounts = OB.DEC.add(rangeAmountBeforeDiscounts, partialAmtBeforeDiscounts);
-            rangeAmountAfterDiscounts = OB.DEC.add(rangeAmountAfterDiscounts, partialAmtAfterDiscounts);
+            partialAmtAfterDiscounts = Math.abs(
+              OB.DEC.div(
+                OB.DEC.sub(
+                  rl.gross,
+                  _.reduce(
+                    rl.promotions,
+                    function(memo, promo) {
+                      return OB.DEC.add(memo, promo.amt);
+                    },
+                    0
+                  )
+                ),
+                rl.qty
+              )
+            );
+            rangeAmountBeforeDiscounts = OB.DEC.add(
+              rangeAmountBeforeDiscounts,
+              partialAmtBeforeDiscounts
+            );
+            rangeAmountAfterDiscounts = OB.DEC.add(
+              rangeAmountAfterDiscounts,
+              partialAmtAfterDiscounts
+            );
           }
         }
       } else {
         if (l) {
           partialAmtBeforeDiscounts = Math.abs(l.get('net'));
-          partialAmtAfterDiscounts = Math.abs(OB.DEC.sub(l.get('net'), _.reduce(l.get('promotions'), function (memo, promo) {
-            return memo + promo.amt;
-          }, 0)));
-          amountBeforeDiscounts = OB.DEC.add(amountBeforeDiscounts, partialAmtBeforeDiscounts);
-          amountAfterDiscounts = OB.DEC.add(amountAfterDiscounts, partialAmtAfterDiscounts);
+          partialAmtAfterDiscounts = Math.abs(
+            OB.DEC.sub(
+              l.get('net'),
+              _.reduce(
+                l.get('promotions'),
+                function(memo, promo) {
+                  return memo + promo.amt;
+                },
+                0
+              )
+            )
+          );
+          amountBeforeDiscounts = OB.DEC.add(
+            amountBeforeDiscounts,
+            partialAmtBeforeDiscounts
+          );
+          amountAfterDiscounts = OB.DEC.add(
+            amountAfterDiscounts,
+            partialAmtAfterDiscounts
+          );
           lineMap.linePriceBeforeDiscounts = partialAmtBeforeDiscounts;
           lineMap.linePrice = partialAmtAfterDiscounts;
           if (product.get('quantityRule') === 'PP') {
-            partialAmtBeforeDiscounts = Math.abs(OB.DEC.div(l.get('net'), l.get('qty')));
-            partialAmtAfterDiscounts = Math.abs(OB.DEC.div(OB.DEC.sub(l.get('net'), _.reduce(l.get('promotions'), function (memo, promo) {
-              return OB.DEC.add(memo, promo.amt);
-            }, 0)), l.get('qty')));
-            rangeAmountBeforeDiscounts = OB.DEC.add(rangeAmountBeforeDiscounts, partialAmtBeforeDiscounts);
-            rangeAmountAfterDiscounts = OB.DEC.add(rangeAmountAfterDiscounts, partialAmtAfterDiscounts);
+            partialAmtBeforeDiscounts = Math.abs(
+              OB.DEC.div(l.get('net'), l.get('qty'))
+            );
+            partialAmtAfterDiscounts = Math.abs(
+              OB.DEC.div(
+                OB.DEC.sub(
+                  l.get('net'),
+                  _.reduce(
+                    l.get('promotions'),
+                    function(memo, promo) {
+                      return OB.DEC.add(memo, promo.amt);
+                    },
+                    0
+                  )
+                ),
+                l.get('qty')
+              )
+            );
+            rangeAmountBeforeDiscounts = OB.DEC.add(
+              rangeAmountBeforeDiscounts,
+              partialAmtBeforeDiscounts
+            );
+            rangeAmountAfterDiscounts = OB.DEC.add(
+              rangeAmountAfterDiscounts,
+              partialAmtAfterDiscounts
+            );
           }
         } else {
           partialAmtBeforeDiscounts = Math.abs(rl.net);
-          partialAmtAfterDiscounts = Math.abs(OB.DEC.div(OB.DEC.sub(rl.net, _.reduce(rl.promotions, function (memo, promo) {
-            return OB.DEC.add(memo, promo.amt);
-          }, 0)), rl.qty));
-          amountBeforeDiscounts = OB.DEC.add(amountBeforeDiscounts, partialAmtBeforeDiscounts);
-          amountAfterDiscounts = OB.DEC.add(amountAfterDiscounts, partialAmtAfterDiscounts);
+          partialAmtAfterDiscounts = Math.abs(
+            OB.DEC.div(
+              OB.DEC.sub(
+                rl.net,
+                _.reduce(
+                  rl.promotions,
+                  function(memo, promo) {
+                    return OB.DEC.add(memo, promo.amt);
+                  },
+                  0
+                )
+              ),
+              rl.qty
+            )
+          );
+          amountBeforeDiscounts = OB.DEC.add(
+            amountBeforeDiscounts,
+            partialAmtBeforeDiscounts
+          );
+          amountAfterDiscounts = OB.DEC.add(
+            amountAfterDiscounts,
+            partialAmtAfterDiscounts
+          );
           lineMap.linePriceBeforeDiscounts = partialAmtBeforeDiscounts;
           lineMap.linePrice = partialAmtAfterDiscounts;
           if (product.get('quantityRule') === 'PP') {
             partialAmtBeforeDiscounts = Math.abs(OB.DEC.div(rl.net, rl.qty));
-            partialAmtAfterDiscounts = Math.abs(OB.DEC.div(OB.DEC.sub(rl.net, _.reduce(rl.promotions, function (memo, promo) {
-              return OB.DEC.add(memo, promo.amt);
-            }, 0)), rl.qty));
-            rangeAmountBeforeDiscounts = OB.DEC.add(rangeAmountBeforeDiscounts, partialAmtBeforeDiscounts);
-            rangeAmountAfterDiscounts = OB.DEC.add(rangeAmountAfterDiscounts, partialAmtAfterDiscounts);
+            partialAmtAfterDiscounts = Math.abs(
+              OB.DEC.div(
+                OB.DEC.sub(
+                  rl.net,
+                  _.reduce(
+                    rl.promotions,
+                    function(memo, promo) {
+                      return OB.DEC.add(memo, promo.amt);
+                    },
+                    0
+                  )
+                ),
+                rl.qty
+              )
+            );
+            rangeAmountBeforeDiscounts = OB.DEC.add(
+              rangeAmountBeforeDiscounts,
+              partialAmtBeforeDiscounts
+            );
+            rangeAmountAfterDiscounts = OB.DEC.add(
+              rangeAmountAfterDiscounts,
+              partialAmtAfterDiscounts
+            );
           }
         }
       }
@@ -887,83 +1398,166 @@ OB.UTIL.getCalculatedPriceForService = function (line, product, relatedLines, se
       rangeAmountAfterDiscounts = amountAfterDiscounts;
     }
     var aggregatedNewPrice = 0,
-        finalCallback = _.after(relatedLines.length, function () {
+      finalCallback = _.after(relatedLines.length, function() {
         if (product.get('quantityRule') === 'PP') {
-          callback(line, OB.Utilities.Number.roundJSNumber(OB.DEC.add(OB.DEC.div(aggregatedNewPrice, relatedQuantity), product.get('listPrice')), 2));
+          callback(
+            line,
+            OB.Utilities.Number.roundJSNumber(
+              OB.DEC.add(
+                OB.DEC.div(aggregatedNewPrice, relatedQuantity),
+                product.get('listPrice')
+              ),
+              2
+            )
+          );
         } else {
-          callback(line, OB.Utilities.Number.roundJSNumber(OB.DEC.add(aggregatedNewPrice, product.get('listPrice')), 2));
+          callback(
+            line,
+            OB.Utilities.Number.roundJSNumber(
+              OB.DEC.add(aggregatedNewPrice, product.get('listPrice')),
+              2
+            )
+          );
         }
         finishExecution();
       });
     execution = OB.UTIL.ProcessController.start('servicePriceCalculation');
-    relatedLines.forEach(function (rl) {
+    relatedLines.forEach(function(rl) {
       var amountToCheck;
-      getPriceRuleVersion(product, rl, amountAfterDiscounts, function (servicePriceRuleVersion) {
-        if (line) {
-          line.set('serviceTrancheMaximum', servicePriceRuleVersion.get('maximum'));
-          line.set('serviceTrancheMinimum', servicePriceRuleVersion.get('minimum'));
-        }
-        getPriceRule(servicePriceRuleVersion, function (spr) {
-          if (spr.get('ruletype') === 'P') {
-            if (spr.get('afterdiscounts')) {
-              amountToCheck = relatedLinesMap[rl.orderlineId].linePrice;
-            } else {
-              amountToCheck = relatedLinesMap[rl.orderlineId].linePriceBeforeDiscounts;
-            }
-            calculatePercentageAmount(product, amountToCheck, spr.get('percentage'), true, function (newprice) {
-              aggregatedNewPrice = OB.DEC.add(aggregatedNewPrice, newprice);
-              finalCallback();
-            });
-          } else { //ruletype = 'R'
-            getPriceRuleRange(spr, rangeAmountBeforeDiscounts, rangeAmountAfterDiscounts, function (range) {
-              if (range.get('ruleType') === 'P') {
+      getPriceRuleVersion(
+        product,
+        rl,
+        amountAfterDiscounts,
+        function(servicePriceRuleVersion) {
+          if (line) {
+            line.set(
+              'serviceTrancheMaximum',
+              servicePriceRuleVersion.get('maximum')
+            );
+            line.set(
+              'serviceTrancheMinimum',
+              servicePriceRuleVersion.get('minimum')
+            );
+          }
+          getPriceRule(
+            servicePriceRuleVersion,
+            function(spr) {
+              if (spr.get('ruletype') === 'P') {
                 if (spr.get('afterdiscounts')) {
                   amountToCheck = relatedLinesMap[rl.orderlineId].linePrice;
                 } else {
-                  amountToCheck = relatedLinesMap[rl.orderlineId].linePriceBeforeDiscounts;
+                  amountToCheck =
+                    relatedLinesMap[rl.orderlineId].linePriceBeforeDiscounts;
                 }
-                calculatePercentageAmount(product, amountToCheck, range.get('percentage'), true, function (newprice) {
-                  aggregatedNewPrice = OB.DEC.add(aggregatedNewPrice, newprice);
-                  finalCallback();
-                });
+                calculatePercentageAmount(
+                  product,
+                  amountToCheck,
+                  spr.get('percentage'),
+                  true,
+                  function(newprice) {
+                    aggregatedNewPrice = OB.DEC.add(
+                      aggregatedNewPrice,
+                      newprice
+                    );
+                    finalCallback();
+                  }
+                );
               } else {
-                calculateRangePriceAmount(product, range, true, function (newprice) {
-                  aggregatedNewPrice = OB.DEC.add(aggregatedNewPrice, OB.DEC.mul(newprice, relatedLinesMap[rl.orderlineId].qty));
-                  finalCallback();
-                }, genericError);
+                //ruletype = 'R'
+                getPriceRuleRange(
+                  spr,
+                  rangeAmountBeforeDiscounts,
+                  rangeAmountAfterDiscounts,
+                  function(range) {
+                    if (range.get('ruleType') === 'P') {
+                      if (spr.get('afterdiscounts')) {
+                        amountToCheck =
+                          relatedLinesMap[rl.orderlineId].linePrice;
+                      } else {
+                        amountToCheck =
+                          relatedLinesMap[rl.orderlineId]
+                            .linePriceBeforeDiscounts;
+                      }
+                      calculatePercentageAmount(
+                        product,
+                        amountToCheck,
+                        range.get('percentage'),
+                        true,
+                        function(newprice) {
+                          aggregatedNewPrice = OB.DEC.add(
+                            aggregatedNewPrice,
+                            newprice
+                          );
+                          finalCallback();
+                        }
+                      );
+                    } else {
+                      calculateRangePriceAmount(
+                        product,
+                        range,
+                        true,
+                        function(newprice) {
+                          aggregatedNewPrice = OB.DEC.add(
+                            aggregatedNewPrice,
+                            OB.DEC.mul(
+                              newprice,
+                              relatedLinesMap[rl.orderlineId].qty
+                            )
+                          );
+                          finalCallback();
+                        },
+                        genericError
+                      );
+                    }
+                  },
+                  genericError
+                );
               }
-            }, genericError);
-          }
-        }, genericError);
-      }, genericError);
+            },
+            genericError
+          );
+        },
+        genericError
+      );
     });
   }
 };
 
-OB.UTIL.hideStoreFilter = function (filterOptions) {
-  _.each(filterOptions, function (prop) {
-    if (prop.name === 'store') {
-      prop.filter = OB.UTIL.isCrossStoreEnabled();
-    }
-  }, this);
+OB.UTIL.hideStoreFilter = function(filterOptions) {
+  _.each(
+    filterOptions,
+    function(prop) {
+      if (prop.name === 'store') {
+        prop.filter = OB.UTIL.isCrossStoreEnabled();
+      }
+    },
+    this
+  );
 };
 
-OB.UTIL.isCrossStoreEnabled = function () {
+OB.UTIL.isCrossStoreEnabled = function() {
   return OB.MobileApp.model.attributes.store.length !== 0;
 };
 
-OB.UTIL.isCrossStoreReceipt = function (receipt) {
-  return OB.MobileApp.model.get('terminal').organization !== (receipt.organization ? receipt.organization : receipt.get('organization'));
+OB.UTIL.isCrossStoreReceipt = function(receipt) {
+  return (
+    OB.MobileApp.model.get('terminal').organization !==
+    (receipt.organization ? receipt.organization : receipt.get('organization'))
+  );
 };
 
-OB.UTIL.isCrossStoreProduct = function (product) {
+OB.UTIL.isCrossStoreProduct = function(product) {
   return product.get('crossStore');
 };
 
-OB.UTIL.isCrossStoreLine = function (line) {
-  return line instanceof OB.Model.OrderLine && line.has('organization') && OB.UTIL.isCrossStoreOrganization(line.get('organization'));
+OB.UTIL.isCrossStoreLine = function(line) {
+  return (
+    line instanceof OB.Model.OrderLine &&
+    line.has('organization') &&
+    OB.UTIL.isCrossStoreOrganization(line.get('organization'))
+  );
 };
 
-OB.UTIL.isCrossStoreOrganization = function (organization) {
+OB.UTIL.isCrossStoreOrganization = function(organization) {
   return organization.id !== OB.MobileApp.model.get('terminal').organization;
 };

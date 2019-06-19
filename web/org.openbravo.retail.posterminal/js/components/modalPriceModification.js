@@ -14,7 +14,7 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Modals.btnModalPriceModificationCancel',
   classes: 'obObposPointOfSaleUiModalsBtnModalPriceModificationCancel',
   i18nContent: 'OBMOBC_LblCancel',
-  tap: function () {
+  tap: function() {
     this.doHideThisPopup();
   }
 });
@@ -27,7 +27,7 @@ enyo.kind({
   events: {
     onPriceModificationDone: ''
   },
-  tap: function () {
+  tap: function() {
     this.doPriceModificationDone();
     this.doHideThisPopup();
   }
@@ -40,14 +40,14 @@ enyo.kind({
   renderLine: enyo.kind({
     kind: 'enyo.Option',
     classes: 'obUiModalPriceModificationReason-renderLine-enyoOption',
-    initComponents: function () {
+    initComponents: function() {
       this.inherited(arguments);
       this.setValue(this.model.get('id'));
       this.setContent(this.model.get('_identifier'));
     }
   }),
   renderEmpty: 'enyo.Control',
-  initComponents: function () {
+  initComponents: function() {
     this.setCollection(new Backbone.Collection());
   }
 });
@@ -61,25 +61,34 @@ enyo.kind({
   closeOnEscKey: false,
   bodyContent: {
     classes: 'obUiModalPriceModification-bodyContent',
-    components: [{
-      name: 'labelPriceModification',
-      classes: 'obUiModalPriceModification-bodyContent-labelPriceModification'
-    }, {
-      kind: 'OB.UI.ModalPriceModificationReason',
-      name: 'priceModificationReason',
-      classes: 'obUiModalPriceModification-bodyContent-priceModificationReason'
-    }]
+    components: [
+      {
+        name: 'labelPriceModification',
+        classes: 'obUiModalPriceModification-bodyContent-labelPriceModification'
+      },
+      {
+        kind: 'OB.UI.ModalPriceModificationReason',
+        name: 'priceModificationReason',
+        classes:
+          'obUiModalPriceModification-bodyContent-priceModificationReason'
+      }
+    ]
   },
   i18nHeader: 'OBPOS_PriceModification',
   bodyButtons: {
     classes: 'obUiModalPriceModification-bodyButtons',
-    components: [{
-      kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalPriceModificationAccept',
-      classes: 'obUiModalPriceModification-bodyButtons-obObposPointOfSaleUiModalsBtnModalPriceModificationAccept'
-    }, {
-      kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalPriceModificationCancel',
-      classes: 'obUiModalPriceModification-bodyButtons-obObposPointOfSaleUiModalsBtnModalPriceModificationCancel'
-    }]
+    components: [
+      {
+        kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalPriceModificationAccept',
+        classes:
+          'obUiModalPriceModification-bodyButtons-obObposPointOfSaleUiModalsBtnModalPriceModificationAccept'
+      },
+      {
+        kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalPriceModificationCancel',
+        classes:
+          'obUiModalPriceModification-bodyButtons-obObposPointOfSaleUiModalsBtnModalPriceModificationCancel'
+      }
+    ]
   },
   events: {
     onPriceModification: ''
@@ -87,40 +96,64 @@ enyo.kind({
   handlers: {
     onPriceModificationDone: 'doPriceModificationDone'
   },
-  doPriceModificationDone: function () {
+  doPriceModificationDone: function() {
     var me = this,
-        i;
+      i;
     if (this.args.selectedModels.length > 1) {
       for (i = 0; i < this.args.selectedModels.length; i++) {
-        this.args.selectedModels[i].set('oBPOSPriceModificationReason', me.$.bodyContent.$.priceModificationReason.getValue());
+        this.args.selectedModels[i].set(
+          'oBPOSPriceModificationReason',
+          me.$.bodyContent.$.priceModificationReason.getValue()
+        );
       }
     } else {
-      this.args.line.set('oBPOSPriceModificationReason', me.$.bodyContent.$.priceModificationReason.getValue());
+      this.args.line.set(
+        'oBPOSPriceModificationReason',
+        me.$.bodyContent.$.priceModificationReason.getValue()
+      );
     }
     this.args.callback();
   },
-  executeOnShow: function () {
+  executeOnShow: function() {
     var i;
-    if (this.args.selectedModels.length <= 1 && this.args.line.get('oBPOSPriceModificationReason')) {
-      for (i = 0; i < OB.MobileApp.model.get('priceModificationReasons').length; i++) {
-        if (OB.MobileApp.model.get('priceModificationReasons')[i].id === this.args.line.get('oBPOSPriceModificationReason')) {
+    if (
+      this.args.selectedModels.length <= 1 &&
+      this.args.line.get('oBPOSPriceModificationReason')
+    ) {
+      for (
+        i = 0;
+        i < OB.MobileApp.model.get('priceModificationReasons').length;
+        i++
+      ) {
+        if (
+          OB.MobileApp.model.get('priceModificationReasons')[i].id ===
+          this.args.line.get('oBPOSPriceModificationReason')
+        ) {
           this.$.bodyContent.$.priceModificationReason.setSelected(i);
           break;
         }
       }
     }
   },
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
-    this.$.bodyContent.$.labelPriceModification.setContent(OB.I18N.getLabel('OBPOS_lblPriceModification'));
+    this.$.bodyContent.$.labelPriceModification.setContent(
+      OB.I18N.getLabel('OBPOS_lblPriceModification')
+    );
     var priceModificationReasonCollection = [];
-    _.each(OB.MobileApp.model.get('priceModificationReasons'), function (reason) {
-      priceModificationReasonCollection.push(new Backbone.Model({
-        id: reason.id,
-        _identifier: reason[OB.Constants.IDENTIFIER]
-      }));
+    _.each(OB.MobileApp.model.get('priceModificationReasons'), function(
+      reason
+    ) {
+      priceModificationReasonCollection.push(
+        new Backbone.Model({
+          id: reason.id,
+          _identifier: reason[OB.Constants.IDENTIFIER]
+        })
+      );
     });
-    this.$.bodyContent.$.priceModificationReason.getCollection().reset(priceModificationReasonCollection);
+    this.$.bodyContent.$.priceModificationReason
+      .getCollection()
+      .reset(priceModificationReasonCollection);
     this.$.headerCloseButton.hide();
   }
 });

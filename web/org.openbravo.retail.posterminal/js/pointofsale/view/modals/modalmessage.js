@@ -9,8 +9,7 @@
 
 /*global OB, enyo */
 
-(function () {
-
+(function() {
   enyo.kind({
     kind: 'OB.UI.ModalAction',
     name: 'OB.UI.MessageDialog',
@@ -23,12 +22,14 @@
     },
     bodyButtons: {
       classes: 'obUiMessageDialogGeneric-bodyButtons',
-      components: [{
-        kind: 'OB.UI.MessageDialogOK',
-        classes: 'obUiMessageDialogGeneric-bodyButtons-obUiMessageDialogOK'
-      }]
+      components: [
+        {
+          kind: 'OB.UI.MessageDialogOK',
+          classes: 'obUiMessageDialogGeneric-bodyButtons-obUiMessageDialogOK'
+        }
+      ]
     },
-    executeOnShow: function () {
+    executeOnShow: function() {
       this.$.header.setContent(this.args.header);
       this.$.bodyContent.$.bodymessage.setContent(this.args.message);
     }
@@ -40,11 +41,10 @@
     classes: 'obUiMessageDialogOK',
     i18nContent: 'OBMOBC_LblOk',
     isDefaultAction: true,
-    tap: function () {
+    tap: function() {
       this.doHideThisPopup();
     }
   });
-
 
   OB.UI.WindowView.registerPopup('OB.OBPOSPointOfSale.UI.PointOfSale', {
     kind: 'OB.UI.MessageDialog',
@@ -58,5 +58,5 @@
   //      header: header,
   //      message: message
   //    }
-  //  });  
-}());
+  //  });
+})();

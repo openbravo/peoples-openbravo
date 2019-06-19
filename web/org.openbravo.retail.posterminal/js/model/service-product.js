@@ -7,8 +7,7 @@
  ************************************************************************************
  */
 
-(function () {
-
+(function() {
   var ServiceProduct = OB.Data.ExtensibleModel.extend({
     modelName: 'ServiceProduct',
     tableName: 'm_product_service',
@@ -19,34 +18,45 @@
     remote: 'OBPOS_remote.product'
   });
 
-  ServiceProduct.addProperties([{
-    name: 'id',
-    column: 'm_product_service_id',
-    primaryKey: true,
-    type: 'TEXT'
-  }, {
-    name: 'service',
-    column: 'm_product_id',
-    type: 'TEXT'
-  }, {
-    name: 'relatedProduct',
-    column: 'm_related_product_id',
-    type: 'TEXT'
-  }]);
+  ServiceProduct.addProperties([
+    {
+      name: 'id',
+      column: 'm_product_service_id',
+      primaryKey: true,
+      type: 'TEXT'
+    },
+    {
+      name: 'service',
+      column: 'm_product_id',
+      type: 'TEXT'
+    },
+    {
+      name: 'relatedProduct',
+      column: 'm_related_product_id',
+      type: 'TEXT'
+    }
+  ]);
 
-  ServiceProduct.addIndex([{
-    name: 'obpos_serviceprod_service',
-    columns: [{
-      name: 'm_product_id',
-      sort: 'asc'
-    }]
-  }, {
-    name: 'obpos_serviceprod_product',
-    columns: [{
-      name: 'm_related_product_id',
-      sort: 'asc'
-    }]
-  }]);
+  ServiceProduct.addIndex([
+    {
+      name: 'obpos_serviceprod_service',
+      columns: [
+        {
+          name: 'm_product_id',
+          sort: 'asc'
+        }
+      ]
+    },
+    {
+      name: 'obpos_serviceprod_product',
+      columns: [
+        {
+          name: 'm_related_product_id',
+          sort: 'asc'
+        }
+      ]
+    }
+  ]);
 
   OB.Data.Registry.registerModel(ServiceProduct);
-}());
+})();

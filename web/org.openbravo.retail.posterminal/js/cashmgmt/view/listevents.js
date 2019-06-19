@@ -13,7 +13,8 @@
 enyo.kind({
   name: 'OB.OBPOSCashMgmt.UI.ModalDepositEvents',
   kind: 'OB.UI.Modal',
-  classes: 'u-popup-top-separation-large obposObposcashmgmtUiModalDepositEvents',
+  classes:
+    'u-popup-top-separation-large obposObposcashmgmtUiModalDepositEvents',
   body: {
     kind: 'OB.OBPOSCashMgmt.UI.ListEvents',
     classes: 'obposObposcashmgmtUiModalDepositEvents-obObposcashmgmtUiListEvent'
@@ -24,14 +25,18 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSCashMgmt.UI.ListEvents',
   classes: 'obObposcashmgmtUiListEvent row-fluid',
-  components: [{
-    classes: 'obObposcashmgmtUiListEvent-container1 span12',
-    components: [{
-      classes: 'obObposcashmgmtUiListEvent-container1-element1'
-    }]
-  }],
+  components: [
+    {
+      classes: 'obObposcashmgmtUiListEvent-container1 span12',
+      components: [
+        {
+          classes: 'obObposcashmgmtUiListEvent-container1-element1'
+        }
+      ]
+    }
+  ],
 
-  init: function (model) {
+  init: function(model) {
     this.createComponent({
       name: this.owner.owner.type,
       kind: 'OB.UI.Table',
@@ -40,7 +45,9 @@ enyo.kind({
       renderEmpty: 'OB.UI.RenderEmpty'
     });
     this.model = model;
-    this.$[this.owner.owner.type].setCollection(this.model.get(this.owner.owner.type));
+    this.$[this.owner.owner.type].setCollection(
+      this.model.get(this.owner.owner.type)
+    );
   }
 });
 
@@ -52,17 +59,18 @@ enyo.kind({
   events: {
     onHideThisPopup: ''
   },
-  components: [{
-    name: 'line',
-    classes: 'obObposcashmgmtUiListEvent-line'
-
-  }],
-  tap: function () {
+  components: [
+    {
+      name: 'line',
+      classes: 'obObposcashmgmtUiListEvent-line'
+    }
+  ],
+  tap: function() {
     this.inherited(arguments);
     this.doHideThisPopup();
   },
 
-  create: function () {
+  create: function() {
     this.inherited(arguments);
     this.$.line.setContent(this.model.get('name'));
   }

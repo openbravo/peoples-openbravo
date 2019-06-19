@@ -17,40 +17,45 @@ enyo.kind({
     onShowLeftSubWindow: '',
     onCloseLeftSubWindow: ''
   },
-  components: [{
-    classes: 'obUiLeftSubWindow-container1',
-    components: [{
-      name: 'leftSubWindowHeader',
-      classes: 'obUiLeftSubWindow-container1-leftSubWindowHeader'
-    }, {
-      name: 'leftSubWindowBody',
-      classes: 'obUiLeftSubWindow-container1-leftSubWindowBody'
-    }]
-  }],
-  mainBeforeSetShowing: function (params) {
+  components: [
+    {
+      classes: 'obUiLeftSubWindow-container1',
+      components: [
+        {
+          name: 'leftSubWindowHeader',
+          classes: 'obUiLeftSubWindow-container1-leftSubWindowHeader'
+        },
+        {
+          name: 'leftSubWindowBody',
+          classes: 'obUiLeftSubWindow-container1-leftSubWindowBody'
+        }
+      ]
+    }
+  ],
+  mainBeforeSetShowing: function(params) {
     //TODO
     if (this.beforeSetShowing) {
       return this.beforeSetShowing(params);
     }
     return true;
   },
-  mainBeforeSetHidden: function (params) {
+  mainBeforeSetHidden: function(params) {
     //TODO
     if (this.beforeSetHidden) {
       return this.beforeSetHidden(params);
     }
     return true;
   },
-  relComponentsWithLeftSubWindow: function (comp, leftSubWin) {
+  relComponentsWithLeftSubWindow: function(comp, leftSubWin) {
     if (!comp || !comp.getComponents) {
       return;
     }
-    enyo.forEach(comp.getComponents(), function (child) {
+    enyo.forEach(comp.getComponents(), function(child) {
       leftSubWin.relComponentsWithLeftSubWindow(child, leftSubWin);
       child.leftSubWindow = leftSubWin;
     });
   },
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
     if (this.header) {
       this.$.leftSubWindowHeader.createComponent(this.header);

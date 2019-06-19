@@ -17,7 +17,7 @@ enyo.kind({
   events: {
     onShowPopup: ''
   },
-  tap: function () {
+  tap: function() {
     if (!this.disabled) {
       this.doShowPopup({
         popup: 'modalproductcharacteristic',
@@ -27,7 +27,7 @@ enyo.kind({
       });
     }
   },
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
     if (this.model.get('_identifier').length < 13) {
       this.setContent(this.model.get('_identifier'));

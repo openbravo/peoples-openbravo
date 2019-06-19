@@ -36,32 +36,41 @@ enyo.kind({
     onChangeFilterSelector: '',
     onChangeBusinessPartner: ''
   },
-  components: [{
-    classes: 'obUiListBpsShipLoc-container1',
-    components: [{
-      classes: 'obUiListBpsShipLoc-container1-container1',
-      components: [{
-        classes: 'obUiListBpsShipLoc-container1-container1-container1',
-        components: [{
-          name: 'bpsloclistitemprinter',
-          kind: 'OB.UI.ScrollableTable',
-          calsses: 'obUiListBpsShipLoc-container1-container1-container1-bpsloclistitemprinter',
-          renderHeader: 'OB.UI.ModalBpLocScrollableHeader',
-          renderLine: 'OB.UI.ListBpsShipLocLine',
-          renderEmpty: 'OB.UI.RenderEmpty'
-        }]
-      }]
-    }]
-  }],
-  clearAction: function (inSender, inEvent) {
+  components: [
+    {
+      classes: 'obUiListBpsShipLoc-container1',
+      components: [
+        {
+          classes: 'obUiListBpsShipLoc-container1-container1',
+          components: [
+            {
+              classes: 'obUiListBpsShipLoc-container1-container1-container1',
+              components: [
+                {
+                  name: 'bpsloclistitemprinter',
+                  kind: 'OB.UI.ScrollableTable',
+                  calsses:
+                    'obUiListBpsShipLoc-container1-container1-container1-bpsloclistitemprinter',
+                  renderHeader: 'OB.UI.ModalBpLocScrollableHeader',
+                  renderLine: 'OB.UI.ListBpsShipLocLine',
+                  renderEmpty: 'OB.UI.RenderEmpty'
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  clearAction: function(inSender, inEvent) {
     this.bpsList.reset();
     return true;
   },
-  searchAction: function (inSender, inEvent) {
+  searchAction: function(inSender, inEvent) {
     var execution = OB.UTIL.ProcessController.start('searchCustomerAddress');
     var me = this,
-        criteria = {},
-        filter = inEvent.locName;
+      criteria = {},
+      filter = inEvent.locName;
 
     function errorCallback(tx, error) {
       OB.UTIL.showError(error);
@@ -77,7 +86,12 @@ enyo.kind({
 
     var operator = OB.Dal.CONTAINS;
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-      operator = OB.MobileApp.model.hasPermission('OBPOS_remote.customer_usesContains', true) ? OB.Dal.CONTAINS : OB.Dal.STARTSWITH;
+      operator = OB.MobileApp.model.hasPermission(
+        'OBPOS_remote.customer_usesContains',
+        true
+      )
+        ? OB.Dal.CONTAINS
+        : OB.Dal.STARTSWITH;
     }
     criteria.name = {
       operator: operator,
@@ -88,78 +102,92 @@ enyo.kind({
 
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
       var filterIdentifier = {
-        columns: ['_filter'],
-        operator: 'startsWith',
-        value: filter
-      },
-          bPartnerId = {
+          columns: ['_filter'],
+          operator: 'startsWith',
+          value: filter
+        },
+        bPartnerId = {
           columns: ['bpartner'],
           operator: 'equals',
           value: this.bPartner.get('id'),
           isId: true
-          },
-          isShipTo = {
+        },
+        isShipTo = {
           columns: ['isShipTo'],
           operator: 'equals',
           value: true,
           boolean: true
-          };
+        };
       var remoteCriteria = [filterIdentifier, bPartnerId, isShipTo];
       criteria.remoteFilters = remoteCriteria;
     }
-    OB.Dal.find(OB.Model.BPLocation, criteria, successCallbackBPsLoc, errorCallback);
+    OB.Dal.find(
+      OB.Model.BPLocation,
+      criteria,
+      successCallbackBPsLoc,
+      errorCallback
+    );
     OB.UTIL.ProcessController.finish('searchCustomerAddress', execution);
     return true;
   },
   bpsList: null,
-  init: function (model) {
+  init: function(model) {
     this.bpsList = new Backbone.Collection();
     this.$.bpsloclistitemprinter.setCollection(this.bpsList);
-    this.bpsList.on('click', function (model) {
-      var me = this;
+    this.bpsList.on(
+      'click',
+      function(model) {
+        var me = this;
 
-      function errorCallback(tx, error) {
-        OB.error(tx);
-        OB.error(error);
-      }
-
-      function successCallbackBPs(dataBps) {
-        dataBps.set('locationModel', model);
-        dataBps.set('shipLocId', model.get('id'));
-        dataBps.set('shipLocName', model.get('name'));
-        dataBps.set('shipPostalCode', model.get('postalCode'));
-        dataBps.set('shipCityName', model.get('cityName'));
-        dataBps.set('shipCountryName', model.get('countryName'));
-        dataBps.set('shipRegionId', model.get('regionId'));
-        dataBps.set('shipCountryId', model.get('countryId'));
-
-        //Keep the other address:
-        dataBps.set('locId', me.bPartner.get('locId'));
-        dataBps.set('locName', me.bPartner.get('locName'));
-        dataBps.set('postalCode', me.bPartner.get('postalCode'));
-        dataBps.set('cityName', me.bPartner.get('cityName'));
-        dataBps.set('countryName', me.bPartner.get('countryName'));
-
-        if (me.target.startsWith('filterSelectorButton_')) {
-          me.doChangeFilterSelector({
-            selector: {
-              name: me.target.substring('filterSelectorButton_'.length),
-              value: dataBps.get('id'),
-              text: dataBps.get('_identifier'),
-              businessPartner: dataBps
-            }
-          });
-        } else {
-          me.doChangeBusinessPartner({
-            businessPartner: dataBps,
-            target: me.owner.owner.args.target
-          });
+        function errorCallback(tx, error) {
+          OB.error(tx);
+          OB.error(error);
         }
-      }
-      if (!model.get('ignoreSetBPLoc')) {
-        OB.Dal.get(OB.Model.BusinessPartner, this.bPartner.get('id'), successCallbackBPs, errorCallback);
-      }
-    }, this);
+
+        function successCallbackBPs(dataBps) {
+          dataBps.set('locationModel', model);
+          dataBps.set('shipLocId', model.get('id'));
+          dataBps.set('shipLocName', model.get('name'));
+          dataBps.set('shipPostalCode', model.get('postalCode'));
+          dataBps.set('shipCityName', model.get('cityName'));
+          dataBps.set('shipCountryName', model.get('countryName'));
+          dataBps.set('shipRegionId', model.get('regionId'));
+          dataBps.set('shipCountryId', model.get('countryId'));
+
+          //Keep the other address:
+          dataBps.set('locId', me.bPartner.get('locId'));
+          dataBps.set('locName', me.bPartner.get('locName'));
+          dataBps.set('postalCode', me.bPartner.get('postalCode'));
+          dataBps.set('cityName', me.bPartner.get('cityName'));
+          dataBps.set('countryName', me.bPartner.get('countryName'));
+
+          if (me.target.startsWith('filterSelectorButton_')) {
+            me.doChangeFilterSelector({
+              selector: {
+                name: me.target.substring('filterSelectorButton_'.length),
+                value: dataBps.get('id'),
+                text: dataBps.get('_identifier'),
+                businessPartner: dataBps
+              }
+            });
+          } else {
+            me.doChangeBusinessPartner({
+              businessPartner: dataBps,
+              target: me.owner.owner.args.target
+            });
+          }
+        }
+        if (!model.get('ignoreSetBPLoc')) {
+          OB.Dal.get(
+            OB.Model.BusinessPartner,
+            this.bPartner.get('id'),
+            successCallbackBPs,
+            errorCallback
+          );
+        }
+      },
+      this
+    );
   }
 });
 
@@ -169,7 +197,7 @@ enyo.kind({
   name: 'OB.UI.ModalBPLocationShip',
   classes: 'obUiModalSelector',
   topPosition: '125px',
-  executeOnShow: function () {
+  executeOnShow: function() {
     if (!this.isInitialized()) {
       this.inherited(arguments);
       if (_.isUndefined(this.args.visibilityButtons)) {
@@ -181,16 +209,23 @@ enyo.kind({
       this.bubble('onSetBusinessPartnerTarget', {
         target: this.args.target
       });
-      this.$.body.$.listBpsShipLoc.setBPartner(this.model.get('order').get('bp'));
+      this.$.body.$.listBpsShipLoc.setBPartner(
+        this.model.get('order').get('bp')
+      );
       this.$.body.$.listBpsShipLoc.setTarget(this.args.target);
       this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.searchAction();
-      this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.createCustomerLocationButton', true));
+      this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.newAction.putDisabled(
+        !OB.MobileApp.model.hasPermission(
+          'OBPOS_retail.createCustomerLocationButton',
+          true
+        )
+      );
     } else if (this.args.makeSearch) {
       this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.searchAction();
     }
     return true;
   },
-  executeOnHide: function () {
+  executeOnHide: function() {
     this.inherited(arguments);
     this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.clearAction();
   },
@@ -199,15 +234,14 @@ enyo.kind({
     kind: 'OB.UI.ListBpsShipLoc',
     classes: 'obUiModalSelector-body-obUiListBpsShipLoc'
   },
-  getScrollableTable: function () {
+  getScrollableTable: function() {
     return this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter;
   },
-  init: function (model) {
+  init: function(model) {
     this.inherited(arguments);
     this.model = model;
     this.waterfall('onSetModel', {
       model: this.model
     });
-
   }
 });
