@@ -360,7 +360,8 @@ public class OrderLoader extends POSDataSynchronizationProcess
                   .setObposCanbedelivered(jsonOrderLine.optBoolean("obposCanbedelivered", false));
               orderLine.setObposIspaid(jsonOrderLine.optBoolean("obposIspaid", false));
               BigDecimal qtyToDeliver = jsonOrderLine.has("obposQtytodeliver")
-                  ? BigDecimal.valueOf(jsonOrderLine.getDouble("obposQtytodeliver"))
+                  ? (BigDecimal.valueOf(jsonOrderLine.getDouble("obposQtytodeliver"))
+                      .stripTrailingZeros())
                   : orderLine.getOrderedQuantity();
               orderLine.setDeliveredQuantity(qtyToDeliver);
               lineReferences.add(orderLine);
@@ -792,7 +793,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
       }
 
       orderline.setDeliveredQuantity(jsonOrderLine.has("obposQtytodeliver")
-          ? BigDecimal.valueOf(jsonOrderLine.getDouble("obposQtytodeliver"))
+          ? (BigDecimal.valueOf(jsonOrderLine.getDouble("obposQtytodeliver")).stripTrailingZeros())
           : orderline.getOrderedQuantity());
 
       lineReferences.add(orderline);
