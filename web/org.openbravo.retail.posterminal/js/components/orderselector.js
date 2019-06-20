@@ -433,6 +433,12 @@ enyo.kind({
           return deliveryMode === dm.id;
         });
       this.$.orderlineProduct.setContent(this.model.get('productName'));
+      if (this.model.get('characteristicDescription')) {
+        this.$.orderlineProduct.setContent(this.$.orderlineProduct.getContent() + ' - ' + this.model.get('characteristicDescription'));
+      }
+      if (this.model.get('attributeDescription') && OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true)) {
+        this.$.orderlineProduct.setContent(this.$.orderlineProduct.getContent() + OB.I18N.getLabel('OBRDM_LblAttribute') + this.model.get('attributeDescription'));
+      }
       this.$.orderlineDeliveryMode.setContent(
         delivery ? delivery.name : deliveryMode
       );

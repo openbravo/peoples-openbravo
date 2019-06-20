@@ -1169,7 +1169,6 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
   display: inline-block;
   width: inherit;
   text-overflow: ellipsis;
-  white-space: nowrap;
   overflow: hidden;
 }
 
@@ -1688,7 +1687,6 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
   border-top: 1px solid #ccc;
   border-right: 1px solid #ccc;
   padding: 5px 0px 0px 5px;
-  height: 62px;
 }
 
 .obrdm-cell-orderline-left-info {

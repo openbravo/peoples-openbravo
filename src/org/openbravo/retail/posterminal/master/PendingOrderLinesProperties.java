@@ -50,6 +50,8 @@ public class PendingOrderLinesProperties extends ModelExtension {
         new HQLProperty("p.searchKey", "productSearchKey"), //
         new HQLProperty("p.name", "productName"), //
         new HQLProperty("p.uPCEAN", "uPCEAN"), //
+        new HQLProperty("coalesce(p.characteristicDescription, '')", "characteristicDescription"), //
+        new HQLProperty("coalesce(attr.description, '')", "attributeDescription"), //
         new HQLProperty("brand.name", "brand"), //
         new HQLProperty("ol.createdBy.name", "createdBy"), //
         new HQLProperty("ol.updatedBy.name", "updatedBy"), //
