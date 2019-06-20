@@ -1665,26 +1665,23 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
 .obrdm-row-order {
   height: 36px;
   width: 100%;
-  border-top: 1px solid #ccc;
-  border-bottom: 1px solid #ccc;
-  padding: 8px 0px 0px 10px;
+  padding: 8px 0px 8px 10px;
 }
 
 .obrdm-row-order-text {
   float: left;
   display: inline-block;
-  padding-top: 5px;
+  padding-top: 10px;
   padding-left: 5px;
 }
 
-.obrdm-row-orderline {
-  padding-left: 20px;
+.obrdm-orderline {
+  margin-left: 20px;
 }
 
 .obrdm-cell-orderline-left {
   float: left;
   display: inline-block;
-  border-top: 1px solid #ccc;
   border-right: 1px solid #ccc;
   padding: 5px 0px 0px 5px;
 }
@@ -1696,15 +1693,14 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
   padding-left: 5px;
 }
 
-
-li.obrdm-order:first-child>button>div.obrdm-row-order,
-li.obrdm-order+li.obrdm-orderline>button>div>div.obrdm-cell-orderline-left,
-li.obrdm-order+li.obrdm-orderline>button>div>div>div.obrdm-cell-orderline-right-col1:first-child,
-li.obrdm-order+li.obrdm-orderline>button>div>div>div.obrdm-cell-orderline-right-col2:first-child {
+li.obrdm-order:first-child > button > div.obrdm-row-order,
+li.obrdm-order + li.obrdm-orderline > button > div > div.obrdm-cell-orderline-left,
+li.obrdm-order + li.obrdm-orderline > button > div > div > div.obrdm-cell-orderline-right-col1:first-child,
+li.obrdm-order + li.obrdm-orderline > button > div > div > div.obrdm-cell-orderline-right-col2:first-child {
   border-top: none;
 }
 
-li.obrdm-orderline:last-child>button>div>div:last-child>div.obrdm-cell-orderline-right-col1:first-child {
+li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-orderline-right-col1:first-child {
   border-bottom: none;
 }
 
@@ -1731,6 +1727,7 @@ li.obrdm-orderline:last-child>button>div>div:last-child>div.obrdm-cell-orderline
   padding: 4px;
   width: 100%;
   height: 26px;
+  border-bottom: 1px solid #ccc !important;
 }
 
 .obrdm-cell-orderline-combobox {
@@ -1780,7 +1777,7 @@ li.obrdm-orderline:last-child>button>div>div:last-child>div.obrdm-cell-orderline
   background-color: #e2e2e2;
   height: 18px;
   float: left;
-  margin: 7px 4px 0px 4px;
+  margin: 8px 4px 0px 4px;
   font-size: 20px;
 }
 
@@ -1849,10 +1846,6 @@ li.obrdm-orderline:last-child>button>div>div:last-child>div.obrdm-cell-orderline
 
 .obrdm-text-line {
   display: inline-block;
-  width: inherit;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
 }
 
 .obrdm-button-select-all {
@@ -1870,7 +1863,7 @@ li.obrdm-orderline:last-child>button>div>div:last-child>div.obrdm-cell-orderline
 }
 
 .obrdm-filter-selector-inner {
-  padding: 7px;
+  padding: 0px 0px 7px 0px;
 }
 
 .obrdm-filter-selector-inner-1 {
@@ -1898,7 +1891,6 @@ li.obrdm-orderline:last-child>button>div>div:last-child>div.obrdm-cell-orderline
 .obrdm-listitembutton {
   height: auto;
   padding: 0px !important;
-  border-bottom: none !important;
 }
 
 .obrdm-listitembutton-text-color {
@@ -1932,7 +1924,7 @@ li.obrdm-orderline:last-child>button>div>div:last-child>div.obrdm-cell-orderline
   width: 25px;
   height: 16px;
   float: left;
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
 .obrdm-orderline-deliverymode {
@@ -2115,3 +2107,209 @@ li.obrdm-orderline:last-child>button>div>div:last-child>div.obrdm-cell-orderline
   width: 31px;
   height: 26px;
 }
+
+.obrdm-checkbox-order {
+  margin-top: 0px;
+}
+
+div.obrdm-cell-orderline-right-col1:nth-child(odd){
+  border-top: none;
+}
+
+@media ( max-width : 395px) {
+
+  .obrdm-modal-order-selector {
+    width: calc(100% - 24px) !important;
+  }
+
+  .obrdm-button-select-all {
+    width: 120px;
+  }
+
+  div.modal-header-text {
+    font-size: 16px;
+  }
+
+  .obrdm-row-order {
+    height: unset;
+  }
+
+  .obrdm-cell-orderline-left-info {
+    padding-left: 5px !important;;
+    border-bottom: 1px solid #ccc;
+    height: 62px;
+    white-space: pre;
+    width: 87%;
+  }
+
+  .obrdm-cell-orderline-right {
+    padding-left: 40px;
+    width: 87% !important;
+  }
+
+  .obrdm-cell-orderline-left {
+    border-right: unset;
+    width: 100% !important;
+  }
+  
+  .obrdm-checkbox-off {
+    width: 33px;
+  }
+
+  .obrdm-cell-orderline-right-col1 {
+    width: 56% !important;
+  }
+
+  .obrdm-button-info-normal {
+    display: none;
+  }
+
+  .obrdm-button-prepared-selected {
+    width: 90px;
+  }
+
+  .obmc-advancedfilter-btn {
+    width: 100px;
+  }
+
+  .obrdm-orderline-prouct {
+    margin-top: 6px;
+    width: 98%;
+  }
+
+  .obrdm-cell-orderline-right-col2 {
+    width: 41% !important;
+  }
+  
+  .obrdm-orderline-deliverymode {
+    width: unset;
+  }
+
+  .obrdm-orderline-info {
+    margin-top: 6px;
+    width: 98%;
+  }
+  
+  button.btnlink-small {
+    padding: 6px 15px 5px;
+  }
+  
+  .obrdm-row-order-text {
+    padding-top: 5px;
+  }
+  
+  .obrdm-cell-orderline-button {
+    width: unset !important;
+  }
+  
+  .obrdm-checkbox-order {
+    margin-top: 13px !important;
+    margin-right: 3px;
+  }
+
+  .obrdm-orderline {
+    margin-left: 20px;
+  }
+
+  .obrdm-row-orderline {
+    padding: 0px;
+    width: 100%;
+  }
+  
+  .obrdm-orderline-qty {
+    margin-top: 5px;
+  }
+  
+  .obrdm-text-line {
+    display: inline-block;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+}
+
+@media ( max-width : 935px) {
+  
+  .obrdm-cell-orderline-left-info {
+    height: 62px;
+    white-space: pre;
+    padding-left: 9px;
+    width: 87%;
+  }
+  
+  .obrdm-orderline-prouct {
+    margin-top: 10px;
+    width: 98%;
+  }
+  
+  .obrdm-button-info-normal {
+    display: none;
+  }
+  
+  .obrdm-orderline-info {
+    margin-top: 6px;
+  }
+  
+  button.btnlink-small {
+    padding: 6px 15px 5px;
+  }
+  
+  .obrdm-row-order-text {
+    padding-top: 10px;
+  }
+  
+  .obrdm-cell-orderline-right-col2 {
+    width: 49%;
+  }
+  
+  .obrdm-cell-orderline-button {
+    width: 100%;
+  }
+  
+  .obrdm-checkbox-order {
+    margin-top: 3px;
+    margin-right: 3px;
+  }
+  
+  .obrdm-checkbox-off {
+    width: 33px;
+  }
+
+  .obrdm-orderline {
+    margin-left: 20px;
+  }
+  
+  .obrdm-row-orderline {
+    padding: 0px;
+    width: 100%;
+  }
+  
+  .obrdm-cell-orderline-left {
+    width: 49%;
+  }
+
+  .obrdm-cell-orderline-right {
+    width: 49%;
+  }
+  
+  .obrdm-cell-orderline-right-col1 {
+    width: 50%;
+  }
+  
+  .obrdm-orderline-deliverymode {
+    width: unset;
+  }
+  
+  .obrdm-cell-orderline-right-container {
+    width: unset;
+  }
+  
+  .obrdm-text-line {
+    display: inline-block;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  
+}
+

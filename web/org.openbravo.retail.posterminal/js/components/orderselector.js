@@ -67,7 +67,7 @@ enyo.kind({
   kind: 'OB.UI.ScrollableTableHeader',
   components: [
     {
-      classes: 'brdm-filter-selector',
+      classes: 'obrdm-filter-selector',
       kind: 'OB.UI.FilterSelectorTableHeader',
       name: 'filterSelector',
       filters: OB.Model.OBRDM_OrderFilter.getProperties()
@@ -121,7 +121,7 @@ enyo.kind({
       classes: 'obrdm-row-order',
       components: [
         {
-          classes: 'obrdm-checkbox-half-on',
+          classes: 'obrdm-checkbox-half-on, obrdm-checkbox-order',
           name: 'iconOrder',
           tap: function() {
             this.bubble('onTapOrderIcon');
@@ -434,10 +434,24 @@ enyo.kind({
         });
       this.$.orderlineProduct.setContent(this.model.get('productName'));
       if (this.model.get('characteristicDescription')) {
-        this.$.orderlineProduct.setContent(this.$.orderlineProduct.getContent() + ' - ' + this.model.get('characteristicDescription'));
+        this.$.orderlineProduct.setContent(
+          this.$.orderlineProduct.getContent() +
+            ' - ' +
+            this.model.get('characteristicDescription')
+        );
       }
-      if (this.model.get('attributeDescription') && OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true)) {
-        this.$.orderlineProduct.setContent(this.$.orderlineProduct.getContent() + OB.I18N.getLabel('OBRDM_LblAttribute') + this.model.get('attributeDescription'));
+      if (
+        this.model.get('attributeDescription') &&
+        OB.MobileApp.model.hasPermission(
+          'OBPOS_EnableSupportForProductAttributes',
+          true
+        )
+      ) {
+        this.$.orderlineProduct.setContent(
+          this.$.orderlineProduct.getContent() +
+            OB.I18N.getLabel('OBRDM_LblAttribute') +
+            this.model.get('attributeDescription')
+        );
       }
       this.$.orderlineDeliveryMode.setContent(
         delivery ? delivery.name : deliveryMode
@@ -1248,6 +1262,14 @@ enyo.kind({
         );
       }
       OB.MobileApp.view.scanningFocus(false);
+      if (window.innerWidth <= 395) {
+        this.$.body.$.listOrders.$.stOrderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonAdvancedFilter.setContent(
+          OB.I18N.getLabel('OBPOS_LblAdvancedFilterShort')
+        );
+        this.$.body.$.listOrders.$.stOrderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonPrepareSelected.setContent(
+          OB.I18N.getLabel('OBRDM_LblPrepareSelectedShort')
+        );
+      }
     }
     if (this.args.hookCallback) {
       this.args.hookCallback();
