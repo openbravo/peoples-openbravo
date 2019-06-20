@@ -28,7 +28,6 @@
     OB.Actions.AbstractAction.call(this, args);
     this.calculateToAdd = args.calculateToAdd;
     this.isActive = function(view) {
-      var product;
       var isEditable = view.state.readCommandState({
         name: 'receipt.isEditable'
       });
@@ -225,7 +224,7 @@
             });
           }.bind(this)
         )
-        ['catch'](function(error) {
+        .catch(function(error) {
           // Dialog cancelled, finish the action
         });
     };

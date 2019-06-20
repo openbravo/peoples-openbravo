@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, Promise, Uint8Array, TextEncoder  */
+/*global OB, Uint8Array, TextEncoder  */
 
 (function() {
   var CODE128Encoder = function() {

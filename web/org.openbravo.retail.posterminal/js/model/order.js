@@ -602,7 +602,7 @@
         }
 
         this.set('json', JSON.stringify(this.serializeToJSON()));
-        if (callback === undefined || !callback instanceof Function) {
+        if (callback === undefined || !(callback instanceof Function)) {
           callback = function() {};
         }
 
@@ -1567,6 +1567,12 @@
       this.set('obposPrepaymentamt', OB.DEC.Zero);
       this.set('obposPrepaymentlimitamt', OB.DEC.Zero);
       this.set('obposPrepaymentlaylimitamt', OB.DEC.Zero);
+      this.set(
+        'cashVAT',
+        OB.MobileApp.model.get('terminal')
+          ? OB.MobileApp.model.get('terminal').cashVat
+          : null
+      );
     },
 
     clearWith: function(_order) {
@@ -3092,7 +3098,6 @@
         line = !OB.UTIL.isNullOrUndefined(options) ? options.line : null,
         stockScreen = options && options.stockScreen,
         allLinesQty = qty,
-        productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(p),
         warehouseId,
         warehouse;
 
@@ -3130,7 +3135,10 @@
             l.get('warehouse').id === warehouseId) ||
           (line && l.get('id') === line.get('id'))
         ) {
-          allLinesQty += l.get('qty');
+          allLinesQty = OB.DEC.add(
+            allLinesQty,
+            OB.DEC.sub(l.get('qty'), l.getDeliveredQuantity())
+          );
         }
       });
 
@@ -3141,7 +3149,7 @@
           attrs.warehouse &&
           !OB.UTIL.isNullOrUndefined(attrs.warehouse.warehouseqty)
         ) {
-          OB.UTIL.StockUtils.checkStockSuccessCallback(
+          OB.UTIL.StockUtils.checkStockCallback(
             p,
             line,
             me,
@@ -3152,55 +3160,65 @@
             callback
           );
         } else {
-          OB.UTIL.StockUtils.getReceiptLineStock(
-            p.get('id'),
-            line,
-            function(data) {
-              if (data && data.exception) {
-                OB.UTIL.showConfirmation.display(
-                  OB.I18N.getLabel('OBMOBC_Error'),
-                  OB.I18N.getLabel('OBPOS_ErrorServerGeneric') +
-                    data.exception.message
-                );
-                if (callback) {
-                  callback(false);
+          if (!OB.MobileApp.model.get('connectedToERP') || !navigator.onLine) {
+            OB.UTIL.StockUtils.noConnectionCheckStockCallback(
+              p,
+              line,
+              me,
+              allLinesQty,
+              callback
+            );
+          } else {
+            OB.UTIL.StockUtils.getReceiptLineStock(
+              p.get('id'),
+              line,
+              function(data) {
+                if (data && data.exception) {
+                  OB.UTIL.showConfirmation.display(
+                    OB.I18N.getLabel('OBMOBC_Error'),
+                    OB.I18N.getLabel('OBPOS_ErrorServerGeneric') +
+                      data.exception.message
+                  );
+                  if (callback) {
+                    callback(false);
+                  }
+                } else {
+                  warehouse = _.find(data.warehouses, function(warehouse) {
+                    return warehouse.warehouseid === warehouseId;
+                  });
+                  if (!warehouse) {
+                    warehouse = {
+                      bins: [],
+                      warehouseid: OB.MobileApp.model.get('warehouses')[0]
+                        .warehouseid,
+                      warehousename: OB.MobileApp.model.get('warehouses')[0]
+                        .warehousename,
+                      warehouseqty: OB.DEC.Zero
+                    };
+                  }
+                  OB.UTIL.StockUtils.checkStockCallback(
+                    p,
+                    line,
+                    me,
+                    attrs,
+                    warehouse,
+                    allLinesQty,
+                    stockScreen,
+                    callback
+                  );
                 }
-              } else {
-                warehouse = _.find(data.warehouses, function(warehouse) {
-                  return warehouse.warehouseid === warehouseId;
-                });
-                if (!warehouse) {
-                  warehouse = {
-                    bins: [],
-                    warehouseid: OB.MobileApp.model.get('warehouses')[0]
-                      .warehouseid,
-                    warehousename: OB.MobileApp.model.get('warehouses')[0]
-                      .warehousename,
-                    warehouseqty: OB.DEC.Zero
-                  };
-                }
-                OB.UTIL.StockUtils.checkStockSuccessCallback(
+              },
+              function(data) {
+                OB.UTIL.StockUtils.noConnectionCheckStockCallback(
                   p,
                   line,
                   me,
-                  attrs,
-                  warehouse,
                   allLinesQty,
-                  stockScreen,
                   callback
                 );
               }
-            },
-            function(data) {
-              OB.UTIL.StockUtils.checkStockErrorCallback(
-                p,
-                line,
-                me,
-                allLinesQty,
-                callback
-              );
-            }
-          );
+            );
+          }
         }
       } else if (callback) {
         callback(true);
@@ -6093,6 +6111,7 @@
           );
 
           me.set('createdBy', OB.MobileApp.model.get('orgUserId'));
+          me.set('cashVAT', OB.MobileApp.model.get('terminal').cashVat);
           if (!me.get('salesRepresentative')) {
             if (OB.MobileApp.model.get('context').isSalesRepresentative) {
               me.set(
@@ -6542,9 +6561,20 @@
     },
 
     createQuotationFromOrder: function() {
-      this.setQuotationProperties();
-      this.trigger('scan');
-      this.save();
+      OB.UTIL.HookManager.executeHooks(
+        'OBPOS_PreCreateQuotationFromOrder',
+        {
+          order: this
+        },
+        function(args) {
+          if (args && args.cancelOperation && args.cancelOperation === true) {
+            return;
+          }
+          args.order.setQuotationProperties();
+          args.order.trigger('scan');
+          args.order.save();
+        }
+      );
     },
 
     createOrderFromQuotation: function(updatePrices, callback) {
@@ -6619,7 +6649,9 @@
           );
           args.order.set(
             'documentType',
-            OB.MobileApp.model.get('terminal').terminalType.documentType
+            OB.UTIL.isCrossStoreReceipt(args.order)
+              ? args.order.get('lines').models[0].get('documentTypeId')
+              : OB.MobileApp.model.get('terminal').terminalType.documentType
           );
           args.order.set('createdBy', OB.MobileApp.model.get('orgUserId'));
           if (OB.MobileApp.model.get('context').user.isSalesRepresentative) {
@@ -6951,6 +6983,7 @@
           payment.set('origAmount', payment.get('amount'));
         }
         payment.set('paid', payment.get('origAmount'));
+        payment.set('precision', precision);
       };
 
       _.each(payments.models, function(payment) {
@@ -7195,7 +7228,7 @@
 
       payments = this.get('payments');
       precision = this.getPrecision(payment);
-      payment.set('amount', OB.DEC.number(payment.get('amount')));
+      payment.set('amount', OB.DEC.toNumber(payment.get('amount'), precision));
       if (this.get('prepaymentChangeMode')) {
         this.unset('prepaymentChangeMode');
         this.adjustPayment();
@@ -7666,7 +7699,8 @@
     serializeToSaveJSON: function() {
       // this.toJSON() generates a collection instance for members like "lines"
       // We need a plain array object
-      var jsonorder = JSON.parse(JSON.stringify(this.toJSON()));
+      var jsonorder = JSON.parse(JSON.stringify(this.toJSON())),
+        jsonOrderLines = jsonorder.lines;
 
       // remove not needed members
       delete jsonorder.undo;
@@ -7678,7 +7712,14 @@
         return !prop.saveToReceipt;
       });
 
-      _.forEach(jsonorder.lines, function(item) {
+      if (
+        !OB.UTIL.isNullOrUndefined(jsonorder.deletedLines) &&
+        jsonorder.deletedLines.length > 0
+      ) {
+        jsonOrderLines = jsonorder.lines.concat(jsonorder.deletedLines);
+      }
+
+      _.forEach(jsonOrderLines, function(item) {
         delete item.sortedTaxCollection;
         if (OB.UTIL.isNullOrUndefined(item.product.saveToReceipt)) {
           _.forEach(productProps, function(prop) {
@@ -8876,7 +8917,6 @@
             approval.approvalType = approval.approvalType.approval;
           }
         });
-        model.set('hasbeenpaid', 'Y');
         OB.Dal.transaction(function(tx) {
           OB.UTIL.HookManager.executeHooks(
             'OBPOS_PreSyncReceipt',
@@ -8887,12 +8927,13 @@
             },
             function(args) {
               model.set('json', JSON.stringify(model.serializeToSaveJSON()));
+              model.set('hasbeenpaid', 'Y');
               OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(
                 model.get('documentnoSuffix'),
                 model.get('quotationnoSuffix'),
                 model.get('returnnoSuffix'),
                 function() {
-                  model.save(function() {
+                  OB.Dal.saveInTransaction(tx, model, function() {
                     if (
                       orderList &&
                       model.get('session') === OB.MobileApp.model.get('session')
@@ -10079,7 +10120,6 @@
 
       addPaidReceipt: function(model, callback) {
         var me = this,
-          synchId = null,
           execution = OB.UTIL.ProcessController.start('addPaidReceipt');
 
         function executeFinalCallback() {
@@ -10573,6 +10613,7 @@
         order.set('isQuotation', false);
         order.set('oldId', null);
         order.set('session', OB.MobileApp.model.get('session'));
+        order.set('cashVAT', OB.MobileApp.model.get('terminal').cashVat);
         order.set('bp', bp);
         if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
           // Set price list for order
@@ -10939,7 +10980,7 @@
 
       payments = this.get('payments');
       precision = this.getPrecision(payment);
-      payment.set('amount', OB.DEC.number(payment.get('amount')));
+      payment.set('amount', OB.DEC.toNumber(payment.get('amount'), precision));
       order = this;
       if (this.get('prepaymentChangeMode')) {
         this.unset('prepaymentChangeMode');

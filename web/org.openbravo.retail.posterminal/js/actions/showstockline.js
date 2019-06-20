@@ -29,7 +29,6 @@
           name: 'receipt.isEditable'
         });
         var active = isEditable;
-        active = active && OB.MobileApp.model.get('connectedToERP');
         active =
           active &&
           selectedReceiptLine &&

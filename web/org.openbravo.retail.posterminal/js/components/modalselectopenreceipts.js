@@ -255,6 +255,10 @@ enyo.kind({
       this.receiptsList
     );
   },
+
+  init: function(model) {
+    this.$.bodyButtons.setStyle('padding-top: 5px');
+  },
   events: {
     onChangeCurrentOrder: '',
     onHideThisPopup: '',

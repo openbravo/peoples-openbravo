@@ -87,11 +87,12 @@
         <text align ="right" length="8"><%= line.printNet() %></text>
     <%}%>
       </line>
-    <%if(line.has('organization') && line.get('organization').id !== OB.MobileApp.model.get('terminal').organization){%>
+    <%if(line.has('organization') && OB.UTIL.isCrossStoreOrganization(line.get('organization'))){%>
       <line>
         <text align ="right">-- <%= line.get('organization').name %></text>  
       </line>
     <%}
+    if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
      var deliveryDate = line.get('obrdmDeliveryDate') ? (line.get('obrdmDeliveryDate') instanceof Date ? line.get('obrdmDeliveryDate') : new Date(line.get('obrdmDeliveryDate'))) : null,
         deliveryTime = line.get('obrdmDeliveryTime') ? (line.get('obrdmDeliveryTime') instanceof Date ? line.get('obrdmDeliveryTime') : new Date(line.get('obrdmDeliveryTime'))) : null,
         showDate = line.get('obrdmDeliveryMode') === 'PickupInStoreDate' || line.get('obrdmDeliveryMode') === 'HomeDelivery',
@@ -127,6 +128,7 @@
           <text align ="right">-- <%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBRDM_DeliveryTime'))%>: <%=deliveryTime ? OB.I18N.formatHour(deliveryTime) : OB.I18N.formatHour(currentDate)%></text>
         </line>
       <%}
+      }
      }
    
         promotions = line.get('promotions');

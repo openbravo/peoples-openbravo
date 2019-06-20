@@ -88,8 +88,7 @@
               var process = new OB.DS.Process(
                 'org.openbravo.retail.posterminal.process.HasDeliveryServices'
               );
-              var params = {},
-                date = new Date();
+              var date = new Date();
               process.exec(
                 {
                   lines: [
@@ -289,7 +288,6 @@
       this.model = model;
     },
     setMultiSelected: function(inSender, inEvent) {
-      var me = this;
       if (
         this.owner.owner.selectedModels &&
         this.owner.owner.selectedModels.length > 0
@@ -360,7 +358,6 @@ enyo.kind({
     onApplyChanges: ''
   },
   tap: function() {
-    var me = this;
     if (this.doApplyChanges()) {
       this.doHideThisPopup();
     }
@@ -642,8 +639,7 @@ enyo.kind({
         var process = new OB.DS.Process(
           'org.openbravo.retail.posterminal.process.HasDeliveryServices'
         );
-        var params = {},
-          date = new Date();
+        var date = new Date();
         process.exec(
           {
             lines: carrierLines,

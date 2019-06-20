@@ -103,9 +103,8 @@ enyo.kind({
 
     for (i = 0; i < buttonContainerArray.length; i++) {
       if (
-        buttonContainerArray[i] &&
-        buttonContainerArray[i].getComponents()[0] &&
         buttonContainerArray[i].getComponents()[0].getComponents()[0]
+          .tabToOpen === tabName
       ) {
         buttonContainerArray[i]
           .getComponents()[0]
@@ -353,6 +352,23 @@ enyo.kind({
     OB.MobileApp.view.scanningFocus(true);
 
     return true;
+  },
+  pointOfSaleLoad: function(inSender, inEvent) {
+    if (OB.UTIL.RfidController.get('connectionLost')) {
+      this.$.rfidIcon.addClass(this.rfidOfflineIcon);
+    } else {
+      this.$.rfidIcon.removeClass(this.rfidOfflineIcon);
+    }
+    if (
+      !OB.UTIL.RfidController.get('isRFIDEnabled') ||
+      !OB.UTIL.RfidController.get('reconnectOnScanningFocus')
+    ) {
+      this.$.rfidIcon.addClass(this.rfidOffIcon);
+      this.$.rfidIcon.removeClass(this.rfidOnIcon);
+    } else {
+      this.$.rfidIcon.addClass(this.rfidOnIcon);
+      this.$.rfidIcon.removeClass(this.rfidOffIcon);
+    }
   }
   //  pointOfSaleLoad: function (inSender, inEvent) {
   //    if (OB.UTIL.RfidController.get('connectionLost')) {
@@ -372,7 +388,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabBrowse',
-  kind: 'OB.UI.ComplexButton',
+  kind: 'OB.UI.ToolbarButtonTab',
   mainClass: 'obObPosPointOfSaleUiButtonTabBrowse',
   buttonBeforeClass: 'obObPosPointOfSaleUiButtonTabBrowse-buttonBefore',
   events: {
@@ -426,7 +442,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabSearchCharacteristic',
-  kind: 'OB.UI.ComplexButton',
+  kind: 'OB.UI.ToolbarButtonTab',
   mainClass: 'obObPosPointOfSaleUiButtonTabSearchCharacteristic',
   tabPanel: 'searchCharacteristic',
   i18nLabel: 'OBPOS_LblSearch',
@@ -487,7 +503,7 @@ enyo.kind({
     ticketLines: null
   },
   mainClass: 'obObPosPointOfSaleUiButtonTabEditLine',
-  kind: 'OB.UI.ComplexButton',
+  kind: 'OB.UI.ToolbarButtonTab',
   tabPanel: 'edit',
   i18nLabel: 'OBPOS_LblEdit',
   buttonBeforeClass: 'obObPosPointOfSaleUiButtonTabEditLine-buttonBefore',
@@ -517,9 +533,9 @@ enyo.kind({
             this.model.get('order').get('lines').length > 0
           ) {
             this.currentLine = lineSelected;
-            this.setUnused(false);
+            this.setDisabled(false);
           } else {
-            this.setUnused(true);
+            this.setDisabled(true);
           }
         },
         this

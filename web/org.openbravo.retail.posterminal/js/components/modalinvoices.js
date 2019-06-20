@@ -210,7 +210,7 @@ enyo.kind({
   events: {
     onHideThisPopup: '',
     onShowPopup: '',
-    onPrintReceipt: ''
+    onPrintSingleReceipt: ''
   },
   handlers: {
     onPopupOpened: 'popupOpened'

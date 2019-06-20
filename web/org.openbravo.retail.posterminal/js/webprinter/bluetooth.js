@@ -86,7 +86,7 @@
         );
     }
 
-    return result['catch'](
+    return result.catch(
       function(error) {
         this.onDisconnected();
         throw error;

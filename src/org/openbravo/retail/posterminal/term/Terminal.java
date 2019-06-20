@@ -115,13 +115,20 @@ public class Terminal extends JSONProcessSimple {
       HQLPropertyList regularTerminalHQLProperties = ModelExtensionUtils
           .getPropertyExtensions(extensions, jsonsent);
 
+      String strOrgId = pOSTerminal.getOrganization().getId();
+
       final OrganizationInformation myOrgInfo = pOSTerminal.getOrganization()
           .getOrganizationInformationList()
           .get(0);
+      final Organization org = OBDal.getInstance().get(Organization.class, strOrgId);
+      final Organization legalEntity = OBContext.getOBContext()
+          .getOrganizationStructureProvider(org.getClient().getId())
+          .getLegalEntity(org);
 
       String storeAddress = "";
       String regionId = "";
       String countryId = "";
+      String orgInfoId = "";
 
       if (myOrgInfo.getLocationAddress() != null
           && myOrgInfo.getLocationAddress().getIdentifier().length() > 0) {
@@ -135,6 +142,12 @@ public class Terminal extends JSONProcessSimple {
       if (myOrgInfo.getLocationAddress().getCountry() != null) {
         countryId = myOrgInfo.getLocationAddress().getCountry().getId();
       }
+
+      if (legalEntity != null && legalEntity.getOrganizationInformationList() != null
+          && !legalEntity.getOrganizationInformationList().isEmpty()) {
+        orgInfoId = legalEntity.getId();
+      }
+
       String selectOrgImage = "";
       String fromOrgImage = "";
       String whereOrgImage = "";
@@ -180,12 +193,14 @@ public class Terminal extends JSONProcessSimple {
           + lastDocumentNumber + " as lastDocumentNumber, " + lastQuotationDocumentNumber
           + " as lastQuotationDocumentNumber, " + lastReturnDocumentNumber
           + " as lastReturnDocumentNumber, " + "'" + regionId + "'" + " as organizationRegionId, "
-          + "'" + countryId + "'" + " as organizationCountryId, '"
+          + "'" + countryId + "'" + " as organizationCountryId, orginfo.cashVAT as cashVat, '"
           + ProcessHQLQuery.escape(storeAddress) + "' as organizationAddressIdentifier, "
           + sessionTimeout + " as sessionTimeout, " + selectOrgImage
           + regularTerminalHQLProperties.getHqlSelect()
-          + " from OBPOS_Applications AS pos inner join pos.obposTerminaltype as postype inner join pos.organization AS org, "
+          + " from OBPOS_Applications AS pos inner join pos.obposTerminaltype as postype inner join pos.organization AS org, Organization org2, "
           + "PricingPriceList pricelist " + fromOrgImage
+          + " inner join org2.organizationInformationList as orginfo with orginfo.id='" + orgInfoId
+          + "'"
           + " where pos.$readableSimpleCriteria and pos.$activeCriteria and pos.searchKey =:searchKey and pricelist.id =:pricelistId "
           + whereOrgImage;
 

@@ -363,7 +363,8 @@
           : null,
         bplRegionId = receipt.get('bp').get('shipRegionId')
           ? receipt.get('bp').get('shipRegionId')
-          : null;
+          : null,
+        isCashVat = OB.MobileApp.model.get('terminal').cashVat;
       // SQL build
       // the query is ordered by countryId desc and regionId desc
       // (so, the first record will be the tax with the same country or
@@ -451,6 +452,15 @@
           "'  or (c_tax.to_region_id is null       and (not exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id)           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_region_id = '" +
           bplRegionId +
           "')           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_region_id is null))))";
+      }
+      if (isCashVat) {
+        sql =
+          sql +
+          " and (c_tax.isCashVAT ='" +
+          isCashVat +
+          "' OR (c_tax.isCashVAT = 'false' and (c_tax.isWithholdingTax = 'true' or c_tax.rate=0))) ";
+      } else {
+        sql = sql + " and c_tax.isCashVAT ='false' ";
       }
       sql =
         sql +
@@ -1011,7 +1021,7 @@
           }
         );
       })
-      ['catch'](function(reason) {
+      .catch(function(reason) {
         showLineTaxError(receipt, line, reason);
       });
   };
@@ -1613,7 +1623,7 @@
           }
         );
       })
-      ['catch'](function(reason) {
+      .catch(function(reason) {
         showLineTaxError(receipt, line, reason);
       });
   };

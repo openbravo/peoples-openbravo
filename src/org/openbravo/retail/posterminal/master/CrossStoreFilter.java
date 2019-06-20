@@ -193,12 +193,13 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
     hql.append(" and owh.active = true");
     hql.append(" and wh.active = true");
     hql.append(" and l.active = true");
-    hql.append(" group by o.id, o.name, o.obposCDoctype.id, w.id, w.name");
+    hql.append(" group by o.id, o.name, o.obposCDoctype.id, o.obposCDoctypequot.id, w.id, w.name");
     hql.append(" , pl.id, pl.priceIncludesTax, pp.standardPrice");
     hql.append(" having w.id = min(wh.id)");
     if (filterByStock) {
       hql.append(" and coalesce(sum(sd.quantityOnHand - sd.reservedQty), 0) > 0");
     }
+    hql.append(" order by case when o.id = :orgId then 0 else 1 end, o.name");
     return hql.toString();
   }
 

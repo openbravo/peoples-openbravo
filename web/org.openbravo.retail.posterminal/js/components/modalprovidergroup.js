@@ -204,7 +204,7 @@ enyo.kind({
           );
         }.bind(this)
       )
-      ['catch'](
+      .catch(
         function(exception) {
           this.showMessageAndClose(
             providerinstance.getErrorMessage

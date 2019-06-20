@@ -65,7 +65,6 @@
         });
         var price = OB.I18N.parseNumber(editboxvalue);
         var receipt = view.model.get('order');
-        var i;
         var setPrices = function() {
           receipt.setPrices(selectedReceiptLines, price);
           receipt.trigger('scan');
@@ -161,7 +160,7 @@
               }
             );
           })
-          ['catch'](function() {
+          .catch(function() {
             // Ignore. User cancelled action
           });
       }

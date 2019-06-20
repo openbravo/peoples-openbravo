@@ -78,6 +78,9 @@ public class PaidReceiptLinesProperties extends ModelExtension {
         add(new HQLProperty("tax.taxCategory.id", "taxCategory"));
         add(new HQLProperty("tax.taxExempt", "taxExempt"));
         add(new HQLProperty("ordLine.updated", "loaded"));
+        add(new HQLProperty("ordLine.organization.obposCDoctype.id", "documentTypeId"));
+        add(new HQLProperty("ordLine.organization.obposCDoctypequot.id",
+            "quotationDocumentTypeId"));
       }
     };
 

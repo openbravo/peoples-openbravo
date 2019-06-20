@@ -128,6 +128,7 @@ enyo.kind({
           OB.MobileApp.model.get('terminal').organization$_identifier
         ])
       };
+      me.leftSubWindow.organization = null;
       attrs.warehouse = {
         id: me.leftSubWindow.warehouse.warehouseid
           ? this.leftSubWindow.warehouse.warehouseid
@@ -137,11 +138,14 @@ enyo.kind({
       };
       if (me.leftSubWindow.documentType) {
         attrs.documentType = me.leftSubWindow.documentType;
+        attrs.quotationDocumentType = me.leftSubWindow.quotationDocumentType;
       }
+      me.leftSubWindow.documentType = null;
+      me.leftSubWindow.quotationDocumentType = null;
       if (
-        OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true) &&
         line &&
-        line.get('obrdmDeliveryMode') !== product.get('obrdmDeliveryMode')
+        line.get('obrdmDeliveryMode') !== product.get('obrdmDeliveryMode') &&
+        OB.UTIL.isCrossStoreOrganization(attrs.organization)
       ) {
         attrs.obrdmDeliveryMode = product.get('obrdmDeliveryMode');
         attrs.obrdmDeliveryDate = product.get('obrdmDeliveryDate');
@@ -180,13 +184,7 @@ enyo.kind({
                 value: attrs.organization
               });
             }
-            if (
-              OB.MobileApp.model.hasPermission(
-                'OBRDM_EnableDeliveryModes',
-                true
-              ) &&
-              attrs.obrdmDeliveryMode
-            ) {
+            if (attrs.obrdmDeliveryMode) {
               me.doSetLineProperty({
                 line: line,
                 property: 'obrdmDeliveryMode',
@@ -334,12 +332,14 @@ enyo.kind({
         me.$.productAddToReceipt.setLabel();
         me.$.productAddToReceipt.setDisabled(false);
         me.leftSubWindow.documentType = data.documentType;
+        me.leftSubWindow.quotationDocumentType = data.quotationDocumentType;
         me.leftSubWindow.organization = organization;
-        if (
-          organization.id !== OB.MobileApp.model.get('terminal').organization
-        ) {
+        if (OB.UTIL.isCrossStoreOrganization(organization)) {
           me.leftSubWindow.setDefaultDeliveryMode();
         }
+        me.leftSubWindow.bodyComponent.$.productDeliveryModes.setShowing(
+          OB.UTIL.isCrossStoreOrganization(organization)
+        );
         me.leftSubWindow.changeWarehouseInfo(null, warehouse);
         me.leftSubWindow.product.set('listPrice', data.currentPrice.price);
         me.leftSubWindow.product.set('standardPrice', data.currentPrice.price);
@@ -649,8 +649,8 @@ enyo.kind({
                 OB.I18N.getLabel('OBPOS_storeStock') + data.qty
               );
             }
-            me.bodyComponent.$.productAddToReceipt.setDisabled(false);
           }
+          me.bodyComponent.$.productAddToReceipt.setDisabled(false);
           if (params.checkStockCallback) {
             params.checkStockCallback();
           }
@@ -724,8 +724,8 @@ enyo.kind({
     this.product = params.product;
     this.forceSelectStore = params.forceSelectStore || false;
     this.$.leftSubWindowBody.leftSubWindow.bodyComponent.$.productDeliveryModes.setShowing(
-      OB.UTIL.isNullOrUndefined(this.line) &&
-        OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)
+      !OB.UTIL.isNullOrUndefined(this.organization) &&
+        OB.UTIL.isCrossStoreOrganization(this.organization)
     );
     this.$.leftSubWindowBody.leftSubWindow.bodyComponent.$.productDeliveryModes.setDetailsView(
       this.$.leftSubWindowBody.$.body
@@ -755,7 +755,7 @@ enyo.kind({
       this.bodyComponent.$.contextImage.show();
     }
     if (OB.MobileApp.model.get('permissions')['OBPOS_retail.productImages']) {
-      this.bodyComponent.$.productImage.setSrc(
+      this.bodyComponent.$.productImage.setImgUrl(
         OB.UTIL.getImageURL(params.product.get('id'))
       );
       this.bodyComponent.$.productImage.setAttribute(
@@ -789,27 +789,24 @@ enyo.kind({
     return true;
   },
   setDefaultDeliveryMode: function() {
-    if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
-      var defaultOrderDeliveryMode = OB.MobileApp.model.receipt.get(
-        'obrdmDeliveryModeProperty'
-      );
-      this.product.set(
-        'obrdmDeliveryMode',
-        this.organization.id !==
-          OB.MobileApp.model.get('terminal').organization &&
-          defaultOrderDeliveryMode === 'PickAndCarry'
-          ? 'PickupInStore'
-          : defaultOrderDeliveryMode
-      );
-      this.product.set(
-        'obrdmDeliveryDate',
-        OB.MobileApp.model.receipt.get('obrdmDeliveryDateProperty')
-      );
-      this.product.set(
-        'obrdmDeliveryTime',
-        OB.MobileApp.model.receipt.get('obrdmDeliveryTimeProperty')
-      );
-    }
+    var defaultOrderDeliveryMode = OB.MobileApp.model.receipt.get(
+      'obrdmDeliveryModeProperty'
+    );
+    this.product.set(
+      'obrdmDeliveryMode',
+      OB.UTIL.isCrossStoreOrganization(this.organization) &&
+        defaultOrderDeliveryMode === 'PickAndCarry'
+        ? 'PickupInStore'
+        : defaultOrderDeliveryMode
+    );
+    this.product.set(
+      'obrdmDeliveryDate',
+      OB.MobileApp.model.receipt.get('obrdmDeliveryDateProperty')
+    );
+    this.product.set(
+      'obrdmDeliveryTime',
+      OB.MobileApp.model.receipt.get('obrdmDeliveryTimeProperty')
+    );
   },
   header: {
     kind: 'OB.OBPOSPointOfSale.UI.ProductDetailsView_header',

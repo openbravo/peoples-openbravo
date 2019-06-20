@@ -7,8 +7,6 @@
  ************************************************************************************
  */
 
-/*global Backbone, _ */
-
 (function() {
   OB.Model.OBRDM_OrderFilter = OB.Data.ExtensibleModel.extend({});
 

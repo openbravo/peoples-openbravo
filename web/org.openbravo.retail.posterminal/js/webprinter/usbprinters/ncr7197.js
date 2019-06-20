@@ -21,7 +21,7 @@
       var height = imagedata.height;
 
       // Raw data
-      for (i = 0; i < imagedata.height; i++) {
+      for (i = 0; i < height; i++) {
         result.push(0x1b, 0x4b, width & 255, width >> 8);
         for (j = 0; j < imagedata.width; j = j + 8) {
           p = 0x00;

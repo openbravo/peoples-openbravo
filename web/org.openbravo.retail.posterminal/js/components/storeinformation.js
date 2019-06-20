@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, Backbone, _ */
+/*global enyo, Backbone*/
 
 enyo.kind({
   name: 'OBPOS.UI.StoreInformation',
@@ -27,7 +27,6 @@ enyo.kind({
     this.$.body.$.storeInformationLine.loadInfo(this.storeId);
   },
   initComponents: function() {
-    var me = this;
     this.inherited(arguments);
   }
 });
@@ -280,8 +279,7 @@ enyo.kind({
       callCenterIndex = 0,
       weekday,
       scheduleCallCenterLine = {},
-      scheduleCallCenter = [],
-      specialDateData = [];
+      scheduleCallCenter = [];
     while (
       scheduleIndex < orgSchedule.length ||
       callCenterIndex < callCenter.length

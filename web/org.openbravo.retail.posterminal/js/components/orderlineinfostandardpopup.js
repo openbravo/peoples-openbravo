@@ -33,7 +33,6 @@ enyo.kind({
     }
   },
   initComponents: function() {
-    var me = this;
     this.inherited(arguments);
   },
   hidePopup: function(inSender, inEvent) {

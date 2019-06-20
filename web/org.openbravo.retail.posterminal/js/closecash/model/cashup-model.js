@@ -189,9 +189,15 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
                   expected = OB.DEC.add(
                     OB.DEC.add(
                       cStartingCash,
-                      OB.DEC.sub(cTotalSales, cTotalReturns)
+                      OB.DEC.sub(
+                        cTotalSales,
+                        cTotalReturns,
+                        payment.obposPosprecision
+                      ),
+                      payment.obposPosprecision
                     ),
-                    cTotalDeposits
+                    cTotalDeposits,
+                    payment.obposPosprecision
                   );
                   var fromCurrencyId = auxPay.get('paymentMethod').currency;
                   auxPay.set(

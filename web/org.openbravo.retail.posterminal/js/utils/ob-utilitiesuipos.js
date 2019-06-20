@@ -1076,8 +1076,6 @@ OB.UTIL.getCalculatedPriceForService = function(
       OB.Model.ServicePriceRuleRange,
       rangeCriteria,
       function(sprr) {
-        var range,
-          priceCriteria = {};
         if (sprr && sprr.length > 0) {
           callback(sprr.at(0));
         } else {

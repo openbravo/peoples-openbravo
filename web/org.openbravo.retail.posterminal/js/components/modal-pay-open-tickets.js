@@ -229,6 +229,17 @@ enyo.kind({
 });
 
 enyo.kind({
+  kind: 'OB.UI.ModalAdvancedFilters',
+  name: 'OB.UI.ModalAdvancedFilterVerifiedReturns',
+  model: OB.Model.VReturnsFilter,
+  initComponents: function() {
+    this.inherited(arguments);
+    OB.UTIL.hideStoreFilter(OB.Model.VReturnsFilter.getProperties());
+    this.setFilters(OB.Model.VReturnsFilter.getProperties());
+  }
+});
+
+enyo.kind({
   kind: 'OB.UI.ButtonAdvancedFilter',
   name: 'OBPOS.UI.AdvancedFilterWindowButtonPayOpenTickets',
   classes: 'obposUiAdvancedFilterWindowButtonPayOpenTickets',

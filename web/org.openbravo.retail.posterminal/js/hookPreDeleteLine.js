@@ -10,19 +10,17 @@
 /*global _ */
 
 OB.UTIL.HookManager.registerHook('OBPOS_PreDeleteLine', function(args, c) {
-  if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
-    var undoDeliveryModes = [];
-    _.each(args.selectedLines, function(line) {
-      undoDeliveryModes.push({
-        id: line.get('id'),
-        prodcutId: line.get('product').get('id'),
-        nameDelivery: line.get('nameDelivery'),
-        obrdmDeliveryMode: line.get('obrdmDeliveryMode'),
-        obrdmDeliveryDate: line.get('obrdmDeliveryDate'),
-        obrdmDeliveryTime: line.get('obrdmDeliveryTime')
-      });
+  var undoDeliveryModes = [];
+  _.each(args.selectedLines, function(line) {
+    undoDeliveryModes.push({
+      id: line.get('id'),
+      prodcutId: line.get('product').get('id'),
+      nameDelivery: line.get('nameDelivery'),
+      obrdmDeliveryMode: line.get('obrdmDeliveryMode'),
+      obrdmDeliveryDate: line.get('obrdmDeliveryDate'),
+      obrdmDeliveryTime: line.get('obrdmDeliveryTime')
     });
-    args.order.set('undoDeliveryModes', undoDeliveryModes);
-  }
+  });
+  args.order.set('undoDeliveryModes', undoDeliveryModes);
   OB.UTIL.HookManager.callbackExecutor(args, c);
 });

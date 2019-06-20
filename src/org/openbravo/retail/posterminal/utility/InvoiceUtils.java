@@ -36,6 +36,7 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.CashVATUtil;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
@@ -48,6 +49,7 @@ import org.openbravo.model.common.invoice.InvoiceLineOffer;
 import org.openbravo.model.common.invoice.InvoiceTax;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.PaymentTerm;
@@ -584,11 +586,14 @@ public class InvoiceUtils {
       if ((amtSign >= 0 && psd.getAmount().compareTo(amtToDistribute) <= 0)
           || (amtSign == -1 && psd.getAmount().compareTo(amtToDistribute) >= 0)) {
         psd.setInvoicePaymentSchedule(paymentScheduleInvoice);
+        paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(psd);
         if (reversalPSD == null) {
           amtToDistribute = amtToDistribute.subtract(psd.getAmount());
           paidAmt = paidAmt.add(invoicePaidAmounts ? psd.getAmount() : BigDecimal.ZERO);
         } else {
           reversalPSD.setInvoicePaymentSchedule(paymentScheduleInvoice);
+          paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList()
+              .add(reversalPSD);
         }
       } else {
         // Create new paymentScheduleDetail:
@@ -625,6 +630,7 @@ public class InvoiceUtils {
           .add(Restrictions.isNull(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE));
       remainingPSDCriteria
           .add(Restrictions.isNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
+      remainingPSDCriteria.setFilterOnReadableOrganization(false);
       remainingPSDCriteria.setMaxResults(1);
       final FIN_PaymentScheduleDetail remainingPSD = (FIN_PaymentScheduleDetail) remainingPSDCriteria
           .uniqueResult();
@@ -688,9 +694,26 @@ public class InvoiceUtils {
     OBDal.getInstance().save(paymentScheduleInvoice);
     OBDal.getInstance().save(invoice);
 
+    if (invoice.isCashVAT()) {
+      createCashVat(invoice);
+    }
+
     OBDal.getInstance().flush();
 
     return paymentScheduleInvoice;
+  }
+
+  public void createCashVat(Invoice invoiceObj) {
+    for (FIN_PaymentSchedule scheduleObj : invoiceObj.getFINPaymentScheduleList()) {
+      for (FIN_PaymentScheduleDetail schDetailObj : scheduleObj
+          .getFINPaymentScheduleDetailInvoicePaymentScheduleList()) {
+        FIN_PaymentDetail paymentDetail = schDetailObj.getPaymentDetails();
+        if (paymentDetail != null) {
+          CashVATUtil.createInvoiceTaxCashVAT(paymentDetail, scheduleObj,
+              paymentDetail.getAmount().add(paymentDetail.getWriteoffAmount()));
+        }
+      }
+    }
   }
 
   private BigDecimal convertCurrencyInvoice(Invoice invoice, BigDecimal amt) {
@@ -986,4 +1009,20 @@ public class InvoiceUtils {
     return "DOCNO" + System.currentTimeMillis();
   }
 
+  /**
+   * Method to set the 'Paid Amount At invoicing' field, can only be called after the TotalPaid has
+   * been updated the the sum of all payments amounts.
+   * 
+   * This field is used for the cash VAT functionality
+   * 
+   * This field is filled with all the payments amounts done at the moment of creating the invoice,
+   * previous payments are prepayment and payments done after are normal payments
+   * 
+   * @param invoice
+   *          the method will update the passed invoice object, setting the field PaidAmtAtInvoice
+   *          with the current value of TotalPaid
+   */
+  public void setPaidAmountAtInvoicing(Invoice invoice) {
+    invoice.setPaidAmountAtInvoicing(invoice.getTotalPaid().subtract(invoice.getPrepaymentamt()));
+  }
 }

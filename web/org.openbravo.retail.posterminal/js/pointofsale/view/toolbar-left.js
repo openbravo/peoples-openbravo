@@ -56,7 +56,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.ButtonNew',
-  kind: 'OB.UI.ComplexButton',
+  kind: 'OB.UI.ToolbarButton',
   i18nContent: 'OBMOBC_New',
   classes: 'obUiButtonNew',
   buttonBeforeClass: 'obUiButtonNew-buttonBefore',
@@ -83,7 +83,7 @@ enyo.kind({
     this.isLocked = false;
     this.setDisabledIfSynchronized();
   },
-  setButtonDisabled: function(value) {
+  setDisabled: function(value) {
     this.lastDisabledStatus = value;
     this.setDisabledIfSynchronized();
   },
@@ -99,13 +99,13 @@ enyo.kind({
       return true;
     }
     this.disabled = value;
-    this.setDisabled(value);
+    this.setAttribute('disabled', value);
   },
   disabledButton: function(inSender, inEvent) {
     this.updateDisabled(inEvent.disableButtonNew || inEvent.status);
   },
   updateDisabled: function(isDisabled) {
-    this.setButtonDisabled(isDisabled);
+    this.setDisabled(isDisabled);
     if (isDisabled) {
       this.removeClass('obUiButtonNew_iconNew');
     } else {
@@ -161,7 +161,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.ButtonDelete',
-  kind: 'OB.UI.ComplexButton',
+  kind: 'OB.UI.ToolbarButton',
   i18nContent: 'OBMOBC_Delete',
   classes: 'obUiButtonDelete',
   buttonBeforeClass: 'obUiButtonDelete-buttonBefore',
@@ -192,7 +192,7 @@ enyo.kind({
     this.isLocked = false;
     this.setDisabledIfSynchronized();
   },
-  setButtonDisabled: function(value) {
+  setDisabled: function(value) {
     this.lastDisabledStatus = value;
     this.setDisabledIfSynchronized();
   },
@@ -208,13 +208,13 @@ enyo.kind({
       return true;
     }
     this.disabled = value;
-    this.setDisabled(value);
+    this.setAttribute('disabled', value);
   },
   disabledButton: function(inSender, inEvent) {
     this.updateDisabled(inEvent.status);
   },
   updateDisabled: function(isDisabled) {
-    this.setButtonDisabled(isDisabled);
+    this.setDisabled(isDisabled);
     if (isDisabled) {
       this.removeClass('obUiButtonDelete_iconDelete');
     } else {
@@ -729,7 +729,14 @@ enyo.kind({
             );
           }
           if (receiptLines[0].has('documentType')) {
-            receipt.set('documentType', receiptLines[0].get('documentType'));
+            if (receipt.get('isQuotation')) {
+              receipt.set(
+                'documentType',
+                receiptLines[0].get('quotationDocumentType')
+              );
+            } else {
+              receipt.set('documentType', receiptLines[0].get('documentType'));
+            }
           }
         }
       }

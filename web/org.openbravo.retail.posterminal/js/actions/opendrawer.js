@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, _ */
+/*global OB*/
 
 (function() {
   OB.MobileApp.actionsRegistry.register(

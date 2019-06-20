@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, Promise, Uint8Array  */
+/*global OB, Uint8Array  */
 
 (function() {
   var WincorCODE128Encoder = function() {

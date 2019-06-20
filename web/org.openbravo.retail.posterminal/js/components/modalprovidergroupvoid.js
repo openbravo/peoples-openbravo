@@ -132,7 +132,7 @@ enyo.kind({
           window.setTimeout(this.doHideThisPopup.bind(this), 0);
         }.bind(this)
       )
-      ['catch'](
+      .catch(
         function(exception) {
           this.showMessageAndClose(
             providerinstance.getErrorMessage

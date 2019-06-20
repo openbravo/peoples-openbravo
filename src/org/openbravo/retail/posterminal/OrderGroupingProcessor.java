@@ -58,6 +58,7 @@ import org.openbravo.model.common.order.OrderLineOffer;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
+import org.openbravo.retail.posterminal.utility.InvoiceUtils;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 
@@ -66,6 +67,9 @@ public class OrderGroupingProcessor {
   @Inject
   @Any
   private Instance<FinishInvoiceHook> invoiceProcesses;
+
+  @Inject
+  private InvoiceUtils iu;
 
   private static final Logger log = LogManager.getLogger();
 
@@ -277,6 +281,9 @@ public class OrderGroupingProcessor {
       invoice.setDocumentNo(
           getInvoiceDocumentNo(invoice.getTransactionDocument(), invoice.getDocumentType()));
       finishInvoice(invoice, currentDate);
+      if (invoice.isCashVAT()) {
+        iu.createCashVat(invoice);
+      }
       executeHooks(invoice, cashUpId);
     }
 
