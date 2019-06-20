@@ -409,8 +409,10 @@ public class Product extends ProcessHQLQuery {
     query.append(" select");
     query.append(crossStoreRegularProductsHQLProperties.getHqlSelect());
     query.append(" from Product product");
+    query.append(" left join product.oBRETCOProlProductList pli");
+    query.append(" with pli.obretcoProductlist.id = :productListId");
     if (!useGetForProductImages) {
-      query.append(" left outer join product.image img");
+      query.append(" left join product.image img");
     }
     query.append(" where $filtersCriteria");
     query.append(" and $hqlCriteria");
