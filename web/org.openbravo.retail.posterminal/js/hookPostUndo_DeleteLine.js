@@ -20,7 +20,6 @@ OB.UTIL.HookManager.registerHook('OBPOS_PostUndo_DeleteLine', function(
       return l.get('id') === delivery.id;
     });
     if (line) {
-      line.set('nameDelivery', delivery.nameDelivery);
       line.set('obrdmDeliveryMode', delivery.obrdmDeliveryMode);
       line.set('obrdmDeliveryDate', delivery.obrdmDeliveryDate);
       line.set('obrdmDeliveryTime', delivery.obrdmDeliveryTime);

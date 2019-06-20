@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015 Openbravo S.L.U.
+ * Copyright (C) 2015-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -20,7 +20,7 @@ enyo.kind({
       message: this.owner.owner.args.message,
       approvalReason: this.owner.owner.$.bodyContent.$.approvalReason.getValue()
     });
-    this.owner.owner.args.callback();
+    this.owner.owner.approved = true;
     this.doHideThisPopup();
   },
   init: function(model) {
@@ -79,6 +79,12 @@ enyo.kind({
   },
   events: {
     onApprovalReason: ''
+  },
+  executeOnShow: function() {
+    this.approved = false;
+  },
+  executeOnHide: function() {
+    this.args.callback(this.approved);
   },
   initComponents: function() {
     this.inherited(arguments);

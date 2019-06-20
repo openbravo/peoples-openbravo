@@ -7,8 +7,6 @@
  ************************************************************************************
  */
 
-/*global _ */
-
 OB.UTIL.HookManager.registerHook('OBPOS_PostAddProductToOrder', function(
   args,
   callbacks
@@ -79,12 +77,6 @@ OB.UTIL.HookManager.registerHook('OBPOS_PostAddProductToOrder', function(
             : order.get('obrdmDeliveryTimeProperty')
         );
       }
-      orderLine.set(
-        'nameDelivery',
-        _.find(OB.MobileApp.model.get('deliveryModes'), function(dm) {
-          return dm.id === orderLine.get('obrdmDeliveryMode');
-        }).name
-      );
     }
   }
   OB.UTIL.HookManager.callbackExecutor(args, callbacks);

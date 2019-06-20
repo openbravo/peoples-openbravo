@@ -853,15 +853,13 @@
                   [
                     {
                       label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                      isConfirmButton: true,
-                      action: function() {
-                        OB.UTIL.localStorage.clear();
-                        OB.UTIL.showLoading(true);
-                        OB.MobileApp.model.logout();
-                      }
+                      isConfirmButton: true
                     }
                   ],
                   {
+                    autoDismiss: false,
+                    closeOnEscKey: false,
+                    execHideFunction: true,
                     onHideFunction: function() {
                       OB.UTIL.localStorage.clear();
                       OB.UTIL.showLoading(true);
@@ -896,15 +894,13 @@
                 [
                   {
                     label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                    isConfirmButton: true,
-                    action: function() {
-                      OB.UTIL.localStorage.clear();
-                      OB.UTIL.showLoading(true);
-                      OB.MobileApp.model.logout();
-                    }
+                    isConfirmButton: true
                   }
                 ],
                 {
+                  autoDismiss: false,
+                  closeOnEscKey: false,
+                  execHideFunction: true,
                   onHideFunction: function() {
                     OB.UTIL.localStorage.clear();
                     OB.UTIL.showLoading(true);
@@ -1147,15 +1143,13 @@
                   [
                     {
                       label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                      isConfirmButton: true,
-                      action: function() {
-                        OB.UTIL.localStorage.clear();
-                        OB.UTIL.showLoading(true);
-                        OB.MobileApp.model.logout();
-                      }
+                      isConfirmButton: true
                     }
                   ],
                   {
+                    autoDismiss: false,
+                    closeOnEscKey: false,
+                    execHideFunction: true,
                     onHideFunction: function() {
                       OB.UTIL.localStorage.clear();
                       OB.UTIL.showLoading(true);

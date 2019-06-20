@@ -15,7 +15,6 @@ OB.UTIL.HookManager.registerHook('OBPOS_PreDeleteLine', function(args, c) {
     undoDeliveryModes.push({
       id: line.get('id'),
       prodcutId: line.get('product').get('id'),
-      nameDelivery: line.get('nameDelivery'),
       obrdmDeliveryMode: line.get('obrdmDeliveryMode'),
       obrdmDeliveryDate: line.get('obrdmDeliveryDate'),
       obrdmDeliveryTime: line.get('obrdmDeliveryTime')

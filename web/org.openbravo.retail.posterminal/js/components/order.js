@@ -1536,6 +1536,20 @@ enyo.kind({
       },
       this
     );
+    this.order.get('lines').on(
+      'add change:obrdmDeliveryMode',
+      function(line) {
+        if (line.get('obrdmDeliveryMode')) {
+          line.set(
+            'nameDelivery',
+            _.find(OB.MobileApp.model.get('deliveryModes'), function(dm) {
+              return dm.id === line.get('obrdmDeliveryMode');
+            }).name
+          );
+        }
+      },
+      this
+    );
     this.order.on(
       'calculatedReceipt updateServicePrices',
       function() {
