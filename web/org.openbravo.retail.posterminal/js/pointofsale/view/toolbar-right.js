@@ -289,15 +289,15 @@ enyo.kind({
   rfidOffIcon: 'obObposPointOfSaleUiButtonTabScan-status-rfidIcon_rfidOff',
   rfidOfflineIcon:
     'obObposPointOfSaleUiButtonTabScan-status-rfidIcon_rfidOffline',
-  //  components: [{
-  //    name: 'status',
-  //    classes: 'obObposPointOfSaleUiButtonTabScan-status',
-  //    components: [{
-  //      name: 'rfidIcon',
-  //      showing: false,
-  //      classes: 'obObposPointOfSaleUiButtonTabScan-status-rfidIcon'
-  //    }]
-  //  }],
+  // components: [{
+  //   name: 'status',
+  //   classes: 'obObposPointOfSaleUiButtonTabScan-status',
+  //   components: [{
+  //     name: 'rfidIcon',
+  //     showing: false,
+  //     classes: 'obObposPointOfSaleUiButtonTabScan-status-rfidIcon'
+  //   }]
+  // }],
   init: function(model) {
     this.model = model;
     //    this.$.lbl.addClass('obObposPointOfSaleUiButtonTabScan-lbl');
@@ -352,23 +352,6 @@ enyo.kind({
     OB.MobileApp.view.scanningFocus(true);
 
     return true;
-  },
-  pointOfSaleLoad: function(inSender, inEvent) {
-    if (OB.UTIL.RfidController.get('connectionLost')) {
-      this.$.rfidIcon.addClass(this.rfidOfflineIcon);
-    } else {
-      this.$.rfidIcon.removeClass(this.rfidOfflineIcon);
-    }
-    if (
-      !OB.UTIL.RfidController.get('isRFIDEnabled') ||
-      !OB.UTIL.RfidController.get('reconnectOnScanningFocus')
-    ) {
-      this.$.rfidIcon.addClass(this.rfidOffIcon);
-      this.$.rfidIcon.removeClass(this.rfidOnIcon);
-    } else {
-      this.$.rfidIcon.addClass(this.rfidOnIcon);
-      this.$.rfidIcon.removeClass(this.rfidOffIcon);
-    }
   }
   //  pointOfSaleLoad: function (inSender, inEvent) {
   //    if (OB.UTIL.RfidController.get('connectionLost')) {
@@ -388,7 +371,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabBrowse',
-  kind: 'OB.UI.ToolbarButtonTab',
+  kind: 'OB.UI.ComplexButton',
   mainClass: 'obObPosPointOfSaleUiButtonTabBrowse',
   buttonBeforeClass: 'obObPosPointOfSaleUiButtonTabBrowse-buttonBefore',
   events: {
@@ -442,7 +425,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabSearchCharacteristic',
-  kind: 'OB.UI.ToolbarButtonTab',
+  kind: 'OB.UI.ComplexButton',
   mainClass: 'obObPosPointOfSaleUiButtonTabSearchCharacteristic',
   tabPanel: 'searchCharacteristic',
   i18nLabel: 'OBPOS_LblSearch',
@@ -503,7 +486,7 @@ enyo.kind({
     ticketLines: null
   },
   mainClass: 'obObPosPointOfSaleUiButtonTabEditLine',
-  kind: 'OB.UI.ToolbarButtonTab',
+  kind: 'OB.UI.ComplexButton',
   tabPanel: 'edit',
   i18nLabel: 'OBPOS_LblEdit',
   buttonBeforeClass: 'obObPosPointOfSaleUiButtonTabEditLine-buttonBefore',
