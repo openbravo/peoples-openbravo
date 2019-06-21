@@ -119,46 +119,76 @@
 
         validatePrice()
           .then(function() {
-            // Finally price is editable...
-            OB.UTIL.Approval.requestApproval(
-              view.model,
-              'OBPOS_approval.setPrice',
-              function(approved, supervisor, approvalType) {
-                if (approved) {
-                  var approvals = receipt.get('approvals') || [];
-                  approvals.push({
-                    approvalType: {
-                      approval: 'OBPOS_approval.setPrice',
-                      message: 'OBPOS_approval.setPriceMessage',
-                      params: [
-                        selectedReceiptLine.get('product').get('_identifier'),
-                        OB.I18N.formatCurrency(selectedReceiptLine.getGross()),
-                        OB.I18N.formatCurrency(price)
-                      ]
-                    },
-                    userContact: supervisor.get('id'),
-                    created: new Date().getTime()
+            var callback = function() {
+                if (
+                  OB.MobileApp.model.get('priceModificationReasons').length > 0
+                ) {
+                  view.doShowPopup({
+                    popup: 'modalPriceModification',
+                    args: {
+                      callback: setPrices,
+                      selectedModels: selectedReceiptLines,
+                      receipt: receipt,
+                      line: selectedReceiptLine
+                    }
                   });
-                  receipt.set('approvals', approvals);
-                  if (
-                    OB.MobileApp.model.get('priceModificationReasons').length >
-                    0
-                  ) {
-                    view.doShowPopup({
-                      popup: 'modalPriceModification',
-                      args: {
-                        callback: setPrices,
-                        selectedModels: selectedReceiptLines,
-                        receipt: receipt,
-                        line: selectedReceiptLine
-                      }
-                    });
-                  } else {
-                    setPrices();
-                  }
+                } else {
+                  setPrices();
+                }
+              },
+              needToLookForServices = false,
+              i = 0;
+
+            if (
+              !OB.MobileApp.model.hasPermission(
+                'OBPOS_ChangeServicePriceNeedApproval',
+                true
+              )
+            ) {
+              // Iterate Selected Lines to look for services
+              for (i; i < selectedReceiptLines.length; i++) {
+                needToLookForServices = true;
+                if (
+                  selectedReceiptLines[i].get('product').get('productType') ===
+                  'I'
+                ) {
+                  needToLookForServices = false;
+                  break;
                 }
               }
-            );
+            }
+
+            if (!needToLookForServices) {
+              // Finally price is editable...
+              OB.UTIL.Approval.requestApproval(
+                view.model,
+                'OBPOS_approval.setPrice',
+                function(approved, supervisor, approvalType) {
+                  if (approved) {
+                    var approvals = receipt.get('approvals') || [];
+                    approvals.push({
+                      approvalType: {
+                        approval: 'OBPOS_approval.setPrice',
+                        message: 'OBPOS_approval.setPriceMessage',
+                        params: [
+                          selectedReceiptLine.get('product').get('_identifier'),
+                          OB.I18N.formatCurrency(
+                            selectedReceiptLine.getGross()
+                          ),
+                          OB.I18N.formatCurrency(price)
+                        ]
+                      },
+                      userContact: supervisor.get('id'),
+                      created: new Date().getTime()
+                    });
+                    receipt.set('approvals', approvals);
+                    callback();
+                  }
+                }
+              );
+            } else {
+              callback();
+            }
           })
           .catch(function() {
             // Ignore. User cancelled action
