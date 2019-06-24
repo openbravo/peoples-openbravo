@@ -13968,8 +13968,92 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 /*               File: menuissue.js              */
 /*             Folder: js/components             */
 /***********************   ***********************/
+
 /*
 # Component: OBRDM.UI.MenuIssueSO
 # Inherits: OB.UI.MenuAction
  */
 .obrdmUiMenuIssueSO {}
+
+/***********************   ***********************/
+/*       File: modalwarehouseselector.js         */
+/*             Folder: js/components             */
+/***********************   ***********************/
+
+/*
+# Component: OBRDM.UI.ListWarehouseLine
+# Inherits: OB.UI.listItemButton
+*/
+.obrdmUiListWarehouseLine {}
+
+.obrdmUiListWarehouseLine-line {
+  line-height: 23px;
+  width: 100%;
+}
+
+.obrdmUiListWarehouseLine-line-organization {
+  float: left;
+  width: 75%;
+}
+
+.obrdmUiListWarehouseLine-line-quantity {
+  float: left;
+  width: 20%;
+  font-weight: bold;
+  text-align: right;
+}
+
+.obrdmUiListWarehouseLine-line-element1 {
+  clear: both;
+}
+
+.obrdmUiListWarehouse {
+
+}
+
+.obrdmUiListWarehouse-container1 {
+  float: left;
+  width: 100%;
+  touch-action: none;
+}
+
+.obrdmUiListWarehouse-container1-container1 {
+  border-bottom: 1px solid #cccccc;
+}
+
+.obrdmUiListWarehouse-container1-container1-container1 {
+  float: left;
+  width: 100%;
+  touch-action: none;
+}
+
+.obrdmUiListWarehouse-container1-container1-container1-stWarehouseSelector {
+
+}
+
+
+.obrdmUiListWarehouse-container1-container1-container1-renderLoading {
+  border-bottom: 1px solid #cccccc;
+  padding: 20px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 30px;
+  color: #cccccc;
+
+}
+
+
+.obrdmUiListWarehouse-container1-container1-container1-renderError {
+  border-bottom: 1px solid #cccccc;
+  padding: 20px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 30px;
+  color: #cccccc;
+}
+
+/*
+# Component: OBRDM.UI.ModalWarehouseSelector
+# Inherits: OB.UI.Modal
+*/
+.obrdmUiModalWarehouseSelector {}

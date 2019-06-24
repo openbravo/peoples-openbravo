@@ -13,10 +13,11 @@
 enyo.kind({
   name: 'OBRDM.UI.ListWarehouseLine',
   kind: 'OB.UI.listItemButton',
+  classes: 'obrdmUiListWarehouseLine',
   components: [
     {
       name: 'line',
-      classes: 'obrdm-listwarehouseline-line',
+      classes: 'obrdmUiListWarehouseLine-line obrdm-listwarehouseline-line',
       components: [
         {
           classes: 'obrdm-listwarehouseline-organization',
@@ -27,7 +28,7 @@ enyo.kind({
           name: 'quantity'
         },
         {
-          classes: 'obrdm-clear-both'
+          classes: 'obrdmUiListWarehouseLine-line-element1'
         }
       ]
     }
@@ -51,20 +52,22 @@ enyo.kind({
 /* Scrollable table (body of modal) */
 enyo.kind({
   name: 'OBRDM.UI.ListWarehouse',
-  classes: 'row-fluid',
+  classes: 'obrdmUiListWarehouse row-fluid',
   components: [
     {
-      classes: 'span12',
+      classes: 'obrdmUiListWarehouse-container1',
       components: [
         {
-          classes: 'row-fluid obrdm-listwarehouse',
+          classes: 'obrdmUiListWarehouse-container1-container1 row-fluid',
           components: [
             {
-              classes: 'span12',
+              classes: 'obrdmUiListWarehouse-container1-container1-container1',
               components: [
                 {
                   name: 'stWarehouseSelector',
                   kind: 'OB.UI.ScrollableTable',
+                  classes:
+                    'obrdmUiListWarehouse-container1-container1-container1-stWarehouseSelector',
                   scrollAreaMaxHeight: '420px',
                   renderLine: 'OBRDM.UI.ListWarehouseLine',
                   renderEmpty: 'OB.UI.RenderEmpty'
@@ -72,7 +75,7 @@ enyo.kind({
                 {
                   name: 'renderLoading',
                   classes:
-                    'obrdm-listwarehouse obrdm-listwarehouse-rendercomponent',
+                    'obrdmUiListWarehouse-container1-container1-container1-renderLoading',
                   showing: false,
                   initComponents: function() {
                     this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
@@ -81,7 +84,7 @@ enyo.kind({
                 {
                   name: 'renderError',
                   classes:
-                    'obrdm-listwarehouse obrdm-listwarehouse-rendercomponent',
+                    'obrdmUiListWarehouse-container1-container1-container1-renderError',
                   showing: false,
                   initComponents: function() {
                     this.setContent(
@@ -126,6 +129,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.Modal',
   name: 'OBRDM.UI.ModalWarehouseSelector',
+  classes: 'obrdmUiModalWarehouseSelector',
   i18nHeader: 'OBRDM_LblSelectWarehouse',
   events: {
     onHideThisPopup: ''
