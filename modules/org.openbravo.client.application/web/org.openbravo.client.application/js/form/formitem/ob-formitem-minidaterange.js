@@ -519,6 +519,7 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
       return;
     }
 
+    delete this.previousLazyFilterValue;
     if (this.expandSingleValue()) {
       this.form.grid.performAction();
     }
