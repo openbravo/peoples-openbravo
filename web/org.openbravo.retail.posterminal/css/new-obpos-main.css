@@ -13964,4 +13964,12 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 */
 .ObUiButtonApplyDeliveryAmount {}
 
-
+/***********************   ***********************/
+/*               File: menuissue.js              */
+/*             Folder: js/components             */
+/***********************   ***********************/
+/*
+# Component: OBRDM.UI.MenuIssueSO
+# Inherits: OB.UI.MenuAction
+ */
+.obrdmUiMenuIssueSO {}
