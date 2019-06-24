@@ -1416,7 +1416,7 @@ public class AdvancedQueryBuilder {
     int columnsInDescending = StringUtils.countMatches(orderBy, "-");
 
     // ... and columnName desc/DESC
-    Pattern p = Pattern.compile(" (desc|DESC)[^a-zA-Z0-9]");
+    Pattern p = Pattern.compile(" (desc|DESC)([^a-zA-Z0-9]|$)");
     Matcher m = p.matcher(orderBy);
     while (m.find()) {
       columnsInDescending++;
