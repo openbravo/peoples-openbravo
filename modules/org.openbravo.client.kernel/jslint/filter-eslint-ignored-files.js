@@ -45,5 +45,8 @@ if (fs.existsSync(ignoreFile)) {
   };
 }
 
+/*
+ Apply the pathFilterFunction after removing the two first values of the argv array: "node" and the path to this script.
+ */
 process.argv.slice(2).forEach(pathFilterFunction);
 process.stdout.write(result.join(' '));
