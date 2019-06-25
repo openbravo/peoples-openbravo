@@ -68,7 +68,6 @@ enyo.kind({
                   kind: 'OB.UI.ScrollableTable',
                   classes:
                     'obrdmUiListWarehouse-container1-container1-container1-stWarehouseSelector',
-                  scrollAreaMaxHeight: '420px',
                   renderLine: 'OBRDM.UI.ListWarehouseLine',
                   renderEmpty: 'OB.UI.RenderEmpty'
                 },

@@ -14028,7 +14028,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 }
 
 .obrdmUiListWarehouse-container1-container1-container1-stWarehouseSelector {
-
+  max-height: 420px;
 }
 
 
@@ -14057,3 +14057,68 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 # Inherits: OB.UI.Modal
 */
 .obrdmUiModalWarehouseSelector {}
+
+/***********************   ***********************/
+/*           File: orderlineinfopopup.js         */
+/*             Folder: js/components             */
+/***********************   ***********************/
+
+/*
+# Component: OBRDM.UI.OrderLineInfoPopup
+# Inherits: [OB.UI.Modal]
+*/
+.obrdmUiOrderLineInfoPopup {
+  top: 44px;
+}
+
+.obrdmUiOrderLineInfoBody {
+
+}
+
+.obrdmUiOrderLineInfoBody-table {
+  /* Inherits: [OBRDM.UI.OrderLineInfoTable] */
+}
+
+.obrdmUiOrderLineInfoBody-buttonFooter {
+  display: table;
+  width: 100%;
+  padding-bottom: 20px;
+}
+
+.obrdmUiOrderLineInfoBody-buttonFooter-infoButtons {
+  display: table-cell;
+  text-align: center;
+}
+
+.obrdmUiOrderLineInfoBody-buttoncancel {
+  /* Inherits: [OBRDM.UI.OrderLineInfoCloseBtn] */
+}
+
+/*
+# Component: OBRDM.UI.OrderLineInfoLine
+*/
+.obrdmUiOrderLineInfoLine {
+  display: table;
+  width: 100%;
+  padding: 0px 0px 16px 0px;
+}
+
+.obrdmUiOrderLineInfoLine-label {
+  display: table-cell;
+  width: 35%;
+  text-align: right;
+  padding: 0px 10px 10px 10px;
+}
+
+.obrdmUiOrderLineInfoLine-value {
+  display: table-cell;
+  width: 65%;
+  padding: 0px 20px 10px 20px;
+}
+
+/*
+# Component: OBRDM.UI.OrderLineInfoTable
+*/
+.obrdmUiOrderLineInfoTable {
+  padding: 28px;
+}
