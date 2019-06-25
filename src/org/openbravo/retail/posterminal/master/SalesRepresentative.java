@@ -20,6 +20,8 @@ import javax.inject.Inject;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
@@ -56,11 +58,27 @@ public class SalesRepresentative extends ProcessHQLQuery {
 
     String operator = lastUpdated == null ? " AND " : " OR ";
 
-    hqlQueries.add("select" + regularSalesRepresentativeHQLProperties.getHqlSelect() //
-        + "from ADUser user " + "where $filtersCriteria AND"
-        + " exists (select 1 from BusinessPartner bp where user.businessPartner = bp AND bp.isSalesRepresentative = true AND (bp.$naturalOrgCriteria)) "
-        + "AND ((user.$incrementalUpdateCriteria) " + operator
-        + " (user.businessPartner.$incrementalUpdateCriteria)) AND (user.$naturalOrgCriteria) AND (user.$readableSimpleClientCriteria) order by user.name asc, user.id");
+    String hqlQuery = "SELECT " + regularSalesRepresentativeHQLProperties.getHqlSelect() //
+        + "FROM ADUser user " + "WHERE $filtersCriteria AND "
+        + "EXISTS (SELECT 1 FROM BusinessPartner bp WHERE user.businessPartner = bp AND bp.isSalesRepresentative = true AND (bp.$naturalOrgCriteria)) ";
+
+    try {
+      if (Preferences
+          .getPreferenceValue("OBPOS_OrgAccessInSalesRepresentative", true,
+              OBContext.getOBContext().getCurrentClient(),
+              OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+              OBContext.getOBContext().getRole(), null)
+          .equals("Y")) {
+        hqlQuery += "AND EXISTS (SELECT 1 FROM ADUserRoles userRoles, ADRoleOrganization orgAccess "
+            + "WHERE userRoles.role = orgAccess.role AND  userRoles.userContact.id = user.id AND orgAccess.organization.id = :orgId AND orgAccess.active = true) ";
+      }
+    } catch (Exception e) {
+    }
+
+    hqlQuery += "AND ((user.$incrementalUpdateCriteria) " + operator
+        + " (user.businessPartner.$incrementalUpdateCriteria)) AND (user.$naturalOrgCriteria) AND (user.$readableSimpleClientCriteria) order by user.name asc, user.id";
+
+    hqlQueries.add(hqlQuery);
 
     return hqlQueries;
   }
@@ -68,5 +86,22 @@ public class SalesRepresentative extends ProcessHQLQuery {
   @Override
   protected boolean bypassPreferenceCheck() {
     return true;
+  }
+
+  @Override
+  protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
+    Map<String, Object> parameters = new HashMap<String, Object>();
+    try {
+      if (Preferences
+          .getPreferenceValue("OBPOS_OrgAccessInSalesRepresentative", true,
+              OBContext.getOBContext().getCurrentClient(),
+              OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+              OBContext.getOBContext().getRole(), null)
+          .equals("Y")) {
+        parameters.put("orgId", jsonsent.getString("organization"));
+      }
+    } catch (Exception e) {
+    }
+    return parameters;
   }
 }
