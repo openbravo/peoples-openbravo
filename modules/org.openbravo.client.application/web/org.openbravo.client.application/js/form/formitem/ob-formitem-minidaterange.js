@@ -831,12 +831,19 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
         enterOnEmptyItem = !item.getValue() && !item.getEnteredValue();
         this.expandSingleValue();
         if (sourceGrid && sourceGrid.lazyFiltering && sourceGrid.sorter) {
-          if (item.previousLazyFilterValue !== item.mapValueToDisplay()) {
+          if (item.previousLazyFilterValue === undefined && enterOnEmptyItem) {
+            // pressing enter without having edited the filter
+            item.previousLazyFilterValue = item.mapValueToDisplay();
+          } else if (
+            item.previousLazyFilterValue !== item.mapValueToDisplay()
+          ) {
+            // filter has changed
             sourceGrid.filterHasChanged = true;
             sourceGrid.sorter.enable();
             item.previousLazyFilterValue = item.mapValueToDisplay();
             return false;
           } else if (!enterOnEmptyItem || item.previousLazyFilterValue !== '') {
+            // filter has not changed: let grid decide if filtering should be performed
             if (enterOnEmptyItem) {
               item.previousLazyFilterValue = '';
             }
