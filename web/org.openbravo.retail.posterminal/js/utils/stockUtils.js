@@ -152,34 +152,47 @@
           }
           if (!args.allowToAdd) {
             if (args.askConfirmation) {
-              OB.UTIL.showConfirmation.display(
-                OB.I18N.getLabel('OBPOS_NotEnoughStock'),
-                args.notAllowMessage,
-                [
-                  {
-                    label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                    action: function() {
+              OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
+                popup: 'OBPOSPointOfSale_UI_Modals_ModalStockDiscontinued',
+                args: {
+                  header: OB.I18N.getLabel('OBPOS_NotEnoughStock'),
+                  message: args.notAllowMessage,
+                  product: product,
+                  buttons: [
+                    {
+                      label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                      action: function() {
+                        OB.UTIL.StockUtils.navigateToStockScreen(
+                          product,
+                          warehouse,
+                          stockScreen
+                        );
+                        if (callback && callback instanceof Function) {
+                          callback(false);
+                        }
+                      }
+                    }
+                  ],
+                  options: {
+                    onHideFunction: function() {
                       OB.UTIL.StockUtils.navigateToStockScreen(
                         product,
                         warehouse,
                         stockScreen
                       );
+                      if (callback && callback instanceof Function) {
+                        callback(false);
+                      }
                     }
-                  }
-                ],
-                {
-                  onHideFunction: function() {
-                    OB.UTIL.StockUtils.navigateToStockScreen(
-                      product,
-                      warehouse,
-                      stockScreen
-                    );
+                  },
+                  acceptLine: function(accept, newAttrs) {
+                    if (accept && newAttrs) {
+                      attrs = Object.assign(attrs, newAttrs);
+                    }
+                    callback(accept);
                   }
                 }
-              );
-              if (callback && callback instanceof Function) {
-                callback(false);
-              }
+              });
             } else {
               if (callback && callback instanceof Function) {
                 callback(false);

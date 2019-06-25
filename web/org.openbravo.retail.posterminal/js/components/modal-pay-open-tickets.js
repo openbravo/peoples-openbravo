@@ -619,7 +619,6 @@ enyo.kind({
       }
     });
 
-    OB.UTIL.showLoading(true);
     this.doHideThisPopup();
     // Check if the selected orders are payable by the 'Pay Open Tickets' flow
     for (i = 0; i < checkedMultiOrders.length; i++) {
@@ -684,7 +683,6 @@ enyo.kind({
         );
       }
       OB.UTIL.ProcessController.finish('payOpenTicketsValidation', execution);
-      OB.UTIL.showLoading(false);
       return;
     }
     this.owner.owner.model.deleteMultiOrderList();
@@ -747,7 +745,6 @@ enyo.kind({
                 'payOpenTicketsValidation',
                 execution
               );
-              OB.UTIL.showLoading(false);
               OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
             }
           },
@@ -765,7 +762,6 @@ enyo.kind({
     this.doHideThisPopup();
   },
   showPaymentView: function() {
-    OB.UTIL.showLoading(false);
     this.doTabChange({
       tabPanel: 'payment',
       keyboard: 'toolbarpayment',
