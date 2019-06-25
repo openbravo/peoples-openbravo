@@ -6329,18 +6329,12 @@
       }
 
       if (
-        isDeleted ||
-        (!this.get('payOnCredit') && !this.get('completeTicket'))
-      ) {
+      isDeleted || (!this.get('payOnCredit') && !this.get('completeTicket'))) {
         finalCallback();
         return;
       }
 
-      if (
-        (this.get('bp').get('invoiceTerms') === 'I' &&
-          this.get('generateInvoice')) ||
-        this.get('payOnCredit')
-      ) {
+      if ((this.get('bp').get('invoiceTerms') === 'I' && this.get('generateInvoice')) || this.get('payOnCredit')) {
         receiptShouldBeInvoiced = true;
       } else if (this.get('bp').get('invoiceTerms') === 'O') {
         if (this.get('deliver')) {
@@ -6350,9 +6344,8 @@
         if (this.get('generateShipment')) {
           receiptShouldBeInvoiced = true;
         } else {
-          deliveredNotInvoicedLine = _.find(this.get('lines').models, function(
-            line
-          ) {
+          deliveredNotInvoicedLine = _.find(this.get('lines').models, function (
+          line) {
             return line.getDeliveredQuantity() !== line.get('invoicedQuantity');
           });
           receiptShouldBeInvoiced = !_.isUndefined(deliveredNotInvoicedLine);
