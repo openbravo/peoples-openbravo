@@ -135,7 +135,9 @@
       window: 'retail.pointofsale',
       name: 'keyboard-Backspace',
       properties: {
-        label: '\u232B'
+        label: '\u232B',
+        useIcon: true,
+        cssClasses: 'btn-icon btn-icon-backspace'
       },
       action: 'del'
     })
@@ -145,7 +147,9 @@
       window: 'retail.pointofsale',
       name: 'keyboard-Enter',
       properties: {
-        label: '\u21B5'
+        label: '\u21B5',
+        useIcon: true,
+        cssClasses: 'btn-icon btn-icon-enter'
       },
       action: 'OK'
     })
