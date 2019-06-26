@@ -13976,6 +13976,37 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 .obrdmUiMenuIssueSO {}
 
 /***********************   ***********************/
+/*             File: orderselector.js            */
+/*             Folder: js/components             */
+/***********************   ***********************/
+
+/*
+# Component: OBRDM.UI.ButtonSelectAll
+# Inherits: [OB.UI.SmallButton]
+*/
+.obrdmUiButtonSelectAll {
+  display: inline-block;
+  border: none;
+  text-decoration: none;
+  cursor: pointer;
+  opacity: 0.999;
+  font-weight: normal;
+  height: 30px;
+  font-size: 16px;
+  padding: 5px 15px 7px 15px;
+  background-color: #6cb33f;
+  color: white;
+  width: 160px;
+  margin: 0px 9px 8px 0px;
+}
+
+@media all and (max-width: 800px) {
+  .obrdmUiButtonSelectAll {
+    height: 45px;
+  }
+}
+
+/***********************   ***********************/
 /*       File: modalwarehouseselector.js         */
 /*             Folder: js/components             */
 /***********************   ***********************/

@@ -56,7 +56,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.ButtonNew',
-  kind: 'OB.UI.ToolbarButton',
+  kind: 'OB.UI.ComplexButton',
   i18nContent: 'OBMOBC_New',
   classes: 'obUiButtonNew',
   buttonBeforeClass: 'obUiButtonNew-buttonBefore',
@@ -83,7 +83,7 @@ enyo.kind({
     this.isLocked = false;
     this.setDisabledIfSynchronized();
   },
-  setDisabled: function(value) {
+  setButtonDisabled: function(value) {
     this.lastDisabledStatus = value;
     this.setDisabledIfSynchronized();
   },
@@ -99,13 +99,13 @@ enyo.kind({
       return true;
     }
     this.disabled = value;
-    this.setAttribute('disabled', value);
+    this.setDisabled(value);
   },
   disabledButton: function(inSender, inEvent) {
     this.updateDisabled(inEvent.disableButtonNew || inEvent.status);
   },
   updateDisabled: function(isDisabled) {
-    this.setDisabled(isDisabled);
+    this.setButtonDisabled(isDisabled);
     if (isDisabled) {
       this.removeClass('obUiButtonNew_iconNew');
     } else {
@@ -161,7 +161,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.ButtonDelete',
-  kind: 'OB.UI.ToolbarButton',
+  kind: 'OB.UI.ComplexButton',
   i18nContent: 'OBMOBC_Delete',
   classes: 'obUiButtonDelete',
   buttonBeforeClass: 'obUiButtonDelete-buttonBefore',
@@ -192,7 +192,7 @@ enyo.kind({
     this.isLocked = false;
     this.setDisabledIfSynchronized();
   },
-  setDisabled: function(value) {
+  setButtonDisabled: function(value) {
     this.lastDisabledStatus = value;
     this.setDisabledIfSynchronized();
   },
@@ -208,13 +208,13 @@ enyo.kind({
       return true;
     }
     this.disabled = value;
-    this.setAttribute('disabled', value);
+    this.setDisabled(value);
   },
   disabledButton: function(inSender, inEvent) {
     this.updateDisabled(inEvent.status);
   },
   updateDisabled: function(isDisabled) {
-    this.setDisabled(isDisabled);
+    this.setButtonDisabled(isDisabled);
     if (isDisabled) {
       this.removeClass('obUiButtonDelete_iconDelete');
     } else {

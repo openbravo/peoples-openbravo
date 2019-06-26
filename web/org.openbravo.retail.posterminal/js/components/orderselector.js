@@ -12,7 +12,7 @@
 enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OBRDM.UI.ButtonSelectAll',
-  classes: 'btnlink-yellow btnlink btnlink-small obrdm-button-select-all',
+  classes: 'obrdmUiButtonSelectAll',
   i18nLabel: 'OBPOS_lblSelectAll',
   events: {
     onSelectAll: ''
