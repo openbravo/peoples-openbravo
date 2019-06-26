@@ -508,7 +508,10 @@ enyo.kind({
                       if (_.last(txt) === '%') {
                         options.percentaje = true;
                       }
-                      amount = OB.DEC.number(OB.I18N.parseNumber(txt));
+                      amount = OB.DEC.toNumber(
+                        OB.I18N.parseNumber(txt),
+                        payment.obposPosprecision
+                      );
                       if (_.isNaN(amount)) {
                         OB.UTIL.showWarning(
                           OB.I18N.getLabel('OBPOS_NotValidNumber', [txt])
@@ -584,7 +587,10 @@ enyo.kind({
                     if (_.last(txt) === '%') {
                       options.percentaje = true;
                     }
-                    amount = OB.DEC.number(OB.I18N.parseNumber(txt));
+                    amount = OB.DEC.toNumber(
+                      OB.I18N.parseNumber(txt),
+                      payment.obposPosprecision
+                    );
                     if (_.isNaN(amount)) {
                       OB.UTIL.showWarning(
                         OB.I18N.getLabel('OBPOS_NotValidNumber', [txt])
