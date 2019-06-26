@@ -7,12 +7,12 @@
  ************************************************************************************
  */
 
-/*global OB, enyo, Backbone, _, $ */
+/*global OB, enyo, Backbone, _ */
 
 enyo.kind({
   name: 'OB.UI.OrderMultiSelect',
-  kind: 'Image',
   classes: 'obUiOrderMultiSelect',
+  kind: 'Image',
   src: '../org.openbravo.retail.posterminal/img/iconPinSelected.svg',
   sizing: 'cover',
   showing: false,
@@ -31,8 +31,8 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.OrderSingleSelect',
-  kind: 'Image',
   classes: 'obUiOrderSingleSelect',
+  kind: 'Image',
   src: '../org.openbravo.retail.posterminal/img/iconPinUnselected.svg',
   sizing: 'cover',
   events: {
@@ -87,14 +87,14 @@ enyo.kind({
       name: 'orderdetails'
     },
     {
-      classes: 'obUiOrderHeader-labelComponents-btnMultiSelection',
-      kind: 'OB.UI.OrderMultiSelect',
-      name: 'btnMultiSelection'
-    },
-    {
       classes: 'obUiOrderHeader-labelComponents-btnMultiSelectAll',
       kind: 'OB.UI.OrderMultiSelectAll',
       name: 'btnMultiSelectAll'
+    },
+    {
+      classes: 'obUiOrderHeader-labelComponents-btnMultiSelection',
+      kind: 'OB.UI.OrderMultiSelect',
+      name: 'btnMultiSelection'
     },
     {
       classes: 'obUiOrderHeader-labelComponents-btnSingleSelection',
@@ -141,7 +141,6 @@ enyo.kind({
   ],
   resizeHandler: function() {
     this.inherited(arguments);
-    this.setOrderDetailWidth(this.showPin, this.showSelectAll);
   },
   orderChanged: function(oldValue) {
     _.each(
@@ -163,19 +162,6 @@ enyo.kind({
       this
     );
   },
-  setOrderDetailWidth: function(pin, selectAll) {
-    this.showPin = pin;
-    this.showSelectAll = selectAll;
-    var w = $('#' + this.$.receiptLabels.id).width() - 25;
-    if (pin) {
-      w =
-        w - $('#' + this.$.receiptLabels.$.btnSingleSelection.id).width() - 20;
-    }
-    if (selectAll) {
-      w = w - $('#' + this.$.receiptLabels.$.btnMultiSelectAll.id).width() - 20;
-    }
-    $('#' + this.$.receiptLabels.$.orderdetails.id).width(w + 'px');
-  },
   showMultiSelected: function(inSender, inEvent) {
     if (inEvent.show) {
       this.$.receiptLabels.$.btnSingleSelection.setShowing(true);
@@ -184,7 +170,6 @@ enyo.kind({
     }
     this.$.receiptLabels.$.btnMultiSelection.setShowing(false);
     this.$.receiptLabels.$.btnMultiSelectAll.setShowing(false);
-    this.setOrderDetailWidth(inEvent.show, false);
     this.doToggleSelectionMode({
       multiselection: false
     });
@@ -199,7 +184,6 @@ enyo.kind({
       this.$.receiptLabels.$.btnMultiSelection.setShowing(false);
       this.$.receiptLabels.$.btnMultiSelectAll.setShowing(false);
     }
-    this.setOrderDetailWidth(true, inEvent.multiselection);
     this.doToggleSelectionMode(inEvent);
   },
   multiSelectAll: function(inSender, inEvent) {

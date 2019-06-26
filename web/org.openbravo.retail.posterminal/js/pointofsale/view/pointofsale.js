@@ -667,6 +667,7 @@ enyo.kind({
         {
           kind: 'OB.UI.MultiColumn',
           name: 'multiColumn',
+          classes: 'obObposPointOfSaleUiPointOfSale-mainSubWindow-multiColumn',
           handlers: {
             onChangeTotal: 'processChangeTotal'
           },
@@ -738,7 +739,9 @@ enyo.kind({
           rightToolbar: {
             kind: 'OB.OBPOSPointOfSale.UI.RightToolbarImpl',
             name: 'rightToolbar',
-            classes: 'obObposPointOfSaleUiPointOfSale-multiColumn-rightToolbar'
+            classes: 'obObposPointOfSaleUiPointOfSale-multiColumn-rightToolbar',
+            showMenu: true,
+            showWindowsMenu: true
           },
           rightPanel: {
             name: 'keyboardTabsPanel',
@@ -1476,6 +1479,9 @@ enyo.kind({
   },
   tabChange: function(inSender, inEvent) {
     this.switchBottomRightLayout(inEvent.tabPanel);
+    OB.POS.terminal.$.containerWindow
+      .getRoot()
+      .$.multiColumn.$.panels.removeClass('obUiMultiColumn-panels-showReceipt');
     this.leftToolbarDisabled(inSender, {
       status: inEvent.status || false,
       disableMenu:

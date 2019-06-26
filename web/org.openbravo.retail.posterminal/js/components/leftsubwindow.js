@@ -11,7 +11,7 @@
 
 enyo.kind({
   name: 'OB.UI.LeftSubWindow',
-  classes: 'obUiLeftSubWindow span6',
+  classes: 'obUiLeftSubWindow',
   showing: false,
   events: {
     onShowLeftSubWindow: '',

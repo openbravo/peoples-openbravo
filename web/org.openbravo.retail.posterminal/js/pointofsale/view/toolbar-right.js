@@ -68,6 +68,7 @@
 //});
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.RightToolbarImpl',
+  kind: 'OB.OBPOSPointOfSale.UI.ToolbarImpl',
   classes: 'obObposPointOfSaleUiRightToolbarImpl',
   published: {
     receipt: null
@@ -102,23 +103,9 @@ enyo.kind({
       i;
 
     for (i = 0; i < buttonContainerArray.length; i++) {
-      if (
-        buttonContainerArray[i].getComponents()[0].getComponents()[0]
-          .tabToOpen === tabName
-      ) {
-        buttonContainerArray[i]
-          .getComponents()[0]
-          .getComponents()[0]
-          .removeClass('active');
-        if (
-          buttonContainerArray[i].getComponents()[0].getComponents()[0]
-            .tabToOpen === tabName
-        ) {
-          buttonContainerArray[i]
-            .getComponents()[0]
-            .getComponents()[0]
-            .addClass('active');
-        }
+      buttonContainerArray[i].removeClass('active');
+      if (buttonContainerArray[i].tabToOpen === tabName) {
+        buttonContainerArray[i].addClass('active');
       }
     }
   },
@@ -129,11 +116,8 @@ enyo.kind({
       var componentArray = me.$.toolbar.getComponents(),
         i;
       for (i = 0; i < componentArray.length; i++) {
-        if (
-          componentArray[i].$.theButton.getComponents()[0].tabToOpen === name &&
-          componentArray[i].$.theButton.getComponents()[0].showing
-        ) {
-          return componentArray[i].$.theButton.getComponents()[0];
+        if (componentArray[i].tabToOpen === name && componentArray[i].showing) {
+          return componentArray[i];
         }
       }
       return null;
@@ -159,7 +143,6 @@ enyo.kind({
       defaultTab.tap(options);
     }
   },
-  kind: 'OB.UI.MultiColumn.Toolbar',
   buttons: [
     {
       kind: 'OB.OBPOSPointOfSale.UI.ButtonTabScan',
@@ -186,6 +169,11 @@ enyo.kind({
       name: 'toolbarBtnEdit',
       classes: 'obObposPointOfSaleUiRightToolbarImpl-buttons-toolbarBtnEdit',
       tabToOpen: 'edit'
+    },
+    {
+      kind: 'OB.OBPOSPointOfSale.UI.ButtonTabReceipt',
+      name: 'toolbarBtnReceipt',
+      classes: 'obObposPointOfSaleUiRightToolbarImpl-buttons-toolbarBtnReceipt'
     }
   ],
 
@@ -271,6 +259,45 @@ enyo.kind({
 // Toolbar buttons
 // ----------------------------------------------------------------------------
 enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.ButtonTabReceipt',
+  kind: 'OB.UI.ToolbarButtonTab',
+  classes: 'obObposPointOfSaleUiButtonTabReceipt',
+  events: {
+    onTabChange: '',
+    onRightToolbarDisabled: ''
+  },
+  handlers: {
+    onRightToolbarDisabled: 'disabledButton'
+  },
+  init: function(model) {
+    this.model = model;
+  },
+  disabledButton: function(inSender, inEvent) {
+    var isDisabled = inEvent.status;
+    this.isEnabled = !inEvent.status;
+    this.setDisabled(isDisabled);
+    if (!this.isEnabled) {
+      this.$.lbl.hide();
+    } else {
+      this.$.lbl.show();
+    }
+  },
+  i18nLabel: 'OBMOBC_LblReceipt',
+  tabPanel: 'receipt',
+  tap: function() {
+    if (!this.disabled) {
+      OB.POS.terminal.$.containerWindow
+        .getRoot()
+        .$.multiColumn.$.panels.addClass('obUiMultiColumn-panels-showReceipt');
+    }
+    OB.MobileApp.view.scanningFocus(true);
+  },
+  initComponents: function() {
+    this.inherited(arguments);
+  }
+});
+
+enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabScan',
   kind: 'OB.UI.ComplexButton',
   mainClass: 'obObposPointOfSaleUiButtonTabScan',
@@ -300,35 +327,36 @@ enyo.kind({
   // }],
   init: function(model) {
     this.model = model;
+    // [TODO] Fix or discuss where ad how RFID icon will be shown
     //    this.$.lbl.addClass('obObposPointOfSaleUiButtonTabScan-lbl');
-    if (OB.UTIL.RfidController.isRfidConfigured()) {
-      this.$.rfidIcon.show();
-    }
-    OB.UTIL.RfidController.on(
-      'change:connected change:connectionLost',
-      function(model) {
-        if (this.$.rfidIcon) {
-          if (OB.UTIL.RfidController.get('connectionLost')) {
-            this.$.rfidIcon.removeClass(this.rfidOnIcon);
-            this.$.rfidIcon.removeClass(this.rfidOffIcon);
-            this.$.rfidIcon.addClass(this.rfidOfflineIcon);
-          } else {
-            this.$.rfidIcon.removeClass(this.rfidOfflineIcon);
-            if (
-              OB.UTIL.RfidController.get('isRFIDEnabled') &&
-              OB.UTIL.RfidController.get('connected')
-            ) {
-              this.$.rfidIcon.removeClass(this.rfidOffIcon);
-              this.$.rfidIcon.addClass(this.rfidOnIcon);
-            } else {
-              this.$.rfidIcon.removeClass(this.rfidOnIcon);
-              this.$.rfidIcon.addClass(this.rfidOffIcon);
-            }
-          }
-        }
-      },
-      this
-    );
+    // if (OB.UTIL.RfidController.isRfidConfigured()) {
+    //   this.$.rfidIcon.show();
+    // }
+    // OB.UTIL.RfidController.on(
+    //   'change:connected change:connectionLost',
+    //   function(model) {
+    //     if (this.$.rfidIcon) {
+    //       if (OB.UTIL.RfidController.get('connectionLost')) {
+    //         this.$.rfidIcon.removeClass(this.rfidOnIcon);
+    //         this.$.rfidIcon.removeClass(this.rfidOffIcon);
+    //         this.$.rfidIcon.addClass(this.rfidOfflineIcon);
+    //       } else {
+    //         this.$.rfidIcon.removeClass(this.rfidOfflineIcon);
+    //         if (
+    //           OB.UTIL.RfidController.get('isRFIDEnabled') &&
+    //           OB.UTIL.RfidController.get('connected')
+    //         ) {
+    //           this.$.rfidIcon.removeClass(this.rfidOffIcon);
+    //           this.$.rfidIcon.addClass(this.rfidOnIcon);
+    //         } else {
+    //           this.$.rfidIcon.removeClass(this.rfidOnIcon);
+    //           this.$.rfidIcon.addClass(this.rfidOffIcon);
+    //         }
+    //       }
+    //     }
+    //   },
+    //   this
+    // );
   },
   disabledButton: function(inSender, inEvent) {
     this.isEnabled = !inEvent.status;
@@ -482,14 +510,14 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabEditLine',
+  kind: 'OB.UI.ComplexButton',
+  mainClass: 'obObPosPointOfSaleUiButtonTabEditLine',
+  buttonBeforeClass: 'obObPosPointOfSaleUiButtonTabEditLine-buttonBefore',
   published: {
     ticketLines: null
   },
-  mainClass: 'obObPosPointOfSaleUiButtonTabEditLine',
-  kind: 'OB.UI.ComplexButton',
   tabPanel: 'edit',
   i18nLabel: 'OBPOS_LblEdit',
-  buttonBeforeClass: 'obObPosPointOfSaleUiButtonTabEditLine-buttonBefore',
   events: {
     onTabChange: '',
     onRightToolbarDisabled: '',

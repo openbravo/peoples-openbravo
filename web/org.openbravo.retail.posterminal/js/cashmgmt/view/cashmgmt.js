@@ -17,6 +17,32 @@ enyo.kind({
   buttons: [
     {
       kind: 'OB.UI.ToolbarButton',
+      name: 'btnCashMgmt',
+      classes: 'obObposcashmgmtUiRightToolbarImpl-btnCashMgmt',
+      disabled: true,
+      i18nLabel: 'OBPOS_LblCashManagement'
+    },
+    {
+      kind: 'OB.UI.ToolbarButton',
+      name: 'btnToggleView',
+      classes: 'obObposcashmgmtUiRightToolbarImpl-btnToggleView',
+      // [TODO] Use complexbutton for this to be able to use an icon
+      i18nLabel: 'OBPOS_LblSwitchView',
+      tap: function() {
+        if (!this.disabled) {
+          var keypadClass = 'obUiMultiColumn-panels-showKeypad',
+            panels = OB.POS.terminal.$.containerWindow.getRoot().$
+              .cashupMultiColumn.$.panels;
+          if (panels.hasClass(keypadClass)) {
+            panels.removeClass(keypadClass);
+          } else {
+            panels.addClass(keypadClass);
+          }
+        }
+      }
+    },
+    {
+      kind: 'OB.UI.ToolbarButton',
       name: 'btnCancel',
       classes: 'obObposcashmgmtUiLeftToolbarImpl-btnCancel',
       disabled: false,
@@ -95,7 +121,6 @@ enyo.kind({
       kind: 'OB.UI.ToolbarButton',
       name: 'btnCashMgmt',
       classes: 'obObposcashmgmtUiRightToolbarImpl-btnCashMgmt',
-      span: 12,
       disabled: true,
       i18nLabel: 'OBPOS_LblCashManagement'
     }

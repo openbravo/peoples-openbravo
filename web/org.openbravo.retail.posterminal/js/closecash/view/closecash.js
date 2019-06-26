@@ -60,6 +60,32 @@ enyo.kind({
   },
   buttons: [
     {
+      name: 'btnCashUp',
+      kind: 'OB.OBPOSCashUp.UI.Button',
+      classes: 'obObPosCashUpUiLeftToolbarImpl-btnCashUp',
+      disabled: true,
+      i18nLabel: 'OBPOS_LblCloseCash'
+    },
+    {
+      name: 'btnToggleView',
+      kind: 'OB.UI.ToolbarButton',
+      classes: 'obObPosCashUpUiLeftToolbarImpl-btnToggleView',
+      // [TODO] Use complexbutton for this to be able to use an icon
+      i18nLabel: 'OBPOS_LblSwitchView',
+      tap: function() {
+        if (!this.disabled) {
+          var keypadClass = 'obUiMultiColumn-panels-showKeypad',
+            panels = OB.POS.terminal.$.containerWindow.getRoot().$
+              .cashupMultiColumn.$.panels;
+          if (panels.hasClass(keypadClass)) {
+            panels.removeClass(keypadClass);
+          } else {
+            panels.addClass(keypadClass);
+          }
+        }
+      }
+    },
+    {
       kind: 'OB.OBPOSCashUp.UI.Button',
       name: 'btnPrevious',
       classes: 'obObPosCashUpUiLeftToolbarImpl-btnPrevious',
@@ -294,7 +320,7 @@ enyo.kind({
     this.inherited(arguments);
     this.execution = OB.UTIL.ProcessController.start('cashupWindow');
 
-    this.$.cashupMultiColumn.$.rightToolbar.$.rightToolbar.$.toolbar.$.button.$.theButton.$.btnCashUp.setContent(
+    this.$.cashupMultiColumn.$.rightToolbar.$.rightToolbar.$.toolbar.$.btnCashUp.setContent(
       OB.I18N.getLabel(this.titleLabel)
     );
 
@@ -653,9 +679,9 @@ enyo.kind({
     this.refreshButtons();
     // Show button label.
     var nextButtonI18NLabel = this.model.nextButtonI18NLabel();
-    this.$.cashupMultiColumn.$.leftToolbar.$.leftToolbar.$.toolbar
-      .getComponents()[2]
-      .$.theButton.$.btnNext.setContent(OB.I18N.getLabel(nextButtonI18NLabel));
+    this.$.cashupMultiColumn.$.leftToolbar.$.leftToolbar.$.toolbar.$.btnNext.setContent(
+      OB.I18N.getLabel(nextButtonI18NLabel)
+    );
   },
   changeStep: function(inSender, inEvent) {
     var direction = inEvent.originator.stepCount;

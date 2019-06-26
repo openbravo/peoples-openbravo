@@ -2302,7 +2302,7 @@
 # Component: OB.UI.OrderDetails
 */
 .obUiOrderDetails {
-  padding: 13px 0px 15px 10px;
+  padding: 13px 0px 17px 10px;
   font-weight: bold;
   color: #6CB33F;
   float: left;
@@ -4280,7 +4280,12 @@
   /*Inherits: [OB.UI.bplocshipbutton]*/
 }
 
-.obUiOrderHeader-receiptLabels {}
+.obUiOrderHeader-receiptLabels {
+  padding-right: 5px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr auto auto auto;
+}
 
 .obUiOrderHeader-receiptButtons {
   clear: both;
@@ -4543,7 +4548,6 @@
 
 .obUiOrderView-listOrderLines {
   /*Inherits: [OB.UI.ScrollableTable]*/
-  max-height: 250px;
 }
 
 .obUiOrderView-listOrderLines-bigger {
@@ -6944,7 +6948,9 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
   /* Inherits: [OBPOS.UI.StoreInformation] */
 }
 
-.obObposPointOfSaleUiPointOfSale-mainSubWindow {}
+.obObposPointOfSaleUiPointOfSale-mainSubWindow {
+  height: 100%;
+}
 
 .obObposPointOfSaleUiPointOfSale-mainSubWindow-multiColumn {
   /* Inherits: [OB.UI.MultiColumn] */
@@ -6955,7 +6961,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 }
 
 .obObposPointOfSaleUiPointOfSale-multiColumn-leftPanel {
-  max-height: 622px;
+  height: 100%;
 }
 
 .obObposPointOfSaleUiPointOfSale-multiColumn-leftPanel-divHeader {
@@ -7009,6 +7015,25 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
   /* Inherits: [OB.OBPOSPointOfSale.UI.KeyboardOrder] */
 }
 
+@media all and (max-width: 800px) {
+  .obObposPointOfSaleUiPointOfSale-mainSubWindow-multiColumn .obUiMultiColumn-panels {
+    grid-template-areas:
+      "obUiMultiColumn-rightToolbar"
+      "obUiMultiColumn-rightPanel";
+    grid-template-rows: 72px calc(100% - 72px);
+    grid-template-columns: 100%;
+  }
+
+  .obObposPointOfSaleUiPointOfSale-mainSubWindow-multiColumn .obUiMultiColumn-panels.obUiMultiColumn-panels-showReceipt {
+    grid-template-areas:
+      "obUiMultiColumn-rightToolbar"
+      "obUiMultiColumn-leftToolbar"
+      "obUiMultiColumn-leftPanel";
+    grid-template-rows: 67px 72px calc(100% - 139px);
+   grid-template-columns: 100%;
+  }
+}
+
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.LeftHeader
@@ -7030,6 +7055,42 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 }
 
 
+/*
+# Component: WebPOS LeftToolbar Implementation
+*/
+.obObposPointOfSaleUiPointOfSale-mainSubWindow-multiColumn .obUiMultiColumn-leftToolbar .obUiMultiColumnToolbar-standardToolbar-toolbar {
+  grid-template-areas: "obUiMainMenu obUiButtonNew obUiButtonDelete obObposPointOfSaleUiButtonTabPayment obObposPointOfSaleUiButtonTabPayment";
+  grid-template-rows: 100%;
+  grid-template-columns: repeat(3, calc(100% / 5)) repeat(2, calc(100% / 5));
+}
+
+@media all and (max-width: 800px) {
+  .obObposPointOfSaleUiPointOfSale-mainSubWindow-multiColumn .obUiMultiColumn-leftToolbar .obUiMultiColumnToolbar-standardToolbar-toolbar {
+    grid-template-areas: "obUiButtonNew obUiButtonDelete obObposPointOfSaleUiButtonTabPayment";
+    grid-template-rows: 100%;
+    grid-template-columns: repeat(3, calc(100% / 3));
+  }
+}
+
+
+/*
+# Component: WebPOS RightToolbar Implementation
+*/
+.obObposPointOfSaleUiPointOfSale-mainSubWindow-multiColumn .obUiMultiColumn-rightToolbar .obUiMultiColumnToolbar-standardToolbar-toolbar {
+  grid-template-areas: "obObposPointOfSaleUiButtonTabScan obObPosPointOfSaleUiButtonTabBrowse obObPosPointOfSaleUiButtonTabSearchCharacteristic obObPosPointOfSaleUiButtonTabEditLine";
+  grid-template-rows: 100%;
+  grid-template-columns: repeat(4, calc(100% / 4));
+}
+
+@media all and (max-width: 800px) {
+  .obObposPointOfSaleUiPointOfSale-mainSubWindow-multiColumn .obUiMultiColumn-rightToolbar .obUiMultiColumnToolbar-standardToolbar-toolbar {
+    grid-template-areas: "obUiMainMenu obObposPointOfSaleUiButtonTabScan obObPosPointOfSaleUiButtonTabBrowse obObPosPointOfSaleUiButtonTabSearchCharacteristic obObPosPointOfSaleUiButtonTabEditLine obObposPointOfSaleUiButtonTabReceipt";
+    grid-template-rows: 100%;
+    grid-template-columns: repeat(6, calc(100% / 6));
+  }
+}
+
+
 
 /***********************   ***********************/
 /*            File: ps-receiptview.js            */
@@ -7038,18 +7099,21 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 /*
 # Component: OB.OBPOSPointOfSale.UI.ReceiptView
 */
-.obObposPointOfSaleUiReceiptView {}
+.obObposPointOfSaleUiReceiptView {
+  height: 100%;
+}
 
 .obObposPointOfSaleUiReceiptView-container1 {
-  margin: 5px;
+  margin: 5px 5px 10px 5px;
+  height: calc(100% - 15px);
 }
 
 .obObposPointOfSaleUiReceiptView-container1-container1 {
+  height: 100%;
   position: relative;
   background-color: #ffffff;
   color: black;
   overflow-y: auto;
-  max-height: 612px;
 }
 
 .obObposPointOfSaleUiReceiptView-container1-container1-receiptcounter {
@@ -7057,7 +7121,12 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 }
 
 .obObposPointOfSaleUiReceiptView-container1-container1-container2 {
+  display: grid;
   padding: 5px;
+  grid-auto-flow: row;
+  grid-auto-columns: 100%;
+  grid-auto-rows: auto 1fr;
+  height: calc(100% - 10px);
 }
 
 .obObposPointOfSaleUiReceiptView-container1-container1-container2-receiptheader {
@@ -7065,7 +7134,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 }
 
 .obObposPointOfSaleUiReceiptView-container1-container1-container2-container2 {
-  max-height: 536px;
+  overflow-y: auto;
 }
 
 .obObposPointOfSaleUiReceiptView-container1-container1-container2-container2-container1 {}
@@ -7339,6 +7408,26 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 
 
 /***********************   ***********************/
+/*           File: obpos-toolbar.js              */
+/*               Folder: js/view                 */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSPointOfSale.UI.ToolbarImpl
+# Inherits: [OB.UI.MultiColumn.Toolbar]
+*/
+.obObposPointOfSaleUiToolbarImpl {}
+
+.obObposPointOfSaleUiToolbarImpl-obUiMenuDisableEnableRFIDReader {
+  /*Inherits: [OB.UI.MenuDisableEnableRFIDReader]*/
+}
+
+.obObposPointOfSaleUiToolbarImpl-sep0 {
+  /*Inherits: [OB.UI.MenuSeparator]*/
+}
+
+
+
+/***********************   ***********************/
 /*            File: toolbar-left.js              */
 /*               Folder: js/view                 */
 /***********************   ***********************/
@@ -7371,7 +7460,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 # Inherits: [OB.UI.ToolbarButton]
 */
 .obUiButtonNew {
-  width: 100%;
+  grid-area: obUiButtonNew;
 }
 
 .obUiButtonNew_iconNew {}
@@ -7394,7 +7483,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 # Inherits: [OB.UI.ToolbarButton]
 */
 .obUiButtonDelete {
-  width: 100%;
+  grid-area: obUiButtonDelete;
 }
 
 .obUiButtonDelete.paidticket {
@@ -7428,6 +7517,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
   text-align: center;
   font-size: 30px;
   color: white;
+  grid-area: obObposPointOfSaleUiButtonTabPayment;
 }
 
 .obObposPointOfSaleUiButtonTabPayment_disabled {
@@ -7455,17 +7545,9 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.LeftToolbarImpl
-# Inherits: [OB.UI.MultiColumn.Toolbar]
+# Inherits: [OB.OBPOSPointOfSale.UI.ToolbarImpl]
 */
 .obObposPointOfSaleUiLeftToolbarImpl {}
-
-.obObposPointOfSaleUiLeftToolbarImpl-obUiMenuDisableEnableRFIDReader {
-  /*Inherits: [OB.UI.MenuDisableEnableRFIDReader]*/
-}
-
-.obObposPointOfSaleUiLeftToolbarImpl-sep0 {
-  /*Inherits: [OB.UI.MenuSeparator]*/
-}
 
 .obObposPointOfSaleUiLeftToolbarImpl-obUiButtonNew {
   /*Inherits: [OB.UI.ButtonNew]*/
@@ -7604,11 +7686,28 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 
 
 /*
+# Component: OB.OBPOSPointOfSale.UI.ButtonTabReceipt
+# Inherits: [OB.UI.ToolbarButtonTab]
+*/
+.obObposPointOfSaleUiButtonTabReceipt {
+  display: none;
+  grid-area: obObposPointOfSaleUiButtonTabReceipt;
+}
+
+@media all and (max-width: 800px) {
+  .obObposPointOfSaleUiButtonTabReceipt {
+    display: block;
+  }
+}
+
+
+/*
 # Component: OB.OBPOSPointOfSale.UI.ButtonTabScan
 # Inherits: [OB.UI.ToolbarButtonTab]
 */
 .obObposPointOfSaleUiButtonTabScan {
   background-color: #e2e2e2;
+  grid-area: obObposPointOfSaleUiButtonTabScan;
 }
 
 .obObposPointOfSaleUiButtonTabScan.active {
@@ -7673,6 +7772,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 */
 .obObPosPointOfSaleUiButtonTabBrowse {
   background-color: #e2e2e2;
+  grid-area: obObPosPointOfSaleUiButtonTabBrowse;
 }
 
 .obObPosPointOfSaleUiButtonTabBrowse.active {
@@ -7697,6 +7797,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 */
 .obObPosPointOfSaleUiButtonTabSearchCharacteristic {
   background-color: #e2e2e2;
+  grid-area: obObPosPointOfSaleUiButtonTabSearchCharacteristic;
 }
 
 .obObPosPointOfSaleUiButtonTabSearchCharacteristic.active {
@@ -7723,6 +7824,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 */
 .obObPosPointOfSaleUiButtonTabEditLine {
   background-color: #e2e2e2;
+  grid-area: obObPosPointOfSaleUiButtonTabEditLine;
 }
 
 .obObPosPointOfSaleUiButtonTabEditLine.active {
@@ -7744,7 +7846,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.RightToolbarImpl
-# Inherits: [OB.UI.MultiColumn.Toolbar]
+# Inherits: [OB.OBPOSPointOfSale.UI.ToolbarImpl]
 */
 .obObposPointOfSaleUiRightToolbarImpl {}
 
@@ -11788,10 +11890,12 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 
 .obObposcashmgmtUiLeftToolbarImpl-btnCancel {
   /*Inherits: [OB.UI.ToolbarButton]*/
+  grid-area: obObposcashmgmtUiLeftToolbarImpl-btnCancel;
 }
 
 .obObposcashmgmtUiLeftToolbarImpl-btnDone {
   /*Inherits: [OB.UI.ToolbarButton]*/
+  grid-area: obObposcashmgmtUiLeftToolbarImpl-btnDone;
 }
 
 
@@ -11803,6 +11907,12 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 
 .obObposcashmgmtUiRightToolbarImpl-btnCashMgmt {
   /*Inherits: [OB.UI.ToolbarButton]*/
+  grid-area: obObposcashmgmtUiRightToolbarImpl-btnCashMgmt;
+}
+
+.obObposcashmgmtUiRightToolbarImpl-btnToggleView {
+  /*Inherits: [OB.UI.ToolbarButton]*/
+  grid-area: obObposcashmgmtUiRightToolbarImpl-btnToggleView;
 }
 
 
@@ -11868,6 +11978,45 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 
 .obObposcashmgmtUiCashManagement-otherSubWindowsContainer-modalAdvancedFilterBP {
   /*Inherits: [OB.UI.ModalAdvancedFilterBP]*/
+}
+
+/* Implementation: WebPOS CashManagement LeftToolbar */
+.obObposcashmgmtUiCashManagement-cashupMultiColumn .obUiMultiColumn-leftToolbar .obUiMultiColumnToolbar-standardToolbar-toolbar {
+  grid-template-areas: "obObposcashmgmtUiLeftToolbarImpl-btnCancel obObposcashmgmtUiLeftToolbarImpl-btnDone";
+  grid-template-rows: 100%;
+  grid-template-columns: repeat(2, calc(100% / 2));
+}
+
+/* Implementation: WebPOS CashManagement RightToolbar */
+.obObposcashmgmtUiCashManagement-cashupMultiColumn .obUiMultiColumn-rightToolbar .obUiMultiColumnToolbar-standardToolbar-toolbar {
+  grid-template-areas: "obObposcashmgmtUiRightToolbarImpl-btnCashMgmt";
+  grid-template-columns: repeat(1, calc(100% / 1));
+}
+
+@media all and (max-width: 800px) {
+  /* Implementation: WebPOS CashManagement Multicolumn */
+  .obObposcashmgmtUiCashManagement-cashupMultiColumn .obUiMultiColumn-panels {
+    grid-template-areas:
+      "obUiMultiColumn-leftToolbar"
+      "obUiMultiColumn-leftPanel";
+    grid-template-rows: 72px calc(100% - 72px);
+    grid-template-columns: 100%;
+  }
+
+  /* Implementation: WebPOS CashManagement Multicolumn */
+  .obObposcashmgmtUiCashManagement-cashupMultiColumn .obUiMultiColumn-panels.obUiMultiColumn-panels-showKeypad {
+    grid-template-areas:
+      "obUiMultiColumn-leftToolbar"
+      "obUiMultiColumn-rightPanel";
+    grid-template-rows: 72px calc(100% - 72px);
+    grid-template-columns: 100%;
+  }
+
+  /* Implementation: WebPOS CashManagement LeftToolbar */
+  .obObposcashmgmtUiCashManagement-cashupMultiColumn .obUiMultiColumn-leftToolbar .obUiMultiColumnToolbar-standardToolbar-toolbar {
+    grid-template-areas: "obObposcashmgmtUiRightToolbarImpl-btnCashMgmt obObposcashmgmtUiLeftToolbarImpl-btnCancel obObposcashmgmtUiLeftToolbarImpl-btnDone obObposcashmgmtUiRightToolbarImpl-btnToggleView";
+    grid-template-columns: repeat(4, calc(100% / 4));
+  }
 }
 
 
@@ -12020,8 +12169,18 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 */
 .obObPosCashUpUiLeftToolbarImpl {}
 
+.obObPosCashUpUiLeftToolbarImpl-btnCashUp {
+  /* Inherits: [OB.OBPOSCashUp.UI.Button] */
+  grid-area: obObPosCashUpUiLeftToolbarImpl-btnCashUp;
+}
+.obObPosCashUpUiLeftToolbarImpl-btnToggleView {
+  /* Inherits: [OB.UI.ToolbarButton] */
+  grid-area: obObPosCashUpUiLeftToolbarImpl-btnToggleView;
+}
+
 .obObPosCashUpUiLeftToolbarImpl-btnPrevious {
   /* Inherits: [OB.OBPOSCashUp.UI.Button] */
+  grid-area: obObPosCashUpUiLeftToolbarImpl-btnPrevious;
 }
 
 .obObPosCashUpUiLeftToolbarImpl-btnPrevious.btn-over,
@@ -12031,10 +12190,12 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 
 .obObPosCashUpUiLeftToolbarImpl-btnCancel {
   /* Inherits: [OB.OBPOSCashUp.UI.CancelButton] */
+  grid-area: obObPosCashUpUiLeftToolbarImpl-btnCancel;
 }
 
 .obObPosCashUpUiLeftToolbarImpl-btnNext {
   /* Inherits: [OB.OBPOSCashUp.UI.Button] */
+  grid-area: obObPosCashUpUiLeftToolbarImpl-btnNext;
 }
 
 .obObPosCashUpUiLeftToolbarImpl-btnNext.btn-over,
@@ -12132,6 +12293,45 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 
 .obObPosCashupUiCashUp-modalSelectPrinters {
   /* Inherits: [OB.UI.ModalSelectPrinters] */
+}
+
+/* Implementation: WebPOS CashUp LeftToolbar */
+.obObPosCashupUiCashUp-cashupMultiColumn .obUiMultiColumn-leftToolbar .obUiMultiColumnToolbar-standardToolbar-toolbar {
+  grid-template-areas: "obObPosCashUpUiLeftToolbarImpl-btnPrevious obObPosCashUpUiLeftToolbarImpl-btnCancel obObPosCashUpUiLeftToolbarImpl-btnNext";
+  grid-template-rows: 100%;
+  grid-template-columns: repeat(3, calc(100% / 3));
+}
+
+/* Implementation: WebPOS CashUp RightToolbar */
+.obObPosCashupUiCashUp-cashupMultiColumn .obUiMultiColumn-rightToolbar .obUiMultiColumnToolbar-standardToolbar-toolbar {
+  grid-template-areas: "obObPosCashUpUiLeftToolbarImpl-btnCashUp";
+  grid-template-columns: repeat(1, calc(100% / 1));
+}
+
+@media all and (max-width: 800px) {
+  /* Implementation: WebPOS CashUp Multicolumn */
+  .obObPosCashupUiCashUp-cashupMultiColumn .obUiMultiColumn-panels {
+    grid-template-areas:
+      "obUiMultiColumn-leftToolbar"
+      "obUiMultiColumn-leftPanel";
+    grid-template-rows: 72px calc(100% - 72px);
+    grid-template-columns: 100%;
+  }
+
+  /* Implementation: WebPOS CashUp Multicolumn */
+  .obObPosCashupUiCashUp-cashupMultiColumn .obUiMultiColumn-panels.obUiMultiColumn-panels-showKeypad {
+    grid-template-areas:
+      "obUiMultiColumn-leftToolbar"
+      "obUiMultiColumn-rightPanel";
+    grid-template-rows: 72px calc(100% - 72px);
+    grid-template-columns: 100%;
+  }
+
+  /* Implementation: WebPOS CashUp LeftToolbar */
+  .obObPosCashupUiCashUp-cashupMultiColumn .obUiMultiColumn-leftToolbar .obUiMultiColumnToolbar-standardToolbar-toolbar {
+    grid-template-areas: "obObPosCashUpUiLeftToolbarImpl-btnCashUp obObPosCashUpUiLeftToolbarImpl-btnPrevious obObPosCashUpUiLeftToolbarImpl-btnCancel obObPosCashUpUiLeftToolbarImpl-btnNext obObPosCashUpUiLeftToolbarImpl-btnToggleView";
+    grid-template-columns: repeat(5, calc(100% / 5));
+  }
 }
 
 
@@ -14152,4 +14352,12 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 */
 .obrdmUiOrderLineInfoTable {
   padding: 28px;
+}
+
+/*****************/
+/*      DBA      */
+/*****************/
+/* [TODO] Missing CSS classes */
+.obUiReceiptLabels-multiReceipt {
+  padding-right: 55px;
 }

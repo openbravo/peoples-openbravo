@@ -11,7 +11,7 @@
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ReceiptView',
-  classes: 'obObposPointOfSaleUiReceiptView span6',
+  classes: 'obObposPointOfSaleUiReceiptView',
   published: {
     order: null,
     orderList: null
@@ -53,7 +53,7 @@ enyo.kind({
                   components: [
                     {
                       classes:
-                        'obObposPointOfSaleUiReceiptView-container1-container1-container2-container2-container1 span12',
+                        'obObposPointOfSaleUiReceiptView-container1-container1-container2-container2-container1',
                       components: [
                         {
                           kind: 'OB.UI.OrderView',
