@@ -306,28 +306,6 @@ enyo.kind({
     dialogbuttons,
     payment
   ) {
-    if (
-      btncomponent.btn.command.indexOf('paymentMethodCategory.showitems.') < 0
-    ) {
-      btncomponent.btn.definition.canTap = function(callback) {
-        OB.UTIL.HookManager.executeHooks(
-          'OBPOS_PrePaymentSelected',
-          {
-            paymentSelected: payment,
-            receipt: btncomponent.btn.definition.scope.receipt,
-            btnDefintion: btncomponent.btn.definition
-          },
-          function(args) {
-            if (args && args.cancellation && args.cancellation === true) {
-              callback(false);
-            } else {
-              callback(true);
-            }
-          }
-        );
-      };
-    }
-
     if (countbuttons < paymentsbuttons) {
       this.createComponent(btncomponent);
     } else {
