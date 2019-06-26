@@ -17,6 +17,10 @@
   margin: 10px 5px 5px 5px;
 }
 
+.obObposPointOfSaleUiRightBottomPanelWrapper-keyboardWrapper {
+  margin: -5px;
+}
+
 .obObposPointOfSaleUiGridKeyboard {}
 
 .obObposPointOfSaleUiGridKeyboard>button.obUiActionButton {
