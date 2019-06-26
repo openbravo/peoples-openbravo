@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -80,7 +80,7 @@ class UpdateQuantitiesAndUOMs extends CreateLinesFromProcessHook {
     UOM operativeUOM = (UOM) getCopiedFromLine().get("operativeUOM");
     ProductUOM orderUOM = (ProductUOM) getCopiedFromLine().get("orderUOM");
 
-    return isUomManagementEnabled && (orderUOM == null || operativeUOM == null);
+    return isUomManagementEnabled && orderUOM == null && operativeUOM == null;
   }
 
   private boolean aUMIsDifferentThanUOM(final String defaultAum) {
