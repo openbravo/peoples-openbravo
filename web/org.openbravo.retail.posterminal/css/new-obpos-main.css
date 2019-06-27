@@ -7687,16 +7687,26 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.ButtonTabReceipt
-# Inherits: [OB.UI.ToolbarButtonTab]
+# Inherits: [OB.UI.ComplexButtonTab]
 */
 .obObposPointOfSaleUiButtonTabReceipt {
   display: none;
   grid-area: obObposPointOfSaleUiButtonTabReceipt;
+  background-color: #e2e2e2;
 }
+
+.obObposPointOfSaleUiButtonTabReceipt_disabled {}
+
+.obObposPointOfSaleUiButtonTabReceipt-buttonBefore {}
+
+.obObposPointOfSaleUiButtonTabReceipt-buttonAfter {}
+
+.obObposPointOfSaleUiButtonTabReceipt-labelClass {}
 
 @media all and (max-width: 800px) {
   .obObposPointOfSaleUiButtonTabReceipt {
-    display: block;
+    display: flex;
+    flex:1;
   }
 }
 
@@ -7827,6 +7837,11 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
   grid-area: obObPosPointOfSaleUiButtonTabEditLine;
 }
 
+.obObPosPointOfSaleUiButtonTabEditLine_disabled {
+  background-color: var(--color-primary-light);
+  cursor: default;
+}
+
 .obObPosPointOfSaleUiButtonTabEditLine.active {
   background-color: #f8941d;
 }
@@ -7842,6 +7857,12 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
   background-position: center;
 }
 
+
+.obObPosPointOfSaleUiButtonTabGeneric_disabled {
+  background-color: var(--color-primary-light);
+  cursor: pointer;
+  opacity: 1;
+}
 
 
 /*
@@ -11929,6 +11950,13 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
   grid-area: obObposcashmgmtUiRightToolbarImpl-btnToggleView;
 }
 
+.obObposcashmgmtUiRightToolbarImpl-btnToggleView_disabled {}
+
+.obObposcashmgmtUiRightToolbarImpl-btnToggleView-buttonBefore {}
+
+.obObposcashmgmtUiRightToolbarImpl-btnToggleView-buttonAfter {}
+
+.obObposcashmgmtUiRightToolbarImpl-btnToggleView-labelClass {}
 
 /*
 # Component: OB.OBPOSCashMgmt.UI.CashManagement
@@ -12188,9 +12216,17 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
   grid-area: obObPosCashUpUiLeftToolbarImpl-btnCashUp;
 }
 .obObPosCashUpUiLeftToolbarImpl-btnToggleView {
-  /* Inherits: [OB.UI.ToolbarButton] */
+  /* Inherits: [OB.UI.ComplexButton] */
   grid-area: obObPosCashUpUiLeftToolbarImpl-btnToggleView;
 }
+
+.obObPosCashUpUiLeftToolbarImpl-btnToggleView_disabled {}
+
+.obObPosCashUpUiLeftToolbarImpl-btnToggleView-buttonBefore {}
+
+.obObPosCashUpUiLeftToolbarImpl-btnToggleView-buttonAfter {}
+
+.obObPosCashUpUiLeftToolbarImpl-btnToggleView-labelClass {}
 
 .obObPosCashUpUiLeftToolbarImpl-btnPrevious {
   /* Inherits: [OB.OBPOSCashUp.UI.Button] */

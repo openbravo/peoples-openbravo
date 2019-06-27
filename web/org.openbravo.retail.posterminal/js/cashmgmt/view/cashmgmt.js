@@ -23,10 +23,15 @@ enyo.kind({
       i18nLabel: 'OBPOS_LblCashManagement'
     },
     {
-      kind: 'OB.UI.ToolbarButton',
+      kind: 'OB.UI.ComplexButton',
       name: 'btnToggleView',
       classes: 'obObposcashmgmtUiRightToolbarImpl-btnToggleView',
-      // [TODO] Use complexbutton for this to be able to use an icon
+      disabledClass: 'obObposcashmgmtUiRightToolbarImpl-btnToggleView_disabled',
+      buttonBeforeClass:
+        'obObposcashmgmtUiRightToolbarImpl-btnToggleView-buttonBefore',
+      buttonAfterClass:
+        'obObposcashmgmtUiRightToolbarImpl-btnToggleView-buttonAfter',
+      labelClass: 'obObposcashmgmtUiRightToolbarImpl-btnToggleView-labelClass',
       i18nLabel: 'OBPOS_LblSwitchView',
       tap: function() {
         if (!this.disabled) {
