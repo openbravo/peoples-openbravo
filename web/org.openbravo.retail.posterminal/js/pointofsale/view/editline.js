@@ -313,7 +313,11 @@ enyo.kind({
     {
       kind: 'OB.UI.ActionButton',
       name: 'deleteLine',
-      classes: 'obObposPointOfSaleUiEditLine-actionButtons-deleteLine',
+      hideLabelOnDisabled: false,
+      disabledClass:
+        'obObposPointOfSaleUiEditLine-propertiesToShow-general_disabled',
+      classes:
+        'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-deleteLine',
       action: {
         window: 'retail.pointofsale',
         name: 'deleteLine'
@@ -322,7 +326,11 @@ enyo.kind({
     {
       kind: 'OB.UI.ActionButton',
       name: 'descriptionButton',
-      classes: 'obObposPointOfSaleUiEditLine-actionButtons-descriptionButton',
+      hideLabelOnDisabled: false,
+      disabledClass:
+        'obObposPointOfSaleUiEditLine-propertiesToShow-general_disabled',
+      classes:
+        'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-descriptionButton',
       action: {
         window: 'retail.pointofsale',
         name: 'editLine'
@@ -331,7 +339,11 @@ enyo.kind({
     {
       kind: 'OB.UI.ActionButton',
       name: 'returnLine',
-      classes: 'obObposPointOfSaleUiEditLine-actionButtons-returnLine',
+      hideLabelOnDisabled: false,
+      disabledClass:
+        'obObposPointOfSaleUiEditLine-propertiesToShow-general_disabled',
+      classes:
+        'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-returnLine',
       action: {
         window: 'retail.pointofsale',
         name: 'returnLine'
@@ -340,7 +352,11 @@ enyo.kind({
     {
       kind: 'OB.UI.ActionButton',
       name: 'splitlineButton',
-      classes: 'obObposPointOfSaleUiEditLine-actionButtons-splitlineButton',
+      hideLabelOnDisabled: false,
+      disabledClass:
+        'obObposPointOfSaleUiEditLine-propertiesToShow-general_disabled',
+      classes:
+        'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-splitlineButton',
       action: {
         window: 'retail.pointofsale',
         name: 'splitLine'
@@ -349,7 +365,11 @@ enyo.kind({
     {
       kind: 'OB.UI.SmallButton',
       name: 'showRelatedServices',
-      classes: 'obObposPointOfSaleUiEditLine-actionButtons-showRelatedServices',
+      hideLabelOnDisabled: false,
+      disabledClass:
+        'obObposPointOfSaleUiEditLine-propertiesToShow-general_disabled',
+      classes:
+        'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-showRelatedServices',
       permission: 'OBPOS_ActionButtonShowRelatedServices',
       content: '-',
       tap: function(inSender, inEvent) {
@@ -412,10 +432,13 @@ enyo.kind({
     {
       kind: 'OB.UI.SmallButton',
       name: 'removeDiscountButton',
+      hideLabelOnDisabled: false,
+      disabledClass:
+        'obObposPointOfSaleUiEditLine-propertiesToShow-general_disabled',
       i18nContent: 'OBPOS_LblRemoveDiscount',
       showing: false,
       classes:
-        'obObposPointOfSaleUiEditLine-actionButtons-removeDiscountButton',
+        'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-removeDiscountButton',
       permission: 'OBPOS_ActionButtonRemoveDiscount',
       tap: function() {
         var i,
@@ -472,7 +495,11 @@ enyo.kind({
     {
       kind: 'OB.UI.ActionButton',
       name: 'checkStockButton',
-      classes: 'obObposPointOfSaleUiEditLine-actionButtons-checkStockButton',
+      hideLabelOnDisabled: false,
+      disabledClass:
+        'obObposPointOfSaleUiEditLine-propertiesToShow-general_disabled',
+      classes:
+        'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-checkStockButton',
       action: {
         window: 'retail.pointofsale',
         name: 'showStockLine'
@@ -481,16 +508,23 @@ enyo.kind({
     {
       kind: 'OB.OBPOSPointOfSale.UI.EditLine.OpenAttributeButton',
       name: 'openAttributeButton',
-      classes: 'obObposPointOfSaleUiEditLine-actionButtons-openAttributeButton',
+      hideLabelOnDisabled: false,
+      disabledClass:
+        'obObposPointOfSaleUiEditLine-propertiesToShow-general_disabled',
+      classes:
+        'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-openAttributeButton',
       showing: false
     },
     {
       kind: 'OB.UI.SmallButton',
       name: 'addAssociationsButton',
+      hideLabelOnDisabled: false,
+      disabledClass:
+        'obObposPointOfSaleUiEditLine-propertiesToShow-general_disabled',
       i18nContent: 'OBPOS_AddAssociations',
       showing: false,
       classes:
-        'obObposPointOfSaleUiEditLine-actionButtons-addAssociationsButton',
+        'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-addAssociationsButton',
       tap: function() {
         this.owner.owner.doShowPopup({
           popup: 'OBPOS_modalAssociateTickets',
@@ -504,10 +538,13 @@ enyo.kind({
     {
       kind: 'OB.UI.SmallButton',
       name: 'removeAssociationsButton',
+      hideLabelOnDisabled: false,
+      disabledClass:
+        'obObposPointOfSaleUiEditLine-propertiesToShow-general_disabled',
       i18nContent: 'OBPOS_RemoveAssociations',
       showing: false,
       classes:
-        'obObposPointOfSaleUiEditLine-actionButtons-removeAssociationsButton',
+        'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-removeAssociationsButton',
       tap: function() {
         this.owner.owner.doShowPopup({
           popup: 'OBPOS_modalRemoveAssociatedTickets',
@@ -521,7 +558,11 @@ enyo.kind({
     {
       kind: 'OB.UI.SmallButton',
       name: 'canDeliver',
-      classes: 'obObposPointOfSaleUiEditLine-actionButtons-canDeliver',
+      hideLabelOnDisabled: false,
+      disabledClass:
+        'obObposPointOfSaleUiEditLine-propertiesToShow-general_disabled',
+      classes:
+        'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-canDeliver',
       content: '-',
       tap: function(inSender, inEvent) {
         var me = this,

@@ -8119,6 +8119,19 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 */
 .obObposPointOfSaleUiEditLine {}
 
+.obObposPointOfSaleUiEditLine-propertiesToShow-general {
+  margin: 5px 10px 5px 10px;
+  padding: 0px 5px 0px 5px;
+  background-color: var(--color-maincolor);
+  color: var(--color-primary-lighter);
+  height: 30px;
+}
+
+.obObposPointOfSaleUiEditLine-propertiesToShow-general_disabled {
+  background-color: var(--color-primary-light);
+  cursor: default;
+}
+
 .obObposPointOfSaleUiEditLine-propertiesToShow-descLine,
 .obObposPointOfSaleUiEditLine-propertiesToShow-returnReasonLine,
 .obObposPointOfSaleUiEditLine-propertiesToShow-qtyLine,
@@ -8136,8 +8149,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 .obObposPointOfSaleUiEditLine-actionButtons-returnLine,
 .obObposPointOfSaleUiEditLine-actionButtons-splitlineButton {
   /* Inherits: [OB.UI.SmallButton] */
-  background-color: orange;
-  color: black;
 }
 
 .obObposPointOfSaleUiEditLine-actionButtons-showRelatedServices {
@@ -8199,6 +8210,9 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 
 .obObposPointOfSaleUiEditLine-msgedit-actionButtonsContainer {
 /* Inherits: [Scroller] */
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
   padding: 0px 0px 1px 0px;
   line-height: 50%;
   max-height: 50px;
