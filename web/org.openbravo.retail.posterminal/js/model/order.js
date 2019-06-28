@@ -1289,7 +1289,7 @@
           !this.get('cancelLayaway') &&
           this.get('bp') &&
           this.get('bp').get('id') !==
-            OB.MobileApp.model.get('businessPartner').get('id')
+            OB.MobileApp.model.get('terminal').org_anonymouscustomer
         ) {
           OB.UTIL.prepaymentRules[
             OB.MobileApp.model.get('terminal').prepaymentAlgorithm
@@ -2117,7 +2117,7 @@
               me.set('skipCalculateReceipt', true);
               me.set('deleting', true);
               if (
-                OB.MobileApp.model.get('terminal').businessPartner ===
+                OB.MobileApp.model.get('terminal').org_anonymouscustomer ===
                 me.get('bp').get('id')
               ) {
                 for (i = 0; i < me.get('undo').lines.length; i++) {
@@ -2975,7 +2975,7 @@
               me.set('preventServicesUpdate', true);
               me.set('deleting', true);
               if (
-                OB.MobileApp.model.get('terminal').businessPartner ===
+                OB.MobileApp.model.get('terminal').org_anonymouscustomer ===
                 me.get('bp').get('id')
               ) {
                 for (i = 0; i < me.get('undo').lines.length; i++) {
@@ -4164,7 +4164,7 @@
         return;
       }
       if (
-        OB.MobileApp.model.get('terminal').businessPartner ===
+        OB.MobileApp.model.get('terminal').org_anonymouscustomer ===
           me.get('bp').get('id') &&
         p &&
         p.has('oBPOSAllowAnonymousSale') &&
@@ -5233,7 +5233,7 @@
       };
 
       if (
-        OB.MobileApp.model.get('terminal').businessPartner ===
+        OB.MobileApp.model.get('terminal').org_anonymouscustomer ===
         businessPartner.id
       ) {
         for (i = 0; i < me.get('lines').models.length; i++) {
@@ -9345,7 +9345,7 @@
       var me = this;
       if (
         me.get('bp').id ===
-          OB.MobileApp.model.get('terminal').businessPartner &&
+          OB.MobileApp.model.get('terminal').org_anonymouscustomer &&
         !me.get('obposIsDeleted')
       ) {
         // Checking blind returned lines

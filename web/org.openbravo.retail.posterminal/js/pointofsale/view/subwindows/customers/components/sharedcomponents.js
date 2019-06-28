@@ -441,7 +441,8 @@ enyo.kind({
     //Validate anonymous customer edit allowed
     if (
       this.customer &&
-      OB.MobileApp.model.get('terminal').businessPartner === this.customer.id &&
+      OB.MobileApp.model.get('terminal').org_anonymouscustomer ===
+        this.customer.id &&
       OB.MobileApp.model.hasPermission(
         'OBPOS_NotAllowEditAnonymousCustomer',
         true
