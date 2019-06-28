@@ -39,7 +39,7 @@ while getopts ":w" arg; do
         ;;
     esac
 done
-shift $((OPTIND-1))
+shift "$((OPTIND-1))"
 
 FLAGS=""
 if [[ -d ./modules/org.openbravo.client.kernel/jsformatter ]]; then
