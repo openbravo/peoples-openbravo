@@ -629,7 +629,7 @@ enyo.kind({
       if (
         receipt.get('isQuotation') &&
         receipt.get('bp').id ===
-          OB.MobileApp.model.get('terminal').org_anonymouscustomer &&
+          OB.MobileApp.model.get('terminal').businessPartner &&
         !OB.MobileApp.model.get('terminal').quotation_anonymouscustomer
       ) {
         OB.UTIL.showConfirmation.display(

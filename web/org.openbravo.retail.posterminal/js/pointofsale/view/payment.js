@@ -487,8 +487,7 @@ enyo.kind({
         // If the business partner has been changed to the or from the anonymous customer, calculate the prepayment amount
         var calculateprepayments = OB.MobileApp.model.get('terminal')
             .terminalType.calculateprepayments,
-          anonymousBP = OB.MobileApp.model.get('terminal')
-            .org_anonymouscustomer,
+          anonymousBP = OB.MobileApp.model.get('terminal').businessPartner,
           isClearWithProcessActive = OB.UTIL.ProcessController.isProcessActive(
             'clearWith'
           );
@@ -2316,7 +2315,7 @@ enyo.kind({
         if (
           order.get('orderType') === 2 &&
           order.get('bp').id ===
-            OB.MobileApp.model.get('terminal').org_anonymouscustomer &&
+            OB.MobileApp.model.get('terminal').businessPartner &&
           !OB.MobileApp.model.get('terminal').layaway_anonymouscustomer
         ) {
           avoidPayment = true;
@@ -3295,7 +3294,7 @@ enyo.kind({
 
       if (
         receipt.get('bp').id ===
-          OB.MobileApp.model.get('terminal').org_anonymouscustomer &&
+          OB.MobileApp.model.get('terminal').businessPartner &&
         !OB.MobileApp.model.get('terminal').layaway_anonymouscustomer
       ) {
         OB.UTIL.showConfirmation.display(
