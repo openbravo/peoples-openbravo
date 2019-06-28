@@ -166,13 +166,9 @@ enyo.kind({
   putDisabled: function(status) {
     if (status === false) {
       this.setDisabled(false);
-      this.removeClass('disabled');
-      this.disabled = false;
       return;
     }
     this.setDisabled(true);
-    this.addClass('disabled');
-    this.disabled = true;
   },
   init: function(model) {
     this.model = model;
@@ -196,11 +192,9 @@ enyo.kind({
     if (
       !OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomerButton', true)
     ) {
-      this.disabled = true;
-      this.setAttribute('disabled', 'disabled');
+      this.setDisabled(true);
     } else {
-      this.disabled = false;
-      this.setAttribute('disabled', null);
+      this.setDisabled(false);
     }
   },
   tap: function() {
@@ -223,18 +217,15 @@ enyo.kind({
   putDisabled: function(status) {
     if (status === false) {
       this.setDisabled(false);
-      this.removeClass('disabled');
-      this.disabled = false;
       return;
     }
     this.setDisabled(true);
-    this.addClass('disabled');
-    this.disabled = true;
   },
   init: function(model) {
     this.model = model;
   },
   initComponents: function() {
+    this.inherited(arguments);
     this.setContent(OB.I18N.getLabel('OBPOS_LblEdit'));
   }
 });
