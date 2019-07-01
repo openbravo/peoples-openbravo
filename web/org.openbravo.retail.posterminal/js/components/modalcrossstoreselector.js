@@ -12,8 +12,7 @@
 enyo.kind({
   name: 'OBPOS.UI.CrossStoreSelector',
   kind: 'OB.UI.ModalSelector',
-  classes: 'obpos-modal-store-selector',
-  topPosition: '70px',
+  classes: 'obposUiCrossStoreSelector',
   i18nHeader: 'OBPOS_SelectStore',
   body: {
     kind: 'OBPOS.UI.CrossStoreList'
@@ -52,25 +51,30 @@ enyo.kind({
 enyo.kind({
   name: 'OBPOS.UI.ModalCrossStoreProductScrollableHeader',
   kind: 'OB.UI.ScrollableTableHeader',
+  classes: 'obposUiModalCrossStoreProductScrollableHeader',
   components: [
     {
-      classes: 'obpos-filter-selector',
       kind: 'OB.UI.FilterSelectorTableHeader',
       name: 'filterSelector',
+      classes: 'obposUiModalCrossStoreProductScrollableHeader-filterSelector',
       filters: OB.Model.CrossStoreFilter.getProperties()
     },
     {
-      style: 'padding: 10px;',
+      classes: 'obposUiModalCrossStoreProductScrollableHeader-container1',
       components: [
         {
-          style: 'display: table; width: 100%;',
+          classes:
+            'obposUiModalCrossStoreProductScrollableHeader-container1-container1',
           components: [
             {
-              style: 'display: table-cell; text-align: center; ',
+              classes:
+                'obposUiModalCrossStoreProductScrollableHeader-container1-container1-container1',
               components: [
                 {
                   kind: 'OB.UI.ButtonAdvancedFilter',
-                  dialog: 'modalAdvancedFilterSelectStore'
+                  dialog: 'modalAdvancedFilterSelectStore',
+                  classes:
+                    'obposUiModalCrossStoreProductScrollableHeader-container1-container1-container1-modalAdvancedFilterSelectStore'
                 }
               ]
             }
@@ -82,8 +86,9 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.ModalAdvancedFilters',
   name: 'OB.UI.ModalAdvancedFilterSelectStore',
+  kind: 'OB.UI.ModalAdvancedFilters',
+  classes: 'obUiModalAdvancedFilterSelectStore',
   model: OB.Model.CrossStoreFilter,
   initComponents: function() {
     this.inherited(arguments);
@@ -94,7 +99,7 @@ enyo.kind({
 /* Scrollable table (body of modal) */
 enyo.kind({
   name: 'OBPOS.UI.CrossStoreList',
-  classes: 'row-fluid',
+  classes: 'obposUiCrossStoreList row-fluid',
   handlers: {
     onClearFilterSelector: 'searchAction',
     onSearchAction: 'searchAction'
@@ -106,18 +111,19 @@ enyo.kind({
   callback: null,
   components: [
     {
-      classes: 'span12',
+      classes: 'obposUiCrossStoreList-container1',
       components: [
         {
-          classes: 'row-fluid obpos-list-store',
+          classes: 'obposUiCrossStoreList-container1-container1 row-fluid',
           components: [
             {
-              classes: 'span12',
+              classes: 'obposUiCrossStoreList-container1-container1-container1',
               components: [
                 {
                   name: 'csStoreSelector',
                   kind: 'OB.UI.ScrollableTable',
-                  scrollAreaMaxHeight: '420px',
+                  classes:
+                    'obposUiCrossStoreList-container1-container1-container1-csStoreSelector',
                   renderHeader:
                     'OBPOS.UI.ModalCrossStoreProductScrollableHeader',
                   renderLine: 'OBPOS.UI.CrossStoreLine',
@@ -125,7 +131,8 @@ enyo.kind({
                 },
                 {
                   name: 'renderLoading',
-                  classes: 'obpos-list-orders obpos-list-orders-renderloading',
+                  classes:
+                    'obposUiCrossStoreList-container1-container1-container1-renderLoading',
                   showing: false,
                   initComponents: function() {
                     this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
@@ -255,7 +262,7 @@ enyo.kind({
 enyo.kind({
   name: 'OBPOS.UI.CrossStoreLine',
   kind: 'OB.UI.listItemButton',
-  classes: 'obpos-listitembutton',
+  classes: 'obposUiCrossStoreLine',
   tap: function() {
     if (this.owner.owner.owner.owner.callback && !(event && event.cancel)) {
       var data = {
@@ -282,7 +289,7 @@ enyo.kind({
   },
   components: [
     {
-      classes: 'obpos-store-information',
+      classes: 'obposUiCrossStoreLine-iconStore',
       name: 'iconStore',
       tap: function() {
         if (event) {
@@ -299,23 +306,23 @@ enyo.kind({
       }
     },
     {
-      classes: 'obpos-row-store-name',
+      classes: 'obposUiCrossStoreLine-storeName',
       name: 'storeName'
     },
     {
-      classes: 'obpos-row-store-standard-price',
+      classes: 'obposUiCrossStoreLine-standardPrice',
       name: 'standarPrice'
     },
     {
-      classes: 'obpos-row-store-current-price',
+      classes: 'obposUiCrossStoreLine-currentPrice',
       name: 'currentPrice'
     },
     {
-      classes: 'obpos-row-store-stock',
+      classes: 'obposUiCrossStoreLine-stock',
       name: 'stock'
     },
     {
-      classes: '.changedialog-properties-end'
+      classes: 'obposUiCrossStoreLine-element1'
     }
   ],
   create: function() {

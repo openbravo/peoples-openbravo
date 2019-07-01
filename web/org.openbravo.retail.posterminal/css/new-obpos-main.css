@@ -1178,7 +1178,131 @@
 */
 .obposUiAdvancedFilterWindowButtonVerifiedReturns {}
 
+/***********************   ***********************/
+/*        File: modalcrossstoreselector.js       */
+/*            Folder: js/components/             */
+/***********************   ***********************/
 
+/*
+# Component: OBPOS.UI.CrossStoreSelector
+# Inherits: [OB.UI.ModalSelector]
+*/
+.obposUiCrossStoreSelector {
+  width: 550px !important;
+  top: 70px;
+}
+
+/*
+# Component: OBPOS.UI.ModalCrossStoreProductScrollableHeader
+# Inherits: [OB.UI.ScrollableTableHeader]
+*/
+.obposUiModalCrossStoreProductScrollableHeader {}
+
+.obposUiModalCrossStoreProductScrollableHeader-filterSelector {
+  /* Inherits: [OB.UI.FilterSelectorTableHeader] */
+  padding: 10px;
+}
+
+.obposUiModalCrossStoreProductScrollableHeader-container1 {
+  padding: 10px;
+}
+
+.obposUiModalCrossStoreProductScrollableHeader-container1-container1 {
+  display: table;
+  width:  100%;
+}
+
+.obposUiModalCrossStoreProductScrollableHeader-container1-container1-container1 {
+  display: table-cell;
+  text-align: center;
+}
+
+.obposUiModalCrossStoreProductScrollableHeader-container1-container1-container1-modalAdvancedFilterSelectStore {
+  /* Inherits: [OB.UI.ButtonAdvancedFilter] */
+}
+
+/*
+# Component: OB.UI.ModalAdvancedFilterSelectStore
+# Inherits: [OB.UI.ModalAdvancedFilters]
+*/
+.obUiModalAdvancedFilterSelectStore {}
+
+/*
+# Component: OBPOS.UI.CrossStoreList
+*/
+.obposUiCrossStoreList {}
+
+.obposUiCrossStoreList-container1 {
+  float: left;
+  width: 100%;
+  touch-action: none;
+}
+
+.obposUiCrossStoreList-container1-container1 {
+  border-bottom: 1px solid #cccccc;
+}
+
+.obposUiCrossStoreList-container1-container1-container1 {
+  float: left;
+  width: 100%;
+  touch-action: none;
+}
+
+.obposUiCrossStoreList-container1-container1-container1-csStoreSelector {
+  /* Inherits: [OB.UI.ScrollableTable] */
+  max-height: 420px;
+}
+
+.obposUiCrossStoreList-container1-container1-container1-renderLoading {}
+
+/*
+# Component: OBPOS.UI.CrossStoreLine
+# Inherits: [OB.UI.listItemButton]
+*/
+.obposUiCrossStoreLine {}
+
+.obposUiCrossStoreLine-iconStore {
+  width: 35px;
+  height: 35px;
+  float: left;
+  display: inline-block;
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconInfo.svg');
+  background-size: 35px 35px;
+  background-repeat: no-repeat;
+}
+
+.obposUiCrossStoreLine-storeName {
+  float: left;
+  display: inline-block;
+  padding-top: 5px;
+  padding-left: 30px;
+}
+
+.obposUiCrossStoreLine-standardPrice {
+  float: right;
+  padding-top: 5px;
+  padding-left: 5px;
+  font-weight: bold;
+}
+
+.obposUiCrossStoreLine-currentPrice {
+  float: right;
+  padding: 5px 15px 0px 5px;
+  font-weight: bold;
+  color: #808080;
+}
+
+.obposUiCrossStoreLine-stock {
+  float: right;
+  padding-top: 5px;
+  padding-left: 5px;
+  padding-right: 30px;
+  font-weight: bold;
+}
+
+.obposUiCrossStoreLine-element1 {
+  clear: both;
+}
 
 /***********************   ***********************/
 /*        File: modalmultiorderslayaway.js       */
