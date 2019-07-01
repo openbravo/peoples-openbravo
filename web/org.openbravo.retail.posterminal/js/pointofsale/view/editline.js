@@ -294,7 +294,7 @@ enyo.kind({
     {
       kind: 'OB.UI.ActionButton',
       name: 'deleteLine',
-      classes: 'btnlink btnlink-small btnlink-orange',
+      classes: 'btnlink btnlink-small',
       action: {
         window: 'retail.pointofsale',
         name: 'deleteLine'
@@ -303,7 +303,7 @@ enyo.kind({
     {
       kind: 'OB.UI.ActionButton',
       name: 'descriptionButton',
-      classes: 'btnlink btnlink-small btnlink-orange',
+      classes: 'btnlink btnlink-small',
       action: {
         window: 'retail.pointofsale',
         name: 'editLine'
@@ -312,7 +312,7 @@ enyo.kind({
     {
       kind: 'OB.UI.ActionButton',
       name: 'returnLine',
-      classes: 'btnlink btnlink-small btnlink-orange',
+      classes: 'btnlink btnlink-small',
       action: {
         window: 'retail.pointofsale',
         name: 'returnLine'
@@ -321,7 +321,7 @@ enyo.kind({
     {
       kind: 'OB.UI.ActionButton',
       name: 'splitlineButton',
-      classes: 'btnlink btnlink-small btnlink-orange',
+      classes: 'btnlink btnlink-small',
       action: {
         window: 'retail.pointofsale',
         name: 'splitLine'
@@ -448,7 +448,7 @@ enyo.kind({
     {
       kind: 'OB.UI.ActionButton',
       name: 'checkStockButton',
-      classes: 'btnlink btnlink-small btnlink-orange',
+      classes: 'btnlink btnlink-small',
       action: {
         window: 'retail.pointofsale',
         name: 'showStockLine'
@@ -911,7 +911,8 @@ enyo.kind({
               maxHeight: '50px',
               thumb: true,
               horizontal: 'hidden',
-              classes: 'span12',
+              classes:
+                'obObposPointOfSaleUiEditLine-actionButtonsContainer span12',
               style: 'padding: 0px 0px 1px 0px; line-height: 50%;'
             },
             {
