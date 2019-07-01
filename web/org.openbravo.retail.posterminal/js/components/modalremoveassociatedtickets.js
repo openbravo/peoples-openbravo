@@ -255,6 +255,7 @@ enyo.kind({
         var line = _.find(me.args.receipt.get('lines').models, function(line) {
           return line.id === relatedLine.orderlineId;
         });
+        relatedLine.orderDocumentNo = me.args.receipt.get('documentNo');
         relatedLine.bpName = me.args.receipt.get('bp').get('name');
         if (!OB.UTIL.isNullOrUndefined(line)) {
           relatedLine.qty = line.get('qty');
