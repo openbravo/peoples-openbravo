@@ -42,19 +42,25 @@ public class SessionExpirationFilter implements Filter {
 
     HttpSession session = hReq.getSession(false);
     if (session != null) {
-      Date expirationDate = (Date) session.getAttribute("expirationDate");
+      try {
+        Date expirationDate = (Date) session.getAttribute("expirationDate");
 
-      if (expirationDate != null && expirationDate.before(new Date())) {
-        session.invalidate();
-      } else {
-        // ignore requests marked as both ajaxCall and ignoreForSessionTimeout
-        String isAjaxCall = hReq.getParameter("IsAjaxCall");
-        String ignoreForSessionTimeout = hReq.getParameter("ignoreForSessionTimeout");
-        boolean ignoreForTimeout = "1".equals(isAjaxCall) && "1".equals(ignoreForSessionTimeout);
-        if (!ignoreForTimeout) {
-          session.setAttribute("expirationDate",
-              new Date(System.currentTimeMillis() + session.getMaxInactiveInterval() * 1000));
+        if (expirationDate != null && expirationDate.before(new Date())) {
+          session.invalidate();
+        } else {
+          // ignore requests marked as both ajaxCall and ignoreForSessionTimeout
+          String isAjaxCall = hReq.getParameter("IsAjaxCall");
+          String ignoreForSessionTimeout = hReq.getParameter("ignoreForSessionTimeout");
+          boolean ignoreForTimeout = "1".equals(isAjaxCall) && "1".equals(ignoreForSessionTimeout);
+          if (!ignoreForTimeout) {
+            session.setAttribute("expirationDate",
+                new Date(System.currentTimeMillis() + session.getMaxInactiveInterval() * 1000));
+          }
         }
+      } catch (IllegalStateException ignore) {
+        // If session is already invalidated, IllegalStateException is thrown while trying to
+        // read/write attributes. HttpSession does not provide any way to check validity.
+        // Let's just ignore this case and continue.
       }
     }
     chain.doFilter(req, resp);
