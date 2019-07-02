@@ -30,7 +30,7 @@ enyo.kind({
               components: [
                 {
                   name: 'printer',
-                  style: 'padding: 5px 0px 0px 0px; font-size: 125%;'
+                  classes: 'printerLine'
                 }
               ],
               tap: function() {

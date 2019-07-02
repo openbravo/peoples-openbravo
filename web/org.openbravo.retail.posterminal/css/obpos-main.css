@@ -2313,3 +2313,30 @@ div.obrdm-cell-orderline-right-col1:nth-child(odd){
   
 }
 
+.printerLine {
+  padding: 5px 0px 0px 0px;
+  font-size: 125%;
+}
+
+@media (max-width: 525px) {
+  .printerLine {
+    font-size: 110%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 280px;
+    white-space: nowrap;
+    text-align: left;
+  }
+}
+
+@media (min-width: 526px) {
+  .printerLine {
+    font-size: 125%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 390px;
+    white-space: nowrap;
+    text-align: left;
+  }
+}
+
