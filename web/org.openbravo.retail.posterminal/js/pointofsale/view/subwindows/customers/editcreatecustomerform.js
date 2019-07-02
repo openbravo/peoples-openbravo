@@ -630,6 +630,7 @@ enyo.kind({
     {
       kind: 'OB.UI.SwitchShippingInvoicingAddr',
       name: 'useSameAddrCheck',
+      i18nLabel: 'OBPOS_SameAddrInfo',
       classes:
         'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-newAttributes-useSameAddrCheck'
     }
@@ -676,12 +677,8 @@ enyo.kind({
       },
       hideShow: function(inSender, inEvent) {
         if (inEvent.checked) {
-          this.owner.removeClass('width52');
-          this.owner.owner.$.labelLine.removeClass('width40');
           this.owner.owner.hide();
         } else {
-          this.owner.addClass('width52');
-          this.owner.owner.$.labelLine.addClass('width40');
           this.owner.owner.show();
         }
       }
@@ -698,20 +695,8 @@ enyo.kind({
       mandatory: true,
       hideShow: function(inSender, inEvent) {
         if (inEvent.checked) {
-          this.owner.removeClass(
-            'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-largeWidth'
-          );
-          this.owner.owner.$.labelLine.removeClass(
-            'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-smallWidth'
-          );
           this.owner.owner.hide();
         } else {
-          this.owner.addClass(
-            'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-largeWidth'
-          );
-          this.owner.owner.$.labelLine.addClass(
-            'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-smallWidth'
-          );
           this.owner.owner.show();
         }
       }
@@ -726,20 +711,8 @@ enyo.kind({
       maxlength: 10,
       hideShow: function(inSender, inEvent) {
         if (inEvent.checked) {
-          this.owner.removeClass(
-            'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-largeWidth'
-          );
-          this.owner.owner.$.labelLine.removeClass(
-            'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-smallWidth'
-          );
           this.owner.owner.hide();
         } else {
-          this.owner.addClass(
-            'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-largeWidth'
-          );
-          this.owner.owner.$.labelLine.addClass(
-            'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-smallWidth'
-          );
           this.owner.owner.show();
         }
       }
@@ -754,20 +727,8 @@ enyo.kind({
       maxlength: 60,
       hideShow: function(inSender, inEvent) {
         if (inEvent.checked) {
-          this.owner.removeClass(
-            'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-largeWidth'
-          );
-          this.owner.owner.$.labelLine.removeClass(
-            'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-smallWidth'
-          );
           this.owner.owner.hide();
         } else {
-          this.owner.addClass(
-            'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-largeWidth'
-          );
-          this.owner.owner.$.labelLine.addClass(
-            'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-smallWidth'
-          );
           this.owner.owner.show();
         }
       }
@@ -812,24 +773,6 @@ enyo.kind({
           },
           args
         );
-      },
-      mandatory: true,
-      hideShow: function(inSender, inEvent) {
-        if (inEvent.checked) {
-          this.owner.removeClass(
-            'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-largeWidth'
-          );
-          this.owner.owner.$.labelLine.removeClass(
-            'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-smallWidth'
-          );
-        } else {
-          this.owner.addClass(
-            'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-largeWidth'
-          );
-          this.owner.owner.$.labelLine.addClass(
-            'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-smallWidth'
-          );
-        }
       }
     },
     {
@@ -841,24 +784,7 @@ enyo.kind({
       i18nLabel: 'OBPOS_LblAddress',
       maxlength: 60,
       mandatory: true,
-      hasAddrIcons: true,
-      hideShow: function(inSender, inEvent) {
-        if (inEvent.checked) {
-          this.owner.removeClass(
-            'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-largeWidth'
-          );
-          this.owner.owner.$.labelLine.removeClass(
-            'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-smallWidth'
-          );
-        } else {
-          this.owner.addClass(
-            'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-largeWidth'
-          );
-          this.owner.owner.$.labelLine.addClass(
-            'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-smallWidth'
-          );
-        }
-      }
+      hasAddrIcons: true
     },
     {
       kind: 'OB.UI.CustomerTextPropertyAddr',
@@ -867,24 +793,7 @@ enyo.kind({
         'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-invAddrAttributes-customerInvPostalCode',
       modelProperty: 'postalCode',
       i18nLabel: 'OBPOS_LblPostalCode',
-      maxlength: 10,
-      hideShow: function(inSender, inEvent) {
-        if (inEvent.checked) {
-          this.owner.removeClass(
-            'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-largeWidth'
-          );
-          this.owner.owner.$.labelLine.removeClass(
-            'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-smallWidth'
-          );
-        } else {
-          this.owner.addClass(
-            'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-largeWidth'
-          );
-          this.owner.owner.$.labelLine.addClass(
-            'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-smallWidth'
-          );
-        }
-      }
+      maxlength: 10
     },
     {
       kind: 'OB.UI.CustomerTextPropertyAddr',
@@ -893,24 +802,7 @@ enyo.kind({
         'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-invAddrAttributes-customerInvCity',
       modelProperty: 'cityName',
       i18nLabel: 'OBPOS_LblCity',
-      maxlength: 60,
-      hideShow: function(inSender, inEvent) {
-        if (inEvent.checked) {
-          this.owner.removeClass(
-            'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-largeWidth'
-          );
-          this.owner.owner.$.labelLine.removeClass(
-            'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-smallWidth'
-          );
-        } else {
-          this.owner.addClass(
-            'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-largeWidth'
-          );
-          this.owner.owner.$.labelLine.addClass(
-            'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-smallWidth'
-          );
-        }
-      }
+      maxlength: 60
     }
   ]
 });

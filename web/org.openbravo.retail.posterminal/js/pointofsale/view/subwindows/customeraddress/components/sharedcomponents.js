@@ -43,7 +43,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.CustomerAddrTextProperty',
-  kind: 'enyo.Input',
+  kind: 'OB.UI.FormElement.Input',
   type: 'text',
   classes: 'obUiCustomerAddrTextProperty',
   handlers: {
@@ -60,7 +60,9 @@ enyo.kind({
     onRetrieveCustomer: '',
     onSetValues: ''
   },
-  blur: function() {},
+  blur: function() {
+    this.inherited(arguments);
+  },
   input: function() {},
   change: function() {},
   valueSet: function(inSender, inEvent) {
@@ -529,7 +531,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.CustomerAddrCheckProperty',
-  kind: 'OB.UI.CheckboxButton',
+  kind: 'OB.UI.FormElement.Checkbox',
   classes: 'obUiCustomerAddrCheckProperty',
   handlers: {
     onLoadValue: 'loadValue',
@@ -556,16 +558,10 @@ enyo.kind({
     var me = this;
     if (inEvent.customerAddr !== undefined) {
       if (inEvent.customerAddr.get(me.modelProperty) !== undefined) {
-        me.checked = inEvent.customerAddr.get(me.modelProperty);
-      }
-      if (me.checked) {
-        me.addClass('obUiCustomerAddrCheckProperty_active');
-      } else {
-        me.removeClass('obUiCustomerAddrCheckProperty_active');
+        me.setChecked(inEvent.customerAddr.get(me.modelProperty));
       }
     } else {
-      me.checked = true;
-      me.addClass('obUiCustomerAddrCheckProperty_active');
+      me.setChecked(true);
     }
   },
   saveChange: function(inSender, inEvent) {

@@ -271,7 +271,7 @@
 }
 
 .obUiModalReceiptPropertiesImpl-newAttributes-printBox_active {
-  background-image: url('./../img/checkbox-on.svg');
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-on.svg');
   background-size: 34px 27px;
 }
 
@@ -9832,6 +9832,85 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 
 .obObposPointOfSaleUiCustomersModalConfigurationRequiredForCreateCustomers-bodyContent {}
 
+.obUiCustomerCheckComboProperty {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  height: 49px;
+  padding: 0px 0px 0px 8px;
+}
+
+/*
+# Component: OB.UI.CustomerCheckOption
+# Inherits: OB.UI.Button
+*/
+.obUiCustomerCheckOption {
+  cursor: pointer;
+  height: 25px;
+  border: 1px solid #8c8c8c;
+  color: #8c8c8c;
+  background-repeat: no-repeat;
+  background-position: 6px center;
+  background-color: transparent;
+  background-image: none;
+  background-size: 15px auto;
+  padding: 0px 20px 0px 20px;
+  transition: color .2s ease-out, background .2s ease-out, padding .2s ease-out;
+}
+
+.obUiCustomerCheckOption.active {
+  background-color: white;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-on.svg');
+  padding: 0px 12px 0px 28px;
+  color: black;
+}
+
+.obUiCustomerCheckOption.active:active {
+  background-color: white;
+  background-image: none;
+  padding: 0px 20px 0px 20px;
+  color: #8c8c8c;
+}
+
+.obUiCustomerCheckOption.half-active {
+  background-color: white;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-half-on.svg');
+  padding: 0px 12px 0px 28px;
+  color: black;
+}
+
+.obUiCustomerCheckOption[disabled='disabled']:active {
+  background-color: white;
+  background-image: none;
+  padding: 0px 20px 0px 20px;
+  color: #8c8c8c;
+}
+
+.obUiCustomerCheckOption.active[disabled='disabled']:active {
+  background-color: white;background-color: white;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-on.svg');
+  padding: 0px 12px 0px 28px;
+  color: #8c8c8c;
+}
+
+.obUiCustomerCheckOption:focus {
+  outline-style: solid;
+  outline-color: var(--color-maincolor);
+  border-color: var(--color-maincolor);
+}
+
+.obUiCustomerCheckOption.obUiComplexButton_disabled,
+.obUiCustomerCheckOption .obUiComplexButton-buttonLabel_disabled,
+.obUiCustomerCheckOption:disabled {
+  display: block;
+  cursor: default;
+  color: #8c8c8c;
+  border-width: 0px;
+}
+
+.obUiCustomerCheckOption .obUiComplexButton-buttonLabel_disabled {
+  padding-top: 4px;
+}
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.customers.cancelEdit
@@ -10036,21 +10115,44 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
   overflow-x: hidden;
 }
 
-.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields {}
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields {
+  display: grid;
+  grid-auto-flow: row;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+@media all and (max-width: 800px) {
+  .obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields {
+    display: grid;
+    grid-auto-flow: row;
+    grid-template-columns: 1fr;
+  }
+}
 
 .obObposPointOfSaleUiCustomersEditCreatecustomers-customerOnlyFields-obUiCustomerPropertyLine {
 /* Inherits: [OB.UI.CustomerPropertyLine] */
 }
 
-.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-shipAddress {}
-
-.obObposPointOfSaleUiCustomersEditCreatecustomers-shipAddress-shipLbl {
-  float: left;
-  font-weight: bold;
-  font-size: var(--font-xlarge);
-  line-height: 30px;
-  padding-top: 1px;
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerOnlyFields-obUiCustomerPropertyLine.obUiFormElement_isCustom .obUiFormElement-placement {
+  border: 0px;
 }
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-shipAndInvAddress {
+  display: grid;
+  grid-auto-flow: column;
+}
+
+@media all and (max-width: 800px) {
+  .obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-shipAndInvAddress {
+    grid-auto-flow: row;
+  }
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-shipAndInvAddress-shipAddress {}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-shipAndInvAddress-shipAddress {}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-shipAddress-shipLbl {}
 
 .obObposPointOfSaleUiCustomersEditCreatecustomers-shipAddress-shippingAddrFields {}
 
@@ -10058,42 +10160,15 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 /* Inherits: [OB.UI.CustomerPropertyLine] */
 }
 
-.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-invAddress {}
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-shipAndInvAddress-invAddress {}
 
-.obObposPointOfSaleUiCustomersEditCreatecustomers-invAddress-invLbl {
-  float: left;
-  font-weight: bold;
-  font-size: var(--font-xlarge);
-  line-height: 30px;
-  padding-top: 1px;
-}
+.obObposPointOfSaleUiCustomersEditCreatecustomers-invAddress-invLbl {}
 
 .obObposPointOfSaleUiCustomersEditCreatecustomers-invAddress-invoicingAddrFields {}
 
 .obObposPointOfSaleUiCustomersEditCreatecustomers-invoicingAddrFields-obUiCustomerPropertyLine {
 /* Inherits: [OB.UI.CustomerPropertyLine] */
 }
-
-
-/*
-# Component: OB.UI.CustomerConsentCheckProperty
-# Inherits: [OB.UI.CheckboxButton]
-*/
-.obUiCustomerConsentCheckProperty {
-  margin: 5px 0px 0px 5px;
-}
-
-.obUiCustomerConsentCheckProperty_active {
-  background-image: url('./../img/checkbox-on.svg');
-  background-size: 34px 27px;
-}
-
-.obUiCustomerConsentCheckProperty_active:active,
-.obUiCustomerConsentCheckProperty_active[disabled="disabled"]:active {
-  background-image: url('./../img/checkbox-off.svg');
-  background-size: 34px 27px;
-}
-
 
 
 /*************************   *************************/
@@ -10239,14 +10314,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
   padding: 9px 15px;
 }
 
-.obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-smallWidth {
-  width: 40%;
-}
-
-.obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-largeWidth {
-  width: 52%;
-}
-
 .obObposPointOfSaleUiCustomersEditCreatecustomersImpl-newAttributes-greeting {
 /* Inherits: [OB.UI.CustomerComboProperty] */
 }
@@ -10346,37 +10413,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 .obObposPointOfSaleUiCustomersEditCreatecustomersImpl-invAddrAttributes-customerInvCity {
 /* Inherits: [OB.UI.CustomerTextPropertyAddr] */
 }
-
-@media all and (max-width: 800px) {
-  .obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-smallWidth {
-    width: 20%;
-  }
-
-  .obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-largeWidth {
-    width: 75%;
-  }
-}
-
-@media (min-width: 350px) and (max-width: 520px) {
-  .obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-smallWidth {
-    width: 40%;
-  }
-
-  .obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-largeWidth {
-    width: 54%;
-  }
-}
-
-@media (min-width: 521px) and (max-width: 800px) {
-  .obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-smallWidth {
-    width: 30%;
-  }
-
-  .obObposPointOfSaleUiCustomersEditCreatecustomersImpl-generic-largeWidth {
-    width: 64%;
-  }
-}
-
 
 
 /******************************   ******************************/
@@ -10710,6 +10746,12 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
   overflow-x: hidden;
   overflow-y: auto;
   max-height: 622px;
+}
+
+.obObposPointOfSaleUiCustomeraddrEditCreatecustomers-customerAddrAttributes {
+  display: grid;
+  grid-auto-flow: row;
+  grid-template-columns: 1fr;
 }
 
 .obObposPointOfSaleUiCustomeraddrEditCreatecustomers-customerAddrAttributes-obUiCustomerPropertyLine {
@@ -13312,7 +13354,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 }
 
 .obObposCashupUiRenderCashMasterLine-container1-container1-container1-slaveCashUpIsClosed_finishOrNoTransaction {
-  color: green;
+  color: var(--color-maincolor);
 }
 
 .obObposCashupUiRenderCashMasterLine-container1-container1-container1-slaveCashUpIsClosed_noFinishNoTransaction {

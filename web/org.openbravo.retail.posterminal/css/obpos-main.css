@@ -134,14 +134,6 @@
   width: 6% !important;
 }
 
-.width40 {
-  width: 40% !important;
-}
-
-.width52 {
-  width: 52% !important;
-}
-
 .twoAddrLayout {
   width: 50%;
   float: left;
@@ -159,14 +151,6 @@
 @media all and (max-width: 800px) {
   .twoAddrLayout {
     width: 100%;
-  }
-
-  .width40 {
-    width: 20% !important;
-  }
-
-  .width52 {
-    width: 75% !important;
   }
 }
 
@@ -557,16 +541,8 @@ button.btnbp:disabled {
     width: 40%;
   }
 
-  .width40 {
-    width: 40% !important;
-  }
-
   .customer-property-text {
     width: 54%;
-  }
-
-  .width52 {
-    width: 54% !important;
   }
 }
 
@@ -575,16 +551,8 @@ button.btnbp:disabled {
     width: 30%;
   }
 
-  .width40 {
-    width: 30% !important;
-  }
-
   .customer-property-text {
     width: 64%;
-  }
-
-  .width52 {
-    width: 64% !important;
   }
 }
 

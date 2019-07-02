@@ -46,41 +46,17 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.CustomerPropertyLine',
-  classes: 'obUiCustomerPropertyLine',
-  components: [
-    {
-      classes: 'obUiCustomerPropertyLine-labelLine',
-      name: 'labelLine'
-    },
-    {
-      classes: 'obUiCustomerPropertyLine-newAttribute',
-      name: 'newAttribute'
-    },
-    {
-      classes: 'obUiCustomerPropertyLine-element3 u-clearBoth'
-    }
-  ],
-  initComponents: function() {
-    this.inherited(arguments);
-    this.$.newAttribute.createComponent(this.newAttribute);
-    this.$.labelLine.content = this.newAttribute.i18nLabel
-      ? OB.I18N.getLabel(this.newAttribute.i18nLabel)
-      : this.newAttribute.label;
-    if (this.newAttribute.mandatory) {
-      this.$.labelLine.content = this.$.labelLine.content + ' *';
-    }
-  }
+  kind: 'OB.UI.FormElement',
+  classes: 'obUiFormElement_dataEntry obUICustomerPropertyLine'
 });
 
 enyo.kind({
   name: 'OB.UI.CustomerTextProperty',
-  kind: 'enyo.Input',
+  kind: 'OB.UI.FormElement.Input',
   type: 'text',
-  classes: 'obUiCustomerTextProperty',
   handlers: {
     onLoadValue: 'loadValue',
     onSaveChange: 'saveChange',
-    onblur: 'blur',
     onchange: 'change',
     oninput: 'input',
     onSetValue: 'valueSet',
@@ -99,7 +75,6 @@ enyo.kind({
   retrieveValue: function(inSender, inEvent) {
     inEvent[this.modelProperty] = this.getValue();
   },
-  blur: function() {},
   input: function() {},
   change: function() {},
   loadValue: function(inSender, inEvent) {
@@ -113,14 +88,6 @@ enyo.kind({
   },
   saveChange: function(inSender, inEvent) {
     inEvent.customer.set(this.modelProperty, this.getValue());
-  },
-  initComponents: function() {
-    if (this.readOnly) {
-      this.setAttribute('readonly', 'readonly');
-    }
-    if (this.maxlength) {
-      this.setAttribute('maxlength', this.maxlength);
-    }
   }
 });
 
@@ -154,6 +121,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.SwitchShippingInvoicingAddr',
+  kind: 'OB.UI.FormElement.Checkbox',
   classes: 'obUiSwitchShippingInvoicingAddr',
   handlers: {
     onLoadValue: 'loadValue',
@@ -164,81 +132,39 @@ enyo.kind({
   events: {
     onHideShowFields: ''
   },
-  components: [
-    {
-      name: 'useSameCheck',
-      classes: 'obUiSwitchShippingInvoicingAddr-useSameCheck',
-      components: [
-        {
-          name: 'btnUseSameCheck',
-          kind: 'OB.UI.CheckboxButton',
-          classes:
-            'obUiSwitchShippingInvoicingAddr-useSameCheck-btnUseSameCheck'
-        }
-      ]
-    },
-    {
-      name: 'info',
-      classes: 'obUiSwitchShippingInvoicingAddr-info',
-      components: [
-        {
-          name: 'infotext',
-          classes: 'obUiSwitchShippingInvoicingAddr-info-infotext'
-        }
-      ]
-    }
-  ],
-  initComponents: function() {
-    this.inherited(arguments);
-    this.owner.owner.$.labelLine.hide();
-    this.$.infotext.setContent(OB.I18N.getLabel('OBPOS_SameAddrInfo'));
-  },
   valueSet: function(inSender, inEvent) {
     if (inEvent.data.hasOwnProperty('btnUseSameCheck')) {
       this.doHideShowFields({
         checked: inEvent.data.btnUseSameCheck
       });
-      if (inEvent.data.btnUseSameCheck) {
-        this.$.btnUseSameCheck.check();
-      } else {
-        this.$.btnUseSameCheck.unCheck();
-      }
+      this.setChecked(inEvent.data.btnUseSameCheck);
     }
   },
   retrieveValue: function(inSender, inEvent) {
-    inEvent.btnUseSameCheck = this.$.btnUseSameCheck.checked;
-  },
-  rendered: function() {
-    this.inherited(arguments);
-    // This inline style is allowed
-    this.owner.applyStyle('width', '100%');
+    inEvent.btnUseSameCheck = this.getChecked();
   },
   loadValue: function(inSender, inEvent) {
     if (inEvent.customer !== undefined) {
-      this.hide();
+      this.formElement.hide();
     } else {
-      this.show();
-      this.$.btnUseSameCheck.checked = true;
-      this.$.btnUseSameCheck.addClass(
-        'obUiSwitchShippingInvoicingAddr-useSameCheck-btnUseSameCheck_active'
-      );
+      this.formElement.show();
+      this.setChecked(true);
       this.doHideShowFields({
-        checked: this.$.btnUseSameCheck.checked
+        checked: this.getChecked()
       });
     }
   },
   saveChange: function(inSender, inEvent) {
-    inEvent.customer.set(
-      'useSameAddrForShipAndInv',
-      this.$.btnUseSameCheck.checked
-    );
+    inEvent.customer.set('useSameAddrForShipAndInv', this.getChecked());
   },
   tap: function() {
+    this.inherited(arguments);
     this.doHideShowFields({
-      checked: this.$.btnUseSameCheck.checked
+      checked: this.getChecked()
     });
   }
 });
+
 enyo.kind({
   name: 'OB.UI.CustomerComboProperty',
   classes: 'obUiCustomerComboProperty',
@@ -258,11 +184,8 @@ enyo.kind({
     {
       kind: 'OB.UI.List',
       name: 'customerCombo',
-      classes: 'obUiCustomerComboProperty-customerCombo',
       renderLine: enyo.kind({
-        kind: 'enyo.Option',
-        classes:
-          'obUiCustomerComboProperty-customerCombo-renderLine-enyoOption',
+        kind: 'OB.UI.FormElement.Select.Option',
         initComponents: function() {
           this.inherited(arguments);
           this.setValue(
@@ -398,39 +321,48 @@ enyo.kind({
             'obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields'
         },
         {
-          name: 'shipAddress',
+          name: 'shipAndInvAddress',
           classes:
-            'obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-shipAddress',
+            'obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-shipAndInvAddress',
           components: [
             {
-              name: 'shipLbl',
-              showing: false,
+              name: 'shipAddress',
               classes:
-                'obObposPointOfSaleUiCustomersEditCreatecustomers-shipAddress-shipLbl'
+                'obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-shipAndInvAddress-shipAddress',
+              components: [
+                {
+                  name: 'shipLbl',
+                  kind: 'OB.UI.FormSection.Label',
+                  showing: false,
+                  classes:
+                    'obObposPointOfSaleUiCustomersEditCreatecustomers-shipAddress-shipLbl'
+                },
+                {
+                  name: 'shippingAddrFields',
+                  classes:
+                    'obObposPointOfSaleUiCustomersEditCreatecustomers-shipAddress-shippingAddrFields u-clearBoth'
+                }
+              ]
             },
             {
-              name: 'shippingAddrFields',
+              name: 'invAddress',
               classes:
-                'obObposPointOfSaleUiCustomersEditCreatecustomers-shipAddress-shippingAddrFields u-clearBoth'
-            }
-          ]
-        },
-        {
-          name: 'invAddress',
-          classes:
-            'obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-invAddress',
-          components: [
-            {
-              name: 'invLbl',
-              showing: false,
-              classes:
-                'obObposPointOfSaleUiCustomersEditCreatecustomers-invAddress-invLbl'
-            },
-            {
-              style: 'clear:both',
-              name: 'invoicingAddrFields',
-              classes:
-                'obObposPointOfSaleUiCustomersEditCreatecustomers-invAddress-invoicingAddrFields u-clearBoth'
+                'obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-shipAndInvAddress-invAddress',
+              components: [
+                {
+                  name: 'invLbl',
+                  kind: 'OB.UI.FormSection.Label',
+                  showing: false,
+                  classes:
+                    'obObposPointOfSaleUiCustomersEditCreatecustomers-invAddress-invLbl'
+                },
+                {
+                  style: 'clear:both',
+                  name: 'invoicingAddrFields',
+                  classes:
+                    'obObposPointOfSaleUiCustomersEditCreatecustomers-invAddress-invoicingAddrFields u-clearBoth'
+                }
+              ]
             }
           ]
         }
@@ -438,16 +370,9 @@ enyo.kind({
     }
   ],
   hideShowFields: function(inSender, inEvent) {
+    this.$.shipAddress.setShowing(!inEvent.checked);
     this.$.shipLbl.setShowing(!inEvent.checked);
     this.$.invLbl.setShowing(!inEvent.checked);
-    this.$.shipAddress.addRemoveClass(
-      'obObposPointOfSaleUiCustomersEditCreatecustomers-shipAddress-shipLbl',
-      !inEvent.checked
-    );
-    this.$.invAddress.addRemoveClass(
-      'obObposPointOfSaleUiCustomersEditCreatecustomers-invAddress-invLbl',
-      !inEvent.checked
-    );
     this.waterfall('onHideShow', {
       checked: inEvent.checked
     });
@@ -800,8 +725,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.CustomerConsentCheckProperty',
-  kind: 'OB.UI.CheckboxButton',
-  classes: 'obUiCustomerConsentCheckProperty',
+  kind: 'OB.UI.FormElement.Checkbox',
   handlers: {
     onLoadValue: 'loadValue',
     onSaveChange: 'saveChange',
@@ -813,65 +737,61 @@ enyo.kind({
   },
   valueSet: function(inSender, inEvent) {
     if (inEvent.data.hasOwnProperty(this.modelProperty)) {
-      if (inEvent.data[this.modelProperty]) {
-        this.check();
-      } else {
-        this.unCheck();
-      }
+      this.setChecked(inEvent.data[this.modelProperty]);
     }
+    this.inherited(arguments);
   },
   retrieveValue: function(inSender, inEvent) {
-    inEvent[this.modelProperty] = this.checked;
+    inEvent[this.modelProperty] = this.getChecked();
   },
   loadValue: function(inSender, inEvent) {
     var me = this;
     if (inEvent.customer !== undefined) {
       if (inEvent.customer.get(me.modelProperty) !== undefined) {
-        me.checked = inEvent.customer.get(me.modelProperty);
-      }
-      if (me.checked) {
-        me.addClass('obUiCustomerConsentCheckProperty_active');
-      } else {
-        me.removeClass('obUiCustomerConsentCheckProperty_active');
+        me.setChecked(inEvent.customer.get(me.modelProperty));
       }
     } else {
-      me.checked = false;
-      me.removeClass('obUiCustomerConsentCheckProperty_active');
+      me.setChecked(false);
     }
+    this.inherited(arguments);
   },
   saveChange: function(inSender, inEvent) {
     var me = this;
-    inEvent.customer.set(me.modelProperty, me.checked);
-  },
-  initComponents: function() {
-    if (this.readOnly) {
-      this.setAttribute('readonly', 'readonly');
-    }
-    if (this.maxlength) {
-      this.setAttribute('maxlength', this.maxlength);
-    }
+    inEvent.customer.set(me.modelProperty, me.getChecked());
   }
 });
 enyo.kind({
   name: 'OB.UI.CustomerCheckCommercialAuth',
-  kind: 'OB.UI.CustomerConsentCheckProperty',
+  kind: 'OB.UI.FormElement.Checkbox',
+  handlers: {
+    onLoadValue: 'loadValue',
+    onSaveChange: 'saveChange',
+    onSetValue: 'valueSet',
+    onRetrieveValues: 'retrieveValue'
+  },
+  events: {
+    onSaveProperty: ''
+  },
+  valueSet: function(inSender, inEvent) {
+    if (inEvent.data.hasOwnProperty(this.modelProperty)) {
+      this.setChecked(inEvent.data[this.modelProperty]);
+    }
+    this.inherited(arguments);
+  },
+  retrieveValue: function(inSender, inEvent) {
+    inEvent[this.modelProperty] = this.getChecked();
+  },
   loadValue: function(inSender, inEvent) {
     var me = this;
-    var i;
+    var form, i;
     if (inEvent.customer !== undefined) {
       if (inEvent.customer.get(me.modelProperty) !== undefined) {
-        me.checked = inEvent.customer.get(me.modelProperty);
+        me.setChecked(inEvent.customer.get(me.modelProperty));
       }
-      if (me.checked) {
-        me.addClass('active');
-      } else {
-        me.removeClass('active');
-      }
-      for (i = 0; i < me.parent.parent.parent.children.length; i++) {
-        if (
-          me.parent.parent.parent.children[i].name === 'line_contactpreferences'
-        ) {
-          var contactpreferences = me.parent.parent.parent.children[i];
+      form = me.formElement.parent;
+      for (i = 0; i < form.children.length; i++) {
+        if (form.children[i].name === 'line_contactpreferences') {
+          var contactpreferences = form.children[i];
           var commercialauth = inEvent.customer.attributes.commercialauth;
           if (commercialauth) {
             contactpreferences.show();
@@ -881,108 +801,101 @@ enyo.kind({
         }
       }
     } else {
-      me.checked = false;
-      me.removeClass('active');
+      me.setChecked(false);
     }
+    this.inherited(arguments);
   },
   tap: function() {
-    if (this.readOnly) {
-      return;
-    }
-    var i;
-    this.checked = !this.checked;
-    this.addRemoveClass('active', this.checked);
-    for (i = 0; i < this.parent.parent.parent.children.length; i++) {
-      if (
-        this.parent.parent.parent.children[i].name === 'line_contactpreferences'
-      ) {
-        var contactpreferences = this.parent.parent.parent.children[i];
-        var smsCheck =
-          contactpreferences.$.newAttribute.$.contactpreferences.$.smsCheck;
-        var emailCheck =
-          contactpreferences.$.newAttribute.$.contactpreferences.$.emailCheck;
-        if (this.checked) {
+    this.inherited(arguments);
+    var form, i;
+    form = this.formElement.parent;
+    for (i = 0; i < form.children.length; i++) {
+      if (form.children[i].name === 'line_contactpreferences') {
+        var contactpreferences = form.children[i];
+        var smsLabelCheck =
+          contactpreferences.$.newAttribute.$.contactpreferences.$
+            .smsLabelCheck;
+        var emailLabelCheck =
+          contactpreferences.$.newAttribute.$.contactpreferences.$
+            .emailLabelCheck;
+        if (this.getChecked()) {
           contactpreferences.show();
         } else {
           contactpreferences.hide();
           //reset saved values when hide contact preferences
-          smsCheck.checked = false;
-          emailCheck.checked = false;
+          smsLabelCheck.setChecked(false);
+          emailLabelCheck.setChecked(false);
         }
       }
     }
   },
   saveChange: function(inSender, inEvent) {
     var me = this;
-    var i;
-    inEvent.customer.set(me.modelProperty, me.checked);
-    for (i = 0; i < me.parent.parent.parent.children.length; i++) {
-      if (
-        me.parent.parent.parent.children[i].name === 'line_contactpreferences'
-      ) {
-        var contactpreferences = me.parent.parent.parent.children[i];
+    var form, i;
+    inEvent.customer.set(me.modelProperty, me.getChecked());
+    form = me.formElement.parent;
+    for (i = 0; i < form.children.length; i++) {
+      if (form.children[i].name === 'line_contactpreferences') {
+        var contactpreferences = form.children[i];
         inEvent.customer.set(
           'viasms',
-          contactpreferences.$.newAttribute.$.contactpreferences.$.smsCheck
-            .checked
+          contactpreferences.$.newAttribute.$.contactpreferences.$.smsLabelCheck.getChecked()
         );
         inEvent.customer.set(
           'viaemail',
-          contactpreferences.$.newAttribute.$.contactpreferences.$.emailCheck
-            .checked
+          contactpreferences.$.newAttribute.$.contactpreferences.$.emailLabelCheck.getChecked()
         );
       }
     }
   }
 });
+
+enyo.kind({
+  name: 'OB.UI.CustomerCheckOption',
+  kind: 'enyo.Button',
+  classes: 'obUiCustomerCheckOption',
+  checked: false,
+  tap: function() {
+    if (this.readOnly) {
+      return;
+    }
+    this.setChecked(!this.getChecked());
+  },
+  toggle: function() {
+    this.setChecked(!this.getChecked());
+  },
+  setChecked: function(value) {
+    if (value) {
+      this.check();
+    } else {
+      this.unCheck();
+    }
+  },
+  getChecked: function(value) {
+    return this.checked;
+  },
+  check: function() {
+    this.addClass('active');
+    this.checked = true;
+  },
+  unCheck: function() {
+    this.removeClass('active');
+    this.checked = false;
+  }
+});
+
 enyo.kind({
   name: 'OB.UI.CustomerCheckComboProperty',
+  kind: 'OB.UI.FormElement.Custom',
+  classes: 'obUiCustomerCheckComboProperty',
   components: [
     {
-      components: [
-        {
-          name: 'checkoptions',
-          style: 'display: flex; flex-wrap: wrap;',
-          components: [
-            {
-              name: 'smsField',
-              style: 'display: table; height: 40px; border: 1px solid #CCC; ',
-              components: [
-                {
-                  kind: 'OB.UI.CheckboxButton',
-                  name: 'smsCheck',
-                  style:
-                    'background-position: 0px 5px; height: 38px; margin-left: 5px; '
-                },
-                {
-                  name: 'smsLabel',
-                  classes: 'input',
-                  style:
-                    'width: 80%; display: table-cell; vertical-align: middle; border: none; '
-                }
-              ]
-            },
-            {
-              name: 'emailField',
-              style: 'display: table; height: 40px; border: 1px solid #CCC; ',
-              components: [
-                {
-                  kind: 'OB.UI.CheckboxButton',
-                  name: 'emailCheck',
-                  style:
-                    'background-position: 0px 5px; height: 38px; margin-left: 5px; '
-                },
-                {
-                  name: 'emailLabel',
-                  classes: 'input',
-                  style:
-                    'width: 80%; display: table-cell; vertical-align: middle; border: none; '
-                }
-              ]
-            }
-          ]
-        }
-      ]
+      kind: 'OB.UI.CustomerCheckOption',
+      name: 'smsLabelCheck'
+    },
+    {
+      kind: 'OB.UI.CustomerCheckOption',
+      name: 'emailLabelCheck'
     }
   ],
   handlers: {
@@ -998,24 +911,24 @@ enyo.kind({
 
     if (inEvent.customer !== undefined) {
       if (inEvent.customer.get('viasms') !== undefined) {
-        me.$.smsCheck.checked = inEvent.customer.get('viasms');
+        me.$.smsLabelCheck.setChecked(inEvent.customer.get('viasms'));
       } else {
-        me.$.smsCheck.checked = false;
+        me.$.smsLabelCheck.setChecked(false);
       }
       if (inEvent.customer.get('viaemail') !== undefined) {
-        me.$.emailCheck.checked = inEvent.customer.get('viaemail');
+        me.$.emailLabelCheck.setChecked(inEvent.customer.get('viaemail'));
       } else {
-        me.$.emailCheck.checked = false;
+        me.$.emailLabelCheck.setChecked(false);
       }
-      if (me.$.smsCheck.checked) {
-        me.$.smsCheck.addClass('active');
+      if (me.$.smsLabelCheck.getChecked()) {
+        me.$.smsLabelCheck.addClass('active');
       } else {
-        me.$.smsCheck.removeClass('active');
+        me.$.smsLabelCheck.removeClass('active');
       }
-      if (me.$.emailCheck.checked) {
-        me.$.emailCheck.addClass('active');
+      if (me.$.emailLabelCheck.getChecked()) {
+        me.$.emailLabelCheck.addClass('active');
       } else {
-        me.$.emailCheck.removeClass('active');
+        me.$.emailLabelCheck.removeClass('active');
       }
       for (i = 0; i < me.parent.parent.parent.children.length; i++) {
         if (
@@ -1023,35 +936,36 @@ enyo.kind({
         ) {
           commertialauth =
             me.parent.parent.parent.children[i].$.newAttribute.$.commercialauth;
-          if (commertialauth.checked) {
-            if (me.$.smsCheck.checked) {
-              me.$.smsCheck.addClass('active');
+          if (commertialauth.getChecked()) {
+            if (me.$.smsLabelCheck.getChecked()) {
+              me.$.smsLabelCheck.addClass('active');
             } else {
-              me.$.smsCheck.removeClass('active');
+              me.$.smsLabelCheck.removeClass('active');
             }
-            if (me.$.emailCheck.checked) {
-              me.$.emailCheck.addClass('active');
+            if (me.$.emailLabelCheck.getChecked()) {
+              me.$.emailLabelCheck.addClass('active');
             } else {
-              me.$.emailCheck.removeClass('active');
+              me.$.emailLabelCheck.removeClass('active');
             }
           }
         }
       }
     }
+    this.doHandleInputStyle();
   },
   saveChange: function(inSender, inEvent) {
     var me = this;
-    inEvent.customer.set('viasms', me.$.smsCheck.checked);
-    inEvent.customer.set('viaemail', me.$.emailCheck.checked);
+    inEvent.customer.set('viasms', me.$.smsLabelCheck.getChecked());
+    inEvent.customer.set('viaemail', me.$.emailLabelCheck.getChecked());
   },
   initComponents: function() {
     this.inherited(arguments);
-    this.$.smsLabel.setContent(OB.I18N.getLabel('OBPOS_LblSms'));
-    this.$.emailLabel.setContent(OB.I18N.getLabel('OBPOS_LblEmail'));
+    this.$.smsLabelCheck.setContent(OB.I18N.getLabel('OBPOS_LblSms'));
+    this.$.emailLabelCheck.setContent(OB.I18N.getLabel('OBPOS_LblEmail'));
     if (this.readOnly) {
-      this.$.smsCheck.setDisabled(true);
-      this.$.emailCheck.setDisabled(true);
+      this.$.smsLabelCheck.setDisabled(true);
+      this.$.emailLabelCheck.setDisabled(true);
     }
-    this.$.checkoptions.show();
+    this.show();
   }
 });
