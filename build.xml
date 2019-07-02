@@ -354,8 +354,6 @@ export.database: exports database structure and data to xml files.
      </sequential>
   </macrodef>
   
-  <taskdef resource="axis-tasks.properties" classpathref="project.class.path" />
-  
   <target name="init">
     <fail if="root.user" message="Don't run ant tasks with the root user" />
     <fail if="no.java.home" message="The environment variable JAVA_HOME is not set." />
