@@ -345,6 +345,23 @@
   background-color: transparent;
 }
 
+.obObposPointOfSaleUiEditLine-actionButtonsContainer>button.obUiActionButton {
+  background-color: #ffa500;
+  color: #000;
+}
+
+.obObposPointOfSaleUiEditLine-actionButtonsContainer>button.obUiActionButton:active {
+  opacity: 0.999;
+  background-color: #cccccc;
+}
+
+.obObposPointOfSaleUiEditLine-actionButtonsContainer>button.obUiActionButton:disabled,
+.obObposPointOfSaleUiEditLine-actionButtonsContainer>button.obUiActionButton[disabled=true]:hover {
+  cursor: default;
+  background-color: #717171;
+  opacity: 1;
+}
+
 .obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic>.obUiDummyAction {
   background-color: #717171;
 }
