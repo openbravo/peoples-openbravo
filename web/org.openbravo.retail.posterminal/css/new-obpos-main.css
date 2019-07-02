@@ -15370,6 +15370,107 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
   padding: 28px;
 }
 
+/***********************   ***********************/
+/*       File: orderlineinfostandardpopup.js     */
+/*            Folder: js/components/             */
+/***********************   ***********************/
+
+/*
+# Component: OBRDM.UI.OrderLineInfoPopupStandard
+# Inherits: [OB.UI.Modal]
+*/
+.obrdmUiOrderLineInfoPopupStandard {
+  top: 44px;
+}
+
+.obrdmUiOrderLineInfoStandardBody {}
+
+.obrdmUiOrderLineInfoStandardBody-table {
+  /* Inherits: [OBRDM.UI.OrderLineInfoTableStandard] */
+}
+
+.obrdmUiOrderLineInfoStandardBody-buttonFooter {
+  display: table;
+  width: 100%;
+  padding-bottom: 20px;
+}
+
+.obrdmUiOrderLineInfoStandardBody-buttonFooter-infoButtons {
+  display: table-cell;
+  text-align: center;
+}
+
+.obrdmUiOrderLineInfoStandardBody-buttoncancel {
+  /* Inherits: [OBRDM.UI.OrderLineInfoCloseBtn] */
+}
+
+/*
+# Component: OBRDM.UI.OrderLineInfoTableStandard
+*/
+.obrdmUiOrderLineInfoTableStandard {
+  padding: 28px;
+}
+
+/*
+# Component: OBRDM.UI.IssueSalesOrderInformationLine
+*/
+.obrdmUiIssueSalesOrderInformationLine {}
+
+.obrdmUiIssueSalesOrderInformationLine-container1 {
+  display: table;
+  width: 100%;
+}
+
+.obrdmUiIssueSalesOrderInformationLine-container1-searchKey {
+  display: table-row;
+}
+
+.obrdmUiIssueSalesOrderInformationLine-container1-searchKey-searchKeyLbl {
+  display: table-cell;
+  width: 20%;
+  padding: 2px;
+}
+
+.obrdmUiIssueSalesOrderInformationLine-container1-searchKey-searchKeyValue {
+  display: table-cell;
+  width: 80%;
+  padding: 2px;
+}
+
+.obrdmUiIssueSalesOrderInformationLine-container1-name {
+  display: table-row;
+  padding: 2px;
+}
+
+.obrdmUiIssueSalesOrderInformationLine-container1-name-nameLbl {
+  display: table-cell;
+  width: 20%;
+  padding: 2px;
+}
+
+.obrdmUiIssueSalesOrderInformationLine-container1-name-nameValue {
+  display: table-cell;
+  width: 80%;
+  padding: 2px;
+}
+
+.obrdmUiIssueSalesOrderInformationLine-container1-ean {
+  display: table-row;
+  padding: 2px;
+}
+
+.obrdmUiIssueSalesOrderInformationLine-container1-ean-eanLbl {
+  display: table-cell;
+  width: 20%;
+  padding: 2px;
+}
+
+.obrdmUiIssueSalesOrderInformationLine-container1-ean-eanValue {
+  display: table-cell;
+  width: 80%;
+  padding: 2px;
+}
+
 /*****************/
 /*      DBA      */
 /*****************/
