@@ -12,6 +12,7 @@
 var ReceiptDeliveryModeDefinition = {
   kind: 'OB.UI.renderComboProperty',
   name: 'ReceiptDeliveryMode',
+  classes: 'receiptDeliveryMode',
   modelProperty: 'obrdmDeliveryModeProperty',
   i18nLabel: 'OBRDM_DefaultDeliveryMode',
   defaultValue: 'PickAndCarry',
@@ -107,9 +108,9 @@ var ReceiptDeliveryModeDefinition = {
 };
 
 var ReceiptDeliveryDateDefinition = {
-  kind: 'OB.UI.DatePickerSimple',
   name: 'ReceiptDeliveryDate',
-  style: 'display: flex; justify-content: center;',
+  kind: 'OB.UI.DatePickerSimple',
+  classes: 'receiptDeliveryDate',
   modelProperty: 'obrdmDeliveryDateProperty',
   i18nLabel: 'OBRDM_DefaultDeliveryDate',
   handlers: {
@@ -163,9 +164,9 @@ var ReceiptDeliveryDateDefinition = {
 };
 
 var ReceiptDeliveryTimeDefinition = {
-  kind: 'OB.UI.TimePickerSimple',
   name: 'ReceiptDeliveryTime',
-  style: 'display: flex; justify-content: center;',
+  kind: 'OB.UI.TimePickerSimple',
+  classes: 'receiptDeliveryTime',
   modelProperty: 'obrdmDeliveryTimeProperty',
   i18nLabel: 'OBRDM_DefaultDeliveryTime',
   handlers: {

@@ -14681,7 +14681,34 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
   float: right;
 }
 
+/***********************   ***********************/
+/*              File: receiptEdit.js             */
+/*                  Folder: js/                  */
+/***********************   ***********************/
 
+/*
+# Component: ReceiptDeliveryMode
+# Inherits: [OB.UI.renderComboProperty]
+*/
+.receiptDeliveryMode {}
+
+/*
+# Component: ReceiptDeliveryDate
+# Inherits: [OB.UI.DatePickerSimple]
+*/
+.receiptDeliveryDate {
+  display: flex;
+  justify-content: center;
+}
+
+/*
+# Component: ReceiptDeliveryTime
+# Inherits: [OB.UI.TimePickerSimple]
+*/
+.receiptDeliveryTime {
+  display: flex;
+  justify-content: center;
+}
 
 /***********************   ***********************/
 /*         File: hookRenderOrderLine.js          */
