@@ -1305,6 +1305,455 @@
 }
 
 /***********************   ***********************/
+/*            File: storeinformation.js          */
+/*            Folder: js/components/             */
+/***********************   ***********************/
+
+/*
+# Component: OBPOS.UI.StoreInformation
+# Inherits: [OB.UI.Modal]
+*/
+.obposUiStoreInformation {
+  top: 40px;
+}
+
+.obposUiStoreInformationLine {
+
+}
+
+.obposUiStoreInformationLine-container1 {
+  display: table;
+  width: 100%;
+  padding: 5px;
+  float: left;
+  touch-action: none;
+}
+
+.obposUiStoreInformationLine-container1-iconAddress {
+  width: 30px;
+  height: 30px;
+  float: left;
+  display: inline-block;
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconAddress.svg');
+  background-size: 22px 18px;
+  background-repeat: no-repeat;
+  background-position: 3px 3px;
+}
+
+.obposUiStoreInformationLine-container1-addressValue {
+  float: left;
+  padding-top: 5px;
+  padding-left: 5px;
+}
+
+@media (max-width: 525px) {
+  .obposUiStoreInformationLine-container1-addressValue {
+    padding-left: 0px !important;
+  }
+}
+
+.obposUiStoreInformationLine-element1 {
+  clear: both;
+}
+
+.obposUiStoreInformationLine-container2 {
+  display: table;
+  width: 100%;
+  padding: 5px;
+  float: left;
+  touch-action: none;
+}
+
+.obposUiStoreInformationLine-container2-container1 {
+  float: left;
+  width: 50%;
+  touch-action: none;
+}
+
+.obposUiStoreInformationLine-container2-container1-iconPhone {
+  width: 30px;
+  height: 30px;
+  float: left;
+  display: inline-block;
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconPhone.svg');
+  background-size: 17px 17px;
+  background-repeat: no-repeat;
+  background-position: 3px 3px;
+}
+
+.obposUiStoreInformationLine-container2-container1-phoneNumber {
+  float: left;
+  padding-top: 5px;
+  padding-left: 5px;
+}
+
+@media (max-width: 525px) {
+  .obposUiStoreInformationLine-container2-container1-phoneNumber {
+    padding-left: 0px !important;
+  }
+}
+
+.obposUiStoreInformationLine-container2-container2 {
+  float: left;
+  width: 50%;
+  touch-action: none;
+}
+
+.obposUiStoreInformationLine-container2-container1-iconFax {
+  width: 30px;
+  height: 30px;
+  float: left;
+  display: inline-block;
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconFax.svg');
+  background-size: 19px 19px;
+  background-repeat: no-repeat;
+  background-position: 3px 3px;
+}
+
+.obposUiStoreInformationLine-container2-container1-faxNumber {
+  float: left;
+  padding-top: 5px;
+  padding-left: 5px;
+}
+
+@media (max-width: 525px) {
+  .obposUiStoreInformationLine-container2-container1-faxNumber {
+    padding-left: 0px !important;
+  }
+}
+
+.obposUiStoreInformationLine-container3 {
+  display: table;
+  width: 100%;
+  padding: 5px;
+  float: left;
+  touch-action: none;
+}
+
+.obposUiStoreInformationLine-container3-iconEmail {
+  width: 30px;
+  height: 30px;
+  float: left;
+  display: inline-block;
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconEmail.svg');
+  background-size: 20px 13px;
+  background-repeat: no-repeat;
+  background-position: 3px 3px;
+}
+
+.obposUiStoreInformationLine-container3-email {
+  float: left;
+  padding-top: 5px;
+  padding-left: 5px;
+}
+
+@media (max-width: 525px) {
+  .obposUiStoreInformationLine-container3-email {
+    padding-left: 0px !important;
+  }
+}
+
+.obposUiStoreInformationLine-container4 {
+  display: table;
+  width: 100%;
+  padding: 5px;
+  float: left;
+  touch-action: none;
+}
+
+.obposUiStoreInformationLine-container4-iconCif {
+  width: 30px;
+  height: 30px;
+  font-size: 16px;
+  font-weight: bold;
+  font-family: 'Arial';
+  color: #6cb33f;
+  float: left;
+  padding-top: 5px;
+}
+
+.obposUiStoreInformationLine-container4-cif {
+  float: left;
+  padding-top: 5px;
+  padding-left: 5px;
+}
+
+@media (max-width: 525px) {
+  .obposUiStoreInformationLine-container4-cif {
+    padding-left: 0px !important;
+  }
+}
+
+.obposUiStoreInformationLine-container5 {
+  display: table;
+  width: 100%;
+  padding: 5px;
+  float: left;
+  touch-action: none;
+}
+
+.obposUiStoreInformationLine-container5-storeCallCenterSchedule {
+  /* Inherits: [OB.UI.ScrollableTable] */
+  max-height: 140px;
+}
+
+.obposUiStoreInformationLine-container6 {
+  display: table;
+  width: 100%;
+  padding: 5px;
+  float: left;
+  touch-action: none;
+}
+
+.obposUiStoreInformationLine-container6-storeSpecialSchedule {
+  /* Inherits: [OB.UI.ScrollableTable] */
+  max-height: 140px;
+}
+
+.obposUiStoreInformationLine-container7 {
+  float: left;
+  width: 100%;
+  touch-action: none;
+  text-align: center;
+}
+
+.obposUiStoreInformationLine-container7-btnClose {
+  /* Inherits: [OB.UI.Button] */
+  clear: both;
+  width: 160px;
+  display: inline-block;
+  border: none;
+  text-decoration: none;
+  cursor: pointer;
+  margin: 10px;
+  opacity: 0.999;
+  font-weight: normal;
+  height: 30px;
+  font-size: 16px;
+  padding: 5px 15px 7px 15px;
+  background-color: #e2e2e2;
+  color: black;
+}
+
+@media all and (max-width: 800px) {
+  .obposUiStoreInformationLine-container7-btnClose {
+    height: 45px;
+  }
+}
+
+/*
+# Component: OBPOS.UI.StoreInformationScheduleScrollableHeader
+# Inherits: [OB.UI.ScrollableTableHeader]
+*/
+.obposUiStoreInformationScheduleScrollableHeader {
+  padding: 10px 10px 10px 0px;
+  border-bottom: 1px solid #cccccc;
+}
+
+.obposUiStoreInformationScheduleScrollableHeader-container1 {}
+
+.obposUiStoreInformationScheduleScrollableHeader-container1-container1 {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.obposUiStoreInformationScheduleScrollableHeader-container1-container1-iconSchedule {
+  width: 30px;
+  height: 30px;
+  float: left;
+  display: inline-block;
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconClock.svg');
+  background-size: 21px 21px;
+  background-repeat: no-repeat;
+  background-position: 3px 3px;
+  margin-left: 3px;
+}
+
+.obposUiStoreInformationScheduleScrollableHeader-container1-openHour {
+  display: table-cell;
+  vertical-align: middle;
+  width: 68%;
+  text-align: right;
+}
+
+@media (max-width: 525px) {
+  .obposUiStoreInformationScheduleScrollableHeader-container1-openHour {
+    width: 55% !important;
+  }
+}
+
+@media (min-width: 345px) and (max-width: 375px){
+  .obposUiStoreInformationScheduleScrollableHeader-container1-openHour {
+    width: 51% !important;
+  }
+}
+
+.obposUiStoreInformationScheduleScrollableHeader-container1-element1 {
+  display: table-cell;
+  vertical-align: middle;
+  width: 9%;
+}
+
+.obposUiStoreInformationScheduleScrollableHeader-container1-callCenter {
+  display: table-cell;
+  vertical-align: middle;
+  width: 30%;
+}
+
+/*
+# Component: OBPOS.UI.StoreInformationScheduleLine
+# Inherits: [OB.UI.listItemButton]
+*/
+.obposUiStoreInformationScheduleLine {}
+
+.obposUiStoreInformationScheduleLine-element1 {
+  float: left;
+  padding-top: 5px;
+  width: 15%;
+}
+
+.obposUiStoreInformationScheduleLine-weekday {
+  float: left;
+  padding-top: 5px;
+  padding-left: 5px;
+  width: 25%;
+  touch-action: none;
+}
+
+.obposUiStoreInformationScheduleLine-openHour {
+  float: left;
+  padding-top: 5px;
+  padding-left: 5px;
+  width: 33.33%;
+  touch-action: none;
+  text-align: center;
+}
+
+.obposUiStoreInformationScheduleLine-callCenter {
+  float: left;
+  padding-top: 5px;
+  padding-left: 5px;
+}
+
+@media (max-width: 525px) {
+  .obposUiStoreInformationScheduleLine-element1 {
+    width: unset !important;
+  }
+
+  .obposUiStoreInformationScheduleLine-weekday {
+    padding-left: 0px !important;
+  }
+
+  .obposUiStoreInformationScheduleLine-openHour {
+    padding-left: 0px !important;
+  }
+
+  .obposUiStoreInformationScheduleLine-callCenter {
+    padding-left: 0px !important;
+  }
+}
+
+/*
+# Component: OBPOS.UI.StoreInformationSpecialScheduleScrollableHeader
+# Inherits: [OB.UI.ScrollableTableHeader]
+*/
+.obposUiScrollableTableHeader {
+  padding: 10px 10px 10px 0px;
+  border-bottom: 1px solid #cccccc;
+}
+
+.obposUiScrollableTableHeader-element1 {
+  float: left;
+  padding-top: 5px;
+  width: 15%;
+}
+
+.obposUiScrollableTableHeader-specialOpenHour {
+  float: left;
+  width: 41.66%;
+  touch-action: none;
+  padding-left: 20px;
+}
+
+.obposUiScrollableTableHeader-element2 {
+  display: table-cell;
+  vertical-align: middle;
+  width: 1%;
+}
+
+.obposUiScrollableTableHeader-specialCloseHour {
+  display: table-cell;
+  vertical-align: middle;
+  width: 30%;
+}
+
+@media (max-width: 525px) {
+  .obposUiScrollableTableHeader-element1 {
+    width: unset !important;
+  }
+
+  .obposUiScrollableTableHeader-specialOpenHour {
+    width: unset;
+  }
+
+  .obposUiScrollableTableHeader-element2 {
+    width: 13% !important;
+  }
+}
+
+@media (min-width: 490px) and (max-width: 525px){
+  .obposUiScrollableTableHeader-element2 {
+    width: 20% !important;
+  }
+}
+
+@media (min-width: 345px) and (max-width: 375px) {
+  .obposUiScrollableTableHeader-element2 {
+    width: 8% !important;
+  }
+}
+
+/*
+# Component: OBPOS.UI.StoreInformationSpecialScheduleLine
+# Inherits: [OB.UI.listItemButton]
+*/
+.obposUiStoreInformationSpecialScheduleLine {}
+
+.obposUiStoreInformationSpecialScheduleLine-element1 {
+  float: left;
+  padding-top: 5px;
+  width: 15%;
+}
+
+.obposUiStoreInformationSpecialScheduleLine-openHour {
+  float: left;
+  padding-top: 5px;
+  padding-left: 5px;
+  width: 50%;
+  touch-action: none;
+}
+
+.obposUiStoreInformationSpecialScheduleLine-closeHour {
+  float: left;
+  padding-top: 5px;
+  padding-left: 5px;
+}
+
+@media (max-width: 525px) {
+  .obposUiStoreInformationSpecialScheduleLine-element1 {
+    width: unset !important;
+  }
+
+  .obposUiStoreInformationSpecialScheduleLine-openHour {
+    padding-left: 0px !important;
+  }
+
+  .obposUiStoreInformationSpecialScheduleLine-closeHour {
+    padding-left: 0px !important;
+  }
+}
+
+/***********************   ***********************/
 /*        File: modalmultiorderslayaway.js       */
 /*            Folder: js/components/             */
 /***********************   ***********************/
