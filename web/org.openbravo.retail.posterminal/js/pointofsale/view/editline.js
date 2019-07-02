@@ -969,8 +969,11 @@ enyo.kind({
                     'padding: 1% 0px 5px 2%; line-height: 120%; width: 65%;'
                 },
                 {
+                  // this container has a variable max height
+                  // based on return line action
+                  // It is set below (render function)
+                  // 134px or 110px
                   classes: 'span3',
-                  sytle: 'text-align: right',
                   name: 'contextImage',
                   components: [
                     {
@@ -1115,9 +1118,11 @@ enyo.kind({
         }
         this.$.returnreason.show();
         this.$.linePropertiesContainer.setMaxHeight('110px');
+        this.$.contextImage.applyStyle('max-height', '110px');
       } else {
         this.$.returnreason.hide();
         this.$.linePropertiesContainer.setMaxHeight('134px');
+        this.$.contextImage.applyStyle('max-height', '134px');
       }
     } else {
       this.$.txtaction.setContent(OB.I18N.getLabel('OBPOS_NoLineSelected'));
