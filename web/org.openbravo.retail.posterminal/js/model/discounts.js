@@ -79,8 +79,15 @@
         receipt.trigger('applyPromotionsFinished');
       }
       if (
-        OB.Model.Discounts.discountRules['4755A35B4DA34F6CB08F15462BA123CF']
+        !OB.UTIL.isNullOrUndefined(
+          OB.Model.Discounts.discountRules['4755A35B4DA34F6CB08F15462BA123CF']
+        ) &&
+        _.size(
+          OB.Model.Discounts.discountRules['4755A35B4DA34F6CB08F15462BA123CF']
+            .discountedUnits
+        ) > 0
       ) {
+        receipt.calculateGross();
         OB.Model.Discounts.discountRules[
           '4755A35B4DA34F6CB08F15462BA123CF'
         ].discountedUnits = {};
