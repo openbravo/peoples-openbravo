@@ -269,7 +269,6 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     return responseData;
   }
 
-  @SuppressWarnings("deprecation")
   private OBQuery<BaseOBObject> getNodeChildrenQuery(Map<String, String> parameters,
       String parentId, String hqlWhereClause, String hqlWhereClauseRootNodes, Tab tab, Tree tree,
       Entity entity) throws JSONException {
@@ -278,15 +277,18 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     //@formatter:off
     String joinClause = " as tn, " + entity.getName() + " as e "
                       + "where tn.node = e.id "
-                      + "  and tn.tree.id = '" + tree.getId() + "' ";
+                      + "  and tn.tree.id = :treeId ";
     //@formatter:on
+
+    Map<String, Object> params = new HashMap<>();
+    params.put("treeId", tree.getId());
 
     if (hqlWhereClause != null) {
       joinClause += " and (" + hqlWhereClause + ")";
     }
     if (!AD_ORG_TABLE_ID.equals(tree.getTable().getId())) {
-      joinClause += " and e.organization.id "
-          + OBDal.getInstance().getReadableOrganizationsInClause();
+      joinClause += " and e.organization.id in :orgs ";
+      params.put("orgs", OBContext.getOBContext().getReadableOrganizations());
     }
     if (hqlWhereClauseRootNodes != null) {
       joinClause += " and (" + hqlWhereClauseRootNodes + ") ";
@@ -300,7 +302,8 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
           JSONArray criteria = (JSONArray) JsonUtils.buildCriteria(parameters).get("criteria");
           String parentRecordId = getParentRecordIdFromCriteria(criteria, parentPropertyName);
           if (parentRecordId != null) {
-            joinClause += " and e." + parentPropertyName + ".id = '" + parentRecordId + "' ";
+            joinClause += " and e." + parentPropertyName + ".id = :parentRecordId ";
+            params.put("parentRecordId", parentRecordId);
           }
         }
       }
@@ -312,10 +315,12 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
           joinClause += " and tn.reportSet is null";
         } else {
           // Other ad_tree nodes can have either ROOT_NODE_DB or null as parent_id
-          joinClause += " and (tn.reportSet = '" + ROOT_NODE_DB + "' or tn.reportSet is null)";
+          joinClause += " and (tn.reportSet = :parentId or tn.reportSet is null)";
+          params.put("parentId", ROOT_NODE_DB);
         }
       } else {
-        joinClause += " and tn.reportSet = '" + parentId + "' ";
+        joinClause += " and tn.reportSet = :parentId ";
+        params.put("parentId", parentId);
       }
     }
     joinClause += " order by tn.sequenceNumber ";
@@ -323,11 +328,12 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     // Selects the relevant properties from ADTreeNode and all the properties from the referenced
     // table
     String selectClause = " tn.id as treeNodeId, tn.reportSet as parentId, tn.sequenceNumber as seqNo, tn.node as nodeId, e as entity";
-    OBQuery<BaseOBObject> obq = OBDal.getInstance().createQuery(TreeNode.ENTITY_NAME, joinClause);
-    obq.setFilterOnActive(false);
-    obq.setSelectClause(selectClause);
-    obq.setFilterOnReadableOrganization(false);
-    return obq;
+    return OBDal.getInstance()
+        .createQuery(TreeNode.ENTITY_NAME, joinClause)
+        .setFilterOnActive(false)
+        .setSelectClause(selectClause)
+        .setFilterOnReadableOrganization(false)
+        .setNamedParameters(params);
   }
 
   @Override
@@ -346,12 +352,14 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     //@formatter:off
     String joinClause = " as tn, " + entity.getName() + " as e "
                       + " where tn.node = e.id "
-                      + "   and tn.reportSet = :nodeId order by tn.sequenceNumber ";
+                      + "   and tn.reportSet = :nodeId ";
     //@formatter:on
 
     if (hqlWhereClause != null) {
       joinClause += " and (" + hqlWhereClause + ")";
     }
+
+    joinClause += " order by tn.sequenceNumber ";
 
     return OBDal.getInstance()
         .createQuery("ADTreeNode", joinClause)
