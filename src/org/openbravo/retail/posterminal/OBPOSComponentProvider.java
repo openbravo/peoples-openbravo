@@ -35,7 +35,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
   static {
     // Set dependency on Mobile Core app
     BaseComponentProvider.setAppDependencies(POSUtils.APP_NAME,
-        Arrays.asList(MobileCoreConstants.RETAIL_CORE));
+        Arrays.asList(MobileCoreConstants.RETAIL_CORE, DiscountsComponentProvider.DISCOUNTS_APP));
   }
 
   public static final String QUALIFIER = "OBPOS_Main";
@@ -242,7 +242,10 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
         "model/ordertoselectorissue", "components/orderselector",
         "components/modalwarehouseselector", "components/orderlineinfopopup",
-        "components/orderlineinfostandardpopup" };
+        "components/orderlineinfostandardpopup",
+
+        // Discounts
+        "discountsengine/pos/pos-discounts" };
 
     // Unlink onLoad in the ERP
     globalResources.add(createComponentResource(ComponentResourceType.Static,
