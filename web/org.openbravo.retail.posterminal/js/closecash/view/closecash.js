@@ -728,9 +728,9 @@ enyo.kind({
       if (this.model.get('cashUpSent')) {
         return true;
       }
-      this.$.cashupMultiColumn.$.leftToolbar.$.leftToolbar.$.toolbar
-        .getComponents()[2]
-        .$.theButton.$.btnNext.setDisabled(true);
+      this.$.cashupMultiColumn.$.leftToolbar.$.leftToolbar.$.toolbar.$.btnNext.setDisabled(
+        true
+      );
       this.model.set('cashUpSent', true);
       this.model.processAndFinishCashUp();
     } else if (nextsubstep < 0) {
