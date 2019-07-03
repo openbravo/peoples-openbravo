@@ -739,6 +739,10 @@ public class InvoiceUtils {
   }
 
   public void createPaymentTerms(Order order, Invoice invoice) {
+    if (invoice.getFINPaymentScheduleList() == null
+        || invoice.getFINPaymentScheduleList().isEmpty()) {
+      return;
+    }
     final FIN_PaymentSchedule paymentSchedule = order.getFINPaymentScheduleList().get(0);
     final FIN_PaymentSchedule paymentScheduleInvoice = invoice.getFINPaymentScheduleList().get(0);
     final OBCriteria<FIN_PaymentScheduleDetail> remainingPSDCriteria = OBDal.getInstance()
