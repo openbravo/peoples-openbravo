@@ -907,8 +907,8 @@ enyo.kind({
   },
   loadValue: function(inSender, inEvent) {
     var me = this;
-    var commertialauth, i;
-
+    var commertialauth, form, i;
+    form = me.formElement.parent;
     if (inEvent.customer !== undefined) {
       if (inEvent.customer.get('viasms') !== undefined) {
         me.$.smsLabelCheck.setChecked(inEvent.customer.get('viasms'));
@@ -930,12 +930,9 @@ enyo.kind({
       } else {
         me.$.emailLabelCheck.removeClass('active');
       }
-      for (i = 0; i < me.parent.parent.parent.children.length; i++) {
-        if (
-          me.parent.parent.parent.children[i].name === 'line_commercialauth'
-        ) {
-          commertialauth =
-            me.parent.parent.parent.children[i].$.newAttribute.$.commercialauth;
+      for (i = 0; i < form.children.length; i++) {
+        if (form.children[i].name === 'line_commercialauth') {
+          commertialauth = form.children[i].$.newAttribute.$.commercialauth;
           if (commertialauth.getChecked()) {
             if (me.$.smsLabelCheck.getChecked()) {
               me.$.smsLabelCheck.addClass('active');
