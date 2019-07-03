@@ -2313,6 +2313,18 @@ div.obrdm-cell-orderline-right-col1:nth-child(odd){
   
 }
 
+.productDetails {
+  height: 120px;
+  padding: 10px;
+}
+  
+@media (min-width: 393px) and (max-width: 525px) {
+  .productDetails {
+    height: 130px;
+    padding: 3px;
+  }
+}
+
 .printerLine {
   padding: 5px 0px 0px 0px;
   font-size: 125%;

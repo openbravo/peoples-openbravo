@@ -438,7 +438,7 @@ enyo.kind({
       ]
     },
     {
-      style: 'height: 80px;  padding: 10px;',
+      classes: 'productDetails',
       components: [
         {
           style: 'float: left; width: 50%;',
