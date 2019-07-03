@@ -9147,6 +9147,12 @@
         //TODO: check & generate ids
         invoice.set('orderId', this.get('id'));
         invoice.set('id', OB.UTIL.get_UUID());
+        invoice.unset('calculateReceiptCallbacks');
+        invoice.unset('calculatedInvoice');
+        invoice.unset('canceledorder');
+        invoice.get('payments').reset();
+        invoice.unset('json');
+        invoice.unset('undo');
         invoice.set('posTerminal', OB.MobileApp.model.get('terminal').id);
         invoice.set('isInvoice', true);
         invoice.unset('isBeingClosed');
