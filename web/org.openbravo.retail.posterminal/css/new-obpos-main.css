@@ -14753,6 +14753,110 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 }
 
 /***********************   ***********************/
+/*        File: receiptMultiLineEdit.js          */
+/*                  Folder: js/                  */
+/***********************   ***********************/
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.EditLine.DeliveryModesButton
+# Inherits: [OB.UI.SmallButton]
+*/
+.obObposPointOfSaleUiEditLineDeliveryModesButton {
+  background-color: #ffa500;
+  color: #000000;
+}
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.EditLine.DeliveryServicesButton
+# Inherits: [OB.UI.SmallButton]
+*/
+.obObposPointOfSaleUiEditLineDeliveryServicesButton {
+  background-color: #ffa500;
+  width: 45px;
+  background-repeat: no-repeat;
+  background-position: center;
+  color: rgba(0, 0, 0, 0);
+}
+
+.obObposPointOfSaleUiEditLineDeliveryServicesButton_unreviewed {
+  background-image: url('../../web/org.openbravo.retail.posterminal/img/deliveryServiceUnreviewed.svg');
+  background-repeat: no-repeat;
+  background-size: 26px 26px;
+  background-position: 0px 1px;
+  width: 31px;
+  height: 26px;
+}
+
+.obObposPointOfSaleUiEditLineDeliveryServicesButton_reviewed {
+  background-image: url('../../web/org.openbravo.retail.posterminal/img/deliveryServiceReviewed.svg');
+  background-repeat: no-repeat;
+  background-size: 26px 26px;
+  background-position: 0px 1px;
+  width: 31px;
+  height: 26px;
+}
+
+/*
+# Component: OBRDM.UI.MultiReceiptPropertiesDialogApply
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.obrdmUiMultiReceiptPropertiesDialogApply {}
+
+/*
+# Component: OBRDM.UI.MultiReceiptPropertiesDialogCancel
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.obrdmUiMultiReceiptPropertiesDialogCancel {}
+
+/*
+# Component: OBRDM.UI.ModalReceiptMultiLinesProperties
+# Inherits: [OB.UI.ModalAction]
+*/
+.obrdmUiModalReceiptMultiLinesProperties {}
+
+.obrdmUiModalReceiptMultiLinesProperties-bodyContent {
+  /* Inherits: [Scroller] */
+  max-height: 225px;
+  background-color: #ffffff;
+}
+
+.obrdmUiModalReceiptMultiLinesProperties-bodyContent-attributes {}
+
+.obrdmUiModalReceiptMultiLinesProperties-receiptMultiLinePropertiesApplyBtn {
+  /* Inherits: [OBRDM.UI.MultiReceiptPropertiesDialogApply] */
+}
+
+.obrdmUiModalReceiptMultiLinesProperties-receiptMultiLinePropertiesCancelBtn {
+  /* Inherits: [OBRDM.UI.MultiReceiptPropertiesDialogCancel] */
+}
+
+.obrdmUiModalReceiptMultiLinesProperties-line {
+  /* Inherits: [OB.UI.PropertyEditLine] */
+}
+
+/*
+# Component: OBRDM.UI.ModalReceiptMultiLinesImpl
+# Inherits: [OBRDM.UI.ModalReceiptMultiLinesProperties]
+*/
+.obrdmUiModalReceiptMultiLinesImpl {}
+
+.obrdmUiModalReceiptMultiLinesImpl-receiptLineDeliveryMode {
+  /* Inherits: [OB.UI.renderComboProperty] */
+}
+
+.obrdmUiModalReceiptMultiLinesImpl-receiptLineDeliveryDate {
+  /* Inherits: [OB.UI.DatePickerSimple] */
+  display: flex;
+  justify-content: center;
+}
+
+.obrdmUiModalReceiptMultiLinesImpl-receiptLineDeliveryTime {
+  /* Inherits: [OB.UI.TimePickerSimple] */
+  display: flex;
+  justify-content: center;
+}
+
+/***********************   ***********************/
 /*         File: hookRenderOrderLine.js          */
 /*                  Folder: js/                  */
 /***********************   ***********************/
