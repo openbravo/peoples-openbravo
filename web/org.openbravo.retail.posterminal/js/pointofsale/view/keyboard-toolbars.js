@@ -310,28 +310,6 @@ enyo.kind({
     dialogbuttons,
     payment
   ) {
-    if (
-      btncomponent.btn.command.indexOf('paymentMethodCategory.showitems.') < 0
-    ) {
-      btncomponent.btn.definition.canTap = function(callback) {
-        OB.UTIL.HookManager.executeHooks(
-          'OBPOS_PrePaymentSelected',
-          {
-            paymentSelected: payment,
-            receipt: btncomponent.btn.definition.scope.receipt,
-            btnDefintion: btncomponent.btn.definition
-          },
-          function(args) {
-            if (args && args.cancellation && args.cancellation === true) {
-              callback(false);
-            } else {
-              callback(true);
-            }
-          }
-        );
-      };
-    }
-
     if (countbuttons < paymentsbuttons) {
       this.createComponent(btncomponent);
     } else {
@@ -513,7 +491,10 @@ enyo.kind({
                       if (_.last(txt) === '%') {
                         options.percentaje = true;
                       }
-                      amount = OB.DEC.number(OB.I18N.parseNumber(txt));
+                      amount = OB.DEC.toNumber(
+                        OB.I18N.parseNumber(txt),
+                        payment.obposPosprecision
+                      );
                       if (_.isNaN(amount)) {
                         OB.UTIL.showWarning(
                           OB.I18N.getLabel('OBPOS_NotValidNumber', [txt])
@@ -589,7 +570,10 @@ enyo.kind({
                     if (_.last(txt) === '%') {
                       options.percentaje = true;
                     }
-                    amount = OB.DEC.number(OB.I18N.parseNumber(txt));
+                    amount = OB.DEC.toNumber(
+                      OB.I18N.parseNumber(txt),
+                      payment.obposPosprecision
+                    );
                     if (_.isNaN(amount)) {
                       OB.UTIL.showWarning(
                         OB.I18N.getLabel('OBPOS_NotValidNumber', [txt])

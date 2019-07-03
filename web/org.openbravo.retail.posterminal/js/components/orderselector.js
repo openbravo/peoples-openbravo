@@ -456,6 +456,26 @@ enyo.kind({
           return deliveryMode === dm.id;
         });
       this.$.orderlineProduct.setContent(this.model.get('productName'));
+      if (this.model.get('characteristicDescription')) {
+        this.$.orderlineProduct.setContent(
+          this.$.orderlineProduct.getContent() +
+            ' - ' +
+            this.model.get('characteristicDescription')
+        );
+      }
+      if (
+        this.model.get('attributeDescription') &&
+        OB.MobileApp.model.hasPermission(
+          'OBPOS_EnableSupportForProductAttributes',
+          true
+        )
+      ) {
+        this.$.orderlineProduct.setContent(
+          this.$.orderlineProduct.getContent() +
+            OB.I18N.getLabel('OBRDM_LblAttribute') +
+            this.model.get('attributeDescription')
+        );
+      }
       this.$.orderlineDeliveryMode.setContent(
         delivery ? delivery.name : deliveryMode
       );
@@ -1265,6 +1285,14 @@ enyo.kind({
         );
       }
       OB.MobileApp.view.scanningFocus(false);
+      if (window.innerWidth <= 395) {
+        this.$.body.$.listOrders.$.stOrderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonAdvancedFilter.setContent(
+          OB.I18N.getLabel('OBPOS_LblAdvancedFilterShort')
+        );
+        this.$.body.$.listOrders.$.stOrderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonPrepareSelected.setContent(
+          OB.I18N.getLabel('OBRDM_LblPrepareSelectedShort')
+        );
+      }
     }
     if (this.args.hookCallback) {
       this.args.hookCallback();

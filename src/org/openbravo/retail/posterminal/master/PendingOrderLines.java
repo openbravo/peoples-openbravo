@@ -122,6 +122,7 @@ public class PendingOrderLines extends ProcessHQLQuery {
         + queryHQLProperties.getHqlSelect() //
         + " from OrderLine as ol " //
         + "join ol.product as p " //
+        + "left join p.attributeSetValue attr " //
         + "join ol.salesOrder as salesOrder " //
         + "join salesOrder.businessPartner as bp " //
         + "left join salesOrder.partnerAddress as loc "

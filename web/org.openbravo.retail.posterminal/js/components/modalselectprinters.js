@@ -117,6 +117,10 @@ enyo.kind({
             },
             this
           );
+
+          if (!isalreadychecked && Object.keys(this.$).length > 0) {
+            this.$[Object.keys(this.$)[0]].$.selected.activeRadio();
+          }
         },
         getActiveURL: function() {
           // check radio of activeurl radio
@@ -295,6 +299,10 @@ enyo.kind({
             },
             this
           );
+
+          if (!isalreadychecked && Object.keys(this.$).length > 0) {
+            this.$[Object.keys(this.$)[0]].$.selected.activeRadio();
+          }
         },
         getActiveURL: function() {
           // check radio of activeurl radio

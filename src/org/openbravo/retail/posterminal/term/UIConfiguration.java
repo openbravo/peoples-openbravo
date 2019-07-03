@@ -16,6 +16,7 @@ import java.util.Map;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.mobile.core.MobileUiConfiguration;
+import org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.retail.posterminal.POSUtils;
 
 public class UIConfiguration extends QueryTerminalProperty {
@@ -27,12 +28,13 @@ public class UIConfiguration extends QueryTerminalProperty {
 
   @Override
   protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
-
     MobileUiConfiguration uiConfig = POSUtils
         .getUiConfigurationByTerminalId(jsonsent.getString("pos"));
+    OBPOSApplications posTerminal = POSUtils.getTerminalById(jsonsent.getString("pos"));
     String uiConfId = uiConfig == null ? "" : uiConfig.getId();
     Map<String, Object> args = new HashMap<String, Object>();
     args.put("uiConfigId", uiConfId);
+    args.put("clientId", posTerminal.getClient().getId());
     return args;
   }
 
@@ -56,7 +58,10 @@ public class UIConfiguration extends QueryTerminalProperty {
     hqlSelect.append("WHERE dfact.active = 'Y' AND ");
     hqlSelect.append("abaconf.active = 'Y' AND ");
     hqlSelect.append("abaconf.mobileUIConfiguration.active = 'Y' AND ");
-    hqlSelect.append("abaconf.mobileUIConfiguration.id = :uiConfigId");
+    hqlSelect.append("abaconf.mobileUIConfiguration.id = :uiConfigId AND ");
+    hqlSelect.append("abaconf.client.id IN ('0', :clientId) AND ");
+    hqlSelect.append("abaconf.mobileUIConfiguration.client.id IN ('0', :clientId) AND ");
+    hqlSelect.append("dfact.client.id IN ('0', :clientId) ");
     return Arrays.asList(hqlSelect.toString());
   }
 

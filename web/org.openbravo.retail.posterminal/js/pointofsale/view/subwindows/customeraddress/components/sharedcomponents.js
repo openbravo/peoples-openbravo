@@ -416,7 +416,7 @@ enyo.kind({
                               'OBPOS_BeforeCustomerAddrSave',
                               {
                                 customerAddr: me.model.get('customerAddr'),
-                                isNew: true,
+                                isNew: false,
                                 windowComponent: me
                               },
                               function(args) {
@@ -464,7 +464,7 @@ enyo.kind({
                       'OBPOS_BeforeCustomerAddrSave',
                       {
                         customerAddr: me.model.get('customerAddr'),
-                        isNew: true,
+                        isNew: false,
                         windowComponent: me
                       },
                       function(args) {
