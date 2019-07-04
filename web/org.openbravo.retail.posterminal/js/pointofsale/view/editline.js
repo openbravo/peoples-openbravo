@@ -1185,6 +1185,9 @@ enyo.kind({
         this.$.linePropertiesContainer.removeClass(
           'obObposPointOfSaleUiEditLine-linePropertiesContainer_withoutReturnReasons'
         );
+        this.$.contextImage.addClass(
+          'obObposPointOfSaleUiEditLine-msgedit-container3-contextImage_withReturnReasons'
+        );
       } else {
         this.$.returnreason.hide();
         this.$.linePropertiesContainer.addClass(
@@ -1192,6 +1195,9 @@ enyo.kind({
         );
         this.$.linePropertiesContainer.removeClass(
           'obObposPointOfSaleUiEditLine-linePropertiesContainer_withReturnReasons'
+        );
+        this.$.contextImage.removeClass(
+          'obObposPointOfSaleUiEditLine-msgedit-container3-contextImage_withReturnReasons'
         );
       }
     } else {

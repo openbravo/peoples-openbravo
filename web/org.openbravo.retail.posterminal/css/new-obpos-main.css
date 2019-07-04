@@ -8852,6 +8852,11 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 
 .obObposPointOfSaleUiEditLine-msgedit-container3-contextImage {
   text-align: right;
+  max-height: 134px;
+}
+
+.obObposPointOfSaleUiEditLine-msgedit-container3-contextImage_withReturnReasons {
+  max-height: 110px;
 }
 
 .obObposPointOfSaleUiEditLine-contextImage-container1 {
