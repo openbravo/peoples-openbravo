@@ -2491,7 +2491,7 @@
 }
 
 .obUiRenderOrderLine-container13-element1 {
-  color: #f8941d;
+  color: var(--color-actioncolor);
   float: left;
   width: 100%;
   clear: left;
@@ -2861,11 +2861,494 @@
 # Inherits: [Image]
 */
 .obUiOrderMultiSelect {
-  float: right;
   cursor: pointer;
   margin-top: 8px;
   width: 27px;
   height: 27px;
+}
+
+/*
+# Component: OB.UI.OrderSingleSelect
+# Inherits: [Image]
+*/
+.obUiOrderSingleSelect {
+  cursor: pointer;
+  margin-top: 8px; 
+  width: 27px;
+  height: 27px;
+}
+
+
+/*
+# Component: OB.UI.OrderMultiSelectAll
+# Inherits: [OB.UI.SmallButton]
+*/
+.obUiOrderMultiSelectAll {
+  margin-top: 6px;
+  white-space: nowrap;
+}
+
+
+/*
+# Component: OB.UI.OrderHeader
+*/
+.obUiOrderHeader {
+  display: flex;
+  flex-direction: column;
+  border-bottom: var(--bottomseparator-slim);
+}
+
+.obUiOrderHeader-abaReceiptToolbar1 {
+  /*Inherits: [OB.UI.ActionButtonArea]*/
+  grid-template-areas:
+    "pos00 pos01 pos02 pos03 pos04";
+  grid-template-columns: repeat(5, 1fr);
+  margin: 3px 10px 1px 10px;
+  grid-column-gap: 5px;
+  grid-row-gap: 5px;
+}
+
+.obUiOrderHeader-abaReceiptToolbar1>obUiActionButton {
+  min-height: 35px;
+  max-height: 43px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 14px;
+  padding: 4px 5px;
+}
+
+.obUiOrderHeader-abaReceiptToolbar1>.obUiDummyAction {
+  background-color: transparent;
+}
+
+.obUiOrderHeader-labelComponents-orderdetails {
+  /*Inherits: [OB.UI.OrderDetails]*/
+}
+
+.obUiOrderHeader-labelComponents-btnMultiSelection {
+  /*Inherits: [OB.UI.OrderMultiSelect]*/
+}
+
+.obUiOrderHeader-labelComponents-btnMultiSelectAll {
+  /*Inherits: [OB.UI.OrderMultiSelectAll]*/
+}
+
+.obUiOrderHeader-labelComponents-btnSingleSelection {
+  /*Inherits: [OB.UI.OrderSingleSelect]*/
+}
+
+.obUiOrderHeader-labelComponents-btnSingleSelection {
+  clear: both;
+}
+
+.obUiOrderHeader-buttonComponents-bpbutton {
+  /*Inherits: [OB.UI.BusinessPartnerSelector]*/
+}
+
+.obUiOrderHeader-buttonComponents-separator {
+  min-width: 5px;
+  padding: 0px;
+  margin: 0px;
+}
+
+.obUiOrderHeader-buttonComponents-bplocbutton {
+  /*Inherits: [OB.UI.BPLocation]*/
+}
+
+.obUiOrderHeader-buttonComponents-bplocshipbutton {
+  /*Inherits: [OB.UI.bplocshipbutton]*/
+}
+
+.obUiOrderHeader-receiptLabels {
+  padding-right: 5px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr auto auto auto;
+}
+
+.obUiOrderHeader-receiptButtons {
+  clear: both;
+
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: stretch;
+  flex-wrap: nowrap;
+}
+
+
+/*
+# Component: OB.UI.OrderFooter
+*/
+.obUiOrderFooter {
+  border-bottom: var(--bottomseparator-slim);
+}
+
+
+/*
+# Component: OB.UI.TotalMultiReceiptLine
+*/
+.obUiTotalMultiReceiptLine {
+  position: relative;
+  padding: 10px;
+}
+
+.obUiTotalMultiReceiptLine-lblTotal {
+  float: left; width: 40%;
+}
+
+.obUiTotalMultiReceiptLine-totalqty {
+  float: left; width: 20%; text-align:right; font-weight:bold;
+}
+
+.obUiTotalMultiReceiptLine-totalgross {
+  float: left; width: 40%; text-align:right; font-weight:bold;
+}
+
+.obUiTotalMultiReceiptLine-element1 {
+  clear: both;
+}
+
+
+/*
+# Component: OB.UI.TotalReceiptLine
+*/
+.obUiTotalReceiptLine {
+  position: relative;
+  padding: 10px;
+  height: 35px;
+}
+
+.obUiTotalReceiptLine-lblTotal {
+  font-weight: bold;
+  float: left;
+  width: calc(100% - 225px);
+}
+
+.obUiTotalReceiptLine-lblTotal_large {
+  width: 48;
+}
+
+.obUiTotalReceiptLine-lblTotal_small {
+  width: 40;
+}
+
+.obUiTotalReceiptLine-obUiFitTextQty {
+  float: left;
+  width: 65px;
+  text-align: right;
+  font-weight: bold;
+}
+
+.obUiTotalReceiptLine-obUiFitTextQty-totalqty {}
+
+.obUiTotalReceiptLine-obUiFitTextQty-totalqty_large {
+  width: 20;
+}
+
+.obUiTotalReceiptLine-obUiFitTextQty-totalqty_small {
+  width: 16;
+}
+
+.obUiTotalReceiptLine-obUiFitTextGross {
+  float: left;
+  width: 160px;
+  text-align: right;
+  font-weight: bold;
+}
+
+.obUiTotalReceiptLine-obUiFitTextGross-totalgross {}
+
+.obUiTotalReceiptLine-obUiFitTextGross-totalgross_large {
+  width: 40;
+}
+
+.obUiTotalReceiptLine-obUiFitTextGross-totalgross_small {
+  width: 36;
+}
+
+.obUiTotalReceiptLine-element1 {
+  clear: both;
+}
+
+
+/*
+# Component: OB.UI.TotalTaxLine
+*/
+.obUiTotalTaxLine {
+  position: relative;
+  padding: 10px;
+}
+
+.obUiTotalTaxLine-lblTotalTax {
+  float: left;
+  width: 40%;
+}
+
+.obUiTotalTaxLine-totalbase {
+  float: left;
+  width: 20%;
+  text-align:right;
+  font-weight:bold;
+}
+
+.obUiTotalTaxLine-totaltax {
+  float: left;
+  width: 60%;
+  text-align:right;
+  font-weight:bold;
+}
+
+.obUiTotalTaxLine-element1 {
+  clear: both;
+}
+
+
+/*
+# Component: OB.UI.TaxBreakdown
+*/
+.obUiTaxBreakdown {
+  position: relative;
+  padding: 10px;
+}
+
+.obUiTaxBreakdown-lblTotalTaxBreakdown {
+  float: left;
+  widows: 40%;
+}
+
+.obUiTaxBreakdown-element1{
+  clear: both;
+}
+
+
+/*
+# Component: OB.UI.BtnReceiptToInvoice
+# Inherits: [OB.UI.SmallButton]
+*/
+.obUiBtnReceiptToInvoice {
+  width: 40px;
+  color: black;
+  margin: 0px 0px 0px 16px;
+  padding-top: 4px;
+  border: var(--bottomseparator-slim);
+  height: 20px;
+  background-color: transparent;
+  height: 20px;
+  background-size: 21px 17px;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkBlack.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+
+/*
+# Component: btninvoice
+*/
+.btnInvoice {
+  float: left;
+  width: 40%;
+}
+
+.btnInvoice-obUiBtnReceiptToInvoice {}
+
+.btnInvoice-element1 {}
+
+.btnInvoice-lblInvoiceReceipt {
+  font-weight:bold;
+}
+
+
+/*
+# Component: OB.UI.OrderViewDivText
+*/
+.obUiOrderViewDivText {
+  float: right;
+  text-align: right;
+  font-weight:bold;
+  font-size: 30px;
+  line-height: 30px;
+}
+
+.obUiOrderViewDivText_quotation {
+  width: 100%;
+  color: var(--color-actioncolor);
+}
+
+.obUiOrderViewDivText_paid {
+  width: 50%;
+  color: var(--color-actioncolor);
+}
+
+.obUiOrderViewDivText_layaway {
+  width: 50%;
+  color: lightblue;
+}
+
+.obUiOrderViewDivText_CancelAndReplaceType1 {
+  width: 90%;
+  color: lightblue;
+  line-height:30px;
+}
+
+.obUiOrderViewDivText_CancelAndReplaceType2 {
+  width: 90%;
+  color: #5353C5;
+  line-height:30px;
+}
+
+.obUiOrderViewDivText_CancelLayawayFromLayaway {
+  width: 60%;
+  color: lightblue;
+}
+
+.obUiOrderViewDivText_CancelLayaway {
+  width: 60%;
+  color: #5353C5;
+}
+
+.obUiOrderViewDivText_ToBeReturned {
+  width: 50%;
+  color: var(--color-actioncolor);
+}
+
+.obUiOrderViewDivText_ToBeLaidaway {
+  width: 60%;
+  color: lightblue;
+}
+
+
+/*
+# Component: OB.UI.OrderView
+*/
+.obUiOrderView {}
+
+.obUiOrderView-listOrderLines {
+  /*Inherits: [OB.UI.ScrollableTable]*/
+}
+
+.obUiOrderView-listOrderLines-bigger {
+  max-height: 393px;
+}
+
+.obUiOrderView-container1 {}
+
+.obUiOrderView-container1-container1 {}
+
+.obUiOrderView-container1-container1-totalTaxLine {
+  /*Inherits: [OB.UI.TotalTaxLine]*/
+}
+
+.obUiOrderView-container1-container1-totalReceiptLine {
+  /*Inherits: [OB.UI.TotalReceiptLine]*/
+}
+
+.obUiOrderView-container1-container2 {}
+
+.obUiOrderView-container1-container2-injectedFooter {}
+
+.obUiOrderView-container1-container2-container1 {
+  padding: 10px;
+  border-top: var(--bottomseparator-slim);
+  min-height: 40px;
+}
+
+.obUiOrderView-container1-container2-container1-divbtninvoice {
+  /*Inherits: [btninvoice]*/
+}
+
+.obUiOrderView-container1-container2-container1-divText {
+  /*Inherits: [OB.UI.OrderViewDivText]*/
+}
+
+.obUiOrderView-container1-container2-container1-element1 {
+  clear: both;
+}
+
+.obUiOrderView-container1-container3 {}
+
+.obUiOrderView-container1-container3-taxBreakdownDiv {
+  padding: 10px;
+  border-top: var(--bottomseparator-slim);
+  height: 40px;
+}
+
+.obUiOrderView-container1-container3-taxBreakdownDiv-taxBreakdown {
+  /*Inherits: [OB.UI.TaxBreakdown]*/
+}
+
+.obUiOrderView-container1-listTaxLines {
+  /*Inherits: [OB.UI.ScrollableTable]*/
+}
+.obUiOrderView-container1-listTaxLines-scrollAreaClasses {
+  max-height: 250px;
+}
+
+.obUiOrderView-container1-container5 {}
+
+.obUiOrderView-container1-container5-paymentBreakdown {
+  padding: 10px;
+  height: 40px;
+}
+
+.obUiOrderView-paymentBreakdown-container1 {
+  position: relative;
+  padding: 10px;
+}
+
+.obUiOrderView-paymentBreakdown-container1-lblTotalPayment {
+  float: left;
+  width: 40%;
+}
+
+.obUiOrderView-paymentBreakdown-container1-element1 {
+  clear: both;
+}
+
+.obUiOrderView-container1-listPaymentLines {
+  border-bottom: var(--bottomseparator-slim);
+}
+
+.obUiOrderView-container1-listPaymentLines-scrollArea {
+  max-height: 250px;
+}
+
+
+/*
+# Component: OB.UI.MultiOrderView
+*/
+.obUiMultiOrderView {}
+
+.obUiMultiOrderView-listMultiOrderLines {}
+
+.obUiMultiOrderView-listMultiOrderLines-scrollArea {
+  max-height: 450px;
+}
+
+.obUiMultiOrderView-container1 {}
+
+.obUiMultiOrderView-container1-container1 {}
+
+.obUiMultiOrderView-container1-container1-totalMultiReceiptLine {
+  /*Inherits: [OB.UI.TotalMultiReceiptLine]*/
+}
+
+.obUiMultiOrderView-container1-container2 {}
+
+.obUiMultiOrderView-container1-container2-container1 {
+  padding: 10px;
+  border-top: var(--bottomseparator-slim);
+  height: 40px;
+}
+
+.obUiMultiOrderView-container1-container2-container1-multiOrderBtnInvoice {
+  /*Inherits: [btninvoice]*/
+}
+
+.obUiMultiOrderView-container1-container2-container1-element1 {
+  clear: both;
 }
 
 
@@ -4779,469 +5262,6 @@
 }
 
 .obUiOpenedReceiptsListLine-container2-element3 {
-  clear: both;
-}
-
-
-/*
-# Component: OB.UI.OrderSingleSelect
-# Inherits: [Image]
-*/
-.obUiOrderSingleSelect {
-  float: right;
-  cursor: pointer;
-  margin-top: 8px;
-  width: 27px;
-  height: 27px;
-}
-
-
-/*
-# Component: OB.UI.OrderMultiSelectAll
-# Inherits: [OB.UI.SmallButton]
-*/
-.obUiOrderMultiSelectAll {
-  float: right;
-  margin-top: 6px;
-  background-color: orange;
-  color: black;
-}
-
-
-/*
-# Component: OB.UI.OrderHeader
-*/
-.obUiOrderHeader {
-  border-bottom: var(--bottomseparator-slim);
-}
-
-.obUiOrderHeader-labelComponents-orderdetails {
-  /*Inherits: [OB.UI.OrderDetails]*/
-}
-
-.obUiOrderHeader-labelComponents-btnMultiSelection {
-  /*Inherits: [OB.UI.OrderMultiSelect]*/
-}
-
-.obUiOrderHeader-labelComponents-btnMultiSelectAll {
-  /*Inherits: [OB.UI.OrderMultiSelectAll]*/
-}
-
-.obUiOrderHeader-labelComponents-btnSingleSelection {
-  /*Inherits: [OB.UI.OrderSingleSelect]*/
-}
-
-.obUiOrderHeader-labelComponents-btnSingleSelection {
-  clear: both;
-}
-
-.obUiOrderHeader-buttonComponents-bpbutton {
-  /*Inherits: [OB.UI.BusinessPartnerSelector]*/
-}
-
-.obUiOrderHeader-buttonComponents-separator {
-  min-width: 5px;
-  padding: 0px;
-  margin: 0px;
-}
-
-.obUiOrderHeader-buttonComponents-bplocbutton {
-  /*Inherits: [OB.UI.BPLocation]*/
-}
-
-.obUiOrderHeader-buttonComponents-bplocshipbutton {
-  /*Inherits: [OB.UI.bplocshipbutton]*/
-}
-
-.obUiOrderHeader-receiptLabels {
-  padding-right: 5px;
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 1fr auto auto auto;
-}
-
-.obUiOrderHeader-receiptButtons {
-  clear: both;
-
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: stretch;
-  flex-wrap: nowrap;
-}
-
-
-/*
-# Component: OB.UI.OrderFooter
-*/
-.obUiOrderFooter {
-  border-bottom: var(--bottomseparator-slim);
-}
-
-
-/*
-# Component: OB.UI.TotalMultiReceiptLine
-*/
-.obUiTotalMultiReceiptLine {
-  position: relative;
-  padding: 10px;
-}
-
-.obUiTotalMultiReceiptLine-lblTotal {
-  float: left; width: 40%;
-}
-
-.obUiTotalMultiReceiptLine-totalqty {
-  float: left; width: 20%; text-align:right; font-weight:bold;
-}
-
-.obUiTotalMultiReceiptLine-totalgross {
-  float: left; width: 40%; text-align:right; font-weight:bold;
-}
-
-.obUiTotalMultiReceiptLine-element1 {
-  clear: both;
-}
-
-
-/*
-# Component: OB.UI.TotalReceiptLine
-*/
-.obUiTotalReceiptLine {
-  position: relative;
-  padding: 10px;
-  height: 35px;
-}
-
-.obUiTotalReceiptLine-lblTotal {
-  font-weight: bold;
-  float: left;
-  width: calc(100% - 225px);
-}
-
-.obUiTotalReceiptLine-lblTotal_large {
-  width: 48;
-}
-
-.obUiTotalReceiptLine-lblTotal_small {
-  width: 40;
-}
-
-.obUiTotalReceiptLine-obUiFitTextQty {
-  float: left;
-  width: 65px;
-  text-align: right;
-  font-weight: bold;
-}
-
-.obUiTotalReceiptLine-obUiFitTextQty-totalqty {}
-
-.obUiTotalReceiptLine-obUiFitTextQty-totalqty_large {
-  width: 20;
-}
-
-.obUiTotalReceiptLine-obUiFitTextQty-totalqty_small {
-  width: 16;
-}
-
-.obUiTotalReceiptLine-obUiFitTextGross {
-  float: left;
-  width: 160px;
-  text-align: right;
-  font-weight: bold;
-}
-
-.obUiTotalReceiptLine-obUiFitTextGross-totalgross {}
-
-.obUiTotalReceiptLine-obUiFitTextGross-totalgross_large {
-  width: 40;
-}
-
-.obUiTotalReceiptLine-obUiFitTextGross-totalgross_small {
-  width: 36;
-}
-
-.obUiTotalReceiptLine-element1 {
-  clear: both;
-}
-
-
-/*
-# Component: OB.UI.TotalTaxLine
-*/
-.obUiTotalTaxLine {
-  position: relative;
-  padding: 10px;
-}
-
-.obUiTotalTaxLine-lblTotalTax {
-  float: left;
-  width: 40%;
-}
-
-.obUiTotalTaxLine-totalbase {
-  float: left;
-  width: 20%;
-  text-align:right;
-  font-weight:bold;
-}
-
-.obUiTotalTaxLine-totaltax {
-  float: left;
-  width: 60%;
-  text-align:right;
-  font-weight:bold;
-}
-
-.obUiTotalTaxLine-element1 {
-  clear: both;
-}
-
-
-/*
-# Component: OB.UI.TaxBreakdown
-*/
-.obUiTaxBreakdown {
-  position: relative;
-  padding: 10px;
-}
-
-.obUiTaxBreakdown-lblTotalTaxBreakdown {
-  float: left;
-  widows: 40%;
-}
-
-.obUiTaxBreakdown-element1{
-  clear: both;
-}
-
-
-/*
-# Component: OB.UI.BtnReceiptToInvoice
-# Inherits: [OB.UI.SmallButton]
-*/
-.obUiBtnReceiptToInvoice {
-  width: 40px;
-  color: black;
-  margin: 0px 0px 0px 16px;
-  padding-top: 4px;
-  border: var(--bottomseparator-slim);
-  height: 20px;
-  background-color: transparent;
-  height: 20px;
-  background-size: 21px 17px;
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkBlack.svg');
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
-
-/*
-# Component: btninvoice
-*/
-.btnInvoice {
-  float: left;
-  width: 40%;
-}
-
-.btnInvoice-obUiBtnReceiptToInvoice {}
-
-.btnInvoice-element1 {}
-
-.btnInvoice-lblInvoiceReceipt {
-  font-weight:bold;
-}
-
-
-/*
-# Component: OB.UI.OrderViewDivText
-*/
-.obUiOrderViewDivText {
-  float: right;
-  text-align: right;
-  font-weight:bold;
-  font-size: 30px;
-  line-height: 30px;
-}
-
-.obUiOrderViewDivText_quotation {
-  width: 100%;
-  color: #f8941d;
-}
-
-.obUiOrderViewDivText_paid {
-  width: 50%;
-  color: #f8941d;
-}
-
-.obUiOrderViewDivText_layaway {
-  width: 50%;
-  color: lightblue;
-}
-
-.obUiOrderViewDivText_CancelAndReplaceType1 {
-  width: 90%;
-  color: lightblue;
-  line-height:30px;
-}
-
-.obUiOrderViewDivText_CancelAndReplaceType2 {
-  width: 90%;
-  color: #5353C5;
-  line-height:30px;
-}
-
-.obUiOrderViewDivText_CancelLayawayFromLayaway {
-  width: 60%;
-  color: lightblue;
-}
-
-.obUiOrderViewDivText_CancelLayaway {
-  width: 60%;
-  color: #5353C5;
-}
-
-.obUiOrderViewDivText_ToBeReturned {
-  width: 50%;
-  color: #f8941d;
-}
-
-.obUiOrderViewDivText_ToBeLaidaway {
-  width: 60%;
-  color: lightblue;
-}
-
-
-/*
-# Component: OB.UI.OrderView
-*/
-.obUiOrderView {}
-
-.obUiOrderView-listOrderLines {
-  /*Inherits: [OB.UI.ScrollableTable]*/
-}
-
-.obUiOrderView-listOrderLines-bigger {
-  max-height: 393px;
-}
-
-.obUiOrderView-container1 {}
-
-.obUiOrderView-container1-container1 {}
-
-.obUiOrderView-container1-container1-totalTaxLine {
-  /*Inherits: [OB.UI.TotalTaxLine]*/
-}
-
-.obUiOrderView-container1-container1-totalReceiptLine {
-  /*Inherits: [OB.UI.TotalReceiptLine]*/
-}
-
-.obUiOrderView-container1-container2 {}
-
-.obUiOrderView-container1-container2-injectedFooter {}
-
-.obUiOrderView-container1-container2-container1 {
-  padding: 10px;
-  border-top: var(--bottomseparator-slim);
-  min-height: 40px;
-}
-
-.obUiOrderView-container1-container2-container1-divbtninvoice {
-  /*Inherits: [btninvoice]*/
-}
-
-.obUiOrderView-container1-container2-container1-divText {
-  /*Inherits: [OB.UI.OrderViewDivText]*/
-}
-
-.obUiOrderView-container1-container2-container1-element1 {
-  clear: both;
-}
-
-.obUiOrderView-container1-container3 {}
-
-.obUiOrderView-container1-container3-taxBreakdownDiv {
-  padding: 10px;
-  border-top: var(--bottomseparator-slim);
-  height: 40px;
-}
-
-.obUiOrderView-container1-container3-taxBreakdownDiv-taxBreakdown {
-  /*Inherits: [OB.UI.TaxBreakdown]*/
-}
-
-.obUiOrderView-container1-listTaxLines {
-  /*Inherits: [OB.UI.ScrollableTable]*/
-}
-.obUiOrderView-container1-listTaxLines-scrollAreaClasses {
-  max-height: 250px;
-}
-
-.obUiOrderView-container1-container5 {}
-
-.obUiOrderView-container1-container5-paymentBreakdown {
-  padding: 10px;
-  height: 40px;
-}
-
-.obUiOrderView-paymentBreakdown-container1 {
-  position: relative;
-  padding: 10px;
-}
-
-.obUiOrderView-paymentBreakdown-container1-lblTotalPayment {
-  float: left;
-  width: 40%;
-}
-
-.obUiOrderView-paymentBreakdown-container1-element1 {
-  clear: both;
-}
-
-.obUiOrderView-container1-listPaymentLines {
-  border-bottom: var(--bottomseparator-slim);
-}
-
-.obUiOrderView-container1-listPaymentLines-scrollArea {
-  max-height: 250px;
-}
-
-
-/*
-# Component: OB.UI.MultiOrderView
-*/
-.obUiMultiOrderView {}
-
-.obUiMultiOrderView-listMultiOrderLines {}
-
-.obUiMultiOrderView-listMultiOrderLines-scrollArea {
-  max-height: 450px;
-}
-
-.obUiMultiOrderView-container1 {}
-
-.obUiMultiOrderView-container1-container1 {}
-
-.obUiMultiOrderView-container1-container1-totalMultiReceiptLine {
-  /*Inherits: [OB.UI.TotalMultiReceiptLine]*/
-}
-
-.obUiMultiOrderView-container1-container2 {}
-
-.obUiMultiOrderView-container1-container2-container1 {
-  padding: 10px;
-  border-top: var(--bottomseparator-slim);
-  height: 40px;
-}
-
-.obUiMultiOrderView-container1-container2-container1-multiOrderBtnInvoice {
-  /*Inherits: [btninvoice]*/
-}
-
-.obUiMultiOrderView-container1-container2-container1-element1 {
   clear: both;
 }
 
@@ -7252,6 +7272,110 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 /* # Inherits: [OB.UI.ListBrands] */
 }
 
+/***********************   ***********************/
+/*      File: ps-gridkeyboard-edit.js            */
+/*          Folder: js/pointofsale/view/         */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSPointOfSale.UI.ReceiptView
+# inherits: [OB.OBPOSPointOfSale.UI.GridKeyboard]
+*/
+
+.obObposPointOfSaleUiGridKeyboard {}
+
+.obObposPointOfSaleUiGridKeyboard>button.obUiActionButton {
+  font-size: 24px;
+  background-color: #e2e2e2;
+  color: black;
+}
+
+.obObposPointOfSaleUiGridKeyboard>button.obUiActionButton:hover {
+  opacity: 0.75;
+}
+
+.obObposPointOfSaleUiGridKeyboard>button.obUiActionButton:disabled,
+.obObposPointOfSaleUiGridKeyboard>button.obUiActionButton[disabled=true]:hover {
+  cursor: default;
+  background-color: #717171;
+  opacity: 1;
+}
+
+.obObposPointOfSaleUiGridKeyboard>button.obUiActionButton:active {
+  opacity: 0.999;
+  background-color: #cccccc;
+}
+
+.obObposPointOfSaleUiGridKeyboard-keyboardEditBox {
+  grid-area: inp;
+  background-color: white;
+  color: black;
+}
+
+.obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic {
+  height: 57px;
+  width: 100%;
+}
+
+.obObposPointOfSaleUiGridKeyboard-addqty {
+  grid-area: cmd1;
+}
+
+.obObposPointOfSaleUiGridKeyboard-removeqty {
+  grid-area: cmd2;
+}
+
+.obObposPointOfSaleUiGridKeyboard-backspace {
+  grid-area: cmd3;
+}
+
+.obObposPointOfSaleUiGridKeyboard-keyboardkey9 {
+  grid-area: num9;
+}
+
+.obObposPointOfSaleUiGridKeyboard-keyboardkey8 {
+  grid-area: num8;
+}
+
+.obObposPointOfSaleUiGridKeyboard-keyboardkey7 {
+  grid-area: num7;
+}
+
+.obObposPointOfSaleUiGridKeyboard-keyboardkey6 {
+  grid-area: num6;
+}
+
+.obObposPointOfSaleUiGridKeyboard-keyboardkey5 {
+  grid-area: num5;
+}
+
+.obObposPointOfSaleUiGridKeyboard-keyboardkey4 {
+  grid-area: num4;
+}
+
+.obObposPointOfSaleUiGridKeyboard-keyboardkey3 {
+  grid-area: num3;
+}
+
+.obObposPointOfSaleUiGridKeyboard-keyboardkey2 {
+  grid-area: num2;
+}
+
+.obObposPointOfSaleUiGridKeyboard-keyboardkey1 {
+  grid-area: num1;
+}
+
+.obObposPointOfSaleUiGridKeyboard-keyboardkey0 {
+  grid-area: num0;
+}
+
+.obObposPointOfSaleUiGridKeyboard-keyboardkeyPeriod {
+  grid-area: per;
+}
+
+.obObposPointOfSaleUiGridKeyboard-keyboardkeyEnter {
+  grid-area: cmdok;
+}
+
 
 
 /***********************   ***********************/
@@ -7663,7 +7787,60 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
   }
 }
 
+/*
+# Component: OB.OBPOSPointOfSale.UI.RightBottomPanelWrapper
+*/
+.obObposPointOfSaleUiRightBottomPanelWrapper {
+  margin: 10px 5px 5px 5px;
+}
 
+.obObposPointOfSaleUiRightBottomPanelWrapper-keyboardWrapper {
+  margin: -5px;
+}
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.BottomRightGridLayoutsContainer
+*/
+
+.obObposPointOfSaleUiBottomRightGridLayout {
+  color: white;
+  display: grid;
+  grid-template-areas: "hside center";
+  grid-template-columns: 2fr 3fr;
+  column-gap: 10px;
+  row-gap: 10px;
+}
+
+.right.obObposPointOfSaleUiBottomRightGridLayout {
+  grid-template-areas: "center hside";
+  grid-template-columns: 3fr 2fr;
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic {
+  grid-area: hside;
+  display: grid;
+  grid-auto-flow: row;
+  row-gap: 10px;
+  column-gap: 10px;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(6, 57px);
+  grid-template-areas:
+    "pos00 pos01"
+    "pos10 pos11"
+    "pos20 pos21"
+    "pos30 pos31"
+    "pos40 pos41"
+    "pos50 pos51";
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic>button.obUiActionButton:active {
+  opacity: 0.999;
+  background-color: var(--color-primary-lighter);
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic>button.obUiActionButtonSwitch_selected {
+  background-color: var(--color-actioncolor);
+}
 
 /***********************   ***********************/
 /*            File: ps-receiptview.js            */
@@ -8416,7 +8593,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 }
 
 .obObPosPointOfSaleUiButtonTabEditLine.active {
-  background-color: #f8941d;
+  background-color: var(--color-actioncolor);
 }
 
 .obObPosPointOfSaleUiButtonTabEditLine.active:hover {
@@ -8811,6 +8988,23 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
   line-height: 50%;
   max-height: 50px;
   overflow-x: hidden;
+}
+
+.obObposPointOfSaleUiEditLine-actionButtonsContainer>.obUiActionButton {
+  background-color: #ffa500;
+  color: #000;
+}
+
+.obObposPointOfSaleUiEditLine-actionButtonsContainer>.obUiActionButton:active {
+  opacity: 0.999;
+  background-color: #cccccc;
+}
+
+.obObposPointOfSaleUiEditLine-actionButtonsContainer>.obUiActionButton:disabled,
+.obObposPointOfSaleUiEditLine-actionButtonsContainer>.obUiActionButton[disabled=true]:hover {
+  cursor: default;
+  background-color: #717171;
+  opacity: 1;
 }
 
 .obObposPointOfSaleUiEditLine-msgedit-returnreason {
@@ -14888,11 +15082,11 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
   float: left;
   width: 80%;
   display: block;
-  color: #f8941d;
+  color: var(--color-actioncolor);
 }
 
 .obPosRenderOrderLine-amtToPayInDelivery-orderlineCanbedelivered {
-  color: #f8941d;
+  color: var(--color-actioncolor);
   float: left;
   width: 100%;
   clear: left;

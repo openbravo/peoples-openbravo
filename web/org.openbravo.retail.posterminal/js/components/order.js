@@ -130,9 +130,9 @@ enyo.kind({
     },
     {
       kind: 'OB.UI.ActionButtonArea',
-      name: 'obpos_pointofsale-receipttoolbar1',
+      name: 'abaReceiptToolbar1',
       abaIdentifier: 'obpos_pointofsale-receipttoolbar1',
-      classes: 'obpos_pointofsale-receipttoolbar1'
+      classes: 'obUiOrderHeader-abaReceiptToolbar1'
     },
     {
       name: 'receiptButtons',
