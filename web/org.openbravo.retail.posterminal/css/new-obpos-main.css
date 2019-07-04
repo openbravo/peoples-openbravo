@@ -14429,9 +14429,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 /*
 # Component: OB.OBPOSCashUp.UI.PostPrintClose
 */
-.obObPosCashUpUiPostPrintClose {
-  display: none;
-}
+.obObPosCashUpUiPostPrintClose {}
 
 .obObPosCashUpUiPostPrintClose.active {
   display: block;
