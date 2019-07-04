@@ -8,6 +8,7 @@
  */
 
 (function() {
+  OB.Discounts = OB.Discounts || {};
   OB.Discounts.Pos = {
     calculateLocal: function() {
       var ticket = JSON.parse(JSON.stringify(OB.MobileApp.model.receipt));

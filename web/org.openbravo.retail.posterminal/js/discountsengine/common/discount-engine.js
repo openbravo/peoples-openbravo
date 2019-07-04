@@ -9,21 +9,19 @@
 
 (function() {
   OB = OB || {};
-  OB.Discounts = {
-    applyDiscounts: function(ticket, rules) {
-      OB.debug('applying discounts for ', rules.length);
+  OB.Discounts = OB.Discounts || {};
+  OB.Discounts.applyDiscounts = function(ticket, rules) {
+    OB.debug('applying discounts for ', rules.length);
 
-      let discounts = [];
-      rules.forEach(discountImpl => {
-        OB.debug(discountImpl.discountType);
-        let DiscountRule =
-          OB.Discounts.discountRules[discountImpl.discountType];
-        if (DiscountRule) {
-          let r = new DiscountRule(ticket, discountImpl, discounts);
-          r.calculateDiscounts();
-        }
-      });
-      return discounts;
-    }
+    let discounts = [];
+    rules.forEach(discountImpl => {
+      OB.debug(discountImpl.discountType);
+      let DiscountRule = OB.Discounts.discountRules[discountImpl.discountType];
+      if (DiscountRule) {
+        let r = new DiscountRule(ticket, discountImpl, discounts);
+        r.calculateDiscounts();
+      }
+    });
+    return discounts;
   };
 })();
