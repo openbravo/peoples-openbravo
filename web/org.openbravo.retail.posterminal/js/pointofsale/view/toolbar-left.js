@@ -371,9 +371,11 @@ enyo.kind({
     this.disabledChanged(inEvent.status);
   },
   disableButton: function() {
+    this.setDisabled(true);
     this.disabledChanged(true);
   },
   enableButton: function() {
+    this.setDisabled(false);
     this.disabledChanged(false);
   },
   disabledChanged: function(isDisabled) {

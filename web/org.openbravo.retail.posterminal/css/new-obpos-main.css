@@ -8440,7 +8440,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.ButtonTabReceipt
-# Inherits: [OB.UI.ComplexButtonTab]
+# Inherits: [OB.UI.Button]
 */
 .obObposPointOfSaleUiButtonTabReceipt {
   display: none;
@@ -8482,7 +8482,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 }
 
 .obObposPointOfSaleUiButtonTabScan-buttonBefore {
-  /*Inherits: [OB.UI.ComplexButton]*/
+  /*Inherits: [OB.UI.Button]*/
   background-size: 32px 17px;
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconMainBlack.svg');
   background-repeat: no-repeat;
@@ -8547,7 +8547,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 }
 
 .obObPosPointOfSaleUiButtonTabBrowse-buttonBefore {
-  /*Inherits: [OB.UI.ComplexButton]*/
+  /*Inherits: [OB.UI.Button]*/
   background-size: 32px 17px;
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconBrowseBlack.svg');
   background-repeat: no-repeat;
@@ -8572,7 +8572,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 }
 
 .obObPosPointOfSaleUiButtonTabSearchCharacteristic-buttonBefore {
-  /*Inherits: [OB.UI.ComplexButton]*/
+  /*Inherits: [OB.UI.Button]*/
   background-size: 32px 17px;
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconSearchBlack.svg');
   background-repeat: no-repeat;
@@ -8603,7 +8603,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
   opacity: 1;
 }
 .obObPosPointOfSaleUiButtonTabEditLine-buttonBefore {
-  /*Inherits: [OB.UI.ComplexButton]*/
+  /*Inherits: [OB.UI.Button]*/
   background-size: 32px 17px;
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconEditBlack.svg');
   background-repeat: no-repeat;
@@ -10100,8 +10100,8 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
   border-color: var(--color-maincolor);
 }
 
-.obUiCustomerCheckOption.obUiComplexButton_disabled,
-.obUiCustomerCheckOption .obUiComplexButton-buttonLabel_disabled,
+.obUiCustomerCheckOption.obUiButton_disabled,
+.obUiCustomerCheckOption .obUiButton-buttonLabel_disabled,
 .obUiCustomerCheckOption:disabled {
   display: block;
   cursor: default;
@@ -10109,7 +10109,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
   border-width: 0px;
 }
 
-.obUiCustomerCheckOption .obUiComplexButton-buttonLabel_disabled {
+.obUiCustomerCheckOption .obUiButton-buttonLabel_disabled {
   padding-top: 4px;
 }
 
@@ -13029,7 +13029,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
   grid-area: obObPosCashUpUiLeftToolbarImpl-btnCashUp;
 }
 .obObPosCashUpUiLeftToolbarImpl-btnToggleView {
-  /* Inherits: [OB.UI.ComplexButton] */
+  /* Inherits: [OB.UI.Button] */
   grid-area: obObPosCashUpUiLeftToolbarImpl-btnToggleView;
 }
 
