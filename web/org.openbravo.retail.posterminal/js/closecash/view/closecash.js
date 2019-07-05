@@ -68,7 +68,7 @@ enyo.kind({
     },
     {
       name: 'btnToggleView',
-      kind: 'OB.UI.ComplexButton',
+      kind: 'OB.UI.Button',
       classes: 'obObPosCashUpUiLeftToolbarImpl-btnToggleView',
       disabledClass: 'obObPosCashUpUiLeftToolbarImpl-btnToggleView_disabled',
       buttonBeforeClass:

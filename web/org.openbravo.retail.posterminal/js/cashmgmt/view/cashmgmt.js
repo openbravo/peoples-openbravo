@@ -23,7 +23,7 @@ enyo.kind({
       i18nLabel: 'OBPOS_LblCashManagement'
     },
     {
-      kind: 'OB.UI.ComplexButton',
+      kind: 'OB.UI.Button',
       name: 'btnToggleView',
       classes: 'obObposcashmgmtUiRightToolbarImpl-btnToggleView',
       disabledClass: 'obObposcashmgmtUiRightToolbarImpl-btnToggleView_disabled',

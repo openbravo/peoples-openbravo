@@ -56,7 +56,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.ButtonNew',
-  kind: 'OB.UI.ComplexButton',
+  kind: 'OB.UI.Button',
   i18nContent: 'OBMOBC_New',
   classes: 'obUiButtonNew',
   buttonBeforeClass: 'obUiButtonNew-buttonBefore',
@@ -161,7 +161,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.ButtonDelete',
-  kind: 'OB.UI.ComplexButton',
+  kind: 'OB.UI.Button',
   i18nContent: 'OBMOBC_Delete',
   classes: 'obUiButtonDelete',
   buttonBeforeClass: 'obUiButtonDelete-buttonBefore',

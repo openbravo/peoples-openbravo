@@ -260,7 +260,7 @@ enyo.kind({
 // ----------------------------------------------------------------------------
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabReceipt',
-  kind: 'OB.UI.ComplexButton',
+  kind: 'OB.UI.Button',
   classes: 'obObposPointOfSaleUiButtonTabReceipt',
   disabledClass: 'obObposPointOfSaleUiButtonTabReceipt_disabled',
   buttonBeforeClass: 'obObposPointOfSaleUiButtonTabReceipt-buttonBefore',
@@ -304,7 +304,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabScan',
-  kind: 'OB.UI.ComplexButton',
+  kind: 'OB.UI.Button',
   classes: 'obObposPointOfSaleUiButtonTabScan',
   tabPanel: 'scan',
   i18nLabel: 'OBMOBC_LblScan',
@@ -405,7 +405,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabBrowse',
-  kind: 'OB.UI.ComplexButton',
+  kind: 'OB.UI.Button',
   classes: 'obObPosPointOfSaleUiButtonTabBrowse',
   hideSubcomponentsOnDisabled: false,
   buttonBeforeClass: 'obObPosPointOfSaleUiButtonTabBrowse-buttonBefore',
@@ -460,7 +460,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabSearchCharacteristic',
-  kind: 'OB.UI.ComplexButton',
+  kind: 'OB.UI.Button',
   classes: 'obObPosPointOfSaleUiButtonTabSearchCharacteristic',
   tabPanel: 'searchCharacteristic',
   i18nLabel: 'OBPOS_LblSearch',
@@ -518,7 +518,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabEditLine',
-  kind: 'OB.UI.ComplexButton',
+  kind: 'OB.UI.Button',
   classes: 'obObPosPointOfSaleUiButtonTabEditLine',
   disabledClass: 'obObPosPointOfSaleUiButtonTabEditLine_disabled',
   hideSubcomponentsOnDisabled: false,
