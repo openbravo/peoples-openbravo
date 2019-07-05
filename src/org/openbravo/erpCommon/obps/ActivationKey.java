@@ -1768,9 +1768,8 @@ public class ActivationKey {
     Date firstDayOfPeriod = exceededInLastDays.get(0);
 
     long lastDayOfPeriod;
-    if (today.getTime()
-        + (getExtraWsExceededDaysAllowed() * MILLSECS_PER_DAY) < firstDayOfPeriod.getTime()
-            + WS_MS_EXCEEDING_ALLOWED_PERIOD) {
+    if (today.getTime() + (getExtraWsExceededDaysAllowed() * MILLSECS_PER_DAY) < firstDayOfPeriod
+        .getTime() + WS_MS_EXCEEDING_ALLOWED_PERIOD) {
       lastDayOfPeriod = firstDayOfPeriod.getTime() + WS_MS_EXCEEDING_ALLOWED_PERIOD;
     } else {
       lastDayOfPeriod = today.getTime() + WS_MS_EXCEEDING_ALLOWED_PERIOD;
