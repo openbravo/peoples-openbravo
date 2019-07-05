@@ -2352,3 +2352,173 @@ div.obrdm-cell-orderline-right-col1:nth-child(odd){
   }
 }
 
+.relatedDocsDocNolbl {
+  line-height: 25px;
+  font-size: 17px;
+  width: 180px;
+  padding-left: 70px;
+}
+
+@media (max-width: 480px) {
+  .relatedDocsDocNolbl {
+    font-size: 12px;
+    padding-left: 20px;
+    width: 110px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 645px) {
+  .relatedDocsDocNolbl {
+    font-size: 15px;
+    padding-left: 35px;
+    width: 120px;
+  }
+}
+
+.relatedDocsOrderDateLbl {
+  line-height: 25px;
+  font-size: 17px;
+  width: 180px;
+}
+
+@media (max-width: 480px) {
+  .relatedDocsOrderDateLbl {
+    font-size: 12px;
+    width: 100px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 645px) {
+  .relatedDocsOrderDateLbl {
+    font-size: 15px;
+    width: 120px;
+  }
+}
+
+.relatedDocsAmountLbl {
+  line-height: 25px;
+  font-size: 17px;
+  width: 80px;
+}
+
+@media (max-width: 480px) {
+  .relatedDocsAmountLbl {
+    font-size: 12px;
+    width: 60px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 645px) {
+  .relatedDocsAmountLbl {
+    font-size: 15px;
+    width: 90px;
+  }
+}
+
+.relatedDocsPendingLbl {
+  line-height: 25px;
+  font-size: 17px;
+  width: 80px;
+  padding-left: 20px;
+}
+
+@media (max-width: 480px) {
+  .relatedDocsPendingLbl {
+    font-size: 12px;
+    width: 60px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 645px) {
+  .relatedDocsPendingLbl {
+    font-size: 15px;
+    width: 90px;
+    padding-left: 0px;
+  }
+}
+
+.relatedDocsDocNo {
+  line-height: 25px;
+  font-size: 17px;
+  width: 180px;
+  padding-left: 15px;
+}
+
+@media all and (max-width: 480px) {
+  .relatedDocsDocNo {
+    font-size: 12px;
+    width: 95px;
+    padding-left: 5px;
+    text-align: left;
+  }
+}
+
+@media all and (min-width: 481px) and (max-width: 645px) {
+  .relatedDocsDocNo {
+    font-size: 15px;
+    width: 120px;
+    padding-left: 0px;
+  }
+}
+
+.relatedDocsOrderDate {
+  line-height: 25px;
+  font-size: 17px;
+  width: 180px;
+}
+
+@media all and (max-width: 480px) {
+  .relatedDocsOrderDate {
+    font-size: 12px;
+    width: 100px;
+  }
+}
+
+@media all and (min-width: 481px) and (max-width: 645px) {
+  .relatedDocsOrderDate {
+    font-size: 15px;
+    width: 120px;
+  }
+}
+
+.relatedDocsAmount {
+  line-height: 25px;
+  font-size: 17px;
+  width: 80px;
+}
+
+@media all and (max-width: 480px) {
+  .relatedDocsAmount {
+    font-size: 12px;
+    width: 60px;
+  }
+}
+
+@media all and (min-width: 481px) and (max-width: 645px) {
+  .relatedDocsAmount {
+    font-size: 15px;
+    width: 90px;
+  }
+}
+
+.relatedDocsPending {
+  line-height: 25px;
+  font-size: 17px;
+  width: 80px;
+  padding-left: 20px;
+}
+
+@media all and (max-width: 480px) {
+  .relatedDocsPending {
+    font-size: 12px;
+    width: 60px;
+  }
+}
+
+@media all and (min-width: 481px) and (max-width: 645px) {
+  .relatedDocsPending {
+    font-size: 15px;
+    width: 90px;
+    padding-left: 0px;
+  }
+}

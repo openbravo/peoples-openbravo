@@ -79,25 +79,19 @@ enyo.kind({
     },
     {
       name: 'documentNo',
-      classes: 'span4',
-      style:
-        'line-height: 25px; font-size: 17px; width: 180px; padding-left: 15px;'
+      classes: 'span4 relatedDocsDocNo'
     },
     {
       name: 'orderedDate',
-      classes: 'span2',
-      style: 'line-height: 25px; font-size: 17px; width: 180px;'
+      classes: 'span2 relatedDocsOrderDate'
     },
     {
       name: 'amount',
-      classes: 'span2',
-      style: 'line-height: 25px; font-size: 17px; width: 80px;'
+      classes: 'span2 relatedDocsAmount'
     },
     {
       name: 'pending',
-      classes: 'span2',
-      style:
-        'line-height: 25px; font-size: 17px; width: 80px; padding-left: 20px;'
+      classes: 'span2 relatedDocsPending'
     },
     {
       style: 'clear: both;'
@@ -231,28 +225,22 @@ enyo.kind({
         {
           name: 'documentNoLbl',
           content: OB.I18N.getLabel('OBPOS_DocumentNo'),
-          classes: 'span4',
-          style:
-            'line-height: 25px; font-size: 17px; width: 180px; padding-left: 70px;'
+          classes: 'span4 relatedDocsDocNolbl'
         },
         {
           name: 'orderedDateLbl',
           content: OB.I18N.getLabel('OBPOS_DateOrdered'),
-          classes: 'span2',
-          style: 'line-height: 25px; font-size: 17px; width: 180px;'
+          classes: 'span2 relatedDocsOrderDateLbl'
         },
         {
           name: 'amountLbl',
           content: OB.I18N.getLabel('OBPOS_AmountOfCash'),
-          classes: 'span2',
-          style: 'line-height: 25px; font-size: 17px; width: 80px;'
+          classes: 'span2 relatedDocsAmountLbl'
         },
         {
           name: 'pendingLbl',
           content: OB.I18N.getLabel('OBPOS_Pending'),
-          classes: 'span2',
-          style:
-            'line-height: 25px; font-size: 17px; width: 80px; padding-left: 20px;'
+          classes: 'span2 relatedDocsPendingLbl'
         },
         {
           style: 'clear: both;'
