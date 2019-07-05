@@ -8,21 +8,22 @@
  */
 
 (function() {
-  function FixedPercentage(ticket, discountImpl, discounts) {
-    OB.Discounts.Discount.call(this, ticket, discountImpl, discounts);
-  }
-  FixedPercentage.prototype = Object.create(OB.Discounts.Discount.prototype);
+  class FixedPercentage extends OB.Discounts.Discount {
+    constructor(ticket, discountImpl, discounts) {
+      super(ticket, discountImpl, discounts);
+    }
 
-  FixedPercentage.prototype.calculateDiscounts = function() {
-    let me = this; // due to partial ES6 support in nashorn
-    this.getApplicableLines().forEach(line => {
-      let disc = OB.DEC.mul(
-        me.getPrice(line),
-        OB.DEC.div(me.discountImpl.discount, 100)
-      );
-      me.addDiscount(line, disc);
-    });
-  };
+    /* @Override */
+    calculateDiscounts() {
+      this.getApplicableLines().forEach(line => {
+        let disc = OB.DEC.mul(
+          this.getPrice(line),
+          OB.DEC.div(this.discountImpl.discount, 100)
+        );
+        this.addDiscount(line, disc);
+      });
+    }
+  }
 
   OB.Discounts.discountRules[
     '697A7AB9FD9C4EE0A3E891D3D3CCA0A7'

@@ -8,66 +8,66 @@
  */
 
 (function() {
-  function PriceAdjustment(ticket, discountImpl, discounts) {
-    OB.Discounts.Discount.call(this, ticket, discountImpl, discounts);
-  }
+  class PriceAdjustment extends OB.Discounts.Discount {
+    constructor(ticket, discountImpl, discounts) {
+      super(ticket, discountImpl, discounts);
+    }
 
-  PriceAdjustment.prototype = Object.create(OB.Discounts.Discount.prototype);
+    canApplyDiscount(line) {
+      let minQty = this.discountImpl.minQuantity,
+        maxQty = this.discountImpl.maxQuantity,
+        isMultiple = this.discountImpl.ismultiple,
+        multipleQty = this.discountImpl.multiple,
+        qty = line.qty;
 
-  PriceAdjustment.prototype.calculateDiscounts = function() {
-    let me = this; // due to partial ES6 support in nashorn
-    this.getApplicableLines()
-      .filter(line => me.canApplyDiscount(line))
-      .forEach(line => me.discountForLine(line));
-  };
-
-  PriceAdjustment.prototype.canApplyDiscount = function(line) {
-    let minQty = this.discountImpl.minQuantity,
-      maxQty = this.discountImpl.maxQuantity,
-      isMultiple = this.discountImpl.ismultiple,
-      multipleQty = this.discountImpl.multiple,
-      qty = line.qty;
-
-    if (isMultiple) {
-      if (qty < multipleQty) {
+      if (isMultiple) {
+        if (qty < multipleQty) {
+          return false;
+        }
+      } else if ((minQty && qty < minQty) || (maxQty && qty > maxQty)) {
         return false;
       }
-    } else if ((minQty && qty < minQty) || (maxQty && qty > maxQty)) {
-      return false;
+
+      let linePrice = this.getUnitPrice(line);
+
+      if (linePrice < this.discountImpl.fixedPrice) {
+        return false;
+      }
+
+      return true;
     }
 
-    let linePrice = this.getUnitPrice(line);
+    discountForLine(line) {
+      let discountAmount = this.discountImpl.discountAmount,
+        qty = line.qty,
+        fixedPrice = this.discountImpl.fixedPrice,
+        discountedAmt,
+        discountedLinePrice,
+        linePrice = this.getUnitPrice(line);
 
-    if (linePrice < this.discountImpl.fixedPrice) {
-      return false;
+      // TODO: wtf are chunks?
+
+      if (fixedPrice) {
+        discountedLinePrice = fixedPrice;
+      } else {
+        discountedLinePrice =
+          (linePrice - discountAmount) * (1 - this.discountImpl.discount / 100);
+      }
+      discountedAmt = OB.DEC.toNumber(
+        (linePrice -
+          OB.DEC.toNumber(OB.DEC.toBigDecimal(String(discountedLinePrice)))) *
+          qty
+      );
+      this.addDiscount(line, discountedAmt);
     }
 
-    return true;
-  };
-
-  PriceAdjustment.prototype.discountForLine = function(line) {
-    let discountAmount = this.discountImpl.discountAmount,
-      qty = line.qty,
-      fixedPrice = this.discountImpl.fixedPrice,
-      discountedAmt,
-      discountedLinePrice,
-      linePrice = this.getUnitPrice(line);
-
-    // TODO: wtf are chunks?
-
-    if (fixedPrice) {
-      discountedLinePrice = fixedPrice;
-    } else {
-      discountedLinePrice =
-        (linePrice - discountAmount) * (1 - this.discountImpl.discount / 100);
+    /* @Override */
+    calculateDiscounts() {
+      this.getApplicableLines()
+        .filter(line => this.canApplyDiscount(line))
+        .forEach(line => this.discountForLine(line));
     }
-    discountedAmt = OB.DEC.toNumber(
-      (linePrice -
-        OB.DEC.toNumber(OB.DEC.toBigDecimal(String(discountedLinePrice)))) *
-        qty
-    );
-    this.addDiscount(line, discountedAmt);
-  };
+  }
 
   OB.Discounts.discountRules[
     '5D4BAF6BB86D4D2C9ED3D5A6FC051579'
