@@ -61,7 +61,7 @@
     }
 
     getPrice(line) {
-      let price = line.gross;
+      let price = line.price;
       this.discounts
         .filter(disc => disc.ticketLine.id === line.id)
         .forEach(disc => (price = OB.DEC.sub(price, disc.discount)));

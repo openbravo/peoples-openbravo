@@ -39,26 +39,22 @@
 
     discountForLine(line) {
       let discountAmount = this.discountImpl.discountAmount,
+        discountPercentage = this.discountImpl.discountPercentage,
+        fixedUnitPrice = this.discountImpl.discountFixedUnitPrice,
         qty = line.qty,
-        fixedPrice = this.discountImpl.fixedPrice,
-        discountedAmt,
-        discountedLinePrice,
-        linePrice = this.getUnitPrice(line);
+        discountedAmt;
 
-      // TODO: wtf are chunks?
-
-      if (fixedPrice) {
-        discountedLinePrice = fixedPrice;
-      } else {
-        discountedLinePrice =
-          (linePrice - discountAmount) * (1 - this.discountImpl.discount / 100);
+      if (fixedUnitPrice) {
+        discountedAmt = line.price - fixedUnitPrice * qty;
+      } else if (discountPercentage) {
+        discountedAmt = line.price * (discountPercentage / 100);
+      } else if (discountAmount) {
+        discountedAmt = discountAmount;
       }
-      discountedAmt = OB.DEC.toNumber(
-        (linePrice -
-          OB.DEC.toNumber(OB.DEC.toBigDecimal(String(discountedLinePrice)))) *
-          qty
-      );
-      this.addDiscount(line, discountedAmt);
+
+      if (discountedAmt) {
+        this.addDiscount(line, OB.DEC.toNumber(discountedAmt));
+      }
     }
 
     /* @Override */
