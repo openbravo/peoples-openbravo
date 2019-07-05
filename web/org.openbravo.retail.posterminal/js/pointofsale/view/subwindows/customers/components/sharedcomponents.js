@@ -483,6 +483,28 @@ enyo.kind({
       }
     }
 
+    function validateEmailFormat(customer) {
+      //Validate that email have @ and .*
+      var email = customer.get('email');
+      var regex = new RegExp(
+        /^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/
+      );
+      if (email === '') {
+        return true;
+      } else {
+        return regex.test(email) ? true : false;
+      }
+    }
+    function validatePhoneFormat(phone) {
+      //Validate that phone only have numbers
+      var regex = new RegExp(/^([0-9])*$/);
+      if (phone === '') {
+        return true;
+      } else {
+        return regex.test(phone) ? true : false;
+      }
+    }
+
     function validateForm(form) {
       if (inEvent.validations) {
         var customer = form.model.get('customer'),
@@ -550,6 +572,18 @@ enyo.kind({
         }
         if (!validateEmail(customer)) {
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_EmailRequired'));
+          return false;
+        }
+        if (!validateEmailFormat(customer)) {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_WrongEmailFormat'));
+          return false;
+        }
+        if (!validatePhoneFormat(customer.get('phone'))) {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_WrongPhoneFormat'));
+          return false;
+        }
+        if (!validatePhoneFormat(customer.get('alternativePhone'))) {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_WrongAltPhoneFormat'));
           return false;
         }
       }
