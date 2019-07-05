@@ -204,7 +204,7 @@ enyo.kind({
       classes: 'obUiKeypadCoinsLegacy-container5',
       components: [
         {
-          classes: 'obUiKeypadCoinsLegacy-container5-container1',
+          classes: 'obUiKeypadCoinsLegacy-container5-container1 span4',
           components: [
             {
               kind: 'OB.UI.PaymentButton',

@@ -65,6 +65,9 @@
   clear: both;
 }
 
+.btnactive-green {
+  background-color: var(--color-maincolor);
+}
 
 /***********************   ***********************/
 /*                 File: order.js                */
@@ -742,7 +745,7 @@
 
 .obUiPaymentButton-btn {
 /* # Inherits: [OB.UI.Button] */
-  display: block;
+  display: flex;
   width: 100%;
   border: none;
   font-size: 18px;
@@ -9997,7 +10000,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 
 .obObposPointOfSaleUiButtonSwitch-container1-btn {
 /* Inherits: [OB.UI.Button] */
-  display: block;
+  display: flex;
   width: 100%;
   border: none;
   font-size: var(--font-medium-large);
@@ -10006,7 +10009,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
   padding: 0px;
   text-decoration: none;
   background-color: #e2e2e2;
-  color: #ffffff;
   cursor: pointer;
   height: 57px;
 }
