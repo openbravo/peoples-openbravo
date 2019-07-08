@@ -682,22 +682,13 @@ public class PaidReceipts extends JSONProcessSimple {
 
   private boolean checkOrderInErrorEntry(List<String> orderIds) {
     boolean hasRecord = false;
-    final String COMMA = ",";
-    StringBuilder idsBuilder = new StringBuilder();
     final String OR = "OR";
     StringBuilder orBuilder = new StringBuilder();
     try {
       for (int i = 0; i < orderIds.size(); i++) {
-        String id = orderIds.get(i);
-        idsBuilder.append(id);
-        idsBuilder.append(COMMA);
-
         orBuilder.append(" imp.jsonInfo like :id" + i + " ");
         orBuilder.append(OR);
       }
-      String ids = idsBuilder.toString();
-      // Remove last comma
-      ids = ids.substring(0, ids.length() - COMMA.length());
 
       String orIds = orBuilder.toString();
       // Remove last OR
@@ -710,7 +701,7 @@ public class PaidReceipts extends JSONProcessSimple {
           .getSession()
           .createQuery(hqlError, Object.class);
       errorQuery.setParameter("clientId", OBContext.getOBContext().getCurrentClient().getId());
-      errorQuery.setParameter("recordIdList", ids);
+      errorQuery.setParameterList("recordIdList", orderIds);
       if (errorQuery.list().size() > 0) {
         return true;
       }
