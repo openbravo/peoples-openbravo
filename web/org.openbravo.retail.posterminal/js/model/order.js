@@ -7457,8 +7457,17 @@
             args.receipt.set('openDrawer', false);
           }
           args.receipt.adjustPayment();
-          args.receipt.save(removeCallback);
-          args.receipt.trigger('saveCurrent');
+          OB.UTIL.HookManager.executeHooks(
+            'OBPOS_postRemovePayment',
+            {
+              receipt: args.receipt,
+              payment: payment
+            },
+            function(args) {
+              args.receipt.save(removeCallback);
+              args.receipt.trigger('saveCurrent');
+            }
+          );
         }
       );
     },
