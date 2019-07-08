@@ -262,10 +262,6 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabReceipt',
   kind: 'OB.UI.Button',
   classes: 'obObposPointOfSaleUiButtonTabReceipt',
-  disabledClass: 'obObposPointOfSaleUiButtonTabReceipt_disabled',
-  buttonBeforeClass: 'obObposPointOfSaleUiButtonTabReceipt-buttonBefore',
-  buttonAfterClass: 'obObposPointOfSaleUiButtonTabReceipt-buttonAfter',
-  labelClass: 'obObposPointOfSaleUiButtonTabReceipt-labelClass',
   events: {
     onTabChange: '',
     onRightToolbarDisabled: ''
@@ -308,8 +304,7 @@ enyo.kind({
   classes: 'obObposPointOfSaleUiButtonTabScan',
   tabPanel: 'scan',
   i18nLabel: 'OBMOBC_LblScan',
-  hideSubcomponentsOnDisabled: false,
-  buttonBeforeClass: 'obObposPointOfSaleUiButtonTabScan-buttonBefore',
+
   events: {
     onTabChange: '',
     onRightToolbarDisabled: ''
@@ -407,8 +402,6 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabBrowse',
   kind: 'OB.UI.Button',
   classes: 'obObPosPointOfSaleUiButtonTabBrowse',
-  hideSubcomponentsOnDisabled: false,
-  buttonBeforeClass: 'obObPosPointOfSaleUiButtonTabBrowse-buttonBefore',
   events: {
     onTabChange: '',
     onRightToolbarDisabled: ''
@@ -464,9 +457,6 @@ enyo.kind({
   classes: 'obObPosPointOfSaleUiButtonTabSearchCharacteristic',
   tabPanel: 'searchCharacteristic',
   i18nLabel: 'OBPOS_LblSearch',
-  hideSubcomponentsOnDisabled: false,
-  buttonBeforeClass:
-    'obObPosPointOfSaleUiButtonTabSearchCharacteristic-buttonBefore',
   events: {
     onTabChange: '',
     onRightToolbarDisabled: ''
@@ -520,9 +510,6 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabEditLine',
   kind: 'OB.UI.Button',
   classes: 'obObPosPointOfSaleUiButtonTabEditLine',
-  disabledClass: 'obObPosPointOfSaleUiButtonTabEditLine_disabled',
-  hideSubcomponentsOnDisabled: false,
-  buttonBeforeClass: 'obObPosPointOfSaleUiButtonTabEditLine-buttonBefore',
   published: {
     ticketLines: null
   },

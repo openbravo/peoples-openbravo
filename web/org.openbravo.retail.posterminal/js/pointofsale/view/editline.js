@@ -313,9 +313,6 @@ enyo.kind({
     {
       kind: 'OB.UI.ActionButton',
       name: 'deleteLine',
-      hideSubcomponentsOnDisabled: false,
-      disabledClass:
-        'obObposPointOfSaleUiEditLine-propertiesToShow-general_disabled',
       classes:
         'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-deleteLine',
       action: {
@@ -326,9 +323,6 @@ enyo.kind({
     {
       kind: 'OB.UI.ActionButton',
       name: 'descriptionButton',
-      hideSubcomponentsOnDisabled: false,
-      disabledClass:
-        'obObposPointOfSaleUiEditLine-propertiesToShow-general_disabled',
       classes:
         'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-descriptionButton',
       action: {
@@ -339,9 +333,6 @@ enyo.kind({
     {
       kind: 'OB.UI.ActionButton',
       name: 'returnLine',
-      hideSubcomponentsOnDisabled: false,
-      disabledClass:
-        'obObposPointOfSaleUiEditLine-propertiesToShow-general_disabled',
       classes:
         'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-returnLine',
       action: {
@@ -352,9 +343,6 @@ enyo.kind({
     {
       kind: 'OB.UI.ActionButton',
       name: 'splitlineButton',
-      hideSubcomponentsOnDisabled: false,
-      disabledClass:
-        'obObposPointOfSaleUiEditLine-propertiesToShow-general_disabled',
       classes:
         'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-splitlineButton',
       action: {
@@ -365,9 +353,6 @@ enyo.kind({
     {
       kind: 'OB.UI.SmallButton',
       name: 'showRelatedServices',
-      hideSubcomponentsOnDisabled: false,
-      disabledClass:
-        'obObposPointOfSaleUiEditLine-propertiesToShow-general_disabled',
       classes:
         'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-showRelatedServices',
       permission: 'OBPOS_ActionButtonShowRelatedServices',
@@ -432,9 +417,6 @@ enyo.kind({
     {
       kind: 'OB.UI.SmallButton',
       name: 'removeDiscountButton',
-      hideSubcomponentsOnDisabled: false,
-      disabledClass:
-        'obObposPointOfSaleUiEditLine-propertiesToShow-general_disabled',
       i18nContent: 'OBPOS_LblRemoveDiscount',
       showing: false,
       classes:
@@ -495,9 +477,6 @@ enyo.kind({
     {
       kind: 'OB.UI.ActionButton',
       name: 'checkStockButton',
-      hideSubcomponentsOnDisabled: false,
-      disabledClass:
-        'obObposPointOfSaleUiEditLine-propertiesToShow-general_disabled',
       classes:
         'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-checkStockButton',
       action: {
@@ -508,9 +487,6 @@ enyo.kind({
     {
       kind: 'OB.OBPOSPointOfSale.UI.EditLine.OpenAttributeButton',
       name: 'openAttributeButton',
-      hideSubcomponentsOnDisabled: false,
-      disabledClass:
-        'obObposPointOfSaleUiEditLine-propertiesToShow-general_disabled',
       classes:
         'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-openAttributeButton',
       showing: false
@@ -518,9 +494,6 @@ enyo.kind({
     {
       kind: 'OB.UI.SmallButton',
       name: 'addAssociationsButton',
-      hideSubcomponentsOnDisabled: false,
-      disabledClass:
-        'obObposPointOfSaleUiEditLine-propertiesToShow-general_disabled',
       i18nContent: 'OBPOS_AddAssociations',
       showing: false,
       classes:
@@ -538,9 +511,6 @@ enyo.kind({
     {
       kind: 'OB.UI.SmallButton',
       name: 'removeAssociationsButton',
-      hideSubcomponentsOnDisabled: false,
-      disabledClass:
-        'obObposPointOfSaleUiEditLine-propertiesToShow-general_disabled',
       i18nContent: 'OBPOS_RemoveAssociations',
       showing: false,
       classes:
@@ -558,9 +528,6 @@ enyo.kind({
     {
       kind: 'OB.UI.SmallButton',
       name: 'canDeliver',
-      hideSubcomponentsOnDisabled: false,
-      disabledClass:
-        'obObposPointOfSaleUiEditLine-propertiesToShow-general_disabled',
       classes:
         'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-canDeliver',
       content: '-',

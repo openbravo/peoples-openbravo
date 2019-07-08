@@ -102,11 +102,11 @@ enyo.kind({
     onSetLineProperty: '',
     onCloseLeftSubWindow: ''
   },
-  setLabel: function() {
+  setProperLabel: function() {
     if (this.leftSubWindow && this.leftSubWindow.line) {
-      this.setContent(OB.I18N.getLabel('OBMOBC_LblApply'));
+      this.setLabel(OB.I18N.getLabel('OBMOBC_LblApply'));
     } else {
-      this.setContent(OB.I18N.getLabel('OBPOS_addToTicket'));
+      this.setLabel(OB.I18N.getLabel('OBPOS_addToTicket'));
     }
   },
   tap: function() {
@@ -329,7 +329,7 @@ enyo.kind({
             OB.I18N.formatCurrency(data.currentPrice.price) +
             '</b>'
         );
-        me.$.productAddToReceipt.setLabel();
+        me.$.productAddToReceipt.setProperLabel();
         me.$.productAddToReceipt.setDisabled(false);
         me.leftSubWindow.documentType = data.documentType;
         me.leftSubWindow.quotationDocumentType = data.quotationDocumentType;
@@ -783,7 +783,7 @@ enyo.kind({
     this.bodyComponent.$.descriptionArea.setContent(
       params.product.get('description')
     );
-    this.bodyComponent.$.productAddToReceipt.setLabel();
+    this.bodyComponent.$.productAddToReceipt.setProperLabel();
     this.getOtherStock();
     this.getStoreStock(params);
     return true;

@@ -59,8 +59,6 @@ enyo.kind({
   kind: 'OB.UI.Button',
   i18nContent: 'OBMOBC_New',
   classes: 'obUiButtonNew',
-  buttonBeforeClass: 'obUiButtonNew-buttonBefore',
-  labelClass: 'obUiButtonNew-buttonLabel',
   events: {
     onAddNewOrder: ''
   },
@@ -164,8 +162,6 @@ enyo.kind({
   kind: 'OB.UI.Button',
   i18nContent: 'OBMOBC_Delete',
   classes: 'obUiButtonDelete',
-  buttonBeforeClass: 'obUiButtonDelete-buttonBefore',
-  labelClass: 'obUiButtonDelete-buttonLabel',
   events: {
     onShowPopup: '',
     onDeleteOrder: '',
@@ -274,11 +270,9 @@ enyo.kind({
   },
   addPaidTicketClass: function() {
     this.addClass('paidticket');
-    this.removeSubcomponentsClass();
   },
   removePaidTicketClass: function() {
     this.removeClass('paidticket');
-    this.addSubcomponentsClass();
   },
   init: function(model) {
     this.model = model;
