@@ -685,15 +685,6 @@ public class PaidReceipts extends JSONProcessSimple {
     final String OR = "OR";
     StringBuilder orBuilder = new StringBuilder();
     try {
-      for (int i = 0; i < orderIds.size(); i++) {
-        orBuilder.append(" imp.jsonInfo like :id" + i + " ");
-        orBuilder.append(OR);
-      }
-
-      String orIds = orBuilder.toString();
-      // Remove last OR
-      orIds = orIds.substring(0, orIds.length() - OR.length());
-
       // OBPOS Errors
       String hqlError = "select line.id from OBPOS_Errors_Line line inner join line.obposErrors error "
           + "where error.client.id = :clientId and line.recordID in (:recordIdList) and error.typeofdata = 'Order' and error.orderstatus = 'N' ";
@@ -706,6 +697,15 @@ public class PaidReceipts extends JSONProcessSimple {
       if (errorQuery.list().size() > 0) {
         return true;
       }
+
+      for (int i = 0; i < orderIds.size(); i++) {
+        orBuilder.append(" imp.jsonInfo like :id" + i + " ");
+        orBuilder.append(OR);
+      }
+
+      String orIds = orBuilder.toString();
+      // Remove last OR
+      orIds = orIds.substring(0, orIds.length() - OR.length());
 
       String hqlError2 = "select imp.id from C_IMPORT_ENTRY imp "
           + "where imp.client.id = :clientId and imp.typeofdata = 'Order' and imp.importStatus = 'Error' "
