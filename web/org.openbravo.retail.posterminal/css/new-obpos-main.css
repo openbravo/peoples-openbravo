@@ -8222,19 +8222,10 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
   grid-area: obUiButtonNew;
 }
 
-.obUiButtonNew_iconNew {}
-
 .obUiButtonNew .obUiButton-before {
-  background-repeat: no-repeat;
-  background-position: center center;
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconCreateNew.svg');
   background-size: 19px 19px;
 }
-
-.obUiButtonNew .obUiButton-label {
-  color: var(--color-primary-lighter);
-}
-
 
 
 /*
@@ -8245,25 +8236,14 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
   grid-area: obUiButtonDelete;
 }
 
-.obUiButtonDelete.paidticket {
-  width: 100%;
-  background-repeat: no-repeat;
-  background-size: 15px 18px;
-  background-position: center;
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconClearPaidTicket.png');
-}
-
-.obUiButtonDelete_iconDelete {}
-
 .obUiButtonDelete .obUiButton-before {
-  background-repeat: no-repeat;
-  background-position: center center;
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconDelete.svg');
   background-size: 15px 18px;
 }
 
-.obUiButtonDelete .obUiButton-label {
-  color: var(--color-primary-lighter);
+.obUiButtonDelete.paidticket .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconClearPaidTicket.png');
+  background-size: 15px 15px;
 }
 
 
@@ -8449,14 +8429,16 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 # Inherits: [OB.UI.Button]
 */
 .obObposPointOfSaleUiButtonTabReceipt {
-  display: none;
+  visibility: hidden;
   grid-area: obObposPointOfSaleUiButtonTabReceipt;
-  background-color: #e2e2e2;
 }
 
 .obObposPointOfSaleUiButtonTabReceipt.obUiButton_disabled {}
 
-.obObposPointOfSaleUiButtonTabReceipt .obUiButton-before {}
+.obObposPointOfSaleUiButtonTabReceipt .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconRFIDON.svg');
+  background-size: 17px 18px;
+}
 
 .obObposPointOfSaleUiButtonTabReceipt .obUiButton-after {}
 
@@ -8464,8 +8446,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 
 @media all and (max-width: 800px) {
   .obObposPointOfSaleUiButtonTabReceipt {
-    display: flex;
-    flex:1;
+    visibility: visible;
   }
 }
 
@@ -8491,8 +8472,10 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
   /*Inherits: [OB.UI.Button]*/
   background-size: 32px 17px;
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconMainBlack.svg');
-  background-repeat: no-repeat;
-  background-position: center;
+}
+
+.obObposPointOfSaleUiButtonTabScan .obUiButton-label {
+  color: black;
 }
 
 .obObposPointOfSaleUiButtonTabScan-status-rfidIcon_rfidOn {
@@ -8556,8 +8539,10 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
   /*Inherits: [OB.UI.Button]*/
   background-size: 32px 17px;
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconBrowseBlack.svg');
-  background-repeat: no-repeat;
-  background-position: center;
+}
+
+.obObPosPointOfSaleUiButtonTabBrowse .obUiButton-label {
+  color: black;
 }
 
 /*
@@ -8581,8 +8566,10 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
   /*Inherits: [OB.UI.Button]*/
   background-size: 32px 17px;
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconSearchBlack.svg');
-  background-repeat: no-repeat;
-  background-position: center;
+}
+
+.obObPosPointOfSaleUiButtonTabSearchCharacteristic .obUiButton-label {
+  color: black;
 }
 
 
@@ -8612,8 +8599,10 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
   /*Inherits: [OB.UI.Button]*/
   background-size: 32px 17px;
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconEditBlack.svg');
-  background-repeat: no-repeat;
-  background-position: center;
+}
+
+.obObPosPointOfSaleUiButtonTabEditLine .obUiButton-label {
+  color: black;
 }
 
 

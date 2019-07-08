@@ -56,7 +56,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.ButtonNew',
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ToolbarButton',
   i18nContent: 'OBMOBC_New',
   classes: 'obUiButtonNew',
   events: {
@@ -104,15 +104,9 @@ enyo.kind({
   },
   updateDisabled: function(isDisabled) {
     this.setButtonDisabled(isDisabled);
-    if (isDisabled) {
-      this.removeClass('obUiButtonNew_iconNew');
-    } else {
-      this.addClass('obUiButtonNew_iconNew');
-    }
   },
   init: function(model) {
     this.model = model;
-    this.addClass('obUiButtonNew_iconNew');
   },
   tap: function() {
     var me = this;
@@ -159,7 +153,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.ButtonDelete',
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ToolbarButton',
   i18nContent: 'OBMOBC_Delete',
   classes: 'obUiButtonDelete',
   events: {
@@ -211,11 +205,6 @@ enyo.kind({
   },
   updateDisabled: function(isDisabled) {
     this.setButtonDisabled(isDisabled);
-    if (isDisabled) {
-      this.removeClass('obUiButtonDelete_iconDelete');
-    } else {
-      this.addClass('obUiButtonDelete_iconDelete');
-    }
   },
   tap: function() {
     var me = this,
@@ -276,7 +265,6 @@ enyo.kind({
   },
   init: function(model) {
     this.model = model;
-    this.addClass('obUiButtonDelete_iconDelete');
     this.model.get('leftColumnViewManager').on(
       'multiorder',
       function() {
@@ -482,24 +470,24 @@ enyo.kind({
       : false;
     if (requirementsAreMet(this.model)) {
       newIsDisabledState = false;
-      this.$.totalPrinter.show();
+      this.totalPrinter.show();
       if (!hasBeenPaid) {
-        this.$.totalPrinter.removeClass(
+        this.totalPrinter.removeClass(
           'obObposPointOfSaleUiButtonTabPayment-totalPrinter_black'
         );
-        this.$.totalPrinter.addClass(
+        this.totalPrinter.addClass(
           'obObposPointOfSaleUiButtonTabPayment-totalPrinter_white '
         );
       }
     } else {
       newIsDisabledState = true;
       if (discountEdit) {
-        this.$.totalPrinter.hide();
+        this.totalPrinter.hide();
       } else if (OB.MobileApp.model.get('serviceSearchMode')) {
-        this.$.totalPrinter.removeClass(
+        this.totalPrinter.removeClass(
           'obObposPointOfSaleUiButtonTabPayment-totalPrinter_white '
         );
-        this.$.totalPrinter.addClass(
+        this.totalPrinter.addClass(
           'obObposPointOfSaleUiButtonTabPayment-totalPrinter_black'
         );
       }
@@ -536,7 +524,7 @@ enyo.kind({
     this.disabled = newIsDisabledState; // for getDisabled() to return the correct value
     this.setAttribute('disabled', newIsDisabledState); // to effectively turn the button enabled or disabled
     if (hasBeenPaid && !newIsDisabledState) {
-      this.$.totalPrinter.removeClass(
+      this.totalPrinter.removeClass(
         'obObposPointOfSaleUiButtonTabPayment-totalPrinter_white'
       );
       this.addClass('obObposPointOfSaleUiButtonTabPayment_disabled');
@@ -893,7 +881,7 @@ enyo.kind({
     }
   },
   attributes: {},
-  components: [
+  customComponents: [
     {
       kind: 'OB.UI.FitText',
       name: 'totalButtonDiv',
@@ -923,17 +911,20 @@ enyo.kind({
     }
   ],
   getLabel: function() {
-    return this.$.totalPrinter.getContent();
+    return this.totalPrinter.getContent();
   },
   initComponents: function() {
     this.inherited(arguments);
+    //FIXME: handle properly the css classes to show the required background depending on the status
+    this.$.after.createComponents(this.customComponents);
+    this.totalPrinter = this.$.after.$.totalPrinter;
     this.removeClass('btnlink-gray');
   },
   destroyComponents: function() {
     this.inherited(arguments);
   },
   renderTotal: function(inSender, inEvent) {
-    this.$.totalPrinter.renderTotal(inEvent.newTotal);
+    this.totalPrinter.renderTotal(inEvent.newTotal);
     this.disabledChanged(false);
   },
   init: function(model) {

@@ -260,7 +260,7 @@ enyo.kind({
 // ----------------------------------------------------------------------------
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabReceipt',
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ToolbarButtonTab',
   classes: 'obObposPointOfSaleUiButtonTabReceipt',
   events: {
     onTabChange: '',
@@ -300,7 +300,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabScan',
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ToolbarButtonTab',
   classes: 'obObposPointOfSaleUiButtonTabScan',
   tabPanel: 'scan',
   i18nLabel: 'OBMOBC_LblScan',
@@ -400,7 +400,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabBrowse',
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ToolbarButtonTab',
   classes: 'obObPosPointOfSaleUiButtonTabBrowse',
   events: {
     onTabChange: '',
@@ -453,7 +453,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabSearchCharacteristic',
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ToolbarButtonTab',
   classes: 'obObPosPointOfSaleUiButtonTabSearchCharacteristic',
   tabPanel: 'searchCharacteristic',
   i18nLabel: 'OBPOS_LblSearch',
@@ -508,7 +508,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabEditLine',
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ToolbarButtonTab',
   classes: 'obObPosPointOfSaleUiButtonTabEditLine',
   published: {
     ticketLines: null
