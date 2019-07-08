@@ -10320,6 +10320,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
   display: grid;
   grid-auto-flow: row;
   grid-template-columns: 1fr 1fr 1fr;
+  grid-column-gap: 15px;
 }
 
 @media all and (max-width: 800px) {
@@ -10334,7 +10335,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 /* Inherits: [OB.UI.CustomerPropertyLine] */
 }
 
-.obObposPointOfSaleUiCustomersEditCreatecustomers-customerOnlyFields-obUiCustomerPropertyLine.obUiFormElement_isCustom .obUiFormElement-placement {
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerOnlyFields-obUiCustomerPropertyLine.obUiFormElement_isCustom .obUiFormElement-coreElementArea {
   border: 0px;
 }
 
@@ -13457,7 +13458,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 .obObposCashupUiListPendingReceipts-container1-container1-container1-container1-stepsheader {
   padding: 10px;
   border-bottom: var(--bottomseparator-slim);
-  text-align:center;
+  text-align: center;
 }
 
 .obObposCashupUiListPendingReceipts-container1-container1-container1-container2 {
@@ -13590,7 +13591,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 .obObposCahupUiCashMaster-container1-container1-container1-container1-container1-stepsheader {
   padding: 10px;
   border-bottom: var(--bottomseparator-slim);
-  text-align:center;
+  text-align: center;
 }
 
 .obObposCahupUiCashMaster-container1-container1-container1-container2 {
@@ -13769,7 +13770,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 .obObposCashupUiCashPayments-container1-container1-container1-container1-container1-title {
   padding: 10px;
   border-bottom: var(--bottomseparator-slim);
-  text-align:center;
+  text-align: center;
 }
 
 .obObposCashupUiCashPayments-container1-container1-container1-container2 {
@@ -14021,7 +14022,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 .obObposCashupUiListPaymentMethods-container1-container1-container1-container1-container1-stepsheader {
   padding: 10px;
   border-bottom: var(--bottomseparator-slim);
-  text-align:center;
+  text-align: center;
 }
 
 .obObposCashupUiListPaymentMethods-container1-container1-container1-container2 {
@@ -14653,7 +14654,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 .obObPosCashUpUiPostPrintClose-scrollArea-container1-container1-container1-reporttitle {
   padding: 10px;
   border-bottom: 1px solid #cccccc;
-  text-align:center;
+  text-align: center;
 }
 
 .obObPosCashUpUiPostPrintClose-scrollArea-container1-container1-element1 {
@@ -14670,7 +14671,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 
 .obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1 {
   padding: 10px;
-  text-align:center;
+  text-align: center;
 }
 
 .obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1-img {
@@ -14679,27 +14680,27 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 
 .obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1-store {
   padding: 5px;
-  text-align:center;
+  text-align: center;
 }
 
 .obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1-terminal {
   padding: 5px;
-  text-align:center;
+  text-align: center;
 }
 
 .obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1-user {
   padding: 5px;
-  text-align:center;
+  text-align: center;
 }
 
 .obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1-openingtime {
   padding: 5px;
-  text-align:center;
+  text-align: center;
 }
 
 .obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1-time {
   padding: 5px;
-  text-align:center;
+  text-align: center;
 }
 
 .obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1-element1 {

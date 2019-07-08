@@ -168,6 +168,16 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.CustomerComboProperty',
   classes: 'obUiCustomerComboProperty',
+  kind: 'OB.UI.List',
+  renderLine: enyo.kind({
+    kind: 'OB.UI.FormElement.Select.Option',
+    initComponents: function() {
+      this.inherited(arguments);
+      this.setValue(this.model.get(this.parent.retrievedPropertyForValue));
+      this.setContent(this.model.get(this.parent.retrievedPropertyForText));
+    }
+  }),
+  renderEmpty: 'enyo.Control',
   handlers: {
     onLoadValue: 'loadValue',
     onSaveChange: 'saveChange',
@@ -180,44 +190,25 @@ enyo.kind({
     onSaveProperty: '',
     onSetValues: ''
   },
-  components: [
-    {
-      kind: 'OB.UI.List',
-      name: 'customerCombo',
-      renderLine: enyo.kind({
-        kind: 'OB.UI.FormElement.Select.Option',
-        initComponents: function() {
-          this.inherited(arguments);
-          this.setValue(
-            this.model.get(this.parent.parent.retrievedPropertyForValue)
-          );
-          this.setContent(
-            this.model.get(this.parent.parent.retrievedPropertyForText)
-          );
-        }
-      }),
-      renderEmpty: 'enyo.Control'
-    }
-  ],
   valueSet: function(inSender, inEvent) {
     var i;
     if (inEvent.data.hasOwnProperty(this.modelProperty)) {
-      for (i = 0; i < this.$.customerCombo.getCollection().length; i++) {
+      for (i = 0; i < this.getCollection().length; i++) {
         if (
-          this.$.customerCombo.getCollection().models[i].get('id') ===
+          this.getCollection().models[i].get('id') ===
           inEvent.data[this.modelProperty]
         ) {
-          this.$.customerCombo.setSelected(i);
+          this.setSelected(i);
           break;
         }
       }
     }
   },
   retrieveValue: function(inSender, inEvent) {
-    inEvent[this.modelProperty] = this.$.customerCombo.getValue();
+    inEvent[this.modelProperty] = this.getValue();
   },
   loadValue: function(inSender, inEvent) {
-    this.$.customerCombo.setCollection(this.collection);
+    this.setCollection(this.collection);
     this.fetchDataFunction(inEvent);
   },
   change: function() {},
@@ -258,13 +249,13 @@ enyo.kind({
       this
     );
     if (result) {
-      this.$.customerCombo.setSelected(index);
+      this.setSelected(index);
     } else {
-      this.$.customerCombo.setSelected(0);
+      this.setSelected(0);
     }
   },
   saveChange: function(inSender, inEvent) {
-    var selected = this.collection.at(this.$.customerCombo.getSelected());
+    var selected = this.collection.at(this.getSelected());
     if (selected) {
       inEvent.customer.set(
         this.modelProperty,
@@ -290,9 +281,6 @@ enyo.kind({
       OB.info('OB.UI.CustomerComboProperty: Collection is required');
     }
     this.inherited(arguments);
-    if (this.readOnly) {
-      this.setAttribute('readonly', 'readonly');
-    }
   }
 });
 
@@ -760,6 +748,7 @@ enyo.kind({
     inEvent.customer.set(me.modelProperty, me.getChecked());
   }
 });
+
 enyo.kind({
   name: 'OB.UI.CustomerCheckCommercialAuth',
   kind: 'OB.UI.FormElement.Checkbox',
@@ -948,7 +937,7 @@ enyo.kind({
         }
       }
     }
-    this.doHandleInputStyle();
+    this.doHandleFormElementStyle();
   },
   saveChange: function(inSender, inEvent) {
     var me = this;

@@ -360,7 +360,7 @@ button.btnbp:disabled {
 .iconRemove {
   width: 30px;
   height: 30px;
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconSelectorRemove.svg');
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconFormElementClear.svg');
   background-size: 24px 24px;
   background-repeat: no-repeat;
   background-position: 3px 3px;
@@ -369,7 +369,9 @@ button.btnbp:disabled {
 .iconSortNone {
   width: 58px;
   height: 30px;
+  margin: 10px 0px;
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconSelectorSortDisabled.svg');
+  background-color: transparent;
   background-size: 52px 28px;
   background-repeat: no-repeat;
 }
@@ -377,7 +379,9 @@ button.btnbp:disabled {
 .iconSortAsc {
   width: 58px;
   height: 30px;
+  margin: 10px 0px;
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconSelectorSortAscending.svg');
+  background-color: transparent;
   background-size: 52px 28px;
   background-repeat: no-repeat;
 }
@@ -385,7 +389,9 @@ button.btnbp:disabled {
 .iconSortDesc {
   width: 58px;
   height: 30px;
+  margin: 10px 0px;
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconSelectorSortDescending.svg');
+  background-color: transparent;
   background-size: 52px 28px;
   background-repeat: no-repeat;
 }
@@ -2103,7 +2109,7 @@ div.obrdm-cell-orderline-right-col1:nth-child(odd){
   }
 
   .obrdm-cell-orderline-left-info {
-    padding-left: 5px !important;;
+    padding-left: 5px !important;
     border-bottom: 1px solid #ccc;
     height: 62px;
     white-space: pre;
