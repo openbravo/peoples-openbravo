@@ -121,6 +121,9 @@
           receipt.set('hasbeenpaid', 'N');
           diffReceipt.set('hasbeenpaid', 'N');
           frozenReceipt.set('hasbeenpaid', 'N');
+          receipt.unset('completeTicket');
+          diffReceipt.unset('completeTicket');
+          frozenReceipt.unset('completeTicket');
           OB.Dal.save(
             receipt,
             function() {
@@ -211,6 +214,7 @@
           if (args && args.cancellation && args.cancellation === true) {
             args.context.receipt.set('isbeingprocessed', 'N');
             args.context.receipt.set('hasbeenpaid', 'N');
+            args.context.receipt.unset('completeTicket');
             args.context.receipt.trigger('paymentCancel');
             if (eventParams && eventParams.callback) {
               eventParams.callback({
@@ -588,6 +592,8 @@
                     // rollback other changes
                     receipt.set('hasbeenpaid', 'N');
                     frozenReceipt.set('hasbeenpaid', 'N');
+                    receipt.unset('completeTicket');
+                    frozenReceipt.unset('completeTicket');
                   },
                   null
                 );
@@ -649,6 +655,7 @@
                 model.get('orderList').remove(order);
                 rcpt.set('isbeingprocessed', 'N');
                 rcpt.set('hasbeenpaid', 'N');
+                rcpt.unset('completeTicket');
                 model.get('orderList').push(rcpt);
                 OB.Dal.save(
                   rcpt,
@@ -682,6 +689,7 @@
                   ) || {};
                 rcpt.set('isbeingprocessed', 'N');
                 rcpt.set('hasbeenpaid', 'N');
+                rcpt.unset('completeTicket');
                 rcpt.set('payment', fRcpt.get('payment'));
                 rcpt.set('paymentWithSign', fRcpt.get('paymentWithSign'));
                 rcpt.set('payments', fRcpt.get('payments'));

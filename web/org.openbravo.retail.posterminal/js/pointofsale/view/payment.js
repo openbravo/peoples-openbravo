@@ -2343,8 +2343,6 @@ enyo.kind({
       });
     }
 
-    myModel.get('order').set('completeTicket', true);
-
     if (!avoidPayment) {
       if (isMultiOrder) {
         payments = this.owner.model.get('multiOrders').get('payments');
@@ -2442,6 +2440,13 @@ enyo.kind({
           prepaymentLimitAmount,
           pendingPrepayment,
           receiptHasPrepaymentAmount = true;
+
+        function underTheLimitApprovalCallback() {
+          myModel.get('order').set('completeTicket', true);
+          if (callback && callback instanceof Function) {
+            callback();
+          }
+        }
 
         if (!isMultiOrder) {
           paymentStatus = me.owner.receipt.getPaymentStatus();
@@ -2569,9 +2574,7 @@ enyo.kind({
                               }
 
                               popup.doHideThisPopup();
-                              if (callback && callback instanceof Function) {
-                                callback();
-                              }
+                              underTheLimitApprovalCallback();
                             }
                           },
                           {
@@ -2587,9 +2590,7 @@ enyo.kind({
                         ]
                       );
                     } else {
-                      if (callback && callback instanceof Function) {
-                        callback();
-                      }
+                      underTheLimitApprovalCallback();
                     }
                   } else {
                     OB.UTIL.ProcessController.finish(
@@ -2600,9 +2601,7 @@ enyo.kind({
                 }
               );
             } else {
-              if (callback && callback instanceof Function) {
-                callback();
-              }
+              underTheLimitApprovalCallback();
             }
           } else {
             OB.UTIL.ProcessController.finish('tapDoneButton', execution);
@@ -2614,9 +2613,7 @@ enyo.kind({
             );
           }
         } else {
-          if (callback && callback instanceof Function) {
-            callback();
-          }
+          underTheLimitApprovalCallback();
         }
       };
 
