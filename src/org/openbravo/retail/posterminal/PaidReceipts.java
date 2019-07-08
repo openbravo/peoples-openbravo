@@ -702,6 +702,7 @@ public class PaidReceipts extends JSONProcessSimple {
           .createQuery(hqlError, Object.class);
       errorQuery.setParameter("clientId", OBContext.getOBContext().getCurrentClient().getId());
       errorQuery.setParameterList("recordIdList", orderIds);
+      errorQuery.setMaxResults(1);
       if (errorQuery.list().size() > 0) {
         return true;
       }
@@ -716,6 +717,7 @@ public class PaidReceipts extends JSONProcessSimple {
       for (int i = 0; i < orderIds.size(); i++) {
         errorQuery2.setParameter("id" + i, "%" + orderIds.get(i) + "%");
       }
+      errorQuery2.setMaxResults(1);
       if (errorQuery2.list().size() > 0) {
         return true;
       }
