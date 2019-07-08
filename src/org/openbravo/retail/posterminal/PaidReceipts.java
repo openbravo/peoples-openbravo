@@ -641,21 +641,24 @@ public class PaidReceipts extends JSONProcessSimple {
     if (objectIn.getDouble("amount") != objectIn.getDouble("paymentAmount")
         && objectIn.getDouble("paymentAmount") != 0) {
       // Search for the overpayment amount and add to the amount
-      final StringBuffer overpaymentHQL = new StringBuffer();
-      overpaymentHQL.append("SELECT SUM(pd.amount) ");
-      overpaymentHQL.append("FROM FIN_Payment_Detail AS pd ");
-      overpaymentHQL.append("JOIN pd.finPayment AS p ");
-      overpaymentHQL.append("JOIN p.oBPOSPOSTerminal AS t ");
-      overpaymentHQL.append("WHERE p.id = :finPaymentId ");
-      overpaymentHQL.append("AND pd.gLItem IS NOT NULL ");
-      overpaymentHQL.append("AND pd.gLItem.id = (SELECT DISTINCT(ppt.glitemWriteoff.id) ");
-      overpaymentHQL.append("FROM OBPOS_App_Payment AS pp ");
-      overpaymentHQL.append("JOIN pp.paymentMethod AS ppt ");
-      overpaymentHQL.append("WHERE pp.obposApplications.id = t.id ");
-      overpaymentHQL.append("AND ppt.paymentMethod.id = p.paymentMethod.id)");
+      // @formatter:off
+      String overpaymentHQL = "" +
+      "SELECT SUM(pd.amount) " +
+      "FROM FIN_Payment_Detail AS pd " +
+      "JOIN pd.finPayment AS p " +
+      "JOIN p.oBPOSPOSTerminal AS t " +
+      "WHERE p.id = :finPaymentId " +
+      "AND pd.gLItem IS NOT NULL " +
+      "AND pd.gLItem.id = " +
+        "(SELECT DISTINCT(ppt.glitemWriteoff.id) " +
+        "FROM OBPOS_App_Payment AS pp " +
+        "JOIN pp.paymentMethod AS ppt " +
+        "WHERE pp.obposApplications.id = t.id " +
+        "AND ppt.paymentMethod.id = p.paymentMethod.id)";
+      // @formatter:on
       final Query<BigDecimal> overpaymentQuery = OBDal.getInstance()
           .getSession()
-          .createQuery(overpaymentHQL.toString(), BigDecimal.class);
+          .createQuery(overpaymentHQL, BigDecimal.class);
       overpaymentQuery.setParameter("finPaymentId", objectIn.getString("paymentId"));
       overpaymentQuery.setMaxResults(1);
       final BigDecimal overpaymentAmt = overpaymentQuery.uniqueResult();
@@ -683,7 +686,6 @@ public class PaidReceipts extends JSONProcessSimple {
   private boolean checkOrderInErrorEntry(List<String> orderIds) {
     boolean hasRecord = false;
     final String OR = "OR";
-    StringBuilder orBuilder = new StringBuilder();
     try {
       // OBPOS Errors
       String hqlError = "select line.id from OBPOS_Errors_Line line inner join line.obposErrors error "
@@ -698,12 +700,11 @@ public class PaidReceipts extends JSONProcessSimple {
         return true;
       }
 
+      String orIds = "";
       for (int i = 0; i < orderIds.size(); i++) {
-        orBuilder.append(" imp.jsonInfo like :id" + i + " ");
-        orBuilder.append(OR);
+        orIds += " imp.jsonInfo like :id" + i + " ";
+        orIds += OR;
       }
-
-      String orIds = orBuilder.toString();
       // Remove last OR
       orIds = orIds.substring(0, orIds.length() - OR.length());
 
