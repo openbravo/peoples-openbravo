@@ -681,11 +681,12 @@ public class PaidReceipts extends JSONProcessSimple {
     final String OR = "OR";
     StringBuilder orBuilder = new StringBuilder();
     try {
-      for (String id : orderIds) {
+      for (int i = 0; i < orderIds.size(); i++) {
+        String id = orderIds.get(i);
         idsBuilder.append(id);
         idsBuilder.append(COMMA);
 
-        orBuilder.append(" imp.jsonInfo like '%" + id + "%' ");
+        orBuilder.append(" imp.jsonInfo like :id" + i + " ");
         orBuilder.append(OR);
       }
       String ids = idsBuilder.toString();
@@ -715,6 +716,9 @@ public class PaidReceipts extends JSONProcessSimple {
           .getSession()
           .createQuery(hqlError2, Object.class);
       errorQuery2.setParameter("clientId", OBContext.getOBContext().getCurrentClient().getId());
+      for (int i = 0; i < orderIds.size(); i++) {
+        errorQuery2.setParameter("id" + i, "%" + orderIds.get(i) + "%");
+      }
       if (errorQuery2.list().size() > 0) {
         return true;
       }
