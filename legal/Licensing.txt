@@ -270,9 +270,9 @@ The SmartClient source code, as well as JavaScript and CSS files under the isomo
 directory are licensed under the terms of the LGPL 3.0, available at
 http://www.gnu.org/licenses/lgpl-3.0.html
 
-# BigDecimal-all-1.0.1.min.js
+# BigDecimal-all-1.0.3.min.js
 BigDecimal implementation in JavaScript under the ICU4J license which is available in the file ICU4J-1.3.1.txt in this folder or with more explanation at:
-https://github.com/dtrebbien/BigDecimal.js
+https://github.com/alostale/BigDecimal.js
 
 # scopeleaks.js
 # scopeleaks.min.js
