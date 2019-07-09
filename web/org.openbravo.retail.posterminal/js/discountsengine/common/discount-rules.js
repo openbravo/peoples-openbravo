@@ -72,20 +72,24 @@
       return OB.DEC.div(this.getPrice(line), line.qty);
     }
 
-    addDiscount(line, amt) {
+    addDiscount(line, amt, additionalParams) {
       OB.debug(
         'Applying discount',
         this.discountImpl.name,
         line.product._identifier
       );
-      this.discounts.push({
+      let discountToAdd = {
         id: this.discountImpl.id,
         discountType: this.discountImpl.discountType,
         name: this.discountImpl.name,
         ticketLine: { id: line.id, product: line.product._identifier },
         applyNext: this.discountImpl.applyNext,
         discount: amt
-      });
+      };
+      if (additionalParams) {
+        Object.assign(discountToAdd, additionalParams);
+      }
+      this.discounts.push(discountToAdd);
     }
   }
 
