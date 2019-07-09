@@ -25,7 +25,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.hibernate.query.Query;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.model.ad.utility.Tree;
@@ -64,13 +63,15 @@ public class TreeUtility {
     final String nodeQryStr =
           "select tn.node"
         + "  from ADTreeNode tn"
-        + " where tn.tree.id = '" + t.getId()+ "'"
-        + "   and tn.reportSet = '" + nodeId + "'";
+        + " where tn.tree.id = :treeId"
+        + "   and tn.reportSet = :nodeId";
     // @formatter:on
 
-    final Query<String> nodeQry = SessionHandler.getInstance()
-        .createQuery(nodeQryStr, String.class);
-    return nodeQry.list();
+    return SessionHandler.getInstance()
+        .createQuery(nodeQryStr, String.class)
+        .setParameter("treeId", t.getId())
+        .setParameter("nodeId", nodeId)
+        .list();
   }
 
   /**
@@ -91,12 +92,15 @@ public class TreeUtility {
     final String qryStr =
           "select t"
         + "  from ADTree t"
-        + " where treetype = '" + treeType + "' "
-        + "   and client.id = '" + clientId + "'";
+        + " where treetype = :treeType"
+        + "   and client.id = :clientId";
     // @formatter:on
 
-    final Query<Tree> qry = SessionHandler.getInstance().createQuery(qryStr, Tree.class);
-    return qry.list();
+    return SessionHandler.getInstance()
+        .createQuery(qryStr, Tree.class)
+        .setParameter("treeType", treeType)
+        .setParameter("clientId", clientId)
+        .list();
   }
 }
 
