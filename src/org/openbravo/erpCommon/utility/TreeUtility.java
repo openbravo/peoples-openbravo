@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2018 Openbravo SLU
+ * All portions are Copyright (C) 2012-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -60,8 +60,14 @@ public class TreeUtility {
   }
 
   private List<String> getChildrenOfTreeNode(final Tree t, String nodeId) {
-    final String nodeQryStr = "select tn.node from " + TreeNode.class.getName()
-        + " tn where tn.tree.id='" + t.getId() + "' and tn.reportSet = '" + nodeId + "'";
+    // @formatter:off
+    final String nodeQryStr =
+          "select tn.node"
+        + "  from ADTreeNode tn"
+        + " where tn.tree.id = '" + t.getId()+ "'"
+        + "   and tn.reportSet = '" + nodeId + "'";
+    // @formatter:on
+
     final Query<String> nodeQry = SessionHandler.getInstance()
         .createQuery(nodeQryStr, String.class);
     return nodeQry.list();
@@ -81,8 +87,14 @@ public class TreeUtility {
 
   private List<Tree> getTreeIdsFromTreeType(String treeType) {
     final String clientId = OBContext.getOBContext().getCurrentClient().getId();
-    final String qryStr = "select t from " + Tree.class.getName() + " t where treetype='" + treeType
-        + "' and client.id='" + clientId + "'";
+    // @formatter:off
+    final String qryStr =
+          "select t"
+        + "  from ADTree t"
+        + " where treetype = '" + treeType + "' "
+        + "   and client.id = '" + clientId + "'";
+    // @formatter:on
+
     final Query<Tree> qry = SessionHandler.getInstance().createQuery(qryStr, Tree.class);
     return qry.list();
   }
