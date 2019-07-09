@@ -31,6 +31,7 @@ import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.UnsatisfiedResolutionException;
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
@@ -750,7 +751,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
   protected String substituteParameters(String hqlTreeWhereClause, Map<String, String> parameters) {
     Pattern pattern = Pattern.compile("@\\S*@");
     Matcher matcher = pattern.matcher(hqlTreeWhereClause);
-    HashMap<String, String> replacements = new HashMap<String, String>();
+    HashMap<String, String> replacements = new HashMap<>();
     while (matcher.find()) {
       String contextPropertyName = hqlTreeWhereClause.substring(matcher.start(), matcher.end());
       String value = null;
@@ -761,17 +762,17 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
         // try again without the '@'
         value = parameters.get(contextPropertyName.substring(1, contextPropertyName.length() - 1));
       }
-      replacements.put(contextPropertyName, "'" + value + "'");
+      replacements.put(contextPropertyName, "'" + StringEscapeUtils.escapeSql(value) + "'");
     }
-    String hqlCopy = new String(hqlTreeWhereClause);
+    String hqlCopy = hqlTreeWhereClause;
     for (String key : replacements.keySet()) {
       // if the key is not found in the request parameters, its value in the replacement list will
       // be 'null'
       if (replacements.get(key).equals("'null'")) {
         // Strip the "@" from the key
         String keyWithoutAt = key.substring(1, key.length() - 1);
-        hqlCopy = hqlCopy.replaceAll(key,
-            "'" + (String) RequestContext.get().getSessionAttribute(keyWithoutAt) + "'");
+        hqlCopy = hqlCopy.replaceAll(key, "'" + StringEscapeUtils
+            .escapeSql((String) RequestContext.get().getSessionAttribute(keyWithoutAt)) + "'");
       } else {
         hqlCopy = hqlCopy.replaceAll(key, replacements.get(key));
       }
