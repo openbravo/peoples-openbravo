@@ -273,20 +273,22 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       String parentId, String hqlWhereClause, String hqlWhereClauseRootNodes, Tab tab, Tree tree,
       Entity entity) throws JSONException {
     // Joins the ADTreeNode with the referenced table
-    StringBuilder joinClause = new StringBuilder();
-    joinClause.append(" as tn ");
-    joinClause.append(" , " + entity.getName() + " as e ");
-    joinClause.append(" where tn.node = e.id ");
+
+    //@formatter:off
+    String joinClause = " as tn, " + entity.getName() + " as e "
+                      + "where tn.node = e.id "
+                      + "  and tn.tree.id = '" + tree.getId() + "' ";
+    //@formatter:on
+
     if (hqlWhereClause != null) {
-      joinClause.append(" and (" + hqlWhereClause + ")");
+      joinClause += " and (" + hqlWhereClause + ")";
     }
-    joinClause.append(" and tn.tree.id = '" + tree.getId() + "' ");
     if (!AD_ORG_TABLE_ID.equals(tree.getTable().getId())) {
-      joinClause.append(
-          " and e.organization.id " + OBDal.getInstance().getReadableOrganizationsInClause());
+      joinClause += " and e.organization.id "
+          + OBDal.getInstance().getReadableOrganizationsInClause();
     }
     if (hqlWhereClauseRootNodes != null) {
-      joinClause.append(" and (" + hqlWhereClauseRootNodes + ") ");
+      joinClause += " and (" + hqlWhereClauseRootNodes + ") ";
     } else {
       if (tab != null && tab.getTabLevel() > 0) {
         // Add the criteria to filter only the records that belong to the record selected in the
@@ -297,7 +299,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
           JSONArray criteria = (JSONArray) JsonUtils.buildCriteria(parameters).get("criteria");
           String parentRecordId = getParentRecordIdFromCriteria(criteria, parentPropertyName);
           if (parentRecordId != null) {
-            joinClause.append(" and e." + parentPropertyName + ".id = '" + parentRecordId + "' ");
+            joinClause += " and e." + parentPropertyName + ".id = '" + parentRecordId + "' ";
           }
         }
       }
@@ -306,22 +308,21 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
           // The ad_org table needs a special treatment, since is the only table tree that has an
           // actual node ('*' organization) with node_id = ROOT_NODE_DB
           // In this table the root nodes have the parent_id property set to null
-          joinClause.append(" and tn.reportSet is null");
+          joinClause += " and tn.reportSet is null";
         } else {
           // Other ad_tree nodes can have either ROOT_NODE_DB or null as parent_id
-          joinClause.append(" and (tn.reportSet = '" + ROOT_NODE_DB + "' or tn.reportSet is null)");
+          joinClause += " and (tn.reportSet = '" + ROOT_NODE_DB + "' or tn.reportSet is null)";
         }
       } else {
-        joinClause.append(" and tn.reportSet = '" + parentId + "' ");
+        joinClause += " and tn.reportSet = '" + parentId + "' ";
       }
     }
-    joinClause.append(" order by tn.sequenceNumber ");
+    joinClause += " order by tn.sequenceNumber ";
 
     // Selects the relevant properties from ADTreeNode and all the properties from the referenced
     // table
     String selectClause = " tn.id as treeNodeId, tn.reportSet as parentId, tn.sequenceNumber as seqNo, tn.node as nodeId, e as entity";
-    OBQuery<BaseOBObject> obq = OBDal.getInstance()
-        .createQuery(TreeNode.ENTITY_NAME, joinClause.toString());
+    OBQuery<BaseOBObject> obq = OBDal.getInstance().createQuery(TreeNode.ENTITY_NAME, joinClause);
     obq.setFilterOnActive(false);
     obq.setSelectClause(selectClause);
     obq.setFilterOnReadableOrganization(false);
@@ -341,21 +342,20 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
    * @return
    */
   protected boolean nodeHasChildren(Entity entity, String nodeId, String hqlWhereClause) {
-    StringBuilder joinClause = new StringBuilder();
-    joinClause.append(" as tn ");
-    joinClause.append(" , " + entity.getName() + " as e ");
-    joinClause.append(" where tn.node = e.id ");
+    //@formatter:off
+    String joinClause = " as tn, " + entity.getName() + " as e "
+                      + " where tn.node = e.id "
+                      + "   and tn.reportSet = :nodeId order by tn.sequenceNumber ";
+    //@formatter:on
+
     if (hqlWhereClause != null) {
-      joinClause.append(" and (" + hqlWhereClause + ")");
+      joinClause += " and (" + hqlWhereClause + ")";
     }
-    joinClause.append(" and tn.reportSet = :nodeId order by tn.sequenceNumber ");
-    OBQuery<BaseOBObject> obq = OBDal.getInstance()
-        .createQuery("ADTreeNode", joinClause.toString());
+
+    OBQuery<BaseOBObject> obq = OBDal.getInstance().createQuery("ADTreeNode", joinClause);
     obq.setFilterOnActive(false);
     obq.setFilterOnReadableOrganization(entity.getMappingClass() != Organization.class);
-    final Map<String, Object> parameters = new HashMap<>(1);
-    parameters.put("nodeId", nodeId);
-    obq.setNamedParameters(parameters);
+    obq.setNamedParameter("nodeId", nodeId);
     return obq.count() > 0;
   }
 
@@ -410,23 +410,24 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
    * first node associated with a menu entry that belong to a module not in developement is reached
    */
   private void recomputeSequenceNumbers(Tree tree, String newParentId, Long seqNo) {
-    StringBuilder queryStr = new StringBuilder();
-    queryStr.append(" UPDATE ad_treenode ");
-    queryStr.append(" SET seqno = (seqno + 10) ");
-    queryStr.append(" WHERE ad_tree_id = ? ");
+    //@formatter:off
+    String queryStr = " UPDATE ad_treenode "
+                    + " SET seqno = (seqno + 10) "
+                    + " WHERE ad_tree_id = ? ";
+    //@formatter:on
     if (newParentId == null) {
-      queryStr.append(" AND parent_id is null ");
+      queryStr += " AND parent_id is null ";
     } else {
-      queryStr.append(" AND parent_id = ? ");
+      queryStr += " AND parent_id = ? ";
     }
-    queryStr.append(" AND seqno >= ? ");
+    queryStr += " AND seqno >= ? ";
 
     // Menu Tree, do not update the nodes that belong to windows not in development
     int seqNoOfFirstModNotInDev = -1;
     if (tree.getTable().getId().equals(AD_MENU_TABLE_ID)) {
       seqNoOfFirstModNotInDev = getSeqNoOfFirstModNotInDev(tree.getId(), newParentId, seqNo);
       if (seqNoOfFirstModNotInDev > 0) {
-        queryStr.append(" AND seqno < ? ");
+        queryStr += " AND seqno < ? ";
       }
     }
 
@@ -434,7 +435,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     PreparedStatement st = null;
     try {
       int nParam = 1;
-      st = conn.getPreparedStatement(queryStr.toString());
+      st = conn.getPreparedStatement(queryStr);
       st.setString(nParam++, tree.getId());
       if (newParentId != null) {
         st.setString(nParam++, newParentId);
@@ -462,20 +463,22 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
    * associated to a menu entry that belongs to a module not in development
    */
   private int getSeqNoOfFirstModNotInDev(String treeId, String parentId, Long seqNo) {
-    StringBuilder queryStr = new StringBuilder();
-    queryStr.append(" SELECT min(tn.seqno) ");
-    queryStr.append(" FROM ad_treenode tn, ad_menu me, ad_module mo ");
-    queryStr.append(" WHERE tn.node_id = me.ad_menu_id ");
-    queryStr.append(" AND me.ad_module_id = mo.ad_module_id ");
-    queryStr.append(" AND tn.ad_tree_id = ? ");
-    queryStr.append(" AND tn.parent_id = ? ");
-    queryStr.append(" AND tn.seqno >= ? ");
-    queryStr.append(" AND mo.isindevelopment = 'N' ");
+    //@formatter:off
+    String queryStr = " SELECT min(tn.seqno) "
+                    + " FROM ad_treenode tn, ad_menu me, ad_module mo "
+                    + " WHERE tn.node_id = me.ad_menu_id "
+                    + " AND me.ad_module_id = mo.ad_module_id "
+                    + " AND tn.ad_tree_id = ? "
+                    + " AND tn.parent_id = ? "
+                    + " AND tn.seqno >= ? "
+                    + " AND mo.isindevelopment = 'N' ";
+    //@formatter:on
+
     ConnectionProvider conn = new DalConnectionProvider(false);
     PreparedStatement st = null;
     int seq = -1;
     try {
-      st = conn.getPreparedStatement(queryStr.toString());
+      st = conn.getPreparedStatement(queryStr);
       st.setString(1, treeId);
       st.setString(2, parentId);
       st.setLong(3, seqNo);
@@ -679,22 +682,20 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       String hqlWhereClause) {
 
     Entity entity = ModelProvider.getInstance().getEntityByTableId(tableTree.getTable().getId());
-    StringBuilder joinClause = new StringBuilder();
-    joinClause.append(" as tn ");
-    joinClause.append(" , " + entity.getName() + " as e ");
-    joinClause.append(" where tn.node = e.id ");
+
+    //@formatter:off
+    String joinClause = " as tn , " + entity.getName() + " as e"
+                      + " where tn.node = e.id"
+                      + "   and tn.node = :nodeId ";
+    //@formatter:on
+
     if (hqlWhereClause != null) {
-      joinClause.append(" and (" + hqlWhereClause + ")");
+      joinClause += " and (" + hqlWhereClause + ")";
     }
-    joinClause.append(" and tn.node = :nodeId");
-    OBQuery<BaseOBObject> obq = OBDal.getInstance()
-        .createQuery("ADTreeNode", joinClause.toString());
+
+    OBQuery<BaseOBObject> obq = OBDal.getInstance().createQuery("ADTreeNode", joinClause);
     obq.setFilterOnActive(false);
-
-    final Map<String, Object> parameters = new HashMap<>();
-    parameters.put("nodeId", nodeId);
-    obq.setNamedParameters(parameters);
-
+    obq.setNamedParameter("nodeId", nodeId);
     return obq.count() > 0;
   }
 
@@ -710,7 +711,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
 
   @Override
   protected Map<String, Object> getDatasourceSpecificParams(Map<String, String> parameters) {
-    Map<String, Object> datasourceParams = new HashMap<String, Object>();
+    Map<String, Object> datasourceParams = new HashMap<>();
     String tabId = parameters.get("tabId");
     String treeReferenceId = parameters.get("treeReferenceId");
     String tableId = null;
