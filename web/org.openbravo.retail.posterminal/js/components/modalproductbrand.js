@@ -111,7 +111,7 @@ enyo.kind({
     var products =
         inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$
           .searchCharacteristic.$.searchCharacteristicTabContent.$.products,
-      productFilterText = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.productFilterText.getValue(),
+      productFilterText = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.formElementProductFilterText.coreElement.getValue(),
       characteristic = [],
       crossStoreSearch =
         inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$
