@@ -9,6 +9,7 @@
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -1646,8 +1647,12 @@ public class OrderLoader extends POSDataSynchronizationProcess
           order.getBusinessPartner(), paymentType.getPaymentMethod().getPaymentMethod(),
           account == null ? paymentType.getFinancialAccount() : account, origAmount.toString(),
           calculatedDate, paymentOrganization, null, paymentScheduleDetailList, paymentAmountMap,
-          false, false, order.getCurrency(), mulrate, amount, true,
-          payment.has("id") ? payment.getString("id") : null);
+          false, false, order.getCurrency(),
+          ((payment.has("precision") && payment.get("precision") != JSONObject.NULL)
+              && payment.getInt("precision") != pricePrecision)
+                  ? amount.divide(origAmount, MathContext.DECIMAL32)
+                  : mulrate,
+          amount, true, payment.has("id") ? payment.getString("id") : null);
 
       boolean doFlush = false;
 
