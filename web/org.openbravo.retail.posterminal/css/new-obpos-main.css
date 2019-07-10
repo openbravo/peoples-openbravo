@@ -10331,6 +10331,34 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 /* Inherits: [OB.UI.CustomerPropertyLine] */
 }
 
+.obUiCustomerPropertyLine_firstName .obUiFormElement-beforeArea {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconUser.svg');
+  background-size: 16px;
+  background-repeat: no-repeat;
+  background-position: center 24px;
+}
+
+.obUiCustomerPropertyLine_customerPhone .obUiFormElement-beforeArea {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconPhone.svg');
+  background-size: 18px;
+  background-repeat: no-repeat;
+  background-position: center 23px;
+}
+
+.obUiCustomerPropertyLine_customerEmail .obUiFormElement-beforeArea {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconEmail.svg');
+  background-size: 18px;
+  background-repeat: no-repeat;
+  background-position: center 23px;
+}
+
+.obUiCustomerPropertyLine_customerLanguage .obUiFormElement-beforeArea {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconLanguage.svg');
+  background-size: 18px;
+  background-repeat: no-repeat;
+  background-position: center 23px;
+}
+
 .obObposPointOfSaleUiCustomersEditCreatecustomers-customerOnlyFields-obUiCustomerPropertyLine.obUiFormElement_isCustom .obUiFormElement-coreElementArea {
   border: 0px;
 }

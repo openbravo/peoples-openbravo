@@ -47,7 +47,8 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.CustomerPropertyLine',
   kind: 'OB.UI.FormElement',
-  classes: 'obUiFormElement_dataEntry obUICustomerPropertyLine'
+  classes:
+    'obUiFormElement_dataEntry obUiFormElement_dataEntry_icon obUICustomerPropertyLine'
 });
 
 enyo.kind({
@@ -659,7 +660,8 @@ enyo.kind({
             kind: 'OB.UI.CustomerPropertyLine',
             name: 'line_' + natt.name,
             classes:
-              'obObposPointOfSaleUiCustomersEditCreatecustomers-customerOnlyFields-obUiCustomerPropertyLine',
+              'obObposPointOfSaleUiCustomersEditCreatecustomers-customerOnlyFields-obUiCustomerPropertyLine obUiCustomerPropertyLine_' +
+              natt.name,
             newAttribute: natt
           },
           {
@@ -677,7 +679,8 @@ enyo.kind({
             kind: 'OB.UI.CustomerPropertyLine',
             name: 'line_' + natt.name,
             classes:
-              'obObposPointOfSaleUiCustomersEditCreatecustomers-shippingAddrFields-obUiCustomerPropertyLine',
+              'obObposPointOfSaleUiCustomersEditCreatecustomers-shippingAddrFields-obUiCustomerPropertyLine obUiCustomerPropertyLine_' +
+              natt.name,
             newAttribute: natt
           },
           {
@@ -695,7 +698,8 @@ enyo.kind({
             kind: 'OB.UI.CustomerPropertyLine',
             name: 'line_' + natt.name,
             classes:
-              'obObposPointOfSaleUiCustomersEditCreatecustomers-invoicingAddrFields-obUiCustomerPropertyLine',
+              'obObposPointOfSaleUiCustomersEditCreatecustomers-invoicingAddrFields-obUiCustomerPropertyLine obUiCustomerPropertyLine_' +
+              natt.name,
             newAttribute: natt
           },
           {
