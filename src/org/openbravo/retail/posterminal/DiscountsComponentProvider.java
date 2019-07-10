@@ -45,7 +45,8 @@ public class DiscountsComponentProvider extends BaseComponentProvider {
         JS_BASE + "common/discount-rules", //
         JS_BASE + "common/rules/discount-fixed-percentage",
         JS_BASE + "common/rules/price-adjustment-discount",
-        JS_BASE + "common/rules/buy-x-pay-y-same-products-discount");
+        JS_BASE + "common/rules/buy-x-pay-y-same-products-discount",
+        JS_BASE + "common/rules/buy-x-pay-y-different-products-discount");
 
     List<ComponentResource> globalResources = new ArrayList<>();
     globalResources.addAll(getComponents(commonDependencies, DISCOUNTS_APP));
