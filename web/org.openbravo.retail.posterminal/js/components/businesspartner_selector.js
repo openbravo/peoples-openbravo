@@ -24,7 +24,7 @@ OB.UTIL.BusinessPartnerSelector = {
 
 enyo.kind({
   name: 'OB.UI.BusinessPartnerSelector',
-  kind: 'OB.UI.SmallButton',
+  kind: 'OB.UI.FormElement.Selector',
   classes: 'obUiBusinessPartnerSelector',
   published: {
     order: null
@@ -80,14 +80,17 @@ enyo.kind({
   initComponents: function() {
     return this;
   },
-  renderCustomer: function(newCustomer) {
-    this.setContent(newCustomer);
+  renderCustomer: function(newCustomerId, newCustomerName) {
+    this.setValue(newCustomerId, newCustomerName);
   },
   orderChanged: function(oldValue) {
     if (this.order.get('bp')) {
-      this.renderCustomer(this.order.get('bp').get('_identifier'));
+      this.renderCustomer(
+        this.order.get('bp').get('id'),
+        this.order.get('bp').get('_identifier')
+      );
     } else {
-      this.renderCustomer('');
+      this.renderCustomer(null, '');
     }
 
     this.order.on(
@@ -122,9 +125,12 @@ enyo.kind({
           } else {
             model.set('generateInvoice', false);
           }
-          this.renderCustomer(model.get('bp').get('_identifier'));
+          this.renderCustomer(
+            model.get('bp').get('id'),
+            model.get('bp').get('_identifier')
+          );
         } else {
-          this.renderCustomer('');
+          this.renderCustomer(null, '');
         }
       },
       this

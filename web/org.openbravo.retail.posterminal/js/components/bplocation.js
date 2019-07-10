@@ -12,7 +12,7 @@
 /*global enyo, Backbone, _ */
 
 enyo.kind({
-  kind: 'OB.UI.SmallButton',
+  kind: 'OB.UI.FormElement.Selector',
   name: 'OB.UI.SmallBPButton',
   classes: 'obUiSmallBPButton',
   published: {
@@ -35,18 +35,21 @@ enyo.kind({
   initComponents: function() {
     this.inherited(arguments);
   },
-  renderBPLocation: function(newLocation) {
-    this.$.identifier.setContent(newLocation);
+  renderBPLocation: function(newLocationId, newLocationName) {
+    this.setValue(newLocationId, newLocationName);
   },
   orderChanged: function(oldValue) {
     if (this.order.get('bp')) {
       this.renderBPLocation(
         _.isNull(this.order.get('bp').get(this.locName))
+          ? null
+          : this.order.get('bp').get(this.locId),
+        _.isNull(this.order.get('bp').get(this.locName))
           ? OB.I18N.getLabel('OBPOS_LblEmptyAddress')
           : this.order.get('bp').get(this.locName)
       );
     } else {
-      this.renderBPLocation(OB.I18N.getLabel('OBPOS_LblEmptyAddress'));
+      this.renderBPLocation(null, OB.I18N.getLabel('OBPOS_LblEmptyAddress'));
     }
 
     this.order.on(
@@ -58,11 +61,17 @@ enyo.kind({
           }
           this.renderBPLocation(
             _.isNull(model.get('bp').get(this.locName))
+              ? null
+              : model.get('bp').get(this.locId),
+            _.isNull(model.get('bp').get(this.locName))
               ? OB.I18N.getLabel('OBPOS_LblEmptyAddress')
               : model.get('bp').get(this.locName)
           );
         } else {
-          this.renderBPLocation(OB.I18N.getLabel('OBPOS_LblEmptyAddress'));
+          this.renderBPLocation(
+            null,
+            OB.I18N.getLabel('OBPOS_LblEmptyAddress')
+          );
         }
       },
       this
@@ -75,23 +84,10 @@ enyo.kind({
   name: 'OB.UI.BPLocation',
   classes: 'obUiBPLocation',
   locName: 'locName',
+  locId: 'locId',
   events: {
     onShowPopup: ''
   },
-  components: [
-    {
-      name: 'bottomAddrIcon',
-      classes: 'obUiBPLocation-bottomAddrIcon',
-      showing: false
-    },
-    {
-      name: 'identifier',
-      classes: 'obUiBPLocation-identifier'
-    },
-    {
-      classes: 'obUiBPLocation-element1'
-    }
-  ],
   tap: function() {
     if (!this.disabled) {
       this.doShowPopup({
@@ -113,55 +109,21 @@ enyo.kind({
   kind: 'OB.UI.SmallBPButton',
   name: 'OB.UI.BPLocationShip',
   classes: 'obUiBPLocationShip',
-  showing: false,
   locName: 'shipLocName',
+  locId: 'shipLocId',
   events: {
     onShowPopup: ''
   },
-  components: [
-    {
-      name: 'bottomAddrIcon',
-      classes: 'obUiBPLocationShip-bottomAddrIcon'
-    },
-    {
-      name: 'identifier',
-      classes: 'obUiBPLocationShip-identifier'
-    },
-    {
-      classes: 'obUiBPLocationShip-element1'
-    }
-  ],
   changeStyle: function(status) {
     var me = this;
+    me.formElement.setShowing(status);
     if (!status) {
-      me.setShowing(status);
-      me.parent.$.bplocbutton.$.bottomAddrIcon.addClass('u-hideFromUI');
-      me.parent.$.bplocbutton.$.identifier.addClass(
-        'bUiBPLocationShip-identifier_fullWidth'
-      );
-      me.parent.$.bplocbutton.$.identifier.removeClass(
-        'obUiBPLocationShip-identifier_partialWidth'
-      );
-      me.parent.$.bplocshipbutton.$.identifier.addClass(
-        'bUiBPLocationShip-identifier_fullWidth'
-      );
-      me.parent.$.bplocshipbutton.$.identifier.removeClass(
-        'obUiBPLocationShip-identifier_partialWidth'
+      me.formElement.parent.$.formElementBplocbutton.setLabel(
+        OB.I18N.getLabel('OBPOS_LblAddress')
       );
     } else {
-      me.setShowing(status);
-      me.parent.$.bplocbutton.$.bottomAddrIcon.removeClass('hideFromUI');
-      me.parent.$.bplocbutton.$.identifier.removeClass(
-        'bUiBPLocationShip-identifier_fullWidth'
-      );
-      me.parent.$.bplocbutton.$.identifier.addClass(
-        'obUiBPLocationShip-identifier_partialWidth'
-      );
-      me.parent.$.bplocshipbutton.$.identifier.removeClass(
-        'bUiBPLocationShip-identifier_fullWidth'
-      );
-      me.parent.$.bplocshipbutton.$.identifier.addClass(
-        'obUiBPLocationShip-identifier_partialWidth'
+      me.formElement.parent.$.formElementBplocbutton.setLabel(
+        OB.I18N.getLabel('OBPOS_LblBillAddr')
       );
     }
   },

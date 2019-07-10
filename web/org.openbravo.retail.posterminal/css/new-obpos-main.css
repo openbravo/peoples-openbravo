@@ -2944,8 +2944,14 @@
   clear: both;
 }
 
-.obUiOrderHeader-buttonComponents-bpbutton {
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBpbutton {
   /*Inherits: [OB.UI.BusinessPartnerSelector]*/
+  width: auto;
+}
+
+.obUiOrderHeader-buttonComponents-formElementBpbutton-bpbutton {
+  /*Inherits: [OB.UI.BusinessPartnerSelector]*/
+  width: auto;
 }
 
 .obUiOrderHeader-buttonComponents-separator {
@@ -2954,12 +2960,24 @@
   margin: 0px;
 }
 
-.obUiOrderHeader-buttonComponents-bplocbutton {
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocbutton {
   /*Inherits: [OB.UI.BPLocation]*/
+  width: auto;
 }
 
-.obUiOrderHeader-buttonComponents-bplocshipbutton {
-  /*Inherits: [OB.UI.bplocshipbutton]*/
+.obUiOrderHeader-buttonComponents-formElementBplocbutton-bplocbutton {
+  /*Inherits: [OB.UI.BPLocation]*/
+  width: auto;
+}
+
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocshipbutton {
+  /*Inherits: [OB.UI.BPLocation]*/
+  width: auto;
+}
+
+.obUiOrderHeader-buttonComponents-formElementBplocshipbutton-bplocshipbutton {
+  /*Inherits: [OB.UI.BPLocation]*/
+  width: auto;
 }
 
 .obUiOrderHeader-receiptLabels {
@@ -3671,23 +3689,6 @@
 # Inherits: OB.UI.SmallButton
 */
 .obUiBusinessPartnerSelector {
-  background-color: #e2e2e2;
-  color: black;
-  max-width: 70%;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-  text-align: center;
-  font-size: 16px;
-  font-weight: 400;
-  height: 30px;
-  margin: 10px;
-  padding: 5px 15px 7px;
-  text-decoration: none;
-  border: none;
-  cursor: pointer;
-  display: inline-block;
-  line-height: 18px;
   flex-shrink: 1;
 }
 
@@ -3970,10 +3971,7 @@
 # Component: OB.UI.SmallBPButton
 # Inherits: [OB.UI.SmallButton]
 */
-.obUiSmallBPButton {
-  display: table;
-  float: right;
-}
+.obUiSmallBPButton {}
 
 .obUiSmallBPButton_disabled:disabled {
   text-decoration: none;
@@ -3988,46 +3986,8 @@
 # Inherits: [OB.UI.SmallBPButton]
 */
 .obUiBPLocation {
-  max-width: 70%;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-
-  background-color: #e2e2e2;
-  color: black;
-  text-align: center;
-  font-size: 16px;
-  font-weight: 400;
-  height: 30px;
-  margin: 10px;
-  padding: 5px 15px 7px;
-  text-decoration: none;
-  border: none;
-  cursor: pointer;
-  display: inline-block;
-  line-height: 18px;
-
   flex-shrink: 10000;
-  min-width: 53px;
-}
-
-.obUiBPLocation-bottomAddrIcon {
-  background-image: url('./../../org.openbravo.retail.posterminal/img/iconInvoicingAddress.svg');
-  background-repeat: no-repeat;
-  background-size: 16px 18px;
-  background-position: 5px 1px;
-  width: 26px;
-  height: 22px;
-}
-
-.obUiBPLocation-identifier {
-  text-overflow: inherit;
-  white-space: inherit;
-  overflow: inherit;
-}
-
-.obUiBPLocation-element1 {
-  clear: both;
+  min-width: 130px;
 }
 
 
@@ -4036,54 +3996,8 @@
 # Inherits: [OB.UI.SmallBPButton]
 */
 .obUiBPLocationShip {
-  max-width: 70%;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-
-  background-color: #e2e2e2;
-  color: black;
-  text-align: center;
-  font-size: 16px;
-  font-weight: 400;
-  height: 30px;
-  margin: 10px;
-  padding: 5px 15px 7px;
-  text-decoration: none;
-  border: none;
-  cursor: pointer;
-  display: inline-block;
-  line-height: 18px;
-
   flex-shrink: 10000;
-  min-width: 53px;
-}
-
-.obUiBPLocationShip-bottomAddrIcon {
-  background-image: url('./../../org.openbravo.retail.posterminal/img/iconShippingAddress.svg');
-  background-repeat: no-repeat;
-  background-size: 21px 21px;
-  background-position: 0px 0px;
-  width: 26px;
-  height: 22px;
-}
-
-.obUiBPLocationShip-identifier {
-  text-overflow: inherit;
-  white-space: inherit;
-  overflow: inherit;
-}
-
-.obUiBPLocationShip-identifier_fullWidth {
-  max-width: 100%;
-}
-
-.obUiBPLocationShip-identifier_partialWidth {
-  max-width: 90%;
-}
-
-.obUiBPLocationShip-element1 {
-  clear: both;
+  min-width: 130px;
 }
 
 

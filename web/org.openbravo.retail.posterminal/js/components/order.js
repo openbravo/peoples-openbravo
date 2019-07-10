@@ -104,23 +104,51 @@ enyo.kind({
   ],
   newButtonComponents: [
     {
-      classes: 'obUiOrderHeader-buttonComponents-bpbutton',
-      kind: 'OB.UI.BusinessPartnerSelector',
-      name: 'bpbutton'
+      classes:
+        'obUiFormElement_dataEntry obUiFormElement_dataEntry_noicon obUiOrderHeader-buttonComponents-formElementBpbutton',
+      kind: 'OB.UI.FormElement',
+      name: 'formElementBpbutton',
+      newAttribute: {
+        classes:
+          'obUiOrderHeader-buttonComponents-formElementBpbutton-bpbutton',
+        kind: 'OB.UI.BusinessPartnerSelector',
+        i18nLabel: 'OBPOS_LblCustomer',
+        hideNullifyButton: true,
+        name: 'bpbutton'
+      }
     },
     {
       name: 'separator',
       classes: 'obUiOrderHeader-buttonComponents-separator'
     },
     {
-      classes: 'obUiOrderHeader-buttonComponents-bplocbutton',
-      kind: 'OB.UI.BPLocation',
-      name: 'bplocbutton'
+      classes:
+        'obUiFormElement_dataEntry obUiFormElement_dataEntry_noicon obUiOrderHeader-buttonComponents-formElementBplocbutton',
+      kind: 'OB.UI.FormElement',
+      name: 'formElementBplocbutton',
+      newAttribute: {
+        classes:
+          'obUiOrderHeader-buttonComponents-formElementBplocbutton-bplocbutton',
+        kind: 'OB.UI.BPLocation',
+        i18nLabel: 'OBPOS_LblBillAddr',
+        hideNullifyButton: true,
+        name: 'bplocbutton'
+      }
     },
     {
-      classes: 'obUiOrderHeader-buttonComponents-bplocshipbutton',
-      kind: 'OB.UI.BPLocationShip',
-      name: 'bplocshipbutton'
+      classes:
+        'obUiFormElement_dataEntry obUiFormElement_dataEntry_noicon obUiOrderHeader-buttonComponents-formElementBplocshipbutton',
+      kind: 'OB.UI.FormElement',
+      name: 'formElementBplocshipbutton',
+      showing: false,
+      newAttribute: {
+        classes:
+          'obUiOrderHeader-buttonComponents-formElementBplocshipbutton-bplocshipbutton',
+        kind: 'OB.UI.BPLocationShip',
+        i18nLabel: 'OBPOS_LblShipAddr',
+        hideNullifyButton: true,
+        name: 'bplocshipbutton'
+      }
     }
   ],
   components: [
@@ -157,6 +185,8 @@ enyo.kind({
       function(comp) {
         if (comp.setOrder) {
           comp.setOrder(this.order);
+        } else if (comp.coreElement && comp.coreElement.setOrder) {
+          comp.coreElement.setOrder(this.order);
         }
       },
       this
