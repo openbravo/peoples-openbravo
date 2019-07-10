@@ -6725,7 +6725,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
   background-position: 8px center !important;
 }
 .obUiUpdateprices_active {
-  background-image: url('./../img/checkbox-on.svg');
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-on.svg');
   background-size: 34px 27px;
 }
 
@@ -7190,7 +7190,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 }
 
 .obUiListBrandsLine_active {
-  background-image: url('./../img/checkbox-on.svg');
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-on.svg');
   background-size: 34px 27px;
 }
 
@@ -10254,13 +10254,13 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 }
 
 .obUiSwitchShippingInvoicingAddr-useSameCheck-btnUseSameCheck_active {
-  background-image: url('./../img/checkbox-on.svg');
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-on.svg');
   background-size: 34px 27px;
 }
 
 .obUiSwitchShippingInvoicingAddr-useSameCheck-btnUseSameCheck_active:active,
 .obUiSwitchShippingInvoicingAddr-useSameCheck-btnUseSameCheck_active[disabled="disabled"] {
-  background-image: url('./../img/checkbox-off.svg');
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-off.svg');
   background-size: 34px 27px;
 }
 
@@ -10995,13 +10995,13 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 
 .obUiCustomerAddrCheckProperty_active,
 .obUiCustomerAddrCheckProperty_active[disabled="disabled"]:active {
-  background-image: url('./../img/checkbox-on.svg');
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-on.svg');
   background-size: 34px 27px;
 }
 
 .obUiCustomerAddrCheckProperty_active:active,
 .obUiCustomerAddrCheckProperty_active[disabled="disabled"]:active {
-  background-image: url('./../img/checkbox-off.svg');
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-off.svg');
   background-size: 34px 27px;
 }
 
