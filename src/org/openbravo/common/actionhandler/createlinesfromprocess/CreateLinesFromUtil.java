@@ -146,8 +146,8 @@ class CreateLinesFromUtil {
         aum = OBDal.getInstance().get(UOM.class, selectedPEValuesInLine.getString("operativeUOM"));
         if (aum == null) {
           OBCriteria<UOM> aumCriteria = OBDal.getInstance().createCriteria(UOM.class);
-          aumCriteria
-              .add(Restrictions.eq("name", selectedPEValuesInLine.getString("operativeUOM")));
+          aumCriteria.add(
+              Restrictions.eq(UOM.PROPERTY_NAME, selectedPEValuesInLine.getString("operativeUOM")));
           aum = (UOM) aumCriteria.uniqueResult();
         }
       }
