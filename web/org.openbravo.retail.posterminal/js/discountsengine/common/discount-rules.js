@@ -25,7 +25,9 @@
     }
 
     static isApplicableToLine(line, rule) {
-      let elementFound = rule.products.find(p => p.product === line.product.id);
+      let elementFound = rule.products.find(
+        p => p.product.id === line.product.id
+      );
       let onlyIncluded = rule.includedProducts === 'N';
       let applicable =
         (onlyIncluded && elementFound) || (!onlyIncluded && !elementFound);
@@ -35,7 +37,7 @@
       }
 
       elementFound = rule.productCategories.find(
-        pc => pc.productCategory === line.product.productCategory
+        pc => pc.productCategory.id === line.product.productCategory.id
       );
       onlyIncluded = rule.includedProductCategories === 'N';
       applicable =
