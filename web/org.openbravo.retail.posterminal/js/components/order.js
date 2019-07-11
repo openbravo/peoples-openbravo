@@ -241,6 +241,45 @@ enyo.kind({
 });
 
 enyo.kind({
+  name: 'OB.UI.OrderCaptions',
+  classes: 'obUiOrderCaptions',
+  components: [
+    {
+      name: 'description',
+      classes: 'obUiOrderCaptions-description',
+      i18nContent: 'OBPOS_LineDescription',
+      initComponents: function() {
+        this.setContent(OB.I18N.getLabel(this.i18nContent));
+      }
+    },
+    {
+      name: 'quantity',
+      classes: 'obUiOrderCaptions-quantity',
+      i18nContent: 'OBPOS_LineQuantity',
+      initComponents: function() {
+        this.setContent(OB.I18N.getLabel(this.i18nContent));
+      }
+    },
+    {
+      name: 'unitprice',
+      classes: 'obUiOrderCaptions-unitprice',
+      i18nContent: 'OBPOS_LineUnitPrice',
+      initComponents: function() {
+        this.setContent(OB.I18N.getLabel(this.i18nContent));
+      }
+    },
+    {
+      name: 'linetotal',
+      classes: 'obUiOrderCaptions-linetotal',
+      i18nContent: 'OBPOS_LineLineTotal',
+      initComponents: function() {
+        this.setContent(OB.I18N.getLabel(this.i18nContent));
+      }
+    }
+  ]
+});
+
+enyo.kind({
   name: 'OB.UI.OrderFooter',
   classes: 'obUiOrderFooter row-fluid span12',
   published: {

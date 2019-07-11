@@ -52,6 +52,12 @@ enyo.kind({
                     'obObposPointOfSaleUiReceiptView-container1-container1-container2-container2',
                   components: [
                     {
+                      kind: 'OB.UI.OrderCaptions',
+                      name: 'orderCaptions',
+                      classes:
+                        'obObposPointOfSaleUiReceiptView-container1-container1-container2-container2-orderCaptions'
+                    },
+                    {
                       classes:
                         'obObposPointOfSaleUiReceiptView-container1-container1-container2-container2-container1',
                       components: [

@@ -2898,7 +2898,6 @@
 .obUiOrderHeader {
   display: flex;
   flex-direction: column;
-  border-bottom: var(--bottomseparator-slim);
 }
 
 .obUiOrderHeader-abaReceiptToolbar1 {
@@ -3019,6 +3018,83 @@
   flex-wrap: nowrap;
 }
 
+/*
+# Component: OB.UI.OrderLabels
+*/
+.obUiOrderCaptions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 25px;
+  border-bottom: var(--bottomseparator-slim);
+  font-size: 11px;
+  position: relative;
+  padding: 0px 10px 0px 10px;
+  color: var(--color-maincolor);
+}
+
+.obUiOrderCaptions-description {
+  display: inline-block;
+  width: calc(100% - 255px);
+}
+
+.obUiOrderCaptions-quantity {
+  display: inline-block;
+  width: 80px;
+  text-align: center;
+}
+
+.obUiOrderCaptions-unitprice {
+  display: inline-block;
+  width: 70px;
+  text-align: right;
+}
+
+.obUiOrderCaptions-linetotal {
+  display: inline-block;
+  width: 105px;
+  text-align: right;
+}
+
+@media all and (min-width: 801px) and (max-aspect-ratio: 150/100),
+(max-width: 800px) and (max-aspect-ratio: 3/4) {
+
+  .obUiOrderCaptions-description {
+    width: calc((29/79 * 100%) + 43px);
+  }
+
+  .obUiOrderCaptions-quantity {
+    width: 60px;
+  }
+
+  .obUiOrderCaptions-unitprice {
+    width: calc((25/79 * 100%) - 59px);
+  }
+
+  .obUiOrderCaptions-linetotal {
+    width: calc((25/79 * 100%) - 39px);
+  }
+}
+
+@media all and (min-width: 801px) and (max-aspect-ratio: 125/100),
+(max-width: 800px) and (max-aspect-ratio: 10/16) {
+
+  .obUiOrderCaptions-description {
+    width: calc(100% - 195px);
+  }
+
+  .obUiOrderCaptions-quantity {
+    width: 60px;
+  }
+
+  .obUiOrderCaptions-unitprice {
+    width: 55px;
+  }
+
+  .obUiOrderCaptions-linetotal {
+    width: 80px;
+  }
+}
 
 /*
 # Component: OB.UI.OrderFooter
@@ -3274,13 +3350,17 @@
 
 .obUiOrderView-listOrderLines {
   /*Inherits: [OB.UI.ScrollableTable]*/
+  overflow-y: auto;
+  min-height: 60%;
 }
 
 .obUiOrderView-listOrderLines-bigger {
   max-height: 393px;
 }
 
-.obUiOrderView-container1 {}
+.obUiOrderView-container1 {
+  overflow-y: auto;
+}
 
 .obUiOrderView-container1-container1 {}
 
@@ -7827,13 +7907,22 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 }
 
 .obObposPointOfSaleUiReceiptView-container1-container1-container2-container2 {
+  display: grid;
+  grid-template-rows: auto 1fr;
   overflow-y: auto;
 }
 
-.obObposPointOfSaleUiReceiptView-container1-container1-container2-container2-container1 {}
+.obObposPointOfSaleUiReceiptView-container1-container1-container2-container2-orderCaptions {}
+
+.obObposPointOfSaleUiReceiptView-container1-container1-container2-container2-container1 {
+  overflow-y: auto;
+}
 
 .obObposPointOfSaleUiReceiptView-container1-container1-container2-container2-container1-orderview {
 /* Inherits: [OB.UI.OrderView] */
+  display: grid;
+  grid-template-rows: auto auto;
+  height: 100%;
 }
 
 .obObposPointOfSaleUiReceiptView-container1-container1-container2-receiptfooter {
