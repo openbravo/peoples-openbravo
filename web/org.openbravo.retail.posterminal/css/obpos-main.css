@@ -2313,3 +2313,212 @@ div.obrdm-cell-orderline-right-col1:nth-child(odd){
   
 }
 
+.productDetails {
+  height: 120px;
+  padding: 10px;
+}
+  
+@media (min-width: 393px) and (max-width: 525px) {
+  .productDetails {
+    height: 130px;
+    padding: 3px;
+  }
+}
+
+.printerLine {
+  padding: 5px 0px 0px 0px;
+  font-size: 125%;
+}
+
+@media (max-width: 525px) {
+  .printerLine {
+    font-size: 110%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 280px;
+    white-space: nowrap;
+    text-align: left;
+  }
+}
+
+@media (min-width: 526px) {
+  .printerLine {
+    font-size: 125%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 390px;
+    white-space: nowrap;
+    text-align: left;
+  }
+}
+
+.relatedDocsDocNolbl {
+  line-height: 25px;
+  font-size: 17px;
+  width: 180px;
+  padding-left: 70px;
+}
+
+@media (max-width: 480px) {
+  .relatedDocsDocNolbl {
+    font-size: 12px;
+    padding-left: 20px;
+    width: 110px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 645px) {
+  .relatedDocsDocNolbl {
+    font-size: 15px;
+    padding-left: 35px;
+    width: 120px;
+  }
+}
+
+.relatedDocsOrderDateLbl {
+  line-height: 25px;
+  font-size: 17px;
+  width: 180px;
+}
+
+@media (max-width: 480px) {
+  .relatedDocsOrderDateLbl {
+    font-size: 12px;
+    width: 100px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 645px) {
+  .relatedDocsOrderDateLbl {
+    font-size: 15px;
+    width: 120px;
+  }
+}
+
+.relatedDocsAmountLbl {
+  line-height: 25px;
+  font-size: 17px;
+  width: 80px;
+}
+
+@media (max-width: 480px) {
+  .relatedDocsAmountLbl {
+    font-size: 12px;
+    width: 60px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 645px) {
+  .relatedDocsAmountLbl {
+    font-size: 15px;
+    width: 90px;
+  }
+}
+
+.relatedDocsPendingLbl {
+  line-height: 25px;
+  font-size: 17px;
+  width: 80px;
+  padding-left: 20px;
+}
+
+@media (max-width: 480px) {
+  .relatedDocsPendingLbl {
+    font-size: 12px;
+    width: 60px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 645px) {
+  .relatedDocsPendingLbl {
+    font-size: 15px;
+    width: 90px;
+    padding-left: 0px;
+  }
+}
+
+.relatedDocsDocNo {
+  line-height: 25px;
+  font-size: 17px;
+  width: 180px;
+  padding-left: 15px;
+}
+
+@media all and (max-width: 480px) {
+  .relatedDocsDocNo {
+    font-size: 12px;
+    width: 95px;
+    padding-left: 5px;
+    text-align: left;
+  }
+}
+
+@media all and (min-width: 481px) and (max-width: 645px) {
+  .relatedDocsDocNo {
+    font-size: 15px;
+    width: 120px;
+    padding-left: 0px;
+  }
+}
+
+.relatedDocsOrderDate {
+  line-height: 25px;
+  font-size: 17px;
+  width: 180px;
+}
+
+@media all and (max-width: 480px) {
+  .relatedDocsOrderDate {
+    font-size: 12px;
+    width: 100px;
+  }
+}
+
+@media all and (min-width: 481px) and (max-width: 645px) {
+  .relatedDocsOrderDate {
+    font-size: 15px;
+    width: 120px;
+  }
+}
+
+.relatedDocsAmount {
+  line-height: 25px;
+  font-size: 17px;
+  width: 80px;
+}
+
+@media all and (max-width: 480px) {
+  .relatedDocsAmount {
+    font-size: 12px;
+    width: 60px;
+  }
+}
+
+@media all and (min-width: 481px) and (max-width: 645px) {
+  .relatedDocsAmount {
+    font-size: 15px;
+    width: 90px;
+  }
+}
+
+.relatedDocsPending {
+  line-height: 25px;
+  font-size: 17px;
+  width: 80px;
+  padding-left: 20px;
+}
+
+@media all and (max-width: 480px) {
+  .relatedDocsPending {
+    font-size: 12px;
+    width: 60px;
+  }
+}
+
+@media all and (min-width: 481px) and (max-width: 645px) {
+  .relatedDocsPending {
+    font-size: 15px;
+    width: 90px;
+    padding-left: 0px;
+  }
+}

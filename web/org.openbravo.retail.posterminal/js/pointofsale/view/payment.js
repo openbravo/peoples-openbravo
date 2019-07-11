@@ -843,6 +843,18 @@ enyo.kind({
       OB.UTIL.ProcessController.finish('updatePending', execution);
       return true;
     }
+    if (this.receipt.get('lines').length === 0) {
+      this.$.prepaymentLine.hide();
+      this.$.paymentLine.hide();
+      this.$.errorLabelArea.hide();
+      this.$.prepaymentsbuttons.hide();
+      this.$.exactbutton.hide();
+      this.$.donebutton.hide();
+      this.$.creditsalesaction.hide();
+      this.$.layawayaction.hide();
+      OB.UTIL.ProcessController.finish('updatePending', execution);
+      return true;
+    }
     var paymentstatus = this.receipt.getPaymentStatus(),
       prepaymentAmount = this.receipt.get('obposPrepaymentamt'),
       symbol = '',
@@ -855,6 +867,8 @@ enyo.kind({
         OB.DEC.add(prepaymentAmount, paymentstatus.pendingAmt),
         paymentstatus.totalAmt
       );
+
+    this.$.paymentLine.show();
 
     if (_.isEmpty(OB.MobileApp.model.paymentnames)) {
       symbol = OB.MobileApp.model.get('terminal').symbol;
@@ -1808,6 +1822,7 @@ enyo.kind({
           'position: absolute; bottom: 0px; height: 20px; color: #ff0000;';
       this.errorLabels = this.pushErrorMessagesToArray();
       this.showingCount = this.getShowingMessagesCount(this.errorLabels);
+      this.$.errorLabelArea.show();
       this.firstShowingObject = this.getFirstShowingObject(this.errorLabels);
       if (this.firstShowingObject && this.showingCount > 1) {
         this.animateErrorInterval = setInterval(function() {
@@ -2328,8 +2343,6 @@ enyo.kind({
       });
     }
 
-    myModel.get('order').set('completeTicket', true);
-
     if (!avoidPayment) {
       if (isMultiOrder) {
         payments = this.owner.model.get('multiOrders').get('payments');
@@ -2427,6 +2440,13 @@ enyo.kind({
           prepaymentLimitAmount,
           pendingPrepayment,
           receiptHasPrepaymentAmount = true;
+
+        function underTheLimitApprovalCallback() {
+          myModel.get('order').set('completeTicket', true);
+          if (callback && callback instanceof Function) {
+            callback();
+          }
+        }
 
         if (!isMultiOrder) {
           paymentStatus = me.owner.receipt.getPaymentStatus();
@@ -2554,9 +2574,7 @@ enyo.kind({
                               }
 
                               popup.doHideThisPopup();
-                              if (callback && callback instanceof Function) {
-                                callback();
-                              }
+                              underTheLimitApprovalCallback();
                             }
                           },
                           {
@@ -2572,9 +2590,7 @@ enyo.kind({
                         ]
                       );
                     } else {
-                      if (callback && callback instanceof Function) {
-                        callback();
-                      }
+                      underTheLimitApprovalCallback();
                     }
                   } else {
                     OB.UTIL.ProcessController.finish(
@@ -2585,9 +2601,7 @@ enyo.kind({
                 }
               );
             } else {
-              if (callback && callback instanceof Function) {
-                callback();
-              }
+              underTheLimitApprovalCallback();
             }
           } else {
             OB.UTIL.ProcessController.finish('tapDoneButton', execution);
@@ -2599,9 +2613,7 @@ enyo.kind({
             );
           }
         } else {
-          if (callback && callback instanceof Function) {
-            callback();
-          }
+          underTheLimitApprovalCallback();
         }
       };
 

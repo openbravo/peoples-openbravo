@@ -97,8 +97,7 @@ public class LoadedCustomer extends ProcessHQLQuery {
     bpartnerHQLQuery.append(" or bpsl.id in (");
     bpartnerHQLQuery.append("   select max(bpls.id) as bpLocId");
     bpartnerHQLQuery.append("   from BusinessPartnerLocation AS bpls");
-    bpartnerHQLQuery.append("   where bpls.active = true");
-    bpartnerHQLQuery.append("   and bpls.shipToAddress = true");
+    bpartnerHQLQuery.append("   where bpls.shipToAddress = true");
     bpartnerHQLQuery.append("   and bpls.businessPartner.id = bp.id");
     bpartnerHQLQuery.append("   and bpls.$readableSimpleClientCriteria");
     bpartnerHQLQuery.append(" ))");

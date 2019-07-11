@@ -30,7 +30,7 @@ enyo.kind({
               components: [
                 {
                   name: 'printer',
-                  style: 'padding: 5px 0px 0px 0px; font-size: 125%;'
+                  classes: 'printerLine'
                 }
               ],
               tap: function() {
@@ -114,6 +114,10 @@ enyo.kind({
             },
             this
           );
+
+          if (!isalreadychecked && Object.keys(this.$).length > 0) {
+            this.$[Object.keys(this.$)[0]].$.selected.activeRadio();
+          }
         },
         getActiveURL: function() {
           // check radio of activeurl radio
@@ -289,6 +293,10 @@ enyo.kind({
             },
             this
           );
+
+          if (!isalreadychecked && Object.keys(this.$).length > 0) {
+            this.$[Object.keys(this.$)[0]].$.selected.activeRadio();
+          }
         },
         getActiveURL: function() {
           // check radio of activeurl radio

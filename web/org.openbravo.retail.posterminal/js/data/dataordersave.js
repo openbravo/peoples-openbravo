@@ -121,6 +121,9 @@
           receipt.set('hasbeenpaid', 'N');
           diffReceipt.set('hasbeenpaid', 'N');
           frozenReceipt.set('hasbeenpaid', 'N');
+          receipt.unset('completeTicket');
+          diffReceipt.unset('completeTicket');
+          frozenReceipt.unset('completeTicket');
           OB.Dal.save(
             receipt,
             function() {
@@ -211,6 +214,7 @@
           if (args && args.cancellation && args.cancellation === true) {
             args.context.receipt.set('isbeingprocessed', 'N');
             args.context.receipt.set('hasbeenpaid', 'N');
+            args.context.receipt.unset('completeTicket');
             args.context.receipt.trigger('paymentCancel');
             if (eventParams && eventParams.callback) {
               eventParams.callback({
@@ -588,6 +592,8 @@
                     // rollback other changes
                     receipt.set('hasbeenpaid', 'N');
                     frozenReceipt.set('hasbeenpaid', 'N');
+                    receipt.unset('completeTicket');
+                    frozenReceipt.unset('completeTicket');
                   },
                   null
                 );
@@ -625,55 +631,84 @@
       model
         .get('multiOrders')
         .get('payments')
-        .forEach(function(p) {
-          var itemP = _.find(
-            model.get('multiOrders').get('frozenPayments').models,
-            function(fp) {
-              return p.get('id') === fp.get('id');
-            },
-            this
-          );
-          p.set('origAmount', itemP.get('origAmount'));
-        });
+        .reset(model.get('multiOrders').get('frozenPayments').models);
       model.get('multiOrders').trigger('paymentCancel');
-      model
-        .get('multiOrders')
-        .get('multiOrdersList')
-        .reset(model.get('multiOrders').get('frozenMultiOrdersList').models);
       var promises = [];
-      _.each(model.get('multiOrders').get('multiOrdersList').models, function(
-        rcpt
-      ) {
-        promises.push(
-          new Promise(function(resolve, reject) {
-            rcpt.set('isbeingprocessed', 'N');
-            rcpt.set('hasbeenpaid', 'N');
-            _.each(
-              model.get('orderList').models,
-              function(mdl) {
-                if (mdl.get('id') === rcpt.get('id')) {
-                  mdl.set('isbeingprocessed', 'N');
-                  mdl.set('hasbeenpaid', 'N');
-                  mdl.set('payment', rcpt.get('payment'));
-                  mdl.set('payments', rcpt.get('payments'));
-                  return true;
-                }
-              },
-              this
+      if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+        model
+          .get('multiOrders')
+          .get('multiOrdersList')
+          .reset(model.get('multiOrders').get('frozenMultiOrdersList').models);
+        _.each(
+          model.get('multiOrders').get('multiOrdersList').models,
+          function(rcpt) {
+            promises.push(
+              new Promise(function(resolve, reject) {
+                var order =
+                  _.find(
+                    model.get('orderList').models,
+                    function(o) {
+                      return o.get('id') === rcpt.get('id');
+                    },
+                    this
+                  ) || {};
+                model.get('orderList').remove(order);
+                rcpt.set('isbeingprocessed', 'N');
+                rcpt.set('hasbeenpaid', 'N');
+                rcpt.unset('completeTicket');
+                model.get('orderList').push(rcpt);
+                OB.Dal.save(
+                  rcpt,
+                  function() {
+                    resolve();
+                  },
+                  function() {
+                    reject();
+                  },
+                  false
+                );
+              })
             );
-            OB.Dal.save(
-              rcpt,
-              function() {
-                resolve();
-              },
-              function() {
-                reject();
-              },
-              false
-            );
-          })
+          },
+          this
         );
-      });
+      } else {
+        _.each(
+          model.get('multiOrders').get('multiOrdersList').models,
+          function(rcpt) {
+            promises.push(
+              new Promise(function(resolve, reject) {
+                var fRcpt =
+                  _.find(
+                    model.get('multiOrders').get('frozenMultiOrdersList')
+                      .models,
+                    function(fom) {
+                      return fom.get('id') === rcpt.get('id');
+                    },
+                    this
+                  ) || {};
+                rcpt.set('isbeingprocessed', 'N');
+                rcpt.set('hasbeenpaid', 'N');
+                rcpt.unset('completeTicket');
+                rcpt.set('payment', fRcpt.get('payment'));
+                rcpt.set('paymentWithSign', fRcpt.get('paymentWithSign'));
+                rcpt.set('payments', fRcpt.get('payments'));
+                OB.Dal.save(
+                  rcpt,
+                  function() {
+                    resolve();
+                  },
+                  function() {
+                    reject();
+                  },
+                  false
+                );
+              })
+            );
+          },
+          this
+        );
+      }
       Promise.all(promises).then(function() {
         OB.UTIL.calculateCurrentCash();
         if (callback instanceof Function) {
@@ -890,7 +925,8 @@
     this.context.get('multiOrders').on(
       'closed',
       function(receipt, closedCallback) {
-        var me = this;
+        var me = this,
+          hasError = false;
         OB.Dal.find(OB.Model.Order, {}, function(orderList) {
           var multiOrderList = me.context
               .get('multiOrders')
@@ -908,13 +944,21 @@
           });
 
           completeMultiOrder = _.after(closedReceipts.length, function() {
-            OB.Dal.transaction(function(tx) {
-              saveAndSyncMultiOrder(me, closedReceipts, tx, function() {
+            if (hasError) {
+              restoreMultiOrderOnError(function() {
                 if (closedCallback instanceof Function) {
-                  closedCallback();
+                  closedCallback(false);
                 }
               });
-            });
+            } else {
+              OB.Dal.transaction(function(tx) {
+                saveAndSyncMultiOrder(me, closedReceipts, tx, function() {
+                  if (closedCallback instanceof Function) {
+                    closedCallback();
+                  }
+                });
+              });
+            }
           });
           validateMultiOrder = function() {
             _.each(closedReceipts, function(receipt) {
@@ -931,11 +975,8 @@
                 function(args) {
                   OB.trace('Execution of pre order save hook OK.');
                   if (args && args.cancellation && args.cancellation === true) {
-                    restoreMultiOrderOnError(function() {
-                      if (closedCallback instanceof Function) {
-                        closedCallback(false);
-                      }
-                    });
+                    hasError = true;
+                    completeMultiOrder();
                     return true;
                   }
                   OB.UTIL.TicketCloseUtils.processChangePayments(
