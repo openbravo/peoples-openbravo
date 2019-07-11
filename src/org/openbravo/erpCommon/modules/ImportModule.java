@@ -1929,7 +1929,7 @@ public class ImportModule implements Serializable {
       URL url = new URL(strUrl);
       HttpURLConnection conn = null;
 
-      if (strUrl.startsWith("https://")) {
+      if (isCommercial) {
         ActivationKey ak = ActivationKey.getInstance();
         String instanceKey = "obinstance=" + URLEncoder.encode(ak.getPublicKey(), "utf-8");
         conn = HttpsUtils.sendHttpsRequest(url, instanceKey);
