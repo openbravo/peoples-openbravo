@@ -1330,6 +1330,12 @@ public class OrderLoader extends POSDataSynchronizationProcess
       if (payment.optBoolean("isPrePayment", false)) {
         continue;
       }
+      
+      BigDecimal amount = BigDecimal.valueOf(payment.getDouble("origAmount"))
+          .setScale(pricePrecision, RoundingMode.HALF_UP);
+      if(amount.signum()==0) {
+        continue;
+      }
 
       String paymentTypeName = payment.getString("kind");
       OBCriteria<OBPOSAppPayment> type = OBDal.getInstance().createCriteria(OBPOSAppPayment.class);
@@ -1353,8 +1359,6 @@ public class OrderLoader extends POSDataSynchronizationProcess
         if (paymentType.getFinancialAccount() == null && account == null) {
           continue;
         }
-        BigDecimal amount = BigDecimal.valueOf(payment.getDouble("origAmount"))
-            .setScale(pricePrecision, RoundingMode.HALF_UP);
         BigDecimal tempWriteoffAmt = writeoffAmt;
         if (payment.has("reversedPaymentId")) {
           tempWriteoffAmt = BigDecimal.valueOf(payment.optDouble("overpayment", 0));
