@@ -1911,7 +1911,7 @@ public class ImportModule implements Serializable {
     JSONObject versionInfo = CentralRepository.executeRequest(Service.VERSION_INFO,
         Arrays.asList(moduleVersionID));
     try {
-      System.out.println(versionInfo.toString(1));
+      log4j.debug("version info: {}", versionInfo);
 
       isCommercial = versionInfo.getJSONObject("response").getBoolean("commercial");
       strUrl = versionInfo.getJSONObject("response").getString("url");
