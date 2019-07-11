@@ -121,9 +121,15 @@ enyo.kind({
       me.formElement.parent.$.formElementBplocbutton.setLabel(
         OB.I18N.getLabel('OBPOS_LblAddress')
       );
+      me.formElement.parent.$.formElementBplocbutton.addClass(
+        'obUiOrderHeader-buttonComponents-formElementBplocbutton_noicon'
+      );
     } else {
       me.formElement.parent.$.formElementBplocbutton.setLabel(
         OB.I18N.getLabel('OBPOS_LblBillAddr')
+      );
+      me.formElement.parent.$.formElementBplocbutton.removeClass(
+        'obUiOrderHeader-buttonComponents-formElementBplocbutton_noicon'
       );
     }
   },

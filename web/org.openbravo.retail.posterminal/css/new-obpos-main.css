@@ -2965,6 +2965,14 @@
   width: auto;
 }
 
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocbutton .obUiFormElement-labelArea-afterArea {
+  width: 25px;
+  background-image: url('./../img/iconInvoicingAddress.svg');
+  background-repeat: no-repeat;
+  background-size: 11px;
+  background-position: center 1px;
+}
+
 .obUiOrderHeader-buttonComponents-formElementBplocbutton-bplocbutton {
   /*Inherits: [OB.UI.BPLocation]*/
   width: auto;
@@ -2973,6 +2981,18 @@
 .obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocshipbutton {
   /*Inherits: [OB.UI.BPLocation]*/
   width: auto;
+}
+
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocshipbutton .obUiFormElement-labelArea-afterArea {
+  width: 30px;
+  background-image: url('./../img/iconShippingAddress.svg');
+  background-repeat: no-repeat;
+  background-size: 15px;
+  background-position: center 2px;
+}
+
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocbutton_noicon .obUiFormElement-labelArea-afterArea {
+  width: 0px;
 }
 
 .obUiOrderHeader-buttonComponents-formElementBplocshipbutton-bplocshipbutton {
