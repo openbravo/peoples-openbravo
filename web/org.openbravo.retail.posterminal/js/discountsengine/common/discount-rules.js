@@ -15,13 +15,55 @@
       this.discounts = discounts;
     }
 
+    /*
+     * This method must be ALWAYS override in each subclass
+     * Used for log purpouses only. Identifies the discount type being applied
+     * Output: String with promotion name
+     */
+    getDiscountTypeName() {
+      throw 'getDiscountTypeName method not implemented';
+    }
+
+    /*
+     * This method must be ALWAYS override in each subclass
+     * Implementation of the discount calculation for extended subclass
+     * Input: Array of lines applicable to the promotion
+     */
+    executeDiscountCalculation() {
+      throw 'executeDiscountCalculation method not implemented';
+    }
+
+    /*
+     * This method must be ALWAYS override in each subclass
+     * Decides which applicable lines are valid to be discountable
+     * Input: Array of lines candidates to be applied
+     * Output: Array of lines applicable to the promotion
+     */
+    canApplyDiscount() {
+      throw 'canApplyDiscount method not implemented';
+    }
+
     getTicket() {
       return this.ticket;
     }
 
-    calculateDiscount() {
-      // This method should be always override in each subclass
-      throw 'not implemented';
+    getDiscountImplementationId() {
+      return this.discountImpl.id;
+    }
+
+    calculateDiscounts() {
+      let applicableLines = this.getApplicableLines();
+      let discountableLines = this.canApplyDiscount(applicableLines);
+      if (discountableLines && applicableLines.length > 0) {
+        OB.debug(
+          `Discount type ${this.getDiscountTypeName()} with id ${this.getDiscountImplementationId()} executing discount calculation`
+        );
+        this.executeDiscountCalculation(discountableLines);
+      } else {
+        OB.debug(
+          `Discount type ${this.getDiscountTypeName()} with id ${this.getDiscountImplementationId()} cannot be applied`
+        );
+      }
     }
 
     static isApplicableToLine(line, rule) {

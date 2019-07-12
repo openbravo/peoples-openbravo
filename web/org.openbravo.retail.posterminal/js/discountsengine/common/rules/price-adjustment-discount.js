@@ -13,55 +13,62 @@
       super(ticket, discountImpl, discounts);
     }
 
-    canApplyDiscount(line) {
-      let minQty = this.discountImpl.minQuantity,
-        maxQty = this.discountImpl.maxQuantity,
-        isMultiple = this.discountImpl.ismultiple,
-        multipleQty = this.discountImpl.multiple,
-        qty = line.qty;
-
-      if (isMultiple) {
-        if (qty < multipleQty) {
-          return false;
-        }
-      } else if ((minQty && qty < minQty) || (maxQty && qty > maxQty)) {
-        return false;
-      }
-
-      let linePrice = this.getUnitPrice(line);
-
-      if (linePrice < this.discountImpl.fixedPrice) {
-        return false;
-      }
-
-      return true;
-    }
-
-    discountForLine(line) {
-      let discountAmount = this.discountImpl.discountAmount,
-        discountPercentage = this.discountImpl.discountPercentage,
-        fixedUnitPrice = this.discountImpl.discountFixedUnitPrice,
-        qty = line.qty,
-        discountedAmt;
-
-      if (fixedUnitPrice) {
-        discountedAmt = line.price - fixedUnitPrice * qty;
-      } else if (discountPercentage) {
-        discountedAmt = line.price * (discountPercentage / 100);
-      } else if (discountAmount) {
-        discountedAmt = discountAmount;
-      }
-
-      if (discountedAmt) {
-        this.addDiscount(line, OB.DEC.toNumber(discountedAmt));
-      }
+    /* @Override */
+    getDiscountTypeName() {
+      return 'Price Adjustment';
     }
 
     /* @Override */
-    calculateDiscounts() {
-      this.getApplicableLines()
-        .filter(line => this.canApplyDiscount(line))
-        .forEach(line => this.discountForLine(line));
+    canApplyDiscount(lines) {
+      const minQty = this.discountImpl.minQuantity,
+        maxQty = this.discountImpl.maxQuantity,
+        isMultiple = this.discountImpl.ismultiple,
+        multipleQty = this.discountImpl.multiple;
+      let discountableLines = [];
+
+      lines.forEach(line => {
+        let qty = line.qty;
+        if (isMultiple) {
+          if (qty < multipleQty) {
+            return;
+          }
+        } else if ((minQty && qty < minQty) || (maxQty && qty > maxQty)) {
+          return;
+        }
+
+        let linePrice = this.getUnitPrice(line);
+
+        if (linePrice < this.discountImpl.fixedPrice) {
+          return;
+        }
+
+        discountableLines.push(line);
+      });
+
+      return discountableLines;
+    }
+
+    /* @Override */
+    executeDiscountCalculation(lines) {
+      let discountAmount = this.discountImpl.discountAmount,
+        discountPercentage = this.discountImpl.discountPercentage,
+        fixedUnitPrice = this.discountImpl.discountFixedUnitPrice;
+
+      lines.forEach(line => {
+        let qty = line.qty,
+          discountedAmt;
+        if (fixedUnitPrice) {
+          discountedAmt = line.price - fixedUnitPrice * qty;
+        } else if (discountPercentage) {
+          discountedAmt = line.price * (discountPercentage / 100);
+        } else if (discountAmount) {
+          discountedAmt = discountAmount;
+        }
+
+        if (discountedAmt) {
+          this.addDiscount(line, OB.DEC.toNumber(discountedAmt));
+        }
+      });
     }
   }
 

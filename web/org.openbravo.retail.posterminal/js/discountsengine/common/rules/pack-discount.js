@@ -53,16 +53,6 @@
       return chunks;
     }
 
-    canApplyDiscount(lines) {
-      let productsToFullfill = this.getDiscountProductUnits(),
-        chunks = this.getNumberOfChunksToBeApplied(productsToFullfill, lines);
-      if (chunks > 0) {
-        return true;
-      } else {
-        return false;
-      }
-    }
-
     getTotalPrice(lines) {
       let totalPrice = 0;
       lines.forEach(
@@ -71,7 +61,24 @@
       return totalPrice;
     }
 
-    executeRule(lines) {
+    /* @Override */
+    getDiscountTypeName() {
+      return 'Pack';
+    }
+
+    /* @Override */
+    canApplyDiscount(lines) {
+      let productsToFullfill = this.getDiscountProductUnits(),
+        chunks = this.getNumberOfChunksToBeApplied(productsToFullfill, lines);
+      if (chunks > 0) {
+        return lines;
+      } else {
+        return [];
+      }
+    }
+
+    /* @Override */
+    executeDiscountCalculation(lines) {
       let discPrice = OB.DEC.toNumber(this.discountImpl.oBDISCPrice),
         discProducts = this.getDiscountProductUnits(),
         chunks = this.getNumberOfChunksToBeApplied(discProducts, lines),
@@ -81,7 +88,6 @@
         accumulativeAmt = 0;
 
       // first loop calculated the total discount, now let's apply it
-
       discProducts.forEach((discProduct, index) => {
         let line = lines.find(ln => ln.product.id === discProduct.id),
           price = line.price,
@@ -102,14 +108,6 @@
           chunks: chunks
         });
       });
-    }
-
-    /* @Override */
-    calculateDiscounts() {
-      let applicableLines = this.getApplicableLines();
-      if (this.canApplyDiscount(applicableLines)) {
-        this.executeRule(applicableLines);
-      }
     }
   }
 

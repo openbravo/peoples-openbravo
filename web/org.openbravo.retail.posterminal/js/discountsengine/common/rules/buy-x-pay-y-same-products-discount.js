@@ -18,12 +18,23 @@
       return qtyAvailable;
     }
 
-    canApplyDiscount(lines) {
-      let qtyAvailable = this.getAvailableQty(lines);
-      return qtyAvailable >= this.discountImpl.oBDISCX;
+    /* @Override */
+    getDiscountTypeName() {
+      return 'Buy X Pay Y Same Products';
     }
 
-    executeRule(lines) {
+    /* @Override */
+    canApplyDiscount(lines) {
+      let qtyAvailable = this.getAvailableQty(lines);
+      if (qtyAvailable >= this.discountImpl.oBDISCX) {
+        return lines;
+      } else {
+        return [];
+      }
+    }
+
+    /* @Override */
+    executeDiscountCalculation(lines) {
       let totalQty = this.getAvailableQty(lines),
         oBDISCX = this.discountImpl.oBDISCX,
         oBDISCY = this.discountImpl.oBDISCY,
@@ -85,14 +96,6 @@
           }
         }
       });
-    }
-
-    /* @Override */
-    calculateDiscounts() {
-      let applicableLines = this.getApplicableLines();
-      if (this.canApplyDiscount(applicableLines)) {
-        this.executeRule(applicableLines);
-      }
     }
   }
 

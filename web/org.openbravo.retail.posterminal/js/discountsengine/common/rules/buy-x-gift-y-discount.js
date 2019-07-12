@@ -56,16 +56,6 @@
       return chunks;
     }
 
-    canApplyDiscount(lines) {
-      let productsToFullfill = this.getDiscountProductUnits(),
-        chunks = this.getNumberOfChunksToBeApplied(productsToFullfill, lines);
-      if (chunks > 0) {
-        return true;
-      } else {
-        return false;
-      }
-    }
-
     getPromotionAmt(discProducts, lines) {
       let promotionAmt = 0,
         chunks = this.getNumberOfChunksToBeApplied(discProducts, lines);
@@ -90,7 +80,24 @@
       return totalPrice;
     }
 
-    executeRule(lines) {
+    /* @Override */
+    getDiscountTypeName() {
+      return 'Buy X Get Y As Gift';
+    }
+
+    /* @Override */
+    canApplyDiscount(lines) {
+      let productsToFullfill = this.getDiscountProductUnits(),
+        chunks = this.getNumberOfChunksToBeApplied(productsToFullfill, lines);
+      if (chunks > 0) {
+        return lines;
+      } else {
+        return [];
+      }
+    }
+
+    /* @Override */
+    executeDiscountCalculation(lines) {
       const discProducts = this.getDiscountProductUnits(),
         chunks = this.getNumberOfChunksToBeApplied(discProducts, lines);
 
@@ -146,14 +153,6 @@
           }
         }
       });
-    }
-
-    /* @Override */
-    calculateDiscounts() {
-      let applicableLines = this.getApplicableLines();
-      if (this.canApplyDiscount(applicableLines)) {
-        this.executeRule(applicableLines);
-      }
     }
   }
 

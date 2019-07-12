@@ -14,8 +14,18 @@
     }
 
     /* @Override */
-    calculateDiscounts() {
-      this.getApplicableLines().forEach(line => {
+    getDiscountTypeName() {
+      return 'Fixed Percentage';
+    }
+
+    /* @Override */
+    canApplyDiscount(lines) {
+      return lines;
+    }
+
+    /* @Override */
+    executeDiscountCalculation(lines) {
+      lines.forEach(line => {
         let disc = OB.DEC.mul(
           this.getPrice(line),
           OB.DEC.div(this.discountImpl.discount, 100)
