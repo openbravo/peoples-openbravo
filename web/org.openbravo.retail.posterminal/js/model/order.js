@@ -8511,7 +8511,7 @@
             }
             // if it is a promotions with applyNext, the line is related to the promotion, so, when applyPromotions is called again,
             // if the promotion is similar to this promotion, then no changes have been done, then stop
-            if (p.applyNext) {
+            if (p.manual || p.applyNext) {
               promotionsApplyNext.push(p);
               promotionsCascadeApplied.push(p);
             }
