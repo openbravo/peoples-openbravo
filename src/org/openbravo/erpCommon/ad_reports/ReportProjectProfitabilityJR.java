@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2019 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.database.ConnectionProvider;
@@ -153,7 +155,7 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
     String strBaseCurrencyId = Utility.stringBaseCurrencyId(readOnlyCP, vars.getClient());
     try {
       List<UOM> uomList = noConversionToHours(strProject, OBDateUtils.getDate(strDateFrom2),
-          OBDateUtils.getDate(strDateTo2), strTreeOrg, strProjectType, strResponsible,
+          OBDateUtils.getDate(strDateTo2), strOrg, strProjectType, strResponsible,
           OBDateUtils.getDate(strDateFrom), OBDateUtils.getDate(strDateTo), strPartner,
           OBDateUtils.getDate(strDateFrom3), OBDateUtils.getDate(strDateTo3));
       if (!uomList.isEmpty()) {
@@ -227,7 +229,11 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
       parameters.put("projectId", strProject);
     }
     if (StringUtils.isNotEmpty(strOrg)) {
-      hsqlScript.append("    and p." + Project.PROPERTY_ORGANIZATION + ".id in (" + strOrg + ")");
+      Set<String> orgIds = OBContext.getOBContext()
+          .getOrganizationStructureProvider()
+          .getChildTree(strOrg, true);
+      hsqlScript.append("    and p." + Project.PROPERTY_ORGANIZATION + ".id in (:orgIds)");
+      parameters.put("orgIds", orgIds);
     }
     if (StringUtils.isNotEmpty(strProjectType)) {
       hsqlScript.append("    and p." + Project.PROPERTY_PROJECTTYPE + ".id = :projectTypeId");
