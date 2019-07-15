@@ -238,7 +238,7 @@ public class ApplicationDictionaryCachedStructures {
     getAuxiliarInputList(tab);
     getFieldsOfTab(tab);
     initializeDALObject(tab.getTable());
-    getColumnsOfTable(tab.getTable().getId());
+    initializeColumnsOfTable(tab.getTable().getId());
     initializeProcess(tab.getProcess());
     initializeDALObject(tab.getTableTree());
 
@@ -248,18 +248,23 @@ public class ApplicationDictionaryCachedStructures {
     }
   }
 
-  public Table getTable(String tableId) {
-    if (useCache() && tableMap.containsKey(tableId)) {
-      return tableMap.get(tableId);
-    }
+  private Table initializeTable(String tableId) {
     Table table = OBDal.getInstance().get(Table.class, tableId);
     initializeDALObject(table);
     initializeDALObject(table.getADColumnList());
     initializeDALObject(table.getObserdsDatasource());
-    if (useCache()) {
+    if (useCache() && !tableMap.containsKey(tableId)) {
       tableMap.put(tableId, table);
     }
     return table;
+  }
+
+  public Table getTable(String tableId) {
+    if (useCache() && tableMap.containsKey(tableId)) {
+      return tableMap.get(tableId);
+    }
+
+    return initializeTable(tableId);
   }
 
   public List<Field> getFieldsOfTab(String tabId) {
@@ -293,19 +298,24 @@ public class ApplicationDictionaryCachedStructures {
     return fields;
   }
 
-  public List<Column> getColumnsOfTable(String tableId) {
-    if (useCache() && columnMap.get(tableId) != null) {
-      return columnMap.get(tableId);
-    }
-    Table table = getTable(tableId);
+  public List<Column> initializeColumnsOfTable(String tableId) {
+    Table table = initializeTable(tableId);
     List<Column> columns = table.getADColumnList();
     for (Column c : columns) {
       initializeColumn(c);
     }
-    if (useCache()) {
+    if (useCache() && !columnMap.containsKey(tableId)) {
       columnMap.put(tableId, columns);
     }
     return columns;
+  }
+
+  public List<Column> getColumnsOfTable(String tableId) {
+    if (useCache() && columnMap.get(tableId) != null) {
+      return columnMap.get(tableId);
+    }
+
+    return initializeColumnsOfTable(tableId);
   }
 
   private void initializeColumn(Column c) {
