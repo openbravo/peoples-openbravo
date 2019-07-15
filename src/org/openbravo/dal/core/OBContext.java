@@ -922,7 +922,7 @@ public class OBContext implements OBNotSingleton, Serializable {
       if (!writableOrgs.contains(getCurrentOrganization().getId())) {
         if (writableOrgs.isEmpty()) {
           log.warn(
-              "User {} with role {} does not have write access to its current organization {} does not have any write access to any organization",
+              "User {} with role {} (default organization {}) does not have write access to any organization",
               getUser(), getRole(), getCurrentOrganization(), new Exception("stack trace"));
         } else {
           // take the first writableOrganization

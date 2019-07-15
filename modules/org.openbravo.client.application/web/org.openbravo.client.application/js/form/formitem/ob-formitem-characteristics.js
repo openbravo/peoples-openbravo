@@ -365,7 +365,7 @@ isc.OBCharacteristicsFilterDialog.addProperties({
               false
             );
           }
-          return this.Super('transformRequest', arguments);
+          return this.Super('transformRequest', dsRequest);
         };
 
         var treeField;

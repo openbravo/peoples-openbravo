@@ -659,6 +659,25 @@ public class FIN_AddPayment {
    */
   public static void saveGLItem(FIN_Payment payment, BigDecimal glitemAmount, GLItem glitem,
       String paymentId) {
+    saveGLItem(payment, glitemAmount, glitem, paymentId, true);
+  }
+
+  /**
+   * It adds to the Payment a new Payment Detail with the given GL Item and amount.
+   * 
+   * @param payment
+   *          Payment where the new Payment Detail needs to be added.
+   * @param glitemAmount
+   *          Amount of the new Payment Detail.
+   * @param glitem
+   *          GLItem to be set in the new Payment Detail.
+   * @param paymentId
+   *          id to set in new entities
+   * @param doFlush
+   *          Do the flush during the process
+   */
+  public static void saveGLItem(FIN_Payment payment, BigDecimal glitemAmount, GLItem glitem,
+      String paymentId, boolean doFlush) {
     // FIXME: added to access the FIN_PaymentSchedule and FIN_PaymentScheduleDetail tables to be
     // removed when new security implementation is done
     dao = new AdvPaymentMngtDao();
@@ -667,7 +686,7 @@ public class FIN_AddPayment {
       FIN_PaymentScheduleDetail psd = dao.getNewPaymentScheduleDetail(payment.getOrganization(),
           glitemAmount, paymentId);
       FIN_PaymentDetail pd = dao.getNewPaymentDetail(payment, psd, glitemAmount, BigDecimal.ZERO,
-          false, glitem, true, paymentId);
+          false, glitem, doFlush, paymentId);
       pd.setFinPayment(payment);
       OBDal.getInstance().save(pd);
       OBDal.getInstance().save(payment);

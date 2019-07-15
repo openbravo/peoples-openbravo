@@ -15,6 +15,7 @@
 # * All Rights Reserved.
 # * Contributor(s):  ______________________________________.
 # ************************************************************************
+
 SCRIPT_NAME=$(basename "$0")
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 FIX=false
@@ -43,7 +44,21 @@ it will be executed for each module that has a .eslintignore file in its root.
 # size limit is much lower than the one in bash commands.
 #
 function lintFiles {
-    echo "$@" | xargs --max-args 250 npm run jslint -s -- ${FLAGS} || exit 1
+    if [[ -f "./.jsignore" ]]; then
+        exit 0
+    fi
+
+    IGNORE_PATH=""
+    if [[ "$(isCurrentFolderModuleRoot)" == true && -f "./.eslintignore" ]]; then
+        IGNORE_PATH="--ignore-path $(pwd)/.eslintignore"
+    fi
+
+    # Since eslint complains when ignoring a file explicitly passed and there's no way to workaround that via CLI,
+    # ignored files are removed using a script
+    FILTERED_FILES=$(node ${SCRIPT_DIR}/filter-eslint-ignored-files.js "$@")
+    if [[ -n "${FILTERED_FILES}" ]]; then
+        echo "${FILTERED_FILES}" | xargs -n 250 npm run jslint -s -- ${FLAGS} ${IGNORE_PATH} || exit 1
+    fi
 }
 
 function getEslintIgnorePatterns {
@@ -86,6 +101,10 @@ function runLinterInModule {
         IGNORE_PATH="--ignore-path ${BASE}/.eslintignore"
     fi
 
+    if [[ -f "${BASE}/.jsignore" ]]; then
+        exit 0
+    fi
+
     echo "Lint check for module $(basename ${BASE})"
     npm run jslint -s -- ${LINTER_FLAGS} ${IGNORE_PATH} "${BASE}"
 }
@@ -107,7 +126,7 @@ while getopts ":fh" arg; do
         ;;
     esac
 done
-shift $((OPTIND-1))
+shift "$((OPTIND-1))"
 
 source ${SCRIPT_DIR}/../jsutils/check-npm-deps
 

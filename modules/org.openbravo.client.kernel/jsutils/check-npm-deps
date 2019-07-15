@@ -16,8 +16,8 @@
 # * Contributor(s):  ______________________________________.
 # ************************************************************************
 
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-source ${SCRIPT_DIR}/../jsutils/dir-functions
+NPM_DEPS_SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source ${NPM_DEPS_SCRIPT_DIR}/../jsutils/dir-functions
 
 if ! [[ -x "$(command -v npm)" ]]; then
     echo -e "\n\033[0;31mERROR:\033[0m npm command not found. Install using"
