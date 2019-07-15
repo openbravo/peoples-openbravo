@@ -538,7 +538,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
         moduleBox.put("urlStyle", "true");
       }
       moduleBox.put("moduleVersionID", mod.getString("moduleVersionID"));
-      moduleBox.put("commercialStyle", mod.getString("isCommercial"));
+      moduleBox.put("commercialStyle", mod.getBoolean("isCommercial") ? "true" : "none");
 
       JSONObject additionalInfo = mod.getJSONObject("additionalInfo");
       int maturity = additionalInfo.getInt("maturity.level");
