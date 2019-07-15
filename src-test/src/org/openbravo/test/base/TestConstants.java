@@ -56,6 +56,11 @@ public class TestConstants {
     public static final String DISCOUNTS_AND_PROMOTIONS = "800028";
   }
 
+  public static class Tabs {
+    public static final String SALES_INVOICE_HEADER = "263";
+    public static final String PURCHASE_INVOICE_HEADER = "290";
+  }
+
   public static class Entities {
     public static final String COUNTRY = "Country";
   }

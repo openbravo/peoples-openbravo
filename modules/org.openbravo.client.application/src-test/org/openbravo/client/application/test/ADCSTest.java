@@ -19,21 +19,24 @@
 
 package org.openbravo.client.application.test;
 
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.isEmptyString;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeTrue;
-import static org.openbravo.test.base.TestConstants.Windows.DISCOUNTS_AND_PROMOTIONS;
 
 import javax.inject.Inject;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.application.window.StandardWindowComponent;
 import org.openbravo.client.kernel.ComponentGenerator;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
+import org.openbravo.test.base.TestConstants.Tabs;
 
 /** Additional test cases for {@link ApplicationDictionaryCachedStructures} */
 public class ADCSTest extends WeldBaseTest {
@@ -43,15 +46,18 @@ public class ADCSTest extends WeldBaseTest {
   @Inject
   private StandardWindowComponent component;
 
+  @Before
+  public void doChecks() {
+    assumeTrue("Cache can be used (no modules in development)", adcs.useCache());
+    setSystemAdministratorContext();
+  }
+
   /** See issue #40633 */
   @Test
   public void tabWithProductCharacteristicsIsGeneratedAfterADCSInitialization() {
-    assumeTrue("Cache can be used (no modules in development)", adcs.useCache());
-    setSystemAdministratorContext();
-
     // given ADCS initialized with only Discounts and Promotions window
     adcs.init();
-    Window w = adcs.getWindow(DISCOUNTS_AND_PROMOTIONS);
+    Window w = adcs.getWindow("167");
 
     // when Discounts and Promotions view is requested in a different DAL session
     OBDal.getInstance().commitAndClose();
@@ -60,6 +66,24 @@ public class ADCSTest extends WeldBaseTest {
 
     // then the view gets generated without throwing exceptions
     assertThat(generatedView, not(isEmptyString()));
+  }
+
+  /** See issue #41338 */
+  @Test
+  public void tabsSharingTableAreCorrectlyInitialized() {
+    // given ADCS initialized with only Sales Invoice header tab (uses c_order)
+    adcs.init();
+
+    adcs.getTab(Tabs.SALES_INVOICE_HEADER);
+    OBDal.getInstance().commitAndClose();
+
+    // when Purchase Invoice header (it also uses c_order) is taken from ADCS
+    adcs.getTab(Tabs.PURCHASE_INVOICE_HEADER);
+    OBDal.getInstance().commitAndClose();
+
+    // then Purchase Invoice header is fully initialized even if taken in a different session
+    Tab t = adcs.getTab(Tabs.PURCHASE_INVOICE_HEADER);
+    assertThat(t.getTable().getADColumnList().size(), greaterThan(1));
   }
 
 }
