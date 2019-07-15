@@ -12,8 +12,7 @@
 /*left toolbar*/
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.LeftToolbarButton',
-  tag: 'li',
-  classes: 'obObposPointOfSaleUiLeftToolbarButton span4',
+  classes: 'obObposPointOfSaleUiLeftToolbarButton',
   components: [
     {
       name: 'theButton',
@@ -29,7 +28,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.LeftToolbar',
-  classes: 'obObposPointOfSaleUiLeftToolbar span3',
+  classes: 'obObposPointOfSaleUiLeftToolbar',
   components: [
     {
       tag: 'ul',
@@ -332,6 +331,7 @@ enyo.kind({
   kind: 'OB.UI.ToolbarButtonTab',
   classes: 'obObposPointOfSaleUiButtonTabPayment',
   tabPanel: 'payment',
+  i18nContent: 'OBMOBC_LblCheckout',
   handlers: {
     onChangedTotal: 'renderTotal',
     onRightToolbarDisabled: 'disabledButton'
@@ -886,7 +886,7 @@ enyo.kind({
       kind: 'OB.UI.FitText',
       name: 'totalButtonDiv',
       minFontSize: 15,
-      maxFontSize: 30,
+      maxFontSize: 26,
       maxHeight: 57,
       classes: 'obObposPointOfSaleUiButtonTabPayment-totalButtonDiv buttonText',
       components: [
@@ -896,7 +896,17 @@ enyo.kind({
           classes:
             'obObposPointOfSaleUiButtonTabPayment-totalButtonDiv-totalPrinter',
           renderTotal: function(total) {
-            this.setContent(OB.I18N.formatCurrency(total));
+            var payment =
+              OB.MobileApp.model.paymentnames[
+                OB.MobileApp.model.get('paymentcash')
+              ];
+            this.setContent(
+              OB.I18N.formatCurrencyWithSymbol(
+                total,
+                payment.symbol,
+                payment.currencySymbolAtTheRight
+              )
+            );
             //It needs an small asynch to be rendered and then we can adaptFontSize
             setTimeout(
               function(me) {
@@ -916,8 +926,8 @@ enyo.kind({
   initComponents: function() {
     this.inherited(arguments);
     //FIXME: handle properly the css classes to show the required background depending on the status
-    this.$.after.createComponents(this.customComponents);
-    this.totalPrinter = this.$.after.$.totalPrinter;
+    this.$.before.createComponents(this.customComponents);
+    this.totalPrinter = this.$.before.$.totalPrinter;
     this.removeClass('btnlink-gray');
   },
   destroyComponents: function() {

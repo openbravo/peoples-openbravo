@@ -8318,6 +8318,11 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   /*Inherits: [OB.UI.ButtonTabPayment]*/
 }
 
+.obObposPointOfSaleUiLeftToolbarImpl-ButtonTabPayment .obUiButton-before {
+  line-height: normal;
+    padding: 0px 0px 4px 0px;  
+}
+
 .obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuReceiptSelector {
   /*Inherits: [OB.UI.ReceiptSelector]*/
 }
