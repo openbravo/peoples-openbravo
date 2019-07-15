@@ -104,13 +104,6 @@ enyo.kind({
                     if (!item.disabled) {
                       var dialog = this.owner.owner.owner;
                       dialog.doHideThisPopup();
-                      while (
-                        !OB.UTIL.isNullOrUndefined(
-                          OB.MobileApp.view.openedPopup
-                        )
-                      ) {
-                        OB.MobileApp.view.openedPopup.hide();
-                      }
                       dialog.selectItem = true;
                       dialog.bubble('onPaymentChanged', {
                         payment: this.payment,
