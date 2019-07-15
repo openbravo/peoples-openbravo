@@ -565,7 +565,7 @@ enyo.kind({
   manageServiceProposal: function(inSender, inEvent) {
     OB.MobileApp.model.set('serviceSearchMode', inEvent.proposalType);
     this.previousStatus = inEvent.previousStatus;
-    this.$.lbl.setContent(OB.I18N.getLabel('OBPOS_LblContinue'));
+    this.setContent(OB.I18N.getLabel('OBPOS_LblContinue'));
     this.doDisableUserInterface();
     OB.MobileApp.view.scanningFocus(false);
     this.setDisabled(false);
@@ -575,7 +575,7 @@ enyo.kind({
   },
   tap: function(options) {
     if (OB.MobileApp.model.get('serviceSearchMode')) {
-      this.$.lbl.setContent(OB.I18N.getLabel('OBPOS_LblEdit'));
+      this.setContent(OB.I18N.getLabel('OBPOS_LblEdit'));
       this.doEnableUserInterface();
       OB.MobileApp.view.scanningFocus(true);
       this.doShowActionIcons({
