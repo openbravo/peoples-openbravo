@@ -64,7 +64,7 @@ public class ADCSTest extends WeldBaseTest {
   public void tabWithProductCharacteristicsIsGeneratedAfterADCSInitialization() {
     // given ADCS initialized with only Discounts and Promotions window
     adcs.init();
-    Window w = adcs.getWindow("167");
+    Window w = adcs.getWindow(Windows.DISCOUNTS_AND_PROMOTIONS);
 
     // when Discounts and Promotions view is requested in a different DAL session
     OBDal.getInstance().commitAndClose();
