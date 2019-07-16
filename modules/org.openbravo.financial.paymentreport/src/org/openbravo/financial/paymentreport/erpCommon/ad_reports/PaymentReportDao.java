@@ -29,7 +29,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Vector;
 
@@ -57,6 +56,7 @@ import org.openbravo.dal.service.OBDao;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.SQLReturnObject;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.List;
@@ -301,7 +301,7 @@ public class PaymentReportDao {
             || (StringUtils.isNotEmpty(strcBPGroupIdIN)
                 && (StringUtils.equals(strcNoBusinessPartner, "include")
                     || StringUtils.equals(strcNoBusinessPartner, "exclude")))) {
-         hsqlScript += "left join paybp.businessPartnerCategory as paybpc"
+         hsqlScript +=" left join paybp.businessPartnerCategory as paybpc"
                     + " left join invbp.businessPartnerCategory as invbpc";
         }
       } else if (StringUtils.isNotEmpty(strFinancialAccountId)) {
@@ -311,28 +311,17 @@ public class PaymentReportDao {
 
       // organization + include sub-organization
       if (StringUtils.isEmpty(strOrg) || StringUtils.equals(strOrg, "0")) {
-        hsqlScript +="  and fpsd.organization.id in "
-                   + concatOrganizations(OBContext.getOBContext().getReadableOrganizations());
+        hsqlScript +="  and fpsd.organization.id in :readableOrgs";
+        parameters.put("readableOrgs", OBContext.getOBContext().getReadableOrganizations());
       } else {
         if (!StringUtils.equalsIgnoreCase(strInclSubOrg, "include")) {
-         hsqlScript +=" and fpsd.organization.id = '"
-                    + strOrg
-                    + " '";
+         hsqlScript +=" and fpsd.organization.id = :org";
+         parameters.put("org", strOrg);
         } else {
-          hsqlScript+=" and fpsd.organization.id in ('";
-          Set<String> orgChildTree = OBContext.getOBContext()
-              .getOrganizationStructureProvider()
-              .getChildTree(strOrg, true);
-          Iterator<String> orgChildTreeIter = orgChildTree.iterator();
-          while (orgChildTreeIter.hasNext()) {
-            hsqlScript += orgChildTreeIter.next();
-            orgChildTreeIter.remove();
-            hsqlScript += "'";
-            if (orgChildTreeIter.hasNext()) {
-              hsqlScript += ", '";
-            }
-          }
-          hsqlScript += " )";
+          hsqlScript+=" and fpsd.organization.id in :childTree";
+          parameters.put("childTree", OBContext.getOBContext()
+                 .getOrganizationStructureProvider()
+                 .getChildTree(strOrg, true));
         }
       }
 
@@ -389,14 +378,16 @@ public class PaymentReportDao {
 
         // business partner
         if (StringUtils.isNotEmpty(strcBPartnerIdIN)) {
-          hsqlScript+=" and ((coalesce(pay.businessPartner, inv.businessPartner) "
-                    + "      in " + strcBPartnerIdIN + ") "
+          hsqlScript+=" and ((coalesce(pay.businessPartner.id, inv.businessPartner.id) "
+                    + "      in :bpIdIn) "
                     + "      or (pay.businessPartner is null and inv.businessPartner is null))";
+          parameters.put("bpIdIn", Utility.stringToArrayList(strcBPartnerIdIN.replaceAll("\\(|\\)|'", "")));
         }
         // business partner category
         if (StringUtils.isNotEmpty(strcBPGroupIdIN)) {
-          hsqlScript+=" and (coalesce(paybpc, invbpc) = '" + strcBPGroupIdIN + "' "
+          hsqlScript+=" and (coalesce(paybpc.id, invbpc.id) = :bpGroupIdIn "
                     + "     or (pay.businessPartner is null and inv.businessPartner is null))";
+          parameters.put("bpGroupIdIn", Utility.stringToArrayList(strcBPGroupIdIN.replaceAll("\\(|\\)|'", "")));
         }
 
         // Empty Businesss Partner excluded
@@ -404,12 +395,14 @@ public class PaymentReportDao {
 
         // business partner
         if (StringUtils.isNotEmpty(strcBPartnerIdIN)) {
-          hsqlScript+=" and coalesce(pay.businessPartner, inv.businessPartner) in " + strcBPartnerIdIN;
+          hsqlScript+=" and coalesce(pay.businessPartner.id, inv.businessPartner.id) in :bpIdIn";
+          parameters.put("bpIdIn", Utility.stringToArrayList(strcBPartnerIdIN.replaceAll("\\(|\\)|'", "")));
         }
 
         // business partner category
         if (StringUtils.isNotEmpty(strcBPGroupIdIN)) {
-          hsqlScript+=" and coalesce(paybpc, invbpc) = '" + strcBPGroupIdIN + "'";
+          hsqlScript+=" and coalesce(paybpc.id, invbpc.id) = :bpGroupIdIn";
+          parameters.put("bpGroupIdIn", Utility.stringToArrayList(strcBPGroupIdIN.replaceAll("\\(|\\)|'", "")));
         }
         // exclude empty business partner
         if (StringUtils.isEmpty(strcBPartnerIdIN) && StringUtils.isEmpty(strcBPGroupIdIN)) {
@@ -423,13 +416,15 @@ public class PaymentReportDao {
 
       // project
       if (StringUtils.isNotEmpty(strcProjectIdIN)) {
-        hsqlScript += " and coalesce(pay.project, inv.project) in " + strcProjectIdIN;
+        hsqlScript += " and coalesce(pay.project.id, inv.project.id) in :projectIdIn";
+        parameters.put("projectIdIn", Utility.stringToArrayList(strcProjectIdIN.replaceAll("\\(|\\)|'", "")));
       }
 
       // status
       if (StringUtils.isNotEmpty(strfinPaymSt)
           && !StringUtils.equalsIgnoreCase(strfinPaymSt, "('')")) {
-        hsqlScript += " and (pay.status in " + strfinPaymSt;
+        hsqlScript += " and (pay.status in :paymentStatus";
+        parameters.put("paymentStatus", Utility.stringToArrayList(strfinPaymSt.replaceAll("\\(|\\)|'", "")));
         if (strfinPaymSt.contains("RPAP")) {
           hsqlScript+="    or fpsd.paymentDetails is null)";
         } else {
@@ -439,7 +434,8 @@ public class PaymentReportDao {
 
       // payment method
       if (StringUtils.isNotEmpty(strPaymentMethodId)) {
-        hsqlScript += " and coalesce(pay.paymentMethod, invps.finPaymentmethod) = '" + strPaymentMethodId + "'";
+        hsqlScript += " and coalesce(pay.paymentMethod.id, invps.finPaymentmethod.id) = :paymentMethodId";
+        parameters.put("paymentMethodId", strPaymentMethodId);
       }
 
       // financial account
@@ -451,23 +447,26 @@ public class PaymentReportDao {
                    + "          from FIN_Finacc_Transaction trans right "
                    + "            outer join trans.finPayment payment "
                    + "          where payment = pay)"
-                   + "        = '" + strFinancialAccountId + "' "
+                   + "        = :financialAccountId"
                    + "     or ((pay is null and inv.salesTransaction = 'Y'"
-                   + "          and invbp.account.id = '" + strFinancialAccountId + "')"
+                   + "          and invbp.account.id = :financialAccountId)"
                    + "         or (pay is null and inv.salesTransaction = 'N'"
-                   + "             and invbp.pOFinancialAccount.id = '" + strFinancialAccountId + "')"
+                   + "             and invbp.pOFinancialAccount.id = :financialAccountId)"
                    + "        )"
                    + "       )";
+        parameters.put("financialAccountId", strFinancialAccountId);
       }
 
       // currency
       if (StringUtils.isNotEmpty(strcCurrency)) {
-        hsqlScript += " and coalesce(pay.currency, inv.currency) = '" + strcCurrency + "'";
+        hsqlScript += " and coalesce(pay.currency.id, inv.currency.id) = :currencyId";
+        parameters.put("currencyId", strcCurrency);
       }
 
       // strsalesrepId
       if (StringUtils.isNotEmpty(strsalesrepId)) {
-        hsqlScript += " and inv.salesRepresentative = '" + strsalesrepId + "'";
+        hsqlScript += " and inv.salesRepresentative.id = :salesRepId";
+        parameters.put("salesRepId", strsalesrepId);
       }
 
       // payment type
@@ -494,9 +493,7 @@ public class PaymentReportDao {
         int maxRecords = 1000;
         final Session sessionCount = OBDal.getReadOnlyInstance().getSession();
         final Query<Long> queryCount = sessionCount.createQuery("select count(*)" + hsqlScript.toString(), Long.class);
-        for (Entry<String, Object> entry : parameters.entrySet()) {
-          queryCount.setParameter(entry.getKey(), entry.getValue());
-        }
+        queryCount.setProperties(parameters);
         final Long hqlRecordsCount = queryCount.list().get(0);
         if ((int) (long) hqlRecordsCount > maxRecords) {
           String message = "FINPR_TooManyRecords";
@@ -573,10 +570,7 @@ public class PaymentReportDao {
       // @formatter:on
       final Session session = OBDal.getReadOnlyInstance().getSession();
       final Query<Object[]> query = session.createQuery(hsqlScript.toString(), Object[].class);
-
-      for (Entry<String, Object> entry : parameters.entrySet()) {
-        query.setParameter(entry.getKey(), entry.getValue());
-      }
+      query.setProperties(parameters);
 
       scroller = query.scroll(ScrollMode.FORWARD_ONLY);
 
@@ -2054,13 +2048,14 @@ public class PaymentReportDao {
                      + "  FIN_Payment_Schedule ps "
                      + " where pc.payment = pdv.payment "
                      + "  and ps.id = pdv.invoicePaymentPlan "
-                     + "  and pc.creditPaymentUsed.id = '" + credit_payment.getId() + "' ";
+                     + "  and pc.creditPaymentUsed.id = :creditPaymentId";
     // @formatter:on
     try {
       OBContext.setAdminMode(true);
       final Session session = OBDal.getReadOnlyInstance().getSession();
       final Query<FIN_PaymentSchedule> query = session.createQuery(sql.toString(),
           FIN_PaymentSchedule.class);
+      query.setParameter("creditPaymentId", credit_payment.getId());
       return query.list();
     } finally {
       OBContext.restorePreviousMode();
@@ -2076,7 +2071,7 @@ public class PaymentReportDao {
                      + "   FIN_Payment_Schedule ps "
                      + " where pc.payment = pdv.payment "
                      + " and ps.id = pdv.invoicePaymentPlan "
-                     + " and pc.creditPaymentUsed.id = '" + credit_payment.getId() + "' ";
+                     + " and pc.creditPaymentUsed.id = :creditPaymentId";
     // @formatter: on
     
     try {
@@ -2084,6 +2079,7 @@ public class PaymentReportDao {
       final Session session = OBDal.getReadOnlyInstance().getSession();
       final Query<FIN_PaymentSchedule> query = session.createQuery(sql.toString(),
           FIN_PaymentSchedule.class);
+      query.setParameter("creditPaymentId", credit_payment.getId());
       return query.uniqueResult();
     } finally {
       OBContext.restorePreviousMode();
@@ -2111,19 +2107,6 @@ public class PaymentReportDao {
       bp = psd.getPaymentDetails().getFinPayment().getBusinessPartner();
     }
     return bp;
-  }
-
-  private String concatOrganizations(String[] orgs) {
-    String concatOrgs = "";
-    for (int i = 0; i < orgs.length; i++) {
-      concatOrgs = concatOrgs.concat("', '" + orgs[i]);
-    }
-    if (StringUtils.isNotEmpty(concatOrgs)) {
-      concatOrgs = concatOrgs.substring(3);
-      concatOrgs = "(" + concatOrgs + "')";
-    }
-
-    return concatOrgs;
   }
 
   /**
@@ -2180,5 +2163,4 @@ public class PaymentReportDao {
     // @formatter:on
     acctList = OBDal.getReadOnlyInstance().getSession().createQuery(hql.toString()).list();
   }
-
 }
