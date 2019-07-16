@@ -18,21 +18,16 @@
  */
 package org.openbravo.client.kernel;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openbravo.dal.core.OBContext;
 
 /**
  * Uses a component to generate the component output and then postprocesses this output.
  * 
  * @see Component#generate()
- * @see JSLintChecker
  * @see JSCompressor
  * @author mtaal
  */
 public class ComponentGenerator {
-  private static final Logger log = LogManager.getLogger();
-
   private static ComponentGenerator instance = new ComponentGenerator();
 
   public static synchronized ComponentGenerator getInstance() {
@@ -47,15 +42,11 @@ public class ComponentGenerator {
   }
 
   /**
-   * Calls {@link Component#generate()} and optionally compresses the output and optionally checks
-   * the syntax.
+   * Calls {@link Component#generate()} and optionally compresses the output.
    * 
    * Compressing is done if the module of the component ({@link Component#getModule()}) is not in
    * development.
-   * 
-   * Syntax checking is done if the module of the component ({@link Component#getModule()}) is in
-   * development.
-   * 
+   *
    * @param component
    *          the component to generate javascript for
    * @return generated and compressed javascript.
@@ -64,16 +55,6 @@ public class ComponentGenerator {
     OBContext.setAdminMode();
     try {
       final String originalResult = component.generate();
-      if (component.isJavaScriptComponent() && component.isInDevelopment()) {
-        if (originalResult.contains(KernelConstants.JSLINT_DIRECTIVE)) {
-          final String errors = JSLintChecker.getInstance()
-              .check(component.getModule().getName() + "." + component.getId(), originalResult);
-          if (errors != null) {
-            log.error("Error parsing component "
-                + (component.getId() != null ? component.getId() : "") + "\n" + errors);
-          }
-        }
-      }
       final String compressedResult;
       if (component.isJavaScriptComponent() && !component.isInDevelopment()) {
         compressedResult = JSCompressor.getInstance().compress(originalResult);

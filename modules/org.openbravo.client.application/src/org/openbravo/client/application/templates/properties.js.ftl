@@ -19,7 +19,6 @@
 */
 -->
 
-/* jslint */
 OB.Properties = {
 <#list data.properties as prop>
 <#if prop.stringValue>

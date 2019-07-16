@@ -15,10 +15,11 @@
 # * All Rights Reserved.
 # * Contributor(s):  ______________________________________.
 # ************************************************************************
+#
 
 SCRIPT_NAME=$(basename "$0")
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-FIX=false
+WRITE=false
 
 source ${SCRIPT_DIR}/../jsutils/dir-functions
 
@@ -26,15 +27,15 @@ OPENBRAVO_ROOT_PATH=$(getOpenbravoRootPath)
 SCAN_BASE_PATH=$(getJsFilesScanPath)
 
 function usage() {
-  echo -n "Usage: ${SCRIPT_NAME} [-f][-h] [FILE ...]
+  echo -n "Usage: ${SCRIPT_NAME} [-h][-w] [FILE ...]
 
-Utility to pass the Javascript Linter to the given files, or all files from the current directory if none given.
-With no arguments, if executed from Openbravo root directory, linting will be checked for all Core modules first and then
-it will be executed for each module that has a .eslintignore file in its root.
+Utility to pass the Javascript Formatter to the given files, or all files from the current directory if none given.
+With no arguments, if executed from Openbravo root directory, formatting will be checked for all Core modules first and then
+it will be executed for each module that has a .prettierignore file in its root.
 
  Options:
-  -f                Fixes errors/warnings that can automatically be fixed (Adds --fix argument to ESLint)
   -h                Display this help and exit
+  -w                Write mode. Show formatting issues and overwrites the files with the fixes
 
 "
 }
@@ -43,81 +44,75 @@ it will be executed for each module that has a .eslintignore file in its root.
 # Execute the Linter splitting the list of files in chunks of max 250 arguments. This is done because "npm run" argument
 # size limit is much lower than the one in bash commands.
 #
-function lintFiles {
+function formatFiles {
     if [[ -f "./.jsignore" ]]; then
         exit 0
     fi
 
     IGNORE_PATH=""
-    if [[ "$(isCurrentFolderModuleRoot)" == true && -f "./.eslintignore" ]]; then
-        IGNORE_PATH="--ignore-path $(pwd)/.eslintignore"
+    if [[ "$(isCurrentFolderModuleRoot)" == true && -f "./.prettierignore" ]]; then
+        IGNORE_PATH="--ignore-path $(pwd)/.prettierignore"
     fi
 
-    # Since eslint complains when ignoring a file explicitly passed and there's no way to workaround that via CLI,
-    # ignored files are removed using a script
-    FILTERED_FILES=$(node ${SCRIPT_DIR}/filter-eslint-ignored-files.js "$@")
-    if [[ -n "${FILTERED_FILES}" ]]; then
-        echo "${FILTERED_FILES}" | xargs -n 250 npm run jslint -s -- ${FLAGS} ${IGNORE_PATH} || exit 1
-    fi
+    echo "$@" | xargs -n 250 npm run jsformat -s -- ${FLAGS} ${IGNORE_PATH} || exit 1
 }
 
-function getEslintIgnorePatterns {
+function getPrettierIgnorePatterns {
     PATTERNS=""
     for mod in ${@} ; do
-        PATTERNS="${PATTERNS} --ignore-pattern $(basename ${mod})"
+        PATTERNS="${PATTERNS} !"${mod}"/**"
     done
 
     echo "${PATTERNS}"
 }
 
-function lintAllFiles {
+function formatAllFiles {
     if [[ -d ${SCAN_BASE_PATH}/../modules ]]; then
-        echo "Lint check for Core files"
-        MODS_WITH_IGNORE=$(getModulesPathWithIgnoreFile ".eslintignore")
+        echo "Formatter check for Core files"
+        MODS_WITH_IGNORE=$(getModulesPathWithIgnoreFile ".prettierignore")
         MODS_COMPLETELY_IGNORED=$(getModulesPathWithIgnoreFile ".jsignore")
-        IGNORE_PATTERNS=$(getEslintIgnorePatterns "${MODS_WITH_IGNORE}" "${MODS_COMPLETELY_IGNORED}")
+        IGNORE_PATTERNS=$(getPrettierIgnorePatterns "${MODS_WITH_IGNORE}" "${MODS_COMPLETELY_IGNORED}")
 
-        runLinterInCore  ${SCAN_BASE_PATH} "${IGNORE_PATTERNS}" "${FLAGS}"
+        runFormatterInCore "${IGNORE_PATTERNS}" "${FLAGS}"
         for mod in ${MODS_WITH_IGNORE} ; do
-            runLinterInModule  ${mod} "${FLAGS}"
+            runFormatterInModule ${mod} "${FLAGS}"
         done
     elif [[ -d ${SCAN_BASE_PATH}/../../modules ]]; then
-        runLinterInModule ${SCAN_BASE_PATH}
+        runFormatterInModule ${SCAN_BASE_PATH} "${FLAGS}"
     fi
 }
 
-function runLinterInCore {
-    BASE=$1
-    IG_PATTERNS=$2
-    LINTER_FLAGS=$3
-    npm run jslint -s -- ${LINTER_FLAGS} ${IG_PATTERNS} ${BASE}
+function runFormatterInCore {
+    IG_PATTERNS=$1
+    FORMATTER_FLAGS=$2
+    npm run jsformat -s -- ${FORMATTER_FLAGS} "modules/**/*.js" ${IG_PATTERNS}
 }
 
-function runLinterInModule {
+function runFormatterInModule {
     BASE=$1
-    LINTER_FLAGS=$2
+    FORMATTER_FLAGS=$2
     IGNORE_PATH=""
-    if [[ -f "${BASE}/.eslintignore" ]]; then
-        IGNORE_PATH="--ignore-path ${BASE}/.eslintignore"
+    if [[ -f "${BASE}/.prettierignore" ]]; then
+        IGNORE_PATH="--ignore-path ${BASE}/.prettierignore"
     fi
 
     if [[ -f "${BASE}/.jsignore" ]]; then
         exit 0
     fi
 
-    echo "Lint check for module $(basename ${BASE})"
-    npm run jslint -s -- ${LINTER_FLAGS} ${IGNORE_PATH} "${BASE}"
+    echo "Formatter check for module $(basename ${BASE})"
+    npm run jsformat -s -- ${FORMATTER_FLAGS} ${IGNORE_PATH} "${BASE}/**/*.js"
 }
 
 #Parse input arguments
-while getopts ":fh" arg; do
+while getopts ":hw" arg; do
     case ${arg} in
-        f )
-            FIX=true
-        ;;
         h )
             usage
             exit 0
+        ;;
+        w )
+            WRITE=true
         ;;
         \? )
             echo "Invalid option: -$OPTARG" >&2
@@ -131,13 +126,15 @@ shift "$((OPTIND-1))"
 source ${SCRIPT_DIR}/../jsutils/check-npm-deps
 
 FLAGS=""
-if [[ ${FIX} == true ]]; then
-    FLAGS="--fix"
+if [[ ${WRITE} == true ]]; then
+    FLAGS="--write"
+else
+    FLAGS="--check"
 fi
 
 if [[ $# > 0 ]]; then
     files=$(convertPathsToAbsolute $@)
-    lintFiles ${files}
+    formatFiles ${files}
 else
-    lintAllFiles
+    formatAllFiles
 fi

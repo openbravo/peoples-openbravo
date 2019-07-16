@@ -16,7 +16,6 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
-// jslint
 
 // remarks if there is an editor type defined in the simpletype then the validators of the 
 // FormItem itself are not executed anymore.

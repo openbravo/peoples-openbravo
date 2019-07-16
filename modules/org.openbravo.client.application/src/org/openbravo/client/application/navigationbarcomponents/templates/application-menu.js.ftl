@@ -17,7 +17,6 @@
  ************************************************************************
 */
 
-/* jslint */
 
 OB.Application.menu = [
   <#list data.rootMenuOptions as menuOption>

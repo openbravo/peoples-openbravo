@@ -17,8 +17,6 @@
  ************************************************************************
 */
 
-/*jslint*/
-
 (function(w) {
   var d = w.document, ul, li, a;
   ul = d.getElementById('js-files');

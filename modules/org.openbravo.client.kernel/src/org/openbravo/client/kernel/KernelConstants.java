@@ -69,8 +69,6 @@ public class KernelConstants {
   public static final String DOCUMENT_COMPONENT_ID = "DocumentResources";
   public static final String RESOURCE_CONTEXT_URL_PARAMETER = "#{contextUrl}";
 
-  public static final String JSLINT_DIRECTIVE = "jslint";
-
   public static final String CONTEXT_URL = "_contextUrl";
 
   public static final String SERVLET_CONTEXT = "_servletContext";

@@ -11,29 +11,42 @@
 # * under the License.
 # * The Original Code is Openbravo ERP.
 # * The Initial Developer of the Original Code is Openbravo SLU
-# * All portions are Copyright (C) 2016 Openbravo SLU
+# * All portions are Copyright (C) 2019 Openbravo SLU
 # * All Rights Reserved.
 # * Contributor(s):  ______________________________________.
 # ************************************************************************
 
+#
+# Mercurial pretxncommit hook to check linting in js code
+#
 set -e
-replaceparam=$1
 
- echo ""
- echo "***********************************************"
-if [ "$replaceparam" != "replace" ] ; then
- echo "Performing jsbeautify check on all js resources"
-else
- echo "Performing jsbeautify replacement on all js resources"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source ${SCRIPT_DIR}/../jsutils/dir-functions
+
+OPENBRAVO_ROOT_PATH=$(getOpenbravoRootPath 2>/dev/null)
+
+if [[ -z "${OPENBRAVO_ROOT_PATH}" ]]; then
+    exit 0
 fi
- echo "***********************************************"
- echo ""
-files=$(../org.openbravo.client.kernel/jscheck/jsfiles ./)
 
-for changedfile in echo $files;
+IS_A_MODULE=$(isCurrentFolderModuleRoot)
+
+echo "pretxncommit: Performing lint check on modified js resources"
+
+FILES=()
+for i in $(hg log -r $HG_NODE --template '{files}')
 do
-  if [ -f "$changedfile" -a -n "$(echo $changedfile | awk '/.js$/')" ]; then
-  source ../org.openbravo.client.kernel/jsbeautify/jsbeautify-module $changedfile $replaceparam
+  if [[ -f "${i}" ]]; then
+    if [[ "${IS_A_MODULE}" == true && -n "$(echo ${i} | awk '/.js$/')" || \
+          "${IS_A_MODULE}" == false && -n "$(echo ${i} | awk '/.js$/ && ! /^web/')" ]]; then
+        FILES+=("$(pwd)/${i}")
+    fi
   fi
 done
-exit $ERROR
+
+if [[ -n "${FILES[*]}" ]]; then
+    ${OPENBRAVO_ROOT_PATH}/modules/org.openbravo.client.kernel/jslint/jslint ${FILES[*]} || exit 1
+fi
+
+exit 0

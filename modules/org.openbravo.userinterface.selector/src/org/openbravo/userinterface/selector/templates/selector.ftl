@@ -74,7 +74,7 @@
         outHiddenInputPrefix: '${data.outHiddenInputPrefix}'
     </#if>
 <#else>
-/* jslint */
+
 <#list data.hiddenInputs?keys as key>
 document.write('<input type="hidden" value="" id="${key}" name="${key}" />');
 </#list>

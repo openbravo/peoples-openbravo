@@ -56,7 +56,7 @@
         this.Super('init', arguments);
     },
 <#else>
-/* jslint */
+
 sc_${data.columnName} = isc.OBSelectorLinkWidget.create({
     popupTextMatchStyle: '${data.selector.popuptextmatchstyle}',
     suggestionTextMatchStyle: '${data.selector.suggestiontextmatchstyle}',

@@ -19,7 +19,6 @@
 */
 -->
 
-/*jslint*/
 <#if !data.popup>
 OB.Layout.ViewManager.loadedWindowClassName = 'processDefinition${data.windowClientClassName?js_string}';
 </#if>
