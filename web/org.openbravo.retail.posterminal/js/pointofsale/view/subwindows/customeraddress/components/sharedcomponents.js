@@ -203,13 +203,13 @@ enyo.kind({
         var errors = '',
           customerAddr = form.model.get('customerAddr');
         _.each(form.$.customerAddrAttributes.children, function(item) {
-          if (item.newAttribute.mandatory) {
-            var value = customerAddr.get(item.newAttribute.modelProperty);
+          if (item.coreElement.mandatory) {
+            var value = customerAddr.get(item.coreElement.modelProperty);
             if (!value) {
               if (errors) {
                 errors += ', ';
               }
-              errors += OB.I18N.getLabel(item.newAttribute.i18nLabel);
+              errors += OB.I18N.getLabel(item.coreElement.i18nLabel);
             }
           }
         });
@@ -517,7 +517,7 @@ enyo.kind({
             classes:
               'obObposPointOfSaleUiCustomeraddrEditCreatecustomers-customerAddrAttributes-obUiCustomerPropertyLine',
             name: 'line_' + natt.name,
-            newAttribute: natt
+            coreElement: natt
           });
         }
       },

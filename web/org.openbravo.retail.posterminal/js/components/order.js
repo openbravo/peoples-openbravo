@@ -108,7 +108,7 @@ enyo.kind({
         'obUiFormElement_dataEntry obUiFormElement_dataEntry_noicon obUiOrderHeader-buttonComponents-formElementBpbutton',
       kind: 'OB.UI.FormElement',
       name: 'formElementBpbutton',
-      newAttribute: {
+      coreElement: {
         classes:
           'obUiOrderHeader-buttonComponents-formElementBpbutton-bpbutton',
         kind: 'OB.UI.BusinessPartnerSelector',
@@ -126,7 +126,7 @@ enyo.kind({
         'obUiFormElement_dataEntry obUiFormElement_dataEntry_noicon obUiOrderHeader-buttonComponents-formElementBplocbutton',
       kind: 'OB.UI.FormElement',
       name: 'formElementBplocbutton',
-      newAttribute: {
+      coreElement: {
         classes:
           'obUiOrderHeader-buttonComponents-formElementBplocbutton-bplocbutton',
         kind: 'OB.UI.BPLocation',
@@ -141,7 +141,7 @@ enyo.kind({
       kind: 'OB.UI.FormElement',
       name: 'formElementBplocshipbutton',
       showing: false,
-      newAttribute: {
+      coreElement: {
         classes:
           'obUiOrderHeader-buttonComponents-formElementBplocshipbutton-bplocshipbutton',
         kind: 'OB.UI.BPLocationShip',

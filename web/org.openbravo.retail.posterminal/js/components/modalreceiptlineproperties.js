@@ -22,15 +22,15 @@ enyo.kind({
       var att,
         receiptLineDescription,
         receiptLineDescriptionControl,
-        receiptLineDescriptionNewAttribute;
+        receiptLineDescriptionCoreElement;
       for (att in diff) {
         if (diff.hasOwnProperty(att)) {
           this.loadValue(att, diff[att]);
           if (diff[att].owner.$.receiptLineDescription) {
             receiptLineDescription = diff[att].owner.$.receiptLineDescription;
             receiptLineDescriptionControl = diff[att].owner.owner.$.control.id;
-            receiptLineDescriptionNewAttribute =
-              diff[att].owner.owner.$.newAttribute.id;
+            receiptLineDescriptionCoreElement =
+              diff[att].owner.owner.$.coreElement.id;
           }
         }
       }
@@ -42,9 +42,9 @@ enyo.kind({
             'obUiModalReceiptLinesPropertiesImpl-receiptLineDescription-control'
           );
         document
-          .getElementById(receiptLineDescriptionNewAttribute)
+          .getElementById(receiptLineDescriptionCoreElement)
           .classList.add(
-            'obUiModalReceiptLinesPropertiesImpl-receiptLineDescription-newAttribute'
+            'obUiModalReceiptLinesPropertiesImpl-receiptLineDescription-coreElement'
           );
       }, 200);
     }
@@ -150,7 +150,7 @@ enyo.kind({
           name: 'line_' + natt.name,
           classes:
             'obUiModalReceiptLinesProperties-scroller-attributes-obUiPropertyEditLine',
-          newAttribute: natt
+          coreElement: natt
         });
         this.propertycomponents[natt.modelProperty] = editline.coreElement;
         this.propertycomponents[natt.modelProperty].propertiesDialog = this;

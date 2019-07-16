@@ -436,13 +436,13 @@ enyo.kind({
     function checkMandatoryFields(items, customer) {
       var errors = '';
       _.each(items, function(item) {
-        if (item.newAttribute.mandatory) {
-          var value = customer.get(item.newAttribute.modelProperty);
+        if (item.coreElement.mandatory) {
+          var value = customer.get(item.coreElement.modelProperty);
           if (!value) {
             if (errors) {
               errors += ', ';
             }
-            errors += OB.I18N.getLabel(item.newAttribute.i18nLabel);
+            errors += OB.I18N.getLabel(item.coreElement.i18nLabel);
           }
         }
       });
@@ -662,7 +662,7 @@ enyo.kind({
             classes:
               'obObposPointOfSaleUiCustomersEditCreatecustomers-customerOnlyFields-obUiCustomerPropertyLine obUiCustomerPropertyLine_' +
               natt.name,
-            newAttribute: natt
+            coreElement: natt
           },
           {
             owner: me.attributeContainer
@@ -681,7 +681,7 @@ enyo.kind({
             classes:
               'obObposPointOfSaleUiCustomersEditCreatecustomers-shippingAddrFields-obUiCustomerPropertyLine obUiCustomerPropertyLine_' +
               natt.name,
-            newAttribute: natt
+            coreElement: natt
           },
           {
             owner: me.attributeContainer
@@ -700,7 +700,7 @@ enyo.kind({
             classes:
               'obObposPointOfSaleUiCustomersEditCreatecustomers-invoicingAddrFields-obUiCustomerPropertyLine obUiCustomerPropertyLine_' +
               natt.name,
-            newAttribute: natt
+            coreElement: natt
           },
           {
             owner: me.attributeContainer
@@ -805,12 +805,8 @@ enyo.kind({
     for (i = 0; i < form.children.length; i++) {
       if (form.children[i].name === 'line_contactpreferences') {
         var contactpreferences = form.children[i];
-        var smsLabelCheck =
-          contactpreferences.$.newAttribute.$.contactpreferences.$
-            .smsLabelCheck;
-        var emailLabelCheck =
-          contactpreferences.$.newAttribute.$.contactpreferences.$
-            .emailLabelCheck;
+        var smsLabelCheck = contactpreferences.coreElement.$.smsLabelCheck;
+        var emailLabelCheck = contactpreferences.coreElement.$.emailLabelCheck;
         if (this.getChecked()) {
           contactpreferences.show();
         } else {
@@ -832,11 +828,11 @@ enyo.kind({
         var contactpreferences = form.children[i];
         inEvent.customer.set(
           'viasms',
-          contactpreferences.$.newAttribute.$.contactpreferences.$.smsLabelCheck.getChecked()
+          contactpreferences.coreElement.$.smsLabelCheck.getChecked()
         );
         inEvent.customer.set(
           'viaemail',
-          contactpreferences.$.newAttribute.$.contactpreferences.$.emailLabelCheck.getChecked()
+          contactpreferences.coreElement.$.emailLabelCheck.getChecked()
         );
       }
     }
@@ -925,7 +921,7 @@ enyo.kind({
       }
       for (i = 0; i < form.children.length; i++) {
         if (form.children[i].name === 'line_commercialauth') {
-          commertialauth = form.children[i].$.newAttribute.$.commercialauth;
+          commertialauth = form.children[i].coreElement;
           if (commertialauth.getChecked()) {
             if (me.$.smsLabelCheck.getChecked()) {
               me.$.smsLabelCheck.addClass('active');

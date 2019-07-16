@@ -790,7 +790,7 @@ enyo.kind({
           kind: 'OB.UI.PropertyEditLine',
           name: 'line_' + natt.name,
           classes: 'obrdmUiModalReceiptMultiLinesProperties-line',
-          newAttribute: natt
+          coreElement: natt
         });
         this.propertycomponents[natt.modelProperty] = editline.coreElement;
         this.propertycomponents[natt.modelProperty].propertiesDialog = this;

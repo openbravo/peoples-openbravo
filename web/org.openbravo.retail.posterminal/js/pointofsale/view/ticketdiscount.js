@@ -37,7 +37,7 @@ enyo.kind({
           name: 'formElementDiscountsList',
           classes:
             'obUiFormElement_dataEntry obUiFormElement_dataEntry_noicon obObposPointOfSaleUiDiscounts-scroller-formElementDiscountsList',
-          newAttribute: {
+          coreElement: {
             kind: 'OB.UI.DiscountList',
             name: 'discountsList',
             i18nLabel: 'OBPOS_LineDiscount',
@@ -50,7 +50,7 @@ enyo.kind({
           name: 'formElementCheckOverride',
           classes:
             'obUiFormElement_dataEntry obUiFormElement_dataEntry_noicon obObposPointOfSaleUiDiscounts-scroller-formElementCheckOverride',
-          newAttribute: {
+          coreElement: {
             kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnCheckOverride',
             name: 'checkOverride',
             i18nLabel: 'OBPOS_overridePromotions',
@@ -63,7 +63,7 @@ enyo.kind({
           name: 'formElementCheckSelectAll',
           classes:
             'obUiFormElement_dataEntry obUiFormElement_dataEntry_noicon obObposPointOfSaleUiDiscounts-scroller-formElementCheckSelectAll',
-          newAttribute: {
+          coreElement: {
             kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnCheckAll',
             name: 'checkSelectAll',
             i18nLabel: 'OBPOS_applyToAllLines',

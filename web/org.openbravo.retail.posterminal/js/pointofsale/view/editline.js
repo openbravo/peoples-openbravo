@@ -1332,7 +1332,7 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.EditLine.ReturnReason',
   classes:
     'obUiFormElement_dataEntry obUiFormElement_dataEntry_noicon obObposPointOfSaleUiEditLineReturnReasom',
-  newAttribute: {
+  coreElement: {
     kind: 'OB.UI.List',
     i18nLabel: 'OBPOS_ReturnReason',
     classes: 'obObposPointOfSaleUiEditLine-msgedit-returnreason',
