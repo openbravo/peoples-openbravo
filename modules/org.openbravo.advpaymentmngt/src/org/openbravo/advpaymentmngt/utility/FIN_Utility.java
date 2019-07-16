@@ -1294,14 +1294,18 @@ public class FIN_Utility {
         + "select max(p.id) as period "
         + " from FinancialMgmtPeriodControl pc "
         + "   left join pc.period p "
-        + " where p.client = '" + client + "' "
-        + "   and pc.documentCategory = '" + documentType + "' "
+        + " where p.client.id = :clientId"
+        + "   and pc.documentCategory = :documentType"
         + "   and pc.periodStatus = 'O' "
-        + "   and pc.organization = ad_org_getcalendarowner('" + org + "') "
-        + "   and to_date('" + dateAcct + "') >= p.startingDate "
-        + "   and to_date('" + dateAcct + "') < p.endingDate + 1 ";
+        + "   and pc.organization = ad_org_getcalendarowner(:org) "
+        + "   and to_date(:dateAcct) >= p.startingDate "
+        + "   and to_date(:dateAcct) < p.endingDate + 1 ";
     // @formatter:on
     final Query<String> qry = session.createQuery(hql.toString(), String.class);
+    qry.setParameter("clientId", client);
+    qry.setParameter("documentType", documentType);
+    qry.setParameter("dateAcct", dateAcct);
+    qry.setParameter("org", org);
 
     String period = qry.list().get(0);
     return period != null;
@@ -1387,13 +1391,14 @@ public class FIN_Utility {
       final String whereClause = ""
           + " as pd "
           + "   left join pd.fINPaymentScheduleDetailList as psd"
-          + " where pd.finPayment.id = '" + payment.getId() + "'"
+          + " where pd.finPayment.id = :paymentId"
           + " order by psd.invoicePaymentSchedule"
           + "   , coalesce(psd.orderPaymentSchedule"
           + "   , '0')";
       // @formatter:on
       OBQuery<FIN_PaymentDetail> query = OBDal.getInstance()
           .createQuery(FIN_PaymentDetail.class, whereClause.toString());
+      query.setNamedParameter("paymentId", payment.getId());
       query.setFilterOnReadableClients(false);
       query.setFilterOnReadableOrganization(false);
       pdList = query.list();
@@ -1448,11 +1453,11 @@ public class FIN_Utility {
     final String hql = ""
         + "select count(p) "
         + "from FIN_Payment p "
-        + "where p.reversedPayment = '"  + payment.getId() + "' ";
+        + "where p.reversedPayment.id = :paymentId";
     // @formatter:on
 
     final Query<Long> qry = session.createQuery(hql.toString(), Long.class);
-
+    qry.setParameter("paymentId", payment.getId());
     return qry.list().get(0) > Long.parseLong("0");
   }
 
