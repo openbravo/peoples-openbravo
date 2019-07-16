@@ -8954,15 +8954,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   opacity: 1;
 }
 
-.obObposPointOfSaleUiEditLine-msgedit-returnreason {
-  width: 90%;
-  margin-bottom: 2px;
-  margin-left: 2%;
-  height: 30px;
-  background-color: #cccccc;
-  color: #555555;
-  border: 1px solid #cccccc;
-}
+.obObposPointOfSaleUiEditLine-msgedit-returnreason {}
 
 .obObposPointOfSaleUiEditLine-returnreason-renderHeader-enyoOption {
 /* Inherits: [enyo.Option] */
