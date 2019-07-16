@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2018 Openbravo SLU
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -1288,14 +1288,18 @@ public class FIN_Utility {
     hql.append("select max(p.id) as period ");
     hql.append(" from FinancialMgmtPeriodControl pc ");
     hql.append("   left join pc.period p ");
-    hql.append(" where p.client = '").append(client).append("' ");
-    hql.append(" and pc.documentCategory = '").append(documentType).append("' ");
+    hql.append(" where p.client.id = :clientId");
+    hql.append(" and pc.documentCategory = :documentType");
     hql.append(" and pc.periodStatus = 'O' ");
-    hql.append(" and pc.organization = ad_org_getcalendarowner('").append(org).append("') ");
-    hql.append(" and to_date('").append(dateAcct).append("') >= p.startingDate ");
-    hql.append(" and to_date('").append(dateAcct).append("') < p.endingDate + 1 ");
+    hql.append(" and pc.organization = ad_org_getcalendarowner(:org) ");
+    hql.append(" and to_date(:dateAcct) >= p.startingDate ");
+    hql.append(" and to_date(:dateAcct) < p.endingDate + 1 ");
 
     final Query<String> qry = session.createQuery(hql.toString(), String.class);
+    qry.setParameter("clientId", client);
+    qry.setParameter("documentType", documentType);
+    qry.setParameter("dateAcct", dateAcct);
+    qry.setParameter("org", org);
 
     String period = qry.list().get(0);
     return period != null;
@@ -1381,8 +1385,7 @@ public class FIN_Utility {
       whereClause.append(" as pd ");
       whereClause.append(
           " left join pd." + FIN_PaymentDetail.PROPERTY_FINPAYMENTSCHEDULEDETAILLIST + " as psd");
-      whereClause.append(
-          " where pd." + FIN_PaymentDetail.PROPERTY_FINPAYMENT + ".id = '" + payment.getId() + "'");
+      whereClause.append(" where pd." + FIN_PaymentDetail.PROPERTY_FINPAYMENT + ".id = :paymentId");
       whereClause
           .append(" order by psd." + FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
       whereClause.append(
@@ -1390,6 +1393,7 @@ public class FIN_Utility {
 
       OBQuery<FIN_PaymentDetail> query = OBDal.getInstance()
           .createQuery(FIN_PaymentDetail.class, whereClause.toString());
+      query.setNamedParameter("paymentId", payment.getId());
       query.setFilterOnReadableClients(false);
       query.setFilterOnReadableOrganization(false);
       pdList = query.list();
@@ -1445,9 +1449,10 @@ public class FIN_Utility {
     final StringBuilder hql = new StringBuilder();
     hql.append("select count(p) ");
     hql.append(" from FIN_Payment p ");
-    hql.append(" where p.reversedPayment = '").append(payment.getId()).append("' ");
+    hql.append(" where p.reversedPayment.id = :paymentId");
 
     final Query<Long> qry = session.createQuery(hql.toString(), Long.class);
+    qry.setParameter("paymentId", payment.getId());
 
     return qry.list().get(0) > Long.parseLong("0");
   }
