@@ -8385,8 +8385,9 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obObposPointOfSaleUiButtonTabReceipt.obUiButton_disabled {}
 
 .obObposPointOfSaleUiButtonTabReceipt .obUiButton-before {
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconRFIDON.svg');
-  background-size: 17px 18px;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconShoppingCart.svg');
+  background-size: 19px 19px;
+  background-position: calc(50% - 1px) center;
 }
 
 .obObposPointOfSaleUiButtonTabReceipt .obUiButton-after {}

@@ -283,7 +283,7 @@ enyo.kind({
     //      this.$.lbl.show();
     //    }
   },
-  i18nLabel: 'OBMOBC_LblReceipt',
+  i18nLabel: 'OBMOBC_LblCart',
   tabPanel: 'receipt',
   tap: function() {
     if (!this.disabled) {
