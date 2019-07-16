@@ -32,27 +32,33 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
     canGroupBy: false
   },
 
-  initWidget: function () {
+  initWidget: function() {
     var treeWindow = this,
-        okButton, cancelButton, i;
+      okButton,
+      cancelButton,
+      i;
 
     okButton = isc.OBFormButton.create({
       title: OB.I18N.getLabel('OBUISC_Dialog.OK_BUTTON_TITLE'),
-      click: function () {
+      click: function() {
         treeWindow.accept();
       }
     });
     cancelButton = isc.OBFormButton.create({
       title: OB.I18N.getLabel('OBUISC_Dialog.CANCEL_BUTTON_TITLE'),
-      click: function () {
+      click: function() {
         treeWindow.closeClick();
       }
     });
 
-    OB.Utilities.applyDefaultValues(this.treeGridFields, this.defaultTreeGridField);
+    OB.Utilities.applyDefaultValues(
+      this.treeGridFields,
+      this.defaultTreeGridField
+    );
 
     for (i = 0; i < this.treeGridFields.length; i++) {
-      this.treeGridFields[i].canSort = (this.treeGridFields[i].canSort === false ? false : true);
+      this.treeGridFields[i].canSort =
+        this.treeGridFields[i].canSort === false ? false : true;
       if (this.treeGridFields[i].disableFilter) {
         this.treeGridFields[i].canFilter = false;
       } else {
@@ -74,26 +80,41 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
       alternateRecordStyles: true,
       sortField: this.displayField,
 
-      init: function () {
+      init: function() {
         var theGrid;
         OB.Datasource.get(this.dataSourceId, this, null, true);
         if (this.view.paramWindow) {
           // the checkShowFilterFunnelIcon implementation of OBPickAndExecuteGrid requires the contentView to be defined
-          theGrid = this.view.theForm.getField(this.treePopup.filterItem.containerWidget.grid.parentElement.parameterName).canvas.viewGrid;
+          theGrid = this.view.theForm.getField(
+            this.treePopup.filterItem.containerWidget.grid.parentElement
+              .parameterName
+          ).canvas.viewGrid;
           this.contentView = theGrid.contentView;
           this.copyFunctionsFromGrid(theGrid);
         } else {
           this.copyFunctionsFromViewGrid();
         }
         this.Super('init', arguments);
-        this.filterNoRecordsEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridFilterNoResults') + '</span>' + '<span onclick="window[\'' + this.ID + '\'].clearFilter();" class="' + this.emptyMessageLinkStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridClearFilter') + '</span>';
+        this.filterNoRecordsEmptyMessage =
+          '<span class="' +
+          this.emptyMessageStyle +
+          '">' +
+          OB.I18N.getLabel('OBUIAPP_GridFilterNoResults') +
+          '</span>' +
+          '<span onclick="window[\'' +
+          this.ID +
+          '\'].clearFilter();" class="' +
+          this.emptyMessageLinkStyle +
+          '">' +
+          OB.I18N.getLabel('OBUIAPP_GridClearFilter') +
+          '</span>';
       },
 
-      copyFunctionsFromViewGrid: function () {
+      copyFunctionsFromViewGrid: function() {
         this.copyFunctionsFromGrid(this.view.viewGrid);
       },
 
-      copyFunctionsFromGrid: function (grid) {
+      copyFunctionsFromGrid: function(grid) {
         this.filterEditorProperties = grid.filterEditorProperties;
         this.checkShowFilterFunnelIcon = grid.checkShowFilterFunnelIcon;
         this.isGridFiltered = grid.isGridFiltered;
@@ -107,12 +128,14 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
         this.noDataEmptyMessage = grid.noDataEmptyMessage;
       },
 
-      onFetchData: function (criteria, requestProperties) {
+      onFetchData: function(criteria, requestProperties) {
         requestProperties = requestProperties || {};
-        requestProperties.params = this.getFetchRequestParams(requestProperties.params);
+        requestProperties.params = this.getFetchRequestParams(
+          requestProperties.params
+        );
       },
 
-      getFetchRequestParams: function (params) {
+      getFetchRequestParams: function(params) {
         params = params || {};
         if (this.getSelectedRecord()) {
           params._targetRecordId = this.targetRecordId;
@@ -120,20 +143,20 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
         return params;
       },
 
-      dataArrived: function () {
+      dataArrived: function() {
         this.Super('dataArrived', arguments);
       },
 
       fields: this.treeGridFields,
 
-      handleFilterEditorSubmit: function (criteria, context) {
+      handleFilterEditorSubmit: function(criteria, context) {
         this.Super('handleFilterEditorSubmit', [criteria, context]);
       },
 
-      setDataSource: function (ds, fields) {
+      setDataSource: function(ds, fields) {
         var me = this,
-            i;
-        ds.transformRequest = function (dsRequest) {
+          i;
+        ds.transformRequest = function(dsRequest) {
           var target = window[dsRequest.componentId];
           dsRequest.params = dsRequest.params || {};
           dsRequest.params._startRow = 0;
@@ -142,7 +165,7 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
           return this.Super('transformRequest', arguments);
         };
 
-        ds.transformResponse = function (dsResponse, dsRequest, jsonData) {
+        ds.transformResponse = function(dsResponse, dsRequest, jsonData) {
           var i, node;
           if (jsonData.response.error) {
             dsResponse.error = jsonData.response.error;
@@ -160,8 +183,12 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
           return this.Super('transformResponse', arguments);
         };
 
-        ds.handleError = function (response, request) {
-          if (response && response.error && response.error.type === 'tooManyNodes') {
+        ds.handleError = function(response, request) {
+          if (
+            response &&
+            response.error &&
+            response.error.type === 'tooManyNodes'
+          ) {
             isc.warn(OB.I18N.getLabel('OBUIAPP_TooManyNodes'));
           }
         };
@@ -177,30 +204,41 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
       },
 
       // show or hide the filter button
-      filterEditorSubmit: function (criteria) {
+      filterEditorSubmit: function(criteria) {
         this.checkShowFilterFunnelIcon(criteria);
       }
     });
 
-
-    this.items = [isc.VLayout.create({
-      height: this.height,
-      width: this.width,
-      members: [this.treeGrid, isc.LayoutSpacer.create({
-        height: 10
-      }), isc.HLayout.create({
-        styleName: this.buttonBarStyleName,
-        height: 30,
-        defaultLayoutAlign: 'center',
-        members: [isc.LayoutSpacer.create({}), okButton, isc.LayoutSpacer.create({
-          width: 20
-        }), cancelButton, isc.LayoutSpacer.create({})]
-      })]
-    })];
+    this.items = [
+      isc.VLayout.create({
+        height: this.height,
+        width: this.width,
+        members: [
+          this.treeGrid,
+          isc.LayoutSpacer.create({
+            height: 10
+          }),
+          isc.HLayout.create({
+            styleName: this.buttonBarStyleName,
+            height: 30,
+            defaultLayoutAlign: 'center',
+            members: [
+              isc.LayoutSpacer.create({}),
+              okButton,
+              isc.LayoutSpacer.create({
+                width: 20
+              }),
+              cancelButton,
+              isc.LayoutSpacer.create({})
+            ]
+          })
+        ]
+      })
+    ];
     this.Super('initWidget', arguments);
   },
 
-  destroy: function () {
+  destroy: function() {
     var i;
     for (i = 0; i < this.items.length; i++) {
       this.items[i].destroy();
@@ -208,8 +246,7 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
     return this.Super('destroy', arguments);
   },
 
-
-  show: function (refreshGrid) {
+  show: function(refreshGrid) {
     if (refreshGrid) {
       this.treeGrid.invalidateCache();
     }
@@ -217,7 +254,12 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
     if (this.treeGrid.isDrawn()) {
       this.treeGrid.focusInFilterEditor();
     } else {
-      isc.Page.setEvent(isc.EH.IDLE, this.treeGrid, isc.Page.FIRE_ONCE, 'focusInFilterEditor');
+      isc.Page.setEvent(
+        isc.EH.IDLE,
+        this.treeGrid,
+        isc.Page.FIRE_ONCE,
+        'focusInFilterEditor'
+      );
     }
 
     this.treeGrid.checkShowFilterFunnelIcon(this.treeGrid.getCriteria());
@@ -225,39 +267,45 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
     return ret;
   },
 
-  resized: function () {
+  resized: function() {
     this.items[0].setWidth(this.width - 4);
     this.items[0].setHeight(this.height - 40);
     this.items[0].redraw();
     return this.Super('resized', arguments);
   },
 
-  accept: function () {
+  accept: function() {
     if (this.changeCriteriacallback) {
-      this.fireCallback(this.changeCriteriacallback, 'value', [this.getCriteria()]);
+      this.fireCallback(this.changeCriteriacallback, 'value', [
+        this.getCriteria()
+      ]);
     }
     this.hide();
   },
 
-  clearValues: function () {
+  clearValues: function() {
     this.treeGrid.deselectAllRecords();
   },
 
-  getCriteria: function () {
+  getCriteria: function() {
     var selection = this.treeGrid.getSelection(),
-        criteria = {},
-        i, len = selection.length,
-        fieldName = this.fieldName + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER;
+      criteria = {},
+      i,
+      len = selection.length,
+      fieldName =
+        this.fieldName + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER;
     if (len === 0) {
       return {};
     } else if (len === 1) {
       criteria._constructor = 'AdvancedCriteria';
       criteria.operator = 'and';
-      criteria.criteria = [{
-        fieldName: fieldName,
-        operator: 'equals',
-        value: selection[0][OB.Constants.IDENTIFIER]
-      }];
+      criteria.criteria = [
+        {
+          fieldName: fieldName,
+          operator: 'equals',
+          value: selection[0][OB.Constants.IDENTIFIER]
+        }
+      ];
     } else {
       criteria._constructor = 'AdvancedCriteria';
       criteria._OrExpression = true;
@@ -274,7 +322,6 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
     }
     return criteria;
   }
-
 });
 
 isc.ClassFactory.defineClass('OBTreeFilterItem', isc.OBTextItem);
@@ -293,14 +340,14 @@ isc.OBTreeFilterItem.addProperties({
     showFocused: false,
     showFocusedWithItem: false,
     hspace: 0,
-    click: function (form, item, icon) {
+    click: function(form, item, icon) {
       if (!item.disabled) {
         item.showDialog();
       }
     }
   },
 
-  filterDialogCallback: function (criterion) {
+  filterDialogCallback: function(criterion) {
     this.updateCriterion(criterion);
     this.lastValueFromPopup = this.getValue();
     this.form.grid.performAction();
@@ -308,7 +355,7 @@ isc.OBTreeFilterItem.addProperties({
 
   //This function updates the criterion of the tree filter, deletes the old
   //criterion and adds the new criterion.
-  updateCriterion: function (criterion) {
+  updateCriterion: function(criterion) {
     if (!criterion.criteria) {
       this.setValue(null);
     } else {
@@ -316,16 +363,25 @@ isc.OBTreeFilterItem.addProperties({
     }
   },
 
-  init: function () {
+  init: function() {
     var field, treeGridFields, treeReferenceId, dataSourceId, view;
     this.pickerIconSrc = OB.Styles.OBFormField.DefaultSearch.pickerIconSrc;
     this.Super('init', arguments);
     field = this.grid.getField(this.name);
     this.criteriaField = field.displayField;
     if (this.selectorWindow) {
-      treeGridFields = this.selectorWindow.selectorGridFields.find('name', this.name).treeGridFields;
-      treeReferenceId = this.selectorWindow.selectorGridFields.find('name', this.name).treeReferenceId;
-      dataSourceId = this.selectorWindow.selectorGridFields.find('name', this.name).dataSourceId;
+      treeGridFields = this.selectorWindow.selectorGridFields.find(
+        'name',
+        this.name
+      ).treeGridFields;
+      treeReferenceId = this.selectorWindow.selectorGridFields.find(
+        'name',
+        this.name
+      ).treeReferenceId;
+      dataSourceId = this.selectorWindow.selectorGridFields.find(
+        'name',
+        this.name
+      ).dataSourceId;
       view = this.selectorWindow.selectorGrid.selector.form.view;
     } else {
       treeGridFields = field.editorProperties.treeGridFields;
@@ -333,27 +389,30 @@ isc.OBTreeFilterItem.addProperties({
       dataSourceId = field.editorProperties.dataSourceId;
       view = this.grid.parentElement.view;
     }
-    this.addAutoChild('filterDialog', {
-      title: this.title,
-      filterItem: this,
-      treeGridFields: treeGridFields,
-      treeReferenceId: treeReferenceId,
-      dataSourceId: dataSourceId,
-      fieldName: field.name,
-      view: view,
-      changeCriteriacallback: this.getID() + '.filterDialogCallback(value)'
-    }, 'isc.OBTreeItemPopupFilterWindow');
+    this.addAutoChild(
+      'filterDialog',
+      {
+        title: this.title,
+        filterItem: this,
+        treeGridFields: treeGridFields,
+        treeReferenceId: treeReferenceId,
+        dataSourceId: dataSourceId,
+        fieldName: field.name,
+        view: view,
+        changeCriteriacallback: this.getID() + '.filterDialogCallback(value)'
+      },
+      'isc.OBTreeItemPopupFilterWindow'
+    );
   },
 
-  destroy: function () {
+  destroy: function() {
     if (this.filterDialog) {
       this.filterDialog.destroy();
     }
     return this.Super('destroy', arguments);
   },
 
-
-  showDialog: function () {
+  showDialog: function() {
     var hasChanged = false;
     if (this.lastValueFromPopup !== this.getValue()) {
       hasChanged = true;

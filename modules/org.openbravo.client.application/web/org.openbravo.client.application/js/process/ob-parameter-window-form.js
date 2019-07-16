@@ -31,14 +31,14 @@ isc.OBParameterWindowForm.addProperties({
   numCols: 4,
   showErrorIcons: false,
   colWidths: ['*', '*', '*', '*'],
-  itemChanged: function (item, newValue) {
+  itemChanged: function(item, newValue) {
     this.paramWindow.handleReadOnlyLogic();
     this.paramWindow.handleButtonsStatus();
   },
 
-  setItems: function (itemList) {
-    itemList.forEach(function (item) {
-      item.setValueProgrammatically = function (value) {
+  setItems: function(itemList) {
+    itemList.forEach(function(item) {
+      item.setValueProgrammatically = function(value) {
         if (this.setDateParameterValue) {
           this.setDateParameterValue(value);
         } else if (this.setValue) {
@@ -54,15 +54,25 @@ isc.OBParameterWindowForm.addProperties({
 
   // this function is invoked on the blur action of the formitems
   // this is the proper place to execute the client-side callouts
-  handleItemChange: function (item) {
-    var dynamicColumns, affectedParams, i, field, me = this,
-        registryId;
+  handleItemChange: function(item) {
+    var dynamicColumns,
+      affectedParams,
+      i,
+      field,
+      me = this,
+      registryId;
 
     registryId = this.paramWindow.viewId || this.paramWindow.processId;
 
     // Execute onChangeFunctions if they exist
     if (OB.OnChangeRegistry.hasOnChange(registryId, item)) {
-      OB.OnChangeRegistry.call(registryId, item, this.paramWindow, this, this.paramWindow.viewGrid);
+      OB.OnChangeRegistry.call(
+        registryId,
+        item,
+        this.paramWindow,
+        this,
+        this.paramWindow.viewGrid
+      );
     }
     // Check validation rules (subordinated fields), when value of a
     // parent field is changed, all its subordinated are reset
@@ -84,13 +94,13 @@ isc.OBParameterWindowForm.addProperties({
     // - the availability of the process definition buttons must be updated after the form redrawal
     // - at this point the form cannot be directly redrawn because otherwise the focus does not behave properly, that's why markForRedraw is used
     // - there is no way to assign a callback to the markForRedraw function
-    setTimeout(function () {
+    setTimeout(function() {
       me.paramWindow.handleButtonsStatus();
     }, 200);
     item._hasChanged = false;
   },
 
-  setFieldSections: function () {
+  setFieldSections: function() {
     var i, item, length;
 
     length = this.getItems().length;

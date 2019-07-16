@@ -18,4 +18,5 @@
  */
 // Empty file, included for backward compatibility
 /* exported isomorphicDir */
-var isomorphicDir = '../web/org.openbravo.userinterface.smartclient/isomorphic/';
+var isomorphicDir =
+  '../web/org.openbravo.userinterface.smartclient/isomorphic/';

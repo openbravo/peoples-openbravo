@@ -19,36 +19,64 @@
 
 OB.Costing = OB.Costing || {};
 
-OB.Costing.MatchFromInvoiceAmtValidation = function (item, validator, value, record) {
+OB.Costing.MatchFromInvoiceAmtValidation = function(
+  item,
+  validator,
+  value,
+  record
+) {
   var selectedRecords = item.grid.getSelectedRecords(),
-      selectedRecordsLength = selectedRecords.length,
-      context = item.grid.view.parentWindow.activeView.getContextInfo(false, false, false, true),
-      matchedamt = BigDecimal.prototype.ZERO,
-      editedRecord, i, invoiceamt;
+    selectedRecordsLength = selectedRecords.length,
+    context = item.grid.view.parentWindow.activeView.getContextInfo(
+      false,
+      false,
+      false,
+      true
+    ),
+    matchedamt = BigDecimal.prototype.ZERO,
+    editedRecord,
+    i,
+    invoiceamt;
 
   invoiceamt = new BigDecimal(String(context['@InvoiceLine.lineNetAmount@']));
   if (!isc.isA.Number(value)) {
-    item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_NotValidNumber'));
+    item.grid.view.messageBar.setMessage(
+      isc.OBMessageBar.TYPE_ERROR,
+      null,
+      OB.I18N.getLabel('APRM_NotValidNumber')
+    );
     return false;
   }
   // Check that matched amount is not higher than invoice line net amount
   for (i = 0; i < selectedRecordsLength; i++) {
-    editedRecord = isc.addProperties({}, selectedRecords[i], item.grid.getEditedRecord(selectedRecords[i]));
+    editedRecord = isc.addProperties(
+      {},
+      selectedRecords[i],
+      item.grid.getEditedRecord(selectedRecords[i])
+    );
     if (editedRecord.matchedAmt) {
-      matchedamt = matchedamt.add(new BigDecimal(String(editedRecord.matchedAmt)));
+      matchedamt = matchedamt.add(
+        new BigDecimal(String(editedRecord.matchedAmt))
+      );
     }
   }
   if (matchedamt.compareTo(invoiceamt) > 0) {
-    item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_Costing_MachedMoreThanInvoice', [invoiceamt.toString()]));
+    item.grid.view.messageBar.setMessage(
+      isc.OBMessageBar.TYPE_ERROR,
+      null,
+      OB.I18N.getLabel('OBUIAPP_Costing_MachedMoreThanInvoice', [
+        invoiceamt.toString()
+      ])
+    );
     return false;
   }
 
   return true;
 };
 
-OB.Costing.MatchFromInvoiceAmtSelectionChange = function (grid, record, state) {
+OB.Costing.MatchFromInvoiceAmtSelectionChange = function(grid, record, state) {
   if (!state && record.matched) {
-    // do not allow to deselect matched records. 
+    // do not allow to deselect matched records.
     grid.selectRecord(record);
   }
 };

@@ -17,7 +17,6 @@
  ************************************************************************
  */
 
-
 // == OBTextItem ==
 // Input for normal strings
 isc.ClassFactory.defineClass('OBTextItem', isc.TextItem);
@@ -29,8 +28,7 @@ isc.OBTextItem.addProperties({
 
   validateAgainstMask: true,
 
-  init: function () {
-
+  init: function() {
     if (this.mask && this.validateAgainstMask) {
       this.resetMaskValidator(true);
     }
@@ -38,14 +36,16 @@ isc.OBTextItem.addProperties({
     this.Super('init', arguments);
   },
 
-  resetMaskValidator: function (createNew) {
+  resetMaskValidator: function(createNew) {
     var gridField;
     if (this.maskValidator && this.validators) {
       this.validators.remove(this.maskValidator);
       delete this.maskValidator;
     }
     if (createNew && this.mask && this.validateAgainstMask) {
-      this.maskValidator = isc.clone(isc.Validator.getValidatorDefinition('mask'));
+      this.maskValidator = isc.clone(
+        isc.Validator.getValidatorDefinition('mask')
+      );
       this.maskValidator.mask = this.createRegExpFromMask(this.mask);
       this.validators = this.validators || [];
       this.validators.push(this.maskValidator);
@@ -59,9 +59,11 @@ isc.OBTextItem.addProperties({
     }
   },
 
-  createRegExpFromMask: function (mask) {
-    var split, i, regexp = '',
-        escaped = false;
+  createRegExpFromMask: function(mask) {
+    var split,
+      i,
+      regexp = '',
+      escaped = false;
     if (!mask) {
       return null;
     }
@@ -105,7 +107,7 @@ isc.OBTextItem.addProperties({
     return regexp;
   },
 
-  itemHoverHTML: function (item, form) {
+  itemHoverHTML: function(item, form) {
     if (this.isDisabled()) {
       return this.getValue();
     } else if (this.mask) {
@@ -113,11 +115,10 @@ isc.OBTextItem.addProperties({
     }
   },
 
-  setMask: function (mask) {
+  setMask: function(mask) {
     this.Super('setMask', arguments);
     this.resetMaskValidator(mask);
   }
-
 });
 
 isc.ClassFactory.defineClass('OBTextFilterItem', isc.OBTextItem);
@@ -128,9 +129,14 @@ isc.OBTextFilterItem.addProperties({
   // In P&E grids, on blur will be overridden to ensure correct record selection having filter on change disabled
   canOverrideOnBlur: true,
 
-  init: function () {
+  init: function() {
     var field = this.grid.getField(this.name);
-    if (field && field.gridProps && field.gridProps.filterEditorProperties && field.gridProps.filterEditorProperties.filterOnChange === false) {
+    if (
+      field &&
+      field.gridProps &&
+      field.gridProps.filterEditorProperties &&
+      field.gridProps.filterEditorProperties.filterOnChange === false
+    ) {
       this.actOnKeypress = false;
       // Explicitly sets the filterOnKeypress property of the field.
       // This prevents the restoring of this.actOnKeypress to true when it should remain false.
@@ -140,7 +146,7 @@ isc.OBTextFilterItem.addProperties({
     this.Super('init', arguments);
   },
 
-  blur: function () {
+  blur: function() {
     if (this.actOnKeypress === false) {
       this.form.grid.performAction();
     }
@@ -148,7 +154,7 @@ isc.OBTextFilterItem.addProperties({
   },
 
   // solve a small bug in the value expressions
-  buildValueExpressions: function () {
+  buildValueExpressions: function() {
     var ret = this.Super('buildValueExpressions', arguments);
     if (isc.isA.String(ret) && ret.contains('undefined')) {
       return ret.replace('undefined', '');
@@ -158,8 +164,13 @@ isc.OBTextFilterItem.addProperties({
 
   // Solve a small bug on iBetweenInclusive criteria
   // See issue https://issues.openbravo.com/view.php?id=26504
-  setCriterion: function (criterion) {
-    if (criterion && (criterion.operator === 'iBetweenInclusive' || criterion.operator === 'betweenInclusive') && criterion.end.indexOf('ZZZZZZZZZZ') !== -1) {
+  setCriterion: function(criterion) {
+    if (
+      criterion &&
+      (criterion.operator === 'iBetweenInclusive' ||
+        criterion.operator === 'betweenInclusive') &&
+      criterion.end.indexOf('ZZZZZZZZZZ') !== -1
+    ) {
       criterion.end = criterion.end.substring(0, criterion.end.length - 10);
     }
     this.Super('setCriterion', arguments);

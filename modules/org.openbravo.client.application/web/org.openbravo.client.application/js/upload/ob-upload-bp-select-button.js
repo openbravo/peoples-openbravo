@@ -17,33 +17,52 @@
  ************************************************************************
  */
 
-(function () {
-
+(function() {
   // Button in bp set window itself
-  var BPSetButtonProps = isc.addProperties({}, isc.OBUploadView.UPLOAD_BUTTON_PROPERTIES, {
-    actionUrl: './ApplicationDataUpload/ImportBPSet',
-    inChildTab: false,
-    title: OB.I18N.getLabel('OBUIAPP_ImportBPInBPSet'),
-    prompt: OB.I18N.getLabel('OBUIAPP_ImportBPInBPSetPrompt'),
-    buttonType: 'ob-upload-import-bp-in-bp-set',
+  var BPSetButtonProps = isc.addProperties(
+    {},
+    isc.OBUploadView.UPLOAD_BUTTON_PROPERTIES,
+    {
+      actionUrl: './ApplicationDataUpload/ImportBPSet',
+      inChildTab: false,
+      title: OB.I18N.getLabel('OBUIAPP_ImportBPInBPSet'),
+      prompt: OB.I18N.getLabel('OBUIAPP_ImportBPInBPSetPrompt'),
+      buttonType: 'ob-upload-import-bp-in-bp-set',
 
-    getPopupType: function () {
-      return isc.OBUploadBPView;
+      getPopupType: function() {
+        return isc.OBUploadBPView;
+      }
     }
-  });
-  OB.ToolbarRegistry.registerButton(BPSetButtonProps.buttonType, isc.OBToolbarIconButton, BPSetButtonProps, 500, 'BF972A02844E43AFAD23F3B25338E970');
+  );
+  OB.ToolbarRegistry.registerButton(
+    BPSetButtonProps.buttonType,
+    isc.OBToolbarIconButton,
+    BPSetButtonProps,
+    500,
+    'BF972A02844E43AFAD23F3B25338E970'
+  );
 
   // BP set line button
-  var BPSetLineButtonProps = isc.addProperties({}, isc.OBUploadView.UPLOAD_BUTTON_PROPERTIES, {
-    actionUrl: './ApplicationDataUpload/ImportBPSet',
-    inChildTab: true,
-    popupTitle: OB.I18N.getLabel('OBUIAPP_ImportBPInBPSet'),
-    prompt: OB.I18N.getLabel('OBUIAPP_ImportBPInBPSetPrompt'),
-    buttonType: 'ob-upload-import-bp-in-bp-set-line',
+  var BPSetLineButtonProps = isc.addProperties(
+    {},
+    isc.OBUploadView.UPLOAD_BUTTON_PROPERTIES,
+    {
+      actionUrl: './ApplicationDataUpload/ImportBPSet',
+      inChildTab: true,
+      popupTitle: OB.I18N.getLabel('OBUIAPP_ImportBPInBPSet'),
+      prompt: OB.I18N.getLabel('OBUIAPP_ImportBPInBPSetPrompt'),
+      buttonType: 'ob-upload-import-bp-in-bp-set-line',
 
-    getPopupType: function () {
-      return isc.OBUploadBPView;
+      getPopupType: function() {
+        return isc.OBUploadBPView;
+      }
     }
-  });
-  OB.ToolbarRegistry.registerButton(BPSetLineButtonProps.buttonType, isc.OBToolbarIconButton, BPSetLineButtonProps, 510, '7D7E6951FF4945AE9CC556C36E680DBA');
-}());
+  );
+  OB.ToolbarRegistry.registerButton(
+    BPSetLineButtonProps.buttonType,
+    isc.OBToolbarIconButton,
+    BPSetLineButtonProps,
+    510,
+    '7D7E6951FF4945AE9CC556C36E680DBA'
+  );
+})();

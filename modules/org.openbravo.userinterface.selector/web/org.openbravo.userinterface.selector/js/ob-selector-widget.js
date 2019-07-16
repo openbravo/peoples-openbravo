@@ -25,8 +25,8 @@
 // 2) a popup window showing a search grid with data
 //
 // The widget is a compound widget extending the DynamicForm. A number
-// of default values are set in the widget for example the width and 
-// the columns in the picklist etc. 
+// of default values are set in the widget for example the width and
+// the columns in the picklist etc.
 isc.ClassFactory.defineClass('OBSelectorWidget', isc.DynamicForm);
 
 // Three class definitions just for generic styling purposes
@@ -50,17 +50,20 @@ if (!isc.OBClassicIButton) {
 // componentprovider.
 if (!isc.Page.isRTL()) {
   isc.OBSelectorWidget.addClassProperties({
-    fieldPickerIconSrc: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/selector/selectorBtn.png'
+    fieldPickerIconSrc:
+      OB.Styles.skinsPath +
+      '250to300Comp/org.openbravo.userinterface.selector/selector/selectorBtn.png'
   });
 } else {
   isc.OBSelectorWidget.addClassProperties({
-    fieldPickerIconSrc: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/selector/selectorBtn-RTL.png'
+    fieldPickerIconSrc:
+      OB.Styles.skinsPath +
+      '250to300Comp/org.openbravo.userinterface.selector/selector/selectorBtn-RTL.png'
   });
 }
 
 isc.OBSelectorWidget.addClassProperties({
   styling: {
-
     // ** {{{ selectorFieldTextBoxStyle }}} **
     // Selector input css classname
     selectorFieldTextBoxStyle: 'selectItemText',
@@ -72,7 +75,9 @@ isc.OBSelectorWidget.addClassProperties({
 
     // ** {{{ filterEditorIcon properties }}} **
     // filterEditorIcon is shown in the popup grid next to each field.
-    filterEditorClearIconSrc: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/selector/filterClear.png',
+    filterEditorClearIconSrc:
+      OB.Styles.skinsPath +
+      '250to300Comp/org.openbravo.userinterface.selector/selector/filterClear.png',
     filterEditorClearIconWidth: 15,
     filterEditorClearIconHeight: 15,
     filterEditorClearIconHSpace: 0,
@@ -96,7 +101,9 @@ isc.OBSelectorWidget.addClassProperties({
     modalPopupRelativeHeight: '85%',
 
     // modal popup top left icon
-    modalPopupHeaderIconSrc: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/btn/icons/iconSearch.png',
+    modalPopupHeaderIconSrc:
+      OB.Styles.skinsPath +
+      '250to300Comp/org.openbravo.userinterface.selector/btn/icons/iconSearch.png',
     modalPopupHeaderIconWidth: 16,
     modalPopupHeaderIconHeight: 16,
 
@@ -107,12 +114,16 @@ isc.OBSelectorWidget.addClassProperties({
     modalPopupButtonSeparatorWidth: 20,
 
     // modal popup bottom Ok button
-    modalPopupOkButtonSrc: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/btn/icons/iconOk.png',
+    modalPopupOkButtonSrc:
+      OB.Styles.skinsPath +
+      '250to300Comp/org.openbravo.userinterface.selector/btn/icons/iconOk.png',
     modalPopupOkButtonAlign: 'center',
     modalPopupOkButtonWidth: 115,
 
     // modal popup bottom Cancel button
-    modalPopupCancelButtonSrc: OB.Styles.skinsPath + '250to300Comp/org.openbravo.userinterface.selector/btn/icons/iconCancel.png',
+    modalPopupCancelButtonSrc:
+      OB.Styles.skinsPath +
+      '250to300Comp/org.openbravo.userinterface.selector/btn/icons/iconCancel.png',
     modalPopupCancelButtonAlign: 'center',
     modalPopupCancelButtonWidth: 115,
 
@@ -151,14 +162,14 @@ isc.OBSelectorWidget.addProperties({
 
   // ** {{{ enableSelector }}} **
   // call to enable the selector
-  enableSelector: function () {
+  enableSelector: function() {
     this.disabled = false;
     this.selectorField.setDisabled(false);
   },
 
   // ** {{{ disableSelector }}} **
   // call to disable the selector
-  disableSelector: function () {
+  disableSelector: function() {
     this.selectorField.setDisabled(true);
     this.disabled = true;
   },
@@ -169,7 +180,7 @@ isc.OBSelectorWidget.addProperties({
 
   // ** {{{ callOut }}} **
   // set to define a callout function to be called
-  callOut: function (name) {
+  callOut: function(name) {
     alert(name);
   },
 
@@ -182,9 +193,11 @@ isc.OBSelectorWidget.addProperties({
 
   // ** {{{ pickListFields }}} **
   // The pick list columns shown, as a default is only the identifier
-  pickListFields: [{
-    name: OB.Constants.IDENTIFIER
-  }],
+  pickListFields: [
+    {
+      name: OB.Constants.IDENTIFIER
+    }
+  ],
 
   // ** {{{ whereClause }}} **
   // The HQL where clause.
@@ -229,10 +242,12 @@ isc.OBSelectorWidget.addProperties({
 
   // ** {{{ selectorGridFields }}} **
   // the definition of the columns in the popup window
-  selectorGridFields: [{
-    title: OB.I18N.getLabel('OBUISC_Identifier'),
-    name: OB.Constants.IDENTIFIER
-  }],
+  selectorGridFields: [
+    {
+      title: OB.I18N.getLabel('OBUISC_Identifier'),
+      name: OB.Constants.IDENTIFIER
+    }
+  ],
 
   // ** {{{ Standard form properties }}} **
   writeFormTag: false,
@@ -249,9 +264,9 @@ isc.OBSelectorWidget.addProperties({
   // ** {{{ setSelectorValueFromGrid }}} **
   // called when a value is selected in the grid
   // sets the combo and the openbravo field
-  setSelectorValueFromGrid: function () {
+  setSelectorValueFromGrid: function() {
     var selected = this.selector.selectorGrid.getSelectedRecord(),
-        newValue;
+      newValue;
     if (selected) {
       newValue = selected[this.selector.valueField];
       this.selector.openbravoField.value = newValue;
@@ -262,7 +277,8 @@ isc.OBSelectorWidget.addProperties({
       if (!this.selector.selectorField.valueMap) {
         this.selector.selectorField.valueMap = {};
       }
-      this.selector.selectorField.valueMap[newValue] = selected[this.selector.displayField];
+      this.selector.selectorField.valueMap[newValue] =
+        selected[this.selector.displayField];
       this.selector.selectorField.updateValueMap();
     } else {
       this.selector.openbravoField.value = '';
@@ -279,7 +295,7 @@ isc.OBSelectorWidget.addProperties({
   // ** {{{ setSelectorValueFromField }}} **
   // called when a value is selected in the combo
   // sets the selected value in the openbravo field
-  setSelectorValueFromField: function (form, item, value) {
+  setSelectorValueFromField: function(form, item, value) {
     if (item.selector.pickListShowing) {
       return;
     }
@@ -287,7 +303,9 @@ isc.OBSelectorWidget.addProperties({
     var selected = item.selector.selectorField.getSelectedRecord();
 
     if (selected) {
-      item.selector.openbravoField.value = item.selector.selectorField.getSelectedRecord()[item.selector.valueField];
+      item.selector.openbravoField.value = item.selector.selectorField.getSelectedRecord()[
+        item.selector.valueField
+      ];
     } else {
       item.selector.openbravoField.value = '';
     }
@@ -306,7 +324,7 @@ isc.OBSelectorWidget.addProperties({
   // This is the place to hook an specific functionality.
   // The parameter passed is a JavaScript object containing all the
   // id/value plus all fields defined as 'Out field'
-  onValueChanged: function (selected) {
+  onValueChanged: function(selected) {
     return;
   },
 
@@ -314,9 +332,10 @@ isc.OBSelectorWidget.addProperties({
   // calls different Openbravo utils.js methods
   // to control overall form state. Is called when the value
   // changes. Executes onValueChanged function.
-  openbravoChanged: function (selected) {
+  openbravoChanged: function(selected) {
     var selectedObj = {},
-        i, hiddenInput;
+      i,
+      hiddenInput;
 
     function changeField(field, value) {
       var inputId;
@@ -355,7 +374,9 @@ isc.OBSelectorWidget.addProperties({
           }
 
           if (this.outFields[i].suffix) {
-            hiddenInput = this.outHiddenInputs[this.outHiddenInputPrefix + this.outFields[i].suffix];
+            hiddenInput = this.outHiddenInputs[
+              this.outHiddenInputPrefix + this.outFields[i].suffix
+            ];
             if (hiddenInput) {
               hiddenInput.value = selected[i] ? selected[i] : '';
             }
@@ -366,7 +387,10 @@ isc.OBSelectorWidget.addProperties({
       }
     }
 
-    if (document.getElementById('linkButtonEdition') && typeof setWindowEditing === 'function') {
+    if (
+      document.getElementById('linkButtonEdition') &&
+      typeof setWindowEditing === 'function'
+    ) {
       setWindowEditing(true);
     }
 
@@ -387,7 +411,8 @@ isc.OBSelectorWidget.addProperties({
     }
 
     // revalidate after blurring or when the value has been set
-    var valueSet = this.openbravoField.value !== null && this.openbravoField.value !== '';
+    var valueSet =
+      this.openbravoField.value !== null && this.openbravoField.value !== '';
     // reset any warnings
     if (valueSet) {
       this.checkDefaultValidations();
@@ -396,16 +421,18 @@ isc.OBSelectorWidget.addProperties({
     this.onValueChanged(selectedObj);
   },
 
-  fetchDefaultsCallback: function (rpcResponse, data, rpcRequest) {
-
+  fetchDefaultsCallback: function(rpcResponse, data, rpcRequest) {
     if (data) {
       this.defaultFilter = {}; // Reset filter
       isc.addProperties(this.defaultFilter, data);
     }
 
-    if (this.selectorField.getDisplayValue()) { // Prevents overriding a default
+    if (this.selectorField.getDisplayValue()) {
+      // Prevents overriding a default
       // value with empty
-      this.defaultFilter[this.defaultPopupFilterField] = this.selectorField.getDisplayValue();
+      this.defaultFilter[
+        this.defaultPopupFilterField
+      ] = this.selectorField.getDisplayValue();
     }
 
     // adds the selector id to filter used to get filter information
@@ -416,7 +443,10 @@ isc.OBSelectorWidget.addProperties({
     //Adding dynamic generated filter Expression to whereClause. Refer Issue https://issues.openbravo.com/view.php?id=21541
     if (data.filterExpression) {
       if (this.selectorGrid.selector.whereClause) {
-        this.selectorGrid.selector.whereClause = this.selectorGrid.selector.whereClause + " and " + data.filterExpression;
+        this.selectorGrid.selector.whereClause =
+          this.selectorGrid.selector.whereClause +
+          ' and ' +
+          data.filterExpression;
       } else {
         this.selectorGrid.selector.whereClause = data.filterExpression;
       }
@@ -434,8 +464,9 @@ isc.OBSelectorWidget.addProperties({
     this.selectorGrid.focusInFilterEditor();
 
     if (this.openbravoField.value !== '') {
-      this.selectorGrid.selectSingleRecord(this.selectorGrid.data.find(
-      this.valueField, this.openbravoField.value));
+      this.selectorGrid.selectSingleRecord(
+        this.selectorGrid.data.find(this.valueField, this.openbravoField.value)
+      );
     } else {
       this.selectorGrid.selectSingleRecord(null);
     }
@@ -444,28 +475,43 @@ isc.OBSelectorWidget.addProperties({
   // ** {{{ openSelectorWindow }}} **
   // open the popup window and make sure that it has the correct
   // filter set
-  openSelectorWindow: function (form, field, icon) {
+  openSelectorWindow: function(form, field, icon) {
     var data = {
-      '_selectorDefinitionId': this.selectorDefinitionId
+      _selectorDefinitionId: this.selectorDefinitionId
     };
     OB.Utilities.addFormInputsToCriteria(data);
-    OB.RemoteCallManager.call('org.openbravo.userinterface.selector.SelectorDefaultFilterActionHandler', data, data, this.ID + '.fetchDefaultsCallback(rpcResponse, data, rpcRequest)');
+    OB.RemoteCallManager.call(
+      'org.openbravo.userinterface.selector.SelectorDefaultFilterActionHandler',
+      data,
+      data,
+      this.ID + '.fetchDefaultsCallback(rpcResponse, data, rpcRequest)'
+    );
   },
 
   // ** {{{ checkDefaultValidations }}} **
   // checks mandatory constraint
-  checkDefaultValidations: function (form, item) {
-    var missingSpan = document.getElementById(this.openbravoField.id + 'missingSpan');
-    var invalidSpan = document.getElementById(this.openbravoField.id + 'invalidSpan');
+  checkDefaultValidations: function(form, item) {
+    var missingSpan = document.getElementById(
+      this.openbravoField.id + 'missingSpan'
+    );
+    var invalidSpan = document.getElementById(
+      this.openbravoField.id + 'invalidSpan'
+    );
     if (!invalidSpan || (!missingSpan && this.required)) {
       return;
     }
-    if (this.selectorField.getDisplayValue().length > 0 && (this.openbravoField.value === null || this.openbravoField.value === '')) {
+    if (
+      this.selectorField.getDisplayValue().length > 0 &&
+      (this.openbravoField.value === null || this.openbravoField.value === '')
+    ) {
       if (missingSpan) {
         missingSpan.style.display = 'none';
       }
       invalidSpan.style.display = '';
-    } else if (this.required && (this.openbravoField.value === null || this.openbravoField.value === '')) {
+    } else if (
+      this.required &&
+      (this.openbravoField.value === null || this.openbravoField.value === '')
+    ) {
       invalidSpan.style.display = 'none';
       missingSpan.style.display = '';
     } else {
@@ -478,14 +524,18 @@ isc.OBSelectorWidget.addProperties({
 
   // ** {{{ getSelectorContainerHtmlObj }}} **
   // Finds the html container for the selector field
-  getSelectorContainerHtmlObj: function () {
+  getSelectorContainerHtmlObj: function() {
     var childObj;
     var selectorContainerHtmlObj;
     childObj = this.selectorField.getDataElement();
     for (;;) {
       for (;;) {
         childObj = childObj.parentNode;
-        if ((childObj.tagName.toLowerCase() === 'div' && childObj.getAttribute('id')) || childObj.tagName.toLowerCase() === 'body') {
+        if (
+          (childObj.tagName.toLowerCase() === 'div' &&
+            childObj.getAttribute('id')) ||
+          childObj.tagName.toLowerCase() === 'body'
+        ) {
           break;
         }
       }
@@ -500,11 +550,13 @@ isc.OBSelectorWidget.addProperties({
 
   // ** {{{ setFilterEditorProperties }}} **
   // Called to set the filter editor properties on each grid field.
-  setFilterEditorProperties: function (gridFields) {
+  setFilterEditorProperties: function(gridFields) {
     var selector = this,
-        i, keyPressFunction, clickFunction;
+      i,
+      keyPressFunction,
+      clickFunction;
 
-    keyPressFunction = function (item, form, keyName, characterValue) {
+    keyPressFunction = function(item, form, keyName, characterValue) {
       if (keyName === 'Escape') {
         selector.selectorWindow.hide();
         return false;
@@ -512,7 +564,7 @@ isc.OBSelectorWidget.addProperties({
       return true;
     };
 
-    clickFunction = function (form, item, icon) {
+    clickFunction = function(form, item, icon) {
       item.setValue(null);
       selector.selectorGrid.focusInFilterEditor(item);
       selector.selectorGrid.filterByEditor();
@@ -520,7 +572,7 @@ isc.OBSelectorWidget.addProperties({
 
     for (i = 0; i < gridFields.length; i++) {
       var gridField = gridFields[i],
-          type;
+        type;
       if (!gridField.filterEditorProperties) {
         gridField.filterEditorProperties = {
           required: false
@@ -575,10 +627,10 @@ isc.OBSelectorWidget.addProperties({
     }
   },
 
-  afterDrawDo: function () {
+  afterDrawDo: function() {
     var selectorContainerHtmlObj = this.getSelectorContainerHtmlObj();
     if (!selectorContainerHtmlObj.focusLogic) {
-      selectorContainerHtmlObj.focusLogic = function (param) {
+      selectorContainerHtmlObj.focusLogic = function(param) {
         if (param === 'mustBeJumped') {
           return true;
         } else if (param === 'mustBeIgnored') {
@@ -593,13 +645,15 @@ isc.OBSelectorWidget.addProperties({
   // ** {{{ initWidget }}} **
   // Override initWidget to set the parts of the form. Creates the
   // form, suggestion box and popup modal and grid components.
-  initWidget: function () {
-
-    var baseTestRegistryName = 'org.openbravo.userinterface.selector.' + this.openbravoField + '.',
-        initialValueMap = {},
-        f;
+  initWidget: function() {
+    var baseTestRegistryName =
+        'org.openbravo.userinterface.selector.' + this.openbravoField + '.',
+      initialValueMap = {},
+      f;
     if (this.openbravoField.value) {
-      initialValueMap[this.openbravoField.value] = this.openbravoField.getAttribute('identifier');
+      initialValueMap[
+        this.openbravoField.value
+      ] = this.openbravoField.getAttribute('identifier');
     }
 
     // Do not destroy dataSource after creation
@@ -620,161 +674,185 @@ isc.OBSelectorWidget.addProperties({
       }
     }
 
-    if (this.numCols > 0 && this.numCols <= isc.OBSelectorWidget.styling.widthDefinition.length) {
-      this.width = isc.OBSelectorWidget.styling.widthDefinition[this.numCols - 1];
+    if (
+      this.numCols > 0 &&
+      this.numCols <= isc.OBSelectorWidget.styling.widthDefinition.length
+    ) {
+      this.width =
+        isc.OBSelectorWidget.styling.widthDefinition[this.numCols - 1];
       // } else {
       // // TODO log this error case?
     }
 
     // add the combobox to the DynamicForm
-    this.fields = [{
-      textMatchStyle: this.suggestionTextMatchStyle,
-      selector: this,
-      selectOnFocus: true,
-      autoFetchData: false,
-      showTitle: false,
-      showPickerIcon: true,
-      shouldSaveValue: false,
-      validateOnChange: true,
-      completeOnTab: true,
-      valueMap: initialValueMap,
-      addUnknownValues: false,
-      icons: [{
+    this.fields = [
+      {
+        textMatchStyle: this.suggestionTextMatchStyle,
         selector: this,
-        showFocused: true,
-        showOver: true,
-        src: isc.OBSelectorWidget.fieldPickerIconSrc,
-        width: isc.OBSelectorWidget.styling.fieldPickerIconWidth,
-        height: isc.OBSelectorWidget.styling.fieldPickerIconHeight,
-        hspace: isc.OBSelectorWidget.styling.fieldPickerIconHSpace,
-        // note
-        // unsupported
-        // feature:
-        // http://forums.smartclient.com/showthread.php?p=34868
-        keyPress: function (keyName, character, form, item, icon) {
-          if (keyName === 'Enter' && isc.EventHandler.ctrlKeyDown() && !isc.EventHandler.altKeyDown() && !isc.EventHandler.shiftKeyDown()) {
-            this.selector.openSelectorWindow(form, item, icon);
+        selectOnFocus: true,
+        autoFetchData: false,
+        showTitle: false,
+        showPickerIcon: true,
+        shouldSaveValue: false,
+        validateOnChange: true,
+        completeOnTab: true,
+        valueMap: initialValueMap,
+        addUnknownValues: false,
+        icons: [
+          {
+            selector: this,
+            showFocused: true,
+            showOver: true,
+            src: isc.OBSelectorWidget.fieldPickerIconSrc,
+            width: isc.OBSelectorWidget.styling.fieldPickerIconWidth,
+            height: isc.OBSelectorWidget.styling.fieldPickerIconHeight,
+            hspace: isc.OBSelectorWidget.styling.fieldPickerIconHSpace,
+            // note
+            // unsupported
+            // feature:
+            // http://forums.smartclient.com/showthread.php?p=34868
+            keyPress: function(keyName, character, form, item, icon) {
+              if (
+                keyName === 'Enter' &&
+                isc.EventHandler.ctrlKeyDown() &&
+                !isc.EventHandler.altKeyDown() &&
+                !isc.EventHandler.shiftKeyDown()
+              ) {
+                this.selector.openSelectorWindow(form, item, icon);
+                return false;
+              }
+              return true;
+            },
+            click: function(form, item, icon) {
+              this.selector.selectorField.focus();
+              this.selector.openSelectorWindow(form, item, icon);
+            }
+          }
+        ],
+        openSelectorWindow: function() {
+          this.selector.selectorField.focus();
+          this.selector.openSelectorWindow(this.form, this, null);
+        },
+        width: this.width,
+        editorType: 'comboBox',
+        displayField: this.displayField,
+        focus: function(form, item) {
+          if (typeof setWindowElementFocus === 'function') {
+            // To sync with Openbravo focus logic
+            setWindowElementFocus(
+              document.getElementById(this.selector.openbravoField.id),
+              'obj'
+            );
+          }
+          if (typeof disableDefaultAction === 'function') {
+            // To prevent form default action when ENTER is pressed
+            disableDefaultAction();
+          }
+        },
+
+        keyPress: function(item, form, keyName, characterValue) {
+          if (
+            keyName === 'Enter' &&
+            isc.EventHandler.ctrlKeyDown() &&
+            !isc.EventHandler.altKeyDown() &&
+            !isc.EventHandler.shiftKeyDown()
+          ) {
+            this.selector.openSelectorWindow(form, item, null);
             return false;
           }
           return true;
         },
-        click: function (form, item, icon) {
-          this.selector.selectorField.focus();
-          this.selector.openSelectorWindow(form, item, icon);
-        }
-      }],
-      openSelectorWindow: function () {
-        this.selector.selectorField.focus();
-        this.selector.openSelectorWindow(this.form, this, null);
-      },
-      width: this.width,
-      editorType: 'comboBox',
-      displayField: this.displayField,
-      focus: function (form, item) {
-        if (typeof setWindowElementFocus === 'function') {
-          // To sync with Openbravo focus logic
-          setWindowElementFocus(document.getElementById(this.selector.openbravoField.id), 'obj');
-        }
-        if (typeof disableDefaultAction === 'function') {
-          // To prevent form default action when ENTER is pressed
-          disableDefaultAction();
-        }
-      },
-
-      keyPress: function (item, form, keyName, characterValue) {
-        if (keyName === 'Enter' && isc.EventHandler.ctrlKeyDown() && !isc.EventHandler.altKeyDown() && !isc.EventHandler.shiftKeyDown()) {
-          this.selector.openSelectorWindow(form, item, null);
-          return false;
-        }
-        return true;
-      },
-      valueField: this.valueField,
-      optionDataSource: this.dataSource,
-      pickListWidth: this.width,
-      pickListProperties: {
-        fetchDelay: 400,
-        // prevents additional requests when loading data
-        drawAllMaxCells: 0,
-        showHeaderContextMenu: false,
-        hide: function () {
-          this.Super('hide', arguments);
-          this.formItem.selector.pickListShowing = false;
-          this.formItem.selector.setSelectorValueFromField(
-          this.formItem.form, this.formItem, this.formItem.value);
+        valueField: this.valueField,
+        optionDataSource: this.dataSource,
+        pickListWidth: this.width,
+        pickListProperties: {
+          fetchDelay: 400,
+          // prevents additional requests when loading data
+          drawAllMaxCells: 0,
+          showHeaderContextMenu: false,
+          hide: function() {
+            this.Super('hide', arguments);
+            this.formItem.selector.pickListShowing = false;
+            this.formItem.selector.setSelectorValueFromField(
+              this.formItem.form,
+              this.formItem,
+              this.formItem.value
+            );
+          },
+          show: function() {
+            this.Super('show', arguments);
+            this.formItem.selector.pickListShowing = true;
+          }
         },
-        show: function () {
-          this.Super('show', arguments);
-          this.formItem.selector.pickListShowing = true;
-        }
-      },
-      pickListFields: this.pickListFields,
-      blur: function (form, item) {
-        this.Super('blur', [form, item]);
-        // show the openbravo error message
-        this.selector.checkDefaultValidations(form, item);
-      },
-      getPickListFilterCriteria: function () {
-        var i, criteria = {
-          operator: 'or',
-          _constructor: 'AdvancedCriteria',
-          criteria: []
+        pickListFields: this.pickListFields,
+        blur: function(form, item) {
+          this.Super('blur', [form, item]);
+          // show the openbravo error message
+          this.selector.checkDefaultValidations(form, item);
         },
+        getPickListFilterCriteria: function() {
+          var i,
+            criteria = {
+              operator: 'or',
+              _constructor: 'AdvancedCriteria',
+              criteria: []
+            },
             crit = this.Super('getPickListFilterCriteria');
 
-        criteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
+          criteria.criteria.push(isc.OBRestDataSource.getDummyCriterion());
 
-        // also adds the special ORG parameter
-        OB.Utilities.addFormInputsToCriteria(criteria);
+          // also adds the special ORG parameter
+          OB.Utilities.addFormInputsToCriteria(criteria);
 
-        // adds the selector id to filter used to get filter information
-        criteria._selectorDefinitionId = this.selector.selectorDefinitionId;
+          // adds the selector id to filter used to get filter information
+          criteria._selectorDefinitionId = this.selector.selectorDefinitionId;
 
-        // only filter if the display field is also passed
-        // the displayField filter is not passed when the user clicks the drop-down button
-        var displayFieldValue = null;
-        if (crit.criteria) {
-          for (i = 0; i < crit.criteria.length; i++) {
-            if (crit.criteria[i].fieldName === this.displayField) {
-              displayFieldValue = crit.criteria[i].value;
+          // only filter if the display field is also passed
+          // the displayField filter is not passed when the user clicks the drop-down button
+          var displayFieldValue = null;
+          if (crit.criteria) {
+            for (i = 0; i < crit.criteria.length; i++) {
+              if (crit.criteria[i].fieldName === this.displayField) {
+                displayFieldValue = crit.criteria[i].value;
+              }
             }
+          } else if (crit[this.displayField]) {
+            displayFieldValue = crit[this.displayField];
           }
-        } else if (crit[this.displayField]) {
-          displayFieldValue = crit[this.displayField];
-        }
-        if (displayFieldValue !== null) {
-          for (i = 0; i < this.selector.extraSearchFields.length; i++) {
-            if (!criteria[this.selector.extraSearchFields[i]]) {
-              criteria.criteria.push({
-                fieldName: this.selector.extraSearchFields[i],
-                operator: 'iContains',
-                value: displayFieldValue
-              });
+          if (displayFieldValue !== null) {
+            for (i = 0; i < this.selector.extraSearchFields.length; i++) {
+              if (!criteria[this.selector.extraSearchFields[i]]) {
+                criteria.criteria.push({
+                  fieldName: this.selector.extraSearchFields[i],
+                  operator: 'iContains',
+                  value: displayFieldValue
+                });
+              }
             }
+            criteria.criteria.push({
+              fieldName: this.displayField,
+              operator: 'iContains',
+              value: displayFieldValue
+            });
           }
-          criteria.criteria.push({
-            fieldName: this.displayField,
-            operator: 'iContains',
-            value: displayFieldValue
-          });
-        }
 
-        // for the suggestion box it is one big or
-        criteria[OB.Constants.OR_EXPRESSION] = 'true';
+          // for the suggestion box it is one big or
+          criteria[OB.Constants.OR_EXPRESSION] = 'true';
 
-        // the additional where clause
-        criteria[OB.Constants.WHERE_PARAMETER] = this.selector.whereClause;
+          // the additional where clause
+          criteria[OB.Constants.WHERE_PARAMETER] = this.selector.whereClause;
 
-        // and sort according to the display field
-        // initially
-        criteria[OB.Constants.SORTBY_PARAMETER] = this.selector.displayField;
+          // and sort according to the display field
+          // initially
+          criteria[OB.Constants.SORTBY_PARAMETER] = this.selector.displayField;
 
-        return criteria;
-      },
+          return criteria;
+        },
 
-      // when changed set the field
-      changed: this.setSelectorValueFromField
-    }];
-
+        // when changed set the field
+        changed: this.setSelectorValueFromField
+      }
+    ];
 
     // Always call the superclass implementation when overriding
     // initWidget
@@ -792,18 +870,21 @@ isc.OBSelectorWidget.addProperties({
     }
 
     if (this.required) {
-      this.selectorField.textBoxStyle = isc.OBSelectorWidget.styling.selectorFieldTextBoxStyleRequired;
+      this.selectorField.textBoxStyle =
+        isc.OBSelectorWidget.styling.selectorFieldTextBoxStyleRequired;
     } else {
-      this.selectorField.textBoxStyle = isc.OBSelectorWidget.styling.selectorFieldTextBoxStyle;
+      this.selectorField.textBoxStyle =
+        isc.OBSelectorWidget.styling.selectorFieldTextBoxStyle;
     }
 
-    this.selectorField.pendingTextBoxStyle = isc.OBSelectorWidget.styling.pendingTextBoxStyle;
+    this.selectorField.pendingTextBoxStyle =
+      isc.OBSelectorWidget.styling.pendingTextBoxStyle;
 
     this.selectorField.setValue(this.openbravoField.value);
     this.initialValue = this.selectorField.getValue();
 
     this.openbravoField._selector = this;
-    this.openbravoField.doReset = function () {
+    this.openbravoField.doReset = function() {
       if (this._selector.initialValue !== null) {
         this._selector.selectorField.setValue(this._selector.initialValue);
         this._selector.openbravoField.value = this._selector.initialValue;
@@ -811,7 +892,7 @@ isc.OBSelectorWidget.addProperties({
       }
     };
 
-    this.openbravoField.focusLogic = function (param) {
+    this.openbravoField.focusLogic = function(param) {
       if (param === 'mustBeJumped') {
         return false;
       } else if (param === 'mustBeIgnored') {
@@ -827,7 +908,7 @@ isc.OBSelectorWidget.addProperties({
       }
     };
 
-    this.openbravoField.setReadOnly = function (readOnly) {
+    this.openbravoField.setReadOnly = function(readOnly) {
       // note directly setting disabled on the
       // selectorfield did not work, has to be
       // done through a disable/enable function/call
@@ -844,15 +925,19 @@ isc.OBSelectorWidget.addProperties({
 
     // register ourselves
     OB.TestRegistry.register(baseTestRegistryName + 'selector', this);
-    OB.TestRegistry.register(baseTestRegistryName + 'selectorField', this.selectorField);
+    OB.TestRegistry.register(
+      baseTestRegistryName + 'selectorField',
+      this.selectorField
+    );
 
     // create the selector grid shown in the popup window
     if (this.showSelectorGrid) {
-
-      OB.Utilities.applyDefaultValues(this.selectorGridFields, this.defaultSelectorGridField);
+      OB.Utilities.applyDefaultValues(
+        this.selectorGridFields,
+        this.defaultSelectorGridField
+      );
 
       this.selectorGrid = isc.OBClassicGrid.create({
-
         selector: this,
         // pointer back to the
         // dynamic form
@@ -868,7 +953,7 @@ isc.OBSelectorWidget.addProperties({
         showFilterEditor: true,
         sortField: this.displayField,
 
-        filterData: function (criteria, callback, requestProperties) {
+        filterData: function(criteria, callback, requestProperties) {
           requestProperties = requestProperties || {};
           requestProperties.params = requestProperties.params || {};
           requestProperties.params._selectorDefinitionId = this.selector.selectorDefinitionId;
@@ -883,17 +968,22 @@ isc.OBSelectorWidget.addProperties({
           // set the default sort option
           criteria[OB.Constants.SORTBY_PARAMETER] = this.selector.displayField;
 
-          criteria[OB.Constants.TEXT_MATCH_PARAMETER_OVERRIDE] = this.selector.popupTextMatchStyle;
+          criteria[
+            OB.Constants.TEXT_MATCH_PARAMETER_OVERRIDE
+          ] = this.selector.popupTextMatchStyle;
 
           criteria._selectorDefinitionId = this.selector.selectorDefinitionId;
           criteria._requestType = 'Window';
 
           // and call the super
-          return this.Super('filterData', [criteria, callback, requestProperties]);
+          return this.Super('filterData', [
+            criteria,
+            callback,
+            requestProperties
+          ]);
         },
 
-        fetchData: function (criteria, callback, requestProperties) {
-
+        fetchData: function(criteria, callback, requestProperties) {
           if (!criteria) {
             criteria = {};
           }
@@ -904,7 +994,9 @@ isc.OBSelectorWidget.addProperties({
 
           // set the default sort option
           criteria[OB.Constants.SORTBY_PARAMETER] = this.selector.displayField;
-          criteria[OB.Constants.TEXT_MATCH_PARAMETER_OVERRIDE] = this.selector.popupTextMatchStyle;
+          criteria[
+            OB.Constants.TEXT_MATCH_PARAMETER_OVERRIDE
+          ] = this.selector.popupTextMatchStyle;
 
           criteria._selectorDefinitionId = this.selector.selectorDefinitionId;
           criteria._requestType = 'Window';
@@ -914,11 +1006,14 @@ isc.OBSelectorWidget.addProperties({
           requestProperties.params._selectorDefinitionId = this.selector.selectorDefinitionId;
 
           // and call the super
-          return this.Super('fetchData', [criteria, callback, requestProperties]);
+          return this.Super('fetchData', [
+            criteria,
+            callback,
+            requestProperties
+          ]);
         },
 
-        dataArrived: function () {
-
+        dataArrived: function() {
           this.Super('dataArrived', arguments);
 
           // check if a record has been selected, if
@@ -929,13 +1024,17 @@ isc.OBSelectorWidget.addProperties({
           // when the record shows in view
           if (!this.getSelectedRecord()) {
             if (this.selector.openbravoField.value !== '') {
-              this.selectSingleRecord(this.data.find(this.selector, this.selector.openbravoField.value));
+              this.selectSingleRecord(
+                this.data.find(
+                  this.selector,
+                  this.selector.openbravoField.value
+                )
+              );
             } else {
               this.selectSingleRecord(null);
             }
           }
         },
-
 
         filterEditorProperties: {
           actionButtonProperties: {
@@ -947,7 +1046,10 @@ isc.OBSelectorWidget.addProperties({
         recordDoubleClick: this.setSelectorValueFromGrid
       });
 
-      OB.TestRegistry.register(baseTestRegistryName + 'selectorGrid', this.selectorGrid);
+      OB.TestRegistry.register(
+        baseTestRegistryName + 'selectorGrid',
+        this.selectorGrid
+      );
 
       var okButton = isc.OBClassicIButton.create({
         selector: this,
@@ -967,7 +1069,7 @@ isc.OBSelectorWidget.addProperties({
         align: isc.OBSelectorWidget.styling.modalPopupCancelButtonAlign,
         width: isc.OBSelectorWidget.styling.modalPopupCancelButtonWidth,
         icon: isc.OBSelectorWidget.styling.modalPopupCancelButtonSrc,
-        click: function () {
+        click: function() {
           this.selector.selectorWindow.hide();
         }
       });
@@ -988,7 +1090,13 @@ isc.OBSelectorWidget.addProperties({
         dismissOnEscape: true,
         animateMinimize: false,
         showMaximizeButton: true,
-        headerControls: ['headerIcon', 'headerLabel', 'minimizeButton', 'maximizeButton', 'closeButton'],
+        headerControls: [
+          'headerIcon',
+          'headerLabel',
+          'minimizeButton',
+          'maximizeButton',
+          'closeButton'
+        ],
         headerIconProperties: {
           width: isc.OBSelectorWidget.styling.modalPopupHeaderIconWidth,
           height: isc.OBSelectorWidget.styling.modalPopupHeaderIconHeight,
@@ -996,32 +1104,48 @@ isc.OBSelectorWidget.addProperties({
         },
         // the items are the selector grid and the
         // button bar below it
-        hide: function () {
+        hide: function() {
           this.Super('hide', arguments);
           setOBTabBehavior(true);
           this.selector.selectorField.focus();
         },
         items: [
-        this.selectorGrid, isc.HLayout.create({
-          styleName: isc.OBSelectorWidget.styling.modalPopupButtonGroupStyle,
-          height: isc.OBSelectorWidget.styling.modalPopupButtonGroupHeight,
-          defaultLayoutAlign: isc.OBSelectorWidget.styling.modalPopupButtonGroupAlign,
-          members: [
-          isc.LayoutSpacer.create({}), okButton, isc.LayoutSpacer.create({
-            width: isc.OBSelectorWidget.styling.modalPopupButtonSeparatorWidth
-          }), cancelButton, isc.LayoutSpacer.create({})]
-        })]
+          this.selectorGrid,
+          isc.HLayout.create({
+            styleName: isc.OBSelectorWidget.styling.modalPopupButtonGroupStyle,
+            height: isc.OBSelectorWidget.styling.modalPopupButtonGroupHeight,
+            defaultLayoutAlign:
+              isc.OBSelectorWidget.styling.modalPopupButtonGroupAlign,
+            members: [
+              isc.LayoutSpacer.create({}),
+              okButton,
+              isc.LayoutSpacer.create({
+                width:
+                  isc.OBSelectorWidget.styling.modalPopupButtonSeparatorWidth
+              }),
+              cancelButton,
+              isc.LayoutSpacer.create({})
+            ]
+          })
+        ]
       });
 
-      OB.TestRegistry.register(baseTestRegistryName + 'selectorWindow', this.selectorWindow);
       OB.TestRegistry.register(
-      baseTestRegistryName + 'selectorWindow.okButton', okButton);
+        baseTestRegistryName + 'selectorWindow',
+        this.selectorWindow
+      );
       OB.TestRegistry.register(
-      baseTestRegistryName + 'selectorWindow.cancelButton', cancelButton);
+        baseTestRegistryName + 'selectorWindow.okButton',
+        okButton
+      );
+      OB.TestRegistry.register(
+        baseTestRegistryName + 'selectorWindow.cancelButton',
+        cancelButton
+      );
     }
 
     var thisSelector = this;
-    this.afterDrawDoLoop = window.setInterval(function () {
+    this.afterDrawDoLoop = window.setInterval(function() {
       if (thisSelector.isDrawn() === true) {
         thisSelector.afterDrawDo();
         window.clearInterval(thisSelector.afterDrawDoLoop);

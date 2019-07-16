@@ -39,16 +39,16 @@ isc.OBListFilterItem.addProperties({
   // remove the width so that smartclient will autoflow the content
   // will make sure that the picklist is resized.
   // http://forums.smartclient.com/showthread.php?p=93868#post93868
-  getPickListFields: function () {
+  getPickListFields: function() {
     var ret = this.Super('getPickListFields', arguments);
     delete ret[0].width;
     return ret;
   },
 
   // overridden to prevent selection of first item
-  selectDefaultItem: function () {},
+  selectDefaultItem: function() {},
 
-  showPickList: function () {
+  showPickList: function() {
     this.Super('showPickList', arguments);
 
     var value, i;
@@ -67,17 +67,22 @@ isc.OBListFilterItem.addProperties({
     this.selectItemFromValue(value);
   },
 
-  // note: can't override changed as it is used by the filter editor 
+  // note: can't override changed as it is used by the filter editor
   // itself, see the RecordEditor source code and the changed event
-  change: function (form, item, value, oldValue) {
+  change: function(form, item, value, oldValue) {
     if (this._pickedValue || !value) {
       // filter with a delay to let the value be set
-      isc.Page.setEvent(isc.EH.IDLE, this.form.grid, isc.Page.FIRE_ONCE, 'performAction');
+      isc.Page.setEvent(
+        isc.EH.IDLE,
+        this.form.grid,
+        isc.Page.FIRE_ONCE,
+        'performAction'
+      );
     }
     this.Super('change', arguments);
   },
 
-  handleKeyPress: function () {
+  handleKeyPress: function() {
     if (isc.EH.getKey() === 'Space') {
       if (this.isPickListShown() && !this.pickList.bodyKeyPress('Space')) {
         return false;
@@ -90,14 +95,19 @@ isc.OBListFilterItem.addProperties({
 isc.OBListFilterItem.changeDefaults('pickListProperties', {
   showOverAsSelected: false,
 
-  bodyKeyPress: function (event, eventInfo) {
+  bodyKeyPress: function(event, eventInfo) {
     var focusedRecord = this.getRecord(this.getFocusRow()),
-        selectedRecords = this.getSelectedRecords(),
-        isSelectedRecord = false,
-        recordIdentifier = (this.fields && this.fields[1] && this.fields[1].name ? this.fields[1].name : ''),
-        i;
+      selectedRecords = this.getSelectedRecords(),
+      isSelectedRecord = false,
+      recordIdentifier =
+        this.fields && this.fields[1] && this.fields[1].name
+          ? this.fields[1].name
+          : '',
+      i;
     for (i = 0; i < selectedRecords.length; i++) {
-      if (focusedRecord[recordIdentifier] === selectedRecords[i][recordIdentifier]) {
+      if (
+        focusedRecord[recordIdentifier] === selectedRecords[i][recordIdentifier]
+      ) {
         isSelectedRecord = true;
         break;
       }

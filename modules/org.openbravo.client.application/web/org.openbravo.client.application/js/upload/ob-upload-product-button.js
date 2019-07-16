@@ -17,15 +17,24 @@
  ************************************************************************
  */
 
-(function () {
-
+(function() {
   // Import Product in Discounts
-  var ProductDiscountButtonProps = isc.addProperties({}, isc.OBUploadView.UPLOAD_BUTTON_PROPERTIES, {
-    actionUrl: './ApplicationDataUpload/ImportProductInDiscount',
-    inChildTab: true,
-    popupTitle: OB.I18N.getLabel('OBUIAPP_ImportProductInDiscount'),
-    prompt: OB.I18N.getLabel('OBUIAPP_ImportProductInDiscountPrompt'),
-    buttonType: 'ob-upload-import-product-in-discount'
-  });
-  OB.ToolbarRegistry.registerButton(ProductDiscountButtonProps.buttonType, isc.OBToolbarIconButton, ProductDiscountButtonProps, 500, '800082');
-}());
+  var ProductDiscountButtonProps = isc.addProperties(
+    {},
+    isc.OBUploadView.UPLOAD_BUTTON_PROPERTIES,
+    {
+      actionUrl: './ApplicationDataUpload/ImportProductInDiscount',
+      inChildTab: true,
+      popupTitle: OB.I18N.getLabel('OBUIAPP_ImportProductInDiscount'),
+      prompt: OB.I18N.getLabel('OBUIAPP_ImportProductInDiscountPrompt'),
+      buttonType: 'ob-upload-import-product-in-discount'
+    }
+  );
+  OB.ToolbarRegistry.registerButton(
+    ProductDiscountButtonProps.buttonType,
+    isc.OBToolbarIconButton,
+    ProductDiscountButtonProps,
+    500,
+    '800082'
+  );
+})();

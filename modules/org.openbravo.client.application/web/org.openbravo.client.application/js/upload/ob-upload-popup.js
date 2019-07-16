@@ -21,7 +21,7 @@ isc.defineClass('OBUploadView', isc.OBBaseParameterWindowView);
 
 // == OBUploadView ==
 // OBUploadView is the view that represents the window to upload
-// the file with data. Note that below are also class properties added to define the 
+// the file with data. Note that below are also class properties added to define the
 // upload button props.
 isc.OBUploadView.addProperties({
   // Set default properties for the OBPopup container
@@ -51,7 +51,8 @@ isc.OBUploadView.addProperties({
   // needs to be set by sub type
   action: null,
 
-  defaultsActionHandler: 'org.openbravo.client.application.businesslogic.DefaultsUploadDataActionHandler',
+  defaultsActionHandler:
+    'org.openbravo.client.application.businesslogic.DefaultsUploadDataActionHandler',
 
   formProps: {
     encoding: 'multipart',
@@ -64,69 +65,83 @@ isc.OBUploadView.addProperties({
     //theCanvas: this.canvas
   },
 
-  initWidget: function () {
+  initWidget: function() {
     var formFields = [],
-        i, form, hiddenFields, fileItemFormFields, fileItemForm;
-    formFields = [{
-      name: 'inpname',
-      title: OB.I18N.getLabel('OBUIAPP_File'),
-      // Upload type item cannot be used as it is not possible to redraw() the DynamicForm which
-      // is needed to run the display and read only logics
-      titleStyle: 'OBFormFieldLabel',
-      cellStyle: 'OBFormField',
-      type: 'file',
-      multiple: false,
-      canFocus: false
-    }, {
-      selectOnFocus: true,
-      width: '100%',
-      canFocus: true,
-      name: 'importMode',
-      title: OB.I18N.getLabel('OBUIAPP_ImportMode'),
-      defaultValue: 'add_import',
-      prompt: OB.I18N.getLabel('OBUIAPP_ExplainImportMode'),
-      // is the list reference
-      type: '_id_17',
-      valueMap: {
-        'add_import': OB.I18N.getLabel('OBUIAPP_ImportAndAdd'),
-        'replace_import': OB.I18N.getLabel('OBUIAPP_ImportAndReplace')
+      i,
+      form,
+      hiddenFields,
+      fileItemFormFields,
+      fileItemForm;
+    formFields = [
+      {
+        name: 'inpname',
+        title: OB.I18N.getLabel('OBUIAPP_File'),
+        // Upload type item cannot be used as it is not possible to redraw() the DynamicForm which
+        // is needed to run the display and read only logics
+        titleStyle: 'OBFormFieldLabel',
+        cellStyle: 'OBFormField',
+        type: 'file',
+        multiple: false,
+        canFocus: false
+      },
+      {
+        selectOnFocus: true,
+        width: '100%',
+        canFocus: true,
+        name: 'importMode',
+        title: OB.I18N.getLabel('OBUIAPP_ImportMode'),
+        defaultValue: 'add_import',
+        prompt: OB.I18N.getLabel('OBUIAPP_ExplainImportMode'),
+        // is the list reference
+        type: '_id_17',
+        valueMap: {
+          add_import: OB.I18N.getLabel('OBUIAPP_ImportAndAdd'),
+          replace_import: OB.I18N.getLabel('OBUIAPP_ImportAndReplace')
+        }
+      },
+      {
+        // is the list reference
+        type: '_id_17',
+        selectOnFocus: true,
+        width: '100%',
+        canFocus: true,
+        name: 'importErrorHandling',
+        title: OB.I18N.getLabel('OBUIAPP_ImportError'),
+        defaultValue: 'continue_at_error',
+        prompt: OB.I18N.getLabel('OBUIAPP_ExplainImportError'),
+        valueMap: {
+          continue_at_error: OB.I18N.getLabel('OBUIAPP_ContinueAtError'),
+          stop_at_error: OB.I18N.getLabel('OBUIAPP_StopAtError')
+        }
       }
-    }, {
-      // is the list reference
-      type: '_id_17',
-      selectOnFocus: true,
-      width: '100%',
-      canFocus: true,
-      name: 'importErrorHandling',
-      title: OB.I18N.getLabel('OBUIAPP_ImportError'),
-      defaultValue: 'continue_at_error',
-      prompt: OB.I18N.getLabel('OBUIAPP_ExplainImportError'),
-      valueMap: {
-        'continue_at_error': OB.I18N.getLabel('OBUIAPP_ContinueAtError'),
-        'stop_at_error': OB.I18N.getLabel('OBUIAPP_StopAtError')
+    ];
+    hiddenFields = [
+      {
+        name: 'command',
+        type: 'hidden',
+        value: 'upload'
+      },
+      {
+        name: 'viewID',
+        type: 'hidden',
+        value: this.viewID
+      },
+      {
+        name: 'buttonID',
+        type: 'hidden',
+        value: this.buttonID
+      },
+      {
+        name: 'inpOwnerId',
+        type: 'hidden',
+        value: this.ownerId
+      },
+      {
+        name: 'inpTabId',
+        type: 'hidden',
+        value: this.tabId
       }
-    }];
-    hiddenFields = [{
-      name: 'command',
-      type: 'hidden',
-      value: 'upload'
-    }, {
-      name: 'viewID',
-      type: 'hidden',
-      value: this.viewID
-    }, {
-      name: 'buttonID',
-      type: 'hidden',
-      value: this.buttonID
-    }, {
-      name: 'inpOwnerId',
-      type: 'hidden',
-      value: this.ownerId
-    }, {
-      name: 'inpTabId',
-      type: 'hidden',
-      value: this.tabId
-    }];
+    ];
     formFields.addAll(hiddenFields);
 
     this.formProps.action = this.action;
@@ -138,7 +153,9 @@ isc.OBUploadView.addProperties({
     this.viewProperties.fields = isc.shallowClone(formFields);
     if (this.viewProperties.additionalFields) {
       for (i = 0; i < this.viewProperties.additionalFields.length; i++) {
-        this.viewProperties.fields.push(this.viewProperties.additionalFields[i]);
+        this.viewProperties.fields.push(
+          this.viewProperties.additionalFields[i]
+        );
       }
     }
 
@@ -152,42 +169,49 @@ isc.OBUploadView.addProperties({
     fileItemFormFields = isc.shallowClone(fileItemForm.getItems());
     // paramValues has a String representation of a JSONObject with the values of all the metadata values.
     // Command and hiddenFields are needed in the Request of TabAttachment servlet.
-    fileItemFormFields.addAll([{
-      name: 'paramValues',
-      type: 'hidden',
-      value: ''
-    }]);
+    fileItemFormFields.addAll([
+      {
+        name: 'paramValues',
+        type: 'hidden',
+        value: ''
+      }
+    ]);
     fileItemFormFields.addAll(hiddenFields);
 
     fileItemForm.setItems(fileItemFormFields);
-    // redraw to ensure that the new items are added to the html form. If this not happens then the 
+    // redraw to ensure that the new items are added to the html form. If this not happens then the
     // values are not included in the submitForm.
     fileItemForm.redraw();
     fileItemForm.setAction(this.action);
     fileItemForm.setTarget('background_target');
   },
 
-  destroy: function () {
+  destroy: function() {
     this.theForm.getFileItemForm().destroy();
     this.Super('destroy', arguments);
   },
 
-  buildButtonLayout: function () {
+  buildButtonLayout: function() {
     var view = this,
-        buttons = [],
-        me = this,
-        submitbutton, cancelButton;
+      buttons = [],
+      me = this,
+      submitbutton,
+      cancelButton;
 
     function doClick() {
       var view = this.view,
-          value = view.theForm.getItem('inpname').getValue(),
-          lastChar, fileName;
+        value = view.theForm.getItem('inpname').getValue(),
+        lastChar,
+        fileName;
 
       if (!value) {
         isc.say(OB.I18N.getLabel('OBUIAPP_SpecifyFile'));
         return;
       }
-      if (!value.toLowerCase().endsWith('.txt') && !value.toLowerCase().endsWith('.csv')) {
+      if (
+        !value.toLowerCase().endsWith('.txt') &&
+        !value.toLowerCase().endsWith('.csv')
+      ) {
         isc.say(OB.I18N.getLabel('OBUIAPP_OnlyTxtFileSupported'));
         return;
       }
@@ -213,28 +237,34 @@ isc.OBUploadView.addProperties({
     cancelButton = isc.OBFormButton.create({
       title: OB.I18N.getLabel('OBUISC_Dialog.CANCEL_BUTTON_TITLE'),
       realTitle: '',
-      click: function () {
+      click: function() {
         view.closeClick();
       }
     });
 
-    buttons.push(isc.LayoutSpacer.create({
-      realTitle: ''
-    }));
+    buttons.push(
+      isc.LayoutSpacer.create({
+        realTitle: ''
+      })
+    );
     buttons.push(submitbutton);
-    buttons.push(isc.LayoutSpacer.create({
-      realTitle: '',
-      width: '30'
-    })); // 30px width
+    buttons.push(
+      isc.LayoutSpacer.create({
+        realTitle: '',
+        width: '30'
+      })
+    ); // 30px width
     buttons.push(cancelButton);
-    buttons.push(isc.LayoutSpacer.create({
-      realTitle: ''
-    }));
+    buttons.push(
+      isc.LayoutSpacer.create({
+        realTitle: ''
+      })
+    );
 
     return buttons;
   },
 
-  submitFile: function (fileName) {
+  submitFile: function(fileName) {
     var form = this.theForm;
 
     // spin it
@@ -242,16 +272,18 @@ isc.OBUploadView.addProperties({
     this.button.resetBaseStyle();
 
     form.updateFileItemForm();
-    form.getFileItemForm().getItem('paramValues').setValue(isc.JSON.encode(this.getContextInfo()));
+    form
+      .getFileItemForm()
+      .getItem('paramValues')
+      .setValue(isc.JSON.encode(this.getContextInfo()));
     form.getFileItemForm().submitForm();
 
     this.closeClick();
   },
 
-  validate: function () {
+  validate: function() {
     return null;
   }
-
 });
 
 isc.OBUploadView.addClassProperties({
@@ -262,14 +294,15 @@ isc.OBUploadView.addClassProperties({
     title: '',
     buttonType: 'ob-upload-import',
     prompt: '',
-    getPopupType: function () {
+    getPopupType: function() {
       return isc.OBUploadView;
     },
-    action: function () {
+    action: function() {
       var view = this.view,
-          ownerId, tabId = view.tabId,
-          grid = view.viewGrid,
-          selectedRecords = grid.getSelectedRecords();
+        ownerId,
+        tabId = view.tabId,
+        grid = view.viewGrid,
+        selectedRecords = grid.getSelectedRecords();
 
       if (this.inChildTab) {
         ownerId = this.view.parentRecordId;
@@ -286,11 +319,21 @@ isc.OBUploadView.addClassProperties({
         title: this.popupTitle,
         buttonID: this.ID
       });
-      view.standardWindow.openPopupInTab(popupContent, this.title, popupContent.popupWidth, popupContent.popupHeight, false, false, true, true);
+      view.standardWindow.openPopupInTab(
+        popupContent,
+        this.title,
+        popupContent.popupWidth,
+        popupContent.popupHeight,
+        false,
+        false,
+        true,
+        true
+      );
     },
 
-    updateState: function () {
-      var ownerId, tabId = this.view.tabId;
+    updateState: function() {
+      var ownerId,
+        tabId = this.view.tabId;
       if (this.inChildTab) {
         ownerId = this.view.parentRecordId;
         if (ownerId && ownerId !== '-1') {
@@ -303,11 +346,11 @@ isc.OBUploadView.addClassProperties({
       }
     },
 
-    updateTabState: function () {
+    updateTabState: function() {
       var view = this.view,
-          form = view.viewForm,
-          grid = view.viewGrid,
-          selectedRecords = grid.getSelectedRecords();
+        form = view.viewForm,
+        grid = view.viewGrid,
+        selectedRecords = grid.getSelectedRecords();
       if (view.isShowingForm && form.isNew) {
         this.setDisabled(true);
       } else if (view.isEditingGrid && grid.getEditForm().isNew) {
@@ -317,7 +360,7 @@ isc.OBUploadView.addClassProperties({
       }
     },
 
-    callback: function (data) {
+    callback: function(data) {
       this.view.refresh();
       if (data && data.msg) {
         isc.say(data.msg);
@@ -331,7 +374,7 @@ isc.OBUploadView.addClassProperties({
       this.resetBaseStyle();
     },
 
-    downloadResult: function (fileName) {
+    downloadResult: function(fileName) {
       var params = {
         paramValues: isc.JSON.encode({
           command: 'download',

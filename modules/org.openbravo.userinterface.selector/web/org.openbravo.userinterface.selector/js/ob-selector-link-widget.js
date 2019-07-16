@@ -40,14 +40,13 @@ if (!isc.OBClassicIButton) {
 }
 
 isc.OBSelectorLinkWidget.addProperties({
-
   // ** {{{ setSelectorValueFromGrid }}} **
   // Override method
-  setSelectorValueFromGrid: function () {
+  setSelectorValueFromGrid: function() {
     var changed = false,
-        oldValue = this.selector.openbravoField.value,
-        selected = this.selector.selectorGrid.getSelectedRecord(),
-        newValue;
+      oldValue = this.selector.openbravoField.value,
+      selected = this.selector.selectorGrid.getSelectedRecord(),
+      newValue;
     if (selected) {
       newValue = selected[this.selector.valueField];
       changed = oldValue !== newValue;
@@ -64,14 +63,14 @@ isc.OBSelectorLinkWidget.addProperties({
     }
   },
 
-  afterDrawDo: function () {
+  afterDrawDo: function() {
     return;
   },
 
   // ** {{{ openSelectorWindow }}} **
   // open the popup window and make sure that it has the correct
   // filter set
-  openSelectorWindow: function (form) {
+  openSelectorWindow: function(form) {
     setOBTabBehavior(false);
     form.selectorWindow.show();
     form.selectorGrid.setFilterEditorCriteria({});
@@ -83,29 +82,35 @@ isc.OBSelectorLinkWidget.addProperties({
   // ** {{{ initWidget }}} **
   // Override initWidget to set the parts of the form. Creates the
   // form, suggestion box and popup modal and grid components.
-  initWidget: function () {
+  initWidget: function() {
     var thisSelector = this;
 
     // Always call the superclass implementation when overriding
     // initWidget
     this.Super('initWidget', arguments);
 
-    if (this.numCols > 0 && this.numCols <= isc.OBSelectorLinkWidget.styling.widthDefinition.length) {
-      this.width = isc.OBSelectorLinkWidget.styling.widthDefinition[this.numCols - 1];
+    if (
+      this.numCols > 0 &&
+      this.numCols <= isc.OBSelectorLinkWidget.styling.widthDefinition.length
+    ) {
+      this.width =
+        isc.OBSelectorLinkWidget.styling.widthDefinition[this.numCols - 1];
     }
     //        } else {
     // TODO log this error case?
     //        }
     // add the link to the DynamicForm
-    this.setFields([{
-      type: 'link',
-      editorType: 'link',
-      linkTitle: 'find',
-      target: 'javascript',
-      handleClick: function () {
-        this.containerWidget.openSelectorWindow(this.containerWidget);
+    this.setFields([
+      {
+        type: 'link',
+        editorType: 'link',
+        linkTitle: 'find',
+        target: 'javascript',
+        handleClick: function() {
+          this.containerWidget.openSelectorWindow(this.containerWidget);
+        }
       }
-    }]);
+    ]);
 
     this.selectorGrid = isc.OBClassicGrid.create({
       selector: this,
@@ -120,7 +125,7 @@ isc.OBSelectorLinkWidget.addProperties({
       dataSource: this.dataSource,
       showFilterEditor: true,
       sortField: this.displayField,
-      filterData: function (criteria, callback, requestProperties) {
+      filterData: function(criteria, callback, requestProperties) {
         if (!criteria) {
           criteria = {};
         }
@@ -132,12 +137,18 @@ isc.OBSelectorLinkWidget.addProperties({
         // set the default sort option
         criteria[OB.Constants.SORTBY_PARAMETER] = this.selector.displayField;
 
-        criteria[OB.Constants.TEXT_MATCH_PARAMETER_OVERRIDE] = this.selector.popupTextMatchStyle;
+        criteria[
+          OB.Constants.TEXT_MATCH_PARAMETER_OVERRIDE
+        ] = this.selector.popupTextMatchStyle;
 
         // and call the super
-        return this.Super('filterData', [criteria, callback, requestProperties]);
+        return this.Super('filterData', [
+          criteria,
+          callback,
+          requestProperties
+        ]);
       },
-      fetchData: function (criteria, callback, requestProperties) {
+      fetchData: function(criteria, callback, requestProperties) {
         if (!criteria) {
           criteria = {};
         }
@@ -148,13 +159,15 @@ isc.OBSelectorLinkWidget.addProperties({
 
         // set the default sort option
         criteria[OB.Constants.SORTBY_PARAMETER] = this.selector.displayField;
-        criteria[OB.Constants.TEXT_MATCH_PARAMETER_OVERRIDE] = this.selector.popupTextMatchStyle;
+        criteria[
+          OB.Constants.TEXT_MATCH_PARAMETER_OVERRIDE
+        ] = this.selector.popupTextMatchStyle;
 
         // and call the super
         return this.Super('fetchData', [criteria, callback, requestProperties]);
       },
 
-      dataArrived: function () {
+      dataArrived: function() {
         this.Super('dataArrived', arguments);
 
         // check if a record has been selected, if
@@ -165,7 +178,12 @@ isc.OBSelectorLinkWidget.addProperties({
         // when the record shows in view
         if (!this.getSelectedRecord()) {
           if (this.selector.openbravoField.value !== '') {
-            this.selectSingleRecord(this.data.find(this.selector.valueField, this.selector.openbravoField.value));
+            this.selectSingleRecord(
+              this.data.find(
+                this.selector.valueField,
+                this.selector.openbravoField.value
+              )
+            );
           } else {
             this.selectSingleRecord(null);
           }
@@ -191,7 +209,13 @@ isc.OBSelectorLinkWidget.addProperties({
       dismissOnEscape: true,
       animateMinimize: false,
       showMaximizeButton: true,
-      headerControls: ['headerIcon', 'headerLabel', 'minimizeButton', 'maximizeButton', 'closeButton'],
+      headerControls: [
+        'headerIcon',
+        'headerLabel',
+        'minimizeButton',
+        'maximizeButton',
+        'closeButton'
+      ],
       headerIconProperties: {
         width: isc.OBSelectorWidget.styling.modalPopupHeaderIconWidth,
         height: isc.OBSelectorWidget.styling.modalPopupHeaderIconHeight,
@@ -199,42 +223,52 @@ isc.OBSelectorLinkWidget.addProperties({
       },
       // the items are the selector grid and the
       // button bar below it
-      hide: function () {
+      hide: function() {
         this.Super('hide', arguments);
         setOBTabBehavior(true);
         this.selector.selectorField.focus();
       },
-      items: [this.selectorGrid, isc.HLayout.create({
-        styleName: isc.OBSelectorWidget.styling.modalPopupButtonGroupStyle,
-        height: isc.OBSelectorWidget.styling.modalPopupButtonGroupHeight,
-        defaultLayoutAlign: isc.OBSelectorWidget.styling.modalPopupButtonGroupAlign,
-        members: [isc.LayoutSpacer.create({}), isc.OBClassicIButton.create({
-          selector: this,
-          title: OB.I18N.getLabel('OBUISC_Dialog.OK_BUTTON_TITLE'),
-          endRow: false,
-          startRow: false,
-          align: isc.OBSelectorWidget.styling.modalPopupOkButtonAlign,
-          width: isc.OBSelectorWidget.styling.modalPopupOkButtonWidth,
-          icon: isc.OBSelectorWidget.styling.modalPopupOkButtonSrc,
-          click: this.setSelectorValueFromGrid
-        }), isc.LayoutSpacer.create({
-          width: isc.OBSelectorWidget.styling.modalPopupButtonSeparatorWidth
-        }), isc.OBClassicIButton.create({
-          selector: this,
-          title: OB.I18N.getLabel('OBUISC_Dialog.CANCEL_BUTTON_TITLE'),
-          endRow: false,
-          startRow: false,
-          align: isc.OBSelectorWidget.styling.modalPopupCancelButtonAlign,
-          width: isc.OBSelectorWidget.styling.modalPopupCancelButtonWidth,
-          icon: isc.OBSelectorWidget.styling.modalPopupCancelButtonSrc,
-          click: function () {
-            this.selector.selectorWindow.hide();
-          }
-        }), isc.LayoutSpacer.create({})]
-      })]
+      items: [
+        this.selectorGrid,
+        isc.HLayout.create({
+          styleName: isc.OBSelectorWidget.styling.modalPopupButtonGroupStyle,
+          height: isc.OBSelectorWidget.styling.modalPopupButtonGroupHeight,
+          defaultLayoutAlign:
+            isc.OBSelectorWidget.styling.modalPopupButtonGroupAlign,
+          members: [
+            isc.LayoutSpacer.create({}),
+            isc.OBClassicIButton.create({
+              selector: this,
+              title: OB.I18N.getLabel('OBUISC_Dialog.OK_BUTTON_TITLE'),
+              endRow: false,
+              startRow: false,
+              align: isc.OBSelectorWidget.styling.modalPopupOkButtonAlign,
+              width: isc.OBSelectorWidget.styling.modalPopupOkButtonWidth,
+              icon: isc.OBSelectorWidget.styling.modalPopupOkButtonSrc,
+              click: this.setSelectorValueFromGrid
+            }),
+            isc.LayoutSpacer.create({
+              width: isc.OBSelectorWidget.styling.modalPopupButtonSeparatorWidth
+            }),
+            isc.OBClassicIButton.create({
+              selector: this,
+              title: OB.I18N.getLabel('OBUISC_Dialog.CANCEL_BUTTON_TITLE'),
+              endRow: false,
+              startRow: false,
+              align: isc.OBSelectorWidget.styling.modalPopupCancelButtonAlign,
+              width: isc.OBSelectorWidget.styling.modalPopupCancelButtonWidth,
+              icon: isc.OBSelectorWidget.styling.modalPopupCancelButtonSrc,
+              click: function() {
+                this.selector.selectorWindow.hide();
+              }
+            }),
+            isc.LayoutSpacer.create({})
+          ]
+        })
+      ]
     });
 
-    this.afterDrawDoLoop = window.setInterval(function () {
+    this.afterDrawDoLoop = window.setInterval(function() {
       if (thisSelector.isDrawn() === true) {
         thisSelector.afterDrawDo();
         window.clearInterval(thisSelector.afterDrawDoLoop);

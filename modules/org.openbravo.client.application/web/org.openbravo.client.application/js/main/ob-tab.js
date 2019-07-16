@@ -17,18 +17,16 @@
  ************************************************************************
  */
 
-
 isc.ClassFactory.defineClass('OBTabBarButton', isc.StretchImgButton);
 
 isc.ClassFactory.defineClass('OBTabSet', isc.TabSet);
 
 isc.ClassFactory.defineClass('OBTabBar', isc.TabBar);
 
-
 isc.ClassFactory.defineClass('OBTabBarButtonMain', isc.OBTabBarButton);
 
 isc.OBTabBarButtonMain.addProperties({
-  mouseDown: function () {
+  mouseDown: function() {
     this.select();
     return this.Super('mouseDown', arguments);
   }
@@ -42,7 +40,7 @@ isc.OBTabSetMain.addProperties({
   stateAsString: null,
 
   canReorderTabs: true,
-  reorderTab: function (tab, moveToPosition) {
+  reorderTab: function(tab, moveToPosition) {
     var ret = this.Super('reorderTab', arguments);
     OB.Layout.HistoryManager.updateHistory();
     return ret;
@@ -54,10 +52,10 @@ isc.OBTabSetMain.addProperties({
 
     dblClickWaiting: false,
 
-    itemClick: function (item, itemNum) {
+    itemClick: function(item, itemNum) {
       var me = this;
       me.dblClickWaiting = true;
-      isc.Timer.setTimeout(function () {
+      isc.Timer.setTimeout(function() {
         // if no double click happened then do the single click
         if (me.dblClickWaiting) {
           me.dblClickWaiting = false;
@@ -66,28 +64,37 @@ isc.OBTabSetMain.addProperties({
           }
         }
       }, OB.Constants.DBL_CLICK_DELAY);
-
     },
-    itemDoubleClick: function (item, itemNum) {
+    itemDoubleClick: function(item, itemNum) {
       this.dblClickWaiting = false;
-      if (this.tabSet.selectedTab === itemNum && item.pane.doHandleDoubleClick) {
+      if (
+        this.tabSet.selectedTab === itemNum &&
+        item.pane.doHandleDoubleClick
+      ) {
         item.pane.doHandleDoubleClick();
       }
     }
   }),
 
-  tabSelected: function (tabNum, tabPane, ID, tab) {
+  tabSelected: function(tabNum, tabPane, ID, tab) {
     var appFrame;
-    if (navigator.userAgent.indexOf('Trident') !== -1 && navigator.userAgent.indexOf('Trident/5.0') === -1) {
+    if (
+      navigator.userAgent.indexOf('Trident') !== -1 &&
+      navigator.userAgent.indexOf('Trident/5.0') === -1
+    ) {
       // To fix a problem with Internet Explorer 10 and classic OB windows: http://forums.smartclient.com/showthread.php?t=27389
-      if (tabPane.viewId === 'OBClassicWindow' || tabPane.viewId === 'ClassicOBHelp') {
+      if (
+        tabPane.viewId === 'OBClassicWindow' ||
+        tabPane.viewId === 'ClassicOBHelp'
+      ) {
         tabPane.bringToFront();
       }
     }
     if (!tabPane.isLoadingTab) {
       OB.Layout.HistoryManager.updateHistory();
     }
-    if (tabPane.tabSelected) { //Redirect if tabPane has its own tabSelected handler
+    if (tabPane.tabSelected) {
+      //Redirect if tabPane has its own tabSelected handler
       tabPane.tabSelected(tabNum, tabPane, ID, tab);
     }
     // Set the active classic frame as activeFrame
@@ -102,15 +109,22 @@ isc.OBTabSetMain.addProperties({
     document.title = OB.Constants.WINTITLE + ' - ' + tab.title;
   },
 
-  tabDeselected: function (tabNum, tabPane, ID, tab, newTab) {
+  tabDeselected: function(tabNum, tabPane, ID, tab, newTab) {
     var appFrame;
-    if (navigator.userAgent.indexOf('Trident') !== -1 && navigator.userAgent.indexOf('Trident/5.0') === -1) {
+    if (
+      navigator.userAgent.indexOf('Trident') !== -1 &&
+      navigator.userAgent.indexOf('Trident/5.0') === -1
+    ) {
       // To fix a problem with Internet Explorer 10 and classic OB windows: http://forums.smartclient.com/showthread.php?t=27389
-      if (tabPane.viewId === 'OBClassicWindow' || tabPane.viewId === 'ClassicOBHelp') {
+      if (
+        tabPane.viewId === 'OBClassicWindow' ||
+        tabPane.viewId === 'ClassicOBHelp'
+      ) {
         tabPane.sendToBack();
       }
     }
-    if (tabPane.tabDeselected) { //Redirect if tabPane has its own tabDeselected handler
+    if (tabPane.tabDeselected) {
+      //Redirect if tabPane has its own tabDeselected handler
       tabPane.tabDeselected(tabNum, tabPane, ID, tab, newTab);
     }
     if (tabPane.viewId === 'OBClassicWindow') {
@@ -121,7 +135,7 @@ isc.OBTabSetMain.addProperties({
     }
   },
 
-  closeClick: function (tab) {
+  closeClick: function(tab) {
     if (tab.pane && tab.pane.closeClick) {
       tab.pane.closeClick(tab, this);
     } else {
@@ -129,69 +143,120 @@ isc.OBTabSetMain.addProperties({
     }
   },
 
-  doCloseClick: function (tab) {
+  doCloseClick: function(tab) {
     if (tab && tab.pane) {
       tab.pane.closing = true;
     }
     return this.Super('closeClick', arguments);
   },
 
-  initWidget: function () {
+  initWidget: function() {
     this.tabBarProperties.tabSet = this;
     this.Super('initWidget', arguments);
   },
 
-  draw: function () {
+  draw: function() {
     var me = this,
-        ksAction_CloseSelectedTab, ksAction_SelectParentTab, ksAction_SelectChildTab, ksAction_SelectPreviousTab, ksAction_SelectNextTab, ksAction_SelectWorkspaceTab;
-    ksAction_CloseSelectedTab = function () {
+      ksAction_CloseSelectedTab,
+      ksAction_SelectParentTab,
+      ksAction_SelectChildTab,
+      ksAction_SelectPreviousTab,
+      ksAction_SelectNextTab,
+      ksAction_SelectWorkspaceTab;
+    ksAction_CloseSelectedTab = function() {
       me.closeSelectedTab();
       return false; //To avoid keyboard shortcut propagation
     };
-    OB.KeyboardManager.Shortcuts.set('TabSet_CloseSelectedTab', 'Canvas', ksAction_CloseSelectedTab);
-    ksAction_SelectParentTab = function () {
+    OB.KeyboardManager.Shortcuts.set(
+      'TabSet_CloseSelectedTab',
+      'Canvas',
+      ksAction_CloseSelectedTab
+    );
+    ksAction_SelectParentTab = function() {
       me.selectParentTab();
       return false; //To avoid keyboard shortcut propagation
     };
-    OB.KeyboardManager.Shortcuts.set('TabSet_SelectParentTab', 'Canvas', ksAction_SelectParentTab);
-    OB.KeyboardManager.Shortcuts.set('TabSet_SelectParentTab_Alternative', 'Canvas', ksAction_SelectParentTab);
-    ksAction_SelectChildTab = function () {
+    OB.KeyboardManager.Shortcuts.set(
+      'TabSet_SelectParentTab',
+      'Canvas',
+      ksAction_SelectParentTab
+    );
+    OB.KeyboardManager.Shortcuts.set(
+      'TabSet_SelectParentTab_Alternative',
+      'Canvas',
+      ksAction_SelectParentTab
+    );
+    ksAction_SelectChildTab = function() {
       me.selectChildTab();
       return false; //To avoid keyboard shortcut propagation
     };
-    OB.KeyboardManager.Shortcuts.set('TabSet_SelectChildTab', 'Canvas', ksAction_SelectChildTab);
-    OB.KeyboardManager.Shortcuts.set('TabSet_SelectChildTab_Alternative', 'Canvas', ksAction_SelectChildTab);
-    ksAction_SelectPreviousTab = function () {
-      if (!isc.Page.isRTL()) { // LTR mode
+    OB.KeyboardManager.Shortcuts.set(
+      'TabSet_SelectChildTab',
+      'Canvas',
+      ksAction_SelectChildTab
+    );
+    OB.KeyboardManager.Shortcuts.set(
+      'TabSet_SelectChildTab_Alternative',
+      'Canvas',
+      ksAction_SelectChildTab
+    );
+    ksAction_SelectPreviousTab = function() {
+      if (!isc.Page.isRTL()) {
+        // LTR mode
         me.selectPreviousTab();
-      } else { // RTL mode
+      } else {
+        // RTL mode
         me.selectNextTab();
       }
       return false; //To avoid keyboard shortcut propagation
     };
-    OB.KeyboardManager.Shortcuts.set('TabSet_SelectPreviousTab', 'Canvas', ksAction_SelectPreviousTab);
-    OB.KeyboardManager.Shortcuts.set('TabSet_SelectPreviousTab_Alternative', 'Canvas', ksAction_SelectPreviousTab);
-    ksAction_SelectNextTab = function () {
-      if (!isc.Page.isRTL()) { // LTR mode
+    OB.KeyboardManager.Shortcuts.set(
+      'TabSet_SelectPreviousTab',
+      'Canvas',
+      ksAction_SelectPreviousTab
+    );
+    OB.KeyboardManager.Shortcuts.set(
+      'TabSet_SelectPreviousTab_Alternative',
+      'Canvas',
+      ksAction_SelectPreviousTab
+    );
+    ksAction_SelectNextTab = function() {
+      if (!isc.Page.isRTL()) {
+        // LTR mode
         me.selectNextTab();
-      } else { // RTL mode
+      } else {
+        // RTL mode
         me.selectPreviousTab();
       }
       return false; //To avoid keyboard shortcut propagation
     };
-    OB.KeyboardManager.Shortcuts.set('TabSet_SelectNextTab', 'Canvas', ksAction_SelectNextTab);
-    OB.KeyboardManager.Shortcuts.set('TabSet_SelectNextTab_Alternative', 'Canvas', ksAction_SelectNextTab);
-    ksAction_SelectWorkspaceTab = function () {
+    OB.KeyboardManager.Shortcuts.set(
+      'TabSet_SelectNextTab',
+      'Canvas',
+      ksAction_SelectNextTab
+    );
+    OB.KeyboardManager.Shortcuts.set(
+      'TabSet_SelectNextTab_Alternative',
+      'Canvas',
+      ksAction_SelectNextTab
+    );
+    ksAction_SelectWorkspaceTab = function() {
       me.selectTab(0);
       return false; //To avoid keyboard shortcut propagation
     };
-    OB.KeyboardManager.Shortcuts.set('TabSet_SelectWorkspaceTab', 'Canvas', ksAction_SelectWorkspaceTab);
+    OB.KeyboardManager.Shortcuts.set(
+      'TabSet_SelectWorkspaceTab',
+      'Canvas',
+      ksAction_SelectWorkspaceTab
+    );
     this.Super('draw', arguments);
   },
 
-  closeAllTabs: function () { // Except "Workspace" tab
-    var tabCount, tabArray = [],
-        i = 1;
+  closeAllTabs: function() {
+    // Except "Workspace" tab
+    var tabCount,
+      tabArray = [],
+      i = 1;
     while (typeof this.getTab(i) !== 'undefined') {
       i++;
     }
@@ -203,48 +268,52 @@ isc.OBTabSetMain.addProperties({
     this.removeTabs(tabArray);
   },
 
-  closeSelectedTab: function () { // Only if selected tab is closable
+  closeSelectedTab: function() {
+    // Only if selected tab is closable
     var selectedTab = this.getSelectedTab();
     if (selectedTab.canClose) {
       this.removeTabs(selectedTab);
     }
   },
 
-  selectParentTab: function () {
+  selectParentTab: function() {
     var tabSet = this,
-        tab = tabSet.getSelectedTab(),
-        tabPane = tabSet.getTabPane(tab);
+      tab = tabSet.getSelectedTab(),
+      tabPane = tabSet.getTabPane(tab);
 
-    if (tabPane.selectParentTab) { //Redirect if tabPane has its own selectPreviousTab handler
+    if (tabPane.selectParentTab) {
+      //Redirect if tabPane has its own selectPreviousTab handler
       tabPane.selectParentTab(tabSet);
     }
 
     return true;
   },
 
-  selectChildTab: function () {
+  selectChildTab: function() {
     var tabSet = this,
-        tab = tabSet.getSelectedTab(),
-        tabPane = tabSet.getTabPane(tab);
+      tab = tabSet.getSelectedTab(),
+      tabPane = tabSet.getTabPane(tab);
 
-    if (tabPane.selectChildTab) { //Redirect if tabPane has its own selectPreviousTab handler
+    if (tabPane.selectChildTab) {
+      //Redirect if tabPane has its own selectPreviousTab handler
       tabPane.selectChildTab(tabSet);
     }
 
     return true;
   },
 
-  selectPreviousTab: function (doDefaultAction) {
+  selectPreviousTab: function(doDefaultAction) {
     var tabSet = this,
-        tab = tabSet.getSelectedTab(),
-        tabNum = tabSet.getTabNumber(tab),
-        tabPane = tabSet.getTabPane(tab);
+      tab = tabSet.getSelectedTab(),
+      tabNum = tabSet.getTabNumber(tab),
+      tabPane = tabSet.getTabPane(tab);
 
     if (!doDefaultAction) {
       doDefaultAction = false;
     }
 
-    if (!doDefaultAction && tabPane.selectPreviousTab) { //Redirect if tabPane has its own selectPreviousTab handler
+    if (!doDefaultAction && tabPane.selectPreviousTab) {
+      //Redirect if tabPane has its own selectPreviousTab handler
       tabPane.selectPreviousTab(tabSet);
     } else {
       tabSet.selectTab(tabNum - 1);
@@ -253,17 +322,18 @@ isc.OBTabSetMain.addProperties({
     return true;
   },
 
-  selectNextTab: function (doDefaultAction) {
+  selectNextTab: function(doDefaultAction) {
     var tabSet = this,
-        tab = tabSet.getSelectedTab(),
-        tabNum = tabSet.getTabNumber(tab),
-        tabPane = tabSet.getTabPane(tab);
+      tab = tabSet.getSelectedTab(),
+      tabNum = tabSet.getTabNumber(tab),
+      tabPane = tabSet.getTabPane(tab);
 
     if (!doDefaultAction) {
       doDefaultAction = false;
     }
 
-    if (!doDefaultAction && tabPane.selectNextTab) { //Redirect if tabPane has its own selectNextTab handler
+    if (!doDefaultAction && tabPane.selectNextTab) {
+      //Redirect if tabPane has its own selectNextTab handler
       tabPane.selectNextTab(tabSet);
     } else {
       tabSet.selectTab(tabNum + 1);
@@ -273,9 +343,9 @@ isc.OBTabSetMain.addProperties({
   },
 
   // is used by selenium
-  getTabFromTitle: function (title) {
+  getTabFromTitle: function(title) {
     var index = 0,
-        tab = null;
+      tab = null;
     for (; index < OB.MainView.TabSet.tabs.getLength(); index++) {
       tab = OB.MainView.TabSet.getTabObject(index);
       if (tab.title === title) {
@@ -285,9 +355,13 @@ isc.OBTabSetMain.addProperties({
     return null;
   },
 
-  removeTabs: function (tabs, destroyPanes) {
-    var i, tab, appFrame, tabsLength, toRemove = [],
-        tabSet = OB.MainView.TabSet;
+  removeTabs: function(tabs, destroyPanes) {
+    var i,
+      tab,
+      appFrame,
+      tabsLength,
+      toRemove = [],
+      tabSet = OB.MainView.TabSet;
 
     if (!tabs) {
       return;
@@ -306,7 +380,6 @@ isc.OBTabSetMain.addProperties({
     for (i = 0; i < tabsLength; i++) {
       tab = tabSet.getTab(tabs[i].ID);
       if (tab.pane.Class === 'OBClassicWindow') {
-
         appFrame = tab.pane.appFrameWindow || tab.pane.getAppFrameWindow();
 
         if (appFrame && appFrame.isUserChanges) {
@@ -328,7 +401,7 @@ isc.OBTabSetMain.addProperties({
     return true;
   },
 
-  updateTab: function (tab, pane, refresh) {
+  updateTab: function(tab, pane, refresh) {
     var previousPane = tab && this.getTabObject(tab).pane;
 
     this.Super('updateTab', arguments);
@@ -340,10 +413,14 @@ isc.OBTabSetMain.addProperties({
     }
 
     if (refresh && pane.refresh) {
-      this.fireOnPause('refreshRecordInView', {
-        target: pane,
-        methodName: 'refresh'
-      }, 120);
+      this.fireOnPause(
+        'refreshRecordInView',
+        {
+          target: pane,
+          methodName: 'refresh'
+        },
+        120
+      );
     }
   }
 });
@@ -351,11 +428,11 @@ isc.OBTabSetMain.addProperties({
 isc.ClassFactory.defineClass('OBTabBarMain', isc.OBTabBar);
 
 isc.OBTabBarMain.addProperties({
-  initWidget: function () {
+  initWidget: function() {
     this.Super('initWidget', arguments);
   },
 
-  keyPress: function () {
+  keyPress: function() {
     var ret;
     this.tabWithinToolbar = true;
     ret = this.Super('keyPress', arguments);
@@ -364,19 +441,22 @@ isc.OBTabBarMain.addProperties({
   }
 });
 
-
 isc.ClassFactory.defineClass('OBTabBarButtonChild', isc.OBTabBarButton);
 
 isc.OBTabBarButtonChild.addProperties({
   // Needed to replicate the "click" behavior in automated tests
-  virtualClick: function () {
-    this.getParentCanvas().getParentCanvas().selectTab(this);
-    this.getParentCanvas().getParentCanvas().doHandleClick();
+  virtualClick: function() {
+    this.getParentCanvas()
+      .getParentCanvas()
+      .selectTab(this);
+    this.getParentCanvas()
+      .getParentCanvas()
+      .doHandleClick();
     this.focus();
   },
-  // when a tab is drawn the first time it steals the focus 
+  // when a tab is drawn the first time it steals the focus
   // from the active view, prevent this
-  focus: function () {
+  focus: function() {
     if (this.parentElement.tabSet.tabPicker) {
       this.pane.setAsActiveView();
     }
@@ -398,7 +478,7 @@ isc.OBTabSetChild.addProperties({
 
     dblClickWaiting: false,
 
-    click: function () {
+    click: function() {
       if (this.itemClicked) {
         delete this.itemClicked;
         return false;
@@ -406,7 +486,7 @@ isc.OBTabSetChild.addProperties({
       this.tabSet.doHandleClick();
     },
 
-    doubleClick: function () {
+    doubleClick: function() {
       if (this.itemClicked || this.itemDoubleClicked) {
         delete this.itemClicked;
         delete this.itemDoubleClicked;
@@ -420,7 +500,7 @@ isc.OBTabSetChild.addProperties({
     dragStartDistance: 1,
     overflow: 'hidden',
 
-    itemClick: function (item, itemNum) {
+    itemClick: function(item, itemNum) {
       var me = this;
       this.itemClicked = true;
       if (this.tabSet.ignoreItemClick) {
@@ -428,7 +508,7 @@ isc.OBTabSetChild.addProperties({
         return false;
       }
       me.dblClickWaiting = true;
-      isc.Timer.setTimeout(function () {
+      isc.Timer.setTimeout(function() {
         // if no double click happened then do the single click
         if (me.dblClickWaiting) {
           me.dblClickWaiting = false;
@@ -438,38 +518,38 @@ isc.OBTabSetChild.addProperties({
       return false;
     },
 
-    itemDoubleClick: function (item, itemNum) {
+    itemDoubleClick: function(item, itemNum) {
       this.dblClickWaiting = false;
       this.itemDoubleClicked = true;
       this.tabSet.doHandleDoubleClick();
     },
 
-    dragStop: function () {
+    dragStop: function() {
       // change the height to percentage based to handle resizing of browser:
       this.tabSet.parentContainer.convertToPercentageHeights();
       this.setCursor(isc.Canvas.ROW_RESIZE);
       return true;
     },
 
-    mouseDown: function () {
+    mouseDown: function() {
       if (this.tabSet.state === isc.OBStandardView.STATE_IN_MID) {
         this.setCursor(isc.Canvas.MOVE);
       }
     },
 
-    mouseUp: function () {
+    mouseUp: function() {
       if (this.tabSet.state === isc.OBStandardView.STATE_IN_MID) {
         this.setCursor(isc.Canvas.ROW_RESIZE);
       }
     },
 
-    mouseOut: function () {
+    mouseOut: function() {
       if (this.tabSet.state === isc.OBStandardView.STATE_IN_MID) {
         this.setCursor(isc.Canvas.ROW_RESIZE);
       }
     },
 
-    mouseOver: function () {
+    mouseOver: function() {
       if (this.tabSet.state === isc.OBStandardView.STATE_IN_MID) {
         this.setCursor(isc.Canvas.ROW_RESIZE);
       } else {
@@ -477,7 +557,7 @@ isc.OBTabSetChild.addProperties({
       }
     },
 
-    getCurrentCursor: function () {
+    getCurrentCursor: function() {
       if (this.tabSet.state === isc.OBStandardView.STATE_IN_MID) {
         if (isc.EventHandler.leftButtonDown()) {
           return isc.Canvas.MOVE;
@@ -487,16 +567,24 @@ isc.OBTabSetChild.addProperties({
       return this.Super('getCurrentCursor', arguments);
     },
 
-    dragStart: function () {
+    dragStart: function() {
       // -2 to prevent scrollbar
       this.tabSet.maxHeight = this.tabSet.parentContainer.getHeight() - 2;
-      this.tabSet.minHeight = (this.getHeight() * 2) + 15;
+      this.tabSet.minHeight = this.getHeight() * 2 + 15;
       return true;
     },
 
-    dragMove: function () {
+    dragMove: function() {
       var offset = -1 * isc.EH.dragOffsetY;
-      this.resizeTarget(this.tabSet, true, true, offset, -1 * this.getHeight(), null, true);
+      this.resizeTarget(
+        this.tabSet,
+        true,
+        true,
+        offset,
+        -1 * this.getHeight(),
+        null,
+        true
+      );
       this.tabSet.draggedHeight = this.tabSet.getHeight();
       // if (this.tabSet.getHeight() === this.getHeight()) {
       // // set the parent to top-max
@@ -513,7 +601,7 @@ isc.OBTabSetChild.addProperties({
   // keeps track of the previous dragged height, to restore it
   draggedHeight: null,
 
-  setDraggable: function (draggable) {
+  setDraggable: function(draggable) {
     if (draggable) {
       this.tabBar.canDrag = true;
       this.tabBar.cursor = isc.Canvas.ROW_RESIZE;
@@ -523,7 +611,7 @@ isc.OBTabSetChild.addProperties({
     }
   },
 
-  doHandleClick: function () {
+  doHandleClick: function() {
     if (this.state === isc.OBStandardView.STATE_MIN) {
       // we are minimized, there must be a parent then
       if (this.parentTabSet) {
@@ -544,7 +632,7 @@ isc.OBTabSetChild.addProperties({
     }
   },
 
-  doHandleDoubleClick: function () {
+  doHandleDoubleClick: function() {
     if (this.state === isc.OBStandardView.STATE_TOP_MAX) {
       // we are maximized go back to the previous state
       if (this.previousState && this.previousState !== this.state) {
@@ -569,11 +657,11 @@ isc.OBTabSetChild.addProperties({
     }
   },
 
-  getState: function () {
+  getState: function() {
     return this.state;
   },
 
-  setState: function (newState) {
+  setState: function(newState) {
     // disabled this as sometimes states have
     // to be reset to recompute heights changed automatically
     // if (this.state === newState) {
@@ -608,7 +696,6 @@ isc.OBTabSetChild.addProperties({
           pane.setTopMaximum();
         }
       }
-
     } else if (newState === isc.OBStandardView.STATE_MIN) {
       for (i = 0; i < this.tabs.length; i++) {
         tab = this.tabs[i];
@@ -678,7 +765,7 @@ isc.OBTabSetChild.addProperties({
     }
   },
 
-  makeTabVisible: function (tab) {
+  makeTabVisible: function(tab) {
     var pane;
 
     if (tab === this.getSelectedTab()) {
@@ -696,7 +783,7 @@ isc.OBTabSetChild.addProperties({
     }
   },
 
-  allTabsHidden: function (tabSet) {
+  allTabsHidden: function(tabSet) {
     var i, tabViewPane;
     if (!isc.isA.Array(tabSet.tabs)) {
       return false;
@@ -710,9 +797,9 @@ isc.OBTabSetChild.addProperties({
     return true;
   },
 
-  tabSelected: function (tabNum, tabPane, ID, tab) {
+  tabSelected: function(tabNum, tabPane, ID, tab) {
     var event = isc.EventHandler.getLastEvent(),
-        tabSet = tabPane.getParentCanvas().getParentCanvas();
+      tabSet = tabPane.getParentCanvas().getParentCanvas();
     if (typeof tabPane.paneActionOnSelect === 'function') {
       tabPane.paneActionOnSelect();
       // tabPane should be set again because 'paneActionOnSelect' could have modified the pane content
@@ -723,12 +810,19 @@ isc.OBTabSetChild.addProperties({
     }
     // if the event is a mouse event then let the item click not do max/min
     // tabselected events are also fired when drawing
-    if (this.isDrawn() && event && isc.EventHandler.isMouseEvent(event.eventType) && tabPane.parentView && tabPane.parentView.state !== isc.OBStandardView.STATE_TOP_MAX && tabPane.parentView.state !== isc.OBStandardView.STATE_MID) {
+    if (
+      this.isDrawn() &&
+      event &&
+      isc.EventHandler.isMouseEvent(event.eventType) &&
+      tabPane.parentView &&
+      tabPane.parentView.state !== isc.OBStandardView.STATE_TOP_MAX &&
+      tabPane.parentView.state !== isc.OBStandardView.STATE_MID
+    ) {
       this.ignoreItemClick = true;
     }
   },
 
-  initWidget: function () {
+  initWidget: function() {
     this.tabBarProperties.tabSet = this;
     this.Super('initWidget', arguments);
   }
@@ -737,7 +831,7 @@ isc.OBTabSetChild.addProperties({
 isc.ClassFactory.defineClass('OBTabBarChild', isc.OBTabBar);
 
 isc.OBTabBarChild.addProperties({
-  initWidget: function () {
+  initWidget: function() {
     this.Super('initWidget', arguments);
   }
 });

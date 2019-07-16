@@ -24,11 +24,17 @@ isc.ClassFactory.defineClass('OBEncryptedItem', isc.PasswordItem);
 isc.OBEncryptedItem.addProperties({
   operator: 'iContains',
   autoCompleteKeywords: ['new-password'],
-  changed: function (form, item, value) {
+  changed: function(form, item, value) {
     this.Super('changed', arguments);
     this.form.setValue(item.name + '_cleartext', value);
     if (this.grid.isEditing()) {
-      this.grid.setEditValue(this.grid.getEditRow(), item.name + '_cleartext', value, true, true);
+      this.grid.setEditValue(
+        this.grid.getEditRow(),
+        item.name + '_cleartext',
+        value,
+        true,
+        true
+      );
     }
   }
 });

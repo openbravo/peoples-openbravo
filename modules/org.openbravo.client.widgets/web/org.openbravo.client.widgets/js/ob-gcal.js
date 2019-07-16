@@ -21,14 +21,18 @@
 isc.defineClass('OBGCalWidget', isc.OBUrlWidget);
 
 isc.OBGCalWidget.addProperties({
-  initWidget: function () {
+  initWidget: function() {
     this.setContentSource();
     this.Super('initWidget', arguments);
   },
-  setContentSource: function () {
-    this.contentSource = 'http://www.google.com/calendar/embed?src=' + this.parameters.account + '&ctz=Europe/Madrid&preventCache=' + Math.random();
+  setContentSource: function() {
+    this.contentSource =
+      'http://www.google.com/calendar/embed?src=' +
+      this.parameters.account +
+      '&ctz=Europe/Madrid&preventCache=' +
+      Math.random();
   },
-  refresh: function () {
+  refresh: function() {
     this.setContentSource();
     this.Super('refresh', arguments);
   }

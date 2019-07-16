@@ -27,22 +27,27 @@ isc.OBFKItem.addProperties({
   operator: 'iContains',
 
   // set the identifier field also, that's what gets displayed in the grid
-  changed: function (form, item, value) {
+  changed: function(form, item, value) {
     if (!this._pickedValue && value) {
       return;
     }
 
     var display = this.mapValueToDisplay(value),
-        identifierFieldName = this.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER;
+      identifierFieldName =
+        this.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER;
     form.setValue(identifierFieldName, display);
     // make sure that the grid does not display the old identifier
     if (form.grid) {
-      form.grid.setEditValue(form.grid.getEditRow(), identifierFieldName, display);
+      form.grid.setEditValue(
+        form.grid.getEditRow(),
+        identifierFieldName,
+        display
+      );
     }
     return this.Super('changed', arguments);
   },
 
-  setValue: function (val) {
+  setValue: function(val) {
     if (this._clearingValue) {
       this._editorEnterValue = null;
     }

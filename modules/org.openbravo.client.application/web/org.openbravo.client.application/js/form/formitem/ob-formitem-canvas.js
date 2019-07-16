@@ -29,28 +29,32 @@ isc.OBClientClassCanvasItem.addProperties({
   shouldSaveValue: true,
   // if the canvas is used somewhere else (in the statusbar) then
   // don't do placeCanvas.
-  placeCanvas: function () {
+  placeCanvas: function() {
     if (this.canvas && !this.canvas.inStatusBar) {
       this.Super('placeCanvas', arguments);
     }
   },
 
-  showValue: function (displayValue, dataValue, form, item) {
+  showValue: function(displayValue, dataValue, form, item) {
     if (this.canvas && this.canvas.showValue) {
       this.canvas.showValue(displayValue, dataValue, form, item);
     }
   },
 
-  createCanvas: function () {
+  createCanvas: function() {
     var canvas, clientClassArray, clientClass, clientClassProps;
 
     clientClassArray = OB.Utilities.clientClassSplitProps(this.clientClass);
     clientClass = clientClassArray[0];
     clientClassProps = clientClassArray[1];
 
-    canvas = isc.ClassFactory.newInstance(clientClass, {
-      canvasItem: this
-    }, clientClassProps);
+    canvas = isc.ClassFactory.newInstance(
+      clientClass,
+      {
+        canvasItem: this
+      },
+      clientClassProps
+    );
 
     if (!canvas) {
       return isc.Label.create({
@@ -67,20 +71,24 @@ isc.OBClientClassCanvasItem.addProperties({
     }
 
     if (this.form.itemChanged && canvas.onItemChanged) {
-      canvas.observe(this.form, 'itemChanged', 'observer.onItemChanged(observed)');
+      canvas.observe(
+        this.form,
+        'itemChanged',
+        'observer.onItemChanged(observed)'
+      );
     }
 
     return canvas;
   },
 
-  destroy: function () {
+  destroy: function() {
     if (this.canvas && this.form) {
       this.canvas.ignore(this.form, 'itemChanged');
     }
     return this.Super('destroy', arguments);
   },
 
-  redrawing: function () {
+  redrawing: function() {
     if (this.canvas.redrawingItem) {
       this.canvas.redrawingItem();
     }
@@ -99,16 +107,23 @@ isc.OBTruncAddMinusDisplay.addProperties({
   width: 1,
   overflow: 'visible',
 
-  setRecord: function (record) {
+  setRecord: function(record) {
     var val = record[this.field.name];
-    if (this.field && this.field.type && isc.SimpleType.getType(this.field.type).normalDisplayFormatter) {
-      this.showValue(isc.SimpleType.getType(this.field.type).normalDisplayFormatter(val), val);
+    if (
+      this.field &&
+      this.field.type &&
+      isc.SimpleType.getType(this.field.type).normalDisplayFormatter
+    ) {
+      this.showValue(
+        isc.SimpleType.getType(this.field.type).normalDisplayFormatter(val),
+        val
+      );
     } else {
       this.showValue(String(record[this.field.name]));
     }
   },
 
-  showValue: function (displayValue, dataValue, form, item) {
+  showValue: function(displayValue, dataValue, form, item) {
     if (!dataValue || displayValue === '0') {
       this.setContents(displayValue);
     } else if (!displayValue) {
@@ -128,16 +143,23 @@ isc.OBAddPercentageSign.addProperties({
   width: 1,
   overflow: 'visible',
 
-  setRecord: function (record) {
+  setRecord: function(record) {
     var val = record[this.field.name];
-    if (this.field && this.field.type && isc.SimpleType.getType(this.field.type).normalDisplayFormatter) {
-      this.showValue(isc.SimpleType.getType(this.field.type).normalDisplayFormatter(val), val);
+    if (
+      this.field &&
+      this.field.type &&
+      isc.SimpleType.getType(this.field.type).normalDisplayFormatter
+    ) {
+      this.showValue(
+        isc.SimpleType.getType(this.field.type).normalDisplayFormatter(val),
+        val
+      );
     } else {
       this.showValue(String(record[this.field.name]));
     }
   },
 
-  showValue: function (displayValue, dataValue, form, item) {
+  showValue: function(displayValue, dataValue, form, item) {
     if (!displayValue) {
       this.setContents('0 %');
     } else {
@@ -162,19 +184,19 @@ isc.OBLevelImg.addProperties({
   width: 1,
   height: 1,
 
-  setState: function () {
+  setState: function() {
     //To avoid add "_Disabled" to the src image if the grid row is disabled
     return '';
   },
 
-  click: function () {
+  click: function() {
     if (this.grid) {
       this.grid.selectSingleRecord(this.record);
     }
     return this.Super('click', arguments);
   },
 
-  setValue: function (value) {
+  setValue: function(value) {
     var i;
     if (!value) {
       if (this.value) {
@@ -188,11 +210,22 @@ isc.OBLevelImg.addProperties({
         value = i;
       }
     }
-    if (typeof value === 'number' && value >= 0 && value < this.valuesList.length) {
+    if (
+      typeof value === 'number' &&
+      value >= 0 &&
+      value < this.valuesList.length
+    ) {
       this.value = value;
       this.setWidth(41);
       this.setHeight(20);
-      this.setSrc(OB.Styles.skinsPath + 'Default/org.openbravo.client.application/images/form/levelImg_' + value.toString() + '_' + (this.valuesList.length - 1).toString() + '.png');
+      this.setSrc(
+        OB.Styles.skinsPath +
+          'Default/org.openbravo.client.application/images/form/levelImg_' +
+          value.toString() +
+          '_' +
+          (this.valuesList.length - 1).toString() +
+          '.png'
+      );
     } else {
       this.value = null;
       this.setWidth(1);
@@ -201,11 +234,11 @@ isc.OBLevelImg.addProperties({
     }
   },
 
-  showValue: function (displayValue, dataValue, form, item) {
+  showValue: function(displayValue, dataValue, form, item) {
     this.setValue(dataValue);
   },
 
-  setRecord: function (record) {
+  setRecord: function(record) {
     if (this.field && this.field.name && record[this.field.name]) {
       this.setValue(record[this.field.name]);
     }

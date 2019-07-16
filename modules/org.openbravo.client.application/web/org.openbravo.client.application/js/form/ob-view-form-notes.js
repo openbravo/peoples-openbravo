@@ -31,7 +31,7 @@ isc.OBNoteSectionItem.addProperties({
 
   overflow: 'hidden',
 
-  // some defaults, note if this changes then also the 
+  // some defaults, note if this changes then also the
   // field generation logic needs to be checked
   colSpan: 4,
   startRow: true,
@@ -53,7 +53,7 @@ isc.OBNoteSectionItem.addProperties({
   itemIds: ['_notes_Canvas'],
 
   // note formitems don't have an initWidget but an init method
-  init: function () {
+  init: function() {
     // override the one passed in
     this.defaultValue = OB.I18N.getLabel('OBUIAPP_NotesTitle');
 
@@ -63,14 +63,16 @@ isc.OBNoteSectionItem.addProperties({
     this.Super('init', arguments);
   },
 
-  setNoteCount: function (lNoteCount) {
+  setNoteCount: function(lNoteCount) {
     lNoteCount = parseInt(lNoteCount, 10);
     this.noteCount = lNoteCount;
     if (lNoteCount !== 0) {
       if (!this.getNotePart().noteListGrid.isVisible()) {
         this.getNotePart().noteListGrid.show();
       }
-      this.setValue(OB.I18N.getLabel('OBUIAPP_NotesTitle') + ' (' + lNoteCount + ')');
+      this.setValue(
+        OB.I18N.getLabel('OBUIAPP_NotesTitle') + ' (' + lNoteCount + ')'
+      );
     } else {
       if (this.getNotePart().noteListGrid.isVisible()) {
         this.getNotePart().noteListGrid.hide();
@@ -79,41 +81,39 @@ isc.OBNoteSectionItem.addProperties({
     }
   },
 
-  getNotePart: function () {
+  getNotePart: function() {
     if (!this.noteCanvasItem) {
       this.noteCanvasItem = this.form.getField(this.itemIds[0]);
     }
     return this.noteCanvasItem.canvas;
   },
 
-  setRecordInfo: function (entity, id, notesForm) {
+  setRecordInfo: function(entity, id, notesForm) {
     this.getNotePart().setRecordInfo(entity, id, notesForm);
   },
 
-  refresh: function () {
+  refresh: function() {
     this.getNotePart().refresh();
   },
 
-  expandSection: function () {
+  expandSection: function() {
     this.Super('expandSection', arguments);
     this.form.noteSection.refresh();
   },
 
-  hide: function () {
+  hide: function() {
     this.Super('hide', arguments);
     if (this.noteCanvasItem) {
-      // Solves issue #16663: Forcing call to canvas hide. 
-      // Shouldn't this be invoked by SmartClient 
+      // Solves issue #16663: Forcing call to canvas hide.
+      // Shouldn't this be invoked by SmartClient
       this.noteCanvasItem.hide();
     }
   }
-
 });
 
 isc.ClassFactory.defineClass('OBNoteLayout', isc.VLayout);
 
 isc.OBNoteLayout.addProperties({
-
   entity: null,
 
   recordId: null,
@@ -139,34 +139,49 @@ isc.OBNoteLayout.addProperties({
   // * If the string 'all' is found in the array, it will refresh in all cases
   // * Entities can be added to the list by third parties by doing: isc.OBNoteLayout.getPrototype().refreshFormWithEntities.push(theEntityName);
   //   Where 'theEntityName' is the string with the name of the entity
-  shouldRefreshAfterAddOrRemove: function () {
+  shouldRefreshAfterAddOrRemove: function() {
     var i;
     for (i = 0; i < this.refreshFormWithEntities.length; i++) {
-      if (this.refreshFormWithEntities[i].toLowerCase() === 'all' || this.refreshFormWithEntities[i] === this.entity) {
+      if (
+        this.refreshFormWithEntities[i].toLowerCase() === 'all' ||
+        this.refreshFormWithEntities[i] === this.entity
+      ) {
         return true;
       }
     }
     return false;
   },
 
-  addOrRemoveCancelLogic: function () {
-    if (this.shouldRefreshAfterAddOrRemove() && this.view && this.view.viewForm && this.view.viewGrid && //
-    (this.view.viewForm.hasChanged || (this.view.isEditingGrid && this.view.viewGrid.getEditForm().hasChanged))) { //
+  addOrRemoveCancelLogic: function() {
+    if (
+      this.shouldRefreshAfterAddOrRemove() &&
+      this.view &&
+      this.view.viewForm &&
+      this.view.viewGrid && //
+      (this.view.viewForm.hasChanged ||
+        (this.view.isEditingGrid &&
+          this.view.viewGrid.getEditForm().hasChanged))
+    ) {
+      //
       // If should refresh after save, and there is already changes made in the form,
       // notice it and cancel the note save action to avoid possible collisions
-      isc.warn(OB.I18N.getLabel('OBUIAPP_SaveChangesBeforeAddRemoveNote'), function () {
-        return true;
-      }, {
-        icon: '[SKINIMG]Dialog/error.png',
-        title: OB.I18N.getLabel('OBUIAPP_Error')
-      });
+      isc.warn(
+        OB.I18N.getLabel('OBUIAPP_SaveChangesBeforeAddRemoveNote'),
+        function() {
+          return true;
+        },
+        {
+          icon: '[SKINIMG]Dialog/error.png',
+          title: OB.I18N.getLabel('OBUIAPP_Error')
+        }
+      );
       return false;
     } else {
       return true;
     }
   },
 
-  addOrRemoveNoteCallback: function (dsResponse, data, dsRequest) {
+  addOrRemoveNoteCallback: function(dsResponse, data, dsRequest) {
     if (this.shouldRefreshAfterAddOrRemove()) {
       this.view.refresh();
     }
@@ -175,11 +190,11 @@ isc.OBNoteLayout.addProperties({
   /**
    * Saves the note to the DB.
    */
-  saveNote: function () {
+  saveNote: function() {
     var me = this;
-    var addNoteCallback = function (dsResponse, data, dsRequest) {
-        me.addOrRemoveNoteCallback(dsResponse, data, dsRequest);
-        };
+    var addNoteCallback = function(dsResponse, data, dsRequest) {
+      me.addOrRemoveNoteCallback(dsResponse, data, dsRequest);
+    };
 
     if (!this.addOrRemoveCancelLogic()) {
       return false;
@@ -204,30 +219,35 @@ isc.OBNoteLayout.addProperties({
       organizationOfTheNote = this.notesForm.values.organization;
     }
 
-    noteDS.addData({
-      'client': OB.User.clientId,
-      'organization': organizationOfTheNote,
-      'table': this.notesForm.view.standardProperties.inpTableId,
-      'record': this.notesForm.view.viewGrid.getSelectedRecord().id,
-      'note': note
-    }, addNoteCallback);
+    noteDS.addData(
+      {
+        client: OB.User.clientId,
+        organization: organizationOfTheNote,
+        table: this.notesForm.view.standardProperties.inpTableId,
+        record: this.notesForm.view.viewGrid.getSelectedRecord().id,
+        note: note
+      },
+      addNoteCallback
+    );
 
     // clean text area
     this.noteDynamicForm.getItem('noteOBTextAreaItem').clearValue();
     this.saveNoteButton.setDisabled(true);
     this.noteDynamicForm.focusInItem('noteOBTextAreaItem');
 
-    this.parentElement.noteSection.setNoteCount(this.parentElement.noteSection.noteCount + 1);
+    this.parentElement.noteSection.setNoteCount(
+      this.parentElement.noteSection.noteCount + 1
+    );
   },
 
   /**
    * Deletes the note from the DB.
    */
-  deleteNote: function ( /* note id to delete */ id) {
+  deleteNote: function(/* note id to delete */ id) {
     var me = this;
-    var removeNoteCallback = function (dsResponse, data, dsRequest) {
-        me.addOrRemoveNoteCallback(dsResponse, data, dsRequest);
-        };
+    var removeNoteCallback = function(dsResponse, data, dsRequest) {
+      me.addOrRemoveNoteCallback(dsResponse, data, dsRequest);
+    };
 
     if (!this.addOrRemoveCancelLogic()) {
       return false;
@@ -235,29 +255,36 @@ isc.OBNoteLayout.addProperties({
 
     var noteDS = this.getNoteDataSource();
     var noteSection = this.parentElement.noteSection;
-    isc.confirm(OB.I18N.getLabel('OBUIAPP_ConfirmRemoveNote'), function (clickedOK) {
-      if (clickedOK) {
-        noteDS.removeData({
-          'id': id
-        }, removeNoteCallback);
-        noteSection.setNoteCount(noteSection.noteCount - 1);
+    isc.confirm(
+      OB.I18N.getLabel('OBUIAPP_ConfirmRemoveNote'),
+      function(clickedOK) {
+        if (clickedOK) {
+          noteDS.removeData(
+            {
+              id: id
+            },
+            removeNoteCallback
+          );
+          noteSection.setNoteCount(noteSection.noteCount - 1);
+        }
+      },
+      {
+        title: OB.I18N.getLabel('OBUIAPP_DialogTitle_DeleteNote')
       }
-    }, {
-      title: OB.I18N.getLabel('OBUIAPP_DialogTitle_DeleteNote')
-    });
+    );
   },
 
   /**
    * Returns Notes data source.
    */
-  getNoteDataSource: function () {
+  getNoteDataSource: function() {
     return this.noteListGrid.dataSource;
   },
 
   /**
    * Initializes the widget.
    */
-  initWidget: function () {
+  initWidget: function() {
     this.Super('initWidget', arguments);
 
     var view = this.getForm().view;
@@ -275,30 +302,38 @@ isc.OBNoteLayout.addProperties({
     this.noteDynamicForm = isc.DynamicForm.create({
       numCols: 1,
       width: '100%',
-      fields: [{
-        name: 'noteOBTextAreaItem',
-        type: 'OBTextAreaItem',
-        showTitle: false,
-        layout: this,
-        width: '*',
-        length: 2000,
-        change: function (form, item, value, oldValue) {
-          if (value) {
-            this.layout.saveNoteButton.setDisabled(false);
-          } else {
-            this.layout.saveNoteButton.setDisabled(true);
-          }
-          return this.Super('change', arguments);
-        },
-        isDisabled: function () {
-          var windowId = view.standardWindow ? view.standardWindow.windowId : null;
-          this.Super('isDisabled', arguments);
-          if (OB.PropertyStore.get("DisableNotesForReadOnlyTabs", windowId) === 'Y' && view.readOnly === true) {
-            this.readOnly = true;
-            this.canEdit = false;
+      fields: [
+        {
+          name: 'noteOBTextAreaItem',
+          type: 'OBTextAreaItem',
+          showTitle: false,
+          layout: this,
+          width: '*',
+          length: 2000,
+          change: function(form, item, value, oldValue) {
+            if (value) {
+              this.layout.saveNoteButton.setDisabled(false);
+            } else {
+              this.layout.saveNoteButton.setDisabled(true);
+            }
+            return this.Super('change', arguments);
+          },
+          isDisabled: function() {
+            var windowId = view.standardWindow
+              ? view.standardWindow.windowId
+              : null;
+            this.Super('isDisabled', arguments);
+            if (
+              OB.PropertyStore.get('DisableNotesForReadOnlyTabs', windowId) ===
+                'Y' &&
+              view.readOnly === true
+            ) {
+              this.readOnly = true;
+              this.canEdit = false;
+            }
           }
         }
-      }]
+      ]
     });
 
     this.saveNoteButton = isc.OBFormButton.create({
@@ -306,12 +341,12 @@ isc.OBNoteLayout.addProperties({
       margin: 4,
       //hLayout layoutTopMargin is not affecting completly the button, so this magin tries to balance it
       title: OB.I18N.getLabel('OBUIAPP_SaveNoteButtonTitle'),
-      click: function () {
+      click: function() {
         this.layout.saveNote();
         return false;
       },
       canFocus: true,
-      draw: function () {
+      draw: function() {
         this.setDisabled(true);
         return this.Super('draw', arguments);
       }
@@ -325,12 +360,15 @@ isc.OBNoteLayout.addProperties({
     this.noteListGrid = isc.OBGrid.create({
       width: '50%',
       autoFitData: 'vertical',
-      fields: [{
-        name: 'colorBar',
-        width: '5'
-      }, {
-        name: 'note'
-      }],
+      fields: [
+        {
+          name: 'colorBar',
+          width: '5'
+        },
+        {
+          name: 'note'
+        }
+      ],
       alternateRecordStyles: false,
       autoFetchData: true,
       baseStyle: 'OBNoteListGridCell',
@@ -348,28 +386,40 @@ isc.OBNoteLayout.addProperties({
       styleName: 'OBNoteListGrid',
       wrapCells: true,
 
-      setDataSource: function (dataSource, fields) {
+      setDataSource: function(dataSource, fields) {
         this.Super('setDataSource', [dataSource, this.fields]);
       },
 
-      fetchData: function (criteria, callback, requestProperties) {
-        if (this.layout.getForm() && this.layout.getForm().noteSection && this.layout.getForm().noteSection.visible && this.layout.getForm().noteSection.isExpanded()) {
-          return this.Super('fetchData', [this.convertCriteria(criteria), callback, requestProperties]);
+      fetchData: function(criteria, callback, requestProperties) {
+        if (
+          this.layout.getForm() &&
+          this.layout.getForm().noteSection &&
+          this.layout.getForm().noteSection.visible &&
+          this.layout.getForm().noteSection.isExpanded()
+        ) {
+          return this.Super('fetchData', [
+            this.convertCriteria(criteria),
+            callback,
+            requestProperties
+          ]);
         }
       },
 
-      filterData: function (criteria, callback, requestProperties) {
+      filterData: function(criteria, callback, requestProperties) {
         return this.Super('filterData', [
-        this.convertCriteria(criteria), callback, requestProperties]);
+          this.convertCriteria(criteria),
+          callback,
+          requestProperties
+        ]);
       },
 
-      getCriteria: function () {
+      getCriteria: function() {
         var criteria = this.Super('getCriteria', arguments) || {};
         criteria = this.convertCriteria(criteria);
         return criteria;
       },
 
-      convertCriteria: function (criteria) {
+      convertCriteria: function(criteria) {
         criteria = isc.addProperties({}, criteria || {});
 
         if (!criteria.criteria) {
@@ -392,11 +442,9 @@ isc.OBNoteLayout.addProperties({
           criteria[OB.Constants.ORDERBY_PARAMETER] = '-updated';
         }
         return criteria;
-
       },
 
-      formatCellValue: function (value, record, rowNum, colNum) {
-
+      formatCellValue: function(value, record, rowNum, colNum) {
         if (this.getFieldName(colNum) !== 'note') {
           return value;
         }
@@ -405,17 +453,37 @@ isc.OBNoteLayout.addProperties({
           value = value.asHTML();
         }
 
-        value = value + ' <span class="OBNoteListGridAuthor">' + OB.Utilities.getTimePassedInterval(record.recordTime - record.creationDate.getTime()) + ' ' + OB.I18N.getLabel('OBUIAPP_by') + ' ' + record['createdBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER].asHTML() + '</span>';
+        value =
+          value +
+          ' <span class="OBNoteListGridAuthor">' +
+          OB.Utilities.getTimePassedInterval(
+            record.recordTime - record.creationDate.getTime()
+          ) +
+          ' ' +
+          OB.I18N.getLabel('OBUIAPP_by') +
+          ' ' +
+          record[
+            'createdBy' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER
+          ].asHTML() +
+          '</span>';
 
         // show delete link if the note was created by
         // the current user
         if (record && record.createdBy === OB.User.id) {
-          value = value + ' <nobr><span class="OBNoteListGridDelete" ><a class="OBNoteListGridDelete" href="#" onclick="' + this.layout.ID + '.deleteNote(\'' + record.id + '\')">[ ' + OB.I18N.getLabel('OBUIAPP_delete') + ' ]</a></span></nobr>';
+          value =
+            value +
+            ' <nobr><span class="OBNoteListGridDelete" ><a class="OBNoteListGridDelete" href="#" onclick="' +
+            this.layout.ID +
+            ".deleteNote('" +
+            record.id +
+            '\')">[ ' +
+            OB.I18N.getLabel('OBUIAPP_delete') +
+            ' ]</a></span></nobr>';
         }
         return value;
       },
 
-      getBaseStyle: function (record, rowNum, colNum) {
+      getBaseStyle: function(record, rowNum, colNum) {
         if (this.getFieldName(colNum) !== 'colorBar') {
           return this.baseStyle;
         }
@@ -426,7 +494,6 @@ isc.OBNoteLayout.addProperties({
           return 'OBNoteListGridOtherUserNoteCell';
         }
       }
-
     });
 
     this.noteListGrid.addSort({
@@ -447,28 +514,26 @@ isc.OBNoteLayout.addProperties({
   /**
    * Sets record information.
    */
-  setRecordInfo: function (entity, id, notesForm) {
+  setRecordInfo: function(entity, id, notesForm) {
     this.entity = entity;
     this.recordId = id;
     this.notesForm = notesForm;
   },
 
-  refresh: function () {
+  refresh: function() {
     this.noteDynamicForm.getItem('noteOBTextAreaItem').clearValue();
     this.noteListGrid.fetchData();
   },
 
-  getForm: function () {
+  getForm: function() {
     return this.canvasItem.form;
   }
-
 });
 
 isc.ClassFactory.defineClass('OBNoteCanvasItem', isc.CanvasItem);
 
 isc.OBNoteCanvasItem.addProperties({
-
-  // some defaults, note if this changes then also the 
+  // some defaults, note if this changes then also the
   // field generation logic needs to be checked
   colSpan: 4,
   startRow: true,
@@ -488,8 +553,7 @@ isc.OBNoteCanvasItem.addProperties({
   canvasConstructor: 'OBNoteLayout',
 
   // never disable this one
-  isDisabled: function () {
+  isDisabled: function() {
     return false;
   }
-
 });

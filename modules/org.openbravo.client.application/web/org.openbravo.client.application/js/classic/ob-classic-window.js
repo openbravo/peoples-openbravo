@@ -19,8 +19,8 @@
 
 // = OB Classic Window =
 //
-// Implements the view which shows a classic OB window in a Smartclient HTMLFlow component. The 
-// classic OB window is shown in a tab in the multi-tab interface. 
+// Implements the view which shows a classic OB window in a Smartclient HTMLFlow component. The
+// classic OB window is shown in a tab in the multi-tab interface.
 //
 isc.defineClass('OBClassicWindow', isc.HTMLPane).addProperties({
   showsItself: false,
@@ -53,11 +53,17 @@ isc.defineClass('OBClassicWindow', isc.HTMLPane).addProperties({
 });
 
 isc.OBClassicWindow.addMethods({
-
   // ** {{{ updateTabInformation }}} **
   //
   // Is called to update the tab information of an opened classic window.
-  updateTabInformation: function (windowId, tabId, recordId, command, obManualURL, title) {
+  updateTabInformation: function(
+    windowId,
+    tabId,
+    recordId,
+    command,
+    obManualURL,
+    title
+  ) {
     // ignore the first time
     if (this.ignoreTabInfoUpdate) {
       this.ignoreTabInfoUpdate = false;
@@ -83,40 +89,65 @@ isc.OBClassicWindow.addMethods({
   //
   // Is used to handle the refresh keyboard shortcut, clicks the refresh button
   // of a classic window.
-  refreshTab: function () {
+  refreshTab: function() {
     if (this.getAppFrameWindow()) {
-      this.getAppFrameWindow().document.getElementById('buttonRefresh').onclick();
+      this.getAppFrameWindow()
+        .document.getElementById('buttonRefresh')
+        .onclick();
     }
   },
 
   // ** {{{ tabSelected }}} **
   //
   // Is used to place the focus in a tab after one of the flyouts is closed.
-  tabSelected: function () {
+  tabSelected: function() {
     var appFrameWindow = this.getAppFrameWindow();
-    if (appFrameWindow && appFrameWindow.putFocusOnWindow && !appFrameWindow.OB_NoRefocusAfterTabSelection) {
+    if (
+      appFrameWindow &&
+      appFrameWindow.putFocusOnWindow &&
+      !appFrameWindow.OB_NoRefocusAfterTabSelection
+    ) {
       appFrameWindow.putFocusOnWindow();
     }
   },
 
-  initWidget: function (args) {
+  initWidget: function(args) {
     var urlCharacter = '?';
     if (this.appURL.indexOf('?') !== -1) {
       urlCharacter = '&';
     }
     if (this.keyParameter) {
-      this.contentsURL = this.appURL + urlCharacter + 'url=' + this.mappingName + '&' + this.keyParameter + '=' + this.recordId + '&noprefs=true&Command=DIRECT&hideMenu=true';
+      this.contentsURL =
+        this.appURL +
+        urlCharacter +
+        'url=' +
+        this.mappingName +
+        '&' +
+        this.keyParameter +
+        '=' +
+        this.recordId +
+        '&noprefs=true&Command=DIRECT&hideMenu=true';
     } else if (this.obManualURL && this.obManualURL !== '') {
       this.obManualURL = this.obManualURL.replace('?', '&');
 
-      this.contentsURL = this.appURL + urlCharacter + 'url=' + this.obManualURL + '&noprefs=true&hideMenu=true';
+      this.contentsURL =
+        this.appURL +
+        urlCharacter +
+        'url=' +
+        this.obManualURL +
+        '&noprefs=true&hideMenu=true';
 
       if (this.obManualURL.indexOf('Command=') === -1) {
         // Add command in case it is not already set in the obManualURL
         this.contentsURL = this.contentsURL + '&Command=' + this.command;
       }
     } else {
-      this.contentsURL = this.appURL + urlCharacter + 'Command=' + this.command + '&noprefs=true';
+      this.contentsURL =
+        this.appURL +
+        urlCharacter +
+        'Command=' +
+        this.command +
+        '&noprefs=true';
       if (this.recordId !== '') {
         this.contentsURL = this.contentsURL + '&windowId=' + this.windowId;
       }
@@ -136,7 +167,7 @@ isc.OBClassicWindow.addMethods({
   //
   // Returns the contentWindow object of the iframe implementing the classic
   // window.
-  getIframeWindow: function () {
+  getIframeWindow: function() {
     var container, iframes;
 
     container = this.getHandle();
@@ -144,7 +175,7 @@ isc.OBClassicWindow.addMethods({
     if (container && container.getElementsByTagName) {
       iframes = container.getElementsByTagName('iframe');
       if (iframes.length > 0) {
-        return (iframes[0].contentWindow ? iframes[0].contentWindow : null);
+        return iframes[0].contentWindow ? iframes[0].contentWindow : null;
       }
     }
     return null;
@@ -154,14 +185,14 @@ isc.OBClassicWindow.addMethods({
   //
   // Returns the appFrame object of the contentWindow of the iframe implementing
   // the classic window.
-  getAppFrameWindow: function () {
+  getAppFrameWindow: function() {
     var iframe;
     if (this.appFrameWindow !== null) {
       return this.appFrameWindow;
     }
     iframe = this.getIframeWindow();
     try {
-      this.appFrameWindow = (iframe && iframe.appFrame ? iframe.appFrame : null); // caching reference
+      this.appFrameWindow = iframe && iframe.appFrame ? iframe.appFrame : null; // caching reference
     } catch (e) {
       //To avoid cross-domain JS error (in case it exists)
       this.appFrameWindow = null;
@@ -171,7 +202,7 @@ isc.OBClassicWindow.addMethods({
 
   // The following methods are related to history management, i.e. that a
   // specific window is only opened once.
-  getBookMarkParams: function () {
+  getBookMarkParams: function() {
     var result = {};
     if (this.recordId) {
       result.recordId = this.recordId;
@@ -203,12 +234,20 @@ isc.OBClassicWindow.addMethods({
     return result;
   },
 
-  isEqualParams: function (params) {
-    if (params && (this.recordId || params.recordId) && params.recordId !== this.recordId) {
+  isEqualParams: function(params) {
+    if (
+      params &&
+      (this.recordId || params.recordId) &&
+      params.recordId !== this.recordId
+    ) {
       return false;
     }
 
-    if (params && (this.command || params.command) && params.command !== this.command) {
+    if (
+      params &&
+      (this.command || params.command) &&
+      params.command !== this.command
+    ) {
       return false;
     }
 
@@ -216,38 +255,66 @@ isc.OBClassicWindow.addMethods({
       return false;
     }
 
-    if (params && (this.formId || params.formId) && params.formId !== this.formId) {
+    if (
+      params &&
+      (this.formId || params.formId) &&
+      params.formId !== this.formId
+    ) {
       return false;
     }
 
-    if (params && (this.windowId || params.windowId) && params.windowId !== this.windowId) {
+    if (
+      params &&
+      (this.windowId || params.windowId) &&
+      params.windowId !== this.windowId
+    ) {
       return false;
     }
 
-    if (params && (this.processId || params.processId) && params.processId !== this.processId) {
+    if (
+      params &&
+      (this.processId || params.processId) &&
+      params.processId !== this.processId
+    ) {
       return false;
     }
 
     return true;
   },
 
-  isSameTab: function (viewName, params) {
+  isSameTab: function(viewName, params) {
     if (viewName !== 'OBClassicWindow') {
       return false;
     }
-    if (params && (params.obManualURL || this.obManualURL) && params.obManualURL === this.obManualURL) {
+    if (
+      params &&
+      (params.obManualURL || this.obManualURL) &&
+      params.obManualURL === this.obManualURL
+    ) {
       return true;
     }
 
-    if (params && (this.windowId || params.windowId) && params.windowId === this.windowId) {
+    if (
+      params &&
+      (this.windowId || params.windowId) &&
+      params.windowId === this.windowId
+    ) {
       return true;
     }
 
-    if (params && (this.processId || params.processId) && params.processId === this.processId) {
+    if (
+      params &&
+      (this.processId || params.processId) &&
+      params.processId === this.processId
+    ) {
       return true;
     }
 
-    if (params && (this.formId || params.formId) && params.formId === this.formId) {
+    if (
+      params &&
+      (this.formId || params.formId) &&
+      params.formId === this.formId
+    ) {
       return true;
     }
 
@@ -261,7 +328,7 @@ isc.OBClassicWindow.addMethods({
   // ** {{{ getHelpView }}} **
   //
   // Returns the view definition of the help window for this classic window.
-  getHelpView: function () {
+  getHelpView: function() {
     if (this.windowId) {
       // tabTitle is set in the viewManager
       return {
@@ -298,10 +365,13 @@ isc.OBClassicWindow.addMethods({
   // Is used for supporting autosave, saves the specific tab of the window.
   // Calls the server to do the actual save, the response calls the callback
   // method.
-  saveRecord: function ( /* String */ tabID, /* Function */ callback) {
-    var postData, reqObj, appFrame = this.appFrameWindow || this.getAppFrameWindow(),
-        saveCallback = callback || this.ID + '.saveCallback(rpcResponse, data, rpcRequest)',
-        tabid = tabID || '';
+  saveRecord: function(/* String */ tabID, /* Function */ callback) {
+    var postData,
+      reqObj,
+      appFrame = this.appFrameWindow || this.getAppFrameWindow(),
+      saveCallback =
+        callback || this.ID + '.saveCallback(rpcResponse, data, rpcRequest)',
+      tabid = tabID || '';
 
     postData = {};
     OB.Utilities.addFormInputsToCriteria(postData, appFrame);
@@ -323,9 +393,9 @@ isc.OBClassicWindow.addMethods({
   // ** {{{ saveCallback }}} **
   //
   // If the save is successfull closes the tab.
-  saveCallback: function (rpcResponse, data, rpcRequest) {
+  saveCallback: function(rpcResponse, data, rpcRequest) {
     var result = eval('(' + data + ')'),
-        appFrame = this.appFrameWindow || this.getAppFrameWindow();
+      appFrame = this.appFrameWindow || this.getAppFrameWindow();
     if (result && result.oberror) {
       if (result.oberror.type === 'Success') {
         appFrame.isUserChanges = false;
@@ -338,9 +408,10 @@ isc.OBClassicWindow.addMethods({
 
   // Waits until the iFrame has been loaded, and sets it as activeFrame
   // See issue https://issues.openbravo.com/view.php?id=25558
-  setAsActiveIFrame: function (nCalls) {
-    var iFrame, me = this,
-        parentFrame;
+  setAsActiveIFrame: function(nCalls) {
+    var iFrame,
+      me = this,
+      parentFrame;
     if (!nCalls) {
       nCalls = 0;
     } else if (nCalls > 20) {
@@ -349,7 +420,7 @@ isc.OBClassicWindow.addMethods({
     }
     iFrame = this.getAppFrameWindow();
     if (!iFrame) {
-      setTimeout(function () {
+      setTimeout(function() {
         me.setAsActiveIFrame(nCalls++);
       }, 500);
     } else {

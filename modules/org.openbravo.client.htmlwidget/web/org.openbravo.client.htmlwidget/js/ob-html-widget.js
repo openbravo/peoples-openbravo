@@ -23,12 +23,12 @@
 isc.defineClass('OBHTMLWidget', isc.OBWidget).addProperties({
   contentSource: null,
 
-  initWidget: function () {
+  initWidget: function() {
     this.Super('initWidget', arguments);
     this.setWidgetHeight();
   },
 
-  createWindowContents: function () {
+  createWindowContents: function() {
     if (!this.contentSource && this.parameters.htmlcode) {
       this.contentSource = this.evaluateContents(this.parameters.htmlcode);
     }
@@ -42,7 +42,7 @@ isc.defineClass('OBHTMLWidget', isc.OBWidget).addProperties({
     });
   },
 
-  refresh: function () {
+  refresh: function() {
     this.setWidgetHeight();
     if (this.parameters.widgetTitle) {
       this.setTitle(this.parameters.widgetTitle);
@@ -53,12 +53,12 @@ isc.defineClass('OBHTMLWidget', isc.OBWidget).addProperties({
     this.windowContents.setContents(this.contentSource);
   },
 
-  setWidgetHeight: function () {
+  setWidgetHeight: function() {
     var currentHeight = this.getHeight(),
-        contentHeight = this.parameters.widgetHeight,
-        edgeTop = this.edgeTop,
-        edgeBottom = this.edgeBottom,
-        newHeight = contentHeight + edgeTop + edgeBottom;
+      contentHeight = this.parameters.widgetHeight,
+      edgeTop = this.edgeTop,
+      edgeBottom = this.edgeBottom,
+      newHeight = contentHeight + edgeTop + edgeBottom;
 
     if (!isc.isA.Number(this.parameters.widgetHeight)) {
       return;
@@ -67,7 +67,7 @@ isc.defineClass('OBHTMLWidget', isc.OBWidget).addProperties({
     this.setHeight(newHeight);
     if (this.parentElement) {
       var heightDiff = newHeight - currentHeight,
-          parentHeight = this.parentElement.getHeight();
+        parentHeight = this.parentElement.getHeight();
       this.parentElement.setHeight(parentHeight + heightDiff);
     }
   }

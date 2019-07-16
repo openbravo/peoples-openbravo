@@ -21,8 +21,7 @@
 // Contains code which is called for page level events. The mouse down event
 // is handled to set the correct active view.
 //
-(function (OB, isc) {
-
+(function(OB, isc) {
   if (!OB || !isc) {
     throw {
       name: 'ReferenceError',
@@ -33,16 +32,15 @@
   function EventHandler() {}
 
   EventHandler.prototype = {
-
-    mouseDown: function (canvas) {
+    mouseDown: function(canvas) {
       var lastEvent = isc.EventHandler.lastEvent,
-          checkName = lastEvent.nativeTarget ? lastEvent.nativeTarget.name : null,
-          index = checkName ? checkName.indexOf('_') : -1;
+        checkName = lastEvent.nativeTarget ? lastEvent.nativeTarget.name : null,
+        index = checkName ? checkName.indexOf('_') : -1;
       // this code assumes that there is a name attribute on the html element
       // which points to the formitem
       // happens with compount formitems, such as date
       // in that case the formitem name consists of the fieldname followed
-      // by the 
+      // by the
       if (index !== -1) {
         checkName = checkName.substring(0, index);
       }
@@ -56,14 +54,20 @@
     },
 
     // at this point target can be a canvas or a formitem
-    processEvent: function (target) {
+    processEvent: function(target) {
       var onClickTarget = null,
-          lastEvent = isc.EventHandler.lastEvent;
+        lastEvent = isc.EventHandler.lastEvent;
 
       // handle a special case:
       // https://issues.openbravo.com/view.php?id=17439
       // when setting the active view we loose the click
-      if (lastEvent && lastEvent.eventType === 'mouseDown' && lastEvent.DOMevent && lastEvent.DOMevent.target && lastEvent.DOMevent.target.onclick) {
+      if (
+        lastEvent &&
+        lastEvent.eventType === 'mouseDown' &&
+        lastEvent.DOMevent &&
+        lastEvent.DOMevent.target &&
+        lastEvent.DOMevent.target.onclick
+      ) {
         onClickTarget = lastEvent.DOMevent.target;
       }
 
@@ -76,13 +80,22 @@
       }
 
       // when clicking in the tabbar
-      if (target.tabSet && target.tabSet.getSelectedTab() && target.tabSet.getSelectedTab().pane && target.tabSet.getSelectedTab().pane.setAsActiveView) {
+      if (
+        target.tabSet &&
+        target.tabSet.getSelectedTab() &&
+        target.tabSet.getSelectedTab().pane &&
+        target.tabSet.getSelectedTab().pane.setAsActiveView
+      ) {
         target.tabSet.getSelectedTab().pane.setAsActiveView();
         return true;
       }
 
       do {
-        if (target.view && target.view.setAsActiveView && target.view.isVisible()) {
+        if (
+          target.view &&
+          target.view.setAsActiveView &&
+          target.view.isVisible()
+        ) {
           // don't do this if already activec
           if (target.view.isActiveView()) {
             onClickTarget = null;
@@ -102,7 +115,8 @@
             return true;
           }
         }
-        if (target.mouseDownCancelParentPropagation) { // Added to be able to scroll the toolbar without focusing top level view
+        if (target.mouseDownCancelParentPropagation) {
+          // Added to be able to scroll the toolbar without focusing top level view
           target = null;
         } else if (!target.parentElement && target.grid) {
           target = target.grid;
@@ -120,4 +134,4 @@
 
   OB.EventHandler = new EventHandler();
   isc.Page.setEvent(isc.EH.MOUSE_DOWN, OB.EventHandler, null, 'mouseDown');
-}(OB, isc));
+})(OB, isc);

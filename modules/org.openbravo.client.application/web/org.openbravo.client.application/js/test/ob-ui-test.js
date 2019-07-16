@@ -21,19 +21,20 @@
 
 QUnit.module('org.openbravo.client.application');
 
-QUnit.test('Basic requirements', function () {
+QUnit.test('Basic requirements', function() {
   QUnit.expect(2);
   QUnit.ok(isc, 'isc object is present');
   QUnit.ok(document.getElementById, 'getElementById');
 });
 
-QUnit.test('Create Canvas', function () {
+QUnit.test('Create Canvas', function() {
   var canvasID = 'myCanvas',
-      canvas, createCanvas;
+    canvas,
+    createCanvas;
 
   QUnit.expect(3);
 
-  createCanvas = function (isc) {
+  createCanvas = function(isc) {
     var c = isc.Canvas.newInstance({
       ID: canvasID,
       width: '100%',
@@ -47,9 +48,12 @@ QUnit.test('Create Canvas', function () {
 
   QUnit.ok(typeof canvas !== 'undefined', 'Canvas created');
 
-  QUnit.ok((function (c) {
-    return c.height !== 0 && c.width !== 0;
-  }(canvas)), 'Canvas height and width are not zero');
+  QUnit.ok(
+    (function(c) {
+      return c.height !== 0 && c.width !== 0;
+    })(canvas),
+    'Canvas height and width are not zero'
+  );
 
   QUnit.ok(isc.Log.getStackTrace() !== undefined, 'getStackTrace()');
 });

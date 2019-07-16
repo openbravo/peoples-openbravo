@@ -49,20 +49,20 @@ isc.OBRelativeDateItem.addProperties({
   endDate: Date.createLogicalDate(2050, 11, 31),
 
   presetOptions: {
-    "$today": OB.I18N.getLabel('OBUISC_DateChooser.todayButtonTitle'),
-    "$yesterday": OB.I18N.getLabel('OBUIAPP_Yesterday'),
-    "$tomorrow": OB.I18N.getLabel('OBUIAPP_Tomorrow'),
-    "-1w": OB.I18N.getLabel('OBUIAPP_Current_day_of_last_week'),
-    "+1w": OB.I18N.getLabel('OBUIAPP_Current_day_of_next_week'),
-    "-1m": OB.I18N.getLabel('OBUIAPP_Current_day_of_last_month'),
-    "+1m": OB.I18N.getLabel('OBUIAPP_Current_day_of_next_month')
+    $today: OB.I18N.getLabel('OBUISC_DateChooser.todayButtonTitle'),
+    $yesterday: OB.I18N.getLabel('OBUIAPP_Yesterday'),
+    $tomorrow: OB.I18N.getLabel('OBUIAPP_Tomorrow'),
+    '-1w': OB.I18N.getLabel('OBUIAPP_Current_day_of_last_week'),
+    '+1w': OB.I18N.getLabel('OBUIAPP_Current_day_of_next_week'),
+    '-1m': OB.I18N.getLabel('OBUIAPP_Current_day_of_last_month'),
+    '+1m': OB.I18N.getLabel('OBUIAPP_Current_day_of_next_month')
   },
 
   // Function to load just needed OB.DateItemProperties properties, since all of them can not be loaded
   // because there are some parameters like "init", "pickerDataChanged", ... that cannot be overwritten
   // because SmartClient also overwrites them while creating this isc.RelativeDateItem definition.
   // Fixes issue: https://issues.openbravo.com/view.php?id=21552
-  addDateItemProperties: function () {
+  addDateItemProperties: function() {
     this.setDateParams = OB.DateItemProperties.setDateParams;
     this.parseValue = OB.DateItemProperties.parseValue;
     this.expandPart = OB.DateItemProperties.expandPart;
@@ -74,8 +74,12 @@ isc.OBRelativeDateItem.addProperties({
 
   areDateItemPropertiesSet: false,
 
-  blurValue: function () {
-    if (this.editor && this.editor.items[0] && this.editor.items[0].getElementValue) {
+  blurValue: function() {
+    if (
+      this.editor &&
+      this.editor.items[0] &&
+      this.editor.items[0].getElementValue
+    ) {
       return this.editor.items[0].getElementValue();
     } else {
       return null;
@@ -85,7 +89,7 @@ isc.OBRelativeDateItem.addProperties({
   validateOnExit: true,
   showErrorIcon: false,
 
-  validateRelativeDateItem: function (value) {
+  validateRelativeDateItem: function(value) {
     var isADate = Object.prototype.toString.call(value) === '[object Date]';
     if (value === null || isADate) {
       this.editor.items[0].textBoxStyle = this.editor.items[0].textBoxStyleNormal;
@@ -98,18 +102,22 @@ isc.OBRelativeDateItem.addProperties({
     }
   },
 
-  validators: [{
-    type: 'custom',
-    condition: function (item, validator, value) {
-      return item.validateRelativeDateItem(value);
+  validators: [
+    {
+      type: 'custom',
+      condition: function(item, validator, value) {
+        return item.validateRelativeDateItem(value);
+      }
     }
-  }],
+  ],
 
-  blur: function () {
+  blur: function() {
     var blurValue = this.blurValue(),
-        newBlurValue = '',
-        jsValue, digitRegExp = new RegExp('^\\d+$', 'gm'),
-        newValue, i;
+      newBlurValue = '',
+      jsValue,
+      digitRegExp = new RegExp('^\\d+$', 'gm'),
+      newValue,
+      i;
 
     if (!this.areDateItemPropertiesSet) {
       this.addDateItemProperties();
@@ -128,7 +136,7 @@ isc.OBRelativeDateItem.addProperties({
       newValue = this.parseValue();
       if (newValue) {
         jsValue = OB.Utilities.Date.OBToJS(newValue, this.dateFormat);
-        // if jsValue == null then this is an illegal date, will be 
+        // if jsValue == null then this is an illegal date, will be
         // caught later
         if (jsValue) {
           this.setValue(jsValue);
@@ -144,20 +152,21 @@ isc.OBRelativeDateItem.addProperties({
   pickerConstructor: 'OBDateChooser',
 
   // overridden as the displayDateFormat does not seem to work fine
-  formatDate: function (dt) {
+  formatDate: function(dt) {
     return OB.Utilities.Date.JSToOB(dt, OB.Format.date);
   },
 
   // updateEditor() Fired when the value changes (via updateValue or setValue)
   // Shows or hides the quantity box and updates the hint to reflect the current value.
   // overridden to solve: https://issues.openbravo.com/view.php?id=16295
-  updateEditor: function () {
-
+  updateEditor: function() {
     if (!this.valueField || !this.quantityField) {
       return;
     }
 
-    var focusItem, selectionRange, mustRefocus = false;
+    var focusItem,
+      selectionRange,
+      mustRefocus = false;
 
     if (this.valueField.hasFocus) {
       focusItem = this.valueField;
@@ -169,7 +178,8 @@ isc.OBRelativeDateItem.addProperties({
 
     var value = this.valueField.getValue();
 
-    var showQuantity = (value && isc.isA.String(value) && this.relativePresets[value]);
+    var showQuantity =
+      value && isc.isA.String(value) && this.relativePresets[value];
 
     if (!showQuantity) {
       if (this.quantityField.isVisible()) {
@@ -192,7 +202,9 @@ isc.OBRelativeDateItem.addProperties({
         displayValue = OB.Utilities.trim(displayValue);
         // if it starts with a number then it must be a real date
         if (displayValue.charAt(0) < '0' || displayValue.charAt(0) > '9') {
-          this.calculatedDateField.setValue(!value ? '' : '(' + this.formatDate(value) + ')');
+          this.calculatedDateField.setValue(
+            !value ? '' : '(' + this.formatDate(value) + ')'
+          );
         } else {
           this.calculatedDateField.setValue('');
         }
@@ -208,7 +220,10 @@ isc.OBRelativeDateItem.addProperties({
         this.valueField.focusInItem();
       } else {
         if (selectionRange) {
-          focusItem.delayCall('setSelectionRange', [selectionRange[0], selectionRange[1]]);
+          focusItem.delayCall('setSelectionRange', [
+            selectionRange[0],
+            selectionRange[1]
+          ]);
         }
       }
     }
@@ -217,10 +232,13 @@ isc.OBRelativeDateItem.addProperties({
 
   // overridden because the picker is now part of the combo and not a separate field.
   // custom code to center the picker over the picker icon
-  getPickerRect: function () {
+  getPickerRect: function() {
     // we want the date chooser to float centered over the picker icon.
     var form = this.canvas;
-    return [this.getPageLeft() + form.getLeft(), this.getPageTop() + form.getTop() - 40];
+    return [
+      this.getPageLeft() + form.getLeft(),
+      this.getPageTop() + form.getTop() - 40
+    ];
   }
 });
 
@@ -229,9 +247,9 @@ isc.OBRelativeDateItem.changeDefaults('quantityFieldDefaults', {
   max: 1000,
   alwaysTakeSpace: false,
 
-  // after leaving the quantity field the next time the rangeitem is visited the 
+  // after leaving the quantity field the next time the rangeitem is visited the
   // focus should go to the value field again
-  blur: function () {
+  blur: function() {
     if (this.form && this.form._isRedrawing) {
       return;
     }
@@ -242,8 +260,13 @@ isc.OBRelativeDateItem.changeDefaults('quantityFieldDefaults', {
 });
 
 isc.OBRelativeDateItem.changeDefaults('valueFieldDefaults', {
-  keyPress: function (item, form, keyName, characterValue) {
-    if (keyName === 'Enter' && !isc.EventHandler.ctrlKeyDown() && !isc.EventHandler.altKeyDown() && !isc.EventHandler.shiftKeyDown()) {
+  keyPress: function(item, form, keyName, characterValue) {
+    if (
+      keyName === 'Enter' &&
+      !isc.EventHandler.ctrlKeyDown() &&
+      !isc.EventHandler.altKeyDown() &&
+      !isc.EventHandler.shiftKeyDown()
+    ) {
       // canvasItem is the rangeItem
       form.canvasItem.showPicker();
       return false;
@@ -251,30 +274,30 @@ isc.OBRelativeDateItem.changeDefaults('valueFieldDefaults', {
     return true;
   },
 
-  init: function () {
-    this.icons = [{
-      width: this.calendarIconWidth,
-      height: this.calendarIconHeight,
-      hspace: this.calendarIconHspace,
-      canFocus: false,
-      showFocused: false,
-      item: this,
-      src: this.calendarIconSrc,
-      click: function () {
-        this.item.form.canvasItem.showPicker();
+  init: function() {
+    this.icons = [
+      {
+        width: this.calendarIconWidth,
+        height: this.calendarIconHeight,
+        hspace: this.calendarIconHspace,
+        canFocus: false,
+        showFocused: false,
+        item: this,
+        src: this.calendarIconSrc,
+        click: function() {
+          this.item.form.canvasItem.showPicker();
+        }
       }
-    }];
+    ];
     this.Super('init', arguments);
   }
 });
-
 
 isc.ClassFactory.defineClass('OBDateRangeItem', isc.DateRangeItem);
 
 isc.OBDateRangeItem.addProperties({
   relativeItemConstructor: 'OBRelativeDateItem'
 });
-
 
 // == OBMiniDateRangeItem ==
 // OBMiniDateRangeItem inherits from SmartClient MiniDateRangeItem
@@ -284,25 +307,25 @@ isc.OBDateRangeItem.addProperties({
 isc.ClassFactory.defineClass('OBDateRangeDialog', isc.DateRangeDialog);
 
 isc.OBDateRangeDialog.addProperties({
-  rangeItemConstructor: "OBDateRangeItem",
+  rangeItemConstructor: 'OBDateRangeItem',
 
-  initWidget: function () {
+  initWidget: function() {
     this.Super('initWidget', arguments);
     this.rangeForm.setFocusItem(this.rangeItem);
 
     var fromField = this.rangeForm.items[0].fromField,
-        toField = this.rangeForm.items[0].toField;
-    this.clearButton.click = function () {
+      toField = this.rangeForm.items[0].toField;
+    this.clearButton.click = function() {
       this.creator.clearValues();
       fromField.validate();
       toField.validate();
     };
   },
 
-  show: function () {
+  show: function() {
     this.Super('show', arguments);
     var fromField = this.rangeForm.items[0].fromField,
-        toField = this.rangeForm.items[0].toField;
+      toField = this.rangeForm.items[0].toField;
     fromField.calculatedDateField.canFocus = false;
     fromField.validate();
     toField.calculatedDateField.canFocus = false;
@@ -312,26 +335,28 @@ isc.OBDateRangeDialog.addProperties({
   },
 
   // trick: overridden to let the ok and clear button change places
-  addAutoChild: function (name, props) {
+  addAutoChild: function(name, props) {
     if (name === 'okButton') {
-      return this.Super('addAutoChild', ['clearButton',
-      {
-        canFocus: true,
-        title: this.clearButtonTitle
-      }]);
+      return this.Super('addAutoChild', [
+        'clearButton',
+        {
+          canFocus: true,
+          title: this.clearButtonTitle
+        }
+      ]);
     } else if (name === 'clearButton') {
-      return this.Super('addAutoChild', ['okButton',
-      {
-        canFocus: true,
-        title: this.okButtonTitle
-      }]);
+      return this.Super('addAutoChild', [
+        'okButton',
+        {
+          canFocus: true,
+          title: this.okButtonTitle
+        }
+      ]);
     } else {
       return this.Super('addAutoChild', arguments);
     }
   }
-
 });
-
 
 // == OBMinDateRangeItem ==
 // Item used for filtering by dates in the grid. Replaces the normal Smartclient
@@ -355,7 +380,7 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
   rangeDialogDefaults: {
     autoDraw: false,
     destroyOnClose: false,
-    clear: function () {
+    clear: function() {
       if (this.destroying) {
         return;
       }
@@ -372,7 +397,7 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
     showFocused: false,
     showFocusedWithItem: false,
     hspace: 0,
-    click: function (form, item, icon) {
+    click: function(form, item, icon) {
       if (!item.disabled) {
         item.showRangeDialog();
       }
@@ -388,7 +413,7 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
   // In P&E grids, on blur will be overridden to ensure correct record selection having filter on change disabled
   canOverrideOnBlur: true,
 
-  init: function () {
+  init: function() {
     this.addAutoChild('rangeDialog', {
       fromDate: this.fromDate,
       toDate: this.toDate,
@@ -399,9 +424,15 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
       callback: this.getID() + '.rangeDialogCallback(value)'
     });
 
-    this.icons = [isc.addProperties({
-      prompt: this.pickerIconPrompt
-    }, this.pickerIconDefaults, this.pickerIconProperties)];
+    this.icons = [
+      isc.addProperties(
+        {
+          prompt: this.pickerIconPrompt
+        },
+        this.pickerIconDefaults,
+        this.pickerIconProperties
+      )
+    ];
 
     this.rangeItem = this.rangeDialog.rangeItem;
     this.rangeItem.name = this.name;
@@ -412,14 +443,14 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
     }
   },
 
-  blurValue: function () {
+  blurValue: function() {
     return this.getElementValue();
   },
 
-  expandSingleValue: function () {
+  expandSingleValue: function() {
     var newValue = this.parseValue(),
-        oldValue = this.mapValueToDisplay(),
-        dateValue;
+      oldValue = this.mapValueToDisplay(),
+      dateValue;
 
     if (!this.singleDateMode) {
       return;
@@ -451,8 +482,11 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
     return false;
   },
 
-  getFieldCriterionFromGrid: function () {
-    var currentGridCriteria, fieldCriterion, criteria, sourceGrid = this.getSourceGrid();
+  getFieldCriterionFromGrid: function() {
+    var currentGridCriteria,
+      fieldCriterion,
+      criteria,
+      sourceGrid = this.getSourceGrid();
     if (sourceGrid && sourceGrid.getCriteria) {
       currentGridCriteria = sourceGrid.getCriteria();
       if (currentGridCriteria) {
@@ -463,11 +497,11 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
     return fieldCriterion;
   },
 
-  getSourceGrid: function () {
+  getSourceGrid: function() {
     return this.grid && this.grid.sourceWidget;
   },
 
-  clearFilterValues: function () {
+  clearFilterValues: function() {
     this.singleDateValue = null;
     this.singleDateDisplayValue = '';
     this.singleDateMode = true;
@@ -476,14 +510,14 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
     this.setElementValue('', '');
   },
 
-  clearValue: function () {
+  clearValue: function() {
     // Clear all the filter values, using clearFilterValues
     // See issue https://issues.openbravo.com/view.php?id=29554
     this.clearFilterValues();
     return this.Super('clearValue', arguments);
   },
 
-  setSingleDateValue: function (value) {
+  setSingleDateValue: function(value) {
     var displayValue = OB.Utilities.Date.JSToOB(value, this.dateFormat);
     this.singleDateValue = value;
     this.singleDateDisplayValue = displayValue;
@@ -494,7 +528,7 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
     this.setValue(displayValue);
   },
 
-  blur: function () {
+  blur: function() {
     if (this.form && this.form._isRedrawing) {
       return;
     }
@@ -505,7 +539,7 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
     return this.Super('blur', arguments);
   },
 
-  showRangeDialog: function () {
+  showRangeDialog: function() {
     if (!this.rangeItemValue) {
       this.rangeDialog.clear();
       this.rangeItem.fromField.setValue(null);
@@ -516,17 +550,23 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
     this.rangeDialog.show();
   },
 
-  rangeDialogCallback: function (value) {
+  rangeDialogCallback: function(value) {
     var data = value,
-        illegalStart = data && data.start && !this.isCorrectRangeValue(data.start),
-        illegalEnd = data && data.end && !this.isCorrectRangeValue(data.end),
-        sourceGrid = this.getSourceGrid();
+      illegalStart =
+        data && data.start && !this.isCorrectRangeValue(data.start),
+      illegalEnd = data && data.end && !this.isCorrectRangeValue(data.end),
+      sourceGrid = this.getSourceGrid();
     if (illegalStart || illegalEnd) {
       return;
     }
     this.singleDateMode = false;
     this.singleDateValue = null;
-    if (sourceGrid && sourceGrid.lazyFiltering && sourceGrid.sorter && this.rangeChanged(data)) {
+    if (
+      sourceGrid &&
+      sourceGrid.lazyFiltering &&
+      sourceGrid.sorter &&
+      this.rangeChanged(data)
+    ) {
       sourceGrid.filterHasChanged = true;
       sourceGrid.sorter.enable();
     }
@@ -535,7 +575,7 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
     this.form.grid.performAction();
   },
 
-  rangeChanged: function (newRange) {
+  rangeChanged: function(newRange) {
     var currentStart, currentEnd, newStart, newEnd;
     if (!newRange) {
       return newRange !== this.rangeItemValue;
@@ -547,19 +587,27 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
     currentEnd = this.getAbsoluteDate(this.rangeItemValue.end, 'end');
     newStart = this.getAbsoluteDate(newRange.start, 'start');
     newEnd = this.getAbsoluteDate(newRange.end, 'end');
-    return 0 !== isc.Date.compareLogicalDates(currentStart, newStart) || 0 !== isc.Date.compareLogicalDates(currentEnd, newEnd);
+    return (
+      0 !== isc.Date.compareLogicalDates(currentStart, newStart) ||
+      0 !== isc.Date.compareLogicalDates(currentEnd, newEnd)
+    );
   },
 
-  getAbsoluteDate: function (date, rangePosition) {
+  getAbsoluteDate: function(date, rangePosition) {
     var RDI = isc.OBRelativeDateItem;
-    return RDI.isRelativeDate(date) ? RDI.getAbsoluteDate(date.value, null, null, rangePosition) : date;
+    return RDI.isRelativeDate(date)
+      ? RDI.getAbsoluteDate(date.value, null, null, rangePosition)
+      : date;
   },
 
-  hasAdvancedCriteria: function () {
-    return this.singleDateMode || (this.rangeItem !== null && this.rangeItem.hasAdvancedCriteria());
+  hasAdvancedCriteria: function() {
+    return (
+      this.singleDateMode ||
+      (this.rangeItem !== null && this.rangeItem.hasAdvancedCriteria())
+    );
   },
 
-  setCriterion: function (criterion) {
+  setCriterion: function(criterion) {
     if (!criterion) {
       return;
     }
@@ -591,7 +639,7 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
     }
   },
 
-  getCriterion: function () {
+  getCriterion: function() {
     var value = this.blurValue();
     if (value === '#') {
       return {
@@ -625,10 +673,10 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
   // Sets the logicalDate property to true to the date values contained in the criteria.
   // This way the dates will always be serialized as a Date, and not as a DateTime
   // See issue https://issues.openbravo.com/view.php?id=22885
-  makeLogicalDates: function (criteria) {
+  makeLogicalDates: function(criteria) {
     var criteriaCopy = isc.shallowClone(criteria),
-        innerCriteria = criteriaCopy.criteria,
-        i;
+      innerCriteria = criteriaCopy.criteria,
+      i;
     if (innerCriteria && innerCriteria.length) {
       for (i = 0; i < innerCriteria.length; i++) {
         if (isc.isA.Date(innerCriteria[i].value)) {
@@ -639,9 +687,11 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
     return criteriaCopy;
   },
 
-  canEditCriterion: function (criterion) {
-
-    if (criterion.fieldName === this.name && (criterion.operator === 'isNull' || criterion.operator === 'notNull')) {
+  canEditCriterion: function(criterion) {
+    if (
+      criterion.fieldName === this.name &&
+      (criterion.operator === 'isNull' || criterion.operator === 'notNull')
+    ) {
       return true;
     }
     if (this.singleDateMode && criterion.fieldName === this.name) {
@@ -650,13 +700,15 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
     return this.rangeItem ? this.rangeItem.canEditCriterion(criterion) : false;
   },
 
-  itemHoverHTML: function (item, form) {
+  itemHoverHTML: function(item, form) {
     return this.mapValueToDisplay();
   },
 
-  updateStoredDates: function () {
+  updateStoredDates: function() {
     var value = this.rangeItemValue,
-        i, newValue, length;
+      i,
+      newValue,
+      length;
 
     if (value) {
       if (isc.DataSource.isAdvancedCriteria(value)) {
@@ -666,9 +718,15 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
 
         for (i = 0; i < length; i++) {
           var criterion = value.criteria[i];
-          if (criterion.operator === 'greaterThan' || criterion.operator === 'greaterOrEqual') {
+          if (
+            criterion.operator === 'greaterThan' ||
+            criterion.operator === 'greaterOrEqual'
+          ) {
             newValue.start = criterion.value;
-          } else if (criterion.operator === 'lessThan' || criterion.operator === 'lessOrEqual') {
+          } else if (
+            criterion.operator === 'lessThan' ||
+            criterion.operator === 'lessOrEqual'
+          ) {
             newValue.end = criterion.value;
           }
         }
@@ -683,7 +741,7 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
     }
   },
 
-  displayValue: function (value) {
+  displayValue: function(value) {
     var displayValue = this.mapValueToDisplay(value) || '';
     this.setElementValue(displayValue, value);
     // Use setValue() to prevent the clearing of the filter invoked through setItemValues method of the form when this.getValue() returns undefined
@@ -691,27 +749,35 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
     this.setValue(displayValue);
   },
 
-  setElementValue: function () {
+  setElementValue: function() {
     return this.Super('setElementValue', arguments);
   },
 
-  compareValues: function (value1, value2) {
-    if (this.isTargetRecordBeingOpened() && value1 === '' && value2 === undefined) {
+  compareValues: function(value1, value2) {
+    if (
+      this.isTargetRecordBeingOpened() &&
+      value1 === '' &&
+      value2 === undefined
+    ) {
       // prevent extra DS requests when opening a record directly by ignoring false updates in the item value
       return true;
     }
-    return (0 === isc.Date.compareLogicalDates(value1, value2));
+    return 0 === isc.Date.compareLogicalDates(value1, value2);
   },
 
-  isTargetRecordBeingOpened: function () {
-    return this.grid && this.grid.parentElement && this.grid.parentElement.targetRecordId;
+  isTargetRecordBeingOpened: function() {
+    return (
+      this.grid &&
+      this.grid.parentElement &&
+      this.grid.parentElement.targetRecordId
+    );
   },
 
-  mapDisplayToValue: function (display) {
+  mapDisplayToValue: function(display) {
     return display;
   },
 
-  mapValueToDisplay: function (value) {
+  mapValueToDisplay: function(value) {
     if (this.singleDateMode) {
       if (this.singleDateDisplayValue) {
         return this.singleDateDisplayValue;
@@ -725,7 +791,7 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
     }
     value = this.rangeItemValue;
     var start = this.getAbsoluteDate(value.start, 'start'),
-        end = this.getAbsoluteDate(value.end, 'end');
+      end = this.getAbsoluteDate(value.end, 'end');
 
     var prompt;
     if (start || end) {
@@ -753,11 +819,11 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
     return this.prompt;
   },
 
-  getCriteriaValue: function () {
+  getCriteriaValue: function() {
     return this.getCriterion();
   },
 
-  isCorrectRangeValue: function (value) {
+  isCorrectRangeValue: function(value) {
     if (!value) {
       return false;
     }
@@ -770,7 +836,7 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
     return false;
   },
 
-  keyPress: function (item, form, keyName, characterValue) {
+  keyPress: function(item, form, keyName, characterValue) {
     var enterOnEmptyItem;
     if (keyName === 'Enter') {
       if (this.singleDateMode) {
@@ -783,7 +849,11 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
       }
       this.showRangeDialog();
       return false;
-    } else if (characterValue || keyName === 'Backspace' || keyName === 'Delete') {
+    } else if (
+      characterValue ||
+      keyName === 'Backspace' ||
+      keyName === 'Delete'
+    ) {
       // only do this if something got really typed in
       this.fromDate = null;
       this.toDate = null;
@@ -798,9 +868,9 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
     return true;
   },
 
-  // Explicit destroy of the rangedialog as formitems don't have 
+  // Explicit destroy of the rangedialog as formitems don't have
   // an auto delete of autochilds
-  destroy: function () {
+  destroy: function() {
     this.destroying = true;
     if (this.rangeDialog) {
       this.rangeDialog.rangeForm.destroy();
@@ -813,14 +883,14 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
     this.destroying = false;
   },
 
-  clear: function () {
+  clear: function() {
     if (this.destroying) {
       return;
     }
     this.Super('clear', arguments);
   },
 
-  formatDate: function (dt) {
+  formatDate: function(dt) {
     return OB.Utilities.Date.JSToOB(dt, OB.Format.date);
   }
 });

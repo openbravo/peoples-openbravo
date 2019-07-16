@@ -19,14 +19,20 @@
 isc.defineClass('OBTwitterWidget', isc.OBUrlWidget);
 
 isc.OBTwitterWidget.addProperties({
-  initWidget: function () {
+  initWidget: function() {
     this.setContentSource();
     this.Super('initWidget', arguments);
   },
-  setContentSource: function () {
-    this.contentSource = OB.Application.contextUrl + 'web/org.openbravo.client.widgets/twitter.html?t=search' + '&s=' + this.parameters.search + '&preventCache=' + Math.random();
+  setContentSource: function() {
+    this.contentSource =
+      OB.Application.contextUrl +
+      'web/org.openbravo.client.widgets/twitter.html?t=search' +
+      '&s=' +
+      this.parameters.search +
+      '&preventCache=' +
+      Math.random();
   },
-  refresh: function () {
+  refresh: function() {
     this.setContentSource();
     this.Super('refresh', arguments);
   }

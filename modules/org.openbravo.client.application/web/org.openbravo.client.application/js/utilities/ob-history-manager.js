@@ -19,16 +19,15 @@
 
 // = History Manager =
 //
-// Keeps track of the state of the user interface and handle the back button 
-// in a correct way. The state is stored in the url in the address field 
-// of the browser. Every user action related to the tabs can result in an 
+// Keeps track of the state of the user interface and handle the back button
+// in a correct way. The state is stored in the url in the address field
+// of the browser. Every user action related to the tabs can result in an
 // update of the history state: select a tab, open a tab, close a tab etc.
-// The history manager makes use of the smartclient isc.History object to 
+// The history manager makes use of the smartclient isc.History object to
 // actually update the address in the address bar and to get called when
 // the user presses the back or forward button.
 //
-(function (OB, isc) {
-
+(function(OB, isc) {
   if (!OB || !isc) {
     throw {
       name: 'ReferenceError',
@@ -38,12 +37,11 @@
 
   // cache object references locally
   var L = OB.Layout,
-      QUOTE_REPLACE = '__';
+    QUOTE_REPLACE = '__';
 
   function HistoryManager() {}
 
   HistoryManager.prototype = {
-
     // ** {{{ updateHistory }}} **
     //
     // Stores the current state of the main layout as a bookmark. This method
@@ -53,11 +51,17 @@
     // state of that tab. The combined state is passed to the smartclient
     // History object.
     //
-    updateHistory: function () {
-
+    updateHistory: function() {
       var state = {},
-          stateStr, data, i, tabsLength, tab, tabObject, tabWidgetNumber, previousWidgetsInTab = 0,
-          bookMarkParams;
+        stateStr,
+        data,
+        i,
+        tabsLength,
+        tab,
+        tabObject,
+        tabWidgetNumber,
+        previousWidgetsInTab = 0,
+        bookMarkParams;
 
       if (L.ViewManager.inStateHandling) {
         return;
@@ -76,7 +80,11 @@
         tab = OB.MainView.TabSet.tabs[i];
         bookMarkParams = null;
 
-        if (tab.viewName !== 'OBQueryListView' && tab.viewName !== 'OBCalendarWidgetView' && !tab.isProcessDefinitionReport) {
+        if (
+          tab.viewName !== 'OBQueryListView' &&
+          tab.viewName !== 'OBCalendarWidgetView' &&
+          !tab.isProcessDefinitionReport
+        ) {
           state.bm[i] = {};
 
           // get the original tab object
@@ -89,7 +97,12 @@
           // retrieve the bookmark parameters
           if (tabObject.pane && tabObject.pane.getBookMarkParams) {
             bookMarkParams = tabObject.pane.getBookMarkParams();
-          } else if (OB.MyOB && tabObject.myOB && tabObject.pane && tabObject.pane.isLoadingTab) {
+          } else if (
+            OB.MyOB &&
+            tabObject.myOB &&
+            tabObject.pane &&
+            tabObject.pane.isLoadingTab
+          ) {
             // Workspace is not yet loaded, recovering its getBookMarkParams to avoid losing them
             bookMarkParams = OB.MyOB.getBookMarkParams();
           }
@@ -121,7 +134,7 @@
       state.st = state.st - previousWidgetsInTab;
 
       // remove possible undefined values from bm array
-      state.bm = state.bm.filter(function (elem) {
+      state.bm = state.bm.filter(function(elem) {
         return elem !== undefined;
       });
 
@@ -162,7 +175,7 @@
     // string
     // * {{{data}}} type: String, extra parameter passed in by Smartclient, not
     // used
-    restoreHistory: function (id, data) {
+    restoreHistory: function(id, data) {
       var correctedId, state;
       isc.Log.logDebug('Restoring history ' + id, 'OB');
 
@@ -183,6 +196,7 @@
   L.HistoryManager = new HistoryManager();
 
   // and register the callback
-  isc.History.registerCallback('OB.Layout.HistoryManager.restoreHistory(id, data)');
-
-}(OB, isc));
+  isc.History.registerCallback(
+    'OB.Layout.HistoryManager.restoreHistory(id, data)'
+  );
+})(OB, isc);

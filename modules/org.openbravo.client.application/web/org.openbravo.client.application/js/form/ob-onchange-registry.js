@@ -24,16 +24,15 @@
 isc.ClassFactory.defineClass('OBOnChangeRegistry', isc.OBFunctionRegistry);
 
 isc.OBOnChangeRegistry.addProperties({
-
-  hasOnChange: function (tabId, item) {
+  hasOnChange: function(tabId, item) {
     return this.getEntries(tabId, item);
   },
 
-  getEntries: function (tabId, item) {
+  getEntries: function(tabId, item) {
     return this.getFieldEntry(tabId, item);
   },
 
-  getFieldEntry: function (tabId, item) {
+  getFieldEntry: function(tabId, item) {
     var field;
     if (item.grid && item.grid.parameterName) {
       field = item.grid.parameterName + OB.Constants.FIELDSEPARATOR + item.name;
@@ -42,7 +41,6 @@ isc.OBOnChangeRegistry.addProperties({
     }
     return this.Super('getEntries', [tabId, field]);
   }
-
 });
 
 OB.OnChangeRegistry = isc.OBOnChangeRegistry.create();

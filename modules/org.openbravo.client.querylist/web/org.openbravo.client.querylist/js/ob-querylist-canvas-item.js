@@ -20,13 +20,24 @@
 isc.defineClass('OBQLCanvasItem_Link', isc.OBGridLinkItem);
 
 isc.OBQLCanvasItem_Link.addProperties({
-  setRecord: function () {
-    this.setTitle(this.grid.formatLinkValue(this.record, this.field, this.colNum, this.rowNum, this.record[this.field.name]));
+  setRecord: function() {
+    this.setTitle(
+      this.grid.formatLinkValue(
+        this.record,
+        this.field,
+        this.colNum,
+        this.rowNum,
+        this.record[this.field.name]
+      )
+    );
   },
-  doAction: function () {
+  doAction: function() {
     if (this.field.OB_TabId && this.field.OB_LinkExpression) {
       //To open the tab provided in the widget column. Refer https://issues.openbravo.com/view.php?id=17411.
-      OB.Utilities.openDirectTab(this.field.OB_TabId, this.record[this.field.OB_LinkExpression]);
+      OB.Utilities.openDirectTab(
+        this.field.OB_TabId,
+        this.record[this.field.OB_LinkExpression]
+      );
     }
   }
 });
@@ -34,7 +45,7 @@ isc.OBQLCanvasItem_Link.addProperties({
 isc.defineClass('OBQLCanvasItem_Print', isc.OBGridLinkItem);
 
 isc.OBQLCanvasItem_Print.addProperties({
-  initWidget: function () {
+  initWidget: function() {
     if (this.record.isGridSummary) {
       this.title = '';
     }
@@ -44,24 +55,40 @@ isc.OBQLCanvasItem_Print.addProperties({
   isDirectPDF: true,
   isDirectAttach: false,
   blockAction: false,
-  doAction: function () {
+  doAction: function() {
     var postParams = {
-      inpdirectprint: "N",
-      inppdfpath: this.field.OB_printUrl,
-      inpwindowId: this.field.OB_WindowId,
-      inpkeyColumnId: this.field.OB_keyColumnName,
-      inpTabId: this.field.OB_TabId,
-      inphiddenvalue: this.record[this.field.OB_LinkExpression],
-      inpIsDirectPDF: this.isDirectPDF,
-      inpIsDirectAttach: this.isDirectAttach
-    },
-        showPopup = (postParams.inpIsDirectPDF || postParams.inpIsDirectAttach ? false : true),
-        me = this;
+        inpdirectprint: 'N',
+        inppdfpath: this.field.OB_printUrl,
+        inpwindowId: this.field.OB_WindowId,
+        inpkeyColumnId: this.field.OB_keyColumnName,
+        inpTabId: this.field.OB_TabId,
+        inphiddenvalue: this.record[this.field.OB_LinkExpression],
+        inpIsDirectPDF: this.isDirectPDF,
+        inpIsDirectAttach: this.isDirectAttach
+      },
+      showPopup =
+        postParams.inpIsDirectPDF || postParams.inpIsDirectAttach
+          ? false
+          : true,
+      me = this;
     if (postParams.inppdfpath && !this.blockAction) {
       // Block action + setTimeout to avoid user double-click the 'Print' button in 4 seconds.
       this.blockAction = true;
-      OB.Layout.ClassicOBCompatibility.Popup.open('print', 0, 0, OB.Application.contextUrl + 'businessUtility/PrinterReports.html', '', window, false, false, true, postParams, showPopup, showPopup);
-      setTimeout(function () {
+      OB.Layout.ClassicOBCompatibility.Popup.open(
+        'print',
+        0,
+        0,
+        OB.Application.contextUrl + 'businessUtility/PrinterReports.html',
+        '',
+        window,
+        false,
+        false,
+        true,
+        postParams,
+        showPopup,
+        showPopup
+      );
+      setTimeout(function() {
         me.blockAction = false;
       }, 4000);
     }
