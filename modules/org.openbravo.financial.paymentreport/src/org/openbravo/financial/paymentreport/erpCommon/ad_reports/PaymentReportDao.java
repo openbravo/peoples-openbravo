@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2009-2018 Openbravo SL 
+ * All portions are Copyright (C) 2009-2019 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -253,7 +253,7 @@ public class PaymentReportDao {
       String strExpectedDateFrom, String strExpectedDateTo, String strsalesrepId, String strOutput)
       throws OBException {
 
-    StringBuilder hsqlScript = new StringBuilder();
+    String hsqlScript = "";
     final Map<String, Object> parameters = new HashMap<>();
 
     String dateFormatString = OBPropertiesProvider.getInstance()
@@ -270,20 +270,22 @@ public class PaymentReportDao {
 
     OBContext.setAdminMode(true);
     try {
-      hsqlScript.append(" from FIN_Payment_ScheduleDetail as fpsd ");
-      hsqlScript.append(" left join fpsd.paymentDetails as fpd");
-      hsqlScript.append(" left join fpd.finPayment as pay");
-      hsqlScript.append(" left join fpsd.invoicePaymentSchedule as invps");
-      hsqlScript.append(" left join invps.invoice as inv");
+      // @formatter:off
+      hsqlScript += " from FIN_Payment_ScheduleDetail as fpsd "
+                 +  "   left join fpsd.paymentDetails as fpd"
+                 +  "   left join fpd.finPayment as pay"
+                 +  "   left join fpsd.invoicePaymentSchedule as invps"
+                 +  "   left join invps.invoice as inv";
+      
       if (StringUtils.equalsIgnoreCase(strGroupCrit, "INS_CURRENCY")
           || StringUtils.contains(strOrdCrit, "INS_CURRENCY")) {
-        hsqlScript.append(" left join pay.currency as paycur");
-        hsqlScript.append(" left join inv.currency as invcur");
+        hsqlScript += " left join pay.currency as paycur"
+                   +  " left join inv.currency as invcur";
       }
       if (StringUtils.equalsIgnoreCase(strGroupCrit, "Project")
           || StringUtils.contains(strOrdCrit, "Project")) {
-        hsqlScript.append(" left join pay.project as paypro");
-        hsqlScript.append(" left join inv.project as invpro");
+        hsqlScript += " left join pay.project as paypro"
+                   +  " left join inv.project as invpro";
       }
       if (StringUtils.equalsIgnoreCase(strGroupCrit, "APRM_FATS_BPARTNER")
           || StringUtils.contains(strOrdCrit, "APRM_FATS_BPARTNER")
@@ -292,151 +294,109 @@ public class PaymentReportDao {
           || (StringUtils.isNotEmpty(strcBPGroupIdIN)
               && (StringUtils.equals(strcNoBusinessPartner, "include")
                   || StringUtils.equals(strcNoBusinessPartner, "exclude")))) {
-        hsqlScript.append(" left join pay.businessPartner as paybp");
-        hsqlScript.append(" left join inv.businessPartner as invbp");
+        hsqlScript += " left join pay.businessPartner as paybp"
+                   + "  left join inv.businessPartner as invbp";
         if (StringUtils.equalsIgnoreCase(strGroupCrit, "FINPR_BPartner_Category")
             || StringUtils.contains(strOrdCrit, "FINPR_BPartner_Category")
             || (StringUtils.isNotEmpty(strcBPGroupIdIN)
                 && (StringUtils.equals(strcNoBusinessPartner, "include")
                     || StringUtils.equals(strcNoBusinessPartner, "exclude")))) {
-          hsqlScript.append(" left join paybp.businessPartnerCategory as paybpc");
-          hsqlScript.append(" left join invbp.businessPartnerCategory as invbpc");
+         hsqlScript += "left join paybp.businessPartnerCategory as paybpc"
+                    + " left join invbp.businessPartnerCategory as invbpc";
         }
       } else if (StringUtils.isNotEmpty(strFinancialAccountId)) {
-        hsqlScript.append(" left join inv.businessPartner as invbp");
+        hsqlScript += " left join inv.businessPartner as invbp";
       }
-      hsqlScript.append(
-          " where (fpsd.paymentDetails is not null or fpsd.invoicePaymentSchedule is not null)");
+      hsqlScript += " where (fpsd.paymentDetails is not null or fpsd.invoicePaymentSchedule is not null)";
 
       // organization + include sub-organization
       if (StringUtils.isEmpty(strOrg) || StringUtils.equals(strOrg, "0")) {
-        hsqlScript.append(" and fpsd.organization.id in ");
-        hsqlScript.append(concatOrganizations(OBContext.getOBContext().getReadableOrganizations()));
+        hsqlScript +="  and fpsd.organization.id in "
+                   + concatOrganizations(OBContext.getOBContext().getReadableOrganizations());
       } else {
         if (!StringUtils.equalsIgnoreCase(strInclSubOrg, "include")) {
-          hsqlScript.append(" and fpsd.");
-          hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_ORGANIZATION);
-          hsqlScript.append(".id = '");
-          hsqlScript.append(strOrg);
-          hsqlScript.append("'");
+         hsqlScript +=" and fpsd.organization.id = '"
+                    + strOrg
+                    + " '";
         } else {
-          hsqlScript.append(" and fpsd.");
-          hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_ORGANIZATION);
-          hsqlScript.append(".id in ('");
+          hsqlScript+=" and fpsd.organization.id in ('";
           Set<String> orgChildTree = OBContext.getOBContext()
               .getOrganizationStructureProvider()
               .getChildTree(strOrg, true);
           Iterator<String> orgChildTreeIter = orgChildTree.iterator();
           while (orgChildTreeIter.hasNext()) {
-            hsqlScript.append(orgChildTreeIter.next());
+            hsqlScript += orgChildTreeIter.next();
             orgChildTreeIter.remove();
-            hsqlScript.append("'");
+            hsqlScript += "'";
             if (orgChildTreeIter.hasNext()) {
-              hsqlScript.append(", '");
+              hsqlScript += ", '";
             }
           }
-          hsqlScript.append(")");
+          hsqlScript += " )";
         }
       }
 
       // Exclude payments that use credit payment
       if (!StringUtils.equalsIgnoreCase(strInclPaymentUsingCredit, "Y")) {
-        hsqlScript.append(" and (not (pay.amount = 0 ");
-        hsqlScript.append(" and pay.usedCredit > pay.generatedCredit) or pay is null)");
+        hsqlScript += " and ("
+                   +  "     not (pay.amount = 0 and pay.usedCredit > pay.generatedCredit)"
+                   +  "     or pay is null)";
       }
 
       // due date from - due date to
       if (StringUtils.isNotEmpty(strDueDateFrom)) {
-        hsqlScript.append(" and invps.");
-        hsqlScript.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
-        hsqlScript.append(" >= :dueDateFrom");
+        hsqlScript += " and invps.dueDate >= :dueDateFrom";
         parameters.put("dueDateFrom", FIN_Utility.getDate(strDueDateFrom));
       }
       if (StringUtils.isNotEmpty(strDueDateTo)) {
-        hsqlScript.append(" and invps.");
-        hsqlScript.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
-        hsqlScript.append(" <= :dueDateTo");
+        hsqlScript += " and invps.dueDate <= :dueDateTo";
         parameters.put("dueDateTo", FIN_Utility.getDate(strDueDateTo));
       }
 
       // expected date from - expected date to
       if (StringUtils.isNotEmpty(strExpectedDateFrom)) {
-        hsqlScript.append(" and invps.");
-        hsqlScript.append(FIN_PaymentSchedule.PROPERTY_EXPECTEDDATE);
-        hsqlScript.append(" >= :expectedDateFrom");
+        hsqlScript += " and invps.expectedDate >= :expectedDateFrom";
         parameters.put("expectedDateFrom", FIN_Utility.getDate(strExpectedDateFrom));
       }
       if (StringUtils.isNotEmpty(strExpectedDateTo)) {
-        hsqlScript.append(" and invps.");
-        hsqlScript.append(FIN_PaymentSchedule.PROPERTY_EXPECTEDDATE);
-        hsqlScript.append(" <= :expectedDateTo");
+        hsqlScript += " and invps.expectedDate <= :expectedDateTo";
         parameters.put("expectedDateTo", FIN_Utility.getDate(strExpectedDateTo));
       }
 
       // document date from - document date to
       if (StringUtils.isNotEmpty(strDocumentDateFrom)) {
-        hsqlScript.append(" and coalesce(inv.");
-        hsqlScript.append(Invoice.PROPERTY_INVOICEDATE);
-        hsqlScript.append(", pay.");
-        hsqlScript.append(FIN_Payment.PROPERTY_PAYMENTDATE);
-        hsqlScript.append(") >= :documentDateFrom");
+        hsqlScript += " and coalesce(inv.invoiceDate, pay.paymentDate) >= :documentDateFrom";
         parameters.put("documentDateFrom", FIN_Utility.getDate(strDocumentDateFrom));
       }
       if (StringUtils.isNotEmpty(strDocumentDateTo)) {
-        hsqlScript.append(" and coalesce(inv.");
-        hsqlScript.append(Invoice.PROPERTY_INVOICEDATE);
-        hsqlScript.append(", pay.");
-        hsqlScript.append(FIN_Payment.PROPERTY_PAYMENTDATE);
-        hsqlScript.append(") <= :documentDateTo");
+        hsqlScript += " and coalesce(inv.invoiceDate, pay.paymentDate) <= :documentDateTo";
         parameters.put("documentDateTo", FIN_Utility.getDate(strDocumentDateTo));
       }
 
       // payment date from - payment date to
       if (StringUtils.isNotEmpty(strPaymentDateFrom)) {
-        hsqlScript.append(" and ((pay.");
-        hsqlScript.append(FIN_Payment.PROPERTY_PAYMENTDATE);
-        hsqlScript.append(" >= :paymentDateFrom)  or (pay.");
-        hsqlScript.append(FIN_Payment.PROPERTY_PAYMENTDATE);
-        hsqlScript.append(" is null and invps.");
-        hsqlScript.append(FIN_PaymentSchedule.PROPERTY_EXPECTEDDATE);
-        hsqlScript.append(" >= :paymentDateFrom))");
+        hsqlScript += " and ((pay.paymentDate >= :paymentDateFrom)  "
+                   + "      or (pay.paymentDate is null and invps.expectedDate >= :paymentDateFrom))";
         parameters.put("paymentDateFrom", FIN_Utility.getDate(strPaymentDateFrom));
       }
       if (StringUtils.isNotEmpty(strPaymentDateTo)) {
-        hsqlScript.append(" and coalesce(pay.");
-        hsqlScript.append(FIN_Payment.PROPERTY_PAYMENTDATE);
-        hsqlScript.append(", invps.");
-        hsqlScript.append(FIN_PaymentSchedule.PROPERTY_EXPECTEDDATE);
-        hsqlScript.append(") <= :paymentDateTo");
+        hsqlScript += " and coalesce(pay.paymentDate, invps.expectedDate) <= :paymentDateTo";
         parameters.put("paymentDateTo", FIN_Utility.getDate(strPaymentDateTo));
-      }
+      } 
 
       // Empty Business Partner included
       if (StringUtils.equals(strcNoBusinessPartner, "include")) {
 
         // business partner
         if (StringUtils.isNotEmpty(strcBPartnerIdIN)) {
-          hsqlScript.append(" and ((coalesce(pay.");
-          hsqlScript.append(FIN_Payment.PROPERTY_BUSINESSPARTNER);
-          hsqlScript.append(", inv.");
-          hsqlScript.append(Invoice.PROPERTY_BUSINESSPARTNER);
-          hsqlScript.append(") in ");
-          hsqlScript.append(strcBPartnerIdIN);
-          hsqlScript.append(") or (pay.");
-          hsqlScript.append(FIN_Payment.PROPERTY_BUSINESSPARTNER);
-          hsqlScript.append(" is null and inv.");
-          hsqlScript.append(Invoice.PROPERTY_BUSINESSPARTNER);
-          hsqlScript.append(" is null))");
+          hsqlScript+=" and ((coalesce(pay.businessPartner, inv.businessPartner) "
+                    + "      in " + strcBPartnerIdIN + ") "
+                    + "      or (pay.businessPartner is null and inv.businessPartner is null))";
         }
         // business partner category
         if (StringUtils.isNotEmpty(strcBPGroupIdIN)) {
-          hsqlScript.append(" and (coalesce(paybpc, invbpc) = '");
-          hsqlScript.append(strcBPGroupIdIN);
-          hsqlScript.append("' or (pay.");
-          hsqlScript.append(FIN_Payment.PROPERTY_BUSINESSPARTNER);
-          hsqlScript.append(" is null and inv.");
-          hsqlScript.append(Invoice.PROPERTY_BUSINESSPARTNER);
-          hsqlScript.append(" is null))");
+          hsqlScript+=" and (coalesce(paybpc, invbpc) = '" + strcBPGroupIdIN + "' "
+                    + "     or (pay.businessPartner is null and inv.businessPartner is null))";
         }
 
         // Empty Businesss Partner excluded
@@ -444,160 +404,96 @@ public class PaymentReportDao {
 
         // business partner
         if (StringUtils.isNotEmpty(strcBPartnerIdIN)) {
-          hsqlScript.append(" and coalesce(pay.");
-          hsqlScript.append(FIN_Payment.PROPERTY_BUSINESSPARTNER);
-          hsqlScript.append(", inv.");
-          hsqlScript.append(Invoice.PROPERTY_BUSINESSPARTNER);
-          hsqlScript.append(") in ");
-          hsqlScript.append(strcBPartnerIdIN);
+          hsqlScript+=" and coalesce(pay.businessPartner, inv.businessPartner) in " + strcBPartnerIdIN;
         }
 
         // business partner category
         if (StringUtils.isNotEmpty(strcBPGroupIdIN)) {
-          hsqlScript.append(" and coalesce(paybpc, invbpc) = '");
-          hsqlScript.append(strcBPGroupIdIN);
-          hsqlScript.append("'");
+          hsqlScript+=" and coalesce(paybpc, invbpc) = '" + strcBPGroupIdIN + "'";
         }
         // exclude empty business partner
         if (StringUtils.isEmpty(strcBPartnerIdIN) && StringUtils.isEmpty(strcBPGroupIdIN)) {
-          hsqlScript.append(" and (pay.");
-          hsqlScript.append(FIN_Payment.PROPERTY_BUSINESSPARTNER);
-          hsqlScript.append(" is not null or inv.");
-          hsqlScript.append(Invoice.PROPERTY_BUSINESSPARTNER);
-          hsqlScript.append(" is not null) ");
+          hsqlScript+=" and (pay.businessPartner is not null or inv.businessPartner is not null) ";
         }
 
         // Only Empty Business Partner
       } else {// if ((strcNoBusinessPartner.equals("only")))
-        hsqlScript.append(" and pay.");
-        hsqlScript.append(FIN_Payment.PROPERTY_BUSINESSPARTNER);
-        hsqlScript.append(" is null and inv.");
-        hsqlScript.append(Invoice.PROPERTY_BUSINESSPARTNER);
-        hsqlScript.append(" is null ");
+          hsqlScript+=" and pay.businessPartner is null and inv.businessPartner is null ";
       }
 
       // project
       if (StringUtils.isNotEmpty(strcProjectIdIN)) {
-        hsqlScript.append(" and coalesce(pay.");
-        hsqlScript.append(FIN_Payment.PROPERTY_PROJECT);
-        hsqlScript.append(", inv.");
-        hsqlScript.append(Invoice.PROPERTY_PROJECT);
-        hsqlScript.append(") in ");
-        hsqlScript.append(strcProjectIdIN);
+        hsqlScript += " and coalesce(pay.project, inv.project) in " + strcProjectIdIN;
       }
 
       // status
       if (StringUtils.isNotEmpty(strfinPaymSt)
           && !StringUtils.equalsIgnoreCase(strfinPaymSt, "('')")) {
-        hsqlScript.append(" and (pay.");
-        hsqlScript.append(FIN_Payment.PROPERTY_STATUS);
-        hsqlScript.append(" in ");
-        hsqlScript.append(strfinPaymSt);
+        hsqlScript += " and (pay.status in " + strfinPaymSt;
         if (strfinPaymSt.contains("RPAP")) {
-          hsqlScript.append(" or fpsd.");
-          hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS);
-          hsqlScript.append(" is null)");
+          hsqlScript+="    or fpsd.paymentDetails is null)";
         } else {
-          hsqlScript.append(" )");
+          hsqlScript += " )";
         }
       }
 
       // payment method
       if (StringUtils.isNotEmpty(strPaymentMethodId)) {
-        hsqlScript.append(" and coalesce(pay.");
-        hsqlScript.append(FIN_Payment.PROPERTY_PAYMENTMETHOD);
-        hsqlScript.append(", invps.");
-        hsqlScript.append(FIN_PaymentSchedule.PROPERTY_FINPAYMENTMETHOD);
-        hsqlScript.append(") = '");
-        hsqlScript.append(strPaymentMethodId);
-        hsqlScript.append("'");
+        hsqlScript += " and coalesce(pay.paymentMethod, invps.finPaymentmethod) = '" + strPaymentMethodId + "'";
       }
 
       // financial account
       if (StringUtils.isNotEmpty(strFinancialAccountId)) {
-        hsqlScript.append(" and  (pay is not null and ");
-        hsqlScript.append(
-            "(select case when trans is not null then trans.account.id else payment.account.id end from FIN_Finacc_Transaction trans right outer join trans.finPayment payment where payment=pay)");
-
-        hsqlScript.append(" = '");
-        hsqlScript.append(strFinancialAccountId);
-        hsqlScript.append("' or ((pay is null and inv.");
-        hsqlScript.append(Invoice.PROPERTY_SALESTRANSACTION);
-        hsqlScript.append(" = 'Y'");
-        hsqlScript.append(" and invbp.");
-        hsqlScript.append(BusinessPartner.PROPERTY_ACCOUNT);
-        hsqlScript.append(".id = '");
-        hsqlScript.append(strFinancialAccountId);
-        hsqlScript.append("')");
-        hsqlScript.append(" or (pay is null and inv.");
-        hsqlScript.append(Invoice.PROPERTY_SALESTRANSACTION);
-        hsqlScript.append(" = 'N'");
-        hsqlScript.append(" and invbp.");
-        hsqlScript.append(BusinessPartner.PROPERTY_POFINANCIALACCOUNT);
-        hsqlScript.append(".id = '");
-        hsqlScript.append(strFinancialAccountId);
-        hsqlScript.append("')))");
+        hsqlScript += " and  (pay is not null"
+                   + "     and (select case when trans is not null "
+                   + "            then trans.account.id "
+                   + "            else payment.account.id end "
+                   + "          from FIN_Finacc_Transaction trans right "
+                   + "            outer join trans.finPayment payment "
+                   + "          where payment = pay)"
+                   + "        = '" + strFinancialAccountId + "' "
+                   + "     or ((pay is null and inv.salesTransaction = 'Y'"
+                   + "          and invbp.account.id = '" + strFinancialAccountId + "')"
+                   + "         or (pay is null and inv.salesTransaction = 'N'"
+                   + "             and invbp.pOFinancialAccount.id = '" + strFinancialAccountId + "')"
+                   + "        )"
+                   + "       )";
       }
 
       // currency
       if (StringUtils.isNotEmpty(strcCurrency)) {
-        hsqlScript.append(" and coalesce(pay.");
-        hsqlScript.append(FIN_Payment.PROPERTY_CURRENCY);
-        hsqlScript.append(", inv.");
-        hsqlScript.append(Invoice.PROPERTY_CURRENCY);
-        hsqlScript.append(") = '");
-        hsqlScript.append(strcCurrency);
-        hsqlScript.append("'");
+        hsqlScript += " and coalesce(pay.currency, inv.currency) = '" + strcCurrency + "'";
       }
 
       // strsalesrepId
       if (StringUtils.isNotEmpty(strsalesrepId)) {
-        hsqlScript.append(" and inv.");
-        hsqlScript.append(Invoice.PROPERTY_SALESREPRESENTATIVE);
-        hsqlScript.append(" = '");
-        hsqlScript.append(strsalesrepId);
-        hsqlScript.append("'");
+        hsqlScript += " and inv.salesRepresentative = '" + strsalesrepId + "'";
       }
 
       // payment type
       if (StringUtils.equalsIgnoreCase(strPaymType, "FINPR_Receivables")) {
-        hsqlScript.append(" and (pay.");
-        hsqlScript.append(FIN_Payment.PROPERTY_RECEIPT);
-        hsqlScript.append(" = 'Y'");
-        hsqlScript.append(" or inv.");
-        hsqlScript.append(Invoice.PROPERTY_SALESTRANSACTION);
-        hsqlScript.append(" = 'Y')");
+        hsqlScript += " and (pay.receipt = 'Y'"
+                   +  "      or inv.salesTransaction = 'Y')";
       } else if (StringUtils.equalsIgnoreCase(strPaymType, "FINPR_Payables")) {
-        hsqlScript.append(" and (pay.");
-        hsqlScript.append(FIN_Payment.PROPERTY_RECEIPT);
-        hsqlScript.append(" = 'N'");
-        hsqlScript.append(" or inv.");
-        hsqlScript.append(Invoice.PROPERTY_SALESTRANSACTION);
-        hsqlScript.append(" = 'N')");
+        hsqlScript += " and (pay.receipt = 'N'"
+                   +  "      or inv.salesTransaction = 'N')";
       }
 
       // overdue
       if (StringUtils.isNotEmpty(strOverdue)) {
-        hsqlScript.append(" and invps.");
-        hsqlScript.append(FIN_PaymentSchedule.PROPERTY_OUTSTANDINGAMOUNT);
-        hsqlScript.append(" != '0'");
-        hsqlScript.append(" and invps.");
-        hsqlScript.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
-        hsqlScript.append(" <  :dueDate");
+        hsqlScript += " and invps.outstandingAmount != '0'"
+                   +  " and invps.dueDate <  :dueDate";
         parameters.put("dueDate", DateUtils.truncate(new Date(), Calendar.DATE));
       }
 
       if (!StringUtils.equals(strBAZero, "Y")) {
-        hsqlScript.append(" and not (pay.");
-        hsqlScript.append(FIN_Payment.PROPERTY_AMOUNT);
-        hsqlScript.append(" = 0 )");
+        hsqlScript += " and not (pay.amount = 0 )";
       }
 
       if (StringUtils.equals(strOutput, "HTML")) {
         int maxRecords = 1000;
         final Session sessionCount = OBDal.getReadOnlyInstance().getSession();
-        final Query<Long> queryCount = sessionCount
-            .createQuery("select count(*)" + hsqlScript.toString(), Long.class);
+        final Query<Long> queryCount = sessionCount.createQuery("select count(*)" + hsqlScript.toString(), Long.class);
         for (Entry<String, Object> entry : parameters.entrySet()) {
           queryCount.setParameter(entry.getKey(), entry.getValue());
         }
@@ -608,106 +504,73 @@ public class PaymentReportDao {
         }
       }
 
-      final StringBuilder firstLineQuery = new StringBuilder();
-      firstLineQuery.append(
-          "select fpsd.id, (select a.sequenceNumber from ADList a where a.reference.id = '575BCB88A4694C27BC013DE9C73E6FE7' and a.searchKey = coalesce(pay.status, 'RPAP')) as a");
-      hsqlScript = firstLineQuery.append(hsqlScript);
-
-      hsqlScript.append(" order by ");
+      final String firstLineQuery = ""
+          + " select fpsd.id, "
+          + "   (select a.sequenceNumber "
+          + "    from ADList a "
+          + "    where a.reference.id = '575BCB88A4694C27BC013DE9C73E6FE7' "
+          + "      and a.searchKey = coalesce(pay.status, 'RPAP')"
+          + "   ) as a"
+          + hsqlScript
+          + " order by ";
+      hsqlScript = firstLineQuery;
 
       if (StringUtils.equalsIgnoreCase(strGroupCrit, "APRM_FATS_BPARTNER")) {
-        hsqlScript.append(" coalesce(paybp.");
-        hsqlScript.append(BusinessPartner.PROPERTY_NAME);
-        hsqlScript.append(", invbp.");
-        hsqlScript.append(BusinessPartner.PROPERTY_NAME);
-        hsqlScript.append("), ");
+        hsqlScript += " coalesce(paybp.name, invbp.name), ";
       } else if (StringUtils.equalsIgnoreCase(strGroupCrit, "Project")) {
-        hsqlScript.append("  coalesce(paypro.");
-        hsqlScript.append(Project.PROPERTY_NAME);
-        hsqlScript.append(", invpro.");
-        hsqlScript.append(Project.PROPERTY_NAME);
-        hsqlScript.append("), ");
+        hsqlScript += " coalesce(paypro.name, invpro.name), ";
       } else if (StringUtils.equalsIgnoreCase(strGroupCrit, "FINPR_BPartner_Category")) {
-        hsqlScript.append("  coalesce(paybpc.");
-        hsqlScript.append(Category.PROPERTY_NAME);
-        hsqlScript.append(", invbpc.");
-        hsqlScript.append(Category.PROPERTY_NAME);
-        hsqlScript.append("), ");
+        hsqlScript += " coalesce(paybpc.name, invbpc.name), ";
       } else if (StringUtils.equalsIgnoreCase(strGroupCrit, "INS_CURRENCY")) {
-        hsqlScript.append("  coalesce(paycur.");
-        hsqlScript.append(Currency.PROPERTY_ISOCODE);
-        hsqlScript.append(", invcur.");
-        hsqlScript.append(Currency.PROPERTY_ISOCODE);
-        hsqlScript.append("), ");
+        hsqlScript += " coalesce(paycur.iSOCode, invcur.iSOCode), ";
       } else if (StringUtils.equalsIgnoreCase(strGroupCrit, "ACCS_ACCOUNT_ID_D")) {
-        hsqlScript.append(" coalesce(");
-        hsqlScript.append(
-            " (select trans.account.name from FIN_Finacc_Transaction trans left outer join trans.finPayment payment where payment.id=pay.id),");
-        hsqlScript.append(" pay.");
-        hsqlScript.append(FIN_Payment.PROPERTY_ACCOUNT);
-        hsqlScript.append(".name, 'Awaiting Payment'");
-        hsqlScript.append("), ");
+        hsqlScript += " coalesce("
+                   + "    (select trans.account.name "
+                   + "     from FIN_Finacc_Transaction trans "
+                   + "     left outer join trans.finPayment payment "
+                   + "     where payment.id=pay.id),"
+                   + "    pay.account.name, "
+                   + "    'Awaiting Payment'"
+                   + "  ), ";
       }
-
-      hsqlScript.append(" a, coalesce(pay.");
-      hsqlScript.append(FIN_Payment.PROPERTY_STATUS);
-      hsqlScript.append(", 'RPAP')");
+      hsqlScript += " a, coalesce(pay.status, 'RPAP')";
 
       if (StringUtils.isNotEmpty(strOrdCrit)) {
         String[] strOrdCritList = strOrdCrit.substring(2, strOrdCrit.length() - 2).split("', '");
 
         for (int i = 0; i < strOrdCritList.length; i++) {
           if (StringUtils.equalsIgnoreCase(strOrdCritList[i], "Date")) {
-            hsqlScript.append(", inv.");
-            hsqlScript.append(Invoice.PROPERTY_INVOICEDATE);
+            hsqlScript += ", inv.invoiceDate";
           }
           if (strOrdCritList[i].contains("Project")) {
-            hsqlScript.append(",  coalesce(paypro.");
-            hsqlScript.append(Project.PROPERTY_NAME);
-            hsqlScript.append(", invpro.");
-            hsqlScript.append(Project.PROPERTY_NAME);
-            hsqlScript.append(")");
+            hsqlScript += ",  coalesce(paypro.name, invpro.name)";
           }
           if (strOrdCritList[i].contains("FINPR_BPartner_Category")) {
-            hsqlScript.append(",  coalesce(paybpc.");
-            hsqlScript.append(Category.PROPERTY_NAME);
-            hsqlScript.append(", invbpc.");
-            hsqlScript.append(Category.PROPERTY_NAME);
-            hsqlScript.append(")");
+            hsqlScript += ",  coalesce(paybpc.name, invbpc.name)";
           }
           if (strOrdCritList[i].contains("APRM_FATS_BPARTNER")) {
-            hsqlScript.append(",  coalesce(paybp.");
-            hsqlScript.append(BusinessPartner.PROPERTY_NAME);
-            hsqlScript.append(", invbp.");
-            hsqlScript.append(BusinessPartner.PROPERTY_NAME);
-            hsqlScript.append(")");
+            hsqlScript += ",  coalesce(paybp.name, invbp.name)";
           }
           if (strOrdCritList[i].contains("INS_CURRENCY")) {
-            hsqlScript.append(",  coalesce(paycur.");
-            hsqlScript.append(Currency.PROPERTY_ISOCODE);
-            hsqlScript.append(", invcur.");
-            hsqlScript.append(Currency.PROPERTY_ISOCODE);
-            hsqlScript.append(")");
+            hsqlScript += ",  coalesce(paycur.iSOCode, invcur.iSOCode)";
           }
           if (StringUtils.equalsIgnoreCase(strOrdCritList[i], "ACCS_ACCOUNT_ID_D")) {
-            hsqlScript.append(", coalesce(");
-            hsqlScript.append(
-                " (select trans.account.name from FIN_Finacc_Transaction trans left outer join trans.finPayment payment where payment.id=pay.id),");
-            hsqlScript.append(" pay.");
-            hsqlScript.append(FIN_Payment.PROPERTY_ACCOUNT);
-            hsqlScript.append(".name)");
+            hsqlScript += ", coalesce("
+                       +  "    (select trans.account.name "
+                       +  "     from FIN_Finacc_Transaction trans "
+                       +  "      left outer join trans.finPayment payment "
+                       +  "     where payment.id=pay.id),"
+                       +  "    pay.account.name)";
           }
           if (StringUtils.equalsIgnoreCase(strOrdCritList[i], "DueDate")) {
-            hsqlScript.append(", invps.");
-            hsqlScript.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
+            hsqlScript += ", invps.dueDate";
           }
         }
       }
+      
+      hsqlScript += ", fpsd.invoicePaymentSchedule.id";
 
-      hsqlScript.append(", fpsd.");
-      hsqlScript.append(FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-      hsqlScript.append(".");
-      hsqlScript.append(FIN_PaymentSchedule.PROPERTY_ID);
+      // @formatter:on
       final Session session = OBDal.getReadOnlyInstance().getSession();
       final Query<Object[]> query = session.createQuery(hsqlScript.toString(), Object[].class);
 
@@ -2150,21 +2013,22 @@ public class PaymentReportDao {
   }
 
   public java.util.List<Invoice> getInvoicesUsingCredit(final FIN_Payment payment) {
-    final StringBuilder sql = new StringBuilder();
     final java.util.List<Invoice> result = new ArrayList<>();
 
-    sql.append(" select distinct(psiv.invoice.id) ");
-    sql.append(" from FIN_Payment_Sched_Inv_V psiv ");
-    sql.append(" where exists (");
-    sql.append("   select 1 ");
-    sql.append("   from FIN_Payment_Credit pc");
-    sql.append("   , FIN_Payment_Detail pd");
-    sql.append("   , FIN_Payment_ScheduleDetail psd");
-    sql.append("   where pc.payment.id = pd.finPayment.id");
-    sql.append("   and pd.id = psd.paymentDetails.id");
-    sql.append("   and pc.creditPaymentUsed.id = :paymentId");
-    sql.append("   and psd.invoicePaymentSchedule.id = psiv.id");
-    sql.append(" )");
+    // @formatter:off
+    final String sql = " select distinct(psiv.invoice.id) "
+                     + " from FIN_Payment_Sched_Inv_V psiv "
+                     + " where exists ("
+                     + "   select 1 "
+                     + "   from FIN_Payment_Credit pc,"
+                     + "    FIN_Payment_Detail pd,"
+                     + "    FIN_Payment_ScheduleDetail psd"
+                     + "   where pc.payment.id = pd.finPayment.id"
+                     + "     and pd.id = psd.paymentDetails.id"
+                     + "     and pc.creditPaymentUsed.id = :paymentId"
+                     + "     and psd.invoicePaymentSchedule.id = psiv.id"
+                     + "   )";
+    // @formatter:on
 
     try {
       OBContext.setAdminMode(true);
@@ -2183,14 +2047,15 @@ public class PaymentReportDao {
 
   public java.util.List<FIN_PaymentSchedule> getInvoicePaymentSchedules(
       FIN_Payment credit_payment) {
-    final StringBuilder sql = new StringBuilder();
-    sql.append(" select ps ");
-    sql.append(" from FIN_Payment_Credit pc, FIN_Payment_Detail_V pdv, ");
-    sql.append(" FIN_Payment_Schedule ps ");
-    sql.append(" where pc.payment = pdv.payment ");
-    sql.append(" and ps.id = pdv.invoicePaymentPlan ");
-    sql.append(" and pc.creditPaymentUsed.id = '" + credit_payment.getId() + "' ");
-
+    // @formatter:off
+    final String sql = " select ps "
+                     + " from FIN_Payment_Credit pc,"
+                     + "  FIN_Payment_Detail_V pdv,"
+                     + "  FIN_Payment_Schedule ps "
+                     + " where pc.payment = pdv.payment "
+                     + "  and ps.id = pdv.invoicePaymentPlan "
+                     + "  and pc.creditPaymentUsed.id = '" + credit_payment.getId() + "' ";
+    // @formatter:on
     try {
       OBContext.setAdminMode(true);
       final Session session = OBDal.getReadOnlyInstance().getSession();
@@ -2204,14 +2069,16 @@ public class PaymentReportDao {
 
   @Deprecated
   public FIN_PaymentSchedule getInvoicePaymentSchedule(FIN_Payment credit_payment) {
-    final StringBuilder sql = new StringBuilder();
-    sql.append(" select ps ");
-    sql.append(" from FIN_Payment_Credit pc, FIN_Payment_Detail_V pdv, ");
-    sql.append(" FIN_Payment_Schedule ps ");
-    sql.append(" where pc.payment = pdv.payment ");
-    sql.append(" and ps.id = pdv.invoicePaymentPlan ");
-    sql.append(" and pc.creditPaymentUsed.id = '" + credit_payment.getId() + "' ");
-
+    // @formatter:off
+    final String sql = " select ps "
+                     + " from FIN_Payment_Credit pc,"
+                     + "   FIN_Payment_Detail_V pdv,"
+                     + "   FIN_Payment_Schedule ps "
+                     + " where pc.payment = pdv.payment "
+                     + " and ps.id = pdv.invoicePaymentPlan "
+                     + " and pc.creditPaymentUsed.id = '" + credit_payment.getId() + "' ";
+    // @formatter: on
+    
     try {
       OBContext.setAdminMode(true);
       final Session session = OBDal.getReadOnlyInstance().getSession();
@@ -2276,37 +2143,41 @@ public class PaymentReportDao {
 
   @SuppressWarnings("unchecked")
   private void createBPList() {
-    final StringBuilder hql = new StringBuilder();
-    hql.append(" select bp." + BusinessPartner.PROPERTY_NAME);
-    hql.append(" from " + BusinessPartner.ENTITY_NAME + " as bp");
-    hql.append(" order by bp." + BusinessPartner.PROPERTY_NAME);
+    // @formatter:off
+    final String hql = " select bp.name "
+                     + " from BusinessPartner as bp"
+                     + " order by bp.name";
+    // @formatter:on
     bpList = OBDal.getReadOnlyInstance().getSession().createQuery(hql.toString()).list();
   }
 
   @SuppressWarnings("unchecked")
   private void createBPCategoryList() {
-    final StringBuilder hql = new StringBuilder();
-    hql.append(" select c." + Category.PROPERTY_NAME);
-    hql.append(" from " + Category.ENTITY_NAME + " as c");
-    hql.append(" order by c." + Category.PROPERTY_NAME);
+    // @formatter:off
+    final String hql = " select c.name "
+                     + " from BusinessPartnerCategory as c"
+                     + " order by c.name";
+    // @formatter:on
     bpCategoryList = OBDal.getReadOnlyInstance().getSession().createQuery(hql.toString()).list();
   }
 
   @SuppressWarnings("unchecked")
   private void createProjectList() {
-    final StringBuilder hql = new StringBuilder();
-    hql.append(" select p." + Project.PROPERTY_NAME);
-    hql.append(" from " + Project.ENTITY_NAME + " as p");
-    hql.append(" order by p." + Project.PROPERTY_NAME);
+    // @formatter:off
+    final String hql = " select p.name "
+                     + " from Project as p"
+                     + " order by p.name";
+    // @formatter:on
     projectList = OBDal.getReadOnlyInstance().getSession().createQuery(hql.toString()).list();
   }
 
   @SuppressWarnings("unchecked")
   private void createAcctList() {
-    final StringBuilder hql = new StringBuilder();
-    hql.append(" select fa." + FIN_FinancialAccount.PROPERTY_NAME);
-    hql.append(" from " + FIN_FinancialAccount.ENTITY_NAME + " as fa");
-    hql.append(" order by fa." + FIN_FinancialAccount.PROPERTY_NAME);
+    // @formatter:off
+    final String hql = " select fa.name"
+                     + " from FIN_Financial_Account as fa"
+                     + " order by fa.name";
+    // @formatter:on
     acctList = OBDal.getReadOnlyInstance().getSession().createQuery(hql.toString()).list();
   }
 
