@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2018 Openbravo SLU
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -296,15 +296,17 @@ public class FIN_Utility {
 
     OBContext.setAdminMode(false);
     try {
-      StringBuilder where = new StringBuilder();
-      where.append(" as dt");
-      where.append(" where dt.organization.id in (:orgIdList)");
-      where.append(" and dt.client.id = :clientId");
-      where.append(" and dt.documentCategory = :docCategory");
-      where.append(" order by ad_isorgincluded(:orgId, dt.organization.id, :clientId)");
-      where.append(" , dt.default desc");
-      where.append(" , dt.id desc");
+      // @formatter:off
+      final String where = ""
+          + " as dt"
+          + " where dt.organization.id in (:orgIdList)"
+          + "   and dt.client.id = :clientId"
+          + "   and dt.documentCategory = :docCategory"
+          + " order by ad_isorgincluded(:orgId, dt.organization.id, :clientId)"
+          + "   , dt.default desc"
+          + "   , dt.id desc";
 
+      // @formatter:on
       OBQuery<DocumentType> dt = OBDal.getInstance()
           .createQuery(DocumentType.class, where.toString());
       dt.setFilterOnReadableClients(false);
@@ -392,7 +394,12 @@ public class FIN_Utility {
   }
 
   private static Sequence lockSequence(Sequence seq) {
-    StringBuilder where = new StringBuilder("select s from ADSequence s where id = :id");
+    // @formatter:off
+    final String where = ""
+        + "select s "
+        + "from ADSequence s "
+        + "where id = :id";
+    // @formatter:on
     final Session session = OBDal.getInstance().getSession();
     final Query<Sequence> query = session.createQuery(where.toString(), Sequence.class);
     query.setParameter("id", seq.getId());
@@ -1164,8 +1171,7 @@ public class FIN_Utility {
     try {
       final OBCriteria<org.openbravo.model.ad.domain.List> obCriteria = OBDal.getInstance()
           .createCriteria(org.openbravo.model.ad.domain.List.class);
-      obCriteria.add(Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE + ".id",
-          "575BCB88A4694C27BC013DE9C73E6FE7"));
+      obCriteria.add(Restrictions.eq("reference.id", "575BCB88A4694C27BC013DE9C73E6FE7"));
       List<org.openbravo.model.ad.domain.List> adRefList = obCriteria.list();
       for (org.openbravo.model.ad.domain.List adRef : adRefList) {
         if (isConfirmed.equals(isPaymentConfirmed(adRef.getSearchKey(), null))) {
@@ -1194,8 +1200,7 @@ public class FIN_Utility {
     try {
       final OBCriteria<org.openbravo.model.ad.domain.List> obCriteria = OBDal.getInstance()
           .createCriteria(org.openbravo.model.ad.domain.List.class);
-      obCriteria.add(Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE + ".id",
-          "575BCB88A4694C27BC013DE9C73E6FE7"));
+      obCriteria.add(Restrictions.eq("reference.id", "575BCB88A4694C27BC013DE9C73E6FE7"));
       List<org.openbravo.model.ad.domain.List> adRefList = obCriteria.list();
       for (org.openbravo.model.ad.domain.List adRef : adRefList) {
         if (isConfirmed.equals(isPaymentConfirmed(adRef.getSearchKey(), psd))) {
@@ -1284,17 +1289,18 @@ public class FIN_Utility {
       String dateAcct) {
     final Session session = OBDal.getInstance().getSession();
 
-    final StringBuilder hql = new StringBuilder();
-    hql.append("select max(p.id) as period ");
-    hql.append(" from FinancialMgmtPeriodControl pc ");
-    hql.append("   left join pc.period p ");
-    hql.append(" where p.client = '").append(client).append("' ");
-    hql.append(" and pc.documentCategory = '").append(documentType).append("' ");
-    hql.append(" and pc.periodStatus = 'O' ");
-    hql.append(" and pc.organization = ad_org_getcalendarowner('").append(org).append("') ");
-    hql.append(" and to_date('").append(dateAcct).append("') >= p.startingDate ");
-    hql.append(" and to_date('").append(dateAcct).append("') < p.endingDate + 1 ");
-
+    // @formatter:off
+    final String hql = ""
+        + "select max(p.id) as period "
+        + " from FinancialMgmtPeriodControl pc "
+        + "   left join pc.period p "
+        + " where p.client = '" + client + "' "
+        + "   and pc.documentCategory = '" + documentType + "' "
+        + "   and pc.periodStatus = 'O' "
+        + "   and pc.organization = ad_org_getcalendarowner('" + org + "') "
+        + "   and to_date('" + dateAcct + "') >= p.startingDate "
+        + "   and to_date('" + dateAcct + "') < p.endingDate + 1 ";
+    // @formatter:on
     final Query<String> qry = session.createQuery(hql.toString(), String.class);
 
     String period = qry.list().get(0);
@@ -1377,17 +1383,15 @@ public class FIN_Utility {
 
     OBContext.setAdminMode();
     try {
-      final StringBuilder whereClause = new StringBuilder();
-      whereClause.append(" as pd ");
-      whereClause.append(
-          " left join pd." + FIN_PaymentDetail.PROPERTY_FINPAYMENTSCHEDULEDETAILLIST + " as psd");
-      whereClause.append(
-          " where pd." + FIN_PaymentDetail.PROPERTY_FINPAYMENT + ".id = '" + payment.getId() + "'");
-      whereClause
-          .append(" order by psd." + FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-      whereClause.append(
-          ", coalesce(psd." + FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE + ",'0')");
-
+      // @formatter:off
+      final String whereClause = ""
+          + " as pd "
+          + "   left join pd.fINPaymentScheduleDetailList as psd"
+          + " where pd.finPayment.id = '" + payment.getId() + "'"
+          + " order by psd.invoicePaymentSchedule"
+          + "   , coalesce(psd.orderPaymentSchedule"
+          + "   , '0')";
+      // @formatter:on
       OBQuery<FIN_PaymentDetail> query = OBDal.getInstance()
           .createQuery(FIN_PaymentDetail.class, whereClause.toString());
       query.setFilterOnReadableClients(false);
@@ -1410,19 +1414,17 @@ public class FIN_Utility {
 
     OBContext.setAdminMode(true);
     try {
-      final StringBuilder whereClause = new StringBuilder();
-      whereClause.append(" select pd." + FIN_PaymentDetail.PROPERTY_ID);
-      whereClause.append(" from " + FIN_PaymentDetail.ENTITY_NAME + " as pd");
-      whereClause.append(
-          " inner join pd." + FIN_PaymentDetail.PROPERTY_FINPAYMENTSCHEDULEDETAILLIST + " as psd");
-      whereClause
-          .append(" where pd." + FIN_PaymentDetail.PROPERTY_FINPAYMENT + ".id = :paymentId ");
-      whereClause.append(" and pd." + FIN_PaymentDetail.PROPERTY_ACTIVE + " = true");
-      whereClause
-          .append(" order by psd." + FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
-      whereClause.append(
-          ", coalesce(psd." + FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE + ",'0')");
-
+      // @formatter:off
+      final String whereClause = ""
+          + " select pd.id"
+          + " from FIN_Payment_Detail as pd"
+          + "   inner join pd.fINPaymentScheduleDetailList as psd"
+          + " where pd.finPayment.id = :paymentId "
+          + "   and pd.active = true"
+          + " order by psd.invoicePaymentSchedule"
+          + "   , coalesce(psd.orderPaymentSchedule"
+          + "   ,'0')";
+      // @formatter:on
       Query<String> query = OBDal.getInstance()
           .getSession()
           .createQuery(whereClause.toString(), String.class);
@@ -1442,10 +1444,12 @@ public class FIN_Utility {
   public static boolean isReversePayment(FIN_Payment payment) {
     final Session session = OBDal.getInstance().getSession();
 
-    final StringBuilder hql = new StringBuilder();
-    hql.append("select count(p) ");
-    hql.append(" from FIN_Payment p ");
-    hql.append(" where p.reversedPayment = '").append(payment.getId()).append("' ");
+    // @formatter:off
+    final String hql = ""
+        + "select count(p) "
+        + "from FIN_Payment p "
+        + "where p.reversedPayment = '"  + payment.getId() + "' ";
+    // @formatter:on
 
     final Query<Long> qry = session.createQuery(hql.toString(), Long.class);
 
@@ -1646,33 +1650,33 @@ public class FIN_Utility {
    */
   public static FinAccPaymentMethod getFinancialAccountPaymentMethod(String paymentMethodId,
       String financialAccountId, boolean issotrx, String currencyId, String orgId) {
-    StringBuffer where = new StringBuffer();
-    where.append(" as fapm");
-    where.append(" join fapm." + FinAccPaymentMethod.PROPERTY_ACCOUNT + " as fa");
-    where.append(
-        " where fapm." + FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD + ".id = :paymentMethodId");
-    where.append(" and fa." + FIN_FinancialAccount.PROPERTY_ACTIVE + " = true");
+    // @formatter:off
+    String where = ""
+          + " as fapm"
+          + "   join fapm.account as fa"
+          + " where fapm.paymentMethod.id = :paymentMethodId"
+          + "   and fa.active = true";
     if (issotrx) {
-      where.append(" and fapm." + FinAccPaymentMethod.PROPERTY_PAYINALLOW + " = true");
+     where += " and fapm.payinAllow = true";
     } else {
-      where.append(" and fapm." + FinAccPaymentMethod.PROPERTY_PAYOUTALLOW + " = true");
+     where += " and fapm.payoutAllow = true";
     }
     if (StringUtils.isNotEmpty(financialAccountId)) {
-      where.append(" and fa." + FIN_FinancialAccount.PROPERTY_ID + " = :financialAccountId");
+     where += " and fa.id = :financialAccountId";
     }
     if (StringUtils.isNotEmpty(currencyId)) {
-      where.append(" and (fa." + FIN_FinancialAccount.PROPERTY_CURRENCY + ".id = :currencyId");
+     where += " and (fa.currency.id = :currencyId";
       if (issotrx) {
-        where.append(" or fapm." + FinAccPaymentMethod.PROPERTY_PAYINISMULTICURRENCY + " = true)");
+        where += "   or fapm.payinIsMulticurrency = true)";
       } else {
-        where.append(" or fapm." + FinAccPaymentMethod.PROPERTY_PAYOUTISMULTICURRENCY + " = true)");
+        where += "   or fapm.payoutIsMulticurrency = true)";
       }
     }
     if (StringUtils.isNotEmpty(orgId)) {
-      where.append(" and ad_org_isinnaturaltree(fa." + FIN_FinancialAccount.PROPERTY_ORGANIZATION
-          + ".id, :orgId, fa." + FIN_FinancialAccount.PROPERTY_CLIENT + ".id) = 'Y'");
+     where += " and ad_org_isinnaturaltree(fa.organization.id, :orgId, fa.client.id) = 'Y'";
     }
-    where.append(" order by fapm." + FinAccPaymentMethod.PROPERTY_DEFAULT + " desc");
+    where += " order by fapm.default desc";
+    // @formatter:on
 
     OBQuery<FinAccPaymentMethod> qry = OBDal.getInstance()
         .createQuery(FinAccPaymentMethod.class, where.toString());
