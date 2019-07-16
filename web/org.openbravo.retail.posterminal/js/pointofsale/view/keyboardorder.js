@@ -29,12 +29,19 @@ enyo.kind({
     onSetMultiSelected: 'setMultiSelected',
     onKeyboardOnDiscountsMode: 'keyboardOnDiscountsMode'
   },
-  setMultiSelected: function (inSender, inEvent) {
-    if (inEvent.models && inEvent.models.length > 0 && !(inEvent.models[0] instanceof OB.Model.OrderLine)) {
+  setMultiSelected: function(inSender, inEvent) {
+    if (
+      inEvent.models &&
+      inEvent.models.length > 0 &&
+      !(inEvent.models[0] instanceof OB.Model.OrderLine)
+    ) {
       return;
     }
     this.selectedModels = inEvent.models;
-    this.selectedEditPrice = OB.MobileApp.model.hasPermission('OBPOS_order.changePrice', false);
+    this.selectedEditPrice = OB.MobileApp.model.hasPermission(
+      'OBPOS_order.changePrice',
+      false
+    );
     if (this.selectedEditPrice) {
       var i;
       for (i = 0; i < this.selectedModels.length; i++) {
@@ -48,7 +55,7 @@ enyo.kind({
       disabled: !this.selectedEditPrice
     });
   },
-  keyboardOnDiscountsMode: function (inSender, inEvent) {
+  keyboardOnDiscountsMode: function(inSender, inEvent) {
     if (inEvent.status) {
       this.showSidepad('ticketDiscountsToolbar');
     } else {
@@ -95,58 +102,95 @@ enyo.kind({
   },
   sideBarEnabled: true,
 
-  receiptChanged: function () {
+  receiptChanged: function() {
     this.$.toolbarcontainer.$.toolbarPayment.setReceipt(this.receipt);
 
     this.line = null;
 
-    this.receipt.get('lines').on('selected', function (line) {
-      this.line = line;
-      this.clearEditBox();
-    }, this);
+    this.receipt.get('lines').on(
+      'selected',
+      function(line) {
+        this.line = line;
+        this.clearEditBox();
+      },
+      this
+    );
   },
-  validateQuantity: function (keyboard, value, callback) {
+  validateQuantity: function(keyboard, value, callback) {
     var me = this;
     if (!isFinite(value)) {
       return true;
     }
     var valueBigDecimal = OB.DEC.toBigDecimal(value);
-    if (valueBigDecimal.scale() > keyboard.line.get('product').get('uOMstandardPrecision')) {
-      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_StdPrecisionLimitError', [keyboard.line.get('product').get('uOMstandardPrecision')]));
+    if (
+      valueBigDecimal.scale() >
+      keyboard.line.get('product').get('uOMstandardPrecision')
+    ) {
+      OB.UTIL.showError(
+        OB.I18N.getLabel('OBPOS_StdPrecisionLimitError', [
+          keyboard.line.get('product').get('uOMstandardPrecision')
+        ])
+      );
       return false;
     }
-    if (OB.MobileApp.model.hasPermission('OBPOS_maxQtyUsingKeyboard', true) && value >= OB.I18N.parseNumber(OB.MobileApp.model.hasPermission('OBPOS_maxQtyUsingKeyboard', true))) {
-      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_maxQtyUsingKeyboardHeader'), OB.I18N.getLabel('OBPOS_maxQtyUsingKeyboardBody', [value]), [{
-        isConfirmButton: true,
-        label: OB.I18N.getLabel('OBMOBC_LblOk'),
-        action: function () {
-          callback(me, keyboard, value);
-        }
-      }, {
-        label: OB.I18N.getLabel('OBMOBC_LblCancel')
-      }]);
+    if (
+      OB.MobileApp.model.hasPermission('OBPOS_maxQtyUsingKeyboard', true) &&
+      value >=
+        OB.I18N.parseNumber(
+          OB.MobileApp.model.hasPermission('OBPOS_maxQtyUsingKeyboard', true)
+        )
+    ) {
+      OB.UTIL.showConfirmation.display(
+        OB.I18N.getLabel('OBPOS_maxQtyUsingKeyboardHeader'),
+        OB.I18N.getLabel('OBPOS_maxQtyUsingKeyboardBody', [value]),
+        [
+          {
+            isConfirmButton: true,
+            label: OB.I18N.getLabel('OBMOBC_LblOk'),
+            action: function() {
+              callback(me, keyboard, value);
+            }
+          },
+          {
+            label: OB.I18N.getLabel('OBMOBC_LblCancel')
+          }
+        ]
+      );
       return false;
     }
     return true;
   },
-  validatePrice: function (keyboard, price, callback) {
+  validatePrice: function(keyboard, price, callback) {
     var me = this;
-    if (OB.MobileApp.model.hasPermission('OBPOS_maxPriceUsingKeyboard', true) && price >= OB.I18N.parseNumber(OB.MobileApp.model.hasPermission('OBPOS_maxPriceUsingKeyboard', true))) {
-      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_maxPriceUsingKeyboardHeader'), OB.I18N.getLabel('OBPOS_maxPriceUsingKeyboardBody', [price]), [{
-        isConfirmButton: true,
-        label: OB.I18N.getLabel('OBMOBC_LblOk'),
-        action: function () {
-          callback(me, keyboard, price);
-        }
-      }, {
-        label: OB.I18N.getLabel('OBMOBC_LblCancel')
-      }]);
+    if (
+      OB.MobileApp.model.hasPermission('OBPOS_maxPriceUsingKeyboard', true) &&
+      price >=
+        OB.I18N.parseNumber(
+          OB.MobileApp.model.hasPermission('OBPOS_maxPriceUsingKeyboard', true)
+        )
+    ) {
+      OB.UTIL.showConfirmation.display(
+        OB.I18N.getLabel('OBPOS_maxPriceUsingKeyboardHeader'),
+        OB.I18N.getLabel('OBPOS_maxPriceUsingKeyboardBody', [price]),
+        [
+          {
+            isConfirmButton: true,
+            label: OB.I18N.getLabel('OBMOBC_LblOk'),
+            action: function() {
+              callback(me, keyboard, price);
+            }
+          },
+          {
+            label: OB.I18N.getLabel('OBMOBC_LblCancel')
+          }
+        ]
+      );
       return false;
     } else {
       return true;
     }
   },
-  validateReceipt: function (keyboard, validateLine) {
+  validateReceipt: function(keyboard, validateLine) {
     if (keyboard.receipt.get('isEditable') === false) {
       this.doShowPopup({
         popup: 'modalNotEditableOrder'
@@ -154,7 +198,10 @@ enyo.kind({
       return false;
     }
     if (validateLine) {
-      if (keyboard.line && keyboard.line.get('product').get('isEditableQty') === false) {
+      if (
+        keyboard.line &&
+        keyboard.line.get('product').get('isEditableQty') === false
+      ) {
         this.doShowPopup({
           popup: 'modalNotEditableLine'
         });
@@ -165,167 +212,182 @@ enyo.kind({
     }
     return true;
   },
-  initComponents: function () {
+  initComponents: function() {
     var me = this;
 
-    var actionAddProduct = function (keyboard, value) {
-        if (keyboard.line.get('relatedLines')) {
-          return;
-        }
-        if (!me.validateReceipt(keyboard, true)) {
+    var actionAddProduct = function(keyboard, value) {
+      if (keyboard.line.get('relatedLines')) {
+        return;
+      }
+      if (!me.validateReceipt(keyboard, true)) {
+        return true;
+      }
+      if (keyboard.line) {
+        if (_.isNaN(value)) {
           return true;
-        }
-        if (keyboard.line) {
-          if (_.isNaN(value)) {
-            return true;
-          } else {
-            me.doAddProduct({
-              product: keyboard.line.get('product'),
-              qty: value,
-              options: {
-                line: keyboard.line,
-                blockAddProduct: true
-              }
-            });
-            keyboard.receipt.trigger('scan');
-          }
-        }
-        };
-
-    var actionAddMultiProduct = function (keyboard, qty) {
-        var cancelQtyChange = false,
-            cancelQtyChangeReturn = false;
-
-        // Check if is trying to remove delivered units or to modify negative lines in a cancel and replace ticket.
-        // In that case stop the flow and show an error popup.
-        if (keyboard.receipt.get('replacedorder')) {
-          _.each(me.selectedModels, function (l) {
-            var oldqty = l.get('qty'),
-                newqty = oldqty + qty;
-
-            if (oldqty > 0 && newqty < l.get('remainingQuantity')) {
-              cancelQtyChange = true;
-            } else if (oldqty < 0 && l.get('remainingQuantity')) {
-              cancelQtyChangeReturn = true;
+        } else {
+          me.doAddProduct({
+            product: keyboard.line.get('product'),
+            qty: value,
+            options: {
+              line: keyboard.line,
+              blockAddProduct: true
             }
           });
+          keyboard.receipt.trigger('scan');
         }
-        if (cancelQtyChange) {
-          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceQtyEdit'));
-          return;
-        } else if (cancelQtyChangeReturn) {
-          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceQtyEditReturn'));
-          return;
-        }
+      }
+    };
 
-        keyboard.receipt.set('undo', null);
-        keyboard.receipt.set('multipleUndo', true);
-        var selection = [];
-        _.each(me.selectedModels, function (model) {
-          selection.push(model);
-          keyboard.line = model;
-          actionAddProduct(keyboard, qty);
+    var actionAddMultiProduct = function(keyboard, qty) {
+      var cancelQtyChange = false,
+        cancelQtyChangeReturn = false;
+
+      // Check if is trying to remove delivered units or to modify negative lines in a cancel and replace ticket.
+      // In that case stop the flow and show an error popup.
+      if (keyboard.receipt.get('replacedorder')) {
+        _.each(me.selectedModels, function(l) {
+          var oldqty = l.get('qty'),
+            newqty = oldqty + qty;
+
+          if (oldqty > 0 && newqty < l.get('remainingQuantity')) {
+            cancelQtyChange = true;
+          } else if (oldqty < 0 && l.get('remainingQuantity')) {
+            cancelQtyChangeReturn = true;
+          }
         });
-        keyboard.receipt.set('multipleUndo', null);
-        me.doSetMultiSelectionItems({
-          selection: selection
-        });
-        };
+      }
+      if (cancelQtyChange) {
+        OB.UTIL.showConfirmation.display(
+          OB.I18N.getLabel('OBMOBC_Error'),
+          OB.I18N.getLabel('OBPOS_CancelReplaceQtyEdit')
+        );
+        return;
+      } else if (cancelQtyChangeReturn) {
+        OB.UTIL.showConfirmation.display(
+          OB.I18N.getLabel('OBMOBC_Error'),
+          OB.I18N.getLabel('OBPOS_CancelReplaceQtyEditReturn')
+        );
+        return;
+      }
+
+      keyboard.receipt.set('undo', null);
+      keyboard.receipt.set('multipleUndo', true);
+      var selection = [];
+      _.each(me.selectedModels, function(model) {
+        selection.push(model);
+        keyboard.line = model;
+        actionAddProduct(keyboard, qty);
+      });
+      keyboard.receipt.set('multipleUndo', null);
+      me.doSetMultiSelectionItems({
+        selection: selection
+      });
+    };
 
     // action bindable to a command that completely deletes a product from the order list
-    var actionDeleteLine = function (keyboard) {
-        if (!me.validateReceipt(keyboard, true)) {
-          return true;
+    var actionDeleteLine = function(keyboard) {
+      if (!me.validateReceipt(keyboard, true)) {
+        return true;
+      }
+      if (
+        keyboard.model.get('leftColumnViewManager') &&
+        !keyboard.model.get('leftColumnViewManager').isMultiOrder()
+      ) {
+        if (keyboard.line) {
+          keyboard.doDeleteLine({
+            selectedModels: keyboard.selectedModels
+          });
         }
-        if (keyboard.model.get('leftColumnViewManager') && !keyboard.model.get('leftColumnViewManager').isMultiOrder()) {
-          if (keyboard.line) {
+      } else {
+        return true;
+      }
+    };
+
+    var changePrice = function(keyboardComponent, keyboard, price) {
+      var cancelChange = false;
+
+      var setPrice = function() {
+        if (keyboardComponent.selectedModels.length > 1) {
+          keyboard.receipt.set('undo', null);
+          keyboard.receipt.set('multipleUndo', true);
+          _.each(keyboardComponent.selectedModels, function(model) {
+            if (model.get('replacedorderline') && model.get('qty') < 0) {
+              cancelChange = true;
+            }
+          });
+          if (cancelChange) {
+            OB.UTIL.showConfirmation.display(
+              OB.I18N.getLabel('OBMOBC_Error'),
+              OB.I18N.getLabel('OBPOS_CancelReplaceReturnPriceChange')
+            );
+            return;
+          }
+          _.each(keyboardComponent.selectedModels, function(model) {
+            keyboard.receipt.setPrice(model, price);
+          });
+          keyboard.receipt.set('multipleUndo', null);
+        } else {
+          keyboard.receipt.setPrice(keyboard.line, price);
+        }
+        keyboard.receipt.calculateReceipt();
+        keyboard.receipt.trigger('scan');
+      };
+
+      if (OB.MobileApp.model.get('priceModificationReasons').length > 0) {
+        me.doShowPopup({
+          popup: 'modalPriceModification',
+          args: {
+            callback: setPrice,
+            selectedModels: me.selectedModels,
+            receipt: keyboard.receipt,
+            line: keyboard.line
+          }
+        });
+      } else {
+        setPrice();
+      }
+    };
+
+    var changeQuantity = function(keyboardComponent, keyboard, value) {
+      keyboard.receipt.set('undo', null);
+      var selection = [];
+      var toadd;
+      if (
+        keyboardComponent.selectedModels &&
+        keyboardComponent.selectedModels.length > 1
+      ) {
+        keyboard.receipt.set('multipleUndo', true);
+      }
+      _.each(keyboardComponent.selectedModels, function(model) {
+        selection.push(model);
+        keyboard.line = model;
+        if (keyboard.receipt.get('orderType') === 1) {
+          toadd = value - -keyboard.line.get('qty');
+        } else {
+          toadd = value - keyboard.line.get('qty');
+        }
+        if (toadd !== 0) {
+          if (value === 0) {
+            // If final quantity will be 0 then request approval
             keyboard.doDeleteLine({
               selectedModels: keyboard.selectedModels
             });
+          } else {
+            actionAddProduct(keyboard, toadd);
           }
         } else {
-          return true;
+          keyboard.clearInput();
         }
-
-        };
-
-    var changePrice = function (keyboardComponent, keyboard, price) {
-        var cancelChange = false;
-
-        var setPrice = function () {
-            if (keyboardComponent.selectedModels.length > 1) {
-              keyboard.receipt.set('undo', null);
-              keyboard.receipt.set('multipleUndo', true);
-              _.each(keyboardComponent.selectedModels, function (model) {
-                if (model.get('replacedorderline') && model.get('qty') < 0) {
-                  cancelChange = true;
-                }
-              });
-              if (cancelChange) {
-                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceReturnPriceChange'));
-                return;
-              }
-              _.each(keyboardComponent.selectedModels, function (model) {
-                keyboard.receipt.setPrice(model, price);
-              });
-              keyboard.receipt.set('multipleUndo', null);
-            } else {
-              keyboard.receipt.setPrice(keyboard.line, price);
-            }
-            keyboard.receipt.calculateReceipt();
-            keyboard.receipt.trigger('scan');
-            };
-
-        if (OB.MobileApp.model.get('priceModificationReasons').length > 0) {
-          me.doShowPopup({
-            popup: 'modalPriceModification',
-            args: {
-              callback: setPrice,
-              selectedModels: me.selectedModels,
-              receipt: keyboard.receipt,
-              line: keyboard.line
-            }
-          });
-        } else {
-          setPrice();
-        }
-        };
-
-    var changeQuantity = function (keyboardComponent, keyboard, value) {
-        keyboard.receipt.set('undo', null);
-        var selection = [];
-        var toadd;
-        if (keyboardComponent.selectedModels && keyboardComponent.selectedModels.length > 1) {
-          keyboard.receipt.set('multipleUndo', true);
-        }
-        _.each(keyboardComponent.selectedModels, function (model) {
-          selection.push(model);
-          keyboard.line = model;
-          if (keyboard.receipt.get('orderType') === 1) {
-            toadd = value - (-keyboard.line.get('qty'));
-          } else {
-            toadd = value - keyboard.line.get('qty');
-          }
-          if (toadd !== 0) {
-            if (value === 0) { // If final quantity will be 0 then request approval
-              keyboard.doDeleteLine({
-                selectedModels: keyboard.selectedModels
-              });
-            } else {
-              actionAddProduct(keyboard, toadd);
-            }
-          } else {
-            keyboard.clearInput();
-          }
-        });
-        keyboard.receipt.set('multipleUndo', null);
-        keyboardComponent.doSetMultiSelectionItems({
-          selection: selection
-        });
-        };
+      });
+      keyboard.receipt.set('multipleUndo', null);
+      keyboardComponent.doSetMultiSelectionItems({
+        selection: selection
+      });
+    };
 
     this.addCommand('line:qty', {
-      action: function (keyboard, txt) {
+      action: function(keyboard, txt) {
         var value = OB.I18N.parseNumber(txt);
 
         if (!keyboard.line) {
@@ -342,7 +404,7 @@ enyo.kind({
 
     this.addCommand('line:price', {
       permission: 'OBPOS_order.changePrice',
-      action: function (keyboard, txt) {
+      action: function(keyboard, txt) {
         var price = OB.I18N.parseNumber(txt);
 
         if (!me.validateReceipt(keyboard, false)) {
@@ -362,41 +424,53 @@ enyo.kind({
         }
         if (keyboard.line) {
           OB.UTIL.Approval.requestApproval(
-          me.model, 'OBPOS_approval.setPrice', function (approved, supervisor, approvalType) {
-            if (approved) {
-              var approvals = keyboard.receipt.get('approvals') || [],
+            me.model,
+            'OBPOS_approval.setPrice',
+            function(approved, supervisor, approvalType) {
+              if (approved) {
+                var approvals = keyboard.receipt.get('approvals') || [],
                   approval = {
-                  approvalType: {
-                    approval: 'OBPOS_approval.setPrice',
-                    message: 'OBPOS_approval.setPriceMessage',
-                    params: [keyboard.line.get('product').get('_identifier'), OB.I18N.formatCurrency(keyboard.line.getGross()), OB.I18N.formatCurrency(price)]
-                  },
-                  userContact: supervisor.get('id'),
-                  created: (new Date()).getTime()
+                    approvalType: {
+                      approval: 'OBPOS_approval.setPrice',
+                      message: 'OBPOS_approval.setPriceMessage',
+                      params: [
+                        keyboard.line.get('product').get('_identifier'),
+                        OB.I18N.formatCurrency(keyboard.line.getGross()),
+                        OB.I18N.formatCurrency(price)
+                      ]
+                    },
+                    userContact: supervisor.get('id'),
+                    created: new Date().getTime()
                   };
-              approvals.push(approval);
-              keyboard.receipt.set('approvals', approvals);
-              changePrice(me, keyboard, price);
+                approvals.push(approval);
+                keyboard.receipt.set('approvals', approvals);
+                changePrice(me, keyboard, price);
+              }
             }
-          });
+          );
         }
       }
     });
 
     this.addCommand('line:dto', {
       permission: 'OBPOS_order.discount',
-      action: function (keyboard, txt) {
+      action: function(keyboard, txt) {
         if (!me.validateReceipt(keyboard, true)) {
           return true;
         }
-        if (OB.MobileApp.model.get('permissions')["OBPOS_retail.discountkeyboard"] === true || keyboard.line.getQty() < 0) {
+        if (
+          OB.MobileApp.model.get('permissions')[
+            'OBPOS_retail.discountkeyboard'
+          ] === true ||
+          keyboard.line.getQty() < 0
+        ) {
           OB.UTIL.showWarning(OB.I18N.getLabel('OBMOBC_LineCanNotBeSelected'));
           return true;
         }
         keyboard.receipt.set('undo', null);
         keyboard.receipt.set('multipleUndo', true);
         var discount = OB.I18N.parseNumber(txt);
-        _.each(me.selectedModels, function (model) {
+        _.each(me.selectedModels, function(model) {
           keyboard.receipt.trigger('discount', model, discount);
         });
         keyboard.receipt.set('multipleUndo', null);
@@ -408,7 +482,7 @@ enyo.kind({
     this.addCommand('screen:dto', {
       stateless: true,
       permission: 'OBPOS_order.discount',
-      action: function (keyboard, txt) {
+      action: function(keyboard, txt) {
         if (!me.validateReceipt(keyboard, true)) {
           return true;
         }
@@ -426,7 +500,7 @@ enyo.kind({
     //To be used in the discounts side bar
     this.addCommand('ticket:discount', {
       permission: 'OBPOS_retail.advDiscounts',
-      action: function (keyboard, txt) {
+      action: function(keyboard, txt) {
         if (keyboard.discountsMode) {
           me.doSetDiscountQty({
             qty: OB.I18N.parseNumber(txt)
@@ -440,13 +514,16 @@ enyo.kind({
 
     this.addCommand('+', {
       stateless: true,
-      action: function (keyboard, txt) {
+      action: function(keyboard, txt) {
         var qty = 1;
         if (!me.selectedModels || !keyboard.line) {
           return;
         }
 
-        if ((!_.isNull(txt) || !_.isUndefined(txt)) && !_.isNaN(OB.I18N.parseNumber(txt))) {
+        if (
+          (!_.isNull(txt) || !_.isUndefined(txt)) &&
+          !_.isNaN(OB.I18N.parseNumber(txt))
+        ) {
           qty = OB.I18N.parseNumber(txt);
           if (!me.validateQuantity(keyboard, qty)) {
             return true;
@@ -463,9 +540,9 @@ enyo.kind({
 
     this.addCommand('-', {
       stateless: true,
-      action: function (keyboard, txt) {
+      action: function(keyboard, txt) {
         var qty = 1,
-            value;
+          value;
         if (!me.selectedModels || !keyboard.line) {
           return;
         }
@@ -473,7 +550,10 @@ enyo.kind({
           return true;
         }
 
-        if ((!_.isNull(txt) || !_.isUndefined(txt)) && !_.isNaN(OB.I18N.parseNumber(txt))) {
+        if (
+          (!_.isNull(txt) || !_.isUndefined(txt)) &&
+          !_.isNaN(OB.I18N.parseNumber(txt))
+        ) {
           qty = OB.I18N.parseNumber(txt);
           if (!me.validateQuantity(keyboard, qty)) {
             return true;
@@ -488,14 +568,21 @@ enyo.kind({
         } else if (!_.isUndefined(keyboard.line)) {
           value = keyboard.line.get('qty') - qty;
         }
-        if (value === 0) { // If final quantity will be 0 then request approval
+        if (value === 0) {
+          // If final quantity will be 0 then request approval
           keyboard.doDeleteLine({
             selectedModels: keyboard.selectedModels
           });
         } else {
           var actionAddProducts;
-          actionAddProducts = function (doNotReturnServices) {
-            if (keyboard.receipt.validateAllowSalesWithReturn(value, false, me.selectedModels)) {
+          actionAddProducts = function(doNotReturnServices) {
+            if (
+              keyboard.receipt.validateAllowSalesWithReturn(
+                value,
+                false,
+                me.selectedModels
+              )
+            ) {
               return;
             }
             keyboard.receipt.set('undo', null);
@@ -510,9 +597,13 @@ enyo.kind({
           if (value > 0) {
             actionAddProducts();
           } else {
-            me.getReceipt().checkReturnableProducts(me.selectedModels, me.model, function () {
-              actionAddProducts();
-            });
+            me.getReceipt().checkReturnableProducts(
+              me.selectedModels,
+              me.model,
+              function() {
+                actionAddProducts();
+              }
+            );
           }
         }
       }
@@ -521,7 +612,7 @@ enyo.kind({
     // add a command that will handle the DELETE keyboard key
     this.addCommand('line:delete', {
       stateless: true,
-      action: function (keyboard) {
+      action: function(keyboard) {
         if (keyboard.line) {
           actionDeleteLine(keyboard);
         }
@@ -536,52 +627,76 @@ enyo.kind({
     this.addToolbar(OB.OBPOSPointOfSale.UI.ToolbarDiscounts);
   },
 
-
-  init: function (model) {
+  init: function(model) {
     this.model = model;
     // Add the keypads for each payment method
     this.initCurrencyKeypads();
 
-    _.each(this.keypads, function (keypadname) {
-      this.addKeypad(keypadname);
-    }, this);
+    _.each(
+      this.keypads,
+      function(keypadname) {
+        this.addKeypad(keypadname);
+      },
+      this
+    );
   },
-  initCurrencyKeypads: function () {
+  initCurrencyKeypads: function() {
     var me = this;
     var currenciesManaged = {};
 
-    _.each(OB.MobileApp.model.get('payments'), function (payment) {
-      // Is cash method if is checked as iscash or is the legacy hardcoded cash method for euros.
-      if ((payment.paymentMethod.iscash && payment.paymentMethod.showkeypad) && !currenciesManaged[payment.paymentMethod.currency]) {
-        // register that is already built
-        currenciesManaged[payment.paymentMethod.currency] = true;
+    _.each(
+      OB.MobileApp.model.get('payments'),
+      function(payment) {
+        // Is cash method if is checked as iscash or is the legacy hardcoded cash method for euros.
+        if (
+          payment.paymentMethod.iscash &&
+          payment.paymentMethod.showkeypad &&
+          !currenciesManaged[payment.paymentMethod.currency]
+        ) {
+          // register that is already built
+          currenciesManaged[payment.paymentMethod.currency] = true;
 
-        // Build the panel
-        OB.Dal.find(OB.Model.CurrencyPanel, {
-          'currency': payment.paymentMethod.currency,
-          _orderByClause: 'line'
-        }, function (datacurrency) {
-          if (datacurrency.length > 0) {
-            me.buildCoinsAndNotesPanel(payment, payment.symbol, datacurrency);
-          } else if (payment.payment.searchKey === 'OBPOS_payment.cash' && payment.paymentMethod.currency === '102') {
-            // Add the legacy keypad if is the legacy hardcoded cash method for euros.
-            me.addKeypad('OB.UI.KeypadCoinsLegacy');
-          }
-        }, function (tx, error) {
-          OB.UTIL.showError(error);
-        });
-      }
-    }, this);
+          // Build the panel
+          OB.Dal.find(
+            OB.Model.CurrencyPanel,
+            {
+              currency: payment.paymentMethod.currency,
+              _orderByClause: 'line'
+            },
+            function(datacurrency) {
+              if (datacurrency.length > 0) {
+                me.buildCoinsAndNotesPanel(
+                  payment,
+                  payment.symbol,
+                  datacurrency
+                );
+              } else if (
+                payment.payment.searchKey === 'OBPOS_payment.cash' &&
+                payment.paymentMethod.currency === '102'
+              ) {
+                // Add the legacy keypad if is the legacy hardcoded cash method for euros.
+                me.addKeypad('OB.UI.KeypadCoinsLegacy');
+              }
+            },
+            function(tx, error) {
+              OB.UTIL.showError(error);
+            }
+          );
+        }
+      },
+      this
+    );
   },
 
-  buildCoinsAndNotesButton: function (paymentkey, coin) {
+  buildCoinsAndNotesButton: function(paymentkey, coin) {
     if (coin) {
       return {
         kind: 'OB.UI.PaymentButton',
         paymenttype: paymentkey,
         amount: coin.get('amount'),
         background: coin.get('backcolor') || '#f3bc9e',
-        bordercolor: coin.get('bordercolor') || coin.get('backcolor') || '#f3bc9e'
+        bordercolor:
+          coin.get('bordercolor') || coin.get('backcolor') || '#f3bc9e'
       };
     } else {
       return {
@@ -593,8 +708,7 @@ enyo.kind({
     }
   },
 
-  buildCoinsAndNotesPanel: function (payment, symbol, datacurrency) {
-
+  buildCoinsAndNotesPanel: function(payment, symbol, datacurrency) {
     enyo.kind({
       name: 'OB.UI.Keypad' + payment.payment.searchKey,
       label: _.template('<%= symbol %>,<%= symbol %>,<%= symbol %>,...', {
@@ -602,82 +716,174 @@ enyo.kind({
       }),
       padName: 'Coins-' + payment.paymentMethod.currency,
       padPayment: payment.payment.searchKey,
-      components: [{
-        classes: 'row-fluid',
-        components: [{
-          classes: 'span4',
-          components: [{
-            kind: 'OB.UI.ButtonKey',
-            classButton: 'btnkeyboard-num',
-            label: '/',
-            command: '/'
-          }]
-        }, {
-          classes: 'span4',
-          components: [{
-            kind: 'OB.UI.ButtonKey',
-            classButton: 'btnkeyboard-num',
-            label: '*',
-            command: '*'
-          }]
-        }, {
-          classes: 'span4',
-          components: [{
-            kind: 'OB.UI.ButtonKey',
-            classButton: 'btnkeyboard-num',
-            label: '%',
-            command: '%'
-          }]
-        }]
-      }, {
-        classes: 'row-fluid',
-        components: [{
-          classes: 'span4',
-          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(9))]
-        }, {
-          classes: 'span4',
-          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(10))]
-        }, {
-          classes: 'span4',
-          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(11))]
-        }]
-      }, {
-        classes: 'row-fluid',
-        components: [{
-          classes: 'span4',
-          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(6))]
-        }, {
-          classes: 'span4',
-          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(7))]
-        }, {
-          classes: 'span4',
-          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(8))]
-        }]
-      }, {
-        classes: 'row-fluid',
-        components: [{
-          classes: 'span4',
-          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(3))]
-        }, {
-          classes: 'span4',
-          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(4))]
-        }, {
-          classes: 'span4',
-          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(5))]
-        }]
-      }, {
-        classes: 'row-fluid',
-        components: [{
-          classes: 'span4',
-          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(0))]
-        }, {
-          classes: 'span4',
-          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(1))]
-        }, {
-          classes: 'span4',
-          components: [this.buildCoinsAndNotesButton(payment.payment.searchKey, datacurrency.at(2))]
-        }]
-      }]
+      components: [
+        {
+          classes: 'row-fluid',
+          components: [
+            {
+              classes: 'span4',
+              components: [
+                {
+                  kind: 'OB.UI.ButtonKey',
+                  classButton: 'btnkeyboard-num',
+                  label: '/',
+                  command: '/'
+                }
+              ]
+            },
+            {
+              classes: 'span4',
+              components: [
+                {
+                  kind: 'OB.UI.ButtonKey',
+                  classButton: 'btnkeyboard-num',
+                  label: '*',
+                  command: '*'
+                }
+              ]
+            },
+            {
+              classes: 'span4',
+              components: [
+                {
+                  kind: 'OB.UI.ButtonKey',
+                  classButton: 'btnkeyboard-num',
+                  label: '%',
+                  command: '%'
+                }
+              ]
+            }
+          ]
+        },
+        {
+          classes: 'row-fluid',
+          components: [
+            {
+              classes: 'span4',
+              components: [
+                this.buildCoinsAndNotesButton(
+                  payment.payment.searchKey,
+                  datacurrency.at(9)
+                )
+              ]
+            },
+            {
+              classes: 'span4',
+              components: [
+                this.buildCoinsAndNotesButton(
+                  payment.payment.searchKey,
+                  datacurrency.at(10)
+                )
+              ]
+            },
+            {
+              classes: 'span4',
+              components: [
+                this.buildCoinsAndNotesButton(
+                  payment.payment.searchKey,
+                  datacurrency.at(11)
+                )
+              ]
+            }
+          ]
+        },
+        {
+          classes: 'row-fluid',
+          components: [
+            {
+              classes: 'span4',
+              components: [
+                this.buildCoinsAndNotesButton(
+                  payment.payment.searchKey,
+                  datacurrency.at(6)
+                )
+              ]
+            },
+            {
+              classes: 'span4',
+              components: [
+                this.buildCoinsAndNotesButton(
+                  payment.payment.searchKey,
+                  datacurrency.at(7)
+                )
+              ]
+            },
+            {
+              classes: 'span4',
+              components: [
+                this.buildCoinsAndNotesButton(
+                  payment.payment.searchKey,
+                  datacurrency.at(8)
+                )
+              ]
+            }
+          ]
+        },
+        {
+          classes: 'row-fluid',
+          components: [
+            {
+              classes: 'span4',
+              components: [
+                this.buildCoinsAndNotesButton(
+                  payment.payment.searchKey,
+                  datacurrency.at(3)
+                )
+              ]
+            },
+            {
+              classes: 'span4',
+              components: [
+                this.buildCoinsAndNotesButton(
+                  payment.payment.searchKey,
+                  datacurrency.at(4)
+                )
+              ]
+            },
+            {
+              classes: 'span4',
+              components: [
+                this.buildCoinsAndNotesButton(
+                  payment.payment.searchKey,
+                  datacurrency.at(5)
+                )
+              ]
+            }
+          ]
+        },
+        {
+          classes: 'row-fluid',
+          components: [
+            {
+              classes: 'span4',
+              components: [
+                this.buildCoinsAndNotesButton(
+                  payment.payment.searchKey,
+                  datacurrency.at(0)
+                )
+              ]
+            },
+            {
+              classes: 'span4',
+              components: [
+                this.buildCoinsAndNotesButton(
+                  payment.payment.searchKey,
+                  datacurrency.at(1)
+                )
+              ]
+            },
+            {
+              classes: 'span4',
+              components: [
+                this.buildCoinsAndNotesButton(
+                  payment.payment.searchKey,
+                  datacurrency.at(2)
+                )
+              ]
+            }
+          ]
+        }
+      ]
     });
     this.addKeypad('OB.UI.Keypad' + payment.payment.searchKey);
   }
@@ -688,11 +894,11 @@ enyo.kind({
   name: 'OB.UI.BarcodeActionHandler',
   kind: 'OB.UI.AbstractBarcodeActionHandler',
 
-  errorCallback: function (tx, error) {
+  errorCallback: function(tx, error) {
     OB.UTIL.showError(error);
   },
 
-  findProductByBarcode: function (code, callback, keyboard, attrs) {
+  findProductByBarcode: function(code, callback, keyboard, attrs) {
     if (attrs.receipt && attrs.receipt.get('isEditable') === false) {
       //Checking preference to search Receipt using Scanner
       attrs.doShowPopup({
@@ -703,27 +909,31 @@ enyo.kind({
     var me = this;
     OB.debug('BarcodeActionHandler - id: ' + code);
     if (code.length > 0) {
-      OB.UTIL.HookManager.executeHooks('OBPOS_BarcodeScan', {
-        context: me,
-        code: code.replace(/\\-/g, '-').replace(/\\+/g, '+'),
-        callback: callback,
-        attrs: attrs
-      }, function (args) {
-        if (args.cancellation) {
-          return;
+      OB.UTIL.HookManager.executeHooks(
+        'OBPOS_BarcodeScan',
+        {
+          context: me,
+          code: code.replace(/\\-/g, '-').replace(/\\+/g, '+'),
+          callback: callback,
+          attrs: attrs
+        },
+        function(args) {
+          if (args.cancellation) {
+            return;
+          }
+          args.attrs = args.attrs || {};
+          args.attrs.isScanning = true;
+          me.searchProduct(args.code, args.callback, args.attrs);
         }
-        args.attrs = args.attrs || {};
-        args.attrs.isScanning = true;
-        me.searchProduct(args.code, args.callback, args.attrs);
-      });
+      );
     }
   },
 
-  searchProduct: function (code, callback, attrs) {
+  searchProduct: function(code, callback, attrs) {
     var me = this,
-        criteria = {
+      criteria = {
         uPCEAN: code
-        };
+      };
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
       var uPCEAN = {
         columns: ['uPCEAN'],
@@ -734,75 +944,111 @@ enyo.kind({
       criteria.remoteFilters = remoteCriteria;
     }
 
-    OB.Dal.findUsingCache('productSearch', OB.Model.Product, criteria, function (data) {
-      me.searchProductCallback(data, code, callback, attrs);
-    }, me.errorCallback, {
-      modelsAffectedByCache: ['Product']
-    });
+    OB.Dal.findUsingCache(
+      'productSearch',
+      OB.Model.Product,
+      criteria,
+      function(data) {
+        me.searchProductCallback(data, code, callback, attrs);
+      },
+      me.errorCallback,
+      {
+        modelsAffectedByCache: ['Product']
+      }
+    );
   },
 
-  searchProductCallback: function (data, code, callback, attrs) {
+  searchProductCallback: function(data, code, callback, attrs) {
     this.successCallbackProducts(data, code, callback, attrs);
   },
 
-  successCallbackProducts: function (dataProducts, code, callback, attrs) {
-    OB.UTIL.HookManager.executeHooks('OBPOS_BarcodeSearch', {
-      dataProducts: dataProducts,
-      code: code,
-      callback: callback,
-      attrs: attrs
-    }, function (args) {
-      if (args.cancellation) {
-        return;
-      }
-      var reproduceErrorSound = function () {
+  successCallbackProducts: function(dataProducts, code, callback, attrs) {
+    OB.UTIL.HookManager.executeHooks(
+      'OBPOS_BarcodeSearch',
+      {
+        dataProducts: dataProducts,
+        code: code,
+        callback: callback,
+        attrs: attrs
+      },
+      function(args) {
+        if (args.cancellation) {
+          return;
+        }
+        var reproduceErrorSound = function() {
           //scanMode is disable, raise an error sound only if the preference allows it.
-          if (OB.MobileApp.model.hasPermission('OBMOBC_ReproduceErrorSoundOnFailedScan', true)) {
-            var error_sound = new Audio('../org.openbravo.mobile.core/sounds/Computer_Error.mp3');
+          if (
+            OB.MobileApp.model.hasPermission(
+              'OBMOBC_ReproduceErrorSoundOnFailedScan',
+              true
+            )
+          ) {
+            var error_sound = new Audio(
+              '../org.openbravo.mobile.core/sounds/Computer_Error.mp3'
+            );
             error_sound.play();
           }
-          };
-      if (args.dataProducts && args.dataProducts.length > 0) {
-        OB.debug('productfound');
-        args.callback(args.dataProducts.at(0), args.attrs);
-      } else {
-        // If rfid has been used remove code from buffer
-        if (args.attrs && args.attrs.obposEpccode) {
-          OB.UTIL.RfidController.removeEpc(args.attrs.obposEpccode);
+        };
+        if (args.dataProducts && args.dataProducts.length > 0) {
+          OB.debug('productfound');
+          args.callback(args.dataProducts.at(0), args.attrs);
+        } else {
+          // If rfid has been used remove code from buffer
+          if (args.attrs && args.attrs.obposEpccode) {
+            OB.UTIL.RfidController.removeEpc(args.attrs.obposEpccode);
+          }
+          OB.UTIL.HookManager.executeHooks(
+            'OBPOS_PostBarcodeAction',
+            {
+              keyboard: this,
+              code: code
+            },
+            function(args) {
+              if (args.cancellation) {
+                return;
+              }
+              // If the preference to show that the 'UPC/EAN code has not been found is enabled'
+              if (
+                OB.MobileApp.model.hasPermission(
+                  'OBPOS_showPopupEANNotFound',
+                  true
+                )
+              ) {
+                reproduceErrorSound();
+                OB.MobileApp.model.set('reproduceErrorSound', true);
+                OB.UTIL.showConfirmation.display(
+                  OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [args.code]),
+                  undefined,
+                  [
+                    {
+                      isConfirmButton: true,
+                      label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                      action: function() {
+                        OB.MobileApp.model.set('reproduceErrorSound', false);
+                      }
+                    }
+                  ],
+                  {
+                    defaultAction: false,
+                    onHideFunction: function() {
+                      OB.MobileApp.model.set('reproduceErrorSound', false);
+                    }
+                  }
+                );
+              } else {
+                reproduceErrorSound();
+                OB.UTIL.showWarning(
+                  OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [args.code])
+                );
+              }
+            }
+          );
         }
-        OB.UTIL.HookManager.executeHooks('OBPOS_PostBarcodeAction', {
-          keyboard: this,
-          code: code
-        }, function (args) {
-          if (args.cancellation) {
-            return;
-          }
-          // If the preference to show that the 'UPC/EAN code has not been found is enabled'
-          if (OB.MobileApp.model.hasPermission('OBPOS_showPopupEANNotFound', true)) {
-            reproduceErrorSound();
-            OB.MobileApp.model.set('reproduceErrorSound', true);
-            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [args.code]), undefined, [{
-              isConfirmButton: true,
-              label: OB.I18N.getLabel('OBMOBC_LblOk'),
-              action: function () {
-                OB.MobileApp.model.set('reproduceErrorSound', false);
-              }
-            }], {
-              defaultAction: false,
-              onHideFunction: function () {
-                OB.MobileApp.model.set('reproduceErrorSound', false);
-              }
-            });
-          } else {
-            reproduceErrorSound();
-            OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [args.code]));
-          }
-        });
       }
-    });
+    );
   },
 
-  addProductToReceipt: function (keyboard, product, attrs) {
+  addProductToReceipt: function(keyboard, product, attrs) {
     keyboard.doAddProduct({
       product: product,
       qty: attrs.unitsToAdd,

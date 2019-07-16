@@ -10,7 +10,8 @@
 /*global enyo, _*/
 
 enyo.kind({
-  name: 'OB.OBPOSPointOfSale.UI.customers.ModalConfigurationRequiredForCreateCustomers',
+  name:
+    'OB.OBPOSPointOfSale.UI.customers.ModalConfigurationRequiredForCreateCustomers',
   kind: 'OB.UI.ModalInfo',
   i18nHeader: 'OBPOS_configurationRequired',
   bodyContent: {
@@ -27,7 +28,7 @@ enyo.kind({
   handlers: {
     onDisableButton: 'disableButton'
   },
-  disableButton: function (inSender, inEvent) {
+  disableButton: function(inSender, inEvent) {
     this.setDisabled(inEvent.disabled);
     if (inEvent.disabled) {
       this.addClass(this.classButtonDisabled);
@@ -35,26 +36,32 @@ enyo.kind({
       this.removeClass(this.classButtonDisabled);
     }
   },
-  tap: function () {
+  tap: function() {
     this.bubble('onCancelClose');
   }
 });
 
 enyo.kind({
   name: 'OB.UI.CustomerPropertyLine',
-  components: [{
-    classes: 'customer-property-label',
-    name: 'labelLine'
-  }, {
-    classes: 'customer-property-text',
-    name: 'newAttribute'
-  }, {
-    style: 'clear: both'
-  }],
-  initComponents: function () {
+  components: [
+    {
+      classes: 'customer-property-label',
+      name: 'labelLine'
+    },
+    {
+      classes: 'customer-property-text',
+      name: 'newAttribute'
+    },
+    {
+      style: 'clear: both'
+    }
+  ],
+  initComponents: function() {
     this.inherited(arguments);
     this.$.newAttribute.createComponent(this.newAttribute);
-    this.$.labelLine.content = this.newAttribute.i18nLabel ? OB.I18N.getLabel(this.newAttribute.i18nLabel) : this.newAttribute.label;
+    this.$.labelLine.content = this.newAttribute.i18nLabel
+      ? OB.I18N.getLabel(this.newAttribute.i18nLabel)
+      : this.newAttribute.label;
     if (this.newAttribute.mandatory) {
       this.$.labelLine.content = this.$.labelLine.content + ' *';
     }
@@ -81,18 +88,18 @@ enyo.kind({
     onRetrieveCustomer: '',
     onSetValues: ''
   },
-  valueSet: function (inSender, inEvent) {
+  valueSet: function(inSender, inEvent) {
     if (inEvent.data.hasOwnProperty(this.modelProperty)) {
       this.setValue(inEvent.data[this.modelProperty]);
     }
   },
-  retrieveValue: function (inSender, inEvent) {
+  retrieveValue: function(inSender, inEvent) {
     inEvent[this.modelProperty] = this.getValue();
   },
-  blur: function () {},
-  input: function () {},
-  change: function () {},
-  loadValue: function (inSender, inEvent) {
+  blur: function() {},
+  input: function() {},
+  change: function() {},
+  loadValue: function(inSender, inEvent) {
     if (inEvent.customer !== undefined) {
       if (inEvent.customer.get(this.modelProperty) !== undefined) {
         this.setValue(inEvent.customer.get(this.modelProperty));
@@ -101,10 +108,10 @@ enyo.kind({
       this.setValue('');
     }
   },
-  saveChange: function (inSender, inEvent) {
+  saveChange: function(inSender, inEvent) {
     inEvent.customer.set(this.modelProperty, this.getValue());
   },
-  initComponents: function () {
+  initComponents: function() {
     if (this.readOnly) {
       this.setAttribute('readonly', 'readonly');
     }
@@ -121,7 +128,7 @@ enyo.kind({
     onLoadValue: 'loadValue',
     onHideShow: 'hideShow'
   },
-  loadValue: function (inSender, inEvent) {
+  loadValue: function(inSender, inEvent) {
     if (inEvent.customer !== undefined) {
       if (inEvent.customer.get(this.modelProperty) !== undefined) {
         if (_.isNull(inEvent.customer.get(this.modelProperty))) {
@@ -152,28 +159,38 @@ enyo.kind({
   events: {
     onHideShowFields: ''
   },
-  components: [{
-    name: 'useSameCheck',
-    style: 'text-align: right; width: 20%; float: left; padding: 0px 5px 1px 0px',
-    components: [{
-      name: 'btnUseSameCheck',
-      kind: 'OB.UI.CheckboxButton',
-      style: 'background-position: 0px 5px; height: 38px; margin-left: 5px; '
-    }]
-  }, {
-    name: 'info',
-    style: 'width: 75%; float: left; ',
-    components: [{
-      name: 'infotext',
-      style: 'display: table-cell; vertical-align: middle; height: 30px; padding: 4px; '
-    }]
-  }],
-  initComponents: function () {
+  components: [
+    {
+      name: 'useSameCheck',
+      style:
+        'text-align: right; width: 20%; float: left; padding: 0px 5px 1px 0px',
+      components: [
+        {
+          name: 'btnUseSameCheck',
+          kind: 'OB.UI.CheckboxButton',
+          style:
+            'background-position: 0px 5px; height: 38px; margin-left: 5px; '
+        }
+      ]
+    },
+    {
+      name: 'info',
+      style: 'width: 75%; float: left; ',
+      components: [
+        {
+          name: 'infotext',
+          style:
+            'display: table-cell; vertical-align: middle; height: 30px; padding: 4px; '
+        }
+      ]
+    }
+  ],
+  initComponents: function() {
     this.inherited(arguments);
     this.owner.owner.$.labelLine.hide();
     this.$.infotext.setContent(OB.I18N.getLabel('OBPOS_SameAddrInfo'));
   },
-  valueSet: function (inSender, inEvent) {
+  valueSet: function(inSender, inEvent) {
     if (inEvent.data.hasOwnProperty('btnUseSameCheck')) {
       this.doHideShowFields({
         checked: inEvent.data.btnUseSameCheck
@@ -185,14 +202,14 @@ enyo.kind({
       }
     }
   },
-  retrieveValue: function (inSender, inEvent) {
+  retrieveValue: function(inSender, inEvent) {
     inEvent.btnUseSameCheck = this.$.btnUseSameCheck.checked;
   },
-  rendered: function () {
+  rendered: function() {
     this.inherited(arguments);
     this.owner.applyStyle('width', '100%');
   },
-  loadValue: function (inSender, inEvent) {
+  loadValue: function(inSender, inEvent) {
     if (inEvent.customer !== undefined) {
       this.hide();
     } else {
@@ -204,10 +221,13 @@ enyo.kind({
       });
     }
   },
-  saveChange: function (inSender, inEvent) {
-    inEvent.customer.set('useSameAddrForShipAndInv', this.$.btnUseSameCheck.checked);
+  saveChange: function(inSender, inEvent) {
+    inEvent.customer.set(
+      'useSameAddrForShipAndInv',
+      this.$.btnUseSameCheck.checked
+    );
   },
-  tap: function () {
+  tap: function() {
     this.doHideShowFields({
       checked: this.$.btnUseSameCheck.checked
     });
@@ -228,43 +248,52 @@ enyo.kind({
     onSaveProperty: '',
     onSetValues: ''
   },
-  components: [{
-    kind: 'OB.UI.List',
-    name: 'customerCombo',
-    classes: 'combo',
-    style: 'width: 101%; margin:0;',
-    renderLine: enyo.kind({
-      kind: 'enyo.Option',
-      initComponents: function () {
-        this.inherited(arguments);
-        this.setValue(this.model.get(this.parent.parent.retrievedPropertyForValue));
-        this.setContent(this.model.get(this.parent.parent.retrievedPropertyForText));
-      }
-    }),
-    renderEmpty: 'enyo.Control'
-  }],
-  valueSet: function (inSender, inEvent) {
+  components: [
+    {
+      kind: 'OB.UI.List',
+      name: 'customerCombo',
+      classes: 'combo',
+      style: 'width: 101%; margin:0;',
+      renderLine: enyo.kind({
+        kind: 'enyo.Option',
+        initComponents: function() {
+          this.inherited(arguments);
+          this.setValue(
+            this.model.get(this.parent.parent.retrievedPropertyForValue)
+          );
+          this.setContent(
+            this.model.get(this.parent.parent.retrievedPropertyForText)
+          );
+        }
+      }),
+      renderEmpty: 'enyo.Control'
+    }
+  ],
+  valueSet: function(inSender, inEvent) {
     var i;
     if (inEvent.data.hasOwnProperty(this.modelProperty)) {
       for (i = 0; i < this.$.customerCombo.getCollection().length; i++) {
-        if (this.$.customerCombo.getCollection().models[i].get('id') === inEvent.data[this.modelProperty]) {
+        if (
+          this.$.customerCombo.getCollection().models[i].get('id') ===
+          inEvent.data[this.modelProperty]
+        ) {
           this.$.customerCombo.setSelected(i);
           break;
         }
       }
     }
   },
-  retrieveValue: function (inSender, inEvent) {
+  retrieveValue: function(inSender, inEvent) {
     inEvent[this.modelProperty] = this.$.customerCombo.getValue();
   },
-  loadValue: function (inSender, inEvent) {
+  loadValue: function(inSender, inEvent) {
     this.$.customerCombo.setCollection(this.collection);
     this.fetchDataFunction(inEvent);
   },
-  change: function () {},
-  dataReadyFunction: function (data, inEvent) {
+  change: function() {},
+  dataReadyFunction: function(data, inEvent) {
     var index = 0,
-        result = null;
+      result = null;
     if (this.destroyed) {
       return;
     }
@@ -275,37 +304,57 @@ enyo.kind({
       return;
     }
 
-    result = _.find(this.collection.models, function (categ) {
-      if (inEvent.customer) {
-        //Edit: select actual value
-        if (categ.get(this.retrievedPropertyForValue) === inEvent.customer.get(this.modelProperty)) {
-          return true;
+    result = _.find(
+      this.collection.models,
+      function(categ) {
+        if (inEvent.customer) {
+          //Edit: select actual value
+          if (
+            categ.get(this.retrievedPropertyForValue) ===
+            inEvent.customer.get(this.modelProperty)
+          ) {
+            return true;
+          }
+        } else {
+          //New: select default value
+          if (
+            categ.get(this.retrievedPropertyForValue) === this.defaultValue()
+          ) {
+            return true;
+          }
         }
-      } else {
-        //New: select default value
-        if (categ.get(this.retrievedPropertyForValue) === this.defaultValue()) {
-          return true;
-        }
-      }
-      index += 1;
-    }, this);
+        index += 1;
+      },
+      this
+    );
     if (result) {
       this.$.customerCombo.setSelected(index);
     } else {
       this.$.customerCombo.setSelected(0);
     }
   },
-  saveChange: function (inSender, inEvent) {
+  saveChange: function(inSender, inEvent) {
     var selected = this.collection.at(this.$.customerCombo.getSelected());
     if (selected) {
-      inEvent.customer.set(this.modelProperty, selected.get(this.retrievedPropertyForValue));
+      inEvent.customer.set(
+        this.modelProperty,
+        selected.get(this.retrievedPropertyForValue)
+      );
       if (this.modelPropertyText) {
-        inEvent.customer.set(this.modelPropertyText, selected.get(this.retrievedPropertyForText));
+        inEvent.customer.set(
+          this.modelPropertyText,
+          selected.get(this.retrievedPropertyForText)
+        );
       }
     }
   },
-  initComponents: function () {
-    if (this.collectionName && OB && OB.Collection && OB.Collection[this.collectionName]) {
+  initComponents: function() {
+    if (
+      this.collectionName &&
+      OB &&
+      OB.Collection &&
+      OB.Collection[this.collectionName]
+    ) {
       this.collection = new OB.Collection[this.collectionName]();
     } else {
       OB.info('OB.UI.CustomerComboProperty: Collection is required');
@@ -324,38 +373,51 @@ enyo.kind({
     onHideShowFields: 'hideShowFields'
   },
   events: {},
-  components: [{
-    name: 'bodyheader'
-  }, {
-    name: 'customerAttributes',
-    kind: 'Scroller',
-    maxHeight: '500px',
-    horizontal: 'hidden',
-    components: [{
-      name: 'customerOnlyFields'
-    }, {
-      name: 'shipAddress',
-      components: [{
-        name: 'shipLbl',
-        showing: false,
-        classes: 'twoAddrLayoutHeader'
-      }, {
-        style: 'clear:both',
-        name: 'shippingAddrFields'
-      }]
-    }, {
-      name: 'invAddress',
-      components: [{
-        name: 'invLbl',
-        showing: false,
-        classes: 'twoAddrLayoutHeader'
-      }, {
-        style: 'clear:both',
-        name: 'invoicingAddrFields'
-      }]
-    }]
-  }],
-  hideShowFields: function (inSender, inEvent) {
+  components: [
+    {
+      name: 'bodyheader'
+    },
+    {
+      name: 'customerAttributes',
+      kind: 'Scroller',
+      maxHeight: '500px',
+      horizontal: 'hidden',
+      components: [
+        {
+          name: 'customerOnlyFields'
+        },
+        {
+          name: 'shipAddress',
+          components: [
+            {
+              name: 'shipLbl',
+              showing: false,
+              classes: 'twoAddrLayoutHeader'
+            },
+            {
+              style: 'clear:both',
+              name: 'shippingAddrFields'
+            }
+          ]
+        },
+        {
+          name: 'invAddress',
+          components: [
+            {
+              name: 'invLbl',
+              showing: false,
+              classes: 'twoAddrLayoutHeader'
+            },
+            {
+              style: 'clear:both',
+              name: 'invoicingAddrFields'
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  hideShowFields: function(inSender, inEvent) {
     this.$.shipLbl.setShowing(!inEvent.checked);
     this.$.invLbl.setShowing(!inEvent.checked);
     this.$.shipAddress.addRemoveClass('twoAddrLayout', !inEvent.checked);
@@ -365,48 +427,59 @@ enyo.kind({
     });
     return true;
   },
-  setCustomer: function (customer) {
+  setCustomer: function(customer) {
     this.customer = customer;
     this.waterfall('onLoadValue', {
       customer: this.customer
     });
   },
-  preSaveCustomer: function (inSender, inEvent) {
+  preSaveCustomer: function(inSender, inEvent) {
     var me = this,
-        inSenderOriginal = inSender,
-        inEventOriginal = inEvent;
+      inSenderOriginal = inSender,
+      inEventOriginal = inEvent;
 
     //Validate anonymous customer edit allowed
-    if (this.customer && OB.MobileApp.model.get('terminal').businessPartner === this.customer.id && OB.MobileApp.model.hasPermission('OBPOS_NotAllowEditAnonymousCustomer', true)) {
+    if (
+      this.customer &&
+      OB.MobileApp.model.get('terminal').businessPartner === this.customer.id &&
+      OB.MobileApp.model.hasPermission(
+        'OBPOS_NotAllowEditAnonymousCustomer',
+        true
+      )
+    ) {
       OB.UTIL.showError(OB.I18N.getLabel('OBPOS_CannotEditAnonymousCustomer'));
       return;
     }
 
-    OB.UTIL.HookManager.executeHooks('OBPOS_PreCustomerSave', {
-      inSender: inSenderOriginal,
-      inEvent: inEventOriginal,
-      passValidation: true,
-      error: '',
-      meObject: me,
-      validations: inEvent.validations
-    }, function (args) {
-      if (args.cancellation) {
-        return;
+    OB.UTIL.HookManager.executeHooks(
+      'OBPOS_PreCustomerSave',
+      {
+        inSender: inSenderOriginal,
+        inEvent: inEventOriginal,
+        passValidation: true,
+        error: '',
+        meObject: me,
+        validations: inEvent.validations
+      },
+      function(args) {
+        if (args.cancellation) {
+          return;
+        }
+        if (args.passValidation) {
+          args.meObject.saveCustomer(args.inSender, args.inEvent);
+        } else {
+          OB.UTIL.showError(args.error);
+          me.waterfall('onDisableButton', {
+            disabled: false
+          });
+        }
       }
-      if (args.passValidation) {
-        args.meObject.saveCustomer(args.inSender, args.inEvent);
-      } else {
-        OB.UTIL.showError(args.error);
-        me.waterfall('onDisableButton', {
-          disabled: false
-        });
-      }
-    });
+    );
     return true;
   },
-  saveCustomer: function (inSender, inEvent) {
+  saveCustomer: function(inSender, inEvent) {
     var me = this,
-        customerEdited;
+      customerEdited;
 
     function enableButtonsCallback(disable) {
       me.waterfall('onDisableButton', {
@@ -422,7 +495,7 @@ enyo.kind({
 
     function checkMandatoryFields(items, customer) {
       var errors = '';
-      _.each(items, function (item) {
+      _.each(items, function(item) {
         if (item.newAttribute.mandatory) {
           var value = customer.get(item.newAttribute.modelProperty);
           if (!value) {
@@ -439,30 +512,61 @@ enyo.kind({
     function validateForm(form) {
       if (inEvent.validations) {
         var customer = form.model.get('customer'),
-            errors = checkMandatoryFields(form.$.customerOnlyFields.children, customer);
+          errors = checkMandatoryFields(
+            form.$.customerOnlyFields.children,
+            customer
+          );
         if (form.$.invoicingAddrFields.showing) {
-          var invoicingErrors = checkMandatoryFields(form.$.invoicingAddrFields.children, customer);
+          var invoicingErrors = checkMandatoryFields(
+            form.$.invoicingAddrFields.children,
+            customer
+          );
           if (invoicingErrors) {
             if (errors) {
               errors += ', ';
             }
-            errors += (form.$.invoicingAddrFields.getClassAttribute().indexOf("twoAddrLayout") === 0 ? OB.I18N.getLabel('OBPOS_LblBillAddr') + ' [' + invoicingErrors + ']' : invoicingErrors);
+            errors +=
+              form.$.invoicingAddrFields
+                .getClassAttribute()
+                .indexOf('twoAddrLayout') === 0
+                ? OB.I18N.getLabel('OBPOS_LblBillAddr') +
+                  ' [' +
+                  invoicingErrors +
+                  ']'
+                : invoicingErrors;
           }
         }
-        if (form.$.shippingAddrFields.showing && form.$.shippingAddrFields.getClassAttribute().indexOf("twoAddrLayout") === 0) {
-          var shippingErrors = checkMandatoryFields(form.$.shippingAddrFields.children, customer);
+        if (
+          form.$.shippingAddrFields.showing &&
+          form.$.shippingAddrFields
+            .getClassAttribute()
+            .indexOf('twoAddrLayout') === 0
+        ) {
+          var shippingErrors = checkMandatoryFields(
+            form.$.shippingAddrFields.children,
+            customer
+          );
           if (shippingErrors) {
             if (errors) {
               errors += ', ';
             }
-            errors += OB.I18N.getLabel('OBPOS_LblShipAddr') + ' [' + shippingErrors + ']';
+            errors +=
+              OB.I18N.getLabel('OBPOS_LblShipAddr') +
+              ' [' +
+              shippingErrors +
+              ']';
           }
         }
         if (errors) {
-          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerRequiredFields', [errors]));
+          OB.UTIL.showError(
+            OB.I18N.getLabel('OBPOS_BPartnerRequiredFields', [errors])
+          );
           return false;
         }
-        if (customer.get('firstName').length + customer.get('lastName').length >= 60) {
+        if (
+          customer.get('firstName').length + customer.get('lastName').length >=
+          60
+        ) {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_TooLongName'));
           return false;
         }
@@ -473,33 +577,49 @@ enyo.kind({
     function beforeCustomerSave(customer, isNew) {
       customer.adjustNames();
       if (customer.get('locationModel')) {
-        customer.set('countryId', customer.get('locationModel').get('countryId'));
-        customer.set('shipCountryId', customer.get('locationModel').get('shipCountryId'));
-        customer.set('countryName', customer.get('locationModel').get('countryName'));
-        customer.set('shipCountryName', customer.get('locationModel').get('shipCountryName'));
+        customer.set(
+          'countryId',
+          customer.get('locationModel').get('countryId')
+        );
+        customer.set(
+          'shipCountryId',
+          customer.get('locationModel').get('shipCountryId')
+        );
+        customer.set(
+          'countryName',
+          customer.get('locationModel').get('countryName')
+        );
+        customer.set(
+          'shipCountryName',
+          customer.get('locationModel').get('shipCountryName')
+        );
       }
-      OB.UTIL.HookManager.executeHooks('OBPOS_BeforeCustomerSave', {
-        customer: customer,
-        isNew: isNew,
-        validations: inEvent.validations,
-        windowComponent: me
-      }, function (args) {
-        if (args && args.cancellation && args.cancellation === true) {
-          enableButtonsCallback(false);
-          return true;
-        }
-        customerEdited = args.customer;
-        args.customer.saveCustomer(function (result) {
-          me.waterfall('onDisableButton', {
-            disabled: false
-          });
-          if (result && !inEvent.silent) {
-            me.bubble('onCancelClose', {
-              customer: customerEdited
-            });
+      OB.UTIL.HookManager.executeHooks(
+        'OBPOS_BeforeCustomerSave',
+        {
+          customer: customer,
+          isNew: isNew,
+          validations: inEvent.validations,
+          windowComponent: me
+        },
+        function(args) {
+          if (args && args.cancellation && args.cancellation === true) {
+            enableButtonsCallback(false);
+            return true;
           }
-        });
-      });
+          customerEdited = args.customer;
+          args.customer.saveCustomer(function(result) {
+            me.waterfall('onDisableButton', {
+              disabled: false
+            });
+            if (result && !inEvent.silent) {
+              me.bubble('onCancelClose', {
+                customer: customerEdited
+              });
+            }
+          });
+        }
+      );
     }
 
     if (this.customer === undefined) {
@@ -513,7 +633,7 @@ enyo.kind({
         enableButtonsCallback(false);
       }
     } else {
-      this.model.get('customer').loadModel(this.customer, function (customer) {
+      this.model.get('customer').loadModel(this.customer, function(customer) {
         getCustomerValues({
           customer: customer
         });
@@ -525,7 +645,7 @@ enyo.kind({
       });
     }
   },
-  initComponents: function () {
+  initComponents: function() {
     var me = this;
     this.inherited(arguments);
     this.$.bodyheader.createComponent({
@@ -536,11 +656,17 @@ enyo.kind({
     this.attributeContainer = this.$.customerAttributes;
     //Sort Attributes
     if (OB.MobileApp.model.get('permissions').OBPOS_CustomerCompSortOrder) {
-      var prefIndex, sortOrder, sortedAttr = [],
-          prefAttr = [];
+      var prefIndex,
+        sortOrder,
+        sortedAttr = [],
+        prefAttr = [];
       try {
-        sortOrder = JSON.parse(OB.MobileApp.model.get('permissions').OBPOS_CustomerCompSortOrder.replace(/'/g, "\""));
-        _.each(this.newAttributes, function (attr) {
+        sortOrder = JSON.parse(
+          OB.MobileApp.model
+            .get('permissions')
+            .OBPOS_CustomerCompSortOrder.replace(/'/g, '"')
+        );
+        _.each(this.newAttributes, function(attr) {
           prefIndex = sortOrder.indexOf(attr.modelProperty);
           if (prefIndex >= 0) {
             prefAttr[prefIndex] = attr;
@@ -548,7 +674,7 @@ enyo.kind({
             sortedAttr.push(attr);
           }
         });
-        prefAttr = _.filter(prefAttr, function (attr) {
+        prefAttr = _.filter(prefAttr, function(attr) {
           return !OB.UTIL.isNullOrUndefined(attr);
         });
         this.newAttributes = prefAttr.concat(sortedAttr);
@@ -556,35 +682,56 @@ enyo.kind({
         // Don't do anything if exception is thrown
       }
     }
-    enyo.forEach(this.newAttributes, function (natt) {
-      this.$.customerOnlyFields.createComponent({
-        kind: 'OB.UI.CustomerPropertyLine',
-        name: 'line_' + natt.name,
-        newAttribute: natt
-      }, {
-        owner: me.attributeContainer
-      });
-    }, this);
-    enyo.forEach(this.shipAddrAttributes, function (natt) {
-      this.$.shippingAddrFields.createComponent({
-        kind: 'OB.UI.CustomerPropertyLine',
-        name: 'line_' + natt.name,
-        newAttribute: natt
-      }, {
-        owner: me.attributeContainer
-      });
-    }, this);
-    enyo.forEach(this.invAddrAttributes, function (natt) {
-      this.$.invoicingAddrFields.createComponent({
-        kind: 'OB.UI.CustomerPropertyLine',
-        name: 'line_' + natt.name,
-        newAttribute: natt
-      }, {
-        owner: me.attributeContainer
-      });
-    }, this);
+    enyo.forEach(
+      this.newAttributes,
+      function(natt) {
+        this.$.customerOnlyFields.createComponent(
+          {
+            kind: 'OB.UI.CustomerPropertyLine',
+            name: 'line_' + natt.name,
+            newAttribute: natt
+          },
+          {
+            owner: me.attributeContainer
+          }
+        );
+      },
+      this
+    );
+    enyo.forEach(
+      this.shipAddrAttributes,
+      function(natt) {
+        this.$.shippingAddrFields.createComponent(
+          {
+            kind: 'OB.UI.CustomerPropertyLine',
+            name: 'line_' + natt.name,
+            newAttribute: natt
+          },
+          {
+            owner: me.attributeContainer
+          }
+        );
+      },
+      this
+    );
+    enyo.forEach(
+      this.invAddrAttributes,
+      function(natt) {
+        this.$.invoicingAddrFields.createComponent(
+          {
+            kind: 'OB.UI.CustomerPropertyLine',
+            name: 'line_' + natt.name,
+            newAttribute: natt
+          },
+          {
+            owner: me.attributeContainer
+          }
+        );
+      },
+      this
+    );
   },
-  init: function (model) {
+  init: function(model) {
     this.model = model;
   }
 });
@@ -602,7 +749,7 @@ enyo.kind({
   events: {
     onSaveProperty: ''
   },
-  valueSet: function (inSender, inEvent) {
+  valueSet: function(inSender, inEvent) {
     if (inEvent.data.hasOwnProperty(this.modelProperty)) {
       if (inEvent.data[this.modelProperty]) {
         this.check();
@@ -611,10 +758,10 @@ enyo.kind({
       }
     }
   },
-  retrieveValue: function (inSender, inEvent) {
+  retrieveValue: function(inSender, inEvent) {
     inEvent[this.modelProperty] = this.checked;
   },
-  loadValue: function (inSender, inEvent) {
+  loadValue: function(inSender, inEvent) {
     var me = this;
     if (inEvent.customer !== undefined) {
       if (inEvent.customer.get(me.modelProperty) !== undefined) {
@@ -630,11 +777,11 @@ enyo.kind({
       me.removeClass('active');
     }
   },
-  saveChange: function (inSender, inEvent) {
+  saveChange: function(inSender, inEvent) {
     var me = this;
     inEvent.customer.set(me.modelProperty, me.checked);
   },
-  initComponents: function () {
+  initComponents: function() {
     if (this.readOnly) {
       this.setAttribute('readonly', 'readonly');
     }

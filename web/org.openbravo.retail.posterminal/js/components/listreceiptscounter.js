@@ -16,17 +16,20 @@ enyo.kind({
   published: {
     orderList: null
   },
-  components: [{
-    kind: 'OB.UI.ReceiptsCounterButton',
-    name: 'receiptsCounterButton'
-  }],
+  components: [
+    {
+      kind: 'OB.UI.ReceiptsCounterButton',
+      name: 'receiptsCounterButton'
+    }
+  ],
   events: {
     onSetReceiptsList: ''
   },
-  renderNrItems: function (nrItems) {
+  renderNrItems: function(nrItems) {
     var receiptLabels;
     try {
-      receiptLabels = OB.POS.terminal.$.containerWindow.getRoot().$.multiColumn.$.leftPanel.$.receiptview.$.receiptheader.$.receiptLabels;
+      receiptLabels = OB.POS.terminal.$.containerWindow.getRoot().$.multiColumn
+        .$.leftPanel.$.receiptview.$.receiptheader.$.receiptLabels;
     } catch (e) {
       OB.error('receiptLabels not found');
     }
@@ -51,48 +54,57 @@ enyo.kind({
       this.hide();
     }
   },
-  orderListChanged: function (oldValue) {
+  orderListChanged: function(oldValue) {
     var me = this;
     this.doSetReceiptsList({
       orderList: this.orderList
     });
     this.renderNrItems(this.orderList.length);
-    this.orderList.on('add remove reset', function () {
-      me.renderNrItems(me.orderList.length);
-    }, this);
+    this.orderList.on(
+      'add remove reset',
+      function() {
+        me.renderNrItems(me.orderList.length);
+      },
+      this
+    );
   },
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
   }
 });
-
 
 enyo.kind({
   name: 'OB.UI.ReceiptsCounterButton',
   kind: 'OB.UI.Button',
   classes: 'btnlink btnlink-gray',
-  style: 'position: relative; overflow: hidden; margin:0px; padding:0px; height:50px; width: 50px;',
+  style:
+    'position: relative; overflow: hidden; margin:0px; padding:0px; height:50px; width: 50px;',
   events: {
     onShowPopup: ''
   },
   handlers: {
     onOrderSelectionDisabled: 'orderDisabled'
   },
-  orderDisabled: function (inSender, inEvent) {
+  orderDisabled: function(inSender, inEvent) {
     this.setDisabled(inEvent.status);
     this.addRemoveClass('disabled', inEvent.status);
   },
-  tap: function () {
+  tap: function() {
     if (!this.disabled) {
       this.doShowPopup({
         popup: 'modalreceipts'
       });
     }
   },
-  components: [{
-    style: 'position: absolute; top: -35px; right:-35px; background: #404040; height:70px; width: 70px; -webkit-transform: rotate(45deg); -moz-transform: rotate(45deg); -ms-transform: rotate(45deg); -transform: rotate(45deg);'
-  }, {
-    name: 'counter',
-    style: 'position: absolute; top: 0px; right:0px; padding-top: 5px; padding-right: 10px; font-weight: bold; color: white; max-width: 21px; max-height: 18px;'
-  }]
+  components: [
+    {
+      style:
+        'position: absolute; top: -35px; right:-35px; background: #404040; height:70px; width: 70px; -webkit-transform: rotate(45deg); -moz-transform: rotate(45deg); -ms-transform: rotate(45deg); -transform: rotate(45deg);'
+    },
+    {
+      name: 'counter',
+      style:
+        'position: absolute; top: 0px; right:0px; padding-top: 5px; padding-right: 10px; font-weight: bold; color: white; max-width: 21px; max-height: 18px;'
+    }
+  ]
 });

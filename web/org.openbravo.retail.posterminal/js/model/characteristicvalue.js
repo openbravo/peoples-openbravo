@@ -7,8 +7,7 @@
  ************************************************************************************
  */
 
-(function () {
-
+(function() {
   var CharacteristicValue = OB.Data.ExtensibleModel.extend({
     modelName: 'CharacteristicValue',
     tableName: 'm_ch_value',
@@ -18,32 +17,39 @@
     source: 'org.openbravo.retail.posterminal.master.CharacteristicValue'
   });
 
-  CharacteristicValue.addProperties([{
-    name: 'id',
-    column: 'id',
-    primaryKey: true,
-    type: 'TEXT'
-  }, {
-    name: 'name',
-    column: 'name',
-    type: 'TEXT'
-  }, {
-    name: 'characteristic_id',
-    column: 'characteristic_id',
-    type: 'TEXT'
-  }, {
-    name: 'parent',
-    column: 'parent',
-    type: 'TEXT'
-  }, {
-    name: 'summaryLevel',
-    column: 'summaryLevel',
-    type: 'TEXT'
-  }, {
-    name: '_identifier',
-    column: '_identifier',
-    type: 'TEXT'
-  }]);
+  CharacteristicValue.addProperties([
+    {
+      name: 'id',
+      column: 'id',
+      primaryKey: true,
+      type: 'TEXT'
+    },
+    {
+      name: 'name',
+      column: 'name',
+      type: 'TEXT'
+    },
+    {
+      name: 'characteristic_id',
+      column: 'characteristic_id',
+      type: 'TEXT'
+    },
+    {
+      name: 'parent',
+      column: 'parent',
+      type: 'TEXT'
+    },
+    {
+      name: 'summaryLevel',
+      column: 'summaryLevel',
+      type: 'TEXT'
+    },
+    {
+      name: '_identifier',
+      column: '_identifier',
+      type: 'TEXT'
+    }
+  ]);
 
   OB.Data.Registry.registerModel(CharacteristicValue);
-}());
+})();

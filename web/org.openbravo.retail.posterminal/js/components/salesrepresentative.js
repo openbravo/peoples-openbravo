@@ -9,7 +9,6 @@
 
 /*global OB, enyo, Backbone, _ */
 
-
 enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OB.UI.SalesRepresentative',
@@ -21,14 +20,14 @@ enyo.kind({
   events: {
     onShowPopup: ''
   },
-  tap: function () {
+  tap: function() {
     if (!this.disabled) {
       this.doShowPopup({
         popup: 'modalsalesrepresentative'
       });
     }
   },
-  init: function (model) {
+  init: function(model) {
     if (!OB.MobileApp.model.hasPermission(this.permission)) {
       this.parent.parent.parent.hide();
     } else {
@@ -38,23 +37,32 @@ enyo.kind({
     }
     this.setOrder(model.get('order'));
   },
-  renderSalesRepresentative: function (newSalesRepresentative) {
+  renderSalesRepresentative: function(newSalesRepresentative) {
     this.setContent(newSalesRepresentative);
   },
-  orderChanged: function (oldValue) {
+  orderChanged: function(oldValue) {
     if (this.order.get('salesRepresentative')) {
       this.renderSalesRepresentative(this.order.get('salesRepresentative'));
     } else {
       this.renderSalesRepresentative('');
     }
 
-    this.order.on('change:salesRepresentative$_identifier change:salesRepresentative', function (model) {
-      if (!_.isUndefined(model.get('salesRepresentative$_identifier')) && !_.isNull(model.get('salesRepresentative$_identifier'))) {
-        this.renderSalesRepresentative(model.get('salesRepresentative$_identifier'));
-      } else {
-        this.renderSalesRepresentative('');
-      }
-    }, this);
+    this.order.on(
+      'change:salesRepresentative$_identifier change:salesRepresentative',
+      function(model) {
+        if (
+          !_.isUndefined(model.get('salesRepresentative$_identifier')) &&
+          !_.isNull(model.get('salesRepresentative$_identifier'))
+        ) {
+          this.renderSalesRepresentative(
+            model.get('salesRepresentative$_identifier')
+          );
+        } else {
+          this.renderSalesRepresentative('');
+        }
+      },
+      this
+    );
   }
 });
 
@@ -71,41 +79,55 @@ enyo.kind({
     onSearchActionByKey: 'searchAction',
     onFiltered: 'searchAction'
   },
-  components: [{
-    style: 'padding: 10px;',
-    components: [{
-      style: 'display: table;',
-      components: [{
-        style: 'display: table-cell; width: 100%;',
-        components: [{
-          kind: 'OB.UI.SearchInputAutoFilter',
-          name: 'filterText',
-          style: 'width: 100%'
-        }]
-      }, {
-        style: 'display: table-cell;',
-        components: [{
-          kind: 'OB.UI.SmallButton',
-          classes: 'btnlink-gray btn-icon-small btn-icon-clear',
-          style: 'width: 100px; margin: 0px 5px 8px 19px;',
-          ontap: 'clearAction'
-        }]
-      }, {
-        style: 'display: table-cell;',
-        components: [{
-          kind: 'OB.UI.SmallButton',
-          classes: 'btnlink-yellow btn-icon-small btn-icon-search',
-          style: 'width: 100px; margin: 0px 0px 8px 5px;',
-          ontap: 'searchAction'
-        }]
-      }]
-    }]
-  }],
-  clearAction: function () {
+  components: [
+    {
+      style: 'padding: 10px;',
+      components: [
+        {
+          style: 'display: table;',
+          components: [
+            {
+              style: 'display: table-cell; width: 100%;',
+              components: [
+                {
+                  kind: 'OB.UI.SearchInputAutoFilter',
+                  name: 'filterText',
+                  style: 'width: 100%'
+                }
+              ]
+            },
+            {
+              style: 'display: table-cell;',
+              components: [
+                {
+                  kind: 'OB.UI.SmallButton',
+                  classes: 'btnlink-gray btn-icon-small btn-icon-clear',
+                  style: 'width: 100px; margin: 0px 5px 8px 19px;',
+                  ontap: 'clearAction'
+                }
+              ]
+            },
+            {
+              style: 'display: table-cell;',
+              components: [
+                {
+                  kind: 'OB.UI.SmallButton',
+                  classes: 'btnlink-yellow btn-icon-small btn-icon-search',
+                  style: 'width: 100px; margin: 0px 0px 8px 5px;',
+                  ontap: 'searchAction'
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  clearAction: function() {
     this.$.filterText.setValue('');
     this.doClearAction();
   },
-  searchAction: function () {
+  searchAction: function() {
     this.doSearchAction({
       srName: this.$.filterText.getValue()
     });
@@ -117,23 +139,28 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ListSrsLine',
   kind: 'OB.UI.SelectButton',
-  components: [{
-    name: 'line',
-    style: 'line-height: 23px;',
-    components: [{
-      name: 'name'
-    }, {
-      style: 'clear: both;'
-    }]
-  }],
+  components: [
+    {
+      name: 'line',
+      style: 'line-height: 23px;',
+      components: [
+        {
+          name: 'name'
+        },
+        {
+          style: 'clear: both;'
+        }
+      ]
+    }
+  ],
   events: {
     onHideThisPopup: ''
   },
-  tap: function () {
+  tap: function() {
     this.inherited(arguments);
     this.doHideThisPopup();
   },
-  create: function () {
+  create: function() {
     this.inherited(arguments);
     this.$.name.setContent(this.model.get('name'));
   }
@@ -150,31 +177,39 @@ enyo.kind({
   events: {
     onChangeSalesRepresentative: ''
   },
-  components: [{
-    classes: 'span12',
-    components: [{
-      style: 'border-bottom: 1px solid #cccccc;',
-      classes: 'row-fluid',
-      components: [{
-        classes: 'span12',
-        components: [{
-          name: 'srslistitemprinter',
-          kind: 'OB.UI.ScrollableTable',
-          scrollAreaMaxHeight: '400px',
-          renderHeader: 'OB.UI.ModalSrScrollableHeader',
-          renderLine: 'OB.UI.ListSrsLine',
-          renderEmpty: 'OB.UI.RenderEmpty'
-        }]
-      }]
-    }]
-  }],
-  clearAction: function (inSender, inEvent) {
+  components: [
+    {
+      classes: 'span12',
+      components: [
+        {
+          style: 'border-bottom: 1px solid #cccccc;',
+          classes: 'row-fluid',
+          components: [
+            {
+              classes: 'span12',
+              components: [
+                {
+                  name: 'srslistitemprinter',
+                  kind: 'OB.UI.ScrollableTable',
+                  scrollAreaMaxHeight: '400px',
+                  renderHeader: 'OB.UI.ModalSrScrollableHeader',
+                  renderLine: 'OB.UI.ListSrsLine',
+                  renderEmpty: 'OB.UI.RenderEmpty'
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  clearAction: function(inSender, inEvent) {
     this.srsList.reset();
     return true;
   },
-  searchAction: function (inSender, inEvent) {
+  searchAction: function(inSender, inEvent) {
     var me = this,
-        filter = inEvent.srName;
+      filter = inEvent.srName;
 
     function errorCallback(tx, error) {
       OB.UTIL.showError(error);
@@ -201,21 +236,33 @@ enyo.kind({
       };
     }
 
-    OB.Dal.find(OB.Model.SalesRepresentative, criteria, successCallbackBPs, errorCallback, null, null, true);
+    OB.Dal.find(
+      OB.Model.SalesRepresentative,
+      criteria,
+      successCallbackBPs,
+      errorCallback,
+      null,
+      null,
+      true
+    );
     return true;
   },
   srsList: null,
-  init: function (model) {
+  init: function(model) {
     this.srsList = new Backbone.Collection();
     this.$.srslistitemprinter.setCollection(this.srsList);
-    this.srsList.on('click', function (model) {
-      if (model.attributes.name === OB.I18N.getLabel('OBPOS_None')) {
-        model.attributes.name = null;
-      }
-      this.doChangeSalesRepresentative({
-        salesRepresentative: model
-      });
-    }, this);
+    this.srsList.on(
+      'click',
+      function(model) {
+        if (model.attributes.name === OB.I18N.getLabel('OBPOS_None')) {
+          model.attributes.name = null;
+        }
+        this.doChangeSalesRepresentative({
+          salesRepresentative: model
+        });
+      },
+      this
+    );
   }
 });
 
@@ -224,14 +271,14 @@ enyo.kind({
   name: 'OB.UI.ModalSalesRepresentative',
   topPosition: '125px',
   kind: 'OB.UI.Modal',
-  executeOnHide: function () {
+  executeOnHide: function() {
     this.$.body.$.listSrs.$.srslistitemprinter.$.theader.$.modalSrScrollableHeader.clearAction();
   },
   i18nHeader: 'OBPOS_LblAssignSalesRepresentative',
   body: {
     kind: 'OB.UI.ListSrs'
   },
-  init: function (model) {
+  init: function(model) {
     this.model = model;
     this.waterfall('onSetModel', {
       model: this.model

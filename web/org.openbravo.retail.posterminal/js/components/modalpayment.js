@@ -15,9 +15,16 @@ enyo.kind({
   header: '',
   maxheight: '600px',
   bodyContent: {},
-  executeOnShow: function () {
-
-    this.$.header.setContent(this.args.receipt && this.args.receipt.getTotal() > 0 ? OB.I18N.getLabel('OBPOS_LblModalPayment', [OB.I18N.formatCurrency(this.args.amount)]) : OB.I18N.getLabel('OBPOS_LblModalReturn', [OB.I18N.formatCurrency(this.args.amount)]));
+  executeOnShow: function() {
+    this.$.header.setContent(
+      this.args.receipt && this.args.receipt.getTotal() > 0
+        ? OB.I18N.getLabel('OBPOS_LblModalPayment', [
+            OB.I18N.formatCurrency(this.args.amount)
+          ])
+        : OB.I18N.getLabel('OBPOS_LblModalReturn', [
+            OB.I18N.formatCurrency(this.args.amount)
+          ])
+    );
 
     this.$.bodyContent.destroyComponents();
     //default values to reset changes done by a payment method
@@ -26,26 +33,28 @@ enyo.kind({
     this.executeOnShown = null;
     this.executeBeforeHide = null;
     this.executeOnHide = null;
-    this.$.bodyContent.createComponent({
-      mainPopup: this,
-      kind: this.args.provider,
-      paymentMethod: this.args.paymentMethod,
-      paymentType: this.args.name,
-      paymentAmount: this.args.amount,
-      isocode: this.args.isocode,
-      key: this.args.key,
-      receipt: this.args.receipt,
-      cashManagement: this.args.cashManagement,
-      allowOpenDrawer: this.args.paymentMethod.allowopendrawer,
-      isCash: this.args.paymentMethod.iscash,
-      openDrawer: this.args.paymentMethod.openDrawer,
-      printtwice: this.args.paymentMethod.printtwice,
-      isReversePayment: this.args.isReversePayment,
-      reversedPaymentId: this.args.reversedPaymentId,
-      reversedPayment: this.args.reversedPayment
-    }).render();
+    this.$.bodyContent
+      .createComponent({
+        mainPopup: this,
+        kind: this.args.provider,
+        paymentMethod: this.args.paymentMethod,
+        paymentType: this.args.name,
+        paymentAmount: this.args.amount,
+        isocode: this.args.isocode,
+        key: this.args.key,
+        receipt: this.args.receipt,
+        cashManagement: this.args.cashManagement,
+        allowOpenDrawer: this.args.paymentMethod.allowopendrawer,
+        isCash: this.args.paymentMethod.iscash,
+        openDrawer: this.args.paymentMethod.openDrawer,
+        printtwice: this.args.paymentMethod.printtwice,
+        isReversePayment: this.args.isReversePayment,
+        reversedPaymentId: this.args.reversedPaymentId,
+        reversedPayment: this.args.reversedPayment
+      })
+      .render();
   },
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
     this.dfAutoDismiss = this.autoDismiss;
     this.dfCloseOnEscKey = this.closeOnEscKey;
@@ -59,8 +68,12 @@ enyo.kind({
   maxheight: '600px',
   bodyContent: {},
   bodyButtons: {},
-  executeOnShow: function () {
-    this.$.header.setContent(OB.I18N.getLabel('OBPOS_LblModalVoidTransaction', [OB.I18N.formatCurrency(this.args.amount)]));
+  executeOnShow: function() {
+    this.$.header.setContent(
+      OB.I18N.getLabel('OBPOS_LblModalVoidTransaction', [
+        OB.I18N.formatCurrency(this.args.amount)
+      ])
+    );
     this.$.headerCloseButton.hide();
     this.autoDismiss = false;
   }

@@ -10,30 +10,37 @@
 /*global OB, enyo, _ */
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.LineProperty',
-  components: [{
-    classes: 'row-fluid',
-    style: 'clear: both;',
-    components: [{
-      classes: 'span4',
-      style: 'width: 95px;',
-      name: 'propertyLabel'
-    }, {
-      classes: 'span8',
-      style: 'width: 60%;',
-      components: [{
-        tag: 'span',
-        name: 'propertyValue'
-      }]
-    }]
-  }],
-  render: function (model) {
+  components: [
+    {
+      classes: 'row-fluid',
+      style: 'clear: both;',
+      components: [
+        {
+          classes: 'span4',
+          style: 'width: 95px;',
+          name: 'propertyLabel'
+        },
+        {
+          classes: 'span8',
+          style: 'width: 60%;',
+          components: [
+            {
+              tag: 'span',
+              name: 'propertyValue'
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  render: function(model) {
     if (model) {
       this.$.propertyValue.setContent(model.get(this.propertyToPrint));
     } else {
       this.$.propertyValue.setContent('');
     }
   },
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
     this.$.propertyLabel.setContent(OB.I18N.getLabel(this.I18NLabel));
   }
@@ -41,28 +48,35 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.LinePropertyDiv',
-  components: [{
-    classes: 'row-fluid',
-    style: 'clear: both;',
-    components: [{
-      classes: 'span4',
-      name: 'propertyLabel'
-    }, {
-      classes: 'span8',
-      components: [{
-        tag: 'div',
-        name: 'propertyValue'
-      }]
-    }]
-  }],
-  render: function (model) {
+  components: [
+    {
+      classes: 'row-fluid',
+      style: 'clear: both;',
+      components: [
+        {
+          classes: 'span4',
+          name: 'propertyLabel'
+        },
+        {
+          classes: 'span8',
+          components: [
+            {
+              tag: 'div',
+              name: 'propertyValue'
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  render: function(model) {
     if (model) {
       this.$.propertyValue.setContent(model.get(this.propertyToPrint));
     } else {
       this.$.propertyValue.setContent('');
     }
   },
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
     this.$.propertyLabel.setContent(OB.I18N.getLabel(this.I18NLabel));
   }
@@ -70,406 +84,517 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.EditLine',
-  propertiesToShow: [{
-    kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
-    position: 10,
-    name: 'descLine',
-    I18NLabel: 'OBPOS_LineDescription',
-    render: function (line) {
-      if (line) {
-        this.$.propertyValue.setContent(line.get('product').get('_identifier'));
-      } else {
-        this.$.propertyValue.setContent('');
-      }
-    }
-  }, {
-    kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
-    position: 15,
-    name: 'returnReasonLine',
-    I18NLabel: 'OBPOS_ReturnReason',
-    render: function (line) {
-      if (line && line.get('returnReason')) {
-        this.$.propertyValue.setContent(line.get('returnReasonName'));
-        this.show();
-      } else {
-        this.hide();
-      }
-    }
-  }, {
-    kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
-    position: 20,
-    name: 'qtyLine',
-    I18NLabel: 'OBPOS_LineQuantity',
-    multiSelection: false,
-    render: function (line) {
-      if (line) {
-        if (line.get('qty') === 0) {
-          this.$.propertyValue.setContent(OB.I18N.getLabel('OBPOS_lblMultiSelectQuantity'));
+  propertiesToShow: [
+    {
+      kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
+      position: 10,
+      name: 'descLine',
+      I18NLabel: 'OBPOS_LineDescription',
+      render: function(line) {
+        if (line) {
+          this.$.propertyValue.setContent(
+            line.get('product').get('_identifier')
+          );
         } else {
-          this.$.propertyValue.setContent(line.printQty() + (this.multiSelection ? " " + OB.I18N.getLabel('OBPOS_lblMultiSelectPerLines') : ""));
+          this.$.propertyValue.setContent('');
         }
-      } else {
-        this.$.propertyValue.setContent('');
       }
-    }
-  }, {
-    kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
-    position: 25,
-    name: 'priceStdLine',
-    I18NLabel: 'OBPOS_LinePriceStd',
-    render: function (line) {
-      if (line) {
-        this.$.propertyValue.setContent(OB.I18N.formatCurrency(line.get('product').get('standardPrice')));
-      } else {
-        this.$.propertyValue.setContent('');
-      }
-    }
-  }, {
-    kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
-    position: 30,
-    name: 'priceLine',
-    I18NLabel: 'OBPOS_LinePrice',
-    render: function (line) {
-      if (line) {
-        if (this.multiSelection) {
-          this.$.propertyValue.setContent(line.get('hasPrice') ? line.printPrice() + " " + OB.I18N.getLabel('OBPOS_lblMultiSelectPerLines') : OB.I18N.getLabel('OBPOS_lblMultiSelectPrice'));
+    },
+    {
+      kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
+      position: 15,
+      name: 'returnReasonLine',
+      I18NLabel: 'OBPOS_ReturnReason',
+      render: function(line) {
+        if (line && line.get('returnReason')) {
+          this.$.propertyValue.setContent(line.get('returnReasonName'));
+          this.show();
         } else {
-          this.$.propertyValue.setContent(line.printPrice());
+          this.hide();
         }
-      } else {
-        this.$.propertyValue.setContent('');
       }
-    }
-  }, {
-    kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
-    position: 40,
-    name: 'discountedAmountLine',
-    I18NLabel: 'OBPOS_LineDiscount',
-    multiSelection: false,
-    render: function (line) {
-      if (line) {
-        if (this.multiSelection) {
-          var lineDisc = line.printDiscount();
-          this.$.propertyValue.setContent(line.get('hasDiscount') ? lineDisc + (lineDisc !== '' ? ' ' + OB.I18N.getLabel('OBPOS_lblMultiSelectPerLines') : '') : OB.I18N.getLabel('OBPOS_lblMultiSelectDiscount'));
-        } else {
-          var discount = line.getTotalAmountOfPromotions();
-          if (discount === 0) {
-            this.$.propertyValue.setContent('');
+    },
+    {
+      kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
+      position: 20,
+      name: 'qtyLine',
+      I18NLabel: 'OBPOS_LineQuantity',
+      multiSelection: false,
+      render: function(line) {
+        if (line) {
+          if (line.get('qty') === 0) {
+            this.$.propertyValue.setContent(
+              OB.I18N.getLabel('OBPOS_lblMultiSelectQuantity')
+            );
           } else {
-            this.$.propertyValue.setContent(OB.I18N.formatCurrency(discount));
+            this.$.propertyValue.setContent(
+              line.printQty() +
+                (this.multiSelection
+                  ? ' ' + OB.I18N.getLabel('OBPOS_lblMultiSelectPerLines')
+                  : '')
+            );
+          }
+        } else {
+          this.$.propertyValue.setContent('');
+        }
+      }
+    },
+    {
+      kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
+      position: 25,
+      name: 'priceStdLine',
+      I18NLabel: 'OBPOS_LinePriceStd',
+      render: function(line) {
+        if (line) {
+          this.$.propertyValue.setContent(
+            OB.I18N.formatCurrency(line.get('product').get('standardPrice'))
+          );
+        } else {
+          this.$.propertyValue.setContent('');
+        }
+      }
+    },
+    {
+      kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
+      position: 30,
+      name: 'priceLine',
+      I18NLabel: 'OBPOS_LinePrice',
+      render: function(line) {
+        if (line) {
+          if (this.multiSelection) {
+            this.$.propertyValue.setContent(
+              line.get('hasPrice')
+                ? line.printPrice() +
+                    ' ' +
+                    OB.I18N.getLabel('OBPOS_lblMultiSelectPerLines')
+                : OB.I18N.getLabel('OBPOS_lblMultiSelectPrice')
+            );
+          } else {
+            this.$.propertyValue.setContent(line.printPrice());
+          }
+        } else {
+          this.$.propertyValue.setContent('');
+        }
+      }
+    },
+    {
+      kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
+      position: 40,
+      name: 'discountedAmountLine',
+      I18NLabel: 'OBPOS_LineDiscount',
+      multiSelection: false,
+      render: function(line) {
+        if (line) {
+          if (this.multiSelection) {
+            var lineDisc = line.printDiscount();
+            this.$.propertyValue.setContent(
+              line.get('hasDiscount')
+                ? lineDisc +
+                    (lineDisc !== ''
+                      ? ' ' + OB.I18N.getLabel('OBPOS_lblMultiSelectPerLines')
+                      : '')
+                : OB.I18N.getLabel('OBPOS_lblMultiSelectDiscount')
+            );
+          } else {
+            var discount = line.getTotalAmountOfPromotions();
+            if (discount === 0) {
+              this.$.propertyValue.setContent('');
+            } else {
+              this.$.propertyValue.setContent(OB.I18N.formatCurrency(discount));
+            }
+          }
+        } else {
+          this.$.propertyValue.setContent('');
+        }
+      }
+    },
+    {
+      kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
+      position: 50,
+      name: 'grossLine',
+      I18NLabel: 'OBPOS_LineTotal',
+      render: function(line) {
+        if (line) {
+          if (line.get('editlinetotal')) {
+            // Is has been calculated, (by multiline)
+            this.$.propertyValue.setContent(
+              OB.I18N.formatCurrency(line.get('editlinetotal'))
+            );
+          } else if (line.get('priceIncludesTax')) {
+            this.$.propertyValue.setContent(line.printTotalLine());
+          } else {
+            this.$.propertyValue.setContent(
+              OB.I18N.formatCurrency(line.get('discountedNet'))
+            );
+          }
+        } else {
+          this.$.propertyValue.setContent('');
+        }
+      }
+    },
+    {
+      kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
+      position: 60,
+      name: 'warehouseLine',
+      I18NLabel: 'OBPOS_LineWarehouse',
+      render: function(line) {
+        if (line && line.get('warehouse')) {
+          this.$.propertyValue.setContent(line.get('warehouse').warehousename);
+        } else {
+          this.$.propertyValue.setContent(
+            OB.MobileApp.model.get('warehouses')[0].warehousename
+          );
+        }
+      }
+    },
+    {
+      kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
+      position: 70,
+      name: 'deliverableLine',
+      I18NLabel: 'OBPOS_LineDeliverable',
+      render: function(line) {
+        if (this.owner.owner.hideDeliveryLabel) {
+          this.hide();
+        } else {
+          this.show();
+          if (this.owner.owner.hideDeliveryButton) {
+            this.$.propertyValue.setContent(
+              OB.I18N.getLabel('OBPOS_lblMultiSelectValues')
+            );
+          } else if (line && line.get('obposCanbedelivered')) {
+            this.$.propertyValue.setContent(OB.I18N.getLabel('OBMOBC_LblYes'));
+            this.owner.owner.$.actionButtonsContainer.$.canDeliver.setContent(
+              OB.I18N.getLabel('OBPOS_SetAsUndeliverable')
+            );
+          } else {
+            this.$.propertyValue.setContent(OB.I18N.getLabel('OBMOBC_LblNo'));
+            this.owner.owner.$.actionButtonsContainer.$.canDeliver.setContent(
+              OB.I18N.getLabel('OBPOS_SetAsDeliverable')
+            );
           }
         }
-      } else {
-        this.$.propertyValue.setContent('');
       }
     }
-  }, {
-    kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
-    position: 50,
-    name: 'grossLine',
-    I18NLabel: 'OBPOS_LineTotal',
-    render: function (line) {
-      if (line) {
-        if (line.get('editlinetotal')) { // Is has been calculated, (by multiline)
-          this.$.propertyValue.setContent(OB.I18N.formatCurrency(line.get('editlinetotal')));
-        } else if (line.get('priceIncludesTax')) {
-          this.$.propertyValue.setContent(line.printTotalLine());
-        } else {
-          this.$.propertyValue.setContent(OB.I18N.formatCurrency(line.get('discountedNet')));
-        }
-      } else {
-        this.$.propertyValue.setContent('');
-      }
-    }
-  }, {
-    kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
-    position: 60,
-    name: 'warehouseLine',
-    I18NLabel: 'OBPOS_LineWarehouse',
-    render: function (line) {
-      if (line && line.get('warehouse')) {
-        this.$.propertyValue.setContent(line.get('warehouse').warehousename);
-      } else {
-        this.$.propertyValue.setContent(OB.MobileApp.model.get('warehouses')[0].warehousename);
-      }
-    }
-  }, {
-    kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
-    position: 70,
-    name: 'deliverableLine',
-    I18NLabel: 'OBPOS_LineDeliverable',
-    render: function (line) {
-      if (this.owner.owner.hideDeliveryLabel) {
-        this.hide();
-      } else {
-        this.show();
-        if (this.owner.owner.hideDeliveryButton) {
-          this.$.propertyValue.setContent(OB.I18N.getLabel('OBPOS_lblMultiSelectValues'));
-        } else if (line && line.get('obposCanbedelivered')) {
-          this.$.propertyValue.setContent(OB.I18N.getLabel('OBMOBC_LblYes'));
-          this.owner.owner.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_SetAsUndeliverable'));
-        } else {
-          this.$.propertyValue.setContent(OB.I18N.getLabel('OBMOBC_LblNo'));
-          this.owner.owner.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_SetAsDeliverable'));
-        }
-      }
-    }
-  }],
-  actionButtons: [{
-    kind: 'OB.UI.SmallButton',
-    name: 'deleteLine',
-    i18nContent: 'OBPOS_ButtonDelete',
-    classes: 'btnlink-orange',
-    permission: 'OBPOS_ActionButtonDelete',
-    tap: function () {
-      this.owner.owner.doDeleteLine({
-        selectedModels: this.owner.owner.selectedModels
-      });
-    },
-    init: function (model) {
-      this.model = model;
-    }
-  }, {
-    kind: 'OB.UI.SmallButton',
-    i18nContent: 'OBPOS_LblDescription',
-    name: 'descriptionButton',
-    classes: 'btnlink-orange',
-    permission: 'OBPOS_ActionButtonDescription',
-    tap: function () {
-      if (this.owner.owner.receipt.get('isQuotation') && this.owner.owner.receipt.get('hasbeenpaid') === 'Y') {
-        this.owner.owner.doShowPopup({
-          popup: 'modalNotEditableOrder'
+  ],
+  actionButtons: [
+    {
+      kind: 'OB.UI.SmallButton',
+      name: 'deleteLine',
+      i18nContent: 'OBPOS_ButtonDelete',
+      classes: 'btnlink-orange',
+      permission: 'OBPOS_ActionButtonDelete',
+      tap: function() {
+        this.owner.owner.doDeleteLine({
+          selectedModels: this.owner.owner.selectedModels
         });
-        return;
+      },
+      init: function(model) {
+        this.model = model;
       }
-      this.owner.owner.doEditLine({
-        line: this.owner.owner.line
-      });
     },
-    init: function (model) {
-      this.model = model;
-    }
-  }, {
-    kind: 'OB.UI.SmallButton',
-    name: 'returnLine',
-    i18nContent: 'OBPOS_LblReturnLine',
-    permission: 'OBPOS_ReturnLine',
-    classes: 'btnlink-orange',
-    showing: false,
-    tap: function () {
-      var me = this,
+    {
+      kind: 'OB.UI.SmallButton',
+      i18nContent: 'OBPOS_LblDescription',
+      name: 'descriptionButton',
+      classes: 'btnlink-orange',
+      permission: 'OBPOS_ActionButtonDescription',
+      tap: function() {
+        if (
+          this.owner.owner.receipt.get('isQuotation') &&
+          this.owner.owner.receipt.get('hasbeenpaid') === 'Y'
+        ) {
+          this.owner.owner.doShowPopup({
+            popup: 'modalNotEditableOrder'
+          });
+          return;
+        }
+        this.owner.owner.doEditLine({
+          line: this.owner.owner.line
+        });
+      },
+      init: function(model) {
+        this.model = model;
+      }
+    },
+    {
+      kind: 'OB.UI.SmallButton',
+      name: 'returnLine',
+      i18nContent: 'OBPOS_LblReturnLine',
+      permission: 'OBPOS_ReturnLine',
+      classes: 'btnlink-orange',
+      showing: false,
+      tap: function() {
+        var me = this,
           order = this.owner.owner.receipt,
           selectedModels = this.owner.owner.selectedModels;
 
-      if (order.get('replacedorder') && _.find(selectedModels, function (l) {
-        l.get('remainingQuantity');
-      })) {
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceReturnLines'));
-        return;
-      }
-
-      order.checkReturnableProducts(selectedModels, this.model, function () {
-        //The value of qty need to be negate because we want to change it
-        if (order.validateAllowSalesWithReturn(-1, false, selectedModels)) {
-          me.owner.owner.rearrangeEditButtonBar();
+        if (
+          order.get('replacedorder') &&
+          _.find(selectedModels, function(l) {
+            l.get('remainingQuantity');
+          })
+        ) {
+          OB.UTIL.showConfirmation.display(
+            OB.I18N.getLabel('OBMOBC_Error'),
+            OB.I18N.getLabel('OBPOS_CancelReplaceReturnLines')
+          );
           return;
         }
-        order.set('undo', null);
-        order.set('multipleUndo', true);
-        order.set('preventServicesUpdate', true);
-        _.each(selectedModels, function (line) {
-          if (!line.get('relatedLines')) {
-            me.owner.owner.doReturnLine({
-              line: line
-            });
+
+        order.checkReturnableProducts(selectedModels, this.model, function() {
+          //The value of qty need to be negate because we want to change it
+          if (order.validateAllowSalesWithReturn(-1, false, selectedModels)) {
+            me.owner.owner.rearrangeEditButtonBar();
+            return;
           }
-        });
-        order.unset('preventServicesUpdate');
-        order.get('lines').trigger('updateRelations');
-        order.set('multipleUndo', null);
-      });
-    },
-    init: function (model) {
-      this.model = model;
-    }
-  }, {
-    kind: 'OB.UI.SmallButton',
-    name: 'splitlineButton',
-    i18nContent: 'OBPOS_lblSplit',
-    showing: false,
-    classes: 'btnlink-orange',
-    permission: 'OBPOS_ActionButtonSplit',
-    tap: function () {
-      this.owner.owner.doShowPopup({
-        popup: 'OBPOS_modalSplitLine',
-        args: {
-          receipt: this.owner.owner.model.get('order'),
-          model: this.owner.owner.line
-        }
-      });
-    }
-  }, {
-    kind: 'OB.UI.SmallButton',
-    name: 'showRelatedServices',
-    classes: 'btnlink-orange',
-    permission: 'OBPOS_ActionButtonShowRelatedServices',
-    style: 'width: 45px; background-repeat: no-repeat; background-position: center; color: rgba(0, 0, 0, 0)',
-    content: '-',
-    tap: function (inSender, inEvent) {
-      var product = this.owner.owner.line.get('product');
-      if (product) {
-        OB.UI.SearchProductCharacteristic.prototype.filtersCustomClear();
-        OB.UI.SearchProductCharacteristic.prototype.filtersCustomAdd(new OB.UI.SearchServicesFilter({
-          text: this.owner.owner.selectedModels.filter(function (line) {
-            return line.get('hasRelatedServices');
-          }).map(function (line) {
-            return line.get('product').get('_identifier');
-          }).join(', '),
-          productList: this.owner.owner.selectedModels.filter(function (line) {
-            return line.get('hasRelatedServices');
-          }).map(function (line) {
-            return line.get('product').get('id');
-          }),
-          orderlineList: this.owner.owner.selectedModels.filter(function (line) {
-            return line.get('hasRelatedServices');
-          })
-        }));
-        var me = this;
-        setTimeout(function () {
-          me.bubble('onTabChange', {
-            tabPanel: 'searchCharacteristic'
-          });
-          me.bubble('onSelectFilter', {
-            params: {
-              skipProductCharacteristic: true
+          order.set('undo', null);
+          order.set('multipleUndo', true);
+          order.set('preventServicesUpdate', true);
+          _.each(selectedModels, function(line) {
+            if (!line.get('relatedLines')) {
+              me.owner.owner.doReturnLine({
+                line: line
+              });
             }
           });
-          me.owner.owner.selectedModels.filter(function (line) {
-            return line.get('hasRelatedServices');
-          }).forEach(function (l) {
-            l.set("obposServiceProposed", true);
-          });
-        }, 1);
-        this.addRemoveClass('iconServices_unreviewed', false);
-        this.addRemoveClass('iconServices_reviewed', true);
+          order.unset('preventServicesUpdate');
+          order.get('lines').trigger('updateRelations');
+          order.set('multipleUndo', null);
+        });
+      },
+      init: function(model) {
+        this.model = model;
       }
-    }
-  }, {
-    kind: 'OB.UI.SmallButton',
-    name: 'removeDiscountButton',
-    i18nContent: 'OBPOS_LblRemoveDiscount',
-    showing: false,
-    classes: 'btnlink-orange',
-    permission: 'OBPOS_ActionButtonRemoveDiscount',
-    tap: function () {
-      var i, lineModel, selectedLines, checkFilter, linesWithPromotionsLength = 0,
-          manualPromotions = OB.Model.Discounts.getManualPromotions();
-
-      checkFilter = function (prom) {
-        return (manualPromotions.indexOf(prom.discountType) !== -1);
-      };
-
-      selectedLines = _.filter(this.owner.owner.selectedModels, function (line) {
-        return this.owner.owner.receipt.get('isEditable') && line.get('isEditable');
-      }, this);
-
-      for (i = 0; i < selectedLines.length; i++) {
-        lineModel = selectedLines[i];
-        if (lineModel.get('promotions') && lineModel.get('promotions').length > 0) {
-          linesWithPromotionsLength = _.filter(lineModel.get('promotions'), checkFilter).length;
-          if (linesWithPromotionsLength > 0) {
-            this.owner.owner.doShowPopup({
-              popup: 'modalDeleteDiscount',
-              args: {
-                receipt: this.owner.owner.receipt,
-                selectedLines: selectedLines,
-                selectedLine: lineModel,
-                context: this
+    },
+    {
+      kind: 'OB.UI.SmallButton',
+      name: 'splitlineButton',
+      i18nContent: 'OBPOS_lblSplit',
+      showing: false,
+      classes: 'btnlink-orange',
+      permission: 'OBPOS_ActionButtonSplit',
+      tap: function() {
+        this.owner.owner.doShowPopup({
+          popup: 'OBPOS_modalSplitLine',
+          args: {
+            receipt: this.owner.owner.model.get('order'),
+            model: this.owner.owner.line
+          }
+        });
+      }
+    },
+    {
+      kind: 'OB.UI.SmallButton',
+      name: 'showRelatedServices',
+      classes: 'btnlink-orange',
+      permission: 'OBPOS_ActionButtonShowRelatedServices',
+      style:
+        'width: 45px; background-repeat: no-repeat; background-position: center; color: rgba(0, 0, 0, 0)',
+      content: '-',
+      tap: function(inSender, inEvent) {
+        var product = this.owner.owner.line.get('product');
+        if (product) {
+          OB.UI.SearchProductCharacteristic.prototype.filtersCustomClear();
+          OB.UI.SearchProductCharacteristic.prototype.filtersCustomAdd(
+            new OB.UI.SearchServicesFilter({
+              text: this.owner.owner.selectedModels
+                .filter(function(line) {
+                  return line.get('hasRelatedServices');
+                })
+                .map(function(line) {
+                  return line.get('product').get('_identifier');
+                })
+                .join(', '),
+              productList: this.owner.owner.selectedModels
+                .filter(function(line) {
+                  return line.get('hasRelatedServices');
+                })
+                .map(function(line) {
+                  return line.get('product').get('id');
+                }),
+              orderlineList: this.owner.owner.selectedModels.filter(function(
+                line
+              ) {
+                return line.get('hasRelatedServices');
+              })
+            })
+          );
+          var me = this;
+          setTimeout(function() {
+            me.bubble('onTabChange', {
+              tabPanel: 'searchCharacteristic'
+            });
+            me.bubble('onSelectFilter', {
+              params: {
+                skipProductCharacteristic: true
               }
             });
-            break;
-          }
+            me.owner.owner.selectedModels
+              .filter(function(line) {
+                return line.get('hasRelatedServices');
+              })
+              .forEach(function(l) {
+                l.set('obposServiceProposed', true);
+              });
+          }, 1);
+          this.addRemoveClass('iconServices_unreviewed', false);
+          this.addRemoveClass('iconServices_reviewed', true);
         }
       }
     },
-    init: function (model) {
-      this.model = model;
-    }
-  }, {
-    kind: 'OB.OBPOSPointOfSale.UI.EditLine.OpenStockButton',
-    name: 'checkStockButton',
-    permission: 'OBPOS_ActionButtonCheckStock',
-    showing: false
-  }, {
-    kind: 'OB.OBPOSPointOfSale.UI.EditLine.OpenAttributeButton',
-    name: 'openAttributeButton',
-    showing: false
-  }, {
-    kind: 'OB.UI.SmallButton',
-    name: 'addAssociationsButton',
-    i18nContent: 'OBPOS_AddAssociations',
-    showing: false,
-    classes: 'btnlink-orange',
-    tap: function () {
-      this.owner.owner.doShowPopup({
-        popup: 'OBPOS_modalAssociateTickets',
-        args: {
-          receipt: this.owner.owner.receipt,
-          selectedLines: this.owner.owner.selectedModels
+    {
+      kind: 'OB.UI.SmallButton',
+      name: 'removeDiscountButton',
+      i18nContent: 'OBPOS_LblRemoveDiscount',
+      showing: false,
+      classes: 'btnlink-orange',
+      permission: 'OBPOS_ActionButtonRemoveDiscount',
+      tap: function() {
+        var i,
+          lineModel,
+          selectedLines,
+          checkFilter,
+          linesWithPromotionsLength = 0,
+          manualPromotions = OB.Model.Discounts.getManualPromotions();
+
+        checkFilter = function(prom) {
+          return manualPromotions.indexOf(prom.discountType) !== -1;
+        };
+
+        selectedLines = _.filter(
+          this.owner.owner.selectedModels,
+          function(line) {
+            return (
+              this.owner.owner.receipt.get('isEditable') &&
+              line.get('isEditable')
+            );
+          },
+          this
+        );
+
+        for (i = 0; i < selectedLines.length; i++) {
+          lineModel = selectedLines[i];
+          if (
+            lineModel.get('promotions') &&
+            lineModel.get('promotions').length > 0
+          ) {
+            linesWithPromotionsLength = _.filter(
+              lineModel.get('promotions'),
+              checkFilter
+            ).length;
+            if (linesWithPromotionsLength > 0) {
+              this.owner.owner.doShowPopup({
+                popup: 'modalDeleteDiscount',
+                args: {
+                  receipt: this.owner.owner.receipt,
+                  selectedLines: selectedLines,
+                  selectedLine: lineModel,
+                  context: this
+                }
+              });
+              break;
+            }
+          }
         }
-      });
-    }
-  }, {
-    kind: 'OB.UI.SmallButton',
-    name: 'removeAssociationsButton',
-    i18nContent: 'OBPOS_RemoveAssociations',
-    showing: false,
-    classes: 'btnlink-orange',
-    tap: function () {
-      this.owner.owner.doShowPopup({
-        popup: 'OBPOS_modalRemoveAssociatedTickets',
-        args: {
-          receipt: this.owner.owner.receipt,
-          selectedLine: this.owner.owner.selectedModels[0]
-        }
-      });
-    }
-  }, {
-    kind: 'OB.UI.SmallButton',
-    name: 'canDeliver',
-    classes: 'btnlink-orange',
-    content: '-',
-    tap: function (inSender, inEvent) {
-      var me = this,
-          deliveredLines = _.filter(this.owner.owner.selectedModels, function (line) {
-          return line.get('deliveredQuantity');
-        });
-      if (!deliveredLines.length) {
-        OB.UTIL.Approval.requestApproval(
-        me.owner.owner.model, 'OBPOS_approval.canBeDelivered', function (approved, supervisor, approvalType) {
-          if (approved) {
-            _.each(me.owner.owner.selectedModels, function (line) {
-              if (line.get('obposCanbedelivered')) {
-                line.set('obposCanbedelivered', false);
-              } else {
-                line.set('obposCanbedelivered', true);
-              }
-            });
-            me.owner.owner.render();
-            me.owner.owner.model.get('order').getPrepaymentAmount(function () {
-              me.owner.owner.model.get('order').save();
-            });
+      },
+      init: function(model) {
+        this.model = model;
+      }
+    },
+    {
+      kind: 'OB.OBPOSPointOfSale.UI.EditLine.OpenStockButton',
+      name: 'checkStockButton',
+      permission: 'OBPOS_ActionButtonCheckStock',
+      showing: false
+    },
+    {
+      kind: 'OB.OBPOSPointOfSale.UI.EditLine.OpenAttributeButton',
+      name: 'openAttributeButton',
+      showing: false
+    },
+    {
+      kind: 'OB.UI.SmallButton',
+      name: 'addAssociationsButton',
+      i18nContent: 'OBPOS_AddAssociations',
+      showing: false,
+      classes: 'btnlink-orange',
+      tap: function() {
+        this.owner.owner.doShowPopup({
+          popup: 'OBPOS_modalAssociateTickets',
+          args: {
+            receipt: this.owner.owner.receipt,
+            selectedLines: this.owner.owner.selectedModels
           }
         });
-      } else {
-        var linesNames = [OB.I18N.getLabel('OBPOS_NotAllowUndeliverable')];
-        _.each(deliveredLines, function (line) {
-          linesNames.push(OB.I18N.getLabel('OBMOBC_Character')[1] + ' ' + line.get('product').get('_identifier'));
+      }
+    },
+    {
+      kind: 'OB.UI.SmallButton',
+      name: 'removeAssociationsButton',
+      i18nContent: 'OBPOS_RemoveAssociations',
+      showing: false,
+      classes: 'btnlink-orange',
+      tap: function() {
+        this.owner.owner.doShowPopup({
+          popup: 'OBPOS_modalRemoveAssociatedTickets',
+          args: {
+            receipt: this.owner.owner.receipt,
+            selectedLine: this.owner.owner.selectedModels[0]
+          }
         });
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), linesNames);
+      }
+    },
+    {
+      kind: 'OB.UI.SmallButton',
+      name: 'canDeliver',
+      classes: 'btnlink-orange',
+      content: '-',
+      tap: function(inSender, inEvent) {
+        var me = this,
+          deliveredLines = _.filter(this.owner.owner.selectedModels, function(
+            line
+          ) {
+            return line.get('deliveredQuantity');
+          });
+        if (!deliveredLines.length) {
+          OB.UTIL.Approval.requestApproval(
+            me.owner.owner.model,
+            'OBPOS_approval.canBeDelivered',
+            function(approved, supervisor, approvalType) {
+              if (approved) {
+                _.each(me.owner.owner.selectedModels, function(line) {
+                  if (line.get('obposCanbedelivered')) {
+                    line.set('obposCanbedelivered', false);
+                  } else {
+                    line.set('obposCanbedelivered', true);
+                  }
+                });
+                me.owner.owner.render();
+                me.owner.owner.model
+                  .get('order')
+                  .getPrepaymentAmount(function() {
+                    me.owner.owner.model.get('order').save();
+                  });
+              }
+            }
+          );
+        } else {
+          var linesNames = [OB.I18N.getLabel('OBPOS_NotAllowUndeliverable')];
+          _.each(deliveredLines, function(line) {
+            linesNames.push(
+              OB.I18N.getLabel('OBMOBC_Character')[1] +
+                ' ' +
+                line.get('product').get('_identifier')
+            );
+          });
+          OB.UTIL.showConfirmation.display(
+            OB.I18N.getLabel('OBMOBC_Error'),
+            linesNames
+          );
+        }
       }
     }
-  }],
+  ],
   published: {
     receipt: null
   },
@@ -488,7 +613,7 @@ enyo.kind({
     onHideReturnLineButton: 'hideReturnLineButton',
     onRearrangedEditButtonBar: 'rearrangeEditButtonBar'
   },
-  checkBoxBehavior: function (inSender, inEvent) {
+  checkBoxBehavior: function(inSender, inEvent) {
     if (inEvent.status) {
       this.line = null;
       //WARN! When off is done the components which are listening to this event
@@ -507,45 +632,88 @@ enyo.kind({
       }
     }
   },
-  hideReturnLineButton: function (inSender, inEvent) {
+  hideReturnLineButton: function(inSender, inEvent) {
     if (this.$.actionButtonsContainer.$.returnLine) {
-      if (inEvent.hide || !OB.MobileApp.model.hasPermission(this.$.actionButtonsContainer.$.returnLine.permission, true)) {
+      if (
+        inEvent.hide ||
+        !OB.MobileApp.model.hasPermission(
+          this.$.actionButtonsContainer.$.returnLine.permission,
+          true
+        )
+      ) {
         this.$.actionButtonsContainer.$.returnLine.hide();
       } else {
         this.$.actionButtonsContainer.$.returnLine.show();
       }
     }
   },
-  rearrangeEditButtonBar: function (line) {
+  rearrangeEditButtonBar: function(line) {
     if (this.$.actionButtonsContainer.$.returnLine) {
-      if (OB.MobileApp.model.get('permissions')[this.$.actionButtonsContainer.$.returnLine.permission] && !(this.model.get('order').get('isPaid') === true || this.model.get('order').get('isLayaway') === true || this.model.get('order').get('isQuotation') === true)) {
+      if (
+        OB.MobileApp.model.get('permissions')[
+          this.$.actionButtonsContainer.$.returnLine.permission
+        ] &&
+        !(
+          this.model.get('order').get('isPaid') === true ||
+          this.model.get('order').get('isLayaway') === true ||
+          this.model.get('order').get('isQuotation') === true
+        )
+      ) {
         this.$.actionButtonsContainer.$.returnLine.show();
       } else {
         this.$.actionButtonsContainer.$.returnLine.hide();
       }
-      if (this.model.get('order').get('orderType') === 1 || (!OB.MobileApp.model.hasPermission('OBPOS_AllowLayawaysNegativeLines', true) && this.model.get('order').get('orderType') === 2)) {
+      if (
+        this.model.get('order').get('orderType') === 1 ||
+        (!OB.MobileApp.model.hasPermission(
+          'OBPOS_AllowLayawaysNegativeLines',
+          true
+        ) &&
+          this.model.get('order').get('orderType') === 2)
+      ) {
         this.$.actionButtonsContainer.$.returnLine.hide();
       }
     }
-    if (this.selectedModels && this.selectedModels.length > 0 && (this.selectedModels[0] instanceof OB.Model.OrderLine)) {
-      var selectedServices = _.filter(this.selectedModels, function (line) {
+    if (
+      this.selectedModels &&
+      this.selectedModels.length > 0 &&
+      this.selectedModels[0] instanceof OB.Model.OrderLine
+    ) {
+      var selectedServices = _.filter(this.selectedModels, function(line) {
         return line.get('product').get('productType') === 'S';
       });
-      this.hideDeliveryButton = !OB.MobileApp.model.get('terminal').terminalType.calculateprepayments || selectedServices.length ? true : false;
-      this.hideDeliveryLabel = !OB.MobileApp.model.get('terminal').terminalType.calculateprepayments || selectedServices.length === this.selectedModels.length ? true : false;
+      this.hideDeliveryButton =
+        !OB.MobileApp.model.get('terminal').terminalType.calculateprepayments ||
+        selectedServices.length
+          ? true
+          : false;
+      this.hideDeliveryLabel =
+        !OB.MobileApp.model.get('terminal').terminalType.calculateprepayments ||
+        selectedServices.length === this.selectedModels.length
+          ? true
+          : false;
       if (this.selectedModels.length > 1) {
-        var selectedLinesToDeliver = _.filter(this.selectedModels, function (line) {
+        var selectedLinesToDeliver = _.filter(this.selectedModels, function(
+          line
+        ) {
           return line.get('obposCanbedelivered');
         });
-        this.hideDeliveryButton = this.hideDeliveryButton ? true : selectedLinesToDeliver.length && selectedLinesToDeliver.length < this.selectedModels.length;
+        this.hideDeliveryButton = this.hideDeliveryButton
+          ? true
+          : selectedLinesToDeliver.length &&
+            selectedLinesToDeliver.length < this.selectedModels.length;
         if (this.hideDeliveryButton) {
           this.$.actionButtonsContainer.$.canDeliver.hide();
         } else {
           this.$.actionButtonsContainer.$.canDeliver.show();
           if (!selectedLinesToDeliver.length) {
-            this.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_SetAsDeliverable'));
+            this.$.actionButtonsContainer.$.canDeliver.setContent(
+              OB.I18N.getLabel('OBPOS_SetAsDeliverable')
+            );
           } else {
-            this.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_SetAsUndeliverable'));
+            this.$.actionButtonsContainer.$.canDeliver.setContent(
+              OB.I18N.getLabel('OBPOS_SetAsUndeliverable')
+            );
           }
         }
       } else if (this.selectedModels.length === 1) {
@@ -554,9 +722,13 @@ enyo.kind({
         } else {
           this.$.actionButtonsContainer.$.canDeliver.show();
           if (this.selectedModels[0].get('obposCanbedelivered')) {
-            this.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_SetAsUndeliverable'));
+            this.$.actionButtonsContainer.$.canDeliver.setContent(
+              OB.I18N.getLabel('OBPOS_SetAsUndeliverable')
+            );
           } else {
-            this.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_SetAsDeliverable'));
+            this.$.actionButtonsContainer.$.canDeliver.setContent(
+              OB.I18N.getLabel('OBPOS_SetAsDeliverable')
+            );
           }
         }
       }
@@ -566,7 +738,15 @@ enyo.kind({
       if (line && !this.isLineInSelection(line)) {
         return;
       }
-      if (this.selectedModels && this.selectedModels.length === 1 && line.get('product') && line.get('product').get('productType') === 'S' && line.get('product').get('isLinkedToProduct') && this.model.get('order').get('isEditable') && line.get('isEditable')) {
+      if (
+        this.selectedModels &&
+        this.selectedModels.length === 1 &&
+        line.get('product') &&
+        line.get('product').get('productType') === 'S' &&
+        line.get('product').get('isLinkedToProduct') &&
+        this.model.get('order').get('isEditable') &&
+        line.get('isEditable')
+      ) {
         this.$.actionButtonsContainer.$.addAssociationsButton.show();
         this.$.actionButtonsContainer.$.removeAssociationsButton.show();
       } else {
@@ -586,25 +766,40 @@ enyo.kind({
           if (this.$.actionButtonsContainer.$.descriptionButton) {
             this.$.actionButtonsContainer.$.descriptionButton.show();
           }
-          var showSplitBtn = line && line.get('qty') > 1 && (!line.get('remainingQuantity') || line.get('remainingQuantity') < line.get('qty')) && //
-          (!this.model.get('order').get('hasServices') || (line.get('product').get('productType') !== 'S' && !_.find(this.model.get('order').get('lines').models, function (l) {
-            return l.get('relatedLines') && _.find(l.get('relatedLines'), function (rl) {
-              return rl.orderlineId === line.id;
-            }) !== undefined;
-          })));
+          var showSplitBtn =
+            line &&
+            line.get('qty') > 1 &&
+            (!line.get('remainingQuantity') ||
+              line.get('remainingQuantity') < line.get('qty')) && //
+            (!this.model.get('order').get('hasServices') ||
+              (line.get('product').get('productType') !== 'S' &&
+                !_.find(this.model.get('order').get('lines').models, function(
+                  l
+                ) {
+                  return (
+                    l.get('relatedLines') &&
+                    _.find(l.get('relatedLines'), function(rl) {
+                      return rl.orderlineId === line.id;
+                    }) !== undefined
+                  );
+                })));
           if (this.$.actionButtonsContainer.$.splitlineButton) {
             if (showSplitBtn) {
               var me = this;
-              OB.UTIL.HookManager.executeHooks('OBPOS_CheckSplitLine', {
-                receipt: me.model.get('order'),
-                orderline: line
-              }, function (args) {
-                if (args && args.cancelOperation) {
-                  me.$.actionButtonsContainer.$.splitlineButton.hide();
-                } else {
-                  me.$.actionButtonsContainer.$.splitlineButton.show();
+              OB.UTIL.HookManager.executeHooks(
+                'OBPOS_CheckSplitLine',
+                {
+                  receipt: me.model.get('order'),
+                  orderline: line
+                },
+                function(args) {
+                  if (args && args.cancelOperation) {
+                    me.$.actionButtonsContainer.$.splitlineButton.hide();
+                  } else {
+                    me.$.actionButtonsContainer.$.splitlineButton.show();
+                  }
                 }
-              });
+              );
             } else {
               this.$.actionButtonsContainer.$.splitlineButton.hide();
             }
@@ -612,7 +807,12 @@ enyo.kind({
         }
         if (this.$.actionButtonsContainer.$.checkStockButton) {
           if (this.line) {
-            if (this.receipt.get('isEditable') && this.line.get('product').get('productType') === 'I' && !this.line.get('product').get('ispack') && OB.MobileApp.model.get('connectedToERP')) {
+            if (
+              this.receipt.get('isEditable') &&
+              this.line.get('product').get('productType') === 'I' &&
+              !this.line.get('product').get('ispack') &&
+              OB.MobileApp.model.get('connectedToERP')
+            ) {
               this.$.actionButtonsContainer.$.checkStockButton.show();
             } else {
               this.$.actionButtonsContainer.$.checkStockButton.hide();
@@ -623,7 +823,13 @@ enyo.kind({
         }
         if (this.$.actionButtonsContainer.$.openAttributeButton) {
           if (this.line) {
-            if ((this.receipt.get('isEditable') || this.receipt.get('isLayaway')) && this.line.get('product').get('hasAttributes') && OB.MobileApp.model.get('permissions').OBPOS_EnableSupportForProductAttributes) {
+            if (
+              (this.receipt.get('isEditable') ||
+                this.receipt.get('isLayaway')) &&
+              this.line.get('product').get('hasAttributes') &&
+              OB.MobileApp.model.get('permissions')
+                .OBPOS_EnableSupportForProductAttributes
+            ) {
               this.$.actionButtonsContainer.$.openAttributeButton.show();
             } else {
               this.$.actionButtonsContainer.$.openAttributeButton.hide();
@@ -648,35 +854,72 @@ enyo.kind({
       }
       if (this.$.actionButtonsContainer.$.removeDiscountButton) {
         var promotions = false,
-            hasEditableLines = true;
+          hasEditableLines = true;
         if (this.selectedModels) {
-          _.each(this.selectedModels, function (lineModel) {
-            if (!hasEditableLines) {
-              promotions = false;
-              return false;
-            }
-            hasEditableLines = this.model.get('order').get('isEditable') && lineModel.get('isEditable');
-            if (hasEditableLines && lineModel.get('promotions') && lineModel.get('promotions').length > 0) {
-              // lines with just discretionary discounts can be removed.
-              var filtered = _.filter(lineModel.get('promotions'), function (prom) {
-                return OB.Model.Discounts.discountRules[prom.discountType].isManual;
-              }, this);
-              if (filtered.length > 0) {
-                promotions = true;
+          _.each(
+            this.selectedModels,
+            function(lineModel) {
+              if (!hasEditableLines) {
+                promotions = false;
+                return false;
               }
-            }
-          }, this);
+              hasEditableLines =
+                this.model.get('order').get('isEditable') &&
+                lineModel.get('isEditable');
+              if (
+                hasEditableLines &&
+                lineModel.get('promotions') &&
+                lineModel.get('promotions').length > 0
+              ) {
+                // lines with just discretionary discounts can be removed.
+                var filtered = _.filter(
+                  lineModel.get('promotions'),
+                  function(prom) {
+                    return OB.Model.Discounts.discountRules[prom.discountType]
+                      .isManual;
+                  },
+                  this
+                );
+                if (filtered.length > 0) {
+                  promotions = true;
+                }
+              }
+            },
+            this
+          );
         }
         if (promotions) {
           this.$.actionButtonsContainer.$.removeDiscountButton.show();
         } else {
           this.$.actionButtonsContainer.$.removeDiscountButton.hide();
         }
-        if ((!_.isUndefined(line) && !_.isUndefined(line.get('originalOrderLineId'))) || this.model.get('order').get('orderType') === 1 || (!OB.MobileApp.model.hasPermission('OBPOS_AllowLayawaysNegativeLines', true) && this.model.get('order').get('orderType') === 2)) {
+        if (
+          (!_.isUndefined(line) &&
+            !_.isUndefined(line.get('originalOrderLineId'))) ||
+          this.model.get('order').get('orderType') === 1 ||
+          (!OB.MobileApp.model.hasPermission(
+            'OBPOS_AllowLayawaysNegativeLines',
+            true
+          ) &&
+            this.model.get('order').get('orderType') === 2)
+        ) {
           if (this.$.actionButtonsContainer.$.returnLine) {
-            if ((!_.isUndefined(line) && !line.get('isEditable')) || this.model.get('order').get('orderType') === 1 || this.model.get('order').get('orderType') === 2) {
+            if (
+              (!_.isUndefined(line) && !line.get('isEditable')) ||
+              this.model.get('order').get('orderType') === 1 ||
+              this.model.get('order').get('orderType') === 2
+            ) {
               this.$.actionButtonsContainer.$.returnLine.hide();
-            } else if (OB.MobileApp.model.get('permissions')[this.$.actionButtonsContainer.$.returnLine.permission] && !(this.model.get('order').get('isPaid') === true || this.model.get('order').get('isLayaway') === true || this.model.get('order').get('isQuotation') === true)) {
+            } else if (
+              OB.MobileApp.model.get('permissions')[
+                this.$.actionButtonsContainer.$.returnLine.permission
+              ] &&
+              !(
+                this.model.get('order').get('isPaid') === true ||
+                this.model.get('order').get('isLayaway') === true ||
+                this.model.get('order').get('isQuotation') === true
+              )
+            ) {
               this.$.actionButtonsContainer.$.returnLine.show();
             }
           }
@@ -691,20 +934,37 @@ enyo.kind({
         if (this.$.actionButtonsContainer.$.showRelatedServices) {
           if (this.selectedModels && this.selectedModels.length > 0) {
             var proposedServices, existRelatedServices;
-            existRelatedServices = this.selectedModels.filter(function (line) {
-              return line.get('hasRelatedServices');
-            }).length === this.selectedModels.length;
-            proposedServices = this.selectedModels.filter(function (line) {
-              return !line.get('hasRelatedServices') || line.get('obposServiceProposed');
-            }).length === this.selectedModels.length;
+            existRelatedServices =
+              this.selectedModels.filter(function(line) {
+                return line.get('hasRelatedServices');
+              }).length === this.selectedModels.length;
+            proposedServices =
+              this.selectedModels.filter(function(line) {
+                return (
+                  !line.get('hasRelatedServices') ||
+                  line.get('obposServiceProposed')
+                );
+              }).length === this.selectedModels.length;
             if (existRelatedServices) {
               this.$.actionButtonsContainer.$.showRelatedServices.show();
               if (proposedServices) {
-                this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_unreviewed', false);
-                this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_reviewed', true);
+                this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass(
+                  'iconServices_unreviewed',
+                  false
+                );
+                this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass(
+                  'iconServices_reviewed',
+                  true
+                );
               } else {
-                this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_unreviewed', true);
-                this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_reviewed', false);
+                this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass(
+                  'iconServices_unreviewed',
+                  true
+                );
+                this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass(
+                  'iconServices_reviewed',
+                  false
+                );
               }
             } else {
               this.$.actionButtonsContainer.$.showRelatedServices.hide();
@@ -712,11 +972,23 @@ enyo.kind({
           } else if (this.line && this.line.get('hasRelatedServices')) {
             this.$.actionButtonsContainer.$.showRelatedServices.show();
             if (this.line.get('obposServiceProposed')) {
-              this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_unreviewed', false);
-              this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_reviewed', true);
+              this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass(
+                'iconServices_unreviewed',
+                false
+              );
+              this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass(
+                'iconServices_reviewed',
+                true
+              );
             } else {
-              this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_unreviewed', true);
-              this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass('iconServices_reviewed', false);
+              this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass(
+                'iconServices_unreviewed',
+                true
+              );
+              this.$.actionButtonsContainer.$.showRelatedServices.addRemoveClass(
+                'iconServices_reviewed',
+                false
+              );
             }
           } else {
             this.$.actionButtonsContainer.$.showRelatedServices.hide();
@@ -726,7 +998,7 @@ enyo.kind({
       this.render();
     }
   },
-  toggleLineSelection: function (inSender, inEvent) {
+  toggleLineSelection: function(inSender, inEvent) {
     if (inEvent.status && this.line) {
       this.selectedLine = this.line;
       this.line = null;
@@ -746,29 +1018,38 @@ enyo.kind({
       }
     }
   },
-  setMultiSelected: function (inSender, inEvent) {
-    if (inEvent.models && inEvent.models.length > 0 && !(inEvent.models[0] instanceof OB.Model.OrderLine)) {
+  setMultiSelected: function(inSender, inEvent) {
+    if (
+      inEvent.models &&
+      inEvent.models.length > 0 &&
+      !(inEvent.models[0] instanceof OB.Model.OrderLine)
+    ) {
       return;
     }
     this.selectedModels = inEvent.models;
     if (this.$.linePropertiesContainer.$.priceLine) {
-      this.$.linePropertiesContainer.$.priceLine.multiSelection = inEvent.models.length > 1;
+      this.$.linePropertiesContainer.$.priceLine.multiSelection =
+        inEvent.models.length > 1;
     }
     if (this.$.linePropertiesContainer.$.qtyLine) {
-      this.$.linePropertiesContainer.$.qtyLine.multiSelection = inEvent.models.length > 1;
+      this.$.linePropertiesContainer.$.qtyLine.multiSelection =
+        inEvent.models.length > 1;
     }
-    this.$.linePropertiesContainer.$.discountedAmountLine.multiSelection = inEvent.models.length > 1;
-    this.selectedListener(this.selectedModels.length > 0 ? this.selectedModels[0] : undefined);
+    this.$.linePropertiesContainer.$.discountedAmountLine.multiSelection =
+      inEvent.models.length > 1;
+    this.selectedListener(
+      this.selectedModels.length > 0 ? this.selectedModels[0] : undefined
+    );
 
     this.render();
   },
-  isLineInSelection: function (line) {
-    var model = _.find(this.selectedModels, function (model) {
+  isLineInSelection: function(line) {
+    var model = _.find(this.selectedModels, function(model) {
       return model.id === line.id;
     });
     return model !== undefined;
   },
-  executeOnShow: function (args) {
+  executeOnShow: function(args) {
     if (args && args.discounts) {
       this.$.defaultEdit.hide();
       this.$.discountsEdit.show();
@@ -780,112 +1061,137 @@ enyo.kind({
     this.$.defaultEdit.show();
     this.$.discountsEdit.hide();
   },
-  components: [{
-    kind: 'OB.OBPOSPointOfSale.UI.Discounts',
-    showing: false,
-    name: 'discountsEdit'
-  }, {
-    name: 'defaultEdit',
-    style: 'background-color: #ffffff; color: black; height: 200px; margin: 5px; padding: 5px',
-    components: [{
-      name: 'msgedit',
-      classes: 'row-fluid',
+  components: [
+    {
+      kind: 'OB.OBPOSPointOfSale.UI.Discounts',
       showing: false,
-      components: [{
-        name: 'actionButtonsContainer',
-        kind: 'Scroller',
-        maxHeight: '50px',
-        thumb: true,
-        horizontal: 'hidden',
-        classes: 'span12',
-        style: 'padding: 0px 0px 1px 0px; line-height: 50%;'
-      }, {
-        kind: 'OB.UI.List',
-        name: 'returnreason',
-        classes: 'combo',
-        style: 'width: 90%; margin-bottom: 2px; margin-left: 2%; height: 30px ',
-        events: {
-          onSetReason: ''
-        },
-        handlers: {
-          onchange: 'changeReason'
-        },
-        changeReason: function (inSender, inEvent) {
-          var returnReason = this.children[this.getSelected()].getValue();
-          _.each(this.owner.selectedModels, function (line) {
-            if (returnReason === '') {
-              line.unset('returnReason');
-            } else {
-              line.set('returnReason', returnReason);
+      name: 'discountsEdit'
+    },
+    {
+      name: 'defaultEdit',
+      style:
+        'background-color: #ffffff; color: black; height: 200px; margin: 5px; padding: 5px',
+      components: [
+        {
+          name: 'msgedit',
+          classes: 'row-fluid',
+          showing: false,
+          components: [
+            {
+              name: 'actionButtonsContainer',
+              kind: 'Scroller',
+              maxHeight: '50px',
+              thumb: true,
+              horizontal: 'hidden',
+              classes: 'span12',
+              style: 'padding: 0px 0px 1px 0px; line-height: 50%;'
+            },
+            {
+              kind: 'OB.UI.List',
+              name: 'returnreason',
+              classes: 'combo',
+              style:
+                'width: 90%; margin-bottom: 2px; margin-left: 2%; height: 30px ',
+              events: {
+                onSetReason: ''
+              },
+              handlers: {
+                onchange: 'changeReason'
+              },
+              changeReason: function(inSender, inEvent) {
+                var returnReason = this.children[this.getSelected()].getValue();
+                _.each(this.owner.selectedModels, function(line) {
+                  if (returnReason === '') {
+                    line.unset('returnReason');
+                  } else {
+                    line.set('returnReason', returnReason);
+                  }
+                });
+              },
+              renderHeader: enyo.kind({
+                kind: 'enyo.Option',
+                initComponents: function() {
+                  this.inherited(arguments);
+                  this.setValue('');
+                  this.setContent(OB.I18N.getLabel('OBPOS_ReturnReasons'));
+                }
+              }),
+              renderLine: enyo.kind({
+                kind: 'enyo.Option',
+                initComponents: function() {
+                  this.inherited(arguments);
+                  this.setValue(this.model.get('id'));
+                  this.setContent(this.model.get('_identifier'));
+                }
+              }),
+              renderEmpty: 'enyo.Control'
+            },
+            {
+              classes: 'span12',
+              components: [
+                {
+                  classes: 'span7',
+                  kind: 'Scroller',
+                  name: 'linePropertiesContainer',
+                  maxHeight: '134px',
+                  thumb: true,
+                  horizontal: 'hidden',
+                  style:
+                    'padding: 1% 0px 5px 2%; line-height: 120%; width: 65%;'
+                },
+                {
+                  classes: 'span3',
+                  sytle: 'text-align: right',
+                  name: 'contextImage',
+                  components: [
+                    {
+                      style: 'padding: 2px 10px 10px 10px;',
+                      components: [
+                        {
+                          tag: 'div',
+                          classes: 'image-wrap image-editline',
+                          contentType: 'image/png',
+                          style: 'width: 128px; height: 128px',
+                          components: [
+                            {
+                              tag: 'img',
+                              name: 'icon',
+                              classes: 'product_image'
+                            }
+                          ]
+                        },
+                        {
+                          name: 'editlineimage',
+                          kind: 'OB.UI.Thumbnail',
+                          classes: 'image-wrap image-editline',
+                          width: '105px',
+                          height: '105px'
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              name: 'msgaction',
+              style: 'padding: 10px;',
+              components: [
+                {
+                  name: 'txtaction',
+                  style: 'float:left;'
+                }
+              ]
             }
-          });
-        },
-        renderHeader: enyo.kind({
-          kind: 'enyo.Option',
-          initComponents: function () {
-            this.inherited(arguments);
-            this.setValue('');
-            this.setContent(OB.I18N.getLabel('OBPOS_ReturnReasons'));
-          }
-        }),
-        renderLine: enyo.kind({
-          kind: 'enyo.Option',
-          initComponents: function () {
-            this.inherited(arguments);
-            this.setValue(this.model.get('id'));
-            this.setContent(this.model.get('_identifier'));
-          }
-        }),
-        renderEmpty: 'enyo.Control'
-      }, {
-        classes: 'span12',
-        components: [{
-          classes: 'span7',
-          kind: 'Scroller',
-          name: 'linePropertiesContainer',
-          maxHeight: '134px',
-          thumb: true,
-          horizontal: 'hidden',
-          style: 'padding: 1% 0px 5px 2%; line-height: 120%; width: 65%;'
-        }, {
-          classes: 'span3',
-          sytle: 'text-align: right',
-          name: 'contextImage',
-          components: [{
-            style: 'padding: 2px 10px 10px 10px;',
-            components: [{
-              tag: 'div',
-              classes: 'image-wrap image-editline',
-              contentType: 'image/png',
-              style: 'width: 128px; height: 128px',
-              components: [{
-                tag: 'img',
-                name: 'icon',
-                classes: 'product_image'
-              }]
-            }, {
-              name: 'editlineimage',
-              kind: 'OB.UI.Thumbnail',
-              classes: 'image-wrap image-editline',
-              width: '105px',
-              height: '105px'
-            }]
-          }]
-        }]
-      }, {
-        name: 'msgaction',
-        style: 'padding: 10px;',
-        components: [{
-          name: 'txtaction',
-          style: 'float:left;'
-        }]
-      }]
-    }]
-  }],
-  selectedListener: function (line) {
+          ]
+        }
+      ]
+    }
+  ],
+  selectedListener: function(line) {
     this.rearrangeEditButtonBar(line);
   },
-  receiptChanged: function () {
+  receiptChanged: function() {
     this.inherited(arguments);
     this.line = null;
     var me = this;
@@ -897,25 +1203,37 @@ enyo.kind({
         me.render();
       }
     }
-    this.receipt.on('clear', function () {
-      resetSelectedModel();
-    }, this);
-    this.receipt.get('lines').on('remove', function () {
-      resetSelectedModel();
-    }, this);
-    this.receipt.get('lines').on('selected', function (lineSelected) {
-      if (lineSelected) {
-        me.selectedListener(lineSelected);
-        me.doReceiptLineSelected({
-          line: lineSelected
-        });
-      }
-    }, this);
+    this.receipt.on(
+      'clear',
+      function() {
+        resetSelectedModel();
+      },
+      this
+    );
+    this.receipt.get('lines').on(
+      'remove',
+      function() {
+        resetSelectedModel();
+      },
+      this
+    );
+    this.receipt.get('lines').on(
+      'selected',
+      function(lineSelected) {
+        if (lineSelected) {
+          me.selectedListener(lineSelected);
+          me.doReceiptLineSelected({
+            line: lineSelected
+          });
+        }
+      },
+      this
+    );
   },
 
-  render: function () {
+  render: function() {
     var me = this,
-        selectedReason;
+      selectedReason;
     this.inherited(arguments);
 
     if (this.line) {
@@ -926,12 +1244,17 @@ enyo.kind({
       } else {
         this.$.contextImage.show();
       }
-      if (OB.MobileApp.model.get('permissions')["OBPOS_retail.productImages"]) {
+      if (OB.MobileApp.model.get('permissions')['OBPOS_retail.productImages']) {
         if (this.selectedModels && this.selectedModels.length > 1) {
-          this.$.icon.setSrc("../org.openbravo.mobile.core/assets/img/box.png");
+          this.$.icon.setSrc('../org.openbravo.mobile.core/assets/img/box.png');
         } else {
-          this.$.icon.setSrc(OB.UTIL.getImageURL(this.line.get('product').get('id')));
-          this.$.icon.setAttribute('onerror', 'if (this.src != "../org.openbravo.mobile.core/assets/img/box.png") this.src = "../org.openbravo.mobile.core/assets/img/box.png"; ');
+          this.$.icon.setSrc(
+            OB.UTIL.getImageURL(this.line.get('product').get('id'))
+          );
+          this.$.icon.setAttribute(
+            'onerror',
+            'if (this.src != "../org.openbravo.mobile.core/assets/img/box.png") this.src = "../org.openbravo.mobile.core/assets/img/box.png"; '
+          );
         }
         this.$.editlineimage.hide();
       } else {
@@ -942,29 +1265,39 @@ enyo.kind({
         }
         this.$.icon.parent.hide();
       }
-      if (this.line.get('qty') < OB.DEC.Zero && !this.receipt.get('iscancelled') && !this.receipt.get('isPaid')) {
+      if (
+        this.line.get('qty') < OB.DEC.Zero &&
+        !this.receipt.get('iscancelled') &&
+        !this.receipt.get('isPaid')
+      ) {
         if (!_.isUndefined(this.line.get('returnReason'))) {
-          selectedReason = _.filter(this.$.returnreason.children, function (reason) {
+          selectedReason = _.filter(this.$.returnreason.children, function(
+            reason
+          ) {
             return reason.getValue() === me.line.get('returnReason');
           })[0];
           if (selectedReason) {
-            this.$.returnreason.setSelected(selectedReason.getNodeProperty('index'));
+            this.$.returnreason.setSelected(
+              selectedReason.getNodeProperty('index')
+            );
           }
         }
         this.$.returnreason.show();
-        this.$.linePropertiesContainer.setMaxHeight("110px");
+        this.$.linePropertiesContainer.setMaxHeight('110px');
       } else {
         this.$.returnreason.hide();
-        this.$.linePropertiesContainer.setMaxHeight("134px");
+        this.$.linePropertiesContainer.setMaxHeight('134px');
       }
     } else {
       this.$.txtaction.setContent(OB.I18N.getLabel('OBPOS_NoLineSelected'));
       this.$.msgedit.hide();
       this.$.msgaction.show();
-      if (OB.MobileApp.model.get('permissions')["OBPOS_retail.productImages"]) {
+      if (OB.MobileApp.model.get('permissions')['OBPOS_retail.productImages']) {
         this.$.icon.applyStyle('background-image', '');
       } else {
-        if (OB.MobileApp.model.get('permissions')["OBPOS_retail.productImages"]) {
+        if (
+          OB.MobileApp.model.get('permissions')['OBPOS_retail.productImages']
+        ) {
           this.$.icon.applyStyle('background-image', '');
         } else {
           this.$.editlineimage.setImg(null);
@@ -972,38 +1305,71 @@ enyo.kind({
       }
     }
     if (this.selectedModels && this.selectedModels.length > 1) {
-      var i, quantity = this.selectedModels[0].get('qty'),
-          price = this.selectedModels[0].get('price'),
-          priceTotal = OB.DEC.mul(price, quantity),
-          hasPrice = true,
-          hasDiscount = true,
-          disc = OB.DEC.mul(OB.DEC.sub(this.selectedModels[0].get('product').get('standardPrice'), this.selectedModels[0].get('price')), this.selectedModels[0].get('qty')),
-          discount = this.selectedModels[0].getTotalAmountOfPromotions(),
-          warehousename = this.selectedModels[0].get('warehouse') ? this.selectedModels[0].get('warehouse').warehousename : '',
-          editlinetotal = this.selectedModels[0].get('priceIncludesTax') ? this.selectedModels[0].getTotalLine() : this.selectedModels[0].get('discountedNet'),
-          orderLine = this.selectedModels[0].clone();
+      var i,
+        quantity = this.selectedModels[0].get('qty'),
+        price = this.selectedModels[0].get('price'),
+        priceTotal = OB.DEC.mul(price, quantity),
+        hasPrice = true,
+        hasDiscount = true,
+        disc = OB.DEC.mul(
+          OB.DEC.sub(
+            this.selectedModels[0].get('product').get('standardPrice'),
+            this.selectedModels[0].get('price')
+          ),
+          this.selectedModels[0].get('qty')
+        ),
+        discount = this.selectedModels[0].getTotalAmountOfPromotions(),
+        warehousename = this.selectedModels[0].get('warehouse')
+          ? this.selectedModels[0].get('warehouse').warehousename
+          : '',
+        editlinetotal = this.selectedModels[0].get('priceIncludesTax')
+          ? this.selectedModels[0].getTotalLine()
+          : this.selectedModels[0].get('discountedNet'),
+        orderLine = this.selectedModels[0].clone();
       for (i = 1; i < this.selectedModels.length; i++) {
         if (price && price !== this.selectedModels[i].get('price')) {
           hasPrice = false;
         }
-        var lineDisc = OB.DEC.mul(OB.DEC.sub(this.selectedModels[i].get('product').get('standardPrice'), this.selectedModels[i].get('price')), this.selectedModels[i].get('qty'));
+        var lineDisc = OB.DEC.mul(
+          OB.DEC.sub(
+            this.selectedModels[i].get('product').get('standardPrice'),
+            this.selectedModels[i].get('price')
+          ),
+          this.selectedModels[i].get('qty')
+        );
         if (lineDisc !== disc) {
           hasDiscount = false;
         }
         if (discount !== this.selectedModels[i].getTotalAmountOfPromotions()) {
           hasDiscount = false;
         }
-        var warehouse = this.selectedModels[i].get('warehouse') ? this.selectedModels[i].get('warehouse').warehousename : '';
+        var warehouse = this.selectedModels[i].get('warehouse')
+          ? this.selectedModels[i].get('warehouse').warehousename
+          : '';
         if (warehousename !== warehouse) {
           warehousename = OB.I18N.getLabel('OBPOS_lblMultiSelectValues');
         }
         if (quantity !== this.selectedModels[i].get('qty')) {
           quantity = 0;
         }
-        priceTotal += this.selectedModels[i].get('price') * this.selectedModels[i].get('qty');
-        editlinetotal = OB.DEC.add(editlinetotal, this.selectedModels[i].get('priceIncludesTax') ? this.selectedModels[i].getTotalLine() : this.selectedModels[i].get('discountedNet'));
+        priceTotal +=
+          this.selectedModels[i].get('price') *
+          this.selectedModels[i].get('qty');
+        editlinetotal = OB.DEC.add(
+          editlinetotal,
+          this.selectedModels[i].get('priceIncludesTax')
+            ? this.selectedModels[i].getTotalLine()
+            : this.selectedModels[i].get('discountedNet')
+        );
       }
-      orderLine.get('product').set('_identifier', OB.I18N.getLabel('OBPOS_lblMultiSelectDescription', [this.selectedModels.length]));
+      orderLine
+        .get('product')
+        .set(
+          '_identifier',
+          OB.I18N.getLabel('OBPOS_lblMultiSelectDescription', [
+            this.selectedModels.length
+          ])
+        );
       orderLine.set('qty', quantity);
       orderLine.set('_gross', priceTotal);
       orderLine.set('hasPrice', hasPrice);
@@ -1013,9 +1379,11 @@ enyo.kind({
       orderLine.set('price', price);
       orderLine.set('hasDiscount', hasDiscount);
       if (hasDiscount) {
-        orderLine.set('promotions', [{
-          amt: discount
-        }]);
+        orderLine.set('promotions', [
+          {
+            amt: discount
+          }
+        ]);
       }
       if (warehousename !== '') {
         orderLine.set('warehouse', {
@@ -1043,36 +1411,57 @@ enyo.kind({
       orderLine.set('editlinetotal', editlinetotal);
       this.$.linePropertiesContainer.$.grossLine.render(orderLine);
     } else {
-      enyo.forEach(this.$.linePropertiesContainer.getComponents(), function (compToRender) {
-        if (compToRender.kindName.indexOf("enyo.") !== 0) {
-          compToRender.render(this.line);
-        }
-      }, this);
+      enyo.forEach(
+        this.$.linePropertiesContainer.getComponents(),
+        function(compToRender) {
+          if (compToRender.kindName.indexOf('enyo.') !== 0) {
+            compToRender.render(this.line);
+          }
+        },
+        this
+      );
     }
   },
-  initComponents: function () {
+  initComponents: function() {
     var sortedPropertiesByPosition;
     this.inherited(arguments);
-    sortedPropertiesByPosition = _.sortBy(this.propertiesToShow, function (comp) {
-      return (comp.position ? comp.position : (comp.position === 0 ? 0 : 999));
+    sortedPropertiesByPosition = _.sortBy(this.propertiesToShow, function(
+      comp
+    ) {
+      return comp.position ? comp.position : comp.position === 0 ? 0 : 999;
     });
-    enyo.forEach(sortedPropertiesByPosition, function (compToCreate) {
-      this.$.linePropertiesContainer.createComponent(compToCreate);
-    }, this);
-    enyo.forEach(this.actionButtons, function (compToCreate) {
-      if (!compToCreate.permission || OB.MobileApp.model.hasPermission(compToCreate.permission, false)) {
-        this.$.actionButtonsContainer.createComponent(compToCreate);
-      }
-    }, this);
+    enyo.forEach(
+      sortedPropertiesByPosition,
+      function(compToCreate) {
+        this.$.linePropertiesContainer.createComponent(compToCreate);
+      },
+      this
+    );
+    enyo.forEach(
+      this.actionButtons,
+      function(compToCreate) {
+        if (
+          !compToCreate.permission ||
+          OB.MobileApp.model.hasPermission(compToCreate.permission, false)
+        ) {
+          this.$.actionButtonsContainer.createComponent(compToCreate);
+        }
+      },
+      this
+    );
   },
-  init: function (model) {
+  init: function(model) {
     this.model = model;
     this.reasons = new OB.Collection.ReturnReasonList();
     this.$.returnreason.setCollection(this.reasons);
 
-    this.model.get('order').on('change:isPaid change:isLayaway change:isQuotation', function (newValue) {
-      this.rearrangeEditButtonBar();
-    }, this);
+    this.model.get('order').on(
+      'change:isPaid change:isLayaway change:isQuotation',
+      function(newValue) {
+        this.rearrangeEditButtonBar();
+      },
+      this
+    );
 
     function errorCallback(tx, error) {
       OB.UTIL.showError(error);
@@ -1088,7 +1477,13 @@ enyo.kind({
         me.reasons.reset();
       }
     }
-    OB.Dal.find(OB.Model.ReturnReason, null, successCallbackReasons, errorCallback, this);
+    OB.Dal.find(
+      OB.Model.ReturnReason,
+      null,
+      successCallbackReasons,
+      errorCallback,
+      this
+    );
   }
 });
 
@@ -1100,20 +1495,25 @@ enyo.kind({
   },
   content: '',
   classes: 'btnlink-orange',
-  tap: function () {
+  tap: function() {
     var line = this.owner.owner.line;
     var product = this.owner.owner.line.get('product');
     var params = {};
     //show always or just when the product has been set to show stock screen?
-    if (product.get('productType') === 'I' && !product.get('ispack') && OB.MobileApp.model.get('connectedToERP')) {
-      params.leftSubWindow = OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
+    if (
+      product.get('productType') === 'I' &&
+      !product.get('ispack') &&
+      OB.MobileApp.model.get('connectedToERP')
+    ) {
+      params.leftSubWindow =
+        OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
       params.product = product;
       params.line = line;
       params.warehouse = this.owner.owner.line.get('warehouse');
       this.doShowLeftSubWindow(params);
     }
   },
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
     this.setContent(OB.I18N.getLabel('OBPOS_checkStock'));
   }
@@ -1125,17 +1525,21 @@ enyo.kind({
   content: '',
   classes: 'btnlink-orange',
   permission: 'OBPOS_EnableSupportForProductAttributes',
-  tap: function () {
+  tap: function() {
     var me = this;
     OB.MobileApp.view.waterfall('onShowPopup', {
       popup: 'modalProductAttribute',
       attributeValue: this.owner.owner.line.get('attributeValue'),
       args: {
-        callback: function (attributeValue, cancelled) {
+        callback: function(attributeValue, cancelled) {
           var line = me.owner.owner.line;
           if (!cancelled) {
-            if (me.owner.owner.receipt.checkSerialAttribute(line.get('product'), attributeValue)) {
-
+            if (
+              me.owner.owner.receipt.checkSerialAttribute(
+                line.get('product'),
+                attributeValue
+              )
+            ) {
               if (_.isEmpty(attributeValue)) {
                 // the attributes for layaways accepts empty values, but for manage later easy to be null instead ""
                 attributeValue = null;
@@ -1149,7 +1553,10 @@ enyo.kind({
               // if not the new value in attributeValue will be ignored
               me.owner.owner.line.unset('attSetInstanceDesc');
             } else {
-              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ProductDefinedAsSerialNo'));
+              OB.UTIL.showConfirmation.display(
+                OB.I18N.getLabel('OBMOBC_Error'),
+                OB.I18N.getLabel('OBPOS_ProductDefinedAsSerialNo')
+              );
             }
           }
         },
@@ -1160,7 +1567,7 @@ enyo.kind({
       }
     });
   },
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
     this.setContent(OB.I18N.getLabel('OBPOS_openAttributes'));
   }

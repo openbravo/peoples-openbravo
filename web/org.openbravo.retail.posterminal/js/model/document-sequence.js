@@ -9,8 +9,7 @@
 
 /*global OB*/
 
-(function () {
-
+(function() {
   var DocumentSequence = OB.Data.ExtensibleModel.extend({
     modelName: 'DocumentSequence',
     tableName: 'c_document_sequence',
@@ -19,28 +18,34 @@
     local: true
   });
 
-  DocumentSequence.addProperties([{
-    name: 'id',
-    column: 'c_document_sequence_id',
-    primaryKey: true,
-    type: 'TEXT'
-  }, {
-    name: 'posSearchKey',
-    column: 'pos_search_key',
-    type: 'TEXT'
-  }, {
-    name: 'documentSequence',
-    column: 'document_sequence',
-    type: 'NUMBER'
-  }, {
-    name: 'quotationDocumentSequence',
-    column: 'quotation_document_sequence',
-    type: 'NUMBER'
-  }, {
-    name: 'returnDocumentSequence',
-    column: 'return_document_sequence',
-    type: 'NUMBER'
-  }]);
+  DocumentSequence.addProperties([
+    {
+      name: 'id',
+      column: 'c_document_sequence_id',
+      primaryKey: true,
+      type: 'TEXT'
+    },
+    {
+      name: 'posSearchKey',
+      column: 'pos_search_key',
+      type: 'TEXT'
+    },
+    {
+      name: 'documentSequence',
+      column: 'document_sequence',
+      type: 'NUMBER'
+    },
+    {
+      name: 'quotationDocumentSequence',
+      column: 'quotation_document_sequence',
+      type: 'NUMBER'
+    },
+    {
+      name: 'returnDocumentSequence',
+      column: 'return_document_sequence',
+      type: 'NUMBER'
+    }
+  ]);
 
   OB.Data.Registry.registerModel(DocumentSequence);
-}());
+})();

@@ -7,8 +7,7 @@
  ************************************************************************************
  */
 
-(function () {
-
+(function() {
   var ServicePriceRule = OB.Data.ExtensibleModel.extend({
     modelName: 'ServicePriceRule',
     tableName: 'm_servicepricerule',
@@ -19,28 +18,34 @@
     remote: 'OBPOS_remote.product'
   });
 
-  ServicePriceRule.addProperties([{
-    name: 'id',
-    column: 'm_servicepricerule_id',
-    primaryKey: true,
-    type: 'TEXT'
-  }, {
-    name: 'active',
-    column: 'active',
-    type: 'BOOL'
-  }, {
-    name: 'afterdiscounts',
-    column: 'afterdiscounts',
-    type: 'BOOL'
-  }, {
-    name: 'percentage',
-    column: 'percentage',
-    type: 'NUMBER'
-  }, {
-    name: 'ruletype',
-    column: 'ruletype',
-    type: 'TEXT'
-  }]);
+  ServicePriceRule.addProperties([
+    {
+      name: 'id',
+      column: 'm_servicepricerule_id',
+      primaryKey: true,
+      type: 'TEXT'
+    },
+    {
+      name: 'active',
+      column: 'active',
+      type: 'BOOL'
+    },
+    {
+      name: 'afterdiscounts',
+      column: 'afterdiscounts',
+      type: 'BOOL'
+    },
+    {
+      name: 'percentage',
+      column: 'percentage',
+      type: 'NUMBER'
+    },
+    {
+      name: 'ruletype',
+      column: 'ruletype',
+      type: 'TEXT'
+    }
+  ]);
 
   OB.Data.Registry.registerModel(ServicePriceRule);
-}());
+})();

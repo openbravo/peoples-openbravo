@@ -13,7 +13,7 @@ enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.Modals.btnModalCreateOrderCancel',
   i18nContent: 'OBMOBC_LblCancel',
-  tap: function () {
+  tap: function() {
     this.doHideThisPopup();
   }
 });
@@ -24,24 +24,29 @@ enyo.kind({
   events: {
     onCreateOrderFromQuotation: ''
   },
-  tap: function () {
+  tap: function() {
     var checked = !this.owner.$.updateprices.checked;
     this.doHideThisPopup();
-    this.parent.parent.parent.parent.theQuotation.createOrderFromQuotation(checked);
+    this.parent.parent.parent.parent.theQuotation.createOrderFromQuotation(
+      checked
+    );
   }
 });
-
 
 enyo.kind({
   name: 'OB.UI.updateprices',
   kind: 'OB.UI.CheckboxButton',
   classes: 'modal-dialog-btn-check',
   checked: false,
-  init: function () {
-    this.checked = !OB.MobileApp.model.get('permissions')['OBPOS_quotation.defaultNotFirm'];
+  init: function() {
+    this.checked = !OB.MobileApp.model.get('permissions')[
+      'OBPOS_quotation.defaultNotFirm'
+    ];
     this.addRemoveClass('active', this.checked);
 
-    this.setDisabled(!OB.MobileApp.model.hasPermission('OBPOS_quotation.editableFirmCheck'));
+    this.setDisabled(
+      !OB.MobileApp.model.hasPermission('OBPOS_quotation.editableFirmCheck')
+    );
   }
 });
 
@@ -53,28 +58,39 @@ enyo.kind({
     i18nContent: 'OBPOS_QuotationUpdatePricesText'
   },
   bodyButtons: {
-    components: [{
-      style: 'height: 40px; width: 120px; float:left;'
-    }, {
-      style: 'height: 40px; width: 50px; background-color: rgb(226, 226, 226); float:left',
-      components: [{
-        kind: 'OB.UI.updateprices',
-        myId: 'updatePricesCheck'
-      }]
-    }, {
-      style: 'text-align: left; padding: 11px; float: left; width: 248px; background: #dddddd;',
-      initComponents: function () {
-        this.setContent(OB.I18N.getLabel('OBPOS_QuotationUpdatePrices'));
+    components: [
+      {
+        style: 'height: 40px; width: 120px; float:left;'
+      },
+      {
+        style:
+          'height: 40px; width: 50px; background-color: rgb(226, 226, 226); float:left',
+        components: [
+          {
+            kind: 'OB.UI.updateprices',
+            myId: 'updatePricesCheck'
+          }
+        ]
+      },
+      {
+        style:
+          'text-align: left; padding: 11px; float: left; width: 248px; background: #dddddd;',
+        initComponents: function() {
+          this.setContent(OB.I18N.getLabel('OBPOS_QuotationUpdatePrices'));
+        }
+      },
+      {
+        style: 'clear: both;'
+      },
+      {
+        kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalCreateOrderAccept'
+      },
+      {
+        kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalCreateOrderCancel'
       }
-    }, {
-      style: 'clear: both;'
-    }, {
-      kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalCreateOrderAccept'
-    }, {
-      kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalCreateOrderCancel'
-    }]
+    ]
   },
-  init: function (model) {
+  init: function(model) {
     this.model = model;
     var receipt = this.model.get('order');
     this.theQuotation = receipt;

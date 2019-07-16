@@ -7,8 +7,7 @@
  ************************************************************************************
  */
 
-(function () {
-
+(function() {
   var Characteristic = OB.Data.ExtensibleModel.extend({
     modelName: 'Characteristic',
     tableName: 'm_characteristic',
@@ -19,16 +18,19 @@
     source: 'org.openbravo.retail.posterminal.master.Characteristic'
   });
 
-  Characteristic.addProperties([{
-    name: 'id',
-    column: 'id',
-    primaryKey: true,
-    type: 'TEXT'
-  }, {
-    name: '_identifier',
-    column: '_identifier',
-    type: 'TEXT'
-  }]);
+  Characteristic.addProperties([
+    {
+      name: 'id',
+      column: 'id',
+      primaryKey: true,
+      type: 'TEXT'
+    },
+    {
+      name: '_identifier',
+      column: '_identifier',
+      type: 'TEXT'
+    }
+  ]);
 
   OB.Data.Registry.registerModel(Characteristic);
-}());
+})();

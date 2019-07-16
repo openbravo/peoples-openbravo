@@ -17,12 +17,14 @@ enyo.kind({
     i18nContent: 'OBPOS_FinishCashMgmtDialog'
   },
   bodyButtons: {
-    components: [{
-      //OK button
-      kind: 'OB.OBPOSCashMgmt.UI.modalFinished_OkButton'
-    }]
+    components: [
+      {
+        //OK button
+        kind: 'OB.OBPOSCashMgmt.UI.modalFinished_OkButton'
+      }
+    ]
   },
-  executeOnHide: function () {
+  executeOnHide: function() {
     OB.POS.navigate('retail.pointofsale');
   }
 });
@@ -31,11 +33,10 @@ enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSCashMgmt.UI.modalFinished_OkButton',
   i18nContent: 'OBMOBC_LblOk',
-  tap: function () {
+  tap: function() {
     this.doHideThisPopup();
   }
 });
-
 
 enyo.kind({
   kind: 'OB.UI.ModalAction',
@@ -45,12 +46,14 @@ enyo.kind({
     i18nContent: 'OBPOS_CashMgmtWrongly'
   },
   bodyButtons: {
-    components: [{
-      //OK button
-      kind: 'OB.OBPOSCashMgmt.UI.modalFinishedWrongly_OkButton'
-    }]
+    components: [
+      {
+        //OK button
+        kind: 'OB.OBPOSCashMgmt.UI.modalFinishedWrongly_OkButton'
+      }
+    ]
   },
-  executeOnHide: function () {
+  executeOnHide: function() {
     OB.POS.navigate('retail.pointofsale');
   }
 });
@@ -59,7 +62,7 @@ enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSCashMgmt.UI.modalFinishedWrongly_OkButton',
   i18nContent: 'OBMOBC_LblOk',
-  tap: function () {
+  tap: function() {
     this.doHideThisPopup();
   }
 });

@@ -9,8 +9,7 @@
 
 /*global OB, Backbone, _ */
 
-(function () {
-
+(function() {
   OB.Model = window.OB.Model || {};
   OB.Collection = window.OB.Collection || {};
 
@@ -26,13 +25,13 @@
   //DayCash.PaymentMethodCol Model.
   OB.Collection.PaymentMethodList = Backbone.Collection.extend({
     model: OB.Model.PaymentMethod,
-    serializeToJSON: function () {
+    serializeToJSON: function() {
       var jsonpayment = this.toJSON();
 
       // remove not needed members
       delete jsonpayment.undo;
 
-      _.forEach(jsonpayment, function (item) {
+      _.forEach(jsonpayment, function(item) {
         item.difference = item.counted - item.expected;
         item.paymentTypeId = item.id;
 
@@ -54,8 +53,8 @@
       allowedStep: 0
     },
 
-    initialize: function () {
+    initialize: function() {
       this.set('paymentmethods', new OB.Model.PaymentMethodList());
     }
   });
-}());
+})();

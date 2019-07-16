@@ -18,7 +18,7 @@ enyo.kind({
     onRearrangeEditButtonBar: ''
   },
   i18nLabel: 'OBPOS_LblReturn',
-  tap: function () {
+  tap: function() {
     if (this.disabled) {
       return true;
     }
@@ -33,10 +33,13 @@ enyo.kind({
     }
     this.doRearrangeEditButtonBar();
   },
-  displayLogic: function () {
-    var negativeLines = _.filter(this.model.get('order').get('lines').models, function (line) {
-      return line.get('qty') < 0;
-    }).length;
+  displayLogic: function() {
+    var negativeLines = _.filter(
+      this.model.get('order').get('lines').models,
+      function(line) {
+        return line.get('qty') < 0;
+      }
+    ).length;
     if (!this.model.get('order').get('isQuotation')) {
       this.show();
     } else {
@@ -47,34 +50,47 @@ enyo.kind({
       this.hide();
       return;
     }
-    if (this.model.get('order').get('isEditable') === false || this.model.get('order').get('orderType') === 2) {
+    if (
+      this.model.get('order').get('isEditable') === false ||
+      this.model.get('order').get('orderType') === 2
+    ) {
       this.hide();
       return;
     }
-    if (!_.find(OB.MobileApp.model.get('payments'), function (payment) {
-      return payment.paymentMethod.refundable;
-    })) {
+    if (
+      !_.find(OB.MobileApp.model.get('payments'), function(payment) {
+        return payment.paymentMethod.refundable;
+      })
+    ) {
       this.hide();
       return;
     }
     this.adjustVisibilityBasedOnPermissions();
   },
-  init: function (model) {
+  init: function(model) {
     this.model = model;
     var receipt = model.get('order');
-    receipt.on('change:isEditable change:isQuotation change:gross change:orderType change:replacedorder', function (changedModel) {
-      this.displayLogic();
-    }, this);
-    this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
-      if (changedModel.isOrder()) {
+    receipt.on(
+      'change:isEditable change:isQuotation change:gross change:orderType change:replacedorder',
+      function(changedModel) {
         this.displayLogic();
-        return;
-      }
-      if (changedModel.isMultiOrder()) {
-        this.setShowing(false);
-        return;
-      }
-    }, this);
+      },
+      this
+    );
+    this.model.get('leftColumnViewManager').on(
+      'change:currentView',
+      function(changedModel) {
+        if (changedModel.isOrder()) {
+          this.displayLogic();
+          return;
+        }
+        if (changedModel.isMultiOrder()) {
+          this.setShowing(false);
+          return;
+        }
+      },
+      this
+    );
   }
 });
 
@@ -87,76 +103,105 @@ enyo.kind({
     onTabChange: ''
   },
   i18nLabel: 'OBPOS_VoidLayaway',
-  tap: function () {
+  tap: function() {
     var me = this;
     if (this.disabled) {
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
-    this.model.get('order').checkNotProcessedPayments(function () {
-      OB.UTIL.HookManager.executeHooks('OBPOS_PreVoidLayaway', {
-        context: me
-      }, function (args) {
-        if (args && args.cancelOperation) {
-          return;
-        }
-        var order = me.model.get('order');
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_VoidLayawayLbl'), OB.I18N.getLabel('OBPOS_VoidLayawayConfirmation'), [{
-          label: OB.I18N.getLabel('OBMOBC_LblOk'),
-          isConfirmButton: true,
-          action: function () {
-            order.set('voidLayaway', true);
-            order.trigger('voidLayaway');
+    this.model.get('order').checkNotProcessedPayments(function() {
+      OB.UTIL.HookManager.executeHooks(
+        'OBPOS_PreVoidLayaway',
+        {
+          context: me
+        },
+        function(args) {
+          if (args && args.cancelOperation) {
+            return;
           }
-        }, {
-          label: OB.I18N.getLabel('OBMOBC_LblCancel')
-        }]);
-      });
+          var order = me.model.get('order');
+          OB.UTIL.showConfirmation.display(
+            OB.I18N.getLabel('OBPOS_VoidLayawayLbl'),
+            OB.I18N.getLabel('OBPOS_VoidLayawayConfirmation'),
+            [
+              {
+                label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                isConfirmButton: true,
+                action: function() {
+                  order.set('voidLayaway', true);
+                  order.trigger('voidLayaway');
+                }
+              },
+              {
+                label: OB.I18N.getLabel('OBMOBC_LblCancel')
+              }
+            ]
+          );
+        }
+      );
     });
   },
-  displayLogic: function () {
+  displayLogic: function() {
     var me = this,
-        i;
+      i;
     this.hideVoidLayaway = [];
 
     this.show();
     this.adjustVisibilityBasedOnPermissions();
-    if (this.model.get('order').get('isLayaway') && this.model.get('order').get('payments').length === 0) {
-      OB.UTIL.HookManager.executeHooks('OBPOS_PreDisplayVoidLayaway', {
-        context: this
-      }, function (args) {
-        for (i = 0; i < me.hideVoidLayaway.length; i++) {
-          if (me.hideVoidLayaway[i]) {
-            me.hide();
-            break;
+    if (
+      this.model.get('order').get('isLayaway') &&
+      this.model.get('order').get('payments').length === 0
+    ) {
+      OB.UTIL.HookManager.executeHooks(
+        'OBPOS_PreDisplayVoidLayaway',
+        {
+          context: this
+        },
+        function(args) {
+          for (i = 0; i < me.hideVoidLayaway.length; i++) {
+            if (me.hideVoidLayaway[i]) {
+              me.hide();
+              break;
+            }
           }
         }
-      });
-      if (this.model.get('orderList').current && OB.UTIL.isCrossStoreReceipt(this.model.get('orderList').current)) {
+      );
+      if (
+        this.model.get('orderList').current &&
+        OB.UTIL.isCrossStoreReceipt(this.model.get('orderList').current)
+      ) {
         this.hide();
       }
     } else {
       this.hide();
     }
   },
-  init: function (model) {
+  init: function(model) {
     this.model = model;
     var receipt = model.get('order');
     this.setShowing(false);
-    receipt.on('change:isLayaway change:receiptLines change:orderType', function (model) {
-      this.displayLogic();
-    }, this);
-
-    this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
-      if (changedModel.isOrder()) {
+    receipt.on(
+      'change:isLayaway change:receiptLines change:orderType',
+      function(model) {
         this.displayLogic();
-        return;
-      }
-      if (changedModel.isMultiOrder()) {
-        this.setShowing(false);
-        return;
-      }
-    }, this);
+      },
+      this
+    );
+
+    this.model.get('leftColumnViewManager').on(
+      'change:currentView',
+      function(changedModel) {
+        if (changedModel.isOrder()) {
+          this.displayLogic();
+          return;
+        }
+        if (changedModel.isMultiOrder()) {
+          this.setShowing(false);
+          return;
+        }
+      },
+      this
+    );
   }
 });
 
@@ -169,7 +214,7 @@ enyo.kind({
     onRearrangeEditButtonBar: ''
   },
   i18nLabel: 'OBPOS_LblReceiptLayaway',
-  tap: function () {
+  tap: function() {
     if (this.disabled) {
       return true;
     }
@@ -185,10 +230,14 @@ enyo.kind({
       errorsConvertingLayawayToReceipt.push('OBPOS_AllAttributesNeedValue');
     }
 
-    enyo.forEach(this.model.get('order').get('payments').models, function (curPayment) {
-      errorsConvertingLayawayToReceipt.push('OBPOS_LayawayHasPayment');
-      return;
-    }, this);
+    enyo.forEach(
+      this.model.get('order').get('payments').models,
+      function(curPayment) {
+        errorsConvertingLayawayToReceipt.push('OBPOS_LayawayHasPayment');
+        return;
+      },
+      this
+    );
 
     if (errorsConvertingLayawayToReceipt.length === 0) {
       this.doShowDivText({
@@ -196,13 +245,13 @@ enyo.kind({
         orderType: 0
       });
     } else {
-      errorsConvertingLayawayToReceipt.forEach(function (error) {
+      errorsConvertingLayawayToReceipt.forEach(function(error) {
         OB.UTIL.showWarning(OB.I18N.getLabel(error));
       });
     }
     this.doRearrangeEditButtonBar();
   },
-  displayLogic: function () {
+  displayLogic: function() {
     if (this.model.get('order').get('orderType') === 2) {
       this.show();
       this.adjustVisibilityBasedOnPermissions();
@@ -210,27 +259,39 @@ enyo.kind({
       this.hide();
     }
   },
-  init: function (model) {
+  init: function(model) {
     this.model = model;
     var receipt = model.get('order');
     this.setShowing(false);
-    receipt.on('change:orderType', function (model) {
-      this.displayLogic();
-    }, this);
-    receipt.on('change:isLayaway', function (model) {
-      this.displayLogic();
-    }, this);
-
-    this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
-      if (changedModel.isOrder()) {
+    receipt.on(
+      'change:orderType',
+      function(model) {
         this.displayLogic();
-        return;
-      }
-      if (changedModel.isMultiOrder()) {
-        this.setShowing(false);
-        return;
-      }
-    }, this);
+      },
+      this
+    );
+    receipt.on(
+      'change:isLayaway',
+      function(model) {
+        this.displayLogic();
+      },
+      this
+    );
+
+    this.model.get('leftColumnViewManager').on(
+      'change:currentView',
+      function(changedModel) {
+        if (changedModel.isOrder()) {
+          this.displayLogic();
+          return;
+        }
+        if (changedModel.isMultiOrder()) {
+          this.setShowing(false);
+          return;
+        }
+      },
+      this
+    );
   }
 });
 
@@ -243,37 +304,57 @@ enyo.kind({
     onTabChange: ''
   },
   i18nLabel: 'OBPOS_CancelLayaway',
-  tap: function () {
+  tap: function() {
     if (this.disabled) {
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
     if (this.model.get('order').get('iscancelled')) {
-      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_AlreadyCancelledHeader'), OB.I18N.getLabel('OBPOS_AlreadyCancelled'));
+      OB.UTIL.showConfirmation.display(
+        OB.I18N.getLabel('OBPOS_AlreadyCancelledHeader'),
+        OB.I18N.getLabel('OBPOS_AlreadyCancelled')
+      );
       return;
     }
     if (this.model.get('order').get('isFullyDelivered')) {
-      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_FullyDeliveredHeader'), OB.I18N.getLabel('OBPOS_FullyDelivered'));
+      OB.UTIL.showConfirmation.display(
+        OB.I18N.getLabel('OBPOS_FullyDeliveredHeader'),
+        OB.I18N.getLabel('OBPOS_FullyDelivered')
+      );
       return;
     }
-    var negativeLines = _.find(this.model.get('order').get('lines').models, function (line) {
-      return line.get('qty') < 0;
-    });
+    var negativeLines = _.find(
+      this.model.get('order').get('lines').models,
+      function(line) {
+        return line.get('qty') < 0;
+      }
+    );
     if (negativeLines) {
-      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_cannotCancelLayawayHeader'), OB.I18N.getLabel('OBPOS_cancelLayawayWithNegativeLines'));
+      OB.UTIL.showConfirmation.display(
+        OB.I18N.getLabel('OBPOS_cannotCancelLayawayHeader'),
+        OB.I18N.getLabel('OBPOS_cancelLayawayWithNegativeLines')
+      );
       return;
     }
 
     this.model.get('order').cancelLayaway(this);
   },
-  displayLogic: function () {
+  displayLogic: function() {
     var me = this,
-        isPaidReceipt, isReturn, receiptLines, receipt;
+      isPaidReceipt,
+      isReturn,
+      receiptLines,
+      receipt;
 
     receipt = this.model.get('order');
 
     isPaidReceipt = receipt.get('isPaid') && !receipt.get('isQuotation');
-    isReturn = receipt.get('orderType') === 1 || receipt.get('documentType') === OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns || receipt.get('documentType') === 'VBS RFC Order';
+    isReturn =
+      receipt.get('orderType') === 1 ||
+      receipt.get('documentType') ===
+        OB.MobileApp.model.get('terminal').terminalType
+          .documentTypeForReturns ||
+      receipt.get('documentType') === 'VBS RFC Order';
     receiptLines = receipt.get('receiptLines');
 
     // Function to know the delivered status of the current order
@@ -281,73 +362,109 @@ enyo.kind({
     function delivered() {
       var shipqty = OB.DEC.Zero;
       var qty = OB.DEC.Zero;
-      _.each(receipt.get('lines').models, function (line) {
+      _.each(receipt.get('lines').models, function(line) {
         qty += line.get('qty');
       });
       if (receiptLines) {
-        _.each(receiptLines, function (line) {
-          _.each(line.shipmentlines, function (shipline) {
+        _.each(receiptLines, function(line) {
+          _.each(line.shipmentlines, function(shipline) {
             shipqty += shipline.qty;
           });
         });
       } else {
         return 'udf';
       }
-      if (shipqty === qty) { //totally delivered
+      if (shipqty === qty) {
+        //totally delivered
         return 'TD';
       }
-      if (shipqty === 0) { //no deliveries
+      if (shipqty === 0) {
+        //no deliveries
         return 'ND';
       }
       return 'DN';
     }
 
     function hasPayments() {
-      if (me.model.get('orderList').current && me.model.get('orderList').current.get('payments').length && _.find(me.model.get('orderList').current.get('payments').models, function (payment) {
-        return payment.get('isPrePayment');
-      })) {
+      if (
+        me.model.get('orderList').current &&
+        me.model.get('orderList').current.get('payments').length &&
+        _.find(
+          me.model.get('orderList').current.get('payments').models,
+          function(payment) {
+            return payment.get('isPrePayment');
+          }
+        )
+      ) {
         return true;
       }
       return false;
     }
 
-    if (!isReturn && delivered() !== 'TD' && (isPaidReceipt || (receipt.get('isLayaway') && (!OB.MobileApp.model.hasPermission('OBPOS_payments.cancelLayaway', true) || hasPayments())))) {
+    if (
+      !isReturn &&
+      delivered() !== 'TD' &&
+      (isPaidReceipt ||
+        (receipt.get('isLayaway') &&
+          (!OB.MobileApp.model.hasPermission(
+            'OBPOS_payments.cancelLayaway',
+            true
+          ) ||
+            hasPayments())))
+    ) {
       this.show();
       this.adjustVisibilityBasedOnPermissions();
     } else {
       this.hide();
     }
 
-    if (this.model.get('orderList').current && OB.UTIL.isCrossStoreReceipt(this.model.get('orderList').current)) {
+    if (
+      this.model.get('orderList').current &&
+      OB.UTIL.isCrossStoreReceipt(this.model.get('orderList').current)
+    ) {
       this.hide();
     }
   },
-  updateLabel: function (model) {
-    if (model.get('isPaid') && this.$.lbl.getContent() === OB.I18N.getLabel('OBPOS_CancelLayaway')) {
+  updateLabel: function(model) {
+    if (
+      model.get('isPaid') &&
+      this.$.lbl.getContent() === OB.I18N.getLabel('OBPOS_CancelLayaway')
+    ) {
       this.$.lbl.setContent(OB.I18N.getLabel('OBPOS_CancelOrder'));
-    } else if (model.get('isLayaway') && this.$.lbl.getContent() === OB.I18N.getLabel('OBPOS_CancelOrder')) {
+    } else if (
+      model.get('isLayaway') &&
+      this.$.lbl.getContent() === OB.I18N.getLabel('OBPOS_CancelOrder')
+    ) {
       this.$.lbl.setContent(OB.I18N.getLabel('OBPOS_CancelLayaway'));
     }
   },
-  init: function (model) {
+  init: function(model) {
     this.model = model;
     var receipt = model.get('order');
 
-    receipt.on('change:isLayaway change:isPaid change:orderType change:documentType', function (model) {
-      this.updateLabel(model);
-      this.displayLogic();
-    }, this);
+    receipt.on(
+      'change:isLayaway change:isPaid change:orderType change:documentType',
+      function(model) {
+        this.updateLabel(model);
+        this.displayLogic();
+      },
+      this
+    );
 
-    this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
-      if (changedModel.isOrder()) {
-        this.displayLogic(changedModel);
-        return;
-      }
-      if (changedModel.isMultiOrder()) {
-        this.hide();
-        return;
-      }
-    }, this);
+    this.model.get('leftColumnViewManager').on(
+      'change:currentView',
+      function(changedModel) {
+        if (changedModel.isOrder()) {
+          this.displayLogic(changedModel);
+          return;
+        }
+        if (changedModel.isMultiOrder()) {
+          this.hide();
+          return;
+        }
+      },
+      this
+    );
 
     this.displayLogic();
   }
@@ -362,8 +479,10 @@ enyo.kind({
     onRearrangeEditButtonBar: ''
   },
   i18nLabel: 'OBPOS_LblLayawayReceipt',
-  tap: function () {
-    var negativeLines, deliveredLines, me = this;
+  tap: function() {
+    var negativeLines,
+      deliveredLines,
+      me = this;
     if (this.disabled) {
       return true;
     }
@@ -372,38 +491,60 @@ enyo.kind({
       OB.UTIL.showError(OB.I18N.getLabel('OBPOS_layawaysOrderWithNotBP'));
       return true;
     }
-    if (!OB.MobileApp.model.hasPermission('OBPOS_AllowLayawaysNegativeLines', true)) {
-      negativeLines = _.find(this.model.get('order').get('lines').models, function (line) {
-        return line.get('qty') < 0;
-      });
+    if (
+      !OB.MobileApp.model.hasPermission(
+        'OBPOS_AllowLayawaysNegativeLines',
+        true
+      )
+    ) {
+      negativeLines = _.find(
+        this.model.get('order').get('lines').models,
+        function(line) {
+          return line.get('qty') < 0;
+        }
+      );
       if (negativeLines) {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_layawaysOrdersWithReturnsNotAllowed'));
+        OB.UTIL.showWarning(
+          OB.I18N.getLabel('OBPOS_layawaysOrdersWithReturnsNotAllowed')
+        );
         return true;
       }
     }
     if (this.model.get('order').get('doCancelAndReplace')) {
-      deliveredLines = _.find(this.model.get('order').get('lines').models, function (line) {
-        return line.get('deliveredQuantity') && OB.DEC.compare(line.get('deliveredQuantity')) === 1;
-      });
+      deliveredLines = _.find(
+        this.model.get('order').get('lines').models,
+        function(line) {
+          return (
+            line.get('deliveredQuantity') &&
+            OB.DEC.compare(line.get('deliveredQuantity')) === 1
+          );
+        }
+      );
       if (deliveredLines) {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_LayawaysOrdersWithDeliveries'));
+        OB.UTIL.showWarning(
+          OB.I18N.getLabel('OBPOS_LayawaysOrdersWithDeliveries')
+        );
         return true;
       }
     }
-    OB.UTIL.HookManager.executeHooks('OBPOS_LayawayReceipt', {
-      context: me
-    }, function (args) {
-      if (args && args.cancelOperation && args.cancelOperation === true) {
-        return;
+    OB.UTIL.HookManager.executeHooks(
+      'OBPOS_LayawayReceipt',
+      {
+        context: me
+      },
+      function(args) {
+        if (args && args.cancelOperation && args.cancelOperation === true) {
+          return;
+        }
+        me.doShowDivText({
+          permission: me.permission,
+          orderType: 2
+        });
+        me.doRearrangeEditButtonBar();
       }
-      me.doShowDivText({
-        permission: me.permission,
-        orderType: 2
-      });
-      me.doRearrangeEditButtonBar();
-    });
+    );
   },
-  updateVisibility: function (isVisible) {
+  updateVisibility: function(isVisible) {
     if (!OB.MobileApp.model.hasPermission(this.permission)) {
       this.hide();
       return;
@@ -414,30 +555,50 @@ enyo.kind({
     }
     this.show();
   },
-  init: function (model) {
+  init: function(model) {
     this.model = model;
     var receipt = model.get('order'),
-        me = this;
-    receipt.on('change:isEditable change:isQuotation change:orderType', function (model) {
-      if (!model.get('isEditable') || model.get('isQuotation') || (model.get('orderType') === 1 && !OB.MobileApp.model.hasPermission('OBPOS_AllowLayawaysNegativeLines', true)) || model.get('orderType') === 2) {
-        me.updateVisibility(false);
-      } else {
-        me.updateVisibility(true);
-      }
-    }, this);
-    this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
-      if (changedModel.isOrder()) {
-        if (model.get('order').get('isEditable') && !this.model.get('order').get('isQuotation')) {
-          me.updateVisibility(true);
+      me = this;
+    receipt.on(
+      'change:isEditable change:isQuotation change:orderType',
+      function(model) {
+        if (
+          !model.get('isEditable') ||
+          model.get('isQuotation') ||
+          (model.get('orderType') === 1 &&
+            !OB.MobileApp.model.hasPermission(
+              'OBPOS_AllowLayawaysNegativeLines',
+              true
+            )) ||
+          model.get('orderType') === 2
+        ) {
+          me.updateVisibility(false);
         } else {
+          me.updateVisibility(true);
+        }
+      },
+      this
+    );
+    this.model.get('leftColumnViewManager').on(
+      'change:currentView',
+      function(changedModel) {
+        if (changedModel.isOrder()) {
+          if (
+            model.get('order').get('isEditable') &&
+            !this.model.get('order').get('isQuotation')
+          ) {
+            me.updateVisibility(true);
+          } else {
+            me.updateVisibility(false);
+          }
+          return;
+        }
+        if (changedModel.isMultiOrder()) {
           me.updateVisibility(false);
         }
-        return;
-      }
-      if (changedModel.isMultiOrder()) {
-        me.updateVisibility(false);
-      }
-    }, this);
+      },
+      this
+    );
   }
 });
 
@@ -449,38 +610,46 @@ enyo.kind({
     onShowReceiptProperties: ''
   },
   i18nLabel: 'OBPOS_LblProperties',
-  tap: function () {
+  tap: function() {
     if (this.disabled) {
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
     this.doShowReceiptProperties();
   },
-  init: function (model) {
+  init: function(model) {
     this.model = model;
-    this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
-      if (changedModel.isOrder()) {
-        if (model.get('order').get('isEditable')) {
-          this.setDisabled(false);
-          this.adjustVisibilityBasedOnPermissions();
-        } else {
-          this.setDisabled(true);
-        }
-        return;
-      }
-      if (changedModel.isMultiOrder()) {
-        this.setDisabled(true);
-      }
-    }, this);
-    this.model.get('order').on('change:isEditable', function (newValue) {
-      if (newValue) {
-        if (newValue.get('isEditable') === false) {
-          this.setShowing(false);
+    this.model.get('leftColumnViewManager').on(
+      'change:currentView',
+      function(changedModel) {
+        if (changedModel.isOrder()) {
+          if (model.get('order').get('isEditable')) {
+            this.setDisabled(false);
+            this.adjustVisibilityBasedOnPermissions();
+          } else {
+            this.setDisabled(true);
+          }
           return;
         }
-      }
-      this.setShowing(true);
-    }, this);
+        if (changedModel.isMultiOrder()) {
+          this.setDisabled(true);
+        }
+      },
+      this
+    );
+    this.model.get('order').on(
+      'change:isEditable',
+      function(newValue) {
+        if (newValue) {
+          if (newValue.get('isEditable') === false) {
+            this.setShowing(false);
+            return;
+          }
+        }
+        this.setShowing(true);
+      },
+      this
+    );
   }
 });
 
@@ -493,17 +662,23 @@ enyo.kind({
     onCancelReceiptToInvoice: ''
   },
   i18nLabel: 'OBPOS_LblInvoice',
-  tap: function () {
+  tap: function() {
     if (this.disabled) {
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
     this.taxIdValidation(this.model.get('order'));
   },
-  taxIdValidation: function (model) {
+  taxIdValidation: function(model) {
     if (!OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice')) {
       this.doCancelReceiptToInvoice();
-    } else if (OB.MobileApp.model.hasPermission('OBPOS_retail.restricttaxidinvoice', true) && !model.get('bp').get('taxID')) {
+    } else if (
+      OB.MobileApp.model.hasPermission(
+        'OBPOS_retail.restricttaxidinvoice',
+        true
+      ) &&
+      !model.get('bp').get('taxID')
+    ) {
       if (OB.MobileApp.model.get('terminal').terminalType.generateInvoice) {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
       } else {
@@ -513,9 +688,8 @@ enyo.kind({
     } else {
       this.doReceiptToInvoice();
     }
-
   },
-  updateVisibility: function (isVisible) {
+  updateVisibility: function(isVisible) {
     if (!OB.MobileApp.model.hasPermission(this.permission)) {
       this.hide();
       return;
@@ -526,23 +700,35 @@ enyo.kind({
     }
     this.show();
   },
-  init: function (model) {
+  init: function(model) {
     this.model = model;
     var receipt = model.get('order'),
-        me = this;
-    receipt.on('change:generateInvoice change:bp change:isQuotation', function (model) {
-      if (!model.get('isQuotation') && !model.get('generateInvoice') && model.get('bp').get('invoiceTerms') === 'I') {
-        this.updateVisibility(true);
-      } else {
-        this.updateVisibility(false);
-      }
-    }, this);
-    receipt.on('change:bp', function (model) {
-      // if the receip is cloning, then the called to taxIdValidation is not done because this function does a save
-      if (model.get('generateInvoice') && !model.get('cloningReceipt')) {
-        me.taxIdValidation(model);
-      }
-    }, this);
+      me = this;
+    receipt.on(
+      'change:generateInvoice change:bp change:isQuotation',
+      function(model) {
+        if (
+          !model.get('isQuotation') &&
+          !model.get('generateInvoice') &&
+          model.get('bp').get('invoiceTerms') === 'I'
+        ) {
+          this.updateVisibility(true);
+        } else {
+          this.updateVisibility(false);
+        }
+      },
+      this
+    );
+    receipt.on(
+      'change:bp',
+      function(model) {
+        // if the receip is cloning, then the called to taxIdValidation is not done because this function does a save
+        if (model.get('generateInvoice') && !model.get('cloningReceipt')) {
+          me.taxIdValidation(model);
+        }
+      },
+      this
+    );
   }
 });
 
@@ -551,29 +737,35 @@ enyo.kind({
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_retail.opendrawerfrommenu',
   i18nLabel: 'OBPOS_LblOpenDrawer',
-  updateVisibility: function () {
+  updateVisibility: function() {
     if (!OB.MobileApp.model.get('hasPaymentsForCashup')) {
       this.hide();
     }
   },
-  init: function (model) {
+  init: function(model) {
     this.model = model;
     this.updateVisibility();
   },
-  tap: function () {
+  tap: function() {
     var me = this;
     if (this.disabled) {
       return true;
     }
     this.inherited(arguments);
     OB.UTIL.Approval.requestApproval(
-    me.model, 'OBPOS_approval.opendrawer.menu', function (approved, supervisor, approvalType) {
-      if (approved) {
-        OB.POS.hwserver.openDrawer({
-          openFirst: true
-        }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
+      me.model,
+      'OBPOS_approval.opendrawer.menu',
+      function(approved, supervisor, approvalType) {
+        if (approved) {
+          OB.POS.hwserver.openDrawer(
+            {
+              openFirst: true
+            },
+            OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales
+          );
+        }
       }
-    });
+    );
   }
 });
 
@@ -585,7 +777,7 @@ enyo.kind({
     onShowPopup: ''
   },
   i18nLabel: 'OBPOS_LblCustomers',
-  tap: function () {
+  tap: function() {
     if (this.disabled) {
       return true;
     }
@@ -597,16 +789,24 @@ enyo.kind({
       }
     });
   },
-  init: function (model) {
+  init: function(model) {
     this.model = model;
-    model.get('leftColumnViewManager').on('order', function () {
-      this.setDisabled(false);
-      this.adjustVisibilityBasedOnPermissions();
-    }, this);
+    model.get('leftColumnViewManager').on(
+      'order',
+      function() {
+        this.setDisabled(false);
+        this.adjustVisibilityBasedOnPermissions();
+      },
+      this
+    );
 
-    model.get('leftColumnViewManager').on('multiorder', function () {
-      this.setDisabled(true);
-    }, this);
+    model.get('leftColumnViewManager').on(
+      'multiorder',
+      function() {
+        this.setDisabled(true);
+      },
+      this
+    );
   }
 });
 
@@ -619,7 +819,7 @@ enyo.kind({
     onShowPopup: ''
   },
   i18nLabel: 'OBPOS_LblPrintReceipt',
-  tap: function () {
+  tap: function() {
     if (this.disabled) {
       return true;
     }
@@ -634,7 +834,7 @@ enyo.kind({
       }
     }
   },
-  init: function (model) {
+  init: function(model) {
     this.receipt = model.get('order');
     this.adjustVisibilityBasedOnPermissions();
   }
@@ -648,12 +848,14 @@ enyo.kind({
     onCreateQuotation: ''
   },
   i18nLabel: 'OBPOS_CreateQuotation',
-  tap: function () {
+  tap: function() {
     if (this.disabled) {
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
-    if (OB.MobileApp.model.get('terminal').terminalType.documentTypeForQuotations) {
+    if (
+      OB.MobileApp.model.get('terminal').terminalType.documentTypeForQuotations
+    ) {
       if (OB.MobileApp.model.hasPermission(this.permission)) {
         if (this.model.get('leftColumnViewManager').isMultiOrder()) {
           if (this.model.get('multiorders')) {
@@ -667,18 +869,22 @@ enyo.kind({
       OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationNoDocType'));
     }
   },
-  updateVisibility: function (model) {
+  updateVisibility: function(model) {
     if (!model.get('isQuotation')) {
       this.show();
       this.adjustVisibilityBasedOnPermissions();
     }
   },
-  init: function (model) {
+  init: function(model) {
     var receipt = model.get('order');
     this.model = model;
-    receipt.on('change:isQuotation', function (model) {
-      this.updateVisibility(model);
-    }, this);
+    receipt.on(
+      'change:isQuotation',
+      function(model) {
+        this.updateVisibility(model);
+      },
+      this
+    );
   }
 });
 
@@ -691,7 +897,7 @@ enyo.kind({
   },
   //TODO
   i18nLabel: 'OBPOS_LblReceiptDiscounts',
-  tap: function () {
+  tap: function() {
     if (!this.disabled) {
       this.inherited(arguments); // Manual dropdown menu closure
       this.doDiscountsMode({
@@ -704,7 +910,7 @@ enyo.kind({
       });
     }
   },
-  updateVisibility: function () {
+  updateVisibility: function() {
     var me = this;
     if (this.model.get('leftColumnViewManager').isMultiOrder()) {
       me.setDisabled(true);
@@ -716,13 +922,13 @@ enyo.kind({
       return;
     }
 
-    OB.UTIL.isDisableDiscount(this.receipt, function (disable) {
+    OB.UTIL.isDisableDiscount(this.receipt, function(disable) {
       me.setDisabled(disable);
     });
 
     me.adjustVisibilityBasedOnPermissions();
   },
-  init: function (model) {
+  init: function(model) {
     var me = this;
     this.model = model;
     this.receipt = model.get('order');
@@ -733,21 +939,37 @@ enyo.kind({
       return;
     }
 
-    model.get('leftColumnViewManager').on('order', function () {
-      this.updateVisibility();
-    }, this);
+    model.get('leftColumnViewManager').on(
+      'order',
+      function() {
+        this.updateVisibility();
+      },
+      this
+    );
 
-    model.get('leftColumnViewManager').on('multiorder', function () {
-      me.setDisabled(true);
-    }, this);
+    model.get('leftColumnViewManager').on(
+      'multiorder',
+      function() {
+        me.setDisabled(true);
+      },
+      this
+    );
 
-    this.receipt.on('change', function () {
-      this.updateVisibility();
-    }, this);
+    this.receipt.on(
+      'change',
+      function() {
+        this.updateVisibility();
+      },
+      this
+    );
 
-    this.receipt.get('lines').on('all', function () {
-      this.updateVisibility();
-    }, this);
+    this.receipt.get('lines').on(
+      'all',
+      function() {
+        this.updateVisibility();
+      },
+      this
+    );
   }
 });
 
@@ -759,7 +981,7 @@ enyo.kind({
     onShowPopup: ''
   },
   i18nLabel: 'OBPOS_CreateOrderFromQuotation',
-  tap: function () {
+  tap: function() {
     if (this.disabled) {
       return true;
     }
@@ -770,33 +992,54 @@ enyo.kind({
       });
     }
   },
-  updateVisibility: function (model) {
-    if (OB.MobileApp.model.hasPermission(this.permission) && model.get('isQuotation') && model.get('hasbeenpaid') === 'Y' && !OB.UTIL.isCrossStoreReceipt(model)) {
+  updateVisibility: function(model) {
+    if (
+      OB.MobileApp.model.hasPermission(this.permission) &&
+      model.get('isQuotation') &&
+      model.get('hasbeenpaid') === 'Y' &&
+      !OB.UTIL.isCrossStoreReceipt(model)
+    ) {
       this.show();
     } else {
       this.hide();
     }
   },
-  init: function (model) {
+  init: function(model) {
     var receipt = model.get('order'),
-        me = this;
+      me = this;
     me.hide();
 
-    model.get('leftColumnViewManager').on('order', function () {
-      this.updateVisibility(receipt);
-      this.adjustVisibilityBasedOnPermissions();
-    }, this);
+    model.get('leftColumnViewManager').on(
+      'order',
+      function() {
+        this.updateVisibility(receipt);
+        this.adjustVisibilityBasedOnPermissions();
+      },
+      this
+    );
 
-    model.get('leftColumnViewManager').on('multiorder', function () {
-      me.hide();
-    }, this);
+    model.get('leftColumnViewManager').on(
+      'multiorder',
+      function() {
+        me.hide();
+      },
+      this
+    );
 
-    receipt.on('change:isQuotation', function (model) {
-      this.updateVisibility(model);
-    }, this);
-    receipt.on('change:hasbeenpaid', function (model) {
-      this.updateVisibility(model);
-    }, this);
+    receipt.on(
+      'change:isQuotation',
+      function(model) {
+        this.updateVisibility(model);
+      },
+      this
+    );
+    receipt.on(
+      'change:hasbeenpaid',
+      function(model) {
+        this.updateVisibility(model);
+      },
+      this
+    );
   }
 });
 
@@ -808,50 +1051,81 @@ enyo.kind({
   events: {
     onTabChange: ''
   },
-  tap: function () {
+  tap: function() {
     if (this.disabled) {
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
     if (this.receipt.get('payments').length) {
-      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ExistingPayments'));
+      OB.UTIL.showConfirmation.display(
+        OB.I18N.getLabel('OBMOBC_Error'),
+        OB.I18N.getLabel('OBPOS_ExistingPayments')
+      );
       return;
     }
-    if (_.find(this.receipt.get('lines').models, function (line) {
-      return OB.DEC.compare(line.get('qty')) === -1;
-    })) {
-      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_NegativeLinesQuotation'));
+    if (
+      _.find(this.receipt.get('lines').models, function(line) {
+        return OB.DEC.compare(line.get('qty')) === -1;
+      })
+    ) {
+      OB.UTIL.showConfirmation.display(
+        OB.I18N.getLabel('OBMOBC_Error'),
+        OB.I18N.getLabel('OBPOS_NegativeLinesQuotation')
+      );
       return;
     }
     this.receipt.createQuotationFromOrder();
   },
-  updateVisibility: function (model) {
-    if (OB.MobileApp.model.hasPermission(this.permission) && !model.get('isQuotation') && model.get('isEditable') && (model.get('orderType') === 0 || model.get('orderType') === 2)) {
+  updateVisibility: function(model) {
+    if (
+      OB.MobileApp.model.hasPermission(this.permission) &&
+      !model.get('isQuotation') &&
+      model.get('isEditable') &&
+      (model.get('orderType') === 0 || model.get('orderType') === 2)
+    ) {
       this.show();
     } else {
       this.hide();
     }
   },
-  updateLabel: function (model) {
-    if (model.get('orderType') === 0 && this.$.lbl.getContent() === OB.I18N.getLabel('OBPOS_CreateQuotationFromLayaway')) {
+  updateLabel: function(model) {
+    if (
+      model.get('orderType') === 0 &&
+      this.$.lbl.getContent() ===
+        OB.I18N.getLabel('OBPOS_CreateQuotationFromLayaway')
+    ) {
       this.$.lbl.setContent(OB.I18N.getLabel('OBPOS_CreateQuotationFromOrder'));
-    } else if (model.get('orderType') === 2 && this.$.lbl.getContent() === OB.I18N.getLabel('OBPOS_CreateQuotationFromOrder')) {
-      this.$.lbl.setContent(OB.I18N.getLabel('OBPOS_CreateQuotationFromLayaway'));
+    } else if (
+      model.get('orderType') === 2 &&
+      this.$.lbl.getContent() ===
+        OB.I18N.getLabel('OBPOS_CreateQuotationFromOrder')
+    ) {
+      this.$.lbl.setContent(
+        OB.I18N.getLabel('OBPOS_CreateQuotationFromLayaway')
+      );
     }
   },
-  init: function (model) {
+  init: function(model) {
     this.receipt = model.get('order');
 
     this.updateVisibility(this.receipt);
     this.updateLabel(this.receipt);
 
-    this.receipt.on('change:isQuotation change:isEditable change:orderType', function (model) {
-      this.updateVisibility(model);
-    }, this);
+    this.receipt.on(
+      'change:isQuotation change:isEditable change:orderType',
+      function(model) {
+        this.updateVisibility(model);
+      },
+      this
+    );
 
-    this.receipt.on('change:orderType', function (model) {
-      this.updateLabel(model);
-    }, this);
+    this.receipt.on(
+      'change:orderType',
+      function(model) {
+        this.updateLabel(model);
+      },
+      this
+    );
   }
 });
 
@@ -863,7 +1137,7 @@ enyo.kind({
     onShowReactivateQuotation: ''
   },
   i18nLabel: 'OBPOS_ReactivateQuotation',
-  tap: function () {
+  tap: function() {
     if (this.disabled) {
       return true;
     }
@@ -872,33 +1146,54 @@ enyo.kind({
       this.doShowReactivateQuotation();
     }
   },
-  updateVisibility: function (model) {
-    if (OB.MobileApp.model.hasPermission(this.permission) && model.get('isQuotation') && model.get('hasbeenpaid') === 'Y' && !OB.UTIL.isCrossStoreReceipt(model)) {
+  updateVisibility: function(model) {
+    if (
+      OB.MobileApp.model.hasPermission(this.permission) &&
+      model.get('isQuotation') &&
+      model.get('hasbeenpaid') === 'Y' &&
+      !OB.UTIL.isCrossStoreReceipt(model)
+    ) {
       this.show();
     } else {
       this.hide();
     }
   },
-  init: function (model) {
+  init: function(model) {
     var receipt = model.get('order'),
-        me = this;
+      me = this;
     me.hide();
 
-    model.get('leftColumnViewManager').on('order', function () {
-      this.updateVisibility(receipt);
-      this.adjustVisibilityBasedOnPermissions();
-    }, this);
+    model.get('leftColumnViewManager').on(
+      'order',
+      function() {
+        this.updateVisibility(receipt);
+        this.adjustVisibilityBasedOnPermissions();
+      },
+      this
+    );
 
-    model.get('leftColumnViewManager').on('multiorder', function () {
-      me.hide();
-    }, this);
+    model.get('leftColumnViewManager').on(
+      'multiorder',
+      function() {
+        me.hide();
+      },
+      this
+    );
 
-    receipt.on('change:isQuotation', function (model) {
-      this.updateVisibility(model);
-    }, this);
-    receipt.on('change:hasbeenpaid', function (model) {
-      this.updateVisibility(model);
-    }, this);
+    receipt.on(
+      'change:isQuotation',
+      function(model) {
+        this.updateVisibility(model);
+      },
+      this
+    );
+    receipt.on(
+      'change:hasbeenpaid',
+      function(model) {
+        this.updateVisibility(model);
+      },
+      this
+    );
   }
 });
 
@@ -910,7 +1205,7 @@ enyo.kind({
     onShowRejectQuotation: ''
   },
   i18nLabel: 'OBPOS_RejectQuotation',
-  tap: function () {
+  tap: function() {
     if (this.disabled) {
       return true;
     }
@@ -919,33 +1214,54 @@ enyo.kind({
       this.doShowRejectQuotation();
     }
   },
-  updateVisibility: function (model) {
-    if (OB.MobileApp.model.hasPermission(this.permission, true) && model.get('isQuotation') && model.get('hasbeenpaid') === 'Y' && !OB.UTIL.isCrossStoreReceipt(model)) {
+  updateVisibility: function(model) {
+    if (
+      OB.MobileApp.model.hasPermission(this.permission, true) &&
+      model.get('isQuotation') &&
+      model.get('hasbeenpaid') === 'Y' &&
+      !OB.UTIL.isCrossStoreReceipt(model)
+    ) {
       this.show();
     } else {
       this.hide();
     }
   },
-  init: function (model) {
+  init: function(model) {
     var receipt = model.get('order'),
-        me = this;
+      me = this;
     me.hide();
 
-    model.get('leftColumnViewManager').on('order', function () {
-      this.updateVisibility(receipt);
-      this.adjustVisibilityBasedOnPermissions();
-    }, this);
+    model.get('leftColumnViewManager').on(
+      'order',
+      function() {
+        this.updateVisibility(receipt);
+        this.adjustVisibilityBasedOnPermissions();
+      },
+      this
+    );
 
-    model.get('leftColumnViewManager').on('multiorder', function () {
-      me.hide();
-    }, this);
+    model.get('leftColumnViewManager').on(
+      'multiorder',
+      function() {
+        me.hide();
+      },
+      this
+    );
 
-    receipt.on('change:isQuotation', function (model) {
-      this.updateVisibility(model);
-    }, this);
-    receipt.on('change:hasbeenpaid', function (model) {
-      this.updateVisibility(model);
-    }, this);
+    receipt.on(
+      'change:isQuotation',
+      function(model) {
+        this.updateVisibility(model);
+      },
+      this
+    );
+    receipt.on(
+      'change:hasbeenpaid',
+      function(model) {
+        this.updateVisibility(model);
+      },
+      this
+    );
   }
 });
 
@@ -957,28 +1273,32 @@ enyo.kind({
     onShowPopup: ''
   },
   i18nLabel: 'OBPOS_OpenReceipt',
-  tap: function () {
+  tap: function() {
     var me = this;
-    var connectedCallback = function () {
-        if (OB.MobileApp.model.hasPermission(me.permission)) {
-          me.doShowPopup({
-            popup: 'modalReceiptSelector',
-            args: {
-              keepFiltersOnClose: true
-            }
-          });
-        }
-        };
-    var notConnectedCallback = function () {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
-        return;
-        };
+    var connectedCallback = function() {
+      if (OB.MobileApp.model.hasPermission(me.permission)) {
+        me.doShowPopup({
+          popup: 'modalReceiptSelector',
+          args: {
+            keepFiltersOnClose: true
+          }
+        });
+      }
+    };
+    var notConnectedCallback = function() {
+      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
+      return;
+    };
     if (this.disabled) {
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
     if (!OB.MobileApp.model.get('connectedToERP')) {
-      OB.UTIL.checkOffLineConnectivity(500, connectedCallback, notConnectedCallback);
+      OB.UTIL.checkOffLineConnectivity(
+        500,
+        connectedCallback,
+        notConnectedCallback
+      );
     } else {
       connectedCallback();
     }
@@ -993,7 +1313,7 @@ enyo.kind({
     onMultiOrders: ''
   },
   i18nLabel: 'OBPOS_LblPayOpenTickets',
-  tap: function () {
+  tap: function() {
     if (this.disabled) {
       return true;
     }
@@ -1007,12 +1327,12 @@ enyo.kind({
       this.doMultiOrders();
     }
   },
-  updateVisibility: function () {
+  updateVisibility: function() {
     if (OB.MobileApp.model.get('payments').length <= 0) {
       this.hide();
     }
   },
-  init: function (model) {
+  init: function(model) {
     this.model = model;
     this.updateVisibility();
   }
@@ -1027,14 +1347,14 @@ enyo.kind({
     onBackOffice: ''
   },
   i18nLabel: 'OBPOS_LblOpenbravoWorkspace',
-  tap: function () {
+  tap: function() {
     var useURL = this.url;
     if (this.disabled) {
       return true;
     }
 
     // use the central server url
-    _.each(OB.RR.RequestRouter.servers.models, function (server) {
+    _.each(OB.RR.RequestRouter.servers.models, function(server) {
       if (server.get('mainServer') && server.get('address')) {
         useURL = server.get('address');
       }
@@ -1058,12 +1378,14 @@ enyo.kind({
   handlers: {
     onPointOfSaleLoad: 'pointOfSaleLoad'
   },
-  components: [{
-    name: 'lbl',
-    allowHtml: true,
-    style: 'padding: 12px 5px 12px 15px;'
-  }],
-  tap: function () {
+  components: [
+    {
+      name: 'lbl',
+      allowHtml: true,
+      style: 'padding: 12px 5px 12px 15px;'
+    }
+  ],
+  tap: function() {
     this.inherited(arguments);
     if (this.disabled) {
       return true;
@@ -1083,50 +1405,68 @@ enyo.kind({
           if (OB.UTIL.RfidController.get('rfidTimeout')) {
             clearTimeout(OB.UTIL.RfidController.get('rfidTimeout'));
           }
-          OB.UTIL.RfidController.set('rfidTimeout', setTimeout(function () {
-            OB.UTIL.RfidController.unset('rfidTimeout');
-            OB.UTIL.RfidController.set('reconnectOnScanningFocus', false);
-            OB.UTIL.RfidController.disconnectRFIDDevice();
-          }, OB.POS.modelterminal.get('terminal').terminalType.rfidTimeout * 1000 * 60));
+          OB.UTIL.RfidController.set(
+            'rfidTimeout',
+            setTimeout(function() {
+              OB.UTIL.RfidController.unset('rfidTimeout');
+              OB.UTIL.RfidController.set('reconnectOnScanningFocus', false);
+              OB.UTIL.RfidController.disconnectRFIDDevice();
+            }, OB.POS.modelterminal.get('terminal').terminalType.rfidTimeout *
+              1000 *
+              60)
+          );
         }
       }
     }
   },
-  init: function (model) {
+  init: function(model) {
     if (!OB.UTIL.RfidController.isRfidConfigured()) {
       this.hide();
     }
-    OB.UTIL.RfidController.on('change:connected change:connectionLost', function (model) {
-      if (OB.UTIL.RfidController.get('connectionLost')) {
-        this.removeClass('btn-icon-switchon');
-        this.removeClass('btn-icon-switchoff');
-        this.addClass('btn-icon-switchoffline');
-        this.setDisabled(true);
-      } else {
-        this.removeClass('btn-icon-switchoffline');
-        if (OB.UTIL.RfidController.get('isRFIDEnabled') && OB.UTIL.RfidController.get('connected')) {
-          this.addClass('btn-icon-switchon');
-          this.removeClass('btn-icon-switchoff');
-        } else {
-          OB.UTIL.RfidController.disconnectRFIDDevice();
+    OB.UTIL.RfidController.on(
+      'change:connected change:connectionLost',
+      function(model) {
+        if (OB.UTIL.RfidController.get('connectionLost')) {
           this.removeClass('btn-icon-switchon');
-          this.addClass('btn-icon-switchoff');
+          this.removeClass('btn-icon-switchoff');
+          this.addClass('btn-icon-switchoffline');
+          this.setDisabled(true);
+        } else {
+          this.removeClass('btn-icon-switchoffline');
+          if (
+            OB.UTIL.RfidController.get('isRFIDEnabled') &&
+            OB.UTIL.RfidController.get('connected')
+          ) {
+            this.addClass('btn-icon-switchon');
+            this.removeClass('btn-icon-switchoff');
+          } else {
+            OB.UTIL.RfidController.disconnectRFIDDevice();
+            this.removeClass('btn-icon-switchon');
+            this.addClass('btn-icon-switchoff');
+          }
+          this.setDisabled(false);
         }
-        this.setDisabled(false);
-      }
-    }, this);
+      },
+      this
+    );
   },
-  pointOfSaleLoad: function (inSender, inEvent) {
+  pointOfSaleLoad: function(inSender, inEvent) {
     if (OB.UTIL.RfidController.isRfidConfigured()) {
       var protocol = OB.POS.hwserver.url.split('/')[0];
       if (window.location.protocol === protocol) {
-        if (OB.UTIL.RfidController.get('connectionLost') || !OB.UTIL.RfidController.get('connected')) {
+        if (
+          OB.UTIL.RfidController.get('connectionLost') ||
+          !OB.UTIL.RfidController.get('connected')
+        ) {
           this.addClass('btn-icon-switchoffline');
           return;
         } else {
           this.removeClass('btn-icon-switchoffline');
         }
-        if (!OB.UTIL.RfidController.get('isRFIDEnabled') || !OB.UTIL.RfidController.get('reconnectOnScanningFocus')) {
+        if (
+          !OB.UTIL.RfidController.get('isRFIDEnabled') ||
+          !OB.UTIL.RfidController.get('reconnectOnScanningFocus')
+        ) {
           this.addClass('btn-icon-switchoff');
           this.removeClass('btn-icon-switchon');
         } else {
@@ -1135,12 +1475,13 @@ enyo.kind({
         }
       } else {
         this.hide();
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_POSHWMProtocolMismatch'));
+        OB.UTIL.showConfirmation.display(
+          OB.I18N.getLabel('OBPOS_POSHWMProtocolMismatch')
+        );
       }
     }
   }
 });
-
 
 enyo.kind({
   name: 'OB.UI.MenuSelectPrinter',
@@ -1150,10 +1491,10 @@ enyo.kind({
     onModalSelectPrinters: ''
   },
   i18nLabel: 'OBPOS_MenuSelectPrinter',
-  init: function (model) {
+  init: function(model) {
     this.displayLogic();
   },
-  tap: function () {
+  tap: function() {
     if (this.disabled) {
       return true;
     }
@@ -1162,10 +1503,13 @@ enyo.kind({
       this.doModalSelectPrinters();
     }
   },
-  displayLogic: function () {
-    if (!OB.MobileApp.model.get('terminal').terminalType.selectprinteralways && _.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
-      return printer.hasReceiptPrinter;
-    })) {
+  displayLogic: function() {
+    if (
+      !OB.MobileApp.model.get('terminal').terminalType.selectprinteralways &&
+      _.any(OB.POS.modelterminal.get('hardwareURL'), function(printer) {
+        return printer.hasReceiptPrinter;
+      })
+    ) {
       this.show();
     } else {
       this.hide();
@@ -1181,10 +1525,10 @@ enyo.kind({
     onModalSelectPDFPrinters: ''
   },
   i18nLabel: 'OBPOS_MenuSelectPDFPrinter',
-  init: function (model) {
+  init: function(model) {
     this.displayLogic();
   },
-  tap: function () {
+  tap: function() {
     if (this.disabled) {
       return true;
     }
@@ -1193,10 +1537,13 @@ enyo.kind({
       this.doModalSelectPDFPrinters();
     }
   },
-  displayLogic: function () {
-    if (!OB.MobileApp.model.get('terminal').terminalType.selectprinteralways && _.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
-      return printer.hasPDFPrinter;
-    })) {
+  displayLogic: function() {
+    if (
+      !OB.MobileApp.model.get('terminal').terminalType.selectprinteralways &&
+      _.any(OB.POS.modelterminal.get('hardwareURL'), function(printer) {
+        return printer.hasPDFPrinter;
+      })
+    ) {
       this.show();
     } else {
       this.hide();
@@ -1212,56 +1559,90 @@ enyo.kind({
   events: {
     onRearrangeEditButtonBar: ''
   },
-  tap: function () {
+  tap: function() {
     if (this.disabled) {
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
     this.model.get('order').verifyCancelAndReplace(this);
   },
-  updateVisibility: function () {
+  updateVisibility: function() {
     var isPaidReceipt, isLayaway, isReturn, haspayments, receiptLines, receipt;
 
     receipt = this.model.get('order');
 
-    isPaidReceipt = receipt.get('isPaid') === true && !receipt.get('isQuotation');
+    isPaidReceipt =
+      receipt.get('isPaid') === true && !receipt.get('isQuotation');
     isLayaway = receipt.get('isLayaway');
-    isReturn = receipt.get('orderType') === 1 || receipt.get('documentType') === OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns || receipt.get('documentType') === 'VBS RFC Order';
+    isReturn =
+      receipt.get('orderType') === 1 ||
+      receipt.get('documentType') ===
+        OB.MobileApp.model.get('terminal').terminalType
+          .documentTypeForReturns ||
+      receipt.get('documentType') === 'VBS RFC Order';
     haspayments = receipt.get('payments').length > 0;
     receiptLines = OB.MobileApp.model.receipt.get('receiptLines');
 
     function delivered() {
       var shipqty = OB.DEC.Zero;
       var qty = OB.DEC.Zero;
-      _.each(receipt.get('lines').models, function (line) {
+      _.each(receipt.get('lines').models, function(line) {
         qty += line.get('qty');
       });
       if (receiptLines) {
-        _.each(receiptLines, function (line) {
-          _.each(line.shipmentlines, function (shipline) {
+        _.each(receiptLines, function(line) {
+          _.each(line.shipmentlines, function(shipline) {
             shipqty += shipline.qty;
           });
         });
       } else {
         return 'udf';
       }
-      if (shipqty === qty) { //totally delivered
+      if (shipqty === qty) {
+        //totally delivered
         return 'TD';
       }
-      if (shipqty === 0) { //no deliveries
+      if (shipqty === 0) {
+        //no deliveries
         return 'ND';
       }
       return 'DN';
     }
     if (isPaidReceipt || isLayaway) {
       var deliveredresult = delivered();
-      if (isPaidReceipt && !OB.MobileApp.model.hasPermission('OBPOS_receipt.CancelReplacePaidOrders', true) && deliveredresult === 'TD') {
+      if (
+        isPaidReceipt &&
+        !OB.MobileApp.model.hasPermission(
+          'OBPOS_receipt.CancelReplacePaidOrders',
+          true
+        ) &&
+        deliveredresult === 'TD'
+      ) {
         this.hide();
-      } else if (!OB.MobileApp.model.hasPermission('OBPOS_receipt.CancelReplaceLayaways', true) && deliveredresult === 'ND' && !haspayments) {
+      } else if (
+        !OB.MobileApp.model.hasPermission(
+          'OBPOS_receipt.CancelReplaceLayaways',
+          true
+        ) &&
+        deliveredresult === 'ND' &&
+        !haspayments
+      ) {
         this.hide();
-      } else if (!OB.MobileApp.model.hasPermission('OBPOS_receipt.CancelAndReplaceOrdersWithDeliveries', true) && (deliveredresult === 'TD' || deliveredresult === 'DN')) {
+      } else if (
+        !OB.MobileApp.model.hasPermission(
+          'OBPOS_receipt.CancelAndReplaceOrdersWithDeliveries',
+          true
+        ) &&
+        (deliveredresult === 'TD' || deliveredresult === 'DN')
+      ) {
         this.hide();
-      } else if (OB.MobileApp.model.hasPermission('OBPOS_payments.hideCancelAndReplace', true) && !haspayments) {
+      } else if (
+        OB.MobileApp.model.hasPermission(
+          'OBPOS_payments.hideCancelAndReplace',
+          true
+        ) &&
+        !haspayments
+      ) {
         this.hide();
       } else if (OB.UTIL.isCrossStoreReceipt(receipt)) {
         this.hide();
@@ -1278,24 +1659,36 @@ enyo.kind({
 
     this.adjustVisibilityBasedOnPermissions();
   },
-  init: function (model) {
+  init: function(model) {
     var receipt = model.get('order'),
-        me = this;
+      me = this;
 
     this.model = model;
 
-    this.model.get('leftColumnViewManager').on('order', function () {
-      this.updateVisibility();
-      this.adjustVisibilityBasedOnPermissions();
-    }, this);
+    this.model.get('leftColumnViewManager').on(
+      'order',
+      function() {
+        this.updateVisibility();
+        this.adjustVisibilityBasedOnPermissions();
+      },
+      this
+    );
 
-    this.model.get('leftColumnViewManager').on('multiorder', function () {
-      me.hide();
-    }, this);
+    this.model.get('leftColumnViewManager').on(
+      'multiorder',
+      function() {
+        me.hide();
+      },
+      this
+    );
 
-    receipt.on('change:isLayaway change:isPaid change:isQuotation change:replacedorder change:orderType change:receiptLines', function () {
-      this.updateVisibility();
-    }, this);
+    receipt.on(
+      'change:isLayaway change:isPaid change:isQuotation change:replacedorder change:orderType change:receiptLines',
+      function() {
+        this.updateVisibility();
+      },
+      this
+    );
 
     this.updateVisibility();
   }
@@ -1306,10 +1699,10 @@ enyo.kind({
   kind: 'OB.UI.MenuAction',
   permission: 'OBMOBC_NotAutoLoadIncrementalAtLogin',
   i18nLabel: 'OBPOS_MenuForceIncrementalRefreshLabel',
-  init: function (model) {
+  init: function(model) {
     this.displayLogic();
   },
-  tap: function () {
+  tap: function() {
     if (this.disabled) {
       return true;
     }
@@ -1319,7 +1712,7 @@ enyo.kind({
       window.location.reload();
     }
   },
-  displayLogic: function () {
+  displayLogic: function() {
     if (OB.MobileApp.model.hasPermission(this.permission, true)) {
       this.show();
     } else {

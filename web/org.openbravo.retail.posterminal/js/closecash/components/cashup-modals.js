@@ -9,8 +9,6 @@
 
 /*global OB, enyo */
 
-
-
 enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.OBPOSCashUp.UI.modalPendingToProcess',
@@ -19,13 +17,16 @@ enyo.kind({
     i18nContent: 'OBPOS_MsgReceiptsProcess'
   },
   bodyButtons: {
-    components: [{
-      //OK button
-      kind: 'OB.OBPOSCashUp.UI.modalPendingToProcess_OkButton'
-    }, {
-      //Cancel button
-      kind: 'OB.OBPOSCashUp.UI.modalPendingToProcess_CancelButton'
-    }]
+    components: [
+      {
+        //OK button
+        kind: 'OB.OBPOSCashUp.UI.modalPendingToProcess_OkButton'
+      },
+      {
+        //Cancel button
+        kind: 'OB.OBPOSCashUp.UI.modalPendingToProcess_CancelButton'
+      }
+    ]
   }
 });
 
@@ -34,7 +35,7 @@ enyo.kind({
   name: 'OB.OBPOSCashUp.UI.modalPendingToProcess_OkButton',
   i18nContent: 'OBMOBC_LblOk',
   isDefaultAction: true,
-  tap: function () {
+  tap: function() {
     this.doHideThisPopup();
   }
 });
@@ -43,7 +44,7 @@ enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSCashUp.UI.modalPendingToProcess_CancelButton',
   i18nContent: 'OBMOBC_LblCancel',
-  tap: function () {
+  tap: function() {
     this.doHideThisPopup();
     OB.POS.navigate('retail.pointofsale');
   }

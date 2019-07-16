@@ -7,8 +7,7 @@
  ************************************************************************************
  */
 
-(function () {
-
+(function() {
   OB.Model.OrderFilter = OB.Data.ExtensibleModel.extend({
     source: 'org.openbravo.retail.posterminal.PaidReceiptsFilter',
     dataLimit: OB.Dal.DATALIMIT,
@@ -17,126 +16,143 @@
     forceRemoteEntity: true
   });
 
-  OB.Model.OrderFilter.addProperties([{
-    name: 'id',
-    column: 'id',
-    primaryKey: true,
-    filter: false,
-    type: 'TEXT'
-  }, {
-    name: 'documentTypeId',
-    filter: false,
-    type: 'TEXT'
-  }, {
-    name: 'documentStatus',
-    filter: false,
-    type: 'TEXT'
-  }, {
-    name: 'orderDate',
-    filter: false,
-    type: 'TEXT'
-  }, {
-    name: 'creationDate',
-    filter: false,
-    type: 'TEXT'
-  }, {
-    name: 'totalamount',
-    filter: false,
-    type: 'TEXT'
-  }, {
-    name: 'businessPartnerName',
-    filter: false,
-    type: 'TEXT'
-  }, {
-    name: 'organization',
-    filter: false,
-    type: 'TEXT'
-  }, {
-    name: 'documentNo',
-    column: 'documentNo',
-    filter: true,
-    type: 'TEXT',
-    caption: 'OBPOS_DocumentNo'
-  }, {
-    name: 'businessPartner',
-    column: 'businessPartner',
-    sortName: 'businessPartnerName',
-    filter: true,
-    type: 'TEXT',
-    caption: 'OBPOS_LblCustomer',
-    isSelector: true,
-    selectorPopup: 'modalcustomer',
-    operator: OB.Dal.EQ,
-    preset: {
-      id: '',
-      name: ''
+  OB.Model.OrderFilter.addProperties([
+    {
+      name: 'id',
+      column: 'id',
+      primaryKey: true,
+      filter: false,
+      type: 'TEXT'
     },
-    modalArgs: {
-      clean: false,
-      keepFiltersOnClose: true
+    {
+      name: 'documentTypeId',
+      filter: false,
+      type: 'TEXT'
+    },
+    {
+      name: 'documentStatus',
+      filter: false,
+      type: 'TEXT'
+    },
+    {
+      name: 'orderDate',
+      filter: false,
+      type: 'TEXT'
+    },
+    {
+      name: 'creationDate',
+      filter: false,
+      type: 'TEXT'
+    },
+    {
+      name: 'totalamount',
+      filter: false,
+      type: 'TEXT'
+    },
+    {
+      name: 'businessPartnerName',
+      filter: false,
+      type: 'TEXT'
+    },
+    {
+      name: 'organization',
+      filter: false,
+      type: 'TEXT'
+    },
+    {
+      name: 'documentNo',
+      column: 'documentNo',
+      filter: true,
+      type: 'TEXT',
+      caption: 'OBPOS_DocumentNo'
+    },
+    {
+      name: 'businessPartner',
+      column: 'businessPartner',
+      sortName: 'businessPartnerName',
+      filter: true,
+      type: 'TEXT',
+      caption: 'OBPOS_LblCustomer',
+      isSelector: true,
+      selectorPopup: 'modalcustomer',
+      operator: OB.Dal.EQ,
+      preset: {
+        id: '',
+        name: ''
+      },
+      modalArgs: {
+        clean: false,
+        keepFiltersOnClose: true
+      }
+    },
+    {
+      name: 'orderDateFrom',
+      column: 'orderDate',
+      filter: true,
+      type: 'TEXT',
+      caption: 'OBPOS_DateFrom',
+      isDate: true,
+      hqlFilter: 'OrderDateFrom_Filter'
+    },
+    {
+      name: 'orderDateTo',
+      column: 'orderDateTo',
+      filter: true,
+      type: 'TEXT',
+      caption: 'OBPOS_DateTo',
+      isDate: true,
+      hqlFilter: 'OrderDateTo_Filter'
+    },
+    {
+      name: 'totalamountFrom',
+      column: 'totalamount',
+      type: 'TEXT',
+      filter: true,
+      caption: 'OBPOS_AmountFrom',
+      isNumeric: true,
+      hqlFilter: 'OrderAmountFrom_Filter'
+    },
+    {
+      name: 'totalamountTo',
+      column: 'totalamountTo',
+      type: 'TEXT',
+      filter: true,
+      caption: 'OBPOS_AmountTo',
+      isNumeric: true,
+      hqlFilter: 'OrderAmountTo_Filter'
+    },
+    {
+      name: 'orderType',
+      column: 'orderType',
+      filter: true,
+      type: 'TEXT',
+      caption: 'OBPOS_OrderType',
+      isList: true,
+      termProperty: 'orderType',
+      propertyId: 'id',
+      propertyName: 'name',
+      operator: '='
+    },
+    {
+      name: 'iscancelled',
+      filter: false,
+      type: 'BOOL'
+    },
+    {
+      name: 'store',
+      column: 'organizationName',
+      type: 'TEXT',
+      filter: true,
+      isMandatoryFilter: true,
+      caption: 'OBPOS_Store',
+      isList: true,
+      termProperty: 'store',
+      propertyId: 'id',
+      propertyName: 'name',
+      hqlFilter: 'Store',
+      remoteEntity: true,
+      applyUIRestrictions: true,
+      disableSorting: true
     }
-  }, {
-    name: 'orderDateFrom',
-    column: 'orderDate',
-    filter: true,
-    type: 'TEXT',
-    caption: 'OBPOS_DateFrom',
-    isDate: true,
-    hqlFilter: 'OrderDateFrom_Filter'
-  }, {
-    name: 'orderDateTo',
-    column: 'orderDateTo',
-    filter: true,
-    type: 'TEXT',
-    caption: 'OBPOS_DateTo',
-    isDate: true,
-    hqlFilter: 'OrderDateTo_Filter'
-  }, {
-    name: 'totalamountFrom',
-    column: 'totalamount',
-    type: 'TEXT',
-    filter: true,
-    caption: 'OBPOS_AmountFrom',
-    isNumeric: true,
-    hqlFilter: 'OrderAmountFrom_Filter'
-  }, {
-    name: 'totalamountTo',
-    column: 'totalamountTo',
-    type: 'TEXT',
-    filter: true,
-    caption: 'OBPOS_AmountTo',
-    isNumeric: true,
-    hqlFilter: 'OrderAmountTo_Filter'
-  }, {
-    name: 'orderType',
-    column: 'orderType',
-    filter: true,
-    type: 'TEXT',
-    caption: 'OBPOS_OrderType',
-    isList: true,
-    termProperty: 'orderType',
-    propertyId: 'id',
-    propertyName: 'name',
-    operator: '='
-  }, {
-    name: 'iscancelled',
-    filter: false,
-    type: 'BOOL'
-  }, {
-    name: 'store',
-    column: 'organizationName',
-    type: 'TEXT',
-    filter: true,
-    isMandatoryFilter: true,
-    caption: 'OBPOS_Store',
-    isList: true,
-    termProperty: 'store',
-    propertyId: 'id',
-    propertyName: 'name',
-    hqlFilter: 'Store',
-    remoteEntity: true,
-    applyUIRestrictions: true,
-    disableSorting: true
-  }]);
-
-}());
+  ]);
+})();

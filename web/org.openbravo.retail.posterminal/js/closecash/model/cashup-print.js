@@ -7,51 +7,68 @@
  ************************************************************************************
  */
 
-(function () {
+(function() {
+  var PrintCashUp = function() {
+    var terminal = OB.MobileApp.model.get('terminal');
+    this.templatecashup = new OB.DS.HWResource(
+      terminal.printCashUpTemplate || OB.OBPOSPointOfSale.Print.CashUpTemplate
+    );
+    this.cancelOrDismiss = function() {
+      OB.POS.navigate('retail.pointofsale');
+      OB.MobileApp.view.$.confirmationContainer.setAttribute('openedPopup', '');
+    };
+    this.isRetry = false;
+  };
 
-  var PrintCashUp = function () {
-      var terminal = OB.MobileApp.model.get('terminal');
-      this.templatecashup = new OB.DS.HWResource(terminal.printCashUpTemplate || OB.OBPOSPointOfSale.Print.CashUpTemplate);
-      this.cancelOrDismiss = function () {
-        OB.POS.navigate('retail.pointofsale');
-        OB.MobileApp.view.$.confirmationContainer.setAttribute('openedPopup', '');
-      };
-      this.isRetry = false;
-      };
-
-  PrintCashUp.prototype.print = function (report, sumary, closed, callback) {
+  PrintCashUp.prototype.print = function(report, sumary, closed, callback) {
     var me = this;
     // callbacks definition
-    var successfunc = function () {
-        var printCashUp = new OB.OBPOSCashUp.Print.CashUp();
-        printCashUp.isRetry = true;
-        printCashUp.print(report, sumary, closed, me.cancelOrDismiss);
-        return true;
-        };
-    var cancelfunc = function () {
-        me.cancelOrDismiss();
-        return true;
-        };
-    var printProcess = function () {
-        OB.POS.hwserver.cleanDisplay();
-        OB.POS.hwserver.print(me.templatecashup, {
+    var successfunc = function() {
+      var printCashUp = new OB.OBPOSCashUp.Print.CashUp();
+      printCashUp.isRetry = true;
+      printCashUp.print(report, sumary, closed, me.cancelOrDismiss);
+      return true;
+    };
+    var cancelfunc = function() {
+      me.cancelOrDismiss();
+      return true;
+    };
+    var printProcess = function() {
+      OB.POS.hwserver.cleanDisplay();
+      OB.POS.hwserver.print(
+        me.templatecashup,
+        {
           cashup: {
             closed: closed,
             report: report,
             summary: sumary
           }
-        }, function (result) {
+        },
+        function(result) {
           if (result && result.exception) {
-            OB.OBPOS.showSelectPrinterDialog(successfunc, cancelfunc, cancelfunc, false, 'OBPOS_MsgPrintAgainCashUp');
+            OB.OBPOS.showSelectPrinterDialog(
+              successfunc,
+              cancelfunc,
+              cancelfunc,
+              false,
+              'OBPOS_MsgPrintAgainCashUp'
+            );
           } else {
             if (callback) {
               callback();
             }
           }
-        });
-        };
+        }
+      );
+    };
     if (OB.MobileApp.model.get('terminal').terminalType.selectprinteralways) {
-      OB.OBPOS.showSelectPrintersWindow(printProcess, cancelfunc, cancelfunc, false, me.isRetry);
+      OB.OBPOS.showSelectPrintersWindow(
+        printProcess,
+        cancelfunc,
+        cancelfunc,
+        false,
+        me.isRetry
+      );
     } else {
       printProcess();
     }
@@ -62,5 +79,4 @@
   OB.OBPOSCashUp.Print = OB.OBPOSCashUp.Print || {};
 
   OB.OBPOSCashUp.Print.CashUp = PrintCashUp;
-
-}());
+})();

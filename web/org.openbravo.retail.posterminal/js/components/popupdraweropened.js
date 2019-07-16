@@ -19,25 +19,32 @@ enyo.kind({
   autoDismiss: false,
   keydownHandler: '',
   i18nHeader: 'OBPOS_closeDrawerContinue',
-  components: [{
-    classes: 'modal-dialog-header',
-    name: 'table',
-    components: [{
-      name: 'header',
-      classes: 'modal-dialog-header-text'
-    }]
-  }, {
-    classes: 'modal-dialog-body',
-    name: 'bodyParent',
-    components: [{
-      name: 'bodyContent'
-    }]
-  }],
+  components: [
+    {
+      classes: 'modal-dialog-header',
+      name: 'table',
+      components: [
+        {
+          name: 'header',
+          classes: 'modal-dialog-header-text'
+        }
+      ]
+    },
+    {
+      classes: 'modal-dialog-body',
+      name: 'bodyParent',
+      components: [
+        {
+          name: 'bodyContent'
+        }
+      ]
+    }
+  ],
   bodyContent: {
     kind: 'enyo.Control',
     name: 'label'
   },
-  initComponents: function () {
+  initComponents: function() {
     this.inherited(arguments);
 
     this.setStyle('min-height: 180px;');
@@ -50,19 +57,26 @@ enyo.kind({
 
     this.$.bodyContent.setClasses(this.bodyContentClass);
     if (this.bodyContent && this.bodyContent.i18nContent) {
-      this.$.bodyContent.setContent(OB.I18N.getLabel(this.bodyContent.i18nContent));
+      this.$.bodyContent.setContent(
+        OB.I18N.getLabel(this.bodyContent.i18nContent)
+      );
     } else {
       this.$.bodyContent.createComponent(this.bodyContent);
     }
-
   }
 });
 
-OB.UTIL.HookManager.registerHook('OBPOS_LoadPOSWindow', function (args, callbacks) {
+OB.UTIL.HookManager.registerHook('OBPOS_LoadPOSWindow', function(
+  args,
+  callbacks
+) {
   if (OB.MobileApp.model.get('permissions').OBPOS_closeDrawerBeforeContinue) {
-    OB.POS.hwserver.isDrawerClosed({
-      openFirst: false
-    }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
+    OB.POS.hwserver.isDrawerClosed(
+      {
+        openFirst: false
+      },
+      OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales
+    );
   }
   OB.UTIL.HookManager.callbackExecutor(args, callbacks);
 });

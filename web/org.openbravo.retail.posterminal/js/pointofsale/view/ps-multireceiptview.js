@@ -16,35 +16,56 @@ enyo.kind({
     order: null,
     orderList: null
   },
-  components: [{
-    style: 'margin: 5px',
-    components: [{
-      style: 'position: relative; background-color: #ffffff; color: black; overflow-y: auto; max-height: 622px',
-      components: [{
-        style: 'padding: 5px;',
-        components: [{
-          classes: 'row-fluid',
-          components: [{
-            classes: 'span12',
-            components: [{
-              style: 'padding: 5px 0px 10px 0px; border-bottom: 1px solid #cccccc;',
-              components: [{
-                style: 'clear:both;'
-              }]
-            }]
-          }]
-        }, {
-          classes: 'row-fluid',
-          style: 'max-height: 536px;',
-          components: [{
-            classes: 'span12',
-            components: [{
-              kind: 'OB.UI.MultiOrderView',
-              name: 'multiorderview'
-            }]
-          }]
-        }]
-      }]
-    }]
-  }]
+  components: [
+    {
+      style: 'margin: 5px',
+      components: [
+        {
+          style:
+            'position: relative; background-color: #ffffff; color: black; overflow-y: auto; max-height: 622px',
+          components: [
+            {
+              style: 'padding: 5px;',
+              components: [
+                {
+                  classes: 'row-fluid',
+                  components: [
+                    {
+                      classes: 'span12',
+                      components: [
+                        {
+                          style:
+                            'padding: 5px 0px 10px 0px; border-bottom: 1px solid #cccccc;',
+                          components: [
+                            {
+                              style: 'clear:both;'
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  classes: 'row-fluid',
+                  style: 'max-height: 536px;',
+                  components: [
+                    {
+                      classes: 'span12',
+                      components: [
+                        {
+                          kind: 'OB.UI.MultiOrderView',
+                          name: 'multiorderview'
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
 });

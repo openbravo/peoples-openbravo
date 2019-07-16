@@ -7,8 +7,7 @@
  ************************************************************************************
  */
 
-(function () {
-
+(function() {
   var ServicePriceRuleVersion = OB.Data.ExtensibleModel.extend({
     modelName: 'ServicePriceRuleVersion',
     tableName: 'm_servicepricerule_version',
@@ -19,36 +18,44 @@
     remote: 'OBPOS_remote.product'
   });
 
-  ServicePriceRuleVersion.addProperties([{
-    name: 'id',
-    column: 'm_servicepricerule_version_id',
-    primaryKey: true,
-    type: 'TEXT'
-  }, {
-    name: 'active',
-    column: 'active',
-    type: 'BOOL'
-  }, {
-    name: 'product',
-    column: 'product',
-    type: 'TEXT'
-  }, {
-    name: 'validFromDate',
-    column: 'validFromDate',
-    type: 'TEXT'
-  }, {
-    name: 'servicePriceRule',
-    column: 'servicePriceRule',
-    type: 'TEXT'
-  }, {
-    name: 'minimum',
-    column: 'minimum',
-    type: 'NUMERIC'
-  }, {
-    name: 'maximum',
-    column: 'maximum',
-    type: 'NUMERIC'
-  }]);
+  ServicePriceRuleVersion.addProperties([
+    {
+      name: 'id',
+      column: 'm_servicepricerule_version_id',
+      primaryKey: true,
+      type: 'TEXT'
+    },
+    {
+      name: 'active',
+      column: 'active',
+      type: 'BOOL'
+    },
+    {
+      name: 'product',
+      column: 'product',
+      type: 'TEXT'
+    },
+    {
+      name: 'validFromDate',
+      column: 'validFromDate',
+      type: 'TEXT'
+    },
+    {
+      name: 'servicePriceRule',
+      column: 'servicePriceRule',
+      type: 'TEXT'
+    },
+    {
+      name: 'minimum',
+      column: 'minimum',
+      type: 'NUMERIC'
+    },
+    {
+      name: 'maximum',
+      column: 'maximum',
+      type: 'NUMERIC'
+    }
+  ]);
 
   OB.Data.Registry.registerModel(ServicePriceRuleVersion);
-}());
+})();

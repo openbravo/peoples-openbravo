@@ -9,22 +9,40 @@
 
 /*global OB, Backbone, _ */
 
-(function () {
+(function() {
   // Because of problems with module dependencies, it is possible this object to already
   // be defined with some rules.
-  var alreadyDefinedRules = (OB && OB.Model && OB.Model.Discounts && OB.Model.Discounts.discountRules) || {},
-      onLoadActions = (OB && OB.Model && OB.Model.Discounts && OB.Model.Discounts.onLoadActions) || [],
-      i;
+  var alreadyDefinedRules =
+      (OB &&
+        OB.Model &&
+        OB.Model.Discounts &&
+        OB.Model.Discounts.discountRules) ||
+      {},
+    onLoadActions =
+      (OB &&
+        OB.Model &&
+        OB.Model.Discounts &&
+        OB.Model.Discounts.onLoadActions) ||
+      [],
+    i;
 
   OB.Model.Discounts = {
     discountRules: alreadyDefinedRules,
     executor: new OB.Model.DiscountsExecutor(),
     preventApplyPromotions: false,
     applyPromotionsTimeout: {},
-    applyPromotions: function (receipt, line) {
-      var stack = OB.UTIL.getStackTrace('OB.Model.Discounts.applyPromotions', false);
-      if (stack.indexOf('OB.Model.Discounts.applyPromotions') > -1 && stack.indexOf('Backbone.Model.extend.calculateReceipt') > -1) {
-        OB.error("It's forbidden to use applyPromotions from outside of calculateReceipt");
+    applyPromotions: function(receipt, line) {
+      var stack = OB.UTIL.getStackTrace(
+        'OB.Model.Discounts.applyPromotions',
+        false
+      );
+      if (
+        stack.indexOf('OB.Model.Discounts.applyPromotions') > -1 &&
+        stack.indexOf('Backbone.Model.extend.calculateReceipt') > -1
+      ) {
+        OB.error(
+          "It's forbidden to use applyPromotions from outside of calculateReceipt"
+        );
       }
       if (!receipt.get('isBeingDiscounted')) {
         receipt.set('isBeingDiscounted', true, {
@@ -40,8 +58,8 @@
         });
       }
     },
-    finishPromotions: function (receipt, line) {
-      _.forEach(receipt.get('lines').models, function (l) {
+    finishPromotions: function(receipt, line) {
+      _.forEach(receipt.get('lines').models, function(l) {
         l.set('orderManualPromotionsAlreadyApplied', false, {
           silent: true
         });
@@ -60,137 +78,169 @@
         });
         receipt.trigger('applyPromotionsFinished');
       }
-      if (OB.Model.Discounts.discountRules['4755A35B4DA34F6CB08F15462BA123CF']) {
-        OB.Model.Discounts.discountRules['4755A35B4DA34F6CB08F15462BA123CF'].discountedUnits = {};
+      if (
+        OB.Model.Discounts.discountRules['4755A35B4DA34F6CB08F15462BA123CF']
+      ) {
+        OB.Model.Discounts.discountRules[
+          '4755A35B4DA34F6CB08F15462BA123CF'
+        ].discountedUnits = {};
       }
     },
-    applyPromotionsLat: function (receipt, line) {
+    applyPromotionsLat: function(receipt, line) {
       var me = this;
-      OB.UTIL.HookManager.executeHooks('OBPOS_PreCheckDiscount', {
-        context: me,
-        receipt: receipt,
-        line: line
-      }, function (args) {
-        if (receipt.get('skipApplyPromotions') || receipt.get('cloningReceipt') || me.preventApplyPromotions || args.cancellation === true) {
-          OB.Model.Discounts.finishPromotions(receipt, line);
-          return;
-        }
-
-        var auxReceipt = new OB.Model.Order(),
-            oldLines, oldLines2, isFirstExecution = true;
-        OB.UTIL.clone(receipt, auxReceipt);
-        auxReceipt.groupLinesByProduct();
-        auxReceipt.removeNoDiscountAllowLines();
-        me.auxReceiptInExecution = auxReceipt;
-        auxReceipt.on('discountsApplied', function () {
-          // to avoid several calls to applyPromotions, only will be applied the changes to original receipt for the last call done to applyPromotion
-          // so if the auxReceipt is distinct of the last auxReceipt created (last call) then nothing is done
-          if (me.auxReceiptInExecution !== auxReceipt) {
+      OB.UTIL.HookManager.executeHooks(
+        'OBPOS_PreCheckDiscount',
+        {
+          context: me,
+          receipt: receipt,
+          line: line
+        },
+        function(args) {
+          if (
+            receipt.get('skipApplyPromotions') ||
+            receipt.get('cloningReceipt') ||
+            me.preventApplyPromotions ||
+            args.cancellation === true
+          ) {
+            OB.Model.Discounts.finishPromotions(receipt, line);
             return;
           }
 
-          var continueApplyPromotions = true;
+          var auxReceipt = new OB.Model.Order(),
+            oldLines,
+            oldLines2,
+            isFirstExecution = true;
+          OB.UTIL.clone(receipt, auxReceipt);
+          auxReceipt.groupLinesByProduct();
+          auxReceipt.removeNoDiscountAllowLines();
+          me.auxReceiptInExecution = auxReceipt;
+          auxReceipt.on('discountsApplied', function() {
+            // to avoid several calls to applyPromotions, only will be applied the changes to original receipt for the last call done to applyPromotion
+            // so if the auxReceipt is distinct of the last auxReceipt created (last call) then nothing is done
+            if (me.auxReceiptInExecution !== auxReceipt) {
+              return;
+            }
 
-          // replace the promotions with applyNext that they were applied previously
-          auxReceipt.removePromotionsCascadeApplied();
+            var continueApplyPromotions = true;
 
-          // check if the order lines have changed in the last execution of applyPromotions
-          // if they didn't changed, then stop
-          if (!OB.UTIL.isNullOrUndefined(oldLines) && oldLines.size() > 0) {
-            isFirstExecution = false;
-            oldLines2 = new Backbone.Collection();
-            oldLines.forEach(function (ol) {
-              oldLines2.push(ol);
-            });
+            // replace the promotions with applyNext that they were applied previously
+            auxReceipt.removePromotionsCascadeApplied();
 
-            oldLines2.forEach(function (ol) {
-              for (i = 0; i < auxReceipt.get('lines').size(); i++) {
-                if (auxReceipt.isSimilarLine(ol, auxReceipt.get('lines').at(i))) {
-                  oldLines.remove(ol);
+            // check if the order lines have changed in the last execution of applyPromotions
+            // if they didn't changed, then stop
+            if (!OB.UTIL.isNullOrUndefined(oldLines) && oldLines.size() > 0) {
+              isFirstExecution = false;
+              oldLines2 = new Backbone.Collection();
+              oldLines.forEach(function(ol) {
+                oldLines2.push(ol);
+              });
+
+              oldLines2.forEach(function(ol) {
+                for (i = 0; i < auxReceipt.get('lines').size(); i++) {
+                  if (
+                    auxReceipt.isSimilarLine(ol, auxReceipt.get('lines').at(i))
+                  ) {
+                    oldLines.remove(ol);
+                  }
                 }
-              }
-            });
+              });
 
-            if (oldLines.length === 0) {
+              if (oldLines.length === 0) {
+                continueApplyPromotions = false;
+              }
+            } else if (
+              !OB.UTIL.isNullOrUndefined(oldLines) &&
+              oldLines.size() === 0 &&
+              !isFirstExecution
+            ) {
               continueApplyPromotions = false;
             }
-          } else if (!OB.UTIL.isNullOrUndefined(oldLines) && oldLines.size() === 0 && !isFirstExecution) {
-            continueApplyPromotions = false;
-          }
 
-          if (continueApplyPromotions) {
-            receipt.fillPromotionsWith(auxReceipt, isFirstExecution);
-            if (auxReceipt.hasPromotions()) {
-              auxReceipt.removeQtyOffer();
-              if (auxReceipt.get('lines').length > 0) {
-                oldLines = new Backbone.Collection();
-                auxReceipt.get('lines').forEach(function (l) {
-                  var clonedLine = l.clone();
-                  clonedLine.set('promotions', _.clone(clonedLine.get('promotions')));
-                  oldLines.push(clonedLine);
-                });
-                me.applyPromotionsImp(auxReceipt, undefined, true);
+            if (continueApplyPromotions) {
+              receipt.fillPromotionsWith(auxReceipt, isFirstExecution);
+              if (auxReceipt.hasPromotions()) {
+                auxReceipt.removeQtyOffer();
+                if (auxReceipt.get('lines').length > 0) {
+                  oldLines = new Backbone.Collection();
+                  auxReceipt.get('lines').forEach(function(l) {
+                    var clonedLine = l.clone();
+                    clonedLine.set(
+                      'promotions',
+                      _.clone(clonedLine.get('promotions'))
+                    );
+                    oldLines.push(clonedLine);
+                  });
+                  me.applyPromotionsImp(auxReceipt, undefined, true);
+                } else {
+                  OB.Model.Discounts.finishPromotions(receipt, line);
+                }
               } else {
                 OB.Model.Discounts.finishPromotions(receipt, line);
               }
             } else {
               OB.Model.Discounts.finishPromotions(receipt, line);
             }
-          } else {
-            OB.Model.Discounts.finishPromotions(receipt, line);
-          }
-        });
-
-        // if preventApplyPromotions then the promotions will not be deleted, because they will not be recalculated
-        if (!me.preventApplyPromotions) {
-          var manualPromotions = [];
-          _.each(auxReceipt.get('lines').models, function (line) {
-            manualPromotions = _.filter(line.get('promotions'), function (p) {
-              return p.manual === true;
-            });
-            line.set('manualPromotions', manualPromotions);
-            line.set('promotions', []);
-            line.set('promotionCandidates', []);
           });
-          _.each(receipt.get('lines').models, function (line) {
-            if (OB.UTIL.isNullOrUndefined(line.get('originalOrderLineId'))) {
-              // Clean the promotions only if the line is not a return
+
+          // if preventApplyPromotions then the promotions will not be deleted, because they will not be recalculated
+          if (!me.preventApplyPromotions) {
+            var manualPromotions = [];
+            _.each(auxReceipt.get('lines').models, function(line) {
+              manualPromotions = _.filter(line.get('promotions'), function(p) {
+                return p.manual === true;
+              });
+              line.set('manualPromotions', manualPromotions);
               line.set('promotions', []);
               line.set('promotionCandidates', []);
-            }
-          });
+            });
+            _.each(receipt.get('lines').models, function(line) {
+              if (OB.UTIL.isNullOrUndefined(line.get('originalOrderLineId'))) {
+                // Clean the promotions only if the line is not a return
+                line.set('promotions', []);
+                line.set('promotionCandidates', []);
+              }
+            });
+          }
+          me.applyPromotionsImp(auxReceipt, null, true);
         }
-        me.applyPromotionsImp(auxReceipt, null, true);
-      });
+      );
     },
 
-    applyPromotionsImp: function (receipt, line, skipSave, avoidTrigger) {
+    applyPromotionsImp: function(receipt, line, skipSave, avoidTrigger) {
       var lines;
       if (this.preventApplyPromotions) {
         return;
       }
 
-      if (receipt && (!receipt.get('isEditable') || (!OB.UTIL.isNullOrUndefined(receipt.get('isNewReceipt')) && receipt.get('isNewReceipt')))) {
+      if (
+        receipt &&
+        (!receipt.get('isEditable') ||
+          (!OB.UTIL.isNullOrUndefined(receipt.get('isNewReceipt')) &&
+            receipt.get('isNewReceipt')))
+      ) {
         receipt.trigger('discountsApplied');
       }
 
       if (line) {
-        this.executor.addEvent(new Backbone.Model({
-          id: line.cid,
-          groupId: 'discounts',
-          receipt: receipt,
-          line: line,
-          skipSave: skipSave,
-          avoidTrigger: avoidTrigger
-        }), true);
+        this.executor.addEvent(
+          new Backbone.Model({
+            id: line.cid,
+            groupId: 'discounts',
+            receipt: receipt,
+            line: line,
+            skipSave: skipSave,
+            avoidTrigger: avoidTrigger
+          }),
+          true
+        );
       } else {
-        lines = _.sortBy(receipt.get('lines').models, function (lo) {
+        lines = _.sortBy(receipt.get('lines').models, function(lo) {
           return -lo.getQty();
         });
         if (lines.length === 0) {
           receipt.trigger('discountsApplied');
         }
-        lines.forEach(function (l) {
+        lines.forEach(function(l) {
           // with new flow discounts -> skipSave =true
           this.applyPromotionsImp(receipt, l, true, true);
         }, this);
@@ -198,8 +248,13 @@
       }
     },
 
-    addManualPromotion: function (receipt, lines, promotion) {
-      var rule = OB.Model.Discounts.discountRules[promotion.rule.get ? promotion.rule.get('discountType') : promotion.rule.discountType];
+    addManualPromotion: function(receipt, lines, promotion) {
+      var rule =
+        OB.Model.Discounts.discountRules[
+          promotion.rule.get
+            ? promotion.rule.get('discountType')
+            : promotion.rule.discountType
+        ];
       if (!rule || !rule.addManual) {
         OB.warn('No manual implemetation for rule ' + promotion.discountType);
         return;
@@ -209,26 +264,34 @@
         promotion.definition.discountinstance = OB.UTIL.get_UUID();
       }
 
-      lines.forEach(function (line) {
+      lines.forEach(function(line) {
         if (line.get('promotions')) {
-          line.get('promotions').forEach(function (promotion) {
+          line.get('promotions').forEach(function(promotion) {
             promotion.lastApplied = undefined;
           });
         }
         line.unset('noDiscountCandidates', {
           silent: true
         });
-        if (line.get('qty') > 0 || (line.get('qty') < 0 && promotion.rule.get('obdiscAllowinnegativelines'))) {
+        if (
+          line.get('qty') > 0 ||
+          (line.get('qty') < 0 &&
+            promotion.rule.get('obdiscAllowinnegativelines'))
+        ) {
           rule.addManual(receipt, line, promotion);
         } else {
-          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_AvoidApplyManualPromotions'));
+          OB.UTIL.showWarning(
+            OB.I18N.getLabel('OBPOS_AvoidApplyManualPromotions')
+          );
         }
       });
 
       receipt.setUndo('AddDiscount', {
-        text: OB.I18N.getLabel('OBPOS_AddedDiscount', [promotion.rule.get('name')]),
-        undo: function () {
-          receipt.get('lines').forEach(function (line) {
+        text: OB.I18N.getLabel('OBPOS_AddedDiscount', [
+          promotion.rule.get('name')
+        ]),
+        undo: function() {
+          receipt.get('lines').forEach(function(line) {
             receipt.removePromotion(line, {
               id: promotion.rule.get('id'),
               discountinstance: promotion.definition.discountinstance
@@ -250,9 +313,10 @@
      * Gets the list of manual promotions. If asList param is true, it is returned
      * as an list, other case, as a comma separated string to be used in sql statements
      */
-    getManualPromotions: function (asList) {
-      var p, promos = [],
-          promosSql = '';
+    getManualPromotions: function(asList) {
+      var p,
+        promos = [],
+        promosSql = '';
       for (p in this.discountRules) {
         if (this.discountRules.hasOwnProperty(p)) {
           if (this.discountRules[p].addManual) {
@@ -280,9 +344,10 @@
      * If asList param is true, it is returned
      * as a list, other case, as a comma separated string to be used in sql statements
      */
-    getAutoCalculatedPromotions: function (asList) {
-      var p, promos = [],
-          promosSql = '';
+    getAutoCalculatedPromotions: function(asList) {
+      var p,
+        promos = [],
+        promosSql = '';
       for (p in this.discountRules) {
         if (this.discountRules.hasOwnProperty(p)) {
           if (this.discountRules[p].isAutoCalculated) {
@@ -305,95 +370,113 @@
       }
     },
 
-    registerRule: function (name, rule) {
+    registerRule: function(name, rule) {
       this.discountRules[name] = rule;
     },
 
-    standardFilter: " date(?) BETWEEN DATEFROM AND COALESCE(date(DATETO), date('9999-12-31'))" //
-    + " AND((BPARTNER_SELECTION = 'Y'" //
-    + " AND NOT EXISTS" //
-    + " (SELECT 1" //
-    + " FROM M_OFFER_BPARTNER" //
-    + " WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID" //
-    + "   AND C_BPARTNER_ID = ?" //
-    + " ))" //
-    + " OR(BPARTNER_SELECTION = 'N'" //
-    + " AND EXISTS" //
-    + " (SELECT 1" //
-    + " FROM M_OFFER_BPARTNER" //
-    + " WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID" //
-    + "   AND C_BPARTNER_ID = ?" //
-    + " )))" //
-    + " AND((BP_SET_SELECTION = 'Y'" //
-    + " AND NOT EXISTS" //
-    + " (SELECT 1" //
-    + " FROM M_OFFER_BP_SET OBPS, C_BP_SET_LINE BPL" //
-    + " WHERE OBPS.C_BP_SET_ID = BPL.C_BP_SET_ID" //
-    + "   AND OBPS.M_OFFER_ID = M_OFFER.M_OFFER_ID" //
-    + "   AND BPL.C_BPARTNER_ID = ? AND datetime('now') BETWEEN COALESCE(datetime(BPL.STARTDATE), datetime('2000-12-31T00:00:00')) AND COALESCE(datetime(BPL.ENDDATE), datetime('9999-12-31T23:59:59'))" //
-    + " ))" //
-    + " OR(BP_SET_SELECTION = 'N'" //
-    + " AND EXISTS" //
-    + " (SELECT 1" //
-    + " FROM M_OFFER_BP_SET OBPS, C_BP_SET_LINE BPL" //
-    + " WHERE OBPS.C_BP_SET_ID = BPL.C_BP_SET_ID" //
-    + "   AND OBPS.M_OFFER_ID = M_OFFER.M_OFFER_ID" //
-    + "   AND BPL.C_BPARTNER_ID = ? AND datetime('now') BETWEEN COALESCE(datetime(BPL.STARTDATE), datetime('2000-12-31T00:00:00')) AND COALESCE(datetime(BPL.ENDDATE), datetime('9999-12-31T23:59:59'))" //
-    + " )))" //
-    + " AND((BP_GROUP_SELECTION = 'Y'" //
-    + " AND NOT EXISTS" //
-    + " (SELECT 1" //
-    + " FROM C_BPARTNER B," //
-    + "   M_OFFER_BP_GROUP OB" //
-    + " WHERE OB.M_OFFER_ID = M_OFFER.M_OFFER_ID" //
-    + "   AND B.C_BPARTNER_ID = ?" //
-    + "   AND OB.C_BP_GROUP_ID = B.C_BP_GROUP_ID" //
-    + " ))" //
-    + " OR(BP_GROUP_SELECTION = 'N'" //
-    + " AND EXISTS" //
-    + " (SELECT 1" //
-    + " FROM C_BPARTNER B," //
-    + "   M_OFFER_BP_GROUP OB" //
-    + " WHERE OB.M_OFFER_ID = M_OFFER.M_OFFER_ID" //
-    + "   AND B.C_BPARTNER_ID = ?" //
-    + "   AND OB.C_BP_GROUP_ID = B.C_BP_GROUP_ID" //
-    + " )))" //
-    + " AND((PRODUCT_SELECTION = 'Y'" //
-    + " AND NOT EXISTS" //
-    + " (SELECT 1" //
-    + " FROM M_OFFER_PRODUCT" //
-    + " WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID" //
-    + "   AND M_PRODUCT_ID = ?" //
-    + " ))" //
-    + " OR(PRODUCT_SELECTION = 'N'" //
-    + " AND EXISTS" //
-    + " (SELECT 1" //
-    + " FROM M_OFFER_PRODUCT" //
-    + " WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID" //
-    + "   AND M_PRODUCT_ID = ?" //
-    + " )))" //
-    + " AND((PROD_CAT_SELECTION = 'Y'" //
-    + " AND NOT EXISTS" //
-    + " (SELECT 1" //
-    + " FROM M_OFFER_PROD_CAT OP" //
-    + " WHERE OP.M_OFFER_ID = M_OFFER.M_OFFER_ID" //
-    + "   AND OP.M_PRODUCT_CATEGORY_ID = ?" //
-    + " ))" //
-    + " OR(PROD_CAT_SELECTION = 'N'" //
-    + " AND EXISTS" //
-    + " (SELECT 1" //
-    + " FROM M_OFFER_PROD_CAT OP" //
-    + " WHERE OP.M_OFFER_ID = M_OFFER.M_OFFER_ID" //
-    + "   AND OP.M_PRODUCT_CATEGORY_ID = ?" //
-    + " ))) " //
-    + " AND ((CHARACTERISTICS_SELECTION = 'Y'" + " AND NOT EXISTS" + " (SELECT 1" + "  FROM M_OFFER_CHARACTERISTIC C, M_PRODUCT_CH_VALUE V" + "  WHERE C.M_OFFER_ID = M_OFFER.M_OFFER_ID" + "    AND V.M_PRODUCT_ID = ?" + "    AND V.M_CH_VALUE_ID = C.M_CH_VALUE_ID" + " ))" + " OR(CHARACTERISTICS_SELECTION = 'N'" + " AND EXISTS" + " (SELECT 1" + "  FROM M_OFFER_CHARACTERISTIC C, M_PRODUCT_CH_VALUE V" + "  WHERE C.M_OFFER_ID = M_OFFER.M_OFFER_ID" + "    AND V.M_PRODUCT_ID = ?" + "    AND V.M_CH_VALUE_ID = C.M_CH_VALUE_ID" + " ))" + " )" + " AND ((pricelist_selection = 'Y' AND NOT EXISTS" // 
-    + "	  (SELECT 1 FROM m_offer_pricelist opl WHERE m_offer.m_offer_id = opl.m_offer_id AND opl.m_pricelist_id = ? )) " //
-    + "	OR (pricelist_selection = 'N' AND EXISTS" // 
-    + "   (SELECT 1 FROM m_offer_pricelist opl WHERE m_offer.m_offer_id = opl.m_offer_id AND opl.m_pricelist_id = ? )))",
+    standardFilter:
+      " date(?) BETWEEN DATEFROM AND COALESCE(date(DATETO), date('9999-12-31'))" + //
+      " AND((BPARTNER_SELECTION = 'Y'" + //
+      ' AND NOT EXISTS' + //
+      ' (SELECT 1' + //
+      ' FROM M_OFFER_BPARTNER' + //
+      ' WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID' + //
+      '   AND C_BPARTNER_ID = ?' + //
+      ' ))' + //
+      " OR(BPARTNER_SELECTION = 'N'" + //
+      ' AND EXISTS' + //
+      ' (SELECT 1' + //
+      ' FROM M_OFFER_BPARTNER' + //
+      ' WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID' + //
+      '   AND C_BPARTNER_ID = ?' + //
+      ' )))' + //
+      " AND((BP_SET_SELECTION = 'Y'" + //
+      ' AND NOT EXISTS' + //
+      ' (SELECT 1' + //
+      ' FROM M_OFFER_BP_SET OBPS, C_BP_SET_LINE BPL' + //
+      ' WHERE OBPS.C_BP_SET_ID = BPL.C_BP_SET_ID' + //
+      '   AND OBPS.M_OFFER_ID = M_OFFER.M_OFFER_ID' + //
+      "   AND BPL.C_BPARTNER_ID = ? AND datetime('now') BETWEEN COALESCE(datetime(BPL.STARTDATE), datetime('2000-12-31T00:00:00')) AND COALESCE(datetime(BPL.ENDDATE), datetime('9999-12-31T23:59:59'))" + //
+      ' ))' + //
+      " OR(BP_SET_SELECTION = 'N'" + //
+      ' AND EXISTS' + //
+      ' (SELECT 1' + //
+      ' FROM M_OFFER_BP_SET OBPS, C_BP_SET_LINE BPL' + //
+      ' WHERE OBPS.C_BP_SET_ID = BPL.C_BP_SET_ID' + //
+      '   AND OBPS.M_OFFER_ID = M_OFFER.M_OFFER_ID' + //
+      "   AND BPL.C_BPARTNER_ID = ? AND datetime('now') BETWEEN COALESCE(datetime(BPL.STARTDATE), datetime('2000-12-31T00:00:00')) AND COALESCE(datetime(BPL.ENDDATE), datetime('9999-12-31T23:59:59'))" + //
+      ' )))' + //
+      " AND((BP_GROUP_SELECTION = 'Y'" + //
+      ' AND NOT EXISTS' + //
+      ' (SELECT 1' + //
+      ' FROM C_BPARTNER B,' + //
+      '   M_OFFER_BP_GROUP OB' + //
+      ' WHERE OB.M_OFFER_ID = M_OFFER.M_OFFER_ID' + //
+      '   AND B.C_BPARTNER_ID = ?' + //
+      '   AND OB.C_BP_GROUP_ID = B.C_BP_GROUP_ID' + //
+      ' ))' + //
+      " OR(BP_GROUP_SELECTION = 'N'" + //
+      ' AND EXISTS' + //
+      ' (SELECT 1' + //
+      ' FROM C_BPARTNER B,' + //
+      '   M_OFFER_BP_GROUP OB' + //
+      ' WHERE OB.M_OFFER_ID = M_OFFER.M_OFFER_ID' + //
+      '   AND B.C_BPARTNER_ID = ?' + //
+      '   AND OB.C_BP_GROUP_ID = B.C_BP_GROUP_ID' + //
+      ' )))' + //
+      " AND((PRODUCT_SELECTION = 'Y'" + //
+      ' AND NOT EXISTS' + //
+      ' (SELECT 1' + //
+      ' FROM M_OFFER_PRODUCT' + //
+      ' WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID' + //
+      '   AND M_PRODUCT_ID = ?' + //
+      ' ))' + //
+      " OR(PRODUCT_SELECTION = 'N'" + //
+      ' AND EXISTS' + //
+      ' (SELECT 1' + //
+      ' FROM M_OFFER_PRODUCT' + //
+      ' WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID' + //
+      '   AND M_PRODUCT_ID = ?' + //
+      ' )))' + //
+      " AND((PROD_CAT_SELECTION = 'Y'" + //
+      ' AND NOT EXISTS' + //
+      ' (SELECT 1' + //
+      ' FROM M_OFFER_PROD_CAT OP' + //
+      ' WHERE OP.M_OFFER_ID = M_OFFER.M_OFFER_ID' + //
+      '   AND OP.M_PRODUCT_CATEGORY_ID = ?' + //
+      ' ))' + //
+      " OR(PROD_CAT_SELECTION = 'N'" + //
+      ' AND EXISTS' + //
+      ' (SELECT 1' + //
+      ' FROM M_OFFER_PROD_CAT OP' + //
+      ' WHERE OP.M_OFFER_ID = M_OFFER.M_OFFER_ID' + //
+      '   AND OP.M_PRODUCT_CATEGORY_ID = ?' + //
+      ' ))) ' + //
+      " AND ((CHARACTERISTICS_SELECTION = 'Y'" +
+      ' AND NOT EXISTS' +
+      ' (SELECT 1' +
+      '  FROM M_OFFER_CHARACTERISTIC C, M_PRODUCT_CH_VALUE V' +
+      '  WHERE C.M_OFFER_ID = M_OFFER.M_OFFER_ID' +
+      '    AND V.M_PRODUCT_ID = ?' +
+      '    AND V.M_CH_VALUE_ID = C.M_CH_VALUE_ID' +
+      ' ))' +
+      " OR(CHARACTERISTICS_SELECTION = 'N'" +
+      ' AND EXISTS' +
+      ' (SELECT 1' +
+      '  FROM M_OFFER_CHARACTERISTIC C, M_PRODUCT_CH_VALUE V' +
+      '  WHERE C.M_OFFER_ID = M_OFFER.M_OFFER_ID' +
+      '    AND V.M_PRODUCT_ID = ?' +
+      '    AND V.M_CH_VALUE_ID = C.M_CH_VALUE_ID' +
+      ' ))' +
+      ' )' +
+      " AND ((pricelist_selection = 'Y' AND NOT EXISTS" + //
+      '	  (SELECT 1 FROM m_offer_pricelist opl WHERE m_offer.m_offer_id = opl.m_offer_id AND opl.m_pricelist_id = ? )) ' + //
+      "	OR (pricelist_selection = 'N' AND EXISTS" + //
+      '   (SELECT 1 FROM m_offer_pricelist opl WHERE m_offer.m_offer_id = opl.m_offer_id AND opl.m_pricelist_id = ? )))',
 
     additionalFilters: [],
     //extensible to add additional filters
-    computeStandardFilter: function (receipt) {
+    computeStandardFilter: function(receipt) {
       var filter = OB.Model.Discounts.standardFilter;
       var i, additionalFilter;
       for (i = 0; i < OB.Model.Discounts.additionalFilters.length; i++) {
@@ -410,17 +493,24 @@
   // Price Adjustment
   OB.Model.Discounts.registerRule('5D4BAF6BB86D4D2C9ED3D5A6FC051579', {
     async: false,
-    implementation: function (discountRule, receipt, line) {
-      receipt.get('lines').forEach(function (l) {
+    implementation: function(discountRule, receipt, line) {
+      receipt.get('lines').forEach(function(l) {
         var clonedDiscountRule = discountRule.clone();
-        var linePrice, discountedLinePrice, discountAmt, chunks, qty = l.get('qty'),
-            promotionCandidates = l.get('promotionCandidates'),
-            minQty = clonedDiscountRule.get('minQuantity'),
-            maxQty = clonedDiscountRule.get('maxQuantity'),
-            isMultiple = clonedDiscountRule.get('ismultiple'),
-            multipleQty = clonedDiscountRule.get('multiple');
+        var linePrice,
+          discountedLinePrice,
+          discountAmt,
+          chunks,
+          qty = l.get('qty'),
+          promotionCandidates = l.get('promotionCandidates'),
+          minQty = clonedDiscountRule.get('minQuantity'),
+          maxQty = clonedDiscountRule.get('maxQuantity'),
+          isMultiple = clonedDiscountRule.get('ismultiple'),
+          multipleQty = clonedDiscountRule.get('multiple');
 
-        if (OB.UTIL.isNullOrUndefined(promotionCandidates) || promotionCandidates.indexOf(discountRule.id) === -1) {
+        if (
+          OB.UTIL.isNullOrUndefined(promotionCandidates) ||
+          promotionCandidates.indexOf(discountRule.id) === -1
+        ) {
           // The line is not valid for this discountRule
           return;
         }
@@ -440,12 +530,30 @@
 
         chunks = 1;
         if (isMultiple) {
-          chunks = parseInt((qty / multipleQty), 10);
-          if (!OB.UTIL.isNullOrUndefined(clonedDiscountRule.get('discountAmount')) && clonedDiscountRule.get('discountAmount') > 0 && clonedDiscountRule.get('discountAmount') < linePrice) {
-            discountedLinePrice = OB.DEC.sub(linePrice, clonedDiscountRule.get('discountAmount'));
-            discountAmt = OB.DEC.mul(clonedDiscountRule.get('discountAmount'), chunks);
-          } else if (!OB.UTIL.isNullOrUndefined(clonedDiscountRule.get('discount')) && clonedDiscountRule.get('discount') > 0) {
-            discountAmt = OB.DEC.mul(linePrice, OB.DEC.div(clonedDiscountRule.get('discount'), 100));
+          chunks = parseInt(qty / multipleQty, 10);
+          if (
+            !OB.UTIL.isNullOrUndefined(
+              clonedDiscountRule.get('discountAmount')
+            ) &&
+            clonedDiscountRule.get('discountAmount') > 0 &&
+            clonedDiscountRule.get('discountAmount') < linePrice
+          ) {
+            discountedLinePrice = OB.DEC.sub(
+              linePrice,
+              clonedDiscountRule.get('discountAmount')
+            );
+            discountAmt = OB.DEC.mul(
+              clonedDiscountRule.get('discountAmount'),
+              chunks
+            );
+          } else if (
+            !OB.UTIL.isNullOrUndefined(clonedDiscountRule.get('discount')) &&
+            clonedDiscountRule.get('discount') > 0
+          ) {
+            discountAmt = OB.DEC.mul(
+              linePrice,
+              OB.DEC.div(clonedDiscountRule.get('discount'), 100)
+            );
             if (discountAmt < linePrice) {
               discountedLinePrice = OB.DEC.sub(linePrice, discountAmt);
               discountAmt = OB.DEC.mul(discountAmt, chunks);
@@ -454,12 +562,21 @@
             }
           }
         } else {
-          if (!OB.UTIL.isNullOrUndefined(clonedDiscountRule.get('fixedPrice')) && clonedDiscountRule.get('fixedPrice') >= 0) {
+          if (
+            !OB.UTIL.isNullOrUndefined(clonedDiscountRule.get('fixedPrice')) &&
+            clonedDiscountRule.get('fixedPrice') >= 0
+          ) {
             discountedLinePrice = clonedDiscountRule.get('fixedPrice');
           } else {
-            discountedLinePrice = (linePrice - clonedDiscountRule.get('discountAmount')) * (1 - clonedDiscountRule.get('discount') / 100);
+            discountedLinePrice =
+              (linePrice - clonedDiscountRule.get('discountAmount')) *
+              (1 - clonedDiscountRule.get('discount') / 100);
           }
-          discountAmt = OB.DEC.toNumber((linePrice - OB.DEC.toNumber(new BigDecimal(String(discountedLinePrice)))) * qty);
+          discountAmt = OB.DEC.toNumber(
+            (linePrice -
+              OB.DEC.toNumber(new BigDecimal(String(discountedLinePrice)))) *
+              qty
+          );
         }
         clonedDiscountRule.set('qtyOffer', qty);
         receipt.addPromotion(l, clonedDiscountRule, {
@@ -482,4 +599,4 @@
       onLoadActions[i].execute();
     }
   }
-}());
+})();

@@ -9,7 +9,7 @@
 
 /*global Backbone */
 
-(function () {
+(function() {
   var ChangedBusinessPartners = Backbone.Model.extend({
     modelName: 'ChangedBusinessPartners',
     tableName: 'changedbusinesspartners',
@@ -18,17 +18,18 @@
     local: true,
     properties: ['id', 'json', 'c_bpartner_id', 'isbeingprocessed'],
     propertyMap: {
-      'id': 'changedbusinesspartners_id',
-      'json': 'json',
-      'c_bpartner_id': 'c_bpartner_id',
-      'isbeingprocessed': 'isbeingprocessed'
+      id: 'changedbusinesspartners_id',
+      json: 'json',
+      c_bpartner_id: 'c_bpartner_id',
+      isbeingprocessed: 'isbeingprocessed'
     },
 
-    createStatement: 'CREATE TABLE IF NOT EXISTS changedbusinesspartners (changedbusinesspartners_id TEXT PRIMARY KEY, json TEXT, c_bpartner_id TEXT, isbeingprocessed TEXT)',
+    createStatement:
+      'CREATE TABLE IF NOT EXISTS changedbusinesspartners (changedbusinesspartners_id TEXT PRIMARY KEY, json TEXT, c_bpartner_id TEXT, isbeingprocessed TEXT)',
     dropStatement: 'DROP TABLE IF EXISTS changedbusinesspartners',
-    insertStatement: 'INSERT INTO changedbusinesspartners(changedbusinesspartners_id, json, c_bpartner_id, isbeingprocessed) VALUES (?,?,?,?)'
+    insertStatement:
+      'INSERT INTO changedbusinesspartners(changedbusinesspartners_id, json, c_bpartner_id, isbeingprocessed) VALUES (?,?,?,?)'
   });
 
-
   OB.Data.Registry.registerModel(ChangedBusinessPartners);
-}());
+})();
