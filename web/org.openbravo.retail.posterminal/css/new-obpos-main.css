@@ -266,24 +266,6 @@
 
 .obUiModalReceiptPropertiesImpl-newAttributes-printBox {
 /* Inherits: [OB.UI.renderBooleanProperty] */
-  height: 38px;
-  background-position: 10px center;
-  cursor: pointer;
-  vertical-align: middle;
-  width: 100%;
-}
-
-.obUiModalReceiptPropertiesImpl-newAttributes-printBox_active {
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-on.svg');
-  background-size: 34px 27px;
-}
-
-.obUiModalReceiptPropertiesImpl-newAttributes-printBox:focus {
-  outline: none;
-  border-width: 2px;
-  border-color: #0078d7;
-  border-style: solid;
-  background-position: 8px center !important;
 }
 
 .obUiModalReceiptPropertiesImpl-newAttributes-salesRepresentativeBox {
@@ -4374,62 +4356,6 @@
 /*           File: customershipbill.js           */
 /*            Folder: js/components/             */
 /***********************   ***********************/
-/*
-# Component: Generic CSS class for file
-*/
-.customerShipBill-obUiSmallButton-generic {
-  float: left;
-  margin: 7px;
-  height: 27px;
-  padding: 4px 15px 7px 15px;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-  width: 80%;
-  background-color: #e2e2e2;
-  color: black;
-  font-weight: normal;
-  border: none;
-  font-size: var(--font-medium);
-  text-decoration: none;
-  cursor: pointer;
-  opacity: 0.999;
-}
-
-@media all and (max-width: 800px) {
-  .customerShipBill-obUiSmallButton-generic {
-    height: 45px;
-  }
-}
-
-.customerShipBill-obUiSmallButton-generic.btn-over,
-.customerShipBill-obUiSmallButton-generic:hover {
-  opacity: 0.75;
-}
-
-.customerShipBill-obUiSmallButton-generic.btn-down,
-.customerShipBill-obUiSmallButton-generic:active {
-  opacity: 0.999;
-  /* Instead of "1" to avoid strange displacement effect in buttons on hover effect */
-  background-color: #cccccc;
-}
-
-.customerShipBill-obUiSmallButton-generic:disabled,
-.customerShipBill-obUiSmallButton-generic[disabled=true]:hover {
-  background-color: #a9a9a9;
-  opacity: 1;
-  cursor: default;
-}
-
-.customerShipBill-obUiSmallButton-generic:focus {
-  outline: none;
-  border-width: 2px;
-  border-color: #0078d7;
-  border-style: solid;
-  padding: 2px 13px 5px 13px !important;
-}
-
-
 /*
 # Component: OB.UI.Customer
 # Inherits: [OB.UI.SmallButton]

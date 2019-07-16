@@ -152,8 +152,7 @@ enyo.kind({
             'obUiModalReceiptLinesProperties-scroller-attributes-obUiPropertyEditLine',
           newAttribute: natt
         });
-        this.propertycomponents[natt.modelProperty] =
-          editline.propertycomponent;
+        this.propertycomponents[natt.modelProperty] = editline.coreElement;
         this.propertycomponents[natt.modelProperty].propertiesDialog = this;
       },
       this
@@ -208,7 +207,7 @@ enyo.kind({
       init: function(model) {
         this.model = model;
         this.collection = new Backbone.Collection();
-        this.$.renderCombo.setCollection(this.collection);
+        this.setCollection(this.collection);
         var i = 0;
         for (
           i;
@@ -234,17 +233,17 @@ enyo.kind({
                 inEvent.model.get('oBPOSPriceModificationReason') ===
                 OB.MobileApp.model.get('priceModificationReasons')[i].id
               ) {
-                this.$.renderCombo.setSelected(i);
+                this.setSelected(i);
                 break;
               }
             }
           } else {
-            this.$.renderCombo.setSelected(0);
+            this.setSelected(0);
           }
         }
       },
       applyValue: function(inSender, inEvent) {
-        inSender.set(this.modelProperty, this.$.renderCombo.getValue());
+        inSender.set(this.modelProperty, this.getValue());
         return true;
       },
       showProperty: function(orderline, callback) {

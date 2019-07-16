@@ -32,7 +32,7 @@ var ReceiptDeliveryModeDefinition = {
   //This function is called when the user accepts on the properties dialog,
   // and applies the value selected to the row.
   applyChange: function() {
-    var value = this.$.renderCombo.getValue();
+    var value = this.getValue();
     this.model.set(this.modelProperty, value);
   },
   setModel: function(inSender, inEvent) {
@@ -40,7 +40,7 @@ var ReceiptDeliveryModeDefinition = {
   },
   init: function(model) {
     this.model = model.get('order');
-    this.$.renderCombo.change = function(inSender, inEvent) {
+    this.change = function(inSender, inEvent) {
       var cond = inSender.getValue(),
         showDate = cond === 'PickupInStoreDate' || cond === 'HomeDelivery',
         showTime = cond === 'HomeDelivery',

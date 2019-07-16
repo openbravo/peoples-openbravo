@@ -58,11 +58,11 @@ enyo.kind({
         this.doLoadValueNeeded = true;
         if (!OB.MobileApp.model.hasPermission(this.permission)) {
           this.doLoadValueNeeded = false;
-          this.parent.parent.parent.hide();
+          this.formElement.hide();
         } else {
           if (OB.MobileApp.model.hasPermission(this.permissionOption, true)) {
             this.doLoadValueNeeded = false;
-            this.parent.parent.parent.hide();
+            this.formElement.hide();
           }
         }
       },
@@ -135,6 +135,7 @@ enyo.kind({
       popup: 'receiptPropertiesDialog',
       name: 'customerbutton',
       classes: 'obUiModalReceiptPropertiesImpl-newAttributes-customerbutton',
+      hideNullifyButton: true,
       i18nLabel: 'OBPOS_LblCustomer'
     },
     {
@@ -143,6 +144,7 @@ enyo.kind({
       popup: 'receiptPropertiesDialog',
       name: 'addressshipbutton',
       classes: 'obUiModalReceiptPropertiesImpl-newAttributes-addressshipbutton',
+      hideNullifyButton: true,
       i18nLabel: 'OBPOS_LblShipAddr'
     },
     {
@@ -151,6 +153,7 @@ enyo.kind({
       popup: 'receiptPropertiesDialog',
       name: 'addressbillbutton',
       classes: 'obUiModalReceiptPropertiesImpl-newAttributes-addressbillbutton',
+      hideNullifyButton: true,
       i18nLabel: 'OBPOS_LblBillAddr'
     }
   ],
