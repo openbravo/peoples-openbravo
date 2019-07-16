@@ -9602,10 +9602,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsApply
 # Inherits: [OB.UI.ModalDialog]
 */
-.obObposPointOfSaleUiDiscountsBtnDiscountsApply {
-  color: var(--color-actioncolor);
-  font-weight: bold;
-}
+.obObposPointOfSaleUiDiscountsBtnDiscountsApply {}
 
 
 /*
@@ -9636,14 +9633,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.UI.DiscountList
 # Inherits: [OB.UI.List]
 */
-.obUiDiscountList {
-  height: 40px;
-  width: 100%;
-  margin: 0px;
-  background-color: var(--color-primary-lighter);
-  padding: 4px;
-  border: var(--bottomseparator-slim);
-}
+.obUiDiscountList {}
 
 
 /*
@@ -9674,149 +9664,36 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   overflow-y: auto;
 }
 
-.obObposPointOfSaleUiDiscounts-scroller-container1 {}
+.obObposPointOfSaleUiDiscounts-scroller-formElementDiscountsList {}
 
-.obObposPointOfSaleUiDiscounts-scroller-container1-container1 {
-  border: 1px solid #f0f0f0;
-  background-color: #e2e2e2;
-  color: var(--color-primary-darker);
-  width: 35%;
-  height: 40px;
-  float: left;
-  text-align: left;
-}
+.obObposPointOfSaleUiDiscounts-scroller-formElementDiscountsList-discountsList {}
 
-.obObposPointOfSaleUiDiscounts-scroller-container1-container1-element1 {
-  padding: 5px 8px 0px 3px;
-}
+.obObposPointOfSaleUiDiscounts-scroller-formElementCheckOverride {}
 
-.obObposPointOfSaleUiDiscounts-scroller-container1-discountsContainer {
-  border: 1px solid #f0f0f0;
-  float: left;
-  width: 63%;
-}
+.obObposPointOfSaleUiDiscounts-scroller-formElementCheckOverride-checkOverride {}
 
-.obObposPointOfSaleUiDiscounts-scroller-container1-discountsContainer-discountsList {
-  /*Inherits: [OB.UI.DiscountList]*/
-}
+.obObposPointOfSaleUiDiscounts-scroller-formElementCheckSelectAll {}
 
-.obObposPointOfSaleUiDiscounts-scroller-container2 {
-  clear: both;
-}
+.obObposPointOfSaleUiDiscounts-scroller-formElementCheckSelectAll-checkSelectAll {}
 
-.obObposPointOfSaleUiDiscounts-scroller-container3 {}
-
-.obObposPointOfSaleUiDiscounts-scroller-container3-container1 {
-  border: 1px solid #f0f0f0;
-  background-color: #e2e2e2;
-  color: var(--color-primary-darker);
-  width: 35%;
-  height: 40px;
-  float: left;
-  text-align: left;
-}
-
-.obObposPointOfSaleUiDiscounts-scroller-container3-container1-container1 {
-  padding: 5px 8px 0px 3px;
-}
-
-.obObposPointOfSaleUiDiscounts-scroller-container3-container2 {
-  border: 1px solid #f0f0f0;
-  float: left;
-  width: 63%;
-}
-
-.obObposPointOfSaleUiDiscounts-scroller-container3-container2-container1 {
-  height: 40px;
-  margin: 0px;
-  background-color: white;
-  width: 59%;
-  float: left;
-}
-
-.obObposPointOfSaleUiDiscounts-scroller-container3-container2-container1-checkOverride {
-  height: 38px;
-  cursor: pointer;
-  vertical-align: middle;
-  width: 100%;
-  outline: none;
-  border-width: 2px;
-  border-color: #0078d7;
-  border-style: solid;
-  background-position: 8px center;
-}
-
-.obObposPointOfSaleUiDiscounts-scroller-container3-container3 {
-  clear: both;
-}
-
-.obObposPointOfSaleUiDiscounts-scroller-container3-applyCheckSelectAll {}
-
-.obObposPointOfSaleUiDiscounts-scroller-container3-applyCheckSelectAll-container1 {
-  border: 1px solid #f0f0f0;
-  background-color: #e2e2e2;
-  color: var(--color-primary-darker);
-  width: 35%;
-  height: 40px;
-  float: left;
-  text-align: left;
-}
-
-.obObposPointOfSaleUiDiscounts-scroller-container3-applyCheckSelectAll-container1-element1 {
-  padding: 5px 8px 0px 3px;
-}
-
-.obObposPointOfSaleUiDiscounts-scroller-container3-applyCheckSelectAll-container2 {
-  border: 1px solid #f0f0f0;
-  float: left;
-  width: 63%;
-}
-
-.obObposPointOfSaleUiDiscounts-scroller-container3-applyCheckSelectAll-container2-container1 {
-  height: 40px;
-  margin: 0px;
-  background-color: white;
-  width: 59%;
-  float: left;
-}
-
-.obObposPointOfSaleUiDiscounts-scroller-container3-applyCheckSelectAll-container2-container1-checkSelectAll {
-  height: 38px;
-  cursor: pointer;
-  vertical-align: middle;
-  width: 100%;
-  outline: none;
-  border-width: 2px;
-  border-color: #0078d7;
-  border-style: solid;
-  background-position: 8px center;
-}
-
-.obObposPointOfSaleUiDiscounts-scroller-container3-container4 {
-  clear: both;
-}
-
-.obObposPointOfSaleUiDiscounts-container1 {
-  padding: 10px;
-}
-
-.obObposPointOfSaleUiDiscounts-container1-container1 {
+.obObposPointOfSaleUiDiscounts-buttons {
+  padding: 10px;  
   text-align: center;
 }
 
-.obObposPointOfSaleUiDiscounts-container1-container1-btnApply {
+.obObposPointOfSaleUiDiscounts-buttons-btnApply {
   /*Inherits: [OB.UI.PopupDrawerOpened]*/
 }
 
-.obObposPointOfSaleUiDiscounts-container1-container1-btnApply_activate {
+.obObposPointOfSaleUiDiscounts-buttons-btnApply_activate {
   color: var(--color-actioncolor);
 }
 
-.obObposPointOfSaleUiDiscounts-container1-container1-btnApply_desactivate {
+.obObposPointOfSaleUiDiscounts-buttons-btnApply_desactivate {
   color: #4c4949;
 }
 
-.obObposPointOfSaleUiDiscounts-container1-container1-obObposPointOfSaleUiBtnDiscountsCancel {
+.obObposPointOfSaleUiDiscounts-buttons-obObposPointOfSaleUiBtnDiscountsCancel {
   /*Inherits: [OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsCancel]*/
 }
 
