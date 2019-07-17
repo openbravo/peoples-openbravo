@@ -35,7 +35,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
   static {
     // Set dependency on Mobile Core app
     BaseComponentProvider.setAppDependencies(POSUtils.APP_NAME,
-        Arrays.asList(MobileCoreConstants.RETAIL_CORE, DiscountsComponentProvider.DISCOUNTS_APP));
+        Arrays.asList(MobileCoreConstants.RETAIL_CORE));
   }
 
   public static final String QUALIFIER = "OBPOS_Main";
