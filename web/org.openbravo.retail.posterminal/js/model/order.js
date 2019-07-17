@@ -5320,7 +5320,10 @@
               null,
               null,
               function(shipping, billing, locations) {
-                businessPartner.set('locationModel', billing);
+                businessPartner.set(
+                  'locationModel',
+                  shipping ? shipping : billing
+                );
                 businessPartner.set('locationBillModel', billing);
                 businessPartner.set('locId', billing.get('id'));
                 businessPartner.set('locName', billing.get('name'));
@@ -5416,7 +5419,10 @@
             null,
             null,
             function(shipping, billing, locations) {
-              businessPartner.set('locationModel', billing);
+              businessPartner.set(
+                'locationModel',
+                shipping ? shipping : billing
+              );
               businessPartner.set('locationBillModel', billing);
               businessPartner.set('locId', billing.get('id'));
               businessPartner.set('locName', billing.get('name'));
