@@ -1953,7 +1953,7 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
 
 @media (max-width: 392px) {
   .obpos-product-details-view-buttons {
-    min-width: 150px;
+    width: 150px;
   }
 }
 
