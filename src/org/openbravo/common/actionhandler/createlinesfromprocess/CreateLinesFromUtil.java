@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,9 +29,11 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.invoice.Invoice;
@@ -137,13 +139,22 @@ class CreateLinesFromUtil {
     return inOutLine;
   }
 
-  static UOM getAUM(BaseOBObject line) {
-    if (isOrderLine(line)) {
-      return ((OrderLine) line).getGoodsShipmentLine() != null
-          ? ((OrderLine) line).getGoodsShipmentLine().getOperativeUOM()
-          : ((OrderLine) line).getOperativeUOM();
-    } else {
-      return ((ShipmentInOutLine) line).getOperativeUOM();
+  static UOM getAUM(JSONObject selectedPEValuesInLine) {
+    try {
+      UOM aum = null;
+      if (hasNotEmptyValue(selectedPEValuesInLine, "operativeUOM")) {
+        aum = OBDal.getInstance().get(UOM.class, selectedPEValuesInLine.getString("operativeUOM"));
+        if (aum == null) {
+          OBCriteria<UOM> aumCriteria = OBDal.getInstance().createCriteria(UOM.class);
+          aumCriteria.add(
+              Restrictions.eq(UOM.PROPERTY_NAME, selectedPEValuesInLine.getString("operativeUOM")));
+          aum = (UOM) aumCriteria.uniqueResult();
+        }
+      }
+      return aum;
+    } catch (JSONException e) {
+      log.error("Error getting the Order UOM.", e);
+      throw new OBException(e);
     }
   }
 

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -752,7 +753,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
   protected String substituteParameters(String hqlTreeWhereClause, Map<String, String> parameters) {
     Pattern pattern = Pattern.compile("@\\S*@");
     Matcher matcher = pattern.matcher(hqlTreeWhereClause);
-    HashMap<String, String> replacements = new HashMap<String, String>();
+    HashMap<String, String> replacements = new HashMap<>();
     while (matcher.find()) {
       String contextPropertyName = hqlTreeWhereClause.substring(matcher.start(), matcher.end());
       String value = null;
@@ -763,18 +764,19 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
         // try again without the '@'
         value = parameters.get(contextPropertyName.substring(1, contextPropertyName.length() - 1));
       }
-      replacements.put(contextPropertyName, "'" + value + "'");
+      replacements.put(contextPropertyName, "'" + StringEscapeUtils.escapeSql(value) + "'");
     }
-    String hqlCopy = new String(hqlTreeWhereClause);
-    for (String key : replacements.keySet()) {
+    String hqlCopy = hqlTreeWhereClause;
+    for (Entry<String, String> entry : replacements.entrySet()) {
       // if the key is not found in the request parameters, its value in the replacement list will
       // be 'null'
-      if (replacements.get(key).equals("'null'")) {
+      String key = entry.getKey();
+      if (entry.getValue().equals("'null'")) {
         // Strip the "@" from the key
         String keyWithoutAt = key.substring(1, key.length() - 1);
         hqlCopy = hqlCopy.replaceAll(key, getEscapedSessionAttribute(keyWithoutAt));
       } else {
-        hqlCopy = hqlCopy.replaceAll(key, replacements.get(key));
+        hqlCopy = hqlCopy.replaceAll(key, entry.getValue());
       }
     }
     return hqlCopy;

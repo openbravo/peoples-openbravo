@@ -34,6 +34,16 @@ IS_A_MODULE=$(isCurrentFolderModuleRoot)
 
 echo "pre-commit: Performing formatting check on modified js resources"
 
+FLAGS=""
+while getopts ":w" arg; do
+    case ${arg} in
+        w )
+            FLAGS="-w"
+        ;;
+    esac
+done
+shift "$((OPTIND-1))"
+
 FILES=()
 for changedfile in $(hg st -ma)
 do
@@ -46,7 +56,7 @@ do
 done
 
 if [[ -n "${FILES[*]}" ]]; then
-    ${OPENBRAVO_ROOT_PATH}/modules/org.openbravo.client.kernel/jsformatter/jsformatter ${FILES[*]} || exit 1
+    ${OPENBRAVO_ROOT_PATH}/modules/org.openbravo.client.kernel/jsformatter/jsformatter ${FLAGS} ${FILES[*]} || exit 1
 fi
 
 exit 0

@@ -54,6 +54,13 @@ public class TestConstants {
   public static class Windows {
     public static final String SALES_ORDER = "143";
     public static final String DISCOUNTS_AND_PROMOTIONS = "800028";
+    public static final String SALES_INVOICE = "167";
+    public static final String PURCHASE_INVOICE = "183";
+  }
+
+  public static class Tabs {
+    public static final String SALES_INVOICE_HEADER = "263";
+    public static final String PURCHASE_INVOICE_HEADER = "290";
   }
 
   public static class Entities {

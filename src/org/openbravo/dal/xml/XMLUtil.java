@@ -29,6 +29,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -54,6 +56,7 @@ import org.xml.sax.SAXException;
 
 public class XMLUtil implements OBSingleton {
 
+  private static final Logger log = LogManager.getLogger();
   private static XMLUtil instance;
 
   public static synchronized XMLUtil getInstance() {
@@ -87,8 +90,8 @@ public class XMLUtil implements OBSingleton {
   /** @return a new secure {@link TransformerHandler} */
   public TransformerHandler newSAXTransformerHandler() throws TransformerConfigurationException {
     final SAXTransformerFactory tf = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
-    tf.setAttribute("http://javax.xml.XMLConstants/property/accessExternalDTD", "");
-    tf.setAttribute("http://javax.xml.XMLConstants/property/accessExternalStylesheet", "");
+    setAttribute(tf, "http://javax.xml.XMLConstants/property/accessExternalDTD", "");
+    setAttribute(tf, "http://javax.xml.XMLConstants/property/accessExternalStylesheet", "");
 
     return tf.newTransformerHandler();
   }
@@ -105,9 +108,18 @@ public class XMLUtil implements OBSingleton {
   /** @return a new secure {@link TransformerFactory} */
   public TransformerFactory newTransformerFactory() {
     TransformerFactory factory = TransformerFactory.newInstance();
-    factory.setAttribute("http://javax.xml.XMLConstants/property/accessExternalDTD", "");
-    factory.setAttribute("http://javax.xml.XMLConstants/property/accessExternalStylesheet", "");
+    setAttribute(factory, "http://javax.xml.XMLConstants/property/accessExternalDTD", "");
+    setAttribute(factory, "http://javax.xml.XMLConstants/property/accessExternalStylesheet", "");
     return factory;
+  }
+
+  private void setAttribute(TransformerFactory factory, String attribute, Object value) {
+    try {
+      factory.setAttribute(attribute, value);
+    } catch (IllegalArgumentException ex) {
+      log.warn("TransformerFactory implementation {} doesn't recognize the attribute {}",
+          factory.getClass().getName(), attribute);
+    }
   }
 
   /**

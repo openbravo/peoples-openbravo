@@ -31,12 +31,12 @@
 # [hooks]
 # pretxncommit = <path_to_this_script>/jslint-hg-hook.sh
 #
-if [ -d ./modules/org.openbravo.client.kernel/jsformatter ]; then
+if [[ -d ./modules/org.openbravo.client.kernel/jsformatter ]]; then
   ./modules/org.openbravo.client.kernel/jslint/jslint-hg
-elif [ -d ../org.openbravo.client.kernel/jsformatter ]; then
+elif [[ -d ../org.openbravo.client.kernel/jsformatter ]]; then
   ../org.openbravo.client.kernel/jslint/jslint-hg
-elif [ -d ./modules/org.openbravo.client.kernel/jsbeautify ]; then
+elif [[ -d ./modules/org.openbravo.client.kernel/jsbeautify ]]; then
   ./modules/org.openbravo.client.kernel/jslint/jscheck-hg
-elif [ -d ../org.openbravo.client.kernel/jsbeautify ]; then
+elif [[ -d ../org.openbravo.client.kernel/jsbeautify ]]; then
   ../org.openbravo.client.kernel/jslint/jscheck-module-hg
 fi

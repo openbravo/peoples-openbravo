@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2017 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2019 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -57,14 +57,14 @@ import org.openbravo.userinterface.selector.SelectorConstants;
 @RunWith(Parameterized.class)
 public class CrossOrganizationUI extends OBBaseTest {
   private static final String ORDER_PRICELIST_FIELD = "1077";
-  private static final String ORDER_SALESREP_FIELD = "1098";
+  private static final String ORDER_ORGTRX_FIELD = "7038";
 
   private static final String ORDER_PRICELIST_COLUMN = "2204";
-  private static final String ORDER_SALESREP_COLUMN = "2186";
+  private static final String ORDER_ORGTRX_COLUMN = "9331";
   private static final String ORDER_BP_COLUMN = "2762";
 
   private static final List<String> COLUMNS_TO_ALLOW_CROSS_ORG = Arrays
-      .asList(ORDER_PRICELIST_COLUMN, ORDER_SALESREP_COLUMN, ORDER_BP_COLUMN);
+      .asList(ORDER_PRICELIST_COLUMN, ORDER_ORGTRX_COLUMN, ORDER_BP_COLUMN);
 
   private boolean useCrossOrgColumns;
 
@@ -96,17 +96,17 @@ public class CrossOrganizationUI extends OBBaseTest {
 
   @Test
   public void tableShouldAlwaysShowReferenceableOrgs() throws Exception {
-    List<String> rows = getComboValues(OBDal.getInstance().get(Field.class, ORDER_SALESREP_FIELD));
-    assertThat(rows, hasItem("Juan López"));
+    List<String> rows = getComboValues(OBDal.getInstance().get(Field.class, ORDER_ORGTRX_FIELD));
+    assertThat(rows, hasItem("F&B España - Región Norte - F&B España - Región Norte"));
   }
 
   @Test
   public void tableShouldShowNonReferenceableOrgsIfAllowed() throws Exception {
-    List<String> rows = getComboValues(OBDal.getInstance().get(Field.class, ORDER_SALESREP_FIELD));
+    List<String> rows = getComboValues(OBDal.getInstance().get(Field.class, ORDER_ORGTRX_FIELD));
     if (useCrossOrgColumns) {
-      assertThat(rows, hasItem("John Smith"));
+      assertThat(rows, hasItem("F&B US West Coast - F&B US West Coast"));
     } else {
-      assertThat(rows, not(hasItem("John Smith")));
+      assertThat(rows, not(hasItem("F&B US West Coast - F&B US West Coast")));
     }
   }
 
@@ -163,7 +163,7 @@ public class CrossOrganizationUI extends OBBaseTest {
         put(JsonConstants.STARTROW_PARAMETER, "0");
         put(JsonConstants.ENDROW_PARAMETER, "75");
         put(JsonConstants.NOCOUNT_PARAMETER, "true");
-        put(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER, "862F54CB1B074513BD791C6789F4AA42");
+        put(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER, "F132874BE0954A9B8C1301BE20704730");
         put(JsonConstants.ORG_PARAMETER, TEST_ORG_ID);
         put("inpTableId", "259");
         put("targetProperty", "businessPartner");
