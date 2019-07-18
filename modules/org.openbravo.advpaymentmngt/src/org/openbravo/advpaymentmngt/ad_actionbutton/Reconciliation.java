@@ -553,15 +553,14 @@ public class Reconciliation extends HttpSecureAppServlet {
   private String linesInNotAvailablePeriod(String reconciliationId) {
     //@formatter:off
     final String hql = " as rl "
-    + " where rl.reconciliation.id = '"
-    + reconciliationId
-    + "' "
+    + " where rl.reconciliation.id = :reconciliationId"
     + "   and c_chk_open_period(rl.organization, rl.transactionDate, 'REC', null) = 0 "
     + " order by rl.transactionDate";
 
     //@formatter:on
     final OBQuery<FIN_ReconciliationLine_v> obqRL = OBDal.getInstance()
         .createQuery(FIN_ReconciliationLine_v.class, hql.toString());
+    obqRL.setNamedParameter("reconciliationId", reconciliationId);
     obqRL.setMaxResult(1);
 
     List<FIN_ReconciliationLine_v> obqRLlist = obqRL.list();
