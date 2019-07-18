@@ -4552,31 +4552,31 @@
         }
       }
 
-      currentDiscountedLinePrice = OB.DEC.toNumber(
-        new BigDecimal(String(line.get('price'))).subtract(
-          new BigDecimal(String(allDiscountedAmt)).divide(
-            new BigDecimal(String(line.get('qty'))),
-            20,
-            OB.DEC.getRoundingMode()
+      if (allDiscountedAmt > 0 && line.get('qty') > 0) {
+        currentDiscountedLinePrice = OB.DEC.toNumber(
+          new BigDecimal(String(line.get('price'))).subtract(
+            new BigDecimal(String(allDiscountedAmt)).divide(
+              new BigDecimal(String(line.get('qty'))),
+              20,
+              OB.DEC.getRoundingMode()
+            )
           )
-        )
-      );
+        );
+      } else {
+        currentDiscountedLinePrice = line.get('price');
+      }
 
       return currentDiscountedLinePrice;
     },
 
     calculateDiscountedLinePrice: function(line) {
-      var finalDiscountedLinePrice;
-
-      finalDiscountedLinePrice = this.getCurrentDiscountedLinePrice(
-        line,
-        false
-      );
-
       if (line.get('qty') === 0) {
         line.unset('discountedLinePrice');
       } else {
-        line.set('discountedLinePrice', finalDiscountedLinePrice);
+        line.set(
+          'discountedLinePrice',
+          this.getCurrentDiscountedLinePrice(line, false)
+        );
       }
     },
 

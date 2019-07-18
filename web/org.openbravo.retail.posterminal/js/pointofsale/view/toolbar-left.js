@@ -342,6 +342,7 @@ enyo.kind({
     'completeQuotation',
     'clearWith',
     'addProduct',
+    'deleteLine',
     'servicePriceCalculation',
     'totalAmountValidation'
   ],
