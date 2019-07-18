@@ -118,15 +118,13 @@ public class AdvPaymentMngtDao {
       //@formatter:off
       final String whereClause = " as psd "
            + " where psd.paymentDetails is null"
-           + "   and psd.invoicePaymentSchedule.invoice.id = '"
-           +  invoice.getId()
-           + "'"
+           + "   and psd.invoicePaymentSchedule.invoice.id = :invoiceId"
            + " order by psd.invoicePaymentSchedule.expectedDate, psd.amount";
       
       //@formatter:on
       final OBQuery<FIN_PaymentScheduleDetail> obqPSD = OBDal.getInstance()
           .createQuery(FIN_PaymentScheduleDetail.class, whereClause.toString());
-
+      obqPSD.setNamedParameter("invoiceId", invoice.getId());
       return obqPSD.list();
 
     } finally {
@@ -143,15 +141,13 @@ public class AdvPaymentMngtDao {
       //@formatter:off
       final String whereClause = " as psd "
            + " where psd.paymentDetails is null"
-           + "   and psd.orderPaymentSchedule.order.id = '"
-           + order.getId()
-           + "'"
+           + "   and psd.orderPaymentSchedule.order.id = :orderId"
            + " order by psd.orderPaymentSchedule.expectedDate, psd.amount";
 
       //@formatter:on
       final OBQuery<FIN_PaymentScheduleDetail> obqPSD = OBDal.getInstance()
           .createQuery(FIN_PaymentScheduleDetail.class, whereClause.toString());
-
+      obqPSD.setNamedParameter("orderId", order.getId());
       return obqPSD.list();
 
     } finally {
@@ -721,15 +717,13 @@ public class AdvPaymentMngtDao {
            + " left outer join ips.invoice as inv"
            + " left outer join psd.orderPaymentSchedule as ops"
            + " left outer join ops.order as ord"
-           + " where ppd.finPaymentProposal.id='"
-           + paymentProposal.getId()
-           + "' "
+           + " where ppd.finPaymentProposal.id= :paymentProposalId"
            + " order by COALESCE (inv.businessPartner, ord.businessPartner)";
 
       //@formatter:on
       final OBQuery<FIN_PaymentPropDetail> obqPSD = OBDal.getInstance()
           .createQuery(FIN_PaymentPropDetail.class, whereClause.toString());
-
+      obqPSD.setNamedParameter("paymentProposalId", paymentProposal.getId());
       return obqPSD.list();
 
     } finally {
@@ -745,13 +739,12 @@ public class AdvPaymentMngtDao {
     try {
       //@formatter:off
       final String hsqlScript = " as recon "
-           + " where recon.id='"
-           + strReconID
-           + "'";
+           + " where recon.id= :reconciliationId";
       
       //@formatter:on
       final OBQuery<FIN_Reconciliation> obqRecon = OBDal.getInstance()
           .createQuery(FIN_Reconciliation.class, hsqlScript.toString());
+      obqRecon.setNamedParameter("reconciliationId", strReconID);
 
       List<FIN_Reconciliation> obqRecList = obqRecon.list();
       FIN_Reconciliation[] FIN_Reconcile = new FIN_Reconciliation[0];
@@ -780,13 +773,13 @@ public class AdvPaymentMngtDao {
     try {
       //@formatter:off
       final String hsqlScript = " as recon "
-           + " where recon.id='"
-           + strReconID
-           + "'";
+           + " where recon.id= :reconciliationId";
       
       //@formatter:on
       final OBQuery<FIN_Reconciliation> obqRecon = OBDal.getInstance()
           .createQuery(FIN_Reconciliation.class, hsqlScript.toString());
+      obqRecon.setNamedParameter("reconciliationId", strReconID);
+
       List<FIN_Reconciliation> obqRecList = obqRecon.list();
       FIN_Reconciliation[] FIN_Reconcile = new FIN_Reconciliation[0];
       FIN_Reconcile = obqRecList.toArray(FIN_Reconcile);
