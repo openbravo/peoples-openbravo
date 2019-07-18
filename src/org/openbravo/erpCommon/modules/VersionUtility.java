@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,9 +20,11 @@
 package org.openbravo.erpCommon.modules;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.servlet.ServletContext;
@@ -33,6 +35,8 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.ConnectionProviderContextListener;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
@@ -40,11 +44,11 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.module.ModuleMerge;
-import org.openbravo.services.webservice.Module;
-import org.openbravo.services.webservice.ModuleDependency;
-import org.openbravo.services.webservice.ModuleInstallDetail;
-import org.openbravo.services.webservice.WebService3Impl;
-import org.openbravo.services.webservice.WebService3ImplServiceLocator;
+import org.openbravo.service.centralrepository.CentralRepository;
+import org.openbravo.service.centralrepository.CentralRepository.Service;
+import org.openbravo.service.centralrepository.Module;
+import org.openbravo.service.centralrepository.ModuleDependency;
+import org.openbravo.service.centralrepository.ModuleInstallDetail;
 
 public class VersionUtility {
   protected static ConnectionProvider pool;
@@ -594,8 +598,7 @@ public class VersionUtility {
       ver.dependencies = new HashMap<String, Dep>();
       ver.includes = new HashMap<String, Dep>();
 
-      HashMap<String, String> enforcements = (HashMap<String, String>) modules[i]
-          .getAdditionalInfo()
+      Map<String, String> enforcements = (Map<String, String>) modules[i].getAdditionalInfo()
           .get("enforcements");
 
       ModuleDependency[] dependencies = modules[i].getDependencies();
@@ -626,29 +629,25 @@ public class VersionUtility {
     return mods;
   }
 
-  static private boolean installModulesLocal(Module[] modulesToInstall, Module[] modulesToUpdate,
+  private static boolean installModulesLocal(Module[] modulesToInstall, Module[] modulesToUpdate,
       Module[] modulesToMerge, Vector<String> vecErrors) throws Exception {
     boolean checked = false;
     HashMap<String, Mod> modsInstalled = fillModules(modulesToMerge);
     HashMap<String, Mod> modsToInstall = modules2mods(modulesToInstall);
     HashMap<String, Mod> modsToUpdate = modules2mods(modulesToUpdate);
 
-    try {
-      /** Check if all dependencies are satisfied with installed modules */
-      checked = checkAllDependencies(modsInstalled, modsToInstall, modsToUpdate, modulesToMerge,
-          vecErrors);
-    } catch (Exception e) {
-      throw e;
-    }
+    /** Check if all dependencies are satisfied with installed modules */
+    checked = checkAllDependencies(modsInstalled, modsToInstall, modsToUpdate, modulesToMerge,
+        vecErrors);
 
     return checked;
   }
 
-  static public boolean getOBError(OBError rt, ConnectionProvider conn, VariablesSecureApp vars,
+  public static boolean getOBError(OBError rt, ConnectionProvider conn, VariablesSecureApp vars,
       String[] errors) {
     if (errors.length != 0) {
       rt.setType("Error");
-      StringBuffer strErrors = new StringBuffer();
+      StringBuilder strErrors = new StringBuilder();
       for (String s : errors) {
         strErrors.append(s).append("\n");
       }
@@ -680,17 +679,28 @@ public class VersionUtility {
    * @param maturityLevels
    * @return ModuleInstallDetail with modulesToInstall, modulesToUpdate and isValidConfiguration
    */
-  static public ModuleInstallDetail checkRemote(VariablesSecureApp vars, String[] moduleVersionId,
+  public static ModuleInstallDetail checkRemote(VariablesSecureApp vars, String[] moduleVersionId,
       String[] moduleVersionToUpdateId, OBError obErrors, HashMap<String, String> maturityLevels)
       throws Exception {
-    WebService3ImplServiceLocator loc = new WebService3ImplServiceLocator();
-    WebService3Impl ws = loc.getWebService3();
-    String[] errors = new String[0];
+    JSONObject mods = ImportModule.getJsonInstalledModulesAndDeps();
+    JSONObject additionalInfo = new JSONObject(maturityLevels);
+    JSONObject req = new JSONObject();
+    req.put("modules", mods);
+    req.put("additionalInfo", additionalInfo);
 
-    ModuleInstallDetail mid = ws.checkConsistency(ImportModule.getInstalledModulesAndDeps(),
-        moduleVersionId, moduleVersionToUpdateId, maturityLevels);
+    JSONArray toInstall = new JSONArray();
+    Arrays.stream(moduleVersionId).forEach(toInstall::put);
+    req.put("toInstall", toInstall);
 
-    errors = mid.getDependencyErrors();
+    JSONArray toUpdate = new JSONArray();
+    Arrays.stream(moduleVersionToUpdateId).forEach(toUpdate::put);
+    req.put("toUpdate", toUpdate);
+
+    JSONObject installDetails = CentralRepository.executeRequest(Service.CHECK_CONSISTENCY, req);
+
+    ModuleInstallDetail mid = ModuleInstallDetail.fromJson(installDetails);
+
+    String[] errors = mid.getDependencyErrors();
 
     getOBError(obErrors, pool, vars, errors);
     return mid;

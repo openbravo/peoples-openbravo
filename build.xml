@@ -856,10 +856,6 @@ export.database: exports database structure and data to xml files.
     <start url="${tomcat.manager.url}" username="${tomcat.manager.username}" password="${tomcat.manager.password}" path="/${context.name}" />
   </target>
 
-  <target name="generate-wsdd">
-    <ant dir="${base.src}" target="generate-wsdd" inheritAll="true" inheritRefs="true" />
-  </target>
-
   <target name="obx.export.database" if="obx.exp.DB">
     <antcall target="export.database" />
   </target>

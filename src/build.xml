@@ -672,18 +672,6 @@ build.war: build a war file in the lib directory.
     <updatesystemstatus v="RB51"/>
   </target>
 
-  <target name="generate-wsdd">
-    <delete failonerror="false">
-      <fileset dir="${base.src}/org/openbravo/services/webservice" includes="**/*" />
-    </delete>
-
-    <mkdir dir="${build}" />
-     <axis-wsdl2java output="${base.src}" verbose="false" url="http://centralrepository.openbravo.com/openbravo/services/WebService3?wsdl" serverside="true" debug="false">
-      <mapping namespace="http://centralrepository.openbravo.com/openbravo/services/WebService3" package="org.openbravo.services.webservice" />
-      <mapping namespace="/services/WebService3" package="org.openbravo.services.webservice" />
-    </axis-wsdl2java>
-  </target>
-
   <target name="update.build.timestamp" unless="timestamp">
     <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" delimiter="/">
       <classpath>
