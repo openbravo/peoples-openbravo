@@ -108,7 +108,7 @@ public class TransactionsDao {
     //@formatter:off
     String hql = "select max(f.lineNo) as maxLineno "
         + "from FIN_Finacc_Transaction as f "
-        + "where account.id=:accountId";
+        + "where account.id = :accountId";
     //@formatter:on
     Query<Long> query = OBDal.getInstance().getSession().createQuery(hql, Long.class);
     query.setParameter("accountId", financialAccount.getId());
@@ -249,15 +249,14 @@ public class TransactionsDao {
     final String hqlString = "select sum(ft.depositAmount) - sum(ft.paymentAmount)"
         + " from FIN_Finacc_Transaction as ft"
         + " left outer join ft.reconciliation as rec"
-        + " where ft.account.id = '" 
-        +  strAccountId 
-        + "'"
+        + " where ft.account.id = :accountId"
         + "   and rec.processed = 'N'"
         + "   and ft.processed = 'Y'";
 
     //@formatter:on
     final Session session = OBDal.getInstance().getSession();
     final Query<BigDecimal> query = session.createQuery(hqlString, BigDecimal.class);
+    query.setParameter("accountId", strAccountId);
     BigDecimal resultObject = query.uniqueResult();
     if (resultObject != null) {
       return resultObject;
