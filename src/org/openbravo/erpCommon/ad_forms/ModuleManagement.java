@@ -1217,17 +1217,13 @@ public class ModuleManagement extends HttpSecureAppServlet {
       // if it is a remote installation get the module from webservice,
       // other case the obx file is passed as an InputStream
       try {
-        if (HttpsUtils.isInternetAvailable()) {
-          module = getRemoteModuleVersionDetail(recordId);
-        } else {
-          String popUpTitle = Utility.messageBD(this, "OBUIAPP_Error", vars.getLanguage());
-          String connectErrorMsg = Utility.messageBD(this, "CR_CouldNotConnect",
-              vars.getLanguage());
-          advisePopUpRefresh(request, response, "ERROR", popUpTitle, connectErrorMsg);
-          return;
-        }
+        module = getRemoteModuleVersionDetail(recordId);
       } catch (final Exception e) {
-        log4j.error("Error obtaining module info", e);
+        log4j.error("Error obtaining module version info for version id {}", recordId, e);
+        String popUpTitle = Utility.messageBD(this, "OBUIAPP_Error", vars.getLanguage());
+        String connectErrorMsg = Utility.messageBD(this, "CR_CouldNotConnect", vars.getLanguage());
+        advisePopUpRefresh(request, response, "ERROR", popUpTitle, connectErrorMsg);
+        return;
       }
     } else {
       discard[4] = "core";
