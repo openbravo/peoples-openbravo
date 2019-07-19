@@ -366,20 +366,17 @@ public class RecordID2Filling extends DalBaseProcess {
       hqlString += "select distinct ca.customerReceivablesNo, "
           + "   ca.customerPrepayment"
           + " from CustomerAccounts as ca"
-          + " where ca.accountingSchema.id = '" 
-          + acctSchemaId 
-          + "'";
+          + " where ca.accountingSchema.id = :acctSchemaId";
     } else {
       hqlString += "select distinct va.vendorPrepayment, "
           + "   va.vendorLiability"// va.vendorServiceLiability,
           + " from VendorAccounts as va"
-          + " where va.accountingSchema.id = '" 
-          + acctSchemaId 
-          + "'";
+          + " where va.accountingSchema.id = :acctSchemaId";
     }
     //@formatter:on
     final Session session = OBDal.getInstance().getSession();
     final Query<Object[]> query = session.createQuery(hqlString, Object[].class);
+    query.setParameter("acctSchemaId", acctSchemaId);
     for (Object[] values : query.list()) {
       for (Object value : values) {
         if (value instanceof AccountingCombination) {
