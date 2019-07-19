@@ -307,8 +307,7 @@ public class FIN_Utility {
           + "   , dt.id desc";
 
       // @formatter:on
-      OBQuery<DocumentType> dt = OBDal.getInstance()
-          .createQuery(DocumentType.class, where.toString());
+      OBQuery<DocumentType> dt = OBDal.getInstance().createQuery(DocumentType.class, where);
       dt.setFilterOnReadableClients(false);
       dt.setFilterOnReadableOrganization(false);
       dt.setMaxResult(1);
@@ -401,7 +400,7 @@ public class FIN_Utility {
         + "where id = :id";
     // @formatter:on
     final Session session = OBDal.getInstance().getSession();
-    final Query<Sequence> query = session.createQuery(where.toString(), Sequence.class);
+    final Query<Sequence> query = session.createQuery(where, Sequence.class);
     query.setParameter("id", seq.getId());
     query.setMaxResults(1);
     query.setLockOptions(LockOptions.UPGRADE);
@@ -1301,7 +1300,7 @@ public class FIN_Utility {
         + "   and to_date(:dateAcct) >= p.startingDate "
         + "   and to_date(:dateAcct) < p.endingDate + 1 ";
     // @formatter:on
-    final Query<String> qry = session.createQuery(hql.toString(), String.class);
+    final Query<String> qry = session.createQuery(hql, String.class);
     qry.setParameter("clientId", client);
     qry.setParameter("documentType", documentType);
     qry.setParameter("dateAcct", dateAcct);
@@ -1397,7 +1396,7 @@ public class FIN_Utility {
           + "   , '0')";
       // @formatter:on
       OBQuery<FIN_PaymentDetail> query = OBDal.getInstance()
-          .createQuery(FIN_PaymentDetail.class, whereClause.toString());
+          .createQuery(FIN_PaymentDetail.class, whereClause);
       query.setNamedParameter("paymentId", payment.getId());
       query.setFilterOnReadableClients(false);
       query.setFilterOnReadableOrganization(false);
@@ -1430,9 +1429,7 @@ public class FIN_Utility {
           + "   , coalesce(psd.orderPaymentSchedule"
           + "   ,'0')";
       // @formatter:on
-      Query<String> query = OBDal.getInstance()
-          .getSession()
-          .createQuery(whereClause.toString(), String.class);
+      Query<String> query = OBDal.getInstance().getSession().createQuery(whereClause, String.class);
       query.setParameter("paymentId", paymentId);
       pdList = query.list();
 
@@ -1456,7 +1453,7 @@ public class FIN_Utility {
         + "where p.reversedPayment.id = :paymentId";
     // @formatter:on
 
-    final Query<Long> qry = session.createQuery(hql.toString(), Long.class);
+    final Query<Long> qry = session.createQuery(hql, Long.class);
     qry.setParameter("paymentId", payment.getId());
     return qry.list().get(0) > Long.parseLong("0");
   }
@@ -1684,7 +1681,7 @@ public class FIN_Utility {
     // @formatter:on
 
     OBQuery<FinAccPaymentMethod> qry = OBDal.getInstance()
-        .createQuery(FinAccPaymentMethod.class, where.toString());
+        .createQuery(FinAccPaymentMethod.class, where);
     qry.setFilterOnReadableOrganization(false);
     qry.setMaxResult(1);
 
