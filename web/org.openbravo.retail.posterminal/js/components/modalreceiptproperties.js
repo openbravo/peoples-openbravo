@@ -187,7 +187,7 @@ enyo.kind({
       if (this.newAttributes.hasOwnProperty(p)) {
         att = this.$.bodyContent.$.attributes.$[
           'line_' + this.newAttributes[p].name
-        ].$.newAttribute.$[this.newAttributes[p].name];
+        ].$.coreElementContainer.$[this.newAttributes[p].name];
         if (att && att.setValue) {
           att.setValue('');
         }
