@@ -2092,7 +2092,7 @@
             },
             function(args) {
               if (callback) {
-                callback();
+                callback(true);
               }
             }
           );
@@ -2282,6 +2282,11 @@
                   line.set('deleteApproved', true);
                 });
                 preDeleteLine();
+              } else {
+                if (callback) {
+                  callback(false);
+                }
+                return;
               }
             }
           );
@@ -2339,7 +2344,7 @@
       //If there are no lines to delete, continue
       if (!selectedModels || !selectedModels.length) {
         if (callback) {
-          callback();
+          callback(true);
         }
         return;
       }
@@ -2364,7 +2369,7 @@
             OB.I18N.getLabel('OBPOS_CancelReplaceDeleteLine')
           );
           if (callback) {
-            callback();
+            callback(false);
           }
           return;
         }
@@ -4552,31 +4557,31 @@
         }
       }
 
-      currentDiscountedLinePrice = OB.DEC.toNumber(
-        new BigDecimal(String(line.get('price'))).subtract(
-          new BigDecimal(String(allDiscountedAmt)).divide(
-            new BigDecimal(String(line.get('qty'))),
-            20,
-            OB.DEC.getRoundingMode()
+      if (allDiscountedAmt > 0 && line.get('qty') > 0) {
+        currentDiscountedLinePrice = OB.DEC.toNumber(
+          new BigDecimal(String(line.get('price'))).subtract(
+            new BigDecimal(String(allDiscountedAmt)).divide(
+              new BigDecimal(String(line.get('qty'))),
+              20,
+              OB.DEC.getRoundingMode()
+            )
           )
-        )
-      );
+        );
+      } else {
+        currentDiscountedLinePrice = line.get('price');
+      }
 
       return currentDiscountedLinePrice;
     },
 
     calculateDiscountedLinePrice: function(line) {
-      var finalDiscountedLinePrice;
-
-      finalDiscountedLinePrice = this.getCurrentDiscountedLinePrice(
-        line,
-        false
-      );
-
       if (line.get('qty') === 0) {
         line.unset('discountedLinePrice');
       } else {
-        line.set('discountedLinePrice', finalDiscountedLinePrice);
+        line.set(
+          'discountedLinePrice',
+          this.getCurrentDiscountedLinePrice(line, false)
+        );
       }
     },
 
@@ -5172,14 +5177,37 @@
 
     setBPandBPLoc: function(businessPartner, showNotif, saveChange, callback) {
       var me = this,
-        undef;
-      var i,
-        oldbp = this.get('bp');
+        undef,
+        i,
+        oldbp = this.get('bp'),
+        setAndSaveBP,
+        setPriceList,
+        finishSaveData;
 
-      var finishSaveData = function(callback) {
+      setAndSaveBP = function(bp, saveBPCallback) {
+        me.set('bp', bp);
+        me.save(function() {
+          OB.MobileApp.model.orderList.saveCurrent();
+          if (saveBPCallback) {
+            saveBPCallback();
+          }
+        });
+      };
+
+      setPriceList = function(bp) {
+        var priceIncludesTax = bp.get('priceIncludesTax');
+        if (OB.UTIL.isNullOrUndefined(priceIncludesTax)) {
+          priceIncludesTax = OB.MobileApp.model.get('pricelist')
+            .priceIncludesTax;
+        }
+        me.set('priceList', bp.get('priceList'));
+        me.set('priceIncludesTax', priceIncludesTax);
+      };
+
+      finishSaveData = function(callback) {
         // set the undo action
         if (showNotif === undef || showNotif === true) {
-          this.setUndo('SetBPartner', {
+          me.setUndo('SetBPartner', {
             text: businessPartner
               ? OB.I18N.getLabel('OBPOS_SetBP', [
                   businessPartner.get('_identifier')
@@ -5187,22 +5215,42 @@
               : OB.I18N.getLabel('OBPOS_ResetBP'),
             bp: businessPartner,
             undo: function() {
-              me.set('bp', oldbp);
-              me.save();
               me.set('undo', null);
+              setPriceList(oldbp);
+              setAndSaveBP(oldbp, function() {
+                me.calculateReceipt(function() {
+                  me.save();
+                });
+              });
             }
           });
         }
         if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
           if (oldbp.get('priceList') !== businessPartner.get('priceList')) {
-            me.set('priceList', businessPartner.get('priceList'));
-            var priceIncludesTax = businessPartner.get('priceIncludesTax');
-            if (OB.UTIL.isNullOrUndefined(priceIncludesTax)) {
-              priceIncludesTax = OB.MobileApp.model.get('pricelist')
-                .priceIncludesTax;
-            }
-            me.set('priceIncludesTax', priceIncludesTax);
-            me.removeAndInsertLines(function() {
+            setPriceList(businessPartner);
+            me.removeAndInsertLines(function(deleted) {
+              if (OB.UTIL.isNullOrUndefined(deleted) || deleted === true) {
+                setAndSaveBP(businessPartner, function() {
+                  me.calculateReceipt(function() {
+                    if (saveChange) {
+                      me.save();
+                    }
+                    if (callback) {
+                      callback();
+                    }
+                  });
+                });
+              } else {
+                setPriceList(oldbp);
+                setAndSaveBP(oldbp, function() {
+                  if (callback) {
+                    callback();
+                  }
+                });
+              }
+            });
+          } else {
+            setAndSaveBP(businessPartner, function() {
               me.calculateReceipt(function() {
                 if (saveChange) {
                   me.save();
@@ -5212,23 +5260,13 @@
                 }
               });
             });
-          } else {
-            me.calculateReceipt(function() {
-              if (saveChange) {
-                me.save();
-              }
-              if (callback) {
-                callback();
-              }
-            });
           }
         } else {
-          if (saveChange) {
-            me.save();
-          }
-          if (callback) {
-            callback();
-          }
+          setAndSaveBP(businessPartner, function() {
+            if (callback) {
+              callback();
+            }
+          });
         }
       };
 
@@ -5320,7 +5358,10 @@
               null,
               null,
               function(shipping, billing, locations) {
-                businessPartner.set('locationModel', billing);
+                businessPartner.set(
+                  'locationModel',
+                  shipping ? shipping : billing
+                );
                 businessPartner.set('locationBillModel', billing);
                 businessPartner.set('locId', billing.get('id'));
                 businessPartner.set('locName', billing.get('name'));
@@ -5345,23 +5386,11 @@
                     shipping.get('countryId')
                   );
                 }
-                OB.info('[saveBP] 1 - set BP for order with id ' + me.id);
-                me.set('bp', businessPartner);
-                OB.info('[saveBP] 2 - set BP for order with id ' + me.id);
-                me.save(function() {
-                  OB.info('[saveBP] 3 - order with id ' + me.id + ' saved');
-                  // copy the modelOrder again, as saveOrUpdate is possibly async
-                  OB.MobileApp.model.orderList.saveCurrent();
-                  finishSaveData(callback);
-                });
+                finishSaveData(callback);
               },
               businessPartner.get('id')
             );
           } else {
-            me.set('bp', businessPartner);
-            me.save();
-            // copy the modelOrder again, as saveOrUpdate is possibly async
-            OB.MobileApp.model.orderList.saveCurrent();
             finishSaveData(callback);
           }
         };
@@ -5416,7 +5445,10 @@
             null,
             null,
             function(shipping, billing, locations) {
-              businessPartner.set('locationModel', billing);
+              businessPartner.set(
+                'locationModel',
+                shipping ? shipping : billing
+              );
               businessPartner.set('locationBillModel', billing);
               businessPartner.set('locId', billing.get('id'));
               businessPartner.set('locName', billing.get('name'));
@@ -5438,15 +5470,11 @@
                 businessPartner.set('shipRegionId', shipping.get('regionId'));
                 businessPartner.set('shipCountryId', shipping.get('countryId'));
               }
-              me.set('bp', businessPartner);
-              me.save();
               finishSaveData(callback);
             },
             businessPartner.get('id')
           );
         } else {
-          me.set('bp', businessPartner);
-          me.save();
           finishSaveData(callback);
         }
       }
@@ -5571,7 +5599,7 @@
         if (index === lines.length) {
           me.set('skipCalculateReceipt', false);
           if (callback) {
-            callback();
+            callback(true);
           }
           return;
         }
@@ -5602,8 +5630,12 @@
         orderlines.push(line);
         promotionlines.push(line.get('promotions'));
       });
-      this.deleteLinesFromOrder(orderlines, function() {
-        addProductsOfLines(me, orderlines, 0, callback, promotionlines);
+      this.deleteLinesFromOrder(orderlines, function(deleted) {
+        if (deleted) {
+          addProductsOfLines(me, orderlines, 0, callback, promotionlines);
+        } else {
+          callback(false);
+        }
       });
     },
 
@@ -7457,8 +7489,17 @@
             args.receipt.set('openDrawer', false);
           }
           args.receipt.adjustPayment();
-          args.receipt.save(removeCallback);
-          args.receipt.trigger('saveCurrent');
+          OB.UTIL.HookManager.executeHooks(
+            'OBPOS_postRemovePayment',
+            {
+              receipt: args.receipt,
+              payment: payment
+            },
+            function(args) {
+              args.receipt.save(removeCallback);
+              args.receipt.trigger('saveCurrent');
+            }
+          );
         }
       );
     },
@@ -8282,10 +8323,8 @@
                     if (rli.get('qty') - qtyOffer === 0) {
                       return;
                     } else if (rli.get('qty') - qtyOffer > 0) {
-                      var auxrli = new Backbone.Model();
-                      OB.UTIL.clone(rli, auxrli);
-                      auxrli.set('qty', rli.get('qty') - qtyOffer);
-                      linesToApply.add(auxrli);
+                      rli.set('lineQtyOffer', rli.get('qty') - qtyOffer);
+                      linesToApply.add(rli);
                     }
                   }
                 } else {
@@ -9147,6 +9186,12 @@
         //TODO: check & generate ids
         invoice.set('orderId', this.get('id'));
         invoice.set('id', OB.UTIL.get_UUID());
+        invoice.unset('calculateReceiptCallbacks');
+        invoice.unset('calculatedInvoice');
+        invoice.unset('canceledorder');
+        invoice.get('payments').reset();
+        invoice.unset('json');
+        invoice.unset('undo');
         invoice.set('posTerminal', OB.MobileApp.model.get('terminal').id);
         invoice.set('isInvoice', true);
         invoice.unset('isBeingClosed');
@@ -9552,7 +9597,7 @@
           }
         }
         bpLocId = model.bpLocId;
-        bpBillLocId = model.bpBillLocId;
+        bpBillLocId = model.bpBillLocId || model.bpLocId;
         bpId = model.bp;
         var bpartnerForProduct = function(bp) {
           var loadProducts = function() {
@@ -9969,18 +10014,30 @@
             loadProducts();
           };
 
+          bp.set('locations', bp.get('locations') || []);
           if (bpLocId === bpBillLocId) {
             if (isLoadedPartiallyFromBackend) {
+              bp.get('locations').push(bpLoc);
               locationForBpartner(bpLoc, bpLoc);
             } else {
               OB.Dal.get(
                 OB.Model.BPLocation,
                 bpLocId,
                 function(bpLoc) {
+                  bp.get('locations').push(bpLoc);
                   locationForBpartner(bpLoc, bpLoc);
                 },
                 function(tx, error) {
                   OB.UTIL.showError(error);
+                },
+                function() {
+                  loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(
+                    data
+                  ) {
+                    bpLoc = data.bpLoc;
+                    bp.get('locations').push(bpLoc);
+                    locationForBpartner(bpLoc, bpLoc);
+                  });
                 }
               );
             }
@@ -9990,7 +10047,7 @@
               !OB.UTIL.isNullOrUndefined(bpLoc) &&
               !OB.UTIL.isNullOrUndefined(bpBillLoc)
             ) {
-              bp.set('locations', [bpBillLoc, bpLoc]);
+              bp.get('locations').push(bpLoc, bpBillLoc);
               locationForBpartner(bpLoc, bpBillLoc);
             } else {
               var criteria = {};
@@ -10014,15 +10071,26 @@
                 OB.Model.BPLocation,
                 criteria,
                 function(locations) {
-                  var loc, billLoc;
-                  _.each(locations.models, function(l) {
-                    if (l.id === bpLocId) {
-                      loc = l;
-                    } else if (l.id === bpBillLocId) {
-                      billLoc = l;
-                    }
-                  });
-                  locationForBpartner(loc, billLoc);
+                  if (locations.models.length > 0) {
+                    _.each(locations.models, function(l) {
+                      if (l.id === bpLocId) {
+                        bpLoc = l;
+                      } else if (l.id === bpBillLocId) {
+                        bpBillLoc = l;
+                      }
+                    });
+                    bp.get('locations').push(bpLoc, bpBillLoc);
+                    locationForBpartner(bpLoc, bpBillLoc);
+                  } else {
+                    loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(
+                      data
+                    ) {
+                      bpLoc = data.bpLoc;
+                      bpBillLoc = data.bpBillLoc;
+                      bp.get('locations').push(bpLoc, bpBillLoc);
+                      locationForBpartner(bpLoc, bpBillLoc);
+                    });
+                  }
                 },
                 function(tx, error) {
                   OB.UTIL.showError(error);
@@ -10031,6 +10099,58 @@
               );
             }
           }
+        };
+        var loadBusinesPartner = function(
+          bpartnerId,
+          bpLocationId,
+          bpBillLocationId,
+          callback
+        ) {
+          var loadCustomerParameters = {
+            bpartnerId: bpartnerId,
+            bpLocationId: bpLocationId
+          };
+          if (bpLocationId !== bpBillLocationId) {
+            loadCustomerParameters.bpBillLocationId = bpBillLocationId;
+          }
+          new OB.DS.Request(
+            'org.openbravo.retail.posterminal.master.LoadedCustomer'
+          ).exec(
+            loadCustomerParameters,
+            function(data) {
+              isLoadedPartiallyFromBackend = true;
+              callback({
+                bpartner: OB.Dal.transform(OB.Model.BusinessPartner, data[0]),
+                bpLoc: OB.Dal.transform(OB.Model.BPLocation, data[1]),
+                bpBillLoc:
+                  bpLocationId !== bpBillLocationId
+                    ? OB.Dal.transform(OB.Model.BPLocation, data[2])
+                    : null
+              });
+              bpLoc = OB.Dal.transform(OB.Model.BPLocation, data[1]);
+              if (bpLocId !== bpBillLocId) {
+                bpBillLoc = OB.Dal.transform(OB.Model.BPLocation, data[2]);
+              }
+              bpartnerForProduct(
+                OB.Dal.transform(OB.Model.BusinessPartner, data[0])
+              );
+            },
+            function() {
+              if (NoFoundCustomer) {
+                NoFoundCustomer = false;
+                OB.UTIL.showConfirmation.display(
+                  OB.I18N.getLabel('OBPOS_InformationTitle'),
+                  OB.I18N.getLabel('OBPOS_NoReceiptLoadedText'),
+                  [
+                    {
+                      label: OB.I18N.getLabel('OBPOS_LblOk'),
+                      isConfirmButton: true
+                    }
+                  ]
+                );
+              }
+            }
+          );
         };
         OB.Dal.get(
           OB.Model.BusinessPartner,
@@ -10041,43 +10161,13 @@
           null,
           function() {
             //Empty
-            var loadCustomerParameters = {
-              bpartnerId: bpId,
-              bpLocationId: bpLocId
-            };
-            if (bpLocId !== bpBillLocId) {
-              loadCustomerParameters.bpBillLocationId = bpBillLocId;
-            }
-            new OB.DS.Request(
-              'org.openbravo.retail.posterminal.master.LoadedCustomer'
-            ).exec(
-              loadCustomerParameters,
-              function(data) {
-                isLoadedPartiallyFromBackend = true;
-                bpLoc = OB.Dal.transform(OB.Model.BPLocation, data[1]);
-                if (bpLocId !== bpBillLocId) {
-                  bpBillLoc = OB.Dal.transform(OB.Model.BPLocation, data[2]);
-                }
-                bpartnerForProduct(
-                  OB.Dal.transform(OB.Model.BusinessPartner, data[0])
-                );
-              },
-              function() {
-                if (NoFoundCustomer) {
-                  NoFoundCustomer = false;
-                  OB.UTIL.showConfirmation.display(
-                    OB.I18N.getLabel('OBPOS_InformationTitle'),
-                    OB.I18N.getLabel('OBPOS_NoReceiptLoadedText'),
-                    [
-                      {
-                        label: OB.I18N.getLabel('OBPOS_LblOk'),
-                        isConfirmButton: true
-                      }
-                    ]
-                  );
-                }
+            loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(data) {
+              bpLoc = data.bpLoc;
+              if (bpLocId !== bpBillLocId) {
+                bpBillLoc = data.bpBillLoc;
               }
-            );
+              bpartnerForProduct(data.bpartner);
+            });
           }
         );
       },

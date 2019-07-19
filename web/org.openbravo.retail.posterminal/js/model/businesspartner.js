@@ -382,6 +382,7 @@
         this.set('shipLocName', shipping.get('name'));
         this.set('shipCityName', shipping.get('cityName'));
         this.set('shipPostalCode', shipping.get('postalCode'));
+        this.set('locationModel', shipping);
       } else {
         this.set('shipLocId', null);
         this.set('shipLocName', null);

@@ -254,7 +254,6 @@
           };
           line.set(
             {
-              tax: tax.taxId,
               taxLines: lineObj,
               taxAmount: OB.DEC.add(line.get('taxAmount') || 0, tax.taxAmount),
               linerate: OB.DEC.toNumber(

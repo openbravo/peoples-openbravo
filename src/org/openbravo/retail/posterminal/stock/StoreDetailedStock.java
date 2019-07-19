@@ -52,6 +52,7 @@ public class StoreDetailedStock extends JSONProcessSimple {
       hqlQuery.append(" join wh.organizationWarehouseList ow");
       hqlQuery.append(" where ow.organization.id = :orgId");
       hqlQuery.append(" and ms.product.id = :prodId");
+      hqlQuery.append(" and ms.quantityOnHand - ms.reservedQty <> 0");
       if (isCrossStore) {
         hqlQuery.append(" and ls.oBRETCOAvailableCrossStore = true");
       } else {

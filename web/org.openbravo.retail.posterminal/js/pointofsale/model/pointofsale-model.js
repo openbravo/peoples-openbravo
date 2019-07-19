@@ -565,6 +565,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         function callbackPaymentCancelled(callbackToExecuteAfter) {
           OB.UTIL.ProcessController.finish('paymentDone', execution);
           receipt.unset('paymentDone');
+          receipt.unset('completeTicket');
           // Review this showLoading false
           //OB.UTIL.showLoading(false);
           if (callbackToExecuteAfter instanceof Function) {
@@ -959,6 +960,12 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               },
               function(args) {
                 if (args && args.cancellation && args.cancellation === true) {
+                  _.each(
+                    me.get('multiOrders').get('multiOrdersList').models,
+                    function(currentOrder) {
+                      currentOrder.unset('completeTicket');
+                    }
+                  );
                   me.get('multiOrders').trigger('paymentCancel');
                   return;
                 }
@@ -1511,6 +1518,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                                       edit: false
                                     });
                                     receipt.set('hasbeenpaid', 'N');
+                                    receipt.unset('completeTicket');
                                     receipt.trigger('updatePending');
                                     OB.Dal.save(
                                       receipt,
