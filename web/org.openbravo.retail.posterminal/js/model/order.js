@@ -5537,13 +5537,12 @@
     },
 
     removeAndInsertLines: function(callback) {
-      this.set('skipCalculateReceipt', true);
-      var me = this;
-      // Remove all lines and insert again with new prices
-      var orderlines = [];
-      var promotionlines = [];
-      var addProductsOfLines = null;
+      var me = this,
+        orderlines = [],
+        promotionlines = [],
+        addProductsOfLines = null;
 
+      // Remove all lines and insert again with new prices
       addProductsOfLines = function(
         receipt,
         lines,
@@ -5630,10 +5629,12 @@
         orderlines.push(line);
         promotionlines.push(line.get('promotions'));
       });
+      me.set('skipCalculateReceipt', true);
       this.deleteLinesFromOrder(orderlines, function(deleted) {
         if (deleted) {
           addProductsOfLines(me, orderlines, 0, callback, promotionlines);
         } else {
+          me.set('skipCalculateReceipt', false);
           callback(false);
         }
       });
