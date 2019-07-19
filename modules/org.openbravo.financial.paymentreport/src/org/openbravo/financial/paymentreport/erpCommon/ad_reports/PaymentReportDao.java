@@ -492,7 +492,7 @@ public class PaymentReportDao {
       if (StringUtils.equals(strOutput, "HTML")) {
         int maxRecords = 1000;
         final Session sessionCount = OBDal.getReadOnlyInstance().getSession();
-        final Query<Long> queryCount = sessionCount.createQuery("select count(*)" + hsqlScript.toString(), Long.class);
+        final Query<Long> queryCount = sessionCount.createQuery("select count(*)" + hsqlScript, Long.class);
         queryCount.setProperties(parameters);
         final Long hqlRecordsCount = queryCount.list().get(0);
         if ((int) (long) hqlRecordsCount > maxRecords) {
@@ -569,7 +569,7 @@ public class PaymentReportDao {
 
       // @formatter:on
       final Session session = OBDal.getReadOnlyInstance().getSession();
-      final Query<Object[]> query = session.createQuery(hsqlScript.toString(), Object[].class);
+      final Query<Object[]> query = session.createQuery(hsqlScript, Object[].class);
       query.setProperties(parameters);
 
       scroller = query.scroll(ScrollMode.FORWARD_ONLY);
@@ -660,7 +660,7 @@ public class PaymentReportDao {
           // payment description
           FieldProviderFactory.setField(data, "PAYMENT_DESC", payment.getDescription());
           // payment_id
-          FieldProviderFactory.setField(data, "PAYMENT_ID", payment.getId().toString());
+          FieldProviderFactory.setField(data, "PAYMENT_ID", payment.getId());
           // payment_date
           FieldProviderFactory.setField(data, "PAYMENT_DATE",
               (payment.getPaymentDate() != null) ? dateFormat.format(payment.getPaymentDate())
@@ -1281,14 +1281,11 @@ public class PaymentReportDao {
     String bpCategory = "";
     String strProject = "";
     if (transaction.getBusinessPartner() != null) {
-      bpName = transaction.getBusinessPartner().getName().toString();
-      bpCategory = transaction.getBusinessPartner()
-          .getBusinessPartnerCategory()
-          .getName()
-          .toString();
+      bpName = transaction.getBusinessPartner().getName();
+      bpCategory = transaction.getBusinessPartner().getBusinessPartnerCategory().getName();
     }
     if (transaction.getProject() != null) {
-      strProject = transaction.getProject().getId().toString();
+      strProject = transaction.getProject().getId();
     }
 
     if (StringUtils.isNotEmpty(strGroupCrit)) {
@@ -1339,13 +1336,11 @@ public class PaymentReportDao {
       } else if (StringUtils.equalsIgnoreCase(strGroupCrit, "INS_CURRENCY")) {
         if (transaction.getCurrency()
             .getISOCode()
-            .toString()
             .compareTo(data.getField("TRANS_CURRENCY")) == 0) {
           isBefore = isBeforeStatusAndOrder(transaction, data, strOrdCrit, bpName, bpCategory,
               strProject);
         } else if (transaction.getCurrency()
             .getISOCode()
-            .toString()
             .compareTo(data.getField("TRANS_CURRENCY")) < 0) {
           isBefore = true;
         }
@@ -1380,13 +1375,13 @@ public class PaymentReportDao {
       String strOrdCrit, String BPName, String BPCategory, String strProject) {
     boolean isBefore = false;
 
-    if (StringUtils.equals(transaction.getStatus().toString(), data.getField("STATUS_CODE"))) {
+    if (StringUtils.equals(transaction.getStatus(), data.getField("STATUS_CODE"))) {
       if (StringUtils.isNotEmpty(strOrdCrit)) {
         String[] strOrdCritList = strOrdCrit.substring(2, strOrdCrit.length() - 2).split("', '");
         isBefore = isBeforeOrder(transaction, data, strOrdCritList, 0, BPName, BPCategory,
             strProject);
       }
-    } else if (isBeforeStatus(transaction.getStatus().toString(), data.getField("STATUS_CODE"))) {
+    } else if (isBeforeStatus(transaction.getStatus(), data.getField("STATUS_CODE"))) {
       isBefore = true;
     }
     return isBefore;
@@ -1433,7 +1428,6 @@ public class PaymentReportDao {
       if (strOrdCritList[i].contains("INS_CURRENCY")) {
         isBefore = isBefore || (transaction.getCurrency()
             .getISOCode()
-            .toString()
             .compareTo(data.getField("TRANS_CURRENCY")) < 0);
       }
       if (StringUtils.equalsIgnoreCase(strOrdCritList[i], "DueDate")) {
@@ -1476,7 +1470,7 @@ public class PaymentReportDao {
         if ((pos < posData || StringUtils.isEmpty(data.getField("BP_GROUP")))
             && StringUtils.isNotEmpty(bpCategory)) {
           isBefore = true;
-        } else if (StringUtils.equals(bpCategory.toString(), data.getField("BP_GROUP"))) {
+        } else if (StringUtils.equals(bpCategory, data.getField("BP_GROUP"))) {
           isBefore = isBeforeOrder(transaction, data, strOrdCritList, i + 1, bpName, bpCategory,
               strProject);
         }
@@ -1495,14 +1489,10 @@ public class PaymentReportDao {
               strProject);
         }
       } else if (strOrdCritList[i].contains("INS_CURRENCY")) {
-        if (transaction.getCurrency()
-            .getISOCode()
-            .toString()
-            .compareTo(data.getField("TRANS_CURRENCY")) < 0) {
+        if (transaction.getCurrency().getISOCode().compareTo(data.getField("TRANS_CURRENCY")) < 0) {
           isBefore = true;
         } else if (transaction.getCurrency()
             .getISOCode()
-            .toString()
             .compareTo(data.getField("TRANS_CURRENCY")) == 0) {
           isBefore = isBeforeOrder(transaction, data, strOrdCritList, i + 1, bpName, bpCategory,
               strProject);
@@ -1828,7 +1818,7 @@ public class PaymentReportDao {
     FieldProviderFactory.setField(data, "NOT_PAYMENT_PLAN_Y_N", "Display:none");
     // invoiceDate
     invoicedDate = paymentSchedule.getInvoice().getInvoiceDate();
-    FieldProviderFactory.setField(data, "INVOICE_DATE", dateFormat.format(invoicedDate).toString());
+    FieldProviderFactory.setField(data, "INVOICE_DATE", dateFormat.format(invoicedDate));
     // dueDate
     FieldProviderFactory.setField(data, "DUE_DATE",
         dateFormat.format(paymentSchedule.getDueDate()).toString());
@@ -2027,7 +2017,7 @@ public class PaymentReportDao {
     try {
       OBContext.setAdminMode(true);
       final Session session = OBDal.getReadOnlyInstance().getSession();
-      final Query<String> query = session.createQuery(sql.toString(), String.class);
+      final Query<String> query = session.createQuery(sql, String.class);
       query.setParameter("paymentId", payment.getId());
       for (final String o : query.list()) {
         result.add(OBDal.getReadOnlyInstance().get(Invoice.class, o));
@@ -2053,8 +2043,7 @@ public class PaymentReportDao {
     try {
       OBContext.setAdminMode(true);
       final Session session = OBDal.getReadOnlyInstance().getSession();
-      final Query<FIN_PaymentSchedule> query = session.createQuery(sql.toString(),
-          FIN_PaymentSchedule.class);
+      final Query<FIN_PaymentSchedule> query = session.createQuery(sql, FIN_PaymentSchedule.class);
       query.setParameter("creditPaymentId", credit_payment.getId());
       return query.list();
     } finally {
@@ -2077,7 +2066,7 @@ public class PaymentReportDao {
     try {
       OBContext.setAdminMode(true);
       final Session session = OBDal.getReadOnlyInstance().getSession();
-      final Query<FIN_PaymentSchedule> query = session.createQuery(sql.toString(),
+      final Query<FIN_PaymentSchedule> query = session.createQuery(sql,
           FIN_PaymentSchedule.class);
       query.setParameter("creditPaymentId", credit_payment.getId());
       return query.uniqueResult();
@@ -2131,7 +2120,7 @@ public class PaymentReportDao {
                      + " from BusinessPartner as bp"
                      + " order by bp.name";
     // @formatter:on
-    bpList = OBDal.getReadOnlyInstance().getSession().createQuery(hql.toString()).list();
+    bpList = OBDal.getReadOnlyInstance().getSession().createQuery(hql).list();
   }
 
   @SuppressWarnings("unchecked")
@@ -2141,7 +2130,7 @@ public class PaymentReportDao {
                      + " from BusinessPartnerCategory as c"
                      + " order by c.name";
     // @formatter:on
-    bpCategoryList = OBDal.getReadOnlyInstance().getSession().createQuery(hql.toString()).list();
+    bpCategoryList = OBDal.getReadOnlyInstance().getSession().createQuery(hql).list();
   }
 
   @SuppressWarnings("unchecked")
@@ -2151,7 +2140,7 @@ public class PaymentReportDao {
                      + " from Project as p"
                      + " order by p.name";
     // @formatter:on
-    projectList = OBDal.getReadOnlyInstance().getSession().createQuery(hql.toString()).list();
+    projectList = OBDal.getReadOnlyInstance().getSession().createQuery(hql).list();
   }
 
   @SuppressWarnings("unchecked")
@@ -2161,6 +2150,6 @@ public class PaymentReportDao {
                      + " from FIN_Financial_Account as fa"
                      + " order by fa.name";
     // @formatter:on
-    acctList = OBDal.getReadOnlyInstance().getSession().createQuery(hql.toString()).list();
+    acctList = OBDal.getReadOnlyInstance().getSession().createQuery(hql).list();
   }
 }
