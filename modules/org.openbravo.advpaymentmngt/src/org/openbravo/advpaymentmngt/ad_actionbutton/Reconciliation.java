@@ -559,7 +559,7 @@ public class Reconciliation extends HttpSecureAppServlet {
 
     //@formatter:on
     final OBQuery<FIN_ReconciliationLine_v> obqRL = OBDal.getInstance()
-        .createQuery(FIN_ReconciliationLine_v.class, hql.toString());
+        .createQuery(FIN_ReconciliationLine_v.class, hql);
     obqRL.setNamedParameter("reconciliationId", reconciliationId);
     obqRL.setMaxResult(1);
 
