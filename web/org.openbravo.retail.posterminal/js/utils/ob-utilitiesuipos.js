@@ -409,9 +409,22 @@ OB.UTIL.getPriceListName = function(priceListId, callback) {
     if (OB.MobileApp.model.get('pricelist').id === priceListId) {
       callback(OB.MobileApp.model.get('pricelist').name);
     } else {
-      OB.Dal.get(OB.Model.PriceList, priceListId, function(pList) {
-        callback(pList.get('name'));
-      });
+      OB.Dal.findUsingCache(
+        'PriceListName',
+        OB.Model.PriceList,
+        { m_pricelist_id: priceListId },
+        function(pList) {
+          if (pList.length > 0) {
+            callback(pList.at(0).get('name'));
+          } else {
+            callback();
+          }
+        },
+        function() {
+          callback();
+        },
+        { modelsAffectedByCache: ['PriceList'] }
+      );
     }
   } else {
     callback('');
