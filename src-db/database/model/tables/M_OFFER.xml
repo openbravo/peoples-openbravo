@@ -153,7 +153,7 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
-      <column name="ALLWEEKDAYS" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="ALLWEEKDAYS" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[Y]]></default>
         <onCreateDefault><![CDATA['Y']]></onCreateDefault>
       </column>
