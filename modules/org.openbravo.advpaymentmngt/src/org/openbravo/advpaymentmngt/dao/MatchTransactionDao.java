@@ -102,15 +102,13 @@ public class MatchTransactionDao {
       FIN_FinancialAccount account) {
     //@formatter:off
     final String whereClause = " as bsl " 
-        + " where bsl.bankStatement.account.id = '"
-        +  account.getId() 
-        + "'" 
+        + " where bsl.bankStatement.account.id = :accountId"
         + "   and bsl.financialAccountTransaction is null"
         + "   and bsl.bankStatement.processed = 'Y'";
     //@formatter:on
     final OBQuery<FIN_BankStatementLine> obData = OBDal.getInstance()
         .createQuery(FIN_BankStatementLine.class, whereClause);
-
+    obData.setNamedParameter("accountId", account.getId());
     return obData.list();
   }
 
@@ -123,13 +121,12 @@ public class MatchTransactionDao {
     try {
       //@formatter:off
       String whereClause = " as ft " 
-          + " where ft.account.id = '" 
-          + strFinancialAccountId 
-          + "'"
+          + " where ft.account.id = :financialAccountId"
           + "   and ft.reconciliation is null" 
           + "   and ft.processed = true"
           + "   and ft.status <> 'RPPC' " 
           + "   and (ft.depositAmount - paymentAmount) = :amount";
+      parameters.put("financialAccountId", strFinancialAccountId);
       parameters.put("amount", amount);
       if (transactionDate != null) {
         whereClause += " and ft.transactionDate = :transactionDate";
@@ -172,13 +169,12 @@ public class MatchTransactionDao {
     try {
       //@formatter:off
       String whereClause = " as ft "
-       + " where ft.account.id = '"
-       + strFinancialAccountId
-       + "'"
+       + " where ft.account.id = :financialAccountId"
        + "   and ft.reconciliation is null"
        + "   and ft.processed = true"
        + "   and ft.status <> 'RPPC' "
        + "   and (ft.depositAmount - paymentAmount) = :amount";
+      parameters.put("financialAccountId", strFinancialAccountId);
       parameters.put("amount", amount);
       if (transactionDate != null) {
         whereClause += "   and ft.transactionDate = :transactionDate";
@@ -219,13 +215,12 @@ public class MatchTransactionDao {
 
     //@formatter:off
     String whereClause = " as ft "
-       + " where ft.account.id = '"
-       + strFinancialAccountId
-       + "'"
+       + " where ft.account.id = :financialAccountId"
        + "   and ft.reconciliation is null"
        + "   and ft.processed = true"
        + "   and ft.status <> 'RPPC' "
        + "   and (ft.depositAmount - paymentAmount) = :amount";
+    parameters.put("financialAccountId", strFinancialAccountId);
     parameters.put("amount", amount);
     if (transactionDate != null) {
       whereClause += "   and ft.transactionDate = :transactionDate";
@@ -247,14 +242,13 @@ public class MatchTransactionDao {
 
     //@formatter:off
     String whereClause = " as ft "
-        + " where ft.account.id = '"
-        + strFinancialAccountId
-        + "'"
+        + " where ft.account.id = :financialAccountId"
         + "   and ft.reconciliation is null"
         + "   and ft.processed = true"
         + "   and ft.gLItem = :glItem"
         + "   and ft.status <> 'RPPC' "
         + "   and (ft.depositAmount - paymentAmount) = :amount";
+    parameters.put("financialAccountId", strFinancialAccountId);
     parameters.put("glItem", glItem);
     parameters.put("amount", amount);
     if (transactionDate != null) {
