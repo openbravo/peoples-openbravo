@@ -123,7 +123,7 @@ public class AdvPaymentMngtDao {
       
       //@formatter:on
       final OBQuery<FIN_PaymentScheduleDetail> obqPSD = OBDal.getInstance()
-          .createQuery(FIN_PaymentScheduleDetail.class, whereClause.toString());
+          .createQuery(FIN_PaymentScheduleDetail.class, whereClause);
       obqPSD.setNamedParameter("invoiceId", invoice.getId());
       return obqPSD.list();
 
@@ -146,7 +146,7 @@ public class AdvPaymentMngtDao {
 
       //@formatter:on
       final OBQuery<FIN_PaymentScheduleDetail> obqPSD = OBDal.getInstance()
-          .createQuery(FIN_PaymentScheduleDetail.class, whereClause.toString());
+          .createQuery(FIN_PaymentScheduleDetail.class, whereClause);
       obqPSD.setNamedParameter("orderId", order.getId());
       return obqPSD.list();
 
@@ -515,8 +515,8 @@ public class AdvPaymentMngtDao {
     String truncateDescription = null;
     if (description != null) {
       truncateDescription = (description.length() > 255)
-          ? description.substring(0, 252).concat("...").toString()
-          : description.toString();
+          ? description.substring(0, 252).concat("...")
+          : description;
     }
     finTrans.setDescription(truncateDescription);
     finTrans.setDateAcct(accountingDate);
@@ -722,7 +722,7 @@ public class AdvPaymentMngtDao {
 
       //@formatter:on
       final OBQuery<FIN_PaymentPropDetail> obqPSD = OBDal.getInstance()
-          .createQuery(FIN_PaymentPropDetail.class, whereClause.toString());
+          .createQuery(FIN_PaymentPropDetail.class, whereClause);
       obqPSD.setNamedParameter("paymentProposalId", paymentProposal.getId());
       return obqPSD.list();
 
@@ -743,7 +743,7 @@ public class AdvPaymentMngtDao {
       
       //@formatter:on
       final OBQuery<FIN_Reconciliation> obqRecon = OBDal.getInstance()
-          .createQuery(FIN_Reconciliation.class, hsqlScript.toString());
+          .createQuery(FIN_Reconciliation.class, hsqlScript);
       obqRecon.setNamedParameter("reconciliationId", strReconID);
 
       List<FIN_Reconciliation> obqRecList = obqRecon.list();
@@ -777,7 +777,7 @@ public class AdvPaymentMngtDao {
       
       //@formatter:on
       final OBQuery<FIN_Reconciliation> obqRecon = OBDal.getInstance()
-          .createQuery(FIN_Reconciliation.class, hsqlScript.toString());
+          .createQuery(FIN_Reconciliation.class, hsqlScript);
       obqRecon.setNamedParameter("reconciliationId", strReconID);
 
       List<FIN_Reconciliation> obqRecList = obqRecon.list();
@@ -1312,7 +1312,7 @@ public class AdvPaymentMngtDao {
 
       //@formatter:on
       final Session session = OBDal.getInstance().getSession();
-      final Query<FIN_Payment> query = session.createQuery(hql.toString(), FIN_Payment.class);
+      final Query<FIN_Payment> query = session.createQuery(hql, FIN_Payment.class);
       query.setProperties(params);
 
       final List<FIN_Payment> queryList = query.list();
