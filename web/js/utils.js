@@ -2065,11 +2065,6 @@ function moveElementInList(list, incr) {
   return true;
 }
 
-// Depecated since 2.50, use searchArray instead
-function valorArray(dataArray, searchKey, valueIndex) {
-  searchArray(dataArray, searchKey, valueIndex);
-}
-
 /**
 * Search for a key and returns the value in the {intDevolverPosicion} index position of the Array.
 * @param {Array} dataArray Array of elements 
