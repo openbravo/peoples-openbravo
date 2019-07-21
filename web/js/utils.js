@@ -5755,11 +5755,6 @@ function auto_complete_date(field, fmt) {
   autoCompleteDate(field, fmt);
 }
 
-//Deprecation in 2.50, use markCheckedAllElements instead
-function seleccionarListCompleto(field) {
-  markCheckedAllElements(field);
-}
-
 /**
 * End of deprecated functions in 2.50
 */
