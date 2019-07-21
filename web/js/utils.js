@@ -4374,14 +4374,6 @@ function changeAuditIcon(newStatus) {
     setTimeout("getDataBaseStandardMessage('showAudit', changeAuditIconTitle)",100);
 }
 
-function changeSearchIcon(filtered){
-  var obj = document.getElementById("buttonSearch") || document.getElementById("buttonSearchFiltered") ;
-  if (!obj) {
-    return false;
-  }
-  obj.className = "Main_ToolBar_Button_Icon Main_ToolBar_Button_Icon_Search"+(filtered?"Filtered":"");
-}
-
  function changeAuditIconTitle(paramXMLParticular, XMLHttpRequestObj) {
    var obj;
    object = document.getElementById("buttonAudit");
