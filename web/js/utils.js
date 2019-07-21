@@ -2001,40 +2001,6 @@ function selectDefaultValueFromArray (dataArray, bolSelected) {
 }
 
 /**
-* Function Description
-* @param {Object} sourceList A reference to the source list 
-* @param {Object} destinationList A reference to the destination list
-* @param {Boolean} withPrefix
-* @param {Boolean} selectAll
-* @returns Returns false if source or destination list is null.
-* @type Boolean
-*/
-function addListOrderBy(sourceList, destinationList, withPrefix, selectAll) {
-  if (sourceList==null || destinationList==null) return false;
-  if (selectAll==null) selectAll=false;
-  if (withPrefix==null) withPrefix=false;
-  var sourceListLength = sourceList.length;
-  var i = 0;
-  for (var j=0;j<sourceListLength;j++) {
-    if (selectAll || sourceList.options[i].selected==true) {
-      var text = sourceList.options[i].text;
-      var value = sourceList.options[i].value;
-      if (withPrefix) {
-        if (value.indexOf("-")!=-1) value = value.substring(1);
-        if (text.indexOf("/\\")!=-1 || text.indexOf("\\/")!=-1) text = text.substring(2);
-      } else {
-        text = "/\\" + text;
-      }
-      destinationList.options[destinationList.length] = new Option(text, value);
-      sourceList.options[i]=null;
-    } else {
-      i = i + 1;
-    }
-  }
-  return true;
-}
-
-/**
 * Moves elements from one list to another.
 * @param {Object} sourceList A reference to the source list, where the items come from.
 * @param {Object} destinationList A reference to the destination list, where the items will be copied.
