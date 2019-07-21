@@ -2001,34 +2001,6 @@ function selectDefaultValueFromArray (dataArray, bolSelected) {
 }
 
 /**
-* Change the sorting direction of a list.
-* @param {Object} sourceList A reference to the list that will be sorted.
-* @returns True if everything was right, otherwise false.
-* @type Boolean
-*/
-function changeOrderBy(sourceList) {
-  if (sourceList == null) return false;
-  for (var j=sourceList.length-1;j>=0;j--) {
-    if (sourceList.options[j].selected==true) {
-      var text = sourceList.options[j].text;
-      var value = sourceList.options[j].value;
-      if (value.indexOf("-")!=-1) {
-        value = value.substring(1);
-        text = text.substring(2);
-        text = "/\\" + text;
-      } else {
-        value = "-" + value;
-        text = text.substring(2);
-        text = "\\/" + text;
-      }      
-      sourceList.options[j].value = value;
-      sourceList.options[j].text = text;
-    }
-  }
-  return true;
-}
-
-/**
 * Function Description
 * @param {Object} sourceList A reference to the source list 
 * @param {Object} destinationList A reference to the destination list
