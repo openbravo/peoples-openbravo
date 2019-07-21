@@ -2509,31 +2509,6 @@ function changeClass(id, class1, class2, forced) {
 
 /**
 * Function Description
-* Change the readonly status of a textbox or a textarea
-* @param {String} id ID of the element
-* @param {Boolean} forced: it could be "true" or "false"
-* @returns False if the element was not found, otherwise True.
-* @type Boolean
-*/
-function changeReadOnly(id, forced) {
-  if (forced==null) forced = false;
-  var element = document.getElementById(id);
-  if (!element) return false;
-  if (!forced) {
-    if (element.readOnly!=true) element.readOnly=true;
-    else element.readOnly=false;
-  } else {
-//    forced = forced.toLowerCase();
-    if (forced=="true") element.readOnly=true;
-    else if (forced=="false") element.readOnly=false;
-    else return false;
-  }
-  return true;
-}
-
-
-/**
-* Function Description
 * Gets a reference to a window
 * @param {String} id ID of the element
 * @returns A reference to the object, or null if the element was not found.
