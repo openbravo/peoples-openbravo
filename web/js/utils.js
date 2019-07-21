@@ -620,23 +620,6 @@ function checkForChanges(f) {
 }
 
 /**
- * Prompt a confirmation when an autosave process has failed. If the wants to
- * stay in the page or navigate to the requested URL
- * @param refererURL String URL to navigate to
- * @return 
- */
-function continueUserAction(requestURL) {
-	if(typeof(requestURL) == 'undefined') { 
-		return false;
-	}	
-	var continueAction = showJSMessage(26, null, false);
-	if(continueAction) {
-		submitCommandForm('DEFAULT', false, null, requestURL, 'appFrame', false, true);
-	}
-	return true;
-}
-
-/**
 * Function Description
 * @param {Form} form
 * @param {String} columName
