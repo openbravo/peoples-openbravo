@@ -1172,23 +1172,6 @@ function openPDFFiltered(url, _name, checkChanges) {
 }
 
 /**
-* Opens a pop-up window with the default window parameters
-* @param {String} _name This is the string that just names the new window.
-* @param {Number} height Specifies the height of the content area, viewing area of the new secondary window in pixels. If is null, a fixed height of 250 pixels is used.
-* @param {Number} width Specifies the width of the content area, viewing area of the new secondary window in pixels. If is null, a fixed width of 230 pixels is used.
-* @param {Boolean} closeControl Specifies if the new window should be closed in the unload event.
-* @param {Boolean} showstatus
-* @returns An ID reference pointing to the newly opened browser window.
-* @type Object
-* @see #openPopUp
-*/
-function openPopUpDefaultSize(url, _name, height, width, closeControl, showstatus) {
-  if (height==null) height = 250;
-  if (width==null) width = 230;
-  return openPopUp(url, _name, height, width, null, null, null, null, null, closeControl, null);
-}
-
-/**
 * Opens a PDF session
 * @param {String} strPage
 * @param {String} strDirectPrinting
