@@ -4220,36 +4220,6 @@ function resizeAreaHelp() {
 /**
 * Function Description
 */
-function resizeAreaUserOps() {
-  var mnu = document.getElementById("client");
-  var mnuIndex = document.getElementById("clientIndex");
-  var mTopSeparator = document.getElementById("tdSeparator");
-  var mVerSeparator = document.getElementById("tdVerSeparator");
-  var mTopNavigation = document.getElementById("tdNavigation");
-  var body = document.getElementsByTagName("BODY");
-  var h, w;
-  if (isIE9Strict) {
-    h = window.innerHeight;
-    w = window.innerWidth;
-  } else {
-    h = body[0].clientHeight;
-    w = body[0].clientWidth;
-  }
-  var name = window.navigator.userAgent;
-//  mnu.style.width = w - 18 - ((name.indexOf("MSIE")==-1)?2:0);
-  mnu.style.height = h -(mTopSeparator.clientHeight + mTopNavigation.clientHeight) - 2;
-  mnuIndex.style.height = mnu.style.height;
-
-  mnuIndex.style.display = "";
-
-  mnu.style.width= w - (mVerSeparator.clientWidth + mnuIndex.clientWidth) - 2;
-
-  mnu.style.display = "";
-}
-
-/**
-* Function Description
-*/
 function resizeAreaInfo(isOnResize) {
   if (isOnResize==null) isOnResize = false;
   var table_header = document.getElementById("table_header");
