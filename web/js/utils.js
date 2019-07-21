@@ -2225,29 +2225,6 @@ function markCheckedAllElements(field) {
 }
 
 /**
-* Handles the keypress event on textarea fields. Used to control the max length of a field.
-* @param {Object} field A reference to the object in the page. Usually use the 'this' reference.
-* @param {Number} maxLength Max length of the field.
-* @param {Event} evt Event handling object.
-* @returns True if is allowed to keep entering text, otherwise false.
-*/
-function handleFieldMaxLength(field, maxLength, evt) {
-  if (field==null || !field) return false;
-  if (field.value.length>=maxLength) {
-    if (document.layers) keyCode.which=0;
-    else {
-      if (evt==null) evt = window.event;
-      evt.keyCode=0;
-      evt.returnValue = false;
-      evt.cancelBubble = true 
-    }
-    showJSMessage(11);
-    return false;
-  }
-  return true;
-}
-
-/**
 * Function Description
 * @param {Object} combo A reference the the combo object
 * @param {String} key The element key to select
