@@ -2490,41 +2490,6 @@ function getAppUrl() {
 
 /**
 * Function Description
-* Resize a window progressively
-* @param {String} id ID of the window
-* @param {Number} topSize 
-* @param {Number} newSize The new size of the window
-* @param {Boolean} grow If the window should 'grow' or set the new size immediately
-*/
-function progressiveHideMenu(id, topSize, newSize, grow) {
-  var frame = parent.document;
-  var object = frame.getElementById(id);
-  if (newSize==null) {
-    var sizes = object.cols.split(",");
-    size = sizes[0];
-    size = size.replace("%", "");
-    size = size.replace("px", "");
-    newSize = parseInt(size);
-  }
-  if (grow==null) grow = !(newSize>0);
-  if (grow) {
-    newSize += 5;
-    if (newSize>=topSize) {
-      object.cols = topSize + "%, *";
-      return true;
-    } else object.cols = newSize + "%, *";
-  } else {
-    newSize -= 5;
-    if (newSize<=0) {
-      object.cols = "0%, *";
-      return true;
-    } else object.cols = newSize + "%, *";
-  }
-  return setTimeout('progressiveHideMenu("' + id + '", ' + topSize + ', ' + newSize + ', ' + grow + ')', 100);
-}
-
-/**
-* Function Description
 * Change the class of an element on the page
 * @param {String} id ID of the element
 * @param {String} class1 The class to search for
