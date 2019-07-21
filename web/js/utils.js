@@ -5750,11 +5750,6 @@ function moreOnLoadDoFunctions() {
 * Start of deprecated functions for 2.50 (will be removed after the 2.50 release)
 */
 
-//Deprecated in 2.50, use openNewBrowser instead
-function abrirNuevoBrowser(url, _name, height, width, top, left) {
-  openNewBrowser(url, _name, height, width, top, left);
-}
-
 //Deprecated in 2.50, use autoCompleteDate instead
 function auto_complete_date(field, fmt) {
   autoCompleteDate(field, fmt);
