@@ -203,26 +203,6 @@ function getBrowserInfo(param) {
   }
 }
 
-/**
-* Checks if the browser is a supported one. Just for 2.50
-*/
-function checkBrowserCompatibility250() {
-   var browserName = getBrowserInfo("name");
-   var browserVersion = getBrowserInfo("version");
-   var browserMajorVersion = getBrowserInfo("majorVersion");
-   var isValid = false;
-   if (browserName.toUpperCase().indexOf('FIREFOX') != -1 || browserName.toUpperCase().indexOf('ICEWEASEL') != -1) {
-     if (browserMajorVersion >= 3) {
-       isValid = true;
-     }
-   } else if (browserName.toUpperCase().indexOf('INTERNET EXPLORER') != -1) {
-     if (browserMajorVersion >= 7) {
-       isValid = true;
-     }
-   }
-   return isValid;
-}
-
 function getObjAttribute(obj, attribute) {
   attribute = attribute.toLowerCase();
   var attribute_text = "";
