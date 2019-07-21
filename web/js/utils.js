@@ -4990,21 +4990,6 @@ function formattedNumberOp(number1, operator, number2, result_maskNumeric, decSe
 }
 
 /**
-* Function that returns the reverse of a given text string
-* @param {String} text The text
-* @return The reversed string
-* @type String
-*/
-function reverseString(text) {
-  var reverseText = "";
-  for (var i=text.length; i>0 ;i--) {
-     reverseText += text.substring(i-1, i);
-  }
-  return reverseText;
-}
-
-
-/**
 * Objet CaretPosition
 */
 function CaretPosition() {
