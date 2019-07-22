@@ -114,7 +114,7 @@ public class StoreDetailedStock extends JSONProcessSimple {
       if (resultsAvailable) {
         warehouseInfo.put("warehouseid", curWHId);
         warehouseInfo.put("warehousename", curWHName);
-        warehouseInfo.put("warehouseqty", qtyCounterPerWH.toString());
+        warehouseInfo.put("warehouseqty", qtyCounterPerWH);
         warehouseInfo.put("bins", arrBinInfo);
         responseArray.put(warehouseInfo);
       }
