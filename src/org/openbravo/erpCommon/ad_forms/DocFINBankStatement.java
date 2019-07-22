@@ -86,14 +86,16 @@ public class DocFINBankStatement extends AcctServer {
     try {
       //@formatter:off
       String whereClause = " as astdt "
-          + " where astdt.acctschemaTable.accountingSchema.id = "
-          + " '" + as.m_C_AcctSchema_ID + "'"
-          + "   and astdt.acctschemaTable.table.id = '" + AD_Table_ID + "'"
-          + "   and astdt.documentCategory = '" + DocumentType + "'";
+          + " where astdt.acctschemaTable.accountingSchema.id = :accountSchemaId"
+          + "   and astdt.acctschemaTable.table.id = :tableId"
+          + "   and astdt.documentCategory = :documentTypeId";
       //@formatter:on
 
       final OBQuery<AcctSchemaTableDocType> obqParameters = OBDal.getInstance()
           .createQuery(AcctSchemaTableDocType.class, whereClause);
+      obqParameters.setNamedParameter("accountSchemaId", as.m_C_AcctSchema_ID);
+      obqParameters.setNamedParameter("tableId", AD_Table_ID);
+      obqParameters.setNamedParameter("documentTypeId", DocumentType);
       final List<AcctSchemaTableDocType> acctSchemaTableDocTypes = obqParameters.list();
 
       if (acctSchemaTableDocTypes != null && acctSchemaTableDocTypes.size() > 0
@@ -104,14 +106,14 @@ public class DocFINBankStatement extends AcctServer {
       if (strClassname.equals("")) {
         //@formatter:off
         String whereClause2 = " as ast "
-            + " where ast.accountingSchema.id = "
-            + " '" + as.m_C_AcctSchema_ID + "'"
-            + "   and ast.table.id = "
-            + " '" + AD_Table_ID + "'";
+            + " where ast.accountingSchema.id = :accountSchemaId"
+            + "   and ast.table.id = :adTableId";
         //@formatter:on
 
         final OBQuery<AcctSchemaTable> obqParameters2 = OBDal.getInstance()
             .createQuery(AcctSchemaTable.class, whereClause2);
+        obqParameters2.setNamedParameter("accountSchemaId", as.m_C_AcctSchema_ID);
+        obqParameters2.setNamedParameter("adTableId", AD_Table_ID);
         final List<AcctSchemaTable> acctSchemaTables = obqParameters2.list();
         if (acctSchemaTables != null && acctSchemaTables.size() > 0
             && acctSchemaTables.get(0).getCreatefactTemplate() != null) {
