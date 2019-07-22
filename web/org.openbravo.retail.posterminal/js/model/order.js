@@ -10072,7 +10072,7 @@
                 OB.Model.BPLocation,
                 criteria,
                 function(locations) {
-                  if (locations.models.length > 0) {
+                  if (locations.models.length === 2) {
                     _.each(locations.models, function(l) {
                       if (l.id === bpLocId) {
                         bpLoc = l;
