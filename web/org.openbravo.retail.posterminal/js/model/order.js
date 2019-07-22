@@ -7973,10 +7973,8 @@
                     if (rli.get('qty') - qtyOffer === 0) {
                       return;
                     } else if (rli.get('qty') - qtyOffer > 0) {
-                      var auxrli = new Backbone.Model();
-                      OB.UTIL.clone(rli, auxrli);
-                      auxrli.set('qty', rli.get('qty') - qtyOffer);
-                      linesToApply.add(auxrli);
+                      rli.set('lineQtyOffer', rli.get('qty') - qtyOffer);
+                      linesToApply.add(rli);
                     }
                   }
                 } else {
@@ -9234,7 +9232,7 @@
           }
         }
         bpLocId = model.bpLocId;
-        bpBillLocId = model.bpBillLocId;
+        bpBillLocId = model.bpBillLocId || model.bpLocId;
         bpId = model.bp;
         var bpartnerForProduct = function(bp) {
           var loadProducts = function() {
