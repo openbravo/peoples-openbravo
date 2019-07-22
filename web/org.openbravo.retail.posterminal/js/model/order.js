@@ -4393,17 +4393,17 @@
     },
 
     calculateDiscountedLinePrice: function(line) {
-      var i;
-      var allDiscountedAmt = 0;
-      for (i = 0; i < line.get('promotions').length; i++) {
-        if (!line.get('promotions')[i].hidden) {
-          allDiscountedAmt += line.get('promotions')[i].amt;
-        }
-      }
+      var i,
+        allDiscountedAmt = 0;
 
       if (line.get('qty') === 0) {
         line.unset('discountedLinePrice');
       } else {
+        for (i = 0; i < line.get('promotions').length; i++) {
+          if (!line.get('promotions')[i].hidden) {
+            allDiscountedAmt += line.get('promotions')[i].amt;
+          }
+        }
         line.set(
           'discountedLinePrice',
           OB.DEC.toNumber(

@@ -304,6 +304,7 @@ enyo.kind({
   processesToListen: [
     'calculateReceipt',
     'completeQuotation',
+    'deleteLine',
     'clearWith',
     'addProduct'
   ],
