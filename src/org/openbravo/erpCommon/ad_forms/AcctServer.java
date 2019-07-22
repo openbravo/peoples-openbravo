@@ -1913,15 +1913,15 @@ public abstract class AcctServer {
 
         //@formatter:off
         whereClause +=" as cusa "
-            + " where cusa.businessPartner.id = "
-            + "'" + cBPartnerId + "'"
-            + " and cusa.accountingSchema.id = "
-            + "'" + as.m_C_AcctSchema_ID + "'"
+            + " where cusa.businessPartner.id = :bpartnerId"
+            + " and cusa.accountingSchema.id = :accountId"
             + " and (cusa.status is null or cusa.status = 'DE')";
         //@formatter:on
 
         final OBQuery<CustomerAccounts> obqParameters = OBDal.getInstance()
             .createQuery(CustomerAccounts.class, whereClause);
+        obqParameters.setNamedParameter("bpartnerId", cBPartnerId);
+        obqParameters.setNamedParameter("accountId", as.m_C_AcctSchema_ID);
         obqParameters.setFilterOnReadableClients(false);
         obqParameters.setFilterOnReadableOrganization(false);
         final List<CustomerAccounts> customerAccounts = obqParameters.list();
@@ -1936,15 +1936,15 @@ public abstract class AcctServer {
       } else {
         //@formatter:off
         final String whereClause = " as vena "
-            + " where vena.businessPartner.id = "
-            + "'" + cBPartnerId + "'"
-            + " and vena.accountingSchema.id = "
-            + "'" + as.m_C_AcctSchema_ID + "'"
+            + " where vena.businessPartner.id = :bpartnerId"
+            + " and vena.accountingSchema.id = :accountId"
             + " and (vena.status is null or vena.status = 'DE')";
         //@formatter:on
 
         final OBQuery<VendorAccounts> obqParameters = OBDal.getInstance()
             .createQuery(VendorAccounts.class, whereClause);
+        obqParameters.setNamedParameter("bpartnerId", cBPartnerId);
+        obqParameters.setNamedParameter("accountId", as.m_C_AcctSchema_ID);
         obqParameters.setFilterOnReadableClients(false);
         obqParameters.setFilterOnReadableOrganization(false);
         final List<VendorAccounts> vendorAccounts = obqParameters.list();
@@ -2974,15 +2974,17 @@ public abstract class AcctServer {
       for (int i = 0; i < m_as.length; i++) {
         //@formatter:off
         String whereClause = " as astdt "
-            + " where astdt.acctschemaTable.accountingSchema.id = "
-            + " '" +  m_as[i].m_C_AcctSchema_ID + "'"
-            + "   and astdt.acctschemaTable.table.id = '" + AD_Table_ID + "'";
+            + " where astdt.acctschemaTable.accountingSchema.id = :accountSchemaId"
+            + "   and astdt.acctschemaTable.table.id = :tableId";
         if (!"".equals(DocumentType)) {
-          whereClause += " and astdt.documentCategory = '" + DocumentType + "'";
+          whereClause += " and astdt.documentCategory = :documentType";
         }
         //@formatter:on
         final OBQuery<AcctSchemaTableDocType> obqParameters = OBDal.getInstance()
             .createQuery(AcctSchemaTableDocType.class, whereClause);
+        obqParameters.setNamedParameter("accountSchemaId", m_as[i].m_C_AcctSchema_ID);
+        obqParameters.setNamedParameter("tableId", AD_Table_ID);
+        obqParameters.setNamedParameter("accountSchemaId", DocumentType);
         final List<AcctSchemaTableDocType> acctSchemaTableDocTypes = obqParameters.list();
         if (acctSchemaTableDocTypes != null && acctSchemaTableDocTypes.size() > 0
             && acctSchemaTableDocTypes.get(0).getCreatefactTemplate() != null) {
@@ -2990,12 +2992,13 @@ public abstract class AcctServer {
         }
         //@formatter:off
         final String whereClause2 = " as ast "
-            + " where ast.accountingSchema.id = "
-            + " '" + m_as[i].m_C_AcctSchema_ID + "'"
-            + "   and ast.table.id = '" + AD_Table_ID + "'";
+            + " where ast.accountingSchema.id = :accountSchemaId"
+            + "   and ast.table.id = :tableId";
         //@formatter:on
         final OBQuery<AcctSchemaTable> obqParameters2 = OBDal.getInstance()
             .createQuery(AcctSchemaTable.class, whereClause2);
+        obqParameters2.setNamedParameter("accountSchemaId", m_as[i].m_C_AcctSchema_ID);
+        obqParameters2.setNamedParameter("tableId", AD_Table_ID);
         final List<AcctSchemaTable> acctSchemaTables = obqParameters2.list();
         if (acctSchemaTables != null && acctSchemaTables.size() > 0
             && acctSchemaTables.get(0).getCreatefactTemplate() != null) {
