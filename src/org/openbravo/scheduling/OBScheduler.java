@@ -21,6 +21,15 @@ package org.openbravo.scheduling;
 import static org.openbravo.scheduling.Process.SCHEDULED;
 import static org.openbravo.scheduling.Process.UNSCHEDULED;
 
+import static org.quartz.TriggerKey.triggerKey;
+import static org.quartz.JobKey.jobKey;
+
+import static org.quartz.JobBuilder.*;
+import static org.quartz.TriggerBuilder.*;
+import static org.quartz.CronScheduleBuilder.*;
+import static org.quartz.CalendarIntervalScheduleBuilder.*;
+import static org.quartz.DateBuilder.*;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -37,15 +46,14 @@ import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
-import org.quartz.CronTrigger;
 import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerContext;
 import org.quartz.SchedulerException;
-import org.quartz.SimpleTrigger;
+import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
-import org.quartz.TriggerUtils;
+import org.quartz.TriggerBuilder;
 
 /**
  * @author awolski
@@ -230,8 +238,8 @@ public class OBScheduler {
   public void reschedule(String requestId, ProcessBundle bundle)
       throws SchedulerException, ServletException {
     try {
-      sched.unscheduleJob(requestId, OB_GROUP);
-      sched.deleteJob(requestId, OB_GROUP);
+      sched.unscheduleJob(triggerKey(requestId, OB_GROUP));
+      sched.deleteJob(jobKey(requestId, OB_GROUP));
 
     } catch (final SchedulerException e) {
       log.error("An error occurred rescheduling process " + bundle.toString(), e);
@@ -241,8 +249,8 @@ public class OBScheduler {
 
   public void unschedule(String requestId, ProcessContext context) throws SchedulerException {
     try {
-      sched.unscheduleJob(requestId, OB_GROUP);
-      sched.deleteJob(requestId, OB_GROUP);
+      sched.unscheduleJob(triggerKey(requestId, OB_GROUP));
+      sched.deleteJob(jobKey(requestId, OB_GROUP));
       ProcessRequestData.update(getConnection(), UNSCHEDULED, null, sqlDateTimeFormat,
           format(new Date()), context.getUser(), requestId);
     } catch (final Exception e) {
@@ -267,36 +275,40 @@ public class OBScheduler {
     this.sched = schdlr;
 
     final ProcessMonitor monitor = new ProcessMonitor("Monitor." + OB_GROUP, this.ctx);
-    schdlr.addSchedulerListener(monitor);
-    schdlr.addGlobalJobListener(monitor);
-    schdlr.addGlobalTriggerListener(monitor);
+    schdlr.getListenerManager().addSchedulerListener(monitor);
+    schdlr.getListenerManager().addJobListener(monitor);
+    schdlr.getListenerManager().addTriggerListener(monitor);
 
     dateTimeFormat = getConfigParameters().getJavaDateTimeFormat();
     sqlDateTimeFormat = getConfigParameters().getSqlDateTimeFormat();
 
-    ProcessRequestData[] data = null;
-    try {
-      data = ProcessRequestData.selectByStatus(getConnection(), SCHEDULED);
+    // If the JobStore persists the Jobs and Triggers between restarts, there is no need
+    // to reload them
+    if (!schdlr.getMetaData().isJobStoreSupportsPersistence()) {
+      ProcessRequestData[] data = null;
+      try {
+        data = ProcessRequestData.selectByStatus(getConnection(), SCHEDULED);
 
-      for (final ProcessRequestData request : data) {
-        final String requestId = request.id;
-        final VariablesSecureApp vars = ProcessContext.newInstance(request.obContext).toVars();
+        for (final ProcessRequestData request : data) {
+          final String requestId = request.id;
+          final VariablesSecureApp vars = ProcessContext.newInstance(request.obContext).toVars();
 
-        if ("Direct".equals(request.channel)
-            || TriggerProvider.TIMING_OPTION_IMMEDIATE.equals(request.timingOption)) {
-          // do not re-schedule immediate and direct requests that were in execution last time
-          // Tomcat stopped
-          ProcessRequestData.update(getConnection(), Process.SYSTEM_RESTART, vars.getUser(),
-              requestId);
-          log.debug(request.channel + " run of process id " + request.processId
-              + " was scheduled, marked as 'System Restart'");
-          continue;
+          if ("Direct".equals(request.channel)
+              || TriggerProvider.TIMING_OPTION_IMMEDIATE.equals(request.timingOption)) {
+            // do not re-schedule immediate and direct requests that were in execution last time
+            // Tomcat stopped
+            ProcessRequestData.update(getConnection(), Process.SYSTEM_RESTART, vars.getUser(),
+                requestId);
+            log.debug(request.channel + " run of process id " + request.processId
+                + " was scheduled, marked as 'System Restart'");
+            continue;
+          }
+
+          scheduleProcess(requestId, vars);
         }
-
-        scheduleProcess(requestId, vars);
+      } catch (final ServletException e) {
+        log.error("An error occurred retrieving scheduled process data: " + e.getMessage(), e);
       }
-    } catch (final ServletException e) {
-      log.error("An error occurred retrieving scheduled process data: " + e.getMessage(), e);
     }
   }
 
@@ -333,7 +345,7 @@ public class OBScheduler {
       if (bundle == null) {
         throw new SchedulerException("Process bundle cannot be null.");
       }
-      final JobDetail jobDetail = new JobDetail(name, OB_GROUP, jobClass);
+      final JobDetail jobDetail = newJob(jobClass).withIdentity(name, OB_GROUP).build();
       jobDetail.getJobDataMap().put(ProcessBundle.KEY, bundle);
 
       return jobDetail;
@@ -403,9 +415,11 @@ public class OBScheduler {
       }
 
       Trigger trigger = null;
+      @SuppressWarnings("rawtypes")
+      TriggerBuilder triggerBuilder;
 
       if (data == null) {
-        trigger = new SimpleTrigger(name, OB_GROUP, new Date());
+        trigger = newTrigger().withIdentity(name, OB_GROUP).startAt(new Date()).build();
         trigger.getJobDataMap().put(ProcessBundle.KEY, bundle);
         return trigger;
       }
@@ -414,12 +428,10 @@ public class OBScheduler {
       try {
         final String timingOption = data.timingOption;
         if ("".equals(timingOption) || timingOption.equals(TIMING_OPTION_IMMEDIATE)) {
-          trigger = new SimpleTrigger(name, OB_GROUP, new Date());
-
+          triggerBuilder = newTrigger().withIdentity(name, OB_GROUP).startAt(new Date());
         } else if (data.timingOption.equals(TIMING_OPTION_LATER)) {
-          trigger = new SimpleTrigger();
           start = timestamp(data.startDate, data.startTime);
-          trigger.setStartTime(start.getTime());
+          triggerBuilder = newTrigger().startAt(start.getTime());
 
         } else if (data.timingOption.equals(TIMING_OPTION_SCHEDULED)) {
           start = timestamp(data.startDate, data.startTime);
@@ -429,26 +441,45 @@ public class OBScheduler {
           final int hour = start.get(Calendar.HOUR_OF_DAY);
 
           if (data.frequency.equals(FREQUENCY_SECONDLY)) {
-            trigger = makeIntervalTrigger(FREQUENCY_SECONDLY, data.secondlyInterval,
-                data.secondlyRepetitions);
-
+            if (data.secondlyRepetitions.trim().equals("")) {
+              triggerBuilder = newTrigger().withSchedule(SimpleScheduleBuilder
+                  .repeatSecondlyForever(Integer.parseInt(data.secondlyInterval)));
+            } else {
+              triggerBuilder = newTrigger().withSchedule(SimpleScheduleBuilder
+                  .repeatSecondlyForTotalCount(Integer.parseInt(data.secondlyRepetitions),
+                      Integer.parseInt(data.secondlyInterval)));
+            }
           } else if (data.frequency.equals(FREQUENCY_MINUTELY)) {
-            trigger = makeIntervalTrigger(FREQUENCY_MINUTELY, data.minutelyInterval,
-                data.minutelyRepetitions);
-
+            if (data.minutelyRepetitions.trim().equals("")) {
+              triggerBuilder = newTrigger().withSchedule(SimpleScheduleBuilder
+                  .repeatMinutelyForever(Integer.parseInt(data.minutelyInterval)));
+            } else {
+              triggerBuilder = newTrigger().withSchedule(SimpleScheduleBuilder
+                  .repeatMinutelyForTotalCount(Integer.parseInt(data.minutelyRepetitions),
+                      Integer.parseInt(data.minutelyInterval)));
+            }
           } else if (data.frequency.equals(FREQUENCY_HOURLY)) {
-            trigger = makeIntervalTrigger(FREQUENCY_HOURLY, data.hourlyInterval,
-                data.hourlyRepetitions);
-
+            if (data.hourlyRepetitions.trim().equals("")) {
+              triggerBuilder = newTrigger().withSchedule(
+                  SimpleScheduleBuilder.repeatHourlyForever(Integer.parseInt(data.hourlyInterval)));
+            } else {
+              triggerBuilder = newTrigger().withSchedule(SimpleScheduleBuilder
+                  .repeatHourlyForTotalCount(Integer.parseInt(data.hourlyRepetitions),
+                      Integer.parseInt(data.hourlyInterval)));
+            }
           } else if (data.frequency.equals(FREQUENCY_DAILY)) {
             if ("".equals(data.dailyOption)) {
               final String cronExpression = second + " " + minute + " " + hour + " ? * *";
-              trigger = new CronTrigger(name, OB_GROUP, cronExpression);
+              triggerBuilder = newTrigger().startNow()
+                  .withSchedule(
+                      cronSchedule(cronExpression).withMisfireHandlingInstructionDoNothing());
 
             } else if (data.dailyOption.equals(EVERY_N_DAYS)) {
               try {
                 final int interval = Integer.parseInt(data.dailyInterval);
-                trigger = TriggerUtils.makeHourlyTrigger(interval * 24);
+                triggerBuilder = newTrigger().startNow()
+                    .withSchedule(
+                        calendarIntervalSchedule().withInterval(interval, IntervalUnit.DAY));
 
               } catch (final NumberFormatException e) {
                 throw new ParseException("Invalid interval specified.", -1);
@@ -456,11 +487,15 @@ public class OBScheduler {
 
             } else if (data.dailyOption.equals(WEEKDAYS)) {
               final String cronExpression = second + " " + minute + " " + hour + " ? * MON-FRI";
-              trigger = new CronTrigger(name, OB_GROUP, cronExpression);
+              triggerBuilder = newTrigger().startNow()
+                  .withSchedule(
+                      cronSchedule(cronExpression).withMisfireHandlingInstructionDoNothing());
 
             } else if (data.dailyOption.equals(WEEKENDS)) {
               final String cronExpression = second + " " + minute + " " + hour + " ? * SAT,SUN";
-              trigger = new CronTrigger(name, OB_GROUP, cronExpression);
+              triggerBuilder = newTrigger().startNow()
+                  .withSchedule(
+                      cronSchedule(cronExpression).withMisfireHandlingInstructionDoNothing());
 
             } else {
               throw new ParseException("At least one option must be selected.", -1);
@@ -492,7 +527,9 @@ public class OBScheduler {
 
             if (sb.length() != 0) {
               sb.insert(0, second + " " + minute + " " + hour + " ? * ");
-              trigger = new CronTrigger(name, OB_GROUP, sb.toString());
+              triggerBuilder = newTrigger().startNow()
+                  .withSchedule(
+                      cronSchedule(sb.toString()).withMisfireHandlingInstructionDoNothing());
             } else {
               throw new ParseException("At least one day must be selected.", -1);
             }
@@ -517,27 +554,35 @@ public class OBScheduler {
             } else {
               throw new ParseException("At least one month option be selected.", -1);
             }
-            trigger = new CronTrigger(name, OB_GROUP, sb.toString());
+            triggerBuilder = newTrigger().startNow()
+                .withSchedule(
+                    cronSchedule(sb.toString()).withMisfireHandlingInstructionDoNothing());
 
           } else if (data.frequency.equals(FREQUENCY_CRON)) {
-            trigger = new CronTrigger(name, OB_GROUP, data.cron);
+            triggerBuilder = newTrigger().startNow()
+                .withSchedule(cronSchedule(data.cron).withMisfireHandlingInstructionDoNothing());
           } else {
             throw new ServletException("Invalid option: " + data.frequency);
           }
 
           if (data.nextFireTime.equals("")) {
-            trigger.setStartTime(start.getTime());
+            triggerBuilder.startAt(start.getTime());
           } else {
             Calendar nextTriggerTime = timestamp(data.nextFireTime, data.nextFireTime);
-            trigger.setStartTime(nextTriggerTime.getTime());
+            triggerBuilder.startAt(nextTriggerTime.getTime());
           }
 
           if (data.finishes.equals(FINISHES)) {
             finish = timestamp(data.finishesDate, data.finishesTime);
-            trigger.setEndTime(finish.getTime());
+            triggerBuilder.endAt(finish.getTime());
           }
-
+        } else {
+          final String msg = Utility.messageBD(conn, "TRIG_INVALID_DATA",
+              bundle.getContext().getLanguage());
+          log.error("Error scheduling process {}", data.processName + " " + data.processGroupName);
+          throw new ServletException(msg + " Unrecognized timing option");
         }
+
       } catch (final ParseException e) {
         final String msg = Utility.messageBD(conn, "TRIG_INVALID_DATA",
             bundle.getContext().getLanguage());
@@ -545,56 +590,18 @@ public class OBScheduler {
         throw new ServletException(msg + " " + e.getMessage());
       }
 
-      if (trigger.getName() == null) {
-        trigger.setName(name);
-      }
-      if (trigger.getGroup() == null) {
-        trigger.setGroup(OB_GROUP);
-      }
+      triggerBuilder.withIdentity(name, OB_GROUP)
+          .usingJobData(Process.PREVENT_CONCURRENT_EXECUTIONS, "Y".equals(data.preventconcurrent))
+          .usingJobData(Process.PROCESS_NAME, data.processName + " " + data.processGroupName)
+          .usingJobData(Process.PROCESS_ID, data.adProcessId);
 
+      trigger = triggerBuilder.build();
       trigger.getJobDataMap().put(ProcessBundle.KEY, bundle);
-      trigger.getJobDataMap()
-          .put(Process.PREVENT_CONCURRENT_EXECUTIONS, "Y".equals(data.preventconcurrent));
-      trigger.getJobDataMap()
-          .put(Process.PROCESS_NAME, data.processName + " " + data.processGroupName);
-
-      trigger.getJobDataMap().put(Process.PROCESS_ID, data.adProcessId);
-
-      if (trigger instanceof CronTrigger) {
-        // Setting misfore instruction for CronTriggers not to execute on misfire.
-        // For SimpleTrigger, default policy does not execute on missfire.
-
-        trigger.setMisfireInstruction(CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING);
-      }
 
       log.debug("Scheduled process {}. Start time:{}.",
           data.processName + " " + data.processGroupName, trigger.getStartTime());
 
       return trigger;
-    }
-
-    private static final Trigger makeIntervalTrigger(String type, String interval,
-        String repititions) throws ParseException {
-      try {
-        final int i = Integer.parseInt(interval);
-        int r = SimpleTrigger.REPEAT_INDEFINITELY;
-        if (!repititions.trim().equals("")) {
-          r = Integer.parseInt(repititions);
-        }
-        if (type.equals(FREQUENCY_SECONDLY)) {
-          return TriggerUtils.makeSecondlyTrigger(i, r);
-
-        } else if (type.equals(FREQUENCY_MINUTELY)) {
-          return TriggerUtils.makeMinutelyTrigger(i, r);
-
-        } else if (type.equals(FREQUENCY_HOURLY)) {
-          return TriggerUtils.makeHourlyTrigger(i, r);
-        }
-        return null;
-
-      } catch (final NumberFormatException e) {
-        throw new ParseException("Invalid interval or repitition value.", -1);
-      }
     }
 
     /**
