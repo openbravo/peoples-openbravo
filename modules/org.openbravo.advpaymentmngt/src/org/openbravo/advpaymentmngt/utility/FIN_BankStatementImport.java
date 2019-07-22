@@ -317,9 +317,7 @@ public abstract class FIN_BankStatementImport {
           + "  = translate( replace(:bpName,' ',''),'0123456789', '          ')"
           + "  and (bsl.businessPartner is not null or bsl.gLItem is not null)"
           + "  and bsl.bankStatement.account.id = :account"
-          + "  and bsl.organization.id in ("
-          + Utility.getInStrSet(
-          new OrganizationStructureProvider().getNaturalTree(organization.getId())) + ") "
+          + "  and bsl.organization.id in :orgNaturalTree"
           + "  and bsl.bankStatement.processed = 'Y'"
           + " order by bsl.creationDate desc";
       //@formatter:on
@@ -327,6 +325,8 @@ public abstract class FIN_BankStatementImport {
           .createQuery(FIN_BankStatementLine.class, whereClause);
       bsl.setNamedParameter("bpName", partnername.replaceAll("\\r\\n|\\r|\\n", " "));
       bsl.setNamedParameter("account", account.getId());
+      bsl.setNamedParameter("orgNaturalTree",
+          new OrganizationStructureProvider().getNaturalTree(organization.getId()));
       bsl.setFilterOnReadableOrganization(false);
       // Just look in 10 matches
       bsl.setMaxResult(10);
@@ -356,13 +356,13 @@ public abstract class FIN_BankStatementImport {
       //@formatter:off
       String whereClause = " as bp "
           + " where bp.name = :bpName"
-          + "  and bp.organization.id in (" +
-      Utility.getInStrSet(
-          new OrganizationStructureProvider().getNaturalTree(organization.getId())) + ") ";
+          + "  and bp.organization.id in :orgNaturalTree"; 
       //@formatter:on
       final OBQuery<BusinessPartner> bp = OBDal.getInstance()
           .createQuery(BusinessPartner.class, whereClause);
       bp.setNamedParameter("bpName", partnername);
+      bp.setNamedParameter("orgNaturalTree",
+          new OrganizationStructureProvider().getNaturalTree(organization.getId()));
       bp.setFilterOnReadableOrganization(false);
       bp.setMaxResult(1);
       List<BusinessPartner> matchedBP = bp.list();
@@ -420,14 +420,15 @@ public abstract class FIN_BankStatementImport {
         tokenIndex++;
       }
       whereClause += ")"
-            + "  and b.organization.id in ("
-            + Utility.getInStrSet(new OrganizationStructureProvider().getNaturalTree(organization.getId())) 
-            + "  ) ";
+            + "  and b.organization.id in :orgNaturalTree";
       //@formatter:on
       final Query<Object[]> bl = OBDal.getInstance()
           .getSession()
           .createQuery(whereClause, Object[].class);
       bl.setProperties(tokenPrams);
+      bl.setParameterList("orgNaturalTree",
+          new OrganizationStructureProvider().getNaturalTree(organization.getId()));
+
       businessPartnersScroll = bl.scroll(ScrollMode.SCROLL_SENSITIVE);
 
       if (!businessPartnersScroll.next()) {
