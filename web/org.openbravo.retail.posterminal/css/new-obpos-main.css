@@ -3626,7 +3626,7 @@
 /* # Inherits: [OB.UI.SmallButton] */
   width: 100px;
   margin: 0px 5px 8px 19px;
-  background-image: url('./../img/iconClear.svg');
+  background-image: url('../../../openbravo/web/org.openbravo.mobile.core/assets/img/iconClear.svg');
   background-size: 13px 13px;
   height: 20px;
   background-repeat: no-repeat;
@@ -3651,7 +3651,7 @@
 /* # Inherits: [OB.UI.SmallButton] */
   width: 100px;
   margin: 0px 0px 8px 5px;
-  background-image: url('./../img/iconSearch.svg');
+  background-image: url('../../../openbravo/web/org.openbravo.mobile.core/assets/img/iconSearch.svg');
   background-size: 15px 16px;
   height: 20px;
   background-repeat: no-repeat;
@@ -4137,7 +4137,7 @@
   color: var(--color-primary-darker);
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url('./../../openbravo/web/org.openbravo.mobile.core/assets/img/iconClear.svg');
+  background-image: url('../../../openbravo/web/org.openbravo.mobile.core/assets/img/iconClear.svg');
   background-size: 13px 13px;
 }
 
@@ -4449,7 +4449,7 @@
   /* Inherits: [OB.UI.SmallButton] */
   width: 100px;
   margin: 0px 5px 8px 19px;
-  background-image: url('./../img/iconClear.svg');
+  background-image: url('../../../openbravo/web/org.openbravo.mobile.core/assets/img/iconClear.svg');
   background-size: 13px 13px;
   height: 20px;
   background-repeat: no-repeat;
@@ -4474,7 +4474,7 @@
   /* Inherits: [OB.UI.SmallButton] */
   width: 100px;
   margin: 0px 0px 8px 5px;
-  background-image: url('./../img/iconSearch.svg');
+  background-image: url('../../../openbravo/web/org.openbravo.mobile.core/assets/img/iconSearch.svg');
   background-size: 15px 16px;
   height: 20px;
   background-repeat: no-repeat;
@@ -6227,7 +6227,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obUiModalPRScrollableHeader-container1-container1-container2-clearAction {
   width: 100px;
   margin: 0px 5px 8px 19px;
-  background-image: url('./../img/iconClear.svg');
+  background-image: url('../../../openbravo/web/org.openbravo.mobile.core/assets/img/iconClear.svg');
   background-size: 13px 13px;
   height: 20px;
   background-repeat: no-repeat;
@@ -6251,7 +6251,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obUiModalPRScrollableHeader-container1-container1-container3-searchButton {
   width: 100px;
   margin: 0px 0px 8px 5px;
-  background-image: url('./../img/iconSearch.svg');
+  background-image: url('../../../openbravo/web/org.openbravo.mobile.core/assets/img/iconSearch.svg');
   background-size: 15px 16px;
   height: 20px;
   background-repeat: no-repeat;
@@ -11547,7 +11547,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /* Inherits: [OB.UI.SmallButton] */
   width: 80px;
   margin: 0px 5px 8px 19px;
-  background-image: url('./../img/iconClear.svg');
+  background-image: url('../../../openbravo/web/org.openbravo.mobile.core/assets/img/iconClear.svg');
   background-size: 13px 13px;
   height: 20px;
   background-repeat: no-repeat;
@@ -11572,7 +11572,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /* Inherits: [OB.UI.SmallButton] */
   width: 80px;
   margin: 0px 0px 8px 5px;
-  background-image: url('./../img/iconSearch.svg');
+  background-image: url('../../../openbravo/web/org.openbravo.mobile.core/assets/img/iconSearch.svg');
   background-size: 15px 16px;
   height: 20px;
   background-repeat: no-repeat;
@@ -13123,7 +13123,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Inherits: [OB.UI.SmallButton]
 */
 .obObposCashupUiButtonVoid {
-  background-image: url('./../../openbravo/web/org.openbravo.mobile.core/assets/img/iconClear.svg');
+  background-image: url('../../../openbravo/web/org.openbravo.mobile.core/assets/img/iconClear.svg');
   background-size: 13px 13px;
   background-color: #e2e2e2;
   margin: 5px 0px 5px 0px;
