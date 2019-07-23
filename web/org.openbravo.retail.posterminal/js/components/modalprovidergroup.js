@@ -156,54 +156,65 @@ enyo.kind({
         refund: refund,
         providerGroup: providerGroup
       })
-      .then(
-        function(response) {
-          var cardlogo = response.properties.cardlogo;
-          var paymentline;
-          for (i = 0; i < providerGroup._payments.length; i++) {
-            var payment = providerGroup._payments[i];
-            if (cardlogo === payment.paymentType.searchKey) {
-              // We found the payment method that applies.
-              paymentline = {
-                kind: payment.payment.searchKey,
-                name: payment.payment._identifier,
-                amount: amount,
-                rate: payment.rate,
-                mulrate: payment.mulrate,
-                isocode: payment.isocode,
-                allowOpenDrawer: payment.paymentMethod.allowopendrawer,
-                isCash: payment.paymentMethod.iscash,
-                openDrawer: payment.paymentMethod.openDrawer,
-                printtwice: payment.paymentMethod.printtwice,
-                paymentData: {
-                  provider: providerGroup.provider,
-                  voidConfirmation: false,
-                  // Is the void provider in charge of defining confirmation.
-                  transaction: response.transaction,
-                  authorization: response.authorization,
-                  properties: response.properties
-                }
-              };
-              receipt.addPayment(
-                new OB.Model.PaymentLine(Object.assign(paymentline, attributes))
-              );
-              window.setTimeout(this.doHideThisPopup.bind(this), 0);
-              return; // Success
+      .then(response => {
+        const addResponseToPayment = payment => {
+          // We found the payment method that applies.
+          const paymentline = {
+            kind: payment.payment.searchKey,
+            name: payment.payment._identifier,
+            amount: amount,
+            rate: payment.rate,
+            mulrate: payment.mulrate,
+            isocode: payment.isocode,
+            allowOpenDrawer: payment.paymentMethod.allowopendrawer,
+            isCash: payment.paymentMethod.iscash,
+            openDrawer: payment.paymentMethod.openDrawer,
+            printtwice: payment.paymentMethod.printtwice,
+            paymentData: {
+              provider: providerGroup.provider,
+              voidConfirmation: false,
+              // Is the void provider in charge of defining confirmation.
+              transaction: response.transaction,
+              authorization: response.authorization,
+              properties: response.properties
             }
+          };
+          receipt.addPayment(
+            new OB.Model.PaymentLine(Object.assign(paymentline, attributes))
+          );
+          window.setTimeout(this.doHideThisPopup.bind(this), 0);
+        };
+
+        // First attempt. Find an exact match.
+        const cardlogo = response.properties.cardlogo;
+        let undefinedPayment = null;
+        for (i = 0; i < providerGroup._payments.length; i++) {
+          const payment = providerGroup._payments[i];
+          if (cardlogo === payment.paymentType.searchKey) {
+            addResponseToPayment(payment);
+            return; // Success
+          } else if ('UNDEFINED' === payment.paymentType.searchKey) {
+            undefinedPayment = payment;
           }
-          this.showMessageAndClose(
-            OB.I18N.getLabel('OBPOS_CannotFindPaymentMethod')
-          );
-        }.bind(this)
-      )
-      .catch(
-        function(exception) {
-          this.showMessageAndClose(
-            providerinstance.getErrorMessage
-              ? providerinstance.getErrorMessage(exception)
-              : exception.message
-          );
-        }.bind(this)
-      );
+        }
+
+        // Second attempt. Find UNDEFINED paymenttype.
+        if (undefinedPayment) {
+          addResponseToPayment(undefinedPayment);
+          return; // Success
+        }
+
+        // Fail. Cannot find payment to assign response
+        this.showMessageAndClose(
+          OB.I18N.getLabel('OBPOS_CannotFindPaymentMethod')
+        );
+      })
+      .catch(exception => {
+        this.showMessageAndClose(
+          providerinstance.getErrorMessage
+            ? providerinstance.getErrorMessage(exception)
+            : exception.message
+        );
+      });
   }
 });
