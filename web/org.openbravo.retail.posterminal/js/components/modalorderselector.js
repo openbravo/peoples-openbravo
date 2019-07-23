@@ -273,7 +273,7 @@ enyo.kind({
 
     if (me.model.get('iscancelled')) {
       this.$.orderType.setContent(OB.I18N.getLabel('OBPOS_Cancelled'));
-      this.$.orderType.accClass(
+      this.$.orderType.addClass(
         'obUiReceiptSelectorRender-lineInfoContainerSecondRow-orderType_cancelled'
       );
     } else {
