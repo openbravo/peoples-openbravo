@@ -897,17 +897,7 @@ enyo.kind({
           classes:
             'obObposPointOfSaleUiButtonTabPayment-totalButtonDiv-totalPrinter',
           renderTotal: function(total) {
-            var payment =
-              OB.MobileApp.model.paymentnames[
-                OB.MobileApp.model.get('paymentcash')
-              ];
-            this.setContent(
-              OB.I18N.formatCurrencyWithSymbol(
-                total,
-                payment.symbol,
-                payment.currencySymbolAtTheRight
-              )
-            );
+            this.setContent(OB.I18N.formatCurrency(total));
             //It needs an small asynch to be rendered and then we can adaptFontSize
             setTimeout(
               function(me) {
