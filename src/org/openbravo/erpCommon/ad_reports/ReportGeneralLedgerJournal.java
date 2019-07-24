@@ -61,10 +61,8 @@ import org.openbravo.erpCommon.utility.ReferencedLink;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.User;
-import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.financialmgmt.accounting.coa.AcctSchema;
-import org.openbravo.model.financialmgmt.accounting.coa.AcctSchemaTable;
 import org.openbravo.model.financialmgmt.gl.GLJournal;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -1087,34 +1085,28 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
 
   public static Set<String> getDocuments(String org, String accSchema) {
 
-    final StringBuilder whereClause = new StringBuilder();
     final Map<String, Object> parameters = new HashMap<>(1);
     OBContext.setAdminMode();
     try {
       Set<String> orgStrct = OBContext.getOBContext()
           .getOrganizationStructureProvider()
           .getNaturalTree(org);
-      whereClause.append(" as cd ,");
-      whereClause.append(AcctSchemaTable.ENTITY_NAME);
-      whereClause.append(" as ca ");
-      whereClause.append(" where cd.");
-      whereClause.append(DocumentType.PROPERTY_TABLE + ".id");
-      whereClause.append("= ca.");
-      whereClause.append(AcctSchemaTable.PROPERTY_TABLE + ".id");
-      whereClause.append(" and ca.");
-      whereClause.append(AcctSchemaTable.PROPERTY_ACCOUNTINGSCHEMA + ".id");
-      whereClause.append(" = :accSchemaId ");
+      //@formatter:off
+      final String whereClause = " as cd ,"
+          + "   FinancialMgmtAcctSchemaTable as ca "
+          + " where cd.table.id = ca.table.id"
+          + "   and ca.accountingSchema.id = :accSchemaId "
+          + "   and ca.active = 'Y'"
+          + "   and cd.organization.id in "
+          + " (" + Utility.getInStrSet(orgStrct) + ")"
+          + "   and ca.organization.id in "
+          + " (" + Utility.getInStrSet(orgStrct) + ")"
+          + " order by cd.documentCategory";
+      
+      //@formatter:on
       parameters.put("accSchemaId", accSchema);
-      whereClause.append("and ca.");
-      whereClause.append(AcctSchemaTable.PROPERTY_ACTIVE + "='Y'");
-      whereClause.append(" and cd.");
-      whereClause.append(DocumentType.PROPERTY_ORGANIZATION + ".id");
-      whereClause.append(" in (" + Utility.getInStrSet(orgStrct) + ")");
-      whereClause.append(" and ca." + AcctSchemaTable.PROPERTY_ORGANIZATION + ".id");
-      whereClause.append(" in (" + Utility.getInStrSet(orgStrct) + ")");
-      whereClause.append(" order by cd." + DocumentType.PROPERTY_DOCUMENTCATEGORY);
       final OBQuery<DocumentType> obqDt = OBDal.getReadOnlyInstance()
-          .createQuery(DocumentType.class, whereClause.toString());
+          .createQuery(DocumentType.class, whereClause);
       obqDt.setNamedParameters(parameters);
       obqDt.setFilterOnReadableOrganization(false);
       TreeSet<String> docBaseTypes = new TreeSet<String>();
@@ -1142,17 +1134,16 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       String documentNo = StringEscapeUtils.escapeSql(strDocumentNo);
       documentNo = documentNo.replaceAll(";", "");
 
-      StringBuffer where = new StringBuffer();
-      where.append(" select t." + Table.PROPERTY_DBTABLENAME);
-      where.append(" from " + DocumentType.ENTITY_NAME + " as d");
-      where.append(" join d." + DocumentType.PROPERTY_TABLE + " as t");
-      where.append(" where d." + DocumentType.PROPERTY_DOCUMENTCATEGORY + " = :document");
-      where.append(" and d." + DocumentType.PROPERTY_CLIENT + ".id = :client");
-      where.append(" group by d." + DocumentType.PROPERTY_DOCUMENTCATEGORY);
-      where.append(" , t." + Table.PROPERTY_DBTABLENAME);
-      Query<String> qry = OBDal.getReadOnlyInstance()
-          .getSession()
-          .createQuery(where.toString(), String.class);
+      //@formatter:off
+      final String where = " select t.dBTableName "
+          + "  from DocumentType as d"
+          + "    join d.table as t"
+          + "  where d.documentCategory = :document"
+          + "    and d.client.id = :client"
+          + "  group by d.documentCategory, t.dBTableName";
+      
+      //@formatter:on
+      Query<String> qry = OBDal.getReadOnlyInstance().getSession().createQuery(where, String.class);
       qry.setMaxResults(1);
       qry.setParameter("document", strDocument);
       qry.setParameter("client", strClient);
@@ -1162,11 +1153,14 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
         return null;
       }
 
-      StringBuffer existsSubQuery = new StringBuffer("( SELECT 1 FROM ");
-      existsSubQuery.append(tablename);
-      existsSubQuery.append(" dt WHERE f.record_id = dt.").append(tablename).append("_id");
-      existsSubQuery.append(" AND dt.documentno = '").append(documentNo).append("' )");
-      return existsSubQuery.toString();
+      //@formatter:off
+      final String existsSubQuery = "( select 1 "
+          + " from " + tablename + " dt "
+          + " where f.record_id = dt." + tablename + "_id"
+          + "   and dt.documentno = '" + documentNo + "' )";
+      
+      //@formatter:on
+      return existsSubQuery;
     } catch (Exception ignore) {
       return null;
     } finally {
