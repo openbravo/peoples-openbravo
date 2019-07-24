@@ -135,7 +135,8 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
     final String executionId = SequenceIdData.getUUID();
     try {
       ProcessRunData.insert(getConnection(), ctx.getOrganization(), ctx.getClient(), ctx.getUser(),
-          ctx.getUser(), executionId, PROCESSING, null, null, jec.getJobDetail().getKey().getName());
+          ctx.getUser(), executionId, PROCESSING, null, null, jec.getJobDetail().getKey().getName(),
+          jec.getFireInstanceId());
 
       bundle.setProcessRunId(executionId);
       jec.put(EXECUTION_ID, executionId);
@@ -419,7 +420,8 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
         final ProcessContext ctx = bundle.getContext();
         final String executionId = SequenceIdData.getUUID();
         ProcessRunData.insert(getConnection(), ctx.getOrganization(), ctx.getClient(),
-            ctx.getUser(), ctx.getUser(), executionId, PROCESSING, null, null, trigger.getKey().getName());
+            ctx.getUser(), ctx.getUser(), executionId, PROCESSING, null, null, trigger.getKey().getName(),
+            jec.getFireInstanceId());
         ProcessRunData.update(getConnection(), ctx.getUser(), ERROR, getDuration(0),
             "Concurrent attempt to execute", executionId);
 

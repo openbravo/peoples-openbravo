@@ -2,7 +2,7 @@
   <database name="TABLE OBSCHED_SIMPLE_TRIGGERS">
     <table name="OBSCHED_SIMPLE_TRIGGERS" primaryKey="OBSCHED_SIM_TRI_PK">
       <column name="OBSCHED_SIMPLE_TRIGGERS_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
+        <default><![CDATA[get_uuid()]]></default>
         <onCreateDefault/>
       </column>
       <column name="SCHED_NAME" primaryKey="false" required="true" type="VARCHAR" size="120" autoIncrement="false">

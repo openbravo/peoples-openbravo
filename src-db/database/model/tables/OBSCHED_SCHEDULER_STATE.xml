@@ -2,7 +2,7 @@
   <database name="TABLE OBSCHED_SCHEDULER_STATE">
     <table name="OBSCHED_SCHEDULER_STATE" primaryKey="OBSCHED_SCH_STA_PK">
       <column name="OBSCHED_SCHEDULER_STATE_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
+        <default><![CDATA[get_uuid()]]></default>
         <onCreateDefault/>
       </column>
       <column name="SCHED_NAME" primaryKey="false" required="true" type="VARCHAR" size="120" autoIncrement="false">
