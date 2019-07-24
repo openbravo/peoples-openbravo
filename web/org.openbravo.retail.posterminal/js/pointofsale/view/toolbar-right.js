@@ -23,10 +23,10 @@
 //  }],
 //  tabButtonTapHandler: function (inSender, inEvent) {
 //    if (inEvent.tabPanel) {
-//      this.setTabButtonActive(inEvent.tabPanel);
+//      this.setTabButtonSelected(inEvent.tabPanel);
 //    }
 //  },
-//  setTabButtonActive: function (tabName) {
+//  setTabButtonSelected: function (tabName) {
 //    var buttonContainerArray = this.$.toolbar.getComponents(),
 //        i;
 //
@@ -83,7 +83,7 @@ enyo.kind({
   lastButtonTab: '',
   tabButtonTapHandler: function(inSender, inEvent) {
     if (inEvent.tabPanel) {
-      this.setTabButtonActive(inEvent.tabPanel);
+      this.setTabButtonSelected(inEvent.tabPanel);
       if (this.lastSelectedTabPanel !== inEvent.tabPanel) {
         this.lastSelectedTabPanel = inEvent.tabPanel;
         if (inEvent.tabPanel === 'edit') {
@@ -98,14 +98,14 @@ enyo.kind({
       }
     }
   },
-  setTabButtonActive: function(tabName) {
+  setTabButtonSelected: function(tabName) {
     var buttonContainerArray = this.$.toolbar.getComponents(),
       i;
 
     for (i = 0; i < buttonContainerArray.length; i++) {
-      buttonContainerArray[i].removeClass('active');
+      buttonContainerArray[i].removeClass('selected');
       if (buttonContainerArray[i].tabToOpen === tabName) {
-        buttonContainerArray[i].addClass('active');
+        buttonContainerArray[i].addClass('selected');
       }
     }
   },
@@ -171,9 +171,9 @@ enyo.kind({
       tabToOpen: 'edit'
     },
     {
-      kind: 'OB.OBPOSPointOfSale.UI.ButtonTabReceipt',
-      name: 'toolbarBtnReceipt',
-      classes: 'obObposPointOfSaleUiRightToolbarImpl-buttons-toolbarBtnReceipt'
+      kind: 'OB.OBPOSPointOfSale.UI.ButtonTabCart',
+      name: 'toolbarBtnCart',
+      classes: 'obObposPointOfSaleUiRightToolbarImpl-buttons-toolbarBtnCart'
     }
   ],
 
@@ -259,9 +259,9 @@ enyo.kind({
 // Toolbar buttons
 // ----------------------------------------------------------------------------
 enyo.kind({
-  name: 'OB.OBPOSPointOfSale.UI.ButtonTabReceipt',
+  name: 'OB.OBPOSPointOfSale.UI.ButtonTabCart',
   kind: 'OB.UI.ToolbarButtonTab',
-  classes: 'obObposPointOfSaleUiButtonTabReceipt',
+  classes: 'obObposPointOfSaleUiButtonTabCart',
   events: {
     onTabChange: '',
     onRightToolbarDisabled: ''

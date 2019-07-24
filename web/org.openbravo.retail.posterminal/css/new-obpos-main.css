@@ -7725,7 +7725,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 @media all and (max-width: 800px) {
   .obObposPointOfSaleUiPointOfSale-mainSubWindow-multiColumn .obUiMultiColumn-rightToolbar .obUiMultiColumnToolbar-standardToolbar-toolbar {
-    grid-template-areas: "obUiMainMenu obObposPointOfSaleUiButtonTabScan obObPosPointOfSaleUiButtonTabBrowse obObPosPointOfSaleUiButtonTabSearchCharacteristic obObPosPointOfSaleUiButtonTabEditLine obObposPointOfSaleUiButtonTabReceipt";
+    grid-template-areas: "obUiMainMenu obObposPointOfSaleUiButtonTabScan obObPosPointOfSaleUiButtonTabBrowse obObPosPointOfSaleUiButtonTabSearchCharacteristic obObPosPointOfSaleUiButtonTabEditLine obObposPointOfSaleUiButtonTabCart";
     grid-template-rows: 100%;
     grid-template-columns: repeat(6, calc(100% / 6));
   }
@@ -8167,8 +8167,8 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obUiButtonNew .obUiButton-before {
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconCreateNew.svg');
-  background-size: 19px 19px;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabCreateNew.svg');
+  background-size: 17px 17px;
 }
 
 
@@ -8181,8 +8181,8 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obUiButtonDelete .obUiButton-before {
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconDelete.svg');
-  background-size: 15px 18px;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabDelete.svg');
+  background-size: 14px 17px;
 }
 
 .obUiButtonDelete.paidticket .obUiButton-before {
@@ -8196,9 +8196,9 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Inherits: [OB.UI.ToolbarButtonTab]
 */
 .obObposPointOfSaleUiButtonTabPayment {
-  background-color: var(--color-maincolor);
+  background-color: transparent;
   text-align: center;
-  font-size: 30px;
+  font-size: 26px;
   color: white;
   grid-area: obObposPointOfSaleUiButtonTabPayment;
 }
@@ -8246,7 +8246,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiLeftToolbarImpl-ButtonTabPayment .obUiButton-before {
   line-height: normal;
-    padding: 0px 0px 4px 0px;  
+  padding: 21px 0px 0px 0px;
 }
 
 .obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuReceiptSelector {
@@ -8377,25 +8377,27 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSPointOfSale.UI.ButtonTabReceipt
 # Inherits: [OB.UI.Button]
 */
-.obObposPointOfSaleUiButtonTabReceipt {
+.obObposPointOfSaleUiButtonTabCart {
   visibility: hidden;
-  grid-area: obObposPointOfSaleUiButtonTabReceipt;
+  grid-area: obObposPointOfSaleUiButtonTabCart;
 }
 
-.obObposPointOfSaleUiButtonTabReceipt.obUiButton_disabled {}
+.obObposPointOfSaleUiButtonTabCart.selected {}
 
-.obObposPointOfSaleUiButtonTabReceipt .obUiButton-before {
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconShoppingCart.svg');
-  background-size: 19px 19px;
-  background-position: calc(50% - 1px) center;
+.obObposPointOfSaleUiButtonTabCart .obUiButton-before {
+  /*Inherits: [OB.UI.Button]*/
+  background-size: 18px 16px;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabCart.svg');
 }
 
-.obObposPointOfSaleUiButtonTabReceipt .obUiButton-after {}
+.obObposPointOfSaleUiButtonTabCart.selected .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabCart_selected.svg');
+}
 
-.obObposPointOfSaleUiButtonTabReceipt .obUiButton-label {}
+.obObposPointOfSaleUiButtonTabCart.selected .obUiButton-label {}
 
 @media all and (max-width: 800px) {
-  .obObposPointOfSaleUiButtonTabReceipt {
+  .obObposPointOfSaleUiButtonTabCart {
     visibility: visible;
   }
 }
@@ -8406,25 +8408,23 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Inherits: [OB.UI.ToolbarButtonTab]
 */
 .obObposPointOfSaleUiButtonTabScan {
-  background-color: #e2e2e2;
   grid-area: obObposPointOfSaleUiButtonTabScan;
 }
 
-.obObposPointOfSaleUiButtonTabScan.active {
-  background-color: #7da7d9;
-}
-
-.obObposPointOfSaleUiButtonTabScan.active:hover {
-  opacity: 1;
-}
+.obObposPointOfSaleUiButtonTabScan.selected {}
 
 .obObposPointOfSaleUiButtonTabScan .obUiButton-before {
   /*Inherits: [OB.UI.Button]*/
-  background-size: 32px 17px;
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconMainBlack.svg');
+  background-size: 25px 17px;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabScan.svg');
+  background-position: center 19px;
 }
 
-.obObposPointOfSaleUiButtonTabScan .obUiButton-label {
+.obObposPointOfSaleUiButtonTabScan.selected .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabScan_selected.svg');
+}
+
+.obObposPointOfSaleUiButtonTabScan.selected .obUiButton-label {
   color: black;
 }
 
@@ -8473,55 +8473,44 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Inherits: [OB.UI.ToolbarButtonTab]
 */
 .obObPosPointOfSaleUiButtonTabBrowse {
-  background-color: #e2e2e2;
   grid-area: obObPosPointOfSaleUiButtonTabBrowse;
 }
 
-.obObPosPointOfSaleUiButtonTabBrowse.active {
-  background-color: #b882c6;
-}
-
-.obObPosPointOfSaleUiButtonTabBrowse.active:hover {
-  opacity: 1;
-}
+.obObPosPointOfSaleUiButtonTabBrowse.selected {}
 
 .obObPosPointOfSaleUiButtonTabBrowse .obUiButton-before {
   /*Inherits: [OB.UI.Button]*/
-  background-size: 32px 17px;
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconBrowseBlack.svg');
+  background-size: 18px 16px;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabBrowse.svg');
 }
 
-.obObPosPointOfSaleUiButtonTabBrowse .obUiButton-label {
-  color: black;
+.obObPosPointOfSaleUiButtonTabBrowse.selected .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabBrowse_selected.svg');
 }
+
+.obObPosPointOfSaleUiButtonTabBrowse.selected .obUiButton-label {}
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.ButtonTabSearchCharacteristic
 # Inherits: [OB.UI.ToolbarButtonTab]
 */
 .obObPosPointOfSaleUiButtonTabSearchCharacteristic {
-  background-color: #e2e2e2;
   grid-area: obObPosPointOfSaleUiButtonTabSearchCharacteristic;
 }
 
-.obObPosPointOfSaleUiButtonTabSearchCharacteristic.active {
-  background-color: #f8e859;
-}
-
-.obObPosPointOfSaleUiButtonTabSearchCharacteristic.active:hover {
-  opacity: 1;
-}
+.obObPosPointOfSaleUiButtonTabSearchCharacteristic.selected {}
 
 .obObPosPointOfSaleUiButtonTabSearchCharacteristic .obUiButton-before {
   /*Inherits: [OB.UI.Button]*/
   background-size: 32px 17px;
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconSearchBlack.svg');
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabSearch.svg');
 }
 
-.obObPosPointOfSaleUiButtonTabSearchCharacteristic .obUiButton-label {
-  color: black;
+.obObPosPointOfSaleUiButtonTabSearchCharacteristic.selected .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabSearch_selected.svg');
 }
 
+.obObPosPointOfSaleUiButtonTabSearchCharacteristic.selected .obUiButton-label {}
 
 
 /*
@@ -8529,30 +8518,29 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Inherits: [OB.UI.ToolbarButtonTab]
 */
 .obObPosPointOfSaleUiButtonTabEditLine {
-  background-color: #e2e2e2;
   grid-area: obObPosPointOfSaleUiButtonTabEditLine;
 }
 
-.obObPosPointOfSaleUiButtonTabEditLine.obUiButton_disabled {
-  background-color: var(--color-primary-light);
-  cursor: default;
-}
+.obObPosPointOfSaleUiButtonTabEditLine.selected {}
 
-.obObPosPointOfSaleUiButtonTabEditLine.active {
-  background-color: var(--color-actioncolor);
-}
-
-.obObPosPointOfSaleUiButtonTabEditLine.active:hover {
-  opacity: 1;
-}
 .obObPosPointOfSaleUiButtonTabEditLine .obUiButton-before {
   /*Inherits: [OB.UI.Button]*/
   background-size: 32px 17px;
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconEditBlack.svg');
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabEdit.svg');
 }
 
-.obObPosPointOfSaleUiButtonTabEditLine .obUiButton-label {
-  color: black;
+.obObPosPointOfSaleUiButtonTabEditLine.selected .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabEdit_selected.svg');
+}
+
+.obObPosPointOfSaleUiButtonTabEditLine.disabled .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabEdit_disabled.svg');
+}
+
+.obObPosPointOfSaleUiButtonTabEditLine.selected .obUiButton-label {}
+
+.obObPosPointOfSaleUiButtonTabEditLine.disabled .obUiButton-label {
+  color: #90979f;
 }
 
 
@@ -8846,7 +8834,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   height: 30px;
 }
 
-.obObposPointOfSaleUiEditLine-propertiesToShow-general.obUiButton_disabled {
+.obObposPointOfSaleUiEditLine-propertiesToShow-general.disabled {
   background-color: var(--color-primary-light);
   cursor: default;
 }
@@ -9915,8 +9903,8 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   border-color: var(--color-maincolor);
 }
 
-.obUiCustomerCheckOption.obUiButton_disabled,
-.obUiCustomerCheckOption.obUiButton_disabled .obUiButton-label,
+.obUiCustomerCheckOption.disabled,
+.obUiCustomerCheckOption.disabled .obUiButton-label,
 .obUiCustomerCheckOption:disabled {
   display: block;
   cursor: default;
@@ -9924,7 +9912,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   border-width: 0px;
 }
 
-.obUiCustomerCheckOption.obUiButton_disabled .obUiButton-label {
+.obUiCustomerCheckOption.disabled .obUiButton-label {
   padding-top: 4px;
 }
 
@@ -12611,7 +12599,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   grid-area: obObposcashmgmtUiRightToolbarImpl-btnToggleView;
 }
 
-.obObposcashmgmtUiRightToolbarImpl-btnToggleView.obUiButton_disabled {}
+.obObposcashmgmtUiRightToolbarImpl-btnToggleView.disabled {}
 
 .obObposcashmgmtUiRightToolbarImpl-btnToggleView .obUiButton-before {}
 
@@ -12881,7 +12869,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   grid-area: obObPosCashUpUiLeftToolbarImpl-btnToggleView;
 }
 
-.obObPosCashUpUiLeftToolbarImpl-btnToggleView.obUiButton_disabled {}
+.obObPosCashUpUiLeftToolbarImpl-btnToggleView.disabled {}
 
 .obObPosCashUpUiLeftToolbarImpl-btnToggleView .obUiButton-before {}
 
