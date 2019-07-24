@@ -18,6 +18,8 @@
  */
 package org.openbravo.scheduling;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,7 +31,9 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
  * @author awolski
  * 
  */
-public class ProcessContext {
+public class ProcessContext implements Serializable {
+
+  static final long serialVersionUID = 1L;
 
   private static final Logger log = LogManager.getLogger();
   public static final String KEY = "org.openbravo.base.secureApp.ObContext";

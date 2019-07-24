@@ -13,6 +13,7 @@ package org.openbravo.database;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -34,7 +35,10 @@ import org.apache.logging.log4j.Logger;
 import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.exception.PoolNotFoundException;
 
-public class ConnectionProviderImpl implements ConnectionProvider {
+public class ConnectionProviderImpl implements ConnectionProvider, Serializable {
+  
+  static final long serialVersionUID = 1L;
+
   static Logger log4j = LogManager.getLogger();
   String defaultPoolName = "";
   String bbdd = "";

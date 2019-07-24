@@ -42,7 +42,7 @@ import org.quartz.Trigger;
 
 /**
  * Provides the ability of schedule and unschedule background processes.
- * 
+ *
  * @author awolski
  */
 public class OBScheduler {
@@ -108,10 +108,10 @@ public class OBScheduler {
   /**
    * Schedule a new process (bundle) to run immediately in the background, using a random name for
    * the Quartz's JobDetail.
-   * 
+   *
    * This will create a new record in AD_PROCESS_REQUEST. This method throws a
    * {@link ServletException} if there is an error creating the AD_PROCESS_REQUEST information.
-   * 
+   *
    * @see #schedule(String, ProcessBundle)
    */
   public void schedule(ProcessBundle bundle) throws SchedulerException, ServletException {
@@ -140,12 +140,12 @@ public class OBScheduler {
    * Schedule a process (bundle) with the specified request id. The request id is used in Quartz as
    * the JobDetail's name. The details must be saved to AD_PROCESS_REQUEST before reaching this
    * method.
-   * 
+   *
    * @param requestId
    *          the id of the process request used as the Quartz jobDetail name
    * @param bundle
    *          The bundle with all of the process' details
-   * 
+   *
    * @throws SchedulerException
    *           If something goes wrong with the trigger creation or with the process scheduling.
    */
@@ -222,7 +222,7 @@ public class OBScheduler {
     this.ctx = schdlr.getContext();
     this.sched = schdlr;
 
-    ProcessMonitor monitor = new ProcessMonitor("Monitor." + OB_GROUP, this.ctx);
+    final ProcessMonitor monitor = new ProcessMonitor("Monitor." + OB_GROUP, this.ctx);
     schdlr.getListenerManager().addSchedulerListener(monitor);
     schdlr.getListenerManager().addJobListener(monitor);
     schdlr.getListenerManager().addTriggerListener(monitor);

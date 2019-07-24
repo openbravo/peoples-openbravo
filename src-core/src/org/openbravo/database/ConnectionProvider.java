@@ -16,10 +16,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.io.Serializable;
 
 import org.openbravo.exception.NoConnectionAvailableException;
 
-public interface ConnectionProvider {
+public interface ConnectionProvider extends Serializable {
+  
   public Connection getConnection() throws NoConnectionAvailableException;
 
   public String getRDBMS();

@@ -1,11 +1,14 @@
 package org.openbravo.scheduling;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Utility;
 
-public class ProcessLogger {
+public class ProcessLogger implements Serializable {
+
+  static final long serialVersionUID = 1L;
 
   private StringBuilder log;
 
