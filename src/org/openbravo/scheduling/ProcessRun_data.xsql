@@ -30,8 +30,9 @@
       <Sql><![CDATA[
       	INSERT INTO AD_Process_Run 
         (AD_Org_ID, AD_Client_ID, Isactive, Created, Createdby, Updated, UpdatedBy, 
-        AD_Process_Run_ID, Status, Start_Time, Runtime, Log, AD_Process_Request_ID)
-        VALUES (?, ?, 'Y', NOW(), ?, NOW(), ?, ?, ?, NOW(), ?, ?, ?)
+        AD_Process_Run_ID, Status, Start_Time, Runtime, Log, AD_Process_Request_ID,
+        Scheduler_Instance)
+        VALUES (?, ?, 'Y', NOW(), ?, NOW(), ?, ?, ?, NOW(), ?, ?, ?, ?)
     ]]></Sql>
     <Parameter name="adOrgId"/>
     <Parameter name="adClientId"/>
@@ -42,6 +43,7 @@
     <Parameter name="runtime"/>
     <Parameter name="log"/>
     <Parameter name="processRequestId"/>
+    <Parameter name="schedulerInstance"/>
    </SqlMethod>
    <SqlMethod name="update" type="preparedStatement" return="rowcount" saveContextInfo="false">
       <SqlMethodComment></SqlMethodComment>

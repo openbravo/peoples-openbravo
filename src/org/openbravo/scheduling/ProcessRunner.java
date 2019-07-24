@@ -77,7 +77,7 @@ public class ProcessRunner {
 
     status = PROCESSING;
     ProcessRunData.insert(conn, ctx.getOrganization(), ctx.getClient(), ctx.getUser(),
-        ctx.getUser(), executionId, status, null, bundle.getLog(), requestId);
+        ctx.getUser(), executionId, status, null, bundle.getLog(), requestId, null);
 
     try {
       log.debug("Calling execute on process " + requestId);
