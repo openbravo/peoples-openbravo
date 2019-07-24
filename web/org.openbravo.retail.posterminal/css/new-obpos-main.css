@@ -2738,7 +2738,7 @@
   background-position: center center;
   background-color: transparent;
 
-  background-image: url('./../../openbravo/web/org.openbravo.mobile.core/assets/img/iconClearPayment.svg');
+  background-image: url('../../../openbravo/web/org.openbravo.mobile.core/assets/img/iconClearPayment.svg');
   background-size: 13px 13px;
 }
 
@@ -9527,7 +9527,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposPointOfSaleUiRemovePayment_iconClearPayment {
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconClearPayment.svg');
+  background-image: url('../../../openbravo/web/org.openbravo.mobile.core/assets/img/iconClearPayment.svg');
   background-size: 13px 13px;
 }
 
