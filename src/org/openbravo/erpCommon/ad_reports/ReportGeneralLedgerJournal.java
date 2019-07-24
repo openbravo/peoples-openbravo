@@ -1085,7 +1085,6 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
 
   public static Set<String> getDocuments(String org, String accSchema) {
 
-    final Map<String, Object> parameters = new HashMap<>(1);
     OBContext.setAdminMode();
     try {
       Set<String> orgStrct = OBContext.getOBContext()
@@ -1097,17 +1096,15 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
           + " where cd.table.id = ca.table.id"
           + "   and ca.accountingSchema.id = :accSchemaId "
           + "   and ca.active = 'Y'"
-          + "   and cd.organization.id in "
-          + " (" + Utility.getInStrSet(orgStrct) + ")"
-          + "   and ca.organization.id in "
-          + " (" + Utility.getInStrSet(orgStrct) + ")"
+          + "   and cd.organization.id in :orgNaturalTree"
+          + "   and ca.organization.id in :orgNaturalTree"
           + " order by cd.documentCategory";
       
       //@formatter:on
-      parameters.put("accSchemaId", accSchema);
       final OBQuery<DocumentType> obqDt = OBDal.getReadOnlyInstance()
           .createQuery(DocumentType.class, whereClause);
-      obqDt.setNamedParameters(parameters);
+      obqDt.setNamedParameter("accSchemaId", accSchema);
+      obqDt.setNamedParameter("orgNaturalTree", orgStrct);
       obqDt.setFilterOnReadableOrganization(false);
       TreeSet<String> docBaseTypes = new TreeSet<String>();
       for (DocumentType doc : obqDt.list()) {
