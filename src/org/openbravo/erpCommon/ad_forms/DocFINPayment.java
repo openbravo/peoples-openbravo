@@ -501,16 +501,16 @@ public class DocFINPayment extends AcctServer {
     try {
       //@formatter:off
       final String whereClause = " as astdt "
-          + " where astdt.acctschemaTable.accountingSchema.id = "
-          + "'" + as.m_C_AcctSchema_ID + "'"
-          + "   and astdt.acctschemaTable.table.id = "
-          + "'" + AD_Table_ID + "'"
-          + "   and astdt.documentCategory = "
-          + "'" + DocumentType + "'";
+          + " where astdt.acctschemaTable.accountingSchema.id = :accountSchemaId"
+          + "   and astdt.acctschemaTable.table.id = :tableId"
+          + "   and astdt.documentCategory = :documentType";
 
       //@formatter:on
       final OBQuery<AcctSchemaTableDocType> obqParameters = OBDal.getInstance()
           .createQuery(AcctSchemaTableDocType.class, whereClause);
+      obqParameters.setNamedParameter("accountSchemaId", as.m_C_AcctSchema_ID);
+      obqParameters.setNamedParameter("tableId", AD_Table_ID);
+      obqParameters.setNamedParameter("documentType", DocumentType);
       obqParameters.setFilterOnReadableClients(false);
       obqParameters.setFilterOnReadableOrganization(false);
       final List<AcctSchemaTableDocType> acctSchemaTableDocTypes = obqParameters.list();
@@ -523,14 +523,14 @@ public class DocFINPayment extends AcctServer {
       if (strClassname.equals("")) {
         //@formatter:off
         final String whereClause2 = " as ast "
-            + " where ast.accountingSchema.id = "
-            + "'" + as.m_C_AcctSchema_ID + "'"
-            + "   and ast.table.id = "
-            + "'" + AD_Table_ID + "'";
+            + " where ast.accountingSchema.id = :accountSchemaId"
+            + "   and ast.table.id = :tableId";
 
         //@formatter:on
         final OBQuery<AcctSchemaTable> obqParameters2 = OBDal.getInstance()
             .createQuery(AcctSchemaTable.class, whereClause2);
+        obqParameters2.setNamedParameter("accountSchemaId", as.m_C_AcctSchema_ID);
+        obqParameters2.setNamedParameter("tableId", AD_Table_ID);
         obqParameters2.setFilterOnReadableClients(false);
         obqParameters2.setFilterOnReadableOrganization(false);
         final List<AcctSchemaTable> acctSchemaTables = obqParameters2.list();
