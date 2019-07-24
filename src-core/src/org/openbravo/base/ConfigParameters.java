@@ -15,6 +15,7 @@ package org.openbravo.base;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
@@ -30,7 +31,10 @@ import org.apache.logging.log4j.Logger;
  * 
  * @author Ben Sommerville
  */
-public class ConfigParameters {
+public class ConfigParameters implements Serializable {
+
+  static final long serialVersionUID = 1L;
+
   public final static String CONFIG_ATTRIBUTE = "openbravoConfig";
 
   private final String strBaseConfigPath;

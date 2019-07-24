@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.ConnectionProviderContextListener;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBCriteria;
@@ -83,7 +84,11 @@ public class ScheduleProcess extends HttpSecureAppServlet {
           return;
         }
       }
-      final ProcessBundle bundle = ProcessBundle.request(requestId, vars, this);
+      // This class extends non serializable classes and is added to the data map
+      // using the ConnectionProvider available in the context listener instead.
+      // final ProcessBundle bundle = ProcessBundle.request(requestId, vars, this);
+      final ProcessBundle bundle = ProcessBundle.request(requestId, vars,
+          ConnectionProviderContextListener.getPool());
       OBScheduler.getInstance().schedule(requestId, bundle);
 
     } catch (final Exception e) {

@@ -18,6 +18,7 @@
  */
 package org.openbravo.scheduling;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,7 +43,9 @@ import org.openbravo.erpCommon.ad_process.PinstanceProcedure;
  * @author awolski
  * 
  */
-public class ProcessBundle {
+public class ProcessBundle implements Serializable {
+
+  static final long serialVersionUID = 1L;
 
   /**
    * String constant to retrieve the ProcessBundle from the Quartz JobExecutionContext
