@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2018 Openbravo SLU
+ * All portions are Copyright (C) 2012-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -132,63 +132,64 @@ public class UpdateActuals extends DalBaseProcess {
         String OrgTreeList = commaSeparated(
             OBContext.getOBContext().getOrganizationStructureProvider().getChildTree(orgId, true));
 
-        StringBuilder queryString = new StringBuilder();
-        queryString.append("select SUM(e.credit) as credit,");
-        queryString.append(" SUM(e.debit) as debit");
-        queryString.append(" from FinancialMgmtAccountingFact e where");
-        queryString.append(" e.client.id='").append(myBudget.getClient().getId()).append("'");
-        queryString.append(" and e.organization.id in (").append(OrgTreeList).append(")");
-        queryString.append(" and e.period.year.id='")
-            .append(myBudget.getYear().getId())
-            .append("'");
+        //@formatter:off
+        String queryString = "select SUM(e.credit) as credit,"
+                       + "      SUM(e.debit) as debit"
+                       + "    from FinancialMgmtAccountingFact e "
+                       + "    where e.client.id="
+                       + "'" + myBudget.getClient().getId() + "'"
+                       + "      and e.organization.id in "
+                       + "(" + OrgTreeList + ")"
+                       + "      and e.period.year.id="
+                       + "'" + myBudget.getYear().getId() + "'";
 
         if (!"".equals(activity)) {
-          queryString.append(" and e.activity.id in (").append(activityTree).append(")");
+          queryString += "      and e.activity.id in "
+                      + "(" + activityTree + ")";
         }
-        queryString.append(" and e.accountingSchema.id=:accountingSchema");
+        queryString   += "      and e.accountingSchema.id=:accountingSchema";
         if (!"".equals(asset)) {
-          queryString.append(" and e.asset.id in (").append(assetTree).append(")");
+          queryString += "      and e.asset.id in (" + assetTree + ")";
         }
         if (!"".equals(businessPartner)) {
-          queryString.append(" and e.businessPartner.id = :businessPartner");
+          queryString += "      and e.businessPartner.id = :businessPartner";
         }
         if (StringUtils.isNotEmpty(businessPartnerCategory)) {
-          queryString
-              .append(" and e.businessPartner.businessPartnerCategory.id=:businessPartnerCategory");
+          queryString += "      and e.businessPartner.businessPartnerCategory.id=:businessPartnerCategory";
         }
         if (!"".equals(costcenter)) {
-          queryString.append(" and e.costcenter.id in (").append(costcenterTree).append(")");
+          queryString += "      and e.costcenter.id in "
+                      +  "(" + costcenterTree + ")";
         }
-        queryString.append(" and e.account.id in (").append(accountTree).append(")");
+        queryString   += "      and e.account.id in "
+                      +  "(" + accountTree + ")";
         if (!"".equals(period)) {
-          queryString.append(" and e.period.id=:period");
+          queryString += "      and e.period.id=:period";
         }
         if (!"".equals(product)) {
-          queryString.append(" and e.product.id=:product");
+          queryString += "      and e.product.id=:product";
         }
         if (StringUtils.isNotEmpty(productCategory)) {
-          queryString.append(" and e.product.productCategory.id in (")
-              .append(productCategoryTree)
-              .append(")");
+          queryString += "      and e.product.productCategory.id in (" + productCategoryTree +")";
         }
         if (!"".equals(project)) {
-          queryString.append(" and e.project.id in (").append(projectTree).append(")");
+          queryString += "      and e.project.id in (" + projectTree + ")";
         }
         if (!"".equals(salesCampaign)) {
-          queryString.append(" and e.salesCampaign.id in (").append(campaignTree).append(")");
+          queryString += "      and e.salesCampaign.id in (" + campaignTree + ")";
         }
         if (!"".equals(salesRegion)) {
-          queryString.append(" and e.salesRegion.id in (").append(regionTree).append(")");
+          queryString += "      and e.salesRegion.id in (" + regionTree + ")";
         }
         if (!"".equals(user1)) {
-          queryString.append(" and e.stDimension.id in (").append(user1Tree).append(")");
+          queryString += "      and e.stDimension.id in (" + user1Tree + ")";
         }
         if (!"".equals(user1)) {
-          queryString.append(" and e.ndDimension.id in (").append(user2Tree).append(")");
+          queryString += "      and e.ndDimension.id in (" + user2Tree + ")";
         }
         Query<Object[]> query = OBDal.getInstance()
             .getSession()
-            .createQuery(queryString.toString(), Object[].class);
+            .createQuery(queryString, Object[].class);
         query.setReadOnly(true);
         query.setParameter("accountingSchema", accountingSchema);
         if (!"".equals(businessPartner)) {
