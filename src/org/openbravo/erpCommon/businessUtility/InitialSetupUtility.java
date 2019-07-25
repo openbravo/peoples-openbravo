@@ -1867,11 +1867,13 @@ public class InitialSetupUtility {
   public static List<Module> getCOAModules(String strModules) throws Exception {
     //@formatter:off
     final String strWhereClause = " as module "
-        + "  where module.id in (" + strModules + ")"
+        + "  where module.id in :modules"
         + "    and module.hasChartOfAccounts = 'Y'";
     
     //@formatter:on
     final OBQuery<Module> obqModule = OBDal.getInstance().createQuery(Module.class, strWhereClause);
+    obqModule.setNamedParameter("modules",
+        Utility.stringToArrayList(strModules.replaceAll("\\(|\\)|'", "")));
     return obqModule.list();
   }
 
@@ -1886,12 +1888,14 @@ public class InitialSetupUtility {
   public static List<Module> getRDModules(String strModules) throws Exception {
     //@formatter:off
     final String strWhereClause = " as module "
-        + " where module.id in (" + strModules + ")"
+        + " where module.id in :modules"
         + " and module.hasReferenceData = 'Y'"
         + " and module.hasChartOfAccounts = 'N'";
     
     //@formatter:on
     final OBQuery<Module> obqModule = OBDal.getInstance().createQuery(Module.class, strWhereClause);
+    obqModule.setNamedParameter("modules",
+        Utility.stringToArrayList(strModules.replaceAll("\\(|\\)|'", "")));
     return obqModule.list();
   }
 
