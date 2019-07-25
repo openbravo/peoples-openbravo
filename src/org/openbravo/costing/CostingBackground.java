@@ -87,11 +87,11 @@ public class CostingBackground extends DalBaseProcess implements KillableProcess
           + "    where ad_isorgincluded(o.id, cr.organization.id, client.id) <> -1 "
           + "      and cr.validated is true"
           + "    )"
-          + " and ad_isorgincluded(o.id, "
-          + "'" + bundle.getContext().getOrganization() + "', "
-          + "'" + bundle.getContext().getClient() + "') <> -1 ";
+          + " and ad_isorgincluded(o.id, :orgId, :clientId) <> -1 ";
       //@formatter:on
       OBQuery<Organization> orgQry = OBDal.getInstance().createQuery(Organization.class, where);
+      orgQry.setNamedParameter("orgId", bundle.getContext().getOrganization());
+      orgQry.setNamedParameter("clientId", bundle.getContext().getClient());
       List<Organization> orgs = orgQry.list();
       if (orgs.size() == 0) {
         log4j.debug("No organizations with Costing Rule defined");
