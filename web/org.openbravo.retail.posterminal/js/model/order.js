@@ -2305,34 +2305,44 @@
             productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(
               product
             ),
-            checkStock =
-              negativeQty &&
-              (productStatus.restrictsaleoutofstock ||
-                OB.UTIL.isCrossStoreProduct(product));
+            checkStockActions = [];
+
+          if (negativeQty && productStatus.restrictsaleoutofstock) {
+            checkStockActions.push('discontinued');
+          }
+
+          if (negativeQty && OB.UTIL.isCrossStoreProduct(product)) {
+            checkStockActions.push('crossStore');
+          }
 
           OB.UTIL.HookManager.executeHooks(
             'OBPOS_CheckStockDeleteLine',
             {
               order: me,
               line: line,
-              checkStock: checkStock
+              checkStockActions: checkStockActions
             },
             function(args) {
               if (args.cancelOperation) {
                 return;
               }
-              if (args.checkStock) {
+              if (args.checkStockActions.length) {
                 var qtyAdded = -line.get('qty'),
                   options = {
                     line: line
                   };
-                me.getStoreStock(product, qtyAdded, options, null, function(
-                  hasStock
-                ) {
-                  if (hasStock) {
-                    checkLineStock(idx + 1);
+                me.getStoreStock(
+                  product,
+                  qtyAdded,
+                  options,
+                  null,
+                  args.checkStockActions,
+                  function(hasStock) {
+                    if (hasStock) {
+                      checkLineStock(idx + 1);
+                    }
                   }
-                });
+                );
               } else {
                 checkLineStock(idx + 1);
               }
@@ -2690,17 +2700,22 @@
         var product = line.get('product'),
           negativeQty = OB.DEC.compare(line.get('qty')) < 0,
           productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(product),
-          checkStock =
-            negativeQty &&
-            (productStatus.restrictsaleoutofstock ||
-              OB.UTIL.isCrossStoreProduct(product));
+          checkStockActions = [];
+
+        if (negativeQty && productStatus.restrictsaleoutofstock) {
+          checkStockActions.push('discontinued');
+        }
+
+        if (negativeQty && OB.UTIL.isCrossStoreProduct(product)) {
+          checkStockActions.push('crossStore');
+        }
 
         OB.UTIL.HookManager.executeHooks(
           'OBPOS_CheckStockDeleteLine',
           {
             order: me,
             line: line,
-            checkStock: checkStock
+            checkStockActions: checkStockActions
           },
           function(args) {
             if (args.cancelOperation) {
@@ -2709,7 +2724,7 @@
               }
               return;
             }
-            if (args.checkStock) {
+            if (args.checkStockActions.length) {
               var qtyAdded = -line.get('qty'),
                 options = {
                   line: line
@@ -2719,6 +2734,7 @@
                 qtyAdded,
                 options,
                 null,
+                args.checkStockActions,
                 function(hasStock) {
                   if (hasStock) {
                     deleteLineOnceChecked();
@@ -3097,7 +3113,14 @@
       // remove the line
       finishDelete();
     },
-    getStoreStock: function(p, qty, options, attrs, callback) {
+    getStoreStock: function(
+      p,
+      qty,
+      options,
+      attrs,
+      checkStockActions,
+      callback
+    ) {
       var me = this,
         lines = this.get('lines'),
         line = !OB.UTIL.isNullOrUndefined(options) ? options.line : null,
@@ -3155,6 +3178,7 @@
           !OB.UTIL.isNullOrUndefined(attrs.warehouse.warehouseqty)
         ) {
           OB.UTIL.StockUtils.checkStockCallback(
+            checkStockActions,
             p,
             line,
             me,
@@ -3202,6 +3226,7 @@
                     };
                   }
                   OB.UTIL.StockUtils.checkStockCallback(
+                    checkStockActions,
                     p,
                     line,
                     me,
@@ -3344,11 +3369,19 @@
             )
           ) {
             var positiveQty = OB.DEC.compare(qty) > 0,
-              checkStock =
-                positiveQty &&
-                (productStatus.restrictsaleoutofstock ||
-                  (OB.UTIL.isCrossStoreProduct(p) &&
-                    (!line || OB.DEC.compare(line.get('qty')) > 0)));
+              checkStockActions = [];
+
+            if (positiveQty && productStatus.restrictsaleoutofstock) {
+              checkStockActions.push('discontinued');
+            }
+
+            if (
+              positiveQty &&
+              (OB.UTIL.isCrossStoreProduct(p) &&
+                (!line || OB.DEC.compare(line.get('qty')) > 0))
+            ) {
+              checkStockActions.push('crossStore');
+            }
 
             OB.UTIL.HookManager.executeHooks(
               'OBPOS_CheckStockAddProduct',
@@ -3357,7 +3390,7 @@
                 product: p,
                 line: line,
                 qty: qty,
-                checkStock: checkStock
+                checkStockActions: checkStockActions
               },
               function(args) {
                 if (args && args.cancelOperation) {
@@ -3366,20 +3399,27 @@
                   }
                   return;
                 }
-                args.checkStock =
-                  args.checkStock &&
+                if (
+                  args.checkStockActions.length &&
                   (_.isUndefined(attrs) ||
                     attrs.kindOriginator !==
                       'OB.OBPOSPointOfSale.UI.KeyboardOrder' ||
-                    !attrs.isScanning);
-                if (args.checkStock) {
-                  me.getStoreStock(p, qty, options, attrs, function(hasStock) {
-                    if (hasStock) {
-                      stockCallback();
-                    } else if (callback && callback instanceof Function) {
-                      callback(false, null);
+                    !attrs.isScanning)
+                ) {
+                  me.getStoreStock(
+                    p,
+                    qty,
+                    options,
+                    attrs,
+                    args.checkStockActions,
+                    function(hasStock) {
+                      if (hasStock) {
+                        stockCallback();
+                      } else if (callback && callback instanceof Function) {
+                        callback(false, null);
+                      }
                     }
-                  });
+                  );
                 } else {
                   stockCallback();
                 }

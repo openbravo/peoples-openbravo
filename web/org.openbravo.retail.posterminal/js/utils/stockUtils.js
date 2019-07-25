@@ -40,6 +40,14 @@
     );
   };
 
+  OB.UTIL.StockUtils.hasStockAction = function(checkStockActions, stockAction) {
+    return !_.isUndefined(
+      _.find(checkStockActions, function(checkStockAction) {
+        return checkStockAction === stockAction;
+      })
+    );
+  };
+
   //Function to navigate to the stock screen window
   OB.UTIL.StockUtils.navigateToStockScreen = function(
     product,
@@ -60,6 +68,7 @@
 
   //Function executed after the check stock process has sent a response, even if the response is an error response
   OB.UTIL.StockUtils.checkStockCallback = function(
+    checkStockActions,
     product,
     line,
     order,
@@ -76,12 +85,14 @@
     }
 
     if (allLinesQty > warehouse.warehouseqty) {
-      var stockActions = [],
-        productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(product);
-      if (productStatus.restrictsaleoutofstock) {
+      var stockActions = [];
+      if (
+        OB.UTIL.StockUtils.hasStockAction(checkStockActions, 'discontinued')
+      ) {
         var discontinuedAction = {
             actionName: 'discontinued'
           },
+          productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(product),
           allowToAdd;
         if (line) {
           if (
@@ -137,6 +148,7 @@
       OB.UTIL.HookManager.executeHooks(
         'OBPOS_PreAddProductWithoutStock',
         {
+          checkStockActions: checkStockActions,
           stockActions: stockActions,
           order: order,
           line: line,
@@ -260,6 +272,7 @@
       OB.UTIL.HookManager.executeHooks(
         'OBPOS_PreAddProductWithStock',
         {
+          checkStockActions: checkStockActions,
           order: order,
           line: line,
           product: product,
@@ -333,10 +346,15 @@
         product = line.get('product'),
         productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(product),
         positiveQty = OB.DEC.compare(line.get('qty')) > 0,
-        checkStock =
-          positiveQty &&
-          (productStatus.restrictsaleoutofstock ||
-            OB.UTIL.isCrossStoreProduct(product));
+        checkStockActions = [];
+
+      if (positiveQty && productStatus.restrictsaleoutofstock) {
+        checkStockActions.push('discontinued');
+      }
+
+      if (positiveQty && OB.UTIL.isCrossStoreProduct(product)) {
+        checkStockActions.push('crossStore');
+      }
 
       OB.UTIL.HookManager.executeHooks(
         'OBPOS_CheckStockPrePayment',
@@ -344,7 +362,7 @@
           order: order,
           orders: orders,
           line: line,
-          checkStock: checkStock
+          checkStockActions: checkStockActions
         },
         function(args) {
           if (args.cancelOperation) {
@@ -353,7 +371,7 @@
             }
             return;
           }
-          if (args.checkStock) {
+          if (args.checkStockActions.length) {
             var qtyInOtherOrders = OB.DEC.Zero,
               options = {
                 line: line
@@ -398,6 +416,7 @@
                 qtyInOtherOrders,
                 options,
                 null,
+                args.checkStockActions,
                 function(hasStock, warehouse, allLinesQty, stockScreen) {
                   if (hasStock) {
                     checkedLine.warehouse = warehouse;
@@ -422,6 +441,7 @@
                 !_.isNull(checkedLine.allLinesQty)
               ) {
                 OB.UTIL.StockUtils.checkStockCallback(
+                  args.checkStockActions,
                   line.get('product'),
                   line,
                   order,
