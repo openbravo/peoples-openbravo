@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2018 Openbravo SLU
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1865,11 +1865,13 @@ public class InitialSetupUtility {
    * @throws Exception
    */
   public static List<Module> getCOAModules(String strModules) throws Exception {
-    StringBuilder strWhereClause = new StringBuilder();
-    strWhereClause.append(" as module where module.id in (" + strModules + ")");
-    strWhereClause.append(" and module.hasChartOfAccounts = 'Y'");
-    final OBQuery<Module> obqModule = OBDal.getInstance()
-        .createQuery(Module.class, strWhereClause.toString());
+    //@formatter:off
+    final String strWhereClause = " as module "
+        + "  where module.id in (" + strModules + ")"
+        + "    and module.hasChartOfAccounts = 'Y'";
+    
+    //@formatter:on
+    final OBQuery<Module> obqModule = OBDal.getInstance().createQuery(Module.class, strWhereClause);
     return obqModule.list();
   }
 
@@ -1882,12 +1884,14 @@ public class InitialSetupUtility {
    * @throws Exception
    */
   public static List<Module> getRDModules(String strModules) throws Exception {
-    StringBuilder strWhereClause = new StringBuilder();
-    strWhereClause.append(" as module where module.id in (" + strModules + ")");
-    strWhereClause.append(" and module.hasReferenceData = 'Y'");
-    strWhereClause.append(" and module.hasChartOfAccounts = 'N'");
-    final OBQuery<Module> obqModule = OBDal.getInstance()
-        .createQuery(Module.class, strWhereClause.toString());
+    //@formatter:off
+    final String strWhereClause = " as module "
+        + " where module.id in (" + strModules + ")"
+        + " and module.hasReferenceData = 'Y'"
+        + " and module.hasChartOfAccounts = 'N'";
+    
+    //@formatter:on
+    final OBQuery<Module> obqModule = OBDal.getInstance().createQuery(Module.class, strWhereClause);
     return obqModule.list();
   }
 
