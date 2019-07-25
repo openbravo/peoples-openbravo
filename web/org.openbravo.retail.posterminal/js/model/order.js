@@ -10128,13 +10128,6 @@
                     ? OB.Dal.transform(OB.Model.BPLocation, data[2])
                     : null
               });
-              bpLoc = OB.Dal.transform(OB.Model.BPLocation, data[1]);
-              if (bpLocId !== bpBillLocId) {
-                bpBillLoc = OB.Dal.transform(OB.Model.BPLocation, data[2]);
-              }
-              bpartnerForProduct(
-                OB.Dal.transform(OB.Model.BusinessPartner, data[0])
-              );
             },
             function() {
               if (NoFoundCustomer) {
