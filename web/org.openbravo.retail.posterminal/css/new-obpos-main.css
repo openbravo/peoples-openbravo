@@ -4153,7 +4153,7 @@
   color: var(--color-primary-darker);
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url('./../../openbravo/web/org.openbravo.mobile.core/assets/img/iconSearch.svg');
+  background-image: url('../../../openbravo/web/org.openbravo.mobile.core/assets/img/iconSearch.svg');
   background-size: 15px 16px;
 }
 
