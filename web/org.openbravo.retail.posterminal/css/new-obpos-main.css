@@ -6976,7 +6976,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   background-position: center;
   cursor: pointer;
   vertical-align: middle;
-  background-image: url('./../img/inspectTree.svg');
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/inspectTree.svg');
   background-size: 31px 27px;
 }
 
