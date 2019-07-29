@@ -2,7 +2,7 @@
   <database name="TABLE OBSCHED_SIMPROP_TRIGGERS">
     <table name="OBSCHED_SIMPROP_TRIGGERS" primaryKey="OBSCHED_SMP_TRI_PK">
       <column name="OBSCHED_SIMPROP_TRIGGERS_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
-        <default><![CDATA[get_uuid()]]></default>
+        <default/>
         <onCreateDefault/>
       </column>
       <column name="SCHED_NAME" primaryKey="false" required="true" type="VARCHAR" size="120" autoIncrement="false">
@@ -63,13 +63,7 @@
       </column>
       <foreign-key foreignTable="OBSCHED_TRIGGERS" name="OBSCHED_SMP_TRI_TRI_FK">
         <reference local="SCHED_NAME" foreign="SCHED_NAME"/>
-        <reference local="SCHED_NAME" foreign="TRIGGER_NAME"/>
-        <reference local="SCHED_NAME" foreign="TRIGGER_GROUP"/>
-        <reference local="TRIGGER_NAME" foreign="SCHED_NAME"/>
         <reference local="TRIGGER_NAME" foreign="TRIGGER_NAME"/>
-        <reference local="TRIGGER_NAME" foreign="TRIGGER_GROUP"/>
-        <reference local="TRIGGER_GROUP" foreign="SCHED_NAME"/>
-        <reference local="TRIGGER_GROUP" foreign="TRIGGER_NAME"/>
         <reference local="TRIGGER_GROUP" foreign="TRIGGER_GROUP"/>
       </foreign-key>
       <unique name="OBSCHED_SMP_TRI_UK">
