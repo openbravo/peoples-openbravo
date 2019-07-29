@@ -1386,6 +1386,9 @@ public class Property {
    * @return the transformed value
    */
   public Object transformValue(Object value) {
-    return getDomainType().transformValue(this, value);
+    if (domainType != null) {
+      return domainType.transformValue(this, value);
+    }
+    return value;
   }
 }
