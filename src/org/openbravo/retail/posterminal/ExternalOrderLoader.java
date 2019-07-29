@@ -743,8 +743,15 @@ public class ExternalOrderLoader extends OrderLoader {
 
   protected void transformPayments(JSONObject orderJson) throws JSONException {
     final JSONArray payments = orderJson.getJSONArray("payments");
+    final OBPOSApplications posTerminal = getPOSTerminal(orderJson);
     for (int i = 0; i < payments.length(); i++) {
       final JSONObject payment = payments.getJSONObject(i);
+      if (posTerminal != null) {
+        payment.put("oBPOSPOSTerminal", posTerminal.getId());
+        if (orderJson.has("obposAppCashup")) {
+          payment.put("obposAppCashup", orderJson.get("obposAppCashup"));
+        }
+      }
       if (!payment.has("currency")) {
         payment.put("currency", orderJson.get("currency"));
       }
@@ -753,7 +760,6 @@ public class ExternalOrderLoader extends OrderLoader {
       }
 
       // check payment kind
-      final OBPOSApplications posTerminal = getPOSTerminal(orderJson);
       boolean found = false;
       for (OBPOSAppPayment paymentType : posTerminal.getOBPOSAppPaymentList()) {
         if (paymentType.getSearchKey().equals(payment.getString("kind"))) {
