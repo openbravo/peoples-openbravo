@@ -26,68 +26,51 @@ enyo.kind({
   },
   components: [
     {
-      classes: 'obObposPointOfSaleUiReceiptView-container1',
+      kind: 'OB.UI.ReceiptsCounter',
+      name: 'receiptcounter',
+      classes: 'obObposPointOfSaleUiReceiptView-receiptcounter'
+    },
+    {
+      name: 'receiptWrapper',
+      classes: 'obObposPointOfSaleUiReceiptView-receiptWrapper',
       components: [
         {
-          classes: 'obObposPointOfSaleUiReceiptView-container1-container1',
+          kind: 'OB.UI.OrderHeader',
+          name: 'receiptHeader',
+          classes:
+            'obObposPointOfSaleUiReceiptView-receiptWrapper-receiptHeader'
+        },
+        {
+          name: 'receiptBody',
+          classes: 'obObposPointOfSaleUiReceiptView-receiptWrapper-receiptBody',
           components: [
             {
-              kind: 'OB.UI.ReceiptsCounter',
-              name: 'receiptcounter',
+              kind: 'OB.UI.OrderCaptions',
+              name: 'orderCaptions',
               classes:
-                'obObposPointOfSaleUiReceiptView-container1-container1-receiptcounter'
+                'obObposPointOfSaleUiReceiptView-receiptWrapper-receiptBody-orderCaptions'
             },
             {
+              kind: 'OB.UI.OrderView',
+              name: 'orderview',
               classes:
-                'obObposPointOfSaleUiReceiptView-container1-container1-container2',
-              components: [
-                {
-                  kind: 'OB.UI.OrderHeader',
-                  name: 'receiptheader',
-                  classes:
-                    'obObposPointOfSaleUiReceiptView-container1-container1-container2-receiptheader'
-                },
-                {
-                  classes:
-                    'obObposPointOfSaleUiReceiptView-container1-container1-container2-container2',
-                  components: [
-                    {
-                      kind: 'OB.UI.OrderCaptions',
-                      name: 'orderCaptions',
-                      classes:
-                        'obObposPointOfSaleUiReceiptView-container1-container1-container2-container2-orderCaptions'
-                    },
-                    {
-                      classes:
-                        'obObposPointOfSaleUiReceiptView-container1-container1-container2-container2-container1',
-                      components: [
-                        {
-                          kind: 'OB.UI.OrderView',
-                          name: 'orderview',
-                          classes:
-                            'obObposPointOfSaleUiReceiptView-container1-container1-container2-container2-container1-orderview'
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  kind: 'OB.UI.OrderFooter',
-                  name: 'receiptfooter',
-                  classes:
-                    'obObposPointOfSaleUiReceiptView-container1-container1-container2-receiptfooter'
-                }
-              ]
+                'obObposPointOfSaleUiReceiptView-receiptWrapper-receiptBody-orderview'
             }
           ]
+        },
+        {
+          kind: 'OB.UI.OrderFooter',
+          name: 'receiptFooter',
+          classes:
+            'obObposPointOfSaleUiReceiptView-receiptWrapper-receiptFooter'
         }
       ]
     }
   ],
   orderChanged: function(oldValue) {
-    this.$.receiptheader.setOrder(this.order);
+    this.$.receiptHeader.setOrder(this.order);
     this.$.orderview.setOrder(this.order);
-    this.$.receiptfooter.setOrder(this.order);
+    this.$.receiptFooter.setOrder(this.order);
   },
   orderListChanged: function(oldValue) {
     this.$.receiptcounter.setOrderList(this.orderList);

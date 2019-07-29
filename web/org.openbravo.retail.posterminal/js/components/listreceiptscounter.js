@@ -30,7 +30,7 @@ enyo.kind({
     var receiptLabels;
     try {
       receiptLabels = OB.POS.terminal.$.containerWindow.getRoot().$.multiColumn
-        .$.leftPanel.$.receiptview.$.receiptheader.$.receiptLabels;
+        .$.leftPanel.$.receiptview.$.receiptHeader.$.receiptLabels;
     } catch (e) {
       OB.error('receiptLabels not found');
     }

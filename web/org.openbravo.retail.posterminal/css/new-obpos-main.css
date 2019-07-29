@@ -7795,26 +7795,24 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 */
 .obObposPointOfSaleUiReceiptView {
   height: 100%;
+  position: relative;
 }
 
-.obObposPointOfSaleUiReceiptView-container1 {
+
+.obObposPointOfSaleUiReceiptView {
   margin: 5px 5px 10px 5px;
   height: calc(100% - 15px);
-}
-
-.obObposPointOfSaleUiReceiptView-container1-container1 {
-  height: 100%;
   position: relative;
   background-color: #ffffff;
   color: black;
   overflow-y: auto;
 }
 
-.obObposPointOfSaleUiReceiptView-container1-container1-receiptcounter {
+.obObposPointOfSaleUiReceiptView-receiptcounter {
 /* Inherits: [OB.UI.ReceiptsCounter] */
 }
 
-.obObposPointOfSaleUiReceiptView-container1-container1-container2 {
+.obObposPointOfSaleUiReceiptView-receiptWrapper {
   display: grid;
   padding: 5px;
   grid-auto-flow: row;
@@ -7823,30 +7821,27 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   height: calc(100% - 10px);
 }
 
-.obObposPointOfSaleUiReceiptView-container1-container1-container2-receiptheader {
+.obObposPointOfSaleUiReceiptView-receiptWrapper-receiptHeader {
 /* Inherits: [OB.UI.OrderHeader] */
 }
 
-.obObposPointOfSaleUiReceiptView-container1-container1-container2-container2 {
+.obObposPointOfSaleUiReceiptView-receiptWrapper-receiptBody {
   display: grid;
   grid-template-rows: auto 1fr;
   overflow-y: auto;
 }
 
-.obObposPointOfSaleUiReceiptView-container1-container1-container2-container2-orderCaptions {}
+.obObposPointOfSaleUiReceiptView-receiptWrapper-receiptBody-orderCaptions {}
 
-.obObposPointOfSaleUiReceiptView-container1-container1-container2-container2-container1 {
-  overflow-y: auto;
-}
-
-.obObposPointOfSaleUiReceiptView-container1-container1-container2-container2-container1-orderview {
+.obObposPointOfSaleUiReceiptView-receiptWrapper-receiptBody-orderview {
 /* Inherits: [OB.UI.OrderView] */
+  overflow-y: auto;
   display: grid;
   grid-template-rows: auto auto;
   height: 100%;
 }
 
-.obObposPointOfSaleUiReceiptView-container1-container1-container2-receiptfooter {
+.obObposPointOfSaleUiReceiptView-receiptWrapper-receiptFooter {
 /* Inherits: [OB.UI.OrderFooter] */
 }
 
