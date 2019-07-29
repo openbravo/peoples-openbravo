@@ -130,7 +130,6 @@ enyo.kind({
   name: 'OB.UI.ModalOpenRelatedReceipts',
   kind: 'OB.UI.ModalAction',
   classes: 'modal-dialog',
-  style: 'width: 700px;',
   handlers: {
     onApplyChanges: 'applyChanges',
     onCheckedAll: 'checkedAll',

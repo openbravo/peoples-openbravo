@@ -2092,7 +2092,7 @@
             },
             function(args) {
               if (callback) {
-                callback();
+                callback(true);
               }
             }
           );
@@ -2282,6 +2282,11 @@
                   line.set('deleteApproved', true);
                 });
                 preDeleteLine();
+              } else {
+                if (callback) {
+                  callback(false);
+                }
+                return;
               }
             }
           );
@@ -2300,34 +2305,44 @@
             productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(
               product
             ),
-            checkStock =
-              negativeQty &&
-              (productStatus.restrictsaleoutofstock ||
-                OB.UTIL.isCrossStoreProduct(product));
+            checkStockActions = [];
+
+          if (negativeQty && productStatus.restrictsaleoutofstock) {
+            checkStockActions.push('discontinued');
+          }
+
+          if (negativeQty && OB.UTIL.isCrossStoreProduct(product)) {
+            checkStockActions.push('crossStore');
+          }
 
           OB.UTIL.HookManager.executeHooks(
             'OBPOS_CheckStockDeleteLine',
             {
               order: me,
               line: line,
-              checkStock: checkStock
+              checkStockActions: checkStockActions
             },
             function(args) {
               if (args.cancelOperation) {
                 return;
               }
-              if (args.checkStock) {
+              if (args.checkStockActions.length) {
                 var qtyAdded = -line.get('qty'),
                   options = {
                     line: line
                   };
-                me.getStoreStock(product, qtyAdded, options, null, function(
-                  hasStock
-                ) {
-                  if (hasStock) {
-                    checkLineStock(idx + 1);
+                me.getStoreStock(
+                  product,
+                  qtyAdded,
+                  options,
+                  null,
+                  args.checkStockActions,
+                  function(hasStock) {
+                    if (hasStock) {
+                      checkLineStock(idx + 1);
+                    }
                   }
-                });
+                );
               } else {
                 checkLineStock(idx + 1);
               }
@@ -2339,7 +2354,7 @@
       //If there are no lines to delete, continue
       if (!selectedModels || !selectedModels.length) {
         if (callback) {
-          callback();
+          callback(true);
         }
         return;
       }
@@ -2364,7 +2379,7 @@
             OB.I18N.getLabel('OBPOS_CancelReplaceDeleteLine')
           );
           if (callback) {
-            callback();
+            callback(false);
           }
           return;
         }
@@ -2685,17 +2700,22 @@
         var product = line.get('product'),
           negativeQty = OB.DEC.compare(line.get('qty')) < 0,
           productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(product),
-          checkStock =
-            negativeQty &&
-            (productStatus.restrictsaleoutofstock ||
-              OB.UTIL.isCrossStoreProduct(product));
+          checkStockActions = [];
+
+        if (negativeQty && productStatus.restrictsaleoutofstock) {
+          checkStockActions.push('discontinued');
+        }
+
+        if (negativeQty && OB.UTIL.isCrossStoreProduct(product)) {
+          checkStockActions.push('crossStore');
+        }
 
         OB.UTIL.HookManager.executeHooks(
           'OBPOS_CheckStockDeleteLine',
           {
             order: me,
             line: line,
-            checkStock: checkStock
+            checkStockActions: checkStockActions
           },
           function(args) {
             if (args.cancelOperation) {
@@ -2704,7 +2724,7 @@
               }
               return;
             }
-            if (args.checkStock) {
+            if (args.checkStockActions.length) {
               var qtyAdded = -line.get('qty'),
                 options = {
                   line: line
@@ -2714,6 +2734,7 @@
                 qtyAdded,
                 options,
                 null,
+                args.checkStockActions,
                 function(hasStock) {
                   if (hasStock) {
                     deleteLineOnceChecked();
@@ -3092,7 +3113,14 @@
       // remove the line
       finishDelete();
     },
-    getStoreStock: function(p, qty, options, attrs, callback) {
+    getStoreStock: function(
+      p,
+      qty,
+      options,
+      attrs,
+      checkStockActions,
+      callback
+    ) {
       var me = this,
         lines = this.get('lines'),
         line = !OB.UTIL.isNullOrUndefined(options) ? options.line : null,
@@ -3150,6 +3178,7 @@
           !OB.UTIL.isNullOrUndefined(attrs.warehouse.warehouseqty)
         ) {
           OB.UTIL.StockUtils.checkStockCallback(
+            checkStockActions,
             p,
             line,
             me,
@@ -3197,6 +3226,7 @@
                     };
                   }
                   OB.UTIL.StockUtils.checkStockCallback(
+                    checkStockActions,
                     p,
                     line,
                     me,
@@ -3339,11 +3369,19 @@
             )
           ) {
             var positiveQty = OB.DEC.compare(qty) > 0,
-              checkStock =
-                positiveQty &&
-                (productStatus.restrictsaleoutofstock ||
-                  (OB.UTIL.isCrossStoreProduct(p) &&
-                    (!line || OB.DEC.compare(line.get('qty')) > 0)));
+              checkStockActions = [];
+
+            if (positiveQty && productStatus.restrictsaleoutofstock) {
+              checkStockActions.push('discontinued');
+            }
+
+            if (
+              positiveQty &&
+              (OB.UTIL.isCrossStoreProduct(p) &&
+                (!line || OB.DEC.compare(line.get('qty')) > 0))
+            ) {
+              checkStockActions.push('crossStore');
+            }
 
             OB.UTIL.HookManager.executeHooks(
               'OBPOS_CheckStockAddProduct',
@@ -3352,7 +3390,7 @@
                 product: p,
                 line: line,
                 qty: qty,
-                checkStock: checkStock
+                checkStockActions: checkStockActions
               },
               function(args) {
                 if (args && args.cancelOperation) {
@@ -3361,20 +3399,27 @@
                   }
                   return;
                 }
-                args.checkStock =
-                  args.checkStock &&
+                if (
+                  args.checkStockActions.length &&
                   (_.isUndefined(attrs) ||
                     attrs.kindOriginator !==
                       'OB.OBPOSPointOfSale.UI.KeyboardOrder' ||
-                    !attrs.isScanning);
-                if (args.checkStock) {
-                  me.getStoreStock(p, qty, options, attrs, function(hasStock) {
-                    if (hasStock) {
-                      stockCallback();
-                    } else if (callback && callback instanceof Function) {
-                      callback(false, null);
+                    !attrs.isScanning)
+                ) {
+                  me.getStoreStock(
+                    p,
+                    qty,
+                    options,
+                    attrs,
+                    args.checkStockActions,
+                    function(hasStock) {
+                      if (hasStock) {
+                        stockCallback();
+                      } else if (callback && callback instanceof Function) {
+                        callback(false, null);
+                      }
                     }
-                  });
+                  );
                 } else {
                   stockCallback();
                 }
@@ -5172,14 +5217,37 @@
 
     setBPandBPLoc: function(businessPartner, showNotif, saveChange, callback) {
       var me = this,
-        undef;
-      var i,
-        oldbp = this.get('bp');
+        undef,
+        i,
+        oldbp = this.get('bp'),
+        setAndSaveBP,
+        setPriceList,
+        finishSaveData;
 
-      var finishSaveData = function(callback) {
+      setAndSaveBP = function(bp, saveBPCallback) {
+        me.set('bp', bp);
+        me.save(function() {
+          OB.MobileApp.model.orderList.saveCurrent();
+          if (saveBPCallback) {
+            saveBPCallback();
+          }
+        });
+      };
+
+      setPriceList = function(bp) {
+        var priceIncludesTax = bp.get('priceIncludesTax');
+        if (OB.UTIL.isNullOrUndefined(priceIncludesTax)) {
+          priceIncludesTax = OB.MobileApp.model.get('pricelist')
+            .priceIncludesTax;
+        }
+        me.set('priceList', bp.get('priceList'));
+        me.set('priceIncludesTax', priceIncludesTax);
+      };
+
+      finishSaveData = function(callback) {
         // set the undo action
         if (showNotif === undef || showNotif === true) {
-          this.setUndo('SetBPartner', {
+          me.setUndo('SetBPartner', {
             text: businessPartner
               ? OB.I18N.getLabel('OBPOS_SetBP', [
                   businessPartner.get('_identifier')
@@ -5187,22 +5255,42 @@
               : OB.I18N.getLabel('OBPOS_ResetBP'),
             bp: businessPartner,
             undo: function() {
-              me.set('bp', oldbp);
-              me.save();
               me.set('undo', null);
+              setPriceList(oldbp);
+              setAndSaveBP(oldbp, function() {
+                me.calculateReceipt(function() {
+                  me.save();
+                });
+              });
             }
           });
         }
         if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
           if (oldbp.get('priceList') !== businessPartner.get('priceList')) {
-            me.set('priceList', businessPartner.get('priceList'));
-            var priceIncludesTax = businessPartner.get('priceIncludesTax');
-            if (OB.UTIL.isNullOrUndefined(priceIncludesTax)) {
-              priceIncludesTax = OB.MobileApp.model.get('pricelist')
-                .priceIncludesTax;
-            }
-            me.set('priceIncludesTax', priceIncludesTax);
-            me.removeAndInsertLines(function() {
+            setPriceList(businessPartner);
+            me.removeAndInsertLines(function(deleted) {
+              if (OB.UTIL.isNullOrUndefined(deleted) || deleted === true) {
+                setAndSaveBP(businessPartner, function() {
+                  me.calculateReceipt(function() {
+                    if (saveChange) {
+                      me.save();
+                    }
+                    if (callback) {
+                      callback();
+                    }
+                  });
+                });
+              } else {
+                setPriceList(oldbp);
+                setAndSaveBP(oldbp, function() {
+                  if (callback) {
+                    callback();
+                  }
+                });
+              }
+            });
+          } else {
+            setAndSaveBP(businessPartner, function() {
               me.calculateReceipt(function() {
                 if (saveChange) {
                   me.save();
@@ -5212,23 +5300,13 @@
                 }
               });
             });
-          } else {
-            me.calculateReceipt(function() {
-              if (saveChange) {
-                me.save();
-              }
-              if (callback) {
-                callback();
-              }
-            });
           }
         } else {
-          if (saveChange) {
-            me.save();
-          }
-          if (callback) {
-            callback();
-          }
+          setAndSaveBP(businessPartner, function() {
+            if (callback) {
+              callback();
+            }
+          });
         }
       };
 
@@ -5320,7 +5398,10 @@
               null,
               null,
               function(shipping, billing, locations) {
-                businessPartner.set('locationModel', billing);
+                businessPartner.set(
+                  'locationModel',
+                  shipping ? shipping : billing
+                );
                 businessPartner.set('locationBillModel', billing);
                 businessPartner.set('locId', billing.get('id'));
                 businessPartner.set('locName', billing.get('name'));
@@ -5345,23 +5426,11 @@
                     shipping.get('countryId')
                   );
                 }
-                OB.info('[saveBP] 1 - set BP for order with id ' + me.id);
-                me.set('bp', businessPartner);
-                OB.info('[saveBP] 2 - set BP for order with id ' + me.id);
-                me.save(function() {
-                  OB.info('[saveBP] 3 - order with id ' + me.id + ' saved');
-                  // copy the modelOrder again, as saveOrUpdate is possibly async
-                  OB.MobileApp.model.orderList.saveCurrent();
-                  finishSaveData(callback);
-                });
+                finishSaveData(callback);
               },
               businessPartner.get('id')
             );
           } else {
-            me.set('bp', businessPartner);
-            me.save();
-            // copy the modelOrder again, as saveOrUpdate is possibly async
-            OB.MobileApp.model.orderList.saveCurrent();
             finishSaveData(callback);
           }
         };
@@ -5416,7 +5485,10 @@
             null,
             null,
             function(shipping, billing, locations) {
-              businessPartner.set('locationModel', billing);
+              businessPartner.set(
+                'locationModel',
+                shipping ? shipping : billing
+              );
               businessPartner.set('locationBillModel', billing);
               businessPartner.set('locId', billing.get('id'));
               businessPartner.set('locName', billing.get('name'));
@@ -5438,15 +5510,11 @@
                 businessPartner.set('shipRegionId', shipping.get('regionId'));
                 businessPartner.set('shipCountryId', shipping.get('countryId'));
               }
-              me.set('bp', businessPartner);
-              me.save();
               finishSaveData(callback);
             },
             businessPartner.get('id')
           );
         } else {
-          me.set('bp', businessPartner);
-          me.save();
           finishSaveData(callback);
         }
       }
@@ -5509,13 +5577,12 @@
     },
 
     removeAndInsertLines: function(callback) {
-      this.set('skipCalculateReceipt', true);
-      var me = this;
-      // Remove all lines and insert again with new prices
-      var orderlines = [];
-      var promotionlines = [];
-      var addProductsOfLines = null;
+      var me = this,
+        orderlines = [],
+        promotionlines = [],
+        addProductsOfLines = null;
 
+      // Remove all lines and insert again with new prices
       addProductsOfLines = function(
         receipt,
         lines,
@@ -5571,7 +5638,7 @@
         if (index === lines.length) {
           me.set('skipCalculateReceipt', false);
           if (callback) {
-            callback();
+            callback(true);
           }
           return;
         }
@@ -5602,8 +5669,14 @@
         orderlines.push(line);
         promotionlines.push(line.get('promotions'));
       });
-      this.deleteLinesFromOrder(orderlines, function() {
-        addProductsOfLines(me, orderlines, 0, callback, promotionlines);
+      me.set('skipCalculateReceipt', true);
+      this.deleteLinesFromOrder(orderlines, function(deleted) {
+        if (deleted) {
+          addProductsOfLines(me, orderlines, 0, callback, promotionlines);
+        } else {
+          me.set('skipCalculateReceipt', false);
+          callback(false);
+        }
       });
     },
 
@@ -10039,7 +10112,7 @@
                 OB.Model.BPLocation,
                 criteria,
                 function(locations) {
-                  if (locations.models.length > 0) {
+                  if (locations.models.length === 2) {
                     _.each(locations.models, function(l) {
                       if (l.id === bpLocId) {
                         bpLoc = l;
@@ -10095,13 +10168,6 @@
                     ? OB.Dal.transform(OB.Model.BPLocation, data[2])
                     : null
               });
-              bpLoc = OB.Dal.transform(OB.Model.BPLocation, data[1]);
-              if (bpLocId !== bpBillLocId) {
-                bpBillLoc = OB.Dal.transform(OB.Model.BPLocation, data[2]);
-              }
-              bpartnerForProduct(
-                OB.Dal.transform(OB.Model.BusinessPartner, data[0])
-              );
             },
             function() {
               if (NoFoundCustomer) {

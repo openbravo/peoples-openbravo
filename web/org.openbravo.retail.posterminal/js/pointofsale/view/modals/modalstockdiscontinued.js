@@ -39,7 +39,10 @@
       var me = this;
       this.buttonPushed = false;
       this.acceptLine = this.args.acceptLine;
+      this.order = this.args.order;
+      this.line = this.args.line;
       this.product = this.args.product;
+      this.actionName = this.args.actionName;
       this.autoDismiss =
         !OB.UTIL.isNullOrUndefined(this.args.options) &&
         !OB.UTIL.isNullOrUndefined(this.args.options.autoDismiss)

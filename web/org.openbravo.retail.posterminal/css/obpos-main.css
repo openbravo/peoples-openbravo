@@ -948,6 +948,18 @@ button.payment-changebutton {
   margin: 0px 8px 6px 0px !important;
 }
 
+@media (min-width: 393px) and (max-width: 460px) {
+  .btnlink-headerButton {
+    width: 113px !important;
+  }
+}
+
+@media (min-width: 460px) and (max-width: 600px) {
+  .btnlink-headerButton {
+    width: 135px !important;
+  }
+}
+
 .filterSelectorTableHeader {
   padding: 10px;
 }
@@ -1009,11 +1021,28 @@ button.payment-changebutton {
   color: #888888;
 }
 
+@media (min-width: 393px) and (max-width: 460px) {
+  .ob-row-order-text {
+    font-size: 13px;
+    width: 90px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+
 .ob-row-order-text-bold {
   float: left;
   display: inline-block;
   padding-top: 4px;
   padding-left: 5px;
+}
+
+@media (min-width: 393px) and (max-width: 460px) {
+  .ob-row-order-text-bold {
+    padding-left: 0px;
+    font-size: 13px;
+  }
 }
 
 .ob-row-orderline {
@@ -1037,6 +1066,12 @@ button.payment-changebutton {
   display: inline-block;
   padding-left: 5px;
   padding-top: 5px;
+}
+
+@media (min-width: 393px) and (max-width: 460px) {
+  .ob-cell-orderline-left-info {
+    width: 275px;
+  }
 }
 
 li.ob-order:first-child>button>div.ob-row-order,
@@ -1172,12 +1207,18 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
   overflow: hidden;
 }
 
+@media (min-width: 393px) and (max-width: 460px) {
+  .ob-text-line {
+    font-size: 13px;
+  }
+}
+
 .modal_associateTickets {
-  width: 725px !important;
+  width: 725px;
 }
 
 .modal-removeAssociatedTickets {
-  width: 900px !important;
+  width: 900px;
 }
 
 .modal-removeAssociatedTickets-scroller {
@@ -1211,10 +1252,62 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
   padding-left: 80px;
 }
 
+@media (min-width: 393px) and (max-width: 525px) {
+  .modal-removeAssociatedTickets-headerLabels-productName {
+    font-size: 11px;
+    width: 100px;
+    padding-left: 20px;
+  }
+}
+
+@media (min-width: 526px) and (max-width: 640px) {
+  .modal-removeAssociatedTickets-headerLabels-productName {
+    font-size: 17px;
+    width: 150px;
+    padding-left: 35px;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 800px) {
+  .modal-removeAssociatedTickets-headerLabels-productName {
+    font-size: 17px;
+    width: 160px;
+    padding-left: 40px;
+  }
+}
+
+@media (min-width: 801px) {
+  .modal-removeAssociatedTickets-headerLabels-productName {
+    width: 180px;
+    padding-left: 60px;
+  }
+}
+
 .modal-removeAssociatedTickets-headerLabels-totalQty {
   line-height: 25px;
   font-size: 17px;
   width: 85px;
+}
+
+@media (min-width: 393px) and (max-width: 525px) {
+  .modal-removeAssociatedTickets-headerLabels-totalQty {
+    font-size: 12px;
+    width: 50px;
+  }
+}
+
+@media (min-width: 526px) and (max-width: 640px) {
+  .modal-removeAssociatedTickets-headerLabels-totalQty {
+    font-size: 15px;
+    width: 65px;
+  }
+}
+
+@media (min-width: 641px) {
+  .modal-removeAssociatedTickets-headerLabels-totalQty {
+    font-size: 17px;
+    width: 65px;
+  }
 }
 
 .modal-removeAssociatedTickets-headerLabels-receipt {
@@ -1223,11 +1316,69 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
   width: 180px;
 }
 
+@media (min-width: 393px) and (max-width: 525px) {
+  .modal-removeAssociatedTickets-headerLabels-receipt {
+    font-size: 12px;
+    width: 100px;
+  }
+}
+
+@media (min-width: 526px) and (max-width: 640px) {
+  .modal-removeAssociatedTickets-headerLabels-receipt {
+    font-size: 15px;
+    width: 120px;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 800px) {
+  .modal-removeAssociatedTickets-headerLabels-receipt {
+    font-size: 17px;
+    width: 140px;
+  }
+}
+
+@media (min-width: 801px) {
+  .modal-removeAssociatedTickets-headerLabels-receipt {
+    width: 160px;
+  }
+}
+
 .modal-removeAssociatedTickets-headerLabels-customer {
   line-height: 25px;
   font-size: 17px;
   width: 250px;
   padding-left: 20px;
+}
+
+@media (min-width: 393px) and (max-width: 525px) {
+  .modal-removeAssociatedTickets-headerLabels-customer {
+    font-size: 11px;
+    width: 100px;
+    padding-left: 0px;
+  }
+}
+
+@media (min-width: 526px) and (max-width: 640px) {
+  .modal-removeAssociatedTickets-headerLabels-customer {
+    font-size: 15px;
+    width: 120px;
+    padding-left: 0px;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 800px) {
+  .modal-removeAssociatedTickets-headerLabels-customer {
+    font-size: 17px;
+    width: 180px;
+    padding-left: 0px;
+  }
+}
+
+@media (min-width: 801px) {
+  .modal-removeAssociatedTickets-headerLabels-customer {
+    width: 180px;
+    padding-left: 0px;
+  }
 }
 
 .modal-removeAssociatedTickets-headerContent {
@@ -1250,6 +1401,13 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
   background-position: 15px center !important;
 }
 
+@media (min-width: 393px) and (max-width: 525px) {
+  .checkbox_removeAssociations {
+    width: 6%;
+    background-position: 2px center !important;
+  }
+}
+
 .associatedOrderLine {
   border-bottom: 1px solid #cccccc;
   text-align: center;
@@ -1264,10 +1422,72 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
   padding-left: 6px;
 }
 
+@media (min-width: 393px) and (max-width: 525px) {
+  .associatedOrderLine-productName {
+    font-size: 11px;
+    width: 100px;
+    padding-left: 0px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+
+@media (min-width: 526px) and (max-width: 640px) {
+  .associatedOrderLine-productName {
+    font-size: 15px;
+    width: 135px;
+    padding-left: 0px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 800px) {
+  .associatedOrderLine-productName {
+    font-size: 17px;
+    width: 150px;
+    padding-left: 0px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+
+@media (min-width: 801px) {
+  .associatedOrderLine-productName {
+    font-size: 17px;
+    width: 180px;
+    padding-left: 0px;
+  }
+}
+
 .associatedOrderLine-orderedQuantity {
   line-height: 35px;
   font-size: 17px;
   width: 85px;
+}
+
+@media (min-width: 393px) and (max-width: 525px) {
+  .associatedOrderLine-orderedQuantity {
+    font-size: 12px;
+    width: 45px;
+  }
+}
+
+@media (min-width: 526px) and (max-width: 640px) {
+  .associatedOrderLine-orderedQuantity {
+    font-size: 15px;
+    width: 65px;
+  }
+}
+
+@media (min-width: 641px) {
+  .associatedOrderLine-orderedQuantity {
+    font-size: 17px;
+    width: 65px;
+  }
 }
 
 .associatedOrderLine-documentNo {
@@ -1277,11 +1497,81 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
   padding-left: 5px;
 }
 
+@media (min-width: 393px) and (max-width: 525px) {
+  .associatedOrderLine-documentNo {
+    font-size: 11px;
+    width: 100px;
+  }
+}
+
+@media (min-width: 526px) and (max-width: 640px) {
+  .associatedOrderLine-documentNo {
+    font-size: 15px;
+    width: 130px;
+    padding-left: 0px;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 800px) {
+  .associatedOrderLine-documentNo {
+    font-size: 17px;
+    width: 140px;
+    padding-left: 0px;
+  }
+}
+
+@media (min-width: 801px) {
+  .associatedOrderLine-documentNo {
+    width: 160px;
+    padding-left: 0px;
+  }
+}
+
 .associatedOrderLine-customer {
   line-height: 35px;
   font-size: 17px;
   width: 250px;
   padding-left: 20px;
+}
+
+@media (min-width: 393px) and (max-width: 525px) {
+  .associatedOrderLine-customer {
+    font-size: 11px;
+    width: 100px;
+    padding-left: 0px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+
+@media (min-width: 526px) and (max-width: 640px) {
+  .associatedOrderLine-customer {
+    font-size: 15px;
+    width: 120px;
+    padding-left: 0px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 800px) {
+  .associatedOrderLine-customer {
+    font-size: 17px;
+    width: 180px;
+    padding-left: 0px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+
+@media (min-width: 801px) {
+  .associatedOrderLine-customer {    
+    width: 200px;
+    padding-left: 0px;
+  }
 }
 
 .modal-invoices-list-invoices-line {
@@ -1659,6 +1949,12 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
 .obpos-product-details-view-buttons{
 	min-width: 200px; 
 	margin: 2px 5px 2px 5px !important;
+}
+
+@media (max-width: 392px) {
+  .obpos-product-details-view-buttons {
+    width: 150px;
+  }
 }
 
 /* Delivery Modes */

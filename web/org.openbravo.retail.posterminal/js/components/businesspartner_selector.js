@@ -1134,6 +1134,15 @@ enyo.kind({
         );
       }
     } else {
+      if (OB.UTIL.isNullOrUndefined(this.args.target)) {
+        this.args.target = 'order';
+      }
+      this.bubble('onSetBusinessPartnerTarget', {
+        target: this.args.target
+      });
+      this.waterfall('onSetBusinessPartnerTarget', {
+        target: this.args.target
+      });
       if (this.keepFiltersOnClose) {
         this.doSetSelectorAdvancedSearch({
           isAdvanced: this.advancedFilterShowing

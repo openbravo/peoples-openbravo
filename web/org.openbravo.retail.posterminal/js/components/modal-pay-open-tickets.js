@@ -264,7 +264,8 @@ enyo.kind({
     return 'modalAdvancedFilterVerifiedReturns';
   },
   executeOnShow: function() {
-    var me = this;
+    var me = this,
+      isPaid;
     if (!this.initialized) {
       this.inherited(arguments);
       this.getFilterSelectorTableHeader().clearFilter();
@@ -278,9 +279,14 @@ enyo.kind({
     ) {
       _.each(me.model.get('orderList').models, function(iter) {
         if (iter.get('lines') && iter.get('lines').length > 0) {
+          isPaid =
+            iter.get('payment') < iter.get('gross') &&
+            OB.MobileApp.model.get('terminal').terminalType.calculateprepayments
+              ? false
+              : iter.get('payment') >= iter.get('gross');
           if (
             (iter.get('orderType') === 0 || iter.get('orderType') === 2) &&
-            !iter.get('isPaid') &&
+            !isPaid &&
             !iter.get('isQuotation') &&
             iter.get('gross') >= 0
           ) {
