@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+  <database name="TRIGGER OBSCHED_PAUSED_TRI_GRPS_TRG">
+    <trigger name="OBSCHED_PAUSED_TRI_GRPS_TRG" table="OBSCHED_PAUSED_TRIGGER_GRPS" fires="before" insert="true" update="false" delete="false" foreach="row">
+      <body><![CDATA[BEGIN
+  :new.obsched_paused_trigger_grps_id = get_uuid();
+  RETURN new;
+END OBSCHED_PAUSED_TRI_GRPS_TRG
+]]></body>
+    </trigger>
+  </database>

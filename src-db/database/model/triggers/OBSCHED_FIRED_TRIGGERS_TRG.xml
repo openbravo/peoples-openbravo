@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+  <database name="TRIGGER OBSCHED_FIRED_TRIGGERS_TRG">
+    <trigger name="OBSCHED_FIRED_TRIGGERS_TRG" table="OBSCHED_FIRED_TRIGGERS" fires="before" insert="true" update="false" delete="false" foreach="row">
+      <body><![CDATA[BEGIN
+  :new.obsched_fired_triggers_id = get_uuid();
+  RETURN new;
+END OBSCHED_FIRED_TRIGGERS_TRG
+]]></body>
+    </trigger>
+  </database>

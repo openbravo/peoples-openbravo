@@ -2,7 +2,7 @@
   <database name="TABLE OBSCHED_JOB_DETAILS">
     <table name="OBSCHED_JOB_DETAILS" primaryKey="OBSCHED_JOB_DET_PK">
       <column name="OBSCHED_JOB_DETAILS_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
-        <default><![CDATA[get_uuid()]]></default>
+        <default/>
         <onCreateDefault/>
       </column>
       <column name="SCHED_NAME" primaryKey="false" required="true" type="VARCHAR" size="120" autoIncrement="false">

@@ -1,7 +1,5 @@
 package org.openbravo.scheduling.quartz;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,7 +12,7 @@ import static org.openbravo.scheduling.quartz.OpenbravoJDBCPersistenceSupport.ge
 import static org.openbravo.scheduling.quartz.OpenbravoJDBCPersistenceSupport.setBooleanValue;
 
 public class OpenbravoJDBCDelegate extends PostgreSQLDelegate {
-	
+
 	@Override
     protected void addDefaultTriggerPersistenceDelegates() {
         addTriggerPersistenceDelegate(new SimpleTriggerPersistenceDelegate());

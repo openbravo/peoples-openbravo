@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+  <database name="TRIGGER OBSCHED_LOCKS_TRG">
+    <trigger name="OBSCHED_LOCKS_TRG" table="OBSCHED_LOCKS" fires="before" insert="true" update="false" delete="false" foreach="row">
+      <body><![CDATA[BEGIN
+  :new.obsched_locks_id = get_uuid();
+  RETURN new;
+END OBSCHED_LOCKS_TRG
+]]></body>
+    </trigger>
+  </database>
