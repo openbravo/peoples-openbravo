@@ -84,7 +84,7 @@ public class RegisterModuleActionHandler extends BaseProcessActionHandler {
       jsonModule.put("type", module.getType());
       jsonModule.put("help", module.getHelpComment());
       if (!module.getModuleDBPrefixList().isEmpty()) {
-        jsonModule.put("dbPrefix", module.getModuleDBPrefixList().get(0));
+        jsonModule.put("dbPrefix", module.getModuleDBPrefixList().get(0).getName());
       }
       jsonModule.put("description", module.getDescription());
       r.put("module", jsonModule);
