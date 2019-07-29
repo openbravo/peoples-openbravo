@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2011 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,11 +21,7 @@ package org.openbravo.base.model.domaintype;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-
-import org.apache.commons.lang.time.DateUtils;
-import org.openbravo.base.model.Property;
 
 /**
  * The type for a date column.
@@ -79,16 +75,6 @@ public class DateDomainType extends BasePrimitiveDomainType {
   @Override
   public String getXMLSchemaType() {
     return "ob:dateTime";
-  }
-
-  @Override
-  public Object transformValue(Property property, Object value) {
-    if (!(value instanceof Date)) {
-      return value;
-    }
-    // Date properties should not include information about the time, truncate the rest
-    Date dateValue = (Date) value;
-    return DateUtils.truncate(dateValue, Calendar.DATE);
   }
 
 }

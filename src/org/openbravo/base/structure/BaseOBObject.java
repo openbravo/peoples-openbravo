@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -171,8 +171,7 @@ public abstract class BaseOBObject
           + "This happens when setting property " + propName + " " + p + " with value " + value
           + " in entity " + getEntity());
     }
-    Object transformedValue = p.transformValue(value);
-    data[p.getIndexInEntity()] = transformedValue;
+    data[p.getIndexInEntity()] = value;
   }
 
   @Override

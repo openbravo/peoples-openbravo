@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2010 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -93,18 +93,4 @@ public interface DomainType {
    *          the property to check
    */
   void checkObjectIsValid(BaseOBObjectDef obObject, Property property) throws ValidationException;
-
-  /**
-   * Transforms the value of an object. The default implementation is to return the original value
-   * as it is
-   * 
-   * @param property
-   *          the property which has this value
-   * @param value
-   *          the value to be transformed
-   * @return the transformed value
-   */
-  default Object transformValue(Property property, Object value) {
-    return value;
-  }
 }

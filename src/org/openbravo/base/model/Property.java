@@ -1377,18 +1377,4 @@ public class Property {
   public void setChildPropertyInParent(boolean isChildPropertyInParent) {
     this.isChildPropertyInParent = isChildPropertyInParent;
   }
-
-  /**
-   * Given an object, applies the transformation defined in its domain type
-   * 
-   * @param value
-   *          the value to be transformed
-   * @return the transformed value
-   */
-  public Object transformValue(Object value) {
-    if (domainType != null) {
-      return domainType.transformValue(this, value);
-    }
-    return value;
-  }
 }
