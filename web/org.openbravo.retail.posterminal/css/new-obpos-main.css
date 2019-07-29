@@ -2567,7 +2567,7 @@
 # Component: OB.UI.RenderOrderLineEmpty
 */
 .obUiRenderOrderLineEmpty {
-  border-bottom: 1px solid #cccccc;
+  border-bottom: var(--bottomseparator-slim);
   padding: 20px;
   text-align: center;
   font-weight: bold;
@@ -2580,7 +2580,7 @@
 # Component: OB.UI.RenderTaxLineEmpty
 */
 .obUiRenderTaxLineEmpty {
-  border-bottom: 1px solid #cccccc;
+  border-bottom: var(--bottomseparator-slim);
   padding: 20px;
   text-align: center;
   font-weight: bold;
@@ -2917,18 +2917,8 @@
   /*Inherits: [OB.UI.OrderSingleSelect]*/
 }
 
-.obUiOrderHeader-labelComponents-btnSingleSelection {
-  clear: both;
-}
-
-.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBpbutton {
-  /*Inherits: [OB.UI.BusinessPartnerSelector]*/
-  width: auto;
-}
-
 .obUiOrderHeader-buttonComponents-formElementBpbutton-bpbutton {
   /*Inherits: [OB.UI.BusinessPartnerSelector]*/
-  width: auto;
 }
 
 .obUiOrderHeader-buttonComponents-separator {
@@ -2939,7 +2929,6 @@
 
 .obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocbutton {
   /*Inherits: [OB.UI.BPLocation]*/
-  width: auto;
 }
 
 .obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocbutton .obUiFormElement-labelArea-afterArea {
@@ -2957,7 +2946,6 @@
 
 .obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocshipbutton {
   /*Inherits: [OB.UI.BPLocation]*/
-  width: auto;
 }
 
 .obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocshipbutton .obUiFormElement-labelArea-afterArea {
@@ -2977,6 +2965,54 @@
   width: auto;
 }
 
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBpbutton,
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocbutton,
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocshipbutton {
+  width: auto;
+  box-shadow: 0px 0px 10px -1px #8D8D8D;
+  border-radius: 4px;
+  background-color: white;
+  grid-template-rows: 1fr 0px;
+  height: 100%;
+}
+
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBpbutton:hover,
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocbutton:hover,
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocshipbutton:hover {
+  background-color: #e8e8e8;
+}
+
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBpbutton:active,
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocbutton:active,
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocshipbutton:active {
+  background-color: #c5c5c5;
+  box-shadow: 0px 0px 2px -1px #ccc;
+}
+
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBpbutton .obUiFormElement-labelArea,
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocbutton .obUiFormElement-labelArea,
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocshipbutton .obUiFormElement-labelArea {
+  color: var(--color-maincolor);
+}
+
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBpbutton .obUiFormElement-errorArea,
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocbutton .obUiFormElement-errorArea,
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocshipbutton .obUiFormElement-errorArea {
+  height: 0px;
+}
+
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBpbutton .obUiFormElement-visualEffect,
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocbutton .obUiFormElement-visualEffect,
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocshipbutton .obUiFormElement-visualEffect {
+  display: none;
+}
+
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBpbutton .obUiFormElement-coreElementArea,
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocbutton .obUiFormElement-coreElementArea,
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocshipbutton .obUiFormElement-coreElementArea {
+  border-width: 0px;
+}
+
 .obUiOrderHeader-receiptLabels {
   padding-right: 5px;
   display: grid;
@@ -2988,7 +3024,7 @@
   clear: both;
 
   padding: 0;
-  margin: 0;
+  margin: 0px 0px 20px 0px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -3003,7 +3039,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  height: 25px;
+  height: 28px;
   border-bottom: var(--bottomseparator-slim);
   font-size: 11px;
   position: relative;
@@ -3464,7 +3500,7 @@
 # Component: OB.UI.OrderDetails
 */
 .obUiOrderDetails {
-  padding: 13px 0px 17px 10px;
+  padding: 13px 0px 17px 0px;
   font-weight: bold;
   color: #6cb33f;
   float: left;
@@ -7800,12 +7836,13 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 
 .obObposPointOfSaleUiReceiptView {
-  margin: 5px 5px 10px 5px;
+  margin: 0px 0px 10px 0px;
   height: calc(100% - 15px);
   position: relative;
-  background-color: #ffffff;
+  background-color: transparent;
   color: black;
   overflow-y: auto;
+  width: calc(100% - 5px);
 }
 
 .obObposPointOfSaleUiReceiptView-receiptcounter {
@@ -7814,7 +7851,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiReceiptView-receiptWrapper {
   display: grid;
-  padding: 5px;
+  padding: 5px 10px;
   grid-auto-flow: row;
   grid-auto-columns: 100%;
   grid-auto-rows: auto 1fr;
@@ -7829,6 +7866,9 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   display: grid;
   grid-template-rows: auto 1fr;
   overflow-y: auto;
+  background-color: white;
+  box-shadow: 0px 0px 10px -1px #8D8D8D;
+  border-radius: 4px;
 }
 
 .obObposPointOfSaleUiReceiptView-receiptWrapper-receiptBody-orderCaptions {}
