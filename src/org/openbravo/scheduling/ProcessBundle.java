@@ -83,7 +83,7 @@ public class ProcessBundle implements Serializable {
 
   private ProcessContext context;
 
-  private ConnectionProvider connection;
+  private transient ConnectionProvider connection;
 
   private ConfigParameters config;
 
