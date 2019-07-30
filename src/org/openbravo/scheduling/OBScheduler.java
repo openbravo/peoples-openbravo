@@ -34,6 +34,7 @@ import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.scheduling.trigger.TriggerProvider;
+import org.openbravo.scheduling.quartz.JobInitializationListener;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerContext;
@@ -82,7 +83,7 @@ public class OBScheduler {
 
   /**
    * Retrieves the Openbravo ConnectionProvider from the Scheduler Context.
-   * 
+   *
    * @return A ConnectionProvider
    */
   public ConnectionProvider getConnection() {
@@ -91,7 +92,7 @@ public class OBScheduler {
 
   /**
    * Retrieves the Openbravo ConfigParameters from the Scheduler context.
-   * 
+   *
    * @return Openbravo ConfigParameters
    */
   public ConfigParameters getConfigParameters() {
@@ -227,6 +228,9 @@ public class OBScheduler {
     schdlr.getListenerManager().addJobListener(monitor);
     schdlr.getListenerManager().addTriggerListener(monitor);
 
+    // Add the listener in charge of initializing transient fields after deserialization
+    schdlr.getListenerManager().addJobListener(new JobInitializationListener());
+
     sqlDateTimeFormat = getConfigParameters().getSqlDateTimeFormat();
 
     try {
@@ -248,7 +252,14 @@ public class OBScheduler {
           continue;
         }
 
-        scheduleProcess(requestId, vars);
+        // processes will be scheduled on initialization only when the Quartz JobStore
+        // in usage does not support persistence and when, even with persistence, the
+        // job is not in Quartz structures. This can happen if the database recreated
+        // or the JobStore has been changed from a non-persistent one.
+        if (!schdlr.getMetaData().isJobStoreSupportsPersistence()
+            || !sched.checkExists(jobKey(requestId, OB_GROUP))) {
+          scheduleProcess(requestId, vars);
+        }
       }
     } catch (final ServletException e) {
       log.error("An error occurred retrieving scheduled process data: " + e.getMessage(), e);

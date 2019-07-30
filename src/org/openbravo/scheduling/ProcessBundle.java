@@ -87,7 +87,7 @@ public class ProcessBundle implements Serializable {
 
   private ConfigParameters config;
 
-  private ProcessLogger logger;
+  private transient ProcessLogger logger;
 
   private Object result;
 
