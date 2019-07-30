@@ -46,6 +46,7 @@ import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.scheduling.quartz.JobInitializationListener;
 import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
@@ -270,6 +271,9 @@ public class OBScheduler {
 		schdlr.getListenerManager().addSchedulerListener(monitor);
 		schdlr.getListenerManager().addJobListener(monitor);
 		schdlr.getListenerManager().addTriggerListener(monitor);
+		
+		// Add the listener in charge of initializing transient fields after deserialization
+		schdlr.getListenerManager().addJobListener(new JobInitializationListener());
 
 		dateTimeFormat = getConfigParameters().getJavaDateTimeFormat();
 		sqlDateTimeFormat = getConfigParameters().getSqlDateTimeFormat();

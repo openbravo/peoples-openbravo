@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.openbravo.base.ConnectionProviderContextListener;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.scheduling.ProcessBundle;
+import org.openbravo.scheduling.ProcessLogger;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.listeners.JobListenerSupport;
@@ -37,6 +38,7 @@ public class JobInitializationListener extends JobListenerSupport {
 			// Set the ConnectionProvider if it was lost during serialization/deserialization
 			bundle.setConnection((ConnectionProvider) ctx.get(ConnectionProviderContextListener.POOL_ATTRIBUTE));
 		}
+		bundle.setLog(new ProcessLogger(bundle.getConnection()));
 	}
 	
 }
