@@ -4831,17 +4831,17 @@
 }
 
 .obUiMenuDisableEnableRFIDReader_switchOn {
-  background-image: url('./../img/iconSwitchON.svg');
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconSwitchON.svg');
   background-size: 61px 23px;
 }
 
 .obUiMenuDisableEnableRFIDReader_switchOff {
-  background-image: url('./../img/iconSwitchOFF.svg');
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconSwitchOFF.svg');
   background-size: 61px 23px;
 }
 
 .obUiMenuDisableEnableRFIDReader_switchOffline {
-  background-image: url('./../img/iconSwitchOffline.svg');
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconSwitchOffline.svg');
   background-size: 61px 23px;
 }
 
