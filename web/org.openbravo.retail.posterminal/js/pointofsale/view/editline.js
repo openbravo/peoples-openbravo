@@ -618,15 +618,18 @@ enyo.kind({
           ? true
           : false;
       if (this.selectedModels.length > 1) {
-        var selectedLinesToDeliver = _.filter(this.selectedModels, function(
-          line
-        ) {
-          return (
-            (line.get('obposCanbedelivered') &&
-              line.get('deliveredQuantity') < line.get('qty')) ||
-            OB.UTIL.isCrossStoreLine(line)
-          );
-        });
+        var canBeDeliveredLine = this.selectedModels[0].get(
+            'obposCanbedelivered'
+          ),
+          selectedLinesToDeliver = _.filter(this.selectedModels, function(
+            line
+          ) {
+            return (
+              (line.get('obposCanbedelivered') === canBeDeliveredLine &&
+                !line.getDeliveredQuantity()) ||
+              OB.UTIL.isCrossStoreLine(line)
+            );
+          });
         this.hideDeliveryButton = this.hideDeliveryButton
           ? true
           : selectedLinesToDeliver.length &&
@@ -648,8 +651,7 @@ enyo.kind({
       } else if (this.selectedModels.length === 1) {
         if (
           this.hideDeliveryButton ||
-          this.selectedModels[0].get('deliveredQuantity') <
-            this.selectedModels[0].get('qty') ||
+          this.selectedModels[0].getDeliveredQuantity() ||
           OB.UTIL.isCrossStoreLine(this.selectedModels[0])
         ) {
           this.$.actionButtonsContainer.$.canDeliver.hide();

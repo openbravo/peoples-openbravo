@@ -6148,7 +6148,12 @@
             line.unset('invoicedQuantity');
             line.unset('grossUnitPrice');
             line.unset('lineGrossAmount');
-            line.set('obposCanbedelivered', true);
+            if (
+              !line.get('obposCanbedelivered') &&
+              line.get('deliveredQuantity') === line.get('qty')
+            ) {
+              line.set('obposCanbedelivered', true);
+            }
             line.set('obposIspaid', false);
             line.set('documentType', me.get('documentType'));
           });
