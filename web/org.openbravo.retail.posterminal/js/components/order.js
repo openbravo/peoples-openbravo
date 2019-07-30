@@ -353,6 +353,7 @@ enyo.kind({
     },
     {
       kind: 'OB.UI.FitText',
+      maxFontSize: 20,
       classes: 'obUiTotalReceiptLine-obUiFitTextQty fitText',
       components: [
         {
@@ -364,6 +365,7 @@ enyo.kind({
     },
     {
       kind: 'OB.UI.FitText',
+      maxFontSize: 20,
       classes: 'obUiTotalReceiptLine-obUiFitTextGross fitText',
       components: [
         {
@@ -372,9 +374,6 @@ enyo.kind({
           name: 'totalgross'
         }
       ]
-    },
-    {
-      classes: 'obUiTotalReceiptLine-element1'
     }
   ],
   renderTotal: function(newTotal) {
@@ -452,9 +451,6 @@ enyo.kind({
     {
       classes: 'obUiTaxBreakdown-lblTotalTaxBreakdown',
       name: 'lblTotalTaxBreakdown'
-    },
-    {
-      classes: 'obUiTaxBreakdown-element1'
     }
   ],
   initComponents: function() {
@@ -733,19 +729,19 @@ enyo.kind({
     },
     {
       tag: 'ul',
-      classes: 'obUiOrderView-container1',
+      classes: 'obUiOrderView-totalAndBreakdowns',
       components: [
         {
           tag: 'li',
-          classes: 'obUiOrderView-container1-container1',
+          classes: 'obUiOrderView-totalAndBreakdowns-row1',
           components: [
             {
-              classes: 'obUiOrderView-container1-container1-totalTaxLine',
+              classes: 'obUiOrderView-totalAndBreakdowns-row1-totalTaxLine',
               kind: 'OB.UI.TotalTaxLine',
               name: 'totalTaxLine'
             },
             {
-              classes: 'obUiOrderView-container1-container1-totalReceiptLine',
+              classes: 'obUiOrderView-totalAndBreakdowns-row1-totalReceiptLine',
               kind: 'OB.UI.TotalReceiptLine',
               name: 'totalReceiptLine'
             }
@@ -753,31 +749,27 @@ enyo.kind({
         },
         {
           tag: 'li',
-          classes: 'obUiOrderView-container1-container2',
+          classes: 'obUiOrderView-totalAndBreakdowns-row2',
           components: [
             {
-              classes: 'obUiOrderView-container1-container2-injectedFooter',
+              classes: 'obUiOrderView-totalAndBreakdowns-row2-injectedFooter',
               name: 'injectedFooter'
             },
             {
-              classes: 'obUiOrderView-container1-container2-container1',
+              classes: 'obUiOrderView-totalAndBreakdowns-row2-status',
               components: [
                 {
                   kind: 'btninvoice',
                   classes:
-                    'obUiOrderView-container1-container2-container1-divbtninvoice',
+                    'obUiOrderView-totalAndBreakdowns-row2-status-divbtninvoice',
                   name: 'divbtninvoice',
                   showing: false
                 },
                 {
                   kind: 'OB.UI.OrderViewDivText',
                   classes:
-                    'obUiOrderView-container1-container2-container1-divText',
+                    'obUiOrderView-totalAndBreakdowns-row2-status-divText',
                   name: 'divText'
-                },
-                {
-                  classes:
-                    'obUiOrderView-container1-container2-container1-element1'
                 }
               ]
             }
@@ -785,28 +777,21 @@ enyo.kind({
         },
         {
           tag: 'li',
-          classes: 'obUiOrderView-container1-container3',
+          classes: 'obUiOrderView-totalAndBreakdowns-row3',
           components: [
             {
-              name: 'taxBreakdownDiv',
-              classes: 'obUiOrderView-container1-container3-taxBreakdownDiv',
-              components: [
-                {
-                  kind: 'OB.UI.TaxBreakdown',
-                  classes:
-                    'obUiOrderView-container1-container3-taxBreakdownDiv-taxBreakdown',
-                  name: 'taxBreakdown'
-                }
-              ]
+              kind: 'OB.UI.TaxBreakdown',
+              classes: 'obUiOrderView-totalAndBreakdowns-row3-taxBreakdown',
+              name: 'taxBreakdown'
             }
           ]
         },
         {
           kind: 'OB.UI.ScrollableTable',
-          classes: 'obUiOrderView-container1-listTaxLines',
+          classes: 'obUiOrderView-totalAndBreakdowns-listTaxLines',
           name: 'listTaxLines',
           scrollAreaClasses:
-            'obUiOrderView-container1-listTaxLines-scrollAreaClasses',
+            'obUiOrderView-totalAndBreakdowns-listTaxLines-scrollAreaClasses',
           renderLine: 'OB.UI.RenderTaxLine',
           renderEmpty: 'OB.UI.RenderTaxLineEmpty',
           //defined on redenderorderline.js
@@ -815,26 +800,16 @@ enyo.kind({
         },
         {
           tag: 'li',
-          classes: 'obUiOrderView-container1-container5',
+          classes: 'obUiOrderView-totalAndBreakdowns-row5',
           components: [
             {
               name: 'paymentBreakdown',
-              classes: 'obUiOrderView-container1-container5-paymentBreakdown',
+              classes: 'obUiOrderView-totalAndBreakdowns-row5-paymentBreakdown',
               showing: false,
               components: [
                 {
-                  classes: 'obUiOrderView-paymentBreakdown-container1',
-                  components: [
-                    {
-                      classes:
-                        'obUiOrderView-paymentBreakdown-container1-lblTotalPayment',
-                      name: 'lblTotalPayment'
-                    },
-                    {
-                      classes:
-                        'obUiOrderView-paymentBreakdown-container1-element1'
-                    }
-                  ]
+                  classes: 'obUiOrderView-paymentBreakdown-lblTotalPayment',
+                  name: 'lblTotalPayment'
                 }
               ]
             }
@@ -842,15 +817,19 @@ enyo.kind({
         },
         {
           kind: 'OB.UI.ScrollableTable',
-          classes: 'obUiOrderView-container1-listPaymentLines',
+          classes: 'obUiOrderView-totalAndBreakdowns-listPaymentLines',
           name: 'listPaymentLines',
           showing: false,
           scrollAreaClasses:
-            'obUiOrderView-container1-listPaymentLines-scrollArea',
+            'obUiOrderView-totalAndBreakdowns-listPaymentLines-scrollArea',
           renderLine: 'OB.UI.RenderPaymentLine',
           renderEmpty: 'OB.UI.RenderPaymentLineEmpty',
           //defined on redenderorderline.js
           listStyle: 'nonselectablelist'
+        },
+        {
+          classes: 'obUiOrderView-totalAndBreakdowns-row7',
+          name: 'bottomMargin'
         }
       ]
     }
@@ -928,7 +907,7 @@ enyo.kind({
 
       this.$.listTaxLines.setCollection(taxList);
     } else {
-      this.$.taxBreakdownDiv.hide();
+      this.$.taxBreakdown.hide();
     }
   },
   toggleSelectionTable: function(inSender, inEvent) {

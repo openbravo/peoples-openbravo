@@ -2329,7 +2329,24 @@
 # Component: OB.UI.RenderOrderLine
 # Inherits: [OB.UI.listItemButton]
 */
-.obUiRenderOrderLine {}
+.obUiRenderOrderLine {
+  border-left: 4px solid transparent;
+  padding-right: 14px;
+}
+
+li.selected > .obUiRenderOrderLine:not(.obUiRenderOrderLine_edit) {
+  border-left-color: #6eb43f;
+}
+
+li.selected > .obUiRenderOrderLine_edit {
+  border-left-color: #6eb43f;
+  background-color: #e8e8e8;
+}
+
+.obUiRenderOrderLine:active {
+  background-color: #c5c5c5;
+  border-left-color: darkgreen;
+}
 
 .obUiRenderOrderLine-checkBoxColumn {
 /* Inherits: [OB.UI.CheckboxButton] */
@@ -2580,8 +2597,6 @@
 # Component: OB.UI.RenderTaxLineEmpty
 */
 .obUiRenderTaxLineEmpty {
-  border-bottom: var(--bottomseparator-slim);
-  padding: 20px;
   text-align: center;
   font-weight: bold;
   font-size: var(--font-huge);
@@ -2613,8 +2628,20 @@
 # Component: OB.UI.RenderTaxLine
 # Inherits: [OB.UI.listItemButton]
 */
-.obUiRenderTaxLine {
-  color: #ffe7ce;
+.obUiRenderTaxLine,
+.obUiRenderTaxLine:hover,
+.obUiRenderTaxLine:active {
+  background-color: inherit;
+  color: inherit;
+  cursor: inherit;
+  border: 0px;
+
+  position: relative;
+  display: inline-flex;
+  box-sizing: border-box;
+  align-items: center;
+  width: 100%;
+  padding: 4px 12px 3px 30px;
 }
 
 .obUiRenderTaxLine-tax {
@@ -2668,35 +2695,42 @@
 # Component: OB.UI.RenderPaymentLine
 # Inherits: [OB.UI.SelectButton]
 */
-.obUiRenderPaymentLine {
-  border-bottom: 0px;
-  color: #ffe7ce;
+.obUiRenderPaymentLine,
+.obUiRenderPaymentLine:hover,
+.obUiRenderPaymentLine:active {
+  background-color: inherit;
+  color: inherit;
+  cursor: inherit;
+  border: 0px;
+
+  position: relative;
+  display: inline-flex;
+  box-sizing: border-box;
+  align-items: center;
+  width: 100%;
+  padding: 4px 12px 3px 30px;
 }
 
 .obUiRenderPaymentLine-name {
   float: left;
   width: 40%;
-  padding: 5px 0px 0px 0px;
 }
 
 .obUiRenderPaymentLine-date {
   float: left;
   width: 20%;
-  padding: 5px 0px 0px 0px;
   text-align: right;
 }
 
 .obUiRenderPaymentLine-foreignAmount {
   float: left;
   width: 20%;
-  padding: 5px 0px 0px 0px;
   text-align: right;
 }
 
 .obUiRenderPaymentLine-amount {
   float: left;
   width: 20%;
-  padding: 5px 0px 0px 0px;
   text-align: right;
 }
 
@@ -3043,7 +3077,7 @@
   border-bottom: var(--bottomseparator-slim);
   font-size: 11px;
   position: relative;
-  padding: 0px 10px 0px 10px;
+  padding: 0px 15px;
   color: var(--color-maincolor);
 }
 
@@ -3153,13 +3187,18 @@
 */
 .obUiTotalReceiptLine {
   position: relative;
-  padding: 10px;
+  display: inline-flex;
+  box-sizing: border-box;
   height: 35px;
+  align-items: center;
+  width: 100%;
+  font-size: var(--font-large);
+  padding: 10px 12px 0px 12px;
 }
 
 .obUiTotalReceiptLine-lblTotal {
+  display: inline-block;
   font-weight: bold;
-  float: left;
   width: calc(100% - 225px);
 }
 
@@ -3172,7 +3211,7 @@
 }
 
 .obUiTotalReceiptLine-obUiFitTextQty {
-  float: left;
+  display: inline-block;
   width: 65px;
   text-align: right;
   font-weight: bold;
@@ -3189,7 +3228,7 @@
 }
 
 .obUiTotalReceiptLine-obUiFitTextGross {
-  float: left;
+  display: inline-block;
   width: 160px;
   text-align: right;
   font-weight: bold;
@@ -3205,17 +3244,18 @@
   width: 36;
 }
 
-.obUiTotalReceiptLine-element1 {
-  clear: both;
-}
-
 
 /*
 # Component: OB.UI.TotalTaxLine
 */
 .obUiTotalTaxLine {
   position: relative;
-  padding: 10px;
+  display: inline-flex;
+  box-sizing: border-box;
+  height: 30px;
+  align-items: center;
+  width: 100%;
+  padding: 15px 12px 0px 12px;
 }
 
 .obUiTotalTaxLine-lblTotalTax {
@@ -3247,16 +3287,16 @@
 */
 .obUiTaxBreakdown {
   position: relative;
-  padding: 10px;
+  display: inline-flex;
+  box-sizing: border-box;
+  height: 35px;
+  align-items: center;
+  width: 100%;
+  padding: 10px 12px 0px 12px;
 }
 
 .obUiTaxBreakdown-lblTotalTaxBreakdown {
-  float: left;
-  widows: 40%;
-}
-
-.obUiTaxBreakdown-element1 {
-  clear: both;
+  display: inline-block;
 }
 
 
@@ -3284,8 +3324,10 @@
 # Component: btninvoice
 */
 .btnInvoice {
-  float: left;
-  width: 40%;
+  display: inline-block;
+  padding-top: 10px;
+  min-height: 30px;
+  width: 50%;
 }
 
 .btnInvoice-obUiBtnReceiptToInvoice {}
@@ -3300,9 +3342,11 @@
 # Component: OB.UI.OrderViewDivText
 */
 .obUiOrderViewDivText {
-  float: right;
+  display: inline-block;
   text-align: right;
   font-weight: bold;
+  padding-top: 10px;
+  min-height: 30px;
   font-size: 30px;
   line-height: 30px;
 }
@@ -3370,90 +3414,77 @@
   max-height: 393px;
 }
 
-.obUiOrderView-container1 {
+.obUiOrderView-totalAndBreakdowns {
   overflow-y: auto;
+  background-color: var(--color-maincolor);
+  color: white;
 }
 
-.obUiOrderView-container1-container1 {}
+.obUiOrderView-totalAndBreakdowns-row1 {}
 
-.obUiOrderView-container1-container1-totalTaxLine {
+.obUiOrderView-totalAndBreakdowns-row1-totalTaxLine {
   /*Inherits: [OB.UI.TotalTaxLine]*/
 }
 
-.obUiOrderView-container1-container1-totalReceiptLine {
+.obUiOrderView-totalAndBreakdowns-row1-totalReceiptLine {
   /*Inherits: [OB.UI.TotalReceiptLine]*/
 }
 
-.obUiOrderView-container1-container2 {}
+.obUiOrderView-totalAndBreakdowns-row2 {}
 
-.obUiOrderView-container1-container2-injectedFooter {}
+.obUiOrderView-totalAndBreakdowns-row2-injectedFooter {}
 
-.obUiOrderView-container1-container2-container1 {
-  padding: 10px;
-  border-top: var(--bottomseparator-slim);
-  min-height: 40px;
+.obUiOrderView-totalAndBreakdowns-row2-status {
+  padding: 0px 12px;
+  display: flex;
+  justify-content: flex-end;
 }
 
-.obUiOrderView-container1-container2-container1-divbtninvoice {
+.obUiOrderView-totalAndBreakdowns-row2-status-divbtninvoice {
   /*Inherits: [btninvoice]*/
 }
 
-.obUiOrderView-container1-container2-container1-divText {
+.obUiOrderView-totalAndBreakdowns-row2-status-divText {
   /*Inherits: [OB.UI.OrderViewDivText]*/
 }
+.obUiOrderView-totalAndBreakdowns-row3 {}
 
-.obUiOrderView-container1-container2-container1-element1 {
-  clear: both;
-}
-
-.obUiOrderView-container1-container3 {}
-
-.obUiOrderView-container1-container3-taxBreakdownDiv {
-  padding: 10px;
-  border-top: var(--bottomseparator-slim);
-  height: 40px;
-}
-
-.obUiOrderView-container1-container3-taxBreakdownDiv-taxBreakdown {
+.obUiOrderView-totalAndBreakdowns-row3-taxBreakdown {
   /*Inherits: [OB.UI.TaxBreakdown]*/
 }
 
-.obUiOrderView-container1-listTaxLines {
+.obUiOrderView-totalAndBreakdowns-listTaxLines {
   /*Inherits: [OB.UI.ScrollableTable]*/
 }
-.obUiOrderView-container1-listTaxLines-scrollAreaClasses {
+.obUiOrderView-totalAndBreakdowns-listTaxLines-scrollAreaClasses {
   max-height: 250px;
 }
 
-.obUiOrderView-container1-container5 {}
+.obUiOrderView-totalAndBreakdowns-row5 {}
 
-.obUiOrderView-container1-container5-paymentBreakdown {
-  padding: 10px;
-  height: 40px;
-}
-
-.obUiOrderView-paymentBreakdown-container1 {
+.obUiOrderView-totalAndBreakdowns-row5-paymentBreakdown {
   position: relative;
-  padding: 10px;
+  display: inline-flex;
+  box-sizing: border-box;
+  height: 35px;
+  align-items: center;
+  width: 100%;
+  padding: 10px 12px 0px 12px;
 }
 
-.obUiOrderView-paymentBreakdown-container1-lblTotalPayment {
-  float: left;
-  width: 40%;
+.obUiOrderView-paymentBreakdown-lblTotalPayment {
+  display: inline-block;
 }
 
-.obUiOrderView-paymentBreakdown-container1-element1 {
-  clear: both;
-}
+.obUiOrderView-totalAndBreakdowns-listPaymentLines {}
 
-.obUiOrderView-container1-listPaymentLines {
-  border-bottom: var(--bottomseparator-slim);
-}
-
-.obUiOrderView-container1-listPaymentLines-scrollArea {
+.obUiOrderView-totalAndBreakdowns-listPaymentLines-scrollArea {
   max-height: 250px;
 }
 
+.obUiOrderView-totalAndBreakdowns-row7 {
+  height: 10px;
+}
 
 /*
 # Component: OB.UI.MultiOrderView
@@ -7877,7 +7908,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /* Inherits: [OB.UI.OrderView] */
   overflow-y: auto;
   display: grid;
-  grid-template-rows: auto auto;
+  grid-template-rows: minmax(150px, 1fr) auto;
   height: 100%;
 }
 
@@ -8238,10 +8269,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   grid-area: obObposPointOfSaleUiButtonTabPayment;
 }
 
-.obObposPointOfSaleUiButtonTabPayment_disabled {
-  background-color: #e2e2e2;
-  color: black;
-}
+.obObposPointOfSaleUiButtonTabPayment_disabled {}
 
 .obObposPointOfSaleUiButtonTabPayment-totalButtonDiv {
   /*Inherits: [OB.UI.FitText]*/
@@ -9701,7 +9729,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obObposPointOfSaleUiDiscounts-scroller-formElementCheckSelectAll-checkSelectAll {}
 
 .obObposPointOfSaleUiDiscounts-buttons {
-  padding: 10px;  
+  padding: 10px;
   text-align: center;
 }
 
