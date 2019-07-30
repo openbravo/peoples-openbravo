@@ -208,8 +208,8 @@ public class PaidReceipts extends JSONProcessSimple {
 
           if (paidReceiptLine.has("goodsShipmentLine")
               && !paidReceiptLine.getString("goodsShipmentLine").equals("null")) {
-            String hqlShipLines = "select ordLine.goodsShipmentLine.salesOrderLine.salesOrder.documentNo, ordLine.goodsShipmentLine.salesOrderLine.id "
-                + "from OrderLine as ordLine where ordLine.id = :lineId ";
+            String hqlShipLines = "select retOrdLine.salesOrder.documentNo, retOrdLine.id "
+                + "from OrderLine as ordLine join ordLine.goodsShipmentLine.salesOrderLine as retOrdLine where ordLine.id = :lineId";
             OBDal.getInstance().getSession().createQuery(hqlShipLines);
             Query<Object[]> shipLines = OBDal.getInstance()
                 .getSession()
