@@ -8392,7 +8392,13 @@
                     }
                   }
                 } else {
-                  linesToApply.add(rli);
+                  if (
+                    !gli.get('singleManualPromotionApplied') ||
+                    (gli.get('id') === rli.get('id') &&
+                      gli.get('singleManualPromotionApplied'))
+                  ) {
+                    linesToApply.add(rli);
+                  }
                 }
               }
             } else {
