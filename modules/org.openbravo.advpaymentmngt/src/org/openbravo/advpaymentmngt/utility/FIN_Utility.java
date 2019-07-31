@@ -368,31 +368,24 @@ public class FIN_Utility {
   }
 
   public static String getDocumentNo(boolean updateNext, Sequence seqParam) {
-    Sequence seq = seqParam;
-    if (seq != null) {
-      if (updateNext) {
-        // We lock the sequence with a select for update to avoid duplicates
-        seq = lockSequence(seq);
-      }
-      StringBuilder nextDocNumber = new StringBuilder();
-      if (seq.getPrefix() != null) {
-        nextDocNumber.append(seq.getPrefix());
-      }
-      nextDocNumber.append(seq.getNextAssignedNumber().toString());
-      if (seq.getSuffix() != null) {
-        nextDocNumber.append(seq.getSuffix());
-      }
-      if (updateNext) {
-        seq.setNextAssignedNumber(seq.getNextAssignedNumber() + seq.getIncrementBy());
-        OBDal.getInstance().save(seq);
-        // OBDal.getInstance().flush();
-      }
-      return nextDocNumber.toString();
+    if (seqParam == null) {
+      return null;
     }
-    return null;
+    Sequence seq = getSequenceAndLockIfUpdateNext(updateNext, seqParam);
+    return getNextDocNumberAndIncrementSeqIfUpdateNext(updateNext, seq);
+
   }
 
-  private static Sequence lockSequence(Sequence seq) {
+  private static Sequence getSequenceAndLockIfUpdateNext(final boolean updateNext,
+      final Sequence seqParam) {
+    if (updateNext) {
+      // We lock the sequence with a select for update to avoid duplicates
+      return lockSequence(seqParam.getId());
+    }
+    return seqParam;
+  }
+
+  private static Sequence lockSequence(String sequenceId) {
     // @formatter:off
     final String where = ""
         + "select s "
@@ -401,11 +394,33 @@ public class FIN_Utility {
     // @formatter:on
     final Session session = OBDal.getInstance().getSession();
     final Query<Sequence> query = session.createQuery(where, Sequence.class);
-    query.setParameter("id", seq.getId());
+    query.setParameter("id", sequenceId);
     query.setMaxResults(1);
     query.setLockOptions(LockOptions.UPGRADE);
-    OBDal.getInstance().getSession().evict(seq);
     return query.uniqueResult();
+  }
+
+  private static String getNextDocNumberAndIncrementSeqIfUpdateNext(final boolean updateNext,
+      final Sequence seq) {
+    final StringBuilder nextDocNumber = new StringBuilder();
+    if (seq.getPrefix() != null) {
+      nextDocNumber.append(seq.getPrefix());
+    }
+    nextDocNumber.append(seq.getNextAssignedNumber().toString());
+    if (seq.getSuffix() != null) {
+      nextDocNumber.append(seq.getSuffix());
+    }
+
+    incrementSeqIfUpdateNext(updateNext, seq);
+
+    return nextDocNumber.toString();
+  }
+
+  private static void incrementSeqIfUpdateNext(final boolean updateNext, final Sequence seq) {
+    if (updateNext) {
+      seq.setNextAssignedNumber(seq.getNextAssignedNumber() + seq.getIncrementBy());
+      OBDal.getInstance().save(seq);
+    }
   }
 
   /**
