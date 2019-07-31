@@ -6148,7 +6148,12 @@
             line.unset('invoicedQuantity');
             line.unset('grossUnitPrice');
             line.unset('lineGrossAmount');
-            line.set('obposCanbedelivered', true);
+            if (
+              !line.get('obposCanbedelivered') &&
+              line.get('deliveredQuantity') === line.get('qty')
+            ) {
+              line.set('obposCanbedelivered', true);
+            }
             line.set('obposIspaid', false);
             line.set('documentType', me.get('documentType'));
           });
@@ -6702,6 +6707,7 @@
             line.unset('grossListPrice');
             line.unset('grossUnitPrice');
             line.unset('lineGrossAmount');
+            line.unset('obposQtytodeliver');
             idMap[line.get('id')] = OB.UTIL.get_UUID();
             line.set('id', idMap[line.get('id')]);
             if (line.get('hasRelatedServices')) {
