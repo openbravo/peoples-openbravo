@@ -462,42 +462,23 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.SmallButton',
+  kind: 'OB.UI.FormElement',
   name: 'OB.UI.BtnReceiptToInvoice',
+  classes:
+    'obUiFormElement_dataEntry obUiFormElement_dataEntry_noicon obUiBtnReceiptToInvoice',
   events: {
     onCancelReceiptToInvoice: ''
   },
-  classes: 'obUiBtnReceiptToInvoice',
-  tap: function() {
-    this.doCancelReceiptToInvoice();
-  }
-});
-
-enyo.kind({
-  name: 'btninvoice',
-  classes: 'btnInvoice',
-  showing: false,
-  components: [
-    {
-      classes: 'btnInvoice-obUiBtnReceiptToInvoice',
-      kind: 'OB.UI.BtnReceiptToInvoice'
-    },
-    {
-      classes: 'btnInvoice-element1',
-      tag: 'span',
-      content: ' '
-    },
-    {
-      tag: 'span',
-      classes: 'btnInvoice-lblInvoiceReceipt',
-      name: 'lblInvoiceReceipt'
+  coreElement: {
+    kind: 'OB.UI.FormElement.Checkbox',
+    i18nLabel: 'OBPOS_LblInvoiceReceipt',
+    checked: true,
+    tap: function() {
+      this.formElement.doCancelReceiptToInvoice();
     }
-  ],
+  },
   initComponents: function() {
     this.inherited(arguments);
-    this.$.lblInvoiceReceipt.setContent(
-      OB.I18N.getLabel('OBPOS_LblInvoiceReceipt')
-    );
   }
 });
 
@@ -759,7 +740,7 @@ enyo.kind({
               classes: 'obUiOrderView-totalAndBreakdowns-row2-status',
               components: [
                 {
-                  kind: 'btninvoice',
+                  kind: 'OB.UI.BtnReceiptToInvoice',
                   classes:
                     'obUiOrderView-totalAndBreakdowns-row2-status-divbtninvoice',
                   name: 'divbtninvoice',
@@ -826,10 +807,6 @@ enyo.kind({
           renderEmpty: 'OB.UI.RenderPaymentLineEmpty',
           //defined on redenderorderline.js
           listStyle: 'nonselectablelist'
-        },
-        {
-          classes: 'obUiOrderView-totalAndBreakdowns-row7',
-          name: 'bottomMargin'
         }
       ]
     }

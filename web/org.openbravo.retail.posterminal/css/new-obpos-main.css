@@ -2601,6 +2601,7 @@ li.selected > .obUiRenderOrderLine_edit {
   font-weight: bold;
   font-size: var(--font-huge);
   color: #cccccc;
+  display: none;
 }
 
 
@@ -2741,12 +2742,13 @@ li.selected > .obUiRenderOrderLine_edit {
 # Component: OB.UI.RenderPaymentLineEmpty
 */
 .obUiRenderPaymentLineEmpty {
-  border-bottom: 1px solid #cccccc;
+  border-bottom: 0px;
   padding: 20px;
   text-align: center;
   font-weight: bold;
   font-size: var(--font-huge);
   color: #cccccc;
+  display: none;
 }
 
 
@@ -3302,41 +3304,41 @@ li.selected > .obUiRenderOrderLine_edit {
 
 /*
 # Component: OB.UI.BtnReceiptToInvoice
-# Inherits: [OB.UI.SmallButton]
+# Inherits: [OB.UI.FormElement]
 */
-.obUiBtnReceiptToInvoice {
-  width: 40px;
-  color: black;
-  margin: 0px 0px 0px 16px;
-  padding-top: 4px;
-  border: var(--bottomseparator-slim);
-  height: 20px;
-  background-color: transparent;
-  height: 20px;
-  background-size: 21px 17px;
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkBlack.svg');
-  background-repeat: no-repeat;
-  background-position: center;
-}
+.obUiFormElement_dataEntry.obUiFormElement.obUiBtnReceiptToInvoice {
+  grid-template-rows: 1fr 0px;
 
-
-/*
-# Component: btninvoice
-*/
-.btnInvoice {
-  display: inline-block;
   padding-top: 10px;
-  min-height: 30px;
-  width: 50%;
+  grid-area: obUiBtnReceiptToInvoice;
 }
 
-.btnInvoice-obUiBtnReceiptToInvoice {}
-
-.btnInvoice-element1 {}
-
-.btnInvoice-lblInvoiceReceipt {
-  font-weight: bold;
+.obUiFormElement_dataEntry.obUiBtnReceiptToInvoice .obUiFormElement-beforeArea {
+  display: none;
 }
+
+.obUiFormElement_dataEntry.obUiBtnReceiptToInvoice .obUiFormElement-errorArea {
+  display: none;
+}
+
+.obUiFormElement_dataEntry.obUiBtnReceiptToInvoice .obUiFormElement-coreElementArea {
+  height: 35px;
+}
+
+.obUiFormElement_dataEntry.obUiFormElement_isCheckbox:not(.obUiFormElement_readonly):not(.obUiFormElement_disabled).obUiBtnReceiptToInvoice .obUiFormElement-labelArea {
+  color: white;
+  left: 50px;
+  top: 25px;
+}
+
+.obUiFormElement_dataEntry.obUiFormElement_focused:not(.obUiFormElement_readonly):not(.obUiFormElement_disabled).obUiBtnReceiptToInvoice .obUiFormElementCheckbox,
+.obUiFormElement_dataEntry.obUiBtnReceiptToInvoice .obUiFormElementCheckbox_active {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-alt-on.svg');
+  border-color: lightgrey;
+  border-width: 1px;
+  zoom: 0.7;
+}
+
 
 /*
 # Component: OB.UI.OrderViewDivText
@@ -3345,56 +3347,48 @@ li.selected > .obUiRenderOrderLine_edit {
   display: inline-block;
   text-align: right;
   font-weight: bold;
-  padding-top: 10px;
-  min-height: 30px;
+  min-height: 35px;
   font-size: 30px;
-  line-height: 30px;
+  line-height: 35px;
+  padding-top: 10px;
+  grid-area: obUiOrderViewDivText;
 }
 
 .obUiOrderViewDivText_quotation {
-  width: 100%;
   color: var(--color-actioncolor);
 }
 
 .obUiOrderViewDivText_paid {
-  width: 50%;
   color: var(--color-actioncolor);
 }
 
 .obUiOrderViewDivText_layaway {
-  width: 50%;
   color: lightblue;
 }
 
 .obUiOrderViewDivText_CancelAndReplaceType1 {
-  width: 90%;
   color: lightblue;
   line-height: 30px;
 }
 
 .obUiOrderViewDivText_CancelAndReplaceType2 {
-  width: 90%;
   color: #5353c5;
   line-height: 30px;
 }
 
 .obUiOrderViewDivText_CancelLayawayFromLayaway {
-  width: 60%;
   color: lightblue;
 }
 
 .obUiOrderViewDivText_CancelLayaway {
-  width: 60%;
   color: #5353c5;
 }
 
 .obUiOrderViewDivText_ToBeReturned {
-  width: 50%;
   color: var(--color-actioncolor);
 }
 
 .obUiOrderViewDivText_ToBeLaidaway {
-  width: 60%;
   color: lightblue;
 }
 
@@ -3418,6 +3412,7 @@ li.selected > .obUiRenderOrderLine_edit {
   overflow-y: auto;
   background-color: var(--color-maincolor);
   color: white;
+  padding-bottom: 10px;
 }
 
 .obUiOrderView-totalAndBreakdowns-row1 {}
@@ -3435,9 +3430,13 @@ li.selected > .obUiRenderOrderLine_edit {
 .obUiOrderView-totalAndBreakdowns-row2-injectedFooter {}
 
 .obUiOrderView-totalAndBreakdowns-row2-status {
+  display: grid;
+  grid-template-columns: 40% 1fr;
+  grid-template-areas: "obUiBtnReceiptToInvoice obUiOrderViewDivText";
+
+  width: 100%;
+  box-sizing: border-box;
   padding: 0px 12px;
-  display: flex;
-  justify-content: flex-end;
 }
 
 .obUiOrderView-totalAndBreakdowns-row2-status-divbtninvoice {
@@ -3480,10 +3479,6 @@ li.selected > .obUiRenderOrderLine_edit {
 
 .obUiOrderView-totalAndBreakdowns-listPaymentLines-scrollArea {
   max-height: 250px;
-}
-
-.obUiOrderView-totalAndBreakdowns-row7 {
-  height: 10px;
 }
 
 /*
