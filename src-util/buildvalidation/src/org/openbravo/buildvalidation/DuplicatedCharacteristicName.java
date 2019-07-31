@@ -55,6 +55,7 @@ public class DuplicatedCharacteristicName extends BuildValidation {
   
   @Override
   protected ExecutionLimits getBuildValidationLimits() {
-    return new ExecutionLimits("0", null, new OpenbravoVersion(3, 0, 36215));
+    // This BuildValidation should be executed for all instances that are updating from an older release than PR19Q4
+    return new ExecutionLimits("0", null, new OpenbravoVersion(3, 0, 36389));
   }
 }
