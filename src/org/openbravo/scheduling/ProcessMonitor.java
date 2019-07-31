@@ -335,7 +335,6 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
   }
   
   @Override
-  @SuppressWarnings("unchecked")
   public boolean vetoJobExecution(Trigger trigger, JobExecutionContext jec) {
     JobDataMap jobData = trigger.getJobDataMap();
     Boolean preventConcurrentExecutions = (Boolean) jobData
