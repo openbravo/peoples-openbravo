@@ -2601,6 +2601,7 @@ li.selected > .obUiRenderOrderLine_edit {
   font-weight: bold;
   font-size: var(--font-huge);
   color: #cccccc;
+  display: none;
 }
 
 
@@ -2741,12 +2742,13 @@ li.selected > .obUiRenderOrderLine_edit {
 # Component: OB.UI.RenderPaymentLineEmpty
 */
 .obUiRenderPaymentLineEmpty {
-  border-bottom: 1px solid #cccccc;
+  border-bottom: 0px;
   padding: 20px;
   text-align: center;
   font-weight: bold;
   font-size: var(--font-huge);
   color: #cccccc;
+  display: none;
 }
 
 
@@ -2763,17 +2765,28 @@ li.selected > .obUiRenderOrderLine_edit {
   color: white;
 
   margin: 0px 0px 0px 16px;
-  padding-top: 4px;
-  border: var(--bottomseparator-slim);
+  padding: 6px 0px 0px 0px;
 
   width: 100%;
-  height: 20px;
+  height: 32px;
   background-repeat: no-repeat;
   background-position: center center;
   background-color: transparent;
 
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconClearPayment.svg');
-  background-size: 13px 13px;
+  background-size: 16px 16px;
+}
+
+.obUiRemoveMultiOrders:hover {
+  opacity: 1;
+  background-color: #e8e8e8;
+  border-radius: 50%;
+}
+
+.obUiRemoveMultiOrders:active {
+  opacity: 1;
+  background-color: #c5c5c5;
+  border-radius: 50%;
 }
 
 .obUiRemoveMultiOrders_loading {
@@ -3155,30 +3168,33 @@ li.selected > .obUiRenderOrderLine_edit {
 */
 .obUiTotalMultiReceiptLine {
   position: relative;
-  padding: 10px;
+  display: inline-flex;
+  box-sizing: border-box;
+  height: 35px;
+  align-items: center;
+  width: 100%;
+  font-size: var(--font-large);
+  padding: 10px 12px 0px 12px;
 }
 
 .obUiTotalMultiReceiptLine-lblTotal {
-  float: left;
-  width: 40%;
+  display: inline-block;
+  font-weight: bold;
+  width: calc(100% - 225px);
 }
 
 .obUiTotalMultiReceiptLine-totalqty {
-  float: left;
-  width: 20%;
+  display: inline-block;
+  width: 65px;
   text-align: right;
   font-weight: bold;
 }
 
 .obUiTotalMultiReceiptLine-totalgross {
-  float: left;
-  width: 40%;
+  display: inline-block;
+  width: 160px;
   text-align: right;
   font-weight: bold;
-}
-
-.obUiTotalMultiReceiptLine-element1 {
-  clear: both;
 }
 
 
@@ -3302,41 +3318,41 @@ li.selected > .obUiRenderOrderLine_edit {
 
 /*
 # Component: OB.UI.BtnReceiptToInvoice
-# Inherits: [OB.UI.SmallButton]
+# Inherits: [OB.UI.FormElement]
 */
-.obUiBtnReceiptToInvoice {
-  width: 40px;
-  color: black;
-  margin: 0px 0px 0px 16px;
-  padding-top: 4px;
-  border: var(--bottomseparator-slim);
-  height: 20px;
-  background-color: transparent;
-  height: 20px;
-  background-size: 21px 17px;
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkBlack.svg');
-  background-repeat: no-repeat;
-  background-position: center;
-}
+.obUiFormElement_dataEntry.obUiFormElement.obUiBtnReceiptToInvoice {
+  grid-template-rows: 1fr 0px;
 
-
-/*
-# Component: btninvoice
-*/
-.btnInvoice {
-  display: inline-block;
   padding-top: 10px;
-  min-height: 30px;
-  width: 50%;
+  grid-area: obUiBtnReceiptToInvoice;
 }
 
-.btnInvoice-obUiBtnReceiptToInvoice {}
-
-.btnInvoice-element1 {}
-
-.btnInvoice-lblInvoiceReceipt {
-  font-weight: bold;
+.obUiFormElement_dataEntry.obUiBtnReceiptToInvoice .obUiFormElement-beforeArea {
+  display: none;
 }
+
+.obUiFormElement_dataEntry.obUiBtnReceiptToInvoice .obUiFormElement-errorArea {
+  display: none;
+}
+
+.obUiFormElement_dataEntry.obUiBtnReceiptToInvoice .obUiFormElement-coreElementArea {
+  height: 35px;
+}
+
+.obUiFormElement_dataEntry.obUiFormElement_isCheckbox:not(.obUiFormElement_readonly):not(.obUiFormElement_disabled).obUiBtnReceiptToInvoice .obUiFormElement-labelArea {
+  color: white;
+  left: 50px;
+  top: 25px;
+}
+
+.obUiFormElement_dataEntry.obUiFormElement_focused:not(.obUiFormElement_readonly):not(.obUiFormElement_disabled).obUiBtnReceiptToInvoice .obUiFormElementCheckbox,
+.obUiFormElement_dataEntry.obUiBtnReceiptToInvoice .obUiFormElementCheckbox_active {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-alt-on.svg');
+  border-color: lightgrey;
+  border-width: 1px;
+  zoom: 0.7;
+}
+
 
 /*
 # Component: OB.UI.OrderViewDivText
@@ -3345,56 +3361,48 @@ li.selected > .obUiRenderOrderLine_edit {
   display: inline-block;
   text-align: right;
   font-weight: bold;
-  padding-top: 10px;
-  min-height: 30px;
+  min-height: 35px;
   font-size: 30px;
-  line-height: 30px;
+  line-height: 35px;
+  padding-top: 10px;
+  grid-area: obUiOrderViewDivText;
 }
 
 .obUiOrderViewDivText_quotation {
-  width: 100%;
   color: var(--color-actioncolor);
 }
 
 .obUiOrderViewDivText_paid {
-  width: 50%;
   color: var(--color-actioncolor);
 }
 
 .obUiOrderViewDivText_layaway {
-  width: 50%;
   color: lightblue;
 }
 
 .obUiOrderViewDivText_CancelAndReplaceType1 {
-  width: 90%;
   color: lightblue;
   line-height: 30px;
 }
 
 .obUiOrderViewDivText_CancelAndReplaceType2 {
-  width: 90%;
   color: #5353c5;
   line-height: 30px;
 }
 
 .obUiOrderViewDivText_CancelLayawayFromLayaway {
-  width: 60%;
   color: lightblue;
 }
 
 .obUiOrderViewDivText_CancelLayaway {
-  width: 60%;
   color: #5353c5;
 }
 
 .obUiOrderViewDivText_ToBeReturned {
-  width: 50%;
   color: var(--color-actioncolor);
 }
 
 .obUiOrderViewDivText_ToBeLaidaway {
-  width: 60%;
   color: lightblue;
 }
 
@@ -3414,10 +3422,12 @@ li.selected > .obUiRenderOrderLine_edit {
   max-height: 393px;
 }
 
-.obUiOrderView-totalAndBreakdowns {
+.obUiOrderView-totalAndBreakdowns,
+.obUiMultiOrderView-totalAndBreakdowns {
   overflow-y: auto;
   background-color: var(--color-maincolor);
   color: white;
+  padding-bottom: 10px;
 }
 
 .obUiOrderView-totalAndBreakdowns-row1 {}
@@ -3435,9 +3445,13 @@ li.selected > .obUiRenderOrderLine_edit {
 .obUiOrderView-totalAndBreakdowns-row2-injectedFooter {}
 
 .obUiOrderView-totalAndBreakdowns-row2-status {
+  display: grid;
+  grid-template-columns: 40% 1fr;
+  grid-template-areas: "obUiBtnReceiptToInvoice obUiOrderViewDivText";
+
+  width: 100%;
+  box-sizing: border-box;
   padding: 0px 12px;
-  display: flex;
-  justify-content: flex-end;
 }
 
 .obUiOrderView-totalAndBreakdowns-row2-status-divbtninvoice {
@@ -3482,10 +3496,6 @@ li.selected > .obUiRenderOrderLine_edit {
   max-height: 250px;
 }
 
-.obUiOrderView-totalAndBreakdowns-row7 {
-  height: 10px;
-}
-
 /*
 # Component: OB.UI.MultiOrderView
 */
@@ -3497,30 +3507,21 @@ li.selected > .obUiRenderOrderLine_edit {
   max-height: 450px;
 }
 
-.obUiMultiOrderView-container1 {}
+.obUiMultiOrderView-totalAndBreakdowns {}
 
-.obUiMultiOrderView-container1-container1 {}
+.obUiMultiOrderView-totalAndBreakdowns-row1 {}
 
-.obUiMultiOrderView-container1-container1-totalMultiReceiptLine {
+.obUiMultiOrderView-totalAndBreakdowns-row1-totalMultiReceiptLine {
   /*Inherits: [OB.UI.TotalMultiReceiptLine]*/
 }
 
-.obUiMultiOrderView-container1-container2 {}
-
-.obUiMultiOrderView-container1-container2-container1 {
-  padding: 10px;
-  border-top: var(--bottomseparator-slim);
-  height: 40px;
+.obUiMultiOrderView-totalAndBreakdowns-row2 {
+  padding-left: 10px;
 }
 
-.obUiMultiOrderView-container1-container2-container1-multiOrderBtnInvoice {
-  /*Inherits: [btninvoice]*/
+.obUiMultiOrderView-totalAndBreakdowns-row2-multiOrderBtnInvoice {
+  /*Inherits: [OB.UI.BtnReceiptToInvoice]*/
 }
-
-.obUiMultiOrderView-container1-container2-container1-element1 {
-  clear: both;
-}
-
 
 
 /***********************   ***********************/
@@ -7860,13 +7861,8 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /*
 # Component: OB.OBPOSPointOfSale.UI.ReceiptView
 */
-.obObposPointOfSaleUiReceiptView {
-  height: 100%;
-  position: relative;
-}
-
-
-.obObposPointOfSaleUiReceiptView {
+.obObposPointOfSaleUiReceiptView,
+.obObposPointOfSaleUiMultiReceiptView {
   margin: 0px 0px 10px 0px;
   height: calc(100% - 15px);
   position: relative;
@@ -7880,12 +7876,16 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /* Inherits: [OB.UI.ReceiptsCounter] */
 }
 
-.obObposPointOfSaleUiReceiptView-receiptWrapper {
+.obObposPointOfSaleUiReceiptView-receiptWrapper,
+.obObposPointOfSaleUiMultiReceiptView-multiReceiptWrapper {
   display: grid;
-  padding: 5px 10px;
   grid-auto-flow: row;
   grid-auto-columns: 100%;
   grid-auto-rows: auto 1fr;
+}
+
+.obObposPointOfSaleUiReceiptView-receiptWrapper {
+  padding: 5px 10px 5px 10px;
   height: calc(100% - 10px);
 }
 
@@ -7893,13 +7893,17 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /* Inherits: [OB.UI.OrderHeader] */
 }
 
-.obObposPointOfSaleUiReceiptView-receiptWrapper-receiptBody {
+.obObposPointOfSaleUiReceiptView-receiptWrapper-receiptBody,
+.obObposPointOfSaleUiMultiReceiptView-multiReceiptWrapper-multiorderview {
   display: grid;
-  grid-template-rows: auto 1fr;
   overflow-y: auto;
   background-color: white;
   box-shadow: 0px 0px 10px -1px #8D8D8D;
   border-radius: 4px;
+}
+
+.obObposPointOfSaleUiReceiptView-receiptWrapper-receiptBody {
+  grid-template-rows: auto 1fr;
 }
 
 .obObposPointOfSaleUiReceiptView-receiptWrapper-receiptBody-orderCaptions {}
@@ -7925,60 +7929,24 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /*
 # Component: OB.OBPOSPointOfSale.UI.MultiReceiptView
 */
-.obObposPointOfSaleUiMultiReceiptView {
-  float: left;
-  width: 50%;
-  touch-action: none;
+.obObposPointOfSaleUiMultiReceiptView {}
+
+.obObposPointOfSaleUiMultiReceiptView-multiReceiptWrapper {
+  padding: 25px 10px 5px 10px;
+  height: calc(100% - 35px);
 }
 
-.obObposPointOfSaleUiMultiReceiptView-container1 {
-  margin: 5px;
-}
+.obObposPointOfSaleUiMultiReceiptView-multiReceiptWrapper-container1 {}
 
-.obObposPointOfSaleUiMultiReceiptView-container1-container1 {
-  position: relative;
-  background-color: #ffffff;
-  color: #000000;
-  overflow-y: auto;
-  max-height: 622px;
-}
+.obObposPointOfSaleUiMultiReceiptView-multiReceiptWrapper-container1-container1 {}
 
-.obObposPointOfSaleUiMultiReceiptView-container1-container1-container1 {
-  padding: 5px;
-}
+.obObposPointOfSaleUiMultiReceiptView-multiReceiptWrapper-container1-container1-container1 {}
 
-.obObposPointOfSaleUiMultiReceiptView-container1-container1-container1-container1 {
-}
+.obObposPointOfSaleUiMultiReceiptView-multiReceiptWrapper-container1-container1-container1-container1 {}
 
-.obObposPointOfSaleUiMultiReceiptView-container1-container1-container1-container1-container1 {
-  float: left;
-  width: 100%;
-  touch-action: none;
+.obObposPointOfSaleUiMultiReceiptView-multiReceiptWrapper-multiorderview {
+  grid-template-rows: minmax(150px, 1fr) auto;
 }
-
-.obObposPointOfSaleUiMultiReceiptView-container1-container1-container1-container1-container1-container1 {
-  padding: 5px 0px 10px 0px;
-  border-bottom: 1px solid #cccccc;
-}
-
-.obObposPointOfSaleUiMultiReceiptView-container1-container1-container1-container1-container1-container1-element1 {
-  clear: both;
-}
-
-.obObposPointOfSaleUiMultiReceiptView-container1-container1-container1-container2 {
-  max-height: 536px;
-}
-
-.obObposPointOfSaleUiMultiReceiptView-container1-container1-container1-container2-container1 {
-  float: left;
-  width: 100%;
-  touch-action: none;
-}
-
-.obObposPointOfSaleUiMultiReceiptView-container1-container1-container1-container2-container1-multiorderview {
-  /* Inherits: [OB.UI.MultiOrderView] */
-}
-
 
 
 /***********************   ***********************/

@@ -18,58 +18,35 @@ enyo.kind({
   },
   components: [
     {
-      classes: 'obObposPointOfSaleUiMultiReceiptView-container1',
+      classes: 'obObposPointOfSaleUiMultiReceiptView-multiReceiptWrapper',
       components: [
         {
-          classes: 'obObposPointOfSaleUiMultiReceiptView-container1-container1',
+          classes:
+            'obObposPointOfSaleUiMultiReceiptView-multiReceiptWrapper-container1',
           components: [
             {
               classes:
-                'obObposPointOfSaleUiMultiReceiptView-container1-container1-container1',
+                'obObposPointOfSaleUiMultiReceiptView-multiReceiptWrapper-container1-container1',
               components: [
                 {
                   classes:
-                    'obObposPointOfSaleUiMultiReceiptView-container1-container1-container1-container1 row-fluid',
+                    'obObposPointOfSaleUiMultiReceiptView-multiReceiptWrapper-container1-container1-container1',
                   components: [
                     {
                       classes:
-                        'obObposPointOfSaleUiMultiReceiptView-container1-container1-container1-container1-container1',
-                      components: [
-                        {
-                          classes:
-                            'obObposPointOfSaleUiMultiReceiptView-container1-container1-container1-container1-container1-container1',
-                          components: [
-                            {
-                              classes:
-                                'obObposPointOfSaleUiMultiReceiptView-container1-container1-container1-container1-container1-container1-element1'
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  classes:
-                    'obObposPointOfSaleUiMultiReceiptView-container1-container1-container1-container2 row-fluid',
-                  components: [
-                    {
-                      classes:
-                        'obObposPointOfSaleUiMultiReceiptView-container1-container1-container1-container2-container1',
-                      components: [
-                        {
-                          kind: 'OB.UI.MultiOrderView',
-                          name: 'multiorderview',
-                          classes:
-                            'obObposPointOfSaleUiMultiReceiptView-container1-container1-container1-container2-container1-multiorderview'
-                        }
-                      ]
+                        'obObposPointOfSaleUiMultiReceiptView-multiReceiptWrapper-container1-container1-container1-container1'
                     }
                   ]
                 }
               ]
             }
           ]
+        },
+        {
+          kind: 'OB.UI.MultiOrderView',
+          name: 'multiorderview',
+          classes:
+            'obObposPointOfSaleUiMultiReceiptView-multiReceiptWrapper-multiorderview'
         }
       ]
     }
