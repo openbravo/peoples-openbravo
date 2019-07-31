@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+  <database name="FUNCTION OBPOS_GET_STARTDATE_TIMINGUNIT">
+    <function name="OBPOS_GET_STARTDATE_TIMINGUNIT" type="TIMESTAMP">
+      <parameter name="p_timing_unit" type="NUMERIC" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_timing" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
+      <body><![CDATA[v_ResultStr VARCHAR(2000) := '';
+  v_StartDate DATE:= NULL;
+BEGIN
+	IF(p_timing = 'H') THEN
+    	v_StartDate := now() - p_timing_unit * interval '1' hour;
+        --RAISE NOTICE 'Hour % ', v_StartDate;
+    ELSIF(p_timing = 'D') THEN
+    	v_StartDate := now() - p_timing_unit * interval '1' day;
+        --RAISE NOTICE 'DAY % ', v_StartDate;
+    ELSIF(p_timing = 'W') THEN
+    	v_StartDate := now() - p_timing_unit * interval '7' day;
+        --RAISE NOTICE 'WEEK % ', v_StartDate;
+    ELSIF(p_timing = 'M') THEN
+    	v_StartDate := now() - p_timing_unit * interval '1' month;
+        --RAISE NOTICE 'MONTH % ', v_StartDate;
+    ELSIF(p_timing = 'Y') THEN
+    	v_StartDate := now() - p_timing_unit * interval '1' year;
+        --RAISE NOTICE 'YEAR % ', v_StartDate;
+	END IF;
+    RETURN v_StartDate;
+EXCEPTION
+WHEN OTHERS THEN
+  v_ResultStr:= '@ERROR=' || SQLERRM;
+  DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
+  RAISE;
+  RETURN NULL;
+END OBPOS_GET_STARTDATE_TIMINGUNIT
+]]></body>
+    </function>
+  </database>
