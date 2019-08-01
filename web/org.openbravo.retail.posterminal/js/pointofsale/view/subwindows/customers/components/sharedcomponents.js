@@ -786,7 +786,7 @@ enyo.kind({
             name: 'line_' + natt.name,
             classes:
               'obObposPointOfSaleUiCustomersEditCreatecustomers-statisticsFields-obUiCustomerPropertyLine',
-            newAttribute: natt
+            coreElement: natt
           },
           {
             owner: me.attributeContainer
