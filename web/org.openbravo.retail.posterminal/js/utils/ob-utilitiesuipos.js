@@ -594,9 +594,11 @@ OB.UTIL.checkApproval = function(
                       _.each(
                         approvalType,
                         function(perm) {
+                          var approvalToCheck =
+                            typeof perm === 'object' ? perm.approval : perm;
                           if (
                             JSON.parse(user.get('terminalinfo')).permissions[
-                              perm
+                              approvalToCheck
                             ]
                           ) {
                             countApprovals += 1;
@@ -633,10 +635,12 @@ OB.UTIL.checkApproval = function(
                 _.each(
                   approvalType,
                   function(perm) {
+                    var approvalToCheck =
+                      typeof perm === 'object' ? perm.approval : perm;
                     if (
                       _.contains(
                         JSON.parse(supervisor.get('permissions')),
-                        perm
+                        approvalToCheck
                       )
                     ) {
                       countApprovals += 1;
@@ -664,9 +668,11 @@ OB.UTIL.checkApproval = function(
                           _.each(
                             approvalType,
                             function(perm) {
+                              var approvalToCheck =
+                                typeof perm === 'object' ? perm.approval : perm;
                               if (
                                 JSON.parse(user.get('terminalinfo'))
-                                  .permissions[perm]
+                                  .permissions[approvalToCheck]
                               ) {
                                 countApprovals += 1;
                                 supervisor = user;
