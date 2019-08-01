@@ -447,6 +447,10 @@ enyo.kind({
       },
       this
     );
+
+    if (OB.MobileApp.model.get('useBarcode')) {
+      OB.UTIL.setScanningFocus(true);
+    }
   },
   printTotals: function() {
     this.$.counted.printAmount(this.payment.get('foreignCounted'));
