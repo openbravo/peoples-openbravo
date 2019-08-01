@@ -33,6 +33,23 @@ enyo.kind({
     me.$.body.$.editcustomers_impl.setCustomer(this.args.businessPartner);
     var customerHeader = this.$.body.$.editcustomers_impl.$.bodyheader.$
       .editCustomerHeader;
+
+    //Statistics data fetch
+    if (
+      OB.MobileApp.model.get('context') &&
+      OB.MobileApp.model.get('context').organization && //
+      (OB.MobileApp.model.get('context').organization.obposRecencytiming !==
+        null || //
+      OB.MobileApp.model.get('context').organization.obposFrecuencytiming !==
+        null || //
+      OB.MobileApp.model.get('context').organization.obposMonetarytiming !==
+        null || //
+        OB.MobileApp.model.get('context').organization.obposAvgbaskettiming !==
+          null)
+    ) {
+      me.$.body.$.editcustomers_impl.$.statisticsLbl.setShowing(true);
+    }
+
     var buttonContainer = customerHeader.$.buttonContainer;
     Object.keys(buttonContainer.$).forEach(function(key, index) {
       if (
@@ -566,6 +583,68 @@ enyo.kind({
         return OB.MobileApp.model.hasPermission(
           'OBPOS_Cus360ShowContactPreferences',
           true
+        );
+      }
+    }
+  ],
+  statisticsAttributes: [
+    {
+      kind: 'OB.UI.CustomerStatisticsTextProperty',
+      name: 'recency',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-recency',
+      i18nLabel: 'OBPOS_LblRecency',
+      readOnly: true,
+      displayLogic: function() {
+        return (
+          OB.MobileApp.model.get('context') &&
+          OB.MobileApp.model.get('context').organization &&
+          OB.MobileApp.model.get('context').organization.obposRecencytiming !==
+            null
+        );
+      }
+    },
+    {
+      kind: 'OB.UI.CustomerStatisticsTextProperty',
+      name: 'frequency',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-frequency',
+      i18nLabel: 'OBPOS_LblFrequency',
+      readOnly: true,
+      displayLogic: function() {
+        return (
+          OB.MobileApp.model.get('context') &&
+          OB.MobileApp.model.get('context').organization &&
+          OB.MobileApp.model.get('context').organization
+            .obposFrecuencytiming !== null
+        );
+      }
+    },
+    {
+      kind: 'OB.UI.CustomerStatisticsTextProperty',
+      name: 'monetaryValue',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-monetaryValue',
+      i18nLabel: 'OBPOS_LblMonetaryVal',
+      readOnly: true,
+      displayLogic: function() {
+        return (
+          OB.MobileApp.model.get('context') &&
+          OB.MobileApp.model.get('context').organization &&
+          OB.MobileApp.model.get('context').organization.obposMonetarytiming !==
+            null
+        );
+      }
+    },
+    {
+      kind: 'OB.UI.CustomerStatisticsTextProperty',
+      name: 'averageCart',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-averageCart',
+      i18nLabel: 'OBPOS_LblAvgCart',
+      readOnly: true,
+      displayLogic: function() {
+        return (
+          OB.MobileApp.model.get('context') &&
+          OB.MobileApp.model.get('context').organization &&
+          OB.MobileApp.model.get('context').organization
+            .obposAvgbaskettiming !== null
         );
       }
     }

@@ -10029,14 +10029,18 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
-
 /*
 # Component: OB.UI.CustomerTextPropertyAddr
 # Inherits: [OB.UI.CustomerTextProperty]
 */
 .obUiCustomerTextPropertyAddr {}
 
-
+/*
+# Component: OB.UI.CustomerStatisticsTextProperty
+# Inherits: [enyo.Input]
+*/
+.obUiCustomerStatisticsTextProperty {}
+    
 /*
 # Component: OB.UI.SwitchShippingInvoicingAddr
 */
@@ -10170,6 +10174,18 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 /* Inherits: [OB.UI.CustomerPropertyLine] */
 }
 
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-statistics {}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-statistics-statisticsLbl {}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-statistics-statisticsFields {
+	display: grid;
+  	grid-auto-flow: column;
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-statisticsFields-obUiCustomerPropertyLine {
+/* Inherits: [OB.UI.CustomerPropertyLine] */
+}
 
 /*************************   *************************/
 /*         File: editcreatecustomerform.js           */
@@ -10644,6 +10660,22 @@ li.obUiListOrders-orderSelector_obOrder:last-child>button>div>div:last-child>div
 
 .obObPosPointOfSaleUiCustomersEditCustomersImpl-contactpreferences {
   /* Inherits: [OB.UI.CustomerCheckComboProperty] */
+}
+
+.obObPosPointOfSaleUiCustomersEditCustomersImpl-recency {
+	/* Inherits: [OB.UI.CustomerSatisticsTextProperty] */
+}
+
+.obObPosPointOfSaleUiCustomersEditCustomersImpl-frequency {
+	/* Inherits: [OB.UI.CustomerSatisticsTextProperty] */
+}
+
+.obObPosPointOfSaleUiCustomersEditCustomersImpl-monetaryValue {
+	/* Inherits: [OB.UI.CustomerSatisticsTextProperty] */
+}
+
+.obObPosPointOfSaleUiCustomersEditCustomersImpl-averageCart {
+	/* Inherits: [OB.UI.CustomerSatisticsTextProperty] */
 }
 
 

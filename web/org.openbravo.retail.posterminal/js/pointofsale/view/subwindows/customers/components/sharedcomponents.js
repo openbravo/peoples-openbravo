@@ -120,6 +120,19 @@ enyo.kind({
 });
 
 enyo.kind({
+  name: 'OB.UI.CustomerStatisticsTextProperty',
+  kind: 'OB.UI.FormElement.Input',
+  class: 'obUiCustomerStatisticsTextProperty',
+  type: 'text',
+  handlers: {
+    onLoadValue: 'loadValue'
+  },
+  loadValue: function(inSender, inEvent) {
+    this.setValue('100');
+  }
+});
+
+enyo.kind({
   name: 'OB.UI.SwitchShippingInvoicingAddr',
   kind: 'OB.UI.FormElement.Checkbox',
   classes: 'obUiSwitchShippingInvoicingAddr',
@@ -365,6 +378,25 @@ enyo.kind({
               ]
             }
           ]
+        },
+        {
+          name: 'statistics',
+          classes:
+            'obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-statistics',
+          components: [
+            {
+              name: 'statisticsLbl',
+              kind: 'OB.UI.FormSection.Label',
+              showing: false,
+              classes:
+                'obObposPointOfSaleUiCustomersEditCreatecustomers-statistics-statisticsLbl'
+            },
+            {
+              name: 'statisticsFields',
+              classes:
+                'obObposPointOfSaleUiCustomersEditCreatecustomers-statistics-statisticsFields u-clearBoth'
+            }
+          ]
         }
       ]
     }
@@ -495,6 +527,7 @@ enyo.kind({
         return regex.test(email) ? true : false;
       }
     }
+
     function validatePhoneFormat(phone) {
       //Validate that phone only have numbers
       var regex = new RegExp(/^([0-9])*$/);
@@ -668,6 +701,7 @@ enyo.kind({
     });
     this.$.shipLbl.setContent(OB.I18N.getLabel('OBPOS_LblShipAddr'));
     this.$.invLbl.setContent(OB.I18N.getLabel('OBPOS_LblBillAddr'));
+    this.$.statisticsLbl.setContent(OB.I18N.getLabel('OBPOS_LblStatistics'));
     this.attributeContainer = this.$.customerAttributes;
     //Sort Attributes
     if (OB.MobileApp.model.get('permissions').OBPOS_CustomerCompSortOrder) {
@@ -742,6 +776,24 @@ enyo.kind({
             name: 'line_' + natt.name,
             classes:
               'obObposPointOfSaleUiCustomersEditCreatecustomers-invoicingAddrFields-obUiCustomerPropertyLine',
+            newAttribute: natt
+          },
+          {
+            owner: me.attributeContainer
+          }
+        );
+      },
+      this
+    );
+    enyo.forEach(
+      this.statisticsAttributes,
+      function(natt) {
+        this.$.statisticsFields.createComponent(
+          {
+            kind: 'OB.UI.CustomerPropertyLine',
+            name: 'line_' + natt.name,
+            classes:
+              'obObposPointOfSaleUiCustomersEditCreatecustomers-statisticsFields-obUiCustomerPropertyLine',
             newAttribute: natt
           },
           {
