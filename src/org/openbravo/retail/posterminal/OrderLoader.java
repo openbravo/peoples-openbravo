@@ -9,6 +9,7 @@
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -1343,6 +1344,12 @@ public class OrderLoader extends POSDataSynchronizationProcess
       if (payment.optBoolean("isPrePayment", false)) {
         continue;
       }
+      
+      BigDecimal amount = BigDecimal.valueOf(payment.getDouble("origAmount"))
+          .setScale(pricePrecision, RoundingMode.HALF_UP);
+      if(amount.signum()==0) {
+        continue;
+      }
 
       String paymentTypeName = payment.getString("kind");
       OBCriteria<OBPOSAppPayment> type = OBDal.getInstance().createCriteria(OBPOSAppPayment.class);
@@ -1366,8 +1373,6 @@ public class OrderLoader extends POSDataSynchronizationProcess
         if (paymentType.getFinancialAccount() == null && account == null) {
           continue;
         }
-        BigDecimal amount = BigDecimal.valueOf(payment.getDouble("origAmount"))
-            .setScale(pricePrecision, RoundingMode.HALF_UP);
         BigDecimal tempWriteoffAmt = writeoffAmt;
         if (payment.has("reversedPaymentId")) {
           tempWriteoffAmt = BigDecimal.valueOf(payment.optDouble("overpayment", 0));
@@ -1642,8 +1647,12 @@ public class OrderLoader extends POSDataSynchronizationProcess
           order.getBusinessPartner(), paymentType.getPaymentMethod().getPaymentMethod(),
           account == null ? paymentType.getFinancialAccount() : account, origAmount.toString(),
           calculatedDate, paymentOrganization, null, paymentScheduleDetailList, paymentAmountMap,
-          false, false, order.getCurrency(), mulrate, amount, true,
-          payment.has("id") ? payment.getString("id") : null);
+          false, false, order.getCurrency(),
+          ((payment.has("precision") && payment.get("precision") != JSONObject.NULL)
+              && payment.getInt("precision") != pricePrecision)
+                  ? amount.divide(origAmount, MathContext.DECIMAL32)
+                  : mulrate,
+          amount, true, payment.has("id") ? payment.getString("id") : null);
 
       boolean doFlush = false;
 

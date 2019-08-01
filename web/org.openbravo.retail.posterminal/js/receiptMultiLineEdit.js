@@ -790,10 +790,9 @@ enyo.kind({
           kind: 'OB.UI.PropertyEditLine',
           name: 'line_' + natt.name,
           classes: 'obrdmUiModalReceiptMultiLinesProperties-line',
-          newAttribute: natt
+          coreElement: natt
         });
-        this.propertycomponents[natt.modelProperty] =
-          editline.propertycomponent;
+        this.propertycomponents[natt.modelProperty] = editline.coreElement;
         this.propertycomponents[natt.modelProperty].propertiesDialog = this;
       },
       this
@@ -846,7 +845,7 @@ enyo.kind({
       // This function is called when the user accepts on the properties dialog,
       // and applies the value selected to the row.
       applyValue: function(row) {
-        var value = this.$.renderCombo.getValue();
+        var value = this.getValue();
         row.set(this.modelProperty, value);
 
         if (value !== 'PickupInStoreDate' && value !== 'HomeDelivery') {
@@ -860,7 +859,7 @@ enyo.kind({
         return true;
       },
       init: function() {
-        this.$.renderCombo.change = function(inSender, inEvent) {
+        this.change = function(inSender, inEvent) {
           var cond = inSender.getValue();
           this.owner.owner.owner.owner.owner.owner.waterfallDown('onShowhide', {
             showDate: cond === 'PickupInStoreDate' || cond === 'HomeDelivery',

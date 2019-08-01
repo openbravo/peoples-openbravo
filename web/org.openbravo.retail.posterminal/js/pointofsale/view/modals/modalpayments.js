@@ -112,8 +112,8 @@ enyo.kind({
                   tap: function() {
                     if (!item.disabled) {
                       var dialog = this.owner.owner.owner;
-                      dialog.doHideThisPopup();
                       dialog.selectItem = true;
+                      dialog.doHideThisPopup();
                       dialog.bubble('onPaymentChanged', {
                         payment: this.payment,
                         status: this.payment.payment.searchKey,

@@ -49,15 +49,12 @@ enyo.kind({
         this.$.body.$.edit_createcustomers_impl.$.customerAttributes.$,
         function(attribute) {
           if (attribute.name !== 'strategy') {
-            _.each(
-              attribute.$.newAttribute.$,
-              function(attrObject) {
-                if (attrObject.displayLogic && !attrObject.displayLogic()) {
-                  this.hide();
-                }
-              },
-              attribute
-            );
+            if (
+              attribute.coreElement.displayLogic &&
+              !attribute.coreElement.displayLogic()
+            ) {
+              attribute.hide();
+            }
           }
         }
       );

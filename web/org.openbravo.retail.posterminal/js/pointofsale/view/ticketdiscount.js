@@ -33,143 +33,58 @@ enyo.kind({
       thumb: true,
       components: [
         {
-          classes: 'obObposPointOfSaleUiDiscounts-scroller-container1',
-          components: [
-            {
-              classes:
-                'obObposPointOfSaleUiDiscounts-scroller-container1-container1',
-              components: [
-                {
-                  classes:
-                    'obObposPointOfSaleUiDiscounts-scroller-container1-container1-element1',
-                  initComponents: function() {
-                    this.setContent(OB.I18N.getLabel('OBPOS_LineDiscount'));
-                  }
-                }
-              ]
-            },
-            {
-              name: 'discountsContainer',
-              classes:
-                'obObposPointOfSaleUiDiscounts-scroller-container1-discountsContainer',
-              components: [
-                {
-                  name: 'discountsList',
-                  classes:
-                    'obObposPointOfSaleUiDiscounts-scroller-container1-discountsContainer-discountsList',
-                  kind: 'OB.UI.DiscountList'
-                }
-              ]
-            }
-          ]
-        },
-        {
-          classes: 'obObposPointOfSaleUiDiscounts-scroller-container2'
-        },
-        {
-          classes: 'obObposPointOfSaleUiDiscounts-scroller-container3',
-          components: [
-            {
-              classes:
-                'obObposPointOfSaleUiDiscounts-scroller-container3-container1',
-              components: [
-                {
-                  classes:
-                    'obObposPointOfSaleUiDiscounts-scroller-container3-container1-container1',
-                  initComponents: function() {
-                    this.setContent(
-                      OB.I18N.getLabel('OBPOS_overridePromotions')
-                    );
-                  }
-                }
-              ]
-            },
-            {
-              classes:
-                'obObposPointOfSaleUiDiscounts-scroller-container3-container2',
-              components: [
-                {
-                  classes:
-                    'obObposPointOfSaleUiDiscounts-scroller-container3-container2-container1',
-                  components: [
-                    {
-                      kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnCheckOverride',
-                      name: 'checkOverride',
-                      classes:
-                        'obObposPointOfSaleUiDiscounts-scroller-container3-container2-container1-checkOverride'
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        {
+          kind: 'OB.UI.FormElement',
+          name: 'formElementDiscountsList',
           classes:
-            'obObposPointOfSaleUiDiscounts-scroller-container3-container3'
+            'obUiFormElement_dataEntry obUiFormElement_dataEntry_noicon obObposPointOfSaleUiDiscounts-scroller-formElementDiscountsList',
+          coreElement: {
+            kind: 'OB.UI.DiscountList',
+            name: 'discountsList',
+            i18nLabel: 'OBPOS_LineDiscount',
+            classes:
+              'obObposPointOfSaleUiDiscounts-scroller-formElementDiscountsList-discountsList'
+          }
         },
         {
-          name: 'applyCheckSelectAll',
+          kind: 'OB.UI.FormElement',
+          name: 'formElementCheckOverride',
           classes:
-            'obObposPointOfSaleUiDiscounts-scroller-container3-applyCheckSelectAll',
-          components: [
-            {
-              classes:
-                'obObposPointOfSaleUiDiscounts-scroller-container3-applyCheckSelectAll-container1',
-              components: [
-                {
-                  classes:
-                    'obObposPointOfSaleUiDiscounts-scroller-container3-applyCheckSelectAll-container1-element1',
-                  initComponents: function() {
-                    this.setContent(OB.I18N.getLabel('OBPOS_applyToAllLines'));
-                  }
-                }
-              ]
-            },
-            {
-              classes:
-                'obObposPointOfSaleUiDiscounts-scroller-container3-applyCheckSelectAll-container2',
-              components: [
-                {
-                  classes:
-                    'obObposPointOfSaleUiDiscounts-scroller-container3-applyCheckSelectAll-container2-container1',
-                  components: [
-                    {
-                      kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnCheckAll',
-                      name: 'checkSelectAll',
-                      classes:
-                        'obObposPointOfSaleUiDiscounts-scroller-container3-applyCheckSelectAll-container2-container1-checkSelectAll'
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
+            'obUiFormElement_dataEntry obUiFormElement_dataEntry_noicon obObposPointOfSaleUiDiscounts-scroller-formElementCheckOverride',
+          coreElement: {
+            kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnCheckOverride',
+            name: 'checkOverride',
+            i18nLabel: 'OBPOS_overridePromotions',
+            classes:
+              'obObposPointOfSaleUiDiscounts-scroller-formElementCheckOverride-checkOverride'
+          }
         },
         {
+          kind: 'OB.UI.FormElement',
+          name: 'formElementCheckSelectAll',
           classes:
-            'obObposPointOfSaleUiDiscounts-scroller-container3-container4'
+            'obUiFormElement_dataEntry obUiFormElement_dataEntry_noicon obObposPointOfSaleUiDiscounts-scroller-formElementCheckSelectAll',
+          coreElement: {
+            kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnCheckAll',
+            name: 'checkSelectAll',
+            i18nLabel: 'OBPOS_applyToAllLines',
+            classes:
+              'obObposPointOfSaleUiDiscounts-scroller-formElementCheckSelectAll-checkSelectAll'
+          }
         }
       ]
     },
     {
-      classes: 'obObposPointOfSaleUiDiscounts-container1',
+      classes: 'obObposPointOfSaleUiDiscounts-buttons',
       components: [
         {
-          classes: 'obObposPointOfSaleUiDiscounts-container1-container1',
-          components: [
-            {
-              kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsApply',
-              name: 'btnApply',
-              classes:
-                'obObposPointOfSaleUiDiscounts-container1-container1-btnApply'
-            },
-            {
-              kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsCancel',
-              classes:
-                'obObposPointOfSaleUiDiscounts-container1-container1-obObposPointOfSaleUiBtnDiscountsCancel'
-            }
-          ]
+          kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsApply',
+          name: 'btnApply',
+          classes: 'obObposPointOfSaleUiDiscounts-buttons-btnApply'
+        },
+        {
+          kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsCancel',
+          classes:
+            'obObposPointOfSaleUiDiscounts-buttons-obObposPointOfSaleUiBtnDiscountsCancel'
         }
       ]
     }
@@ -267,7 +182,7 @@ enyo.kind({
           me.discountChanged(
             {},
             {
-              originator: me.$.discountsList,
+              originator: me.$.formElementDiscountsList.coreElement,
               model: model,
               amt: amt,
               requiresQty: requiresQty,
@@ -280,8 +195,8 @@ enyo.kind({
         //show an error in combo
         var tr;
         me.discounts.reset();
-        tr = me.$.discountsList.createComponent({
-          kind: 'enyo.Option',
+        tr = me.$.formElementDiscountsList.coreElement.createComponent({
+          kind: 'OB.UI.FormElement.Select.Option',
           text: OB.I18N.getLabel('OBPOS_errorGettingDiscounts'),
           value: 'error',
           initComponents: function() {
@@ -325,7 +240,7 @@ enyo.kind({
   },
   _searchSelectedComponent: function(selectedId) {
     return _.find(
-      this.$.discountsList.getComponents(),
+      this.$.formElementDiscountsList.coreElement.getComponents(),
       function(comp) {
         if (comp.getValue() === selectedId) {
           return true;
@@ -341,7 +256,9 @@ enyo.kind({
       });
       return;
     }
-    var comp = this._searchSelectedComponent(this.$.discountsList.getValue());
+    var comp = this._searchSelectedComponent(
+      this.$.formElementDiscountsList.coreElement.getValue()
+    );
     if (comp.units === '%' && OB.DEC.toBigDecimal(inEvent.qty) > 100) {
       this.doShowPopup({
         popup: 'modalNotValidValueForDiscount'
@@ -349,7 +266,7 @@ enyo.kind({
       return;
     }
     comp.setContent(comp.originalText + ' - ' + inEvent.qty + ' ' + comp.units);
-    this.$.discountsContainer.amt = inEvent.qty;
+    this.$.formElementDiscountsList.amt = inEvent.qty;
   },
   initComponents: function() {
     var discountsModel = Backbone.Collection.extend({
@@ -358,14 +275,14 @@ enyo.kind({
     this.inherited(arguments);
 
     this.discounts = new discountsModel();
-    this.$.discountsList.setCollection(this.discounts);
+    this.$.formElementDiscountsList.coreElement.setCollection(this.discounts);
   },
   ticketLineChecked: function(inSender, inEvent) {
     var activateButton = false;
     if (inEvent.allChecked) {
-      this.$.checkSelectAll.check();
+      this.$.formElementCheckSelectAll.coreElement.check();
     } else {
-      this.$.checkSelectAll.unCheck();
+      this.$.formElementCheckSelectAll.coreElement.unCheck();
     }
     this.checkedLines = inEvent.checkedLines;
 
@@ -381,22 +298,22 @@ enyo.kind({
     ) {
       this.$.btnApply.setDisabled(false);
       this.$.btnApply.addClass(
-        'obObposPointOfSaleUiDiscounts-container1-container1-btnApply_activate'
+        '.obObposPointOfSaleUiDiscounts-buttons-btnApply_activate'
       );
     } else {
       this.$.btnApply.setDisabled(true);
       this.$.btnApply.addClass(
-        'obObposPointOfSaleUiDiscounts-container1-container1-btnApply_desactivate'
+        '.obObposPointOfSaleUiDiscounts-buttons-btnApply_desactivate'
       );
     }
   },
   discountChanged: function(inSender, inEvent) {
     // Build discount container info
-    var discountsContainer = this.$.discountsContainer;
-    discountsContainer.model = inEvent.model;
-    discountsContainer.requiresQty = inEvent.requiresQty;
-    discountsContainer.amt = inEvent.amt;
-    discountsContainer.units = inEvent.units;
+    var formElementDiscountsList = this.$.formElementDiscountsList;
+    formElementDiscountsList.model = inEvent.model;
+    formElementDiscountsList.requiresQty = inEvent.requiresQty;
+    formElementDiscountsList.amt = inEvent.amt;
+    formElementDiscountsList.units = inEvent.units;
 
     // Disable keyboard if rule is fixed, otherwise, enable keyboard
     if (
@@ -412,7 +329,7 @@ enyo.kind({
       'OBPOS_preDiscountChangeHook',
       {
         context: this,
-        discountsContainer: discountsContainer,
+        formElementDiscountsList: formElementDiscountsList,
         inEvent: inEvent,
         hideLineSelectionOptions: false
       },
@@ -421,54 +338,56 @@ enyo.kind({
           return;
         }
         if (
-          OB.UTIL.isNullOrUndefined(args.discountsContainer) ||
-          OB.UTIL.isNullOrUndefined(args.discountsContainer.model)
+          OB.UTIL.isNullOrUndefined(args.formElementDiscountsList) ||
+          OB.UTIL.isNullOrUndefined(args.formElementDiscountsList.model)
         ) {
           // Mandatory infornation
           OB.UTIL.showError(
             'Critical discount information is missing: ' +
-              (args.discountsContainer
+              (args.formElementDiscountsList
                 ? 'Discount model'
                 : 'Discount Container')
           );
         } else if (
-          OB.UTIL.isNullOrUndefined(args.discountsContainer.amt) ||
-          OB.UTIL.isNullOrUndefined(args.discountsContainer.units)
+          OB.UTIL.isNullOrUndefined(args.formElementDiscountsList.amt) ||
+          OB.UTIL.isNullOrUndefined(args.formElementDiscountsList.units)
         ) {
           // Without this information, the discounts could not be applied
           OB.UTIL.showWarning(
             'Some discount information is missing, the promotion could not be applied: ' +
-              (args.discountsContainer.amt
+              (args.formElementDiscountsList.amt
                 ? 'Discount units'
                 : 'Discount amount')
           );
         }
         if (args.hideLineSelectionOptions) {
-          args.context.$.applyCheckSelectAll.hide();
+          args.context.$.formElementCheckSelectAll.hide();
           args.context.order.get('lines').trigger('hideAllCheckBtn');
           args.context.$.btnApply.setDisabled(false);
           args.context.$.btnApply.addClass(
-            'obObposPointOfSaleUiDiscounts-container1-container1-btnApply_activate'
+            '.obObposPointOfSaleUiDiscounts-buttons-btnApply_activate'
           );
         } else {
-          args.context.$.applyCheckSelectAll.show();
+          args.context.$.formElementCheckSelectAll.show();
           args.context.order.get('lines').trigger('showAllCheckBtn');
 
           if (
             args.context.checkedLines.length > 0 &&
             ((!OB.UTIL.isNullOrUndefined(args.context.discounts) &&
               args.context.discounts.length !== 0) ||
-              (!OB.UTIL.isNullOrUndefined(args.discountsContainer) &&
-                !OB.UTIL.isNullOrUndefined(args.discountsContainer.model)))
+              (!OB.UTIL.isNullOrUndefined(args.formElementDiscountsList) &&
+                !OB.UTIL.isNullOrUndefined(
+                  args.formElementDiscountsList.model
+                )))
           ) {
             args.context.$.btnApply.setDisabled(false);
             args.context.$.btnApply.addClass(
-              'obObposPointOfSaleUiDiscounts-container1-container1-btnApply_activate'
+              '.obObposPointOfSaleUiDiscounts-buttons-btnApply_activate'
             );
           } else {
             args.context.$.btnApply.setDisabled(true);
             args.context.$.btnApply.addClass(
-              'obObposPointOfSaleUiDiscounts-container1-container1-btnApply_desactivate'
+              '.obObposPointOfSaleUiDiscounts-buttons-btnApply_desactivate'
             );
           }
         }
@@ -477,7 +396,7 @@ enyo.kind({
   },
   closingDiscounts: function(inSender, inEvent) {
     OB.MobileApp.view.scanningFocus(true);
-    this.$.checkSelectAll.unCheck();
+    this.$.formElementCheckSelectAll.coreElement.unCheck();
     this.setShowing(false);
     this.doDiscountsModeFinished({
       tabPanel: 'scan',
@@ -489,8 +408,8 @@ enyo.kind({
     });
   },
   applyDiscounts: function(inSender, inEvent) {
-    var promotionToAplly = {},
-      discountsContainer = this.$.discountsContainer,
+    var promotionToApply = {},
+      formElementDiscountsList = this.$.formElementDiscountsList,
       orderLinesCollection = new OB.Collection.OrderLineList(),
       me = this;
     //preApplyDiscountsHook
@@ -504,15 +423,18 @@ enyo.kind({
           me.closingDiscounts();
           return;
         }
-        promotionToAplly.rule = discountsContainer.model;
-        promotionToAplly.definition = {};
-        promotionToAplly.definition.userAmt = discountsContainer.amt;
-        promotionToAplly.definition.applyNext = !me.$.checkOverride.checked;
-        promotionToAplly.definition.lastApplied = true;
-        promotionToAplly.definition.obdiscLineFinalgross =
-          discountsContainer.amt;
+        promotionToApply.rule = formElementDiscountsList.model;
+        promotionToApply.definition = {};
+        promotionToApply.definition.userAmt = formElementDiscountsList.amt;
+        promotionToApply.definition.applyNext = !me.$.formElementCheckOverride.coreElement.getChecked();
+        promotionToApply.definition.lastApplied = true;
+        promotionToApply.definition.obdiscLineFinalgross =
+          formElementDiscountsList.amt;
 
-        if (discountsContainer.requiresQty && !discountsContainer.amt) {
+        if (
+          formElementDiscountsList.requiresQty &&
+          !formElementDiscountsList.amt
+        ) {
           //Show a modal pop up with the error
           me.doShowPopup({
             popup: 'modalDiscountNeedQty'
@@ -526,7 +448,7 @@ enyo.kind({
         OB.Model.Discounts.addManualPromotion(
           me.order,
           orderLinesCollection,
-          promotionToAplly
+          promotionToApply
         );
 
         me.closingDiscounts();
@@ -557,7 +479,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Discounts.btnCheckAll',
-  kind: 'OB.UI.CheckboxButton',
+  kind: 'OB.UI.FormElement.Checkbox',
   classes: 'obObposPointOfSaleUiDiscountsBtnCheckAll',
   events: {
     onCheckAllTicketLines: ''
@@ -573,7 +495,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Discounts.btnCheckOverride',
-  kind: 'OB.UI.CheckboxButton',
+  kind: 'OB.UI.FormElement.Checkbox',
   classes: 'obObposPointOfSaleUiDiscountsBtnCheckOverride',
   checked: false
 });
@@ -594,7 +516,6 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.DiscountList',
   kind: 'OB.UI.List',
-  tag: 'select',
   handlers: {
     onchange: 'changeDiscount'
   },
@@ -622,7 +543,7 @@ enyo.kind({
       units = '%';
     }
 
-    this.owner.discountChanged(
+    this.formElement.owner.discountChanged(
       {},
       {
         originator: this,
@@ -636,7 +557,7 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'enyo.Option',
+  kind: 'OB.UI.FormElement.Select.Option',
   name: 'OB.UI.DiscountList.Options',
   classses: 'obUiDiscountListOptions',
   initComponents: function() {

@@ -104,23 +104,51 @@ enyo.kind({
   ],
   newButtonComponents: [
     {
-      classes: 'obUiOrderHeader-buttonComponents-bpbutton',
-      kind: 'OB.UI.BusinessPartnerSelector',
-      name: 'bpbutton'
+      classes:
+        'obUiFormElement_dataEntry obUiFormElement_dataEntry_noicon obUiOrderHeader-buttonComponents-formElementBpbutton',
+      kind: 'OB.UI.FormElement',
+      name: 'formElementBpbutton',
+      coreElement: {
+        classes:
+          'obUiOrderHeader-buttonComponents-formElementBpbutton-bpbutton',
+        kind: 'OB.UI.BusinessPartnerSelector',
+        i18nLabel: 'OBPOS_LblCustomer',
+        hideNullifyButton: true,
+        name: 'bpbutton'
+      }
     },
     {
       name: 'separator',
       classes: 'obUiOrderHeader-buttonComponents-separator'
     },
     {
-      classes: 'obUiOrderHeader-buttonComponents-bplocbutton',
-      kind: 'OB.UI.BPLocation',
-      name: 'bplocbutton'
+      classes:
+        'obUiFormElement_dataEntry obUiFormElement_dataEntry_noicon obUiOrderHeader-buttonComponents-formElementBplocbutton',
+      kind: 'OB.UI.FormElement',
+      name: 'formElementBplocbutton',
+      coreElement: {
+        classes:
+          'obUiOrderHeader-buttonComponents-formElementBplocbutton-bplocbutton',
+        kind: 'OB.UI.BPLocation',
+        i18nLabel: 'OBPOS_LblBillAddr',
+        hideNullifyButton: true,
+        name: 'bplocbutton'
+      }
     },
     {
-      classes: 'obUiOrderHeader-buttonComponents-bplocshipbutton',
-      kind: 'OB.UI.BPLocationShip',
-      name: 'bplocshipbutton'
+      classes:
+        'obUiFormElement_dataEntry obUiFormElement_dataEntry_noicon obUiOrderHeader-buttonComponents-formElementBplocshipbutton',
+      kind: 'OB.UI.FormElement',
+      name: 'formElementBplocshipbutton',
+      showing: false,
+      coreElement: {
+        classes:
+          'obUiOrderHeader-buttonComponents-formElementBplocshipbutton-bplocshipbutton',
+        kind: 'OB.UI.BPLocationShip',
+        i18nLabel: 'OBPOS_LblShipAddr',
+        hideNullifyButton: true,
+        name: 'bplocshipbutton'
+      }
     }
   ],
   components: [
@@ -130,9 +158,9 @@ enyo.kind({
     },
     {
       kind: 'OB.UI.ActionButtonArea',
-      name: 'obpos_pointofsale-receipttoolbar1',
+      name: 'abaReceiptToolbar1',
       abaIdentifier: 'obpos_pointofsale-receipttoolbar1',
-      classes: 'obpos_pointofsale-receipttoolbar1'
+      classes: 'obUiOrderHeader-abaReceiptToolbar1'
     },
     {
       name: 'receiptButtons',
@@ -157,6 +185,8 @@ enyo.kind({
       function(comp) {
         if (comp.setOrder) {
           comp.setOrder(this.order);
+        } else if (comp.coreElement && comp.coreElement.setOrder) {
+          comp.coreElement.setOrder(this.order);
         }
       },
       this
@@ -211,6 +241,45 @@ enyo.kind({
 });
 
 enyo.kind({
+  name: 'OB.UI.OrderCaptions',
+  classes: 'obUiOrderCaptions',
+  components: [
+    {
+      name: 'description',
+      classes: 'obUiOrderCaptions-description',
+      i18nContent: 'OBPOS_LineDescription',
+      initComponents: function() {
+        this.setContent(OB.I18N.getLabel(this.i18nContent));
+      }
+    },
+    {
+      name: 'quantity',
+      classes: 'obUiOrderCaptions-quantity',
+      i18nContent: 'OBPOS_LineQuantity',
+      initComponents: function() {
+        this.setContent(OB.I18N.getLabel(this.i18nContent));
+      }
+    },
+    {
+      name: 'unitprice',
+      classes: 'obUiOrderCaptions-unitprice',
+      i18nContent: 'OBPOS_LineUnitPrice',
+      initComponents: function() {
+        this.setContent(OB.I18N.getLabel(this.i18nContent));
+      }
+    },
+    {
+      name: 'linetotal',
+      classes: 'obUiOrderCaptions-linetotal',
+      i18nContent: 'OBPOS_LineLineTotal',
+      initComponents: function() {
+        this.setContent(OB.I18N.getLabel(this.i18nContent));
+      }
+    }
+  ]
+});
+
+enyo.kind({
   name: 'OB.UI.OrderFooter',
   classes: 'obUiOrderFooter row-fluid span12',
   published: {
@@ -255,9 +324,6 @@ enyo.kind({
     {
       name: 'totalgross',
       classes: 'obUiTotalMultiReceiptLine-totalgross'
-    },
-    {
-      classes: 'obUiTotalMultiReceiptLine-element1'
     }
   ],
   renderTotal: function(newTotal) {
@@ -284,6 +350,7 @@ enyo.kind({
     },
     {
       kind: 'OB.UI.FitText',
+      maxFontSize: 20,
       classes: 'obUiTotalReceiptLine-obUiFitTextQty fitText',
       components: [
         {
@@ -295,6 +362,7 @@ enyo.kind({
     },
     {
       kind: 'OB.UI.FitText',
+      maxFontSize: 20,
       classes: 'obUiTotalReceiptLine-obUiFitTextGross fitText',
       components: [
         {
@@ -303,9 +371,6 @@ enyo.kind({
           name: 'totalgross'
         }
       ]
-    },
-    {
-      classes: 'obUiTotalReceiptLine-element1'
     }
   ],
   renderTotal: function(newTotal) {
@@ -383,9 +448,6 @@ enyo.kind({
     {
       classes: 'obUiTaxBreakdown-lblTotalTaxBreakdown',
       name: 'lblTotalTaxBreakdown'
-    },
-    {
-      classes: 'obUiTaxBreakdown-element1'
     }
   ],
   initComponents: function() {
@@ -397,42 +459,23 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.SmallButton',
+  kind: 'OB.UI.FormElement',
   name: 'OB.UI.BtnReceiptToInvoice',
+  classes:
+    'obUiFormElement_dataEntry obUiFormElement_dataEntry_noicon obUiBtnReceiptToInvoice',
   events: {
     onCancelReceiptToInvoice: ''
   },
-  classes: 'obUiBtnReceiptToInvoice',
-  tap: function() {
-    this.doCancelReceiptToInvoice();
-  }
-});
-
-enyo.kind({
-  name: 'btninvoice',
-  classes: 'btnInvoice',
-  showing: false,
-  components: [
-    {
-      classes: 'btnInvoice-obUiBtnReceiptToInvoice',
-      kind: 'OB.UI.BtnReceiptToInvoice'
-    },
-    {
-      classes: 'btnInvoice-element1',
-      tag: 'span',
-      content: ' '
-    },
-    {
-      tag: 'span',
-      classes: 'btnInvoice-lblInvoiceReceipt',
-      name: 'lblInvoiceReceipt'
+  coreElement: {
+    kind: 'OB.UI.FormElement.Checkbox',
+    i18nLabel: 'OBPOS_LblInvoiceReceipt',
+    checked: true,
+    tap: function() {
+      this.formElement.doCancelReceiptToInvoice();
     }
-  ],
+  },
   initComponents: function() {
     this.inherited(arguments);
-    this.$.lblInvoiceReceipt.setContent(
-      OB.I18N.getLabel('OBPOS_LblInvoiceReceipt')
-    );
   }
 });
 
@@ -664,19 +707,19 @@ enyo.kind({
     },
     {
       tag: 'ul',
-      classes: 'obUiOrderView-container1',
+      classes: 'obUiOrderView-totalAndBreakdowns',
       components: [
         {
           tag: 'li',
-          classes: 'obUiOrderView-container1-container1',
+          classes: 'obUiOrderView-totalAndBreakdowns-row1',
           components: [
             {
-              classes: 'obUiOrderView-container1-container1-totalTaxLine',
+              classes: 'obUiOrderView-totalAndBreakdowns-row1-totalTaxLine',
               kind: 'OB.UI.TotalTaxLine',
               name: 'totalTaxLine'
             },
             {
-              classes: 'obUiOrderView-container1-container1-totalReceiptLine',
+              classes: 'obUiOrderView-totalAndBreakdowns-row1-totalReceiptLine',
               kind: 'OB.UI.TotalReceiptLine',
               name: 'totalReceiptLine'
             }
@@ -684,31 +727,27 @@ enyo.kind({
         },
         {
           tag: 'li',
-          classes: 'obUiOrderView-container1-container2',
+          classes: 'obUiOrderView-totalAndBreakdowns-row2',
           components: [
             {
-              classes: 'obUiOrderView-container1-container2-injectedFooter',
+              classes: 'obUiOrderView-totalAndBreakdowns-row2-injectedFooter',
               name: 'injectedFooter'
             },
             {
-              classes: 'obUiOrderView-container1-container2-container1',
+              classes: 'obUiOrderView-totalAndBreakdowns-row2-status',
               components: [
                 {
-                  kind: 'btninvoice',
+                  kind: 'OB.UI.BtnReceiptToInvoice',
                   classes:
-                    'obUiOrderView-container1-container2-container1-divbtninvoice',
+                    'obUiOrderView-totalAndBreakdowns-row2-status-divbtninvoice',
                   name: 'divbtninvoice',
                   showing: false
                 },
                 {
                   kind: 'OB.UI.OrderViewDivText',
                   classes:
-                    'obUiOrderView-container1-container2-container1-divText',
+                    'obUiOrderView-totalAndBreakdowns-row2-status-divText',
                   name: 'divText'
-                },
-                {
-                  classes:
-                    'obUiOrderView-container1-container2-container1-element1'
                 }
               ]
             }
@@ -716,28 +755,21 @@ enyo.kind({
         },
         {
           tag: 'li',
-          classes: 'obUiOrderView-container1-container3',
+          classes: 'obUiOrderView-totalAndBreakdowns-row3',
           components: [
             {
-              name: 'taxBreakdownDiv',
-              classes: 'obUiOrderView-container1-container3-taxBreakdownDiv',
-              components: [
-                {
-                  kind: 'OB.UI.TaxBreakdown',
-                  classes:
-                    'obUiOrderView-container1-container3-taxBreakdownDiv-taxBreakdown',
-                  name: 'taxBreakdown'
-                }
-              ]
+              kind: 'OB.UI.TaxBreakdown',
+              classes: 'obUiOrderView-totalAndBreakdowns-row3-taxBreakdown',
+              name: 'taxBreakdown'
             }
           ]
         },
         {
           kind: 'OB.UI.ScrollableTable',
-          classes: 'obUiOrderView-container1-listTaxLines',
+          classes: 'obUiOrderView-totalAndBreakdowns-listTaxLines',
           name: 'listTaxLines',
           scrollAreaClasses:
-            'obUiOrderView-container1-listTaxLines-scrollAreaClasses',
+            'obUiOrderView-totalAndBreakdowns-listTaxLines-scrollAreaClasses',
           renderLine: 'OB.UI.RenderTaxLine',
           renderEmpty: 'OB.UI.RenderTaxLineEmpty',
           //defined on redenderorderline.js
@@ -746,26 +778,16 @@ enyo.kind({
         },
         {
           tag: 'li',
-          classes: 'obUiOrderView-container1-container5',
+          classes: 'obUiOrderView-totalAndBreakdowns-row5',
           components: [
             {
               name: 'paymentBreakdown',
-              classes: 'obUiOrderView-container1-container5-paymentBreakdown',
+              classes: 'obUiOrderView-totalAndBreakdowns-row5-paymentBreakdown',
               showing: false,
               components: [
                 {
-                  classes: 'obUiOrderView-paymentBreakdown-container1',
-                  components: [
-                    {
-                      classes:
-                        'obUiOrderView-paymentBreakdown-container1-lblTotalPayment',
-                      name: 'lblTotalPayment'
-                    },
-                    {
-                      classes:
-                        'obUiOrderView-paymentBreakdown-container1-element1'
-                    }
-                  ]
+                  classes: 'obUiOrderView-paymentBreakdown-lblTotalPayment',
+                  name: 'lblTotalPayment'
                 }
               ]
             }
@@ -773,11 +795,11 @@ enyo.kind({
         },
         {
           kind: 'OB.UI.ScrollableTable',
-          classes: 'obUiOrderView-container1-listPaymentLines',
+          classes: 'obUiOrderView-totalAndBreakdowns-listPaymentLines',
           name: 'listPaymentLines',
           showing: false,
           scrollAreaClasses:
-            'obUiOrderView-container1-listPaymentLines-scrollArea',
+            'obUiOrderView-totalAndBreakdowns-listPaymentLines-scrollArea',
           renderLine: 'OB.UI.RenderPaymentLine',
           renderEmpty: 'OB.UI.RenderPaymentLineEmpty',
           //defined on redenderorderline.js
@@ -859,7 +881,7 @@ enyo.kind({
 
       this.$.listTaxLines.setCollection(taxList);
     } else {
-      this.$.taxBreakdownDiv.hide();
+      this.$.taxBreakdown.hide();
     }
   },
   toggleSelectionTable: function(inSender, inEvent) {
@@ -1659,15 +1681,15 @@ enyo.kind({
     },
     {
       tag: 'ul',
-      classes: 'obUiMultiOrderView-container1',
+      classes: 'obUiMultiOrderView-totalAndBreakdowns',
       components: [
         {
-          classes: 'obUiMultiOrderView-container1-container1',
+          classes: 'obUiMultiOrderView-totalAndBreakdowns-row1',
           tag: 'li',
           components: [
             {
               classes:
-                'obUiMultiOrderView-container1-container1-totalMultiReceiptLine',
+                'obUiMultiOrderView-totalAndBreakdowns-row1-totalMultiReceiptLine',
               kind: 'OB.UI.TotalMultiReceiptLine',
               name: 'totalMultiReceiptLine'
             }
@@ -1675,23 +1697,14 @@ enyo.kind({
         },
         {
           tag: 'li',
-          classes: 'obUiMultiOrderView-container1-container2',
+          classes: 'obUiMultiOrderView-totalAndBreakdowns-row2',
           components: [
             {
-              classes: 'obUiMultiOrderView-container1-container2-container1',
-              components: [
-                {
-                  classes:
-                    'obUiMultiOrderView-container1-container2-container1-multiOrderBtnInvoice',
-                  kind: 'btninvoice',
-                  name: 'multiOrder_btninvoice',
-                  showing: false
-                },
-                {
-                  classes:
-                    'obUiMultiOrderView-container1-container2-container1-element1'
-                }
-              ]
+              classes:
+                'obUiMultiOrderView-totalAndBreakdowns-row2-multiOrderBtnInvoice',
+              kind: 'OB.UI.BtnReceiptToInvoice',
+              name: 'multiOrder_btninvoice',
+              showing: false
             }
           ]
         }

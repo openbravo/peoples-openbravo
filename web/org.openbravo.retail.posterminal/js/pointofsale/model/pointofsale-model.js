@@ -565,6 +565,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         function callbackPaymentCancelled(callbackToExecuteAfter) {
           OB.UTIL.ProcessController.finish('paymentDone', execution);
           receipt.unset('paymentDone');
+          receipt.unset('completeTicket');
           // Review this showLoading false
           //OB.UTIL.showLoading(false);
           if (callbackToExecuteAfter instanceof Function) {
@@ -747,35 +748,39 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             payment = paymentList.at(paymentListIndex),
             paymentLine;
 
-          function addPaymentLine(paymentLine, payment, addPaymentCallback) {
-            OB.UTIL.HookManager.executeHooks(
-              'OBPOS_MultiOrderAddPaymentLine',
-              {
-                paymentLine: paymentLine,
-                origPayment: payment
-              },
-              function(args) {
-                order.addPayment(args.paymentLine, function() {
-                  updateAmountToLayaway(
-                    order,
-                    args.paymentLine.get('origAmount')
-                  );
-                  if (addPaymentCallback instanceof Function) {
-                    addPaymentCallback();
-                  }
-                });
-              }
-            );
-          }
+          if (payment.get('origAmount')) {
+            var addPaymentLine = function(
+              paymentLine,
+              payment,
+              addPaymentCallback
+            ) {
+              OB.UTIL.HookManager.executeHooks(
+                'OBPOS_MultiOrderAddPaymentLine',
+                {
+                  paymentLine: paymentLine,
+                  origPayment: payment
+                },
+                function(args) {
+                  order.addPayment(args.paymentLine, function() {
+                    updateAmountToLayaway(
+                      order,
+                      args.paymentLine.get('origAmount')
+                    );
+                    if (addPaymentCallback instanceof Function) {
+                      addPaymentCallback();
+                    }
+                  });
+                }
+              );
+            };
 
-          if (
-            orderListIndex === orderList.length - 1 &&
-            !considerPrepaymentAmount
-          ) {
-            // Transfer everything
-            order.set('changePayments', changePayments);
-            if (paymentListIndex < paymentList.length) {
-              if (OB.DEC.compare(payment.get('origAmount')) !== 0) {
+            if (
+              orderListIndex === orderList.length - 1 &&
+              !considerPrepaymentAmount
+            ) {
+              // Transfer everything
+              order.set('changePayments', changePayments);
+              if (paymentListIndex < paymentList.length) {
                 // Pending payments to add
                 paymentLine = new OB.Model.PaymentLine();
                 OB.UTIL.clone(payment, paymentLine);
@@ -795,104 +800,104 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                   );
                 });
               } else {
+                // No more payments to add, finish the process
+                if (callback instanceof Function) {
+                  // Process finished
+                  callback();
+                }
+              }
+            } else {
+              var amountToPay;
+              if (!OB.UTIL.isNullOrUndefined(order.get('amountToLayaway'))) {
+                amountToPay = order.get('amountToLayaway');
+              } else if (considerPrepaymentAmount) {
+                amountToPay = OB.DEC.sub(
+                  order.get('obposPrepaymentamt')
+                    ? order.get('obposPrepaymentamt')
+                    : order.get('gross'),
+                  order.get('payment')
+                );
+              } else {
+                amountToPay = OB.DEC.sub(
+                  order.get('gross'),
+                  order.get('payment')
+                );
+              }
+              if (OB.DEC.compare(amountToPay) > 0) {
+                var paymentMethod =
+                  OB.MobileApp.model.paymentnames[payment.get('kind')];
+                paymentLine = new OB.Model.PaymentLine();
+                OB.UTIL.clone(payment, paymentLine);
+
+                if (payment.get('origAmount') <= amountToPay) {
+                  // Use all the remaining payment amount for this receipt
+                  payment.set('origAmount', OB.DEC.Zero);
+                  payment.set('amount', OB.DEC.Zero);
+                  addPaymentLine(paymentLine, payment, function() {
+                    setPaymentsToReceipts(
+                      orderList,
+                      paymentList,
+                      changePayments,
+                      orderListIndex,
+                      paymentListIndex + 1,
+                      considerPrepaymentAmount,
+                      callback
+                    );
+                  });
+                } else {
+                  // Get part of the payment and go with the next order
+                  var amountToPayForeign = OB.DEC.mul(
+                    amountToPay,
+                    paymentMethod.mulrate,
+                    paymentMethod.obposPosprecision
+                  );
+                  payment.set(
+                    'origAmount',
+                    OB.DEC.sub(payment.get('origAmount'), amountToPay)
+                  );
+                  payment.set(
+                    'amount',
+                    OB.DEC.sub(payment.get('amount'), amountToPayForeign)
+                  );
+
+                  paymentLine.set('origAmount', amountToPay);
+                  paymentLine.set('amount', amountToPayForeign);
+
+                  addPaymentLine(paymentLine, payment, function() {
+                    setPaymentsToReceipts(
+                      orderList,
+                      paymentList,
+                      changePayments,
+                      orderListIndex + 1,
+                      paymentListIndex,
+                      considerPrepaymentAmount,
+                      callback
+                    );
+                  });
+                }
+              } else {
+                // This order is already paid, go to the next order
                 setPaymentsToReceipts(
                   orderList,
                   paymentList,
                   changePayments,
-                  orderListIndex,
-                  paymentListIndex + 1,
+                  orderListIndex + 1,
+                  paymentListIndex,
                   considerPrepaymentAmount,
                   callback
                 );
               }
-            } else {
-              // No more payments to add, finish the process
-              if (callback instanceof Function) {
-                // Process finished
-                callback();
-              }
             }
           } else {
-            var amountToPay;
-            if (!OB.UTIL.isNullOrUndefined(order.get('amountToLayaway'))) {
-              amountToPay = order.get('amountToLayaway');
-            } else if (considerPrepaymentAmount) {
-              amountToPay = OB.DEC.sub(
-                order.get('obposPrepaymentamt')
-                  ? order.get('obposPrepaymentamt')
-                  : order.get('gross'),
-                order.get('payment')
-              );
-            } else {
-              amountToPay = OB.DEC.sub(
-                order.get('gross'),
-                order.get('payment')
-              );
-            }
-            if (OB.DEC.compare(amountToPay) > 0) {
-              var paymentMethod =
-                OB.MobileApp.model.paymentnames[payment.get('kind')];
-              paymentLine = new OB.Model.PaymentLine();
-              OB.UTIL.clone(payment, paymentLine);
-
-              if (payment.get('origAmount') <= amountToPay) {
-                // Use all the remaining payment amount for this receipt
-                payment.set('origAmount', OB.DEC.Zero);
-                payment.set('amount', OB.DEC.Zero);
-                addPaymentLine(paymentLine, payment, function() {
-                  setPaymentsToReceipts(
-                    orderList,
-                    paymentList,
-                    changePayments,
-                    orderListIndex,
-                    paymentListIndex + 1,
-                    considerPrepaymentAmount,
-                    callback
-                  );
-                });
-              } else {
-                // Get part of the payment and go with the next order
-                var amountToPayForeign = OB.DEC.mul(
-                  amountToPay,
-                  paymentMethod.mulrate,
-                  paymentMethod.obposPosprecision
-                );
-                payment.set(
-                  'origAmount',
-                  OB.DEC.sub(payment.get('origAmount'), amountToPay)
-                );
-                payment.set(
-                  'amount',
-                  OB.DEC.sub(payment.get('amount'), amountToPayForeign)
-                );
-
-                paymentLine.set('origAmount', amountToPay);
-                paymentLine.set('amount', amountToPayForeign);
-
-                addPaymentLine(paymentLine, payment, function() {
-                  setPaymentsToReceipts(
-                    orderList,
-                    paymentList,
-                    changePayments,
-                    orderListIndex + 1,
-                    paymentListIndex,
-                    considerPrepaymentAmount,
-                    callback
-                  );
-                });
-              }
-            } else {
-              // This order is already paid, go to the next order
-              setPaymentsToReceipts(
-                orderList,
-                paymentList,
-                changePayments,
-                orderListIndex + 1,
-                paymentListIndex,
-                considerPrepaymentAmount,
-                callback
-              );
-            }
+            setPaymentsToReceipts(
+              orderList,
+              paymentList,
+              changePayments,
+              orderListIndex,
+              paymentListIndex + 1,
+              considerPrepaymentAmount,
+              callback
+            );
           }
         };
 
@@ -959,6 +964,12 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               },
               function(args) {
                 if (args && args.cancellation && args.cancellation === true) {
+                  _.each(
+                    me.get('multiOrders').get('multiOrdersList').models,
+                    function(currentOrder) {
+                      currentOrder.unset('completeTicket');
+                    }
+                  );
                   me.get('multiOrders').trigger('paymentCancel');
                   return;
                 }
@@ -1511,6 +1522,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                                       edit: false
                                     });
                                     receipt.set('hasbeenpaid', 'N');
+                                    receipt.unset('completeTicket');
                                     receipt.trigger('updatePending');
                                     OB.Dal.save(
                                       receipt,

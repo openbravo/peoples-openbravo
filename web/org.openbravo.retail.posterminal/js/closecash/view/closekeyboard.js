@@ -170,15 +170,6 @@ enyo.kind({
                     );
                     return;
                   }
-                  if (payment.get('paymentMethod').iscash && convAmt < 0) {
-                    OB.UTIL.showWarning(
-                      OB.I18N.getLabel(
-                        'OBPOS_CashUpNegativeAmtForCashPayment',
-                        [amt]
-                      )
-                    );
-                    return;
-                  }
                   payment.set('foreignCounted', OB.DEC.add(0, convAmt));
                   payment.set(
                     'counted',

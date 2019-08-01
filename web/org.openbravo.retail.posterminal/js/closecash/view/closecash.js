@@ -68,14 +68,8 @@ enyo.kind({
     },
     {
       name: 'btnToggleView',
-      kind: 'OB.UI.ComplexButton',
+      kind: 'OB.UI.Button',
       classes: 'obObPosCashUpUiLeftToolbarImpl-btnToggleView',
-      disabledClass: 'obObPosCashUpUiLeftToolbarImpl-btnToggleView_disabled',
-      buttonBeforeClass:
-        'obObPosCashUpUiLeftToolbarImpl-btnToggleView-buttonBefore',
-      buttonAfterClass:
-        'obObPosCashUpUiLeftToolbarImpl-btnToggleView-buttonAfter',
-      labelClass: 'obObPosCashUpUiLeftToolbarImpl-btnToggleView-labelClass',
       i18nLabel: 'OBPOS_LblSwitchView',
       tap: function() {
         if (!this.disabled) {

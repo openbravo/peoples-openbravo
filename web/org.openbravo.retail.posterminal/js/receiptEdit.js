@@ -32,7 +32,7 @@ var ReceiptDeliveryModeDefinition = {
   //This function is called when the user accepts on the properties dialog,
   // and applies the value selected to the row.
   applyChange: function() {
-    var value = this.$.renderCombo.getValue();
+    var value = this.getValue();
     this.model.set(this.modelProperty, value);
   },
   setModel: function(inSender, inEvent) {
@@ -40,7 +40,7 @@ var ReceiptDeliveryModeDefinition = {
   },
   init: function(model) {
     this.model = model.get('order');
-    this.$.renderCombo.change = function(inSender, inEvent) {
+    this.change = function(inSender, inEvent) {
       var cond = inSender.getValue(),
         showDate = cond === 'PickupInStoreDate' || cond === 'HomeDelivery',
         showTime = cond === 'HomeDelivery',
@@ -240,12 +240,12 @@ OB.UI.ModalReceiptPropertiesImpl.prototype.newAttributes.push(
         line_ReceiptDeliveryDate = this.owner.owner.$.bodyContent.$.attributes.$
           .line_ReceiptDeliveryDate,
         dateComponent = line_ReceiptDeliveryDate
-          ? line_ReceiptDeliveryDate.$.newAttribute.$.ReceiptDeliveryDate
+          ? line_ReceiptDeliveryDate.$.coreElement
           : undefined,
         line_ReceiptDeliveryTime = this.owner.owner.$.bodyContent.$.attributes.$
           .line_ReceiptDeliveryTime,
         timeComponent = line_ReceiptDeliveryTime
-          ? line_ReceiptDeliveryTime.$.newAttribute.$.ReceiptDeliveryTime
+          ? line_ReceiptDeliveryTime.$.coreElement
           : undefined;
       if (dateComponent && dateComponent.owner.owner.getShowing()) {
         var dateSelected = dateComponent.getValue(),

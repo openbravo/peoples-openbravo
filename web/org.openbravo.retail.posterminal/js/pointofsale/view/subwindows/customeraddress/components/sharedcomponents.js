@@ -203,13 +203,13 @@ enyo.kind({
         var errors = '',
           customerAddr = form.model.get('customerAddr');
         _.each(form.$.customerAddrAttributes.children, function(item) {
-          if (item.newAttribute.mandatory) {
-            var value = customerAddr.get(item.newAttribute.modelProperty);
+          if (item.coreElement.mandatory) {
+            var value = customerAddr.get(item.coreElement.modelProperty);
             if (!value) {
               if (errors) {
                 errors += ', ';
               }
-              errors += OB.I18N.getLabel(item.newAttribute.i18nLabel);
+              errors += OB.I18N.getLabel(item.coreElement.i18nLabel);
             }
           }
         });
@@ -517,7 +517,7 @@ enyo.kind({
             classes:
               'obObposPointOfSaleUiCustomeraddrEditCreatecustomers-customerAddrAttributes-obUiCustomerPropertyLine',
             name: 'line_' + natt.name,
-            newAttribute: natt
+            coreElement: natt
           });
         }
       },
@@ -581,6 +581,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.CustomerAddrComboProperty',
   classes: 'obUiCustomerAddrComboProperty',
+  kind: 'OB.UI.List',
   handlers: {
     onLoadValue: 'loadValue',
     onSaveChange: 'saveChange',
@@ -592,47 +593,36 @@ enyo.kind({
     onSaveProperty: '',
     onSetValues: ''
   },
-  components: [
-    {
-      kind: 'OB.UI.List',
-      name: 'customerAddrCombo',
-      classes: 'obUiCustomerAddrComboProperty-customerAddrCombo',
-      renderLine: enyo.kind({
-        kind: 'enyo.Option',
-        classes:
-          'obUiCustomerAddrComboProperty-customerAddrCombo-renderLine-enyoOption',
-        initComponents: function() {
-          this.inherited(arguments);
-          this.setValue(
-            this.model.get(this.parent.parent.retrievedPropertyForValue)
-          );
-          this.setContent(
-            this.model.get(this.parent.parent.retrievedPropertyForText)
-          );
-        }
-      }),
-      renderEmpty: 'enyo.Control'
+  renderLine: enyo.kind({
+    kind: 'OB.UI.FormElement.Select.Option',
+    classes:
+      'obUiCustomerAddrComboProperty-customerAddrCombo-renderLine-enyoOption',
+    initComponents: function() {
+      this.inherited(arguments);
+      this.setValue(this.model.get(this.parent.retrievedPropertyForValue));
+      this.setContent(this.model.get(this.parent.retrievedPropertyForText));
     }
-  ],
+  }),
+  renderEmpty: 'enyo.Control',
   valueSet: function(inSender, inEvent) {
     var i;
     if (inEvent.data.hasOwnProperty(this.modelProperty)) {
-      for (i = 0; i < this.$.customerAddrCombo.getCollection().length; i++) {
+      for (i = 0; i < this.getCollection().length; i++) {
         if (
-          this.$.customerAddrCombo.getCollection().models[i].get('id') ===
+          this.getCollection().models[i].get('id') ===
           inEvent.data[this.modelProperty]
         ) {
-          this.$.customerAddrCombo.setSelected(i);
+          this.setSelected(i);
           break;
         }
       }
     }
   },
   retrieveValue: function(inSender, inEvent) {
-    inEvent[this.modelProperty] = this.$.customerAddrCombo.getValue();
+    inEvent[this.modelProperty] = this.getValue();
   },
   loadValue: function(inSender, inEvent) {
-    this.$.customerAddrCombo.setCollection(this.collection);
+    this.setCollection(this.collection);
     this.fetchDataFunction(inEvent);
   },
   change: function() {},
@@ -673,13 +663,13 @@ enyo.kind({
       this
     );
     if (result) {
-      this.$.customerAddrCombo.setSelected(index);
+      this.setSelected(index);
     } else {
-      this.$.customerAddrCombo.setSelected(0);
+      this.setSelected(0);
     }
   },
   saveChange: function(inSender, inEvent) {
-    var selected = this.collection.at(this.$.customerAddrCombo.getSelected());
+    var selected = this.collection.at(this.getSelected());
     inEvent.customerAddr.set(
       this.modelProperty,
       selected.get(this.retrievedPropertyForValue)
@@ -703,8 +693,5 @@ enyo.kind({
       OB.info('OB.UI.CustomerAddrComboProperty: Collection is required');
     }
     this.inherited(arguments);
-    if (this.readOnly) {
-      this.setAttribute('readonly', 'readonly');
-    }
   }
 });

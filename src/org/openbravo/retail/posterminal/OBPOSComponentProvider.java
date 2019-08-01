@@ -160,9 +160,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "pointofsale/model/pointofsale-model", "pointofsale/model/localstock",
         "pointofsale/model/otherstoresstock", "pointofsale/view/pointofsale",
         "pointofsale/view/ps-receiptview", "pointofsale/view/ps-multireceiptview",
-        "pointofsale/view/ps-productdetailsview", "pointofsale/view/obpos-toolbar", "pointofsale/view/toolbar-left",
-        "pointofsale/view/toolbar-right", "pointofsale/view/scan", "pointofsale/view/editline",
-        "pointofsale/view/payment", "pointofsale/view/ticketdiscount",
+        "pointofsale/view/ps-productdetailsview", "pointofsale/view/obpos-toolbar",
+        "pointofsale/view/toolbar-left", "pointofsale/view/toolbar-right", "pointofsale/view/scan",
+        "pointofsale/view/editline", "pointofsale/view/payment", "pointofsale/view/ticketdiscount",
         "pointofsale/view/keyboard-toolbars", "pointofsale/view/keyboardorder",
         // Point of sale subwindows
         "pointofsale/view/subwindows/customers/components/sharedcomponents",
@@ -257,7 +257,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         prefix + "utils/openhardwareurl.js", ComponentResource.APP_OB3));
 
     // [TODO] Remove pos-login and obpos-legacy after the renaming
-    final String[] cssDependency = { "pos-login", "obpos-main", "obpos-main-uiconfig", "new-obpos-main" };
+    final String[] cssDependency = { "pos-login", "new-obpos-main" };
 
     for (final String resource : resourceDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,

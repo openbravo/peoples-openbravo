@@ -313,9 +313,6 @@ enyo.kind({
     {
       kind: 'OB.UI.ActionButton',
       name: 'deleteLine',
-      hideSubcomponentsOnDisabled: false,
-      disabledClass:
-        'obObposPointOfSaleUiEditLine-propertiesToShow-general_disabled',
       classes:
         'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-deleteLine',
       action: {
@@ -326,9 +323,6 @@ enyo.kind({
     {
       kind: 'OB.UI.ActionButton',
       name: 'descriptionButton',
-      hideSubcomponentsOnDisabled: false,
-      disabledClass:
-        'obObposPointOfSaleUiEditLine-propertiesToShow-general_disabled',
       classes:
         'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-descriptionButton',
       action: {
@@ -339,9 +333,6 @@ enyo.kind({
     {
       kind: 'OB.UI.ActionButton',
       name: 'returnLine',
-      hideSubcomponentsOnDisabled: false,
-      disabledClass:
-        'obObposPointOfSaleUiEditLine-propertiesToShow-general_disabled',
       classes:
         'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-returnLine',
       action: {
@@ -352,9 +343,6 @@ enyo.kind({
     {
       kind: 'OB.UI.ActionButton',
       name: 'splitlineButton',
-      hideSubcomponentsOnDisabled: false,
-      disabledClass:
-        'obObposPointOfSaleUiEditLine-propertiesToShow-general_disabled',
       classes:
         'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-splitlineButton',
       action: {
@@ -365,9 +353,6 @@ enyo.kind({
     {
       kind: 'OB.UI.SmallButton',
       name: 'showRelatedServices',
-      hideSubcomponentsOnDisabled: false,
-      disabledClass:
-        'obObposPointOfSaleUiEditLine-propertiesToShow-general_disabled',
       classes:
         'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-showRelatedServices',
       permission: 'OBPOS_ActionButtonShowRelatedServices',
@@ -432,9 +417,6 @@ enyo.kind({
     {
       kind: 'OB.UI.SmallButton',
       name: 'removeDiscountButton',
-      hideSubcomponentsOnDisabled: false,
-      disabledClass:
-        'obObposPointOfSaleUiEditLine-propertiesToShow-general_disabled',
       i18nContent: 'OBPOS_LblRemoveDiscount',
       showing: false,
       classes:
@@ -495,9 +477,6 @@ enyo.kind({
     {
       kind: 'OB.UI.ActionButton',
       name: 'checkStockButton',
-      hideSubcomponentsOnDisabled: false,
-      disabledClass:
-        'obObposPointOfSaleUiEditLine-propertiesToShow-general_disabled',
       classes:
         'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-checkStockButton',
       action: {
@@ -508,9 +487,6 @@ enyo.kind({
     {
       kind: 'OB.OBPOSPointOfSale.UI.EditLine.OpenAttributeButton',
       name: 'openAttributeButton',
-      hideSubcomponentsOnDisabled: false,
-      disabledClass:
-        'obObposPointOfSaleUiEditLine-propertiesToShow-general_disabled',
       classes:
         'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-openAttributeButton',
       showing: false
@@ -518,9 +494,6 @@ enyo.kind({
     {
       kind: 'OB.UI.SmallButton',
       name: 'addAssociationsButton',
-      hideSubcomponentsOnDisabled: false,
-      disabledClass:
-        'obObposPointOfSaleUiEditLine-propertiesToShow-general_disabled',
       i18nContent: 'OBPOS_AddAssociations',
       showing: false,
       classes:
@@ -538,9 +511,6 @@ enyo.kind({
     {
       kind: 'OB.UI.SmallButton',
       name: 'removeAssociationsButton',
-      hideSubcomponentsOnDisabled: false,
-      disabledClass:
-        'obObposPointOfSaleUiEditLine-propertiesToShow-general_disabled',
       i18nContent: 'OBPOS_RemoveAssociations',
       showing: false,
       classes:
@@ -558,9 +528,6 @@ enyo.kind({
     {
       kind: 'OB.UI.SmallButton',
       name: 'canDeliver',
-      hideSubcomponentsOnDisabled: false,
-      disabledClass:
-        'obObposPointOfSaleUiEditLine-propertiesToShow-general_disabled',
       classes:
         'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-canDeliver',
       content: '-',
@@ -686,15 +653,18 @@ enyo.kind({
           ? true
           : false;
       if (this.selectedModels.length > 1) {
-        var selectedLinesToDeliver = _.filter(this.selectedModels, function(
-          line
-        ) {
-          return (
-            (line.get('obposCanbedelivered') &&
-              line.get('deliveredQuantity') < line.get('qty')) ||
-            OB.UTIL.isCrossStoreLine(line)
-          );
-        });
+        var canBeDeliveredLine = this.selectedModels[0].get(
+            'obposCanbedelivered'
+          ),
+          selectedLinesToDeliver = _.filter(this.selectedModels, function(
+            line
+          ) {
+            return (
+              (line.get('obposCanbedelivered') === canBeDeliveredLine &&
+                !line.getDeliveredQuantity()) ||
+              OB.UTIL.isCrossStoreLine(line)
+            );
+          });
         this.hideDeliveryButton = this.hideDeliveryButton
           ? true
           : selectedLinesToDeliver.length &&
@@ -716,8 +686,7 @@ enyo.kind({
       } else if (this.selectedModels.length === 1) {
         if (
           this.hideDeliveryButton ||
-          this.selectedModels[0].get('deliveredQuantity') <
-            this.selectedModels[0].get('qty') ||
+          this.selectedModels[0].getDeliveredQuantity() ||
           OB.UTIL.isCrossStoreLine(this.selectedModels[0])
         ) {
           this.$.actionButtonsContainer.$.canDeliver.hide();
@@ -755,7 +724,7 @@ enyo.kind({
         this.$.actionButtonsContainer.$.addAssociationsButton.hide();
         this.$.actionButtonsContainer.$.removeAssociationsButton.hide();
       }
-      this.$.returnreason.setSelected(0);
+      this.$.formElementReturnreason.coreElement.setSelected(0);
       if (this.line) {
         this.line.off('change', this.render);
       }
@@ -981,46 +950,10 @@ enyo.kind({
                 'obObposPointOfSaleUiEditLine-msgedit-actionButtonsContainer span12'
             },
             {
-              kind: 'OB.UI.List',
-              name: 'returnreason',
-              classes: 'obObposPointOfSaleUiEditLine-msgedit-returnreason',
-              events: {
-                onSetReason: ''
-              },
-              handlers: {
-                onchange: 'changeReason'
-              },
-              changeReason: function(inSender, inEvent) {
-                var returnReason = this.children[this.getSelected()].getValue();
-                _.each(this.owner.selectedModels, function(line) {
-                  if (returnReason === '') {
-                    line.unset('returnReason');
-                  } else {
-                    line.set('returnReason', returnReason);
-                  }
-                });
-              },
-              renderHeader: enyo.kind({
-                kind: 'enyo.Option',
-                classes:
-                  'obObposPointOfSaleUiEditLine-returnreason-renderHeader-enyoOption',
-                initComponents: function() {
-                  this.inherited(arguments);
-                  this.setValue('');
-                  this.setContent(OB.I18N.getLabel('OBPOS_ReturnReasons'));
-                }
-              }),
-              renderLine: enyo.kind({
-                kind: 'enyo.Option',
-                classes:
-                  'obObposPointOfSaleUiEditLine-returnreason-renderLine-enyoOption',
-                initComponents: function() {
-                  this.inherited(arguments);
-                  this.setValue(this.model.get('id'));
-                  this.setContent(this.model.get('_identifier'));
-                }
-              }),
-              renderEmpty: 'enyo.Control'
+              kind: 'OB.OBPOSPointOfSale.UI.EditLine.ReturnReason',
+              name: 'formElementReturnreason',
+              classes:
+                'obObposPointOfSaleUiEditLine-msgedit-formElementReturnreason'
             },
             {
               classes: 'obObposPointOfSaleUiEditLine-msgedit-container3 span12',
@@ -1167,31 +1100,38 @@ enyo.kind({
         !this.receipt.get('isPaid')
       ) {
         if (!_.isUndefined(this.line.get('returnReason'))) {
-          selectedReason = _.filter(this.$.returnreason.children, function(
-            reason
-          ) {
-            return reason.getValue() === me.line.get('returnReason');
-          })[0];
+          selectedReason = _.filter(
+            this.$.formElementReturnreason.coreElement.children,
+            function(reason) {
+              return reason.getValue() === me.line.get('returnReason');
+            }
+          )[0];
           if (selectedReason) {
-            this.$.returnreason.setSelected(
+            this.$.formElementReturnreason.coreElement.setSelected(
               selectedReason.getNodeProperty('index')
             );
           }
         }
-        this.$.returnreason.show();
+        this.$.formElementReturnreason.show();
         this.$.linePropertiesContainer.addClass(
           'obObposPointOfSaleUiEditLine-linePropertiesContainer_withReturnReasons'
         );
         this.$.linePropertiesContainer.removeClass(
           'obObposPointOfSaleUiEditLine-linePropertiesContainer_withoutReturnReasons'
+        );
+        this.$.contextImage.addClass(
+          'obObposPointOfSaleUiEditLine-msgedit-container3-contextImage_withReturnReasons'
         );
       } else {
-        this.$.returnreason.hide();
+        this.$.formElementReturnreason.hide();
         this.$.linePropertiesContainer.addClass(
           'obObposPointOfSaleUiEditLine-linePropertiesContainer_withoutReturnReasons'
         );
         this.$.linePropertiesContainer.removeClass(
           'obObposPointOfSaleUiEditLine-linePropertiesContainer_withReturnReasons'
+        );
+        this.$.contextImage.removeClass(
+          'obObposPointOfSaleUiEditLine-msgedit-container3-contextImage_withReturnReasons'
         );
       }
     } else {
@@ -1355,7 +1295,7 @@ enyo.kind({
   init: function(model) {
     this.model = model;
     this.reasons = new OB.Collection.ReturnReasonList();
-    this.$.returnreason.setCollection(this.reasons);
+    this.$.formElementReturnreason.coreElement.setCollection(this.reasons);
 
     this.model.get('order').on(
       'change:isPaid change:isLayaway change:isQuotation',
@@ -1386,6 +1326,49 @@ enyo.kind({
       errorCallback,
       this
     );
+  }
+});
+
+enyo.kind({
+  kind: 'OB.UI.FormElement',
+  name: 'OB.OBPOSPointOfSale.UI.EditLine.ReturnReason',
+  classes:
+    'obUiFormElement_dataEntry obUiFormElement_dataEntry_noicon obObposPointOfSaleUiEditLineReturnReasom',
+  coreElement: {
+    kind: 'OB.UI.List',
+    i18nLabel: 'OBPOS_ReturnReason',
+    classes: 'obObposPointOfSaleUiEditLine-msgedit-returnreason',
+    change: function(inSender, inEvent) {
+      var returnReason = this.children[this.getSelected()].getValue();
+      _.each(this.formElement.owner.selectedModels, function(line) {
+        if (returnReason === '') {
+          line.unset('returnReason');
+        } else {
+          line.set('returnReason', returnReason);
+        }
+      });
+    },
+    renderHeader: enyo.kind({
+      kind: 'OB.UI.FormElement.Select.Option',
+      classes:
+        'obObposPointOfSaleUiEditLine-returnreason-renderHeader-enyoOption',
+      initComponents: function() {
+        this.inherited(arguments);
+        this.setValue('');
+        this.setContent('');
+      }
+    }),
+    renderLine: enyo.kind({
+      kind: 'OB.UI.FormElement.Select.Option',
+      classes:
+        'obObposPointOfSaleUiEditLine-returnreason-renderLine-enyoOption',
+      initComponents: function() {
+        this.inherited(arguments);
+        this.setValue(this.model.get('id'));
+        this.setContent(this.model.get('_identifier'));
+      }
+    }),
+    renderEmpty: 'enyo.Control'
   }
 });
 
