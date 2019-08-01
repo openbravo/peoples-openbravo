@@ -22,6 +22,7 @@ import org.openbravo.client.kernel.BaseComponentProvider.ComponentResource.Compo
 import org.openbravo.client.kernel.Component;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.mobile.core.MobileCoreConstants;
+import org.openbravo.retail.discounts.DiscountsEngineAppComponentProvider;
 import org.openbravo.retail.posterminal.locale.POSApplicationFormatComponent;
 
 /**
@@ -34,8 +35,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
   static {
     // Set dependency on Mobile Core app
-    BaseComponentProvider.setAppDependencies(POSUtils.APP_NAME,
-        Arrays.asList(MobileCoreConstants.RETAIL_CORE));
+    BaseComponentProvider.setAppDependencies(POSUtils.APP_NAME, Arrays.asList(
+        MobileCoreConstants.RETAIL_CORE, DiscountsEngineAppComponentProvider.DISCOUNTS_APP));
   }
 
   public static final String QUALIFIER = "OBPOS_Main";
