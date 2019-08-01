@@ -27,17 +27,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 
-import org.apache.axis.MessageContext;
-import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.base.ConnectionProviderContextListener;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
@@ -49,9 +44,9 @@ import org.openbravo.service.centralrepository.CentralRepository.Service;
 import org.openbravo.service.centralrepository.Module;
 import org.openbravo.service.centralrepository.ModuleDependency;
 import org.openbravo.service.centralrepository.ModuleInstallDetail;
+import org.openbravo.service.db.DalConnectionProvider;
 
 public class VersionUtility {
-  protected static ConnectionProvider pool;
   static Logger log4j = LogManager.getLogger();
 
   private static class Mod {
@@ -74,25 +69,6 @@ public class VersionUtility {
     String modId;
     String modName;
     String enforcement;
-  }
-
-  public VersionUtility() {
-    initPool();
-  }
-
-  static private void initPool() {
-    if (log4j.isDebugEnabled()) {
-      log4j.debug("init");
-    }
-    try {
-      HttpServlet srv = (HttpServlet) MessageContext.getCurrentContext()
-          .getProperty(HTTPConstants.MC_HTTP_SERVLET);
-      ServletContext context = srv.getServletContext();
-      pool = ConnectionProviderContextListener.getPool(context);
-    } catch (Exception e) {
-      log4j.error("Error : initPool");
-      log4j.error(e.getStackTrace());
-    }
   }
 
   static private boolean checkVersion(String depParentMod, Dep dep, Mod mod,
@@ -324,7 +300,7 @@ public class VersionUtility {
    * Modules IDs excluding the ones to be merged
    */
   static private HashMap<String, Mod> fillModules(Module[] modulesToMerge) throws ServletException {
-    VersionUtilityData[] data = VersionUtilityData.readModules(pool);
+    VersionUtilityData[] data = VersionUtilityData.readModules(new DalConnectionProvider(false));
     HashMap<String, Mod> modules = new HashMap<String, Mod>();
     for (int i = 0; i < data.length; i++) {
       if (!isInList(data[i].adModuleId, modulesToMerge)
@@ -383,9 +359,11 @@ public class VersionUtility {
 
     VersionUtilityData[] data;
     if (installed) {
-      data = VersionUtilityData.readDependencies(pool, modID, include ? "Y" : "N");
+      data = VersionUtilityData.readDependencies(new DalConnectionProvider(false), modID,
+          include ? "Y" : "N");
     } else {
-      data = VersionUtilityData.readDependenciesToInstall(pool, modID, include ? "Y" : "N");
+      data = VersionUtilityData.readDependenciesToInstall(new DalConnectionProvider(false), modID,
+          include ? "Y" : "N");
     }
     HashMap<String, Dep> hashDep = new HashMap<String, Dep>();
     for (int i = 0; i < data.length; i++) {
@@ -702,7 +680,7 @@ public class VersionUtility {
 
     String[] errors = mid.getDependencyErrors();
 
-    getOBError(obErrors, pool, vars, errors);
+    getOBError(obErrors, new DalConnectionProvider(false), vars, errors);
     return mid;
   }
 
@@ -729,11 +707,7 @@ public class VersionUtility {
         vecErrors);
 
     String[] errors = vecErrors.toArray(new String[0]);
-    getOBError(obErrors, pool, vars, errors);
+    getOBError(obErrors, new DalConnectionProvider(false), vars, errors);
     return checked;
-  }
-
-  static public void setPool(ConnectionProvider cp) {
-    pool = cp;
   }
 }

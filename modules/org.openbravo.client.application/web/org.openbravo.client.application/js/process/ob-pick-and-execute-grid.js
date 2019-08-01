@@ -1042,6 +1042,23 @@ isc.OBPickAndExecuteGrid.addProperties({
     }
   },
 
+  setEditValue: function(
+    rowNum,
+    colNum,
+    newValue,
+    suppressDisplay,
+    suppressChange
+  ) {
+    this.Super('setEditValue', arguments);
+    if (
+      rowNum !== this.getEditRow() &&
+      this.isSelected(this.getRecord(rowNum))
+    ) {
+      this.validateRow(rowNum);
+      this.markForRedraw();
+    }
+  },
+
   processFICReturn: function(response, data, request) {
     var context = response && response.clientContext,
       rowNum = context && context.rowNum,

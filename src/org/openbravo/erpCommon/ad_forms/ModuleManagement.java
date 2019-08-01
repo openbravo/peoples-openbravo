@@ -1238,8 +1238,6 @@ public class ModuleManagement extends HttpSecureAppServlet {
     // to hold (key,value) = (moduleId, minVersion)
     Map<String, String> minVersions = new HashMap<String, String>();
 
-    VersionUtility.setPool(this);
-
     // Create a new ImportModule instance which will be used to check
     // dependencies and to process the installation
     ImportModule im;
