@@ -9974,6 +9974,7 @@
                       warehousename: iter.warehousename
                     },
                     relatedLines: iter.relatedLines,
+                    groupService: prod.get('groupProduct'),
                     isEditable: true,
                     isDeletable: true,
                     attSetInstanceDesc: iter.attSetInstanceDesc
