@@ -273,6 +273,7 @@
         'OBPOS_PreAddProductWithStock',
         {
           checkStockActions: checkStockActions,
+          stockActions: stockActions,
           order: order,
           line: line,
           product: product,
