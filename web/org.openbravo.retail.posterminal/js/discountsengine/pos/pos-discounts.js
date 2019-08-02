@@ -37,7 +37,9 @@
 
     applyDiscounts: function(ticket, result) {
       ticket.get('lines').forEach(line => {
-        const discountInfoForLine = result.lines[line.get('id')].discounts;
+        const discountInfoForLine =
+          result.lines[line.get('id')] &&
+          result.lines[line.get('id')].discounts;
         if (!discountInfoForLine) {
           //No discounts for this line, we clear existing discounts if they exist, and move to the next
           line.set('promotions', []);
@@ -114,6 +116,10 @@
 
           OB.Dal.find(OB.Model.DiscountFilterProduct, ruleFilter, products => {
             r.products = JSON.parse(JSON.stringify(products));
+            r.products.forEach(
+              offerProduct =>
+                (offerProduct.product = { id: offerProduct.product })
+            );
             OB.Dal.find(
               OB.Model.DiscountFilterProductCategory,
               ruleFilter,
