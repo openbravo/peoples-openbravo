@@ -5466,6 +5466,14 @@
               },
               function() {
                 OB.error(arguments);
+                if (callback) {
+                  callback();
+                }
+              },
+              function() {
+                if (callback) {
+                  callback();
+                }
               }
             );
           }
@@ -6148,7 +6156,12 @@
             line.unset('invoicedQuantity');
             line.unset('grossUnitPrice');
             line.unset('lineGrossAmount');
-            line.set('obposCanbedelivered', true);
+            if (
+              !line.get('obposCanbedelivered') &&
+              line.get('deliveredQuantity') === line.get('qty')
+            ) {
+              line.set('obposCanbedelivered', true);
+            }
             line.set('obposIspaid', false);
             line.set('documentType', me.get('documentType'));
           });
@@ -6702,6 +6715,7 @@
             line.unset('grossListPrice');
             line.unset('grossUnitPrice');
             line.unset('lineGrossAmount');
+            line.unset('obposQtytodeliver');
             idMap[line.get('id')] = OB.UTIL.get_UUID();
             line.set('id', idMap[line.get('id')]);
             if (line.get('hasRelatedServices')) {
@@ -9518,6 +9532,186 @@
         return OB.Collection.OrderList.newOrder(bp, propertiesToReset);
       },
 
+      loadCustomer: function(model, callback) {
+        var bpId,
+          bpLocId,
+          bpBillLocId,
+          bpLoc,
+          bpBillLoc,
+          loadBusinesPartner,
+          loadLocations,
+          finalCallback,
+          isLoadedPartiallyFromBackend = false;
+
+        bpId = model.bpId;
+        bpLocId = model.bpLocId;
+        bpBillLocId = model.bpBillLocId || model.bpLocId;
+
+        finalCallback = function(bp, bpLoc, bpBillLoc) {
+          bp.set('locations', bp.get('locations') || []);
+          bp.set('shipLocId', bpLoc.get('id'));
+          bp.set('shipLocName', bpLoc.get('name'));
+          bp.set('shipPostalCode', bpLoc.get('postalCode'));
+          bp.set('shipCityName', bpLoc.get('cityName'));
+          bp.set('shipCountryId', bpLoc.get('countryId'));
+          bp.set('shipCountryName', bpLoc.get('countryName'));
+          bp.set('shipRegionId', bpLoc.get('regionId'));
+          bp.set('locId', bpLoc.get('id'));
+          bp.set('locName', bpLoc.get('name'));
+          bp.set('locationModel', bpLoc);
+          bp.get('locations').push(bpLoc);
+          if (bpBillLoc) {
+            bp.set('locId', bpBillLoc.get('id'));
+            bp.set('locName', bpBillLoc.get('name'));
+            bp.set('postalCode', bpBillLoc.get('postalCode'));
+            bp.set('cityName', bpBillLoc.get('cityName'));
+            bp.set('countryName', bpBillLoc.get('countryName'));
+            bp.set('locationBillModel', bpBillLoc);
+            bp.get('locations').push(bpBillLoc);
+          }
+          callback(bp, bpLoc, bpBillLoc);
+        };
+
+        loadBusinesPartner = function(
+          bpartnerId,
+          bpLocationId,
+          bpBillLocationId,
+          callback
+        ) {
+          var loadCustomerParameters = {
+            bpartnerId: bpartnerId,
+            bpLocationId: bpLocationId
+          };
+          if (bpLocationId !== bpBillLocationId) {
+            loadCustomerParameters.bpBillLocationId = bpBillLocationId;
+          }
+          new OB.DS.Request(
+            'org.openbravo.retail.posterminal.master.LoadedCustomer'
+          ).exec(
+            loadCustomerParameters,
+            function(data) {
+              isLoadedPartiallyFromBackend = true;
+              callback({
+                bpartner: OB.Dal.transform(OB.Model.BusinessPartner, data[0]),
+                bpLoc: OB.Dal.transform(OB.Model.BPLocation, data[1]),
+                bpBillLoc:
+                  bpLocationId !== bpBillLocationId
+                    ? OB.Dal.transform(OB.Model.BPLocation, data[2])
+                    : null
+              });
+            },
+            function() {
+              OB.UTIL.showConfirmation.display(
+                OB.I18N.getLabel('OBPOS_InformationTitle'),
+                OB.I18N.getLabel('OBPOS_NoReceiptLoadedText'),
+                [
+                  {
+                    label: OB.I18N.getLabel('OBPOS_LblOk'),
+                    isConfirmButton: true
+                  }
+                ]
+              );
+            }
+          );
+        };
+
+        loadLocations = function(bp) {
+          if (bpLocId === bpBillLocId) {
+            if (isLoadedPartiallyFromBackend) {
+              finalCallback(bp, bpLoc, null);
+            } else {
+              OB.Dal.get(
+                OB.Model.BPLocation,
+                bpLocId,
+                function(bpLoc) {
+                  finalCallback(bp, bpLoc, null);
+                },
+                function(tx, error) {
+                  OB.UTIL.showError(error);
+                },
+                function() {
+                  loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(
+                    data
+                  ) {
+                    finalCallback(bp, data.bpLoc, null);
+                  });
+                }
+              );
+            }
+          } else {
+            if (
+              isLoadedPartiallyFromBackend &&
+              !OB.UTIL.isNullOrUndefined(bpLoc) &&
+              !OB.UTIL.isNullOrUndefined(bpBillLoc)
+            ) {
+              finalCallback(bp, bpLoc, bpBillLoc);
+            } else {
+              var criteria = {};
+              if (
+                OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)
+              ) {
+                var remoteCriteria = [
+                  {
+                    columns: ['id'],
+                    operator: 'equals',
+                    value: [bpLocId, bpBillLocId]
+                  }
+                ];
+                criteria.remoteFilters = remoteCriteria;
+              } else {
+                criteria._whereClause =
+                  'where c_bpartner_location_id in (?, ?)';
+                criteria.params = [bpLocId, bpBillLocId];
+              }
+              OB.Dal.find(
+                OB.Model.BPLocation,
+                criteria,
+                function(locations) {
+                  if (locations.models.length === 2) {
+                    _.each(locations.models, function(l) {
+                      if (l.id === bpLocId) {
+                        bpLoc = l;
+                      } else if (l.id === bpBillLocId) {
+                        bpBillLoc = l;
+                      }
+                    });
+                    finalCallback(bp, bpLoc, bpBillLoc);
+                  } else {
+                    loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(
+                      data
+                    ) {
+                      finalCallback(bp, data.bpLoc, data.bpBillLoc);
+                    });
+                  }
+                },
+                function(tx, error) {
+                  OB.UTIL.showError(error);
+                },
+                bpLoc
+              );
+            }
+          }
+        };
+        OB.Dal.get(
+          OB.Model.BusinessPartner,
+          bpId,
+          function(bp) {
+            loadLocations(bp);
+          },
+          null,
+          function() {
+            //Empty
+            loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(data) {
+              bpLoc = data.bpLoc;
+              if (bpLocId !== bpBillLocId) {
+                bpBillLoc = data.bpBillLoc;
+              }
+              loadLocations(data.bpartner);
+            });
+          }
+        );
+      },
+
       newPaidReceipt: function(model, callback) {
         var order = new Order(),
           lines,
@@ -9525,16 +9719,9 @@
           payments,
           curPayment,
           taxes,
-          bpId,
-          bpLocId,
-          bpLoc,
-          bpBillLocId,
-          bpBillLoc,
           numberOfLines = model.receiptLines.length,
           orderQty = 0,
           NoFoundProduct = true,
-          NoFoundCustomer = true,
-          isLoadedPartiallyFromBackend = false,
           execution = OB.UTIL.ProcessController.start('newPaidReceipt');
 
         // Each payment that has been reverted stores the id of the reversal payment
@@ -9637,571 +9824,404 @@
             order.set('orderType', 1);
           }
         }
-        bpLocId = model.bpLocId;
-        bpBillLocId = model.bpBillLocId || model.bpLocId;
-        bpId = model.bp;
-        var bpartnerForProduct = function(bp) {
-          var loadProducts = function() {
-            var linepos = 0,
-              hasDeliveredProducts = false,
-              hasNotDeliveredProducts = false,
-              i,
-              sortedPayments = false;
-            _.each(model.receiptLines, function(iter) {
-              var price;
-              iter.linepos = linepos;
-              var addLineForProduct = function(prod) {
-                if (
-                  OB.MobileApp.model.hasPermission(
-                    'OBPOS_remote.product',
-                    true
-                  ) ||
-                  OB.UTIL.isCrossStoreReceipt(order)
-                ) {
-                  var success = function() {
-                    var productcriteria = {
-                      columns: ['product'],
-                      operator: 'equals',
-                      value: prod.id,
-                      isId: true
-                    };
-                    var remoteCriteria = [productcriteria];
-                    var criteriaFilter = {};
-                    criteriaFilter.remoteFilters = remoteCriteria;
-                    criteriaFilter.forceRemote = true;
-                    criteriaFilter.remoteParams = {};
-                    criteriaFilter.remoteParams.crossStoreSearch = OB.UTIL.isCrossStoreReceipt(
-                      order
-                    );
-                    if (OB.UTIL.isCrossStoreReceipt(order)) {
-                      criteriaFilter.remoteParams.productId = prod.get('id');
-                    }
-                    OB.Dal.find(
-                      OB.Model.ProductCharacteristicValue,
-                      criteriaFilter,
-                      function(productcharacteristic) {
-                        _.each(productcharacteristic.models, function(pchv) {
-                          OB.Dal.saveOrUpdate(
-                            pchv,
-                            function() {},
-                            function() {
-                              OB.error(arguments);
-                            }
-                          );
-                        });
-                      },
-                      function() {
-                        OB.error(arguments);
-                      }
-                    );
+        var loadProducts = function() {
+          var linepos = 0,
+            hasDeliveredProducts = false,
+            hasNotDeliveredProducts = false,
+            i,
+            sortedPayments = false;
+          _.each(model.receiptLines, function(iter) {
+            var price;
+            iter.linepos = linepos;
+            var addLineForProduct = function(prod) {
+              if (
+                OB.MobileApp.model.hasPermission(
+                  'OBPOS_remote.product',
+                  true
+                ) ||
+                OB.UTIL.isCrossStoreReceipt(order)
+              ) {
+                var success = function() {
+                  var productcriteria = {
+                    columns: ['product'],
+                    operator: 'equals',
+                    value: prod.id,
+                    isId: true
                   };
-
-                  if (!OB.UTIL.isCrossStoreReceipt(order)) {
-                    OB.Dal.saveOrUpdate(prod, success, function() {
-                      OB.error(arguments);
-                    });
-                  } else {
-                    success();
+                  var remoteCriteria = [productcriteria];
+                  var criteriaFilter = {};
+                  criteriaFilter.remoteFilters = remoteCriteria;
+                  criteriaFilter.forceRemote = true;
+                  criteriaFilter.remoteParams = {};
+                  criteriaFilter.remoteParams.crossStoreSearch = OB.UTIL.isCrossStoreReceipt(
+                    order
+                  );
+                  if (OB.UTIL.isCrossStoreReceipt(order)) {
+                    criteriaFilter.remoteParams.productId = prod.get('id');
                   }
-                }
-                // Set product services
-                order._loadRelatedServices(
-                  prod.get('productType'),
-                  prod.get('id'),
-                  prod.get('productCategory'),
-                  function(data) {
-                    var hasservices;
-                    if (
-                      !OB.UTIL.isNullOrUndefined(data) &&
-                      OB.DEC.number(iter.quantity) > 0
-                    ) {
-                      hasservices = data.hasservices;
-                    }
-                    _.each(iter.promotions, function(promotion) {
-                      OB.Dal.get(
-                        OB.Model.Discount,
-                        promotion.ruleId,
-                        function(discount) {
-                          if (
-                            discount &&
-                            OB.Model.Discounts.discountRules[
-                              discount.get('discountType')
-                            ].addManual
-                          ) {
-                            var percentage;
-                            if (discount.get('obdiscPercentage')) {
-                              percentage = OB.DEC.mul(
-                                OB.DEC.div(promotion.amt, iter.lineGrossAmount),
-                                new BigDecimal('100')
-                              );
-                            }
-                            promotion.userAmt = percentage
-                              ? percentage
-                              : promotion.amt;
-                            promotion.discountType = discount.get(
-                              'discountType'
-                            );
-                            promotion.manual = true;
+                  OB.Dal.find(
+                    OB.Model.ProductCharacteristicValue,
+                    criteriaFilter,
+                    function(productcharacteristic) {
+                      _.each(productcharacteristic.models, function(pchv) {
+                        OB.Dal.saveOrUpdate(
+                          pchv,
+                          function() {},
+                          function() {
+                            OB.error(arguments);
                           }
-                        },
-                        function(tx, error) {
-                          OB.UTIL.showError(error);
-                        }
-                      );
-                    });
-                    if (
-                      OB.MobileApp.model.hasPermission(
-                        'OBPOS_EnableSupportForProductAttributes',
-                        true
-                      )
-                    ) {
-                      if (
-                        iter.attributeValue &&
-                        _.isString(iter.attributeValue)
-                      ) {
-                        var processedAttValues = OB.UTIL.AttributeUtils.generateDescriptionBasedOnJson(
-                          iter.attributeValue
                         );
-                        if (
-                          processedAttValues &&
-                          processedAttValues.keyValue &&
-                          _.isArray(processedAttValues.keyValue) &&
-                          processedAttValues.keyValue.length > 0
-                        ) {
-                          iter.attSetInstanceDesc =
-                            processedAttValues.description;
-                        }
-                      }
-                    }
-                    newline = new OrderLine({
-                      id: iter.lineId,
-                      product: prod,
-                      uOM: iter.uOM,
-                      qty: OB.DEC.number(iter.quantity),
-                      price: price,
-                      priceList:
-                        prod.get('listPrice') !== price
-                          ? price
-                          : prod.get('listPrice'),
-                      promotions: iter.promotions,
-                      description: iter.description,
-                      priceIncludesTax: order.get('priceIncludesTax'),
-                      hasRelatedServices: hasservices,
-                      attributeValue: iter.attributeValue,
-                      warehouse: {
-                        id: iter.warehouse,
-                        warehousename: iter.warehousename
-                      },
-                      relatedLines: iter.relatedLines,
-                      isEditable: true,
-                      isDeletable: true,
-                      attSetInstanceDesc: iter.attSetInstanceDesc
-                        ? iter.attSetInstanceDesc
-                        : null,
-                      lineGrossAmount: iter.lineGrossAmount
-                    });
-
-                    // copy verbatim not owned properties -> modular properties.
-                    _.each(iter, function(value, key) {
-                      if (!newline.ownProperties[key]) {
-                        newline.set(key, value);
-                      }
-                    });
-
-                    // add the created line
-                    lines.add(newline, {
-                      at: iter.linepos
-                    });
-                    numberOfLines--;
-                    orderQty = OB.DEC.add(iter.quantity, orderQty);
-                    if (numberOfLines === 0) {
-                      lines.reset(
-                        lines.sortBy(function(line) {
-                          return line.get('linepos');
-                        })
-                      );
-                      order.set('lines', lines);
-                      order.set('qty', orderQty);
-                      order.set('json', JSON.stringify(order.toJSON()));
-                      callback(order);
-                      OB.UTIL.ProcessController.finish(
-                        'newPaidReceipt',
-                        execution
-                      );
-                    }
-                  }
-                );
-              };
-
-              if (order.get('priceIncludesTax')) {
-                price = OB.DEC.number(iter.unitPrice);
-              } else {
-                price = OB.DEC.number(
-                  iter.baseNetUnitPrice > 0
-                    ? iter.baseNetUnitPrice
-                    : iter.unitPrice
-                );
-              }
-
-              if (!iter.deliveredQuantity) {
-                hasNotDeliveredProducts = true;
-              } else {
-                hasDeliveredProducts = true;
-                if (iter.deliveredQuantity < iter.quantity) {
-                  hasNotDeliveredProducts = true;
-                }
-              }
-
-              if (iter.relatedLines && !order.get('hasServices')) {
-                order.set('hasServices', true);
-              }
-
-              OB.Dal.get(
-                OB.Model.Product,
-                iter.id,
-                function(product) {
-                  addLineForProduct(product);
-                },
-                null,
-                function() {
-                  //Empty
-                  new OB.DS.Request(
-                    'org.openbravo.retail.posterminal.master.LoadedProduct'
-                  ).exec(
-                    {
-                      productId: iter.id,
-                      salesOrderLineId: iter.lineId
-                    },
-                    function(data) {
-                      addLineForProduct(
-                        OB.Dal.transform(OB.Model.Product, data[0])
-                      );
+                      });
                     },
                     function() {
-                      if (NoFoundProduct) {
-                        NoFoundProduct = false;
-                        OB.UTIL.showConfirmation.display(
-                          OB.I18N.getLabel('OBPOS_InformationTitle'),
-                          OB.I18N.getLabel('OBPOS_NoReceiptLoadedText'),
-                          [
-                            {
-                              label: OB.I18N.getLabel('OBPOS_LblOk'),
-                              isConfirmButton: true
-                            }
-                          ]
-                        );
+                      OB.error(arguments);
+                    }
+                  );
+                };
+
+                if (!OB.UTIL.isCrossStoreReceipt(order)) {
+                  OB.Dal.saveOrUpdate(prod, success, function() {
+                    OB.error(arguments);
+                  });
+                } else {
+                  success();
+                }
+              }
+              // Set product services
+              order._loadRelatedServices(
+                prod.get('productType'),
+                prod.get('id'),
+                prod.get('productCategory'),
+                function(data) {
+                  var hasservices;
+                  if (
+                    !OB.UTIL.isNullOrUndefined(data) &&
+                    OB.DEC.number(iter.quantity) > 0
+                  ) {
+                    hasservices = data.hasservices;
+                  }
+                  _.each(iter.promotions, function(promotion) {
+                    OB.Dal.get(
+                      OB.Model.Discount,
+                      promotion.ruleId,
+                      function(discount) {
+                        if (
+                          discount &&
+                          OB.Model.Discounts.discountRules[
+                            discount.get('discountType')
+                          ].addManual
+                        ) {
+                          var percentage;
+                          if (discount.get('obdiscPercentage')) {
+                            percentage = OB.DEC.mul(
+                              OB.DEC.div(promotion.amt, iter.lineGrossAmount),
+                              new BigDecimal('100')
+                            );
+                          }
+                          promotion.userAmt = percentage
+                            ? percentage
+                            : promotion.amt;
+                          promotion.discountType = discount.get('discountType');
+                          promotion.manual = true;
+                        }
+                      },
+                      function(tx, error) {
+                        OB.UTIL.showError(error);
+                      }
+                    );
+                  });
+                  if (
+                    OB.MobileApp.model.hasPermission(
+                      'OBPOS_EnableSupportForProductAttributes',
+                      true
+                    )
+                  ) {
+                    if (
+                      iter.attributeValue &&
+                      _.isString(iter.attributeValue)
+                    ) {
+                      var processedAttValues = OB.UTIL.AttributeUtils.generateDescriptionBasedOnJson(
+                        iter.attributeValue
+                      );
+                      if (
+                        processedAttValues &&
+                        processedAttValues.keyValue &&
+                        _.isArray(processedAttValues.keyValue) &&
+                        processedAttValues.keyValue.length > 0
+                      ) {
+                        iter.attSetInstanceDesc =
+                          processedAttValues.description;
                       }
                     }
-                  );
-                }
-              );
-              linepos++;
-            });
+                  }
+                  newline = new OrderLine({
+                    id: iter.lineId,
+                    product: prod,
+                    uOM: iter.uOM,
+                    qty: OB.DEC.number(iter.quantity),
+                    price: price,
+                    priceList:
+                      prod.get('listPrice') !== price
+                        ? price
+                        : prod.get('listPrice'),
+                    promotions: iter.promotions,
+                    description: iter.description,
+                    priceIncludesTax: order.get('priceIncludesTax'),
+                    hasRelatedServices: hasservices,
+                    attributeValue: iter.attributeValue,
+                    warehouse: {
+                      id: iter.warehouse,
+                      warehousename: iter.warehousename
+                    },
+                    relatedLines: iter.relatedLines,
+                    isEditable: true,
+                    isDeletable: true,
+                    attSetInstanceDesc: iter.attSetInstanceDesc
+                      ? iter.attSetInstanceDesc
+                      : null,
+                    lineGrossAmount: iter.lineGrossAmount
+                  });
 
-            function getReverserPayment(payment, Payments) {
-              return _.filter(model.receiptPayments, function(receiptPayment) {
-                return receiptPayment.paymentId === payment.reversedPaymentId;
-              })[0];
-            }
-            i = 0;
-            // Sort payments array, puting reverser payments inmediatly after their reversed payment
-            while (i < model.receiptPayments.length) {
-              var payment = model.receiptPayments[i];
-              if (payment.reversedPaymentId && !payment.isSorted) {
-                var reversed_index = model.receiptPayments.indexOf(
-                  getReverserPayment(payment, model.receiptPayments)
-                );
-                payment.isSorted = true;
-                if (i < reversed_index) {
-                  model.receiptPayments.splice(i, 1);
-                  model.receiptPayments.splice(reversed_index, 0, payment);
-                  sortedPayments = true;
-                } else if (i > reversed_index + 1) {
-                  model.receiptPayments.splice(i, 1);
-                  model.receiptPayments.splice(reversed_index + 1, 0, payment);
-                  sortedPayments = true;
-                }
-              } else {
-                i++;
-              }
-            }
-            if (sortedPayments) {
-              model.receiptPayments.forEach(function(receitPayment) {
-                if (receitPayment.isSorted) {
-                  delete receitPayment.isSorted;
-                }
-              });
-            }
-            //order.set('payments', model.receiptPayments);
-            payments = new PaymentLineList();
-            _.each(model.receiptPayments, function(iter) {
-              var paymentProp;
-              curPayment = new PaymentLine();
-              for (paymentProp in iter) {
-                if (iter.hasOwnProperty(paymentProp)) {
-                  if (paymentProp === 'paymentDate') {
-                    if (
-                      !OB.UTIL.isNullOrUndefined(iter[paymentProp]) &&
-                      moment(iter[paymentProp]).isValid()
-                    ) {
-                      curPayment.set(
-                        paymentProp,
-                        OB.I18N.normalizeDate(new Date(iter[paymentProp]))
-                      );
-                    } else {
-                      curPayment.set(paymentProp, null);
+                  // copy verbatim not owned properties -> modular properties.
+                  _.each(iter, function(value, key) {
+                    if (!newline.ownProperties[key]) {
+                      newline.set(key, value);
                     }
-                  } else {
-                    curPayment.set(paymentProp, iter[paymentProp]);
+                  });
+
+                  // add the created line
+                  lines.add(newline, {
+                    at: iter.linepos
+                  });
+                  numberOfLines--;
+                  orderQty = OB.DEC.add(iter.quantity, orderQty);
+                  if (numberOfLines === 0) {
+                    lines.reset(
+                      lines.sortBy(function(line) {
+                        return line.get('linepos');
+                      })
+                    );
+                    order.set('lines', lines);
+                    order.set('qty', orderQty);
+                    order.set('json', JSON.stringify(order.toJSON()));
+                    callback(order);
+                    OB.UTIL.ProcessController.finish(
+                      'newPaidReceipt',
+                      execution
+                    );
                   }
                 }
-              }
-              curPayment.set('orderGross', order.get('gross'));
-              curPayment.set('isPaid', order.get('isPaid'));
-              curPayment.set('date', new Date(iter.paymentDate));
-              payments.add(curPayment);
-            });
-            order.set('payments', payments);
-            order.adjustPayment();
-
-            order.set(
-              'isPartiallyDelivered',
-              hasDeliveredProducts && hasNotDeliveredProducts ? true : false
-            );
-            if (hasDeliveredProducts && !hasNotDeliveredProducts) {
-              order.set('isFullyDelivered', true);
-            }
-            if (order.get('isPartiallyDelivered')) {
-              var partiallyPaid = 0;
-              _.each(
-                _.filter(order.get('receiptLines'), function(reciptLine) {
-                  return reciptLine.deliveredQuantity;
-                }),
-                function(deliveredLine) {
-                  partiallyPaid = OB.DEC.add(
-                    partiallyPaid,
-                    OB.DEC.mul(
-                      deliveredLine.deliveredQuantity,
-                      deliveredLine.grossUnitPrice
-                    )
-                  );
-                }
               );
-              order.set('deliveredQuantityAmount', partiallyPaid);
-              if (
-                order.get('deliveredQuantityAmount') &&
-                order.get('deliveredQuantityAmount') > order.get('payment')
-              ) {
-                order.set('isDeliveredGreaterThanGross', true);
+            };
+
+            if (order.get('priceIncludesTax')) {
+              price = OB.DEC.number(iter.unitPrice);
+            } else {
+              price = OB.DEC.number(
+                iter.baseNetUnitPrice > 0
+                  ? iter.baseNetUnitPrice
+                  : iter.unitPrice
+              );
+            }
+
+            if (!iter.deliveredQuantity) {
+              hasNotDeliveredProducts = true;
+            } else {
+              hasDeliveredProducts = true;
+              if (iter.deliveredQuantity < iter.quantity) {
+                hasNotDeliveredProducts = true;
               }
             }
 
-            taxes = {};
-            _.each(model.receiptTaxes, function(iter) {
-              var taxProp;
-              taxes[iter.taxid] = {};
-              for (taxProp in iter) {
-                if (iter.hasOwnProperty(taxProp)) {
-                  taxes[iter.taxid][taxProp] = iter[taxProp];
-                }
+            if (iter.relatedLines && !order.get('hasServices')) {
+              order.set('hasServices', true);
+            }
+
+            OB.Dal.get(
+              OB.Model.Product,
+              iter.id,
+              function(product) {
+                addLineForProduct(product);
+              },
+              null,
+              function() {
+                //Empty
+                new OB.DS.Request(
+                  'org.openbravo.retail.posterminal.master.LoadedProduct'
+                ).exec(
+                  {
+                    productId: iter.id,
+                    salesOrderLineId: iter.lineId
+                  },
+                  function(data) {
+                    addLineForProduct(
+                      OB.Dal.transform(OB.Model.Product, data[0])
+                    );
+                  },
+                  function() {
+                    if (NoFoundProduct) {
+                      NoFoundProduct = false;
+                      OB.UTIL.showConfirmation.display(
+                        OB.I18N.getLabel('OBPOS_InformationTitle'),
+                        OB.I18N.getLabel('OBPOS_NoReceiptLoadedText'),
+                        [
+                          {
+                            label: OB.I18N.getLabel('OBPOS_LblOk'),
+                            isConfirmButton: true
+                          }
+                        ]
+                      );
+                    }
+                  }
+                );
+              }
+            );
+            linepos++;
+          });
+
+          function getReverserPayment(payment, Payments) {
+            return _.filter(model.receiptPayments, function(receiptPayment) {
+              return receiptPayment.paymentId === payment.reversedPaymentId;
+            })[0];
+          }
+          i = 0;
+          // Sort payments array, puting reverser payments inmediatly after their reversed payment
+          while (i < model.receiptPayments.length) {
+            var payment = model.receiptPayments[i];
+            if (payment.reversedPaymentId && !payment.isSorted) {
+              var reversed_index = model.receiptPayments.indexOf(
+                getReverserPayment(payment, model.receiptPayments)
+              );
+              payment.isSorted = true;
+              if (i < reversed_index) {
+                model.receiptPayments.splice(i, 1);
+                model.receiptPayments.splice(reversed_index, 0, payment);
+                sortedPayments = true;
+              } else if (i > reversed_index + 1) {
+                model.receiptPayments.splice(i, 1);
+                model.receiptPayments.splice(reversed_index + 1, 0, payment);
+                sortedPayments = true;
+              }
+            } else {
+              i++;
+            }
+          }
+          if (sortedPayments) {
+            model.receiptPayments.forEach(function(receitPayment) {
+              if (receitPayment.isSorted) {
+                delete receitPayment.isSorted;
               }
             });
-            order.set('taxes', taxes);
-
-            if (!model.isLayaway && !model.isQuotation) {
-              if (
-                model.totalamount > 0 &&
-                order.get('payment') < model.totalamount
-              ) {
-                order.set('paidOnCredit', true);
-              } else if (
-                model.totalamount < 0 &&
-                (order.get('payment') === 0 ||
-                  OB.DEC.abs(model.totalamount) > order.get('payment'))
-              ) {
-                order.set('paidOnCredit', true);
+          }
+          //order.set('payments', model.receiptPayments);
+          payments = new PaymentLineList();
+          _.each(model.receiptPayments, function(iter) {
+            var paymentProp;
+            curPayment = new PaymentLine();
+            for (paymentProp in iter) {
+              if (iter.hasOwnProperty(paymentProp)) {
+                if (paymentProp === 'paymentDate') {
+                  if (
+                    !OB.UTIL.isNullOrUndefined(iter[paymentProp]) &&
+                    moment(iter[paymentProp]).isValid()
+                  ) {
+                    curPayment.set(
+                      paymentProp,
+                      OB.I18N.normalizeDate(new Date(iter[paymentProp]))
+                    );
+                  } else {
+                    curPayment.set(paymentProp, null);
+                  }
+                } else {
+                  curPayment.set(paymentProp, iter[paymentProp]);
+                }
               }
             }
-            if (model.receiptLines.length === 0) {
-              order.set('json', JSON.stringify(order.toJSON()));
-              callback(order);
-              OB.UTIL.ProcessController.finish('newPaidReceipt', execution);
-            }
-          };
+            curPayment.set('orderGross', order.get('gross'));
+            curPayment.set('isPaid', order.get('isPaid'));
+            curPayment.set('date', new Date(iter.paymentDate));
+            payments.add(curPayment);
+          });
+          order.set('payments', payments);
+          order.adjustPayment();
 
-          var locationForBpartner = function(loc, billLoc) {
-            bp.set('shipLocName', loc.get('name'));
-            bp.set('shipLocId', loc.get('id'));
-            bp.set('shipPostalCode', loc.get('postalCode'));
-            bp.set('shipCityName', loc.get('cityName'));
-            bp.set('shipCountryName', loc.get('countryName'));
-            bp.set('shipCountryId', loc.get('countryId'));
-            bp.set('shipRegionId', loc.get('regionId'));
-            if (billLoc) {
-              bp.set('locName', billLoc.get('name'));
-              bp.set('locId', billLoc.get('id'));
-              bp.set('postalCode', billLoc.get('postalCode'));
-              bp.set('cityName', billLoc.get('cityName'));
-              bp.set('countryName', billLoc.get('countryName'));
-              bp.set('locationModel', billLoc);
-            } else {
-              bp.set('locationModel', loc);
+          order.set(
+            'isPartiallyDelivered',
+            hasDeliveredProducts && hasNotDeliveredProducts ? true : false
+          );
+          if (hasDeliveredProducts && !hasNotDeliveredProducts) {
+            order.set('isFullyDelivered', true);
+          }
+          if (order.get('isPartiallyDelivered')) {
+            var partiallyPaid = 0;
+            _.each(
+              _.filter(order.get('receiptLines'), function(reciptLine) {
+                return reciptLine.deliveredQuantity;
+              }),
+              function(deliveredLine) {
+                partiallyPaid = OB.DEC.add(
+                  partiallyPaid,
+                  OB.DEC.mul(
+                    deliveredLine.deliveredQuantity,
+                    deliveredLine.grossUnitPrice
+                  )
+                );
+              }
+            );
+            order.set('deliveredQuantityAmount', partiallyPaid);
+            if (
+              order.get('deliveredQuantityAmount') &&
+              order.get('deliveredQuantityAmount') > order.get('payment')
+            ) {
+              order.set('isDeliveredGreaterThanGross', true);
             }
+          }
 
+          taxes = {};
+          _.each(model.receiptTaxes, function(iter) {
+            var taxProp;
+            taxes[iter.taxid] = {};
+            for (taxProp in iter) {
+              if (iter.hasOwnProperty(taxProp)) {
+                taxes[iter.taxid][taxProp] = iter[taxProp];
+              }
+            }
+          });
+          order.set('taxes', taxes);
+
+          if (!model.isLayaway && !model.isQuotation) {
+            if (
+              model.totalamount > 0 &&
+              order.get('payment') < model.totalamount
+            ) {
+              order.set('paidOnCredit', true);
+            } else if (
+              model.totalamount < 0 &&
+              (order.get('payment') === 0 ||
+                OB.DEC.abs(model.totalamount) > order.get('payment'))
+            ) {
+              order.set('paidOnCredit', true);
+            }
+          }
+          if (model.receiptLines.length === 0) {
+            order.set('json', JSON.stringify(order.toJSON()));
+            callback(order);
+            OB.UTIL.ProcessController.finish('newPaidReceipt', execution);
+          }
+        };
+
+        this.loadCustomer(
+          {
+            bpId: model.bp,
+            bpLocId: model.bpLocId,
+            bpBillLocId: model.bpBillLocId || model.bpLocId
+          },
+          function(bp, loc, billLoc) {
             order.set('bp', bp);
             order.set('gross', model.totalamount);
             order.set('net', model.totalNetAmount);
             order.trigger('change:bp', order);
             loadProducts();
-          };
-
-          bp.set('locations', bp.get('locations') || []);
-          if (bpLocId === bpBillLocId) {
-            if (isLoadedPartiallyFromBackend) {
-              bp.get('locations').push(bpLoc);
-              locationForBpartner(bpLoc, bpLoc);
-            } else {
-              OB.Dal.get(
-                OB.Model.BPLocation,
-                bpLocId,
-                function(bpLoc) {
-                  bp.get('locations').push(bpLoc);
-                  locationForBpartner(bpLoc, bpLoc);
-                },
-                function(tx, error) {
-                  OB.UTIL.showError(error);
-                },
-                function() {
-                  loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(
-                    data
-                  ) {
-                    bpLoc = data.bpLoc;
-                    bp.get('locations').push(bpLoc);
-                    locationForBpartner(bpLoc, bpLoc);
-                  });
-                }
-              );
-            }
-          } else {
-            if (
-              isLoadedPartiallyFromBackend &&
-              !OB.UTIL.isNullOrUndefined(bpLoc) &&
-              !OB.UTIL.isNullOrUndefined(bpBillLoc)
-            ) {
-              bp.get('locations').push(bpLoc, bpBillLoc);
-              locationForBpartner(bpLoc, bpBillLoc);
-            } else {
-              var criteria = {};
-              if (
-                OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)
-              ) {
-                var remoteCriteria = [
-                  {
-                    columns: ['id'],
-                    operator: 'equals',
-                    value: [bpLocId, bpBillLocId]
-                  }
-                ];
-                criteria.remoteFilters = remoteCriteria;
-              } else {
-                criteria._whereClause =
-                  'where c_bpartner_location_id in (?, ?)';
-                criteria.params = [bpLocId, bpBillLocId];
-              }
-              OB.Dal.find(
-                OB.Model.BPLocation,
-                criteria,
-                function(locations) {
-                  if (locations.models.length === 2) {
-                    _.each(locations.models, function(l) {
-                      if (l.id === bpLocId) {
-                        bpLoc = l;
-                      } else if (l.id === bpBillLocId) {
-                        bpBillLoc = l;
-                      }
-                    });
-                    bp.get('locations').push(bpLoc, bpBillLoc);
-                    locationForBpartner(bpLoc, bpBillLoc);
-                  } else {
-                    loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(
-                      data
-                    ) {
-                      bpLoc = data.bpLoc;
-                      bpBillLoc = data.bpBillLoc;
-                      bp.get('locations').push(bpLoc, bpBillLoc);
-                      locationForBpartner(bpLoc, bpBillLoc);
-                    });
-                  }
-                },
-                function(tx, error) {
-                  OB.UTIL.showError(error);
-                },
-                bpLoc
-              );
-            }
-          }
-        };
-        var loadBusinesPartner = function(
-          bpartnerId,
-          bpLocationId,
-          bpBillLocationId,
-          callback
-        ) {
-          var loadCustomerParameters = {
-            bpartnerId: bpartnerId,
-            bpLocationId: bpLocationId
-          };
-          if (bpLocationId !== bpBillLocationId) {
-            loadCustomerParameters.bpBillLocationId = bpBillLocationId;
-          }
-          new OB.DS.Request(
-            'org.openbravo.retail.posterminal.master.LoadedCustomer'
-          ).exec(
-            loadCustomerParameters,
-            function(data) {
-              isLoadedPartiallyFromBackend = true;
-              callback({
-                bpartner: OB.Dal.transform(OB.Model.BusinessPartner, data[0]),
-                bpLoc: OB.Dal.transform(OB.Model.BPLocation, data[1]),
-                bpBillLoc:
-                  bpLocationId !== bpBillLocationId
-                    ? OB.Dal.transform(OB.Model.BPLocation, data[2])
-                    : null
-              });
-            },
-            function() {
-              if (NoFoundCustomer) {
-                NoFoundCustomer = false;
-                OB.UTIL.showConfirmation.display(
-                  OB.I18N.getLabel('OBPOS_InformationTitle'),
-                  OB.I18N.getLabel('OBPOS_NoReceiptLoadedText'),
-                  [
-                    {
-                      label: OB.I18N.getLabel('OBPOS_LblOk'),
-                      isConfirmButton: true
-                    }
-                  ]
-                );
-              }
-            }
-          );
-        };
-        OB.Dal.get(
-          OB.Model.BusinessPartner,
-          bpId,
-          function(bp) {
-            bpartnerForProduct(bp);
-          },
-          null,
-          function() {
-            //Empty
-            loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(data) {
-              bpLoc = data.bpLoc;
-              if (bpLocId !== bpBillLocId) {
-                bpBillLoc = data.bpBillLoc;
-              }
-              bpartnerForProduct(data.bpartner);
-            });
           }
         );
       },
