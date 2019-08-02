@@ -10,8 +10,9 @@
 (function() {
   OB.Discounts = OB.Discounts || {};
   OB.Discounts.Pos = {
-    calculateLocal: function() {
-      var ticket = JSON.parse(JSON.stringify(OB.MobileApp.model.receipt));
+    local: true,
+
+    calculateLocal: function(ticket) {
       if (!OB.Discounts.Pos.ruleImpls) {
         throw 'Local discount cache is not yet initialized, execute: OB.Discounts.Pos.initCache()';
       }
@@ -21,12 +22,7 @@
       );
     },
 
-    calculateRemote: function(jsMode) {
-      var ticket = JSON.parse(JSON.stringify(OB.MobileApp.model.receipt));
-      if (jsMode) {
-        ticket.jsEngine = jsMode;
-      }
-
+    calculateRemote: function(ticket) {
       ticket = JSON.stringify(ticket);
       fetch('../../discount', {
         method: 'POST',
@@ -39,83 +35,116 @@
         .then(disc => OB.info(disc));
     },
 
-    applyDiscounts: function(ticket, discounts) {
-      discounts.forEach(discount => {
-        let line = ticket.get('lines').get(discount.ticketLine.id);
-        let rule = OB.Discounts.Pos.ruleImpls.find(r => r.id === discount.id);
-        if (!rule) {
-          OB.error('Rule not found!', discount);
+    applyDiscounts: function(ticket, result) {
+      ticket.get('lines').forEach(line => {
+        const discountInfoForLine = result.lines[line.get('id')].discounts;
+        if (!discountInfoForLine) {
+          //No discounts for this line, we clear existing discounts if they exist, and move to the next
+          line.set('promotions', []);
           return;
         }
-        let ruleModel = rule.ruleModel;
-        try {
-          ticket.addPromotion(line, ruleModel, {
-            amt: discount.discount
-          });
-        } catch (e) {
-          OB.error(e);
-        }
+
+        line.set('promotions', discountInfoForLine.promotions);
+        return;
+        // let rule = OB.Discounts.Pos.ruleImpls.find(r => r.id === discount.id);
+        // if (!rule) {
+        //   OB.error('Rule not found!', discount);
+        //   return;
+        // }
+        // let ruleModel = rule.ruleModel;
+        // try {
+        //   ticket.addPromotion(line, ruleModel, {
+        //     amt: discount.discount
+        //   });
+        // } catch (e) {
+        //   OB.error(e);
+        // }
       });
     },
 
-    initCache: function() {
+    translateTicket: function(receipt) {
+      let newTicket = {};
+      newTicket.businessPartner = {};
+      newTicket.businessPartner.id = receipt.get('bp').id;
+      newTicket.businessPartner._identifier = receipt.get('bp')._identifier;
+      newTicket.id = receipt.get('id');
+      newTicket.date = receipt.get('orderDate');
+      newTicket.lines = [];
+      receipt.get('lines').forEach(line => {
+        let newLine = {};
+        newLine.id = line.get('id');
+        newLine.product = {};
+        newLine.product.id = line.get('product').id;
+        newLine.product._identifier = line.get('product')._identifier;
+        newLine.qty = line.get('qty');
+        newLine.price = line.get('price');
+        newTicket.lines.push(newLine);
+      });
+      return newTicket;
+    },
+
+    calculateDiscounts(receipt, callback) {
+      const ticketForEngine = OB.Discounts.Pos.translateTicket(receipt);
+      let result;
+      if (OB.Discounts.Pos.local) {
+        result = OB.Discounts.Pos.calculateLocal(ticketForEngine);
+        OB.Discounts.Pos.applyDiscounts(receipt, result);
+        callback();
+      } else {
+        result = OB.Discounts.Pos.calculateRemote(receipt, callback);
+      }
+    },
+
+    initCache: function(callback) {
+      OB.info('[Discounts cache] Starting load...');
+      const initialTime = new Date().getTime();
       OB.Discounts.Pos.ruleImpls = [];
       OB.Dal.find(OB.Model.Discount, [], rules => {
+        const finishCallback = _.after(rules.length, () => {
+          OB.info(
+            '[Discounts cache] ...load finished. Elapsed time: ' +
+              (new Date().getTime() - initialTime) +
+              'ms.'
+          );
+          callback();
+        });
         rules.forEach(rule => {
           var r = JSON.parse(JSON.stringify(rule)),
             ruleFilter = { priceAdjustment: rule.get('id') };
 
-          OB.Dal.find(
-            OB.Model.DiscountFilterProduct,
-            ruleFilter,
-            products => (r.products = JSON.parse(JSON.stringify(products)))
-          );
-
-          OB.Dal.find(
-            OB.Model.DiscountFilterProductCategory,
-            ruleFilter,
-            productCategories =>
-              (r.productCategories = JSON.parse(
-                JSON.stringify(productCategories)
-              ))
-          );
-
-          OB.Dal.find(
-            OB.Model.DiscountFilterBusinessPartner,
-            ruleFilter,
-            bps => (r.businessPartners = JSON.parse(JSON.stringify(bps)))
-          );
-
-          OB.Dal.find(
-            OB.Model.DiscountFilterBusinessPartnerGroup,
-            ruleFilter,
-            bpCategories =>
-              (r.businessPartnerCategories = JSON.parse(
-                JSON.stringify(bpCategories)
-              ))
-          );
-          r.ruleModel = rule;
-          OB.Discounts.Pos.ruleImpls.push(r);
+          OB.Dal.find(OB.Model.DiscountFilterProduct, ruleFilter, products => {
+            r.products = JSON.parse(JSON.stringify(products));
+            OB.Dal.find(
+              OB.Model.DiscountFilterProductCategory,
+              ruleFilter,
+              productCategories => {
+                r.productCategories = JSON.parse(
+                  JSON.stringify(productCategories)
+                );
+                OB.Dal.find(
+                  OB.Model.DiscountFilterBusinessPartner,
+                  ruleFilter,
+                  bps => {
+                    r.businessPartners = JSON.parse(JSON.stringify(bps));
+                    OB.Dal.find(
+                      OB.Model.DiscountFilterBusinessPartnerGroup,
+                      ruleFilter,
+                      bpCategories => {
+                        r.businessPartnerCategories = JSON.parse(
+                          JSON.stringify(bpCategories)
+                        );
+                        r.ruleModel = rule;
+                        OB.Discounts.Pos.ruleImpls.push(r);
+                        finishCallback();
+                      }
+                    );
+                  }
+                );
+              }
+            );
+          });
         });
       });
-
-      let stdPromotions = OB.Model.Discounts.applyPromotions;
-
-      OB.Model.Discounts.applyPromotions = function(receipt, line) {
-        if (OB.Discounts.Pos.oldImpl) {
-          OB.info(
-            'Using old discount implementation - to use new one: OB.Discounts.Pos.oldImpl=false'
-          );
-          stdPromotions(receipt, line);
-        } else {
-          OB.info(
-            'Using new discount engine - to use old one: OB.Discounts.Pos.oldImpl=true'
-          );
-          let discounts = OB.Discounts.Pos.calculateLocal();
-          OB.Discounts.Pos.applyDiscounts(receipt, discounts);
-          OB.Model.Discounts.finishPromotions(receipt, line);
-        }
-      };
     },
 
     getApplicableDiscounts: function(ticket) {

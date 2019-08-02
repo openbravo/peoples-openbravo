@@ -1027,69 +1027,85 @@
         }
         return;
       }
+
+      const callbacksAndFinish = function() {
+        var finishCalculateReceipt = function(callback) {
+          me.calculatingReceipt = false;
+          OB.MobileApp.view.waterfall('calculatedReceipt');
+          OB.UTIL.ProcessController.finish('calculateReceipt', execution);
+          me.trigger('calculatedReceipt');
+          me.getPrepaymentAmount(function() {
+            me.trigger('updatePending');
+            if (callback && callback instanceof Function) {
+              callback();
+            }
+          });
+        };
+        if (
+          me.get('calculateReceiptCallbacks') &&
+          me.get('calculateReceiptCallbacks').length > 0
+        ) {
+          var calculateReceiptCallbacks = me
+            .get('calculateReceiptCallbacks')
+            .slice(0);
+          me.unset('calculateReceiptCallbacks');
+          finishCalculateReceipt(function() {
+            var executeCallback;
+            executeCallback = function(listOfCallbacks) {
+              if (listOfCallbacks.length === 0) {
+                listOfCallbacks = null;
+                return;
+              }
+              var callbackToExe = listOfCallbacks.shift();
+              callbackToExe();
+              executeCallback(listOfCallbacks);
+            };
+            executeCallback(calculateReceiptCallbacks);
+          });
+        } else {
+          finishCalculateReceipt();
+        }
+      };
+
       OB.MobileApp.view.waterfall('calculatingReceipt');
       this.trigger('calculatingReceipt');
       this.calculatingReceipt = true;
       var execution = OB.UTIL.ProcessController.start('calculateReceipt');
       this.addToListOfCallbacks(callback);
       var me = this;
-      this.on('applyPromotionsFinished', function() {
-        me.off('applyPromotionsFinished');
-        me.on('calculategross', function() {
-          me.off('calculategross');
-          if (me.pendingCalculateReceipt) {
-            OB.UTIL.ProcessController.finish('calculateReceipt', execution);
-            OB.MobileApp.view.waterfall('calculatedReceipt');
-            me.pendingCalculateReceipt = false;
-            me.calculatingReceipt = false;
-            me.calculateReceipt();
-            return;
-          } else {
-            var finishCalculateReceipt = function(callback) {
-              me.calculatingReceipt = false;
-              OB.MobileApp.view.waterfall('calculatedReceipt');
-              OB.UTIL.ProcessController.finish('calculateReceipt', execution);
-              me.trigger('calculatedReceipt');
-              me.getPrepaymentAmount(function() {
-                me.trigger('updatePending');
-                if (callback && callback instanceof Function) {
-                  callback();
-                }
-              });
-            };
-            if (
-              me.get('calculateReceiptCallbacks') &&
-              me.get('calculateReceiptCallbacks').length > 0
-            ) {
-              var calculateReceiptCallbacks = me
-                .get('calculateReceiptCallbacks')
-                .slice(0);
-              me.unset('calculateReceiptCallbacks');
-              finishCalculateReceipt(function() {
-                var executeCallback;
-                executeCallback = function(listOfCallbacks) {
-                  if (listOfCallbacks.length === 0) {
-                    listOfCallbacks = null;
-                    return;
-                  }
-                  var callbackToExe = listOfCallbacks.shift();
-                  callbackToExe();
-                  executeCallback(listOfCallbacks);
-                };
-                executeCallback(calculateReceiptCallbacks);
-              });
-            } else {
-              finishCalculateReceipt();
-            }
-          }
+
+      if (OB.MobileApp.model.hasPermission('OBPOS_NewDiscounts', true)) {
+        OB.Discounts.Pos.calculateDiscounts(this, () => {
+          me.on('calculategross', function() {
+            me.off('calculategross');
+            callbacksAndFinish();
+          });
+          me.calculateGross();
         });
-        me.calculateGross();
-      });
-      // If line is null or undefined, we calculate the Promotions of the receipt
-      if (OB.UTIL.isNullOrUndefined(line) || line.get('splitline')) {
-        OB.Model.Discounts.applyPromotions(this);
       } else {
-        OB.Model.Discounts.applyPromotions(this, line);
+        this.on('applyPromotionsFinished', function() {
+          me.off('applyPromotionsFinished');
+          me.on('calculategross', function() {
+            me.off('calculategross');
+            if (me.pendingCalculateReceipt) {
+              OB.UTIL.ProcessController.finish('calculateReceipt', execution);
+              OB.MobileApp.view.waterfall('calculatedReceipt');
+              me.pendingCalculateReceipt = false;
+              me.calculatingReceipt = false;
+              me.calculateReceipt();
+              return;
+            } else {
+              callbacksAndFinish();
+            }
+          });
+          me.calculateGross();
+        });
+        // If line is null or undefined, we calculate the Promotions of the receipt
+        if (OB.UTIL.isNullOrUndefined(line) || line.get('splitline')) {
+          OB.Model.Discounts.applyPromotions(this);
+        } else {
+          OB.Model.Discounts.applyPromotions(this, line);
+        }
       }
     },
 
