@@ -181,7 +181,7 @@ public class TransactionsDao {
 
       //@formatter:on
       final OBQuery<FIN_FinaccTransaction> obQuery = OBDal.getInstance()
-          .createQuery(FIN_FinaccTransaction.class, whereClause.toString(), parameters);
+          .createQuery(FIN_FinaccTransaction.class, whereClause, parameters);
 
       List<FIN_FinaccTransaction> transactionOBList = obQuery.list();
 
