@@ -6629,6 +6629,7 @@
             line.unset('grossListPrice');
             line.unset('grossUnitPrice');
             line.unset('lineGrossAmount');
+            line.unset('obposQtytodeliver');
             idMap[line.get('id')] = OB.UTIL.get_UUID();
             line.set('id', idMap[line.get('id')]);
             if (line.get('hasRelatedServices')) {
