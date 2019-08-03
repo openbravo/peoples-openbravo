@@ -470,16 +470,16 @@ enyo.kind({
   bodyButtons: {
     components: [
       {
-        kind: 'OBRDM.UI.MultiReceiptPropertiesDialogApply',
-        name: 'receiptMultiLinePropertiesApplyBtn',
-        classes:
-          'obrdmUiModalReceiptMultiLinesProperties-receiptMultiLinePropertiesApplyBtn'
-      },
-      {
         kind: 'OBRDM.UI.MultiReceiptPropertiesDialogCancel',
         name: 'receiptMultiLinePropertiesCancelBtn',
         classes:
           'obrdmUiModalReceiptMultiLinesProperties-receiptMultiLinePropertiesCancelBtn'
+      },
+      {
+        kind: 'OBRDM.UI.MultiReceiptPropertiesDialogApply',
+        name: 'receiptMultiLinePropertiesApplyBtn',
+        classes:
+          'obrdmUiModalReceiptMultiLinesProperties-receiptMultiLinePropertiesApplyBtn'
       }
     ]
   },

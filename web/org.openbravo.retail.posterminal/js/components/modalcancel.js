@@ -23,14 +23,14 @@ enyo.kind({
     classes: 'obUiModalCancel-bodyButtons',
     components: [
       {
-        //OK button
-        classes: 'obUiModalCancel-bodyButtons-obUiModalCancelOkButton',
-        kind: 'OB.UI.ModalCancel_OkButton'
-      },
-      {
         //Cancel button
         classes: 'obUiModalCancel-bodyButtons-obUiModalCancelCancelButton',
         kind: 'OB.UI.ModalCancel_CancelButton'
+      },
+      {
+        //OK button
+        classes: 'obUiModalCancel-bodyButtons-obUiModalCancelOkButton',
+        kind: 'OB.UI.ModalCancel_OkButton'
       }
     ]
   }

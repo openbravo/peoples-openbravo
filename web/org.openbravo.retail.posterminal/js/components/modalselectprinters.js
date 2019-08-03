@@ -140,12 +140,12 @@ enyo.kind({
     classes: 'obUiModalSelectPrinters-bodyButtons',
     components: [
       {
-        classes: 'obUiModalSelectPrinters-bodyButtons-selectPrinterApply',
-        kind: 'SelectPrintersApply'
-      },
-      {
         classes: 'obUiModalSelectPrinters-bodyButtons-selectPrinterCancel',
         kind: 'SelectPrintersCancel'
+      },
+      {
+        classes: 'obUiModalSelectPrinters-bodyButtons-selectPrinterApply',
+        kind: 'SelectPrintersApply'
       }
     ]
   },
@@ -323,15 +323,15 @@ enyo.kind({
     components: [
       {
         classes:
-          'obUiModalSelectPDFPrinters-bodyButtons-selectPDFPrintersApply',
-        name: 'SelectPDFPrintersApply',
-        kind: 'SelectPrintersApply'
-      },
-      {
-        classes:
           'obUiModalSelectPDFPrinters-bodyButtons-selectPDFPrintersCancel',
         name: 'SelectPDFPrintersCancel',
         kind: 'SelectPrintersCancel'
+      },
+      {
+        classes:
+          'obUiModalSelectPDFPrinters-bodyButtons-selectPDFPrintersApply',
+        name: 'SelectPDFPrintersApply',
+        kind: 'SelectPrintersApply'
       }
     ]
   },

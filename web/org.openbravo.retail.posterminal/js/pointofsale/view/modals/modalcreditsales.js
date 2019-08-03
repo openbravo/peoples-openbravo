@@ -24,15 +24,15 @@ enyo.kind({
     components: [
       {
         kind:
-          'OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit.Components.apply_button',
-        classes:
-          'obObposPointOfSaleUiModalsModalEnoughCredit-bodyButtons-obObposPointOfSaleUiModalsModalEnoughCreditComponentsApplyButton'
-      },
-      {
-        kind:
           'OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit.Components.cancel_button',
         classes:
           'obObposPointOfSaleUiModalsModalEnoughCredit-bodyButtons-obObposPointOfSaleUiModalsModalEnoughCreditComponentsCancelButton'
+      },
+      {
+        kind:
+          'OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit.Components.apply_button',
+        classes:
+          'obObposPointOfSaleUiModalsModalEnoughCredit-bodyButtons-obObposPointOfSaleUiModalsModalEnoughCreditComponentsApplyButton'
       }
     ]
   },
