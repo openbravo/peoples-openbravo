@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -23,7 +23,7 @@ enyo.kind({
       i18nLabel: 'OBPOS_LblCashManagement'
     },
     {
-      kind: 'OB.UI.Button',
+      kind: 'OB.UI.ToolbarButton',
       name: 'btnToggleView',
       classes: 'obObposcashmgmtUiRightToolbarImpl-btnToggleView',
       i18nLabel: 'OBPOS_LblSwitchView',
@@ -172,22 +172,9 @@ enyo.kind({
           'obObposcashmgmtUiCashManagement-cashupMultiColumn-cashmgmtLeftPanel',
         components: [
           {
+            kind: 'OB.OBPOSCashMgmt.UI.ListDepositsDrops',
             classes:
-              'obObposcashmgmtUiCashManagement-cashmgmtLeftPanel-container1 row',
-            components: [
-              // 1st column: list of deposits/drops done or in process
-              {
-                classes:
-                  'obObposcashmgmtUiCashManagement-cashmgmtLeftPanel-container1-container1 span12',
-                components: [
-                  {
-                    kind: 'OB.OBPOSCashMgmt.UI.ListDepositsDrops',
-                    classes:
-                      'obObposcashmgmtUiCashManagement-cashmgmtLeftPanel-container1-container1-ObposcashmgmtUiListDepositsDrops'
-                  }
-                ]
-              }
-            ]
+              'obObposcashmgmtUiCashManagement-cashmgmtLeftPanel-ObposcashmgmtUiListDepositsDrops'
           }
         ]
       },

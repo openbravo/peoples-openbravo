@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -15,39 +15,33 @@ enyo.kind({
   classes: 'obObposcashmgmtUiRenderDepositLine',
   components: [
     {
-      classes: 'obObposcashmgmtUiRenderDepositLine-container1 row-fluid',
+      classes: 'obObposcashmgmtUiRenderDepositLine-wrapper',
       components: [
         {
-          classes:
-            'obObposcashmgmtUiRenderDepositLine-container1-container1 span12',
-          components: [
-            {
-              name: 'description',
-              classes:
-                'obObposcashmgmtUiRenderDepositLine-container1-container1-description'
-            },
-            {
-              name: 'user',
-              classes:
-                'obObposcashmgmtUiRenderDepositLine-container1-container1-user'
-            },
-            {
-              name: 'time',
-              classes:
-                'obObposcashmgmtUiRenderDepositLine-container1-container1-time'
-            },
-            {
-              name: 'foreignAmt',
-              classes:
-                'obObposcashmgmtUiRenderDepositLine-container1-container1-foreignAmt',
-              content: ''
-            },
-            {
-              name: 'amt',
-              classes:
-                'obObposcashmgmtUiRenderDepositLine-container1-container1-amt'
-            }
-          ]
+          name: 'description',
+          classes: 'obObposcashmgmtUiRenderDepositLine-wrapper-description'
+        },
+        {
+          name: 'user',
+          classes: 'obObposcashmgmtUiRenderDepositLine-wrapper-user'
+        },
+        {
+          name: 'time',
+          classes: 'obObposcashmgmtUiRenderDepositLine-wrapper-time'
+        },
+        {
+          name: 'separator',
+          content: '-',
+          classes: 'obObposcashmgmtUiRenderDepositLine-wrapper-separator'
+        },
+        {
+          name: 'foreignAmt',
+          classes: 'obObposcashmgmtUiRenderDepositLine-wrapper-foreignAmt',
+          content: ''
+        },
+        {
+          name: 'amt',
+          classes: 'obObposcashmgmtUiRenderDepositLine-wrapper-amt'
         }
       ]
     }
@@ -101,7 +95,6 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSCashMgmt.UI.RenderForeignTotal',
   classes: 'obObposcashmgmtUiRenderForeignTotal',
-  tag: 'span',
   published: {
     foreignTotal: null,
     textForeignTotal: ''
@@ -119,9 +112,9 @@ enyo.kind({
   foreignTotalChanged: function(oldValue) {
     this.setContent(this.textForeignTotal);
     if (OB.DEC.compare(this.foreignTotal) < 0) {
-      this.addClass('obObposcashmgmtUiRenderForeignTotal_negative');
+      this.parent.addClass('negative');
     } else {
-      this.addClass('obObposcashmgmtUiRenderForeignTotal_positive');
+      this.parent.removeClass('negative');
     }
   }
 });
@@ -129,7 +122,6 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSCashMgmt.UI.RenderTotal',
   classes: 'obObposcashmgmtUiRenderTotal',
-  tag: 'span',
   published: {
     total: null
   },
@@ -146,9 +138,9 @@ enyo.kind({
   totalChanged: function(oldValue) {
     this.setContent(OB.I18N.formatCurrency(this.total));
     if (OB.DEC.compare(this.total) < 0) {
-      this.addClass('obObposcashmgmtUiRenderTotal_negative');
+      this.parent.addClass('negative');
     } else {
-      this.addClass('obObposcashmgmtUiRenderTotal_positive');
+      this.parent.removeClass('negative');
     }
   }
 });
@@ -160,79 +152,48 @@ enyo.kind({
   components: [
     // separator
     {
-      classes: 'obObposcashmgmtUiRenderDepositsDrops-container1 row-fluid',
-      components: [
-        {
-          classes:
-            'obObposcashmgmtUiRenderDepositsDrops-container1-container1 span12',
-          components: [
-            {
-              classes:
-                'obObposcashmgmtUiRenderDepositsDrops-container1-container1-element1'
-            },
-            {
-              classes:
-                'obObposcashmgmtUiRenderDepositsDrops-container1-container1-element2'
-            }
-          ]
-        }
-      ]
+      classes: 'obObposcashmgmtUiRenderDepositsDrops-row1'
     },
 
     // Total per payment type
     {
-      classes: 'obObposcashmgmtUiRenderDepositsDrops-container2 row-fluid',
+      classes: 'obObposcashmgmtUiRenderDepositsDrops-row2',
       components: [
         {
+          name: 'startingCashPayName',
           classes:
-            'obObposcashmgmtUiRenderDepositsDrops-container2-container1 span12',
-          components: [
-            {
-              name: 'startingCashPayName',
-              classes:
-                'obObposcashmgmtUiRenderDepositsDrops-container2-container1-startingCashPayName'
-            },
-            {
-              name: 'startingCashForeignAmnt',
-              classes:
-                'obObposcashmgmtUiRenderDepositsDrops-container2-container1-startingCashForeignAmnt',
-              content: ''
-            },
-            {
-              name: 'startingCashAmnt',
-              classes:
-                'obObposcashmgmtUiRenderDepositsDrops-container2-container1-startingCashAmnt'
-            }
-          ]
+            'obObposcashmgmtUiRenderDepositsDrops-row2-startingCashPayName'
+        },
+        {
+          name: 'startingCashForeignAmnt',
+          classes:
+            'obObposcashmgmtUiRenderDepositsDrops-row2-startingCashForeignAmnt',
+          content: ''
+        },
+        {
+          name: 'startingCashAmnt',
+          classes: 'obObposcashmgmtUiRenderDepositsDrops-row2-startingCashAmnt'
         }
       ]
     },
 
     // Tendered per payment type
     {
-      classes: 'obObposcashmgmtUiRenderDepositsDrops-container3 row-fluid',
+      classes: 'obObposcashmgmtUiRenderDepositsDrops-row3',
       components: [
         {
+          name: 'tenderedLbl',
+          classes: 'obObposcashmgmtUiRenderDepositsDrops-row3-tenderedLbl'
+        },
+        {
+          name: 'tenderedForeignAmnt',
           classes:
-            'obObposcashmgmtUiRenderDepositsDrops-container3-container1 span12',
-          components: [
-            {
-              name: 'tenderedLbl',
-              classes:
-                'obObposcashmgmtUiRenderDepositsDrops-container3-container1-tenderedLbl'
-            },
-            {
-              name: 'tenderedForeignAmnt',
-              classes:
-                'obObposcashmgmtUiRenderDepositsDrops-container3-container1-tenderedForeignAmnt',
-              content: ''
-            },
-            {
-              name: 'tenderedAmnt',
-              classes:
-                'obObposcashmgmtUiRenderDepositsDrops-container3-container1-tenderedAmnt'
-            }
-          ]
+            'obObposcashmgmtUiRenderDepositsDrops-row3-tenderedForeignAmnt',
+          content: ''
+        },
+        {
+          name: 'tenderedAmnt',
+          classes: 'obObposcashmgmtUiRenderDepositsDrops-row3-tenderedAmnt'
         }
       ]
     },
@@ -252,37 +213,21 @@ enyo.kind({
       classes: 'obObposcashmgmtUiRenderDepositsDrops-container4 row-fluid',
       components: [
         {
-          classes:
-            'obObposcashmgmtUiRenderDepositsDrops-container4-container1 span12',
+          classes: 'obObposcashmgmtUiRenderDepositsDrops-row4',
           components: [
             {
               name: 'availableLbl',
-              classes:
-                'obObposcashmgmtUiRenderDepositsDrops-container4-container1-availableLbl'
+              classes: 'obObposcashmgmtUiRenderDepositsDrops-row4-availableLbl'
             },
             {
-              classes:
-                'obObposcashmgmtUiRenderDepositsDrops-container4-container1-container1',
-              components: [
-                {
-                  name: 'foreignTotal',
-                  kind: 'OB.OBPOSCashMgmt.UI.RenderForeignTotal',
-                  classes:
-                    'obObposcashmgmtUiRenderDepositsDrops-container4-container1-container1-foreignTotal'
-                }
-              ]
+              name: 'foreignTotal',
+              kind: 'OB.OBPOSCashMgmt.UI.RenderForeignTotal',
+              classes: 'obObposcashmgmtUiRenderDepositsDrops-row4-foreignTotal'
             },
             {
-              classes:
-                'obObposcashmgmtUiRenderDepositsDrops-container4-container1-container2',
-              components: [
-                {
-                  name: 'total',
-                  kind: 'OB.OBPOSCashMgmt.UI.RenderTotal',
-                  classes:
-                    'obObposcashmgmtUiRenderDepositsDrops-container4-container1-container2-total'
-                }
-              ]
+              name: 'total',
+              kind: 'OB.OBPOSCashMgmt.UI.RenderTotal',
+              classes: 'obObposcashmgmtUiRenderDepositsDrops-row4-total'
             }
           ]
         }
@@ -403,56 +348,50 @@ enyo.kind({
   classes: 'obObposcashmgmtUiListDepositsDrops',
   components: [
     {
-      classes: 'obObposcashmgmtUiListDepositsDrops-container1',
+      classes: 'obObposcashmgmtUiListDepositsDrops-wrapper',
       components: [
         {
-          classes: 'obObposcashmgmtUiListDepositsDrops-container1-container1',
+          classes: 'obObposcashmgmtUiListDepositsDrops-wrapper-components',
           components: [
             {
               classes:
-                'obObposcashmgmtUiListDepositsDrops-container1-container1-container1 row-fluid',
+                'obObposcashmgmtUiListDepositsDrops-wrapper-components-header',
               components: [
                 {
+                  name: 'titleLbl',
                   classes:
-                    'obObposcashmgmtUiListDepositsDrops-container1-container1-container1-container1 span12',
-                  components: [
-                    {
-                      name: 'titleLbl',
-                      classes:
-                        'obObposcashmgmtUiListDepositsDrops-container1-container1-container1-container1-titleLbl'
-                    },
-                    {
-                      name: 'userName',
-                      classes:
-                        'obObposcashmgmtUiListDepositsDrops-container1-container1-container1-container1-userName'
-                    },
-                    {
-                      name: 'time',
-                      classes:
-                        'obObposcashmgmtUiListDepositsDrops-container1-container1-container1-container1-time'
-                    },
-                    {
-                      name: 'store',
-                      classes:
-                        'obObposcashmgmtUiListDepositsDrops-container1-container1-container1-container1-store'
-                    },
-                    {
-                      name: 'terminal',
-                      classes:
-                        'obObposcashmgmtUiListDepositsDrops-container1-container1-container1-container1-terminal'
-                    },
-                    {
-                      name: 'depositDropsList',
-                      kind: 'OB.UI.Table',
-                      classes:
-                        'obObposcashmgmtUiListDepositsDrops-container1-container1-container1-container1-depositDropsList',
-                      renderLine: 'OB.OBPOSCashMgmt.UI.RenderDepositsDrops',
-                      renderEmpty: 'enyo.Control',
-                      listStyle: 'list'
-                    }
-                  ]
+                    'obObposcashmgmtUiListDepositsDrops-wrapper-components-header-titleLbl'
+                },
+                {
+                  name: 'userName',
+                  classes:
+                    'obObposcashmgmtUiListDepositsDrops-wrapper-components-header-userName'
+                },
+                {
+                  name: 'time',
+                  classes:
+                    'obObposcashmgmtUiListDepositsDrops-wrapper-components-header-time'
+                },
+                {
+                  name: 'store',
+                  classes:
+                    'obObposcashmgmtUiListDepositsDrops-wrapper-components-header-store'
+                },
+                {
+                  name: 'terminal',
+                  classes:
+                    'obObposcashmgmtUiListDepositsDrops-wrapper-components-header-terminal'
                 }
               ]
+            },
+            {
+              name: 'depositDropsList',
+              kind: 'OB.UI.Table',
+              classes:
+                'obObposcashmgmtUiListDepositsDrops-wrapper-components-depositDropsList',
+              renderLine: 'OB.OBPOSCashMgmt.UI.RenderDepositsDrops',
+              renderEmpty: 'enyo.Control',
+              listStyle: 'list'
             }
           ]
         }

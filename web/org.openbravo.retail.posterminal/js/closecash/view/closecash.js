@@ -68,7 +68,7 @@ enyo.kind({
     },
     {
       name: 'btnToggleView',
-      kind: 'OB.UI.Button',
+      kind: 'OB.UI.ToolbarButton',
       classes: 'obObPosCashUpUiLeftToolbarImpl-btnToggleView',
       i18nLabel: 'OBPOS_LblSwitchView',
       tap: function() {

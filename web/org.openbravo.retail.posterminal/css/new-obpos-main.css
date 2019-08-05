@@ -12352,44 +12352,43 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 */
 .obObposcashmgmtUiRenderDepositLine {}
 
-.obObposcashmgmtUiRenderDepositLine-container1 {}
-
-.obObposcashmgmtUiRenderDepositLine-container1-container1 {
+.obObposcashmgmtUiRenderDepositLine-wrapper {
+  display: grid;
+  padding: 6px 12px;
   border-bottom: var(--bottomseparator-slim);
+
+  grid-auto-flow: column;
+  grid-template-areas: 'obObposcashmgmtUiRenderDepositLine-wrapper-time        obObposcashmgmtUiRenderDepositLine-wrapper-separator   obObposcashmgmtUiRenderDepositLine-wrapper-user        obObposcashmgmtUiRenderDepositLine-wrapper-amt'
+                       'obObposcashmgmtUiRenderDepositLine-wrapper-description obObposcashmgmtUiRenderDepositLine-wrapper-description obObposcashmgmtUiRenderDepositLine-wrapper-description obObposcashmgmtUiRenderDepositLine-wrapper-foreignAmt';
+  grid-template-columns: auto 5px 1fr auto;
+  grid-gap: 5px;
 }
 
-.obObposcashmgmtUiRenderDepositLine-container1-container1-description {
-  padding: 6px 20px 6px 10px;
-  float: left;
-  width: 30%;
+.obObposcashmgmtUiRenderDepositLine-wrapper-description {
+  grid-area: obObposcashmgmtUiRenderDepositLine-wrapper-description;
 }
 
-.obObposcashmgmtUiRenderDepositLine-container1-container1-user {
+.obObposcashmgmtUiRenderDepositLine-wrapper-user {
+  grid-area: obObposcashmgmtUiRenderDepositLine-wrapper-user;
+}
+
+.obObposcashmgmtUiRenderDepositLine-wrapper-time {
+  grid-area: obObposcashmgmtUiRenderDepositLine-wrapper-time;
+}
+
+.obObposcashmgmtUiRenderDepositLine-wrapper-separator {
+  text-align: center;
+  grid-area: obObposcashmgmtUiRenderDepositLine-wrapper-separator;
+}
+
+.obObposcashmgmtUiRenderDepositLine-wrapper-foreignAmt {
   text-align: right;
-  padding: 6px 20px 6px 10px;
-  float: left;
-  width: 12%;
+  grid-area: obObposcashmgmtUiRenderDepositLine-wrapper-foreignAmt;
 }
 
-.obObposcashmgmtUiRenderDepositLine-container1-container1-time {
+.obObposcashmgmtUiRenderDepositLine-wrapper-amt {
   text-align: right;
-  padding: 6px 20px 6px 10px;
-  float: left;
-  width: 8%;
-}
-
-.obObposcashmgmtUiRenderDepositLine-container1-container1-foreignAmt {
-  text-align: right;
-  padding: 6px 0px 6px 10px;
-  float: left;
-  width: 15%;
-}
-
-.obObposcashmgmtUiRenderDepositLine-container1-container1-amt {
-  text-align: right;
-  padding: 6px 20px 6px 10px;
-  float: right;
-  width: 20%;
+  grid-area: obObposcashmgmtUiRenderDepositLine-wrapper-amt;
 }
 
 
@@ -12412,14 +12411,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 */
 .obObposcashmgmtUiRenderTotal {}
 
-.obObposcashmgmtUiRenderTotal_negative {
-  color: red;
-}
-
-.obObposcashmgmtUiRenderTotal_positive {
-  color: var(--color-primary-darker);
-}
-
 
 /*
 # Component: OB.OBPOSCashMgmt.UI.RenderDepositsDrops
@@ -12427,109 +12418,54 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obObposcashmgmtUiRenderDepositsDrops {}
 
 
-.obObposcashmgmtUiRenderDepositsDrops-container1 {}
+.obObposcashmgmtUiRenderDepositsDrops-row1 {
+  height: 18px;
+}
 
-.obObposcashmgmtUiRenderDepositsDrops-container1-container1 {
+.obObposcashmgmtUiRenderDepositsDrops-row1,
+.obObposcashmgmtUiRenderDepositsDrops-row2,
+.obObposcashmgmtUiRenderDepositsDrops-row3,
+.obObposcashmgmtUiRenderDepositsDrops-row4 {
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
   border-bottom: var(--bottomseparator-slim);
 }
 
-.obObposcashmgmtUiRenderDepositsDrops-container1-container1-element1 {
-  padding: 10px 20px 10px 10px;
-  float: left;
+.obObposcashmgmtUiRenderDepositsDrops-row2-startingCashPayName,
+.obObposcashmgmtUiRenderDepositsDrops-row3-tenderedLbl,
+.obObposcashmgmtUiRenderDepositsDrops-row4-availableLbl {
+  width: 55%;
 }
 
-.obObposcashmgmtUiRenderDepositsDrops-container1-container1-element2 {
-  clear: both;
-}
-
-.obObposcashmgmtUiRenderDepositsDrops-container2 {}
-
-.obObposcashmgmtUiRenderDepositsDrops-container2-container1 {
-  border-bottom: var(--bottomseparator-slim);
-}
-
-.obObposcashmgmtUiRenderDepositsDrops-container2-container1-startingCashPayName {
-  padding: 6px 20px 6px 10px;
-  float: left;
-  width: 61%;
-}
-
-.obObposcashmgmtUiRenderDepositsDrops-container2-container1-startingCashForeignAmnt {
+.obObposcashmgmtUiRenderDepositsDrops-row2-startingCashForeignAmnt,
+.obObposcashmgmtUiRenderDepositsDrops-row3-tenderedForeignAmnt,
+.obObposcashmgmtUiRenderDepositsDrops-row4-foreignTotal {
+  width: 23%;
   text-align: right;
-  padding: 6px 0px 6px 10px;
-  float: left;
-  width: 15%;
 }
 
-.obObposcashmgmtUiRenderDepositsDrops-container2-container1-startingCashAmnt {
+.obObposcashmgmtUiRenderDepositsDrops-row2-startingCashAmnt,
+.obObposcashmgmtUiRenderDepositsDrops-row3-tenderedAmnt,
+.obObposcashmgmtUiRenderDepositsDrops-row4-total {
+  width: 23%;
   text-align: right;
-  padding: 6px 20px 6px 10px;
-  float: right;
-}
-
-.obObposcashmgmtUiRenderDepositsDrops-container3 {}
-
-.obObposcashmgmtUiRenderDepositsDrops-container3-container1 {
-  border-bottom: var(--bottomseparator-slim);
-}
-
-.obObposcashmgmtUiRenderDepositsDrops-container3-container1-tenderedLbl {
-  padding: 6px 20px 6px 10px;
-  float: left;
-  width: 61%;
-}
-
-.obObposcashmgmtUiRenderDepositsDrops-container3-container1-tenderedForeignAmnt {
-  text-align: right;
-  padding: 6px 0px 6px 10px;
-  float: left;
-  width: 15%;
-}
-
-.obObposcashmgmtUiRenderDepositsDrops-container3-container1-tenderedAmnt {
-  text-align: right;
-  padding: 6px 20px 6px 10px;
-  float: right;
 }
 
 .obObposcashmgmtUiRenderDepositsDrops-theList {
   /*Inherits: [OB.UI.Table]*/
 }
 
-.obObposcashmgmtUiRenderDepositsDrops-container4 {}
-
-.obObposcashmgmtUiRenderDepositsDrops-container4-container1 {
-  border-bottom: var(--bottomseparator-slim);
-}
-
-.obObposcashmgmtUiRenderDepositsDrops-container4-container1-availableLbl {
-  padding: 10px 20px 10px 10px;
-  float: left;
-  width: 61%;
+.obObposcashmgmtUiRenderDepositsDrops-row4 {
   font-weight: bold;
+  font-size: 20px;
+  color: var(--color-maincolor);
+  padding-top: 12px;
+  padding-bottom: 12px;
 }
 
-.obObposcashmgmtUiRenderDepositsDrops-container4-container1-container1 {
-  text-align: right;
-  padding: 6px 0px 6px 10px;
-  float: left;
-  width: 15%;
-  font-weight: bold;
-}
-
-.obObposcashmgmtUiRenderDepositsDrops-container4-container1-container1-foreignTotal {
-  float: right;
-}
-
-.obObposcashmgmtUiRenderDepositsDrops-container4-container1-container2 {
-  padding: 10px 20px 10px 0px;
-  float: right;
-}
-
-.obObposcashmgmtUiRenderDepositsDrops-container4-container1-container2-total {
-  /*Inherits: [OB.OBPOSCashMgmt.UI.RenderTotal]*/
-  float: right;
-  font-weight: bold;
+.obObposcashmgmtUiRenderDepositsDrops-row4.negative {
+  color: red;
 }
 
 
@@ -12538,58 +12474,61 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 */
 .obObposcashmgmtUiListDepositsDrops {}
 
-.obObposcashmgmtUiListDepositsDrops-container1 {
-  overflow: auto;
-  height: 612px;
-  margin: 5px;
-  background-color: white;
+.obObposcashmgmtUiListDepositsDrops-wrapper {
+  padding: 25px 10px 5px 10px;
+  height: calc(100% - 35px);
 }
 
-.obObposcashmgmtUiListDepositsDrops-container1-container1 {
-  background-color: var(--color-primary-lighter);
-  color: var(--color-primary-darker);
-  padding: 5px;
-}
+.obObposcashmgmtUiListDepositsDrops-wrapper-components {
+  display: grid;
+  grid-template-rows: auto 1fr;
 
-.obObposcashmgmtUiListDepositsDrops-container1-container1-container1 {}
-
-.obObposcashmgmtUiListDepositsDrops-container1-container1-container1-container1 {
   border-bottom: var(--bottomseparator-slim);
+  overflow-y: auto;
+  background-color: white;
+  box-shadow: 0px 0px 10px -1px #8D8D8D;
+  border-radius: 4px;
+  height: 100%;
 }
 
-.obObposcashmgmtUiListDepositsDrops-container1-container1-container1-container1-titleLbl {
-  padding: 6px;
+.obObposcashmgmtUiListDepositsDrops-wrapper-components-header {}
+
+.obObposcashmgmtUiListDepositsDrops-wrapper-components-header-titleLbl {
+  padding: 12px;
   border-bottom: var(--bottomseparator-slim);
   text-align: center;
   font-weight: bold;
+  font-size: 20px;
+  color: var(--color-maincolor);
 }
 
-.obObposcashmgmtUiListDepositsDrops-container1-container1-container1-container1-userName {
+.obObposcashmgmtUiListDepositsDrops-wrapper-components-header-userName {
   padding: 6px;
   border-bottom: var(--bottomseparator-slim);
   text-align: center;
 }
 
-.obObposcashmgmtUiListDepositsDrops-container1-container1-container1-container1-time {
+.obObposcashmgmtUiListDepositsDrops-wrapper-components-header-time {
   padding: 6px;
   border-bottom: var(--bottomseparator-slim);
   text-align: center;
 }
 
-.obObposcashmgmtUiListDepositsDrops-container1-container1-container1-container1-store {
+.obObposcashmgmtUiListDepositsDrops-wrapper-components-header-store {
   padding: 6px;
   border-bottom: var(--bottomseparator-slim);
   text-align: center;
 }
 
-.obObposcashmgmtUiListDepositsDrops-container1-container1-container1-container1-terminal {
+.obObposcashmgmtUiListDepositsDrops-wrapper-components-header-terminal {
   padding: 6px;
   border-bottom: var(--bottomseparator-slim);
   text-align: center;
 }
 
-.obObposcashmgmtUiListDepositsDrops-container1-container1-container1-container1-depositDropsList {
+.obObposcashmgmtUiListDepositsDrops-wrapper-components-depositDropsList {
   /*Inherits: [OB.UI.Table]*/
+  overflow-y: auto;
 }
 
 
@@ -12609,9 +12548,27 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   grid-area: obObposcashmgmtUiLeftToolbarImpl-btnCancel;
 }
 
+.obObposcashmgmtUiLeftToolbarImpl-btnCancel  .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabCancel.svg');
+  background-size: 20px;
+}
+
+.obObposcashmgmtUiLeftToolbarImpl-btnCancel.disabled .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabCancel_disabled.svg');
+}
+
 .obObposcashmgmtUiLeftToolbarImpl-btnDone {
   /*Inherits: [OB.UI.ToolbarButton]*/
   grid-area: obObposcashmgmtUiLeftToolbarImpl-btnDone;
+}
+
+.obObposcashmgmtUiLeftToolbarImpl-btnDone  .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabDone.svg');
+  background-size: 20px;
+}
+
+.obObposcashmgmtUiLeftToolbarImpl-btnDone.disabled .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabDone_disabled.svg');
 }
 
 
@@ -12624,11 +12581,29 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obObposcashmgmtUiRightToolbarImpl-btnCashMgmt {
   /*Inherits: [OB.UI.ToolbarButton]*/
   grid-area: obObposcashmgmtUiRightToolbarImpl-btnCashMgmt;
+
+  grid-template-rows: auto 30px auto;
+}
+
+.obObposcashmgmtUiRightToolbarImpl-btnCashMgmt .obUiButton-label {
+  align-self: center;
+  font-size: 16px;
+  line-height: 20px;
+  padding: 0px;
 }
 
 .obObposcashmgmtUiRightToolbarImpl-btnToggleView {
   /*Inherits: [OB.UI.ToolbarButton]*/
   grid-area: obObposcashmgmtUiRightToolbarImpl-btnToggleView;
+}
+
+.obObposcashmgmtUiRightToolbarImpl-btnToggleView  .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabSwitch.svg');
+  background-size: 24px;
+}
+
+.obObposcashmgmtUiRightToolbarImpl-btnToggleView.disabled .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabSwitch_disabled.svg');
 }
 
 .obObposcashmgmtUiRightToolbarImpl-btnToggleView.disabled {}
@@ -12657,14 +12632,15 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   /*Inherits: [OB.OBPOSCashMgmt.UI.RightToolbarImpl]*/
 }
 
-.obObposcashmgmtUiCashManagement-cashupMultiColumn-cashmgmtLeftPanel {}
+.obObposcashmgmtUiCashManagement-cashupMultiColumn-cashmgmtLeftPanel {
+  height: 100%;
+}
 
-.obObposcashmgmtUiCashManagement-cashmgmtLeftPanel-container1 {}
-
-.obObposcashmgmtUiCashManagement-cashmgmtLeftPanel-container1-container1 {}
-
-.obObposcashmgmtUiCashManagement-cashmgmtLeftPanel-container1-container1-ObposcashmgmtUiListDepositsDrops {
+.obObposcashmgmtUiCashManagement-cashmgmtLeftPanel-ObposcashmgmtUiListDepositsDrops {
   /*Inherits: [OB.OBPOSCashMgmt.UI.ListDepositsDrops]*/
+  height: calc(100% - 15px);
+  margin: 0px 0px 10px 0px;
+  width: calc(100% - 5px);
 }
 
 .obObposcashmgmtUiCashManagement-cashupMultiColumn-cashmgmtRightPanel {}
@@ -12714,6 +12690,14 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obObposcashmgmtUiCashManagement-cashupMultiColumn .obUiMultiColumn-rightToolbar .obUiMultiColumnToolbar-standardToolbar-toolbar {
   grid-template-areas: "obObposcashmgmtUiRightToolbarImpl-btnCashMgmt";
   grid-template-columns: repeat(1, calc(100% / 1));
+}
+
+@media all and (min-width: 800px) {
+  .obUiMultiColumn-leftToolbar .obObposcashmgmtUiRightToolbarImpl-btnCashMgmt,
+  .obObposcashmgmtUiRightToolbarImpl-btnToggleView {
+    /*Inherits: [OB.UI.ToolbarButton]*/
+    display: none;
+  }
 }
 
 @media all and (max-width: 800px) {
