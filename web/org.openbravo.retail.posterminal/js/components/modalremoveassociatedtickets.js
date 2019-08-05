@@ -133,14 +133,14 @@ enyo.kind({
     classes: 'obUiModalRemoveAssociatedTickets-bodyButtons',
     components: [
       {
-        kind: 'OB.UI.ModalRemoveAssociations_btnApply',
-        classes:
-          'obUiModalRemoveAssociatedTickets-bodyButtons-obUiModalRemoveAssociationsBtnApply'
-      },
-      {
         kind: 'OB.UI.ModalRemoveAssociations_btnCancel',
         classes:
           'obUiModalRemoveAssociatedTickets-bodyButtons-obUiModalRemoveAssociationsBtnCancel'
+      },
+      {
+        kind: 'OB.UI.ModalRemoveAssociations_btnApply',
+        classes:
+          'obUiModalRemoveAssociatedTickets-bodyButtons-obUiModalRemoveAssociationsBtnApply'
       }
     ]
   },

@@ -80,6 +80,11 @@ enyo.kind({
     components: [
       {
         classes:
+          'obUiModalSelectOpenedReceipt-bodyButtons-obUiModalSelectOpenedReceiptBtnCancel',
+        kind: 'OB.UI.ModalSelectOpenedReceipt_btnCancel'
+      },
+      {
+        classes:
           'obUiModalSelectOpenedReceipt-bodyButtons-obUiModalSelectOpenedReceiptBtnApply',
         kind: 'OB.UI.ModalSelectOpenedReceipt_btnApply',
         disabled: true,
@@ -219,11 +224,6 @@ enyo.kind({
               me.owner.owner.doHideThisPopup();
             });
         }
-      },
-      {
-        classes:
-          'obUiModalSelectOpenedReceipt-bodyButtons-obUiModalSelectOpenedReceiptBtnCancel',
-        kind: 'OB.UI.ModalSelectOpenedReceipt_btnCancel'
       }
     ]
   },

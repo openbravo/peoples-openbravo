@@ -172,12 +172,12 @@ enyo.kind({
     classes: 'obUiModalDeleteReceipt-bodyButtons',
     components: [
       {
-        classes: 'obUiModalDeleteReceipt-bodyButtons-obUiBtnModalApplyDelete',
-        kind: 'OB.UI.btnModalApplyDelete'
-      },
-      {
         classes: 'obUiModalDeleteReceipt-bodyButtons-obUiBtnModalCancelDelete',
         kind: 'OB.UI.btnModalCancelDelete'
+      },
+      {
+        classes: 'obUiModalDeleteReceipt-bodyButtons-obUiBtnModalApplyDelete',
+        kind: 'OB.UI.btnModalApplyDelete'
       }
     ]
   },

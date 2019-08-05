@@ -45,14 +45,14 @@ enyo.kind({
     classes: 'obUiModalChange-bodyButtons-container1',
     components: [
       {
-        kind: 'OB.UI.ModalChangeButtonOK',
-        classes:
-          'obUiModalChange-bodyButtons-container1-obUiModalChangeButtonOK'
-      },
-      {
         kind: 'OB.UI.ModalChangeButtonCancel',
         classes:
           'obUiModalChange-bodyButtons-container1-obUiModalChangeButtonCancel'
+      },
+      {
+        kind: 'OB.UI.ModalChangeButtonOK',
+        classes:
+          'obUiModalChange-bodyButtons-container1-obUiModalChangeButtonOK'
       }
     ]
   },

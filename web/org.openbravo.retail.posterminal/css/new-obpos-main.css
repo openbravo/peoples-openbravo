@@ -3322,6 +3322,7 @@ li.selected > .obUiRenderOrderLine_edit {
 */
 .obUiFormElement_dataEntry.obUiFormElement.obUiBtnReceiptToInvoice {
   grid-template-rows: 1fr 0px;
+  grid-template-columns: 0px 1fr 0px 0px;
 
   padding-top: 10px;
   grid-area: obUiBtnReceiptToInvoice;
@@ -3446,7 +3447,7 @@ li.selected > .obUiRenderOrderLine_edit {
 
 .obUiOrderView-totalAndBreakdowns-row2-status {
   display: grid;
-  grid-template-columns: 40% 1fr;
+  grid-template-columns: 35% 1fr;
   grid-template-areas: "obUiBtnReceiptToInvoice obUiOrderViewDivText";
 
   width: 100%;

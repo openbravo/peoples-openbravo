@@ -152,14 +152,14 @@ enyo.kind({
     classes: 'obUiModalOpenRelatedReceipts-bodyButtons',
     components: [
       {
-        kind: 'OB.UI.OpenRelatedReceipts_btnApply',
-        classes:
-          'obUiModalOpenRelatedReceipts-bodyButtons-obUiOpenRelatedReceiptsBtnApply'
-      },
-      {
         kind: 'OB.UI.OpenRelatedReceipts_btnCancel',
         classes:
           'obUiModalOpenRelatedReceipts-bodyButtons-obUiOpenRelatedReceiptsBtnCancel'
+      },
+      {
+        kind: 'OB.UI.OpenRelatedReceipts_btnApply',
+        classes:
+          'obUiModalOpenRelatedReceipts-bodyButtons-obUiOpenRelatedReceiptsBtnApply'
       }
     ]
   },

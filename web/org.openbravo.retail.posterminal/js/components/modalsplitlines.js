@@ -379,13 +379,13 @@ enyo.kind({
     classes: 'obUiModalSplitLine-bodyButtons',
     components: [
       {
+        kind: 'OB.UI.ModalSplitLine_btnCancel',
+        classes: 'obUiModalSplitLine-bodyButtons-obUiModalSplitLineBtnCancel'
+      },
+      {
         kind: 'OB.UI.ModalSplitLine_btnApply',
         name: 'btnApply',
         classes: 'obUiModalSplitLine-bodyButtons-btnApply'
-      },
-      {
-        kind: 'OB.UI.ModalSplitLine_btnCancel',
-        classes: 'obUiModalSplitLine-bodyButtons-obUiModalSplitLineBtnCancel'
       }
     ]
   },

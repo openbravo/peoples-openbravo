@@ -22,16 +22,16 @@ enyo.kind({
     classes: 'obObposCashupUiModalPendingToProcess-bodyButtons',
     components: [
       {
-        //OK button
-        kind: 'OB.OBPOSCashUp.UI.modalPendingToProcess_OkButton',
-        classes:
-          'obObposCashupUiModalPendingToProcess-bodyButtons-obObposCashupUiModalPendingToProcessOkButton'
-      },
-      {
         //Cancel button
         kind: 'OB.OBPOSCashUp.UI.modalPendingToProcess_CancelButton',
         classes:
           'obObposCashupUiModalPendingToProcess-bodyButtons-obObposCashupUiModalPendingToProcessCancelButton'
+      },
+      {
+        //OK button
+        kind: 'OB.OBPOSCashUp.UI.modalPendingToProcess_OkButton',
+        classes:
+          'obObposCashupUiModalPendingToProcess-bodyButtons-obObposCashupUiModalPendingToProcessOkButton'
       }
     ]
   }

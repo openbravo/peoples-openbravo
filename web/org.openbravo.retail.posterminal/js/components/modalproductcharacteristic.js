@@ -476,7 +476,7 @@ enyo.kind({
   parentValue: '0',
   setCollection: function(inSender, inEvent) {
     if (inEvent.parentValue !== '0') {
-      this.parent.parent.$.header.$.modalProductChTopHeader.$.backChButton.removelass(
+      this.parent.parent.$.header.$.modalProductChTopHeader.$.backChButton.removeClass(
         'u-hiddenVisible'
       );
       this.parent.parent.$.header.$.modalProductChTopHeader.$.backChButton.addClass(
