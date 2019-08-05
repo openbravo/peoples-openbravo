@@ -126,10 +126,16 @@ enyo.kind({
   class: 'obUiCustomerStatisticsTextProperty',
   type: 'text',
   handlers: {
-    onLoadValue: 'loadValue'
+    onSetStatisticValue: 'setStatisticsValue'
   },
-  loadValue: function(inSender, inEvent) {
-    this.setValue('100');
+  setStatisticsValue: function(inSender, inEvent) {
+    if (inEvent[this.textProperty]) {
+      this.setValue(inEvent[this.textProperty]);
+      this.parent.parent.parent.show();
+      this.parent.parent.parent.parent.parent.show();
+    } else {
+      this.parent.parent.parent.hide();
+    }
   }
 });
 
@@ -376,7 +382,6 @@ enyo.kind({
             {
               name: 'statisticsLbl',
               kind: 'OB.UI.FormSection.Label',
-              showing: false,
               classes:
                 'obObposPointOfSaleUiCustomersEditCreatecustomers-statistics-statisticsLbl'
             },
