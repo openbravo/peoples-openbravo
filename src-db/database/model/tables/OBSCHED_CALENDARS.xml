@@ -13,7 +13,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="CALENDAR" primaryKey="false" required="true" type="BLOB" size="4000" autoIncrement="false">
+      <column name="CALENDAR" primaryKey="false" required="false" type="BLOB" size="4000" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
