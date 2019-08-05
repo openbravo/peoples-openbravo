@@ -996,6 +996,7 @@ export.database: exports database structure and data to xml files.
     <java classname="org.openbravo.base.BuildTask" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
       <arg line="'${base.config}/Openbravo.properties' ${logFileName}" />
       <classpath>
+        <pathelement path="${base.config}" />
         <pathelement path="${build.core.lib}/openbravo-core.jar" />
         <pathelement path="${base.lib}/runtime/log4j-1.2-api-2.11.1.jar" />
         <pathelement path="${base.lib}/runtime/log4j-api-2.11.1.jar" />
