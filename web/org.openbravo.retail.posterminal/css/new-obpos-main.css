@@ -2642,7 +2642,7 @@ li.selected > .obUiRenderOrderLine_edit {
   box-sizing: border-box;
   align-items: center;
   width: 100%;
-  padding: 4px 12px 3px 30px;
+  padding: 4px 12px 3px 0px;
 }
 
 .obUiRenderTaxLine-tax {
@@ -2709,7 +2709,7 @@ li.selected > .obUiRenderOrderLine_edit {
   box-sizing: border-box;
   align-items: center;
   width: 100%;
-  padding: 4px 12px 3px 30px;
+  padding: 4px 12px 3px 0px;
 }
 
 .obUiRenderPaymentLine-name {
@@ -3471,8 +3471,11 @@ li.selected > .obUiRenderOrderLine_edit {
 .obUiOrderView-totalAndBreakdowns-listTaxLines {
   /*Inherits: [OB.UI.ScrollableTable]*/
 }
-.obUiOrderView-totalAndBreakdowns-listTaxLines-scrollAreaClasses {
-  max-height: 250px;
+.obUiOrderView-totalAndBreakdowns-listTaxLines-scrollAreaClasses {}
+
+.obUiOrderView-totalAndBreakdowns-listTaxLines-scrollAreaClasses .obUiScrollableTable-theader-scrollArea-tbody {
+  list-style-type: disc;
+  padding-left: 35px;
 }
 
 .obUiOrderView-totalAndBreakdowns-row5 {}
@@ -3493,8 +3496,11 @@ li.selected > .obUiRenderOrderLine_edit {
 
 .obUiOrderView-totalAndBreakdowns-listPaymentLines {}
 
-.obUiOrderView-totalAndBreakdowns-listPaymentLines-scrollArea {
-  max-height: 250px;
+.obUiOrderView-totalAndBreakdowns-listPaymentLines-scrollArea {}
+
+.obUiOrderView-totalAndBreakdowns-listPaymentLines-scrollArea .obUiScrollableTable-theader-scrollArea-tbody {
+  list-style-type: disc;
+  padding-left: 35px;
 }
 
 /*
