@@ -2364,6 +2364,13 @@ li.selected > .obUiRenderOrderLine_edit {
 /* Inherits: [Image] */
   float: left;
   padding-right: 5px;
+  margin-bottom: -7px;
+  width: 16px;
+  height: 23px;
+  background-color: transparent;
+  background-image: url('./../img/iconServices_ticketline.svg');
+  background-repeat: no-repeat;
+  background-size: 16px;
 }
 
 .obUiRenderOrderLine-nameContainner-product {}
@@ -2611,19 +2618,57 @@ li.selected > .obUiRenderOrderLine_edit {
 .obUiShowServicesButton {
   float: right;
   display: block;
+  width: 60px;
+  height: 50px;
+  background-color: #4d545c;
+  border-radius: 4px;
+  margin-top: 4px;
 }
 
-.obUiShowServicesButton_unreviewed {
-  width: 27px;
-  height: 26px;
-  background-image: url('./../img/iconServices_unreviewed.png');
+.obUiShowServicesButton:hover {
+  background-color: #3a3f45;
+  opacity: 1;
 }
 
-.obUiShowServicesButton_reviewed {
-  width: 27px;
-  height: 26px;
-  background-image: url('./../img/iconServices_reviewed.png');
+.obUiShowServicesButton:active {
+  background-color: #232629;
+  opacity: 1;
 }
+
+.obUiShowServicesButton_unreviewed .obUiButton-before,
+.obUiShowServicesButton_reviewed .obUiButton-before {
+  width: 100%;
+  height: 100%;
+  background-image: url('./../img/iconServices.svg');
+  background-repeat: no-repeat;
+  background-size: 23px;
+}
+
+.obUiShowServicesButton_unreviewed .obUiButton-before {
+  background-position: calc(50% + 1px) center;
+}
+
+.obUiShowServicesButton_reviewed .obUiButton-before {
+  background-position: calc(50% - 10px) center;
+}
+
+.obUiShowServicesButton_unreviewed .obUiButton-label,
+.obUiShowServicesButton_reviewed .obUiButton-label {
+  display: none;
+}
+
+.obUiShowServicesButton_reviewed .obUiButton-after {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  top: 14px;
+  left: 33px;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-on.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 20px;
+}
+
 
 /*
 # Component: OB.UI.RenderTaxLine
@@ -8948,13 +8993,13 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obObposPointOfSaleUiEditLine-actionButtons-showRelatedServices_unreviewed {
   width: 27px;
   height: 26px;
-  background-image: url('./../img/iconServices_unreviewed.png');
+  background-image: url('./../img/iconServices.svg');
 }
 
 .obObposPointOfSaleUiEditLine-actionButtons-showRelatedServices_reviewed {
   width: 27px;
   height: 26px;
-  background-image: url('./../img/iconServices_reviewed.png');
+  background-image: url('./../img/iconServices.svg');
 }
 
 .obObposPointOfSaleUiEditLine-actionButtons-removeDiscountButton {
