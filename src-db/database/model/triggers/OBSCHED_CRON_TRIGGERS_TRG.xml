@@ -21,7 +21,7 @@
 
 BEGIN
   :NEW.obsched_cron_triggers_ID := get_uuid();
-END obsched_cron_triggers_TRG
+END OBSCHED_CRON_TRIGGERS_TRG
 ]]></body>
     </trigger>
   </database>

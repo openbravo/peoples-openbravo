@@ -21,7 +21,7 @@
 
 BEGIN
   :NEW.obsched_job_details_ID := get_uuid();
-END obsched_job_details_TRG
+END OBSCHED_JOB_DETAILS_TRG
 ]]></body>
     </trigger>
   </database>

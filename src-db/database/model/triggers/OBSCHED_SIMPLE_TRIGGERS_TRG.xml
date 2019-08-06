@@ -21,7 +21,7 @@
 
 BEGIN
   :NEW.obsched_simple_triggers_ID := get_uuid();
-END obsched_simple_triggers_TRG
+END OBSCHED_SIMPLE_TRIGGERS_TRG
 ]]></body>
     </trigger>
   </database>
