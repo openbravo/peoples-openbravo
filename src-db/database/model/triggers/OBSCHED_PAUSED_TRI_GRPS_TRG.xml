@@ -21,6 +21,7 @@
 
 BEGIN
   :NEW.obsched_paused_trigger_grps_ID := get_uuid();
-END obsched_paused_tri_grps_TRG]]></body>
+END obsched_paused_tri_grps_TRG
+]]></body>
     </trigger>
   </database>

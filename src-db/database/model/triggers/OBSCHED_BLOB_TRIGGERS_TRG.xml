@@ -21,6 +21,7 @@
 
 BEGIN
   :NEW.obsched_blob_triggers_ID := get_uuid();
-END obsched_blob_triggers_TRG]]></body>
+END obsched_blob_triggers_TRG
+]]></body>
     </trigger>
   </database>
