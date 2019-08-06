@@ -2930,22 +2930,45 @@ li.selected > .obUiRenderOrderLine_edit {
   /*Inherits: [OB.UI.ActionButtonArea]*/
   grid-template-areas: 'pos00 pos01 pos02 pos03 pos04';
   grid-template-columns: repeat(5, 1fr);
-  margin: 3px 10px 1px 10px;
-  grid-column-gap: 5px;
-  grid-row-gap: 5px;
+  margin: 0px 0px 18px 0px;
+  grid-column-gap: 1px;
+  grid-row-gap: 1px;
 }
 
-.obUiOrderHeader-abaReceiptToolbar1>obUiActionButton {
-  min-height: 35px;
-  max-height: 43px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-size: 14px;
-  padding: 4px 5px;
+.obUiOrderHeader-abaReceiptToolbar1 > .obUiActionButton {
+  text-decoration: none;
+  background-color: #4d545c;
+  font-size: var(--font-medium);
+  color: #e8e8e8;
+  padding: 0px 18px;
+  margin: 0px;
+  height: 50px;
+  text-align: center;
 }
 
-.obUiOrderHeader-abaReceiptToolbar1>.obUiDummyAction {
-  background-color: transparent;
+.obUiOrderHeader-abaReceiptToolbar1 > .obUiActionButton:hover {
+  background-color: #3a3f45;
+  opacity: 1;
+}
+
+.obUiOrderHeader-abaReceiptToolbar1 > .obUiActionButton:active {
+  background-color: #232629;
+  opacity: 1;
+}
+
+.obUiOrderHeader-abaReceiptToolbar1 > .pos00 {
+  border-radius: 4px 0px 0px 4px;
+}
+
+.obUiOrderHeader-abaReceiptToolbar1 > .pos04 {
+  border-radius: 0px 4px 4px 0px;
+}
+
+.obUiOrderHeader-abaReceiptToolbar1 > .obUiActionButton.disabled,
+.obUiOrderHeader-abaReceiptToolbar1 > .obUiDummyAction {
+  background-color: #d0d2d3;
+  opacity: 1;
+  color: #90979f;
 }
 
 .obUiOrderHeader-labelComponents-orderdetails {
