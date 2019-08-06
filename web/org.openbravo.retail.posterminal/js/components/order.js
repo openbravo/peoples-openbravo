@@ -12,9 +12,7 @@
 enyo.kind({
   name: 'OB.UI.OrderMultiSelect',
   classes: 'obUiOrderMultiSelect',
-  kind: 'Image',
-  src: '../org.openbravo.retail.posterminal/img/iconPinSelected.svg',
-  sizing: 'cover',
+  kind: 'OB.UI.Button',
   showing: false,
   events: {
     onToggleSelection: ''
@@ -32,9 +30,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.OrderSingleSelect',
   classes: 'obUiOrderSingleSelect',
-  kind: 'Image',
-  src: '../org.openbravo.retail.posterminal/img/iconPinUnselected.svg',
-  sizing: 'cover',
+  kind: 'OB.UI.Button',
   events: {
     onToggleSelection: ''
   },
