@@ -275,6 +275,7 @@ enyo.kind({
     this.model.get('leftColumnViewManager').on(
       'order',
       function() {
+        this.removePaidTicketClass();
         if (
           this.model.get('order').get('isPaid') ||
           this.model.get('order').get('isLayaway') ||
