@@ -9,6 +9,7 @@
 package org.openbravo.retail.posterminal.process;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -80,18 +81,18 @@ public class CustomerStatistics extends JSONProcessSimple {
         if (recencyDays != null) {
           if (recencyTiming.equalsIgnoreCase("H")) {
             noofRecency = recencyDays.multiply(new BigDecimal("24"))
-                .setScale(2, BigDecimal.ROUND_HALF_UP);
+                .setScale(2, RoundingMode.HALF_UP);
           } else if (recencyTiming.equalsIgnoreCase("D")) {
-            noofRecency = recencyDays.setScale(2, BigDecimal.ROUND_HALF_UP);
+            noofRecency = recencyDays.setScale(2, RoundingMode.HALF_UP);
           } else if (recencyTiming.equalsIgnoreCase("W")) {
             noofRecency = recencyDays.divide(new BigDecimal("7"))
-                .setScale(2, BigDecimal.ROUND_HALF_UP);
+                .setScale(2, RoundingMode.HALF_UP);
           } else if (recencyTiming.equalsIgnoreCase("M")) {
             noofRecency = recencyDays.divide(new BigDecimal("30"))
-                .setScale(2, BigDecimal.ROUND_HALF_UP);
+                .setScale(2, RoundingMode.HALF_UP);
           } else if (recencyTiming.equalsIgnoreCase("Y")) {
             noofRecency = recencyDays.divide(new BigDecimal("365"))
-                .setScale(2, BigDecimal.ROUND_HALF_UP);
+                .setScale(2, RoundingMode.HALF_UP);
           }
 
           timingText = getTimingText(noofRecency, recencyTiming);
@@ -126,7 +127,7 @@ public class CustomerStatistics extends JSONProcessSimple {
           frequencyQuery.setParameter("startDate", startDate);
           long freq = frequencyQuery.uniqueResult();
           BigDecimal frequency = new BigDecimal(freq)
-              .setScale(2, BigDecimal.ROUND_HALF_UP);
+              .setScale(2, RoundingMode.HALF_UP);
           System.out.println("frequency ===> " + frequency);
 
           if (frequencyTimingUnit != null) {
@@ -172,7 +173,7 @@ public class CustomerStatistics extends JSONProcessSimple {
           monetaryValueQuery.setParameter("orgId", orgId);
           monetaryValueQuery.setParameter("startDate", startDate);
           BigDecimal monetaryValue = monetaryValueQuery.uniqueResult()
-              .setScale(2, BigDecimal.ROUND_HALF_UP);
+              .setScale(2, RoundingMode.HALF_UP);
           System.out.println("monetaryValue ===> " + monetaryValue);
 
           if (monetaryValueTimingUnit != null) {
@@ -219,7 +220,7 @@ public class CustomerStatistics extends JSONProcessSimple {
           averageBasketQuery.setParameter("orgId", orgId);
           averageBasketQuery.setParameter("startDate", startDate);
           BigDecimal averageBasketValue = averageBasketQuery.uniqueResult()
-              .setScale(2, BigDecimal.ROUND_HALF_UP);
+              .setScale(2, RoundingMode.HALF_UP);
           System.out.println("averageBasket ===> " + averageBasketValue);
 
           if (averageBasketTimingUnit != null) {
