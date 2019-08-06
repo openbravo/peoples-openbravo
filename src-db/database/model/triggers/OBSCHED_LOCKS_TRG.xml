@@ -21,6 +21,7 @@
 
 BEGIN
   :NEW.obsched_locks_ID := get_uuid();
-END obsched_locks_TRG]]></body>
+END obsched_locks_TRG
+]]></body>
     </trigger>
   </database>
