@@ -36,6 +36,8 @@ enyo.kind({
     return retrievedValues;
   },
   executeOnShow: function() {
+    var me = this;
+
     if (
       OB.MobileApp.model.get('terminal').defaultbp_paymentmethod !== null &&
       OB.MobileApp.model.get('terminal').defaultbp_bpcategory !== null &&
@@ -68,11 +70,43 @@ enyo.kind({
         this.$.body.$.edit_createcustomers_impl.$.invoicingAddrFields.hide();
         this.$.body.$.edit_createcustomers_impl.$.shippingAddrFields.hide();
         this.$.header.setContent(OB.I18N.getLabel('OBPOS_TitleEditCustomer'));
+
+        //Statistics
+        me.$.body.$.edit_createcustomers_impl.$.statistics.setShowing(false);
+        var anonymousCustomer = OB.MobileApp.model.get('businessPartner').id;
+        if (
+          OB.MobileApp.model.get('connectedToERP') &&
+          this.args.businessPartner.id !== anonymousCustomer
+        ) {
+          var process = new OB.DS.Process(
+            'org.openbravo.retail.posterminal.process.CustomerStatistics'
+          );
+          process.exec(
+            {
+              organization: OB.MobileApp.model.get('terminal').organization,
+              bpId: this.args.businessPartner.id
+            },
+            function(data, message) {
+              if (data && data.exception) {
+                OB.UTIL.showError(
+                  OB.I18N.getLabel('OBPOS_GetStatistics_Error')
+                );
+              } else if (data) {
+                me.waterfall('onSetStatisticValue', data);
+              } else {
+                OB.UTIL.showError(
+                  OB.I18N.getLabel('OBPOS_GetStatistics_Error')
+                );
+              }
+            }
+          );
+        }
       } else {
         this.$.body.$.edit_createcustomers_impl.setCustomer(undefined);
         this.$.body.$.edit_createcustomers_impl.$.invoicingAddrFields.show();
         this.$.body.$.edit_createcustomers_impl.$.shippingAddrFields.show();
         this.$.header.setContent(OB.I18N.getLabel('OBPOS_TitleNewCustomer'));
+        this.$.body.$.edit_createcustomers_impl.$.statistics.setShowing(false);
       }
       this.waterfall('onDisableButton', {
         disabled: false
@@ -800,6 +834,40 @@ enyo.kind({
       modelProperty: 'cityName',
       i18nLabel: 'OBPOS_LblCity',
       maxlength: 60
+    }
+  ],
+  statisticsAttributes: [
+    {
+      kind: 'OB.UI.CustomerStatisticsTextProperty',
+      name: 'recency',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-recency',
+      i18nLabel: 'OBPOS_LblRecency',
+      textProperty: 'recencyMsg',
+      readOnly: true
+    },
+    {
+      kind: 'OB.UI.CustomerStatisticsTextProperty',
+      name: 'frequency',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-frequency',
+      i18nLabel: 'OBPOS_LblFrequency',
+      textProperty: 'frequencyMsg',
+      readOnly: true
+    },
+    {
+      kind: 'OB.UI.CustomerStatisticsTextProperty',
+      name: 'monetaryValue',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-monetaryValue',
+      i18nLabel: 'OBPOS_LblMonetaryVal',
+      textProperty: 'monetaryValMsg',
+      readOnly: true
+    },
+    {
+      kind: 'OB.UI.CustomerStatisticsTextProperty',
+      name: 'averageCart',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-averageCart',
+      i18nLabel: 'OBPOS_LblAvgCart',
+      textProperty: 'averageBasketMsg',
+      readOnly: true
     }
   ]
 });
