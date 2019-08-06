@@ -49,7 +49,7 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.SmallButton',
+  kind: 'OB.UI.Button',
   name: 'OB.UI.OrderMultiSelectAll',
   i18nContent: 'OBPOS_lblSelectAll',
   classes: 'obUiOrderMultiSelectAll',

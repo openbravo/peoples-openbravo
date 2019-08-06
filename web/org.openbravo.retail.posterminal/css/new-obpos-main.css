@@ -2887,34 +2887,55 @@ li.selected > .obUiRenderOrderLine_edit {
 /***********************   ***********************/
 /*
 # Component: OB.UI.OrderMultiSelect
-# Inherits: [Image]
-*/
-.obUiOrderMultiSelect {
-  cursor: pointer;
-  margin-top: 8px;
-  width: 27px;
-  height: 27px;
-}
-
-/*
 # Component: OB.UI.OrderSingleSelect
 # Inherits: [Image]
 */
+.obUiOrderMultiSelect,
 .obUiOrderSingleSelect {
   cursor: pointer;
-  margin-top: 8px;
-  width: 27px;
+  margin-top: 9px;
+  width: 45px;
   height: 27px;
+}
+
+.obUiOrderMultiSelect:hover ,
+.obUiOrderSingleSelect:hover {
+  opacity: 0.75;
+}
+
+.obUiOrderMultiSelect:active,
+.obUiOrderSingleSelect:active {
+  opacity: 1;
+  filter: contrast(0.8) brightness(0.8);
 }
 
 
 /*
 # Component: OB.UI.OrderMultiSelectAll
-# Inherits: [OB.UI.SmallButton]
+# Inherits: [OB.UI.Button]
 */
 .obUiOrderMultiSelectAll {
-  margin-top: 6px;
+  margin-top: 3px;
   white-space: nowrap;
+  background-color: transparent;
+  background-image: url('./../img/iconSelectAll.svg');
+  background-repeat: no-repeat;
+  background-size: 30px;
+  background-position: center center;
+  width: 55px;
+  height: 40px;
+}
+
+.obUiOrderMultiSelectAll:hover {
+  opacity: 0.75;
+}
+.obUiOrderMultiSelectAll:active {
+  opacity: 1;
+  filter: contrast(0.8) brightness(0.8);
+}
+
+.obUiOrderMultiSelectAll .obUiButton-label {
+  display: none;
 }
 
 
@@ -3562,7 +3583,7 @@ li.selected > .obUiRenderOrderLine_edit {
 # Component: OB.UI.OrderDetails
 */
 .obUiOrderDetails {
-  padding: 13px 0px 17px 0px;
+  padding: 15px 0px 17px 0px;
   font-weight: bold;
   color: #6cb33f;
   float: left;
@@ -3570,6 +3591,15 @@ li.selected > .obUiRenderOrderLine_edit {
   overflow: hidden;
   text-overflow: ellipsis;
   cursor: pointer;
+}
+
+.obUiOrderDetails:hover {
+  opacity: 0.75;
+}
+
+.obUiOrderDetails:active {
+  opacity: 1;
+  filter: contrast(0.8) brightness(0.8);
 }
 
 
@@ -4640,7 +4670,7 @@ li.selected > .obUiRenderOrderLine_edit {
 .obUiReceiptsCounter {
   position: absolute;
   top: 0px;
-  right: 2px;
+  right: 3px;
 }
 
 .obUiReceiptsCounter-receiptsCounterButton {}
@@ -4677,7 +4707,7 @@ li.selected > .obUiRenderOrderLine_edit {
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconReceiptCounter.svg');
   background-repeat: no-repeat;
   background-size: 40px 40px;
-  background-position: center;
+  background-position: center calc(50% + 2px);
 }
 
 .obUiReceiptsCounterButton:hover {
@@ -4702,7 +4732,7 @@ li.selected > .obUiRenderOrderLine_edit {
   position: absolute;
   top: 0px;
   right: 0px;
-  padding-top: 26px;
+  padding-top: 29px;
   padding-right: 6px;
   font-weight: bold;
   color: white;
