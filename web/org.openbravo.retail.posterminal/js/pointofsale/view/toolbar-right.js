@@ -104,8 +104,15 @@ enyo.kind({
 
     for (i = 0; i < buttonContainerArray.length; i++) {
       buttonContainerArray[i].removeClass('selected');
-      if (buttonContainerArray[i].tabToOpen === tabName) {
+      if (buttonContainerArray[i].setActive) {
+        buttonContainerArray[i].setActive(false);
+      }
+      if (
+        buttonContainerArray[i].tabToOpen === tabName &&
+        buttonContainerArray[i].setActive
+      ) {
         buttonContainerArray[i].addClass('selected');
+        buttonContainerArray[i].setActive(true);
       }
     }
   },
