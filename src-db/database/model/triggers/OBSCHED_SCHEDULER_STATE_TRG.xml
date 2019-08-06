@@ -21,7 +21,7 @@
 
 BEGIN
   :NEW.obsched_scheduler_state_ID := get_uuid();
-END obsched_scheduler_state_TRG
+END OBSCHED_SCHEDULER_STATE_TRG
 ]]></body>
     </trigger>
   </database>

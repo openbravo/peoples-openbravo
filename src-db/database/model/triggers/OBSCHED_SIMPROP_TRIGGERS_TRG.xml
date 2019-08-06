@@ -21,7 +21,7 @@
 
 BEGIN
   :NEW.obsched_simprop_triggers_ID := get_uuid();
-END obsched_simprop_triggers_TRG
+END OBSCHED_SIMPROP_TRIGGERS_TRG
 ]]></body>
     </trigger>
   </database>

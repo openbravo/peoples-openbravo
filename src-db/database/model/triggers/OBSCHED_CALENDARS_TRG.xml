@@ -21,7 +21,7 @@
 
 BEGIN
   :NEW.obsched_calendars_ID := get_uuid();
-END obsched_calendars_TRG
+END OBSCHED_CALENDARS_TRG
 ]]></body>
     </trigger>
   </database>
