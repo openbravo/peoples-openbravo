@@ -36,7 +36,11 @@ enyo.kind({
 
     //Statistics
     me.$.body.$.editcustomers_impl.$.statistics.setShowing(false);
-    if (OB.MobileApp.model.get('connectedToERP')) {
+    var anonymousCustomer = OB.MobileApp.model.get('businessPartner').id;
+    if (
+      OB.MobileApp.model.get('connectedToERP') &&
+      this.args.businessPartner.id !== anonymousCustomer
+    ) {
       var process = new OB.DS.Process(
         'org.openbravo.retail.posterminal.process.CustomerStatistics'
       );
