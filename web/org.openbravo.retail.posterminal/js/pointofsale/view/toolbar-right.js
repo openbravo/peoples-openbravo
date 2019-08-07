@@ -31,9 +31,9 @@
 //        i;
 //
 //    for (i = 0; i < buttonContainerArray.length; i++) {
-//      buttonContainerArray[i].removeClass('active');
+//      buttonContainerArray[i].removeClass('selected');
 //      if (buttonContainerArray[i].getComponents()[0].getComponents()[0].name === tabName) {
-//        buttonContainerArray[i].addClass('active');
+//        buttonContainerArray[i].addClass('selected');
 //      }
 //    }
 //  },
@@ -104,15 +104,15 @@ enyo.kind({
 
     for (i = 0; i < buttonContainerArray.length; i++) {
       buttonContainerArray[i].removeClass('selected');
-      if (buttonContainerArray[i].setActive) {
-        buttonContainerArray[i].setActive(false);
+      if (buttonContainerArray[i].setSelected) {
+        buttonContainerArray[i].setSelected(false);
       }
       if (
         buttonContainerArray[i].tabToOpen === tabName &&
-        buttonContainerArray[i].setActive
+        buttonContainerArray[i].setSelected
       ) {
         buttonContainerArray[i].addClass('selected');
-        buttonContainerArray[i].setActive(true);
+        buttonContainerArray[i].setSelected(true);
       }
     }
   },
@@ -708,12 +708,12 @@ enyo.kind({
         var paneArray = me.getComponents(),
           i;
         for (i = 0; i < paneArray.length; i++) {
-          paneArray[i].removeClass('active');
+          paneArray[i].removeClass('selected');
           if (paneArray[i].name === args.tabName) {
             if (paneArray[i].executeOnShow) {
               paneArray[i].executeOnShow(options);
             }
-            paneArray[i].addClass('active');
+            paneArray[i].addClass('selected');
             OB.MobileApp.model.set('lastPaneShown', args.tabName);
           }
         }

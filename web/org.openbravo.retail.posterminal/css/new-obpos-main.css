@@ -7803,19 +7803,19 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   /* Inherits: [OB.OBPOSPointOfSale.UI.RightToolbarImpl] */
 }
 
-.obObposPointOfSaleUiPointOfSale-multiColumn-keyboardTabsPanel {}
+.obObposPointOfSaleUiPointOfSale-multiColumn-rightPanel {}
 
-.obObposPointOfSaleUiPointOfSale-multiColumn-keyboardTabsPanel-container1 {
+.obObposPointOfSaleUiPointOfSale-multiColumn-rightPanel-wrapper {
   float: left;
   width: 100%;
   touch-action: none;
 }
 
-.obObposPointOfSaleUiPointOfSale-multiColumn-keyboardTabsPanel-container1-toolbarpane {
+.obObposPointOfSaleUiPointOfSale-multiColumn-rightPanel-wrapper-toolbarpane {
   /* Inherits: [OB.OBPOSPointOfSale.UI.RightToolbarPane] */
 }
 
-.obObposPointOfSaleUiPointOfSale-multiColumn-keyboardTabsPanel-container1-rightBottomPanel {
+.obObposPointOfSaleUiPointOfSale-multiColumn-rightPanel-wrapper-rightBottomPanel {
   /* Inherits: [OB.OBPOSPointOfSale.UI.KeyboardOrder] */
 }
 
@@ -8838,9 +8838,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /*
 # Component: OB.OBPOSPointOfSale.UI.Scan
 */
-.obObposPointOfSaleUiScan {}
-
-.obObposPointOfSaleUiScan-container1 {
+.obObposPointOfSaleUiScan {
   position: relative;
   background-color: #7da7d9;
   background-size: cover;
@@ -8850,7 +8848,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   padding: 5px;
 }
 
-.obObposPointOfSaleUiScan-container1-obUiClock {
+.obObposPointOfSaleUiScan-obUiClock {
 /* Inherits: [OB.UI.Clock] */
   position: absolute;
   bottom: 0px;
@@ -8858,7 +8856,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   text-align: center;
 }
 
-.obObposPointOfSaleUiScan-container1-mainPanel {}
+.obObposPointOfSaleUiScan-mainPanel {}
 
 .obObposPointOfSaleUiScan-mainPanel-msgwelcome {
   padding: 6px;

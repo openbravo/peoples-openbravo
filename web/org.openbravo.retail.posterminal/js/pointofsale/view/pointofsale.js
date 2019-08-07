@@ -744,25 +744,24 @@ enyo.kind({
             showWindowsMenu: true
           },
           rightPanel: {
-            name: 'keyboardTabsPanel',
-            classes:
-              'obObposPointOfSaleUiPointOfSale-multiColumn-keyboardTabsPanel',
+            name: 'rightPanel',
+            classes: 'obObposPointOfSaleUiPointOfSale-multiColumn-rightPanel',
             components: [
               {
                 classes:
-                  'obObposPointOfSaleUiPointOfSale-multiColumn-keyboardTabsPanel-container1',
+                  'obObposPointOfSaleUiPointOfSale-multiColumn-rightPanel-wrapper',
                 components: [
                   {
                     kind: 'OB.OBPOSPointOfSale.UI.RightToolbarPane',
                     name: 'toolbarpane',
                     classes:
-                      'obObposPointOfSaleUiPointOfSale-multiColumn-keyboardTabsPanel-container1-toolbarpane'
+                      'obObposPointOfSaleUiPointOfSale-multiColumn-rightPanel-wrapper-toolbarpane'
                   },
                   {
                     kind: 'OB.OBPOSPointOfSale.UI.RightBottomPanelWrapper',
                     name: 'rightBottomPanel',
                     classes:
-                      'obObposPointOfSaleUiPointOfSale-multiColumn-keyboardTabsPanel-container1-rightBottomPanel'
+                      'obObposPointOfSaleUiPointOfSale-multiColumn-rightPanel-wrapper-rightBottomPanel'
                   }
                 ]
               }

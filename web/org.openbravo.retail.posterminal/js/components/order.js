@@ -63,7 +63,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.OrderHeader',
-  classes: 'obUiOrderHeader row-fluid span12',
+  classes: 'obUiOrderHeader',
   published: {
     order: null
   },
@@ -277,7 +277,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.OrderFooter',
-  classes: 'obUiOrderFooter row-fluid span12',
+  classes: 'obUiOrderFooter',
   published: {
     order: null
   },
