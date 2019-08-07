@@ -867,25 +867,29 @@ enyo.kind({
   },
   loadValue: function(inSender, inEvent) {
     var me = this;
-    var form, i;
+    var form, i, contactpreferences;
+    form = me.formElement.parent;
+
+    //Get Contact Preference Element
+    for (i = 0; i < form.children.length; i++) {
+      if (form.children[i].name === 'line_contactpreferences') {
+        contactpreferences = form.children[i];
+      }
+    }
+
     if (inEvent.customer !== undefined) {
       if (inEvent.customer.get(me.modelProperty) !== undefined) {
         me.setChecked(inEvent.customer.get(me.modelProperty));
       }
-      form = me.formElement.parent;
-      for (i = 0; i < form.children.length; i++) {
-        if (form.children[i].name === 'line_contactpreferences') {
-          var contactpreferences = form.children[i];
-          var commercialauth = inEvent.customer.attributes.commercialauth;
-          if (commercialauth) {
-            contactpreferences.show();
-          } else {
-            contactpreferences.hide();
-          }
-        }
+      var commercialauth = inEvent.customer.attributes.commercialauth;
+      if (commercialauth) {
+        contactpreferences.show();
+      } else {
+        contactpreferences.hide();
       }
     } else {
       me.setChecked(false);
+      contactpreferences.hide();
     }
     this.inherited(arguments);
   },
