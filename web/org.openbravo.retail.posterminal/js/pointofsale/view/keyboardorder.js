@@ -363,7 +363,7 @@ enyo.kind({
         selection.push(model);
         keyboard.line = model;
         if (keyboard.receipt.get('orderType') === 1) {
-          toadd = value - -keyboard.line.get('qty');
+          toadd = value + keyboard.line.get('qty');
         } else {
           toadd = value - keyboard.line.get('qty');
         }
