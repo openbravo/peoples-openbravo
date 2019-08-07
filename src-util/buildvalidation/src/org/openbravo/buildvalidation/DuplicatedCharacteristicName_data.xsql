@@ -28,5 +28,14 @@
         GROUP BY ch.m_characteristic_id, ch.name, chv.name
         HAVING count(*) > 1        
       ]]></Sql>
-  </SqlMethod>  
+  </SqlMethod>
+  <SqlMethod name="tableExists" type="preparedStatement" return="boolean">
+      <SqlMethodComment>Checks if table exists in AD.</SqlMethodComment>
+      <Sql><![CDATA[
+             select tablename
+             from ad_table
+             where lower(tablename) = ?
+      ]]></Sql>
+     <Parameter name="tableName"/>
+   </SqlMethod>  
 </SqlClass>
