@@ -9,13 +9,12 @@
 
 package org.openbravo.retail.posterminal.utility;
 
-import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 
 public class CustomerStatisticsUtils {
 
-  public static Date getStartDateFromTimingUnit(String timing, BigDecimal timingUnit) {
+  public static Date getStartDateFromTimingUnit(String timing, Long timingUnit) {
     Date startDate = null;
     Calendar cal = Calendar.getInstance();
 
@@ -26,7 +25,7 @@ public class CustomerStatisticsUtils {
       cal.add(Calendar.DATE, -timingUnit.intValue());
       startDate = cal.getTime();
     } else if (timing.equals("W")) {
-      cal.add(Calendar.DATE, -(timingUnit.multiply(new BigDecimal("7"))).intValue());
+      cal.add(Calendar.DATE, -(timingUnit.intValue())*7);
       startDate = cal.getTime();
     } else if (timing.equals("M")) {
       cal.add(Calendar.MONTH, -timingUnit.intValue());
