@@ -939,7 +939,7 @@ enyo.kind({
       components: [
         {
           name: 'msgedit',
-          classes: 'obObposPointOfSaleUiEditLine-defaultEdit-msgedit row-fluid',
+          classes: 'obObposPointOfSaleUiEditLine-defaultEdit-msgedit',
           showing: false,
           components: [
             {
@@ -947,7 +947,7 @@ enyo.kind({
               kind: 'Scroller',
               thumb: true,
               classes:
-                'obObposPointOfSaleUiEditLine-msgedit-actionButtonsContainer span12'
+                'obObposPointOfSaleUiEditLine-msgedit-actionButtonsContainer'
             },
             {
               kind: 'OB.OBPOSPointOfSale.UI.EditLine.ReturnReason',
@@ -956,18 +956,18 @@ enyo.kind({
                 'obObposPointOfSaleUiEditLine-msgedit-formElementReturnreason'
             },
             {
-              classes: 'obObposPointOfSaleUiEditLine-msgedit-container3 span12',
+              classes: 'obObposPointOfSaleUiEditLine-msgedit-container3',
               components: [
                 {
                   classes:
-                    'obObposPointOfSaleUiEditLine-msgedit-container3-linePropertiesContainer span7',
+                    'obObposPointOfSaleUiEditLine-msgedit-container3-linePropertiesContainer',
                   kind: 'Scroller',
                   name: 'linePropertiesContainer',
                   thumb: true
                 },
                 {
                   classes:
-                    'obObposPointOfSaleUiEditLine-msgedit-container3-contextImage span3',
+                    'obObposPointOfSaleUiEditLine-msgedit-container3-contextImage',
                   name: 'contextImage',
                   components: [
                     {

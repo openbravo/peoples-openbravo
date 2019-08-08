@@ -35,27 +35,19 @@ enyo.kind({
       OB.error('receiptLabels not found');
     }
     if (nrItems > 1) {
-      this.$.receiptsCounterButton.$.counter.setContent(nrItems - 1);
+      if (nrItems < 1000) {
+        this.$.receiptsCounterButton.$.counter.setContent(nrItems - 1);
+      } else {
+        this.$.receiptsCounterButton.$.counter.setContent('...');
+      }
       if (receiptLabels) {
         // If the receipt counter button is shown, the receipt top labels should have a right padding to avoid overlapping
         // [TODO] Change at the same time as component/order.js
+        receiptLabels.removeClass(
+          'obUiReceiptsCounter-receiptsCounterButton-receiptLabel_singleLine'
+        );
         receiptLabels.addClass(
           'obUiReceiptsCounter-receiptsCounterButton-receiptLabel_multiLine'
-        );
-      }
-      if (nrItems > 100) {
-        this.$.receiptsCounterButton.$.counter.removeClass(
-          'obUiReceiptsCounterButton_mediumLargeFont'
-        );
-        this.$.receiptsCounterButton.$.counter.addClass(
-          'obUiReceiptsCounterButton_smallFont'
-        );
-      } else {
-        this.$.receiptsCounterButton.$.counter.removeClass(
-          'obUiReceiptsCounterButton_smallFont'
-        );
-        this.$.receiptsCounterButton.$.counter.addClass(
-          'obUiReceiptsCounterButton_mediumLargeFont'
         );
       }
       this.show();
@@ -64,6 +56,9 @@ enyo.kind({
       if (receiptLabels) {
         // If the receipt counter button is not shown, the receipt top labels should reach the right of the receipt area
         // [TODO] Change at the same time as component/order.js
+        receiptLabels.removeClass(
+          'obUiReceiptsCounter-receiptsCounterButton-receiptLabel_multiLine'
+        );
         receiptLabels.addClass(
           'obUiReceiptsCounter-receiptsCounterButton-receiptLabel_singleLine'
         );

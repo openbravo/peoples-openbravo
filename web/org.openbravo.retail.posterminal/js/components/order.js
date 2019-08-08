@@ -12,9 +12,7 @@
 enyo.kind({
   name: 'OB.UI.OrderMultiSelect',
   classes: 'obUiOrderMultiSelect',
-  kind: 'Image',
-  src: '../org.openbravo.retail.posterminal/img/iconPinSelected.svg',
-  sizing: 'cover',
+  kind: 'OB.UI.Button',
   showing: false,
   events: {
     onToggleSelection: ''
@@ -32,9 +30,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.OrderSingleSelect',
   classes: 'obUiOrderSingleSelect',
-  kind: 'Image',
-  src: '../org.openbravo.retail.posterminal/img/iconPinUnselected.svg',
-  sizing: 'cover',
+  kind: 'OB.UI.Button',
   events: {
     onToggleSelection: ''
   },
@@ -49,7 +45,7 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.SmallButton',
+  kind: 'OB.UI.Button',
   name: 'OB.UI.OrderMultiSelectAll',
   i18nContent: 'OBPOS_lblSelectAll',
   classes: 'obUiOrderMultiSelectAll',
@@ -67,7 +63,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.OrderHeader',
-  classes: 'obUiOrderHeader row-fluid span12',
+  classes: 'obUiOrderHeader',
   published: {
     order: null
   },
@@ -281,7 +277,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.OrderFooter',
-  classes: 'obUiOrderFooter row-fluid span12',
+  classes: 'obUiOrderFooter',
   published: {
     order: null
   },

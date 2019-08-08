@@ -360,6 +360,7 @@ enyo.kind({
       this.$.icon.parent.hide();
     }
 
+    /* TODO: Check if it is still needed or can be refactored using only CSS */
     if (this.owner.owner.owner.owner.owner.name === 'browseProducts') {
       if (enyo.Panels.isScreenNarrow()) {
         maxWidthCalc = parseInt(document.body.clientWidth / 2, 10) - 213;

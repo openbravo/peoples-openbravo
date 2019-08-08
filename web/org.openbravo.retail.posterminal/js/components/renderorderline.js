@@ -53,9 +53,7 @@ enyo.kind({
       components: [
         {
           name: 'serviceIcon',
-          kind: 'Image',
-          classes: 'obUiRenderOrderLine-nameContainner-serviceIcon',
-          src: 'img/iconService_ticketline.png'
+          classes: 'obUiRenderOrderLine-nameContainner-serviceIcon'
         },
         {
           name: 'product',
@@ -488,6 +486,8 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.ShowServicesButton',
+  kind: 'OB.UI.Button',
+  i18nLabel: 'OBPOS_Services',
   classes: 'obUiShowServicesButton',
   published: {
     disabled: false
