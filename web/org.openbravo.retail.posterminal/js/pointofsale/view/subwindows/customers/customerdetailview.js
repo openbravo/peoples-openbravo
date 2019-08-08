@@ -114,6 +114,12 @@ enyo.kind({
         customer.set('shipCountryName', orderBP.get('shipCountryName'));
       }
     }
+    if (
+      OB.UTIL.isNullOrUndefined(customer.get('locId')) &&
+      !OB.UTIL.isNullOrUndefined(customer.get('locationModel'))
+    ) {
+      customer.set('locId', customer.get('locationModel').get('id'));
+    }
     this.doChangeBusinessPartner({
       businessPartner: OB.UTIL.clone(customer),
       target: this.parent.target
