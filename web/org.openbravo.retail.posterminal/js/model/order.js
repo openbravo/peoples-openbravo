@@ -1214,6 +1214,14 @@
       return OB.I18N.formatCurrency(this.getPending());
     },
 
+    getInvoiceTerms: function() {
+      return this.get('invoiceTerms')
+        ? this.get('invoiceTerms')
+        : this.get('bp')
+        ? this.get('bp').get('invoiceTerms')
+        : undefined;
+    },
+
     isNegative: function() {
       var isNegative;
       if (OB.UTIL.isNullOrUndefined(this.get('isNegative'))) {
@@ -9228,16 +9236,15 @@
       }
 
       if (
-        (this.get('bp').get('invoiceTerms') === 'I' &&
-          this.get('generateInvoice')) ||
+        (this.getInvoiceTerms() === 'I' && this.get('generateInvoice')) ||
         this.get('payOnCredit')
       ) {
         receiptShouldBeInvoiced = true;
-      } else if (this.get('bp').get('invoiceTerms') === 'O') {
+      } else if (this.getInvoiceTerms() === 'O') {
         if (this.get('deliver')) {
           receiptShouldBeInvoiced = true;
         }
-      } else if (this.get('bp').get('invoiceTerms') === 'D') {
+      } else if (this.getInvoiceTerms() === 'D') {
         if (this.get('generateShipment')) {
           receiptShouldBeInvoiced = true;
         } else {
@@ -9281,11 +9288,11 @@
               : ol.get('qty'),
             qtyToInvoice = OB.DEC.Zero,
             lineToInvoice;
-          if (me.get('bp').get('invoiceTerms') === 'D') {
+          if (me.getInvoiceTerms() === 'D') {
             qtyToInvoice = OB.DEC.sub(qtyToDeliver, qtyAlreadyInvoiced);
           } else if (
-            me.get('bp').get('invoiceTerms') === 'I' ||
-            me.get('bp').get('invoiceTerms') === 'O'
+            me.getInvoiceTerms() === 'I' ||
+            me.getInvoiceTerms() === 'O'
           ) {
             qtyToInvoice = qtyPendingToBeInvoiced;
           }
@@ -9293,7 +9300,7 @@
             qtyToInvoice &&
             (ol.get('obposCanbedelivered') ||
               ol.get('obposIspaid') ||
-              me.get('bp').get('invoiceTerms') === 'I')
+              me.getInvoiceTerms() === 'I')
           ) {
             lineToInvoice = new OB.Model.OrderLine();
             OB.UTIL.clone(ol, lineToInvoice);
