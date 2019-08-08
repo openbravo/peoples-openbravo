@@ -55,6 +55,7 @@
           this.set('shipCountryName', this.get('countryName'));
           this.set('shipCountryId', this.get('countryId'));
           this.set('shipRegionId', this.get('regionId'));
+          this.set('shipRegionName', this.get('regionName'));
         } else {
           //Create 1 address for shipping and 1 for invoicing
           if (!this.get('locName') || !this.get('shipLocName')) {
