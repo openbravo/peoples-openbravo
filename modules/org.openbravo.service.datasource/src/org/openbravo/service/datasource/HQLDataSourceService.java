@@ -217,7 +217,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
           // Aliases should be properly set in HQL, column name can be used only as fallback in case
           // alias is not set or it does not match any actual property. Even in this case it will
           // only work in case columns in HQL are in the same order as defined by AD_Column.seqNo.
-          String columnName = columns.size() < i ? columns.get(i).getDBColumnName() : null;
+          String columnName = columns.size() > i ? columns.get(i).getDBColumnName() : null;
 
           String propertyName = getPropertyName(entity, alias, columnName);
           record.put(propertyName, alias != null ? tuple.get(alias) : tuple.get(i));
