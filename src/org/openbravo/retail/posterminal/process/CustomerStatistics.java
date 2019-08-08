@@ -133,9 +133,11 @@ public class CustomerStatistics extends JSONProcessSimple {
     String timingText = null, recencyMsg = null;
     BigDecimal noofRecency = BigDecimal.ZERO;
 
+    // @formatter:off
     String recencyHQLQuery = "select EXTRACT(DAY FROM (Date(now()) - coalesce(max(orderDate), now()))) "
         + " from Order where businessPartner.id=:bpartnerId and organization.id=:orgId";
 
+    // @formatter:on
     final Session recencySession = OBDal.getInstance().getSession();
     final Query<Integer> recencyQuery = recencySession.createQuery(recencyHQLQuery, Integer.class);
     recencyQuery.setParameter("bpartnerId", bp.getId());
@@ -178,10 +180,13 @@ public class CustomerStatistics extends JSONProcessSimple {
     }
 
     if (startDate != null) {
-      String frequencyHQLQuery = "select count(*) as frequency from Order "
+      // @formatter:off
+      String frequencyHQLQuery = "select count(id) as frequency from Order "
           + " where businessPartner.id=:bpartnerId and organization.id=:orgId "
-          + " and orderDate>=to_date(:startDate, 'YYYY-mm-dd') " + " and orderDate < now() ";
+          + " and orderDate>=to_date(:startDate, 'YYYY-mm-dd') " 
+          + " and orderDate < now() ";
 
+      // @formatter:on
       final Session frequencySession = OBDal.getInstance().getSession();
       final Query<Long> frequencyQuery = frequencySession.createQuery(frequencyHQLQuery,
           Long.class);
@@ -229,12 +234,15 @@ public class CustomerStatistics extends JSONProcessSimple {
     }
 
     if (startDate != null) {
+      // @formatter:off
       String monetaryValueHQLQuery = "select coalesce(sum(o.grandTotalAmount), 0) from Order o "
           + " join o.documentType as dt "
           + " where o.businessPartner.id = :bpartnerId and dt.sOSubType <> 'OB' "
           + " and o.organization.id= :orgId "
-          + " and o.orderDate>=to_date(:startDate, 'YYYY-mm-dd') " + " and o.orderDate < now() ";
+          + " and o.orderDate>=to_date(:startDate, 'YYYY-mm-dd') " 
+          + " and o.orderDate < now() ";
 
+      // @formatter:on
       final Session monetaryValueSession = OBDal.getInstance().getSession();
       final Query<BigDecimal> monetaryValueQuery = monetaryValueSession
           .createQuery(monetaryValueHQLQuery, BigDecimal.class);
@@ -282,12 +290,15 @@ public class CustomerStatistics extends JSONProcessSimple {
     }
 
     if (startDate != null) {
+      // @formatter:off
       String averageBasketHQLQuery = "select coalesce(TRUNC((sum(o.grandTotalAmount)/count(o.id)),2), 0) from Order o "
           + " join o.documentType as dt "
           + " where o.businessPartner.id = :bpartnerId and dt.sOSubType <> 'OB' "
           + " and o.organization.id= :orgId and dt.return = 'N' "
-          + " and o.orderDate>=to_date(:startDate, 'YYYY-mm-dd') " + " and o.orderDate < now()";
+          + " and o.orderDate>=to_date(:startDate, 'YYYY-mm-dd') " 
+          + " and o.orderDate < now()";
 
+      // @formatter:on
       final Session averageBasketSession = OBDal.getInstance().getSession();
       final Query<BigDecimal> averageBasketQuery = averageBasketSession
           .createQuery(averageBasketHQLQuery, BigDecimal.class);
