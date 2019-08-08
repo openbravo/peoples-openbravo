@@ -5408,7 +5408,7 @@
                 businessPartner.set('postalCode', billing.get('postalCode'));
                 businessPartner.set('cityName', billing.get('cityName'));
                 businessPartner.set('countryName', billing.get('countryName'));
-                if (shipping) {
+                if (shipping && !businessPartner.get('assignedShipAddr')) {
                   businessPartner.set('shipLocId', shipping.get('id'));
                   businessPartner.set('shipLocName', shipping.get('name'));
                   businessPartner.set(
@@ -5503,7 +5503,7 @@
               businessPartner.set('postalCode', billing.get('postalCode'));
               businessPartner.set('cityName', billing.get('cityName'));
               businessPartner.set('countryName', billing.get('countryName'));
-              if (shipping) {
+              if (shipping && !businessPartner.get('assignedShipAddr')) {
                 businessPartner.set('shipLocId', shipping.get('id'));
                 businessPartner.set('shipLocName', shipping.get('name'));
                 businessPartner.set(
