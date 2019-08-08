@@ -878,8 +878,14 @@
           return;
         }
         var afterDeleteCallback = function(cashupPaymentMethods) {
+          var lastProcessedCashup = OB.UTIL.localStorage.getItem(
+            'lastProcessedCashup'
+          );
           // Found non processed cashups
-          if (data[0]) {
+          if (
+            data[0] &&
+            (!lastProcessedCashup || lastProcessedCashup !== data[0].id)
+          ) {
             var cashUp = new OB.Model.CashUp();
             cashUp.set(data[0]);
             var cashUpCollection = new Backbone.Collection();
@@ -892,6 +898,7 @@
               },
               cashupPaymentMethods
             );
+            OB.UTIL.localStorage.removeItem('lastProcessedCashup');
           } else {
             OB.UTIL.createNewCashup(callback);
           }
