@@ -36,26 +36,30 @@ public class DuplicatedCharacteristicName extends BuildValidation {
     ConnectionProvider cp = getConnectionProvider();
     ArrayList<String> errors = new ArrayList<String>();
     try {
-      DuplicatedCharacteristicNameData[] chName = DuplicatedCharacteristicNameData
-          .DuplicatedCharacteristicNameData(cp);
-      if (chName.length > 0) {
-        errors.add("Due to a database constraint modification, is no longer allowed to "
-            + "create the more than once characteristic value with the same name. "
-            + "There exists data in your database that do not fit this new constraint. Please review following:- ");
-      }
-      for (int i = 0; i < chName.length; i++) {
-        errors.add(" Characteristic id: " + chName[i].mCharacteristicId + ", Characteristic: "
-            + chName[i].characteristic + ", Value: " + chName[i].value + ", Count: " + chName[i].count);
+      if (DuplicatedCharacteristicNameData.tableExists(cp, "m_ch_value")) {
+        DuplicatedCharacteristicNameData[] chName = DuplicatedCharacteristicNameData
+            .DuplicatedCharacteristicNameData(cp);
+        if (chName.length > 0) {
+          errors.add("Due to a database constraint modification, is no longer allowed to "
+              + "create the more than once characteristic value with the same name. "
+              + "There exists data in your database that do not fit this new constraint. Please review following:- ");
+        }
+        for (int i = 0; i < chName.length; i++) {
+          errors.add(" Characteristic id: " + chName[i].mCharacteristicId + ", Characteristic: "
+              + chName[i].characteristic + ", Value: " + chName[i].value + ", Count: "
+              + chName[i].count);
+        }
       }
     } catch (Exception e) {
       return handleError(e);
     }
     return errors;
   }
-  
+
   @Override
   protected ExecutionLimits getBuildValidationLimits() {
-    // This BuildValidation should be executed for all instances that are updating from an older release than PR19Q4
+    // This BuildValidation should be executed for all instances that are updating from an older
+    // release than PR19Q4
     return new ExecutionLimits("0", null, new OpenbravoVersion(3, 0, 36389));
   }
 }

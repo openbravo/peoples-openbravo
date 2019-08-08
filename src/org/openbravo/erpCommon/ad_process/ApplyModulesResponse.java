@@ -60,10 +60,10 @@ class ApplyModulesResponse {
       JSONObject properties = new JSONObject();
       properties.put("state", state);
       properties.put("statusofstate", statusofstate);
-      if (!warnings.isEmpty()) {
+      if (warnings != null && !warnings.isEmpty()) {
         properties.put("warnings", new JSONArray(warnings));
       }
-      if (errors.isEmpty()) {
+      if (errors != null && !errors.isEmpty()) {
         properties.put("errors", new JSONArray(errors));
       }
       properties.put("lastmessage", lastmessage);
