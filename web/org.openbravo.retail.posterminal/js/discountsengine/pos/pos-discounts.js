@@ -97,51 +97,159 @@
       }
     },
 
-    initCache: function(callback) {
+    computeDiscountsQuery(basicParams) {
+      let date =
+        OB.Utilities.Date.JSToOB(new Date(), 'yyyy-MM-dd') + ' 00:00:00.000';
+      let params = [
+        date,
+        basicParams.businessPartner,
+        basicParams.businessPartner,
+        basicParams.businessPartner,
+        basicParams.businessPartner,
+        basicParams.businessPartner,
+        basicParams.businessPartner,
+        OB.MobileApp.model.get('pricelist').id,
+        OB.MobileApp.model.get('pricelist').id,
+        OB.MobileApp.model.get('context').role.id,
+        OB.MobileApp.model.get('context').role.id
+      ];
+      let discountsQuery =
+        'SELECT * FROM M_OFFER WHERE ( ' +
+        //Date Filter
+        "date(?) BETWEEN DATEFROM AND COALESCE(date(DATETO), date('9999-12-31'))" +
+        //BusinessPartner, BPCategory, BPSet filter
+        " AND((BPARTNER_SELECTION = 'Y'" +
+        ' AND NOT EXISTS' +
+        ' (SELECT 1' + //
+        ' FROM M_OFFER_BPARTNER' + //
+        ' WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID' + //
+        '   AND C_BPARTNER_ID = ?' +
+        ' ))' + //
+        " OR(BPARTNER_SELECTION = 'N'" + //
+        ' AND EXISTS' + //
+        ' (SELECT 1' + //
+        ' FROM M_OFFER_BPARTNER' + //
+        ' WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID' + //
+        '   AND C_BPARTNER_ID = ?' + //
+        ' )))' + //
+        " AND((BP_SET_SELECTION = 'Y'" + //
+        ' AND NOT EXISTS' + //
+        ' (SELECT 1' + //
+        ' FROM M_OFFER_BP_SET OBPS, C_BP_SET_LINE BPL' + //
+        ' WHERE OBPS.C_BP_SET_ID = BPL.C_BP_SET_ID' + //
+        '   AND OBPS.M_OFFER_ID = M_OFFER.M_OFFER_ID' + //
+        "   AND BPL.C_BPARTNER_ID = ? AND datetime('now') BETWEEN COALESCE(datetime(BPL.STARTDATE), datetime('2000-12-31T00:00:00')) AND COALESCE(datetime(BPL.ENDDATE), datetime('9999-12-31T23:59:59'))" + //
+        ' ))' + //
+        " OR(BP_SET_SELECTION = 'N'" + //
+        ' AND EXISTS' + //
+        ' (SELECT 1' + //
+        ' FROM M_OFFER_BP_SET OBPS, C_BP_SET_LINE BPL' + //
+        ' WHERE OBPS.C_BP_SET_ID = BPL.C_BP_SET_ID' + //
+        '   AND OBPS.M_OFFER_ID = M_OFFER.M_OFFER_ID' + //
+        "   AND BPL.C_BPARTNER_ID = ? AND datetime('now') BETWEEN COALESCE(datetime(BPL.STARTDATE), datetime('2000-12-31T00:00:00')) AND COALESCE(datetime(BPL.ENDDATE), datetime('9999-12-31T23:59:59'))" + //
+        ' )))' + //
+        " AND((BP_GROUP_SELECTION = 'Y'" + //
+        ' AND NOT EXISTS' + //
+        ' (SELECT 1' + //
+        ' FROM C_BPARTNER B,' + //
+        '   M_OFFER_BP_GROUP OB' + //
+        ' WHERE OB.M_OFFER_ID = M_OFFER.M_OFFER_ID' + //
+        '   AND B.C_BPARTNER_ID = ?' + //
+        '   AND OB.C_BP_GROUP_ID = B.C_BP_GROUP_ID' + //
+        ' ))' + //
+        " OR(BP_GROUP_SELECTION = 'N'" + //
+        ' AND EXISTS' + //
+        ' (SELECT 1' + //
+        ' FROM C_BPARTNER B,' + //
+        '   M_OFFER_BP_GROUP OB' + //
+        ' WHERE OB.M_OFFER_ID = M_OFFER.M_OFFER_ID' + //
+        '   AND B.C_BPARTNER_ID = ?' + //
+        '   AND OB.C_BP_GROUP_ID = B.C_BP_GROUP_ID' + //
+        ' )))' + //
+        //Pricelist filter
+        " AND ((pricelist_selection = 'Y' AND NOT EXISTS" + //
+        '   (SELECT 1 FROM m_offer_pricelist opl WHERE m_offer.m_offer_id = opl.m_offer_id AND opl.m_pricelist_id = ? ))' + //
+        " OR (pricelist_selection = 'N' AND EXISTS" + //
+        '   (SELECT 1 FROM m_offer_pricelist opl WHERE m_offer.m_offer_id = opl.m_offer_id AND opl.m_pricelist_id = ? )))' +
+        //Do not include manual promotions
+        ' AND M_OFFER_TYPE_ID NOT IN (' +
+        OB.Model.Discounts.getManualPromotions() +
+        ')' + //
+        //Role filter
+        " AND ((EM_OBDISC_ROLE_SELECTION = 'Y' AND NOT EXISTS (SELECT 1 FROM OBDISC_OFFER_ROLE WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID " +
+        " AND AD_ROLE_ID = ?)) OR (EM_OBDISC_ROLE_SELECTION = 'N' " + //
+        ' AND EXISTS (SELECT 1 FROM OBDISC_OFFER_ROLE WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID ' +
+        ' AND AD_ROLE_ID = ?)))' + //
+        ') OR M_OFFER_TYPE_ID IN (' +
+        OB.Model.Discounts.getAutoCalculatedPromotions() +
+        ')';
+      const discountsObj = { query: discountsQuery, params: params };
+      return discountsObj;
+    },
+
+    translateRule: function(rule) {
+      rule.set('discountPercentage', rule.get('discount'));
+    },
+
+    initCache: function(basicParams, callback) {
       OB.info('[Discounts cache] Starting load...');
       const initialTime = new Date().getTime();
       OB.Discounts.Pos.ruleImpls = [];
-      OB.Dal.find(OB.Model.Discount, [], rules => {
-        const finishCallback = _.after(rules.length, () => {
-          OB.info(
-            '[Discounts cache] ...load finished. Elapsed time: ' +
-              (new Date().getTime() - initialTime) +
-              'ms.'
-          );
-          callback();
-        });
-        rules.forEach(rule => {
-          var r = JSON.parse(JSON.stringify(rule)),
-            ruleFilter = { priceAdjustment: rule.get('id') };
-
-          OB.Dal.find(OB.Model.DiscountFilterProduct, ruleFilter, products => {
-            r.products = JSON.parse(JSON.stringify(products));
-            r.products.forEach(
-              offerProduct =>
-                (offerProduct.product = { id: offerProduct.product })
+      let discountsQueryObject = OB.Discounts.Pos.computeDiscountsQuery(
+        basicParams
+      );
+      OB.Dal.query(
+        OB.Model.Discount,
+        discountsQueryObject.query,
+        discountsQueryObject.params,
+        rules => {
+          const finishCallback = _.after(rules.length, () => {
+            OB.info(
+              '[Discounts cache] ...load finished. Elapsed time: ' +
+                (new Date().getTime() - initialTime) +
+                'ms.'
             );
+            callback();
+          });
+
+          rules.forEach(rule => OB.Discounts.Pos.translateRule(rule));
+          rules.forEach(rule => {
+            var r = JSON.parse(JSON.stringify(rule)),
+              ruleFilter = { priceAdjustment: rule.get('id') };
+
             OB.Dal.find(
-              OB.Model.DiscountFilterProductCategory,
+              OB.Model.DiscountFilterProduct,
               ruleFilter,
-              productCategories => {
-                r.productCategories = JSON.parse(
-                  JSON.stringify(productCategories)
+              products => {
+                r.products = JSON.parse(JSON.stringify(products));
+                r.products.forEach(
+                  offerProduct =>
+                    (offerProduct.product = { id: offerProduct.product })
                 );
                 OB.Dal.find(
-                  OB.Model.DiscountFilterBusinessPartner,
+                  OB.Model.DiscountFilterProductCategory,
                   ruleFilter,
-                  bps => {
-                    r.businessPartners = JSON.parse(JSON.stringify(bps));
+                  productCategories => {
+                    r.productCategories = JSON.parse(
+                      JSON.stringify(productCategories)
+                    );
                     OB.Dal.find(
-                      OB.Model.DiscountFilterBusinessPartnerGroup,
+                      OB.Model.DiscountFilterBusinessPartner,
                       ruleFilter,
-                      bpCategories => {
-                        r.businessPartnerCategories = JSON.parse(
-                          JSON.stringify(bpCategories)
+                      bps => {
+                        r.businessPartners = JSON.parse(JSON.stringify(bps));
+                        OB.Dal.find(
+                          OB.Model.DiscountFilterBusinessPartnerGroup,
+                          ruleFilter,
+                          bpCategories => {
+                            r.businessPartnerCategories = JSON.parse(
+                              JSON.stringify(bpCategories)
+                            );
+                            r.ruleModel = rule;
+                            OB.Discounts.Pos.ruleImpls.push(r);
+                            finishCallback();
+                          }
                         );
-                        r.ruleModel = rule;
-                        OB.Discounts.Pos.ruleImpls.push(r);
-                        finishCallback();
                       }
                     );
                   }
@@ -149,8 +257,8 @@
               }
             );
           });
-        });
-      });
+        }
+      );
     },
 
     getApplicableDiscounts: function(ticket) {
