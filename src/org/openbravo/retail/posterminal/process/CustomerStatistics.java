@@ -260,7 +260,7 @@ public class CustomerStatistics extends JSONProcessSimple {
       if (monetaryValueTimingUnit != null) {
         timingText = getTimingText(monetaryValueTimingUnit, monetaryValueTiming);
 
-        if (monetaryValueTimingUnit.compareTo(0L) > 0) {
+        if (monetaryValueTimingUnit.compareTo(1L) > 0) {
           monetaryValMsg = String.format(OBMessageUtils.messageBD("OBPOS_MonetaryText"),
               monetaryValue, currencySymbol, monetaryValueTimingUnit, timingText);
         } else {
@@ -316,7 +316,7 @@ public class CustomerStatistics extends JSONProcessSimple {
       if (averageBasketTimingUnit != null) {
         timingText = getTimingText(averageBasketTimingUnit, averageBasketTiming);
 
-        if (averageBasketTimingUnit.compareTo(0L) > 0) {
+        if (averageBasketTimingUnit.compareTo(1L) > 0) {
           averageBasketMsg = String.format(OBMessageUtils.messageBD("OBPOS_AverageBasket"),
               averageBasketValue, currencySymbol, averageBasketTimingUnit, timingText);
         } else {
