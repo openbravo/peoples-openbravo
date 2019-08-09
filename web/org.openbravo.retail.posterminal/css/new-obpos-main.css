@@ -8864,7 +8864,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 */
 .obObposPointOfSaleUiScan {
   position: relative;
-  color: white;
+  color: var(--color-maincolor);
   height: 100%;
   padding: 5px;
   box-sizing: border-box;
@@ -8879,7 +8879,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposPointOfSaleUiScan-mainPanel {
-  background-color: #7da7d9;
+  background-color: transparent;
   height: 100%;
   padding: 5px;
   box-sizing: border-box;
@@ -8900,30 +8900,65 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   font-size: 16px;
   height: 23px;
   justify-content: flex-end;
-  padding: 2px 102px 0px 0px;
+  padding: 2px 101px 0px 0px;
 }
 
-.obObposPointOfSaleUiScan-mainPanel-msgaction {}
+.obObposPointOfSaleUiScan-mainPanel-msgaction {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: 1fr auto;
+  width: 100%;
+}
 
 .obObposPointOfSaleUiScan-msgaction-txtaction {
   overflow-x: hidden;
   overflow-y: auto;
   max-height: 134px;
   padding: 10px;
-  float: left;
-  width: 400px;
+  width: 100%;
   line-height: 23px;
   position: relative;
 }
 
-.obObposPointOfSaleUiScan-msgaction-container2 {
-  float: right;
-}
-
-.obObposPointOfSaleUiScan-msgaction-container2-undobutton {
+.obObposPointOfSaleUiScan-msgaction-undobutton {
 /* Inherits: [OB.UI.SmallButton] */
   color: #7da7d9;
   background-color: #ffffff;
+}
+
+.obObposPointOfSaleUiScan-msgaction-undobutton {
+  text-decoration: none;
+  min-width: 110px;
+  background-color: var(--color-maincolor);
+  font-size: var(--font-medium-large);
+  color: var(--color-secondarycolor);
+  padding: 0px 15px;
+  margin: 6px;
+  height: 50px;
+  text-align: center;
+  border: 1px solid var(--color-maincolor);
+  border-radius: 4px;
+}
+
+.obObposPointOfSaleUiScan-msgaction-undobutton:hover {
+  background-color: #c4dab6;
+  color: #333333;
+}
+
+.obObposPointOfSaleUiScan-msgaction-undobutton:active {
+  background-color: #c5c5c5;
+  color: var(--color-primary-dark);
+}
+
+.obObposPointOfSaleUiScan-msgaction-undobutton:focus {
+  border-width: 2px;
+  border-color: seagreen;
+  border-style: solid;
+  /*box-shadow: 0 0 5px 3px rgba(110, 180, 63, .5);*/
+}
+
+.obObposPointOfSaleUiScan-msgaction-undobutton .obUiButton-label {
+  padding: 0px 0px 1px 0px;
 }
 
 .obObposPointOfSaleUiScan-mainPanel-divInDevHeader {
