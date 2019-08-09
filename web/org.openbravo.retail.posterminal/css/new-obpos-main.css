@@ -8833,7 +8833,9 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obObposPointOfSaleUiInDevHeader-headerImg1-element1 {
   height: 32px;
   width: 35px;
-  background: url(../org.openbravo.mobile.core/assets/img/Warning.png) no-repeat top left;
+  background: url('./../../org.openbravo.mobile.core/assets/img/Warning.png');
+  background-repeat: no-repeat;
+  background-position: top left;
 }
 
 .obObposPointOfSaleUiInDevHeader-headerText-headerContentContainer {
@@ -8855,7 +8857,9 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obObposPointOfSaleUiInDevHeader-headerImg2-element1 {
   height: 32px;
   width: 35px;
-  background: url(../org.openbravo.mobile.core/assets/img/Warning.png) no-repeat top left;
+  background: url('./../../org.openbravo.mobile.core/assets/img/Warning.png');
+  background-repeat: no-repeat;
+  background-position: top left;
 }
 
 
@@ -8892,7 +8896,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obObposPointOfSaleUiScan-msgwelcome-msgwelcomeLbl {
   float: right;
   align-items: center;
-  background-image: url(./../img/OpenbravoWelcomeLogo.svg);
+  background-image: url('./../img/OpenbravoWelcomeLogo.svg');
   background-position-x: right;
   background-repeat: no-repeat;
   background-size: 95px 23px;
@@ -8918,6 +8922,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   width: 100%;
   line-height: 23px;
   position: relative;
+  box-sizing: border-box;
 }
 
 .obObposPointOfSaleUiScan-msgaction-undobutton {
@@ -8927,6 +8932,9 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposPointOfSaleUiScan-msgaction-undobutton {
+  grid-auto-flow: column;
+  grid-template-columns: auto 1fr;
+
   text-decoration: none;
   min-width: 110px;
   background-color: var(--color-maincolor);
@@ -8940,9 +8948,22 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   border-radius: 4px;
 }
 
+.obObposPointOfSaleUiScan-msgaction-undobutton .obUiButton-before {
+  background-image: url('./../img/iconUndo.svg');
+  background-repeat: no-repeat;
+  background-size: 20px 10px;
+  background-position: center calc(50% - 1px);
+  width: 20px;
+  height: 100%;
+}
+
 .obObposPointOfSaleUiScan-msgaction-undobutton:hover {
   background-color: #c4dab6;
-  color: #333333;
+  color: var(--color-primary-dark);
+}
+
+.obObposPointOfSaleUiScan-msgaction-undobutton:hover .obUiButton-before {
+  background-image: url('./../img/iconUndo_hover.svg');
 }
 
 .obObposPointOfSaleUiScan-msgaction-undobutton:active {
@@ -8950,15 +8971,20 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   color: var(--color-primary-dark);
 }
 
+.obObposPointOfSaleUiScan-msgaction-undobutton:active .obUiButton-before {
+  background-image: url('./../img/iconUndo_active.svg');
+}
+
 .obObposPointOfSaleUiScan-msgaction-undobutton:focus {
   border-width: 2px;
   border-color: seagreen;
   border-style: solid;
+  padding: 0px 14px;
   /*box-shadow: 0 0 5px 3px rgba(110, 180, 63, .5);*/
 }
 
 .obObposPointOfSaleUiScan-msgaction-undobutton .obUiButton-label {
-  padding: 0px 0px 1px 0px;
+  padding: 0px 0px 1px 10px;
 }
 
 .obObposPointOfSaleUiScan-mainPanel-divInDevHeader {
