@@ -4766,7 +4766,7 @@
             discount.discountinstance === promotions[i].discountinstance
           ) {
             if (promotions[i].hidden !== true) {
-              if (disc.applyNext === false) {
+              if (disc.applyNext === false || discount.forceReplace === true) {
                 promotions[i] = disc;
               }
               replaced = true;
@@ -8326,11 +8326,20 @@
                 copiedPromo.chunks = promList.length;
               }
             }
+            for (i = 0; i < line.get('promotions').length; i++) {
+              if (
+                line.get('promotions')[i].ruleId === promList[0].ruleId &&
+                line.get('promotions')[i].discountinstance ===
+                  promList[0].discountinstance
+              ) {
+                break;
+              }
+            }
             me.removePromotion(line, {
               id: promList[0].ruleId,
               discountinstance: promList[0].discountinstance
             });
-            line.get('promotions').push(copiedPromo);
+            line.get('promotions').splice(i, 0, copiedPromo);
           }
           if (orderPromotions) {
             var lineNoNormalized = 10;
@@ -9974,6 +9983,7 @@
                       warehousename: iter.warehousename
                     },
                     relatedLines: iter.relatedLines,
+                    groupService: prod.get('groupProduct'),
                     isEditable: true,
                     isDeletable: true,
                     attSetInstanceDesc: iter.attSetInstanceDesc

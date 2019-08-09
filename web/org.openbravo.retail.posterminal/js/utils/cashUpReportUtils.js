@@ -149,10 +149,7 @@
               gross = line.get('discountedGross');
             }
             if (order.get('doCancelAndReplace')) {
-              if (line.get('replacedorderline')) {
-                netReturns = OB.DEC.add(netReturns, line.get('net'));
-                grossReturns = OB.DEC.add(grossReturns, gross);
-              } else {
+              if (!line.get('replacedorderline')) {
                 netSales = OB.DEC.add(netSales, line.get('net'));
                 grossSales = OB.DEC.add(grossSales, gross);
               }
@@ -298,7 +295,10 @@
               order.get('payments').models,
               function(payment) {
                 auxPay = payMthds.filter(function(payMthd) {
-                  return payMthd.get('searchKey') === payment.get('kind');
+                  return (
+                    payMthd.get('searchKey') === payment.get('kind') &&
+                    !payment.get('isPrePayment')
+                  );
                 })[0];
                 if (!auxPay) {
                   //We cannot find this payment in local database, it must be a new payment method, we skip it.
@@ -310,14 +310,6 @@
                 amount = _.isNumber(payment.get('amountRounded'))
                   ? payment.get('amountRounded')
                   : payment.get('amount');
-                if (
-                  order.get('doCancelAndReplace') &&
-                  payment.get('isPrePayment')
-                ) {
-                  amount = OB.DEC.mul(amount, -1);
-                } else if (payment.get('isPrePayment')) {
-                  return;
-                }
                 if (amount < 0) {
                   auxPay.set(
                     'totalReturns',
@@ -886,8 +878,14 @@
           return;
         }
         var afterDeleteCallback = function(cashupPaymentMethods) {
+          var lastProcessedCashup = OB.UTIL.localStorage.getItem(
+            'lastProcessedCashup'
+          );
           // Found non processed cashups
-          if (data[0]) {
+          if (
+            data[0] &&
+            (!lastProcessedCashup || lastProcessedCashup !== data[0].id)
+          ) {
             var cashUp = new OB.Model.CashUp();
             cashUp.set(data[0]);
             var cashUpCollection = new Backbone.Collection();
@@ -900,6 +898,7 @@
               },
               cashupPaymentMethods
             );
+            OB.UTIL.localStorage.removeItem('lastProcessedCashup');
           } else {
             OB.UTIL.createNewCashup(callback);
           }
