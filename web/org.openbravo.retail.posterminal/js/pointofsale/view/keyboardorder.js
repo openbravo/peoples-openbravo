@@ -104,6 +104,7 @@ enyo.kind({
         return true;
       }
     }
+    OB.MobileApp.view.setFocusOnFocusKeeper();
   },
   sideBarEnabled: true,
 
