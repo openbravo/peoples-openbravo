@@ -56,6 +56,7 @@ public class AssociateOrderLines extends ProcessHQLQuery {
     params.put("excluded",
         new HashSet<String>(Arrays.asList(paramValues.get("excluded").toString().split(","))));
     params.put("productId", paramValues.get("productId"));
+    params.put("excludedOrder", paramValues.get("excludedOrder"));
 
     Iterator<?> it = paramValues.entrySet().iterator();
     while (it.hasNext()) {
@@ -100,7 +101,12 @@ public class AssociateOrderLines extends ProcessHQLQuery {
     hqlPendingLines.append(" AND salesOrder.obposIsDeleted = false");
     hqlPendingLines.append(" AND salesOrder.documentStatus <> 'CL'");
     hqlPendingLines.append(" AND salesOrder.transactionDocument.sOSubType NOT LIKE 'OB'");
-    hqlPendingLines.append(" AND ol.id NOT IN ( :excluded )");
+
+    if (!paramValues.containsKey("excludedOrder")) {
+      hqlPendingLines.append(" AND ol.id NOT IN ( :excluded )");
+    } else {
+      hqlPendingLines.append(" AND ol.salesOrder.id <> :excludedOrder");
+    }
 
     if ("N".equals(paramValues.get("includeProductCategories"))) {
       hqlPendingLines.append(" AND EXISTS");

@@ -471,6 +471,7 @@ enyo.kind({
   searchAction: function(inSender, inEvent) {
     var me = this,
       orderLinesToExclude = [],
+      orderToExclude = '',
       selectedLine = this.parent.parent.selectedLine,
       bp = this.parent.parent.receipt.get('bp').get('id'),
       filterModel = OB.Model.OrderAssociationsFilter;
@@ -481,6 +482,9 @@ enyo.kind({
     _.each(selectedLine.get('relatedLines'), function(relatedLine) {
       orderLinesToExclude.push(relatedLine.orderlineId);
     });
+    if (selectedLine.get('orderId') !== undefined) {
+      orderToExclude = selectedLine.get('orderId');
+    }
     if (!inEvent.advanced) {
       this.waterfall('onDisableSearch');
     }
@@ -655,6 +659,12 @@ enyo.kind({
         columns: 'excluded',
         value: orderLinesToExclude.toString(),
         operator: '='
+      },
+      {
+        columns: 'excludedOrder',
+        value: orderToExclude,
+        operator: '=',
+        isId: true
       }
     );
 
