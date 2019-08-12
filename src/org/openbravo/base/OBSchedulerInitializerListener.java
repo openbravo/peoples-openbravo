@@ -86,9 +86,15 @@ public class OBSchedulerInitializerListener implements ServletContextListener {
 
       /*
        * If the "start-scheduler-on-load" init-parameter is not specified, the scheduler will be
-       * started. This is to maintain backwards compatability.
+       * started. This is to maintain backwards compatibility.
+       * start-scheduler-on-load controls the starting of the scheduler across all the nodes in
+       * the cluster. The configuration parameter background.policy controls the starting of the
+       * scheduler in a specific instance of the cluster.
+       * Even if the instance is not started on application startup, it can be started later by
+       * using the JMX OBScheduler MBean.
        */
-      if (startOnLoad == null || (Boolean.valueOf(startOnLoad).booleanValue())) {
+      if ((startOnLoad == null || (Boolean.valueOf(startOnLoad).booleanValue()))
+          && !OBScheduler.isNoExecuteBackgroundPolicy()) {
         if (startDelay <= 0) {
           // Start now
           scheduler.start();
@@ -99,7 +105,7 @@ public class OBSchedulerInitializerListener implements ServletContextListener {
           log.info("Scheduler will start in " + startDelay + " seconds.");
         }
       } else {
-        log.info("Scheduler has not been started. Use scheduler.start()");
+        log.info("Scheduler has not been started. Start the scheduler calling start() on the OBScheduler MBean");
       }
 
       String factoryKey = servletContext.getInitParameter("servlet-context-factory-key");

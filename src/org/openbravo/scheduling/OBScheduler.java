@@ -34,7 +34,9 @@ import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.scheduling.trigger.TriggerProvider;
+import org.openbravo.jmx.MBeanRegistry;
 import org.openbravo.scheduling.quartz.JobInitializationListener;
+import org.openbravo.scheduling.quartz.OpenbravoPersistentJobStore;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerContext;
@@ -46,7 +48,7 @@ import org.quartz.Trigger;
  *
  * @author awolski
  */
-public class OBScheduler {
+public class OBScheduler implements OBSchedulerMBean {
   private static final OBScheduler INSTANCE = new OBScheduler();
 
   private static final Logger log = LogManager.getLogger();
@@ -61,10 +63,13 @@ public class OBScheduler {
 
   private String sqlDateTimeFormat;
 
+  private boolean initializing = true;
+
   private static final String BACKGROUND_POLICY = "background.policy";
   private static final String NO_EXECUTE_POLICY = "no-execute";
 
   private OBScheduler() {
+    MBeanRegistry.registerMBean("OBScheduler", this);
   }
 
   /**
@@ -151,8 +156,8 @@ public class OBScheduler {
    *           If something goes wrong with the trigger creation or with the process scheduling.
    */
   public void schedule(String requestId, ProcessBundle bundle) throws SchedulerException {
-    if (isNoExecuteBackgroundPolicy()) {
-      log.info("Not scheduling process because current context background policy is 'no-execute'");
+    if (!initializing && !isSchedulingAllowed()) {
+      log.info("Not scheduling process because no scheduler instances are active");
       return;
     }
     if (requestId == null) {
@@ -166,6 +171,12 @@ public class OBScheduler {
         .createTrigger(requestId, bundle, getConnection());
 
     sched.scheduleJob(jobDetail, trigger);
+  }
+
+  public boolean isSchedulingAllowed() throws SchedulerException {
+    return !sched.isInStandbyMode()
+        || (sched.getMetaData().isJobStoreClustered()
+            && OpenbravoPersistentJobStore.isSchedulingAllowedInCluster(sched.getSchedulerName()));
   }
 
   /**
@@ -261,6 +272,7 @@ public class OBScheduler {
           scheduleProcess(requestId, vars);
         }
       }
+      initializing = false;
     } catch (final ServletException e) {
       log.error("An error occurred retrieving scheduled process data: " + e.getMessage(), e);
     }
@@ -273,6 +285,51 @@ public class OBScheduler {
       schedule(requestId, bundle);
     } catch (final ServletException | ParameterSerializationException e) {
       log.error("Error scheduling process request: " + requestId, e);
+    }
+  }
+
+  /*
+   * Implementation of the MBean interface
+   */
+
+  @Override
+  public boolean isStarted() {
+    boolean started;
+    try {
+      started = sched != null && sched.isStarted() && !sched.isInStandbyMode();
+    } catch (SchedulerException ex) {
+      throw new RuntimeException(ex);
+    }
+    return started;
+  }
+
+  @Override
+  public void start() {
+    try {
+      if (sched == null) {
+        throw new RuntimeException("The scheduler was incorrectly initialized, the internal Quartz Scheduler is null");
+      }
+      if (sched.isStarted() && !sched.isInStandbyMode()) {
+        throw new RuntimeException("The scheduler is already started");
+      }
+      sched.start();
+    } catch (SchedulerException ex) {
+      throw new RuntimeException(ex);
+    }
+  }
+
+  @Override
+  public void standby() {
+    try {
+      if (sched == null) {
+        throw new RuntimeException("The scheduler was incorrectly initialized, the internal Quartz Scheduler is null");
+      }
+      if (sched.isInStandbyMode()){
+        throw new RuntimeException("The scheduler is already in standby mode");
+      }
+      sched.standby();
+    } catch (SchedulerException ex) {
+      throw new RuntimeException(ex);
     }
   }
 }

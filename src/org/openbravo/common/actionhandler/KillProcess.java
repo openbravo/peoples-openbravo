@@ -48,7 +48,7 @@ public class KillProcess extends BaseProcessActionHandler {
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
     JSONObject result = new JSONObject();
     try {
-      if (OBScheduler.isNoExecuteBackgroundPolicy()) {
+      if (!OBScheduler.getInstance().isSchedulingAllowed()) {
         return getResponseBuilder()
             .showMsgInProcessView(MessageType.ERROR,
                 OBMessageUtils.getI18NMessage("BackgroundPolicyNoExecuteMsg", null))
