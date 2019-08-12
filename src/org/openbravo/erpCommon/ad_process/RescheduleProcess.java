@@ -54,16 +54,6 @@ public class RescheduleProcess extends HttpSecureAppServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
-    String policy = OBPropertiesProvider.getInstance()
-        .getOpenbravoProperties()
-        .getProperty("background.policy", "default");
-    if ("no-execute".equals(policy)) {
-      log.info("Not scheduling process because current context background policy is 'no-execute'");
-      advisePopUp(request, response, "ERROR",
-          OBMessageUtils.messageBD("BackgroundPolicyNoExecuteTitle"),
-          OBMessageUtils.messageBD("BackgroundPolicyNoExecuteMsg"));
-      return;
-    }
 
     final VariablesSecureApp vars = new VariablesSecureApp(request);
 
@@ -76,6 +66,21 @@ public class RescheduleProcess extends HttpSecureAppServlet {
 
     String message;
     try {
+      if (!OBScheduler.getInstance().isSchedulingAllowed()) {
+        if (OBScheduler.getInstance().getScheduler().getMetaData().isJobStoreClustered()) {
+          log.info("Not scheduling process because current there is no scheduler instance active");
+          advisePopUp(request, response, "ERROR",
+              OBMessageUtils.messageBD("NoSchedulerInstanceActiveTitle"),
+              OBMessageUtils.messageBD("NoSchedulerInstanceActiveMsg"));
+        } else {
+        log.info("Not scheduling process because current context background policy is 'no-execute'");
+        advisePopUp(request, response, "ERROR",
+            OBMessageUtils.messageBD("BackgroundPolicyNoExecuteTitle"),
+            OBMessageUtils.messageBD("BackgroundPolicyNoExecuteMsg"));
+        }
+        return;
+      }
+      
       // Avoid launch empty groups
       // Duplicated code in: ScheduleProcess
       if (group.equals("Y")) {

@@ -21,6 +21,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="STATUS" primaryKey="false" required="true" type="VARCHAR" size="10" autoIncrement="false">
+        <default><![CDATA[STANDBY]]></default>
+        <onCreateDefault/>
+      </column>
       <unique name="OBSCHED_SCH_STA_UK">
         <unique-column name="SCHED_NAME"/>
         <unique-column name="INSTANCE_NAME"/>

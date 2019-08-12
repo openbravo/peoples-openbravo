@@ -38,6 +38,7 @@ import org.openbravo.model.ad.ui.ProcessGroupList;
 import org.openbravo.model.ad.ui.ProcessRequest;
 import org.openbravo.scheduling.OBScheduler;
 import org.openbravo.scheduling.ProcessBundle;
+import org.quartz.SchedulerException;
 
 /**
  * @author awolski
@@ -53,21 +54,28 @@ public class ScheduleProcess extends HttpSecureAppServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
-    if (OBScheduler.isNoExecuteBackgroundPolicy()) {
-      log.info("Not scheduling process because current context background policy is 'no-execute'");
-      advisePopUp(request, response, "ERROR",
-          OBMessageUtils.messageBD("BackgroundPolicyNoExecuteTitle"),
-          OBMessageUtils.messageBD("BackgroundPolicyNoExecuteMsg"));
-      return;
-    }
-
-    final VariablesSecureApp vars = new VariablesSecureApp(request);
     String message = null;
+    final VariablesSecureApp vars = new VariablesSecureApp(request);
     final String windowId = vars.getStringParameter("inpwindowId");
     final String requestId = vars.getSessionValue(windowId + "|" + PROCESS_REQUEST_ID);
     final String group = vars.getStringParameter("inpisgroup");
 
     try {
+      if (!OBScheduler.getInstance().isSchedulingAllowed()) {
+        if (OBScheduler.getInstance().getScheduler().getMetaData().isJobStoreClustered()) {
+          log.info("Not scheduling process because current there is no scheduler instance active");
+          advisePopUp(request, response, "ERROR",
+              OBMessageUtils.messageBD("NoSchedulerInstanceActiveTitle"),
+              OBMessageUtils.messageBD("NoSchedulerInstanceActiveMsg"));
+        } else {
+        log.info("Not scheduling process because current context background policy is 'no-execute'");
+        advisePopUp(request, response, "ERROR",
+            OBMessageUtils.messageBD("BackgroundPolicyNoExecuteTitle"),
+            OBMessageUtils.messageBD("BackgroundPolicyNoExecuteMsg"));
+        }
+        return;
+      }
+
       // Avoid launch empty groups
       // Duplicated code in: RescheduleProcess
       if (group.equals("Y")) {
@@ -95,6 +103,7 @@ public class ScheduleProcess extends HttpSecureAppServlet {
       message = Utility.messageBD(this, "SCHED_ERROR", vars.getLanguage());
       String processErrorTit = Utility.messageBD(this, "Error", vars.getLanguage());
       advisePopUp(request, response, "ERROR", processErrorTit, message + " " + e.getMessage());
+      return;
     }
     message = Utility.messageBD(this, "SCHED_SUCCESS", vars.getLanguage());
     String processTitle = Utility.messageBD(this, "Success", vars.getLanguage());
