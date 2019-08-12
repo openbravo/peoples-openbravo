@@ -1162,6 +1162,17 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
                         OB.UTIL.showLoading(true);
                         me.set('finished', true);
                         if (
+                          OB.MobileApp.model.hasPermission(
+                            'OBMOBC_SynchronizedMode',
+                            true
+                          )
+                        ) {
+                          OB.UTIL.localStorage.setItem(
+                            'lastProcessedCashup',
+                            cashUp.at(0).get('id')
+                          );
+                        }
+                        if (
                           OB.MobileApp.model.hasPermission('OBPOS_print.cashup')
                         ) {
                           var cashUpReport = new OB.Model.CashUp(),

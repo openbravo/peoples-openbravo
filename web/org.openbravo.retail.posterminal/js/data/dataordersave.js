@@ -841,11 +841,18 @@
                           ) {
                             invoiceLine.unset('product');
                           });
-                          me.context
-                            .get('multiOrders')
-                            .trigger('print', invoiceToPrint, {
-                              offline: true
-                            });
+                          if (
+                            OB.MobileApp.model.hasPermission(
+                              'OBPOS_print.invoicesautomatically',
+                              true
+                            )
+                          ) {
+                            me.context
+                              .get('multiOrders')
+                              .trigger('print', invoiceToPrint, {
+                                offline: true
+                              });
+                          }
                         }
 
                         me.context

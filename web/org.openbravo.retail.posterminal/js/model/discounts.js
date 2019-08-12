@@ -286,6 +286,7 @@
             promotion.rule.get('obdiscAllowinnegativelines'))
         ) {
           rule.addManual(receipt, line, promotion);
+          line.set('singleManualPromotionApplied', true);
         } else {
           OB.UTIL.showWarning(
             OB.I18N.getLabel('OBPOS_AvoidApplyManualPromotions')

@@ -1456,23 +1456,28 @@ enyo.kind({
       var product = inEvent.line.get('product'),
         negativeQty = OB.DEC.compare(inEvent.line.get('qty')) < 0,
         productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(product),
-        checkStock =
-          negativeQty &&
-          productStatus.restrictsaleoutofstock &&
-          !OB.UTIL.isCrossStoreProduct(product);
+        checkStockActions = [];
+
+      if (negativeQty && productStatus.restrictsaleoutofstock) {
+        checkStockActions.push('discontinued');
+      }
+
+      if (negativeQty && OB.UTIL.isCrossStoreProduct(product)) {
+        checkStockActions.push('crossStore');
+      }
 
       OB.UTIL.HookManager.executeHooks(
         'OBPOS_CheckStockReturnLine',
         {
           order: this.model.get('order'),
           line: inEvent.line,
-          checkStock: checkStock
+          checkStockActions: checkStockActions
         },
         function(args) {
           if (args.cancelOperation) {
             return;
           }
-          if (args.checkStock) {
+          if (args.checkStockActions.length) {
             var qtyAdded = -inEvent.line.get('qty') - inEvent.line.get('qty');
             me.model
               .get('order')
@@ -1481,6 +1486,7 @@ enyo.kind({
                 qtyAdded,
                 inEvent,
                 null,
+                args.checkStockActions,
                 function(hasStock) {
                   if (hasStock) {
                     me.model.get('order').returnLine(inEvent.line);

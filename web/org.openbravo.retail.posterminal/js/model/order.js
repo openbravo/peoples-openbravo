@@ -1230,6 +1230,14 @@
       return OB.I18N.formatCurrency(this.getPending());
     },
 
+    getInvoiceTerms: function() {
+      return this.get('invoiceTerms')
+        ? this.get('invoiceTerms')
+        : this.get('bp')
+        ? this.get('bp').get('invoiceTerms')
+        : undefined;
+    },
+
     isNegative: function() {
       var isNegative;
       if (OB.UTIL.isNullOrUndefined(this.get('isNegative'))) {
@@ -4782,7 +4790,7 @@
             discount.discountinstance === promotions[i].discountinstance
           ) {
             if (promotions[i].hidden !== true) {
-              if (disc.applyNext === false) {
+              if (disc.applyNext === false || discount.forceReplace === true) {
                 promotions[i] = disc;
               }
               replaced = true;
@@ -5424,7 +5432,7 @@
                 businessPartner.set('postalCode', billing.get('postalCode'));
                 businessPartner.set('cityName', billing.get('cityName'));
                 businessPartner.set('countryName', billing.get('countryName'));
-                if (shipping) {
+                if (shipping && !businessPartner.get('assignedShipAddr')) {
                   businessPartner.set('shipLocId', shipping.get('id'));
                   businessPartner.set('shipLocName', shipping.get('name'));
                   businessPartner.set(
@@ -5519,7 +5527,7 @@
               businessPartner.set('postalCode', billing.get('postalCode'));
               businessPartner.set('cityName', billing.get('cityName'));
               businessPartner.set('countryName', billing.get('countryName'));
-              if (shipping) {
+              if (shipping && !businessPartner.get('assignedShipAddr')) {
                 businessPartner.set('shipLocId', shipping.get('id'));
                 businessPartner.set('shipLocName', shipping.get('name'));
                 businessPartner.set(
@@ -8342,11 +8350,20 @@
                 copiedPromo.chunks = promList.length;
               }
             }
+            for (i = 0; i < line.get('promotions').length; i++) {
+              if (
+                line.get('promotions')[i].ruleId === promList[0].ruleId &&
+                line.get('promotions')[i].discountinstance ===
+                  promList[0].discountinstance
+              ) {
+                break;
+              }
+            }
             me.removePromotion(line, {
               id: promList[0].ruleId,
               discountinstance: promList[0].discountinstance
             });
-            line.get('promotions').push(copiedPromo);
+            line.get('promotions').splice(i, 0, copiedPromo);
           }
           if (orderPromotions) {
             var lineNoNormalized = 10;
@@ -8399,7 +8416,13 @@
                     }
                   }
                 } else {
-                  linesToApply.add(rli);
+                  if (
+                    !gli.get('singleManualPromotionApplied') ||
+                    (gli.get('id') === rli.get('id') &&
+                      gli.get('singleManualPromotionApplied'))
+                  ) {
+                    linesToApply.add(rli);
+                  }
                 }
               }
             } else {
@@ -9229,16 +9252,15 @@
       }
 
       if (
-        (this.get('bp').get('invoiceTerms') === 'I' &&
-          this.get('generateInvoice')) ||
+        (this.getInvoiceTerms() === 'I' && this.get('generateInvoice')) ||
         this.get('payOnCredit')
       ) {
         receiptShouldBeInvoiced = true;
-      } else if (this.get('bp').get('invoiceTerms') === 'O') {
+      } else if (this.getInvoiceTerms() === 'O') {
         if (this.get('deliver')) {
           receiptShouldBeInvoiced = true;
         }
-      } else if (this.get('bp').get('invoiceTerms') === 'D') {
+      } else if (this.getInvoiceTerms() === 'D') {
         if (this.get('generateShipment')) {
           receiptShouldBeInvoiced = true;
         } else {
@@ -9282,11 +9304,11 @@
               : ol.get('qty'),
             qtyToInvoice = OB.DEC.Zero,
             lineToInvoice;
-          if (me.get('bp').get('invoiceTerms') === 'D') {
+          if (me.getInvoiceTerms() === 'D') {
             qtyToInvoice = OB.DEC.sub(qtyToDeliver, qtyAlreadyInvoiced);
           } else if (
-            me.get('bp').get('invoiceTerms') === 'I' ||
-            me.get('bp').get('invoiceTerms') === 'O'
+            me.getInvoiceTerms() === 'I' ||
+            me.getInvoiceTerms() === 'O'
           ) {
             qtyToInvoice = qtyPendingToBeInvoiced;
           }
@@ -9294,7 +9316,7 @@
             qtyToInvoice &&
             (ol.get('obposCanbedelivered') ||
               ol.get('obposIspaid') ||
-              me.get('bp').get('invoiceTerms') === 'I')
+              me.getInvoiceTerms() === 'I')
           ) {
             lineToInvoice = new OB.Model.OrderLine();
             OB.UTIL.clone(ol, lineToInvoice);
@@ -9990,6 +10012,7 @@
                       warehousename: iter.warehousename
                     },
                     relatedLines: iter.relatedLines,
+                    groupService: prod.get('groupProduct'),
                     isEditable: true,
                     isDeletable: true,
                     attSetInstanceDesc: iter.attSetInstanceDesc

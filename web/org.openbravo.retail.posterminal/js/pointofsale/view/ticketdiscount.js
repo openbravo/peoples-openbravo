@@ -478,7 +478,8 @@ enyo.kind({
         promotionToAplly.rule = discountsContainer.model;
         promotionToAplly.definition = {};
         promotionToAplly.definition.userAmt = discountsContainer.amt;
-        promotionToAplly.definition.applyNext = !me.$.checkOverride.checked;
+        promotionToAplly.definition.applyNext = true;
+        promotionToAplly.definition.forceReplace = me.$.checkOverride.checked;
         promotionToAplly.definition.lastApplied = true;
         promotionToAplly.definition.obdiscLineFinalgross =
           discountsContainer.amt;
