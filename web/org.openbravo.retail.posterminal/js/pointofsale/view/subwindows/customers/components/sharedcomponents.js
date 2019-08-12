@@ -396,9 +396,14 @@ enyo.kind({
     }
   ],
   hideShowFields: function(inSender, inEvent) {
+    if (inEvent.checked) {
+      this.$.invLbl.setContent(OB.I18N.getLabel('OBPOS_LblAddress'));
+    } else {
+      this.$.invLbl.setContent(OB.I18N.getLabel('OBPOS_LblBillAddr'));
+    }
     this.$.shipAddress.setShowing(!inEvent.checked);
     this.$.shipLbl.setShowing(!inEvent.checked);
-    this.$.invLbl.setShowing(!inEvent.checked);
+    this.$.invLbl.setShowing(true);
     this.waterfall('onHideShow', {
       checked: inEvent.checked
     });
@@ -473,7 +478,7 @@ enyo.kind({
     function checkMandatoryFields(items, customer) {
       var errors = '';
       _.each(items, function(item) {
-        if (item.coreElement.mandatory) {
+        if (item.coreElement && item.coreElement.mandatory) {
           var value = customer.get(item.coreElement.modelProperty);
           if (!value) {
             if (errors) {
@@ -725,25 +730,70 @@ enyo.kind({
         // Don't do anything if exception is thrown
       }
     }
+
+    //Create Field Group along with Fields
     enyo.forEach(
-      this.newAttributes,
-      function(natt) {
-        this.$.customerOnlyFields.createComponent(
-          {
-            kind: 'OB.UI.CustomerPropertyLine',
-            name: 'line_' + natt.name,
-            classes:
-              'obObposPointOfSaleUiCustomersEditCreatecustomers-customerOnlyFields-obUiCustomerPropertyLine obUiCustomerPropertyLine_' +
-              natt.name,
-            coreElement: natt
+      this.fieldGroups,
+      function(fg) {
+        //Section
+        this.$.customerOnlyFields.createComponent({
+          name: fg.sectionName,
+          classes:
+            'obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-' +
+            fg.sectionName
+        });
+        //Label
+        this.$.customerOnlyFields.$[fg.sectionName].createComponent({
+          name: fg.sectionLableName,
+          kind: 'OB.UI.FormSection.Label',
+          content: fg.title,
+          classes:
+            'obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-' +
+            fg.sectionName +
+            '-' +
+            fg.sectionLableName
+        });
+        //FieldSection
+        this.$.customerOnlyFields.$[fg.sectionName].createComponent({
+          name: fg.sectionFieldsName,
+          classes:
+            'obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-' +
+            fg.sectionName +
+            '-' +
+            fg.sectionFieldsName
+        });
+        //FieldLine
+        enyo.forEach(
+          this.newAttributes,
+          function(natt) {
+            if (natt.fgSection === fg.groupName) {
+              this.$.customerOnlyFields.$[fg.sectionName].$[
+                fg.sectionFieldsName
+              ].createComponent(
+                {
+                  kind: 'OB.UI.CustomerPropertyLine',
+                  name: 'line_' + natt.name,
+                  classes:
+                    'obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-' +
+                    fg.sectionName +
+                    '-' +
+                    fg.sectionFieldsName +
+                    '-obUiCustomerPropertyLine obUiCustomerPropertyLine_' +
+                    natt.name,
+                  coreElement: natt
+                },
+                {
+                  owner: me.attributeContainer
+                }
+              );
+            }
           },
-          {
-            owner: me.attributeContainer
-          }
+          this
         );
       },
       this
     );
+
     enyo.forEach(
       this.shipAddrAttributes,
       function(natt) {

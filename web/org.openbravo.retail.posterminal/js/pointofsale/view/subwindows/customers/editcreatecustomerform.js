@@ -294,6 +294,32 @@ enyo.kind({
   kind: 'OB.OBPOSPointOfSale.UI.customers.edit_createcustomers',
   classes: 'obObposPointOfSaleUiCustomersEditCreatecustomersImpl',
   windowHeader: 'OB.OBPOSPointOfSale.UI.customers.NewCustomer_bodyheader',
+  fieldGroups: [
+    {
+      groupName: 'OBPOS_FG_PersonalInformation',
+      title: 'Personal Information',
+      sectionName: 'personalInfo',
+      sectionLableName: 'personalInfoLbl',
+      sectionFieldsName: 'personalInfoFields',
+      sectionFieldsLineName: 'personalInfoFieldsLine'
+    },
+    {
+      groupName: 'OBPOS_FG_ContactInformation',
+      title: 'Contact Information',
+      sectionName: 'contactInfo',
+      sectionLableName: 'contactInfoLbl',
+      sectionFieldsName: 'contactInfoFields',
+      sectionFieldsLineName: 'contactInfoFieldsLine'
+    },
+    {
+      groupName: 'OBPOS_FG_OthersInformation',
+      title: 'Other Information',
+      sectionName: 'otherInfo',
+      sectionLableName: 'otherInfoLbl',
+      sectionFieldsName: 'otherInfoFields',
+      sectionFieldsLineName: 'otherInfoFieldsLine'
+    }
+  ],
   newAttributes: [
     {
       kind: 'OB.UI.CustomerComboProperty',
@@ -328,6 +354,7 @@ enyo.kind({
         me.dataReadyFunction(data, args);
       },
       i18nLabel: 'OBPOS_LblGreetings',
+      fgSection: 'OBPOS_FG_PersonalInformation',
       displayLogic: function() {
         return OB.MobileApp.model.hasPermission(
           'OBPOS_Cus360ShowGreetings',
@@ -343,6 +370,7 @@ enyo.kind({
       modelProperty: 'firstName',
       isFirstFocus: true,
       i18nLabel: 'OBPOS_LblName',
+      fgSection: 'OBPOS_FG_PersonalInformation',
       maxlength: 60,
       mandatory: true
     },
@@ -354,6 +382,7 @@ enyo.kind({
       modelProperty: 'lastName',
       isFirstFocus: true,
       i18nLabel: 'OBPOS_LblLastName',
+      fgSection: 'OBPOS_FG_PersonalInformation',
       maxlength: 60
     },
     {
@@ -399,6 +428,7 @@ enyo.kind({
         );
       },
       i18nLabel: 'OBPOS_BPCategory',
+      fgSection: 'OBPOS_FG_OthersInformation',
       mandatory: true,
       displayLogic: function() {
         return OB.MobileApp.model.get('terminal').bp_showcategoryselector;
@@ -411,6 +441,7 @@ enyo.kind({
         'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-newAttributes-customerTaxId',
       modelProperty: 'taxID',
       i18nLabel: 'OBPOS_LblTaxId',
+      fgSection: 'OBPOS_FG_PersonalInformation',
       displayLogic: function() {
         return OB.MobileApp.model.get('terminal').bp_showtaxid;
       },
@@ -423,6 +454,7 @@ enyo.kind({
         'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-newAttributes-customerPhone',
       modelProperty: 'phone',
       i18nLabel: 'OBPOS_LblPhone',
+      fgSection: 'OBPOS_FG_ContactInformation',
       maxlength: 40
     },
     {
@@ -432,6 +464,7 @@ enyo.kind({
         'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-newAttributes-alternativePhone',
       modelProperty: 'alternativePhone',
       i18nLabel: 'OBPOS_LblAlternativePhone',
+      fgSection: 'OBPOS_FG_ContactInformation',
       maxlength: 40
     },
     {
@@ -441,6 +474,7 @@ enyo.kind({
         'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-newAttributes-customerEmail',
       modelProperty: 'email',
       i18nLabel: 'OBPOS_LblEmail',
+      fgSection: 'OBPOS_FG_ContactInformation',
       maxlength: 255
     },
     {
@@ -450,6 +484,7 @@ enyo.kind({
         'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-newAttributes-birthPlace',
       modelProperty: 'birthPlace',
       i18nLabel: 'OBPOS_LblBirthplace',
+      fgSection: 'OBPOS_FG_PersonalInformation',
       displayLogic: function() {
         return OB.MobileApp.model.hasPermission(
           'OBPOS_Cus360ShowBirthplace',
@@ -464,6 +499,7 @@ enyo.kind({
         'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-newAttributes-birthDay',
       modelProperty: 'birthDay',
       i18nLabel: 'OBPOS_LblBirthdate',
+      fgSection: 'OBPOS_FG_PersonalInformation',
       handlers: {
         onLoadValue: 'loadValue',
         onSaveChange: 'saveChange',
@@ -538,6 +574,7 @@ enyo.kind({
         me.dataReadyFunction(data, args);
       },
       i18nLabel: 'OBPOS_LblLanguage',
+      fgSection: 'OBPOS_FG_PersonalInformation',
       displayLogic: function() {
         return OB.MobileApp.model.hasPermission(
           'OBPOS_Cus360ShowLanguage',
@@ -552,6 +589,7 @@ enyo.kind({
         'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-newAttributes-comments',
       modelProperty: 'comments',
       i18nLabel: 'OBPOS_LblComments',
+      fgSection: 'OBPOS_FG_OthersInformation',
       maxlength: 40,
       displayLogic: function() {
         return OB.MobileApp.model.hasPermission(
@@ -614,6 +652,7 @@ enyo.kind({
         );
       },
       i18nLabel: 'OBPOS_PriceList',
+      fgSection: 'OBPOS_FG_OthersInformation',
       displayLogic: function() {
         return OB.MobileApp.model.hasPermission('EnableMultiPriceList', true);
       }
@@ -633,6 +672,7 @@ enyo.kind({
         'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-newAttributes-commercialauth',
       modelProperty: 'commercialauth',
       i18nLabel: 'OBPOS_CommercialAuth',
+      fgSection: 'OBPOS_FG_ContactInformation',
       displayLogic: function() {
         return OB.MobileApp.model.hasPermission(
           'OBPOS_Cus360ShowCommercialAuth',
@@ -647,6 +687,7 @@ enyo.kind({
         'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-newAttributes-contactpreferences',
       modelProperty: 'contactpreferences',
       i18nLabel: 'OBPOS_ContactPreferences',
+      fgSection: 'OBPOS_FG_ContactInformation',
       setEditedProperties: function(oldBp, editedBp) {
         editedBp.set('viasms', oldBp.get('viasms'));
         editedBp.set('viaemail', oldBp.get('viaemail'));
@@ -662,6 +703,7 @@ enyo.kind({
       kind: 'OB.UI.SwitchShippingInvoicingAddr',
       name: 'useSameAddrCheck',
       i18nLabel: 'OBPOS_SameAddrInfo',
+      fgSection: 'OBPOS_FG_ContactInformation',
       classes:
         'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-newAttributes-useSameAddrCheck'
     }
