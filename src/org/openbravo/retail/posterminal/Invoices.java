@@ -250,7 +250,7 @@ public class Invoices extends JSONProcessSimple {
                 + "c_currency_rate(p.account.currency, p.organization.currency, null, null, p.client.id, p.organization.id) as rate, "
                 + "c_currency_rate(p.organization.currency, p.account.currency, null, null, p.client.id, p.organization.id) as mulrate, "
                 + "p.account.currency.iSOCode as isocode "
-                + " from FIN_Payment as p where p.id=:paymentId)";
+                + " from FIN_Payment as p where p.id=:paymentId";
             @SuppressWarnings("rawtypes")
             Query paymentTypeQuery = OBDal.getInstance().getSession().createQuery(hqlPaymentType);
             paymentTypeQuery.setParameter("paymentId", objectIn.getString("paymentId"));
