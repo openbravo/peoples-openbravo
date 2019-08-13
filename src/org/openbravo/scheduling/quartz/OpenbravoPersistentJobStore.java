@@ -81,6 +81,15 @@ public class OpenbravoPersistentJobStore extends JobStoreTX {
     }
     return false;
   }
+  
+  /*
+   * This method overridden only to suppress the warnings produced by TxJobStore in the Quartz library
+   */
+  @Override
+  protected Object executeInLock(String lockName, @SuppressWarnings("rawtypes") TransactionCallback txCallback)
+      throws JobPersistenceException {
+    return super.executeInLock(lockName, txCallback);
+  }
 
   public static boolean isSchedulingAllowedInCluster(String instanceName) {
     OpenbravoPersistentJobStore jobStore = clusterJobStores.get(instanceName);
