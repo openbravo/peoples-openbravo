@@ -34,8 +34,6 @@ import static org.openbravo.scheduling.quartz.OpenbravoJDBCPersistenceSupport.se
 
 public class OpenbravoJDBCDelegate extends PostgreSQLDelegate {
 
-  private static Logger log = LogManager.getLogger();
-
   private static final String COL_SCHEDULER_STATUS = "STATUS";
   
   static String SCHEDULER_STATUS_STANDBY = "STANDBY";
