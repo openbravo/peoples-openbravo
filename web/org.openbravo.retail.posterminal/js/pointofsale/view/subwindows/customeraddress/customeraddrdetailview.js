@@ -271,6 +271,7 @@ enyo.kind({
       this.customer.set('locations', []);
     }
     this.customer.get('locations').push(this.customerAddr.clone());
+    this.customer.set('assignedShipAddr', true);
     this.model.get('order').trigger('change:bp', this.model.get('order'));
     this.doChangeBusinessPartner({
       businessPartner: this.customer,

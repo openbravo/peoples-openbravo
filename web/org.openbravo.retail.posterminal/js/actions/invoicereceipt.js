@@ -19,11 +19,9 @@
         i18nContent: 'OBPOS_LblInvoice'
       },
       isActive: function(view) {
+        var receipt = view.model.get('order');
         var generateInvoice = view.state.readState({
           name: 'receipt.generateInvoice'
-        });
-        var bp = view.state.readState({
-          name: 'receipt.bp'
         });
         var isQuotation = view.state.readState({
           name: 'receipt.isQuotation'
@@ -32,7 +30,7 @@
         return (
           !isQuotation &&
           !generateInvoice &&
-          (bp && bp.get('invoiceTerms') === 'I')
+          (receipt && receipt.getInvoiceTerms() === 'I')
         );
       },
       command: function(view) {
