@@ -8,11 +8,11 @@ import java.util.Map;
 import org.quartz.JobPersistenceException;
 import org.quartz.SchedulerException;
 import org.quartz.impl.jdbcjobstore.JobStoreTX;
-import org.quartz.spi.JobStore;
 
+@SuppressWarnings("unchecked")
 public class OpenbravoPersistentJobStore extends JobStoreTX {
 
-  private static Map<String, JobStore> clusterJobStores = new Hashtable<String, JobStore>();
+  private static Map<String, OpenbravoPersistentJobStore> clusterJobStores = new Hashtable<String, OpenbravoPersistentJobStore>();
 
   @Override
   public void setInstanceName(String instanceName) {
@@ -68,25 +68,26 @@ public class OpenbravoPersistentJobStore extends JobStoreTX {
   }
 
   public boolean isSchedulingAllowed() {
-    boolean schedulingAllowed = false;
-    Connection conn;
+    Connection conn = null;
     try {
       conn = getNonManagedTXConnection();
-      schedulingAllowed = ((OpenbravoJDBCDelegate) getDelegate()).schedulersStarted(conn);
+      return ((OpenbravoJDBCDelegate) getDelegate()).schedulersStarted(conn);
     } catch (ClassCastException | JobPersistenceException | SQLException e) {
       getLog().error("Failed to look for started scheduler instances. " + e.getMessage());
+    } finally {
+      if (conn != null) {
+        cleanupConnection(conn);
+      }
     }
-    return schedulingAllowed;
+    return false;
   }
 
   public static boolean isSchedulingAllowedInCluster(String instanceName) {
-    boolean schedulingAllowed = false;
-    JobStore jobStore = clusterJobStores.get(instanceName);
-    if (jobStore == null || !(jobStore instanceof OpenbravoPersistentJobStore)) {
-      return schedulingAllowed;
+    OpenbravoPersistentJobStore jobStore = clusterJobStores.get(instanceName);
+    if (jobStore == null) {
+      return false;
     }
-    schedulingAllowed = ((OpenbravoPersistentJobStore) jobStore).isSchedulingAllowed();
-    return schedulingAllowed;
+    return jobStore.isSchedulingAllowed();
   }
 
 }

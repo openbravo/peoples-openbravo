@@ -38,7 +38,6 @@ import org.openbravo.model.ad.ui.ProcessGroupList;
 import org.openbravo.model.ad.ui.ProcessRequest;
 import org.openbravo.scheduling.OBScheduler;
 import org.openbravo.scheduling.ProcessBundle;
-import org.quartz.SchedulerException;
 
 /**
  * @author awolski
