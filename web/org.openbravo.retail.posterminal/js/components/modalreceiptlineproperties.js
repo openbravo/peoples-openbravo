@@ -30,7 +30,7 @@ enyo.kind({
             receiptLineDescription = diff[att].owner.$.receiptLineDescription;
             receiptLineDescriptionControl = diff[att].owner.owner.$.control.id;
             receiptLineDescriptionCoreElement =
-              diff[att].owner.owner.$.coreElement.id;
+              diff[att].owner.owner.$.coreElementContainer.id;
           }
         }
       }
