@@ -746,7 +746,7 @@ enyo.kind({
         this.$.customerOnlyFields.$[fg.sectionName].createComponent({
           name: fg.sectionLableName,
           kind: 'OB.UI.FormSection.Label',
-          content: fg.title,
+          content: OB.I18N.getLabel(fg.title),
           classes:
             'obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-' +
             fg.sectionName +

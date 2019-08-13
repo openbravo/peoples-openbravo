@@ -367,7 +367,7 @@ enyo.kind({
   fieldGroups: [
     {
       groupName: 'OBPOS_FG_PersonalInformation',
-      title: 'Personal Information',
+      title: 'OBPOS_Personal_Info',
       sectionName: 'personalInfo',
       sectionLableName: 'personalInfoLbl',
       sectionFieldsName: 'personalInfoFields',
@@ -375,7 +375,7 @@ enyo.kind({
     },
     {
       groupName: 'OBPOS_FG_ContactInformation',
-      title: 'Contact Information',
+      title: 'OBPOS_Contact_Info',
       sectionName: 'contactInfo',
       sectionLableName: 'contactInfoLbl',
       sectionFieldsName: 'contactInfoFields',
@@ -383,7 +383,7 @@ enyo.kind({
     },
     {
       groupName: 'OBPOS_FG_OthersInformation',
-      title: 'Other Information',
+      title: 'OBPOS_Other_Info',
       sectionName: 'otherInfo',
       sectionLableName: 'otherInfoLbl',
       sectionFieldsName: 'otherInfoFields',
