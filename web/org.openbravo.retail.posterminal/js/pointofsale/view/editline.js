@@ -13,25 +13,17 @@ enyo.kind({
   classes: 'obObposPointOfSaleUiLineProperty',
   components: [
     {
-      classes:
-        'obObposPointOfSaleUiLineProperty-container1 row-fluid u-clearBoth',
+      name: 'propertyLabel',
+      classes: 'obObposPointOfSaleUiLineProperty-propertyLabel'
+    },
+    {
+      classes: 'obObposPointOfSaleUiLineProperty-propertyValueWrapper',
       components: [
         {
-          name: 'propertyLabel',
+          tag: 'span',
+          name: 'propertyValue',
           classes:
-            'obObposPointOfSaleUiLineProperty-container1-propertyLabel span4'
-        },
-        {
-          classes:
-            'obObposPointOfSaleUiLineProperty-container1-container2 span8',
-          components: [
-            {
-              tag: 'span',
-              name: 'propertyValue',
-              classes:
-                'obObposPointOfSaleUiLineProperty-container1-container2-propertyValue'
-            }
-          ]
+            'obObposPointOfSaleUiLineProperty-propertyValueWrapper-propertyValue'
         }
       ]
     }
@@ -943,11 +935,34 @@ enyo.kind({
           showing: false,
           components: [
             {
-              name: 'actionButtonsContainer',
-              kind: 'Scroller',
-              thumb: true,
               classes:
-                'obObposPointOfSaleUiEditLine-msgedit-actionButtonsContainer'
+                'obObposPointOfSaleUiEditLine-defaultEdit-msgedit-header',
+              components: [
+                {
+                  name: 'actionButtonsContainer',
+                  kind: 'Scroller',
+                  thumb: true,
+                  tap: function() {
+                    this.owner.$.actionButtonsContainer.removeClass('expanded');
+                    this.owner.$.showLessActionButtons.setShowing(false);
+                  },
+                  classes:
+                    'obObposPointOfSaleUiEditLine-msgedit-actionButtonsContainer'
+                },
+                {
+                  kind: 'OB.OBPOSPointOfSale.UI.EditLine.ShowMoreActionButtons',
+                  name: 'showMoreActionButtons',
+                  classes:
+                    'obObposPointOfSaleUiEditLine-msgedit-showMoreActionButtons'
+                },
+                {
+                  kind: 'OB.OBPOSPointOfSale.UI.EditLine.ShowLessActionButtons',
+                  name: 'showLessActionButtons',
+                  showing: false,
+                  classes:
+                    'obObposPointOfSaleUiEditLine-msgedit-showLessActionButtons'
+                }
+              ]
             },
             {
               kind: 'OB.OBPOSPointOfSale.UI.EditLine.ReturnReason',
@@ -1326,6 +1341,28 @@ enyo.kind({
       errorCallback,
       this
     );
+  }
+});
+
+enyo.kind({
+  kind: 'OB.UI.Button',
+  name: 'OB.OBPOSPointOfSale.UI.EditLine.ShowMoreActionButtons',
+  i18nContent: 'OBMOBC_LblShowMore',
+  classes: 'obObposPointOfSaleUiEditLineShowMoreActionButtons',
+  tap: function() {
+    this.owner.$.actionButtonsContainer.addClass('expanded');
+    this.owner.$.showLessActionButtons.setShowing(true);
+  }
+});
+
+enyo.kind({
+  kind: 'OB.UI.Button',
+  name: 'OB.OBPOSPointOfSale.UI.EditLine.ShowLessActionButtons',
+  i18nContent: 'OBMOBC_LblShowLess',
+  classes: 'obObposPointOfSaleUiEditLineShowLessActionButtons',
+  tap: function() {
+    this.owner.$.actionButtonsContainer.removeClass('expanded');
+    this.owner.$.showLessActionButtons.setShowing(false);
   }
 });
 

@@ -3017,7 +3017,7 @@ li.selected > .obUiRenderOrderLine_edit {
   background-color: #4d545c;
   font-size: var(--font-medium);
   color: #e8e8e8;
-  padding: 0px 18px;
+  padding: 0px;
   margin: 0px;
   height: 50px;
   text-align: center;
@@ -8833,7 +8833,9 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obObposPointOfSaleUiInDevHeader-headerImg1-element1 {
   height: 32px;
   width: 35px;
-  background: url(../org.openbravo.mobile.core/assets/img/Warning.png) no-repeat top left;
+  background: url('./../../org.openbravo.mobile.core/assets/img/Warning.png');
+  background-repeat: no-repeat;
+  background-position: top left;
 }
 
 .obObposPointOfSaleUiInDevHeader-headerText-headerContentContainer {
@@ -8855,7 +8857,9 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obObposPointOfSaleUiInDevHeader-headerImg2-element1 {
   height: 32px;
   width: 35px;
-  background: url(../org.openbravo.mobile.core/assets/img/Warning.png) no-repeat top left;
+  background: url('./../../org.openbravo.mobile.core/assets/img/Warning.png');
+  background-repeat: no-repeat;
+  background-position: top left;
 }
 
 
@@ -8864,7 +8868,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 */
 .obObposPointOfSaleUiScan {
   position: relative;
-  color: white;
+  color: var(--color-maincolor);
   height: 100%;
   padding: 5px;
   box-sizing: border-box;
@@ -8879,7 +8883,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposPointOfSaleUiScan-mainPanel {
-  background-color: #7da7d9;
+  background-color: transparent;
   height: 100%;
   padding: 5px;
   box-sizing: border-box;
@@ -8892,7 +8896,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obObposPointOfSaleUiScan-msgwelcome-msgwelcomeLbl {
   float: right;
   align-items: center;
-  background-image: url(./../img/OpenbravoWelcomeLogo.svg);
+  background-image: url('./../img/OpenbravoWelcomeLogo.svg');
   background-position-x: right;
   background-repeat: no-repeat;
   background-size: 95px 23px;
@@ -8900,30 +8904,87 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   font-size: 16px;
   height: 23px;
   justify-content: flex-end;
-  padding: 2px 102px 0px 0px;
+  padding: 2px 101px 0px 0px;
 }
 
-.obObposPointOfSaleUiScan-mainPanel-msgaction {}
+.obObposPointOfSaleUiScan-mainPanel-msgaction {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: 1fr auto;
+  width: 100%;
+}
 
 .obObposPointOfSaleUiScan-msgaction-txtaction {
   overflow-x: hidden;
   overflow-y: auto;
   max-height: 134px;
   padding: 10px;
-  float: left;
-  width: 400px;
+  width: 100%;
   line-height: 23px;
   position: relative;
+  box-sizing: border-box;
 }
 
-.obObposPointOfSaleUiScan-msgaction-container2 {
-  float: right;
-}
-
-.obObposPointOfSaleUiScan-msgaction-container2-undobutton {
+.obObposPointOfSaleUiScan-msgaction-undobutton {
 /* Inherits: [OB.UI.SmallButton] */
   color: #7da7d9;
   background-color: #ffffff;
+}
+
+.obObposPointOfSaleUiScan-msgaction-undobutton {
+  grid-auto-flow: column;
+  grid-template-columns: auto 1fr;
+
+  text-decoration: none;
+  min-width: 110px;
+  background-color: var(--color-maincolor);
+  font-size: var(--font-medium-large);
+  color: var(--color-secondarycolor);
+  padding: 0px 15px;
+  margin: 6px;
+  height: 50px;
+  text-align: center;
+  border: 1px solid var(--color-maincolor);
+  border-radius: 4px;
+}
+
+.obObposPointOfSaleUiScan-msgaction-undobutton .obUiButton-before {
+  background-image: url('./../img/iconUndo.svg');
+  background-repeat: no-repeat;
+  background-size: 20px 10px;
+  background-position: center calc(50% - 1px);
+  width: 20px;
+  height: 100%;
+}
+
+.obObposPointOfSaleUiScan-msgaction-undobutton:hover {
+  background-color: #c4dab6;
+  color: var(--color-primary-dark);
+}
+
+.obObposPointOfSaleUiScan-msgaction-undobutton:hover .obUiButton-before {
+  background-image: url('./../img/iconUndo_hover.svg');
+}
+
+.obObposPointOfSaleUiScan-msgaction-undobutton:active {
+  background-color: #c5c5c5;
+  color: var(--color-primary-dark);
+}
+
+.obObposPointOfSaleUiScan-msgaction-undobutton:active .obUiButton-before {
+  background-image: url('./../img/iconUndo_active.svg');
+}
+
+.obObposPointOfSaleUiScan-msgaction-undobutton:focus {
+  border-width: 2px;
+  border-color: seagreen;
+  border-style: solid;
+  padding: 0px 14px;
+  /*box-shadow: 0 0 5px 3px rgba(110, 180, 63, .5);*/
+}
+
+.obObposPointOfSaleUiScan-msgaction-undobutton .obUiButton-label {
+  padding: 0px 0px 1px 10px;
 }
 
 .obObposPointOfSaleUiScan-mainPanel-divInDevHeader {
@@ -8940,19 +9001,25 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /*
 # Component: OB.OBPOSPointOfSale.UI.LineProperty
 */
-.obObposPointOfSaleUiLineProperty {}
+.obObposPointOfSaleUiLineProperty {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: auto 1fr;
+}
 
-.obObposPointOfSaleUiLineProperty-container1 {}
 
-.obObposPointOfSaleUiLineProperty-container1-propertyLabel {
+.obObposPointOfSaleUiLineProperty-propertyLabel {
   width: 95px;
+  text-align: right;
+  color: var(--color-maincolor);
+  font-weight: bold;
 }
 
-.obObposPointOfSaleUiLineProperty-container1-container2 {
-  width: 60%;
+.obObposPointOfSaleUiLineProperty-propertyValueWrapper {
+  padding-left: 12px;
 }
 
-.obObposPointOfSaleUiLineProperty-container1-container2-propertyValue {}
+.obObposPointOfSaleUiLineProperty-propertyValueWrapper-propertyValue {}
 
 
 /*
@@ -8977,17 +9044,34 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposPointOfSaleUiEditLine-propertiesToShow-general {
-  margin: 5px 10px 5px 10px;
-  padding: 0px 5px 0px 5px;
-  background-color: var(--color-maincolor);
-  color: var(--color-primary-lighter);
-  height: 30px;
+  margin: 0px;
+  padding: 0px 18px;
+  background-color: #4d545c;
+  color: #e8e8e8;
+  height: 50px;
+}
+
+.obObposPointOfSaleUiEditLine-propertiesToShow-general:first-of-type {
+  border-radius: 4px 0px 0px 0px;
+}
+
+.obObposPointOfSaleUiEditLine-propertiesToShow-general:hover {
+  background-color: #3a3f45;
+  opacity: 1;
+}
+
+.obObposPointOfSaleUiEditLine-propertiesToShow-general:active {
+  background-color: #232629;
+  opacity: 1;
 }
 
 .obObposPointOfSaleUiEditLine-propertiesToShow-general.disabled {
-  background-color: var(--color-primary-light);
+  background-color: #d0d2d3;
+  opacity: 1;
+  color: #90979f;
   cursor: default;
 }
+
 
 .obObposPointOfSaleUiEditLine-propertiesToShow-descLine,
 .obObposPointOfSaleUiEditLine-propertiesToShow-returnReasonLine,
@@ -9067,32 +9151,63 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   grid-auto-flow: row;
 }
 
+.obObposPointOfSaleUiEditLine-defaultEdit-msgedit-header {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: 1fr auto;
+  background-color: #4d545c;
+  border-radius: 4px 4px 0px 0px;
+}
+
 .obObposPointOfSaleUiEditLine-msgedit-actionButtonsContainer {
 /* Inherits: [Scroller] */
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  padding: 0px 0px 1px 0px;
-  line-height: 50%;
   height: 50px;
-  overflow-x: hidden;
+  overflow: hidden !important;
+  flex-wrap: wrap;
+  padding: 0;
+  width: 100%;
 }
 
-.obObposPointOfSaleUiEditLine-actionButtonsContainer > .obUiActionButton {
-  background-color: #ffa500;
-  color: #000;
+.obObposPointOfSaleUiEditLine-msgedit-actionButtonsContainer.expanded {
+  position: absolute;
+  height: auto;
+  display: block;
+  box-shadow: 0px 0px 10px -1px #8d8d8d;
+  border-radius: 4px;
+  background-color: white;
+  width: calc(80% - 80px);
+  max-width: 427px;
+  z-index: 2;
 }
 
-.obObposPointOfSaleUiEditLine-actionButtonsContainer > .obUiActionButton:active {
-  opacity: 0.999;
-  background-color: #cccccc;
+.obObposPointOfSaleUiEditLineShowMoreActionButtons,
+.obObposPointOfSaleUiEditLineShowLessActionButtons {
+  margin: 0px;
+  padding: 0px 18px;
+  background-color: #4d545c;
+  color: #e8e8e8;
+  text-align: center;
+  height: 50px;
+  border-radius: 0px 4px 0px 0px;
+  border-left: 1px solid #e8e8e8;
+  min-width: 120px;
 }
 
-.obObposPointOfSaleUiEditLine-actionButtonsContainer > .obUiActionButton:disabled,
-.obObposPointOfSaleUiEditLine-actionButtonsContainer > .obUiActionButton[disabled=true]:hover {
-  cursor: default;
-  background-color: #717171;
+.obObposPointOfSaleUiEditLineShowMoreActionButtons:hover,
+.obObposPointOfSaleUiEditLineShowLessActionButtons:hover {
+  background-color: #3a3f45;
   opacity: 1;
+}
+
+.obObposPointOfSaleUiEditLineShowMoreActionButtons:active,
+.obObposPointOfSaleUiEditLineShowLessActionButtons:active {
+  background-color: #232629;
+  opacity: 1;
+}
+
+.obObposPointOfSaleUiEditLine-msgedit-actionButtonsContainer.expanded .obObposPointOfSaleUiEditLine-propertiesToShow-general {
+  display: grid;
 }
 
 .obObposPointOfSaleUiEditLine-msgedit-returnreason {}
@@ -9111,8 +9226,8 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiEditLine-msgedit-container3-linePropertiesContainer {
 /* Inherits: [Scroller] */
-  padding: 1% 0px 5px 2%;
-  line-height: 120%;
+  padding: 10px 5px;
+  line-height: 130%;
   width: 65%;
   overflow-x: hidden;
   display: inline-block;

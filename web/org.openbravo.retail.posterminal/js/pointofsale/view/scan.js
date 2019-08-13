@@ -141,51 +141,44 @@ enyo.kind({
           components: [
             {
               name: 'txtaction',
-              classes: 'obObposPointOfSaleUiScan-msgaction-txtaction span7'
+              classes: 'obObposPointOfSaleUiScan-msgaction-txtaction'
             },
             {
-              classes: 'obObposPointOfSaleUiScan-msgaction-container2',
-              components: [
-                {
-                  name: 'undobutton',
-                  kind: 'OB.UI.SmallButton',
-                  i18nContent: 'OBMOBC_LblUndo',
-                  classes:
-                    'obObposPointOfSaleUiScan-msgaction-container2-undobutton',
-                  tap: function() {
-                    var me = this,
-                      undoaction = this.undoaction;
-                    this.setDisabled(true);
+              name: 'undobutton',
+              kind: 'OB.UI.Button',
+              i18nContent: 'OBMOBC_LblUndo',
+              classes: 'obObposPointOfSaleUiScan-msgaction-undobutton',
+              tap: function() {
+                var me = this,
+                  undoaction = this.undoaction;
+                this.setDisabled(true);
+                OB.UTIL.HookManager.executeHooks(
+                  'OBPOS_PreUndo_' + undoaction,
+                  {
+                    undoBtn: me,
+                    order: OB.MobileApp.model.receipt,
+                    selectedLines: OB.MobileApp.model.receipt.get('undo').lines
+                  },
+                  function(args) {
+                    if (!args.cancellation && me.undoclick) {
+                      me.undoclick();
+                    } else {
+                      me.setDisabled(false);
+                    }
                     OB.UTIL.HookManager.executeHooks(
-                      'OBPOS_PreUndo_' + undoaction,
+                      'OBPOS_PostUndo_' + undoaction,
                       {
                         undoBtn: me,
                         order: OB.MobileApp.model.receipt,
-                        selectedLines: OB.MobileApp.model.receipt.get('undo')
-                          .lines
-                      },
-                      function(args) {
-                        if (!args.cancellation && me.undoclick) {
-                          me.undoclick();
-                        } else {
-                          me.setDisabled(false);
-                        }
-                        OB.UTIL.HookManager.executeHooks(
-                          'OBPOS_PostUndo_' + undoaction,
-                          {
-                            undoBtn: me,
-                            order: OB.MobileApp.model.receipt,
-                            selectedLines: args.selectedLines
-                          }
-                        );
+                        selectedLines: args.selectedLines
                       }
                     );
-                  },
-                  init: function(model) {
-                    this.model = model;
                   }
-                }
-              ]
+                );
+              },
+              init: function(model) {
+                this.model = model;
+              }
             }
           ]
         },

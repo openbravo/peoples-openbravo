@@ -2153,8 +2153,8 @@ OB.UTIL.HookManager.registerHook('OBMOBC_ProfileDialogApply', function(
   callbacks
 ) {
   var widgetForm = args.profileDialogProp.owner.owner.$.bodyContent.$,
-    newRoleId = widgetForm.roleList.getValue(),
-    isDefault = widgetForm.defaultBox.checked,
+    newRoleId = widgetForm.formElementRoleList.coreElement.getValue(),
+    isDefault = widgetForm.formElementDefaultCheckbox.coreElement.checked,
     process = new OB.DS.Process('org.openbravo.retail.posterminal.Profile');
   if (isDefault) {
     args.profileDialogProp.isActive = true;
