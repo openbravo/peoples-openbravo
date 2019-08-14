@@ -182,7 +182,7 @@
         ' AND AD_ROLE_ID = ?)))' + //
         ') OR M_OFFER_TYPE_ID IN (' +
         OB.Model.Discounts.getAutoCalculatedPromotions() +
-        ')';
+        ') ORDER BY PRIORITY';
       const discountsObj = { query: discountsQuery, params: params };
       return discountsObj;
     },
