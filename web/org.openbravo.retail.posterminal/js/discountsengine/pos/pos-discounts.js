@@ -113,8 +113,8 @@
         OB.MobileApp.model.get('context').role.id,
         OB.MobileApp.model.get('context').role.id
       ];
-      let discountsQuery =
-        'SELECT * FROM M_OFFER WHERE ( ' +
+      let discountsFilter =
+        'SELECT M_OFFER_ID FROM M_OFFER WHERE ( ' +
         //Date Filter
         "date(?) BETWEEN DATEFROM AND COALESCE(date(DATETO), date('9999-12-31'))" +
         //BusinessPartner, BPCategory, BPSet filter
@@ -182,8 +182,12 @@
         ' AND AD_ROLE_ID = ?)))' + //
         ') OR M_OFFER_TYPE_ID IN (' +
         OB.Model.Discounts.getAutoCalculatedPromotions() +
-        ') ORDER BY PRIORITY';
-      const discountsObj = { query: discountsQuery, params: params };
+        ') ORDER BY PRIORITY, M_OFFER_ID';
+
+      const discountsObj = {
+        params: params,
+        queryFilter: discountsFilter
+      };
       return discountsObj;
     },
 
@@ -198,96 +202,87 @@
       let discountsQueryObject = OB.Discounts.Pos.computeDiscountsQuery(
         basicParams
       );
+      let discountsQuery =
+        'SELECT * FROM M_OFFER WHERE M_OFFER_ID IN (' +
+        discountsQueryObject.queryFilter +
+        ')';
       OB.Dal.query(
         OB.Model.Discount,
-        discountsQueryObject.query,
+        discountsQuery,
         discountsQueryObject.params,
         rules => {
-          const finishCallback = _.after(rules.length, () => {
+          const finishCallback = function() {
             OB.info(
               '[Discounts cache] ...load finished. Elapsed time: ' +
                 (new Date().getTime() - initialTime) +
                 'ms.'
             );
             callback();
-          });
+          };
 
           rules.forEach(rule => OB.Discounts.Pos.translateRule(rule));
-          rules.forEach(rule => {
-            var r = JSON.parse(JSON.stringify(rule)),
-              ruleFilter = { priceAdjustment: rule.get('id') };
 
-            OB.Dal.find(
-              OB.Model.DiscountFilterProduct,
-              ruleFilter,
-              products => {
-                r.products = JSON.parse(JSON.stringify(products));
-                r.products.forEach(
-                  offerProduct =>
-                    (offerProduct.product = { id: offerProduct.product })
-                );
-                OB.Dal.find(
-                  OB.Model.DiscountFilterProductCategory,
-                  ruleFilter,
-                  productCategories => {
-                    r.productCategories = JSON.parse(
-                      JSON.stringify(productCategories)
-                    );
-                    OB.Dal.find(
-                      OB.Model.DiscountFilterBusinessPartner,
-                      ruleFilter,
-                      bps => {
-                        r.businessPartners = JSON.parse(JSON.stringify(bps));
-                        OB.Dal.find(
-                          OB.Model.DiscountFilterBusinessPartnerGroup,
-                          ruleFilter,
-                          bpCategories => {
-                            r.businessPartnerCategories = JSON.parse(
-                              JSON.stringify(bpCategories)
-                            );
-                            r.ruleModel = rule;
-                            OB.Discounts.Pos.ruleImpls.push(r);
-                            finishCallback();
-                          }
-                        );
-                      }
-                    );
-                  }
-                );
-              }
-            );
+          rules.forEach(rule => {
+            var r = JSON.parse(JSON.stringify(rule));
+            OB.Discounts.Pos.ruleImpls.push(r);
           });
+          let baseFilter =
+            '  WHERE M_OFFER.M_OFFER_ID IN (' +
+            discountsQueryObject.queryFilter +
+            ') ORDER BY PRIORITY, M_OFFER.M_OFFER_ID';
+
+          let productFilterQuery =
+            'SELECT * FROM M_OFFER_PRODUCT INNER JOIN M_OFFER ON M_OFFER_PRODUCT.M_OFFER_ID = M_OFFER.M_OFFER_ID' +
+            baseFilter;
+          OB.Dal.query(
+            OB.Model.DiscountFilterProduct,
+            productFilterQuery,
+            discountsQueryObject.params,
+            products => {
+              let prodGroups = products.groupBy(prod =>
+                prod.get('priceAdjustment')
+              );
+              OB.Discounts.Pos.ruleImpls.forEach(rule => {
+                rule.products = [];
+                if (prodGroups[rule.id]) {
+                  rule.products = JSON.parse(
+                    JSON.stringify(prodGroups[rule.id])
+                  );
+                }
+              });
+
+              let productCatQuery =
+                'SELECT * FROM M_OFFER_PROD_CAT INNER JOIN M_OFFER ON M_OFFER_PROD_CAT.M_OFFER_ID = M_OFFER.M_OFFER_ID' +
+                baseFilter;
+              OB.Dal.query(
+                OB.Model.DiscountFilterProductCategory,
+                productCatQuery,
+                discountsQueryObject.params,
+                productCategories => {
+                  let catGroups = productCategories.groupBy(prod =>
+                    prod.get('priceAdjustment')
+                  );
+                  OB.Discounts.Pos.ruleImpls.forEach(rule => {
+                    rule.productCategories = [];
+                    if (catGroups[rule.id]) {
+                      rule.productCategories = JSON.parse(
+                        JSON.stringify(catGroups[rule.id])
+                      );
+                    }
+                  });
+                  finishCallback();
+                }
+              );
+            }
+          );
         }
       );
     },
 
     getApplicableDiscounts: function(ticket) {
-      return OB.Discounts.Pos.ruleImpls
-        .filter(rule => this.canApplyRuleToTicket(ticket, rule))
-        .filter(rule => this.canApplyRuleToAtLeastOneLine(ticket, rule));
-    },
-
-    // This part is calculated only in POS, backend implements it in Java
-    canApplyRuleToTicket(ticket, rule) {
-      let elementFound = rule.businessPartners.find(
-        bp => bp.businessPartner === ticket.bp.id
+      return OB.Discounts.Pos.ruleImpls.filter(rule =>
+        this.canApplyRuleToAtLeastOneLine(ticket, rule)
       );
-      let onlyIncluded = rule.includedBusinessPartners === 'N';
-      let applicable =
-        (onlyIncluded && elementFound) || (!onlyIncluded && !elementFound);
-
-      if (!applicable) {
-        return false;
-      }
-
-      elementFound = rule.businessPartnerCategories.find(
-        bpc => bpc.businessPartnerCategory === ticket.bp.businessPartnerCategory
-      );
-      onlyIncluded = rule.includedBPCategories === 'N';
-      applicable =
-        (onlyIncluded && elementFound) || (!onlyIncluded && !elementFound);
-
-      return applicable;
     },
 
     canApplyRuleToAtLeastOneLine(ticket, rule) {
