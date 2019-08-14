@@ -42,16 +42,12 @@ import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.advpaymentmngt.utility.Value;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
-import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
-import org.openbravo.data.FieldProvider;
-import org.openbravo.erpCommon.utility.FieldProviderFactory;
-import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
@@ -730,74 +726,6 @@ public class AdvPaymentMngtDao {
       OBContext.restorePreviousMode();
     }
 
-  }
-
-  public FieldProvider[] getReconciliationDetailReport(VariablesSecureApp vars, String strDate,
-      String strReconID) {
-
-    OBContext.setAdminMode();
-    try {
-      //@formatter:off
-      final String hsqlScript = " as recon "
-           + " where recon.id= :reconciliationId";
-      
-      //@formatter:on
-      final OBQuery<FIN_Reconciliation> obqRecon = OBDal.getInstance()
-          .createQuery(FIN_Reconciliation.class, hsqlScript);
-      obqRecon.setNamedParameter("reconciliationId", strReconID);
-
-      List<FIN_Reconciliation> obqRecList = obqRecon.list();
-      FIN_Reconciliation[] FIN_Reconcile = new FIN_Reconciliation[0];
-      FIN_Reconcile = obqRecList.toArray(FIN_Reconcile);
-
-      FieldProvider[] data = FieldProviderFactory.getFieldProviderArray(obqRecList);
-      for (int i = 0; i < data.length; i++) {
-        FieldProviderFactory.setField(data[i], "FIN_RECONCILIATION_ID", FIN_Reconcile[i].getId());
-        FieldProviderFactory.setField(data[i], "ENDDATE",
-            Utility.formatDate(FIN_Reconcile[i].getEndingDate(), vars.getJavaDateFormat()));
-        FieldProviderFactory.setField(data[i], "BPARTNER", "Account Balance in Openbravo");
-        FieldProviderFactory.setField(data[i], "REFERENCE", "");
-        FieldProviderFactory.setField(data[i], "STARTINGBALANCE",
-            FIN_Reconcile[i].getStartingbalance().toString());
-      }
-      return data;
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-  }
-
-  public FieldProvider[] getReconciliationSummaryReport(VariablesSecureApp vars, String strDate,
-      String strReconID) {
-
-    OBContext.setAdminMode();
-    try {
-      //@formatter:off
-      final String hsqlScript = " as recon "
-           + " where recon.id= :reconciliationId";
-      
-      //@formatter:on
-      final OBQuery<FIN_Reconciliation> obqRecon = OBDal.getInstance()
-          .createQuery(FIN_Reconciliation.class, hsqlScript);
-      obqRecon.setNamedParameter("reconciliationId", strReconID);
-
-      List<FIN_Reconciliation> obqRecList = obqRecon.list();
-      FIN_Reconciliation[] FIN_Reconcile = new FIN_Reconciliation[0];
-      FIN_Reconcile = obqRecList.toArray(FIN_Reconcile);
-
-      FieldProvider[] data = FieldProviderFactory.getFieldProviderArray(obqRecList);
-      for (int i = 0; i < data.length; i++) {
-        FieldProviderFactory.setField(data[i], "FIN_RECONCILIATION_ID", FIN_Reconcile[i].getId());
-        FieldProviderFactory.setField(data[i], "ENDDATE",
-            Utility.formatDate(FIN_Reconcile[i].getEndingDate(), vars.getJavaDateFormat()));
-        FieldProviderFactory.setField(data[i], "ENDINGBALANCE",
-            FIN_Reconcile[i].getEndingBalance().toString());
-        FieldProviderFactory.setField(data[i], "STARTINGBALANCE",
-            FIN_Reconcile[i].getStartingbalance().toString());
-      }
-      return data;
-    } finally {
-      OBContext.restorePreviousMode();
-    }
   }
 
   public List<FIN_PaymentMethod> getFilteredPaymentMethods(String strFinancialAccountId,
