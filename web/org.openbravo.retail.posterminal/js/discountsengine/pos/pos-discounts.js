@@ -196,7 +196,9 @@
     },
 
     initCache: function(basicParams, callback) {
-      OB.info('[Discounts cache] Starting load...');
+      const execution = OB.UTIL.ProcessController.start(
+        'discountCacheInitialization'
+      );
       const initialTime = new Date().getTime();
       OB.Discounts.Pos.ruleImpls = [];
       let discountsQueryObject = OB.Discounts.Pos.computeDiscountsQuery(
@@ -212,10 +214,9 @@
         discountsQueryObject.params,
         rules => {
           const finishCallback = function() {
-            OB.info(
-              '[Discounts cache] ...load finished. Elapsed time: ' +
-                (new Date().getTime() - initialTime) +
-                'ms.'
+            OB.UTIL.ProcessController.finish(
+              'discountCacheInitialization',
+              execution
             );
             callback();
           };
