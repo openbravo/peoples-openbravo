@@ -11,6 +11,9 @@ package org.openbravo.retail.posterminal.process;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
@@ -28,11 +31,10 @@ import org.openbravo.retail.posterminal.utility.CustomerStatisticsUtils;
 import org.openbravo.service.json.JsonConstants;
 
 public class CustomerStatistics extends JSONProcessSimple {
-  public static final BigDecimal HOURS    = new BigDecimal("24");
-  public static final BigDecimal DAYSWEEK    = new BigDecimal("7");
-  public static final BigDecimal DAYSMONTH   = new BigDecimal("30");
-  public static final BigDecimal DAYSYEAR  = new BigDecimal("365");
-
+  public static final BigDecimal HOURS = new BigDecimal("24");
+  public static final BigDecimal DAYSWEEK = new BigDecimal("7");
+  public static final BigDecimal DAYSMONTH = new BigDecimal("30");
+  public static final BigDecimal DAYSYEAR = new BigDecimal("365");
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
@@ -49,11 +51,11 @@ public class CustomerStatistics extends JSONProcessSimple {
       Organization organization = OBDal.getInstance().get(Organization.class, orgId);
       String recencyTiming = organization.getObposRecencytiming();
       String frequencyTiming = organization.getObposFrecuencytiming();
-      Long frequencyTimingUnit =organization.getObposFrecuencytimingunit();
+      Long frequencyTimingUnit = organization.getObposFrecuencytimingunit();
       String monetaryValueTiming = organization.getObposMonetarytiming();
       Long monetaryValueTimingUnit = organization.getObposMonetarytimingunit();
       String averageBasketTiming = organization.getObposAvgbaskettiming();
-      Long averageBasketTimingUnit =organization.getObposAvgbaskettimingunit();
+      Long averageBasketTimingUnit = organization.getObposAvgbaskettimingunit();
 
       // Get BPartner
       BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class, bpId);
@@ -173,45 +175,41 @@ public class CustomerStatistics extends JSONProcessSimple {
       BusinessPartner bp) {
     Date startDate = null;
     String timingText = null, frequencyMsg = null;
-
+    Map<String, Object> parameters = new HashMap<>();
     // Get Start Date
     if (frequencyTimingUnit != null && frequencyTimingUnit.compareTo(0L) > 0) {
       startDate = CustomerStatisticsUtils.getStartDateFromTimingUnit(frequencyTiming,
           frequencyTimingUnit);
-    } else {
-      startDate = bp.getCreationDate();
     }
-
-    if (startDate != null) {
-      // @formatter:off
+    // @formatter:off
       String frequencyHQLQuery = "select count(id) as frequency from Order "
           + " where businessPartner.id=:bpartnerId "
-          + " and orderDate>=to_date(:startDate, 'YYYY-mm-dd') " 
           + " and orderDate < now() ";
-
-      // @formatter:on
-      final Session frequencySession = OBDal.getInstance().getSession();
-      final Query<Long> frequencyQuery = frequencySession.createQuery(frequencyHQLQuery,
-          Long.class);
-      frequencyQuery.setParameter("bpartnerId", bp.getId());
-      frequencyQuery.setParameter("startDate", startDate);
-      long freq = frequencyQuery.uniqueResult();
-      BigDecimal frequency = new BigDecimal(freq).setScale(2, RoundingMode.HALF_UP);
-
-      if (frequencyTimingUnit != null) {
-        timingText = getTimingText(frequencyTimingUnit, frequencyTiming);
-
-        if (frequencyTimingUnit.compareTo(1L) > 0) {
-          frequencyMsg = String.format(OBMessageUtils.messageBD("OBPOS_Frequency_Text"), frequency,
-              frequencyTimingUnit, timingText);
-        } else {
-          frequencyMsg = String.format(OBMessageUtils.messageBD("OBPOS_Frequency_Text_Unit"),
-              frequency, timingText);
-        }
-      } else {
-        frequencyMsg = String.format(OBMessageUtils.messageBD("OBPOS_Frequency_Text_NoTiming"),
-            frequency);
+      if (startDate != null) {
+        frequencyHQLQuery +=  " and orderDate>=to_date(:startDate, 'YYYY-mm-dd') ";
+        parameters.put("startDate", startDate);
       }
+      // @formatter:on
+    final Session frequencySession = OBDal.getInstance().getSession();
+    final Query<Long> frequencyQuery = frequencySession.createQuery(frequencyHQLQuery, Long.class);
+    parameters.put("bpartnerId", bp.getId());
+    frequencyQuery.setProperties(parameters);
+    long freq = frequencyQuery.uniqueResult();
+    BigDecimal frequency = new BigDecimal(freq).setScale(2, RoundingMode.HALF_UP);
+
+    if (frequencyTimingUnit != null) {
+      timingText = getTimingText(frequencyTimingUnit, frequencyTiming);
+
+      if (frequencyTimingUnit.compareTo(1L) > 0) {
+        frequencyMsg = String.format(OBMessageUtils.messageBD("OBPOS_Frequency_Text"), frequency,
+            frequencyTimingUnit, timingText);
+      } else {
+        frequencyMsg = String.format(OBMessageUtils.messageBD("OBPOS_Frequency_Text_Unit"),
+            frequency, timingText);
+      }
+    } else {
+      frequencyMsg = String.format(OBMessageUtils.messageBD("OBPOS_Frequency_Text_NoTiming"),
+          frequency);
     }
     return frequencyMsg;
   }
@@ -220,52 +218,49 @@ public class CustomerStatistics extends JSONProcessSimple {
       Long monetaryValueTimingUnit, BusinessPartner bp, Organization org) {
     Date startDate = null;
     String timingText = null, monetaryValMsg = null, currencySymbol = "";
+    Map<String, Object> parameters = new HashMap<>();
 
     // Get Start Date
     startDate = null;
     if (monetaryValueTimingUnit != null && monetaryValueTimingUnit.compareTo(0L) > 0) {
       startDate = CustomerStatisticsUtils.getStartDateFromTimingUnit(monetaryValueTiming,
           monetaryValueTimingUnit);
-    } else {
-      startDate = bp.getCreationDate();
     }
-
     // Currency
     if (org.getCurrency() != null) {
       currencySymbol = org.getCurrency().getSymbol();
     }
 
-    if (startDate != null) {
-      // @formatter:off
+    // @formatter:off
       String monetaryValueHQLQuery = "select coalesce(sum(o.grandTotalAmount), 0) from Order o "
           + " join o.documentType as dt "
           + " where o.businessPartner.id = :bpartnerId and dt.sOSubType <> 'OB' "
-          + " and o.orderDate>=to_date(:startDate, 'YYYY-mm-dd') " 
           + " and o.orderDate < now() ";
-
-      // @formatter:on
-      final Session monetaryValueSession = OBDal.getInstance().getSession();
-      final Query<BigDecimal> monetaryValueQuery = monetaryValueSession
-          .createQuery(monetaryValueHQLQuery, BigDecimal.class);
-      monetaryValueQuery.setParameter("bpartnerId", bp.getId());
-      monetaryValueQuery.setParameter("startDate", startDate);
-      BigDecimal monetaryValue = monetaryValueQuery.uniqueResult()
-          .setScale(2, RoundingMode.HALF_UP);
-
-      if (monetaryValueTimingUnit != null) {
-        timingText = getTimingText(monetaryValueTimingUnit, monetaryValueTiming);
-
-        if (monetaryValueTimingUnit.compareTo(1L) > 0) {
-          monetaryValMsg = String.format(OBMessageUtils.messageBD("OBPOS_MonetaryText"),
-              monetaryValue, currencySymbol, monetaryValueTimingUnit, timingText);
-        } else {
-          monetaryValMsg = String.format(OBMessageUtils.messageBD("OBPOS_MonetaryText_Unit"),
-              monetaryValue, currencySymbol, timingText);
-        }
-      } else {
-        monetaryValMsg = String.format(OBMessageUtils.messageBD("OBPOS_MonetaryText_NoTiming"),
-            monetaryValue, currencySymbol);
+      if (startDate != null) {
+        monetaryValueHQLQuery += " and o.orderDate>=to_date(:startDate, 'YYYY-mm-dd') ";
+        parameters.put("startDate", startDate);
       }
+      // @formatter:on
+    final Session monetaryValueSession = OBDal.getInstance().getSession();
+    final Query<BigDecimal> monetaryValueQuery = monetaryValueSession
+        .createQuery(monetaryValueHQLQuery, BigDecimal.class);
+    parameters.put("bpartnerId", bp.getId());
+    monetaryValueQuery.setProperties(parameters);
+    BigDecimal monetaryValue = monetaryValueQuery.uniqueResult().setScale(2, RoundingMode.HALF_UP);
+
+    if (monetaryValueTimingUnit != null) {
+      timingText = getTimingText(monetaryValueTimingUnit, monetaryValueTiming);
+
+      if (monetaryValueTimingUnit.compareTo(1L) > 0) {
+        monetaryValMsg = String.format(OBMessageUtils.messageBD("OBPOS_MonetaryText"),
+            monetaryValue, currencySymbol, monetaryValueTimingUnit, timingText);
+      } else {
+        monetaryValMsg = String.format(OBMessageUtils.messageBD("OBPOS_MonetaryText_Unit"),
+            monetaryValue, currencySymbol, timingText);
+      }
+    } else {
+      monetaryValMsg = String.format(OBMessageUtils.messageBD("OBPOS_MonetaryText_NoTiming"),
+          monetaryValue, currencySymbol);
     }
     return monetaryValMsg;
   }
@@ -274,55 +269,50 @@ public class CustomerStatistics extends JSONProcessSimple {
       Long averageBasketTimingUnit, BusinessPartner bp, Organization org) {
     Date startDate = null;
     String timingText = null, averageBasketMsg = null, currencySymbol = "";
-
+    Map<String, Object> parameters = new HashMap<>();
     // Get Start Date
     startDate = null;
     if (averageBasketTimingUnit != null && averageBasketTimingUnit.compareTo(0L) > 0) {
       startDate = CustomerStatisticsUtils.getStartDateFromTimingUnit(averageBasketTiming,
           averageBasketTimingUnit);
-    } else {
-      startDate = bp.getCreationDate();
     }
-
     // Currency
     if (org.getCurrency() != null) {
       currencySymbol = org.getCurrency().getSymbol();
     }
-
-    if (startDate != null) {
-      // @formatter:off
+    // @formatter:off
       String averageBasketHQLQuery = "select coalesce(TRUNC((sum(o.grandTotalAmount)/count(o.id)),2), 0) from Order o "
           + " join o.documentType as dt "
           + " where o.businessPartner.id = :bpartnerId and dt.sOSubType <> 'OB' "
           + " and dt.return = 'N' "
-          + " and o.orderDate>=to_date(:startDate, 'YYYY-mm-dd') " 
           + " and o.orderDate < now()";
-
-      // @formatter:on
-      final Session averageBasketSession = OBDal.getInstance().getSession();
-      final Query<BigDecimal> averageBasketQuery = averageBasketSession
-          .createQuery(averageBasketHQLQuery, BigDecimal.class);
-      averageBasketQuery.setParameter("bpartnerId", bp.getId());
-      averageBasketQuery.setParameter("startDate", startDate);
-      BigDecimal averageBasketValue = averageBasketQuery.uniqueResult()
-          .setScale(2, RoundingMode.HALF_UP);
-
-      if (averageBasketTimingUnit != null) {
-        timingText = getTimingText(averageBasketTimingUnit, averageBasketTiming);
-
-        if (averageBasketTimingUnit.compareTo(1L) > 0) {
-          averageBasketMsg = String.format(OBMessageUtils.messageBD("OBPOS_AverageBasket"),
-              averageBasketValue, currencySymbol, averageBasketTimingUnit, timingText);
-        } else {
-          averageBasketMsg = String.format(OBMessageUtils.messageBD("OBPOS_AverageBasket_Unit"),
-              averageBasketValue, currencySymbol, timingText);
-        }
-      } else {
-        averageBasketMsg = String.format(OBMessageUtils.messageBD("OBPOS_AverageBasket_NoTiming"),
-            averageBasketValue, currencySymbol);
+      if (startDate != null) {
+        averageBasketHQLQuery += " and o.orderDate>=to_date(:startDate, 'YYYY-mm-dd') ";
+        parameters.put("startDate", startDate);
       }
+      // @formatter:on
+    final Session averageBasketSession = OBDal.getInstance().getSession();
+    final Query<BigDecimal> averageBasketQuery = averageBasketSession
+        .createQuery(averageBasketHQLQuery, BigDecimal.class);
+    parameters.put("bpartnerId", bp.getId());
+    averageBasketQuery.setProperties(parameters);
+    BigDecimal averageBasketValue = averageBasketQuery.uniqueResult()
+        .setScale(2, RoundingMode.HALF_UP);
+
+    if (averageBasketTimingUnit != null) {
+      timingText = getTimingText(averageBasketTimingUnit, averageBasketTiming);
+
+      if (averageBasketTimingUnit.compareTo(1L) > 0) {
+        averageBasketMsg = String.format(OBMessageUtils.messageBD("OBPOS_AverageBasket"),
+            averageBasketValue, currencySymbol, averageBasketTimingUnit, timingText);
+      } else {
+        averageBasketMsg = String.format(OBMessageUtils.messageBD("OBPOS_AverageBasket_Unit"),
+            averageBasketValue, currencySymbol, timingText);
+      }
+    } else {
+      averageBasketMsg = String.format(OBMessageUtils.messageBD("OBPOS_AverageBasket_NoTiming"),
+          averageBasketValue, currencySymbol);
     }
     return averageBasketMsg;
   }
-
 }
