@@ -482,8 +482,12 @@ enyo.kind({
     _.each(selectedLine.get('relatedLines'), function(relatedLine) {
       orderLinesToExclude.push(relatedLine.orderlineId);
     });
-    if (!_.isUndefined(this.parent.parent.receipt.get('canceledorder').get('id'))) {
-      orderToExclude = this.parent.parent.receipt.get('canceledorder').get('id');
+    if (
+      !_.isUndefined(this.parent.parent.receipt.get('canceledorder').get('id'))
+    ) {
+      orderToExclude = this.parent.parent.receipt
+        .get('canceledorder')
+        .get('id');
     }
     if (!inEvent.advanced) {
       this.waterfall('onDisableSearch');
