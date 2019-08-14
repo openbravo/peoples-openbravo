@@ -75,9 +75,7 @@
       receipt.get('lines').forEach(line => {
         let newLine = {};
         newLine.id = line.get('id');
-        newLine.product = {};
-        newLine.product.id = line.get('product').id;
-        newLine.product._identifier = line.get('product')._identifier;
+        newLine.product = line.get('product').toJSON();
         newLine.qty = line.get('qty');
         newLine.price = line.get('price');
         newTicket.lines.push(newLine);
@@ -246,9 +244,11 @@
               OB.Discounts.Pos.ruleImpls.forEach(rule => {
                 rule.products = [];
                 if (prodGroups[rule.id]) {
-                  rule.products = JSON.parse(
-                    JSON.stringify(prodGroups[rule.id])
-                  );
+                  prodGroups[rule.id].forEach(discProd => {
+                    const objDiscProd = discProd.toJSON();
+                    objDiscProd.product = { id: discProd.get('product') };
+                    rule.products.push(objDiscProd);
+                  });
                 }
               });
 
@@ -266,12 +266,27 @@
                   OB.Discounts.Pos.ruleImpls.forEach(rule => {
                     rule.productCategories = [];
                     if (catGroups[rule.id]) {
-                      rule.productCategories = JSON.parse(
-                        JSON.stringify(catGroups[rule.id])
-                      );
+                      catGroups[rule.id].forEach(discCat => {
+                        const objDiscCat = discCat.toJSON();
+                        objDiscCat.productCategory = {
+                          id: discCat.get('productCategory')
+                        };
+                        rule.productCategories.push(objDiscCat);
+                      });
                     }
                   });
-                  finishCallback();
+
+                  OB.UTIL.HookManager.executeHooks(
+                    'OBPOS_DiscountsCacheInitialization',
+                    {
+                      discounts: OB.Discounts.Pos.ruleImpls,
+                      baseFilter,
+                      params: discountsQueryObject.params
+                    },
+                    function(args) {
+                      finishCallback();
+                    }
+                  );
                 }
               );
             }
