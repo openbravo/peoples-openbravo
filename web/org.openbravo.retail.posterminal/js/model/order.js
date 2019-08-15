@@ -111,6 +111,8 @@
           _.isNumber(attributes.priceList)
         ) {
           this.set('grossListPrice', attributes.priceList);
+        } else {
+          this.set('grossListPrice', attributes.grossListPrice);
         }
         if (attributes.relatedLines && _.isArray(attributes.relatedLines)) {
           this.set('relatedLines', attributes.relatedLines);
@@ -9984,6 +9986,7 @@
                       prod.get('listPrice') !== price
                         ? price
                         : prod.get('listPrice'),
+                    grossListPrice: prod.get('listPrice'),
                     promotions: iter.promotions,
                     description: iter.description,
                     priceIncludesTax: order.get('priceIncludesTax'),
