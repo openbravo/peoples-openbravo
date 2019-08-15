@@ -251,7 +251,11 @@ enyo.kind({
     this.customer.set('cityName', this.customerAddr.get('cityName'));
     this.customer.set('locationModel', this.customerAddr);
     this.customer.set('countryName', this.customerAddr.get('countryName'));
+    if (OB.UTIL.isNullOrUndefined(this.customer.get('locations'))) {
+      this.customer.set('locations', []);
+    }
     this.customer.get('locations').push(this.customerAddr.clone());
+    this.customer.set('assignedShipAddr', true);
     this.model.get('order').trigger('change:bp', this.model.get('order'));
     this.doChangeBusinessPartner({
       businessPartner: this.customer,
