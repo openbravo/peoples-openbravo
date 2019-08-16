@@ -6,6 +6,7 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
+/*global OB, moment */
 
 (function() {
   OB.Discounts = OB.Discounts || {};
@@ -95,6 +96,68 @@
       }
     },
 
+    computeWeekDayFilter() {
+      var weekday = [
+          'sunday',
+          'monday',
+          'tuesday',
+          'wednesday',
+          'thursday',
+          'friday',
+          'saturday'
+        ],
+        currentStartTime = moment().format('YYYY-MM-DDTHH:mm:ss'),
+        currentEndtime = moment().format('YYYY-MM-DDTHH:mm:ss'),
+        day = weekday[moment().day()],
+        startingtimeday = 'startingtime'.concat(day),
+        endingtimeday = 'endingtime'.concat(day),
+        availabilityRule =
+          " AND ((allweekdays = 'true' AND ((startingtime < '" +
+          currentStartTime +
+          "' AND endingtime > '" +
+          currentEndtime +
+          "') " + //
+          "OR (endingtime is null AND startingtime < '" +
+          currentStartTime +
+          "') " + //
+          "OR (startingtime is null and '" +
+          currentEndtime +
+          "' < endingtime) " + //
+          'OR (startingtime is null AND endingtime is null))) ' + //
+          'OR (' +
+          day +
+          " = 'true' " + //
+          'AND ((' +
+          startingtimeday +
+          " < '" +
+          currentStartTime +
+          "' AND " +
+          endingtimeday +
+          " > '" +
+          currentEndtime +
+          "') " + //
+          'OR (' +
+          endingtimeday +
+          ' is null AND ' +
+          startingtimeday +
+          " < '" +
+          currentStartTime +
+          "') " + //
+          'OR (' +
+          startingtimeday +
+          " is null and '" +
+          currentEndtime +
+          "' < " +
+          endingtimeday +
+          ') ' + //
+          'OR (' +
+          startingtimeday +
+          ' is null AND ' +
+          endingtimeday +
+          ' is null)))) ';
+      return availabilityRule;
+    },
+
     computeDiscountsQuery(basicParams) {
       let date =
         OB.Utilities.Date.JSToOB(new Date(), 'yyyy-MM-dd') + ' 00:00:00.000';
@@ -115,6 +178,8 @@
         'SELECT M_OFFER_ID FROM M_OFFER WHERE ( ' +
         //Date Filter
         "date(?) BETWEEN DATEFROM AND COALESCE(date(DATETO), date('9999-12-31'))" +
+        //WeekDay filter
+        this.computeWeekDayFilter() +
         //BusinessPartner, BPCategory, BPSet filter
         " AND((BPARTNER_SELECTION = 'Y'" +
         ' AND NOT EXISTS' +
@@ -197,7 +262,6 @@
       const execution = OB.UTIL.ProcessController.start(
         'discountCacheInitialization'
       );
-      const initialTime = new Date().getTime();
       OB.Discounts.Pos.ruleImpls = [];
       let discountsQueryObject = OB.Discounts.Pos.computeDiscountsQuery(
         basicParams
