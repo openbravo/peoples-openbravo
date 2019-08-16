@@ -1067,7 +1067,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     });
 
     receipt.on(
-      'change:bp',
+      'change:bp change:documentNo',
       function() {
         if (!receipt.get('isEditable') || receipt.get('lines').length === 0) {
           return;
