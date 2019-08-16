@@ -79,6 +79,11 @@ public class PaidReceipts extends JSONProcessSimple {
   @Any
   @Qualifier(paidReceiptsPaymentsPropertyExtension)
   private Instance<ModelExtension> extensionsPayments;
+
+  @Inject
+  @Any
+  private Instance<PaidReceiptsHook> paidReceiptsHooks;
+
   @Inject
   @Any
   private Instance<PaidReceiptsPaymentsTypeHook> paymentsTypeInProcesses;
@@ -613,6 +618,8 @@ public class PaidReceipts extends JSONProcessSimple {
           paidReceipt.put("approvedList", jsonListApproval);
         }
 
+        executePaidReceiptsHooks(orderid, paidReceipt);
+
         // Save the last ticket loaded in obposApplication object
         if (posTerminal != null) {
           posTerminal.setTerminalLastticketloaded(new Date());
@@ -727,6 +734,13 @@ public class PaidReceipts extends JSONProcessSimple {
       log.error("Error while checking order in ErrorEntry", e);
     }
     return hasRecord;
+  }
+
+  private void executePaidReceiptsHooks(final String orderId, final JSONObject paidReceipt)
+      throws Exception {
+    for (final PaidReceiptsHook paidReceiptsHook : paidReceiptsHooks) {
+      paidReceiptsHook.exec(orderId, paidReceipt);
+    }
   }
 
   @Override
