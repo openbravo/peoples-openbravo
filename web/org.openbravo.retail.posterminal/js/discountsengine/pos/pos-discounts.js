@@ -259,6 +259,10 @@
     },
 
     initCache: function(basicParams, callback) {
+      if (OB.Discounts.Pos.isCalculatingCache) {
+        return callback();
+      }
+      OB.Discounts.Pos.isCalculatingCache = true;
       const execution = OB.UTIL.ProcessController.start(
         'discountCacheInitialization'
       );
@@ -281,6 +285,7 @@
               execution
             );
             callback();
+            delete OB.Discounts.Pos.isCalculatingCache;
           };
 
           rules.forEach(rule => OB.Discounts.Pos.translateRule(rule));

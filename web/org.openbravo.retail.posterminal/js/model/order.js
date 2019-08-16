@@ -1028,7 +1028,7 @@
         return;
       }
 
-      const callbacksAndFinish = function() {
+      const finalCallbacksAndFinish = function() {
         var finishCalculateReceipt = function(callback) {
           me.calculatingReceipt = false;
           OB.MobileApp.view.waterfall('calculatedReceipt');
@@ -1067,6 +1067,23 @@
         }
       };
 
+      const calculateGrossThenCallbacks = function() {
+        me.on('calculategross', function() {
+          me.off('calculategross');
+          if (me.pendingCalculateReceipt) {
+            OB.UTIL.ProcessController.finish('calculateReceipt', execution);
+            OB.MobileApp.view.waterfall('calculatedReceipt');
+            me.pendingCalculateReceipt = false;
+            me.calculatingReceipt = false;
+            me.calculateReceipt();
+            return;
+          } else {
+            finalCallbacksAndFinish();
+          }
+        });
+        me.calculateGross();
+      };
+
       OB.MobileApp.view.waterfall('calculatingReceipt');
       this.trigger('calculatingReceipt');
       this.calculatingReceipt = true;
@@ -1075,30 +1092,13 @@
       var me = this;
 
       if (OB.MobileApp.model.hasPermission('OBPOS_NewDiscounts', true)) {
-        OB.Discounts.Pos.calculateDiscounts(this, () => {
-          me.on('calculategross', function() {
-            me.off('calculategross');
-            callbacksAndFinish();
-          });
-          me.calculateGross();
-        });
+        OB.Discounts.Pos.calculateDiscounts(this, () =>
+          calculateGrossThenCallbacks()
+        );
       } else {
         this.on('applyPromotionsFinished', function() {
           me.off('applyPromotionsFinished');
-          me.on('calculategross', function() {
-            me.off('calculategross');
-            if (me.pendingCalculateReceipt) {
-              OB.UTIL.ProcessController.finish('calculateReceipt', execution);
-              OB.MobileApp.view.waterfall('calculatedReceipt');
-              me.pendingCalculateReceipt = false;
-              me.calculatingReceipt = false;
-              me.calculateReceipt();
-              return;
-            } else {
-              callbacksAndFinish();
-            }
-          });
-          me.calculateGross();
+          calculateGrossThenCallbacks;
         });
         // If line is null or undefined, we calculate the Promotions of the receipt
         if (OB.UTIL.isNullOrUndefined(line) || line.get('splitline')) {
