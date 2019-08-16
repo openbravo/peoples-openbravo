@@ -140,6 +140,7 @@
         billing.set('countryName', customer.get('countryName'));
         billing.set('countryId', customer.get('countryId'));
         billing.set('regionId', customer.get('regionId'));
+        billing.set('regionName', customer.get('regionName'));
         if (customer.get('useSameAddrForShipAndInv')) {
           billing.set('isBillTo', true);
           billing.set('isShipTo', true);
@@ -158,6 +159,7 @@
           shipping.set('countryName', customer.get('shipCountryName'));
           shipping.set('countryId', customer.get('shipCountryId'));
           shipping.set('regionId', customer.get('shipRegionId'));
+          shipping.set('regionName', customer.get('shipRegionName'));
           shipping.set('isBillTo', false);
           shipping.set('isShipTo', true);
           locations.push(billing);

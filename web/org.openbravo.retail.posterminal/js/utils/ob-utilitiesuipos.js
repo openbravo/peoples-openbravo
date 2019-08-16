@@ -11,6 +11,9 @@
 
 OB.UTIL = window.OB.UTIL || {};
 
+OB.UTIL.masterdataRefreshStatus = '';
+OB.UTIL.backgroundMasterdataRefreshEnabled;
+
 OB.UTIL.sendLastTerminalStatusValues = function(callback) {
   var process = new OB.DS.Process(
     'org.openbravo.retail.posterminal.process.LastTerminalStatusTimestamps'
@@ -738,12 +741,53 @@ OB.UTIL.clearFlagAndTimersRefreshMasterData = function() {
 };
 
 OB.UTIL.checkRefreshMasterData = function() {
+  // this code is called on:
+  // - ticket close
+  // - timeout of force refresh time
+  // - window navigation
   if (
     OB.MobileApp.model.get('refreshMasterdata') === true &&
     OB.UTIL.refreshMasterDataGetProperty('allowedIncrementalRefresh')
   ) {
-    OB.UTIL.clearFlagAndTimersRefreshMasterData();
-    OB.UTIL.refreshMasterData();
+    if (
+      OB.UTIL.backgroundMasterdataIsEnabled() &&
+      !OB.UTIL.localStorage.getItem('neededForeGroundMasterDataRefresh')
+    ) {
+      // background
+      // this is the save, the request was called in OB.UTIL.loadModelsIncFunc
+      if (OB.UTIL.masterdataRefreshStatus !== 'background-request-finished') {
+        OB.info(
+          "Cannot start masterdata save because the espected status was 'background-request-finished', but it was: " +
+            OB.UTIL.masterdataRefreshStatus
+        );
+      } else {
+        OB.UTIL.clearFlagAndTimersRefreshMasterData();
+        if (OB.DS.masterdataBackgroundModels.totalLength > 0) {
+          OB.UTIL.refreshMasterDataInBackgroundSave();
+        } else {
+          OB.info('No updates in the masterdata.');
+        }
+      }
+    } else {
+      // foreground
+      if (OB.UTIL.localStorage.getItem('neededForeGroundMasterDataRefresh')) {
+        OB.info(
+          'Detected that previous masterdata refresh in background has fail because execeeds the limit of data. Trying normal refresh.'
+        );
+      }
+      if (
+        OB.UTIL.masterdataRefreshStatus !== '' &&
+        OB.UTIL.masterdataRefreshStatus !== 'background-request-finished'
+      ) {
+        OB.info(
+          "Cannot start masterdata refresh in foreground because the espected status was '' or 'background-request-finished', but it was: " +
+            OB.UTIL.masterdataRefreshStatus
+        );
+      } else {
+        OB.UTIL.clearFlagAndTimersRefreshMasterData();
+        OB.UTIL.refreshMasterDataForeground();
+      }
+    }
   }
 };
 
@@ -755,7 +799,56 @@ OB.UTIL.checkRefreshMasterDataOnNavigate = function() {
     OB.UTIL.checkRefreshMasterData();
   }
 };
-OB.UTIL.refreshMasterData = function() {
+
+OB.UTIL.refreshMasterDataInBackgroundRequest = function() {
+  if (
+    OB.UTIL.masterdataRefreshStatus !== '' &&
+    OB.UTIL.masterdataRefreshStatus !== 'background-request-finished'
+  ) {
+    OB.info(
+      'Cannot start the masterdata requests because the expected status was "" or "background-request-finished" but it was: ' +
+        OB.UTIL.masterdataRefreshStatus
+    );
+    return;
+  }
+  OB.UTIL.masterdataRefreshStatus = 'background-request-started';
+  OB.DS.masterdataBackgroundModels = {};
+  OB.MobileApp.model.loadModels(
+    null,
+    true,
+    function() {
+      OB.UTIL.masterdataRefreshStatus = 'background-request-finished';
+    },
+    'background-request'
+  );
+};
+
+OB.UTIL.refreshMasterDataInBackgroundSave = function() {
+  OB.UTIL.masterdataRefreshStatus = 'background-save-started';
+  if (OB.UTIL.RfidController.isRfidConfigured()) {
+    OB.UTIL.RfidController.disconnectRFIDDevice();
+  }
+  OB.UTIL.startLoadingSteps();
+  OB.MobileApp.model.set('isLoggingIn', true);
+  OB.UTIL.showLoading(true);
+  OB.MobileApp.model.loadModels(
+    null,
+    true,
+    function() {
+      OB.UTIL.masterdataRefreshStatus = '';
+      OB.DS.masterdataBackgroundModels = {};
+      OB.UTIL.showLoading(false);
+      if (OB.UTIL.RfidController.isRfidConfigured()) {
+        OB.UTIL.RfidController.connectRFIDDevice();
+      }
+      OB.MobileApp.model.set('isLoggingIn', false);
+    },
+    'background-save'
+  );
+};
+
+OB.UTIL.refreshMasterDataForeground = function() {
+  OB.DS.masterdataBackgroundModels = {};
   OB.MobileApp.model.set('secondsToRefreshMasterdata', 3);
   var counterIntervalId = null;
   counterIntervalId = setInterval(function() {
@@ -764,6 +857,7 @@ OB.UTIL.refreshMasterData = function() {
       OB.MobileApp.model.get('secondsToRefreshMasterdata') - 1
     );
     if (OB.MobileApp.model.get('secondsToRefreshMasterdata') === 0) {
+      OB.UTIL.masterdataRefreshStatus = 'foreground-started';
       OB.MobileApp.model.set('refreshMasterdataShowPopup', false);
       clearInterval(counterIntervalId);
       if (OB.UTIL.RfidController.isRfidConfigured()) {
@@ -778,6 +872,8 @@ OB.UTIL.refreshMasterData = function() {
           OB.UTIL.RfidController.connectRFIDDevice();
         }
         OB.MobileApp.model.set('isLoggingIn', false);
+        OB.UTIL.localStorage.removeItem('neededForeGroundMasterDataRefresh');
+        OB.UTIL.masterdataRefreshStatus = '';
       });
     }
   }, 1000);
@@ -860,8 +956,15 @@ OB.UTIL.loadModelsIncFunc = function() {
     OB.info(msg);
     OB.UTIL.showWarning(msg);
   }
+  if (
+    OB.UTIL.backgroundMasterdataIsEnabled() &&
+    !OB.UTIL.localStorage.getItem('neededForeGroundMasterDataRefresh')
+  ) {
+    OB.UTIL.refreshMasterDataInBackgroundRequest();
+  }
   OB.MobileApp.model.set('refreshMasterdata', true);
   if (!OB.UTIL.isNullOrUndefined(minShowIncRefresh) && minShowIncRefresh >= 0) {
+    // Forced refresh by timeout, ticket close also calls to checkRefreshMasterData
     var noActivityTimeout = OB.MobileApp.model.get(
       'refreshMasterdataNoActivityTimeout'
     );
@@ -874,6 +977,30 @@ OB.UTIL.loadModelsIncFunc = function() {
       }, minShowIncRefresh);
     }
   }
+};
+
+OB.UTIL.backgroundMasterdataIsEnabled = function() {
+  if (OB.UTIL.backgroundMasterdataRefreshEnabled === undefined) {
+    let preferenceValue = OB.MobileApp.model.hasPermission(
+      'OBMOBC_BackgroundMasterdataMaxSize',
+      true
+    );
+    if (
+      !preferenceValue ||
+      (preferenceValue && !isNaN(preferenceValue) && preferenceValue >= 1)
+    ) {
+      OB.UTIL.backgroundMasterdataRefreshEnabled = true;
+    } else {
+      OB.UTIL.backgroundMasterdataRefreshEnabled = false;
+      if (isNaN(preferenceValue)) {
+        OB.warn(
+          'OBMOBC_BackgroundMasterdataMaxSize has a value not numeric: ' +
+            preferenceValue
+        );
+      }
+    }
+  }
+  return OB.UTIL.backgroundMasterdataRefreshEnabled;
 };
 
 OB.UTIL.getCalculatedPriceForService = function(
