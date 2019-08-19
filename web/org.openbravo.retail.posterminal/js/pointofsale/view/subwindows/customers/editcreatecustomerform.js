@@ -663,6 +663,7 @@ enyo.kind({
       classes:
         'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-newAttributes-isCustomerConsent',
       modelProperty: 'isCustomerConsent',
+      fgSection: 'OBPOS_FG_OthersInformation',
       i18nLabel: 'OBPOS_CustomerConsent'
     },
     {
@@ -703,7 +704,7 @@ enyo.kind({
       kind: 'OB.UI.SwitchShippingInvoicingAddr',
       name: 'useSameAddrCheck',
       i18nLabel: 'OBPOS_SameAddrInfo',
-      fgSection: 'OBPOS_FG_ContactInformation',
+      fgSection: 'OBPOS_FG_OthersInformation',
       classes:
         'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-newAttributes-useSameAddrCheck'
     }
