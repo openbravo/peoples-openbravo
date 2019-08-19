@@ -1344,10 +1344,10 @@ public class OrderLoader extends POSDataSynchronizationProcess
       if (payment.optBoolean("isPrePayment", false)) {
         continue;
       }
-      
+
       BigDecimal amount = BigDecimal.valueOf(payment.getDouble("origAmount"))
           .setScale(pricePrecision, RoundingMode.HALF_UP);
-      if(amount.signum()==0) {
+      if (amount.signum() == 0) {
         continue;
       }
 
@@ -1714,6 +1714,17 @@ public class OrderLoader extends POSDataSynchronizationProcess
         // ensure that it is a valid JSON Object prior to save it
         try {
           JSONObject jsonPaymentData = payment.getJSONObject("paymentData");
+          finPayment.setObposPaymentdata(jsonPaymentData.toString());
+        } catch (Exception e) {
+          throw new OBException("paymentData attached to payment " + finPayment.getIdentifier()
+              + " is not a valid JSON.");
+        }
+      } else if (jsonorder.has("changePayments")
+          && jsonorder.getJSONArray("changePayments").length() > 0
+          && !("null".equals(jsonorder.getString("changePayments")))) {
+        // ensure that it is a valid JSON Object prior to save it
+        try {
+          JSONObject jsonPaymentData = jsonorder.getJSONArray("changePayments").getJSONObject(0);
           finPayment.setObposPaymentdata(jsonPaymentData.toString());
         } catch (Exception e) {
           throw new OBException("paymentData attached to payment " + finPayment.getIdentifier()

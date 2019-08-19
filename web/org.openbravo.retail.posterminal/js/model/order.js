@@ -9578,16 +9578,14 @@
           bp.set('shipCountryId', bpLoc.get('countryId'));
           bp.set('shipCountryName', bpLoc.get('countryName'));
           bp.set('shipRegionId', bpLoc.get('regionId'));
-          bp.set('locId', bpLoc.get('id'));
-          bp.set('locName', bpLoc.get('name'));
+          bp.set('locId', (bpBillLoc || bpLoc).get('id'));
+          bp.set('locName', (bpBillLoc || bpLoc).get('name'));
+          bp.set('postalCode', (bpBillLoc || bpLoc).get('postalCode'));
+          bp.set('cityName', (bpBillLoc || bpLoc).get('cityName'));
+          bp.set('countryName', (bpBillLoc || bpLoc).get('countryName'));
           bp.set('locationModel', bpLoc);
           bp.get('locations').push(bpLoc);
           if (bpBillLoc) {
-            bp.set('locId', bpBillLoc.get('id'));
-            bp.set('locName', bpBillLoc.get('name'));
-            bp.set('postalCode', bpBillLoc.get('postalCode'));
-            bp.set('cityName', bpBillLoc.get('cityName'));
-            bp.set('countryName', bpBillLoc.get('countryName'));
             bp.set('locationBillModel', bpBillLoc);
             bp.get('locations').push(bpBillLoc);
           }
