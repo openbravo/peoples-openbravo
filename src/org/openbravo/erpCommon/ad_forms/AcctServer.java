@@ -2984,7 +2984,7 @@ public abstract class AcctServer {
             .createQuery(AcctSchemaTableDocType.class, whereClause);
         obqParameters.setNamedParameter("accountSchemaId", m_as[i].m_C_AcctSchema_ID);
         obqParameters.setNamedParameter("tableId", AD_Table_ID);
-        obqParameters.setNamedParameter("accountSchemaId", DocumentType);
+        obqParameters.setNamedParameter("documentType", DocumentType);
         final List<AcctSchemaTableDocType> acctSchemaTableDocTypes = obqParameters.list();
         if (acctSchemaTableDocTypes != null && acctSchemaTableDocTypes.size() > 0
             && acctSchemaTableDocTypes.get(0).getCreatefactTemplate() != null) {
