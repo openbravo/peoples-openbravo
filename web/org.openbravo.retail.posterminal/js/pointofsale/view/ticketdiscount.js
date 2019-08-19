@@ -65,6 +65,7 @@ enyo.kind({
           style: 'clear: both'
         },
         {
+          name: 'overridePromotion',
           components: [
             {
               style:
@@ -443,6 +444,12 @@ enyo.kind({
             args.context.$.btnApply.addStyles('color: #4C4949;');
           }
         }
+        if (discountsContainer.model.get('obdiscAllowmultipleinstan')) {
+          args.context.$.overridePromotion.hide();
+          args.context.$.checkOverride.unCheck();
+        } else {
+          args.context.$.overridePromotion.show();
+        }
       }
     );
   },
@@ -474,6 +481,9 @@ enyo.kind({
         if (args && args.cancelOperation) {
           me.closingDiscounts();
           return;
+        }
+        if (!me.$.overridePromotion.showing) {
+          me.$.checkOverride.unCheck();
         }
         promotionToAplly.rule = discountsContainer.model;
         promotionToAplly.definition = {};
