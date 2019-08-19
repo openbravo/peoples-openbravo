@@ -350,6 +350,17 @@ public class OrderLoader extends POSDataSynchronizationProcess
         } else {
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
           order.setDelivered(deliver);
+          if (jsonorder.has("obposPrepaymentamt")) {
+            order.setObposPrepaymentamt(
+                BigDecimal.valueOf(jsonorder.getDouble("obposPrepaymentamt")));
+          }
+          if (jsonorder.has("obposPrepaymentlimitamt")) {
+            order.setObposPrepaymentlimitamt(
+                BigDecimal.valueOf(jsonorder.getDouble("obposPrepaymentlimitamt")));
+          }
+          if (jsonorder.has("obposPrepaymentlaylimitamt")) {
+            order.setObposPrepaymentlaylimitamt(jsonorder.getLong("obposPrepaymentlaylimitamt"));
+          }
           if (!jsonorder.has("channel")) {
             order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
           }
@@ -1344,10 +1355,10 @@ public class OrderLoader extends POSDataSynchronizationProcess
       if (payment.optBoolean("isPrePayment", false)) {
         continue;
       }
-      
+
       BigDecimal amount = BigDecimal.valueOf(payment.getDouble("origAmount"))
           .setScale(pricePrecision, RoundingMode.HALF_UP);
-      if(amount.signum()==0) {
+      if (amount.signum() == 0) {
         continue;
       }
 
@@ -1714,6 +1725,17 @@ public class OrderLoader extends POSDataSynchronizationProcess
         // ensure that it is a valid JSON Object prior to save it
         try {
           JSONObject jsonPaymentData = payment.getJSONObject("paymentData");
+          finPayment.setObposPaymentdata(jsonPaymentData.toString());
+        } catch (Exception e) {
+          throw new OBException("paymentData attached to payment " + finPayment.getIdentifier()
+              + " is not a valid JSON.");
+        }
+      } else if (jsonorder.has("changePayments")
+          && jsonorder.getJSONArray("changePayments").length() > 0
+          && !("null".equals(jsonorder.getString("changePayments")))) {
+        // ensure that it is a valid JSON Object prior to save it
+        try {
+          JSONObject jsonPaymentData = jsonorder.getJSONArray("changePayments").getJSONObject(0);
           finPayment.setObposPaymentdata(jsonPaymentData.toString());
         } catch (Exception e) {
           throw new OBException("paymentData attached to payment " + finPayment.getIdentifier()
