@@ -1886,7 +1886,7 @@ public abstract class AcctServer {
               + "  and cuscata.accountingSchema.id = :acctSchemaID";
           //@formatter:on
           final OBQuery<CategoryAccounts> obqParameters = OBDal.getInstance()
-              .createQuery(CategoryAccounts.class, whereClause.toString());
+              .createQuery(CategoryAccounts.class, whereClause);
           obqParameters.setFilterOnReadableClients(false);
           obqParameters.setFilterOnReadableOrganization(false);
           obqParameters.setNamedParameter("bpCategoryID", bp.getBusinessPartnerCategory().getId());
