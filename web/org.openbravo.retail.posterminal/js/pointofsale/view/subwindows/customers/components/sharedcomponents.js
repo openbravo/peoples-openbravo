@@ -760,12 +760,16 @@ enyo.kind({
             'obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-' +
             fg.sectionName +
             '-' +
-            fg.sectionFieldsName
+            fg.sectionFieldsName +
+            ' u-clearBoth'
         });
         //FieldLine
         enyo.forEach(
           this.newAttributes,
           function(natt) {
+            if (natt.fgSection === undefined) {
+              natt.fgSection = 'OBPOS_FG_OthersInformation';
+            }
             if (natt.fgSection === fg.groupName) {
               this.$.customerOnlyFields.$[fg.sectionName].$[
                 fg.sectionFieldsName
@@ -774,11 +778,7 @@ enyo.kind({
                   kind: 'OB.UI.CustomerPropertyLine',
                   name: 'line_' + natt.name,
                   classes:
-                    'obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-' +
-                    fg.sectionName +
-                    '-' +
-                    fg.sectionFieldsName +
-                    '-obUiCustomerPropertyLine obUiCustomerPropertyLine_' +
+                    'obObposPointOfSaleUiCustomersEditCreatecustomers-customerOnlyFields-obUiCustomerPropertyLine obUiCustomerPropertyLine_' +
                     natt.name,
                   coreElement: natt
                 },
@@ -793,7 +793,22 @@ enyo.kind({
       },
       this
     );
-
+    enyo.forEach(
+      this.sameAddrCheckAttributes,
+      function(natt) {
+        this.$.customerOnlyFields.createComponent(
+          {
+            kind: 'OB.UI.CustomerPropertyLine',
+            name: 'line_' + natt.name,
+            coreElement: natt
+          },
+          {
+            owner: me.attributeContainer
+          }
+        );
+      },
+      this
+    );
     enyo.forEach(
       this.shipAddrAttributes,
       function(natt) {

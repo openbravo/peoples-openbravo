@@ -699,14 +699,15 @@ enyo.kind({
           true
         );
       }
-    },
+    }
+  ],
+  sameAddrCheckAttributes: [
     {
       kind: 'OB.UI.SwitchShippingInvoicingAddr',
       name: 'useSameAddrCheck',
       i18nLabel: 'OBPOS_SameAddrInfo',
-      fgSection: 'OBPOS_FG_OthersInformation',
       classes:
-        'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-newAttributes-useSameAddrCheck'
+        'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-sameAddrCheckAttributes-useSameAddrCheck'
     }
   ],
   shipAddrAttributes: [
