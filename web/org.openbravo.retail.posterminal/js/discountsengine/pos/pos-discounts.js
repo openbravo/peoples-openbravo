@@ -71,7 +71,7 @@
       newTicket.businessPartner.id = receipt.get('bp').id;
       newTicket.businessPartner._identifier = receipt.get('bp')._identifier;
       newTicket.id = receipt.get('id');
-      newTicket.date = receipt.get('orderDate');
+      newTicket.date = new Date(receipt.get('orderDate'));
       newTicket.lines = [];
       receipt.get('lines').forEach(line => {
         let newLine = {};
