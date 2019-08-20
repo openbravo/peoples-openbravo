@@ -1100,7 +1100,7 @@
       } else {
         this.on('applyPromotionsFinished', function() {
           me.off('applyPromotionsFinished');
-          calculateGrossThenCallbacks;
+          calculateGrossThenCallbacks();
         });
         // If line is null or undefined, we calculate the Promotions of the receipt
         if (OB.UTIL.isNullOrUndefined(line) || line.get('splitline')) {
