@@ -110,7 +110,7 @@
         OB.MobileApp.model.get('context').role.id
       ];
       let discountsFilter =
-        'SELECT M_OFFER_ID FROM M_OFFER WHERE ( ' +
+        'SELECT M_OFFER_ID FROM M_OFFER WHERE ( 1=1 ' +
         //BusinessPartner, BPCategory, BPSet filter
         " AND((BPARTNER_SELECTION = 'Y'" +
         ' AND NOT EXISTS' +
