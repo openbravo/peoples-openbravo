@@ -59,36 +59,41 @@ public class CustomerStatistics extends JSONProcessSimple {
 
       // Get BPartner
       BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class, bpId);
+      if (bp != null) {
+        // Recency Calculation
+        if (!StringUtils.isEmpty(recencyTiming)) {
+          recencyMsg = getRecencyStatistics(recencyTiming, bp);
+        }
 
-      // Recency Calculation
-      if (!StringUtils.isEmpty(recencyTiming)) {
-        recencyMsg = getRecencyStatistics(recencyTiming, bp);
+        // Frequency Calculation
+        if (!StringUtils.isEmpty(frequencyTiming)) {
+          frequencyMsg = getFrequencyStatistics(frequencyTiming, frequencyTimingUnit, bp);
+        }
+
+        // Monetary Value Calculation
+        if (!StringUtils.isEmpty(monetaryValueTiming)) {
+          monetaryValMsg = getMonetaryValueStatistics(monetaryValueTiming, monetaryValueTimingUnit,
+              bp, organization);
+        }
+
+        // Average Basket Calculation
+        if (!StringUtils.isEmpty(averageBasketTiming)) {
+          averageBasketMsg = getAverageBasketStatistics(averageBasketTiming,
+              averageBasketTimingUnit, bp, organization);
+        }
+
+        response.put("recencyMsg", recencyMsg);
+        response.put("frequencyMsg", frequencyMsg);
+        response.put("monetaryValMsg", monetaryValMsg);
+        response.put("averageBasketMsg", averageBasketMsg);
+
+        result.put(JsonConstants.RESPONSE_DATA, response);
+        result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
+      } else {
+        String errorMsg = "New client, no statistics. ";
+        result.put(JsonConstants.RESPONSE_DATA, errorMsg);
+        result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
       }
-
-      // Frequency Calculation
-      if (!StringUtils.isEmpty(frequencyTiming)) {
-        frequencyMsg = getFrequencyStatistics(frequencyTiming, frequencyTimingUnit, bp);
-      }
-
-      // Monetary Value Calculation
-      if (!StringUtils.isEmpty(monetaryValueTiming)) {
-        monetaryValMsg = getMonetaryValueStatistics(monetaryValueTiming, monetaryValueTimingUnit,
-            bp, organization);
-      }
-
-      // Average Basket Calculation
-      if (!StringUtils.isEmpty(averageBasketTiming)) {
-        averageBasketMsg = getAverageBasketStatistics(averageBasketTiming, averageBasketTimingUnit,
-            bp, organization);
-      }
-
-      response.put("recencyMsg", recencyMsg);
-      response.put("frequencyMsg", frequencyMsg);
-      response.put("monetaryValMsg", monetaryValMsg);
-      response.put("averageBasketMsg", averageBasketMsg);
-
-      result.put(JsonConstants.RESPONSE_DATA, response);
-      result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
       return result;
     } catch (Exception e) {
       e.printStackTrace();
