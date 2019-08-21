@@ -105,44 +105,13 @@ public class CustomerStatistics extends JSONProcessSimple {
 
   }
 
-  private String getTimingText(Long timingUnit, String timing) {
-    String timingText = "";
-    if (timingUnit.compareTo(1L) > 0) {
-      if (timing.equalsIgnoreCase("H")) {
-        timingText = OBMessageUtils.messageBD("OBPOS_Hours");
-      } else if (timing.equalsIgnoreCase("D")) {
-        timingText = OBMessageUtils.messageBD("OBPOS_Days");
-      } else if (timing.equalsIgnoreCase("W")) {
-        timingText = OBMessageUtils.messageBD("OBPOS_Weeks");
-      } else if (timing.equalsIgnoreCase("M")) {
-        timingText = OBMessageUtils.messageBD("OBPOS_Months");
-      } else if (timing.equalsIgnoreCase("Y")) {
-        timingText = OBMessageUtils.messageBD("OBPOS_Years");
-      }
-    } else {
-      if (timing.equalsIgnoreCase("H")) {
-        timingText = OBMessageUtils.messageBD("OBPOS_Hour");
-      } else if (timing.equalsIgnoreCase("D")) {
-        timingText = OBMessageUtils.messageBD("OBPOS_Day");
-      } else if (timing.equalsIgnoreCase("W")) {
-        timingText = OBMessageUtils.messageBD("OBPOS_Week");
-      } else if (timing.equalsIgnoreCase("M")) {
-        timingText = OBMessageUtils.messageBD("OBPOS_Month");
-      } else if (timing.equalsIgnoreCase("Y")) {
-        timingText = OBMessageUtils.messageBD("OBPOS_Year");
-      }
-    }
-    return timingText;
-  }
-
   private String getRecencyStatistics(String recencyTiming, BusinessPartner bp) {
-    String timingText = null, recencyMsg = null;
+    String recencyMsg = null;
     BigDecimal noofRecency = BigDecimal.ZERO;
 
     // @formatter:off
     String recencyHQLQuery = "select EXTRACT(DAY FROM (Date(now()) - coalesce(max(orderDate), now()))) "
         + " from Order where businessPartner.id=:bpartnerId ";
-
     // @formatter:on
     final Session recencySession = OBDal.getInstance().getSession();
     final Query<Integer> recencyQuery = recencySession.createQuery(recencyHQLQuery, Integer.class);
@@ -150,31 +119,52 @@ public class CustomerStatistics extends JSONProcessSimple {
     int recency = recencyQuery.uniqueResult();
     BigDecimal recencyDays = new BigDecimal(recency);
 
+    recencyMsg = getRecencyMessage(recencyTiming, noofRecency, recencyDays);
+    return recencyMsg;
+  }
+
+  private String getRecencyMessage(String recencyTiming, BigDecimal noofRecency,
+      BigDecimal recencyDays) {
+    String timingText, recencyMsg = null;
+    BigDecimal recency = noofRecency;
     if (recencyDays != null) {
       if (recencyTiming.equalsIgnoreCase("H")) {
-        noofRecency = recencyDays.multiply(HOURS).setScale(2, RoundingMode.HALF_UP);
+        recency = recencyDays.multiply(HOURS).setScale(1, RoundingMode.HALF_UP);
       } else if (recencyTiming.equalsIgnoreCase("D")) {
-        noofRecency = recencyDays.setScale(2, RoundingMode.HALF_UP);
+        recency = recencyDays.setScale(1, RoundingMode.HALF_UP);
       } else if (recencyTiming.equalsIgnoreCase("W")) {
-        noofRecency = recencyDays.divide(DAYSWEEK, 2, RoundingMode.HALF_UP);
+        recency = recencyDays.divide(DAYSWEEK, 1, RoundingMode.HALF_UP);
       } else if (recencyTiming.equalsIgnoreCase("M")) {
-        noofRecency = recencyDays.divide(DAYSMONTH, 2, RoundingMode.HALF_UP);
+        recency = recencyDays.divide(DAYSMONTH, 1, RoundingMode.HALF_UP);
       } else if (recencyTiming.equalsIgnoreCase("Y")) {
-        noofRecency = recencyDays.divide(DAYSYEAR, 2, RoundingMode.HALF_UP);
+        recency = recencyDays.divide(DAYSYEAR, 1, RoundingMode.HALF_UP);
       }
-
-      timingText = getTimingText(noofRecency.longValue(), recencyTiming);
-
-      recencyMsg = String.format(OBMessageUtils.messageBD("OBPOS_Recency_Text"), noofRecency,
+      recency = roundRecency(recency);
+      timingText = CustomerStatisticsUtils.getTimingText(recency.longValue(), recencyTiming);
+      recencyMsg = String.format(OBMessageUtils.messageBD("OBPOS_Recency_Text"), recency,
           timingText);
     }
     return recencyMsg;
   }
 
+  private BigDecimal roundRecency(BigDecimal noofRecency) {
+    BigDecimal recency = BigDecimal.ZERO;
+    int decimal = noofRecency.remainder(BigDecimal.ONE)
+        .movePointRight(noofRecency.scale())
+        .abs()
+        .intValue();
+    if (3 < decimal && decimal < 7) {
+      recency = new BigDecimal(noofRecency.intValue() + 0.5);
+    } else {
+      recency = noofRecency.setScale(0, RoundingMode.HALF_UP);
+    }
+    return recency;
+  }
+
   private String getFrequencyStatistics(String frequencyTiming, Long frequencyTimingUnit,
       BusinessPartner bp) {
     Date startDate = null;
-    String timingText = null, frequencyMsg = null;
+    String frequencyMsg = null;
     Map<String, Object> parameters = new HashMap<>();
     // Get Start Date
     if (frequencyTimingUnit != null && frequencyTimingUnit.compareTo(0L) > 0) {
@@ -189,27 +179,27 @@ public class CustomerStatistics extends JSONProcessSimple {
         frequencyHQLQuery +=  " and orderDate>=to_date(:startDate, 'YYYY-mm-dd') ";
         parameters.put("startDate", startDate);
       }
-      // @formatter:on
+    // @formatter:on
     final Session frequencySession = OBDal.getInstance().getSession();
     final Query<Long> frequencyQuery = frequencySession.createQuery(frequencyHQLQuery, Long.class);
     parameters.put("bpartnerId", bp.getId());
     frequencyQuery.setProperties(parameters);
-    long freq = frequencyQuery.uniqueResult();
-    BigDecimal frequency = new BigDecimal(freq).setScale(2, RoundingMode.HALF_UP);
+    BigDecimal frequency = new BigDecimal(frequencyQuery.uniqueResult());
+    frequencyMsg = getFrecuencyMessage(frequencyTiming, frequencyTimingUnit, frequency);
+    return frequencyMsg;
+  }
 
-    if (frequencyTimingUnit != null) {
-      timingText = getTimingText(frequencyTimingUnit, frequencyTiming);
-
-      if (frequencyTimingUnit.compareTo(1L) > 0) {
-        frequencyMsg = String.format(OBMessageUtils.messageBD("OBPOS_Frequency_Text"), frequency,
-            frequencyTimingUnit, timingText);
-      } else {
-        frequencyMsg = String.format(OBMessageUtils.messageBD("OBPOS_Frequency_Text_Unit"),
-            frequency, timingText);
-      }
+  private String getFrecuencyMessage(String frequencyTiming, Long frequencyTimingUnit,
+      BigDecimal frequency) {
+    String frequencyMsg;
+    if (frequency.equals(BigDecimal.ONE)) {
+      frequencyMsg = getStatisticsMessage(frequencyTiming, frequencyTimingUnit, frequency,
+          "OBPOS_Frequency_Simple_Text", "OBPOS_Frequency_Simple_Text_Unit",
+          "OBPOS_Frequency_Simple_Text_NoTiming", null);
     } else {
-      frequencyMsg = String.format(OBMessageUtils.messageBD("OBPOS_Frequency_Text_NoTiming"),
-          frequency);
+      frequencyMsg = getStatisticsMessage(frequencyTiming, frequencyTimingUnit, frequency,
+          "OBPOS_Frequency_Text", "OBPOS_Frequency_Text_Unit", "OBPOS_Frequency_Text_NoTiming",
+          null);
     }
     return frequencyMsg;
   }
@@ -217,7 +207,7 @@ public class CustomerStatistics extends JSONProcessSimple {
   private String getMonetaryValueStatistics(String monetaryValueTiming,
       Long monetaryValueTimingUnit, BusinessPartner bp, Organization org) {
     Date startDate = null;
-    String timingText = null, monetaryValMsg = null, currencySymbol = "";
+    String monetaryValMsg = null, currencySymbol = "";
     Map<String, Object> parameters = new HashMap<>();
 
     // Get Start Date
@@ -247,28 +237,16 @@ public class CustomerStatistics extends JSONProcessSimple {
     parameters.put("bpartnerId", bp.getId());
     monetaryValueQuery.setProperties(parameters);
     BigDecimal monetaryValue = monetaryValueQuery.uniqueResult().setScale(2, RoundingMode.HALF_UP);
-
-    if (monetaryValueTimingUnit != null) {
-      timingText = getTimingText(monetaryValueTimingUnit, monetaryValueTiming);
-
-      if (monetaryValueTimingUnit.compareTo(1L) > 0) {
-        monetaryValMsg = String.format(OBMessageUtils.messageBD("OBPOS_MonetaryText"),
-            monetaryValue, currencySymbol, monetaryValueTimingUnit, timingText);
-      } else {
-        monetaryValMsg = String.format(OBMessageUtils.messageBD("OBPOS_MonetaryText_Unit"),
-            monetaryValue, currencySymbol, timingText);
-      }
-    } else {
-      monetaryValMsg = String.format(OBMessageUtils.messageBD("OBPOS_MonetaryText_NoTiming"),
-          monetaryValue, currencySymbol);
-    }
+    monetaryValMsg = getStatisticsMessage(monetaryValueTiming, monetaryValueTimingUnit,
+        monetaryValue, "OBPOS_MonetaryText", "OBPOS_MonetaryText_Unit",
+        "OBPOS_MonetaryText_NoTiming", currencySymbol);
     return monetaryValMsg;
   }
 
   private String getAverageBasketStatistics(String averageBasketTiming,
       Long averageBasketTimingUnit, BusinessPartner bp, Organization org) {
     Date startDate = null;
-    String timingText = null, averageBasketMsg = null, currencySymbol = "";
+    String averageBasketMsg = null, currencySymbol = "";
     Map<String, Object> parameters = new HashMap<>();
     // Get Start Date
     startDate = null;
@@ -299,20 +277,44 @@ public class CustomerStatistics extends JSONProcessSimple {
     BigDecimal averageBasketValue = averageBasketQuery.uniqueResult()
         .setScale(2, RoundingMode.HALF_UP);
 
-    if (averageBasketTimingUnit != null) {
-      timingText = getTimingText(averageBasketTimingUnit, averageBasketTiming);
+    averageBasketMsg = getStatisticsMessage(averageBasketTiming, averageBasketTimingUnit,
+        averageBasketValue, "OBPOS_AverageBasket", "OBPOS_AverageBasket_Unit", "", currencySymbol);
 
-      if (averageBasketTimingUnit.compareTo(1L) > 0) {
-        averageBasketMsg = String.format(OBMessageUtils.messageBD("OBPOS_AverageBasket"),
-            averageBasketValue, currencySymbol, averageBasketTimingUnit, timingText);
+    return averageBasketMsg;
+  }
+
+  private String getStatisticsMessage(String timing, Long timingUnit, BigDecimal monetaryValue,
+      String messageText, String messageUnit, String messageNoTiming, String currencySymbol) {
+    String timingText;
+    String statisticMsg;
+    if (currencySymbol == null) {
+      if (timingUnit != null) {
+        timingText = CustomerStatisticsUtils.getTimingText(timingUnit, timing);
+        if (timingUnit.compareTo(1L) > 0) {
+          statisticMsg = String.format(OBMessageUtils.messageBD(messageText), monetaryValue,
+              timingUnit, timingText);
+        } else {
+          statisticMsg = String.format(OBMessageUtils.messageBD(messageUnit), monetaryValue,
+              timingText);
+        }
       } else {
-        averageBasketMsg = String.format(OBMessageUtils.messageBD("OBPOS_AverageBasket_Unit"),
-            averageBasketValue, currencySymbol, timingText);
+        statisticMsg = String.format(OBMessageUtils.messageBD(messageNoTiming), monetaryValue);
       }
     } else {
-      averageBasketMsg = String.format(OBMessageUtils.messageBD("OBPOS_AverageBasket_NoTiming"),
-          averageBasketValue, currencySymbol);
+      if (timingUnit != null) {
+        timingText = CustomerStatisticsUtils.getTimingText(timingUnit, timing);
+        if (timingUnit.compareTo(1L) > 0) {
+          statisticMsg = String.format(OBMessageUtils.messageBD(messageText), monetaryValue,
+              currencySymbol, timingUnit, timingText);
+        } else {
+          statisticMsg = String.format(OBMessageUtils.messageBD(messageUnit), monetaryValue,
+              currencySymbol, timingText);
+        }
+      } else {
+        statisticMsg = String.format(OBMessageUtils.messageBD(messageNoTiming), monetaryValue,
+            currencySymbol);
+      }
     }
-    return averageBasketMsg;
+    return statisticMsg;
   }
 }
