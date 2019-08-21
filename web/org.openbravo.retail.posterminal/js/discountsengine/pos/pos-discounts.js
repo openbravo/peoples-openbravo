@@ -39,15 +39,29 @@
     applyDiscounts: function(ticket, result) {
       ticket.get('lines').forEach(line => {
         const discountInfoForLine =
-          result.lines[line.get('id')] &&
-          result.lines[line.get('id')].discounts;
+            result.lines[line.get('id')] &&
+            result.lines[line.get('id')].discounts,
+          excludedFromEnginePromotions = line.get('promotions')
+            ? line.get('promotions').filter(promo => {
+                return !promo.calculatedOnDiscountEngine;
+              })
+            : [];
         if (!discountInfoForLine) {
-          //No discounts for this line, we clear existing discounts if they exist, and move to the next
-          line.set('promotions', []);
+          //No discounts for this line, we keep existing discounts if they exist, and move to the next
+          line.set('promotions', excludedFromEnginePromotions);
           return;
         }
 
-        line.set('promotions', discountInfoForLine.promotions);
+        // Set a property to indicate these promotions has been calculated with the discount engine
+        discountInfoForLine.promotions.forEach(promotion => {
+          promotion.calculatedOnDiscountEngine = true;
+        });
+
+        // Concatenate new promotions and excluded promotions in line
+        line.set('promotions', [
+          ...excludedFromEnginePromotions,
+          ...discountInfoForLine.promotions
+        ]);
         return;
         // let rule = OB.Discounts.Pos.ruleImpls.find(r => r.id === discount.id);
         // if (!rule) {
@@ -74,11 +88,20 @@
       newTicket.date = new Date(receipt.get('orderDate'));
       newTicket.lines = [];
       receipt.get('lines').forEach(line => {
-        let newLine = {};
+        let newLine = {},
+          discountedLinePrice = 0;
+        if (line.get('promotions')) {
+          line.get('promotions').forEach(promo => {
+            if (!promo.calculatedOnDiscountEngine) {
+              discountedLinePrice += promo.amt;
+            }
+          });
+        }
+
         newLine.id = line.get('id');
         newLine.product = line.get('product').toJSON();
         newLine.qty = line.get('qty');
-        newLine.price = line.get('price');
+        newLine.price = line.get('price') - discountedLinePrice;
         newTicket.lines.push(newLine);
       });
       return newTicket;
