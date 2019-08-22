@@ -53,18 +53,12 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.RenderCategoryExpand',
-  kind: 'Image',
-  classes: 'obUiRenderCategoryExpand',
-  src: '../org.openbravo.retail.posterminal/img/iconExpand.png',
-  sizing: 'cover'
+  classes: 'obUiRenderCategoryExpand'
 });
 
 enyo.kind({
   name: 'OB.UI.RenderCategoryCollapse',
-  kind: 'Image',
   classes: 'obUiRenderCategoryCollapse',
-  src: '../org.openbravo.retail.posterminal/img/iconCollapse.png',
-  sizing: 'cover',
   showing: false
 });
 
@@ -104,28 +98,30 @@ enyo.kind({
   },
   components: [
     {
-      classes: 'obUiRenderCategoryTree-container1',
+      classes: 'obUiRenderCategoryTree-identifierContainer',
       components: [
         {
-          classes: 'obUiRenderCategoryTree-container1-identifier',
+          classes: 'obUiRenderCategoryTree-identifierContainer-identifier',
           name: 'identifier'
         }
       ]
     },
     {
-      classes: 'obUiRenderCategoryTree-container2',
+      classes: 'obUiRenderCategoryTree-expandCollapseContainer',
       components: [
         {
           name: 'expandCollapse',
-          classes: 'obUiRenderCategoryTree-container2-expandCollapse',
+          classes:
+            'obUiRenderCategoryTree-expandCollapseContainer-expandCollapse',
           components: [
             {
-              classes: 'obUiRenderCategoryTree-expandCollapse-expand',
+              classes: 'obUiRenderCategoryTree-expandCollapseContainer-expand',
               kind: 'OB.UI.RenderCategoryExpand',
               name: 'expand'
             },
             {
-              classes: 'obUiRenderCategoryTree-expandCollapse-collapse',
+              classes:
+                'obUiRenderCategoryTree-expandCollapseContainer-collapse',
               kind: 'OB.UI.RenderCategoryCollapse',
               name: 'collapse'
             }

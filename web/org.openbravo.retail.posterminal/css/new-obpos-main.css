@@ -1834,63 +1834,82 @@ li.selected > .obUiRenderCategory {
 
 
 /*
-# Component: OB.UI.RenderCategoryExpand
-# Inherits: [Image]
-*/
-.obUiRenderCategoryExpand {
-  width: 26;
-  height: 26;
-}
-
-
-/*
-# Component: OB.UI.RenderCategoryCollapse
-# Inherits: [Image]
-*/
-.obUiRenderCategoryCollapse {
-  width: 26;
-  height: 26;
-}
-
-
-/*
 # Component: OB.UI.RenderCategoryTree
 # Inherits: [OB.UI.listItemButton]
 */
 .obUiRenderCategoryTree {
-  height: 41px;
-  background-color: #b882c6;
-  color: #ffffff;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: 1fr auto;
+  justify-items: left;
+  align-items: center;
+
+  height: 48px;
+  border-left: 4px solid transparent;
+  background-color: #ffffff;
+  color: #000000;
+  padding: 0px;
 }
 
-.obUiRenderCategoryTree-container1 {
-  float: left;
-  width: calc(100% - 40px);
+.obUiRenderCategoryTree:active {
+  background-color: #c5c5c5;
+  border-left-color: darkgreen;
 }
 
-.obUiRenderCategoryTree-container1-identifier {
+li.selected > .obUiRenderCategoryTree {
+  border-left-color: #6eb43f;
+  background-color: #e8e8e8;
+}
+
+.obUiRenderCategoryTree-identifierContainer {
+  width: 100%;
+  padding: 2px 0px 0px 8px;
+  box-sizing: border-box;
+}
+
+.obUiRenderCategoryTree-identifierContainer-identifier {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding-top: 4px;
+  padding-left: 4px;
   height: 20px;
 }
 
-.obUiRenderCategoryTree-container2 {
-  float: left;
-  width: 40px;
-  text-align: right;
-  margin-top: -8px;
+.obUiRenderCategoryTree-expandCollapseContainer {
+  width: 45px;
+  text-align: center;
+  height: 100%;
 }
 
-.obUiRenderCategoryTree-container2-expandCollapse {
-  height: 33px;
-  padding-right: 7px;
-  padding-top: 7px;
+.obUiRenderCategoryTree-expandCollapseContainer-expandCollapse {
+  height: 100%;
 }
 
 .obUiRenderCategoryTree-expandCollapse-expand {}
 
+
+/*
+# Component: OB.UI.RenderCategoryExpand
+# Component: OB.UI.RenderCategoryCollapse
+# Inherits: [Div]
+*/
+.obUiRenderCategoryExpand,
+.obUiRenderCategoryCollapse {
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 26px;
+}
+
+.obUiRenderCategoryExpand {
+  background-image: url('./../img/iconExpand.svg');
+}
+
+.obUiRenderCategoryCollapse {
+  background-image: url('./../img/iconCollapse.svg');
+}
 
 
 /***********************   ***********************/
