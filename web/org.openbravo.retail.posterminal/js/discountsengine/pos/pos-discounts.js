@@ -86,6 +86,7 @@
       newTicket.businessPartner._identifier = receipt.get('bp')._identifier;
       newTicket.id = receipt.get('id');
       newTicket.date = receipt.get('orderDate');
+      newTicket.discountsByUser = {};
       newTicket.lines = [];
       receipt.get('lines').forEach(line => {
         let newLine = {},
@@ -104,6 +105,11 @@
         newLine.price = line.get('price') - discountedLinePrice;
         newTicket.lines.push(newLine);
       });
+      if (receipt.get('coupons')) {
+        newTicket.discountsByUser.coupons = receipt
+          .get('coupons')
+          .map(coupon => coupon.offerid);
+      }
       return newTicket;
     },
 
