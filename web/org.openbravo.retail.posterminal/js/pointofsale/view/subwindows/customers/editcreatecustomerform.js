@@ -720,6 +720,7 @@ enyo.kind({
       modelPropertyText: 'shipCountryName',
       collectionName: 'CountryList',
       i18nLabel: 'OBPOS_LblCountry',
+      mandatory: true,
       defaultValue: function() {
         return OB.MobileApp.model.get('terminal').defaultbp_bpcountry;
       },
@@ -819,6 +820,7 @@ enyo.kind({
       modelPropertyText: 'countryName',
       collectionName: 'CountryList',
       i18nLabel: 'OBPOS_LblCountry',
+      mandatory: true,
       defaultValue: function() {
         return OB.MobileApp.model.get('terminal').defaultbp_bpcountry;
       },

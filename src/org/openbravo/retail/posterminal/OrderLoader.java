@@ -350,6 +350,17 @@ public class OrderLoader extends POSDataSynchronizationProcess
         } else {
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
           order.setDelivered(deliver);
+          if (jsonorder.has("obposPrepaymentamt")) {
+            order.setObposPrepaymentamt(
+                BigDecimal.valueOf(jsonorder.getDouble("obposPrepaymentamt")));
+          }
+          if (jsonorder.has("obposPrepaymentlimitamt")) {
+            order.setObposPrepaymentlimitamt(
+                BigDecimal.valueOf(jsonorder.getDouble("obposPrepaymentlimitamt")));
+          }
+          if (jsonorder.has("obposPrepaymentlaylimitamt")) {
+            order.setObposPrepaymentlaylimitamt(jsonorder.getLong("obposPrepaymentlaylimitamt"));
+          }
           if (!jsonorder.has("channel")) {
             order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
           }
