@@ -138,12 +138,10 @@ enyo.kind({
   initComponents: function() {
     this.inherited(arguments);
     this.$.identifier.setContent(this.model.get('_identifier'));
-    this.$.identifier.setStyle(
-      'padding-left: ' +
-        14 * this.model.get('level') +
-        'px; ' +
-        (this.model.id === '__all__' ? 'font-weight: bold; ' : '')
-    );
+    this.$.identifier.addClass('identifierLevel-' + this.model.get('level'));
+    if (this.model.id === '__all__') {
+      this.$.identifier.addClass('identifierAll');
+    }
     this.$.expandCollapse.setShowing(this.model.get('issummary'));
     this.$.expand.setShowing(this.model.get('treeNode') !== 'EXPANDED');
     this.$.collapse.setShowing(this.model.get('treeNode') === 'EXPANDED');
