@@ -391,6 +391,12 @@ enyo.kind({
             );
           }
         }
+        if (discountsContainer.model.get('obdiscAllowmultipleinstan')) {
+          args.context.$.overridePromotion.hide();
+          args.context.$.checkOverride.unCheck();
+        } else {
+          args.context.$.overridePromotion.show();
+        }
       }
     );
   },
@@ -422,6 +428,9 @@ enyo.kind({
         if (args && args.cancelOperation) {
           me.closingDiscounts();
           return;
+        }
+        if (!me.$.overridePromotion.showing) {
+          me.$.checkOverride.unCheck();
         }
         promotionToApply.rule = formElementDiscountsList.model;
         promotionToApply.definition = {};
