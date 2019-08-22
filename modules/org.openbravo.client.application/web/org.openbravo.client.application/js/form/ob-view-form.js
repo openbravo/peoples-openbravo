@@ -2016,6 +2016,11 @@ OB.ViewFormProperties = {
         if (visibleRows[0] !== -1) {
           view.viewGrid.addToCacheData(data, visibleRows[0]);
           recordIndex = visibleRows[0];
+        } else if (view.viewGrid.body.getTotalRows() === 0) {
+          // this case was missing: an empty grid, where the saved record was not in the filter.
+          // In that case getVisibleRows returns [-1, -1] and the record was not added to the cache
+          view.viewGrid.addToCacheData(data, 0);
+          recordIndex = 0;
         }
       }
 
