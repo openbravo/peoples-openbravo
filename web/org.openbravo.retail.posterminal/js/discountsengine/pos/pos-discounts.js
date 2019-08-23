@@ -63,19 +63,6 @@
           ...discountInfoForLine.promotions
         ]);
         return;
-        // let rule = OB.Discounts.Pos.ruleImpls.find(r => r.id === discount.id);
-        // if (!rule) {
-        //   OB.error('Rule not found!', discount);
-        //   return;
-        // }
-        // let ruleModel = rule.ruleModel;
-        // try {
-        //   ticket.addPromotion(line, ruleModel, {
-        //     amt: discount.discount
-        //   });
-        // } catch (e) {
-        //   OB.error(e);
-        // }
       });
     },
 
