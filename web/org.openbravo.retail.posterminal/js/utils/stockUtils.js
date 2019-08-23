@@ -241,6 +241,7 @@
                 product: product,
                 actionName: actionName,
                 buttons: buttons,
+                attrs: attrs,
                 options: {
                   onHideFunction: function() {
                     OB.UTIL.StockUtils.navigateToStockScreen(

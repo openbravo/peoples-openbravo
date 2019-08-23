@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018 Openbravo S.L.U.
+ * Copyright (C) 2018-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -23,6 +23,7 @@ public class DocumentNoHandler {
   private DocumentType doctypeTarget;
   private DocumentType doctype;
   private BaseOBObject bob;
+  private String documentNoPrefix;
   private String propertyName = "documentNo";
 
   public DocumentNoHandler(BaseOBObject bob, Entity entity, DocumentType doctypeTarget,
@@ -33,8 +34,20 @@ public class DocumentNoHandler {
     this.bob = bob;
   }
 
+  public DocumentNoHandler(BaseOBObject bob, Entity entity, DocumentType doctypeTarget,
+      DocumentType doctype, String documentNoPrefix) {
+    this.entity = entity;
+    this.doctypeTarget = doctypeTarget;
+    this.doctype = doctype;
+    this.bob = bob;
+    this.documentNoPrefix = documentNoPrefix;
+  }
+
   public void setDocumentNoAndSave() {
-    final String docNo = getDocumentNumber(entity, doctypeTarget, doctype);
+    String docNo = getDocumentNumber(entity, doctypeTarget, doctype);
+    if (documentNoPrefix != null) {
+      docNo = documentNoPrefix + docNo;
+    }
     bob.setValue(propertyName, docNo);
     OBDal.getInstance().save(bob);
   }
