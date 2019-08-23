@@ -820,21 +820,21 @@ enyo.kind({
       return;
     }
     if (OB.MobileApp.model.get('terminal').terminalType.showtaxbreakdown) {
-      var prop,
-        taxList = new Backbone.Collection(),
-        taxes = this.order.get('taxes');
+      var taxList = new Backbone.Collection(),
+        taxes = this.order.get('taxes'),
+        remainingTaxesIds = [];
 
-      if (
-        _.filter(this.order.get('lines').models, function(line) {
-          return !line.get('obposIsDeleted');
-        }).length > 0
-      ) {
-        for (prop in taxes) {
-          if (taxes.hasOwnProperty(prop)) {
-            taxList.add(new OB.Model.TaxLine(taxes[prop]));
-          }
+      _.each(this.order.get('lines').models, function(line) {
+        if (!line.get('obposIsDeleted') && line.get('taxLines')) {
+          remainingTaxesIds.push(...Object.keys(line.get('taxLines')));
         }
-      }
+      });
+      Object.keys(taxes).forEach(function(id) {
+        if (remainingTaxesIds.includes(id)) {
+          taxList.add(new OB.Model.TaxLine(taxes[id]));
+        }
+      });
+
       if (taxList.length === 0) {
         this.$.taxBreakdown.hide();
       } else {
