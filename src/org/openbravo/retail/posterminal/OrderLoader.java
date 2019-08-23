@@ -224,6 +224,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
       Invoice invoice = null;
       JSONObject jsoninvoice = null;
       OBPOSApplications posTerminal = null;
+      JSONObject paymentResponse = null;
       ArrayList<OrderLine> lineReferences = new ArrayList<OrderLine>();
       JSONArray orderlines = new JSONArray(jsonorder.getJSONArray("lines").toString());
 
@@ -455,7 +456,23 @@ public class OrderLoader extends POSDataSynchronizationProcess
               + (t4 - t3) + "; Invoice: " + (t116 - t4) + ";");
         }
 
-        if (createShipment || createInvoice) {
+        if (useOrderDocumentNoForRelatedDocs) {
+          paymentCount = countPayments(order);
+        }
+        if (log.isDebugEnabled()) {
+          t5 = System.currentTimeMillis();
+        }
+
+        if (!isQuotation && !isDeleted) {
+          // Payment
+          paymentResponse = handlePayments(jsonorder, order, invoice);
+          if (paymentResponse
+              .getInt(JsonConstants.RESPONSE_STATUS) == JsonConstants.RPCREQUEST_STATUS_FAILURE) {
+            return paymentResponse;
+          }
+        }
+
+        if (createShipment || createInvoice || (!isQuotation && !isDeleted)) {
           // do the docnumbers at the end
           OBContext.setAdminMode(false);
           try {
@@ -481,20 +498,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
         } catch (Throwable ignored) {
         }
       }
-      if (useOrderDocumentNoForRelatedDocs) {
-        paymentCount = countPayments(order);
-      }
-      if (log.isDebugEnabled()) {
-        t5 = System.currentTimeMillis();
-      }
       if (!isQuotation && !isDeleted) {
-        // Payment
-        JSONObject paymentResponse = handlePayments(jsonorder, order, invoice);
-        if (paymentResponse
-            .getInt(JsonConstants.RESPONSE_STATUS) == JsonConstants.RPCREQUEST_STATUS_FAILURE) {
-          return paymentResponse;
-        }
-
         if (doCancelAndReplace && order.getReplacedorder() != null) {
           TriggerHandler.getInstance().disable();
           try {
@@ -1633,16 +1637,10 @@ public class OrderLoader extends POSDataSynchronizationProcess
       }
 
       DocumentType paymentDocType = getPaymentDocumentType(paymentOrganization);
-      Entity paymentEntity = ModelProvider.getInstance().getEntity(FIN_Payment.class);
 
-      String paymentDocNo;
-      if (useOrderDocumentNoForRelatedDocs) {
-        paymentDocNo = order.getDocumentNo();
-        if (paymentCount > 0) {
-          paymentDocNo = paymentDocNo + "-" + paymentCount;
-        }
-      } else {
-        paymentDocNo = getDocumentNo(paymentEntity, null, paymentDocType);
+      String paymentDocNo = order.getDocumentNo();
+      if (paymentCount > 0) {
+        paymentDocNo = paymentDocNo + "-" + paymentCount;
       }
       if (payment.has("reversedPaymentId") && payment.getString("reversedPaymentId") != null) {
         paymentDocNo = "*R*" + paymentDocNo;
@@ -1664,6 +1662,17 @@ public class OrderLoader extends POSDataSynchronizationProcess
                   ? amount.divide(origAmount, MathContext.DECIMAL32)
                   : mulrate,
           amount, true, payment.has("id") ? payment.getString("id") : null);
+
+      if (!useOrderDocumentNoForRelatedDocs) {
+        String documentNoPrefix = null;
+        if (payment.has("reversedPaymentId") && payment.getString("reversedPaymentId") != null) {
+          documentNoPrefix = "*R*";
+        }
+        documentNoHandlers.get()
+            .add(new DocumentNoHandler(finPayment,
+                ModelProvider.getInstance().getEntity(FIN_Payment.class), null, paymentDocType,
+                documentNoPrefix));
+      }
 
       boolean doFlush = false;
 
