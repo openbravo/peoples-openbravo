@@ -174,14 +174,16 @@ enyo.kind({
       OB.I18N.getLabel('OBPOS_MsgConfirmDelete'),
       [
         {
+          label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+          isDefaultAction: false
+        },
+        {
           label: OB.I18N.getLabel('OBPOS_LblYesDelete'),
           isConfirmButton: true,
+          isDefaultAction: true,
           action: function() {
             me.doVoidOrder();
           }
-        },
-        {
-          label: OB.I18N.getLabel('OBMOBC_LblCancel')
         }
       ]
     );

@@ -13415,7 +13415,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 @media all and (min-width: 800px) {
-  .obObPosCashupUiCashUp-rightToolbar-btnCashUp,
   .obObPosCashUpUiLeftToolbarImpl-btnToggleView {
     display: none;
   }
