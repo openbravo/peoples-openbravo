@@ -149,7 +149,8 @@ enyo.kind({
     crossStoreSearch =
       inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$
         .searchCharacteristic.$.searchCharacteristicTabContent.$
-        .searchProductCharacteristicHeader.$.crossStoreSearch;
+        .searchProductCharacteristicHeader.$.formElementCrossStoreSearch
+        .coreElement;
     forceRemote = crossStoreSearch && crossStoreSearch.checked;
 
     productCharacteristic.customFilters.forEach(function(hqlFilter) {
