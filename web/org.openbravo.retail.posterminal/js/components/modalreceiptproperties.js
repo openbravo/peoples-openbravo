@@ -52,7 +52,6 @@ enyo.kind({
       permissionOption: 'OBPOS_SR.comboOrModal',
       retrievedPropertyForValue: 'id',
       retrievedPropertyForText: '_identifier',
-      collection: new Backbone.Collection(),
       init: function(model) {
         this.model = model;
         this.doLoadValueNeeded = true;
@@ -66,7 +65,11 @@ enyo.kind({
           }
         }
       },
-
+      
+      initComponents: function() {
+        this.collection = new OB.Collection.SalesRepresentativeList();
+      },
+      
       // override to not load things upfront when not needed
       loadValue: function() {
         if (this.doLoadValueNeeded) {
