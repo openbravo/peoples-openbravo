@@ -3456,6 +3456,24 @@
           }
         }
 
+        function addProdCharsToProduct(addProdCharCallback) {
+          //Add prod char information to product object
+          if (
+            !p.get('productCharacteristics') &&
+            p.get('characteristicDescription')
+          ) {
+            OB.Dal.find(
+              OB.Model.ProductCharacteristicValue,
+              {"product": p.get('id')},
+              function(productcharacteristics) {
+                p.set('productCharacteristics', productcharacteristics.toJSON());
+                addProdCharCallback()
+              });
+          }else{
+            addProdCharCallback();
+          }
+        }
+
         function execPostAddProductToOrderHook() {
           if (me.isCalculateReceiptLocked === true || !line) {
             OB.error(
@@ -3469,6 +3487,7 @@
             }
             return null;
           }
+
           OB.UTIL.HookManager.executeHooks(
             'OBPOS_PostAddProductToOrder',
             {
@@ -3512,9 +3531,11 @@
                   }
                 }
               }
-              if (callback) {
-                callback(true, args.orderline);
-              }
+              addProdCharsToProduct(function() {
+                if (callback) {
+                  callback(true, args.orderline);
+                }
+              });
             }
           );
         }
