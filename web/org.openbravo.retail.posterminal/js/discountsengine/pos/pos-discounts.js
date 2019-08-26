@@ -292,15 +292,38 @@
                     }
                   });
 
-                  OB.UTIL.HookManager.executeHooks(
-                    'OBPOS_DiscountsCacheInitialization',
-                    {
-                      discounts: OB.Discounts.Pos.ruleImpls,
-                      baseFilter,
-                      params: discountsQueryObject.params
-                    },
-                    function(args) {
-                      finishCallback();
+                  let producCharQuery =
+                    'SELECT * FROM M_OFFER_CHARACTERISTIC INNER JOIN M_OFFER ON M_OFFER_CHARACTERISTIC.M_OFFER_ID = M_OFFER.M_OFFER_ID' +
+                    baseFilter;
+                  OB.Dal.query(
+                    OB.Model.DiscountFilterCharacteristic,
+                    producCharQuery,
+                    discountsQueryObject.params,
+                    productCharacteristics => {
+                      let charGroups = productCharacteristics.groupBy(prod =>
+                        prod.get('offer')
+                      );
+                      OB.Discounts.Pos.ruleImpls.forEach(rule => {
+                        rule.productCharacteristics = [];
+                        if (charGroups[rule.id]) {
+                          charGroups[rule.id].forEach(discChar => {
+                            const objDiscChar = discChar.toJSON();
+                            rule.productCharacteristics.push(objDiscChar);
+                          });
+                        }
+                      });
+
+                      OB.UTIL.HookManager.executeHooks(
+                        'OBPOS_DiscountsCacheInitialization',
+                        {
+                          discounts: OB.Discounts.Pos.ruleImpls,
+                          baseFilter,
+                          params: discountsQueryObject.params
+                        },
+                        function(args) {
+                          finishCallback();
+                        }
+                      );
                     }
                   );
                 }
