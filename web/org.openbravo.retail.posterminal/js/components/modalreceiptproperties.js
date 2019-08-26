@@ -52,8 +52,8 @@ enyo.kind({
       permissionOption: 'OBPOS_SR.comboOrModal',
       retrievedPropertyForValue: 'id',
       retrievedPropertyForText: '_identifier',
+      collection: new Backbone.Collection(),
       init: function(model) {
-        this.collection = new OB.Collection.SalesRepresentativeList();
         this.model = model;
         this.doLoadValueNeeded = true;
         if (!OB.MobileApp.model.hasPermission(this.permission)) {
