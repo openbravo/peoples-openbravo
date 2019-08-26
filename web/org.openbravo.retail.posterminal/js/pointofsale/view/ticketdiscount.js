@@ -393,7 +393,7 @@ enyo.kind({
         }
         if (formElementDiscountsList.model.get('obdiscAllowmultipleinstan')) {
           args.context.$.formElementCheckOverride.hide();
-          args.context.$.checkOverride.unCheck();
+          args.context.$.formElementCheckOverride.$.coreElementContainer.$.checkOverride.unCheck();
         } else {
           args.context.$.formElementCheckOverride.show();
         }
@@ -430,7 +430,7 @@ enyo.kind({
           return;
         }
         if (!me.$.formElementCheckOverride.showing) {
-          me.$.checkOverride.unCheck();
+          me.$.formElementCheckOverride.$.coreElementContainer.$.checkOverride.unCheck();
         }
         promotionToApply.rule = formElementDiscountsList.model;
         promotionToApply.definition = {};
