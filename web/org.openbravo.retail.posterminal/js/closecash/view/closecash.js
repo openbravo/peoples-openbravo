@@ -62,7 +62,7 @@ enyo.kind({
     {
       name: 'btnCashUp',
       kind: 'OB.OBPOSCashUp.UI.Button',
-      classes: 'obObPosCashUpUiLeftToolbarImpl-btnCashUp',
+      classes: 'obObPosCashupUiCashUp-rightToolbar-btnCashUp',
       disabled: true,
       i18nLabel: 'OBPOS_LblCloseCash'
     },

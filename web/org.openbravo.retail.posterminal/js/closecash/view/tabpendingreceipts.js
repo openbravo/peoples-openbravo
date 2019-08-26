@@ -11,7 +11,7 @@
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.ButtonVoid',
-  kind: 'OB.UI.SmallButton',
+  kind: 'OB.UI.Button',
   classes: 'obObposCashupUiButtonVoid',
   initComponents: function() {
     return this;
@@ -20,7 +20,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.ButtonBring',
-  kind: 'OB.UI.SmallButton',
+  kind: 'OB.UI.Button',
   classes: 'obObposCashupUiButtonBring',
   initComponents: function() {
     this.setContent(OB.I18N.getLabel('OBPOS_BringOrder'));
@@ -123,10 +123,6 @@ enyo.kind({
               ontap: 'voidOrder'
             }
           ]
-        },
-        {
-          classes:
-            'obObposCashupUiRenderPendingReceiptLine-container1-container2'
         }
       ]
     }
@@ -229,113 +225,59 @@ enyo.kind({
   },
   components: [
     {
-      classes: 'obObposCashupUiListPendingReceipts-container1',
+      classes: 'obObposCashupUiListPendingReceipts-wrapper',
       components: [
         {
-          classes: 'obObposCashupUiListPendingReceipts-container1-container1',
+          classes: 'obObposCashupUiListPendingReceipts-wrapper-components',
           components: [
             {
+              name: 'stepsheader',
               classes:
-                'obObposCashupUiListPendingReceipts-container1-container1',
+                'obObposCashupUiListPendingReceipts-wrapper-components-title',
+              renderHeader: function(step, count) {
+                this.setContent(
+                  OB.I18N.getLabel('OBPOS_LblStepNumber', [step, count]) +
+                    ' ' +
+                    OB.I18N.getLabel('OBPOS_LblStepPendingOrders') +
+                    OB.OBPOSCashUp.UI.CashUp.getTitleExtensions()
+                );
+              }
+            },
+            {
+              name: 'rowDeleteAll',
+              classes:
+                'obObposCashupUiListPendingReceipts-wrapper-components-rowDeleteAll',
               components: [
                 {
+                  name: 'btnDeleteAll',
+                  kind: 'OB.UI.Button',
                   classes:
-                    'obObposCashupUiListPendingReceipts-container1-container1-container1 row-fluid',
-                  components: [
-                    {
-                      classes:
-                        'obObposCashupUiListPendingReceipts-container1-container1-container1-container1 span12',
-                      components: [
-                        {
-                          name: 'stepsheader',
-                          classes:
-                            'obObposCashupUiListPendingReceipts-container1-container1-container1-container1-stepsheader',
-                          renderHeader: function(step, count) {
-                            this.setContent(
-                              OB.I18N.getLabel('OBPOS_LblStepNumber', [
-                                step,
-                                count
-                              ]) +
-                                ' ' +
-                                OB.I18N.getLabel('OBPOS_LblStepPendingOrders') +
-                                OB.OBPOSCashUp.UI.CashUp.getTitleExtensions()
-                            );
-                          }
-                        }
-                      ]
-                    },
-                    {
-                      classes:
-                        'obObposCashupUiListPendingReceipts-container1-container1-container1-container2'
-                    }
-                  ]
+                    'obObposCashupUiListPendingReceipts-wrapper-components-rowDeleteAll-btnDeleteAll',
+                  i18nContent: 'OBPOS_DeleteAll',
+                  ontap: 'voidAllPendingReceipts'
                 },
                 {
-                  name: 'rowDeleteAll',
+                  name: 'btnBringAll',
+                  kind: 'OB.UI.Button',
                   classes:
-                    'obObposCashupUiListPendingReceipts-container1-container1-rowDeleteAll row-fluid',
-                  components: [
-                    {
-                      classes:
-                        'obObposCashupUiListPendingReceipts-container1-container1-rowDeleteAll row-fluid',
-                      components: [
-                        {
-                          name: 'btnDeleteAll',
-                          kind: 'OB.UI.SmallButton',
-                          classes:
-                            'obObposCashupUiListPendingReceipts-rowDeleteAll-btnDeleteAll',
-                          initComponents: function() {
-                            this.setContent(
-                              OB.I18N.getLabel('OBPOS_DeleteAll')
-                            );
-                          },
-                          ontap: 'voidAllPendingReceipts'
-                        },
-                        {
-                          name: 'btnBringAll',
-                          kind: 'OB.UI.SmallButton',
-                          classes:
-                            'obObposCashupUiListPendingReceipts-rowDeleteAll-btnBringAll',
-                          initComponents: function() {
-                            this.setContent(OB.I18N.getLabel('OBPOS_BringAll'));
-                          },
-                          ontap: 'bringAllPendingReceipts'
-                        },
-                        {
-                          classes:
-                            'obObposCashupUiListPendingReceipts-rowDeleteAll-element1'
-                        }
-                      ]
-                    }
-                  ]
-                },
+                    'obObposCashupUiListPendingReceipts-wrapper-components-rowDeleteAll-btnBringAll',
+                  i18nContent: 'OBPOS_BringAll',
+                  ontap: 'bringAllPendingReceipts'
+                }
+              ]
+            },
+            {
+              classes:
+                'obObposCashupUiListPendingReceipts-wrapper-components-body',
+              components: [
                 {
+                  name: 'pendingReceiptList',
                   classes:
-                    'obObposCashupUiListPendingReceipts-container1-container1-container2 row-fluid',
-                  components: [
-                    {
-                      classes:
-                        'obObposCashupUiListPendingReceipts-container1-container1-container2-container1',
-                      components: [
-                        {
-                          classes:
-                            'obObposCashupUiListPendingReceipts-container1-container1-container2-container1-container1 row-fluid',
-                          components: [
-                            {
-                              name: 'pendingReceiptList',
-                              classes:
-                                'obObposCashupUiListPendingReceipts-container1-container1-container2-container1-container1-pendingReceiptList',
-                              kind: 'OB.UI.Table',
-                              renderLine:
-                                'OB.OBPOSCashUp.UI.RenderPendingReceiptLine',
-                              renderEmpty: 'OB.UI.RenderEmpty',
-                              listStyle: 'list'
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
+                    'obObposCashupUiListPendingReceipts-wrapper-components-body-pendingReceiptList',
+                  kind: 'OB.UI.Table',
+                  renderLine: 'OB.OBPOSCashUp.UI.RenderPendingReceiptLine',
+                  renderEmpty: 'OB.UI.RenderEmpty',
+                  listStyle: 'list'
                 }
               ]
             }
@@ -404,14 +346,16 @@ enyo.kind({
       OB.I18N.getLabel('OBPOS_cannotBeUndone'),
       [
         {
+          label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+          isDefaultAction: false
+        },
+        {
           label: OB.I18N.getLabel('OBPOS_LblYesDelete'),
+          isDefaultAction: true,
           isConfirmButton: true,
           action: function() {
             me.voidAllOrders();
           }
-        },
-        {
-          label: OB.I18N.getLabel('OBMOBC_LblCancel')
         }
       ]
     );
