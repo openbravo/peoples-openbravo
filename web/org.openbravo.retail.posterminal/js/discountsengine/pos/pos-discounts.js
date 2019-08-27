@@ -17,10 +17,7 @@
       if (!OB.Discounts.Pos.ruleImpls) {
         throw 'Local discount cache is not yet initialized, execute: OB.Discounts.Pos.initCache()';
       }
-      return OB.Discounts.applyDiscounts(
-        ticket,
-        this.getApplicableDiscounts(ticket)
-      );
+      return OB.Discounts.applyDiscounts(ticket, OB.Discounts.Pos.ruleImpls);
     },
 
     calculateRemote: function(ticket) {
@@ -73,7 +70,7 @@
       newTicket.businessPartner._identifier = receipt.get('bp')._identifier;
       newTicket.id = receipt.get('id');
       newTicket.date = receipt.get('orderDate');
-      newTicket.discountsByUser = {};
+      newTicket.discountsFromUser = {};
       newTicket.lines = [];
       receipt.get('lines').forEach(line => {
         let newLine = {},
@@ -93,9 +90,79 @@
         newTicket.lines.push(newLine);
       });
       if (receipt.get('coupons')) {
-        newTicket.discountsByUser.coupons = receipt
+        newTicket.discountsFromUser.coupons = receipt
           .get('coupons')
           .map(coupon => coupon.offerid);
+      }
+      if (receipt.get('orderManualPromotions')) {
+        let bytotalManualPromotions = [];
+        let orderManualPromotions = receipt.get('orderManualPromotions').models;
+        orderManualPromotions.forEach(bytotalManualPromotion => {
+          let rule = new Backbone.Model(
+              bytotalManualPromotion.get('discountRule')
+            ),
+            bytotalManualPromotionObj = {};
+          for (let key in rule.attributes) {
+            bytotalManualPromotionObj[key] = rule.attributes[key];
+          }
+          bytotalManualPromotionObj.discountInstance =
+            bytotalManualPromotion.discountInstance;
+
+          // Override some configuration from manualPromotions
+          if (bytotalManualPromotionObj.disctTotalamountdisc) {
+            bytotalManualPromotionObj.disctTotalamountdisc = bytotalManualPromotion.get(
+              'rule'
+            ).userAmt;
+          } else if (bytotalManualPromotionObj.disctTotalpercdisc) {
+            bytotalManualPromotionObj.disctTotalpercdisc = bytotalManualPromotion.get(
+              'rule'
+            ).userAmt;
+          }
+          bytotalManualPromotionObj.products = [];
+          bytotalManualPromotionObj.includedProducts = 'Y';
+          bytotalManualPromotionObj.productCategories = [];
+          bytotalManualPromotionObj.includedProductCategories = 'Y';
+          bytotalManualPromotionObj.productCharacteristics = [];
+          bytotalManualPromotionObj.includedCharacteristics = 'Y';
+          bytotalManualPromotionObj.allweekdays = true;
+
+          bytotalManualPromotions.push(bytotalManualPromotionObj);
+        });
+        newTicket.discountsFromUser.bytotalManualPromotions = bytotalManualPromotions;
+      }
+      if (receipt.get('manualPromotionsAddedToTicket')) {
+        let manualPromotions = [];
+        receipt
+          .get('manualPromotionsAddedToTicket')
+          .forEach(manualPromotion => {
+            let rule = new Backbone.Model(manualPromotion.rule);
+            let manualPromotionObj = {};
+            for (let key in rule.attributes) {
+              manualPromotionObj[key] = rule.attributes[key];
+            }
+            manualPromotionObj.linesToApply = manualPromotion.applicableLines;
+            manualPromotionObj.discountInstance =
+              manualPromotion.discountInstance;
+
+            // Override some configuration from manualPromotions
+            if (manualPromotionObj.obdiscAmt) {
+              manualPromotionObj.obdiscAmt = manualPromotion.userAmt;
+            } else if (manualPromotionObj.obdiscPercentage) {
+              manualPromotionObj.obdiscPercentage = manualPromotion.userAmt;
+            } else if (manualPromotionObj.obdiscLineFinalgross) {
+              manualPromotionObj.obdiscLineFinalgross = manualPromotion.userAmt;
+            }
+            manualPromotionObj.products = [];
+            manualPromotionObj.includedProducts = 'Y';
+            manualPromotionObj.productCategories = [];
+            manualPromotionObj.includedProductCategories = 'Y';
+            manualPromotionObj.productCharacteristics = [];
+            manualPromotionObj.includedCharacteristics = 'Y';
+            manualPromotionObj.allweekdays = true;
+
+            manualPromotions.push(manualPromotionObj);
+          });
+        newTicket.discountsFromUser.manualPromotions = manualPromotions;
       }
       return newTicket;
     },
@@ -190,8 +257,6 @@
         " AND AD_ROLE_ID = ?)) OR (EM_OBDISC_ROLE_SELECTION = 'N' " + //
         ' AND EXISTS (SELECT 1 FROM OBDISC_OFFER_ROLE WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID ' +
         ' AND AD_ROLE_ID = ?)))' + //
-        ') OR M_OFFER_TYPE_ID IN (' +
-        OB.Model.Discounts.getAutoCalculatedPromotions() +
         ') ORDER BY PRIORITY, M_OFFER_ID';
 
       const discountsObj = {
@@ -331,18 +396,6 @@
             }
           );
         }
-      );
-    },
-
-    getApplicableDiscounts: function(ticket) {
-      return OB.Discounts.Pos.ruleImpls.filter(rule =>
-        this.canApplyRuleToAtLeastOneLine(ticket, rule)
-      );
-    },
-
-    canApplyRuleToAtLeastOneLine(ticket, rule) {
-      return ticket.lines.find(line =>
-        OB.Discounts.Discount.isApplicableToLine(line, rule)
       );
     }
   };
