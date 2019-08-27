@@ -464,7 +464,7 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
     _.forEach(beforeManualPromo, function(promo) {
       promo.qtyOffer = undefined;
       var promotion = {
-        rule: new Backbone.Model(promo),
+        rule: new Backbone.Model(promo.rule),
 
         definition: {
           userAmt: promo.userAmt,

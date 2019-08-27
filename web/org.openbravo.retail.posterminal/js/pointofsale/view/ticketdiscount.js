@@ -469,7 +469,7 @@ enyo.kind({
   applyDiscounts: function(inSender, inEvent) {
     var promotionToAplly = {},
       discountsContainer = this.$.discountsContainer,
-      orderLinesCollection = new OB.Collection.OrderLineList(),
+      orderLinesCollection = [],
       me = this;
     //preApplyDiscountsHook
     OB.UTIL.HookManager.executeHooks(
@@ -485,14 +485,19 @@ enyo.kind({
         if (!me.$.overridePromotion.showing) {
           me.$.checkOverride.unCheck();
         }
+
+        _.each(me.checkedLines, function(line) {
+          orderLinesCollection.push(line.get('id'));
+        });
+
+        promotionToAplly = {};
+        promotionToAplly.userAmt = discountsContainer.amt;
+        promotionToAplly.applyNext = true;
+        promotionToAplly.forceReplace = me.$.checkOverride.checked;
+        promotionToAplly.lastApplied = true;
+        promotionToAplly.obdiscLineFinalgross = discountsContainer.amt;
+        promotionToAplly.applicableLines = orderLinesCollection;
         promotionToAplly.rule = discountsContainer.model;
-        promotionToAplly.definition = {};
-        promotionToAplly.definition.userAmt = discountsContainer.amt;
-        promotionToAplly.definition.applyNext = true;
-        promotionToAplly.definition.forceReplace = me.$.checkOverride.checked;
-        promotionToAplly.definition.lastApplied = true;
-        promotionToAplly.definition.obdiscLineFinalgross =
-          discountsContainer.amt;
 
         if (discountsContainer.requiresQty && !discountsContainer.amt) {
           //Show a modal pop up with the error
@@ -501,15 +506,35 @@ enyo.kind({
           });
           return true;
         }
-        _.each(me.checkedLines, function(line) {
-          orderLinesCollection.add(line);
-        });
 
-        OB.Model.Discounts.addManualPromotion(
-          me.order,
-          orderLinesCollection,
-          promotionToAplly
-        );
+        if (!me.order.get('manualPromotionsAddedToTicket')) {
+          me.order.set('manualPromotionsAddedToTicket', []);
+        }
+
+        if (promotionToAplly.rule.get('obdiscAllowmultipleinstan')) {
+          promotionToAplly.discountinstance = OB.UTIL.get_UUID();
+        } else {
+          if (promotionToAplly.forceReplace) {
+            let newPromotionsAfterReplace = [];
+            me.order
+              .get('manualPromotionsAddedToTicket')
+              .forEach(manualPromotionAdded => {
+                if (manualPromotionAdded.rule.id !== promotionToAplly.rule.id) {
+                  newPromotionsAfterReplace.push(manualPromotionAdded);
+                }
+              });
+            if (newPromotionsAfterReplace.length > 0) {
+              me.order.set(
+                'manualPromotionsAddedToTicket',
+                newPromotionsAfterReplace
+              );
+            }
+          }
+        }
+
+        me.order.get('manualPromotionsAddedToTicket').push(promotionToAplly);
+
+        me.order.calculateReceipt();
 
         me.closingDiscounts();
       }
