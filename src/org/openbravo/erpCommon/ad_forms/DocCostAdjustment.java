@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.ad_forms;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 
@@ -29,6 +30,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
@@ -176,199 +178,210 @@ public class DocCostAdjustment extends AcctServer {
     String Fact_Acct_Group_ID = SequenceIdData.getUUID();
     String amtDebit = "0";
     String amtCredit = "0";
+    String clientId = OBContext.getOBContext().getCurrentClient().getId();
 
     // Lines
     for (int i = 0; p_lines != null && i < p_lines.length; i++) {
       DocLine_CostAdjustment line = (DocLine_CostAdjustment) p_lines[i];
-      String transactionType = line.getTransactionType();
 
-      BigDecimal amount = new BigDecimal(line.getAmount());
-      ProductInfo p = new ProductInfo(line.m_M_Product_ID, conn);
+      List<String> orgAcctSchema = OBContext.getOBContext()
+          .getAcctSchemaStructureProvider()
+          .getAcctSchemas(line.m_AD_Org_ID, clientId);
 
-      log4jDocCostAdjustment.debug("antes del creteline, line.getAmount(): " + line.getAmount()
-          + " - TransactionType: " + transactionType);
-      if (transactionType.equals(DocLine_CostAdjustment.TRXTYPE_SHIPMENT)) {
-        // Cogs DR
-        // Inventory Asset CR
-        log4jDocCostAdjustment.debug("********** DocCostAdjustment - factAcct - account - "
-            + p.getAccount(ProductInfo.ACCTTYPE_P_Cogs, as, conn).C_ValidCombination_ID);
+      boolean schemaBelongToOrganization = orgAcctSchema.stream()
+          .anyMatch(accschemaId -> StringUtils.equalsIgnoreCase(accschemaId, as.m_C_AcctSchema_ID));
 
-        if (line.isTransactionNegative()) {
-          amtDebit = "";
-          amtCredit = amount.toPlainString();
-        } else {
-          amtDebit = amount.toPlainString();
-          amtCredit = "";
-        }
-        fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_Cogs, as, conn),
-            line.m_C_Currency_ID, amtDebit, amtCredit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-            DocumentType, line.m_DateAcct, null, conn);
-        fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
-            line.m_C_Currency_ID, amtCredit, amtDebit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-            DocumentType, line.m_DateAcct, null, conn);
-      } else if (transactionType.equals(DocLine_CostAdjustment.TRXTYPE_RECEIPT)) {
-        Account acct = null;
-        // Inventory Asset DR
-        if (line.getIsSource() && ("PDC").equals(line.getSourceProcess())) { // Price Diff
-          // Correction
-          // Invoice Price Variance CR
-          acct = p.getAccount(ProductInfo.ACCTTYPE_P_IPV, as, conn);
-        } else if (line.getIsSource() && ("LC").equals(line.getSourceProcess())) {
-          throw new IllegalStateException(OBMessageUtils.messageBD("LCNotAccounting"));
-        } else {
-          // Product Exp CR
-          acct = getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as,
-              line.getWarehouseId(), conn);
-        }
-        log4jDocCostAdjustment.debug("********** DocCostAdjustment - factAcct - account - "
-            + p.getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn).C_ValidCombination_ID);
-        if (line.isTransactionNegative()) {
-          amtDebit = amount.toPlainString();
-          amtCredit = "";
-        } else {
-          amtDebit = "";
-          amtCredit = amount.toPlainString();
-        }
-        fact.createLine(line, acct, line.m_C_Currency_ID, amtDebit, amtCredit, Fact_Acct_Group_ID,
-            nextSeqNo(SeqNo), DocumentType, line.m_DateAcct, null, conn);
-        fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
-            line.m_C_Currency_ID, amtCredit, amtDebit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-            DocumentType, line.m_DateAcct, null, conn);
-      } else if (transactionType.equals(DocLine_CostAdjustment.TRXTYPE_INVENTORY)) {
-        // Inventory Asset DR
-        // Inventory Adjustment CR
-        log4jDocCostAdjustment.debug("********** DocCostAdjustment - factAcct - account - "
-            + getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as, line.getWarehouseId(),
-                conn).C_ValidCombination_ID);
-        if (line.isTransactionNegative()) {
-          amtDebit = amount.toPlainString();
-          amtCredit = "";
-        } else {
-          amtDebit = "";
-          amtCredit = amount.toPlainString();
-        }
-        fact.createLine(line,
-            getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as, line.getWarehouseId(),
-                conn),
-            line.m_C_Currency_ID, amtDebit, amtCredit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-            DocumentType, line.m_DateAcct, null, conn);
-        fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
-            line.m_C_Currency_ID, amtCredit, amtDebit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-            DocumentType, line.m_DateAcct, null, conn);
-      } else if (transactionType.equals(DocLine_CostAdjustment.TRXTYPE_INTERNALMOVEMENTFROM)) {
-        // Inventory Asset DR
-        // Inventory Adjustment CR
-        M_Warehouse_ID = line.getWarehouseId();
-        log4jDocCostAdjustment.debug("********** DocCostAdjustment - factAcct - account - "
-            + getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as, line.getWarehouseId(),
-                conn).C_ValidCombination_ID);
-        if (line.isTransactionNegative()) {
-          amtDebit = amount.negate().toPlainString();
-          amtCredit = "";
-        } else {
-          amtDebit = "";
-          amtCredit = amount.negate().toPlainString();
-        }
-        fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
-            line.m_C_Currency_ID, amtDebit, amtCredit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-            DocumentType, line.m_DateAcct, null, conn);
+      if (schemaBelongToOrganization) {
+        String transactionType = line.getTransactionType();
 
-        fact.createLine(line,
-            getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as, line.getWarehouseId(),
-                conn),
-            line.m_C_Currency_ID, amtCredit, amtDebit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-            DocumentType, line.m_DateAcct, null, conn);
-      } else if (transactionType.equals(DocLine_CostAdjustment.TRXTYPE_INTERNALMOVEMENTTO)) {
-        // Inventory Asset DR
-        // Inventory Adjustment CR
-        M_Warehouse_ID = line.getWarehouseId();
-        log4jDocCostAdjustment.debug("********** DocCostAdjustment - factAcct - account - "
-            + getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as, line.getWarehouseId(),
-                conn).C_ValidCombination_ID);
-        if (line.isTransactionNegative()) {
-          amtDebit = amount.toPlainString();
-          amtCredit = "";
-        } else {
-          amtDebit = "";
-          amtCredit = amount.toPlainString();
-        }
-        fact.createLine(line,
-            getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as, line.getWarehouseId(),
-                conn),
-            line.m_C_Currency_ID, amtDebit, amtCredit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-            DocumentType, line.m_DateAcct, null, conn);
-        fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
-            line.m_C_Currency_ID, amtCredit, amtDebit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-            DocumentType, line.m_DateAcct, null, conn);
-      } else if (transactionType.equals(DocLine_CostAdjustment.TRXTYPE_INTERNALCONSUMPTION)) {
-        // Inventory Asset DR
-        // Inventory Adjustment CR
-        M_Warehouse_ID = line.getWarehouseId();
-        log4jDocCostAdjustment.debug("********** DocCostAdjustment - factAcct - account - "
-            + getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as, line.getWarehouseId(),
-                conn).C_ValidCombination_ID);
-        if (line.isTransactionNegative()) {
-          amtDebit = amount.toPlainString();
-          amtCredit = "";
-        } else {
-          amtDebit = "";
-          amtCredit = amount.toPlainString();
-        }
-        fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
-            line.m_C_Currency_ID, amtDebit, amtCredit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-            DocumentType, line.m_DateAcct, null, conn);
+        BigDecimal amount = new BigDecimal(line.getAmount());
+        ProductInfo p = new ProductInfo(line.m_M_Product_ID, conn);
 
-        fact.createLine(line,
-            getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as, line.getWarehouseId(),
-                conn),
-            line.m_C_Currency_ID, amtCredit, amtDebit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-            DocumentType, line.m_DateAcct, null, conn);
-      } else if (transactionType.equals(DocLine_CostAdjustment.TRXTYPE_BOM)) {
-        // Inventory Asset DR
-        // Inventory Adjustment CR
-        M_Warehouse_ID = line.getWarehouseId();
-        log4jDocCostAdjustment.debug("********** DocCostAdjustment - factAcct - account - "
-            + getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as, line.getWarehouseId(),
-                conn).C_ValidCombination_ID);
-        if (line.isTransactionNegative()) {
-          amtDebit = amount.toPlainString();
-          amtCredit = "";
-        } else {
-          amtDebit = "";
-          amtCredit = amount.toPlainString();
-        }
-        fact.createLine(line,
-            getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as, line.getWarehouseId(),
-                conn),
-            line.m_C_Currency_ID, amtDebit, amtCredit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-            DocumentType, line.m_DateAcct, null, conn);
+        log4jDocCostAdjustment.debug("antes del creteline, line.getAmount(): " + line.getAmount()
+            + " - TransactionType: " + transactionType);
+        if (transactionType.equals(DocLine_CostAdjustment.TRXTYPE_SHIPMENT)) {
+          // Cogs DR
+          // Inventory Asset CR
+          log4jDocCostAdjustment.debug("********** DocCostAdjustment - factAcct - account - "
+              + p.getAccount(ProductInfo.ACCTTYPE_P_Cogs, as, conn).C_ValidCombination_ID);
 
-        fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
-            line.m_C_Currency_ID, amtCredit, amtDebit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-            DocumentType, line.m_DateAcct, null, conn);
-      } else if (transactionType.equals(DocLine_CostAdjustment.TRXTYPE_MANUFACTURING)) {
-        // Inventory Asset DR
-        // Inventory Adjustment CR
-        M_Warehouse_ID = line.getWarehouseId();
-        log4jDocCostAdjustment.debug("********** DocCostAdjustment - factAcct - account - "
-            + getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as, line.getWarehouseId(),
-                conn).C_ValidCombination_ID);
-        if (line.isTransactionNegative()) {
-          amtDebit = amount.toPlainString();
-          amtCredit = "";
-        } else {
-          amtDebit = "";
-          amtCredit = amount.toPlainString();
-        }
-        fact.createLine(line,
-            getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as, line.getWarehouseId(),
-                conn),
-            line.m_C_Currency_ID, amtDebit, amtCredit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-            DocumentType, line.m_DateAcct, null, conn);
+          if (line.isTransactionNegative()) {
+            amtDebit = "";
+            amtCredit = amount.toPlainString();
+          } else {
+            amtDebit = amount.toPlainString();
+            amtCredit = "";
+          }
+          fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_Cogs, as, conn),
+              line.m_C_Currency_ID, amtDebit, amtCredit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, line.m_DateAcct, null, conn);
+          fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
+              line.m_C_Currency_ID, amtCredit, amtDebit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, line.m_DateAcct, null, conn);
+        } else if (transactionType.equals(DocLine_CostAdjustment.TRXTYPE_RECEIPT)) {
+          Account acct = null;
+          // Inventory Asset DR
+          if (line.getIsSource() && ("PDC").equals(line.getSourceProcess())) { // Price Diff
+            // Correction
+            // Invoice Price Variance CR
+            acct = p.getAccount(ProductInfo.ACCTTYPE_P_IPV, as, conn);
+          } else if (line.getIsSource() && ("LC").equals(line.getSourceProcess())) {
+            throw new IllegalStateException(OBMessageUtils.messageBD("LCNotAccounting"));
+          } else {
+            // Product Exp CR
+            acct = getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as,
+                line.getWarehouseId(), conn);
+          }
+          log4jDocCostAdjustment.debug("********** DocCostAdjustment - factAcct - account - "
+              + p.getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn).C_ValidCombination_ID);
+          if (line.isTransactionNegative()) {
+            amtDebit = amount.toPlainString();
+            amtCredit = "";
+          } else {
+            amtDebit = "";
+            amtCredit = amount.toPlainString();
+          }
+          fact.createLine(line, acct, line.m_C_Currency_ID, amtDebit, amtCredit, Fact_Acct_Group_ID,
+              nextSeqNo(SeqNo), DocumentType, line.m_DateAcct, null, conn);
+          fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
+              line.m_C_Currency_ID, amtCredit, amtDebit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, line.m_DateAcct, null, conn);
+        } else if (transactionType.equals(DocLine_CostAdjustment.TRXTYPE_INVENTORY)) {
+          // Inventory Asset DR
+          // Inventory Adjustment CR
+          log4jDocCostAdjustment.debug("********** DocCostAdjustment - factAcct - account - "
+              + getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as, line.getWarehouseId(),
+                  conn).C_ValidCombination_ID);
+          if (line.isTransactionNegative()) {
+            amtDebit = amount.toPlainString();
+            amtCredit = "";
+          } else {
+            amtDebit = "";
+            amtCredit = amount.toPlainString();
+          }
+          fact.createLine(line,
+              getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as, line.getWarehouseId(),
+                  conn),
+              line.m_C_Currency_ID, amtDebit, amtCredit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, line.m_DateAcct, null, conn);
+          fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
+              line.m_C_Currency_ID, amtCredit, amtDebit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, line.m_DateAcct, null, conn);
+        } else if (transactionType.equals(DocLine_CostAdjustment.TRXTYPE_INTERNALMOVEMENTFROM)) {
+          // Inventory Asset DR
+          // Inventory Adjustment CR
+          M_Warehouse_ID = line.getWarehouseId();
+          log4jDocCostAdjustment.debug("********** DocCostAdjustment - factAcct - account - "
+              + getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as, line.getWarehouseId(),
+                  conn).C_ValidCombination_ID);
+          if (line.isTransactionNegative()) {
+            amtDebit = amount.negate().toPlainString();
+            amtCredit = "";
+          } else {
+            amtDebit = "";
+            amtCredit = amount.negate().toPlainString();
+          }
+          fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
+              line.m_C_Currency_ID, amtDebit, amtCredit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, line.m_DateAcct, null, conn);
 
-        fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
-            line.m_C_Currency_ID, amtCredit, amtDebit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-            DocumentType, line.m_DateAcct, null, conn);
+          fact.createLine(line,
+              getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as, line.getWarehouseId(),
+                  conn),
+              line.m_C_Currency_ID, amtCredit, amtDebit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, line.m_DateAcct, null, conn);
+        } else if (transactionType.equals(DocLine_CostAdjustment.TRXTYPE_INTERNALMOVEMENTTO)) {
+          // Inventory Asset DR
+          // Inventory Adjustment CR
+          M_Warehouse_ID = line.getWarehouseId();
+          log4jDocCostAdjustment.debug("********** DocCostAdjustment - factAcct - account - "
+              + getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as, line.getWarehouseId(),
+                  conn).C_ValidCombination_ID);
+          if (line.isTransactionNegative()) {
+            amtDebit = amount.toPlainString();
+            amtCredit = "";
+          } else {
+            amtDebit = "";
+            amtCredit = amount.toPlainString();
+          }
+          fact.createLine(line,
+              getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as, line.getWarehouseId(),
+                  conn),
+              line.m_C_Currency_ID, amtDebit, amtCredit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, line.m_DateAcct, null, conn);
+          fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
+              line.m_C_Currency_ID, amtCredit, amtDebit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, line.m_DateAcct, null, conn);
+        } else if (transactionType.equals(DocLine_CostAdjustment.TRXTYPE_INTERNALCONSUMPTION)) {
+          // Inventory Asset DR
+          // Inventory Adjustment CR
+          M_Warehouse_ID = line.getWarehouseId();
+          log4jDocCostAdjustment.debug("********** DocCostAdjustment - factAcct - account - "
+              + getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as, line.getWarehouseId(),
+                  conn).C_ValidCombination_ID);
+          if (line.isTransactionNegative()) {
+            amtDebit = amount.toPlainString();
+            amtCredit = "";
+          } else {
+            amtDebit = "";
+            amtCredit = amount.toPlainString();
+          }
+          fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
+              line.m_C_Currency_ID, amtDebit, amtCredit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, line.m_DateAcct, null, conn);
+
+          fact.createLine(line,
+              getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as, line.getWarehouseId(),
+                  conn),
+              line.m_C_Currency_ID, amtCredit, amtDebit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, line.m_DateAcct, null, conn);
+        } else if (transactionType.equals(DocLine_CostAdjustment.TRXTYPE_BOM)) {
+          // Inventory Asset DR
+          // Inventory Adjustment CR
+          M_Warehouse_ID = line.getWarehouseId();
+          log4jDocCostAdjustment.debug("********** DocCostAdjustment - factAcct - account - "
+              + getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as, line.getWarehouseId(),
+                  conn).C_ValidCombination_ID);
+          if (line.isTransactionNegative()) {
+            amtDebit = amount.toPlainString();
+            amtCredit = "";
+          } else {
+            amtDebit = "";
+            amtCredit = amount.toPlainString();
+          }
+          fact.createLine(line,
+              getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as, line.getWarehouseId(),
+                  conn),
+              line.m_C_Currency_ID, amtDebit, amtCredit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, line.m_DateAcct, null, conn);
+
+          fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
+              line.m_C_Currency_ID, amtCredit, amtDebit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, line.m_DateAcct, null, conn);
+        } else if (transactionType.equals(DocLine_CostAdjustment.TRXTYPE_MANUFACTURING)) {
+          // Inventory Asset DR
+          // Inventory Adjustment CR
+          M_Warehouse_ID = line.getWarehouseId();
+          log4jDocCostAdjustment.debug("********** DocCostAdjustment - factAcct - account - "
+              + getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as, line.getWarehouseId(),
+                  conn).C_ValidCombination_ID);
+          if (line.isTransactionNegative()) {
+            amtDebit = amount.toPlainString();
+            amtCredit = "";
+          } else {
+            amtDebit = "";
+            amtCredit = amount.toPlainString();
+          }
+          fact.createLine(line,
+              getAccountByWarehouse(AcctServer.ACCTTYPE_InvDifferences, as, line.getWarehouseId(),
+                  conn),
+              line.m_C_Currency_ID, amtDebit, amtCredit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, line.m_DateAcct, null, conn);
+
+          fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
+              line.m_C_Currency_ID, amtCredit, amtDebit, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+              DocumentType, line.m_DateAcct, null, conn);
+        }
       }
     } // lines
 
