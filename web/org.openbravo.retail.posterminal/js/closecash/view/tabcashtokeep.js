@@ -159,50 +159,31 @@ enyo.kind({
   },
   components: [
     {
-      classes: 'obObposCashupUiCashToKeep-container1',
+      classes: 'obObposCashupUiCashToKeep-wrapper',
       components: [
         {
-          classes: 'obObposCashupUiCashToKeep-container1-container1',
+          classes: 'obObposCashupUiCashToKeep-wrapper-components',
           components: [
             {
-              classes:
-                'obObposCashupUiCashToKeep-container1-container1-container1',
+              name: 'cashtokeepheader',
+              classes: 'obObposCashupUiCashToKeep-wrapper-components-title',
+              renderHeader: function(value, step, count) {
+                this.setContent(
+                  OB.I18N.getLabel('OBPOS_LblStepNumber', [step, count]) +
+                    ' ' +
+                    OB.I18N.getLabel('OBPOS_LblStepCashToKeep', [value]) +
+                    OB.OBPOSCashUp.UI.CashUp.getTitleExtensions()
+                );
+              }
+            },
+            {
+              classes: 'obObposCashupUiCashToKeep-wrapper-components-body',
               components: [
-                {
-                  classes:
-                    'obObposCashupUiCashToKeep-container1-container1-container1-container1 row-fluid',
-                  components: [
-                    {
-                      classes:
-                        'obObposCashupUiCashToKeep-container1-container1-container1-container1-container1 span12',
-                      components: [
-                        {
-                          name: 'cashtokeepheader',
-                          classes:
-                            'obObposCashupUiCashToKeep-container1-container1-container1-container1-container1-cashtokeepheader',
-                          renderHeader: function(value, step, count) {
-                            this.setContent(
-                              OB.I18N.getLabel('OBPOS_LblStepNumber', [
-                                step,
-                                count
-                              ]) +
-                                ' ' +
-                                OB.I18N.getLabel('OBPOS_LblStepCashToKeep', [
-                                  value
-                                ]) +
-                                OB.OBPOSCashUp.UI.CashUp.getTitleExtensions()
-                            );
-                          }
-                        }
-                      ]
-                    }
-                  ]
-                },
                 {
                   kind: 'OB.OBPOSCashUp.UI.KeepDetails',
                   name: 'formkeep',
                   classes:
-                    'obObposCashupUiCashToKeep-container1-container1-container1-formkeep',
+                    'obObposCashupUiCashToKeep-wrapper-components-body-formkeep',
                   handlers: {
                     onChangeOption: 'changeOption'
                   },

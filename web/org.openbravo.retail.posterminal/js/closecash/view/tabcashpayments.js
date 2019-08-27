@@ -75,50 +75,58 @@ enyo.kind({
   },
   components: [
     {
-      classes: 'obObposCashUpUiRenderCashPaymentsLine-coinComponent',
+      classes: 'obObposCashUpUiRenderCashPaymentsLine-listItem',
       components: [
         {
-          name: 'coin',
-          kind: 'OB.UI.Button',
-          avoidDoubleClick: false,
-          classes: 'obObposCashUpUiRenderCashPaymentsLine-coinComponent-coin',
-          ontap: 'addUnit'
-        }
-      ]
-    },
-    {
-      classes: 'obObposCashUpUiRenderCashPaymentsLine-numberOfCoinsComponent',
-      components: [
-        {
-          name: 'qtyminus',
-          kind: 'OB.UI.Button',
-          avoidDoubleClick: false,
           classes:
-            'obObposCashUpUiRenderCashPaymentsLine-numberOfCoinsComponent-qtyminus',
-          label: '-',
-          ontap: 'subUnit'
+            'obObposCashUpUiRenderCashPaymentsLine-listItem-coinComponent',
+          components: [
+            {
+              name: 'coin',
+              kind: 'OB.UI.Button',
+              avoidDoubleClick: false,
+              classes:
+                'obObposCashUpUiRenderCashPaymentsLine-listItem-coinComponent-coin',
+              ontap: 'addUnit'
+            }
+          ]
         },
         {
-          name: 'numberOfCoins',
-          kind: 'OB.UI.Button',
           classes:
-            'obObposCashUpUiRenderCashPaymentsLine-numberOfCoinsComponent-numberOfCoins',
-          ontap: 'lineEdit'
+            'obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent',
+          components: [
+            {
+              name: 'qtyminus',
+              kind: 'OB.UI.Button',
+              avoidDoubleClick: false,
+              classes:
+                'obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-qtyminus',
+              label: '-',
+              ontap: 'subUnit'
+            },
+            {
+              name: 'numberOfCoins',
+              kind: 'OB.UI.Button',
+              classes:
+                'obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-numberOfCoins',
+              ontap: 'lineEdit'
+            },
+            {
+              name: 'qtyplus',
+              kind: 'OB.UI.Button',
+              avoidDoubleClick: false,
+              classes:
+                'obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-qtyplus',
+              label: '+',
+              ontap: 'addUnit'
+            }
+          ]
         },
         {
-          name: 'qtyplus',
-          kind: 'OB.UI.Button',
-          avoidDoubleClick: false,
-          classes:
-            'obObposCashUpUiRenderCashPaymentsLine-numberOfCoinsComponent-qtyplus',
-          label: '+',
-          ontap: 'addUnit'
+          name: 'total',
+          classes: 'obObposCashUpUiRenderCashPaymentsLine-listItem-total'
         }
       ]
-    },
-    {
-      name: 'total',
-      classes: 'obObposCashUpUiRenderCashPaymentsLine-total'
     }
   ],
   create: function() {
@@ -165,11 +173,13 @@ enyo.kind({
   classes: 'obObposCashupUiRenderTotal',
   printAmount: function(value) {
     this.setContent(OB.I18N.formatCurrency(value));
-    this.addClass(
-      OB.DEC.compare(value) < 0
-        ? 'obObposCashupUiRenderTotal_negative'
-        : 'obObposCashupUiRenderTotal_positive'
-    );
+    if (OB.DEC.compare(value) < 0) {
+      this.removeClass('obObposCashupUiRenderTotal_positive');
+      this.addClass('obObposCashupUiRenderTotal_negative');
+    } else {
+      this.removeClass('obObposCashupUiRenderTotal_negative');
+      this.addClass('obObposCashupUiRenderTotal_positive');
+    }
   }
 });
 
@@ -243,8 +253,6 @@ enyo.kind({
                         'obObposCashupUiCashPayments-wrapper-components-body-list-paymentsList',
                       renderLine: 'OB.OBPOSCashUp.UI.RenderCashPaymentsLine',
                       renderEmpty: 'OB.UI.RenderEmpty',
-                      scrollAreaMaxHeight:
-                        'obObposCashupUiCashPayments-wrapper-components-body-list-paymentsList-scrollArea',
                       listStyle: 'list'
                     },
                     {
@@ -272,7 +280,7 @@ enyo.kind({
                             'obObposCashupUiCashPayments-wrapper-components-body-footer-container1-totalLbl',
                           initComponents: function() {
                             this.setContent(
-                              OB.I18N.getLabel('OBPOS_ReceiptTotal')
+                              OB.I18N.getLabel('OBPOS_LblExpected')
                             );
                           }
                         },
@@ -363,6 +371,11 @@ enyo.kind({
   printTotals: function() {
     this.$.counted.printAmount(this.payment.get('foreignCounted'));
     this.$.difference.printAmount(this.payment.get('foreignDifference'));
+    if (this.payment.get('foreignDifference') <= 0) {
+      this.$.differenceLbl.setContent(OB.I18N.getLabel('OBPOS_Remaining'));
+    } else {
+      this.$.differenceLbl.setContent(OB.I18N.getLabel('OBPOS_Surplus'));
+    }
   },
 
   lineEditCash: function(inSender, inEvent) {
@@ -373,7 +386,7 @@ enyo.kind({
     // reset previous status
     if (this.originator && this.originator.$.numberOfCoins) {
       this.originator.$.numberOfCoins.removeClass(
-        'obObposCashUpUiRenderCashPaymentsLine-numberOfCoinsComponent-numberOfCoins_selected'
+        'obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-numberOfCoins_selected'
       );
     }
 
@@ -381,7 +394,7 @@ enyo.kind({
     if (originator && originator !== this.originator) {
       this.originator = originator;
       this.originator.$.numberOfCoins.addClass(
-        'obObposCashUpUiRenderCashPaymentsLine-numberOfCoinsComponent-numberOfCoins_selected'
+        'obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-numberOfCoins_selected'
       );
       this.model.trigger('action:SetStatusCoin');
     } else {
