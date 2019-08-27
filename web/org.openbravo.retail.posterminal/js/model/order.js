@@ -3464,12 +3464,16 @@
           ) {
             OB.Dal.find(
               OB.Model.ProductCharacteristicValue,
-              {"product": p.get('id')},
+              { product: p.get('id') },
               function(productcharacteristics) {
-                p.set('productCharacteristics', productcharacteristics.toJSON());
-                addProdCharCallback()
-              });
-          }else{
+                p.set(
+                  'productCharacteristics',
+                  productcharacteristics.toJSON()
+                );
+                addProdCharCallback();
+              }
+            );
+          } else {
             addProdCharCallback();
           }
         }
