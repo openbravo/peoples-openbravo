@@ -190,6 +190,7 @@ public class UpdateActuals extends DalBaseProcess {
           queryString += "      and e.ndDimension.id in :user2Tree";
           parameters.put("user2Tree", user2Tree);
         }
+        //@formatter:on
         Query<Object[]> query = OBDal.getInstance()
             .getSession()
             .createQuery(queryString, Object[].class);
