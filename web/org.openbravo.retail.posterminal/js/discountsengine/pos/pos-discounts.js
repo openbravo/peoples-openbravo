@@ -17,7 +17,11 @@
       if (!OB.Discounts.Pos.ruleImpls) {
         throw 'Local discount cache is not yet initialized, execute: OB.Discounts.Pos.initCache()';
       }
-      return OB.Discounts.applyDiscounts(ticket, OB.Discounts.Pos.ruleImpls);
+      return OB.Discounts.applyDiscounts(
+        ticket,
+        OB.Discounts.Pos.ruleImpls,
+        OB.Discounts.Pos.bpSets
+      );
     },
 
     calculateRemote: function(ticket) {
@@ -67,6 +71,9 @@
       let newTicket = {};
       newTicket.businessPartner = {};
       newTicket.businessPartner.id = receipt.get('bp').id;
+      newTicket.businessPartner.businessPartnerCategory = receipt
+        .get('bp')
+        .get('businessPartnerCategory');
       newTicket.businessPartner._identifier = receipt.get('bp')._identifier;
       newTicket.id = receipt.get('id');
       newTicket.date = receipt.get('orderDate');
@@ -181,12 +188,6 @@
 
     computeDiscountsQuery(basicParams) {
       let params = [
-        basicParams.businessPartner,
-        basicParams.businessPartner,
-        basicParams.businessPartner,
-        basicParams.businessPartner,
-        basicParams.businessPartner,
-        basicParams.businessPartner,
         OB.MobileApp.model.get('pricelist').id,
         OB.MobileApp.model.get('pricelist').id,
         OB.MobileApp.model.get('context').role.id,
@@ -194,55 +195,6 @@
       ];
       let discountsFilter =
         'SELECT M_OFFER_ID FROM M_OFFER WHERE ( 1=1 ' +
-        //BusinessPartner, BPCategory, BPSet filter
-        " AND((BPARTNER_SELECTION = 'Y'" +
-        ' AND NOT EXISTS' +
-        ' (SELECT 1' + //
-        ' FROM M_OFFER_BPARTNER' + //
-        ' WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID' + //
-        '   AND C_BPARTNER_ID = ?' +
-        ' ))' + //
-        " OR(BPARTNER_SELECTION = 'N'" + //
-        ' AND EXISTS' + //
-        ' (SELECT 1' + //
-        ' FROM M_OFFER_BPARTNER' + //
-        ' WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID' + //
-        '   AND C_BPARTNER_ID = ?' + //
-        ' )))' + //
-        " AND((BP_SET_SELECTION = 'Y'" + //
-        ' AND NOT EXISTS' + //
-        ' (SELECT 1' + //
-        ' FROM M_OFFER_BP_SET OBPS, C_BP_SET_LINE BPL' + //
-        ' WHERE OBPS.C_BP_SET_ID = BPL.C_BP_SET_ID' + //
-        '   AND OBPS.M_OFFER_ID = M_OFFER.M_OFFER_ID' + //
-        "   AND BPL.C_BPARTNER_ID = ? AND datetime('now') BETWEEN COALESCE(datetime(BPL.STARTDATE), datetime('2000-12-31T00:00:00')) AND COALESCE(datetime(BPL.ENDDATE), datetime('9999-12-31T23:59:59'))" + //
-        ' ))' + //
-        " OR(BP_SET_SELECTION = 'N'" + //
-        ' AND EXISTS' + //
-        ' (SELECT 1' + //
-        ' FROM M_OFFER_BP_SET OBPS, C_BP_SET_LINE BPL' + //
-        ' WHERE OBPS.C_BP_SET_ID = BPL.C_BP_SET_ID' + //
-        '   AND OBPS.M_OFFER_ID = M_OFFER.M_OFFER_ID' + //
-        "   AND BPL.C_BPARTNER_ID = ? AND datetime('now') BETWEEN COALESCE(datetime(BPL.STARTDATE), datetime('2000-12-31T00:00:00')) AND COALESCE(datetime(BPL.ENDDATE), datetime('9999-12-31T23:59:59'))" + //
-        ' )))' + //
-        " AND((BP_GROUP_SELECTION = 'Y'" + //
-        ' AND NOT EXISTS' + //
-        ' (SELECT 1' + //
-        ' FROM C_BPARTNER B,' + //
-        '   M_OFFER_BP_GROUP OB' + //
-        ' WHERE OB.M_OFFER_ID = M_OFFER.M_OFFER_ID' + //
-        '   AND B.C_BPARTNER_ID = ?' + //
-        '   AND OB.C_BP_GROUP_ID = B.C_BP_GROUP_ID' + //
-        ' ))' + //
-        " OR(BP_GROUP_SELECTION = 'N'" + //
-        ' AND EXISTS' + //
-        ' (SELECT 1' + //
-        ' FROM C_BPARTNER B,' + //
-        '   M_OFFER_BP_GROUP OB' + //
-        ' WHERE OB.M_OFFER_ID = M_OFFER.M_OFFER_ID' + //
-        '   AND B.C_BPARTNER_ID = ?' + //
-        '   AND OB.C_BP_GROUP_ID = B.C_BP_GROUP_ID' + //
-        ' )))' + //
         //Pricelist filter
         " AND ((pricelist_selection = 'Y' AND NOT EXISTS" + //
         '   (SELECT 1 FROM m_offer_pricelist opl WHERE m_offer.m_offer_id = opl.m_offer_id AND opl.m_pricelist_id = ? ))' + //
@@ -378,15 +330,114 @@
                         }
                       });
 
-                      OB.UTIL.HookManager.executeHooks(
-                        'OBPOS_DiscountsCacheInitialization',
-                        {
-                          discounts: OB.Discounts.Pos.ruleImpls,
-                          baseFilter,
-                          params: discountsQueryObject.params
-                        },
-                        function(args) {
-                          finishCallback();
+                      let bpartnerQuery =
+                        'SELECT * FROM M_OFFER_BPARTNER INNER JOIN M_OFFER ON M_OFFER_BPARTNER.M_OFFER_ID = M_OFFER.M_OFFER_ID' +
+                        baseFilter;
+                      OB.Dal.query(
+                        OB.Model.DiscountFilterBusinessPartner,
+                        bpartnerQuery,
+                        discountsQueryObject.params,
+                        bpartners => {
+                          let bpartnerGroups = bpartners.groupBy(prod =>
+                            prod.get('priceAdjustment')
+                          );
+                          OB.Discounts.Pos.ruleImpls.forEach(rule => {
+                            rule.cbpartners = [];
+                            if (bpartnerGroups[rule.id]) {
+                              bpartnerGroups[rule.id].forEach(discBpartner => {
+                                const objDiscBpartner = discBpartner.toJSON();
+                                objDiscBpartner.businessPartner = {
+                                  id: discBpartner.get('businessPartner')
+                                };
+                                rule.cbpartners.push(objDiscBpartner);
+                              });
+                            }
+                          });
+
+                          let bpartnerGroupQuery =
+                            'SELECT * FROM M_OFFER_BP_GROUP INNER JOIN M_OFFER ON M_OFFER_BP_GROUP.M_OFFER_ID = M_OFFER.M_OFFER_ID' +
+                            baseFilter;
+                          OB.Dal.query(
+                            OB.Model.DiscountFilterBusinessPartnerGroup,
+                            bpartnerGroupQuery,
+                            discountsQueryObject.params,
+                            bpartnerGroups => {
+                              let bpartnerGroupGroups = bpartnerGroups.groupBy(
+                                prod => prod.get('priceAdjustment')
+                              );
+                              OB.Discounts.Pos.ruleImpls.forEach(rule => {
+                                rule.cbpartnerGroups = [];
+                                if (bpartnerGroupGroups[rule.id]) {
+                                  bpartnerGroupGroups[rule.id].forEach(
+                                    discbpartnerGroup => {
+                                      const objDiscbpartnerGroup = discbpartnerGroup.toJSON();
+                                      objDiscbpartnerGroup.businessPartnerCategory = {
+                                        id: discbpartnerGroup.get(
+                                          'businessPartnerCategory'
+                                        )
+                                      };
+                                      rule.cbpartnerGroups.push(
+                                        objDiscbpartnerGroup
+                                      );
+                                    }
+                                  );
+                                }
+                              });
+
+                              let bpartnerSetQuery =
+                                'SELECT * FROM M_OFFER_BP_SET INNER JOIN M_OFFER ON M_OFFER_BP_SET.M_OFFER_ID = M_OFFER.M_OFFER_ID' +
+                                baseFilter;
+                              OB.Dal.query(
+                                OB.Model.DiscountBusinessPartnerSet,
+                                bpartnerSetQuery,
+                                discountsQueryObject.params,
+                                bpartnerSets => {
+                                  let bpartnerSetGroups = bpartnerSets.groupBy(
+                                    prod => prod.get('discount')
+                                  );
+                                  OB.Discounts.Pos.ruleImpls.forEach(rule => {
+                                    rule.cbpartnerSets = [];
+                                    if (bpartnerSetGroups[rule.id]) {
+                                      bpartnerSetGroups[rule.id].forEach(
+                                        discbpartnerSet => {
+                                          const objDiscbpartnerSet = discbpartnerSet.toJSON();
+                                          rule.cbpartnerSets.push(
+                                            objDiscbpartnerSet
+                                          );
+                                        }
+                                      );
+                                    }
+                                  });
+
+                                  //BPSets
+                                  OB.Dal.find(
+                                    OB.Model.BPSetLine,
+                                    [],
+                                    setLines => {
+                                      let setLinesBySet = setLines.groupBy(
+                                        setLine => setLine.get('bpSet')
+                                      );
+                                      OB.Discounts.Pos.bpSets = JSON.parse(
+                                        JSON.stringify(setLinesBySet)
+                                      );
+
+                                      OB.UTIL.HookManager.executeHooks(
+                                        'OBPOS_DiscountsCacheInitialization',
+                                        {
+                                          discounts: OB.Discounts.Pos.ruleImpls,
+                                          baseFilter,
+                                          params: discountsQueryObject.params
+                                        },
+                                        function(args) {
+                                          finishCallback();
+                                        }
+                                      );
+                                    }
+                                  );
+                                }
+                              );
+                            }
+                          );
                         }
                       );
                     }
