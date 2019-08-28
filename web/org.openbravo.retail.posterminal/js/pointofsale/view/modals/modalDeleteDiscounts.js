@@ -222,8 +222,9 @@ enyo.kind({
           orderManualPromotion = receipt
             .get('manualPromotionsAddedToTicket')
             .find(function(manualPromotion) {
+              let rule = new Backbone.Model(manualPromotion.rule);
               return (
-                manualPromotion.rule.get('id') === promotionRuleId &&
+                rule.get('id') === promotionRuleId &&
                 manualPromotion.discountInstance === promotionDiscountInstance
               );
             });

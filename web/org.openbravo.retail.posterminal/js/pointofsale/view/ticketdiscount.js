@@ -499,6 +499,21 @@ enyo.kind({
         promotionToAplly.applicableLines = orderLinesCollection;
         promotionToAplly.rule = discountsContainer.model;
 
+        if (
+          OB.MobileApp.model.hasPermission('OBPOS_NewDiscounts', true) &&
+          OB.Model.Discounts.discountRules[
+            promotionToAplly.rule.get('discountType')
+          ].getIdentifier
+        ) {
+          let finalPromotionName = OB.Model.Discounts.discountRules[
+            promotionToAplly.rule.get('discountType')
+          ].getIdentifier(promotionToAplly.rule, {
+            percentage: promotionToAplly.userAmt
+          });
+          promotionToAplly.rule.set('name', finalPromotionName);
+          promotionToAplly.rule.set('_identifier', finalPromotionName);
+        }
+
         if (discountsContainer.requiresQty && !discountsContainer.amt) {
           //Show a modal pop up with the error
           me.doShowPopup({
