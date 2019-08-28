@@ -86,9 +86,6 @@ enyo.kind({
           kind: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton'
         },
         {
-          classes: 'obObposCashupUiKeepDetails-RadioGroup-element1'
-        },
-        {
           name: 'allowmoveeverything',
           classes: 'obObposCashupUiKeepDetails-RadioGroup-allowmoveeverything',
           kind: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton',
@@ -97,16 +94,10 @@ enyo.kind({
           showing: false
         },
         {
-          classes: 'obObposCashupUiKeepDetails-RadioGroup-element2'
-        },
-        {
           name: 'allowdontmove',
           classes: 'obObposCashupUiKeepDetails-RadioGroup-allowdontmove',
           kind: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton',
           showing: false
-        },
-        {
-          classes: 'obObposCashupUiKeepDetails-RadioGroup-element3'
         },
         {
           name: 'allowvariableamount',

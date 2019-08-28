@@ -14520,6 +14520,8 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   margin-right: 10px;
   margin-bottom: 10px;
   margin-left: 10px;
+  display: block !important;
+  background-position: left center !important;
 }
 
 .obObposCashupUiCashToKeepRadioButton-lbl {
@@ -14544,24 +14546,12 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   /*Inherits: [OB.OBPOSCashUp.UI.CashToKeepRadioButton]*/
 }
 
-.obObposCashupUiKeepDetails-RadioGroup-element1 {
-  clear: both;
-}
-
 .obObposCashupUiKeepDetails-RadioGroup-allowmoveeverything {
   /*Inherits: [OB.OBPOSCashUp.UI.CashToKeepRadioButton]*/
 }
 
-.obObposCashupUiKeepDetails-RadioGroup-element2 {
-  clear: both;
-}
-
 .obObposCashupUiKeepDetails-RadioGroup-allowdontmove {
   /*Inherits: [OB.OBPOSCashUp.UI.CashToKeepRadioButton]*/
-}
-
-.obObposCashupUiKeepDetails-RadioGroup-element3 {
-  clear: both;
 }
 
 .obObposCashupUiKeepDetails-RadioGroup-allowvariableamount {
@@ -14625,11 +14615,10 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposCashupUiCashToKeep-wrapper-components-body {
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-
   height: 100%;
   overflow-y: auto;
+  padding: 10px;
+  box-sizing: border-box;
 }
 
 .obObposCashupUiCashToKeep-wrapper-components-body-formkeep {}
@@ -15009,111 +14998,117 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /*
 # Component: OB.OBPOSCashUp.UI.PostPrintClose
 */
-.obObPosCashUpUiPostPrintClose {}
+.obObPosCashUpUiPostPrintClose {
+  height: 100%;
+}
 
 .obObPosCashUpUiPostPrintClose.active {
   display: block;
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea {
-  max-height: 612px;
-  margin: 5px;
-  background-color: #ffffff;
+.obObPosCashUpUiPostPrintClose-wrapper {
+  padding: 25px 10px 25px 10px;
+  height: 100%;
+  box-sizing: border-box;
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1 {
-  padding: 5px;
+.obObPosCashUpUiPostPrintClose-wrapper-components {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  border-bottom: var(--bottomseparator-slim);
+  overflow-y: auto;
+  background-color: white;
+  box-shadow: 0px 0px 10px -1px #8d8d8d;
+  border-radius: 4px;
+  height: calc(100% - 1px);
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container1 {
+.obObPosCashUpUiPostPrintClose-wrapper-components-title {
+  padding: 12px;
+  border-bottom: var(--bottomseparator-slim);
+  text-align: center;
+  font-weight: bold;
+  font-size: 20px;
+  color: var(--color-maincolor);
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container1-container1 {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body {
+  height: 100%;
+  overflow-y: auto;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container1 {}
+
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1 {
   float: left;
   width: 100%;
   touch-action: none;
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container1-container1-reporttitle {
-  padding: 10px;
-  border-bottom: 1px solid #cccccc;
-  text-align: center;
-}
-
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container1-element1 {
-  clear: both;
-}
-
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container2 {}
-
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1 {
-  float: left;
-  width: 100%;
-  touch-action: none;
-}
-
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1 {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1 {
   padding: 10px;
   text-align: center;
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1-img {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1-img {
   padding: 20px;
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1-store {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1-store {
   padding: 5px;
   text-align: center;
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1-terminal {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1-terminal {
   padding: 5px;
   text-align: center;
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1-user {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1-user {
   padding: 5px;
   text-align: center;
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1-openingtime {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1-openingtime {
   padding: 5px;
   text-align: center;
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1-time {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1-time {
   padding: 5px;
   text-align: center;
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1-element1 {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1-element1 {
   padding: 0px 0px 10px 0px;
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-element1 {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-element1 {
   clear: both;
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container3-container1 {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container2-container1 {
   display: block;
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container3-container1-container1 {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container2-container1-container1 {
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container3-container1-container1-sales {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container2-container1-container1-sales {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_salesTable] */
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container3-container1-container1-returns {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container2-container1-container1-returns {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_returnsTable] */
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container3-container1-container1-totaltransactions {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container2-container1-container1-totaltransactions {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_totalTransactionsTable] */
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container3-element1 {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container2-element1 {
   border-bottom-width: 1px;
   border-bottom-style: solid;
   border-bottom-color: rgb(204, 204, 204);
@@ -15123,38 +15118,38 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   display: none;
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container3-element2 {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container2-element2 {
   display: none;
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container4 {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container3 {
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container4-startingsTable {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-startingsTable {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_startingsTable] */
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container4-dropsTable {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-dropsTable {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_cashDropsTable] */
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container4-depositsTable {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-depositsTable {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_cashDepositsTable] */
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container4-expectedTable {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-expectedTable {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_cashExpectedTable] */
 }
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container4-countedTable {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-countedTable {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_cashCountedTable] */
 }
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container4-differenceTable {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-differenceTable {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_cashDifferenceTable] */
 }
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container4-qtyToKeepTable {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-qtyToKeepTable {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_cashQtyToKeepTable] */
 }
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container4-qtyToDepoTable {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-qtyToDepoTable {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_cashQtyToDepoTable] */
 }
 

@@ -622,215 +622,201 @@ enyo.kind({
     {
       kind: 'Scroller',
       name: 'scrollArea',
-      classes: 'obObPosCashUpUiPostPrintClose-scrollArea',
+      classes: 'obObPosCashUpUiPostPrintClose-wrapper',
       thumb: true,
       horizontal: 'hidden',
       components: [
         {
-          classes: 'obObPosCashUpUiPostPrintClose-scrollArea-container1',
+          classes: 'obObPosCashUpUiPostPrintClose-wrapper-components',
           components: [
             {
-              classes:
-                'obObPosCashUpUiPostPrintClose-scrollArea-container1-container1 row-fluid',
-              components: [
-                {
-                  classes:
-                    'obObPosCashUpUiPostPrintClose-scrollArea-container1-container1-container1',
-                  components: [
-                    {
-                      name: 'reporttitle',
-                      classes:
-                        'obObPosCashUpUiPostPrintClose-scrollArea-container1-container1-container1-reporttitle',
-                      renderHeader: function(step, count) {
-                        this.setContent(
-                          OB.I18N.getLabel('OBPOS_LblStepNumber', [
-                            step,
-                            count
-                          ]) +
-                            ' ' +
-                            OB.I18N.getLabel('OBPOS_LblStepPostPrintAndClose') +
-                            OB.OBPOSCashUp.UI.CashUp.getTitleExtensions()
-                        );
-                      }
-                    }
-                  ]
-                },
-                {
-                  classes:
-                    'obObPosCashUpUiPostPrintClose-scrollArea-container1-container1-element1'
-                }
-              ]
+              name: 'reporttitle',
+              classes: 'obObPosCashUpUiPostPrintClose-wrapper-components-title',
+              renderHeader: function(step, count) {
+                this.setContent(
+                  OB.I18N.getLabel('OBPOS_LblStepNumber', [step, count]) +
+                    ' ' +
+                    OB.I18N.getLabel('OBPOS_LblStepPostPrintAndClose') +
+                    OB.OBPOSCashUp.UI.CashUp.getTitleExtensions()
+                );
+              }
             },
             {
-              classes:
-                'obObPosCashUpUiPostPrintClose-scrollArea-container1-container2 row-fluid',
+              classes: 'obObPosCashUpUiPostPrintClose-wrapper-components-body',
               components: [
                 {
                   classes:
-                    'obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1',
+                    'obObPosCashUpUiPostPrintClose-wrapper-components-body-container1 row-fluid',
                   components: [
                     {
                       classes:
-                        'obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1',
+                        'obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1',
                       components: [
                         {
-                          tag: 'img',
                           classes:
-                            'obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1-img',
-                          initComponents: function() {
-                            if (
-                              OB.MobileApp.model.get('terminal')
-                                .organizationImage
-                            ) {
-                              this.setAttribute(
-                                'src',
-                                'data:' +
-                                  OB.MobileApp.model.get('terminal')
-                                    .organizationImageMime +
-                                  ';base64,' +
+                            'obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1',
+                          components: [
+                            {
+                              tag: 'img',
+                              classes:
+                                'obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1-img',
+                              initComponents: function() {
+                                if (
                                   OB.MobileApp.model.get('terminal')
                                     .organizationImage
-                              );
+                                ) {
+                                  this.setAttribute(
+                                    'src',
+                                    'data:' +
+                                      OB.MobileApp.model.get('terminal')
+                                        .organizationImageMime +
+                                      ';base64,' +
+                                      OB.MobileApp.model.get('terminal')
+                                        .organizationImage
+                                  );
+                                }
+                              }
+                            },
+                            {
+                              name: 'store',
+                              classes:
+                                'obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1-store'
+                            },
+                            {
+                              name: 'terminal',
+                              classes:
+                                'obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1-terminal'
+                            },
+                            {
+                              name: 'user',
+                              classes:
+                                'obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1-user'
+                            },
+                            {
+                              name: 'openingtime',
+                              classes:
+                                'obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1-openingtime'
+                            },
+                            {
+                              name: 'time',
+                              classes:
+                                'obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1-time'
+                            },
+                            {
+                              classes:
+                                'obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1-element1'
                             }
-                          }
-                        },
-                        {
-                          name: 'store',
-                          classes:
-                            'obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1-store'
-                        },
-                        {
-                          name: 'terminal',
-                          classes:
-                            'obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1-terminal'
-                        },
-                        {
-                          name: 'user',
-                          classes:
-                            'obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1-user'
-                        },
-                        {
-                          name: 'openingtime',
-                          classes:
-                            'obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1-openingtime'
-                        },
-                        {
-                          name: 'time',
-                          classes:
-                            'obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1-time'
-                        },
-                        {
-                          classes:
-                            'obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1-element1'
+                          ]
                         }
                       ]
+                    },
+                    {
+                      classes:
+                        'obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-element1'
                     }
                   ]
                 },
+                //FIXME: Iterate taxes
                 {
                   classes:
-                    'obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-element1'
-                }
-              ]
-            },
-            //FIXME: Iterate taxes
-            {
-              classes:
-                'obObPosCashUpUiPostPrintClose-scrollArea-container1-container3 row-fluid',
-              components: [
-                {
-                  tag: 'ul',
-                  classes:
-                    'obObPosCashUpUiPostPrintClose-scrollArea-container1-container3-container1',
+                    'obObPosCashUpUiPostPrintClose-wrapper-components-body-container2 row-fluid',
                   components: [
                     {
-                      tag: 'li',
+                      tag: 'ul',
                       classes:
-                        'obObPosCashUpUiPostPrintClose-scrollArea-container1-container3-container1-container1 selected',
+                        'obObPosCashUpUiPostPrintClose-wrapper-components-body-container2-container1',
                       components: [
                         {
-                          kind: 'OB.OBPOSCashUp.UI.ppc_salesTable',
-                          name: 'sales',
+                          tag: 'li',
                           classes:
-                            'obObPosCashUpUiPostPrintClose-scrollArea-container1-container3-container1-container1-sales'
-                        },
-                        {
-                          kind: 'OB.OBPOSCashUp.UI.ppc_returnsTable',
-                          name: 'returns',
-                          classes:
-                            'obObPosCashUpUiPostPrintClose-scrollArea-container1-container3-container1-container1-returns'
-                        },
-                        {
-                          kind: 'OB.OBPOSCashUp.UI.ppc_totalTransactionsTable',
-                          name: 'totaltransactions',
-                          classes:
-                            'obObPosCashUpUiPostPrintClose-scrollArea-container1-container3-container1-container1-totaltransactions'
+                            'obObPosCashUpUiPostPrintClose-wrapper-components-body-container2-container1-container1 selected',
+                          components: [
+                            {
+                              kind: 'OB.OBPOSCashUp.UI.ppc_salesTable',
+                              name: 'sales',
+                              classes:
+                                'obObPosCashUpUiPostPrintClose-wrapper-components-body-container2-container1-container1-sales'
+                            },
+                            {
+                              kind: 'OB.OBPOSCashUp.UI.ppc_returnsTable',
+                              name: 'returns',
+                              classes:
+                                'obObPosCashUpUiPostPrintClose-wrapper-components-body-container2-container1-container1-returns'
+                            },
+                            {
+                              kind:
+                                'OB.OBPOSCashUp.UI.ppc_totalTransactionsTable',
+                              name: 'totaltransactions',
+                              classes:
+                                'obObPosCashUpUiPostPrintClose-wrapper-components-body-container2-container1-container1-totaltransactions'
+                            }
+                          ]
                         }
                       ]
+                    },
+                    {
+                      classes:
+                        'obObPosCashUpUiPostPrintClose-wrapper-components-body-container2-element1'
+                    },
+                    {
+                      classes:
+                        'obObPosCashUpUiPostPrintClose-wrapper-components-body-container2-element2'
                     }
                   ]
                 },
                 {
                   classes:
-                    'obObPosCashUpUiPostPrintClose-scrollArea-container1-container3-element1'
-                },
-                {
-                  classes:
-                    'obObPosCashUpUiPostPrintClose-scrollArea-container1-container3-element2'
-                }
-              ]
-            },
-            {
-              classes:
-                'obObPosCashUpUiPostPrintClose-scrollArea-container1-container4 row-fluid',
-              components: [
-                {
-                  kind: 'OB.OBPOSCashUp.UI.ppc_startingsTable',
-                  name: 'startingsTable',
-                  classes:
-                    'obObPosCashUpUiPostPrintClose-scrollArea-container1-container4-startingsTable'
-                },
-                {
-                  kind: 'OB.OBPOSCashUp.UI.ppc_cashDropsTable',
-                  name: 'dropsTable',
-                  classes:
-                    'obObPosCashUpUiPostPrintClose-scrollArea-container1-container4-dropsTable'
-                },
-                {
-                  kind: 'OB.OBPOSCashUp.UI.ppc_cashDepositsTable',
-                  name: 'depositsTable',
-                  classes:
-                    'obObPosCashUpUiPostPrintClose-scrollArea-container1-container4-depositsTable'
-                },
-                {
-                  kind: 'OB.OBPOSCashUp.UI.ppc_cashExpectedTable',
-                  name: 'expectedTable',
-                  classes:
-                    'obObPosCashUpUiPostPrintClose-scrollArea-container1-container4-expectedTable'
-                },
-                {
-                  kind: 'OB.OBPOSCashUp.UI.ppc_cashCountedTable',
-                  name: 'countedTable',
-                  classes:
-                    'obObPosCashUpUiPostPrintClose-scrollArea-container1-container4-countedTable'
-                },
-                {
-                  kind: 'OB.OBPOSCashUp.UI.ppc_cashDifferenceTable',
-                  name: 'differenceTable',
-                  classes:
-                    'obObPosCashUpUiPostPrintClose-scrollArea-container1-container4-differenceTable'
-                },
-                {
-                  kind: 'OB.OBPOSCashUp.UI.ppc_cashQtyToKeepTable',
-                  name: 'qtyToKeepTable',
-                  classes:
-                    'obObPosCashUpUiPostPrintClose-scrollArea-container1-container4-qtyToKeepTable'
-                },
-                {
-                  kind: 'OB.OBPOSCashUp.UI.ppc_cashQtyToDepoTable',
-                  name: 'qtyToDepoTable',
-                  classes:
-                    'obObPosCashUpUiPostPrintClose-scrollArea-container1-container4-qtyToDepoTable'
+                    'obObPosCashUpUiPostPrintClose-wrapper-components-body-container3 row-fluid',
+                  components: [
+                    {
+                      kind: 'OB.OBPOSCashUp.UI.ppc_startingsTable',
+                      name: 'startingsTable',
+                      classes:
+                        'obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-startingsTable'
+                    },
+                    {
+                      kind: 'OB.OBPOSCashUp.UI.ppc_cashDropsTable',
+                      name: 'dropsTable',
+                      classes:
+                        'obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-dropsTable'
+                    },
+                    {
+                      kind: 'OB.OBPOSCashUp.UI.ppc_cashDepositsTable',
+                      name: 'depositsTable',
+                      classes:
+                        'obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-depositsTable'
+                    },
+                    {
+                      kind: 'OB.OBPOSCashUp.UI.ppc_cashExpectedTable',
+                      name: 'expectedTable',
+                      classes:
+                        'obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-expectedTable'
+                    },
+                    {
+                      kind: 'OB.OBPOSCashUp.UI.ppc_cashCountedTable',
+                      name: 'countedTable',
+                      classes:
+                        'obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-countedTable'
+                    },
+                    {
+                      kind: 'OB.OBPOSCashUp.UI.ppc_cashDifferenceTable',
+                      name: 'differenceTable',
+                      classes:
+                        'obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-differenceTable'
+                    },
+                    {
+                      kind: 'OB.OBPOSCashUp.UI.ppc_cashQtyToKeepTable',
+                      name: 'qtyToKeepTable',
+                      classes:
+                        'obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-qtyToKeepTable'
+                    },
+                    {
+                      kind: 'OB.OBPOSCashUp.UI.ppc_cashQtyToDepoTable',
+                      name: 'qtyToDepoTable',
+                      classes:
+                        'obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-qtyToDepoTable'
+                    }
+                  ]
                 }
               ]
             }
