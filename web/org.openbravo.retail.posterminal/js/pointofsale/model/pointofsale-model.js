@@ -1072,23 +1072,15 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         if (!receipt.get('isEditable') || receipt.get('lines').length === 0) {
           return;
         }
-
-        OB.Discounts.Pos.initCache(
-          { businessPartner: receipt.get('bp').get('id') },
-          function() {
-            receipt.get('lines').forEach(function(l) {
-              l.unset('noDiscountCandidates', {
-                silent: true
-              });
-            });
-            if (
-              !OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)
-            ) {
-              // Calculate the receipt only if it's not multipricelist
-              receipt.calculateReceipt();
-            }
-          }
-        );
+        receipt.get('lines').forEach(function(l) {
+          l.unset('noDiscountCandidates', {
+            silent: true
+          });
+        });
+        if (!OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
+          // Calculate the receipt only if it's not multipricelist
+          receipt.calculateReceipt();
+        }
       },
       this
     );
