@@ -157,12 +157,15 @@ enyo.kind({
         providerGroup: providerGroup
       })
       .then(response => {
+        const processedAmount = response.properties.processedAmount
+          ? response.properties.processedAmount
+          : amount;
         const addResponseToPayment = payment => {
           // We found the payment method that applies.
           const paymentline = {
             kind: payment.payment.searchKey,
             name: payment.payment._identifier,
-            amount: amount,
+            amount: processedAmount,
             rate: payment.rate,
             mulrate: payment.mulrate,
             isocode: payment.isocode,
