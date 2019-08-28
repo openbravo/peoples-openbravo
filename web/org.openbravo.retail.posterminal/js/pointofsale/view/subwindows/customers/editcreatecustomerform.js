@@ -83,7 +83,7 @@ enyo.kind({
           function(attribute) {
             _.each(this.args.focusError, function(field, indx) {
               if (attribute.name === 'line_' + field) {
-                var attr = attribute.$.newAttribute.$[field];
+                var attr = attribute.$.coreElementContainer.$[field];
                 attr.addClass(
                   'obObposPointOfSaleUiCustomersNewcustomer-newAttribute_error'
                 );
@@ -115,7 +115,7 @@ enyo.kind({
         function(attribute) {
           _.each(this.args.focusError, function(field) {
             if (attribute.name === 'line_' + field) {
-              var attr = attribute.$.newAttribute.$[field];
+              var attr = attribute.$.coreElementContainer.$[field];
               attr.removeClass(
                 'obObposPointOfSaleUiCustomersNewcustomer-newAttribute_error'
               );
