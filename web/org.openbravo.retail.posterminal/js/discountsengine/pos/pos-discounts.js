@@ -77,6 +77,11 @@
         .get('bp')
         .get('businessPartnerCategory');
       newTicket.businessPartner._identifier = receipt.get('bp')._identifier;
+      if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
+        newTicket.pricelist = receipt.get('bp').get('priceList');
+      } else {
+        newTicket.pricelist = OB.MobileApp.model.get('pricelist').id;
+      }
       newTicket.id = receipt.get('id');
       newTicket.date = receipt.get('orderDate');
       newTicket.discountsFromUser = {};
@@ -190,18 +195,11 @@
 
     computeDiscountsQuery(basicParams) {
       let params = [
-        OB.MobileApp.model.get('pricelist').id,
-        OB.MobileApp.model.get('pricelist').id,
         OB.MobileApp.model.get('context').role.id,
         OB.MobileApp.model.get('context').role.id
       ];
       let discountsFilter =
         'SELECT M_OFFER_ID FROM M_OFFER WHERE ( 1=1 ' +
-        //Pricelist filter
-        " AND ((pricelist_selection = 'Y' AND NOT EXISTS" + //
-        '   (SELECT 1 FROM m_offer_pricelist opl WHERE m_offer.m_offer_id = opl.m_offer_id AND opl.m_pricelist_id = ? ))' + //
-        " OR (pricelist_selection = 'N' AND EXISTS" + //
-        '   (SELECT 1 FROM m_offer_pricelist opl WHERE m_offer.m_offer_id = opl.m_offer_id AND opl.m_pricelist_id = ? )))' +
         //Do not include manual promotions
         ' AND M_OFFER_TYPE_ID NOT IN (' +
         OB.Model.Discounts.getManualPromotions() +
@@ -411,27 +409,58 @@
                                     }
                                   });
 
-                                  //BPSets
-                                  OB.Dal.find(
-                                    OB.Model.BPSetLine,
-                                    [],
-                                    setLines => {
-                                      let setLinesBySet = setLines.groupBy(
-                                        setLine => setLine.get('bpSet')
+                                  let pricelistQuery =
+                                    'SELECT * FROM M_OFFER_PRICELIST INNER JOIN M_OFFER ON M_OFFER_PRICELIST.M_OFFER_ID = M_OFFER.M_OFFER_ID' +
+                                    baseFilter;
+                                  OB.Dal.query(
+                                    OB.Model.OfferPriceList,
+                                    pricelistQuery,
+                                    discountsQueryObject.params,
+                                    pricelists => {
+                                      let pricelistGroups = pricelists.groupBy(
+                                        prod => prod.get('m_offer_id')
                                       );
-                                      OB.Discounts.Pos.bpSets = JSON.parse(
-                                        JSON.stringify(setLinesBySet)
+                                      OB.Discounts.Pos.ruleImpls.forEach(
+                                        rule => {
+                                          rule.pricelists = [];
+                                          if (pricelistGroups[rule.id]) {
+                                            pricelistGroups[rule.id].forEach(
+                                              discpricelist => {
+                                                const objDiscpricelist = discpricelist.toJSON();
+                                                rule.pricelists.push(
+                                                  objDiscpricelist
+                                                );
+                                              }
+                                            );
+                                          }
+                                        }
                                       );
 
-                                      OB.UTIL.HookManager.executeHooks(
-                                        'OBPOS_DiscountsCacheInitialization',
-                                        {
-                                          discounts: OB.Discounts.Pos.ruleImpls,
-                                          baseFilter,
-                                          params: discountsQueryObject.params
-                                        },
-                                        function(args) {
-                                          finishCallback();
+                                      //BPSets
+                                      OB.Dal.find(
+                                        OB.Model.BPSetLine,
+                                        [],
+                                        setLines => {
+                                          let setLinesBySet = setLines.groupBy(
+                                            setLine => setLine.get('bpSet')
+                                          );
+                                          OB.Discounts.Pos.bpSets = JSON.parse(
+                                            JSON.stringify(setLinesBySet)
+                                          );
+
+                                          OB.UTIL.HookManager.executeHooks(
+                                            'OBPOS_DiscountsCacheInitialization',
+                                            {
+                                              discounts:
+                                                OB.Discounts.Pos.ruleImpls,
+                                              baseFilter,
+                                              params:
+                                                discountsQueryObject.params
+                                            },
+                                            function(args) {
+                                              finishCallback();
+                                            }
+                                          );
                                         }
                                       );
                                     }
