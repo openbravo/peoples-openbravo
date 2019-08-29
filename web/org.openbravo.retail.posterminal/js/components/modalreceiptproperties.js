@@ -65,11 +65,11 @@ enyo.kind({
           }
         }
       },
-      
+
       initComponents: function() {
         this.collection = new OB.Collection.SalesRepresentativeList();
       },
-      
+
       // override to not load things upfront when not needed
       loadValue: function() {
         if (this.doLoadValueNeeded) {
