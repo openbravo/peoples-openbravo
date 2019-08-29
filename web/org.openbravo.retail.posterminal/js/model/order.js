@@ -4028,6 +4028,7 @@
       var me = this;
       if (
         OB.MobileApp.model.hasPermission('EnableMultiPriceList', true) &&
+        !p.get('ispack') &&
         OB.UTIL.isCrossStoreProduct(p)
       ) {
         p.set('standardPrice', null);
@@ -4078,6 +4079,7 @@
         OB.MobileApp.model.hasPermission('EnableMultiPriceList', true) &&
         this.get('priceList') !==
           OB.MobileApp.model.get('terminal').priceList &&
+        !p.get('ispack') &&
         !OB.UTIL.isCrossStoreProduct(p)
       ) {
         var criteria = {};
