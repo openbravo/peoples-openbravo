@@ -501,7 +501,14 @@ enyo.kind({
           },
           args
         );
-        me.dataReadyFunction(data, args);
+        //When dataReadyFunction is executed the HTML component is not already rendered
+        //adding timeout, the popup is shown and rendered so when data ready is executed
+        //the element to be selected is ready and will work.
+        //without setTimeout me.hashNode() is false
+        //with setTimeout me.hashNode() is a DOM element
+        setTimeout(function() {
+          me.dataReadyFunction(data, args);
+        }, 0);
       },
       i18nLabel: 'OBPOS_LblLanguage',
       displayLogic: function() {
