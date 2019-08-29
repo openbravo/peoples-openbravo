@@ -237,7 +237,7 @@
       let discountsQuery =
         'SELECT * FROM M_OFFER WHERE M_OFFER_ID IN (' +
         discountsQueryObject.queryFilter +
-        ')';
+        ') ORDER BY PRIORITY, M_OFFER.M_OFFER_ID';
       OB.Dal.query(
         OB.Model.Discount,
         discountsQuery,
