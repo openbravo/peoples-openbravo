@@ -3139,6 +3139,11 @@
         warehouseId,
         warehouse;
 
+      if (p.get('productType') === 'S') {
+        callback(true);
+        return;
+      }
+
       if (!line && p.get('groupProduct')) {
         var affectedByPack;
         line = lines.find(function(l) {

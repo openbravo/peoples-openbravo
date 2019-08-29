@@ -86,6 +86,7 @@
 
     if (allLinesQty > warehouse.warehouseqty) {
       var stockActions = [];
+
       if (
         OB.UTIL.StockUtils.hasStockAction(checkStockActions, 'discontinued')
       ) {
@@ -145,6 +146,25 @@
         );
         stockActions.push(discontinuedAction);
       }
+
+      if (OB.UTIL.StockUtils.hasStockAction(checkStockActions, 'crossStore')) {
+        var crossStoreAction = {
+          actionName: 'crossStore'
+        };
+        crossStoreAction.allowToAdd = false;
+        crossStoreAction.askConfirmation = true;
+        crossStoreAction.notAllowMessage = OB.I18N.getLabel(
+          'OBPOS_NotStockCrossStore',
+          [
+            allLinesQty,
+            product.get('_identifier'),
+            warehouse.warehousename,
+            warehouse.warehouseqty
+          ]
+        );
+        stockActions.push(crossStoreAction);
+      }
+
       OB.UTIL.HookManager.executeHooks(
         'OBPOS_PreAddProductWithoutStock',
         {
@@ -348,6 +368,11 @@
         productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(product),
         positiveQty = OB.DEC.compare(line.get('qty')) > 0,
         checkStockActions = [];
+
+      if (product.get('productType') === 'S') {
+        checkOrderLineStock(idxOrderLine + 1, order, orderCallback);
+        return;
+      }
 
       if (positiveQty && productStatus.restrictsaleoutofstock) {
         checkStockActions.push('discontinued');
