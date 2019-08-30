@@ -343,12 +343,13 @@ enyo.kind({
       }
     },
     {
-      kind: 'OB.UI.SmallButton',
+      kind: 'OB.UI.Button',
       name: 'showRelatedServices',
       classes:
-        'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-showRelatedServices',
+        'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-showRelatedServices obUiActionButton',
+      /* TODO: obUiActionButton class to be removed once it become a true OB.UI.ActionButton */
       permission: 'OBPOS_ActionButtonShowRelatedServices',
-      content: '-',
+      i18nContent: 'OBPOS_RelatedServices',
       tap: function(inSender, inEvent) {
         var product = this.owner.owner.line.get('product');
         if (product) {
@@ -407,12 +408,13 @@ enyo.kind({
       }
     },
     {
-      kind: 'OB.UI.SmallButton',
+      kind: 'OB.UI.Button',
       name: 'removeDiscountButton',
       i18nContent: 'OBPOS_LblRemoveDiscount',
       showing: false,
       classes:
-        'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-removeDiscountButton',
+        'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-removeDiscountButton obUiActionButton',
+      /* TODO: obUiActionButton class to be removed once it become a true OB.UI.ActionButton */
       permission: 'OBPOS_ActionButtonRemoveDiscount',
       tap: function() {
         var i,
@@ -484,12 +486,13 @@ enyo.kind({
       showing: false
     },
     {
-      kind: 'OB.UI.SmallButton',
+      kind: 'OB.UI.Button',
       name: 'addAssociationsButton',
       i18nContent: 'OBPOS_AddAssociations',
       showing: false,
       classes:
-        'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-addAssociationsButton',
+        'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-addAssociationsButton obUiActionButton',
+      /* TODO: obUiActionButton class to be removed once it become a true OB.UI.ActionButton */
       tap: function() {
         this.owner.owner.doShowPopup({
           popup: 'OBPOS_modalAssociateTickets',
@@ -501,12 +504,13 @@ enyo.kind({
       }
     },
     {
-      kind: 'OB.UI.SmallButton',
+      kind: 'OB.UI.Button',
       name: 'removeAssociationsButton',
       i18nContent: 'OBPOS_RemoveAssociations',
       showing: false,
       classes:
-        'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-removeAssociationsButton',
+        'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-removeAssociationsButton obUiActionButton',
+      /* TODO: obUiActionButton class to be removed once it become a true OB.UI.ActionButton */
       tap: function() {
         this.owner.owner.doShowPopup({
           popup: 'OBPOS_modalRemoveAssociatedTickets',
@@ -518,10 +522,11 @@ enyo.kind({
       }
     },
     {
-      kind: 'OB.UI.SmallButton',
+      kind: 'OB.UI.Button',
       name: 'canDeliver',
       classes:
-        'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-canDeliver',
+        'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-canDeliver obUiActionButton',
+      /* TODO: obUiActionButton class to be removed once it become a true OB.UI.ActionButton */
       content: '-',
       tap: function(inSender, inEvent) {
         var me = this,
