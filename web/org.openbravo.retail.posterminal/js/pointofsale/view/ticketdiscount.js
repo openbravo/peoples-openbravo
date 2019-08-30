@@ -529,25 +529,73 @@ enyo.kind({
         if (promotionToAplly.rule.get('obdiscAllowmultipleinstan')) {
           promotionToAplly.discountinstance = OB.UTIL.get_UUID();
         } else {
+          let sameManualPromotionAdded = me.order
+            .get('manualPromotionsAddedToTicket')
+            .filter(manualPromotionAdded => {
+              return manualPromotionAdded.rule.id === promotionToAplly.rule.id;
+            });
           if (promotionToAplly.forceReplace) {
-            let newPromotionsAfterReplace = [];
-            me.order
-              .get('manualPromotionsAddedToTicket')
-              .forEach(manualPromotionAdded => {
-                if (manualPromotionAdded.rule.id !== promotionToAplly.rule.id) {
-                  newPromotionsAfterReplace.push(manualPromotionAdded);
-                }
+            // Override flag
+            if (
+              sameManualPromotionAdded &&
+              sameManualPromotionAdded.length > 0
+            ) {
+              sameManualPromotionAdded.forEach(sameManualPromo => {
+                let newApplicableLines = [];
+                sameManualPromo.applicableLines.forEach(applicableLine => {
+                  if (
+                    promotionToAplly.applicableLines.indexOf(applicableLine) ===
+                    -1
+                  ) {
+                    newApplicableLines.push(applicableLine);
+                  }
+                });
+                sameManualPromo.applicableLines = newApplicableLines;
               });
-            if (newPromotionsAfterReplace.length > 0) {
-              me.order.set(
-                'manualPromotionsAddedToTicket',
-                newPromotionsAfterReplace
+            }
+          } else {
+            if (
+              sameManualPromotionAdded &&
+              sameManualPromotionAdded.length > 0
+            ) {
+              let lineIdAlreadyApplied = [];
+              sameManualPromotionAdded.forEach(sameManualPromo => {
+                lineIdAlreadyApplied = [
+                  lineIdAlreadyApplied,
+                  ...sameManualPromo.applicableLines
+                ];
+              });
+              let newApplicableLines = [];
+              newApplicableLines = promotionToAplly.applicableLines.filter(
+                applicableLine => {
+                  if (lineIdAlreadyApplied.indexOf(applicableLine) === -1) {
+                    return true;
+                  } else {
+                    return false;
+                  }
+                }
               );
+              promotionToAplly.applicableLines = newApplicableLines;
             }
           }
         }
 
         me.order.get('manualPromotionsAddedToTicket').push(promotionToAplly);
+
+        let validManualPromotions = me.order
+          .get('manualPromotionsAddedToTicket')
+          .filter(manualPromotionAdded => {
+            return (
+              manualPromotionAdded.applicableLines &&
+              manualPromotionAdded.applicableLines.length > 0
+            );
+          });
+
+        if (validManualPromotions && validManualPromotions.length > 0) {
+          me.order.set('manualPromotionsAddedToTicket', validManualPromotions);
+        } else {
+          me.order.set('manualPromotionsAddedToTicket', []);
+        }
 
         me.order.calculateReceipt();
 
