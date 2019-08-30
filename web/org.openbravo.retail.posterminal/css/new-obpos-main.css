@@ -1055,7 +1055,9 @@
 .obUiReceiptsList {}
 
 .obUiReceiptsList-openreceiptslistitemprinter {
-  overflow: hidden auto;
+  overflow: hidden auto !important;
+  max-height: 350px;
+  position: relative;
 }
 
 
