@@ -83,6 +83,12 @@ public class DatabaseValidator implements SystemValidator {
 
   @Override
   public SystemValidationResult validate() {
+    boolean checkAD = true;
+    return validate(checkAD);
+  }
+
+  @Override
+  public SystemValidationResult validate(boolean checkAD) {
     final SystemValidationResult result = new SystemValidationResult();
 
     // read the tables
@@ -160,102 +166,105 @@ public class DatabaseValidator implements SystemValidator {
       }
     }
 
-    // the following cases are checked:
-    // 1) table present in ad, but not in db
-    // 2) table present in db, not in ad
-    // 3) table present on both sides, column match check
+    if (checkAD) {
+      // the following cases are checked:
+      // 1) table present in ad, but not in db
+      // 2) table present in db, not in ad
+      // 3) table present on both sides, column match check
 
-    final Map<String, org.apache.ddlutils.model.Table> dbTablesByName = new HashMap<String, org.apache.ddlutils.model.Table>();
+      final Map<String, org.apache.ddlutils.model.Table> dbTablesByName = new HashMap<String, org.apache.ddlutils.model.Table>();
 
-    final org.apache.ddlutils.model.Table[] dbTables = getDatabase().getTables();
-    for (org.apache.ddlutils.model.Table dbTable : dbTables) {
-      dbTablesByName.put(dbTable.getName().toUpperCase(), dbTable);
-    }
-
-    final org.apache.ddlutils.model.Table[] dbModifiedTables = getDatabase().getModifiedTables();
-    for (org.apache.ddlutils.model.Table dbModifiedTable : dbModifiedTables) {
-      dbTablesByName.put(dbModifiedTable.getName().toUpperCase(), dbModifiedTable);
-    }
-    final Map<String, org.apache.ddlutils.model.Table> tmpDBTablesByName = new HashMap<String, org.apache.ddlutils.model.Table>(
-        dbTablesByName);
-
-    final Map<String, View> dbViews = new HashMap<String, View>();
-    final View[] views = getDatabase().getViews();
-    for (View view : views) {
-      dbViews.put(view.getName().toUpperCase(), view);
-    }
-
-    final List<Table> adTables = OBDal.getInstance()
-        .createCriteria(Table.class)
-        .add(Restrictions.eq(Table.PROPERTY_VIEW, false))
-        .add(Restrictions.eq(Table.PROPERTY_DATAORIGINTYPE, ApplicationConstants.TABLEBASEDTABLE))
-        .list();
-
-    final String moduleId = (getValidateModule() == null ? null : getValidateModule().getId());
-    for (Table adTable : adTables) {
-      final org.apache.ddlutils.model.Table dbTable = dbTablesByName
-          .get(adTable.getDBTableName().toUpperCase());
-      final View view = dbViews.get(adTable.getDBTableName().toUpperCase());
-
-      if (view == null && dbTable == null) {
-        // in Application Dictionary not in Physical Table
-        if (moduleId == null || (adTable.getDataPackage().getModule() != null
-            && adTable.getDataPackage().getModule().getId().equals(moduleId))) {
-          result.addError(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_DB,
-              "Table " + adTable.getDBTableName() + " defined in the Application Dictionary"
-                  + " but is not present in the database");
-        }
-      } else if (view != null) {
-        dbViews.remove(view.getName().toUpperCase());
-      } else {
-        if (moduleId == null || (adTable.getDataPackage().getModule() != null
-            && adTable.getDataPackage().getModule().getId().equals(moduleId))) {
-          checkTableWithoutPrimaryKey(dbTable, result);
-          checkMaxObjectNameLength(dbTable, result);
-        }
-        matchColumns(adTable, dbTable, result);
-        tmpDBTablesByName.remove(dbTable.getName().toUpperCase());
-        checkFieldsInGridView(adTable, result);
+      final org.apache.ddlutils.model.Table[] dbTables = getDatabase().getTables();
+      for (org.apache.ddlutils.model.Table dbTable : dbTables) {
+        dbTablesByName.put(dbTable.getName().toUpperCase(), dbTable);
       }
-    }
-    for (int i = 0; i < database.getTableCount(); i++) {
-      checkForeignKeys(validateModule, database.getTable(i), result);
-    }
-    for (int i = 0; i < database.getModifiedTableCount(); i++) {
-      checkForeignKeys(validateModule, database.getModifiedTable(i), result);
-    }
 
-    // only check this one if the global validate check is done
-    for (org.apache.ddlutils.model.Table dbTable : tmpDBTablesByName.values()) {
-      // ignore errors related to C_TEMP_SELECTION and AD_CONTEXT_INFO
-      if (!dbTable.getName().toUpperCase().startsWith("C_TEMP_SELECTION")
-          && !dbTable.getName().toUpperCase().startsWith("AD_CONTEXT_INFO")) {
-        result.addWarning(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_AD,
-            "Table " + dbTable.getName() + " present in the database "
-                + " but not defined in the Application Dictionary");
+      final org.apache.ddlutils.model.Table[] dbModifiedTables = getDatabase().getModifiedTables();
+      for (org.apache.ddlutils.model.Table dbModifiedTable : dbModifiedTables) {
+        dbTablesByName.put(dbModifiedTable.getName().toUpperCase(), dbModifiedTable);
       }
-    }
+      final Map<String, org.apache.ddlutils.model.Table> tmpDBTablesByName = new HashMap<String, org.apache.ddlutils.model.Table>(
+          dbTablesByName);
 
-    if (getValidateModule() == null) {
-      for (View view : dbViews.values()) {
-        // ignore errors related to C_TEMP_SELECTION
-        if (!view.getName().toUpperCase().startsWith("C_TEMP_SELECTION")) {
+      final Map<String, View> dbViews = new HashMap<String, View>();
+      final View[] views = getDatabase().getViews();
+      for (View view : views) {
+        dbViews.put(view.getName().toUpperCase(), view);
+      }
+
+      final List<Table> adTables = OBDal.getInstance()
+          .createCriteria(Table.class)
+          .add(Restrictions.eq(Table.PROPERTY_VIEW, false))
+          .add(Restrictions.eq(Table.PROPERTY_DATAORIGINTYPE, ApplicationConstants.TABLEBASEDTABLE))
+          .list();
+
+      final String moduleId = (getValidateModule() == null ? null : getValidateModule().getId());
+      for (Table adTable : adTables) {
+        final org.apache.ddlutils.model.Table dbTable = dbTablesByName
+            .get(adTable.getDBTableName().toUpperCase());
+        final View view = dbViews.get(adTable.getDBTableName().toUpperCase());
+
+        if (view == null && dbTable == null) {
+          // in Application Dictionary not in Physical Table
+          if (moduleId == null || (adTable.getDataPackage().getModule() != null
+              && adTable.getDataPackage().getModule().getId().equals(moduleId))) {
+            result.addError(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_DB,
+                "Table " + adTable.getDBTableName() + " defined in the Application Dictionary"
+                    + " but is not present in the database");
+          }
+        } else if (view != null) {
+          dbViews.remove(view.getName().toUpperCase());
+        } else {
+          if (moduleId == null || (adTable.getDataPackage().getModule() != null
+              && adTable.getDataPackage().getModule().getId().equals(moduleId))) {
+            checkTableWithoutPrimaryKey(dbTable, result);
+            checkMaxObjectNameLength(dbTable, result);
+          }
+          matchColumns(adTable, dbTable, result);
+          tmpDBTablesByName.remove(dbTable.getName().toUpperCase());
+          checkFieldsInGridView(adTable, result);
+        }
+      }
+      for (int i = 0; i < database.getTableCount(); i++) {
+        checkForeignKeys(validateModule, database.getTable(i), result);
+      }
+      for (int i = 0; i < database.getModifiedTableCount(); i++) {
+        checkForeignKeys(validateModule, database.getModifiedTable(i), result);
+      }
+
+      // only check this one if the global validate check is done
+      for (org.apache.ddlutils.model.Table dbTable : tmpDBTablesByName.values()) {
+        // ignore errors related to C_TEMP_SELECTION and AD_CONTEXT_INFO
+        if (!dbTable.getName().toUpperCase().startsWith("C_TEMP_SELECTION")
+            && !dbTable.getName().toUpperCase().startsWith("AD_CONTEXT_INFO")) {
           result.addWarning(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_AD,
-              "View " + view.getName() + " present in the database "
+              "Table " + dbTable.getName() + " present in the database "
                   + " but not defined in the Application Dictionary");
         }
       }
+
+      if (getValidateModule() == null) {
+        for (View view : dbViews.values()) {
+          // ignore errors related to C_TEMP_SELECTION
+          if (!view.getName().toUpperCase().startsWith("C_TEMP_SELECTION")) {
+            result.addWarning(SystemValidationResult.SystemValidationType.NOT_EXIST_IN_AD,
+                "View " + view.getName() + " present in the database "
+                    + " but not defined in the Application Dictionary");
+          }
+        }
+      }
+
+      checkIncorrectClientOrganizationName(result);
+
+      checkDBObjectsName(result);
+
+      checkDataSetName(result);
+
+      checkPasswordColumns(result);
+
+      checkKillableImplementation(result);
+
     }
-
-    checkIncorrectClientOrganizationName(result);
-
-    checkDBObjectsName(result);
-
-    checkDataSetName(result);
-
-    checkPasswordColumns(result);
-
-    checkKillableImplementation(result);
 
     OBDal.getInstance().getSession().clear();
     return result;

@@ -36,4 +36,11 @@ public interface SystemValidator {
    * @return the result of the validation, warning and error messages.
    */
   public SystemValidationResult validate();
+
+  /**
+   * @return the result of the validation, warning and error messages.
+   */
+  public default SystemValidationResult validate(boolean checkAD) {
+    return validate();
+  }
 }
