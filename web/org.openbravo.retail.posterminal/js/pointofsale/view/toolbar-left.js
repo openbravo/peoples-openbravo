@@ -56,7 +56,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ButtonNew',
   kind: 'OB.UI.ToolbarButton',
-  i18nContent: 'OBMOBC_New',
+  i18nContent: 'OBMOBC_NewReceipt',
   classes: 'obUiButtonNew',
   events: {
     onAddNewOrder: ''
@@ -153,7 +153,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ButtonDelete',
   kind: 'OB.UI.ToolbarButton',
-  i18nContent: 'OBMOBC_Delete',
+  i18nContent: 'OBMOBC_DeleteReceipt',
   classes: 'obUiButtonDelete',
   events: {
     onShowPopup: '',
