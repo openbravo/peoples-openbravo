@@ -861,6 +861,7 @@
     calculateGrossAndSave: function(save, callback) {
       this.calculatingGross = true;
       var me = this;
+      var lines = this.get('lines').models;
       // reset some vital receipt values because, at this point, they are obsolete. do not fire the change event
       me.set(
         {
@@ -918,9 +919,20 @@
         }
       };
 
-      this.get('lines').forEach(function(line) {
-        line.calculateGross();
-      });
+      for (var i = 0; i < lines.length; i++) {
+        lines[i].calculateGross();
+        if (
+          OB.MobileApp.model.hasPermission(
+            'OBPOS_EnableMultiPriceList',
+            true
+          ) &&
+          ((this.get('priceIncludesTax') &&
+            !lines[i].get('priceIncludesTax')) ||
+            (!this.get('priceIncludesTax') && lines[i].get('priceIncludesTax')))
+        ) {
+          this.set('priceIncludesTax', lines[i].get('priceIncludesTax'));
+        }
+      }
 
       if (this.get('priceIncludesTax')) {
         this.calculateTaxes(function() {
