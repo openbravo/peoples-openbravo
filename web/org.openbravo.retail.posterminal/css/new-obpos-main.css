@@ -3146,7 +3146,6 @@ li.selected > .obUiRenderOrderLine_edit {
   border-radius: 0px 4px 4px 0px;
 }
 
-.obUiOrderHeader-abaReceiptToolbar1 > .obUiActionButton.disabled,
 .obUiOrderHeader-abaReceiptToolbar1 > .obUiDummyAction {
   background-color: #d0d2d3;
   opacity: 1;
@@ -7520,23 +7519,61 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   grid-area: inp;
   background-color: white;
   color: black;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
 }
 
 .obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic {
-  height: 57px;
+  height: auto;
   width: 100%;
+  background-color: #f9f9f9;
+  color: #333333;
+  font-size: 22px;
 }
 
-.obObposPointOfSaleUiGridKeyboard-addqty {
-  grid-area: cmd1;
+.obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic:hover {
+  background-color: #e8e8e8;
+  opacity: 1;
+}
+
+.obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic:active {
+  background-color: #bbbbbb;
+  opacity: 1;
+}
+
+..obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic.disabled,
+..obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic.disabled:hover,
+..obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic.disabled:active,
+..obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic:disabled,
+..obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic:disabled:hover,
+..obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic:disabled:active,
+..obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic[disabled='true'],
+..obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic[disabled='true']:hover,
+..obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic[disabled='true']:active {
+  color: #90979f;
+  background-color: #d0d2d3;
+  opacity: 1;
+  cursor: default;
 }
 
 .obObposPointOfSaleUiGridKeyboard-removeqty {
+  grid-area: cmd1;
+}
+
+.obObposPointOfSaleUiGridKeyboard-addqty {
   grid-area: cmd2;
 }
 
 .obObposPointOfSaleUiGridKeyboard-backspace {
   grid-area: cmd3;
+  grid-template-columns: 1fr 0 0;
+}
+
+.obObposPointOfSaleUiGridKeyboard-backspace .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconBackspace.svg');
+  background-size: 32px 24px;
+  width: 100%;
+  height: 100%;
 }
 
 .obObposPointOfSaleUiGridKeyboard-keyboardkey9 {
@@ -7577,6 +7614,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiGridKeyboard-keyboardkey0 {
   grid-area: num0;
+  border-bottom-left-radius: 4px;
 }
 
 .obObposPointOfSaleUiGridKeyboard-keyboardkeyPeriod {
@@ -7585,6 +7623,15 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiGridKeyboard-keyboardkeyEnter {
   grid-area: cmdok;
+  border-bottom-right-radius: 4px;
+  grid-template-columns: 1fr 0 0;
+}
+
+.obObposPointOfSaleUiGridKeyboard-keyboardkeyEnter .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconEnter.svg');
+  background-size: 24px 17px;
+  width: 100%;
+  height: 100%;
 }
 
 
@@ -8024,14 +8071,20 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /*
 # Component: OB.OBPOSPointOfSale.UI.BottomRightGridLayoutsContainer
 */
+.obObposPointOfSaleUiBottomRightGridLayoutsContainer {
+  height: 367px;
+  box-sizing: border-box;
+  padding: 10px 10px 25px 10px;
+}
 
 .obObposPointOfSaleUiBottomRightGridLayout {
   color: white;
   display: grid;
   grid-template-areas: 'hside center';
   grid-template-columns: 2fr 3fr;
-  column-gap: 10px;
-  row-gap: 10px;
+  column-gap: 20px;
+  row-gap: 0px;
+  height: 100%;
 }
 
 .right.obObposPointOfSaleUiBottomRightGridLayout {
@@ -8043,10 +8096,10 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   grid-area: hside;
   display: grid;
   grid-auto-flow: row;
-  row-gap: 10px;
-  column-gap: 10px;
+  row-gap: 1px;
+  column-gap: 1px;
   grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: repeat(6, 57px);
+  grid-template-rows: repeat(6, 1fr);
   grid-template-areas:
     'pos00 pos01'
     'pos10 pos11'
@@ -8063,6 +8116,68 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > button.obUiActionButtonSwitch_selected {
   background-color: var(--color-actioncolor);
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .obUiActionButton {
+  padding: 0px;
+  margin: 0px;
+  height: auto;
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos00 {
+  border-top-left-radius: 4px;
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos00.colspan2,
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos01 {
+  border-top-right-radius: 4px;
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos00.rowpan6,
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos10.rowpan5,
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos20.rowpan4,
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos30.rowpan3,
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos40.rowpan2,
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos50 {
+  border-bottom-left-radius: 4px;
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos01.rowpan6,
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos11.rowpan5,
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos21.rowpan4,
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos31.rowpan3,
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos41.rowpan2,
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos51 {
+  border-bottom-right-radius: 4px;
+}
+
+/* Particular cases where there could be colspan or rowspan */
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos00.colspan2 {
+  border-top-right-radius: 4px;
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos00.rowpan6,
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos10.rowpan5,
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos20.rowpan4,
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos30.rowpan3,
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos40.rowpan2,
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos50 {
+  border-bottom-left-radius: 4px;
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos01.rowpan5, {
+  border-bottom-right-radius: 4px;
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos50.colspan2 {
+  border-bottom-right-radius: 4px;
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .obUiDummyAction {
+  background-color: #d0d2d3;
+  opacity: 1;
+  color: #90979f;
 }
 
 /***********************   ***********************/
@@ -9312,6 +9427,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   overflow-y: auto;
   display: grid;
   grid-auto-flow: row;
+  grid-template-rows: auto 1fr;
 }
 
 .obObposPointOfSaleUiEditLine-defaultEdit-msgedit-header {
@@ -9389,7 +9505,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiEditLine-msgedit-container3-linePropertiesContainer {
 /* Inherits: [Scroller] */
-  padding: 10px 5px;
+  padding: 10px 5px 5px 5px;
   line-height: 130%;
   width: 65%;
   overflow-x: hidden;

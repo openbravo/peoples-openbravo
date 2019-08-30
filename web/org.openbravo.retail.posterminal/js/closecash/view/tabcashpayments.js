@@ -101,7 +101,7 @@ enyo.kind({
               avoidDoubleClick: false,
               classes:
                 'obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-qtyminus',
-              label: '-',
+              i18nContent: 'OBMOBC_MinusSign',
               ontap: 'subUnit'
             },
             {
@@ -131,7 +131,6 @@ enyo.kind({
   ],
   create: function() {
     this.inherited(arguments);
-    this.$.qtyminus.setLabel(OB.I18N.getLabel('OBMOBC_Character')[3]);
     this.$.coin.setContent(OB.I18N.formatCurrency(this.model.get('coinValue')));
     //This inline style is allowed
     var style = '';

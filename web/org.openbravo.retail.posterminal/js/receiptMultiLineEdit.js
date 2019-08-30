@@ -226,7 +226,7 @@
     kind: 'OB.UI.SmallButton',
     name: 'OB.OBPOSPointOfSale.UI.EditLine.DeliveryServicesButton',
     classes: 'obObposPointOfSaleUiEditLineDeliveryServicesButton',
-    content: '-',
+    i18nContent: 'OBMOBC_MinusSign',
     handlers: {
       onSetMultiSelected: 'setMultiSelected',
       onRearrangedEditButtonBar: 'setMultiSelected'
