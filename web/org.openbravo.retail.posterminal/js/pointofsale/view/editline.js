@@ -163,7 +163,7 @@ enyo.kind({
       kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
       position: 30,
       name: 'priceLine',
-      I18NLabel: 'OBPOS_LinePrice',
+      I18NLabel: 'OBPOS_LineUnitPrice',
       classes: 'obObposPointOfSaleUiEditLine-propertiesToShow-priceLine',
       render: function(line) {
         if (line) {
