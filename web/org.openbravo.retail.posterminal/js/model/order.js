@@ -3139,6 +3139,11 @@
         warehouseId,
         warehouse;
 
+      if (p.get('productType') === 'S') {
+        callback(true);
+        return;
+      }
+
       if (!line && p.get('groupProduct')) {
         var affectedByPack;
         line = lines.find(function(l) {
@@ -4028,6 +4033,7 @@
       var me = this;
       if (
         OB.MobileApp.model.hasPermission('EnableMultiPriceList', true) &&
+        !p.get('ispack') &&
         OB.UTIL.isCrossStoreProduct(p)
       ) {
         p.set('standardPrice', null);
@@ -4078,6 +4084,7 @@
         OB.MobileApp.model.hasPermission('EnableMultiPriceList', true) &&
         this.get('priceList') !==
           OB.MobileApp.model.get('terminal').priceList &&
+        !p.get('ispack') &&
         !OB.UTIL.isCrossStoreProduct(p)
       ) {
         var criteria = {};
