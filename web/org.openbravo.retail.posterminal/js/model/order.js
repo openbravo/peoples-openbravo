@@ -3456,7 +3456,7 @@
           }
         }
 
-        function addProdCharsToProduct(addProdCharCallback) {
+        function addProdCharsToProduct(orderline, addProdCharCallback) {
           //Add prod char information to product object
           if (
             !p.get('productCharacteristics') &&
@@ -3470,6 +3470,7 @@
                   'productCharacteristics',
                   productcharacteristics.toJSON()
                 );
+                orderline.set('product', p);
                 addProdCharCallback();
               }
             );
@@ -3535,7 +3536,7 @@
                   }
                 }
               }
-              addProdCharsToProduct(function() {
+              addProdCharsToProduct(args.orderline, function() {
                 if (callback) {
                   callback(true, args.orderline);
                 }
