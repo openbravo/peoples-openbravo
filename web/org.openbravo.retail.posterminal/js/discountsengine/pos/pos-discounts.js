@@ -58,6 +58,7 @@
         discountInfoForLine.promotions.forEach(promotion => {
           promotion.calculatedOnDiscountEngine = true;
           promotion.displayedTotalAmount = promotion.amt;
+          promotion.obdiscQtyoffer = promotion.qtyOffer;
         });
 
         // Concatenate new promotions and excluded promotions in line
