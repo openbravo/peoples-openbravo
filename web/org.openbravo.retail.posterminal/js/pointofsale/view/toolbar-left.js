@@ -154,6 +154,7 @@ enyo.kind({
   name: 'OB.UI.ButtonDelete',
   kind: 'OB.UI.ToolbarButton',
   i18nContent: 'OBMOBC_DeleteReceipt',
+  i18nContentPaidTicket: 'OBMOBC_CloseReceipt',
   classes: 'obUiButtonDelete',
   events: {
     onShowPopup: '',
@@ -258,9 +259,11 @@ enyo.kind({
   },
   addPaidTicketClass: function() {
     this.addClass('paidticket');
+    this.setLabel(OB.I18N.getLabel(this.i18nContentPaidTicket));
   },
   removePaidTicketClass: function() {
     this.removeClass('paidticket');
+    this.setLabel(OB.I18N.getLabel(this.i18nContent));
   },
   init: function(model) {
     this.model = model;
