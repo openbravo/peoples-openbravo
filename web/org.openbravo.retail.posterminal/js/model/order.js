@@ -3460,7 +3460,8 @@
           //Add prod char information to product object
           if (
             !p.get('productCharacteristics') &&
-            p.get('characteristicDescription')
+            p.get('characteristicDescription') &&
+            !OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)
           ) {
             OB.Dal.find(
               OB.Model.ProductCharacteristicValue,
