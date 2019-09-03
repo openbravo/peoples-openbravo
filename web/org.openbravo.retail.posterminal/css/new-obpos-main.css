@@ -546,9 +546,19 @@
 /*
 # Component: OB.UI.KeypadCoinsLegacy
 */
-.obUiKeypadCoinsLegacy {}
+.obUiKeypadCoinsLegacy {
+  display: grid;
+  grid-auto-flow: row;
+  grid-template-rows: repeat(5, 20%);
 
-.obUiKeypadCoinsLegacy-container1 {}
+  height: 100%;
+}
+
+.obUiKeypadCoinsLegacy-container1 {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: repeat(3, calc(100% / 3));
+}
 
 .obUiKeypadCoinsLegacy-obUiButtonKey-generic {
   font-size: var(--font-xlarge);
@@ -572,7 +582,11 @@
 /* # Inherits: [OB.UI.ButtonKey] */
 }
 
-.obUiKeypadCoinsLegacy-container2 {}
+.obUiKeypadCoinsLegacy-container2 {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: repeat(3, calc(100% / 3));
+}
 
 .obUiKeypadCoinsLegacy-container2-container1 {}
 
@@ -592,7 +606,11 @@
 /* # Inherits: [OB.UI.PaymentButton] */
 }
 
-.obUiKeypadCoinsLegacy-container3 {}
+.obUiKeypadCoinsLegacy-container3 {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: repeat(3, calc(100% / 3));
+}
 
 .obUiKeypadCoinsLegacy-container3-container1 {}
 
@@ -612,7 +630,11 @@
 /* # Inherits: [OB.UI.PaymentButton] */
 }
 
-.obUiKeypadCoinsLegacy-container4 {}
+.obUiKeypadCoinsLegacy-container4 {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: repeat(3, calc(100% / 3));
+}
 
 .obUiKeypadCoinsLegacy-container4-container1 {}
 
@@ -632,7 +654,11 @@
 /* # Inherits: [OB.UI.PaymentButton] */
 }
 
-.obUiKeypadCoinsLegacy-container5 {}
+.obUiKeypadCoinsLegacy-container5 {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: repeat(3, calc(100% / 3));
+}
 
 .obUiKeypadCoinsLegacy-container5-container1 {}
 
@@ -657,7 +683,8 @@
 # Component: OB.UI.PaymentButton
 */
 .obUiPaymentButton {
-  margin: 5px;
+  margin: 0px;
+  height: 100%;
 }
 
 .obUiPaymentButton-generic {
@@ -727,18 +754,17 @@
 
 .obUiPaymentButton-btn {
 /* # Inherits: [OB.UI.Button] */
-  display: flex;
   width: 100%;
+  height: 100%;
   border: none;
   font-size: 18px;
   text-align: center;
-  line-height: 23px;
   padding: 0px;
   text-decoration: none;
   background-color: #e2e2e2;
-  color: black;
+  color: #000000;
   cursor: pointer;
-  height: 57px;
+  margin: 0px;
 }
 
 @media screen and (max-width: 842px) {
@@ -8058,14 +8084,17 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 */
 .obObposPointOfSaleUiRightBottomPanelWrapper {}
 
-.obObposPointOfSaleUiRightBottomPanelWrapper-keyboardWrapper {
-  height: 100%;
-}
+.obObposPointOfSaleUiRightBottomPanelWrapper-keyboardWrapper {}
 
 .obObposPointOfSaleUiRightBottomPanelWrapper-keyboardWrapper-keyboard {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: calc(25% - 10px) calc(75% - 10px);
+  column-gap: 20px;
+
   box-sizing: border-box;
-  height: 100%;
-  padding: 5px 10px 25px 10px;
+  height: 367px;
+  padding: 10px 10px 25px 10px;
 }
 
 /*
@@ -10238,7 +10267,13 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /*
 # Component: OB.OBPOSPointOfSale.UI.ToolbarPayment
 */
-.obObposPointOfSaleUiToolbarPayment {}
+.obObposPointOfSaleUiToolbarPayment {
+  display: grid;
+  grid-auto-flow: row;
+  grid-template-rows: repeat(6, 1fr);
+
+  height: 100%;
+}
 
 .obObposPointOfSaleUiToolbarPayment-obUiBtnSide {
 /* Inherits: [OB.UI.BtnSide] */
@@ -10307,8 +10342,9 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSPointOfSale.UI.ButtonSwitch
 */
 .obObposPointOfSaleUiButtonSwitch {
-  display: table;
+  display: inline-block;
   width: 100%;
+  height: 100%;
 }
 
 .obObposPointOfSaleUiButtonSwitch_disabled,
@@ -10323,22 +10359,29 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposPointOfSaleUiButtonSwitch-container1 {
-  margin: 5px;
+  display: inline-block;
+  width: 100%;
+  height: 100%;
 }
 
 .obObposPointOfSaleUiButtonSwitch-container1-btn {
 /* Inherits: [OB.UI.Button] */
-  display: flex;
   width: 100%;
+  height: 100%;
   border: none;
-  font-size: var(--font-medium-large);
+  font-size: 18px;
   text-align: center;
-  line-height: 23px;
   padding: 0px;
   text-decoration: none;
   background-color: #e2e2e2;
+  color: #000000;
   cursor: pointer;
-  height: 57px;
+  margin: 0px;
+}
+
+.obObposPointOfSaleUiButtonSwitch-container1-btn .obUiButton-label {
+  width: 100%;
+  text-align: center;
 }
 
 @media screen and (max-width: 842px) {
@@ -12741,7 +12784,16 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSCashMgmt.UI.CashMgmtKeyboard
 # Inherits: [OB.UI.MultiColumn.Keyboard]
 */
-.obObposcashmgmtUiCashMgmtKeyboard {}
+.obObposcashmgmtUiCashMgmtKeyboard {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: calc(25% - 10px) calc(75% - 10px);
+  column-gap: 20px;
+
+  box-sizing: border-box;
+  height: 367px;
+  padding: 10px 10px 25px 10px;
+}
 
 
 
@@ -13140,15 +13192,27 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   height: 100%;
 }
 
-.obObposcashmgmtUiCashManagement-cashupMultiColumn-cashmgmtRightPanel {}
+.obObposcashmgmtUiCashManagement-cashupMultiColumn-cashmgmtRightPanel {
+  height: 100%;
+}
 
-.obObposcashmgmtUiCashManagement-cashmgmtRightPanel-container1 {}
+.obObposcashmgmtUiCashManagement-cashmgmtRightPanel-wrapper {
+  display: grid;
+  grid-auto-flow: row;
+  grid-auto-columns: 100%;
+  grid-auto-rows: 1fr auto;
 
-.obObposcashmgmtUiCashManagement-cashmgmtRightPanel-container1-obObposcashmgmtUiCashMgmtInfo {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  touch-action: none;
+}
+
+.obObposcashmgmtUiCashManagement-cashmgmtRightPanel-wrapper-obObposcashmgmtUiCashMgmtInfo {
   /*Inherits: [OB.OBPOSCashMgmt.UI.CashMgmtInfo]*/
 }
 
-.obObposcashmgmtUiCashManagement-cashmgmtRightPanel-container1-obObposcashmgmtUiCashMgmtKeyboard {
+.obObposcashmgmtUiCashManagement-cashmgmtRightPanel-wrapper-obObposcashmgmtUiCashMgmtKeyboard {
   /*Inherits: [OB.OBPOSCashMgmt.UI.CashMgmtKeyboard]*/
 }
 
@@ -13520,7 +13584,14 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObPosCashupUiCashUp-cashupMultiColumn-cashupRightPanel {
+  display: grid;
+  grid-auto-flow: row;
+  grid-auto-columns: 100%;
+  grid-auto-rows: 1fr auto;
+
   width: 100%;
+  height: 100%;
+  box-sizing: border-box;
   touch-action: none;
 }
 
@@ -13602,7 +13673,16 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /*
 # Component: OB.OBPOSCashUp.UI.CashUpKeyboard
 */
-.obObposCashupUiCashUpKeyboard {}
+.obObposCashupUiCashUpKeyboard {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: calc(25% - 10px) calc(75% - 10px);
+  column-gap: 20px;
+
+  box-sizing: border-box;
+  height: 367px;
+  padding: 10px 10px 25px 10px;
+}
 
 
 

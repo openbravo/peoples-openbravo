@@ -186,17 +186,17 @@ enyo.kind({
           //2nd column
           {
             classes:
-              'obObposcashmgmtUiCashManagement-cashmgmtRightPanel-container1 span12',
+              'obObposcashmgmtUiCashManagement-cashmgmtRightPanel-wrapper',
             components: [
               {
                 kind: 'OB.OBPOSCashMgmt.UI.CashMgmtInfo',
                 classes:
-                  'obObposcashmgmtUiCashManagement-cashmgmtRightPanel-container1-obObposcashmgmtUiCashMgmtInfo'
+                  'obObposcashmgmtUiCashManagement-cashmgmtRightPanel-wrapper-obObposcashmgmtUiCashMgmtInfo'
               },
               {
                 kind: 'OB.OBPOSCashMgmt.UI.CashMgmtKeyboard',
                 classes:
-                  'obObposcashmgmtUiCashManagement-cashmgmtRightPanel-container1-obObposcashmgmtUiCashMgmtKeyboard'
+                  'obObposcashmgmtUiCashManagement-cashmgmtRightPanel-wrapper-obObposcashmgmtUiCashMgmtKeyboard'
               }
             ]
           }
