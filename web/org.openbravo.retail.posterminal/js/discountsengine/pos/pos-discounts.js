@@ -54,11 +54,8 @@
         }
 
         // Set a property to indicate these promotions has been calculated with the discount engine
-        // For these promotions, add a visual property called displayedTotalAmount
         discountInfoForLine.promotions.forEach(promotion => {
           promotion.calculatedOnDiscountEngine = true;
-          promotion.displayedTotalAmount = promotion.amt;
-          promotion.obdiscQtyoffer = promotion.qtyOffer;
         });
 
         // Concatenate new promotions and excluded promotions in line

@@ -210,33 +210,27 @@ enyo.kind({
   },
   callbackExecutor: function(inSender, inEvent) {
     var receipt = this.args.receipt,
+      linePromotions,
       selectedLines = this.args.selectedLines,
       i,
-      j;
+      j,
+      k;
 
     for (i = 0; i < this.promotionsList.length; i++) {
       if (this.promotionsList[i].deleteDiscount) {
-        let promotionRuleId = this.promotionsList[i].promotionObj.ruleId,
-          promotionDiscountInstance = this.promotionsList[i].promotionObj
-            .discountinstance,
-          orderManualPromotion = receipt
-            .get('manualPromotionsAddedToTicket')
-            .find(function(manualPromotion) {
-              let rule = new Backbone.Model(manualPromotion.rule);
-              return (
-                rule.get('id') === promotionRuleId &&
-                manualPromotion.discountInstance === promotionDiscountInstance
-              );
-            });
         for (j = 0; j < selectedLines.length; j++) {
-          let selectedLine = selectedLines[j],
-            applicableLines = orderManualPromotion.applicableLines,
-            remainingApplicableLines = applicableLines.filter(function(
-              applicableLine
+          linePromotions = selectedLines[j].get('promotions');
+          for (k = 0; k < linePromotions.length; k++) {
+            if (
+              linePromotions[k].ruleId ===
+                this.promotionsList[i].promotionObj.ruleId &&
+              linePromotions[k].discountinstance ===
+                this.promotionsList[i].promotionObj.discountinstance
             ) {
-              return applicableLine !== selectedLine.get('id');
-            });
-          orderManualPromotion.applicableLines = remainingApplicableLines;
+              linePromotions.splice(k, 1);
+              break;
+            }
+          }
         }
       }
     }

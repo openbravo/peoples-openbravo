@@ -469,7 +469,7 @@ enyo.kind({
   applyDiscounts: function(inSender, inEvent) {
     var promotionToAplly = {},
       discountsContainer = this.$.discountsContainer,
-      orderLinesCollection = [],
+      orderLinesCollection = new OB.Collection.OrderLineList(),
       me = this;
     //preApplyDiscountsHook
     OB.UTIL.HookManager.executeHooks(
@@ -485,34 +485,14 @@ enyo.kind({
         if (!me.$.overridePromotion.showing) {
           me.$.checkOverride.unCheck();
         }
-
-        _.each(me.checkedLines, function(line) {
-          orderLinesCollection.push(line.get('id'));
-        });
-
-        promotionToAplly = {};
-        promotionToAplly.userAmt = discountsContainer.amt;
-        promotionToAplly.applyNext = true;
-        promotionToAplly.forceReplace = me.$.checkOverride.checked;
-        promotionToAplly.lastApplied = true;
-        promotionToAplly.obdiscLineFinalgross = discountsContainer.amt;
-        promotionToAplly.applicableLines = orderLinesCollection;
         promotionToAplly.rule = discountsContainer.model;
-
-        if (
-          OB.MobileApp.model.hasPermission('OBPOS_NewDiscounts', true) &&
-          OB.Model.Discounts.discountRules[
-            promotionToAplly.rule.get('discountType')
-          ].getIdentifier
-        ) {
-          let finalPromotionName = OB.Model.Discounts.discountRules[
-            promotionToAplly.rule.get('discountType')
-          ].getIdentifier(promotionToAplly.rule, {
-            percentage: promotionToAplly.userAmt
-          });
-          promotionToAplly.rule.set('name', finalPromotionName);
-          promotionToAplly.rule.set('_identifier', finalPromotionName);
-        }
+        promotionToAplly.definition = {};
+        promotionToAplly.definition.userAmt = discountsContainer.amt;
+        promotionToAplly.definition.applyNext = true;
+        promotionToAplly.definition.forceReplace = me.$.checkOverride.checked;
+        promotionToAplly.definition.lastApplied = true;
+        promotionToAplly.definition.obdiscLineFinalgross =
+          discountsContainer.amt;
 
         if (discountsContainer.requiresQty && !discountsContainer.amt) {
           //Show a modal pop up with the error
@@ -521,83 +501,15 @@ enyo.kind({
           });
           return true;
         }
+        _.each(me.checkedLines, function(line) {
+          orderLinesCollection.add(line);
+        });
 
-        if (!me.order.get('manualPromotionsAddedToTicket')) {
-          me.order.set('manualPromotionsAddedToTicket', []);
-        }
-
-        if (promotionToAplly.rule.get('obdiscAllowmultipleinstan')) {
-          promotionToAplly.discountinstance = OB.UTIL.get_UUID();
-        } else {
-          let sameManualPromotionAdded = me.order
-            .get('manualPromotionsAddedToTicket')
-            .filter(manualPromotionAdded => {
-              return manualPromotionAdded.rule.id === promotionToAplly.rule.id;
-            });
-          if (promotionToAplly.forceReplace) {
-            // Override flag
-            if (
-              sameManualPromotionAdded &&
-              sameManualPromotionAdded.length > 0
-            ) {
-              sameManualPromotionAdded.forEach(sameManualPromo => {
-                let newApplicableLines = [];
-                sameManualPromo.applicableLines.forEach(applicableLine => {
-                  if (
-                    promotionToAplly.applicableLines.indexOf(applicableLine) ===
-                    -1
-                  ) {
-                    newApplicableLines.push(applicableLine);
-                  }
-                });
-                sameManualPromo.applicableLines = newApplicableLines;
-              });
-            }
-          } else {
-            if (
-              sameManualPromotionAdded &&
-              sameManualPromotionAdded.length > 0
-            ) {
-              let lineIdAlreadyApplied = [];
-              sameManualPromotionAdded.forEach(sameManualPromo => {
-                lineIdAlreadyApplied = [
-                  lineIdAlreadyApplied,
-                  ...sameManualPromo.applicableLines
-                ];
-              });
-              let newApplicableLines = [];
-              newApplicableLines = promotionToAplly.applicableLines.filter(
-                applicableLine => {
-                  if (lineIdAlreadyApplied.indexOf(applicableLine) === -1) {
-                    return true;
-                  } else {
-                    return false;
-                  }
-                }
-              );
-              promotionToAplly.applicableLines = newApplicableLines;
-            }
-          }
-        }
-
-        me.order.get('manualPromotionsAddedToTicket').push(promotionToAplly);
-
-        let validManualPromotions = me.order
-          .get('manualPromotionsAddedToTicket')
-          .filter(manualPromotionAdded => {
-            return (
-              manualPromotionAdded.applicableLines &&
-              manualPromotionAdded.applicableLines.length > 0
-            );
-          });
-
-        if (validManualPromotions && validManualPromotions.length > 0) {
-          me.order.set('manualPromotionsAddedToTicket', validManualPromotions);
-        } else {
-          me.order.set('manualPromotionsAddedToTicket', []);
-        }
-
-        me.order.calculateReceipt();
+        OB.Model.Discounts.addManualPromotion(
+          me.order,
+          orderLinesCollection,
+          promotionToAplly
+        );
 
         me.closingDiscounts();
       }

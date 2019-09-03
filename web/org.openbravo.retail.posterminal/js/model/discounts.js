@@ -191,27 +191,12 @@
 
           // if preventApplyPromotions then the promotions will not be deleted, because they will not be recalculated
           if (!me.preventApplyPromotions) {
-            let addedManualPromotions =
-              auxReceipt.get('manualPromotionsAddedToTicket') || [];
-            _.each(addedManualPromotions, function(addedManualPromotion) {
-              _.each(addedManualPromotion.applicableLines, function(
-                applicableLine
-              ) {
-                let auxReceiptLine = _.find(
-                  auxReceipt.get('lines').models,
-                  function(l) {
-                    return applicableLine === l.get('id');
-                  }
-                );
-                if (auxReceiptLine) {
-                  let manualPromotions =
-                    auxReceiptLine.get('manualPromotions') || [];
-                  manualPromotions.push(addedManualPromotion);
-                  auxReceiptLine.set('manualPromotions', manualPromotions);
-                }
-              });
-            });
+            var manualPromotions = [];
             _.each(auxReceipt.get('lines').models, function(line) {
+              manualPromotions = _.filter(line.get('promotions'), function(p) {
+                return p.manual === true;
+              });
+              line.set('manualPromotions', manualPromotions);
               line.set('promotions', []);
               line.set('promotionCandidates', []);
             });
@@ -280,6 +265,10 @@
       if (!rule || !rule.addManual) {
         OB.warn('No manual implemetation for rule ' + promotion.discountType);
         return;
+      }
+
+      if (promotion.rule.get('obdiscAllowmultipleinstan')) {
+        promotion.definition.discountinstance = OB.UTIL.get_UUID();
       }
 
       lines.forEach(function(line) {
