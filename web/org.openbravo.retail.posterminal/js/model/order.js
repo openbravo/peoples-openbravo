@@ -3467,11 +3467,12 @@
               OB.Model.ProductCharacteristicValue,
               { product: p.get('id') },
               function(productcharacteristics) {
-                p.set(
+                let newProd = OB.UTIL.clone(p);
+                newProd.set(
                   'productCharacteristics',
                   productcharacteristics.toJSON()
                 );
-                orderline.set('product', p);
+                orderline.set('product', newProd);
                 addProdCharCallback();
               }
             );
