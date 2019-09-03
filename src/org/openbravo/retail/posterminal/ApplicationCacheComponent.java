@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2018 Openbravo SLU
+ * All portions are Copyright (C) 2012-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -44,8 +44,6 @@ public class ApplicationCacheComponent extends MobileCoreApplicationCacheCompone
 
     resources.add("../../web/org.openbravo.client.kernel/js/LAB.min.js");
     resources.add("../../web/org.openbravo.retail.posterminal/js/libs/jquery-1.7.2.js");
-    resources.add("../../web/org.openbravo.retail.posterminal/js/libs/core-min.js");
-    resources.add("../../web/org.openbravo.retail.posterminal/js/libs/sha1-min.js");
 
     // Boot code
 

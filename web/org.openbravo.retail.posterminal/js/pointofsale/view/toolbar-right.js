@@ -180,7 +180,8 @@ enyo.kind({
     {
       kind: 'OB.OBPOSPointOfSale.UI.ButtonTabCart',
       name: 'toolbarBtnCart',
-      classes: 'obObposPointOfSaleUiRightToolbarImpl-buttons-toolbarBtnCart'
+      classes: 'obObposPointOfSaleUiRightToolbarImpl-buttons-toolbarBtnCart',
+      tabToOpen: 'receipt'
     }
   ],
 
@@ -292,8 +293,15 @@ enyo.kind({
   },
   i18nLabel: 'OBMOBC_LblCart',
   tabPanel: 'receipt',
-  tap: function() {
+  tap: function(options) {
     if (!this.disabled) {
+      this.doTabChange({
+        tabPanel: this.tabPanel,
+        keyboard: 'toolbarscan',
+        edit: false,
+        options: options,
+        status: ''
+      });
       OB.POS.terminal.$.containerWindow
         .getRoot()
         .$.multiColumn.$.panels.addClass('obUiMultiColumn-panels-showReceipt');

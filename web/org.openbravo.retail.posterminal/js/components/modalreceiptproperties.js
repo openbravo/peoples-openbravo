@@ -53,7 +53,6 @@ enyo.kind({
       retrievedPropertyForValue: 'id',
       retrievedPropertyForText: '_identifier',
       init: function(model) {
-        this.collection = new OB.Collection.SalesRepresentativeList();
         this.model = model;
         this.doLoadValueNeeded = true;
         if (!OB.MobileApp.model.hasPermission(this.permission)) {
@@ -65,6 +64,10 @@ enyo.kind({
             this.formElement.hide();
           }
         }
+      },
+
+      initComponents: function() {
+        this.collection = new OB.Collection.SalesRepresentativeList();
       },
 
       // override to not load things upfront when not needed

@@ -546,9 +546,19 @@
 /*
 # Component: OB.UI.KeypadCoinsLegacy
 */
-.obUiKeypadCoinsLegacy {}
+.obUiKeypadCoinsLegacy {
+  display: grid;
+  grid-auto-flow: row;
+  grid-template-rows: repeat(5, 20%);
 
-.obUiKeypadCoinsLegacy-container1 {}
+  height: 100%;
+}
+
+.obUiKeypadCoinsLegacy-container1 {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: repeat(3, calc(100% / 3));
+}
 
 .obUiKeypadCoinsLegacy-obUiButtonKey-generic {
   font-size: var(--font-xlarge);
@@ -572,7 +582,11 @@
 /* # Inherits: [OB.UI.ButtonKey] */
 }
 
-.obUiKeypadCoinsLegacy-container2 {}
+.obUiKeypadCoinsLegacy-container2 {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: repeat(3, calc(100% / 3));
+}
 
 .obUiKeypadCoinsLegacy-container2-container1 {}
 
@@ -592,7 +606,11 @@
 /* # Inherits: [OB.UI.PaymentButton] */
 }
 
-.obUiKeypadCoinsLegacy-container3 {}
+.obUiKeypadCoinsLegacy-container3 {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: repeat(3, calc(100% / 3));
+}
 
 .obUiKeypadCoinsLegacy-container3-container1 {}
 
@@ -612,7 +630,11 @@
 /* # Inherits: [OB.UI.PaymentButton] */
 }
 
-.obUiKeypadCoinsLegacy-container4 {}
+.obUiKeypadCoinsLegacy-container4 {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: repeat(3, calc(100% / 3));
+}
 
 .obUiKeypadCoinsLegacy-container4-container1 {}
 
@@ -632,7 +654,11 @@
 /* # Inherits: [OB.UI.PaymentButton] */
 }
 
-.obUiKeypadCoinsLegacy-container5 {}
+.obUiKeypadCoinsLegacy-container5 {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: repeat(3, calc(100% / 3));
+}
 
 .obUiKeypadCoinsLegacy-container5-container1 {}
 
@@ -657,7 +683,8 @@
 # Component: OB.UI.PaymentButton
 */
 .obUiPaymentButton {
-  margin: 5px;
+  margin: 0px;
+  height: 100%;
 }
 
 .obUiPaymentButton-generic {
@@ -727,18 +754,17 @@
 
 .obUiPaymentButton-btn {
 /* # Inherits: [OB.UI.Button] */
-  display: flex;
   width: 100%;
+  height: 100%;
   border: none;
   font-size: 18px;
   text-align: center;
-  line-height: 23px;
   padding: 0px;
   text-decoration: none;
   background-color: #e2e2e2;
-  color: black;
+  color: #000000;
   cursor: pointer;
-  height: 57px;
+  margin: 0px;
 }
 
 @media screen and (max-width: 842px) {
@@ -1055,7 +1081,9 @@
 .obUiReceiptsList {}
 
 .obUiReceiptsList-openreceiptslistitemprinter {
-  overflow: hidden auto;
+  overflow: hidden auto !important;
+  max-height: 350px;
+  position: relative;
 }
 
 
@@ -1789,6 +1817,9 @@
 
 .obUiModalCategoryTree-body-listCategory {
   margin-top: -10px;
+  box-shadow: none;
+  border-radius: 0px;
+  width: calc(100% - 15px);
 }
 
 
@@ -1834,63 +1865,131 @@ li.selected > .obUiRenderCategory {
 
 
 /*
-# Component: OB.UI.RenderCategoryExpand
-# Inherits: [Image]
-*/
-.obUiRenderCategoryExpand {
-  width: 26;
-  height: 26;
-}
-
-
-/*
-# Component: OB.UI.RenderCategoryCollapse
-# Inherits: [Image]
-*/
-.obUiRenderCategoryCollapse {
-  width: 26;
-  height: 26;
-}
-
-
-/*
 # Component: OB.UI.RenderCategoryTree
 # Inherits: [OB.UI.listItemButton]
 */
 .obUiRenderCategoryTree {
-  height: 41px;
-  background-color: #b882c6;
-  color: #ffffff;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: 1fr auto;
+  justify-items: left;
+  align-items: center;
+
+  height: 48px;
+  border-left: 4px solid transparent;
+  background-color: #ffffff;
+  color: #000000;
+  padding: 0px;
 }
 
-.obUiRenderCategoryTree-container1 {
-  float: left;
-  width: calc(100% - 40px);
+.obUiRenderCategoryTree:active {
+  background-color: #c5c5c5;
+  border-left-color: darkgreen;
 }
 
-.obUiRenderCategoryTree-container1-identifier {
-  white-space: nowrap;
+li.selected > .obUiRenderCategoryTree {
+  border-left-color: #6eb43f;
+  background-color: #e8e8e8;
+}
+
+.obUiRenderCategoryTree-identifierContainer {
+  width: 100%;
+  padding: 2px 0px 0px 8px;
+  box-sizing: border-box;
+}
+
+.obUiRenderCategoryTree-identifierContainer-identifier {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-break: break-word;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding-top: 4px;
-  height: 20px;
 }
 
-.obUiRenderCategoryTree-container2 {
-  float: left;
-  width: 40px;
-  text-align: right;
-  margin-top: -8px;
+.obUiRenderCategoryTree-identifierContainer-identifier.identifierAll {
+  font-weight: bold;
 }
 
-.obUiRenderCategoryTree-container2-expandCollapse {
-  height: 33px;
-  padding-right: 7px;
-  padding-top: 7px;
+.obUiRenderCategoryTree-identifierContainer-identifier.identifierLevel-0 {
+  padding-left: calc(14px * 0);
+}
+
+.obUiRenderCategoryTree-identifierContainer-identifier.identifierLevel-1 {
+  padding-left: calc(14px * 1);
+}
+
+.obUiRenderCategoryTree-identifierContainer-identifier.identifierLevel-2 {
+  padding-left: calc(14px * 2);
+}
+
+.obUiRenderCategoryTree-identifierContainer-identifier.identifierLevel-3 {
+  padding-left: calc(14px * 3);
+}
+
+.obUiRenderCategoryTree-identifierContainer-identifier.identifierLevel-4 {
+  padding-left: calc(14px * 4);
+}
+
+.obUiRenderCategoryTree-identifierContainer-identifier.identifierLevel-5 {
+  padding-left: calc(14px * 5);
+}
+
+.obUiRenderCategoryTree-identifierContainer-identifier.identifierLevel-6 {
+  padding-left: calc(14px * 6);
+}
+
+.obUiRenderCategoryTree-identifierContainer-identifier.identifierLevel-7 {
+  padding-left: calc(14px * 7);
+}
+
+.obUiRenderCategoryTree-identifierContainer-identifier.identifierLevel-8 {
+  padding-left: calc(14px * 8);
+}
+
+.obUiRenderCategoryTree-identifierContainer-identifier.identifierLevel-9 {
+  padding-left: calc(14px * 9);
+}
+
+.obUiRenderCategoryTree-identifierContainer-identifier.identifierLevel-10 {
+  padding-left: calc(14px * 10);
+}
+
+.obUiRenderCategoryTree-expandCollapseContainer {
+  text-align: center;
+  height: 100%;
+}
+
+.obUiRenderCategoryTree-expandCollapseContainer-expandCollapse {
+  width: 45px;
+  height: 100%;
 }
 
 .obUiRenderCategoryTree-expandCollapse-expand {}
 
+
+/*
+# Component: OB.UI.RenderCategoryExpand
+# Component: OB.UI.RenderCategoryCollapse
+# Inherits: [Div]
+*/
+.obUiRenderCategoryExpand,
+.obUiRenderCategoryCollapse {
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 26px;
+}
+
+.obUiRenderCategoryExpand {
+  background-image: url('./../img/iconExpand.svg');
+}
+
+.obUiRenderCategoryCollapse {
+  background-image: url('./../img/iconCollapse.svg');
+}
 
 
 /***********************   ***********************/
@@ -3060,24 +3159,9 @@ li.selected > .obUiRenderOrderLine_edit {
 }
 
 .obUiOrderHeader-abaReceiptToolbar1 > .obUiActionButton {
-  text-decoration: none;
-  background-color: #4d545c;
-  font-size: var(--font-medium);
-  color: #e8e8e8;
   padding: 0px;
   margin: 0px;
   height: 50px;
-  text-align: center;
-}
-
-.obUiOrderHeader-abaReceiptToolbar1 > .obUiActionButton:hover {
-  background-color: #3a3f45;
-  opacity: 1;
-}
-
-.obUiOrderHeader-abaReceiptToolbar1 > .obUiActionButton:active {
-  background-color: #232629;
-  opacity: 1;
 }
 
 .obUiOrderHeader-abaReceiptToolbar1 > .pos00 {
@@ -3088,7 +3172,6 @@ li.selected > .obUiRenderOrderLine_edit {
   border-radius: 0px 4px 4px 0px;
 }
 
-.obUiOrderHeader-abaReceiptToolbar1 > .obUiActionButton.disabled,
 .obUiOrderHeader-abaReceiptToolbar1 > .obUiDummyAction {
   background-color: #d0d2d3;
   opacity: 1;
@@ -3163,7 +3246,7 @@ li.selected > .obUiRenderOrderLine_edit {
 .obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocbutton,
 .obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocshipbutton {
   width: auto;
-  box-shadow: 0px 0px 10px -1px #8D8D8D;
+  box-shadow: 0px 0px 10px -1px #8d8d8d;
   border-radius: 4px;
   background-color: white;
   grid-template-rows: 1fr 0px;
@@ -7462,23 +7545,61 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   grid-area: inp;
   background-color: white;
   color: black;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
 }
 
 .obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic {
-  height: 57px;
+  height: auto;
   width: 100%;
+  background-color: #f9f9f9;
+  color: #333333;
+  font-size: 22px;
 }
 
-.obObposPointOfSaleUiGridKeyboard-addqty {
-  grid-area: cmd1;
+.obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic:hover {
+  background-color: #e8e8e8;
+  opacity: 1;
+}
+
+.obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic:active {
+  background-color: #bbbbbb;
+  opacity: 1;
+}
+
+..obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic.disabled,
+..obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic.disabled:hover,
+..obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic.disabled:active,
+..obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic:disabled,
+..obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic:disabled:hover,
+..obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic:disabled:active,
+..obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic[disabled='true'],
+..obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic[disabled='true']:hover,
+..obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic[disabled='true']:active {
+  color: #90979f;
+  background-color: #d0d2d3;
+  opacity: 1;
+  cursor: default;
 }
 
 .obObposPointOfSaleUiGridKeyboard-removeqty {
+  grid-area: cmd1;
+}
+
+.obObposPointOfSaleUiGridKeyboard-addqty {
   grid-area: cmd2;
 }
 
 .obObposPointOfSaleUiGridKeyboard-backspace {
   grid-area: cmd3;
+  grid-template-columns: 1fr 0 0;
+}
+
+.obObposPointOfSaleUiGridKeyboard-backspace .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconBackspace.svg');
+  background-size: 32px 24px;
+  width: 100%;
+  height: 100%;
 }
 
 .obObposPointOfSaleUiGridKeyboard-keyboardkey9 {
@@ -7519,6 +7640,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiGridKeyboard-keyboardkey0 {
   grid-area: num0;
+  border-bottom-left-radius: 4px;
 }
 
 .obObposPointOfSaleUiGridKeyboard-keyboardkeyPeriod {
@@ -7527,6 +7649,15 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiGridKeyboard-keyboardkeyEnter {
   grid-area: cmdok;
+  border-bottom-right-radius: 4px;
+  grid-template-columns: 1fr 0 0;
+}
+
+.obObposPointOfSaleUiGridKeyboard-keyboardkeyEnter .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconEnter.svg');
+  background-size: 24px 17px;
+  width: 100%;
+  height: 100%;
 }
 
 
@@ -7953,27 +8084,36 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 */
 .obObposPointOfSaleUiRightBottomPanelWrapper {}
 
-.obObposPointOfSaleUiRightBottomPanelWrapper-keyboardWrapper {
-  height: 100%;
-}
+.obObposPointOfSaleUiRightBottomPanelWrapper-keyboardWrapper {}
 
 .obObposPointOfSaleUiRightBottomPanelWrapper-keyboardWrapper-keyboard {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: calc(25% - 10px) calc(75% - 10px);
+  column-gap: 20px;
+
   box-sizing: border-box;
-  height: 100%;
-  padding: 5px 10px 25px 10px;
+  height: 367px;
+  padding: 10px 10px 25px 10px;
 }
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.BottomRightGridLayoutsContainer
 */
+.obObposPointOfSaleUiBottomRightGridLayoutsContainer {
+  height: 367px;
+  box-sizing: border-box;
+  padding: 10px 10px 25px 10px;
+}
 
 .obObposPointOfSaleUiBottomRightGridLayout {
   color: white;
   display: grid;
   grid-template-areas: 'hside center';
   grid-template-columns: 2fr 3fr;
-  column-gap: 10px;
-  row-gap: 10px;
+  column-gap: 20px;
+  row-gap: 0px;
+  height: 100%;
 }
 
 .right.obObposPointOfSaleUiBottomRightGridLayout {
@@ -7985,10 +8125,10 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   grid-area: hside;
   display: grid;
   grid-auto-flow: row;
-  row-gap: 10px;
-  column-gap: 10px;
+  row-gap: 1px;
+  column-gap: 1px;
   grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: repeat(6, 57px);
+  grid-template-rows: repeat(6, 1fr);
   grid-template-areas:
     'pos00 pos01'
     'pos10 pos11'
@@ -8005,6 +8145,68 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > button.obUiActionButtonSwitch_selected {
   background-color: var(--color-actioncolor);
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .obUiActionButton {
+  padding: 0px;
+  margin: 0px;
+  height: auto;
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos00 {
+  border-top-left-radius: 4px;
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos00.colspan2,
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos01 {
+  border-top-right-radius: 4px;
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos00.rowpan6,
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos10.rowpan5,
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos20.rowpan4,
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos30.rowpan3,
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos40.rowpan2,
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos50 {
+  border-bottom-left-radius: 4px;
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos01.rowpan6,
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos11.rowpan5,
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos21.rowpan4,
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos31.rowpan3,
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos41.rowpan2,
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos51 {
+  border-bottom-right-radius: 4px;
+}
+
+/* Particular cases where there could be colspan or rowspan */
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos00.colspan2 {
+  border-top-right-radius: 4px;
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos00.rowpan6,
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos10.rowpan5,
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos20.rowpan4,
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos30.rowpan3,
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos40.rowpan2,
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos50 {
+  border-bottom-left-radius: 4px;
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos01.rowpan5, {
+  border-bottom-right-radius: 4px;
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos50.colspan2 {
+  border-bottom-right-radius: 4px;
+}
+
+.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .obUiDummyAction {
+  background-color: #d0d2d3;
+  opacity: 1;
+  color: #90979f;
 }
 
 /***********************   ***********************/
@@ -8050,7 +8252,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   display: grid;
   overflow-y: auto;
   background-color: white;
-  box-shadow: 0px 0px 10px -1px #8D8D8D;
+  box-shadow: 0px 0px 10px -1px #8d8d8d;
   border-radius: 4px;
 }
 
@@ -8606,6 +8808,10 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabScan_selected.svg');
 }
 
+.obObposPointOfSaleUiButtonTabScan.disabled .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabScan_disabled.svg');
+}
+
 .obObposPointOfSaleUiButtonTabScan.selected .obUiButton-label {
   color: black;
 }
@@ -8669,6 +8875,10 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabBrowse_selected.svg');
 }
 
+.obObPosPointOfSaleUiButtonTabBrowse.disabled .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabBrowse_disabled.svg');
+}
+
 .obObPosPointOfSaleUiButtonTabBrowse.selected .obUiButton-label {}
 
 /*
@@ -8688,6 +8898,10 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObPosPointOfSaleUiButtonTabSearchCharacteristic.selected .obUiButton-before {
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabSearch_selected.svg');
+}
+
+.obObPosPointOfSaleUiButtonTabSearchCharacteristic.disabled .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabSearch_disabled.svg');
 }
 
 .obObPosPointOfSaleUiButtonTabSearchCharacteristic.selected .obUiButton-label {}
@@ -9080,31 +9294,23 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiEditLine-propertiesToShow-general {
   margin: 0px;
-  padding: 0px 18px;
-  background-color: #4d545c;
-  color: #e8e8e8;
+  padding: 0px 10px;
   height: 50px;
+  text-align: left;
+  grid-template-columns: 30px 1fr 0;
 }
 
 .obObposPointOfSaleUiEditLine-propertiesToShow-general:first-of-type {
   border-radius: 4px 0px 0px 0px;
 }
 
-.obObposPointOfSaleUiEditLine-propertiesToShow-general:hover {
-  background-color: #3a3f45;
-  opacity: 1;
+.obObposPointOfSaleUiEditLine-propertiesToShow-general .obUiButton-before {
+  width: 100%;
+  height: 100%;
 }
 
-.obObposPointOfSaleUiEditLine-propertiesToShow-general:active {
-  background-color: #232629;
-  opacity: 1;
-}
-
-.obObposPointOfSaleUiEditLine-propertiesToShow-general.disabled {
-  background-color: #d0d2d3;
-  opacity: 1;
-  color: #90979f;
-  cursor: default;
+.obObposPointOfSaleUiEditLine-propertiesToShow-general .obUiButton-label {
+  padding: 0px 5px 0px 5px;
 }
 
 .obObposPointOfSaleUiEditLine-propertiesToShow-general .obUiButton-after {
@@ -9150,35 +9356,71 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   /* Inherits: [OB.UI.SmallButton] */
 }
 
-.obObposPointOfSaleUiEditLine-actionButtons-showRelatedServices {
-/* Inherits: [OB.UI.SmallButton] */
-  background-color: orange;
-  color: black;
-  width: 45px;
-  background-repeat: no-repeat;
-  background-position: center;
+.obObposPointOfSaleUiEditLine-actionButtons-deleteLine .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconActButtonDeleteLine.svg');
+  background-size: auto 16px;
 }
 
-.obObposPointOfSaleUiEditLine-actionButtons-showRelatedServices_unreviewed {
-  width: 27px;
-  height: 26px;
-  background-image: url('./../img/iconServices.svg');
+.obObposPointOfSaleUiEditLine-actionButtons-deleteLine.disabled .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconActButtonDeleteLine_disabled.svg');
 }
 
-.obObposPointOfSaleUiEditLine-actionButtons-showRelatedServices_reviewed {
-  width: 27px;
-  height: 26px;
-  background-image: url('./../img/iconServices.svg');
+.obObposPointOfSaleUiEditLine-actionButtons-descriptionButton .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconActButtonDescription.svg');
+  background-size: auto 16px;
+  background-position: calc(50% + 2px) center;
+}
+
+.obObposPointOfSaleUiEditLine-actionButtons-descriptionButton.disabled .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconActButtonDescription_disabled.svg');
+}
+
+.obObposPointOfSaleUiEditLine-actionButtons-returnLine .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconActButtonReturnLine.svg');
+  background-size: auto 14px;
+}
+
+.obObposPointOfSaleUiEditLine-actionButtons-returnLine.disabled .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconActButtonReturnLine_disabled.svg');
+}
+
+.obObposPointOfSaleUiEditLine-actionButtons-splitlineButton .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconActButtonSplitLine.svg');
+  background-size: auto 14px;
+}
+
+.obObposPointOfSaleUiEditLine-actionButtons-splitlineButton.disabled .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconActButtonSplitLine_disabled.svg');
+}
+
+.obObposPointOfSaleUiEditLine-actionButtons-showRelatedServices .obUiButton-before,
+.obObposPointOfSaleUiEditLine-actionButtons-showRelatedServices_unreviewed .obUiButton-before,
+.obObposPointOfSaleUiEditLine-actionButtons-showRelatedServices_reviewed .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconActButtonRelatedServices.svg');
+  background-size: auto 22px;
+}
+
+.obObposPointOfSaleUiEditLine-actionButtons-showRelatedServices.disabled .obUiButton-before,
+.obObposPointOfSaleUiEditLine-actionButtons-showRelatedServices_unreviewed.disabled .obUiButton-before,
+.obObposPointOfSaleUiEditLine-actionButtons-showRelatedServices_reviewed.disabled .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconActButtonRelatedServices_disabled.svg');
 }
 
 .obObposPointOfSaleUiEditLine-actionButtons-removeDiscountButton {
-/* Inherits: [OB.UI.SmallButton] */
-  background-color: orange;
-  color: black;
+/* Inherits: [OB.UI.Button] */
 }
 
 .obObposPointOfSaleUiEditLine-actionButtons-checkStockButton {
 /* Inherits: [OB.OBPOSPointOfSale.UI.EditLine.OpenStockButton] */
+}
+
+.obObposPointOfSaleUiEditLine-actionButtons-checkStockButton .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconActButtonCheckStock.svg');
+  background-size: auto 14px;
+}
+
+.obObposPointOfSaleUiEditLine-actionButtons-checkStockButton.disabled .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconActButtonCheckStock_disabled.svg');
 }
 
 .obObposPointOfSaleUiEditLine-actionButtons-openAttributeButton {
@@ -9188,9 +9430,16 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obObposPointOfSaleUiEditLine-actionButtons-addAssociationsButton,
 .obObposPointOfSaleUiEditLine-actionButtons-removeAssociationsButton,
 .obObposPointOfSaleUiEditLine-actionButtons-canDeliver {
-/* Inherits: [OB.UI.SmallButton] */
-  background-color: orange;
-  color: black;
+/* Inherits: [OB.UI.Button] */
+}
+
+.obObposPointOfSaleUiEditLine-actionButtons-canDeliver .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconActButtonCanDeliver.svg');
+  background-size: auto 16px;
+}
+
+.obObposPointOfSaleUiEditLine-actionButtons-canDeliver.disabled .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconActButtonCanDeliver_disabled.svg');
 }
 
 .obObposPointOfSaleUiEditLine-discountsEdit {
@@ -9207,6 +9456,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   overflow-y: auto;
   display: grid;
   grid-auto-flow: row;
+  grid-template-rows: auto 1fr;
 }
 
 .obObposPointOfSaleUiEditLine-defaultEdit-msgedit-header {
@@ -9284,7 +9534,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiEditLine-msgedit-container3-linePropertiesContainer {
 /* Inherits: [Scroller] */
-  padding: 10px 5px;
+  padding: 10px 5px 5px 5px;
   line-height: 130%;
   width: 65%;
   overflow-x: hidden;
@@ -9844,7 +10094,8 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposPointOfSaleUiReversePayment_iconReversePayment {
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconReversePayment.png');
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconReversePayment.svg');
+  background-size: 14px auto;
 }
 
 .obObposPointOfSaleUiReversePayment_iconLoading {
@@ -10016,7 +10267,13 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /*
 # Component: OB.OBPOSPointOfSale.UI.ToolbarPayment
 */
-.obObposPointOfSaleUiToolbarPayment {}
+.obObposPointOfSaleUiToolbarPayment {
+  display: grid;
+  grid-auto-flow: row;
+  grid-template-rows: repeat(6, 1fr);
+
+  height: 100%;
+}
 
 .obObposPointOfSaleUiToolbarPayment-obUiBtnSide {
 /* Inherits: [OB.UI.BtnSide] */
@@ -10085,8 +10342,9 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSPointOfSale.UI.ButtonSwitch
 */
 .obObposPointOfSaleUiButtonSwitch {
-  display: table;
+  display: inline-block;
   width: 100%;
+  height: 100%;
 }
 
 .obObposPointOfSaleUiButtonSwitch_disabled,
@@ -10101,22 +10359,29 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposPointOfSaleUiButtonSwitch-container1 {
-  margin: 5px;
+  display: inline-block;
+  width: 100%;
+  height: 100%;
 }
 
 .obObposPointOfSaleUiButtonSwitch-container1-btn {
 /* Inherits: [OB.UI.Button] */
-  display: flex;
   width: 100%;
+  height: 100%;
   border: none;
-  font-size: var(--font-medium-large);
+  font-size: 18px;
   text-align: center;
-  line-height: 23px;
   padding: 0px;
   text-decoration: none;
   background-color: #e2e2e2;
+  color: #000000;
   cursor: pointer;
-  height: 57px;
+  margin: 0px;
+}
+
+.obObposPointOfSaleUiButtonSwitch-container1-btn .obUiButton-label {
+  width: 100%;
+  text-align: center;
 }
 
 @media screen and (max-width: 842px) {
@@ -12629,7 +12894,16 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSCashMgmt.UI.CashMgmtKeyboard
 # Inherits: [OB.UI.MultiColumn.Keyboard]
 */
-.obObposcashmgmtUiCashMgmtKeyboard {}
+.obObposcashmgmtUiCashMgmtKeyboard {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: calc(25% - 10px) calc(75% - 10px);
+  column-gap: 20px;
+
+  box-sizing: border-box;
+  height: 367px;
+  padding: 10px 10px 25px 10px;
+}
 
 
 
@@ -12868,7 +13142,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   border-bottom: var(--bottomseparator-slim);
   overflow-y: auto;
   background-color: white;
-  box-shadow: 0px 0px 10px -1px #8D8D8D;
+  box-shadow: 0px 0px 10px -1px #8d8d8d;
   border-radius: 4px;
   height: 100%;
 }
@@ -12930,7 +13204,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   grid-area: obObposcashmgmtUiLeftToolbarImpl-btnCancel;
 }
 
-.obObposcashmgmtUiLeftToolbarImpl-btnCancel  .obUiButton-before {
+.obObposcashmgmtUiLeftToolbarImpl-btnCancel .obUiButton-before {
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabCancel.svg');
   background-size: 20px;
 }
@@ -12944,7 +13218,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   grid-area: obObposcashmgmtUiLeftToolbarImpl-btnDone;
 }
 
-.obObposcashmgmtUiLeftToolbarImpl-btnDone  .obUiButton-before {
+.obObposcashmgmtUiLeftToolbarImpl-btnDone .obUiButton-before {
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabDone.svg');
   background-size: 20px;
 }
@@ -13028,15 +13302,27 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   height: 100%;
 }
 
-.obObposcashmgmtUiCashManagement-cashupMultiColumn-cashmgmtRightPanel {}
+.obObposcashmgmtUiCashManagement-cashupMultiColumn-cashmgmtRightPanel {
+  height: 100%;
+}
 
-.obObposcashmgmtUiCashManagement-cashmgmtRightPanel-container1 {}
+.obObposcashmgmtUiCashManagement-cashmgmtRightPanel-wrapper {
+  display: grid;
+  grid-auto-flow: row;
+  grid-auto-columns: 100%;
+  grid-auto-rows: 1fr auto;
 
-.obObposcashmgmtUiCashManagement-cashmgmtRightPanel-container1-obObposcashmgmtUiCashMgmtInfo {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  touch-action: none;
+}
+
+.obObposcashmgmtUiCashManagement-cashmgmtRightPanel-wrapper-obObposcashmgmtUiCashMgmtInfo {
   /*Inherits: [OB.OBPOSCashMgmt.UI.CashMgmtInfo]*/
 }
 
-.obObposcashmgmtUiCashManagement-cashmgmtRightPanel-container1-obObposcashmgmtUiCashMgmtKeyboard {
+.obObposcashmgmtUiCashManagement-cashmgmtRightPanel-wrapper-obObposcashmgmtUiCashMgmtKeyboard {
   /*Inherits: [OB.OBPOSCashMgmt.UI.CashMgmtKeyboard]*/
 }
 
@@ -13261,13 +13547,18 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 */
 .obObPosCashUpUiLeftToolbarImpl {}
 
-.obObPosCashUpUiLeftToolbarImpl-btnCashUp {
-  /* Inherits: [OB.OBPOSCashUp.UI.Button] */
-  grid-area: obObPosCashUpUiLeftToolbarImpl-btnCashUp;
-}
 .obObPosCashUpUiLeftToolbarImpl-btnToggleView {
-  /* Inherits: [OB.UI.Button] */
+  /*Inherits: [OB.UI.ToolbarButton]*/
   grid-area: obObPosCashUpUiLeftToolbarImpl-btnToggleView;
+}
+
+.obObPosCashUpUiLeftToolbarImpl-btnToggleView  .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabSwitch.svg');
+  background-size: 24px;
+}
+
+.obObPosCashUpUiLeftToolbarImpl-btnToggleView.disabled .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabSwitch_disabled.svg');
 }
 
 .obObPosCashUpUiLeftToolbarImpl-btnToggleView.disabled {}
@@ -13278,14 +13569,19 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObPosCashUpUiLeftToolbarImpl-btnToggleView .obUiButton-label {}
 
+
 .obObPosCashUpUiLeftToolbarImpl-btnPrevious {
   /* Inherits: [OB.OBPOSCashUp.UI.Button] */
   grid-area: obObPosCashUpUiLeftToolbarImpl-btnPrevious;
 }
 
-.obObPosCashUpUiLeftToolbarImpl-btnPrevious.btn-over,
-.obObPosCashUpUiLeftToolbarImpl-btnPrevious:hover {
-  opacity: 0.75;
+.obObPosCashUpUiLeftToolbarImpl-btnPrevious .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabPreviousStep.svg');
+  background-size: auto 20px;
+}
+
+.obObPosCashUpUiLeftToolbarImpl-btnPrevious.disabled .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabPreviousStep_disabled.svg');
 }
 
 .obObPosCashUpUiLeftToolbarImpl-btnCancel {
@@ -13293,17 +13589,27 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   grid-area: obObPosCashUpUiLeftToolbarImpl-btnCancel;
 }
 
+.obObPosCashUpUiLeftToolbarImpl-btnCancel  .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabCancel.svg');
+  background-size: 20px;
+}
+
+.obObPosCashUpUiLeftToolbarImpl-btnCancel.disabled .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabCancel_disabled.svg');
+}
+
 .obObPosCashUpUiLeftToolbarImpl-btnNext {
   /* Inherits: [OB.OBPOSCashUp.UI.Button] */
   grid-area: obObPosCashUpUiLeftToolbarImpl-btnNext;
 }
 
-.obObPosCashUpUiLeftToolbarImpl-btnNext.btn-over,
-.obObPosCashUpUiLeftToolbarImpl-btnNext:hover {
-  opacity: 0.75;
+.obObPosCashUpUiLeftToolbarImpl-btnNext  .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabNextStep.svg');
+  background-size: auto 20px;
 }
 
-.obObPosCashUpUiLeftToolbarImpl_btnOver {
+.obObPosCashUpUiLeftToolbarImpl-btnNext.disabled .obUiButton-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabNextStep_disabled.svg');
 }
 
 
@@ -13329,53 +13635,73 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   /* Inherits:[OB.OBPOSCashUp.UI.Button] */
 }
 
-.obObPosCashupUiCashUp-cashupMultiColumn-cashupLeftPanel {}
+.obObPosCashupUiCashUp-rightToolbar-btnCashUp {
+  /*Inherits: [OB.UI.ToolbarButton]*/
+  grid-area: .obObPosCashupUiCashUp-rightToolbar-btnCashUp;
+
+  grid-template-rows: auto 30px auto;
+}
+
+.obObPosCashupUiCashUp-rightToolbar-btnCashUp .obUiButton-label {
+  align-self: center;
+  font-size: 16px;
+  line-height: 20px;
+  padding: 0px;
+}
+
+.obObPosCashupUiCashUp-rightToolbar-btnCashUp.disabled .obUiButton-label {
+  color: #e8e8e8;
+}
+
+.obObPosCashupUiCashUp-cashupMultiColumn-cashupLeftPanel {
+  height: 100%;
+}
 
 .obObPosCashupUiCashUp-cashupMultiColumn-cashupLeftPanel-listPendingReceipts {
   /* Inherits: [OB.OBPOSCashUp.UI.ListPendingReceipts] */
-  float: left;
   width: 100%;
   touch-action: none;
 }
 
 .obObPosCashupUiCashUp-cashupMultiColumn-cashupLeftPanel-cashMaster {
   /* Inherits: [OB.OBPOSCashUp.UI.CashMaster] */
-  float: left;
   width: 100%;
   touch-action: none;
 }
 
 .obObPosCashupUiCashUp-cashupMultiColumn-cashupLeftPanel-cashPayments {
   /* Inherits: [OB.OBPOSCashUp.UI.CashPayments] */
-  float: left;
   width: 100%;
   touch-action: none;
 }
 
 .obObPosCashupUiCashUp-cashupMultiColumn-cashupLeftPanel-listPaymentMethods {
   /* Inherits: [OB.OBPOSCashUp.UI.ListPaymentMethods] */
-  float: left;
   width: 100%;
   touch-action: none;
 }
 
 .obObPosCashupUiCashUp-cashupMultiColumn-cashupLeftPanel-cashToKeep {
   /* Inherits: [OB.OBPOSCashUp.UI.CashToKeep] */
-  float: left;
   width: 100%;
   touch-action: none;
 }
 
 .obObPosCashupUiCashUp-cashupMultiColumn-cashupLeftPanel-postPrintClose {
   /* Inherits: [OB.OBPOSCashUp.UI.PostPrintClose] */
-  float: left;
   width: 100%;
   touch-action: none;
 }
 
 .obObPosCashupUiCashUp-cashupMultiColumn-cashupRightPanel {
-  float: left;
+  display: grid;
+  grid-auto-flow: row;
+  grid-auto-columns: 100%;
+  grid-auto-rows: 1fr auto;
+
   width: 100%;
+  height: 100%;
+  box-sizing: border-box;
   touch-action: none;
 }
 
@@ -13404,8 +13730,14 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 /* Implementation: WebPOS CashUp RightToolbar */
 .obObPosCashupUiCashUp-cashupMultiColumn .obUiMultiColumn-rightToolbar .obUiMultiColumnToolbar-standardToolbar-toolbar {
-  grid-template-areas: "obObPosCashUpUiLeftToolbarImpl-btnCashUp";
+  grid-template-areas: "obObPosCashupUiCashUp-rightToolbar-btnCashUp";
   grid-template-columns: repeat(1, calc(100% / 1));
+}
+
+@media all and (min-width: 800px) {
+  .obObPosCashUpUiLeftToolbarImpl-btnToggleView {
+    display: none;
+  }
 }
 
 @media all and (max-width: 800px) {
@@ -13429,7 +13761,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
   /* Implementation: WebPOS CashUp LeftToolbar */
   .obObPosCashupUiCashUp-cashupMultiColumn .obUiMultiColumn-leftToolbar .obUiMultiColumnToolbar-standardToolbar-toolbar {
-    grid-template-areas: "obObPosCashUpUiLeftToolbarImpl-btnCashUp obObPosCashUpUiLeftToolbarImpl-btnPrevious obObPosCashUpUiLeftToolbarImpl-btnCancel obObPosCashUpUiLeftToolbarImpl-btnNext obObPosCashUpUiLeftToolbarImpl-btnToggleView";
+    grid-template-areas: "obObPosCashupUiCashUp-rightToolbar-btnCashUp obObPosCashUpUiLeftToolbarImpl-btnPrevious obObPosCashUpUiLeftToolbarImpl-btnCancel obObPosCashUpUiLeftToolbarImpl-btnNext obObPosCashUpUiLeftToolbarImpl-btnToggleView";
     grid-template-columns: repeat(5, calc(100% / 5));
   }
 }
@@ -13451,7 +13783,16 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /*
 # Component: OB.OBPOSCashUp.UI.CashUpKeyboard
 */
-.obObposCashupUiCashUpKeyboard {}
+.obObposCashupUiCashUpKeyboard {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: calc(25% - 10px) calc(75% - 10px);
+  column-gap: 20px;
+
+  box-sizing: border-box;
+  height: 367px;
+  padding: 10px 10px 25px 10px;
+}
 
 
 
@@ -13511,11 +13852,33 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSCashUp.UI.ButtonVoid
 # Inherits: [OB.UI.SmallButton]
 */
+
 .obObposCashupUiButtonVoid {
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconClear.svg');
-  background-size: 13px 13px;
-  background-color: #e2e2e2;
-  margin: 5px 0px 5px 0px;
+  color: white;
+
+  margin: 0px;
+  padding: 0px;
+
+  width: 32px;
+  height: 32px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-color: transparent;
+
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconVoidReceipt.svg');
+  background-size: 16px 16px;
+}
+
+.obObposCashupUiButtonVoid:hover {
+  opacity: 1;
+  background-color: #e8e8e8;
+  border-radius: 50%;
+}
+
+.obObposCashupUiButtonVoid:active {
+  opacity: 1;
+  background-color: #c5c5c5;
+  border-radius: 50%;
 }
 
 
@@ -13542,10 +13905,9 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSCashUp.UI.InfoPendingReceipt
 */
 .obObposCashupUiInfoPendingReceipt {
-  display: flex;
+  display: inline-flex;
   flex-direction: row;
   justify-content: space-between;
-  height: 100%;
   align-items: center;
 }
 
@@ -13563,7 +13925,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 */
 .obObposCashupUiDocumentNoAndBP {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: center;
 }
 
@@ -13575,14 +13937,12 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposCashupUiDocumentNoAndBP-documentNo {
-  display: table-cell;
-  vertical-align: middle;
+  display: inline-block;
   padding: 2px 0px 2px 5px;
 }
 
 .obObposCashupUiDocumentNoAndBP-bp {
-  display: table-cell;
-  vertical-align: middle;
+  display: inline-block;
   padding: 2px 5px 2px 5px;
 }
 
@@ -13592,27 +13952,19 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 */
 .obObposCashupUiGrossSessionUser {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: center;
 }
 
-@media only screen and (max-width: 1456px) {
-  .obObposCashupUiGrossSessionUser {
-    flex-direction: column;
-  }
-}
-
 .obObposCashupUiGrossSessionUser-printGross {
-  display: table-cell;
-  vertical-align: middle;
+  display: inline-block;
   padding: 2px 5px 2px 5px;
   font-weight: bold;
   text-align: right;
 }
 
 .obObposCashupUiGrossSessionUser-sessionUser {
-  display: table-cell;
-  vertical-align: middle;
+  display: inline-block;
   padding: 2px 5px 2px 5px;
   color: #d3d3d3;
   text-align: right;
@@ -13625,17 +13977,22 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obObposCashupUiRenderPendingReceiptLine {}
 
 .obObposCashupUiRenderPendingReceiptLine-container1 {
-  display: table;
-  height: 42px;
+  display: grid;
+  align-items: center;
+  grid-auto-flow: column;
+  grid-template-columns: auto 1fr auto auto;
+
+  height: 50px;
   width: 100%;
   border-bottom: var(--bottomseparator-slim);
+  padding: 0px 15px;
+  box-sizing: border-box;
 }
 
 .obObposCashupUiRenderPendingReceiptLine-container1-orderDate {
-  display: table-cell;
-  vertical-align: middle;
-  padding: 2px 5px 2px 5px;
-  width: 10%;
+  display: inline-block;
+  width: 50px;
+  padding: 0px 5px 0px 0px;
 }
 
 .obObposCashupUiRenderPendingReceiptLine-container1-infoPendingReceipt {
@@ -13643,10 +14000,8 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposCashupUiRenderPendingReceiptLine-container1-buttonBringContainer {
-  display: table-cell;
-  vertical-align: middle;
-  padding: 2px 5px 2px 5px;
-  width: 15%;
+  display: inline-block;
+  padding: 0px 5px;
 }
 
 .obObposCashupUiRenderPendingReceiptLine-buttonBringContainer-buttonBring {
@@ -13654,108 +14009,94 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposCashupUiRenderPendingReceiptLine-container1-container1 {
-  display: table-cell;
-  vertical-align: middle;
-  width: 5%;
+  display: inline-block;
+  width: 40px;
+  text-align: right;
 }
 
 .obObposCashupUiRenderPendingReceiptLine-container1-container1-buttonVoid {
   /*Inherits: [OB.OBPOSCashUp.UI.ButtonVoid]*/
 }
 
-.obObposCashupUiRenderPendingReceiptLine-container1-container2 {
-  clear: both;
-}
-
 
 /*
 # Component: OB.OBPOSCashUp.UI.ListPendingReceipts
 */
-.obObposCashupUiListPendingReceipts {}
-
-.obObposCashupUiListPendingReceipts-container1 {}
-
-.obObposCashupUiListPendingReceipts-container1-container1 {
-  overflow: auto;
-  height: 500px;
-  margin: 5px;
+.obObposCashupUiListPendingReceipts {
+  height: 100%;
 }
 
-.obObposCashupUiListPendingReceipts-container1-container1-container1 {
-  background-color: var(--color-primary-lighter);
-  color: var(--color-primary-darker);
-  padding: 5px;
+.obObposCashupUiListPendingReceipts-wrapper {
+  padding: 25px 10px 25px 10px;
+  height: 100%;
+  box-sizing: border-box;
 }
 
-.obObposCashupUiListPendingReceipts-container1-container1-container1 {}
+.obObposCashupUiListPendingReceipts-wrapper-components {
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  border-bottom: var(--bottomseparator-slim);
+  overflow-y: auto;
+  background-color: white;
+  box-shadow: 0px 0px 10px -1px #8d8d8d;
+  border-radius: 4px;
+  height: calc(100% - 1px);
+}
 
-.obObposCashupUiListPendingReceipts-container1-container1-container1-container1 {}
-
-.obObposCashupUiListPendingReceipts-container1-container1-container1-container1-stepsheader {
-  padding: 10px;
+.obObposCashupUiListPendingReceipts-wrapper-components-title {
+  padding: 12px;
   border-bottom: var(--bottomseparator-slim);
   text-align: center;
+  font-weight: bold;
+  font-size: 20px;
+  color: var(--color-maincolor);
 }
 
-.obObposCashupUiListPendingReceipts-container1-container1-container1-container2 {
-  clear: both;
-}
-
-.obObposCashupUiListPendingReceipts-container1-container1-rowDeleteAll {}
-
-.obObposCashupUiListPendingReceipts-container1-container1-rowDeleteAll-container1 {
-  padding: 2px 5px 2px 5px;
+.obObposCashupUiListPendingReceipts-wrapper-components-rowDeleteAll {
+  text-align: right;
   border-bottom: var(--bottomseparator-slim);
 }
 
-.obObposCashupUiListPendingReceipts-rowDeleteAll-btnDeleteAll {
-  /*Inherits: [OB.UI.SmallButton]*/
-  background-color: #e2e2e2;
-  color: black;
-  float: right;
-  min-width: 70px;
-  margin: 2px 5px 2px 5px;
+.obObposCashupUiListPendingReceipts-wrapper-components-rowDeleteAll-btnDeleteAll,
+.obObposCashupUiListPendingReceipts-wrapper-components-rowDeleteAll-btnBringAll {
+  margin: 10px;
+  padding: 0px 18px;
+  background-color: #4d545c;
+  color: #e8e8e8;
+  height: 50px;
+  border-radius: 4px;
 }
 
-.obObposCashupUiListPendingReceipts-rowDeleteAll-btnDeleteAll:focus {
-  outline: none;
-  border-width: 2px;
-  border-color: #0078d7;
-  border-style: solid;
-  padding: 2px 13px 5px 13px;
+.obObposCashupUiListPendingReceipts-wrapper-components-rowDeleteAll-btnDeleteAll:hover,
+.obObposCashupUiListPendingReceipts-wrapper-components-rowDeleteAll-btnBringAll:hover {
+  background-color: #3a3f45;
+  opacity: 1;
 }
 
-.obObposCashupUiListPendingReceipts-rowDeleteAll-btnBringAl {
-  /*Inherits: [OB.UI.SmallButton]*/
-  background-color: #e2e2e2;
-  color: black;
-  float: right;
-  min-width: 70px;
-  margin: 2px 5px 2px 5px;
+.obObposCashupUiListPendingReceipts-wrapper-components-rowDeleteAll-btnDeleteAll:active,
+.obObposCashupUiListPendingReceipts-wrapper-components-rowDeleteAll-btnBringAll:active {
+  background-color: #232629;
+  opacity: 1;
 }
 
-.obObposCashupUiListPendingReceipts-rowDeleteAll-btnBringAl:focus {
-  outline: none;
-  border-width: 2px;
-  border-color: #0078d7;
-  border-style: solid;
-  padding: 2px 13px 5px 13px;
+.obObposCashupUiListPendingReceipts-wrapper-components-rowDeleteAll-btnDeleteAll.disabled,
+.obObposCashupUiListPendingReceipts-wrapper-components-rowDeleteAll-btnBringAll.disabled {
+  background-color: #d0d2d3;
+  opacity: 1;
+  color: #90979f;
+  cursor: default;
 }
 
-.obObposCashupUiListPendingReceipts-rowDeleteAll-element1 {
-  clear: both;
+
+.obObposCashupUiListPendingReceipts-wrapper-components-body {
+  height: 100%;
+  overflow-y: auto;
 }
 
-.obObposCashupUiListPendingReceipts-container1-container1-container2 {}
-
-.obObposCashupUiListPendingReceipts-container1-container1-container2-container1 {}
-
-.obObposCashupUiListPendingReceipts-container1-container1-container2-container1-container1 {}
-
-.obObposCashupUiListPendingReceipts-container1-container1-container2-container1-container1-pendingReceiptList {
-  /*Inherits: [OB.UI.Table]*/
+.obObposCashupUiListPendingReceipts-wrapper-components-body-pendingReceiptList {
+  height: 100%;
+  overflow-y: auto;
 }
-
 
 
 /***********************   ***********************/
@@ -13804,6 +14145,41 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSCashUp.UI.CashMaster
 */
 .obObposCahupUiCashMaster {}
+
+.obObposCahupUiCashMaster-wrapper {
+  padding: 25px 10px 25px 10px;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.obObposCahupUiCashMaster-wrapper-components {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  border-bottom: var(--bottomseparator-slim);
+  overflow-y: auto;
+  background-color: white;
+  box-shadow: 0px 0px 10px -1px #8d8d8d;
+  border-radius: 4px;
+  height: calc(100% - 1px);
+}
+
+.obObposCahupUiCashMaster-wrapper-components-title {
+  padding: 12px;
+  border-bottom: var(--bottomseparator-slim);
+  text-align: center;
+  font-weight: bold;
+  font-size: 20px;
+  color: var(--color-maincolor);
+}
+
+.obObposCahupUiCashMaster-wrapper-components-body {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+
+  height: 100%;
+  overflow-y: auto;
+}
+
 
 .obObposCahupUiCashMaster-container1 {}
 
@@ -13876,188 +14252,213 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 */
 .obObposCashUpUiRenderCashPaymentsLine {}
 
-.obObposCashUpUiRenderCashPaymentsLine-container1 {}
+.obObposCashUpUiRenderCashPaymentsLine-listItem {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 
-.obObposCashUpUiRenderCashPaymentsLine-container1-container1 {}
-
-.obObposCashUpUiRenderCashPaymentsLine-container1-container1-container1 {
   border-bottom: var(--bottomseparator-slim);
+  padding: 5px 15px;
 }
 
-.obObposCashUpUiRenderCashPaymentsLine-container1-container1-container1-coin {
+.obObposCashUpUiRenderCashPaymentsLine-listItem-coinComponent {
+  width: 22%;
+  text-align: left;
+}
+
+.obObposCashUpUiRenderCashPaymentsLine-listItem-coinComponent-coin {
   /*Inherits: [OB.UI.MediumButton]*/
   background-color: #e2e2e2;
   color: var(--color-primary-darker);
-  margin: 4px 5px 4px 5px;
-  float: left;
-  width: 27%;
+  text-align: center;
+  font-weight: normal;
+  border: none;
+  border-radius: 4px;
+  height: 50px;
+  font-size: var(--font-medium);
+  text-decoration: none;
+  width: 85%;
+}
+
+.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent {
+  width: 55%;
   text-align: center;
 }
 
-.obObposCashUpUiRenderCashPaymentsLine-container1-container1-container1-coin:focus {
-  outline: none;
-  border-width: 2px;
-  border-color: #0078d7;
-  border-style: solid;
-  padding: 2px 13px 5px 13px;
-}
-
-.obObposCashUpUiRenderCashPaymentsLine-container1-container1-container1-qtyminus {
+.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-qtyminus {
   /*Inherits: [OB.UI.SmallButton]*/
-  background-color: #e2e2e2;
-  color: var(--color-primary-darker);
-  margin: 4px 5px 4px 5px;
-  width: 8%;
+  margin: 0px;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  border-radius: 4px 0px 0px 4px;
+  background-color: #4d545c;
+  color: #e8e8e8;
 }
 
-.obObposCashUpUiRenderCashPaymentsLine-container1-container1-container1-qtyminus:focus {
-  outline: none;
-  border-width: 2px;
-  border-color: #0078d7;
-  border-style: solid;
-  padding: 2px 13px 5px 13px;
+.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-qtyminus:hover {
+  background-color: #3a3f45;
+  opacity: 1;
 }
 
+.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-qtyminus:active {
+  background-color: #232629;
+  opacity: 1;
+}
 
-.obObposCashUpUiRenderCashPaymentsLine-container1-container1-container1-numberOfCoins {
+.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-qtyminus.disabled {
+  background-color: #d0d2d3;
+  opacity: 1;
+  color: #90979f;
+  cursor: default;
+}
+
+.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-numberOfCoins {
   /*Inherits: [OB.UI.MediumButton]*/
-  color: var(--color-primary-darker);
-  margin: 4px 5px 4px 5px;
   background-color: var(--color-primary-lighter);
-  border: var(--bottomseparator-slim);
-  border-radius: 3px;
-  width: 18%;
-}
-
-.obObposCashUpUiRenderCashPaymentsLine-container1-container1-container1-numberOfCoins_mainColor {
-  background-color: var(--color-maincolor);
-}
-
-.obObposCashUpUiRenderCashPaymentsLine-container1-container1-container1-numberOfCoins:focus {
-  outline: none;
-  border-width: 2px;
-  border-color: #0078d7;
-  border-style: solid;
-  padding: 2px 13px 5px 13px;
-}
-
-.obObposCashUpUiRenderCashPaymentsLine-container1-container1-container1-qtyplus {
-  /*Inherits: [OB.UI.SmallButton]*/
-  background-color: #e2e2e2;
   color: var(--color-primary-darker);
-  margin: 4px 5px 4px 5px;
-  width: 8%;
+  border: 1px solid #cccccc;
+  margin: 0px;
+  min-width: 70px;
+  height: 50px;
+  font-size: 16px;
+  box-shadow: 0px 0px 4px -1px #8d8d8d;
 }
 
-.obObposCashUpUiRenderCashPaymentsLine-container1-container1-container1-qtyplus:focus {
-  outline: none;
-  border-width: 2px;
-  border-color: #0078d7;
-  border-style: solid;
-  padding: 2px 13px 5px 13px;
+.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-numberOfCoins_selected {
+  background-color: #e2e2e2;
 }
 
-.obObposCashUpUiRenderCashPaymentsLine-container1-container1-container1-total {
-  margin-left: 2%;
+.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-qtyplus {
+  /*Inherits: [OB.UI.SmallButton]*/
+  margin: 0px;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  border-radius: 0px 4px 4px 0px;
+  background-color: #4d545c;
+  color: #e8e8e8;
+}
+
+.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-qtyplus:hover {
+  background-color: #3a3f45;
+  opacity: 1;
+}
+
+.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-qtyplus:active {
+  background-color: #232629;
+  opacity: 1;
+}
+
+.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-qtyplus.disabled {
+  background-color: #d0d2d3;
+  opacity: 1;
+  color: #90979f;
+  cursor: default;
+}
+
+.obObposCashUpUiRenderCashPaymentsLine-listItem-total {
   display: inline-block;
+  margin-left: 5px;
   padding: 10px 0px 10px 0px;
-  width: 26%;
-  text-align: center;
+  width: 23%;
+  text-align: right;
 }
 
 
 /*
 # Component: OB.OBPOSCashUp.UI.RenderTotal
 */
-.obObposCashupUiRenderTotal {
-  font-weight: bold;
-}
+.obObposCashupUiRenderTotal {}
 
 .obObposCashupUiRenderTotal_negative {
-  color: red;
+  color: yellow;
 }
 
-.obObposCashupUiRenderTotal_positive {
-  color: var(--color-primary-darker);
-}
+.obObposCashupUiRenderTotal_positive {}
 
 
 /*
 # Component: OB.OBPOSCashUp.UI.CashPayments
 */
-.obObposCashupUiCashPayments {}
-
-.obObposCashupUiCashPayments-container1 {}
-
-.obObposCashupUiCashPayments-container1-container1 {
-  margin: 5px;
+.obObposCashupUiCashPayments {
+  height: 100%;
 }
 
-.obObposCashupUiCashPayments-container1-container1-container1 {
-  background-color: var(--color-primary-lighter);
-  color: black;
-  padding: 5px;
+.obObposCashupUiCashPayments-wrapper {
+  padding: 25px 10px 25px 10px;
+  height: 100%;
+  box-sizing: border-box;
 }
 
-.obObposCashupUiCashPayments-container1-container1-container1-container1 {}
-
-.obObposCashupUiCashPayments-container1-container1-container1-container1-container1 {}
-
-.obObposCashupUiCashPayments-container1-container1-container1-container1-container1-title {
-  padding: 10px;
+.obObposCashupUiCashPayments-wrapper-components {
+  display: grid;
+  grid-template-rows: auto 1fr;
   border-bottom: var(--bottomseparator-slim);
+  overflow-y: auto;
+  background-color: white;
+  box-shadow: 0px 0px 10px -1px #8d8d8d;
+  border-radius: 4px;
+  height: calc(100% - 1px);
+}
+
+.obObposCashupUiCashPayments-wrapper-components-title {
+  padding: 12px;
+  border-bottom: var(--bottomseparator-slim);
+  text-align: center;
+  font-weight: bold;
+  font-size: 20px;
+  color: var(--color-maincolor);
+}
+
+.obObposCashupUiCashPayments-wrapper-components-body {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+
+  height: 100%;
+  overflow-y: auto;
+}
+
+.obObposCashupUiCashPayments-wrapper-components-body-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 28px;
+  border-bottom: var(--bottomseparator-slim);
+  font-size: 11px;
+  position: relative;
+  padding: 0px 15px;
+  color: var(--color-maincolor);
+}
+
+.obObposCashupUiCashPayments-wrapper-components-body-header-element1 {
+  width: 22%;
+  text-align: left;
+}
+
+.obObposCashupUiCashPayments-wrapper-components-body-header-element2 {
+  width: 55%;
   text-align: center;
 }
 
-.obObposCashupUiCashPayments-container1-container1-container1-container2 {
+.obObposCashupUiCashPayments-wrapper-components-body-header-element3 {
+  width: 23%;
+  text-align: right;
+}
+
+.obObposCashupUiCashPayments-wrapper-components-body-list {
   background-color: var(--color-primary-lighter);
-  color: var(--color-primary-darker);
   height: 100%;
   width: 100%;
+  overflow-y: auto;
 }
 
-.obObposCashupUiCashPayments-container1-container1-container1-container2-container1 {}
-
-.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container1 {}
-
-.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container1-container1 {
-  border-bottom: var(--bottomseparator-slim);
-}
-
-.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container1-container1-element1 {
-  padding: 10px 20px 10px 10px;
-  float: left;
-  width: 30%;
-}
-
-.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container1-container1-element2 {
-  padding: 10px 20px 10px 0px;
-  float: left;
-  width: 30%;
-}
-
-.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container1-container1-element3 {
-  padding: 10px 0px 10px 0px;
-  float: left;
-  width: 25%;
-}
-
-.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container2 {
-  background-color: var(--color-primary-lighter);
-  height: 454px;
-  clear: left;
-  width: 100%;
-}
-
-.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container2-paymentsList {
+.obObposCashupUiCashPayments-wrapper-components-body-list-paymentsList {
   /*Inherits: [OB.UI.ScrollableTable]*/
+  height: 100%;
 }
 
-.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container2-paymentsList-scrollArea {
-  max-height: 454px;
-}
-
-.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container2-renderLoading {
+.obObposCashupUiCashPayments-wrapper-components-body-list-renderLoading {
   border-bottom: var(--bottomseparator-slim);
   padding: 20px;
   text-align: center;
@@ -14066,72 +14467,70 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   color: var(--color-primary-light);
 }
 
-.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3 {}
+.obObposCashupUiCashPayments-wrapper-components-body-footer {
+  display: grid;
+  grid-template-areas: 'obObposCashupUiCashPayments-wrapper-components-body-footer-container1 obObposCashupUiCashPayments-wrapper-components-body-footer-container2'
+                       'obObposCashupUiCashPayments-wrapper-components-body-footer-container3 obObposCashupUiCashPayments-wrapper-components-body-footer-container3';
+  grid-gap: 10px;
+  grid-template-columns: 1fr 1fr;
 
-.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1 {
-  border-bottom: var(--bottomseparator-slim);
   border-top: var(--bottomseparator-slim);
-  height: 70px;
+  padding: 15px 15px;
+  font-size: var(--font-large);
+  font-weight: bold;
+  background-color: var(--color-maincolor);
+  color: white;
 }
 
-.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1-container1 {
-  float: left;
-  display: table-row;
-  width: 33%;
+.obObposCashupUiCashPayments-wrapper-components-body-footer-container1 {
+  grid-area: obObposCashupUiCashPayments-wrapper-components-body-footer-container1;
+  line-height: 100%;
 }
 
-.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1-container1-totalLbl {
-  padding: 10px 20px 10px 10px;
-  display: table-cell;
+.obObposCashupUiCashPayments-wrapper-components-body-footer-container1-totalLbl {
+  display: inline-block;
 }
 
-.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1-container1-container1 {
-  padding: 10px 20px 10px 0px;
-  display: table-cell;
-}
-
-.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1-container1-container1-total {
+.obObposCashupUiCashPayments-wrapper-components-body-footer-container1-total {
   /*Inherits: [OB.OBPOSCashUp.UI.RenderTotal]*/
+  display: inline-block;
+  padding: 0px 0px 0px 5px;
+  min-width: 40%;
+  text-align: right;
 }
 
-.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1-container2 {
-  float: left;
-  display: table-row;
-  width: 33%;
+.obObposCashupUiCashPayments-wrapper-components-body-footer-container2 {
+  grid-area: obObposCashupUiCashPayments-wrapper-components-body-footer-container2;
+  text-align: right;
+  line-height: 100%;
 }
 
-.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1-container2-countedLbl {
-  padding: 10px 20px 10px 10px;
-  display: table-cell;
+.obObposCashupUiCashPayments-wrapper-components-body-footer-container2-countedLbl {
+  display: inline-block;
 }
 
-.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1-container2-container1 {
-  padding: 10px 5px 10px 0px;
-  display: table-cell;
-}
-
-.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1-container2-container1-counted {
+.obObposCashupUiCashPayments-wrapper-components-body-footer-container2-counted {
   /*Inherits: [OB.OBPOSCashUp.UI.RenderTotal]*/
+  display: inline-block;
+  padding: 0px 0px 0px 5px;
+  min-width: 40%;
 }
 
-.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1-container3 {
-  float: left;
-  display: table-row;
-  width: 33%;
+.obObposCashupUiCashPayments-wrapper-components-body-footer-container3 {
+  grid-area: obObposCashupUiCashPayments-wrapper-components-body-footer-container3;
+  text-align: right;
+  line-height: 100%;
 }
 
-.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1-container3-differenceLbl {
-  padding: 10px 20px 10px 10px;
-  display: table-cell;
+.obObposCashupUiCashPayments-wrapper-components-body-footer-container3-differenceLbl {
+  display: inline-block;
 }
 
-.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1-container3-container1 {
-  padding: 10px 5px 10px 0px;
-  display: table-cell;
-}
-
-.obObposCashupUiCashPayments-container1-container1-container1-container2-container1-container3-container1-container3-container1-difference {
+.obObposCashupUiCashPayments-wrapper-components-body-footer-container3-difference {
   /*Inherits: [OB.OBPOSCashUp.UI.RenderTotal]*/
+  display: inline-block;
+  padding: 0px 0px 0px 5px;
+  min-width: 20%;
 }
 
 
@@ -14145,228 +14544,292 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 */
 .obObposCashupUiRenderPaymentsLine {}
 
-.obObposCashupUiRenderPaymentsLine-container1 {}
+.obObposCashupUiRenderPaymentsLine-listItem {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 
-.obObposCashupUiRenderPaymentsLine-container1-container1 {}
-
-.obObposCashupUiRenderPaymentsLine-container1-container1-listItem {
   border-bottom: var(--bottomseparator-slim);
+  padding: 5px 15px;
 }
 
-.obObposCashupUiRenderPaymentsLine-container1-container1-listItem-conatiner1 {
-  float: left;
-  display: table;
-  width: 50%;
+.obObposCashupUiRenderPaymentsLine-listItem-nameContainer {
+  display: inline-block;
+  width: 90px;
+  padding: 0px 5px 0px 0px;
+  text-align: left;
 }
 
-.obObposCashupUiRenderPaymentsLine-container1-container1-listItem-conatiner1-name {
-  padding: 10px 20px 10px 10px;
-  display: table-cell;
-  width: 40%;
+.obObposCashupUiRenderPaymentsLine-listItem-nameContainer-name {
+  display: inline-block;
 }
 
-.obObposCashupUiRenderPaymentsLine-container1-container1-listItem-conatiner1-foreignExpected {
-  padding: 10px 10px 10px 0px;
+.obObposCashupUiRenderPaymentsLine-listItem-expectedContainer {
+  display: grid;
+  grid-auto-flow: row;
+  align-items: center;
+
+  width: calc(66% - 90px);
   text-align: right;
-  display: table-cell;
-  width: 35%;
+  padding: 0px 5px 0px 0px;
 }
 
-.obObposCashupUiRenderPaymentsLine-container1-container1-listItem-conatiner1-expected {
-  padding: 10px 10px 10px 0px;
-  text-align: right;
-  display: table-cell;
-  width: 35%;
+.obObposCashupUiRenderPaymentsLine-listItem-expectedContainer-foreignExpected {
+  display: inline-block;
 }
 
-.obObposCashupUiRenderPaymentsLine-container1-container1-listItem-conatiner2 {
-  float: left;
-  display: table;
-  width: 50%;
+.obObposCashupUiRenderPaymentsLine-listItem-expectedContainer-expected {
+  display: inline-block;
 }
 
-.obObposCashupUiRenderPaymentsLine-container1-container1-listItem-conatiner2-container1 {
-  display: table-cell;
-  width: 15%;
+.obObposCashupUiRenderPaymentsLine-listItem-countedContainer {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: auto 1fr;
+
+  width: 44%;
+  padding: 0px 0px 0px 10px;
+  box-sizing: border-box;
 }
 
-.obObposCashupUiRenderPaymentsLine-container1-container1-listItem-conatiner2-container1-buttonEdit {
-  /*Inherits: [OB.UI.SmallButton]*/
-  color: var(--color-primary-darker);
-  margin: 4px 5px 4px 5px;
-  width: 100%;
-  height: 20px;
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-color: transparent;
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconEdit.svg');
-  background-size: 20px 20px;
+.obObposCashupUiRenderPaymentsLine-listItem-countedContainer-buttonOk {
+  padding: 0px;
+  background-color: #4d545c;
+  color: #e8e8e8;
+  height: 50px;
+  width: 50px;
+  border-radius: 4px 0px 0px 4px;
+  grid-template-columns: 1fr 0 0;
 }
 
-.obObposCashupUiRenderPaymentsLine-container1-container1-listItem-conatiner2-container2 {
-  display: table-cell;
-  width: 15%;
-}
-
-.obObposCashupUiRenderPaymentsLine-container1-container1-listItem-conatiner2-container2-buttonOk {
-  /*Inherits: [OB.UI.SmallButton]*/
-  margin: 4px 5px 4px 5px;
-  background-color: transparent;
-  width: auto;
-  height: 20px;
+.obObposCashupUiRenderPaymentsLine-listItem-countedContainer-buttonOk .obUiButton-before {
   background-size: 21px 17px;
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkBlack.svg');
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconCountOk.svg');
   background-repeat: no-repeat;
   background-position: center;
+  width: 100%;
+  height: 100%;
 }
 
-.obObposCashupUiRenderPaymentsLine-container1-container1-listItem-conatiner2-foreignCounted {
-  display: table-cell;
-  padding: 10px 10px 10px 0px;
-  text-align: right;
-  width: 35%;
+.obObposCashupUiRenderPaymentsLine-listItem-countedContainer-buttonOk:hover {
+  background-color: #3a3f45;
+  opacity: 1;
 }
 
-.obObposCashupUiRenderPaymentsLine-container1-container1-listItem-conatiner2-counted {
-  display: table-cell;
-  padding: 10px 10px 10px 0px;
+.obObposCashupUiRenderPaymentsLine-listItem-countedContainer-buttonOk:active {
+  background-color: #232629;
+  opacity: 1;
+}
+
+.obObposCashupUiRenderPaymentsLine-listItem-countedContainer-buttonOk.disabled {
+  background-color: #d0d2d3;
+  opacity: 1;
+  color: #90979f;
+  cursor: default;
+}
+
+.obObposCashupUiRenderPaymentsLine-listItem-countedContainer-buttonEdit {
+  /*Inherits: [OB.UI.BaseButton]*/
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  outline: none;
+  cursor: pointer;
+  border: 1px solid #cccccc;
+  box-sizing: border-box;
+  color: var(--color-primary-darker);
+  width: 100%;
+  height: 50px;
+  padding: 0px 6px 0px 0px;
+  border-radius: 0px 4px 4px 0px;
+  box-shadow: 0px 0px 4px -1px #8d8d8d;
+}
+
+.obObposCashupUiRenderPaymentsLine-listItem-countedContainer-buttonEdit.disabled {
+  cursor: default;
+  border: 0px;
+  box-shadow: 0px 0px 0px 0px;
+}
+
+.obObposCashupUiRenderPaymentsLine-listItem-countedContainer-buttonEdit:not(.disabled):focus {
+  background-color: #e2e2e2;
+}
+
+
+.obObposCashupUiRenderPaymentsLine-listItem-countedContainer-foreignCounted {
+  display: inline-block;
   text-align: right;
-  width: 35%;
+  width: 100%;
+}
+
+.obObposCashupUiRenderPaymentsLine-listItem-countedContainer-counted {
+  display: inline-block;
+  text-align: right;
+  width: 100%;
+}
+
+.obObposCashupUiRenderPaymentsLine-listItem-countedContainer-buttonOk_notCounted {}
+
+.obObposCashupUiRenderPaymentsLine_alreadyCounted .obObposCashupUiRenderPaymentsLine-listItem-countedContainer {
+  grid-template-columns: 1fr;
+}
+
+.obObposCashupUiRenderPaymentsLine_alreadyCounted .obObposCashupUiRenderPaymentsLine-listItem-countedContainer-buttonOk {
+  display: none;
+}
+
+.obObposCashupUiRenderPaymentsLine_alreadyCounted .obObposCashupUiRenderPaymentsLine-listItem-countedContainer-buttonEdit {
+  border-radius: 4px;
 }
 
 
 /*
 # Component: OB.OBPOSCashUp.UI.ListPaymentMethods
 */
-.obObposCashupUiListPaymentMethods {}
-
-.obObposCashupUiListPaymentMethods-container1{}
-
-.obObposCashupUiListPaymentMethods-container1-container1 {
-  margin: 5px;
-  background-color: var(--color-primary-lighter);
+.obObposCashupUiListPaymentMethods {
+  height: 100%;
 }
 
-.obObposCashupUiListPaymentMethods-container1-container1-container1 {
-  background-color: var(--color-primary-lighter);
-  color: var(--color-primary-darker);
-  padding: 5px;
+.obObposCashupUiListPaymentMethods-wrapper {
+  padding: 25px 10px 25px 10px;
+  height: 100%;
+  box-sizing: border-box;
 }
 
-.obObposCashupUiListPaymentMethods-container1-container1-container1-container1 {}
+.obObposCashupUiListPaymentMethods-wrapper-components {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  border-bottom: var(--bottomseparator-slim);
+  overflow-y: auto;
+  background-color: white;
+  box-shadow: 0px 0px 10px -1px #8d8d8d;
+  border-radius: 4px;
+  height: calc(100% - 1px);
+}
 
-.obObposCashupUiListPaymentMethods-container1-container1-container1-container1-container1 {}
-
-.obObposCashupUiListPaymentMethods-container1-container1-container1-container1-container1-stepsheader {
-  padding: 10px;
+.obObposCashupUiListPaymentMethods-wrapper-components-title {
+  padding: 12px;
   border-bottom: var(--bottomseparator-slim);
   text-align: center;
+  font-weight: bold;
+  font-size: 20px;
+  color: var(--color-maincolor);
 }
 
-.obObposCashupUiListPaymentMethods-container1-container1-container1-container2 {
-  background-color: var(--color-primary-lighter);
-  color: var(--color-primary-darker);
+.obObposCashupUiListPaymentMethods-wrapper-components-body {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+
+  height: 100%;
+  overflow-y: auto;
 }
 
-.obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1 {}
-
-.obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1 {}
-
-.obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container1 {
+.obObposCashupUiListPaymentMethods-wrapper-components-body-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 28px;
   border-bottom: var(--bottomseparator-slim);
+  font-size: 11px;
+  position: relative;
+  padding: 0px 15px;
+  color: var(--color-maincolor);
 }
 
-.obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container1-container1 {
-  float: left;
-  display: table;
-  width: 50%;
+.obObposCashupUiListPaymentMethods-wrapper-components-body-header-element1 {
+  width: 140px;
+  text-align: left;
 }
 
-.obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container1-container1-element1 {
-  padding: 10px 10px 10px 10px;
-  display: table-cell;
-  width: 60%;
-}
-
-.obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container1-container1-element2 {
-  padding: 10px 10px 10px 0px;
-  display: table-cell;
-  width: 40%;
+.obObposCashupUiListPaymentMethods-wrapper-components-body-header-element2 {
+  width: calc(66% - 140px);
   text-align: right;
 }
 
-.obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container1-container2 {
-  float: right;
-  display: table;
-}
-
-.obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container1-container2-element1 {
-  padding: 10px 40px 10px 0px;
-  display: table-cell;
-  width: 100%;
+.obObposCashupUiListPaymentMethods-wrapper-components-body-header-element3 {
+  width: 44%;
   text-align: right;
 }
 
-.obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container2 {
+.obObposCashupUiListPaymentMethods-wrapper-components-body-list {
   background-color: var(--color-primary-lighter);
-  max-height: 430px;
-  overflow: auto;
-  clear: both;
+  height: 100%;
   width: 100%;
-  border-bottom: var(--bottomseparator-slim);
+  overflow-y: auto;
 }
 
-.obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container2-paymentsList {
-  /*Inherits: [OB.UI.Table]*/
+.obObposCashupUiListPaymentMethods-wrapper-components-body-list-paymentsList {
+  /*Inherits: [OB.UI.ScrollableTable]*/
+  height: 100%;
 }
 
-.obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container3 {
-  background-color: var(--color-primary-lighter);
-  height: 40px;
-  width: 100%;
-  clear: both;
+.obObposCashupUiListPaymentMethods-wrapper-components-body-footer {
+  display: grid;
+  grid-template-areas: 'obObposCashupUiListPaymentMethods-wrapper-components-body-footer-container1 obObposCashupUiListPaymentMethods-wrapper-components-body-footer-container2'
+                       'obObposCashupUiListPaymentMethods-wrapper-components-body-footer-container3 obObposCashupUiListPaymentMethods-wrapper-components-body-footer-container3';
+  grid-gap: 10px;
+  grid-template-columns: 1fr 1fr;
+
+  border-top: var(--bottomseparator-slim);
+  padding: 15px 15px;
+  font-size: var(--font-large);
+  font-weight: bold;
+  background-color: var(--color-maincolor);
+  color: white;
 }
 
-.obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container3-container1 {
-  border-bottom: var(--bottomseparator-slim);
+.obObposCashupUiListPaymentMethods-wrapper-components-body-footer-container1 {
+  grid-area: obObposCashupUiListPaymentMethods-wrapper-components-body-footer-container1;
+  line-height: 100%;
 }
 
-.obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container3-container1-container1 {
-  float: left;
-  display: table;
-  width: 50%;
+.obObposCashupUiListPaymentMethods-wrapper-components-body-footer-container1-totalLbl {
+  display: inline-block;
 }
 
-.obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container3-container1-container1-totalLbl {
-  padding: 10px 10px 10px 10px;
-  display: table-cell;
-  width: 60%;
-}
-
-.obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container3-container1-container1-container1 {
-  padding: 10px 10px 10px 0px;
-  display: table-cell;
-  width: 40%;
-  text-align: right;
-}
-
-.obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container3-container1-container1-container1-total {
+.obObposCashupUiListPaymentMethods-wrapper-components-body-footer-container1-total {
   /*Inherits: [OB.OBPOSCashUp.UI.RenderTotal]*/
-}
-
-.obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container3-container1-container2 {
-  float: left;
-  display: table;
-  width: 50%;
-}
-
-.obObposCashupUiListPaymentMethods-container1-container1-container1-container2-container1-container1-container3-container1-container2-difference {
-  padding: 10px 40px 10px 0px;
-  display: table-cell;
-  width: 100%;
+  display: inline-block;
+  padding: 0px 0px 0px 5px;
+  min-width: 40%;
   text-align: right;
 }
 
+.obObposCashupUiListPaymentMethods-wrapper-components-body-footer-container2 {
+  grid-area: obObposCashupUiListPaymentMethods-wrapper-components-body-footer-container2;
+  text-align: right;
+  line-height: 100%;
+}
+
+.obObposCashupUiListPaymentMethods-wrapper-components-body-footer-container2-countedLbl {
+  display: inline-block;
+}
+
+.obObposCashupUiListPaymentMethods-wrapper-components-body-footer-container2-counted {
+  /*Inherits: [OB.OBPOSCashUp.UI.RenderTotal]*/
+  display: inline-block;
+  padding: 0px 0px 0px 5px;
+  min-width: 40%;
+}
+
+.obObposCashupUiListPaymentMethods-wrapper-components-body-footer-container3 {
+  grid-area: obObposCashupUiListPaymentMethods-wrapper-components-body-footer-container3;
+  text-align: right;
+  line-height: 100%;
+}
+
+.obObposCashupUiListPaymentMethods-wrapper-components-body-footer-container3-differenceLbl {
+  display: inline-block;
+}
+
+.obObposCashupUiListPaymentMethods-wrapper-components-body-footer-container3-difference {
+  /*Inherits: [OB.OBPOSCashUp.UI.RenderTotal]*/
+  display: inline-block;
+  padding: 0px 0px 0px 5px;
+  min-width: 20%;
+}
 
 
 /***********************   ***********************/
@@ -14386,6 +14849,8 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   margin-right: 10px;
   margin-bottom: 10px;
   margin-left: 10px;
+  display: block !important;
+  background-position: left center !important;
 }
 
 .obObposCashupUiCashToKeepRadioButton-lbl {
@@ -14410,24 +14875,12 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   /*Inherits: [OB.OBPOSCashUp.UI.CashToKeepRadioButton]*/
 }
 
-.obObposCashupUiKeepDetails-RadioGroup-element1 {
-  clear: both;
-}
-
 .obObposCashupUiKeepDetails-RadioGroup-allowmoveeverything {
   /*Inherits: [OB.OBPOSCashUp.UI.CashToKeepRadioButton]*/
 }
 
-.obObposCashupUiKeepDetails-RadioGroup-element2 {
-  clear: both;
-}
-
 .obObposCashupUiKeepDetails-RadioGroup-allowdontmove {
   /*Inherits: [OB.OBPOSCashUp.UI.CashToKeepRadioButton]*/
-}
-
-.obObposCashupUiKeepDetails-RadioGroup-element3 {
-  clear: both;
 }
 
 .obObposCashupUiKeepDetails-RadioGroup-allowvariableamount {
@@ -14460,34 +14913,44 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /*
 # Component: OB.OBPOSCashUp.UI.CashToKeep
 */
-.obObposCashupUiCashToKeep {}
-
-.obObposCashupUiCashToKeep-container1 {}
-
-.obObposCashupUiCashToKeep-container1-container1 {
-  overflow: auto;
-  height: 500px;
-  margin: 5px;
+.obObposCashupUiCashToKeep {
+  height: 100%;
 }
 
-.obObposCashupUiCashToKeep-container1-container1-container1 {
-  background-color: var(--color-primary-lighter);
-  color: var(--color-primary-darker);
-  padding: 5px;
+.obObposCashupUiCashToKeep-wrapper {
+  padding: 25px 10px 25px 10px;
+  height: 100%;
+  box-sizing: border-box;
 }
 
-.obObposCashupUiCashToKeep-container1-container1-container1-container1 {}
+.obObposCashupUiCashToKeep-wrapper-components {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  border-bottom: var(--bottomseparator-slim);
+  overflow-y: auto;
+  background-color: white;
+  box-shadow: 0px 0px 10px -1px #8d8d8d;
+  border-radius: 4px;
+  height: calc(100% - 1px);
+}
 
-.obObposCashupUiCashToKeep-container1-container1-container1-container1-container1 {}
-
-.obObposCashupUiCashToKeep-container1-container1-container1-container1-container1-cashtokeepheader {
-  padding: 10px;
+.obObposCashupUiCashToKeep-wrapper-components-title {
+  padding: 12px;
   border-bottom: var(--bottomseparator-slim);
   text-align: center;
+  font-weight: bold;
+  font-size: 20px;
+  color: var(--color-maincolor);
 }
 
-.obObposCashupUiCashToKeep-container1-container1-container1-formkeep {}
+.obObposCashupUiCashToKeep-wrapper-components-body {
+  height: 100%;
+  overflow-y: auto;
+  padding: 10px;
+  box-sizing: border-box;
+}
 
+.obObposCashupUiCashToKeep-wrapper-components-body-formkeep {}
 
 
 /***********************   ***********************/
@@ -14864,111 +15327,117 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /*
 # Component: OB.OBPOSCashUp.UI.PostPrintClose
 */
-.obObPosCashUpUiPostPrintClose {}
+.obObPosCashUpUiPostPrintClose {
+  height: 100%;
+}
 
 .obObPosCashUpUiPostPrintClose.active {
   display: block;
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea {
-  max-height: 612px;
-  margin: 5px;
-  background-color: #ffffff;
+.obObPosCashUpUiPostPrintClose-wrapper {
+  padding: 25px 10px 25px 10px;
+  height: 100%;
+  box-sizing: border-box;
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1 {
-  padding: 5px;
+.obObPosCashUpUiPostPrintClose-wrapper-components {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  border-bottom: var(--bottomseparator-slim);
+  overflow-y: auto;
+  background-color: white;
+  box-shadow: 0px 0px 10px -1px #8d8d8d;
+  border-radius: 4px;
+  height: calc(100% - 1px);
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container1 {
+.obObPosCashUpUiPostPrintClose-wrapper-components-title {
+  padding: 12px;
+  border-bottom: var(--bottomseparator-slim);
+  text-align: center;
+  font-weight: bold;
+  font-size: 20px;
+  color: var(--color-maincolor);
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container1-container1 {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body {
+  height: 100%;
+  overflow-y: auto;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container1 {}
+
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1 {
   float: left;
   width: 100%;
   touch-action: none;
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container1-container1-reporttitle {
-  padding: 10px;
-  border-bottom: 1px solid #cccccc;
-  text-align: center;
-}
-
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container1-element1 {
-  clear: both;
-}
-
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container2 {}
-
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1 {
-  float: left;
-  width: 100%;
-  touch-action: none;
-}
-
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1 {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1 {
   padding: 10px;
   text-align: center;
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1-img {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1-img {
   padding: 20px;
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1-store {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1-store {
   padding: 5px;
   text-align: center;
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1-terminal {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1-terminal {
   padding: 5px;
   text-align: center;
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1-user {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1-user {
   padding: 5px;
   text-align: center;
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1-openingtime {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1-openingtime {
   padding: 5px;
   text-align: center;
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1-time {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1-time {
   padding: 5px;
   text-align: center;
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-container1-element1 {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1-element1 {
   padding: 0px 0px 10px 0px;
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container2-container1-element1 {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-element1 {
   clear: both;
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container3-container1 {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container2-container1 {
   display: block;
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container3-container1-container1 {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container2-container1-container1 {
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container3-container1-container1-sales {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container2-container1-container1-sales {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_salesTable] */
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container3-container1-container1-returns {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container2-container1-container1-returns {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_returnsTable] */
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container3-container1-container1-totaltransactions {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container2-container1-container1-totaltransactions {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_totalTransactionsTable] */
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container3-element1 {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container2-element1 {
   border-bottom-width: 1px;
   border-bottom-style: solid;
   border-bottom-color: rgb(204, 204, 204);
@@ -14978,38 +15447,38 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   display: none;
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container3-element2 {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container2-element2 {
   display: none;
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container4 {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container3 {
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container4-startingsTable {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-startingsTable {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_startingsTable] */
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container4-dropsTable {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-dropsTable {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_cashDropsTable] */
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container4-depositsTable {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-depositsTable {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_cashDepositsTable] */
 }
 
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container4-expectedTable {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-expectedTable {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_cashExpectedTable] */
 }
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container4-countedTable {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-countedTable {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_cashCountedTable] */
 }
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container4-differenceTable {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-differenceTable {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_cashDifferenceTable] */
 }
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container4-qtyToKeepTable {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-qtyToKeepTable {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_cashQtyToKeepTable] */
 }
-.obObPosCashUpUiPostPrintClose-scrollArea-container1-container4-qtyToDepoTable {
+.obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-qtyToDepoTable {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_cashQtyToDepoTable] */
 }
 

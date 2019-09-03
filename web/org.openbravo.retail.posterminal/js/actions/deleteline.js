@@ -16,7 +16,7 @@
       name: 'deleteLine',
       permission: 'OBPOS_ActionButtonDelete',
       properties: {
-        i18nContent: 'OBPOS_ButtonDelete'
+        i18nContent: 'OBPOS_LblDeleteLine'
       },
       viewMethodArgs: ['selectedReceiptLines'],
       isActive: function(view) {

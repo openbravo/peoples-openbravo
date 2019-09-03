@@ -52,6 +52,7 @@
         !OB.UTIL.isNullOrUndefined(this.args.options.autoDismiss)
           ? this.args.options.autoDismiss
           : true;
+      this.attrs = this.args.attrs;
       if (this.args.options && this.args.options.hideCloseButton) {
         this.$.headerCloseButton.hide();
       } else {
@@ -94,7 +95,7 @@
       // Apply display logic
       _.each(this.$.bodyButtons.getComponents(), function(cmp) {
         if (cmp.displayLogic) {
-          cmp.displayLogic();
+          cmp.displayLogic(me.attrs);
         }
       });
       return true;

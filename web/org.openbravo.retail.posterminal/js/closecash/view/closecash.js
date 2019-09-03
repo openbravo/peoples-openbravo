@@ -62,7 +62,7 @@ enyo.kind({
     {
       name: 'btnCashUp',
       kind: 'OB.OBPOSCashUp.UI.Button',
-      classes: 'obObPosCashUpUiLeftToolbarImpl-btnCashUp',
+      classes: 'obObPosCashupUiCashUp-rightToolbar-btnCashUp',
       disabled: true,
       i18nLabel: 'OBPOS_LblCloseCash'
     },
@@ -356,6 +356,9 @@ enyo.kind({
     this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.total.printAmount(
       this.model.get('totalExpected')
     );
+    this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.counted.printAmount(
+      0
+    );
     this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.difference.printAmount(
       OB.DEC.sub(0, this.model.get('totalExpected'))
     );
@@ -380,9 +383,21 @@ enyo.kind({
             this.model.get('totalExpected')
           )
         );
+        this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.counted.printAmount(
+          this.model.get('totalCounted')
+        );
         this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.difference.printAmount(
           this.model.get('totalDifference')
         );
+        if (this.model.get('totalDifference') <= 0) {
+          this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.differenceLbl.setContent(
+            OB.I18N.getLabel('OBPOS_Remaining')
+          );
+        } else {
+          this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.differenceLbl.setContent(
+            OB.I18N.getLabel('OBPOS_Surplus')
+          );
+        }
         this.waterfall('onAnyCounted');
         this.refreshButtons();
       },

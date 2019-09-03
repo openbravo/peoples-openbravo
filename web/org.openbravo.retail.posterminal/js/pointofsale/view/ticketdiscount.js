@@ -391,11 +391,11 @@ enyo.kind({
             );
           }
         }
-        if (discountsContainer.model.get('obdiscAllowmultipleinstan')) {
-          args.context.$.overridePromotion.hide();
-          args.context.$.checkOverride.unCheck();
+        if (formElementDiscountsList.model.get('obdiscAllowmultipleinstan')) {
+          args.context.$.formElementCheckOverride.hide();
+          args.context.$.formElementCheckOverride.$.coreElementContainer.$.checkOverride.unCheck();
         } else {
-          args.context.$.overridePromotion.show();
+          args.context.$.formElementCheckOverride.show();
         }
       }
     );
@@ -429,8 +429,8 @@ enyo.kind({
           me.closingDiscounts();
           return;
         }
-        if (!me.$.overridePromotion.showing) {
-          me.$.checkOverride.unCheck();
+        if (!me.$.formElementCheckOverride.showing) {
+          me.$.formElementCheckOverride.$.coreElementContainer.$.checkOverride.unCheck();
         }
         promotionToApply.rule = formElementDiscountsList.model;
         promotionToApply.definition = {};

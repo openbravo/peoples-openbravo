@@ -53,18 +53,12 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.RenderCategoryExpand',
-  kind: 'Image',
-  classes: 'obUiRenderCategoryExpand',
-  src: '../org.openbravo.retail.posterminal/img/iconExpand.png',
-  sizing: 'cover'
+  classes: 'obUiRenderCategoryExpand'
 });
 
 enyo.kind({
   name: 'OB.UI.RenderCategoryCollapse',
-  kind: 'Image',
   classes: 'obUiRenderCategoryCollapse',
-  src: '../org.openbravo.retail.posterminal/img/iconCollapse.png',
-  sizing: 'cover',
   showing: false
 });
 
@@ -104,28 +98,30 @@ enyo.kind({
   },
   components: [
     {
-      classes: 'obUiRenderCategoryTree-container1',
+      classes: 'obUiRenderCategoryTree-identifierContainer',
       components: [
         {
-          classes: 'obUiRenderCategoryTree-container1-identifier',
+          classes: 'obUiRenderCategoryTree-identifierContainer-identifier',
           name: 'identifier'
         }
       ]
     },
     {
-      classes: 'obUiRenderCategoryTree-container2',
+      classes: 'obUiRenderCategoryTree-expandCollapseContainer',
       components: [
         {
           name: 'expandCollapse',
-          classes: 'obUiRenderCategoryTree-container2-expandCollapse',
+          classes:
+            'obUiRenderCategoryTree-expandCollapseContainer-expandCollapse',
           components: [
             {
-              classes: 'obUiRenderCategoryTree-expandCollapse-expand',
+              classes: 'obUiRenderCategoryTree-expandCollapseContainer-expand',
               kind: 'OB.UI.RenderCategoryExpand',
               name: 'expand'
             },
             {
-              classes: 'obUiRenderCategoryTree-expandCollapse-collapse',
+              classes:
+                'obUiRenderCategoryTree-expandCollapseContainer-collapse',
               kind: 'OB.UI.RenderCategoryCollapse',
               name: 'collapse'
             }
@@ -142,12 +138,10 @@ enyo.kind({
   initComponents: function() {
     this.inherited(arguments);
     this.$.identifier.setContent(this.model.get('_identifier'));
-    this.$.identifier.setStyle(
-      'padding-left: ' +
-        14 * this.model.get('level') +
-        'px; ' +
-        (this.model.id === '__all__' ? 'font-weight: bold; ' : '')
-    );
+    this.$.identifier.addClass('identifierLevel-' + this.model.get('level'));
+    if (this.model.id === '__all__') {
+      this.$.identifier.addClass('identifierAll');
+    }
     this.$.expandCollapse.setShowing(this.model.get('issummary'));
     this.$.expand.setShowing(this.model.get('treeNode') !== 'EXPANDED');
     this.$.collapse.setShowing(this.model.get('treeNode') === 'EXPANDED');

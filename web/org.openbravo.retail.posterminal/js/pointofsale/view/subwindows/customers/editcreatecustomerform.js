@@ -117,7 +117,7 @@ enyo.kind({
           function(attribute) {
             _.each(this.args.focusError, function(field, indx) {
               if (attribute.name === 'line_' + field) {
-                var attr = attribute.$.newAttribute.$[field];
+                var attr = attribute.$.coreElementContainer.$[field];
                 attr.addClass(
                   'obObposPointOfSaleUiCustomersNewcustomer-newAttribute_error'
                 );
@@ -149,7 +149,7 @@ enyo.kind({
         function(attribute) {
           _.each(this.args.focusError, function(field) {
             if (attribute.name === 'line_' + field) {
-              var attr = attribute.$.newAttribute.$[field];
+              var attr = attribute.$.coreElementContainer.$[field];
               attr.removeClass(
                 'obObposPointOfSaleUiCustomersNewcustomer-newAttribute_error'
               );
@@ -351,7 +351,14 @@ enyo.kind({
           },
           args
         );
-        me.dataReadyFunction(data, args);
+        //When dataReadyFunction is executed the HTML component is not already rendered
+        //adding timeout, the popup is shown and rendered so when data ready is executed
+        //the element to be selected is ready and will work.
+        //without setTimeout me.hashNode() is false
+        //with setTimeout me.hashNode() is a DOM element
+        setTimeout(function() {
+          me.dataReadyFunction(data, args);
+        }, 0);
       },
       i18nLabel: 'OBPOS_LblGreetings',
       fgSection: 'OBPOS_FG_PersonalInformation',
@@ -571,7 +578,14 @@ enyo.kind({
           },
           args
         );
-        me.dataReadyFunction(data, args);
+        //When dataReadyFunction is executed the HTML component is not already rendered
+        //adding timeout, the popup is shown and rendered so when data ready is executed
+        //the element to be selected is ready and will work.
+        //without setTimeout me.hashNode() is false
+        //with setTimeout me.hashNode() is a DOM element
+        setTimeout(function() {
+          me.dataReadyFunction(data, args);
+        }, 0);
       },
       i18nLabel: 'OBPOS_LblLanguage',
       fgSection: 'OBPOS_FG_PersonalInformation',

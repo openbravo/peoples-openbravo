@@ -76,103 +76,53 @@ enyo.kind({
   },
   components: [
     {
-      classes: 'obObposCahupUiCashMaster-container1',
+      classes: 'obObposCahupUiCashMaster-wrapper',
       components: [
         {
-          classes: 'obObposCahupUiCashMaster-container1-container1',
+          classes: 'obObposCahupUiCashMaster-wrapper-components',
           components: [
             {
+              name: 'stepsheader',
+              classes: 'obObposCahupUiCashMaster-wrapper-components-title',
+              renderHeader: function(step, count) {
+                this.setContent(
+                  OB.I18N.getLabel('OBPOS_LblStepNumber', [step, count]) +
+                    ' ' +
+                    OB.I18N.getLabel('OBPOS_LblStepMaster') +
+                    OB.OBPOSCashUp.UI.CashUp.getTitleExtensions()
+                );
+              }
+            },
+            {
               classes:
-                'obObposCahupUiCashMaster-container1-container1-container1',
+                'obObposCahupUiCashMaster-container1-container1-container1-container2-container1-container1-container1-container1',
               components: [
                 {
                   classes:
-                    'obObposCahupUiCashMaster-container1-container1-container1-container1 row-fluid',
-                  components: [
-                    {
-                      classes:
-                        'obObposCahupUiCashMaster-container1-container1-container1-container1-container1 span12',
-                      components: [
-                        {
-                          name: 'stepsheader',
-                          classes:
-                            'obObposCahupUiCashMaster-container1-container1-container1-container1-container1-stepsheader',
-                          renderHeader: function(step, count) {
-                            this.setContent(
-                              OB.I18N.getLabel('OBPOS_LblStepNumber', [
-                                step,
-                                count
-                              ]) +
-                                ' ' +
-                                OB.I18N.getLabel('OBPOS_LblStepMaster') +
-                                OB.OBPOSCashUp.UI.CashUp.getTitleExtensions()
-                            );
-                          }
-                        }
-                      ]
-                    }
-                  ]
+                    'obObposCahupUiCashMaster-container1-container1-container1-container2-container1-container1-container1-container1-element1',
+                  initComponents: function() {
+                    this.setContent(OB.I18N.getLabel('OBPOS_LblTerminal'));
+                  }
                 },
                 {
                   classes:
-                    'obObposCahupUiCashMaster-container1-container1-container1-container2',
-                  components: [
-                    {
-                      classes:
-                        'obObposCahupUiCashMaster-container1-container1-container1-container2-container1',
-                      components: [
-                        {
-                          classes:
-                            'obObposCahupUiCashMaster-container1-container1-container1-container2-container1-container1 row-fluid',
-                          components: [
-                            {
-                              classes:
-                                'obObposCahupUiCashMaster-container1-container1-container1-container2-container1-container1-container1 span12',
-                              components: [
-                                {
-                                  classes:
-                                    'obObposCahupUiCashMaster-container1-container1-container1-container2-container1-container1-container1-container1',
-                                  components: [
-                                    {
-                                      classes:
-                                        'obObposCahupUiCashMaster-container1-container1-container1-container2-container1-container1-container1-container1-element1',
-                                      initComponents: function() {
-                                        this.setContent(
-                                          OB.I18N.getLabel('OBPOS_LblTerminal')
-                                        );
-                                      }
-                                    },
-                                    {
-                                      classes:
-                                        'obObposCahupUiCashMaster-container1-container1-container1-container2-container1-container1-container1-container1-element2',
-                                      initComponents: function() {
-                                        this.setContent(
-                                          OB.I18N.getLabel(
-                                            'OBPOS_LblCashupSlaveClosed'
-                                          )
-                                        );
-                                      }
-                                    }
-                                  ]
-                                }
-                              ]
-                            }
-                          ]
-                        },
-                        {
-                          name: 'slaveList',
-                          kind: 'OB.UI.Table',
-                          classes:
-                            'obObposCahupUiCashMaster-container1-container1-container1-container2-container1-slaveList',
-                          renderLine: 'OB.OBPOSCashUp.UI.RenderCashMasterLine',
-                          renderEmpty: 'OB.UI.RenderEmpty',
-                          listStyle: 'list'
-                        }
-                      ]
-                    }
-                  ]
+                    'obObposCahupUiCashMaster-container1-container1-container1-container2-container1-container1-container1-container1-element2',
+                  initComponents: function() {
+                    this.setContent(
+                      OB.I18N.getLabel('OBPOS_LblCashupSlaveClosed')
+                    );
+                  }
                 }
               ]
+            },
+            {
+              name: 'slaveList',
+              kind: 'OB.UI.Table',
+              classes:
+                'obObposCahupUiCashMaster-container1-container1-container1-container2-container1-slaveList',
+              renderLine: 'OB.OBPOSCashUp.UI.RenderCashMasterLine',
+              renderEmpty: 'OB.UI.RenderEmpty',
+              listStyle: 'list'
             }
           ]
         }

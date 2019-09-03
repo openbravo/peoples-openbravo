@@ -19,7 +19,7 @@ enyo.kind({
       classes: 'obUiKeypadCoinsLegacy-container1',
       components: [
         {
-          classes: 'obUiKeypadCoinsLegacy-container1-container1 span4',
+          classes: 'obUiKeypadCoinsLegacy-container1-container1',
           components: [
             {
               kind: 'OB.UI.ButtonKey',
@@ -32,7 +32,7 @@ enyo.kind({
           ]
         },
         {
-          classes: 'obUiKeypadCoinsLegacy-container1-container2 span4',
+          classes: 'obUiKeypadCoinsLegacy-container1-container2',
           components: [
             {
               kind: 'OB.UI.ButtonKey',
@@ -45,7 +45,7 @@ enyo.kind({
           ]
         },
         {
-          classes: 'obUiKeypadCoinsLegacy-container1-container3 span4',
+          classes: 'obUiKeypadCoinsLegacy-container1-container3',
           components: [
             {
               kind: 'OB.UI.ButtonKey',
@@ -63,7 +63,7 @@ enyo.kind({
       classes: 'obUiKeypadCoinsLegacy-container2',
       components: [
         {
-          classes: 'obUiKeypadCoinsLegacy-container2-container1 span4',
+          classes: 'obUiKeypadCoinsLegacy-container2-container1',
           components: [
             {
               kind: 'OB.UI.PaymentButton',
@@ -77,7 +77,7 @@ enyo.kind({
           ]
         },
         {
-          classes: 'obUiKeypadCoinsLegacy-container2-container2 span4',
+          classes: 'obUiKeypadCoinsLegacy-container2-container2',
           components: [
             {
               kind: 'OB.UI.PaymentButton',
@@ -91,7 +91,7 @@ enyo.kind({
           ]
         },
         {
-          classes: 'obUiKeypadCoinsLegacy-container2-container3 span4',
+          classes: 'obUiKeypadCoinsLegacy-container2-container3',
           components: [
             {
               kind: 'OB.UI.PaymentButton',
@@ -110,7 +110,7 @@ enyo.kind({
       classes: 'obUiKeypadCoinsLegacy-container3',
       components: [
         {
-          classes: 'obUiKeypadCoinsLegacy-container3-container1 span4',
+          classes: 'obUiKeypadCoinsLegacy-container3-container1',
           components: [
             {
               kind: 'OB.UI.PaymentButton',
@@ -124,7 +124,7 @@ enyo.kind({
           ]
         },
         {
-          classes: 'obUiKeypadCoinsLegacy-container3-container2 span4',
+          classes: 'obUiKeypadCoinsLegacy-container3-container2',
           components: [
             {
               kind: 'OB.UI.PaymentButton',
@@ -138,7 +138,7 @@ enyo.kind({
           ]
         },
         {
-          classes: 'obUiKeypadCoinsLegacy-container3-container3 span4',
+          classes: 'obUiKeypadCoinsLegacy-container3-container3',
           components: [
             {
               kind: 'OB.UI.PaymentButton',
@@ -157,7 +157,7 @@ enyo.kind({
       classes: 'obUiKeypadCoinsLegacy-container4',
       components: [
         {
-          classes: 'obUiKeypadCoinsLegacy-container4-container1 span4',
+          classes: 'obUiKeypadCoinsLegacy-container4-container1',
           components: [
             {
               kind: 'OB.UI.PaymentButton',
@@ -171,7 +171,7 @@ enyo.kind({
           ]
         },
         {
-          classes: 'obUiKeypadCoinsLegacy-container4-container2 span4',
+          classes: 'obUiKeypadCoinsLegacy-container4-container2',
           components: [
             {
               kind: 'OB.UI.PaymentButton',
@@ -185,7 +185,7 @@ enyo.kind({
           ]
         },
         {
-          classes: 'obUiKeypadCoinsLegacy-container4-container3 span4',
+          classes: 'obUiKeypadCoinsLegacy-container4-container3',
           components: [
             {
               kind: 'OB.UI.PaymentButton',
@@ -204,7 +204,7 @@ enyo.kind({
       classes: 'obUiKeypadCoinsLegacy-container5',
       components: [
         {
-          classes: 'obUiKeypadCoinsLegacy-container5-container1 span4',
+          classes: 'obUiKeypadCoinsLegacy-container5-container1',
           components: [
             {
               kind: 'OB.UI.PaymentButton',
@@ -218,7 +218,7 @@ enyo.kind({
           ]
         },
         {
-          classes: 'obUiKeypadCoinsLegacy-container5-container2 span4',
+          classes: 'obUiKeypadCoinsLegacy-container5-container2',
           components: [
             {
               kind: 'OB.UI.PaymentButton',
@@ -232,7 +232,7 @@ enyo.kind({
           ]
         },
         {
-          classes: 'obUiKeypadCoinsLegacy-container5-container3 span4',
+          classes: 'obUiKeypadCoinsLegacy-container5-container3',
           components: [
             {
               kind: 'OB.UI.PaymentButton',
