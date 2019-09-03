@@ -222,7 +222,8 @@ enyo.kind({
       'change:gross',
       function(model) {
         this.bubble('onChangeTotal', {
-          newTotal: this.receipt.getTotal()
+          newTotal: this.receipt.getTotal(),
+          normalOrder: true
         });
       },
       this
