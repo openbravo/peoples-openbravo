@@ -396,7 +396,10 @@ enyo.kind({
             if (data.length === indx) {
               return;
             }
-            if (data[indx].receiptLines.length === 0) {
+            if (
+              !OB.UTIL.isNullOrUndefined(data[indx]) &&
+              data[indx].receiptLines.length === 0
+            ) {
               finishPrintInvoices();
               printInvoice(++indx);
             } else {
