@@ -413,7 +413,8 @@ enyo.kind({
               components: [
                 {
                   kind: 'OB.UI.ButtonKey',
-                  classButton: 'btnkeyboard-num',
+                  classButton:
+                    'obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic',
                   label: '/',
                   command: '/'
                 }
@@ -424,7 +425,8 @@ enyo.kind({
               components: [
                 {
                   kind: 'OB.UI.ButtonKey',
-                  classButton: 'btnkeyboard-num',
+                  classButton:
+                    'obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic',
                   label: '*',
                   command: '*'
                 }
@@ -435,7 +437,8 @@ enyo.kind({
               components: [
                 {
                   kind: 'OB.UI.ButtonKey',
-                  classButton: 'btnkeyboard-num',
+                  classButton:
+                    'obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic',
                   label: '%',
                   command: '%'
                 }

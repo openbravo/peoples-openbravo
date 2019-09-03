@@ -206,11 +206,6 @@ enyo.kind({
   },
   disableButton: function(inSender, inEvent) {
     this.setDisabled(inEvent.disabled);
-    if (inEvent.disabled) {
-      this.addClass(this.classButtonDisabled);
-    } else {
-      this.removeClass(this.classButtonDisabled);
-    }
   }
 });
 

@@ -16,7 +16,6 @@ OB.OBPOSPointOfSale.UI.ToolbarScan = {
       classes: 'obObposPointOfSaleUiToolbarScan-buttons',
       command: 'code',
       i18nLabel: 'OBMOBC_KbCode',
-      classButtonActive: 'obObposPointOfSaleUiToolbarScan-buttons_bluee',
       idSufix: 'upcean'
     }
   ],
@@ -956,8 +955,6 @@ enyo.kind({
   handlers: {
     onButtonStatusChanged: 'buttonStatusChanged'
   },
-  classButtonActive: 'obObposPointOfSaleUiButtonMore_active',
-  classButtonDisabled: 'obObposPointOfSaleUiButtonMore_disabled',
   components: [
     {
       classes: 'obObposPointOfSaleUiButtonMore-container1',
@@ -977,16 +974,16 @@ enyo.kind({
     this.activegreen = false;
   },
   tap: function() {
-    if (!this.$.btn.hasClass(this.classButtonDisabled)) {
+    if (!this.$.btn.getDisabled()) {
       this.doShowAllButtons();
     }
   },
   buttonStatusChanged: function(inSender, inEvent) {
     var status = inEvent.value.status;
-    this.$.btn.removeClass(this.classButtonDisabled);
+    this.$.btn.setDisabled(false);
     if (this.activegreen) {
       this.$.btn.setContent(OB.I18N.getLabel('OBPOS_MorePayments'));
-      this.$.btn.removeClass(this.classButtonActive);
+      this.$.btn.setSelected(false);
       this.activegreen = false;
     }
     if (
@@ -1001,7 +998,7 @@ enyo.kind({
             this.dialogbuttons[this.owner.keyboard.status]) +
           ')'
       );
-      this.$.btn.addClass(this.classButtonActive);
+      this.$.btn.setSelected(true);
       this.activegreen = true;
     }
     if (this.owner.showing) {
@@ -1013,8 +1010,8 @@ enyo.kind({
           }
         ).length === 0
       ) {
-        this.$.btn.removeClass(this.classButtonActive);
-        this.$.btn.addClass(this.classButtonDisabled);
+        this.$.btn.setSelected(false);
+        this.$.btn.setDisabled(true);
       }
     }
     OB.UTIL.createElipsisEffect(this.$.btn);
@@ -1024,7 +1021,6 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonSwitch',
   classes: 'obObposPointOfSaleUiButtonSwitch',
-  classButtonDisabled: 'obObposPointOfSaleUiButtonSwitch_disabled',
   handlers: {
     onButtonStatusChanged: 'buttonStatusChanged'
   },
@@ -1034,7 +1030,8 @@ enyo.kind({
       components: [
         {
           kind: 'OB.UI.Button',
-          classes: 'obObposPointOfSaleUiButtonSwitch-container1-btn',
+          classes:
+            'obObposPointOfSaleUiButtonSwitch-container1-btn obUiActionButton',
           name: 'btn'
         }
       ]
@@ -1044,7 +1041,7 @@ enyo.kind({
     this.$.btn.setContent(lbl);
   },
   tap: function() {
-    if (!this.$.btn.hasClass(this.classButtonDisabled)) {
+    if (!this.$.btn.getDisabled()) {
       this.keyboard.showNextKeypad();
     }
   },
@@ -1053,10 +1050,8 @@ enyo.kind({
       inEvent.value.status === '' &&
       this.keyboard.getActiveKeypads().length === 1
     ) {
-      this.$.btn.addClass(this.classButtonDisabled);
       this.$.btn.setDisabled(true);
     } else {
-      this.$.btn.removeClass(this.classButtonDisabled);
       this.$.btn.setDisabled(false);
     }
   },
