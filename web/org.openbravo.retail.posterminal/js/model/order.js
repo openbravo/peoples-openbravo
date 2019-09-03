@@ -1094,9 +1094,17 @@
       var me = this;
 
       if (OB.MobileApp.model.hasPermission('OBPOS_NewDiscounts', true)) {
-        OB.Discounts.Pos.calculateDiscounts(this, () =>
-          calculateGrossThenCallbacks()
-        );
+        if (
+          this.get('skipApplyPromotions') ||
+          this.get('cloningReceipt') ||
+          me.preventApplyPromotions
+        ) {
+          calculateGrossThenCallbacks();
+        } else {
+          OB.Discounts.Pos.calculateDiscounts(this, () =>
+            calculateGrossThenCallbacks()
+          );
+        }
       } else {
         this.on('applyPromotionsFinished', function() {
           me.off('applyPromotionsFinished');
