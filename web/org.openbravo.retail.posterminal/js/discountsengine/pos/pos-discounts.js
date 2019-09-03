@@ -41,7 +41,7 @@
       ticket.get('lines').forEach(line => {
         const discountInfoForLine =
             result.lines[line.get('id')] &&
-            result.lines[line.get('id')].discounts,
+            result.lines[line.get('id')].discounts.promotions,
           excludedFromEnginePromotions = line.get('promotions')
             ? line.get('promotions').filter(promo => {
                 return !promo.calculatedOnDiscountEngine;
@@ -53,17 +53,91 @@
           return;
         }
 
-        // Set a property to indicate these promotions has been calculated with the discount engine
-        discountInfoForLine.promotions.forEach(promotion => {
-          promotion.calculatedOnDiscountEngine = true;
-        });
-
         // Concatenate new promotions and excluded promotions in line
         line.set('promotions', [
           ...excludedFromEnginePromotions,
-          ...discountInfoForLine.promotions
+          ...discountInfoForLine
         ]);
         return;
+      });
+    },
+
+    translateManualPromotionsForEngine(receipt) {
+      let manualPromotions = [];
+      receipt.get('lines').models.forEach(line => {
+        if (line.get('promotions') && line.get('promotions').length > 0) {
+          let lineManualPromos =
+            line.get('promotions').filter(promo => {
+              return promo.manual;
+            }) || [];
+          lineManualPromos.forEach(lineManualPromo => {
+            let manualPromoObj = manualPromotions.find(manualPromo => {
+              return (
+                manualPromo.ruleId === lineManualPromo.ruleId &&
+                manualPromo.discountinstance ===
+                  lineManualPromo.discountinstance
+              );
+            });
+            if (manualPromoObj) {
+              manualPromoObj.linesToApply.push(line.get('id'));
+            } else {
+              let manualPromoObj = {};
+
+              // Create an instance of current promotion
+              for (let key in lineManualPromo) {
+                manualPromoObj[key] = lineManualPromo[key];
+              }
+
+              // Add this line as applicable line
+              manualPromoObj.linesToApply = [line.get('id')];
+
+              // Override some configuration from manualPromotions
+              if (
+                manualPromoObj.discountType ===
+                  '7B49D8CC4E084A75B7CB4D85A6A3A578' ||
+                manualPromoObj.discountType ===
+                  'D1D193305A6443B09B299259493B272A'
+              ) {
+                manualPromoObj.obdiscAmt = manualPromoObj.userAmt;
+              } else if (
+                manualPromoObj.discountType ===
+                  '8338556C0FBF45249512DB343FEFD280' ||
+                manualPromoObj.discountType ===
+                  '20E4EC27397344309A2185097392D964'
+              ) {
+                manualPromoObj.obdiscPercentage = manualPromoObj.userAmt;
+              } else if (
+                manualPromoObj.discountType ===
+                'F3B0FB45297844549D9E6B5F03B23A82'
+              ) {
+                manualPromoObj.obdiscLineFinalgross = manualPromoObj.userAmt;
+              }
+              manualPromoObj.id = manualPromoObj.ruleId;
+              manualPromoObj.products = [];
+              manualPromoObj.includedProducts = 'Y';
+              manualPromoObj.productCategories = [];
+              manualPromoObj.includedProductCategories = 'Y';
+              manualPromoObj.productCharacteristics = [];
+              manualPromoObj.includedCharacteristics = 'Y';
+              manualPromoObj.allweekdays = true;
+              manualPromoObj.rule = lineManualPromo.rule;
+
+              manualPromotions.push(manualPromoObj);
+            }
+          });
+        }
+      });
+      return manualPromotions;
+    },
+
+    removeManualPromotionFromLines(receipt) {
+      receipt.get('lines').models.forEach(line => {
+        if (line.get('promotions') && line.get('promotions').length > 0) {
+          let exludeManualPromotions = line.get('promotions').filter(promo => {
+            return !promo.manual;
+          });
+          line.set('promotions', exludeManualPromotions || []);
+        }
       });
     },
 
@@ -85,20 +159,13 @@
       newTicket.discountsFromUser = {};
       newTicket.lines = [];
       receipt.get('lines').forEach(line => {
-        let newLine = {},
-          discountedLinePrice = 0;
-        if (line.get('promotions')) {
-          line.get('promotions').forEach(promo => {
-            if (!promo.calculatedOnDiscountEngine) {
-              discountedLinePrice += promo.amt;
-            }
-          });
-        }
+        let newLine = {};
 
         newLine.id = line.get('id');
         newLine.product = line.get('product').toJSON();
         newLine.qty = line.get('qty');
-        newLine.price = line.get('price') - discountedLinePrice;
+        newLine.price = line.get('price');
+        newLine.promotions = [];
         newTicket.lines.push(newLine);
       });
       if (receipt.get('coupons')) {
@@ -142,41 +209,58 @@
         });
         newTicket.discountsFromUser.bytotalManualPromotions = bytotalManualPromotions;
       }
-      if (receipt.get('manualPromotionsAddedToTicket')) {
-        let manualPromotions = [];
-        receipt
-          .get('manualPromotionsAddedToTicket')
-          .forEach(manualPromotion => {
-            let rule = new Backbone.Model(manualPromotion.rule);
-            let manualPromotionObj = {};
-            for (let key in rule.attributes) {
-              manualPromotionObj[key] = rule.attributes[key];
-            }
-            manualPromotionObj.linesToApply = manualPromotion.applicableLines;
-            manualPromotionObj.discountInstance =
-              manualPromotion.discountInstance;
 
-            // Override some configuration from manualPromotions
-            if (manualPromotionObj.obdiscAmt) {
-              manualPromotionObj.obdiscAmt = manualPromotion.userAmt;
-            } else if (manualPromotionObj.obdiscPercentage) {
-              manualPromotionObj.obdiscPercentage = manualPromotion.userAmt;
-            } else if (manualPromotionObj.obdiscLineFinalgross) {
-              manualPromotionObj.obdiscLineFinalgross = manualPromotion.userAmt;
-            }
-            manualPromotionObj.products = [];
-            manualPromotionObj.includedProducts = 'Y';
-            manualPromotionObj.productCategories = [];
-            manualPromotionObj.includedProductCategories = 'Y';
-            manualPromotionObj.productCharacteristics = [];
-            manualPromotionObj.includedCharacteristics = 'Y';
-            manualPromotionObj.allweekdays = true;
-
-            manualPromotions.push(manualPromotionObj);
-          });
-        newTicket.discountsFromUser.manualPromotions = manualPromotions;
-      }
+      let manualPromotions = this.translateManualPromotionsForEngine(receipt);
+      newTicket.discountsFromUser.manualPromotions = manualPromotions;
+      this.removeManualPromotionFromLines(receipt);
       return newTicket;
+    },
+
+    transformNewEngineManualPromotions(ticket, ticketManualPromos, result) {
+      ticket.get('lines').forEach(line => {
+        const discountInfoForLine =
+          result.lines[line.get('id')] &&
+          result.lines[line.get('id')].discounts.promotions;
+        if (!discountInfoForLine || discountInfoForLine.length === 0) {
+          return;
+        }
+        // Create new instances of original definitions for manual promotions
+        discountInfoForLine.forEach(promotion => {
+          if (promotion.manual) {
+            let promotionRuleId = promotion.ruleId,
+              promotionDiscountInstance = promotion.discountinstance;
+
+            let discountInstance = ticketManualPromos.find(
+              ticketManualPromo => {
+                return (
+                  ticketManualPromo.ruleId === promotionRuleId &&
+                  ticketManualPromo.discountinstance ===
+                    promotionDiscountInstance
+                );
+              }
+            );
+
+            let newPromoInstance = {};
+
+            for (let key in discountInstance) {
+              newPromoInstance[key] = discountInstance[key];
+            }
+
+            for (let key in promotion) {
+              newPromoInstance[key] = promotion[key];
+            }
+
+            delete newPromoInstance.linesToApply;
+
+            for (let key in newPromoInstance) {
+              promotion[key] = newPromoInstance[key];
+            }
+          }
+          promotion.calculatedOnDiscountEngine = true;
+          promotion.displayedTotalAmount = promotion.amt;
+          promotion.fullAmt = promotion.amt;
+        });
+      });
     },
 
     calculateDiscounts(receipt, callback) {
@@ -184,6 +268,11 @@
       let result;
       if (OB.Discounts.Pos.local) {
         result = OB.Discounts.Pos.calculateLocal(ticketForEngine);
+        this.transformNewEngineManualPromotions(
+          receipt,
+          ticketForEngine.discountsFromUser.manualPromotions,
+          result
+        );
         OB.Discounts.Pos.applyDiscounts(receipt, result);
         callback();
       } else {
