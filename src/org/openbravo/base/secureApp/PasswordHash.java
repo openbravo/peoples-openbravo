@@ -45,6 +45,9 @@ public abstract class PasswordHash {
       User user = (User) OBDal.getInstance()
           .createCriteria(User.class)
           .add(Restrictions.eq(User.PROPERTY_USERNAME, userName))
+          .setFilterOnActive(true)
+          .setFilterOnReadableClients(false)
+          .setFilterOnReadableOrganization(false)
           .uniqueResult();
 
       if (user == null) {
