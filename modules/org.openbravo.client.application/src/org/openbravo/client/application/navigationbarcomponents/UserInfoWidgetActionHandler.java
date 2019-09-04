@@ -32,6 +32,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.LoginUtils;
+import org.openbravo.base.secureApp.PasswordHash;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.client.kernel.BaseActionHandler;
@@ -50,7 +51,6 @@ import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.portal.PortalAccessible;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.password.PasswordStrengthChecker;
-import org.openbravo.utils.FormatUtilities;
 
 /**
  * Action handler used to save the default user information of the 'Profile' widget and the password
@@ -100,7 +100,7 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
     final String newPwd = json.getString("newPwd");
     final String confirmPwd = json.getString("confirmPwd");
 
-    if (!user.getPassword().equals(FormatUtilities.sha1Base64(currentPwd))) {
+    if (!PasswordHash.matches(currentPwd, user.getPassword())) {
       return createErrorResponse("currentPwd", "UINAVBA_CurrentPwdIncorrect");
     }
     if (currentPwd.equals(newPwd)) {
@@ -115,7 +115,7 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
     if (!passwordStrengthChecker.isStrongPassword(newPwd)) {
       return createErrorResponse("newPwd", "CPPasswordNotStrongEnough");
     }
-    user.setPassword(FormatUtilities.sha1Base64(newPwd));
+    user.setPassword(PasswordHash.getDefaultAlgorithm().generateHash(newPwd));
     OBDal.getInstance().flush();
     return ApplicationConstants.ACTION_RESULT_SUCCESS;
   }
