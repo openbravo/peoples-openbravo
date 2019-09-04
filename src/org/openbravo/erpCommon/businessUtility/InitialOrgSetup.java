@@ -52,7 +52,6 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.OrganizationType;
 import org.openbravo.model.common.geography.Location;
 import org.openbravo.service.db.ImportResult;
-import org.openbravo.utils.FormatUtilities;
 
 public class InitialOrgSetup {
   private static final Logger log4j = LogManager.getLogger();
@@ -634,8 +633,7 @@ public class InitialOrgSetup {
     log4j.debug("insertUser() - Organization User Name: " + strOrgUser);
 
     try {
-      user = InitialSetupUtility.insertUser(client, null, strOrgUser,
-          FormatUtilities.sha1Base64(strPassword), null, language);
+      user = InitialSetupUtility.insertUser(client, null, strOrgUser, strPassword, null, language);
     } catch (final Exception err) {
       return logErrorAndRollback("@CreateOrgFailed@",
           "insertUser() - ERROR - Not able to insert the user " + strOrgUser, err);
