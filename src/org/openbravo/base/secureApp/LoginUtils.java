@@ -43,6 +43,7 @@ import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.RoleOrganization;
+import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -106,13 +107,8 @@ public class LoginUtils {
   public static String checkUserPassword(ConnectionProvider connectionProvider, String login,
       String unHashedPassword) {
     try {
-      final String hashedPassword = FormatUtilities.sha1Base64(unHashedPassword);
-      final String userId = SeguridadData.valido(connectionProvider, login, hashedPassword);
-      if (userId.equals("-1")) {
-        return null;
-      }
-
-      return userId;
+      User user = PasswordHash.getUser(login, unHashedPassword);
+      return user == null ? null : user.getId();
     } catch (final Exception e) {
       throw new OBException(e);
     }

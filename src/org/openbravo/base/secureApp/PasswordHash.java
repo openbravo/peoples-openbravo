@@ -33,7 +33,7 @@ public abstract class PasswordHash {
     return algorithm;
   }
 
-  public static User getUserId(String userName, String password) {
+  public static User getUser(String userName, String password) {
     OBContext.setAdminMode(false);
     try {
       // TODO: ensure we can use DAL at this point
@@ -47,7 +47,7 @@ public abstract class PasswordHash {
       }
 
       PasswordHash algorithm = getAlgorithm(user.getPassword());
-      if (algorithm.check(user.getPassword(), password)) {
+      if (algorithm.check(password, user.getPassword())) {
         return user;
       } else {
         return null;
@@ -71,6 +71,7 @@ public abstract class PasswordHash {
       if (salt != null) {
         md.update(salt.getBytes(StandardCharsets.UTF_8));
       }
+
       byte[] bytes = md.digest(plainText.getBytes(StandardCharsets.UTF_8));
       return new String(org.apache.commons.codec.binary.Base64.encodeBase64(bytes),
           StandardCharsets.UTF_8);
