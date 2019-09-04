@@ -15,6 +15,7 @@ import org.openbravo.model.ad.access.User;
 
 public abstract class PasswordHash {
   public static final Logger log = LogManager.getLogger();
+  private static final int DEFAULT_CURRENT_ALGORITHM_VERSION = 1;
 
   private static final Map<Integer, PasswordHash> INSTANCES = Map.of(0, new SHA1(), 1,
       new SHA512Salt());
@@ -48,6 +49,14 @@ public abstract class PasswordHash {
 
       PasswordHash algorithm = getAlgorithm(user.getPassword());
       if (algorithm.check(password, user.getPassword())) {
+        if (algorithm.getAlgorithmVersion() < DEFAULT_CURRENT_ALGORITHM_VERSION) {
+          log.debug("Upgrading password hash for user {}, from algorithm version {} to {}.",
+              user.getUsername(), algorithm.getAlgorithmVersion(),
+              DEFAULT_CURRENT_ALGORITHM_VERSION);
+          String newPassword = INSTANCES.get(DEFAULT_CURRENT_ALGORITHM_VERSION)
+              .generateHash(password);
+          user.setPassword(newPassword);
+        }
         return user;
       } else {
         return null;
@@ -56,6 +65,10 @@ public abstract class PasswordHash {
       OBContext.restorePreviousMode();
     }
   }
+
+  protected abstract String generateHash(String password);
+
+  protected abstract int getAlgorithmVersion();
 
   public static boolean matches(String plainTextPassword, String hashedPassword) {
     PasswordHash algorithm = getAlgorithm(hashedPassword);
@@ -102,6 +115,16 @@ public abstract class PasswordHash {
       return hash(plainTextPassword, null).equals(hashedPassword);
     }
 
+    @Override
+    protected int getAlgorithmVersion() {
+      return 0;
+    }
+
+    @Override
+    protected String generateHash(String password) {
+      return hash(password, null);
+    }
+
   }
 
   private static class SHA512Salt extends PasswordHash {
@@ -117,6 +140,18 @@ public abstract class PasswordHash {
       String orginalHash = hashParts[2];
 
       return hash(plainTextPassword, salt).equals(orginalHash);
+    }
+
+    @Override
+    protected int getAlgorithmVersion() {
+      return 1;
+    }
+
+    @Override
+    protected String generateHash(String password) {
+      String salt = "someRandom"; // TODO: define salt
+      String hash = hash(password, salt);
+      return getAlgorithmVersion() + "$" + salt + "$" + hash;
     }
   }
 }
