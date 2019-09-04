@@ -41,7 +41,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="PASSWORD" primaryKey="false" required="false" type="NVARCHAR" size="40" autoIncrement="false">
+      <column name="PASSWORD" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
