@@ -266,6 +266,7 @@
             }
           }
           promotion.calculatedOnDiscountEngine = true;
+          promotion.obdiscQtyoffer = promotion.qtyOffer;
           promotion.displayedTotalAmount = promotion.amt;
           promotion.fullAmt = promotion.amt;
           promotion.actualAmt = promotion.amt;
