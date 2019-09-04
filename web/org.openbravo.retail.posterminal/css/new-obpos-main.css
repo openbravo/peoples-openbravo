@@ -8147,10 +8147,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   background-color: var(--color-primary-lighter);
 }
 
-.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > button.obUiActionButtonSwitch_selected {
-  background-color: var(--color-actioncolor);
-}
-
 .obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .obUiActionButton {
   padding: 0px;
   margin: 0px;
