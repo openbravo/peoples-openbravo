@@ -66,7 +66,11 @@ public abstract class PasswordHash {
     }
   }
 
-  protected abstract String generateHash(String password);
+  public static PasswordHash getDefaultAlgorithm() {
+    return INSTANCES.get(DEFAULT_CURRENT_ALGORITHM_VERSION);
+  }
+
+  public abstract String generateHash(String password);
 
   protected abstract int getAlgorithmVersion();
 
@@ -121,7 +125,7 @@ public abstract class PasswordHash {
     }
 
     @Override
-    protected String generateHash(String password) {
+    public String generateHash(String password) {
       return hash(password, null);
     }
 
@@ -148,7 +152,7 @@ public abstract class PasswordHash {
     }
 
     @Override
-    protected String generateHash(String password) {
+    public String generateHash(String password) {
       String salt = "someRandom"; // TODO: define salt
       String hash = hash(password, salt);
       return getAlgorithmVersion() + "$" + salt + "$" + hash;

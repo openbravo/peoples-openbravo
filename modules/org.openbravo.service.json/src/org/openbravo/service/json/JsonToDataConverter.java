@@ -50,6 +50,7 @@ import org.openbravo.base.model.domaintype.HashedStringDomainType;
 import org.openbravo.base.model.domaintype.ProductCharacteristicsDomainType;
 import org.openbravo.base.model.domaintype.TimestampDomainType;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.secureApp.PasswordHash;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.Traceable;
 import org.openbravo.base.util.Check;
@@ -57,7 +58,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.utils.CryptoUtility;
-import org.openbravo.utils.FormatUtilities;
 
 /**
  * Converts json data to Openbravo business object(s).
@@ -207,14 +207,7 @@ public class JsonToDataConverter {
         return new BigDecimal(((Number) value).doubleValue());
       } else if (value instanceof String
           && property.getDomainType() instanceof HashedStringDomainType) {
-        String str = (String) value;
-        try {
-          return FormatUtilities.sha1Base64(str);
-        } catch (ServletException e) {
-          log.error("Error hashing password", e);
-          // TODO: translate error message
-          throw new Error("Could not encrypt password", e);
-        }
+        return PasswordHash.getDefaultAlgorithm().generateHash((String) value);
       } else if (value instanceof String
           && property.getDomainType() instanceof EncryptedStringDomainType) {
         String str = (String) value;
