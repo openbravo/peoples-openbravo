@@ -68,6 +68,7 @@ public abstract class PasswordHash {
         String newPassword = INSTANCES.get(DEFAULT_CURRENT_ALGORITHM_VERSION)
             .generateHash(password);
         user.setPassword(newPassword);
+        OBDal.getInstance().flush();
       }
       return Optional.of(user);
     } finally {
