@@ -653,14 +653,13 @@ public class PaidReceipts extends JSONProcessSimple {
       "SELECT SUM(pd.amount) " +
       "FROM FIN_Payment_Detail AS pd " +
       "JOIN pd.finPayment AS p " +
-      "JOIN p.oBPOSPOSTerminal AS t " +
       "WHERE p.id = :finPaymentId " +
       "AND pd.gLItem IS NOT NULL " +
       "AND pd.gLItem.id = " +
         "(SELECT DISTINCT(ppt.glitemWriteoff.id) " +
         "FROM OBPOS_App_Payment AS pp " +
         "JOIN pp.paymentMethod AS ppt " +
-        "WHERE pp.obposApplications.id = t.id " +
+        "WHERE pp.obposApplications.id = p.oBPOSPOSTerminal.id " +
         "AND ppt.paymentMethod.id = p.paymentMethod.id)";
       // @formatter:on
       final Query<BigDecimal> overpaymentQuery = OBDal.getInstance()

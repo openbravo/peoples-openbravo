@@ -861,6 +861,7 @@
     calculateGrossAndSave: function(save, callback) {
       this.calculatingGross = true;
       var me = this;
+      var lines = this.get('lines').models;
       // reset some vital receipt values because, at this point, they are obsolete. do not fire the change event
       me.set(
         {
@@ -918,9 +919,20 @@
         }
       };
 
-      this.get('lines').forEach(function(line) {
-        line.calculateGross();
-      });
+      for (var i = 0; i < lines.length; i++) {
+        lines[i].calculateGross();
+        if (
+          OB.MobileApp.model.hasPermission(
+            'OBPOS_EnableMultiPriceList',
+            true
+          ) &&
+          ((this.get('priceIncludesTax') &&
+            !lines[i].get('priceIncludesTax')) ||
+            (!this.get('priceIncludesTax') && lines[i].get('priceIncludesTax')))
+        ) {
+          this.set('priceIncludesTax', lines[i].get('priceIncludesTax'));
+        }
+      }
 
       if (this.get('priceIncludesTax')) {
         this.calculateTaxes(function() {
@@ -3163,6 +3175,11 @@
         warehouseId,
         warehouse;
 
+      if (p.get('productType') === 'S') {
+        callback(true);
+        return;
+      }
+
       if (!line && p.get('groupProduct')) {
         var affectedByPack;
         line = lines.find(function(l) {
@@ -4080,6 +4097,7 @@
       var me = this;
       if (
         OB.MobileApp.model.hasPermission('EnableMultiPriceList', true) &&
+        !p.get('ispack') &&
         OB.UTIL.isCrossStoreProduct(p)
       ) {
         p.set('standardPrice', null);
@@ -4130,6 +4148,7 @@
         OB.MobileApp.model.hasPermission('EnableMultiPriceList', true) &&
         this.get('priceList') !==
           OB.MobileApp.model.get('terminal').priceList &&
+        !p.get('ispack') &&
         !OB.UTIL.isCrossStoreProduct(p)
       ) {
         var criteria = {};
