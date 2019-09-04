@@ -265,6 +265,7 @@
           promotion.calculatedOnDiscountEngine = true;
           promotion.displayedTotalAmount = promotion.amt;
           promotion.fullAmt = promotion.amt;
+          promotion.actualAmt = promotion.amt;
         });
       });
     },
