@@ -4726,6 +4726,7 @@
       disc.amt = discount.amt;
       disc.fullAmt = discount.amt ? discount.amt : 0;
       disc.actualAmt = discount.actualAmt;
+      disc.splitAmt = discount.splitAmt;
       disc.pack = discount.pack;
       disc.discountType = rule.get('discountType');
       disc.priority = rule.get('priority');

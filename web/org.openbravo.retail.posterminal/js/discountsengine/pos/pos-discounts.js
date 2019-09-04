@@ -76,7 +76,8 @@
                 manualPromo.ruleId === lineManualPromo.ruleId &&
                 manualPromo.discountinstance ===
                   lineManualPromo.discountinstance &&
-                manualPromo.noOrder === lineManualPromo.noOrder
+                manualPromo.noOrder === lineManualPromo.noOrder &&
+                manualPromo.splitAmt === lineManualPromo.splitAmt
               );
             });
             if (manualPromoObj) {
@@ -233,7 +234,8 @@
           if (promotion.manual) {
             let promotionRuleId = promotion.ruleId,
               promotionDiscountInstance = promotion.discountinstance,
-              promotionNoOrder = promotion.noOrder;
+              promotionNoOrder = promotion.noOrder,
+              promotionSplitAmt = promotion.splitAmt;
 
             let discountInstance = ticketManualPromos.find(
               ticketManualPromo => {
@@ -241,7 +243,8 @@
                   ticketManualPromo.ruleId === promotionRuleId &&
                   ticketManualPromo.discountinstance ===
                     promotionDiscountInstance &&
-                  ticketManualPromo.noOrder === promotionNoOrder
+                  ticketManualPromo.noOrder === promotionNoOrder &&
+                  ticketManualPromo.splitAmt === promotionSplitAmt
                 );
               }
             );
