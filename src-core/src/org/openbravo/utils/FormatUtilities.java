@@ -11,6 +11,10 @@
  */
 package org.openbravo.utils;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 import javax.servlet.ServletException;
 
 import org.apache.logging.log4j.LogManager;
@@ -77,9 +81,20 @@ public class FormatUtilities {
     if (text == null || text.trim().equals("")) {
       return "";
     }
-    String result = text;
-    result = CryptoSHA1BASE64.hash(text);
-    return result;
+
+    MessageDigest md = null;
+
+    try {
+      md = MessageDigest.getInstance("SHA"); // SHA-1 generator instance
+    } catch (NoSuchAlgorithmException e) {
+      throw new ServletException(e.getMessage());
+    }
+
+    md.update(text.getBytes(StandardCharsets.UTF_8));
+
+    byte[] raw = md.digest(); // Message summary reception
+    return new String(org.apache.commons.codec.binary.Base64.encodeBase64(raw),
+        StandardCharsets.UTF_8);
   }
 
   public static String encryptDecrypt(String text, boolean encrypt) throws ServletException {
