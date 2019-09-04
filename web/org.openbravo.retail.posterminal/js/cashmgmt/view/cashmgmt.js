@@ -49,9 +49,20 @@ enyo.kind({
       stepCount: 0,
       span: 6,
       tap: function() {
-        OB.POS.hwserver.checkDrawer(function() {
-          OB.POS.navigate('retail.pointofsale');
-        });
+        var finalCallback = function() {
+          OB.POS.hwserver.checkDrawer(function() {
+            OB.POS.navigate('retail.pointofsale');
+          });
+        };
+        OB.Dal.removeAll(
+          OB.Model.CashManagement,
+          {
+            cashup_id: OB.MobileApp.model.get('terminal').cashUpId,
+            isbeingprocessed: 'N'
+          },
+          finalCallback,
+          finalCallback
+        );
       }
     },
     {
