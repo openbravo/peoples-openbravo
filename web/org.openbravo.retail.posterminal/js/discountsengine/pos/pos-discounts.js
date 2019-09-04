@@ -202,6 +202,23 @@
               'rule'
             ).userAmt;
           }
+          bytotalManualPromotionObj.noOrder = bytotalManualPromotion.get(
+            'rule'
+          ).noOrder;
+          if (
+            OB.Model.Discounts.discountRules[
+              bytotalManualPromotionObj.discountType
+            ] &&
+            OB.Model.Discounts.discountRules[
+              bytotalManualPromotionObj.discountType
+            ].getIdentifier
+          ) {
+            let promotionName = OB.Model.Discounts.discountRules[
+              bytotalManualPromotionObj.discountType
+            ].getIdentifier(rule, bytotalManualPromotionObj);
+            bytotalManualPromotionObj.name = promotionName;
+            bytotalManualPromotionObj._identifier = promotionName;
+          }
           bytotalManualPromotionObj.products = [];
           bytotalManualPromotionObj.includedProducts = 'Y';
           bytotalManualPromotionObj.productCategories = [];

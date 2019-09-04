@@ -483,6 +483,15 @@ enyo.kind({
       }
     });
 
+    receipt
+      .get('orderManualPromotions')
+      .models.forEach(orderManualPromotion => {
+        let noOrder = orderManualPromotion.get('rule').noOrder || 0;
+        if (noOrder > maxNoOrder) {
+          maxNoOrder = noOrder;
+        }
+      });
+
     return maxNoOrder;
   },
   applyDiscounts: function(inSender, inEvent) {
