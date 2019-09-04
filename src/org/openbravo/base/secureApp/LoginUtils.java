@@ -15,6 +15,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.servlet.ServletException;
@@ -106,8 +107,8 @@ public class LoginUtils {
   public static String checkUserPassword(ConnectionProvider connectionProvider, String login,
       String unHashedPassword) {
     try {
-      User user = PasswordHash.getUser(login, unHashedPassword);
-      return user == null ? null : user.getId();
+      Optional<User> user = PasswordHash.getUser(login, unHashedPassword);
+      return user.map(User::getId).orElse(null);
     } catch (final Exception e) {
       throw new OBException(e);
     }

@@ -6,6 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 
 import org.apache.logging.log4j.LogManager;
@@ -19,7 +20,6 @@ import org.openbravo.model.ad.access.User;
 public abstract class PasswordHash {
   public static final Logger log = LogManager.getLogger();
   private static final int DEFAULT_CURRENT_ALGORITHM_VERSION = 1;
-  private static final Random RANDOM = new SecureRandom();
 
   private static final Map<Integer, PasswordHash> INSTANCES = Map.of(0, new SHA1(), 1,
       new SHA512Salt());
@@ -38,7 +38,7 @@ public abstract class PasswordHash {
     return algorithm;
   }
 
-  public static User getUser(String userName, String password) {
+  public static Optional<User> getUser(String userName, String password) {
     OBContext.setAdminMode(false);
     try {
       // TODO: ensure we can use DAL at this point
@@ -48,23 +48,25 @@ public abstract class PasswordHash {
           .uniqueResult();
 
       if (user == null) {
-        return null;
+        // no user for given userName
+        return Optional.empty();
       }
 
       PasswordHash algorithm = getAlgorithm(user.getPassword());
-      if (algorithm.check(password, user.getPassword())) {
-        if (algorithm.getAlgorithmVersion() < DEFAULT_CURRENT_ALGORITHM_VERSION) {
-          log.debug("Upgrading password hash for user {}, from algorithm version {} to {}.",
-              user.getUsername(), algorithm.getAlgorithmVersion(),
-              DEFAULT_CURRENT_ALGORITHM_VERSION);
-          String newPassword = INSTANCES.get(DEFAULT_CURRENT_ALGORITHM_VERSION)
-              .generateHash(password);
-          user.setPassword(newPassword);
-        }
-        return user;
-      } else {
-        return null;
+
+      if (!algorithm.check(password, user.getPassword())) {
+        // invalid password
+        return Optional.empty();
       }
+
+      if (algorithm.getAlgorithmVersion() < DEFAULT_CURRENT_ALGORITHM_VERSION) {
+        log.debug("Upgrading password hash for user {}, from algorithm version {} to {}.",
+            user.getUsername(), algorithm.getAlgorithmVersion(), DEFAULT_CURRENT_ALGORITHM_VERSION);
+        String newPassword = INSTANCES.get(DEFAULT_CURRENT_ALGORITHM_VERSION)
+            .generateHash(password);
+        user.setPassword(newPassword);
+      }
+      return Optional.of(user);
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -136,6 +138,8 @@ public abstract class PasswordHash {
   }
 
   private static class SHA512Salt extends PasswordHash {
+    private static final Random RANDOM = new SecureRandom();
+
     @Override
     protected String getHashingBaseAlgorithm() {
       return "SHA-512";
