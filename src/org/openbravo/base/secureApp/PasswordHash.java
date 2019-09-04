@@ -3,6 +3,7 @@ package org.openbravo.base.secureApp;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
@@ -90,8 +91,8 @@ public abstract class PasswordHash {
       }
 
       byte[] bytes = md.digest(plainText.getBytes(StandardCharsets.UTF_8));
-      return new String(org.apache.commons.codec.binary.Base64.encodeBase64(bytes),
-          StandardCharsets.UTF_8);
+
+      return Base64.getEncoder().encodeToString(bytes);
     } catch (NoSuchAlgorithmException e) {
       log.error("Error getting hashing algorithm", e);
       return "";

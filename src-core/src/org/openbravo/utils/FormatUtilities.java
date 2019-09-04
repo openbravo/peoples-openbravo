@@ -14,6 +14,7 @@ package org.openbravo.utils;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 
 import javax.servlet.ServletException;
 
@@ -93,8 +94,7 @@ public class FormatUtilities {
     md.update(text.getBytes(StandardCharsets.UTF_8));
 
     byte[] raw = md.digest(); // Message summary reception
-    return new String(org.apache.commons.codec.binary.Base64.encodeBase64(raw),
-        StandardCharsets.UTF_8);
+    return Base64.getEncoder().encodeToString(raw);
   }
 
   public static String encryptDecrypt(String text, boolean encrypt) throws ServletException {
