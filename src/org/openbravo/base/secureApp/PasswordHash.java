@@ -3,8 +3,10 @@ package org.openbravo.base.secureApp;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.Map;
+import java.util.Random;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,6 +19,7 @@ import org.openbravo.model.ad.access.User;
 public abstract class PasswordHash {
   public static final Logger log = LogManager.getLogger();
   private static final int DEFAULT_CURRENT_ALGORITHM_VERSION = 1;
+  private static final Random RANDOM = new SecureRandom();
 
   private static final Map<Integer, PasswordHash> INSTANCES = Map.of(0, new SHA1(), 1,
       new SHA512Salt());
@@ -154,7 +157,9 @@ public abstract class PasswordHash {
 
     @Override
     public String generateHash(String password) {
-      String salt = "someRandom"; // TODO: define salt
+      byte[] rawSalt = new byte[16];
+      RANDOM.nextBytes(rawSalt);
+      String salt = Base64.getEncoder().withoutPadding().encodeToString(rawSalt);
       String hash = hash(password, salt);
       return getAlgorithmVersion() + "$" + salt + "$" + hash;
     }

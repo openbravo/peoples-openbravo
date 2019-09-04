@@ -1,6 +1,8 @@
 package org.openbravo.test.system;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
@@ -35,6 +37,13 @@ public class PasswordHashing {
   public void newHashesWork() {
     String sha512SaltedOpenbravo = "1$anySalt$iyWvhlUpOrXFPPeRVzWXXR/B4hQ5qs8ZjCLUPoncJIKHRy5HZeXm9/r20qXg8tRgKcfC8bp/u5fPPQ9qA/hheQ==";
     assertThat(PasswordHash.matches("openbravo", sha512SaltedOpenbravo), is(true));
+  }
+
+  @Test
+  public void saltPrventCollission() {
+    assertThat("same password should generate different salted hashes",
+        PasswordHash.getDefaultAlgorithm().generateHash("mySecret"),
+        not(equalTo(PasswordHash.getDefaultAlgorithm().generateHash("mySecret"))));
   }
 
 }
