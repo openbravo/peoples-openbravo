@@ -466,6 +466,25 @@ enyo.kind({
       }
     });
   },
+
+  getMaxNoOrder: function(receipt) {
+    let maxNoOrder = 0;
+
+    receipt.get('lines').models.forEach(line => {
+      if (line.get('promotions') && line.get('promotions').length > 0) {
+        line.get('promotions').forEach(promo => {
+          if (promo.manual) {
+            let noOrder = promo.noOrder || 0;
+            if (noOrder > maxNoOrder) {
+              maxNoOrder = noOrder;
+            }
+          }
+        });
+      }
+    });
+
+    return maxNoOrder;
+  },
   applyDiscounts: function(inSender, inEvent) {
     var promotionToAplly = {},
       discountsContainer = this.$.discountsContainer,
@@ -493,6 +512,9 @@ enyo.kind({
         promotionToAplly.definition.lastApplied = true;
         promotionToAplly.definition.obdiscLineFinalgross =
           discountsContainer.amt;
+
+        let maxNoOrder = me.getMaxNoOrder(me.order);
+        promotionToAplly.definition.noOrder = maxNoOrder + 1;
 
         if (discountsContainer.requiresQty && !discountsContainer.amt) {
           //Show a modal pop up with the error

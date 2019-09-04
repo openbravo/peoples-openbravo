@@ -4711,6 +4711,7 @@
       disc.discountType = rule.get('discountType');
       disc.priority = rule.get('priority');
       disc.manual = discount.manual;
+      disc.noOrder = discount.noOrder;
       disc.userAmt = discount.userAmt;
       disc.lastApplied = discount.lastApplied;
       disc.obdiscQtyoffer = OB.UTIL.isNullOrUndefined(rule.get('qtyOffer'))

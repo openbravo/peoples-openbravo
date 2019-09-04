@@ -75,7 +75,8 @@
               return (
                 manualPromo.ruleId === lineManualPromo.ruleId &&
                 manualPromo.discountinstance ===
-                  lineManualPromo.discountinstance
+                  lineManualPromo.discountinstance &&
+                manualPromo.noOrder === lineManualPromo.noOrder
               );
             });
             if (manualPromoObj) {
@@ -127,7 +128,10 @@
           });
         }
       });
-      return manualPromotions;
+
+      return manualPromotions.sort((a, b) => {
+        return a.noOrder - b.noOrder;
+      });
     },
 
     removeManualPromotionFromLines(receipt) {
@@ -228,14 +232,16 @@
         discountInfoForLine.forEach(promotion => {
           if (promotion.manual) {
             let promotionRuleId = promotion.ruleId,
-              promotionDiscountInstance = promotion.discountinstance;
+              promotionDiscountInstance = promotion.discountinstance,
+              promotionNoOrder = promotion.noOrder;
 
             let discountInstance = ticketManualPromos.find(
               ticketManualPromo => {
                 return (
                   ticketManualPromo.ruleId === promotionRuleId &&
                   ticketManualPromo.discountinstance ===
-                    promotionDiscountInstance
+                    promotionDiscountInstance &&
+                  ticketManualPromo.noOrder === promotionNoOrder
                 );
               }
             );
