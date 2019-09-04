@@ -47,7 +47,6 @@ import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.openbravo.utils.FormatUtilities;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -77,7 +76,7 @@ public class LoginUtils {
    * @param unHashedPassword
    *          the password, the unhashed password as it is entered by the user.
    * @return the user id or null if no user could be found or the user is locked.
-   * @see FormatUtilities#sha1Base64(String)
+   * @see PasswordHash
    */
   public static String getValidUserId(ConnectionProvider connectionProvider, String login,
       String unHashedPassword) {

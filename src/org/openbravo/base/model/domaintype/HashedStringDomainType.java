@@ -19,12 +19,14 @@
 
 package org.openbravo.base.model.domaintype;
 
+import org.openbravo.base.secureApp.PasswordHash;
+
 /**
  * The type for storing passwords. Only a hash-code of the value is stored in the database so the
  * cleartext value cannot be recovered.
  * 
  * @author shuehner
- * @see org.openbravo.utils.CryptoSHA1BASE64#hash(String)
+ * @see PasswordHash
  */
 public class HashedStringDomainType extends StringDomainType {
 
