@@ -110,23 +110,32 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
                 defaultProcess: p.defaultProcess,
                 extendedType: p.extendedType
               });
-              if (p.extendedProp || _.isObject(p.extendedProp)) {
-                _.each(_.keys(p.extendedProp), function(key) {
-                  addedCashMgmt.set(key, p.extendedProp[key]);
-                });
-              }
-              me.depsdropstosave.add(addedCashMgmt);
+              OB.Dal.save(
+                addedCashMgmt,
+                function() {
+                  if (p.extendedProp || _.isObject(p.extendedProp)) {
+                    _.each(_.keys(p.extendedProp), function(key) {
+                      addedCashMgmt.set(key, p.extendedProp[key]);
+                    });
+                  }
+                  me.depsdropstosave.add(addedCashMgmt);
 
-              var selectedPayment = me.payments.filter(function(payment) {
-                return payment.get('paymentmethod_id') === p.id;
-              })[0];
-              if (selectedPayment.get('listdepositsdrops')) {
-                selectedPayment.get('listdepositsdrops').push(addedCashMgmt);
-                selectedPayment.trigger('change');
-              } else {
-                selectedPayment.set('listdepositsdrops', [addedCashMgmt]);
-              }
-              resolve();
+                  var selectedPayment = me.payments.filter(function(payment) {
+                    return payment.get('paymentmethod_id') === p.id;
+                  })[0];
+                  if (selectedPayment.get('listdepositsdrops')) {
+                    selectedPayment
+                      .get('listdepositsdrops')
+                      .push(addedCashMgmt);
+                    selectedPayment.trigger('change');
+                  } else {
+                    selectedPayment.set('listdepositsdrops', [addedCashMgmt]);
+                  }
+                  resolve();
+                },
+                reject,
+                true
+              );
             },
             reject,
             this
@@ -352,8 +361,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
                   depdrop.id
               );
               return;
-            },
-            true
+            }
           );
         }
       };
