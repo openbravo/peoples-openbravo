@@ -66,16 +66,22 @@ enyo.kind({
               ontap: 'lineEdit',
               components: [
                 {
-                  name: 'counted',
                   classes:
-                    'obObposCashupUiRenderPaymentsLine-listItem-countedContainer-counted',
-                  content: '-'
-                },
-                {
-                  name: 'foreignCounted',
-                  classes:
-                    'obObposCashupUiRenderPaymentsLine-listItem-countedContainer-foreignCounted',
-                  content: ''
+                    'obObposCashupUiRenderPaymentsLine-listItem-countedContainer-buttonEdit-components',
+                  components: [
+                    {
+                      name: 'counted',
+                      classes:
+                        'obObposCashupUiRenderPaymentsLine-listItem-countedContainer-buttonEdit-components-counted',
+                      content: '-'
+                    },
+                    {
+                      name: 'foreignCounted',
+                      classes:
+                        'obObposCashupUiRenderPaymentsLine-listItem-countedContainer-buttonEdit-components-foreignCounted',
+                      content: ''
+                    }
+                  ]
                 }
               ]
             }
