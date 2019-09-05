@@ -189,8 +189,6 @@
           for (let key in rule.attributes) {
             bytotalManualPromotionObj[key] = rule.attributes[key];
           }
-          bytotalManualPromotionObj.discountInstance =
-            bytotalManualPromotion.discountInstance;
 
           // Override some configuration from manualPromotions
           if (bytotalManualPromotionObj.disctTotalamountdisc) {
@@ -205,6 +203,9 @@
           bytotalManualPromotionObj.noOrder = bytotalManualPromotion.get(
             'rule'
           ).noOrder;
+          bytotalManualPromotionObj.discountinstance = bytotalManualPromotion.get(
+            'rule'
+          ).discountinstance;
           if (
             OB.Model.Discounts.discountRules[
               bytotalManualPromotionObj.discountType
