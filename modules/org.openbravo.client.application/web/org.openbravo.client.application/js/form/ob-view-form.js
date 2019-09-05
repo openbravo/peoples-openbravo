@@ -214,6 +214,24 @@ OB.ViewFormProperties = {
     isLocalTime,
     wasEditingGrid
   ) {
+    // If records doesn't exist,
+    // deselect all records and switch from Form view to View grid
+    // Refresh grid and show informative message about the change of view.
+    if (!record) {
+      this.view.viewGrid.deselectAllRecords();
+      if (this.view.isShowingForm) {
+        this.view.switchFormGridVisibility();
+        this.view.messageBar.setMessage(
+          isc.OBMessageBar.TYPE_INFO,
+          null,
+          OB.I18N.getLabel('OBUIAPP_FormEditingRecordRemoved')
+        );
+        this.view.messageBar.show(true);
+      }
+      this.view.viewGrid.refreshGrid();
+      this.view.updateSubtabVisibility();
+      return;
+    }
     var ret;
     this.clearValues();
     // if editRecord is called from OBStandardView.editRecord, then the time fields have already
