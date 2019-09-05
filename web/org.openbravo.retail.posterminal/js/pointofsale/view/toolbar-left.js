@@ -789,7 +789,11 @@ enyo.kind({
                         ) {
                           args3.approvals.push('OBPOS_approval.returns');
                         }
-                        if (args3.approvals.length > 0) {
+                        if (
+                          args3.approvals.length > 0 &&
+                          !receipt.get('isLayaway') &&
+                          !receipt.get('isPaid')
+                        ) {
                           OB.UTIL.Approval.requestApproval(
                             me.model,
                             args3.approvals,
