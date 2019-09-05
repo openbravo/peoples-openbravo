@@ -621,9 +621,19 @@ enyo.kind({
             ]
           },
           processChangeTotal: function(inSender, inEvent) {
-            this.waterfall('onChangedTotal', {
-              newTotal: inEvent.newTotal
-            });
+            if (
+              this.$.leftPanel.$.receiptview.model
+                .get('leftColumnViewManager')
+                .isMultiOrder() &&
+              inEvent.normalOrder
+            ) {
+              //Do not update total button as we are in multicolumn mode, and the event is for a single receipt
+              return true;
+            } else {
+              this.waterfall('onChangedTotal', {
+                newTotal: inEvent.newTotal
+              });
+            }
           }
         }
       ]
