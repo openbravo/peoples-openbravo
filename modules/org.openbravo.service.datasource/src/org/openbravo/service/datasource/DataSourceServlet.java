@@ -635,11 +635,13 @@ public class DataSourceServlet extends BaseKernelServlet {
           Object keyValue = json.has(key + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER)
               ? json.get(key + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER)
               : json.get(key);
+          boolean isNumeric = false;
           if (refListCols.contains(key)) {
             keyValue = refLists.get(key).get(keyValue);
           } else if (keyValue instanceof Number) {
             // if the CSV decimal separator property is defined, used it over the character
             // defined in Format.xml
+            isNumeric = true;
             keyValue = keyValue.toString()
                 .replace(".",
                     prefDecimalSeparator != null ? prefDecimalSeparator : decimalSeparator);
@@ -679,7 +681,7 @@ public class DataSourceServlet extends BaseKernelServlet {
           String outputValue;
           if (keyValue != null && !keyValue.toString().equals("null")) {
             outputValue = keyValue.toString().replace("\"", "\"\"");
-            if (StringUtils.startsWithAny(outputValue, CSV_FORMULA_PREFIXES)) {
+            if (!isNumeric && StringUtils.startsWithAny(outputValue, CSV_FORMULA_PREFIXES)) {
               // escape formulas
               outputValue = "\t" + outputValue;
             }
