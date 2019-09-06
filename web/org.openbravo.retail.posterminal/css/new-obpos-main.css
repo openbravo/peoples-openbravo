@@ -9007,20 +9007,23 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obObpodPointOfSaleUiRightToolbarPane-scan {}
 
 .obObpodPointOfSaleUiRightToolbarPane-catalog {
-    box-sizing: border-box;
-    padding: 15px 10px 25px 10px;
+  box-sizing: border-box;
+  padding: 15px 10px 25px 10px;
 }
 
 .obObpodPointOfSaleUiRightToolbarPane-searchCharacteristic {
-    box-sizing: border-box;
-    padding: 15px 10px 25px 10px;
+  box-sizing: border-box;
+  padding: 15px 10px 25px 10px;
 }
 
-.obObpodPointOfSaleUiRightToolbarPane-payment {}
+.obObpodPointOfSaleUiRightToolbarPane-payment {
+  box-sizing: border-box;
+  padding: 15px 10px 10px 10px;
+}
 
 .obObpodPointOfSaleUiRightToolbarPane-edit {
-    box-sizing: border-box;
-    padding: 15px 10px 10px 10px;
+  box-sizing: border-box;
+  padding: 15px 10px 10px 10px;
 }
 
 
@@ -9626,15 +9629,15 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /*
 # Component: OB.OBPOSPointOfSale.UI.Payment
 */
-.obObposPointOfSaleUiPayment {}
+.obObposPointOfSaleUiPayment {
+  height: 100%;
+}
 
 .obObposPointOfSaleUiPayment-container1 {
+  position: relative;
   background-color: #363636;
   color: #ffffff;
-  height: 200px;
-  margin: 5px;
-  padding: 5px;
-  position: relative;
+  height: 100%;
 }
 
 .obObposPointOfSaleUiPayment-container1-container1 {}
