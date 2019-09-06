@@ -7526,28 +7526,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiGridKeyboard {}
 
-.obObposPointOfSaleUiGridKeyboard>button.obUiActionButton {
-  font-size: 24px;
-  background-color: #e2e2e2;
-  color: black;
-}
-
-.obObposPointOfSaleUiGridKeyboard>button.obUiActionButton:hover {
-  opacity: 0.75;
-}
-
-.obObposPointOfSaleUiGridKeyboard>button.obUiActionButton:disabled,
-.obObposPointOfSaleUiGridKeyboard>button.obUiActionButton[disabled=true]:hover {
-  cursor: default;
-  background-color: #717171;
-  opacity: 1;
-}
-
-.obObposPointOfSaleUiGridKeyboard>button.obUiActionButton:active {
-  opacity: 0.999;
-  background-color: #cccccc;
-}
-
 .obObposPointOfSaleUiGridKeyboard-keyboardEditBox {
   grid-area: inp;
   background-color: white;
@@ -7599,6 +7577,9 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiGridKeyboard-backspace {
   grid-area: cmd3;
+}
+
+.obObposPointOfSaleUiGridKeyboard-backspace .obUiButton-components {
   grid-template-columns: 1fr 0 0;
 }
 
@@ -7657,6 +7638,9 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obObposPointOfSaleUiGridKeyboard-keyboardkeyEnter {
   grid-area: cmdok;
   border-bottom-right-radius: 4px;
+}
+
+.obObposPointOfSaleUiGridKeyboard-keyboardkeyEnter .obUiButton-components {
   grid-template-columns: 1fr 0 0;
 }
 
