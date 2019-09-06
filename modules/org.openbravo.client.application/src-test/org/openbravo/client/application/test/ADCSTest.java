@@ -41,6 +41,7 @@ import org.openbravo.client.kernel.ComponentGenerator;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
+import org.openbravo.test.base.Issue;
 import org.openbravo.test.base.TestConstants.Tabs;
 import org.openbravo.test.base.TestConstants.Windows;
 import org.openbravo.test.base.mock.HttpServletRequestMock;
@@ -59,8 +60,8 @@ public class ADCSTest extends WeldBaseTest {
     setSystemAdministratorContext();
   }
 
-  /** See issue #40633 */
   @Test
+  @Issue("40633")
   public void tabWithProductCharacteristicsIsGeneratedAfterADCSInitialization() {
     // given ADCS initialized with only Discounts and Promotions window
     adcs.init();
@@ -75,8 +76,8 @@ public class ADCSTest extends WeldBaseTest {
     assertThat(generatedView, not(isEmptyString()));
   }
 
-  /** See issue #41338 */
   @Test
+  @Issue("41338")
   public void tabsSharingTableAreCorrectlyInitialized() {
     // given ADCS initialized with only Sales Invoice header tab (uses c_order)
     adcs.init();
@@ -93,8 +94,8 @@ public class ADCSTest extends WeldBaseTest {
     assertThat(t.getTable().getADColumnList().size(), greaterThan(1));
   }
 
-  /** See issue #41338 */
   @Test
+  @Issue("41338")
   public void wsahDoesNotLeaveAdcsInInvalidState() {
     // given a clean ADCS
     adcs.init();
