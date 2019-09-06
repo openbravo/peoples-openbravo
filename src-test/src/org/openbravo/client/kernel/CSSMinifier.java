@@ -49,8 +49,7 @@ public class CSSMinifier {
   }
 
   @Test
-  @Issue({ "41068", "xx" })
-  @Issue.Issues(@Issue("dd"))
+  @Issue("41068")
   public void repeatedParamaters() {
     String original = ".testElement { grid-template-columns: 1fr 1fr 1fr; }";
     String shouldBe = "1fr 1fr 1fr";

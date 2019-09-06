@@ -64,7 +64,6 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
 import org.openbravo.model.financialmgmt.payment.PaymentTerm;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.pricing.pricelist.PriceList;
-import org.openbravo.test.base.Issue;
 import org.openbravo.test.copyLinesFromOrders.data.CLFOTestConstants;
 import org.openbravo.test.copyLinesFromOrders.data.CLFOTestDataPO_13;
 import org.openbravo.test.copyLinesFromOrders.data.CLFOTestDataPO_14;
@@ -97,8 +96,6 @@ import org.openbravo.test.copyLinesFromOrders.data.UOMManagementUtil;
  * @author Mark
  * 
  */
-@Issue({ "s", "d" })
-@Issue({ "2" })
 public class CopyLinesFromOrdersTest extends WeldBaseTest {
   final static private Logger log = LogManager.getLogger();
 
