@@ -9016,10 +9016,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   padding: 15px 10px 25px 10px;
 }
 
-.obObpodPointOfSaleUiRightToolbarPane-payment {
-  box-sizing: border-box;
-  padding: 15px 10px 10px 10px;
-}
+.obObpodPointOfSaleUiRightToolbarPane-payment {}
 
 .obObpodPointOfSaleUiRightToolbarPane-edit {
   box-sizing: border-box;
@@ -9634,9 +9631,11 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposPointOfSaleUiPayment-container1 {
+  display: grid;
+  grid-auto-flow: row;
+  grid-template-rows: auto 1fr;
+
   position: relative;
-  background-color: #363636;
-  color: #ffffff;
   height: 100%;
 }
 
@@ -9644,13 +9643,36 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiPayment-container1-container1-container1 {}
 
-.obObposPointOfSaleUiPayment-container1-container2 {}
+.obObposPointOfSaleUiPayment-container1-container2 {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: 1fr auto;
+  grid-column-gap: 20px;
 
-.obObposPointOfSaleUiPayment-container1-container2-container1 {}
+  box-sizing: border-box;
+  padding: 15px 10px 10px 10px;
+  overflow-y: auto;
+}
 
-.obObposPointOfSaleUiPayment-container1-container2-container1-prepaymentLine {
-  padding: 0px 0px 0px 10px;
-  height: 17px;
+.obObposPointOfSaleUiPayment-container1-container2-container1 {
+  display: grid;
+  grid-auto-flow: row;
+  grid-template-rows: auto 1fr auto;
+
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: 0px 0px 10px -1px #8d8d8d;
+  overflow-y: auto;
+}
+
+.obObposPointOfSaleUiPayment-container1-container2-container1-container1 {
+  padding: 12px 10px 8px 10px;
+  border-bottom: var(--bottomseparator-slim);
+  color: var(--color-maincolor);
+}
+
+.obObposPointOfSaleUiPayment-container1-container2-container1-container1-prepaymentLine {
+  padding: 0px 0px 10px;
 }
 
 .obObposPointOfSaleUiPayment-prepaymentLine-prepaymenttotalpending {
@@ -9659,7 +9681,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposPointOfSaleUiPayment-prepaymentLine-prepaymenttotalpending_defaultColor {
-  color: #ffffff;
+  color: black;
 }
 
 .obObposPointOfSaleUiPayment-prepaymentLine-prepaymenttotalpending_alternativeColor {
@@ -9672,21 +9694,18 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiPayment-prepaymentLine-deliverychangelbl {}
 
-.obObposPointOfSaleUiPayment-container1-container2-container1-paymentLine {
-  padding: 5px 0px 0px 10px;
-  height: 17px;
-}
+.obObposPointOfSaleUiPayment-container1-container2-container1-container1-paymentLine {}
 
-.obObposPointOfSaleUiPayment-container1-container2-container1-paymentLine_wPrepayment {
+.obObposPointOfSaleUiPayment-container1-container2-container1-container1-paymentLine_wPrepayment {
   padding: 0px 0px 0px 10px;
   height: 16px;
   color: #999999;
 }
 
-.obObposPointOfSaleUiPayment-container1-container2-container1-paymentLine_woPrepayment {
+.obObposPointOfSaleUiPayment-container1-container2-container1-container1-paymentLine_woPrepayment {
   padding: 10px 0px 0px 10px;
   height: 28px;
-  color: #ffffff;
+  color: black;
 }
 
 .obObposPointOfSaleUiPayment-paymentLine-totalpending {
@@ -9729,26 +9748,22 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiPayment-paymentLine-overpaymentlbl {}
 
-.obObposPointOfSaleUiPayment-paymentLine-exactlbl {}
+.obObposPointOfSaleUiPayment-paymentLine-exactlbl {
+  font-weight: bold;
+}
 
 .obObposPointOfSaleUiPayment-paymentLine-donezerolbl {}
 
-.obObposPointOfSaleUiPayment-container1-container2-container1-container3 {}
-
-.obObposPointOfSaleUiPayment-container1-container2-container1-container3-container1 {
-  padding: 5px;
+.obObposPointOfSaleUiPayment-container1-container2-container1-container2 {
+  overflow-y: auto;
 }
 
-.obObposPointOfSaleUiPayment-container1-container2-container1-container3-container1-element1 {
-  margin: 2px 0px 0px 0px;
-  border-bottom: 1px solid #cccccc;
-}
+.obObposPointOfSaleUiPayment-container1-container2-container1-container2-container1 {}
 
-.obObposPointOfSaleUiPayment-container1-container2-container1-container3-container1-payments {
+.obObposPointOfSaleUiPayment-container1-container2-container1-container2-container1-element1 {}
+
+.obObposPointOfSaleUiPayment-container1-container2-container1-container2-container1-payments {
 /* Inherits: [OB.UI.ScrollableTable] */
-  height: 115px;
-  max-height: 115px;
-  overflow-x: hidden;
   overflow-y: auto;
 }
 
@@ -9756,11 +9771,8 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   height: 36px;
 }
 
-.obObposPointOfSaleUiPayment-container1-container2-container1-container3-container1-multiPayments {
+.obObposPointOfSaleUiPayment-container1-container2-container1-container2-container1-multiPayments {
 /* Inherits: [OB.UI.ScrollableTable] */
-  height: 115px;
-  max-height: 115px;
-  overflow-x: hidden;
   overflow-y: auto;
 }
 
@@ -9768,13 +9780,11 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   height: 36px;
 }
 
-.obObposPointOfSaleUiPayment-container1-container2-container1-container3-container1-errorLabelArea {
-  overflow: hidden;
-  height: 30px;
-  margin-top: 3px;
-  color: #ff0000;
-  padding: 5px;
+.obObposPointOfSaleUiPayment-container1-container2-container1-container3 {}
+
+.obObposPointOfSaleUiPayment-container1-container2-container1-container3-errorLabelArea {
   position: relative;
+  color: #ff0000;
 }
 
 .obObposPointOfSaleUiPayment-errorLabelArea-noenoughchangelbl,
@@ -9783,7 +9793,9 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obObposPointOfSaleUiPayment-errorLabelArea-overpaymentexceedlimit,
 .obObposPointOfSaleUiPayment-errorLabelArea-onlycashpaymentmethod,
 .obObposPointOfSaleUiPayment-errorLabelArea-errorMaxlimitamount,
-.obObposPointOfSaleUiPayment-errorLabelArea-allAttributesNeedValue {}
+.obObposPointOfSaleUiPayment-errorLabelArea-allAttributesNeedValue {
+  padding: 0px 10px 6px 10px;
+}
 
 .obObposPointOfSaleUiPayment-errorLabelArea-paymentMethodSelect {
   color: #ffa500;
@@ -9795,19 +9807,24 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposPointOfSaleUiPayment-container1-container2-container2 {
-  overflow-x: hidden;
-  overflow-y: auto;
-  max-height: 200px;
+  width: 145px;
 }
 
-.obObposPointOfSaleUiPayment-container1-container2-container2-prepaymentsbuttons {
-  width: 85%;
-  max-width: 125px;
-  float: right;
-  margin: 5px 5px 10px 0px;
-  clear: right;
-  font-weight: normal;
-  padding: 0px;
+.obObposPointOfSaleUiPayment-container1-container2-container2-container1 {
+  display: grid;
+  grid-auto-flow: row;
+  grid-auto-rows: minmax(auto, calc(calc(100% - 20px) / 3));
+  grid-row-gap: 10px;
+
+  width: 100%;
+  height: 100%;
+}
+
+.obObposPointOfSaleUiPayment-container1-container2-container2-container1-prepaymentsbuttons {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: 1fr 1fr;
+  grid-column-gap: 10px;
 }
 
 .obObposPointOfSaleUiPayment-prepaymentsbuttons-prepaymentsexactbutton {
@@ -9844,7 +9861,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   width: auto;
   height: 20px;
   background-size: 21px 17px;
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkBlack.svg');
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconExactPayment.svg');
   background-repeat: no-repeat;
   background-position: center;
 }
@@ -9860,38 +9877,68 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   position: relative;
 }
 
-.obObposPointOfSaleUiPayment-container1-container2-container2-exactbutton {
+.obObposPointOfSaleUiPayment-container1-container2-container2-container1-exactbutton {
 /* Inherits: [OB.OBPOSPointOfSale.UI.ExactButton] */
 }
 
-.obObposPointOfSaleUiPayment-container1-container2-container2-donebutton {
+.obObposPointOfSaleUiPayment-container1-container2-container2-container1-donebutton {
 /* Inherits: [OB.OBPOSPointOfSale.UI.DoneButton] */
 }
 
-.obObposPointOfSaleUiPayment-container1-container2-container2-creditsalesaction {
+.obObposPointOfSaleUiPayment-container1-container2-container2-container1-creditsalesaction {
 /* Inherits: [OB.OBPOSPointOfSale.UI.CreditButton] */
 }
 
-.obObposPointOfSaleUiPayment-container1-container2-container2-layawayaction {
+.obObposPointOfSaleUiPayment-container1-container2-container2-container1-layawayaction {
 /* Inherits: [OB.OBPOSPointOfSale.UI.LayawayButton] */
 }
 
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.ProcessButton
-# Inherits: [OB.UI.RegularButton]
+# Inherits: [OB.UI.Button]
 */
 .obObposPointOfSaleUiProcessButton {
-  width: 85%;
-  max-width: 125px;
-  float: right;
-  margin: 5px 5px 10px 0px;
-  height: 2.5em;
-  display: block;
-  clear: right;
-  font-weight: normal;
-  padding: 0px;
+  text-decoration: none;
+  background-color: var(--color-maincolor);
+  font-size: var(--font-medium-large);
+  color: var(--color-secondarycolor);
+  text-align: center;
+  border: 1px solid var(--color-maincolor);
+  border-radius: 4px;
 }
+
+.obObposPointOfSaleUiProcessButton .obUiButton-components {
+  grid-auto-flow: column;
+  grid-template-columns: 0 1fr 0;
+  padding: 0px 15px;
+}
+
+.obObposPointOfSaleUiProcessButton .obUiButton-components-before {
+}
+
+.obObposPointOfSaleUiProcessButton:hover {
+  background-color: #c4dab6;
+  color: var(--color-primary-dark);
+}
+
+.obObposPointOfSaleUiProcessButton:hover .obUiButton-components-before {}
+
+.obObposPointOfSaleUiProcessButton:active {
+  background-color: #c5c5c5;
+  color: var(--color-primary-dark);
+}
+
+.obObposPointOfSaleUiProcessButton:active .obUiButton-components-before {}
+
+.obObposPointOfSaleUiProcessButton:focus {
+  box-shadow: inset 0px 0 2px 1px seagreen;
+  border-color: seagreen;
+  border-style: solid;
+  /*box-shadow: 0 0 5px 3px rgba(110, 180, 63, .5);*/
+}
+
+.obObposPointOfSaleUiProcessButton .obUiButton-components-label {}
 
 
 /*
@@ -9905,27 +9952,14 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSPointOfSale.UI.PrepaymentsDeliveryButton
 # Inherits: [OB.OBPOSPointOfSale.UI.ProcessButton]
 */
-.obObposPointOfSaleUiPrepaymentsDeliveryButton {
-  width: calc(50% - 5px);
-  margin: 0px 5px 0px 0px;
-  clear: unset;
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-color: transparent;
-}
+.obObposPointOfSaleUiPrepaymentsDeliveryButton {}
 
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.PrepaymentsExactButton
 # Inherits: [OB.OBPOSPointOfSale.UI.ProcessButton]
 */
-.obObposPointOfSaleUiPrepaymentsExactButton {
-  width: calc(50% - 5px);
-  margin: 0px 0px 0px 5px;
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-color: transparent;
-}
+.obObposPointOfSaleUiPrepaymentsExactButton {}
 
 
 /*
@@ -9934,7 +9968,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 */
 .obObposPointOfSaleUiExactButton {
   background-size: 21px 17px;
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkBlack.svg');
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconExactPayment.svg');
   background-repeat: no-repeat;
   background-position: center;
 }
@@ -9946,50 +9980,54 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obObposPointOfSaleUiRenderPaymentLine {
   display: block;
   position: relative;
-  padding: 8px 10px 8px 10px;
+  padding: 4px 10px;
   text-decoration: none;
-  border-bottom: 1px solid #cccccc;
+  border-bottom: var(--bottomseparator-slim);
 }
 
 .obObposPointOfSaleUiRenderPaymentLine_renderPaymentLine {
-  min-height: 29px;
+  display: grid;
+  align-items: center;
+
+  min-height: 48px;
+  box-sizing: border-box;
 }
 
 .obObposPointOfSaleUiRenderPaymentLine-container1 {
-  color: #ffffff;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+
+  color: black;
 }
 
 .obObposPointOfSaleUiRenderPaymentLine-container1-container1 {
-  float: left;
-  width: 85%;
+  padding: 0px 10px 0px 0px;
 }
 
-.obObposPointOfSaleUiRenderPaymentLine-container1-container1-container1 {}
+.obObposPointOfSaleUiRenderPaymentLine-container1-container1-container1 {
+  display: flex;
+}
 
 .obObposPointOfSaleUiRenderPaymentLine-container1-container1-container1-name {
-  float: left;
   width: 65%;
-  padding: 5px 0px 0px 0px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .obObposPointOfSaleUiRenderPaymentLine-container1-container1-container1-amount {
-  float: left;
   width: 35%;
-  padding: 5px 0px 0px 0px;
   text-align: right;
 }
 
-.obObposPointOfSaleUiRenderPaymentLine-container1-container1-container1-element3 {}
-
-.obObposPointOfSaleUiRenderPaymentLine-container1-container1-container2 {}
+.obObposPointOfSaleUiRenderPaymentLine-container1-container1-container2 {
+  display: flex;
+}
 
 .obObposPointOfSaleUiRenderPaymentLine-container1-container1-container2-info {
-  float: left;
   width: 65%;
-  padding: 5px 0px 0px 0px;
   font-size: smaller;
   white-space: nowrap;
   overflow: hidden;
@@ -9997,20 +10035,12 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposPointOfSaleUiRenderPaymentLine-container1-container1-container2-foreignAmount {
-  float: left;
   width: 35%;
-  padding: 5px 0px 0px 0px;
   font-size: smaller;
   text-align: right;
 }
 
-.obObposPointOfSaleUiRenderPaymentLine-container1-container1-container2-element3 {}
-
-.obObposPointOfSaleUiRenderPaymentLine-container1-container2 {
-  float: left;
-  width: 15%;
-  text-align: right;
-}
+.obObposPointOfSaleUiRenderPaymentLine-container1-container2 {}
 
 .obObposPointOfSaleUiRenderPaymentLine-container1-container2-removePayment {
 /* Inherits: [OB.OBPOSPointOfSale.UI.RemovePayment] */
@@ -10024,11 +10054,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   margin-top: 10px;
 }
 
-.obObposPointOfSaleUiRenderPaymentLine-container1-container3 {
-  float: left;
-  width: 15%;
-  text-align: right;
-}
+.obObposPointOfSaleUiRenderPaymentLine-container1-container3 {}
 
 .obObposPointOfSaleUiRenderPaymentLine-container1-container3-reversePayment {
 /* Inherits: [OB.OBPOSPointOfSale.UI.ReversePayment] */
@@ -10038,28 +10064,39 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   margin-left: 10%;
 }
 
-.obObposPointOfSaleUiRenderPaymentLine-container1-element4 {}
-
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.RemovePayment
-# Inherits: [OB.UI.SmallButton]
+# Inherits: [OB.UI.Button]
 */
 .obObposPointOfSaleUiRemovePayment {
-  background-color: #363636;
   color: white;
-  margin: 0px 0px 0px 16px;
-  padding-top: 4px;
-  border: 1px #cccccc solid;
-  width: 100%;
-  height: 20px;
+
+  margin: 0px;
+  padding: 0px;
+
+  width: 32px;
+  height: 32px;
   background-repeat: no-repeat;
   background-position: center center;
+  background-color: transparent;
+}
+
+.obObposPointOfSaleUiRemovePayment:hover {
+  opacity: 1;
+  background-color: #e8e8e8;
+  border-radius: 50%;
+}
+
+.obObposPointOfSaleUiRemovePayment:active {
+  opacity: 1;
+  background-color: #c5c5c5;
+  border-radius: 50%;
 }
 
 .obObposPointOfSaleUiRemovePayment_iconClearPayment {
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconClearPayment.svg');
-  background-size: 13px 13px;
+  background-size: 16px auto;
 }
 
 .obObposPointOfSaleUiRemovePayment_iconLoading {
@@ -10069,23 +10106,37 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.ReversePayment
-# Inherits: [OB.UI.SmallButton]
+# Inherits: [OB.UI.Button]
 */
 .obObposPointOfSaleUiReversePayment {
-  background-color: #363636;
   color: white;
-  margin: 0px 0px 0px 16px;
-  padding-top: 4px;
-  border: 1px #cccccc solid;
-  width: 100%;
-  height: 20px;
+
+  margin: 0px;
+  padding: 0px;
+
+  width: 32px;
+  height: 32px;
   background-repeat: no-repeat;
   background-position: center center;
+  background-color: transparent;
+}
+
+.obObposPointOfSaleUiReversePayment:hover {
+  opacity: 1;
+  background-color: #e8e8e8;
+  border-radius: 50%;
+}
+
+.obObposPointOfSaleUiReversePayment:active {
+  opacity: 1;
+  background-color: #c5c5c5;
+  border-radius: 50%;
 }
 
 .obObposPointOfSaleUiReversePayment_iconReversePayment {
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconReversePayment.svg');
-  background-size: 14px auto;
+  background-size: 18px auto;
+  background-position: center calc(50% - 1px);
 }
 
 .obObposPointOfSaleUiReversePayment_iconLoading {
@@ -10097,26 +10148,14 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSPointOfSale.UI.CreditButton
 # Inherits: [OB.OBPOSPointOfSale.UI.ProcessButton]
 */
-.obObposPointOfSaleUiCreditButton {
-  width: 100%;
-  height: 20px;
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-color: transparent;
-}
+.obObposPointOfSaleUiCreditButton {}
 
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.LayawayButton
 # Inherits: [OB.OBPOSPointOfSale.UI.ProcessButton]
 */
-.obObposPointOfSaleUiLayawayButton {
-  width: 100%;
-  height: 20px;
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-color: transparent;
-}
+.obObposPointOfSaleUiLayawayButton {}
 
 
 /*
