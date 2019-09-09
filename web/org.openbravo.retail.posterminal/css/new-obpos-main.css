@@ -2787,6 +2787,10 @@ li.selected > .obUiRenderOrderLine_edit {
   opacity: 1;
 }
 
+.obUiShowServicesButton .obUiButton-components {
+  grid-template-columns: 1fr 0 0;
+}
+
 .obUiShowServicesButton_unreviewed .obUiButton-components-before,
 .obUiShowServicesButton_reviewed .obUiButton-components-before {
   width: 100%;
@@ -9900,6 +9904,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 */
 .obObposPointOfSaleUiProcessButton {
   text-decoration: none;
+  height: 100%;
   background-color: var(--color-maincolor);
   font-size: var(--font-medium-large);
   color: var(--color-secondarycolor);
@@ -9910,11 +9915,18 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiProcessButton .obUiButton-components {
   grid-auto-flow: column;
-  grid-template-columns: 0 1fr 0;
-  padding: 0px 15px;
+  grid-template-columns: 30px 1fr 0;
+
+  padding: 0px 10px;
+  justify-items: center;
 }
 
 .obObposPointOfSaleUiProcessButton .obUiButton-components-before {
+  background-size: 22px auto;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 100%;
+  height: 100%;
 }
 
 .obObposPointOfSaleUiProcessButton:hover {
@@ -9945,7 +9957,17 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSPointOfSale.UI.DoneButton
 # Inherits: [OB.OBPOSPointOfSale.UI.ProcessButton]
 */
-.obObposPointOfSaleUiDoneButton {}
+.obObposPointOfSaleUiDoneButton .obUiButton-components-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconPaymentDone.svg');
+}
+
+.obObposPointOfSaleUiDoneButton:hover .obUiButton-components-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconPaymentDone_hover.svg');
+}
+
+.obObposPointOfSaleUiDoneButton:active .obUiButton-components-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconPaymentDone_active.svg');
+}
 
 
 /*
@@ -9966,11 +9988,16 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSPointOfSale.UI.ExactButton
 # Inherits: [OB.OBPOSPointOfSale.UI.ProcessButton]
 */
-.obObposPointOfSaleUiExactButton {
-  background-size: 21px 17px;
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconExactPayment.svg');
-  background-repeat: no-repeat;
-  background-position: center;
+.obObposPointOfSaleUiExactButton .obUiButton-components-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconPaymentTotal.svg');
+}
+
+.obObposPointOfSaleUiExactButton:hover .obUiButton-components-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconPaymentTotal_hover.svg');
+}
+
+.obObposPointOfSaleUiExactButton:active .obUiButton-components-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconPaymentTotal_active.svg');
 }
 
 
@@ -10148,14 +10175,34 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSPointOfSale.UI.CreditButton
 # Inherits: [OB.OBPOSPointOfSale.UI.ProcessButton]
 */
-.obObposPointOfSaleUiCreditButton {}
+.obObposPointOfSaleUiCreditButton .obUiButton-components-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconPaymentCredit.svg');
+}
+
+.obObposPointOfSaleUiCreditButton:hover .obUiButton-components-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconPaymentCredit_hover.svg');
+}
+
+.obObposPointOfSaleUiCreditButton:active .obUiButton-components-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconPaymentCredit_active.svg');
+}
 
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.LayawayButton
 # Inherits: [OB.OBPOSPointOfSale.UI.ProcessButton]
 */
-.obObposPointOfSaleUiLayawayButton {}
+.obObposPointOfSaleUiLayawayButton .obUiButton-components-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconPaymentLayaway.svg');
+}
+
+.obObposPointOfSaleUiLayawayButton:hover .obUiButton-components-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconPaymentLayaway_hover.svg');
+}
+
+.obObposPointOfSaleUiLayawayButton:active .obUiButton-components-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconPaymentLayaway_active.svg');
+}
 
 
 /*

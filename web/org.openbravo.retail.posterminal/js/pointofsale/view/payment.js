@@ -1156,6 +1156,17 @@ enyo.kind({
       this.updateCreditSalesAction();
       this.$.layawayaction.hide();
     } else {
+      if (
+        parseInt(paymentstatus.pending, 10) < parseInt(paymentstatus.total, 10)
+      ) {
+        this.$.exactbutton.setLabel(
+          OB.I18N.getLabel(this.$.exactbutton.i18nLabelRemaining)
+        );
+      } else {
+        this.$.exactbutton.setLabel(
+          OB.I18N.getLabel(this.$.exactbutton.i18nLabelTotal)
+        );
+      }
       this.setTotalPending(
         OB.DEC.mul(paymentstatus.pendingAmt, rate, precision),
         symbol,
@@ -2405,6 +2416,7 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.DoneButton',
   kind: 'OB.OBPOSPointOfSale.UI.ProcessButton',
   classes: 'obObposPointOfSaleUiDoneButton',
+  i18nLabel: 'OBPOS_LblDone',
   drawerOpened: true,
   processesToListen: [
     'calculateReceipt',
@@ -2421,7 +2433,6 @@ enyo.kind({
   init: function(model) {
     this.model = model;
     this.setDisabledIfSynchronized();
-    this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
     this.model.get('order').on(
       'change:openDrawer',
       function() {
@@ -2914,6 +2925,7 @@ enyo.kind({
   events: {
     onDeliveryPayment: ''
   },
+  i18nLabel: 'OBPOS_PrepaymentsDeliveryButtonLbl',
   classes: 'obObposPointOfSaleUiPrepaymentsDeliveryButton',
   processesToListen: [
     'calculateReceipt',
@@ -2932,9 +2944,6 @@ enyo.kind({
   },
   initComponents: function() {
     this.inherited(arguments);
-    this.children[1].setContent(
-      OB.I18N.getLabel('OBPOS_PrepaymentsDeliveryButtonLbl')
-    );
     if (!OB.MobileApp.model.get('terminal').terminalType.calculateprepayments) {
       this.hide();
     }
@@ -2947,6 +2956,7 @@ enyo.kind({
   events: {
     onExactPayment: ''
   },
+  i18nLabel: 'OBPOS_PrepaymentsExactButtonLbl',
   classes: 'obObposPointOfSaleUiPrepaymentsExactButton',
   processesToListen: [
     'calculateReceipt',
@@ -2965,9 +2975,6 @@ enyo.kind({
   },
   initComponents: function() {
     this.inherited(arguments);
-    this.children[1].setContent(
-      OB.I18N.getLabel('OBPOS_PrepaymentsExactButtonLbl')
-    );
     if (!OB.MobileApp.model.get('terminal').terminalType.calculateprepayments) {
       this.hide();
     }
@@ -2980,6 +2987,8 @@ enyo.kind({
   events: {
     onExactPayment: ''
   },
+  i18nLabelTotal: 'OBPOS_PayTotalLbl',
+  i18nLabelRemaining: 'OBPOS_PayRemainingLbl',
   classes: 'obObposPointOfSaleUiExactButton',
   processesToListen: [
     'calculateReceipt',
@@ -3214,7 +3223,8 @@ enyo.kind({
         ]),
         [
           {
-            label: OB.I18N.getLabel('OBMOBC_LblOk')
+            label: OB.I18N.getLabel('OBMOBC_LblOk'),
+            isDefaultAction: true
           }
         ]
       );
@@ -3225,7 +3235,12 @@ enyo.kind({
       OB.I18N.getLabel('OBPOS_ReverseConfirm'),
       [
         {
+          label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+          isDefaultAction: false
+        },
+        {
           label: OB.I18N.getLabel('OBPOS_LblOk'),
+          isDefaultAction: true,
           action: function(popup) {
             if (_.isUndefined(me.deleting) || me.deleting === false) {
               me.deleting = true;
@@ -3260,9 +3275,6 @@ enyo.kind({
               });
             }
           }
-        },
-        {
-          label: OB.I18N.getLabel('OBMOBC_LblCancel')
         }
       ]
     );
