@@ -595,6 +595,7 @@ enyo.kind({
               adjustedPromotion.displayedTotalAmount = amount;
               adjustedPromotion.fullAmt = amount;
               adjustedPromotion.userAmt = amount;
+              adjustedPromotion.splitAmt = amount;
             }
             this.orderline
               .get('promotions')
