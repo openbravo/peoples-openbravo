@@ -524,7 +524,7 @@ enyo.kind({
                       ].attributes['class'];
                     if (
                       me.currentPayment &&
-                      buttonClass.indexOf('btnactive-green') > 0
+                      buttonClass.indexOf('selected') > 0
                     ) {
                       me.pay(
                         amount,
