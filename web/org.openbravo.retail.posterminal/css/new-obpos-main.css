@@ -8923,6 +8923,19 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObPosPointOfSaleUiButtonTabEditLine.selected .obUiButton-components-label {}
 
+.obObPosPointOfSaleUiButtonTabEditLine_continue .obUiButton-components-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabNextStep.svg');
+  background-size: auto 20px;
+}
+
+.obObPosPointOfSaleUiButtonTabEditLine_continue.selected .obUiButton-components-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabNextStep_selected.svg');
+}
+
+.obObPosPointOfSaleUiButtonTabEditLine_continue.disabled .obUiButton-components-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabNextStep_disabled.svg');
+}
+
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.RightToolbarImpl
