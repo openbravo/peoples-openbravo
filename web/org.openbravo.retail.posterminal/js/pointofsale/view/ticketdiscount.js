@@ -77,14 +77,15 @@ enyo.kind({
       classes: 'obObposPointOfSaleUiDiscounts-buttons',
       components: [
         {
-          kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsApply',
-          name: 'btnApply',
-          classes: 'obObposPointOfSaleUiDiscounts-buttons-btnApply'
-        },
-        {
           kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsCancel',
           classes:
             'obObposPointOfSaleUiDiscounts-buttons-obObposPointOfSaleUiBtnDiscountsCancel'
+        },
+        {
+          kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsApply',
+          name: 'btnApply',
+          isDefaultAction: true,
+          classes: 'obObposPointOfSaleUiDiscounts-buttons-btnApply'
         }
       ]
     }

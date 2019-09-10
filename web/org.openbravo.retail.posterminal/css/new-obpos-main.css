@@ -10248,10 +10248,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsCancel
 # Inherits: [OB.UI.ModalDialogButton]
 */
-.obObposPointOfSaleUiDiscountsBtnDiscountsCancel {
-  color: var(--color-actioncolor);
-  font-weight: bold;
-}
+.obObposPointOfSaleUiDiscountsBtnDiscountsCancel {}
 
 
 /*
@@ -10273,20 +10270,17 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 */
 .obObposPointOfSaleUiDiscounts {
   position: relative;
-  background-color: var(--color-actioncolor);
   background-size: cover;
   color: var(--color-primary-lighter);
-  height: 200px;
-  margin: 5px;
-  padding: 5px;
+  height: 100%;
+  margin: 0px;
+  padding: 5px 10px;
+  box-sizing: border-box;
+  overflow-y: auto;
 }
 
 .obObposPointOfSaleUiDiscounts-scroller {
   /*Inherits: [OB.UI.Scroller]*/
-  max-height: 130px;
-  height: 130px;
-  overflow-x: hidden;
-  overflow-y: auto;
 }
 
 .obObposPointOfSaleUiDiscounts-scroller-formElementDiscountsList {}
@@ -10302,8 +10296,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obObposPointOfSaleUiDiscounts-scroller-formElementCheckSelectAll-checkSelectAll {}
 
 .obObposPointOfSaleUiDiscounts-buttons {
-  padding: 10px;
-  text-align: center;
+  text-align: right;
 }
 
 .obObposPointOfSaleUiDiscounts-buttons-btnApply {
@@ -12345,7 +12338,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Inherits: [OB.UI.ModalAction]
 */
 .obObposPointOfSaleUiModalsModalNotEnoughCredit {
-  background-color: #eba001;
+  background-color: white;
 }
 
 .obObposPointOfSaleUiModalsModalNotEnoughCredit-bodyContent-popupmessage {}
