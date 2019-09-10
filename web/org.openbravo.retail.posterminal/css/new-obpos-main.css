@@ -9753,6 +9753,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obObposPointOfSaleUiPayment-paymentLine-overpaymentlbl {}
 
 .obObposPointOfSaleUiPayment-paymentLine-exactlbl {
+  font-size: 20px;
   font-weight: bold;
 }
 
@@ -9835,50 +9836,8 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /* Inherits: [OB.OBPOSPointOfSale.UI.PrepaymentsExactButton] */
 }
 
-.obObposPointOfSaleUiPayment-prepaymentsexactbutton-prepaymentsexactbuttonicon {
-  display: block;
-  width: auto;
-  height: 20px;
-  background-size: 32px 17px;
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkDoubleBlack.svg');
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
-.obObposPointOfSaleUiPayment-prepaymentsexactbutton-prepaymentsexactbuttonlbl {
-  font-size: var(--font-xsmall);
-  font-weight: bold;
-  color: #000000;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: block;
-  position: relative;
-}
-
 .obObposPointOfSaleUiPayment-prepaymentsbuttons-prepaymentsdeliverybutton {
 /* Inherits: [OB.OBPOSPointOfSale.UI.PrepaymentsDeliveryButton] */
-}
-
-.obObposPointOfSaleUiPayment-prepaymentsdeliverybutton-prepaymentsdeliverybuttonicon {
-  display: block;
-  width: auto;
-  height: 20px;
-  background-size: 21px 17px;
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconExactPayment.svg');
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
-.obObposPointOfSaleUiPayment-prepaymentsdeliverybutton-prepaymentsdeliverybuttonlbl {
-  font-size: var(--font-xsmall);
-  font-weight: bold;
-  color: #000000;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: block;
-  position: relative;
 }
 
 .obObposPointOfSaleUiPayment-container1-container2-container2-container1-exactbutton {
@@ -9950,7 +9909,19 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   /*box-shadow: 0 0 5px 3px rgba(110, 180, 63, .5);*/
 }
 
-.obObposPointOfSaleUiProcessButton .obUiButton-components-label {}
+.obObposPointOfSaleUiProcessButton .obUiButton-components-label {
+  display: flex;
+  align-items: center;
+
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+.obObposPointOfSaleUiProcessButton .obUiButton-components-label-labelText_0 {
+  position: absolute;
+  width: 100%;
+}
 
 
 /*
@@ -9974,15 +9945,50 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSPointOfSale.UI.PrepaymentsDeliveryButton
 # Inherits: [OB.OBPOSPointOfSale.UI.ProcessButton]
 */
-.obObposPointOfSaleUiPrepaymentsDeliveryButton {}
+.obObposPointOfSaleUiPrepaymentsDeliveryButton .obUiButton-components {
+  grid-auto-flow: row;
+  grid-template-rows: 44% 56% 0;
+  grid-template-columns: 1fr;
 
+  padding: 0px 2px;
+}
+
+.obObposPointOfSaleUiPrepaymentsDeliveryButton .obUiButton-components-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconPrepaymentPartial.svg');
+}
+
+.obObposPointOfSaleUiPrepaymentsDeliveryButton:hover .obUiButton-components-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconPrepaymentPartial_hover.svg');
+}
+
+.obObposPointOfSaleUiPrepaymentsDeliveryButton:active .obUiButton-components-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconPrepaymentPartial_active.svg');
+}
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.PrepaymentsExactButton
 # Inherits: [OB.OBPOSPointOfSale.UI.ProcessButton]
 */
-.obObposPointOfSaleUiPrepaymentsExactButton {}
+.obObposPointOfSaleUiPrepaymentsExactButton .obUiButton-components {
+  grid-auto-flow: row;
+  grid-template-rows: 44% 56% 0;
+  grid-template-columns: 1fr;
 
+  padding: 0px 2px;
+}
+
+.obObposPointOfSaleUiPrepaymentsExactButton .obUiButton-components-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconPrepaymentTotal.svg');
+  background-size: auto 18px;
+}
+
+.obObposPointOfSaleUiPrepaymentsExactButton:hover .obUiButton-components-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconPrepaymentTotal_hover.svg');
+}
+
+.obObposPointOfSaleUiPrepaymentsExactButton:active .obUiButton-components-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconPrepaymentTotal_active.svg');
+}
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.ExactButton
@@ -10023,7 +10029,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obObposPointOfSaleUiRenderPaymentLine-container1 {
   display: grid;
   grid-auto-flow: column;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 1fr 32px;
   align-items: center;
 
   color: black;

@@ -483,38 +483,14 @@ enyo.kind({
                           name: 'prepaymentsexactbutton',
                           kind: 'OB.OBPOSPointOfSale.UI.PrepaymentsExactButton',
                           classes:
-                            'obObposPointOfSaleUiPayment-prepaymentsbuttons-prepaymentsexactbutton',
-                          components: [
-                            {
-                              name: 'prepaymentsexactbuttonicon',
-                              classes:
-                                'obObposPointOfSaleUiPayment-prepaymentsexactbutton-prepaymentsexactbuttonicon'
-                            },
-                            {
-                              name: 'prepaymentsexactbuttonlbl',
-                              classes:
-                                'obObposPointOfSaleUiPayment-prepaymentsexactbutton-prepaymentsexactbuttonlbl'
-                            }
-                          ]
+                            'obObposPointOfSaleUiPayment-prepaymentsbuttons-prepaymentsexactbutton'
                         },
                         {
                           name: 'prepaymentsdeliverybutton',
                           kind:
                             'OB.OBPOSPointOfSale.UI.PrepaymentsDeliveryButton',
                           classes:
-                            'obObposPointOfSaleUiPayment-prepaymentsbuttons-prepaymentsdeliverybutton',
-                          components: [
-                            {
-                              name: 'prepaymentsdeliverybuttonicon',
-                              classes:
-                                'obObposPointOfSaleUiPayment-prepaymentsdeliverybutton-prepaymentsdeliverybuttonicon'
-                            },
-                            {
-                              name: 'prepaymentsdeliverybuttonlbl',
-                              classes:
-                                'obObposPointOfSaleUiPayment-prepaymentsdeliverybutton-prepaymentsdeliverybuttonlbl'
-                            }
-                          ]
+                            'obObposPointOfSaleUiPayment-prepaymentsbuttons-prepaymentsdeliverybutton'
                         }
                       ]
                     },
