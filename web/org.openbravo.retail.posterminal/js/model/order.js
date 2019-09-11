@@ -10047,7 +10047,7 @@
                       prod.get('listPrice') !== price
                         ? price
                         : prod.get('listPrice'),
-                    grossListPrice: prod.get('listPrice'),
+                    grossListPrice: iter.grossListPrice,
                     promotions: iter.promotions,
                     description: iter.description,
                     priceIncludesTax: order.get('priceIncludesTax'),
