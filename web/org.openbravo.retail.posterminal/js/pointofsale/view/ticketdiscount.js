@@ -77,14 +77,15 @@ enyo.kind({
       classes: 'obObposPointOfSaleUiDiscounts-buttons',
       components: [
         {
-          kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsApply',
-          name: 'btnApply',
-          classes: 'obObposPointOfSaleUiDiscounts-buttons-btnApply'
-        },
-        {
           kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsCancel',
           classes:
             'obObposPointOfSaleUiDiscounts-buttons-obObposPointOfSaleUiBtnDiscountsCancel'
+        },
+        {
+          kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsApply',
+          name: 'btnApply',
+          isDefaultAction: true,
+          classes: 'obObposPointOfSaleUiDiscounts-buttons-btnApply'
         }
       ]
     }
@@ -413,6 +414,34 @@ enyo.kind({
       }
     });
   },
+
+  getMaxNoOrder: function(receipt) {
+    let maxNoOrder = 0;
+
+    receipt.get('lines').models.forEach(line => {
+      if (line.get('promotions') && line.get('promotions').length > 0) {
+        line.get('promotions').forEach(promo => {
+          if (promo.manual) {
+            let noOrder = promo.noOrder || 0;
+            if (noOrder > maxNoOrder) {
+              maxNoOrder = noOrder;
+            }
+          }
+        });
+      }
+    });
+
+    receipt
+      .get('orderManualPromotions')
+      .models.forEach(orderManualPromotion => {
+        let noOrder = orderManualPromotion.get('rule').noOrder || 0;
+        if (noOrder > maxNoOrder) {
+          maxNoOrder = noOrder;
+        }
+      });
+
+    return maxNoOrder;
+  },
   applyDiscounts: function(inSender, inEvent) {
     var promotionToApply = {},
       formElementDiscountsList = this.$.formElementDiscountsList,
@@ -439,6 +468,9 @@ enyo.kind({
         promotionToApply.definition.lastApplied = true;
         promotionToApply.definition.obdiscLineFinalgross =
           formElementDiscountsList.amt;
+
+        let maxNoOrder = me.getMaxNoOrder(me.order);
+        promotionToApply.definition.noOrder = maxNoOrder + 1;
 
         if (
           formElementDiscountsList.requiresQty &&

@@ -236,7 +236,8 @@ enyo.kind({
       'change:gross',
       function(model) {
         this.bubble('onChangeTotal', {
-          newTotal: this.receipt.getTotal()
+          newTotal: this.receipt.getTotal(),
+          normalOrder: true
         });
       },
       this
@@ -377,11 +378,11 @@ enyo.kind({
   disabledButton: function(inSender, inEvent) {
     this.isEnabled = !inEvent.status;
     this.setDisabled(inEvent.status);
-    //    if (!this.isEnabled) {
-    //      this.$.lbl.hide();
-    //    } else {
-    //      this.$.lbl.show();
-    //    }
+    if (!this.isEnabled) {
+      this.addClass('empty');
+    } else {
+      this.removeClass('empty');
+    }
   },
   tap: function(options) {
     if (!this.disabled) {
@@ -440,11 +441,11 @@ enyo.kind({
       isDisabled = true;
     }
     this.setDisabled(isDisabled);
-    //    if (!this.isEnabled) {
-    //      this.$.lbl.hide();
-    //    } else {
-    //      this.$.lbl.show();
-    //    }
+    if (!this.isEnabled) {
+      this.addClass('empty');
+    } else {
+      this.removeClass('empty');
+    }
   },
   tabPanel: 'catalog',
   i18nLabel: 'OBMOBC_LblBrowse',
@@ -495,11 +496,11 @@ enyo.kind({
       isDisabled = true;
     }
     this.setDisabled(isDisabled);
-    //    if (!this.isEnabled && !OB.MobileApp.model.get('serviceSearchMode')) {
-    //      this.$.lbl.hide();
-    //    } else {
-    //      this.$.lbl.show();
-    //    }
+    if (!this.isEnabled && !OB.MobileApp.model.get('serviceSearchMode')) {
+      this.addClass('empty');
+    } else {
+      this.removeClass('empty');
+    }
   },
   tap: function() {
     if (this.disabled === false) {
@@ -525,6 +526,7 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabEditLine',
   kind: 'OB.UI.ToolbarButtonTab',
   classes: 'obObPosPointOfSaleUiButtonTabEditLine',
+  continueClass: 'obObPosPointOfSaleUiButtonTabEditLine_continue',
   published: {
     ticketLines: null
   },
@@ -580,7 +582,8 @@ enyo.kind({
   manageServiceProposal: function(inSender, inEvent) {
     OB.MobileApp.model.set('serviceSearchMode', inEvent.proposalType);
     this.previousStatus = inEvent.previousStatus;
-    this.setContent(OB.I18N.getLabel('OBPOS_LblContinue'));
+    this.setLabel(OB.I18N.getLabel('OBPOS_LblContinue'));
+    this.addClass(this.continueClass);
     this.doDisableUserInterface();
     OB.MobileApp.view.scanningFocus(false);
     this.setDisabled(false);
@@ -590,7 +593,8 @@ enyo.kind({
   },
   tap: function(options) {
     if (OB.MobileApp.model.get('serviceSearchMode')) {
-      this.setContent(OB.I18N.getLabel('OBPOS_LblEdit'));
+      this.setLabel(OB.I18N.getLabel('OBPOS_LblEdit'));
+      this.removeClass(this.continueClass);
       this.doEnableUserInterface();
       OB.MobileApp.view.scanningFocus(true);
       this.doShowActionIcons({

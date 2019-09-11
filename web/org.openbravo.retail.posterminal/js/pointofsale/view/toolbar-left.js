@@ -103,6 +103,11 @@ enyo.kind({
   },
   updateDisabled: function(isDisabled) {
     this.setButtonDisabled(isDisabled);
+    if (isDisabled) {
+      this.addClass('empty');
+    } else {
+      this.removeClass('empty');
+    }
   },
   init: function(model) {
     this.model = model;
@@ -205,6 +210,11 @@ enyo.kind({
   },
   updateDisabled: function(isDisabled) {
     this.setButtonDisabled(isDisabled);
+    if (isDisabled) {
+      this.addClass('empty');
+    } else {
+      this.removeClass('empty');
+    }
   },
   tap: function() {
     var me = this,

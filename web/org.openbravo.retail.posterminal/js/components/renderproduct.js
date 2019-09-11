@@ -323,8 +323,7 @@ enyo.kind({
     // Build filter info from filter attributes
     var filterTxt = '',
       searchTab = false,
-      filterAttr = this.model.get('filterAttr'),
-      maxWidthCalc;
+      filterAttr = this.model.get('filterAttr');
 
     if (filterAttr && _.isArray(filterAttr) && filterAttr.length > 0) {
       filterAttr.forEach(function(attr) {
@@ -358,43 +357,6 @@ enyo.kind({
     } else {
       this.$.thumbnail.setImg(this.model.get('img'));
       this.$.icon.parent.hide();
-    }
-
-    /* TODO: Check if it is still needed or can be refactored using only CSS */
-    if (this.owner.owner.owner.owner.owner.name === 'browseProducts') {
-      if (enyo.Panels.isScreenNarrow()) {
-        maxWidthCalc = parseInt(document.body.clientWidth / 2, 10) - 213;
-      } else {
-        maxWidthCalc = parseInt(document.body.clientWidth / 4, 10) - 213;
-      }
-    } else {
-      if (enyo.Panels.isScreenNarrow()) {
-        maxWidthCalc = parseInt(document.body.clientWidth / 2, 10) - 213;
-      } else {
-        maxWidthCalc = parseInt(document.body.clientWidth, 10) - 363;
-      }
-    }
-    if (maxWidthCalc < 0) {
-      maxWidthCalc = 0;
-    }
-    maxWidthCalc =
-      Math.floor(maxWidthCalc / 20) * 20 >= 20
-        ? Math.floor(maxWidthCalc / 20) * 20
-        : 20;
-    // This inline style is allowed
-    this.$.icons.addStyles('max-width: ' + maxWidthCalc + 'px');
-    if (this.model.get('bestseller') !== true) {
-      // This inline style is allowed
-      this.$.icons.applyStyle('min-width', this.$.icons.minWidth + 'px');
-      this.$.icons.addClass('u-noWidth');
-      this.$.bestseller.removeClass('u-blockDisplay');
-      this.$.bestseller.$.image.hide();
-    } else {
-      this.$.icons.minWidth += 20;
-      // This inline style is allowed
-      this.$.icons.applyStyle('min-width', this.$.icons.minWidth + 'px');
-      this.$.icons.removeClass('u-noWidth');
-      this.$.bestseller.addClass('u-blockDisplay');
     }
 
     if (

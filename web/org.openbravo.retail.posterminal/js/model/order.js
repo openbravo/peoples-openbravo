@@ -861,6 +861,7 @@
     calculateGrossAndSave: function(save, callback) {
       this.calculatingGross = true;
       var me = this;
+      var lines = this.get('lines').models;
       // reset some vital receipt values because, at this point, they are obsolete. do not fire the change event
       me.set(
         {
@@ -918,9 +919,20 @@
         }
       };
 
-      this.get('lines').forEach(function(line) {
-        line.calculateGross();
-      });
+      for (var i = 0; i < lines.length; i++) {
+        lines[i].calculateGross();
+        if (
+          OB.MobileApp.model.hasPermission(
+            'OBPOS_EnableMultiPriceList',
+            true
+          ) &&
+          ((this.get('priceIncludesTax') &&
+            !lines[i].get('priceIncludesTax')) ||
+            (!this.get('priceIncludesTax') && lines[i].get('priceIncludesTax')))
+        ) {
+          this.set('priceIncludesTax', lines[i].get('priceIncludesTax'));
+        }
+      }
 
       if (this.get('priceIncludesTax')) {
         this.calculateTaxes(function() {
@@ -1029,14 +1041,47 @@
         }
         return;
       }
-      OB.MobileApp.view.waterfall('calculatingReceipt');
-      this.trigger('calculatingReceipt');
-      this.calculatingReceipt = true;
-      var execution = OB.UTIL.ProcessController.start('calculateReceipt');
-      this.addToListOfCallbacks(callback);
-      var me = this;
-      this.on('applyPromotionsFinished', function() {
-        me.off('applyPromotionsFinished');
+
+      const finalCallbacksAndFinish = function() {
+        var finishCalculateReceipt = function(callback) {
+          me.calculatingReceipt = false;
+          OB.MobileApp.view.waterfall('calculatedReceipt');
+          OB.UTIL.ProcessController.finish('calculateReceipt', execution);
+          me.trigger('calculatedReceipt');
+          me.getPrepaymentAmount(function() {
+            me.trigger('updatePending');
+            if (callback && callback instanceof Function) {
+              callback();
+            }
+          });
+        };
+        if (
+          me.get('calculateReceiptCallbacks') &&
+          me.get('calculateReceiptCallbacks').length > 0
+        ) {
+          var calculateReceiptCallbacks = me
+            .get('calculateReceiptCallbacks')
+            .slice(0);
+          me.unset('calculateReceiptCallbacks');
+          finishCalculateReceipt(function() {
+            var executeCallback;
+            executeCallback = function(listOfCallbacks) {
+              if (listOfCallbacks.length === 0) {
+                listOfCallbacks = null;
+                return;
+              }
+              var callbackToExe = listOfCallbacks.shift();
+              callbackToExe();
+              executeCallback(listOfCallbacks);
+            };
+            executeCallback(calculateReceiptCallbacks);
+          });
+        } else {
+          finishCalculateReceipt();
+        }
+      };
+
+      const calculateGrossThenCallbacks = function() {
         me.on('calculategross', function() {
           me.off('calculategross');
           if (me.pendingCalculateReceipt) {
@@ -1047,51 +1092,42 @@
             me.calculateReceipt();
             return;
           } else {
-            var finishCalculateReceipt = function(callback) {
-              me.calculatingReceipt = false;
-              OB.MobileApp.view.waterfall('calculatedReceipt');
-              OB.UTIL.ProcessController.finish('calculateReceipt', execution);
-              me.trigger('calculatedReceipt');
-              me.getPrepaymentAmount(function() {
-                me.trigger('updatePending');
-                if (callback && callback instanceof Function) {
-                  callback();
-                }
-              });
-            };
-            if (
-              me.get('calculateReceiptCallbacks') &&
-              me.get('calculateReceiptCallbacks').length > 0
-            ) {
-              var calculateReceiptCallbacks = me
-                .get('calculateReceiptCallbacks')
-                .slice(0);
-              me.unset('calculateReceiptCallbacks');
-              finishCalculateReceipt(function() {
-                var executeCallback;
-                executeCallback = function(listOfCallbacks) {
-                  if (listOfCallbacks.length === 0) {
-                    listOfCallbacks = null;
-                    return;
-                  }
-                  var callbackToExe = listOfCallbacks.shift();
-                  callbackToExe();
-                  executeCallback(listOfCallbacks);
-                };
-                executeCallback(calculateReceiptCallbacks);
-              });
-            } else {
-              finishCalculateReceipt();
-            }
+            finalCallbacksAndFinish();
           }
         });
         me.calculateGross();
-      });
-      // If line is null or undefined, we calculate the Promotions of the receipt
-      if (OB.UTIL.isNullOrUndefined(line) || line.get('splitline')) {
-        OB.Model.Discounts.applyPromotions(this);
+      };
+
+      OB.MobileApp.view.waterfall('calculatingReceipt');
+      this.trigger('calculatingReceipt');
+      this.calculatingReceipt = true;
+      var execution = OB.UTIL.ProcessController.start('calculateReceipt');
+      this.addToListOfCallbacks(callback);
+      var me = this;
+
+      if (OB.MobileApp.model.hasPermission('OBPOS_NewDiscounts', true)) {
+        if (
+          this.get('skipApplyPromotions') ||
+          this.get('cloningReceipt') ||
+          me.preventApplyPromotions
+        ) {
+          calculateGrossThenCallbacks();
+        } else {
+          OB.Discounts.Pos.calculateDiscounts(this, () =>
+            calculateGrossThenCallbacks()
+          );
+        }
       } else {
-        OB.Model.Discounts.applyPromotions(this, line);
+        this.on('applyPromotionsFinished', function() {
+          me.off('applyPromotionsFinished');
+          calculateGrossThenCallbacks();
+        });
+        // If line is null or undefined, we calculate the Promotions of the receipt
+        if (OB.UTIL.isNullOrUndefined(line) || line.get('splitline')) {
+          OB.Model.Discounts.applyPromotions(this);
+        } else {
+          OB.Model.Discounts.applyPromotions(this, line);
+        }
       }
     },
 
@@ -3445,6 +3481,31 @@
           }
         }
 
+        function addProdCharsToProduct(orderline, addProdCharCallback) {
+          //Add prod char information to product object
+          if (
+            !p.get('productCharacteristics') &&
+            p.get('characteristicDescription') &&
+            !OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)
+          ) {
+            OB.Dal.find(
+              OB.Model.ProductCharacteristicValue,
+              { product: p.get('id') },
+              function(productcharacteristics) {
+                let newProd = OB.UTIL.clone(p);
+                newProd.set(
+                  'productCharacteristics',
+                  productcharacteristics.toJSON()
+                );
+                orderline.set('product', newProd);
+                addProdCharCallback();
+              }
+            );
+          } else {
+            addProdCharCallback();
+          }
+        }
+
         function execPostAddProductToOrderHook() {
           if (me.isCalculateReceiptLocked === true || !line) {
             OB.error(
@@ -3458,6 +3519,7 @@
             }
             return null;
           }
+
           OB.UTIL.HookManager.executeHooks(
             'OBPOS_PostAddProductToOrder',
             {
@@ -3501,9 +3563,11 @@
                   }
                 }
               }
-              if (callback) {
-                callback(true, args.orderline);
-              }
+              addProdCharsToProduct(args.orderline, function() {
+                if (callback) {
+                  callback(true, args.orderline);
+                }
+              });
             }
           );
         }
@@ -4662,10 +4726,12 @@
       disc.amt = discount.amt;
       disc.fullAmt = discount.amt ? discount.amt : 0;
       disc.actualAmt = discount.actualAmt;
+      disc.splitAmt = discount.splitAmt;
       disc.pack = discount.pack;
       disc.discountType = rule.get('discountType');
       disc.priority = rule.get('priority');
       disc.manual = discount.manual;
+      disc.noOrder = discount.noOrder;
       disc.userAmt = discount.userAmt;
       disc.lastApplied = discount.lastApplied;
       disc.obdiscQtyoffer = OB.UTIL.isNullOrUndefined(rule.get('qtyOffer'))

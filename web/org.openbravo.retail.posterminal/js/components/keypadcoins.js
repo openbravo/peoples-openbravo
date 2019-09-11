@@ -25,7 +25,7 @@ enyo.kind({
               kind: 'OB.UI.ButtonKey',
               name: 'OBKEY_legacy_A1',
               classButton:
-                'obUiKeypadCoinsLegacy-container1-container1-obKeyLegacyA1 obUiKeypadCoinsLegacy-obUiButtonKey-generic',
+                'obUiKeypadCoinsLegacy-container1-container1-obKeyLegacyA1 obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic',
               label: '/',
               command: '/'
             }
@@ -37,7 +37,7 @@ enyo.kind({
             {
               kind: 'OB.UI.ButtonKey',
               classButton:
-                'obUiKeypadCoinsLegacy-container1-container2-obKeyLegacyB1 obUiKeypadCoinsLegacy-obUiButtonKey-generic',
+                'obUiKeypadCoinsLegacy-container1-container2-obKeyLegacyB1 obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic',
               name: 'OBKEY_legacy_B1',
               label: '*',
               command: '*'
@@ -50,7 +50,7 @@ enyo.kind({
             {
               kind: 'OB.UI.ButtonKey',
               classButton:
-                'obUiKeypadCoinsLegacy-container1-container3-obKeyLegacyC1 obUiKeypadCoinsLegacy-obUiButtonKey-generic',
+                'obUiKeypadCoinsLegacy-container1-container3-obKeyLegacyC1 obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic',
               name: 'OBKEY_legacy_C1',
               label: '%',
               command: '%'

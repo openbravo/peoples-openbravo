@@ -223,137 +223,142 @@ enyo.kind({
       classes: 'obObposPointOfSaleUiPayment-container1',
       components: [
         {
-          classes:
-            'obObposPointOfSaleUiPayment-container1-container1 row-fluid',
+          classes: 'obObposPointOfSaleUiPayment-container1-container1',
           components: [
             {
               classes:
-                'obObposPointOfSaleUiPayment-container1-container1-container1 span12'
+                'obObposPointOfSaleUiPayment-container1-container1-container1'
             }
           ]
         },
         {
-          classes:
-            'obObposPointOfSaleUiPayment-container1-container2 row-fluid',
+          classes: 'obObposPointOfSaleUiPayment-container1-container2',
           components: [
             {
               classes:
-                'obObposPointOfSaleUiPayment-container1-container2-container1 span9',
+                'obObposPointOfSaleUiPayment-container1-container2-container1',
               components: [
                 {
                   classes:
-                    'obObposPointOfSaleUiPayment-container1-container2-container1-prepaymentLine',
-                  name: 'prepaymentLine',
+                    'obObposPointOfSaleUiPayment-container1-container2-container1-container1',
                   components: [
                     {
-                      tag: 'span',
-                      name: 'prepaymenttotalpending',
                       classes:
-                        'obObposPointOfSaleUiPayment-prepaymentLine-prepaymenttotalpending'
+                        'obObposPointOfSaleUiPayment-container1-container2-container1-container1-prepaymentLine',
+                      name: 'prepaymentLine',
+                      components: [
+                        {
+                          tag: 'span',
+                          name: 'prepaymenttotalpending',
+                          classes:
+                            'obObposPointOfSaleUiPayment-prepaymentLine-prepaymenttotalpending'
+                        },
+                        {
+                          tag: 'span',
+                          name: 'prepaymenttotalpendinglbl',
+                          classes:
+                            'obObposPointOfSaleUiPayment-prepaymentLine-prepaymenttotalpendinglbl'
+                        },
+                        {
+                          tag: 'span',
+                          name: 'prepaymentexactlbl',
+                          classes:
+                            'obObposPointOfSaleUiPayment-prepaymentLine-prepaymentexactlbl'
+                        },
+                        {
+                          tag: 'span',
+                          name: 'deliverychangelbl',
+                          classes:
+                            'obObposPointOfSaleUiPayment-prepaymentLine-deliverychangelbl'
+                        }
+                      ]
                     },
                     {
-                      tag: 'span',
-                      name: 'prepaymenttotalpendinglbl',
+                      name: 'paymentLine',
                       classes:
-                        'obObposPointOfSaleUiPayment-prepaymentLine-prepaymenttotalpendinglbl'
-                    },
-                    {
-                      tag: 'span',
-                      name: 'prepaymentexactlbl',
-                      classes:
-                        'obObposPointOfSaleUiPayment-prepaymentLine-prepaymentexactlbl'
-                    },
-                    {
-                      tag: 'span',
-                      name: 'deliverychangelbl',
-                      classes:
-                        'obObposPointOfSaleUiPayment-prepaymentLine-deliverychangelbl'
+                        'obObposPointOfSaleUiPayment-container1-container2-container1-container1-paymentLine',
+                      components: [
+                        {
+                          tag: 'span',
+                          name: 'totalpending',
+                          classes:
+                            'obObposPointOfSaleUiPayment-paymentLine-totalpending'
+                        },
+                        {
+                          tag: 'span',
+                          name: 'totalpendinglbl',
+                          classes:
+                            'obObposPointOfSaleUiPayment-paymentLine-totalpendinglbl'
+                        },
+                        {
+                          tag: 'span',
+                          name: 'remainingfortotallbl',
+                          classes:
+                            'obObposPointOfSaleUiPayment-paymentLine-remainingfortotallbl'
+                        },
+                        {
+                          kind: 'OB.UI.RegularButton',
+                          name: 'changebutton',
+                          classes:
+                            'obObposPointOfSaleUiPayment-paymentLine-changebutton',
+                          ontap: 'actionChangeButton'
+                        },
+                        {
+                          kind: 'OB.OBPOSPointOfSale.UI.Change',
+                          name: 'change',
+                          classes:
+                            'obObposPointOfSaleUiPayment-paymentLine-change'
+                        },
+                        {
+                          tag: 'span',
+                          name: 'changelbl',
+                          classes:
+                            'obObposPointOfSaleUiPayment-paymentLine-changelbl'
+                        },
+                        {
+                          tag: 'span',
+                          name: 'overpayment',
+                          classes:
+                            'obObposPointOfSaleUiPayment-paymentLine-overpayment'
+                        },
+                        {
+                          tag: 'span',
+                          name: 'overpaymentlbl',
+                          classes:
+                            'obObposPointOfSaleUiPayment-paymentLine-overpaymentlbl'
+                        },
+                        {
+                          tag: 'span',
+                          name: 'exactlbl',
+                          classes:
+                            'obObposPointOfSaleUiPayment-paymentLine-exactlbl'
+                        },
+                        {
+                          tag: 'span',
+                          name: 'donezerolbl',
+                          classes:
+                            'obObposPointOfSaleUiPayment-paymentLine-donezerolbl'
+                        }
+                      ]
                     }
                   ]
                 },
                 {
-                  name: 'paymentLine',
                   classes:
-                    'obObposPointOfSaleUiPayment-container1-container2-container1-paymentLine',
-                  components: [
-                    {
-                      tag: 'span',
-                      name: 'totalpending',
-                      classes:
-                        'obObposPointOfSaleUiPayment-paymentLine-totalpending'
-                    },
-                    {
-                      tag: 'span',
-                      name: 'totalpendinglbl',
-                      classes:
-                        'obObposPointOfSaleUiPayment-paymentLine-totalpendinglbl'
-                    },
-                    {
-                      tag: 'span',
-                      name: 'remainingfortotallbl',
-                      classes:
-                        'obObposPointOfSaleUiPayment-paymentLine-remainingfortotallbl'
-                    },
-                    {
-                      kind: 'OB.UI.RegularButton',
-                      name: 'changebutton',
-                      classes:
-                        'obObposPointOfSaleUiPayment-paymentLine-changebutton',
-                      ontap: 'actionChangeButton'
-                    },
-                    {
-                      kind: 'OB.OBPOSPointOfSale.UI.Change',
-                      name: 'change',
-                      classes: 'obObposPointOfSaleUiPayment-paymentLine-change'
-                    },
-                    {
-                      tag: 'span',
-                      name: 'changelbl',
-                      classes:
-                        'obObposPointOfSaleUiPayment-paymentLine-changelbl'
-                    },
-                    {
-                      tag: 'span',
-                      name: 'overpayment',
-                      classes:
-                        'obObposPointOfSaleUiPayment-paymentLine-overpayment'
-                    },
-                    {
-                      tag: 'span',
-                      name: 'overpaymentlbl',
-                      classes:
-                        'obObposPointOfSaleUiPayment-paymentLine-overpaymentlbl'
-                    },
-                    {
-                      tag: 'span',
-                      name: 'exactlbl',
-                      classes:
-                        'obObposPointOfSaleUiPayment-paymentLine-exactlbl'
-                    },
-                    {
-                      tag: 'span',
-                      name: 'donezerolbl',
-                      classes:
-                        'obObposPointOfSaleUiPayment-paymentLine-donezerolbl'
-                    }
-                  ]
-                },
-                {
-                  classes:
-                    'obObposPointOfSaleUiPayment-container1-container2-container1-container3',
+                    'obObposPointOfSaleUiPayment-container1-container2-container1-container2',
                   components: [
                     {
                       classes:
-                        'obObposPointOfSaleUiPayment-container1-container2-container1-container3-container1',
+                        'obObposPointOfSaleUiPayment-container1-container2-container1-container2-container1',
                       components: [
                         {
                           classes:
-                            'obObposPointOfSaleUiPayment-container1-container2-container1-container3-container1-element1'
+                            'obObposPointOfSaleUiPayment-container1-container2-container1-container2-container1-element1'
                         },
                         {
                           kind: 'OB.UI.ScrollableTable',
                           classes:
-                            'obObposPointOfSaleUiPayment-container1-container2-container1-container3-container1-payments',
+                            'obObposPointOfSaleUiPayment-container1-container2-container1-container2-container1-payments',
                           name: 'payments',
                           renderEmpty: enyo.kind({
                             classes:
@@ -368,7 +373,7 @@ enyo.kind({
                           kind: 'OB.UI.ScrollableTable',
                           name: 'multiPayments',
                           classes:
-                            'obObposPointOfSaleUiPayment-container1-container2-container1-container3-container1-multiPayments',
+                            'obObposPointOfSaleUiPayment-container1-container2-container1-container2-container1-multiPayments',
                           showing: false,
                           renderEmpty: enyo.kind({
                             classes:
@@ -378,76 +383,82 @@ enyo.kind({
                             return model.get('changePayment');
                           },
                           renderLine: 'OB.OBPOSPointOfSale.UI.RenderPaymentLine'
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  classes:
+                    'obObposPointOfSaleUiPayment-container1-container2-container1-container3',
+                  components: [
+                    {
+                      name: 'errorLabelArea',
+                      classes:
+                        'obObposPointOfSaleUiPayment-container1-container2-container1-container3-errorLabelArea',
+                      components: [
+                        {
+                          name: 'noenoughchangelbl',
+                          classes:
+                            'obObposPointOfSaleUiPayment-errorLabelArea-noenoughchangelbl',
+                          showing: false,
+                          type: 'error'
                         },
                         {
-                          name: 'errorLabelArea',
+                          name: 'changeexceedlimit',
                           classes:
-                            'obObposPointOfSaleUiPayment-container1-container2-container1-container3-container1-errorLabelArea',
-                          components: [
-                            {
-                              name: 'noenoughchangelbl',
-                              classes:
-                                'obObposPointOfSaleUiPayment-errorLabelArea-noenoughchangelbl',
-                              showing: false,
-                              type: 'error'
-                            },
-                            {
-                              name: 'changeexceedlimit',
-                              classes:
-                                'obObposPointOfSaleUiPayment-errorLabelArea-changeexceedlimit',
-                              showing: false,
-                              type: 'error'
-                            },
-                            {
-                              name: 'overpaymentnotavailable',
-                              classes:
-                                'obObposPointOfSaleUiPayment-errorLabelArea-overpaymentnotavailable',
-                              showing: false,
-                              type: 'error'
-                            },
-                            {
-                              name: 'overpaymentexceedlimit',
-                              classes:
-                                'obObposPointOfSaleUiPayment-errorLabelArea-overpaymentexceedlimit',
-                              showing: false,
-                              type: 'error'
-                            },
-                            {
-                              name: 'onlycashpaymentmethod',
-                              classes:
-                                'obObposPointOfSaleUiPayment-errorLabelArea-onlycashpaymentmethod',
-                              showing: false,
-                              type: 'error'
-                            },
-                            {
-                              name: 'errorMaxlimitamount',
-                              classes:
-                                'obObposPointOfSaleUiPayment-errorLabelArea-errorMaxlimitamount',
-                              showing: false,
-                              type: 'error'
-                            },
-                            {
-                              name: 'allAttributesNeedValue',
-                              classes:
-                                'obObposPointOfSaleUiPayment-errorLabelArea-allAttributesNeedValue',
-                              type: 'error',
-                              showing: false
-                            },
-                            {
-                              name: 'paymentMethodSelect',
-                              classes:
-                                'obObposPointOfSaleUiPayment-errorLabelArea-paymentMethodSelect',
-                              type: 'info',
-                              showing: false
-                            },
-                            {
-                              name: 'extrainfo',
-                              classes:
-                                'obObposPointOfSaleUiPayment-errorLabelArea-extrainfo',
-                              type: 'info',
-                              showing: false
-                            }
-                          ]
+                            'obObposPointOfSaleUiPayment-errorLabelArea-changeexceedlimit',
+                          showing: false,
+                          type: 'error'
+                        },
+                        {
+                          name: 'overpaymentnotavailable',
+                          classes:
+                            'obObposPointOfSaleUiPayment-errorLabelArea-overpaymentnotavailable',
+                          showing: false,
+                          type: 'error'
+                        },
+                        {
+                          name: 'overpaymentexceedlimit',
+                          classes:
+                            'obObposPointOfSaleUiPayment-errorLabelArea-overpaymentexceedlimit',
+                          showing: false,
+                          type: 'error'
+                        },
+                        {
+                          name: 'onlycashpaymentmethod',
+                          classes:
+                            'obObposPointOfSaleUiPayment-errorLabelArea-onlycashpaymentmethod',
+                          showing: false,
+                          type: 'error'
+                        },
+                        {
+                          name: 'errorMaxlimitamount',
+                          classes:
+                            'obObposPointOfSaleUiPayment-errorLabelArea-errorMaxlimitamount',
+                          showing: false,
+                          type: 'error'
+                        },
+                        {
+                          name: 'allAttributesNeedValue',
+                          classes:
+                            'obObposPointOfSaleUiPayment-errorLabelArea-allAttributesNeedValue',
+                          type: 'error',
+                          showing: false
+                        },
+                        {
+                          name: 'paymentMethodSelect',
+                          classes:
+                            'obObposPointOfSaleUiPayment-errorLabelArea-paymentMethodSelect',
+                          type: 'info',
+                          showing: false
+                        },
+                        {
+                          name: 'extrainfo',
+                          classes:
+                            'obObposPointOfSaleUiPayment-errorLabelArea-extrainfo',
+                          type: 'info',
+                          showing: false
                         }
                       ]
                     }
@@ -457,74 +468,57 @@ enyo.kind({
             },
             {
               classes:
-                'obObposPointOfSaleUiPayment-container1-container2-container2 span3',
+                'obObposPointOfSaleUiPayment-container1-container2-container2',
               components: [
                 {
-                  name: 'prepaymentsbuttons',
                   classes:
-                    'obObposPointOfSaleUiPayment-container1-container2-container2-prepaymentsbuttons',
+                    'obObposPointOfSaleUiPayment-container1-container2-container2-container1',
                   components: [
                     {
-                      name: 'prepaymentsexactbutton',
-                      kind: 'OB.OBPOSPointOfSale.UI.PrepaymentsExactButton',
+                      name: 'prepaymentsbuttons',
                       classes:
-                        'obObposPointOfSaleUiPayment-prepaymentsbuttons-prepaymentsexactbutton',
+                        'obObposPointOfSaleUiPayment-container1-container2-container2-container1-prepaymentsbuttons',
                       components: [
                         {
-                          name: 'prepaymentsexactbuttonicon',
+                          name: 'prepaymentsexactbutton',
+                          kind: 'OB.OBPOSPointOfSale.UI.PrepaymentsExactButton',
                           classes:
-                            'obObposPointOfSaleUiPayment-prepaymentsexactbutton-prepaymentsexactbuttonicon'
+                            'obObposPointOfSaleUiPayment-prepaymentsbuttons-prepaymentsexactbutton'
                         },
                         {
-                          name: 'prepaymentsexactbuttonlbl',
+                          name: 'prepaymentsdeliverybutton',
+                          kind:
+                            'OB.OBPOSPointOfSale.UI.PrepaymentsDeliveryButton',
                           classes:
-                            'obObposPointOfSaleUiPayment-prepaymentsexactbutton-prepaymentsexactbuttonlbl'
+                            'obObposPointOfSaleUiPayment-prepaymentsbuttons-prepaymentsdeliverybutton'
                         }
                       ]
                     },
                     {
-                      name: 'prepaymentsdeliverybutton',
-                      kind: 'OB.OBPOSPointOfSale.UI.PrepaymentsDeliveryButton',
+                      name: 'exactbutton',
+                      kind: 'OB.OBPOSPointOfSale.UI.ExactButton',
                       classes:
-                        'obObposPointOfSaleUiPayment-prepaymentsbuttons-prepaymentsdeliverybutton',
-                      components: [
-                        {
-                          name: 'prepaymentsdeliverybuttonicon',
-                          classes:
-                            'obObposPointOfSaleUiPayment-prepaymentsdeliverybutton-prepaymentsdeliverybuttonicon'
-                        },
-                        {
-                          name: 'prepaymentsdeliverybuttonlbl',
-                          classes:
-                            'obObposPointOfSaleUiPayment-prepaymentsdeliverybutton-prepaymentsdeliverybuttonlbl'
-                        }
-                      ]
+                        'obObposPointOfSaleUiPayment-container1-container2-container2-container1-exactbutton'
+                    },
+                    {
+                      name: 'donebutton',
+                      kind: 'OB.OBPOSPointOfSale.UI.DoneButton',
+                      classes:
+                        'obObposPointOfSaleUiPayment-container1-container2-container2-container1-donebutton'
+                    },
+                    {
+                      name: 'creditsalesaction',
+                      kind: 'OB.OBPOSPointOfSale.UI.CreditButton',
+                      classes:
+                        'obObposPointOfSaleUiPayment-container1-container2-container2-container1-creditsalesaction'
+                    },
+                    {
+                      name: 'layawayaction',
+                      kind: 'OB.OBPOSPointOfSale.UI.LayawayButton',
+                      classes:
+                        'obObposPointOfSaleUiPayment-container1-container2-container2-container1-layawayaction'
                     }
                   ]
-                },
-                {
-                  name: 'exactbutton',
-                  kind: 'OB.OBPOSPointOfSale.UI.ExactButton',
-                  classes:
-                    'obObposPointOfSaleUiPayment-container1-container2-container2-exactbutton'
-                },
-                {
-                  name: 'donebutton',
-                  kind: 'OB.OBPOSPointOfSale.UI.DoneButton',
-                  classes:
-                    'obObposPointOfSaleUiPayment-container1-container2-container2-donebutton'
-                },
-                {
-                  name: 'creditsalesaction',
-                  kind: 'OB.OBPOSPointOfSale.UI.CreditButton',
-                  classes:
-                    'obObposPointOfSaleUiPayment-container1-container2-container2-creditsalesaction'
-                },
-                {
-                  name: 'layawayaction',
-                  kind: 'OB.OBPOSPointOfSale.UI.LayawayButton',
-                  classes:
-                    'obObposPointOfSaleUiPayment-container1-container2-container2-layawayaction'
                 }
               ]
             }
@@ -1138,6 +1132,17 @@ enyo.kind({
       this.updateCreditSalesAction();
       this.$.layawayaction.hide();
     } else {
+      if (
+        parseInt(paymentstatus.pending, 10) < parseInt(paymentstatus.total, 10)
+      ) {
+        this.$.exactbutton.setLabel(
+          OB.I18N.getLabel(this.$.exactbutton.i18nLabelRemaining)
+        );
+      } else {
+        this.$.exactbutton.setLabel(
+          OB.I18N.getLabel(this.$.exactbutton.i18nLabelTotal)
+        );
+      }
       this.setTotalPending(
         OB.DEC.mul(paymentstatus.pendingAmt, rate, precision),
         symbol,
@@ -1991,6 +1996,7 @@ enyo.kind({
     }
   },
   animateErrorMessages: function() {
+    // TODO: To be removed after new skin implementation
     if (
       OB.MobileApp.view.currentWindow === 'retail.pointofsale' &&
       typeof this.$.errorLabelArea !== 'undefined'
@@ -2333,7 +2339,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ProcessButton',
-  kind: 'OB.UI.RegularButton',
+  kind: 'OB.UI.Button',
   classes: 'obObposPointOfSaleUiProcessButton',
   processdisabled: false,
   localdisabled: false,
@@ -2386,6 +2392,7 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.DoneButton',
   kind: 'OB.OBPOSPointOfSale.UI.ProcessButton',
   classes: 'obObposPointOfSaleUiDoneButton',
+  i18nLabel: 'OBPOS_LblDone',
   drawerOpened: true,
   processesToListen: [
     'calculateReceipt',
@@ -2402,7 +2409,6 @@ enyo.kind({
   init: function(model) {
     this.model = model;
     this.setDisabledIfSynchronized();
-    this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
     this.model.get('order').on(
       'change:openDrawer',
       function() {
@@ -2895,6 +2901,7 @@ enyo.kind({
   events: {
     onDeliveryPayment: ''
   },
+  i18nLabel: 'OBPOS_PrepaymentsDeliveryButtonLbl',
   classes: 'obObposPointOfSaleUiPrepaymentsDeliveryButton',
   processesToListen: [
     'calculateReceipt',
@@ -2913,9 +2920,6 @@ enyo.kind({
   },
   initComponents: function() {
     this.inherited(arguments);
-    this.children[1].setContent(
-      OB.I18N.getLabel('OBPOS_PrepaymentsDeliveryButtonLbl')
-    );
     if (!OB.MobileApp.model.get('terminal').terminalType.calculateprepayments) {
       this.hide();
     }
@@ -2928,6 +2932,7 @@ enyo.kind({
   events: {
     onExactPayment: ''
   },
+  i18nLabel: 'OBPOS_PrepaymentsExactButtonLbl',
   classes: 'obObposPointOfSaleUiPrepaymentsExactButton',
   processesToListen: [
     'calculateReceipt',
@@ -2946,9 +2951,6 @@ enyo.kind({
   },
   initComponents: function() {
     this.inherited(arguments);
-    this.children[1].setContent(
-      OB.I18N.getLabel('OBPOS_PrepaymentsExactButtonLbl')
-    );
     if (!OB.MobileApp.model.get('terminal').terminalType.calculateprepayments) {
       this.hide();
     }
@@ -2961,6 +2963,8 @@ enyo.kind({
   events: {
     onExactPayment: ''
   },
+  i18nLabelTotal: 'OBPOS_PayTotalLbl',
+  i18nLabelRemaining: 'OBPOS_PayRemainingLbl',
   classes: 'obObposPointOfSaleUiExactButton',
   processesToListen: [
     'calculateReceipt',
@@ -3007,10 +3011,6 @@ enyo.kind({
                   name: 'amount',
                   classes:
                     'obObposPointOfSaleUiRenderPaymentLine-container1-container1-container1-amount'
-                },
-                {
-                  classes:
-                    'obObposPointOfSaleUiRenderPaymentLine-container1-container1-container1-element3 u-clearBoth'
                 }
               ]
             },
@@ -3027,10 +3027,6 @@ enyo.kind({
                   name: 'foreignAmount',
                   classes:
                     'obObposPointOfSaleUiRenderPaymentLine-container1-container1-container2-foreignAmount'
-                },
-                {
-                  classes:
-                    'obObposPointOfSaleUiRenderPaymentLine-container1-container1-container2-element3 u-clearBoth'
                 }
               ]
             }
@@ -3059,10 +3055,6 @@ enyo.kind({
                 'obObposPointOfSaleUiRenderPaymentLine-container1-container3-reversePayment'
             }
           ]
-        },
-        {
-          classes:
-            'obObposPointOfSaleUiRenderPaymentLine-container1-element4 u-clearBoth'
         }
       ]
     }
@@ -3156,7 +3148,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.RemovePayment',
-  kind: 'OB.UI.SmallButton',
+  kind: 'OB.UI.Button',
   classes:
     'obObposPointOfSaleUiRemovePayment obObposPointOfSaleUiRemovePayment_iconClearPayment',
   events: {
@@ -3188,7 +3180,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ReversePayment',
-  kind: 'OB.UI.SmallButton',
+  kind: 'OB.UI.Button',
   classes:
     'obObposPointOfSaleUiReversePayment obObposPointOfSaleUiReversePayment_iconReversePayment',
   events: {
@@ -3207,7 +3199,8 @@ enyo.kind({
         ]),
         [
           {
-            label: OB.I18N.getLabel('OBMOBC_LblOk')
+            label: OB.I18N.getLabel('OBMOBC_LblOk'),
+            isDefaultAction: true
           }
         ]
       );
@@ -3218,7 +3211,12 @@ enyo.kind({
       OB.I18N.getLabel('OBPOS_ReverseConfirm'),
       [
         {
+          label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+          isDefaultAction: false
+        },
+        {
           label: OB.I18N.getLabel('OBPOS_LblOk'),
+          isDefaultAction: true,
           action: function(popup) {
             if (_.isUndefined(me.deleting) || me.deleting === false) {
               me.deleting = true;
@@ -3253,9 +3251,6 @@ enyo.kind({
               });
             }
           }
-        },
-        {
-          label: OB.I18N.getLabel('OBMOBC_LblCancel')
         }
       ]
     );

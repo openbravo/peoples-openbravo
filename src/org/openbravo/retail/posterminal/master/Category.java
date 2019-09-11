@@ -93,7 +93,7 @@ public class Category extends ProcessHQLQuery {
       hqlQueries.add(getSummaryProductCategoryHqlString(regularProductsCategoriesHQLProperties,
           lastUpdated, true));
     }
-    hqlQueries.add(getPackProductCategoryHqlString(isCrossStoreEnabled));
+    hqlQueries.add(getPackProductCategoryHqlString());
 
     return hqlQueries;
   }
@@ -102,18 +102,23 @@ public class Category extends ProcessHQLQuery {
       final HQLPropertyList regularProductsCategoriesHQLProperties, final Long lastUpdated,
       final boolean isCrossStore) {
     final String assortmentFilter = isCrossStore ? ":productListIds" : ":productListId";
+    final String lastUpdatedFilter = lastUpdated == null ? "and" : "or";
 
     final StringBuilder query = new StringBuilder();
     query.append(" select");
     query.append(regularProductsCategoriesHQLProperties.getHqlSelect());
     query.append(" , " + isCrossStore + " as crossStore");
-    query.append(" from OBRETCO_Productcategory aCat");
-    query.append(" join aCat.productCategory pCat");
+    query.append(" from ProductCategory pCat");
     query.append(" left join pCat.image img");
-    query.append(" where aCat.$readableSimpleClientCriteria");
-    query.append(" and aCat.obretcoProductlist.id in " + assortmentFilter);
-    query.append(" and (aCat.$incrementalUpdateCriteria");
-    query.append(" " + (lastUpdated == null ? "and" : "or") + " pCat.$incrementalUpdateCriteria)");
+    query.append(" where pCat.$readableSimpleClientCriteria");
+    query.append(" and exists (");
+    query.append("   select 1");
+    query.append("   from OBRETCO_Productcategory aCat");
+    query.append("   where aCat.productCategory.id = pCat.id");
+    query.append("   and aCat.obretcoProductlist.id in " + assortmentFilter);
+    query.append("   and (aCat.$incrementalUpdateCriteria");
+    query.append("   " + lastUpdatedFilter + " pCat.$incrementalUpdateCriteria)");
+    query.append(" )");
     if (isCrossStore) {
       query.append(" and not exists (");
       query.append("   select 1");
@@ -163,7 +168,7 @@ public class Category extends ProcessHQLQuery {
     return query.toString();
   }
 
-  private String getPackProductCategoryHqlString(final boolean isCrossStoreEnabled) {
+  private String getPackProductCategoryHqlString() {
     String promoNameTrl;
     if (OBContext.hasTranslationInstalled()) {
       promoNameTrl = "coalesce ((select t.commercialName from PromotionTypeTrl t where t.discountPromotionType=pt and t.language.id= :languageId), pt.commercialName)";
