@@ -107,7 +107,7 @@ public class LoginUtils {
   public static String checkUserPassword(ConnectionProvider connectionProvider, String login,
       String unHashedPassword) {
     try {
-      Optional<User> user = PasswordHash.getUser(login, unHashedPassword);
+      Optional<User> user = PasswordHash.getUserWithPassword(login, unHashedPassword);
       return user.map(User::getId).orElse(null);
     } catch (final Exception e) {
       throw new OBException(e);

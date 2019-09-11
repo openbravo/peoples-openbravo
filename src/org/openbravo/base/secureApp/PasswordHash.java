@@ -38,7 +38,7 @@ public abstract class PasswordHash {
     return algorithm;
   }
 
-  public static Optional<User> getUser(String userName, String password) {
+  public static Optional<User> getUserWithPassword(String userName, String password) {
     OBContext.setAdminMode(false);
     try {
       // TODO: ensure we can use DAL at this point
