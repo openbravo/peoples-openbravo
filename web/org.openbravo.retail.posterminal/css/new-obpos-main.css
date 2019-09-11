@@ -239,14 +239,23 @@
 .obUiLeftSubWindow {}
 
 .obUiLeftSubWindow-container1 {
-  margin: 5px;
-  height: 612px;
+  display: grid;
+  grid-template-rows: auto 1fr;
+
+  width: 100%;
+  height: 100%;
+  box-shadow: 0px 0px 10px -1px #8d8d8d;
+  border-radius: 4px;
   background-color: white;
 }
 
 .obUiLeftSubWindow-container1-leftSubWindowHeader {}
 
-.obUiLeftSubWindow-container1-leftSubWindowBody {}
+.obUiLeftSubWindow-container1-leftSubWindowBody {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+}
 
 
 
@@ -2965,11 +2974,8 @@ li.selected > .obUiRenderOrderLine_edit {
 .obUiRemoveMultiOrders {
   color: white;
 
-  margin: 0px 0px 0px 16px;
-  padding: 6px 0px 0px 0px;
-
-  width: 100%;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   background-repeat: no-repeat;
   background-position: center center;
   background-color: transparent;
@@ -3053,6 +3059,11 @@ li.selected > .obUiRenderOrderLine_edit {
 # Component: OB.UI.RenderMultiOrdersLine
 */
 .obUiRenderMultiOrdersLine {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: 50px 1fr;
+  align-items: center;
+
   border-bottom: var(--bottomseparator-slim);
   width: 100%;
 }
@@ -3060,15 +3071,13 @@ li.selected > .obUiRenderOrderLine_edit {
 .obUiRenderMultiOrdersLine-obUiRemoveMultiOrders {
   /* Inherits: [OB.UI.RemoveMultiOrders] */
   display: inline-block;
-  width: 8%;
+  justify-self: right;
 }
 
 .obUiRenderMultiOrdersLine-obUiRenderMultiOrdersLineValues {
    /* Inherits: [OB.UI.RenderMultiOrdersLineValues] */
-  display: inline-block;
-  width: 87%;
+  width: 100%;
   border: none;
-  margin: 1px;
 }
 
 .obUiRenderMultiOrdersLineEmpty {
@@ -7962,12 +7971,17 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   touch-action: none;
 }
 
-.obObposPointOfSaleUiPointOfSale-multiColumn-leftPanel-leftSubWindowsContainer {}
+.obObposPointOfSaleUiPointOfSale-multiColumn-leftPanel-leftSubWindowsContainer {
+  width: 100%;
+  height: 100%;
+}
 
 .obObposPointOfSaleUiPointOfSale-multiColumn-leftPanel-leftSubWindowsContainer-productdetailsview {
   /* Inherits: [OB.OBPOSPointOfSale.UI.ProductDetailsView] */
-  float: left;
   width: 100%;
+  height: 100%;
+  padding: 15px 10px 25px 10px;
+  box-sizing: border-box;
   touch-action: none;
 }
 
@@ -8277,8 +8291,9 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obObposPointOfSaleUiMultiReceiptView {}
 
 .obObposPointOfSaleUiMultiReceiptView-multiReceiptWrapper {
-  padding: 25px 10px 5px 10px;
-  height: calc(100% - 35px);
+  height: 100%;
+  padding: 15px 10px 25px 10px;
+  box-sizing: border-box;
 }
 
 .obObposPointOfSaleUiMultiReceiptView-multiReceiptWrapper-container1 {}
@@ -8300,21 +8315,25 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /***********************   ***********************/
 /*
 # Component: OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonStockThisStore
-# Inherits: [OB.UI.SmallButton]
+# Inherits: [OB.UI.Button]
 */
 .obObposPointOfSaleUiProductDetailsViewButtonStockThisStore {
   min-width: 200px;
-  margin: 2px 5px 2px 5px;
+  height: 50px;
+  border-radius: 4px;
+  margin-bottom: 10px;
 }
 
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonStockOtherStore
-# Inherits: [OB.UI.SmallButton]
+# Inherits: [OB.UI.Button]
 */
 .obObposPointOfSaleUiProductDetailsViewButtonStockOtherStore {
   min-width: 200px;
-  margin: 2px 5px 2px 5px;
+  height: 50px;
+  border-radius: 4px;
+  margin-bottom: 10px;
 }
 
 .obObposPointOfSaleUiProductDetailsViewButtonStockOtherStore_error {
@@ -8324,28 +8343,108 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonAddToTicket
-# Inherits: [OB.UI.RegularButton]
+# Inherits: [OB.UI.Button]
 */
 .obObposPointOfSaleUiProductDetailsViewButtonAddToTicket {
-  min-width: 70px;
-  margin: 2px 5px 2px 5px;
+  width: 150px;
+  height: 50px;
+  text-decoration: none;
+  background-color: var(--color-maincolor);
+  font-size: var(--font-medium-large);
+  color: var(--color-secondarycolor);
+  text-align: center;
+  border: 1px solid var(--color-maincolor);
+  border-radius: 4px;
+}
+
+.obObposPointOfSaleUiProductDetailsViewButtonAddToTicket .obUiButton-components {
+  grid-auto-flow: column;
+  grid-template-columns: 30px 1fr 0;
+
+  padding: 0px 10px;
+  justify-items: center;
+}
+
+.obObposPointOfSaleUiProductDetailsViewButtonAddToTicket .obUiButton-components-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconAddToCart.svg');
+  background-size: 22px auto;
+  background-repeat: no-repeat;
+  background-position: center calc(50% - 2px);
+  width: 100%;
+  height: 100%;
+}
+
+.obObposPointOfSaleUiProductDetailsViewButtonAddToTicket:hover {
+  background-color: #c4dab6;
+  color: var(--color-primary-dark);
+}
+
+.obObposPointOfSaleUiProductDetailsViewButtonAddToTicket:hover .obUiButton-components-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconAddToCart_hover.svg');
+}
+
+.obObposPointOfSaleUiProductDetailsViewButtonAddToTicket:active {
+  background-color: #c5c5c5;
+  color: var(--color-primary-dark);
+}
+
+.obObposPointOfSaleUiProductDetailsViewButtonAddToTicket:active .obUiButton-components-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconAddToCart_active.svg');
+}
+
+.obObposPointOfSaleUiProductDetailsViewButtonAddToTicket:active .obUiButton-components-before {}
+
+.obObposPointOfSaleUiProductDetailsViewButtonAddToTicket:focus {
+  box-shadow: inset 0px 0 2px 1px seagreen;
+  border-color: seagreen;
+  border-style: solid;
+  /*box-shadow: 0 0 5px 3px rgba(110, 180, 63, .5);*/
+}
+
+.obObposPointOfSaleUiProductDetailsViewButtonAddToTicket .obUiButton-components-label {
+  display: flex;
+  align-items: center;
+
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+.obObposPointOfSaleUiProductDetailsViewButtonAddToTicket .obUiButton-components-label-labelText_0 {
+  position: absolute;
+  width: 100%;
 }
 
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonClose
+# Inherits: [OB.UI.Button]
 */
 .obObposPointOfSaleUiProductDetailsViewButtonClose {
-  float: right;
-  cursor: pointer;
-  font-size: 150%;
-  font-weight: bold;
-  color: #cccccc;
-  width: 40px;
-  height: 40px;
-  margin: -10px;
-  text-align: right;
-  padding: 8px;
+  color: white;
+
+  margin: 0px;
+  padding: 0px;
+
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-color: transparent;
+}
+
+.obObposPointOfSaleUiProductDetailsViewButtonClose {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconClosePopup.svg');
+  background-size: 16px auto;
+}
+
+
+.obObposPointOfSaleUiProductDetailsViewButtonClose:hover {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconClosePopup_hover.svg');
+}
+
+.obObposPointOfSaleUiProductDetailsViewButtonClose:active {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconClosePopup_active.svg');
 }
 
 
@@ -8353,9 +8452,18 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSPointOfSale.UI.ProductDetailsView_header
 */
 .obObposPointOfSaleUiProductDetailsViewHeader {
-  font-size: var(--font-xlarge);
-  height: 25px;
-  padding: 15px 15px 5px 15px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: 1fr 45px;
+  align-items: center;
+
+  height: 50px;
+  padding: 0px 0px 0px 15px;
+  box-sizing: border-box;
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--color-maincolor);
+  border-bottom: var(--bottomseparator-slim);
 }
 
 .obObposPointOfSaleUiProductDetailsViewHeader-productName {
@@ -8364,6 +8472,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiProductDetailsViewHeader-buttonClose {
 /* Inherits: [OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonClose] */
+  justify-self: center;
 }
 
 
@@ -8388,33 +8497,28 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposPointOfSaleUiProductDetailsViewBody-container2 {
-  margin: 5px 15px;
+  padding: 15px 10px 10px 15px;
 }
 
 .obObposPointOfSaleUiProductDetailsViewBody-container2-warehouseToGet {
   line-height: 20px;
   font-size: var(--font-large);
-  padding: 10px;
   color: #000000;
 }
 
 .obObposPointOfSaleUiProductDetailsViewBody-container3 {
-  height: 80px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: 1fr auto;
+
   padding: 10px;
 }
 
-.obObposPointOfSaleUiProductDetailsViewBody-container3-container1 {
-  float: left;
-  width: 50%;
-}
+.obObposPointOfSaleUiProductDetailsViewBody-container3-container1 {}
 
-.obObposPointOfSaleUiProductDetailsViewBody-container3-container1-container1 {
-  padding: 0px 0px 15px 0px;
-}
+.obObposPointOfSaleUiProductDetailsViewBody-container3-container1-container1 {}
 
-.obObposPointOfSaleUiProductDetailsViewBody-container3-container1-container2{
-  padding: 0px 0px 15px 0px;
-}
+.obObposPointOfSaleUiProductDetailsViewBody-container3-container1-container2 {}
 
 .obObposPointOfSaleUiProductDetailsViewBody-container3-container1-container2-stockHere {
 /* Inherits: [OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonStockThisStore] */
@@ -8426,8 +8530,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiProductDetailsViewBody-container3-container1-productDeliveryModes {
  /* Inherits: [OB.OBPOSPointOfSale.UI.EditLine.DeliveryModesButton] */
-  min-width: 200px;
-  margin: 2px 5px 2px 5px !important;
 }
 
 .obObposPointOfSaleUiProductDetailsViewBody-stockHere_error,
@@ -8435,9 +8537,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   background-color: #ff0000;
 }
 
-.obObposPointOfSaleUiProductDetailsViewBody-container3-container2 {
-  float: right;
-}
+.obObposPointOfSaleUiProductDetailsViewBody-container3-container2 {}
 
 .obObposPointOfSaleUiProductDetailsViewBody-container3-container2-productPrice {
   margin: 5px 0px 12px 0px;
@@ -8454,7 +8554,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiProductDetailsViewBody-scroller {
 /* Inherits: [Scroller] */
-  max-height: 191px;
   padding: 15px;
 }
 
@@ -8473,6 +8572,9 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiProductDetailsView-body-body {
 /* Inherits: [OB.OBPOSPointOfSale.UI.ProductDetailsView_body] */
+  display: grid;
+  grid-auto-flow: row;
+  grid-auto-rows: auto;
 }
 
 
@@ -15655,8 +15757,10 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Inherits: [OB.UI.SmallButton]
 */
 .obObposPointOfSaleUiEditLineDeliveryModesButton {
-  background-color: #ffa500;
-  color: #000000;
+  min-width: 200px;
+  height: 50px;
+  border-radius: 4px;
+  margin-bottom: 10px;
 }
 
 /*

@@ -14,7 +14,7 @@
     name: 'OB.OBPOSPointOfSale.UI.EditLine.DeliveryModesButton',
     kind: 'OB.UI.SmallButton',
     i18nContent: 'OBRDM_DeliveryMode',
-    classes: 'obObposPointOfSaleUiEditLineDeliveryModesButton',
+    classes: 'obObposPointOfSaleUiEditLineDeliveryModesButton obUiActionButton',
     detailsView: null,
     handlers: {
       onSetMultiSelected: 'setMultiSelected',

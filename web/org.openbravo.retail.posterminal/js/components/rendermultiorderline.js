@@ -10,7 +10,7 @@
 /*global OB, enyo, _ */
 enyo.kind({
   name: 'OB.UI.RemoveMultiOrders',
-  kind: 'OB.UI.SmallButton',
+  kind: 'OB.UI.Button',
   classes: 'obUiRemoveMultiOrders',
   events: {
     onRemoveMultiOrders: ''
