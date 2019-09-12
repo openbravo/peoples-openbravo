@@ -153,12 +153,12 @@ OB.UTIL.HookManager.registerHook('OBPOS_RenderOrderLine', function(
 
     if (isDeliveryService) {
       args.orderline.$.serviceIcon.setSrc('img/iconShippingAddress.svg');
-      args.orderline.$.serviceIcon.setClass(
+      args.orderline.$.serviceIcon.setClasses(
         'obPosRenderOrderLine-serviceIcon-isDeliveryService'
       );
     } else {
       args.orderline.$.serviceIcon.setSrc('img/iconService_ticketline.png');
-      args.orderline.$.serviceIcon.setClass(
+      args.orderline.$.serviceIcon.setClasses(
         'obPosRenderOrderLine-serviceIcon-isNotDeliveryService'
       );
     }
