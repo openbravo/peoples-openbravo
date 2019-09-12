@@ -15,17 +15,24 @@ enyo.kind({
   classes: 'obObposcashmgmtUiCashMgmtInfo',
   components: [
     {
-      classes: 'obObposcashmgmtUiCashMgmtInfo-container1',
+      classes: 'obObposcashmgmtUiCashMgmtInfo-wrapper',
       components: [
         {
-          //clock here
-          kind: 'OB.UI.Clock',
-          classes: 'obObposcashmgmtUiCashMgmtInfo-container1-obUiClock'
-        },
-        {
-          // process info
-          name: 'infoLbl',
-          classes: 'obObposcashmgmtUiCashMgmtInfo-container1-obUiClock-infoLbl'
+          classes: 'obObposcashmgmtUiCashMgmtInfo-wrapper-components',
+          components: [
+            {
+              //clock here
+              kind: 'OB.UI.Clock',
+              classes:
+                'obObposcashmgmtUiCashMgmtInfo-wrapper-components-obUiClock'
+            },
+            {
+              //process info
+              name: 'infoLbl',
+              classes:
+                'obObposcashmgmtUiCashMgmtInfo-wrapper-components-infoLbl'
+            }
+          ]
         }
       ]
     }

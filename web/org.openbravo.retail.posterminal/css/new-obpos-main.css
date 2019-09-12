@@ -13029,25 +13029,28 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 */
 .obObposcashmgmtUiCashMgmtInfo {}
 
-.obObposcashmgmtUiCashMgmtInfo-container1 {
-  position: relative;
-  background: var(--color-primary-dark);
-  color: var(--color-primary-lighter);
-  height: 200px;
-  margin: 5px;
-  padding: 5px;
+.obObposcashmgmtUiCashMgmtInfo-wrapper {
+  box-sizing: border-box;
+  padding: 15px 10px 10px 10px;
+  height: 100%;
 }
 
-.obObposcashmgmtUiCashMgmtInfo-container1-obUiClock {
+.obObposcashmgmtUiCashMgmtInfo-wrapper-components {
+  position: relative;
+  color: var(--color-maincolor);
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.obObposcashmgmtUiCashMgmtInfo-wrapper-components-obUiClock {
   position: absolute;
   bottom: 0px;
   right: 0px;
   text-align: center;
 }
 
-.obObposcashmgmtUiCashMgmtInfo-container1-obUiClock-infoLbl {
+.obObposcashmgmtUiCashMgmtInfo-wrapper-components-infoLbl {
   padding: 10px;
-  float: left;
   width: 320px;
   line-height: 23px;
 }
@@ -13876,40 +13879,43 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 */
 .obObposCashupUiCashupInfo {}
 
-.obObposCashupUiCashupInfo-container1 {
-  position: relative;
-  background: #363636;
-  color: var(--color-primary-lighter);
-  height: 200px;
-  margin: 5px;
-  padding: 5px;
+.obObposCashupUiCashupInfo-wrapper {
+  box-sizing: border-box;
+  padding: 15px 10px 10px 10px;
+  height: 100%;
 }
 
-.obObposCashupUiCashupInfo-container1-obUiClock {
-  /*Inherits: [OB.UI.Clock]*/
+.obObposCashupUiCashupInfo-wrapper-components {
+  position: relative;
+  color: var(--color-maincolor);
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.obObposCashupUiCashupInfo-wrapper-components-obUiClock {
   position: absolute;
   bottom: 0px;
   right: 0px;
   text-align: center;
 }
 
-.obObposCashupUiCashupInfo-container1-element1 {
+.obObposCashupUiCashupInfo-wrapper-components-element1 {
   padding: 5px;
 }
 
-.obObposCashupUiCashupInfo-container1-element2 {
+.obObposCashupUiCashupInfo-wrapper-components-element2 {
   padding: 3px;
 }
 
-.obObposCashupUiCashupInfo-container1-element3 {
+.obObposCashupUiCashupInfo-wrapper-components-element3 {
   padding: 3px;
 }
 
-.obObposCashupUiCashupInfo-container1-element4 {
+.obObposCashupUiCashupInfo-wrapper-components-element4 {
   padding: 3px;
 }
 
-.obObposCashupUiCashupInfo-container1-element5 {
+.obObposCashupUiCashupInfo-wrapper-components-element5 {
   padding: 3px;
 }
 
