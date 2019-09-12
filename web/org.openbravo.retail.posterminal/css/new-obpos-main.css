@@ -9123,7 +9123,10 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   overflow-y: auto;
 }
 
-.obObpodPointOfSaleUiRightToolbarPane-scan {}
+.obObpodPointOfSaleUiRightToolbarPane-scan {
+  box-sizing: border-box;
+  padding: 15px 10px 10px 10px;
+}
 
 .obObpodPointOfSaleUiRightToolbarPane-catalog {
   box-sizing: border-box;
@@ -9225,22 +9228,20 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   position: relative;
   color: var(--color-maincolor);
   height: 100%;
-  padding: 5px;
   box-sizing: border-box;
 }
 
 .obObposPointOfSaleUiScan-obUiClock {
 /* Inherits: [OB.UI.Clock] */
   position: absolute;
-  bottom: 5px;
-  right: 5px;
+  bottom: 0px;
+  right: 0px;
   text-align: center;
 }
 
 .obObposPointOfSaleUiScan-mainPanel {
   background-color: transparent;
   height: 100%;
-  padding: 5px;
   box-sizing: border-box;
 }
 
