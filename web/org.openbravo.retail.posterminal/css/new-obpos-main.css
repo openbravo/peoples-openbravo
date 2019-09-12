@@ -8147,15 +8147,8 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
     'pos50 pos51';
 }
 
-.obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > button.obUiActionButton:active {
-  opacity: 0.999;
-  background-color: var(--color-primary-lighter);
-}
-
 .obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .obUiActionButton {
-  padding: 0px;
-  margin: 0px;
-  height: auto;
+  height: 100%;
 }
 
 .obObposPointOfSaleUiBottomRightGridLayout-obUiActionButtonArea-generic > .pos00 {
