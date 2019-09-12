@@ -174,9 +174,9 @@
         newTicket.lines.push(newLine);
       });
       if (receipt.get('coupons')) {
-        newTicket.discountsFromUser.coupons = receipt
-          .get('coupons')
-          .map(coupon => coupon.offerid);
+        newTicket.discountsFromUser.coupons = JSON.parse(
+          JSON.stringify(receipt.get('coupons'))
+        );
       }
       if (receipt.get('orderManualPromotions')) {
         let bytotalManualPromotions = [];
