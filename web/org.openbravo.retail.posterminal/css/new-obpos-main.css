@@ -8027,7 +8027,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
       'obUiMultiColumn-rightToolbar'
       'obUiMultiColumn-leftToolbar'
       'obUiMultiColumn-leftPanel';
-    grid-template-rows: 67px 72px calc(100% - 139px);
+    grid-template-rows: 72px 87px calc(100% - 159px);
     grid-template-columns: 100%;
   }
 }
@@ -8702,6 +8702,13 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Inherits: [OB.OBPOSPointOfSale.UI.ToolbarImpl]
 */
 .obObposPointOfSaleUiLeftToolbarImpl {}
+
+@media all and (max-width: 800px) {
+  .obObposPointOfSaleUiLeftToolbarImpl {
+    background-color: #4d545c;
+    border-radius: 4px;
+  }
+}
 
 .obObposPointOfSaleUiLeftToolbarImpl-obUiButtonNew {
   /*Inherits: [OB.UI.ButtonNew]*/
