@@ -10825,6 +10825,10 @@
           OB.MobileApp.model.get('terminal').organization
         );
         order.set(
+          'organizationAddressIdentifier',
+          OB.MobileApp.model.get('terminal').organizationAddressIdentifier
+        );
+        order.set(
           'trxOrganization',
           OB.MobileApp.model.get('terminal').organization
         );
