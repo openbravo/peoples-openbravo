@@ -1561,7 +1561,7 @@
   color: black;
 }
 
-@media all and (max-width: 800px) {
+@media all and (max-aspect-ratio: 9/8) {
   .obposUiStoreInformationLine-container7-btnClose {
     height: 45px;
   }
@@ -2716,7 +2716,7 @@ li.selected > .obUiRenderOrderLine_edit {
 }
 
 @media all and (min-width: 801px) and (max-aspect-ratio: 150/100),
-  (max-width: 800px) and (max-aspect-ratio: 3/4) {
+  (max-aspect-ratio: 9/8) and (max-aspect-ratio: 3/4) {
   .obUiRenderOrderLine-nameContainner {
     width: calc((29 / 79 * 100%) + 13px);
   }
@@ -2732,7 +2732,7 @@ li.selected > .obUiRenderOrderLine_edit {
 }
 
 @media all and (min-width: 801px) and (max-aspect-ratio: 125/100),
-  (max-width: 800px) and (max-aspect-ratio: 10/16) {
+  (max-aspect-ratio: 9/8) and (max-aspect-ratio: 10/16) {
   .obUiRenderOrderLine-nameContainner {
     width: calc(100% - 225px);
   }
@@ -2877,7 +2877,7 @@ li.selected > .obUiRenderOrderLine_edit {
 .obUiRenderTaxLine-container3 {}
 
 @media all and (min-width: 801px) and (max-aspect-ratio: 150/100),
-(max-width: 800px) and (max-aspect-ratio: 3/4) {
+(max-aspect-ratio: 9/8) and (max-aspect-ratio: 3/4) {
 
   .obUiRenderTaxLine-tax {
     width: calc((29 / 79 * 100%) + 78px);
@@ -2890,7 +2890,7 @@ li.selected > .obUiRenderOrderLine_edit {
 }
 
 @media all and (min-width: 801px) and (max-aspect-ratio: 125/100),
-  (max-width: 800px) and (max-aspect-ratio: 10/16) {
+  (max-aspect-ratio: 9/8) and (max-aspect-ratio: 10/16) {
   .obUiRenderTaxLine-tax {
     width: calc(100% - 160px);
   }
@@ -3368,7 +3368,7 @@ li.selected > .obUiRenderOrderLine_edit {
 }
 
 @media all and (min-width: 801px) and (max-aspect-ratio: 150/100),
-  (max-width: 800px) and (max-aspect-ratio: 3/4) {
+  (max-aspect-ratio: 9/8) and (max-aspect-ratio: 3/4) {
   .obUiOrderCaptions-description {
     width: calc((29 / 79 * 100%) + 43px);
   }
@@ -3387,7 +3387,7 @@ li.selected > .obUiRenderOrderLine_edit {
 }
 
 @media all and (min-width: 801px) and (max-aspect-ratio: 125/100),
-  (max-width: 800px) and (max-aspect-ratio: 10/16) {
+  (max-aspect-ratio: 9/8) and (max-aspect-ratio: 10/16) {
   .obUiOrderCaptions-description {
     width: calc(100% - 195px);
   }
@@ -3860,7 +3860,7 @@ li.selected > .obUiRenderOrderLine_edit {
   width: 45px;
 }
 
-@media all and (max-width: 800px) {
+@media all and (max-aspect-ratio: 9/8) {
   .businesspartner-obUiButton-generic_yellow {
     height: 45px;
   }
@@ -4121,7 +4121,7 @@ li.selected > .obUiRenderOrderLine_edit {
   height: 30px;
 }
 
-@media all and (max-width: 800px) {
+@media all and (max-aspect-ratio: 9/8) {
   .obUiNewCustomerButton {
     height: 45px;
   }
@@ -4147,7 +4147,7 @@ li.selected > .obUiRenderOrderLine_edit {
   height: 30px;
 }
 
-@media all and (max-width: 800px) {
+@media all and (max-aspect-ratio: 9/8) {
   .obUiAdvancedFilterButton {
     height: 45px;
   }
@@ -4744,7 +4744,7 @@ li.selected > .obUiRenderOrderLine_edit {
   padding: 2px 13px 5px 13px !important;
 }
 
-@media all and (max-width: 800px) {
+@media all and (max-aspect-ratio: 9/8) {
   .obUiSalesRepresentative {
     height: 45px;
   }
@@ -5250,7 +5250,7 @@ li.selected > .obUiRenderOrderLine_edit {
   min-height: 180px;
 }
 
-@media all and (max-width: 800px) {
+@media all and (max-aspect-ratio: 9/8) {
   .obUiPopupDrawerOpened {
     left: 10px;
     margin-left: 0px;
@@ -5555,7 +5555,7 @@ li.selected > .obUiRenderOrderLine_edit {
   margin: -2px 0 0 2px;
 }
 
-@media all and (max-width: 800px) {
+@media all and (max-aspect-ratio: 9/8) {
   .obUiModalNumberEditor-numberQt {
     height: 45px;
   }
@@ -5620,7 +5620,7 @@ li.selected > .obUiRenderOrderLine_edit {
   padding: 2px 13px 5px 13px !important;
 }
 
-@media all and (max-width: 800px) {
+@media all and (max-aspect-ratio: 9/8) {
   .obUiModalSplitLinesTable {
     max-height: 110px;
   }
@@ -5775,7 +5775,7 @@ li.selected > .obUiRenderOrderLine_edit {
 /* Inherits: [OB.UI.ModalSplitLine_btnCancel] */
 }
 
-@media all and (max-width: 800px) {
+@media all and (max-aspect-ratio: 9/8) {
   .obUiModalSplitLine-bodyContent-container2 {
     height: 60px;
   }
@@ -5862,7 +5862,7 @@ li.selected > .obUiRenderOrderLine_edit {
   cursor: default;
 }
 
-@media all and (max-width: 800px) {
+@media all and (max-aspect-ratio: 9/8) {
   .obUiButtonSelectAll {
     height: 45px;
   }
@@ -5916,7 +5916,7 @@ li.selected > .obUiRenderOrderLine_edit {
   cursor: default;
 }
 
-@media all and (max-width: 800px) {
+@media all and (max-aspect-ratio: 9/8) {
   .obUiButtonAssociateSelected {
     height: 45px;
   }
@@ -6230,7 +6230,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   border-radius: 0px;
 }
 
-@media all and (max-width: 800px) {
+@media all and (max-aspect-ratio: 9/8) {
   .obUiModalRemoveAssociatedTickets {
     left: 10px;
     margin-left: 0px;
@@ -6418,7 +6418,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   border-radius: 0px;
 }
 
-@media all and (max-width: 800px) {
+@media all and (max-aspect-ratio: 9/8) {
   .obUiModalOpenRelatedReceipts {
     left: 10px;
     margin-left: 0px;
@@ -8013,7 +8013,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   /* Inherits: [OB.OBPOSPointOfSale.UI.KeyboardOrder] */
 }
 
-@media all and (max-width: 800px) {
+@media all and (max-aspect-ratio: 9/8) {
   .obObposPointOfSaleUiPointOfSale-mainSubWindow-multiColumn .obUiMultiColumn-panels {
     grid-template-areas:
       'obUiMultiColumn-rightToolbar'
@@ -8070,7 +8070,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   grid-template-columns: repeat(3, calc(100% / 5)) repeat(2, calc(100% / 5));
 }
 
-@media all and (max-width: 800px) {
+@media all and (max-aspect-ratio: 9/8) {
   .obObposPointOfSaleUiPointOfSale-mainSubWindow-multiColumn .obUiMultiColumn-leftToolbar .obUiMultiColumnToolbar-standardToolbar-toolbar {
     grid-template-areas: "obUiButtonNew obUiButtonDelete obObposPointOfSaleUiButtonTabPayment";
     grid-template-rows: 100%;
@@ -8088,7 +8088,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   grid-template-columns: repeat(4, calc(100% / 4));
 }
 
-@media all and (max-width: 800px) {
+@media all and (max-aspect-ratio: 9/8) {
   .obObposPointOfSaleUiPointOfSale-mainSubWindow-multiColumn .obUiMultiColumn-rightToolbar .obUiMultiColumnToolbar-standardToolbar-toolbar {
     grid-template-areas: "obUiMainMenu obObposPointOfSaleUiButtonTabScan obObPosPointOfSaleUiButtonTabBrowse obObPosPointOfSaleUiButtonTabSearchCharacteristic obObPosPointOfSaleUiButtonTabEditLine obObposPointOfSaleUiButtonTabCart";
     grid-template-rows: 100%;
@@ -8711,7 +8711,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 */
 .obObposPointOfSaleUiLeftToolbarImpl {}
 
-@media all and (max-width: 800px) {
+@media all and (max-aspect-ratio: 9/8) {
   .obObposPointOfSaleUiLeftToolbarImpl {
     background-color: #4d545c;
     border-radius: 4px;
@@ -8882,7 +8882,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiButtonTabCart.selected .obUiButton-components-label {}
 
-@media all and (max-width: 800px) {
+@media all and (max-aspect-ratio: 9/8) {
   .obObposPointOfSaleUiButtonTabCart {
     display: block;
   }
@@ -10723,7 +10723,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 
-@media all and (max-width: 800px) {
+@media all and (max-aspect-ratio: 9/8) {
   .obObposPointOfSaleUiCustomersCancelEdit {
     height: 45px;
   }
@@ -10765,7 +10765,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   }
 }
 
-@media (min-width: 521px) and (max-width: 800px) {
+@media (min-width: 521px) and (max-aspect-ratio: 9/8) {
   .obUiCustomerPropertyLine-labelLine {
     width: 30%;
   }
@@ -10886,7 +10886,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   grid-column-gap: 15px;
 }
 
-@media all and (max-width: 800px) {
+@media all and (max-aspect-ratio: 9/8) {
   .obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields {
     display: grid;
     grid-auto-flow: row;
@@ -10935,7 +10935,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   grid-auto-flow: column;
 }
 
-@media all and (max-width: 800px) {
+@media all and (max-aspect-ratio: 9/8) {
   .obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-shipAndInvAddress {
     grid-auto-flow: row;
   }
@@ -11006,7 +11006,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   }
 }
 
-@media (min-width: 650px) and (max-width: 800px) {
+@media (min-width: 650px) and (max-aspect-ratio: 9/8) {
   .obObposPointOfSaleUiCustomersNewcustomer {
     width: calc(100% - 24px);
   }
@@ -11063,7 +11063,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   cursor: default;
 }
 
-@media all and (max-width: 800px) {
+@media all and (max-aspect-ratio: 9/8) {
   .obObposPointOfSaleUiCustomersNewcustomersave {
     height: 45px;
   }
@@ -11240,7 +11240,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   }
 }
 
-@media (min-width: 650px) and (max-width: 800px) {
+@media (min-width: 650px) and (max-aspect-ratio: 9/8) {
   .obObPosPointOfSaleUiCustomersEditCustomer {
     width: calc(100% - 24px) !important;
   }
@@ -11504,7 +11504,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   cursor: default;
 }
 
-@media all and (max-width: 800px) {
+@media all and (max-aspect-ratio: 9/8) {
   .obObposPointOfSaleUiCustomeraddrCancelEdit {
     height: 45px;
   }
@@ -11629,7 +11629,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   }
 }
 
-@media (min-width: 650px) and (max-width: 800px) {
+@media (min-width: 650px) and (max-aspect-ratio: 9/8) {
   .obObposPointOfSaleUiCustomeraddrNewcustomeraddr {
     width: calc(100% - 24px);
   }
@@ -11678,7 +11678,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   cursor: default;
 }
 
-@media all and (max-width: 800px) {
+@media all and (max-aspect-ratio: 9/8) {
   .obObposPointOfSaleUiCustomeraddrNewcustomeraddrsave {
     height: 45px;
   }
@@ -11774,7 +11774,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   }
 }
 
-@media (min-width: 650px) and (max-width: 800px) {
+@media (min-width: 650px) and (max-aspect-ratio: 9/8) {
   .obObposPointOfSaleUiCustomerAddrEditCustomerAddr {
     width: calc(100% - 24px);
   }
@@ -11853,7 +11853,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /* Inherits: [OB.UI.BPLocAssignToReceiptInvoicingContextMenuItem] */
 }
 
-@media all and (max-width: 800px) {
+@media all and (max-aspect-ratio: 9/8) {
   .obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-obUiButton {
     height: 45px;
   }
@@ -12383,7 +12383,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   font-weight: bold;
 }
 
-@media all and (max-width: 800px) {
+@media all and (max-aspect-ratio: 9/8) {
   .obObposPointOfSaleUiModalsModalPaymentsSelect-paymentMethods-items {
     min-width: 33%;
   }
@@ -13332,7 +13332,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   display: block;
 }
 
-@media all and (max-width: 800px) {
+@media all and (max-aspect-ratio: 9/8) {
   .obObposcashmgmtUiCashManagement-cashupMultiColumn-leftToolbar .obObposcashmgmtUiRightToolbarImpl-btnCashMgmt {
     display: block; /* To be displayed only in portrait mode */
   }
@@ -13364,7 +13364,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   grid-area: obObposcashmgmtUiRightToolbarImpl-btnToggleView;
 }
 
-@media all and (max-width: 800px) {
+@media all and (max-aspect-ratio: 9/8) {
   .obObposcashmgmtUiRightToolbarImpl-btnToggleView {
     /*Inherits: [OB.UI.ToolbarButton]*/
     display: block;
@@ -13476,7 +13476,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   grid-template-columns: repeat(1, calc(100% / 1));
 }
 
-@media all and (max-width: 800px) {
+@media all and (max-aspect-ratio: 9/8) {
   /* Implementation: WebPOS CashManagement Multicolumn */
   .obObposcashmgmtUiCashManagement-cashupMultiColumn .obUiMultiColumn-panels {
     grid-template-areas:
@@ -13670,7 +13670,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   grid-area: obObPosCashUpUiLeftToolbarImpl-btnToggleView;
 }
 
-@media all and (max-width: 800px) {
+@media all and (max-aspect-ratio: 9/8) {
   .obObPosCashUpUiLeftToolbarImpl-btnToggleView {
     display: block;
   }
@@ -13768,7 +13768,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   display: block;
 }
 
-@media all and (max-width: 800px) {
+@media all and (max-aspect-ratio: 9/8) {
   .obObPosCashupUiCashUp-cashupMultiColumn-leftToolbar .obObPosCashupUiCashUp-rightToolbar-btnCashUp {
     display: block; /* To be displayed only in portrait mode */
   }
@@ -13874,7 +13874,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   grid-template-columns: repeat(1, calc(100% / 1));
 }
 
-@media all and (max-width: 800px) {
+@media all and (max-aspect-ratio: 9/8) {
   /* Implementation: WebPOS CashUp Multicolumn */
   .obObPosCashupUiCashUp-cashupMultiColumn .obUiMultiColumn-panels {
     grid-template-areas:
@@ -16089,7 +16089,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   margin: 0px 9px 8px 0px;
 }
 
-@media all and (max-width: 800px) {
+@media all and (max-aspect-ratio: 9/8) {
   .obrdmUiButtonSelectAll {
     height: 45px;
   }
@@ -16121,7 +16121,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   margin: 0px 9px 8px 0px;
 }
 
-@media all and (max-width: 800px) {
+@media all and (max-aspect-ratio: 9/8) {
   .obrdmUiButtonPrepareSelected {
     height: 45px;
   }
