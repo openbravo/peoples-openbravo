@@ -8030,6 +8030,14 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
     grid-template-rows: 72px 87px calc(100% - 159px);
     grid-template-columns: 100%;
   }
+
+  .obObposPointOfSaleUiPointOfSale-mainSubWindow-multiColumn .obUiMultiColumn-leftToolbar {
+    padding: 0px;
+    background-image: linear-gradient(#e8e8e8, #e8e8e8);
+    border-width: 15px 15px 0px 15px;
+    border-style: solid;
+    border-color: #e8e8e8;
+  }
 }
 
 
@@ -8856,7 +8864,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Inherits: [OB.UI.Button]
 */
 .obObposPointOfSaleUiButtonTabCart {
-  visibility: hidden;
+  display: none; /* To be displayed only in portrait mode */
   grid-area: obObposPointOfSaleUiButtonTabCart;
 }
 
@@ -8876,7 +8884,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 @media all and (max-width: 800px) {
   .obObposPointOfSaleUiButtonTabCart {
-    visibility: visible;
+    display: block;
   }
 }
 
@@ -13316,6 +13324,24 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   grid-area: obObposcashmgmtUiRightToolbarImpl-btnCashMgmt;
 }
 
+.obObposcashmgmtUiCashManagement-cashupMultiColumn-leftToolbar .obObposcashmgmtUiRightToolbarImpl-btnCashMgmt {
+  display: none; /* To be displayed only in portrait mode */
+}
+
+.obObposcashmgmtUiCashManagement-cashupMultiColumn-rightToolbar .obObposcashmgmtUiRightToolbarImpl-btnCashMgmt {
+  display: block;
+}
+
+@media all and (max-width: 800px) {
+  .obObposcashmgmtUiCashManagement-cashupMultiColumn-leftToolbar .obObposcashmgmtUiRightToolbarImpl-btnCashMgmt {
+    display: block; /* To be displayed only in portrait mode */
+  }
+
+  .obObposcashmgmtUiCashManagement-cashupMultiColumn-rightToolbar .obObposcashmgmtUiRightToolbarImpl-btnCashMgmt {
+    display: none; /* To be displayed only in landscape mode */
+  }
+}
+
 .obObposcashmgmtUiRightToolbarImpl-btnCashMgmt .obUiButton-components {
   grid-template-rows: auto 1fr auto;
 }
@@ -13334,7 +13360,15 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposcashmgmtUiRightToolbarImpl-btnToggleView {
   /*Inherits: [OB.UI.ToolbarButton]*/
+  display: none; /* To be displayed only in portrait mode */
   grid-area: obObposcashmgmtUiRightToolbarImpl-btnToggleView;
+}
+
+@media all and (max-width: 800px) {
+  .obObposcashmgmtUiRightToolbarImpl-btnToggleView {
+    /*Inherits: [OB.UI.ToolbarButton]*/
+    display: block;
+  }
 }
 
 .obObposcashmgmtUiRightToolbarImpl-btnToggleView  .obUiButton-components-before {
@@ -13442,14 +13476,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   grid-template-columns: repeat(1, calc(100% / 1));
 }
 
-@media all and (min-width: 800px) {
-  .obUiMultiColumn-leftToolbar .obObposcashmgmtUiRightToolbarImpl-btnCashMgmt,
-  .obObposcashmgmtUiRightToolbarImpl-btnToggleView {
-    /*Inherits: [OB.UI.ToolbarButton]*/
-    display: none;
-  }
-}
-
 @media all and (max-width: 800px) {
   /* Implementation: WebPOS CashManagement Multicolumn */
   .obObposcashmgmtUiCashManagement-cashupMultiColumn .obUiMultiColumn-panels {
@@ -13473,6 +13499,18 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   .obObposcashmgmtUiCashManagement-cashupMultiColumn .obUiMultiColumn-leftToolbar .obUiMultiColumnToolbar-standardToolbar-toolbar {
     grid-template-areas: "obObposcashmgmtUiRightToolbarImpl-btnCashMgmt obObposcashmgmtUiLeftToolbarImpl-btnCancel obObposcashmgmtUiLeftToolbarImpl-btnDone obObposcashmgmtUiRightToolbarImpl-btnToggleView";
     grid-template-columns: repeat(4, calc(100% / 4));
+  }
+
+  .obObposcashmgmtUiCashManagement-cashupMultiColumn-rightToolbar {
+    display: none;
+  }
+
+  .obUiMultiColumn-panels.obUiMultiColumn-panels-showKeypad .obObposcashmgmtUiCashManagement-cashupMultiColumn-cashmgmtLeftPanel {
+    display: none;
+  }
+
+  .obUiMultiColumn-panels:not(.obUiMultiColumn-panels-showKeypad) .obObposcashmgmtUiCashManagement-cashupMultiColumn-cashmgmtRightPanel {
+    display: none;
   }
 }
 
@@ -13628,7 +13666,14 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObPosCashUpUiLeftToolbarImpl-btnToggleView {
   /*Inherits: [OB.UI.ToolbarButton]*/
+  display: none; /* To be displayed only in portrait mode */
   grid-area: obObPosCashUpUiLeftToolbarImpl-btnToggleView;
+}
+
+@media all and (max-width: 800px) {
+  .obObPosCashUpUiLeftToolbarImpl-btnToggleView {
+    display: block;
+  }
 }
 
 .obObPosCashUpUiLeftToolbarImpl-btnToggleView  .obUiButton-components-before {
@@ -13712,11 +13757,25 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObPosCashupUiCashUp-rightToolbar-btnCashUp {
   /* Inherits:[OB.OBPOSCashUp.UI.Button] */
+  grid-area: obObPosCashupUiCashUp-rightToolbar-btnCashUp;
 }
 
-.obObPosCashupUiCashUp-rightToolbar-btnCashUp {
-  /*Inherits: [OB.UI.ToolbarButton]*/
-  grid-area: .obObPosCashupUiCashUp-rightToolbar-btnCashUp;
+.obObPosCashupUiCashUp-cashupMultiColumn-leftToolbar .obObPosCashupUiCashUp-rightToolbar-btnCashUp {
+  display: none; /* To be displayed only in portrait mode */
+}
+
+.obObPosCashupUiCashUp-cashupMultiColumn-rightToolbar .obObPosCashupUiCashUp-rightToolbar-btnCashUp {
+  display: block;
+}
+
+@media all and (max-width: 800px) {
+  .obObPosCashupUiCashUp-cashupMultiColumn-leftToolbar .obObPosCashupUiCashUp-rightToolbar-btnCashUp {
+    display: block; /* To be displayed only in portrait mode */
+  }
+
+  .obObPosCashupUiCashUp-cashupMultiColumn-rightToolbar .obObPosCashupUiCashUp-rightToolbar-btnCashUp {
+    display: none; /* To be displayed only in landscape mode */
+  }
 }
 
 .obObPosCashupUiCashUp-rightToolbar-btnCashUp .obUiButton-components {
@@ -13815,12 +13874,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   grid-template-columns: repeat(1, calc(100% / 1));
 }
 
-@media all and (min-width: 800px) {
-  .obObPosCashUpUiLeftToolbarImpl-btnToggleView {
-    display: none;
-  }
-}
-
 @media all and (max-width: 800px) {
   /* Implementation: WebPOS CashUp Multicolumn */
   .obObPosCashupUiCashUp-cashupMultiColumn .obUiMultiColumn-panels {
@@ -13844,6 +13897,18 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   .obObPosCashupUiCashUp-cashupMultiColumn .obUiMultiColumn-leftToolbar .obUiMultiColumnToolbar-standardToolbar-toolbar {
     grid-template-areas: "obObPosCashupUiCashUp-rightToolbar-btnCashUp obObPosCashUpUiLeftToolbarImpl-btnPrevious obObPosCashUpUiLeftToolbarImpl-btnCancel obObPosCashUpUiLeftToolbarImpl-btnNext obObPosCashUpUiLeftToolbarImpl-btnToggleView";
     grid-template-columns: repeat(5, calc(100% / 5));
+  }
+
+  .obObPosCashupUiCashUp-cashupMultiColumn-rightToolbar {
+    display: none;
+  }
+
+  .obUiMultiColumn-panels.obUiMultiColumn-panels-showKeypad .obObPosCashupUiCashUp-cashupMultiColumn-cashupLeftPanel {
+    display: none;
+  }
+
+  .obUiMultiColumn-panels:not(.obUiMultiColumn-panels-showKeypad) .obObPosCashupUiCashUp-cashupMultiColumn-cashupRightPanel {
+    display: none;
   }
 }
 
