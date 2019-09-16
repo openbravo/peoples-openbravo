@@ -423,7 +423,6 @@
 .selectPrinterLine-container1 {
   line-height: 23px;
   width: 100%;
-  padding-left: 15px;
   border-bottom: var(--bottomseparator-slim);
 }
 
@@ -431,14 +430,12 @@
 
 .selectPrinterLine-container1-container1-selected {
   /*Inherits: [OB.UI.RadioButton]*/
-  float: left;
-  padding-left: 60px;
+  padding-left: 40px;
   margin: 10px;
 }
 
 .selectPrinterLine-selected-printer {
-  padding: 5px 0px 0px 0px;
-  font-size: 125%;
+  padding: 3px 0px 0px 0px;
 }
 
 .selectPrinterLine-container1-container2 {
@@ -8351,7 +8348,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   height: 50px;
   text-decoration: none;
   background-color: var(--color-maincolor);
-  font-size: var(--font-medium-large);
+  font-size: var(--font-medium);
   color: var(--color-secondarycolor);
   text-align: center;
   border: 1px solid var(--color-maincolor);
@@ -8461,15 +8458,13 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   height: 50px;
   padding: 0px 0px 0px 15px;
   box-sizing: border-box;
-  font-size: 20px;
+  font-size: var(--font-large);
   font-weight: bold;
   color: var(--color-maincolor);
   border-bottom: var(--bottomseparator-slim);
 }
 
-.obObposPointOfSaleUiProductDetailsViewHeader-productName {
-  float: left;
-}
+.obObposPointOfSaleUiProductDetailsViewHeader-productName {}
 
 .obObposPointOfSaleUiProductDetailsViewHeader-buttonClose {
 /* Inherits: [OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonClose] */
@@ -8503,7 +8498,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiProductDetailsViewBody-container2-warehouseToGet {
   line-height: 20px;
-  font-size: var(--font-large);
+  font-size: var(--font-medium-large);
   color: #000000;
 }
 
@@ -9293,7 +9288,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   text-decoration: none;
   min-width: 110px;
   background-color: var(--color-maincolor);
-  font-size: var(--font-medium-large);
+  font-size: var(--font-medium);
   color: var(--color-secondarycolor);
   margin: 6px;
   height: 50px;
