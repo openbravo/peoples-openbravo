@@ -455,38 +455,6 @@ public class OrderLoader extends POSDataSynchronizationProcess
               + "; Shipment: " + (t115 - t113) + "; Approvals" + (t11 - t115) + "; stock"
               + (t4 - t3) + "; Invoice: " + (t116 - t4) + ";");
         }
-
-        if (useOrderDocumentNoForRelatedDocs) {
-          paymentCount = countPayments(order);
-        }
-        if (log.isDebugEnabled()) {
-          t5 = System.currentTimeMillis();
-        }
-
-        if (!isQuotation && !isDeleted) {
-          // Payment
-          paymentResponse = handlePayments(jsonorder, order, invoice);
-          if (paymentResponse
-              .getInt(JsonConstants.RESPONSE_STATUS) == JsonConstants.RPCREQUEST_STATUS_FAILURE) {
-            return paymentResponse;
-          }
-        }
-
-        if (createShipment || createInvoice || (!isQuotation && !isDeleted)) {
-          // do the docnumbers at the end
-          OBContext.setAdminMode(false);
-          try {
-            for (DocumentNoHandler documentNoHandler : documentNoHandlers.get()) {
-              documentNoHandler.setDocumentNoAndSave();
-            }
-            OBDal.getInstance().flush();
-          } finally {
-            // set to null, should not be used anymore after this.
-            documentNoHandlers.set(null);
-            OBContext.restorePreviousMode();
-          }
-        }
-
       } catch (Exception ex) {
         throw new OBException("Error in OrderLoader: " + ex.getMessage(), ex);
       } finally {
@@ -498,6 +466,45 @@ public class OrderLoader extends POSDataSynchronizationProcess
         } catch (Throwable ignored) {
         }
       }
+
+      if (useOrderDocumentNoForRelatedDocs) {
+        paymentCount = countPayments(order);
+      }
+      if (log.isDebugEnabled()) {
+        t5 = System.currentTimeMillis();
+      }
+
+      if (!isQuotation && !isDeleted) {
+        // Payment
+        paymentResponse = handlePayments(jsonorder, order, invoice);
+        if (paymentResponse
+            .getInt(JsonConstants.RESPONSE_STATUS) == JsonConstants.RPCREQUEST_STATUS_FAILURE) {
+          return paymentResponse;
+        }
+      }
+
+      if (createShipment || createInvoice || (!isQuotation && !isDeleted)) {
+        // do the docnumbers at the end
+        OBContext.setAdminMode(false);
+        TriggerHandler.getInstance().disable();
+        try {
+          for (DocumentNoHandler documentNoHandler : documentNoHandlers.get()) {
+            documentNoHandler.setDocumentNoAndSave();
+          }
+          OBDal.getInstance().flush();
+        } finally {
+          // set to null, should not be used anymore after this.
+          documentNoHandlers.set(null);
+          try {
+            // enable triggers contains a flush in getConnection method
+            TriggerHandler.getInstance().enable();
+          } catch (Throwable ignored) {
+
+          }
+          OBContext.restorePreviousMode();
+        }
+      }
+
       if (!isQuotation && !isDeleted) {
         if (doCancelAndReplace && order.getReplacedorder() != null) {
           TriggerHandler.getInstance().disable();
