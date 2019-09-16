@@ -393,7 +393,7 @@ enyo.kind({
             });
 
           printInvoice = function(indx) {
-            if (data.length === indx) {
+            if (data.length <= indx) {
               return;
             }
             if (
