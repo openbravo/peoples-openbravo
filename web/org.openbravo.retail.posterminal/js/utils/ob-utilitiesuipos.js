@@ -835,13 +835,15 @@ OB.UTIL.refreshMasterDataInBackgroundSave = function() {
     null,
     true,
     function() {
-      OB.UTIL.masterdataRefreshStatus = '';
-      OB.DS.masterdataBackgroundModels = {};
-      OB.UTIL.showLoading(false);
-      if (OB.UTIL.RfidController.isRfidConfigured()) {
-        OB.UTIL.RfidController.connectRFIDDevice();
-      }
-      OB.MobileApp.model.set('isLoggingIn', false);
+      OB.Discounts.Pos.initCache({}, function() {
+        OB.UTIL.masterdataRefreshStatus = '';
+        OB.DS.masterdataBackgroundModels = {};
+        OB.UTIL.showLoading(false);
+        if (OB.UTIL.RfidController.isRfidConfigured()) {
+          OB.UTIL.RfidController.connectRFIDDevice();
+        }
+        OB.MobileApp.model.set('isLoggingIn', false);
+      });
     },
     'background-save'
   );
