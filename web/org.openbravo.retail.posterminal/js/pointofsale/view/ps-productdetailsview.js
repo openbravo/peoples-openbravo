@@ -11,9 +11,9 @@
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonStockThisStore',
-  kind: 'OB.UI.SmallButton',
+  kind: 'OB.UI.Button',
   classes:
-    'obObposPointOfSaleUiProductDetailsViewButtonStockThisStore obpos-product-details-view-buttons',
+    'obObposPointOfSaleUiProductDetailsViewButtonStockThisStore obUiActionButton',
   events: {
     onOpenLocalStockModal: '',
     onOpenLocalStockClickableModal: ''
@@ -35,9 +35,9 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonStockOtherStore',
-  kind: 'OB.UI.SmallButton',
+  kind: 'OB.UI.Button',
   classes:
-    'obObposPointOfSaleUiProductDetailsViewButtonStockOtherStore obpos-product-details-view-buttons',
+    'obObposPointOfSaleUiProductDetailsViewButtonStockOtherStore obUiActionButton',
   events: {
     onOpenOtherStoresStockModal: ''
   },
@@ -94,7 +94,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonAddToTicket',
-  kind: 'OB.UI.RegularButton',
+  kind: 'OB.UI.Button',
   classes: 'obObposPointOfSaleUiProductDetailsViewButtonAddToTicket',
   i18nLabel: 'OBPOS_addToTicket',
   events: {
@@ -244,10 +244,8 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonClose',
+  kind: 'OB.UI.Button',
   classes: 'obObposPointOfSaleUiProductDetailsViewButtonClose',
-  init: function() {
-    this.setContent(OB.I18N.getLabel('OBMOBC_Character')[2]);
-  },
   tap: function() {
     this.leftSubWindow.doCloseLeftSubWindow();
   }

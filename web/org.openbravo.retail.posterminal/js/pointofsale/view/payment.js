@@ -1132,9 +1132,7 @@ enyo.kind({
       this.updateCreditSalesAction();
       this.$.layawayaction.hide();
     } else {
-      if (
-        parseInt(paymentstatus.pending, 10) < parseInt(paymentstatus.total, 10)
-      ) {
+      if (paymentstatus.pendingAmt < paymentstatus.totalAmt) {
         this.$.exactbutton.setLabel(
           OB.I18N.getLabel(this.$.exactbutton.i18nLabelRemaining)
         );
@@ -1463,6 +1461,18 @@ enyo.kind({
       }
       this.updateCreditSalesAction();
     } else {
+      if (
+        OB.DEC.sub(multiOrders.get('total'), multiOrders.get('payment')) <
+        multiOrders.get('total')
+      ) {
+        this.$.exactbutton.setLabel(
+          OB.I18N.getLabel(this.$.exactbutton.i18nLabelRemaining)
+        );
+      } else {
+        this.$.exactbutton.setLabel(
+          OB.I18N.getLabel(this.$.exactbutton.i18nLabelTotal)
+        );
+      }
       this.setTotalPending(
         OB.DEC.mul(
           OB.DEC.sub(multiOrders.get('total'), multiOrders.get('payment')),

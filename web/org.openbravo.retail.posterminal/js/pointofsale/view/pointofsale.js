@@ -1053,7 +1053,7 @@ enyo.kind({
           OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
         this.showLeftSubWindow(inSender, inEvent);
         if (enyo.Panels.isScreenNarrow()) {
-          this.$.multiColumn.switchColumn();
+          this.$.multiColumn.$.rightToolbar.$.rightToolbar.$.toolbar.$.toolbarBtnCart.tap();
         }
         return true;
       } else {
