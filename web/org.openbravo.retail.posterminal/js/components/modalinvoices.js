@@ -393,7 +393,7 @@ enyo.kind({
             });
 
           printInvoice = function(indx) {
-            if (data.length <= indx) {
+            if (data.length === indx) {
               return;
             }
             if (
@@ -401,7 +401,7 @@ enyo.kind({
               data[indx].receiptLines.length === 0
             ) {
               finishPrintInvoices();
-              printInvoice(++indx);
+              printInvoice(indx + 1);
             } else {
               me.owner.model
                 .get('orderList')
@@ -425,13 +425,13 @@ enyo.kind({
                             args.cancelOperation === true
                           ) {
                             finishPrintInvoices();
-                            printInvoice(++indx);
+                            printInvoice(indx + 1);
                             return;
                           }
                           me.model.printReceipt.print(invoice, {
                             callback: function() {
                               finishPrintInvoices();
-                              printInvoice(++indx);
+                              printInvoice(indx + 1);
                             }
                           });
                         }
@@ -439,7 +439,7 @@ enyo.kind({
                     } catch (e) {
                       OB.error('Error printing the receipt:' + e);
                       finishPrintInvoices();
-                      printInvoice(++indx);
+                      printInvoice(indx + 1);
                     }
                   });
                 });
