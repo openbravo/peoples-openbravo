@@ -10891,18 +10891,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 
 .obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields {
-  display: grid;
-  grid-auto-flow: row;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-column-gap: 15px;
-}
-
-@media all and (max-aspect-ratio: 9/8) {
-  .obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields {
-    display: grid;
-    grid-auto-flow: row;
-    grid-template-columns: 1fr;
-  }
 }
 
 .obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-personalInfo{}
@@ -10917,7 +10905,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   grid-template-columns: 1fr 1fr 1fr;
 }
 
-@media all and (max-width: 800px) {
+@media all and (max-aspect-ratio: 9/8) {
   .obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-personalInfo-personalInfoFields {
     display: grid;
     grid-auto-flow: row;
@@ -10941,7 +10929,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   grid-template-columns: 1fr 1fr 1fr;
 }
 
-@media all and (max-width: 800px) {
+@media all and (max-aspect-ratio: 9/8) {
   .obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-contactInfo-contactInfoFields {
     display: grid;
     grid-auto-flow: row;
@@ -10966,7 +10954,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   grid-template-columns: 1fr 1fr 1fr;
 }
 
-@media all and (max-width: 800px) {
+@media all and (max-aspect-ratio: 9/8) {
   .obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-otherInfo-otherInfoFields {
     display: grid;
     grid-auto-flow: row;
@@ -11055,7 +11043,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   grid-template-columns: 1fr 1fr 1fr;
 }
 
-@media all and (max-width: 800px) {
+@media all and (max-aspect-ratio: 9/8) {
   .obObposPointOfSaleUiCustomersEditCreatecustomers-statistics-statisticsFields {
     display: grid;
     grid-auto-flow: row;
