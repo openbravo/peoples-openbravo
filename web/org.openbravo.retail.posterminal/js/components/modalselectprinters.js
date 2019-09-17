@@ -87,20 +87,21 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.ModalSelectPrinters',
-  kind: 'OB.UI.ModalAction',
+  kind: 'OB.UI.Modal',
   classes: 'obUiModalSelectPrinters',
   handlers: {
     onApplyChanges: 'applyChanges',
     onCancelChanges: 'cancelChanges'
   },
-  bodyContent: {
+  i18nHeader: 'OBPOS_SelectPrintersTitle',
+  body: {
     kind: 'Scroller',
     thumb: true,
-    classes: 'obUiModalSelectPrinters-bodyContent',
+    classes: 'obUiModalSelectPrinters-body',
     components: [
       {
         name: 'printerslist',
-        classes: 'obUiModalSelectPrinters-bodyContent-printerslist',
+        classes: 'obUiModalSelectPrinters-body-printerslist',
         selectURL: function(hardwareId) {
           var isalreadychecked = false;
 
@@ -136,15 +137,15 @@ enyo.kind({
       }
     ]
   },
-  bodyButtons: {
-    classes: 'obUiModalSelectPrinters-bodyButtons',
+  footer: {
+    classes: 'obUiModalSelectPrinters-footer',
     components: [
       {
-        classes: 'obUiModalSelectPrinters-bodyButtons-selectPrinterCancel',
+        classes: 'obUiModalSelectPrinters-footer-selectPrinterCancel',
         kind: 'SelectPrintersCancel'
       },
       {
-        classes: 'obUiModalSelectPrinters-bodyButtons-selectPrinterApply',
+        classes: 'obUiModalSelectPrinters-footer-selectPrinterApply',
         kind: 'SelectPrintersApply'
       }
     ]
@@ -168,9 +169,8 @@ enyo.kind({
 
   initComponents: function() {
     this.inherited(arguments);
-    this.printerscontainer = this.$.bodyContent.$.printerslist;
+    this.printerscontainer = this.$.body.$.printerslist;
     this.autoDismiss = false;
-    this.setHeader(OB.I18N.getLabel('OBPOS_SelectPrintersTitle'));
     this.successCallbackArray = [];
     this.cancellCallbackArray = [];
     this.hideCallbackArray = [];
@@ -246,13 +246,13 @@ enyo.kind({
     ) {
       this.closeOnEscKey = false;
       this.autoDismiss = false;
-      this.$.bodyButtons.$.selectPrintersCancel.hide();
-      this.$.headerCloseButton.hide();
+      this.$.footer.$.selectPrintersCancel.hide();
+      this.$.closebutton.hide();
     } else {
       this.closeOnEscKey = true;
       this.autoDismiss = true;
-      this.$.bodyButtons.$.selectPrintersCancel.show();
-      this.$.headerCloseButton.show();
+      this.$.footer.$.selectPrintersCancel.show();
+      this.$.closebutton.show();
     }
 
     if (OB.POS.hwserver.activeurl) {
@@ -275,14 +275,15 @@ enyo.kind({
     onApplyChanges: 'applyChanges',
     onCancelChanges: 'cancelChanges'
   },
-  bodyContent: {
-    classes: 'obUiModalSelectPDFPrinters-bodyContent',
+  i18nHeader: 'OBPOS_SelectPDFPrintersTitle',
+  body: {
+    classes: 'obUiModalSelectPDFPrinters-body',
     kind: 'Scroller',
     thumb: true,
     components: [
       {
         name: 'printerslist',
-        classes: 'obUiModalSelectPDFPrinters-bodyContent-printerslist',
+        classes: 'obUiModalSelectPDFPrinters-body-printerslist',
         selectURL: function(hardwareId) {
           var isalreadychecked = false;
 
@@ -318,18 +319,16 @@ enyo.kind({
       }
     ]
   },
-  bodyButtons: {
-    classes: 'obUiModalSelectPDFPrinters-bodyButtons',
+  footer: {
+    classes: 'obUiModalSelectPDFPrinters-footer',
     components: [
       {
-        classes:
-          'obUiModalSelectPDFPrinters-bodyButtons-selectPDFPrintersCancel',
+        classes: 'obUiModalSelectPDFPrinters-footer-selectPDFPrintersCancel',
         name: 'SelectPDFPrintersCancel',
         kind: 'SelectPrintersCancel'
       },
       {
-        classes:
-          'obUiModalSelectPDFPrinters-bodyButtons-selectPDFPrintersApply',
+        classes: 'obUiModalSelectPDFPrinters-footer-selectPDFPrintersApply',
         name: 'SelectPDFPrintersApply',
         kind: 'SelectPrintersApply'
       }
@@ -354,9 +353,8 @@ enyo.kind({
 
   initComponents: function() {
     this.inherited(arguments);
-    this.printerscontainer = this.$.bodyContent.$.printerslist;
+    this.printerscontainer = this.$.body.$.printerslist;
     this.autoDismiss = false;
-    this.setHeader(OB.I18N.getLabel('OBPOS_SelectPDFPrintersTitle'));
     this.successCallbackArray = [];
     this.cancellCallbackArray = [];
     this.hideCallbackArray = [];
@@ -432,13 +430,13 @@ enyo.kind({
     ) {
       this.closeOnEscKey = false;
       this.autoDismiss = false;
-      this.$.bodyButtons.$.SelectPDFPrintersCancel.hide();
-      this.$.headerCloseButton.hide();
+      this.$.footer.$.SelectPDFPrintersCancel.hide();
+      this.$.closebutton.hide();
     } else {
       this.closeOnEscKey = true;
       this.autoDismiss = true;
-      this.$.bodyButtons.$.SelectPDFPrintersCancel.show();
-      this.$.headerCloseButton.show();
+      this.$.footer.$.SelectPDFPrintersCancel.show();
+      this.$.closebutton.show();
     }
   },
 

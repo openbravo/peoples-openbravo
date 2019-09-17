@@ -17,6 +17,7 @@ enyo.kind({
     onHideThisPopup: '',
     onSelectCategoryTreeItem: ''
   },
+  hideCloseButton: true,
   body: {
     kind: 'OB.UI.ListCategories',
     classes: 'obUiModalCategoryTree-body',
@@ -30,7 +31,6 @@ enyo.kind({
     this.$.body.$.listCategories.$[
       this.$.body.$.listCategories.tableName
     ].$.theader.hide();
-    this.$.closebutton.hide();
     this.$.header.hide();
   },
 

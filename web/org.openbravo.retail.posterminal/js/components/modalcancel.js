@@ -10,26 +10,26 @@
 /*global enyo */
 
 enyo.kind({
-  kind: 'OB.UI.ModalAction',
+  kind: 'OB.UI.Modal',
   name: 'OB.UI.ModalCancel',
   popup: 'modalCancel',
   classes: 'obUiModalCancel',
   i18nHeader: 'OBMOBC_LblCancel',
-  bodyContent: {
-    classes: 'obUiModalCancel-bodyContent',
+  body: {
+    classes: 'obUiModalCancel-body',
     i18nContent: 'OBPOS_ProcessCancelDialog'
   },
-  bodyButtons: {
-    classes: 'obUiModalCancel-bodyButtons',
+  footer: {
+    classes: 'obUiModalCancel-footer',
     components: [
       {
         //Cancel button
-        classes: 'obUiModalCancel-bodyButtons-obUiModalCancelCancelButton',
+        classes: 'obUiModalCancel-footer-obUiModalCancelCancelButton',
         kind: 'OB.UI.ModalCancel_CancelButton'
       },
       {
         //OK button
-        classes: 'obUiModalCancel-bodyButtons-obUiModalCancelOkButton',
+        classes: 'obUiModalCancel-footer-obUiModalCancelOkButton',
         kind: 'OB.UI.ModalCancel_OkButton'
       }
     ]

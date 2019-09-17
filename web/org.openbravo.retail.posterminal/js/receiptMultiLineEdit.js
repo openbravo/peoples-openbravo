@@ -406,7 +406,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OBRDM.UI.ModalReceiptMultiLinesProperties',
-  kind: 'OB.UI.ModalAction',
+  kind: 'OB.UI.Modal',
   classes: 'obrdmUiModalReceiptMultiLinesProperties',
   handlers: {
     onApplyChanges: 'applyChanges'
@@ -454,20 +454,19 @@ enyo.kind({
     }
   },
   i18nHeader: 'OBRDM_ReceiptLineDeliveryModeDialogTitle',
-  bodyContent: {
+  body: {
     kind: 'Scroller',
-    classes: 'obrdmUiModalReceiptMultiLinesProperties-bodyContent',
+    classes: 'obrdmUiModalReceiptMultiLinesProperties-body',
     thumb: true,
     horizontal: 'hidden',
     components: [
       {
         name: 'attributes',
-        classes:
-          'obrdmUiModalReceiptMultiLinesProperties-bodyContent-attributes'
+        classes: 'obrdmUiModalReceiptMultiLinesProperties-body-attributes'
       }
     ]
   },
-  bodyButtons: {
+  footer: {
     components: [
       {
         kind: 'OBRDM.UI.MultiReceiptPropertiesDialogCancel',
@@ -778,15 +777,14 @@ enyo.kind({
   },
   initComponents: function() {
     this.inherited(arguments);
-    this.attributeContainer = this.$.bodyContent.$.attributes;
-    this.setHeader(OB.I18N.getLabel(this.i18nHeader));
+    this.attributeContainer = this.$.body.$.attributes;
 
     this.propertycomponents = {};
 
     enyo.forEach(
       this.newAttributes,
       function(natt) {
-        var editline = this.$.bodyContent.$.attributes.createComponent({
+        var editline = this.$.body.$.attributes.createComponent({
           kind: 'OB.UI.PropertyEditLine',
           name: 'line_' + natt.name,
           classes: 'obrdmUiModalReceiptMultiLinesProperties-line',

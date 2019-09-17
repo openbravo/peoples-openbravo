@@ -768,19 +768,18 @@ enyo.kind({
     );
     this.waterfall('onSearchAction');
   },
+  hideCloseButton: true,
   i18nHeader: '',
+  header: {
+    kind: 'OB.UI.ModalProductChTopHeader',
+    classes: 'obUiModalProductCharacteristic-header-obUiModalProductChTopHeader'
+  },
   body: {
     kind: 'OB.UI.ListValues',
     classes: 'obUiModalProductCharacteristic-body-obUiListValues'
   },
   initComponents: function() {
     this.inherited(arguments);
-    this.$.closebutton.hide();
-    this.$.header.createComponent({
-      kind: 'OB.UI.ModalProductChTopHeader',
-      classes:
-        'obUiModalProductCharacteristic-header-obUiModalProductChTopHeader'
-    });
   },
   addToSelected: function(inSender, inEvent) {
     var index = this.selected

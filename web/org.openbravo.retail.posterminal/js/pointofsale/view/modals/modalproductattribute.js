@@ -8,13 +8,14 @@
  */
 /*global OB, enyo */
 enyo.kind({
-  kind: 'OB.UI.ModalAction',
+  kind: 'OB.UI.Modal',
   name: 'OB.UI.ModalProductAttributes',
   classes: 'obUiModalProductAttributes',
   i18nHeader: 'OBPOS_ProductAttributeValueDialogTitle',
   autoDismiss: false,
-  bodyContent: {
-    classes: 'obUiModalProductAttributes-bodyContent',
+  hideCloseButton: true,
+  body: {
+    classes: 'obUiModalProductAttributes-body',
     components: [
       {
         initComponents: function() {
@@ -31,19 +32,18 @@ enyo.kind({
           maxlength: 190
         },
         name: 'valueAttribute',
-        classes: 'obUiModalProductAttributes-bodyContent-valueAttribute',
+        classes: 'obUiModalProductAttributes-body-valueAttribute',
         selectOnFocus: true,
         isFirstFocus: true
       }
     ]
   },
-  bodyButtons: {
-    classes: 'obUiModalProductAttributes-bodyButtons',
+  footer: {
+    classes: 'obUiModalProductAttributes-footer',
     components: [
       {
         kind: 'OB.UI.ModalDialogButton',
-        classes:
-          'obUiModalProductAttributes-bodyButtons-obUiModalDialogButton1',
+        classes: 'obUiModalProductAttributes-footer-obUiModalDialogButton1',
         i18nContent: 'OBMOBC_LblOk',
         tap: function() {
           this.owner.owner.saveAction();
@@ -51,8 +51,7 @@ enyo.kind({
       },
       {
         kind: 'OB.UI.ModalDialogButton',
-        classes:
-          'obUiModalProductAttributes-bodyButtons-obUiModalDialogButton2',
+        classes: 'obUiModalProductAttributes-footer-obUiModalDialogButton2',
         i18nContent: 'OBPOS_LblClear',
         tap: function() {
           this.owner.owner.clearAction();
@@ -60,8 +59,7 @@ enyo.kind({
       },
       {
         kind: 'OB.UI.ModalDialogButton',
-        classes:
-          'obUiModalProductAttributes-bodyButtons-obUiModalDialogButton3',
+        classes: 'obUiModalProductAttributes-footer-obUiModalDialogButton3',
         i18nContent: 'OBMOBC_LblCancel',
         tap: function() {
           this.owner.owner.cancelAction();
@@ -76,7 +74,7 @@ enyo.kind({
     return true;
   },
   saveAttribute: function(inSender, inEvent) {
-    var inpAttributeValue = this.$.bodyContent.$.valueAttribute.getValue();
+    var inpAttributeValue = this.$.body.$.valueAttribute.getValue();
     inpAttributeValue = inpAttributeValue.replace(/\s+/, '');
     if (
       (this.validAttribute(inpAttributeValue) && inpAttributeValue) ||
@@ -92,7 +90,7 @@ enyo.kind({
     }
   },
   clearAction: function() {
-    this.$.bodyContent.$.valueAttribute.setValue(null);
+    this.$.body.$.valueAttribute.setValue(null);
     return;
   },
   cancelAction: function() {
@@ -107,19 +105,16 @@ enyo.kind({
     return;
   },
   executeOnHide: function() {
-    this.$.bodyContent.$.valueAttribute.setValue(null);
+    this.$.body.$.valueAttribute.setValue(null);
   },
   executeOnShow: function() {
     if (this.args.options.attSetInstanceDesc) {
-      this.$.bodyContent.$.valueAttribute.setValue(
+      this.$.body.$.valueAttribute.setValue(
         this.args.options.attSetInstanceDesc
       );
     } else if (this.args.options.attributeValue) {
-      this.$.bodyContent.$.valueAttribute.setValue(
-        this.args.options.attributeValue
-      );
+      this.$.body.$.valueAttribute.setValue(this.args.options.attributeValue);
     }
-    this.$.headerCloseButton.hide();
   },
   initComponents: function() {
     this.inherited(arguments);

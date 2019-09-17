@@ -463,6 +463,7 @@ enyo.kind({
     );
     this.waterfall('onSearchAction');
   },
+  hideCloseButton: true,
   i18nHeader: '',
   body: {
     kind: 'OB.UI.ListBrands',
@@ -470,7 +471,6 @@ enyo.kind({
   },
   initComponents: function() {
     this.inherited(arguments);
-    this.$.closebutton.hide();
     this.$.header.createComponent({
       kind: 'OB.UI.ModalProductBrandTopHeader',
       classes: 'obUiModalProductBrand-header-obUiModalProductBrandTopHeader'

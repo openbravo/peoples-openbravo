@@ -149,15 +149,15 @@
 /***********************   ***********************/
 /*
 # Component: OB.UI.ModalCancel
-# Inherits: [OB.UI.ModalAction]
+# Inherits: [OB.UI.Modal]
 */
 .obUiModalCancel {}
 
-.obUiModalCancel-bodyContent {}
+.obUiModalCancel-body {}
 
-.obUiModalCancel-bodyButtons-obUiModalCancelOkButton {}
+.obUiModalCancel-footer-obUiModalCancelOkButton {}
 
-.obUiModalCancel-bodyButtons-obUiModalCancelCancelButton {}
+.obUiModalCancel-footer-obUiModalCancelCancelButton {}
 
 
 
@@ -462,11 +462,11 @@
 
 /*
 # Component: OB.UI.ModalSelectPrinters
-# Inherits: [OB.UI.ModalAction]
+# Inherits: [OB.UI.Modal]
 */
 .obUiModalSelectPrinters {}
 
-.obUiModalSelectPrinters-bodyContent {
+.obUiModalSelectPrinters-body {
   /*Inherits: [Scroller]*/
   max-height: 225px;
   background-color: var(--color-primary-lighter);
@@ -474,23 +474,23 @@
   overflow-y: auto;
 }
 
-.obUiModalSelectPrinters-bodyContent-printerslist {}
+.obUiModalSelectPrinters-body-printerslist {}
 
-.obUiModalSelectPrinters-bodyButtons {}
+.obUiModalSelectPrinters-footer {}
 
-.obUiModalSelectPrinters-bodyButtons-selectPrinterApply {}
+.obUiModalSelectPrinters-footer-selectPrinterApply {}
 
-.obUiModalSelectPrinters-bodyButtons-selectPrinterCancel {}
+.obUiModalSelectPrinters-footer-selectPrinterCancel {}
 
 
 
 /*
 # Component: OB.UI.ModalSelectPDFPrinters
-# Inherits: [OB.UI.ModalAction]
+# Inherits: [OB.UI.Modal]
 */
 .obUiModalSelectPDFPrinters {}
 
-.obUiModalSelectPDFPrinters-bodyContent {
+.obUiModalSelectPDFPrinters-body {
   /*Inherits: [Scroller]*/
   max-height: 225px;
   background-color: var(--color-primary-lighter);
@@ -498,13 +498,13 @@
   overflow-y: auto;
 }
 
-.obUiModalSelectPDFPrinters-bodyContent-printerslist {}
+.obUiModalSelectPDFPrinters-body-printerslist {}
 
-.obUiModalSelectPDFPrinters-bodyButtons {}
+.obUiModalSelectPDFPrinters-footer {}
 
-.obUiModalSelectPDFPrinters-bodyButtons-selectPDFPrintersApply {}
+.obUiModalSelectPDFPrinters-footer-selectPDFPrintersApply {}
 
-.obUiModalSelectPDFPrinters-bodyButtons-selectPDFPrintersCancel {}
+.obUiModalSelectPDFPrinters-footer-selectPDFPrintersCancel {}
 
 
 
@@ -5158,15 +5158,15 @@ li.selected > .obUiRenderOrderLine_edit {
 /***********************   ***********************/
 /*
 # Component: OB.UI.ModalSelectTerminal
-# Inherits: [OB.UI.ModalAction]
+# Inherits: [OB.UI.Modal]
 */
 .obUiModalSelectTerminal {}
 
-.obUiModalSelectTerminal-bodyContent {}
+.obUiModalSelectTerminal-body {}
 
-.obUiModalSelectTerminal-bodyButtons {}
+.obUiModalSelectTerminal-footer {}
 
-.obUiModalSelectTerminal-bodyButtons-terminalKeyIdentifier {
+.obUiModalSelectTerminal-footer-terminalKeyIdentifier {
   /*Inherits: [enyo.Input]*/
   height: 30px;
   background-color: var(--color-primary-lighter);
@@ -5182,7 +5182,7 @@ li.selected > .obUiRenderOrderLine_edit {
   margin-right: auto;
 }
 
-.obUiModalSelectTerminal-bodyButtons-username {
+.obUiModalSelectTerminal-footer-username {
   /*Inherits: [enyo.Input]*/
   height: 30px;
   background-color: var(--color-primary-lighter);
@@ -5198,7 +5198,7 @@ li.selected > .obUiRenderOrderLine_edit {
   margin-right: auto;
 }
 
-.obUiModalSelectTerminal-bodyButtons-password {
+.obUiModalSelectTerminal-footer-password {
   /*Inherits: [enyo.Input]*/
   height: 30px;
   background-color: var(--color-primary-lighter);
@@ -5214,7 +5214,7 @@ li.selected > .obUiRenderOrderLine_edit {
   margin-right: auto;
 }
 
-.obUiModalSelectTerminal-bodyButtons-element1 {
+.obUiModalSelectTerminal-footer-element1 {
   /*Inherits: [OB.UI.btnApplyTerminal]*/
 }
 
@@ -5649,26 +5649,26 @@ li.selected > .obUiRenderOrderLine_edit {
 
 /*
 # Component: OB.UI.ModalSplitLine
-# Inherits: [OB.UI.ModalAction]
+# Inherits: [OB.UI.Modal]
 */
 .obUiModalSplitLine {}
 
-.obUiModalSplitLine-bodyContent {}
+.obUiModalSplitLine-body {}
 
-.obUiModalSplitLine-bodyContent-splitlineMessage {
+.obUiModalSplitLine-body-splitlineMessage {
   padding: 6px 0px 0px 14px;
 }
 
-.obUiModalSplitLine-bodyContent-container2 {
+.obUiModalSplitLine-body-container2 {
   background-color: #fff;
   height: 32px;
   color: black;
   font-size: var(--font-medium);
 }
 
-.obUiModalSplitLine-bodyContent-container2-element1,
-.obUiModalSplitLine-bodyContent-container2-element2,
-.obUiModalSplitLine-bodyContent-container2-element4 {
+.obUiModalSplitLine-body-container2-element1,
+.obUiModalSplitLine-body-container2-element2,
+.obUiModalSplitLine-body-container2-element4 {
   width: 25%;
   float: left;
   background-color: #e2e2e2;
@@ -5676,7 +5676,7 @@ li.selected > .obUiRenderOrderLine_edit {
   vertical-align: middle;
 }
 
-.obUiModalSplitLine-bodyContent-container2-element3 {
+.obUiModalSplitLine-body-container2-element3 {
   width: calc(25% - 12px);
   float: left;
   background-color: #e2e2e2;
@@ -5684,39 +5684,39 @@ li.selected > .obUiRenderOrderLine_edit {
   vertical-align: middle;
 }
 
-.obUiModalSplitLine-bodyContent-container3 {
+.obUiModalSplitLine-body-container3 {
   background-color: #fff;
   height: 34px;
   color: black;
 }
 
-.obUiModalSplitLine-bodyContent-container3-container1,
-.obUiModalSplitLine-bodyContent-container3-container2,
-.obUiModalSplitLine-bodyContent-container3-container3,
-.obUiModalSplitLine-bodyContent-container3-container4 {
+.obUiModalSplitLine-body-container3-container1,
+.obUiModalSplitLine-body-container3-container2,
+.obUiModalSplitLine-body-container3-container3,
+.obUiModalSplitLine-body-container3-container4 {
   width: 25%;
   float: left;
   background-color: #fff;
   text-align: center;
 }
 
-.obUiModalSplitLine-bodyContent-container3-container1-originalQty,
-.obUiModalSplitLine-bodyContent-container3-container2-splitQty,
-.obUiModalSplitLine-bodyContent-container3-container3-differenceQty {
+.obUiModalSplitLine-body-container3-container1-originalQty,
+.obUiModalSplitLine-body-container3-container2-splitQty,
+.obUiModalSplitLine-body-container3-container3-differenceQty {
 /* Inherits: [OB.UI.EditNumber] */
   width: 40px;
   height: 23px;
 }
 
-.obUiModalSplitLine-bodyContent-container3-container4-numberlinesQty {
+.obUiModalSplitLine-body-container3-container4-numberlinesQty {
 /* Inherits: [OB.UI.ModalNumberEditor] */
 }
 
-.obUiModalSplitLine-bodyContent-element4 {
+.obUiModalSplitLine-body-element4 {
   height: 15px;
 }
 
-.obUiModalSplitLine-bodyContent-container5 {
+.obUiModalSplitLine-body-container5 {
   width: 100%;
   clear: both;
   background-color: #fff;
@@ -5725,7 +5725,7 @@ li.selected > .obUiRenderOrderLine_edit {
   display: none;
 }
 
-.obUiModalSplitLine-bodyContent-container5-element1 {
+.obUiModalSplitLine-body-container5-element1 {
   float: left;
   width: 50%;
   background-color: #e2e2e2;
@@ -5736,28 +5736,28 @@ li.selected > .obUiRenderOrderLine_edit {
   color: black;
 }
 
-.obUiModalSplitLine-bodyContent-container5-container2 {
+.obUiModalSplitLine-body-container5-container2 {
   float: left;
   width: 40%;
   text-align: left;
   padding-left: 5px;
 }
 
-.obUiModalSplitLine-bodyContent-container5-container2-numberlinesQtyMobile {
+.obUiModalSplitLine-body-container5-container2-numberlinesQtyMobile {
 /* Inherits: [OB.UI.ModalNumberEditor] */
   float: left;
 }
 
-.obUiModalSplitLine-bodyContent-container6 {
+.obUiModalSplitLine-body-container6 {
   height: 15px;
   display: none;
 }
 
-.obUiModalSplitLine-bodyContent-qtyLines {
+.obUiModalSplitLine-body-qtyLines {
 /* Inherits: [OB.UI.ModalSplitLinesTable] */
 }
 
-.obUiModalSplitLine-bodyContent-labelError {
+.obUiModalSplitLine-body-labelError {
   padding: 6px 0px 0px 14px;
   color: yellow;
 }
@@ -5773,46 +5773,46 @@ li.selected > .obUiRenderOrderLine_edit {
 }
 
 @media all and (max-aspect-ratio: 9/8) {
-  .obUiModalSplitLine-bodyContent-container2 {
+  .obUiModalSplitLine-body-container2 {
     height: 60px;
   }
 
-  .obUiModalSplitLine-bodyContent-container2-element1,
-  .obUiModalSplitLine-bodyContent-container2-element2 {
+  .obUiModalSplitLine-body-container2-element1,
+  .obUiModalSplitLine-body-container2-element2 {
     width: 33%;
     height: 58px;
   }
 
-  .obUiModalSplitLine-bodyContent-container2-element3 {
+  .obUiModalSplitLine-body-container2-element3 {
     width: calc(33% - 4px);
     height: 58px;
   }
 
-  .obUiModalSplitLine-bodyContent-container2-element4 {
+  .obUiModalSplitLine-body-container2-element4 {
     display: none;
   }
 
-  .obUiModalSplitLine-bodyContent-container3-container1,
-  .obUiModalSplitLine-bodyContent-container3-container2,
-  .obUiModalSplitLine-bodyContent-container3-container3 {
+  .obUiModalSplitLine-body-container3-container1,
+  .obUiModalSplitLine-body-container3-container2,
+  .obUiModalSplitLine-body-container3-container3 {
     width: 33%;
   }
 
-  .obUiModalSplitLine-bodyContent-container3-container4 {
+  .obUiModalSplitLine-body-container3-container4 {
     display: none;
   }
 
-  .obUiModalSplitLine-bodyContent-container5,
-  .obUiModalSplitLine-bodyContent-container6 {
+  .obUiModalSplitLine-body-container5,
+  .obUiModalSplitLine-body-container6 {
     display: block;
   }
 
-  .obUiModalSplitLine-bodyContent-container5-element1 {
+  .obUiModalSplitLine-body-container5-element1 {
     width: 35%;
     height: 53px;
   }
 
-  .obUiModalSplitLine-bodyContent-container5-container2 {
+  .obUiModalSplitLine-body-container5-container2 {
     width: 59%;
   }
 }
@@ -12682,26 +12682,26 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /***********************   ***********************/
 /*
 # Component: OB.UI.ModalProductAttributes
-# Inherits: [OB.UI.ModalAction]
+# Inherits: [OB.UI.Modal]
 */
 .obUiModalProductAttributes {}
 
-.obUiModalProductAttributes-bodyContent {}
+.obUiModalProductAttributes-body {}
 
-.obUiModalProductAttributes-bodyContent-valueAttribute {
-  /*Inherits: [OB.UI.ModalAction]*/
+.obUiModalProductAttributes-body-valueAttribute {
+  /*Inherits: [OB.UI.Modal]*/
   text-align: center;
   width: 400px;
   height: 40px;
 }
 
-.obUiModalProductAttributes-bodyButtons {}
+.obUiModalProductAttributes-footer {}
 
-.obUiModalProductAttributes-bodyButtons-obUiModalDialogButton1 {}
+.obUiModalProductAttributes-footer-obUiModalDialogButton1 {}
 
-.obUiModalProductAttributes-bodyButtons-obUiModalDialogButton2 {}
+.obUiModalProductAttributes-footer-obUiModalDialogButton2 {}
 
-.obUiModalProductAttributes-bodyButtons-obUiModalDialogButton3 {}
+.obUiModalProductAttributes-footer-obUiModalDialogButton3 {}
 
 
 
@@ -12843,11 +12843,11 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /***********************   ***********************/
 /*
 # Component: OB.UI.ModalChange
-# Inherits: [OB.UI.ModalAction]
+# Inherits: [OB.UI.Modal]
 */
 .obUiModalChange {}
 
-.obUiModalChange-bodyContent-bodyattributes {}
+.obUiModalChange-body-bodyattributes {}
 
 .obUiModalChange-bodyattributes-scroller {
 /* Inherits: [Scroller] */
@@ -15874,17 +15874,17 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 /*
 # Component: OBRDM.UI.ModalReceiptMultiLinesProperties
-# Inherits: [OB.UI.ModalAction]
+# Inherits: [OB.UI.Modal]
 */
 .obrdmUiModalReceiptMultiLinesProperties {}
 
-.obrdmUiModalReceiptMultiLinesProperties-bodyContent {
+.obrdmUiModalReceiptMultiLinesProperties-body {
   /* Inherits: [Scroller] */
   max-height: 225px;
   background-color: #ffffff;
 }
 
-.obrdmUiModalReceiptMultiLinesProperties-bodyContent-attributes {}
+.obrdmUiModalReceiptMultiLinesProperties-body-attributes {}
 
 .obrdmUiModalReceiptMultiLinesProperties-receiptMultiLinePropertiesApplyBtn {
   /* Inherits: [OBRDM.UI.MultiReceiptPropertiesDialogApply] */

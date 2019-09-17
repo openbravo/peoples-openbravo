@@ -219,10 +219,10 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.ModalAction',
+  kind: 'OB.UI.Modal',
   name: 'OB.UI.ModalSplitLine',
   i18nHeader: 'OBPOS_lblSplit',
-  topPosition: '60px',
+  topPosition: '60px', //FIXME-SKIN
   classes: 'obUiModalSplitLine',
   events: {
     onHideThisPopup: '',
@@ -232,39 +232,39 @@ enyo.kind({
     onNumberChange: 'numberChange'
   },
   //body of the popup
-  bodyContent: {
-    classes: 'obUiModalSplitLine-bodyContent',
+  body: {
+    classes: 'obUiModalSplitLine-body',
     components: [
       {
-        classes: 'obUiModalSplitLine-bodyContent-splitlineMessage',
+        classes: 'obUiModalSplitLine-body-splitlineMessage',
         name: 'splitlineMessage',
         initComponents: function() {
           this.setContent(OB.I18N.getLabel('OBPOS_lblSplitWarning'));
         }
       },
       {
-        classes: 'obUiModalSplitLine-bodyContent-container2',
+        classes: 'obUiModalSplitLine-body-container2',
         components: [
           {
-            classes: 'obUiModalSplitLine-bodyContent-container2-element1',
+            classes: 'obUiModalSplitLine-body-container2-element1',
             initComponents: function() {
               this.setContent(OB.I18N.getLabel('OBPOS_lblSplitOriginalQty'));
             }
           },
           {
-            classes: 'obUiModalSplitLine-bodyContent-container2-element2',
+            classes: 'obUiModalSplitLine-body-container2-element2',
             initComponents: function() {
               this.setContent(OB.I18N.getLabel('OBPOS_lblSplitQty'));
             }
           },
           {
-            classes: 'obUiModalSplitLine-bodyContent-container2-element3',
+            classes: 'obUiModalSplitLine-body-container2-element3',
             initComponents: function() {
               this.setContent(OB.I18N.getLabel('OBPOS_lblSplitDifference'));
             }
           },
           {
-            classes: 'obUiModalSplitLine-bodyContent-container2-element4',
+            classes: 'obUiModalSplitLine-body-container2-element4',
             initComponents: function() {
               this.setContent(OB.I18N.getLabel('OBPOS_lblSplitNumberLines'));
             }
@@ -272,16 +272,16 @@ enyo.kind({
         ]
       },
       {
-        classes: 'obUiModalSplitLine-bodyContent-container3',
+        classes: 'obUiModalSplitLine-body-container3',
         components: [
           {
-            classes: 'obUiModalSplitLine-bodyContent-container3-container1',
+            classes: 'obUiModalSplitLine-body-container3-container1',
             components: [
               {
                 kind: 'OB.UI.EditNumber',
                 name: 'originalQty',
                 classes:
-                  'obUiModalSplitLine-bodyContent-container3-container1-originalQty',
+                  'obUiModalSplitLine-body-container3-container1-originalQty',
                 initComponents: function() {
                   this.setDisabled(true);
                 }
@@ -289,13 +289,13 @@ enyo.kind({
             ]
           },
           {
-            classes: 'obUiModalSplitLine-bodyContent-container3-container2',
+            classes: 'obUiModalSplitLine-body-container3-container2',
             components: [
               {
                 kind: 'OB.UI.EditNumber',
                 name: 'splitQty',
                 classes:
-                  'obUiModalSplitLine-bodyContent-container3-container2-splitQty',
+                  'obUiModalSplitLine-body-container3-container2-splitQty',
                 initComponents: function() {
                   this.setDisabled(true);
                 }
@@ -303,13 +303,13 @@ enyo.kind({
             ]
           },
           {
-            classes: 'obUiModalSplitLine-bodyContent-container3-container3',
+            classes: 'obUiModalSplitLine-body-container3-container3',
             components: [
               {
                 kind: 'OB.UI.EditNumber',
                 name: 'differenceQty',
                 classes:
-                  'obUiModalSplitLine-bodyContent-container3-container3-differenceQty',
+                  'obUiModalSplitLine-body-container3-container3-differenceQty',
                 initComponents: function() {
                   this.setDisabled(true);
                 }
@@ -317,13 +317,13 @@ enyo.kind({
             ]
           },
           {
-            classes: 'obUiModalSplitLine-bodyContent-container3-container4',
+            classes: 'obUiModalSplitLine-body-container3-container4',
             components: [
               {
                 kind: 'OB.UI.ModalNumberEditor',
                 name: 'numberlinesQty',
                 classes:
-                  'obUiModalSplitLine-bodyContent-container3-container4-numberlinesQty',
+                  'obUiModalSplitLine-body-container3-container4-numberlinesQty',
                 maxLines: OB.SplitLine.MAX_SPLITLINE
               }
             ]
@@ -331,25 +331,25 @@ enyo.kind({
         ]
       },
       {
-        classes: 'obUiModalSplitLine-bodyContent-element4'
+        classes: 'obUiModalSplitLine-body-element4'
       },
       {
-        classes: 'obUiModalSplitLine-bodyContent-container5',
+        classes: 'obUiModalSplitLine-body-container5',
         components: [
           {
-            classes: 'obUiModalSplitLine-bodyContent-container5-element1',
+            classes: 'obUiModalSplitLine-body-container5-element1',
             initComponents: function() {
               this.setContent(OB.I18N.getLabel('OBPOS_lblSplitNumberLines'));
             }
           },
           {
-            classes: 'obUiModalSplitLine-bodyContent-container5-container2',
+            classes: 'obUiModalSplitLine-body-container5-container2',
             components: [
               {
                 kind: 'OB.UI.ModalNumberEditor',
                 name: 'numberlinesQtyMobile',
                 classes:
-                  'obUiModalSplitLine-bodyContent-container5-container2-numberlinesQtyMobile',
+                  'obUiModalSplitLine-body-container5-container2-numberlinesQtyMobile',
                 maxLines: 100
               }
             ]
@@ -357,15 +357,15 @@ enyo.kind({
         ]
       },
       {
-        classes: 'obUiModalSplitLine-bodyContent-container6'
+        classes: 'obUiModalSplitLine-body-container6'
       },
       {
         kind: 'OB.UI.ModalSplitLinesTable',
         name: 'qtyLines',
-        classes: 'obUiModalSplitLine-bodyContent-qtyLines'
+        classes: 'obUiModalSplitLine-body-qtyLines'
       },
       {
-        classes: 'obUiModalSplitLine-bodyContent-labelError',
+        classes: 'obUiModalSplitLine-body-labelError',
         name: 'labelError',
         showing: false,
         initComponents: function() {
@@ -375,17 +375,17 @@ enyo.kind({
     ]
   },
   //buttons of the popup
-  bodyButtons: {
-    classes: 'obUiModalSplitLine-bodyButtons',
+  footer: {
+    classes: 'obUiModalSplitLine-footer',
     components: [
       {
         kind: 'OB.UI.ModalSplitLine_btnCancel',
-        classes: 'obUiModalSplitLine-bodyButtons-obUiModalSplitLineBtnCancel'
+        classes: 'obUiModalSplitLine-footer-obUiModalSplitLineBtnCancel'
       },
       {
         kind: 'OB.UI.ModalSplitLine_btnApply',
         name: 'btnApply',
-        classes: 'obUiModalSplitLine-bodyButtons-btnApply'
+        classes: 'obUiModalSplitLine-footer-btnApply'
       }
     ]
   },
@@ -398,28 +398,28 @@ enyo.kind({
 
     maxRows = Math.min(
       this.orderline.get('qty'),
-      this.$.bodyContent.$.numberlinesQty.maxLines
+      this.$.body.$.numberlinesQty.maxLines
     );
     mobileMaxRows = Math.min(
       this.orderline.get('qty'),
-      this.$.bodyContent.$.numberlinesQtyMobile.maxLines
+      this.$.body.$.numberlinesQtyMobile.maxLines
     );
 
-    this.$.bodyContent.$.originalQty.setValue(this.orderline.get('qty'));
-    this.$.bodyContent.$.numberlinesQty.$.numberQty.setValue(2);
-    this.$.bodyContent.$.numberlinesQty.$.numberQty.setMin(2);
-    this.$.bodyContent.$.numberlinesQty.$.numberQty.setMax(maxRows);
-    this.$.bodyContent.$.numberlinesQtyMobile.$.numberQty.setValue(2);
-    this.$.bodyContent.$.numberlinesQtyMobile.$.numberQty.setMin(2);
-    this.$.bodyContent.$.numberlinesQtyMobile.$.numberQty.setMax(mobileMaxRows);
-    this.$.bodyContent.$.qtyLines.removeAllLine();
+    this.$.body.$.originalQty.setValue(this.orderline.get('qty'));
+    this.$.body.$.numberlinesQty.$.numberQty.setValue(2);
+    this.$.body.$.numberlinesQty.$.numberQty.setMin(2);
+    this.$.body.$.numberlinesQty.$.numberQty.setMax(maxRows);
+    this.$.body.$.numberlinesQtyMobile.$.numberQty.setValue(2);
+    this.$.body.$.numberlinesQtyMobile.$.numberQty.setMin(2);
+    this.$.body.$.numberlinesQtyMobile.$.numberQty.setMax(mobileMaxRows);
+    this.$.body.$.qtyLines.removeAllLine();
     _.each(
       this.getSplitProposal(),
       function(qty) {
         if (qty instanceof Object) {
-          this.$.bodyContent.$.qtyLines.createLine(qty.qty, true);
+          this.$.body.$.qtyLines.createLine(qty.qty, true);
         } else {
-          this.$.bodyContent.$.qtyLines.createLine(qty);
+          this.$.body.$.qtyLines.createLine(qty);
         }
       },
       this
@@ -622,7 +622,7 @@ enyo.kind({
 
   splitLines: function() {
     this.indexToAdd = 1;
-    this.qtysToAdd = this.$.bodyContent.$.qtyLines.getValues();
+    this.qtysToAdd = this.$.body.$.qtyLines.getValues();
     this.orderline.set('splitline', true);
     this.receipt.set('skipCalculateReceipt', true);
     this.doAddProduct({
@@ -652,10 +652,7 @@ enyo.kind({
       sum = 0,
       proposal = [],
       qty = this.orderline.get('qty'),
-      lines = parseInt(
-        this.$.bodyContent.$.numberlinesQty.$.numberQty.getValue(),
-        10
-      ),
+      lines = parseInt(this.$.body.$.numberlinesQty.$.numberQty.getValue(), 10),
       proposed = Math.floor(qty / lines),
       remainingQuantity = this.orderline.get('remainingQuantity');
     if (proposed < 1) {
@@ -700,32 +697,30 @@ enyo.kind({
       inEvent.numberId === 'numberlinesQtyMobile'
     ) {
       if (inEvent.numberId === 'numberlinesQty') {
-        this.$.bodyContent.$.numberlinesQtyMobile.$.numberQty.setValue(
-          inEvent.value
-        );
+        this.$.body.$.numberlinesQtyMobile.$.numberQty.setValue(inEvent.value);
       } else {
-        this.$.bodyContent.$.numberlinesQty.$.numberQty.setValue(inEvent.value);
+        this.$.body.$.numberlinesQty.$.numberQty.setValue(inEvent.value);
       }
       var i,
-        countLines = this.$.bodyContent.$.qtyLines.countLines();
+        countLines = this.$.body.$.qtyLines.countLines();
       if (inEvent.value < countLines) {
         for (i = 0; i < countLines - inEvent.value; i++) {
-          this.$.bodyContent.$.qtyLines.removeLine(countLines - i - 1, false);
+          this.$.body.$.qtyLines.removeLine(countLines - i - 1, false);
         }
       } else if (inEvent.value > countLines) {
         var qty = 1;
         if (this.modified && inEvent.value - 1 === countLines) {
-          var sumLines = this.$.bodyContent.$.qtyLines.sumLines();
+          var sumLines = this.$.body.$.qtyLines.sumLines();
           if (sumLines < this.orderline.get('qty')) {
             qty = this.orderline.get('qty') - sumLines;
           }
         }
         for (i = 0; i < inEvent.value - countLines; i++) {
-          this.$.bodyContent.$.qtyLines.createLine(qty);
+          this.$.body.$.qtyLines.createLine(qty);
         }
       }
       if (!this.modified) {
-        this.$.bodyContent.$.qtyLines.setValues(this.getSplitProposal());
+        this.$.body.$.qtyLines.setValues(this.getSplitProposal());
       }
     } else {
       this.setModified();
@@ -734,11 +729,11 @@ enyo.kind({
   },
 
   updateDifference: function() {
-    var sumLines = this.$.bodyContent.$.qtyLines.sumLines(),
+    var sumLines = this.$.body.$.qtyLines.sumLines(),
       difference = this.orderline.get('qty') - sumLines;
-    this.$.bodyContent.$.splitQty.setValue(sumLines);
-    this.$.bodyContent.$.differenceQty.setValue(difference);
-    this.$.bodyContent.$.labelError.setShowing(difference !== 0);
-    this.$.bodyButtons.$.btnApply.setDisabled(difference !== 0);
+    this.$.body.$.splitQty.setValue(sumLines);
+    this.$.body.$.differenceQty.setValue(difference);
+    this.$.body.$.labelError.setShowing(difference !== 0);
+    this.$.footer.$.btnApply.setDisabled(difference !== 0);
   }
 });

@@ -494,13 +494,13 @@ enyo.kind({
       model: this.model
     });
   },
+  hideCloseButton: true,
   i18nHeader: 'OBPOS_LblInvoices',
   body: {
     kind: 'OB.UI.ListInvoices'
   },
   initComponents: function() {
     this.inherited(arguments);
-    this.$.closebutton.hide();
   },
   init: function(model) {
     this.model = model;
