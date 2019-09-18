@@ -12766,7 +12766,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   width: 100%;
   border-width: 0px;
   box-sizing: border-box;
-  background-image: url('./../img/iconDropdownArrow.svg');
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconDropdownArrow.svg');
   background-repeat: no-repeat;
   background-size: 15px 8px;
   background-color: white;
