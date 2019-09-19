@@ -237,12 +237,12 @@ OB.UI.ModalReceiptPropertiesImpl.prototype.newAttributes.push(
     OB.UI.ReceiptPropertiesDialogApply.prototype.tap,
     function(wrapped) {
       var tap = _.bind(origTap, this),
-        line_ReceiptDeliveryDate = this.owner.owner.$.bodyContent.$.attributes.$
+        line_ReceiptDeliveryDate = this.owner.owner.$.body.$.attributes.$
           .line_ReceiptDeliveryDate,
         dateComponent = line_ReceiptDeliveryDate
           ? line_ReceiptDeliveryDate.$.coreElement
           : undefined,
-        line_ReceiptDeliveryTime = this.owner.owner.$.bodyContent.$.attributes.$
+        line_ReceiptDeliveryTime = this.owner.owner.$.body.$.attributes.$
           .line_ReceiptDeliveryTime,
         timeComponent = line_ReceiptDeliveryTime
           ? line_ReceiptDeliveryTime.$.coreElement
