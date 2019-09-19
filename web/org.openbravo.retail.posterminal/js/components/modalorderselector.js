@@ -892,7 +892,7 @@ enyo.kind({
   initComponents: function() {
     this.filters = this.filterModel.getFilterPropertiesWithSelectorPreference();
     this.inherited(arguments);
-    this.$.filterSelector.$.entityFilterText.skipAutoFilterPref = true;
+    this.$.filterSelector.$.formElementEntityFilterText.coreElement.skipAutoFilterPref = true;
   }
 });
 
@@ -936,7 +936,7 @@ enyo.kind({
   initComponents: function() {
     this.filters = this.filterModel.getFilterPropertiesWithSelectorPreference();
     this.inherited(arguments);
-    this.$.filterSelector.$.entityFilterText.skipAutoFilterPref = true;
+    this.$.filterSelector.$.formElementEntityFilterText.coreElement.skipAutoFilterPref = true;
   }
 });
 

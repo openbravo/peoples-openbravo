@@ -1125,7 +1125,7 @@
 .obUiModalReceiptsScrollableHeader {}
 
 .obUiModalReceiptsScrollableHeader-filterSelector {
-  padding: 10px;
+  padding: 10px 0 0 0;
 }
 
 .obUiModalReceiptsScrollableHeader-container1 {
@@ -1154,7 +1154,7 @@
 .obUiModalVerifiedReturnsScrollableHeader {}
 
 .obUiModalVerifiedReturnsScrollableHeader-filterSelector {
-  padding: 10px;
+  padding: 10px 0 0 0;
 }
 
 .obUiModalVerifiedReturnsScrollableHeader-container1 {
@@ -3978,7 +3978,7 @@ li.selected > .obUiRenderOrderLine_edit {
   display: table-cell;
 }
 
-.obUiModalBpScrollableHeader-container1-container1-container3-obUiSmallButton {
+.obUiModalBpScrollableHeader-container1-container1-container3-searchButton {
 /* # Inherits: [OB.UI.SmallButton] */
   width: 100px;
   margin: 0px 0px 8px 5px;
@@ -4159,7 +4159,7 @@ li.selected > .obUiRenderOrderLine_edit {
 
 .obUiModalBpSelectorScrollableHeader-filterSelector {
   /* Inherits: [OB.UI.FilterSelectorTableHeader] */
-  padding: 10px;
+  padding: 10px 0 0 0;
 }
 
 .obUiModalBpSelectorScrollableHeader-container1 {
@@ -4427,10 +4427,6 @@ li.selected > .obUiRenderOrderLine_edit {
   text-decoration: none;
 }
 
-.obUiNewCustomerAddressWindowButton_gray {
-  background-color: var(--color-primary-light);
-}
-
 
 /*
 # Component: OB.UI.ModalBpLocScrollableHeader
@@ -4439,53 +4435,38 @@ li.selected > .obUiRenderOrderLine_edit {
 .obUiModalBpLocScrollableHeader {}
 
 .obUiModalBpLocScrollableHeader-container1 {
-  padding: 10px;
+  padding: 10px 0 0 0;
 }
 
 .obUiModalBpLocScrollableHeader-container1-container1 {
-  display: table;
-}
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: 1fr;
+  grid-auto-columns: auto;
+  align-items: start;
 
-.obUiModalBpLocScrollableHeader-container1-container1-container1 {
-  display: table-cell;
   width: 100%;
 }
+
+.obUiModalBpLocScrollableHeader-container1-container1-container1 {}
+
+.obUiModalBpLocScrollableHeader-container1-container1-container1-formElementBpsLocationSearchfilterText {}
 
 .obUiModalBpLocScrollableHeader-container1-container1-container1-bpsLocationSearchfilterText {
   /* Inherits: [OB.UI.SearchInputAutoFilter] */
   width: 100%;
 }
 
-.obUiModalBpLocScrollableHeader-container1-container1-container2 {
-  display: table-cell;
-}
+.obUiModalBpLocScrollableHeader-container1-container1-container2 {}
 
 .obUiModalBpLocScrollableHeader-container1-container1-container2-bpsLocationSearchClearButton {
-  /* Inherits: [OB.UI.SmallButton] */
-  width: 100px;
-  margin: 0px 5px 8px 19px;
-  background-color: var(--color-primary-light);
-  color: var(--color-primary-darker);
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconClear.svg');
-  background-size: 13px 13px;
+  /* Inherits: [OB.UI.Button] */
 }
 
-.obUiModalBpLocScrollableHeader-container1-container1-container3 {
-  display: table-cell;
-}
+.obUiModalBpLocScrollableHeader-container1-container1-container3 {}
 
 .obUiModalBpLocScrollableHeader-container1-container1-container3-bpsLocationSearchButton {
-  /* Inherits: [OB.UI.SmallButton] */
-  width: 100px;
-  margin: 0px 0px 8px 5px;
-  background-color: #f8e859;
-  color: var(--color-primary-darker);
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconSearch.svg');
-  background-size: 15px 16px;
+  /* Inherits: [OB.UI.Button] */
 }
 
 .obUiModalBpLocScrollableHeader-container1-container2 {
@@ -6671,7 +6652,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obUiModalPayOpenTicketsScrollableHeader {}
 
 .obUiModalPayOpenTicketsScrollableHeader-filterSelector {
-  padding: 10px;
+  padding: 10px 0 0 0;
 }
 
 .obUiModalPayOpenTicketsScrollableHeader-container1 {

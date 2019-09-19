@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -135,7 +135,7 @@ enyo.kind({
     this.model = inEvent.model;
   },
   doDisableNewBP: function(inSender, inEvent) {
-    this.putDisabled(inEvent.status);
+    this.setDisabled(inEvent.status);
   },
   tap: function(model) {
     if (this.disabled) {
@@ -150,17 +150,6 @@ enyo.kind({
         }
       }
     });
-  },
-  putDisabled: function(status) {
-    if (status === false) {
-      this.disabled = false;
-      this.setDisabled(false);
-      this.removeClass('disabled');
-      return;
-    }
-    this.disabled = true;
-    this.setDisabled(true);
-    this.addClass('disabled');
   }
 });
 
@@ -179,7 +168,7 @@ enyo.kind({
     this.model = inEvent.model;
   },
   doDisableNewBP: function(inSender, inEvent) {
-    this.putDisabled(inEvent.status);
+    this.setDisabled(inEvent.status);
   },
   events: {
     onHideThisPopup: ''
@@ -196,20 +185,9 @@ enyo.kind({
       }
     });
   },
-  putDisabled: function(status) {
-    if (status === false) {
-      this.disabled = false;
-      this.setDisabled(false);
-      this.removeClass('disabled');
-      return;
-    }
-    this.disabled = true;
-    this.setDisabled(true);
-    this.addClass('disabled');
-  },
   initComponents: function() {
     this.inherited(arguments);
-    this.putDisabled(
+    this.setDisabled(
       !OB.MobileApp.model.hasPermission('OBPOS_receipt.customers')
     );
   }
@@ -496,7 +474,7 @@ enyo.kind({
   kind: 'OB.UI.Modal',
   classes: 'obUiModalBusinessPartners',
   executeOnShow: function() {
-    this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.newAction.putDisabled(
+    this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.newAction.setDisabled(
       !OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomerButton')
     );
     return true;

@@ -157,7 +157,7 @@ enyo.kind({
     this.model = inEvent.model;
   },
   doDisableNewBP: function(inSender, inEvent) {
-    this.putDisabled(inEvent.status);
+    this.setDisabled(inEvent.status);
   },
   tap: function(model) {
     if (this.disabled) {
@@ -183,17 +183,6 @@ enyo.kind({
         cancelNavigationPath: navigationPath
       }
     });
-  },
-  putDisabled: function(status) {
-    if (status === false) {
-      this.setDisabled(false);
-      this.removeClass('disabled');
-      this.disabled = false;
-      return;
-    }
-    this.setDisabled(true);
-    this.addClass('disabled');
-    this.disabled = true;
   }
 });
 
@@ -208,22 +197,11 @@ enyo.kind({
     onNewBPDisabled: 'doDisableNewBP'
   },
   doDisableNewBP: function(inSender, inEvent) {
-    this.putDisabled(inEvent.status);
-  },
-  putDisabled: function(status) {
-    if (status === false) {
-      this.setDisabled(false);
-      this.removeClass('disabled');
-      this.disabled = false;
-      return;
-    }
-    this.setDisabled(true);
-    this.addClass('disabled');
-    this.disabled = true;
+    this.setDisabled(inEvent.status);
   },
   initComponents: function() {
     this.inherited(arguments);
-    this.putDisabled(
+    this.setDisabled(
       !OB.MobileApp.model.hasPermission(
         'OBPOS_retail.customer_advanced_filters',
         true
@@ -1122,7 +1100,7 @@ enyo.kind({
       this.waterfall('onSetBusinessPartnerTarget', {
         target: this.args.target
       });
-      this.$.body.$.listBpsSelector.$.stBPAssignToReceipt.$.theader.$.modalBpSelectorScrollableHeader.$.newAction.putDisabled(
+      this.$.body.$.listBpsSelector.$.stBPAssignToReceipt.$.theader.$.modalBpSelectorScrollableHeader.$.newAction.setDisabled(
         !OB.MobileApp.model.hasPermission(
           'OBPOS_retail.createCustomerButton',
           true
@@ -1224,7 +1202,7 @@ enyo.kind({
       model: this.model
     });
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-      this.$.body.$.listBpsSelector.$.stBPAssignToReceipt.$.theader.$.modalBpSelectorScrollableHeader.$.filterSelector.$.entityFilterText.skipAutoFilterPref = true;
+      this.$.body.$.listBpsSelector.$.stBPAssignToReceipt.$.theader.$.modalBpSelectorScrollableHeader.$.filterSelector.$.formElementEntityFilterText.coreElement.skipAutoFilterPref = true;
     }
   }
 });

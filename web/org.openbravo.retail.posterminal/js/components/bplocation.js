@@ -222,7 +222,7 @@ enyo.kind({
     return true;
   },
   doDisableNewBPLoc: function(inSender, inEvent) {
-    this.putDisabled(inEvent.status);
+    this.setDisabled(inEvent.status);
     return true;
   },
   setBusinessPartner: function(inSender, inEvent) {
@@ -284,19 +284,6 @@ enyo.kind({
         errorCallback
       );
     }
-  },
-  putDisabled: function(status) {
-    if (status === false) {
-      this.setDisabled(false);
-      this.removeClass('disabled');
-      this.disabled = false;
-      this.removeClass('obUiNewCustomerAddressWindowButton_gray');
-      return;
-    }
-    this.setDisabled(true);
-    this.addClass('disabled');
-    this.disabled = true;
-    this.addClass('obUiNewCustomerAddressWindowButton_gray');
   }
 });
 
@@ -324,11 +311,17 @@ enyo.kind({
                 'obUiModalBpLocScrollableHeader-container1-container1-container1',
               components: [
                 {
-                  kind: 'OB.UI.SearchInputAutoFilter',
-                  name: 'bpsLocationSearchfilterText',
+                  kind: 'OB.UI.FormElement',
+                  name: 'formElementBpsLocationSearchfilterText',
                   classes:
-                    'obUiModalBpLocScrollableHeader-container1-container1-container1-bpsLocationSearchfilterText',
-                  minLengthToSearch: 3
+                    'obUiFormElement_dataEntry obUiFormElement_dataEntry_noicon obUiModalBpLocScrollableHeader-container1-container1-container1-formElementBpsLocationSearchfilterText',
+                  coreElement: {
+                    kind: 'OB.UI.SearchInputAutoFilter',
+                    name: 'bpsLocationSearchfilterText',
+                    i18nLabel: 'OBMOBC_LblSearchEllipsis',
+                    classes:
+                      'obUiModalBpLocScrollableHeader-container1-container1-container1-bpsLocationSearchfilterText'
+                  }
                 }
               ]
             },
@@ -337,9 +330,10 @@ enyo.kind({
                 'obUiModalBpLocScrollableHeader-container1-container1-container2',
               components: [
                 {
-                  kind: 'OB.UI.SmallButton',
+                  kind: 'OB.UI.Button',
                   classes:
-                    'obUiModalBpLocScrollableHeader-container1-container1-container2-bpsLocationSearchClearButton',
+                    'obUiSearchClearButton obUiModalBpLocScrollableHeader-container1-container1-container2-bpsLocationSearchClearButton',
+                  i18nLabel: 'OBMOBC_LblClear',
                   name: 'bpsLocationSearchClearButton',
                   ontap: 'clearAction'
                 }
@@ -350,9 +344,10 @@ enyo.kind({
                 'obUiModalBpLocScrollableHeader-container1-container1-container3',
               components: [
                 {
-                  kind: 'OB.UI.SmallButton',
+                  kind: 'OB.UI.Button',
                   classes:
-                    'obUiModalBpLocScrollableHeader-container1-container1-container3-bpsLocationSearchButton',
+                    'obUiSearchLaunchButton obUiModalBpLocScrollableHeader-container1-container1-container3-bpsLocationSearchButton',
+                  i18nLabel: 'OBMOBC_LblSearch',
                   name: 'bpsLocationSearchButton',
                   ontap: 'searchAction'
                 }
@@ -395,15 +390,15 @@ enyo.kind({
     }
   ],
   clearAction: function() {
-    this.$.bpsLocationSearchfilterText.setValue('');
+    this.$.formElementBpsLocationSearchfilterText.coreElement.setValue('');
     this.doSearchAction({
-      locName: this.$.bpsLocationSearchfilterText.getValue()
+      locName: this.$.formElementBpsLocationSearchfilterText.coreElement.getValue()
     });
     return true;
   },
   searchAction: function() {
     this.doSearchAction({
-      locName: this.$.bpsLocationSearchfilterText.getValue()
+      locName: this.$.formElementBpsLocationSearchfilterText.coreElement.getValue()
     });
     return true;
   }
@@ -1112,7 +1107,7 @@ enyo.kind({
       } else {
         this.$.body.$.listBpsLoc.bpsList.reset([]);
       }
-      this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.newAction.putDisabled(
+      this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.newAction.setDisabled(
         !OB.MobileApp.model.hasPermission(
           'OBPOS_retail.createCustomerLocationButton',
           true
@@ -1132,7 +1127,7 @@ enyo.kind({
   executeOnHide: function() {
     var selectorHide = this.selectorHide;
     this.inherited(arguments);
-    this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.bpsLocationSearchfilterText.setValue(
+    this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.formElementBpsLocationSearchfilterText.coreElement.setValue(
       ''
     );
     if (

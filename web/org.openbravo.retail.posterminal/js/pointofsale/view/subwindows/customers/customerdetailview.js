@@ -46,7 +46,7 @@ enyo.kind({
         buttonContainer.$[key].navigationPath = me.args.navigationPath;
         buttonContainer.$[key].target = me.args.target;
         if (buttonContainer.$[key].permission) {
-          buttonContainer.$[key].children[0].putDisabled(
+          buttonContainer.$[key].children[0].setDisabled(
             !OB.MobileApp.model.hasPermission(
               buttonContainer.$[key].permission,
               true
@@ -166,13 +166,6 @@ enyo.kind({
       });
     });
   },
-  putDisabled: function(status) {
-    if (status === false) {
-      this.setDisabled(false);
-      return;
-    }
-    this.setDisabled(true);
-  },
   init: function(model) {
     this.model = model;
   },
@@ -216,13 +209,6 @@ enyo.kind({
         }
       });
     }
-  },
-  putDisabled: function(status) {
-    if (status === false) {
-      this.setDisabled(false);
-      return;
-    }
-    this.setDisabled(true);
   },
   init: function(model) {
     this.model = model;

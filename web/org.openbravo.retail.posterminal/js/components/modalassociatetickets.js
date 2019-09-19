@@ -812,7 +812,7 @@ enyo.kind({
   init: function(model) {
     this.inherited(arguments);
     this.initialized = false;
-    this.$.body.$.listOrders.$.orderSelector.$.theader.$.modalOrderScrollableHeader.$.filterSelector.$.entityFilterText.skipAutoFilterPref = true;
+    this.$.body.$.listOrders.$.orderSelector.$.theader.$.modalOrderScrollableHeader.$.filterSelector.$.formElementEntityFilterText.coreElement.skipAutoFilterPref = true;
   }
 });
 
