@@ -10654,56 +10654,9 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.customers.cancelEdit
-# Inherits: [OB.UI.Button]
+# Inherits: [OB.UI.ModalDialogButton]
 */
-.obObposPointOfSaleUiCustomersCancelEdit {
-  width: 100px;
-  margin: 0px 0px 8px 5px;
-  background-color: #e2e2e2;
-  color: black;
-  display: inline-block;
-  font-weight: normal;
-  border: none;
-  height: 30px;
-  font-size: var(--font-medium);
-  padding: 5px 15px 7px 15px;
-  text-decoration: none;
-  cursor: pointer;
-  opacity: 0.999;
-}
-
-
-.obObposPointOfSaleUiCustomersCancelEdit:focus {
-  outline: none;
-  border-width: 2px;
-  border-color: #0078d7;
-  border-style: solid;
-  padding: 2px 13px 5px 13px;
-}
-
-
-.obObposPointOfSaleUiCustomersCancelEdit:hover {
-  opacity: 0.75;
-}
-
-.obObposPointOfSaleUiCustomersCancelEdit:active {
-  opacity: 0.999;
-  background-color: #cccccc;
-}
-
-.obObposPointOfSaleUiCustomersCancelEdit:disabled,
-.obObposPointOfSaleUiCustomersCancelEdit[disabled=true]:hover {
-  background-color: #a9a9a9;
-  opacity: 1;
-  cursor: default;
-}
-
-
-@media all and (max-aspect-ratio: 9/8) {
-  .obObposPointOfSaleUiCustomersCancelEdit {
-    height: 45px;
-  }
-}
+.obObposPointOfSaleUiCustomersCancelEdit {}
 
 
 /*
@@ -10846,8 +10799,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSPointOfSale.UI.customers.edit_createcustomers
 */
 .obObposPointOfSaleUiCustomersEditCreatecustomers {}
-
-.obObposPointOfSaleUiCustomersEditCreatecustomers-bodyheader {}
 
 .obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes {
 /* Inherits: [Scroller] */
@@ -10997,81 +10948,32 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.customers.newcustomersave
-# Inherits: [OB.UI.Button]
+# Inherits: [OB.UI.ModalDialogButton]
 */
-.obObposPointOfSaleUiCustomersNewcustomersave {
-  width: 100px;
-  margin: 0px 5px 8px 19px;
-  background-color: #f8e859;
-  color: black;
-  display: inline-block;
-  font-weight: normal;
-  border: none;
-  height: 30px;
-  font-size: var(--font-medium);
-  padding: 5px 15px 7px 15px;
-  text-decoration: none;
-  cursor: pointer;
-  opacity: 0.999;
-}
-
-.obObposPointOfSaleUiCustomersNewcustomersave:hover {
-  opacity: 0.75;
-}
-
-.obObposPointOfSaleUiCustomersNewcustomersave:active {
-  opacity: 0.999;
-  background-color: #cccccc;
-}
-
-.obObposPointOfSaleUiCustomersNewcustomersave:focus {
-  outline: none;
-  border-width: 2px;
-  border-color: #0078d7;
-  border-style: solid;
-  padding: 2px 13px 5px 13px;
-}
-
-.obObposPointOfSaleUiCustomersNewcustomersave:disabled,
-.obObposPointOfSaleUiCustomersNewcustomersave[disabled=true]:hover {
-  background-color: #a9a9a9;
-  opacity: 1;
-  cursor: default;
-}
-
-@media all and (max-aspect-ratio: 9/8) {
-  .obObposPointOfSaleUiCustomersNewcustomersave {
-    height: 45px;
-  }
-}
+.obObposPointOfSaleUiCustomersNewcustomersave {}
 
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.customers.NewCustomer_bodyheader
 */
-.obObposPointOfSaleUiCustomersNewCustomerBodyheader {}
+.obObposPointOfSaleUiCustomersNewCustomerFooter {}
 
-.obObposPointOfSaleUiCustomersNewCustomerBodyheader-container1 {}
+.obObposPointOfSaleUiCustomersNewCustomerFooter-container1 {}
 
-.obObposPointOfSaleUiCustomersNewCustomerBodyheader-container1-container1 {
-  display: table;
-  margin: 0px auto;
+.obObposPointOfSaleUiCustomersNewCustomerFooter-container1-container1 {
+  display: inline-block;
 }
 
-.obObposPointOfSaleUiCustomersNewCustomerBodyheader-container1-container1-container1 {
-  display: table-cell;
-}
-
-.obObposPointOfSaleUiCustomersNewCustomerBodyheader-container1-container1-container1-obObposPointOfSaleUiCustomersNewcustomersave {
-/* Inherits: [OB.OBPOSPointOfSale.UI.customers.newcustomersave] */
-}
-
-.obObposPointOfSaleUiCustomersNewCustomerBodyheader-container1-container1-container2 {
-  display: table-cell;
-}
-
-.obObposPointOfSaleUiCustomersNewCustomerBodyheader-container1-container1-container2-obObposPointOfSaleUiCustomersCancelEdit {
+.obObposPointOfSaleUiCustomersNewCustomerFooter-container1-container1-obObposPointOfSaleUiCustomersCancelEdit {
 /* Inherits: [OB.OBPOSPointOfSale.UI.customers.cancelEdit] */
+}
+
+.obObposPointOfSaleUiCustomersNewCustomerFooter-container1-container2 {
+  display: inline-block;
+}
+
+.obObposPointOfSaleUiCustomersNewCustomerFooter-container1-container2-obObposPointOfSaleUiCustomersNewcustomersave {
+/* Inherits: [OB.OBPOSPointOfSale.UI.customers.newcustomersave] */
 }
 
 
@@ -11231,111 +11133,52 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.customers.assigncustomertoticket
-# Inherits: OB.UI.Button
+# Inherits: OB.UI.ModalDialogButton
 */
-.obObPosPointOfSaleUiCustomersassignCustomerToTicket {
-  margin: 0px 0px 8px 5px;
-  background-color: #f8e859;
-  color: black;
-  display: inline-block;
-  font-weight: normal;
-  border: none;
-  font-size: 16px;
-  text-decoration: none;
-  cursor: pointer;
-  opacity: 0.999;
-  height: 30px;
-  padding: 5px 15px 7px 15px;
-}
+.obObPosPointOfSaleUiCustomersassignCustomerToTicket {}
 
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.customers.managebpaddress
-# Inherits: OB.UI.Button
+# Inherits: OB.UI.ModalDialogButton
 */
-.obObPosPointOfSaleUiCustomersManageBPAddress {
-  margin: 0px 0px 8px 5px;
-  background-color: #f8e859;
-  color: black;
-  display: inline-block;
-  font-weight: normal;
-  border: none;
-  font-size: 16px;
-  text-decoration: none;
-  cursor: pointer;
-  opacity: 0.999;
-  height: 30px;
-  padding: 5px 15px 7px 15px;
-}
+.obObPosPointOfSaleUiCustomersManageBPAddress {}
 
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.customers.editbp
-# Inherits: OB.UI.Button
+# Inherits: OB.UI.ModalDialogButton
 */
-.obObPosPointOfSaleUiCustomersEditBP {
-  width: 100px;
-  margin: 0px 0px 8px 19px;
-  background-color: #ffa500;
-  color: black;
-  display: inline-block;
-  font-weight: normal;
-  border: none;
-  font-size: 16px;
-  text-decoration: none;
-  cursor: pointer;
-  opacity: 0.999;
-  height: 30px;
-  padding: 5px 15px 7px 15px;
-}
+.obObPosPointOfSaleUiCustomersEditBP {}
 
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.customers.lastactivity
-# Inherits: [OB.UI.Button]
+# Inherits: [OB.UI.ModalDialogButton]
 */
-.obObPosPointOfSaleUiCustomersLastActivity {
-  margin: 0px 0px 8px 5px;
-  background-color: #f8e859;
-  color: black;
-  display: inline-block;
-  font-weight: normal;
-  border: none;
-  font-size: 16px;
-  text-decoration: none;
-  cursor: pointer;
-  opacity: 0.999;
-  height: 30px;
-  padding: 5px 15px 7px 15px;
-}
+.obObPosPointOfSaleUiCustomersLastActivity {}
+
+
+/*
+# Component: OB.OBPOSPointOfSale.UI.customers.close
+# Inherits: [OB.UI.ModalDialogButton]
+*/
+.obObPosPointOfSaleUiCustomersClose {}
 
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.customers.EditCustomerHeader
 */
-.obObPosPointOfSaleUiCustomersEditCustomerHeader {
-}
+.obObPosPointOfSaleUiCustomersEditCustomerFooter {}
 
-.obObPosPointOfSaleUiCustomersEditCustomerHeader-editbp {
-  display: table-cell;
-}
+.obObPosPointOfSaleUiCustomersEditCustomerFooter-buttonContainer {}
 
-.obObPosPointOfSaleUiCustomersEditCustomerHeader-assigncustomertoticket {
-  display: table-cell;
-}
-
-.obObPosPointOfSaleUiCustomersEditCustomerHeader-managebpaddress {
-  display: table-cell;
-}
-
-.obObPosPointOfSaleUiCustomersEditCustomerHeader-lastactivity {
-  display: table-cell;
-}
-
-.obObPosPointOfSaleUiCustomersEditCustomerHeader-buttonContainer {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+.obObPosPointOfSaleUiCustomersEditCustomerFooter-editbp,
+.obObPosPointOfSaleUiCustomersEditCustomerFooter-assigncustomertoticket,
+.obObPosPointOfSaleUiCustomersEditCustomerFooter-managebpaddress,
+.obObPosPointOfSaleUiCustomersEditCustomerFooter-lastactivity,
+.obObPosPointOfSaleUiCustomersEditCustomerFooter-close {
+  display: inline-block;
 }
 
 
@@ -11438,53 +11281,9 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.customeraddr.cancelEdit
-# Inherits: [OB.UI.Button]
+# Inherits: [OB.UI.ModalDialogButton]
 */
-.obObposPointOfSaleUiCustomeraddrCancelEdit {
-  width: 100px;
-  margin: 0px 0px 8px 5px;
-  background-color: #e2e2e2;
-  color: black;
-  display: inline-block;
-  font-weight: normal;
-  border: none;
-  height: 30px;
-  font-size: var(--font-medium);
-  padding: 5px 15px 7px 15px;
-  text-decoration: none;
-  cursor: pointer;
-  opacity: 0.999;
-}
-
-.obObposPointOfSaleUiCustomeraddrCancelEdit:hover {
-  opacity: 0.75;
-}
-
-.obObposPointOfSaleUiCustomeraddrCancelEdit:active {
-  opacity: 0.999;
-  background-color: #cccccc;
-}
-
-.obObposPointOfSaleUiCustomeraddrCancelEdit:focus {
-  outline: none;
-  border-width: 2px;
-  border-color: #0078d7;
-  border-style: solid;
-  padding: 2px 13px 5px 13px;
-}
-
-.obObposPointOfSaleUiCustomeraddrCancelEdit:disabled,
-.obObposPointOfSaleUiCustomeraddrCancelEdit[disabled=true]:hover {
-  background-color: #a9a9a9;
-  opacity: 1;
-  cursor: default;
-}
-
-@media all and (max-aspect-ratio: 9/8) {
-  .obObposPointOfSaleUiCustomeraddrCancelEdit {
-    height: 45px;
-  }
-}
+.obObposPointOfSaleUiCustomeraddrCancelEdit {}
 
 
 /*
@@ -11620,75 +11419,33 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.customeraddr.newcustomeraddrsave
-# Inherits: [OB.UI.Button]
+# Inherits: [OB.UI.ModalDialogButton]
 */
-.obObposPointOfSaleUiCustomeraddrNewcustomeraddrsave {
-  width: 100px;
-  margin: 0px 5px 8px 19px;
-  background-color: #f8e859;
-  color: black;
-  display: inline-block;
-  font-weight: normal;
-  border: none;
-  height: 30px;
-  font-size: 16px;
-  padding: 5px 15px 7px 15px;
-  text-decoration: none;
-  cursor: pointer;
-  opacity: 0.999;
-}
-
-.obObposPointOfSaleUiCustomeraddrNewcustomeraddrsave:hover {
-  opacity: 0.75;
-}
-
-.obObposPointOfSaleUiCustomeraddrNewcustomeraddrsave:active {
-  opacity: 0.999;
-  background-color: #cccccc;
-}
-
-.obObposPointOfSaleUiCustomeraddrNewcustomeraddrsave:disabled,
-.obObposPointOfSaleUiCustomeraddrNewcustomeraddrsave[disabled=true]:hover {
-  background-color: #a9a9a9;
-  opacity: 1;
-  cursor: default;
-}
-
-@media all and (max-aspect-ratio: 9/8) {
-  .obObposPointOfSaleUiCustomeraddrNewcustomeraddrsave {
-    height: 45px;
-  }
-}
+.obObposPointOfSaleUiCustomeraddrNewcustomeraddrsave {}
 
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.customeraddr.subwindowNewCustomer_bodyheader
 */
-.obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerBodyheader {}
+.obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerFooter {}
 
-.obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerBodyheader-container1 {}
+.obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerFooter-container1 {}
 
-.obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerBodyheader-container1-container1 {
-  display: table;
-  margin: 0 auto;
+.obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerFooter-container1-container1 {
+  display: inline-block;
 }
 
-.obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerBodyheader-container1-container1-container1 {
-  display: table-cell;
-}
-
-.obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerBodyheader-container1-container1-container1-obObposPointOfSaleUiCustomeraddrNewcustomeraddrsave {
-/* Inherits: [OB.OBPOSPointOfSale.UI.customeraddr.newcustomeraddrsave] */
-}
-
-.obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerBodyheader-container1-container1-container2 {
-  display: table-cell;
-}
-
-.obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerBodyheader-container1-container1-container2-addressEditCancel {
+.obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerFooter-container1-container1-addressEditCancel {
 /* Inherits: [OB.OBPOSPointOfSale.UI.customeraddr.cancelEdit] */
 }
 
+.obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerFooter-container1-container2 {
+  display: inline-block;
+}
+
+.obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerFooter-container1-container2-obObposPointOfSaleUiCustomeraddrNewcustomeraddrsave {
+/* Inherits: [OB.OBPOSPointOfSale.UI.customeraddr.newcustomeraddrsave] */
+}
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.customeraddr.edit_createcustomers_impl
@@ -11769,48 +11526,37 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 */
 .obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu {}
 
-.obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-obUiButton {
-/* Inherits: [OB.UI.Button] */
-  margin: 0px 0px 8px 5px;
-  background-color: #f8e859;
-  color: black;
-  display: inline-block;
-  font-weight: normal;
-  border: none;
-  height: 30px;
-  font-size: 16px;
-  padding: 5px 15px 7px 15px;
-  text-decoration: none;
-  cursor: pointer;
-  opacity: 0.999;
+.obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-button {
+  /* Inherits: [OB.UI.ModalDialogButton] */
 }
 
-.obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-obUiButton:hover {
-  opacity: 0.75;
+.obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-button .obUiButton-components {
+  grid-auto-flow: column;
+  grid-template-columns: 1fr auto;
+  padding: 0px 15px;
 }
 
-.obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-obUiButton:active {
-  opacity: 0.999;
-  background-color: #cccccc;
-}
+.obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-button .obUiButton-components-before {
+  grid-column: 2;
 
-.obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-obUiButton:disabled,
-.obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-obUiButton[disabled=true]:hover {
-  background-color: #a9a9a9;
-  opacity: 1;
-  cursor: default;
-}
-
-.obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-obUiButton-identifier {}
-
-.obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-obUiButton-element2 {
-  background-image: url('./../../org.openbravo.retail.posterminal/img/iconDownArrow.png');
+  background-image: url('./../img/iconDropdownModalButton.svg');
   background-repeat: no-repeat;
-  background-size: 14px 9px;
-  background-position: 21px 6px;
-  width: 35px;
-  height: 24px;
-  float: right;
+  background-size: 15px auto;
+  background-position: center center;
+  width: 15px;
+  height: 100%;
+}
+
+.obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-button:hover .obUiButton-components-before {
+  background-image: url('./../img/iconDropdownModalButton_hover.svg');
+}
+
+.obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-button:active .obUiButton-components-before {
+  background-image: url('./../img/iconDropdownModalButton_active.svg');
+}
+
+.obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-button .obUiButton-components-label {
+  padding: 0px 10px 1px 0px;
 }
 
 .obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-menu {
@@ -11829,47 +11575,12 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /* Inherits: [OB.UI.BPLocAssignToReceiptInvoicingContextMenuItem] */
 }
 
-@media all and (max-aspect-ratio: 9/8) {
-  .obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-obUiButton {
-    height: 45px;
-  }
-}
-
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.customeraddr.AssignAddrButton
-# Inherits: [OB.UI.Button]
+# Inherits: [OB.UI.ModalDialogButton]
 */
-.obObposPointOfSaleUiCustomeraddrAssignAddrButton {
-  margin: 0px 0px 8px 5px;
-  background-color: #f8e859;
-  color: black;
-  display: inline-block;
-  font-weight: normal;
-  border: none;
-  height: 30px;
-  font-size: 16px;
-  padding: 5px 15px 7px 15px;
-  text-decoration: none;
-  cursor: pointer;
-  opacity: 0.999;
-}
-
-.obObposPointOfSaleUiCustomeraddrAssignAddrButton:hover {
-  opacity: 0.75;
-}
-
-.obObposPointOfSaleUiCustomeraddrAssignAddrButton:active {
-  opacity: 0.999;
-  background-color: #cccccc;
-}
-
-.obObposPointOfSaleUiCustomeraddrAssignAddrButton:disabled,
-.obObposPointOfSaleUiCustomeraddrAssignAddrButton[disabled=true]:hover {
-  background-color: #a9a9a9;
-  opacity: 1;
-  cursor: default;
-}
+.obObposPointOfSaleUiCustomeraddrAssignAddrButton {}
 
 
 /*
@@ -11895,89 +11606,50 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.customeraddr.editticketcustomeraddr
-# Inherits: [OB.UI.Button]
+# Inherits: [OB.UI.ModalDialogButton]
 */
 .obObposPointOfSaleUiCustomeraddrEditticketcustomeraddr {
-  width: 100px;
-  margin: 0px 5px 8px 19px;
-  background-color: orange;
-  color: black;
-  display: inline-block;
-  font-weight: normal;
-  border: none;
-  height: 30px;
-  font-size: 16px;
-  padding: 5px 15px 7px 15px;
-  text-decoration: none;
-  cursor: pointer;
-  opacity: 0.999;
-}
-
-.obObposPointOfSaleUiCustomeraddrEditticketcustomeraddr:hover {
-  opacity: 0.75;
-}
-
-.obObposPointOfSaleUiCustomeraddrEditticketcustomeraddr:active {
-  opacity: 0.999;
-  background-color: #cccccc;
-}
-
-.obObposPointOfSaleUiCustomeraddrEditticketcustomeraddr:disabled,
-.obObposPointOfSaleUiCustomeraddrEditticketcustomeraddr[disabled='true']:hover {
-  background-color: #a9a9a9;
-  opacity: 1;
-  cursor: default;
 }
 
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.customeraddr.EditCustomerHeader
 */
-.obObposPointOfSaleUiCustomeraddrEditCustomerHeader {}
+.obObposPointOfSaleUiCustomeraddrEditCustomerFooter {}
 
-.obObposPointOfSaleUiCustomeraddrEditCustomerHeader-container1 {
-  display: table;
-  margin: 0 auto;
+.obObposPointOfSaleUiCustomeraddrEditCustomerFooter-container1 {}
+
+.obObposPointOfSaleUiCustomeraddrEditCustomerFooter-container1-container1,
+.obObposPointOfSaleUiCustomeraddrEditCustomerFooter-container1-container2,
+.obObposPointOfSaleUiCustomeraddrEditCustomerFooter-container1-container3,
+.obObposPointOfSaleUiCustomeraddrEditCustomerFooter-container1-container4,
+.obObposPointOfSaleUiCustomeraddrEditCustomerFooter-container1-container5,
+.obObposPointOfSaleUiCustomeraddrEditCustomerFooter-container1-container6 {
+  display: inline-block;
 }
 
-.obObposPointOfSaleUiCustomeraddrEditCustomerHeader-container1-container1 {
-  display: table-cell;
-}
-
-.obObposPointOfSaleUiCustomeraddrEditCustomerHeader-container1-container1-obObposPointOfSaleUiCustomeraddrEditticketcustomeraddr {
+.obObposPointOfSaleUiCustomeraddrEditCustomerFooter-container1-container1-obObposPointOfSaleUiCustomeraddrEditticketcustomeraddr {
 /* Inherits: [OB.OBPOSPointOfSale.UI.customeraddr.editticketcustomeraddr] */
 }
 
-.obObposPointOfSaleUiCustomeraddrEditCustomerHeader-container1-container2 {
-  display: table-cell;
-}
-
-.obObposPointOfSaleUiCustomeraddrEditCustomerHeader-container1-container2-obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu {
+.obObposPointOfSaleUiCustomeraddrEditCustomerFooter-container1-container2-obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu {
 /* Inherits: [OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticketmenu] */
 }
 
-.obObposPointOfSaleUiCustomeraddrEditCustomerHeader-container1-container3 {
-  display: table-cell;
-}
-
-.obObposPointOfSaleUiCustomeraddrEditCustomerHeader-container1-container3-obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketship {
+.obObposPointOfSaleUiCustomeraddrEditCustomerFooter-container1-container3-obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketship {
   /* Inherits: [OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticketship] */
 }
 
-.obObposPointOfSaleUiCustomeraddrEditCustomerHeader-container1-container4 {
-  display: table-cell;
-}
-
-.obObposPointOfSaleUiCustomeraddrEditCustomerHeader-container1-container4-obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketinv {
+.obObposPointOfSaleUiCustomeraddrEditCustomerFooter-container1-container4-obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketinv {
 /* Inherits: [OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticketinv] */
 }
 
-.obObposPointOfSaleUiCustomeraddrEditCustomerHeader-container1-container5 {
-  display: table-cell;
+.obObposPointOfSaleUiCustomeraddrEditCustomerFooter-container1-container5-obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticket {
+/* Inherits: [OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticket] */
 }
 
-.obObposPointOfSaleUiCustomeraddrEditCustomerHeader-container1-container5-obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticket {
-/* Inherits: [OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticket] */
+.obObposPointOfSaleUiCustomeraddrEditCustomerFooter-container1-container6-obObposPointOfSaleUiCustomeraddrClose {
+  /* Inherits: [OB.OBPOSPointOfSale.UI.customeraddr.close] */
 }
 
 

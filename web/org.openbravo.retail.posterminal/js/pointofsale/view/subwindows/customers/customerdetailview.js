@@ -31,14 +31,13 @@ enyo.kind({
     var me = this;
     me.pressedBtn = false;
     me.$.body.$.editcustomers_impl.setCustomer(this.args.businessPartner);
-    var customerHeader = this.$.body.$.editcustomers_impl.$.bodyheader.$
-      .editCustomerHeader;
-    var buttonContainer = customerHeader.$.buttonContainer;
+    var customerFooter = this.$.footer.$.editCustomerFooter;
+    var buttonContainer = customerFooter.$.buttonContainer;
     Object.keys(buttonContainer.$).forEach(function(key, index) {
       if (
-        OB.OBPOSPointOfSale.UI.customers.EditCustomerHeader.prototype.customerHeaderButtons.find(
-          function(headerButton) {
-            return headerButton.name === key;
+        OB.OBPOSPointOfSale.UI.customers.EditCustomerFooter.prototype.customerFooterButtons.find(
+          function(footerButton) {
+            return footerButton.name === key;
           }
         )
       ) {
@@ -88,7 +87,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.assigncustomertoticket',
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ModalDialogButton',
   classes: 'obObPosPointOfSaleUiCustomersassignCustomerToTicket',
   events: {
     onChangeBusinessPartner: '',
@@ -137,7 +136,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.managebpaddress',
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ModalDialogButton',
   classes: 'obObPosPointOfSaleUiCustomersManageBPAddress',
   events: {
     onShowPopup: '',
@@ -176,7 +175,7 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.customers.editbp',
   classes: 'obObPosPointOfSaleUiCustomersEditBP',
   events: {
@@ -220,7 +219,7 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.customers.lastactivity',
   classes: 'obObPosPointOfSaleUiCustomersLastActivity',
   i18nLabel: 'OBPOS_Cus360LblLastActivity',
@@ -254,15 +253,27 @@ enyo.kind({
   }
 });
 
-/*header of window body*/
 enyo.kind({
-  name: 'OB.OBPOSPointOfSale.UI.customers.EditCustomerHeader',
-  classes: 'obObPosPointOfSaleUiCustomersEditCustomerHeader',
-  customerHeaderButtons: [
+  kind: 'OB.UI.ModalDialogButton',
+  name: 'OB.OBPOSPointOfSale.UI.customers.close',
+  classes: 'obObPosPointOfSaleUiCustomersClose',
+  i18nLabel: 'OBRDM_LblClose',
+  tap: function() {
+    if (this.disabled === false) {
+      this.doHideThisPopup();
+    }
+  }
+});
+
+/*footer of window*/
+enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.customers.EditCustomerFooter',
+  classes: 'obObPosPointOfSaleUiCustomersEditCustomerFooter',
+  customerFooterButtons: [
     {
       name: 'editbp',
       permission: 'OBPOS_retail.editCustomerButton',
-      classes: 'obObPosPointOfSaleUiCustomersEditCustomerHeader-editbp',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomerFooter-editbp',
       components: [
         {
           kind: 'OB.OBPOSPointOfSale.UI.customers.editbp'
@@ -272,7 +283,7 @@ enyo.kind({
     {
       name: 'assigncustomertoticket',
       classes:
-        'obObPosPointOfSaleUiCustomersEditCustomerHeader-assigncustomertoticket',
+        'obObPosPointOfSaleUiCustomersEditCustomerFooter-assigncustomertoticket',
       components: [
         {
           kind: 'OB.OBPOSPointOfSale.UI.customers.assigncustomertoticket'
@@ -282,7 +293,7 @@ enyo.kind({
     {
       name: 'managebpaddress',
       classes:
-        'obObPosPointOfSaleUiCustomersEditCustomerHeader-managebpaddress',
+        'obObPosPointOfSaleUiCustomersEditCustomerFooter-managebpaddress',
       permission: 'OBPOS_retail.editCustomerLocationButton',
       components: [
         {
@@ -292,10 +303,20 @@ enyo.kind({
     },
     {
       name: 'lastactivity',
-      classes: 'obObPosPointOfSaleUiCustomersEditCustomerHeader-lastactivity',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomerFooter-lastactivity',
       components: [
         {
           kind: 'OB.OBPOSPointOfSale.UI.customers.lastactivity'
+        }
+      ]
+    },
+    {
+      name: 'close',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomerFooter-close',
+      components: [
+        {
+          kind: 'OB.OBPOSPointOfSale.UI.customers.close',
+          isDefaultAction: true
         }
       ]
     }
@@ -303,13 +324,13 @@ enyo.kind({
   components: [
     {
       name: 'buttonContainer',
-      classes: 'obObPosPointOfSaleUiCustomersEditCustomerHeader-buttonContainer'
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomerFooter-buttonContainer'
     }
   ],
   initComponents: function() {
     this.inherited(arguments);
     var container = this.$.buttonContainer;
-    this.customerHeaderButtons.forEach(function(button) {
+    this.customerFooterButtons.forEach(function(button) {
       container.createComponent(button);
     });
   }
@@ -319,7 +340,7 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.editcustomers_impl',
   kind: 'OB.OBPOSPointOfSale.UI.customers.edit_createcustomers',
   classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl',
-  windowHeader: 'OB.OBPOSPointOfSale.UI.customers.EditCustomerHeader',
+  windowFooter: 'OB.OBPOSPointOfSale.UI.customers.EditCustomerFooter',
   newAttributes: [
     {
       kind: 'OB.UI.CustomerTextProperty',

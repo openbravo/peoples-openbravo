@@ -25,7 +25,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.cancelEdit',
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ModalDialogButton',
   classes: 'obObposPointOfSaleUiCustomeraddrCancelEdit',
   i18nContent: 'OBMOBC_LblCancel',
   handlers: {
@@ -101,7 +101,7 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.edit_createcustomers',
   classes: 'obObposPointOfSaleUiCustomeraddrEditCreatecustomers',
   handlers: {
-    onSaveCustomerAddr: 'preSaveCustomerAddr'
+    onExecuteSaveCustomerAddr: 'preSaveCustomerAddr'
   },
   events: {
     onChangeBusinessPartner: ''
@@ -502,9 +502,12 @@ enyo.kind({
   },
   initComponents: function() {
     this.inherited(arguments);
-    this.$.bodyheader.createComponent({
-      kind: this.windowHeader
-    });
+    if (this.windowFooter) {
+      this.owner.owner.$.footer.createComponent({
+        kind: this.windowFooter
+      });
+      this.owner.owner.$.footer.show();
+    }
     this.attributeContainer = this.$.customerAddrAttributes;
     enyo.forEach(
       this.newAttributes,

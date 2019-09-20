@@ -21,6 +21,7 @@ enyo.kind({
   },
   handlers: {
     onSetValues: 'setValues',
+    onSaveCustomerAddr: 'saveCustomerAddr',
     onRetrieveCustomer: 'retrieveCustomers',
     onCancelClose: 'cancelClose'
   },
@@ -94,16 +95,20 @@ enyo.kind({
       }
     });
   },
+  saveCustomerAddr: function(inSender, inEvent) {
+    this.waterfall('onExecuteSaveCustomerAddr', inEvent);
+  },
   body: {
     kind: 'OB.OBPOSPointOfSale.UI.customeraddr.edit_createcustomers_impl',
     classes:
       'obObposPointOfSaleUiCustomeraddrNewcustomeraddr-obObposPointOfSaleUiCustomeraddrEditCreatecustomersImpl'
   }
+  //'footer' implemented programatically from the body
 });
 
 //button of header of the body
 enyo.kind({
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.newcustomeraddrsave',
   classes: 'obObposPointOfSaleUiCustomeraddrNewcustomeraddrsave',
   i18nLabel: 'OBPOS_LblSave',
@@ -147,50 +152,44 @@ enyo.kind({
 
 //Header of body
 enyo.kind({
-  name: 'OB.OBPOSPointOfSale.UI.customeraddr.subwindowNewCustomer_bodyheader',
-  classes: 'obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerBodyheader',
+  name: 'OB.OBPOSPointOfSale.UI.customeraddr.subwindowNewCustomer_footer',
+  classes: 'obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerFooter',
   components: [
     {
       classes:
-        'obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerBodyheader-container1',
+        'obUiModal-footer-mainButtons obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerFooter-container1',
       components: [
         {
           classes:
-            'obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerBodyheader-container1-container1',
+            'obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerFooter-container1-container1',
           components: [
             {
+              kind: 'OB.OBPOSPointOfSale.UI.customeraddr.cancelEdit',
+              name: 'addressEditCancel',
               classes:
-                'obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerBodyheader-container1-container1-container1',
-              components: [
-                {
-                  kind:
-                    'OB.OBPOSPointOfSale.UI.customeraddr.newcustomeraddrsave',
-                  classes:
-                    'obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerBodyheader-container1-container1-container1-obObposPointOfSaleUiCustomeraddrNewcustomeraddrsave'
-                }
-              ]
-            },
+                'obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerFooter-container1-container1-addressEditCancel',
+              handlers: {
+                onSetCustomerAddr: 'setCustomerAddr'
+              },
+              setCustomerAddr: function(inSender, inEvent) {
+                this.customer = inEvent.customer;
+                this.customerAddr = inEvent.customerAddr;
+              },
+              tap: function() {
+                this.bubble('onCancelClose');
+              }
+            }
+          ]
+        },
+        {
+          classes:
+            'obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerFooter-container1-container2',
+          components: [
             {
+              kind: 'OB.OBPOSPointOfSale.UI.customeraddr.newcustomeraddrsave',
               classes:
-                'obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerBodyheader-container1-container1-container2',
-              components: [
-                {
-                  kind: 'OB.OBPOSPointOfSale.UI.customeraddr.cancelEdit',
-                  name: 'addressEditCancel',
-                  classes:
-                    'obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerBodyheader-container1-container1-container2-addressEditCancel',
-                  handlers: {
-                    onSetCustomerAddr: 'setCustomerAddr'
-                  },
-                  setCustomerAddr: function(inSender, inEvent) {
-                    this.customer = inEvent.customer;
-                    this.customerAddr = inEvent.customerAddr;
-                  },
-                  tap: function() {
-                    this.bubble('onCancelClose');
-                  }
-                }
-              ]
+                'obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerFooter-container1-container2-obObposPointOfSaleUiCustomeraddrNewcustomeraddrsave',
+              isDefaultAction: true
             }
           ]
         }
@@ -203,8 +202,8 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.edit_createcustomers_impl',
   kind: 'OB.OBPOSPointOfSale.UI.customeraddr.edit_createcustomers',
   classes: 'obObposPointOfSaleUiCustomeraddrEditCreatecustomersImpl',
-  windowHeader:
-    'OB.OBPOSPointOfSale.UI.customeraddr.subwindowNewCustomer_bodyheader',
+  windowFooter:
+    'OB.OBPOSPointOfSale.UI.customeraddr.subwindowNewCustomer_footer',
   newAttributes: [
     {
       kind: 'OB.UI.CustomerAddrTextProperty',
