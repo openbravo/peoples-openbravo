@@ -804,9 +804,7 @@
 # Component: OB.UI.ModalReceipts
 # Inherits: [OB.UI.Modal]
 */
-.obUiModalReceipts {
-  top: 125px;
-}
+.obUiModalReceipts {}
 
 .obUiModalReceipts-listreceipts {
   /*Inherits: [OB.UI.ListReceipts]*/
@@ -817,19 +815,16 @@
 /*
 # Component: OB.UI.ListReceipts
 */
-.obUiListReceipt {}
-
-.obUiListReceipt-container1 {}
-
-.obUiListReceipt-container1-element1 {
-  border-bottom: var(--bottomseparator-slim);
+.obUiListReceipt {
+  height: calc(100% - 1px);
 }
 
-.obUiListReceipt-container1-container1 {}
+.obUiListReceipt-container1 {
+  height: 100%;
+}
 
-.obUiListReceipt-container1-container1-receiptslistitemprinter {
+.obUiListReceipt-container1-receiptslistitemprinter {
   /*Inherits: [OB.UI.ScrollableTable]*/
-  max-height: 400px;
 }
 
 
@@ -981,6 +976,7 @@
 
 .obUiReceiptSelectorRender-line-lineInfo {
   float: left;
+  box-sizing: border-box;
   width: 100%;
   padding: 5px;
 }
@@ -1072,13 +1068,18 @@
 /*
 # Component: OB.UI.GenericReceiptsList
 */
-.obUiGenericReceiptsList {}
+.obUiGenericReceiptsList {
+  height: calc(100% - 1px);
+}
 
 .obUiGenericReceiptsList-container1 {
   border-bottom: var(--bottomseparator-slim);
+  height: 100%;
 }
 
-.obUiGenericReceiptsList-container1-containerOfReceiptsListItemPrinter {}
+.obUiGenericReceiptsList-container1-containerOfReceiptsListItemPrinter {
+  height: 100%;
+}
 
 
 .obUiGenericReceiptsList-container1-renderLoading {}
@@ -1090,11 +1091,7 @@
 */
 .obUiReceiptsList {}
 
-.obUiReceiptsList-openreceiptslistitemprinter {
-  overflow: hidden auto !important;
-  max-height: 350px;
-  position: relative;
-}
+.obUiReceiptsList-openreceiptslistitemprinter {}
 
 
 /*
@@ -1103,9 +1100,7 @@
 */
 .obUiReceiptsForVerifiedReturnsList {}
 
-.obUiReceiptsForVerifiedReturnsList-verifiedReturnsReceiptsListItemPrinter {
-  max-height: 350px;
-}
+.obUiReceiptsForVerifiedReturnsList-verifiedReturnsReceiptsListItemPrinter {}
 
 
 /*
@@ -4316,30 +4311,18 @@ li.selected > .obUiRenderOrderLine_edit {
 # Component: OB.UI.ListBpsSelector
 */
 .obUiListBpsSelector {
-
+  height: calc(100% - 1px);
 }
 
 .obUiListBpsSelector-container1 {
-  float: left;
   width: 100%;
+  height: 100%;
   touch-action: none;
 }
 
-.obUiListBpsSelector-container1-container1 {
-  border-bottom: 1px solid #cccccc;
-}
+.obUiListBpsSelector-container1-stBpAssignToReceipt {}
 
-.obUiListBpsSelector-container1-container1-container1 {
-  float: left;
-  width: 100%;
-  touch-action: none;
-}
-
-.obUiListBpsSelector-container1-container1-container1-stBpAssignToReceipt {
-  max-height: 400px;
-}
-
-.obUiListBpsSelector-container1-container1-container1-renderLoading {
+.obUiListBpsSelector-container1-renderLoading {
   border-bottom: 1px solid #cccccc;
   padding: 20px;
   text-align: center;
@@ -4358,9 +4341,7 @@ li.selected > .obUiRenderOrderLine_edit {
 # Component: OB.UI.ModalSelectorBusinessPartners
 # Inherits: [OB.UI.ModalSelector]
  */
-.obUiModalSelectorBusinessPartners {
-  top: 75px;
-}
+.obUiModalSelectorBusinessPartners {}
 
 /*
 # Component: OB.UI.ModalAdvancedFilterBp
@@ -4592,31 +4573,25 @@ li.selected > .obUiRenderOrderLine_edit {
 # Component: OB.UI.ListBpsLoc
 */
 
-.ListBpsLoc {}
-
-.obUiListBpsLoc-container1 {}
-
-.obUiListBpsLoc-container1-container1 {
-  border-bottom: var(--bottomseparator-slim);
+.ListBpsLoc {
+  height: calc(100% - 1px);
 }
 
-.obUiListBpsLoc-container1-container1-container1 {}
-
-.obUiListBpsLoc-container1-container1-container1-bpsloclistitemprinter {}
-
-
-.obUiListBpsLoc-container1-container1-container1-bpsloclistitemprinter_scrollArea {
-  max-height: 400px;
+.obUiListBpsLoc-container1 {
+  height: 100%;
 }
+
+.obUiListBpsLoc-container1-container1-bpsloclistitemprinter {}
+
+
+.obUiListBpsLoc-container1-container1-bpsloclistitemprinter_scrollArea {}
 
 
 /*
 # Component: OB.UI.ModalBPLocation
 # Inherits: [OB.UI.ModalSelector]
 */
-.obUiModalBPLocation{
-  top: 125px;
-}
+.obUiModalBPLocation{}
 
 
 
@@ -4634,17 +4609,15 @@ li.selected > .obUiRenderOrderLine_edit {
 /*
 # Component:OB.UI.ListBpsShipLoc
 */
-.obUiListBpsShipLoc {}
-
-.obUiListBpsShipLoc-container1 {}
-
-.obUiListBpsShipLoc-container1-container1 {
-  border-bottom: 1px solid #cccccc;
+.obUiListBpsShipLoc {
+  height: calc(100% - 1px);
 }
 
-.obUiListBpsShipLoc-container1-container1-container1 {}
+.obUiListBpsShipLoc-container1 {
+  height: 100%;
+}
 
-.obUiListBpsShipLoc-container1-container1-container1-bpsloclistitemprinter {
+.obUiListBpsShipLoc-container1-bpsloclistitemprinter {
 /* Inherits: [OB.UI.ScrollableTable] */
   max-height: 400px;
   overflow-x: hidden;
@@ -6640,9 +6613,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 */
 .obUiReceiptsForPayOpenTicketsList {}
 
-.obUiReceiptsForPayOpenTicketsList-listItemPrinter-scrollArea {
-  max-height: 350px;
-}
+.obUiReceiptsForPayOpenTicketsList-listItemPrinter-scrollArea {}
 
 
 /*
@@ -6691,7 +6662,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obUiModalMultiOrdersPayOpenTickets-obUiReceiptsForPayOpenTicketsList {}
 
-.obUiModalMultiOrdersPayOpenTickets-header-obUiModalMultiOrdersTopHeader {}
+.obUiModalMultiOrdersPayOpenTickets-footer-obUiModalMultiOrdersFooter {}
 
 
 
@@ -6710,13 +6681,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   height: 90px;
 }
 
-.obUiListMultiOrdersLine:focus {
-  outline: none;
-  border-width: 2px;
-  border-color: #0078d7;
-  border-style: solid;
-  background-position: 8px center;
-}
+.obUiListMultiOrdersLine:focus {}
 
 .obUiListMultiOrdersLine-line {
   line-height: 30px;
@@ -6750,32 +6715,18 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 
 /*
-# Component: OB.UI.ModalMultiOrdersTopHeader
+# Component: OB.UI.ModalMultiOrdersFooter
 # Inherits: [OB.UI.ScrollableTableHeader]
 */
-.obUiModalMultiOrdersTopHeader {}
+.obUiModalMultiOrdersFooter {}
 
-.obUiModalMultiOrdersTopHeader-container1 {
-  display: table;
+.obUiModalMultiOrdersFooter-container1 {}
+
+.obUiModalMultiOrdersFooter-container1-container1 {
+  display: inline-block;
 }
 
-.obUiModalMultiOrdersTopHeader-container1-container1 {
-  display: table-cell;
-  float: left;
-}
-
-.obUiModalMultiOrdersTopHeader-container1-container1-doneMultiOrdersButton {}
-
-.obUiModalMultiOrdersTopHeader-container1-container2 {
-  display: table-cell;
-  vertical-align: middle;
-  width: 100%;
-}
-
-.obUiModalMultiOrdersTopHeader-container1-container2-title {
-  text-align: center;
-}
-
+.obUiModalMultiOrdersFooter-container1-container1-doneMultiOrdersButton {}
 
 
 /***********************   ***********************/
@@ -7243,13 +7194,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   vertical-align: middle;
 }
 
-.obUiListValuesLineCheck:focus {
-  outline: none;
-  border-width: 2px;
-  border-color: #0078d7;
-  border-style: solid;
-  background-position: 8px center !important;
-}
+.obUiListValuesLineCheck:focus {}
 
 
 /*
@@ -7290,78 +7235,51 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /*
 # Component: OB.UI.ListValues
 */
-.obUiListValues {}
+.obUiListValues {
+  height: calc(100% - 1px);
+}
 
-.obUiListValues-container1 {}
+.obUiListValues-container1 {
+  height: 100%;
+}
 
-.obUiListValues-container1-container1 {}
-
-.obUiListValues-container1-container1-container1 {}
-
-.obUiListValues-container1-container1-container1-valueslistitemprinter {
+.obUiListValues-container1-valueslistitemprinter {
 /* # Inherits: [OB.UI.ScrollableTable] */
-  max-height: 400px;
-  overflow-x: hidden;
   overflow-y: auto;
 }
 
 
 /*
-# Component: OB.UI.ModalProductChTopHeader
+# Component: OB.UI.ModalProductChFooter
 # Inherits: [OB.UI.ScrollableTableHeader]
 */
-.obUiModalProductChTopHeader {}
+.obUiModalProductChFooter {}
 
-.obUiModalProductChTopHeader-obUiSmallButton-generic_gray {
-  background-color: #e2e2e2;
-  color: black;
+.obUiModalProductChFooter-container1 {}
+
+.obUiModalProductChFooter-container1-container1 {
+  display: inline-block;
 }
 
-.obUiModalProductChTopHeader-obUiSmallButton-generic_gray:focus {
-  outline: none;
-  border-width: 2px;
-  border-color: #0078d7;
-  border-style: solid;
-  padding: 2px 13px 5px 13px !important;
+.obUiModalProductChFooter-container1-container1-backChButton {
+/* # Inherits: [OB.UI.Button] */
 }
 
-.obUiModalProductChTopHeader-container1 {
-  display: table;
-  width: 100%;
+
+.obUiModalProductChFooter-container2-container1 {
+  display: inline-block;
 }
 
-.obUiModalProductChTopHeader-container1-container1 {
-  display: table-cell;
+.obUiModalProductChFooter-container2-container1-cancelChButton {
+/* # Inherits: [OB.UI.Button] */
 }
 
-.obUiModalProductChTopHeader-container1-container1-backChButton {
-/* # Inherits: [OB.UI.SmallButton] */
+.obUiModalProductChFooter-container2-container2 {
+  display: inline-block;
 }
 
-.obUiModalProductChTopHeader-container1-container2 {
-  display: table-cell;
-  width: 55%;
-}
-
-.obUiModalProductChTopHeader-container1-container2-title {
-  text-align: center;
-  vertical-align: middle;
-}
-
-.obUiModalProductChTopHeader-container1-container3 {
-  display: table-cell;
-}
-
-.obUiModalProductChTopHeader-container1-container3-doneChButton {
-/* # Inherits: [OB.UI.SmallButton] */
-}
-
-.obUiModalProductChTopHeader-container1-container4 {
-  display: table-cell;
-}
-
-.obUiModalProductChTopHeader-container1-container4-cancelChButton {
-/* # Inherits: [OB.UI.SmallButton] */
+.obUiModalProductChFooter-container2-container2-doneChButton {
+/* # Inherits: [OB.UI.Button] */
 }
 
 
@@ -7371,14 +7289,8 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 */
 .obUiModalProductCharacteristic {}
 
-.obUiModalProductCharacteristic_boder {
-  padding: 0px;
-  border-bottom: 1px solid #cccccc;
-}
-
-.obUiModalProductCharacteristic-header-obUiModalProductChTopHeader {
-/* # Inherits: [OB.UI.ModalProductChTopHeader] */
-  border-bottom: 0px;
+.obUiModalProductCharacteristic-footer-obUiModalProductChFooter {
+/* # Inherits: [OB.UI.ModalProductChFooter] */
 }
 
 .obUiModalProductCharacteristic-body-obUiListValues {
@@ -7404,15 +7316,10 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   cursor: pointer;
   vertical-align: middle;
   width: 100%;
+  outline: none;
 }
 
-.obUiListBrandsLine:focus {
-  outline: none;
-  border-width: 2px;
-  border-color: #0078d7;
-  border-style: solid;
-  background-position: 8px center !important;
-}
+.obUiListBrandsLine:focus {}
 
 .obUiListBrandsLine_active {
   background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-on.svg');
@@ -7433,56 +7340,31 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obUiListBrands-container1-container1-container1-brandslistitemprinter {
 /* # Inherits: [OB.UI.ScrollableTable] */
-  max-height: 400px;
   overflow-x: hidden;
   overflow-y: auto;
 }
 
 
 /*
-# Component: OB.UI.ModalProductBrandTopHeader
+# Component: OB.UI.ModalProductBrandFooter
 # Inherits: [OB.UI.ScrollableTableHeader]
 */
-.obUiModalProductBrandTopHeader {}
+.obUiModalProductBrandFooter {}
 
-.obUiModalProductBrandTopHeader-container1 {
-  display: table;
+.obUiModalProductBrandFooter-container1 {}
+
+.obUiModalProductBrandFooter-container1-container1 {}
+
+.obUiModalProductBrandFooter-container1-container1-cancelBrandButton {
+/* # Inherits: [OB.UI.Button] */
+  display: inline-block;
 }
 
-.obUiModalProductBrandTopHeader-container1-container1 {
-  display: table-cell;
-  width: 100%;
-}
+.obUiModalProductBrandFooter-container1-container2 {}
 
-.obUiModalProductBrandTopHeader-container1-container1-title {
-  text-align: center;
-  vertical-align: middle;
-}
-
-.obUiModalProductBrandTopHeader-container1-container2 {
-  display: table-cell;
-}
-
-.obUiModalProductBrandTopHeader-container1-container2-doneBrandButton {
-/* # Inherits: [OB.UI.SmallButton] */
-}
-
-.obUiModalProductBrandTopHeader-container1-container3 {
-  display: table-cell;
-}
-
-.obUiModalProductBrandTopHeader-container1-container3-cancelBrandButton {
-/* # Inherits: [OB.UI.SmallButton] */
-  background-color: #e2e2e2;
-  color: black;
-}
-
-.obUiModalProductBrandTopHeader-container1-container3-cancelBrandButton:focus {
-  outline: none;
-  border-width: 2px;
-  border-color: #0078d7;
-  border-style: solid;
-  padding: 2px 13px 5px 13px !important;
+.obUiModalProductBrandFooter-container1-container2-doneBrandButton {
+/* # Inherits: [OB.UI.Button] */
+  display: inline-block;
 }
 
 
@@ -7491,16 +7373,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Inherits: [OB.UI.Modal]
 */
 .obUiModalProductBrand {}
-
-.obUiModalProductBrand-header-obUiModalProductBrandTopHeader {
-/* # Inherits: [OB.UI.ModalProductBrandTopHeader] */
-  border-bottom: 0px;
-}
-
-.obUiModalProductBrand-header-obUiModalProductBrandTopHeader_bottom {
-  padding: 0px;
-  border-bottom: var(--bottomseparator-slim);
-}
 
 .obUiModalProductBrand-body-obUiListBrands {
 /* # Inherits: [OB.UI.ListBrands] */
@@ -10802,7 +10674,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes {
 /* Inherits: [Scroller] */
-  max-height: 500px;
   overflow-x: hidden;
 }
 
@@ -10913,36 +10784,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiCustomersNewcustomer-body-obObposPointOfSaleUiCustomersEditCreatecustomersImpl {
 /* Inherits: [OB.OBPOSPointOfSale.UI.customers.edit_createcustomers_impl] */
-}
-
-@media (min-width: 350px) and (max-width: 470px) {
-  .obObposPointOfSaleUiCustomersNewcustomer {
-    width: calc(100% - 24px);
-  }
-}
-
-@media (min-width: 471px) and (max-width: 549px) {
-  .obObposPointOfSaleUiCustomersNewcustomer {
-    width: calc(100% - 24px);
-  }
-}
-
-@media (min-width: 550px) and (max-width: 649px) {
-  .obObposPointOfSaleUiCustomersNewcustomer {
-    width: calc(100% - 24px);
-  }
-}
-
-@media (min-width: 650px) and (max-aspect-ratio: 9/8) {
-  .obObposPointOfSaleUiCustomersNewcustomer {
-    width: calc(100% - 24px);
-  }
-}
-
-@media (min-width: 801px) and (max-width: 899px) {
-  .obObposPointOfSaleUiCustomersNewcustomer {
-    width: 780px;
-  }
 }
 
 
@@ -11378,42 +11219,10 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSPointOfSale.UI.customeraddr.newcustomeraddr
 # Inherits: [OB.UI.Modal]
 */
-.obObposPointOfSaleUiCustomeraddrNewcustomeraddr {
-  width: 870px;
-}
+.obObposPointOfSaleUiCustomeraddrNewcustomeraddr {}
 
 .obObposPointOfSaleUiCustomeraddrNewcustomeraddr-obObposPointOfSaleUiCustomeraddrEditCreatecustomersImpl {
 /* Inherits: [OB.OBPOSPointOfSale.UI.customeraddr.edit_createcustomers_impl] */
-}
-
-@media (min-width: 350px) and (max-width: 470px) {
-  .obObposPointOfSaleUiCustomeraddrNewcustomeraddr {
-    width: calc(100% - 24px);
-  }
-}
-
-@media (min-width: 471px) and (max-width: 549px) {
-  .obObposPointOfSaleUiCustomeraddrNewcustomeraddr {
-    width: calc(100% - 24px);
-  }
-}
-
-@media (min-width: 550px) and (max-width: 649px) {
-  .obObposPointOfSaleUiCustomeraddrNewcustomeraddr {
-    width: calc(100% - 24px);
-  }
-}
-
-@media (min-width: 650px) and (max-aspect-ratio: 9/8) {
-  .obObposPointOfSaleUiCustomeraddrNewcustomeraddr {
-    width: calc(100% - 24px);
-  }
-}
-
-@media (min-width: 801px) and (max-width: 899px) {
-  .obObposPointOfSaleUiCustomeraddrNewcustomeraddr {
-    width: 780px;
-  }
 }
 
 
@@ -11481,42 +11290,10 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSPointOfSale.UI.customeraddr.editcustomeraddr
 # Inherits: [OB.UI.Modal]
 */
-.obObposPointOfSaleUiCustomerAddrEditCustomerAddr {
-  width: 870px;
-}
+.obObposPointOfSaleUiCustomerAddrEditCustomerAddr {}
 
 .obObposPointOfSaleUiCustomerAddrEditCustomerAddr-body-obObposPointOfSaleUiCustomerAddrEditCustomersImpl {
 /* Inherits: [OB.OBPOSPointOfSale.UI.customeraddr.editcustomers_impl] */
-}
-
-@media (min-width: 350px) and (max-width: 470px) {
-  .obObposPointOfSaleUiCustomerAddrEditCustomerAddr {
-    width: calc(100% - 24px);
-  }
-}
-
-@media (min-width: 471px) and (max-width: 549px) {
-  .obObposPointOfSaleUiCustomerAddrEditCustomerAddr {
-    width: calc(100% - 24px);
-  }
-}
-
-@media (min-width: 550px) and (max-width: 649px) {
-  .obObposPointOfSaleUiCustomerAddrEditCustomerAddr {
-    width: calc(100% - 24px);
-  }
-}
-
-@media (min-width: 650px) and (max-aspect-ratio: 9/8) {
-  .obObposPointOfSaleUiCustomerAddrEditCustomerAddr {
-    width: calc(100% - 24px);
-  }
-}
-
-@media (min-width: 801px) and (max-width: 899px) {
-  .obObposPointOfSaleUiCustomerAddrEditCustomerAddr{
-    width: 780px;
-  }
 }
 
 

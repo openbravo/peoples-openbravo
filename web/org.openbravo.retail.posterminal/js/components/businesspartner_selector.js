@@ -618,7 +618,7 @@ enyo.kind({
 /*scrollable table (body of modal)*/
 enyo.kind({
   name: 'OB.UI.ListBpsSelector',
-  classes: 'obUiListBpsSelector row-fluid',
+  classes: 'obUiListBpsSelector',
   handlers: {
     onSearchAction: 'searchAction',
     onClearFilterSelector: 'clearAction',
@@ -635,32 +635,20 @@ enyo.kind({
       classes: 'obUiListBpsSelector-container1',
       components: [
         {
-          classes: 'obUiListBpsSelector-container1-container1 row-fluid',
-          components: [
-            {
-              classes: 'obUiListBpsSelector-container1-container1-container1',
-              components: [
-                {
-                  name: 'stBPAssignToReceipt',
-                  kind: 'OB.UI.ScrollableTable',
-                  classes:
-                    'obUiListBpsSelector-container1-container1-container1-stBpAssignToReceipt',
-                  renderHeader: 'OB.UI.ModalBpSelectorScrollableHeader',
-                  renderLine: 'OB.UI.ListBpsSelectorLine',
-                  renderEmpty: 'OB.UI.RenderEmpty'
-                },
-                {
-                  name: 'renderLoading',
-                  classes:
-                    'obUiListBpsSelector-container1-container1-container1-renderLoading',
-                  showing: false,
-                  initComponents: function() {
-                    this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
-                  }
-                }
-              ]
-            }
-          ]
+          name: 'stBPAssignToReceipt',
+          kind: 'OB.UI.ScrollableTable',
+          classes: 'obUiListBpsSelector-container1-stBpAssignToReceipt',
+          renderHeader: 'OB.UI.ModalBpSelectorScrollableHeader',
+          renderLine: 'OB.UI.ListBpsSelectorLine',
+          renderEmpty: 'OB.UI.RenderEmpty'
+        },
+        {
+          name: 'renderLoading',
+          classes: 'obUiListBpsSelector-container1-renderLoading',
+          showing: false,
+          initComponents: function() {
+            this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
+          }
         }
       ]
     }

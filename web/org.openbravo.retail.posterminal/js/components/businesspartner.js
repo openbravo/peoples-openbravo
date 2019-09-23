@@ -470,7 +470,6 @@ enyo.kind({
 /*Modal definiton*/
 enyo.kind({
   name: 'OB.UI.ModalBusinessPartners',
-  topPosition: '125px',
   kind: 'OB.UI.Modal',
   classes: 'obUiModalBusinessPartners',
   executeOnShow: function() {

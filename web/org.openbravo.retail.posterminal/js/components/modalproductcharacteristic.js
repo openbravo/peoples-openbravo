@@ -98,22 +98,11 @@ enyo.kind({
       classes: 'obUiListValues-container1',
       components: [
         {
-          classes: 'obUiListValues-container1-container1',
-          components: [
-            {
-              classes: 'obUiListValues-container1-container1-container1',
-              components: [
-                {
-                  name: 'valueslistitemprinter',
-                  kind: 'OB.UI.ScrollableTable',
-                  classes:
-                    'obUiListValues-container1-container1-container1-valueslistitemprinter',
-                  renderLine: 'OB.UI.ListValuesLine',
-                  renderEmpty: 'OB.UI.RenderEmpty'
-                }
-              ]
-            }
-          ]
+          name: 'valueslistitemprinter',
+          kind: 'OB.UI.ScrollableTable',
+          classes: 'obUiListValues-container1-container1-valueslistitemprinter',
+          renderLine: 'OB.UI.ListValuesLine',
+          renderEmpty: 'OB.UI.RenderEmpty'
         }
       ]
     }
@@ -476,20 +465,10 @@ enyo.kind({
   },
   parentValue: '0',
   setCollection: function(inSender, inEvent) {
-    if (inEvent.parentValue !== '0') {
-      this.parent.parent.$.header.$.modalProductChTopHeader.$.backChButton.removeClass(
-        'u-hiddenVisible'
-      );
-      this.parent.parent.$.header.$.modalProductChTopHeader.$.backChButton.addClass(
-        'u-resetVisible'
-      );
+    if (inEvent.parentValue === '0') {
+      this.parent.parent.$.footer.$.modalProductChFooter.$.backChButton.hide();
     } else {
-      this.parent.parent.$.header.$.modalProductChTopHeader.$.backChButton.removeClass(
-        'u-resetVisible'
-      );
-      this.parent.parent.$.header.$.modalProductChTopHeader.$.backChButton.addClass(
-        'u-hiddenVisible'
-      );
+      this.parent.parent.$.footer.$.modalProductChFooter.$.backChButton.show();
     }
     this.parentValue = inEvent.parentValue;
     this.updateListSelection(inEvent.value);
@@ -582,9 +561,9 @@ enyo.kind({
 });
 
 enyo.kind({
-  name: 'OB.UI.ModalProductChTopHeader',
-  kind: 'OB.UI.ScrollableTableHeader',
-  classes: 'obUiModalProductChTopHeader',
+  name: 'OB.UI.ModalProductChFooter',
+  kind: 'OB.UI.ScrollableTableFooter',
+  classes: 'obUiModalProductChFooter',
   events: {
     onHideThisPopup: '',
     onSelectCharacteristicValue: '',
@@ -592,50 +571,53 @@ enyo.kind({
   },
   components: [
     {
-      classes: 'obUiModalProductChTopHeader-container1',
+      classes: 'obUiModalProductChFooter-container1',
       components: [
         {
-          classes: 'obUiModalProductChTopHeader-container1-container1',
+          classes:
+            'obUiModal-footer-secondaryButtons obUiModalProductChFooter-container1-container1',
           components: [
             {
               classes:
-                'obUiModalProductChTopHeader-container1-container1-backChButton obUiModalProductChTopHeader-obUiSmallButton-generic_gray',
+                'obUiModalProductChFooter-container1-container1-backChButton',
               name: 'backChButton',
-              kind: 'OB.UI.SmallButton',
+              kind: 'OB.UI.ModalDialogButton',
+              i18nContent: 'OBMOBC_LblBack',
+              showing: false,
               ontap: 'backAction'
             }
           ]
-        },
+        }
+      ]
+    },
+    {
+      classes:
+        'obUiModal-footer-mainButtons obUiModalProductChFooter-container2',
+      components: [
         {
-          classes: 'obUiModalProductChTopHeader-container1-container2',
+          classes: 'obUiModalProductChFooter-container2-container1',
           components: [
             {
-              name: 'title',
-              classes: 'obUiModalProductChTopHeader-container1-container2-title'
+              classes:
+                'obUiModalProductChFooter-container2-container1-cancelChButton',
+              name: 'cancelChButton',
+              kind: 'OB.UI.ModalDialogButton',
+              i18nContent: 'OBMOBC_LblCancel',
+              ontap: 'cancelAction'
             }
           ]
         },
         {
-          classes: 'obUiModalProductChTopHeader-container1-container3',
+          classes: 'obUiModalProductChFooter-container2-container2',
           components: [
             {
               name: 'doneChButton',
-              kind: 'OB.UI.SmallButton',
+              kind: 'OB.UI.ModalDialogButton',
+              i18nContent: 'OBMOBC_LblDone',
               classes:
-                'obUiModalProductChTopHeader-container1-container3-doneChButton',
+                'obUiModalProductChFooter-container2-container2-doneChButton',
+              isDefaultAction: true,
               ontap: 'doneAction'
-            }
-          ]
-        },
-        {
-          classes: 'obUiModalProductChTopHeader-container1-container4',
-          components: [
-            {
-              classes:
-                'obUiModalProductChTopHeader-container1-container4-cancelChButton obUiModalProductChTopHeader-obUiSmallButton-generic_gray',
-              name: 'cancelChButton',
-              kind: 'OB.UI.SmallButton',
-              ontap: 'cancelAction'
             }
           ]
         }
@@ -644,10 +626,6 @@ enyo.kind({
   ],
   initComponents: function() {
     this.inherited(arguments);
-    this.$.backChButton.setContent(OB.I18N.getLabel('OBMOBC_LblBack'));
-    this.$.backChButton.addClass('u-hiddenVisible');
-    this.$.doneChButton.setContent(OB.I18N.getLabel('OBMOBC_LblDone'));
-    this.$.cancelChButton.setContent(OB.I18N.getLabel('OBMOBC_LblCancel'));
     this.selectedToSend = [];
     this.parent.parent.parent.selected = [];
   },
@@ -743,7 +721,6 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalProductCharacteristic',
   classes: 'obUiModalProductCharacteristic',
-  topPosition: '170px',
   kind: 'OB.UI.Modal',
   published: {
     characteristic: null,
@@ -758,25 +735,19 @@ enyo.kind({
   },
   executeOnShow: function() {
     this.$.body.$.listValues.parentValue = '0';
-    this.$.header.parent.addClass('obUiModalProductCharacteristic_boder');
-    this.$.header.$.modalProductChTopHeader.$.backChButton.addClass(
-      'u-hiddenVisible'
-    );
+    this.$.header.parent.addClass('obUiModalProductCharacteristic_border');
     this.characteristic = this.args.model;
-    this.$.header.$.modalProductChTopHeader.$.title.setContent(
-      this.args.model.get('_identifier')
-    );
+    this.setHeader(this.args.model.get('_identifier'));
     this.waterfall('onSearchAction');
   },
-  hideCloseButton: true,
   i18nHeader: '',
-  header: {
-    kind: 'OB.UI.ModalProductChTopHeader',
-    classes: 'obUiModalProductCharacteristic-header-obUiModalProductChTopHeader'
-  },
   body: {
     kind: 'OB.UI.ListValues',
     classes: 'obUiModalProductCharacteristic-body-obUiListValues'
+  },
+  footer: {
+    kind: 'OB.UI.ModalProductChFooter',
+    classes: 'obUiModalProductCharacteristic-footer-obUiModalProductChFooter'
   },
   initComponents: function() {
     this.inherited(arguments);
@@ -832,19 +803,9 @@ enyo.kind({
     }
     if (this.$.body.$.listValues.parentValue === '0') {
       //root
-      this.$.header.$.modalProductChTopHeader.$.backChButton.removeClass(
-        'u-resetVisible'
-      );
-      this.$.header.$.modalProductChTopHeader.$.backChButton.addClass(
-        'u-hiddenVisible'
-      );
+      this.$.footer.$.modalProductChFooter.$.backChButton.hide();
     } else {
-      this.$.header.$.modalProductChTopHeader.$.backChButton.removeClass(
-        'u-hiddenVisible'
-      );
-      this.$.header.$.modalProductChTopHeader.$.backChButton.addClass(
-        'u-resetVisible'
-      );
+      this.$.footer.$.modalProductChFooter.$.backChButton.show();
     }
   },
   countedValues: 0,

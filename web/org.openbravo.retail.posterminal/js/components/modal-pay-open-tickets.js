@@ -249,15 +249,20 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalMultiOrdersPayOpenTickets',
   kind: 'OB.UI.ModalSelector',
-  classes: 'u-popup-top-separation-medium obUiModalMultiOrdersPayOpenTickets',
-  i18nHeader: 'OBPOS_LblPaidReceipts',
+  classes: 'obUiModalMultiOrdersPayOpenTickets',
   published: {
     params: null
   },
+  i18nHeader: 'OBPOS_LblMultiOrders',
   body: {
     kind: 'OB.UI.ReceiptsForPayOpenTicketsList',
     classes:
       'obUiModalMultiOrdersPayOpenTickets-obUiReceiptsForPayOpenTicketsList'
+  },
+  footer: {
+    kind: 'OB.UI.ModalMultiOrdersFooter',
+    classes:
+      'obUiModalMultiOrdersPayOpenTickets-footer-obUiModalMultiOrdersFooter'
   },
   getFilterSelectorTableHeader: function() {
     return this.$.body.$.receiptsForPayOpenTicketsList.$
@@ -315,11 +320,6 @@ enyo.kind({
   },
   init: function(model) {
     this.model = model;
-    this.$.header.createComponent({
-      kind: 'OB.UI.ModalMultiOrdersTopHeader',
-      classes:
-        'obUiModalMultiOrdersPayOpenTickets-header-obUiModalMultiOrdersTopHeader'
-    });
   }
 });
 
@@ -473,9 +473,9 @@ enyo.kind({
 });
 
 enyo.kind({
-  name: 'OB.UI.ModalMultiOrdersTopHeader',
-  kind: 'OB.UI.ScrollableTableHeader',
-  classes: 'obUiModalMultiOrdersTopHeader',
+  name: 'OB.UI.ModalMultiOrdersFooter',
+  kind: 'OB.UI.ScrollableTableFooter',
+  classes: 'obUiModalMultiOrdersFooter',
   events: {
     onHideThisPopup: '',
     onSelectMultiOrders: '',
@@ -484,27 +484,20 @@ enyo.kind({
   },
   components: [
     {
-      classes: 'obUiModalMultiOrdersTopHeader-container1',
+      classes:
+        'obUiModal-footer-mainButtons obUiobUiModalMultiOrdersFooter-container1',
       components: [
         {
-          classes: 'obUiModalMultiOrdersTopHeader-container1-container1',
+          classes: 'obUiModalMultiOrdersFooter-container1-container1',
           components: [
             {
               name: 'doneMultiOrdersButton',
-              kind: 'OB.UI.SmallButton',
+              kind: 'OB.UI.ModalDialogButton',
+              i18nLabel: 'OBMOBC_LblDone',
               classes:
-                'obUiModalMultiOrdersTopHeader-container1-container1-doneMultiOrdersButton',
+                'obUiModalMultiOrdersFooter-container1-container1-doneMultiOrdersButton',
+              isDefaultAction: true,
               ontap: 'doneAction'
-            }
-          ]
-        },
-        {
-          classes: 'obUiModalMultiOrdersTopHeader-container1-container2',
-          components: [
-            {
-              name: 'title',
-              classes:
-                'obUiModalMultiOrdersTopHeader-container1-container2-title'
             }
           ]
         }
@@ -513,8 +506,6 @@ enyo.kind({
   ],
   initComponents: function() {
     this.inherited(arguments);
-    this.$.title.setContent(OB.I18N.getLabel('OBPOS_LblMultiOrders'));
-    this.$.doneMultiOrdersButton.setContent(OB.I18N.getLabel('OBMOBC_LblDone'));
   },
   disableDoneButton: function(value) {
     this.$.doneMultiOrdersButton.setDisabled(value);
@@ -529,7 +520,7 @@ enyo.kind({
         'org.openbravo.retail.posterminal.PaidReceipts'
       ),
       checkedMultiOrders = _.compact(
-        this.parent.parent.parent.$.body.$.receiptsForPayOpenTicketsList.receiptList.map(
+        this.parent.parent.$.body.$.receiptsForPayOpenTicketsList.receiptList.map(
           function(e) {
             if (e.get('checked')) {
               return e;

@@ -295,7 +295,6 @@ enyo.kind({
   name: 'OB.UI.ModalVerifiedReturns',
   kind: 'OB.UI.ModalSelector',
   classes: 'obUiModalVerifiedReturns',
-  topPosition: '70px',
   i18nHeader: 'OBPOS_LblPaidReceipts',
   published: {
     params: null

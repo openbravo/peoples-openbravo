@@ -41,23 +41,12 @@ enyo.kind({
       classes: 'obUiListBpsShipLoc-container1',
       components: [
         {
-          classes: 'obUiListBpsShipLoc-container1-container1',
-          components: [
-            {
-              classes: 'obUiListBpsShipLoc-container1-container1-container1',
-              components: [
-                {
-                  name: 'bpsloclistitemprinter',
-                  kind: 'OB.UI.ScrollableTable',
-                  calsses:
-                    'obUiListBpsShipLoc-container1-container1-container1-bpsloclistitemprinter',
-                  renderHeader: 'OB.UI.ModalBpLocScrollableHeader',
-                  renderLine: 'OB.UI.ListBpsShipLocLine',
-                  renderEmpty: 'OB.UI.RenderEmpty'
-                }
-              ]
-            }
-          ]
+          name: 'bpsloclistitemprinter',
+          kind: 'OB.UI.ScrollableTable',
+          calsses: 'obUiListBpsShipLoc-container1-bpsloclistitemprinter',
+          renderHeader: 'OB.UI.ModalBpLocScrollableHeader',
+          renderLine: 'OB.UI.ListBpsShipLocLine',
+          renderEmpty: 'OB.UI.RenderEmpty'
         }
       ]
     }
@@ -196,7 +185,6 @@ enyo.kind({
   kind: 'OB.UI.ModalSelector',
   name: 'OB.UI.ModalBPLocationShip',
   classes: 'obUiModalSelector',
-  topPosition: '125px',
   executeOnShow: function() {
     if (!this.isInitialized()) {
       this.inherited(arguments);

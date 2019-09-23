@@ -747,7 +747,6 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalSelector',
   name: 'OB.UI.ModalAssociateTickets',
-  topPosition: '45px',
   classes: 'obUiModalAssociateTickets',
   i18nHeader: 'OBPOS_SelectLinesToAssociate',
   body: {

@@ -839,28 +839,17 @@ enyo.kind({
   },
   components: [
     {
-      classes: 'obUiListBpsLoc-container1 span12',
+      classes: 'obUiListBpsLoc-container1',
       components: [
         {
-          classes: 'obUiListBpsLoc-container1-container1',
-          components: [
-            {
-              classes: 'obUiListBpsLoc-container1-container1-container1 span12',
-              components: [
-                {
-                  name: 'bpsloclistitemprinter',
-                  kind: 'OB.UI.ScrollableTable',
-                  classes:
-                    'obUiListBpsLoc-container1-container1-container1-bpsloclistitemprinter',
-                  scrollAreaClasses:
-                    'obUiListBpsLoc-container1-container1-container1-bpsloclistitemprinter_scrollArea',
-                  renderHeader: 'OB.UI.ModalBpLocScrollableHeader',
-                  renderLine: 'OB.UI.ListBpsLocLine',
-                  renderEmpty: 'OB.UI.RenderEmpty'
-                }
-              ]
-            }
-          ]
+          name: 'bpsloclistitemprinter',
+          kind: 'OB.UI.ScrollableTable',
+          classes: 'obUiListBpsLoc-container1-bpsloclistitemprinter',
+          scrollAreaClasses:
+            'obUiListBpsLoc-container1-bpsloclistitemprinter_scrollArea',
+          renderHeader: 'OB.UI.ModalBpLocScrollableHeader',
+          renderLine: 'OB.UI.ListBpsLocLine',
+          renderEmpty: 'OB.UI.RenderEmpty'
         }
       ]
     }
@@ -1074,7 +1063,6 @@ enyo.kind({
   kind: 'OB.UI.ModalSelector',
   name: 'OB.UI.ModalBPLocation',
   classes: 'obUiModalBPLocation',
-  topPosition: '125px',
   events: {
     onShowPopup: ''
   },
