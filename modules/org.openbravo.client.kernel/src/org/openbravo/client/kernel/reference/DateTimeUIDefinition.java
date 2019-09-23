@@ -71,7 +71,11 @@ public class DateTimeUIDefinition extends DateUIDefinition {
     int gmtMillisecondOffset = (calendar.get(Calendar.ZONE_OFFSET)
         + calendar.get(Calendar.DST_OFFSET));
     calendar.add(Calendar.MILLISECOND, -gmtMillisecondOffset);
-    return getClassicFormat().format(calendar.getTime(), new StringBuffer(), new FieldPosition(0));
+    SimpleDateFormat dateTimeFormat = getClassicFormat();
+    synchronized (dateTimeFormat) {
+      return getClassicFormat().format(calendar.getTime(), new StringBuffer(),
+          new FieldPosition(0));
+    }
   }
 
   @Override
