@@ -276,6 +276,9 @@ enyo.kind({
     this.$.cashupMultiColumn.$.rightPanel.$.cashUpInfo.setModel(this.model);
     this.$.cashupMultiColumn.$.leftToolbar.$.leftToolbar.setModel(this.model);
 
+    // Remove Pending CashMgmt Events
+    OB.UTIL.localStorage.removeItem('CashMgmtPendingDepositsDrops');
+
     //step 0
     this.model.on(
       'change:pendingOrdersToProcess',
