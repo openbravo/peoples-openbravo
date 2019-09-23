@@ -20,6 +20,7 @@ package org.openbravo.client.kernel.reference;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -142,9 +143,19 @@ public class DateUIDefinition extends UIDefinition {
       if (value.contains("T")) {
         return value;
       }
-      final Date date = getClassicFormat().parse(value);
+      final Date date = parse(value);
       return getUIFormat().format(date);
     } catch (Exception e) {
+      throw new OBException(e);
+    }
+  }
+
+  /** Parses an {@link String} to a {@link Date} using reference's classic format. */
+  public synchronized Date parse(String value) {
+    try {
+      return getClassicFormat().parse(value);
+    } catch (ParseException e) {
+      log.error("Could not parse date {}", value, e);
       throw new OBException(e);
     }
   }

@@ -68,7 +68,7 @@ import org.openbravo.client.application.window.OBViewUtil;
 import org.openbravo.client.kernel.BaseKernelServlet;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.OBUserException;
-import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
@@ -648,24 +648,15 @@ public class DataSourceServlet extends BaseKernelServlet {
           } else if (dateCols.contains(key) && keyValue != null
               && !keyValue.toString().equals("null")) {
             Date date = JsonUtils.createDateFormat().parse(keyValue.toString());
-            String pattern = RequestContext.get()
-                .getSessionAttribute("#AD_JAVADATEFORMAT")
-                .toString();
-            SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
-            dateFormat.setLenient(true);
-            keyValue = dateFormat.format(date);
+            keyValue = UIDefinitionController.DATE_UI_DEFINITION.convertToClassicString(date);
           } else if (dateTimeCols.contains(key) && keyValue != null
               && !keyValue.toString().equals("null")) {
             final String repairedString = JsonUtils.convertFromXSDToJavaFormat(keyValue.toString());
             Date localDate = JsonUtils.createDateTimeFormat().parse(repairedString);
             Date clientTimezoneDate = null;
             clientTimezoneDate = convertFromLocalToClientTimezone(localDate);
-            String pattern = RequestContext.get()
-                .getSessionAttribute("#AD_JAVADATETIMEFORMAT")
-                .toString();
-            SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
-            dateFormat.setLenient(true);
-            keyValue = dateFormat.format(clientTimezoneDate);
+            keyValue = UIDefinitionController.DATETIME_UI_DEFINITION
+                .convertToClassicString(clientTimezoneDate);
           } else if (timeCols.contains(key) && keyValue != null
               && !keyValue.toString().equals("null")) {
             Date UTCdate = JsonUtils.createTimeFormatWithoutGMTOffset().parse(keyValue.toString());
