@@ -1075,10 +1075,9 @@ public class OrderLoader extends POSDataSynchronizationProcess
             .getProxy("FIN_PaymentMethod",
                 jsonorder.getJSONObject("bp").getString("paymentMethod")));
       } else if (bp.getPaymentMethod() != null) {
-        order.setPaymentMethod((FIN_PaymentMethod) bp.getPaymentMethod());
+        order.setPaymentMethod(bp.getPaymentMethod());
       } else if (order.getOrganization().getObretcoDbpPmethodid() != null) {
-        order
-            .setPaymentMethod((FIN_PaymentMethod) order.getOrganization().getObretcoDbpPmethodid());
+        order.setPaymentMethod(order.getOrganization().getObretcoDbpPmethodid());
       } else {
         String paymentMethodHqlWhereClause = " pmethod where EXISTS (SELECT 1 FROM FinancialMgmtFinAccPaymentMethod fapm "
             + "WHERE pmethod.id = fapm.paymentMethod.id AND fapm.payinAllow = 'Y')";
@@ -1098,9 +1097,9 @@ public class OrderLoader extends POSDataSynchronizationProcess
           .getProxy("FinancialMgmtPaymentTerm",
               jsonorder.getJSONObject("bp").getString("paymentTerms")));
     } else if (bp.getPaymentTerms() != null) {
-      order.setPaymentTerms((PaymentTerm) bp.getPaymentTerms());
+      order.setPaymentTerms(bp.getPaymentTerms());
     } else if (order.getOrganization().getObretcoDbpPmethodid() != null) {
-      order.setPaymentTerms((PaymentTerm) order.getOrganization().getObretcoDbpPtermid());
+      order.setPaymentTerms(order.getOrganization().getObretcoDbpPtermid());
     } else {
       OBCriteria<PaymentTerm> paymentTerms = OBDal.getInstance().createCriteria(PaymentTerm.class);
       paymentTerms.add(Restrictions.eq(Locator.PROPERTY_ACTIVE, true));
@@ -1501,12 +1500,9 @@ public class OrderLoader extends POSDataSynchronizationProcess
       if (payment.has("isReversePayment")) {
         // If the current payment is a reversal payment, a new PSD must be added for each PSD in the
         // reversed payment
-        final StringBuffer reversedPSDHQL = new StringBuffer();
-        reversedPSDHQL.append(" AS psd ");
-        reversedPSDHQL.append("WHERE psd.paymentDetails.finPayment.id = :paymentId ");
-        reversedPSDHQL.append("AND psd.orderPaymentSchedule.id = :paymentSchId");
+        final String reversedPSDHQL = " AS psd WHERE psd.paymentDetails.finPayment.id = :paymentId AND psd.orderPaymentSchedule.id = :paymentSchId";
         final OBQuery<FIN_PaymentScheduleDetail> reversedPSDQuery = OBDal.getInstance()
-            .createQuery(FIN_PaymentScheduleDetail.class, reversedPSDHQL.toString());
+            .createQuery(FIN_PaymentScheduleDetail.class, reversedPSDHQL);
         reversedPSDQuery.setNamedParameter("paymentId", payment.getString("reversedPaymentId"));
         reversedPSDQuery.setNamedParameter("paymentSchId", paymentSchedule.getId());
         reversedPSDQuery.setFilterOnReadableOrganization(false);

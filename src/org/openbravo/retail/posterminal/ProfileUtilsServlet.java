@@ -37,17 +37,11 @@ public class ProfileUtilsServlet extends ProfileUtils {
     for (Organization org : orgs) {
       JSONObject orgWarehouse = new JSONObject();
       orgWarehouse.put("orgId", org.getId());
-      StringBuffer hqlQuery = new StringBuffer();
-      hqlQuery.append("organization.id in (:orgList) AND ");
-      hqlQuery.append("client.id=:clientId AND ");
-      hqlQuery.append("id in (");
-      hqlQuery.append("  select owar.warehouse.id from OrganizationWarehouse owar ");
-      hqlQuery.append("  where owar.organization.id = :orgId");
-      hqlQuery.append(") AND ");
-      hqlQuery.append("organization.active=true ");
-      hqlQuery.append("order by name");
+      String hqlQuery = "organization.id in (:orgList) AND client.id=:clientId "
+          + "AND id in (select owar.warehouse.id from OrganizationWarehouse owar "
+          + "where owar.organization.id = :orgId) AND organization.active=true order by name";
       final OBQuery<Warehouse> warehouses = OBDal.getInstance()
-          .createQuery(Warehouse.class, hqlQuery.toString());
+          .createQuery(Warehouse.class, hqlQuery);
       warehouses.setNamedParameter("orgList", osp.getNaturalTree(org.getId()));
       warehouses.setNamedParameter("orgId", org.getId());
       warehouses.setNamedParameter("clientId", clientId);
@@ -65,8 +59,8 @@ public class ProfileUtilsServlet extends ProfileUtils {
     String formId = defaults.getFormId();
     String clientId = OBContext.getOBContext().getCurrentClient().getId();
     String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
-    String whereClause = "as r where userContact.id=:user and role.active=true ";
-    whereClause += "and exists (select 1 from ADFormAccess a "//
+    String whereClause = "as r where userContact.id=:user and role.active=true "
+        + " and exists (select 1 from ADFormAccess a "//
         + " where a.active = true" //
         + " and a.role.id = r.role.id "//
         + " and a.role.client.id = :clientId "//
