@@ -7353,18 +7353,20 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obUiModalProductBrandFooter-container1 {}
 
-.obUiModalProductBrandFooter-container1-container1 {}
-
-.obUiModalProductBrandFooter-container1-container1-cancelBrandButton {
-/* # Inherits: [OB.UI.Button] */
+.obUiModalProductBrandFooter-container1-container1 {
   display: inline-block;
 }
 
-.obUiModalProductBrandFooter-container1-container2 {}
+.obUiModalProductBrandFooter-container1-container1-cancelBrandButton {
+/* # Inherits: [OB.UI.Button] */
+}
+
+.obUiModalProductBrandFooter-container1-container2 {
+  display: inline-block;
+}
 
 .obUiModalProductBrandFooter-container1-container2-doneBrandButton {
 /* # Inherits: [OB.UI.Button] */
-  display: inline-block;
 }
 
 
