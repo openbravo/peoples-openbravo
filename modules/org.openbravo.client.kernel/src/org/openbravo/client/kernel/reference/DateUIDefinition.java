@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,7 +28,6 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.kernel.KernelConstants;
-import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.model.ad.ui.Field;
 
 /**
@@ -41,7 +40,6 @@ public class DateUIDefinition extends UIDefinition {
   private static final String UIPATTERN = "yyyy-MM-dd";
 
   private SimpleDateFormat format = null;
-  private String lastUsedPattern = null;
   private SimpleDateFormat dateFormat = null;
   private SimpleDateFormat uiDateFormat = null;
 
@@ -106,10 +104,11 @@ public class DateUIDefinition extends UIDefinition {
   }
 
   protected SimpleDateFormat getClassicFormat() {
-    String pattern = RequestContext.get().getSessionAttribute("#AD_JAVADATEFORMAT").toString();
-    if (dateFormat == null || !pattern.equals(lastUsedPattern)) {
+    if (dateFormat == null) {
+      String pattern = OBPropertiesProvider.getInstance()
+          .getOpenbravoProperties()
+          .getProperty("dateFormat.java");
       dateFormat = new SimpleDateFormat(pattern);
-      lastUsedPattern = pattern;
       dateFormat.setLenient(true);
     }
     return dateFormat;
