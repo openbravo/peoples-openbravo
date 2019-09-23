@@ -469,10 +469,10 @@ OB.UTIL.RfidController.processRemainingCodes = function(
 
 OB.UTIL.RfidController.connectRFIDDevice = function(callback, errorCallback) {
   if (OB.UTIL.RfidController.get('rfidWebsocket')) {
-    OB.UTIL.RfidController.set('isRFIDEnabled', true);
-    OB.UTIL.RfidController.set('connected', true);
     OB.UTIL.RfidController.waitForAck(
       function(uuid) {
+        OB.UTIL.RfidController.set('isRFIDEnabled', true);
+        OB.UTIL.RfidController.set('connected', true);
         OB.UTIL.RfidController.get('rfidWebsocket').send('connect:' + uuid);
         OB.debug('connectRFIDDevice sent, UUID: ' + uuid);
       },
@@ -483,9 +483,9 @@ OB.UTIL.RfidController.connectRFIDDevice = function(callback, errorCallback) {
         }
       },
       function() {
-        OB.UTIL.RfidController.set('connectionLost', true);
         OB.UTIL.RfidController.waitForAck(
           function(uuid) {
+            OB.UTIL.RfidController.set('connectionLost', true);
             OB.UTIL.RfidController.get('rfidWebsocket').send('connect:' + uuid);
             OB.debug('connectRFIDDevice sent, UUID: ' + uuid);
           },
@@ -522,10 +522,10 @@ OB.UTIL.RfidController.disconnectRFIDDevice = function(
   errorCallback
 ) {
   if (OB.UTIL.RfidController.get('rfidWebsocket')) {
-    OB.UTIL.RfidController.set('isRFIDEnabled', false);
-    OB.UTIL.RfidController.set('connected', false);
     OB.UTIL.RfidController.waitForAck(
       function(uuid) {
+        OB.UTIL.RfidController.set('isRFIDEnabled', false);
+        OB.UTIL.RfidController.set('connected', false);
         OB.UTIL.RfidController.get('rfidWebsocket').send('disconnect:' + uuid);
         OB.debug('disconnectRFIDDevice sent, UUID: ' + uuid);
       },
@@ -536,9 +536,9 @@ OB.UTIL.RfidController.disconnectRFIDDevice = function(
         }
       },
       function() {
-        OB.UTIL.RfidController.set('connectionLost', true);
         OB.UTIL.RfidController.waitForAck(
           function(uuid) {
+            OB.UTIL.RfidController.set('connectionLost', true);
             OB.UTIL.RfidController.get('rfidWebsocket').send(
               'disconnect:' + uuid
             );
