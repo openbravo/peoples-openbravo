@@ -14436,7 +14436,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   margin-right: 10px;
   margin-bottom: 10px;
   margin-left: 10px;
-  display: block !important;
+  display: block;
   background-position: left center !important;
 }
 
