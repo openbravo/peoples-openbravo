@@ -19,14 +19,8 @@
 
 package org.openbravo.authentication.hashing;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.util.Base64;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Random;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -135,108 +129,5 @@ public abstract class PasswordHash {
       return 0;
     }
     return Integer.parseInt(hash.substring(0, idx));
-  }
-
-  /** Algorithm used to hash password to store in Database */
-  public abstract static class HashingAlgorithm {
-
-    /** Generates a hash using current algorithm */
-    public abstract String generateHash(String password);
-
-    /**
-     * Each {@link HashingAlgorithm} must be versioned, passwords hashed in Database with older
-     * algorithms can be automatically upgraded to newer ones.
-     * 
-     * @see PasswordHash#getUserWithPassword(String, String)
-     */
-    protected abstract int getAlgorithmVersion();
-
-    /** Checks whether a plain text password matches with a hashed password */
-    protected abstract boolean check(String plainTextPassowed, String hashedPassword);
-
-    protected abstract String getHashingBaseAlgorithm();
-
-    protected final String hash(String plainText, String salt) {
-      try {
-        MessageDigest md = MessageDigest.getInstance(getHashingBaseAlgorithm());
-        if (salt != null) {
-          md.update(salt.getBytes(StandardCharsets.UTF_8));
-        }
-
-        byte[] bytes = md.digest(plainText.getBytes(StandardCharsets.UTF_8));
-
-        return Base64.getEncoder().encodeToString(bytes);
-      } catch (NoSuchAlgorithmException e) {
-        log.error("Error getting hashing algorithm", e);
-        return "";
-      }
-    }
-  }
-
-  /**
-   * Passwords are hashed with SHA-1 algorithm represented as a {@code String} encoded in base 64.
-   * <p>
-   * Algorithm used before 3.0PR20Q1.
-   */
-  private static class SHA1 extends HashingAlgorithm {
-    @Override
-    protected String getHashingBaseAlgorithm() {
-      return "SHA-1";
-    }
-
-    @Override
-    protected boolean check(String plainTextPassword, String hashedPassword) {
-      return hash(plainTextPassword, null).equals(hashedPassword);
-    }
-
-    @Override
-    protected int getAlgorithmVersion() {
-      return 0;
-    }
-
-    @Override
-    public String generateHash(String password) {
-      return hash(password, null);
-    }
-
-  }
-
-  /**
-   * Passwords are hashed using SHA-512 algorithm with a random salt of 16 bytes represented as a
-   * {@code String} encoded in base 64.
-   * <p>
-   * The full hash looks like {@code 1$salt$hashedPassword}, where {@code 1} is this algorithm's
-   * version.
-   */
-  private static class SHA512Salt extends HashingAlgorithm {
-    private static final Random RANDOM = new SecureRandom();
-
-    @Override
-    protected String getHashingBaseAlgorithm() {
-      return "SHA-512";
-    }
-
-    @Override
-    protected boolean check(String plainTextPassword, String hashedPassword) {
-      String[] hashParts = hashedPassword.split("\\$");
-      String salt = hashParts[1];
-      String orginalHash = hashParts[2];
-
-      return hash(plainTextPassword, salt).equals(orginalHash);
-    }
-
-    @Override
-    protected int getAlgorithmVersion() {
-      return 1;
-    }
-
-    @Override
-    public String generateHash(String password) {
-      byte[] rawSalt = new byte[16];
-      RANDOM.nextBytes(rawSalt);
-      String salt = Base64.getEncoder().withoutPadding().encodeToString(rawSalt);
-      String hash = hash(password, salt);
-      return getAlgorithmVersion() + "$" + salt + "$" + hash;
-    }
   }
 }
