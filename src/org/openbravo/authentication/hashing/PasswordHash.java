@@ -17,7 +17,7 @@
  ************************************************************************
  */
 
-package org.openbravo.base.secureApp;
+package org.openbravo.authentication.hashing;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;

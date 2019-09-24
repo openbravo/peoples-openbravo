@@ -6,7 +6,7 @@ import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
-import org.openbravo.base.secureApp.PasswordHash;
+import org.openbravo.authentication.hashing.PasswordHash;
 
 public class PasswordHashing {
 

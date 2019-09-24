@@ -30,6 +30,7 @@ import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationExpirationPasswordException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.authentication.ChangePasswordException;
+import org.openbravo.authentication.hashing.PasswordHash;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.secureApp.LoginUtils.RoleDefaults;
 import org.openbravo.client.application.CachedPreference;

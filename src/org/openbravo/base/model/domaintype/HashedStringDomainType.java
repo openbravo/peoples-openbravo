@@ -24,7 +24,7 @@ package org.openbravo.base.model.domaintype;
  * cleartext value cannot be recovered.
  * 
  * @author shuehner
- * @see org.openbravo.base.secureApp.PasswordHash
+ * @see org.openbravo.authentication.hashing.PasswordHash
  */
 public class HashedStringDomainType extends StringDomainType {
 
