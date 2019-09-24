@@ -417,7 +417,7 @@ enyo.kind({
       customerEdited;
 
     function enableButtonsCallback(disable) {
-      me.waterfall('onDisableButton', {
+      me.parent.parent.waterfall('onDisableButton', {
         disabled: disable
       });
     }
