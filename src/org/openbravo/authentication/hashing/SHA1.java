@@ -1,5 +1,10 @@
 package org.openbravo.authentication.hashing;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+import org.jboss.weld.exceptions.IllegalStateException;
+
 /**
  * Passwords are hashed with SHA-1 algorithm represented as a {@code String} encoded in base 64.
  * <p>
@@ -7,8 +12,12 @@ package org.openbravo.authentication.hashing;
  */
 class SHA1 extends HashingAlgorithm {
   @Override
-  protected String getHashingBaseAlgorithm() {
-    return "SHA-1";
+  protected MessageDigest getHashingBaseAlgorithm() {
+    try {
+      return MessageDigest.getInstance("SHA-1");
+    } catch (NoSuchAlgorithmException wontHappen) {
+      throw new IllegalStateException(wontHappen);
+    }
   }
 
   @Override
