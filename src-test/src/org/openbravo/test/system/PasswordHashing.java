@@ -24,10 +24,20 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
+import java.util.Optional;
+
 import org.junit.Test;
 import org.openbravo.authentication.hashing.PasswordHash;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.access.User;
+import org.openbravo.test.base.OBBaseTest;
+import org.openbravo.test.base.TestConstants;
 
-public class PasswordHashing {
+/** Tests password hashing with different algorithms */
+public class PasswordHashing extends OBBaseTest {
+
+  private static final String SHA1_OPENBRAVO = "PwOd6SgWF74HY4u51bfrUxjtB9g=";
+  private static final String SHA512SALT_OPENBRAVO = "1$anySalt$iyWvhlUpOrXFPPeRVzWXXR/B4hQ5qs8ZjCLUPoncJIKHRy5HZeXm9/r20qXg8tRgKcfC8bp/u5fPPQ9qA/hheQ==";
 
   @Test
   public void sha1IsAKnownAlgorithm() {
@@ -42,20 +52,17 @@ public class PasswordHashing {
 
   @Test(expected = IllegalStateException.class)
   public void unknownAlgorithmsThrowException() {
-    assertThat(PasswordHash.getAlgorithm("2$salt$hash").getClass().getSimpleName(),
-        is("SHA512Salt"));
+    PasswordHash.getAlgorithm("2$salt$hash");
   }
 
   @Test
   public void oldHashesWork() {
-    String sha1HashedOpenbravo = "PwOd6SgWF74HY4u51bfrUxjtB9g=";
-    assertThat(PasswordHash.matches("openbravo", sha1HashedOpenbravo), is(true));
+    assertThat(PasswordHash.matches("openbravo", SHA1_OPENBRAVO), is(true));
   }
 
   @Test
   public void newHashesWork() {
-    String sha512SaltedOpenbravo = "1$anySalt$iyWvhlUpOrXFPPeRVzWXXR/B4hQ5qs8ZjCLUPoncJIKHRy5HZeXm9/r20qXg8tRgKcfC8bp/u5fPPQ9qA/hheQ==";
-    assertThat(PasswordHash.matches("openbravo", sha512SaltedOpenbravo), is(true));
+    assertThat(PasswordHash.matches("openbravo", SHA512SALT_OPENBRAVO), is(true));
   }
 
   @Test
@@ -64,4 +71,55 @@ public class PasswordHashing {
         PasswordHash.generateHash("mySecret"), not(equalTo(PasswordHash.generateHash("mySecret"))));
   }
 
+  @Test
+  public void validUserNameAndPasswordReturnAUser() {
+    Optional<User> user = PasswordHash.getUserWithPassword("Openbravo", "openbravo");
+    assertThat("Openbravo user is found", user.isPresent(), is(true));
+  }
+
+  @Test
+  public void invalidPasswordDoesNotReturnAUser() {
+    Optional<User> user = PasswordHash.getUserWithPassword("Openbravo", "wrongPassword");
+    assertThat("Openbravo user is found", user.isPresent(), is(false));
+  }
+
+  @Test
+  public void invalidUserDoesNotReturnAUser() {
+    Optional<User> user = PasswordHash.getUserWithPassword("wrongUser", "wrongPassword");
+    assertThat("User is found", user.isPresent(), is(false));
+  }
+
+  @Test
+  public void oldAlgorithmsGetPromoted() {
+    setSystemAdministratorContext();
+
+    // Given a user with a password hashed with old algorithm
+    User obUser = OBDal.getInstance().get(User.class, TestConstants.Users.OPENBRAVO);
+    obUser.setPassword(SHA1_OPENBRAVO);
+    OBDal.getInstance().flush();
+
+    // when credentials are checked first time
+    Optional<User> user = PasswordHash.getUserWithPassword("Openbravo", "openbravo");
+
+    // then password gets promoted to new algorithm
+    assertThat("password is promoted",
+        PasswordHash.getAlgorithm(user.get().getPassword()).getClass().getSimpleName(),
+        is("SHA512Salt"));
+  }
+
+  @Test
+  public void newAlgorithmsRemainUntouched() {
+    setSystemAdministratorContext();
+
+    // Given a user with a password hashed with old algorithm
+    User obUser = OBDal.getInstance().get(User.class, TestConstants.Users.OPENBRAVO);
+    obUser.setPassword(SHA512SALT_OPENBRAVO);
+    OBDal.getInstance().flush();
+
+    // when credentials are checked first time
+    Optional<User> user = PasswordHash.getUserWithPassword("Openbravo", "openbravo");
+
+    // then password gets promoted to new algorithm
+    assertThat("password is not changed", user.get().getPassword(), is(SHA512SALT_OPENBRAVO));
+  }
 }
