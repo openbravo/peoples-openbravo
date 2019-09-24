@@ -598,7 +598,8 @@ enyo.kind({
   },
   events: {
     onReceiptLineSelected: '',
-    onRenderPaymentLine: ''
+    onRenderPaymentLine: '',
+    onChangeOrderCaptionWidth: ''
   },
   handlers: {
     onCheckBoxBehaviorForTicketLine: 'checkBoxBehavior',
@@ -1022,6 +1023,13 @@ enyo.kind({
           this.$.listPaymentLines.hide();
           this.$.paymentBreakdown.hide();
         }
+      },
+      this
+    );
+    this.order.get('lines').on(
+      'add remove reset',
+      function() {
+        this.doChangeOrderCaptionWidth();
       },
       this
     );
