@@ -562,7 +562,6 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.ModalProductChFooter',
-  kind: 'OB.UI.ScrollableTableFooter',
   classes: 'obUiModalProductChFooter',
   events: {
     onHideThisPopup: '',

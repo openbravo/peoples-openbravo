@@ -1123,7 +1123,6 @@
 
 /*
 # Component: OB.UI.ModalReceiptsFooter
-# Inherits: [OB.UI.ScrollableTableFooter]
 */
 
 .obUiModalReceiptsFooter-container1 {}
@@ -1154,7 +1153,6 @@
 
 /*
 # Component: OB.UI.ModalVerifiedReturnsFooter
-# Inherits: [OB.UI.ScrollableTableFooter]
 */
 .obUiModalVerifiedReturnsScrollableHeader-container1 {}
 
@@ -6573,7 +6571,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 /*
 # Component: OB.UI.ModalPayOpenTicketsFooter
-# Inherits: [OB.UI.ScrollableTableFooter]
 */
 
 .obUiModalPayOpenTicketsFooter-container1 {}

@@ -249,7 +249,6 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.ModalBpSelectorFooter',
-  kind: 'OB.UI.ScrollableTableFooter',
   classes: 'obUiModalBpSelectorFooter',
   components: [
     {

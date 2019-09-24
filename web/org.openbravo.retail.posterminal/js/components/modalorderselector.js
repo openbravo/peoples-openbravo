@@ -874,7 +874,6 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.ModalReceiptsFooter',
-  kind: 'OB.UI.ScrollableTableFooter',
   classes: 'obUiModalReceiptsFooter',
   components: [
     {
@@ -946,7 +945,6 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.ModalVerifiedReturnsFooter',
-  kind: 'OB.UI.ScrollableTableFooter',
   classes: 'obUiModalVerifiedReturnsFooter',
   components: [
     {
