@@ -39,6 +39,8 @@ import org.openbravo.model.ad.access.User;
 /**
  * Handles hashing passwords to be stored in database supporting different
  * {@link HashingAlgorithm}s.
+ *
+ * @since 3.0PR20Q1
  */
 public abstract class PasswordHash {
   public static final Logger log = LogManager.getLogger();
@@ -50,27 +52,14 @@ public abstract class PasswordHash {
   private PasswordHash() {
   }
 
-  /** Determines the algorithm used to hash a given password. */
-  public static HashingAlgorithm getAlgorithm(String hash) {
-    HashingAlgorithm algorithm = ALGORITHMS.get(getVersion(hash));
-
-    if (algorithm == null) {
-      throw new IllegalStateException(
-          "Hashing alorightm version " + getVersion(hash) + " is not implemented");
-    }
-
-    return algorithm;
-  }
-
   /**
    * Checks if userName matches password, returning an {@link Optional} {@link User} in case it
    * matches.
-   * 
    * <p>
-   * <b>Important Note</b>: In case password matches with the current one for the user, but it was
+   * <b>Important Note</b>: In case password matches with the current one for the user and it was
    * hashed with a {@link HashingAlgorithm} with a version lower than current default, hash will be
-   * updated with the default algorithm. In this case, DAL current transaction will be flushed to
-   * DB.
+   * promoted to the default algorithm. In this case, user's password field will be updated and DAL
+   * current transaction will be flushed to DB.
    * 
    * @param userName
    *          user name to check
@@ -121,10 +110,23 @@ public abstract class PasswordHash {
     return ALGORITHMS.get(DEFAULT_CURRENT_ALGORITHM_VERSION);
   }
 
+  /** Checks whether a plain text password matches with a hashed password */
   public static boolean matches(String plainTextPassword, String hashedPassword) {
     HashingAlgorithm algorithm = getAlgorithm(hashedPassword);
     log.trace("Checking password with algorithm {}", () -> algorithm.getClass().getSimpleName());
     return algorithm.check(plainTextPassword, hashedPassword);
+  }
+
+  /** Determines the algorithm used to hash a given password. */
+  public static HashingAlgorithm getAlgorithm(String hash) {
+    HashingAlgorithm algorithm = ALGORITHMS.get(getVersion(hash));
+
+    if (algorithm == null) {
+      throw new IllegalStateException(
+          "Hashing alorightm version " + getVersion(hash) + " is not implemented");
+    }
+
+    return algorithm;
   }
 
   private static int getVersion(String hash) {
@@ -135,16 +137,26 @@ public abstract class PasswordHash {
     return Integer.parseInt(hash.substring(0, idx));
   }
 
+  /** Algorithm used to hash password to store in Database */
   public abstract static class HashingAlgorithm {
+
+    /** Generates a hash using current algorithm */
     public abstract String generateHash(String password);
 
+    /**
+     * Each {@link HashingAlgorithm} must be versioned, passwords hashed in Database with older
+     * algorithms can be automatically upgraded to newer ones.
+     * 
+     * @see PasswordHash#getUserWithPassword(String, String)
+     */
     protected abstract int getAlgorithmVersion();
 
+    /** Checks whether a plain text password matches with a hashed password */
     protected abstract boolean check(String plainTextPassowed, String hashedPassword);
 
     protected abstract String getHashingBaseAlgorithm();
 
-    protected String hash(String plainText, String salt) {
+    protected final String hash(String plainText, String salt) {
       try {
         MessageDigest md = MessageDigest.getInstance(getHashingBaseAlgorithm());
         if (salt != null) {
@@ -161,6 +173,11 @@ public abstract class PasswordHash {
     }
   }
 
+  /**
+   * Passwords are hashed with SHA-1 algorithm represented as a {@code String} encoded in base 64.
+   * <p>
+   * Algorithm used before 3.0PR20Q1.
+   */
   private static class SHA1 extends HashingAlgorithm {
     @Override
     protected String getHashingBaseAlgorithm() {
@@ -184,6 +201,13 @@ public abstract class PasswordHash {
 
   }
 
+  /**
+   * Passwords are hashed using SHA-512 algorithm with a random salt of 16 bytes represented as a
+   * {@code String} encoded in base 64.
+   * <p>
+   * The full hash looks like {@code 1$salt$hashedPassword}, where {@code 1} is this algorithm's
+   * version.
+   */
   private static class SHA512Salt extends HashingAlgorithm {
     private static final Random RANDOM = new SecureRandom();
 
