@@ -609,7 +609,7 @@ public class LoginHandler extends HttpBaseServlet {
       } else if (!passwordStrengthChecker.isStrongPassword(newPassword)) {
         throwChangePasswordException("CPWeakPasswordTitle", "CPPasswordNotStrongEnough", language);
       } else {
-        user.setPassword(PasswordHash.getDefaultAlgorithm().generateHash(newPassword));
+        user.setPassword(PasswordHash.generateHash(newPassword));
         OBDal.getInstance().commitAndClose();
       }
     } finally {

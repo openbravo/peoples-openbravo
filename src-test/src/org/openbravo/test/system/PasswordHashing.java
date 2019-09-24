@@ -42,8 +42,7 @@ public class PasswordHashing {
   @Test
   public void saltPrventCollission() {
     assertThat("same password should generate different salted hashes",
-        PasswordHash.getDefaultAlgorithm().generateHash("mySecret"),
-        not(equalTo(PasswordHash.getDefaultAlgorithm().generateHash("mySecret"))));
+        PasswordHash.generateHash("mySecret"), not(equalTo(PasswordHash.generateHash("mySecret"))));
   }
 
 }

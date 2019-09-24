@@ -102,7 +102,7 @@ public class GrantPortalAccessProcess extends BaseProcessActionHandler {
       }
 
       String newPassword = RandomStringUtils.randomAlphanumeric(PASSWORD_LENGHT);
-      user.setPassword(PasswordHash.getDefaultAlgorithm().generateHash(newPassword));
+      user.setPassword(PasswordHash.generateHash(newPassword));
 
       // flushing changes in admin mode
       OBDal.getInstance().flush();

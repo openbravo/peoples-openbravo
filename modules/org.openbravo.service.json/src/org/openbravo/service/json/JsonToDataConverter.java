@@ -207,7 +207,7 @@ public class JsonToDataConverter {
         return new BigDecimal(((Number) value).doubleValue());
       } else if (value instanceof String
           && property.getDomainType() instanceof HashedStringDomainType) {
-        return PasswordHash.getDefaultAlgorithm().generateHash((String) value);
+        return PasswordHash.generateHash((String) value);
       } else if (value instanceof String
           && property.getDomainType() instanceof EncryptedStringDomainType) {
         String str = (String) value;

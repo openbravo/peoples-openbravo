@@ -115,7 +115,7 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
     if (!passwordStrengthChecker.isStrongPassword(newPwd)) {
       return createErrorResponse("newPwd", "CPPasswordNotStrongEnough");
     }
-    user.setPassword(PasswordHash.getDefaultAlgorithm().generateHash(newPwd));
+    user.setPassword(PasswordHash.generateHash(newPwd));
     OBDal.getInstance().flush();
     return ApplicationConstants.ACTION_RESULT_SUCCESS;
   }

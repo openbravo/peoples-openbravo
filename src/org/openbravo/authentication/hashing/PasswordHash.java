@@ -100,8 +100,9 @@ public abstract class PasswordHash {
     }
   }
 
-  public static HashingAlgorithm getDefaultAlgorithm() {
-    return ALGORITHMS.get(DEFAULT_CURRENT_ALGORITHM_VERSION);
+  /** Generates a hash for the {@code plainText} using current default {@link HashingAlgorithm} */
+  public static String generateHash(String plainText) {
+    return ALGORITHMS.get(DEFAULT_CURRENT_ALGORITHM_VERSION).generateHash(plainText);
   }
 
   /** Checks whether a plain text password matches with a hashed password */

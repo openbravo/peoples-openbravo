@@ -695,7 +695,7 @@ public class InitialSetupUtility {
     newUser.setName(name);
     newUser.setDescription(name);
     newUser.setUsername(name);
-    newUser.setPassword(PasswordHash.getDefaultAlgorithm().generateHash(password));
+    newUser.setPassword(PasswordHash.generateHash(password));
     newUser.setDefaultLanguage(defaultLanguage);
     if (role != null) {
       newUser.setDefaultRole(role);
