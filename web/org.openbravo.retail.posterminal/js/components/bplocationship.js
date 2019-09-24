@@ -202,7 +202,7 @@ enyo.kind({
       );
       this.$.body.$.listBpsShipLoc.setTarget(this.args.target);
       this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.searchAction();
-      this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.newAction.setDisabled(
+      this.$.footer.$.modalBpLocFooter.$.newAction.setDisabled(
         !OB.MobileApp.model.hasPermission(
           'OBPOS_retail.createCustomerLocationButton',
           true
@@ -221,6 +221,9 @@ enyo.kind({
   body: {
     kind: 'OB.UI.ListBpsShipLoc',
     classes: 'obUiModalSelector-body-obUiListBpsShipLoc'
+  },
+  footer: {
+    kind: 'OB.UI.ModalBpLocFooter'
   },
   getScrollableTable: function() {
     return this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter;

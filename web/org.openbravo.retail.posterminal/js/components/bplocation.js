@@ -202,7 +202,7 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.NewCustomerAddressWindowButton',
   events: {
     onChangeSubWindow: '',
@@ -216,6 +216,10 @@ enyo.kind({
     onSetModel: 'setModel',
     onNewBPLocDisabled: 'doDisableNewBPLoc',
     onSetBusinessPartner: 'setBusinessPartner'
+  },
+  initComponents: function() {
+    this.popup = OB.UTIL.getPopupFromComponent(this);
+    this.inherited(arguments);
   },
   setModel: function(inSender, inEvent) {
     this.model = inEvent.model;
@@ -244,16 +248,15 @@ enyo.kind({
     }
 
     function successCallbackBPs(dataBps) {
-      var modalDlg = me.owner.owner.owner.owner.owner.owner,
-        navigationPath;
-      if (modalDlg.kind === 'OB.UI.ModalBPLocation') {
+      var navigationPath;
+      if (me.popup.kind === 'OB.UI.ModalBPLocation') {
         navigationPath = OB.UTIL.BusinessPartnerSelector.cloneAndPush(
-          modalDlg.args.navigationPath,
+          me.popup.args.navigationPath,
           'modalcustomeraddress'
         );
       } else {
         navigationPath = OB.UTIL.BusinessPartnerSelector.cloneAndPush(
-          modalDlg.args.navigationPath,
+          me.popup.args.navigationPath,
           'modalcustomershipaddress'
         );
       }
@@ -261,7 +264,7 @@ enyo.kind({
         popup: 'customerAddrCreateAndEdit',
         args: {
           businessPartner: dataBps,
-          target: modalDlg.target,
+          target: me.popup.target,
           navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(
             navigationPath,
             'customerAddressView'
@@ -356,37 +359,6 @@ enyo.kind({
           ]
         }
       ]
-    },
-    {
-      classes: 'obUiModalBpLocScrollableHeader-container1-container2',
-      showing: true,
-      handlers: {
-        onSetShow: 'setShow'
-      },
-      setShow: function(inSender, inEvent) {
-        this.setShowing(inEvent.visibility);
-        return true;
-      },
-      components: [
-        {
-          classes:
-            'obUiModalBpLocScrollableHeader-container1-container2-container1',
-          components: [
-            {
-              classes:
-                'obUiModalBpLocScrollableHeader-container1-container2-container1-container1',
-              components: [
-                {
-                  kind: 'OB.UI.NewCustomerAddressWindowButton',
-                  classes:
-                    'obUiModalBpLocScrollableHeader-container1-container2-container1-container1-newAction',
-                  name: 'newAction'
-                }
-              ]
-            }
-          ]
-        }
-      ]
     }
   ],
   clearAction: function() {
@@ -402,6 +374,49 @@ enyo.kind({
     });
     return true;
   }
+});
+
+enyo.kind({
+  name: 'OB.UI.ModalBpLocFooter',
+  kind: 'OB.UI.ScrollableTableFooter',
+  classes: 'obUiModalBpLocFooter',
+  components: [
+    {
+      classes: 'obUiModalBpLocFooter-container1',
+      showing: true,
+      handlers: {
+        onSetShow: 'setShow'
+      },
+      setShow: function(inSender, inEvent) {
+        this.setShowing(inEvent.visibility);
+        return true;
+      },
+      components: [
+        {
+          classes:
+            'obUiModal-footer-mainButtons obUiModalBpLocFooter-container1-container1',
+          components: [
+            {
+              kind: 'OB.UI.NewCustomerAddressWindowButton',
+              classes: 'obUiModalBpLocFooter-container1-container1-newAction',
+              name: 'newAction'
+            },
+            {
+              kind: 'OB.UI.ModalDialogButton',
+              classes: 'obUiModalBpLocFooter-container1-container1-close',
+              i18nLabel: 'OBRDM_LblClose',
+              isDefaultAction: true,
+              tap: function() {
+                if (this.disabled === false) {
+                  this.doHideThisPopup();
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
 });
 
 enyo.kind({
@@ -1095,7 +1110,7 @@ enyo.kind({
       } else {
         this.$.body.$.listBpsLoc.bpsList.reset([]);
       }
-      this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.newAction.setDisabled(
+      this.$.footer.$.modalBpLocFooter.$.newAction.setDisabled(
         !OB.MobileApp.model.hasPermission(
           'OBPOS_retail.createCustomerLocationButton',
           true
@@ -1219,6 +1234,9 @@ enyo.kind({
   i18nHeader: '',
   body: {
     kind: 'OB.UI.ListBpsLoc'
+  },
+  footer: {
+    kind: 'OB.UI.ModalBpLocFooter'
   },
   getScrollableTable: function() {
     return this.$.body.$.listBpsLoc.$.bpsloclistitemprinter;

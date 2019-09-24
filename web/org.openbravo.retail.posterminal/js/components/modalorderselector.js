@@ -28,13 +28,16 @@ enyo.kind({
     kind: 'OB.UI.ReceiptsList',
     classes: 'obposUiReceiptSelector-obUiReceiptsList'
   },
+  footer: {
+    kind: 'OB.UI.ModalReceiptsFooter'
+  },
   getFilterSelectorTableHeader: function() {
     return this.$.body.$.receiptsList.$.openreceiptslistitemprinter.$.theader.$
       .modalReceiptsScrollableHeader.$.filterSelector;
   },
   getAdvancedFilterBtn: function() {
-    return this.$.body.$.receiptsList.$.openreceiptslistitemprinter.$.theader.$
-      .modalReceiptsScrollableHeader.$.advancedFilterWindowButtonReceipts;
+    return this.$.footer.$.modalReceiptsFooter.$
+      .advancedFilterWindowButtonReceipts;
   },
   getAdvancedFilterDialog: function() {
     return 'OB_UI_ModalAdvancedFilterReceipts';
@@ -83,7 +86,7 @@ enyo.kind({
       ).terminalType.ignoreRelatedreceipts = false;
       var isMultiselect = this.args.multiselect === true;
       this.$.body.$.receiptsList.$.openreceiptslistitemprinter.multiselect = isMultiselect;
-      this.$.body.$.receiptsList.$.openreceiptslistitemprinter.$.theader.$.modalReceiptsScrollableHeader.$.btnOpenSelected.setShowing(
+      this.$.footer.$.modalReceiptsFooter.$.btnOpenSelected.setShowing(
         isMultiselect
       );
       if (this.args.advancedFilters) {
@@ -829,7 +832,7 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.SmallButton',
+  kind: 'OB.UI.ModalDialogButton',
   name: 'OBPOS.UI.ButtonReceiptSelectorOpenSelected',
   classes: 'obposUiButtonReceiptSelectorOpenSelected',
   i18nLabel: 'OBPOS_OpenReceiptBtnOpenSelected',
@@ -860,29 +863,54 @@ enyo.kind({
       kind: 'OB.UI.FilterSelectorTableHeader',
       name: 'filterSelector',
       classes: 'obUiModalReceiptsScrollableHeader-filterSelector'
-    },
+    }
+  ],
+  initComponents: function() {
+    this.filters = this.filterModel.getFilterPropertiesWithSelectorPreference();
+    this.inherited(arguments);
+    this.$.filterSelector.$.formElementEntityFilterText.coreElement.skipAutoFilterPref = true;
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.ModalReceiptsFooter',
+  kind: 'OB.UI.ScrollableTableFooter',
+  classes: 'obUiModalReceiptsFooter',
+  components: [
     {
-      classes: 'obUiModalReceiptsScrollableHeader-container1',
+      classes: 'obUiModalReceiptsFooter-container1',
       components: [
         {
-          classes: 'obUiModalReceiptsScrollableHeader-container1-container1',
+          classes:
+            'obUiModal-footer-secondaryButtons obUiModalReceiptsFooter-container1-container1',
           components: [
             {
+              kind: 'OBPOS.UI.AdvancedFilterWindowButtonReceipts',
               classes:
-                'obUiModalReceiptsScrollableHeader-container1-container1-container1',
-              components: [
-                {
-                  kind: 'OBPOS.UI.AdvancedFilterWindowButtonReceipts',
-                  classes:
-                    'obUiModalReceiptsScrollableHeader-container1-container1-container1-obposUiAdvancedFilterWindowButtonReceipts'
-                },
-                {
-                  kind: 'OBPOS.UI.ButtonReceiptSelectorOpenSelected',
-                  name: 'btnOpenSelected',
-                  classes:
-                    'obUiModalReceiptsScrollableHeader-container1-container1-container1-btnOpenSelected'
+                'obUiModalReceiptsFooter-container1-container1-obposUiAdvancedFilterWindowButtonReceipts'
+            }
+          ]
+        },
+        {
+          classes:
+            'obUiModal-footer-mainButtons obUiModalReceiptsFooter-container1-container2',
+          components: [
+            {
+              kind: 'OBPOS.UI.ButtonReceiptSelectorOpenSelected',
+              name: 'btnOpenSelected',
+              classes:
+                'obUiModalReceiptsFooter-container1-container2-btnOpenSelected'
+            },
+            {
+              kind: 'OB.UI.ModalDialogButton',
+              classes: 'obUiModalReceiptsFooter-container1-container2-close',
+              i18nLabel: 'OBRDM_LblClose',
+              isDefaultAction: true,
+              tap: function() {
+                if (this.disabled === false) {
+                  this.doHideThisPopup();
                 }
-              ]
+              }
             }
           ]
         }
@@ -890,9 +918,7 @@ enyo.kind({
     }
   ],
   initComponents: function() {
-    this.filters = this.filterModel.getFilterPropertiesWithSelectorPreference();
     this.inherited(arguments);
-    this.$.filterSelector.$.formElementEntityFilterText.coreElement.skipAutoFilterPref = true;
   }
 });
 
@@ -909,24 +935,49 @@ enyo.kind({
       kind: 'OB.UI.FilterSelectorTableHeader',
       name: 'filterSelector',
       classes: 'obUiModalVerifiedReturnsScrollableHeader-filterSelector'
-    },
+    }
+  ],
+  initComponents: function() {
+    this.filters = this.filterModel.getFilterPropertiesWithSelectorPreference();
+    this.inherited(arguments);
+    this.$.filterSelector.$.formElementEntityFilterText.coreElement.skipAutoFilterPref = true;
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.ModalVerifiedReturnsFooter',
+  kind: 'OB.UI.ScrollableTableFooter',
+  classes: 'obUiModalVerifiedReturnsFooter',
+  components: [
     {
-      classes: 'obUiModalVerifiedReturnsScrollableHeader-container1',
+      classes: 'obUiModalVerifiedReturnsFooter-container1',
       components: [
         {
           classes:
-            'obUiModalVerifiedReturnsScrollableHeader-container1-container1',
+            'obUiModal-footer-secondaryButtons obUiModalVerifiedReturnsFooter-container1-container1',
           components: [
             {
+              kind: 'OBPOS.UI.AdvancedFilterWindowButtonVerifiedReturns',
               classes:
-                'obUiModalVerifiedReturnsScrollableHeader-container1-container1-container1',
-              components: [
-                {
-                  kind: 'OBPOS.UI.AdvancedFilterWindowButtonVerifiedReturns',
-                  classes:
-                    'obUiModalVerifiedReturnsScrollableHeader-container1-container1-container1-obposUiAdvancedFilterWindowButtonVerifiedReturns'
+                'obUiModalVerifiedReturnsFooter-container1-container1-obposUiAdvancedFilterWindowButtonVerifiedReturns'
+            }
+          ]
+        },
+        {
+          classes:
+            'obUiModal-footer-mainButtons obUiModalVerifiedReturnsFooter-container1-container2',
+          components: [
+            {
+              kind: 'OB.UI.ModalDialogButton',
+              classes:
+                'obUiModalVerifiedReturnsFooter-container1-container2-close',
+              i18nLabel: 'OBRDM_LblClose',
+              isDefaultAction: true,
+              tap: function() {
+                if (this.disabled === false) {
+                  this.doHideThisPopup();
                 }
-              ]
+              }
             }
           ]
         }
@@ -934,9 +985,7 @@ enyo.kind({
     }
   ],
   initComponents: function() {
-    this.filters = this.filterModel.getFilterPropertiesWithSelectorPreference();
     this.inherited(arguments);
-    this.$.filterSelector.$.formElementEntityFilterText.coreElement.skipAutoFilterPref = true;
   }
 });
 

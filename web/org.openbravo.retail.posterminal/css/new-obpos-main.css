@@ -1107,10 +1107,7 @@
 # Component: OBPOS.UI.ButtonReceiptSelectorOpenSelected
 # Inherits: [OB.UI.SmallButton]
 */
-.obposUiButtonReceiptSelectorOpenSelected {
-  width: 170px;
-  margin: 0px 9px 8px 0px;
-}
+.obposUiButtonReceiptSelectorOpenSelected {}
 
 
 /*
@@ -1123,23 +1120,25 @@
   padding: 10px 0 0 0;
 }
 
-.obUiModalReceiptsScrollableHeader-container1 {
-  padding: 10px;
+
+/*
+# Component: OB.UI.ModalReceiptsFooter
+# Inherits: [OB.UI.ScrollableTableFooter]
+*/
+
+.obUiModalReceiptsFooter-container1 {}
+
+.obUiModalReceiptsFooter-container1-container1 {}
+
+.obUiModalReceiptsFooter-container1-container1-obposUiAdvancedFilterWindowButtonReceipts {
+  /* Inherits: [OB.UI.ButtonAdvancedFilter] */
 }
 
-.obUiModalReceiptsScrollableHeader-container1-container1 {
-  display: table;
-  width: 100%;
-}
+.obUiModalReceiptsFooter-container1-container2 {}
 
-.obUiModalReceiptsScrollableHeader-container1-container1-container1 {
-  display: table-cell;
-  text-align: center;
-}
+.obUiModalReceiptsFooter-container1-container2-btnOpenSelected {}
 
-.obUiModalReceiptsScrollableHeader-container1-container1-container1-obposUiAdvancedFilterWindowButtonReceipts {}
-
-.obUiModalReceiptsScrollableHeader-container1-container1-container1-btnOpenSelected {}
+.obUiModalReceiptsFooter-container1-container2-close {}
 
 
 /*
@@ -1152,21 +1151,24 @@
   padding: 10px 0 0 0;
 }
 
-.obUiModalVerifiedReturnsScrollableHeader-container1 {
-  padding: 10px;
+
+/*
+# Component: OB.UI.ModalVerifiedReturnsFooter
+# Inherits: [OB.UI.ScrollableTableFooter]
+*/
+.obUiModalVerifiedReturnsScrollableHeader-container1 {}
+
+.obUiModalVerifiedReturnsScrollableHeader-container1-container1 {}
+
+.obUiModalVerifiedReturnsFooter-container1-container1-obposUiAdvancedFilterWindowButtonVerifiedReturns {
+  /* Inherits: [OBPOS.UI.AdvancedFilterWindowButtonVerifiedReturns] */
 }
 
-.obUiModalVerifiedReturnsScrollableHeader-container1-container1 {
-  display: table;
-  width: 100%;
-}
+.obUiModalVerifiedReturnsFooter-container1-container2 {}
 
-.obUiModalVerifiedReturnsScrollableHeader-container1-container1-container1 {
-  display: table-cell;
-  text-align: center;
+.obUiModalVerifiedReturnsFooter-container1-container2-close {
+  /* Inherits: [OB.UI.ModalDialogButton] */
 }
-
-.obUiModalVerifiedReturnsScrollableHeader-container1-container1-container1-obposUiAdvancedFilterWindowButtonVerifiedReturns {}
 
 
 /*
@@ -1777,19 +1779,25 @@
 /***********************   ***********************/
 /*
 # Component: OB.UI.ModalMultiOrdersLayaway
-# Inherits: [OB.UI.ModalAction]
+# Inherits: [OB.UI.Modal]
 */
 .obUiModalMultiOrdersLayaway {}
 
-.obUiModalMultiOrdersLayaway-bodyContent {}
+.obUiModalMultiOrdersLayaway-body {}
 
-.obUiModalMultiOrdersLayaway-bodyButtons {}
+.obUiModalMultiOrdersLayaway-body-label {}
 
-.obUiModalMultiOrdersLayaway-bodyButtons-btnModalMultiSearchInput {
+.obUiModalMultiOrdersLayaway-body-formElementBtnModalMultiSearchInput {}
+
+.obUiModalMultiOrdersLayaway-body-btnModalMultiSearchInput {
 /* # Inherits: [OB.UI.SearchInput] */
 }
 
-.obUiModalMultiOrdersLayaway-bodyButtons-obUiBtnApplyMultiLayaway {
+.obUiModalMultiOrdersLayaway-footer {}
+
+.obUiModalMultiOrdersLayaway-footer-cancel {}
+
+.obUiModalMultiOrdersLayaway-footer-obUiBtnApplyMultiLayaway {
 /* # Inherits: [OB.UI.btnApplyMultiLayaway] */
 }
 
@@ -4098,52 +4106,14 @@ li.selected > .obUiRenderOrderLine_edit {
 # Component: OB.UI.NewCustomerButton
 # Inherits: OB.UI.Button
 */
-.obUiNewCustomerButton {
-  width: 170px;
-  margin: 0 9px 8px 0;
-  background-color: #f8e859;
-  color: black;
-  display: inline-block;
-  border: none;
-  font-size: 18px;
-  padding: 12px 15px 14px 15px;
-  text-decoration: none;
-  cursor: pointer;
-  opacity: 0.999;
-  height: 30px;
-}
-
-@media all and (max-aspect-ratio: 9/8) {
-  .obUiNewCustomerButton {
-    height: 45px;
-  }
-}
+.obUiNewCustomerButton {}
 
 
 /*
 # Component: OB.UI.AdvancedFilterButton
 # Inherits: OB.UI.ButtonAdvancedFilter
 */
-.obUiAdvancedFilterButton {
-  width: 170px;
-  margin: 0 0 8px 9px;
-  background-color: #f8e859;
-  color: black;
-  display: inline-block;
-  border: none;
-  font-size: 18px;
-  padding: 12px 15px 14px 15px;
-  text-decoration: none;
-  cursor: pointer;
-  opacity: 0.999;
-  height: 30px;
-}
-
-@media all and (max-aspect-ratio: 9/8) {
-  .obUiAdvancedFilterButton {
-    height: 45px;
-  }
-}
+.obUiAdvancedFilterButton {}
 
 
 /*
@@ -4157,30 +4127,22 @@ li.selected > .obUiRenderOrderLine_edit {
   padding: 10px 0 0 0;
 }
 
-.obUiModalBpSelectorScrollableHeader-container1 {
-  padding: 7px;
+.obUiModalBpSelectorFooter-container1 {}
+
+.obUiModalBpSelectorFooter-container1-container1 {}
+
+.obUiModalBpSelectorFooter-container1-container1-element1 {
+  /* Inherits: [OB.UI.AdvancedFilterButton] */
 }
 
-.obUiModalBpSelectorScrollableHeader-container1-container1 {
-  display: table;
-  width: 100%;
-}
+.obUiModalBpSelectorFooter-container1-container2 {}
 
-.obUiModalBpSelectorScrollableHeader-container1-container1-container1 {
-  display: table-cell;
-  text-align: right;
-}
-
-.obUiModalBpSelectorScrollableHeader-container1-container1-container1-newAction {
+.obUiModalBpSelectorFooter-container1-container2-newAction {
   /* Inherits: [OB.UI.NewCustomerButton] */
 }
 
-.obUiModalBpSelectorScrollableHeader-container1-container1-container2 {
-  display: table-cell;
-}
-
-.obUiModalBpSelectorScrollableHeader-container1-container1-container2-element1 {
-  /* Inherits: [OB.UI.AdvancedFilterButton] */
+.obUiModalBpSelectorFooter-container1-container2-close {
+  /* Inherits: [OB.UI.ModalDialogButton] */
 }
 
 
@@ -4393,20 +4355,7 @@ li.selected > .obUiRenderOrderLine_edit {
 # Component: OB.UI.NewCustomerAddressWindowButton
 # Inherits: [OB.UI.Button]
 */
-.obUiNewCustomerAddressWindowButton {
-  width: 170px;
-  margin: 0px 5px 8px 19px;
-  background-color: #f8e859;
-  color: black;
-  border: none;
-  cursor: pointer;
-  display: inline-block;
-  font-size: 16px;
-  font-weight: 400;
-  height: 30px;
-  padding: 5px 15px 7px;
-  text-decoration: none;
-}
+.obUiNewCustomerAddressWindowButton {}
 
 
 /*
@@ -4450,20 +4399,16 @@ li.selected > .obUiRenderOrderLine_edit {
   /* Inherits: [OB.UI.Button] */
 }
 
-.obUiModalBpLocScrollableHeader-container1-container2 {
-  padding: 10px;
-}
+.obUiModalBpLocFooter-container1 {}
 
-.obUiModalBpLocScrollableHeader-container1-container2-container1 {
-  display: table;
-}
+.obUiModalBpLocFooter-container1-container1 {}
 
-.obUiModalBpLocScrollableHeader-container1-container2-container1-container1 {
-  display: table-cell;
-}
-
-.obUiModalBpLocScrollableHeader-container1-container2-container1-container1-newAction {
+.obUiModalBpLocFooter-container1-container1-newAction {
   /* Inherits: [OB.UI.NewCustomerAddressWindowButton] */
+}
+
+.obUiModalBpLocFooter-container1-container1-close {
+  /* Inherits: [OB.UI.ModalDialogButton] */
 }
 
 
@@ -6626,21 +6571,18 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   padding: 10px 0 0 0;
 }
 
-.obUiModalPayOpenTicketsScrollableHeader-container1 {
-  padding: 10px;
-}
+/*
+# Component: OB.UI.ModalPayOpenTicketsFooter
+# Inherits: [OB.UI.ScrollableTableFooter]
+*/
 
-.obUiModalPayOpenTicketsScrollableHeader-container1-container1 {
-  display: table;
-  width: 100%;
-}
+.obUiModalPayOpenTicketsFooter-container1 {}
 
-.obUiModalPayOpenTicketsScrollableHeader-container1-container1-container1 {
-  display: table-cell;
-  text-align: center;
-}
+.obUiModalPayOpenTicketsFooter-container1-container1 {}
 
-.obUiModalPayOpenTicketsScrollableHeader-container1-container1-container1-obposUiAdvancedFilterWindowButtonVerifiedReturns {}
+.obUiModalPayOpenTicketsFooter-container1-container1-obposUiAdvancedFilterWindowButtonVerifiedReturns {}
+
+.obUiModalPayOpenTicketsFooter-container1-container1-doneMultiOrdersButton {}
 
 
 
@@ -6661,9 +6603,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obUiModalMultiOrdersPayOpenTickets-obUiReceiptsForPayOpenTicketsList {}
-
-.obUiModalMultiOrdersPayOpenTickets-footer-obUiModalMultiOrdersFooter {}
-
 
 
 /*
@@ -11307,6 +11246,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-button {
   /* Inherits: [OB.UI.ModalDialogButton] */
+  max-width: 150px;
 }
 
 .obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-button .obUiButton-components {
@@ -15434,17 +15374,25 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 /*
 # Component: OBRDM.UI.ModalChangeDeliveryAmount
-# Inherits: [OB.UI.ModalAction]
+# Inherits: [OB.UI.Modal]
 */
 .obRdmUiModalChangeDeliveryAmount {}
 
-.obRdmUiModalChangeDeliveryAmount-inputNewDeliveryAmount {
-  /* Inherits: [OB.UI.SearchInput] */
+.obRdmUiModalChangeDeliveryAmount-body {}
+
+.obRdmUiModalChangeDeliveryAmount-body-label {}
+
+.obRdmUiModalChangeDeliveryAmount-body-formElementBtnModalMultiSearchInput {}
+
+.obRdmUiModalChangeDeliveryAmount-body-btnModalMultiSearchInput {
+  /* # Inherits: [OB.UI.SearchInput] */
 }
 
-.obRdmUiModalChangeDeliveryAmount-element1 {
-  /* Inherits: [OB.UI.ButtonApplyDeliveryAmount] */
-}
+.obRdmUiModalChangeDeliveryAmount-footer {}
+
+.obRdmUiModalChangeDeliveryAmount-footer-cancel {}
+
+.obRdmUiModalChangeDeliveryAmount-footer-obUiBtnApplyMultiLayaway {}
 
 
 /*

@@ -303,6 +303,9 @@ enyo.kind({
     kind: 'OB.UI.ReceiptsForVerifiedReturnsList',
     classes: 'obUiModalVerifiedReturns-body-obUiReceiptsForVerifiedReturnsList'
   },
+  footer: {
+    kind: 'OB.UI.ModalVerifiedReturnsFooter'
+  },
   getFilterSelectorTableHeader: function() {
     return this.$.body.$.receiptsForVerifiedReturnsList.$
       .verifiedReturnsReceiptsListItemPrinter.$.theader.$

@@ -197,28 +197,6 @@ enyo.kind({
       kind: 'OB.UI.FilterSelectorTableHeader',
       name: 'filterSelector',
       classes: 'obUiModalPayOpenTicketsScrollableHeader-filterSelector'
-    },
-    {
-      classes: 'obUiModalPayOpenTicketsScrollableHeader-container1',
-      components: [
-        {
-          classes:
-            'obUiModalPayOpenTicketsScrollableHeader-container1-container1',
-          components: [
-            {
-              classes:
-                'obUiModalPayOpenTicketsScrollableHeader-container1-container1-container1',
-              components: [
-                {
-                  kind: 'OBPOS.UI.AdvancedFilterWindowButtonPayOpenTickets',
-                  classes:
-                    'obUiModalPayOpenTicketsScrollableHeader-container1-container1-container1-obposUiAdvancedFilterWindowButtonVerifiedReturns'
-                }
-              ]
-            }
-          ]
-        }
-      ]
     }
   ],
   initComponents: function() {
@@ -229,253 +207,9 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.ModalAdvancedFilters',
-  name: 'OB.UI.ModalAdvancedFilterVerifiedReturns',
-  model: OB.Model.VReturnsFilter,
-  initComponents: function() {
-    this.inherited(arguments);
-    OB.UTIL.hideStoreFilter(OB.Model.VReturnsFilter.getProperties());
-    this.setFilters(OB.Model.VReturnsFilter.getProperties());
-  }
-});
-
-enyo.kind({
-  kind: 'OB.UI.ButtonAdvancedFilter',
-  name: 'OBPOS.UI.AdvancedFilterWindowButtonPayOpenTickets',
-  classes: 'obposUiAdvancedFilterWindowButtonPayOpenTickets',
-  dialog: 'modalAdvancedFilterVerifiedReturns'
-});
-
-enyo.kind({
-  name: 'OB.UI.ModalMultiOrdersPayOpenTickets',
-  kind: 'OB.UI.ModalSelector',
-  classes: 'obUiModalMultiOrdersPayOpenTickets',
-  published: {
-    params: null
-  },
-  i18nHeader: 'OBPOS_LblMultiOrders',
-  body: {
-    kind: 'OB.UI.ReceiptsForPayOpenTicketsList',
-    classes:
-      'obUiModalMultiOrdersPayOpenTickets-obUiReceiptsForPayOpenTicketsList'
-  },
-  footer: {
-    kind: 'OB.UI.ModalMultiOrdersFooter',
-    classes:
-      'obUiModalMultiOrdersPayOpenTickets-footer-obUiModalMultiOrdersFooter'
-  },
-  getFilterSelectorTableHeader: function() {
-    return this.$.body.$.receiptsForPayOpenTicketsList.$
-      .payOpenTicketsReceiptsListItemPrinter.$.theader.$
-      .modalPayOpenTicketsScrollableHeader.$.filterSelector;
-  },
-  getAdvancedFilterBtn: function() {
-    return this.$.body.$.receiptsForPayOpenTicketsList.$
-      .payOpenTicketsReceiptsListItemPrinter.$.theader.$
-      .modalPayOpenTicketsScrollableHeader.$
-      .advancedFilterWindowButtonVerifiedReturns;
-  },
-  getAdvancedFilterDialog: function() {
-    return 'modalAdvancedFilterVerifiedReturns';
-  },
-  executeOnShow: function() {
-    var me = this,
-      isPaid;
-    if (!this.initialized) {
-      this.inherited(arguments);
-      this.getFilterSelectorTableHeader().clearFilter();
-    }
-    if (
-      !OB.MobileApp.model.get('connectedToERP') ||
-      OB.MobileApp.model.hasPermission(
-        'OBPOS_SelectCurrentTicketsOnPaidOpen',
-        true
-      )
-    ) {
-      _.each(me.model.get('orderList').models, function(iter) {
-        if (iter.get('lines') && iter.get('lines').length > 0) {
-          isPaid =
-            iter.get('payment') < iter.get('gross') &&
-            OB.MobileApp.model.get('terminal').terminalType.calculateprepayments
-              ? false
-              : iter.get('payment') >= iter.get('gross');
-          if (
-            (iter.get('orderType') === 0 || iter.get('orderType') === 2) &&
-            !isPaid &&
-            !iter.get('isQuotation') &&
-            iter.get('gross') >= 0
-          ) {
-            if (!_.isNull(iter.id) && !_.isUndefined(iter.id)) {
-              iter.set('checked', true);
-              me.$.body.$.receiptsForPayOpenTicketsList.receiptList.add(iter);
-            }
-          }
-        }
-      });
-    }
-    if (!this.initialized) {
-      this.inherited(arguments);
-      this.getFilterSelectorTableHeader().clearFilter();
-    }
-  },
-  init: function(model) {
-    this.model = model;
-  }
-});
-
-enyo.kind({
-  name: 'OB.UI.ListMultiOrdersLine',
-  kind: 'OB.UI.CheckboxButton',
-  classes: 'obUiListMultiOrdersLine',
-  events: {
-    onHideThisPopup: ''
-  },
-  tap: function() {
-    this.inherited(arguments);
-    if (
-      this.model.crossStoreInfo &&
-      OB.UTIL.isCrossStoreReceipt(this.model) &&
-      !this.model.get('checked')
-    ) {
-      OB.UTIL.showConfirmation.display(
-        OB.I18N.getLabel('OBPOS_LblCrossStorePayment'),
-        OB.I18N.getLabel('OBPOS_LblCrossStoreMessage', [
-          this.model.get('documentNo'),
-          this.model.get('store')
-        ]) +
-          '. ' +
-          OB.I18N.getLabel('OBPOS_LblCrossStoreDelivery'),
-        [
-          {
-            label: OB.I18N.getLabel('OBMOBC_Continue'),
-            isConfirmButton: true,
-            args: {
-              model: this.model
-            },
-            action: function() {
-              this.args.model.set('checked', !this.args.model.get('checked'));
-              this.args.model.trigger('verifyDoneButton', this.args.model);
-              return true;
-            }
-          },
-          {
-            label: OB.I18N.getLabel('OBMOBC_LblCancel'),
-            args: {
-              button: this
-            },
-            action: function() {
-              this.args.button.removeClass('active');
-              return true;
-            }
-          }
-        ]
-      );
-    } else {
-      this.model.set('checked', !this.model.get('checked'));
-      this.model.trigger('verifyDoneButton', this.model);
-    }
-  },
-  components: [
-    {
-      name: 'line',
-      classes: 'obUiListMultiOrdersLine-line',
-      components: [
-        {
-          name: 'store',
-          classes: 'obUiListMultiOrdersLine-line-store'
-        },
-        {
-          classes: 'obUiListMultiOrdersLine-line-element1'
-        },
-        {
-          name: 'topLine',
-          classes: 'obUiListMultiOrdersLine-line-topLine'
-        },
-        {
-          name: 'isLayaway',
-          classes: 'obUiListMultiOrdersLine-line-isLayaway'
-        },
-        {
-          name: 'bottonLine',
-          classes: 'obUiListMultiOrdersLine-line-bottonLine'
-        },
-        {
-          classes: 'obUiListMultiOrdersLine-line-element2'
-        }
-      ]
-    }
-  ],
-  create: function() {
-    var returnLabel = '';
-    this.inherited(arguments);
-    if (this.model.crossStoreInfo) {
-      this.$.store.setContent(
-        OB.UTIL.isCrossStoreReceipt(this.model)
-          ? this.model.get('store')
-          : OB.I18N.getLabel('OBPOS_LblThisStore', [
-              OB.MobileApp.model.get('terminal').organization$_identifier
-            ])
-      );
-    } else {
-      this.$.store.setContent('');
-    }
-    if (
-      this.model.get('documentTypeId') ===
-      OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns
-    ) {
-      this.model.set(
-        'totalamount',
-        OB.DEC.mul(this.model.get('totalamount'), -1)
-      );
-      returnLabel = ' (' + OB.I18N.getLabel('OBPOS_ToReturn') + ')';
-    }
-    this.$.topLine.setContent(
-      this.model.get('documentNo') +
-        ' - ' +
-        (this.model.get('bp')
-          ? this.model.get('bp').get('_identifier')
-          : this.model.get('businessPartnerName')) +
-        returnLabel
-    );
-    this.$.bottonLine.setContent(
-      (this.model.get('totalamount') || this.model.get('totalamount') === 0
-        ? this.model.get('totalamount')
-        : this.model.getGross()) +
-        ' (' +
-        OB.I18N.formatDate(new Date(this.model.get('orderDate'))) +
-        ') '
-    );
-    if (this.model.get('checked')) {
-      this.addClass('active');
-    } else {
-      this.removeClass('active');
-    }
-
-    switch (this.model.get('orderType')) {
-      case 'ORD':
-        this.$.isLayaway.setContent(OB.I18N.getLabel('OBPOS_LblAssignReceipt'));
-        this.$.isLayaway.setClasses('payOpenTicketsIsReceipt');
-        break;
-
-      case 'LAY':
-        this.$.isLayaway.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
-        this.$.isLayaway.setClasses('payOpenTicketsIsLayaway');
-        break;
-
-      default:
-        break;
-    }
-    if (this.model.get('orderType') === 'LAY') {
-      this.$.isLayaway.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
-    }
-    this.render();
-  }
-});
-
-enyo.kind({
-  name: 'OB.UI.ModalMultiOrdersFooter',
-  kind: 'OB.UI.ScrollableTableFooter',
-  classes: 'obUiModalMultiOrdersFooter',
+  name: 'OB.UI.ModalPayOpenTicketsFooter',
+  kind: 'OB.UI.ScrollableTableHeader',
+  classes: 'obUiModalPayOpenTicketsFooter',
   events: {
     onHideThisPopup: '',
     onSelectMultiOrders: '',
@@ -484,18 +218,39 @@ enyo.kind({
   },
   components: [
     {
-      classes:
-        'obUiModal-footer-mainButtons obUiobUiModalMultiOrdersFooter-container1',
+      classes: 'obUiModalPayOpenTicketsFooter-container1',
       components: [
         {
-          classes: 'obUiModalMultiOrdersFooter-container1-container1',
+          classes:
+            'obUiModal-footer-secondaryButtons obUiModalPayOpenTicketsFooter-container1-container1',
           components: [
+            {
+              kind: 'OBPOS.UI.AdvancedFilterWindowButtonPayOpenTickets',
+              classes:
+                'obUiModalPayOpenTicketsFooter-container1-container1-obposUiAdvancedFilterWindowButtonVerifiedReturns'
+            }
+          ]
+        },
+        {
+          classes:
+            'obUiModal-footer-mainButtons obUiModalPayOpenTicketsFooter-container1-container2',
+          components: [
+            {
+              kind: 'OB.UI.ModalDialogButton',
+              classes: 'obUiModalAdvancedFilters-footer-container1-cancel',
+              i18nLabel: 'OBMOBC_LblCancel',
+              tap: function() {
+                if (this.disabled === false) {
+                  this.doHideThisPopup();
+                }
+              }
+            },
             {
               name: 'doneMultiOrdersButton',
               kind: 'OB.UI.ModalDialogButton',
               i18nLabel: 'OBMOBC_LblDone',
               classes:
-                'obUiModalMultiOrdersFooter-container1-container1-doneMultiOrdersButton',
+                'obUiModalPayOpenTicketsFooter-container1-container1-doneMultiOrdersButton',
               isDefaultAction: true,
               ontap: 'doneAction'
             }
@@ -764,5 +519,247 @@ enyo.kind({
       keyboard: 'toolbarpayment',
       edit: false
     });
+  }
+});
+
+enyo.kind({
+  kind: 'OB.UI.ModalAdvancedFilters',
+  name: 'OB.UI.ModalAdvancedFilterVerifiedReturns',
+  model: OB.Model.VReturnsFilter,
+  initComponents: function() {
+    this.inherited(arguments);
+    OB.UTIL.hideStoreFilter(OB.Model.VReturnsFilter.getProperties());
+    this.setFilters(OB.Model.VReturnsFilter.getProperties());
+  }
+});
+
+enyo.kind({
+  kind: 'OB.UI.ButtonAdvancedFilter',
+  name: 'OBPOS.UI.AdvancedFilterWindowButtonPayOpenTickets',
+  classes: 'obposUiAdvancedFilterWindowButtonPayOpenTickets',
+  dialog: 'modalAdvancedFilterVerifiedReturns'
+});
+
+enyo.kind({
+  name: 'OB.UI.ModalMultiOrdersPayOpenTickets',
+  kind: 'OB.UI.ModalSelector',
+  classes: 'obUiModalMultiOrdersPayOpenTickets',
+  published: {
+    params: null
+  },
+  i18nHeader: 'OBPOS_LblMultiOrders',
+  body: {
+    kind: 'OB.UI.ReceiptsForPayOpenTicketsList',
+    classes:
+      'obUiModalMultiOrdersPayOpenTickets-obUiReceiptsForPayOpenTicketsList'
+  },
+  footer: {
+    kind: 'OB.UI.ModalPayOpenTicketsFooter'
+  },
+  getFilterSelectorTableHeader: function() {
+    return this.$.body.$.receiptsForPayOpenTicketsList.$
+      .payOpenTicketsReceiptsListItemPrinter.$.theader.$
+      .modalPayOpenTicketsScrollableHeader.$.filterSelector;
+  },
+  getAdvancedFilterBtn: function() {
+    return this.$.body.$.receiptsForPayOpenTicketsList.$
+      .payOpenTicketsReceiptsListItemPrinter.$.theader.$
+      .modalPayOpenTicketsScrollableHeader.$
+      .advancedFilterWindowButtonVerifiedReturns;
+  },
+  getAdvancedFilterDialog: function() {
+    return 'modalAdvancedFilterVerifiedReturns';
+  },
+  executeOnShow: function() {
+    var me = this,
+      isPaid;
+    if (!this.initialized) {
+      this.inherited(arguments);
+      this.getFilterSelectorTableHeader().clearFilter();
+    }
+    if (
+      !OB.MobileApp.model.get('connectedToERP') ||
+      OB.MobileApp.model.hasPermission(
+        'OBPOS_SelectCurrentTicketsOnPaidOpen',
+        true
+      )
+    ) {
+      _.each(me.model.get('orderList').models, function(iter) {
+        if (iter.get('lines') && iter.get('lines').length > 0) {
+          isPaid =
+            iter.get('payment') < iter.get('gross') &&
+            OB.MobileApp.model.get('terminal').terminalType.calculateprepayments
+              ? false
+              : iter.get('payment') >= iter.get('gross');
+          if (
+            (iter.get('orderType') === 0 || iter.get('orderType') === 2) &&
+            !isPaid &&
+            !iter.get('isQuotation') &&
+            iter.get('gross') >= 0
+          ) {
+            if (!_.isNull(iter.id) && !_.isUndefined(iter.id)) {
+              iter.set('checked', true);
+              me.$.body.$.receiptsForPayOpenTicketsList.receiptList.add(iter);
+            }
+          }
+        }
+      });
+    }
+    if (!this.initialized) {
+      this.inherited(arguments);
+      this.getFilterSelectorTableHeader().clearFilter();
+    }
+  },
+  init: function(model) {
+    this.model = model;
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.ListMultiOrdersLine',
+  kind: 'OB.UI.CheckboxButton',
+  classes: 'obUiListMultiOrdersLine',
+  events: {
+    onHideThisPopup: ''
+  },
+  tap: function() {
+    this.inherited(arguments);
+    if (
+      this.model.crossStoreInfo &&
+      OB.UTIL.isCrossStoreReceipt(this.model) &&
+      !this.model.get('checked')
+    ) {
+      OB.UTIL.showConfirmation.display(
+        OB.I18N.getLabel('OBPOS_LblCrossStorePayment'),
+        OB.I18N.getLabel('OBPOS_LblCrossStoreMessage', [
+          this.model.get('documentNo'),
+          this.model.get('store')
+        ]) +
+          '. ' +
+          OB.I18N.getLabel('OBPOS_LblCrossStoreDelivery'),
+        [
+          {
+            label: OB.I18N.getLabel('OBMOBC_Continue'),
+            isConfirmButton: true,
+            args: {
+              model: this.model
+            },
+            action: function() {
+              this.args.model.set('checked', !this.args.model.get('checked'));
+              this.args.model.trigger('verifyDoneButton', this.args.model);
+              return true;
+            }
+          },
+          {
+            label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+            args: {
+              button: this
+            },
+            action: function() {
+              this.args.button.removeClass('active');
+              return true;
+            }
+          }
+        ]
+      );
+    } else {
+      this.model.set('checked', !this.model.get('checked'));
+      this.model.trigger('verifyDoneButton', this.model);
+    }
+  },
+  components: [
+    {
+      name: 'line',
+      classes: 'obUiListMultiOrdersLine-line',
+      components: [
+        {
+          name: 'store',
+          classes: 'obUiListMultiOrdersLine-line-store'
+        },
+        {
+          classes: 'obUiListMultiOrdersLine-line-element1'
+        },
+        {
+          name: 'topLine',
+          classes: 'obUiListMultiOrdersLine-line-topLine'
+        },
+        {
+          name: 'isLayaway',
+          classes: 'obUiListMultiOrdersLine-line-isLayaway'
+        },
+        {
+          name: 'bottonLine',
+          classes: 'obUiListMultiOrdersLine-line-bottonLine'
+        },
+        {
+          classes: 'obUiListMultiOrdersLine-line-element2'
+        }
+      ]
+    }
+  ],
+  create: function() {
+    var returnLabel = '';
+    this.inherited(arguments);
+    if (this.model.crossStoreInfo) {
+      this.$.store.setContent(
+        OB.UTIL.isCrossStoreReceipt(this.model)
+          ? this.model.get('store')
+          : OB.I18N.getLabel('OBPOS_LblThisStore', [
+              OB.MobileApp.model.get('terminal').organization$_identifier
+            ])
+      );
+    } else {
+      this.$.store.setContent('');
+    }
+    if (
+      this.model.get('documentTypeId') ===
+      OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns
+    ) {
+      this.model.set(
+        'totalamount',
+        OB.DEC.mul(this.model.get('totalamount'), -1)
+      );
+      returnLabel = ' (' + OB.I18N.getLabel('OBPOS_ToReturn') + ')';
+    }
+    this.$.topLine.setContent(
+      this.model.get('documentNo') +
+        ' - ' +
+        (this.model.get('bp')
+          ? this.model.get('bp').get('_identifier')
+          : this.model.get('businessPartnerName')) +
+        returnLabel
+    );
+    this.$.bottonLine.setContent(
+      (this.model.get('totalamount') || this.model.get('totalamount') === 0
+        ? this.model.get('totalamount')
+        : this.model.getGross()) +
+        ' (' +
+        OB.I18N.formatDate(new Date(this.model.get('orderDate'))) +
+        ') '
+    );
+    if (this.model.get('checked')) {
+      this.addClass('active');
+    } else {
+      this.removeClass('active');
+    }
+
+    switch (this.model.get('orderType')) {
+      case 'ORD':
+        this.$.isLayaway.setContent(OB.I18N.getLabel('OBPOS_LblAssignReceipt'));
+        this.$.isLayaway.setClasses('payOpenTicketsIsReceipt');
+        break;
+
+      case 'LAY':
+        this.$.isLayaway.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
+        this.$.isLayaway.setClasses('payOpenTicketsIsLayaway');
+        break;
+
+      default:
+        break;
+    }
+    if (this.model.get('orderType') === 'LAY') {
+      this.$.isLayaway.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
+    }
+    this.render();
   }
 });
