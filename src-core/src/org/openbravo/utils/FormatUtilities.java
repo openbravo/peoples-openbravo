@@ -75,9 +75,9 @@ public class FormatUtilities {
    * Hashes text using SHA-1 algorithm. This method is deprecate in favor of PasswordHash which
    * supports more modern algorithms.
    *
-   * @deprecated Use PasswordHash instead
+   * @deprecated Use PasswordHash instead (since = "3.0PR20Q1", forRemoval = true)
    */
-  @Deprecated(since = "3.0PR20Q1", forRemoval = true)
+  @Deprecated
   public static String sha1Base64(String text) throws ServletException {
     if (text == null || text.trim().equals("")) {
       return "";

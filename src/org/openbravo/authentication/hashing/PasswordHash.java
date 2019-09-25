@@ -19,6 +19,7 @@
 
 package org.openbravo.authentication.hashing;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -40,8 +41,12 @@ public abstract class PasswordHash {
   public static final Logger log = LogManager.getLogger();
   private static final int DEFAULT_CURRENT_ALGORITHM_VERSION = 1;
 
-  private static final Map<Integer, HashingAlgorithm> ALGORITHMS = Map.of(0, new SHA1(), 1,
-      new SHA512Salt());
+  private static final Map<Integer, HashingAlgorithm> ALGORITHMS;
+  static {
+    ALGORITHMS = new HashMap<>(2);
+    ALGORITHMS.put(0, new SHA1());
+    ALGORITHMS.put(1, new SHA512Salt());
+  }
 
   private PasswordHash() {
   }
