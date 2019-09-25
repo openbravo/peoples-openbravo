@@ -94,9 +94,11 @@ enyo.kind({
       this.$.orderCaptions.$.description.hasNode().style.width =
         'calc(100% - 270px)';
     } else {
-      this.$.orderCaptions.$.description
-        .hasNode()
-        .style.removeProperty('width');
+      if (this.$.orderCaptions.$.description.hasNode()) {
+        this.$.orderCaptions.$.description
+          .hasNode()
+          .style.removeProperty('width');
+      }
     }
   }
 });
