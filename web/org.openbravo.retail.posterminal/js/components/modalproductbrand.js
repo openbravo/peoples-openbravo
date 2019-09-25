@@ -422,7 +422,7 @@ enyo.kind({
   },
   doneAction: function() {
     var selectedBrands = _.compact(
-      this.parent.parent.parent.$.body.$.listBrands.brandsList.map(function(e) {
+      this.parent.parent.$.body.$.listBrands.brandsList.map(function(e) {
         return e;
       })
     );
