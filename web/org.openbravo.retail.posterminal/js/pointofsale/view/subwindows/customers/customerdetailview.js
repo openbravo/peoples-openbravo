@@ -621,7 +621,7 @@ enyo.kind({
     }
     var isMultiselect = this.args.multiselect === true;
     this.$.body.$.receiptsList.$.openreceiptslistitemprinter.multiselect = isMultiselect;
-    this.$.body.$.receiptsList.$.openreceiptslistitemprinter.$.theader.$.modalReceiptsScrollableHeader.$.btnOpenSelected.setShowing(
+    this.$.body.$.receiptsList.$.openreceiptslistitemprinter.$.theader.$.modalReceiptsScrollableHeader.$.filterSelector.setShowing(
       isMultiselect
     );
     if (this.args.customHeaderContent) {
