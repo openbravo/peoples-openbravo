@@ -168,7 +168,7 @@ enyo.kind({
     var me = this;
 
     function enableButtonsCallback() {
-      me.waterfall('onDisableButton', {
+      me.parent.parent.waterfall('onDisableButton', {
         disabled: false
       });
     }
