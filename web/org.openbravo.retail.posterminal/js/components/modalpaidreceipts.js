@@ -295,7 +295,6 @@ enyo.kind({
   name: 'OB.UI.ModalVerifiedReturns',
   kind: 'OB.UI.ModalSelector',
   classes: 'obUiModalVerifiedReturns',
-  topPosition: '70px',
   i18nHeader: 'OBPOS_LblPaidReceipts',
   published: {
     params: null
@@ -303,6 +302,9 @@ enyo.kind({
   body: {
     kind: 'OB.UI.ReceiptsForVerifiedReturnsList',
     classes: 'obUiModalVerifiedReturns-body-obUiReceiptsForVerifiedReturnsList'
+  },
+  footer: {
+    kind: 'OB.UI.ModalVerifiedReturnsFooter'
   },
   getFilterSelectorTableHeader: function() {
     return this.$.body.$.receiptsForVerifiedReturnsList.$

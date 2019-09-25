@@ -141,7 +141,7 @@ enyo.kind({
 /*header of scrollable table*/
 enyo.kind({
   name: 'OB.UI.NewCustomerButton',
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ModalDialogButton',
   events: {
     onShowPopup: '',
     onHideSelector: ''
@@ -153,11 +153,15 @@ enyo.kind({
     onSetModel: 'setModel',
     onNewBPDisabled: 'doDisableNewBP'
   },
+  initComponents: function() {
+    this.popup = OB.UTIL.getPopupFromComponent(this);
+    this.inherited(arguments);
+  },
   setModel: function(inSender, inEvent) {
     this.model = inEvent.model;
   },
   doDisableNewBP: function(inSender, inEvent) {
-    this.putDisabled(inEvent.status);
+    this.setDisabled(inEvent.status);
   },
   tap: function(model) {
     if (this.disabled) {
@@ -166,16 +170,15 @@ enyo.kind({
     this.doHideSelector({
       selectorHide: true
     });
-    var modalDlg = this.owner.owner.owner.owner.owner.owner,
-      navigationPath = OB.UTIL.BusinessPartnerSelector.cloneAndPush(
-        modalDlg.args.navigationPath,
-        'modalcustomer'
-      );
+    var navigationPath = OB.UTIL.BusinessPartnerSelector.cloneAndPush(
+      this.popup.args.navigationPath,
+      'modalcustomer'
+    );
     this.doShowPopup({
       popup: 'customerCreateAndEdit',
       args: {
         businessPartner: null,
-        target: modalDlg.target,
+        target: this.popup.target,
         navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(
           navigationPath,
           'customerView'
@@ -183,17 +186,6 @@ enyo.kind({
         cancelNavigationPath: navigationPath
       }
     });
-  },
-  putDisabled: function(status) {
-    if (status === false) {
-      this.setDisabled(false);
-      this.removeClass('disabled');
-      this.disabled = false;
-      return;
-    }
-    this.setDisabled(true);
-    this.addClass('disabled');
-    this.disabled = true;
   }
 });
 
@@ -208,22 +200,11 @@ enyo.kind({
     onNewBPDisabled: 'doDisableNewBP'
   },
   doDisableNewBP: function(inSender, inEvent) {
-    this.putDisabled(inEvent.status);
-  },
-  putDisabled: function(status) {
-    if (status === false) {
-      this.setDisabled(false);
-      this.removeClass('disabled');
-      this.disabled = false;
-      return;
-    }
-    this.setDisabled(true);
-    this.addClass('disabled');
-    this.disabled = true;
+    this.setDisabled(inEvent.status);
   },
   initComponents: function() {
     this.inherited(arguments);
-    this.putDisabled(
+    this.setDisabled(
       !OB.MobileApp.model.hasPermission(
         'OBPOS_retail.customer_advanced_filters',
         true
@@ -242,47 +223,6 @@ enyo.kind({
       name: 'filterSelector',
       kind: 'OB.UI.FilterSelectorTableHeader',
       classes: 'obUiModalBpSelectorScrollableHeader-filterSelector'
-    },
-    {
-      classes: 'obUiModalBpSelectorScrollableHeader-element1',
-      showing: true,
-      handlers: {
-        onSetShow: 'setShow'
-      },
-      setShow: function(inSender, inEvent) {
-        this.setShowing(inEvent.visibility);
-        return true;
-      },
-      components: [
-        {
-          classes: 'obUiModalBpSelectorScrollableHeader-container1-container1',
-          components: [
-            {
-              classes:
-                'obUiModalBpSelectorScrollableHeader-container1-container1-container1',
-              components: [
-                {
-                  kind: 'OB.UI.NewCustomerButton',
-                  name: 'newAction',
-                  classes:
-                    'obUiModalBpSelectorScrollableHeader-container1-container1-container1-newAction'
-                }
-              ]
-            },
-            {
-              classes:
-                'obUiModalBpSelectorScrollableHeader-container1-container1-container2',
-              components: [
-                {
-                  kind: 'OB.UI.AdvancedFilterButton',
-                  classes:
-                    'obUiModalBpSelectorScrollableHeader-container1-container1-container2-element1'
-                }
-              ]
-            }
-          ]
-        }
-      ]
     }
   ],
   initComponents: function() {
@@ -303,6 +243,63 @@ enyo.kind({
       this
     );
     this.filters = filterProperties;
+    this.inherited(arguments);
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.ModalBpSelectorFooter',
+  classes: 'obUiModalBpSelectorFooter',
+  components: [
+    {
+      classes: 'obUiModalBpSelectorFooter-container1',
+      showing: true,
+      handlers: {
+        onSetShow: 'setShow'
+      },
+      setShow: function(inSender, inEvent) {
+        this.setShowing(inEvent.visibility);
+        return true;
+      },
+      components: [
+        {
+          classes:
+            'obUiModal-footer-secondaryButtons obUiModalBpSelectorFooter-container1-container1',
+          components: [
+            {
+              kind: 'OB.UI.AdvancedFilterButton',
+              classes:
+                'obUiModalBpSelectorFooter-container1-container1-element1'
+            }
+          ]
+        },
+        {
+          classes:
+            'obUiModal-footer-mainButtons obUiModalBpSelectorFooter-container1-container2',
+          components: [
+            {
+              kind: 'OB.UI.NewCustomerButton',
+              name: 'newAction',
+              classes:
+                'obUiModalBpSelectorFooter-container1-container2-newAction'
+            },
+            {
+              kind: 'OB.UI.ModalDialogButton',
+              classes: 'obUiModalBpSelectorFooter-container1-container2-close',
+              i18nLabel: 'OBRDM_LblClose',
+              isDefaultAction: true,
+              tap: function() {
+                if (this.disabled === false) {
+                  this.doHideThisPopup();
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  initComponents: function() {
     this.inherited(arguments);
   }
 });
@@ -640,7 +637,7 @@ enyo.kind({
 /*scrollable table (body of modal)*/
 enyo.kind({
   name: 'OB.UI.ListBpsSelector',
-  classes: 'obUiListBpsSelector row-fluid',
+  classes: 'obUiListBpsSelector',
   handlers: {
     onSearchAction: 'searchAction',
     onClearFilterSelector: 'clearAction',
@@ -657,32 +654,20 @@ enyo.kind({
       classes: 'obUiListBpsSelector-container1',
       components: [
         {
-          classes: 'obUiListBpsSelector-container1-container1 row-fluid',
-          components: [
-            {
-              classes: 'obUiListBpsSelector-container1-container1-container1',
-              components: [
-                {
-                  name: 'stBPAssignToReceipt',
-                  kind: 'OB.UI.ScrollableTable',
-                  classes:
-                    'obUiListBpsSelector-container1-container1-container1-stBpAssignToReceipt',
-                  renderHeader: 'OB.UI.ModalBpSelectorScrollableHeader',
-                  renderLine: 'OB.UI.ListBpsSelectorLine',
-                  renderEmpty: 'OB.UI.RenderEmpty'
-                },
-                {
-                  name: 'renderLoading',
-                  classes:
-                    'obUiListBpsSelector-container1-container1-container1-renderLoading',
-                  showing: false,
-                  initComponents: function() {
-                    this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
-                  }
-                }
-              ]
-            }
-          ]
+          name: 'stBPAssignToReceipt',
+          kind: 'OB.UI.ScrollableTable',
+          classes: 'obUiListBpsSelector-container1-stBpAssignToReceipt',
+          renderHeader: 'OB.UI.ModalBpSelectorScrollableHeader',
+          renderLine: 'OB.UI.ListBpsSelectorLine',
+          renderEmpty: 'OB.UI.RenderEmpty'
+        },
+        {
+          name: 'renderLoading',
+          classes: 'obUiListBpsSelector-container1-renderLoading',
+          showing: false,
+          initComponents: function() {
+            this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
+          }
         }
       ]
     }
@@ -714,7 +699,7 @@ enyo.kind({
         true
       )
     ) {
-      this.$.stBPAssignToReceipt.$.theader.$.modalBpSelectorScrollableHeader.$.newAction.setDisabled(
+      this.popup.$.footer.$.modalBpSelectorFooter.$.newAction.setDisabled(
         false
       );
     }
@@ -982,6 +967,10 @@ enyo.kind({
     return true;
   },
   bpsList: null,
+  initComponents: function() {
+    this.popup = OB.UTIL.getPopupFromComponent(this);
+    this.inherited(arguments);
+  },
   init: function(model) {
     this.bpsList = new Backbone.Collection();
     this.$.stBPAssignToReceipt.setCollection(this.bpsList);
@@ -1097,6 +1086,9 @@ enyo.kind({
   body: {
     kind: 'OB.UI.ListBpsSelector'
   },
+  footer: {
+    kind: 'OB.UI.ModalBpSelectorFooter'
+  },
   executeOnShow: function() {
     if (!this.isInitialized()) {
       this.inherited(arguments);
@@ -1122,7 +1114,7 @@ enyo.kind({
       this.waterfall('onSetBusinessPartnerTarget', {
         target: this.args.target
       });
-      this.$.body.$.listBpsSelector.$.stBPAssignToReceipt.$.theader.$.modalBpSelectorScrollableHeader.$.newAction.putDisabled(
+      this.$.footer.$.modalBpSelectorFooter.$.newAction.setDisabled(
         !OB.MobileApp.model.hasPermission(
           'OBPOS_retail.createCustomerButton',
           true
@@ -1137,9 +1129,7 @@ enyo.kind({
           true
         )
       ) {
-        this.$.body.$.listBpsSelector.$.stBPAssignToReceipt.$.theader.$.modalBpSelectorScrollableHeader.$.newAction.setDisabled(
-          true
-        );
+        this.$.footer.$.modalBpSelectorFooter.$.newAction.setDisabled(true);
       }
       this.$.body.$.listBpsSelector.$.stBPAssignToReceipt.$.theader.$.modalBpSelectorScrollableHeader.$.filterSelector.clearFilter();
       if (this.args.businessPartner) {
@@ -1211,8 +1201,7 @@ enyo.kind({
       .modalBpSelectorScrollableHeader.$.filterSelector;
   },
   getAdvancedFilterBtn: function() {
-    return this.$.body.$.listBpsSelector.$.stBPAssignToReceipt.$.theader.$
-      .modalBpSelectorScrollableHeader.$.advancedFilterButton;
+    return this.$.footer.$.modalBpSelectorFooter.$.advancedFilterButton;
   },
   getAdvancedFilterDialog: function() {
     return 'modalAdvancedFilterBP';
@@ -1224,7 +1213,7 @@ enyo.kind({
       model: this.model
     });
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-      this.$.body.$.listBpsSelector.$.stBPAssignToReceipt.$.theader.$.modalBpSelectorScrollableHeader.$.filterSelector.$.entityFilterText.skipAutoFilterPref = true;
+      this.$.body.$.listBpsSelector.$.stBPAssignToReceipt.$.theader.$.modalBpSelectorScrollableHeader.$.filterSelector.$.formElementEntityFilterText.coreElement.skipAutoFilterPref = true;
     }
   }
 });

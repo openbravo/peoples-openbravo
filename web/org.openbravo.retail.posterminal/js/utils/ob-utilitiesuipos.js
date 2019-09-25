@@ -107,6 +107,18 @@ OB.UTIL.getPaymentByKey = function(key) {
   return null;
 };
 
+OB.UTIL.getPopupFromComponent = function(component) {
+  while (!OB.UTIL.isNullOrUndefined(component)) {
+    if (component.popup) {
+      return component.popup;
+    } else if (typeof component.updatePosition === 'function') {
+      return component;
+    } else {
+      component = component.owner;
+    }
+  }
+};
+
 /**
  * Facilitates to work reliably with currency conversions
  *   in the easiest way, you will just need to do like this:

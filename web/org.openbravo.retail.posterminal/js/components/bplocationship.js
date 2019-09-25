@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -41,23 +41,12 @@ enyo.kind({
       classes: 'obUiListBpsShipLoc-container1',
       components: [
         {
-          classes: 'obUiListBpsShipLoc-container1-container1',
-          components: [
-            {
-              classes: 'obUiListBpsShipLoc-container1-container1-container1',
-              components: [
-                {
-                  name: 'bpsloclistitemprinter',
-                  kind: 'OB.UI.ScrollableTable',
-                  calsses:
-                    'obUiListBpsShipLoc-container1-container1-container1-bpsloclistitemprinter',
-                  renderHeader: 'OB.UI.ModalBpLocScrollableHeader',
-                  renderLine: 'OB.UI.ListBpsShipLocLine',
-                  renderEmpty: 'OB.UI.RenderEmpty'
-                }
-              ]
-            }
-          ]
+          name: 'bpsloclistitemprinter',
+          kind: 'OB.UI.ScrollableTable',
+          calsses: 'obUiListBpsShipLoc-container1-bpsloclistitemprinter',
+          renderHeader: 'OB.UI.ModalBpLocScrollableHeader',
+          renderLine: 'OB.UI.ListBpsShipLocLine',
+          renderEmpty: 'OB.UI.RenderEmpty'
         }
       ]
     }
@@ -196,7 +185,6 @@ enyo.kind({
   kind: 'OB.UI.ModalSelector',
   name: 'OB.UI.ModalBPLocationShip',
   classes: 'obUiModalSelector',
-  topPosition: '125px',
   executeOnShow: function() {
     if (!this.isInitialized()) {
       this.inherited(arguments);
@@ -214,7 +202,7 @@ enyo.kind({
       );
       this.$.body.$.listBpsShipLoc.setTarget(this.args.target);
       this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.searchAction();
-      this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.newAction.putDisabled(
+      this.$.footer.$.modalBpLocFooter.$.newAction.setDisabled(
         !OB.MobileApp.model.hasPermission(
           'OBPOS_retail.createCustomerLocationButton',
           true
@@ -233,6 +221,9 @@ enyo.kind({
   body: {
     kind: 'OB.UI.ListBpsShipLoc',
     classes: 'obUiModalSelector-body-obUiListBpsShipLoc'
+  },
+  footer: {
+    kind: 'OB.UI.ModalBpLocFooter'
   },
   getScrollableTable: function() {
     return this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter;

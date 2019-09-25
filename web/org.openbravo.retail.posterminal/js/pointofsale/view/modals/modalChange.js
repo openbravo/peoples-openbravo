@@ -10,7 +10,7 @@
 /*global OB, enyo */
 
 enyo.kind({
-  kind: 'OB.UI.ModalAction',
+  kind: 'OB.UI.Modal',
   name: 'OB.UI.ModalChange',
   classes: 'obUiModalChange',
   events: {
@@ -20,9 +20,10 @@ enyo.kind({
     onActionOK: 'actionOK',
     onActionInput: 'actionInput'
   },
-  bodyContent: {
+  i18nHeader: 'OBPOS_ChangeSplit',
+  body: {
     name: 'bodyattributes',
-    classes: 'obUiModalChange-bodyContent-bodyattributes',
+    classes: 'obUiModalChange-body-bodyattributes',
     components: [
       {
         kind: 'Scroller',
@@ -41,29 +42,26 @@ enyo.kind({
       }
     ]
   },
-  bodyButtons: {
-    classes: 'obUiModalChange-bodyButtons-container1',
+  footer: {
+    classes: 'obUiModalChange-body-container1',
     components: [
       {
         kind: 'OB.UI.ModalChangeButtonCancel',
-        classes:
-          'obUiModalChange-bodyButtons-container1-obUiModalChangeButtonCancel'
+        classes: 'obUiModalChange-body-container1-obUiModalChangeButtonCancel'
       },
       {
         kind: 'OB.UI.ModalChangeButtonOK',
-        classes:
-          'obUiModalChange-bodyButtons-container1-obUiModalChangeButtonOK'
+        classes: 'obUiModalChange-body-container1-obUiModalChangeButtonOK'
       }
     ]
   },
   initComponents: function() {
     this.inherited(arguments);
-    this.$.header.setContent(OB.I18N.getLabel('OBPOS_ChangeSplit'));
 
     var i = 0;
     OB.MobileApp.model.get('payments').forEach(function(payment) {
       if (payment.paymentMethod.iscash) {
-        this.$.bodyContent.$.paymentlines.createComponent({
+        this.$.body.$.paymentlines.createComponent({
           kind: 'OB.UI.ModalChangeLine',
           name: 'line_' + payment.payment.searchKey,
           classes: 'obUiModalChange-paymentlines-obUiModalChangeLine',
@@ -74,7 +72,7 @@ enyo.kind({
     }, this);
   },
   executeOnShow: function() {
-    var lines = this.$.bodyContent.$.paymentlines.getComponents();
+    var lines = this.$.body.$.paymentlines.getComponents();
     lines.forEach(
       function(l) {
         l.executeOnShow(this.args);
@@ -97,7 +95,7 @@ enyo.kind({
       change,
       changeRounding;
 
-    lines = this.$.bodyContent.$.paymentlines.getComponents();
+    lines = this.$.body.$.paymentlines.getComponents();
     change = this.args.change;
     changemin = 0;
     changemax = 0;
@@ -144,7 +142,7 @@ enyo.kind({
 
   calculateRemaining: function() {
     var changeremaining = this.calculateRemainingFor(),
-      lines = this.$.bodyContent.$.paymentlines.getComponents(),
+      lines = this.$.body.$.paymentlines.getComponents(),
       errortext = '',
       overpayment = false;
 
@@ -166,11 +164,9 @@ enyo.kind({
 
     // Show the change error, if any
     if (overpayment) {
-      this.$.bodyContent.$.errors.setContent(
-        OB.I18N.getLabel('OBPOS_Overpayment')
-      );
+      this.$.body.$.errors.setContent(OB.I18N.getLabel('OBPOS_Overpayment'));
     } else {
-      this.$.bodyContent.$.errors.setContent(errortext);
+      this.$.body.$.errors.setContent(errortext);
     }
   },
 
@@ -188,7 +184,7 @@ enyo.kind({
 
     changeRounding = this.args.change;
     indexRounding = -1;
-    lines = this.$.bodyContent.$.paymentlines.getComponents();
+    lines = this.$.body.$.paymentlines.getComponents();
     edited = false;
     paymentchangemap = [];
 
@@ -256,7 +252,7 @@ enyo.kind({
       linechange,
       changeLessThan;
 
-    lines = this.$.bodyContent.$.paymentlines.getComponents();
+    lines = this.$.body.$.paymentlines.getComponents();
 
     if (!inEvent.hasErrors && lines.length === 2) {
       line = lines[inEvent.line === lines[0] ? 1 : 0];

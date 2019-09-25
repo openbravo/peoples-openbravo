@@ -202,7 +202,7 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.NewCustomerAddressWindowButton',
   events: {
     onChangeSubWindow: '',
@@ -217,12 +217,16 @@ enyo.kind({
     onNewBPLocDisabled: 'doDisableNewBPLoc',
     onSetBusinessPartner: 'setBusinessPartner'
   },
+  initComponents: function() {
+    this.popup = OB.UTIL.getPopupFromComponent(this);
+    this.inherited(arguments);
+  },
   setModel: function(inSender, inEvent) {
     this.model = inEvent.model;
     return true;
   },
   doDisableNewBPLoc: function(inSender, inEvent) {
-    this.putDisabled(inEvent.status);
+    this.setDisabled(inEvent.status);
     return true;
   },
   setBusinessPartner: function(inSender, inEvent) {
@@ -244,16 +248,15 @@ enyo.kind({
     }
 
     function successCallbackBPs(dataBps) {
-      var modalDlg = me.owner.owner.owner.owner.owner.owner,
-        navigationPath;
-      if (modalDlg.kind === 'OB.UI.ModalBPLocation') {
+      var navigationPath;
+      if (me.popup.kind === 'OB.UI.ModalBPLocation') {
         navigationPath = OB.UTIL.BusinessPartnerSelector.cloneAndPush(
-          modalDlg.args.navigationPath,
+          me.popup.args.navigationPath,
           'modalcustomeraddress'
         );
       } else {
         navigationPath = OB.UTIL.BusinessPartnerSelector.cloneAndPush(
-          modalDlg.args.navigationPath,
+          me.popup.args.navigationPath,
           'modalcustomershipaddress'
         );
       }
@@ -261,7 +264,7 @@ enyo.kind({
         popup: 'customerAddrCreateAndEdit',
         args: {
           businessPartner: dataBps,
-          target: modalDlg.target,
+          target: me.popup.target,
           navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(
             navigationPath,
             'customerAddressView'
@@ -284,19 +287,6 @@ enyo.kind({
         errorCallback
       );
     }
-  },
-  putDisabled: function(status) {
-    if (status === false) {
-      this.setDisabled(false);
-      this.removeClass('disabled');
-      this.disabled = false;
-      this.removeClass('obUiNewCustomerAddressWindowButton_gray');
-      return;
-    }
-    this.setDisabled(true);
-    this.addClass('disabled');
-    this.disabled = true;
-    this.addClass('obUiNewCustomerAddressWindowButton_gray');
   }
 });
 
@@ -324,11 +314,17 @@ enyo.kind({
                 'obUiModalBpLocScrollableHeader-container1-container1-container1',
               components: [
                 {
-                  kind: 'OB.UI.SearchInputAutoFilter',
-                  name: 'bpsLocationSearchfilterText',
+                  kind: 'OB.UI.FormElement',
+                  name: 'formElementBpsLocationSearchfilterText',
                   classes:
-                    'obUiModalBpLocScrollableHeader-container1-container1-container1-bpsLocationSearchfilterText',
-                  minLengthToSearch: 3
+                    'obUiFormElement_dataEntry obUiFormElement_dataEntry_noicon obUiModalBpLocScrollableHeader-container1-container1-container1-formElementBpsLocationSearchfilterText',
+                  coreElement: {
+                    kind: 'OB.UI.SearchInputAutoFilter',
+                    name: 'bpsLocationSearchfilterText',
+                    i18nLabel: 'OBMOBC_LblSearchEllipsis',
+                    classes:
+                      'obUiModalBpLocScrollableHeader-container1-container1-container1-bpsLocationSearchfilterText'
+                  }
                 }
               ]
             },
@@ -337,9 +333,10 @@ enyo.kind({
                 'obUiModalBpLocScrollableHeader-container1-container1-container2',
               components: [
                 {
-                  kind: 'OB.UI.SmallButton',
+                  kind: 'OB.UI.Button',
                   classes:
-                    'obUiModalBpLocScrollableHeader-container1-container1-container2-bpsLocationSearchClearButton',
+                    'obUiSearchClearButton obUiModalBpLocScrollableHeader-container1-container1-container2-bpsLocationSearchClearButton',
+                  i18nLabel: 'OBMOBC_LblClear',
                   name: 'bpsLocationSearchClearButton',
                   ontap: 'clearAction'
                 }
@@ -350,9 +347,10 @@ enyo.kind({
                 'obUiModalBpLocScrollableHeader-container1-container1-container3',
               components: [
                 {
-                  kind: 'OB.UI.SmallButton',
+                  kind: 'OB.UI.Button',
                   classes:
-                    'obUiModalBpLocScrollableHeader-container1-container1-container3-bpsLocationSearchButton',
+                    'obUiSearchLaunchButton obUiModalBpLocScrollableHeader-container1-container1-container3-bpsLocationSearchButton',
+                  i18nLabel: 'OBMOBC_LblSearch',
                   name: 'bpsLocationSearchButton',
                   ontap: 'searchAction'
                 }
@@ -361,9 +359,29 @@ enyo.kind({
           ]
         }
       ]
-    },
+    }
+  ],
+  clearAction: function() {
+    this.$.formElementBpsLocationSearchfilterText.coreElement.setValue('');
+    this.doSearchAction({
+      locName: this.$.formElementBpsLocationSearchfilterText.coreElement.getValue()
+    });
+    return true;
+  },
+  searchAction: function() {
+    this.doSearchAction({
+      locName: this.$.formElementBpsLocationSearchfilterText.coreElement.getValue()
+    });
+    return true;
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.ModalBpLocFooter',
+  classes: 'obUiModalBpLocFooter',
+  components: [
     {
-      classes: 'obUiModalBpLocScrollableHeader-container1-container2',
+      classes: 'obUiModalBpLocFooter-container1',
       showing: true,
       handlers: {
         onSetShow: 'setShow'
@@ -375,38 +393,29 @@ enyo.kind({
       components: [
         {
           classes:
-            'obUiModalBpLocScrollableHeader-container1-container2-container1',
+            'obUiModal-footer-mainButtons obUiModalBpLocFooter-container1-container1',
           components: [
             {
-              classes:
-                'obUiModalBpLocScrollableHeader-container1-container2-container1-container1',
-              components: [
-                {
-                  kind: 'OB.UI.NewCustomerAddressWindowButton',
-                  classes:
-                    'obUiModalBpLocScrollableHeader-container1-container2-container1-container1-newAction',
-                  name: 'newAction'
+              kind: 'OB.UI.NewCustomerAddressWindowButton',
+              classes: 'obUiModalBpLocFooter-container1-container1-newAction',
+              name: 'newAction'
+            },
+            {
+              kind: 'OB.UI.ModalDialogButton',
+              classes: 'obUiModalBpLocFooter-container1-container1-close',
+              i18nLabel: 'OBRDM_LblClose',
+              isDefaultAction: true,
+              tap: function() {
+                if (this.disabled === false) {
+                  this.doHideThisPopup();
                 }
-              ]
+              }
             }
           ]
         }
       ]
     }
-  ],
-  clearAction: function() {
-    this.$.bpsLocationSearchfilterText.setValue('');
-    this.doSearchAction({
-      locName: this.$.bpsLocationSearchfilterText.getValue()
-    });
-    return true;
-  },
-  searchAction: function() {
-    this.doSearchAction({
-      locName: this.$.bpsLocationSearchfilterText.getValue()
-    });
-    return true;
-  }
+  ]
 });
 
 enyo.kind({
@@ -844,28 +853,17 @@ enyo.kind({
   },
   components: [
     {
-      classes: 'obUiListBpsLoc-container1 span12',
+      classes: 'obUiListBpsLoc-container1',
       components: [
         {
-          classes: 'obUiListBpsLoc-container1-container1',
-          components: [
-            {
-              classes: 'obUiListBpsLoc-container1-container1-container1 span12',
-              components: [
-                {
-                  name: 'bpsloclistitemprinter',
-                  kind: 'OB.UI.ScrollableTable',
-                  classes:
-                    'obUiListBpsLoc-container1-container1-container1-bpsloclistitemprinter',
-                  scrollAreaClasses:
-                    'obUiListBpsLoc-container1-container1-container1-bpsloclistitemprinter_scrollArea',
-                  renderHeader: 'OB.UI.ModalBpLocScrollableHeader',
-                  renderLine: 'OB.UI.ListBpsLocLine',
-                  renderEmpty: 'OB.UI.RenderEmpty'
-                }
-              ]
-            }
-          ]
+          name: 'bpsloclistitemprinter',
+          kind: 'OB.UI.ScrollableTable',
+          classes: 'obUiListBpsLoc-container1-bpsloclistitemprinter',
+          scrollAreaClasses:
+            'obUiListBpsLoc-container1-bpsloclistitemprinter_scrollArea',
+          renderHeader: 'OB.UI.ModalBpLocScrollableHeader',
+          renderLine: 'OB.UI.ListBpsLocLine',
+          renderEmpty: 'OB.UI.RenderEmpty'
         }
       ]
     }
@@ -1079,7 +1077,6 @@ enyo.kind({
   kind: 'OB.UI.ModalSelector',
   name: 'OB.UI.ModalBPLocation',
   classes: 'obUiModalBPLocation',
-  topPosition: '125px',
   events: {
     onShowPopup: ''
   },
@@ -1112,7 +1109,7 @@ enyo.kind({
       } else {
         this.$.body.$.listBpsLoc.bpsList.reset([]);
       }
-      this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.newAction.putDisabled(
+      this.$.footer.$.modalBpLocFooter.$.newAction.setDisabled(
         !OB.MobileApp.model.hasPermission(
           'OBPOS_retail.createCustomerLocationButton',
           true
@@ -1132,7 +1129,7 @@ enyo.kind({
   executeOnHide: function() {
     var selectorHide = this.selectorHide;
     this.inherited(arguments);
-    this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.bpsLocationSearchfilterText.setValue(
+    this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.formElementBpsLocationSearchfilterText.coreElement.setValue(
       ''
     );
     if (
@@ -1236,6 +1233,9 @@ enyo.kind({
   i18nHeader: '',
   body: {
     kind: 'OB.UI.ListBpsLoc'
+  },
+  footer: {
+    kind: 'OB.UI.ModalBpLocFooter'
   },
   getScrollableTable: function() {
     return this.$.body.$.listBpsLoc.$.bpsloclistitemprinter;

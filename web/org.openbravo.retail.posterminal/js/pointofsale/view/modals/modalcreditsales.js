@@ -121,7 +121,7 @@ enyo.kind({
       .get('creditUsed');
     var totalPending = this.model.get('order').getPending();
 
-    if (this.parent.parent.parent.parent.args.order.get('gross') < 0) {
+    if (this.parent.parent.parent.args.order.get('gross') < 0) {
       bp.set('creditUsed', bpCreditUsed - totalPending);
     } else {
       bp.set('creditUsed', bpCreditUsed + totalPending);

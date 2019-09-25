@@ -78,10 +78,10 @@
               )
             )
         ) {
-          return OB.UTIL.question(
-            OB.I18N.getLabel('OBPOS_maxQtyUsingKeyboardHeader'),
-            OB.I18N.getLabel('OBPOS_maxQtyUsingKeyboardBody', [value])
-          );
+          return OB.DIALOGS.confirm({
+            title: OB.I18N.getLabel('OBPOS_maxQtyUsingKeyboardHeader'),
+            message: OB.I18N.getLabel('OBPOS_maxQtyUsingKeyboardBody', [value])
+          });
         } else {
           return Promise.resolve();
         }

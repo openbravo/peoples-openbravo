@@ -375,9 +375,8 @@ enyo.kind({
 });
 
 enyo.kind({
-  name: 'OB.UI.ModalProductBrandTopHeader',
-  kind: 'OB.UI.ScrollableTableHeader',
-  classes: 'obUiModalProductBrandTopHeader',
+  name: 'OB.UI.ModalProductBrandFooter',
+  classes: 'obUiModalProductBrandFooter',
   events: {
     onHideThisPopup: '',
     onSelectBrand: '',
@@ -385,39 +384,33 @@ enyo.kind({
   },
   components: [
     {
-      classes: 'obUiModalProductBrandTopHeader-container1',
+      classes:
+        'obUiModal-footer-mainButtons obUiModalProductBrandFooter-container1',
       components: [
         {
-          classes: 'obUiModalProductBrandTopHeader-container1-container1',
-          components: [
-            {
-              name: 'title',
-              classes:
-                'obUiModalProductBrandTopHeader-container1-container1-title'
-            }
-          ]
-        },
-        {
-          classes: 'obUiModalProductBrandTopHeader-container1-container2',
-          components: [
-            {
-              name: 'doneBrandButton',
-              kind: 'OB.UI.SmallButton',
-              classes:
-                'obUiModalProductBrandTopHeader-container1-container2-doneBrandButton',
-              ontap: 'doneAction'
-            }
-          ]
-        },
-        {
-          classes: 'obUiModalProductBrandTopHeader-container1-container3',
+          classes: 'obUiModalProductBrandFooter-container1-container1',
           components: [
             {
               name: 'cancelBrandButton',
-              kind: 'OB.UI.SmallButton',
+              kind: 'OB.UI.ModalDialogButton',
+              i18nContent: 'OBMOBC_LblCancel',
               classes:
-                'obUiModalProductBrandTopHeader-container1-container3-cancelBrandButton',
+                'obUiModalProductBrandFooter-container1-container1-cancelBrandButton',
               ontap: 'cancelAction'
+            }
+          ]
+        },
+        {
+          classes: 'obUiModalProductBrandFooter-container1-container2',
+          components: [
+            {
+              name: 'doneBrandButton',
+              kind: 'OB.UI.ModalDialogButton',
+              i18nContent: 'OBMOBC_LblDone',
+              classes:
+                'obUiModalProductBrandFooter-container1-container2-doneBrandButton',
+              isDefaultAction: true,
+              ontap: 'doneAction'
             }
           ]
         }
@@ -426,8 +419,6 @@ enyo.kind({
   ],
   initComponents: function() {
     this.inherited(arguments);
-    this.$.doneBrandButton.setContent(OB.I18N.getLabel('OBMOBC_LblDone'));
-    this.$.cancelBrandButton.setContent(OB.I18N.getLabel('OBMOBC_LblCancel'));
   },
   doneAction: function() {
     var selectedBrands = _.compact(
@@ -448,33 +439,25 @@ enyo.kind({
 /*Modal definiton*/
 enyo.kind({
   name: 'OB.UI.ModalProductBrand',
-  topPosition: '170px',
   kind: 'OB.UI.Modal',
   classes: 'obUiModalProductBrand',
   published: {
     characteristic: null
   },
   executeOnShow: function() {
-    this.$.header.parent.addClass(
-      'obUiModalProductBrand-header-obUiModalProductBrandTopHeader_bottom'
-    );
-    this.$.header.$.modalProductBrandTopHeader.$.title.setContent(
-      OB.I18N.getLabel('OBMOBC_LblBrand')
-    );
     this.waterfall('onSearchAction');
   },
-  i18nHeader: '',
+  i18nHeader: 'OBMOBC_LblBrand',
   body: {
     kind: 'OB.UI.ListBrands',
     classes: 'obUiModalProductBrand-body-obUiListBrands'
   },
+  footer: {
+    kind: 'OB.UI.ModalProductBrandFooter',
+    classes: 'obUiModalProductBrand-footer'
+  },
   initComponents: function() {
     this.inherited(arguments);
-    this.$.closebutton.hide();
-    this.$.header.createComponent({
-      kind: 'OB.UI.ModalProductBrandTopHeader',
-      classes: 'obUiModalProductBrand-header-obUiModalProductBrandTopHeader'
-    });
   },
   init: function(model) {
     this.model = model;

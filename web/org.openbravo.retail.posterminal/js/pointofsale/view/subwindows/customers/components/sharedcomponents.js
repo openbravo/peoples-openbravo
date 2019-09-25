@@ -25,7 +25,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.cancelEdit',
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ModalDialogButton',
   classes: 'obObposPointOfSaleUiCustomersCancelEdit',
   i18nContent: 'OBMOBC_LblCancel',
   handlers: {
@@ -303,7 +303,7 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.edit_createcustomers',
   classes: 'obObposPointOfSaleUiCustomersEditCreatecustomers',
   handlers: {
-    onSaveCustomer: 'preSaveCustomer',
+    onExecuteSaveCustomer: 'preSaveCustomer',
     onHideShowFields: 'hideShowFields'
   },
   events: {},
@@ -459,7 +459,7 @@ enyo.kind({
       customerEdited;
 
     function enableButtonsCallback(disable) {
-      me.waterfall('onDisableButton', {
+      me.parent.parent.waterfall('onDisableButton', {
         disabled: disable
       });
     }
@@ -690,9 +690,12 @@ enyo.kind({
   initComponents: function() {
     var me = this;
     this.inherited(arguments);
-    this.$.bodyheader.createComponent({
-      kind: this.windowHeader
-    });
+    if (this.windowFooter) {
+      this.owner.owner.$.footer.createComponent({
+        kind: this.windowFooter
+      });
+      this.owner.owner.$.footer.show();
+    }
     this.$.shipLbl.setContent(OB.I18N.getLabel('OBPOS_LblShipAddr'));
     this.$.invLbl.setContent(OB.I18N.getLabel('OBPOS_LblBillAddr'));
     this.$.statisticsLbl.setContent(OB.I18N.getLabel('OBPOS_LblStatistics'));

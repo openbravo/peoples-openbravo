@@ -29,9 +29,7 @@ enyo.kind({
   tap: function() {
     var checked = !this.owner.$.updateprices.checked;
     this.doHideThisPopup();
-    this.parent.parent.parent.parent.theQuotation.createOrderFromQuotation(
-      checked
-    );
+    this.parent.parent.parent.theQuotation.createOrderFromQuotation(checked);
   }
 });
 

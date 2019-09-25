@@ -227,33 +227,65 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.ModalAction',
+  kind: 'OB.UI.Modal',
   name: 'OBRDM.UI.ModalChangeDeliveryAmount',
   classes: 'obRdmUiModalChangeDeliveryAmount',
   executeOnShow: function() {
-    this.$.bodyButtons.$.inputNewDeliveryAmount.setValue(
+    this.$.body.$.formElementInputNewDeliveryAmount.coreElement.setValue(
       this.args.orderline.get('obrdmAmttopayindelivery')
     );
   },
-  bodyContent: {
-    i18nContent: 'OBRDM_ChangeDeliveryAmountBody'
-  },
-  bodyButtons: {
+  i18nHeader: 'OBRDM_ChangeDeliveryAmountTitle',
+  body: {
+    classes: 'obRdmUiModalChangeDeliveryAmount-body',
     components: [
       {
-        name: 'inputNewDeliveryAmount',
-        kind: 'OB.UI.SearchInput',
-        classes: 'obRdmUiModalChangeDeliveryAmount-inputNewDeliveryAmount'
+        name: 'label',
+        content: '',
+        classes: 'obRdmUiModalChangeDeliveryAmount-body-label'
+      },
+      {
+        kind: 'OB.UI.FormElement',
+        name: 'formElementInputNewDeliveryAmount',
+        classes:
+          'obUiFormElement_dataEntry obUiFormElement_dataEntry_noicon obRdmUiModalChangeDeliveryAmount-body-formElementBtnModalMultiSearchInput',
+        coreElement: {
+          name: 'inputNewDeliveryAmount',
+          kind: 'OB.UI.SearchInput',
+          i18nLabel: 'OBPOS_AmountOfCash',
+          classes:
+            'obRdmUiModalChangeDeliveryAmount-body-btnModalMultiSearchInput'
+        }
+      }
+    ]
+  },
+  footer: {
+    classes:
+      'obUiModal-footer-mainButtons obRdmUiModalChangeDeliveryAmount-footer',
+    components: [
+      {
+        kind: 'OB.UI.ModalDialogButton',
+        classes: 'obRdmUiModalChangeDeliveryAmount-footer-cancel',
+        i18nLabel: 'OBMOBC_LblCancel',
+        tap: function() {
+          if (this.disabled === false) {
+            this.doHideThisPopup();
+          }
+        }
       },
       {
         kind: 'OB.UI.ButtonApplyDeliveryAmount',
-        classes: 'obRdmUiModalChangeDeliveryAmount-element1'
+        isDefaultAction: true,
+        classes:
+          'obRdmUiModalChangeDeliveryAmount-footer-obUiBtnApplyMultiLayaway'
       }
     ]
   },
   initComponents: function() {
-    this.header = OB.I18N.getLabel('OBRDM_ChangeDeliveryAmountTitle');
     this.inherited(arguments);
+    this.$.body.$.label.setContent(
+      OB.I18N.getLabel('OBRDM_ChangeDeliveryAmountBody')
+    );
   }
 });
 
@@ -263,9 +295,13 @@ enyo.kind({
   classes: 'ObUiButtonApplyDeliveryAmount',
   isDefaultAction: true,
   i18nContent: 'OBPOS_LblApplyButton',
+  initComponents: function() {
+    this.popup = OB.UTIL.getPopupFromComponent(this);
+    this.inherited(arguments);
+  },
   tap: function() {
     var amount,
-      tmpAmount = this.owner.$.inputNewDeliveryAmount.getValue();
+      tmpAmount = this.popup.$.body.$.formElementInputNewDeliveryAmount.coreElement.getValue();
     try {
       if (!OB.I18N.isValidNumber(tmpAmount)) {
         OB.UTIL.showConfirmation.display(
@@ -288,9 +324,9 @@ enyo.kind({
     }
     if (_.isNaN(amount)) {
       //Reset delivery amount to the backup value stored in the line
-      this.owner.owner.args.orderline.set(
+      this.popup.args.orderline.set(
         'obrdmAmttopayindelivery',
-        this.owner.owner.args.orderline.get('baseAmountToPayInDeliver')
+        this.popup.args.orderline.get('baseAmountToPayInDeliver')
       );
       this.doHideThisPopup();
     } else if (amount < 0) {
@@ -307,7 +343,7 @@ enyo.kind({
         );
         return;
       } else {
-        this.owner.owner.args.orderline.set('obrdmAmttopayindelivery', amount);
+        this.popup.args.orderline.set('obrdmAmttopayindelivery', amount);
         this.doHideThisPopup();
       }
     }

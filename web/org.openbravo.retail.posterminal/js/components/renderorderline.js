@@ -28,7 +28,8 @@ enyo.kind({
   },
   events: {
     onLineChecked: '',
-    onShowPopup: ''
+    onShowPopup: '',
+    onChangeOrderCaptionWidth: ''
   },
   components: [
     {
@@ -416,7 +417,8 @@ enyo.kind({
       this.$.gross.hasNode().style.width = '18%';
       this.$.quantity.hasNode().style.width = '16%';
       this.$.price.hasNode().style.width = '18%';
-      this.$.nameContainner.hasNode().style.width = '38%';
+      this.$.nameContainner.hasNode().style.width = '37%';
+      this.doChangeOrderCaptionWidth({ status: true });
 
       if (this.$.characteristicsDescription) {
         this.$.characteristicsDescription.addClass(
@@ -437,11 +439,11 @@ enyo.kind({
       this.$.checkBoxColumn.show();
       this.changeEditMode(this, inEvent.status);
     } else {
-      // These inline styles are allowed
-      this.$.gross.hasNode().style.width = '20%';
-      this.$.quantity.hasNode().style.width = '20%';
-      this.$.price.hasNode().style.width = '20%';
-      this.$.nameContainner.hasNode().style.width = '40%';
+      this.$.gross.hasNode().style.removeProperty('width');
+      this.$.quantity.hasNode().style.removeProperty('width');
+      this.$.price.hasNode().style.removeProperty('width');
+      this.$.nameContainner.hasNode().style.removeProperty('width');
+      this.doChangeOrderCaptionWidth({ status: false });
 
       if (this.$.characteristicsDescription) {
         this.$.characteristicsDescription.addClass(

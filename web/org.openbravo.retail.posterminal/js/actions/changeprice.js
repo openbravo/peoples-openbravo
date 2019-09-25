@@ -83,10 +83,12 @@
                 )
               )
           ) {
-            return OB.UTIL.question(
-              OB.I18N.getLabel('OBPOS_maxPriceUsingKeyboardHeader'),
-              OB.I18N.getLabel('OBPOS_maxPriceUsingKeyboardBody', [price])
-            );
+            return OB.DIALOGS.confirm({
+              title: OB.I18N.getLabel('OBPOS_maxPriceUsingKeyboardHeader'),
+              message: OB.I18N.getLabel('OBPOS_maxPriceUsingKeyboardBody', [
+                price
+              ])
+            });
           } else {
             return Promise.resolve();
           }

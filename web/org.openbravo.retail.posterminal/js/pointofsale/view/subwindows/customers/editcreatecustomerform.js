@@ -20,6 +20,7 @@ enyo.kind({
   handlers: {
     onCancelClose: 'cancelClose',
     onSetValues: 'setValues',
+    onSaveCustomer: 'saveCustomer',
     onRetrieveCustomer: 'retrieveCustomers'
   },
   cancelClose: function(inSender, inEvent) {
@@ -190,16 +191,20 @@ enyo.kind({
       this.$.body.$.edit_createcustomers_impl.$.shipLbl.setShowing(false);
     }
   },
+  saveCustomer: function(inSender, inEvent) {
+    this.waterfall('onExecuteSaveCustomer', inEvent);
+  },
   body: {
     kind: 'OB.OBPOSPointOfSale.UI.customers.edit_createcustomers_impl',
     classes:
       'obObposPointOfSaleUiCustomersNewcustomer-body-obObposPointOfSaleUiCustomersEditCreatecustomersImpl'
   }
+  //'footer' implemented programatically from the body
 });
 
 //button of header of the body
 enyo.kind({
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.customers.newcustomersave',
   classes: 'obObposPointOfSaleUiCustomersNewcustomersave',
   i18nLabel: 'OBPOS_LblSave',
@@ -245,37 +250,32 @@ enyo.kind({
 
 //Header of body
 enyo.kind({
-  name: 'OB.OBPOSPointOfSale.UI.customers.NewCustomer_bodyheader',
-  classes: 'obObposPointOfSaleUiCustomersNewCustomerBodyheader',
+  name: 'OB.OBPOSPointOfSale.UI.customers.NewCustomer_footer',
+  classes: 'obObposPointOfSaleUiCustomersNewCustomerFooter',
   components: [
     {
-      classes: 'obObposPointOfSaleUiCustomersNewCustomerBodyheader-container1',
+      classes: 'obObposPointOfSaleUiCustomersNewCustomerFooter-container1',
       components: [
         {
           classes:
-            'obObposPointOfSaleUiCustomersNewCustomerBodyheader-container1-container1',
+            'obObposPointOfSaleUiCustomersNewCustomerFooter-container1-container1',
           components: [
             {
+              kind: 'OB.OBPOSPointOfSale.UI.customers.cancelEdit',
               classes:
-                'obObposPointOfSaleUiCustomersNewCustomerBodyheader-container1-container1-container1',
-              components: [
-                {
-                  kind: 'OB.OBPOSPointOfSale.UI.customers.newcustomersave',
-                  classes:
-                    'obObposPointOfSaleUiCustomersNewCustomerBodyheader-container1-container1-container1-obObposPointOfSaleUiCustomersNewcustomersave'
-                }
-              ]
-            },
+                'obObposPointOfSaleUiCustomersNewCustomerFooter-container1-container1-obObposPointOfSaleUiCustomersCancelEdit'
+            }
+          ]
+        },
+        {
+          classes:
+            'obObposPointOfSaleUiCustomersNewCustomerFooter-container1-container2',
+          components: [
             {
+              kind: 'OB.OBPOSPointOfSale.UI.customers.newcustomersave',
+              isDefaultAction: true,
               classes:
-                'obObposPointOfSaleUiCustomersNewCustomerBodyheader-container1-container1-container2',
-              components: [
-                {
-                  kind: 'OB.OBPOSPointOfSale.UI.customers.cancelEdit',
-                  classes:
-                    'obObposPointOfSaleUiCustomersNewCustomerBodyheader-container1-container1-container2-obObposPointOfSaleUiCustomersCancelEdit'
-                }
-              ]
+                'obObposPointOfSaleUiCustomersNewCustomerFooter-container1-container2-obObposPointOfSaleUiCustomersNewcustomersave'
             }
           ]
         }
@@ -315,6 +315,7 @@ enyo.kind({
       sectionFieldsLineName: 'otherInfoFieldsLine'
     }
   ],
+  windowFooter: 'OB.OBPOSPointOfSale.UI.customers.NewCustomer_footer',
   newAttributes: [
     {
       kind: 'OB.UI.CustomerComboProperty',

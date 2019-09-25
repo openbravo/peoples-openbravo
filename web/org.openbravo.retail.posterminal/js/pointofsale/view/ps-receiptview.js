@@ -22,7 +22,8 @@ enyo.kind({
   handlers: {
     onCheckBoxBehaviorForTicketLine: 'checkBoxBehavior',
     onToggleSelectionMode: 'toggleSelectionMode',
-    onTableMultiSelectAll: 'tableMultiSelectAll'
+    onTableMultiSelectAll: 'tableMultiSelectAll',
+    onChangeOrderCaptionWidth: 'changeOrderCaptionWidth'
   },
   components: [
     {
@@ -81,5 +82,21 @@ enyo.kind({
   },
   tableMultiSelectAll: function(inSender, inEvent) {
     this.waterfall('onMultiSelectAllTable');
+  },
+  changeOrderCaptionWidth: function(inSender, inEvent) {
+    if (
+      this.$.orderview.$.listOrderLines.getScrollArea().getScrollBounds()
+        .maxTop !== 0
+    ) {
+      this.$.orderCaptions.$.description.hasNode().style.width =
+        'calc(100% - 285px)';
+    } else if (inEvent.status) {
+      this.$.orderCaptions.$.description.hasNode().style.width =
+        'calc(100% - 270px)';
+    } else {
+      this.$.orderCaptions.$.description
+        .hasNode()
+        .style.removeProperty('width');
+    }
   }
 });

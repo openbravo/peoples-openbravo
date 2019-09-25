@@ -747,7 +747,6 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalSelector',
   name: 'OB.UI.ModalAssociateTickets',
-  topPosition: '45px',
   classes: 'obUiModalAssociateTickets',
   i18nHeader: 'OBPOS_SelectLinesToAssociate',
   body: {
@@ -812,7 +811,7 @@ enyo.kind({
   init: function(model) {
     this.inherited(arguments);
     this.initialized = false;
-    this.$.body.$.listOrders.$.orderSelector.$.theader.$.modalOrderScrollableHeader.$.filterSelector.$.entityFilterText.skipAutoFilterPref = true;
+    this.$.body.$.listOrders.$.orderSelector.$.theader.$.modalOrderScrollableHeader.$.filterSelector.$.formElementEntityFilterText.coreElement.skipAutoFilterPref = true;
   }
 });
 
