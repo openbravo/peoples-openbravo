@@ -10632,6 +10632,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /* Inherits: [OB.UI.CustomerPropertyLine] */
 }
 
+.obUiCustomerPropertyLine_customerName .obUiFormElement-before,
 .obUiCustomerPropertyLine_firstName .obUiFormElement-before {
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconUser.svg');
   background-size: 16px;
@@ -10653,6 +10654,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   background-position: center 23px;
 }
 
+.obUiCustomerPropertyLine_language .obUiFormElement-before,
 .obUiCustomerPropertyLine_customerLanguage .obUiFormElement-before {
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconLanguage.svg');
   background-size: 18px;
