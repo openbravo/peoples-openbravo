@@ -626,7 +626,7 @@ enyo.kind({
   initComponents: function() {
     this.inherited(arguments);
     this.selectedToSend = [];
-    this.parent.parent.parent.selected = [];
+    this.parent.parent.selected = [];
   },
   backAction: function() {
     this.doGetPrevCollection();
@@ -634,28 +634,28 @@ enyo.kind({
   doneAction: function() {
     var me = this;
     this.countingValues =
-      this.countingValues + me.parent.parent.parent.selected.length;
-    if (me.parent.parent.parent.selected.length > 0) {
+      this.countingValues + me.parent.parent.selected.length;
+    if (me.parent.parent.selected.length > 0) {
       OB.UTIL.showLoading(true);
-      this.inspectTree(me.parent.parent.parent.selected);
+      this.inspectTree(me.parent.parent.selected);
     } else {
       this.doHideThisPopup();
     }
   },
   cancelAction: function() {
-    this.parent.parent.parent.selected = [];
-    this.parent.parent.parent.countedValues = 0;
+    this.parent.parent.selected = [];
+    this.parent.parent.countedValues = 0;
     this.doHideThisPopup();
   },
   checkFinished: function() {
     var me = this;
-    if (this.parent.parent.parent.countedValues === this.countingValues) {
+    if (this.parent.parent.countedValues === this.countingValues) {
       this.doSelectCharacteristicValue({
         value: me.selectedToSend
       });
-      this.parent.parent.parent.selected = [];
+      this.parent.parent.selected = [];
       this.selectedToSend = [];
-      this.parent.parent.parent.countedValues = 0;
+      this.parent.parent.countedValues = 0;
       this.countingValues = 0;
       this.doHideThisPopup();
       OB.UTIL.showLoading(false);
