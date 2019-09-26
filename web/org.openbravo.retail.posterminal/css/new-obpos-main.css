@@ -5419,83 +5419,24 @@ li.selected > .obUiRenderOrderLine_edit {
 /*           File: modalsplitlines.js            */
 /*            Folder: js/components/             */
 /***********************   ***********************/
-/*
-# Component: OB.UI.ModalNumberEditor
-*/
-.obUiModalNumberEditor {}
-
-.obUiModalNumberEditor-button-generic {
-  background-color: #ffffff;
-  color: black;
-}
-
-.obUiModalNumberEditor-btnQtyMinus {
-/* Inherits: [OB.UI.SmallButton] */
-  border: 1px solid #e2e2e2;
-  margin: -2px 2px 0 0;
-}
-
-.obUiModalNumberEditor-numberQt {
-/* Inherits: [OB.UI.EditNumber] */
-  width: 30px;
-  height: 23px;
-}
-
-.obUiModalNumberEditor-btnQtyPlus {
-/* Inherits: [OB.UI.SmallButton] */
-  border: 1px solid #e2e2e2;
-  margin: -2px 0 0 2px;
-}
-
-@media all and (max-aspect-ratio: 9/8) {
-  .obUiModalNumberEditor-numberQt {
-    height: 45px;
-  }
-}
-
 
 /*
 # Component: OB.UI.ModalSplitLinesTable
 # Inherits: [Scroller]
 */
-.obUiModalSplitLinesTable {
-  width: 100%;
-  background-color: #fff;
-  max-height: 200px;
-}
+.obUiModalSplitLinesTable {}
 
-.obUiModalSplitLinesTable-line {
-  width: 100%;
-  clear: both;
-  background-color: #fff;
-  height: 35px;
-  padding-top: 2px;
-}
+.obUiModalSplitLinesTable-line {}
 
-.obUiModalSplitLinesTable-line-lineNum {
-  float: left;
-  width: 50%;
-  background-color: #e2e2e2;
-  height: 35px;
-  padding-right: 5px;
-  text-align: right;
-  font-size: 16px;
-  color: black;
-}
+.obUiModalSplitLinesTable-line-container1 {}
 
-.obUiModalSplitLinesTable-line-container2 {
-  float: left;
-  width: 40%;
-  text-align: left;
-  padding-left: 5px;
-}
+.obUiModalSplitLinesTable-line-container1-formElementQty {}
 
-.obUiModalSplitLinesTable-line-container2-qty {
+.obUiModalSplitLinesTable-line-container1-qty {
 /* Inherits: [OB.UI.ModalNumberEditor] */
-  float: left;
 }
 
-.obUiModalSplitLinesTable-line-container2-btnRemove {
+.obUiModalSplitLinesTable-line-container1-btnRemove {
 /* Inherits: [OB.UI.SmallButton] */
   border: 1px solid #d2d2d2;
   margin: 2px 0 0 5px;
@@ -5504,27 +5445,12 @@ li.selected > .obUiRenderOrderLine_edit {
   color: black;
 }
 
-.obUiModalSplitLinesTable-line-container2-btnRemove:focus {
+.obUiModalSplitLinesTable-line-container1-btnRemove:focus {
   outline: none;
   border-width: 2px;
   border-color: #0078d7;
   border-style: solid;
   padding: 2px 13px 5px 13px !important;
-}
-
-@media all and (max-aspect-ratio: 9/8) {
-  .obUiModalSplitLinesTable {
-    max-height: 110px;
-  }
-
-  .obUiModalSplitLinesTable-line-lineNum {
-    width: 35%;
-    height: 53px;
-  }
-
-  .obUiModalSplitLinesTable-line-container2 {
-    width: 59%;
-  }
 }
 
 
@@ -5546,106 +5472,64 @@ li.selected > .obUiRenderOrderLine_edit {
 # Component: OB.UI.ModalSplitLine
 # Inherits: [OB.UI.Modal]
 */
-.obUiModalSplitLine {}
+.obUiModalSplitLine {
+  height: var(--modal-tall);
+}
 
-.obUiModalSplitLine-body {}
+@media all and (max-aspect-ratio: 9/8) {
+  .obUiModalSplitLine {
+    height: var(--modal-xtall);
+  }
+}
+
+.obUiModalSplitLine-body {
+  display: grid;
+  grid-auto-flow: row;
+  grid-template-rows: auto auto 1fr auto;
+  height: 100%;
+}
 
 .obUiModalSplitLine-body-splitlineMessage {
   padding: 6px 0px 0px 14px;
 }
 
-.obUiModalSplitLine-body-container2 {
-  background-color: #fff;
-  height: 32px;
-  color: black;
-  font-size: var(--font-medium);
+.obUiModalSplitLine-body-header {
+  display: grid;
+  grid-auto-flow: row;
+  grid-template-rows: auto auto;
 }
 
-.obUiModalSplitLine-body-container2-element1,
-.obUiModalSplitLine-body-container2-element2,
-.obUiModalSplitLine-body-container2-element4 {
-  width: 25%;
-  float: left;
-  background-color: #e2e2e2;
-  border: 1px solid #fff;
-  vertical-align: middle;
+.obUiModalSplitLine-body-header-infoFields {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: repeat(3, calc(100% / 3));
 }
 
-.obUiModalSplitLine-body-container2-element3 {
-  width: calc(25% - 12px);
-  float: left;
-  background-color: #e2e2e2;
-  border: 1px solid #fff;
-  vertical-align: middle;
+.obUiModalSplitLine-body-header-infoFields-container1,
+.obUiModalSplitLine-body-header-infoFields-container2,
+.obUiModalSplitLine-body-header-infoFields-container3,
+.obUiModalSplitLine-body-header-numberlinesSetter {}
+
+.obUiModalSplitLine-body-header-infoFields-container1-formElementOriginalQty,
+.obUiModalSplitLine-body-header-infoFields-container2-formElementSplitQty,
+.obUiModalSplitLine-body-header-infoFields-container3-formElementDifferenceQty {
+  /* Inherits: [OB.UI.FormElement] */
 }
 
-.obUiModalSplitLine-body-container3 {
-  background-color: #fff;
-  height: 34px;
-  color: black;
-}
-
-.obUiModalSplitLine-body-container3-container1,
-.obUiModalSplitLine-body-container3-container2,
-.obUiModalSplitLine-body-container3-container3,
-.obUiModalSplitLine-body-container3-container4 {
-  width: 25%;
-  float: left;
-  background-color: #fff;
-  text-align: center;
-}
-
-.obUiModalSplitLine-body-container3-container1-originalQty,
-.obUiModalSplitLine-body-container3-container2-splitQty,
-.obUiModalSplitLine-body-container3-container3-differenceQty {
+.obUiModalSplitLine-body-header-infoFields-container1-originalQty,
+.obUiModalSplitLine-body-header-infoFields-container2-splitQty,
+.obUiModalSplitLine-body-header-infoFields-container3-differenceQty {
 /* Inherits: [OB.UI.EditNumber] */
   width: 40px;
   height: 23px;
 }
 
-.obUiModalSplitLine-body-container3-container4-numberlinesQty {
-/* Inherits: [OB.UI.ModalNumberEditor] */
+.obUiModalSplitLine-body-header-numberlinesSetter-formElementNumberlinesQty {
+  /* Inherits: [OB.UI.FormElement] */
 }
 
-.obUiModalSplitLine-body-element4 {
-  height: 15px;
-}
-
-.obUiModalSplitLine-body-container5 {
-  width: 100%;
-  clear: both;
-  background-color: #fff;
-  height: 55px;
-  padding-top: 2px;
-  display: none;
-}
-
-.obUiModalSplitLine-body-container5-element1 {
-  float: left;
-  width: 50%;
-  background-color: #e2e2e2;
-  height: 35px;
-  padding-right: 5px;
-  text-align: right;
-  font-size: 16px;
-  color: black;
-}
-
-.obUiModalSplitLine-body-container5-container2 {
-  float: left;
-  width: 40%;
-  text-align: left;
-  padding-left: 5px;
-}
-
-.obUiModalSplitLine-body-container5-container2-numberlinesQtyMobile {
-/* Inherits: [OB.UI.ModalNumberEditor] */
-  float: left;
-}
-
-.obUiModalSplitLine-body-container6 {
-  height: 15px;
-  display: none;
+.obUiModalSplitLine-body-header-numberlinesSetter-numberlinesQty {
+/* Inherits: [OB.UI.FormElement.IntegerEditor] */
 }
 
 .obUiModalSplitLine-body-qtyLines {
@@ -5665,51 +5549,6 @@ li.selected > .obUiRenderOrderLine_edit {
 
 .obUiModalSplitLine-bodyButtons-obUiModalSplitLineBtnCancel {
 /* Inherits: [OB.UI.ModalSplitLine_btnCancel] */
-}
-
-@media all and (max-aspect-ratio: 9/8) {
-  .obUiModalSplitLine-body-container2 {
-    height: 60px;
-  }
-
-  .obUiModalSplitLine-body-container2-element1,
-  .obUiModalSplitLine-body-container2-element2 {
-    width: 33%;
-    height: 58px;
-  }
-
-  .obUiModalSplitLine-body-container2-element3 {
-    width: calc(33% - 4px);
-    height: 58px;
-  }
-
-  .obUiModalSplitLine-body-container2-element4 {
-    display: none;
-  }
-
-  .obUiModalSplitLine-body-container3-container1,
-  .obUiModalSplitLine-body-container3-container2,
-  .obUiModalSplitLine-body-container3-container3 {
-    width: 33%;
-  }
-
-  .obUiModalSplitLine-body-container3-container4 {
-    display: none;
-  }
-
-  .obUiModalSplitLine-body-container5,
-  .obUiModalSplitLine-body-container6 {
-    display: block;
-  }
-
-  .obUiModalSplitLine-body-container5-element1 {
-    width: 35%;
-    height: 53px;
-  }
-
-  .obUiModalSplitLine-body-container5-container2 {
-    width: 59%;
-  }
 }
 
 
@@ -13799,7 +13638,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-qtyminus {
-  /*Inherits: [OB.UI.SmallButton]*/
+  /*Inherits: [OB.UI.Button]*/
   margin: 0px;
   width: 50px;
   height: 50px;
@@ -13827,7 +13666,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-numberOfCoins {
-  /*Inherits: [OB.UI.MediumButton]*/
+  /*Inherits: [OB.UI.Button]*/
   background-color: var(--color-primary-lighter);
   color: var(--color-primary-darker);
   border: 1px solid #cccccc;
