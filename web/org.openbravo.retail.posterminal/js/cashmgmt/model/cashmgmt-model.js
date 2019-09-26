@@ -89,8 +89,12 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
               isprocessed: 'N'
             },
             function(cashUp) {
-              var now = new Date();
-              var addedCashMgmt = new OB.Model.CashManagement({
+              var now = new Date(),
+                addedCashMgmt,
+                selectedPayment,
+                pendingDepositsDrops;
+
+              addedCashMgmt = new OB.Model.CashManagement({
                 id: OB.UTIL.get_UUID(),
                 description: p.identifier + ' - ' + model.get('name'),
                 amount: p.amount,
@@ -110,32 +114,34 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
                 defaultProcess: p.defaultProcess,
                 extendedType: p.extendedType
               });
-              OB.Dal.save(
-                addedCashMgmt,
-                function() {
-                  if (p.extendedProp || _.isObject(p.extendedProp)) {
-                    _.each(_.keys(p.extendedProp), function(key) {
-                      addedCashMgmt.set(key, p.extendedProp[key]);
-                    });
-                  }
-                  me.depsdropstosave.add(addedCashMgmt);
+              if (p.extendedProp || _.isObject(p.extendedProp)) {
+                _.each(_.keys(p.extendedProp), function(key) {
+                  addedCashMgmt.set(key, p.extendedProp[key]);
+                });
+              }
+              me.depsdropstosave.add(addedCashMgmt);
 
-                  var selectedPayment = me.payments.filter(function(payment) {
-                    return payment.get('paymentmethod_id') === p.id;
-                  })[0];
-                  if (selectedPayment.get('listdepositsdrops')) {
-                    selectedPayment
-                      .get('listdepositsdrops')
-                      .push(addedCashMgmt);
-                    selectedPayment.trigger('change');
-                  } else {
-                    selectedPayment.set('listdepositsdrops', [addedCashMgmt]);
-                  }
-                  resolve();
-                },
-                reject,
-                true
+              selectedPayment = me.payments.filter(function(payment) {
+                return payment.get('paymentmethod_id') === p.id;
+              })[0];
+              if (selectedPayment.get('listdepositsdrops')) {
+                selectedPayment.get('listdepositsdrops').push(addedCashMgmt);
+                selectedPayment.trigger('change');
+              } else {
+                selectedPayment.set('listdepositsdrops', [addedCashMgmt]);
+              }
+
+              pendingDepositsDrops =
+                JSON.parse(
+                  OB.UTIL.localStorage.getItem('CashMgmtPendingDepositsDrops')
+                ) || {};
+              pendingDepositsDrops[p.id] = pendingDepositsDrops[p.id] || [];
+              pendingDepositsDrops[p.id].push(addedCashMgmt);
+              OB.UTIL.localStorage.setItem(
+                'CashMgmtPendingDepositsDrops',
+                JSON.stringify(pendingDepositsDrops)
               );
+              resolve();
             },
             reject,
             this
@@ -204,6 +210,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
             function() {
               OB.UTIL.showLoading(false);
               me.set('finished', true);
+              OB.UTIL.localStorage.removeItem('CashMgmtPendingDepositsDrops');
               if (
                 OB.MobileApp.model.hasPermission('OBPOS_print.cashmanagement')
               ) {
@@ -361,7 +368,8 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
                   depdrop.id
               );
               return;
-            }
+            },
+            true
           );
         }
       };
@@ -510,16 +518,16 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
         }
       });
 
-      var paymentMth;
-      var criteria;
-      // synch logic
-      var execution = OB.UTIL.ProcessController.start('cashMgmtLoadCashup');
+      var i,
+        paymentMth,
+        criteria,
+        asyncToSyncWrapper,
+        execution = OB.UTIL.ProcessController.start('cashMgmtLoadCashup');
 
       function finishSynch() {
         OB.UTIL.ProcessController.finish('cashMgmtLoadCashup', execution);
       }
-      var i;
-      var asyncToSyncWrapper = new Promise(function(resolve, reject) {
+      asyncToSyncWrapper = new Promise(function(resolve, reject) {
         OB.Dal.find(
           OB.Model.CashUp,
           {
@@ -539,6 +547,35 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
                   if (me.payments.at(i).get('usedInCurrentTrx') !== false) {
                     me.payments.at(i).set('usedInCurrentTrx', false);
                   }
+                }
+
+                function addDepositDrop(pay, cashmgmt) {
+                  let listDepositsDrops = [],
+                    pendingDepositsDrops =
+                      JSON.parse(
+                        OB.UTIL.localStorage.getItem(
+                          'CashMgmtPendingDepositsDrops'
+                        )
+                      ) || {};
+                  if (cashmgmt.length > 0) {
+                    listDepositsDrops.push(...cashmgmt.models);
+                  }
+                  if (
+                    pendingDepositsDrops &&
+                    _.isArray(pendingDepositsDrops[pay.get('paymentmethod_id')])
+                  ) {
+                    _.forEach(
+                      pendingDepositsDrops[pay.get('paymentmethod_id')],
+                      function(model) {
+                        const addedCashMgmt = new OB.Model.CashManagement(
+                          model
+                        );
+                        me.depsdropstosave.add(addedCashMgmt);
+                        listDepositsDrops.push(addedCashMgmt);
+                      }
+                    );
+                  }
+                  pay.set('listdepositsdrops', listDepositsDrops);
                 }
 
                 function updatePaymentMethod(pay) {
@@ -576,9 +613,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
                         OB.Model.CashManagement,
                         criteria,
                         function(cashmgmt, pay) {
-                          if (cashmgmt.length > 0) {
-                            pay.set('listdepositsdrops', cashmgmt.models);
-                          }
+                          addDepositDrop(pay, cashmgmt);
                           if (args.slavePayments) {
                             // Accumulate slave payments
                             _.each(args.slavePayments, function(slavePay) {
@@ -641,9 +676,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
                               OB.Model.CashManagement,
                               criteria,
                               function(cashmgmt, pay) {
-                                if (cashmgmt.length > 0) {
-                                  pay.set('listdepositsdrops', cashmgmt.models);
-                                }
+                                addDepositDrop(pay, cashmgmt);
                                 resolve();
                               },
                               reject,

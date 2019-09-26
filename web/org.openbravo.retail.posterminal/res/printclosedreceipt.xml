@@ -107,7 +107,7 @@
           if(_.isUndefined(payments.at(i).get('paymentDate')) || _.isNull(payments.at(i).get('paymentDate'))){
               paymentDate = OB.I18N.formatDate(new Date());
           }else{
-              paymentDate = payments.at(i).get('paymentDate');
+              paymentDate = new Date(payments.at(i).get('paymentDate'));
           }
           if (payments && payments.at(i) && payments.at(i).get('paymentData') && payments.at(i).get('paymentData').name && payments.at(i).get('paymentData').name.length > 0) {
             paymentName = paymentName + ' (' + payments.at(i).get('paymentData').name + ')';
@@ -195,7 +195,7 @@
       
     <line></line>
     <line size="1">
-      <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_ticketIsClosed')) %></text>
+      <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_duplicate')) %></text>
     </line>
     <line>
       <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_line2'))%></text>

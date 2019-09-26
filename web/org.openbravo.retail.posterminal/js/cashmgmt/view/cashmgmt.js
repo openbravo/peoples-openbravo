@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2019 Openbravo S.L.U.
+ * Copyright (C) 2012-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -49,20 +49,9 @@ enyo.kind({
       stepCount: 0,
       span: 6,
       tap: function() {
-        var finalCallback = function() {
-          OB.POS.hwserver.checkDrawer(function() {
-            OB.POS.navigate('retail.pointofsale');
-          });
-        };
-        OB.Dal.removeAll(
-          OB.Model.CashManagement,
-          {
-            cashup_id: OB.MobileApp.model.get('terminal').cashUpId,
-            isbeingprocessed: 'N'
-          },
-          finalCallback,
-          finalCallback
-        );
+        OB.POS.hwserver.checkDrawer(function() {
+          OB.POS.navigate('retail.pointofsale');
+        });
       }
     },
     {

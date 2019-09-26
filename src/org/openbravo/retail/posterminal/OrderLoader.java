@@ -396,7 +396,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
         order.setObposIslayaway(!isQuotation && !isDeleted && !completeTicket && !payOnCredit);
 
         // Order lines
-        if (jsonorder.has("oldId") && !jsonorder.getString("oldId").equals("null")
+        if (!isDeleted && jsonorder.has("oldId") && !jsonorder.getString("oldId").equals("null")
             && (!jsonorder.has("isQuotation") || !jsonorder.getBoolean("isQuotation"))) {
           try {
             // This order comes from a quotation, we need to associate both

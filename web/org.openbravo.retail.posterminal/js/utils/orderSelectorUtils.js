@@ -157,7 +157,15 @@
           if (data && data.exception) {
             errorCallback(true, data.exception.message, true);
           } else {
-            orderLoaded(data);
+            if (data[0].recordInImportEntry) {
+              OB.UTIL.showLoading(false);
+              OB.UTIL.showConfirmation.display(
+                OB.I18N.getLabel('OBMOBC_Error'),
+                OB.I18N.getLabel('OBPOS_ReceiptNotSynced', [data[0].documentNo])
+              );
+            } else {
+              orderLoaded(data);
+            }
           }
         },
         function(error) {
