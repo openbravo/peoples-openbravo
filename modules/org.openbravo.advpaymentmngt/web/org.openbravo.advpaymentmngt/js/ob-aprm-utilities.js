@@ -82,6 +82,16 @@ OB.APRM.validateModifyPaymentPlanAmounts = function(
           false
         ).inpoutstandingamt
       )
+    ),
+    invoiceGrandTotal = new BigDecimal(
+      String(
+        item.grid.view.parentWindow.activeView.getContextInfo(
+          false,
+          true,
+          true,
+          false
+        ).inpgrandtotal
+      )
     );
 
   if (
@@ -115,8 +125,9 @@ OB.APRM.validateModifyPaymentPlanAmounts = function(
   }
   if (
     totalOutstanding
+      .add(totalReceived)
       .abs()
-      .compareTo(totalExpected.subtract(totalReceived).abs()) !== 0
+      .compareTo(invoiceGrandTotal.abs()) !== 0
   ) {
     return false;
   }

@@ -37,6 +37,7 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesHistory;
@@ -44,6 +45,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.database.ConnectionProvider;
@@ -538,7 +540,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
                 rowNum, Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportGeneralLedger"),
                 Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
                 strDateFrom, DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"), strDocument,
-                getDocumentNo(vars.getClient(), strDocument, strDocumentNo), strcAcctSchemaId,
+                getDocumentIds(vars.getClient(), strDocument, strDocumentNo), strcAcctSchemaId,
                 strOrgFamily, strCheck, strAllaccounts, strcelementvaluefrom, strcelementvalueto,
                 null, null, null);
             Vector<ReportGeneralLedgerJournalData> res = new Vector<ReportGeneralLedgerJournalData>();
@@ -617,7 +619,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
               Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportGeneralLedger"),
               Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
               strDateFrom, DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"), strDocument,
-              getDocumentNo(vars.getClient(), strDocument, strDocumentNo), strcAcctSchemaId,
+              getDocumentIds(vars.getClient(), strDocument, strDocumentNo), strcAcctSchemaId,
               strOrgFamily, strCheck, strAllaccounts, strcelementvaluefrom, strcelementvalueto,
               vars.getLanguage(), pgLimit, oraLimit1, oraLimit2);
           Vector<ReportGeneralLedgerJournalData> res = new Vector<ReportGeneralLedgerJournalData>();
@@ -631,7 +633,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
                 Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportGeneralLedger"),
                 Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
                 strDateFrom, DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"), strDocument,
-                getDocumentNo(vars.getClient(), strDocument, strDocumentNo), strcAcctSchemaId,
+                getDocumentIds(vars.getClient(), strDocument, strDocumentNo), strcAcctSchemaId,
                 strOrgFamily, strCheck, strAllaccounts, strcelementvaluefrom, strcelementvalueto,
                 data[0].dateacct, data[0].identifier);
           }
@@ -916,7 +918,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
             readOnlyCP, Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportGeneralLedger"),
             Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
             strDateFrom, DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"), strDocument,
-            getDocumentNo(vars.getClient(), strDocument, strDocumentNo), strcAcctSchemaId,
+            getDocumentIds(vars.getClient(), strDocument, strDocumentNo), strcAcctSchemaId,
             strOrgFamily, strCheck, strAllaccounts, strcelementvaluefrom, strcelementvalueto,
             StringUtils.equals(strShowDescription, "Y") ? "'Y'" : "'N'"));
         // Get the limit of number of records shown for a report based on the preference
@@ -939,7 +941,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
               Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportGeneralLedger"),
               Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
               strDateFrom, DateTimeData.nDaysAfter(readOnlyCP, strDateTo, "1"), strDocument,
-              getDocumentNo(vars.getClient(), strDocument, strDocumentNo), strcAcctSchemaId,
+              getDocumentIds(vars.getClient(), strDocument, strDocumentNo), strcAcctSchemaId,
               strOrgFamily, strCheck, strAllaccounts, strcelementvaluefrom, strcelementvalueto,
               vars.getLanguage(), null, null, null);
         }
@@ -1121,7 +1123,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
   /**
    * Builds dynamic SQL to filter by document No
    */
-  private String getDocumentNo(String strClient, String strDocument, String strDocumentNo) {
+  private String getDocumentIds(String strClient, String strDocument, String strDocumentNo) {
     if (StringUtils.isBlank(strDocument) || StringUtils.isBlank(strDocumentNo)) {
       return null;
     }
@@ -1132,12 +1134,12 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       documentNo = documentNo.replaceAll(";", "");
 
       //@formatter:off
-      final String where = " select t.dBTableName "
+      final String where = " select t.name "
           + "  from DocumentType as d"
           + "    join d.table as t"
           + "  where d.documentCategory = :document"
           + "    and d.client.id = :client"
-          + "  group by d.documentCategory, t.dBTableName";
+          + "  group by d.documentCategory, t.name";
       
       //@formatter:on
       Query<String> qry = OBDal.getReadOnlyInstance().getSession().createQuery(where, String.class);
@@ -1150,14 +1152,10 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
         return null;
       }
 
-      //@formatter:off
-      final String existsSubQuery = "( select 1 "
-          + " from " + tablename + " dt "
-          + " where f.record_id = dt." + tablename + "_id"
-          + "   and dt.documentno = '" + documentNo + "' )";
-      
-      //@formatter:on
-      return existsSubQuery;
+      OBCriteria<BaseOBObject> query = OBDal.getInstance().createCriteria(tablename);
+      query.add(Restrictions.eq("documentNo", documentNo));
+
+      return Utility.getInStrList(query.list(), true);
     } catch (Exception ignore) {
       return null;
     } finally {
