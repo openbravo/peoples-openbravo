@@ -476,10 +476,13 @@ enyo.kind({
         if (item.coreElement && item.coreElement.mandatory) {
           var value = customer.get(item.coreElement.modelProperty);
           if (!value) {
+            item.setMessage(OB.I18N.getLabel('OBMOBC_LblMandatoryField'), true);
             if (errors) {
               errors += ', ';
             }
             errors += OB.I18N.getLabel(item.coreElement.i18nLabel);
+          } else {
+            item.setMessage();
           }
         }
       });

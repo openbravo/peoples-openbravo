@@ -138,7 +138,7 @@
           if(_.isUndefined(payments.at(i).get('date')) || _.isNull(payments.at(i).get('date'))){
               paymentDate = new Date();
           }else{
-              paymentDate = payments.at(i).get('date');
+              paymentDate = new Date(payments.at(i).get('date'));
           }
           if (payments && payments.at(i) && payments.at(i).get('paymentData') && payments.at(i).get('paymentData').name && payments.at(i).get('paymentData').name.length > 0) {
             paymentName = paymentName + ' (' + payments.at(i).get('paymentData').name + ')';
@@ -225,23 +225,11 @@
     
     <line></line>
     <line size="1">
-      <% if (payments.length > 0) {
-            if (order.get('orderType') === 3){%>
-                <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_returned')) %></text>
-         <% } else { %>
-                <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_paid')) %></text>
-         <% }
-      } else {
-           if (order.get('orderType') === 3){%>
-                  <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_notReturned')) %></text>
-           <% } else { %>
-                <%if (order.getGross() === 0){%>
-                    <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_line1')) %></text>
-                <% } else { %>
-                    <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_notPaid')) %></text>
-                <% } %>
-           <% }
-       } %>
+      <% if (order.get('payments').length > 0) { %>
+       <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_paid')) %></text>
+      <% } else { %>
+        <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_notPaid'))  %></text>
+      <% } %>
     </line>
     <line>
       <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_line2'))%></text>

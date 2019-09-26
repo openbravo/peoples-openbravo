@@ -311,9 +311,7 @@
 
 .obUiModalReceiptLinesProperties-bodyContent-scroller {
 /* # Inherits: [Scroller] */
-  background-color: #ffffff;
-  max-height: 225px;
-  overflow-x: hidden;
+  overflow-x: hidden !important;
 }
 
 .obUiModalReceiptLinesProperties-scroller-attributes {}
@@ -3290,9 +3288,9 @@ li.selected > .obUiRenderOrderLine_edit {
   color: var(--color-maincolor);
 }
 
-.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBpbutton .obUiFormElement-error,
-.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocbutton .obUiFormElement-error,
-.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocshipbutton .obUiFormElement-error {
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBpbutton .obUiFormElement-messageArea,
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocbutton .obUiFormElement-messageArea,
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocshipbutton .obUiFormElement-messageArea {
   height: 0px;
 }
 
@@ -3580,7 +3578,7 @@ li.selected > .obUiRenderOrderLine_edit {
   display: none;
 }
 
-.obUiFormElement_dataEntry.obUiBtnReceiptToInvoice .obUiFormElement-error {
+.obUiFormElement_dataEntry.obUiBtnReceiptToInvoice .obUiFormElement-messageArea {
   display: none;
 }
 

@@ -76,11 +76,14 @@ public class SaveDataActionHandler extends BaseActionHandler {
 
         JSONObject record = new JSONObject(error.getJsoninfo());
         record.put("posErrorId", errorId);
+        JSONArray jsonArray = new JSONArray();
+        jsonArray.put(record);
         JSONObject data = new JSONObject();
-        data.put("data", record);
+        data.put("data", jsonArray);
 
         String entryId = SequenceIdData.getUUID();
-        importEntryManager.createImportEntry(entryId, type, data.toString(), false);
+        importEntryManager.createImportEntry(entryId, syncProcess.getImportEntryQualifier(),
+            data.toString(), false);
         importEntryManager.setImportEntryProcessed(entryId);
         ImportEntry entry = OBDal.getInstance().get(ImportEntry.class, entryId);
 

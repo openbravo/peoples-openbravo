@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -21,5 +21,9 @@ public abstract class POSDataSynchronizationProcess extends DataSynchronizationP
   @Override
   public String getAppName() {
     return POSUtils.APP_NAME;
+  }
+
+  public String getImportEntryQualifier() {
+    return getImportQualifier();
   }
 }
