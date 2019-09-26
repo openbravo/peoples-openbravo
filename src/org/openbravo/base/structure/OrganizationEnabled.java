@@ -29,7 +29,17 @@ import org.openbravo.model.common.enterprise.Organization;
 
 public interface OrganizationEnabled {
 
+  /**
+   * Gets organization reference
+   * 
+   * @return organization
+   */
   public Organization getOrganization();
 
+  /**
+   * Sets organization reference
+   * 
+   * @param org
+   */
   public void setOrganization(Organization org);
 }

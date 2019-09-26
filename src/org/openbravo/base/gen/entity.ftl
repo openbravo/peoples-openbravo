@@ -13,6 +13,7 @@
     <#return "List">
   </#if>
 </#function>
+
 /*
  *************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
@@ -48,15 +49,28 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
     <#list entity.properties as p>
     <#if !p.computedColumn>
     <@addDeprecationIfNeeded property=p />
+    <#if p.allowDerivedRead() && !p.isBeingReferenced()>
+    /**
+     * Property ${p.name} stored <#if p.columnName??>in column ${p.columnName} </#if>in table ${entity.tableName}
+     * @see <#if p.isAuditInfo()>Traceable </#if><#if p.isClientOrOrganization() && p.getColumnName() == "AD_Org_ID">OrganizationEnabled </#if><#if p.isClientOrOrganization() && p.getColumnName() != "AD_Org_ID">ClientEnabled </#if><#if p.isActiveColumn()>ActiveEnabled </#if><#if p.isIdentifier()>${p.entity.name} </#if>
+     */
+    <#else>
+    /**
+     * Property ${p.name} stored <#if p.columnName??>in column ${p.columnName} </#if>in table ${entity.tableName}
+     */
+    </#if>
     public static final String PROPERTY_${p.name?upper_case} = "${p.name}";
     </#if>
+
     </#list>
 
     <#if entity.hasComputedColumns()>
 
-    // Computed columns properties, these properties cannot be directly accessed, they need
-    // to be read through _commputedColumns proxy. They cannot be directly used in HQL, OBQuery
-    // nor OBCriteria. 
+    /**
+     * Computed columns properties, these properties cannot be directly accessed, they need
+     * to be read through _computedColumns proxy. They cannot be directly used in HQL, OBQuery
+     * nor OBCriteria.
+     */
     <#list entity.computedColumnProperties as p>
     public static final String COMPUTED_COLUMN_${p.name?upper_case} = "${p.name}";
     </#list>
@@ -77,6 +91,9 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
 
     <#list entity.properties as p>
     <#if !p.oneToMany>
+    /**
+     * @see ${entity.simpleClassName}#PROPERTY_${p.name?upper_case}
+     */
     <#if p.name?matches("Id")>
     @Override
     </#if>
@@ -91,7 +108,9 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
       </#if>
     </#if>
     }
-
+    /**
+     * @see ${entity.simpleClassName}#PROPERTY_${p.name?upper_case}
+     */
     <#if p.name?matches("Id")>
     @Override
     </#if>
@@ -111,6 +130,9 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
 	</#list>
 	<#list entity.properties as p>
 	<#if p.oneToMany>
+	/**
+     * @see ${p.shorterNameTargetEntity}
+     */
 	<@addDeprecationIfNeeded property=p />
     @SuppressWarnings("unchecked")
     public ${theList(entity)}<${p.shorterNameTargetEntity}> get${p.name?cap_first}() {
@@ -121,6 +143,9 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
       </#if>
     }
 
+    /**
+     * @see ${p.shorterNameTargetEntity}
+     */
     <@addDeprecationIfNeeded property=p />
     public void set${p.getterSetterName?cap_first}(${theList(entity)}<${p.shorterNameTargetEntity}> ${p.name}) {
         set(PROPERTY_${p.name?upper_case}, ${p.name});
