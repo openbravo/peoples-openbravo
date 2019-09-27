@@ -1,4 +1,4 @@
- This is the development trunk of Openbravo ERP.
+ This is the development repository of Openbravo ERP.
 
 * Installation
 
@@ -30,8 +30,6 @@ There is also a list of on-going community projects:
 http://wiki.openbravo.com/wiki/Community_Projects
 
 Please share your changes so others can benefit.
-
-Please use svn diff to prepare patches.
 
 * Contact
 
