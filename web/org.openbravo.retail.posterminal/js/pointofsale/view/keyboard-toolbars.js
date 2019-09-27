@@ -694,19 +694,7 @@ enyo.kind({
             }
           };
         if (payPrepayment) {
-          var total = me.model.getTotal();
-          if (me.model.get('leftColumnViewManager').isMultiOrder()) {
-            total = OB.DEC.add(
-              total,
-              me.model.get('multiOrders').get('existingPayment')
-                ? me.model.get('multiOrders').get('existingPayment')
-                : 0
-            );
-          }
-          pendingPrepayment = OB.DEC.sub(
-            OB.DEC.add(me.model.getPending(), me.model.getPrepaymentAmount()),
-            total
-          );
+          pendingPrepayment = me.model.getPrepaymentAmount();
         }
         if (providerGroups[status]) {
           // It is selected  a provider group
