@@ -1,5 +1,3 @@
-syntax: glob
-
 .classpath
 .settings
 .idea
@@ -48,3 +46,30 @@ Thumbs.db
 sources
 scripts
 node_modules
+
+# ignore all modules 
+# except those ones included in OB3 distribution
+/modules/*
+!/modules/org.openbravo.advpaymentmngt
+!/modules/org.openbravo.apachejdbcconnectionpool
+!/modules/org.openbravo.base.weld
+!/modules/org.openbravo.client.application
+!/modules/org.openbravo.client.htmlwidget
+!/modules/org.openbravo.client.kernel
+!/modules/org.openbravo.client.myob
+!/modules/org.openbravo.client.querylist
+!/modules/org.openbravo.client.widgets
+!/modules/org.openbravo.financial.paymentreport
+!/modules/org.openbravo.reports.ordersawaitingdelivery
+!/modules/org.openbravo.service.datasource
+!/modules/org.openbravo.service.integration.google
+!/modules/org.openbravo.service.integration.openid
+!/modules/org.openbravo.service.json
+!/modules/org.openbravo.userinterface.selector
+!/modules/org.openbravo.userinterface.skin.250to300Comp
+!/modules/org.openbravo.userinterface.smartclient
+!/modules/org.openbravo.utility.cleanup.log
+!/modules/org.openbravo.v3
+!/modules/org.openbravo.v3.datasets
+!/modules/org.openbravo.v3.framework
+
