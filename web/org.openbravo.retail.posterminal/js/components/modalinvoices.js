@@ -393,15 +393,15 @@ enyo.kind({
             });
 
           printInvoice = function(indx) {
-            if (data.length === indx) {
+            if (indx >= data.length) {
               return;
             }
             if (
-              !OB.UTIL.isNullOrUndefined(data[indx]) &&
+              OB.UTIL.isNullOrUndefined(data[indx].receiptLines) ||
               data[indx].receiptLines.length === 0
             ) {
               finishPrintInvoices();
-              printInvoice(indx + 1);
+              printInvoice(++indx);
             } else {
               me.owner.model
                 .get('orderList')
@@ -425,13 +425,17 @@ enyo.kind({
                             args.cancelOperation === true
                           ) {
                             finishPrintInvoices();
-                            printInvoice(indx + 1);
+                            printInvoice(++indx);
                             return;
                           }
                           me.model.printReceipt.print(invoice, {
-                            callback: function() {
+                            callback: function(options) {
                               finishPrintInvoices();
-                              printInvoice(indx + 1);
+                              if (options && options.failed) {
+                                printInvoice(indx);
+                              } else {
+                                printInvoice(++indx);
+                              }
                             }
                           });
                         }
@@ -439,7 +443,7 @@ enyo.kind({
                     } catch (e) {
                       OB.error('Error printing the receipt:' + e);
                       finishPrintInvoices();
-                      printInvoice(indx + 1);
+                      printInvoice(++indx);
                     }
                   });
                 });

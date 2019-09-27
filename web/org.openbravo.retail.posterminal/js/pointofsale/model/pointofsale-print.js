@@ -196,7 +196,7 @@
                   me.isRetry = true;
                   me.print(receipt, printargs);
                   if (args.callback) {
-                    args.callback();
+                    args.callback({ failed: true });
                   }
                   return true;
                 };
@@ -214,7 +214,7 @@
                     );
                   }
                   if (args.callback) {
-                    args.callback();
+                    args.callback({ failed: true });
                   }
                 };
                 var cancelfunc = function() {
