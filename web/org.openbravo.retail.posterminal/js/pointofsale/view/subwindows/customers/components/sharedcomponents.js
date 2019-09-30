@@ -1097,6 +1097,9 @@ enyo.kind({
           }
         }
       }
+    } else {
+      me.$.smsLabelCheck.setChecked(false);
+      me.$.emailLabelCheck.setChecked(false);
     }
     this.doHandleFormElementStyle();
   },
