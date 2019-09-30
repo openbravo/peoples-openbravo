@@ -1124,7 +1124,12 @@ enyo.kind({
           ) &&
         multiOrders.get('amountToLayaway') === 0,
       pendingPrepayment = OB.DEC.sub(
-        prepaymentAmount,
+        OB.DEC.sub(
+          prepaymentAmount,
+          multiOrders.get('existingPayment')
+            ? multiOrders.get('existingPayment')
+            : 0
+        ),
         multiOrders.get('payment')
       );
 
