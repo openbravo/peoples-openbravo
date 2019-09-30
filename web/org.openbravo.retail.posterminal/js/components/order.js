@@ -1724,12 +1724,7 @@ enyo.kind({
               order.get('amountToLayaway')
             );
           }
-          prepayment = OB.DEC.add(
-            prepayment,
-            order.get('obposPrepaymentamt') - order.get('payment') > 0
-              ? order.get('obposPrepaymentamt') - order.get('payment')
-              : 0
-          );
+          prepayment = OB.DEC.add(prepayment, order.get('obposPrepaymentamt'));
           if (
             order.get('amountToLayaway') &&
             order.get('amountToLayaway') < order.getGross()
