@@ -11902,20 +11902,19 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obUiModalProductAttributes-body {}
 
-.obUiModalProductAttributes-body-valueAttribute {
-  /*Inherits: [OB.UI.Modal]*/
-  text-align: center;
-  width: 400px;
-  height: 40px;
-}
+.obUiModalProductAttributes-body-label {}
+
+.obUiModalProductAttributes-body-formElementValueAttribute {}
+
+.obUiModalProductAttributes-body-valueAttribute {}
 
 .obUiModalProductAttributes-footer {}
 
-.obUiModalProductAttributes-footer-obUiModalDialogButton1 {}
+.obUiModalProductAttributes-footer-clearButton {}
 
-.obUiModalProductAttributes-footer-obUiModalDialogButton2 {}
+.obUiModalProductAttributes-footer-cancelButton {}
 
-.obUiModalProductAttributes-footer-obUiModalDialogButton3 {}
+.obUiModalProductAttributes-footer-okButton {}
 
 
 

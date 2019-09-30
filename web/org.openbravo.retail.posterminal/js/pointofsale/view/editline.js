@@ -1415,7 +1415,7 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.SmallButton',
+  kind: 'OB.UI.Button',
   name: 'OB.OBPOSPointOfSale.UI.EditLine.OpenAttributeButton',
   content: '',
   classes: 'obObposPointOfSaleUiEditLineOpenAttributeButton',
