@@ -9164,6 +9164,15 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /* Inherits: [OB.OBPOSPointOfSale.UI.EditLine.OpenAttributeButton] */
 }
 
+.obObposPointOfSaleUiEditLine-actionButtons-openAttributeButton .obUiButton-components-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconActButtonAttributes.svg');
+  background-size: auto 14px;
+}
+
+.obObposPointOfSaleUiEditLine-actionButtons-openAttributeButton.disabled .obUiButton-components-before {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconActButtonAttributes_disabled.svg');
+}
+
 .obObposPointOfSaleUiEditLine-actionButtons-addAssociationsButton,
 .obObposPointOfSaleUiEditLine-actionButtons-removeAssociationsButton,
 .obObposPointOfSaleUiEditLine-actionButtons-canDeliver {
@@ -9353,12 +9362,9 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.EditLine.OpenAttributeButton
-# Inherits: [OB.UI.SmallButton]
+# Inherits: [OB.UI.Button]
 */
-.obObposPointOfSaleUiEditLineOpenAttributeButton {
-  background-color: orange;
-  color: #000000;
-}
+.obObposPointOfSaleUiEditLineOpenAttributeButton {}
 
 
 
