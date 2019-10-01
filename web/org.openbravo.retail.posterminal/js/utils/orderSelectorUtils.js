@@ -136,7 +136,7 @@
           }
         );
       } else {
-        errorCallback(true, OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
+        errorCallback(true);
       }
     };
 
@@ -161,7 +161,15 @@
               OB.UTIL.showLoading(false);
               OB.UTIL.showConfirmation.display(
                 OB.I18N.getLabel('OBMOBC_Error'),
-                OB.I18N.getLabel('OBPOS_ReceiptNotSynced', [data[0].documentNo])
+                OB.I18N.getLabel('OBPOS_ReceiptNotSynced', [
+                  data[0].documentNo
+                ]),
+                null,
+                {
+                  onHideFunction: function() {
+                    errorCallback(true);
+                  }
+                }
               );
             } else {
               orderLoaded(data);
@@ -215,7 +223,7 @@
                   } else {
                     errorCallback(
                       true,
-                      OB.I18N.getLabel('OBPOS_MsgErrorDropDep')
+                      OB.I18N.getLabel('OBPOS_RelatedReceiptNotFound')
                     );
                   }
                 },
