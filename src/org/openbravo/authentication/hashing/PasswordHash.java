@@ -79,7 +79,7 @@ public abstract class PasswordHash {
           .setFilterOnReadableOrganization(false)
           .uniqueResult();
 
-      if (user == null) {
+      if (user == null || user.getPassword() == null) {
         // no user for given userName
         return Optional.empty();
       }
