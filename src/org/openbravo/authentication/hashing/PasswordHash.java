@@ -37,7 +37,7 @@ import org.openbravo.model.ad.access.User;
  *
  * @since 3.0PR20Q1
  */
-public abstract class PasswordHash {
+public class PasswordHash {
   public static final Logger log = LogManager.getLogger();
   private static final int DEFAULT_CURRENT_ALGORITHM_VERSION = 1;
 
