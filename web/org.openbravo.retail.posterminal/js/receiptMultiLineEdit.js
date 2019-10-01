@@ -467,6 +467,7 @@ enyo.kind({
     ]
   },
   footer: {
+    classes: 'obUiModal-footer-mainButtons',
     components: [
       {
         kind: 'OBRDM.UI.MultiReceiptPropertiesDialogCancel',

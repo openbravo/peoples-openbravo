@@ -43,7 +43,7 @@ enyo.kind({
     ]
   },
   footer: {
-    classes: 'obUiModalChange-body-container1',
+    classes: 'obUiModal-footer-mainButtons obUiModalChange-body-container1',
     components: [
       {
         kind: 'OB.UI.ModalChangeButtonCancel',

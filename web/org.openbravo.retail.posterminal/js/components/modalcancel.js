@@ -20,7 +20,7 @@ enyo.kind({
     i18nContent: 'OBPOS_ProcessCancelDialog'
   },
   footer: {
-    classes: 'obUiModalCancel-footer',
+    classes: 'obUiModal-footer-mainButtons obUiModalCancel-footer',
     components: [
       {
         //Cancel button
