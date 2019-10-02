@@ -90,7 +90,7 @@ public class CheckApproval extends HttpServlet {
         jsonError.put("message", OBMessageUtils.getI18NMessage("OBPOS_InvalidUserPassword", null));
         result.put("error", jsonError);
       } else {
-        String supervisorId = supervisor.map(User::getId).get();
+        String supervisorId = supervisor.get().getId();
         String approvals = "'" + approvalType.getString(0) + "'";
         for (int i = 1; i < approvalType.length(); i++) {
           approvals = approvals + ",'" + approvalType.getString(i) + "'";
