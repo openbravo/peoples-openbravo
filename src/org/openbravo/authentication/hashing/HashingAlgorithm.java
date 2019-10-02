@@ -24,7 +24,7 @@ import java.security.MessageDigest;
 import java.util.Base64;
 
 /** Algorithm used to hash password to store in Database */
-public abstract class HashingAlgorithm {
+abstract class HashingAlgorithm {
 
   /**
    * Generates a hash using current algorithm, hashes should look like: {@code version$salt$hashed}

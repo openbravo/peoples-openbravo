@@ -118,7 +118,7 @@ public class PasswordHash {
   }
 
   /** Determines the algorithm used to hash a given password. */
-  public static HashingAlgorithm getAlgorithm(String hash) {
+  static HashingAlgorithm getAlgorithm(String hash) {
     HashingAlgorithm algorithm = ALGORITHMS.get(getVersion(hash));
 
     if (algorithm == null) {

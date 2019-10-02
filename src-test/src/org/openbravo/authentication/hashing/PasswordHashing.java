@@ -17,7 +17,7 @@
  ************************************************************************
  */
 
-package org.openbravo.test.system;
+package org.openbravo.authentication.hashing;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
