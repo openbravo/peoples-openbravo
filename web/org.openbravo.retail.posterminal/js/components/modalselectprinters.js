@@ -138,7 +138,7 @@ enyo.kind({
     ]
   },
   footer: {
-    classes: 'obUiModalSelectPrinters-footer',
+    classes: 'obUiModal-footer-mainButtons obUiModalSelectPrinters-footer',
     components: [
       {
         classes: 'obUiModalSelectPrinters-footer-selectPrinterCancel',
@@ -320,7 +320,7 @@ enyo.kind({
     ]
   },
   footer: {
-    classes: 'obUiModalSelectPDFPrinters-footer',
+    classes: 'obUiModal-footer-mainButtons obUiModalSelectPDFPrinters-footer',
     components: [
       {
         classes: 'obUiModalSelectPDFPrinters-footer-selectPDFPrintersCancel',

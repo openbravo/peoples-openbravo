@@ -482,7 +482,7 @@ enyo.kind({
       kind: 'OB.OBPOSPointOfSale.UI.EditLine.OpenAttributeButton',
       name: 'openAttributeButton',
       classes:
-        'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-openAttributeButton',
+        'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLine-actionButtons-openAttributeButton obUiActionButton',
       showing: false
     },
     {
@@ -1415,7 +1415,7 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.SmallButton',
+  kind: 'OB.UI.Button',
   name: 'OB.OBPOSPointOfSale.UI.EditLine.OpenAttributeButton',
   content: '',
   classes: 'obObposPointOfSaleUiEditLineOpenAttributeButton',

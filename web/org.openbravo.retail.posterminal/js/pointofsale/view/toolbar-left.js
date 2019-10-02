@@ -935,8 +935,8 @@ enyo.kind({
   initComponents: function() {
     this.inherited(arguments);
     //FIXME: handle properly the css classes to show the required background depending on the status
-    this.$.before.createComponents(this.customComponents);
-    this.totalPrinter = this.$.before.$.totalPrinter;
+    this.$.icon.createComponents(this.customComponents);
+    this.totalPrinter = this.$.icon.$.totalPrinter;
     this.removeClass('btnlink-gray');
   },
   destroyComponents: function() {

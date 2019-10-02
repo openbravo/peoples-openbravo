@@ -947,7 +947,8 @@ enyo.kind({
   classes: 'obUiModalVerifiedReturnsFooter',
   components: [
     {
-      classes: 'obUiModalVerifiedReturnsFooter-container1',
+      classes:
+        'obUiModal-footer-mainButtons obUiModalVerifiedReturnsFooter-container1',
       components: [
         {
           classes:

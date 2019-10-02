@@ -18,40 +18,36 @@ enyo.kind({
     classes: 'obUiModalProductAttributes-body',
     components: [
       {
-        initComponents: function() {
-          this.setContent(
-            OB.I18N.getLabel('OBPOS_ProductAttributeValueDialogTitleDesc')
-          );
-        }
+        name: 'label',
+        content: '',
+        classes: 'obUiModalProductAttributes-body-label'
       },
       {
-        kind: 'enyo.Input',
-        type: 'text',
-        attributes: {
-          //Allowed, it is not a style attribute
-          maxlength: 190
-        },
-        name: 'valueAttribute',
-        classes: 'obUiModalProductAttributes-body-valueAttribute',
-        selectOnFocus: true,
-        isFirstFocus: true
+        kind: 'OB.UI.FormElement',
+        name: 'formElementValueAttribute',
+        classes:
+          'obUiFormElement_dataEntry obUiFormElement_dataEntry_noicon obUiModalProductAttributes-body-formElementValueAttribute',
+        coreElement: {
+          name: 'valueAttribute',
+          kind: 'OB.UI.FormElement.Input',
+          attributes: {
+            //Allowed, it is not a style attribute
+            maxlength: 190
+          },
+          selectOnFocus: true,
+          isFirstFocus: true,
+          i18nLabel: 'OBMOBC_LblValue',
+          classes: 'obUiModalProductAttributes-body-valueAttribute'
+        }
       }
     ]
   },
   footer: {
-    classes: 'obUiModalProductAttributes-footer',
+    classes: 'obUiModal-footer-mainButtons obUiModalProductAttributes-footer',
     components: [
       {
         kind: 'OB.UI.ModalDialogButton',
-        classes: 'obUiModalProductAttributes-footer-obUiModalDialogButton1',
-        i18nContent: 'OBMOBC_LblOk',
-        tap: function() {
-          this.owner.owner.saveAction();
-        }
-      },
-      {
-        kind: 'OB.UI.ModalDialogButton',
-        classes: 'obUiModalProductAttributes-footer-obUiModalDialogButton2',
+        classes: 'obUiModalProductAttributes-footer-clearButton',
         i18nContent: 'OBPOS_LblClear',
         tap: function() {
           this.owner.owner.clearAction();
@@ -59,10 +55,19 @@ enyo.kind({
       },
       {
         kind: 'OB.UI.ModalDialogButton',
-        classes: 'obUiModalProductAttributes-footer-obUiModalDialogButton3',
+        classes: 'obUiModalProductAttributes-footer-cancelButton',
         i18nContent: 'OBMOBC_LblCancel',
         tap: function() {
           this.owner.owner.cancelAction();
+        }
+      },
+      {
+        kind: 'OB.UI.ModalDialogButton',
+        classes: 'obUiModalProductAttributes-footer-okButton',
+        i18nContent: 'OBMOBC_LblOk',
+        isDefaultAction: true,
+        tap: function() {
+          this.owner.owner.saveAction();
         }
       }
     ]
@@ -74,7 +79,7 @@ enyo.kind({
     return true;
   },
   saveAttribute: function(inSender, inEvent) {
-    var inpAttributeValue = this.$.body.$.valueAttribute.getValue();
+    var inpAttributeValue = this.$.body.$.formElementValueAttribute.coreElement.getValue();
     inpAttributeValue = inpAttributeValue.replace(/\s+/, '');
     if (
       (this.validAttribute(inpAttributeValue) && inpAttributeValue) ||
@@ -90,7 +95,7 @@ enyo.kind({
     }
   },
   clearAction: function() {
-    this.$.body.$.valueAttribute.setValue(null);
+    this.$.body.$.formElementValueAttribute.coreElement.setValue(null);
     return;
   },
   cancelAction: function() {
@@ -105,18 +110,23 @@ enyo.kind({
     return;
   },
   executeOnHide: function() {
-    this.$.body.$.valueAttribute.setValue(null);
+    this.$.body.$.formElementValueAttribute.coreElement.setValue(null);
   },
   executeOnShow: function() {
     if (this.args.options.attSetInstanceDesc) {
-      this.$.body.$.valueAttribute.setValue(
+      this.$.body.$.formElementValueAttribute.coreElement.setValue(
         this.args.options.attSetInstanceDesc
       );
     } else if (this.args.options.attributeValue) {
-      this.$.body.$.valueAttribute.setValue(this.args.options.attributeValue);
+      this.$.body.$.formElementValueAttribute.coreElement.setValue(
+        this.args.options.attributeValue
+      );
     }
   },
   initComponents: function() {
     this.inherited(arguments);
+    this.$.body.$.label.setContent(
+      OB.I18N.getLabel('OBPOS_ProductAttributeValueDialogTitleDesc')
+    );
   }
 });

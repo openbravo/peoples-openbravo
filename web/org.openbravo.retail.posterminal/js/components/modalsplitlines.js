@@ -290,7 +290,7 @@ enyo.kind({
   },
   //buttons of the popup
   footer: {
-    classes: 'obUiModalSplitLine-footer',
+    classes: 'obUiModal-footer-mainButtons obUiModalSplitLine-footer',
     components: [
       {
         kind: 'OB.UI.ModalSplitLine_btnCancel',
