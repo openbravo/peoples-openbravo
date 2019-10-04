@@ -69,20 +69,14 @@ public class AttributesUtils {
             // Issue 37308: We have found several Att Set Instances with the same description.
             // Lets try to find one which have stock
             // inside the warehouses used by the store
-            StringBuilder stDetailWhereClause = new StringBuilder();
-            stDetailWhereClause.append(" as e WHERE ");
-            stDetailWhereClause.append("e.attributeSetValue.id in ( ");
-            stDetailWhereClause.append("  select id from AttributeSetInstance attseti ");
-            stDetailWhereClause.append("  where attseti.description = :attsetdescription ");
-            stDetailWhereClause.append(") AND ");
-            stDetailWhereClause.append("e.quantityOnHand > 0 AND ");
-            stDetailWhereClause.append("e.storageBin.warehouse.id in ( ");
-            stDetailWhereClause.append("  select warehouse.id from OrganizationWarehouse orgwh ");
-            stDetailWhereClause.append("  where orgwh.organization.id = :orgid ");
-            stDetailWhereClause.append(") ");
-            stDetailWhereClause.append("ORDER BY e.quantityOnHand desc, e.attributeSetValue.id ");
+            String stDetailWhereClause = " as e WHERE e.attributeSetValue.id "
+                + " in (select id from AttributeSetInstance attseti "
+                + " where attseti.description = :attsetdescription) "
+                + " AND e.quantityOnHand > 0 AND e.storageBin.warehouse.id "
+                + " in (select warehouse.id from OrganizationWarehouse orgwh "
+                + " where orgwh.organization.id = :orgid) ORDER BY e.quantityOnHand desc, e.attributeSetValue.id ";
             OBQuery<StorageDetail> querySdetail = OBDal.getInstance()
-                .createQuery(StorageDetail.class, stDetailWhereClause.toString());
+                .createQuery(StorageDetail.class, stDetailWhereClause);
             querySdetail.setNamedParameter("attsetdescription",
                 validatedAttributeSetInstanceDescription);
             querySdetail.setNamedParameter("orgid", posTerminalOrganizationId);
@@ -357,11 +351,9 @@ public class AttributesUtils {
       AttributeSet attributeSet) {
     List<Attribute> lstAttributes = new ArrayList<Attribute>();
     try {
-      StringBuilder hqlQueryString = new StringBuilder();
-      hqlQueryString.append("attributeSet.id = :attSetId ");
-      hqlQueryString.append("ORDER BY seqNo asc");
+      String hqlQueryString = " attributeSet.id = :attSetId ORDER BY seqNo asc ";
       OBQuery<AttributeUse> attUseQuery = OBDal.getInstance()
-          .createQuery(AttributeUse.class, hqlQueryString.toString());
+          .createQuery(AttributeUse.class, hqlQueryString);
       attUseQuery.setNamedParameter("attSetId", attributeSet.getId());
       List<AttributeUse> lstAttUse = attUseQuery.list();
       for (AttributeUse attUse : lstAttUse) {
@@ -382,11 +374,9 @@ public class AttributesUtils {
               + att.getIdentifier() + "-");
       return true;
     }
-    StringBuilder hqlQueryString = new StringBuilder();
-    hqlQueryString.append("attribute.id = :attId AND ");
-    hqlQueryString.append("name = :nameValue ");
+    String hqlQueryString = " attribute.id = :attId AND name = :nameValue ";
     OBQuery<AttributeValue> attValueQuery = OBDal.getInstance()
-        .createQuery(AttributeValue.class, hqlQueryString.toString());
+        .createQuery(AttributeValue.class, hqlQueryString);
     attValueQuery.setNamedParameter("attId", att.getId());
     attValueQuery.setNamedParameter("nameValue", value);
     List<AttributeValue> lstAttValues = attValueQuery.list();

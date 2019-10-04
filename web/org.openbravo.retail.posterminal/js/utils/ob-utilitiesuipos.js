@@ -785,7 +785,7 @@ OB.UTIL.checkRefreshMasterDataOnNavigate = function() {
   }
 };
 
-OB.UTIL.refreshMasterDataInBackgroundRequest = function() {
+OB.UTIL.refreshMasterDataInBackgroundRequest = function(callback) {
   if (
     OB.UTIL.masterdataRefreshStatus !== '' &&
     OB.UTIL.masterdataRefreshStatus !== 'background-request-finished'
@@ -794,6 +794,7 @@ OB.UTIL.refreshMasterDataInBackgroundRequest = function() {
       'Cannot start the masterdata requests because the expected status was "" or "background-request-finished" but it was: ' +
         OB.UTIL.masterdataRefreshStatus
     );
+    callback();
     return;
   }
   OB.UTIL.masterdataRefreshStatus = 'background-request-started';
@@ -803,6 +804,7 @@ OB.UTIL.refreshMasterDataInBackgroundRequest = function() {
     true,
     function() {
       OB.UTIL.masterdataRefreshStatus = 'background-request-finished';
+      callback();
     },
     'background-request'
   );
@@ -934,35 +936,43 @@ OB.UTIL.loadModelsIncFunc = function() {
         ? 'OBPOS_MasterdataWillHappenOnCloseTicket'
         : 'OBPOS_MasterdataWillHappenOnReturnToWebPOS'
     ),
+    refreshMasterData,
     minutesToShowRefreshDataInc = OB.MobileApp.model.get('terminal')
       .terminalType.minutesToShowRefreshDataInc,
     minShowIncRefresh = OB.UTIL.isNullOrUndefined(minutesToShowRefreshDataInc)
       ? undefined
       : minutesToShowRefreshDataInc * 60 * 1000;
+  refreshMasterData = function() {
+    if (
+      !OB.UTIL.isNullOrUndefined(minShowIncRefresh) &&
+      minShowIncRefresh >= 0
+    ) {
+      // Forced refresh by timeout, ticket close also calls to checkRefreshMasterData
+      var noActivityTimeout = OB.MobileApp.model.get(
+        'refreshMasterdataNoActivityTimeout'
+      );
+      if (OB.UTIL.isNullOrUndefined(noActivityTimeout)) {
+        OB.MobileApp.model.set('refreshMasterdataNoActivityTimeout', true);
+        setTimeout(function() {
+          // Refresh Master Data
+          OB.MobileApp.model.unset('refreshMasterdataNoActivityTimeout');
+          OB.UTIL.checkRefreshMasterData();
+        }, minShowIncRefresh);
+      }
+    }
+  };
   if (OB.UTIL.isNullOrUndefined(minShowIncRefresh) || minShowIncRefresh > 0) {
     OB.info(msg);
     OB.UTIL.showWarning(msg);
   }
+  OB.MobileApp.model.set('refreshMasterdata', true);
   if (
     OB.UTIL.backgroundMasterdataIsEnabled() &&
     !OB.UTIL.localStorage.getItem('neededForeGroundMasterDataRefresh')
   ) {
-    OB.UTIL.refreshMasterDataInBackgroundRequest();
-  }
-  OB.MobileApp.model.set('refreshMasterdata', true);
-  if (!OB.UTIL.isNullOrUndefined(minShowIncRefresh) && minShowIncRefresh >= 0) {
-    // Forced refresh by timeout, ticket close also calls to checkRefreshMasterData
-    var noActivityTimeout = OB.MobileApp.model.get(
-      'refreshMasterdataNoActivityTimeout'
-    );
-    if (OB.UTIL.isNullOrUndefined(noActivityTimeout)) {
-      OB.MobileApp.model.set('refreshMasterdataNoActivityTimeout', true);
-      setTimeout(function() {
-        // Refresh Master Data
-        OB.MobileApp.model.unset('refreshMasterdataNoActivityTimeout');
-        OB.UTIL.checkRefreshMasterData();
-      }, minShowIncRefresh);
-    }
+    OB.UTIL.refreshMasterDataInBackgroundRequest(refreshMasterData);
+  } else {
+    refreshMasterData();
   }
 };
 

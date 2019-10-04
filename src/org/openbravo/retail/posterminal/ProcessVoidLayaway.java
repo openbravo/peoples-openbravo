@@ -66,21 +66,12 @@ public class ProcessVoidLayaway extends POSDataSynchronizationProcess
         }
       }
 
-      final StringBuffer hql = new StringBuffer();
-      hql.append("SELECT DISTINCT so.documentNo ");
-      hql.append("FROM OrderlineServiceRelation AS olsr ");
-      hql.append("JOIN olsr.orderlineRelated AS pol ");
-      hql.append("JOIN olsr.salesOrderLine AS sol ");
-      hql.append("JOIN pol.salesOrder AS po ");
-      hql.append("JOIN sol.salesOrder AS so ");
-      hql.append("WHERE po.id = :orderId ");
-      hql.append("AND so.id <> :orderId ");
-      hql.append("AND pol.orderedQuantity <> pol.deliveredQuantity ");
-      hql.append("AND sol.orderedQuantity <> sol.deliveredQuantity ");
-      hql.append("AND so.documentStatus <> 'CL' ");
-      Query<String> query = OBDal.getInstance()
-          .getSession()
-          .createQuery(hql.toString(), String.class);
+      final String hql = "SELECT DISTINCT so.documentNo FROM OrderlineServiceRelation AS olsr "
+          + " JOIN olsr.orderlineRelated AS pol JOIN olsr.salesOrderLine AS sol "
+          + " JOIN pol.salesOrder AS po JOIN sol.salesOrder AS so WHERE po.id = :orderId "
+          + " AND so.id <> :orderId AND pol.orderedQuantity <> pol.deliveredQuantity "
+          + " AND sol.orderedQuantity <> sol.deliveredQuantity AND so.documentStatus <> 'CL' ";
+      Query<String> query = OBDal.getInstance().getSession().createQuery(hql, String.class);
       query.setParameter("orderId", order.getId());
       List<String> documentNoList = query.list();
       if (documentNoList.size() > 0) {

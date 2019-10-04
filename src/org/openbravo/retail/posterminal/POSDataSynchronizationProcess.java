@@ -23,6 +23,8 @@ public abstract class POSDataSynchronizationProcess extends DataSynchronizationP
     return POSUtils.APP_NAME;
   }
 
+  // We must define a new public method in order to
+  // get the Import Qualifier from records
   public String getImportEntryQualifier() {
     return getImportQualifier();
   }

@@ -1435,32 +1435,22 @@
       this.cleanSessionInfo();
     },
 
-    preLogoutActions: function(callback) {
-      var me = this,
-        criteria = {},
-        finalCallback;
+    preLogoutActions: function(finalCallback) {
+      var criteria = {};
+      var me = this;
 
-      finalCallback = function() {
-        // Clean Session Info
-        me.cleanSessionInfo();
-
-        // Remove Pending CashMgmt Events
-        OB.UTIL.localStorage.removeItem('CashMgmtPendingDepositsDrops');
-
-        if (callback && callback instanceof Function) {
-          callback();
-        }
-      };
-
-      function removeOneModel(model, collection) {
+      function removeOneModel(model, collection, callback) {
         if (collection.length === 0) {
-          finalCallback();
+          if (callback && callback instanceof Function) {
+            me.cleanSessionInfo();
+            callback();
+          }
           return;
         }
 
         model.deleteOrder(me, function() {
           collection.remove(model);
-          removeOneModel(collection.at(0), collection);
+          removeOneModel(collection.at(0), collection, callback);
         });
       }
 
@@ -1469,9 +1459,12 @@
           _.each(collection.models, function(model) {
             model.set('ignoreCheckIfIsActiveOrder', true);
           });
-          removeOneModel(collection.at(0), collection);
+          removeOneModel(collection.at(0), collection, finalCallback);
         } else {
-          finalCallback();
+          if (finalCallback && finalCallback instanceof Function) {
+            me.cleanSessionInfo();
+            finalCallback();
+          }
         }
       }
 

@@ -83,14 +83,10 @@ public class UpdateProductCategoryByAssortmentBackground extends DalBaseProcess 
         for (OBRETCOProductList assortment : assortmentList.list()) {
           List<OBRETCOProductcategory> productCategoryElementList = new ArrayList<OBRETCOProductcategory>();
 
-          final StringBuilder hql = new StringBuilder();
-          hql.append("select distinct(mpc.id) ");
-          hql.append(" from OBRETCO_ProductList obpl ");
-          hql.append(" left join obpl.oBRETCOProlProductList obpp  ");
-          hql.append(" left join obpp.product mp  ");
-          hql.append(" left join mp.productCategory mpc ");
-          hql.append(" where obpl.id= :assortmentid ");
-          hql.append(" and mp.active='Y'");
+          final String hql = "select distinct(mpc.id) from OBRETCO_ProductList obpl "
+              + "left join obpl.oBRETCOProlProductList obpp left join obpp.product mp "
+              + "left join mp.productCategory mpc "
+              + "where obpl.id= :assortmentid and mp.active='Y'";
 
           final Session session = OBDal.getInstance().getSession();
           final Query<String> query = session.createQuery(hql.toString(), String.class);

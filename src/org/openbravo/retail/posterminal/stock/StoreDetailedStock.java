@@ -42,25 +42,19 @@ public class StoreDetailedStock extends JSONProcessSimple {
           : jsonData.getString("organization");
       prodId = jsonData.getString("product");
 
-      final StringBuilder hqlQuery = new StringBuilder();
-      hqlQuery.append(" select wh.id, wh.name, sb.id, sb.searchKey");
-      hqlQuery.append(" , sum(ms.quantityOnHand - ms.reservedQty) as qtyonhand");
-      hqlQuery.append(" from MaterialMgmtStorageDetail ms");
-      hqlQuery.append(" join ms.storageBin sb");
-      hqlQuery.append(" join sb.inventoryStatus ls");
-      hqlQuery.append(" join sb.warehouse wh");
-      hqlQuery.append(" join wh.organizationWarehouseList ow");
-      hqlQuery.append(" where ow.organization.id = :orgId");
-      hqlQuery.append(" and ms.product.id = :prodId");
-      hqlQuery.append(" and ms.quantityOnHand - ms.reservedQty <> 0");
+      String hqlQuery = " select wh.id, wh.name, sb.id, sb.searchKey, sum(ms.quantityOnHand - ms.reservedQty) as qtyonhand "
+          + " from MaterialMgmtStorageDetail ms join ms.storageBin sb "
+          + " join sb.inventoryStatus ls join sb.warehouse wh "
+          + " join wh.organizationWarehouseList ow where ow.organization.id = :orgId "
+          + " and ms.product.id = :prodId and ms.quantityOnHand - ms.reservedQty <> 0";
       if (isCrossStore) {
-        hqlQuery.append(" and ls.oBRETCOAvailableCrossStore = true");
+        hqlQuery += " and ls.oBRETCOAvailableCrossStore = true";
       } else {
-        hqlQuery.append(" and ls.available = true");
+        hqlQuery += " and ls.available = true";
       }
-      hqlQuery.append(" and wh.active = true");
-      hqlQuery.append(" group by wh.id, wh.name, sb.id, sb.searchKey");
-      hqlQuery.append(" order by wh.name");
+      hqlQuery += " and wh.active = true";
+      hqlQuery += " group by wh.id, wh.name, sb.id, sb.searchKey";
+      hqlQuery += " order by wh.name";
 
       final Session session = OBDal.getInstance().getSession();
       final Query<Object[]> query = session.createQuery(hqlQuery.toString(), Object[].class);
@@ -83,7 +77,7 @@ public class StoreDetailedStock extends JSONProcessSimple {
             curWHId = (String) results.get(0);
             qtyCounterPerWH = BigDecimal.ZERO;
           }
-          if (!curWHId.equals((String) results.get(0))) {
+          if (!curWHId.equals(results.get(0))) {
             warehouseInfo.put("warehouseid", curWHId);
             warehouseInfo.put("warehousename", curWHName);
             warehouseInfo.put("warehouseqty", qtyCounterPerWH);
@@ -98,8 +92,8 @@ public class StoreDetailedStock extends JSONProcessSimple {
             qtyCounterPerWH = BigDecimal.ZERO;
           }
           JSONObject binInfo = new JSONObject();
-          binInfo.put("binid", (String) results.get(2));
-          binInfo.put("binname", (String) results.get(3));
+          binInfo.put("binid", results.get(2));
+          binInfo.put("binname", results.get(3));
           binInfo.put("binqty", ((BigDecimal) results.get(4)).toString());
 
           arrBinInfo.put(binInfo);
