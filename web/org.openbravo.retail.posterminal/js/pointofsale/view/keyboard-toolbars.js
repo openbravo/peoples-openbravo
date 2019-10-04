@@ -693,28 +693,21 @@ enyo.kind({
         var amount = me.model.getPending(),
           pendingPrepayment,
           setAmountIfPrepayment = function() {
+            var reminingPrepayment;
             if (
               payPrepayment &&
               pendingPrepayment > 0 &&
               pendingPrepayment < amount
             ) {
-              amount = pendingPrepayment;
+              reminingPrepayment = OB.DEC.sub(
+                pendingPrepayment,
+                me.model.getPayment()
+              );
+              amount = reminingPrepayment > 0 ? reminingPrepayment : 0;
             }
           };
         if (payPrepayment) {
-          var total = me.model.getTotal();
-          if (me.model.get('leftColumnViewManager').isMultiOrder()) {
-            total = OB.DEC.add(
-              total,
-              me.model.get('multiOrders').get('existingPayment')
-                ? me.model.get('multiOrders').get('existingPayment')
-                : 0
-            );
-          }
-          pendingPrepayment = OB.DEC.sub(
-            OB.DEC.add(me.model.getPending(), me.model.getPrepaymentAmount()),
-            total
-          );
+          pendingPrepayment = me.model.getPrepaymentAmount();
         }
         if (providerGroups[status]) {
           // It is selected  a provider group

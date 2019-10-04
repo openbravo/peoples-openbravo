@@ -462,7 +462,28 @@ enyo.kind({
               : null
           },
           function(data) {
-            if (data) {
+            if (data && data.exception) {
+              OB.UTIL.ProcessController.finish(
+                'payOpenTicketsValidation',
+                execution
+              );
+              OB.UTIL.showLoading(false);
+              OB.UTIL.showConfirmation.display('', data.exception.message);
+            } else if (data) {
+              if (data[0].recordInImportEntry) {
+                OB.UTIL.ProcessController.finish(
+                  'payOpenTicketsValidation',
+                  execution
+                );
+                OB.UTIL.showLoading(false);
+                OB.UTIL.showConfirmation.display(
+                  OB.I18N.getLabel('OBMOBC_Error'),
+                  OB.I18N.getLabel('OBPOS_ReceiptNotSynced', [
+                    data[0].documentNo
+                  ])
+                );
+                return;
+              }
               me.owner.owner.model
                 .get('orderList')
                 .newPaidReceipt(data[0], function(order) {
@@ -497,7 +518,6 @@ enyo.kind({
                 'payOpenTicketsValidation',
                 execution
               );
-              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
             }
           },
           function(data) {

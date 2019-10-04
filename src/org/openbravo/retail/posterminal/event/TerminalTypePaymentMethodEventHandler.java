@@ -25,7 +25,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.retail.posterminal.OBPOSCurrencyRounding;
 import org.openbravo.retail.posterminal.TerminalTypePaymentMethod;
 import org.openbravo.service.db.DalConnectionProvider;
 
@@ -70,15 +69,10 @@ public class TerminalTypePaymentMethodEventHandler extends EntityPersistenceEven
     OBContext.setAdminMode(true);
     try {
       if (ttpm.getChangeLessThan() != null && ttpm.getChangePaymentType() != null) {
-        StringBuilder hql = new StringBuilder();
-        hql.append("select " + OBPOSCurrencyRounding.PROPERTY_ID);
-        hql.append(" from " + OBPOSCurrencyRounding.ENTITY_NAME + " cr");
-        hql.append(" where " + OBPOSCurrencyRounding.PROPERTY_CURRENCY + ".id = :currencyId");
-        hql.append(" and " + OBPOSCurrencyRounding.PROPERTY_ACTIVE + " = true");
-        hql.append(" and ad_isorgincluded(:organizationId, cr.organization.id, :clientId) <> -1");
-        Query<String> qry = OBDal.getInstance()
-            .getSession()
-            .createQuery(hql.toString(), String.class);
+        String hql = "select cr.id from OBPOS_CurrencyRounding cr "
+            + " where cr.currency.id = :currencyId and OBPOS_CurrencyRounding.active = true "
+            + " and ad_isorgincluded(:organizationId, cr.organization.id, :clientId) <> -1";
+        Query<String> qry = OBDal.getInstance().getSession().createQuery(hql, String.class);
         qry.setParameter("currencyId", ttpm.getCurrency().getId());
         qry.setParameter("organizationId", ttpm.getOrganization().getId());
         qry.setParameter("clientId", ttpm.getClient().getId());

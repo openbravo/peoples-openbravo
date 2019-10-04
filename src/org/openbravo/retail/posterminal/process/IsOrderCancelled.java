@@ -85,18 +85,12 @@ public class IsOrderCancelled extends MultiServerJSONProcess {
               && jsonData.getBoolean("checkNotEditableLines")) {
             // Find the deferred services or the products that have related deferred services in the
             // order that is being canceled
-            final StringBuffer hql = new StringBuffer();
-            hql.append("SELECT DISTINCT sol.lineNo ");
-            hql.append("FROM OrderlineServiceRelation AS olsr ");
-            hql.append("JOIN olsr.salesOrderLine AS sol ");
-            hql.append("JOIN olsr.orderlineRelated AS pol ");
-            hql.append("JOIN sol.salesOrder AS so ");
-            hql.append("WHERE so.id <> :orderId ");
-            hql.append("AND pol.salesOrder.id = :orderId ");
-            hql.append("AND so.iscancelled = false");
-            final Query<Long> query = OBDal.getInstance()
-                .getSession()
-                .createQuery(hql.toString(), Long.class);
+            final String hql = "SELECT DISTINCT sol.lineNo "
+                + " FROM OrderlineServiceRelation AS olsr JOIN olsr.salesOrderLine AS sol "
+                + " JOIN olsr.orderlineRelated AS pol JOIN sol.salesOrder AS so "
+                + " WHERE so.id <> :orderId AND pol.salesOrder.id = :orderId "
+                + " AND so.iscancelled = false";
+            final Query<Long> query = OBDal.getInstance().getSession().createQuery(hql, Long.class);
             query.setParameter("orderId", orderId);
             result.put("deferredLines", query.list());
           }
@@ -104,21 +98,15 @@ public class IsOrderCancelled extends MultiServerJSONProcess {
               && jsonData.getBoolean("checkNotDeliveredDeferredServices")) {
             // Find if there's any line in the ticket which is not delivered and has deferred
             // services
-            final StringBuffer hql = new StringBuffer();
-            hql.append("SELECT DISTINCT so.documentNo ");
-            hql.append("FROM OrderlineServiceRelation AS olsr ");
-            hql.append("JOIN olsr.orderlineRelated AS pol ");
-            hql.append("JOIN olsr.salesOrderLine AS sol ");
-            hql.append("JOIN pol.salesOrder AS po ");
-            hql.append("JOIN sol.salesOrder AS so ");
-            hql.append("WHERE po.id = :orderId ");
-            hql.append("AND so.id <> :orderId ");
-            hql.append("AND pol.orderedQuantity <> pol.deliveredQuantity ");
-            hql.append("AND sol.orderedQuantity <> sol.deliveredQuantity ");
-            hql.append("AND so.documentStatus <> 'CL' ");
+            final String hql = "SELECT DISTINCT so.documentNo "
+                + " FROM OrderlineServiceRelation AS olsr JOIN olsr.orderlineRelated AS pol "
+                + " JOIN olsr.salesOrderLine AS sol JOIN pol.salesOrder AS po "
+                + " JOIN sol.salesOrder AS so WHERE po.id = :orderId AND so.id <> :orderId "
+                + " AND pol.orderedQuantity <> pol.deliveredQuantity "
+                + " AND sol.orderedQuantity <> sol.deliveredQuantity AND so.documentStatus <> 'CL' ";
             final Query<String> query = OBDal.getInstance()
                 .getSession()
-                .createQuery(hql.toString(), String.class);
+                .createQuery(hql, String.class);
             query.setParameter("orderId", orderId);
             result.put("notDeliveredDeferredServices", query.list());
           }
