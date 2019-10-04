@@ -489,25 +489,46 @@ enyo.kind({
       return errors;
     }
 
-    function validateSMS(customer) {
+    function validateSMS(customer, form) {
       //Validate that sms field is filled if  'Commercial Auth -> sms' is checked
       var commercialAuthViaSms = customer.get('viasms');
       var alternativePhone = customer.get('alternativePhone');
       var phone = customer.get('phone');
+      var phoneField =
+        form.$.customerOnlyFields.$.contactInfo.$.contactInfoFields.children[0];
+      var altPhoneField =
+        form.$.customerOnlyFields.$.contactInfo.$.contactInfoFields.children[1];
       if (commercialAuthViaSms && (phone === '' && alternativePhone === '')) {
+        phoneField.setMessage(
+          OB.I18N.getLabel('OBMOBC_LblMandatoryField'),
+          true
+        );
+        altPhoneField.setMessage(
+          OB.I18N.getLabel('OBMOBC_LblMandatoryField'),
+          true
+        );
         return false;
       } else {
+        phoneField.setMessage();
+        altPhoneField.setMessage();
         return true;
       }
     }
 
-    function validateEmail(customer) {
+    function validateEmail(customer, form) {
       //Validate that email field is filled if 'Commercial Auth -> email' is checked
       var commercialAuthViaEmail = customer.get('viaemail');
       var email = customer.get('email');
+      var emailField =
+        form.$.customerOnlyFields.$.contactInfo.$.contactInfoFields.children[2];
       if (commercialAuthViaEmail && email === '') {
+        emailField.setMessage(
+          OB.I18N.getLabel('OBMOBC_LblMandatoryField'),
+          true
+        );
         return false;
       } else {
+        emailField.setMessage();
         return true;
       }
     }
@@ -538,19 +559,35 @@ enyo.kind({
     function validateForm(form) {
       if (inEvent.validations) {
         var customer = form.model.get('customer'),
-          errors = checkMandatoryFields(
-            form.$.customerOnlyFields.children,
-            customer
-          );
+          errors = '';
+        var contactInfoErrors = checkMandatoryFields(
+          form.$.customerOnlyFields.$.contactInfo.$.contactInfoFields.children,
+          customer
+        );
+        if (contactInfoErrors) {
+          errors += contactInfoErrors + ', ';
+        }
+        var personalInfoErrors = checkMandatoryFields(
+          form.$.customerOnlyFields.$.personalInfo.$.personalInfoFields
+            .children,
+          customer
+        );
+        if (personalInfoErrors) {
+          errors += personalInfoErrors + ', ';
+        }
+        var otherInfoErrors = checkMandatoryFields(
+          form.$.customerOnlyFields.$.otherInfo.$.otherInfoFields.children,
+          customer
+        );
+        if (otherInfoErrors) {
+          errors += otherInfoErrors + ', ';
+        }
         if (form.$.invoicingAddrFields.showing) {
           var invoicingErrors = checkMandatoryFields(
             form.$.invoicingAddrFields.children,
             customer
           );
           if (invoicingErrors) {
-            if (errors) {
-              errors += ', ';
-            }
             errors +=
               form.$.invoicingAddrFields
                 .getClassAttribute()
@@ -596,25 +633,44 @@ enyo.kind({
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_TooLongName'));
           return false;
         }
-        if (!validateSMS(customer)) {
+        if (!validateSMS(customer, form)) {
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_PhoneRequired'));
+
           return false;
         }
-        if (!validateEmail(customer)) {
+        if (!validateEmail(customer, form)) {
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_EmailRequired'));
           return false;
         }
+        var emailField =
+          form.$.customerOnlyFields.$.contactInfo.$.contactInfoFields
+            .children[2];
         if (!validateEmailFormat(customer)) {
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_WrongEmailFormat'));
+          emailField.setMessage(OB.I18N.getLabel('OBPOS_WrongFormat'), true);
           return false;
+        } else {
+          emailField.setMessage();
         }
+        var phoneField =
+          form.$.customerOnlyFields.$.contactInfo.$.contactInfoFields
+            .children[0];
         if (!validatePhoneFormat(customer.get('phone'))) {
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_WrongPhoneFormat'));
+          phoneField.setMessage(OB.I18N.getLabel('OBPOS_WrongFormat'), true);
           return false;
+        } else {
+          phoneField.setMessage();
         }
+        var altPhoneField =
+          form.$.customerOnlyFields.$.contactInfo.$.contactInfoFields
+            .children[1];
         if (!validatePhoneFormat(customer.get('alternativePhone'))) {
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_WrongAltPhoneFormat'));
+          altPhoneField.setMessage(OB.I18N.getLabel('OBPOS_WrongFormat'), true);
           return false;
+        } else {
+          altPhoneField.setMessage();
         }
       }
       return true;
