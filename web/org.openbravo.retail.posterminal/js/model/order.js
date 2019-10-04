@@ -5468,7 +5468,8 @@
         var saveBP = function() {
           if (
             !businessPartner.get('locId') ||
-            !businessPartner.get('shipLocId')
+            !businessPartner.get('shipLocId') ||
+            OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)
           ) {
             businessPartner.loadBPLocations(
               null,

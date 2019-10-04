@@ -1279,6 +1279,20 @@ enyo.kind({
             });
             return true;
           }
+          eventBP.set(
+            'locId',
+            component.model
+              .get('order')
+              .get('bp')
+              .get('locId')
+          );
+          eventBP.set(
+            'shipLocId',
+            component.model
+              .get('order')
+              .get('bp')
+              .get('shipLocId')
+          );
           component.model.get('order').setBPandBPLoc(eventBP, false, true);
           component.model.get('orderList').saveCurrent();
         } else {
