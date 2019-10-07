@@ -110,16 +110,12 @@ class DeferredServiceDelivery {
       final Session session = OBDal.getInstance().getSession();
 
       // Check if there's any deferred service to deliver. Otherwise, continue
-      final StringBuilder checkServiceToDeliverHQL = new StringBuilder();
-      checkServiceToDeliverHQL.append("SELECT 1 ");
-      checkServiceToDeliverHQL.append("FROM OrderlineServiceRelation AS olsr ");
-      checkServiceToDeliverHQL.append("JOIN olsr.orderlineRelated AS pol ");
-      checkServiceToDeliverHQL.append("JOIN olsr.salesOrderLine AS sol ");
-      checkServiceToDeliverHQL.append("WHERE pol.salesOrder.id = :orderId ");
-      checkServiceToDeliverHQL.append("AND pol.salesOrder.id <> sol.salesOrder.id ");
-      checkServiceToDeliverHQL.append("AND sol.obposIspaid = true");
+      String checkServiceToDeliverHQL = "SELECT 1 FROM OrderlineServiceRelation AS olsr "
+          + " JOIN olsr.orderlineRelated AS pol JOIN olsr.salesOrderLine AS sol "
+          + " WHERE pol.salesOrder.id = :orderId AND pol.salesOrder.id <> sol.salesOrder.id "
+          + " AND sol.obposIspaid = true";
       final Query<Integer> checkServiceToDeliverQuery = session
-          .createQuery(checkServiceToDeliverHQL.toString(), Integer.class);
+          .createQuery(checkServiceToDeliverHQL, Integer.class);
       checkServiceToDeliverQuery.setParameter("orderId", order.getId());
       checkServiceToDeliverQuery.setMaxResults(1);
 
@@ -127,11 +123,11 @@ class DeferredServiceDelivery {
         return;
       }
 
-      final String deferredLinesHqlQuery = "select osr.salesOrderLine"
-          + " from OrderlineServiceRelation osr join osr.orderlineRelated olr"
-          + " where olr.salesOrder.id =:orderId"
-          + " and olr.salesOrder.id <> osr.salesOrderLine.salesOrder.id"
-          + " and osr.salesOrderLine.obposIspaid = true";
+      final String deferredLinesHqlQuery = "select osr.salesOrderLine "
+          + " from OrderlineServiceRelation osr join osr.orderlineRelated olr "
+          + " where olr.salesOrder.id =:orderId "
+          + " and olr.salesOrder.id <> osr.salesOrderLine.salesOrder.id "
+          + " and osr.salesOrderLine.obposIspaid = true ";
       final Query<OrderLine> query = session.createQuery(deferredLinesHqlQuery, OrderLine.class);
       query.setParameter("orderId", order.getId());
 
@@ -143,10 +139,10 @@ class DeferredServiceDelivery {
         }
         if ("UQ".equals(serviceOrderLine.getProduct().getQuantityRule())) {
           String relatedDeliveredLinesHqlQuery = "select count(olsr.id) " //
-              + "from OrderlineServiceRelation olsr " //
-              + "join olsr.orderlineRelated as relatedLine " //
-              + "where olsr.salesOrderLine.id = :orderLineId " //
-              + "and relatedLine.deliveredQuantity <> 0";
+              + " from OrderlineServiceRelation olsr " //
+              + " join olsr.orderlineRelated as relatedLine " //
+              + " where olsr.salesOrderLine.id = :orderLineId " //
+              + " and relatedLine.deliveredQuantity <> 0";
           final Session relatedLinesSession = OBDal.getInstance().getSession();
           final Query<Long> deliveredRelatedLinesCountQuery = relatedLinesSession
               .createQuery(relatedDeliveredLinesHqlQuery, Long.class);
@@ -163,9 +159,9 @@ class DeferredServiceDelivery {
           }
         } else {
           String relatedLinesHqlQtyQuery = "select sum(relatedLine.deliveredQuantity) as quantity "
-              + "from OrderlineServiceRelation olsr " //
-              + "join olsr.orderlineRelated as relatedLine " //
-              + "where olsr.salesOrderLine.id = :orderLineId";
+              + " from OrderlineServiceRelation olsr " //
+              + " join olsr.orderlineRelated as relatedLine " //
+              + " where olsr.salesOrderLine.id = :orderLineId";
           final Session relatedLinesSession = OBDal.getInstance().getSession();
           final Query<BigDecimal> relatedLinesQuery = relatedLinesSession
               .createQuery(relatedLinesHqlQtyQuery, BigDecimal.class);

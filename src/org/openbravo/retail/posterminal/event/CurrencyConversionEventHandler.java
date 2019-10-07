@@ -25,7 +25,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.retail.posterminal.OBPOSCurrencyRounding;
-import org.openbravo.retail.posterminal.TerminalTypePaymentMethod;
 
 public class CurrencyConversionEventHandler extends EntityPersistenceEventObserver {
 
@@ -57,22 +56,16 @@ public class CurrencyConversionEventHandler extends EntityPersistenceEventObserv
     OBPOSCurrencyRounding currencyRounding = (OBPOSCurrencyRounding) event.getTargetInstance();
     OBContext.setAdminMode(true);
     try {
-      StringBuilder hql = new StringBuilder();
-      hql.append("select " + TerminalTypePaymentMethod.PROPERTY_ID);
-      hql.append(" from " + TerminalTypePaymentMethod.ENTITY_NAME + " ttpm");
-      hql.append(" where " + TerminalTypePaymentMethod.PROPERTY_CURRENCY + ".id = :currencyId");
-      hql.append(" and " + TerminalTypePaymentMethod.PROPERTY_ACTIVE + " = true");
-      hql.append(" and " + TerminalTypePaymentMethod.PROPERTY_CHANGEPAYMENTTYPE + " is not null");
-      hql.append(" and " + TerminalTypePaymentMethod.PROPERTY_CHANGEPAYMENTTYPE + " is not null");
-      hql.append(" and ad_isorgincluded(ttpm.organization.id, :organizationId, :clientId) <> -1");
-      Query<String> qry = OBDal.getInstance()
-          .getSession()
-          .createQuery(hql.toString(), String.class);
+      final String hql = "select ttpm.id from OBPOS_App_Payment_Type ttpm "
+          + " where ttpm.currency.id = :currencyId and ttpm.active = true and ttpm.changePaymentType is not null "
+          + " and ad_isorgincluded(ttpm.organization.id, :organizationId, :clientId) <> -1";
+
+      Query<String> qry = OBDal.getInstance().getSession().createQuery(hql, String.class);
       qry.setParameter("currencyId", currencyRounding.getCurrency().getId());
       qry.setParameter("organizationId", currencyRounding.getOrganization().getId());
       qry.setParameter("clientId", currencyRounding.getClient().getId());
       qry.setMaxResults(1);
-      String currencyRoundingId = (String) qry.uniqueResult();
+      String currencyRoundingId = qry.uniqueResult();
       if (currencyRoundingId != null) {
         throw new OBException(
             String.format(OBMessageUtils.messageBD("OBPOS_CurrencyRoundingNotAllowed"),

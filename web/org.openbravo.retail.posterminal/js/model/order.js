@@ -3560,7 +3560,10 @@
           );
         }
 
-        if (p.get('obposScale') && !options.isVerifiedReturn) {
+        if (
+          p.get('obposScale') &&
+          (OB.UTIL.isNullOrUndefined(options) || !options.isVerifiedReturn)
+        ) {
           OB.POS.hwserver.getWeight(function(data) {
             if (data.exception) {
               OB.UTIL.showConfirmation.display('', data.exception.message);
@@ -3578,7 +3581,9 @@
             } else {
               line = me.createLine(
                 p,
-                options.isVerifiedReturn ? -data.result : data.result,
+                options && options.isVerifiedReturn
+                  ? -data.result
+                  : data.result,
                 options,
                 attrs
               );

@@ -191,13 +191,9 @@ public class POSUtils {
   public static List<String> getOrgListByCrossStoreId(final String crossStoreId) {
     OBContext.setAdminMode(false);
     try {
-      final StringBuilder select = new StringBuilder();
-      select.append(" select " + Organization.PROPERTY_ID);
-      select.append(" from " + Organization.ENTITY_NAME);
-      select.append(
-          " where " + Organization.PROPERTY_OBRETCOCROSSSTOREORGANIZATION + ".id = :crossStoreId");
+      final String select = "select o.id from Organization as o where o.oBRETCOCrossStoreOrganization.id = :crossStoreId";
 
-      final Query<String> query = OBDal.getInstance().getSession().createQuery(select.toString());
+      final Query<String> query = OBDal.getInstance().getSession().createQuery(select);
       query.setParameter("crossStoreId", crossStoreId);
 
       return query.list();
@@ -397,15 +393,11 @@ public class POSUtils {
         final Organization crossStore = posterminal.getOrganization()
             .getOBRETCOCrossStoreOrganization();
 
-        final StringBuilder select = new StringBuilder();
-        select.append(" select " + Organization.PROPERTY_OBRETCOPRODUCTLIST + ".id");
-        select.append(" from " + Organization.ENTITY_NAME);
-        select.append(" where " + Organization.PROPERTY_OBRETCOCROSSSTOREORGANIZATION
-            + ".id = :crossStoreId");
-        select.append(" and " + Organization.PROPERTY_OBRETCOPRODUCTLIST + " is not null");
-        select.append(" group by " + Organization.PROPERTY_OBRETCOPRODUCTLIST + ".id");
+        final String select = " select o.obretcoProductlist.id from Organization o "
+            + " where o.oBRETCOCrossStoreOrganization.id = :crossStoreId "
+            + " and o.obretcoProductlist is not null group by o.obretcoProductlist.id";
 
-        final Query<String> query = OBDal.getInstance().getSession().createQuery(select.toString());
+        final Query<String> query = OBDal.getInstance().getSession().createQuery(select);
         query.setParameter("crossStoreId", crossStore.getId());
         productList.addAll(query.list());
       }
@@ -449,11 +441,11 @@ public class POSUtils {
       if (curDbms.equals("POSTGRE")) {
         sqlToExecute = "select max(a.docno) from (select to_number(substring(replace(co.documentno, app.orderdocno_prefix, ''), '^/{0,1}([0-9]+)$')) docno from c_order co "
             + "inner join obpos_applications app on app.obpos_applications_id = co.em_obpos_applications_id and app.value = :appValue "
-            + "where co.c_doctype_id in (" + doctypeIds + ")) a";
+            + "where co.c_doctype_id in (:doctypeIds)) a";
       } else if (curDbms.equals("ORACLE")) {
         sqlToExecute = "select max(a.docno) from (select to_number(substr(REGEXP_SUBSTR(REPLACE(co.documentno, app.orderdocno_prefix), '^/{0,1}([0-9]+)$'), 2)) docno from c_order co "
             + "inner join obpos_applications app on app.obpos_applications_id = co.em_obpos_applications_id and app.value = :appValue "
-            + "where co.c_doctype_id in (" + doctypeIds + ")) a";
+            + "where co.c_doctype_id in (:doctypeIds)) a";
       } else {
         // unknow DBMS
         // shouldn't happen
@@ -463,6 +455,7 @@ public class POSUtils {
       @SuppressWarnings("rawtypes")
       NativeQuery query = OBDal.getInstance().getSession().createNativeQuery(sqlToExecute);
       query.setParameter("appValue", searchKey);
+      query.setParameter("doctypeIds", doctypeIds);
 
       Object result = query.uniqueResult();
       if (result == null) {
@@ -539,11 +532,11 @@ public class POSUtils {
       if (curDbms.equals("POSTGRE")) {
         sqlToExecute = "select max(a.docno) from (select to_number(substring(replace(co.documentno, app.quotationdocno_prefix, ''), '^/{0,1}([0-9]+)$')) docno from c_order co "
             + "inner join obpos_applications app on app.obpos_applications_id = co.em_obpos_applications_id and app.value = :appValue "
-            + "where co.c_doctype_id in (" + doctypeIds + ")) a";
+            + "where co.c_doctype_id in (:doctypeIds)) a";
       } else if (curDbms.equals("ORACLE")) {
         sqlToExecute = "select max(a.docno) from (select to_number(substr(REGEXP_SUBSTR(REPLACE(co.documentno, app.quotationdocno_prefix), '^/{0,1}([0-9]+)$'), 2)) docno from c_order co "
             + "inner join obpos_applications app on app.obpos_applications_id = co.em_obpos_applications_id and app.value = :appValue "
-            + "where co.c_doctype_id in (" + doctypeIds + ")) a";
+            + "where co.c_doctype_id in (:doctypeIds)) a";
       } else {
         // unknow DBMS
         // shouldn't happen
@@ -553,6 +546,7 @@ public class POSUtils {
       @SuppressWarnings("rawtypes")
       NativeQuery query = OBDal.getInstance().getSession().createNativeQuery(sqlToExecute);
       query.setParameter("appValue", searchKey);
+      query.setParameter("doctypeIds", doctypeIds);
 
       Object result = query.uniqueResult();
       if (result == null) {
@@ -629,11 +623,11 @@ public class POSUtils {
       if (curDbms.equals("POSTGRE")) {
         sqlToExecute = "select max(a.docno) from (select to_number(substring(replace(co.documentno, app.returndocno_prefix, ''), '^/{0,1}([0-9]+)$')) docno from c_order co "
             + "inner join obpos_applications app on app.obpos_applications_id = co.em_obpos_applications_id and app.value = :appValue "
-            + "where co.c_doctype_id in (" + doctypeIds + ")) a";
+            + "where co.c_doctype_id in (:doctypeIds)) a";
       } else if (curDbms.equals("ORACLE")) {
         sqlToExecute = "select max(a.docno) from (select to_number(substr(REGEXP_SUBSTR(REPLACE(co.documentno, app.returndocno_prefix), '^/{0,1}([0-9]+)$'), 2)) docno from c_order co "
             + "inner join obpos_applications app on app.obpos_applications_id = co.em_obpos_applications_id and app.value = :appValue "
-            + "where co.c_doctype_id in (" + doctypeIds + ")) a";
+            + "where co.c_doctype_id in (:doctypeIds)) a";
       } else {
         // unknow DBMS
         // shouldn't happen
@@ -643,6 +637,7 @@ public class POSUtils {
       @SuppressWarnings("rawtypes")
       NativeQuery query = OBDal.getInstance().getSession().createNativeQuery(sqlToExecute);
       query.setParameter("appValue", searchKey);
+      query.setParameter("doctypeIds", doctypeIds);
       Object result = query.uniqueResult();
       if (result == null) {
         maxDocNo = 0;

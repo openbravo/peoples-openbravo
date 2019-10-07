@@ -76,24 +76,13 @@ public class OBPOSConversionRateEventHandler extends EntityPersistenceEventObser
   // Check if exists another record using this currencyFrom - currencyTo in the same dates
   private boolean existsRecord(String id, Client client, Organization organization,
       Currency currencyFrom, Currency currencyTo, Date validFrom, Date validTo) {
-    StringBuilder hql = new StringBuilder();
-    hql.append(" SELECT t." + OBPOSConversionRate.PROPERTY_ID);
-    hql.append(" FROM " + OBPOSConversionRate.ENTITY_NAME + " as t");
-    hql.append(" WHERE :id != t. " + OBPOSConversionRate.PROPERTY_ID);
-    hql.append(" AND :client = t. " + OBPOSConversionRate.PROPERTY_CLIENT);
-    hql.append(" AND :organization = t. " + OBPOSConversionRate.PROPERTY_ORGANIZATION);
-    hql.append(" AND :currencyFrom = t. " + OBPOSConversionRate.PROPERTY_CURRENCY);
-    hql.append(" AND :currencyTo = t. " + OBPOSConversionRate.PROPERTY_TOCURRENCY);
-    hql.append(" AND ((:validFrom between t." + OBPOSConversionRate.PROPERTY_VALIDFROMDATE
-        + " AND t." + OBPOSConversionRate.PROPERTY_VALIDTODATE);
-    hql.append(" OR :validTo between t." + OBPOSConversionRate.PROPERTY_VALIDFROMDATE + " AND t."
-        + OBPOSConversionRate.PROPERTY_VALIDTODATE + ")");
-    hql.append(" OR (:validFrom < t." + OBPOSConversionRate.PROPERTY_VALIDFROMDATE
-        + " AND :validTo > t." + OBPOSConversionRate.PROPERTY_VALIDTODATE + "))");
+    String hql = " SELECT t.id FROM OBPOS_Conversion_Rate as t WHERE :id != t.id "
+        + " AND :client = t.client AND :organization = t.organization AND :currencyFrom = t.currency "
+        + " AND :currencyTo = t.toCurrency AND ((:validFrom between t.validFromDate AND t.validToDate "
+        + " OR :validTo between t.validFromDate AND t.validToDate) OR (:validFrom < t.validFromDate "
+        + " AND :validTo > t.validToDate))";
 
-    final Query<Object> query = OBDal.getInstance()
-        .getSession()
-        .createQuery(hql.toString(), Object.class);
+    final Query<Object> query = OBDal.getInstance().getSession().createQuery(hql, Object.class);
     query.setParameter("id", id);
     query.setParameter("client", client);
     query.setParameter("organization", organization);
