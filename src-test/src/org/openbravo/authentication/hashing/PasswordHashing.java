@@ -24,10 +24,10 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
+import java.util.Date;
 import java.util.Optional;
 
 import org.junit.Test;
-import org.openbravo.authentication.hashing.PasswordHash;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.test.base.OBBaseTest;
@@ -121,5 +121,33 @@ public class PasswordHashing extends OBBaseTest {
 
     // then password gets promoted to new algorithm
     assertThat("password is not changed", user.get().getPassword(), is(SHA512SALT_OPENBRAVO));
+  }
+
+  @Test
+  public void oldPasswordsCanBeExpired() {
+    try {
+      setSystemAdministratorContext();
+
+      // Given a user with an expired password hashed with old algorithm
+      User obUser = OBDal.getInstance().get(User.class, TestConstants.Users.OPENBRAVO);
+      obUser.setPassword(SHA1_OPENBRAVO);
+      obUser.setPasswordExpired(true);
+      OBDal.getInstance().flush();
+      OBDal.getInstance().refresh(obUser);
+      Date lastPasswordUpdate = obUser.getLastPasswordUpdate();
+
+      // when credentials are checked first time and password is automatically updated to new
+      // algorithm
+      Optional<User> opUser = PasswordHash.getUserWithPassword("Openbravo", "openbravo");
+      User user = opUser.get();
+      OBDal.getInstance().refresh(user);
+
+      // then password continues being expired
+      assertThat("Last password update timestamp didn't change", user.getLastPasswordUpdate(),
+          is(lastPasswordUpdate));
+      assertThat("Password is expired", user.isPasswordExpired(), is(true));
+    } finally {
+      OBDal.getInstance().rollbackAndClose();
+    }
   }
 }

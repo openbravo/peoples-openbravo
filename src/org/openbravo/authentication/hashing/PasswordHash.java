@@ -91,7 +91,8 @@ public class PasswordHash {
         return Optional.empty();
       }
 
-      if (algorithm.getAlgorithmVersion() < DEFAULT_CURRENT_ALGORITHM_VERSION) {
+      if (algorithm.getAlgorithmVersion() < DEFAULT_CURRENT_ALGORITHM_VERSION
+          && !user.isPasswordExpired()) {
         log.debug("Upgrading password hash for user {}, from algorithm version {} to {}.",
             user.getUsername(), algorithm.getAlgorithmVersion(), DEFAULT_CURRENT_ALGORITHM_VERSION);
         String newPassword = ALGORITHMS.get(DEFAULT_CURRENT_ALGORITHM_VERSION)
