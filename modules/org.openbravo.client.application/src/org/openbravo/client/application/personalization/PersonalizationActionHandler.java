@@ -11,14 +11,13 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.client.application.personalization;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -95,24 +94,21 @@ public class PersonalizationActionHandler extends BaseActionHandler {
         if (uiPersonalization != null) {
           // is null if already removed
           OBDal.getInstance().remove(uiPersonalization);
-        }
-
-        // Delete also all the preferences that has this uiPersonalization as the 'Default View'
-        Map<String, Object> params = new HashMap<>(2);
-        StringBuilder hql = new StringBuilder();
-        hql.append(" as p where ");
-        hql.append(" p.searchKey = :uiPersonalization ");
-        params.put("uiPersonalization", uiPersonalization);
-        hql.append(" and p.property = :property");
-        params.put("property", "OBUIAPP_DefaultSavedView");
-
-        OBQuery<Preference> qPref = OBDal.getInstance()
-            .createQuery(Preference.class, hql.toString());
-        qPref.setNamedParameters(params);
-        List<Preference> preferences = qPref.list();
-
-        for (Preference preference : preferences) {
-          OBDal.getInstance().remove(preference);
+          // Delete also all the preferences that has this uiPersonalization as the 'Default View'
+          //@formatter:off
+          String hql = 
+                  " as p " +
+                  "  where p.searchKey = :uiPersonalization " +
+                  "    and p.property = :property ";
+          //@formatter:on
+          OBQuery<Preference> qPref = OBDal.getInstance()
+              .createQuery(Preference.class, hql)
+              .setNamedParameter("uiPersonalization", uiPersonalization.getId())
+              .setNamedParameter("property", "OBUIAPP_DefaultSavedView");
+          List<Preference> preferences = qPref.list();
+          for (Preference preference : preferences) {
+            OBDal.getInstance().remove(preference);
+          }
         }
 
         return new JSONObject().put("result", "success");
@@ -150,7 +146,7 @@ public class PersonalizationActionHandler extends BaseActionHandler {
             personalizationID, clientID, orgID, roleID, userID, tabId, windowId,
             (String) parameters.get(TARGET), data, saveAsNewPreference);
         final JSONObject result = new JSONObject();
-        result.put("personalizationId", uiPersonalization.getId());
+        result.put(PERSONALIZATIONID, uiPersonalization.getId());
         return result;
       } else if (action.equals(ACTION_FORM)) {
         viewFormComponent.setParameters(parameters);

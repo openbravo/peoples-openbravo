@@ -376,59 +376,61 @@ public class Preferences {
       boolean checkWindow, Map<QueryFilter, Boolean> queryFilters) {
 
     Map<String, Object> parameters = new HashMap<>();
-    StringBuilder hql = new StringBuilder();
-    hql.append(" as p ");
-    hql.append(" where ");
+    //@formatter:off
+    String hql = 
+            " as p " + 
+            " where ";
+    //@formatter:on
     if (exactMatch) {
       if (client != null) {
-        hql.append(" p.visibleAtClient.id = :clientId ");
+        hql += " p.visibleAtClient.id = :clientId ";
         parameters.put("clientId", client);
       } else {
-        hql.append(" p.visibleAtClient is null");
+        hql += " p.visibleAtClient is null ";
       }
       if (org != null) {
-        hql.append(" and p.visibleAtOrganization.id = :orgId ");
+        hql += " and p.visibleAtOrganization.id = :orgId ";
         parameters.put("orgId", org);
       } else {
-        hql.append(" and p.visibleAtOrganization is null ");
+        hql += " and p.visibleAtOrganization is null ";
       }
 
       if (user != null) {
-        hql.append(" and p.userContact.id = :userId ");
+        hql += " and p.userContact.id = :userId ";
         parameters.put("userId", user);
       } else {
-        hql.append(" and p.userContact is null ");
+        hql += " and p.userContact is null ";
       }
 
       if (role != null) {
-        hql.append(" and p.visibleAtRole.id = :roleId ");
+        hql += " and p.visibleAtRole.id = :roleId";
         parameters.put("roleId", role);
       } else {
-        hql.append(" and p.visibleAtRole is null");
+        hql += " and p.visibleAtRole is null ";
       }
 
       if (window != null) {
-        hql.append(" and p.window.id = :windowId ");
+        hql += " and p.window.id = :windowId ";
         parameters.put("windowId", window);
       } else {
-        hql.append(" and p.window is null");
+        hql += " and p.window is null ";
       }
     } else {
       if (client != null) {
-        hql.append(" (p.visibleAtClient.id = :clientId or ");
+        hql += " (p.visibleAtClient.id = :clientId or ";
         parameters.put("clientId", client);
       } else {
-        hql.append(" (");
+        hql += " (";
       }
-      hql.append(" coalesce(p.visibleAtClient, '0')='0') ");
+      hql += " coalesce(p.visibleAtClient, '0')='0') ";
 
       if (role != null) {
-        hql.append(" and   (p.visibleAtRole.id = :roleId or ");
+        hql += " and (p.visibleAtRole.id = :roleId or ";
         parameters.put("roleId", role);
       } else {
-        hql.append(" and (");
+        hql += " and (";
       }
-      hql.append("        p.visibleAtRole is null) ");
+      hql += " p.visibleAtRole is null) ";
 
       List<String> parentOrgs;
       if (org == null) {
@@ -439,41 +441,41 @@ public class Preferences {
             .getParentList(org, true);
       }
 
-      hql.append("     and coalesce(p.visibleAtOrganization.id, '0') in :parentOrgs");
+      hql += " and coalesce(p.visibleAtOrganization.id, '0') in :parentOrgs";
       parameters.put("parentOrgs", parentOrgs);
 
       if (user != null) {
-        hql.append("  and (p.userContact.id = :userId or ");
+        hql += " and (p.userContact.id = :userId or ";
         parameters.put("userId", user);
       } else {
-        hql.append(" and (");
+        hql += " and (";
       }
-      hql.append("         p.userContact is null) ");
+      hql += " p.userContact is null) ";
       if (checkWindow) {
         if (window != null) {
-          hql.append(" and  (p.window.id = :windowId or ");
+          hql += " and (p.window.id = :windowId or ";
           parameters.put("windowId", window);
         } else {
-          hql.append(" and (");
+          hql += " and (";
         }
-        hql.append("        p.window is null) ");
+        hql += " p.window is null) ";
       }
     }
 
     if (property != null) {
-      hql.append(" and p.propertyList = :isListProperty");
+      hql += " and p.propertyList = :isListProperty";
       parameters.put("isListProperty", isListProperty);
       if (isListProperty) {
-        hql.append(" and p.property = :property ");
+        hql += " and p.property = :property ";
       } else {
-        hql.append(" and p.attribute = :property ");
+        hql += " and p.attribute = :property";
       }
       parameters.put("property", property);
     }
 
-    hql.append(" order by p.id");
+    hql += " order by p.id";
 
-    OBQuery<Preference> qPref = OBDal.getInstance().createQuery(Preference.class, hql.toString());
+    OBQuery<Preference> qPref = OBDal.getInstance().createQuery(Preference.class, hql);
     qPref.setNamedParameters(parameters);
     if (queryFilters != null && queryFilters.size() > 0) {
       qPref.setFilterOnActive(queryFilters.get(QueryFilter.ACTIVE));

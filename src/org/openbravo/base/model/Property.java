@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.WordUtils;
 import org.apache.logging.log4j.LogManager;
@@ -968,14 +969,7 @@ public class Property {
    * @return a comma delimited list of allowed values, is used for enums.
    */
   public String concatenatedAllowedValues() {
-    final StringBuffer sb = new StringBuffer();
-    for (final String s : allowedValues) {
-      if (sb.length() > 0) {
-        sb.append(", ");
-      }
-      sb.append(s);
-    }
-    return sb.toString();
+    return allowedValues.stream().collect(Collectors.joining(", "));
   }
 
   /**

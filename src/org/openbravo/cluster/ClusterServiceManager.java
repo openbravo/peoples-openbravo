@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017-2018 Openbravo SLU
+ * All portions are Copyright (C) 2017-2019 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -359,13 +359,18 @@ public class ClusterServiceManager {
     }
 
     private void updateNodeOfService(String formerNodeId, String serviceName, Date now) {
-      StringBuilder hql = new StringBuilder();
-      hql.append("UPDATE ADClusterService ");
-      hql.append("SET nodeID = :newNodeId, nodeName = :newNodeName, updated = :updated ");
-      hql.append("WHERE service = :service AND nodeID = :formerNodeId");
+      //@formatter:off
+      String hql = 
+              "update ADClusterService " +
+              "  set nodeID = :newNodeId, " +
+              "      nodeName = :newNodeName," +
+              "      updated = :updated " +
+              " where service = :service " +
+              "   and nodeID = :formerNodeId";
+      //@formatter:on
       int rowCount = OBDal.getInstance()
           .getSession()
-          .createQuery(hql.toString()) //
+          .createQuery(hql) //
           .setParameter("newNodeId", manager.nodeId) //
           .setParameter("newNodeName", manager.nodeName) //
           .setParameter("updated", now) //
@@ -379,12 +384,16 @@ public class ClusterServiceManager {
     }
 
     private void updateLastPing(String serviceName, Date now) {
-      StringBuilder hql = new StringBuilder();
-      hql.append("UPDATE ADClusterService SET updated = :updated ");
-      hql.append("WHERE service = :service AND nodeID = :currentNodeId");
+      //@formatter:off
+      String hql = 
+              "update ADClusterService " +
+              "  set updated = :updated " +
+              " where service = :service" +
+              "   and nodeID = :currentNodeId";
+      //@formatter:on
       OBDal.getInstance()
           .getSession()
-          .createQuery(hql.toString()) //
+          .createQuery(hql) //
           .setParameter("updated", now) //
           .setParameter("service", serviceName) //
           .setParameter("currentNodeId", manager.nodeId) //

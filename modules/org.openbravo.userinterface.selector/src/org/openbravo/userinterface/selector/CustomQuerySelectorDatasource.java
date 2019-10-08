@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2018 Openbravo SLU
+ * All portions are Copyright (C) 2011-2019 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -69,8 +69,6 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
 
   private static Logger log = LogManager.getLogger();
   private static final String ADDITIONAL_FILTERS = "@additional_filters@";
-  private static final String NEW_FILTER_CLAUSE = "\n AND ";
-  private static final String NEW_OR_FILTER_CLAUSE = "\n OR ";
   public static final String ALIAS_PREFIX = "alias_";
 
   @Override
@@ -87,6 +85,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     final SimpleDateFormat xmlDateTimeFormat = JsonUtils.createDateTimeFormat();
     final List<Map<String, Object>> result = new ArrayList<>();
     final List<Object> typedParameters = new ArrayList<>();
+    final Map<String, Object> namedParameters = new HashMap<>();
     // Defaulted to endRow + 2 to check for more records while scrolling.
     int totalRows = endRow + 2;
     int rowCount = 0;
@@ -108,13 +107,21 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       // cleared when number of records is big enough
       Hibernate.initialize(fields);
 
-      // Parse the HQL in case that optional filters are required
-      String HQL = parseOptionalFilters(parameters, sel, xmlDateFormat, typedParameters);
+      // Parse the hql in case that optional filters are required
+      String hql = parseOptionalFilters(parameters, sel, xmlDateFormat, typedParameters,
+          namedParameters);
 
       String sortBy = parameters.get("_sortBy");
-      HQL += getSortClause(sortBy, sel);
+      hql += getSortClause(sortBy, sel);
 
-      Query<Tuple> selQuery = OBDal.getInstance().getSession().createQuery(HQL, Tuple.class);
+      Query<Tuple> selQuery = OBDal.getInstance()
+          .getSession()
+          .createQuery(hql, Tuple.class);
+
+      selQuery.setParameterList("clients", (String[]) namedParameters.get("clients"));
+      if (namedParameters.containsKey("orgs")) {
+        selQuery.setParameterList("orgs", (String[]) namedParameters.get("orgs"));
+      }
 
       for (int i = 0; i < typedParameters.size(); i++) {
         selQuery.setParameter(ALIAS_PREFIX + Integer.toString(i), typedParameters.get(i));
@@ -186,18 +193,49 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
 
   public String parseOptionalFilters(Map<String, String> parameters, Selector sel,
       SimpleDateFormat xmlDateFormat, List<Object> typedParameters) {
-    String HQL = sel.getHQL();
-    if (!HQL.contains(ADDITIONAL_FILTERS)) {
-      return HQL;
+    return parseOptionalFilters(parameters, sel, xmlDateFormat, typedParameters, new HashMap<>());
+  }
+
+  /**
+   * Returns the selectors HQL query. In case that it contains the '@additional_filters@' String it
+   * is replaced by a set of filter clauses.
+   *
+   * These include a filter clause:
+   * <ul>
+   * <li>for the main entity's client by the context's client.</li>
+   * <li>for the main entity's organization by an organization list see
+   * {@link DataSourceUtils#getOrgs(String)}</li>
+   * <li>with Selector's default filter expression.</li>
+   * <li>for each default expression defined on the selector fields.</li>
+   * <li>for each selector field in case exists a value for it on the parameters param.</li>
+   * </ul>
+   *
+   * @param parameters
+   *          Map of String values with the request parameters.
+   * @param sel
+   *          the selector that it is being retrieved the data.
+   * @param xmlDateFormat
+   *          SimpleDataFormat to be used to parse date Strings.
+   * @param typedParameters
+   *          Typed parameters to be used in the query
+   * @param namedParameters
+   *          Named parameters to be used in the query
+   * @return a String with the HQL to be executed.
+   */
+
+  public String parseOptionalFilters(Map<String, String> parameters, Selector sel,
+      SimpleDateFormat xmlDateFormat, List<Object> typedParameters,
+      Map<String, Object> namedParameters) {
+    String hql = sel.getHQL();
+    if (!hql.contains(ADDITIONAL_FILTERS)) {
+      return hql;
     }
     final String requestType = parameters.get(SelectorConstants.DS_REQUEST_TYPE_PARAMETER);
-    StringBuffer additionalFilter = new StringBuffer();
     final String entityAlias = sel.getEntityAlias();
     // Client filter
-    additionalFilter.append(entityAlias + ".client.id in ('0', '")
-        .append(OBContext.getOBContext().getCurrentClient().getId())
-        .append("')");
-
+    String additionalFilter = entityAlias + ".client.id in :clients";
+    final String[] clients = { "0", OBContext.getOBContext().getCurrentClient().getId() };
+    namedParameters.put("clients", clients);
     if (includeOrgFilter(parameters)) {
       // Organization filter
       boolean isOrgSelector = sel.getTable().getName().equals("Organization");
@@ -209,14 +247,18 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
         orgs = DataSourceUtils.getOrgs(parameters.get(JsonConstants.ORG_PARAMETER));
       }
       if (StringUtils.isNotEmpty(orgs)) {
-        additionalFilter.append(NEW_FILTER_CLAUSE);
-        additionalFilter.append(entityAlias
-            + (isOrgSelector ? ".id in (" + orgs + ")" : ".organization in (" + orgs + ")"));
+        additionalFilter += " and " + entityAlias;
+        if (isOrgSelector) {
+          additionalFilter += ".id in :orgs";
+        } else {
+          additionalFilter += ".organization.id in :orgs";
+        }
+        namedParameters.put("orgs", orgs.replaceAll("'", "").split(","));
       }
     }
-    additionalFilter.append(getDefaultFilterExpression(sel, parameters));
+    additionalFilter += getDefaultFilterExpression(sel, parameters);
 
-    StringBuffer defaultExpressionsFilter = new StringBuffer();
+    String defaultExpressionsFilter = "";
     boolean hasFilter = false;
     List<SelectorField> fields = OBDao.getActiveOBObjectList(sel,
         Selector.PROPERTY_OBUISELSELECTORFIELDLIST);
@@ -250,9 +292,8 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
             defaultValue = defaultValueObject.toString();
           }
           if (StringUtils.isNotEmpty(defaultValue)) {
-            defaultExpressionsFilter.append(NEW_FILTER_CLAUSE);
-            defaultExpressionsFilter.append(getWhereClause(operator, defaultValue, field,
-                xmlDateFormat, operatorvalue, typedParameters));
+            defaultExpressionsFilter += " and " + getWhereClause(operator, defaultValue, field,
+                xmlDateFormat, operatorvalue, typedParameters);
           }
         } catch (Exception e) {
           log.error("Error evaluating filter expression: " + e.getMessage(), e);
@@ -262,27 +303,26 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
         String whereClause = getWhereClause(operator, value, field, xmlDateFormat, operatorvalue,
             typedParameters);
         if (!hasFilter) {
-          additionalFilter.append(NEW_FILTER_CLAUSE);
-          additionalFilter.append(" (");
+          additionalFilter += " and (";
           hasFilter = true;
         } else {
           if ("Window".equals(requestType)) {
-            additionalFilter.append(NEW_FILTER_CLAUSE);
+            additionalFilter += " and ";
           } else {
-            additionalFilter.append(NEW_OR_FILTER_CLAUSE);
+            additionalFilter += " or ";
           }
         }
-        additionalFilter.append(whereClause);
+        additionalFilter += whereClause;
       }
     }
     if (hasFilter) {
-      additionalFilter.append(")");
+      additionalFilter += ")";
     }
     if (defaultExpressionsFilter.length() > 0) {
-      additionalFilter.append(defaultExpressionsFilter);
+      additionalFilter += defaultExpressionsFilter;
     }
-    HQL = HQL.replace(ADDITIONAL_FILTERS, additionalFilter.toString());
-    return HQL;
+    hql = hql.replace(ADDITIONAL_FILTERS, additionalFilter);
+    return hql;
   }
 
   /**
@@ -512,7 +552,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       log.error("Error evaluating filter expression: " + e.getMessage(), e);
     }
     if (result != null && !result.toString().equals("")) {
-      return NEW_FILTER_CLAUSE + "(" + result.toString() + ")";
+      return " and " + "(" + result.toString() + ")";
     }
 
     return "";

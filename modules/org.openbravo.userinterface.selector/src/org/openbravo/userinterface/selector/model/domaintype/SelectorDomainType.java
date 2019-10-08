@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -57,11 +57,14 @@ public class SelectorDomainType extends BaseForeignKeyDomainType {
 
     Session session = ModelProvider.getInstance().getSession();
 
-    StringBuilder hql = new StringBuilder();
-    hql.append("SELECT s FROM " + SelectorDefinition.class.getName());
-    hql.append(" AS s WHERE s.referenceId = :referenceId");
-    Query<SelectorDefinition> query = session.createQuery(hql.toString(), SelectorDefinition.class);
-    query.setParameter("referenceId", getReference().getId());
+    //@formatter:off
+    String hql = 
+            "select s " +
+            "  from SelectorDefinition as s " +
+            " where s.referenceId = :referenceId";
+    //@formatter:on
+    Query<SelectorDefinition> query = session.createQuery(hql, SelectorDefinition.class)
+        .setParameter("referenceId", getReference().getId());
     final List<SelectorDefinition> list = query.list();
     if (list.isEmpty()) {
       // a base reference
@@ -98,12 +101,14 @@ public class SelectorDomainType extends BaseForeignKeyDomainType {
   }
 
   private List<Column> readColumns(Session session, Table table) {
-    StringBuilder hql = new StringBuilder();
-    hql.append("SELECT c FROM " + Column.class.getName());
-    hql.append(" AS c WHERE c.table = :table");
-    hql.append(" ORDER BY c.position ASC");
-    Query<Column> query = session.createQuery(hql.toString(), Column.class);
-    query.setParameter("table", table);
+    //@formatter:off
+    String hql = 
+            "select c " +
+            "  from Column as c " +
+            " where c.table = :table " +
+            " order by c.position asc";
+    //@formatter:on
+    Query<Column> query = session.createQuery(hql, Column.class).setParameter("table", table);
     return query.list();
   }
 

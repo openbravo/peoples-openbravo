@@ -110,7 +110,12 @@ public class ApplicationDictionaryCachedStructures {
   }
 
   private Set<String> getModulesInDevelopment() {
-    final String query = "select m.id from ADModule m where m.inDevelopment=true";
+    //@formatter:off
+    final String query = 
+            "select m.id " +
+            "  from ADModule m " +
+            " where m.inDevelopment=true";
+    //@formatter:on
     final Query<String> indevelMods = OBDal.getInstance()
         .getSession()
         .createQuery(query, String.class);
@@ -468,17 +473,15 @@ public class ApplicationDictionaryCachedStructures {
     if (useCache() && attMethodMetadataMap.get(strMethodTab) != null) {
       return attMethodMetadataMap.get(strMethodTab);
     }
-
-    StringBuilder where = new StringBuilder();
-    where.append(Parameter.PROPERTY_ATTACHMENTMETHOD + ".id = :attMethod");
-    where.append(" and (" + Parameter.PROPERTY_TAB + " is null or " + Parameter.PROPERTY_TAB
-        + ".id = :tab)");
-    where.append(" order by CASE WHEN " + Parameter.PROPERTY_FIXED + " is true THEN 1 ELSE 2 END");
-    where.append(" , " + Parameter.PROPERTY_SEQUENCENUMBER);
+    //@formatter:off
+    String where = "attachmentMethod.id = :attMethod" +
+            "   and (tab is null or tab.id = :tab) " +
+            " order by case when fixed is true then 1 else 2 end , sequenceNumber";
+    //@formatter:on
     final OBQuery<Parameter> qryParams = OBDal.getInstance()
-        .createQuery(Parameter.class, where.toString());
-    qryParams.setNamedParameter("attMethod", strAttMethodId);
-    qryParams.setNamedParameter("tab", strTabId);
+        .createQuery(Parameter.class, where)
+        .setNamedParameter("attMethod", strAttMethodId)
+        .setNamedParameter("tab", strTabId);
     List<Parameter> metadatas = qryParams.list();
     for (Parameter metadata : metadatas) {
       initializeMetadata(metadata);

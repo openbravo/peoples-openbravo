@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -221,7 +221,6 @@ public class HeartbeatProcess implements Process {
   private String createQueryStr(String beatType) {
     logger.logln(logger.messageDb("HB_QUERY", ctx.getLanguage()));
 
-    StringBuilder sb = new StringBuilder();
     if (!(DECLINING_BEAT.equals(beatType) || DEFERRING_BEAT.equals(beatType))) {
       // Complete beat with all available instance info
       try {
@@ -238,18 +237,24 @@ public class HeartbeatProcess implements Process {
     }
 
     Enumeration<?> e = props.propertyNames();
+    String sb = "";
     while (e.hasMoreElements()) {
       String elem = (String) e.nextElement();
       String value = props.getProperty(elem);
       try {
-        sb.append(elem + "=" + (value == null ? "" : URLEncoder.encode(value, "UTF-8")) + "&");
+        if (value != null) {
+          value = URLEncoder.encode(value, "UTF-8");
+        } else {
+          value = "";
+        }
+        sb += elem + "=" + value + "&";
       } catch (UnsupportedEncodingException e1) {
         log.error("Error encoding", e1);
       }
     }
-    sb.append("beatType=" + beatType);
+    sb += "beatType=" + beatType;
 
-    return sb.toString();
+    return sb;
   }
 
   /**

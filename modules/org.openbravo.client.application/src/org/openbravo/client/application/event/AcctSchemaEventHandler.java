@@ -135,19 +135,18 @@ class AcctSchemaEventHandler extends EntityPersistenceEventObserver {
   private void updateElementValues(String elementId, boolean assetPositive,
       boolean liabilityPositive, boolean ownersEquityPositive, boolean expensePositive,
       boolean revenuePositive) {
-    StringBuilder where = new StringBuilder();
     final String ACCOUNTSIGN_CREDIT = "C";
     final String ACCOUNTSIGN_DEBIT = "D";
     final String ACCOUNTTYPE_MEMO = "M";
     Element element = OBDal.getInstance().get(Element.class, elementId);
-    where.append(ElementValue.PROPERTY_ACCOUNTINGELEMENT + ".id = :element");
+    String where = "accountingElement.id = :element";
     OBQuery<ElementValue> elementValueQry = OBDal.getInstance()
-        .createQuery(ElementValue.class, where.toString());
-    elementValueQry.setFilterOnActive(false);
-    elementValueQry.setFilterOnReadableClients(false);
-    elementValueQry.setFilterOnReadableOrganization(false);
-    elementValueQry.setNamedParameter("element", element.getId());
-    elementValueQry.setFetchSize(1000);
+        .createQuery(ElementValue.class, where)
+        .setFilterOnActive(false)
+        .setFilterOnReadableClients(false)
+        .setFilterOnReadableOrganization(false)
+        .setNamedParameter("element", element.getId())
+        .setFetchSize(1000);
 
     ScrollableResults elementvalues = elementValueQry.scroll(ScrollMode.FORWARD_ONLY);
     try {

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2018 Openbravo SLU
+ * All portions are Copyright (C) 2018-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -77,13 +77,13 @@ public class DataPoolChecker implements OBSingleton {
    * @return a new Map object with the mapping (Report_ID, POOL)
    */
   private Map<String, String> findActiveDataPoolSelection() {
-    final StringBuilder hql = new StringBuilder();
-    hql.append("select dps.report.id, dps.dataPool from OBUIAPP_Data_Pool_Selection dps ");
-    hql.append("where dps.active = true");
-
-    Query<Object[]> query = OBDal.getInstance()
-        .getSession()
-        .createQuery(hql.toString(), Object[].class);
+    //@formatter:off
+    String hql = 
+            "select dps.report.id, dps.dataPool " +
+            "  from OBUIAPP_Data_Pool_Selection dps " +
+            " where dps.active = true";
+    //@formatter:on
+    Query<Object[]> query = OBDal.getInstance().getSession().createQuery(hql, Object[].class);
     List<Object[]> queryResults = query.list();
 
     Map<String, String> selection = new HashMap<>(queryResults.size());
@@ -94,14 +94,19 @@ public class DataPoolChecker implements OBSingleton {
   }
 
   private void refreshDefaultPoolPreference() {
-    final StringBuilder hql = new StringBuilder();
-    hql.append("select p.searchKey from ADPreference p ");
-    hql.append(
-        "where p.property='OBUIAPP_DefaultDBPoolForReports' and p.active=true and p.visibleAtClient.id='0' and p.visibleAtOrganization.id='0' ");
+    //@formatter:off
+    String hql = 
+            "select p.searchKey " +
+            "  from ADPreference p " +
+            " where p.property='OBUIAPP_DefaultDBPoolForReports' " +
+            "   and p.active = true " +
+            "   and p.visibleAtClient.id = '0' " +
+            "   and p.visibleAtOrganization.id = '0' ";
+    //@formatter:on
     Query<String> defaultPoolQuery = OBDal.getInstance()
         .getSession()
-        .createQuery(hql.toString(), String.class);
-    defaultPoolQuery.setMaxResults(1);
+        .createQuery(hql, String.class)
+        .setMaxResults(1);
     setDefaultReadOnlyPool(defaultPoolQuery.uniqueResult());
   }
 

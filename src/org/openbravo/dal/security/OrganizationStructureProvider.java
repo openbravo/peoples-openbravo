@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -39,7 +39,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.model.common.enterprise.OrganizationType;
 
 /**
  * Builds a tree of organizations to compute the accessible organizations for the current
@@ -81,15 +80,22 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     // Read all org tree of any client: bypass DAL to prevent security checks and Hibernate to make
     // it in a single query. Using direct SQL managed by Hibernate as in this point SQLC is not
     // allowed because this code is used while generating entities.
-    String sql = "select n.node_id, n.parent_id, o.isready, ot.islegalentity, ot.isbusinessunit, ot.istransactionsallowed, o.isperiodcontrolallowed"
-        + "  from ad_tree t, ad_treenode n, ad_org o, ad_orgtype ot"
-        + " where n.node_id = o.ad_org_id" + "   and o.ad_orgtype_id = ot.ad_orgtype_id"
-        + "   and n.ad_tree_id = t.ad_tree_id" + "   and t.ad_table_id = '155'"
-        + "   and t.ad_client_id = :clientId";
+    //@formatter:off
+    String sql = 
+            "select n.node_id, n.parent_id, o.isready, ot.islegalentity, ot.isbusinessunit, ot.istransactionsallowed, o.isperiodcontrolallowed" +
+            "  from ad_tree t, ad_treenode n, ad_org o, ad_orgtype ot" +
+            " where n.node_id = o.ad_org_id " +
+            "   and o.ad_orgtype_id = ot.ad_orgtype_id" +
+            "   and n.ad_tree_id = t.ad_tree_id" +
+            "   and t.ad_table_id = '155'" +
+            "   and t.ad_client_id = :clientId";
+    //@formatter:on
 
     @SuppressWarnings("rawtypes")
-    NativeQuery qry = OBDal.getInstance().getSession().createNativeQuery(sql);
-    qry.setParameter("clientId", getClientId());
+    NativeQuery qry = OBDal.getInstance()
+        .getSession()
+        .createNativeQuery(sql)
+        .setParameter("clientId", getClientId());
 
     @SuppressWarnings("unchecked")
     List<Object[]> treeNodes = qry.list();
@@ -313,16 +319,18 @@ public class OrganizationStructureProvider implements OBNotSingleton {
    * Returns the legal entities of the selected client.
    */
   public List<Organization> getLegalEntitiesListForSelectedClient(String paramClientId) {
-    StringBuffer where = new StringBuffer();
-    where.append(" as org");
-    where.append(" join org." + Organization.PROPERTY_ORGANIZATIONTYPE + " as orgType");
-    where.append(" where org." + Organization.PROPERTY_CLIENT + ".id = :client");
-    where.append("   and orgType." + OrganizationType.PROPERTY_LEGALENTITY + " = true");
+    //@formatter:off
+    String where = 
+            " as org " +
+            "  join org.organizationType as orgType " +
+            " where org.client.id = :client " +
+            "   and orgType.legalEntity = true";
+    //@formatter:on
     OBQuery<Organization> orgQry = OBDal.getInstance()
-        .createQuery(Organization.class, where.toString());
-    orgQry.setFilterOnReadableClients(false);
-    orgQry.setFilterOnReadableOrganization(false);
-    orgQry.setNamedParameter("client", paramClientId);
+        .createQuery(Organization.class, where)
+        .setFilterOnReadableClients(false)
+        .setFilterOnReadableOrganization(false)
+        .setNamedParameter("client", paramClientId);
     return orgQry.list();
   }
 

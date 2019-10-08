@@ -138,17 +138,17 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
   }
 
   private List<String> getAccessibleWidgetClassIds(String roleId, String additionalWhereClause) {
-    final StringBuilder hql = new StringBuilder();
-    hql.append("SELECT widgetClassAccess.widgetClass.id ");
-    hql.append("FROM OBKMO_WidgetClassAccess widgetClassAccess ");
-    hql.append("WHERE widgetClassAccess.role.id=:roleId ");
-    hql.append("AND widgetClassAccess.active=true ");
+    //@formatter:off
+    String hql = 
+            "select widgetClassAccess.widgetClass.id " +
+            "  from OBKMO_WidgetClassAccess widgetClassAccess " +
+            " where widgetClassAccess.role.id = :roleId " +
+            "   and widgetClassAccess.active=true ";
+    //@formatter:on
     if (!StringUtils.isEmpty(additionalWhereClause)) {
-      hql.append(additionalWhereClause);
+      hql += additionalWhereClause;
     }
-    Query<String> query = OBDal.getInstance()
-        .getSession()
-        .createQuery(hql.toString(), String.class);
+    Query<String> query = OBDal.getInstance().getSession().createQuery(hql, String.class);
     if (StringUtils.isEmpty(roleId)) {
       query.setParameter("roleId", OBContext.getOBContext().getRole().getId());
     } else {

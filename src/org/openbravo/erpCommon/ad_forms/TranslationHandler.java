@@ -10,13 +10,17 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2013 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2019 Openbravo S.L.U.
  ******************************************************************************/
 package org.openbravo.erpCommon.ad_forms;
 
 import java.sql.Connection;
-import java.sql.Statement;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
@@ -38,6 +42,7 @@ class TranslationHandler extends DefaultHandler {
   public TranslationHandler(ConnectionProvider cDB) {
     m_AD_Client_ID = 0;
     DB = cDB;
+    parameters = new ArrayList<>();
   }
 
   public TranslationHandler(int AD_Client_ID, ConnectionProvider cDB, Connection con) {
@@ -45,6 +50,7 @@ class TranslationHandler extends DefaultHandler {
     m_AD_Client_ID = AD_Client_ID;
     DB = cDB;
     this.con = con;
+    parameters = new ArrayList<>();
 
   } // TranslationHandler
 
@@ -65,15 +71,17 @@ class TranslationHandler extends DefaultHandler {
   /** Current ColumnName */
   private String m_curColumnName = null;
   /** Current Value */
-  private StringBuffer m_curValue = null;
+  private String m_curValue = null;
   /** Original Value */
   private String m_oriValue = null;
   /** SQL */
-  private StringBuffer m_sql = null;
+  private String m_sql = null;
 
   private int m_updateCount = 0;
 
   private String m_Translated = null;
+
+  private List<String> parameters;
 
   static Logger log4j = LogManager.getLogger();
 
@@ -99,17 +107,17 @@ class TranslationHandler extends DefaultHandler {
       m_AD_Language = attributes.getValue(TranslationManager.XML_ATTRIBUTE_LANGUAGE);
 
       m_TableName = attributes.getValue(TranslationManager.XML_ATTRIBUTE_TABLE);
-      m_updateSQL = "UPDATE " + m_TableName;
+      m_updateSQL = "update " + m_TableName;
 
       m_updateSQL += "_Trl";
-      m_updateSQL += " SET ";
+      m_updateSQL += " set ";
       if (log4j.isDebugEnabled()) {
         log4j.debug("AD_Language=" + m_AD_Language + ", TableName=" + m_TableName);
       }
     } else if (qName.equals(TranslationManager.XML_ROW_TAG)) {
       m_curID = attributes.getValue(TranslationManager.XML_ROW_ATTRIBUTE_ID);
       m_Translated = attributes.getValue(TranslationManager.XML_ROW_ATTRIBUTE_TRANSLATED);
-      m_sql = new StringBuffer();
+      m_sql = "";
     } else if (qName.equals(TranslationManager.XML_VALUE_TAG)) {
       m_curColumnName = attributes.getValue(TranslationManager.XML_VALUE_ATTRIBUTE_COLUMN);
       m_oriValue = attributes.getValue(TranslationManager.XML_VALUE_ATTRIBUTE_ORIGINAL);
@@ -118,7 +126,7 @@ class TranslationHandler extends DefaultHandler {
     } else {
       log4j.error("startElement - UNKNOWN TAG: " + qName);
     }
-    m_curValue = new StringBuffer();
+    m_curValue = "";
   } // startElement
 
   /**
@@ -133,8 +141,8 @@ class TranslationHandler extends DefaultHandler {
    * @throws SAXException
    */
   @Override
-  public void characters(char ch[], int start, int length) throws SAXException {
-    m_curValue.append(ch, start, length);
+  public void characters(char[] ch, int start, int length) throws SAXException {
+    m_curValue += new String(ch, start, length);
   } // characters
 
   /**
@@ -158,67 +166,81 @@ class TranslationHandler extends DefaultHandler {
     } else if (qName.equals(TranslationManager.XML_ROW_TAG)) {
       // Set section
       if (m_sql.length() > 0) {
-        m_sql.append(",");
+        m_sql += ",";
       }
-      m_sql.append("Updated=now()"); // .append(DB.TO_DATE(m_time,
-      // false));
-      m_sql.append(",IsTranslated='" + m_Translated + "'");
+      m_sql += "Updated=now() ,IsTranslated=?";
+      parameters.add(m_Translated);
       // Where section
-      m_sql.append(" WHERE ").append(m_TableName).append("_ID='").append(m_curID).append("'");
-      m_sql.append(" AND AD_Language='").append(m_AD_Language).append("'");
+      //@formatter:off
+      m_sql += 
+              " where " + m_TableName + "_ID=?" + 
+              "   and AD_Language=?";
+      //@formatter:on
+      parameters.add(m_curID);
+      parameters.add(m_AD_Language);
       if (m_AD_Client_ID >= 0) {
-        m_sql.append(" AND AD_Client_ID='").append(m_AD_Client_ID).append("'");
+        m_sql += "  and AD_Client_ID=?";
+        parameters.add(Integer.toString(m_AD_Client_ID));
       }
       // Update section
-      m_sql.insert(0, m_updateSQL);
+      m_sql = m_updateSQL + m_sql;
       if (log4j.isDebugEnabled()) {
-        log4j.debug(m_sql.toString());
+        log4j.debug(m_sql);
       }
       // Execute
       int no = 0;
       //
-      Statement st = null;
+      PreparedStatement st = null;
       try {
-        st = DB.getStatement(con);
-        no = st.executeUpdate(m_sql.toString());
+        st = DB.getPreparedStatement(con, m_sql);
+        int paramCount = 1;
+        for (String parameter : parameters) {
+          st.setString(paramCount, parameter);
+          paramCount++;
+        }
+
+        no = st.executeUpdate();
       } catch (Exception e) {
-        log4j.error("183:" + m_sql.toString() + e.toString());
+        log4j.error("183:" + m_sql + e.toString());
       } finally {
         try {
-          DB.releaseTransactionalStatement(st);
-        } catch (Exception ignored) {
+          DB.releaseTransactionalPreparedStatement(st);
+        } catch (SQLException e) {
+          // This exception is ignored.
         }
+        parameters.clear();
       }
 
       if (no == 1) {
         if (log4j.isDebugEnabled()) {
-          log4j.debug(m_sql.toString());
+          log4j.debug(m_sql);
         }
         m_updateCount++;
       } else if (no == 0) {
-        log4j.info("Not Found - " + m_sql.toString());
+        log4j.info("Not Found - " + m_sql);
       } else {
-        log4j.error("Update Rows=" + no + " (Should be 1) - " + m_sql.toString());
+        log4j.error("Update Rows=" + no + " (Should be 1) - " + m_sql);
       }
     } else if (qName.equals(TranslationManager.XML_VALUE_TAG)) {
       String value = "";
-      if (m_curValue != null && !m_curValue.toString().equals("")) {
-        value = TO_STRING(m_curValue.toString());
-      } else if (m_oriValue != null && !m_oriValue.toString().equals("")) {
-        value = TO_STRING(m_oriValue.toString());
+      if (StringUtils.isNotEmpty(m_curValue)) {
+        value = TO_STRING(m_curValue);
+      } else if (StringUtils.isNotEmpty(m_oriValue)) {
+        value = TO_STRING(m_oriValue);
       }
-      if (!value.equals("")) {
+      if (StringUtils.isNotEmpty(value)) {
         if (m_sql.length() > 0) {
-          m_sql.append(",");
+          m_sql += ", ";
         }
-        m_sql.append(m_curColumnName).append("=").append(value);
+        m_sql += m_curColumnName + "=?";
+        parameters.add(value);
       }
     } else if (qName.equals(TranslationManager.XML_CONTRIB)) {
       if (log4j.isDebugEnabled()) {
-        log4j.debug("Contibutors:" + TO_STRING(m_curValue.toString()));
+        log4j.debug("Contibutors:" + TO_STRING(m_curValue));
       }
       try {
-        TranslationData.insertContrib(DB, m_curValue.toString(), m_AD_Language);
+        TranslationData.insertContrib(DB, m_curValue, m_AD_Language);
       } catch (Exception e) {
         log4j.error(e.toString());
       }
@@ -241,20 +263,18 @@ class TranslationHandler extends DefaultHandler {
   /**
    * Package Strings for SQL command.
    * 
-   * <pre>
-   * 	-	include in ' (single quotes)
-   * 	-	replace ' with ''
-   * </pre>
+   * Because we are using prepared statements we don't have to escape single quotes, so this method
+   * only gets a substring of maxLength from the string provided
    * 
    * @param txt
    *          String with text
    * @param maxLength
    *          Maximum Length of content or 0 to ignore
-   * @return escaped string for insert statement (NULL if null or empty)
+   * @return escaped string for insert statement (null if null or empty)
    */
   private String TO_STRING(String txt, int maxLength) {
     if (txt == null || txt.isEmpty()) {
-      return "NULL";
+      return null;
     }
 
     // Length
@@ -263,21 +283,7 @@ class TranslationHandler extends DefaultHandler {
       text = txt.substring(0, maxLength);
     }
 
-    char quote = '\'';
-    // copy characters (wee need to look through anyway)
-    StringBuffer out = new StringBuffer();
-    out.append(quote); // '
-    for (int i = 0; i < text.length(); i++) {
-      char c = text.charAt(i);
-      if (c == quote) {
-        out.append("''");
-      } else {
-        out.append(c);
-      }
-    }
-    out.append(quote); // '
-    //
-    return out.toString();
+    return text;
   } // TO_STRING
 
 } // TranslationHandler

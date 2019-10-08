@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2018 Openbravo SLU
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -105,15 +105,19 @@ public class UserInfoComponent extends SessionDynamicTemplateComponent {
     }
 
     // return the complete role list for the current user
-    final StringBuilder hql = new StringBuilder();
-    hql.append(
-        "select ur.role.id, ur.role.name, ur.client.id, ur.client.name from ADUserRoles ur ");
-    hql.append(
-        "where ur.active=true and ur.userContact.id=:userId and ur.role.active=true and ur.role.isrestrictbackend=false ");
+    //@formatter:off
+    String hql = 
+            "select ur.role.id, ur.role.name, ur.client.id, ur.client.name " +
+            "  from ADUserRoles ur " +
+            " where ur.active=true" +
+            "   and ur.userContact.id=:userId" +
+            "   and ur.role.active=true" +
+            "   and ur.role.isrestrictbackend=false ";
+    //@formatter:on
     Query<Object[]> rolesQry = OBDal.getInstance()
         .getSession()
-        .createQuery(hql.toString(), Object[].class);
-    rolesQry.setParameter("userId", OBContext.getOBContext().getUser().getId());
+        .createQuery(hql, Object[].class)
+        .setParameter("userId", OBContext.getOBContext().getUser().getId());
     for (Object[] entry : rolesQry.list()) {
       userRoles.add(new RoleInfo(entry));
     }

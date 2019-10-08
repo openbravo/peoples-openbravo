@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -489,78 +489,79 @@ public class PersonalizationHandler {
       String userId, String roleId, String tabId, String windowId, boolean exactMatch) {
 
     Map<String, Object> parameters = new HashMap<>();
-    StringBuilder hql = new StringBuilder();
-    hql.append(" as p ");
-    hql.append(" where ");
+    //@formatter:off
+    String hql = " as p " +
+            " where ";
+    //@formatter:on
     if (exactMatch) {
       if (clientId != null) {
-        hql.append(" p.visibleAtClient.id = :clientId ");
+        hql += " p.visibleAtClient.id = :clientId ";
         parameters.put("clientId", clientId);
       } else {
-        hql.append(" p.visibleAtClient is null");
+        hql += " p.visibleAtClient is null ";
       }
 
       if (orgId != null) {
-        hql.append(" and p.visibleAtOrganization.id = :orgId ");
+        hql += " and p.visibleAtOrganization.id = :orgId ";
         parameters.put("orgId", orgId);
       } else {
-        hql.append(" and p.visibleAtOrganization is null ");
+        hql += " and p.visibleAtOrganization is null ";
       }
 
       if (userId != null) {
-        hql.append(" and p.user.id = :userId ");
+        hql += " and p.user.id = :userId ";
         parameters.put("userId", userId);
       } else {
-        hql.append(" and p.user is null ");
+        hql += " and p.user is null ";
       }
 
       if (roleId != null) {
-        hql.append(" and p.visibleAtRole.id = :roleId ");
+        hql += " and p.visibleAtRole.id = :roleId ";
         parameters.put("roleId", roleId);
       } else {
-        hql.append(" and p.visibleAtRole is null");
+        hql += " and p.visibleAtRole is null ";
       }
     } else {
       if (clientId != null) {
-        hql.append(" (p.visibleAtClient.id = :clientId or ");
+        hql += " (p.visibleAtClient.id = :clientId or ";
         parameters.put("clientId", clientId);
       } else {
-        hql.append(" (");
+        hql += " (";
       }
-      hql.append(" coalesce(p.visibleAtClient, '0')='0') ");
+      hql += " coalesce(p.visibleAtClient, '0')='0') ";
 
       if (roleId != null) {
-        hql.append(" and   (p.visibleAtRole.id = :roleId or ");
+        hql += " and (p.visibleAtRole.id = :roleId or ";
         parameters.put("roleId", roleId);
       } else {
-        hql.append(" and (");
+        hql += " and (";
       }
-      hql.append(" p.visibleAtRole is null) ");
+      hql += " p.visibleAtRole is null) ";
 
       // note orgId != null is handled below
       if (orgId == null) {
-        hql.append(" and (coalesce(p.visibleAtOrganization, '0')='0'))");
+        hql += " and (coalesce(p.visibleAtOrganization, '0')='0'))";
       }
 
       if (userId != null) {
-        hql.append("  and (p.user.id = :userId or ");
+        hql += " and (p.user.id = :userId or ";
         parameters.put("userId", userId);
       } else {
-        hql.append(" and (");
+        hql += " and (";
       }
-      hql.append(" p.user is null) ");
+      hql += " p.user is null) ";
     }
 
     if (tabId != null) {
-      hql.append(" and  p.tab.id = :tabId ");
+      hql += " and p.tab.id = :tabId ";
       parameters.put("tabId", tabId);
     } else {
-      hql.append(" and  p.window.id = :windowId ");
+      hql += "and p.window.id = :windowId";
       parameters.put("windowId", windowId);
     }
 
     OBQuery<UIPersonalization> qPers = OBDal.getInstance()
-        .createQuery(UIPersonalization.class, hql.toString());
+        .createQuery(UIPersonalization.class, hql);
     qPers.setNamedParameters(parameters);
     List<UIPersonalization> personalizations = qPers.list();
 

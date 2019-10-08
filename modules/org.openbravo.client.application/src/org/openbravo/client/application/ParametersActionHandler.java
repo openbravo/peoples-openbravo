@@ -117,9 +117,9 @@ public class ParametersActionHandler extends BaseActionHandler implements Portal
         ParameterValue value;
         OBQuery<ParameterValue> obq = OBDal.getInstance()
             .createQuery(ParameterValue.class,
-                dbFilterProperty + " = :filter and parameter = :param");
-        obq.setNamedParameter("filter", filterObject);
-        obq.setNamedParameter("param", param);
+                dbFilterProperty + " = :filter and parameter = :param")
+            .setNamedParameter("filter", filterObject)
+            .setNamedParameter("param", param);
 
         if (obq.count() == 0) {
           value = OBProvider.getInstance().get(ParameterValue.class);

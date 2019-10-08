@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -147,16 +147,19 @@ public abstract class BaseOBObject
   }
 
   private BaseOBObject getTranslation(Property trlParentProperty, Language language, String id) {
-    StringBuilder hql = new StringBuilder();
-    hql.append("select trl from " + trlParentProperty.getEntity() + " as trl ");
-    hql.append("where trl." + trlParentProperty.getName() + ".id = :id ");
-    hql.append("and trl.language = :language and trl.active = true");
+    //@formatter:off
+    String hql = 
+            "select trl " +
+            "  from " + trlParentProperty.getEntity() + " as trl " +
+            " where trl." + trlParentProperty.getName() + ".id = :id " +
+            "   and trl.language = :language and trl.active = true";
+    //@formatter:on
     Query<BaseOBObject> query = OBDal.getInstance()
         .getSession()
-        .createQuery(hql.toString(), BaseOBObject.class);
-    query.setParameter("id", id);
-    query.setParameter("language", language);
-    query.setMaxResults(1);
+        .createQuery(hql, BaseOBObject.class)
+        .setParameter("id", id)
+        .setParameter("language", language)
+        .setMaxResults(1);
     return query.uniqueResult();
   }
 

@@ -187,13 +187,13 @@ public class OBQuery<E extends BaseOBObject> {
    * @return the row number or -1 if not found
    */
   public int getRowNumber(String targetId) {
-    String qryStr = createQueryString();
-    if (qryStr.toLowerCase().contains(FROM_SPACED)) {
-      final int index = qryStr.indexOf(FROM_SPACED) + FROM_SPACED.length();
-      qryStr = qryStr.substring(index);
+    String sql = createQueryString();
+    if (sql.toLowerCase().contains(FROM_SPACED)) {
+      final int index = sql.indexOf(FROM_SPACED) + FROM_SPACED.length();
+      sql = sql.substring(index);
     }
-    final Query<String> qry = getSession()
-        .createQuery("select " + usedAlias + "id " + FROM_SPACED + qryStr, String.class);
+    sql = "select " + usedAlias + "id " + FROM_SPACED + sql;
+    final Query<String> qry = getSession().createQuery(sql, String.class);
     setParameters(qry);
 
     try (ScrollableResults results = qry.scroll(ScrollMode.FORWARD_ONLY)) {

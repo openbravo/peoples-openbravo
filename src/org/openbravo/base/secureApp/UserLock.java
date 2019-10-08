@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2010-2018 Openbravo SL 
+ * All portions are Copyright (C) 2010-2019 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -101,13 +101,17 @@ public class UserLock {
 
     // to improve performance this query is not done as subquery of the main one,
     // see issue #25466
-    StringBuilder hql = new StringBuilder();
-    hql.append("select max(s1.creationDate)");
-    hql.append("  from ADSession s1");
-    hql.append(" where s1.username = :name");
-    hql.append("   and s1.loginStatus != 'F'");
-    Query<Date> q1 = OBDal.getInstance().getSession().createQuery(hql.toString(), Date.class);
-    q1.setParameter("name", userName);
+    //@formatter:off
+    String hql = 
+            "select max(s1.creationDate) " +
+            "  from ADSession s1 " +
+            " where s1.username = :name " +
+            "   and s1.loginStatus != 'F'";
+    //@formatter:on
+    Query<Date> q1 = OBDal.getInstance()
+        .getSession()
+        .createQuery(hql, Date.class)
+        .setParameter("name", userName);
     Date lastFailedAttempt = q1.list().get(0);
 
     if (lastFailedAttempt == null) {
@@ -118,16 +122,19 @@ public class UserLock {
     log4j.debug("Time taken to check user lock 1st query " + (System.currentTimeMillis() - t));
 
     long t1 = System.currentTimeMillis();
-    hql = new StringBuilder();
-    hql.append("select count(*)");
-    hql.append("  from ADSession s ");
-    hql.append(" where s.loginStatus='F'");
-    hql.append("   and s.username = :name");
-    hql.append("   and s.creationDate > :lastFail");
-
-    Query<Long> q = OBDal.getInstance().getSession().createQuery(hql.toString(), Long.class);
-    q.setParameter("name", userName);
-    q.setParameter("lastFail", lastFailedAttempt);
+    //@formatter:off
+    hql = 
+            "select count(*) " +
+            "  from ADSession s " +
+            " where s.loginStatus = 'F' " +
+            "   and s.username = :name " +
+            "   and s.creationDate > :lastFail";
+    //@formatter:on
+    Query<Long> q = OBDal.getInstance()
+        .getSession()
+        .createQuery(hql, Long.class)
+        .setParameter("name", userName)
+        .setParameter("lastFail", lastFailedAttempt);
 
     numberOfFails = q.list().get(0).intValue();
     log4j.debug("Time taken to check user lock " + (System.currentTimeMillis() - t)

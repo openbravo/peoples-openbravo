@@ -2629,23 +2629,25 @@ public class Utility {
    * @param fieldId
    *          ID of the field to look for.
    * @param language
-   *          Langage to get the name in.
+   *          Language to get the name in.
    * @return field name in the correct language.
    */
   public static String getFieldName(String fieldId, String language) {
-    StringBuilder hql = new StringBuilder();
-    hql.append("select (select t.name\n");
-    hql.append("          from ADFieldTrl t\n");
-    hql.append("         where t.field = f\n");
-    hql.append("           and t.language.language=:lang),\n");
-    hql.append("       f.name\n");
-    hql.append("  from ADField f\n");
-    hql.append(" where f.id =:fieldId\n");
+    //@formatter:off
+    String hql = 
+            "select (" +
+            "    select t.name " +
+            "      from ADFieldTrl t " +
+            "     where t.field = f " +
+            "       and t.language.language=:lang), f.name " +
+            "  from ADField f " +
+            " where f.id = :fieldId ";
+    //@formatter:on
     Query<Object[]> qName = OBDal.getInstance()
         .getSession()
-        .createQuery(hql.toString(), Object[].class);
-    qName.setParameter("lang", language);
-    qName.setParameter("fieldId", fieldId);
+        .createQuery(hql, Object[].class)
+        .setParameter("lang", language)
+        .setParameter("fieldId", fieldId);
 
     if (qName.list().isEmpty()) {
       log4j.warn("Not found name for fieldId " + fieldId);

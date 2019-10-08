@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -53,11 +53,14 @@ public class TreeDomainType extends BaseForeignKeyDomainType {
 
     Session session = ModelProvider.getInstance().getSession();
 
-    StringBuilder hql = new StringBuilder();
-    hql.append("SELECT r FROM " + RefTree.class.getName());
-    hql.append(" AS r WHERE r.referenceId = :referenceId");
-    Query<RefTree> query = session.createQuery(hql.toString(), RefTree.class);
-    query.setParameter("referenceId", getReference().getId());
+    //@formatter:off
+    String hql = 
+            "select r " +
+            "  from RefTree as r " +
+            " where r.referenceId = :referenceId";
+    //@formatter:on
+    Query<RefTree> query = session.createQuery(hql, RefTree.class)
+        .setParameter("referenceId", getReference().getId());
     final List<RefTree> list = query.list();
     if (list.isEmpty()) {
       // a base reference
@@ -88,13 +91,15 @@ public class TreeDomainType extends BaseForeignKeyDomainType {
   }
 
   private Column readKeyColumn(Session session, Table table) {
-    StringBuilder hql = new StringBuilder();
-    hql.append("SELECT c FROM " + Column.class.getName());
-    hql.append(" AS c WHERE c.table = :table");
-    hql.append(" AND c.key = true");
-    hql.append(" ORDER BY c.position ASC");
-    Query<Column> query = session.createQuery(hql.toString(), Column.class);
-    query.setParameter("table", table);
+    //@formatter:off
+    String hql = 
+            "select c " +
+            "  from Column as c " +
+            " where c.table = :table " +
+            "   and c.key = true " +
+            " order by c.position asc";
+    //@formatter:on
+    Query<Column> query = session.createQuery(hql, Column.class).setParameter("table", table);
 
     List<Column> keyColumns = query.list();
     if (keyColumns.isEmpty()) {

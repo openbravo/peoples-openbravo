@@ -20,9 +20,11 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.OutputStreamWriter;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -401,8 +403,9 @@ public class TranslationManager {
       String rootDirectory, String moduleId, String moduleLanguage, String javaPackage,
       boolean trl) {
 
-    Statement st = null;
-    StringBuffer sql = null;
+    PreparedStatement st = null;
+    String sql = null;
+    List<String> parameters = new ArrayList<>();
     try {
       String trlTable = table;
       if (trl && !table.endsWith("_TRL")) {
@@ -424,41 +427,36 @@ public class TranslationManager {
       }
 
       // Prepare query to retrieve translated rows
-      sql = new StringBuffer("SELECT ");
+      sql = "select ";
       if (trl) {
-        sql.append("t.IsTranslated,");
+        sql += "t.IsTranslated,";
       } else {
-        sql.append("'N', ");
+        sql += "'N', ";
       }
-      sql.append("t.").append(keyColumn);
+      sql += "t." + keyColumn;
 
       for (int i = 0; i < trlColumns.length; i++) {
-        sql.append(", t.")
-            .append(trlColumns[i].c)
-            .append(",o.")
-            .append(trlColumns[i].c)
-            .append(" AS ")
-            .append(trlColumns[i].c)
-            .append("O");
+        sql += ", t." + trlColumns[i].c + ", o." + trlColumns[i].c + " AS " + trlColumns[i].c + "O";
       }
 
-      sql.append(" FROM ").append(trlTable).append(" t").append(", ").append(table).append(" o");
+      sql += " from " + trlTable + " t, " + table + " o";
 
       if (exportReferenceData && !exportAll) {
-        sql.append(", AD_REF_DATA_LOADED DL");
+        sql += ", AD_REF_DATA_LOADED DL";
       }
 
-      sql.append(" WHERE ");
+      sql += " where ";
       if (trl) {
-        sql.append("t.AD_Language='" + AD_Language + "'").append(" AND ");
+        sql += "t.AD_Language=? AND ";
+        parameters.add(AD_Language);
       }
-      sql.append("o.").append(keyColumn).append("= t.").append(keyColumn);
+      sql += "o." + keyColumn + "= t." + keyColumn;
 
       if (m_IsCentrallyMaintained) {
-        sql.append(" AND ").append("o.IsCentrallyMaintained='N'");
+        sql += " and o.IsCentrallyMaintained='N'";
       }
       // AdClient !=0 not supported
-      sql.append(" AND o.AD_Client_ID='0' ");
+      sql += " and o.AD_Client_ID='0' ";
 
       if (!exportReferenceData) {
         String tempTrlTableName = trlTable;
@@ -468,60 +466,64 @@ public class TranslationManager {
         final TranslationData[] parentTable = TranslationData.parentTable(cp, tempTrlTableName);
 
         if (parentTable.length == 0) {
-          sql.append(" AND ").append(" o.ad_module_id='").append(moduleId).append("'");
+          sql += " and o.ad_module_id=?";
+          parameters.add(moduleId);
         } else {
           /** Search for ad_module_id in the parent table */
           if (StringUtils.isEmpty(parentTable[0].grandparent)) {
             String strParentTable = parentTable[0].tablename;
-            sql.append(" AND ");
-            sql.append(" exists ( select 1 from ").append(strParentTable).append(" p ");
-            sql.append("   where p.")
-                .append(strParentTable + "_ID")
-                .append("=")
-                .append("o." + strParentTable + "_ID");
-            sql.append("   and p.ad_module_id='").append(moduleId).append("')");
+            //@formatter:off
+            sql += "  and exists ( " +
+                   "   select 1 " +
+                   "     from " + strParentTable + " p " + 
+                   "    where p." + strParentTable + "_ID = o." + strParentTable + "_ID " +
+                   "      and p.ad_module_id=?)";
+            //@formatter:on
+            parameters.add(moduleId);
           } else {
             String strParentTable = parentTable[0].tablename;
             String strGandParentTable = parentTable[0].grandparent;
 
-            sql.append(" AND ");
-            sql.append(" exists ( select 1 from ")
-                .append(strGandParentTable)
-                .append(" gp, ")
-                .append(strParentTable)
-                .append(" p");
-            sql.append("   where p.")
-                .append(strParentTable + "_ID")
-                .append("=")
-                .append("o." + strParentTable + "_ID");
-            sql.append("   and p." + strGandParentTable + "_ID = gp." + strGandParentTable + "_ID");
-            sql.append("   and gp.ad_module_id='").append(moduleId).append("')");
+            //@formatter:off
+            sql += "  and exists (" +
+                   "   select 1 " +
+                   "     from " + strGandParentTable + " gp, " + strParentTable + " p " +
+                   "    where p." + strParentTable + "_ID = o." + strParentTable + "_ID " +
+                   "      and p." + strGandParentTable + "_ID = gp." + strGandParentTable + "_ID " +
+                   "      and gp.ad_module_id = ?)";
+            //@formatter:on
+            parameters.add(moduleId);
           }
         }
       }
       if (exportReferenceData && !exportAll) {
-        sql.append(" AND DL.GENERIC_ID = o.")
-            .append(keyColumn)
-            .append(" AND DL.AD_TABLE_ID = '")
-            .append(tableID)
-            .append("'")
-            .append(" AND DL.AD_MODULE_ID = '")
-            .append(moduleId)
-            .append("'");
+        //@formatter:off
+        sql += 
+               " and DL.GENERIC_ID = o." + keyColumn + 
+               " and DL.AD_TABLE_ID = ?" +
+               " and DL.AD_MODULE_ID = ?";
+        //@formatter:on
+        parameters.add(tableID);
+        parameters.add(moduleId);
       }
 
-      sql.append(" ORDER BY t.").append(keyColumn);
+      sql += " order by t." + keyColumn;
       //
 
       if (log4j.isDebugEnabled()) {
-        log4j.debug("SQL:" + sql.toString());
+        log4j.debug("SQL:" + sql);
       }
-      st = cp.getStatement();
+      st = cp.getPreparedStatement(sql);
       if (log4j.isDebugEnabled()) {
         log4j.debug("st");
       }
+      int paramCounter = 1;
+      for (String parameter : parameters) {
+        st.setString(paramCounter, parameter);
+        paramCounter++;
+      }
 
-      final ResultSet rs = st.executeQuery(sql.toString());
+      final ResultSet rs = st.executeQuery();
       if (log4j.isDebugEnabled()) {
         log4j.debug("rs");
       }

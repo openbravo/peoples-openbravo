@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2018 Openbravo S.L.U.
+ * Copyright (C) 2001-2019 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -11,9 +11,11 @@
  */
 package org.openbravo.base.secureApp;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 
@@ -42,48 +44,66 @@ class DefaultValuesData implements FieldProvider {
   /**
    * Select for relation
    */
-  public static String select(ConnectionProvider connectionProvider, String param1, String param2,
-      String param3, String param4) throws ServletException {
-    String strSql = "SELECT " + param1 + " AS COLUMNNAME";
-    strSql = strSql + " FROM " + param2 + " ";
-    strSql = strSql + " WHERE isActive = 'Y' ";
-    strSql = strSql + " AND isDefault = 'Y' ";
-    strSql = strSql + " AND AD_Client_ID IN (" + param3 + ") ";
-    strSql = strSql + " AND AD_Org_ID IN (" + param4 + ") ";
-    strSql = strSql + " ORDER BY AD_Client_ID";
+  public static String select(ConnectionProvider connectionProvider, String selArg, String table,
+      String clients, String orgs) throws ServletException {
 
-    Statement st = null;
-    ResultSet result;
+    //@formatter:off
+    String sql = 
+            "select " + selArg + " as COLUMNNAME " +
+            "  from " + table + " " +
+            " where isActive = 'Y' " +
+            "   and isDefault = 'Y' " +
+            "   and AD_Client_ID in " + parseIds(clients) +
+            "   and AD_Org_ID in " + parseIds(orgs) +
+            " order by AD_Client_ID";
+    //@formatter:on
+    ResultSet result = null;
     String resultado = "";
-
+    PreparedStatement st = null;
     try {
-      st = connectionProvider.getStatement();
-      result = st.executeQuery(strSql);
+      st = connectionProvider.getPreparedStatement(sql);
+
+      result = st.executeQuery();
 
       if (result.next()) {
         resultado = UtilSql.getValue(result, "COLUMNNAME");
       }
       result.close();
     } catch (SQLException e) {
-      log4j.error("SQL error in query: " + strSql + "Exception:" + e);
+      log4j.error("SQL error in query:{}", sql, e);
       throw new ServletException(
-          "@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
+          "@CODE=" + e.getErrorCode() + "@" + e.getMessage());
     } catch (NoConnectionAvailableException ec) {
-      log4j.error("Connection error in query: " + strSql + "Exception:" + ec);
+      log4j.error("Connection error in query:{}", sql, ec);
       throw new ServletException("@CODE=NoConnectionAvailable");
     } catch (PoolNotFoundException ep) {
-      log4j.error("Pool error in query: " + strSql + "Exception:" + ep);
+      log4j.error("Pool error in query:{}", sql, ep);
       throw new ServletException("@CODE=NoConnectionAvailable");
     } catch (Exception ex) {
-      log4j.error("Exception in query: " + strSql + "Exception:" + ex);
+      log4j.error("Exception in query:{}", sql, ex);
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
-        connectionProvider.releaseStatement(st);
-      } catch (Exception ignore) {
-        ignore.printStackTrace();
+        if (result != null) {
+          result.close();
+        }
+        connectionProvider.releasePreparedStatement(st);
+      } catch (Exception ex) {
+        log4j.error("Error releasing prepared statement:{}", sql, ex);
       }
     }
     return (resultado);
+  }
+
+  /**
+   * Parses a list of parameters in the form "'id1','id2','id3'" to a string formatted for sql IN
+   * clause "('id1', 'id2', 'id3')"
+   * 
+   * @param parameters
+   *          String with parameters formatted like so "'id1', 'id2', 'id3'"
+   * @return Formatted parameter list for SQL IN clause: "('id1', 'id2', 'id3')"
+   */
+  private static String parseIds(String parameters) {
+    return Arrays.stream(parameters.split(",")).collect(Collectors.joining(",", "(", ")"));
   }
 }

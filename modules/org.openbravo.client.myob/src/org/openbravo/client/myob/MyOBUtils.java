@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2018 Openbravo SLU
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -298,15 +298,15 @@ public class MyOBUtils {
   }
 
   List<String> getAnonymousAccessibleWidgetClassesFromDatabase() {
-    final StringBuilder hql = new StringBuilder();
-    hql.append("SELECT widgetClass.id ");
-    hql.append("FROM OBKMO_WidgetClass widgetClass ");
-    hql.append("WHERE widgetClass.allowAnonymousAccess IS true ");
-    hql.append("AND widgetClass.superclass IS false ");
-    hql.append("AND widgetClass.availableInWorkspace IS true");
-    Query<String> query = OBDal.getInstance()
-        .getSession()
-        .createQuery(hql.toString(), String.class);
+    //@formatter:off
+    String hql = 
+            "select widgetClass.id " +
+            "  from OBKMO_WidgetClass widgetClass " +
+            " where widgetClass.allowAnonymousAccess is true " +
+            "   and widgetClass.superclass is false " +
+            "   and widgetClass.availableInWorkspace is true";
+    //@formatter:on
+    Query<String> query = OBDal.getInstance().getSession().createQuery(hql, String.class);
     return query.list();
   }
 }

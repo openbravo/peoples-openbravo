@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -647,14 +647,14 @@ public class SystemInfo {
    */
   private static void loadSessionInfo() {
     // Obtain login counts
-    StringBuilder hql = new StringBuilder();
-    hql.append("select min(s.creationDate) as firstLogin, ");
-    hql.append("       max(s.creationDate) as lastLogin, ");
-    hql.append("       count(*) as totalLogins");
-    hql.append("  from ADSession s");
-    Query<Object[]> q = OBDal.getInstance()
-        .getSession()
-        .createQuery(hql.toString(), Object[].class);
+    //@formatter:off
+    String hql = 
+            "select min(s.creationDate) as firstLogin, " +
+            "       max(s.creationDate) as lastLogin, " +
+            "       count(*) as totalLogins " +
+            "  from ADSession s";
+    //@formatter:on
+    Query<Object[]> q = OBDal.getInstance().getSession().createQuery(hql, Object[].class);
     if (q.list().size() != 0) {
       Object[] logInfo = q.list().get(0);
       firstLogin = (Date) logInfo[0];
@@ -786,15 +786,19 @@ public class SystemInfo {
   }
 
   private static List<Long> getWsLogins(String type, Date fromDate) {
-    StringBuilder hql = new StringBuilder();
-    hql.append("select count(*)\n");
-    hql.append("  from ADSession\n");
-    hql.append(" where loginStatus = :type\n");
-    hql.append("   and creationDate > :firstDay\n");
-    hql.append(" group by day(creationDate), month(creationDate), year(creationDate)\n");
-    Query<Long> qWs = OBDal.getInstance().getSession().createQuery(hql.toString(), Long.class);
-    qWs.setParameter("firstDay", fromDate);
-    qWs.setParameter("type", type);
+    //@formatter:off
+    String hql = 
+            "select count(*) " +
+            "  from ADSession " +
+            " where loginStatus = :type " +
+            "   and creationDate > :firstDay " +
+            " group by day(creationDate), month(creationDate), year(creationDate) ";
+    //@formatter:on
+    Query<Long> qWs = OBDal.getInstance()
+        .getSession()
+        .createQuery(hql, Long.class)
+        .setParameter("firstDay", fromDate)
+        .setParameter("type", type);
     return qWs.list();
   }
 

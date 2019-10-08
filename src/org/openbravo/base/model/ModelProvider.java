@@ -391,8 +391,13 @@ public class ModelProvider implements OBSingleton {
       connection = con.getConnection();
       PreparedStatement ps = null;
       try {
-        ps = connection.prepareStatement(
-            "select distinct model_impl from ad_reference where model_impl is not null");
+        //@formatter:off
+        String hql = 
+                "select distinct model_impl " +
+                "  from ad_reference " +
+                " where model_impl is not null";
+        //@formatter:on
+        ps = connection.prepareStatement(hql);
         ResultSet rs = ps.executeQuery();
         while (rs.next()) {
           String classname = rs.getString(1);

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2018 Openbravo SLU
+ * All portions are Copyright (C) 2013-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -218,10 +218,12 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     Property linkToParentProperty = getLinkToParentProperty(tableTree);
     Property nodeIdProperty = getNodeIdProperty(tableTree);
     boolean isMultiParentTree = tableTree.isHasMultiparentNodes();
-
-    StringBuilder whereClause = new StringBuilder();
+    //@formatter:off
+    String whereClause = 
+            " as e " +
+            " where ";
+    //@formatter:on
     final Map<String, Object> queryParameters = new HashMap<>();
-    whereClause.append(" as e where ");
     String actualParentId = new String(parentId);
     if (isMultiParentTree) {
       // The ids of multi parent trees are formed by the concatenation of the ids of its parents,
@@ -235,30 +237,30 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     boolean allowNotApplyingWhereClauseToChildren = !tableTree.isApplyWhereClauseToChildNodes();
     if ((fetchRoot || !allowNotApplyingWhereClauseToChildren) && hqlWhereClause != null) {
       // Include the hql where clause for all root nodes and for child nodes only if it is required
-      whereClause.append("(" + hqlWhereClause + ") and ");
+      whereClause += "(" + hqlWhereClause + ") and ";
     }
 
     if (hqlWhereClauseRootNodes != null && fetchRoot) {
       // If we are fetching the root nodes and there is a defined hqlWhereClauseRootNodes, apply it
-      whereClause.append(" " + hqlWhereClauseRootNodes + " ");
+      whereClause += " " + hqlWhereClauseRootNodes + " ";
     } else {
-      whereClause.append(" e." + linkToParentProperty.getName());
+      whereClause += " e." + linkToParentProperty.getName();
       if (fetchRoot) {
-        whereClause.append(" is null ");
+        whereClause += " is null ";
       } else {
         if (!linkToParentProperty.isPrimitive()) {
-          whereClause.append(".id");
+          whereClause += ".id";
         }
-        whereClause.append(" = :parentId ");
+        whereClause += " = :parentId ";
         queryParameters.put("parentId", actualParentId);
       }
       if (tab != null && tab.getTabLevel() > 0) {
         // only try to add the parent tab criteria when the tab is not the header
-        addParentTabCriteria(whereClause, tab, parameters, queryParameters);
+        whereClause = addParentTabCriteria(whereClause, tab, parameters, queryParameters);
       }
     }
     final OBQuery<BaseOBObject> query = OBDal.getInstance()
-        .createQuery(entity.getName(), whereClause.toString());
+        .createQuery(entity.getName(), whereClause);
 
     query.setFilterOnActive(false);
     query.setNamedParameters(queryParameters);
@@ -331,8 +333,8 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
   }
 
   /**
-   * Adds to the where clause the criteria to filter the rows that belong with the record selected
-   * in the parent tab
+   * Returns the where clause with the criteria to filter the rows that belong with the record
+   * selected in the parent tab added
    * 
    * @param whereClause
    *          current hql where clase
@@ -343,9 +345,11 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
    * @param queryParameters
    *          the parameters of the where clause, where the id of the record selected in the parent
    *          tab will be included
+   * @return whereClause with criteria to filter added
    */
-  private void addParentTabCriteria(StringBuilder whereClause, Tab tab,
-      Map<String, String> parameters, Map<String, Object> queryParameters) {
+  private String addParentTabCriteria(String whereClause, Tab tab, Map<String, String> parameters,
+      Map<String, Object> queryParameters) {
+    String finalWhereClause = whereClause;
     Tab parentTab = KernelUtils.getInstance().getParentTab(tab);
     if (parentTab != null) {
       String parentPropertyName = ApplicationUtils.getParentProperty(tab, parentTab);
@@ -354,7 +358,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
           JSONArray criteria = (JSONArray) JsonUtils.buildCriteria(parameters).get("criteria");
           String parentRecordId = getParentRecordIdFromCriteria(criteria, parentPropertyName);
           if (parentRecordId != null) {
-            whereClause.append(" and e." + parentPropertyName + ".id = :parentRecordId ");
+            finalWhereClause += " and e." + parentPropertyName + ".id = :parentRecordId ";
             queryParameters.put("parentRecordId", parentRecordId);
           }
         } catch (JSONException e) {
@@ -362,6 +366,7 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
         }
       }
     }
+    return finalWhereClause;
   }
 
   @Override
@@ -417,17 +422,20 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     } else if (nodeId instanceof BaseOBObject) {
       nodeIdStr = ((BaseOBObject) nodeId).getId().toString();
     }
-    StringBuilder whereClause = new StringBuilder();
-    whereClause.append(" as e where e." + linkToParentProperty.getName());
+    //@formatter:off
+    String whereClause = 
+            " as e " +
+            " where e." + linkToParentProperty.getName();
+    //@formatter:on
     if (!linkToParentProperty.isPrimitive()) {
-      whereClause.append(".id");
+      whereClause += ".id";
     }
-    whereClause.append(" = :nodeId ");
+    whereClause += " = :nodeId ";
     if (hqlWhereClause != null) {
-      whereClause.append(" and " + hqlWhereClause);
+      whereClause += " and " + hqlWhereClause;
     }
     final OBQuery<BaseOBObject> query = OBDal.getInstance()
-        .createQuery(entity.getName(), whereClause.toString());
+        .createQuery(entity.getName(), whereClause);
     query.setFilterOnActive(false);
 
     final Map<String, Object> parameters = new HashMap<>(1);
@@ -511,14 +519,15 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
     Property nodeIdProperty = getNodeIdProperty(tableTree);
 
-    StringBuilder whereClause = new StringBuilder();
-    whereClause.append(" where " + nodeIdProperty.getName());
+    //@formatter:off
+    String whereClause = " where " + nodeIdProperty.getName();
+    //@formatter:on
     if (!nodeIdProperty.isPrimitive()) {
-      whereClause.append(".id");
+      whereClause += ".id";
     }
-    whereClause.append(" = :nodeId ");
+    whereClause += " = :nodeId ";
     final OBQuery<BaseOBObject> query = OBDal.getInstance()
-        .createQuery(entity.getName(), whereClause.toString());
+        .createQuery(entity.getName(), whereClause);
 
     final Map<String, Object> queryParameters = new HashMap<>(1);
     queryParameters.put("nodeId", nodeId);
@@ -552,15 +561,18 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
     Property nodeIdProperty = getNodeIdProperty(tableTree);
 
-    StringBuilder whereClause = new StringBuilder();
-    whereClause.append(" as e where e." + nodeIdProperty.getName());
+    //@formatter:off
+    String whereClause = 
+            " as e " +
+            " where e." + nodeIdProperty.getName();
+    //@formatter:on
     if (!nodeIdProperty.isPrimitive()) {
-      whereClause.append(".id");
+      whereClause += ".id";
     }
-    whereClause.append(" = :nodeId ");
-    whereClause.append(" and (" + hqlWhereClause + ")");
+    whereClause += " = :nodeId ";
+    whereClause += " and (" + hqlWhereClause + ")";
     final OBQuery<BaseOBObject> query = OBDal.getInstance()
-        .createQuery(entity.getName(), whereClause.toString());
+        .createQuery(entity.getName(), whereClause);
 
     final Map<String, Object> queryParameters = new HashMap<>(1);
     queryParameters.put("nodeId", nodeId);
@@ -817,16 +829,18 @@ public class LinkToParentTreeDatasourceService extends TreeDatasourceService {
     Property linkToParentProperty = getLinkToParentProperty(tableTree);
     Property nodeIdProperty = getNodeIdProperty(tableTree);
 
-    StringBuilder whereClause = new StringBuilder();
-    whereClause.append(" as e where ");
-    whereClause.append(" e." + nodeIdProperty.getName());
+    //@formatter:off
+    String whereClause = 
+            " as e " +
+            " where e." + nodeIdProperty.getName();
+    //@formatter:on
     if (!nodeIdProperty.isPrimitive()) {
-      whereClause.append(".id");
+      whereClause += ".id";
     }
-    whereClause.append(" = :parentId ");
+    whereClause += " = :parentId ";
 
     final OBQuery<BaseOBObject> query = OBDal.getInstance()
-        .createQuery(entity.getName(), whereClause.toString());
+        .createQuery(entity.getName(), whereClause);
 
     final Map<String, Object> queryParameters = new HashMap<>();
     queryParameters.put("parentId", parentId);

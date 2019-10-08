@@ -367,9 +367,9 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     log.debug("HQL query: {}", hqlQuery);
     Query<Tuple> query = OBDal.getInstance().getSession().createQuery(hqlQuery, Tuple.class);
 
-    StringBuilder paramsLog = new StringBuilder();
+    String paramsLog = "";
 
-    // sets the parameters of the query
+    // sets the named parameters of the query
     for (String key : queryNamedParameters.keySet()) {
       // Injection and transforms might have modified the query removing named parameters. Check
       // that key is still in the query.
@@ -381,9 +381,21 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
           query.setParameter(key, parameter);
         }
         if (log.isDebugEnabled()) {
-          paramsLog.append("\n").append(key).append(": ").append(parameter);
+          paramsLog += "\n" + key + ": " + parameter;
         }
       }
+    }
+
+    // Set the hql clientId and organization parameters of the query
+    Set<String> namedParameters = query.getParameterMetadata().getNamedParameterNames();
+    if (namedParameters.contains("clientId")) {
+      query.setParameter("clientId", parameters.get("clientId"));
+      parameters.remove("clientId");
+    }
+    if (namedParameters.contains("organizations")) {
+      query.setParameterList("organizations",
+          parameters.get("organizations").replaceAll("'", "").split(","));
+      parameters.remove("organizations");
     }
 
     log.debug("  parameters:{}", paramsLog);
@@ -536,7 +548,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     if (whereClause.trim().isEmpty()) {
       return whereClause;
     }
-    String updatedWhereClause = whereClause.toString();
+    String updatedWhereClause = whereClause;
     Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
     for (Column column : table.getADColumnList()) {
       // look for the property name, replace it with the column alias
@@ -606,37 +618,34 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
   private String addAdditionalFilters(Table table, String hqlQuery, String filterWhereClause,
       Map<String, String> parameters) {
     OBContext.setAdminMode(true);
-    StringBuilder additionalFilter = new StringBuilder();
     final String entityAlias = table.getEntityAlias();
 
     // replace the carriage returns and the tabulations with blanks
     String hqlQueryWithFilters = hqlQuery.replace("\n", " ").replace("\r", " ");
 
+    String additionalFilter = entityAlias + ".client.id in ('0', :clientId)";
     // client filter
-    additionalFilter.append(entityAlias + ".client.id in ('0', '")
-        .append(OBContext.getOBContext().getCurrentClient().getId())
-        .append("')");
+    parameters.put("clientId", OBContext.getOBContext().getCurrentClient().getId());
 
     // organization filter
     final String orgs = DataSourceUtils.getOrgs(parameters.get(JsonConstants.ORG_PARAMETER));
     if (StringUtils.isNotEmpty(orgs)) {
-      additionalFilter.append(AND);
-      additionalFilter.append(entityAlias + ".organization in (" + orgs + ")");
+      additionalFilter += AND + entityAlias + ".organization.id in ( :organizations )";
+      parameters.put("organizations", orgs);
     }
 
-    addFilterWhereClause(additionalFilter, filterWhereClause);
+    additionalFilter = addFilterWhereClause(additionalFilter, filterWhereClause);
 
     // the _where parameter contains the filter clause and the where clause defined at tab level
     String whereClauseParameter = parameters.get(JsonConstants.WHERE_AND_FILTER_CLAUSE);
     if (whereClauseParameter != null && !whereClauseParameter.trim().isEmpty()
         && !"null".equals(whereClauseParameter)) {
-      additionalFilter.append(AND + whereClauseParameter);
+      additionalFilter += AND + whereClauseParameter;
     }
 
     if (hqlQueryWithFilters.contains(ADDITIONAL_FILTERS)) {
       // replace @additional_filters@ with the actual hql filters
-      hqlQueryWithFilters = hqlQueryWithFilters.replace(ADDITIONAL_FILTERS,
-          additionalFilter.toString());
+      hqlQueryWithFilters = hqlQueryWithFilters.replace(ADDITIONAL_FILTERS, additionalFilter);
     } else {
       // adds the hql filters in the proper place at the end of the query
       String separator = null;
@@ -647,16 +656,18 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
         // otherwise, append with 'where'
         separator = WHERE;
       }
-      hqlQueryWithFilters = hqlQueryWithFilters + separator + additionalFilter.toString();
+      hqlQueryWithFilters = hqlQueryWithFilters + separator + additionalFilter;
     }
     OBContext.restorePreviousMode();
     return hqlQueryWithFilters;
   }
 
-  private void addFilterWhereClause(StringBuilder additionalFilter, String filterWhereClause) {
+  private String addFilterWhereClause(String additionalFilter, String filterWhereClause) {
+    String filterWithWhereClause = additionalFilter;
     if (!filterWhereClause.trim().isEmpty()) {
-      additionalFilter.append(AND + removeLeadingWhere(filterWhereClause));
+      filterWithWhereClause += AND + removeLeadingWhere(filterWhereClause);
     }
+    return filterWithWhereClause;
   }
 
   private String removeLeadingWhere(String whereClause) {

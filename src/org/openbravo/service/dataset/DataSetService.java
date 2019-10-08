@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,6 +20,7 @@
 package org.openbravo.service.dataset;
 
 import java.math.BigInteger;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -29,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
@@ -260,32 +262,15 @@ public class DataSetService implements OBSingleton {
       }
 
       String whereClause = dataSetTable.getSQLWhereClause();
+      final Map<String, Object> paramsInWhereClause = new HashMap<>();
 
-      final Map<String, Object> existingParams = new HashMap<String, Object>();
-      if (whereClause != null) {
-        if (parameters != null) {
-          for (final String name : parameters.keySet()) {
-            if (whereClause.indexOf(":" + name) != -1) {
-              final Object value = parameters.get(name);
-              existingParams.put(name, "null".equals(value) ? null : value);
-            }
-          }
-        }
-      }
-
-      if (moduleId != null && whereClause != null) {
-        while (whereClause.indexOf("@moduleid@") != -1) {
-          whereClause = whereClause.replace("@moduleid@", "'" + moduleId + "'");
-        }
-        if (whereClause.indexOf(":moduleid") != -1 && parameters.get("moduleid") == null) {
-          existingParams.put("moduleid", moduleId);
-        }
-      }
+      whereClause = getWhereClauseWithAliasesReplaced(moduleId, parameters, whereClause,
+          paramsInWhereClause);
 
       final OBQuery<BaseOBObject> oq = OBDal.getInstance()
-          .createQuery(entity.getName(), whereClause);
-      oq.setFilterOnActive(false);
-      oq.setNamedParameters(existingParams);
+          .createQuery(entity.getName(), whereClause)
+          .setFilterOnActive(false)
+          .setNamedParameters(paramsInWhereClause);
 
       if (OBContext.getOBContext().getRole().getId().equals("0")
           && OBContext.getOBContext().getCurrentClient().getId().equals("0")) {
@@ -299,6 +284,46 @@ public class DataSetService implements OBSingleton {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  /**
+   * Gets the whereClause and its corresponding parameters
+   * 
+   * @param moduleId
+   *          ModuleId to put in parameters
+   * @param parameters
+   *          Parameter map
+   * @param whereClauseWithAliases
+   *          Original where clause with parameters not set
+   * @param paramsInWhereClause
+   *          New map with found parameters in this where clause
+   * @return whereClause ready for execution and existingParams set
+   */
+  private String getWhereClauseWithAliasesReplaced(String moduleId, Map<String, Object> parameters,
+      String whereClauseWithAliases, Map<String, Object> paramsInWhereClause) {
+    String whereClause = whereClauseWithAliases;
+    if (whereClauseWithAliases != null) {
+      if (parameters != null) {
+        String finalWhereClause = whereClause;
+        parameters.keySet()
+            .stream()
+            .filter(name -> finalWhereClause.contains(":" + name))
+            .forEach(name -> paramsInWhereClause.put(name,
+                "null".equals(parameters.get(name)) ? null : parameters.get(name)));
+      }
+      if (moduleId != null) {
+        // Minimal checking that the moduleId has no spaces and seems to be an alphanumeric string
+        if (StringUtils.isAlphanumeric(moduleId)) {
+          if (whereClauseWithAliases.contains(":moduleid")) {
+            paramsInWhereClause.putIfAbsent("moduleid", moduleId);
+          }
+          whereClause = whereClauseWithAliases.replaceAll("@moduleid@", "'" + moduleId + "'");
+        } else {
+          throw new InvalidParameterException("ModuleId not valid");
+        }
+      }
+    }
+    return whereClause;
   }
 
   /**
@@ -321,25 +346,13 @@ public class DataSetService implements OBSingleton {
 
     if (entity == null) {
       log.error("Entity not found using table name " + entityName);
-      return new ArrayList<BaseOBObject>().iterator();
+      return Collections.emptyIterator();
     }
 
     String whereClause = dataSetTable.getSQLWhereClause();
-    final Map<String, Object> existingParams = new HashMap<String, Object>();
-    for (final String name : parameters.keySet()) {
-      if (whereClause.indexOf(":" + name) != -1) {
-        final Object value = parameters.get(name);
-        existingParams.put(name, "null".equals(value) ? null : value);
-      }
-    }
-    if (moduleId != null && whereClause != null) {
-      while (whereClause.indexOf("@moduleid@") != -1) {
-        whereClause = whereClause.replace("@moduleid@", "'" + moduleId + "'");
-      }
-      if (whereClause.indexOf(":moduleid") != -1 && parameters.get("moduleid") == null) {
-        existingParams.put("moduleid", moduleId);
-      }
-    }
+    final Map<String, Object> paramsInWhereClause = new HashMap<>();
+    whereClause = getWhereClauseWithAliasesReplaced(moduleId, parameters, whereClause,
+        paramsInWhereClause);
 
     // set the order by, first detect if there is an alias
     String alias = "";
@@ -352,12 +365,15 @@ public class DataSetService implements OBSingleton {
       alias = strippedWhereClause.substring(0, index);
       alias += ".";
     }
-
+    String hql = "";
+    if (whereClause != null) {
+      hql += whereClause;
+    }
+    hql += " order by " + alias + "id";
     final OBQuery<BaseOBObject> oq = OBDal.getInstance()
-        .createQuery(entity.getName(),
-            (whereClause != null ? whereClause : "") + " order by " + alias + "id");
-    oq.setFilterOnActive(false);
-    oq.setNamedParameters(existingParams);
+        .createQuery(entity.getName(), hql)
+        .setFilterOnActive(false)
+        .setNamedParameters(paramsInWhereClause);
 
     if (OBContext.getOBContext().getRole().getId().equals("0")
         && OBContext.getOBContext().getCurrentClient().getId().equals("0")) {

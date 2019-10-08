@@ -1714,21 +1714,22 @@ public class ActivationKey {
   }
 
   private void initializeWsCounter() {
-    StringBuilder hql = new StringBuilder();
-    hql.append("select min(creationDate)\n");
-    hql.append("  from ADSession\n");
-    hql.append(" where loginStatus = 'WS'\n");
-    hql.append("   and creationDate > :firstDay\n");
-    hql.append(" group by day(creationDate), month(creationDate), year(creationDate)\n");
-    hql.append("having count(*) > :maxWsPerDay\n");
-    hql.append(" order by 1\n");
-
+    //@formatter:off
+    String hql = 
+            "select min(creationDate) " +
+            "  from ADSession " +
+            " where loginStatus = 'WS' " +
+            "   and creationDate > :firstDay " +
+            " group by day(creationDate), month(creationDate), year(creationDate) " +
+            "   having count(*) > :maxWsPerDay " +
+            " order by 1";
+    //@formatter:on
     Query<Date> qExceededDays = OBDal.getInstance()
         .getSession()
-        .createQuery(hql.toString(), Date.class);
-    qExceededDays.setParameter("firstDay",
-        new Date(getDayAt0(new Date()).getTime() - WS_MS_EXCEEDING_ALLOWED_PERIOD));
-    qExceededDays.setParameter("maxWsPerDay", maxWsCalls);
+        .createQuery(hql, Date.class)
+        .setParameter("firstDay",
+            new Date(getDayAt0(new Date()).getTime() - WS_MS_EXCEEDING_ALLOWED_PERIOD))
+        .setParameter("maxWsPerDay", maxWsCalls);
 
     exceededInLastDays = new ArrayList<Date>();
 

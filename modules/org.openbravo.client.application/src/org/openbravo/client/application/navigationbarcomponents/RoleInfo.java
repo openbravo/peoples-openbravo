@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2018 Openbravo SLU
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -84,13 +84,18 @@ public class RoleInfo {
     }
     roleOrganizations = new LinkedHashMap<>();
 
-    final StringBuilder hql = new StringBuilder();
-    hql.append("select ro.organization.id, ro.organization.name from ADRoleOrganization ro ");
-    hql.append("where ro.active=true and ro.role.id=:roleId and ro.organization.active=true ");
+    //@formatter:off
+    String hql = 
+            "select ro.organization.id, ro.organization.name " +
+            "  from ADRoleOrganization ro " +
+            " where ro.active=true" +
+            "   and ro.role.id=:roleId" +
+            "   and ro.organization.active=true ";
+    //@formatter:on
     Query<Object[]> roleOrgs = OBDal.getInstance()
         .getSession()
-        .createQuery(hql.toString(), Object[].class);
-    roleOrgs.setParameter("roleId", roleId);
+        .createQuery(hql, Object[].class)
+        .setParameter("roleId", roleId);
     for (Object[] orgInfo : roleOrgs.list()) {
       roleOrganizations.put((String) orgInfo[0], (String) orgInfo[1]);
     }
@@ -111,15 +116,20 @@ public class RoleInfo {
       organizationWarehouses.put(orgId, new ArrayList<RoleWarehouseInfo>());
     }
 
-    final StringBuilder hql = new StringBuilder();
-    hql.append("select w.id, w.name, w.organization.id from Warehouse w ");
-    hql.append(
-        "where w.active=true and w.organization.id in (:orgList) and w.client.id=:clientId and w.organization.active=true ");
+    //@formatter:off
+    String hql = 
+            "select w.id, w.name, w.organization.id " +
+            "  from Warehouse w " +
+            " where w.active=true" +
+            "   and w.organization.id in (:orgList)" +
+            "   and w.client.id=:clientId" +
+            "   and w.organization.active=true ";
+    //@formatter:on
     Query<Object[]> orgWarehouses = OBDal.getInstance()
         .getSession()
-        .createQuery(hql.toString(), Object[].class);
-    orgWarehouses.setParameterList("orgList", getOrganizations().keySet());
-    orgWarehouses.setParameter("clientId", clientId);
+        .createQuery(hql, Object[].class)
+        .setParameterList("orgList", getOrganizations().keySet())
+        .setParameter("clientId", clientId);
     for (Object[] entry : orgWarehouses.list()) {
       RoleWarehouseInfo warehouseInfo = new RoleWarehouseInfo(entry);
       for (Map.Entry<String, List<RoleWarehouseInfo>> ow : organizationWarehouses.entrySet()) {
