@@ -317,7 +317,7 @@ enyo.kind({
                   kind: 'OB.UI.FormElement',
                   name: 'formElementBpsLocationSearchfilterText',
                   classes:
-                    'obUiFormElement_dataEntry obUiFormElement_dataEntry_noicon obUiModalBpLocScrollableHeader-container1-container1-container1-formElementBpsLocationSearchfilterText',
+                    'obUiFormElement_dataEntry obUiModalBpLocScrollableHeader-container1-container1-container1-formElementBpsLocationSearchfilterText',
                   coreElement: {
                     kind: 'OB.UI.SearchInputAutoFilter',
                     name: 'bpsLocationSearchfilterText',

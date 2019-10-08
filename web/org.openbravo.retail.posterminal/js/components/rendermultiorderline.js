@@ -15,6 +15,7 @@ enyo.kind({
   events: {
     onRemoveMultiOrders: ''
   },
+  i18nLabel: 'OBMOBC_Remove',
   tap: function() {
     if (_.isUndefined(this.deleting) || this.deleting === false) {
       this.deleting = true;

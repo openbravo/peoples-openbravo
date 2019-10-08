@@ -341,10 +341,7 @@
 /* # Inherits: [OB.UI.renderTextProperty] */
 }
 
-.obUiModalReceiptLinesPropertiesImpl-receiptLineDescription-control {
-  border: 1px solid #f0f0f0;
-  float: left;
-}
+.obUiModalReceiptLinesPropertiesImpl-receiptLineDescription-control {}
 
 .obUiModalReceiptLinesPropertiesImpl-receiptLineDescription-coreElement {
   width: 100%;
@@ -2968,16 +2965,8 @@ li.selected > .obUiRenderOrderLine_edit {
 # Inherits: [OB.UI.SmallButton]
 */
 .obUiRemoveMultiOrders {
-  color: white;
-
   width: 40px;
   height: 40px;
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-color: transparent;
-
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconClearPayment.svg');
-  background-size: 16px 16px;
 }
 
 .obUiRemoveMultiOrders:hover {
@@ -2992,7 +2981,28 @@ li.selected > .obUiRenderOrderLine_edit {
   border-radius: 50%;
 }
 
-.obUiRemoveMultiOrders_loading {
+.obUiRemoveMultiOrders .obUiButton-components {
+  grid-template-columns: 0 1fr 0 0;
+}
+
+.obUiRemoveMultiOrders .obUiButton-components-label {
+  display: none;
+}
+
+.obUiRemoveMultiOrders .obUiButton-components-icon {
+  color: white;
+  width: 100%;
+  height: 100%;
+
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-color: transparent;
+
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconClearPayment.svg');
+  background-size: 16px 16px;
+}
+
+.obUiRemoveMultiOrders_loading .obUiButton-components-icon {
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconloading.gif');
 }
 
@@ -3224,11 +3234,11 @@ li.selected > .obUiRenderOrderLine_edit {
   /*Inherits: [OB.UI.BPLocation]*/
 }
 
-.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocbutton .obUiFormElement-label-after {
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocbutton .obUiFormElement-mainArea-label-icon {
   width: 25px;
   background-image: url('./../img/iconInvoicingAddress.svg');
   background-repeat: no-repeat;
-  background-size: 11px;
+  background-size: 10px;
   background-position: center 1px;
 }
 
@@ -3241,7 +3251,7 @@ li.selected > .obUiRenderOrderLine_edit {
   /*Inherits: [OB.UI.BPLocation]*/
 }
 
-.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocshipbutton .obUiFormElement-label-after {
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocshipbutton .obUiFormElement-mainArea-label-icon {
   width: 30px;
   background-image: url('./../img/iconShippingAddress.svg');
   background-repeat: no-repeat;
@@ -3249,7 +3259,7 @@ li.selected > .obUiRenderOrderLine_edit {
   background-position: center 2px;
 }
 
-.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocbutton_noicon .obUiFormElement-label-after {
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocbutton_noicon .obUiFormElement-mainArea-label-icon {
   width: 0px;
 }
 
@@ -3282,9 +3292,9 @@ li.selected > .obUiRenderOrderLine_edit {
   box-shadow: 0px 0px 2px -1px #ccc;
 }
 
-.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBpbutton .obUiFormElement-label,
-.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocbutton .obUiFormElement-label,
-.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocshipbutton .obUiFormElement-label {
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBpbutton .obUiFormElement-mainArea-label,
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocbutton .obUiFormElement-mainArea-label,
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocshipbutton .obUiFormElement-mainArea-label {
   color: var(--color-maincolor);
 }
 
@@ -3294,15 +3304,15 @@ li.selected > .obUiRenderOrderLine_edit {
   height: 0px;
 }
 
-.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBpbutton .obUiFormElement-visualEffect,
-.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocbutton .obUiFormElement-visualEffect,
-.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocshipbutton .obUiFormElement-visualEffect {
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBpbutton .obUiFormElement-mainArea-coreElementArea-visualEffect,
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocbutton .obUiFormElement-mainArea-coreElementArea-visualEffect,
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocshipbutton .obUiFormElement-mainArea-coreElementArea-visualEffect {
   display: none;
 }
 
-.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBpbutton .obUiFormElement-coreElementArea,
-.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocbutton .obUiFormElement-coreElementArea,
-.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocshipbutton .obUiFormElement-coreElementArea {
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBpbutton .obUiFormElement-mainArea-coreElementArea,
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocbutton .obUiFormElement-mainArea-coreElementArea,
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocshipbutton .obUiFormElement-mainArea-coreElementArea {
   border-width: 0px;
 }
 
@@ -3314,15 +3324,15 @@ li.selected > .obUiRenderOrderLine_edit {
 }
 
 .obUiOrderHeader-receiptButtons {
-  clear: both;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: minmax(20%, auto) auto auto;
+  grid-gap: 4px;
+  justify-content: space-between;
 
+  width: 100%;
   padding: 0;
   margin: 0px 0px 20px 0px;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: stretch;
-  flex-wrap: nowrap;
 }
 
 /*
@@ -3567,14 +3577,11 @@ li.selected > .obUiRenderOrderLine_edit {
 # Inherits: [OB.UI.FormElement]
 */
 .obUiFormElement_dataEntry.obUiFormElement.obUiBtnReceiptToInvoice {
-  grid-template-rows: 1fr 0px;
-  grid-template-columns: 0px 1fr 0px 0px;
-
   padding-top: 10px;
   grid-area: obUiBtnReceiptToInvoice;
 }
 
-.obUiFormElement_dataEntry.obUiBtnReceiptToInvoice .obUiFormElement-before {
+.obUiFormElement_dataEntry.obUiBtnReceiptToInvoice .obUiFormElement-icon {
   display: none;
 }
 
@@ -3582,14 +3589,14 @@ li.selected > .obUiRenderOrderLine_edit {
   display: none;
 }
 
-.obUiFormElement_dataEntry.obUiBtnReceiptToInvoice .obUiFormElement-coreElementArea {
+.obUiFormElement_dataEntry.obUiBtnReceiptToInvoice .obUiFormElement-mainArea-coreElementArea {
   height: 35px;
 }
 
-.obUiFormElement_dataEntry.obUiFormElement_isCheckbox:not(.obUiFormElement_readonly):not(.obUiFormElement_disabled).obUiBtnReceiptToInvoice .obUiFormElement-label {
+.obUiFormElement_dataEntry.obUiFormElement_isCheckbox:not(.obUiFormElement_readonly):not(.obUiFormElement_disabled).obUiBtnReceiptToInvoice .obUiFormElement-mainArea-label {
   color: white;
   left: 50px;
-  top: 25px;
+  top: 14px;
 }
 
 .obUiFormElement_dataEntry.obUiFormElement_focused:not(.obUiFormElement_readonly):not(.obUiFormElement_disabled).obUiBtnReceiptToInvoice .obUiFormElementCheckbox,
@@ -5426,9 +5433,16 @@ li.selected > .obUiRenderOrderLine_edit {
 */
 .obUiModalSplitLinesTable {}
 
-.obUiModalSplitLinesTable-line {}
+.obUiModalSplitLinesTable-line {
+  padding: 9px 0px;
+}
 
-.obUiModalSplitLinesTable-line-container1 {}
+.obUiModalSplitLinesTable-line-container1 {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: minmax(290px, 70%) minmax(50px, 30%);
+  align-items: center;
+}
 
 .obUiModalSplitLinesTable-line-container1-formElementQty {}
 
@@ -5437,22 +5451,43 @@ li.selected > .obUiRenderOrderLine_edit {
 }
 
 .obUiModalSplitLinesTable-line-container1-btnRemove {
-/* Inherits: [OB.UI.SmallButton] */
-  border: 1px solid #d2d2d2;
-  margin: 2px 0 0 5px;
-  float: left;
-  background-color: #e2e2e2;
-  color: black;
+  width: 40px;
+  height: 40px;
+  margin: 0 5px;
 }
 
-.obUiModalSplitLinesTable-line-container1-btnRemove:focus {
-  outline: none;
-  border-width: 2px;
-  border-color: #0078d7;
-  border-style: solid;
-  padding: 2px 13px 5px 13px !important;
+.obUiModalSplitLinesTable-line-container1-btnRemove:hover {
+  opacity: 1;
+  background-color: #e8e8e8;
+  border-radius: 50%;
 }
 
+.obUiModalSplitLinesTable-line-container1-btnRemove:active {
+  opacity: 1;
+  background-color: #c5c5c5;
+  border-radius: 50%;
+}
+
+.obUiModalSplitLinesTable-line-container1-btnRemove .obUiButton-components {
+  grid-template-columns: 0 1fr 0 0;
+}
+
+.obUiModalSplitLinesTable-line-container1-btnRemove .obUiButton-components-label {
+  display: none;
+}
+
+.obUiModalSplitLinesTable-line-container1-btnRemove .obUiButton-components-icon {
+  color: white;
+  width: 100%;
+  height: 100%;
+
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-color: transparent;
+
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconClearPayment.svg');
+  background-size: 16px 16px;
+}
 
 /*
 # Component: OB.UI.ModalSplitLine_btnApply
@@ -5490,7 +5525,7 @@ li.selected > .obUiRenderOrderLine_edit {
 }
 
 .obUiModalSplitLine-body-splitlineMessage {
-  padding: 6px 0px 0px 14px;
+  padding: 10px 4px 0 4px;
 }
 
 .obUiModalSplitLine-body-header {
@@ -5505,10 +5540,58 @@ li.selected > .obUiRenderOrderLine_edit {
   grid-template-columns: repeat(3, calc(100% / 3));
 }
 
+.obUiModalSplitLine-body-header-infoFields .obUiFormElement {
+  display: inline-grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "obUiFormElement-mainArea";
+}
+
+.obUiModalSplitLine-body-header-infoFields .obUiFormElement-mainArea {
+  display: inline-grid;
+  grid-auto-flow: row;
+  grid-template-rows: auto auto;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "obUiFormElement-mainArea-label"
+    "obUiFormElement-mainArea-coreElementArea";
+}
+
+.obUiModalSplitLine-body-header-infoFields .obUiFormElement-mainArea-label {
+  display: grid;
+  grid-template-areas: "obUiFormElement-mainArea-label-labelLine obUiFormElement-mainArea-label-icon";
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr auto;
+  text-align: center;
+  color: #8c8c8c;
+  height: 44px;
+  align-items: end;
+}
+
+.obUiModalSplitLine-body-header-infoFields .obUiFormElement-mainArea-coreElementArea {
+  display: grid;
+  grid-template-areas: "obUiFormElement-mainArea-coreElementArea-component obUiFormElement-mainArea-coreElementArea-passwordVisibilityToggle obUiFormElement-mainArea-coreElementArea-eraser";
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr auto auto;
+  text-align: center;
+}
+
+.obUiModalSplitLine-body-header-infoFields .obUiFormElement-icon,
+.obUiModalSplitLine-body-header-infoFields .obUiFormElement-mainArea-label-icon,
+.obUiModalSplitLine-body-header-infoFields .obUiFormElement-mainArea-coreElementArea-eraser,
+.obUiModalSplitLine-body-header-infoFields .obUiFormElement-mainArea-coreElementArea-passwordVisibilityToggle,
+.obUiModalSplitLine-body-header-infoFields .obUiFormElement-messageArea {
+  display: none;
+}
+
 .obUiModalSplitLine-body-header-infoFields-container1,
 .obUiModalSplitLine-body-header-infoFields-container2,
-.obUiModalSplitLine-body-header-infoFields-container3,
-.obUiModalSplitLine-body-header-numberlinesSetter {}
+.obUiModalSplitLine-body-header-infoFields-container3 {}
+
+.obUiModalSplitLine-body-header-numberlinesSetter {
+  padding: 30px 0px;
+}
 
 .obUiModalSplitLine-body-header-infoFields-container1-formElementOriginalQty,
 .obUiModalSplitLine-body-header-infoFields-container2-formElementSplitQty,
@@ -5520,8 +5603,13 @@ li.selected > .obUiRenderOrderLine_edit {
 .obUiModalSplitLine-body-header-infoFields-container2-splitQty,
 .obUiModalSplitLine-body-header-infoFields-container3-differenceQty {
 /* Inherits: [OB.UI.EditNumber] */
-  width: 40px;
-  height: 23px;
+  width: 100%;
+  height: 25px;
+  text-align: center;
+  background-color: transparent;
+  border: 0;
+  font-size: 16px;
+  color: black;
 }
 
 .obUiModalSplitLine-body-header-numberlinesSetter-formElementNumberlinesQty {
@@ -5532,13 +5620,94 @@ li.selected > .obUiRenderOrderLine_edit {
 /* Inherits: [OB.UI.FormElement.IntegerEditor] */
 }
 
+.obUiModalSplitLine-body-header-numberlinesSetter .obUiFormElement,
+.obUiModalSplitLine-body-qtyLines .obUiFormElement {
+  display: inline-grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "obUiFormElement-mainArea";
+}
+
+.obUiModalSplitLine-body-header-numberlinesSetter .obUiFormElement-mainArea,
+.obUiModalSplitLine-body-qtyLines .obUiFormElement-mainArea {
+  display: inline-grid;
+  grid-auto-flow: column;
+  grid-template-rows: auto;
+  grid-template-areas:
+    "obUiFormElement-mainArea-label obUiFormElement-mainArea-coreElementArea";
+  justify-items: left;
+}
+
+.obUiModalSplitLine-body-header-numberlinesSetter .obUiFormElement-mainArea {
+  grid-template-columns: minmax(131px, 31.5%) minmax(160px, 38.5%);
+}
+
+.obUiModalSplitLine-body-qtyLines .obUiFormElement-mainArea {
+  grid-template-columns: 45% 55%;
+}
+
+.obUiModalSplitLine-body-header-numberlinesSetter .obUiFormElement-mainArea-label,
+.obUiModalSplitLine-body-qtyLines .obUiFormElement-mainArea-label {
+  display: grid;
+  grid-template-areas: "obUiFormElement-mainArea-label-labelLine obUiFormElement-mainArea-label-icon";
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr auto;
+  text-align: right;
+  color: #8c8c8c;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  padding: 0px 10px;
+  box-sizing: border-box;
+}
+
+.obUiModalSplitLine-body-header-numberlinesSetter .obUiFormElement-mainArea-coreElementArea,
+.obUiModalSplitLine-body-qtyLines .obUiFormElement-mainArea-coreElementArea {
+  display: grid;
+  grid-template-areas: "obUiFormElement-mainArea-coreElementArea-component obUiFormElement-mainArea-coreElementArea-passwordVisibilityToggle obUiFormElement-mainArea-coreElementArea-eraser";
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr auto auto;
+  text-align: center;
+}
+
+.obUiModalSplitLine-body-header-numberlinesSetter .obUiFormElementIntegerEditor,
+.obUiModalSplitLine-body-qtyLines .obUiFormElementIntegerEditor {
+  width: 100%;
+}
+
+.obUiModalSplitLine-body-header-numberlinesSetter .obUiFormElement-icon,
+.obUiModalSplitLine-body-header-numberlinesSetter .obUiFormElement-mainArea-label-icon,
+.obUiModalSplitLine-body-header-numberlinesSetter .obUiFormElement-mainArea-coreElementArea-eraser,
+.obUiModalSplitLine-body-header-numberlinesSetter .obUiFormElement-mainArea-coreElementArea-passwordVisibilityToggle,
+.obUiModalSplitLine-body-header-numberlinesSetter .obUiFormElement-messageArea,
+.obUiModalSplitLine-body-qtyLines .obUiFormElement-icon,
+.obUiModalSplitLine-body-qtyLines .obUiFormElement-mainArea-label-icon,
+.obUiModalSplitLine-body-qtyLines .obUiFormElement-mainArea-coreElementArea-eraser,
+.obUiModalSplitLine-body-qtyLines .obUiFormElement-mainArea-coreElementArea-passwordVisibilityToggle,
+.obUiModalSplitLine-body-qtyLines .obUiFormElement-messageArea {
+  display: none;
+}
+
+.obUiModalSplitLine-body-qtyLines_1-lines .obUiModalSplitLinesTable-line-container1-btnRemove, 
+.obUiModalSplitLine-body-qtyLines_2-lines .obUiModalSplitLinesTable-line-container1-btnRemove {
+  display: none;
+}
+
 .obUiModalSplitLine-body-qtyLines {
 /* Inherits: [OB.UI.ModalSplitLinesTable] */
 }
 
 .obUiModalSplitLine-body-labelError {
-  padding: 6px 0px 0px 14px;
-  color: yellow;
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0px 0px 0px;
+  background-color: #fff3cd;
+  color: #856404;
+  text-align: center;
+  line-height: 25px;
+  box-sizing: border-box;
+  touch-action: none;
 }
 
 .obUiModalSplitLine-bodyButtons {}
@@ -10477,43 +10646,51 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /* Inherits: [OB.UI.CustomerPropertyLine] */
 }
 
-.obUiCustomerPropertyLine_customerName .obUiFormElement-before,
-.obUiCustomerPropertyLine_firstName .obUiFormElement-before {
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields .obUiFormElement-icon {
+  width: 40px;
+}
+
+.obObposPointOfSaleUiCustomeraddrEditCreatecustomersImpl-newAttributes-customerAddrCustomerName .obUiFormElement-icon,
+.obObposPointOfSaleUiCustomeraddrEditcustomersImpl-newAttributes-customerAddrCustomerName .obUiFormElement-icon,
+.obUiCustomerPropertyLine_customerName .obUiFormElement-icon,
+.obUiCustomerPropertyLine_firstName .obUiFormElement-icon {
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconUser.svg');
   background-size: 16px;
   background-repeat: no-repeat;
   background-position: center 24px;
 }
 
-.obUiCustomerPropertyLine_customerPhone .obUiFormElement-before {
+.obUiCustomerPropertyLine_customerPhone .obUiFormElement-icon {
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconPhone.svg');
   background-size: 18px;
   background-repeat: no-repeat;
   background-position: center 23px;
 }
 
-.obUiCustomerPropertyLine_customerEmail .obUiFormElement-before {
+.obUiCustomerPropertyLine_customerEmail .obUiFormElement-icon {
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconEmail.svg');
   background-size: 18px;
   background-repeat: no-repeat;
   background-position: center 23px;
 }
 
-.obUiCustomerPropertyLine_language .obUiFormElement-before,
-.obUiCustomerPropertyLine_customerLanguage .obUiFormElement-before {
+.obUiCustomerPropertyLine_language .obUiFormElement-icon,
+.obUiCustomerPropertyLine_customerLanguage .obUiFormElement-icon {
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconLanguage.svg');
   background-size: 18px;
   background-repeat: no-repeat;
   background-position: center 23px;
 }
 
-.obObposPointOfSaleUiCustomersEditCreatecustomers-customerOnlyFields-obUiCustomerPropertyLine.obUiFormElement_isCustom .obUiFormElement-coreElementArea {
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerOnlyFields-obUiCustomerPropertyLine.obUiFormElement_isCustom .obUiFormElement-mainArea-coreElementArea {
   border: 0px;
 }
 
 .obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-shipAndInvAddress {
   display: grid;
   grid-auto-flow: column;
+  grid-gap: 15px;
 }
 
 @media all and (max-aspect-ratio: 9/8) {
@@ -10534,6 +10711,31 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /* Inherits: [OB.UI.CustomerPropertyLine] */
 }
 
+.obObposPointOfSaleUiCustomeraddrEditCreatecustomers-customerAddrAttributes-obUiCustomerPropertyLine .obUiFormElement-icon,
+.obObposPointOfSaleUiCustomersEditCreatecustomers-shippingAddrFields-obUiCustomerPropertyLine .obUiFormElement-icon {
+  width: 40px;
+}
+
+.obObposPointOfSaleUiCustomeraddrEditcustomersImpl-newAttributes-customerAddrName .obUiFormElement-icon,
+.obObposPointOfSaleUiCustomeraddrEditCreatecustomersImpl-newAttributes-customerAddrName .obUiFormElement-icon,
+.obUiCustomerPropertyLine_customerInvLocName .obUiFormElement-icon,
+.obUiCustomerPropertyLine_customerLocName .obUiFormElement-icon {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconAddress.svg');
+  background-size: 14px;
+  background-repeat: no-repeat;
+  background-position: center 23px;
+}
+
+.obObposPointOfSaleUiCustomeraddrEditcustomersImpl-newAttributes-customerAddrCity .obUiFormElement-icon,
+.obObposPointOfSaleUiCustomeraddrEditCreatecustomersImpl-newAttributes-customerAddrCity .obUiFormElement-icon,
+.obUiCustomerPropertyLine_customerInvCity .obUiFormElement-icon,
+.obUiCustomerPropertyLine_customerCity .obUiFormElement-icon {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconCity.svg');
+  background-size: 14px;
+  background-repeat: no-repeat;
+  background-position: center 23px;
+}
+
 .obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-shipAndInvAddress-invAddress {}
 
 .obObposPointOfSaleUiCustomersEditCreatecustomers-invAddress-invLbl {}
@@ -10544,6 +10746,9 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /* Inherits: [OB.UI.CustomerPropertyLine] */
 }
 
+.obObposPointOfSaleUiCustomersEditCreatecustomers-invoicingAddrFields-obUiCustomerPropertyLine .obUiFormElement-icon {
+  width: 40px;
+}
 
 /*************************   *************************/
 /*         File: editcreatecustomerform.js           */
@@ -11230,6 +11435,22 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obObposPointOfSaleUiCustomeraddrEditcustomersImpl-newAttributes-customerAddrShip,
 .obObposPointOfSaleUiCustomeraddrEditcustomersImpl-newAttributes-customerAddrBill {
 /* Inherits: [OB.UI.CustomerAddrTextProperty] */
+}
+
+.obObposPointOfSaleUiCustomeraddrEditCreatecustomersImpl-newAttributes-customerAddrBill .obUiFormElement-icon,
+.obObposPointOfSaleUiCustomeraddrEditcustomersImpl-newAttributes-customerAddrBill .obUiFormElement-icon {
+  background-image: url('./../img/iconInvoicingAddress.svg');
+  background-size: 14px;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+.obObposPointOfSaleUiCustomeraddrEditCreatecustomersImpl-newAttributes-customerAddrShip .obUiFormElement-icon,
+.obObposPointOfSaleUiCustomeraddrEditcustomersImpl-newAttributes-customerAddrShip .obUiFormElement-icon {
+  background-image: url('./../img/iconShippingAddress.svg');
+  background-size: 17px;
+  background-repeat: no-repeat;
+  background-position: center center;
 }
 
 

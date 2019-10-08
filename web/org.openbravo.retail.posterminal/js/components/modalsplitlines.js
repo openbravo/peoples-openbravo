@@ -34,7 +34,7 @@ enyo.kind({
                 kind: 'OB.UI.FormElement',
                 name: 'formElementQty_' + lineNum,
                 classes:
-                  'obUiFormElement_dataEntry obUiFormElement_dataEntry_noicon obUiModalSplitLinesTable-line-container1-formElementQty',
+                  'obUiModalSplitLinesTable-line-container1-formElementQty',
                 coreElement: {
                   kind: 'OB.UI.FormElement.IntegerEditor',
                   name: 'qty_' + lineNum,
@@ -48,11 +48,11 @@ enyo.kind({
                 }
               },
               {
-                kind: 'OB.UI.SmallButton',
+                kind: 'OB.UI.Button',
                 name: 'btnRemove_' + lineNum,
                 lineNum: lineNum,
                 classes: 'obUiModalSplitLinesTable-line-container1-btnRemove',
-                content: 'x',
+                i18nLabel: 'OBMOBC_Remove',
                 tap: function() {
                   this.owner.removeLine(this.lineNum, true);
                 },
@@ -194,9 +194,9 @@ enyo.kind({
                     kind: 'OB.UI.FormElement',
                     name: 'formElementOriginalQty',
                     classes:
-                      'obUiFormElement_dataEntry obUiFormElement_dataEntry_noicon obUiModalSplitLine-body-header-infoFields-container1-formElementOriginalQty',
+                      'obUiModalSplitLine-body-header-infoFields-container1-formElementOriginalQty',
                     coreElement: {
-                      kind: 'OB.UI.EditNumber',
+                      kind: 'OB.UI.FormElement.Input',
                       name: 'originalQty',
                       classes:
                         'obUiModalSplitLine-body-header-infoFields-container1-originalQty',
@@ -215,9 +215,9 @@ enyo.kind({
                     kind: 'OB.UI.FormElement',
                     name: 'formElementSplitQty',
                     classes:
-                      'obUiFormElement_dataEntry obUiFormElement_dataEntry_noicon obUiModalSplitLine-body-header-infoFields-container2-formElementSplitQty',
+                      'obUiModalSplitLine-body-header-infoFields-container2-formElementSplitQty',
                     coreElement: {
-                      kind: 'OB.UI.EditNumber',
+                      kind: 'OB.UI.FormElement.Input',
                       name: 'splitQty',
                       classes:
                         'obUiModalSplitLine-body-header-infoFields-container2-splitQty',
@@ -236,9 +236,9 @@ enyo.kind({
                     kind: 'OB.UI.FormElement',
                     name: 'formElementDifferenceQty',
                     classes:
-                      'obUiFormElement_dataEntry obUiFormElement_dataEntry_noicon obUiModalSplitLine-body-header-infoFields-container3-formElementDifferenceQty',
+                      'obUiModalSplitLine-body-header-infoFields-container3-formElementDifferenceQty',
                     coreElement: {
-                      kind: 'OB.UI.EditNumber',
+                      kind: 'OB.UI.FormElement.Input',
                       name: 'differenceQty',
                       classes:
                         'obUiModalSplitLine-body-header-infoFields-container3-differenceQty',
@@ -259,7 +259,7 @@ enyo.kind({
                 kind: 'OB.UI.FormElement',
                 name: 'formElementNumberlinesQty',
                 classes:
-                  'obUiFormElement_dataEntry obUiFormElement_dataEntry_noicon obUiModalSplitLine-body-header-numberlinesSetter-formElementNumberlinesQty',
+                  'obUiModalSplitLine-body-header-numberlinesSetter-formElementNumberlinesQty',
                 coreElement: {
                   kind: 'OB.UI.FormElement.IntegerEditor',
                   name: 'numberlinesQty',
@@ -638,6 +638,19 @@ enyo.kind({
   updateDifference: function() {
     var sumLines = this.$.body.$.qtyLines.sumLines(),
       difference = this.orderline.get('qty') - sumLines;
+    this.$.body.$.qtyLines.removeClass(
+      this.$.body.$.qtyLines.classes +
+        '_' +
+        this.$.body.$.qtyLines.linesLenght +
+        '-lines'
+    );
+    this.$.body.$.qtyLines.linesLenght = this.$.body.$.qtyLines.lines.length;
+    this.$.body.$.qtyLines.addClass(
+      this.$.body.$.qtyLines.classes +
+        '_' +
+        this.$.body.$.qtyLines.linesLenght +
+        '-lines'
+    );
     this.$.body.$.formElementSplitQty.coreElement.setValue(sumLines);
     this.$.body.$.formElementDifferenceQty.coreElement.setValue(difference);
     this.$.body.$.labelError.setShowing(difference !== 0);

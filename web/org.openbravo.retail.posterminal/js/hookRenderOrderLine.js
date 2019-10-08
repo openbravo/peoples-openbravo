@@ -248,7 +248,7 @@ enyo.kind({
         kind: 'OB.UI.FormElement',
         name: 'formElementInputNewDeliveryAmount',
         classes:
-          'obUiFormElement_dataEntry obUiFormElement_dataEntry_noicon obRdmUiModalChangeDeliveryAmount-body-formElementBtnModalMultiSearchInput',
+          'obUiFormElement_dataEntry obRdmUiModalChangeDeliveryAmount-body-formElementBtnModalMultiSearchInput',
         coreElement: {
           name: 'inputNewDeliveryAmount',
           kind: 'OB.UI.SearchInput',

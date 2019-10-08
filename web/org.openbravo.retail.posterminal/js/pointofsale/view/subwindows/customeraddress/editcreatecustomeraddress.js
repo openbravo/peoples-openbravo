@@ -293,7 +293,7 @@ enyo.kind({
     {
       kind: 'OB.UI.CustomerAddrCheckProperty',
       name: 'customerAddrBill',
-      lasses:
+      classes:
         'obObposPointOfSaleUiCustomeraddrEditCreatecustomersImpl-newAttributes-customerAddrBill',
       modelProperty: 'isBillTo',
       i18nLabel: 'OBPOS_LblBillAddr'
