@@ -1026,6 +1026,7 @@ enyo.kind({
               dataBps.set('postalCode', model.get('postalCode'));
               dataBps.set('cityName', model.get('cityName'));
               dataBps.set('countryName', model.get('countryName'));
+              dataBps.set('locationBillModel', model);
             }
             if (model.get('isShipTo')) {
               dataBps.set('shipLocId', model.get('id'));
@@ -1033,6 +1034,7 @@ enyo.kind({
               dataBps.set('shipPostalCode', model.get('postalCode'));
               dataBps.set('shipCityName', model.get('cityName'));
               dataBps.set('shipCountryName', model.get('countryName'));
+              dataBps.set('locationModel', model);
             }
           } else {
             dataBps.set('locId', model.get('id'));
@@ -1040,6 +1042,8 @@ enyo.kind({
             dataBps.set('postalCode', model.get('postalCode'));
             dataBps.set('cityName', model.get('cityName'));
             dataBps.set('countryName', model.get('countryName'));
+            dataBps.set('locationModel', model);
+            dataBps.set('locationBillModel', model);
           }
 
           if (me.target.startsWith('filterSelectorButton_')) {
