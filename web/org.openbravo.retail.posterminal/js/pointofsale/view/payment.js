@@ -3156,6 +3156,7 @@ enyo.kind({
   kind: 'OB.UI.Button',
   classes:
     'obObposPointOfSaleUiRemovePayment obObposPointOfSaleUiRemovePayment_iconClearPayment',
+  i18nLabel: 'OBMOBC_Remove',
   events: {
     onRemovePayment: ''
   },

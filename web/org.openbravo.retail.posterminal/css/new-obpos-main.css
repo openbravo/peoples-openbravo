@@ -9999,15 +9999,9 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiRenderPaymentLine-container1-container2-removePayment {
 /* Inherits: [OB.OBPOSPointOfSale.UI.RemovePayment] */
-  width: 75%;
-  max-width: 50px;
-  height: 25px;
-  margin-left: 10%;
 }
 
-.obObposPointOfSaleUiRenderPaymentLine-container1-container2-removePayment_withContent {
-  margin-top: 10px;
-}
+.obObposPointOfSaleUiRenderPaymentLine-container1-container2-removePayment_withContent {}
 
 .obObposPointOfSaleUiRenderPaymentLine-container1-container3 {}
 
@@ -10025,16 +10019,8 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Inherits: [OB.UI.Button]
 */
 .obObposPointOfSaleUiRemovePayment {
-  color: white;
-
-  margin: 0px;
-  padding: 0px;
-
   width: 32px;
   height: 32px;
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-color: transparent;
 }
 
 .obObposPointOfSaleUiRemovePayment:hover {
@@ -10049,12 +10035,28 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   border-radius: 50%;
 }
 
-.obObposPointOfSaleUiRemovePayment_iconClearPayment {
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconClearPayment.svg');
-  background-size: 16px auto;
+.obObposPointOfSaleUiRemovePayment .obUiButton-components {
+  grid-template-columns: 0 1fr 0 0;
 }
 
-.obObposPointOfSaleUiRemovePayment_iconLoading {
+.obObposPointOfSaleUiRemovePayment .obUiButton-components-label {
+  display: none;
+}
+
+.obObposPointOfSaleUiRemovePayment .obUiButton-components-icon {
+  color: white;
+  width: 100%;
+  height: 100%;
+
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-color: transparent;
+
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconClearPayment.svg');
+  background-size: 16px 16px;
+}
+
+.obObposPointOfSaleUiRemovePayment_loading .obUiButton-components-icon {
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconloading.gif');
 }
 
