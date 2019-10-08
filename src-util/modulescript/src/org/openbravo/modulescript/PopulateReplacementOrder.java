@@ -31,4 +31,9 @@ public class PopulateReplacementOrder extends ModuleScript {
       handleError(e);
     }
   }
+
+  @Override
+  protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
+    return new ModuleScriptExecutionLimits("0", null, new OpenbravoVersion(3, 0, 36579));
+  }
 }
