@@ -12,9 +12,9 @@
 /*global enyo, Backbone, _ */
 
 enyo.kind({
-  kind: 'OB.UI.SmallButton',
+  kind: 'OB.UI.FormElement.Selector',
   name: 'OB.UI.SmallBPButton',
-  style: 'display: table; float: right;',
+  classes: 'obUiSmallBPButton',
   published: {
     order: null
   },
@@ -25,28 +25,31 @@ enyo.kind({
     this.isEnabled = !inEvent.status;
     this.setDisabled(inEvent.status);
     if (!this.isEnabled) {
-      this.removeClass('btnlink');
-      this.addClass('btnbp');
+      this.removeClass('obUiRegularButton');
+      this.addClass('obUiSmallBPButton_disabled');
     } else {
-      this.removeClass('btnbp');
-      this.addClass('btnlink');
+      this.removeClass('obUiSmallBPButton_disabled');
+      this.addClass('obUiRegularButton');
     }
   },
   initComponents: function() {
     this.inherited(arguments);
   },
-  renderBPLocation: function(newLocation) {
-    this.$.identifier.setContent(newLocation);
+  renderBPLocation: function(newLocationId, newLocationName) {
+    this.setValue(newLocationId, newLocationName);
   },
   orderChanged: function(oldValue) {
     if (this.order.get('bp')) {
       this.renderBPLocation(
         _.isNull(this.order.get('bp').get(this.locName))
+          ? null
+          : this.order.get('bp').get(this.locId),
+        _.isNull(this.order.get('bp').get(this.locName))
           ? OB.I18N.getLabel('OBPOS_LblEmptyAddress')
           : this.order.get('bp').get(this.locName)
       );
     } else {
-      this.renderBPLocation(OB.I18N.getLabel('OBPOS_LblEmptyAddress'));
+      this.renderBPLocation(null, OB.I18N.getLabel('OBPOS_LblEmptyAddress'));
     }
 
     this.order.on(
@@ -58,11 +61,17 @@ enyo.kind({
           }
           this.renderBPLocation(
             _.isNull(model.get('bp').get(this.locName))
+              ? null
+              : model.get('bp').get(this.locId),
+            _.isNull(model.get('bp').get(this.locName))
               ? OB.I18N.getLabel('OBPOS_LblEmptyAddress')
               : model.get('bp').get(this.locName)
           );
         } else {
-          this.renderBPLocation(OB.I18N.getLabel('OBPOS_LblEmptyAddress'));
+          this.renderBPLocation(
+            null,
+            OB.I18N.getLabel('OBPOS_LblEmptyAddress')
+          );
         }
       },
       this
@@ -73,26 +82,12 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.SmallBPButton',
   name: 'OB.UI.BPLocation',
-  classes:
-    'btnlink-gray flex-customer-buttons-item flex-customer-buttons-addresses',
+  classes: 'obUiBPLocation',
   locName: 'locName',
+  locId: 'locId',
   events: {
     onShowPopup: ''
   },
-  components: [
-    {
-      name: 'bottomAddrIcon',
-      classes: 'addressbillbutton',
-      showing: false
-    },
-    {
-      name: 'identifier',
-      classes: 'flex-customer-buttons-item-text'
-    },
-    {
-      style: 'clear: both;'
-    }
-  ],
   tap: function() {
     if (!this.disabled) {
       this.doShowPopup({
@@ -113,57 +108,28 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.SmallBPButton',
   name: 'OB.UI.BPLocationShip',
-  classes:
-    'btnlink-gray flex-customer-buttons-item flex-customer-buttons-addresses',
-  showing: false,
+  classes: 'obUiBPLocationShip',
   locName: 'shipLocName',
+  locId: 'shipLocId',
   events: {
     onShowPopup: ''
   },
-  components: [
-    {
-      name: 'bottomAddrIcon',
-      classes: 'addressshipbutton'
-    },
-    {
-      name: 'identifier',
-      classes: 'flex-customer-buttons-item-text'
-    },
-    {
-      style: 'clear: both;'
-    }
-  ],
   changeStyle: function(status) {
     var me = this;
+    me.formElement.setShowing(status);
     if (!status) {
-      me.setShowing(status);
-      me.parent.$.bplocbutton.$.bottomAddrIcon.applyStyle('display', 'none');
-      me.parent.$.bplocbutton.$.identifier.addClass(
-        'flex-customer-buttons-item-text-fullwidht'
+      me.formElement.parent.$.formElementBplocbutton.setLabel(
+        OB.I18N.getLabel('OBPOS_LblAddress')
       );
-      me.parent.$.bplocbutton.$.identifier.removeClass(
-        'flex-customer-buttons-item-text-partialwidht'
-      );
-      me.parent.$.bplocshipbutton.$.identifier.addClass(
-        'flex-customer-buttons-item-text-fullwidht'
-      );
-      me.parent.$.bplocshipbutton.$.identifier.removeClass(
-        'flex-customer-buttons-item-text-partialwidht'
+      me.formElement.parent.$.formElementBplocbutton.addClass(
+        'obUiOrderHeader-buttonComponents-formElementBplocbutton_noicon'
       );
     } else {
-      me.setShowing(status);
-      me.parent.$.bplocbutton.$.bottomAddrIcon.applyStyle('display', '');
-      me.parent.$.bplocbutton.$.identifier.removeClass(
-        'flex-customer-buttons-item-text-fullwidht'
+      me.formElement.parent.$.formElementBplocbutton.setLabel(
+        OB.I18N.getLabel('OBPOS_LblBillAddr')
       );
-      me.parent.$.bplocbutton.$.identifier.addClass(
-        'flex-customer-buttons-item-text-partialwidht'
-      );
-      me.parent.$.bplocshipbutton.$.identifier.removeClass(
-        'flex-customer-buttons-item-text-fullwidht'
-      );
-      me.parent.$.bplocshipbutton.$.identifier.addClass(
-        'flex-customer-buttons-item-text-partialwidht'
+      me.formElement.parent.$.formElementBplocbutton.removeClass(
+        'obUiOrderHeader-buttonComponents-formElementBplocbutton_noicon'
       );
     }
   },
@@ -236,7 +202,7 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.NewCustomerAddressWindowButton',
   events: {
     onChangeSubWindow: '',
@@ -244,20 +210,23 @@ enyo.kind({
     onHideSelector: ''
   },
   disabled: false,
-  style: 'width: 170px; margin: 0px 5px 8px 19px;',
-  classes: 'btnlink-yellow btnlink btnlink-small',
+  classes: 'obUiNewCustomerAddressWindowButton',
   i18nLabel: 'OBPOS_LblNewCustomerAddress',
   handlers: {
     onSetModel: 'setModel',
     onNewBPLocDisabled: 'doDisableNewBPLoc',
     onSetBusinessPartner: 'setBusinessPartner'
   },
+  initComponents: function() {
+    this.popup = OB.UTIL.getPopupFromComponent(this);
+    this.inherited(arguments);
+  },
   setModel: function(inSender, inEvent) {
     this.model = inEvent.model;
     return true;
   },
   doDisableNewBPLoc: function(inSender, inEvent) {
-    this.putDisabled(inEvent.status);
+    this.setDisabled(inEvent.status);
     return true;
   },
   setBusinessPartner: function(inSender, inEvent) {
@@ -279,16 +248,15 @@ enyo.kind({
     }
 
     function successCallbackBPs(dataBps) {
-      var modalDlg = me.owner.owner.owner.owner.owner.owner,
-        navigationPath;
-      if (modalDlg.kind === 'OB.UI.ModalBPLocation') {
+      var navigationPath;
+      if (me.popup.kind === 'OB.UI.ModalBPLocation') {
         navigationPath = OB.UTIL.BusinessPartnerSelector.cloneAndPush(
-          modalDlg.args.navigationPath,
+          me.popup.args.navigationPath,
           'modalcustomeraddress'
         );
       } else {
         navigationPath = OB.UTIL.BusinessPartnerSelector.cloneAndPush(
-          modalDlg.args.navigationPath,
+          me.popup.args.navigationPath,
           'modalcustomershipaddress'
         );
       }
@@ -296,7 +264,7 @@ enyo.kind({
         popup: 'customerAddrCreateAndEdit',
         args: {
           businessPartner: dataBps,
-          target: modalDlg.target,
+          target: me.popup.target,
           navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(
             navigationPath,
             'customerAddressView'
@@ -319,27 +287,13 @@ enyo.kind({
         errorCallback
       );
     }
-  },
-  putDisabled: function(status) {
-    if (status === false) {
-      this.setDisabled(false);
-      this.removeClass('disabled');
-      this.disabled = false;
-      this.removeClass('btnlink-gray');
-      this.addClass('btnlink-yellow');
-      return;
-    }
-    this.setDisabled(true);
-    this.addClass('disabled');
-    this.disabled = true;
-    this.addClass('btnlink-gray');
-    this.removeClass('btnlink-yellow');
   }
 });
 
 enyo.kind({
   name: 'OB.UI.ModalBpLocScrollableHeader',
   kind: 'OB.UI.ScrollableTableHeader',
+  classes: 'obUiModalBpLocScrollableHeader',
   events: {
     onSearchAction: '',
     onClearAction: ''
@@ -350,41 +304,53 @@ enyo.kind({
   },
   components: [
     {
-      style: 'padding: 10px;',
+      classes: 'obUiModalBpLocScrollableHeader-container1',
       components: [
         {
-          style: 'display: table;',
+          classes: 'obUiModalBpLocScrollableHeader-container1-container1',
           components: [
             {
-              style: 'display: table-cell; width: 100%;',
+              classes:
+                'obUiModalBpLocScrollableHeader-container1-container1-container1',
               components: [
                 {
-                  kind: 'OB.UI.SearchInputAutoFilter',
-                  name: 'bpsLocationSearchfilterText',
-                  minLengthToSearch: 3,
-                  style: 'width: 100%'
+                  kind: 'OB.UI.FormElement',
+                  name: 'formElementBpsLocationSearchfilterText',
+                  classes:
+                    'obUiFormElement_dataEntry obUiModalBpLocScrollableHeader-container1-container1-container1-formElementBpsLocationSearchfilterText',
+                  coreElement: {
+                    kind: 'OB.UI.SearchInputAutoFilter',
+                    name: 'bpsLocationSearchfilterText',
+                    i18nLabel: 'OBMOBC_LblSearchEllipsis',
+                    classes:
+                      'obUiModalBpLocScrollableHeader-container1-container1-container1-bpsLocationSearchfilterText'
+                  }
                 }
               ]
             },
             {
-              style: 'display: table-cell;',
+              classes:
+                'obUiModalBpLocScrollableHeader-container1-container1-container2',
               components: [
                 {
-                  kind: 'OB.UI.SmallButton',
-                  classes: 'btnlink-gray btn-icon-small btn-icon-clear',
-                  style: 'width: 100px; margin: 0px 5px 8px 19px;',
+                  kind: 'OB.UI.Button',
+                  classes:
+                    'obUiSearchClearButton obUiModalBpLocScrollableHeader-container1-container1-container2-bpsLocationSearchClearButton',
+                  i18nLabel: 'OBMOBC_LblClear',
                   name: 'bpsLocationSearchClearButton',
                   ontap: 'clearAction'
                 }
               ]
             },
             {
-              style: 'display: table-cell;',
+              classes:
+                'obUiModalBpLocScrollableHeader-container1-container1-container3',
               components: [
                 {
-                  kind: 'OB.UI.SmallButton',
-                  classes: 'btnlink-yellow btn-icon-small btn-icon-search',
-                  style: 'width: 100px; margin: 0px 0px 8px 5px;',
+                  kind: 'OB.UI.Button',
+                  classes:
+                    'obUiSearchLaunchButton obUiModalBpLocScrollableHeader-container1-container1-container3-bpsLocationSearchButton',
+                  i18nLabel: 'OBMOBC_LblSearch',
                   name: 'bpsLocationSearchButton',
                   ontap: 'searchAction'
                 }
@@ -393,9 +359,29 @@ enyo.kind({
           ]
         }
       ]
-    },
+    }
+  ],
+  clearAction: function() {
+    this.$.formElementBpsLocationSearchfilterText.coreElement.setValue('');
+    this.doSearchAction({
+      locName: this.$.formElementBpsLocationSearchfilterText.coreElement.getValue()
+    });
+    return true;
+  },
+  searchAction: function() {
+    this.doSearchAction({
+      locName: this.$.formElementBpsLocationSearchfilterText.coreElement.getValue()
+    });
+    return true;
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.ModalBpLocFooter',
+  classes: 'obUiModalBpLocFooter',
+  components: [
     {
-      style: 'padding: 10px;',
+      classes: 'obUiModalBpLocFooter-container1',
       showing: true,
       handlers: {
         onSetShow: 'setShow'
@@ -406,41 +392,37 @@ enyo.kind({
       },
       components: [
         {
-          style: 'display: table;',
+          classes:
+            'obUiModal-footer-mainButtons obUiModalBpLocFooter-container1-container1',
           components: [
             {
-              style: 'display: table-cell;',
-              components: [
-                {
-                  kind: 'OB.UI.NewCustomerAddressWindowButton',
-                  name: 'newAction'
+              kind: 'OB.UI.NewCustomerAddressWindowButton',
+              classes: 'obUiModalBpLocFooter-container1-container1-newAction',
+              name: 'newAction'
+            },
+            {
+              kind: 'OB.UI.ModalDialogButton',
+              classes: 'obUiModalBpLocFooter-container1-container1-close',
+              i18nLabel: 'OBRDM_LblClose',
+              isDefaultAction: true,
+              tap: function() {
+                if (this.disabled === false) {
+                  this.doHideThisPopup();
                 }
-              ]
+              }
             }
           ]
         }
       ]
     }
-  ],
-  clearAction: function() {
-    this.$.bpsLocationSearchfilterText.setValue('');
-    this.doSearchAction({
-      locName: this.$.bpsLocationSearchfilterText.getValue()
-    });
-    return true;
-  },
-  searchAction: function() {
-    this.doSearchAction({
-      locName: this.$.bpsLocationSearchfilterText.getValue()
-    });
-    return true;
-  }
+  ]
 });
 
 enyo.kind({
   kind: 'OB.UI.ListContextMenuItem',
   name: 'OB.UI.BPLocDetailsContextMenuItem',
   i18NLabel: 'OBPOS_BPViewDetails',
+  classes: 'obUiBPLocDetailsContextMenuItem',
   selectItem: function(bploc) {
     bploc.set('ignoreSetBPLoc', true, {
       silent: true
@@ -475,6 +457,7 @@ enyo.kind({
   kind: 'OB.UI.ListContextMenuItem',
   name: 'OB.UI.BPLocEditContextMenuItem',
   i18NLabel: 'OBPOS_BPEdit',
+  classes: 'obUiBPLocEditContextMenuItem',
   selectItem: function(bploc) {
     bploc.set('ignoreSetBPLoc', true, {
       silent: true
@@ -517,6 +500,7 @@ enyo.kind({
   kind: 'OB.UI.ListContextMenuItem',
   name: 'OB.UI.BPLocAssignToReceiptContextMenuItem',
   i18NLabel: 'OBPOS_BPLocAssignToReceipt',
+  classes: 'obUiBPLocAssignToReceiptContextMenuItem',
   selectItem: function(bploc) {
     var contextMenu = this.owner.owner;
     contextMenu.dialog.menuSelected = true;
@@ -571,6 +555,7 @@ enyo.kind({
   kind: 'OB.UI.ListContextMenuItem',
   name: 'OB.UI.BPLocAssignToReceiptShippingContextMenuItem',
   i18NLabel: 'OBPOS_BPLocAssignToReceiptShipping',
+  classes: 'obUiBPLocAssignToReceiptShippingContextMenuItem',
   selectItem: function(bploc) {
     var contextMenu = this.owner.owner;
     contextMenu.dialog.menuSelected = true;
@@ -637,6 +622,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ListContextMenuItem',
   name: 'OB.UI.BPLocAssignToReceiptInvoicingContextMenuItem',
+  classes: 'obUiBPLocAssignToReceiptInvoicingContextMenuItem',
   i18NLabel: 'OBPOS_BPLocAssignToReceiptInvoicing',
   selectItem: function(bploc) {
     var contextMenu = this.owner.owner;
@@ -708,6 +694,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ListContextMenu',
   name: 'OB.UI.BPLocationContextMenu',
+  classes: 'obUiBPLocationContextMenu',
   initComponents: function() {
     this.inherited(arguments);
     var menuOptions = [],
@@ -718,18 +705,21 @@ enyo.kind({
     menuOptions.push(
       {
         kind: 'OB.UI.BPLocDetailsContextMenuItem',
-        permission: 'OBPOS_receipt.customers'
+        permission: 'OBPOS_receipt.customers',
+        classes: 'obUiBPLocationContextMenu-BPLocDetailsContextMenuItem'
       },
       {
         kind: 'OB.UI.BPLocEditContextMenuItem',
-        permission: 'OBPOS_retail.editCustomerLocationButton'
+        permission: 'OBPOS_retail.editCustomerLocationButton',
+        classes: 'obUiBPLocationContextMenu-BPLocDetailsContextMenuItem'
       }
     );
 
     if (bpLoc.get('isBillTo') && bpLoc.get('isShipTo')) {
       menuOptions.push({
         kind: 'OB.UI.BPLocAssignToReceiptContextMenuItem',
-        permission: 'OBPOS_retail.assignToReceiptAddress'
+        permission: 'OBPOS_retail.assignToReceiptAddress',
+        classes: 'obUiBPLocationContextMenu-BPLocAssignToReceiptContextMenuItem'
       });
     }
     if (
@@ -739,13 +729,17 @@ enyo.kind({
       if (bpLoc.get('isShipTo')) {
         menuOptions.push({
           kind: 'OB.UI.BPLocAssignToReceiptShippingContextMenuItem',
-          permission: 'OBPOS_retail.assignToReceiptShippingAddress'
+          permission: 'OBPOS_retail.assignToReceiptShippingAddress',
+          classes:
+            'obUiBPLocationContextMenu-BPLocAssignToReceiptShippingContextMenuItem'
         });
       }
       if (bpLoc.get('isBillTo')) {
         menuOptions.push({
           kind: 'OB.UI.BPLocAssignToReceiptInvoicingContextMenuItem',
-          permission: 'OBPOS_retail.assignToReceiptInvoicingAddress'
+          permission: 'OBPOS_retail.assignToReceiptInvoicingAddress',
+          classes:
+            'obUiBPLocationContextMenu-BPLocAssignToReceiptInvoicingContextMenuItem'
         });
       }
     }
@@ -759,31 +753,38 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ListBpsLocLine',
   kind: 'OB.UI.ListSelectorLine',
+  classes: 'obUiListSelectorLine',
   locId: 'locId',
   components: [
     {
       name: 'line',
-      style: 'line-height: 30px; width: 100%',
+      classes: 'obUiListSelectorLine-line',
       components: [
         {
           name: 'textInfo',
-          style: 'float: left; ',
+          classes: 'obUiListSelectorLine-line-textInfo',
           components: [
             {
-              style: 'display: table;',
+              classes: 'obUiListSelectorLine-line-textInfo-element1',
               components: [
                 {
-                  name: 'identifier',
-                  style: 'display: table-cell;'
+                  classes:
+                    'obUiListSelectorLine-line-textInfo-element1-identifier',
+                  name: 'identifier'
                 },
                 {
+                  classes:
+                    'obUiListSelectorLine-line-textInfo-element1-bottomShipIcon',
                   name: 'bottomShipIcon'
                 },
                 {
+                  classes:
+                    'obUiListSelectorLine-line-textInfo-element1-bottomBillIcon',
                   name: 'bottomBillIcon'
                 },
                 {
-                  style: 'clear: both;'
+                  classes:
+                    'obUiListSelectorLine-line-textInfo-element1-element1'
                 }
               ]
             }
@@ -792,7 +793,7 @@ enyo.kind({
         {
           kind: 'OB.UI.BPLocationContextMenu',
           name: 'btnContextMenu',
-          style: 'float: right;'
+          classes: 'obUiListSelectorLine-line-btnContextMenu'
         }
       ]
     }
@@ -807,7 +808,7 @@ enyo.kind({
       this.model.get('id') ===
       OB.MobileApp.model.receipt.get('bp').get(this.locId)
     ) {
-      this.applyStyle('background-color', '#fbf6d1');
+      this.addClass('obUiListSelectorLine_equalLocId');
     }
     if (this.model.get('isBillTo') && this.model.get('isShipTo')) {
       this.$.bottomShipIcon.addClass('addresshipitems');
@@ -835,7 +836,7 @@ enyo.kind({
 /* scrollable table (body of modal) */
 enyo.kind({
   name: 'OB.UI.ListBpsLoc',
-  classes: 'row-fluid',
+  classes: 'ListBpsLoc row-fluid',
   published: {
     bPartner: null,
     manageAddress: false,
@@ -852,26 +853,17 @@ enyo.kind({
   },
   components: [
     {
-      classes: 'span12',
+      classes: 'obUiListBpsLoc-container1',
       components: [
         {
-          style: 'border-bottom: 1px solid #cccccc;',
-          classes: 'row-fluid',
-          components: [
-            {
-              classes: 'span12',
-              components: [
-                {
-                  name: 'bpsloclistitemprinter',
-                  kind: 'OB.UI.ScrollableTable',
-                  scrollAreaMaxHeight: '400px',
-                  renderHeader: 'OB.UI.ModalBpLocScrollableHeader',
-                  renderLine: 'OB.UI.ListBpsLocLine',
-                  renderEmpty: 'OB.UI.RenderEmpty'
-                }
-              ]
-            }
-          ]
+          name: 'bpsloclistitemprinter',
+          kind: 'OB.UI.ScrollableTable',
+          classes: 'obUiListBpsLoc-container1-bpsloclistitemprinter',
+          scrollAreaClasses:
+            'obUiListBpsLoc-container1-bpsloclistitemprinter_scrollArea',
+          renderHeader: 'OB.UI.ModalBpLocScrollableHeader',
+          renderLine: 'OB.UI.ListBpsLocLine',
+          renderEmpty: 'OB.UI.RenderEmpty'
         }
       ]
     }
@@ -1088,7 +1080,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalSelector',
   name: 'OB.UI.ModalBPLocation',
-  topPosition: '125px',
+  classes: 'obUiModalBPLocation',
   events: {
     onShowPopup: ''
   },
@@ -1121,7 +1113,7 @@ enyo.kind({
       } else {
         this.$.body.$.listBpsLoc.bpsList.reset([]);
       }
-      this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.newAction.putDisabled(
+      this.$.footer.$.modalBpLocFooter.$.newAction.setDisabled(
         !OB.MobileApp.model.hasPermission(
           'OBPOS_retail.createCustomerLocationButton',
           true
@@ -1141,7 +1133,7 @@ enyo.kind({
   executeOnHide: function() {
     var selectorHide = this.selectorHide;
     this.inherited(arguments);
-    this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.bpsLocationSearchfilterText.setValue(
+    this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.formElementBpsLocationSearchfilterText.coreElement.setValue(
       ''
     );
     if (
@@ -1245,6 +1237,9 @@ enyo.kind({
   i18nHeader: '',
   body: {
     kind: 'OB.UI.ListBpsLoc'
+  },
+  footer: {
+    kind: 'OB.UI.ModalBpLocFooter'
   },
   getScrollableTable: function() {
     return this.$.body.$.listBpsLoc.$.bpsloclistitemprinter;

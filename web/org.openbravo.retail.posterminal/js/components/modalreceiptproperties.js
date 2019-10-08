@@ -12,6 +12,8 @@
 enyo.kind({
   name: 'OB.UI.ModalReceiptPropertiesImpl',
   kind: 'OB.UI.ModalReceiptProperties',
+  classes: 'obUiModalReceiptPropertiesImpl',
+  i18nHeader: 'OBPOS_ReceiptPropertiesDialogTitle',
   handlers: {
     onCloseCancelSelector: 'closeCancelSelector',
     onUpdateFilterSelector: 'updateFilterSelector',
@@ -21,6 +23,8 @@ enyo.kind({
     {
       kind: 'OB.UI.renderTextProperty',
       name: 'receiptDescription',
+      classes:
+        'obUiModalReceiptPropertiesImpl-newAttributes-receiptDescription',
       modelProperty: 'description',
       i18nLabel: 'OBPOS_LblDescription',
       maxLength: 255
@@ -28,14 +32,17 @@ enyo.kind({
     {
       kind: 'OB.UI.renderBooleanProperty',
       name: 'printBox',
+      classes:
+        'obUiModalReceiptPropertiesImpl-newAttributes-printBox obUiModalReceiptPropertiesImpl-newAttributes-printBox_active',
       checked: true,
-      classes: 'modal-dialog-btn-check active',
       modelProperty: 'print',
       i18nLabel: 'OBPOS_Lbl_RP_Print'
     },
     {
       kind: 'OB.UI.renderComboProperty',
       name: 'salesRepresentativeBox',
+      classes:
+        'obUiModalReceiptPropertiesImpl-newAttributes-salesRepresentativeBox',
       modelProperty: 'salesRepresentative',
       modelPropertyText:
         'salesRepresentative' +
@@ -47,18 +54,21 @@ enyo.kind({
       retrievedPropertyForValue: 'id',
       retrievedPropertyForText: '_identifier',
       init: function(model) {
-        this.collection = new OB.Collection.SalesRepresentativeList();
         this.model = model;
         this.doLoadValueNeeded = true;
         if (!OB.MobileApp.model.hasPermission(this.permission)) {
           this.doLoadValueNeeded = false;
-          this.parent.parent.parent.hide();
+          this.formElement.hide();
         } else {
           if (OB.MobileApp.model.hasPermission(this.permissionOption, true)) {
             this.doLoadValueNeeded = false;
-            this.parent.parent.parent.hide();
+            this.formElement.hide();
           }
         }
+      },
+
+      initComponents: function() {
+        this.collection = new OB.Collection.SalesRepresentativeList();
       },
 
       // override to not load things upfront when not needed
@@ -117,6 +127,8 @@ enyo.kind({
     {
       kind: 'OB.UI.SalesRepresentative',
       name: 'salesrepresentativebutton',
+      classes:
+        'obUiModalReceiptPropertiesImpl-newAttributes-salesrepresentativebutton',
       i18nLabel: 'OBPOS_SalesRepresentative',
       permission: 'OBPOS_salesRepresentative.receipt',
       permissionOption: 'OBPOS_SR.comboOrModal'
@@ -126,6 +138,8 @@ enyo.kind({
       target: 'filterSelectorButton_receiptProperties',
       popup: 'receiptPropertiesDialog',
       name: 'customerbutton',
+      classes: 'obUiModalReceiptPropertiesImpl-newAttributes-customerbutton',
+      hideNullifyButton: true,
       i18nLabel: 'OBPOS_LblCustomer'
     },
     {
@@ -133,6 +147,8 @@ enyo.kind({
       target: 'filterSelectorButton_receiptProperties',
       popup: 'receiptPropertiesDialog',
       name: 'addressshipbutton',
+      classes: 'obUiModalReceiptPropertiesImpl-newAttributes-addressshipbutton',
+      hideNullifyButton: true,
       i18nLabel: 'OBPOS_LblShipAddr'
     },
     {
@@ -140,6 +156,8 @@ enyo.kind({
       target: 'filterSelectorButton_receiptProperties',
       popup: 'receiptPropertiesDialog',
       name: 'addressbillbutton',
+      classes: 'obUiModalReceiptPropertiesImpl-newAttributes-addressbillbutton',
+      hideNullifyButton: true,
       i18nLabel: 'OBPOS_LblBillAddr'
     }
   ],
@@ -151,8 +169,8 @@ enyo.kind({
   },
   moveScrollDown: function(inSender, inEvent) {
     if (inEvent.target === 'filterSelectorButton_receiptProperties') {
-      this.$.bodyContent.$.scroller.setScrollTop(
-        this.$.bodyContent.$.scroller.getScrollTop() + inEvent.lineHeight
+      this.$.body.$.scroller.setScrollTop(
+        this.$.body.$.scroller.getScrollTop() + inEvent.lineHeight
       );
       return true;
     }
@@ -171,9 +189,8 @@ enyo.kind({
     // reset all properties
     for (p in this.newAttributes) {
       if (this.newAttributes.hasOwnProperty(p)) {
-        att = this.$.bodyContent.$.attributes.$[
-          'line_' + this.newAttributes[p].name
-        ].$.newAttribute.$[this.newAttributes[p].name];
+        att = this.$.body.$.attributes.$['line_' + this.newAttributes[p].name].$
+          .coreElementContainer.$[this.newAttributes[p].name];
         if (att && att.setValue) {
           att.setValue('');
         }
@@ -187,24 +204,24 @@ enyo.kind({
       model: this.model
     });
     if (bp && bp.get('locId') === bp.get('shipLocId')) {
-      this.$.bodyContent.$.attributes.$.line_addressshipbutton.hide();
-      this.$.bodyContent.$.attributes.$.line_addressbillbutton.$.labelLine.setContent(
+      this.$.body.$.attributes.$.line_addressshipbutton.hide();
+      this.$.body.$.attributes.$.line_addressbillbutton.$.labelLine.setContent(
         OB.I18N.getLabel('OBPOS_LblAddress')
       );
     } else {
-      this.$.bodyContent.$.attributes.$.line_addressshipbutton.show();
-      this.$.bodyContent.$.attributes.$.line_addressbillbutton.$.labelLine.setContent(
+      this.$.body.$.attributes.$.line_addressshipbutton.show();
+      this.$.body.$.attributes.$.line_addressbillbutton.$.labelLine.setContent(
         OB.I18N.getLabel('OBPOS_LblBillAddr')
       );
     }
     if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
-      this.$.bodyContent.$.attributes.$.line_ReceiptDeliveryMode.show();
-      this.$.bodyContent.$.attributes.$.line_ReceiptDeliveryDate.show();
-      this.$.bodyContent.$.attributes.$.line_ReceiptDeliveryTime.show();
+      this.$.body.$.attributes.$.line_ReceiptDeliveryMode.show();
+      this.$.body.$.attributes.$.line_ReceiptDeliveryDate.show();
+      this.$.body.$.attributes.$.line_ReceiptDeliveryTime.show();
     } else {
-      this.$.bodyContent.$.attributes.$.line_ReceiptDeliveryMode.hide();
-      this.$.bodyContent.$.attributes.$.line_ReceiptDeliveryDate.hide();
-      this.$.bodyContent.$.attributes.$.line_ReceiptDeliveryTime.hide();
+      this.$.body.$.attributes.$.line_ReceiptDeliveryMode.hide();
+      this.$.body.$.attributes.$.line_ReceiptDeliveryDate.hide();
+      this.$.body.$.attributes.$.line_ReceiptDeliveryTime.hide();
     }
     for (p in this.newAttributes) {
       if (this.newAttributes.hasOwnProperty(p)) {
@@ -213,8 +230,6 @@ enyo.kind({
     }
   },
   init: function(model) {
-    this.setHeader(OB.I18N.getLabel('OBPOS_ReceiptPropertiesDialogTitle'));
-
     this.model = model.get('order');
     this.model.on(
       'change',

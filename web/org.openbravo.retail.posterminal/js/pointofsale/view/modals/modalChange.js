@@ -10,8 +10,9 @@
 /*global OB, enyo */
 
 enyo.kind({
-  kind: 'OB.UI.ModalAction',
+  kind: 'OB.UI.Modal',
   name: 'OB.UI.ModalChange',
+  classes: 'obUiModalChange',
   events: {
     onHideThisPopup: ''
   },
@@ -19,47 +20,51 @@ enyo.kind({
     onActionOK: 'actionOK',
     onActionInput: 'actionInput'
   },
-  bodyContent: {
+  i18nHeader: 'OBPOS_ChangeSplit',
+  body: {
     name: 'bodyattributes',
+    classes: 'obUiModalChange-body-bodyattributes',
     components: [
       {
         kind: 'Scroller',
-        maxHeight: '225px',
-        classes: 'changedialog-properties',
+        classes: 'obUiModalChange-bodyattributes-scroller',
         thumb: true,
-        horizontal: 'hidden',
         components: [
           {
-            name: 'paymentlines'
+            name: 'paymentlines',
+            classes: 'obUiModalChange-scroller-paymentlines'
           }
         ]
       },
       {
         name: 'errors',
-        classes: 'changedialog-errors'
+        classes: 'obUiModalChange-bodyattributes-errors'
       }
     ]
   },
-  bodyButtons: {
+  footer: {
+    classes: 'obUiModal-footer-mainButtons obUiModalChange-body-container1',
     components: [
       {
-        kind: 'OB.UI.ModalChangeButtonOK'
+        kind: 'OB.UI.ModalChangeButtonCancel',
+        classes: 'obUiModalChange-body-container1-obUiModalChangeButtonCancel'
       },
       {
-        kind: 'OB.UI.ModalChangeButtonCancel'
+        kind: 'OB.UI.ModalChangeButtonOK',
+        classes: 'obUiModalChange-body-container1-obUiModalChangeButtonOK'
       }
     ]
   },
   initComponents: function() {
     this.inherited(arguments);
-    this.$.header.setContent(OB.I18N.getLabel('OBPOS_ChangeSplit'));
 
     var i = 0;
     OB.MobileApp.model.get('payments').forEach(function(payment) {
       if (payment.paymentMethod.iscash) {
-        this.$.bodyContent.$.paymentlines.createComponent({
+        this.$.body.$.paymentlines.createComponent({
           kind: 'OB.UI.ModalChangeLine',
           name: 'line_' + payment.payment.searchKey,
+          classes: 'obUiModalChange-paymentlines-obUiModalChangeLine',
           index: i++,
           payment: payment
         });
@@ -67,7 +72,7 @@ enyo.kind({
     }, this);
   },
   executeOnShow: function() {
-    var lines = this.$.bodyContent.$.paymentlines.getComponents();
+    var lines = this.$.body.$.paymentlines.getComponents();
     lines.forEach(
       function(l) {
         l.executeOnShow(this.args);
@@ -90,7 +95,7 @@ enyo.kind({
       change,
       changeRounding;
 
-    lines = this.$.bodyContent.$.paymentlines.getComponents();
+    lines = this.$.body.$.paymentlines.getComponents();
     change = this.args.change;
     changemin = 0;
     changemax = 0;
@@ -137,7 +142,7 @@ enyo.kind({
 
   calculateRemaining: function() {
     var changeremaining = this.calculateRemainingFor(),
-      lines = this.$.bodyContent.$.paymentlines.getComponents(),
+      lines = this.$.body.$.paymentlines.getComponents(),
       errortext = '',
       overpayment = false;
 
@@ -159,11 +164,9 @@ enyo.kind({
 
     // Show the change error, if any
     if (overpayment) {
-      this.$.bodyContent.$.errors.setContent(
-        OB.I18N.getLabel('OBPOS_Overpayment')
-      );
+      this.$.body.$.errors.setContent(OB.I18N.getLabel('OBPOS_Overpayment'));
     } else {
-      this.$.bodyContent.$.errors.setContent(errortext);
+      this.$.body.$.errors.setContent(errortext);
     }
   },
 
@@ -181,7 +184,7 @@ enyo.kind({
 
     changeRounding = this.args.change;
     indexRounding = -1;
-    lines = this.$.bodyContent.$.paymentlines.getComponents();
+    lines = this.$.body.$.paymentlines.getComponents();
     edited = false;
     paymentchangemap = [];
 
@@ -249,7 +252,7 @@ enyo.kind({
       linechange,
       changeLessThan;
 
-    lines = this.$.bodyContent.$.paymentlines.getComponents();
+    lines = this.$.body.$.paymentlines.getComponents();
 
     if (!inEvent.hasErrors && lines.length === 2) {
       line = lines[inEvent.line === lines[0] ? 1 : 0];
@@ -284,6 +287,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalChangeButtonOK',
   kind: 'OB.UI.ModalDialogButton',
+  classes: 'obUiModalChangeButtonOK',
   i18nContent: 'OBMOBC_LblOk',
   isDefaultAction: true,
   tap: function() {
@@ -294,6 +298,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalChangeButtonCancel',
   kind: 'OB.UI.ModalDialogButton',
+  classes: 'obUiModalChangeButtonCancel',
   i18nContent: 'OBMOBC_LblCancel',
   tap: function() {
     this.doHideThisPopup();

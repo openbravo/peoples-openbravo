@@ -12,8 +12,9 @@
 enyo.kind({
   name: 'OB.UI.PopupDrawerOpened',
   kind: 'OB.UI.Popup',
-  classes: 'modal-dialog',
-  bodyContentClass: 'modal-dialog-header-text',
+  classes: 'obUiPopupDrawerOpened',
+  bodyContentClass:
+    'modal-dialog-header-text obUiPopupDrawerOpened-bodyContent',
   showing: false,
   closeOnEscKey: false,
   autoDismiss: false,
@@ -21,21 +22,22 @@ enyo.kind({
   i18nHeader: 'OBPOS_closeDrawerContinue',
   components: [
     {
-      classes: 'modal-dialog-header',
+      classes: 'obUiPopupDrawerOpened-table',
       name: 'table',
       components: [
         {
           name: 'header',
-          classes: 'modal-dialog-header-text'
+          classes: 'modal-dialog-header-text obUiPopupDrawerOpened-table-header'
         }
       ]
     },
     {
-      classes: 'modal-dialog-body',
+      classes: 'obUiPopupDrawerOpened-bodyParent',
       name: 'bodyParent',
       components: [
         {
-          name: 'bodyContent'
+          name: 'bodyContent',
+          classes: 'obUiPopupDrawerOpened-bodyParent-bodyContent'
         }
       ]
     }
@@ -46,8 +48,6 @@ enyo.kind({
   },
   initComponents: function() {
     this.inherited(arguments);
-
-    this.setStyle('min-height: 180px;');
 
     if (this.i18nHeader) {
       this.$.header.setContent(OB.I18N.getLabel(this.i18nHeader));

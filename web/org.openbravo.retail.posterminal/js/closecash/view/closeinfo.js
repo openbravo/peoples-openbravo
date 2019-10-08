@@ -11,49 +11,54 @@
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.CashUpInfo',
+  classes: 'obObposCashupUiCashupInfo',
   published: {
     model: null
   },
   components: [
     {
-      style:
-        'position: relative; background: #363636; color: white; height: 200px; margin: 5px; padding: 5px',
+      classes: 'obObposCashupUiCashupInfo-wrapper',
       components: [
         {
-          //clock here
-          kind: 'OB.UI.Clock',
-          classes: 'pos-clock'
-        },
-        {
-          // process info
-          style: 'padding: 5px',
-          initialize: function() {
-            this.setContent(OB.I18N.getLabel('OBPOS_LblCashUpProcess'));
-          }
-        },
-        {
-          style: 'padding: 3px',
-          initialize: function() {
-            this.setContent(OB.I18N.getLabel('OBPOS_LblStep1'));
-          }
-        },
-        {
-          style: 'padding: 3px',
-          initialize: function() {
-            this.setContent(OB.I18N.getLabel('OBPOS_LblStep2'));
-          }
-        },
-        {
-          style: 'padding: 3px',
-          initialize: function() {
-            this.setContent(OB.I18N.getLabel('OBPOS_LblStep3'));
-          }
-        },
-        {
-          style: 'padding: 3px',
-          initialize: function() {
-            this.setContent(OB.I18N.getLabel('OBPOS_LblStep4'));
-          }
+          classes: 'obObposCashupUiCashupInfo-wrapper-components',
+          components: [
+            {
+              //clock here
+              kind: 'OB.UI.Clock',
+              classes: 'obObposCashupUiCashupInfo-wrapper-components-obUiClock'
+            },
+            {
+              // process info
+              classes: 'obObposCashupUiCashupInfo-wrapper-components-element1',
+              initialize: function() {
+                this.setContent(OB.I18N.getLabel('OBPOS_LblCashUpProcess'));
+              }
+            },
+            {
+              classes: 'obObposCashupUiCashupInfo-wrapper-components-element2',
+              initialize: function() {
+                this.setContent(OB.I18N.getLabel('OBPOS_LblStep1'));
+              }
+            },
+            {
+              classes: 'obObposCashupUiCashupInfo-wrapper-components-element3',
+              initialize: function() {
+                this.setContent(OB.I18N.getLabel('OBPOS_LblStep2'));
+              }
+            },
+            {
+              classes: 'obObposCashupUiCashupInfo-wrapper-components-element4',
+              initialize: function() {
+                this.setContent(OB.I18N.getLabel('OBPOS_LblStep3'));
+              }
+            },
+            {
+              classes: 'obObposCashupUiCashupInfo-wrapper-components-element5',
+              initialize: function() {
+                this.setContent(OB.I18N.getLabel('OBPOS_LblStep4'));
+              }
+            }
+          ]
         }
       ]
     }

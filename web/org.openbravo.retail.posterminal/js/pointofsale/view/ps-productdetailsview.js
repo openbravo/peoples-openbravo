@@ -11,12 +11,13 @@
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonStockThisStore',
-  kind: 'OB.UI.SmallButton',
+  kind: 'OB.UI.Button',
+  classes:
+    'obObposPointOfSaleUiProductDetailsViewButtonStockThisStore obUiActionButton',
   events: {
     onOpenLocalStockModal: '',
     onOpenLocalStockClickableModal: ''
   },
-  classes: 'btnlink-green obpos-product-details-view-buttons',
   tap: function() {
     if (
       !OB.MobileApp.model.get('permissions').OBPOS_warehouseselectionforline ||
@@ -34,11 +35,12 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonStockOtherStore',
-  kind: 'OB.UI.SmallButton',
+  kind: 'OB.UI.Button',
+  classes:
+    'obObposPointOfSaleUiProductDetailsViewButtonStockOtherStore obUiActionButton',
   events: {
     onOpenOtherStoresStockModal: ''
   },
-  classes: 'btnlink-green obpos-product-details-view-buttons',
   tap: function() {
     var me = this,
       leftSubWindow = me.parent.leftSubWindow;
@@ -62,7 +64,9 @@ enyo.kind({
             leftSubWindow.bodyComponent.$.stockOthers.setContent(
               OB.I18N.getLabel('OBPOS_stockCannotBeRetrieved')
             );
-            leftSubWindow.bodyComponent.$.stockOthers.addClass('error');
+            leftSubWindow.bodyComponent.$.stockOthers.addClass(
+              'obObposPointOfSaleUiProductDetailsViewButtonStockOtherStore_error'
+            );
           } else if (
             data.product === leftSubWindow.product.get('id') &&
             leftSubWindow.showing &&
@@ -73,7 +77,9 @@ enyo.kind({
               data
             );
             me.doOpenOtherStoresStockModal();
-            leftSubWindow.bodyComponent.$.stockOthers.removeClass('error');
+            leftSubWindow.bodyComponent.$.stockOthers.removeClass(
+              'obObposPointOfSaleUiProductDetailsViewButtonStockOtherStore_error'
+            );
             leftSubWindow.bodyComponent.$.stockOthers.setContent(
               OB.I18N.getLabel('OBPOS_otherStoresStock') + data.qty
             );
@@ -88,25 +94,25 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonAddToTicket',
-  kind: 'OB.UI.RegularButton',
-  classes: 'btnlink-green',
-  style: 'min-width: 70px; margin: 2px 5px 2px 5px;',
+  kind: 'OB.UI.Button',
+  classes: 'obObposPointOfSaleUiProductDetailsViewButtonAddToTicket',
   i18nLabel: 'OBPOS_addToTicket',
   events: {
     onAddProduct: '',
     onSetLineProperty: '',
     onCloseLeftSubWindow: ''
   },
-  setLabel: function() {
+  setProperLabel: function() {
     if (this.leftSubWindow && this.leftSubWindow.line) {
-      this.setContent(OB.I18N.getLabel('OBMOBC_LblApply'));
+      this.setLabel(OB.I18N.getLabel('OBMOBC_LblApply'));
     } else {
-      this.setContent(OB.I18N.getLabel('OBPOS_addToTicket'));
+      this.setLabel(OB.I18N.getLabel('OBPOS_addToTicket'));
     }
   },
   tap: function() {
     var product = this.leftSubWindow.product,
       me = this;
+
     if (product) {
       var line = null;
       if (me.leftSubWindow && me.leftSubWindow.line) {
@@ -238,11 +244,8 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonClose',
-  style:
-    'float: right; cursor: pointer; font-size: 150%; font-weight: bold; color: #CCCCCC; width: 40px; height: 40px; margin: -10px; text-align: right; padding: 8px;',
-  init: function() {
-    this.setContent(OB.I18N.getLabel('OBMOBC_Character')[2]);
-  },
+  kind: 'OB.UI.Button',
+  classes: 'obObposPointOfSaleUiProductDetailsViewButtonClose',
   tap: function() {
     this.leftSubWindow.doCloseLeftSubWindow();
   }
@@ -250,21 +253,23 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ProductDetailsView_header',
-  style: 'font-size: 22px; height: 25px; padding: 15px 15px 5px 15px;',
+  classes: 'obObposPointOfSaleUiProductDetailsViewHeader',
   components: [
     {
       name: 'productName',
-      style: 'float: left;'
+      classes: 'obObposPointOfSaleUiProductDetailsViewHeader-productName'
     },
     {
       kind: 'OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonClose',
-      name: 'buttonClose'
+      name: 'buttonClose',
+      classes: 'obObposPointOfSaleUiProductDetailsViewHeader-buttonClose'
     }
   ]
 });
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ProductDetailsView_body',
+  classes: 'obObposPointOfSaleUiProductDetailsViewBody',
   handlers: {
     onOpenLocalStockModal: 'openLocalStockModal',
     onOpenLocalStockClickableModal: 'openLocalStockClickableModal',
@@ -322,7 +327,7 @@ enyo.kind({
             OB.I18N.formatCurrency(data.currentPrice.price) +
             '</b>'
         );
-        me.$.productAddToReceipt.setLabel();
+        me.$.productAddToReceipt.setProperLabel();
         me.$.productAddToReceipt.setDisabled(false);
         me.leftSubWindow.documentType = data.documentType;
         me.leftSubWindow.quotationDocumentType = data.quotationDocumentType;
@@ -414,77 +419,89 @@ enyo.kind({
   },
   components: [
     {
-      style: 'height: 160px; padding: 20px;',
       name: 'contextImage',
+      classes: 'obObposPointOfSaleUiProductDetailsViewBody-contextImage',
       components: [
         {
           kind: 'OB.UI.Thumbnail',
           name: 'productImage',
-          width: '100%',
-          height: '100%',
-          classes: 'image-wrap image-editline'
+          classes:
+            'obObposPointOfSaleUiProductDetailsViewBody-contextImage-productImage'
         }
       ]
     },
     {
-      style: 'margin: 5px 15px;',
+      classes: 'obObposPointOfSaleUiProductDetailsViewBody-container2',
       components: [
         {
           name: 'warehouseToGet',
           allowHtml: true,
-          style:
-            'line-height: 20px; font-size: 20px; padding: 10px; color: black;'
+          classes:
+            'obObposPointOfSaleUiProductDetailsViewBody-container2-warehouseToGet'
         }
       ]
     },
     {
-      classes: 'productDetails',
+      classes: 'obObposPointOfSaleUiProductDetailsViewBody-container3',
       components: [
         {
-          style: 'float: left; width: 50%;',
+          classes:
+            'obObposPointOfSaleUiProductDetailsViewBody-container3-container1',
           components: [
             {
-              style: 'padding: 0px 0px 15px 0px;',
+              classes:
+                'obObposPointOfSaleUiProductDetailsViewBody-container3-container1-container1',
               components: [
                 {
                   kind:
                     'OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonStockThisStore',
-                  name: 'stockHere'
+                  name: 'stockHere',
+                  classes:
+                    'obObposPointOfSaleUiProductDetailsViewBody-container3-container1-container1-stockHere'
                 }
               ]
             },
             {
-              style: 'padding: 0px 0px 15px 0px;',
+              classes:
+                'obObposPointOfSaleUiProductDetailsViewBody-container3-container1-container2',
               components: [
                 {
                   kind:
                     'OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonStockOtherStore',
-                  name: 'stockOthers'
+                  name: 'stockOthers',
+                  classes:
+                    'obObposPointOfSaleUiProductDetailsViewBody-container3-container1-container2-stockOthers'
                 }
               ]
             },
             {
               name: 'productDeliveryModes',
               kind: 'OB.OBPOSPointOfSale.UI.EditLine.DeliveryModesButton',
-              classes: 'obpos-product-details-view-buttons'
+              classes:
+                'obObposPointOfSaleUiProductDetailsViewBody-container3-container1-productDeliveryModes'
             }
           ]
         },
         {
-          style: 'float: right;',
+          classes:
+            'obObposPointOfSaleUiProductDetailsViewBody-container3-container2',
           components: [
             {
               name: 'productPrice',
               allowHtml: true,
-              style:
-                'margin: 5px 0px 12px 0px; text-align: center; font-size: 18px; font-weight: 600;'
+              classes:
+                'obObposPointOfSaleUiProductDetailsViewBody-container3-container2-productPrice'
             },
             {
+              classes:
+                'obObposPointOfSaleUiProductDetailsViewBody-container3-container2-container2',
               components: [
                 {
                   name: 'productAddToReceipt',
                   kind:
-                    'OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonAddToTicket'
+                    'OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonAddToTicket',
+                  classes:
+                    'obObposPointOfSaleUiProductDetailsViewBody-container3-container2-container2-productAddToReceipt'
                 }
               ]
             }
@@ -494,11 +511,12 @@ enyo.kind({
     },
     {
       kind: 'Scroller',
-      maxHeight: '191px',
-      style: 'padding: 15px;',
+      classes: 'obObposPointOfSaleUiProductDetailsViewBody-scroller',
       components: [
         {
-          name: 'descriptionArea'
+          name: 'descriptionArea',
+          classes:
+            'obObposPointOfSaleUiProductDetailsViewBody-scroller-descriptionArea'
         }
       ]
     }
@@ -508,6 +526,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.LeftSubWindow',
   name: 'OB.OBPOSPointOfSale.UI.ProductDetailsView',
+  classes: 'obObposPointOfSaleUiProductDetailsView',
   events: {
     onShowPopup: ''
   },
@@ -668,7 +687,9 @@ enyo.kind({
             me.bodyComponent.$.stockOthers.setContent(
               OB.I18N.getLabel('OBPOS_stockCannotBeRetrieved')
             );
-            me.bodyComponent.$.stockOthers.addClass('error');
+            me.bodyComponent.$.stockOthers.addClass(
+              'obObposPointOfSaleUiProductDetailsViewBody-stockOthers_error'
+            );
           } else if (
             data.product === me.product.get('id') &&
             (data.qty || data.qty === 0)
@@ -677,7 +698,9 @@ enyo.kind({
             me.otherStoresStockModel = new OB.OBPOSPointOfSale.UsedModels.OtherStoresWarehousesStock(
               data
             );
-            me.bodyComponent.$.stockOthers.removeClass('error');
+            me.bodyComponent.$.stockOthers.removeClass(
+              'obObposPointOfSaleUiProductDetailsViewBody-stockOthers_error'
+            );
             me.bodyComponent.$.stockOthers.setContent(
               OB.UTIL.isCrossStoreEnabled()
                 ? OB.I18N.getLabel('OBPOS_SelectStore')
@@ -758,7 +781,7 @@ enyo.kind({
     this.bodyComponent.$.descriptionArea.setContent(
       params.product.get('description')
     );
-    this.bodyComponent.$.productAddToReceipt.setLabel();
+    this.bodyComponent.$.productAddToReceipt.setProperLabel();
     this.getOtherStock();
     this.getStoreStock(params);
     return true;
@@ -785,10 +808,12 @@ enyo.kind({
   },
   header: {
     kind: 'OB.OBPOSPointOfSale.UI.ProductDetailsView_header',
-    name: 'header'
+    name: 'header',
+    classes: 'obObposPointOfSaleUiProductDetailsView-header-header'
   },
   body: {
     kind: 'OB.OBPOSPointOfSale.UI.ProductDetailsView_body',
-    name: 'body'
+    name: 'body',
+    classes: 'obObposPointOfSaleUiProductDetailsView-body-body'
   }
 });

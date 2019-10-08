@@ -10,9 +10,9 @@
 /*global OB, enyo, _ */
 
 enyo.kind({
-  kind: 'OB.UI.Modal',
   name: 'OB.OBPOSPointOfSale.UI.customers.editcustomer',
-  classes: 'receipt-customer-selector-editor',
+  kind: 'OB.UI.Modal',
+  classes: 'obObPosPointOfSaleUiCustomersEditCustomer',
   i18nHeader: 'OBPOS_TitleViewCustomer',
   handlers: {
     onPressedButton: 'pressedButton'
@@ -31,14 +31,13 @@ enyo.kind({
     var me = this;
     me.pressedBtn = false;
     me.$.body.$.editcustomers_impl.setCustomer(this.args.businessPartner);
-    var customerHeader = this.$.body.$.editcustomers_impl.$.bodyheader.$
-      .editCustomerHeader;
-    var buttonContainer = customerHeader.$.buttonContainer;
+    var customerFooter = this.$.footer.$.editCustomerFooter;
+    var buttonContainer = customerFooter.$.buttonContainer;
     Object.keys(buttonContainer.$).forEach(function(key, index) {
       if (
-        OB.OBPOSPointOfSale.UI.customers.EditCustomerHeader.prototype.customerHeaderButtons.find(
-          function(headerButton) {
-            return headerButton.name === key;
+        OB.OBPOSPointOfSale.UI.customers.EditCustomerFooter.prototype.customerFooterButtons.find(
+          function(footerButton) {
+            return footerButton.name === key;
           }
         )
       ) {
@@ -46,7 +45,7 @@ enyo.kind({
         buttonContainer.$[key].navigationPath = me.args.navigationPath;
         buttonContainer.$[key].target = me.args.target;
         if (buttonContainer.$[key].permission) {
-          buttonContainer.$[key].children[0].putDisabled(
+          buttonContainer.$[key].children[0].setDisabled(
             !OB.MobileApp.model.hasPermission(
               buttonContainer.$[key].permission,
               true
@@ -60,15 +59,12 @@ enyo.kind({
       attribute
     ) {
       if (attribute.name !== 'strategy') {
-        _.each(
-          attribute.$.newAttribute.$,
-          function(attrObject) {
-            if (attrObject.displayLogic && !attrObject.displayLogic()) {
-              this.hide();
-            }
-          },
-          attribute
-        );
+        if (
+          attribute.coreElement.displayLogic &&
+          !attribute.coreElement.displayLogic()
+        ) {
+          attribute.hide();
+        }
       }
     });
     return true;
@@ -90,10 +86,9 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.Button',
   name: 'OB.OBPOSPointOfSale.UI.customers.assigncustomertoticket',
-  style: 'margin: 0px 0px 8px 5px;',
-  classes: 'btnlink-yellow btnlink btnlink-small',
+  kind: 'OB.UI.ModalDialogButton',
+  classes: 'obObPosPointOfSaleUiCustomersassignCustomerToTicket',
   events: {
     onChangeBusinessPartner: '',
     onPressedButton: ''
@@ -140,10 +135,9 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.Button',
   name: 'OB.OBPOSPointOfSale.UI.customers.managebpaddress',
-  style: 'margin: 0px 0px 8px 5px;',
-  classes: 'btnlink-yellow btnlink btnlink-small',
+  kind: 'OB.UI.ModalDialogButton',
+  classes: 'obObPosPointOfSaleUiCustomersManageBPAddress',
   events: {
     onShowPopup: '',
     onPressedButton: ''
@@ -171,17 +165,6 @@ enyo.kind({
       });
     });
   },
-  putDisabled: function(status) {
-    if (status === false) {
-      this.setDisabled(false);
-      this.removeClass('disabled');
-      this.disabled = false;
-      return;
-    }
-    this.setDisabled(true);
-    this.addClass('disabled');
-    this.disabled = true;
-  },
   init: function(model) {
     this.model = model;
   },
@@ -192,10 +175,9 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.customers.editbp',
-  style: 'width: 100px; margin: 0px 5px 8px 19px;',
-  classes: 'btnlink-orange btnlink btnlink-small',
+  classes: 'obObPosPointOfSaleUiCustomersEditBP',
   events: {
     onShowPopup: '',
     onPressedButton: ''
@@ -205,11 +187,9 @@ enyo.kind({
     if (
       !OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomerButton', true)
     ) {
-      this.disabled = true;
-      this.setAttribute('disabled', 'disabled');
+      this.setDisabled(true);
     } else {
-      this.disabled = false;
-      this.setAttribute('disabled', null);
+      this.setDisabled(false);
     }
   },
   tap: function() {
@@ -229,30 +209,19 @@ enyo.kind({
       });
     }
   },
-  putDisabled: function(status) {
-    if (status === false) {
-      this.setDisabled(false);
-      this.removeClass('disabled');
-      this.disabled = false;
-      return;
-    }
-    this.setDisabled(true);
-    this.addClass('disabled');
-    this.disabled = true;
-  },
   init: function(model) {
     this.model = model;
   },
   initComponents: function() {
+    this.inherited(arguments);
     this.setContent(OB.I18N.getLabel('OBPOS_LblEdit'));
   }
 });
 
 enyo.kind({
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.customers.lastactivity',
-  style: 'margin: 0px 0px 8px 5px;',
-  classes: 'btnlink-yellow btnlink btnlink-small',
+  classes: 'obObPosPointOfSaleUiCustomersLastActivity',
   i18nLabel: 'OBPOS_Cus360LblLastActivity',
   events: {
     onShowPopup: '',
@@ -284,14 +253,27 @@ enyo.kind({
   }
 });
 
-/*header of window body*/
 enyo.kind({
-  name: 'OB.OBPOSPointOfSale.UI.customers.EditCustomerHeader',
-  customerHeaderButtons: [
+  kind: 'OB.UI.ModalDialogButton',
+  name: 'OB.OBPOSPointOfSale.UI.customers.close',
+  classes: 'obObPosPointOfSaleUiCustomersClose',
+  i18nLabel: 'OBRDM_LblClose',
+  tap: function() {
+    if (this.disabled === false) {
+      this.doHideThisPopup();
+    }
+  }
+});
+
+/*footer of window*/
+enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.customers.EditCustomerFooter',
+  classes: 'obObPosPointOfSaleUiCustomersEditCustomerFooter',
+  customerFooterButtons: [
     {
       name: 'editbp',
       permission: 'OBPOS_retail.editCustomerButton',
-      style: 'display: table-cell;',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomerFooter-editbp',
       components: [
         {
           kind: 'OB.OBPOSPointOfSale.UI.customers.editbp'
@@ -300,7 +282,8 @@ enyo.kind({
     },
     {
       name: 'assigncustomertoticket',
-      style: 'display: table-cell;',
+      classes:
+        'obObPosPointOfSaleUiCustomersEditCustomerFooter-assigncustomertoticket',
       components: [
         {
           kind: 'OB.OBPOSPointOfSale.UI.customers.assigncustomertoticket'
@@ -309,7 +292,8 @@ enyo.kind({
     },
     {
       name: 'managebpaddress',
-      style: 'display: table-cell;',
+      classes:
+        'obObPosPointOfSaleUiCustomersEditCustomerFooter-managebpaddress',
       permission: 'OBPOS_retail.editCustomerLocationButton',
       components: [
         {
@@ -319,10 +303,20 @@ enyo.kind({
     },
     {
       name: 'lastactivity',
-      style: 'display: table-cell;',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomerFooter-lastactivity',
       components: [
         {
           kind: 'OB.OBPOSPointOfSale.UI.customers.lastactivity'
+        }
+      ]
+    },
+    {
+      name: 'close',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomerFooter-close',
+      components: [
+        {
+          kind: 'OB.OBPOSPointOfSale.UI.customers.close',
+          isDefaultAction: true
         }
       ]
     }
@@ -330,27 +324,28 @@ enyo.kind({
   components: [
     {
       name: 'buttonContainer',
-      style: 'display: flex; flex-wrap: wrap; justify-content: center;'
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomerFooter-buttonContainer'
     }
   ],
   initComponents: function() {
     this.inherited(arguments);
     var container = this.$.buttonContainer;
-    this.customerHeaderButtons.forEach(function(button) {
+    this.customerFooterButtons.forEach(function(button) {
       container.createComponent(button);
     });
   }
 });
 
 enyo.kind({
-  kind: 'OB.OBPOSPointOfSale.UI.customers.edit_createcustomers',
   name: 'OB.OBPOSPointOfSale.UI.customers.editcustomers_impl',
-  style: 'padding: 9px 15px;',
-  windowHeader: 'OB.OBPOSPointOfSale.UI.customers.EditCustomerHeader',
+  kind: 'OB.OBPOSPointOfSale.UI.customers.edit_createcustomers',
+  classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl',
+  windowFooter: 'OB.OBPOSPointOfSale.UI.customers.EditCustomerFooter',
   newAttributes: [
     {
       kind: 'OB.UI.CustomerTextProperty',
       name: 'greeting',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-greeting',
       modelProperty: 'greetingName',
       i18nLabel: 'OBPOS_LblGreetings',
       readOnly: true,
@@ -364,6 +359,7 @@ enyo.kind({
     {
       kind: 'OB.UI.CustomerTextProperty',
       name: 'customerName',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-customerName',
       modelProperty: 'firstName',
       i18nLabel: 'OBPOS_LblName',
       readOnly: true
@@ -371,6 +367,8 @@ enyo.kind({
     {
       kind: 'OB.UI.CustomerTextProperty',
       name: 'customerLastName',
+      classes:
+        'obObPosPointOfSaleUiCustomersEditCustomersImpl-customerLastName',
       modelProperty: 'lastName',
       i18nLabel: 'OBPOS_LblLastName',
       readOnly: true
@@ -378,6 +376,7 @@ enyo.kind({
     {
       kind: 'OB.UI.CustomerTextProperty',
       name: 'customerBpCat',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-customerBpCat',
       modelProperty: 'businessPartnerCategory_name',
       i18nLabel: 'OBPOS_BPCategory',
       readOnly: true,
@@ -388,6 +387,7 @@ enyo.kind({
     {
       kind: 'OB.UI.CustomerTextProperty',
       name: 'customerTaxId',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-customerTaxId',
       modelProperty: 'taxID',
       i18nLabel: 'OBPOS_LblTaxId',
       readOnly: true,
@@ -398,6 +398,7 @@ enyo.kind({
     {
       kind: 'OB.UI.CustomerTextProperty',
       name: 'customerPhone',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-customerPhone',
       modelProperty: 'phone',
       i18nLabel: 'OBPOS_LblPhone',
       readOnly: true
@@ -405,6 +406,8 @@ enyo.kind({
     {
       kind: 'OB.UI.CustomerTextProperty',
       name: 'alternativePhone',
+      classes:
+        'obObPosPointOfSaleUiCustomersEditCustomersImpl-alternativePhone',
       modelProperty: 'alternativePhone',
       i18nLabel: 'OBPOS_LblAlternativePhone',
       readOnly: true
@@ -412,6 +415,7 @@ enyo.kind({
     {
       kind: 'OB.UI.CustomerTextProperty',
       name: 'customerEmail',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-customerEmail',
       modelProperty: 'email',
       i18nLabel: 'OBPOS_LblEmail',
       readOnly: true
@@ -419,6 +423,7 @@ enyo.kind({
     {
       kind: 'OB.UI.CustomerTextProperty',
       name: 'birthPlace',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-birthPlace',
       modelProperty: 'birthPlace',
       i18nLabel: 'OBPOS_LblBirthplace',
       readOnly: true,
@@ -432,6 +437,7 @@ enyo.kind({
     {
       kind: 'OB.UI.CustomerTextProperty',
       name: 'birthDay',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-birthDay',
       modelProperty: 'birthDay',
       i18nLabel: 'OBPOS_LblBirthdate',
       readOnly: true,
@@ -465,6 +471,7 @@ enyo.kind({
     {
       kind: 'OB.UI.CustomerTextProperty',
       name: 'language',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-language',
       modelProperty: 'language_name',
       readOnly: true,
       i18nLabel: 'OBPOS_LblLanguage',
@@ -478,6 +485,7 @@ enyo.kind({
     {
       kind: 'OB.UI.CustomerTextProperty',
       name: 'availableCredit',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-availableCredit',
       modelProperty: 'availableCredit',
       i18nLabel: 'OBPOS_LblAvailableCredit',
       readOnly: true,
@@ -491,6 +499,7 @@ enyo.kind({
     {
       kind: 'OB.UI.CustomerTextProperty',
       name: 'comments',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-comments',
       modelProperty: 'comments',
       i18nLabel: 'OBPOS_LblComments',
       readOnly: true,
@@ -504,6 +513,8 @@ enyo.kind({
     {
       kind: 'OB.UI.CustomerTextProperty',
       name: 'customerPriceList',
+      classes:
+        'obObPosPointOfSaleUiCustomersEditCustomersImpl-customerPriceList',
       modelProperty: 'priceList',
       i18nLabel: 'OBPOS_PriceList',
       readOnly: true,
@@ -529,6 +540,8 @@ enyo.kind({
     {
       kind: 'OB.UI.CustomerConsentCheckProperty',
       name: 'isCustomerConsent',
+      classes:
+        'obObPosPointOfSaleUiCustomersEditCustomersImpl-isCustomerConsent',
       modelProperty: 'isCustomerConsent',
       i18nLabel: 'OBPOS_CustomerConsent',
       readOnly: true
@@ -536,6 +549,7 @@ enyo.kind({
     {
       kind: 'OB.UI.CustomerCheckCommercialAuth',
       name: 'commercialauth',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-commercialauth',
       modelProperty: 'commercialauth',
       i18nLabel: 'OBPOS_CommercialAuth',
       readOnly: true,
@@ -549,6 +563,8 @@ enyo.kind({
     {
       kind: 'OB.UI.CustomerCheckComboProperty',
       name: 'contactpreferences',
+      classes:
+        'obObPosPointOfSaleUiCustomersEditCustomersImpl-contactpreferences',
       modelProperty: 'contactpreferences',
       i18nLabel: 'OBPOS_ContactPreferences',
       readOnly: true,
@@ -565,9 +581,11 @@ enyo.kind({
     }
   ]
 });
+
 enyo.kind({
   name: 'OBPOS.UI.ReceiptSelectorCustomerView',
   kind: 'OBPOS.UI.ReceiptSelector',
+  classes: 'obposUiReceiptSelectorCustomerView',
   executeOnShow: function() {
     if (!this.initialized || (this.args && _.keys(this.args).length > 0)) {
       this.selectorHide = false;
@@ -603,7 +621,7 @@ enyo.kind({
     }
     var isMultiselect = this.args.multiselect === true;
     this.$.body.$.receiptsList.$.openreceiptslistitemprinter.multiselect = isMultiselect;
-    this.$.body.$.receiptsList.$.openreceiptslistitemprinter.$.theader.$.modalReceiptsScrollableHeader.$.btnOpenSelected.setShowing(
+    this.$.body.$.receiptsList.$.openreceiptslistitemprinter.$.theader.$.modalReceiptsScrollableHeader.$.filterSelector.setShowing(
       isMultiselect
     );
     if (this.args.customHeaderContent) {

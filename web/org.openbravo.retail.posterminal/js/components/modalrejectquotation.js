@@ -12,6 +12,7 @@
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.Modals.btnModalRejectQuotationCancel',
+  classes: 'obObposPointOfSaleUiModalsBtnModalRejectQuotationCancel',
   i18nContent: 'OBMOBC_LblCancel',
   tap: function() {
     this.doHideThisPopup();
@@ -20,6 +21,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.Modals.btnModalRejectQuotationAccept',
+  classes: 'obObposPointOfSaleUiModalsBtnModalRejectQuotationAccept',
   i18nContent: 'OBMOBC_LblOk',
   events: {
     onRejectQuotationDone: ''
@@ -32,10 +34,10 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.List',
   name: 'OB.UI.ModalRejectQuotationRejectReason',
-  classes: 'combo',
-  style: 'width: 80%',
+  classes: 'obUiModalRejectQuotationRejectReason',
   renderLine: enyo.kind({
     kind: 'enyo.Option',
+    classes: 'obUiModalRejectQuotationRejectReason-renderLine-enyoOption',
     initComponents: function() {
       this.inherited(arguments);
       this.setValue(this.model.get('id'));
@@ -51,16 +53,17 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.UI.ModalRejectQuotation',
+  classes: 'obUiModalRejectQuotation',
   myId: 'modalRejectQuotation',
   bodyContent: {
+    classes: 'obUiModalRejectQuotation-bodyContent',
     components: [
       {
         name: 'labelRejectReason',
-        style:
-          'text-align: right; padding-right:10px; width: 40%; height: 40px; float: left;'
+        classes: 'obUiModalRejectQuotation-bodyContent-labelRejectReason'
       },
       {
-        style: 'width: 50%; float: left;',
+        classes: 'obUiModalRejectQuotation-bodyContent-rejectReason',
         kind: 'OB.UI.ModalRejectQuotationRejectReason',
         name: 'rejectReason'
       }
@@ -68,12 +71,17 @@ enyo.kind({
   },
   i18nHeader: 'OBPOS_RejectQuotation',
   bodyButtons: {
+    classes: 'obUiModalRejectQuotation-bodyButtons',
     components: [
       {
-        kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalRejectQuotationAccept'
+        kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalRejectQuotationAccept',
+        classes:
+          'obUiModalRejectQuotation-bodyButtons-obObposPointOfSaleUiModalsBtnModalRejectQuotationAccept'
       },
       {
-        kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalRejectQuotationCancel'
+        kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalRejectQuotationCancel',
+        classes:
+          'obUiModalRejectQuotation-bodyButtons-obObposPointOfSaleUiModalsBtnModalRejectQuotationCancel'
       }
     ]
   },

@@ -11,21 +11,21 @@
 
 enyo.kind({
   name: 'OB.UI.ModalChangeLine',
+  classes: 'obUiModalChangeLine',
   components: [
     {
       name: 'labelLine',
-      classes: 'properties-label changedialog-properties-label',
+      classes: 'obUiModalChangeLine-labelLine',
       content: ''
     },
     {
-      classes:
-        'modal-dialog-receipt-properties-text changedialog-properties-text',
+      classes: 'obUiModalChangeLine-container2',
       components: [
         {
           name: 'textline',
           kind: 'enyo.Input',
           type: 'text',
-          classes: 'input changedialog-properties-input',
+          classes: 'obUiModalChangeLine-container2-textline',
           oninput: 'actionInput',
           attributes: {
             maxlength: 22
@@ -34,20 +34,20 @@ enyo.kind({
       ]
     },
     {
-      classes: 'changedialog-properties-info',
+      classes: 'obUiModalChangeLine-container3',
       components: [
         {
           name: 'infomax',
-          classes: 'changedialog-properties-info-text'
+          classes: 'obUiModalChangeLine-container3-infomax'
         },
         {
           name: 'inforemaining',
-          classes: 'changedialog-properties-info-text'
+          classes: 'obUiModalChangeLine-container3-inforemaining'
         }
       ]
     },
     {
-      classes: 'changedialog-properties-end'
+      classes: 'obUiModalChangeLine-element4 u-clearBoth'
     }
   ],
   initComponents: function() {
@@ -208,12 +208,12 @@ enyo.kind({
     }
   },
   displayStatus: function() {
-    this.$.textline.removeClass('changedialog-properties-validation-ok');
-    this.$.textline.removeClass('changedialog-properties-validation-error');
+    this.$.textline.removeClass('obUiModalChangeLine-textline_validationOk');
+    this.$.textline.removeClass('obUiModalChangeLine-textline_validationError');
     this.$.textline.addClass(
       this.hasErrors || this.isOverpaid
-        ? 'changedialog-properties-validation-error'
-        : 'changedialog-properties-validation-ok'
+        ? 'obUiModalChangeLine-textline_validationError'
+        : 'obUiModalChangeLine-textline_validationOk'
     );
   }
 });

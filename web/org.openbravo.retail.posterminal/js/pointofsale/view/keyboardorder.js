@@ -403,38 +403,42 @@ enyo.kind({
       }),
       padName: 'Coins-' + payment.paymentMethod.currency,
       padPayment: payment.payment.searchKey,
+      classes: 'obUiKeypadCoinsLegacy',
       components: [
         {
-          classes: 'row-fluid',
+          classes: 'obUiKeypadCoinsLegacy-container1',
           components: [
             {
-              classes: 'span4',
+              classes: 'obUiKeypadCoinsLegacy-container1-container1',
               components: [
                 {
                   kind: 'OB.UI.ButtonKey',
-                  classButton: 'btnkeyboard-num',
+                  classButton:
+                    'obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic',
                   label: '/',
                   command: '/'
                 }
               ]
             },
             {
-              classes: 'span4',
+              classes: 'obUiKeypadCoinsLegacy-container1-container2',
               components: [
                 {
                   kind: 'OB.UI.ButtonKey',
-                  classButton: 'btnkeyboard-num',
+                  classButton:
+                    'obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic',
                   label: '*',
                   command: '*'
                 }
               ]
             },
             {
-              classes: 'span4',
+              classes: 'obUiKeypadCoinsLegacy-container1-containe3',
               components: [
                 {
                   kind: 'OB.UI.ButtonKey',
-                  classButton: 'btnkeyboard-num',
+                  classButton:
+                    'obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic',
                   label: '%',
                   command: '%'
                 }
@@ -443,10 +447,10 @@ enyo.kind({
           ]
         },
         {
-          classes: 'row-fluid',
+          classes: 'obUiKeypadCoinsLegacy-container2',
           components: [
             {
-              classes: 'span4',
+              classes: 'obUiKeypadCoinsLegacy-container2-container1',
               components: [
                 this.buildCoinsAndNotesButton(
                   payment.payment.searchKey,
@@ -455,7 +459,7 @@ enyo.kind({
               ]
             },
             {
-              classes: 'span4',
+              classes: 'obUiKeypadCoinsLegacy-container2-container2',
               components: [
                 this.buildCoinsAndNotesButton(
                   payment.payment.searchKey,
@@ -464,7 +468,7 @@ enyo.kind({
               ]
             },
             {
-              classes: 'span4',
+              classes: 'obUiKeypadCoinsLegacy-container2-container3',
               components: [
                 this.buildCoinsAndNotesButton(
                   payment.payment.searchKey,
@@ -475,10 +479,10 @@ enyo.kind({
           ]
         },
         {
-          classes: 'row-fluid',
+          classes: 'obUiKeypadCoinsLegacy-container3',
           components: [
             {
-              classes: 'span4',
+              classes: 'obUiKeypadCoinsLegacy-container3-container1',
               components: [
                 this.buildCoinsAndNotesButton(
                   payment.payment.searchKey,
@@ -487,7 +491,7 @@ enyo.kind({
               ]
             },
             {
-              classes: 'span4',
+              classes: 'obUiKeypadCoinsLegacy-container3-container2',
               components: [
                 this.buildCoinsAndNotesButton(
                   payment.payment.searchKey,
@@ -496,7 +500,7 @@ enyo.kind({
               ]
             },
             {
-              classes: 'span4',
+              classes: 'obUiKeypadCoinsLegacy-container3-container3',
               components: [
                 this.buildCoinsAndNotesButton(
                   payment.payment.searchKey,
@@ -507,10 +511,10 @@ enyo.kind({
           ]
         },
         {
-          classes: 'row-fluid',
+          classes: 'obUiKeypadCoinsLegacy-container4',
           components: [
             {
-              classes: 'span4',
+              classes: 'obUiKeypadCoinsLegacy-container4-container1',
               components: [
                 this.buildCoinsAndNotesButton(
                   payment.payment.searchKey,
@@ -519,7 +523,7 @@ enyo.kind({
               ]
             },
             {
-              classes: 'span4',
+              classes: 'obUiKeypadCoinsLegacy-container4-container2',
               components: [
                 this.buildCoinsAndNotesButton(
                   payment.payment.searchKey,
@@ -528,7 +532,7 @@ enyo.kind({
               ]
             },
             {
-              classes: 'span4',
+              classes: 'obUiKeypadCoinsLegacy-container4-container3',
               components: [
                 this.buildCoinsAndNotesButton(
                   payment.payment.searchKey,
@@ -539,10 +543,10 @@ enyo.kind({
           ]
         },
         {
-          classes: 'row-fluid',
+          classes: 'obUiKeypadCoinsLegacy-container5',
           components: [
             {
-              classes: 'span4',
+              classes: 'obUiKeypadCoinsLegacy-container5-container1',
               components: [
                 this.buildCoinsAndNotesButton(
                   payment.payment.searchKey,
@@ -551,7 +555,7 @@ enyo.kind({
               ]
             },
             {
-              classes: 'span4',
+              classes: 'obUiKeypadCoinsLegacy-container5-container2',
               components: [
                 this.buildCoinsAndNotesButton(
                   payment.payment.searchKey,
@@ -560,7 +564,7 @@ enyo.kind({
               ]
             },
             {
-              classes: 'span4',
+              classes: 'obUiKeypadCoinsLegacy-container5-container3',
               components: [
                 this.buildCoinsAndNotesButton(
                   payment.payment.searchKey,

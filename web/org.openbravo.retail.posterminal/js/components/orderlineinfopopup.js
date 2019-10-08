@@ -12,7 +12,7 @@
 enyo.kind({
   name: 'OBRDM.UI.OrderLineInfoPopup',
   kind: 'OB.UI.Modal',
-  topPosition: '44px',
+  classes: 'obrdmUiOrderLineInfoPopup',
   i18nHeader: 'OBRDM_LblInformation',
   body: {
     kind: 'OBRDM.UI.OrderLineInfo_body'
@@ -45,18 +45,20 @@ enyo.kind({
 
 enyo.kind({
   name: 'OBRDM.UI.OrderLineInfo_body',
+  classes: 'obrdmUiOrderLineInfoBody',
   components: [
     {
       name: 'table',
-      kind: 'OBRDM.UI.OrderLineInfoTable'
+      kind: 'OBRDM.UI.OrderLineInfoTable',
+      classes: 'obrdmUiOrderLineInfoBody-table'
     },
     {
       name: 'buttonFooter',
-      classes: 'obrdm-orderlineinfo-buttonfooter',
+      classes: 'obrdmUiOrderLineInfoBody-buttonFooter',
       components: [
         {
           name: 'infoButtons',
-          classes: 'obrdm-orderlineinfo-infobuttons'
+          classes: 'obrdmUiOrderLineInfoBody-buttonFooter-infoButtons'
         }
       ]
     }
@@ -64,7 +66,8 @@ enyo.kind({
   buttons: [
     {
       kind: 'OBRDM.UI.OrderLineInfoCloseBtn',
-      name: 'buttoncancel'
+      name: 'buttoncancel',
+      classes: 'obrdmUiOrderLineInfoBody-buttoncancel'
     }
   ],
   initComponents: function() {
@@ -94,18 +97,18 @@ enyo.kind({
 
 enyo.kind({
   name: 'OBRDM.UI.OrderLineInfoLine',
-  classes: 'obrdm-orderlineinfo-line',
+  classes: 'obrdmUiOrderLineInfoLine',
   handlers: {
     onShowInfo: 'showInfo'
   },
   components: [
     {
       name: 'label',
-      classes: 'obrdm-orderlineinfo-line-label'
+      classes: 'obrdmUiOrderLineInfoLine-label'
     },
     {
       name: 'value',
-      classes: 'obrdm-orderlineinfo-line-value'
+      classes: 'obrdmUiOrderLineInfoLine-value'
     }
   ],
   initComponents: function() {
@@ -122,7 +125,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OBRDM.UI.OrderLineInfoTable',
-  classes: 'obrdm-orderlineinfo-table',
+  classes: 'obrdmUiOrderLineInfoTable',
   infoTableComponents: [],
   components: [],
   initComponents: function() {

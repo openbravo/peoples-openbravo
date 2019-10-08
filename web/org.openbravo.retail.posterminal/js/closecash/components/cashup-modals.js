@@ -12,19 +12,26 @@
 enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.OBPOSCashUp.UI.modalPendingToProcess',
+  classes: 'obObposCashupUiModalPendingToProcess',
   i18nHeader: 'OBPOS_LblReceiptsToProcess',
   bodyContent: {
+    classes: 'obObposCashupUiModalPendingToProcess-bodyContent',
     i18nContent: 'OBPOS_MsgReceiptsProcess'
   },
   bodyButtons: {
+    classes: 'obObposCashupUiModalPendingToProcess-bodyButtons',
     components: [
       {
-        //OK button
-        kind: 'OB.OBPOSCashUp.UI.modalPendingToProcess_OkButton'
+        //Cancel button
+        kind: 'OB.OBPOSCashUp.UI.modalPendingToProcess_CancelButton',
+        classes:
+          'obObposCashupUiModalPendingToProcess-bodyButtons-obObposCashupUiModalPendingToProcessCancelButton'
       },
       {
-        //Cancel button
-        kind: 'OB.OBPOSCashUp.UI.modalPendingToProcess_CancelButton'
+        //OK button
+        kind: 'OB.OBPOSCashUp.UI.modalPendingToProcess_OkButton',
+        classes:
+          'obObposCashupUiModalPendingToProcess-bodyButtons-obObposCashupUiModalPendingToProcessOkButton'
       }
     ]
   }
@@ -33,6 +40,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSCashUp.UI.modalPendingToProcess_OkButton',
+  classes: 'obObposCashupUiModalPendingToProcessOkButton',
   i18nContent: 'OBMOBC_LblOk',
   isDefaultAction: true,
   tap: function() {
@@ -43,6 +51,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSCashUp.UI.modalPendingToProcess_CancelButton',
+  classes: 'obObposCashupUiModalPendingToProcessCancelButton',
   i18nContent: 'OBMOBC_LblCancel',
   tap: function() {
     this.doHideThisPopup();

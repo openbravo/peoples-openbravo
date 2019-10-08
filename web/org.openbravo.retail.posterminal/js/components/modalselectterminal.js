@@ -10,59 +10,60 @@
 /*global enyo, _ */
 
 enyo.kind({
-  kind: 'OB.UI.ModalAction',
+  kind: 'OB.UI.Modal',
   name: 'OB.UI.ModalSelectTerminal',
+  classes: 'obUiModalSelectTerminal',
   closeOnEscKey: false,
   autoDismiss: false,
+  hideCloseButton: true,
   executeOnShow: function() {
-    this.$.bodyButtons.$.terminalKeyIdentifier.attributes.placeholder = OB.I18N.getLabel(
+    this.$.footer.$.terminalKeyIdentifier.attributes.placeholder = OB.I18N.getLabel(
       'OBPOS_TerminalKeyIdentifier'
     );
-    this.$.bodyButtons.$.username.attributes.placeholder = OB.I18N.getLabel(
+    this.$.footer.$.username.attributes.placeholder = OB.I18N.getLabel(
       'OBMOBC_LoginUserInput'
     );
-    this.$.bodyButtons.$.password.attributes.placeholder = OB.I18N.getLabel(
+    this.$.footer.$.password.attributes.placeholder = OB.I18N.getLabel(
       'OBMOBC_LoginPasswordInput'
     );
   },
-  bodyContent: {
+  i18nHeader: 'OBPOS_SelectTerminalHeader',
+  body: {
+    classes: 'obUiModalSelectTerminal-body',
     i18nContent: 'OBPOS_SelectTerminalMsg'
   },
-  bodyButtons: {
+  footer: {
+    classes: 'obUiModalSelectTerminal-footer',
     components: [
       {
         kind: 'enyo.Input',
         type: 'text',
         name: 'terminalKeyIdentifier',
-        classes: 'input-login',
-        style: 'display: block; margin-left: auto; margin-right: auto;',
+        classes: 'obUiModalSelectTerminal-footer-terminalKeyIdentifier',
         onkeydown: 'inputKeydownHandler'
       },
       {
         kind: 'enyo.Input',
         type: 'text',
         name: 'username',
-        classes: 'input-login',
-        style: 'display: block; margin-left: auto; margin-right: auto;',
+        classes: 'obUiModalSelectTerminal-footer-username',
         onkeydown: 'inputKeydownHandler'
       },
       {
         kind: 'enyo.Input',
         type: 'password',
         name: 'password',
-        classes: 'input-login',
-        style: 'display: block; margin-left: auto; margin-right: auto;',
+        classes: 'obUiModalSelectTerminal-footer-password',
         onkeydown: 'inputKeydownHandler'
       },
       {
+        classes: 'obUiModalSelectTerminal-footer-element1',
         kind: 'OB.UI.btnApplyTerminal'
       }
     ]
   },
   initComponents: function() {
-    this.header = OB.I18N.getLabel('OBPOS_SelectTerminalHeader');
     this.inherited(arguments);
-    this.$.headerCloseButton.hide();
     OB.MobileApp.view.currentWindow = 'terminalAuthentication';
   }
 });
@@ -70,6 +71,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.btnApplyTerminal',
+  classes: 'obUiBtnApplyTerminal',
   isDefaultAction: true,
   i18nContent: 'OBPOS_LblApplyButton',
   tap: function() {

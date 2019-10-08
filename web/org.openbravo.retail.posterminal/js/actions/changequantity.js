@@ -261,7 +261,7 @@
       window: 'retail.pointofsale',
       name: 'removeQuantity',
       properties: {
-        label: '-'
+        i18nContent: 'OBMOBC_MinusSign'
       },
       calculateToAdd: function(receipt, qty, value) {
         return -(value || 1);

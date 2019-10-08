@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -12,32 +12,30 @@
 enyo.kind({
   name: 'OB.UI.RenderCategory',
   kind: 'OB.UI.listItemButton',
+  classes: 'obUiRenderCategory',
   components: [
     {
-      style: 'float: left; width: 25%',
+      classes: 'obUiRenderCategory-thumbnailContainer',
       components: [
         {
+          classes: 'obUiRenderCategory-thumbnailContainer-thumbnail',
           kind: 'OB.UI.Thumbnail',
           name: 'thumbnail'
         }
       ]
     },
     {
-      style: 'float: left; width: 75%;',
+      classes: 'obUiRenderCategory-identifierContainer',
       components: [
         {
           name: 'identifier',
-          style: 'padding-left: 5px;'
-        },
-        {
-          style: 'clear:both;'
+          classes: 'obUiRenderCategory-identifierContainer-identifier'
         }
       ]
     }
   ],
   initComponents: function() {
     this.inherited(arguments);
-    this.addClass('btnselect-browse');
     this.$.identifier.setContent(this.model.get('_identifier'));
     this.$.thumbnail.setImg(this.model.get('img'));
 
@@ -55,27 +53,19 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.RenderCategoryExpand',
-  kind: 'Image',
-  src: '../org.openbravo.retail.posterminal/img/iconExpand.png',
-  sizing: 'cover',
-  width: 26,
-  height: 26
+  classes: 'obUiRenderCategoryExpand'
 });
 
 enyo.kind({
   name: 'OB.UI.RenderCategoryCollapse',
-  kind: 'Image',
-  src: '../org.openbravo.retail.posterminal/img/iconCollapse.png',
-  sizing: 'cover',
-  width: 26,
-  height: 26,
+  classes: 'obUiRenderCategoryCollapse',
   showing: false
 });
 
 enyo.kind({
   name: 'OB.UI.RenderCategoryTree',
   kind: 'OB.UI.listItemButton',
-  style: 'height: 41px;',
+  classes: 'obUiRenderCategoryTree',
   handlers: {
     onkeydown: 'keydownHandler'
   },
@@ -108,26 +98,30 @@ enyo.kind({
   },
   components: [
     {
-      style: 'float:left; width: calc(100% - 40px);',
+      classes: 'obUiRenderCategoryTree-identifierContainer',
       components: [
         {
-          classes: 'product_category_tree_identifier',
+          classes: 'obUiRenderCategoryTree-identifierContainer-identifier',
           name: 'identifier'
         }
       ]
     },
     {
-      style: 'float:left; width: 40px; text-align: right; margin-top: -8px;',
+      classes: 'obUiRenderCategoryTree-expandCollapseContainer',
       components: [
         {
           name: 'expandCollapse',
-          style: 'height: 33px; padding-right: 7px; padding-top: 7px;',
+          classes:
+            'obUiRenderCategoryTree-expandCollapseContainer-expandCollapse',
           components: [
             {
+              classes: 'obUiRenderCategoryTree-expandCollapseContainer-expand',
               kind: 'OB.UI.RenderCategoryExpand',
               name: 'expand'
             },
             {
+              classes:
+                'obUiRenderCategoryTree-expandCollapseContainer-collapse',
               kind: 'OB.UI.RenderCategoryCollapse',
               name: 'collapse'
             }
@@ -143,14 +137,11 @@ enyo.kind({
 
   initComponents: function() {
     this.inherited(arguments);
-    this.addClass('btnselect-browse');
     this.$.identifier.setContent(this.model.get('_identifier'));
-    this.$.identifier.setStyle(
-      'padding-left: ' +
-        14 * this.model.get('level') +
-        'px; ' +
-        (this.model.id === '__all__' ? 'font-weight: bold; ' : '')
-    );
+    this.$.identifier.addClass('identifierLevel-' + this.model.get('level'));
+    if (this.model.id === '__all__') {
+      this.$.identifier.addClass('identifierAll');
+    }
     this.$.expandCollapse.setShowing(this.model.get('issummary'));
     this.$.expand.setShowing(this.model.get('treeNode') !== 'EXPANDED');
     this.$.collapse.setShowing(this.model.get('treeNode') === 'EXPANDED');

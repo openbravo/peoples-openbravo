@@ -12,14 +12,12 @@
 /*left toolbar*/
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.LeftToolbarButton',
-  tag: 'li',
-  classes: 'span4',
+  classes: 'obObposPointOfSaleUiLeftToolbarButton',
   components: [
     {
       name: 'theButton',
-      attributes: {
-        style: 'margin: 0px 5px 0px 5px;'
-      }
+      classes: 'obObposPointOfSaleUiLeftToolbarButton-theButton',
+      attributes: {}
     }
   ],
   initComponents: function() {
@@ -30,11 +28,11 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.LeftToolbar',
-  classes: 'span3',
+  classes: 'obObposPointOfSaleUiLeftToolbar',
   components: [
     {
       tag: 'ul',
-      classes: 'unstyled nav-pos row-fluid',
+      classes: 'obObposPointOfSaleUiLeftToolbar-toolbar row-fluid',
       name: 'toolbar'
     }
   ],
@@ -45,6 +43,8 @@ enyo.kind({
       function(btn) {
         this.$.toolbar.createComponent({
           kind: 'OB.OBPOSPointOfSale.UI.LeftToolbarButton',
+          classes:
+            'obObposPointOfSaleUiLeftToolbar-toolbar-obObposPointOfSaleUiLeftToolbarButton',
           button: btn
         });
       },
@@ -56,7 +56,8 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ButtonNew',
   kind: 'OB.UI.ToolbarButton',
-  icon: 'btn-icon btn-icon-new',
+  i18nContent: 'OBMOBC_NewReceipt',
+  classes: 'obUiButtonNew',
   events: {
     onAddNewOrder: ''
   },
@@ -79,7 +80,7 @@ enyo.kind({
     this.isLocked = false;
     this.setDisabledIfSynchronized();
   },
-  setDisabled: function(value) {
+  setButtonDisabled: function(value) {
     this.lastDisabledStatus = value;
     this.setDisabledIfSynchronized();
   },
@@ -95,17 +96,17 @@ enyo.kind({
       return true;
     }
     this.disabled = value;
-    this.setAttribute('disabled', value);
+    this.setDisabled(value);
   },
   disabledButton: function(inSender, inEvent) {
     this.updateDisabled(inEvent.disableButtonNew || inEvent.status);
   },
   updateDisabled: function(isDisabled) {
-    this.setDisabled(isDisabled);
+    this.setButtonDisabled(isDisabled);
     if (isDisabled) {
-      this.removeClass('btn-icon-new');
+      this.addClass('empty');
     } else {
-      this.addClass('btn-icon-new');
+      this.removeClass('empty');
     }
   },
   init: function(model) {
@@ -157,7 +158,9 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ButtonDelete',
   kind: 'OB.UI.ToolbarButton',
-  icon: 'btn-icon btn-icon-delete',
+  i18nContent: 'OBMOBC_DeleteReceipt',
+  i18nContentPaidTicket: 'OBMOBC_CloseReceipt',
+  classes: 'obUiButtonDelete',
   events: {
     onShowPopup: '',
     onDeleteOrder: '',
@@ -184,7 +187,7 @@ enyo.kind({
     this.isLocked = false;
     this.setDisabledIfSynchronized();
   },
-  setDisabled: function(value) {
+  setButtonDisabled: function(value) {
     this.lastDisabledStatus = value;
     this.setDisabledIfSynchronized();
   },
@@ -200,17 +203,17 @@ enyo.kind({
       return true;
     }
     this.disabled = value;
-    this.setAttribute('disabled', value);
+    this.setDisabled(value);
   },
   disabledButton: function(inSender, inEvent) {
     this.updateDisabled(inEvent.status);
   },
   updateDisabled: function(isDisabled) {
-    this.setDisabled(isDisabled);
+    this.setButtonDisabled(isDisabled);
     if (isDisabled) {
-      this.removeClass('btn-icon-delete');
+      this.addClass('empty');
     } else {
-      this.addClass('btn-icon-delete');
+      this.removeClass('empty');
     }
   },
   tap: function() {
@@ -264,12 +267,20 @@ enyo.kind({
       }
     }
   },
+  addPaidTicketClass: function() {
+    this.addClass('paidticket');
+    this.setLabel(OB.I18N.getLabel(this.i18nContentPaidTicket));
+  },
+  removePaidTicketClass: function() {
+    this.removeClass('paidticket');
+    this.setLabel(OB.I18N.getLabel(this.i18nContent));
+  },
   init: function(model) {
     this.model = model;
     this.model.get('leftColumnViewManager').on(
       'multiorder',
       function() {
-        this.addClass('paidticket');
+        this.addPaidTicketClass();
         return true;
       },
       this
@@ -277,7 +288,7 @@ enyo.kind({
     this.model.get('leftColumnViewManager').on(
       'order',
       function() {
-        this.removeClass('paidticket');
+        this.removePaidTicketClass();
         if (
           this.model.get('order').get('isPaid') ||
           this.model.get('order').get('isLayaway') ||
@@ -285,7 +296,7 @@ enyo.kind({
             this.model.get('order').get('hasbeenpaid') === 'Y') ||
           this.model.get('order').get('isModified')
         ) {
-          this.addClass('paidticket');
+          this.addPaidTicketClass();
         }
         this.bubble('onChangeTotal', {
           newTotal: this.model.get('order').getTotal()
@@ -312,10 +323,10 @@ enyo.kind({
             changedModel.get('hasbeenpaid') === 'Y') ||
           changedModel.get('isModified')
         ) {
-          this.addClass('paidticket');
+          this.addPaidTicketClass();
           return;
         }
-        this.removeClass('paidticket');
+        this.removePaidTicketClass();
       },
       this
     );
@@ -332,7 +343,9 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabPayment',
   kind: 'OB.UI.ToolbarButtonTab',
+  classes: 'obObposPointOfSaleUiButtonTabPayment',
   tabPanel: 'payment',
+  i18nContent: 'OBMOBC_LblCheckout',
   handlers: {
     onChangedTotal: 'renderTotal',
     onRightToolbarDisabled: 'disabledButton'
@@ -355,9 +368,11 @@ enyo.kind({
     this.disabledChanged(inEvent.status);
   },
   disableButton: function() {
+    this.setDisabled(true);
     this.disabledChanged(true);
   },
   enableButton: function() {
+    this.setDisabled(false);
     this.disabledChanged(false);
   },
   disabledChanged: function(isDisabled) {
@@ -463,25 +478,33 @@ enyo.kind({
       return true;
     }
     var newIsDisabledState;
-    var discountEdit = this.owner.owner.owner.owner.owner.owner.$.rightPanel.$
-      .toolbarpane
-      ? this.owner.owner.owner.owner.owner.owner.$.rightPanel.$.toolbarpane.$
-          .edit.$.editTabContent.$.discountsEdit.showing
+    // [TODO] Must discuss if there is a better way to show discretionary discount pane
+    var discountEdit = this.owner.owner.owner.owner.$.rightPanel.$.toolbarpane
+      ? this.owner.owner.owner.owner.$.rightPanel.$.toolbarpane.$.edit.$
+          .editTabContent.$.discountsEdit.showing
       : false;
     if (requirementsAreMet(this.model)) {
       newIsDisabledState = false;
-      this.$.totalPrinter.show();
+      this.totalPrinter.show();
       if (!hasBeenPaid) {
-        this.$.totalPrinter.removeClass('blackcolor');
-        this.$.totalPrinter.addClass('whitecolor');
+        this.totalPrinter.removeClass(
+          'obObposPointOfSaleUiButtonTabPayment-totalPrinter_black'
+        );
+        this.totalPrinter.addClass(
+          'obObposPointOfSaleUiButtonTabPayment-totalPrinter_white '
+        );
       }
     } else {
       newIsDisabledState = true;
       if (discountEdit) {
-        this.$.totalPrinter.hide();
+        this.totalPrinter.hide();
       } else if (OB.MobileApp.model.get('serviceSearchMode')) {
-        this.$.totalPrinter.removeClass('whitecolor');
-        this.$.totalPrinter.addClass('blackcolor');
+        this.totalPrinter.removeClass(
+          'obObposPointOfSaleUiButtonTabPayment-totalPrinter_white '
+        );
+        this.totalPrinter.addClass(
+          'obObposPointOfSaleUiButtonTabPayment-totalPrinter_black'
+        );
       }
     }
 
@@ -516,10 +539,12 @@ enyo.kind({
     this.disabled = newIsDisabledState; // for getDisabled() to return the correct value
     this.setAttribute('disabled', newIsDisabledState); // to effectively turn the button enabled or disabled
     if (hasBeenPaid && !newIsDisabledState) {
-      this.$.totalPrinter.removeClass('whitecolor');
-      this.addClass('btnlink-gray');
+      this.totalPrinter.removeClass(
+        'obObposPointOfSaleUiButtonTabPayment-totalPrinter_white'
+      );
+      this.addClass('obObposPointOfSaleUiButtonTabPayment_disabled');
     } else {
-      this.removeClass('btnlink-gray');
+      this.removeClass('obObposPointOfSaleUiButtonTabPayment_disabled');
     }
   },
   events: {
@@ -874,22 +899,21 @@ enyo.kind({
       });
     }
   },
-  attributes: {
-    style: 'text-align: center; font-size: 30px;'
-  },
-  components: [
+  attributes: {},
+  customComponents: [
     {
       kind: 'OB.UI.FitText',
       name: 'totalButtonDiv',
       minFontSize: 15,
-      maxFontSize: 30,
+      maxFontSize: 26,
       maxHeight: 57,
-      classes: 'buttonText',
-      style: 'font-weight: bold; display: initial;',
+      classes: 'obObposPointOfSaleUiButtonTabPayment-totalButtonDiv buttonText',
       components: [
         {
           tag: 'span',
           name: 'totalPrinter',
+          classes:
+            'obObposPointOfSaleUiButtonTabPayment-totalButtonDiv-totalPrinter',
           renderTotal: function(total) {
             this.setContent(OB.I18N.formatCurrency(total));
             //It needs an small asynch to be rendered and then we can adaptFontSize
@@ -906,17 +930,20 @@ enyo.kind({
     }
   ],
   getLabel: function() {
-    return this.$.totalPrinter.getContent();
+    return this.totalPrinter.getContent();
   },
   initComponents: function() {
     this.inherited(arguments);
+    //FIXME: handle properly the css classes to show the required background depending on the status
+    this.$.icon.createComponents(this.customComponents);
+    this.totalPrinter = this.$.icon.$.totalPrinter;
     this.removeClass('btnlink-gray');
   },
   destroyComponents: function() {
     this.inherited(arguments);
   },
   renderTotal: function(inSender, inEvent) {
-    this.$.totalPrinter.renderTotal(inEvent.newTotal);
+    this.totalPrinter.renderTotal(inEvent.newTotal);
     this.disabledChanged(false);
   },
   init: function(model) {
@@ -955,147 +982,24 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.LeftToolbarImpl',
-  kind: 'OB.UI.MultiColumn.Toolbar',
-  menuEntries: [
-    {
-      kind: 'OB.UI.MenuDisableEnableRFIDReader'
-    },
-    {
-      kind: 'OB.UI.MenuSeparator',
-      name: 'sep0',
-      init: function(model) {
-        if (
-          !OB.MobileApp.model.get('terminal').terminalType.useRfid ||
-          !OB.POS.hwserver.url
-        ) {
-          this.hide();
-        }
-      }
-    }
-  ],
+  kind: 'OB.OBPOSPointOfSale.UI.ToolbarImpl',
+  classes: 'obObposPointOfSaleUiLeftToolbarImpl',
   buttons: [
     {
       kind: 'OB.UI.ButtonNew',
-      span: 3
+      classes: 'obObposPointOfSaleUiLeftToolbarImpl-obUiButtonNew'
     },
     {
       kind: 'OB.UI.ButtonDelete',
-      span: 3
+      classes: 'obObposPointOfSaleUiLeftToolbarImpl-ButtonDelete'
     },
     {
       kind: 'OB.OBPOSPointOfSale.UI.ButtonTabPayment',
-      name: 'btnTotalToPay',
-      span: 6
+      classes: 'obObposPointOfSaleUiLeftToolbarImpl-ButtonTabPayment',
+      name: 'btnTotalToPay'
     }
   ],
   initComponents: function() {
-    // set up the POS menu
-    //Menu entries is used for modularity. cannot be initialized
-    //this.menuEntries = [];
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuReceiptSelector'
-    });
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuReturn'
-    });
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuVoidLayaway'
-    });
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuReceiptLayaway'
-    });
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuCancelLayaway'
-    });
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuProperties'
-    });
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuInvoice'
-    });
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuPrint'
-    });
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuLayaway'
-    });
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuCancelAndReplace'
-    });
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuCustomers'
-    });
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuOpenDrawer'
-    });
-    // TODO: what is this for?!!
-    // this.menuEntries = this.menuEntries.concat(this.externalEntries);
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuSeparator',
-      name: 'sep1'
-    });
-
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuDiscounts'
-    });
-
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuSeparator',
-      name: 'sep2'
-    });
-
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuReactivateQuotation'
-    });
-
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuRejectQuotation'
-    });
-
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuCreateOrderFromQuotation'
-    });
-
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuCreateQuotationFromOrder'
-    });
-
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuQuotation'
-    });
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuMultiOrders'
-    });
-
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuSeparator',
-      name: 'sep3'
-    });
-
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuBackOffice'
-    });
-
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuSelectPrinter'
-    });
-
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuSelectPDFPrinter'
-    });
-
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuForceIncrementalRefresh'
-    });
-
-    this.menuEntries.push({
-      kind: 'OB.UI.MenuTestPrinter'
-    });
-
-    //remove duplicates
-    this.menuEntries = _.uniq(this.menuEntries, false, function(p) {
-      return p.kind + p.name;
-    });
     this.inherited(arguments);
   }
 });

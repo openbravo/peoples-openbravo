@@ -12,6 +12,7 @@
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.Modals.btnModalPriceModificationCancel',
+  classes: 'obObposPointOfSaleUiModalsBtnModalPriceModificationCancel',
   i18nContent: 'OBMOBC_LblCancel',
   tap: function() {
     this.doHideThisPopup();
@@ -21,6 +22,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.Modals.btnModalPriceModificationAccept',
+  classes: 'obObposPointOfSaleUiModalsBtnModalPriceModificationAccept',
   i18nContent: 'OBMOBC_LblOk',
   events: {
     onPriceModificationDone: ''
@@ -34,10 +36,10 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.List',
   name: 'OB.UI.ModalPriceModificationReason',
-  classes: 'combo',
-  style: 'width: 80%',
+  classes: 'obUiModalPriceModificationReason',
   renderLine: enyo.kind({
     kind: 'enyo.Option',
+    classes: 'obUiModalPriceModificationReason-renderLine-enyoOption',
     initComponents: function() {
       this.inherited(arguments);
       this.setValue(this.model.get('id'));
@@ -53,30 +55,38 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.UI.ModalPriceModification',
+  classes: 'obUiModalPriceModification',
   myId: 'modalPriceModification',
   autoDismiss: false,
   closeOnEscKey: false,
   bodyContent: {
+    classes: 'obUiModalPriceModification-bodyContent',
     components: [
       {
         name: 'labelPriceModification',
-        classes: 'modal-body-label'
+        classes: 'obUiModalPriceModification-bodyContent-labelPriceModification'
       },
       {
-        style: 'width: 50%; float: left;',
         kind: 'OB.UI.ModalPriceModificationReason',
-        name: 'priceModificationReason'
+        name: 'priceModificationReason',
+        classes:
+          'obUiModalPriceModification-bodyContent-priceModificationReason'
       }
     ]
   },
   i18nHeader: 'OBPOS_PriceModification',
   bodyButtons: {
+    classes: 'obUiModalPriceModification-bodyButtons',
     components: [
       {
-        kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalPriceModificationAccept'
+        kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalPriceModificationAccept',
+        classes:
+          'obUiModalPriceModification-bodyButtons-obObposPointOfSaleUiModalsBtnModalPriceModificationAccept'
       },
       {
-        kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalPriceModificationCancel'
+        kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalPriceModificationCancel',
+        classes:
+          'obUiModalPriceModification-bodyButtons-obObposPointOfSaleUiModalsBtnModalPriceModificationCancel'
       }
     ]
   },

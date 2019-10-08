@@ -12,25 +12,26 @@
 enyo.kind({
   name: 'SelectPrintersLine',
   printer: {},
+  classes: 'selectPrinterLine',
   printerscontainer: null,
   handlers: {
     onSelectLine: 'selectLine'
   },
   components: [
     {
-      style:
-        'line-height: 23px; width: 100%; padding-left: 15px; border-bottom: 1px solid #ccc;',
+      classes: 'selectPrinterLine-container1',
       components: [
         {
+          classes: 'selectPrinterLine-container1-container1',
           components: [
             {
               kind: 'OB.UI.RadioButton',
               name: 'selected',
-              style: 'float: left; padding-left: 60px; margin: 10px;',
+              classes: 'selectPrinterLine-container1-container1-selected',
               components: [
                 {
                   name: 'printer',
-                  classes: 'printerLine'
+                  classes: 'selectPrinterLine-selected-printer'
                 }
               ],
               tap: function() {
@@ -40,7 +41,7 @@ enyo.kind({
           ]
         },
         {
-          style: 'clear: both;'
+          classes: 'selectPrinterLine-container1-container2'
         }
       ]
     }
@@ -57,6 +58,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'SelectPrintersApply',
+  classes: 'selectPrintersApply',
   i18nLabel: 'OBMOBC_LblApply',
   isDefaultAction: true,
   events: {
@@ -72,6 +74,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'SelectPrintersCancel',
+  classes: 'selectPrintersCancel',
   i18nLabel: 'OBMOBC_LblCancel',
   events: {
     onCancelChanges: ''
@@ -84,20 +87,21 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.ModalSelectPrinters',
-  kind: 'OB.UI.ModalAction',
+  kind: 'OB.UI.Modal',
+  classes: 'obUiModalSelectPrinters',
   handlers: {
     onApplyChanges: 'applyChanges',
     onCancelChanges: 'cancelChanges'
   },
-  bodyContent: {
+  i18nHeader: 'OBPOS_SelectPrintersTitle',
+  body: {
     kind: 'Scroller',
-    maxHeight: '225px',
-    style: 'background-color: #ffffff;',
     thumb: true,
-    horizontal: 'hidden',
+    classes: 'obUiModalSelectPrinters-body',
     components: [
       {
         name: 'printerslist',
+        classes: 'obUiModalSelectPrinters-body-printerslist',
         selectURL: function(hardwareId) {
           var isalreadychecked = false;
 
@@ -133,13 +137,16 @@ enyo.kind({
       }
     ]
   },
-  bodyButtons: {
+  footer: {
+    classes: 'obUiModal-footer-mainButtons obUiModalSelectPrinters-footer',
     components: [
       {
-        kind: 'SelectPrintersApply'
+        classes: 'obUiModalSelectPrinters-footer-selectPrinterCancel',
+        kind: 'SelectPrintersCancel'
       },
       {
-        kind: 'SelectPrintersCancel'
+        classes: 'obUiModalSelectPrinters-footer-selectPrinterApply',
+        kind: 'SelectPrintersApply'
       }
     ]
   },
@@ -162,9 +169,8 @@ enyo.kind({
 
   initComponents: function() {
     this.inherited(arguments);
-    this.printerscontainer = this.$.bodyContent.$.printerslist;
+    this.printerscontainer = this.$.body.$.printerslist;
     this.autoDismiss = false;
-    this.setHeader(OB.I18N.getLabel('OBPOS_SelectPrintersTitle'));
     this.successCallbackArray = [];
     this.cancellCallbackArray = [];
     this.hideCallbackArray = [];
@@ -240,13 +246,13 @@ enyo.kind({
     ) {
       this.closeOnEscKey = false;
       this.autoDismiss = false;
-      this.$.bodyButtons.$.selectPrintersCancel.hide();
-      this.$.headerCloseButton.hide();
+      this.$.footer.$.selectPrintersCancel.hide();
+      this.$.closebutton.hide();
     } else {
       this.closeOnEscKey = true;
       this.autoDismiss = true;
-      this.$.bodyButtons.$.selectPrintersCancel.show();
-      this.$.headerCloseButton.show();
+      this.$.footer.$.selectPrintersCancel.show();
+      this.$.closebutton.show();
     }
 
     if (OB.POS.hwserver.activeurl) {
@@ -264,19 +270,20 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalSelectPDFPrinters',
   kind: 'OB.UI.ModalAction',
+  classes: 'obUiModalSelectPDFPrinters',
   handlers: {
     onApplyChanges: 'applyChanges',
     onCancelChanges: 'cancelChanges'
   },
-  bodyContent: {
+  i18nHeader: 'OBPOS_SelectPDFPrintersTitle',
+  body: {
+    classes: 'obUiModalSelectPDFPrinters-body',
     kind: 'Scroller',
-    maxHeight: '225px',
-    style: 'background-color: #ffffff;',
     thumb: true,
-    horizontal: 'hidden',
     components: [
       {
         name: 'printerslist',
+        classes: 'obUiModalSelectPDFPrinters-body-printerslist',
         selectURL: function(hardwareId) {
           var isalreadychecked = false;
 
@@ -312,15 +319,18 @@ enyo.kind({
       }
     ]
   },
-  bodyButtons: {
+  footer: {
+    classes: 'obUiModal-footer-mainButtons obUiModalSelectPDFPrinters-footer',
     components: [
       {
-        name: 'SelectPDFPrintersApply',
-        kind: 'SelectPrintersApply'
-      },
-      {
+        classes: 'obUiModalSelectPDFPrinters-footer-selectPDFPrintersCancel',
         name: 'SelectPDFPrintersCancel',
         kind: 'SelectPrintersCancel'
+      },
+      {
+        classes: 'obUiModalSelectPDFPrinters-footer-selectPDFPrintersApply',
+        name: 'SelectPDFPrintersApply',
+        kind: 'SelectPrintersApply'
       }
     ]
   },
@@ -343,9 +353,8 @@ enyo.kind({
 
   initComponents: function() {
     this.inherited(arguments);
-    this.printerscontainer = this.$.bodyContent.$.printerslist;
+    this.printerscontainer = this.$.body.$.printerslist;
     this.autoDismiss = false;
-    this.setHeader(OB.I18N.getLabel('OBPOS_SelectPDFPrintersTitle'));
     this.successCallbackArray = [];
     this.cancellCallbackArray = [];
     this.hideCallbackArray = [];
@@ -421,13 +430,13 @@ enyo.kind({
     ) {
       this.closeOnEscKey = false;
       this.autoDismiss = false;
-      this.$.bodyButtons.$.SelectPDFPrintersCancel.hide();
-      this.$.headerCloseButton.hide();
+      this.$.footer.$.SelectPDFPrintersCancel.hide();
+      this.$.closebutton.hide();
     } else {
       this.closeOnEscKey = true;
       this.autoDismiss = true;
-      this.$.bodyButtons.$.SelectPDFPrintersCancel.show();
-      this.$.headerCloseButton.show();
+      this.$.footer.$.SelectPDFPrintersCancel.show();
+      this.$.closebutton.show();
     }
   },
 

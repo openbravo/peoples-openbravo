@@ -624,11 +624,10 @@
   ) {
     // Create dialog buttons
     var dialogbuttons = [];
+
     dialogbuttons.push({
-      label: OB.I18N.getLabel('OBPOS_LblRetry'),
-      isConfirmButton: true,
-      isDefaultAction: true,
-      action: successfunc
+      label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+      action: cancelfunc
     });
     if (
       OB.POS.modelterminal.hasPermission('OBPOS_retail.selectprinter') &&
@@ -639,6 +638,7 @@
       // Show this button entry only if there are
       dialogbuttons.push({
         name: 'selectAnotherPrinterButton',
+        classes: 'selectAnotherPrinterButton',
         label: OB.I18N.getLabel('OBPOS_SelectAnotherPrinter'),
         action: function() {
           OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
@@ -661,8 +661,10 @@
       });
     }
     dialogbuttons.push({
-      label: OB.I18N.getLabel('OBMOBC_LblCancel'),
-      action: cancelfunc
+      label: OB.I18N.getLabel('OBPOS_LblRetry'),
+      isConfirmButton: true,
+      isDefaultAction: true,
+      action: successfunc
     });
     // Display error message
     OB.UTIL.showConfirmation.display(

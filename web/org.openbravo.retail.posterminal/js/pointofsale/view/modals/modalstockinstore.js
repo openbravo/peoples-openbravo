@@ -11,16 +11,18 @@
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore',
+  kind: 'OB.UI.Modal',
+  classes: 'obObposPointOfSaleUiModalsModalStockInStore',
   myId: 'ModalStockInStore',
   published: {
     stockInfo: null
   },
-  kind: 'OB.UI.Modal',
   header: '',
   body: {
     kind:
       'OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore.Components.ListStockInStore',
-    name: 'stockDetailList'
+    name: 'stockDetailList',
+    classes: 'obObposPointOfSaleUiModalsModalStockInStore-body-stockDetailList'
   },
   executeOnHide: function() {
     this.stockInfo = null;
@@ -48,23 +50,29 @@ enyo.kind({
 enyo.kind({
   name:
     'OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore.Components.ListStockInStore',
-  classes: 'row-fluid',
+  classes:
+    'obObposPointOfSaleUiModalsModalStockInStoreComponentsListStockInStore row-fluid',
   published: {
     stockValuesPerWarehouse: null
   },
   components: [
     {
-      classes: 'span12',
+      classes:
+        'obObposPointOfSaleUiModalsModalStockInStoreComponentsListStockInStore-container1 span12',
       components: [
         {
-          style: 'border-bottom: 1px solid #cccccc;'
+          classes:
+            'obObposPointOfSaleUiModalsModalStockInStoreComponentsListStockInStore-container1-element1'
         },
         {
+          classes:
+            'obObposPointOfSaleUiModalsModalStockInStoreComponentsListStockInStore-container1-container2',
           components: [
             {
               name: 'scrollListStockDetails',
               kind: 'OB.UI.ScrollableTable',
-              scrollAreaMaxHeight: '400px',
+              classes:
+                'obObposPointOfSaleUiModalsModalStockInStoreComponentsListStockInStore-container1-container2-scrollListStockDetails',
               renderLine:
                 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore.Components.StockInStoreLine',
               renderEmpty: 'OB.UI.RenderEmpty'
@@ -84,30 +92,38 @@ enyo.kind({
 enyo.kind({
   name:
     'OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore.Components.StockInStoreLine',
-  classes: 'btnselect',
+  classes:
+    'obObposPointOfSaleUiModalsModalStockInStoreComponentsStockInStoreLine',
   components: [
     {
       name: 'line',
-      style: 'line-height: 23px;',
+      classes:
+        'obObposPointOfSaleUiModalsModalStockInStoreComponentsStockInStoreLine-line',
       components: [
         {
-          style: 'float: left; width: 60%; font-size: 20px;',
-          name: 'warehouse'
+          name: 'warehouse',
+          classes:
+            'obObposPointOfSaleUiModalsModalStockInStoreComponentsStockInStoreLine-line-warehouse'
         },
         {
-          style: 'float: left; width: 25%; font-weight: bold; font-size: 20px;',
-          name: 'quantity'
+          name: 'quantity',
+          classes:
+            'obObposPointOfSaleUiModalsModalStockInStoreComponentsStockInStoreLine-line-quantity'
         },
         {
-          style: 'clear: both'
+          classes:
+            'obObposPointOfSaleUiModalsModalStockInStoreComponentsStockInStoreLine-line-container3 u-clearBoth'
         }
       ]
     },
     {
+      classes:
+        'obObposPointOfSaleUiModalsModalStockInStoreComponentsStockInStoreLine-container2',
       components: [
         {
-          style: 'padding: 5px; padding-left: 10px;',
           name: 'detail',
+          classes:
+            'obObposPointOfSaleUiModalsModalStockInStoreComponentsStockInStoreLine-container2-detail',
           allowHtml: true
         }
       ]

@@ -12,7 +12,7 @@
 enyo.kind({
   name: 'OBRDM.UI.OrderLineInfoPopupStandard',
   kind: 'OB.UI.Modal',
-  topPosition: '44px',
+  classes: 'obrdmUiOrderLineInfoPopupStandard',
   i18nHeader: 'OBRDM_LblInformation',
   body: {
     kind: 'OBRDM.UI.OrderLineInfoStandard_body'
@@ -47,26 +47,29 @@ enyo.kind({
 
 enyo.kind({
   name: 'OBRDM.UI.OrderLineInfoStandard_body',
+  classes: 'obrdmUiOrderLineInfoStandardBody',
   components: [
     {
       name: 'table',
-      kind: 'OBRDM.UI.OrderLineInfoTableStandard'
+      kind: 'OBRDM.UI.OrderLineInfoTableStandard',
+      classes: 'obrdmUiOrderLineInfoStandardBody-table'
     },
     {
       name: 'buttonFooter',
-      classes: 'obrdm-oederlineinfostandard-buttonfooter',
+      classes: 'obrdmUiOrderLineInfoStandardBody-buttonFooter',
       components: [
         {
           name: 'infoButtons',
-          classes: 'obrdm-oederlineinfostandard-infobuttons'
+          classes: 'obrdmUiOrderLineInfoStandardBody-buttonFooter-infoButtons'
         }
       ]
     }
   ],
   buttons: [
     {
+      name: 'buttoncancel',
       kind: 'OBRDM.UI.OrderLineInfoCloseBtn',
-      name: 'buttoncancel'
+      classes: 'obrdmUiOrderLineInfoStandardBody-buttoncancel'
     }
   ],
   initComponents: function() {
@@ -83,7 +86,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OBRDM.UI.OrderLineInfoTableStandard',
-  classes: 'obrdm-orderineinfotablestandard',
+  classes: 'obrdmUiOrderLineInfoTableStandard',
   infoTableComponents: [],
   components: [],
   initComponents: function() {
@@ -104,52 +107,59 @@ OB.UI.WindowView.registerPopup('OB.OBPOSPointOfSale.UI.PointOfSale', {
 
 enyo.kind({
   name: 'OBRDM.UI.IssueSalesOrderInformationLine',
+  classes: 'obrdmUiIssueSalesOrderInformationLine',
   handlers: {
     onShowInfo: 'showInfo'
   },
   components: [
     {
-      classes: 'obrdm-orderlineinfopopupstandard',
+      classes: 'obrdmUiIssueSalesOrderInformationLine-container1',
       components: [
         {
           name: 'searchKey',
-          classes: 'obrdm-orderlineinfopopupstandard-searchkey',
+          classes: 'obrdmUiIssueSalesOrderInformationLine-container1-searchKey',
           components: [
             {
               name: 'searchKeyLbl',
-              classes: 'obrdm-orderlineinfopopupstandard-searchkey-lbl'
+              classes:
+                'obrdmUiIssueSalesOrderInformationLine-container1-searchKey-searchKeyLbl'
             },
             {
               name: 'searchKeyValue',
-              classes: 'obrdm-orderlineinfopopupstandard-searchkey-value'
+              classes:
+                'obrdmUiIssueSalesOrderInformationLine-container1-searchKey-searchKeyValue'
             }
           ]
         },
         {
           name: 'name',
-          classes: 'obrdm-orderlineinfopopupstandard-name',
+          classes: 'obrdmUiIssueSalesOrderInformationLine-container1-name',
           components: [
             {
               name: 'nameLbl',
-              classes: 'obrdm-orderlineinfopopupstandard-name-lbl'
+              classes:
+                'obrdmUiIssueSalesOrderInformationLine-container1-name-nameLbl'
             },
             {
               name: 'nameValue',
-              classes: 'obrdm-orderlineinfopopupstandard-name-value'
+              classes:
+                'obrdmUiIssueSalesOrderInformationLine-container1-name-nameValue'
             }
           ]
         },
         {
           name: 'ean',
-          classes: 'obrdm-orderlineinfopopupstandard-ean',
+          classes: 'obrdmUiIssueSalesOrderInformationLine-container1-ean',
           components: [
             {
               name: 'eanLbl',
-              classes: 'obrdm-orderlineinfopopupstandard-ean-lbl'
+              classes:
+                'obrdmUiIssueSalesOrderInformationLine-container1-ean-eanLbl'
             },
             {
               name: 'eanValue',
-              classes: 'obrdm-orderlineinfopopupstandard-ean-value'
+              classes:
+                'obrdmUiIssueSalesOrderInformationLine-container1-ean-eanValue'
             }
           ]
         }

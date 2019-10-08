@@ -11,9 +11,8 @@
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.ButtonVoid',
-  kind: 'OB.UI.SmallButton',
-  classes: 'btn-icon-small btn-icon-clear',
-  style: 'background-color: #e2e2e2; margin: 5px 0px 5px 0px;',
+  kind: 'OB.UI.Button',
+  classes: 'obObposCashupUiButtonVoid',
   initComponents: function() {
     return this;
   }
@@ -21,9 +20,8 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.ButtonBring',
-  kind: 'OB.UI.SmallButton',
-  classes: 'btnlink-gray',
-  style: 'background-color: #e2e2e2; margin: 5px 0px 5px 0px;',
+  kind: 'OB.UI.Button',
+  classes: 'obObposCashupUiButtonBring',
   initComponents: function() {
     this.setContent(OB.I18N.getLabel('OBPOS_BringOrder'));
     return this;
@@ -32,48 +30,46 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.DocumentNoAndBP',
-  classes: 'cashupDisplayFlex',
+  classes: 'obObposCashupUiDocumentNoAndBP',
   components: [
     {
       name: 'documentNo',
-      style:
-        'display: table-cell; vertical-align: middle; padding: 2px 0px 2px 5px;'
+      classes: 'obObposCashupUiDocumentNoAndBP-documentNo'
     },
     {
       name: 'bp',
-      style:
-        'display: table-cell; vertical-align: middle; padding: 2px 5px 2px 5px;'
+      classes: 'obObposCashupUiDocumentNoAndBP-bp'
     }
   ]
 });
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.GrossSessionUser',
-  classes: 'cashupDisplayFlex',
+  classes: 'obObposCashupUiGrossSessionUser',
   components: [
     {
       name: 'printGross',
-      style:
-        'display: table-cell; vertical-align: middle; padding: 2px 5px 2px 5px; font-weight: bold; text-align: right;'
+      classes: 'obObposCashupUiGrossSessionUser-printGross'
     },
     {
       name: 'sessionUser',
-      style:
-        'display: table-cell; vertical-align: middle; padding: 2px 5px 2px 5px; color: #d3d3d3; text-align: right;'
+      classes: 'obObposCashupUiGrossSessionUser-sessionUser'
     }
   ]
 });
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.InfoPendingReceipt',
-  classes: 'cashupReceiptInfo',
+  classes: 'obObposCashupUiInfoPendingReceipt',
   components: [
     {
       name: 'documentNoAndBP',
+      classes: 'obObposCashupUiInfoPendingReceipt-documentNoAndBP',
       kind: 'OB.OBPOSCashUp.UI.DocumentNoAndBP'
     },
     {
       name: 'grossSessionUser',
+      classes: 'obObposCashupUiInfoPendingReceipt-grossSessionUser',
       kind: 'OB.OBPOSCashUp.UI.GrossSessionUser'
     }
   ]
@@ -81,48 +77,52 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.RenderPendingReceiptLine',
+  classes: 'obObposCashupUiRenderPendingReceiptLine',
   events: {
     onVoidOrder: '',
     onBringOrder: ''
   },
   components: [
     {
-      style:
-        'display: table; height: 42px; width: 100%; border-bottom: 1px solid #cccccc;',
+      classes: 'obObposCashupUiRenderPendingReceiptLine-container1',
       components: [
         {
           name: 'orderDate',
-          style:
-            'display: table-cell; vertical-align: middle; padding: 2px 5px 2px 5px; width: 10%;'
+          classes:
+            'obObposCashupUiRenderPendingReceiptLine-container1-orderDate'
         },
         {
           name: 'infoPendingReceipt',
+          classes:
+            'obObposCashupUiRenderPendingReceiptLine-container1-infoPendingReceipt',
           kind: 'OB.OBPOSCashUp.UI.InfoPendingReceipt'
         },
         {
-          style:
-            'display: table-cell; vertical-align: middle; padding: 2px 5px 2px 5px; width: 15%;',
+          classes:
+            'obObposCashupUiRenderPendingReceiptLine-container1-buttonBringContainer',
           name: 'buttonBringContainer',
           components: [
             {
               name: 'buttonBring',
+              classes:
+                'obObposCashupUiRenderPendingReceiptLine-buttonBringContainer-buttonBring',
               kind: 'OB.OBPOSCashUp.UI.ButtonBring',
               ontap: 'bringOrder'
             }
           ]
         },
         {
-          classes: 'buttonVoid',
+          classes:
+            'obObposCashupUiRenderPendingReceiptLine-container1-container1',
           components: [
             {
               name: 'buttonVoid',
+              classes:
+                'obObposCashupUiRenderPendingReceiptLine-container1-container1-buttonVoid',
               kind: 'OB.OBPOSCashUp.UI.ButtonVoid',
               ontap: 'voidOrder'
             }
           ]
-        },
-        {
-          style: 'clear: both;'
         }
       ]
     }
@@ -143,7 +143,7 @@ enyo.kind({
       this.model.printGross()
     );
     if (this.model.get('session') === OB.MobileApp.model.get('session')) {
-      this.$.buttonBringContainer.setStyle('display: none');
+      this.$.buttonBringContainer.addClass('u-hideFromUI');
     } else {
       OB.Dal.find(
         OB.Model.User,
@@ -174,14 +174,16 @@ enyo.kind({
       OB.I18N.getLabel('OBPOS_MsgConfirmDelete'),
       [
         {
+          label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+          isDefaultAction: false
+        },
+        {
           label: OB.I18N.getLabel('OBPOS_LblYesDelete'),
           isConfirmButton: true,
+          isDefaultAction: true,
           action: function() {
             me.doVoidOrder();
           }
-        },
-        {
-          label: OB.I18N.getLabel('OBMOBC_LblCancel')
         }
       ]
     );
@@ -216,6 +218,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.ListPendingReceipts',
+  classes: 'obObposCashupUiListPendingReceipts',
   published: {
     collection: null
   },
@@ -224,104 +227,59 @@ enyo.kind({
   },
   components: [
     {
-      classes: 'tab-pane',
+      classes: 'obObposCashupUiListPendingReceipts-wrapper',
       components: [
         {
-          style: 'overflow:auto; height: 500px; margin: 5px',
+          classes: 'obObposCashupUiListPendingReceipts-wrapper-components',
           components: [
             {
-              style: 'background-color: #ffffff; color: black; padding: 5px;',
+              name: 'stepsheader',
+              classes:
+                'obObposCashupUiListPendingReceipts-wrapper-components-title',
+              renderHeader: function(step, count) {
+                this.setContent(
+                  OB.I18N.getLabel('OBPOS_LblStepNumber', [step, count]) +
+                    ' ' +
+                    OB.I18N.getLabel('OBPOS_LblStepPendingOrders') +
+                    OB.OBPOSCashUp.UI.CashUp.getTitleExtensions()
+                );
+              }
+            },
+            {
+              name: 'rowDeleteAll',
+              classes:
+                'obObposCashupUiListPendingReceipts-wrapper-components-rowDeleteAll',
               components: [
                 {
-                  classes: 'row-fluid',
-                  components: [
-                    {
-                      classes: 'span12',
-                      components: [
-                        {
-                          name: 'stepsheader',
-                          style:
-                            'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;',
-                          renderHeader: function(step, count) {
-                            this.setContent(
-                              OB.I18N.getLabel('OBPOS_LblStepNumber', [
-                                step,
-                                count
-                              ]) +
-                                ' ' +
-                                OB.I18N.getLabel('OBPOS_LblStepPendingOrders') +
-                                OB.OBPOSCashUp.UI.CashUp.getTitleExtensions()
-                            );
-                          }
-                        }
-                      ]
-                    },
-                    {
-                      style: 'clear: both;'
-                    }
-                  ]
+                  name: 'btnDeleteAll',
+                  kind: 'OB.UI.Button',
+                  classes:
+                    'obObposCashupUiListPendingReceipts-wrapper-components-rowDeleteAll-btnDeleteAll',
+                  i18nContent: 'OBPOS_DeleteAll',
+                  ontap: 'voidAllPendingReceipts'
                 },
                 {
-                  name: 'rowDeleteAll',
-                  classes: 'row-fluid',
-                  components: [
-                    {
-                      style:
-                        'span12; padding: 2px 5px 2px 5px; border-bottom: 1px solid #cccccc;',
-                      components: [
-                        {
-                          name: 'btnDeleteAll',
-                          kind: 'OB.UI.SmallButton',
-                          classes: 'btnlink-gray',
-                          style:
-                            'float: right; min-width: 70px; margin: 2px 5px 2px 5px;',
-                          initComponents: function() {
-                            this.setContent(
-                              OB.I18N.getLabel('OBPOS_DeleteAll')
-                            );
-                          },
-                          ontap: 'voidAllPendingReceipts'
-                        },
-                        {
-                          name: 'btnBringAll',
-                          kind: 'OB.UI.SmallButton',
-                          classes: 'btnlink-gray',
-                          style:
-                            'float: right; min-width: 70px; margin: 2px 5px 2px 5px;',
-                          initComponents: function() {
-                            this.setContent(OB.I18N.getLabel('OBPOS_BringAll'));
-                          },
-                          ontap: 'bringAllPendingReceipts'
-                        },
-                        {
-                          style: 'clear: both;'
-                        }
-                      ]
-                    }
-                  ]
-                },
+                  name: 'btnBringAll',
+                  kind: 'OB.UI.Button',
+                  classes:
+                    'obObposCashupUiListPendingReceipts-wrapper-components-rowDeleteAll-btnBringAll',
+                  i18nContent: 'OBPOS_BringAll',
+                  ontap: 'bringAllPendingReceipts'
+                }
+              ]
+            },
+            {
+              classes:
+                'obObposCashupUiListPendingReceipts-wrapper-components-body',
+              components: [
                 {
-                  classes: 'row-fluid',
-                  components: [
-                    {
-                      style: 'span12',
-                      components: [
-                        {
-                          classes: 'row-fluid',
-                          components: [
-                            {
-                              name: 'pendingReceiptList',
-                              kind: 'OB.UI.Table',
-                              renderLine:
-                                'OB.OBPOSCashUp.UI.RenderPendingReceiptLine',
-                              renderEmpty: 'OB.UI.RenderEmpty',
-                              listStyle: 'list'
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
+                  name: 'pendingReceiptList',
+                  classes:
+                    'obObposCashupUiListPendingReceipts-wrapper-components-body-pendingReceiptList',
+                  kind: 'OB.UI.Table',
+                  renderLine: 'OB.OBPOSCashUp.UI.RenderPendingReceiptLine',
+                  renderEmpty: 'OB.UI.RenderEmpty',
+                  listStyle: 'list'
                 }
               ]
             }
@@ -390,14 +348,16 @@ enyo.kind({
       OB.I18N.getLabel('OBPOS_cannotBeUndone'),
       [
         {
+          label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+          isDefaultAction: false
+        },
+        {
           label: OB.I18N.getLabel('OBPOS_LblYesDelete'),
+          isDefaultAction: true,
           isConfirmButton: true,
           action: function() {
             me.voidAllOrders();
           }
-        },
-        {
-          label: OB.I18N.getLabel('OBMOBC_LblCancel')
         }
       ]
     );

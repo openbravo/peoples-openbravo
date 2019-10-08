@@ -11,10 +11,10 @@
 
 (function() {
   enyo.kind({
-    kind: 'OB.UI.SmallButton',
     name: 'OB.OBPOSPointOfSale.UI.EditLine.DeliveryModesButton',
+    kind: 'OB.UI.SmallButton',
     i18nContent: 'OBRDM_DeliveryMode',
-    classes: 'btnlink-orange',
+    classes: 'obObposPointOfSaleUiEditLineDeliveryModesButton obUiActionButton',
     detailsView: null,
     handlers: {
       onSetMultiSelected: 'setMultiSelected',
@@ -225,10 +225,8 @@
   enyo.kind({
     kind: 'OB.UI.SmallButton',
     name: 'OB.OBPOSPointOfSale.UI.EditLine.DeliveryServicesButton',
-    classes: 'btnlink-orange',
-    style:
-      'width: 45px; background-repeat: no-repeat; background-position: center; color: rgba(0, 0, 0, 0)',
-    content: '-',
+    classes: 'obObposPointOfSaleUiEditLineDeliveryServicesButton',
+    i18nContent: 'OBMOBC_MinusSign',
     handlers: {
       onSetMultiSelected: 'setMultiSelected',
       onRearrangedEditButtonBar: 'setMultiSelected'
@@ -307,11 +305,23 @@
         if (existRelatedServices) {
           this.show();
           if (proposedServices) {
-            this.addRemoveClass('iconDeliveryServices_unreviewed', false);
-            this.addRemoveClass('iconDeliveryServices_reviewed', true);
+            this.addRemoveClass(
+              'obObposPointOfSaleUiEditLineDeliveryServicesButton_unreviewed',
+              false
+            );
+            this.addRemoveClass(
+              'obObposPointOfSaleUiEditLineDeliveryServicesButton_reviewed',
+              true
+            );
           } else {
-            this.addRemoveClass('iconDeliveryServices_unreviewed', true);
-            this.addRemoveClass('iconDeliveryServices_reviewed', false);
+            this.addRemoveClass(
+              'obObposPointOfSaleUiEditLineDeliveryServicesButton_unreviewed',
+              true
+            );
+            this.addRemoveClass(
+              'obObposPointOfSaleUiEditLineDeliveryServicesButton_reviewed',
+              false
+            );
           }
         } else {
           this.hide();
@@ -322,11 +332,23 @@
       ) {
         this.show();
         if (this.owner.owner.line.get('obposServiceProposed')) {
-          this.addRemoveClass('iconDeliveryServices_unreviewed', false);
-          this.addRemoveClass('iconDeliveryServices_reviewed', true);
+          this.addRemoveClass(
+            'obObposPointOfSaleUiEditLineDeliveryServicesButton_unreviewed',
+            false
+          );
+          this.addRemoveClass(
+            'obObposPointOfSaleUiEditLineDeliveryServicesButton_reviewed',
+            true
+          );
         } else {
-          this.addRemoveClass('iconDeliveryServices_unreviewed', true);
-          this.addRemoveClass('iconDeliveryServices_reviewed', false);
+          this.addRemoveClass(
+            'obObposPointOfSaleUiEditLineDeliveryServicesButton_unreviewed',
+            true
+          );
+          this.addRemoveClass(
+            'obObposPointOfSaleUiEditLineDeliveryServicesButton_reviewed',
+            false
+          );
         }
       } else {
         this.hide();
@@ -351,8 +373,9 @@
 })();
 
 enyo.kind({
-  kind: 'OB.UI.ModalDialogButton',
   name: 'OBRDM.UI.MultiReceiptPropertiesDialogApply',
+  kind: 'OB.UI.ModalDialogButton',
+  classes: 'obrdmUiMultiReceiptPropertiesDialogApply',
   isDefaultAction: true,
   events: {
     onApplyChanges: ''
@@ -369,8 +392,9 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.ModalDialogButton',
   name: 'OBRDM.UI.MultiReceiptPropertiesDialogCancel',
+  kind: 'OB.UI.ModalDialogButton',
+  classes: 'obrdmUiMultiReceiptPropertiesDialogCancel',
   tap: function() {
     this.doHideThisPopup();
   },
@@ -382,7 +406,8 @@ enyo.kind({
 
 enyo.kind({
   name: 'OBRDM.UI.ModalReceiptMultiLinesProperties',
-  kind: 'OB.UI.ModalAction',
+  kind: 'OB.UI.Modal',
+  classes: 'obrdmUiModalReceiptMultiLinesProperties',
   handlers: {
     onApplyChanges: 'applyChanges'
   },
@@ -429,27 +454,32 @@ enyo.kind({
     }
   },
   i18nHeader: 'OBRDM_ReceiptLineDeliveryModeDialogTitle',
-  bodyContent: {
+  body: {
     kind: 'Scroller',
-    maxHeight: '225px',
-    style: 'background-color: #ffffff;',
+    classes: 'obrdmUiModalReceiptMultiLinesProperties-body',
     thumb: true,
     horizontal: 'hidden',
     components: [
       {
-        name: 'attributes'
+        name: 'attributes',
+        classes: 'obrdmUiModalReceiptMultiLinesProperties-body-attributes'
       }
     ]
   },
-  bodyButtons: {
+  footer: {
+    classes: 'obUiModal-footer-mainButtons',
     components: [
       {
-        kind: 'OBRDM.UI.MultiReceiptPropertiesDialogApply',
-        name: 'receiptMultiLinePropertiesApplyBtn'
+        kind: 'OBRDM.UI.MultiReceiptPropertiesDialogCancel',
+        name: 'receiptMultiLinePropertiesCancelBtn',
+        classes:
+          'obrdmUiModalReceiptMultiLinesProperties-receiptMultiLinePropertiesCancelBtn'
       },
       {
-        kind: 'OBRDM.UI.MultiReceiptPropertiesDialogCancel',
-        name: 'receiptMultiLinePropertiesCancelBtn'
+        kind: 'OBRDM.UI.MultiReceiptPropertiesDialogApply',
+        name: 'receiptMultiLinePropertiesApplyBtn',
+        classes:
+          'obrdmUiModalReceiptMultiLinesProperties-receiptMultiLinePropertiesApplyBtn'
       }
     ]
   },
@@ -748,21 +778,20 @@ enyo.kind({
   },
   initComponents: function() {
     this.inherited(arguments);
-    this.attributeContainer = this.$.bodyContent.$.attributes;
-    this.setHeader(OB.I18N.getLabel(this.i18nHeader));
+    this.attributeContainer = this.$.body.$.attributes;
 
     this.propertycomponents = {};
 
     enyo.forEach(
       this.newAttributes,
       function(natt) {
-        var editline = this.$.bodyContent.$.attributes.createComponent({
+        var editline = this.$.body.$.attributes.createComponent({
           kind: 'OB.UI.PropertyEditLine',
           name: 'line_' + natt.name,
-          newAttribute: natt
+          classes: 'obrdmUiModalReceiptMultiLinesProperties-line',
+          coreElement: natt
         });
-        this.propertycomponents[natt.modelProperty] =
-          editline.propertycomponent;
+        this.propertycomponents[natt.modelProperty] = editline.coreElement;
         this.propertycomponents[natt.modelProperty].propertiesDialog = this;
       },
       this
@@ -795,10 +824,12 @@ enyo.kind({
 enyo.kind({
   name: 'OBRDM.UI.ModalReceiptMultiLinesImpl',
   kind: 'OBRDM.UI.ModalReceiptMultiLinesProperties',
+  classes: 'obrdmUiModalReceiptMultiLinesImpl',
   newAttributes: [
     {
-      kind: 'OB.UI.renderComboProperty',
       name: 'ReceiptLineDeliveryMode',
+      kind: 'OB.UI.renderComboProperty',
+      classes: 'obrdmUiModalReceiptMultiLinesImpl-receiptLineDeliveryMode',
       modelProperty: 'obrdmDeliveryMode',
       i18nLabel: 'OBRDM_DeliveryMode',
       // Model Collection to use. This definition has been created when registering the
@@ -813,7 +844,7 @@ enyo.kind({
       // This function is called when the user accepts on the properties dialog,
       // and applies the value selected to the row.
       applyValue: function(row) {
-        var value = this.$.renderCombo.getValue();
+        var value = this.getValue();
         row.set(this.modelProperty, value);
 
         if (value !== 'PickupInStoreDate' && value !== 'HomeDelivery') {
@@ -827,7 +858,7 @@ enyo.kind({
         return true;
       },
       init: function() {
-        this.$.renderCombo.change = function(inSender, inEvent) {
+        this.change = function(inSender, inEvent) {
           var cond = inSender.getValue();
           this.owner.owner.owner.owner.owner.owner.waterfallDown('onShowhide', {
             showDate: cond === 'PickupInStoreDate' || cond === 'HomeDelivery',
@@ -839,7 +870,7 @@ enyo.kind({
     {
       kind: 'OB.UI.DatePickerSimple',
       name: 'ReceiptLineDeliveryDate',
-      style: 'display: flex; justify-content: center;',
+      classes: 'obrdmUiModalReceiptMultiLinesImpl-receiptLineDeliveryDate',
       modelProperty: 'obrdmDeliveryDate',
       i18nLabel: 'OBRDM_DeliveryDate',
       handlers: {
@@ -881,9 +912,9 @@ enyo.kind({
       }
     },
     {
-      kind: 'OB.UI.TimePickerSimple',
       name: 'ReceiptLineDeliveryTime',
-      style: 'display: flex; justify-content: center;',
+      kind: 'OB.UI.TimePickerSimple',
+      classes: 'obrdmUiModalReceiptMultiLinesImpl-receiptLineDeliveryTime',
       modelProperty: 'obrdmDeliveryTime',
       i18nLabel: 'OBRDM_DeliveryTime',
       handlers: {

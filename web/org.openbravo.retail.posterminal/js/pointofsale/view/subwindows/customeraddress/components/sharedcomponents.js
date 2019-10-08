@@ -15,6 +15,8 @@ enyo.kind({
   name:
     'OB.OBPOSPointOfSale.UI.customeraddr.ModalConfigurationRequiredForCreateCustomers',
   kind: 'OB.UI.ModalInfo',
+  classes:
+    'obObposPointOfSaleUiCustomeraddrModalConfigurationRequiredForCreateCustomers',
   i18nHeader: 'OBPOS_configurationRequired',
   bodyContent: {
     i18nContent: 'OBPOS_configurationNeededToCreateCustomers'
@@ -23,29 +25,22 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.cancelEdit',
-  kind: 'OB.UI.Button',
-  style: 'width: 100px; margin: 0px 0px 8px 5px;',
-  classes: 'btnlink-gray btnlink btnlink-small',
+  kind: 'OB.UI.ModalDialogButton',
+  classes: 'obObposPointOfSaleUiCustomeraddrCancelEdit',
   i18nContent: 'OBMOBC_LblCancel',
   handlers: {
     onDisableButton: 'disableButton'
   },
   disableButton: function(inSender, inEvent) {
     this.setDisabled(inEvent.disabled);
-    if (inEvent.disabled) {
-      this.addClass(this.classButtonDisabled);
-    } else {
-      this.removeClass(this.classButtonDisabled);
-    }
   }
 });
 
 enyo.kind({
   name: 'OB.UI.CustomerAddrTextProperty',
-  kind: 'enyo.Input',
+  kind: 'OB.UI.FormElement.Input',
   type: 'text',
-  classes: 'input',
-  style: 'width: 100%; height: 30px; margin:0;',
+  classes: 'obUiCustomerAddrTextProperty',
   handlers: {
     onLoadValue: 'loadValue',
     onSaveChange: 'saveChange',
@@ -60,7 +55,9 @@ enyo.kind({
     onRetrieveCustomer: '',
     onSetValues: ''
   },
-  blur: function() {},
+  blur: function() {
+    this.inherited(arguments);
+  },
   input: function() {},
   change: function() {},
   valueSet: function(inSender, inEvent) {
@@ -102,19 +99,22 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.edit_createcustomers',
+  classes: 'obObposPointOfSaleUiCustomeraddrEditCreatecustomers',
   handlers: {
-    onSaveCustomerAddr: 'preSaveCustomerAddr'
+    onExecuteSaveCustomerAddr: 'preSaveCustomerAddr'
   },
   events: {
     onChangeBusinessPartner: ''
   },
   components: [
     {
-      name: 'bodyheader'
+      name: 'bodyheader',
+      classes: 'obObposPointOfSaleUiCustomeraddrEditCreatecustomers-bodyheader'
     },
     {
       name: 'customerAddrAttributes',
-      style: 'overflow-x:hidden; overflow-y:auto; max-height:622px;'
+      classes:
+        'obObposPointOfSaleUiCustomeraddrEditCreatecustomers-customerAddrAttributes'
     }
   ],
   setCustomerAddr: function(customer, customerAddr) {
@@ -168,7 +168,7 @@ enyo.kind({
     var me = this;
 
     function enableButtonsCallback() {
-      me.waterfall('onDisableButton', {
+      me.parent.parent.waterfall('onDisableButton', {
         disabled: false
       });
     }
@@ -198,13 +198,19 @@ enyo.kind({
         var errors = '',
           customerAddr = form.model.get('customerAddr');
         _.each(form.$.customerAddrAttributes.children, function(item) {
-          if (item.newAttribute.mandatory) {
-            var value = customerAddr.get(item.newAttribute.modelProperty);
+          if (item.coreElement.mandatory) {
+            var value = customerAddr.get(item.coreElement.modelProperty);
             if (!value) {
+              item.setMessage(
+                OB.I18N.getLabel('OBMOBC_LblMandatoryField'),
+                true
+              );
               if (errors) {
                 errors += ', ';
               }
-              errors += OB.I18N.getLabel(item.newAttribute.i18nLabel);
+              errors += OB.I18N.getLabel(item.coreElement.i18nLabel);
+            } else {
+              item.setMessage();
             }
           }
         });
@@ -502,9 +508,12 @@ enyo.kind({
   },
   initComponents: function() {
     this.inherited(arguments);
-    this.$.bodyheader.createComponent({
-      kind: this.windowHeader
-    });
+    if (this.windowFooter) {
+      this.owner.owner.$.footer.createComponent({
+        kind: this.windowFooter
+      });
+      this.owner.owner.$.footer.show();
+    }
     this.attributeContainer = this.$.customerAddrAttributes;
     enyo.forEach(
       this.newAttributes,
@@ -521,8 +530,11 @@ enyo.kind({
         if (resultDisplay) {
           this.$.customerAddrAttributes.createComponent({
             kind: 'OB.UI.CustomerPropertyLine',
+            classes:
+              'obObposPointOfSaleUiCustomeraddrEditCreatecustomers-customerAddrAttributes-obUiCustomerPropertyLine ' +
+              (natt.classes ? natt.classes : ''),
             name: 'line_' + natt.name,
-            newAttribute: natt
+            coreElement: natt
           });
         }
       },
@@ -536,8 +548,8 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.CustomerAddrCheckProperty',
-  kind: 'OB.UI.CheckboxButton',
-  style: 'margin: 5px 0px 0px 5px;',
+  kind: 'OB.UI.FormElement.Checkbox',
+  classes: 'obUiCustomerAddrCheckProperty',
   handlers: {
     onLoadValue: 'loadValue',
     onSaveChange: 'saveChange',
@@ -563,16 +575,10 @@ enyo.kind({
     var me = this;
     if (inEvent.customerAddr !== undefined) {
       if (inEvent.customerAddr.get(me.modelProperty) !== undefined) {
-        me.checked = inEvent.customerAddr.get(me.modelProperty);
-      }
-      if (me.checked) {
-        me.addClass('active');
-      } else {
-        me.removeClass('active');
+        me.setChecked(inEvent.customerAddr.get(me.modelProperty));
       }
     } else {
-      me.checked = true;
-      me.addClass('active');
+      me.setChecked(true);
     }
   },
   saveChange: function(inSender, inEvent) {
@@ -591,6 +597,8 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.CustomerAddrComboProperty',
+  classes: 'obUiCustomerAddrComboProperty',
+  kind: 'OB.UI.List',
   handlers: {
     onLoadValue: 'loadValue',
     onSaveChange: 'saveChange',
@@ -602,46 +610,36 @@ enyo.kind({
     onSaveProperty: '',
     onSetValues: ''
   },
-  components: [
-    {
-      kind: 'OB.UI.List',
-      name: 'customerAddrCombo',
-      classes: 'combo',
-      style: 'width: 101%; margin:0;',
-      renderLine: enyo.kind({
-        kind: 'enyo.Option',
-        initComponents: function() {
-          this.inherited(arguments);
-          this.setValue(
-            this.model.get(this.parent.parent.retrievedPropertyForValue)
-          );
-          this.setContent(
-            this.model.get(this.parent.parent.retrievedPropertyForText)
-          );
-        }
-      }),
-      renderEmpty: 'enyo.Control'
+  renderLine: enyo.kind({
+    kind: 'OB.UI.FormElement.Select.Option',
+    classes:
+      'obUiCustomerAddrComboProperty-customerAddrCombo-renderLine-enyoOption',
+    initComponents: function() {
+      this.inherited(arguments);
+      this.setValue(this.model.get(this.parent.retrievedPropertyForValue));
+      this.setContent(this.model.get(this.parent.retrievedPropertyForText));
     }
-  ],
+  }),
+  renderEmpty: 'enyo.Control',
   valueSet: function(inSender, inEvent) {
     var i;
     if (inEvent.data.hasOwnProperty(this.modelProperty)) {
-      for (i = 0; i < this.$.customerAddrCombo.getCollection().length; i++) {
+      for (i = 0; i < this.getCollection().length; i++) {
         if (
-          this.$.customerAddrCombo.getCollection().models[i].get('id') ===
+          this.getCollection().models[i].get('id') ===
           inEvent.data[this.modelProperty]
         ) {
-          this.$.customerAddrCombo.setSelected(i);
+          this.setSelected(i);
           break;
         }
       }
     }
   },
   retrieveValue: function(inSender, inEvent) {
-    inEvent[this.modelProperty] = this.$.customerAddrCombo.getValue();
+    inEvent[this.modelProperty] = this.getValue();
   },
   loadValue: function(inSender, inEvent) {
-    this.$.customerAddrCombo.setCollection(this.collection);
+    this.setCollection(this.collection);
     this.fetchDataFunction(inEvent);
   },
   change: function() {},
@@ -682,13 +680,13 @@ enyo.kind({
       this
     );
     if (result) {
-      this.$.customerAddrCombo.setSelected(index);
+      this.setSelected(index);
     } else {
-      this.$.customerAddrCombo.setSelected(0);
+      this.setSelected(0);
     }
   },
   saveChange: function(inSender, inEvent) {
-    var selected = this.collection.at(this.$.customerAddrCombo.getSelected());
+    var selected = this.collection.at(this.getSelected());
     inEvent.customerAddr.set(
       this.modelProperty,
       selected.get(this.retrievedPropertyForValue)
@@ -712,8 +710,5 @@ enyo.kind({
       OB.info('OB.UI.CustomerAddrComboProperty: Collection is required');
     }
     this.inherited(arguments);
-    if (this.readOnly) {
-      this.setAttribute('readonly', 'readonly');
-    }
   }
 });

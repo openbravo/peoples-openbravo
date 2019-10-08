@@ -8,14 +8,14 @@
  */
 
 /*global OB, enyo, _ */
-
 OB.OBPOSPointOfSale.UI.ToolbarScan = {
   name: 'toolbarscan',
+  classes: 'obObposPointOfSaleUiToolbarScan',
   buttons: [
     {
+      classes: 'obObposPointOfSaleUiToolbarScan-buttons',
       command: 'code',
       i18nLabel: 'OBMOBC_KbCode',
-      classButtonActive: 'btnactive-blue',
       idSufix: 'upcean'
     }
   ],
@@ -33,6 +33,7 @@ OB.OBPOSPointOfSale.UI.ToolbarScan = {
 
 OB.OBPOSPointOfSale.UI.ToolbarDiscounts = {
   name: 'toolbardiscounts',
+  classes: 'obObposPointOfSaleUiToolbarDiscounts',
   buttons: [],
   shown: function() {
     var keyboard = this.owner.owner;
@@ -48,6 +49,7 @@ OB.OBPOSPointOfSale.UI.ToolbarDiscounts = {
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ToolbarPayment',
+  classes: 'obObposPointOfSaleUiToolbarPayment',
   sideButtons: [],
   published: {
     receipt: null
@@ -286,6 +288,7 @@ enyo.kind({
     }
     return {
       kind: 'OB.UI.BtnSide',
+      classes: 'obObposPointOfSaleUiToolbarPayment-obUiBtnSide',
       btn: {
         command: sidebutton.command,
         label: sidebutton.label,
@@ -443,6 +446,7 @@ enyo.kind({
               } else {
                 btncomponent = {
                   kind: 'OB.UI.BtnSide',
+                  classes: 'obObposPointOfSaleUiToolbarPayment-obUiBtnSide',
                   btn: {
                     command: payment.providerGroup.id,
                     label: payment.providerGroup._identifier,
@@ -520,7 +524,7 @@ enyo.kind({
                       ].attributes['class'];
                     if (
                       me.currentPayment &&
-                      buttonClass.indexOf('btnactive-green') > 0
+                      buttonClass.indexOf('selected') > 0
                     ) {
                       me.pay(
                         amount,
@@ -653,6 +657,7 @@ enyo.kind({
     while (countbuttons++ < paymentsbuttons) {
       this.createComponent({
         kind: 'OB.UI.BtnSide',
+        classes: 'obObposPointOfSaleUiToolbarPayment-obUiBtnSide',
         btn: {}
       });
     }
@@ -660,6 +665,7 @@ enyo.kind({
     if (paymentsdialog) {
       this.createComponent({
         name: 'btnMore',
+        classes: 'obObposPointOfSaleUiToolbarPayment-btnMore',
         toolbar: this,
         dialogbuttons: dialogbuttons,
         kind: 'OB.OBPOSPointOfSale.UI.ButtonMore'
@@ -668,6 +674,8 @@ enyo.kind({
 
     this.createComponent({
       kind: 'OB.OBPOSPointOfSale.UI.ButtonSwitch',
+      classes:
+        'obObposPointOfSaleUiToolbarPayment-obObposPointOfSaleUiButtonSwitch',
       keyboard: this.keyboard
     });
 
@@ -933,22 +941,20 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonMore',
-  style: 'display:table; width:100%;',
+  classes: 'obObposPointOfSaleUiButtonMore',
   events: {
     onShowAllButtons: ''
   },
   handlers: {
     onButtonStatusChanged: 'buttonStatusChanged'
   },
-  classButtonActive: 'btnactive-green',
-  classButtonDisabled: 'btnkeyboard-inactive',
   components: [
     {
-      style: 'margin: 5px;',
+      classes: 'obObposPointOfSaleUiButtonMore-container1',
       components: [
         {
           kind: 'OB.UI.Button',
-          classes: 'btnkeyboard',
+          classes: 'obObposPointOfSaleUiButtonMore-container1-btn',
           name: 'btn',
           label: ''
         }
@@ -961,16 +967,16 @@ enyo.kind({
     this.activegreen = false;
   },
   tap: function() {
-    if (!this.$.btn.hasClass(this.classButtonDisabled)) {
+    if (!this.$.btn.getDisabled()) {
       this.doShowAllButtons();
     }
   },
   buttonStatusChanged: function(inSender, inEvent) {
     var status = inEvent.value.status;
-    this.$.btn.removeClass(this.classButtonDisabled);
+    this.$.btn.setDisabled(false);
     if (this.activegreen) {
       this.$.btn.setContent(OB.I18N.getLabel('OBPOS_MorePayments'));
-      this.$.btn.removeClass(this.classButtonActive);
+      this.$.btn.setSelected(false);
       this.activegreen = false;
     }
     if (
@@ -985,7 +991,7 @@ enyo.kind({
             this.dialogbuttons[this.owner.keyboard.status]) +
           ')'
       );
-      this.$.btn.addClass(this.classButtonActive);
+      this.$.btn.setSelected(true);
       this.activegreen = true;
     }
     if (this.owner.showing) {
@@ -997,8 +1003,8 @@ enyo.kind({
           }
         ).length === 0
       ) {
-        this.$.btn.removeClass(this.classButtonActive);
-        this.$.btn.addClass(this.classButtonDisabled);
+        this.$.btn.setSelected(false);
+        this.$.btn.setDisabled(true);
       }
     }
     OB.UTIL.createElipsisEffect(this.$.btn);
@@ -1007,18 +1013,18 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonSwitch',
-  style: 'display:table; width:100%;',
-  classButtonDisabled: 'btnkeyboard-inactive',
+  classes: 'obObposPointOfSaleUiButtonSwitch',
   handlers: {
     onButtonStatusChanged: 'buttonStatusChanged'
   },
   components: [
     {
-      style: 'margin: 5px;',
+      classes: 'obObposPointOfSaleUiButtonSwitch-container1',
       components: [
         {
           kind: 'OB.UI.Button',
-          classes: 'btnkeyboard',
+          classes:
+            'obObposPointOfSaleUiButtonSwitch-container1-btn obUiActionButton',
           name: 'btn'
         }
       ]
@@ -1028,7 +1034,7 @@ enyo.kind({
     this.$.btn.setContent(lbl);
   },
   tap: function() {
-    if (!this.$.btn.hasClass(this.classButtonDisabled)) {
+    if (!this.$.btn.getDisabled()) {
       this.keyboard.showNextKeypad();
     }
   },
@@ -1037,10 +1043,8 @@ enyo.kind({
       inEvent.value.status === '' &&
       this.keyboard.getActiveKeypads().length === 1
     ) {
-      this.$.btn.addClass(this.classButtonDisabled);
       this.$.btn.setDisabled(true);
     } else {
-      this.$.btn.removeClass(this.classButtonDisabled);
       this.$.btn.setDisabled(false);
     }
   },

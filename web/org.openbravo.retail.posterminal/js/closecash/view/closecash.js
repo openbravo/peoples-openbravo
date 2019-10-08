@@ -12,6 +12,7 @@
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.Button',
   kind: 'OB.UI.ToolbarButton',
+  classes: 'obObPosCashUpUiButton',
   disabled: true,
   events: {
     onChangeStep: ''
@@ -37,6 +38,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.CancelButton',
   kind: 'OB.UI.ToolbarButton',
+  classes: 'obObPosCashUpUiCancelButton',
   i18nLabel: 'OBMOBC_LblCancel',
   disabled: true,
   events: {
@@ -52,13 +54,40 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.LeftToolbarImpl',
   kind: 'OB.UI.MultiColumn.Toolbar',
+  classes: 'obObPosCashUpUiLeftToolbarImpl',
   published: {
     model: null
   },
   buttons: [
     {
+      name: 'btnCashUp',
+      kind: 'OB.OBPOSCashUp.UI.Button',
+      classes: 'obObPosCashupUiCashUp-rightToolbar-btnCashUp',
+      disabled: true,
+      i18nLabel: 'OBPOS_LblCloseCash'
+    },
+    {
+      name: 'btnToggleView',
+      kind: 'OB.UI.ToolbarButton',
+      classes: 'obObPosCashUpUiLeftToolbarImpl-btnToggleView',
+      i18nLabel: 'OBPOS_LblSwitchView',
+      tap: function() {
+        if (!this.disabled) {
+          var keypadClass = 'obUiMultiColumn-panels-showKeypad',
+            panels = OB.POS.terminal.$.containerWindow.getRoot().$
+              .cashupMultiColumn.$.panels;
+          if (panels.hasClass(keypadClass)) {
+            panels.removeClass(keypadClass);
+          } else {
+            panels.addClass(keypadClass);
+          }
+        }
+      }
+    },
+    {
       kind: 'OB.OBPOSCashUp.UI.Button',
       name: 'btnPrevious',
+      classes: 'obObPosCashUpUiLeftToolbarImpl-btnPrevious',
       i18nLabel: 'OBPOS_LblPrevStep',
       stepCount: -1,
       span: 4,
@@ -75,12 +104,14 @@ enyo.kind({
     {
       kind: 'OB.OBPOSCashUp.UI.CancelButton',
       name: 'btnCancel',
+      classes: 'obObPosCashUpUiLeftToolbarImpl-btnCancel',
       disabled: false,
       span: 4
     },
     {
       kind: 'OB.OBPOSCashUp.UI.Button',
       name: 'btnNext',
+      classes: 'obObPosCashUpUiLeftToolbarImpl-btnNext',
       i18nLabel: 'OBPOS_LblNextStep',
       stepCount: 1,
       span: 4,
@@ -128,6 +159,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.CashUp',
   kind: 'OB.UI.WindowView',
+  classes: 'obObPosCashupUiCashUp',
   allowedIncrementalRefresh: false,
   incrementalRefreshOnNavigate: false,
   synchId: null,
@@ -173,60 +205,71 @@ enyo.kind({
     {
       kind: 'OB.UI.MultiColumn',
       name: 'cashupMultiColumn',
+      classes: 'obObPosCashupUiCashUp-cashupMultiColumn',
       leftToolbar: {
         kind: 'OB.OBPOSCashUp.UI.LeftToolbarImpl',
         name: 'leftToolbar',
+        classes: 'obObPosCashupUiCashUp-cashupMultiColumn-leftToolbar',
         showMenu: false,
         showWindowsMenu: false
       },
       rightToolbar: {
         kind: 'OB.UI.MultiColumn.Toolbar',
         name: 'rightToolbar',
+        classes: 'obObPosCashupUiCashUp-cashupMultiColumn-rightToolbar',
         showMenu: false,
         showWindowsMenu: false,
         buttons: [
           {
             kind: 'OB.OBPOSCashUp.UI.Button',
             name: 'btnCashUp',
+            classes: 'obObPosCashupUiCashUp-rightToolbar-btnCashUp',
             span: 12
           }
         ]
       },
       leftPanel: {
         name: 'cashupLeftPanel',
+        classes: 'obObPosCashupUiCashUp-cashupMultiColumn-cashupLeftPanel',
         components: [
           {
-            classes: 'span12',
+            classes:
+              'obObPosCashupUiCashUp-cashupMultiColumn-cashupLeftPanel-listPendingReceipts',
             kind: 'OB.OBPOSCashUp.UI.ListPendingReceipts',
             name: 'listPendingReceipts',
             showing: false
           },
           {
-            classes: 'span12',
+            classes:
+              'obObPosCashupUiCashUp-cashupMultiColumn-cashupLeftPanel-cashMaster',
             kind: 'OB.OBPOSCashUp.UI.CashMaster',
             name: 'cashMaster',
             showing: false
           },
           {
-            classes: 'span12',
+            classes:
+              'obObPosCashupUiCashUp-cashupMultiColumn-cashupLeftPanel-cashPayments',
             kind: 'OB.OBPOSCashUp.UI.CashPayments',
             name: 'cashPayments',
             showing: false
           },
           {
-            classes: 'span12',
+            classes:
+              'obObPosCashupUiCashUp-cashupMultiColumn-cashupLeftPanel-listPaymentMethods',
             kind: 'OB.OBPOSCashUp.UI.ListPaymentMethods',
             name: 'listPaymentMethods',
             showing: false
           },
           {
-            classes: 'span12',
+            classes:
+              'obObPosCashupUiCashUp-cashupMultiColumn-cashupLeftPanel-cashToKeep',
             kind: 'OB.OBPOSCashUp.UI.CashToKeep',
             name: 'cashToKeep',
             showing: false
           },
           {
-            classes: 'span12',
+            classes:
+              'obObPosCashupUiCashUp-cashupMultiColumn-cashupLeftPanel-postPrintClose',
             kind: 'OB.OBPOSCashUp.UI.PostPrintClose',
             name: 'postPrintClose',
             showing: false
@@ -234,31 +277,38 @@ enyo.kind({
         ]
       },
       rightPanel: {
-        classes: 'span12',
+        classes: 'obObPosCashupUiCashUp-cashupMultiColumn-cashupRightPanel',
         name: 'cashupRightPanel',
         components: [
           {
             kind: 'OB.OBPOSCashUp.UI.CashUpInfo',
-            name: 'cashUpInfo'
+            name: 'cashUpInfo',
+            classes:
+              'obObPosCashupUiCashUp-cashupMultiColumn-cashupRightPanel-cashUpInfo'
           },
           {
             kind: 'OB.OBPOSCashUp.UI.CashUpKeyboard',
-            name: 'cashUpKeyboard'
+            name: 'cashUpKeyboard',
+            classes:
+              'obObPosCashupUiCashUp-cashupMultiColumn-cashupRightPanel-cashUpKeyboard'
           }
         ]
       }
     },
     {
       kind: 'OB.UI.ModalCancel',
-      name: 'modalCancel'
+      name: 'modalCancel',
+      classes: 'obObPosCashupUiCashUp-modalCancel'
     },
     {
       kind: 'OB.OBPOSCashUp.UI.modalPendingToProcess',
-      name: 'modalPendingToProcess'
+      name: 'modalPendingToProcess',
+      classes: 'obObPosCashupUiCashUp-modalPendingToProcess'
     },
     {
       kind: 'OB.UI.ModalSelectPrinters',
-      name: 'modalSelectPrinters'
+      name: 'modalSelectPrinters',
+      classes: 'obObPosCashupUiCashUp-modalSelectPrinters'
     }
   ],
   finalAction: function() {
@@ -269,7 +319,7 @@ enyo.kind({
     this.inherited(arguments);
     this.execution = OB.UTIL.ProcessController.start('cashupWindow');
 
-    this.$.cashupMultiColumn.$.rightToolbar.$.rightToolbar.$.toolbar.$.button.$.theButton.$.btnCashUp.setContent(
+    this.$.cashupMultiColumn.$.rightToolbar.$.rightToolbar.$.toolbar.$.btnCashUp.setContent(
       OB.I18N.getLabel(this.titleLabel)
     );
 
@@ -306,6 +356,9 @@ enyo.kind({
     this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.total.printAmount(
       this.model.get('totalExpected')
     );
+    this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.counted.printAmount(
+      0
+    );
     this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.difference.printAmount(
       OB.DEC.sub(0, this.model.get('totalExpected'))
     );
@@ -330,9 +383,21 @@ enyo.kind({
             this.model.get('totalExpected')
           )
         );
+        this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.counted.printAmount(
+          this.model.get('totalCounted')
+        );
         this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.difference.printAmount(
           this.model.get('totalDifference')
         );
+        if (this.model.get('totalDifference') <= 0) {
+          this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.differenceLbl.setContent(
+            OB.I18N.getLabel('OBPOS_Remaining')
+          );
+        } else {
+          this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.differenceLbl.setContent(
+            OB.I18N.getLabel('OBPOS_Surplus')
+          );
+        }
         this.waterfall('onAnyCounted');
         this.refreshButtons();
       },
@@ -628,9 +693,9 @@ enyo.kind({
     this.refreshButtons();
     // Show button label.
     var nextButtonI18NLabel = this.model.nextButtonI18NLabel();
-    this.$.cashupMultiColumn.$.leftToolbar.$.leftToolbar.$.toolbar
-      .getComponents()[2]
-      .$.theButton.$.btnNext.setContent(OB.I18N.getLabel(nextButtonI18NLabel));
+    this.$.cashupMultiColumn.$.leftToolbar.$.leftToolbar.$.toolbar.$.btnNext.setContent(
+      OB.I18N.getLabel(nextButtonI18NLabel)
+    );
   },
   changeStep: function(inSender, inEvent) {
     var direction = inEvent.originator.stepCount;
@@ -672,9 +737,9 @@ enyo.kind({
       if (this.model.get('cashUpSent')) {
         return true;
       }
-      this.$.cashupMultiColumn.$.leftToolbar.$.leftToolbar.$.toolbar
-        .getComponents()[2]
-        .$.theButton.$.btnNext.setDisabled(true);
+      this.$.cashupMultiColumn.$.leftToolbar.$.leftToolbar.$.toolbar.$.btnNext.setDisabled(
+        true
+      );
       this.model.set('cashUpSent', true);
       this.model.processAndFinishCashUp();
     } else if (nextsubstep < 0) {
@@ -809,6 +874,7 @@ OB.POS.registerWindow({
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.CashUpPartial',
   kind: 'OB.OBPOSCashUp.UI.CashUp',
+  classes: 'obObPosCashUpUiCashUpPartial',
   windowmodel: OB.OBPOSCashUp.Model.CashUpPartial,
   titleLabel: 'OBPOS_LblCloseCashPartial',
   finishCloseDialogLabel: 'OBPOS_FinishPartialDialog',

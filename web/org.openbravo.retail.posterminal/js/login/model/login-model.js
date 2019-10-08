@@ -1880,6 +1880,7 @@
             {
               kind: 'OB.UI.ModalSelectTerminal',
               name: 'modalSelectTerminal',
+              classes: 'modalSelectTerminal',
               callback: callback,
               context: this
             }
@@ -1936,6 +1937,7 @@
                         {
                           kind: 'OB.UI.ModalSelectTerminal',
                           name: 'modalSelectTerminal',
+                          classes: 'modalSelectTerminal',
                           callback: callback,
                           context: me
                         }
@@ -1952,6 +1954,7 @@
                       {
                         kind: 'OB.UI.ModalSelectTerminal',
                         name: 'modalSelectTerminal',
+                        classes: 'modalSelectTerminal',
                         callback: callback,
                         context: me
                       }
@@ -2149,9 +2152,9 @@ OB.UTIL.HookManager.registerHook('OBMOBC_ProfileDialogApply', function(
   args,
   callbacks
 ) {
-  var widgetForm = args.profileDialogProp.owner.owner.$.bodyContent.$,
-    newRoleId = widgetForm.roleList.getValue(),
-    isDefault = widgetForm.defaultBox.checked,
+  var widgetForm = args.profileDialogProp.owner.owner.$.body.$,
+    newRoleId = widgetForm.formElementRoleList.coreElement.getValue(),
+    isDefault = widgetForm.formElementDefaultCheckbox.coreElement.checked,
     process = new OB.DS.Process('org.openbravo.retail.posterminal.Profile');
   if (isDefault) {
     args.profileDialogProp.isActive = true;

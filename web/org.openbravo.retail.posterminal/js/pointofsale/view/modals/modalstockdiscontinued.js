@@ -13,11 +13,15 @@
   enyo.kind({
     kind: 'OB.UI.ModalAction',
     name: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockDiscontinued',
+    classes: 'obObposPointOfSaleUiModalsModalStockDiscontinued',
     header: '',
     bodyContent: {
+      classes: 'obObposPointOfSaleUiModalsModalStockDiscontinued-bodyContent',
       components: [
         {
           name: 'bodymessage',
+          classes:
+            'obObposPointOfSaleUiModalsModalStockDiscontinued-bodyContent-bodymessage',
           content: ''
         }
       ]
@@ -70,6 +74,8 @@
           this.$.bodyButtons.createComponent({
             kind: 'OB.UI.ModalDialogButton',
             name: 'btnAction' + indx,
+            classes:
+              'obObposPointOfSaleUiModalsModalStockDiscontinued-bodyButtons-obUiModalDialogButton',
             content: btn.label,
             isDefaultAction: btn.isDefaultAction,
             action: btn.action,

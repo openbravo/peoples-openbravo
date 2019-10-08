@@ -12,8 +12,11 @@
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Modals.ModalConfigurationRequiredForCrossStore',
   kind: 'OB.UI.ModalInfo',
+  classes: 'obObposPointOfSaleUiMpdalsModalConfigurationRequiredForCrossStore',
   i18nHeader: 'OBPOS_configurationRequired',
   bodyContent: {
+    classes:
+      'obObposPointOfSaleUiMpdalsModalConfigurationRequiredForCrossStore-bodyContent',
     i18nContent: 'OBPOS_configurationNeededToCrossStore'
   },
   myId: 'modalConfigurationRequiredForCrossStore'

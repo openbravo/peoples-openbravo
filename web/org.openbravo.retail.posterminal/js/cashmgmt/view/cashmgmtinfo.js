@@ -12,20 +12,27 @@
 // Top-right panel with clock and buttons
 enyo.kind({
   name: 'OB.OBPOSCashMgmt.UI.CashMgmtInfo',
+  classes: 'obObposcashmgmtUiCashMgmtInfo',
   components: [
     {
-      style:
-        'position: relative; background: #363636; color: white; height: 200px; margin: 5px; padding: 5px',
+      classes: 'obObposcashmgmtUiCashMgmtInfo-wrapper',
       components: [
         {
-          //clock here
-          kind: 'OB.UI.Clock',
-          classes: 'pos-clock'
-        },
-        {
-          // process info
-          style: 'padding: 10px; float: left; width: 320px; line-height: 23px;',
-          name: 'infoLbl'
+          classes: 'obObposcashmgmtUiCashMgmtInfo-wrapper-components',
+          components: [
+            {
+              //clock here
+              kind: 'OB.UI.Clock',
+              classes:
+                'obObposcashmgmtUiCashMgmtInfo-wrapper-components-obUiClock'
+            },
+            {
+              //process info
+              name: 'infoLbl',
+              classes:
+                'obObposcashmgmtUiCashMgmtInfo-wrapper-components-infoLbl'
+            }
+          ]
         }
       ]
     }
@@ -41,8 +48,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSCashMgmt.UI.DoneButton',
   kind: 'OB.UI.RegularButton',
-  classes: 'btnlink-white btnlink-fontgray',
-  style: 'min-width: 115px;',
+  classes: 'obObposcashmgmtUiDoneButton',
   i18nContent: 'OBPOS_LblDone',
   tap: function() {
     this.owner.owner.model.depsdropstosave.trigger('makeDeposits');

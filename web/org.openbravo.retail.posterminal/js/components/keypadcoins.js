@@ -13,28 +13,31 @@ enyo.kind({
   name: 'OB.UI.KeypadCoinsLegacy',
   padName: 'Coins-102',
   padPayment: 'OBPOS_payment.cash',
+  classes: 'obUiKeypadCoinsLegacy',
   components: [
     {
-      classes: 'row-fluid',
+      classes: 'obUiKeypadCoinsLegacy-container1',
       components: [
         {
-          classes: 'span4',
+          classes: 'obUiKeypadCoinsLegacy-container1-container1',
           components: [
             {
               kind: 'OB.UI.ButtonKey',
               name: 'OBKEY_legacy_A1',
-              classButton: 'btnkeyboard-num',
+              classButton:
+                'obUiKeypadCoinsLegacy-container1-container1-obKeyLegacyA1 obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic',
               label: '/',
               command: '/'
             }
           ]
         },
         {
-          classes: 'span4',
+          classes: 'obUiKeypadCoinsLegacy-container1-container2',
           components: [
             {
               kind: 'OB.UI.ButtonKey',
-              classButton: 'btnkeyboard-num',
+              classButton:
+                'obUiKeypadCoinsLegacy-container1-container2-obKeyLegacyB1 obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic',
               name: 'OBKEY_legacy_B1',
               label: '*',
               command: '*'
@@ -42,11 +45,12 @@ enyo.kind({
           ]
         },
         {
-          classes: 'span4',
+          classes: 'obUiKeypadCoinsLegacy-container1-container3',
           components: [
             {
               kind: 'OB.UI.ButtonKey',
-              classButton: 'btnkeyboard-num',
+              classButton:
+                'obUiKeypadCoinsLegacy-container1-container3-obKeyLegacyC1 obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic',
               name: 'OBKEY_legacy_C1',
               label: '%',
               command: '%'
@@ -56,166 +60,188 @@ enyo.kind({
       ]
     },
     {
-      classes: 'row-fluid',
+      classes: 'obUiKeypadCoinsLegacy-container2',
       components: [
         {
-          classes: 'span4',
+          classes: 'obUiKeypadCoinsLegacy-container2-container1',
           components: [
             {
               kind: 'OB.UI.PaymentButton',
               paymenttype: 'OBPOS_payment.cash',
               name: 'OBKEY_OBPOS_payment.cash_A2',
+              classes:
+                'obUiKeypadCoinsLegacy-container2-container1-obKeyObposPaymentCashA2',
               amount: 10,
-              background: '#e9b7c3'
+              coinClass: 'obUiPaymentButton_coin10'
             }
           ]
         },
         {
-          classes: 'span4',
+          classes: 'obUiKeypadCoinsLegacy-container2-container2',
           components: [
             {
               kind: 'OB.UI.PaymentButton',
               paymenttype: 'OBPOS_payment.cash',
               name: 'OBKEY_OBPOS_payment.cash_B2',
+              classes:
+                'obUiKeypadCoinsLegacy-container2-container2-obKeyOposPaymentCashB2',
               amount: 20,
-              background: '#bac3de'
+              coinClass: 'obUiPaymentButton_coin20'
             }
           ]
         },
         {
-          classes: 'span4',
+          classes: 'obUiKeypadCoinsLegacy-container2-container3',
           components: [
             {
               kind: 'OB.UI.PaymentButton',
               paymenttype: 'OBPOS_payment.cash',
               name: 'OBKEY_OBPOS_payment.cash_C2',
+              classes:
+                'obUiKeypadCoinsLegacy-container2-container3-obKeyObposPaymentCashC2',
               amount: 50,
-              background: '#f9bb92'
+              coinClass: 'obUiPaymentButton_coin50'
             }
           ]
         }
       ]
     },
     {
-      classes: 'row-fluid',
+      classes: 'obUiKeypadCoinsLegacy-container3',
       components: [
         {
-          classes: 'span4',
+          classes: 'obUiKeypadCoinsLegacy-container3-container1',
           components: [
             {
               kind: 'OB.UI.PaymentButton',
               paymenttype: 'OBPOS_payment.cash',
               name: 'OBKEY_OBPOS_payment.cash_A3',
+              classes:
+                'obUiKeypadCoinsLegacy-container3-container1-obKeyObposPaymentCashA3',
               amount: 1,
-              background: '#e4e0e3',
-              bordercolor: '#f9e487'
+              coinClass: 'obUiPaymentButton_coin1'
             }
           ]
         },
         {
-          classes: 'span4',
+          classes: 'obUiKeypadCoinsLegacy-container3-container2',
           components: [
             {
               kind: 'OB.UI.PaymentButton',
               paymenttype: 'OBPOS_payment.cash',
               name: 'OBKEY_OBPOS_payment.cash_B3',
+              classes:
+                'obUiKeypadCoinsLegacy-container3-container2-obKeyObposPaymentCashB3',
               amount: 2,
-              background: '#f9e487',
-              bordercolor: '#e4e0e3'
+              coinClass: 'obUiPaymentButton_coin2'
             }
           ]
         },
         {
-          classes: 'span4',
+          classes: 'obUiKeypadCoinsLegacy-container3-container3',
           components: [
             {
               kind: 'OB.UI.PaymentButton',
               paymenttype: 'OBPOS_payment.cash',
               name: 'OBKEY_OBPOS_payment.cash_C3',
+              classes:
+                'obUiKeypadCoinsLegacy-container3-container3-obKeyObposPaymentCashC3',
               amount: 5,
-              background: '#bccdc5'
+              coinClass: 'obUiPaymentButton_coin5'
             }
           ]
         }
       ]
     },
     {
-      classes: 'row-fluid',
+      classes: 'obUiKeypadCoinsLegacy-container4',
       components: [
         {
-          classes: 'span4',
+          classes: 'obUiKeypadCoinsLegacy-container4-container1',
           components: [
             {
               kind: 'OB.UI.PaymentButton',
               paymenttype: 'OBPOS_payment.cash',
               name: 'OBKEY_OBPOS_payment.cash_A4',
+              classes:
+                'obUiKeypadCoinsLegacy-container4-container1-obKeyObposPaymentCashA4',
               amount: 0.1,
-              background: '#f9e487'
+              coinClass: 'obUiPaymentButton_coin010'
             }
           ]
         },
         {
-          classes: 'span4',
+          classes: 'obUiKeypadCoinsLegacy-container4-container2',
           components: [
             {
               kind: 'OB.UI.PaymentButton',
               paymenttype: 'OBPOS_payment.cash',
               name: 'OBKEY_OBPOS_payment.cash_B4',
+              classes:
+                'obUiKeypadCoinsLegacy-container4-container2-obKeyObposPaymentCashB4',
               amount: 0.2,
-              background: '#f9e487'
+              coinClass: 'obUiPaymentButton_coin020'
             }
           ]
         },
         {
-          classes: 'span4',
+          classes: 'obUiKeypadCoinsLegacy-container4-container3',
           components: [
             {
               kind: 'OB.UI.PaymentButton',
               paymenttype: 'OBPOS_payment.cash',
               name: 'OBKEY_OBPOS_payment.cash_C4',
+              classes:
+                'obUiKeypadCoinsLegacy-container4-container3-obKeyObposPaymentCashC4',
               amount: 0.5,
-              background: '#f9e487'
+              coinClass: 'obUiPaymentButton_coin050'
             }
           ]
         }
       ]
     },
     {
-      classes: 'row-fluid',
+      classes: 'obUiKeypadCoinsLegacy-container5',
       components: [
         {
-          classes: 'span4',
+          classes: 'obUiKeypadCoinsLegacy-container5-container1',
           components: [
             {
               kind: 'OB.UI.PaymentButton',
               paymenttype: 'OBPOS_payment.cash',
               name: 'OBKEY_OBPOS_payment.cash_A5',
+              classes:
+                'obUiKeypadCoinsLegacy-container5-container1-obKeyObposPaymentCashA5',
               amount: 0.01,
-              background: '#f3bc9e'
+              coinClass: 'obUiPaymentButton_coin001'
             }
           ]
         },
         {
-          classes: 'span4',
+          classes: 'obUiKeypadCoinsLegacy-container5-container2',
           components: [
             {
               kind: 'OB.UI.PaymentButton',
               paymenttype: 'OBPOS_payment.cash',
               name: 'OBKEY_OBPOS_payment.cash_B5',
+              classes:
+                'obUiKeypadCoinsLegacy-container5-container2-obKeyObposPaymentCashB5',
               amount: 0.02,
-              background: '#f3bc9e'
+              coinClass: 'obUiPaymentButton_coin002'
             }
           ]
         },
         {
-          classes: 'span4',
+          classes: 'obUiKeypadCoinsLegacy-container5-container3',
           components: [
             {
               kind: 'OB.UI.PaymentButton',
               name: 'OBKEY_OBPOS_payment.cash_C5',
+              classes:
+                'obUiKeypadCoinsLegacy-container5-container3-obKeyObposPaymentCashC5',
               paymenttype: 'OBPOS_payment.cash',
               amount: 0.05,
-              background: '#f3bc9e'
+              coinClass: 'obUiPaymentButton_coin005'
             }
           ]
         }
@@ -230,15 +256,15 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.PaymentButton',
-  style: 'margin: 5px;',
+  classes: 'obUiPaymentButton',
   components: [
     {
       kind: 'OB.UI.Button',
-      classes: 'btnkeyboard',
+      classes: 'obUiPaymentButton-btn',
       name: 'btn'
     }
   ],
-  background: '#6cb33f',
+  coinClass: 'obUiPaymentButton-generic',
   avoidDoubleClick: false,
   initComponents: function() {
     var btn;
@@ -246,11 +272,7 @@ enyo.kind({
 
     btn = this.$.btn;
     btn.setContent(this.label || OB.I18N.formatCoins(this.amount));
-    btn.applyStyle('background-color', this.background);
-    btn.applyStyle(
-      'border',
-      '10px solid ' + (this.bordercolor || this.background)
-    );
+    btn.addClass(this.coinClass);
   },
   tap: function() {
     if (OB.MobileApp.model.hasPermission(this.paymenttype)) {

@@ -11,7 +11,7 @@
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ReceiptView',
-  classes: 'span6',
+  classes: 'obObposPointOfSaleUiReceiptView',
   published: {
     order: null,
     orderList: null
@@ -22,55 +22,56 @@ enyo.kind({
   handlers: {
     onCheckBoxBehaviorForTicketLine: 'checkBoxBehavior',
     onToggleSelectionMode: 'toggleSelectionMode',
-    onTableMultiSelectAll: 'tableMultiSelectAll'
+    onTableMultiSelectAll: 'tableMultiSelectAll',
+    onChangeOrderCaptionWidth: 'changeOrderCaptionWidth'
   },
   components: [
     {
-      style: 'margin: 5px',
+      kind: 'OB.UI.ReceiptsCounter',
+      name: 'receiptcounter',
+      classes: 'obObposPointOfSaleUiReceiptView-receiptcounter'
+    },
+    {
+      name: 'receiptWrapper',
+      classes: 'obObposPointOfSaleUiReceiptView-receiptWrapper',
       components: [
         {
-          style:
-            'position: relative; background-color: #ffffff; color: black;overflow-y: auto; max-height: 612px',
+          kind: 'OB.UI.OrderHeader',
+          name: 'receiptHeader',
+          classes:
+            'obObposPointOfSaleUiReceiptView-receiptWrapper-receiptHeader'
+        },
+        {
+          name: 'receiptBody',
+          classes: 'obObposPointOfSaleUiReceiptView-receiptWrapper-receiptBody',
           components: [
             {
-              kind: 'OB.UI.ReceiptsCounter',
-              name: 'receiptcounter'
+              kind: 'OB.UI.OrderCaptions',
+              name: 'orderCaptions',
+              classes:
+                'obObposPointOfSaleUiReceiptView-receiptWrapper-receiptBody-orderCaptions'
             },
             {
-              style: 'padding: 5px;',
-              components: [
-                {
-                  kind: 'OB.UI.OrderHeader',
-                  name: 'receiptheader'
-                },
-                {
-                  style: 'max-height: 536px;',
-                  components: [
-                    {
-                      components: [
-                        {
-                          kind: 'OB.UI.OrderView',
-                          name: 'orderview'
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  kind: 'OB.UI.OrderFooter',
-                  name: 'receiptfooter'
-                }
-              ]
+              kind: 'OB.UI.OrderView',
+              name: 'orderview',
+              classes:
+                'obObposPointOfSaleUiReceiptView-receiptWrapper-receiptBody-orderview'
             }
           ]
+        },
+        {
+          kind: 'OB.UI.OrderFooter',
+          name: 'receiptFooter',
+          classes:
+            'obObposPointOfSaleUiReceiptView-receiptWrapper-receiptFooter'
         }
       ]
     }
   ],
   orderChanged: function(oldValue) {
-    this.$.receiptheader.setOrder(this.order);
+    this.$.receiptHeader.setOrder(this.order);
     this.$.orderview.setOrder(this.order);
-    this.$.receiptfooter.setOrder(this.order);
+    this.$.receiptFooter.setOrder(this.order);
   },
   orderListChanged: function(oldValue) {
     this.$.receiptcounter.setOrderList(this.orderList);
@@ -81,5 +82,23 @@ enyo.kind({
   },
   tableMultiSelectAll: function(inSender, inEvent) {
     this.waterfall('onMultiSelectAllTable');
+  },
+  changeOrderCaptionWidth: function(inSender, inEvent) {
+    if (
+      this.$.orderview.$.listOrderLines.getScrollArea().getScrollBounds()
+        .maxTop !== 0
+    ) {
+      this.$.orderCaptions.$.description.hasNode().style.width =
+        'calc(100% - 285px)';
+    } else if (inEvent.status) {
+      this.$.orderCaptions.$.description.hasNode().style.width =
+        'calc(100% - 270px)';
+    } else {
+      if (this.$.orderCaptions.$.description.hasNode()) {
+        this.$.orderCaptions.$.description
+          .hasNode()
+          .style.removeProperty('width');
+      }
+    }
   }
 });

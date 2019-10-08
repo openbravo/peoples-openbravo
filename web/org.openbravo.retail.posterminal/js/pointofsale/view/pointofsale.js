@@ -154,6 +154,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.PointOfSale',
   kind: 'OB.UI.WindowView',
+  classes: 'obObposPointOfSaleUiPointOfSale',
   windowmodel: OB.OBPOSPointOfSale.Model.PointOfSale,
   tag: 'section',
   allowedIncrementalRefresh: true,
@@ -265,83 +266,122 @@ enyo.kind({
   components: [
     {
       name: 'other_SubWindows_Container',
+      classes: 'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer',
       components: [
         {
           kind:
             'OB.OBPOSPointOfSale.UI.customers.ModalConfigurationRequiredForCreateCustomers',
-          name: 'modalConfigurationRequiredForCreateNewCustomers'
+          name: 'modalConfigurationRequiredForCreateNewCustomers',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalConfigurationRequiredForCreateNewCustomers'
         },
         {
           kind: 'OB.OBPOSPointOfSale.UI.customers.newcustomer',
-          name: 'customerCreateAndEdit'
+          name: 'customerCreateAndEdit',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-customerCreateAndEdit'
         },
         {
           kind: 'OB.OBPOSPointOfSale.UI.customers.editcustomer',
-          name: 'customerView'
+          name: 'customerView',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-customerView'
         },
         {
           kind: 'OB.OBPOSPointOfSale.UI.customeraddr.newcustomeraddr',
-          name: 'customerAddrCreateAndEdit'
+          name: 'customerAddrCreateAndEdit',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-customerAddrCreateAndEdit'
         },
         {
           kind: 'OB.OBPOSPointOfSale.UI.customeraddr.editcustomeraddr',
-          name: 'customerAddressView'
+          name: 'customerAddressView',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-customerAddressView'
         },
         {
           kind: 'OB.UI.ModalSelectorBusinessPartners',
-          name: 'modalcustomer'
+          name: 'modalcustomer',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalcustomer'
         },
         {
           kind: 'OB.UI.ModalAdvancedFilterBP',
-          name: 'modalAdvancedFilterBP'
+          name: 'modalAdvancedFilterBP',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalAdvancedFilterBP'
         },
         {
           kind: 'OB.UI.ModalBPLocation',
-          name: 'modalcustomeraddress'
+          name: 'modalcustomeraddress',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalcustomeraddress'
         },
         {
           kind: 'OB.UI.ModalBPLocationShip',
-          name: 'modalcustomershipaddress'
+          name: 'modalcustomershipaddress',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalcustomershipaddress'
         },
         {
           kind: 'OB.UI.ModalDeleteReceipt',
-          name: 'modalConfirmReceiptDelete'
+          name: 'modalConfirmReceiptDelete',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalConfirmReceiptDelete'
         },
         {
           kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalProductCannotBeGroup',
-          name: 'modalProductCannotBeGroup'
+          name: 'modalProductCannotBeGroup',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalProductCannotBeGroup'
         },
         {
           kind: 'OB.UI.Modalnoteditableorder',
-          name: 'modalNotEditableOrder'
+          name: 'modalNotEditableOrder',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalNotEditableOrder'
         },
         {
           kind: 'OB.UI.ModalNotEditableLine',
-          name: 'modalNotEditableLine'
+          name: 'modalNotEditableLine',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalNotEditableLine'
         },
         {
           kind: 'OB.UI.ModalReceipts',
-          name: 'modalreceipts'
+          name: 'modalreceipts',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalreceipts'
         },
         {
           kind: 'OB.UI.ModalVerifiedReturns',
-          name: 'modalVerifiedReturns'
+          name: 'modalVerifiedReturns',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalVerifiedReturns'
         },
         {
           kind: 'OBPOS.UI.ReceiptSelector',
-          name: 'modalReceiptSelector'
+          name: 'modalReceiptSelector',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalReceiptSelector'
         },
         {
           kind: 'OBPOS.UI.ReceiptSelectorCustomerView',
-          name: 'modalReceiptSelectorCustomerView'
+          name: 'modalReceiptSelectorCustomerView',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalReceiptSelectorCustomerView'
         },
         {
           kind: 'OB.UI.ModalAdvancedFilterReceipts',
-          name: 'OB_UI_ModalAdvancedFilterReceipts'
+          name: 'OB_UI_ModalAdvancedFilterReceipts',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-ObUiModalAdvancedFilterReceipts'
         },
         {
           kind: 'OB.UI.ModalAdvancedFilterVerifiedReturns',
-          name: 'modalAdvancedFilterVerifiedReturns'
+          name: 'modalAdvancedFilterVerifiedReturns',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalAdvancedFilterVerifiedReturns'
         },
         {
           kind: 'OB.UI.ModalAdvancedFilterSelectStore',
@@ -349,215 +389,308 @@ enyo.kind({
         },
         {
           kind: 'OB.UI.ModalMultiOrdersPayOpenTickets',
-          name: 'modalMultiOrders'
+          name: 'modalMultiOrders',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalMultiOrders'
         },
         {
           kind: 'OB.UI.ModalInvoices',
-          name: 'modalInvoices'
+          name: 'modalInvoices',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalInvoices'
         },
         {
           kind: 'OB.UI.ModalCreateOrderFromQuotation',
-          name: 'modalCreateOrderFromQuotation'
+          name: 'modalCreateOrderFromQuotation',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalCreateOrderFromQuotation'
         },
         {
           kind: 'OB.UI.ModalReactivateQuotation',
-          name: 'modalReactivateQuotation'
+          name: 'modalReactivateQuotation',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalReactivateQuotation'
         },
         {
           kind: 'OB.UI.ModalRejectQuotation',
-          name: 'modalRejectQuotation'
+          name: 'modalRejectQuotation',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalRejectQuotation'
         },
         {
           kind: 'OB.UI.ModalPriceModification',
-          name: 'modalPriceModification'
+          name: 'modalPriceModification',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalPriceModification'
         },
         {
           kind: 'OB.UI.ModalReceiptPropertiesImpl',
-          name: 'receiptPropertiesDialog'
+          name: 'receiptPropertiesDialog',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-receiptPropertiesDialog'
         },
         {
           kind: 'OB.UI.ModalReceiptLinesPropertiesImpl',
-          name: 'receiptLinesPropertiesDialog'
+          name: 'receiptLinesPropertiesDialog',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-receiptLinesPropertiesDialog'
         },
         {
           kind: 'OB.UI.ModalDeliveryChange',
-          name: 'modalDeliveryChange'
+          name: 'modalDeliveryChange',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalDeliveryChange'
         },
         {
           kind: 'OB.UI.ModalPayment',
-          name: 'modalpayment'
+          name: 'modalpayment',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalpayment'
         },
         {
           kind: 'OB.UI.ModalPaymentVoid',
-          name: 'modalpaymentvoid'
+          name: 'modalpaymentvoid',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalpaymentvoid'
         },
         {
           kind: 'OB.UI.ModalProviderGroup',
-          name: 'modalprovidergroup'
+          name: 'modalprovidergroup',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalprovidergroup'
         },
         {
           kind: 'OB.UI.ModalProviderGroupVoid',
-          name: 'modalprovidergroupvoid'
+          name: 'modalprovidergroupvoid',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalprovidergroupvoid'
         },
         {
           kind: 'OB.UI.ModalChange',
-          name: 'modalchange'
+          name: 'modalchange',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalchange'
         },
         {
           kind:
             'OB.OBPOSPointOfSale.UI.Modals.ModalConfigurationRequiredForCrossStore',
-          name: 'modalConfigurationRequiredForCrossStore'
+          name: 'modalConfigurationRequiredForCrossStore',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalConfigurationRequiredForCrossStore'
         },
         {
           kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInStore',
-          name: 'modalLocalStock'
+          name: 'modalLocalStock',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalLocalStock'
         },
         {
           kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInStoreClickable',
-          name: 'modalLocalStockClickable'
+          name: 'modalLocalStockClickable',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalLocalStockClickable'
         },
         {
           kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockInOtherStores',
-          name: 'modalStockInOtherStores'
+          name: 'modalStockInOtherStores',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalStockInOtherStores'
         },
         {
           kind: 'OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit',
-          name: 'modalEnoughCredit'
+          name: 'modalEnoughCredit',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalEnoughCredit'
         },
         {
           kind: 'OB.OBPOSPointOfSale.UI.Modals.modalNotEnoughCredit',
-          name: 'modalNotEnoughCredit'
+          name: 'modalNotEnoughCredit',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalNotEnoughCredit'
         },
         {
           kind: 'OB.UI.ValidateAction',
-          name: 'modalValidateAction'
+          name: 'modalValidateAction',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalValidateAction'
         },
         {
           kind: 'OB.OBPOSPointOfSale.UI.Modals.modalDiscountNeedQty',
-          name: 'modalDiscountNeedQty'
+          name: 'modalDiscountNeedQty',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalDiscountNeedQty'
         },
         {
           kind: 'OB.OBPOSPointOfSale.UI.Modals.modalNotValidValueForDiscount',
-          name: 'modalNotValidValueForDiscount'
+          name: 'modalNotValidValueForDiscount',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalNotValidValueForDiscount'
         },
         {
           kind: 'OB.UI.ModalSalesRepresentative',
-          name: 'modalsalesrepresentative'
+          name: 'modalsalesrepresentative',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalsalesrepresentative'
         },
         {
           kind: 'OB.UI.ModalMultiOrdersLayaway',
-          name: 'modalmultiorderslayaway'
+          name: 'modalmultiorderslayaway',
+          classes: 'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-'
         },
         {
           kind: 'OB.UI.ModalProductCharacteristic',
-          name: 'modalproductcharacteristic'
+          name: 'modalproductcharacteristic',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalproductcharacteristic'
         },
         {
           kind: 'OB.UI.ModalProductBrand',
-          name: 'modalproductbrand'
+          name: 'modalproductbrand',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalproductbrand'
         },
         {
           kind: 'OB.UI.ModalCategoryTree',
-          name: 'modalcategorytree'
+          name: 'modalcategorytree',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalcategorytree'
         },
         {
           kind: 'OB.UI.ModalSearchFilterBuilder',
-          name: 'modalsearchfilterbuilder'
+          name: 'modalsearchfilterbuilder',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalsearchfilterbuilder'
         },
         {
           kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalPaymentsSelect',
-          name: 'modalPaymentsSelect'
+          name: 'modalPaymentsSelect',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalPaymentsSelect'
         },
         {
           kind: 'OB.UI.ModalSelectPrinters',
-          name: 'modalSelectPrinters'
+          name: 'modalSelectPrinters',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalSelectPrinters'
         },
         {
           kind: 'OB.UI.ModalSelectPDFPrinters',
-          name: 'modalSelectPDFPrinters'
+          name: 'modalSelectPDFPrinters',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalSelectPDFPrinters'
         },
         {
           kind: 'OB.UI.ModalModulesInDev',
-          name: 'modalModulesInDev'
+          name: 'modalModulesInDev',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalModulesInDev'
         },
         {
           kind: 'OB.OBPOSPointOfSale.UI.PaymentMethods',
-          name: 'OBPOS_UI_PaymentMethods'
+          name: 'OBPOS_UI_PaymentMethods',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-OBPOSUIPaymentMethods'
         },
         {
           kind: 'OB.UI.ModalSelectOpenedReceipt',
-          name: 'OBPOS_modalSelectOpenedReceipt'
+          name: 'OBPOS_modalSelectOpenedReceipt',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-OBPOSmodalSelectOpenedReceipt'
         },
         {
           kind: 'OB.UI.ModalSplitLine',
-          name: 'OBPOS_modalSplitLine'
+          name: 'OBPOS_modalSplitLine',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-OBPOSModalSplitLine'
         },
         {
           kind: 'OB.UI.ModalDeleteDiscount',
-          name: 'modalDeleteDiscount'
+          name: 'modalDeleteDiscount',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalDeleteDiscount'
         },
         {
           kind: 'OB.UI.ModalProductAttributes',
-          name: 'modalProductAttribute'
+          name: 'modalProductAttribute',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalProductAttribute'
         },
         {
           kind: 'OB.UI.ModalQuotationProductAttributes',
-          name: 'modalQuotationProductAttributes'
+          name: 'modalQuotationProductAttributes',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalQuotationProductAttributes'
         },
         {
           kind: 'OB.UI.ModalOpenRelatedReceipts',
-          name: 'modalOpenRelatedReceipts'
+          name: 'modalOpenRelatedReceipts',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalOpenRelatedReceipts'
         },
         {
           kind: 'OB.UI.ModalAssociateTickets',
-          name: 'OBPOS_modalAssociateTickets'
+          name: 'OBPOS_modalAssociateTickets',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-OBPOSModalAssociateTickets'
         },
         {
           kind: 'OB.UI.ModalRemoveAssociatedTickets',
-          name: 'OBPOS_modalRemoveAssociatedTickets'
+          name: 'OBPOS_modalRemoveAssociatedTickets',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-OBPOSModalRemoveAssociatedTickets'
         },
         {
           kind: 'OB.UI.ModalAdvancedFilterOrders',
-          name: 'OBPOS_modalAdvancedFilterOrders'
+          name: 'OBPOS_modalAdvancedFilterOrders',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-OBPOSModalAdvancedFilterOrders'
         },
         {
           kind: 'OBPOS.UI.CrossStoreSelector',
-          name: 'OBPOS_modalCrossStoreSelector'
+          name: 'OBPOS_modalCrossStoreSelector',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-OBPOSModalCrossStoreSelector'
         },
         {
           kind: 'OBPOS.UI.StoreInformation',
-          name: 'OBPOS_storeInformation'
+          name: 'OBPOS_storeInformation',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-OBPOSStoreInformation'
         }
       ]
     },
     {
       name: 'mainSubWindow',
+      classes: 'obObposPointOfSaleUiPointOfSale-mainSubWindow',
       isMainSubWindow: true,
       components: [
         {
           kind: 'OB.UI.MultiColumn',
           name: 'multiColumn',
+          classes: 'obObposPointOfSaleUiPointOfSale-mainSubWindow-multiColumn',
           handlers: {
             onChangeTotal: 'processChangeTotal'
           },
           leftToolbar: {
             kind: 'OB.OBPOSPointOfSale.UI.LeftToolbarImpl',
             name: 'leftToolbar',
+            classes: 'obObposPointOfSaleUiPointOfSale-multiColumn-leftToolbar',
             showMenu: true,
             showWindowsMenu: true
           },
           leftPanel: {
             name: 'leftPanel',
-            style: 'max-height: 622px;',
+            classes: 'obObposPointOfSaleUiPointOfSale-multiColumn-leftPanel',
             components: [
               {
-                classes: 'span12',
+                classes:
+                  'obObposPointOfSaleUiPointOfSale-multiColumn-leftPanel-divHeader',
                 kind: 'OB.OBPOSPointOfSale.UI.LeftHeader',
-                style: 'height: 35px;',
                 name: 'divHeader'
               },
               {
-                classes: 'span12',
+                classes:
+                  'obObposPointOfSaleUiPointOfSale-multiColumn-leftPanel-receiptview',
                 kind: 'OB.OBPOSPointOfSale.UI.ReceiptView',
                 name: 'receiptview',
                 init: function(model) {
@@ -572,7 +705,8 @@ enyo.kind({
                 }
               },
               {
-                classes: 'span12',
+                classes:
+                  'obObposPointOfSaleUiPointOfSale-multiColumn-leftPanel-multireceiptview',
                 kind: 'OB.OBPOSPointOfSale.UI.MultiReceiptView',
                 name: 'multireceiptview',
                 showing: false,
@@ -589,9 +723,12 @@ enyo.kind({
               },
               {
                 name: 'leftSubWindowsContainer',
+                classes:
+                  'obObposPointOfSaleUiPointOfSale-multiColumn-leftPanel-leftSubWindowsContainer',
                 components: [
                   {
-                    classes: 'span12',
+                    classes:
+                      'obObposPointOfSaleUiPointOfSale-multiColumn-leftPanel-leftSubWindowsContainer-productdetailsview',
                     kind: 'OB.OBPOSPointOfSale.UI.ProductDetailsView',
                     name: 'productdetailsview'
                   }
@@ -601,20 +738,30 @@ enyo.kind({
           },
           rightToolbar: {
             kind: 'OB.OBPOSPointOfSale.UI.RightToolbarImpl',
-            name: 'rightToolbar'
+            name: 'rightToolbar',
+            classes: 'obObposPointOfSaleUiPointOfSale-multiColumn-rightToolbar',
+            showMenu: true,
+            showWindowsMenu: true
           },
           rightPanel: {
-            name: 'keyboardTabsPanel',
+            name: 'rightPanel',
+            classes: 'obObposPointOfSaleUiPointOfSale-multiColumn-rightPanel',
             components: [
               {
+                classes:
+                  'obObposPointOfSaleUiPointOfSale-multiColumn-rightPanel-wrapper',
                 components: [
                   {
                     kind: 'OB.OBPOSPointOfSale.UI.RightToolbarPane',
-                    name: 'toolbarpane'
+                    name: 'toolbarpane',
+                    classes:
+                      'obObposPointOfSaleUiPointOfSale-multiColumn-rightPanel-wrapper-toolbarpane'
                   },
                   {
                     kind: 'OB.OBPOSPointOfSale.UI.RightBottomPanelWrapper',
-                    name: 'rightBottomPanel'
+                    name: 'rightBottomPanel',
+                    classes:
+                      'obObposPointOfSaleUiPointOfSale-multiColumn-rightPanel-wrapper-rightBottomPanel'
                   }
                 ]
               }
@@ -906,7 +1053,7 @@ enyo.kind({
           OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
         this.showLeftSubWindow(inSender, inEvent);
         if (enyo.Panels.isScreenNarrow()) {
-          this.$.multiColumn.switchColumn();
+          this.$.multiColumn.$.rightToolbar.$.rightToolbar.$.toolbar.$.toolbarBtnCart.tap();
         }
         return true;
       } else {
@@ -1341,6 +1488,9 @@ enyo.kind({
   },
   tabChange: function(inSender, inEvent) {
     this.switchBottomRightLayout(inEvent.tabPanel);
+    OB.POS.terminal.$.containerWindow
+      .getRoot()
+      .$.multiColumn.$.panels.removeClass('obUiMultiColumn-panels-showReceipt');
     this.leftToolbarDisabled(inSender, {
       status: inEvent.status || false,
       disableMenu:
@@ -2279,6 +2429,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.LeftHeader',
+  classes: 'obObPosPointOfSaleUiLeftHeader',
   showing: false,
   published: {
     text: null
@@ -2297,15 +2448,11 @@ enyo.kind({
   components: [
     {
       name: 'innerDiv',
-      style:
-        'text-align: center; font-size: 30px; padding: 5px; padding-top: 0px;',
+      classes: 'obObPosPointOfSaleUiLeftHeader-innerDiv',
       components: [
         {
           name: 'headerText',
-          attributes: {
-            style:
-              'background-color: #ffffff; height: 30px; font-weight:bold; padding-top: 15px;'
-          },
+          classes: 'obObPosPointOfSaleUiLeftHeader-innerDiv-headerText',
           content: ''
         }
       ]

@@ -13,20 +13,26 @@
 enyo.kind({
   name: 'OB.OBPOSCashMgmt.UI.ModalDepositEvents',
   kind: 'OB.UI.Modal',
-  topPosition: '125px',
+  classes:
+    'u-popup-top-separation-large obposObposcashmgmtUiModalDepositEvents',
   body: {
-    kind: 'OB.OBPOSCashMgmt.UI.ListEvents'
+    kind: 'OB.OBPOSCashMgmt.UI.ListEvents',
+    classes: 'obposObposcashmgmtUiModalDepositEvents-obObposcashmgmtUiListEvent'
   }
 });
 
 //Popup with the destinations for deposits/drops
 enyo.kind({
   name: 'OB.OBPOSCashMgmt.UI.ListEvents',
-  classes: 'row-fluid',
+  classes: 'obObposcashmgmtUiListEvent row-fluid',
   components: [
     {
-      classes: 'span12',
-      components: [{}]
+      classes: 'obObposcashmgmtUiListEvent-container1 span12',
+      components: [
+        {
+          classes: 'obObposcashmgmtUiListEvent-container1-element1'
+        }
+      ]
     }
   ],
 
@@ -34,7 +40,7 @@ enyo.kind({
     this.createComponent({
       name: this.owner.owner.type,
       kind: 'OB.UI.Table',
-      style: 'overflow: auto; max-height: 600px',
+      classes: 'obObposcashmgmtUiListEvent-obUiTable',
       renderLine: 'OB.OBPOSCashMgmt.UI.ListEventLine',
       renderEmpty: 'OB.UI.RenderEmpty'
     });
@@ -49,14 +55,14 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSCashMgmt.UI.ListEventLine',
   kind: 'OB.UI.SelectButton',
-  style: 'height: 60px; background-color: #dddddd; border: 1px solid #ffffff;',
+  classes: 'obObposcashmgmtUiListEvent',
   events: {
     onHideThisPopup: ''
   },
   components: [
     {
       name: 'line',
-      style: 'padding: 1px 0px 1px 5px;'
+      classes: 'obObposcashmgmtUiListEvent-line'
     }
   ],
   tap: function() {

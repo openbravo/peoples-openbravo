@@ -13,15 +13,19 @@
   enyo.kind({
     kind: 'OB.UI.ModalAction',
     name: 'OB.UI.MessageDialog',
+    classes: 'obUiMessageDialogGeneric',
     header: '',
     bodyContent: {
       name: 'bodymessage',
+      classes: 'obUiMessageDialogGeneric-bodymessage',
       content: ''
     },
     bodyButtons: {
+      classes: 'obUiMessageDialogGeneric-bodyButtons',
       components: [
         {
-          kind: 'OB.UI.MessageDialogOK'
+          kind: 'OB.UI.MessageDialogOK',
+          classes: 'obUiMessageDialogGeneric-bodyButtons-obUiMessageDialogOK'
         }
       ]
     },
@@ -34,6 +38,7 @@
   enyo.kind({
     kind: 'OB.UI.ModalDialogButton',
     name: 'OB.UI.MessageDialogOK',
+    classes: 'obUiMessageDialogOK',
     i18nContent: 'OBMOBC_LblOk',
     isDefaultAction: true,
     tap: function() {
@@ -43,7 +48,8 @@
 
   OB.UI.WindowView.registerPopup('OB.OBPOSPointOfSale.UI.PointOfSale', {
     kind: 'OB.UI.MessageDialog',
-    name: 'OB_UI_MessageDialog'
+    name: 'OB_UI_MessageDialog',
+    classes: 'obUiMessageDialog'
   });
 
   //  object.doShowPopup({   // OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({

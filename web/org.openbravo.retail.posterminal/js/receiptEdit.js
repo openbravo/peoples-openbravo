@@ -12,6 +12,7 @@
 var ReceiptDeliveryModeDefinition = {
   kind: 'OB.UI.renderComboProperty',
   name: 'ReceiptDeliveryMode',
+  classes: 'receiptDeliveryMode',
   modelProperty: 'obrdmDeliveryModeProperty',
   i18nLabel: 'OBRDM_DefaultDeliveryMode',
   defaultValue: 'PickAndCarry',
@@ -31,7 +32,7 @@ var ReceiptDeliveryModeDefinition = {
   //This function is called when the user accepts on the properties dialog,
   // and applies the value selected to the row.
   applyChange: function() {
-    var value = this.$.renderCombo.getValue();
+    var value = this.getValue();
     this.model.set(this.modelProperty, value);
   },
   setModel: function(inSender, inEvent) {
@@ -39,7 +40,7 @@ var ReceiptDeliveryModeDefinition = {
   },
   init: function(model) {
     this.model = model.get('order');
-    this.$.renderCombo.change = function(inSender, inEvent) {
+    this.change = function(inSender, inEvent) {
       var cond = inSender.getValue(),
         showDate = cond === 'PickupInStoreDate' || cond === 'HomeDelivery',
         showTime = cond === 'HomeDelivery',
@@ -107,9 +108,9 @@ var ReceiptDeliveryModeDefinition = {
 };
 
 var ReceiptDeliveryDateDefinition = {
-  kind: 'OB.UI.DatePickerSimple',
   name: 'ReceiptDeliveryDate',
-  style: 'display: flex; justify-content: center;',
+  kind: 'OB.UI.DatePickerSimple',
+  classes: 'receiptDeliveryDate',
   modelProperty: 'obrdmDeliveryDateProperty',
   i18nLabel: 'OBRDM_DefaultDeliveryDate',
   handlers: {
@@ -163,9 +164,9 @@ var ReceiptDeliveryDateDefinition = {
 };
 
 var ReceiptDeliveryTimeDefinition = {
-  kind: 'OB.UI.TimePickerSimple',
   name: 'ReceiptDeliveryTime',
-  style: 'display: flex; justify-content: center;',
+  kind: 'OB.UI.TimePickerSimple',
+  classes: 'receiptDeliveryTime',
   modelProperty: 'obrdmDeliveryTimeProperty',
   i18nLabel: 'OBRDM_DefaultDeliveryTime',
   handlers: {
@@ -236,15 +237,15 @@ OB.UI.ModalReceiptPropertiesImpl.prototype.newAttributes.push(
     OB.UI.ReceiptPropertiesDialogApply.prototype.tap,
     function(wrapped) {
       var tap = _.bind(origTap, this),
-        line_ReceiptDeliveryDate = this.owner.owner.$.bodyContent.$.attributes.$
+        line_ReceiptDeliveryDate = this.owner.owner.$.body.$.attributes.$
           .line_ReceiptDeliveryDate,
         dateComponent = line_ReceiptDeliveryDate
-          ? line_ReceiptDeliveryDate.$.newAttribute.$.ReceiptDeliveryDate
+          ? line_ReceiptDeliveryDate.$.coreElement
           : undefined,
-        line_ReceiptDeliveryTime = this.owner.owner.$.bodyContent.$.attributes.$
+        line_ReceiptDeliveryTime = this.owner.owner.$.body.$.attributes.$
           .line_ReceiptDeliveryTime,
         timeComponent = line_ReceiptDeliveryTime
-          ? line_ReceiptDeliveryTime.$.newAttribute.$.ReceiptDeliveryTime
+          ? line_ReceiptDeliveryTime.$.coreElement
           : undefined;
       if (dateComponent && dateComponent.owner.owner.getShowing()) {
         var dateSelected = dateComponent.getValue(),

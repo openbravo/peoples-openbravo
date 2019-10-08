@@ -186,7 +186,7 @@
   width: 25%;
   float: left;
   background-color: #fff;
-  text-align: center
+  text-align: center;
 }
 
 .splitline-info-editor-input {
@@ -316,7 +316,7 @@ button.btnbp:disabled {
   min-width: 115px;
 }
 
-.product_category_search li.selected>button.btnselect-browse {
+.product_category_search li.selected > button.btnselect-browse {
   background-color: #f8e859;
   color: #000000;
 }
@@ -376,7 +376,7 @@ button.btnbp:disabled {
 .iconRemove {
   width: 30px;
   height: 30px;
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconSelectorRemove.svg');
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconFormElementClear.svg');
   background-size: 24px 24px;
   background-repeat: no-repeat;
   background-position: 3px 3px;
@@ -385,7 +385,9 @@ button.btnbp:disabled {
 .iconSortNone {
   width: 58px;
   height: 30px;
+  margin: 10px 0px;
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconSelectorSortDisabled.svg');
+  background-color: transparent;
   background-size: 52px 28px;
   background-repeat: no-repeat;
 }
@@ -393,7 +395,9 @@ button.btnbp:disabled {
 .iconSortAsc {
   width: 58px;
   height: 30px;
+  margin: 10px 0px;
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconSelectorSortAscending.svg');
+  background-color: transparent;
   background-size: 52px 28px;
   background-repeat: no-repeat;
 }
@@ -401,7 +405,9 @@ button.btnbp:disabled {
 .iconSortDesc {
   width: 58px;
   height: 30px;
+  margin: 10px 0px;
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconSelectorSortDescending.svg');
+  background-color: transparent;
   background-size: 52px 28px;
   background-repeat: no-repeat;
 }
@@ -415,7 +421,7 @@ button.btnbp:disabled {
 }
 
 @media all and (max-width: 800px) {
-  div[id*=stBPAssignToReceipt_scrollArea] {
+  div[id*='stBPAssignToReceipt_scrollArea'] {
     max-height: 497px !important;
   }
 }
@@ -538,8 +544,8 @@ button.btnbp:disabled {
   font-size: 15px;
   color: black;
   text-align: right;
-  border: 1px solid #FFFFFF;
-  background-color: #E2E2E2;
+  border: 1px solid #ffffff;
+  background-color: #e2e2e2;
   width: 20%;
   height: 28px;
   padding: 12px 5px 1px 0;
@@ -547,7 +553,7 @@ button.btnbp:disabled {
 }
 
 .customer-property-text {
-  border: 1px solid #FFFFFF;
+  border: 1px solid #ffffff;
   float: left;
   width: 75%;
 }
@@ -634,7 +640,7 @@ button.btnbp:disabled {
   clear: left;
 }
 
-li.selected>button>div>div.orderline-canbedelivered {
+li.selected > button > div > div.orderline-canbedelivered {
   color: #c46200;
 }
 
@@ -684,47 +690,45 @@ li.selected>button.btnselect-orderline.btnselect-orderline-edit>div>div.orderlin
 */
 
 @media all and (min-width: 801px) and (max-aspect-ratio: 150/100),
-(max-width: 800px) and (max-aspect-ratio: 3/4) {
-
+  (max-width: 800px) and (max-aspect-ratio: 3/4) {
   .orderline-price,
   .orderline-gross {
-    width: calc((25/79 * 100%) - 39px);
+    width: calc((25 / 79 * 100%) - 39px);
   }
 
   .orderline-productname {
-    width: calc((29/79 * 100%) + 13px);
+    width: calc((29 / 79 * 100%) + 13px);
     /* The same than calc(100% - 65px - 2 * ((25/79 * 100%) - 39px)); */
   }
 
   .orderline-characteristicsDescription {
-    width: calc((29/79 * 100%) + 78px);
+    width: calc((29 / 79 * 100%) + 78px);
     /* The same than calc(100% - 2 * ((25/79 * 100%) - 39px)); */
   }
 
   .order-total-label {
-    width: calc((29/79 * 100%) + 13px);
+    width: calc((29 / 79 * 100%) + 13px);
     /* The same than calc(100% - 65px - 2 * ((25/79 * 100%) - 39px)); */
   }
 
   .order-total-gross {
-    width: calc((50/79 * 100%) - 78px);
+    width: calc((50 / 79 * 100%) - 78px);
     /* The same than calc(2 * ((25/79 * 100%) - 39px)); */
   }
 
   .order-tax-label {
-    width: calc((29/79 * 100%) + 78px);
+    width: calc((29 / 79 * 100%) + 78px);
     /* The same than calc(100% - 2 * ((25/79 * 100%) - 39px)); */
   }
 
   .order-tax-base,
   .order-tax-total {
-    width: calc((25/79 * 100%) - 39px);
+    width: calc((25 / 79 * 100%) - 39px);
   }
 }
 
 @media all and (min-width: 801px) and (max-aspect-ratio: 125/100),
-(max-width: 800px) and (max-aspect-ratio: 10/16) {
-
+  (max-width: 800px) and (max-aspect-ratio: 10/16) {
   .orderline-price,
   .orderline-gross {
     width: 80px;
@@ -881,7 +885,7 @@ button.payment-changebutton {
 }
 
 .changedialog-properties-text {
-  border: 1px solid #F0F0F0;
+  border: 1px solid #f0f0f0;
   float: left;
   width: 35%;
 }
@@ -976,18 +980,18 @@ button.payment-changebutton {
 .selectorHeader_btnSelectAll {
   display: table-cell;
   text-align: right;
-  width: 38%
+  width: 38%;
 }
 
 .selectorHeader_btnAdvancedFilter {
   display: table-cell;
   text-align: center;
-  width: 24%
+  width: 24%;
 }
 
 .selectorHeader_btnAssociateSelected {
   display: table-cell;
-  width: 38%
+  width: 38%;
 }
 
 .selector_orderLines {
@@ -1006,7 +1010,7 @@ button.payment-changebutton {
   text-align: center;
   font-weight: bold;
   font-size: 30px;
-  color: #cccccc
+  color: #cccccc;
 }
 
 .ob-row-order {
@@ -1074,15 +1078,15 @@ button.payment-changebutton {
   }
 }
 
-li.ob-order:first-child>button>div.ob-row-order,
-li.ob-order+li.ob-orderline>button>div>div.ob-cell-orderline-left,
-li.ob-order+li.ob-orderline>button>div>div>div.ob-cell-orderline-right-col1:first-child,
-li.ob-order+li.ob-orderline>button>div>div>div.ob-cell-orderline-right-col2:first-child {
+li.ob-order:first-child > button > div.ob-row-order,
+li.ob-order + li.ob-orderline > button > div > div.ob-cell-orderline-left,
+li.ob-order + li.ob-orderline>button > div > div > div.ob-cell-orderline-right-col1:first-child,
+li.ob-order + li.ob-orderline > button > div > div > div.ob-cell-orderline-right-col2:first-child {
   border-top: none;
 
 }
 
-li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right-col1:first-child {
+li.ob-orderline:last-child > button > div > div:last-child > div.ob-cell-orderline-right-col1:first-child {
   border-bottom: none;
 }
 
@@ -1183,7 +1187,7 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
   background-image: url('./../img/info-icon-plus.png');
   background-repeat: no-repeat;
   background-position: 50%;
-  background-color: #7DA7D9;
+  background-color: #7da7d9;
 }
 
 .ob-cell-orderline-button {
@@ -1605,15 +1609,15 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
   width: 100%;
 }
 
-.modalInvoices__footer--4>.modalInvoices__footer--button {
+.modalInvoices__footer--4 > .modalInvoices__footer--button {
   width: 126px;
 }
 
-.modalInvoices__footer--5>.modalInvoices__footer--button {
+.modalInvoices__footer--5 > .modalInvoices__footer--button {
   width: 112px;
 }
 
-.modalInvoices__footer--6>.modalInvoices__footer--button {
+.modalInvoices__footer--6 > .modalInvoices__footer--button {
   width: 98px;
 }
 
@@ -1666,59 +1670,59 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
   padding: 10px;
 }
 
-.obpos-center-text{
+.obpos-center-text {
   text-align: center;
 }
 
-@media (max-width: 525px){
+@media (max-width: 525px) {
   .obpos-row-store-info {
     padding-left: 0px !important;
   }
-  
-  .obpos-row-store-space{
+
+  .obpos-row-store-space {
     width: unset !important;
   }
-  
-  .obpos-row-store-address{
+
+  .obpos-row-store-address {
     padding-top: 0px !important;
-  } 
-  
-  .obpos-store-information-specialOpenHour{
+  }
+
+  .obpos-store-information-specialOpenHour {
     width: unset;
   }
-  
+
   .obpos-store-information-empty1 {
     width: 13% !important;
   }
-  
-  .obpos-store-information-openhour{
+
+  .obpos-store-information-openhour {
     width: 55% !important;
   }
-  
-  .obpos-row-open-hour{
+
+  .obpos-row-open-hour {
     width: 42% !important;
   }
-  
-  .obpos-row-special-open-hour{
+
+  .obpos-row-special-open-hour {
     width: 65% !important;
   }
 }
 
-@media (min-width: 490px) and (max-width: 525px){
+@media (min-width: 490px) and (max-width: 525px) {
   .obpos-store-information-empty1 {
     width: 20% !important;
   }
 }
 
-@media (min-width: 345px) and (max-width: 375px){
+@media (min-width: 345px) and (max-width: 375px) {
   .obpos-row-weekday {
     width: 27% !important;
   }
-  
-  .obpos-store-information-empty1{
+
+  .obpos-store-information-empty1 {
     width: 8% !important;
   }
-  
+
   .obpos-store-information-openhour {
     width: 51% !important;
   }
@@ -1727,7 +1731,7 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
 .obpos-store-information {
   width: 35px;
   height: 35px;
-  float: left; 
+  float: left;
   display: inline-block;
   background-image: url('./../../org.openbravo.retail.posterminal/img/iconInfo.svg');
   background-size: 35px 35px;
@@ -1743,10 +1747,10 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
 }
 
 .obpos-list-store-renderloading {
-  padding: 20px; 
-  text-align: center; 
-  font-weight: bold; 
-  font-size: 30px; 
+  padding: 20px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 30px;
   color: #cccccc;
 }
 
@@ -1755,20 +1759,20 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
   padding-left: 5px;
 }
 
-.obpos-row-weekday{
-    touch-action: none;
-    width: 30%;
+.obpos-row-weekday {
+  touch-action: none;
+  width: 30%;
 }
 
-.obpos-row-open-hour{
-    touch-action: none;
-    width: 30%;
+.obpos-row-open-hour {
+  touch-action: none;
+  width: 30%;
 }
 
-.obpos-row-special-open-hour{
-	float: left;
-    touch-action: none;
-    width: 50%;
+.obpos-row-special-open-hour {
+  float: left;
+  touch-action: none;
+  width: 50%;
 }
 
 .obpos-row-store-name {
@@ -1817,7 +1821,7 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
 }
 
 .obpos-display-block {
-  display: block !important; 
+  display: block !important;
 }
 
 .obpos-btnlink {
@@ -1826,8 +1830,8 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
 }
 
 .obpos-store-line {
-  display: table; 
-  width: 100%; 
+  display: table;
+  width: 100%;
   padding: 5px;
 }
 
@@ -1840,19 +1844,19 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
 }
 
 .obpos-store-information-header {
-  padding: 10px 10px 10px 0px; 
+  padding: 10px 10px 10px 0px;
   border-bottom: 1px solid #cccccc;
 }
 
 .obpos-store-information-header-icon {
-  display: table-cell; 
+  display: table-cell;
   vertical-align: middle;
 }
 
 .obpos-store-information-openhour {
-  display: table-cell; 
-  vertical-align: middle; 
-  width: 68%; 
+  display: table-cell;
+  vertical-align: middle;
+  width: 68%;
   text-align: right;
 }
 
@@ -1862,27 +1866,27 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
 }
 
 .obpos-store-information-empty1 {
-  display: table-cell; 
-  vertical-align: middle; 
+  display: table-cell;
+  vertical-align: middle;
   width: 1%;
 }
 
 .obpos-store-information-empty9 {
-  display: table-cell; 
-  vertical-align: middle; 
+  display: table-cell;
+  vertical-align: middle;
   width: 9%;
 }
 
 .obpos-store-information-callcenter {
-  display: table-cell; 
-  vertical-align: middle; 
+  display: table-cell;
+  vertical-align: middle;
   width: 30%;
 }
 
 .obpos-icon-address {
   width: 30px;
   height: 30px;
-  float: left; 
+  float: left;
   display: inline-block;
   background-image: url('./../../org.openbravo.retail.posterminal/img/iconAddress.svg');
   background-size: 22px 18px;
@@ -1893,7 +1897,7 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
 .obpos-icon-phone {
   width: 30px;
   height: 30px;
-  float: left; 
+  float: left;
   display: inline-block;
   background-image: url('./../../org.openbravo.retail.posterminal/img/iconPhone.svg');
   background-size: 17px 17px;
@@ -1904,7 +1908,7 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
 .obpos-icon-fax {
   width: 30px;
   height: 30px;
-  float: left; 
+  float: left;
   display: inline-block;
   background-image: url('./../../org.openbravo.retail.posterminal/img/iconFax.svg');
   background-size: 19px 19px;
@@ -1915,7 +1919,7 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
 .obpos-icon-email {
   width: 30px;
   height: 30px;
-  float: left; 
+  float: left;
   display: inline-block;
   background-image: url('./../../org.openbravo.retail.posterminal/img/iconEmail.svg');
   background-size: 20px 13px;
@@ -1928,7 +1932,7 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
   height: 30px;
   font-size: 16px;
   font-weight: bold;
-  font-family: 'Arial';  
+  font-family: 'Arial';
   color: #6cb33f;
   float: left;
   padding-top: 5px;
@@ -1937,7 +1941,7 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
 .obpos-icon-schedule {
   width: 30px;
   height: 30px;
-  float: left; 
+  float: left;
   display: inline-block;
   background-image: url('./../../org.openbravo.retail.posterminal/img/iconClock.svg');
   background-size: 21px 21px;
@@ -1946,9 +1950,9 @@ li.ob-orderline:last-child>button>div>div:last-child>div.ob-cell-orderline-right
   margin-left: 3px;
 }
 
-.obpos-product-details-view-buttons{
-	min-width: 200px; 
-	margin: 2px 5px 2px 5px !important;
+.obpos-product-details-view-buttons {
+  min-width: 200px;
+  margin: 2px 5px 2px 5px !important;
 }
 
 @media (max-width: 392px) {
@@ -2123,7 +2127,7 @@ li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-o
   background-image: url('./../../org.openbravo.mobile.core/assets/img/info-icon-plus.svg');
   background-repeat: no-repeat;
   background-position: 50%;
-  background-color: #7DA7D9;
+  background-color: #7da7d9;
 }
 
 .obrdm-cell-orderline-button {
@@ -2242,7 +2246,7 @@ li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-o
 
 .obrdm-prepare-confirmation {
   width: 500px;
-  height: 350px
+  height: 350px;
 }
 
 .obrdm-modal-order-selector {
@@ -2408,12 +2412,11 @@ li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdm-cell-o
   margin-top: 0px;
 }
 
-div.obrdm-cell-orderline-right-col1:nth-child(odd){
+div.obrdm-cell-orderline-right-col1:nth-child(odd) {
   border-top: none;
 }
 
-@media ( max-width : 395px) {
-
+@media (max-width: 395px) {
   .obrdm-modal-order-selector {
     width: calc(100% - 24px) !important;
   }
@@ -2431,7 +2434,7 @@ div.obrdm-cell-orderline-right-col1:nth-child(odd){
   }
 
   .obrdm-cell-orderline-left-info {
-    padding-left: 5px !important;;
+    padding-left: 5px !important;
     border-bottom: 1px solid #ccc;
     height: 62px;
     white-space: pre;
@@ -2524,8 +2527,7 @@ div.obrdm-cell-orderline-right-col1:nth-child(odd){
   }
 }
 
-@media ( max-width : 935px) {
-  
+@media (max-width: 935px) {
   .obrdm-cell-orderline-left-info {
     height: 62px;
     white-space: pre;

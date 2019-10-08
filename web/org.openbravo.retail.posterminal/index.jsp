@@ -48,7 +48,6 @@ if (useServiceWorkers) {
   <%@include file="../org.openbravo.mobile.core/assets/include/mobile.jsp" %>
 
   <link rel="shortcut icon" type="image/x-icon" href="../../web/images/favicon.ico" />
-  <link rel="stylesheet" type="text/css" href="../../org.openbravo.mobile.core/OBCLKER_Kernel/StyleSheetResources?_appName=WebPOS"/>
 
   <script>
     window.ServiceWorkerUtil={};
@@ -73,6 +72,7 @@ if (useServiceWorkers) {
   <script src="../../org.openbravo.mobile.core/OBMOBC_Main/Lib?_id=Enyo"></script>
   <script src="../../org.openbravo.mobile.core/OBMOBC_Main/Lib?_id=Deps"></script>
   <script src="../../org.openbravo.mobile.core/OBMOBC_Main/StaticResources?_appName=WebPOS"></script>
+  <script src="../../org.openbravo.mobile.core/OBMOBC_Main/CSSResources?_appName=WebPOS"></script>
   <script>
     (function () {
       // manage manifest

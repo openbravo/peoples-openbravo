@@ -13,6 +13,7 @@
 enyo.kind({
   name: 'OB.UI.ModalInvoicesHeader',
   kind: 'OB.UI.ScrollableTableHeader',
+  classes: 'obUiModalInvoicesHeader',
   events: {
     onSearchAction: '',
     onClearAction: ''
@@ -52,7 +53,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ListInvoicesLine',
   kind: 'OB.UI.CheckboxButton',
-  classes: 'modal-dialog-btn-check modal-invoices-list-invoices-line',
+  classes: 'obUiListInvoicesLine',
   tap: function() {
     this.inherited(arguments);
     this.model.set('checked', !this.model.get('checked'));
@@ -61,18 +62,18 @@ enyo.kind({
   components: [
     {
       name: 'line',
-      style: 'line-height: 23px; display: inline',
+      classes: 'obUiListInvoicesLine-line',
       components: [
         {
-          style: 'display: inline',
-          name: 'topLine'
+          name: 'topLine',
+          classes: 'obUiListInvoicesLine-line-topLine'
         },
         {
-          style: 'color: #888888',
-          name: 'bottonLine'
+          name: 'bottonLine',
+          classes: 'obUiListInvoicesLine-line-bottonLine'
         },
         {
-          style: 'clear: both;'
+          classes: 'obUiListInvoicesLine-line-element1'
         }
       ]
     }
@@ -104,25 +105,26 @@ enyo.kind({
 /*scrollable table (body of modal)*/
 enyo.kind({
   name: 'OB.UI.ListInvoices',
-  classes: 'row-fluid',
+  classes: 'obUiListInvoices',
   handlers: {
     onSearchAction: 'searchAction',
     onClearAction: 'clearAction'
   },
   components: [
     {
-      classes: 'span12',
+      classes: 'obUiListInvoices-container1',
       components: [
         {
-          classes: 'row-fluid',
+          classes: 'obUiListInvoices-container1-container1',
           components: [
             {
-              classes: 'span12',
+              classes: 'obUiListInvoices-container1-container1-container1',
               components: [
                 {
                   name: 'invoiceslistitemprinter',
                   kind: 'OB.UI.ScrollableTable',
-                  scrollAreaMaxHeight: '300px',
+                  classes:
+                    'obUiListInvoices-container1-container1-container1-invoiceslistitemprinter',
                   renderHeader: 'OB.UI.ModalInvoicesHeader',
                   renderLine: 'OB.UI.ListInvoicesLine',
                   renderEmpty: 'OB.UI.RenderEmpty'
@@ -133,7 +135,8 @@ enyo.kind({
         },
         {
           kind: 'OB.UI.ModalInvoicesFooter',
-          name: 'footer'
+          name: 'footer',
+          classes: 'obUiListInvoices-container1-footer'
         }
       ]
     }
@@ -203,6 +206,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.ModalInvoicesFooter',
+  classes: 'obUiModalInvoicesFooter',
   events: {
     onHideThisPopup: '',
     onShowPopup: '',
@@ -214,7 +218,7 @@ enyo.kind({
   processesToListen: ['invoicesPrintReceipt', 'invoicesPrintInvoices'],
   buttons: [
     {
-      classes: 'modalInvoices__footer--button',
+      classes: 'obUiModalInvoicesFooter-printReceipt',
       name: 'printReceipt',
       kind: 'OB.UI.SmallButton',
       ontap: 'printReceiptAction',
@@ -222,7 +226,7 @@ enyo.kind({
       position: 10
     },
     {
-      classes: 'modalInvoices__footer--button',
+      classes: 'obUiModalInvoicesFooter-printInvoices',
       name: 'printInvoices',
       kind: 'OB.UI.SmallButton',
       ontap: 'printInvoiceAction',
@@ -232,21 +236,20 @@ enyo.kind({
   ],
   components: [
     {
-      classes: 'modalInvoices__footer',
+      classes: 'obUiModalInvoicesFooter-buttonsContainer',
       name: 'modalInvoicesFooter__buttonsContainer'
     }
   ],
   initComponents: function() {
     var strProto = '__proto__';
     var cancelButton = {
-      classes:
-        'modalInvoices__footer--button modalInvoices__footer--buttoncancel',
+      classes: 'obUiModalInvoicesFooter-cancelButton',
       name: 'cancelButton',
       kind: 'OB.UI.SmallButton',
       ontap: 'cancelAction',
       i18nContent: 'OBMOBC_LblCancel'
     };
-    // Sort buttons by possitions
+    // Sort buttons by positions
     if (this.buttons && _.isArray(this.buttons)) {
       this.buttons.sort(function(a, b) {
         return a.position - b.position;
@@ -284,9 +287,19 @@ enyo.kind({
     // Calculate number of buttons
     if (this.buttons && _.isArray(this.buttons) && this.buttons.length > 1) {
       // Apply CSS class based on number of buttons
-      this.$.modalInvoicesFooter__buttonsContainer.addClass(
-        'modalInvoices__footer--' + this.buttons.length
-      );
+      if (this.buttons.length === 4) {
+        this.$.modalInvoicesFooter__buttonsContainer.addClass(
+          'obUiModalInvoicesFooter-buttonsContainer-button_comfortable'
+        );
+      } else if (this.buttons.length === 5) {
+        this.$.modalInvoicesFooter__buttonsContainer.addClass(
+          'obUiModalInvoicesFooter-buttonsContainer-button_cozy'
+        );
+      } else if (this.buttons.length >= 6) {
+        this.$.modalInvoicesFooter__buttonsContainer.addClass(
+          'obUiModalInvoicesFooter-buttonsContainer-button_compact'
+        );
+      }
     } else {
       OB.warn(
         'OB.UI.ModalInvoicesFooter component requires at least one button'
@@ -475,8 +488,8 @@ enyo.kind({
 /*Modal definiton*/
 enyo.kind({
   name: 'OB.UI.ModalInvoices',
-  topPosition: '125px',
   kind: 'OB.UI.Modal',
+  classes: 'obUiModalInvoices',
   executeOnHide: function() {
     this.waterfall('onPopupClosed');
   },
@@ -485,13 +498,13 @@ enyo.kind({
       model: this.model
     });
   },
+  hideCloseButton: true,
   i18nHeader: 'OBPOS_LblInvoices',
   body: {
     kind: 'OB.UI.ListInvoices'
   },
   initComponents: function() {
     this.inherited(arguments);
-    this.$.closebutton.hide();
   },
   init: function(model) {
     this.model = model;

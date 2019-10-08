@@ -23,17 +23,17 @@
 //  }],
 //  tabButtonTapHandler: function (inSender, inEvent) {
 //    if (inEvent.tabPanel) {
-//      this.setTabButtonActive(inEvent.tabPanel);
+//      this.setTabButtonSelected(inEvent.tabPanel);
 //    }
 //  },
-//  setTabButtonActive: function (tabName) {
+//  setTabButtonSelected: function (tabName) {
 //    var buttonContainerArray = this.$.toolbar.getComponents(),
 //        i;
 //
 //    for (i = 0; i < buttonContainerArray.length; i++) {
-//      buttonContainerArray[i].removeClass('active');
+//      buttonContainerArray[i].removeClass('selected');
 //      if (buttonContainerArray[i].getComponents()[0].getComponents()[0].name === tabName) {
-//        buttonContainerArray[i].addClass('active');
+//        buttonContainerArray[i].addClass('selected');
 //      }
 //    }
 //  },
@@ -68,6 +68,8 @@
 //});
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.RightToolbarImpl',
+  kind: 'OB.OBPOSPointOfSale.UI.ToolbarImpl',
+  classes: 'obObposPointOfSaleUiRightToolbarImpl',
   published: {
     receipt: null
   },
@@ -78,9 +80,10 @@ enyo.kind({
     onTabButtonTap: 'tabButtonTapHandler'
   },
   lastSelectedTabPanel: '',
+  lastButtonTab: '',
   tabButtonTapHandler: function(inSender, inEvent) {
     if (inEvent.tabPanel) {
-      this.setTabButtonActive(inEvent.tabPanel);
+      this.setTabButtonSelected(inEvent.tabPanel);
       if (this.lastSelectedTabPanel !== inEvent.tabPanel) {
         this.lastSelectedTabPanel = inEvent.tabPanel;
         if (inEvent.tabPanel === 'edit') {
@@ -95,17 +98,21 @@ enyo.kind({
       }
     }
   },
-  setTabButtonActive: function(tabName) {
+  setTabButtonSelected: function(tabName) {
     var buttonContainerArray = this.$.toolbar.getComponents(),
       i;
 
     for (i = 0; i < buttonContainerArray.length; i++) {
-      buttonContainerArray[i].removeClass('active');
+      buttonContainerArray[i].removeClass('selected');
+      if (buttonContainerArray[i].setSelected) {
+        buttonContainerArray[i].setSelected(false);
+      }
       if (
-        buttonContainerArray[i].getComponents()[0].getComponents()[0]
-          .tabToOpen === tabName
+        buttonContainerArray[i].tabToOpen === tabName &&
+        buttonContainerArray[i].setSelected
       ) {
-        buttonContainerArray[i].addClass('active');
+        buttonContainerArray[i].addClass('selected');
+        buttonContainerArray[i].setSelected(true);
       }
     }
   },
@@ -116,11 +123,8 @@ enyo.kind({
       var componentArray = me.$.toolbar.getComponents(),
         i;
       for (i = 0; i < componentArray.length; i++) {
-        if (
-          componentArray[i].$.theButton.getComponents()[0].tabToOpen === name &&
-          componentArray[i].$.theButton.getComponents()[0].showing
-        ) {
-          return componentArray[i].$.theButton.getComponents()[0];
+        if (componentArray[i].tabToOpen === name && componentArray[i].showing) {
+          return componentArray[i];
         }
       }
       return null;
@@ -146,28 +150,38 @@ enyo.kind({
       defaultTab.tap(options);
     }
   },
-  kind: 'OB.UI.MultiColumn.Toolbar',
   buttons: [
     {
       kind: 'OB.OBPOSPointOfSale.UI.ButtonTabScan',
       name: 'toolbarBtnScan',
+      classes: 'obObposPointOfSaleUiRightToolbarImpl-buttons-toolbarBtnScan',
       tabToOpen: 'scan',
       defaultTab: true
     },
     {
       kind: 'OB.OBPOSPointOfSale.UI.ButtonTabBrowse',
       name: 'toolbarBtnCatalog',
+      classes: 'obObposPointOfSaleUiRightToolbarImpl-buttons-toolbarBtnCatalog',
       tabToOpen: 'catalog'
     },
     {
       kind: 'OB.OBPOSPointOfSale.UI.ButtonTabSearchCharacteristic',
       name: 'toolbarBtnSearchCharacteristic',
+      classes:
+        'obObposPointOfSaleUiRightToolbarImpl-buttons-toolbarBtnSearchCharacteristic',
       tabToOpen: 'searchCharacteristic'
     },
     {
       kind: 'OB.OBPOSPointOfSale.UI.ButtonTabEditLine',
       name: 'toolbarBtnEdit',
+      classes: 'obObposPointOfSaleUiRightToolbarImpl-buttons-toolbarBtnEdit',
       tabToOpen: 'edit'
+    },
+    {
+      kind: 'OB.OBPOSPointOfSale.UI.ButtonTabCart',
+      name: 'toolbarBtnCart',
+      classes: 'obObposPointOfSaleUiRightToolbarImpl-buttons-toolbarBtnCart',
+      tabToOpen: 'receipt'
     }
   ],
 
@@ -233,13 +247,13 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.RightToolbarButton',
+  classes: 'obObposPointOfSaleUiRightToolbarButton',
   tag: 'li',
   components: [
     {
       name: 'theButton',
-      attributes: {
-        style: 'margin: 0px 5px 0px 5px;'
-      }
+      classes: 'obObposPointOfSaleUiRightToolbarButton-theButton',
+      attributes: {}
     }
   ],
   initComponents: function() {
@@ -254,11 +268,59 @@ enyo.kind({
 // Toolbar buttons
 // ----------------------------------------------------------------------------
 enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.ButtonTabCart',
+  kind: 'OB.UI.ToolbarButtonTab',
+  classes: 'obObposPointOfSaleUiButtonTabCart',
+  events: {
+    onTabChange: '',
+    onRightToolbarDisabled: ''
+  },
+  handlers: {
+    onRightToolbarDisabled: 'disabledButton'
+  },
+  init: function(model) {
+    this.model = model;
+  },
+  disabledButton: function(inSender, inEvent) {
+    var isDisabled = inEvent.status;
+    this.isEnabled = !inEvent.status;
+    this.setDisabled(isDisabled);
+    this.setDisabled(inEvent.status);
+    //    if (!this.isEnabled) {
+    //      this.$.lbl.hide();
+    //    } else {
+    //      this.$.lbl.show();
+    //    }
+  },
+  i18nLabel: 'OBMOBC_LblCart',
+  tabPanel: 'receipt',
+  tap: function(options) {
+    if (!this.disabled) {
+      this.doTabChange({
+        tabPanel: this.tabPanel,
+        keyboard: 'toolbarscan',
+        edit: false,
+        options: options,
+        status: ''
+      });
+      OB.POS.terminal.$.containerWindow
+        .getRoot()
+        .$.multiColumn.$.panels.addClass('obUiMultiColumn-panels-showReceipt');
+    }
+    OB.MobileApp.view.scanningFocus(true);
+  },
+  initComponents: function() {
+    this.inherited(arguments);
+  }
+});
+
+enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabScan',
   kind: 'OB.UI.ToolbarButtonTab',
+  classes: 'obObposPointOfSaleUiButtonTabScan',
   tabPanel: 'scan',
   i18nLabel: 'OBMOBC_LblScan',
-  style: 'position: relative;',
+
   events: {
     onTabChange: '',
     onRightToolbarDisabled: ''
@@ -267,61 +329,59 @@ enyo.kind({
     onRightToolbarDisabled: 'disabledButton',
     onPointOfSaleLoad: 'pointOfSaleLoad'
   },
-  rfidOnIcon: 'btn-icon-rfidon',
-  rfidOffIcon: 'btn-icon-rfidoff',
-  rfidOfflineIcon: 'btn-icon-rfidoffline',
-  components: [
-    {
-      name: 'status',
-      classes: 'btn-icon-toolbartab',
-      components: [
-        {
-          name: 'rfidIcon',
-          showing: false,
-          classes: 'btn-icon-toolbartabrfid'
-        }
-      ]
-    }
-  ],
+  rfidOnIcon: 'obObposPointOfSaleUiButtonTabScan-status-rfidIcon_rfidOn',
+  rfidOffIcon: 'obObposPointOfSaleUiButtonTabScan-status-rfidIcon_rfidOff',
+  rfidOfflineIcon:
+    'obObposPointOfSaleUiButtonTabScan-status-rfidIcon_rfidOffline',
+  // components: [{
+  //   name: 'status',
+  //   classes: 'obObposPointOfSaleUiButtonTabScan-status',
+  //   components: [{
+  //     name: 'rfidIcon',
+  //     showing: false,
+  //     classes: 'obObposPointOfSaleUiButtonTabScan-status-rfidIcon'
+  //   }]
+  // }],
   init: function(model) {
     this.model = model;
-    this.$.lbl.addClass('btn-label');
-    if (OB.UTIL.RfidController.isRfidConfigured()) {
-      this.$.rfidIcon.show();
-    }
-    OB.UTIL.RfidController.on(
-      'change:connected change:connectionLost',
-      function(model) {
-        if (this.$.rfidIcon) {
-          if (OB.UTIL.RfidController.get('connectionLost')) {
-            this.$.rfidIcon.removeClass(this.rfidOnIcon);
-            this.$.rfidIcon.removeClass(this.rfidOffIcon);
-            this.$.rfidIcon.addClass(this.rfidOfflineIcon);
-          } else {
-            this.$.rfidIcon.removeClass(this.rfidOfflineIcon);
-            if (
-              OB.UTIL.RfidController.get('isRFIDEnabled') &&
-              OB.UTIL.RfidController.get('connected')
-            ) {
-              this.$.rfidIcon.removeClass(this.rfidOffIcon);
-              this.$.rfidIcon.addClass(this.rfidOnIcon);
-            } else {
-              this.$.rfidIcon.removeClass(this.rfidOnIcon);
-              this.$.rfidIcon.addClass(this.rfidOffIcon);
-            }
-          }
-        }
-      },
-      this
-    );
+    // [TODO] Fix or discuss where ad how RFID icon will be shown
+    //    this.$.lbl.addClass('obObposPointOfSaleUiButtonTabScan-lbl');
+    // if (OB.UTIL.RfidController.isRfidConfigured()) {
+    //   this.$.rfidIcon.show();
+    // }
+    // OB.UTIL.RfidController.on(
+    //   'change:connected change:connectionLost',
+    //   function(model) {
+    //     if (this.$.rfidIcon) {
+    //       if (OB.UTIL.RfidController.get('connectionLost')) {
+    //         this.$.rfidIcon.removeClass(this.rfidOnIcon);
+    //         this.$.rfidIcon.removeClass(this.rfidOffIcon);
+    //         this.$.rfidIcon.addClass(this.rfidOfflineIcon);
+    //       } else {
+    //         this.$.rfidIcon.removeClass(this.rfidOfflineIcon);
+    //         if (
+    //           OB.UTIL.RfidController.get('isRFIDEnabled') &&
+    //           OB.UTIL.RfidController.get('connected')
+    //         ) {
+    //           this.$.rfidIcon.removeClass(this.rfidOffIcon);
+    //           this.$.rfidIcon.addClass(this.rfidOnIcon);
+    //         } else {
+    //           this.$.rfidIcon.removeClass(this.rfidOnIcon);
+    //           this.$.rfidIcon.addClass(this.rfidOffIcon);
+    //         }
+    //       }
+    //     }
+    //   },
+    //   this
+    // );
   },
   disabledButton: function(inSender, inEvent) {
     this.isEnabled = !inEvent.status;
     this.setDisabled(inEvent.status);
     if (!this.isEnabled) {
-      this.$.lbl.hide();
+      this.addClass('empty');
     } else {
-      this.$.lbl.show();
+      this.removeClass('empty');
     }
   },
   tap: function(options) {
@@ -337,29 +397,27 @@ enyo.kind({
     OB.MobileApp.view.scanningFocus(true);
 
     return true;
-  },
-  pointOfSaleLoad: function(inSender, inEvent) {
-    if (OB.UTIL.RfidController.get('connectionLost')) {
-      this.$.rfidIcon.addClass(this.rfidOfflineIcon);
-    } else {
-      this.$.rfidIcon.removeClass(this.rfidOfflineIcon);
-    }
-    if (
-      !OB.UTIL.RfidController.get('isRFIDEnabled') ||
-      !OB.UTIL.RfidController.get('reconnectOnScanningFocus')
-    ) {
-      this.$.rfidIcon.addClass(this.rfidOffIcon);
-      this.$.rfidIcon.removeClass(this.rfidOnIcon);
-    } else {
-      this.$.rfidIcon.addClass(this.rfidOnIcon);
-      this.$.rfidIcon.removeClass(this.rfidOffIcon);
-    }
   }
+  //  pointOfSaleLoad: function (inSender, inEvent) {
+  //    if (OB.UTIL.RfidController.get('connectionLost')) {
+  //      this.$.rfidIcon.addClass(this.rfidOfflineIcon);
+  //    } else {
+  //      this.$.rfidIcon.removeClass(this.rfidOfflineIcon);
+  //    }
+  //    if (!OB.UTIL.RfidController.get('isRFIDEnabled') || !OB.UTIL.RfidController.get('reconnectOnScanningFocus')) {
+  //      this.$.rfidIcon.addClass(this.rfidOffIcon);
+  //      this.$.rfidIcon.removeClass(this.rfidOnIcon);
+  //    } else {
+  //      this.$.rfidIcon.addClass(this.rfidOnIcon);
+  //      this.$.rfidIcon.removeClass(this.rfidOffIcon);
+  //    }
+  //  }
 });
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabBrowse',
   kind: 'OB.UI.ToolbarButtonTab',
+  classes: 'obObPosPointOfSaleUiButtonTabBrowse',
   events: {
     onTabChange: '',
     onRightToolbarDisabled: ''
@@ -384,9 +442,9 @@ enyo.kind({
     }
     this.setDisabled(isDisabled);
     if (!this.isEnabled) {
-      this.$.lbl.hide();
+      this.addClass('empty');
     } else {
-      this.$.lbl.show();
+      this.removeClass('empty');
     }
   },
   tabPanel: 'catalog',
@@ -412,6 +470,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabSearchCharacteristic',
   kind: 'OB.UI.ToolbarButtonTab',
+  classes: 'obObPosPointOfSaleUiButtonTabSearchCharacteristic',
   tabPanel: 'searchCharacteristic',
   i18nLabel: 'OBPOS_LblSearch',
   events: {
@@ -438,9 +497,9 @@ enyo.kind({
     }
     this.setDisabled(isDisabled);
     if (!this.isEnabled && !OB.MobileApp.model.get('serviceSearchMode')) {
-      this.$.lbl.hide();
+      this.addClass('empty');
     } else {
-      this.$.lbl.show();
+      this.removeClass('empty');
     }
   },
   tap: function() {
@@ -457,6 +516,7 @@ enyo.kind({
   initComponents: function() {
     this.inherited(arguments);
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+      //This setStyle is allowed due to an other one in ob-layout
       this.owner.owner.setStyle('width: 50% !important;');
     }
   }
@@ -464,10 +524,12 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonTabEditLine',
+  kind: 'OB.UI.ToolbarButtonTab',
+  classes: 'obObPosPointOfSaleUiButtonTabEditLine',
+  continueClass: 'obObPosPointOfSaleUiButtonTabEditLine_continue',
   published: {
     ticketLines: null
   },
-  kind: 'OB.UI.ToolbarButtonTab',
   tabPanel: 'edit',
   i18nLabel: 'OBPOS_LblEdit',
   events: {
@@ -520,7 +582,8 @@ enyo.kind({
   manageServiceProposal: function(inSender, inEvent) {
     OB.MobileApp.model.set('serviceSearchMode', inEvent.proposalType);
     this.previousStatus = inEvent.previousStatus;
-    this.$.lbl.setContent(OB.I18N.getLabel('OBPOS_LblContinue'));
+    this.setLabel(OB.I18N.getLabel('OBPOS_LblContinue'));
+    this.addClass(this.continueClass);
     this.doDisableUserInterface();
     OB.MobileApp.view.scanningFocus(false);
     this.setDisabled(false);
@@ -530,7 +593,8 @@ enyo.kind({
   },
   tap: function(options) {
     if (OB.MobileApp.model.get('serviceSearchMode')) {
-      this.$.lbl.setContent(OB.I18N.getLabel('OBPOS_LblEdit'));
+      this.setLabel(OB.I18N.getLabel('OBPOS_LblEdit'));
+      this.removeClass(this.continueClass);
       this.doEnableUserInterface();
       OB.MobileApp.view.scanningFocus(true);
       this.doShowActionIcons({
@@ -603,32 +667,35 @@ enyo.kind({
   published: {
     model: null
   },
-  classes: 'postab-content',
-
+  classes: 'obObpodPointOfSaleUiRightToolbarPane',
   handlers: {
     onTabButtonTap: 'tabButtonTapHandler'
   },
   components: [
     {
       kind: 'OB.OBPOSPointOfSale.UI.TabScan',
-      name: 'scan'
+      name: 'scan',
+      classes: 'obObpodPointOfSaleUiRightToolbarPane-scan'
     },
     {
       kind: 'OB.OBPOSPointOfSale.UI.TabBrowse',
-      name: 'catalog'
+      name: 'catalog',
+      classes: 'obObpodPointOfSaleUiRightToolbarPane-catalog'
     },
     {
       kind: 'OB.OBPOSPointOfSale.UI.TabSearchCharacteristic',
       name: 'searchCharacteristic',
-      style: 'margin: 5px'
+      classes: 'obObpodPointOfSaleUiRightToolbarPane-searchCharacteristic'
     },
     {
       kind: 'OB.OBPOSPointOfSale.UI.TabPayment',
-      name: 'payment'
+      name: 'payment',
+      classes: 'obObpodPointOfSaleUiRightToolbarPane-payment'
     },
     {
       kind: 'OB.OBPOSPointOfSale.UI.TabEditLine',
-      name: 'edit'
+      name: 'edit',
+      classes: 'obObpodPointOfSaleUiRightToolbarPane-edit'
     }
   ],
   tabButtonTapHandler: function(inSender, inEvent) {
@@ -653,12 +720,12 @@ enyo.kind({
         var paneArray = me.getComponents(),
           i;
         for (i = 0; i < paneArray.length; i++) {
-          paneArray[i].removeClass('active');
+          paneArray[i].removeClass('selected');
           if (paneArray[i].name === args.tabName) {
             if (paneArray[i].executeOnShow) {
               paneArray[i].executeOnShow(options);
             }
-            paneArray[i].addClass('active');
+            paneArray[i].addClass('selected');
             OB.MobileApp.model.set('lastPaneShown', args.tabName);
           }
         }
@@ -680,10 +747,13 @@ enyo.kind({
   published: {
     receipt: null
   },
+  classes: 'obObposPointOfSaleUiTabSearchCharacteristic',
   components: [
     {
       kind: 'OB.UI.SearchProductCharacteristic',
-      name: 'searchCharacteristicTabContent'
+      name: 'searchCharacteristicTabContent',
+      classes:
+        'obObposPointOfSaleUiTabSearchCharacteristic-searchCharacteristicTabContent'
     }
   ],
   receiptChanged: function() {
@@ -694,10 +764,12 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.TabBrowse',
   kind: 'OB.UI.TabPane',
+  classes: 'obObposPointOfSaleUiTabBrowse',
   components: [
     {
       kind: 'OB.UI.ProductBrowser',
-      name: 'catalogTabContent'
+      name: 'catalogTabContent',
+      classes: 'obObposPointOfSaleUiTabBrowse-catalogTabContent'
     }
   ]
 });
@@ -705,13 +777,15 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.TabScan',
   kind: 'OB.UI.TabPane',
+  classes: 'obObposPointOfSaleUiTabScan',
   published: {
     receipt: null
   },
   components: [
     {
       kind: 'OB.OBPOSPointOfSale.UI.Scan',
-      name: 'scanTabContent'
+      name: 'scanTabContent',
+      classes: 'obObposPointOfSaleUiTabScan-scanTabContent'
     }
   ],
   receiptChanged: function() {
@@ -722,13 +796,15 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.TabEditLine',
   kind: 'OB.UI.TabPane',
+  classes: 'obObposPointOfSaleUiTabEditLine',
   published: {
     receipt: null
   },
   components: [
     {
       kind: 'OB.OBPOSPointOfSale.UI.EditLine',
-      name: 'editTabContent'
+      name: 'editTabContent',
+      classes: 'obObposPointOfSaleUiTabEditLine-editTabContent'
     }
   ],
   receiptChanged: function() {
@@ -739,13 +815,15 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.TabPayment',
   kind: 'OB.UI.TabPane',
+  classes: 'obObposPointOfSaleUiTabPayment',
   published: {
     receipt: null
   },
   components: [
     {
       kind: 'OB.OBPOSPointOfSale.UI.Payment',
-      name: 'paymentTabContent'
+      name: 'paymentTabContent',
+      classes: 'obObposPointOfSaleUiTabPayment-paymentTabContent'
     }
   ],
   receiptChanged: function() {

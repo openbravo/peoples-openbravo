@@ -12,12 +12,11 @@
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton',
   kind: 'OB.UI.RadioButton',
-  style:
-    'padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 40px; margin-top: 10px; margin-right: 10px; margin-bottom: 10px; margin-left: 10px;',
+  classes: 'obObposCashupUiCashToKeepRadioButton',
   components: [
     {
       name: 'lbl',
-      style: 'padding: 5px 0px 0px 0px;'
+      classes: 'obObposCashupUiCashToKeepRadioButton-lbl'
     }
   ],
   events: {
@@ -50,7 +49,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.KeepDetails',
-  style: 'background-color: #ffffff; color: black;',
+  classes: 'obObposCashupUiKeepDetails',
   events: {
     onResetQtyToKeep: ''
   },
@@ -78,49 +77,44 @@ enyo.kind({
     {
       kind: 'Group',
       name: 'RadioGroup',
-      classes: 'btn-group',
+      classes: 'obObposCashupUiKeepDetails-RadioGroup',
       components: [
         {
           name: 'keepfixedamount',
+          classes: 'obObposCashupUiKeepDetails-RadioGroup-keepfixedamount',
           showing: false,
           kind: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton'
         },
         {
-          style: 'clear: both;'
-        },
-        {
           name: 'allowmoveeverything',
+          classes: 'obObposCashupUiKeepDetails-RadioGroup-allowmoveeverything',
           kind: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton',
           qtyToKeep: 0,
           i18nLabel: 'OBPOS_LblNothing',
           showing: false
         },
         {
-          style: 'clear: both;'
-        },
-        {
           name: 'allowdontmove',
+          classes: 'obObposCashupUiKeepDetails-RadioGroup-allowdontmove',
           kind: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton',
           showing: false
         },
         {
-          style: 'clear: both;'
-        },
-        {
           name: 'allowvariableamount',
+          classes: 'obObposCashupUiKeepDetails-RadioGroup-allowvariableamount',
           binded: false,
           kind: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton',
           showing: false,
           qtyToKeep: 0,
-          style:
-            'padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 40px; margin-top: 10px; margin-right: 10px; margin-bottom: 10px; margin-left: 10px;',
           components: [
             {
-              style: 'display: table-row;',
+              classes:
+                'obObposCashupUiKeepDetails-RadioGroup-allowvariableamount-container1',
               components: [
                 {
                   name: 'variableamount',
-                  style: 'vertical-align: middle; display: table-cell; ',
+                  classes:
+                    'obObposCashupUiKeepDetails-RadioGroup-allowvariableamount-container1-variableamount',
                   setAmount: function(amount) {
                     this.setContent(
                       enyo.format(
@@ -135,7 +129,8 @@ enyo.kind({
                 },
                 {
                   name: 'variableInput',
-                  style: 'padding-left: 20px; display: table-cell;',
+                  classes:
+                    'obObposCashupUiKeepDetails-RadioGroup-allowvariableamount-container1-variableInput',
                   content: OB.DEC.Zero
                 }
               ]
@@ -149,50 +144,37 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.CashToKeep',
+  classes: 'obObposCashupUiCashToKeep',
   published: {
     paymentToKeep: null
   },
   components: [
     {
-      classes: 'tab-pane',
+      classes: 'obObposCashupUiCashToKeep-wrapper',
       components: [
         {
-          style: 'overflow:auto; height: 500px; margin: 5px',
+          classes: 'obObposCashupUiCashToKeep-wrapper-components',
           components: [
             {
-              style: 'background-color: #ffffff; color: black; padding: 5px;',
+              name: 'cashtokeepheader',
+              classes: 'obObposCashupUiCashToKeep-wrapper-components-title',
+              renderHeader: function(value, step, count) {
+                this.setContent(
+                  OB.I18N.getLabel('OBPOS_LblStepNumber', [step, count]) +
+                    ' ' +
+                    OB.I18N.getLabel('OBPOS_LblStepCashToKeep', [value]) +
+                    OB.OBPOSCashUp.UI.CashUp.getTitleExtensions()
+                );
+              }
+            },
+            {
+              classes: 'obObposCashupUiCashToKeep-wrapper-components-body',
               components: [
-                {
-                  classes: 'row-fluid',
-                  components: [
-                    {
-                      classes: 'span12',
-                      components: [
-                        {
-                          name: 'cashtokeepheader',
-                          style:
-                            'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;',
-                          renderHeader: function(value, step, count) {
-                            this.setContent(
-                              OB.I18N.getLabel('OBPOS_LblStepNumber', [
-                                step,
-                                count
-                              ]) +
-                                ' ' +
-                                OB.I18N.getLabel('OBPOS_LblStepCashToKeep', [
-                                  value
-                                ]) +
-                                OB.OBPOSCashUp.UI.CashUp.getTitleExtensions()
-                            );
-                          }
-                        }
-                      ]
-                    }
-                  ]
-                },
                 {
                   kind: 'OB.OBPOSCashUp.UI.KeepDetails',
                   name: 'formkeep',
+                  classes:
+                    'obObposCashupUiCashToKeep-wrapper-components-body-formkeep',
                   handlers: {
                     onChangeOption: 'changeOption'
                   },

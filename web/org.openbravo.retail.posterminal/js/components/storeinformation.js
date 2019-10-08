@@ -12,7 +12,7 @@
 enyo.kind({
   name: 'OBPOS.UI.StoreInformation',
   kind: 'OB.UI.Modal',
-  topPosition: '40px',
+  classes: 'obposUiStoreInformation',
   body: {
     kind: 'OBPOS.UI.StoreInformationLine'
   },
@@ -33,48 +33,53 @@ enyo.kind({
 
 enyo.kind({
   name: 'OBPOS.UI.StoreInformationLine',
+  classes: 'obposUiStoreInformationLine',
   components: [
     {
-      classes: 'obpos-store-line span12',
+      classes: 'obposUiStoreInformationLine-container1',
       components: [
         {
-          classes: 'obpos-row-store-address',
+          classes: 'obposUiStoreInformationLine-container1-iconAddress',
           name: 'iconAddress'
         },
         {
-          classes: 'obpos-row-store-info',
+          classes: 'obposUiStoreInformationLine-container1-addressValue',
           name: 'addressValue'
         }
       ]
     },
     {
-      classes: 'obpos-clear-both'
+      classes: 'obposUiStoreInformationLine-element1'
     },
     {
-      classes: 'obpos-store-line span12',
+      classes: 'obposUiStoreInformationLine-container2',
       components: [
         {
-          classes: 'span6',
+          classes: 'obposUiStoreInformationLine-container2-container1',
           components: [
             {
-              classes: 'obpos-icon-phone',
+              classes:
+                'obposUiStoreInformationLine-container2-container1-iconPhone',
               name: 'iconPhone'
             },
             {
-              classes: 'obpos-row-store-info',
+              classes:
+                'obposUiStoreInformationLine-container2-container1-phoneNumber',
               name: 'phoneNumber'
             }
           ]
         },
         {
-          classes: 'span6',
+          classes: 'obposUiStoreInformationLine-container2-container2',
           components: [
             {
-              classes: 'obpos-icon-fax',
+              classes:
+                'obposUiStoreInformationLine-container2-container1-iconFax',
               name: 'iconFax'
             },
             {
-              classes: 'obpos-row-store-info',
+              classes:
+                'obposUiStoreInformationLine-container2-container1-faxNumber',
               name: 'faxNumber'
             }
           ]
@@ -82,41 +87,42 @@ enyo.kind({
       ]
     },
     {
-      classes: 'obpos-store-line span12',
+      classes: 'obposUiStoreInformationLine-container3',
       components: [
         {
-          classes: 'obpos-icon-email',
+          classes: 'obposUiStoreInformationLine-container3-iconEmail',
           name: 'iconEmail'
         },
         {
-          classes: 'obpos-row-store-info',
+          classes: 'obposUiStoreInformationLine-container3-email',
           name: 'email'
         }
       ]
     },
     {
-      classes: 'obpos-store-line span12',
+      classes: 'obposUiStoreInformationLine-container4',
       components: [
         {
-          classes: 'obpos-icon-cif',
+          classes: 'obposUiStoreInformationLine-container4-iconCif',
           name: 'iconCIF',
           initComponents: function() {
             this.setContent('CIF');
           }
         },
         {
-          classes: 'obpos-row-store-info',
+          classes: 'obposUiStoreInformationLine-container4-cif',
           name: 'cif'
         }
       ]
     },
     {
-      classes: 'span12',
+      classes: 'obposUiStoreInformationLine-container5',
       components: [
         {
           name: 'storeCallCenterSchedule',
           kind: 'OB.UI.ScrollableTable',
-          scrollAreaMaxHeight: '140px',
+          classes:
+            'obposUiStoreInformationLine-container5-storeCallCenterSchedule',
           renderHeader: 'OBPOS.UI.StoreInformationScheduleScrollableHeader',
           renderLine: 'OBPOS.UI.StoreInformationScheduleLine',
           renderEmpty: 'OB.UI.RenderEmpty'
@@ -124,12 +130,13 @@ enyo.kind({
       ]
     },
     {
-      classes: 'obpos-store-line span12',
+      classes: 'obposUiStoreInformationLine-container6',
       components: [
         {
           name: 'storeSpecialSchedule',
           kind: 'OB.UI.ScrollableTable',
-          scrollAreaMaxHeight: '140px',
+          classes:
+            'obposUiStoreInformationLine-container6-storeSpecialSchedule',
           renderHeader:
             'OBPOS.UI.StoreInformationSpecialScheduleScrollableHeader',
           renderLine: 'OBPOS.UI.StoreInformationSpecialScheduleLine',
@@ -138,11 +145,10 @@ enyo.kind({
       ]
     },
     {
-      classes: 'span12 obpos-center-text',
+      classes: 'obposUiStoreInformationLine-container7',
       components: [
         {
-          classes:
-            'obpos-clear-both obpos-btnlink btnlink btnlink-small btnlink-gray',
+          classes: 'obposUiStoreInformationLine-container7-btnClose',
           name: 'btnClose',
           kind: 'OB.UI.Button',
           i18nLabel: 'OBPOS_LblSlaveClose',
@@ -338,28 +344,34 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ScrollableTableHeader',
   name: 'OBPOS.UI.StoreInformationScheduleScrollableHeader',
-  classes: 'obpos-store-information-header',
+  classes: 'obposUiStoreInformationScheduleScrollableHeader',
   components: [
     {
+      classes: 'obposUiStoreInformationScheduleScrollableHeader-container1',
       components: [
         {
-          classes: 'obpos-store-information-header-icon',
+          classes:
+            'obposUiStoreInformationScheduleScrollableHeader-container1-container1',
           components: [
             {
-              classes: 'obpos-icon-schedule',
+              classes:
+                'obposUiStoreInformationScheduleScrollableHeader-container1-container1-iconSchedule',
               name: 'iconSchedule'
             }
           ]
         },
         {
-          classes: 'obpos-store-information-openhour',
+          classes:
+            'obposUiStoreInformationScheduleScrollableHeader-container1-openHour',
           name: 'openHour'
         },
         {
-          classes: 'obpos-store-information-empty9'
+          classes:
+            'obposUiStoreInformationScheduleScrollableHeader-container1-element1'
         },
         {
-          classes: 'obpos-store-information-callcenter',
+          classes:
+            'obposUiStoreInformationScheduleScrollableHeader-container1-callCenter',
           name: 'callCenter'
         }
       ]
@@ -375,20 +387,21 @@ enyo.kind({
 enyo.kind({
   name: 'OBPOS.UI.StoreInformationScheduleLine',
   kind: 'OB.UI.listItemButton',
+  classes: 'obposUiStoreInformationScheduleLine',
   components: [
     {
-      classes: 'obpos-row-store-space'
+      classes: 'obposUiStoreInformationScheduleLine-element1'
     },
     {
-      classes: 'obpos-row-store-info obpos-row-weekday',
+      classes: 'obposUiStoreInformationScheduleLine-weekday',
       name: 'weekday'
     },
     {
-      classes: 'obpos-row-store-info obpos-row-open-hour obpos-center-text',
+      classes: 'obposUiStoreInformationScheduleLine-openHour',
       name: 'openHour'
     },
     {
-      classes: 'obpos-row-store-info',
+      classes: 'obposUiStoreInformationScheduleLine-callCenter',
       name: 'callCenter'
     }
   ],
@@ -401,9 +414,9 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.ScrollableTableHeader',
   name: 'OBPOS.UI.StoreInformationSpecialScheduleScrollableHeader',
-  classes: 'obpos-store-information-header',
+  kind: 'OB.UI.ScrollableTableHeader',
+  classes: 'obposUiScrollableTableHeader',
   components: [
     {
       components: [
@@ -411,14 +424,14 @@ enyo.kind({
           classes: 'obpos-row-store-space'
         },
         {
-          classes: 'span5 obpos-store-information-specialOpenHour',
+          classes: 'obposUiScrollableTableHeader-specialOpenHour',
           name: 'specialOpenHour'
         },
         {
-          classes: 'obpos-store-information-empty1'
+          classes: 'obposUiScrollableTableHeader-element2'
         },
         {
-          classes: 'obpos-store-information-callcenter',
+          classes: 'obposUiScrollableTableHeader-specialCloseHour',
           name: 'specialCloseHour'
         }
       ]
@@ -438,16 +451,17 @@ enyo.kind({
 enyo.kind({
   name: 'OBPOS.UI.StoreInformationSpecialScheduleLine',
   kind: 'OB.UI.listItemButton',
+  classes: 'obposUiStoreInformationSpecialScheduleLine',
   components: [
     {
-      classes: 'obpos-row-store-space'
+      classes: 'obposUiStoreInformationSpecialScheduleLine-element1'
     },
     {
-      classes: 'obpos-row-store-info obpos-row-special-open-hour',
+      classes: 'obposUiStoreInformationSpecialScheduleLine-openHour',
       name: 'openHour'
     },
     {
-      classes: 'obpos-row-store-info',
+      classes: 'obposUiStoreInformationSpecialScheduleLine-closeHour',
       name: 'closeHour'
     }
   ],

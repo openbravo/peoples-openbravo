@@ -10,6 +10,7 @@
 /*global OB, enyo, Backbone, _*/
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Discounts',
+  classes: 'obObposPointOfSaleUiDiscounts',
   handlers: {
     onApplyDiscounts: 'applyDiscounts',
     onDiscountsClose: 'closingDiscounts',
@@ -25,133 +26,66 @@ enyo.kind({
     onCheckAllTicketLines: ''
   },
   checkedLines: [],
-  style:
-    'position:relative; background-color: orange; background-size: cover; color: white; height: 200px; margin: 5px; padding: 5px;',
   components: [
     {
       kind: 'Scroller',
-      maxHeight: '130px',
-      style: 'height: 130px',
+      classes: 'obObposPointOfSaleUiDiscounts-scroller',
       thumb: true,
-      horizontal: 'hidden',
       components: [
         {
-          components: [
-            {
-              style:
-                'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 35%; height: 40px; float: left; text-align: left;',
-              components: [
-                {
-                  style: 'padding: 5px 8px 0px 3px;',
-                  initComponents: function() {
-                    this.setContent(OB.I18N.getLabel('OBPOS_LineDiscount'));
-                  }
-                }
-              ]
-            },
-            {
-              name: 'discountsContainer',
-              style: 'border: 1px solid #F0F0F0; float: left; width: 63%;',
-              components: [
-                {
-                  name: 'discountsList',
-                  kind: 'OB.UI.DiscountList'
-                }
-              ]
-            }
-          ]
+          kind: 'OB.UI.FormElement',
+          name: 'formElementDiscountsList',
+          classes:
+            'obUiFormElement_dataEntry obObposPointOfSaleUiDiscounts-scroller-formElementDiscountsList',
+          coreElement: {
+            kind: 'OB.UI.DiscountList',
+            name: 'discountsList',
+            i18nLabel: 'OBPOS_LineDiscount',
+            classes:
+              'obObposPointOfSaleUiDiscounts-scroller-formElementDiscountsList-discountsList'
+          }
         },
         {
-          style: 'clear: both'
+          kind: 'OB.UI.FormElement',
+          name: 'formElementCheckOverride',
+          classes:
+            'obUiFormElement_dataEntry obObposPointOfSaleUiDiscounts-scroller-formElementCheckOverride',
+          coreElement: {
+            kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnCheckOverride',
+            name: 'checkOverride',
+            i18nLabel: 'OBPOS_overridePromotions',
+            classes:
+              'obObposPointOfSaleUiDiscounts-scroller-formElementCheckOverride-checkOverride'
+          }
         },
         {
-          name: 'overridePromotion',
-          components: [
-            {
-              style:
-                'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 35%; height: 40px; float: left; text-align: left;',
-              components: [
-                {
-                  style: 'padding: 5px 8px 0px 3px;',
-                  initComponents: function() {
-                    this.setContent(
-                      OB.I18N.getLabel('OBPOS_overridePromotions')
-                    );
-                  }
-                }
-              ]
-            },
-            {
-              style: 'border: 1px solid #F0F0F0; float: left; width: 63%;',
-              components: [
-                {
-                  classes: 'modal-dialog-profile-checkbox',
-                  components: [
-                    {
-                      kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnCheckOverride',
-                      name: 'checkOverride',
-                      classes: 'modal-dialog-btn-check'
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        {
-          style: 'clear: both'
-        },
-        {
-          name: 'applyCheckSelectAll',
-          components: [
-            {
-              style:
-                'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 35%; height: 40px; float: left;  text-align: left;',
-              components: [
-                {
-                  style: 'padding: 5px 8px 0px 3px;',
-                  initComponents: function() {
-                    this.setContent(OB.I18N.getLabel('OBPOS_applyToAllLines'));
-                  }
-                }
-              ]
-            },
-            {
-              style: 'border: 1px solid #F0F0F0; float: left; width: 63%;',
-              components: [
-                {
-                  classes: 'modal-dialog-profile-checkbox',
-                  components: [
-                    {
-                      kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnCheckAll',
-                      name: 'checkSelectAll',
-                      classes: 'modal-dialog-btn-check'
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        {
-          style: 'clear: both'
+          kind: 'OB.UI.FormElement',
+          name: 'formElementCheckSelectAll',
+          classes:
+            'obUiFormElement_dataEntry obObposPointOfSaleUiDiscounts-scroller-formElementCheckSelectAll',
+          coreElement: {
+            kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnCheckAll',
+            name: 'checkSelectAll',
+            i18nLabel: 'OBPOS_applyToAllLines',
+            classes:
+              'obObposPointOfSaleUiDiscounts-scroller-formElementCheckSelectAll-checkSelectAll'
+          }
         }
       ]
     },
     {
-      style: 'padding: 10px;',
+      classes: 'obObposPointOfSaleUiDiscounts-buttons',
       components: [
         {
-          style: 'text-align: center;',
-          components: [
-            {
-              kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsApply',
-              name: 'btnApply'
-            },
-            {
-              kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsCancel'
-            }
-          ]
+          kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsCancel',
+          classes:
+            'obObposPointOfSaleUiDiscounts-buttons-obObposPointOfSaleUiBtnDiscountsCancel'
+        },
+        {
+          kind: 'OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsApply',
+          name: 'btnApply',
+          isDefaultAction: true,
+          classes: 'obObposPointOfSaleUiDiscounts-buttons-btnApply'
         }
       ]
     }
@@ -249,7 +183,7 @@ enyo.kind({
           me.discountChanged(
             {},
             {
-              originator: me.$.discountsList,
+              originator: me.$.formElementDiscountsList.coreElement,
               model: model,
               amt: amt,
               requiresQty: requiresQty,
@@ -262,8 +196,8 @@ enyo.kind({
         //show an error in combo
         var tr;
         me.discounts.reset();
-        tr = me.$.discountsList.createComponent({
-          kind: 'enyo.Option',
+        tr = me.$.formElementDiscountsList.coreElement.createComponent({
+          kind: 'OB.UI.FormElement.Select.Option',
           text: OB.I18N.getLabel('OBPOS_errorGettingDiscounts'),
           value: 'error',
           initComponents: function() {
@@ -307,7 +241,7 @@ enyo.kind({
   },
   _searchSelectedComponent: function(selectedId) {
     return _.find(
-      this.$.discountsList.getComponents(),
+      this.$.formElementDiscountsList.coreElement.getComponents(),
       function(comp) {
         if (comp.getValue() === selectedId) {
           return true;
@@ -323,7 +257,9 @@ enyo.kind({
       });
       return;
     }
-    var comp = this._searchSelectedComponent(this.$.discountsList.getValue());
+    var comp = this._searchSelectedComponent(
+      this.$.formElementDiscountsList.coreElement.getValue()
+    );
     if (comp.units === '%' && OB.DEC.toBigDecimal(inEvent.qty) > 100) {
       this.doShowPopup({
         popup: 'modalNotValidValueForDiscount'
@@ -331,7 +267,7 @@ enyo.kind({
       return;
     }
     comp.setContent(comp.originalText + ' - ' + inEvent.qty + ' ' + comp.units);
-    this.$.discountsContainer.amt = inEvent.qty;
+    this.$.formElementDiscountsList.amt = inEvent.qty;
   },
   initComponents: function() {
     var discountsModel = Backbone.Collection.extend({
@@ -340,14 +276,14 @@ enyo.kind({
     this.inherited(arguments);
 
     this.discounts = new discountsModel();
-    this.$.discountsList.setCollection(this.discounts);
+    this.$.formElementDiscountsList.coreElement.setCollection(this.discounts);
   },
   ticketLineChecked: function(inSender, inEvent) {
     var activateButton = false;
     if (inEvent.allChecked) {
-      this.$.checkSelectAll.check();
+      this.$.formElementCheckSelectAll.coreElement.check();
     } else {
-      this.$.checkSelectAll.unCheck();
+      this.$.formElementCheckSelectAll.coreElement.unCheck();
     }
     this.checkedLines = inEvent.checkedLines;
 
@@ -362,19 +298,23 @@ enyo.kind({
       activateButton
     ) {
       this.$.btnApply.setDisabled(false);
-      this.$.btnApply.addStyles('color: orange;');
+      this.$.btnApply.addClass(
+        '.obObposPointOfSaleUiDiscounts-buttons-btnApply_activate'
+      );
     } else {
       this.$.btnApply.setDisabled(true);
-      this.$.btnApply.addStyles('color: #4C4949;');
+      this.$.btnApply.addClass(
+        '.obObposPointOfSaleUiDiscounts-buttons-btnApply_desactivate'
+      );
     }
   },
   discountChanged: function(inSender, inEvent) {
     // Build discount container info
-    var discountsContainer = this.$.discountsContainer;
-    discountsContainer.model = inEvent.model;
-    discountsContainer.requiresQty = inEvent.requiresQty;
-    discountsContainer.amt = inEvent.amt;
-    discountsContainer.units = inEvent.units;
+    var formElementDiscountsList = this.$.formElementDiscountsList;
+    formElementDiscountsList.model = inEvent.model;
+    formElementDiscountsList.requiresQty = inEvent.requiresQty;
+    formElementDiscountsList.amt = inEvent.amt;
+    formElementDiscountsList.units = inEvent.units;
 
     // Disable keyboard if rule is fixed, otherwise, enable keyboard
     if (
@@ -390,7 +330,7 @@ enyo.kind({
       'OBPOS_preDiscountChangeHook',
       {
         context: this,
-        discountsContainer: discountsContainer,
+        formElementDiscountsList: formElementDiscountsList,
         inEvent: inEvent,
         hideLineSelectionOptions: false
       },
@@ -399,63 +339,71 @@ enyo.kind({
           return;
         }
         if (
-          OB.UTIL.isNullOrUndefined(args.discountsContainer) ||
-          OB.UTIL.isNullOrUndefined(args.discountsContainer.model)
+          OB.UTIL.isNullOrUndefined(args.formElementDiscountsList) ||
+          OB.UTIL.isNullOrUndefined(args.formElementDiscountsList.model)
         ) {
           // Mandatory infornation
           OB.UTIL.showError(
             'Critical discount information is missing: ' +
-              (args.discountsContainer
+              (args.formElementDiscountsList
                 ? 'Discount model'
                 : 'Discount Container')
           );
         } else if (
-          OB.UTIL.isNullOrUndefined(args.discountsContainer.amt) ||
-          OB.UTIL.isNullOrUndefined(args.discountsContainer.units)
+          OB.UTIL.isNullOrUndefined(args.formElementDiscountsList.amt) ||
+          OB.UTIL.isNullOrUndefined(args.formElementDiscountsList.units)
         ) {
           // Without this information, the discounts could not be applied
           OB.UTIL.showWarning(
             'Some discount information is missing, the promotion could not be applied: ' +
-              (args.discountsContainer.amt
+              (args.formElementDiscountsList.amt
                 ? 'Discount units'
                 : 'Discount amount')
           );
         }
         if (args.hideLineSelectionOptions) {
-          args.context.$.applyCheckSelectAll.hide();
+          args.context.$.formElementCheckSelectAll.hide();
           args.context.order.get('lines').trigger('hideAllCheckBtn');
           args.context.$.btnApply.setDisabled(false);
-          args.context.$.btnApply.addStyles('color: orange;');
+          args.context.$.btnApply.addClass(
+            '.obObposPointOfSaleUiDiscounts-buttons-btnApply_activate'
+          );
         } else {
-          args.context.$.applyCheckSelectAll.show();
+          args.context.$.formElementCheckSelectAll.show();
           args.context.order.get('lines').trigger('showAllCheckBtn');
 
           if (
             args.context.checkedLines.length > 0 &&
             ((!OB.UTIL.isNullOrUndefined(args.context.discounts) &&
               args.context.discounts.length !== 0) ||
-              (!OB.UTIL.isNullOrUndefined(args.discountsContainer) &&
-                !OB.UTIL.isNullOrUndefined(args.discountsContainer.model)))
+              (!OB.UTIL.isNullOrUndefined(args.formElementDiscountsList) &&
+                !OB.UTIL.isNullOrUndefined(
+                  args.formElementDiscountsList.model
+                )))
           ) {
             args.context.$.btnApply.setDisabled(false);
-            args.context.$.btnApply.addStyles('color: orange;');
+            args.context.$.btnApply.addClass(
+              '.obObposPointOfSaleUiDiscounts-buttons-btnApply_activate'
+            );
           } else {
             args.context.$.btnApply.setDisabled(true);
-            args.context.$.btnApply.addStyles('color: #4C4949;');
+            args.context.$.btnApply.addClass(
+              '.obObposPointOfSaleUiDiscounts-buttons-btnApply_desactivate'
+            );
           }
         }
-        if (discountsContainer.model.get('obdiscAllowmultipleinstan')) {
-          args.context.$.overridePromotion.hide();
-          args.context.$.checkOverride.unCheck();
+        if (formElementDiscountsList.model.get('obdiscAllowmultipleinstan')) {
+          args.context.$.formElementCheckOverride.hide();
+          args.context.$.formElementCheckOverride.$.coreElementContainer.$.checkOverride.unCheck();
         } else {
-          args.context.$.overridePromotion.show();
+          args.context.$.formElementCheckOverride.show();
         }
       }
     );
   },
   closingDiscounts: function(inSender, inEvent) {
     OB.MobileApp.view.scanningFocus(true);
-    this.$.checkSelectAll.unCheck();
+    this.$.formElementCheckSelectAll.coreElement.unCheck();
     this.setShowing(false);
     this.doDiscountsModeFinished({
       tabPanel: 'scan',
@@ -495,8 +443,8 @@ enyo.kind({
     return maxNoOrder;
   },
   applyDiscounts: function(inSender, inEvent) {
-    var promotionToAplly = {},
-      discountsContainer = this.$.discountsContainer,
+    var promotionToApply = {},
+      formElementDiscountsList = this.$.formElementDiscountsList,
       orderLinesCollection = new OB.Collection.OrderLineList(),
       me = this;
     //preApplyDiscountsHook
@@ -510,22 +458,24 @@ enyo.kind({
           me.closingDiscounts();
           return;
         }
-        if (!me.$.overridePromotion.showing) {
-          me.$.checkOverride.unCheck();
+        if (!me.$.formElementCheckOverride.showing) {
+          me.$.formElementCheckOverride.$.coreElementContainer.$.checkOverride.unCheck();
         }
-        promotionToAplly.rule = discountsContainer.model;
-        promotionToAplly.definition = {};
-        promotionToAplly.definition.userAmt = discountsContainer.amt;
-        promotionToAplly.definition.applyNext = true;
-        promotionToAplly.definition.forceReplace = me.$.checkOverride.checked;
-        promotionToAplly.definition.lastApplied = true;
-        promotionToAplly.definition.obdiscLineFinalgross =
-          discountsContainer.amt;
+        promotionToApply.rule = formElementDiscountsList.model;
+        promotionToApply.definition = {};
+        promotionToApply.definition.userAmt = formElementDiscountsList.amt;
+        promotionToApply.definition.applyNext = !me.$.formElementCheckOverride.coreElement.getChecked();
+        promotionToApply.definition.lastApplied = true;
+        promotionToApply.definition.obdiscLineFinalgross =
+          formElementDiscountsList.amt;
 
         let maxNoOrder = me.getMaxNoOrder(me.order);
-        promotionToAplly.definition.noOrder = maxNoOrder + 1;
+        promotionToApply.definition.noOrder = maxNoOrder + 1;
 
-        if (discountsContainer.requiresQty && !discountsContainer.amt) {
+        if (
+          formElementDiscountsList.requiresQty &&
+          !formElementDiscountsList.amt
+        ) {
           //Show a modal pop up with the error
           me.doShowPopup({
             popup: 'modalDiscountNeedQty'
@@ -539,7 +489,7 @@ enyo.kind({
         OB.Model.Discounts.addManualPromotion(
           me.order,
           orderLinesCollection,
-          promotionToAplly
+          promotionToApply
         );
 
         me.closingDiscounts();
@@ -554,7 +504,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsApply',
   kind: 'OB.UI.ModalDialogButton',
-  style: 'color: orange; font-weight: bold;',
+  classes: 'obObposPointOfSaleUiDiscountsBtnDiscountsApply',
   i18nLabel: 'OBMOBC_LblApply',
   events: {
     onApplyDiscounts: ''
@@ -570,7 +520,8 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Discounts.btnCheckAll',
-  kind: 'OB.UI.CheckboxButton',
+  kind: 'OB.UI.FormElement.Checkbox',
+  classes: 'obObposPointOfSaleUiDiscountsBtnCheckAll',
   events: {
     onCheckAllTicketLines: ''
   },
@@ -585,14 +536,15 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Discounts.btnCheckOverride',
-  kind: 'OB.UI.CheckboxButton',
+  kind: 'OB.UI.FormElement.Checkbox',
+  classes: 'obObposPointOfSaleUiDiscountsBtnCheckOverride',
   checked: false
 });
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsCancel',
   kind: 'OB.UI.ModalDialogButton',
-  style: 'color: orange; font-weight: bold;',
+  classes: 'obObposPointOfSaleUiDiscountsBtnDiscountsCancel',
   events: {
     onDiscountsClose: ''
   },
@@ -605,11 +557,10 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.DiscountList',
   kind: 'OB.UI.List',
-  tag: 'select',
   handlers: {
     onchange: 'changeDiscount'
   },
-  classes: 'discount-dialog-profile-combo',
+  classes: 'obUiDiscountList',
   renderEmpty: enyo.Control,
   renderLine: 'OB.UI.DiscountList.Options',
   initComponents: function() {
@@ -633,7 +584,7 @@ enyo.kind({
       units = '%';
     }
 
-    this.owner.discountChanged(
+    this.formElement.owner.discountChanged(
       {},
       {
         originator: this,
@@ -647,8 +598,9 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'enyo.Option',
+  kind: 'OB.UI.FormElement.Select.Option',
   name: 'OB.UI.DiscountList.Options',
+  classses: 'obUiDiscountListOptions',
   initComponents: function() {
     var rule = OB.Model.Discounts.discountRules[this.model.get('discountType')],
       propertyToShow = '';

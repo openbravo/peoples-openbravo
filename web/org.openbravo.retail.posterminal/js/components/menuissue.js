@@ -13,6 +13,7 @@
   enyo.kind({
     name: 'OBRDM.UI.MenuIssueSO',
     kind: 'OB.UI.MenuAction',
+    classes: 'obrdmUiMenuIssueSO',
     permission: 'OBRDM_IssueSalesOrder',
     i18nLabel: 'OBRDM_LblIssueSalesOrder',
     events: {

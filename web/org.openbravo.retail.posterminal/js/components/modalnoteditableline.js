@@ -12,8 +12,10 @@
 enyo.kind({
   name: 'OB.UI.ModalNotEditableLine',
   kind: 'OB.UI.ModalInfo',
+  classes: 'obUIModalNotEditableLine',
   i18Header: 'OBPOS_modalNoEditableLineHeader',
   bodyContent: {
+    classes: 'obUIModalNotEditableLine-bodyContent',
     i18nContent: 'OBPOS_modalNoEditableLineBody'
   }
 });

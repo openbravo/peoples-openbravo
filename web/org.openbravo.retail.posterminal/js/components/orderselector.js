@@ -12,7 +12,7 @@
 enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OBRDM.UI.ButtonSelectAll',
-  classes: 'btnlink-yellow btnlink btnlink-small obrdm-button-select-all',
+  classes: 'obrdmUiButtonSelectAll',
   i18nLabel: 'OBPOS_lblSelectAll',
   events: {
     onSelectAll: ''
@@ -35,15 +35,16 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.ButtonAdvancedFilter',
   name: 'OBRDM.UI.ButtonAdvancedFilter',
+  kind: 'OB.UI.ButtonAdvancedFilter',
+  classes: 'obrdmUiButtonAdvancedFilter',
   dialog: 'OBRDM_ModalAdvancedFilterOrder'
 });
 
 enyo.kind({
-  kind: 'OB.UI.SmallButton',
   name: 'OBRDM.UI.ButtonPrepareSelected',
-  classes: 'btnlink-green btnlink btnlink-small obrdm-button-prepared-selected',
+  kind: 'OB.UI.SmallButton',
+  classes: 'obrdmUiButtonPrepareSelected',
   i18nLabel: 'OBRDM_LblPrepareSelected',
   events: {
     onPrepareSelected: ''
@@ -65,41 +66,51 @@ enyo.kind({
 enyo.kind({
   name: 'OBRDM.UI.ModalOrderScrollableHeader',
   kind: 'OB.UI.ScrollableTableHeader',
+  classes: 'obrdmUiModalOrderScrollableHeader',
   components: [
     {
-      classes: 'obrdm-filter-selector',
-      kind: 'OB.UI.FilterSelectorTableHeader',
       name: 'filterSelector',
+      kind: 'OB.UI.FilterSelectorTableHeader',
+      classes: 'obrdmUiModalOrderScrollableHeader-filterSelector',
       filters: OB.Model.OBRDM_OrderFilter.getProperties()
     },
     {
       showing: true,
-      classes: 'obrdm-filter-selector-inner',
+      classes: 'obrdmUiModalOrderScrollableHeader-container1',
       components: [
         {
-          classes: 'obrdm-filter-selector-inner-1',
+          classes: 'obrdmUiModalOrderScrollableHeader-container1-container1',
           components: [
             {
-              classes: 'obrdm-filter-selector-inner-1-1',
+              classes:
+                'obrdmUiModalOrderScrollableHeader-container1-container1-container1',
               components: [
                 {
-                  kind: 'OBRDM.UI.ButtonSelectAll'
+                  kind: 'OBRDM.UI.ButtonSelectAll',
+                  classes:
+                    'obrdmUiModalOrderScrollableHeader-container1-container1-container1-obrdmUiButtonSelectAll'
                 }
               ]
             },
             {
-              classes: 'obrdm-filter-selector-inner-2',
+              classes:
+                'obrdmUiModalOrderScrollableHeader-container1-container1-container2',
               components: [
                 {
-                  kind: 'OBRDM.UI.ButtonAdvancedFilter'
+                  kind: 'OBRDM.UI.ButtonAdvancedFilter',
+                  classes:
+                    'obrdmUiModalOrderScrollableHeader-container1-container1-container2-obrdmUiButtonAdvancedFilter'
                 }
               ]
             },
             {
-              classes: 'obrdm-filter-selector-inner-3',
+              classes:
+                'obrdmUiModalOrderScrollableHeader-container1-container1-container3',
               components: [
                 {
-                  kind: 'OBRDM.UI.ButtonPrepareSelected'
+                  kind: 'OBRDM.UI.ButtonPrepareSelected',
+                  classes:
+                    'obrdmUiModalOrderScrollableHeader-container1-container1-container3-obrdmUiButtonPrepareSelected'
                 }
               ]
             }
@@ -114,64 +125,68 @@ enyo.kind({
 enyo.kind({
   name: 'OBRDM.UI.ListOrdersLine',
   kind: 'OB.UI.listItemButton',
-  classes: 'obrdm-listitembutton',
+  classes: 'obrdmUiListOrdersLine',
   components: [
     {
       name: 'order',
-      classes: 'obrdm-row-order',
+      classes: 'obrdmUiListOrdersLine-order',
       components: [
         {
-          classes: 'obrdm-checkbox-half-on, obrdm-checkbox-order',
           name: 'iconOrder',
+          classes: 'obrdmUiListOrdersLine-order-iconOrder obrdmCheckbox_halfOn',
           tap: function() {
             this.bubble('onTapOrderIcon');
           }
         },
         {
-          classes: 'obrdm-row-order-text',
+          classes: 'obrdmUiListOrdersLine-order-documentNo',
           name: 'documentNo'
         },
         {
-          classes: 'obrdm-row-order-text obrdm-listitembutton-text-color',
-          name: 'bpName'
+          name: 'bpName',
+          classes: 'obrdmUiListOrdersLine-order-bpName'
         },
         {
-          classes: 'obrdm-row-order-text obrdm-listitembutton-text-color',
-          name: 'orderedDate'
+          name: 'orderedDate',
+          classes: 'obrdmUiListOrdersLine-order-orderedDate'
         },
         {
-          classes: 'obrdm-clear-both'
+          classes: 'obrdmUiListOrdersLine-order-element1'
         }
       ]
     },
     {
       name: 'orderline',
-      classes: 'obrdm-row-orderline',
+      classes: '.obrdmUiListOrdersLine-orderLine',
       components: [
         {
-          classes: 'obrdm-cell-orderline-left',
+          classes: '.obrdmUiListOrdersLine-orderLine-container1',
           components: [
             {
-              classes: 'obrdm-orderline-icon obrdm-checkbox-off',
               name: 'iconOrderLine',
+              classes:
+                'obrdmUiListOrdersLine-orderLine-container1-iconOrderLine obrdmCheckbox_off',
               tap: function() {
                 this.bubble('onTapLineIcon');
               }
             },
             {
-              classes: 'obrdm-cell-orderline-left-info',
+              classes: 'obrdmUiListOrdersLine-orderLine-container1-container1',
               components: [
                 {
-                  classes: 'obrdm-text-line obrdm-orderline-info',
-                  name: 'orderlineInfo'
+                  name: 'orderlineInfo',
+                  classes:
+                    'obrdmUiListOrdersLine-orderLine-container1-container1-orderlineInfo'
                 },
                 {
-                  classes: 'obrdm-text-line obrdm-orderline-prouct',
-                  name: 'orderlineProduct'
+                  name: 'orderlineProduct',
+                  classes:
+                    'obrdmUiListOrdersLine-orderLine-container1-container1-orderlineProduct'
                 },
                 {
-                  classes: 'obrdm-button-info obrdm-button-info-normal',
                   name: 'orderlineInfoBtn',
+                  classes:
+                    'obrdmUiListOrdersLine-orderLine-container1-container1-orderlineInfoBtn',
                   tap: function() {
                     this.bubble('onHideSelector');
                     this.bubble('onShowPopup', {
@@ -193,10 +208,11 @@ enyo.kind({
           ]
         },
         {
-          classes: 'obrdm-cell-orderline-right',
+          classes: 'obrdmUiListOrdersLine-orderLine-container2',
           components: [
             {
-              classes: 'obrdm-cell-orderline-right-col1',
+              classes:
+                'obrdmUiListOrdersLine-orderLine-container2-container1 obrdm-cell-orderline-right-col1',
               components: [
                 {
                   classes: 'obrdm-lbl-prepare',
@@ -205,10 +221,12 @@ enyo.kind({
                   }
                 },
                 {
-                  classes: 'obrdm-float-left',
+                  classes:
+                    'obrdmUiListOrdersLine-orderLine-container2-container1-container1',
                   components: [
                     {
-                      classes: 'obrdm-button-minus-plus obrdm-button-minus',
+                      classes:
+                        'obrdmUiListOrdersLine-orderLine-container2-container1-container1-element1',
                       initComponents: function() {
                         this.setContent(
                           OB.I18N.getLabel('OBMOBC_Character')[3]
@@ -235,11 +253,13 @@ enyo.kind({
                     {
                       kind: 'OB.UI.EditNumber',
                       name: 'orderlineQty',
-                      min: 0,
-                      classes: 'obrdm-orderline-qty'
+                      classes:
+                        'obrdmUiListOrdersLine-orderLine-container2-container1-container1-orderlineQty',
+                      min: 0
                     },
                     {
-                      classes: 'obrdm-button-minus-plus obrdm-button-plus',
+                      classes:
+                        'obrdmUiListOrdersLine-orderLine-container2-container1-container1-element2',
                       initComponents: function() {
                         this.setContent(
                           OB.I18N.getLabel('OBMOBC_Character')[4]
@@ -268,13 +288,15 @@ enyo.kind({
               ]
             },
             {
-              classes: 'obrdm-cell-orderline-right-col2',
+              classes: 'obrdmUiListOrdersLine-orderLine-container2-container2',
               components: [
                 {
-                  classes: 'obrdm-cell-orderline-right-container',
+                  classes:
+                    'obrdmUiListOrdersLine-orderLine-container2-container2-container1',
                   components: [
                     {
-                      classes: 'obrdm-cell-orderline-button',
+                      classes:
+                        'obrdmUiListOrdersLine-orderLine-container2-container2-container1-orderlineWarehouse',
                       name: 'orderlineWarehouse',
                       tap: function() {
                         this.bubble('onHideSelector');
@@ -312,19 +334,20 @@ enyo.kind({
               ]
             },
             {
-              classes: 'obrdm-clear-both'
+              classes: 'obrdmUiListOrdersLine-orderLine-container2-element1'
             },
             {
-              classes: 'obrdm-cell-orderline-right-col1',
+              classes: 'obrdmUiListOrdersLine-orderLine-container2-container3',
               components: [
                 {
-                  classes: 'obrdm-text-line obrdm-orderline-deliverymode',
-                  name: 'orderlineDeliveryMode'
+                  name: 'orderlineDeliveryMode',
+                  classes:
+                    'obrdmUiListOrdersLine-orderLine-container2-container3-orderlineDeliveryMode'
                 }
               ]
             },
             {
-              classes: 'obrdm-clear-both'
+              classes: 'obrdmUiListOrdersLine-orderLine-container2-element2'
             }
           ]
         }
@@ -343,15 +366,15 @@ enyo.kind({
   },
 
   changeIconClass: function(icon, mode) {
-    icon.removeClass('obrdm-checkbox-half-on');
-    icon.removeClass('obrdm-checkbox-on');
-    icon.removeClass('obrdm-checkbox-off');
+    icon.removeClass('.obrdmCheckbox_halfOn');
+    icon.removeClass('.obrdmCheckbox_on');
+    icon.removeClass('.obrdmCheckbox_off');
     if (mode === 'OFF') {
-      icon.addClass('obrdm-checkbox-off');
+      icon.addClass('.obrdmCheckbox_off');
     } else if (mode === 'ON') {
-      icon.addClass('obrdm-checkbox-on');
+      icon.addClass('.obrdmCheckbox_on');
     } else {
-      icon.addClass('obrdm-checkbox-half-on');
+      icon.addClass('.obrdmCheckbox_halfOn');
     }
   },
 
@@ -375,7 +398,7 @@ enyo.kind({
 
   tapOrderIcon: function() {
     var iconClasses = this.$.iconOrder.getClassAttribute(),
-      mode = iconClasses === 'obrdm-checkbox-on' ? 'OFF' : 'ON';
+      mode = iconClasses === 'obrdmCheckbox_on' ? 'OFF' : 'ON';
 
     this.changeIconClass(this.$.iconOrder, mode);
     this.doChangeAllLines({
@@ -389,7 +412,7 @@ enyo.kind({
   tapLineIcon: function() {
     var qty,
       iconClasses = this.$.iconOrderLine.getClassAttribute().split(' ');
-    if (iconClasses[1] === 'obrdm-checkbox-on') {
+    if (iconClasses[1] === 'obrdmCheckbox_on') {
       qty = 0;
     } else {
       qty = this.model.get('qtyPending');
@@ -408,14 +431,14 @@ enyo.kind({
       silent: true
     });
     if (this.model.get('ltype') === 'ORDER') {
-      this.owner.addClass('obrdm-order');
+      //this.owner.addClass('obrdm-order');
       this.$.orderline.hide();
       this.$.order.show();
       this.$.documentNo.setContent(this.model.get('documentNo'));
       this.$.bpName.setContent(' / ' + this.model.get('bpName'));
       this.$.orderedDate.setContent(' / ' + this.model.get('orderedDate'));
     } else {
-      this.owner.addClass('obrdm-orderline');
+      //this.owner.addClass('obrdm-orderline');
       this.$.order.hide();
       this.$.orderline.show();
       this.$.orderlineInfo.setContent(
@@ -465,9 +488,8 @@ enyo.kind({
         OB.MobileApp.model.hasPermission('OBRDM_warehouse.preparation', true)
       ) {
         this.$.orderlineWarehouse.tap = this.onTapCloseButton;
-        this.$.orderlineWarehouse.removeClass('obrdm-cell-orderline-button');
         this.$.orderlineWarehouse.addClass(
-          'obrdm-cell-orderline-button-disabled'
+          'obrdmUiListOrdersLine-orderLine-container2-container2-container1-orderlineWarehouse_disabled'
         );
       }
       this.$.orderlineQty.setMax(this.model.get('qtyPending'));
@@ -487,21 +509,21 @@ enyo.kind({
             if (args && args.showInfo) {
               me.$.orderlineInfoBtn.showinfoplus = true;
               me.$.orderlineInfoBtn.addRemoveClass(
-                'obrdm-button-info-normal',
+                'obrdmUiListOrdersLine-orderLine-container1-container1-orderlineInfoBtn_normal',
                 false
               );
               me.$.orderlineInfoBtn.addRemoveClass(
-                'obrdm-button-info-plus',
+                'obrdmUiListOrdersLine-orderLine-container1-container1-orderlineInfoBtn_plus',
                 true
               );
             } else {
               me.$.orderlineInfoBtn.showinfoplus = false;
               me.$.orderlineInfoBtn.addRemoveClass(
-                'obrdm-button-info-plus',
+                'obrdmUiListOrdersLine-orderLine-container1-container1-orderlineInfoBtn_plus',
                 false
               );
               me.$.orderlineInfoBtn.addRemoveClass(
-                'obrdm-button-info-normal',
+                'obrdmUiListOrdersLine-orderLine-container1-container1-orderlineInfoBtn_normal',
                 true
               );
             }
@@ -515,7 +537,7 @@ enyo.kind({
 /* Scrollable table (body of modal) */
 enyo.kind({
   name: 'OBRDM.UI.ListOrders',
-  classes: 'row-fluid',
+  classes: 'obrdmUiListOrders row-fluid',
   handlers: {
     onClearFilterSelector: 'clearAction',
     onSearchAction: 'searchAction',
@@ -530,25 +552,27 @@ enyo.kind({
   },
   components: [
     {
-      classes: 'span12',
+      classes: 'obrdmUiListOrders-container1',
       components: [
         {
-          classes: 'row-fluid obrdm-list-orders',
+          classes: 'obrdmUiListOrders-container1-container1 row-fluid',
           components: [
             {
-              classes: 'span12',
+              classes: 'obrdmUiListOrders-container1-container1-container1',
               components: [
                 {
                   name: 'stOrderSelector',
                   kind: 'OB.UI.ScrollableTable',
-                  scrollAreaMaxHeight: '420px',
+                  classes:
+                    'obrdmUiListOrders-container1-container1-container1-stOrderSelector',
                   renderHeader: 'OBRDM.UI.ModalOrderScrollableHeader',
                   renderLine: 'OBRDM.UI.ListOrdersLine',
                   renderEmpty: 'OB.UI.RenderEmpty'
                 },
                 {
                   name: 'renderLoading',
-                  classes: 'obrdm-list-orders obrdm-list-orders-renderloading',
+                  classes:
+                    'obrdmUiListOrders-container1-container1-container1-renderLoading',
                   showing: false,
                   initComponents: function() {
                     this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
@@ -799,12 +823,12 @@ enyo.kind({
                 {
                   autoDismiss: false,
                   onShowFunction: function(popup) {
-                    popup.$.bodyButtons.setStyle('clear: both;');
+                    popup.$.bodyButtons.addClass('u-clearBoth');
                   },
                   onHideFunction: function() {
                     me.doShowSelector();
                   },
-                  classes: 'obrdm-prepare-confirmation'
+                  classes: 'obrdmPrepareConfirmation'
                 }
               );
             } else {
@@ -1225,8 +1249,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalSelector',
   name: 'OBRDM.UI.ModalOrderSelector',
-  topPosition: '45px',
-  classes: 'obrdm-modal-order-selector',
+  classes: 'obrdmUiModalOrderSelector',
   i18nHeader: 'OBRDM_LblSelectOrders',
   body: {
     kind: 'OBRDM.UI.ListOrders'
@@ -1299,8 +1322,9 @@ OB.UI.WindowView.registerPopup('OB.OBPOSPointOfSale.UI.PointOfSale', {
 
 /* Advanced filter definition */
 enyo.kind({
-  kind: 'OB.UI.ModalAdvancedFilters',
   name: 'OBRDM.UI.ModalAdvancedFilterOrder',
+  kind: 'OB.UI.ModalAdvancedFilters',
+  classes: 'obrdmUiModalAdvancedFilterOrder',
   initComponents: function() {
     this.inherited(arguments);
     this.setFilters(OB.Model.OBRDM_OrderFilter.getProperties());

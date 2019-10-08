@@ -11,7 +11,7 @@
 
 enyo.kind({
   name: 'OB.UI.ReceiptsCounter',
-  style: 'position: absolute; top:0px; right: 0px;',
+  classes: 'obUiReceiptsCounter',
   showing: false,
   published: {
     orderList: null
@@ -19,7 +19,8 @@ enyo.kind({
   components: [
     {
       kind: 'OB.UI.ReceiptsCounterButton',
-      name: 'receiptsCounterButton'
+      name: 'receiptsCounterButton',
+      classes: 'obUiReceiptsCounter-receiptsCounterButton'
     }
   ],
   events: {
@@ -29,27 +30,38 @@ enyo.kind({
     var receiptLabels;
     try {
       receiptLabels = OB.POS.terminal.$.containerWindow.getRoot().$.multiColumn
-        .$.leftPanel.$.receiptview.$.receiptheader.$.receiptLabels;
+        .$.leftPanel.$.receiptview.$.receiptHeader.$.receiptLabels;
     } catch (e) {
       OB.error('receiptLabels not found');
     }
     if (nrItems > 1) {
-      this.$.receiptsCounterButton.$.counter.setContent(nrItems - 1);
+      if (nrItems < 1000) {
+        this.$.receiptsCounterButton.$.counter.setContent(nrItems - 1);
+      } else {
+        this.$.receiptsCounterButton.$.counter.setContent('...');
+      }
       if (receiptLabels) {
         // If the receipt counter button is shown, the receipt top labels should have a right padding to avoid overlapping
-        receiptLabels.applyStyle('padding-right', '55px');
-      }
-      if (nrItems > 100) {
-        this.$.receiptsCounterButton.$.counter.applyStyle('font-size', '12px');
-      } else {
-        this.$.receiptsCounterButton.$.counter.applyStyle('font-size', '18px');
+        // [TODO] Change at the same time as component/order.js
+        receiptLabels.removeClass(
+          'obUiReceiptsCounter-receiptsCounterButton-receiptLabel_singleLine'
+        );
+        receiptLabels.addClass(
+          'obUiReceiptsCounter-receiptsCounterButton-receiptLabel_multiLine'
+        );
       }
       this.show();
     } else {
       this.$.receiptsCounterButton.$.counter.setContent('');
       if (receiptLabels) {
         // If the receipt counter button is not shown, the receipt top labels should reach the right of the receipt area
-        receiptLabels.applyStyle('padding-right', '5px');
+        // [TODO] Change at the same time as component/order.js
+        receiptLabels.removeClass(
+          'obUiReceiptsCounter-receiptsCounterButton-receiptLabel_multiLine'
+        );
+        receiptLabels.addClass(
+          'obUiReceiptsCounter-receiptsCounterButton-receiptLabel_singleLine'
+        );
       }
       this.hide();
     }
@@ -76,9 +88,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ReceiptsCounterButton',
   kind: 'OB.UI.Button',
-  classes: 'btnlink btnlink-gray',
-  style:
-    'position: relative; overflow: hidden; margin:0px; padding:0px; height:50px; width: 50px;',
+  classes: 'obUiReceiptsCounterButton',
   events: {
     onShowPopup: ''
   },
@@ -98,13 +108,11 @@ enyo.kind({
   },
   components: [
     {
-      style:
-        'position: absolute; top: -35px; right:-35px; background: #404040; height:70px; width: 70px; -webkit-transform: rotate(45deg); -moz-transform: rotate(45deg); -ms-transform: rotate(45deg); -transform: rotate(45deg);'
+      classes: 'obUiReceiptsCounterButton-element1'
     },
     {
       name: 'counter',
-      style:
-        'position: absolute; top: 0px; right:0px; padding-top: 5px; padding-right: 10px; font-weight: bold; color: white; max-width: 21px; max-height: 18px;'
+      classes: 'obUiReceiptsCounterButton-counter'
     }
   ]
 });

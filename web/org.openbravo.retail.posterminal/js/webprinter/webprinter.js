@@ -43,7 +43,7 @@
         canvas.height = img.height;
         var ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, img.width, img.height);
-        img.style.display = 'none';
+        img.style.display = 'none'; /*This inline style is permited*/
         data.imagedata = ctx.getImageData(0, 0, canvas.width, canvas.height);
         resolve(data);
       };

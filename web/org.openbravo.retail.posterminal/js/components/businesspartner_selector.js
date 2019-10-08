@@ -23,10 +23,9 @@ OB.UTIL.BusinessPartnerSelector = {
 };
 
 enyo.kind({
-  kind: 'OB.UI.SmallButton',
   name: 'OB.UI.BusinessPartnerSelector',
-  classes:
-    'btnlink-gray flex-customer-buttons-item flex-customer-buttons-customer',
+  kind: 'OB.UI.FormElement.Selector',
+  classes: 'obUiBusinessPartnerSelector',
   published: {
     order: null
   },
@@ -81,14 +80,17 @@ enyo.kind({
   initComponents: function() {
     return this;
   },
-  renderCustomer: function(newCustomer) {
-    this.setContent(newCustomer);
+  renderCustomer: function(newCustomerId, newCustomerName) {
+    this.setValue(newCustomerId, newCustomerName);
   },
   orderChanged: function(oldValue) {
     if (this.order.get('bp')) {
-      this.renderCustomer(this.order.get('bp').get('_identifier'));
+      this.renderCustomer(
+        this.order.get('bp').get('id'),
+        this.order.get('bp').get('_identifier')
+      );
     } else {
-      this.renderCustomer('');
+      this.renderCustomer(null, '');
     }
 
     this.order.on(
@@ -123,9 +125,12 @@ enyo.kind({
           } else {
             model.set('generateInvoice', false);
           }
-          this.renderCustomer(model.get('bp').get('_identifier'));
+          this.renderCustomer(
+            model.get('bp').get('id'),
+            model.get('bp').get('_identifier')
+          );
         } else {
-          this.renderCustomer('');
+          this.renderCustomer(null, '');
         }
       },
       this
@@ -135,25 +140,28 @@ enyo.kind({
 
 /*header of scrollable table*/
 enyo.kind({
-  kind: 'OB.UI.Button',
   name: 'OB.UI.NewCustomerButton',
+  kind: 'OB.UI.ModalDialogButton',
   events: {
     onShowPopup: '',
     onHideSelector: ''
   },
   disabled: false,
-  style: 'width: 170px; margin: 0px 9px 8px 0px;',
-  classes: 'btnlink-yellow btnlink btnlink-small',
+  classes: 'obUiNewCustomerButton',
   i18nLabel: 'OBPOS_LblNewCustomer',
   handlers: {
     onSetModel: 'setModel',
     onNewBPDisabled: 'doDisableNewBP'
   },
+  initComponents: function() {
+    this.popup = OB.UTIL.getPopupFromComponent(this);
+    this.inherited(arguments);
+  },
   setModel: function(inSender, inEvent) {
     this.model = inEvent.model;
   },
   doDisableNewBP: function(inSender, inEvent) {
-    this.putDisabled(inEvent.status);
+    this.setDisabled(inEvent.status);
   },
   tap: function(model) {
     if (this.disabled) {
@@ -162,16 +170,15 @@ enyo.kind({
     this.doHideSelector({
       selectorHide: true
     });
-    var modalDlg = this.owner.owner.owner.owner.owner.owner,
-      navigationPath = OB.UTIL.BusinessPartnerSelector.cloneAndPush(
-        modalDlg.args.navigationPath,
-        'modalcustomer'
-      );
+    var navigationPath = OB.UTIL.BusinessPartnerSelector.cloneAndPush(
+      this.popup.args.navigationPath,
+      'modalcustomer'
+    );
     this.doShowPopup({
       popup: 'customerCreateAndEdit',
       args: {
         businessPartner: null,
-        target: modalDlg.target,
+        target: this.popup.target,
         navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(
           navigationPath,
           'customerView'
@@ -179,25 +186,13 @@ enyo.kind({
         cancelNavigationPath: navigationPath
       }
     });
-  },
-  putDisabled: function(status) {
-    if (status === false) {
-      this.setDisabled(false);
-      this.removeClass('disabled');
-      this.disabled = false;
-      return;
-    }
-    this.setDisabled(true);
-    this.addClass('disabled');
-    this.disabled = true;
   }
 });
 
 enyo.kind({
-  kind: 'OB.UI.ButtonAdvancedFilter',
   name: 'OB.UI.AdvancedFilterButton',
-  style: 'width: 170px; margin: 0px 0px 8px 9px;',
-  classes: 'btnlink-yellow btnlink btnlink-small ',
+  kind: 'OB.UI.ButtonAdvancedFilter',
+  classes: 'obUiAdvancedFilterButton',
   dialog: 'modalAdvancedFilterBP',
   i18nLabel: 'OBPOS_LblAdvancedFilter',
   disabled: false,
@@ -205,22 +200,11 @@ enyo.kind({
     onNewBPDisabled: 'doDisableNewBP'
   },
   doDisableNewBP: function(inSender, inEvent) {
-    this.putDisabled(inEvent.status);
-  },
-  putDisabled: function(status) {
-    if (status === false) {
-      this.setDisabled(false);
-      this.removeClass('disabled');
-      this.disabled = false;
-      return;
-    }
-    this.setDisabled(true);
-    this.addClass('disabled');
-    this.disabled = true;
+    this.setDisabled(inEvent.status);
   },
   initComponents: function() {
     this.inherited(arguments);
-    this.putDisabled(
+    this.setDisabled(
       !OB.MobileApp.model.hasPermission(
         'OBPOS_retail.customer_advanced_filters',
         true
@@ -232,47 +216,13 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalBpSelectorScrollableHeader',
   kind: 'OB.UI.ScrollableTableHeader',
+  classes: 'obUiModalBpSelectorScrollableHeader',
   filterModel: OB.Model.BPartnerFilter,
   components: [
     {
-      style: 'padding: 10px;',
+      name: 'filterSelector',
       kind: 'OB.UI.FilterSelectorTableHeader',
-      name: 'filterSelector'
-    },
-    {
-      style: 'padding: 7px;',
-      showing: true,
-      handlers: {
-        onSetShow: 'setShow'
-      },
-      setShow: function(inSender, inEvent) {
-        this.setShowing(inEvent.visibility);
-        return true;
-      },
-      components: [
-        {
-          style: 'display: table; width: 100%',
-          components: [
-            {
-              style: 'display: table-cell; text-align: right;',
-              components: [
-                {
-                  kind: 'OB.UI.NewCustomerButton',
-                  name: 'newAction'
-                }
-              ]
-            },
-            {
-              style: 'display: table-cell;',
-              components: [
-                {
-                  kind: 'OB.UI.AdvancedFilterButton'
-                }
-              ]
-            }
-          ]
-        }
-      ]
+      classes: 'obUiModalBpSelectorScrollableHeader-filterSelector'
     }
   ],
   initComponents: function() {
@@ -298,8 +248,66 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.ListContextMenuItem',
+  name: 'OB.UI.ModalBpSelectorFooter',
+  classes: 'obUiModalBpSelectorFooter',
+  components: [
+    {
+      classes: 'obUiModalBpSelectorFooter-container1',
+      showing: true,
+      handlers: {
+        onSetShow: 'setShow'
+      },
+      setShow: function(inSender, inEvent) {
+        this.setShowing(inEvent.visibility);
+        return true;
+      },
+      components: [
+        {
+          classes:
+            'obUiModal-footer-secondaryButtons obUiModalBpSelectorFooter-container1-container1',
+          components: [
+            {
+              kind: 'OB.UI.AdvancedFilterButton',
+              classes:
+                'obUiModalBpSelectorFooter-container1-container1-element1'
+            }
+          ]
+        },
+        {
+          classes:
+            'obUiModal-footer-mainButtons obUiModalBpSelectorFooter-container1-container2',
+          components: [
+            {
+              kind: 'OB.UI.NewCustomerButton',
+              name: 'newAction',
+              classes:
+                'obUiModalBpSelectorFooter-container1-container2-newAction'
+            },
+            {
+              kind: 'OB.UI.ModalDialogButton',
+              classes: 'obUiModalBpSelectorFooter-container1-container2-close',
+              i18nLabel: 'OBRDM_LblClose',
+              isDefaultAction: true,
+              tap: function() {
+                if (this.disabled === false) {
+                  this.doHideThisPopup();
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  initComponents: function() {
+    this.inherited(arguments);
+  }
+});
+
+enyo.kind({
   name: 'OB.UI.BPDetailsContextMenuItem',
+  kind: 'OB.UI.ListContextMenuItem',
+  classes: 'obUiBpDetailsContextMenuItem',
   i18NLabel: 'OBPOS_BPViewDetails',
   selectItem: function(bpartner) {
     bpartner.set('ignoreSetBP', true, {
@@ -330,8 +338,9 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.ListContextMenuItem',
   name: 'OB.UI.BPEditContextMenuItem',
+  kind: 'OB.UI.ListContextMenuItem',
+  classes: 'obUiBpEditContextMenuItem',
   i18NLabel: 'OBPOS_BPEdit',
   selectItem: function(bpartner) {
     bpartner.set('ignoreSetBP', true, {
@@ -369,8 +378,9 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.ListContextMenuItem',
   name: 'OB.UI.BPAddressContextMenuItem',
+  kind: 'OB.UI.ListContextMenuItem',
+  classes: 'obUiBpAddressContextMenuItem',
   i18NLabel: 'OBPOS_BPAddress',
   selectItem: function(bpartner) {
     var dialog = this.owner.owner.dialog;
@@ -403,8 +413,9 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.ListContextMenuItem',
   name: 'OB.UI.BPReceiptsContextMenuItem',
+  kind: 'OB.UI.ListContextMenuItem',
+  classes: 'obUiBpReceiptsContextMenuItem',
   i18NLabel: 'OBPOS_BPReceipts',
   events: {
     onShowPopup: ''
@@ -466,8 +477,9 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.ListContextMenu',
   name: 'OB.UI.BusinessPartnerContextMenu',
+  kind: 'OB.UI.ListContextMenu',
+  classes: 'obUiBusinessPartnerContextMenu',
   initComponents: function() {
     this.inherited(arguments);
     var menuOptions = [],
@@ -482,6 +494,7 @@ enyo.kind({
     ) {
       menuOptions.push({
         kind: 'OB.UI.BPEditContextMenuItem',
+        classes: 'obUiBusinessPartnerContextMenu-obUiBpEditContextMenuItem',
         permission: 'OBPOS_retail.editCustomerButton'
       });
     }
@@ -493,6 +506,7 @@ enyo.kind({
     ) {
       menuOptions.push({
         kind: 'OB.UI.BPAddressContextMenuItem',
+        classes: 'obUiBusinessPartnerContextMenu-obUiBpAddressContextMenuItem',
         permission: 'OBPOS_retail.assignToReceiptAddress'
       });
     }
@@ -506,6 +520,7 @@ enyo.kind({
     ) {
       menuOptions.push({
         kind: 'OB.UI.BPReceiptsContextMenuItem',
+        classes: 'obUiBusinessPartnerContextMenu-obUiBpReceiptsContextMenuItem',
         permission: 'OBPOS_retail.assignToReceiptAddress'
       });
     }
@@ -518,56 +533,59 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ListBpsSelectorLine',
   kind: 'OB.UI.ListSelectorLine',
+  classes: 'obUiListBpsSelectorLine',
   components: [
     {
       name: 'line',
-      style: 'line-height: 23px; width: 100%',
+      classes: 'obUiListBpsSelectorLine-line',
       components: [
         {
           name: 'textInfo',
-          style:
-            'float: left; width: calc(100% - 50px); padding: 8px 0px; display: table; ',
+          classes: 'obUiListBpsSelectorLine-line-textInfo',
           components: [
             {
-              style: 'display: table-cell;',
+              classes: 'obUiListBpsSelectorLine-line-textInfo-container1',
               components: [
                 {
                   tag: 'span',
-                  name: 'identifier'
+                  name: 'identifier',
+                  classes:
+                    'obUiListBpsSelectorLine-line-textInfo-container1-identifier'
                 },
                 {
                   tag: 'span',
-                  style: 'color: #888888;',
-                  name: 'filter'
+                  name: 'filter',
+                  classes:
+                    'obUiListBpsSelectorLine-line-textInfo-container1-filter'
                 },
                 {
                   tag: 'span',
-                  style: 'font-weight: bold; color: red;',
-                  name: 'onHold'
+                  name: 'onHold',
+                  classes:
+                    'obUiListBpsSelectorLine-line-textInfo-container1-onHold'
                 }
               ]
             },
             {
-              style: 'vertical-align: top; ',
               name: 'bottomShipIcon',
-              classes: 'addresshipitems fix-bgposition-y'
+              classes: 'obUiListBpsSelectorLine-line-textInfo-bottomShipIcon'
             },
             {
-              style: 'vertical-align: top; ',
               name: 'bottomBillIcon',
-              classes: 'addressbillitems fix-bgposition-y; '
+              classes: 'obUiListBpsSelectorLine-line-textInfo-bottomBillIcon'
             },
             {
-              style: 'clear: both;'
+              classes: 'obUiListBpsSelectorLine-line-textInfo-element1'
             }
           ]
         },
         {
-          style: 'float: right; width: 30px; margin-right: 13px;',
+          classes: 'obUiListBpsSelectorLine-line-container1',
           components: [
             {
+              name: 'btnContextMenu',
               kind: 'OB.UI.BusinessPartnerContextMenu',
-              name: 'btnContextMenu'
+              classes: 'obUiListBpsSelectorLine-line-container1-btnContextMenu'
             }
           ]
         }
@@ -585,26 +603,26 @@ enyo.kind({
       this.$.onHold.setContent(' (' + OB.I18N.getLabel('OBPOS_OnHold') + ')');
     }
     if (this.model.get('bpartnerId') === this.owner.owner.owner.selectedValue) {
-      this.addClass('modal-bp-selector-selectedItem');
+      this.addClass('obUiListBpsSelectorLine_selectedItem');
     }
     this.$.bottomShipIcon.show();
     this.$.bottomBillIcon.show();
     if (this.model.get('isBillTo') && this.model.get('isShipTo')) {
-      this.$.bottomShipIcon.applyStyle('visibility', 'visible');
-      this.$.bottomBillIcon.applyStyle('visibility', 'visible');
+      this.$.bottomShipIcon.addClass('u-showComponent');
+      this.$.bottomBillIcon.addClass('u-showComponent');
     } else if (this.model.get('isBillTo')) {
-      this.$.bottomShipIcon.applyStyle('visibility', 'hidden');
-      this.$.bottomBillIcon.applyStyle('visibility', 'visible');
+      this.$.bottomShipIcon.addClass('u-hiddeComponent');
+      this.$.bottomBillIcon.addClass('u-showComponent');
     } else if (this.model.get('isShipTo')) {
-      this.$.bottomShipIcon.applyStyle('visibility', 'visible');
-      this.$.bottomBillIcon.applyStyle('visibility', 'hidden');
+      this.$.bottomShipIcon.addClass('u-showComponent');
+      this.$.bottomBillIcon.addClass('u-hiddeComponent');
     } else {
       this.$.bottomShipIcon.hide();
       this.$.bottomBillIcon.hide();
     }
     var bPartner = this.owner.owner.owner.bPartner;
     if (bPartner && bPartner.get('id') === this.model.get('bpartnerId')) {
-      this.addClass('modal-bp-selector-selectedItem');
+      this.addClass('obUiListBpsSelectorLine_selectedItem');
     }
     // Context menu
     this.$.btnContextMenu.dialog = this.owner.owner.owner.owner;
@@ -619,7 +637,7 @@ enyo.kind({
 /*scrollable table (body of modal)*/
 enyo.kind({
   name: 'OB.UI.ListBpsSelector',
-  classes: 'row-fluid',
+  classes: 'obUiListBpsSelector',
   handlers: {
     onSearchAction: 'searchAction',
     onClearFilterSelector: 'clearAction',
@@ -633,36 +651,23 @@ enyo.kind({
   },
   components: [
     {
-      classes: 'span12',
+      classes: 'obUiListBpsSelector-container1',
       components: [
         {
-          style: 'border-bottom: 1px solid #cccccc;',
-          classes: 'row-fluid',
-          components: [
-            {
-              classes: 'span12',
-              components: [
-                {
-                  name: 'stBPAssignToReceipt',
-                  kind: 'OB.UI.ScrollableTable',
-                  classes: 'bp-scroller',
-                  scrollAreaMaxHeight: '400px',
-                  renderHeader: 'OB.UI.ModalBpSelectorScrollableHeader',
-                  renderLine: 'OB.UI.ListBpsSelectorLine',
-                  renderEmpty: 'OB.UI.RenderEmpty'
-                },
-                {
-                  name: 'renderLoading',
-                  style:
-                    'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
-                  showing: false,
-                  initComponents: function() {
-                    this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
-                  }
-                }
-              ]
-            }
-          ]
+          name: 'stBPAssignToReceipt',
+          kind: 'OB.UI.ScrollableTable',
+          classes: 'obUiListBpsSelector-container1-stBpAssignToReceipt',
+          renderHeader: 'OB.UI.ModalBpSelectorScrollableHeader',
+          renderLine: 'OB.UI.ListBpsSelectorLine',
+          renderEmpty: 'OB.UI.RenderEmpty'
+        },
+        {
+          name: 'renderLoading',
+          classes: 'obUiListBpsSelector-container1-renderLoading',
+          showing: false,
+          initComponents: function() {
+            this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
+          }
         }
       ]
     }
@@ -694,7 +699,7 @@ enyo.kind({
         true
       )
     ) {
-      this.$.stBPAssignToReceipt.$.theader.$.modalBpSelectorScrollableHeader.$.newAction.setDisabled(
+      this.popup.$.footer.$.modalBpSelectorFooter.$.newAction.setDisabled(
         false
       );
     }
@@ -753,14 +758,14 @@ enyo.kind({
             ) {
               message.push({
                 content: OB.I18N.getLabel(tokens[i]),
-                style: 'text-align: left; padding-left: 8px;'
+                classes: 'obUiListBpsSelector-errorMessage'
               });
             } else {
               var property = getProperty(tokens[i]);
               if (property) {
                 message.push({
                   content: OB.I18N.getLabel(property.caption),
-                  style: 'text-align: left; padding-left: 8px;',
+                  classes: 'obUiListBpsSelector-errorMessage',
                   tag: 'li'
                 });
               }
@@ -962,6 +967,10 @@ enyo.kind({
     return true;
   },
   bpsList: null,
+  initComponents: function() {
+    this.popup = OB.UTIL.getPopupFromComponent(this);
+    this.inherited(arguments);
+  },
   init: function(model) {
     this.bpsList = new Backbone.Collection();
     this.$.stBPAssignToReceipt.setCollection(this.bpsList);
@@ -1067,15 +1076,18 @@ enyo.kind({
 
 /*Modal definition*/
 enyo.kind({
-  kind: 'OB.UI.ModalSelector',
   name: 'OB.UI.ModalSelectorBusinessPartners',
-  topPosition: '75px',
+  kind: 'OB.UI.ModalSelector',
+  classes: 'obUiModalSelectorBusinessPartners',
   i18nHeader: 'OBPOS_LblAssignCustomer',
   events: {
     onShowPopup: ''
   },
   body: {
     kind: 'OB.UI.ListBpsSelector'
+  },
+  footer: {
+    kind: 'OB.UI.ModalBpSelectorFooter'
   },
   executeOnShow: function() {
     if (!this.isInitialized()) {
@@ -1102,7 +1114,7 @@ enyo.kind({
       this.waterfall('onSetBusinessPartnerTarget', {
         target: this.args.target
       });
-      this.$.body.$.listBpsSelector.$.stBPAssignToReceipt.$.theader.$.modalBpSelectorScrollableHeader.$.newAction.putDisabled(
+      this.$.footer.$.modalBpSelectorFooter.$.newAction.setDisabled(
         !OB.MobileApp.model.hasPermission(
           'OBPOS_retail.createCustomerButton',
           true
@@ -1117,9 +1129,7 @@ enyo.kind({
           true
         )
       ) {
-        this.$.body.$.listBpsSelector.$.stBPAssignToReceipt.$.theader.$.modalBpSelectorScrollableHeader.$.newAction.setDisabled(
-          true
-        );
+        this.$.footer.$.modalBpSelectorFooter.$.newAction.setDisabled(true);
       }
       this.$.body.$.listBpsSelector.$.stBPAssignToReceipt.$.theader.$.modalBpSelectorScrollableHeader.$.filterSelector.clearFilter();
       if (this.args.businessPartner) {
@@ -1191,8 +1201,7 @@ enyo.kind({
       .modalBpSelectorScrollableHeader.$.filterSelector;
   },
   getAdvancedFilterBtn: function() {
-    return this.$.body.$.listBpsSelector.$.stBPAssignToReceipt.$.theader.$
-      .modalBpSelectorScrollableHeader.$.advancedFilterButton;
+    return this.$.footer.$.modalBpSelectorFooter.$.advancedFilterButton;
   },
   getAdvancedFilterDialog: function() {
     return 'modalAdvancedFilterBP';
@@ -1204,14 +1213,15 @@ enyo.kind({
       model: this.model
     });
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-      this.$.body.$.listBpsSelector.$.stBPAssignToReceipt.$.theader.$.modalBpSelectorScrollableHeader.$.filterSelector.$.entityFilterText.skipAutoFilterPref = true;
+      this.$.body.$.listBpsSelector.$.stBPAssignToReceipt.$.theader.$.modalBpSelectorScrollableHeader.$.filterSelector.$.formElementEntityFilterText.coreElement.skipAutoFilterPref = true;
     }
   }
 });
 
 enyo.kind({
-  kind: 'OB.UI.ModalAdvancedFilters',
   name: 'OB.UI.ModalAdvancedFilterBP',
+  kind: 'OB.UI.ModalAdvancedFilters',
+  classes: 'obUiModalAdvancedFilterBp',
   model: OB.Model.BPartnerFilter,
   initComponents: function() {
     this.inherited(arguments);

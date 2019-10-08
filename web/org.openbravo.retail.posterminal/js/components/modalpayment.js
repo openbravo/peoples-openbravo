@@ -13,7 +13,7 @@ enyo.kind({
   name: 'OB.UI.ModalPayment',
   kind: 'OB.UI.ModalAction',
   header: '',
-  maxheight: '600px',
+  classes: 'obUiModalPayment',
   bodyContent: {},
   executeOnShow: function() {
     this.$.header.setContent(
@@ -37,6 +37,7 @@ enyo.kind({
       .createComponent({
         mainPopup: this,
         kind: this.args.provider,
+        classes: 'obUiModalPayment-bodyContent-provider-generic',
         paymentMethod: this.args.paymentMethod,
         paymentType: this.args.name,
         paymentAmount: this.args.amount,
@@ -64,8 +65,8 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalPaymentVoid',
   kind: 'OB.UI.ModalAction',
+  classes: 'obUiModalPaymentVoid',
   header: '',
-  maxheight: '600px',
   bodyContent: {},
   bodyButtons: {},
   executeOnShow: function() {

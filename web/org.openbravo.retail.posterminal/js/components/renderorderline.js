@@ -12,7 +12,7 @@
 enyo.kind({
   kind: 'OB.UI.listItemButton',
   name: 'OB.UI.RenderOrderLine',
-  classes: 'btnselect-orderline',
+  classes: 'obUiRenderOrderLine',
   handlers: {
     onChangeEditMode: 'changeEditMode',
     onCheckBoxBehaviorForTicketLine: 'checkBoxForTicketLines',
@@ -28,12 +28,14 @@ enyo.kind({
   },
   events: {
     onLineChecked: '',
-    onShowPopup: ''
+    onShowPopup: '',
+    onChangeOrderCaptionWidth: ''
   },
   components: [
     {
       name: 'checkBoxColumn',
       kind: 'OB.UI.CheckboxButton',
+      classes: 'obUiRenderOrderLine-checkBoxColumn',
       tag: 'div',
       tap: function() {
         var model = this.owner.model;
@@ -43,59 +45,58 @@ enyo.kind({
           model.trigger('check', model);
         }
         return this;
-      },
-      style: 'float: left; width: 10%;'
+      }
     },
     {
       name: 'nameContainner',
       tag: 'div',
-      classes: 'orderline-productname',
+      classes: 'obUiRenderOrderLine-nameContainner',
       components: [
         {
           name: 'serviceIcon',
-          kind: 'Image',
-          src: 'img/iconService_ticketline.png',
-          style: 'float: left; padding-right: 5px; '
+          classes: 'obUiRenderOrderLine-nameContainner-serviceIcon'
         },
         {
-          name: 'product'
+          name: 'product',
+          classes: 'obUiRenderOrderLine-nameContainner-product'
         }
       ]
     },
     {
       kind: 'OB.UI.FitText',
-      classes: 'orderline-quantity fitText',
+      classes: 'obUiRenderOrderLine-container3 fitText',
       components: [
         {
           tag: 'span',
-          name: 'quantity'
+          name: 'quantity',
+          classes: 'obUiRenderOrderLine-container3-quantity'
         }
       ]
     },
     {
       kind: 'OB.UI.FitText',
-      classes: 'orderline-price fitText',
+      classes: 'obUiRenderOrderLine-container4 fitText',
       components: [
         {
           tag: 'span',
           name: 'price',
-          style: 'padding-left: 8px;'
+          classes: 'obUiRenderOrderLine-container4-price'
         }
       ]
     },
     {
       kind: 'OB.UI.FitText',
-      classes: 'orderline-gross fitText',
+      classes: 'obUiRenderOrderLine-container5 fitText',
       components: [
         {
           tag: 'span',
           name: 'gross',
-          style: 'padding-left: 8px;'
+          classes: 'obUiRenderOrderLine-container5-gross'
         }
       ]
     },
     {
-      style: 'clear: both;'
+      classes: 'obUiRenderOrderLine-element6 u-clearBoth'
     }
   ],
   initComponents: function() {
@@ -105,10 +106,20 @@ enyo.kind({
     this.inherited(arguments);
     if (this.model.get('product').get('productType') === 'S') {
       this.$.serviceIcon.show();
-      this.$.product.addStyles('margin-left: 24px;');
+      this.$.product.removeClass(
+        'obUiRenderOrderLine-nameContainner-product_hideServiceIcon'
+      );
+      this.$.product.addClass(
+        'obUiRenderOrderLine-nameContainner-product_showServiceIcon'
+      );
     } else {
       this.$.serviceIcon.hide();
-      this.$.product.addStyles('float: left;');
+      this.$.product.removeClass(
+        'obUiRenderOrderLine-nameContainner-product_showServiceIcon'
+      );
+      this.$.product.addClass(
+        'obUiRenderOrderLine-nameContainner-product_hideServiceIcon'
+      );
     }
     this.$.checkBoxColumn.hide();
     this.$.product.setContent(this.setIdentifierContent());
@@ -136,39 +147,44 @@ enyo.kind({
       }
 
       this.createComponent({
-        style: 'display: block;',
+        classes: 'obUiRenderOrderLine-container7',
         components: [
           {
             name: 'productAttribute',
             content: attr_msg,
-            attributes: {
-              style: 'float: left; width: 100%; clear: left;'
-            }
+            classes: 'obUiRenderOrderLine-container7-productAttribute',
+            attributes: {}
           },
           {
-            style: 'clear: both;'
+            classes: 'obUiRenderOrderLine-container7-element2 u-clearBoth'
           }
         ]
       });
 
       if (!this.model.get('attributeValue')) {
-        this.$.productAttribute.addStyles('color: red');
+        this.$.productAttribute.addClass(
+          'obUiRenderOrderLine-container7-productAttribute_red'
+        );
+      } else {
+        this.$.productAttribute.removeClass(
+          'obUiRenderOrderLine-container7-productAttribute_red'
+        );
       }
     }
 
     if (this.model.get('product').get('characteristicDescription')) {
       this.createComponent({
-        style: 'display: block; ',
+        classes: 'obUiRenderOrderLine-container8',
         components: [
           {
             name: 'characteristicsDescription',
             content: OB.UTIL.getCharacteristicValues(
               this.model.get('product').get('characteristicDescription')
             ),
-            classes: 'orderline-characteristicsDescription'
+            classes: 'obUiRenderOrderLine-container8-characteristicsDescription'
           },
           {
-            style: 'clear: both;'
+            classes: 'obUiRenderOrderLine-container8-element2 u-clearBoth'
           }
         ]
       });
@@ -193,18 +209,17 @@ enyo.kind({
     }
     if (this.model.get('obposSerialNumber')) {
       this.createComponent({
-        style: 'display: block;',
+        classes: 'obUiRenderOrderLine-container9',
         components: [
           {
             content: OB.I18N.getLabel('OBPOS_SerialNumber', [
               this.model.get('obposSerialNumber')
             ]),
-            attributes: {
-              style: 'float: left; width: 80%;'
-            }
+            classes: 'obUiRenderOrderLine-container9-element1',
+            attributes: {}
           },
           {
-            style: 'clear: both;'
+            classes: 'obUiRenderOrderLine-container9-element2 u-clearBoth'
           }
         ]
       });
@@ -213,7 +228,7 @@ enyo.kind({
     if (order.get('iscancelled')) {
       if (this.model.get('shippedQuantity')) {
         this.createComponent({
-          style: 'display: block;',
+          classes: 'obUiRenderOrderLine-container10',
           components: [
             {
               content:
@@ -221,27 +236,25 @@ enyo.kind({
                 OB.I18N.getLabel('OBPOS_DeliveredQuantity') +
                 ': ' +
                 this.model.get('shippedQuantity'),
-              attributes: {
-                style: 'float: left; width: 100%; clear: left;'
-              }
+              classes: 'obUiRenderOrderLine-container10-element1',
+              attributes: {}
             },
             {
-              style: 'clear: both;'
+              classes: 'obUiRenderOrderLine-container10-element2 u-clearBoth'
             }
           ]
         });
       } else {
         this.createComponent({
-          style: 'display: block;',
+          classes: 'obUiRenderOrderLine-container11',
           components: [
             {
               content: '-- ' + OB.I18N.getLabel('OBPOS_Cancelled'),
-              attributes: {
-                style: 'float: left; width: 100%; clear: left;'
-              }
+              classes: 'obUiRenderOrderLine-container11-element1',
+              attributes: {}
             },
             {
-              style: 'clear: both;'
+              classes: 'obUiRenderOrderLine-container11-element2 u-clearBoth'
             }
           ]
         });
@@ -249,7 +262,7 @@ enyo.kind({
     } else {
       if (this.model.get('deliveredQuantity')) {
         this.createComponent({
-          style: 'display: block;',
+          classes: 'obUiRenderOrderLine-container12',
           components: [
             {
               content:
@@ -257,25 +270,24 @@ enyo.kind({
                 OB.I18N.getLabel('OBPOS_DeliveredQuantity') +
                 ': ' +
                 this.model.get('deliveredQuantity'),
-              attributes: {
-                style: 'float: left; width: 100%; clear: left;'
-              }
+              classes: 'obUiRenderOrderLine-container12-element1',
+              attributes: {}
             },
             {
-              style: 'clear: both;'
+              classes: 'obUiRenderOrderLine-container12-element2 u-clearBoth'
             }
           ]
         });
       } else if (!this.model.get('obposCanbedelivered')) {
         this.createComponent({
-          style: 'display: block;',
+          classes: 'obUiRenderOrderLine-container13',
           components: [
             {
               content: '-- ' + OB.I18N.getLabel('OBPOS_NotDeliverLine'),
-              classes: 'orderline-canbedelivered'
+              classes: 'obUiRenderOrderLine-container13-element1'
             },
             {
-              style: 'clear: both;'
+              classes: 'obUiRenderOrderLine-container13-element2 u-clearBoth'
             }
           ]
         });
@@ -293,25 +305,23 @@ enyo.kind({
           var identifierName = d.identifier || d.name;
           var nochunks = d.chunks;
           this.createComponent({
-            style: 'display: block; padding-top: 4px;',
+            classes: 'obUiRenderOrderLine-container14',
             components: [
               {
                 content:
                   OB.UTIL.isNullOrUndefined(nochunks) || nochunks === 1
                     ? '-- ' + identifierName
                     : '-- ' + '(' + nochunks + 'x) ' + identifierName,
-                attributes: {
-                  style: 'float: left; width: 80%; clear: left;'
-                }
+                classes: 'obUiRenderOrderLine-container14-element1',
+                attributes: {}
               },
               {
                 content: OB.I18N.formatCurrency(-d.amt),
-                attributes: {
-                  style: 'float: right; width: 20%; text-align: right;'
-                }
+                classes: 'obUiRenderOrderLine-container14-element2',
+                attributes: {}
               },
               {
-                style: 'clear: both;'
+                classes: 'obUiRenderOrderLine-container14-element3 u-clearBoth'
               }
             ]
           });
@@ -323,13 +333,14 @@ enyo.kind({
       if (!this.$.relatedLinesContainer) {
         this.createComponent({
           name: 'relatedLinesContainer',
-          style: 'clear:both; float: left; width: 80%;'
+          classes: 'obUiRenderOrderLine-relatedLinesContainer'
         });
       }
       enyo.forEach(
         this.model.get('relatedLines'),
         function(line) {
           this.$.relatedLinesContainer.createComponent({
+            classes: 'obUiRenderOrderLine-relatedLinesContainer-container1',
             components: [
               {
                 content: line.otherTicket
@@ -340,10 +351,9 @@ enyo.kind({
                   : OB.I18N.getLabel('OBPOS_lblRelatedLines', [
                       line.productName
                     ]),
-                attributes: {
-                  style:
-                    'font-size: 14px; font-style: italic; text-align: left; padding-left: 25px'
-                }
+                classes:
+                  'obUiRenderOrderLine-relatedLinesContainer-container1-element1',
+                attributes: {}
               }
             ]
           });
@@ -354,14 +364,16 @@ enyo.kind({
     if (this.model.get('hasRelatedServices')) {
       me.createComponent({
         kind: 'OB.UI.ShowServicesButton',
-        name: 'showServicesButton'
+        name: 'showServicesButton',
+        classes: 'obUiRenderOrderLine-showServicesButton'
       });
     } else if (!this.model.has('hasRelatedServices')) {
       this.model.on('showServicesButton', function() {
         me.model.off('showServicesButton');
         me.createComponent({
           kind: 'OB.UI.ShowServicesButton',
-          name: 'showServicesButton'
+          name: 'showServicesButton',
+          classes: 'obUiRenderOrderLine-showServicesButton'
         }).render();
       });
     }
@@ -394,43 +406,59 @@ enyo.kind({
     }
   },
   changeEditMode: function(inSender, inEvent) {
-    this.addRemoveClass('btnselect-orderline-edit', inEvent.edit);
+    this.addRemoveClass('obUiRenderOrderLine_edit', inEvent.edit);
     this.bubble('onShowColumn', {
       colNum: 1
     });
   },
   checkBoxForTicketLines: function(inSender, inEvent) {
     if (inEvent.status) {
+      // These inline styles are allowed
       this.$.gross.hasNode().style.width = '18%';
       this.$.quantity.hasNode().style.width = '16%';
       this.$.price.hasNode().style.width = '18%';
+      this.$.nameContainner.hasNode().style.width = '37%';
+      this.doChangeOrderCaptionWidth({ status: true });
 
-      this.$.nameContainner.hasNode().style.width = '38%';
       if (this.$.characteristicsDescription) {
-        this.$.characteristicsDescription.addStyles(
-          'padding-left: 10%; clear: both; width: 50.1%; color:grey'
+        this.$.characteristicsDescription.addClass(
+          'obUiRenderOrderLine-characteristicsDescription_withStatus'
+        );
+        this.$.characteristicsDescription.removeClass(
+          'obUiRenderOrderLine-characteristicsDescription_withoutStatus'
         );
       }
       if (this.$.relatedLinesContainer) {
-        this.$.relatedLinesContainer.addStyles(
-          'padding-left: 10%; clear: both; float: left; width: 80%;'
+        this.$.relatedLinesContainer.addClass(
+          'obUiRenderOrderLine-relatedLinesContainer_withStatus'
+        );
+        this.$.relatedLinesContainer.removeClass(
+          'obUiRenderOrderLine-relatedLinesContainer_withoutStatus'
         );
       }
       this.$.checkBoxColumn.show();
       this.changeEditMode(this, inEvent.status);
     } else {
-      this.$.gross.hasNode().style.width = '20%';
-      this.$.quantity.hasNode().style.width = '20%';
-      this.$.price.hasNode().style.width = '20%';
-      this.$.nameContainner.hasNode().style.width = '40%';
+      this.$.gross.hasNode().style.removeProperty('width');
+      this.$.quantity.hasNode().style.removeProperty('width');
+      this.$.price.hasNode().style.removeProperty('width');
+      this.$.nameContainner.hasNode().style.removeProperty('width');
+      this.doChangeOrderCaptionWidth({ status: false });
+
       if (this.$.characteristicsDescription) {
-        this.$.characteristicsDescription.addStyles(
-          'padding-left: 0%; clear: both; width: 60.1%; color:grey'
+        this.$.characteristicsDescription.addClass(
+          'obUiRenderOrderLine-characteristicsDescription_withoutStatus'
+        );
+        this.$.characteristicsDescription.removeClass(
+          'obUiRenderOrderLine-characteristicsDescription_withStatus'
         );
       }
       if (this.$.relatedLinesContainer) {
-        this.$.relatedLinesContainer.addStyles(
-          'padding-left: 0%; clear: both; float: left; width: 80%;'
+        this.$.relatedLinesContainer.addClass(
+          'obUiRenderOrderLine-relatedLinesContainer_withoutStatus'
+        );
+        this.$.relatedLinesContainer.removeClass(
+          'obUiRenderOrderLine-relatedLinesContainer_withStatus'
         );
       }
       this.$.checkBoxColumn.hide();
@@ -444,8 +472,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.RenderOrderLineEmpty',
-  style:
-    'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
+  classes: 'obUiRenderOrderLineEmpty',
   initComponents: function() {
     this.inherited(arguments);
     this.setContent(OB.I18N.getLabel('OBPOS_ReceiptNew'));
@@ -453,8 +480,7 @@ enyo.kind({
 });
 enyo.kind({
   name: 'OB.UI.RenderTaxLineEmpty',
-  style:
-    'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
+  classes: 'obUiRenderTaxLineEmpty',
   initComponents: function() {
     this.inherited(arguments);
   }
@@ -462,7 +488,9 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.ShowServicesButton',
-  style: 'float: right; display: block;',
+  kind: 'OB.UI.Button',
+  i18nLabel: 'OBPOS_Services',
+  classes: 'obUiShowServicesButton',
   published: {
     disabled: false
   },
@@ -512,11 +540,11 @@ enyo.kind({
   initComponents: function() {
     this.inherited(arguments);
     if (this.owner.model.get('obposServiceProposed')) {
-      this.addRemoveClass('iconServices_unreviewed', false);
-      this.addRemoveClass('iconServices_reviewed', true);
+      this.addRemoveClass('obUiShowServicesButton_unreviewed', false);
+      this.addRemoveClass('obUiShowServicesButton_reviewed', true);
     } else {
-      this.addRemoveClass('iconServices_unreviewed', true);
-      this.addRemoveClass('iconServices_reviewed', false);
+      this.addRemoveClass('obUiShowServicesButton_unreviewed', true);
+      this.addRemoveClass('obUiShowServicesButton_reviewed', false);
     }
     if (OB.MobileApp.model.get('serviceSearchMode')) {
       this.hide();
@@ -527,38 +555,39 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.listItemButton',
   name: 'OB.UI.RenderTaxLine',
-  classes: 'btnselect-orderline',
+  classes: 'obUiRenderTaxLine',
   tap: function() {
     return this;
   },
   components: [
     {
       name: 'tax',
-      classes: 'order-tax-label'
+      classes: 'obUiRenderTaxLine-tax'
     },
     {
       kind: 'OB.UI.FitText',
-      classes: 'order-tax-base fitText',
+      classes: 'obUiRenderTaxLine-container1 fitText',
       components: [
         {
           tag: 'span',
-          name: 'base'
+          name: 'base',
+          classes: 'obUiRenderTaxLine-container1-base'
         }
       ]
     },
     {
       kind: 'OB.UI.FitText',
-      classes: 'order-tax-total fitText',
+      classes: 'obUiRenderTaxLine-container2 fitText',
       components: [
         {
           tag: 'span',
           name: 'totaltax',
-          style: 'padding-left: 8px;'
+          classes: 'obUiRenderTaxLine-container2-totaltax'
         }
       ]
     },
     {
-      style: 'clear: both;'
+      classes: 'obUiRenderTaxLine-container3 u-clearBoth'
     }
   ],
   selected: function() {
@@ -577,8 +606,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.SelectButton',
   name: 'OB.UI.RenderPaymentLine',
-  classes: 'btnselect-orderline',
-  style: 'border-bottom: 0px',
+  classes: 'obUiRenderPaymentLine',
   handlers: {
     onRenderPaymentLine: 'renderPaymentLine'
   },
@@ -588,33 +616,26 @@ enyo.kind({
   components: [
     {
       name: 'name',
-      attributes: {
-        style: 'float: left; width: 40%; padding: 5px 0px 0px 0px;'
-      }
+      classes: 'obUiRenderPaymentLine-name',
+      attributes: {}
     },
     {
       name: 'date',
-      attributes: {
-        style:
-          'float: left; width: 20%; padding: 5px 0px 0px 0px; text-align: right;'
-      }
+      classes: 'obUiRenderPaymentLine-date',
+      attributes: {}
     },
     {
       name: 'foreignAmount',
-      attributes: {
-        style:
-          'float: left; width: 20%; padding: 5px 0px 0px 0px; text-align: right;'
-      }
+      classes: 'obUiRenderPaymentLine-foreignAmount',
+      attributes: {}
     },
     {
       name: 'amount',
-      attributes: {
-        style:
-          'float: left; width: 20%; padding: 5px 0px 0px 0px; text-align: right;'
-      }
+      classes: 'obUiRenderPaymentLine-amount',
+      attributes: {}
     },
     {
-      style: 'clear: both;'
+      classes: 'obUiRenderPaymentLine-element5 u-clearBoth'
     }
   ],
   selected: function() {
@@ -683,8 +704,7 @@ enyo.kind({
 });
 enyo.kind({
   name: 'OB.UI.RenderPaymentLineEmpty',
-  style:
-    'border-bottom: 1px solid #cccccc; padding: 20px; text-align: center; font-weight: bold; font-size: 30px; color: #cccccc',
+  classes: 'obUiRenderPaymentLineEmpty',
   initComponents: function() {
     this.inherited(arguments);
   }

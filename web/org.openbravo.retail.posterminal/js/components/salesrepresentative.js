@@ -12,8 +12,7 @@
 enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OB.UI.SalesRepresentative',
-  classes: 'btnlink btnlink-small btnlink-gray',
-  style: 'float:left; margin:7px; height:27px; padding: 4px 15px 7px 15px;',
+  classes: 'obUiSalesRepresentative',
   published: {
     order: null
   },
@@ -71,6 +70,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalSrScrollableHeader',
   kind: 'OB.UI.ScrollableTableHeader',
+  classes: 'obUiModalSrScrollableHeader',
   events: {
     onSearchAction: '',
     onClearAction: ''
@@ -81,39 +81,43 @@ enyo.kind({
   },
   components: [
     {
-      style: 'padding: 10px;',
+      classes: 'obUiModalSrScrollableHeader-container1',
       components: [
         {
-          style: 'display: table;',
+          classes: 'obUiModalSrScrollableHeader-container1-container1',
           components: [
             {
-              style: 'display: table-cell; width: 100%;',
+              classes:
+                'obUiModalSrScrollableHeader-container1-container1-container1',
               components: [
                 {
                   kind: 'OB.UI.SearchInputAutoFilter',
                   name: 'filterText',
-                  style: 'width: 100%'
+                  classes:
+                    'obUiModalSrScrollableHeader-container1-container1-container1-filterText'
                 }
               ]
             },
             {
-              style: 'display: table-cell;',
+              classes:
+                'obUiModalSrScrollableHeader-container1-container1-container2',
               components: [
                 {
                   kind: 'OB.UI.SmallButton',
-                  classes: 'btnlink-gray btn-icon-small btn-icon-clear',
-                  style: 'width: 100px; margin: 0px 5px 8px 19px;',
+                  classes:
+                    'obUiModalSrScrollableHeader-container1-container1-container2-obUiSmallButton',
                   ontap: 'clearAction'
                 }
               ]
             },
             {
-              style: 'display: table-cell;',
+              classes:
+                'obUiModalSrScrollableHeader-container1-container1-container3',
               components: [
                 {
                   kind: 'OB.UI.SmallButton',
-                  classes: 'btnlink-yellow btn-icon-small btn-icon-search',
-                  style: 'width: 100px; margin: 0px 0px 8px 5px;',
+                  classes:
+                    'obUiModalSrScrollableHeader-container1-container1-container3-obUiSmallButton',
                   ontap: 'searchAction'
                 }
               ]
@@ -139,16 +143,18 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ListSrsLine',
   kind: 'OB.UI.SelectButton',
+  classes: 'obUiListSrsLine',
   components: [
     {
       name: 'line',
-      style: 'line-height: 23px;',
+      classes: 'obUiListSrsLine-line',
       components: [
         {
-          name: 'name'
+          name: 'name',
+          classes: 'obUiListSrsLine-line-name'
         },
         {
-          style: 'clear: both;'
+          classes: 'obUiListSrsLine-line-element2 u-clearBoth'
         }
       ]
     }
@@ -169,7 +175,7 @@ enyo.kind({
 /*scrollable table (body of modal)*/
 enyo.kind({
   name: 'OB.UI.ListSrs',
-  classes: 'row-fluid',
+  classes: 'obUiListSrs row-fluid',
   handlers: {
     onSearchAction: 'searchAction',
     onClearAction: 'clearAction'
@@ -179,19 +185,19 @@ enyo.kind({
   },
   components: [
     {
-      classes: 'span12',
+      classes: 'obUiListSrs-container1 span12',
       components: [
         {
-          style: 'border-bottom: 1px solid #cccccc;',
-          classes: 'row-fluid',
+          classes: 'obUiListSrs-container1-container1 row-fluid',
           components: [
             {
-              classes: 'span12',
+              classes: 'obUiListSrs-container1-container1-container1 span12',
               components: [
                 {
                   name: 'srslistitemprinter',
                   kind: 'OB.UI.ScrollableTable',
-                  scrollAreaMaxHeight: '400px',
+                  classes:
+                    'obUiListSrs-container1-container1-container1-srslistitemprinter',
                   renderHeader: 'OB.UI.ModalSrScrollableHeader',
                   renderLine: 'OB.UI.ListSrsLine',
                   renderEmpty: 'OB.UI.RenderEmpty'
@@ -271,12 +277,14 @@ enyo.kind({
   name: 'OB.UI.ModalSalesRepresentative',
   topPosition: '125px',
   kind: 'OB.UI.Modal',
+  classes: 'obUiModalSalesRepresentative',
   executeOnHide: function() {
     this.$.body.$.listSrs.$.srslistitemprinter.$.theader.$.modalSrScrollableHeader.clearAction();
   },
   i18nHeader: 'OBPOS_LblAssignSalesRepresentative',
   body: {
-    kind: 'OB.UI.ListSrs'
+    kind: 'OB.UI.ListSrs',
+    classes: 'obUiModalSalesRepresentative-body-obUiListSrs'
   },
   init: function(model) {
     this.model = model;

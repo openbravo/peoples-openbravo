@@ -13,31 +13,35 @@
 
 enyo.kind({
   name: 'OB.UI.ModalQuotationProductAttributesScroller.QuotationLines',
-  classes: 'flexContainer',
+  classes: 'obUiModalQuotationProductAttributesScrollerQuotationLines',
   components: [
     {
-      classes: 'properties-label',
+      classes:
+        'obUiModalQuotationProductAttributesScrollerQuotationLines-container1',
       components: [
         {
           name: 'productName',
           type: 'text',
-          style: 'font-size: 17px;',
-          classes: 'modal-dialog-receipt-properties-label',
+          classes:
+            'obUiModalQuotationProductAttributesScrollerQuotationLines-container1-productName',
           content: ''
         }
       ]
     },
     {
-      classes: 'properties-component',
+      classes:
+        'obUiModalQuotationProductAttributesScrollerQuotationLines-container2',
       components: [
         {
           name: 'newAttribute',
-          classes: 'modal-dialog-receipt-properties-text',
+          classes:
+            'obUiModalQuotationProductAttributesScrollerQuotationLines-container2-newAttribute',
           components: [
             {
               kind: 'OB.UI.renderTextProperty',
               name: 'valueAttribute',
-              style: 'color: black',
+              classes:
+                'obUiModalQuotationProductAttributesScrollerQuotationLines-newAttribute-valueAttribute',
               maxlength: '70',
               handlers: {
                 oninput: 'blur'
@@ -52,7 +56,8 @@ enyo.kind({
       ]
     },
     {
-      style: 'clear: both'
+      classes:
+        'obUiModalQuotationProductAttributesScrollerQuotationLines-container3'
     }
   ]
 });
@@ -61,28 +66,33 @@ enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.UI.ModalQuotationProductAttributes',
   i18nHeader: 'OBPOS_QuotationProductAttributesDialogTitle',
-  style: 'width: 700px;',
+  classses: 'obUiModalQuotationProductAttributes',
   autoDismiss: false,
   bodyContent: {
     kind: 'Scroller',
-    maxHeight: '225px',
-    style: 'background-color: #ffffff;',
+    classses: 'obUiModalQuotationProductAttributes-scroller',
     thumb: true,
-    horizontal: 'hidden',
     components: [
       {
-        name: 'quotationLinesComponent'
+        name: 'quotationLinesComponent',
+        classses:
+          'obUiModalQuotationProductAttributes-scroller-quotationLinesComponent'
       }
     ]
   },
-  header: {},
+  header: {
+    classes: 'obUiModalQuotationProductAttributes-header'
+  },
   handlers: {
     onFieldChanged: 'fieldChanged'
   },
   bodyButtons: {
+    classes: 'obUiModalQuotationProductAttributes-bodyButtons',
     components: [
       {
         kind: 'OB.UI.ModalDialogButton',
+        classes:
+          'obUiModalQuotationProductAttributes-bodyButtons-obUiModalDialogButton1',
         i18nContent: 'OBMOBC_LblOk',
         tap: function() {
           this.owner.owner.saveAction();
@@ -90,6 +100,8 @@ enyo.kind({
       },
       {
         kind: 'OB.UI.ModalDialogButton',
+        classes:
+          'obUiModalQuotationProductAttributes-bodyButtons-obUiModalDialogButton2',
         i18nContent: 'OBPOS_LblClear',
         tap: function() {
           this.owner.owner.clearAction();
@@ -97,6 +109,8 @@ enyo.kind({
       },
       {
         kind: 'OB.UI.ModalDialogButton',
+        classes:
+          'obUiModalQuotationProductAttributes-bodyButtons-obUiModalDialogButton3',
         i18nContent: 'OBMOBC_LblCancel',
         tap: function() {
           this.owner.owner.cancelAction();
@@ -114,7 +128,9 @@ enyo.kind({
       ].$.valueAttribute.setValue(null);
       me.$.bodyContent.$.quotationLinesComponent.$[
         'quotationLine' + i
-      ].$.valueAttribute.addStyles('background-color: none;');
+      ].$.valueAttribute.addClass(
+        'obUiModalQuotationProductAttributes-quotationLinesComponent-quotationLine_clear'
+      );
     }
     me.$.bodyButtons.$.modalDialogButton.setDisabled(true);
     return;
@@ -187,13 +203,14 @@ enyo.kind({
     me.$.header.$.headerTitle.setContent(
       OB.I18N.getLabel('OBPOS_QuotationProductAttributeDesc')
     );
-    me.$.header.$.headerTitle.addStyles('font-size: 24px');
     i = 0;
     me.$.bodyContent.$.quotationLinesComponent.destroyComponents();
     lines.forEach(function(theLine) {
       var quotationLine = me.$.bodyContent.$.quotationLinesComponent.createComponent(
         {
           kind: 'OB.UI.ModalQuotationProductAttributesScroller.QuotationLines',
+          classes:
+            'obUiModalQuotationProductAttributes-quotationLinesComponent-quotationLine',
           name: 'quotationLine' + i
         }
       );
@@ -213,6 +230,7 @@ enyo.kind({
       components: [
         {
           name: 'headerTitle',
+          classes: 'obUiModalQuotationProductAttributes-header-headerTitle',
           type: 'text'
         }
       ]

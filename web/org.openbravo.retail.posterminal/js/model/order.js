@@ -6122,20 +6122,20 @@
               var components = [];
               components.push({
                 content: OB.I18N.getLabel('OBPOS_CannotCancelLayWithDeferred'),
-                style:
-                  'text-align: left; padding-left: 10px; padding-right: 10px;'
+                classes:
+                  'confirmationPopup-body_cannotCancelLayWithDeferred confirmationPopup-body_generic'
               });
               components.push({
                 content: OB.I18N.getLabel('OBPOS_RelatedOrders'),
-                style:
-                  'text-align: left; padding-left: 30px; padding-right: 10px;'
+                classes:
+                  'confirmationPopup-body_relatedOrders confirmationPopup-body_generic'
               });
               _.each(data.notDeliveredDeferredServices, function(documentNo) {
                 components.push({
                   content:
                     OB.I18N.getLabel('OBMOBC_Character')[1] + ' ' + documentNo,
-                  style:
-                    'text-align: left; padding-left: 60px; padding-right: 10px;'
+                  classes:
+                    'confirmationPopup-body_character confirmationPopup-body_generic'
                 });
               });
               OB.UTIL.showConfirmation.display(
@@ -6468,20 +6468,20 @@
               var components = [];
               components.push({
                 content: OB.I18N.getLabel('OBPOS_CannotCancelLayWithDeferred'),
-                style:
-                  'text-align: left; padding-left: 10px; padding-right: 10px;'
+                classes:
+                  'confirmationPopup-body_cannotCancelLayWithDeferred confirmationPopup-body_generic'
               });
               components.push({
                 content: OB.I18N.getLabel('OBPOS_RelatedOrders'),
-                style:
-                  'text-align: left; padding-left: 30px; padding-right: 10px;'
+                classes:
+                  'confirmationPopup-body_relatedOrders confirmationPopup-body_generic'
               });
               _.each(data.notDeliveredDeferredServices, function(documentNo) {
                 components.push({
                   content:
                     OB.I18N.getLabel('OBMOBC_Character')[1] + ' ' + documentNo,
-                  style:
-                    'text-align: left; padding-left: 60px; padding-right: 10px;'
+                  classes:
+                    'confirmationPopup-body_character confirmationPopup-body_generic'
                 });
               });
               OB.UTIL.showConfirmation.display(

@@ -12,7 +12,7 @@
 enyo.kind({
   kind: 'OB.UI.Button',
   name: 'OB.OBPOSPointOfSale.UI.Modals.btnModaContextChangedAccept',
-  classes: 'btnlink btnlink-gray modal-dialog-button',
+  classes: 'obObpospointofsaleUiModalsBtnModaContextChangedAccept',
   i18nContent: 'OBMOBC_LblOk',
   events: {
     onHideThisPopup: ''
@@ -25,18 +25,23 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.UI.ModalContextChanged',
+  classes: 'obUiModalContextChanged',
   bodyContent: {},
   closeOnEscKey: false,
   autoDismiss: false,
   i18nHeader: 'OBPOS_ContextChanged',
   bodyButtons: {
+    classes: 'obUiModalContextChanged-bodyButtons',
     components: [
       {
+        classes: 'obUiModalContextChanged-bodyButtons-element1',
         initComponents: function() {
           this.setContent(OB.I18N.getLabel('OBPOS_ContextChangedMessage'));
         }
       },
       {
+        classes:
+          'obUiModalContextChanged-bodyButtons-obObpospointofsaleUiModalsBtnModaContextChangedAccept',
         kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModaContextChangedAccept'
       }
     ]

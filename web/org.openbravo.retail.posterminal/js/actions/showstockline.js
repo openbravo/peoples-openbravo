@@ -46,7 +46,11 @@
         var product = selectedReceiptLine.get('product');
         var warehouse = selectedReceiptLine.get('warehouse');
         //show always or just when the product has been set to show stock screen?
-        if (product.get('productType') === 'I' && !product.get('ispack')) {
+        if (
+          product.get('productType') === 'I' &&
+          !product.get('ispack') &&
+          OB.MobileApp.model.get('connectedToERP')
+        ) {
           view.showLeftSubWindow(this, {
             leftSubWindow:
               OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow,

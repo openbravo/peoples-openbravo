@@ -13,15 +13,17 @@
 //with detailed information for each payment typ
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
-  classes: 'row-fluid',
+  classes: 'obObPosCashUpUiPpcLineSeparator row-fluid',
   components: [
     {
-      classes: 'span12',
+      classes: 'obObPosCashUpUiPpcLineSeparator-container1',
       components: [
         {
-          style: 'width: 10%; float: left;',
+          classes: 'obObPosCashUpUiPpcLineSeparator-container1-container1',
           components: [
             {
+              classes:
+                'obObPosCashUpUiPpcLineSeparator-container1-container1-element1',
               allowHtml: true,
               tag: 'span',
               content: '&nbsp;'
@@ -29,35 +31,37 @@ enyo.kind({
           ]
         },
         {
-          style:
-            'padding: 5px 0px 0px 5px; float: left; width: 60%; font-weight:bold;',
+          classes: 'obObPosCashUpUiPpcLineSeparator-container1-container2',
           components: [
             {
-              style: 'clear:both;'
+              classes:
+                'obObPosCashUpUiPpcLineSeparator-container1-container2-element1'
             }
           ]
         }
       ]
     },
     {
-      style: 'clear:both;'
+      classes: 'obObPosCashUpUiPpcLineSeparator-container1-element1'
     }
   ]
 });
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
-  classes: 'row-fluid',
+  classes: 'obObPosCashUpUiPpcTotalsLine row-fluid',
   label: '',
   value: '',
   components: [
     {
-      classes: 'span12',
+      classes: 'obObPosCashUpUiPpcTotalsLine-container1',
       components: [
         {
-          style: 'width: 10%; float: left;',
+          classes: 'obObPosCashUpUiPpcTotalsLine-container1-container1',
           components: [
             {
+              classes:
+                'obObPosCashUpUiPpcTotalsLine-container1-container1-element1',
               allowHtml: true,
               tag: 'span',
               content: '&nbsp;'
@@ -66,18 +70,19 @@ enyo.kind({
         },
         {
           name: 'totalLbl',
-          style:
-            'padding: 5px 0px 0px 5px; border-bottom: 1px solid #cccccc; border-top: 1px solid #cccccc; border-right: 1px solid #cccccc; float: left; width: 55%; font-weight:bold;'
+          classes: 'obObPosCashUpUiPpcTotalsLine-container1-totalLbl'
         },
         {
           name: 'totalQty',
-          style:
-            'padding: 5px 0px 0px 5px; border-bottom: 1px solid #cccccc; border-top: 1px solid #cccccc; float: left; width: 20%; text-align:right; font-weight:bold;'
+          classes: 'obObPosCashUpUiPpcTotalsLine-container1-totalQty'
         },
         {
-          style: 'width: 10%; float: left;',
+          classes:
+            'obObPosCashUpUiPpcTotalsLine-container1-totalQty-container2',
           components: [
             {
+              classes:
+                'obObPosCashUpUiPpcTotalsLine-container1-totalQty-container2-element1',
               allowHtml: true,
               tag: 'span',
               content: '&nbsp;'
@@ -87,7 +92,7 @@ enyo.kind({
       ]
     },
     {
-      style: 'clear:both;'
+      classes: 'obObPosCashUpUiPpcTotalsLine-element1'
     }
   ],
   setValue: function(value) {
@@ -121,7 +126,7 @@ enyo.kind({
   name: 'OB.OBPOSCashUp.UI.ppc_itemLine',
   label: '',
   value: '',
-  classes: 'row-fluid',
+  classes: 'obObPosCashUpUiPpcItemLine row-fluid',
   convertedValues: [
     'expected',
     'counted',
@@ -132,12 +137,14 @@ enyo.kind({
   valuestoConvert: ['deposits', 'drops', 'startings'],
   components: [
     {
-      classes: 'span12',
+      classes: 'obObPosCashUpUiPpcItemLine-container1',
       components: [
         {
-          style: 'width: 10%; float: left;',
+          classes: 'obObPosCashUpUiPpcItemLine-container1-container1',
           components: [
             {
+              classes:
+                'obObPosCashUpUiPpcItemLine-container1-container1-element1',
               allowHtml: true,
               tag: 'span',
               content: '&nbsp;'
@@ -146,24 +153,23 @@ enyo.kind({
         },
         {
           name: 'itemLbl',
-          allowHtml: true,
-          style:
-            'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; float: left; width: 35%'
+          classes: 'obObPosCashUpUiPpcItemLine-container1-itemLbl',
+          allowHtml: true
         },
         {
           name: 'foreignItemQty',
-          style:
-            'padding: 5px 0px 0px 0px;  border-top: 1px solid #cccccc; float: left; width: 20%; text-align:right;'
+          classes: 'obObPosCashUpUiPpcItemLine-container1-foreignItemQty'
         },
         {
           name: 'itemQty',
-          style:
-            'padding: 5px 0px 0px 5px;  border-top: 1px solid #cccccc; border-left: 1px solid #cccccc; float: left; width: 20%; text-align:right;'
+          classes: 'obObPosCashUpUiPpcItemLine-container1-itemQty'
         },
         {
-          style: 'width: 10%; float: left;',
+          classes: 'obObPosCashUpUiPpcItemLine-container1-container2',
           components: [
             {
+              classes:
+                'obObPosCashUpUiPpcItemLine-container1-container2-element1',
               allowHtml: true,
               tag: 'span',
               content: '&nbsp;'
@@ -173,7 +179,7 @@ enyo.kind({
       ]
     },
     {
-      style: 'clear:both;'
+      classes: 'obObPosCashUpUiPpcItemLine-element1'
     }
   ],
   setValue: function(value) {
@@ -261,40 +267,47 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.ppc_collectionLines',
   kind: 'OB.UI.iterateArray',
+  classes: 'obObPosCashUpUiPpcCollectionLines',
   renderLine: 'OB.OBPOSCashUp.UI.ppc_itemLine',
   renderEmpty: 'OB.UI.RenderEmpty'
 });
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.ppc_table',
+  classes: 'obObPosCashUpUiPpcTable',
   setValue: function(name, value) {
     this.$[name].setValue(value);
   }
 });
 
 enyo.kind({
-  kind: 'OB.OBPOSCashUp.UI.ppc_table',
   name: 'OB.OBPOSCashUp.UI.ppc_salesTable',
+  kind: 'OB.OBPOSCashUp.UI.ppc_table',
+  classes: 'obObPosCashUpUiPpcSalesTable',
   components: [
     {
       kind: 'OB.OBPOSCashUp.UI.ppc_itemLine',
       name: 'netsales',
+      classes: 'obObPosCashUpUiPpcSalesTable-netsales',
       i18nLabel: 'OBPOS_LblNetSales'
     },
     {
       kind: 'OB.OBPOSCashUp.UI.ppc_collectionLines',
       name: 'salestaxes',
+      classes: 'obObPosCashUpUiPpcSalesTable-salestaxes',
       lblProperty: 'name',
       qtyProperty: 'amount'
     },
     {
       kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
       name: 'totalsales',
+      classes: 'obObPosCashUpUiPpcSalesTable-totalsales',
       i18nLabel: 'OBPOS_LblGrossSales'
     },
     {
       kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
-      name: 'separator'
+      name: 'separator',
+      classes: 'obObPosCashUpUiPpcSalesTable-separator'
     }
   ],
   setCollection: function(col) {
@@ -305,26 +318,31 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.OBPOSCashUp.UI.ppc_table',
   name: 'OB.OBPOSCashUp.UI.ppc_returnsTable',
+  classes: 'obObPosCashUpUiPpcReturnsTable',
   components: [
     {
       kind: 'OB.OBPOSCashUp.UI.ppc_itemLine',
       name: 'netreturns',
+      classes: 'obObPosCashUpUiPpcReturnsTable-netreturns',
       i18nLabel: 'OBPOS_LblNetReturns'
     },
     {
       kind: 'OB.OBPOSCashUp.UI.ppc_collectionLines',
       name: 'retunrnstaxes',
+      classes: 'obObPosCashUpUiPpcReturnsTable-returnstaxes',
       lblProperty: 'name',
       qtyProperty: 'amount'
     },
     {
       kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
       name: 'totalreturns',
+      classes: 'obObPosCashUpUiPpcReturnsTable-totalreturns',
       i18nLabel: 'OBPOS_LblGrossReturns'
     },
     {
       kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
-      name: 'separator'
+      name: 'separator',
+      classes: 'obObPosCashUpUiPpcReturnsTable-separator'
     }
   ],
   setCollection: function(col) {
@@ -339,6 +357,7 @@ enyo.kind({
     {
       kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
       name: 'totaltransactionsline',
+      classes: 'obObPosCashUpUiPpcTotalTransactionsTable-totaltransactionsline',
       i18nLabel: 'OBPOS_LblTotalRetailTrans',
       init: function() {
         if (
@@ -351,7 +370,8 @@ enyo.kind({
     },
     {
       kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
-      name: 'separator'
+      name: 'separator',
+      classes: 'obObPosCashUpUiPpcTotalTransactionsTable-separator'
     }
   ]
 });
@@ -359,10 +379,12 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.OBPOSCashUp.UI.ppc_table',
   name: 'OB.OBPOSCashUp.UI.ppc_cashDropsTable',
+  classes: 'obObPosCashUpUiPpcCashDropsTable',
   components: [
     {
       kind: 'OB.OBPOSCashUp.UI.ppc_collectionLines',
       name: 'drops',
+      classes: 'obObPosCashUpUiPpcCashDropsTable-drops',
       lblProperty: 'description',
       qtyProperty: 'amount',
       typeProperty: 'drops'
@@ -370,11 +392,13 @@ enyo.kind({
     {
       kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
       name: 'totaldrops',
+      classes: 'obObPosCashUpUiPpcCashDropsTable-totaldrops',
       i18nLabel: 'OBPOS_LblTotalWithdrawals'
     },
     {
       kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
-      name: 'separator'
+      name: 'separator',
+      classes: 'obObPosCashUpUiPpcCashDropsTable-separator'
     }
   ],
   setCollection: function(col) {
@@ -385,10 +409,12 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.OBPOSCashUp.UI.ppc_table',
   name: 'OB.OBPOSCashUp.UI.ppc_cashDepositsTable',
+  classes: 'obObPosCashUpUiPpcCashDepositsTable',
   components: [
     {
       kind: 'OB.OBPOSCashUp.UI.ppc_collectionLines',
       name: 'deposits',
+      classes: 'obObPosCashUpUiPpcCashDepositsTable-description',
       lblProperty: 'description',
       qtyProperty: 'amount',
       typeProperty: 'deposits'
@@ -396,11 +422,13 @@ enyo.kind({
     {
       kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
       name: 'totaldeposits',
+      classes: 'obObPosCashUpUiPpcCashDepositsTable-totaldeposits',
       i18nLabel: 'OBPOS_LblTotalDeposits'
     },
     {
       kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
-      name: 'separator'
+      name: 'separator',
+      classes: 'obObPosCashUpUiPpcCashDepositsTable-separator'
     }
   ],
   setCollection: function(col) {
@@ -411,10 +439,12 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.OBPOSCashUp.UI.ppc_table',
   name: 'OB.OBPOSCashUp.UI.ppc_startingsTable',
+  classes: 'obObPosCashUpUiPpcStartingsTable',
   components: [
     {
       kind: 'OB.OBPOSCashUp.UI.ppc_collectionLines',
       name: 'startings',
+      classes: 'obObPosCashUpUiPpcCashDepositsTable-startings',
       lblProperty: 'description',
       qtyProperty: 'amount',
       typeProperty: 'startings'
@@ -422,11 +452,13 @@ enyo.kind({
     {
       kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
       name: 'totalstartings',
+      classes: 'obObPosCashUpUiPpcStartingsTable-totalstartings',
       i18nLabel: 'OBPOS_LblTotalStarting'
     },
     {
       kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
-      name: 'separator'
+      name: 'separator',
+      classes: 'obObPosCashUpUiPpcStartingsTable-separator'
     }
   ],
   setCollection: function(col) {
@@ -437,10 +469,12 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.OBPOSCashUp.UI.ppc_table',
   name: 'OB.OBPOSCashUp.UI.ppc_cashExpectedTable',
+  classes: 'obObPosCashUpUiPpcCashExpectedTable',
   components: [
     {
       kind: 'OB.OBPOSCashUp.UI.ppc_collectionLines',
       name: 'expectedPerPayment',
+      classes: 'obObPosCashUpUiPpcCashExpectedTable-expectedPerPayment',
       lblProperty: 'name',
       qtyProperty: 'value',
       typeProperty: 'expected'
@@ -448,11 +482,13 @@ enyo.kind({
     {
       kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
       name: 'totalexpected',
+      classes: 'obObPosCashUpUiPpcCashExpectedTable-totalexpected',
       i18nLabel: 'OBPOS_LblTotalExpected'
     },
     {
       kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
-      name: 'separator'
+      name: 'separator',
+      classes: 'obObPosCashUpUiPpcCashExpectedTable-separator'
     }
   ],
   setCollection: function(col) {
@@ -463,10 +499,12 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.OBPOSCashUp.UI.ppc_table',
   name: 'OB.OBPOSCashUp.UI.ppc_cashDifferenceTable',
+  classes: 'obObPosCashUpUiPpcCashDifferenceTable',
   components: [
     {
       kind: 'OB.OBPOSCashUp.UI.ppc_collectionLines',
       name: 'differencePerPayment',
+      classes: 'obObPosCashUpUiPpcCashDifferenceTable-differencePerPayment',
       lblProperty: 'name',
       qtyProperty: 'value',
       typeProperty: 'difference'
@@ -474,11 +512,13 @@ enyo.kind({
     {
       kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
       name: 'totaldifference',
+      classes: 'obObPosCashUpUiPpcCashDifferenceTable-totaldifference',
       i18nLabel: 'OBPOS_LblTotalDifference'
     },
     {
       kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
-      name: 'separator'
+      name: 'separator',
+      classes: 'obObPosCashUpUiPpcCashDifferenceTable-separator'
     }
   ],
   setCollection: function(col) {
@@ -515,10 +555,12 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.OBPOSCashUp.UI.ppc_table',
   name: 'OB.OBPOSCashUp.UI.ppc_cashQtyToKeepTable',
+  classes: 'obObPosCashUpUiPpcCashQtyToKeepTable',
   components: [
     {
       kind: 'OB.OBPOSCashUp.UI.ppc_collectionLines',
       name: 'qtyToKeepPerPayment',
+      classes: 'obObPosCashUpUiPpcCashQtyToKeepTable-qtyToKeepPerPayment',
       lblProperty: 'name',
       qtyProperty: 'value',
       typeProperty: 'qtyToKeep'
@@ -526,11 +568,13 @@ enyo.kind({
     {
       kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
       name: 'totalqtyToKeep',
+      classes: 'obObPosCashUpUiPpcCashQtyToKeepTable-totalqtyToKeep',
       i18nLabel: 'OBPOS_LblTotalQtyToKeep'
     },
     {
       kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
-      name: 'separator'
+      name: 'separator',
+      classes: 'obObPosCashUpUiPpcCashQtyToKeepTable-separator'
     }
   ],
   setCollection: function(col) {
@@ -545,6 +589,7 @@ enyo.kind({
     {
       kind: 'OB.OBPOSCashUp.UI.ppc_collectionLines',
       name: 'qtyToDepoPerPayment',
+      classes: 'obObPosCashUpUiPpcCashQtyToDepoTable-qtyToDepoPerPayment',
       lblProperty: 'name',
       qtyProperty: 'value',
       typeProperty: 'qtyToDepo'
@@ -552,11 +597,13 @@ enyo.kind({
     {
       kind: 'OB.OBPOSCashUp.UI.ppc_totalsLine',
       name: 'totalqtyToDepo',
+      classes: 'obObPosCashUpUiPpcCashQtyToDepoTable-totalqtyToDepo',
       i18nLabel: 'OBPOS_LblTotalQtyToDepo'
     },
     {
       kind: 'OB.OBPOSCashUp.UI.ppc_lineSeparator',
-      name: 'separator'
+      name: 'separator',
+      classes: 'obObPosCashUpUiPpcCashQtyToDepoTable-separator'
     }
   ],
   setCollection: function(col) {
@@ -570,181 +617,206 @@ enyo.kind({
     model: null,
     summary: null
   },
-  classes: 'tab-pane',
+  classes: 'obObPosCashUpUiPostPrintClose',
   components: [
     {
       kind: 'Scroller',
       name: 'scrollArea',
+      classes: 'obObPosCashUpUiPostPrintClose-wrapper',
       thumb: true,
-      maxHeight: '612px',
       horizontal: 'hidden',
-      style: 'margin: 5px; background-color: #ffffff;',
       components: [
         {
-          style: 'padding: 5px;',
+          classes: 'obObPosCashUpUiPostPrintClose-wrapper-components',
           components: [
             {
-              classes: 'row-fluid',
-              components: [
-                {
-                  classes: 'span12',
-                  components: [
-                    {
-                      name: 'reporttitle',
-                      style:
-                        'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;',
-                      renderHeader: function(step, count) {
-                        this.setContent(
-                          OB.I18N.getLabel('OBPOS_LblStepNumber', [
-                            step,
-                            count
-                          ]) +
-                            ' ' +
-                            OB.I18N.getLabel('OBPOS_LblStepPostPrintAndClose') +
-                            OB.OBPOSCashUp.UI.CashUp.getTitleExtensions()
-                        );
-                      }
-                    }
-                  ]
-                },
-                {
-                  style: 'clear:both;'
-                }
-              ]
+              name: 'reporttitle',
+              classes: 'obObPosCashUpUiPostPrintClose-wrapper-components-title',
+              renderHeader: function(step, count) {
+                this.setContent(
+                  OB.I18N.getLabel('OBPOS_LblStepNumber', [step, count]) +
+                    ' ' +
+                    OB.I18N.getLabel('OBPOS_LblStepPostPrintAndClose') +
+                    OB.OBPOSCashUp.UI.CashUp.getTitleExtensions()
+                );
+              }
             },
             {
-              classes: 'row-fluid',
+              classes: 'obObPosCashUpUiPostPrintClose-wrapper-components-body',
               components: [
                 {
-                  classes: 'span12',
+                  classes:
+                    'obObPosCashUpUiPostPrintClose-wrapper-components-body-container1 row-fluid',
                   components: [
                     {
-                      style: 'padding: 10px; text-align:center;',
+                      classes:
+                        'obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1',
                       components: [
                         {
-                          tag: 'img',
-                          style: 'padding: 20px;',
-                          initComponents: function() {
-                            if (
-                              OB.MobileApp.model.get('terminal')
-                                .organizationImage
-                            ) {
-                              this.setAttribute(
-                                'src',
-                                'data:' +
-                                  OB.MobileApp.model.get('terminal')
-                                    .organizationImageMime +
-                                  ';base64,' +
+                          classes:
+                            'obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1',
+                          components: [
+                            {
+                              tag: 'img',
+                              classes:
+                                'obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1-img',
+                              initComponents: function() {
+                                if (
                                   OB.MobileApp.model.get('terminal')
                                     .organizationImage
-                              );
+                                ) {
+                                  this.setAttribute(
+                                    'src',
+                                    'data:' +
+                                      OB.MobileApp.model.get('terminal')
+                                        .organizationImageMime +
+                                      ';base64,' +
+                                      OB.MobileApp.model.get('terminal')
+                                        .organizationImage
+                                  );
+                                }
+                              }
+                            },
+                            {
+                              name: 'store',
+                              classes:
+                                'obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1-store'
+                            },
+                            {
+                              name: 'terminal',
+                              classes:
+                                'obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1-terminal'
+                            },
+                            {
+                              name: 'user',
+                              classes:
+                                'obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1-user'
+                            },
+                            {
+                              name: 'openingtime',
+                              classes:
+                                'obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1-openingtime'
+                            },
+                            {
+                              name: 'time',
+                              classes:
+                                'obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1-time'
+                            },
+                            {
+                              classes:
+                                'obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1-element1'
                             }
-                          }
-                        },
-                        {
-                          name: 'store',
-                          style: 'padding: 5px; text-align:center;'
-                        },
-                        {
-                          name: 'terminal',
-                          style: 'padding: 5px; text-align:center;'
-                        },
-                        {
-                          name: 'user',
-                          style: 'padding: 5px; text-align:center;'
-                        },
-                        {
-                          name: 'openingtime',
-                          style: 'padding: 5px; text-align:center;'
-                        },
-                        {
-                          name: 'time',
-                          style: 'padding: 5px; text-align:center;'
-                        },
-                        {
-                          style: 'padding: 0px 0px 10px 0px;'
+                          ]
                         }
                       ]
+                    },
+                    {
+                      classes:
+                        'obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-element1'
                     }
                   ]
                 },
+                //FIXME: Iterate taxes
                 {
-                  style: 'clear:both;'
-                }
-              ]
-            },
-            //FIXME: Iterate taxes
-            {
-              classes: 'row-fluid',
-              components: [
-                {
-                  tag: 'ul',
-                  classes: 'unstyled',
-                  style: 'display:block',
+                  classes:
+                    'obObPosCashUpUiPostPrintClose-wrapper-components-body-container2 row-fluid',
                   components: [
                     {
-                      tag: 'li',
-                      classes: 'selected',
+                      tag: 'ul',
+                      classes:
+                        'obObPosCashUpUiPostPrintClose-wrapper-components-body-container2-container1',
                       components: [
                         {
-                          kind: 'OB.OBPOSCashUp.UI.ppc_salesTable',
-                          name: 'sales'
-                        },
-                        {
-                          kind: 'OB.OBPOSCashUp.UI.ppc_returnsTable',
-                          name: 'returns'
-                        },
-                        {
-                          kind: 'OB.OBPOSCashUp.UI.ppc_totalTransactionsTable',
-                          name: 'totaltransactions'
+                          tag: 'li',
+                          classes:
+                            'obObPosCashUpUiPostPrintClose-wrapper-components-body-container2-container1-container1 selected',
+                          components: [
+                            {
+                              kind: 'OB.OBPOSCashUp.UI.ppc_salesTable',
+                              name: 'sales',
+                              classes:
+                                'obObPosCashUpUiPostPrintClose-wrapper-components-body-container2-container1-container1-sales'
+                            },
+                            {
+                              kind: 'OB.OBPOSCashUp.UI.ppc_returnsTable',
+                              name: 'returns',
+                              classes:
+                                'obObPosCashUpUiPostPrintClose-wrapper-components-body-container2-container1-container1-returns'
+                            },
+                            {
+                              kind:
+                                'OB.OBPOSCashUp.UI.ppc_totalTransactionsTable',
+                              name: 'totaltransactions',
+                              classes:
+                                'obObPosCashUpUiPostPrintClose-wrapper-components-body-container2-container1-container1-totaltransactions'
+                            }
+                          ]
                         }
                       ]
+                    },
+                    {
+                      classes:
+                        'obObPosCashUpUiPostPrintClose-wrapper-components-body-container2-element1'
+                    },
+                    {
+                      classes:
+                        'obObPosCashUpUiPostPrintClose-wrapper-components-body-container2-element2'
                     }
                   ]
                 },
                 {
-                  style:
-                    'border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(204, 204, 204); padding-top: 15px; padding-right: 15px; padding-bottom: 15px; padding-left: 15px; font-weight: bold; color: rgb(204, 204, 204); display: none;'
-                },
-                {
-                  style: 'display:none;'
-                }
-              ]
-            },
-            {
-              classes: 'row-fluid',
-              components: [
-                {
-                  kind: 'OB.OBPOSCashUp.UI.ppc_startingsTable',
-                  name: 'startingsTable'
-                },
-                {
-                  kind: 'OB.OBPOSCashUp.UI.ppc_cashDropsTable',
-                  name: 'dropsTable'
-                },
-                {
-                  kind: 'OB.OBPOSCashUp.UI.ppc_cashDepositsTable',
-                  name: 'depositsTable'
-                },
-                {
-                  kind: 'OB.OBPOSCashUp.UI.ppc_cashExpectedTable',
-                  name: 'expectedTable'
-                },
-                {
-                  kind: 'OB.OBPOSCashUp.UI.ppc_cashCountedTable',
-                  name: 'countedTable'
-                },
-                {
-                  kind: 'OB.OBPOSCashUp.UI.ppc_cashDifferenceTable',
-                  name: 'differenceTable'
-                },
-                {
-                  kind: 'OB.OBPOSCashUp.UI.ppc_cashQtyToKeepTable',
-                  name: 'qtyToKeepTable'
-                },
-                {
-                  kind: 'OB.OBPOSCashUp.UI.ppc_cashQtyToDepoTable',
-                  name: 'qtyToDepoTable'
+                  classes:
+                    'obObPosCashUpUiPostPrintClose-wrapper-components-body-container3 row-fluid',
+                  components: [
+                    {
+                      kind: 'OB.OBPOSCashUp.UI.ppc_startingsTable',
+                      name: 'startingsTable',
+                      classes:
+                        'obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-startingsTable'
+                    },
+                    {
+                      kind: 'OB.OBPOSCashUp.UI.ppc_cashDropsTable',
+                      name: 'dropsTable',
+                      classes:
+                        'obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-dropsTable'
+                    },
+                    {
+                      kind: 'OB.OBPOSCashUp.UI.ppc_cashDepositsTable',
+                      name: 'depositsTable',
+                      classes:
+                        'obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-depositsTable'
+                    },
+                    {
+                      kind: 'OB.OBPOSCashUp.UI.ppc_cashExpectedTable',
+                      name: 'expectedTable',
+                      classes:
+                        'obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-expectedTable'
+                    },
+                    {
+                      kind: 'OB.OBPOSCashUp.UI.ppc_cashCountedTable',
+                      name: 'countedTable',
+                      classes:
+                        'obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-countedTable'
+                    },
+                    {
+                      kind: 'OB.OBPOSCashUp.UI.ppc_cashDifferenceTable',
+                      name: 'differenceTable',
+                      classes:
+                        'obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-differenceTable'
+                    },
+                    {
+                      kind: 'OB.OBPOSCashUp.UI.ppc_cashQtyToKeepTable',
+                      name: 'qtyToKeepTable',
+                      classes:
+                        'obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-qtyToKeepTable'
+                    },
+                    {
+                      kind: 'OB.OBPOSCashUp.UI.ppc_cashQtyToDepoTable',
+                      name: 'qtyToDepoTable',
+                      classes:
+                        'obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-qtyToDepoTable'
+                    }
+                  ]
                 }
               ]
             }

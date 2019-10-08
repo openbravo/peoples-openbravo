@@ -288,14 +288,17 @@ OB.DS.HWServer.prototype.isDrawerClosed = function(popup, timeout) {
     if (!popupDrawerOpened) {
       popupDrawerOpened = OB.MobileApp.view.$.confirmationContainer.createComponent(
         {
-          kind: 'OB.UI.PopupDrawerOpened'
+          kind: 'OB.UI.PopupDrawerOpened',
+          classes: 'popupDrawerOpened'
         }
       );
     }
 
     if (popup.receipt) {
       var paymentStatus = popup.receipt.getPaymentStatus();
-      popupDrawerOpened.$.table.setStyle('position:relative; top: 0px;');
+      popupDrawerOpened.$.table.addClass(
+        'popupDrawerOpened-table_noTop popupDrawerOpened-table-generic'
+      );
       if (paymentStatus.isReturn || paymentStatus.isNegative) {
         popupDrawerOpened.$.bodyContent.$.label.setContent(
           OB.I18N.getLabel('OBPOS_ToReturn') + ':'
@@ -333,7 +336,9 @@ OB.DS.HWServer.prototype.isDrawerClosed = function(popup, timeout) {
       }
     } else {
       popupDrawerOpened.$.bodyContent.$.label.setContent('');
-      popupDrawerOpened.$.table.setStyle('position:relative; top: 35px;');
+      popupDrawerOpened.$.table.addClass(
+        'popupDrawerOpened-table_standardTop popupDrawerOpened-table-generic'
+      );
     }
 
     if (popup.openFirst) {

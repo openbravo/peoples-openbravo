@@ -21,6 +21,7 @@ enyo.kind({
   },
   handlers: {
     onSetValues: 'setValues',
+    onSaveCustomerAddr: 'saveCustomerAddr',
     onRetrieveCustomer: 'retrieveCustomers',
     onCancelClose: 'cancelClose'
   },
@@ -94,17 +95,22 @@ enyo.kind({
       }
     });
   },
+  saveCustomerAddr: function(inSender, inEvent) {
+    this.waterfall('onExecuteSaveCustomerAddr', inEvent);
+  },
   body: {
-    kind: 'OB.OBPOSPointOfSale.UI.customeraddr.edit_createcustomers_impl'
+    kind: 'OB.OBPOSPointOfSale.UI.customeraddr.edit_createcustomers_impl',
+    classes:
+      'obObposPointOfSaleUiCustomeraddrNewcustomeraddr-obObposPointOfSaleUiCustomeraddrEditCreatecustomersImpl'
   }
+  //'footer' implemented programatically from the body
 });
 
 //button of header of the body
 enyo.kind({
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.newcustomeraddrsave',
-  style: 'width: 100px; margin: 0px 5px 8px 19px;',
-  classes: 'btnlink-yellow btnlink btnlink-small',
+  classes: 'obObposPointOfSaleUiCustomeraddrNewcustomeraddrsave',
   i18nLabel: 'OBPOS_LblSave',
   events: {
     onSaveCustomerAddr: ''
@@ -114,11 +120,6 @@ enyo.kind({
   },
   disableButton: function(inSender, inEvent) {
     this.setDisabled(inEvent.disabled);
-    if (inEvent.disabled) {
-      this.addClass(this.classButtonDisabled);
-    } else {
-      this.removeClass(this.classButtonDisabled);
-    }
   },
   tap: function() {
     var me = this;
@@ -151,40 +152,44 @@ enyo.kind({
 
 //Header of body
 enyo.kind({
-  name: 'OB.OBPOSPointOfSale.UI.customeraddr.subwindowNewCustomer_bodyheader',
+  name: 'OB.OBPOSPointOfSale.UI.customeraddr.subwindowNewCustomer_footer',
+  classes: 'obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerFooter',
   components: [
     {
+      classes:
+        'obUiModal-footer-mainButtons obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerFooter-container1',
       components: [
         {
-          style: 'display: table; margin: 0 auto;',
+          classes:
+            'obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerFooter-container1-container1',
           components: [
             {
-              style: 'display: table-cell;',
-              components: [
-                {
-                  kind:
-                    'OB.OBPOSPointOfSale.UI.customeraddr.newcustomeraddrsave'
-                }
-              ]
-            },
+              kind: 'OB.OBPOSPointOfSale.UI.customeraddr.cancelEdit',
+              name: 'addressEditCancel',
+              classes:
+                'obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerFooter-container1-container1-addressEditCancel',
+              handlers: {
+                onSetCustomerAddr: 'setCustomerAddr'
+              },
+              setCustomerAddr: function(inSender, inEvent) {
+                this.customer = inEvent.customer;
+                this.customerAddr = inEvent.customerAddr;
+              },
+              tap: function() {
+                this.bubble('onCancelClose');
+              }
+            }
+          ]
+        },
+        {
+          classes:
+            'obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerFooter-container1-container2',
+          components: [
             {
-              style: 'display: table-cell;',
-              components: [
-                {
-                  kind: 'OB.OBPOSPointOfSale.UI.customeraddr.cancelEdit',
-                  name: 'addressEditCancel',
-                  handlers: {
-                    onSetCustomerAddr: 'setCustomerAddr'
-                  },
-                  setCustomerAddr: function(inSender, inEvent) {
-                    this.customer = inEvent.customer;
-                    this.customerAddr = inEvent.customerAddr;
-                  },
-                  tap: function() {
-                    this.bubble('onCancelClose');
-                  }
-                }
-              ]
+              kind: 'OB.OBPOSPointOfSale.UI.customeraddr.newcustomeraddrsave',
+              classes:
+                'obObposPointOfSaleUiCustomeraddrSubwindowNewCustomerFooter-container1-container2-obObposPointOfSaleUiCustomeraddrNewcustomeraddrsave',
+              isDefaultAction: true
             }
           ]
         }
@@ -196,13 +201,15 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.edit_createcustomers_impl',
   kind: 'OB.OBPOSPointOfSale.UI.customeraddr.edit_createcustomers',
-  style: 'padding: 9px 15px;',
-  windowHeader:
-    'OB.OBPOSPointOfSale.UI.customeraddr.subwindowNewCustomer_bodyheader',
+  classes: 'obObposPointOfSaleUiCustomeraddrEditCreatecustomersImpl',
+  windowFooter:
+    'OB.OBPOSPointOfSale.UI.customeraddr.subwindowNewCustomer_footer',
   newAttributes: [
     {
       kind: 'OB.UI.CustomerAddrTextProperty',
       name: 'customerAddrCustomerName',
+      classes:
+        'obObposPointOfSaleUiCustomeraddrEditCreatecustomersImpl-newAttributes-customerAddrCustomerName',
       modelProperty: 'customerName',
       i18nLabel: 'OBPOS_LblCustomer',
       readOnly: true
@@ -210,6 +217,8 @@ enyo.kind({
     {
       kind: 'OB.UI.CustomerAddrTextProperty',
       name: 'customerAddrName',
+      classes:
+        'obObposPointOfSaleUiCustomeraddrEditCreatecustomersImpl-newAttributes-customerAddrName',
       modelProperty: 'name',
       i18nLabel: 'OBPOS_LblAddress',
       maxlength: 60,
@@ -218,6 +227,8 @@ enyo.kind({
     {
       kind: 'OB.UI.CustomerAddrTextProperty',
       name: 'customerAddrPostalCode',
+      classes:
+        'obObposPointOfSaleUiCustomeraddrEditCreatecustomersImpl-newAttributes-customerAddrPostalCode',
       modelProperty: 'postalCode',
       i18nLabel: 'OBPOS_LblPostalCode',
       maxlength: 10
@@ -225,6 +236,8 @@ enyo.kind({
     {
       kind: 'OB.UI.CustomerAddrTextProperty',
       name: 'customerAddrCity',
+      classes:
+        'obObposPointOfSaleUiCustomeraddrEditCreatecustomersImpl-newAttributes-customerAddrCity',
       modelProperty: 'cityName',
       i18nLabel: 'OBPOS_LblCity',
       maxlength: 60
@@ -232,6 +245,8 @@ enyo.kind({
     {
       kind: 'OB.UI.CustomerAddrComboProperty',
       name: 'customerAddrCountry',
+      classes:
+        'obObposPointOfSaleUiCustomeraddrEditCreatecustomersImpl-newAttributes-customerAddrCountry',
       modelProperty: 'countryId',
       modelPropertyText: 'countryName',
       collectionName: 'CountryList',
@@ -270,12 +285,16 @@ enyo.kind({
     {
       kind: 'OB.UI.CustomerAddrCheckProperty',
       name: 'customerAddrShip',
+      classes:
+        'obObposPointOfSaleUiCustomeraddrEditCreatecustomersImpl-newAttributes-customerAddrShip',
       modelProperty: 'isShipTo',
       i18nLabel: 'OBPOS_LblShipAddr'
     },
     {
       kind: 'OB.UI.CustomerAddrCheckProperty',
       name: 'customerAddrBill',
+      classes:
+        'obObposPointOfSaleUiCustomeraddrEditCreatecustomersImpl-newAttributes-customerAddrBill',
       modelProperty: 'isBillTo',
       i18nLabel: 'OBPOS_LblBillAddr'
     }

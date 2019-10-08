@@ -12,11 +12,9 @@
 /*global OB, enyo*/
 
 enyo.kind({
-  kind: 'OB.UI.SmallButton',
+  kind: 'OB.UI.FormElement.Selector',
   name: 'OB.UI.Customer',
-  classes: 'btnlink btnlink-small btnlink-gray',
-  style:
-    'float:left; margin:7px; height:27px; padding: 4px 15px 7px 15px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; width: 80%;',
+  classes: 'obUiCustomer',
   published: {
     order: null,
     target: null,
@@ -65,23 +63,29 @@ enyo.kind({
     this.setOrder(model.get('order'));
     this.hiddenPopup = false;
   },
-  renderCustomer: function(newCustomer) {
-    this.setContent(newCustomer);
+  renderCustomer: function(newCustomerId, newCustomerName) {
+    this.setValue(newCustomerId, newCustomerName);
   },
   orderChanged: function(oldValue) {
     if (this.order.get('bp')) {
-      this.renderCustomer(this.order.get('bp').get('_identifier'));
+      this.renderCustomer(
+        this.order.get('bp').get('id'),
+        this.order.get('bp').get('_identifier')
+      );
     } else {
-      this.renderCustomer('');
+      this.renderCustomer(null, '');
     }
 
     this.order.on(
       'change:bp',
       function(model) {
         if (model.get('bp')) {
-          this.renderCustomer(model.get('bp').get('_identifier'));
+          this.renderCustomer(
+            this.order.get('bp').get('id'),
+            this.order.get('bp').get('_identifier')
+          );
         } else {
-          this.renderCustomer('');
+          this.renderCustomer(null, '');
         }
       },
       this
@@ -90,11 +94,9 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.SmallButton',
+  kind: 'OB.UI.FormElement.Selector',
   name: 'OB.UI.ShipTo',
-  classes: 'btnlink btnlink-small btnlink-gray',
-  style:
-    'float:left; margin:7px; height:27px; padding: 4px 15px 7px 15px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; width: 80%;',
+  classes: 'obUiShipTo',
   published: {
     order: null,
     target: null,
@@ -123,22 +125,28 @@ enyo.kind({
     this.setOrder(model.get('order'));
     this.hiddenPopup = false;
   },
-  renderAddrShip: function(newAddr) {
-    this.setContent(newAddr);
+  renderAddrShip: function(newAddrId, newAddrName) {
+    this.setValue(newAddrId, newAddrName);
   },
   orderChanged: function(oldValue) {
     if (this.order.get('bp')) {
-      this.renderAddrShip(this.order.get('bp').get('shipLocName'));
+      this.renderAddrShip(
+        this.order.get('bp').get('shipLocId'),
+        this.order.get('bp').get('shipLocName')
+      );
     } else {
-      this.renderAddrShip('');
+      this.renderAddrShip(null, '');
     }
     this.order.on(
       'change:bp',
       function(model) {
         if (model.get('bp')) {
-          this.renderAddrShip(model.get('bp').get('shipLocName'));
+          this.renderAddrShip(
+            model.get('bp').get('shipLocId'),
+            model.get('bp').get('shipLocName')
+          );
         } else {
-          this.renderAddrShip('');
+          this.renderAddrShip(null, '');
         }
       },
       this
@@ -147,11 +155,9 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.SmallButton',
+  kind: 'OB.UI.FormElement.Selector',
   name: 'OB.UI.BillTo',
-  classes: 'btnlink btnlink-small btnlink-gray',
-  style:
-    'float:left; margin:7px; height:27px; padding: 4px 15px 7px 15px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; width: 80%;',
+  classes: 'obUiBillTo',
   published: {
     order: null,
     target: null,
@@ -180,22 +186,28 @@ enyo.kind({
     this.setOrder(model.get('order'));
     this.hiddenPopup = false;
   },
-  renderAddrBill: function(newAddr) {
-    this.setContent(newAddr);
+  renderAddrBill: function(newAddrId, newAddrName) {
+    this.setValue(newAddrId, newAddrName);
   },
   orderChanged: function(oldValue) {
     if (this.order.get('bp')) {
-      this.renderAddrBill(this.order.get('bp').get('locName'));
+      this.renderAddrBill(
+        this.order.get('bp').get('locId'),
+        this.order.get('bp').get('locName')
+      );
     } else {
-      this.renderAddrBill('');
+      this.renderAddrBill(null, '');
     }
     this.order.on(
       'change:bp',
       function(model) {
         if (model.get('bp')) {
-          this.renderAddrBill(model.get('bp').get('locName'));
+          this.renderAddrBill(
+            model.get('bp').get('locId'),
+            model.get('bp').get('locName')
+          );
         } else {
-          this.renderAddrBill('');
+          this.renderAddrBill(null, '');
         }
       },
       this

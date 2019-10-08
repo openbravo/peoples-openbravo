@@ -10,36 +10,76 @@
 /*global enyo, _ */
 
 enyo.kind({
-  kind: 'OB.UI.ModalAction',
+  kind: 'OB.UI.Modal',
   name: 'OB.UI.ModalMultiOrdersLayaway',
+  classes: 'obUiModalMultiOrdersLayaway',
   executeOnShow: function() {
-    this.$.bodyButtons.$.btnModalMultiSearchInput.setValue('');
+    this.$.body.$.formElementBtnModalMultiSearchInput.coreElement.setValue('');
   },
-  bodyContent: {
-    i18nContent: 'OBPOS_MultiOrdersLayaway' // TODO: add this as part of the message + '\n' + OB.I18N.getLabel('OBPOS_cannotBeUndone')
-  },
-  bodyButtons: {
+  i18nHeader: 'OBPOS_MultiOrdersLayawayHeader',
+  body: {
+    classes: 'obUiModalMultiOrdersLayaway-body',
     components: [
       {
-        name: 'btnModalMultiSearchInput',
-        kind: 'OB.UI.SearchInput'
+        name: 'label',
+        content: '',
+        classes: 'obUiModalMultiOrdersLayaway-body-label'
       },
       {
-        kind: 'OB.UI.btnApplyMultiLayaway'
+        kind: 'OB.UI.FormElement',
+        name: 'formElementBtnModalMultiSearchInput',
+        classes:
+          'obUiFormElement_dataEntry obUiModalMultiOrdersLayaway-body-formElementBtnModalMultiSearchInput',
+        coreElement: {
+          name: 'btnModalMultiSearchInput',
+          kind: 'OB.UI.SearchInput',
+          i18nLabel: 'OBPOS_AmountOfCash',
+          classes: 'obUiModalMultiOrdersLayaway-body-btnModalMultiSearchInput'
+        }
+      }
+    ]
+  },
+  footer: {
+    classes: 'obUiModal-footer-mainButtons obUiModalMultiOrdersLayaway-footer',
+    components: [
+      {
+        kind: 'OB.UI.ModalDialogButton',
+        classes: 'obUiModalMultiOrdersLayaway-footer-cancel',
+        i18nLabel: 'OBMOBC_LblCancel',
+        tap: function() {
+          if (this.disabled === false) {
+            this.doHideThisPopup();
+          }
+        }
+      },
+      {
+        kind: 'OB.UI.btnApplyMultiLayaway',
+        isDefaultAction: true,
+        classes: 'obUiModalMultiOrdersLayaway-footer-obUiBtnApplyMultiLayaway'
       }
     ]
   },
   initComponents: function() {
-    this.header = OB.I18N.getLabel('OBPOS_MultiOrdersLayawayHeader');
     this.inherited(arguments);
+    this.$.body.$.label.setContent(
+      OB.I18N.getLabel('OBPOS_MultiOrdersLayaway') +
+        ' (' +
+        OB.I18N.getLabel('OBPOS_cannotBeUndone') +
+        ')'
+    );
   }
 });
 
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.btnApplyMultiLayaway',
+  classes: 'obUibtnApplyMultiLayaway',
   isDefaultAction: true,
   i18nContent: 'OBPOS_LblApplyButton',
+  initComponents: function() {
+    this.popup = OB.UTIL.getPopupFromComponent(this);
+    this.inherited(arguments);
+  },
   tap: function() {
     var me = this,
       amount = OB.DEC.Zero,
@@ -50,9 +90,15 @@ enyo.kind({
       .get('multiOrders')
       .get('multiOrdersList')
       .get(this.owner.owner.args.id);
-    if (this.owner.$.btnModalMultiSearchInput.getValue().indexOf('%') !== -1) {
+    if (
+      this.popup.$.body.$.formElementBtnModalMultiSearchInput.coreElement
+        .getValue()
+        .indexOf('%') !== -1
+    ) {
       try {
-        tmp = this.owner.$.btnModalMultiSearchInput.getValue().replace('%', '');
+        tmp = this.popup.$.body.$.formElementBtnModalMultiSearchInput.coreElement
+          .getValue()
+          .replace('%', '');
         amount = OB.DEC.div(OB.DEC.mul(currentOrder.getPending(), tmp), 100);
       } catch (ex) {
         OB.UTIL.showConfirmation.display(
@@ -65,7 +111,7 @@ enyo.kind({
       try {
         if (
           !OB.I18N.isValidNumber(
-            this.owner.$.btnModalMultiSearchInput.getValue()
+            this.popup.$.body.$.formElementBtnModalMultiSearchInput.coreElement.getValue()
           )
         ) {
           OB.UTIL.showConfirmation.display(
@@ -74,7 +120,7 @@ enyo.kind({
           );
           return;
         } else {
-          var tmpAmount = this.owner.$.btnModalMultiSearchInput.getValue();
+          var tmpAmount = this.popup.$.body.$.formElementBtnModalMultiSearchInput.coreElement.getValue();
           while (tmpAmount.indexOf(OB.Format.defaultGroupingSymbol) !== -1) {
             tmpAmount = tmpAmount.replace(OB.Format.defaultGroupingSymbol, '');
           }
