@@ -115,6 +115,25 @@ enyo.kind({
 });
 
 enyo.kind({
+  name: 'OB.UI.CustomerStatisticsTextProperty',
+  kind: 'OB.UI.FormElement.Input',
+  class: 'obUiCustomerStatisticsTextProperty',
+  type: 'text',
+  handlers: {
+    onSetStatisticValue: 'setStatisticsValue'
+  },
+  setStatisticsValue: function(inSender, inEvent) {
+    if (inEvent[this.textProperty]) {
+      this.setValue(inEvent[this.textProperty]);
+      this.parent.parent.parent.parent.show();
+      this.parent.parent.parent.parent.parent.parent.show();
+    } else {
+      this.parent.parent.parent.parent.hide();
+    }
+  }
+});
+
+enyo.kind({
   name: 'OB.UI.SwitchShippingInvoicingAddr',
   kind: 'OB.UI.FormElement.Checkbox',
   classes: 'obUiSwitchShippingInvoicingAddr',
@@ -348,14 +367,37 @@ enyo.kind({
               ]
             }
           ]
+        },
+        {
+          name: 'statistics',
+          classes:
+            'obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-statistics',
+          components: [
+            {
+              name: 'statisticsLbl',
+              kind: 'OB.UI.FormSection.Label',
+              classes:
+                'obObposPointOfSaleUiCustomersEditCreatecustomers-statistics-statisticsLbl'
+            },
+            {
+              name: 'statisticsFields',
+              classes:
+                'obObposPointOfSaleUiCustomersEditCreatecustomers-statistics-statisticsFields u-clearBoth'
+            }
+          ]
         }
       ]
     }
   ],
   hideShowFields: function(inSender, inEvent) {
+    if (inEvent.checked) {
+      this.$.invLbl.setContent(OB.I18N.getLabel('OBPOS_LblAddress'));
+    } else {
+      this.$.invLbl.setContent(OB.I18N.getLabel('OBPOS_LblBillAddr'));
+    }
     this.$.shipAddress.setShowing(!inEvent.checked);
     this.$.shipLbl.setShowing(!inEvent.checked);
-    this.$.invLbl.setShowing(!inEvent.checked);
+    this.$.invLbl.setShowing(true);
     this.waterfall('onHideShow', {
       checked: inEvent.checked
     });
@@ -430,7 +472,7 @@ enyo.kind({
     function checkMandatoryFields(items, customer) {
       var errors = '';
       _.each(items, function(item) {
-        if (item.coreElement.mandatory) {
+        if (item.coreElement && item.coreElement.mandatory) {
           var value = customer.get(item.coreElement.modelProperty);
           if (!value) {
             item.setMessage(OB.I18N.getLabel('OBMOBC_LblMandatoryField'), true);
@@ -446,45 +488,105 @@ enyo.kind({
       return errors;
     }
 
-    function validateSMS(customer) {
+    function validateSMS(customer, form) {
       //Validate that sms field is filled if  'Commercial Auth -> sms' is checked
       var commercialAuthViaSms = customer.get('viasms');
       var alternativePhone = customer.get('alternativePhone');
       var phone = customer.get('phone');
+      var phoneField =
+        form.$.customerOnlyFields.$.contactInfo.$.contactInfoFields.children[0];
+      var altPhoneField =
+        form.$.customerOnlyFields.$.contactInfo.$.contactInfoFields.children[1];
       if (commercialAuthViaSms && (phone === '' && alternativePhone === '')) {
+        phoneField.setMessage(
+          OB.I18N.getLabel('OBMOBC_LblMandatoryField'),
+          true
+        );
+        altPhoneField.setMessage(
+          OB.I18N.getLabel('OBMOBC_LblMandatoryField'),
+          true
+        );
         return false;
       } else {
+        phoneField.setMessage();
+        altPhoneField.setMessage();
         return true;
       }
     }
 
-    function validateEmail(customer) {
+    function validateEmail(customer, form) {
       //Validate that email field is filled if 'Commercial Auth -> email' is checked
       var commercialAuthViaEmail = customer.get('viaemail');
       var email = customer.get('email');
+      var emailField =
+        form.$.customerOnlyFields.$.contactInfo.$.contactInfoFields.children[2];
       if (commercialAuthViaEmail && email === '') {
+        emailField.setMessage(
+          OB.I18N.getLabel('OBMOBC_LblMandatoryField'),
+          true
+        );
         return false;
       } else {
+        emailField.setMessage();
         return true;
+      }
+    }
+
+    function validateEmailFormat(customer) {
+      //Validate that email have @ and .*
+      var email = customer.get('email');
+      var regex = new RegExp(
+        /^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/
+      );
+      if (email === '') {
+        return true;
+      } else {
+        return regex.test(email) ? true : false;
+      }
+    }
+
+    function validatePhoneFormat(phone) {
+      //Validate that phone only have numbers
+      var regex = new RegExp(/^([0-9])*$/);
+      if (phone === '') {
+        return true;
+      } else {
+        return regex.test(phone) ? true : false;
       }
     }
 
     function validateForm(form) {
       if (inEvent.validations) {
         var customer = form.model.get('customer'),
-          errors = checkMandatoryFields(
-            form.$.customerOnlyFields.children,
-            customer
-          );
+          errors = '';
+        var contactInfoErrors = checkMandatoryFields(
+          form.$.customerOnlyFields.$.contactInfo.$.contactInfoFields.children,
+          customer
+        );
+        if (contactInfoErrors) {
+          errors += contactInfoErrors + ', ';
+        }
+        var personalInfoErrors = checkMandatoryFields(
+          form.$.customerOnlyFields.$.personalInfo.$.personalInfoFields
+            .children,
+          customer
+        );
+        if (personalInfoErrors) {
+          errors += personalInfoErrors + ', ';
+        }
+        var otherInfoErrors = checkMandatoryFields(
+          form.$.customerOnlyFields.$.otherInfo.$.otherInfoFields.children,
+          customer
+        );
+        if (otherInfoErrors) {
+          errors += otherInfoErrors + ', ';
+        }
         if (form.$.invoicingAddrFields.showing) {
           var invoicingErrors = checkMandatoryFields(
             form.$.invoicingAddrFields.children,
             customer
           );
           if (invoicingErrors) {
-            if (errors) {
-              errors += ', ';
-            }
             errors +=
               form.$.invoicingAddrFields
                 .getClassAttribute()
@@ -530,13 +632,44 @@ enyo.kind({
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_TooLongName'));
           return false;
         }
-        if (!validateSMS(customer)) {
+        if (!validateSMS(customer, form)) {
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_PhoneRequired'));
+
           return false;
         }
-        if (!validateEmail(customer)) {
+        if (!validateEmail(customer, form)) {
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_EmailRequired'));
           return false;
+        }
+        var emailField =
+          form.$.customerOnlyFields.$.contactInfo.$.contactInfoFields
+            .children[2];
+        if (!validateEmailFormat(customer)) {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_WrongEmailFormat'));
+          emailField.setMessage(OB.I18N.getLabel('OBPOS_WrongFormat'), true);
+          return false;
+        } else {
+          emailField.setMessage();
+        }
+        var phoneField =
+          form.$.customerOnlyFields.$.contactInfo.$.contactInfoFields
+            .children[0];
+        if (!validatePhoneFormat(customer.get('phone'))) {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_WrongPhoneFormat'));
+          phoneField.setMessage(OB.I18N.getLabel('OBPOS_WrongFormat'), true);
+          return false;
+        } else {
+          phoneField.setMessage();
+        }
+        var altPhoneField =
+          form.$.customerOnlyFields.$.contactInfo.$.contactInfoFields
+            .children[1];
+        if (!validatePhoneFormat(customer.get('alternativePhone'))) {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_WrongAltPhoneFormat'));
+          altPhoneField.setMessage(OB.I18N.getLabel('OBPOS_WrongFormat'), true);
+          return false;
+        } else {
+          altPhoneField.setMessage();
         }
       }
       return true;
@@ -623,6 +756,7 @@ enyo.kind({
     }
     this.$.shipLbl.setContent(OB.I18N.getLabel('OBPOS_LblShipAddr'));
     this.$.invLbl.setContent(OB.I18N.getLabel('OBPOS_LblBillAddr'));
+    this.$.statisticsLbl.setContent(OB.I18N.getLabel('OBPOS_LblStatistics'));
     this.attributeContainer = this.$.customerAttributes;
     //Sort Attributes
     if (OB.MobileApp.model.get('permissions').OBPOS_CustomerCompSortOrder) {
@@ -652,16 +786,76 @@ enyo.kind({
         // Don't do anything if exception is thrown
       }
     }
+
+    //Create Field Group along with Fields
     enyo.forEach(
-      this.newAttributes,
+      this.fieldGroups,
+      function(fg) {
+        //Section
+        this.$.customerOnlyFields.createComponent({
+          name: fg.sectionName,
+          classes:
+            'obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-' +
+            fg.sectionName
+        });
+        //Label
+        this.$.customerOnlyFields.$[fg.sectionName].createComponent({
+          name: fg.sectionLableName,
+          kind: 'OB.UI.FormSection.Label',
+          content: OB.I18N.getLabel(fg.title),
+          classes:
+            'obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-' +
+            fg.sectionName +
+            '-' +
+            fg.sectionLableName
+        });
+        //FieldSection
+        this.$.customerOnlyFields.$[fg.sectionName].createComponent({
+          name: fg.sectionFieldsName,
+          classes:
+            'obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-' +
+            fg.sectionName +
+            '-' +
+            fg.sectionFieldsName +
+            ' u-clearBoth'
+        });
+        //FieldLine
+        enyo.forEach(
+          this.newAttributes,
+          function(natt) {
+            if (natt.fgSection === undefined) {
+              natt.fgSection = 'OBPOS_FG_OthersInformation';
+            }
+            if (natt.fgSection === fg.groupName) {
+              this.$.customerOnlyFields.$[fg.sectionName].$[
+                fg.sectionFieldsName
+              ].createComponent(
+                {
+                  kind: 'OB.UI.CustomerPropertyLine',
+                  name: 'line_' + natt.name,
+                  classes:
+                    'obObposPointOfSaleUiCustomersEditCreatecustomers-customerOnlyFields-obUiCustomerPropertyLine obUiCustomerPropertyLine_' +
+                    natt.name,
+                  coreElement: natt
+                },
+                {
+                  owner: me.attributeContainer
+                }
+              );
+            }
+          },
+          this
+        );
+      },
+      this
+    );
+    enyo.forEach(
+      this.sameAddrCheckAttributes,
       function(natt) {
         this.$.customerOnlyFields.createComponent(
           {
             kind: 'OB.UI.CustomerPropertyLine',
             name: 'line_' + natt.name,
-            classes:
-              'obObposPointOfSaleUiCustomersEditCreatecustomers-customerOnlyFields-obUiCustomerPropertyLine obUiCustomerPropertyLine_' +
-              natt.name,
             coreElement: natt
           },
           {
@@ -700,6 +894,24 @@ enyo.kind({
             classes:
               'obObposPointOfSaleUiCustomersEditCreatecustomers-invoicingAddrFields-obUiCustomerPropertyLine obUiCustomerPropertyLine_' +
               natt.name,
+            coreElement: natt
+          },
+          {
+            owner: me.attributeContainer
+          }
+        );
+      },
+      this
+    );
+    enyo.forEach(
+      this.statisticsAttributes,
+      function(natt) {
+        this.$.statisticsFields.createComponent(
+          {
+            kind: 'OB.UI.CustomerPropertyLine',
+            name: 'line_' + natt.name,
+            classes:
+              'obObposPointOfSaleUiCustomersEditCreatecustomers-statisticsFields-obUiCustomerPropertyLine',
             coreElement: natt
           },
           {
@@ -776,25 +988,29 @@ enyo.kind({
   },
   loadValue: function(inSender, inEvent) {
     var me = this;
-    var form, i;
+    var form, i, contactpreferences;
+    form = me.formElement.parent;
+
+    //Get Contact Preference Element
+    for (i = 0; i < form.children.length; i++) {
+      if (form.children[i].name === 'line_contactpreferences') {
+        contactpreferences = form.children[i];
+      }
+    }
+
     if (inEvent.customer !== undefined) {
       if (inEvent.customer.get(me.modelProperty) !== undefined) {
         me.setChecked(inEvent.customer.get(me.modelProperty));
       }
-      form = me.formElement.parent;
-      for (i = 0; i < form.children.length; i++) {
-        if (form.children[i].name === 'line_contactpreferences') {
-          var contactpreferences = form.children[i];
-          var commercialauth = inEvent.customer.attributes.commercialauth;
-          if (commercialauth) {
-            contactpreferences.show();
-          } else {
-            contactpreferences.hide();
-          }
-        }
+      var commercialauth = inEvent.customer.attributes.commercialauth;
+      if (commercialauth) {
+        contactpreferences.show();
+      } else {
+        contactpreferences.hide();
       }
     } else {
       me.setChecked(false);
+      contactpreferences.hide();
     }
     this.inherited(arguments);
   },
@@ -936,6 +1152,9 @@ enyo.kind({
           }
         }
       }
+    } else {
+      me.$.smsLabelCheck.setChecked(false);
+      me.$.emailLabelCheck.setChecked(false);
     }
     this.doHandleFormElementStyle();
   },

@@ -10525,14 +10525,29 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
-
 /*
 # Component: OB.UI.CustomerTextPropertyAddr
 # Inherits: [OB.UI.CustomerTextProperty]
 */
 .obUiCustomerTextPropertyAddr {}
 
-
+/*
+# Component: OB.UI.CustomerStatisticsTextProperty
+# Inherits: [enyo.Input]
+*/
+.obUiCustomerStatisticsTextProperty {
+  width: 100%;
+  height: 30px;
+  margin: 0px;
+  background-color: white;
+  padding: 4px;
+  margin-bottom: 9px;
+  color: #555555;
+  border: 1px solid #cccccc;
+  font-size: var(--font-medium);
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+    
 /*
 # Component: OB.UI.SwitchShippingInvoicingAddr
 */
@@ -10608,23 +10623,81 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   overflow-x: hidden;
 }
 
+
 .obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields {
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-personalInfo{}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-personalInfo-personalInfoLbl{
+	/* Inherits: [OB.UI.FormSection.Label] */
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-personalInfo-personalInfoFields{
   display: grid;
   grid-auto-flow: row;
   grid-template-columns: 1fr 1fr 1fr;
-  grid-column-gap: 15px;
 }
 
 @media all and (max-aspect-ratio: 9/8) {
-  .obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields {
+  .obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-personalInfo-personalInfoFields {
     display: grid;
     grid-auto-flow: row;
     grid-template-columns: 1fr;
   }
 }
 
-.obObposPointOfSaleUiCustomersEditCreatecustomers-customerOnlyFields-obUiCustomerPropertyLine {
-/* Inherits: [OB.UI.CustomerPropertyLine] */
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-personalInfo-personalInfoFields-obUiCustomerPropertyLine {
+	/* Inherits: [OB.UI.CustomerPropertyLine] */
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-contactInfo{}
+    
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-contactInfo-contactInfoLbl{
+	/* Inherits: [OB.UI.FormSection.Label] */
+} 
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-contactInfo-contactInfoFields{
+  display: grid;
+  grid-auto-flow: row;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+@media all and (max-aspect-ratio: 9/8) {
+  .obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-contactInfo-contactInfoFields {
+    display: grid;
+    grid-auto-flow: row;
+    grid-template-columns: 1fr;
+  }
+}
+
+      
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-contactInfo-contactInfoFields-obUiCustomerPropertyLine {
+	/* Inherits: [OB.UI.CustomerPropertyLine] */
+}
+             
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-otherInfo{}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-otherInfo-otherInfoLbl{
+	/* Inherits: [OB.UI.FormSection.Label] */
+} 
+ 
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-otherInfo-otherInfoFields{
+  display: grid;
+  grid-auto-flow: row;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+@media all and (max-aspect-ratio: 9/8) {
+  .obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-otherInfo-otherInfoFields {
+    display: grid;
+    grid-auto-flow: row;
+    grid-template-columns: 1fr;
+  }
+}
+       
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-otherInfo-otherInfoFields-obUiCustomerPropertyLine {
+	/* Inherits: [OB.UI.CustomerPropertyLine] */
 }
 
 
@@ -10726,9 +10799,32 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obObposPointOfSaleUiCustomersEditCreatecustomers-invoicingAddrFields-obUiCustomerPropertyLine {
 /* Inherits: [OB.UI.CustomerPropertyLine] */
 }
-
 .obObposPointOfSaleUiCustomersEditCreatecustomers-invoicingAddrFields-obUiCustomerPropertyLine .obUiFormElement-icon {
   width: 40px;
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-statistics {}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-statistics-statisticsLbl {
+	/*OB.UI.FormSection.Label*/
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-statistics-statisticsFields {
+  display: grid;
+  grid-auto-flow: row;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+@media all and (max-aspect-ratio: 9/8) {
+  .obObposPointOfSaleUiCustomersEditCreatecustomers-statistics-statisticsFields {
+    display: grid;
+    grid-auto-flow: row;
+    grid-template-columns: 1fr;
+  }
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-statisticsFields-obUiCustomerPropertyLine {
+/* Inherits: [OB.UI.CustomerPropertyLine] */
 }
 
 /*************************   *************************/
@@ -11066,6 +11162,22 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObPosPointOfSaleUiCustomersEditCustomersImpl-contactpreferences {
   /* Inherits: [OB.UI.CustomerCheckComboProperty] */
+}
+
+.obObPosPointOfSaleUiCustomersEditCustomersImpl-recency {
+	/* Inherits: [OB.UI.CustomerSatisticsTextProperty] */
+}
+
+.obObPosPointOfSaleUiCustomersEditCustomersImpl-frequency {
+	/* Inherits: [OB.UI.CustomerSatisticsTextProperty] */
+}
+
+.obObPosPointOfSaleUiCustomersEditCustomersImpl-monetaryValue {
+	/* Inherits: [OB.UI.CustomerSatisticsTextProperty] */
+}
+
+.obObPosPointOfSaleUiCustomersEditCustomersImpl-averageCart {
+	/* Inherits: [OB.UI.CustomerSatisticsTextProperty] */
 }
 
 
