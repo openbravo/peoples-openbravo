@@ -19,6 +19,7 @@
 
 package org.openbravo.erpCommon.businessUtility;
 
+import java.util.Collection;
 import java.util.Iterator;
 
 import javax.enterprise.inject.Any;
@@ -57,12 +58,12 @@ public class CancelAndReplaceOrderHookCaller {
    *          because the Cancel and Replace has been executed from Web POS.
    */
   public void executeHook(boolean replaceOrder, boolean triggersDisabled, Order oldOrder,
-      Order newOrder, Order inverseOrder, JSONObject jsonorder) throws Exception {
+      Collection<Order> newOrder, Order inverseOrder, JSONObject jsonorder) throws Exception {
     executeHooks(replaceOrder, triggersDisabled, oldOrder, newOrder, inverseOrder, jsonorder);
   }
 
   private void executeHooks(boolean replaceOrder, boolean triggersDisabled, Order oldOrder,
-      Order newOrder, Order inverseOrder, JSONObject jsonorder) throws Exception {
+      Collection<Order> newOrder, Order inverseOrder, JSONObject jsonorder) throws Exception {
     for (Iterator<CancelAndReplaceOrderHook> processIterator = cancelAndReplaceOrderHookProcesses
         .iterator(); processIterator.hasNext();) {
       CancelAndReplaceOrderHook process = processIterator.next();
