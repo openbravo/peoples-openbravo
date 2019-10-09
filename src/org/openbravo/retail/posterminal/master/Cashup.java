@@ -1,6 +1,5 @@
 /*
  ************************************************************************************
- * Copyright (C) 2014-2018 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -297,7 +296,9 @@ public class Cashup extends JSONProcessSimple {
 
         // Get Payment Method ID and Reason ID
         String financialacct = cashMgmtJSON.get("account").toString();
-        String hqlPaymentMethod = "select oap.id as id, oap.obretcoCmevents.id as reason from OBPOS_App_Payment oap where oap.financialAccount.id = :financialacct and oap.obposApplications.id = :terminal";
+        String hqlPaymentMethod = "select oap.id as id, oap.obretcoCmevents.id as reason "
+            + "from OBPOS_App_Payment oap "
+            + "where oap.active = true and oap.financialAccount.id = :financialacct and oap.obposApplications.id = :terminal";
         SimpleQueryBuilder paymentMethodbuilder = new SimpleQueryBuilder(hqlPaymentMethod,
             OBContext.getOBContext().getCurrentClient().getId(),
             OBContext.getOBContext().getCurrentOrganization().getId(), null, null, null);
