@@ -280,34 +280,31 @@ public class OBScheduler {
     dateTimeFormat = getConfigParameters().getJavaDateTimeFormat();
     sqlDateTimeFormat = getConfigParameters().getSqlDateTimeFormat();
 
-    // If the JobStore persists the Jobs and Triggers between restarts, there is no need
-    // to reload them
-    if (!schdlr.getMetaData().isJobStoreSupportsPersistence()) {
-      ProcessRequestData[] data = null;
-      try {
-        data = ProcessRequestData.selectByStatus(getConnection(), SCHEDULED);
+    ProcessRequestData[] data = null;
+    try {
+      data = ProcessRequestData.selectByStatus(getConnection(), SCHEDULED);
 
-        for (final ProcessRequestData request : data) {
-          final String requestId = request.id;
-          final VariablesSecureApp vars = ProcessContext.newInstance(request.obContext).toVars();
+      for (final ProcessRequestData request : data) {
+        final String requestId = request.id;
+        final VariablesSecureApp vars = ProcessContext.newInstance(request.obContext).toVars();
 
-          if ("Direct".equals(request.channel)
-              || TriggerProvider.TIMING_OPTION_IMMEDIATE.equals(request.timingOption)) {
-            // do not re-schedule immediate and direct requests that were in execution last time
-            // Tomcat stopped
-            ProcessRequestData.update(getConnection(), Process.SYSTEM_RESTART, vars.getUser(),
-                requestId);
-            log.debug(request.channel + " run of process id " + request.processId
-                + " was scheduled, marked as 'System Restart'");
-            continue;
-          }
-
-          scheduleProcess(requestId, vars);
+        if ("Direct".equals(request.channel)
+            || TriggerProvider.TIMING_OPTION_IMMEDIATE.equals(request.timingOption)) {
+          // do not re-schedule immediate and direct requests that were in execution last time
+          // Tomcat stopped
+          ProcessRequestData.update(getConnection(), Process.SYSTEM_RESTART, vars.getUser(),
+              requestId);
+          log.debug(request.channel + " run of process id " + request.processId
+              + " was scheduled, marked as 'System Restart'");
+          continue;
         }
-      } catch (final ServletException e) {
-        log.error("An error occurred retrieving scheduled process data: " + e.getMessage(), e);
+
+        scheduleProcess(requestId, vars);
       }
+    } catch (final ServletException e) {
+      log.error("An error occurred retrieving scheduled process data: " + e.getMessage(), e);
     }
+
   }
 
   private void scheduleProcess(String requestId, VariablesSecureApp vars)
