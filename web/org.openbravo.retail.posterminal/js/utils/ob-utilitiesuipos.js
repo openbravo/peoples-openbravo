@@ -495,21 +495,19 @@ OB.UTIL.checkApproval = function(
             },
             enyo.bind(this, function(users) {
               var supervisor,
-                date,
                 permissions = [];
               if (users.models.length === 0) {
                 // new user
                 if (inResponse.data.canApprove) {
                   // insert in local db only in case it is supervisor for current type
-                  date = new Date().toString();
                   supervisor = new OB.Model.Supervisor();
                   supervisor.set('id', inResponse.data.userId);
                   supervisor.set('name', username);
-                  supervisor.set(
-                    'password',
-                    OB.MobileApp.model.generate_sha1(password + date)
+                  OB.Model.PasswordHash.updatePasswordIfNeeded(
+                    supervisor,
+                    password
                   );
-                  supervisor.set('created', date);
+                  supervisor.set('created', new Date().toString());
                   // Set all permissions
                   if (inResponse.data.preference) {
                     _.each(
@@ -528,11 +526,9 @@ OB.UTIL.checkApproval = function(
               } else {
                 // update existent user granting or revoking permission
                 supervisor = users.models[0];
-                supervisor.set(
-                  'password',
-                  OB.MobileApp.model.generate_sha1(
-                    password + supervisor.get('created')
-                  )
+                OB.Model.PasswordHash.updatePasswordIfNeeded(
+                  supervisor,
+                  password
                 );
                 if (supervisor.get('permissions')) {
                   permissions = JSON.parse(supervisor.get('permissions'));
@@ -589,10 +585,7 @@ OB.UTIL.checkApproval = function(
                   _.each(users.models, function(user) {
                     if (
                       username === user.get('name') &&
-                      user.get('password') ===
-                        OB.MobileApp.model.generate_sha1(
-                          password + user.get('created')
-                        )
+                      OB.Model.PasswordHash.checkPassword(user, password)
                     ) {
                       _.each(
                         approvalType,
@@ -629,12 +622,7 @@ OB.UTIL.checkApproval = function(
               );
             } else {
               supervisor = users.models[0];
-              if (
-                supervisor.get('password') ===
-                OB.MobileApp.model.generate_sha1(
-                  password + supervisor.get('created')
-                )
-              ) {
+              if (OB.Model.PasswordHash.checkPassword(supervisor, password)) {
                 _.each(
                   approvalType,
                   function(perm) {
@@ -663,10 +651,7 @@ OB.UTIL.checkApproval = function(
                       _.each(users.models, function(user) {
                         if (
                           username === user.get('name') &&
-                          user.get('password') ===
-                            OB.MobileApp.model.generate_sha1(
-                              password + user.get('created')
-                            )
+                          OB.Model.PasswordHash.checkPassword(user, password)
                         ) {
                           _.each(
                             approvalType,

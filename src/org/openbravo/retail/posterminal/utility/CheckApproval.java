@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.enterprise.inject.Any;
@@ -30,6 +31,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
+import org.openbravo.authentication.hashing.PasswordHash;
 import org.openbravo.base.secureApp.AllowedCrossDomainsHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -40,7 +42,6 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.retail.posterminal.ApprovalCheckHook;
 import org.openbravo.retail.posterminal.ApprovalPreCheckHook;
 import org.openbravo.retail.posterminal.OBPOSApplications;
-import org.openbravo.utils.FormatUtilities;
 
 public class CheckApproval extends HttpServlet {
 
@@ -82,19 +83,14 @@ public class CheckApproval extends HttpServlet {
       executeApprovalPreCheckHook(username, password, terminal, approvalType, attributes);
       JSONObject result = new JSONObject();
 
-      OBCriteria<User> qUser = OBDal.getInstance().createCriteria(User.class);
-      qUser.add(Restrictions.eq(User.PROPERTY_USERNAME, username));
-      qUser.add(Restrictions.eq(User.PROPERTY_PASSWORD, FormatUtilities.sha1Base64(password)));
-      qUser.setFilterOnReadableOrganization(false);
-      qUser.setFilterOnReadableClients(false);
-      List<User> qUserList = qUser.list();
-
-      if (qUserList.isEmpty()) {
+      Optional<User> supervisor = PasswordHash.getUserWithPassword(username, password);
+      if (!supervisor.isPresent()) {
         result.put("status", 1);
         JSONObject jsonError = new JSONObject();
         jsonError.put("message", OBMessageUtils.getI18NMessage("OBPOS_InvalidUserPassword", null));
         result.put("error", jsonError);
       } else {
+        String supervisorId = supervisor.get().getId();
         String approvals = "'" + approvalType.getString(0) + "'";
         for (int i = 1; i < approvalType.length(); i++) {
           approvals = approvals + ",'" + approvalType.getString(i) + "'";
@@ -114,10 +110,11 @@ public class CheckApproval extends HttpServlet {
             + "   and (p.visibleAtOrganization.id = :org "
             + "   or p.visibleAtOrganization.id in (:orgList) "
             + "   or p.visibleAtOrganization is null) group by p.property";
+
         Query<String> preferenceQuery = OBDal.getInstance()
             .getSession()
             .createQuery(hqlQuery, String.class);
-        preferenceQuery.setParameter("user", qUserList.get(0).getId());
+        preferenceQuery.setParameter("user", supervisorId);
         preferenceQuery.setParameter("org", organization);
         preferenceQuery.setParameterList("orgList", naturalTreeOrgList);
 
@@ -139,7 +136,7 @@ public class CheckApproval extends HttpServlet {
               c++;
             }
           }
-          jsonData.put("userId", qUserList.get(0).getId());
+          jsonData.put("userId", supervisorId);
           jsonData.put("canApprove", c >= approvalType.length());
           jsonData.put("preference", jsonPreference);
           result.put("data", jsonData);
