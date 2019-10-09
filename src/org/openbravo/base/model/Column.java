@@ -64,7 +64,6 @@ public class Column extends ModelObject {
   private String valueMin;
   private String valueMax;
   private String sqlLogic;
-  private String developmentStatus;
   private Boolean isTransient;
   private String isTransientCondition;
   private Integer position;
@@ -214,14 +213,6 @@ public class Column extends ModelObject {
 
   public void setValueMax(String valueMax) {
     this.valueMax = valueMax;
-  }
-
-  public String getDevelopmentStatus() {
-    return developmentStatus;
-  }
-
-  public void setDevelopmentStatus(String developmentStatus) {
-    this.developmentStatus = developmentStatus;
   }
 
   public boolean isPrimitiveType() {

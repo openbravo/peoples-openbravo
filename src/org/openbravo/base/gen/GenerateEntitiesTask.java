@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.WordUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.tools.ant.Task;
@@ -138,6 +139,7 @@ public class GenerateEntitiesTask extends Task {
 
     // process template & write file for each entity
     List<Entity> entities = ModelProvider.getInstance().getModel();
+    ModelProvider.getInstance().addHelpToModel();
     for (Entity entity : entities) {
       // If the entity is associated with a datasource based table or based on an HQL query, do not
       // generate a Java file
@@ -319,5 +321,15 @@ public class GenerateEntitiesTask extends Task {
     final Configuration cfg = new Configuration();
     cfg.setObjectWrapper(new DefaultObjectWrapper());
     return cfg;
+  }
+
+  public String formatSqlLogic(String sqlLogic) {
+    if (sqlLogic != null) {
+      final String sqlLogicEscaped = sqlLogic.replaceAll("\\*/", " ");
+      final String wrappedSqlLogic = WordUtils.wrap(sqlLogicEscaped, 100);
+      return wrappedSqlLogic.replaceAll("\n", "\n       ");
+    } else {
+      return sqlLogic;
+    }
   }
 }

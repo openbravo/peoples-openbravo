@@ -30,14 +30,14 @@ import org.openbravo.model.common.enterprise.Organization;
 public interface OrganizationEnabled {
 
   /**
-   * Gets organization reference
+   * Gets organization field
    * 
    * @return organization
    */
   public Organization getOrganization();
 
   /**
-   * Sets organization reference
+   * Sets organization field
    * 
    * @param org
    */

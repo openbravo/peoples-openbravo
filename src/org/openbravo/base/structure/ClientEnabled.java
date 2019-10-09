@@ -30,14 +30,14 @@ import org.openbravo.model.ad.system.Client;
 public interface ClientEnabled {
 
   /**
-   * Client reference
+   * Client field
    * 
    * @return client
    */
   public Client getClient();
 
   /**
-   * Client reference
+   * Client field
    * 
    * @param client
    */

@@ -37,8 +37,10 @@ package ${entity.packageName};
 ${i}
 </#list>
 /**
- * Entity class for entity ${entity.name} (stored in table ${entity.tableName}).
- *
+ * Entity class for entity ${entity.name} (stored in table ${entity.tableName}).<#if entity.help??>
+ * <br>
+ * Help: {@literal ${entity.help}}</#if>
+ * <br>
  * NOTE: This class should not be instantiated directly. To instantiate this
  * class the {@link org.openbravo.base.provider.OBProvider} should be used.
  */
@@ -46,17 +48,19 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
     private static final long serialVersionUID = 1L;
     public static final String TABLE_NAME = "${entity.tableName}";
     public static final String ENTITY_NAME = "${entity.name}";
+
     <#list entity.properties as p>
     <#if !p.computedColumn>
     <@addDeprecationIfNeeded property=p />
     <#if p.allowDerivedRead() && !p.isBeingReferenced()>
     /**
-     * Property ${p.name} stored <#if p.columnName??>in column ${p.columnName} </#if>in table ${entity.tableName}
-     * @see <#if p.isAuditInfo()>Traceable </#if><#if p.isClientOrOrganization() && p.getColumnName() == "AD_Org_ID">OrganizationEnabled </#if><#if p.isClientOrOrganization() && p.getColumnName() != "AD_Org_ID">ClientEnabled </#if><#if p.isActiveColumn()>ActiveEnabled </#if><#if p.isIdentifier()>${p.entity.name} </#if>
+     * Property ${p.name} stored <#if p.columnName??>in column ${p.columnName} </#if>in table ${entity.tableName}<#if !p.isIdentifier()>
+     * @see <#if p.isAuditInfo()>Traceable </#if><#if p.isClientOrOrganization() && p.getColumnName() == "AD_Org_ID">OrganizationEnabled </#if><#if p.isClientOrOrganization() && p.getColumnName() != "AD_Org_ID">ClientEnabled </#if><#if p.isActiveColumn()>ActiveEnabled </#if></#if>
      */
     <#else>
     /**
-     * Property ${p.name} stored <#if p.columnName??>in column ${p.columnName} </#if>in table ${entity.tableName}
+     * Property ${p.name} stored <#if p.columnName??>in column ${p.columnName} </#if>in table ${entity.tableName}<#if p.help??><br>
+     * Help: {@literal ${p.help}}</#if>
      */
     </#if>
     public static final String PROPERTY_${p.name?upper_case} = "${p.name}";
@@ -72,6 +76,14 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
      * nor OBCriteria.
      */
     <#list entity.computedColumnProperties as p>
+
+    /**
+     * Computed column for property ${p.name}<br>
+     * <#if p.help??>
+     * Help: {@literal ${p.help}}</#if><br>
+     * Computed from: <br>
+     * {@code ${util.formatSqlLogic(p.sqlLogic)}}
+     */
     public static final String COMPUTED_COLUMN_${p.name?upper_case} = "${p.name}";
     </#list>
 
@@ -92,7 +104,7 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
     <#list entity.properties as p>
     <#if !p.oneToMany>
     /**
-     * @see ${entity.simpleClassName}#PROPERTY_${p.name?upper_case}
+     * @see ${entity.simpleClassName}#<#if p.computedColumn>COMPUTED_COLUMN<#else>PROPERTY</#if>_${p.name?upper_case}
      */
     <#if p.name?matches("Id")>
     @Override
@@ -109,7 +121,7 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
     </#if>
     }
     /**
-     * @see ${entity.simpleClassName}#PROPERTY_${p.name?upper_case}
+     * @see ${entity.simpleClassName}#<#if p.computedColumn>COMPUTED_COLUMN<#else>PROPERTY</#if>_${p.name?upper_case}
      */
     <#if p.name?matches("Id")>
     @Override
@@ -130,7 +142,8 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
 	</#list>
 	<#list entity.properties as p>
 	<#if p.oneToMany>
-	/**
+    /**<#if p.targetEntity.help??>
+     * {@literal ${p.targetEntity.help}}<br></#if>
      * @see ${p.shorterNameTargetEntity}
      */
 	<@addDeprecationIfNeeded property=p />
@@ -143,7 +156,8 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
       </#if>
     }
 
-    /**
+    /**<#if p.targetEntity.help??>
+     * {@literal ${p.targetEntity.help}}<br></#if>
      * @see ${p.shorterNameTargetEntity}
      */
     <@addDeprecationIfNeeded property=p />
@@ -172,13 +186,13 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
 		public ${p.typeName} «getter((Property)p)»() {
 			return ${p.javaName};
 		}
-		
+
 		public void set${p.getterSetterName?cap_first}(${p.typeName} ${p.javaName}) {
 			this.${p.javaName} = ${p.javaName};
 		}
 		</#if>
 		</#list>
-		
+
 	    public boolean equals(Object obj) {
 			if (this == obj) {
     			return true;
@@ -191,7 +205,7 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
 		<#if p.partOfCompositeId>
 			if (!areEqual(«getter((Property)p)»(), otherId.«getter((Property)p)»())) {
 				return false;
-			} 
+			}
 		</#if>
 		</#list>
 			return true;
@@ -203,11 +217,11 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
     		<#list entity.properties as p>
     		<#if p.partOfCompositeId>
 			if («getter((Property)p)»() != null) {
-				result +=«getter((Property)p)»().hashCode(); 
+				result +=«getter((Property)p)»().hashCode();
 			}
 			</#if>
 			</#list>
-    		
+
     		if (result == 0) {
     			return super.hashCode();
     		}
@@ -219,7 +233,7 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
 				return v1 == v2;
 			}
 			return v1.equals(v2);
-		}		
+		}
 	}
 	</#if>
 	<#if entity.hasComputedColumns()>
@@ -234,7 +248,7 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
         return get_computedColumns().${getter(p)}();
       }
       </#list>
-    
+
       return super.get(propName);
     }
     </#if>

@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.WordUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.base.expression.Evaluator;
@@ -99,6 +100,7 @@ public class Property {
   private Property translationProperty;
 
   private String sqlLogic;
+  private String help;
 
   private PropertyValidator validator;
 
@@ -1376,5 +1378,33 @@ public class Property {
   /** @see #isChildPropertyInParent() */
   public void setChildPropertyInParent(boolean isChildPropertyInParent) {
     this.isChildPropertyInParent = isChildPropertyInParent;
+  }
+
+  public String getHelp() {
+    return help;
+  }
+
+  /**
+   * Adds help to this property from corresponding column Removes comment escape character sequence
+   * and wraps comments over 100 characters
+   * 
+   * @param help
+   *          Help comment to add to this property
+   */
+  public void setHelp(String help) {
+    if (help != null) {
+      final String helpEscaped = help.replaceAll("\\*/", " ");
+      final String wrappedHelp = WordUtils.wrap(helpEscaped, 100);
+      this.help = wrappedHelp.replaceAll("\n", "\n       ");
+    } else {
+      this.help = help;
+    }
+  }
+
+  /**
+   * Removes help comment from this property
+   */
+  public void removeHelp() {
+    setHelp(null);
   }
 }

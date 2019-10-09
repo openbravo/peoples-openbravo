@@ -55,8 +55,11 @@ import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.base.session.UniqueConstraintColumn;
 import org.openbravo.base.util.Check;
 import org.openbravo.base.util.CheckException;
+import org.openbravo.data.UtilSql;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.database.ConnectionProviderImpl;
+import org.openbravo.exception.NoConnectionAvailableException;
+import org.openbravo.exception.PoolNotFoundException;
 
 /**
  * Builds the Runtime model base on the data model (application dictionary: table, column,
@@ -1101,5 +1104,91 @@ public class ModelProvider implements OBSingleton {
    */
   public Session getSession() {
     return initsession;
+  }
+
+  /**
+   * Adds help comments and deprecation status to corresponding entities and properties in the model
+   */
+  public void addHelpToModel() {
+    addHelpToEntities();
+    addHelpToProperties();
+  }
+
+  /**
+   * Gets and maps help to entities without using DAL as it has not been initialized here yet
+   */
+  private void addHelpToEntities() {
+    //@formatter:off
+    String qry = "SELECT ad_table_id, help "
+               + "FROM AD_TABLE ";
+    //@formatter:on
+    try (Connection connection = getConnection();
+        PreparedStatement ps = connection.prepareStatement(qry);
+        ResultSet resultSet = ps.executeQuery()) {
+      while (resultSet.next()) {
+        Entity entity = entitiesByTableId.get(UtilSql.getValue(resultSet, "ad_table_id"));
+        String helpComment = UtilSql.getValue(resultSet, "help");
+        if (helpComment == "") {
+          helpComment = null;
+        }
+        entity.setHelp(helpComment);
+      }
+    } catch (Exception e) {
+      log.error("Couldn't add help to entity. Failed database query.");
+      throw new OBException("Couldn't add help to entity, failed database query.", e);
+    }
+  }
+
+  /**
+   * Gets and maps help to properties without using DAL as it has not been initialized here yet
+   */
+  private void addHelpToProperties() {
+    //@formatter:off
+    String qry = "SELECT ad_table_id, columnname, help " +
+                 "FROM AD_COLUMN";
+    //@formatter:on
+    try (Connection connection = getConnection();
+        PreparedStatement ps = connection.prepareStatement(qry);
+        ResultSet resultSet = ps.executeQuery()) {
+      while (resultSet.next()) {
+        Entity entity = entitiesByTableId.get(UtilSql.getValue(resultSet, "ad_table_id"));
+        if (entity == null) {
+          continue;
+        }
+        String columnName = UtilSql.getValue(resultSet, "columnname");
+        String helpComment = UtilSql.getValue(resultSet, "help");
+        Property property = entity.getPropertyByColumnName(columnName);
+        if ("".equals(helpComment)) {
+          helpComment = null;
+        }
+        property.setHelp(helpComment);
+      }
+    } catch (Exception e) {
+      log.error("Not able to get column help from database.");
+      throw new OBException("Couldn't add help to column, failed database query.", e);
+    }
+  }
+
+  /**
+   * Removes help comments form all entities and properties in the model
+   */
+  public void removeHelpFromModel() {
+    for (final Entity entity : getModel()) {
+      entity.removeHelp();
+    }
+  }
+
+  private Connection getConnection() {
+    ConnectionProvider con = ConnectionProviderContextListener.getPool();
+    try {
+      if (con == null) {
+        con = new ConnectionProviderImpl(
+            OBPropertiesProvider.getInstance().getOpenbravoProperties());
+      }
+      return con.getConnection();
+    } catch (PoolNotFoundException | NoConnectionAvailableException e) {
+      log.error("Couldn't establish database connection in ModelProvider", e);
+      throw new OBException("Couldn't extablish database connection in ModelProvider.", e);
+    }
   }
 }
