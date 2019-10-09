@@ -44,7 +44,6 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.quartz.DateBuilder.IntervalUnit;
-import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerContext;
@@ -121,34 +120,15 @@ public class OBScheduler {
   }
 
   /**
-   * Schedule a new process (bundle) to run immediately in the background with the default Openbravo
-   * Job implementation.
+   * Schedule a new process (bundle) to run immediately in the background, using a random name for
+   * the Quartz's JobDetail.
    * 
-   * This will create a new record in AD_PROCESS_REQUEST.
+   * This will create a new record in AD_PROCESS_REQUEST. This method throws a
+   * {@link ServletException} if there is an error creating the AD_PROCESS_REQUEST information.
    * 
-   * @param bundle
-   * @throws SchedulerException
+   * @see #schedule(String, ProcessBundle)
    */
   public void schedule(ProcessBundle bundle) throws SchedulerException, ServletException {
-    schedule(bundle, DefaultJob.class.asSubclass(Job.class));
-  }
-
-  /**
-   * Schedule a new process (bundle) to run immediately in the background with the specified Job
-   * implementation.
-   * 
-   * This will create a new record in AD_PROCESS_REQUEST.
-   * 
-   * @param bundle
-   *          The bundle with all of the process' details
-   * @param jobClass
-   *          The Quartz Job implementation that will execute when
-   * 
-   * @throws SchedulerException
-   *           If something goes wrong.
-   */
-  public void schedule(ProcessBundle bundle, Class<? extends Job> jobClass)
-      throws SchedulerException, ServletException {
     if (bundle == null) {
       throw new SchedulerException("Process bundle cannot be null.");
     }
@@ -167,36 +147,25 @@ public class OBScheduler {
       ProcessRequestData.updateGroup(getConnection(), bundle.getGroupInfo().getRequest().getId(),
           requestId);
     }
-    schedule(requestId, bundle, jobClass);
+    schedule(requestId, bundle);
   }
 
   /**
-   * Schedule a process (bundle) with the specified requestId and using the default Openbravo Job
-   * implementation. The requestId is used in Quartz as the JobDetail's name. The details must be
-   * saved to AD_PROCESS_REQUEST before reaching this method.
+   * Schedule a process (bundle) with the specified request id. The request id is used in Quartz as
+   * the JobDetail's name. The details must be saved to AD_PROCESS_REQUEST before reaching this
+   * method.
    * 
    * @param requestId
-   *          the id of the request, the Quartz jobDetail name
+   *          the id of the process request used as the Quartz jobDetail name
    * @param bundle
-   *          the context bundle
+   *          The bundle with all of the process' details
+   * 
    * @throws SchedulerException
+   *           If something goes wrong with the process scheduling.
+   * @throws ServletException
+   *           If something goes wrong with the trigger creation.
    */
   public void schedule(String requestId, ProcessBundle bundle)
-      throws SchedulerException, ServletException {
-    schedule(requestId, bundle, DefaultJob.class.asSubclass(Job.class));
-  }
-
-  /**
-   * Schedule a process (bundle) with the specified requestId and the specified Job implementation.
-   * The requestId is used in Quartz as the JobDetail's name. The details must be saved to
-   * AD_PROCESS_REQUEST before reaching this method.
-   * 
-   * @param requestId
-   * @param bundle
-   * @param jobClass
-   * @throws SchedulerException
-   */
-  public void schedule(String requestId, ProcessBundle bundle, Class<? extends Job> jobClass)
       throws SchedulerException, ServletException {
     if (isNoExecuteBackgroundPolicy()) {
       log.info("Not scheduling process because current context background policy is 'no-execute'");
@@ -208,10 +177,7 @@ public class OBScheduler {
     if (bundle == null) {
       throw new SchedulerException("Process bundle cannot be null.");
     }
-    if (jobClass == null) {
-      throw new SchedulerException("Job class cannot be null.");
-    }
-    final JobDetail jobDetail = JobDetailProvider.newInstance(requestId, bundle, jobClass);
+    final JobDetail jobDetail = JobDetailProvider.newInstance(requestId, bundle);
     final Trigger trigger = TriggerProvider.newInstance(requestId, bundle, getConnection());
 
     sched.scheduleJob(jobDetail, trigger);
@@ -332,16 +298,14 @@ public class OBScheduler {
      *          The name of the JobDetail
      * @param bundle
      *          The Openbravo process bundle.
-     * @param jobClass
-     *          The class to be executed when Job.execute is called.
      * @throws SchedulerException
      */
-    private static JobDetail newInstance(String name, ProcessBundle bundle,
-        Class<? extends Job> jobClass) throws SchedulerException {
+    private static JobDetail newInstance(String name, ProcessBundle bundle)
+        throws SchedulerException {
       if (bundle == null) {
         throw new SchedulerException("Process bundle cannot be null.");
       }
-      final JobDetail jobDetail = newJob(jobClass).withIdentity(name, OB_GROUP).build();
+      final JobDetail jobDetail = newJob(DefaultJob.class).withIdentity(name, OB_GROUP).build();
       jobDetail.getJobDataMap().put(ProcessBundle.KEY, bundle);
 
       return jobDetail;
