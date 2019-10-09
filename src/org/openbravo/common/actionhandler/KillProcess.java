@@ -61,7 +61,7 @@ public class KillProcess extends BaseProcessActionHandler {
       // Get Jobs
       Scheduler scheduler = OBScheduler.getInstance().getScheduler();
       List<JobExecutionContext> jobs = scheduler.getCurrentlyExecutingJobs();
-      if (jobs.size() == 0) {
+      if (jobs.isEmpty()) {
         throw new Exception(OBMessageUtils.getI18NMessage("ProcessNotFound", null));
       }
 
