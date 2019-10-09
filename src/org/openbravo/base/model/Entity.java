@@ -74,6 +74,7 @@ public class Entity {
   private String className;
 
   private String help;
+  private Boolean isDeprecated;
   private boolean isInActive;
 
   private boolean isTraceable;
@@ -991,5 +992,23 @@ public class Entity {
     for (Property property : properties) {
       property.removeHelp();
     }
+  }
+
+  /**
+   * Removes deprecation status from entity and its properties
+   */
+  public void removeDeprecated() {
+    setDeprecated(null);
+    for (Property property : properties) {
+      property.setDeprecated(null);
+    }
+  }
+
+  public Boolean isDeprecated() {
+    return isDeprecated;
+  }
+
+  public void setDeprecated(Boolean deprecated) {
+    isDeprecated = deprecated;
   }
 }

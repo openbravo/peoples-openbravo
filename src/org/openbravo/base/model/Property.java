@@ -101,6 +101,7 @@ public class Property {
 
   private String sqlLogic;
   private String help;
+  private Boolean isDeprecated;
 
   private PropertyValidator validator;
 
@@ -1406,5 +1407,13 @@ public class Property {
    */
   public void removeHelp() {
     setHelp(null);
+  }
+
+  public Boolean isDeprecated() {
+    return isDeprecated;
+  }
+
+  public void setDeprecated(Boolean deprecated) {
+    isDeprecated = deprecated;
   }
 }

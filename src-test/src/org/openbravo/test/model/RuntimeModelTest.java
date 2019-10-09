@@ -379,7 +379,7 @@ public class RuntimeModelTest extends OBBaseTest {
     // with help
     int entitiesWithHelp = 0;
     int propertiesWithHelp = 0;
-    ModelProvider.getInstance().addHelpToModel();
+    ModelProvider.getInstance().addHelpAndDeprecationToModel(true);
     for (Entity entity : ModelProvider.getInstance().getModel()) {
       if (entity.getHelp() != null) {
         entitiesWithHelp++;
@@ -404,7 +404,7 @@ public class RuntimeModelTest extends OBBaseTest {
   public void testModelProviderKeepsNoHelpAfterRemoveHelp() {
     ModelProvider modelProvider = ModelProvider.getInstance();
     List<Entity> model = modelProvider.getModel();
-    modelProvider.addHelpToModel();
+    modelProvider.addHelpAndDeprecationToModel(true);
     boolean foundHelp = false;
     // Check every entity/property for help with getModelHelp
     for (Entity entity : model) {
@@ -421,7 +421,7 @@ public class RuntimeModelTest extends OBBaseTest {
     }
     assertTrue(foundHelp);
 
-    modelProvider.removeHelpFromModel();
+    modelProvider.removeHelpAndDeprecationFromModel();
     // Check modelProvider instance keeps its state and doesn't have help
     for (Entity entity : modelProvider.getModel()) {
       assertNull(entity.getHelp());

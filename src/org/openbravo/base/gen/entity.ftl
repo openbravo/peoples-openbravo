@@ -42,8 +42,12 @@ ${i}
  * Help: {@literal ${entity.help}}</#if>
  * <br>
  * NOTE: This class should not be instantiated directly. To instantiate this
- * class the {@link org.openbravo.base.provider.OBProvider} should be used.
+ * class the {@link org.openbravo.base.provider.OBProvider} should be used.<#if util.shouldAddDeprecation() && util.isDeprecated(entity)>
+ * @deprecated Table entity has been marked as deprecated on Development Status field.</#if>
  */
+<#if util.shouldAddDeprecation() && util.isDeprecated(entity)>
+@Deprecated
+</#if>
 public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsStatement} {
     private static final long serialVersionUID = 1L;
     public static final String TABLE_NAME = "${entity.tableName}";
@@ -51,18 +55,20 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
 
     <#list entity.properties as p>
     <#if !p.computedColumn>
-    <@addDeprecationIfNeeded property=p />
     <#if p.allowDerivedRead() && !p.isBeingReferenced()>
     /**
      * Property ${p.name} stored <#if p.columnName??>in column ${p.columnName} </#if>in table ${entity.tableName}<#if !p.isIdentifier()>
      * @see <#if p.isAuditInfo()>Traceable </#if><#if p.isClientOrOrganization() && p.getColumnName() == "AD_Org_ID">OrganizationEnabled </#if><#if p.isClientOrOrganization() && p.getColumnName() != "AD_Org_ID">ClientEnabled </#if><#if p.isActiveColumn()>ActiveEnabled </#if></#if>
+     * <@addDeprecationMessageIfNeeded property=p />
      */
     <#else>
     /**
      * Property ${p.name} stored <#if p.columnName??>in column ${p.columnName} </#if>in table ${entity.tableName}<#if p.help??><br>
      * Help: {@literal ${p.help}}</#if>
+     * <@addDeprecationMessageIfNeeded property=p />
      */
     </#if>
+    <@addDeprecationTagIfNeeded property=p />
     public static final String PROPERTY_${p.name?upper_case} = "${p.name}";
     </#if>
 
@@ -105,7 +111,9 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
     <#if !p.oneToMany>
     /**
      * @see ${entity.simpleClassName}#<#if p.computedColumn>COMPUTED_COLUMN<#else>PROPERTY</#if>_${p.name?upper_case}
+     * <@addDeprecationMessageIfNeeded property=p />
      */
+    <@addDeprecationTagIfNeeded property=p />
     <#if p.name?matches("Id")>
     @Override
     </#if>
@@ -122,7 +130,9 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
     }
     /**
      * @see ${entity.simpleClassName}#<#if p.computedColumn>COMPUTED_COLUMN<#else>PROPERTY</#if>_${p.name?upper_case}
+     * <@addDeprecationMessageIfNeeded property=p />
      */
+     <@addDeprecationTagIfNeeded property=p />
     <#if p.name?matches("Id")>
     @Override
     </#if>
@@ -145,8 +155,9 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
     /**<#if p.targetEntity.help??>
      * {@literal ${p.targetEntity.help}}<br></#if>
      * @see ${p.shorterNameTargetEntity}
+     * <@addDeprecationMessageIfNeeded property=p/>
      */
-	<@addDeprecationIfNeeded property=p />
+	<@addDeprecationTagIfNeeded property=p />
     @SuppressWarnings("unchecked")
     public ${theList(entity)}<${p.shorterNameTargetEntity}> get${p.name?cap_first}() {
       <#if !p.computedColumn>
@@ -159,8 +170,9 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
     /**<#if p.targetEntity.help??>
      * {@literal ${p.targetEntity.help}}<br></#if>
      * @see ${p.shorterNameTargetEntity}
+     * <@addDeprecationMessageIfNeeded property=p/>
      */
-    <@addDeprecationIfNeeded property=p />
+    <@addDeprecationTagIfNeeded property=p />
     public void set${p.getterSetterName?cap_first}(${theList(entity)}<${p.shorterNameTargetEntity}> ${p.name}) {
         set(PROPERTY_${p.name?upper_case}, ${p.name});
     }
@@ -253,9 +265,14 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
     }
     </#if>
 }
-<#macro addDeprecationIfNeeded property>
-    <#if util.isDeprecated(property)>
-    /** @deprecated ${util.getDeprecationMessage(property)}*/
+<#macro addDeprecationMessageIfNeeded property>
+    <#if util.shouldAddDeprecation() && util.isDeprecated(property)>
+@deprecated ${util.getDeprecationMessage(property)}
+    </#if>
+</#macro>
+
+<#macro addDeprecationTagIfNeeded property>
+    <#if util.shouldAddDeprecation() && util.isDeprecated(property)>
     @Deprecated
     </#if>
 </#macro>

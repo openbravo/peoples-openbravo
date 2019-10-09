@@ -77,6 +77,7 @@ import org.openbravo.exception.PoolNotFoundException;
 
 public class ModelProvider implements OBSingleton {
   private static final Logger log = LogManager.getLogger();
+  private static final String DEPRECATED_STATUS = "DP";
 
   private static ModelProvider instance;
   private List<Entity> model = null;
@@ -1109,17 +1110,18 @@ public class ModelProvider implements OBSingleton {
   /**
    * Adds help comments and deprecation status to corresponding entities and properties in the model
    */
-  public void addHelpToModel() {
-    addHelpToEntities();
-    addHelpToProperties();
+  public void addHelpAndDeprecationToModel(boolean addDeprecation) {
+    addHelpAndDeprecationToEntities(addDeprecation);
+    addHelpAndDeprecationToProperties(addDeprecation);
   }
 
   /**
-   * Gets and maps help to entities without using DAL as it has not been initialized here yet
+   * Gets and maps and deprecation status to entities without using DAL as it has not been
+   * initialized here yet
    */
-  private void addHelpToEntities() {
+  private void addHelpAndDeprecationToEntities(boolean addDeprecation) {
     //@formatter:off
-    String qry = "SELECT ad_table_id, help "
+    String qry = "SELECT ad_table_id, help, developmentStatus "
                + "FROM AD_TABLE ";
     //@formatter:on
     try (Connection connection = getConnection();
@@ -1128,10 +1130,14 @@ public class ModelProvider implements OBSingleton {
       while (resultSet.next()) {
         Entity entity = entitiesByTableId.get(UtilSql.getValue(resultSet, "ad_table_id"));
         String helpComment = UtilSql.getValue(resultSet, "help");
-        if (helpComment == "") {
+        if ("".equals(helpComment)) {
           helpComment = null;
         }
         entity.setHelp(helpComment);
+        if (addDeprecation) {
+          String developmentStatus = UtilSql.getValue(resultSet, "developmentStatus");
+          entity.setDeprecated(DEPRECATED_STATUS.equals(developmentStatus));
+        }
       }
     } catch (Exception e) {
       log.error("Couldn't add help to entity. Failed database query.");
@@ -1140,11 +1146,12 @@ public class ModelProvider implements OBSingleton {
   }
 
   /**
-   * Gets and maps help to properties without using DAL as it has not been initialized here yet
+   * Gets and maps help and deprecation status to properties without using DAL as it has not been
+   * initialized here yet
    */
-  private void addHelpToProperties() {
+  private void addHelpAndDeprecationToProperties(boolean addDeprecation) {
     //@formatter:off
-    String qry = "SELECT ad_table_id, columnname, help " +
+    String qry = "SELECT ad_table_id, columnname, help, developmentStatus " +
                  "FROM AD_COLUMN";
     //@formatter:on
     try (Connection connection = getConnection();
@@ -1161,6 +1168,10 @@ public class ModelProvider implements OBSingleton {
         if ("".equals(helpComment)) {
           helpComment = null;
         }
+        if (addDeprecation) {
+          String developmentStatus = UtilSql.getValue(resultSet, "developmentStatus");
+          property.setDeprecated(DEPRECATED_STATUS.equals(developmentStatus));
+        }
         property.setHelp(helpComment);
       }
     } catch (Exception e) {
@@ -1170,11 +1181,12 @@ public class ModelProvider implements OBSingleton {
   }
 
   /**
-   * Removes help comments form all entities and properties in the model
+   * Removes help comments and deprecation status from all entities and properties in the model
    */
-  public void removeHelpFromModel() {
+  public void removeHelpAndDeprecationFromModel() {
     for (final Entity entity : getModel()) {
       entity.removeHelp();
+      entity.removeDeprecated();
     }
   }
 
