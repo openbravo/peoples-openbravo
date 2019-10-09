@@ -477,7 +477,7 @@ enyo.kind({
             product.get('productCategory'),
             '',
             '',
-            existingServices.length > 0 ? existingServices.join("','") : "'-'",
+            existingServices.length > 0 ? existingServices : "'-'",
             totalAmountSelected,
             minimumSelected,
             maximumSelected
