@@ -240,102 +240,6 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
   }
 
   @Override
-  public void jobsPaused(String jobGroup) {
-    // Not implemented
-  }
-
-  @Override
-  public void jobsResumed(String jobGroup) {
-    // Not implemented
-  }
-
-  @Override
-  public void schedulerError(String msg, SchedulerException e) {
-    // Not implemented
-  }
-
-  @Override
-  public void schedulerShutdown() {
-    // Not implemented
-  }
-
-  @Override
-  public void triggersPaused(String triggerGroup) {
-    // Not implemented
-  }
-
-  @Override
-  public void triggersResumed(String triggerGroup) {
-    // Not implemented
-  }
-
-  @Override
-  public void jobExecutionVetoed(JobExecutionContext jec) {
-    // Not implemented
-  }
-
-  @Override
-  public void triggerComplete(Trigger arg0, JobExecutionContext arg1,
-      CompletedExecutionInstruction arg2) {
-    // Not implemented
-  }
-
-  @Override
-  public void jobAdded(JobDetail arg0) {
-    // Not implemented
-  }
-
-  @Override
-  public void jobDeleted(JobKey arg0) {
-    // Not implemented
-  }
-
-  @Override
-  public void jobPaused(JobKey arg0) {
-    // Not implemented
-  }
-
-  @Override
-  public void jobResumed(JobKey arg0) {
-    // Not implemented
-  }
-
-  @Override
-  public void schedulerInStandbyMode() {
-    // Not implemented
-  }
-
-  @Override
-  public void schedulerShuttingdown() {
-    // Not implemented
-  }
-
-  @Override
-  public void schedulerStarted() {
-    // Not implemented
-  }
-
-  @Override
-  public void schedulerStarting() {
-    // Not implemented
-  }
-
-  @Override
-  public void schedulingDataCleared() {
-    // Not implemented
-  }
-
-  @Override
-  public void triggerPaused(TriggerKey arg0) {
-    // Not implemented
-  }
-
-  @Override
-  public void triggerResumed(TriggerKey arg0) {
-    // Not implemented
-  }
-
-  @Override
   public boolean vetoJobExecution(Trigger trigger, JobExecutionContext jec) {
     JobDataMap jobData = trigger.getJobDataMap();
     Boolean preventConcurrentExecutions = (Boolean) jobData
@@ -404,6 +308,102 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
       return false;
     }
 
+  }
+
+  @Override
+  public void jobsPaused(String jobGroup) {
+    // Not implemented
+  }
+
+  @Override
+  public void jobsResumed(String jobGroup) {
+    // Not implemented
+  }
+
+  @Override
+  public void schedulerError(String msg, SchedulerException cause) {
+    // Not implemented
+  }
+
+  @Override
+  public void schedulerShutdown() {
+    // Not implemented
+  }
+
+  @Override
+  public void triggersPaused(String triggerGroup) {
+    // Not implemented
+  }
+
+  @Override
+  public void triggersResumed(String triggerGroup) {
+    // Not implemented
+  }
+
+  @Override
+  public void jobExecutionVetoed(JobExecutionContext jec) {
+    // Not implemented
+  }
+
+  @Override
+  public void triggerComplete(Trigger trigger, JobExecutionContext executionContext,
+      CompletedExecutionInstruction triggerInstructionCode) {
+    // Not implemented
+  }
+
+  @Override
+  public void jobAdded(JobDetail jobDetail) {
+    // Not implemented
+  }
+
+  @Override
+  public void jobDeleted(JobKey jobKey) {
+    // Not implemented
+  }
+
+  @Override
+  public void jobPaused(JobKey jobKey) {
+    // Not implemented
+  }
+
+  @Override
+  public void jobResumed(JobKey jobKey) {
+    // Not implemented
+  }
+
+  @Override
+  public void schedulerInStandbyMode() {
+    // Not implemented
+  }
+
+  @Override
+  public void schedulerShuttingdown() {
+    // Not implemented
+  }
+
+  @Override
+  public void schedulerStarted() {
+    // Not implemented
+  }
+
+  @Override
+  public void schedulerStarting() {
+    // Not implemented
+  }
+
+  @Override
+  public void schedulingDataCleared() {
+    // Not implemented
+  }
+
+  @Override
+  public void triggerPaused(TriggerKey triggerKey) {
+    // Not implemented
+  }
+
+  @Override
+  public void triggerResumed(TriggerKey triggerKey) {
+    // Not implemented
   }
 
   private void stopConcurrency(Trigger trigger, JobExecutionContext jec, String processName) {
