@@ -10827,6 +10827,9 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /* Inherits: [OB.UI.CustomerPropertyLine] */
 }
 
+.obObposPointOfSaleUiCustomersEditCreatecustomers-statisticsFields-obUiCustomerPropertyLine .obUiFormElement-icon {
+  width: 40px;
+}
 /*************************   *************************/
 /*         File: editcreatecustomerform.js           */
 /* Folder: js/pointofsale/view/subwindows/customers/ */

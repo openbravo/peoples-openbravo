@@ -125,10 +125,10 @@ enyo.kind({
   setStatisticsValue: function(inSender, inEvent) {
     if (inEvent[this.textProperty]) {
       this.setValue(inEvent[this.textProperty]);
-      this.parent.parent.parent.parent.show();
-      this.parent.parent.parent.parent.parent.parent.show();
+      this.formElement.show();
+      this.formElement.parent.parent.show();
     } else {
-      this.parent.parent.parent.parent.hide();
+      this.formElement.hide();
     }
   }
 });
