@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,6 +29,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.authentication.hashing.PasswordHash;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.client.application.process.ResponseActionsBuilder.MessageType;
@@ -41,7 +42,6 @@ import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.access.UserRoles;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.utils.CryptoSHA1BASE64;
 
 /**
  * This process grants the user the given role and resets her password
@@ -102,7 +102,7 @@ public class GrantPortalAccessProcess extends BaseProcessActionHandler {
       }
 
       String newPassword = RandomStringUtils.randomAlphanumeric(PASSWORD_LENGHT);
-      user.setPassword(CryptoSHA1BASE64.hash(newPassword));
+      user.setPassword(PasswordHash.generateHash(newPassword));
 
       // flushing changes in admin mode
       OBDal.getInstance().flush();

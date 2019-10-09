@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2018 Openbravo SLU
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,6 +36,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.authentication.hashing.PasswordHash;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.session.SessionFactoryController;
@@ -694,7 +695,7 @@ public class InitialSetupUtility {
     newUser.setName(name);
     newUser.setDescription(name);
     newUser.setUsername(name);
-    newUser.setPassword(password);
+    newUser.setPassword(PasswordHash.generateHash(password));
     newUser.setDefaultLanguage(defaultLanguage);
     if (role != null) {
       newUser.setDefaultRole(role);
@@ -1865,11 +1866,15 @@ public class InitialSetupUtility {
    * @throws Exception
    */
   public static List<Module> getCOAModules(String strModules) throws Exception {
-    StringBuilder strWhereClause = new StringBuilder();
-    strWhereClause.append(" as module where module.id in (" + strModules + ")");
-    strWhereClause.append(" and module.hasChartOfAccounts = 'Y'");
-    final OBQuery<Module> obqModule = OBDal.getInstance()
-        .createQuery(Module.class, strWhereClause.toString());
+    //@formatter:off
+    final String strWhereClause = " as module "
+        + "  where module.id in :modules"
+        + "    and module.hasChartOfAccounts = 'Y'";
+    
+    //@formatter:on
+    final OBQuery<Module> obqModule = OBDal.getInstance().createQuery(Module.class, strWhereClause);
+    obqModule.setNamedParameter("modules",
+        Utility.stringToArrayList(strModules.replaceAll("\\(|\\)|'", "")));
     return obqModule.list();
   }
 
@@ -1882,12 +1887,16 @@ public class InitialSetupUtility {
    * @throws Exception
    */
   public static List<Module> getRDModules(String strModules) throws Exception {
-    StringBuilder strWhereClause = new StringBuilder();
-    strWhereClause.append(" as module where module.id in (" + strModules + ")");
-    strWhereClause.append(" and module.hasReferenceData = 'Y'");
-    strWhereClause.append(" and module.hasChartOfAccounts = 'N'");
-    final OBQuery<Module> obqModule = OBDal.getInstance()
-        .createQuery(Module.class, strWhereClause.toString());
+    //@formatter:off
+    final String strWhereClause = " as module "
+        + " where module.id in :modules"
+        + " and module.hasReferenceData = 'Y'"
+        + " and module.hasChartOfAccounts = 'N'";
+    
+    //@formatter:on
+    final OBQuery<Module> obqModule = OBDal.getInstance().createQuery(Module.class, strWhereClause);
+    obqModule.setNamedParameter("modules",
+        Utility.stringToArrayList(strModules.replaceAll("\\(|\\)|'", "")));
     return obqModule.list();
   }
 

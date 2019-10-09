@@ -39,12 +39,14 @@ public class DownloadReport extends HttpSecureAppServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
-    String report = vars.getStringParameter("report");
-    downloadReport(vars, response, report);
+    downloadReport(vars, response);
   }
 
-  private void downloadReport(VariablesSecureApp vars, HttpServletResponse response, String report)
+  private void downloadReport(VariablesSecureApp vars, HttpServletResponse response)
       throws IOException, ServletException {
+
+    String report = vars.getStringParameter("report");
+    String inline = vars.getStringParameter("inline");
 
     if (report.contains("..") || report.contains(File.separator)) {
       throw new ServletException("Invalid report name");
@@ -65,7 +67,11 @@ public class DownloadReport extends HttpSecureAppServlet {
       // unsupported export type, use application/x-download content type
       response.setContentType("application/x-download");
     }
-    response.setHeader("Content-Disposition", "attachment; filename=" + filename + extension);
+    if ("true".equals(inline)) {
+      response.setHeader("Content-Disposition", "inline");
+    } else {
+      response.setHeader("Content-Disposition", "attachment; filename=" + filename + extension);
+    }
     f.dumpFile(response.getOutputStream());
     response.getOutputStream().flush();
     response.getOutputStream().close();

@@ -2051,30 +2051,6 @@ public class PaymentReportDao {
     }
   }
 
-  @Deprecated
-  public FIN_PaymentSchedule getInvoicePaymentSchedule(FIN_Payment credit_payment) {
-    // @formatter:off
-    final String sql = " select ps "
-                     + " from FIN_Payment_Credit pc,"
-                     + "   FIN_Payment_Detail_V pdv,"
-                     + "   FIN_Payment_Schedule ps "
-                     + " where pc.payment = pdv.payment "
-                     + " and ps.id = pdv.invoicePaymentPlan "
-                     + " and pc.creditPaymentUsed.id = :creditPaymentId";
-    // @formatter: on
-    
-    try {
-      OBContext.setAdminMode(true);
-      final Session session = OBDal.getReadOnlyInstance().getSession();
-      final Query<FIN_PaymentSchedule> query = session.createQuery(sql,
-          FIN_PaymentSchedule.class);
-      query.setParameter("creditPaymentId", credit_payment.getId());
-      return query.uniqueResult();
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-  }
-
   public String getInvoicesDocNos(Collection<Invoice> invoices) {
     final StringBuilder sb = new StringBuilder();
     for (Invoice i : invoices) {

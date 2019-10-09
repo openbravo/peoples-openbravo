@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2018 Openbravo SLU
+ * All portions are Copyright (C) 2009-2019 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,6 +29,7 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.authentication.hashing.PasswordHash;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.LoginUtils;
@@ -50,7 +51,6 @@ import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.portal.PortalAccessible;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.password.PasswordStrengthChecker;
-import org.openbravo.utils.FormatUtilities;
 
 /**
  * Action handler used to save the default user information of the 'Profile' widget and the password
@@ -100,7 +100,7 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
     final String newPwd = json.getString("newPwd");
     final String confirmPwd = json.getString("confirmPwd");
 
-    if (!user.getPassword().equals(FormatUtilities.sha1Base64(currentPwd))) {
+    if (!PasswordHash.matches(currentPwd, user.getPassword())) {
       return createErrorResponse("currentPwd", "UINAVBA_CurrentPwdIncorrect");
     }
     if (currentPwd.equals(newPwd)) {
@@ -115,7 +115,7 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
     if (!passwordStrengthChecker.isStrongPassword(newPwd)) {
       return createErrorResponse("newPwd", "CPPasswordNotStrongEnough");
     }
-    user.setPassword(FormatUtilities.sha1Base64(newPwd));
+    user.setPassword(PasswordHash.generateHash(newPwd));
     OBDal.getInstance().flush();
     return ApplicationConstants.ACTION_RESULT_SUCCESS;
   }

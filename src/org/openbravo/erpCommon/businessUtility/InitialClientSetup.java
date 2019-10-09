@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2018 Openbravo SLU
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -50,7 +50,6 @@ import org.openbravo.model.ad.utility.Tree;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.db.ImportResult;
-import org.openbravo.utils.FormatUtilities;
 
 /**
  * @author David Alsasua
@@ -526,8 +525,7 @@ public class InitialClientSetup {
     log4j.debug("insertUser() - Inserting user named " + strUserName);
     User user;
     try {
-      user = InitialSetupUtility.insertUser(client, null, strUserName,
-          FormatUtilities.sha1Base64(strPassword), role,
+      user = InitialSetupUtility.insertUser(client, null, strUserName, strPassword, role,
           InitialSetupUtility.getLanguage(strLanguage));
     } catch (Exception e) {
       return logErrorAndRollback("@CreateClientFailed@",

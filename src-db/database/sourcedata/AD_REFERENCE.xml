@@ -4454,7 +4454,7 @@ For example, if you want to create different invoices for each ship location for
 <!--16EC6DF4A59747749FDF256B7FBBB058-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--16EC6DF4A59747749FDF256B7FBBB058-->  <NAME><![CDATA[Password (decryptable)]]></NAME>
 <!--16EC6DF4A59747749FDF256B7FBBB058-->  <DESCRIPTION><![CDATA[A password which is shown with * in the UI and stored in a way so that the cleartext value can be recovered.]]></DESCRIPTION>
-<!--16EC6DF4A59747749FDF256B7FBBB058-->  <HELP><![CDATA[The value of the password is encrypted when being saved, however in a way that the cleartext password (as entered) can be recovered. Example use-case is to store a password which needs to be passed later as cleartext to some external service (i.e. a email server password)]]></HELP>
+<!--16EC6DF4A59747749FDF256B7FBBB058-->  <HELP><![CDATA[The value of the password is encrypted when being saved, however in a way that the cleartext password (as entered) can be recovered. Example use-case is to store a password which needs to be passed later as clear text to some external service (i.e. a email server password).]]></HELP>
 <!--16EC6DF4A59747749FDF256B7FBBB058-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--16EC6DF4A59747749FDF256B7FBBB058-->  <ISBASEREFERENCE><![CDATA[Y]]></ISBASEREFERENCE>
 <!--16EC6DF4A59747749FDF256B7FBBB058-->  <MODEL_IMPL><![CDATA[org.openbravo.base.model.domaintype.EncryptedStringDomainType]]></MODEL_IMPL>
@@ -6612,7 +6612,7 @@ There is no any kind of timezone conversion. The stored date-time does not have 
 <!--C5C21C28B39E4683A91779F16C112E40-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--C5C21C28B39E4683A91779F16C112E40-->  <NAME><![CDATA[Password (not decryptable)]]></NAME>
 <!--C5C21C28B39E4683A91779F16C112E40-->  <DESCRIPTION><![CDATA[A password which is shown with * in the UI; the cleartext value cannot be recovered as only a hashed value is stored]]></DESCRIPTION>
-<!--C5C21C28B39E4683A91779F16C112E40-->  <HELP><![CDATA[Fro this type of passwords only a hashed value is stored in the database. It is possible to verify if the same value was entered (to implement a password check), however it is not possible to recover the cleartext value again.]]></HELP>
+<!--C5C21C28B39E4683A91779F16C112E40-->  <HELP><![CDATA[For this type of passwords a hashed value is stored in the database. It is possible to verify if the same value was entered (to implement a password check), however it is not possible to recover the clear text value again.]]></HELP>
 <!--C5C21C28B39E4683A91779F16C112E40-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--C5C21C28B39E4683A91779F16C112E40-->  <ISBASEREFERENCE><![CDATA[Y]]></ISBASEREFERENCE>
 <!--C5C21C28B39E4683A91779F16C112E40-->  <MODEL_IMPL><![CDATA[org.openbravo.base.model.domaintype.HashedStringDomainType]]></MODEL_IMPL>
