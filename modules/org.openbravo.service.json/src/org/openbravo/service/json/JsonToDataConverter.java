@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -39,6 +39,7 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.authentication.hashing.PasswordHash;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.Property;
@@ -57,7 +58,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.utils.CryptoUtility;
-import org.openbravo.utils.FormatUtilities;
 
 /**
  * Converts json data to Openbravo business object(s).
@@ -207,14 +207,7 @@ public class JsonToDataConverter {
         return new BigDecimal(((Number) value).doubleValue());
       } else if (value instanceof String
           && property.getDomainType() instanceof HashedStringDomainType) {
-        String str = (String) value;
-        try {
-          return FormatUtilities.sha1Base64(str);
-        } catch (ServletException e) {
-          log.error("Error hashing password", e);
-          // TODO: translate error message
-          throw new Error("Could not encrypt password", e);
-        }
+        return PasswordHash.generateHash((String) value);
       } else if (value instanceof String
           && property.getDomainType() instanceof EncryptedStringDomainType) {
         String str = (String) value;
