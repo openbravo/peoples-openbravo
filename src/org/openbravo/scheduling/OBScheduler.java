@@ -54,8 +54,9 @@ import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 
 /**
- * @author awolski
+ * Provides the ability of schedule and unschedule background processes.
  * 
+ * @author awolski
  */
 public class OBScheduler {
   private static final OBScheduler INSTANCE = new OBScheduler();
