@@ -26,7 +26,6 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
-import org.jboss.weld.exceptions.IllegalStateException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.User;
@@ -38,7 +37,7 @@ import org.openbravo.model.ad.access.User;
  * @since 3.0PR20Q1
  */
 public class PasswordHash {
-  public static final Logger log = LogManager.getLogger();
+  private static final Logger log = LogManager.getLogger();
   private static final int DEFAULT_CURRENT_ALGORITHM_VERSION = 1;
 
   private static final Map<Integer, HashingAlgorithm> ALGORITHMS;

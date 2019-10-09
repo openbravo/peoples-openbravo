@@ -25,8 +25,6 @@ import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.Random;
 
-import org.jboss.weld.exceptions.IllegalStateException;
-
 /**
  * Passwords are hashed using SHA-512 algorithm with a random salt of 16 bytes represented as a
  * {@code String} encoded in base 64.

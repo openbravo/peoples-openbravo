@@ -22,8 +22,6 @@ package org.openbravo.authentication.hashing;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import org.jboss.weld.exceptions.IllegalStateException;
-
 /**
  * Passwords are hashed with SHA-1 algorithm represented as a {@code String} encoded in base 64.
  * <p>

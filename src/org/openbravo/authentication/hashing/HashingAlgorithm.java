@@ -49,7 +49,7 @@ abstract class HashingAlgorithm {
   protected abstract int getAlgorithmVersion();
 
   /** Checks whether a plain text password matches with a hashed password */
-  protected abstract boolean check(String plainTextPassowed, String hashedPassword);
+  protected abstract boolean check(String plainTextPassword, String hashedPassword);
 
   /** Returns the low level algorithm used to perform the hashing. */
   protected abstract MessageDigest getHashingBaseAlgorithm();
