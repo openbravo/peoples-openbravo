@@ -42,8 +42,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.CustomerPropertyLine',
   kind: 'OB.UI.FormElement',
-  classes:
-    'obUiFormElement_dataEntry obUiFormElement_dataEntry_icon obUICustomerPropertyLine'
+  classes: 'obUiFormElement_dataEntry obUICustomerPropertyLine'
 });
 
 enyo.kind({

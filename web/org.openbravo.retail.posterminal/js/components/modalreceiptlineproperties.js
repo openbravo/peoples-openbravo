@@ -90,16 +90,16 @@ enyo.kind({
     classes: 'obUiModalReceiptLinesProperties-bodyButtons',
     components: [
       {
-        kind: 'OB.UI.ReceiptPropertiesDialogApply',
-        name: 'receiptLinePropertiesApplyBtn',
-        classes:
-          'obUiModalReceiptLinesProperties-bodyButtons-receiptLinePropertiesApplyBtn'
-      },
-      {
         kind: 'OB.UI.ReceiptPropertiesDialogCancel',
         name: 'receiptLinePropertiesCancelBtn',
         classes:
           'obUiModalReceiptLinesProperties-bodyButtons-receiptLinePropertiesCancelBtn'
+      },
+      {
+        kind: 'OB.UI.ReceiptPropertiesDialogApply',
+        name: 'receiptLinePropertiesApplyBtn',
+        classes:
+          'obUiModalReceiptLinesProperties-bodyButtons-receiptLinePropertiesApplyBtn'
       }
     ]
   },

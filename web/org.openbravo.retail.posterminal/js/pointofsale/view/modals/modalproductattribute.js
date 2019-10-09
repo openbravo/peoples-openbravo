@@ -26,7 +26,7 @@ enyo.kind({
         kind: 'OB.UI.FormElement',
         name: 'formElementValueAttribute',
         classes:
-          'obUiFormElement_dataEntry obUiFormElement_dataEntry_noicon obUiModalProductAttributes-body-formElementValueAttribute',
+          'obUiFormElement_dataFilter obUiModalProductAttributes-body-formElementValueAttribute',
         coreElement: {
           name: 'valueAttribute',
           kind: 'OB.UI.FormElement.Input',

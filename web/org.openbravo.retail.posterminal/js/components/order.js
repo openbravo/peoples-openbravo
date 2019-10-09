@@ -101,7 +101,7 @@ enyo.kind({
   newButtonComponents: [
     {
       classes:
-        'obUiFormElement_dataEntry obUiFormElement_dataEntry_noicon obUiOrderHeader-buttonComponents-formElementBpbutton',
+        'obUiFormElement_dataEntry obUiOrderHeader-buttonComponents-formElementBpbutton',
       kind: 'OB.UI.FormElement',
       name: 'formElementBpbutton',
       coreElement: {
@@ -119,7 +119,7 @@ enyo.kind({
     },
     {
       classes:
-        'obUiFormElement_dataEntry obUiFormElement_dataEntry_noicon obUiOrderHeader-buttonComponents-formElementBplocbutton',
+        'obUiFormElement_dataEntry obUiOrderHeader-buttonComponents-formElementBplocbutton',
       kind: 'OB.UI.FormElement',
       name: 'formElementBplocbutton',
       coreElement: {
@@ -133,7 +133,7 @@ enyo.kind({
     },
     {
       classes:
-        'obUiFormElement_dataEntry obUiFormElement_dataEntry_noicon obUiOrderHeader-buttonComponents-formElementBplocshipbutton',
+        'obUiFormElement_dataEntry obUiOrderHeader-buttonComponents-formElementBplocshipbutton',
       kind: 'OB.UI.FormElement',
       name: 'formElementBplocshipbutton',
       showing: false,
@@ -457,8 +457,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.FormElement',
   name: 'OB.UI.BtnReceiptToInvoice',
-  classes:
-    'obUiFormElement_dataEntry obUiFormElement_dataEntry_noicon obUiBtnReceiptToInvoice',
+  classes: 'obUiFormElement_dataEntry obUiBtnReceiptToInvoice',
   events: {
     onCancelReceiptToInvoice: ''
   },

@@ -531,7 +531,8 @@ enyo.kind({
           this.$.customerAddrAttributes.createComponent({
             kind: 'OB.UI.CustomerPropertyLine',
             classes:
-              'obObposPointOfSaleUiCustomeraddrEditCreatecustomers-customerAddrAttributes-obUiCustomerPropertyLine',
+              'obObposPointOfSaleUiCustomeraddrEditCreatecustomers-customerAddrAttributes-obUiCustomerPropertyLine ' +
+              (natt.classes ? natt.classes : ''),
             name: 'line_' + natt.name,
             coreElement: natt
           });
