@@ -2443,7 +2443,6 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.LeftHeader',
   classes: 'obObPosPointOfSaleUiLeftHeader',
-  showing: false,
   published: {
     text: null
   },
@@ -2455,13 +2454,14 @@ enyo.kind({
     if (inEvent.style) {
       this.$.innerDiv.addStyles(inEvent.style);
     }
-    this.show();
+    this.$.innerDiv.show();
   },
 
   components: [
     {
       name: 'innerDiv',
       classes: 'obObPosPointOfSaleUiLeftHeader-innerDiv',
+      showing: false,
       components: [
         {
           name: 'headerText',

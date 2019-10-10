@@ -7740,13 +7740,15 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposPointOfSaleUiPointOfSale-multiColumn-leftPanel {
+  display: grid;
+  grid-auto-flow: row;
+  grid-template-rows: auto 1fr;
+
   height: 100%;
 }
 
 .obObposPointOfSaleUiPointOfSale-multiColumn-leftPanel-divHeader {
   /* Inherits: [OB.OBPOSPointOfSale.UI.LeftHeader] */
-  height: 35px;
-  float: left;
   width: 100%;
   touch-action: none;
 }
@@ -7841,17 +7843,19 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obObPosPointOfSaleUiLeftHeader {}
 
 .obObPosPointOfSaleUiLeftHeader-innerDiv {
-  text-align: center;
-  font-size: 30px;
-  padding: 5px;
-  padding-top: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 30px;
+  padding-top: 10px
 }
 
 .obObPosPointOfSaleUiLeftHeader-innerDiv-headerText {
-  background-color: #ffffff;
-  height: 30px;
+  font-size: var(--font-xlarge);
   font-weight: bold;
-  padding-top: 15px;
+  text-align: center;
+  line-height: normal;
 }
 
 
