@@ -9013,8 +9013,14 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiInDevHeader-innerDiv-headerText_error {
   background-color: #f2dede;
-  color: #b94a48;
-  border: 1px solid #b94a48;
+  color: #b92d2b;
+  border: 1px solid #b92d2b;
+}
+
+.obObposPointOfSaleUiInDevHeader-innerDiv-headerText_error .obUiButton-components-icon {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconMessageError.svg'), url('./../../org.openbravo.mobile.core/assets/img/iconMessageError.svg');
+  background-size: 35px 35px;
+  background-position: 10px center, calc(100% - 10px) center;
 }
 
 
@@ -9049,14 +9055,14 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obObposPointOfSaleUiScan-msgwelcome-msgwelcomeLbl {
   align-items: center;
   background-image: url('./../img/OpenbravoWelcomeLogo.svg');
-  background-position-x: right;
+  background-position-x: calc(100% - 1px);
   background-repeat: no-repeat;
   background-size: 95px 23px;
   display: flex;
   font-size: 16px;
   height: 23px;
   justify-content: flex-end;
-  padding: 2px 101px 0px 0px;
+  padding: 2px 102px 0px 0px;
 }
 
 .obObposPointOfSaleUiScan-mainPanel-msgaction {
@@ -12294,7 +12300,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obUiModalChange-bodyattributes-errors {
-  color: #b94a48;
+  color: #b92d2b;
   font-size: medium;
   height: 25px;
 }
