@@ -18,6 +18,8 @@
  */
 package org.openbravo.service.importprocess;
 
+import static java.util.Comparator.comparing;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
@@ -55,7 +57,8 @@ public class ImportProcessUtils {
         .get(Reference.class, TYPE_OF_DATA_REFERENCE)
         .getADListList()
         .stream()
-        .sorted((o1, o2) -> getSequenceOrDefault(o1).compareTo(getSequenceOrDefault(o2)))
+        .sorted(comparing(ImportProcessUtils::getSequenceOrDefault)
+            .thenComparing(org.openbravo.model.ad.domain.List::getId))
         .map(org.openbravo.model.ad.domain.List::getSearchKey)
         .collect(Collectors.toList());
   }
