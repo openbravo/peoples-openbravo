@@ -56,9 +56,8 @@ import org.quartz.TriggerKey;
 import org.quartz.TriggerListener;
 
 /**
- * A class that listens to Scheduler events and JobDetail and Trigger executions in order to set
- * context and process run information for the application. It also manages the execution of process
- * groups.
+ * Listens to Scheduler events and JobDetail and Trigger executions in order to set context and
+ * process run information for the application. It also manages the execution of process groups.
  * 
  * @author awolski
  */
