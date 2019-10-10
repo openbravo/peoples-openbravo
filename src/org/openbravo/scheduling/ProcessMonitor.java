@@ -274,14 +274,12 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
 
           ProcessBundle jobAlreadyScheduled = (ProcessBundle) job.getTrigger()
               .getJobDataMap()
-              .get("org.openbravo.scheduling.ProcessBundle.KEY");
-          ProcessBundle newJob = (ProcessBundle) trigger.getJobDataMap()
-              .get("org.openbravo.scheduling.ProcessBundle.KEY");
+              .get(ProcessBundle.KEY);
+          ProcessBundle newJob = (ProcessBundle) trigger.getJobDataMap().get(ProcessBundle.KEY);
 
           boolean isSameClient = isSameParam(jobAlreadyScheduled, newJob, "Client");
 
-          if (!isSameClient
-              || (isSameClient && !isSameParam(jobAlreadyScheduled, newJob, "Organization"))) {
+          if (!isSameClient || !isSameParam(jobAlreadyScheduled, newJob, "Organization")) {
             continue;
           }
 
@@ -295,8 +293,7 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
     } else {
       // The process it's a group
       try {
-        ProcessBundle newJob = (ProcessBundle) trigger.getJobDataMap()
-            .get("org.openbravo.scheduling.ProcessBundle.KEY");
+        ProcessBundle newJob = (ProcessBundle) trigger.getJobDataMap().get(ProcessBundle.KEY);
         String concurrent = ProcessRunData.selectConcurrent(getConnection(),
             newJob.getProcessRequestId());
         if (!concurrent.equals("0")) {
@@ -474,11 +471,8 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
       }
     }
 
-    if (newJobParam != null && jobAlreadyScheduledParam != null
-        && newJobParam.equals(jobAlreadyScheduledParam)) {
-      return true;
-    }
-    return false;
+    return newJobParam != null && jobAlreadyScheduledParam != null
+        && newJobParam.equals(jobAlreadyScheduledParam);
   }
 
   /**
@@ -519,7 +513,8 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
     final int minutes = (int) ((duration / 60000) % 60);
     final int hours = (int) (duration / 3600000);
 
-    final String m = (milliseconds < 10 ? "00" : (milliseconds < 100 ? "0" : "")) + milliseconds;
+    final String millis = milliseconds < 100 ? "0" : "";
+    final String m = (milliseconds < 10 ? "00" : millis) + milliseconds;
     final String sec = (seconds < 10 ? "0" : "") + seconds;
     final String min = (minutes < 10 ? "0" : "") + minutes;
     final String hr = (hours < 10 ? "0" : "") + hours;
