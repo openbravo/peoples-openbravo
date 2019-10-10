@@ -9017,6 +9017,14 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   border: 1px solid #b92d2b;
 }
 
+.obObposPointOfSaleUiInDevHeader-innerDiv-headerText_error:hover {
+  filter: brightness(1.02);
+}
+
+.obObposPointOfSaleUiInDevHeader-innerDiv-headerText_error:active {
+  filter: saturate(250%) contrast(0.9);
+}
+
 .obObposPointOfSaleUiInDevHeader-innerDiv-headerText_error .obUiButton-components-icon {
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconMessageError.svg'), url('./../../org.openbravo.mobile.core/assets/img/iconMessageError.svg');
   background-size: 35px 35px;

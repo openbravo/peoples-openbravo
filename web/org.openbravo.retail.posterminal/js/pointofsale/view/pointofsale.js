@@ -2425,7 +2425,11 @@ enyo.kind({
     this.inherited(arguments);
     this.$.multiColumn.$.rightPanel.$.keyboard = this.$.multiColumn.$.rightPanel.$.rightBottomPanel.$.keyboard;
     if (OB.UTIL.Debug.isDebug()) {
-      enyo.$.terminal.addClass('obUiTerminal_isDebug');
+      enyo.$.terminal.addClass(
+        OB.UTIL.Debug.getDebugCauses().isTestEnvironment
+          ? 'obUiTerminal_isWarn'
+          : 'obUiTerminal_isError'
+      );
       this.waterfall('onInDevHeaderShow');
     }
 
