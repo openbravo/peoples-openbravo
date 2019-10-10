@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015 Openbravo SLU
+ * All portions are Copyright (C) 2015-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,10 +20,9 @@ package org.openbravo.service.importprocess;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
@@ -42,6 +41,8 @@ import org.openbravo.service.db.DbUtility;
  */
 public class ImportProcessUtils {
 
+  private static final String TYPE_OF_DATA_REFERENCE = "11F86B630ECB4A57B28927193F8AB99D";
+
   /**
    * Returns true if the import.disable.process property is set to true, false otherwise
    */
@@ -50,34 +51,17 @@ public class ImportProcessUtils {
   }
 
   public static List<String> getOrderedTypesOfData() {
-    final Reference reference = OBDal.getInstance()
-        .get(Reference.class, "11F86B630ECB4A57B28927193F8AB99D");
+    return OBDal.getInstance()
+        .get(Reference.class, TYPE_OF_DATA_REFERENCE)
+        .getADListList()
+        .stream()
+        .sorted((o1, o2) -> getSequenceOrDefault(o1).compareTo(getSequenceOrDefault(o2)))
+        .map(org.openbravo.model.ad.domain.List::getSearchKey)
+        .collect(Collectors.toList());
+  }
 
-    List<org.openbravo.model.ad.domain.List> refList = new ArrayList<org.openbravo.model.ad.domain.List>(
-        reference.getADListList());
-    Collections.sort(refList, new Comparator<org.openbravo.model.ad.domain.List>() {
-
-      @Override
-      public int compare(org.openbravo.model.ad.domain.List o1,
-          org.openbravo.model.ad.domain.List o2) {
-        Long l1 = o1.getSequenceNumber();
-        Long l2 = o2.getSequenceNumber();
-        if (l1 == null) {
-          l1 = 50L;
-        }
-        if (l2 == null) {
-          l2 = 50L;
-        }
-        return l1.compareTo(l2);
-      }
-    });
-
-    final List<String> typesOfData = new ArrayList<String>();
-    for (org.openbravo.model.ad.domain.List ref : refList) {
-      typesOfData.add(ref.getSearchKey());
-    }
-
-    return typesOfData;
+  private static Long getSequenceOrDefault(org.openbravo.model.ad.domain.List l) {
+    return Optional.ofNullable(l.getSequenceNumber()).orElse(50L);
   }
 
   // get a property but prevent someone from putting a crazy value in properties
