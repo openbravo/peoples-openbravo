@@ -64,7 +64,7 @@ public class ImportProcessUtils {
   }
 
   private static Long getSequenceOrDefault(org.openbravo.model.ad.domain.List l) {
-    return Optional.ofNullable(l.getSequenceNumber()).orElse(50L);
+    return Optional.ofNullable(l.getSequenceNumber()).orElse(Long.MAX_VALUE);
   }
 
   // get a property but prevent someone from putting a crazy value in properties
