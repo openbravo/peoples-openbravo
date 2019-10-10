@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016 Openbravo SLU
+ * All portions are Copyright (C) 2016-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -19,7 +19,6 @@
 
 package org.openbravo.erpCommon.businessUtility;
 
-import java.util.Collection;
 import java.util.Iterator;
 
 import javax.enterprise.inject.Any;
@@ -58,12 +57,12 @@ public class CancelAndReplaceOrderHookCaller {
    *          because the Cancel and Replace has been executed from Web POS.
    */
   public void executeHook(boolean replaceOrder, boolean triggersDisabled, Order oldOrder,
-      Collection<Order> newOrder, Order inverseOrder, JSONObject jsonorder) throws Exception {
+      Order newOrder, Order inverseOrder, JSONObject jsonorder) throws Exception {
     executeHooks(replaceOrder, triggersDisabled, oldOrder, newOrder, inverseOrder, jsonorder);
   }
 
   private void executeHooks(boolean replaceOrder, boolean triggersDisabled, Order oldOrder,
-      Collection<Order> newOrder, Order inverseOrder, JSONObject jsonorder) throws Exception {
+      Order newOrder, Order inverseOrder, JSONObject jsonorder) throws Exception {
     for (Iterator<CancelAndReplaceOrderHook> processIterator = cancelAndReplaceOrderHookProcesses
         .iterator(); processIterator.hasNext();) {
       CancelAndReplaceOrderHook process = processIterator.next();

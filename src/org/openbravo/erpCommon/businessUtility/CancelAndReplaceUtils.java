@@ -328,7 +328,7 @@ public class CancelAndReplaceUtils {
       boolean useOrderDocumentNoForRelatedDocs) {
     List<Order> replacementOrders = cancelAndReplaceOrder(newOrderId, jsonorder,
         useOrderDocumentNoForRelatedDocs, false);
-    return replacementOrders != null ? replacementOrders.get(0) : null;
+    return replacementOrders.isEmpty() ? null : replacementOrders.get(0);
   }
 
   /**
@@ -347,28 +347,43 @@ public class CancelAndReplaceUtils {
       boolean useOrderDocumentNoForRelatedDocs) {
     List<Order> replacementOrders = cancelAndReplaceOrder(newOrderId, jsonorder,
         useOrderDocumentNoForRelatedDocs, true);
-    return replacementOrders != null ? replacementOrders.get(0) : null;
+    return replacementOrders.isEmpty() ? null : replacementOrders.get(0);
+  }
+
+  /**
+   * * Method that given an Order Id it cancels it and creates another one equal but with negative
+   * quantities. It also creates a list of new orders replacing the cancelled one.
+   * 
+   * @param newOrderId
+   *          Id of the Sales Order to be cancelled.
+   * @param jsonorder
+   *          Parameter with the order replacement information
+   */
+  public static List<Order> cancelAndReplaceOrder(String newOrderId, JSONObject jsonorder) {
+    return cancelAndReplaceOrder(newOrderId, jsonorder, true, true);
   }
 
   /**
    * Process that cancels an existing order and creates another one inverse of the original. If it
-   * is indicated a new order is created with received modifications that replaces the original one.
+   * is indicated a list of new orders is created with received modifications that replaces the
+   * original one.
    * 
    * This process will create a netting goods shipment to leave the original order and the inverse
    * order completely delivered, and if anything is delivered was delivered in the original order it
-   * will be delivered so in the new one.
+   * will be delivered so in the created ones.
    * 
    * The same behavior of shipments will be implemented with payments.
    * 
    * @param orderId
    *          Order Id of the new order or of the old order, depending on replaceOrder boolean.
    * @param jsonorder
-   *          JSON Object of the order coming from Web POS
+   *          JSON Object of the order coming from Web POS, also can have the order replacement
+   *          information
    * @param useOrderDocumentNoForRelatedDocs
    *          OBPOS_UseOrderDocumentNoForRelatedDocs preference from Web POS.
    * @param replaceOrder
    *          If replaceOrder == true, the original order will be cancelled and replaced with a new
-   *          one, if == false, it will only be cancelled
+   *          one if no replacement information was set, if == false, it will only be cancelled
    */
   private static List<Order> cancelAndReplaceOrder(String orderId, JSONObject jsonorder,
       boolean useOrderDocumentNoForRelatedDocs, boolean replaceOrder) {
@@ -378,7 +393,7 @@ public class CancelAndReplaceUtils {
     Order inverseOrder = null;
     String oldOrderId = null;
     String inverseOrderId = null;
-    List<Order> replacementOrders = null;
+    List<Order> replacementOrders = new ArrayList<>();
     OBContext.setAdminMode(false);
     try {
 
@@ -403,7 +418,6 @@ public class CancelAndReplaceUtils {
           }
         } else {
           // Get new Order
-          replacementOrders = new ArrayList<>();
           replacementOrders.add(OBDal.getInstance().get(Order.class, orderId));
           // Get old Order
           oldOrder = replacementOrders.get(0).getReplacedorder();
@@ -426,7 +440,7 @@ public class CancelAndReplaceUtils {
       closeOldReservations(oldOrder);
 
       // Refresh documents
-      if (replacementOrders != null) {
+      if (!replacementOrders.isEmpty()) {
         List<Order> orders = new ArrayList<>();
         replacementOrders
             .forEach(order -> orders.add(OBDal.getInstance().get(Order.class, order.getId())));
@@ -636,21 +650,18 @@ public class CancelAndReplaceUtils {
       // Close original order
       oldOrder.setDocumentStatus("CL");
       oldOrder.setDocumentAction("--");
-      // FIXME Wait for Dmitri API Change
-      oldOrder.setReplacementorder(replacementOrders != null ? replacementOrders.get(0) : null);
+      oldOrder.setReplacementorder(replacementOrders.size() == 1 ? replacementOrders.get(0) : null);
       oldOrder.setCancelled(true);
       oldOrder.setProcessed(true);
       oldOrder.setProcessNow(false);
       OBDal.getInstance().save(oldOrder);
 
-      if (replacementOrders != null) {
-        for (Order order : replacementOrders) {
-          ReplacementOrder replacement = OBProvider.getInstance().get(ReplacementOrder.class);
-          replacement.setOrder(oldOrder);
-          replacement.setReplacementOrder(order);
-          replacement.setOrganization(order.getOrganization());
-          OBDal.getInstance().save(replacement);
-        }
+      for (Order order : replacementOrders) {
+        ReplacementOrder replacement = OBProvider.getInstance().get(ReplacementOrder.class);
+        replacement.setOrder(oldOrder);
+        replacement.setReplacementOrder(order);
+        replacement.setOrganization(order.getOrganization());
+        OBDal.getInstance().save(replacement);
       }
 
       // Complete new order and generate good shipment and sales invoice
@@ -676,7 +687,7 @@ public class CancelAndReplaceUtils {
 
       // Only create new reservations for new orders if coming from Web POS. For backend workflow it
       // will attend to Order Line Reservation field.
-      if (replacementOrders != null && jsonorder != null) {
+      if (!replacementOrders.isEmpty() && jsonorder != null) {
         // Create new reservations
         replacementOrders.forEach(order -> createNewReservations(order));
       }
@@ -715,9 +726,17 @@ public class CancelAndReplaceUtils {
       }
       try {
         // Calling Cancelandreplaceorderhook
-        WeldUtils.getInstanceFromStaticBeanManager(CancelAndReplaceOrderHookCaller.class)
-            .executeHook(replaceOrder, triggersDisabled, oldOrder, replacementOrders, inverseOrder,
-                jsonorder);
+
+        if (replacementOrders.isEmpty()) {
+          WeldUtils.getInstanceFromStaticBeanManager(CancelAndReplaceOrderHookCaller.class)
+              .executeHook(replaceOrder, triggersDisabled, oldOrder, null, inverseOrder, jsonorder);
+        } else {
+          for (Order newOrder : replacementOrders) {
+            WeldUtils.getInstanceFromStaticBeanManager(CancelAndReplaceOrderHookCaller.class)
+                .executeHook(replaceOrder, triggersDisabled, oldOrder, newOrder, inverseOrder,
+                    jsonorder);
+          }
+        }
       } finally {
         if (triggersDisabled) {
           TriggerHandler.getInstance().disable();
@@ -1113,7 +1132,7 @@ public class CancelAndReplaceUtils {
    * @param inverseOrder
    *          The order that is canceling the old order.
    * @param replacementOrders
-   *          The order that is replacing the old order.
+   *          The orders that is replacing the old order.
    * @param replaceOrder
    *          If true, the process is C&R, otherwise is a CL process.
    * @throws JSONException
@@ -1171,7 +1190,7 @@ public class CancelAndReplaceUtils {
                     if (line.has("linepos")
                         && (line.getInt("linepos") + 1) * 10 == oldOrderLine.getLineNo()) {
                       newOrderLineCriteria
-                          .add(Restrictions.eq(OrderLine.PROPERTY_SALESORDER, replacementOrders));
+                          .add(Restrictions.in(OrderLine.PROPERTY_SALESORDER, replacementOrders));
                       newOrderLineCriteria
                           .add(Restrictions.eq(OrderLine.PROPERTY_LINENO, (long) ((i + 1) * 10)));
                       newOrderLineCriteria.setMaxResults(1);

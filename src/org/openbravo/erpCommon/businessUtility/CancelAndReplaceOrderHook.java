@@ -19,8 +19,6 @@
 
 package org.openbravo.erpCommon.businessUtility;
 
-import java.util.Collection;
-
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.model.common.order.Order;
 
@@ -52,5 +50,5 @@ public abstract class CancelAndReplaceOrderHook {
    *          because the Cancel and Replace has been executed from Web POS.
    */
   public abstract void exec(boolean replaceOrder, boolean triggersDisabled, Order oldOrder,
-      Collection<Order> newOrder, Order inverseOrder, JSONObject jsonorder) throws Exception;
+      Order newOrder, Order inverseOrder, JSONObject jsonorder) throws Exception;
 }
