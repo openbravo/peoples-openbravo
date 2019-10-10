@@ -398,11 +398,11 @@
 */
 .obUiModalModulesInDev {}
 
-.obUiModalModulesInDev-bodyContent {}
+.obUiModalModulesInDev-body {}
 
-.obUiModalModulesInDev-bodyContent-message {}
+.obUiModalModulesInDev-body-message {}
 
-.obUiModalModulesInDev-bodyContent-link {}
+.obUiModalModulesInDev-body-link {}
 
 
 
@@ -8959,65 +8959,58 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obObposPointOfSaleUiInDevHeader-innerDiv {
   text-align: center;
   font-size: var(--font-huge);
-  padding: 5px;
-  padding-top: 0px;
+  padding: 2px 5px 5px 5px;
 }
 
 .obObposPointOfSaleUiInDevHeader-innerDiv-headerText {
-/* Inherits: [OB.UI.SmallButton] */
+/* Inherits: [OB.UI.Button] */
   height: 50px;
-  margin: 5px 5px 0px 0px;
+  margin: 0px;
   padding: 0px;
-  font-size: var(--font-large);
-  cursor: pointer;
-  font-weight: bold;
+  font-size: var(--font-medium-large);
+  width: 100%;
+  box-shadow: 0px 0px 10px -1px #8d8d8d;
+  border-radius: 4px;
 }
 
-.obObposPointOfSaleUiInDevHeader-headerText_orange {
-  background-color: orange;
-  color: black;
+.obObposPointOfSaleUiInDevHeader-innerDiv-headerText .obUiButton-components {
+  grid-template-columns: 0 1fr 0;
 }
 
-.obObposPointOfSaleUiInDevHeader-headerText_red {
-  background-color: red;
-  color: black;
-}
-
-.obObposPointOfSaleUiInDevHeader-headerText-headerImg1 {
-  float: left;
-  margin: 8px 10px;
-}
-
-.obObposPointOfSaleUiInDevHeader-headerImg1-element1 {
-  height: 32px;
-  width: 35px;
-  background: url('./../../org.openbravo.mobile.core/assets/img/Warning.png');
+.obObposPointOfSaleUiInDevHeader-innerDiv-headerText .obUiButton-components-icon {
+  position: absolute;
   background-repeat: no-repeat;
-  background-position: top left;
+  width: 100%;
+  height: 100%;
 }
 
-.obObposPointOfSaleUiInDevHeader-headerText-headerContentContainer {
-  height: 50px;
-  display: inline-flex;
-  align-items: center;
-  width: calc(100% - 40px);
+.obObposPointOfSaleUiInDevHeader-innerDiv-headerText .obUiButton-components-label {
+  padding: 0px 55px;
 }
 
-.obObposPointOfSaleUiInDevHeader-headerContentContainer-headerContent {
-  flex: 1;
+.obObposPointOfSaleUiInDevHeader-innerDiv-headerText_warn {
+  background-color: #fff3cd;
+  color: #856404;
 }
 
-.obObposPointOfSaleUiInDevHeader-headerText-headerImg2 {
-  float: right;
-  margin: 8px 10px;
+.obObposPointOfSaleUiInDevHeader-innerDiv-headerText_warn:hover {
+  filter: brightness(1.02);
 }
 
-.obObposPointOfSaleUiInDevHeader-headerImg2-element1 {
-  height: 32px;
-  width: 35px;
-  background: url('./../../org.openbravo.mobile.core/assets/img/Warning.png');
-  background-repeat: no-repeat;
-  background-position: top left;
+.obObposPointOfSaleUiInDevHeader-innerDiv-headerText_warn:active {
+  filter: saturate(250%) contrast(0.9);
+}
+
+.obObposPointOfSaleUiInDevHeader-innerDiv-headerText_warn .obUiButton-components-icon {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconMessageWarning.svg'), url('./../../org.openbravo.mobile.core/assets/img/iconMessageWarning.svg');
+  background-size: 35px 30px;
+  background-position: 10px center, calc(100% - 10px) center;
+}
+
+.obObposPointOfSaleUiInDevHeader-innerDiv-headerText_error {
+  background-color: #f2dede;
+  color: #b94a48;
+  border: 1px solid #b94a48;
 }
 
 
@@ -9050,7 +9043,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposPointOfSaleUiScan-msgwelcome-msgwelcomeLbl {
-  float: right;
   align-items: center;
   background-image: url('./../img/OpenbravoWelcomeLogo.svg');
   background-position-x: right;
@@ -9140,7 +9132,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiScan-mainPanel-divInDevHeader {
 /* Inherits: [OB.OBPOSPointOfSale.UI.InDevHeader] */
-  height: 35px;
 }
 
 

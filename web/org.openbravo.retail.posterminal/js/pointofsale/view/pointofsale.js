@@ -2411,8 +2411,7 @@ enyo.kind({
     this.inherited(arguments);
     this.$.multiColumn.$.rightPanel.$.keyboard = this.$.multiColumn.$.rightPanel.$.rightBottomPanel.$.keyboard;
     if (OB.UTIL.Debug.isDebug()) {
-      document.body.style.background = '';
-      document.body.className += ' indev-background';
+      enyo.$.terminal.addClass('obUiTerminal_isDebug');
       this.waterfall('onInDevHeaderShow');
     }
 

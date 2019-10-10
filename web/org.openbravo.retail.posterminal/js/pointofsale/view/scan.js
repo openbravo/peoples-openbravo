@@ -29,40 +29,8 @@ enyo.kind({
       components: [
         {
           name: 'headerText',
-          kind: 'OB.UI.SmallButton',
-          classes: 'obObposPointOfSaleUiInDevHeader-innerDiv-headerText span12',
-          components: [
-            {
-              name: 'headerImg1',
-              classes: 'obObposPointOfSaleUiInDevHeader-headerText-headerImg1',
-              components: [
-                {
-                  classes: 'obObposPointOfSaleUiInDevHeader-headerImg1-element1'
-                }
-              ]
-            },
-            {
-              name: 'headerContentContainer',
-              classes:
-                'obObposPointOfSaleUiInDevHeader-headerText-headerContentContainer',
-              components: [
-                {
-                  name: 'headerContent',
-                  classes:
-                    'obObposPointOfSaleUiInDevHeader-headerContentContainer-headerContent'
-                }
-              ]
-            },
-            {
-              name: 'headerImg2',
-              classes: 'obObposPointOfSaleUiInDevHeader-headerText-headerImg2',
-              components: [
-                {
-                  classes: 'obObposPointOfSaleUiInDevHeader-headerImg2-element1'
-                }
-              ]
-            }
-          ],
+          kind: 'OB.UI.Button',
+          classes: 'obObposPointOfSaleUiInDevHeader-innerDiv-headerText',
           tap: function() {
             this.owner.doShowPopup({
               popup: 'modalModulesInDev'
@@ -75,21 +43,13 @@ enyo.kind({
   ],
   showHeaderContent: function() {
     var i18nLabel = 'OBMOBC_Debug';
-    this.$.headerText.removeClass(
-      'obObposPointOfSaleUiInDevHeader-headerText_orange'
-    );
-    this.$.headerText.removeClass(
-      'obObposPointOfSaleUiInDevHeader-headerText_red'
-    );
     this.$.headerText.addClass(
       OB.UTIL.Debug.isDebug() &&
         OB.UTIL.Debug.getDebugCauses().isTestEnvironment
-        ? 'obObposPointOfSaleUiInDevHeader-headerText_orange'
-        : 'obObposPointOfSaleUiInDevHeader-headerText_red'
+        ? 'obObposPointOfSaleUiInDevHeader-innerDiv-headerText_warn'
+        : 'obObposPointOfSaleUiInDevHeader-innerDiv-headerText_error'
     );
 
-    this.$.headerImg1.hide();
-    this.$.headerImg2.hide();
     if (!OB.UTIL.isHTTPSAvailable()) {
       i18nLabel = 'OBPOS_NonSecureConnection';
     } else if (OB.UTIL.Debug.isDebug()) {
@@ -99,7 +59,7 @@ enyo.kind({
         i18nLabel = 'OBPOS_ApplicationInTestEnvironment';
       }
     }
-    this.$.headerContent.setContent(OB.I18N.getLabel(i18nLabel));
+    this.$.headerText.setLabel(OB.I18N.getLabel(i18nLabel));
   },
   initComponents: function() {
     this.inherited(arguments);
