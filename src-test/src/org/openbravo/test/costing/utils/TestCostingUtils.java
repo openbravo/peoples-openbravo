@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017-2018 Openbravo SLU
+ * All portions are Copyright (C) 2017-2019 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -4986,10 +4986,8 @@ public class TestCostingUtils {
         assertEquals(productCosting.isManual(), productCostingAssert.isManual());
         assertEquals(productCosting.isPermanent(), !productCostingAssert.isManual());
 
-        assertEquals(productCosting.getGoodsShipmentLine(), null);
         assertEquals(productCosting.getInvoiceLine(), null);
 
-        assertEquals(productCosting.getProductionLine(), null);
         assertFalse(productCosting.isProduction());
         assertEquals(productCosting.getWarehouse(), productCostingAssert.getWarehouse());
         assertEquals(productCosting.getInventoryTransaction(),

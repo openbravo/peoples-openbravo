@@ -5497,7 +5497,7 @@
 <!--800069-->  <AD_REF_LIST_ID><![CDATA[800069]]></AD_REF_LIST_ID>
 <!--800069-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800069-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800069-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800069-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800069-->  <VALUE><![CDATA[AV]]></VALUE>
 <!--800069-->  <NAME><![CDATA[Legacy Average]]></NAME>
 <!--800069-->  <DESCRIPTION><![CDATA[Average cost calculated with old engine]]></DESCRIPTION>
@@ -5509,7 +5509,7 @@
 <!--800070-->  <AD_REF_LIST_ID><![CDATA[800070]]></AD_REF_LIST_ID>
 <!--800070-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800070-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800070-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800070-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800070-->  <VALUE><![CDATA[ST]]></VALUE>
 <!--800070-->  <NAME><![CDATA[Legacy Standard]]></NAME>
 <!--800070-->  <DESCRIPTION><![CDATA[Standard cost based on old engine]]></DESCRIPTION>

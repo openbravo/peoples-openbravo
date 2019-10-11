@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2018 Openbravo SLU
+ * All portions are Copyright (C) 2012-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -88,7 +88,6 @@ public class CostingRuleProcess implements Process {
       if (rule.getOrganization().getCurrency() == null) {
         throw new OBException("@NoCurrencyInCostingRuleOrg@");
       }
-      migrationCheck();
       if (rule.isBackdatedTransactionsFixed()) {
         CostAdjustmentProcess
             .doGetAlgorithmAdjustmentImp(rule.getCostingAlgorithm().getJavaClassName());
@@ -154,7 +153,6 @@ public class CostingRuleProcess implements Process {
       // Reload rule after possible session clear.
       rule = OBDal.getInstance().get(CostingRule.class, ruleId);
       rule.setValidated(true);
-      CostingStatus.getInstance().setMigrated();
       OBDal.getInstance().save(rule);
     } catch (final OBException e) {
       OBDal.getInstance().rollbackAndClose();
@@ -182,12 +180,6 @@ public class CostingRuleProcess implements Process {
     long end = System.currentTimeMillis();
     log4j.debug(
         "Ending CostingRuleProcess at: " + new Date() + ". Duration: " + (end - start) + " ms.");
-  }
-
-  private void migrationCheck() {
-    if (!CostingStatus.getInstance().isMigrated()) {
-      throw new OBException("@CostMigrationNotDone@");
-    }
   }
 
   private CostingRule getPreviousRule(CostingRule rule) {

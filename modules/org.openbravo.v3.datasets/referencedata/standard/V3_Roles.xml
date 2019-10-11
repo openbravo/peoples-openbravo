@@ -1631,18 +1631,6 @@
     <editableField>true</editableField>
     <inheritedFrom xsi:nil="true"/>
   </ADProcessAccess>
-  <ADProcessAccess id="FF808181259DADEB01259DDDA4E30241" identifier="Generate Average Costs - Finance">
-    <id>FF808181259DADEB01259DDDA4E30241</id>
-    <process id="800085" entity-name="ADProcess" identifier="Generate Average Costs"/>
-    <role id="FF8081812250326E012250353BDE0005" entity-name="ADRole" identifier="Finance"/>
-    <active>true</active>
-    <creationDate transient="true">2019-04-23T08:34:13.454Z</creationDate>
-    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-    <updated transient="true">2019-04-23T08:34:13.454Z</updated>
-    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-    <editableField>true</editableField>
-    <inheritedFrom xsi:nil="true"/>
-  </ADProcessAccess>
   <ADProcessAccess id="FF808181259DADEB01259DDDA4E40244" identifier="Sales Dimensional Report - Sales">
     <id>FF808181259DADEB01259DDDA4E40244</id>
     <process id="800184" entity-name="ADProcess" identifier="Sales Dimensional Report"/>
@@ -1879,18 +1867,6 @@
     <creationDate transient="true">2019-04-23T08:34:13.448Z</creationDate>
     <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
     <updated transient="true">2019-04-23T08:34:13.448Z</updated>
-    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-    <editableField>true</editableField>
-    <inheritedFrom xsi:nil="true"/>
-  </ADProcessAccess>
-  <ADProcessAccess id="FF808181259DADEB01259DDDA517025E" identifier="Generate Average Costs - Warehouse">
-    <id>FF808181259DADEB01259DDDA517025E</id>
-    <process id="800085" entity-name="ADProcess" identifier="Generate Average Costs"/>
-    <role id="FF808181259DADEB01259DDDA4C201E7" entity-name="ADRole" identifier="Warehouse"/>
-    <active>true</active>
-    <creationDate transient="true">2019-04-23T08:34:13.447Z</creationDate>
-    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-    <updated transient="true">2019-04-23T08:34:13.447Z</updated>
     <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
     <editableField>true</editableField>
     <inheritedFrom xsi:nil="true"/>

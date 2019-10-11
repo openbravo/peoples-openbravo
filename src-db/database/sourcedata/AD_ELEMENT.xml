@@ -9931,34 +9931,6 @@ If selected, this column will be used in the Search Window as an available filte
 <!--1746-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--1746--></AD_ELEMENT>
 
-<!--1747--><AD_ELEMENT>
-<!--1747-->  <AD_ELEMENT_ID><![CDATA[1747]]></AD_ELEMENT_ID>
-<!--1747-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1747-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1747-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1747-->  <COLUMNNAME><![CDATA[SetFutureCostTo]]></COLUMNNAME>
-<!--1747-->  <NAME><![CDATA[Set Future Costs to]]></NAME>
-<!--1747-->  <PRINTNAME><![CDATA[Set Future Costs to]]></PRINTNAME>
-<!--1747-->  <DESCRIPTION><![CDATA[Set the Future costs to the selection]]></DESCRIPTION>
-<!--1747-->  <HELP><![CDATA[Set the Future costs to the selection]]></HELP>
-<!--1747-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1747-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
-<!--1747--></AD_ELEMENT>
-
-<!--1748--><AD_ELEMENT>
-<!--1748-->  <AD_ELEMENT_ID><![CDATA[1748]]></AD_ELEMENT_ID>
-<!--1748-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1748-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1748-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1748-->  <COLUMNNAME><![CDATA[SetStandardCost]]></COLUMNNAME>
-<!--1748-->  <NAME><![CDATA[Set Standard Cost]]></NAME>
-<!--1748-->  <PRINTNAME><![CDATA[Set Standard Cost]]></PRINTNAME>
-<!--1748-->  <DESCRIPTION><![CDATA[Set new Standard Costs from Future Costs]]></DESCRIPTION>
-<!--1748-->  <HELP><![CDATA[Set new Standard Costs from Future Costs]]></HELP>
-<!--1748-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1748-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
-<!--1748--></AD_ELEMENT>
-
 <!--1752--><AD_ELEMENT>
 <!--1752-->  <AD_ELEMENT_ID><![CDATA[1752]]></AD_ELEMENT_ID>
 <!--1752-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -13671,19 +13643,6 @@ Order closed: All the products agreed have been delivered.]]></HELP>
 <!--800174-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800174-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--800174--></AD_ELEMENT>
-
-<!--800175--><AD_ELEMENT>
-<!--800175-->  <AD_ELEMENT_ID><![CDATA[800175]]></AD_ELEMENT_ID>
-<!--800175-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800175-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800175-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800175-->  <COLUMNNAME><![CDATA[Coststd]]></COLUMNNAME>
-<!--800175-->  <NAME><![CDATA[Standard Cost]]></NAME>
-<!--800175-->  <PRINTNAME><![CDATA[Cost Standar]]></PRINTNAME>
-<!--800175-->  <HELP><![CDATA[The value of the standard cost used by the legacy engine]]></HELP>
-<!--800175-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800175-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
-<!--800175--></AD_ELEMENT>
 
 <!--800176--><AD_ELEMENT>
 <!--800176-->  <AD_ELEMENT_ID><![CDATA[800176]]></AD_ELEMENT_ID>
