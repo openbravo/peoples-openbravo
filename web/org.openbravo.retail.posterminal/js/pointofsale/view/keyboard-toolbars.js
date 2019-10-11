@@ -954,17 +954,17 @@ enyo.kind({
       components: [
         {
           kind: 'OB.UI.Button',
-          classes: 'obObposPointOfSaleUiButtonMore-container1-btn',
+          classes:
+            'obUiActionButton obObposPointOfSaleUiButtonMore-container1-btn',
           name: 'btn',
-          label: ''
+          i18nLabel: 'OBPOS_MorePayments'
         }
       ]
     }
   ],
   initComponents: function() {
     this.inherited(arguments);
-    this.$.btn.setContent(OB.I18N.getLabel('OBPOS_MorePayments'));
-    this.activegreen = false;
+    this.activated = false;
   },
   tap: function() {
     if (!this.$.btn.getDisabled()) {
@@ -974,17 +974,17 @@ enyo.kind({
   buttonStatusChanged: function(inSender, inEvent) {
     var status = inEvent.value.status;
     this.$.btn.setDisabled(false);
-    if (this.activegreen) {
-      this.$.btn.setContent(OB.I18N.getLabel('OBPOS_MorePayments'));
+    if (this.activated) {
+      this.$.btn.setLabel(OB.I18N.getLabel('OBPOS_MorePayments'));
       this.$.btn.setSelected(false);
-      this.activegreen = false;
+      this.activated = false;
     }
     if (
       this.owner.showing &&
       (this.dialogbuttons[status] ||
         this.dialogbuttons[this.owner.keyboard.status])
     ) {
-      this.$.btn.setContent(
+      this.$.btn.setLabel(
         OB.I18N.getLabel('OBPOS_MorePayments') +
           ' (' +
           (this.dialogbuttons[status] ||
@@ -992,7 +992,7 @@ enyo.kind({
           ')'
       );
       this.$.btn.setSelected(true);
-      this.activegreen = true;
+      this.activated = true;
     }
     if (this.owner.showing) {
       if (
