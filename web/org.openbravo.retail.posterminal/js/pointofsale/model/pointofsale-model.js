@@ -1142,6 +1142,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                           data: [
                             {
                               id: auxReceipt.get('id'),
+                              posTerminal: OB.MobileApp.model.get('terminal')
+                                .id,
                               order: auxReceipt
                             }
                           ]

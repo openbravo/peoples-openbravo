@@ -139,7 +139,7 @@ public class CancelLayawayLoader extends OrderLoader {
           useOrderDocumentNoForRelatedDocs);
     } catch (Exception ex) {
       OBDal.getInstance().rollbackAndClose();
-      throw new OBException("CancelLayawayLoader.cancelOrder: ", ex);
+      throw new OBException("Error in CancelLayawayLoader : " + ex.getMessage(), ex);
     } finally {
       TriggerHandler.getInstance().enable();
     }

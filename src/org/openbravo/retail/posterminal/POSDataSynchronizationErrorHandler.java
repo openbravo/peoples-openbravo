@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -18,7 +18,6 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
-import org.openbravo.base.model.Entity;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.service.OBCriteria;
@@ -33,7 +32,8 @@ public class POSDataSynchronizationErrorHandler extends DataSynchronizationError
   private static final Logger log = LogManager.getLogger();
 
   @Override
-  public void handleError(Throwable t, Entity entity, JSONObject result, JSONObject jsonRecord) {
+  public void handleError(Throwable t, String typeOfData, JSONObject result,
+      JSONObject jsonRecord) {
 
     OBPOSAppTermStatHist terminalStatusHistory = null;
 
@@ -50,7 +50,7 @@ public class POSDataSynchronizationErrorHandler extends DataSynchronizationError
     }
     String cashupId = null;
     try {
-      if (entity.getName().equals("OBPOS_App_Cashup")) {
+      if (typeOfData.equals("OBPOS_App_Cashup")) {
         if (jsonRecord.has("id")) {
           cashupId = jsonRecord.getString("id");
         }
@@ -111,7 +111,7 @@ public class POSDataSynchronizationErrorHandler extends DataSynchronizationError
     errorEntry.setError(getErrorMessage(t));
     errorEntry.setOrderstatus("N");
     errorEntry.setJsoninfo(jsonRecord.toString());
-    errorEntry.setTypeofdata(entity.getName());
+    errorEntry.setTypeofdata(typeOfData);
     errorEntry
         .setObposApplications(OBDal.getInstance().get(OBPOSApplications.class, posTerminalId));
     OBDal.getInstance().save(errorEntry);
