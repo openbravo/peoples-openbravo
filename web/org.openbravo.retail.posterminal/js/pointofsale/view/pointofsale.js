@@ -2455,8 +2455,8 @@ enyo.kind({
   },
   doShowHeader: function(inSender, inEvent) {
     this.setText(inEvent.text);
-    if (inEvent.style) {
-      this.$.innerDiv.addStyles(inEvent.style);
+    if (inEvent.class) {
+      this.$.innerDiv.addClass(inEvent.class);
     }
     this.$.innerDiv.show();
   },
