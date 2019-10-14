@@ -242,11 +242,9 @@ public class OBScheduler {
     dateTimeFormat = getConfigParameters().getJavaDateTimeFormat();
     sqlDateTimeFormat = getConfigParameters().getSqlDateTimeFormat();
 
-    ProcessRequestData[] data = null;
     try {
-      data = ProcessRequestData.selectByStatus(getConnection(), SCHEDULED);
-
-      for (final ProcessRequestData request : data) {
+      for (ProcessRequestData request : ProcessRequestData.selectByStatus(getConnection(),
+          SCHEDULED)) {
         final String requestId = request.id;
         final VariablesSecureApp vars = ProcessContext.newInstance(request.obContext).toVars();
 

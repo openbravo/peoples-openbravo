@@ -26,6 +26,7 @@ import java.util.Calendar;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import org.apache.commons.lang.StringUtils;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 
@@ -94,18 +95,15 @@ abstract class TriggerGenerator {
    *           instance.
    */
   protected Calendar timestamp(String date, String time) throws ParseException {
-    Calendar cal = null;
+    Calendar cal = Calendar.getInstance();
 
-    if (date == null || date.equals("")) {
-      cal = Calendar.getInstance();
-    } else {
-      cal = Calendar.getInstance();
+    if (StringUtils.isNotBlank(date)) {
       synchronized (dateFormat) {
         cal.setTime(dateFormat.parse(date));
       }
     }
 
-    if (time != null && !time.equals("")) {
+    if (StringUtils.isNotBlank(time)) {
       int hour = Integer.parseInt(time.substring(time.indexOf(' ') + 1, time.indexOf(':')));
       int minute = Integer.parseInt(time.substring(time.indexOf(':') + 1, time.lastIndexOf(':')));
       int second = Integer.parseInt(time.substring(time.lastIndexOf(':') + 1, time.length()));
