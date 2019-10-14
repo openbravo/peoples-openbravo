@@ -19,27 +19,18 @@
 package org.openbravo.scheduling;
 
 /**
- * Represents that available timing options for a process request.
+ * A generator of Quartz's Triggers based in a cron expression.
  */
-enum TimingOption {
-  IMMEDIATE("I"), LATER("L"), SCHEDULED("S");
+import org.openbravo.scheduling.TriggerProvider.Timing;
+import org.quartz.CronTrigger;
+import org.quartz.TriggerBuilder;
 
-  private String label;
+@Timing("S7")
+class CronTriggerGenerator extends ScheduledTriggerGenerator {
 
-  private TimingOption(String label) {
-    this.label = label;
+  @Override
+  TriggerBuilder<CronTrigger> getScheduledBuilder(TriggerData data) {
+    return cronScheduledTriggerBuilder(data.cron);
   }
 
-  String getLabel() {
-    return label;
-  }
-
-  static TimingOption of(String label) {
-    for (TimingOption timingOption : values()) {
-      if (timingOption.label.equals(label)) {
-        return timingOption;
-      }
-    }
-    return null;
-  }
 }

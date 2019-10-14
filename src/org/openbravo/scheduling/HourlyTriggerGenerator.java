@@ -18,28 +18,29 @@
  */
 package org.openbravo.scheduling;
 
+import static org.quartz.TriggerBuilder.newTrigger;
+
+import org.apache.commons.lang.StringUtils;
+import org.openbravo.scheduling.TriggerProvider.Timing;
+import org.quartz.SimpleScheduleBuilder;
+import org.quartz.SimpleTrigger;
+import org.quartz.TriggerBuilder;
+
 /**
- * Represents that available timing options for a process request.
+ * A generator of Quartz's Triggers with hourly frequency.
  */
-enum TimingOption {
-  IMMEDIATE("I"), LATER("L"), SCHEDULED("S");
+@Timing("S3")
+class HourlyTriggerGenerator extends ScheduledTriggerGenerator {
 
-  private String label;
-
-  private TimingOption(String label) {
-    this.label = label;
-  }
-
-  String getLabel() {
-    return label;
-  }
-
-  static TimingOption of(String label) {
-    for (TimingOption timingOption : values()) {
-      if (timingOption.label.equals(label)) {
-        return timingOption;
-      }
+  @Override
+  TriggerBuilder<SimpleTrigger> getScheduledBuilder(TriggerData data) {
+    if (StringUtils.isBlank(data.hourlyRepetitions)) {
+      return newTrigger().withSchedule(
+          SimpleScheduleBuilder.repeatHourlyForever(Integer.parseInt(data.hourlyInterval)));
+    } else {
+      return newTrigger().withSchedule(SimpleScheduleBuilder.repeatHourlyForTotalCount(
+          Integer.parseInt(data.hourlyRepetitions), Integer.parseInt(data.hourlyInterval)));
     }
-    return null;
   }
+
 }

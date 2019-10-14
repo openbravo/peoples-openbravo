@@ -18,28 +18,22 @@
  */
 package org.openbravo.scheduling;
 
+import static org.quartz.TriggerBuilder.newTrigger;
+
+import org.openbravo.scheduling.TriggerProvider.Timing;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+
 /**
- * Represents that available timing options for a process request.
+ * A generator of Quartz's Triggers to immediately execute the job. Note that this is also the
+ * default generator when no AD_PROCESS_REQUEST information is found by the {@link TriggerProvider}.
  */
-enum TimingOption {
-  IMMEDIATE("I"), LATER("L"), SCHEDULED("S");
+@Timing("I")
+class ImmediateTriggerGenerator extends TriggerGenerator {
 
-  private String label;
-
-  private TimingOption(String label) {
-    this.label = label;
+  @Override
+  public TriggerBuilder<Trigger> getBuilder(TriggerData data) {
+    return newTrigger().startNow();
   }
 
-  String getLabel() {
-    return label;
-  }
-
-  static TimingOption of(String label) {
-    for (TimingOption timingOption : values()) {
-      if (timingOption.label.equals(label)) {
-        return timingOption;
-      }
-    }
-    return null;
-  }
 }

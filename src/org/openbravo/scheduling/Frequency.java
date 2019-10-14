@@ -30,6 +30,10 @@ enum Frequency {
     this.label = label;
   }
 
+  String getLabel() {
+    return label;
+  }
+
   static Frequency of(String label) {
     for (Frequency frequency : values()) {
       if (frequency.label.equals(label)) {

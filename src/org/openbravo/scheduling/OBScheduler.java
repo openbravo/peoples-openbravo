@@ -35,6 +35,7 @@ import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.ConnectionProviderContextListener;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.quartz.JobDetail;
@@ -64,6 +65,9 @@ public class OBScheduler {
   private String dateTimeFormat;
 
   private String sqlDateTimeFormat;
+
+  private TriggerProvider triggerProvider = WeldUtils
+      .getInstanceFromStaticBeanManager(TriggerProvider.class);
 
   private static final String BACKGROUND_POLICY = "background.policy";
   private static final String NO_EXECUTE_POLICY = "no-execute";
@@ -169,8 +173,7 @@ public class OBScheduler {
       throw new SchedulerException("Process bundle cannot be null.");
     }
     final JobDetail jobDetail = JobDetailProvider.newInstance(requestId, bundle);
-    final Trigger trigger = TriggerProvider.getInstance()
-        .createTrigger(requestId, bundle, getConnection());
+    final Trigger trigger = triggerProvider.createTrigger(requestId, bundle, getConnection());
 
     sched.scheduleJob(jobDetail, trigger);
   }

@@ -18,28 +18,28 @@
  */
 package org.openbravo.scheduling;
 
+import static org.quartz.TriggerBuilder.newTrigger;
+
+import java.text.ParseException;
+import java.util.Calendar;
+
+import org.openbravo.scheduling.TriggerProvider.Timing;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+
 /**
- * Represents that available timing options for a process request.
+ * A generator of Quartz's Triggers to execute the job at a particular date.
  */
-enum TimingOption {
-  IMMEDIATE("I"), LATER("L"), SCHEDULED("S");
+@Timing("L")
+class LaterTriggerGenerator extends TriggerGenerator {
 
-  private String label;
-
-  private TimingOption(String label) {
-    this.label = label;
+  @Override
+  public TriggerBuilder<Trigger> getBuilder(TriggerData data) throws ParseException {
+    return newTrigger().startAt(getStartDate(data).getTime());
   }
 
-  String getLabel() {
-    return label;
+  private Calendar getStartDate(TriggerData data) throws ParseException {
+    return timestamp(data.startDate, data.startTime);
   }
 
-  static TimingOption of(String label) {
-    for (TimingOption timingOption : values()) {
-      if (timingOption.label.equals(label)) {
-        return timingOption;
-      }
-    }
-    return null;
-  }
 }
