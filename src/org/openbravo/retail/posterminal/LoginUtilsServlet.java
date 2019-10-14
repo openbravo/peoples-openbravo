@@ -494,14 +494,11 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
       if (server.isAllorgs()) {
         respArray.put(createServerJSON(server));
       } else {
-        StringBuilder hql = new StringBuilder();
-        hql.append("select mso from " + MobileServerOrganization.ENTITY_NAME + " as mso ");
-        hql.append("where mso." + MobileServerOrganization.PROPERTY_OBMOBCSERVERDEFINITION
-            + " = :serverDefinition ");
-        hql.append("and mso." + MobileServerOrganization.PROPERTY_SERVERORG + " = :org");
-        Query<Object> query = OBDal.getInstance()
-            .getSession()
-            .createQuery(hql.toString(), Object.class);
+        String hql = "select mso from " + MobileServerOrganization.ENTITY_NAME + " as mso " //
+            + "where mso." + MobileServerOrganization.PROPERTY_OBMOBCSERVERDEFINITION
+            + " = :serverDefinition " //
+            + "and mso." + MobileServerOrganization.PROPERTY_SERVERORG + " = :org";
+        Query<Object> query = OBDal.getInstance().getSession().createQuery(hql, Object.class);
 
         query.setParameter("serverDefinition", server);
         query.setParameter("org", terminal.getOrganization());
