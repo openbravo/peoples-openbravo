@@ -36,7 +36,7 @@ import org.quartz.TriggerBuilder;
 @ApplicationScoped
 abstract class TriggerGenerator {
 
-  private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
+  private SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
   /**
    * Provides the TriggerBuilder used by the {@link #generate(String, TriggerData)} method to create
@@ -100,7 +100,9 @@ abstract class TriggerGenerator {
       cal = Calendar.getInstance();
     } else {
       cal = Calendar.getInstance();
-      cal.setTime(DATE_FORMAT.parse(date));
+      synchronized (dateFormat) {
+        cal.setTime(dateFormat.parse(date));
+      }
     }
 
     if (time != null && !time.equals("")) {
