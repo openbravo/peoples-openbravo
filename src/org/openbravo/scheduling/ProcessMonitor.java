@@ -25,7 +25,6 @@ import static org.openbravo.scheduling.Process.KILLED;
 import static org.openbravo.scheduling.Process.PROCESSING;
 import static org.openbravo.scheduling.Process.SCHEDULED;
 import static org.openbravo.scheduling.Process.SUCCESS;
-import static org.openbravo.scheduling.Process.UNSCHEDULED;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -211,22 +210,7 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
 
   @Override
   public void jobUnscheduled(TriggerKey triggerKey) {
-    try {
-      /*
-       * This method is never called. See for more details:
-       * https://issues.openbravo.com/view.php?id=38804
-       * 
-       * Once this issue is fixed, consider whether this method should be removed or changed to use
-       * an appropriate updatedBy userID
-       */
-      ProcessRequestData.update(getConnection(), UNSCHEDULED, null, null, null, "0",
-          triggerKey.getName());
-    } catch (final ServletException e) {
-      log.error(e.getMessage(), e);
-    } finally {
-      // return connection to pool and remove it from current thread
-      SessionInfo.init();
-    }
+    // Not implemented
   }
 
   @Override
