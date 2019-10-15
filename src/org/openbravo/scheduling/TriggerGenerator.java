@@ -24,8 +24,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import javax.enterprise.context.ApplicationScoped;
-
 import org.apache.commons.lang.StringUtils;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
@@ -34,7 +32,6 @@ import org.quartz.TriggerBuilder;
  * A generator of Quartz's Triggers. Each class extending this one should provide a
  * {@code TriggerBuilder} with the settings used to generate the Trigger.
  */
-@ApplicationScoped
 abstract class TriggerGenerator {
 
   private SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");

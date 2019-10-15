@@ -20,7 +20,6 @@ package org.openbravo.scheduling;
 
 import static org.quartz.TriggerBuilder.newTrigger;
 
-import org.openbravo.scheduling.TriggerProvider.Timing;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 
@@ -28,7 +27,6 @@ import org.quartz.TriggerBuilder;
  * A generator of Quartz's Triggers to immediately execute the job. Note that this is also the
  * default generator when no AD_PROCESS_REQUEST information is found by the {@link TriggerProvider}.
  */
-@Timing("I")
 class ImmediateTriggerGenerator extends TriggerGenerator {
 
   @Override

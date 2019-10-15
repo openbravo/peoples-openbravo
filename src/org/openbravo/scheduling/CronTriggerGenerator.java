@@ -18,14 +18,12 @@
  */
 package org.openbravo.scheduling;
 
-/**
- * A generator of Quartz's Triggers based in a cron expression.
- */
-import org.openbravo.scheduling.TriggerProvider.Timing;
 import org.quartz.CronTrigger;
 import org.quartz.TriggerBuilder;
 
-@Timing("S7")
+/**
+ * A generator of Quartz's Triggers based in a cron expression.
+ */
 class CronTriggerGenerator extends ScheduledTriggerGenerator {
 
   @Override

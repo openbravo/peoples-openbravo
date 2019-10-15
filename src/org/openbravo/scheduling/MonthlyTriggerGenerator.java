@@ -20,14 +20,12 @@ package org.openbravo.scheduling;
 
 import java.text.ParseException;
 
-import org.openbravo.scheduling.TriggerProvider.Timing;
 import org.quartz.CronTrigger;
 import org.quartz.TriggerBuilder;
 
 /**
  * A generator of Quartz's Triggers with monthly frequency.
  */
-@Timing("S6")
 class MonthlyTriggerGenerator extends ScheduledTriggerGenerator {
 
   private static final String MONTH_OPTION_FIRST = "1";

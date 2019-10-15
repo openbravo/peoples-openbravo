@@ -18,19 +18,12 @@
  */
 package org.openbravo.scheduling;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 import java.text.ParseException;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
-import javax.enterprise.inject.UnsatisfiedResolutionException;
-import javax.enterprise.util.AnnotationLiteral;
-import javax.inject.Inject;
-import javax.inject.Qualifier;
 import javax.servlet.ServletException;
 
 import org.apache.logging.log4j.LogManager;
@@ -43,13 +36,33 @@ import org.quartz.Trigger;
  * Provides Quartz's Trigger instances configured with the timing options and schedules defined with
  * a process request.
  */
-@ApplicationScoped
 class TriggerProvider {
   private static final Logger log = LogManager.getLogger();
+  private static final TriggerProvider INSTANCE = new TriggerProvider();
 
-  @Inject
-  @Any
-  private Instance<TriggerGenerator> triggerGenerators;
+  private Map<String, TriggerGenerator> triggerGenerators;
+
+  private TriggerProvider() {
+    triggerGenerators = getGenerators();
+  }
+
+  private Map<String, TriggerGenerator> getGenerators() {
+    return Stream
+        .of(new SimpleEntry<>("I", new ImmediateTriggerGenerator()),
+            new SimpleEntry<>("L", new LaterTriggerGenerator()),
+            new SimpleEntry<>("S1", new SecondlyTriggerGenerator()),
+            new SimpleEntry<>("S2", new MinutelyTriggerGenerator()),
+            new SimpleEntry<>("S3", new HourlyTriggerGenerator()),
+            new SimpleEntry<>("S4", new DailyTriggerGenerator()),
+            new SimpleEntry<>("S5", new WeeklyTriggerGenerator()),
+            new SimpleEntry<>("S6", new MonthlyTriggerGenerator()),
+            new SimpleEntry<>("S7", new CronTriggerGenerator()))
+        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+  }
+
+  static TriggerProvider getInstance() {
+    return INSTANCE;
+  }
 
   /**
    * Loads the trigger details from AD_PROCESS_REQUEST and converts them into a schedulable Quartz
@@ -96,13 +109,12 @@ class TriggerProvider {
   private TriggerGenerator getTriggerGenerator(TriggerData data, ProcessBundle bundle,
       ConnectionProvider conn) throws ServletException {
     String timing = getTiming(data);
-    try {
-      return triggerGenerators.select(new Selector(timing)).get();
-    } catch (UnsatisfiedResolutionException ex) {
-      log.error("Couldn't get a trigger generator for timing option {}", timing, ex);
+    if (!triggerGenerators.containsKey(timing)) {
+      log.error("Couldn't get a trigger generator for timing option {}", timing);
       throw new ServletException(
           getErrorMessage(conn, bundle, "Unrecognized timing option " + timing));
     }
+    return triggerGenerators.get(timing);
   }
 
   private String getTiming(TriggerData data) {
@@ -125,34 +137,5 @@ class TriggerProvider {
   private String getErrorMessage(ConnectionProvider conn, ProcessBundle bundle, String msg) {
     String language = bundle.getContext().getLanguage();
     return Utility.messageBD(conn, "TRIG_INVALID_DATA", language) + " " + msg;
-  }
-
-  /**
-   * Defines the qualifier used to register a {@link TriggerGenerator}.
-   */
-  @Qualifier
-  @Retention(RetentionPolicy.RUNTIME)
-  @Target({ ElementType.TYPE })
-  public @interface Timing {
-    String value();
-  }
-
-  /**
-   * A class used to select the correct {@link TriggerGenerator} instance.
-   */
-  @SuppressWarnings("all")
-  private static class Selector extends AnnotationLiteral<Timing> implements Timing {
-    private static final long serialVersionUID = 1L;
-
-    private String value;
-
-    public Selector(String value) {
-      this.value = value;
-    }
-
-    @Override
-    public String value() {
-      return value;
-    }
   }
 }

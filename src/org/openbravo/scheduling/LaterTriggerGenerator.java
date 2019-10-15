@@ -23,14 +23,12 @@ import static org.quartz.TriggerBuilder.newTrigger;
 import java.text.ParseException;
 import java.util.Calendar;
 
-import org.openbravo.scheduling.TriggerProvider.Timing;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 
 /**
  * A generator of Quartz's Triggers to execute the job at a particular date.
  */
-@Timing("L")
 class LaterTriggerGenerator extends TriggerGenerator {
 
   @Override

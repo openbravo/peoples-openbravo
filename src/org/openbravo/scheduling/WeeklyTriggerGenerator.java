@@ -23,14 +23,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openbravo.erpCommon.utility.StringCollectionUtils;
-import org.openbravo.scheduling.TriggerProvider.Timing;
 import org.quartz.CronTrigger;
 import org.quartz.TriggerBuilder;
 
 /**
  * A generator of Quartz's Triggers with weekly frequency.
  */
-@Timing("S5")
 class WeeklyTriggerGenerator extends ScheduledTriggerGenerator {
 
   @Override

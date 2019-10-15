@@ -21,7 +21,6 @@ package org.openbravo.scheduling;
 import static org.quartz.TriggerBuilder.newTrigger;
 
 import org.apache.commons.lang.StringUtils;
-import org.openbravo.scheduling.TriggerProvider.Timing;
 import org.quartz.SimpleScheduleBuilder;
 import org.quartz.SimpleTrigger;
 import org.quartz.TriggerBuilder;
@@ -29,7 +28,6 @@ import org.quartz.TriggerBuilder;
 /**
  * A generator of Quartz's Triggers with minutely frequency.
  */
-@Timing("S2")
 class MinutelyTriggerGenerator extends ScheduledTriggerGenerator {
 
   @Override

@@ -24,14 +24,12 @@ import static org.quartz.TriggerBuilder.newTrigger;
 import java.text.ParseException;
 
 import org.apache.commons.lang.StringUtils;
-import org.openbravo.scheduling.TriggerProvider.Timing;
 import org.quartz.DateBuilder.IntervalUnit;
 import org.quartz.TriggerBuilder;
 
 /**
  * A generator of Quartz's Triggers with daily frequency.
  */
-@Timing("S4")
 class DailyTriggerGenerator extends ScheduledTriggerGenerator {
 
   private enum DailyOption {
