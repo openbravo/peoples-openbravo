@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2008-2018 Openbravo SLU
+ * All portions are Copyright (C) 2008-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,17 +29,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.costing.CostingStatus;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.financial.FinancialUtils;
-import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.transaction.ProductionLine;
 
 public class DocProduction extends AcctServer {
@@ -192,26 +189,15 @@ public class DocProduction extends AcctServer {
       DocLine_Material line = (DocLine_Material) p_lines[i];
       Currency costCurrency = FinancialUtils
           .getLegalEntityCurrency(OBDal.getInstance().get(Organization.class, line.m_AD_Org_ID));
-      if (!CostingStatus.getInstance().isMigrated()) {
-        costCurrency = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency();
-      } else if (line.transaction != null && line.transaction.getCurrency() != null) {
+      if (line.transaction != null && line.transaction.getCurrency() != null) {
         costCurrency = line.transaction.getCurrency();
       }
-      if (CostingStatus.getInstance().isMigrated() && line.transaction != null
-          && !line.transaction.isCostCalculated()) {
+      if (line.transaction != null && !line.transaction.isCostCalculated()) {
         Map<String, String> parameters = getNotCalculatedCostParameters(line.transaction);
         setMessageResult(conn, STATUS_NotCalculatedCost, "error", parameters);
         throw new OBException("@NotCalculatedCost@");
       }
       String costs = line.getProductCosts(DateAcct, as, conn, con);
-      BigDecimal dCosts = new BigDecimal(costs);
-      if (BigDecimal.ZERO.compareTo(dCosts) == 0 && !CostingStatus.getInstance().isMigrated()
-          && DocInOutData.existsCost(conn, DateAcct, line.m_M_Product_ID).equals("0")) {
-        Map<String, String> parameters = getInvalidCostParameters(
-            OBDal.getInstance().get(Product.class, line.m_M_Product_ID).getIdentifier(), DateAcct);
-        setMessageResult(conn, STATUS_InvalidCost, "error", parameters);
-        throw new IllegalStateException();
-      }
       log4jDocProduction
           .debug("DocProduction - createFact - line.m_Productiontype - " + line.m_Productiontype);
       if (line.m_Productiontype.equals("+")) {

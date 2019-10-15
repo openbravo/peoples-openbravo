@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2019 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -42,7 +42,6 @@ import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.report.ReportingUtils;
-import org.openbravo.costing.CostingStatus;
 import org.openbravo.costing.CostingUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
@@ -82,12 +81,6 @@ public class ReportValuationStock extends HttpSecureAppServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
-
-    // This report cannot be run if the instance is not migrated.
-    if (CostingStatus.getInstance().isMigrated() == false) {
-      advise(request, response, "ERROR", OBMessageUtils.messageBD("NotUsingNewCost"), "");
-      return;
-    }
 
     // Get user Client's base currency
     ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();

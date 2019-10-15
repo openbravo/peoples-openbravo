@@ -35,7 +35,6 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.costing.CostingBackground;
-import org.openbravo.costing.CostingStatus;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.Preferences;
@@ -371,11 +370,6 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
         xmlDocument.setParameter("messageType", myMessage.getType());
         xmlDocument.setParameter("messageTitle", myMessage.getTitle());
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
-      }
-      if (CostingStatus.getInstance().isMigrated() == false) {
-        advise(request, response, "ERROR",
-            Utility.messageBD(readOnlyCP, "NotUsingNewCost", vars.getLanguage()), "");
-        return;
       }
       if (!transactionCostDateAcctInitialized()) {
         advise(request, response, "ERROR", Utility.messageBD(readOnlyCP,

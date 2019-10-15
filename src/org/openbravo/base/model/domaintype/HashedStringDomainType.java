@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,7 +24,7 @@ package org.openbravo.base.model.domaintype;
  * cleartext value cannot be recovered.
  * 
  * @author shuehner
- * @see org.openbravo.utils.CryptoSHA1BASE64#hash(String)
+ * @see org.openbravo.authentication.hashing.PasswordHash
  */
 public class HashedStringDomainType extends StringDomainType {
 

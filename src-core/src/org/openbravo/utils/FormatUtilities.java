@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2015 Openbravo S.L.U.
+ * Copyright (C) 2001-2019 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -10,6 +10,11 @@
  ************************************************************************************
  */
 package org.openbravo.utils;
+
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 
 import javax.servlet.ServletException;
 
@@ -66,13 +71,30 @@ public class FormatUtilities {
         "\n", "\\n"), "\r", "").replace("<", "\\<").replace(">", "\\>");
   }
 
+  /**
+   * Hashes text using SHA-1 algorithm. This method is deprecated in favor of PasswordHash which
+   * supports more modern algorithms.
+   *
+   * @deprecated Use PasswordHash instead (since = "3.0PR20Q1", forRemoval = true)
+   */
+  @Deprecated
   public static String sha1Base64(String text) throws ServletException {
     if (text == null || text.trim().equals("")) {
       return "";
     }
-    String result = text;
-    result = CryptoSHA1BASE64.hash(text);
-    return result;
+
+    MessageDigest md = null;
+
+    try {
+      md = MessageDigest.getInstance("SHA"); // SHA-1 generator instance
+    } catch (NoSuchAlgorithmException e) {
+      throw new ServletException(e.getMessage());
+    }
+
+    md.update(text.getBytes(StandardCharsets.UTF_8));
+
+    byte[] raw = md.digest(); // Message summary reception
+    return Base64.getEncoder().encodeToString(raw);
   }
 
   public static String encryptDecrypt(String text, boolean encrypt) throws ServletException {

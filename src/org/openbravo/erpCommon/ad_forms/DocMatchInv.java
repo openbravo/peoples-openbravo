@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2018 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2019 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -30,7 +30,6 @@ import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostingAlgorithm.CostDimension;
-import org.openbravo.costing.CostingStatus;
 import org.openbravo.costing.CostingUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -39,7 +38,6 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.financial.FinancialUtils;
-import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
@@ -288,13 +286,10 @@ public class DocMatchInv extends AcctServer {
       } else {
         trxCost = transaction.getTransactionCost();
       }
-      if (!CostingStatus.getInstance().isMigrated()) {
-        costCurrency = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency();
-      } else if (transaction != null && transaction.getCurrency() != null) {
+      if (transaction != null && transaction.getCurrency() != null) {
         costCurrency = transaction.getCurrency();
       }
-      if (CostingStatus.getInstance().isMigrated() && transaction != null
-          && !transaction.isCostCalculated()) {
+      if (transaction != null && !transaction.isCostCalculated()) {
         Map<String, String> parameters = getNotCalculatedCostParameters(transaction);
         setMessageResult(conn, STATUS_NotCalculatedCost, "error", parameters);
         throw new IllegalStateException();
@@ -304,11 +299,8 @@ public class DocMatchInv extends AcctServer {
       // The precision of the divide is set to 10 because the rounding is needed to avoid
       // exceptions.
       // The rounding itself is not needed because it is done some lines later.
-      bdCost = CostingStatus.getInstance().isMigrated()
-          ? trxCost.divide(transaction == null ? new BigDecimal(data[0].getField("Qty")).abs()
-              : transaction.getMovementQuantity().abs(), 10, RoundingMode.HALF_UP)
-          : new BigDecimal(DocMatchInvData.selectProductAverageCost(conn,
-              data[0].getField("M_Product_Id"), data[0].getField("orderAcctDate")));
+      bdCost = trxCost.divide(transaction == null ? new BigDecimal(data[0].getField("Qty")).abs()
+          : transaction.getMovementQuantity().abs(), 10, RoundingMode.HALF_UP);
       Long scale = costCurrency.getStandardPrecision();
       BigDecimal bdQty = new BigDecimal(data[0].getField("Qty"));
       bdCost = bdCost.multiply(bdQty).setScale(scale.intValue(), RoundingMode.HALF_UP);

@@ -22,7 +22,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2017 Openbravo SLU
+ * All portions are Copyright (C) 2001-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************/
@@ -54,7 +54,6 @@
 
   v_NextNo                              VARCHAR2(32);
   v_ProductionNo                        M_Production.DocumentNo%TYPE;
-  v_iscostmigrated                      CHAR;
   Cur_ProductionPlan RECORD;
   Cur_ProductionLine RECORD;
   Cur_WIP RECORD;
@@ -94,36 +93,15 @@ BEGIN
                         AND pl.CALCULATED = 'N'
                         AND pl.M_PRODUCT_ID = M_PRODUCTIONLINE.M_PRODUCT_ID);
 
-    SELECT count(1) INTO v_count
-    FROM DUAL WHERE EXISTS (SELECT 1 FROM ad_preference
-                      WHERE attribute = 'Cost_Eng_Ins_Migrated');
-
-    IF (v_count > 0) THEN
-      -- Costing engine migrated
-      SELECT MAX(pr.movementdate), MAX(trxprocessdate), COUNT (*), MAX(pr.DOCUMENTNO)
-      INTO v_ProductionDate, v_CostingDate, v_count, v_ProductionNo
-      FROM M_PRODUCTION pr, M_PRODUCTIONLINE pl
-        LEFT JOIN M_TRANSACTION t ON t.m_productionline_id = pl.m_productionline_id
-        , M_PRODUCTIONPLAN pp
-      WHERE pr.m_production_id = p_Production_ID
-        AND pr.m_production_id = pp.m_production_id
-        AND pp.m_productionplan_id = pl.m_productionplan_id;
-      v_costingdate := COALESCE(v_costingdate, v_productiondate);
-    ELSE
-      -- Costing engine not migrated
-      SELECT MAX(movementdate), MAX(movementdate), COUNT (*), MAX(pr.DOCUMENTNO)
-      INTO v_ProductionDate, v_CostingDate, v_count, v_ProductionNo
-      FROM M_PRODUCTION pr, M_PRODUCTIONLINE pl, M_PRODUCTIONPLAN pp
-      WHERE pr.m_production_id = p_Production_ID
-        AND pr.m_production_id = pp.m_production_id
-        AND pp.m_productionplan_id = pl.m_productionplan_id
-        AND pl.calculated = 'N';
-    END IF;
-
-    SELECT CASE COUNT(1) WHEN 0 THEN 'N' ELSE 'Y' END INTO v_iscostmigrated
-    FROM DUAL
-    WHERE EXISTS (SELECT 1 FROM m_costing_rule cr
-               WHERE cr.isvalidated = 'Y');
+    SELECT MAX(pr.movementdate), MAX(trxprocessdate), COUNT (*), MAX(pr.DOCUMENTNO)
+    INTO v_ProductionDate, v_CostingDate, v_count, v_ProductionNo
+    FROM M_PRODUCTION pr, M_PRODUCTIONLINE pl
+      LEFT JOIN M_TRANSACTION t ON t.m_productionline_id = pl.m_productionline_id
+      , M_PRODUCTIONPLAN pp
+    WHERE pr.m_production_id = p_Production_ID
+      AND pr.m_production_id = pp.m_production_id
+      AND pp.m_productionplan_id = pl.m_productionplan_id;
+    v_costingdate := COALESCE(v_costingdate, v_productiondate);
 
     v_ResultStr := 'Calculate cost';
 
@@ -192,8 +170,7 @@ BEGIN
                           AND ppl.PRODUCTIONTYPE = '-'
                           AND ppl.M_PRODUCTIONPLAN_ID = Cur_ProductionPlan.M_PRODUCTIONPLAN_ID
                           AND c.ISPRODUCTION='Y'
-                          AND ((c.COSTTYPE = (CASE WHEN (SELECT COUNT(1) FROM M_PRODUCT WHERE M_PRODUCT_ID = ppl.M_PRODUCT_ID AND PRODUCTTYPE = 'I' AND ISSTOCKED = 'Y') > 0 THEN 'AVA' ELSE 'STA' END) AND v_iscostmigrated = 'Y')
-				OR (c.COSTTYPE IN ('AV','ST') AND v_iscostmigrated = 'N'))
+                          AND c.COSTTYPE = (CASE WHEN (SELECT COUNT(1) FROM M_PRODUCT WHERE M_PRODUCT_ID = ppl.M_PRODUCT_ID AND PRODUCTTYPE = 'I' AND ISSTOCKED = 'Y') > 0 THEN 'AVA' ELSE 'STA' END)
                         GROUP BY ppl.M_PRODUCTIONLINE_ID, ppl.MOVEMENTQTY) LOOP
           v_ProductionCost_Tmp := v_ProductionCost_Tmp + COALESCE(Cur_WIP.cost,0);
           UPDATE M_PRODUCTIONLINE
@@ -212,8 +189,7 @@ BEGIN
                                   AND ppl.PRODUCTIONTYPE = '-'
                                   AND ppl.M_PRODUCTIONPLAN_ID = Cur_ProductionPlan.M_PRODUCTIONPLAN_ID
                                   AND c.ISPRODUCTION='N'
-				                           AND ((c.COSTTYPE = (CASE WHEN (SELECT COUNT(1) FROM M_PRODUCT WHERE M_PRODUCT_ID = ppl.M_PRODUCT_ID AND PRODUCTTYPE = 'I' AND ISSTOCKED = 'Y') > 0 THEN 'AVA' ELSE 'STA' END) AND v_iscostmigrated = 'Y')
-								OR (c.COSTTYPE IN ('AV','ST') AND v_iscostmigrated = 'N'))
+				  AND c.COSTTYPE = (CASE WHEN (SELECT COUNT(1) FROM M_PRODUCT WHERE M_PRODUCT_ID = ppl.M_PRODUCT_ID AND PRODUCTTYPE = 'I' AND ISSTOCKED = 'Y') > 0 THEN 'AVA' ELSE 'STA' END)
                                   AND NOT EXISTS (SELECT 1
                                                   FROM M_COSTING, M_PRODUCTIONLINE
                                                   WHERE M_COSTING.M_PRODUCT_ID = M_PRODUCTIONLINE.M_PRODUCT_ID
@@ -222,8 +198,7 @@ BEGIN
                                                     AND M_PRODUCTIONLINE.PRODUCTIONTYPE = '-'
                                                     AND M_PRODUCTIONLINE.M_PRODUCT_ID = c.M_Product_ID
                                                     AND M_COSTING.ISPRODUCTION='Y'
-						    AND ((M_COSTING.COSTTYPE = (CASE WHEN (SELECT COUNT(1) FROM M_PRODUCT WHERE M_PRODUCT_ID = ppl.M_PRODUCT_ID AND PRODUCTTYPE = 'I' AND ISSTOCKED = 'Y') > 0 THEN 'AVA' ELSE 'STA' END) AND v_iscostmigrated = 'Y')
-							OR (M_COSTING.COSTTYPE IN ('AV','ST') AND v_iscostmigrated = 'N')))
+						    AND M_COSTING.COSTTYPE = (CASE WHEN (SELECT COUNT(1) FROM M_PRODUCT WHERE M_PRODUCT_ID = ppl.M_PRODUCT_ID AND PRODUCTTYPE = 'I' AND ISSTOCKED = 'Y') > 0 THEN 'AVA' ELSE 'STA' END))
                                 GROUP BY ppl.M_PRODUCTIONLINE_ID, ppl.MOVEMENTQTY) LOOP
           v_ProductionCost_Tmp := v_ProductionCost_Tmp + COALESCE(Cur_RawMaterial.cost,0);
           UPDATE M_PRODUCTIONLINE
@@ -233,16 +208,14 @@ BEGIN
         v_ProductionCost := v_ProductionCost + COALESCE(v_ProductionCost_Tmp,0);
         v_ProductionCost_Tmp := 0;
         
-        IF (v_iscostmigrated = 'Y') THEN
-          SELECT count(1), max(p.name) INTO v_count2, v_productname
-          FROM m_productionline pl JOIN m_product p ON pl.m_product_id = p.m_product_id
-          WHERE pl.m_productionplan_id = Cur_ProductionPlan.M_PRODUCTIONPLAN_ID
-            AND pl.productiontype = '-'
-            AND pl.calccost IS NULL;
-          IF (v_count2 > 0) THEN
-            v_message := '@NoAvgCostDefined@ @Product@: ' || v_productname || ', @Date@:' || v_CostingDate;
-            RAISE_APPLICATION_ERROR(-20000, v_message);
-          END IF;
+        SELECT count(1), max(p.name) INTO v_count2, v_productname
+        FROM m_productionline pl JOIN m_product p ON pl.m_product_id = p.m_product_id
+        WHERE pl.m_productionplan_id = Cur_ProductionPlan.M_PRODUCTIONPLAN_ID
+          AND pl.productiontype = '-'
+          AND pl.calccost IS NULL;
+        IF (v_count2 > 0) THEN
+          v_message := '@NoAvgCostDefined@ @Product@: ' || v_productname || ', @Date@:' || v_CostingDate;
+          RAISE_APPLICATION_ERROR(-20000, v_message);
         END IF;
 
         -- Calculates the cost of the cost center
@@ -441,7 +414,7 @@ BEGIN
               AND ISPRODUCTION='Y';
 
             --Insert cost per unit.
-            IF (v_iscostmigrated = 'Y' AND Cur_ProductionLine.isWip = 0) THEN
+            IF (Cur_ProductionLine.isWip = 0) THEN
               -- The product is not consumed in the same work effort so m_costing will be updated/created by the costing server
               -- If it is WIP then we need to update the cost of the product so the production run that consumes it it is
               -- Taking into account the new production cost.
@@ -452,16 +425,16 @@ BEGIN
               --First time
               INSERT INTO M_COSTING (M_COSTING_ID, CREATED, CREATEDBY, UPDATED, UPDATEDBY, AD_CLIENT_ID,
                             AD_ORG_ID, M_PRODUCT_ID, DATETO, DATEFROM, ISMANUAL,
-                            M_PRODUCTIONLINE_ID, QTY,
+                            QTY,
                             PRICE,
                             COST, ISPERMANENT, ISPRODUCTION,
                             COSTTYPE)
                      VALUES (v_NextNo,now(), p_User_ID, now(), p_User_ID, Cur_ProductionLine.AD_CLIENT_ID,
                             Cur_ProductionLine.AD_ORG_ID, Cur_ProductionLine.M_PRODUCT_ID, TO_DATE('31-12-9999','DD-MM-YYYY'), v_CostingDate, 'N',
-                            Cur_ProductionLine.M_PRODUCTIONLINE_ID, Cur_ProductionLine.MOVEMENTQTY,
+                            Cur_ProductionLine.MOVEMENTQTY,
                             ROUND(v_Cost/Cur_ProductionLine.MOVEMENTQTY,4),
                             (CASE (Cur_ProductionLine.MOVEMENTQTY) WHEN 0 THEN 0 ELSE ROUND(v_Cost/Cur_ProductionLine.MOVEMENTQTY,4) END), 'N', 'Y',
-                            CASE v_iscostmigrated WHEN 'Y' THEN 'AVA' ELSE 'AV' END);
+                            'AVA');
             ELSE
               v_ResultStr := 'update cost';
               --Check if costing is correct, there must be only one cost
@@ -511,18 +484,18 @@ BEGIN
                 v_ResultStr := 'insert cost';
                 INSERT INTO M_COSTING (M_COSTING_ID, CREATED, CREATEDBY, UPDATED, UPDATEDBY, AD_CLIENT_ID,
                             AD_ORG_ID, M_PRODUCT_ID, DATETO, DATEFROM, ISMANUAL,
-                            M_PRODUCTIONLINE_ID, QTY,
+                            QTY,
                             PRICE,
                             COST,
                             ISPERMANENT, ISPRODUCTION,
                             COSTTYPE)
                        VALUES (v_NextNo,now(), p_User_ID, now(), p_User_ID, Cur_ProductionLine.AD_CLIENT_ID,
                             Cur_ProductionLine.AD_ORG_ID, Cur_ProductionLine.M_PRODUCT_ID, v_DateTo, v_CostingDate, 'N',
-                            Cur_ProductionLine.M_PRODUCTIONLINE_ID, Cur_ProductionLine.MOVEMENTQTY,
+                            Cur_ProductionLine.MOVEMENTQTY,
                             ROUND(v_Cost/Cur_ProductionLine.MOVEMENTQTY,4),
                             (CASE (v_Qty+Cur_ProductionLine.MOVEMENTQTY) WHEN 0 THEN 0 ELSE ROUND(((v_Qty*v_CostOld)+(v_Cost))/(v_Qty+Cur_ProductionLine.MOVEMENTQTY),4)END),
                                 'N', 'Y',
-                            CASE v_iscostmigrated WHEN 'Y' THEN 'AVA' ELSE 'AV' END);
+                            'AVA');
               ELSIF (v_count2 = 0) THEN
                 SELECT COALESCE(MIN(DATEFROM), TO_DATE('31-12-9999','DD-MM-YYYY')) INTO v_DateTo
                 FROM M_COSTING
@@ -543,18 +516,18 @@ BEGIN
                 v_ResultStr := 'insert cost';
                 INSERT INTO M_COSTING (M_COSTING_ID, CREATED, CREATEDBY, UPDATED, UPDATEDBY, AD_CLIENT_ID,
                             AD_ORG_ID, M_PRODUCT_ID, DATETO, DATEFROM, ISMANUAL,
-                            M_PRODUCTIONLINE_ID, QTY,
+                            QTY,
                             PRICE,
                             COST,
                             ISPERMANENT, ISPRODUCTION,
                             COSTTYPE)
                        VALUES (v_NextNo,now(), p_User_ID, now(), p_User_ID, Cur_ProductionLine.AD_CLIENT_ID,
                             Cur_ProductionLine.AD_ORG_ID, Cur_ProductionLine.M_PRODUCT_ID, v_DateTo, v_CostingDate, 'N',
-                            Cur_ProductionLine.M_PRODUCTIONLINE_ID, Cur_ProductionLine.MOVEMENTQTY,
+                            Cur_ProductionLine.MOVEMENTQTY,
                             ROUND(v_Cost/Cur_ProductionLine.MOVEMENTQTY,4),
                             (CASE (v_Qty+Cur_ProductionLine.MOVEMENTQTY) WHEN 0 THEN 0 ELSE ROUND(((v_Qty*v_CostOld)+(v_Cost))/(v_Qty+Cur_ProductionLine.MOVEMENTQTY),4)END),
                               'N', 'Y',
-                            CASE v_iscostmigrated WHEN 'Y' THEN 'AVA' ELSE 'AV' END);
+                            'AVA');
 
               ELSE
                 --If for productiondate there are more than one calculated costs

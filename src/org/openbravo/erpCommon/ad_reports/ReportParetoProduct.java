@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2019 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,7 +36,6 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.costing.CostingStatus;
 import org.openbravo.costing.CostingUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -137,12 +136,6 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
     ReportParetoProductData[] data = null;
     String strConvRateErrorMsg = "";
     String discard[] = { "discard" };
-
-    // If the instance is not migrated the user should use the Legacy report
-    if (!CostingStatus.getInstance().isMigrated()) {
-      advise(request, response, "ERROR", OBMessageUtils.messageBD("NotUsingNewCost"), "");
-      return;
-    }
 
     ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
     XmlDocument xmlDocument = xmlEngine
