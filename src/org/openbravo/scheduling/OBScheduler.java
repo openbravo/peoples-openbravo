@@ -23,8 +23,8 @@ import static org.openbravo.scheduling.Process.UNSCHEDULED;
 import static org.quartz.JobKey.jobKey;
 import static org.quartz.TriggerKey.triggerKey;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.servlet.ServletException;
 
@@ -60,7 +60,7 @@ public class OBScheduler {
 
   private SchedulerContext ctx;
 
-  private String dateTimeFormat;
+  private DateTimeFormatter dateTimeFormatter;
 
   private String sqlDateTimeFormat;
 
@@ -208,18 +208,20 @@ public class OBScheduler {
       sched.unscheduleJob(triggerKey(requestId, OB_GROUP));
       sched.deleteJob(jobKey(requestId, OB_GROUP));
       ProcessRequestData.update(getConnection(), UNSCHEDULED, null, sqlDateTimeFormat,
-          format(new Date()), context.getUser(), requestId);
+          getCurrentDate(), context.getUser(), requestId);
     } catch (final Exception e) {
       log.error("An error occurred unscheduling process " + requestId, e);
     }
   }
 
-  /**
-   * @param date
-   * @return the date as a formatted string
-   */
-  public static final String format(Date date) {
-    return date == null ? null : new SimpleDateFormat(getInstance().dateTimeFormat).format(date);
+  private String getCurrentDate() {
+    LocalDateTime now = LocalDateTime.now();
+    try {
+      return now.format(dateTimeFormatter);
+    } catch (Exception ex) {
+      log.error("Could not parse date {}", now, ex);
+      return null;
+    }
   }
 
   /**
@@ -235,7 +237,7 @@ public class OBScheduler {
     schdlr.getListenerManager().addJobListener(monitor);
     schdlr.getListenerManager().addTriggerListener(monitor);
 
-    dateTimeFormat = getConfigParameters().getJavaDateTimeFormat();
+    dateTimeFormatter = DateTimeFormatter.ofPattern(getConfigParameters().getJavaDateTimeFormat());
     sqlDateTimeFormat = getConfigParameters().getSqlDateTimeFormat();
 
     try {
