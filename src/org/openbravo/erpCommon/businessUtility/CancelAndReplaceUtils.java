@@ -22,13 +22,11 @@ import java.math.BigDecimal;
 import java.sql.CallableStatement;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
@@ -66,13 +64,11 @@ import org.openbravo.model.ad.access.OrderLineTax;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.OrderLineOffer;
 import org.openbravo.model.common.order.OrderTax;
 import org.openbravo.model.common.order.OrderlineServiceRelation;
-import org.openbravo.model.common.order.ReplacementOrder;
 import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
@@ -111,50 +107,20 @@ public class CancelAndReplaceUtils {
    *          Order that will be cancelled and replaced
    */
   public static Order createReplacementOrder(Order oldOrder) {
-    return createReplacementOrder(oldOrder, "TMP", null, null);
-  }
-
-  /**
-   * Process that creates a replacement order in temporary status in order to Cancel and Replace an
-   * original order
-   * 
-   * @param oldOrder
-   *          Order that will be cancelled and replaced
-   * @param orderStatus
-   *          Status of the new order
-   * @param orderJson
-   *          Replacement Order in json format
-   * @param replacementNumber
-   *          Set the replacement document no
-   */
-  private static Order createReplacementOrder(Order oldOrder, String orderStatus,
-      JSONObject orderJson, String replacementNumber) {
     // Create new Order header
     Order newOrder = (Order) DalUtil.copy(oldOrder, false, true);
     // Change order values
     newOrder.setProcessed(false);
     newOrder.setPosted("N");
-    newOrder.setDocumentStatus(orderStatus);
+    newOrder.setDocumentStatus("TMP");
     newOrder.setDocumentAction("CO");
     newOrder.setGrandTotalAmount(BigDecimal.ZERO);
     newOrder.setSummedLineAmount(BigDecimal.ZERO);
     Date today = new Date();
     newOrder.setOrderDate(today);
     newOrder.setReplacedorder(oldOrder);
-    String newDocumentNo = CancelAndReplaceUtils.getNextCancelDocNo(oldOrder.getDocumentNo(),
-        replacementNumber);
+    String newDocumentNo = CancelAndReplaceUtils.getNextCancelDocNo(oldOrder.getDocumentNo());
     newOrder.setDocumentNo(newDocumentNo);
-    if (orderJson != null) {
-      try {
-        newOrder.setOrganization(
-            OBDal.getInstance().getProxy(Organization.class, orderJson.getString("organization")));
-        newOrder.setWarehouse(
-            OBDal.getInstance().getProxy(Warehouse.class, orderJson.getString("warehouse")));
-      } catch (JSONException e) {
-        log4j.error("Error Creating Replacement Order", e);
-      }
-    }
-
     OBDal.getInstance().save(newOrder);
 
     String newOrderId = newOrder.getId();
@@ -167,11 +133,10 @@ public class CancelAndReplaceUtils {
       while (orderLines.next()) {
         OrderLine oldOrderLine = (OrderLine) orderLines.get(0);
         // Skip discount lines as they will be created when booking the replacement order
-        if (oldOrderLine.getOrderDiscount() != null || !isInNewOrder(oldOrderLine, orderJson)) {
+        if (oldOrderLine.getOrderDiscount() != null) {
           continue;
         }
         OrderLine newOrderLine = (OrderLine) DalUtil.copy(oldOrderLine, false, true);
-        newOrderLine.setOrganization(newOrder.getOrganization());
         newOrderLine.setDeliveredQuantity(BigDecimal.ZERO);
         newOrderLine.setReservedQuantity(BigDecimal.ZERO);
         newOrderLine.setInvoicedQuantity(BigDecimal.ZERO);
@@ -195,27 +160,6 @@ public class CancelAndReplaceUtils {
     OBDal.getInstance().flush();
     updateRelationsBetweenOrderLinesProductsAndServices(newOrder);
     return newOrder;
-  }
-
-  private static boolean isInNewOrder(OrderLine oldOrderLine, JSONObject orderJson) {
-    if (orderJson != null) {
-      try {
-        JSONArray lines = orderJson.getJSONArray("lines");
-        for (int i = 0; i < lines.length(); i++) {
-          JSONObject line = lines.getJSONObject(i);
-          String productId = line.getJSONObject("product").getString("id");
-          String qty = line.getString("qty");
-          if (StringUtils.equals(productId, oldOrderLine.getProduct().getId())
-              && oldOrderLine.getOrderedQuantity().compareTo(new BigDecimal(qty)) == 0) {
-            return true;
-          }
-        }
-      } catch (JSONException e) {
-        log4j.error("Error reading orderLine property", e);
-        return false;
-      }
-    }
-    return orderJson == null;
   }
 
   /**
@@ -330,9 +274,7 @@ public class CancelAndReplaceUtils {
    */
   public static Order cancelOrder(String newOrderId, JSONObject jsonorder,
       boolean useOrderDocumentNoForRelatedDocs) {
-    List<Order> replacementOrders = cancelAndReplaceOrder(newOrderId, jsonorder,
-        useOrderDocumentNoForRelatedDocs, false);
-    return replacementOrders.isEmpty() ? null : replacementOrders.get(0);
+    return cancelAndReplaceOrder(newOrderId, jsonorder, useOrderDocumentNoForRelatedDocs, false);
   }
 
   /**
@@ -349,80 +291,56 @@ public class CancelAndReplaceUtils {
    */
   public static Order cancelAndReplaceOrder(String newOrderId, JSONObject jsonorder,
       boolean useOrderDocumentNoForRelatedDocs) {
-    List<Order> replacementOrders = cancelAndReplaceOrder(newOrderId, jsonorder,
-        useOrderDocumentNoForRelatedDocs, true);
-    return replacementOrders.isEmpty() ? null : replacementOrders.get(0);
-  }
-
-  /**
-   * * Method that given an Order Id it cancels it and creates another one equal but with negative
-   * quantities. It also creates a list of new orders replacing the cancelled one.
-   * 
-   * @param newOrderId
-   *          Id of the Sales Order to be cancelled.
-   * @param jsonorder
-   *          Parameter with the order replacement information
-   */
-  public static List<Order> cancelAndReplaceOrder(String newOrderId, JSONObject jsonorder) {
-    return cancelAndReplaceOrder(newOrderId, jsonorder, true, true);
+    return cancelAndReplaceOrder(newOrderId, jsonorder, useOrderDocumentNoForRelatedDocs, true);
   }
 
   /**
    * Process that cancels an existing order and creates another one inverse of the original. If it
-   * is indicated a list of new orders is created with received modifications that replaces the
-   * original one.
+   * is indicated a new order is created with received modifications that replaces the original one.
    * 
    * This process will create a netting goods shipment to leave the original order and the inverse
    * order completely delivered, and if anything is delivered was delivered in the original order it
-   * will be delivered so in the created ones.
+   * will be delivered so in the new one.
    * 
    * The same behavior of shipments will be implemented with payments.
    * 
    * @param orderId
    *          Order Id of the new order or of the old order, depending on replaceOrder boolean.
    * @param jsonorder
-   *          JSON Object of the order coming from Web POS, also can have the order replacement
-   *          information
+   *          JSON Object of the order coming from Web POS
    * @param useOrderDocumentNoForRelatedDocs
    *          OBPOS_UseOrderDocumentNoForRelatedDocs preference from Web POS.
    * @param replaceOrder
    *          If replaceOrder == true, the original order will be cancelled and replaced with a new
-   *          one if no replacement information was set, if == false, it will only be cancelled
+   *          one, if == false, it will only be cancelled
    */
-  private static List<Order> cancelAndReplaceOrder(String orderId, JSONObject jsonorder,
+  private static Order cancelAndReplaceOrder(String orderId, JSONObject jsonorder,
       boolean useOrderDocumentNoForRelatedDocs, boolean replaceOrder) {
     ScrollableResults orderLines = null;
     ScrollableResults shipmentLines = null;
+    Order newOrder = null;
     Order oldOrder = null;
     Order inverseOrder = null;
+    String newOrderId = null;
     String oldOrderId = null;
     String inverseOrderId = null;
-    List<Order> replacementOrders = new ArrayList<>();
     OBContext.setAdminMode(false);
     try {
 
       boolean triggersDisabled = false;
-      if (jsonorder != null && !jsonorder.has("replacement")) {
+      if (jsonorder != null) {
         triggersDisabled = true;
       }
 
-      // If replaceOrder == true, the original order will be cancelled and
-      // replaced with the replacements or with a new one if no replacement was specified,
+      // If replaceOrder == true, the original order will be cancelled and replaced with a new one,
       // if == false, it will only be cancelled
       if (replaceOrder) {
-        if (jsonorder != null && jsonorder.has("replacement")) {
-          oldOrder = OBDal.getInstance().get(Order.class, orderId);
-          oldOrderId = oldOrder.getId();
-          String docStatus = jsonorder.has("docStatus") ? jsonorder.getString("docStatus") : "TMP";
-          replacementOrders = getOrderReplacements(oldOrder, docStatus,
-              jsonorder.getJSONArray("replacement"));
-        } else {
-          // Get new Order
-          replacementOrders.add(OBDal.getInstance().get(Order.class, orderId));
-          // Get old Order
-          oldOrder = replacementOrders.get(0).getReplacedorder();
-          oldOrderId = oldOrder.getId();
-        }
+        // Get new Order
+        newOrder = OBDal.getInstance().get(Order.class, orderId);
+        newOrderId = newOrder.getId();
+        // Get old Order
+        oldOrder = newOrder.getReplacedorder();
+        oldOrderId = oldOrder.getId();
       } else {
         // Get old Order
         oldOrder = OBDal.getInstance().get(Order.class, orderId);
@@ -440,11 +358,8 @@ public class CancelAndReplaceUtils {
       closeOldReservations(oldOrder);
 
       // Refresh documents
-      if (!replacementOrders.isEmpty()) {
-        List<Order> orders = new ArrayList<>();
-        replacementOrders
-            .forEach(order -> orders.add(OBDal.getInstance().get(Order.class, order.getId())));
-        replacementOrders = orders;
+      if (newOrderId != null) {
+        newOrder = OBDal.getInstance().get(Order.class, newOrderId);
       }
 
       oldOrder = OBDal.getInstance().get(Order.class, oldOrderId);
@@ -511,7 +426,7 @@ public class CancelAndReplaceUtils {
             }
 
             // Get the the new order line that replaces the old order line, should be only one
-            OrderLine newOrderLine = getReplacementOrderLine(replacementOrders, oldOrderLine);
+            OrderLine newOrderLine = getReplacementOrderLine(newOrder, oldOrderLine);
             if (newOrderLine != null) {
               // Create Netting goods shipment Line for the new order line
               movementQty = oldOrderLineDeliveredQty;
@@ -551,10 +466,10 @@ public class CancelAndReplaceUtils {
                   shipments.add(shipment);
                 }
                 // Get the the new order line that replaces the old order line, should be only one
-                OrderLine newOrderLine = getReplacementOrderLine(replacementOrders, oldOrderLine);
+                OrderLine newOrderLine = getReplacementOrderLine(newOrder, oldOrderLine);
                 if (newOrderLine != null) {
                   shipLine.setSalesOrderLine(newOrderLine);
-                  if (jsonorder == null || jsonorder != null && jsonorder.has("replacement")) {
+                  if (jsonorder == null) {
                     newOrderLine.setDeliveredQuantity(
                         newOrderLine.getDeliveredQuantity().add(shipLine.getMovementQuantity()));
                     OBDal.getInstance().save(newOrderLine);
@@ -585,9 +500,9 @@ public class CancelAndReplaceUtils {
             // new order line. Set delivered quantity of the new order line to same as original
             // order
             // line. Do this only in backend workflow, as everything is always delivered in Web POS
-          } else if (jsonorder == null || jsonorder != null && jsonorder.has("replacement")) {
+          } else if (jsonorder == null) {
             // Get the the new order line that replaces the old order line, should be only one
-            OrderLine newOrderLine = getReplacementOrderLine(replacementOrders, oldOrderLine);
+            OrderLine newOrderLine = getReplacementOrderLine(newOrder, oldOrderLine);
             if (newOrderLine != null) {
               newOrderLine.setDeliveredQuantity(oldOrderLine.getDeliveredQuantity());
             }
@@ -612,10 +527,7 @@ public class CancelAndReplaceUtils {
                   .get(ShipmentInOut.class, nettingGoodsShipmentId);
             }
             if (replaceOrder) {
-              List<Order> orders = new ArrayList<>();
-              replacementOrders.forEach(
-                  order -> orders.add(OBDal.getInstance().get(Order.class, order.getId())));
-              replacementOrders = orders;
+              newOrder = OBDal.getInstance().get(Order.class, newOrderId);
             }
             oldOrder = OBDal.getInstance().get(Order.class, oldOrderId);
             inverseOrder = OBDal.getInstance().get(Order.class, inverseOrderId);
@@ -624,7 +536,7 @@ public class CancelAndReplaceUtils {
       }
       // Create or update the needed services relations
       if (replaceOrder) {
-        updateServicesRelations(jsonorder, oldOrder, inverseOrder, replacementOrders, replaceOrder);
+        updateServicesRelations(jsonorder, oldOrder, inverseOrder, newOrder, replaceOrder);
       }
       // The netting shipment is flagged as processed.
       if (nettingGoodsShipment != null) {
@@ -650,57 +562,24 @@ public class CancelAndReplaceUtils {
       // Close original order
       oldOrder.setDocumentStatus("CL");
       oldOrder.setDocumentAction("--");
-      oldOrder.setReplacementorder(replacementOrders.size() == 1 ? replacementOrders.get(0) : null);
+      oldOrder.setReplacementorder(newOrder);
       oldOrder.setCancelled(true);
       oldOrder.setProcessed(true);
       oldOrder.setProcessNow(false);
       OBDal.getInstance().save(oldOrder);
 
-      for (Order order : replacementOrders) {
-        ReplacementOrder replacement = OBProvider.getInstance().get(ReplacementOrder.class);
-        replacement.setOrder(oldOrder);
-        replacement.setReplacementOrder(order);
-        replacement.setOrganization(order.getOrganization());
-        OBDal.getInstance().save(replacement);
-      }
-
       // Complete new order and generate good shipment and sales invoice
       if (!triggersDisabled) {
-        OBContext.setCrossOrgReferenceAdminMode();
-        try {
-          OBDal.getInstance().flush();
-        } finally {
-          OBContext.restorePreviousCrossOrgReferenceMode();
-        }
-        replacementOrders.forEach(order -> {
-          try {
-            String docAction = jsonorder != null && jsonorder.has("docAction")
-                ? jsonorder.getString("docAction")
-                : "CO";
-            order.setDocumentStatus("DR");
-            // order.setDocumentAction("CO");
-            OBDal.getInstance().save(order);
-            boolean processOrder = jsonorder != null && jsonorder.has("processOrder")
-                ? jsonorder.getBoolean("processOrder")
-                : true;
-            if (processOrder) {
-              callCOrderPost(order);
-              // FIXME Remove
-              // Order order1 = OBDal.getInstance().get(Order.class, order.getId());
-              // order1.setDocumentStatus(docAction);
-              // OBDal.getInstance().save(order);
-            }
-          } catch (JSONException e) {
-            log4j.error("Error reading json properties", e);
-          }
-        });
+        newOrder.setDocumentStatus("DR");
+        OBDal.getInstance().save(newOrder);
+        callCOrderPost(newOrder);
       }
 
       // Only create new reservations for new orders if coming from Web POS. For backend workflow it
       // will attend to Order Line Reservation field.
-      if (!replacementOrders.isEmpty() && jsonorder != null) {
+      if (newOrder != null && jsonorder != null) {
         // Create new reservations
-        replacementOrders.forEach(order -> createNewReservations(order));
+        createNewReservations(newOrder);
       }
 
       // Refresh documents
@@ -708,10 +587,7 @@ public class CancelAndReplaceUtils {
         nettingGoodsShipment = OBDal.getInstance().get(ShipmentInOut.class, nettingGoodsShipmentId);
       }
       if (replaceOrder) {
-        List<Order> orders = new ArrayList<>();
-        replacementOrders
-            .forEach(order -> orders.add(OBDal.getInstance().get(Order.class, order.getId())));
-        replacementOrders = orders;
+        newOrder = OBDal.getInstance().get(Order.class, newOrderId);
       }
       oldOrder = OBDal.getInstance().get(Order.class, oldOrderId);
       inverseOrder = OBDal.getInstance().get(Order.class, inverseOrderId);
@@ -728,7 +604,7 @@ public class CancelAndReplaceUtils {
       // Payment Creation only to orders with grand total different than ZERO
       // Get the payment schedule detail of the oldOrder
       if (oldOrder.getGrandTotalAmount().compareTo(BigDecimal.ZERO) != 0) {
-        createPayments(oldOrder, replacementOrders, inverseOrder, jsonorder,
+        createPayments(oldOrder, newOrder, inverseOrder, jsonorder,
             useOrderDocumentNoForRelatedDocs, replaceOrder, triggersDisabled);
       }
 
@@ -737,17 +613,9 @@ public class CancelAndReplaceUtils {
       }
       try {
         // Calling Cancelandreplaceorderhook
-
-        if (replacementOrders.isEmpty()) {
-          WeldUtils.getInstanceFromStaticBeanManager(CancelAndReplaceOrderHookCaller.class)
-              .executeHook(replaceOrder, triggersDisabled, oldOrder, null, inverseOrder, jsonorder);
-        } else {
-          for (Order newOrder : replacementOrders) {
-            WeldUtils.getInstanceFromStaticBeanManager(CancelAndReplaceOrderHookCaller.class)
-                .executeHook(replaceOrder, triggersDisabled, oldOrder, newOrder, inverseOrder,
-                    jsonorder != null && !jsonorder.has("replacement") ? jsonorder : null);
-          }
-        }
+        WeldUtils.getInstanceFromStaticBeanManager(CancelAndReplaceOrderHookCaller.class)
+            .executeHook(replaceOrder, triggersDisabled, oldOrder, newOrder, inverseOrder,
+                jsonorder);
       } finally {
         if (triggersDisabled) {
           TriggerHandler.getInstance().disable();
@@ -763,19 +631,7 @@ public class CancelAndReplaceUtils {
       }
       OBContext.restorePreviousMode();
     }
-    return replacementOrders;
-  }
-
-  private static List<Order> getOrderReplacements(Order oldOrder, String orderStatus,
-      JSONArray orderReplacements) throws JSONException {
-    List<Order> replacements = new ArrayList<>();
-    for (int i = 0; i < orderReplacements.length(); i++) {
-      JSONObject orderJson = orderReplacements.getJSONObject(i);
-      Order newOrder = createReplacementOrder(oldOrder, orderStatus, orderJson,
-          String.valueOf((i + 1)));
-      replacements.add(newOrder);
-    }
-    return replacements;
+    return newOrder;
   }
 
   private static void callCOrderPost(Order order) throws OBException {
@@ -1143,15 +999,14 @@ public class CancelAndReplaceUtils {
    *          The order that have been canceled.
    * @param inverseOrder
    *          The order that is canceling the old order.
-   * @param replacementOrders
-   *          The orders that is replacing the old order.
+   * @param newOrder
+   *          The order that is replacing the old order.
    * @param replaceOrder
    *          If true, the process is C&R, otherwise is a CL process.
    * @throws JSONException
    */
   private static void updateServicesRelations(JSONObject jsonorder, Order oldOrder,
-      Order inverseOrder, Collection<Order> replacementOrders, boolean replaceOrder)
-      throws JSONException {
+      Order inverseOrder, Order newOrder, boolean replaceOrder) throws JSONException {
     final List<String> createdRelations = new ArrayList<>();
     final List<OrderlineServiceRelation> relationsToRemove = new ArrayList<>();
     final OBCriteria<OrderLine> oldOrderLineCriteria = OBDal.getInstance()
@@ -1202,7 +1057,7 @@ public class CancelAndReplaceUtils {
                     if (line.has("linepos")
                         && (line.getInt("linepos") + 1) * 10 == oldOrderLine.getLineNo()) {
                       newOrderLineCriteria
-                          .add(Restrictions.in(OrderLine.PROPERTY_SALESORDER, replacementOrders));
+                          .add(Restrictions.eq(OrderLine.PROPERTY_SALESORDER, newOrder));
                       newOrderLineCriteria
                           .add(Restrictions.eq(OrderLine.PROPERTY_LINENO, (long) ((i + 1) * 10)));
                       newOrderLineCriteria.setMaxResults(1);
@@ -1380,9 +1235,9 @@ public class CancelAndReplaceUtils {
     OBDal.getInstance().flush();
   }
 
-  private static void createPayments(Order oldOrder, Collection<Order> replacementOrders,
-      Order inverseOrder, JSONObject jsonorder, boolean useOrderDocumentNoForRelatedDocs,
-      boolean replaceOrder, boolean triggersDisabled) {
+  private static void createPayments(Order oldOrder, Order newOrder, Order inverseOrder,
+      JSONObject jsonorder, boolean useOrderDocumentNoForRelatedDocs, boolean replaceOrder,
+      boolean triggersDisabled) {
     try {
       FIN_PaymentSchedule paymentSchedule = getPaymentScheduleOfOrder(oldOrder);
       if (paymentSchedule != null) {
@@ -1413,13 +1268,9 @@ public class CancelAndReplaceUtils {
             // Get the payment schedule of the new order to check the outstanding amount, could
             // have been automatically paid on C_ORDER_POST if is automatically invoiced and the
             // payment method of the financial account is configured as 'Automatic Receipt'
-            for (Order newOrder : replacementOrders) {
-              FIN_PaymentSchedule paymentScheduleNewOrder = getPaymentScheduleOfOrder(newOrder);
-              if (paymentScheduleNewOrder == null || paymentScheduleNewOrder.getOutstandingAmount()
-                  .compareTo(BigDecimal.ZERO) == 0) {
-                createPayments = false;
-                break;
-              }
+            FIN_PaymentSchedule paymentScheduleNewOrder = getPaymentScheduleOfOrder(newOrder);
+            if (paymentScheduleNewOrder.getOutstandingAmount().compareTo(BigDecimal.ZERO) == 0) {
+              createPayments = false;
             }
           }
 
@@ -1428,13 +1279,9 @@ public class CancelAndReplaceUtils {
 
           // Pay of the new order the amount already paid in original order
           if (createPayments && paidAmount.compareTo(BigDecimal.ZERO) != 0) {
-            String description = nettingPayment.getDescription();
-            for (Order newOrder : replacementOrders) {
-              nettingPayment = createOrUdpatePayment(jsonorder, nettingPayment, newOrder, null,
-                  paidAmount, null, null, null);
-              description += ": " + newOrder.getDocumentNo();
-            }
-            ;
+            nettingPayment = createOrUdpatePayment(jsonorder, nettingPayment, newOrder, null,
+                paidAmount, null, null, null);
+            String description = nettingPayment.getDescription() + ": " + newOrder.getDocumentNo();
             String truncatedDescription = (description.length() > 255)
                 ? description.substring(0, 252).concat("...").toString()
                 : description.toString();
@@ -1495,7 +1342,7 @@ public class CancelAndReplaceUtils {
     FIN_FinancialAccount financialAccount = null;
     OrganizationStructureProvider osp = OBContext.getOBContext()
         .getOrganizationStructureProvider(oldOrder.getOrganization().getClient().getId());
-    if (jsonorder != null && !jsonorder.has("replacement")) {
+    if (jsonorder != null) {
       paymentPaymentMethod = OBDal.getInstance()
           .get(FIN_PaymentMethod.class,
               (String) jsonorder.getJSONObject("defaultPaymentType").get("paymentMethodId"));
@@ -1712,10 +1559,6 @@ public class CancelAndReplaceUtils {
    * @return The new document number for the order which cancels the old order.
    */
   public static String getNextCancelDocNo(String documentNo) {
-    return getNextCancelDocNo(documentNo, null);
-  }
-
-  private static String getNextCancelDocNo(String documentNo, String replacementNumber) {
     String newDocNo = "";
     String[] splittedDocNo = documentNo.split(HYPHEN);
     if (splittedDocNo.length > 1) {
@@ -1732,12 +1575,10 @@ public class CancelAndReplaceUtils {
           }
         }
       } catch (NumberFormatException nfe) {
-        newDocNo = replacementNumber != null ? documentNo + HYPHEN + replacementNumber
-            : documentNo + HYPHENONE;
+        newDocNo = documentNo + HYPHENONE;
       }
     } else {
-      newDocNo = replacementNumber != null ? documentNo + HYPHEN + replacementNumber
-          : documentNo + HYPHENONE;
+      newDocNo = documentNo + HYPHENONE;
     }
     return newDocNo;
   }
@@ -1798,11 +1639,10 @@ public class CancelAndReplaceUtils {
     return enableStockReservations;
   }
 
-  private static OrderLine getReplacementOrderLine(Collection<Order> orders,
-      OrderLine oldOrderLine) {
+  private static OrderLine getReplacementOrderLine(Order newOrder, OrderLine oldOrderLine) {
     OBCriteria<OrderLine> olc = OBDal.getInstance().createCriteria(OrderLine.class);
     olc.add(Restrictions.eq(OrderLine.PROPERTY_REPLACEDORDERLINE, oldOrderLine));
-    olc.add(Restrictions.in(OrderLine.PROPERTY_SALESORDER, orders));
+    olc.add(Restrictions.eq(OrderLine.PROPERTY_SALESORDER, newOrder));
     olc.setFilterOnReadableOrganization(false);
     olc.setMaxResults(1);
     return (OrderLine) olc.uniqueResult();
