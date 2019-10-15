@@ -35,22 +35,9 @@ import org.quartz.TriggerBuilder;
 class DailyTriggerGenerator extends ScheduledTriggerGenerator {
 
   private enum DailyOption {
-    WEEKDAYS("D"), WEEKENDS("E"), EVERY_N_DAYS("N");
-
-    private String label;
-
-    private DailyOption(String label) {
-      this.label = label;
-    }
-
-    static DailyOption of(String label) {
-      for (DailyOption dailyOption : values()) {
-        if (dailyOption.label.equals(label)) {
-          return dailyOption;
-        }
-      }
-      return null;
-    }
+    D, // WEEKDAYS
+    E, // WEEKENDS
+    N // EVERY_N_DAYS
   }
 
   @Override
@@ -59,13 +46,8 @@ class DailyTriggerGenerator extends ScheduledTriggerGenerator {
       return cronScheduledTriggerBuilder(getCronTime(data) + " ? * *");
     }
 
-    DailyOption dailyOption = DailyOption.of(data.dailyOption);
-    if (dailyOption == null) {
-      throw new ParseException("At least one daily option must be selected.", -1);
-    }
-
-    switch (dailyOption) {
-      case EVERY_N_DAYS:
+    switch (DailyOption.valueOf(data.dailyOption)) {
+      case N:
         try {
           return newTrigger().withSchedule(calendarIntervalSchedule()
               .withInterval(Integer.parseInt(data.dailyInterval), IntervalUnit.DAY));
@@ -73,12 +55,12 @@ class DailyTriggerGenerator extends ScheduledTriggerGenerator {
         } catch (NumberFormatException e) {
           throw new ParseException("Invalid daily interval specified.", -1);
         }
-      case WEEKDAYS:
+      case D:
         return cronScheduledTriggerBuilder(getCronTime(data) + " ? * MON-FRI");
-      case WEEKENDS:
+      case E:
         return cronScheduledTriggerBuilder(getCronTime(data) + " ? * SAT,SUN");
       default:
-        throw new ParseException("At least one daily option must be selected.", -1);
+        throw new ParseException("Invalid daily option: " + data.dailyOption, -1);
     }
   }
 
