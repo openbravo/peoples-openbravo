@@ -183,7 +183,7 @@
       END IF;
     END LOOP;
   ELSE
-     IF (v_DocAction IN ('CO', 'PR')) THEN
+     IF (v_DocAction IN ('CO', 'PR', 'NC')) THEN
        SELECT COUNT(1) 
          INTO v_Count
        FROM DUAL 
@@ -313,7 +313,7 @@
     WHERE m.c_bpartner_id=bp.c_bpartner_id
     AND m.C_ORDER_ID=v_Record_ID
     AND m.C_BPARTNER_ID=v_c_Bpartner_ID;
-    IF (v_DocAction = 'CO' AND v_bpartner_blocked = 'Y' AND v_orderBlocking = 'Y' AND v_isreturndoctype='N' ) THEN
+    IF (v_DocAction IN ('CO', 'NC') AND v_bpartner_blocked = 'Y' AND v_orderBlocking = 'Y' AND v_isreturndoctype='N' ) THEN
       RAISE_APPLICATION_ERROR(-20000,'@ThebusinessPartner@'||' '|| v_bpartner_name ||' '||'@BusinessPartnerBlocked@');
     END IF;
     -- Get the name of the org of the Order. Added by P.Sarobe
@@ -336,7 +336,7 @@
     END IF;
 
     /*PLM Status*/
-    IF (v_DocAction = 'CO' AND v_IsSOTrx = 'Y' AND v_isreturndoctype = 'N') THEN
+    IF (v_DocAction IN ('CO', 'NC') AND v_IsSOTrx = 'Y' AND v_isreturndoctype = 'N') THEN
       FOR Cur_line IN
         (SELECT SUM(ol.qtyordered) AS qtyordered, ol.m_product_id, ol.c_uom_id, p.name, ps.restrictsalefrombackend, ps.restrictsaleoutofstock
          FROM c_orderline ol
@@ -409,7 +409,7 @@
     /**
     * Check if order has lines
     */
-    IF (v_DocAction IN ('CO', 'PR', 'NC', 'AE')) THEN
+    IF (v_DocAction IN ('CO', 'PR', 'NC', 'AE', 'ME')) THEN
       SELECT COUNT(*)
       INTO v_Aux
       FROM C_ORDERLINE
@@ -422,7 +422,7 @@
     /**
     * Check if already processed / reactivated
     */
-    IF (v_DocAction = 'CO' OR v_DocAction = 'PR') THEN
+    IF (v_DocAction IN ('CO', 'PR', 'NC', 'AE', 'ME')) THEN
       IF (v_IsProcessed = 'Y') THEN
         RAISE_APPLICATION_ERROR(-20000,'@AlreadyPosted@');
       END IF;
@@ -433,7 +433,7 @@
     END IF;
 
     -- Check the cash vat flag for all the taxes matches the order one
-    IF (v_DocAction IN ('CO', 'PR')) THEN
+    IF (v_DocAction IN ('CO', 'PR', 'NC', 'AE', 'ME')) THEN
       select count(1)
       into v_Aux
       from c_ordertax ot inner join c_tax t on (ot.c_tax_id = t.c_tax_id)
@@ -948,7 +948,7 @@
      /**************************************************************************
       * Calculate promotions                                                   
       *************************************************************************/
-      IF (v_DocAction = 'CO' AND v_isreturndoctype = 'N' AND v_recalculateDiscounts = 'Y') THEN
+      IF (v_DocAction IN ('CO', 'NC', 'AE', 'ME') AND v_isreturndoctype = 'N' AND v_recalculateDiscounts = 'Y') THEN
          M_PROMOTION_CALCULATE('O', v_Record_ID, v_User);
       END IF;
 
