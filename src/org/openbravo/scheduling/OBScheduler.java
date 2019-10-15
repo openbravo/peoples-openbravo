@@ -20,7 +20,6 @@ package org.openbravo.scheduling;
 
 import static org.openbravo.scheduling.Process.SCHEDULED;
 import static org.openbravo.scheduling.Process.UNSCHEDULED;
-import static org.quartz.JobBuilder.newJob;
 import static org.quartz.JobKey.jobKey;
 import static org.quartz.TriggerKey.triggerKey;
 
@@ -172,7 +171,7 @@ public class OBScheduler {
     if (bundle == null) {
       throw new SchedulerException("Process bundle cannot be null.");
     }
-    final JobDetail jobDetail = JobDetailProvider.newInstance(requestId, bundle);
+    final JobDetail jobDetail = JobDetailProvider.getInstance().createJobDetail(requestId, bundle);
     final Trigger trigger = triggerProvider.createTrigger(requestId, bundle, getConnection());
 
     sched.scheduleJob(jobDetail, trigger);
@@ -274,34 +273,6 @@ public class OBScheduler {
       schedule(requestId, bundle);
     } catch (final ServletException | ParameterSerializationException e) {
       log.error("Error scheduling process request: " + requestId, e);
-    }
-  }
-
-  /**
-   * @author awolski
-   * 
-   */
-  private static class JobDetailProvider {
-
-    /**
-     * Creates a new JobDetail with the specified name and job class. Inserts the process bundle
-     * into the JobDetail's jobDataMap for retrieval when the job is executed.
-     * 
-     * @param name
-     *          The name of the JobDetail
-     * @param bundle
-     *          The Openbravo process bundle.
-     * @throws SchedulerException
-     */
-    private static JobDetail newInstance(String name, ProcessBundle bundle)
-        throws SchedulerException {
-      if (bundle == null) {
-        throw new SchedulerException("Process bundle cannot be null.");
-      }
-      final JobDetail jobDetail = newJob(DefaultJob.class).withIdentity(name, OB_GROUP).build();
-      jobDetail.getJobDataMap().put(ProcessBundle.KEY, bundle);
-
-      return jobDetail;
     }
   }
 }
