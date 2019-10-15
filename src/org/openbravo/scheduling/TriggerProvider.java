@@ -55,9 +55,9 @@ class TriggerProvider {
    * Loads the trigger details from AD_PROCESS_REQUEST and converts them into a schedulable Quartz
    * Trigger instance.
    * 
-   * @param requestId
-   *          the ID of the AD_PROCESS_REQUEST. It is also used as the name element for the
-   *          Trigger's TriggerKey
+   * @param name
+   *          The name element for the Trigger's TriggerKey. In general this will be the the ID of
+   *          the AD_PROCESS_REQUEST.
    * @param bundle
    *          the ProcessBundle to be included into the Trigger's job data map
    * @param conn
@@ -65,11 +65,11 @@ class TriggerProvider {
    * @return a Trigger instance configured according to the AD_PROCESS_REQUEST information retrieved
    *         from database
    */
-  Trigger createTrigger(String requestId, ProcessBundle bundle, ConnectionProvider conn)
+  Trigger createTrigger(String name, ProcessBundle bundle, ConnectionProvider conn)
       throws ServletException {
-    TriggerData data = getTriggerData(requestId, bundle, conn);
+    TriggerData data = getTriggerData(name, bundle, conn);
     try {
-      Trigger trigger = getTriggerGenerator(data, bundle, conn).generate(requestId, data);
+      Trigger trigger = getTriggerGenerator(data, bundle, conn).generate(name, data);
       trigger.getJobDataMap().put(ProcessBundle.KEY, bundle);
 
       log.debug("Scheduled process {} {}. Start time: {}.",
