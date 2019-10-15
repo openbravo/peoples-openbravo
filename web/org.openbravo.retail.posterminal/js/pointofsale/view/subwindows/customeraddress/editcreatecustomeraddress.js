@@ -14,7 +14,7 @@
 enyo.kind({
   kind: 'OB.UI.Modal',
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.newcustomeraddr',
-  classes: 'receipt-customer-selector-editor',
+  classes: 'obObposPointOfSaleUiCustomeraddrNewcustomeraddr',
   events: {
     onShowPopup: '',
     onDisableButton: ''
