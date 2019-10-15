@@ -22,7 +22,8 @@ import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.TriggerBuilder.newTrigger;
 
 import java.text.ParseException;
-import java.util.Calendar;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 import org.quartz.CronTrigger;
@@ -42,36 +43,36 @@ abstract class ScheduledTriggerGenerator extends TriggerGenerator {
   public TriggerBuilder<?> getBuilder(TriggerData data) throws ParseException {
     TriggerBuilder<?> triggerBuilder = getScheduledBuilder(data);
     if (StringUtils.isEmpty(data.nextFireTime)) {
-      triggerBuilder.startAt(getStartDate(data).getTime());
+      triggerBuilder.startAt(getStartDate(data));
     } else {
-      triggerBuilder.startAt(getNextFireDate(data).getTime());
+      triggerBuilder.startAt(getNextFireDate(data));
     }
 
     if (FINISHES.equals(data.finishes)) {
-      triggerBuilder.endAt(getFinishDate(data).getTime());
+      triggerBuilder.endAt(getFinishDate(data));
     }
 
     return triggerBuilder;
   }
 
-  private Calendar getStartDate(TriggerData data) throws ParseException {
+  private Date getStartDate(TriggerData data) throws ParseException {
     return timestamp(data.startDate, data.startTime);
   }
 
-  private Calendar getFinishDate(TriggerData data) throws ParseException {
+  private Date getFinishDate(TriggerData data) throws ParseException {
     return timestamp(data.finishesDate, data.finishesTime);
   }
 
-  private Calendar getNextFireDate(TriggerData data) throws ParseException {
+  private Date getNextFireDate(TriggerData data) throws ParseException {
     return timestamp(data.nextFireTime, data.nextFireTime);
   }
 
   protected String getCronTime(TriggerData data) throws ParseException {
-    Calendar start = getStartDate(data);
+    LocalDateTime localDateTime = parse(data.startDate, data.startTime);
 
-    int second = start.get(Calendar.SECOND);
-    int minute = start.get(Calendar.MINUTE);
-    int hour = start.get(Calendar.HOUR_OF_DAY);
+    int second = localDateTime.getSecond();
+    int minute = localDateTime.getMinute();
+    int hour = localDateTime.getHour();
 
     return second + " " + minute + " " + hour;
   }

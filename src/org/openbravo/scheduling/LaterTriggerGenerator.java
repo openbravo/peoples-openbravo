@@ -21,7 +21,7 @@ package org.openbravo.scheduling;
 import static org.quartz.TriggerBuilder.newTrigger;
 
 import java.text.ParseException;
-import java.util.Calendar;
+import java.util.Date;
 
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
@@ -33,10 +33,10 @@ class LaterTriggerGenerator extends TriggerGenerator {
 
   @Override
   public TriggerBuilder<Trigger> getBuilder(TriggerData data) throws ParseException {
-    return newTrigger().startAt(getStartDate(data).getTime());
+    return newTrigger().startAt(getStartDate(data));
   }
 
-  private Calendar getStartDate(TriggerData data) throws ParseException {
+  private Date getStartDate(TriggerData data) throws ParseException {
     return timestamp(data.startDate, data.startTime);
   }
 

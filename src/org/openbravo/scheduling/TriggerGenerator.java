@@ -21,10 +21,12 @@ package org.openbravo.scheduling;
 import static org.openbravo.scheduling.OBScheduler.OB_GROUP;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Date;
 
-import org.apache.commons.lang.StringUtils;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 
@@ -34,7 +36,7 @@ import org.quartz.TriggerBuilder;
  */
 abstract class TriggerGenerator {
 
-  private SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+  private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 
   /**
    * Provides the TriggerBuilder used by the {@link #generate(String, TriggerData)} method to create
@@ -77,40 +79,50 @@ abstract class TriggerGenerator {
   }
 
   /**
-   * Utility method to parse a start date string and a start time string into a date.
+   * Utility method to parse a start date string and a start time string into a {@link Date}.
    * 
    * @param date
    *          A date as a String. Expected format: 'dd-MM-yyyy'
    * 
    * @param time
-   *          A time as a String. Expected format: 'HH24:MI:SS'
+   *          A time as a String. Expected format: 'HH:mm:ss'
    * 
-   * @return a {@link Calendar} with the provided date and time.
+   * @return a {@link Date} with the provided date and time.
    * 
    * @throws ParseException
-   *           if the provided date and time can not be parsed to create the {@link Calendar}
+   *           if the provided date and time can not be parsed to create the {@link Date} instance.
+   */
+  protected Date timestamp(String date, String time) throws ParseException {
+    LocalDateTime localDateTime = parse(date, time);
+    try {
+      return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+    } catch (Exception ex) {
+      throw new ParseException("Could not parse date " + date + " " + time, -1);
+    }
+  }
+
+  /**
+   * Utility method to parse a start date string and a start time string into a
+   * {@link LocalDateTime}.
+   * 
+   * @param date
+   *          A date as a String. Expected format: 'dd-MM-yyyy'
+   * 
+   * @param time
+   *          A time as a String. Expected format: 'HH:mm:ss'
+   * 
+   * @return a {@link LocalDateTime} with the provided date and time.
+   * 
+   * @throws ParseException
+   *           if the provided date and time can not be parsed to create the {@link LocalDateTime}
    *           instance.
    */
-  protected Calendar timestamp(String date, String time) throws ParseException {
-    Calendar cal = Calendar.getInstance();
-
-    if (StringUtils.isNotBlank(date)) {
-      synchronized (dateFormat) {
-        cal.setTime(dateFormat.parse(date));
-      }
+  protected LocalDateTime parse(String date, String time) throws ParseException {
+    try {
+      return LocalDateTime.parse(date + " " + time, formatter);
+    } catch (DateTimeParseException ex) {
+      throw new ParseException("Could not parse date " + date + " " + time, -1);
     }
-
-    if (StringUtils.isNotBlank(time)) {
-      int hour = Integer.parseInt(time.substring(time.indexOf(' ') + 1, time.indexOf(':')));
-      int minute = Integer.parseInt(time.substring(time.indexOf(':') + 1, time.lastIndexOf(':')));
-      int second = Integer.parseInt(time.substring(time.lastIndexOf(':') + 1, time.length()));
-
-      cal.set(Calendar.HOUR_OF_DAY, hour);
-      cal.set(Calendar.MINUTE, minute);
-      cal.set(Calendar.SECOND, second);
-    }
-
-    return cal;
   }
 
 }
