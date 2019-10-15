@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -123,8 +123,29 @@ public class ActionButtonUtility {
         if (strDocStatus.equals("DR")) {
           data1.setData("ID", "PR");
           v.addElement(data1);
+          data1 = new SQLReturnObject();
+          data1.setData("ID", "NC");
+          v.addElement(data1);
         } else if (strDocStatus.equals("CO")) {
           data1.setData("ID", "RE");
+          v.addElement(data1);
+        } else if (strDocStatus.equals("NC")) {
+          data1.setData("ID", "CL");
+          v.addElement(data1);
+          data1 = new SQLReturnObject();
+          data1.setData("ID", "CO");
+          v.addElement(data1);
+          data1 = new SQLReturnObject();
+          data1.setData("ID", "AE");
+          v.addElement(data1);
+        } else if (strDocStatus.equals("AE")) {
+          data1.setData("ID", "CL");
+          v.addElement(data1);
+          data1 = new SQLReturnObject();
+          data1.setData("ID", "NC");
+          v.addElement(data1);
+          data1 = new SQLReturnObject();
+          data1.setData("ID", "ME");
           v.addElement(data1);
         }
       } else if (strTable.equals("259") && isQuotation) { // Quotations (C_Order)

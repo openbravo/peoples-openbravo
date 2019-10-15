@@ -409,7 +409,7 @@
     /**
     * Check if order has lines
     */
-    IF (v_DocAction = 'CO' OR v_DocAction = 'PR') THEN
+    IF (v_DocAction IN ('CO', 'PR', 'NC', 'AE')) THEN
       SELECT COUNT(*)
       INTO v_Aux
       FROM C_ORDERLINE
@@ -919,9 +919,9 @@
         -- Now, needs to go to END_PROCESSING to unlock
       END IF;
       /**
-      * Allowed Actions:  AProve, COmplete, PRocess, CLose, VOid
+      * Allowed Actions:  AProve, COmplete, PRocess, CLose, VOid, Not Confirmed, Automatic Evaluation, Manual Evaluation
       */
-      IF (v_DocAction IN('AP', 'CO', 'PR', 'CL', 'VO')) THEN
+      IF (v_DocAction IN('AP', 'CO', 'PR', 'CL', 'VO', 'NC', 'AE', 'ME')) THEN
         NULL;
       ELSE
         RAISE_APPLICATION_ERROR(-20000, '@ActionNotAllowedHere@') ;
@@ -1485,7 +1485,7 @@
                 Updated=now(),
                 UpdatedBy=v_User
             WHERE C_Order_ID=v_Record_ID;
-            END_PROCESSING:=TRUE;
+            END_PROCESSING:=TRUE;          
           ELSE
             UPDATE C_ORDER
             SET DocStatus='CO',
@@ -1506,12 +1506,42 @@
      /**
       * In Progress -----------------------------------------------------------
       */
-      UPDATE C_ORDER
-      SET DocStatus='IP',
-          DateAcct=DateOrdered,
-          Updated=now(),
-          UpdatedBy=v_User
-      WHERE C_Order_ID=v_Record_ID;
+      IF (v_DocAction='NC') THEN
+         UPDATE C_ORDER
+         SET DocStatus='NC',
+             DocAction='CO',
+             Processed='N',
+             Updated=now(),
+             UpdatedBy=v_User
+         WHERE C_Order_ID=v_Record_ID;
+         END_PROCESSING:=TRUE;
+      ELSIF (v_DocAction='AE') THEN
+         UPDATE C_ORDER
+         SET DocStatus='AE',
+             DocAction='NC',
+             Processed='N',
+             Updated=now(),
+             UpdatedBy=v_User
+         WHERE C_Order_ID=v_Record_ID;
+         END_PROCESSING:=TRUE;
+      ELSIF (v_DocAction='ME') THEN
+         UPDATE C_ORDER
+         SET DocStatus='ME',
+             DocAction='-',
+             Processed='N',
+             Updated=now(),
+             UpdatedBy=v_User
+         WHERE C_Order_ID=v_Record_ID;
+         END_PROCESSING:=TRUE;
+      ELSE
+        UPDATE C_ORDER
+        SET DocStatus='IP',
+            DateAcct=DateOrdered,
+           Updated=now(),
+           UpdatedBy=v_User
+        WHERE C_Order_ID=v_Record_ID;
+      END IF;
+      
       IF (p_PInstance_ID IS NOT NULL) THEN
         COMMIT;
       END IF;
@@ -1898,7 +1928,7 @@
     END IF;--FINISH_PROCESS
 
     -- Round and Adjust taxes when 'CO' and Recalculate amounts and taxes when 'RE'
-    IF (v_isTaxIncluded = 'Y' AND v_DocAction IN ('CO', 'RE')) THEN
+    IF (v_isTaxIncluded = 'Y' AND v_DocAction IN ('CO', 'RE', 'NC', 'AE')) THEN
       C_ORDERTAX_ADJUSTMENT(v_Record_ID, v_stdPrecision, v_DocAction);
     END IF;
 
