@@ -60,6 +60,9 @@ class TriggerProvider {
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
   }
 
+  /**
+   * @return the TriggerProvider singleton instance
+   */
   static TriggerProvider getInstance() {
     return INSTANCE;
   }

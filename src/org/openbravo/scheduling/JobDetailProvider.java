@@ -31,6 +31,9 @@ class JobDetailProvider {
 
   private static final JobDetailProvider INSTANCE = new JobDetailProvider();
 
+  /**
+   * @return the JobDetailProvider singleton instance
+   */
   static JobDetailProvider getInstance() {
     return INSTANCE;
   }
