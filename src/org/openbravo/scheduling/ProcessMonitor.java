@@ -473,7 +473,8 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
 
   private String format(Date date) {
     try {
-      return SchedulerTimeUtils.format(date, getConfigParameters().getJavaDateTimeFormat());
+      return date == null ? null
+          : SchedulerTimeUtils.format(date, getConfigParameters().getJavaDateTimeFormat());
     } catch (Exception ex) {
       log.error("Could not format date {}", date, ex);
       return null;
