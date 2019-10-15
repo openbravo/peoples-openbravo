@@ -40,7 +40,7 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.quartz.Trigger;
 
 /**
- * Provides {@link Trigger} instances configured with the timing options and schedules defined with
+ * Provides Quartz's Trigger instances configured with the timing options and schedules defined with
  * a process request.
  */
 @ApplicationScoped
