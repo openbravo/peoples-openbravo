@@ -56,19 +56,19 @@ abstract class ScheduledTriggerGenerator extends TriggerGenerator {
   }
 
   private Date getStartDate(TriggerData data) throws ParseException {
-    return timestamp(data.startDate, data.startTime);
+    return SchedulerTimeUtils.timestamp(data.startDate, data.startTime);
   }
 
   private Date getFinishDate(TriggerData data) throws ParseException {
-    return timestamp(data.finishesDate, data.finishesTime);
+    return SchedulerTimeUtils.timestamp(data.finishesDate, data.finishesTime);
   }
 
   private Date getNextFireDate(TriggerData data) throws ParseException {
-    return timestamp(data.nextFireTime, data.nextFireTime);
+    return SchedulerTimeUtils.timestamp(data.nextFireTime, data.nextFireTime);
   }
 
   protected String getCronTime(TriggerData data) throws ParseException {
-    LocalDateTime localDateTime = parse(data.startDate, data.startTime);
+    LocalDateTime localDateTime = SchedulerTimeUtils.parse(data.startDate, data.startTime);
 
     int second = localDateTime.getSecond();
     int minute = localDateTime.getMinute();

@@ -21,11 +21,6 @@ package org.openbravo.scheduling;
 import static org.openbravo.scheduling.OBScheduler.OB_GROUP;
 
 import java.text.ParseException;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.Date;
 
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
@@ -35,8 +30,6 @@ import org.quartz.TriggerBuilder;
  * {@code TriggerBuilder} with the settings used to generate the Trigger.
  */
 abstract class TriggerGenerator {
-
-  private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 
   /**
    * Provides the TriggerBuilder used by the {@link #generate(String, TriggerData)} method to create
@@ -77,52 +70,4 @@ abstract class TriggerGenerator {
     }
     return builder.build();
   }
-
-  /**
-   * Utility method to parse a start date string and a start time string into a {@link Date}.
-   * 
-   * @param date
-   *          A date as a String. Expected format: 'dd-MM-yyyy'
-   * 
-   * @param time
-   *          A time as a String. Expected format: 'HH:mm:ss'
-   * 
-   * @return a {@link Date} with the provided date and time.
-   * 
-   * @throws ParseException
-   *           if the provided date and time can not be parsed to create the {@link Date} instance.
-   */
-  protected Date timestamp(String date, String time) throws ParseException {
-    LocalDateTime localDateTime = parse(date, time);
-    try {
-      return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-    } catch (Exception ex) {
-      throw new ParseException("Could not parse date " + date + " " + time, -1);
-    }
-  }
-
-  /**
-   * Utility method to parse a start date string and a start time string into a
-   * {@link LocalDateTime}.
-   * 
-   * @param date
-   *          A date as a String. Expected format: 'dd-MM-yyyy'
-   * 
-   * @param time
-   *          A time as a String. Expected format: 'HH:mm:ss'
-   * 
-   * @return a {@link LocalDateTime} with the provided date and time.
-   * 
-   * @throws ParseException
-   *           if the provided date and time can not be parsed to create the {@link LocalDateTime}
-   *           instance.
-   */
-  protected LocalDateTime parse(String date, String time) throws ParseException {
-    try {
-      return LocalDateTime.parse(date + " " + time, formatter);
-    } catch (DateTimeParseException ex) {
-      throw new ParseException("Could not parse date " + date + " " + time, -1);
-    }
-  }
-
 }

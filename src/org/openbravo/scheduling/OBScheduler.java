@@ -23,9 +23,6 @@ import static org.openbravo.scheduling.Process.UNSCHEDULED;
 import static org.quartz.JobKey.jobKey;
 import static org.quartz.TriggerKey.triggerKey;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 import javax.servlet.ServletException;
 
 import org.apache.logging.log4j.LogManager;
@@ -59,8 +56,6 @@ public class OBScheduler {
   private Scheduler sched;
 
   private SchedulerContext ctx;
-
-  private DateTimeFormatter dateTimeFormatter;
 
   private String sqlDateTimeFormat;
 
@@ -215,11 +210,10 @@ public class OBScheduler {
   }
 
   private String getCurrentDate() {
-    LocalDateTime now = LocalDateTime.now();
     try {
-      return now.format(dateTimeFormatter);
+      return SchedulerTimeUtils.currentDate(getConfigParameters().getJavaDateTimeFormat());
     } catch (Exception ex) {
-      log.error("Could not parse date {}", now, ex);
+      log.error("Could not format current date", ex);
       return null;
     }
   }
@@ -237,7 +231,6 @@ public class OBScheduler {
     schdlr.getListenerManager().addJobListener(monitor);
     schdlr.getListenerManager().addTriggerListener(monitor);
 
-    dateTimeFormatter = DateTimeFormatter.ofPattern(getConfigParameters().getJavaDateTimeFormat());
     sqlDateTimeFormat = getConfigParameters().getSqlDateTimeFormat();
 
     try {

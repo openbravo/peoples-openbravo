@@ -26,9 +26,6 @@ import static org.openbravo.scheduling.Process.PROCESSING;
 import static org.openbravo.scheduling.Process.SCHEDULED;
 import static org.openbravo.scheduling.Process.SUCCESS;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 
@@ -72,12 +69,9 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
 
   private SchedulerContext context;
 
-  private DateTimeFormatter dateTimeFormatter;
-
   public ProcessMonitor(String name, SchedulerContext context) {
     this.name = name;
     this.context = context;
-    dateTimeFormatter = DateTimeFormatter.ofPattern(getConfigParameters().getJavaDateTimeFormat());
   }
 
   @Override
@@ -479,10 +473,7 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
 
   private String format(Date date) {
     try {
-      LocalDateTime localDateTime = date.toInstant()
-          .atZone(ZoneId.systemDefault())
-          .toLocalDateTime();
-      return localDateTime.format(dateTimeFormatter);
+      return SchedulerTimeUtils.format(date, getConfigParameters().getJavaDateTimeFormat());
     } catch (Exception ex) {
       log.error("Could not format date {}", date, ex);
       return null;
