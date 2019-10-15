@@ -34,32 +34,51 @@ import org.quartz.TriggerBuilder;
 @Timing("S4")
 class DailyTriggerGenerator extends ScheduledTriggerGenerator {
 
-  private static final String WEEKDAYS = "D";
-  private static final String WEEKENDS = "E";
-  private static final String EVERY_N_DAYS = "N";
+  private enum DailyOption {
+    WEEKDAYS("D"), WEEKENDS("E"), EVERY_N_DAYS("N");
+
+    private String label;
+
+    private DailyOption(String label) {
+      this.label = label;
+    }
+
+    static DailyOption of(String label) {
+      for (DailyOption dailyOption : values()) {
+        if (dailyOption.label.equals(label)) {
+          return dailyOption;
+        }
+      }
+      return null;
+    }
+  }
 
   @Override
   TriggerBuilder<?> getScheduledBuilder(TriggerData data) throws ParseException {
     if (StringUtils.isEmpty(data.dailyOption)) {
-      String cronExpression = getCronTime(data) + " ? * *";
-      return cronScheduledTriggerBuilder(cronExpression);
-    } else if (data.dailyOption.equals(EVERY_N_DAYS)) {
-      try {
-        int interval = Integer.parseInt(data.dailyInterval);
-        return newTrigger()
-            .withSchedule(calendarIntervalSchedule().withInterval(interval, IntervalUnit.DAY));
+      return cronScheduledTriggerBuilder(getCronTime(data) + " ? * *");
+    }
 
-      } catch (NumberFormatException e) {
-        throw new ParseException("Invalid daily interval specified.", -1);
-      }
-    } else if (data.dailyOption.equals(WEEKDAYS)) {
-      String cronExpression = getCronTime(data) + " ? * MON-FRI";
-      return cronScheduledTriggerBuilder(cronExpression);
-    } else if (data.dailyOption.equals(WEEKENDS)) {
-      String cronExpression = getCronTime(data) + " ? * SAT,SUN";
-      return cronScheduledTriggerBuilder(cronExpression);
-    } else {
-      throw new ParseException("At least one option must be selected.", -1);
+    DailyOption dailyOption = DailyOption.of(data.dailyOption);
+    if (dailyOption == null) {
+      throw new ParseException("At least one daily option must be selected.", -1);
+    }
+
+    switch (dailyOption) {
+      case EVERY_N_DAYS:
+        try {
+          return newTrigger().withSchedule(calendarIntervalSchedule()
+              .withInterval(Integer.parseInt(data.dailyInterval), IntervalUnit.DAY));
+
+        } catch (NumberFormatException e) {
+          throw new ParseException("Invalid daily interval specified.", -1);
+        }
+      case WEEKDAYS:
+        return cronScheduledTriggerBuilder(getCronTime(data) + " ? * MON-FRI");
+      case WEEKENDS:
+        return cronScheduledTriggerBuilder(getCronTime(data) + " ? * SAT,SUN");
+      default:
+        throw new ParseException("At least one daily option must be selected.", -1);
     }
   }
 
