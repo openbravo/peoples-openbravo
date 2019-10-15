@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2014-2018 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2014-2019 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -27,14 +27,12 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.costing.CostingStatus;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.financial.FinancialUtils;
-import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.Product;
@@ -185,13 +183,10 @@ public class DocInternalConsumption extends AcctServer {
 
       Currency costCurrency = FinancialUtils
           .getLegalEntityCurrency(OBDal.getInstance().get(Organization.class, line.m_AD_Org_ID));
-      if (!CostingStatus.getInstance().isMigrated()) {
-        costCurrency = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency();
-      } else if (line.transaction != null && line.transaction.getCurrency() != null) {
+      if (line.transaction != null && line.transaction.getCurrency() != null) {
         costCurrency = line.transaction.getCurrency();
       }
-      if (CostingStatus.getInstance().isMigrated() && line.transaction != null
-          && !line.transaction.isCostCalculated()) {
+      if (line.transaction != null && !line.transaction.isCostCalculated()) {
         Map<String, String> parameters = getNotCalculatedCostParameters(line.transaction);
         setMessageResult(conn, STATUS_NotCalculatedCost, "error", parameters);
         throw new IllegalStateException();
@@ -216,13 +211,6 @@ public class DocInternalConsumption extends AcctServer {
                 as.m_C_AcctSchema_ID);
         log4j.error("No Account Asset for product: " + product.getName() + " in accounting schema: "
             + schema.getName());
-      }
-      if (b_Costs.compareTo(BigDecimal.ZERO) == 0 && !CostingStatus.getInstance().isMigrated()
-          && DocInOutData.existsCost(conn, DateAcct, line.m_M_Product_ID).equals("0")) {
-        Map<String, String> parameters = getInvalidCostParameters(
-            OBDal.getInstance().get(Product.class, line.m_M_Product_ID).getIdentifier(), DateAcct);
-        setMessageResult(conn, STATUS_InvalidCost, "error", parameters);
-        throw new IllegalStateException();
       }
       dr = fact.createLine(line, cogsAccount, costCurrency.getId(), strCosts, "",
           Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);

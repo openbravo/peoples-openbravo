@@ -36,6 +36,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.authentication.hashing.PasswordHash;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.session.SessionFactoryController;
@@ -694,7 +695,7 @@ public class InitialSetupUtility {
     newUser.setName(name);
     newUser.setDescription(name);
     newUser.setUsername(name);
-    newUser.setPassword(password);
+    newUser.setPassword(PasswordHash.generateHash(password));
     newUser.setDefaultLanguage(defaultLanguage);
     if (role != null) {
       newUser.setDefaultRole(role);

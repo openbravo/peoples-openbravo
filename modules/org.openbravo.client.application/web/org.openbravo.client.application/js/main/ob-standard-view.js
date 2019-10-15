@@ -1682,6 +1682,10 @@ isc.OBStandardView.addProperties({
       // at this point the time fields of the record are formatted in local time
       localTime = true;
     this.messageBar.hide();
+    if (this.parentView) {
+      this.parentView.messageBar.hide();
+    }
+
     // Set a temporary identifier for the record being edited in form view
     // See issue https://issues.openbravo.com/view.php?id=31331
     this.viewForm.recordIdInForm = OB.Utilities.getTemporaryId();
@@ -2379,10 +2383,17 @@ isc.OBStandardView.addProperties({
       //      me.getDataSource().updateCaches(resp, req);
       // therefore do an explicit update of the visual components
       if (me.viewGrid.data) {
-        var recordIndex = me.viewGrid.getRecordIndex(
-          me.viewGrid.getSelectedRecord()
-        );
-        me.viewGrid.updateRecord(recordIndex, data, req);
+        if (data.length !== 0) {
+          var recordIndex = me.viewGrid.getRecordIndex(
+            me.viewGrid.getSelectedRecord()
+          );
+          me.viewGrid.updateRecord(recordIndex, data, req);
+        } else {
+          me.viewGrid.data.localData.remove(me.viewGrid.getSelectedRecord());
+          me.viewGrid.deselectAllRecords();
+          me.markForRedraw();
+          this.view.updateSubtabVisibility();
+        }
       }
 
       if (callBackFunction) {

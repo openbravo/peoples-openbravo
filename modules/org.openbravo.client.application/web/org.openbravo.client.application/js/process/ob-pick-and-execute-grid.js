@@ -62,6 +62,9 @@ isc.OBPickAndExecuteGrid.addProperties({
   // default selection
   selectionProperty: 'obSelected',
 
+  // Prevents group by option in context menu
+  canGroupBy: false,
+
   shouldFixRowHeight: function() {
     return true;
   },

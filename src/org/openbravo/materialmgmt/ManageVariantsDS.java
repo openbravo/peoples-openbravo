@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2018 Openbravo SLU
+ * All portions are Copyright (C) 2013-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -301,6 +301,18 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
       throws JSONException {
     ProductChSelectedFilters selectedFilters = new ProductChSelectedFilters();
     JSONArray criteriaArray = (JSONArray) JsonUtils.buildCriteria(parameters).get("criteria");
+
+    // special case: only column filter on a product characteristics field, and selecting several
+    // product characteristics. In that case the inner criteria is selected, otherwise only the
+    // first product characteristic would be used in the filter
+    // see issue: https://issues.openbravo.com/view.php?id=41900
+    if (criteriaArray.length() == 1) {
+      JSONObject criteria = criteriaArray.getJSONObject(0);
+      if (criteria.has("isProductCharacteristicsCriteria")
+          && criteria.getBoolean("isProductCharacteristicsCriteria") && criteria.has("criteria")) {
+        criteriaArray = criteria.getJSONArray("criteria");
+      }
+    }
 
     for (int i = 0; i < criteriaArray.length(); i++) {
       String value = "";

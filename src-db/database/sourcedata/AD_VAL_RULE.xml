@@ -1609,12 +1609,7 @@ or (@AD_Module_ID@ is not null and AD_Role_ID='0')]]></CODE>
 <!--57D84BE9C3774FDD87CD846F805A07FB-->  <NAME><![CDATA[AD_Org In product costing tab]]></NAME>
 <!--57D84BE9C3774FDD87CD846F805A07FB-->  <DESCRIPTION><![CDATA[Validation to be used in organization field in product window in costing tab. This validation it is different if the instance is migrated to new costing engine or not. ]]></DESCRIPTION>
 <!--57D84BE9C3774FDD87CD846F805A07FB-->  <TYPE><![CDATA[S]]></TYPE>
-<!--57D84BE9C3774FDD87CD846F805A07FB-->  <CODE><![CDATA[(
-(@isCostMigrated@ IS NULL AND AD_ISORGINCLUDED(ad_org.ad_org_id, @Product_Org@, ad_org.ad_client_id)<>-1 AND IsReady = 'Y')
-OR
-(@isCostMigrated@ IS NOT NULL AND exists (select 1 from ad_orgtype where ad_orgtype.ad_orgtype_id = ad_org.ad_orgtype_id and islegalentity='Y')
- AND IsReady='Y' AND ad_org_isinnaturaltree(ad_org_id, @Parent_AD_Org@, ad_client_id) ='Y')
-)]]></CODE>
+<!--57D84BE9C3774FDD87CD846F805A07FB-->  <CODE><![CDATA[IsReady='Y' AND ad_org_isinnaturaltree(ad_org_id, @Parent_AD_Org@, ad_client_id) ='Y' AND exists (select 1 from ad_orgtype where ad_orgtype.ad_orgtype_id = ad_org.ad_orgtype_id and islegalentity='Y')]]></CODE>
 <!--57D84BE9C3774FDD87CD846F805A07FB-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--57D84BE9C3774FDD87CD846F805A07FB--></AD_VAL_RULE>
 
@@ -2289,17 +2284,6 @@ where ad_org_warehouse.ad_org_id=@AD_Org_ID@)]]></CODE>
 <!--CBA25061F3834619B0401E0834F43B2D-->  <CODE><![CDATA[C_DocType.DocBaseType IN ('ARI', 'API', 'ARI_RM') AND C_DocType.IsSOTrx='@IsSOTrx@' AND (AD_ISORGINCLUDED(@AD_Org_ID@,C_DocType.AD_Org_ID, @#AD_Client_ID@) <> '-1' OR COALESCE(@AD_Org_ID@,'-1')='-1')]]></CODE>
 <!--CBA25061F3834619B0401E0834F43B2D-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--CBA25061F3834619B0401E0834F43B2D--></AD_VAL_RULE>
-
-<!--CCE7193FD3BF470E8155135B591F3ADE--><AD_VAL_RULE>
-<!--CCE7193FD3BF470E8155135B591F3ADE-->  <AD_VAL_RULE_ID><![CDATA[CCE7193FD3BF470E8155135B591F3ADE]]></AD_VAL_RULE_ID>
-<!--CCE7193FD3BF470E8155135B591F3ADE-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--CCE7193FD3BF470E8155135B591F3ADE-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--CCE7193FD3BF470E8155135B591F3ADE-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--CCE7193FD3BF470E8155135B591F3ADE-->  <NAME><![CDATA[Costs migrated]]></NAME>
-<!--CCE7193FD3BF470E8155135B591F3ADE-->  <TYPE><![CDATA[S]]></TYPE>
-<!--CCE7193FD3BF470E8155135B591F3ADE-->  <CODE><![CDATA[((@Cost_Eng_Ins_Migrated@='Y' AND AD_Ref_List.Value NOT IN ('AV', 'ST')) OR (@Cost_Eng_Ins_Migrated@ is null AND AD_Ref_List.Value IN ('AV', 'ST')))]]></CODE>
-<!--CCE7193FD3BF470E8155135B591F3ADE-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--CCE7193FD3BF470E8155135B591F3ADE--></AD_VAL_RULE>
 
 <!--CD5ADDE7AAAD44B6B23D0992A24BE456--><AD_VAL_RULE>
 <!--CD5ADDE7AAAD44B6B23D0992A24BE456-->  <AD_VAL_RULE_ID><![CDATA[CD5ADDE7AAAD44B6B23D0992A24BE456]]></AD_VAL_RULE_ID>

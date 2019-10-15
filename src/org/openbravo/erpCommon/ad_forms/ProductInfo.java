@@ -11,13 +11,12 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2017 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2019 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
 import java.text.ParseException;
 import java.util.HashMap;
 
@@ -273,45 +272,6 @@ public class ProductInfo {
     retValue = data[0].converted;
     return retValue;
   } // getConvertedQty
-
-  /**
-   * Get Total Costs in Accounting Schema Currency
-   * 
-   * @param as
-   *          accounting schema
-   * @return cost or null, if qty or costs cannot be determined
-   */
-  public String getProductCosts(String date, String strQty, AcctSchema as, ConnectionProvider conn,
-      Connection con) {
-    if (m_qty == null || m_qty.equals("")) {
-      log4jProductInfo.debug("getProductCosts - No Qty");
-      return null;
-    }
-    BigDecimal cost = new BigDecimal(getProductItemCost(date, as, "", conn, con));
-    log4jProductInfo.debug("getProductCosts - qty = " + m_qty);
-    if (strQty == null || strQty.equals("")) {
-      BigDecimal qty = new BigDecimal(m_qty);
-      log4jProductInfo.debug(
-          "getProductCosts - Qty(" + m_qty + ") * Cost(" + cost + ") = " + qty.multiply(cost));
-      return qty.multiply(cost).toString();
-    } else {
-      return cost.multiply(new BigDecimal(strQty)).toString();
-    }
-
-  } // getProductCosts
-
-  public String getProductItemCost(String date, AcctSchema as, String costType,
-      ConnectionProvider conn, Connection con) {
-    String cost = "";
-    log4jProductInfo
-        .debug("getProductItemCost - m_M_Product_ID(" + m_M_Product_ID + ") - date(" + date + ")");
-    try {
-      cost = ProductInfoData.selectProductAverageCost(conn, m_M_Product_ID, date);
-    } catch (ServletException e) {
-      log4jProductInfo.warn(e);
-    }
-    return cost;
-  }
 
   /**
    * Calculates the total cost of a product in the currency of the organizations Legal Entity. Used
