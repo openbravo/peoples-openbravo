@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2010 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2019 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -22,10 +22,10 @@ import java.sql.Connection;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.costing.CostingStatus;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.plm.Product;
@@ -85,7 +85,7 @@ public class DocLine_Material extends DocLine {
   /**
    * Get Total Product Costs. If exists a transaction retrieves the cost from it, otherwise calls
    * the
-   * {@link ProductInfo#getProductCosts(String, String, AcctSchema, ConnectionProvider, Connection)}
+   * {@link ProductInfo#getProductDefaultCosts(String, BigDecimal, Organization, Warehouse, Currency)}
    * 
    * @param date
    *          String with the accounting date used in case there is no material transaction.
@@ -94,13 +94,12 @@ public class DocLine_Material extends DocLine {
 
   public String getProductCosts(String date, AcctSchema as, ConnectionProvider conn,
       Connection con) {
-    if (transaction != null && transaction.getTransactionCost() != null
-        && CostingStatus.getInstance().isMigrated()) {
+    if (transaction != null && transaction.getTransactionCost() != null) {
       BigDecimal sign = new BigDecimal(new BigDecimal(getQty()).signum());
       return transaction.getTransactionCost().multiply(sign).toString();
-    } else if (transaction != null && CostingStatus.getInstance().isMigrated()) {
+    } else if (transaction != null) {
       return "";
-    } else if (CostingStatus.getInstance().isMigrated()) {
+    } else {
       // If there isn't any material transaction get the default cost of the product.
       try {
         Organization legalEntity = OBContext.getOBContext()
@@ -116,7 +115,6 @@ public class DocLine_Material extends DocLine {
         return "";
       }
     }
-    return p_productInfo.getProductCosts(date, "", as, conn, con);
   } // getProductCosts
 
   /**

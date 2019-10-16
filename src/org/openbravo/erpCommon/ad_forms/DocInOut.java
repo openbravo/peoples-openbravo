@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2018 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2019 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -19,7 +19,6 @@ package org.openbravo.erpCommon.ad_forms;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Connection;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,10 +28,8 @@ import javax.servlet.ServletException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostingAlgorithm.CostDimension;
-import org.openbravo.costing.CostingStatus;
 import org.openbravo.costing.CostingUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -40,7 +37,6 @@ import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.financial.FinancialUtils;
-import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.order.OrderLine;
@@ -206,9 +202,7 @@ public class DocInOut extends AcctServer {
               .getOrganizationStructureProvider(AD_Client_ID)
               .getLegalEntity(OBDal.getInstance().get(Organization.class, line.m_AD_Org_ID));
           Currency costCurrency = FinancialUtils.getLegalEntityCurrency(legalEntity);
-          if (!CostingStatus.getInstance().isMigrated()) {
-            costCurrency = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency();
-          } else if (line.transaction != null && line.transaction.getCurrency() != null) {
+          if (line.transaction != null && line.transaction.getCurrency() != null) {
             costCurrency = line.transaction.getCurrency();
           }
           int standardPrecision = 2;
@@ -246,12 +240,11 @@ public class DocInOut extends AcctServer {
             setMessageResult(conn, STATUS_NotConvertible, "error", null);
             throw new IllegalStateException();
           }
-          if (CostingStatus.getInstance().isMigrated() && line.transaction != null
-              && !line.transaction.isCostCalculated()) {
+          if (line.transaction != null && !line.transaction.isCostCalculated()) {
             Map<String, String> parameters = getNotCalculatedCostParameters(line.transaction);
             setMessageResult(conn, STATUS_NotCalculatedCost, "error", parameters);
             throw new IllegalStateException();
-          } else if (CostingStatus.getInstance().isMigrated() && line.transaction == null) {
+          } else if (line.transaction == null) {
             // Check default cost existence
             HashMap<CostDimension, BaseOBObject> costDimensions = CostingUtils.getEmptyDimensions();
             costDimensions.put(CostDimension.Warehouse, line.getWarehouse());
@@ -277,13 +270,6 @@ public class DocInOut extends AcctServer {
               .multiply(new BigDecimal(line.getBreakdownQty()))
               .divide(new BigDecimal(line.m_qty), standardPrecision, RoundingMode.HALF_UP);
           String strCosts = b_Costs.toString();
-          if (b_Costs.compareTo(BigDecimal.ZERO) == 0 && !CostingStatus.getInstance().isMigrated()
-              && DocInOutData.existsCost(conn, DateAcct, line.m_M_Product_ID).equals("0")) {
-            Map<String, String> parameters = getInvalidCostParameters(product.getIdentifier(),
-                DateAcct);
-            setMessageResult(conn, STATUS_InvalidCost, "error", parameters);
-            throw new IllegalStateException();
-          }
           // CoGS DR
           dr = fact.createLine(line, cogsAccount, costCurrency.getId(), strCosts, "",
               Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
@@ -324,9 +310,7 @@ public class DocInOut extends AcctServer {
               .getOrganizationStructureProvider(AD_Client_ID)
               .getLegalEntity(OBDal.getInstance().get(Organization.class, line.m_AD_Org_ID));
           Currency costCurrency = FinancialUtils.getLegalEntityCurrency(legalEntity);
-          if (!CostingStatus.getInstance().isMigrated()) {
-            costCurrency = OBDal.getInstance().get(Client.class, AD_Client_ID).getCurrency();
-          } else if (line.transaction != null && line.transaction.getCurrency() != null) {
+          if (line.transaction != null && line.transaction.getCurrency() != null) {
             costCurrency = line.transaction.getCurrency();
           }
           C_Currency_ID = costCurrency.getId();
@@ -356,12 +340,11 @@ public class DocInOut extends AcctServer {
           } else {
             // If the Product is not checked as book using PO Price, the Cost of the
             // Transaction will be used to create the FactAcct Line
-            if (CostingStatus.getInstance().isMigrated() && line.transaction != null
-                && !line.transaction.isCostCalculated()) {
+            if (line.transaction != null && !line.transaction.isCostCalculated()) {
               Map<String, String> parameters = getNotCalculatedCostParameters(line.transaction);
               setMessageResult(conn, STATUS_NotCalculatedCost, "error", parameters);
               throw new IllegalStateException();
-            } else if (CostingStatus.getInstance().isMigrated() && line.transaction == null) {
+            } else if (line.transaction == null) {
               // Check default cost existence
               HashMap<CostDimension, BaseOBObject> costDimensions = CostingUtils
                   .getEmptyDimensions();
@@ -380,13 +363,6 @@ public class DocInOut extends AcctServer {
                 .divide(new BigDecimal(line.m_qty), costCurrency.getStandardPrecision().intValue(),
                     RoundingMode.HALF_UP);
             strCosts = b_Costs.toString();
-            if (b_Costs.compareTo(BigDecimal.ZERO) == 0 && !CostingStatus.getInstance().isMigrated()
-                && DocInOutData.existsCost(conn, DateAcct, line.m_M_Product_ID).equals("0")) {
-              Map<String, String> parameters = getInvalidCostParameters(product.getIdentifier(),
-                  DateAcct);
-              setMessageResult(conn, STATUS_InvalidCost, "error", parameters);
-              throw new IllegalStateException();
-            }
           }
           if (!isConvertible(as, conn)) {
             setMessageResult(conn, STATUS_NotConvertible, "error", null);
@@ -497,97 +473,76 @@ public class DocInOut extends AcctServer {
     try {
       DocLineInOutData[] data = DocLineInOutData.select(conn, Record_ID);
       ShipmentInOut inOut = OBDal.getInstance().get(ShipmentInOut.class, strRecordId);
-      String dateFormat = OBPropertiesProvider.getInstance()
-          .getOpenbravoProperties()
-          .getProperty("dateFormat.java");
-      SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
-      String strDateAcct = outputFormat.format(inOut.getAccountingDate());
       int validLines = 0;
       for (int i = 0; i < data.length; i++) {
         BigDecimal trxCost = null;
-        if (CostingStatus.getInstance().isMigrated()) {
-          OBContext.setAdminMode(false);
-          try {
-            // Get related M_Transaction_ID
-            ShipmentInOutLine inOutLine = OBDal.getInstance()
-                .get(ShipmentInOutLine.class, data[i].mInoutlineId);
-            if (inOutLine.getProduct() == null) {
-              continue;
-            }
-            MaterialTransaction trx = null;
-            if (inOutLine.getMaterialMgmtMaterialTransactionList().size() > 0) {
-              trx = inOutLine.getMaterialMgmtMaterialTransactionList().get(0);
-              trxCost = trx.getTransactionCost();
+        OBContext.setAdminMode(false);
+        try {
+          // Get related M_Transaction_ID
+          ShipmentInOutLine inOutLine = OBDal.getInstance()
+              .get(ShipmentInOutLine.class, data[i].mInoutlineId);
+          if (inOutLine.getProduct() == null) {
+            continue;
+          }
+          MaterialTransaction trx = null;
+          if (inOutLine.getMaterialMgmtMaterialTransactionList().size() > 0) {
+            trx = inOutLine.getMaterialMgmtMaterialTransactionList().get(0);
+            trxCost = trx.getTransactionCost();
+          } else {
+            if (inOutLine.getProduct().isBookUsingPurchaseOrderPrice()) {
+              // Not stocked item type product.
+              // If the Product is checked as book using Purchase Order Price, the Price of the PO
+              // will be used to create the FactAcct Line, therefore a related PO must exist
+              OrderLine ol = inOutLine.getSalesOrderLine();
+              if (ol == null) {
+                Map<String, String> parameters = new HashMap<String, String>();
+                parameters.put("product", inOutLine.getProduct().getIdentifier());
+                parameters.put("line", inOutLine.getLineNo().toString());
+                setMessageResult(conn, STATUS_NoRelatedPO, "error", parameters);
+                throw new IllegalStateException();
+              }
+              trxCost = inOutLine.getMovementQuantity().multiply(ol.getUnitPrice());
             } else {
-              if (inOutLine.getProduct().isBookUsingPurchaseOrderPrice()) {
-                // Not stocked item type product.
-                // If the Product is checked as book using Purchase Order Price, the Price of the PO
-                // will be used to create the FactAcct Line, therefore a related PO must exist
-                OrderLine ol = inOutLine.getSalesOrderLine();
-                if (ol == null) {
-                  Map<String, String> parameters = new HashMap<String, String>();
-                  parameters.put("product", inOutLine.getProduct().getIdentifier());
-                  parameters.put("line", inOutLine.getLineNo().toString());
-                  setMessageResult(conn, STATUS_NoRelatedPO, "error", parameters);
-                  throw new IllegalStateException();
-                }
-                trxCost = inOutLine.getMovementQuantity().multiply(ol.getUnitPrice());
+              // Not stocked item type product. Check standard cost existence.
+              // If the Product is not checked as book using PO Price, the Cost of the
+              // Transaction will be used to create the FactAcct Line, therefore the Cost of the
+              // Transaction must have been calculated before.
+              Organization legalEntity = OBContext.getOBContext()
+                  .getOrganizationStructureProvider(AD_Client_ID)
+                  .getLegalEntity(inOut.getOrganization());
+              HashMap<CostDimension, BaseOBObject> costDimensions = CostingUtils
+                  .getEmptyDimensions();
+              if (inOutLine.getStorageBin() == null) {
+                costDimensions.put(CostDimension.Warehouse,
+                    inOutLine.getShipmentReceipt().getWarehouse());
               } else {
-                // Not stocked item type product. Check standard cost existence.
-                // If the Product is not checked as book using PO Price, the Cost of the
-                // Transaction will be used to create the FactAcct Line, therefore the Cost of the
-                // Transaction must have been calculated before.
-                Organization legalEntity = OBContext.getOBContext()
-                    .getOrganizationStructureProvider(AD_Client_ID)
-                    .getLegalEntity(inOut.getOrganization());
-                HashMap<CostDimension, BaseOBObject> costDimensions = CostingUtils
-                    .getEmptyDimensions();
-                if (inOutLine.getStorageBin() == null) {
-                  costDimensions.put(CostDimension.Warehouse,
-                      inOutLine.getShipmentReceipt().getWarehouse());
-                } else {
-                  costDimensions.put(CostDimension.Warehouse,
-                      inOutLine.getStorageBin().getWarehouse());
-                }
-                if (!CostingUtils.hasStandardCostDefinition(inOutLine.getProduct(), legalEntity,
-                    inOut.getAccountingDate(), costDimensions)) {
-                  Map<String, String> parameters = getInvalidCostParameters(
-                      inOutLine.getProduct().getIdentifier(), DateAcct);
-                  setMessageResult(conn, STATUS_InvalidCost, "error", parameters);
-                  throw new IllegalStateException();
-                } else {
-                  Currency currency = legalEntity.getCurrency() != null ? legalEntity.getCurrency()
-                      : legalEntity.getClient().getCurrency();
-                  trxCost = CostingUtils
-                      .getStandardCost(inOutLine.getProduct(), legalEntity,
-                          inOut.getAccountingDate(), costDimensions, currency)
-                      .multiply(new BigDecimal(data[i].breakdownqty));
-                }
+                costDimensions.put(CostDimension.Warehouse,
+                    inOutLine.getStorageBin().getWarehouse());
+              }
+              if (!CostingUtils.hasStandardCostDefinition(inOutLine.getProduct(), legalEntity,
+                  inOut.getAccountingDate(), costDimensions)) {
+                Map<String, String> parameters = getInvalidCostParameters(
+                    inOutLine.getProduct().getIdentifier(), DateAcct);
+                setMessageResult(conn, STATUS_InvalidCost, "error", parameters);
+                throw new IllegalStateException();
+              } else {
+                Currency currency = legalEntity.getCurrency() != null ? legalEntity.getCurrency()
+                    : legalEntity.getClient().getCurrency();
+                trxCost = CostingUtils
+                    .getStandardCost(inOutLine.getProduct(), legalEntity, inOut.getAccountingDate(),
+                        costDimensions, currency)
+                    .multiply(new BigDecimal(data[i].breakdownqty));
               }
             }
-            if (trxCost == null) {
-              Map<String, String> parameters = getNotCalculatedCostParameters(trx);
-              setMessageResult(conn, STATUS_NotCalculatedCost, "error", parameters);
-              setStatus(STATUS_NotCalculatedCost);
-              return false;
-            }
-          } finally {
-            OBContext.restorePreviousMode();
           }
-        } else {
-          trxCost = new BigDecimal(ProductInfoData.selectProductAverageCost(conn,
-              data[i].getField("mProductId"), strDateAcct));
-          if (trxCost == null || trxCost.signum() == 0) {
-            ShipmentInOutLine inOutLine = OBDal.getInstance()
-                .get(ShipmentInOutLine.class, data[i].mInoutlineId);
-            if (inOutLine.getProduct() == null) {
-              continue;
-            }
-            Map<String, String> parameters = getInvalidCostParameters(
-                inOutLine.getProduct().getIdentifier(), strDateAcct);
-            setMessageResult(conn, STATUS_InvalidCost, "error", parameters);
-            throw new IllegalStateException();
+          if (trxCost == null) {
+            Map<String, String> parameters = getNotCalculatedCostParameters(trx);
+            setMessageResult(conn, STATUS_NotCalculatedCost, "error", parameters);
+            setStatus(STATUS_NotCalculatedCost);
+            return false;
           }
+        } finally {
+          OBContext.restorePreviousMode();
         }
 
         if (trxCost != null && trxCost.signum() != 0) {

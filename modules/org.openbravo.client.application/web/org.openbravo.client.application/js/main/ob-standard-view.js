@@ -1682,6 +1682,10 @@ isc.OBStandardView.addProperties({
       // at this point the time fields of the record are formatted in local time
       localTime = true;
     this.messageBar.hide();
+    if (this.parentView) {
+      this.parentView.messageBar.hide();
+    }
+
     // Set a temporary identifier for the record being edited in form view
     // See issue https://issues.openbravo.com/view.php?id=31331
     this.viewForm.recordIdInForm = OB.Utilities.getTemporaryId();

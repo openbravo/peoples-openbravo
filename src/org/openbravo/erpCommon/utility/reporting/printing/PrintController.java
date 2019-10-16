@@ -19,6 +19,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -506,11 +510,18 @@ public class PrintController extends HttpSecureAppServlet {
         }
         if (!directPrint) {
           response.setHeader("Content-disposition", "attachment" + "; filename=" + filename);
+          for (JasperPrint jasperPrint : jrPrintReports) {
+            ReportingUtils.saveReport(jasperPrint, ExportType.PDF, parameters, os);
+          }
         } else {
-          parameters.put(ReportingUtils.PDF_JAVASCRIPT, "this.print();");
-        }
-        for (JasperPrint jasperPrint : jrPrintReports) {
-          ReportingUtils.saveReport(jasperPrint, ExportType.PDF, parameters, os);
+          response.setContentType("text/html");
+          File file = Files
+              .createTempFile(Paths.get(globalParameters.strFTPDirectory), filename + "-", ".pdf")
+              .toFile();
+          for (JasperPrint jasperPrint : jrPrintReports) {
+            ReportingUtils.saveReport(jasperPrint, ExportType.PDF, parameters, file);
+          }
+          doDirectPrint(os, file.getName());
         }
       } else {
         concatReport(reports.toArray(new Report[] {}), jrPrintReports, response, directPrint);
@@ -552,6 +563,15 @@ public class PrintController extends HttpSecureAppServlet {
     }
   }
 
+  private void doDirectPrint(ServletOutputStream os, String fileName) throws IOException {
+    String href = getServletContext().getContextPath() + "/utility/DownloadReport.html?report="
+        + fileName + "&inline=true";
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/base/secureApp/DirectPrint")
+        .createXmlDocument();
+    xmlDocument.setParameter("href", href);
+    os.println(xmlDocument.print());
+  }
+
   public void printReports(HttpServletResponse response, Collection<JasperPrint> jrPrintReports,
       Collection<Report> reports) {
     printReports(response, jrPrintReports, reports, false);
@@ -576,11 +596,18 @@ public class PrintController extends HttpSecureAppServlet {
       }
       if (!directPrint) {
         response.setHeader("Content-disposition", "attachment" + "; filename=" + filename);
+        ReportingUtils.concatPDFReport(new ArrayList<>(jrPrintReports), createBookmarks,
+            response.getOutputStream(), configuration);
       } else {
-        configuration.setPdfJavaScript("this.print();");
+        response.setContentType("text/html");
+        Path path = Files.createTempFile(Paths.get(globalParameters.strFTPDirectory),
+            filename + "-", ".pdf");
+        try (OutputStream outputStream = Files.newOutputStream(path, StandardOpenOption.CREATE)) {
+          ReportingUtils.concatPDFReport(new ArrayList<>(jrPrintReports), createBookmarks,
+              outputStream, configuration);
+        }
+        doDirectPrint(response.getOutputStream(), path.toFile().getName());
       }
-      ReportingUtils.concatPDFReport(new ArrayList<JasperPrint>(jrPrintReports), createBookmarks,
-          response.getOutputStream(), configuration);
     } catch (Exception e) {
       log4j.error(e);
     }

@@ -4655,6 +4655,10 @@ isc.OBViewGrid.addProperties({
     }
 
     this.view.messageBar.hide();
+    if (this.view.parentView) {
+      this.view.parentView.messageBar.hide();
+    }
+
     this.markForCalculateSummaries();
 
     delete this._showingEditor;

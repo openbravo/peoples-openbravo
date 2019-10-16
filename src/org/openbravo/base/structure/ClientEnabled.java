@@ -29,7 +29,17 @@ import org.openbravo.model.ad.system.Client;
 
 public interface ClientEnabled {
 
+  /**
+   * Client field
+   * 
+   * @return client
+   */
   public Client getClient();
 
+  /**
+   * Client field
+   * 
+   * @param client
+   */
   public void setClient(Client client);
 }

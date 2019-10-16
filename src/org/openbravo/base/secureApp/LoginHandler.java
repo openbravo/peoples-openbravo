@@ -30,11 +30,11 @@ import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationExpirationPasswordException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.authentication.ChangePasswordException;
+import org.openbravo.authentication.hashing.PasswordHash;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.secureApp.LoginUtils.RoleDefaults;
 import org.openbravo.client.application.CachedPreference;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.Preferences;
@@ -55,7 +55,6 @@ import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.server.ServerControllerHandler;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.password.PasswordStrengthChecker;
-import org.openbravo.utils.FormatUtilities;
 
 /**
  * 
@@ -587,33 +586,30 @@ public class LoginHandler extends HttpBaseServlet {
    * 
    * @param userId
    *          the userId
-   * @param unHashedPassword
-   *          the password, the unhashed password as it is entered by the user.
+   * @param newPassword
+   *          the password, the plain text password as it is entered by the user.
    * @param language
    *          Default language for the user
    * @throws ServletException
    *           ServletException is thrown in case that password could not be hashed
    * 
    */
-  private void updatePassword(String userId, String unHashedPassword, String language)
-      throws ServletException {
+  private void updatePassword(String userId, String newPassword, String language) {
     try {
       OBContext.setAdminMode();
-      final OBCriteria<User> obc = OBDal.getInstance().createCriteria(User.class);
-      obc.add(Restrictions.eq(User.PROPERTY_ID, userId));
-      obc.setFilterOnReadableClients(false);
-      obc.setFilterOnReadableOrganization(false);
-      final User userOB = (User) obc.uniqueResult();
-      String oldPassword = userOB.getPassword();
-      String newPassword = FormatUtilities.sha1Base64(unHashedPassword);
-      if (oldPassword.equals(newPassword)) {
+      User user = (User) OBDal.getInstance()
+          .createCriteria(User.class)
+          .add(Restrictions.eq(User.PROPERTY_ID, userId))
+          .setFilterOnReadableClients(false)
+          .setFilterOnReadableOrganization(false)
+          .uniqueResult();
+
+      if (PasswordHash.matches(newPassword, user.getPassword())) {
         throwChangePasswordException("CPDifferentPassword", "CPSamePasswordThanOld", language);
-      } else if (!passwordStrengthChecker.isStrongPassword(unHashedPassword)) {
+      } else if (!passwordStrengthChecker.isStrongPassword(newPassword)) {
         throwChangePasswordException("CPWeakPasswordTitle", "CPPasswordNotStrongEnough", language);
       } else {
-        userOB.setPassword(newPassword);
-        OBDal.getInstance().save(userOB);
-        OBDal.getInstance().flush();
+        user.setPassword(PasswordHash.generateHash(newPassword));
         OBDal.getInstance().commitAndClose();
       }
     } finally {

@@ -26,7 +26,17 @@ package org.openbravo.base.structure;
  */
 
 public interface ActiveEnabled {
+  /**
+   * Gets active field
+   * 
+   * @return active
+   */
   public Boolean isActive();
 
+  /**
+   * Sets active field
+   * 
+   * @param active
+   */
   public void setActive(Boolean active);
 }

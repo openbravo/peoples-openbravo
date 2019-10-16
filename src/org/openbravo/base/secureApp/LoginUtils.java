@@ -15,6 +15,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.servlet.ServletException;
@@ -25,6 +26,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openbravo.authentication.hashing.PasswordHash;
 import org.openbravo.base.HttpBaseUtils;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
@@ -43,10 +45,10 @@ import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.RoleOrganization;
+import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.openbravo.utils.FormatUtilities;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -76,7 +78,7 @@ public class LoginUtils {
    * @param unHashedPassword
    *          the password, the unhashed password as it is entered by the user.
    * @return the user id or null if no user could be found or the user is locked.
-   * @see FormatUtilities#sha1Base64(String)
+   * @see PasswordHash
    */
   public static String getValidUserId(ConnectionProvider connectionProvider, String login,
       String unHashedPassword) {
@@ -106,13 +108,8 @@ public class LoginUtils {
   public static String checkUserPassword(ConnectionProvider connectionProvider, String login,
       String unHashedPassword) {
     try {
-      final String hashedPassword = FormatUtilities.sha1Base64(unHashedPassword);
-      final String userId = SeguridadData.valido(connectionProvider, login, hashedPassword);
-      if (userId.equals("-1")) {
-        return null;
-      }
-
-      return userId;
+      Optional<User> user = PasswordHash.getUserWithPassword(login, unHashedPassword);
+      return user.map(User::getId).orElse(null);
     } catch (final Exception e) {
       throw new OBException(e);
     }
