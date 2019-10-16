@@ -124,13 +124,12 @@ public class SystemService implements OBSingleton {
    *          the database to read the dbschema from
    * @return the validation result
    */
-  public SystemValidationResult validateDatabase(Module module, Database database,
-      boolean validateAD) {
+  public SystemValidationResult validateDatabase(Module module, Database database) {
     final DatabaseValidator databaseValidator = new DatabaseValidator();
     databaseValidator.setValidateModule(module);
     databaseValidator.setDatabase(database);
     databaseValidator.setDbsmExecution(true);
-    return databaseValidator.validate(validateAD);
+    return databaseValidator.validate();
   }
 
   /**
