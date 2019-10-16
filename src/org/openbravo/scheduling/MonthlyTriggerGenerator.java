@@ -51,7 +51,7 @@ class MonthlyTriggerGenerator extends ScheduledTriggerGenerator {
   @Override
   TriggerBuilder<CronTrigger> getScheduledBuilder(TriggerData data) throws ParseException {
     MonthlyOption monthOption = MonthlyOption.of(data.monthlyOption)
-        .orElseThrow(() -> new ParseException("Unknown month option: " + data.monthlyOption, -1));
+        .orElseThrow(() -> new ParseException("Unknown monthly option: " + data.monthlyOption, -1));
 
     StringBuilder sb = new StringBuilder();
     sb.append(getCronTime(data) + " ");
