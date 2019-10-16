@@ -19,6 +19,7 @@
 package org.openbravo.scheduling;
 
 import java.text.ParseException;
+import java.util.Optional;
 
 import org.quartz.CronTrigger;
 import org.quartz.TriggerBuilder;
@@ -28,31 +29,51 @@ import org.quartz.TriggerBuilder;
  */
 class MonthlyTriggerGenerator extends ScheduledTriggerGenerator {
 
-  private static final String MONTH_OPTION_FIRST = "1";
-  private static final String MONTH_OPTION_SECOND = "2";
-  private static final String MONTH_OPTION_THIRD = "3";
-  private static final String MONTH_OPTION_FOURTH = "4";
-  private static final String MONTH_OPTION_LAST = "L";
-  private static final String MONTH_OPTION_SPECIFIC = "S";
+  private enum MonthlyOption {
+    FIRST("1"), SECOND("2"), THIRD("3"), FOURTH("4"), LAST("L"), SPECIFIC("S");
+
+    private String label;
+
+    private MonthlyOption(String label) {
+      this.label = label;
+    }
+
+    private static Optional<MonthlyOption> of(String label) {
+      for (MonthlyOption monthOption : values()) {
+        if (monthOption.label.equals(label)) {
+          return Optional.of(monthOption);
+        }
+      }
+      return Optional.empty();
+    }
+  }
 
   @Override
   TriggerBuilder<CronTrigger> getScheduledBuilder(TriggerData data) throws ParseException {
+    MonthlyOption monthOption = MonthlyOption.of(data.monthlyOption)
+        .orElseThrow(() -> new ParseException("Unknown month option: " + data.monthlyOption, -1));
+
     StringBuilder sb = new StringBuilder();
     sb.append(getCronTime(data) + " ");
 
-    if (data.monthlyOption.equals(MONTH_OPTION_FIRST)
-        || data.monthlyOption.equals(MONTH_OPTION_SECOND)
-        || data.monthlyOption.equals(MONTH_OPTION_THIRD)
-        || data.monthlyOption.equals(MONTH_OPTION_FOURTH)) {
-      int day = Integer.parseInt(data.monthlyDayOfWeek) + 1;
-      sb.append("? * " + (day > 7 ? 1 : day) + "#" + data.monthlyOption);
-    } else if (data.monthlyOption.equals(MONTH_OPTION_LAST)) {
-      sb.append("L * ?");
-    } else if (data.monthlyOption.equals(MONTH_OPTION_SPECIFIC)) {
-      sb.append(Integer.parseInt(data.monthlySpecificDay) + " * ?");
-    } else {
-      throw new ParseException("At least one month option be selected.", -1);
+    switch (monthOption) {
+      case FIRST:
+      case SECOND:
+      case THIRD:
+      case FOURTH:
+        int day = Integer.parseInt(data.monthlyDayOfWeek) + 1;
+        sb.append("? * " + (day > 7 ? 1 : day) + "#" + data.monthlyOption);
+        break;
+      case LAST:
+        sb.append("L * ?");
+        break;
+      case SPECIFIC:
+        sb.append(Integer.parseInt(data.monthlySpecificDay) + " * ?");
+        break;
+      default:
+        throw new ParseException("At least one month option be selected.", -1);
     }
+
     return cronScheduledTriggerBuilder(sb.toString());
   }
 
