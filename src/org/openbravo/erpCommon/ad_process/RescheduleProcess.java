@@ -40,8 +40,9 @@ import org.openbravo.scheduling.OBScheduler;
 import org.openbravo.scheduling.ProcessBundle;
 
 /**
- * @author awolski
+ * Reschedules a background process
  * 
+ * @author awolski
  */
 public class RescheduleProcess extends HttpSecureAppServlet {
 
@@ -84,7 +85,7 @@ public class RescheduleProcess extends HttpSecureAppServlet {
         processListCri.add(Restrictions.eq(ProcessGroupList.PROPERTY_PROCESSGROUP,
             requestObject.getProcessGroup()));
         processListCri.setMaxResults(1);
-        if (processListCri.list().size() == 0) {
+        if (processListCri.list().isEmpty()) {
           advisePopUp(request, response, "ERROR", OBMessageUtils.getI18NMessage("Error", null),
               OBMessageUtils.getI18NMessage("PROGROUP_NoProcess",
                   new String[] { requestObject.getProcessGroup().getName() }));
