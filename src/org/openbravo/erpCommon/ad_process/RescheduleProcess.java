@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -95,7 +95,7 @@ public class RescheduleProcess extends HttpSecureAppServlet {
       OBScheduler.getInstance().schedule(requestId, bundle);
 
     } catch (final Exception e) {
-      message = Utility.messageBD(this, "RESCHED_ERROR", vars.getLanguage());
+      message = Utility.messageBD(this, "RESCHED_FAIL", vars.getLanguage());
       String processErrorTit = Utility.messageBD(this, "Error", vars.getLanguage());
       advisePopUp(request, response, "ERROR", processErrorTit, message + " " + e.getMessage());
       log.error("Error scheduling process", e);
