@@ -128,7 +128,7 @@ create.database: creates the database from scratch.
   <target name="ORACLE.structure">
     <antcall target="ORACLE.structure.param">
       <param name="driver" value="${bbdd.driver}"/>
-      <param name="url" value="${bbdd.url}/postgres"/>
+      <param name="url" value="${bbdd.url}"/>
       <param name="systemUser" value="${bbdd.systemUser}"/>
       <param name="systemPassword" value="${bbdd.systemPassword}"/>
       <param name="user" value="${bbdd.user}"/>
