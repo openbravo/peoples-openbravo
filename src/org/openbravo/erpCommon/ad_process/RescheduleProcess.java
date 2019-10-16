@@ -18,91 +18,24 @@
  */
 package org.openbravo.erpCommon.ad_process;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.hibernate.criterion.Restrictions;
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.base.session.OBPropertiesProvider;
-import org.openbravo.dal.service.OBCriteria;
-import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.model.ad.ui.ProcessGroupList;
-import org.openbravo.model.ad.ui.ProcessRequest;
-import org.openbravo.scheduling.OBScheduler;
-import org.openbravo.scheduling.ProcessBundle;
-
 /**
  * Reschedules a background process
  * 
  * @author awolski
  */
-public class RescheduleProcess extends HttpSecureAppServlet {
+public class RescheduleProcess extends ScheduleProcess {
 
   private static final long serialVersionUID = 1L;
-
-  private static final String PROCESS_REQUEST_ID = "AD_Process_Request_ID";
-  private static final Logger log = LogManager.getLogger();
+  private static final String ERROR_MESSAGE = "RESCHED_FAIL";
+  private static final String SUCCESS_MESSAGE = "RESCHED_SUCCESS";
 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
-    String policy = OBPropertiesProvider.getInstance()
-        .getOpenbravoProperties()
-        .getProperty("background.policy", "default");
-    if ("no-execute".equals(policy)) {
-      log.info("Not scheduling process because current context background policy is 'no-execute'");
-      advisePopUp(request, response, "ERROR",
-          OBMessageUtils.messageBD("BackgroundPolicyNoExecuteTitle"),
-          OBMessageUtils.messageBD("BackgroundPolicyNoExecuteMsg"));
-      return;
-    }
+  protected String getErrorMessage() {
+    return ERROR_MESSAGE;
+  }
 
-    final VariablesSecureApp vars = new VariablesSecureApp(request);
-
-    final String windowId = vars.getStringParameter("inpwindowId");
-    String requestId = vars.getSessionValue(windowId + "|" + PROCESS_REQUEST_ID);
-    if (requestId.isEmpty()) {
-      requestId = vars.getStringParameter("AD_Process_Request_ID");
-    }
-    final String group = vars.getStringParameter("inpisgroup");
-
-    String message;
-    try {
-      // Avoid launch empty groups
-      // Duplicated code in: ScheduleProcess
-      if (group.equals("Y")) {
-        ProcessRequest requestObject = OBDal.getInstance().get(ProcessRequest.class, requestId);
-        OBCriteria<ProcessGroupList> processListCri = OBDal.getInstance()
-            .createCriteria(ProcessGroupList.class);
-        processListCri.add(Restrictions.eq(ProcessGroupList.PROPERTY_PROCESSGROUP,
-            requestObject.getProcessGroup()));
-        processListCri.setMaxResults(1);
-        if (processListCri.list().isEmpty()) {
-          advisePopUp(request, response, "ERROR", OBMessageUtils.getI18NMessage("Error", null),
-              OBMessageUtils.getI18NMessage("PROGROUP_NoProcess",
-                  new String[] { requestObject.getProcessGroup().getName() }));
-          return;
-        }
-      }
-      final ProcessBundle bundle = ProcessBundle.request(requestId, vars, this);
-      OBScheduler.getInstance().schedule(requestId, bundle);
-
-    } catch (final Exception e) {
-      message = Utility.messageBD(this, "RESCHED_FAIL", vars.getLanguage());
-      String processErrorTit = Utility.messageBD(this, "Error", vars.getLanguage());
-      advisePopUp(request, response, "ERROR", processErrorTit, message + " " + e.getMessage());
-      log.error("Error scheduling process", e);
-    }
-    message = Utility.messageBD(this, "RESCHED_SUCCESS", vars.getLanguage());
-    String processTitle = Utility.messageBD(this, "Success", vars.getLanguage());
-    advisePopUpRefresh(request, response, "SUCCESS", processTitle, message);
+  @Override
+  protected String getSuccessMessage() {
+    return SUCCESS_MESSAGE;
   }
 }
