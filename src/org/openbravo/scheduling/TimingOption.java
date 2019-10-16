@@ -18,6 +18,8 @@
  */
 package org.openbravo.scheduling;
 
+import java.util.Optional;
+
 /**
  * Represents that available timing options for a process request.
  */
@@ -34,12 +36,12 @@ enum TimingOption {
     return label;
   }
 
-  static TimingOption of(String label) {
+  static Optional<TimingOption> of(String label) {
     for (TimingOption timingOption : values()) {
       if (timingOption.label.equals(label)) {
-        return timingOption;
+        return Optional.of(timingOption);
       }
     }
-    return null;
+    return Optional.empty();
   }
 }

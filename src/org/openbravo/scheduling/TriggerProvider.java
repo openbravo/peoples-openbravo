@@ -123,17 +123,18 @@ class TriggerProvider {
   private String getTiming(TriggerData data) {
     TimingOption timingOption = getTimingOption(data);
     if (timingOption == TimingOption.SCHEDULED) {
-      return timingOption.getLabel() + Frequency.of(data.frequency).getLabel();
+      String frequency = Frequency.of(data.frequency).map(Frequency::getLabel).orElse("");
+      return timingOption.getLabel() + frequency;
     } else {
       return timingOption.getLabel();
     }
   }
 
   private TimingOption getTimingOption(TriggerData data) {
-    if (data == null || "".equals(data.timingOption)) {
+    if (data == null) {
       return TimingOption.IMMEDIATE;
     } else {
-      return TimingOption.of(data.timingOption);
+      return TimingOption.of(data.timingOption).orElse(TimingOption.IMMEDIATE);
     }
   }
 

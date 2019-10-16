@@ -226,7 +226,7 @@ public class OBScheduler {
     this.ctx = schdlr.getContext();
     this.sched = schdlr;
 
-    final ProcessMonitor monitor = new ProcessMonitor("Monitor." + OB_GROUP, this.ctx);
+    ProcessMonitor monitor = new ProcessMonitor("Monitor." + OB_GROUP, this.ctx);
     schdlr.getListenerManager().addSchedulerListener(monitor);
     schdlr.getListenerManager().addJobListener(monitor);
     schdlr.getListenerManager().addTriggerListener(monitor);
@@ -236,11 +236,13 @@ public class OBScheduler {
     try {
       for (ProcessRequestData request : ProcessRequestData.selectByStatus(getConnection(),
           SCHEDULED)) {
-        final String requestId = request.id;
-        final VariablesSecureApp vars = ProcessContext.newInstance(request.obContext).toVars();
+        String requestId = request.id;
+        VariablesSecureApp vars = ProcessContext.newInstance(request.obContext).toVars();
+        boolean isImmediate = TimingOption.of(request.timingOption)
+            .map(timingOption -> timingOption == TimingOption.IMMEDIATE)
+            .orElse(false);
 
-        if ("Direct".equals(request.channel)
-            || TimingOption.of(request.timingOption) == TimingOption.IMMEDIATE) {
+        if ("Direct".equals(request.channel) || isImmediate) {
           // do not re-schedule immediate and direct requests that were in execution last time
           // Tomcat stopped
           ProcessRequestData.update(getConnection(), Process.SYSTEM_RESTART, vars.getUser(),
@@ -255,7 +257,6 @@ public class OBScheduler {
     } catch (final ServletException e) {
       log.error("An error occurred retrieving scheduled process data: " + e.getMessage(), e);
     }
-
   }
 
   private void scheduleProcess(String requestId, VariablesSecureApp vars)

@@ -18,6 +18,8 @@
  */
 package org.openbravo.scheduling;
 
+import java.util.Optional;
+
 /**
  * Represents that frequency of an scheduled process request.
  */
@@ -34,12 +36,12 @@ enum Frequency {
     return label;
   }
 
-  static Frequency of(String label) {
+  static Optional<Frequency> of(String label) {
     for (Frequency frequency : values()) {
       if (frequency.label.equals(label)) {
-        return frequency;
+        return Optional.of(frequency);
       }
     }
-    return null;
+    return Optional.empty();
   }
 }
