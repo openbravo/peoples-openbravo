@@ -41,38 +41,31 @@ class SchedulerTimeUtils {
   }
 
   /**
-   * Utility method to parse a start date string and a start time string into a {@link Date}.
+   * Utility method to parse a date with time String into a {@link Date}.
    * 
-   * @param date
-   *          A date as a String. Expected format: 'dd-MM-yyyy'
-   * 
-   * @param time
-   *          A time as a String. Expected format: 'HH:mm:ss'
+   * @param dateTime
+   *          A date with time as a String. Expected format: 'dd-MM-yyyy HH:mm:ss'
    * 
    * @return a {@link Date} with the provided date and time.
    * 
    * @throws ParseException
    *           if the provided date and time can not be parsed to create the {@link Date} instance.
    */
-  static Date timestamp(String date, String time) throws ParseException {
-    LocalDateTime localDateTime = parse(date, time);
+  static Date timestamp(String dateTime) throws ParseException {
+    LocalDateTime localDateTime = parse(dateTime);
     try {
       return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     } catch (Exception ex) {
-      log.error("Could not parse date {} {}", date, time, ex);
-      throw new ParseException("Could not parse date " + date + " " + time, -1);
+      log.error("Could not parse date {}", dateTime, ex);
+      throw new ParseException("Could not parse date " + dateTime, -1);
     }
   }
 
   /**
-   * Utility method to parse a start date string and a start time string into a
-   * {@link LocalDateTime}.
+   * Utility method to parse a date with time String into a {@link LocalDateTime}.
    * 
-   * @param date
-   *          A date as a String. Expected format: 'dd-MM-yyyy'
-   * 
-   * @param time
-   *          A time as a String. Expected format: 'HH:mm:ss'
+   * @param dateTime
+   *          A date with time as a String. Expected format: 'dd-MM-yyyy HH:mm:ss'
    * 
    * @return a {@link LocalDateTime} with the provided date and time.
    * 
@@ -80,12 +73,12 @@ class SchedulerTimeUtils {
    *           if the provided date and time can not be parsed to create the {@link LocalDateTime}
    *           instance.
    */
-  static LocalDateTime parse(String date, String time) throws ParseException {
+  static LocalDateTime parse(String dateTime) throws ParseException {
     try {
-      return LocalDateTime.parse(date + " " + time, DEFAULT_FORMATTER);
+      return LocalDateTime.parse(dateTime, DEFAULT_FORMATTER);
     } catch (DateTimeParseException ex) {
-      log.error("Could not parse date {} {}", date, time, ex);
-      throw new ParseException("Could not parse date " + date + " " + time, -1);
+      log.error("Could not parse date {}", dateTime, ex);
+      throw new ParseException("Could not parse date " + dateTime, -1);
     }
   }
 

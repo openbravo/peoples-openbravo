@@ -37,7 +37,8 @@ class LaterTriggerGenerator extends TriggerGenerator {
   }
 
   private Date getStartDate(TriggerData data) throws ParseException {
-    return SchedulerTimeUtils.timestamp(data.startDate, data.startTime);
+    String dateTime = data.startDate + " " + data.startTime;
+    return SchedulerTimeUtils.timestamp(dateTime);
   }
 
 }
