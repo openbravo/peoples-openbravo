@@ -3276,7 +3276,6 @@ li.selected > .obUiRenderOrderLine_edit {
   border-radius: 4px;
   background-color: white;
   grid-template-rows: 1fr 0px;
-  height: 100%;
 }
 
 .obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBpbutton:hover,
