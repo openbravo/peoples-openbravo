@@ -173,7 +173,7 @@ enyo.kind({
           amount: amount,
           currency: firstpayment.isocode,
           providerGroup: providerGroup,
-          providerinstance: enyo.createFromKind(providerGroup.provider.provider)
+          providername: providerGroup.provider.provider
         }
       });
     }

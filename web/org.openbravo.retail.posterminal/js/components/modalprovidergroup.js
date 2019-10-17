@@ -69,6 +69,16 @@ enyo.kind({
     this.inherited(arguments);
     this.$.headerCloseButton.hide();
   },
+  createProvider: function(providername, refund) {
+    if (refund) {
+      return (
+        enyo.createFromKind(providername + 'Refund') ||
+        enyo.createFromKind(providername)
+      );
+    } else {
+      return enyo.createFromKind(providername);
+    }
+  },
   executeOnShow: function() {
     var amount = this.args.amount;
     var refund = this.args.refund;
@@ -118,7 +128,10 @@ enyo.kind({
     var refund = this.args.refund;
     var currency = this.args.currency;
     var providerGroup = this.args.providerGroup;
-    var providerinstance = this.args.providerinstance;
+    var providerinstance = this.createProvider(
+      this.args.providername,
+      this.args.refund
+    );
     var attributes = this.args.attributes;
     var i;
 
