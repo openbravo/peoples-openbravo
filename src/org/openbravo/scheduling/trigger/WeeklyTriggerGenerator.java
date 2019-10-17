@@ -33,6 +33,18 @@ class WeeklyTriggerGenerator extends ScheduledTriggerGenerator {
 
   @Override
   TriggerBuilder<CronTrigger> getScheduledBuilder(TriggerData data) throws ParseException {
+    List<String> days = getScheduledDays(data);
+
+    if (days.isEmpty()) {
+      throw new ParseException("At least one day must be selected.", -1);
+    }
+
+    String cronExpression = getCronTime(data) + " ? * "
+        + StringCollectionUtils.commaSeparated(days, false);
+    return cronScheduledTriggerBuilder(cronExpression);
+  }
+
+  private List<String> getScheduledDays(TriggerData data) {
     List<String> days = new ArrayList<>();
     if (data.daySun.equals("Y")) {
       days.add("SUN");
@@ -55,15 +67,7 @@ class WeeklyTriggerGenerator extends ScheduledTriggerGenerator {
     if (data.daySat.equals("Y")) {
       days.add("SAT");
     }
-
-    if (!days.isEmpty()) {
-      StringBuilder sb = new StringBuilder();
-      sb.append(StringCollectionUtils.commaSeparated(days, false));
-      sb.insert(0, getCronTime(data) + " ? * ");
-      return cronScheduledTriggerBuilder(sb.toString());
-    } else {
-      throw new ParseException("At least one day must be selected.", -1);
-    }
+    return days;
   }
 
 }
