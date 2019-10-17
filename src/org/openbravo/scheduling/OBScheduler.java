@@ -147,12 +147,9 @@ public class OBScheduler {
    *          The bundle with all of the process' details
    * 
    * @throws SchedulerException
-   *           If something goes wrong with the process scheduling.
-   * @throws ServletException
-   *           If something goes wrong with the trigger creation.
+   *           If something goes wrong with the trigger creation or with the process scheduling.
    */
-  public void schedule(String requestId, ProcessBundle bundle)
-      throws SchedulerException, ServletException {
+  public void schedule(String requestId, ProcessBundle bundle) throws SchedulerException {
     if (isNoExecuteBackgroundPolicy()) {
       log.info("Not scheduling process because current context background policy is 'no-execute'");
       return;

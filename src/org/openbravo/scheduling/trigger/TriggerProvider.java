@@ -18,6 +18,8 @@
  */
 package org.openbravo.scheduling.trigger;
 
+import static org.openbravo.scheduling.GroupInfo.processGroupId;
+
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +31,6 @@ import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.scheduling.Frequency;
-import org.openbravo.scheduling.GroupInfo;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.TimingOption;
 import org.quartz.Trigger;
@@ -84,39 +85,40 @@ public class TriggerProvider {
    *         from database
    */
   public Trigger createTrigger(String name, ProcessBundle bundle, ConnectionProvider conn)
-      throws ServletException {
-    TriggerData data = getTriggerData(name, bundle, conn);
+      throws TriggerGenerationException {
+    TriggerData data = null;
     try {
+      data = getTriggerData(name, bundle, conn);
       Trigger trigger = getTriggerGenerator(data, bundle, conn).generate(name, data);
       trigger.getJobDataMap().put(ProcessBundle.KEY, bundle);
 
-      log.debug("Scheduled process {} {}. Start time: {}.",
-          () -> data != null ? data.processName : "",
-          () -> data != null ? data.processGroupName : "", trigger::getStartTime);
+      log.debug("Created quartz trigger for process {} {}. Start time: {}.", data.processName,
+          data.processGroupName, trigger.getStartTime());
 
       return trigger;
-    } catch (ParseException e) {
-      log.error("Error scheduling process {} {}", () -> data != null ? data.processName : "",
-          () -> data != null ? data.processGroupName : "", () -> e);
-      throw new ServletException(getErrorMessage(conn, bundle, e.getMessage()));
+    } catch (ParseException ex) {
+      log.error("Couldn't create quartz trigger for process {} {}", data.processName,
+          data.processGroupName, ex);
+      throw new TriggerGenerationException(getErrorMessage(conn, bundle, ex.getMessage()));
     }
   }
 
   private TriggerData getTriggerData(String requestId, ProcessBundle bundle,
-      ConnectionProvider conn) throws ServletException {
-    if (bundle.isGroup()) {
-      return TriggerData.selectGroup(conn, requestId, GroupInfo.processGroupId);
-    } else {
-      return TriggerData.select(conn, requestId);
+      ConnectionProvider conn) throws TriggerGenerationException {
+    try {
+      return bundle.isGroup() ? TriggerData.selectGroup(conn, requestId, processGroupId)
+          : TriggerData.select(conn, requestId);
+    } catch (ServletException ex) {
+      throw new TriggerGenerationException("Error retrieving Trigger data: " + ex.getMessage());
     }
   }
 
   private TriggerGenerator getTriggerGenerator(TriggerData data, ProcessBundle bundle,
-      ConnectionProvider conn) throws ServletException {
+      ConnectionProvider conn) throws TriggerGenerationException {
     String timing = getTiming(data);
     if (!triggerGenerators.containsKey(timing)) {
       log.error("Couldn't get a trigger generator for timing option {}", timing);
-      throw new ServletException(
+      throw new TriggerGenerationException(
           getErrorMessage(conn, bundle, "Unrecognized timing option " + timing));
     }
     return triggerGenerators.get(timing);
