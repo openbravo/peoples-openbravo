@@ -27,7 +27,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -37,9 +36,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.openbravo.dal.core.DalUtil;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
@@ -47,7 +44,6 @@ import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.test.base.OBBaseTest;
-import org.openbravo.test.taxes.data.BPartnerDataConstants;
 
 /**
  * Tests cases to check c_order_post1 executions
@@ -58,14 +54,6 @@ import org.openbravo.test.taxes.data.BPartnerDataConstants;
 public class OrderProcessTest extends OBBaseTest {
   private static final Logger log = LogManager.getLogger();
 
-  // User Openbravo
-  private static final String USER_ID = "100";
-  // Client QA Testing
-  private static final String CLIENT_ID = "4028E6C72959682B01295A070852010D";
-  // Organization Spain
-  private static final String ORGANIZATION_ID = "357947E87C284935AD1D783CF6F099A1";
-  // Role QA Testing Admin
-  private static final String ROLE_ID = "4028E6C72959682B01295A071429011E";
   // Sales Order: 50012
   private static final String SALESORDER_ID = "8B53B7E6CF3B4D8D9BCF3A49EED6FCB4";
   // PriceList: Price Including Taxes Sales
@@ -91,27 +79,24 @@ public class OrderProcessTest extends OBBaseTest {
   /** parameterized possible combinations for taxes computation */
   @Parameters(name = "idx:{0} name:{1}")
   public static Collection<Object[]> params() {
-    return Arrays
-        .asList(new Object[][] { { "01", "Check Order in Not Confirmed can be Closed", "NC", "CL" }, //
-            { "02", "Check Order in Not Confirmed can be Booked", "NC", "CO" }, //
-            { "03", "Check Order in Not Confirmed can be updated to Automatic Evaluation", "NC",
-                "AE" }, //
-            { "04", "Check Order in Automatic Evaluation can be Closed", "AE", "CL" }, //
-            { "05", "Check Order in Automatic Evaluation can be Not Confirmed", "AE", "NC" }, //
-            { "06", "Check Order in Automatic Evaluation updated to Manual Evaluation", "AE",
-                "ME" },
-            { "07", "Check Order in Manual Evaluation can be Closed", "ME", "CL" }, //
-            { "08", "Check Order in Manual Evaluation can be Booked", "ME", "CO" }, //
-            { "09", "Check Order in Manual Evaluation can be updated to Automatic Evaluation", "ME",
-                "AE" }, //
-
-        });
+    Object[][] params = new Object[][] {
+        { "01", "Check Order in Not Confirmed can be Closed", "NC", "CL" }, //
+        { "02", "Check Order in Not Confirmed can be Booked", "NC", "CO" }, //
+        { "03", "Check Order in Not Confirmed can be updated to Automatic Evaluation", "NC", "AE" }, //
+        { "04", "Check Order in Automatic Evaluation can be Closed", "AE", "CL" }, //
+        { "05", "Check Order in Automatic Evaluation can be Not Confirmed", "AE", "NC" }, //
+        { "06", "Check Order in Automatic Evaluation updated to Manual Evaluation", "AE", "ME" },
+        { "07", "Check Order in Manual Evaluation can be Closed", "ME", "CL" }, //
+        { "08", "Check Order in Manual Evaluation can be Booked", "ME", "CO" }, //
+        { "09", "Check Order in Manual Evaluation can be updated to Automatic Evaluation", "ME",
+            "AE" }, //
+    };
+    return Arrays.asList(params);
   }
 
   @Test
   public void testCOrderPostProcess() {
-    // Set QA context
-    OBContext.setOBContext(USER_ID, ROLE_ID, CLIENT_ID, ORGANIZATION_ID);
+    setQAAdminContext();
     Order testOrder = createOrder();
     processOrder(testOrder);
     assertOrder(testOrder);
@@ -121,11 +106,6 @@ public class OrderProcessTest extends OBBaseTest {
     Order order = OBDal.getInstance().get(Order.class, SALESORDER_ID);
     Order testOrder = (Order) DalUtil.copy(order, false);
     testOrder.setDocumentNo("OrderPostTest " + testNumber);
-    Date today = new Date();
-    testOrder.setOrderDate(today);
-    testOrder.setScheduledDeliveryDate(today);
-    testOrder.setBusinessPartner(
-        OBDal.getInstance().getProxy(BusinessPartner.class, BPartnerDataConstants.CUSTOMER_A));
     testOrder.setSummedLineAmount(BigDecimal.ZERO);
     testOrder.setGrandTotalAmount(BigDecimal.ZERO);
     testOrder.setPriceIncludesTax(true);
