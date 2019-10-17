@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.WordUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.tools.ant.Task;
@@ -58,6 +59,7 @@ public class GenerateEntitiesTask extends Task {
   private String srcGenPath;
   private String propertiesFile;
   boolean generateAllChildProperties;
+  boolean generateDeprecatedProperties;
 
   public static void main(String[] args) {
     final String srcPath = args[0];
@@ -126,6 +128,9 @@ public class GenerateEntitiesTask extends Task {
     generateAllChildProperties = OBPropertiesProvider.getInstance()
         .getBooleanProperty("hb.generate.all.parent.child.properties");
 
+    generateDeprecatedProperties = OBPropertiesProvider.getInstance()
+        .getBooleanProperty("hb.generate.deprecated.properties");
+
     // read and parse template
     String ftlFilename = "org/openbravo/base/gen/entity.ftl";
     File ftlFile = new File(getBasePath(), ftlFilename);
@@ -138,6 +143,7 @@ public class GenerateEntitiesTask extends Task {
 
     // process template & write file for each entity
     List<Entity> entities = ModelProvider.getInstance().getModel();
+    ModelProvider.getInstance().addHelpAndDeprecationToModel(generateDeprecatedProperties);
     for (Entity entity : entities) {
       // If the entity is associated with a datasource based table or based on an HQL query, do not
       // generate a Java file
@@ -209,9 +215,42 @@ public class GenerateEntitiesTask extends Task {
     log.info("Generated " + entities.size() + " entities");
   }
 
+  /**
+   * Checks if "hb.generate.deprecated.properties" or "hb.generate.all.parent.child.properties"
+   * properties from Openbravo.properties have been set to true. If so, then deprecation should be
+   * added.
+   * 
+   * @return True if deprecation should be added, depending on global properties found in
+   *         Openbravo.properties, else false.
+   */
+  public boolean shouldAddDeprecation() {
+    return generateDeprecatedProperties || generateAllChildProperties;
+  }
+
+  /**
+   * Checks if an entity is set as deprecated
+   *
+   * @param e
+   *          Entity to check deprecation
+   * @return True if entity is deprecated, false otherwise
+   */
+  public boolean isDeprecated(Entity e) {
+    return e.isDeprecated() != null && e.isDeprecated();
+  }
+
+  /**
+   * Checks if a proprerty is deprecated, it can be deprecated in Application Dictionary or the
+   * entity it references could be deprecated
+   *
+   * @param p
+   *          Property to check deprecation
+   * @return True if property or property target entity are deprecated and generate deprecate
+   *         property is set to true in Openbravo.properties, false otherwise
+   */
   public boolean isDeprecated(Property p) {
-    if (!generateAllChildProperties) {
-      return false;
+    if ((p.isDeprecated() != null && p.isDeprecated()) || (p.getTargetEntity() != null
+        && p.getTargetEntity().isDeprecated() != null && p.getTargetEntity().isDeprecated())) {
+      return true;
     }
 
     Property refPropery = p.getReferencedProperty();
@@ -228,6 +267,14 @@ public class GenerateEntitiesTask extends Task {
   }
 
   public String getDeprecationMessage(Property p) {
+    if (p.isDeprecated() != null && p.isDeprecated()) {
+      return "Property marked as deprecated on field Development Status";
+    }
+    if (p.getTargetEntity() != null && p.getTargetEntity().isDeprecated() != null
+        && p.getTargetEntity().isDeprecated()) {
+      return "Target entity {@link " + p.getTargetEntity().getSimpleClassName()
+          + "} is deprecated.";
+    }
     return "Child property in parent entity generated for backward compatibility, it will be removed in future releases.";
   }
 
@@ -319,5 +366,15 @@ public class GenerateEntitiesTask extends Task {
     final Configuration cfg = new Configuration();
     cfg.setObjectWrapper(new DefaultObjectWrapper());
     return cfg;
+  }
+
+  public String formatSqlLogic(String sqlLogic) {
+    if (sqlLogic != null) {
+      final String sqlLogicEscaped = sqlLogic.replaceAll("\\*/", " ");
+      final String wrappedSqlLogic = WordUtils.wrap(sqlLogicEscaped, 100);
+      return wrappedSqlLogic.replaceAll("\n", "\n       ");
+    } else {
+      return sqlLogic;
+    }
   }
 }

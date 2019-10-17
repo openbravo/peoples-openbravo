@@ -231,8 +231,9 @@ public class SL_Order_Amt extends SimpleCallout {
       BigDecimal unitPrice = isTaxIncludedPriceList ? grossBaseUnitPrice : priceStd;
       BigDecimal discount = priceList.compareTo(BigDecimal.ZERO) == 0 || !calcDiscount
           ? BigDecimal.ZERO
-          : priceList.subtract(unitPrice).divide(priceList, stdPrecision, RoundingMode.HALF_EVEN)
-              .multiply(new BigDecimal("100")).setScale(stdPrecision, RoundingMode.HALF_EVEN);
+          : priceList.subtract(unitPrice)
+              .multiply(new BigDecimal("100"))
+              .divide(priceList, stdPrecision, RoundingMode.HALF_UP);
       log4j.debug("Discount rounded: " + discount.toString());
       info.addResult("inpdiscount", discount);
 

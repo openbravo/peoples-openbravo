@@ -213,14 +213,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="COSTTYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="COSTSTD" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="STOCK_MIN" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
         <default/>
         <onCreateDefault/>

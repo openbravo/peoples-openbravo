@@ -55,8 +55,11 @@ import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.base.session.UniqueConstraintColumn;
 import org.openbravo.base.util.Check;
 import org.openbravo.base.util.CheckException;
+import org.openbravo.data.UtilSql;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.database.ConnectionProviderImpl;
+import org.openbravo.exception.NoConnectionAvailableException;
+import org.openbravo.exception.PoolNotFoundException;
 
 /**
  * Builds the Runtime model base on the data model (application dictionary: table, column,
@@ -74,6 +77,7 @@ import org.openbravo.database.ConnectionProviderImpl;
 
 public class ModelProvider implements OBSingleton {
   private static final Logger log = LogManager.getLogger();
+  private static final String DEPRECATED_STATUS = "DP";
 
   private static ModelProvider instance;
   private List<Entity> model = null;
@@ -1101,5 +1105,102 @@ public class ModelProvider implements OBSingleton {
    */
   public Session getSession() {
     return initsession;
+  }
+
+  /**
+   * Adds help comments and deprecation status to corresponding entities and properties in the model
+   */
+  public void addHelpAndDeprecationToModel(boolean addDeprecation) {
+    addHelpAndDeprecationToEntities(addDeprecation);
+    addHelpAndDeprecationToProperties(addDeprecation);
+  }
+
+  /**
+   * Gets and maps and deprecation status to entities without using DAL as it has not been
+   * initialized here yet
+   */
+  private void addHelpAndDeprecationToEntities(boolean addDeprecation) {
+    //@formatter:off
+    String qry = "SELECT ad_table_id, help, developmentStatus "
+               + "FROM AD_TABLE ";
+    //@formatter:on
+    try (Connection connection = getConnection();
+        PreparedStatement ps = connection.prepareStatement(qry);
+        ResultSet resultSet = ps.executeQuery()) {
+      while (resultSet.next()) {
+        Entity entity = entitiesByTableId.get(UtilSql.getValue(resultSet, "ad_table_id"));
+        String helpComment = UtilSql.getValue(resultSet, "help");
+        if ("".equals(helpComment)) {
+          helpComment = null;
+        }
+        entity.setHelp(helpComment);
+        if (addDeprecation) {
+          String developmentStatus = UtilSql.getValue(resultSet, "developmentStatus");
+          entity.setDeprecated(DEPRECATED_STATUS.equals(developmentStatus));
+        }
+      }
+    } catch (Exception e) {
+      log.error("Couldn't add help to entity. Failed database query.");
+      throw new OBException("Couldn't add help to entity, failed database query.", e);
+    }
+  }
+
+  /**
+   * Gets and maps help and deprecation status to properties without using DAL as it has not been
+   * initialized here yet
+   */
+  private void addHelpAndDeprecationToProperties(boolean addDeprecation) {
+    //@formatter:off
+    String qry = "SELECT ad_table_id, columnname, help, developmentStatus " +
+                 "FROM AD_COLUMN";
+    //@formatter:on
+    try (Connection connection = getConnection();
+        PreparedStatement ps = connection.prepareStatement(qry);
+        ResultSet resultSet = ps.executeQuery()) {
+      while (resultSet.next()) {
+        Entity entity = entitiesByTableId.get(UtilSql.getValue(resultSet, "ad_table_id"));
+        if (entity == null) {
+          continue;
+        }
+        String columnName = UtilSql.getValue(resultSet, "columnname");
+        String helpComment = UtilSql.getValue(resultSet, "help");
+        Property property = entity.getPropertyByColumnName(columnName);
+        if ("".equals(helpComment)) {
+          helpComment = null;
+        }
+        if (addDeprecation) {
+          String developmentStatus = UtilSql.getValue(resultSet, "developmentStatus");
+          property.setDeprecated(DEPRECATED_STATUS.equals(developmentStatus));
+        }
+        property.setHelp(helpComment);
+      }
+    } catch (Exception e) {
+      log.error("Not able to get column help from database.");
+      throw new OBException("Couldn't add help to column, failed database query.", e);
+    }
+  }
+
+  /**
+   * Removes help comments and deprecation status from all entities and properties in the model
+   */
+  public void removeHelpAndDeprecationFromModel() {
+    for (final Entity entity : getModel()) {
+      entity.removeHelp();
+      entity.removeDeprecated();
+    }
+  }
+
+  private Connection getConnection() {
+    ConnectionProvider con = ConnectionProviderContextListener.getPool();
+    try {
+      if (con == null) {
+        con = new ConnectionProviderImpl(
+            OBPropertiesProvider.getInstance().getOpenbravoProperties());
+      }
+      return con.getConnection();
+    } catch (PoolNotFoundException | NoConnectionAvailableException e) {
+      log.error("Couldn't establish database connection in ModelProvider", e);
+      throw new OBException("Couldn't extablish database connection in ModelProvider.", e);
+    }
   }
 }

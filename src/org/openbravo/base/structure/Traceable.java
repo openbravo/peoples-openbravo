@@ -31,19 +31,60 @@ import org.openbravo.model.ad.access.User;
  */
 
 public interface Traceable {
+
+  /**
+   * Created by audit user
+   * 
+   * @return User
+   */
   public User getCreatedBy();
 
+  /**
+   * Created by audit user
+   * 
+   * @param user
+   */
   public void setCreatedBy(User user);
 
+  /**
+   * Creation date of audit
+   * 
+   * @return Date of creation
+   */
   public Date getCreationDate();
 
+  /**
+   * Creation date of audit
+   * 
+   * @param date
+   */
   public void setCreationDate(Date date);
 
+  /**
+   * Update by audit user
+   * 
+   * @return User who updated
+   */
   public User getUpdatedBy();
 
+  /**
+   * Update by audit user
+   * 
+   * @param user
+   */
   public void setUpdatedBy(User user);
 
+  /**
+   * Update date of audit
+   * 
+   * @return Date of update
+   */
   public Date getUpdated();
 
+  /**
+   * Update date of audit
+   * 
+   * @param date
+   */
   public void setUpdated(Date date);
 }
