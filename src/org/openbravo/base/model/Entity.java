@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.WordUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
@@ -72,6 +73,8 @@ public class Entity {
   private boolean mappingClassComputed = false;
   private String className;
 
+  private String help;
+  private Boolean isDeprecated;
   private boolean isInActive;
 
   private boolean isTraceable;
@@ -849,6 +852,20 @@ public class Entity {
     this.isHQLBased = isHQLBased;
   }
 
+  public String getHelp() {
+    return help;
+  }
+
+  public void setHelp(String help) {
+    if (help != null) {
+      final String helpEscaped = help.replaceAll("\\*/", " ");
+      final String wrappedHelp = WordUtils.wrap(helpEscaped, 100);
+      this.help = wrappedHelp.replaceAll("\n", "\n       ");
+    } else {
+      this.help = help;
+    }
+  }
+
   List<String> getJavaImportsInternal() {
     return getJavaImportsInternal(properties);
   }
@@ -965,5 +982,33 @@ public class Entity {
       }
     }
     return result;
+  }
+
+  /**
+   * Removes help from this entity and all its properties
+   */
+  public void removeHelp() {
+    setHelp(null);
+    for (Property property : properties) {
+      property.removeHelp();
+    }
+  }
+
+  /**
+   * Removes deprecation status from entity and its properties
+   */
+  public void removeDeprecated() {
+    setDeprecated(null);
+    for (Property property : properties) {
+      property.setDeprecated(null);
+    }
+  }
+
+  public Boolean isDeprecated() {
+    return isDeprecated;
+  }
+
+  public void setDeprecated(Boolean deprecated) {
+    isDeprecated = deprecated;
   }
 }

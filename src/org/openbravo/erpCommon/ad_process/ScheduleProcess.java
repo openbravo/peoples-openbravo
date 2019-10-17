@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,20 +33,24 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.ui.ProcessGroup;
 import org.openbravo.model.ad.ui.ProcessGroupList;
 import org.openbravo.model.ad.ui.ProcessRequest;
 import org.openbravo.scheduling.OBScheduler;
 import org.openbravo.scheduling.ProcessBundle;
 
 /**
- * @author awolski
+ * Schedules a background process
  * 
+ * @author awolski
  */
 public class ScheduleProcess extends HttpSecureAppServlet {
 
   private static final long serialVersionUID = 1L;
 
   private static final String PROCESS_REQUEST_ID = "AD_Process_Request_ID";
+  private static final String ERROR_MESSAGE = "SCHED_ERROR";
+  private static final String SUCCESS_MESSAGE = "SCHED_SUCCESS";
   private static final Logger log = LogManager.getLogger();
 
   @Override
@@ -60,39 +64,66 @@ public class ScheduleProcess extends HttpSecureAppServlet {
       return;
     }
 
-    final VariablesSecureApp vars = new VariablesSecureApp(request);
-    String message = null;
-    final String windowId = vars.getStringParameter("inpwindowId");
-    final String requestId = vars.getSessionValue(windowId + "|" + PROCESS_REQUEST_ID);
-    final String group = vars.getStringParameter("inpisgroup");
+    VariablesSecureApp vars = new VariablesSecureApp(request);
+    String requestId = getRequestId(vars);
+    String group = vars.getStringParameter("inpisgroup");
 
     try {
       // Avoid launch empty groups
-      // Duplicated code in: RescheduleProcess
-      if (group.equals("Y")) {
-        ProcessRequest requestObject = OBDal.getInstance().get(ProcessRequest.class, requestId);
-        OBCriteria<ProcessGroupList> processListCri = OBDal.getInstance()
-            .createCriteria(ProcessGroupList.class);
-        processListCri.add(Restrictions.eq(ProcessGroupList.PROPERTY_PROCESSGROUP,
-            requestObject.getProcessGroup()));
-        processListCri.setMaxResults(1);
-        if (processListCri.list().size() == 0) {
-          advisePopUp(request, response, "ERROR", OBMessageUtils.getI18NMessage("Error", null),
-              OBMessageUtils.getI18NMessage("PROGROUP_NoProcess",
-                  new String[] { requestObject.getProcessGroup().getName() }));
-          return;
-        }
+      if (group.equals("Y") && isEmptyProcessGroup(requestId)) {
+        advisePopUp(request, response, "ERROR", OBMessageUtils.getI18NMessage("Error", null),
+            OBMessageUtils.getI18NMessage("PROGROUP_NoProcess",
+                new String[] { getProcessGroup(requestId).getName() }));
+        return;
       }
-      final ProcessBundle bundle = ProcessBundle.request(requestId, vars, this);
+
+      ProcessBundle bundle = ProcessBundle.request(requestId, vars, this);
       OBScheduler.getInstance().schedule(requestId, bundle);
 
     } catch (final Exception e) {
-      message = Utility.messageBD(this, "SCHED_ERROR", vars.getLanguage());
+      String message = Utility.messageBD(this, getErrorMessage(), vars.getLanguage());
       String processErrorTit = Utility.messageBD(this, "Error", vars.getLanguage());
       advisePopUp(request, response, "ERROR", processErrorTit, message + " " + e.getMessage());
+      log.error("Error scheduling process request with ID {}", requestId, e);
     }
-    message = Utility.messageBD(this, "SCHED_SUCCESS", vars.getLanguage());
+    String message = Utility.messageBD(this, getSuccessMessage(), vars.getLanguage());
     String processTitle = Utility.messageBD(this, "Success", vars.getLanguage());
     advisePopUpRefresh(request, response, "SUCCESS", processTitle, message);
+  }
+
+  private String getRequestId(VariablesSecureApp vars) {
+    String windowId = vars.getStringParameter("inpwindowId");
+    String requestId = vars.getSessionValue(windowId + "|" + PROCESS_REQUEST_ID);
+    if (requestId.isEmpty()) {
+      return vars.getStringParameter(PROCESS_REQUEST_ID);
+    }
+    return requestId;
+  }
+
+  private boolean isEmptyProcessGroup(String requestId) {
+    OBCriteria<ProcessGroupList> processListCri = OBDal.getInstance()
+        .createCriteria(ProcessGroupList.class);
+    processListCri
+        .add(Restrictions.eq(ProcessGroupList.PROPERTY_PROCESSGROUP, getProcessGroup(requestId)));
+    processListCri.setMaxResults(1);
+    return processListCri.uniqueResult() == null;
+  }
+
+  private ProcessGroup getProcessGroup(String requestId) {
+    return OBDal.getInstance().get(ProcessRequest.class, requestId).getProcessGroup();
+  }
+
+  /**
+   * @return the search key of the AD_MESSAGE used as the error message of the process.
+   */
+  protected String getErrorMessage() {
+    return ERROR_MESSAGE;
+  }
+
+  /**
+   * @return the search key of the AD_MESSAGE used as the success message of the process.
+   */
+  protected String getSuccessMessage() {
+    return SUCCESS_MESSAGE;
   }
 }

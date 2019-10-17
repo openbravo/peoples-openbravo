@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,6 +22,7 @@ package org.openbravo.test.model;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -351,6 +352,83 @@ public class RuntimeModelTest extends OBBaseTest {
           + columns.toString());
     }
     assertEquals(0, columns.size());
+  }
+
+  /**
+   * Checks if a ModelProvider is initialized without help in its model entities and properties
+   */
+  @Test
+  public void testModelProviderShouldBeInitializedWithoutHelpByDefault() {
+    ModelProvider modelProvider = ModelProvider.getInstance();
+
+    // Check every entity/property for help
+    for (Entity entity : modelProvider.getModel()) {
+      assertNull(entity.getHelp());
+      for (Property property : entity.getProperties()) {
+        assertNull(property.getHelp());
+      }
+    }
+  }
+
+  /**
+   * Checks that a ModelProvider has help after addHelpToModel
+   */
+  @Test
+  public void testModelProviderShouldHaveHelpAfterAddHelpToModel() {
+    // Check every entity/property for help, there should be at least one entity and one property
+    // with help
+    int entitiesWithHelp = 0;
+    int propertiesWithHelp = 0;
+    ModelProvider.getInstance().addHelpAndDeprecationToModel(true);
+    for (Entity entity : ModelProvider.getInstance().getModel()) {
+      if (entity.getHelp() != null) {
+        entitiesWithHelp++;
+      }
+      for (Property property : entity.getProperties()) {
+        if (property.getHelp() != null) {
+          propertiesWithHelp++;
+        }
+      }
+    }
+    log.debug("Number of entities with help: " + entitiesWithHelp);
+    log.debug("Number of properties with help: " + propertiesWithHelp);
+    assertTrue(entitiesWithHelp > 0);
+    assertTrue(propertiesWithHelp > 0);
+  }
+
+  /**
+   * Checks if a model removes correctly every help comment from every entity and property of its
+   * model
+   */
+  @Test
+  public void testModelProviderKeepsNoHelpAfterRemoveHelp() {
+    ModelProvider modelProvider = ModelProvider.getInstance();
+    List<Entity> model = modelProvider.getModel();
+    modelProvider.addHelpAndDeprecationToModel(true);
+    boolean foundHelp = false;
+    // Check every entity/property for help with getModelHelp
+    for (Entity entity : model) {
+      if (foundHelp || entity.getHelp() != null) {
+        foundHelp = true;
+        break;
+      }
+      for (Property property : entity.getProperties()) {
+        if (property.getHelp() != null) {
+          foundHelp = true;
+          break;
+        }
+      }
+    }
+    assertTrue(foundHelp);
+
+    modelProvider.removeHelpAndDeprecationFromModel();
+    // Check modelProvider instance keeps its state and doesn't have help
+    for (Entity entity : modelProvider.getModel()) {
+      assertNull(entity.getHelp());
+      for (Property property : entity.getProperties()) {
+        assertNull(property.getHelp());
+      }
+    }
   }
 
   @Test
