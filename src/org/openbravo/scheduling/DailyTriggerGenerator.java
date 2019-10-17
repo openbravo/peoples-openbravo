@@ -48,7 +48,8 @@ class DailyTriggerGenerator extends ScheduledTriggerGenerator {
       case N:
         try {
           return newTrigger().withSchedule(calendarIntervalSchedule()
-              .withInterval(Integer.parseInt(data.dailyInterval), IntervalUnit.DAY));
+              .withInterval(Integer.parseInt(data.dailyInterval), IntervalUnit.DAY)
+              .withMisfireHandlingInstructionDoNothing());
 
         } catch (NumberFormatException e) {
           throw new ParseException("Invalid daily interval specified.", -1);
