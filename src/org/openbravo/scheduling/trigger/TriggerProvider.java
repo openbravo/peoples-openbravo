@@ -19,10 +19,8 @@
 package org.openbravo.scheduling.trigger;
 
 import java.text.ParseException;
-import java.util.AbstractMap.SimpleEntry;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.servlet.ServletException;
 
@@ -51,17 +49,17 @@ public class TriggerProvider {
   }
 
   private Map<String, TriggerGenerator> getGenerators() {
-    return Stream
-        .of(new SimpleEntry<>("I", new ImmediateTriggerGenerator()),
-            new SimpleEntry<>("L", new LaterTriggerGenerator()),
-            new SimpleEntry<>("S1", new SecondlyTriggerGenerator()),
-            new SimpleEntry<>("S2", new MinutelyTriggerGenerator()),
-            new SimpleEntry<>("S3", new HourlyTriggerGenerator()),
-            new SimpleEntry<>("S4", new DailyTriggerGenerator()),
-            new SimpleEntry<>("S5", new WeeklyTriggerGenerator()),
-            new SimpleEntry<>("S6", new MonthlyTriggerGenerator()),
-            new SimpleEntry<>("S7", new CronTriggerGenerator()))
-        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    Map<String, TriggerGenerator> generators = new HashMap<>(9);
+    generators.put("I", new ImmediateTriggerGenerator());
+    generators.put("L", new LaterTriggerGenerator());
+    generators.put("S1", new SecondlyTriggerGenerator());
+    generators.put("S2", new MinutelyTriggerGenerator());
+    generators.put("S3", new HourlyTriggerGenerator());
+    generators.put("S4", new DailyTriggerGenerator());
+    generators.put("S5", new WeeklyTriggerGenerator());
+    generators.put("S6", new MonthlyTriggerGenerator());
+    generators.put("S7", new CronTriggerGenerator());
+    return generators;
   }
 
   /**
