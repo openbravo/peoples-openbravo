@@ -16,29 +16,19 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.scheduling;
+package org.openbravo.scheduling.trigger;
 
-import static org.quartz.TriggerBuilder.newTrigger;
-
-import org.apache.commons.lang.StringUtils;
-import org.quartz.SimpleScheduleBuilder;
-import org.quartz.SimpleTrigger;
+import org.quartz.CronTrigger;
 import org.quartz.TriggerBuilder;
 
 /**
- * A generator of Quartz's Triggers with minutely frequency.
+ * A generator of Quartz's Triggers based in a cron expression.
  */
-class MinutelyTriggerGenerator extends ScheduledTriggerGenerator {
+class CronTriggerGenerator extends ScheduledTriggerGenerator {
 
   @Override
-  TriggerBuilder<SimpleTrigger> getScheduledBuilder(TriggerData data) {
-    if (StringUtils.isBlank(data.minutelyRepetitions)) {
-      return newTrigger().withSchedule(
-          SimpleScheduleBuilder.repeatMinutelyForever(Integer.parseInt(data.minutelyInterval)));
-    } else {
-      return newTrigger().withSchedule(SimpleScheduleBuilder.repeatMinutelyForTotalCount(
-          Integer.parseInt(data.minutelyRepetitions), Integer.parseInt(data.minutelyInterval)));
-    }
+  TriggerBuilder<CronTrigger> getScheduledBuilder(TriggerData data) {
+    return cronScheduledTriggerBuilder(data.cron);
   }
 
 }

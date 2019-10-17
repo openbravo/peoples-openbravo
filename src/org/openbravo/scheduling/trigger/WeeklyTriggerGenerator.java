@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.scheduling;
+package org.openbravo.scheduling.trigger;
 
 import java.text.ParseException;
 import java.util.ArrayList;

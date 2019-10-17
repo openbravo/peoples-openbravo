@@ -16,12 +16,16 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.scheduling;
+package org.openbravo.scheduling.trigger;
 
 import static org.openbravo.scheduling.OBScheduler.OB_GROUP;
+import static org.openbravo.scheduling.Process.PREVENT_CONCURRENT_EXECUTIONS;
+import static org.openbravo.scheduling.Process.PROCESS_ID;
+import static org.openbravo.scheduling.Process.PROCESS_NAME;
 
 import java.text.ParseException;
 
+import org.openbravo.scheduling.OBScheduler;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 
@@ -63,10 +67,9 @@ abstract class TriggerGenerator {
   Trigger generate(String name, TriggerData data) throws ParseException {
     TriggerBuilder<?> builder = getBuilder(data).withIdentity(name, OB_GROUP);
     if (data != null) {
-      builder
-          .usingJobData(Process.PREVENT_CONCURRENT_EXECUTIONS, "Y".equals(data.preventconcurrent))
-          .usingJobData(Process.PROCESS_NAME, data.processName + " " + data.processGroupName)
-          .usingJobData(Process.PROCESS_ID, data.adProcessId);
+      builder.usingJobData(PREVENT_CONCURRENT_EXECUTIONS, "Y".equals(data.preventconcurrent))
+          .usingJobData(PROCESS_NAME, data.processName + " " + data.processGroupName)
+          .usingJobData(PROCESS_ID, data.adProcessId);
     }
     return builder.build();
   }

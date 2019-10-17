@@ -16,29 +16,29 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.scheduling;
+package org.openbravo.scheduling.trigger;
 
 import static org.quartz.TriggerBuilder.newTrigger;
 
-import java.text.ParseException;
-import java.util.Date;
-
-import org.quartz.Trigger;
+import org.apache.commons.lang.StringUtils;
+import org.quartz.SimpleScheduleBuilder;
+import org.quartz.SimpleTrigger;
 import org.quartz.TriggerBuilder;
 
 /**
- * A generator of Quartz's Triggers to execute the job at a particular date.
+ * A generator of Quartz's Triggers with hourly frequency.
  */
-class LaterTriggerGenerator extends TriggerGenerator {
+class HourlyTriggerGenerator extends ScheduledTriggerGenerator {
 
   @Override
-  public TriggerBuilder<Trigger> getBuilder(TriggerData data) throws ParseException {
-    return newTrigger().startAt(getStartDate(data));
-  }
-
-  private Date getStartDate(TriggerData data) throws ParseException {
-    String dateTime = data.startDate + " " + data.startTime;
-    return SchedulerTimeUtils.timestamp(dateTime);
+  TriggerBuilder<SimpleTrigger> getScheduledBuilder(TriggerData data) {
+    if (StringUtils.isBlank(data.hourlyRepetitions)) {
+      return newTrigger().withSchedule(
+          SimpleScheduleBuilder.repeatHourlyForever(Integer.parseInt(data.hourlyInterval)));
+    } else {
+      return newTrigger().withSchedule(SimpleScheduleBuilder.repeatHourlyForTotalCount(
+          Integer.parseInt(data.hourlyRepetitions), Integer.parseInt(data.hourlyInterval)));
+    }
   }
 
 }

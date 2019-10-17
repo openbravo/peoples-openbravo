@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.scheduling;
+package org.openbravo.scheduling.trigger;
 
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.TriggerBuilder.newTrigger;
@@ -26,6 +26,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
+import org.openbravo.scheduling.SchedulerTimeUtils;
 import org.quartz.CronTrigger;
 import org.quartz.TriggerBuilder;
 

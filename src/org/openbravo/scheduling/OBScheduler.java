@@ -33,6 +33,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.scheduling.trigger.TriggerProvider;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerContext;
@@ -49,7 +50,7 @@ public class OBScheduler {
 
   private static final Logger log = LogManager.getLogger();
 
-  protected static final String OB_GROUP = "OB_QUARTZ_GROUP";
+  public static final String OB_GROUP = "OB_QUARTZ_GROUP";
 
   public static final String KEY = "org.openbravo.scheduling.OBSchedulingContext.KEY";
 

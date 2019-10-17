@@ -31,7 +31,7 @@ import org.apache.logging.log4j.Logger;
 /**
  * Provides utility methods that help to deal with dates when scheduling a process.
  */
-class SchedulerTimeUtils {
+public class SchedulerTimeUtils {
 
   private static final Logger log = LogManager.getLogger();
   private static final DateTimeFormatter DEFAULT_FORMATTER = DateTimeFormatter
@@ -51,7 +51,7 @@ class SchedulerTimeUtils {
    * @throws ParseException
    *           if the provided date and time can not be parsed to create the {@link Date} instance.
    */
-  static Date timestamp(String dateTime) throws ParseException {
+  public static Date timestamp(String dateTime) throws ParseException {
     LocalDateTime localDateTime = parse(dateTime);
     try {
       return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
@@ -73,7 +73,7 @@ class SchedulerTimeUtils {
    *           if the provided date and time can not be parsed to create the {@link LocalDateTime}
    *           instance.
    */
-  static LocalDateTime parse(String dateTime) throws ParseException {
+  public static LocalDateTime parse(String dateTime) throws ParseException {
     try {
       return LocalDateTime.parse(dateTime, DEFAULT_FORMATTER);
     } catch (DateTimeParseException ex) {
@@ -91,7 +91,7 @@ class SchedulerTimeUtils {
    * @return a String with the current date time formatted with the provided format.
    * 
    */
-  static String currentDate(String format) {
+  public static String currentDate(String format) {
     return format(LocalDateTime.now(), format);
   }
 
@@ -103,7 +103,7 @@ class SchedulerTimeUtils {
    * 
    * @return a String with the date formatted with the provided format.
    */
-  static String format(Date date, String format) {
+  public static String format(Date date, String format) {
     LocalDateTime localDateTime = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
     return format(localDateTime, format);
   }

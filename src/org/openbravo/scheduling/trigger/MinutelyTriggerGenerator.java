@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.scheduling;
+package org.openbravo.scheduling.trigger;
 
 import static org.quartz.TriggerBuilder.newTrigger;
 
@@ -26,18 +26,18 @@ import org.quartz.SimpleTrigger;
 import org.quartz.TriggerBuilder;
 
 /**
- * A generator of Quartz's Triggers with secondly frequency.
+ * A generator of Quartz's Triggers with minutely frequency.
  */
-class SecondlyTriggerGenerator extends ScheduledTriggerGenerator {
+class MinutelyTriggerGenerator extends ScheduledTriggerGenerator {
 
   @Override
   TriggerBuilder<SimpleTrigger> getScheduledBuilder(TriggerData data) {
-    if (StringUtils.isBlank(data.secondlyRepetitions)) {
+    if (StringUtils.isBlank(data.minutelyRepetitions)) {
       return newTrigger().withSchedule(
-          SimpleScheduleBuilder.repeatSecondlyForever(Integer.parseInt(data.secondlyInterval)));
+          SimpleScheduleBuilder.repeatMinutelyForever(Integer.parseInt(data.minutelyInterval)));
     } else {
-      return newTrigger().withSchedule(SimpleScheduleBuilder.repeatSecondlyForTotalCount(
-          Integer.parseInt(data.secondlyRepetitions), Integer.parseInt(data.secondlyInterval)));
+      return newTrigger().withSchedule(SimpleScheduleBuilder.repeatMinutelyForTotalCount(
+          Integer.parseInt(data.minutelyRepetitions), Integer.parseInt(data.minutelyInterval)));
     }
   }
 

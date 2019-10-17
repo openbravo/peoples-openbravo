@@ -23,7 +23,7 @@ import java.util.Optional;
 /**
  * Represents that frequency of an scheduled process request.
  */
-enum Frequency {
+public enum Frequency {
   SECONDLY("1"), MINUTELY("2"), HOURLY("3"), DAILY("4"), WEEKLY("5"), MONTHLY("6"), CRON("7");
 
   private String label;
@@ -32,11 +32,11 @@ enum Frequency {
     this.label = label;
   }
 
-  String getLabel() {
+  public String getLabel() {
     return label;
   }
 
-  static Optional<Frequency> of(String label) {
+  public static Optional<Frequency> of(String label) {
     for (Frequency frequency : values()) {
       if (frequency.label.equals(label)) {
         return Optional.of(frequency);

@@ -23,7 +23,7 @@ import java.util.Optional;
 /**
  * Represents that available timing options for a process request.
  */
-enum TimingOption {
+public enum TimingOption {
   IMMEDIATE("I"), LATER("L"), SCHEDULED("S");
 
   private String label;
@@ -32,11 +32,11 @@ enum TimingOption {
     this.label = label;
   }
 
-  String getLabel() {
+  public String getLabel() {
     return label;
   }
 
-  static Optional<TimingOption> of(String label) {
+  public static Optional<TimingOption> of(String label) {
     for (TimingOption timingOption : values()) {
       if (timingOption.label.equals(label)) {
         return Optional.of(timingOption);

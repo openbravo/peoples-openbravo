@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.scheduling;
+package org.openbravo.scheduling.trigger;
 
 import java.text.ParseException;
 import java.util.AbstractMap.SimpleEntry;
@@ -30,13 +30,17 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.scheduling.Frequency;
+import org.openbravo.scheduling.GroupInfo;
+import org.openbravo.scheduling.ProcessBundle;
+import org.openbravo.scheduling.TimingOption;
 import org.quartz.Trigger;
 
 /**
  * Provides Quartz's Trigger instances configured with the timing options and schedules defined with
  * a process request.
  */
-class TriggerProvider {
+public class TriggerProvider {
   private static final Logger log = LogManager.getLogger();
   private static final TriggerProvider INSTANCE = new TriggerProvider();
 
@@ -63,7 +67,7 @@ class TriggerProvider {
   /**
    * @return the TriggerProvider singleton instance
    */
-  static TriggerProvider getInstance() {
+  public static TriggerProvider getInstance() {
     return INSTANCE;
   }
 
@@ -81,7 +85,7 @@ class TriggerProvider {
    * @return a Trigger instance configured according to the AD_PROCESS_REQUEST information retrieved
    *         from database
    */
-  Trigger createTrigger(String name, ProcessBundle bundle, ConnectionProvider conn)
+  public Trigger createTrigger(String name, ProcessBundle bundle, ConnectionProvider conn)
       throws ServletException {
     TriggerData data = getTriggerData(name, bundle, conn);
     try {

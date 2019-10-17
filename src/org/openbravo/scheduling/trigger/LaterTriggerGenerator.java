@@ -16,19 +16,30 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.scheduling;
+package org.openbravo.scheduling.trigger;
 
-import org.quartz.CronTrigger;
+import static org.quartz.TriggerBuilder.newTrigger;
+
+import java.text.ParseException;
+import java.util.Date;
+
+import org.openbravo.scheduling.SchedulerTimeUtils;
+import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 
 /**
- * A generator of Quartz's Triggers based in a cron expression.
+ * A generator of Quartz's Triggers to execute the job at a particular date.
  */
-class CronTriggerGenerator extends ScheduledTriggerGenerator {
+class LaterTriggerGenerator extends TriggerGenerator {
 
   @Override
-  TriggerBuilder<CronTrigger> getScheduledBuilder(TriggerData data) {
-    return cronScheduledTriggerBuilder(data.cron);
+  public TriggerBuilder<Trigger> getBuilder(TriggerData data) throws ParseException {
+    return newTrigger().startAt(getStartDate(data));
+  }
+
+  private Date getStartDate(TriggerData data) throws ParseException {
+    String dateTime = data.startDate + " " + data.startTime;
+    return SchedulerTimeUtils.timestamp(dateTime);
   }
 
 }
