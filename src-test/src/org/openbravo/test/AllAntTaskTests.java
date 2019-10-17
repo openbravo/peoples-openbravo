@@ -96,6 +96,7 @@ import org.openbravo.test.modularity.MergePropertiesTest;
 import org.openbravo.test.modularity.TableNameTest;
 import org.openbravo.test.preference.PreferenceTest;
 import org.openbravo.test.pricelist.PriceListTest;
+import org.openbravo.test.process.order.OrderProcessTest;
 import org.openbravo.test.productStatus.ProductStatusTest;
 import org.openbravo.test.referencedinventory.ReferencedInventoryTestSuite;
 import org.openbravo.test.reporting.AllJrxmlCompilation;
@@ -349,7 +350,10 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     ADOrgPersistInfoTestSuite.class,
 
     // Automatic Invoice from Goods Shipment
-    InvoiceFromShipmentTest.class
+    InvoiceFromShipmentTest.class,
+
+    // C_Order_Post
+    OrderProcessTest.class,
 
 })
 public class AllAntTaskTests {
