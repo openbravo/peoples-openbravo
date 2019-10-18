@@ -11,13 +11,13 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
-package org.openbravo.test.scheduling;
+package org.openbravo.scheduling;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
@@ -35,10 +35,6 @@ import org.openbravo.base.weld.test.testinfrastructure.ApplicationScopedBean;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.ui.ProcessRun;
-import org.openbravo.scheduling.Process;
-import org.openbravo.scheduling.ProcessBundle;
-import org.openbravo.scheduling.ProcessLogger;
-import org.openbravo.scheduling.ProcessRunner;
 import org.openbravo.service.db.DalBaseProcess;
 import org.openbravo.service.db.DalConnectionProvider;
 
