@@ -84,14 +84,12 @@ BEGIN
                 WHERE fin_payment_schedule_order = fin_payment_schedule.fin_payment_schedule_id);
   IF (v_count > 1) THEN
     RAISE_APPLICATION_ERROR(-20000, '@APRM_Multiple_Payment_Schedules@');
-  ELSIF (v_count > 0 AND p_docaction IN ('CO', 'NC')) THEN
-    RETURN;
   END IF;
   
   IF(v_docSubType in ('OB', 'ON')) THEN
     RETURN;
   END IF;
-  IF (p_docaction IN ('CO', 'NC')) THEN
+  IF (p_docaction = 'CO') THEN
     -- Checking Payment Method ID is available
     IF(v_paymentmethod_id IS NULL) THEN
       RAISE_APPLICATION_ERROR(-20000, '@APRM_PAYMENTMETHOD_MISSING@');

@@ -183,7 +183,7 @@
       END IF;
     END LOOP;
   ELSE
-     IF (v_DocAction IN ('CO', 'PR', 'NC')) THEN
+     IF (v_DocAction IN ('CO', 'PR')) THEN
        SELECT COUNT(1) 
          INTO v_Count
        FROM DUAL 
@@ -271,6 +271,21 @@
     FROM C_DOCTYPE
     WHERE C_DocType_ID=v_DocTypetarget_ID;
 
+  /**
+  * End process if document action is Not Confirmed, Automatic Evaluation or Manual Evaluation
+  */
+  IF(v_DocAction IN ('NC', 'AE', 'ME')) THEN
+    UPDATE C_ORDER
+    SET DocStatus=v_DocAction,
+        Processed='N',
+        DocAction=CASE WHEN (v_DocAction='NC') THEN 'AE' ELSE CASE WHEN (v_DocAction='ME') THEN 'AE' ELSE 'ME' END END,
+        Updated=now(),
+        UpdatedBy=v_User
+    WHERE C_Order_ID=v_Record_ID;
+    END_PROCESSING:=TRUE;
+    FINISH_PROCESS:=TRUE;
+  END IF;
+
   IF(v_isreturndoctype='Y' AND v_DocAction='CO') THEN
     DECLARE
     v_RefReturnQty NUMBER:=0;
@@ -313,7 +328,7 @@
     WHERE m.c_bpartner_id=bp.c_bpartner_id
     AND m.C_ORDER_ID=v_Record_ID
     AND m.C_BPARTNER_ID=v_c_Bpartner_ID;
-    IF (v_DocAction IN ('CO', 'NC') AND v_bpartner_blocked = 'Y' AND v_orderBlocking = 'Y' AND v_isreturndoctype='N' ) THEN
+    IF (v_DocAction = 'CO' AND v_bpartner_blocked = 'Y' AND v_orderBlocking = 'Y' AND v_isreturndoctype='N' ) THEN
       RAISE_APPLICATION_ERROR(-20000,'@ThebusinessPartner@'||' '|| v_bpartner_name ||' '||'@BusinessPartnerBlocked@');
     END IF;
     -- Get the name of the org of the Order. Added by P.Sarobe
@@ -336,7 +351,7 @@
     END IF;
 
     /*PLM Status*/
-    IF (v_DocAction IN ('CO', 'NC') AND v_IsSOTrx = 'Y' AND v_isreturndoctype = 'N') THEN
+    IF (v_DocAction = 'CO' AND v_IsSOTrx = 'Y' AND v_isreturndoctype = 'N') THEN
       FOR Cur_line IN
         (SELECT SUM(ol.qtyordered) AS qtyordered, ol.m_product_id, ol.c_uom_id, p.name, ps.restrictsalefrombackend, ps.restrictsaleoutofstock
          FROM c_orderline ol
@@ -409,7 +424,7 @@
     /**
     * Check if order has lines
     */
-    IF (v_DocAction IN ('CO', 'PR', 'NC', 'AE', 'ME')) THEN
+    IF (v_DocAction = 'CO' OR v_DocAction = 'PR') THEN
       SELECT COUNT(*)
       INTO v_Aux
       FROM C_ORDERLINE
@@ -422,7 +437,7 @@
     /**
     * Check if already processed / reactivated
     */
-    IF (v_DocAction IN ('CO', 'PR', 'NC', 'AE', 'ME')) THEN
+    IF (v_DocAction = 'CO' OR v_DocAction = 'PR') THEN
       IF (v_IsProcessed = 'Y') THEN
         RAISE_APPLICATION_ERROR(-20000,'@AlreadyPosted@');
       END IF;
@@ -433,7 +448,7 @@
     END IF;
 
     -- Check the cash vat flag for all the taxes matches the order one
-    IF (v_DocAction IN ('CO', 'PR', 'NC', 'AE', 'ME')) THEN
+    IF (v_DocAction IN ('CO', 'PR')) THEN
       select count(1)
       into v_Aux
       from c_ordertax ot inner join c_tax t on (ot.c_tax_id = t.c_tax_id)
@@ -919,9 +934,9 @@
         -- Now, needs to go to END_PROCESSING to unlock
       END IF;
       /**
-      * Allowed Actions:  AProve, COmplete, PRocess, CLose, VOid, Not Confirmed, Automatic Evaluation, Manual Evaluation
+      * Allowed Actions:  AProve, COmplete, PRocess, CLose, VOid
       */
-      IF (v_DocAction IN('AP', 'CO', 'PR', 'CL', 'VO', 'NC', 'AE', 'ME')) THEN
+      IF (v_DocAction IN('AP', 'CO', 'PR', 'CL', 'VO') OR END_PROCESSING) THEN
         NULL;
       ELSE
         RAISE_APPLICATION_ERROR(-20000, '@ActionNotAllowedHere@') ;
@@ -948,7 +963,7 @@
      /**************************************************************************
       * Calculate promotions                                                   
       *************************************************************************/
-      IF (v_DocAction IN ('CO', 'NC', 'AE', 'ME') AND v_isreturndoctype = 'N' AND v_recalculateDiscounts = 'Y') THEN
+      IF (v_DocAction = 'CO' AND v_isreturndoctype = 'N' AND v_recalculateDiscounts = 'Y') THEN
          M_PROMOTION_CALCULATE('O', v_Record_ID, v_User);
       END IF;
 
@@ -1485,7 +1500,7 @@
                 Updated=now(),
                 UpdatedBy=v_User
             WHERE C_Order_ID=v_Record_ID;
-            END_PROCESSING:=TRUE;          
+            END_PROCESSING:=TRUE;
           ELSE
             UPDATE C_ORDER
             SET DocStatus='CO',
@@ -1506,42 +1521,12 @@
      /**
       * In Progress -----------------------------------------------------------
       */
-      IF (v_DocAction='NC') THEN
-         UPDATE C_ORDER
-         SET DocStatus='NC',
-             DocAction='CO',
-             Processed='N',
-             Updated=now(),
-             UpdatedBy=v_User
-         WHERE C_Order_ID=v_Record_ID;
-         END_PROCESSING:=TRUE;
-      ELSIF (v_DocAction='AE') THEN
-         UPDATE C_ORDER
-         SET DocStatus='AE',
-             DocAction='NC',
-             Processed='N',
-             Updated=now(),
-             UpdatedBy=v_User
-         WHERE C_Order_ID=v_Record_ID;
-         END_PROCESSING:=TRUE;
-      ELSIF (v_DocAction='ME') THEN
-         UPDATE C_ORDER
-         SET DocStatus='ME',
-             DocAction='-',
-             Processed='N',
-             Updated=now(),
-             UpdatedBy=v_User
-         WHERE C_Order_ID=v_Record_ID;
-         END_PROCESSING:=TRUE;
-      ELSE
-        UPDATE C_ORDER
-        SET DocStatus='IP',
-            DateAcct=DateOrdered,
-           Updated=now(),
-           UpdatedBy=v_User
-        WHERE C_Order_ID=v_Record_ID;
-      END IF;
-      
+      UPDATE C_ORDER
+      SET DocStatus='IP',
+          DateAcct=DateOrdered,
+          Updated=now(),
+          UpdatedBy=v_User
+      WHERE C_Order_ID=v_Record_ID;
       IF (p_PInstance_ID IS NOT NULL) THEN
         COMMIT;
       END IF;
@@ -1928,7 +1913,7 @@
     END IF;--FINISH_PROCESS
 
     -- Round and Adjust taxes when 'CO' and Recalculate amounts and taxes when 'RE'
-    IF (v_isTaxIncluded = 'Y' AND v_DocAction IN ('CO', 'RE', 'NC', 'AE')) THEN
+    IF (v_isTaxIncluded = 'Y' AND v_DocAction IN ('CO', 'RE')) THEN
       C_ORDERTAX_ADJUSTMENT(v_Record_ID, v_stdPrecision, v_DocAction);
     END IF;
 
