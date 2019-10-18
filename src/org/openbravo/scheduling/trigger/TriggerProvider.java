@@ -29,7 +29,6 @@ import javax.servlet.ServletException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.scheduling.Frequency;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.TimingOption;
@@ -81,15 +80,40 @@ public class TriggerProvider {
    *          the ProcessBundle to be included into the Trigger's job data map
    * @param conn
    *          the ConnectionProvider used to load the AD_PROCESS_REQUEST information
+   * 
    * @return a Trigger instance configured according to the AD_PROCESS_REQUEST information retrieved
    *         from database
+   * 
+   * @throws TriggerGenerationException
+   *           if the trigger generation fails.
    */
   public Trigger createTrigger(String name, ProcessBundle bundle, ConnectionProvider conn)
       throws TriggerGenerationException {
-    TriggerData data = null;
+    TriggerData data = getTriggerData(name, bundle, conn);
+    return createTrigger(name, bundle, data);
+  }
+
+  /**
+   * Converts trigger details into a schedulable Quartz Trigger instance.
+   * 
+   * @param name
+   *          The name element for the Trigger's TriggerKey. In general this will be the the ID of
+   *          the AD_PROCESS_REQUEST.
+   * @param bundle
+   *          the ProcessBundle to be included into the Trigger's job data map
+   * @param data
+   *          the trigger details
+   * 
+   * @return a Trigger instance configured according to the AD_PROCESS_REQUEST information retrieved
+   *         from database
+   * 
+   * @throws TriggerGenerationException
+   *           if the trigger generation fails.
+   */
+  Trigger createTrigger(String name, ProcessBundle bundle, TriggerData data)
+      throws TriggerGenerationException {
     try {
-      data = getTriggerData(name, bundle, conn);
-      Trigger trigger = getTriggerGenerator(data, bundle, conn).generate(name, data);
+      Trigger trigger = getTriggerGenerator(data).generate(name, data);
       trigger.getJobDataMap().put(ProcessBundle.KEY, bundle);
 
       log.debug("Created quartz trigger for process {} {}. Start time: {}.", data.processName,
@@ -99,7 +123,7 @@ public class TriggerProvider {
     } catch (ParseException ex) {
       log.error("Couldn't create quartz trigger for process {} {}", data.processName,
           data.processGroupName, ex);
-      throw new TriggerGenerationException(getErrorMessage(conn, bundle, ex.getMessage()));
+      throw new TriggerGenerationException("Error creating trigger: " + ex.getMessage());
     }
   }
 
@@ -109,17 +133,16 @@ public class TriggerProvider {
       return bundle.isGroup() ? TriggerData.selectGroup(conn, requestId, processGroupId)
           : TriggerData.select(conn, requestId);
     } catch (ServletException ex) {
-      throw new TriggerGenerationException("Error retrieving Trigger data: " + ex.getMessage());
+      log.error("Error retrieving trigger data for process request with ID {}", requestId);
+      throw new TriggerGenerationException("Error retrieving trigger data: " + ex.getMessage());
     }
   }
 
-  private TriggerGenerator getTriggerGenerator(TriggerData data, ProcessBundle bundle,
-      ConnectionProvider conn) throws TriggerGenerationException {
+  private TriggerGenerator getTriggerGenerator(TriggerData data) throws TriggerGenerationException {
     String timing = getTiming(data);
     if (!triggerGenerators.containsKey(timing)) {
       log.error("Couldn't get a trigger generator for timing option {}", timing);
-      throw new TriggerGenerationException(
-          getErrorMessage(conn, bundle, "Unrecognized timing option " + timing));
+      throw new TriggerGenerationException("Unrecognized timing option " + timing);
     }
     return triggerGenerators.get(timing);
   }
@@ -140,10 +163,5 @@ public class TriggerProvider {
     } else {
       return TimingOption.of(data.timingOption).orElse(TimingOption.IMMEDIATE);
     }
-  }
-
-  private String getErrorMessage(ConnectionProvider conn, ProcessBundle bundle, String msg) {
-    String language = bundle.getContext().getLanguage();
-    return Utility.messageBD(conn, "TRIG_INVALID_DATA", language) + " " + msg;
   }
 }
