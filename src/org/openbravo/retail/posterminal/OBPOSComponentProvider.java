@@ -260,8 +260,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     globalResources.add(createComponentResource(ComponentResourceType.Static,
         prefix + "utils/openhardwareurl.js", ComponentResource.APP_OB3));
 
-    // [TODO] Remove pos-login and obpos-legacy after the renaming
-    final String[] cssDependency = { "pos-login", "new-obpos-main" };
+    final String[] cssDependency = { "obpos-main" };
 
     for (final String resource : resourceDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,
