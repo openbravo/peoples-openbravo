@@ -147,10 +147,13 @@ public class TriggerProvider {
     return triggerGenerators.get(timing);
   }
 
-  private String getTiming(TriggerData data) {
+  private String getTiming(TriggerData data) throws TriggerGenerationException {
     TimingOption timingOption = getTimingOption(data);
     if (timingOption == TimingOption.SCHEDULED) {
-      String frequency = Frequency.of(data.frequency).map(Frequency::getLabel).orElse("");
+      String frequency = Frequency.of(data.frequency)
+          .map(Frequency::getLabel)
+          .orElseThrow(() -> new TriggerGenerationException(
+              "Unrecognized frequency option " + data.frequency));
       return timingOption.getLabel() + frequency;
     } else {
       return timingOption.getLabel();
