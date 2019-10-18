@@ -83,7 +83,7 @@ public class ScheduleProcess extends HttpSecureAppServlet {
     } catch (final Exception e) {
       String message = Utility.messageBD(this, getErrorMessage(), vars.getLanguage());
       String processErrorTit = Utility.messageBD(this, "Error", vars.getLanguage());
-      advisePopUp(request, response, "ERROR", processErrorTit, message + " " + e.getMessage());
+      advisePopUp(request, response, "ERROR", processErrorTit, message);
       log.error("Error scheduling process request with ID {}", requestId, e);
     }
     String message = Utility.messageBD(this, getSuccessMessage(), vars.getLanguage());
