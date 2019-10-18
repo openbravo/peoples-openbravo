@@ -133,7 +133,7 @@ public class TriggerProvider {
       return bundle.isGroup() ? TriggerData.selectGroup(conn, requestId, processGroupId)
           : TriggerData.select(conn, requestId);
     } catch (ServletException ex) {
-      log.error("Error retrieving trigger data for process request with ID {}", requestId);
+      log.error("Error retrieving trigger data for process request with ID {}", requestId, ex);
       throw new TriggerGenerationException("Error retrieving trigger data: " + ex.getMessage());
     }
   }
