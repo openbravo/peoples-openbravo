@@ -26,6 +26,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -55,6 +56,37 @@ public class TriggerProviderTest {
   @After
   public void restoreTimeZone() {
     TimeZone.setDefault(DEFAULT);
+  }
+
+  @Test
+  public void immediateExecution() throws SchedulerException {
+    TriggerData data = new TriggerData();
+    data.timingOption = TimingOption.IMMEDIATE.getLabel();
+
+    Date before = new Date();
+    Trigger trigger = TriggerProvider.getInstance()
+        .createTrigger("test" + System.currentTimeMillis(), null, data);
+    Date after = new Date();
+
+    scheduleJob("test" + System.currentTimeMillis(), trigger);
+
+    Date nextFire = trigger.getNextFireTime();
+
+    assertThat("Scheduled now", nextFire.compareTo(before) >= 0 && nextFire.compareTo(after) <= 0,
+        equalTo(true));
+    assertThat("Execution finished", trigger.getFireTimeAfter(nextFire) == null, equalTo(true));
+  }
+
+  @Test
+  public void laterExecution() throws SchedulerException {
+    TriggerData data = new TriggerData();
+    data.timingOption = TimingOption.LATER.getLabel();
+    data.startDate = "23-09-2019";
+    data.startTime = "12:30:22";
+
+    List<String> executions = Arrays.asList("23-09-2019 12:30:22");
+
+    assertExecutions(data, executions, UTC, true);
   }
 
   @Test
@@ -231,6 +263,24 @@ public class TriggerProviderTest {
     assertExecutions(data, executions, UTC, false);
   }
 
+  @Test(expected = TriggerGenerationException.class)
+  public void invalidWeeklyDefinition() throws SchedulerException {
+    TriggerData data = new TriggerData();
+    data.timingOption = TimingOption.SCHEDULED.getLabel();
+    data.frequency = Frequency.WEEKLY.getLabel();
+    data.startDate = "23-09-2019";
+    data.startTime = "01:11:23";
+    data.dayMon = "N";
+    data.dayTue = "N";
+    data.dayWed = "N";
+    data.dayThu = "N";
+    data.dayFri = "N";
+    data.daySat = "N";
+    data.daySun = "N";
+
+    assertExecutions(data, Collections.emptyList(), UTC, false);
+  }
+
   @Test
   public void monthlyFirstDayOfWeekExecution() throws SchedulerException {
     TriggerData data = new TriggerData();
@@ -245,6 +295,129 @@ public class TriggerProviderTest {
         "02-12-2019 19:18:21", "06-01-2020 19:18:21");
 
     assertExecutions(data, executions, UTC, false);
+  }
+
+  @Test
+  public void monthlySecondDayOfWeekExecution() throws SchedulerException {
+    TriggerData data = new TriggerData();
+    data.timingOption = TimingOption.SCHEDULED.getLabel();
+    data.frequency = Frequency.MONTHLY.getLabel();
+    data.startDate = "23-09-2019";
+    data.startTime = "19:18:21";
+    data.monthlyOption = "2";
+    data.monthlyDayOfWeek = "7";
+
+    List<String> executions = Arrays.asList("13-10-2019 19:18:21", "10-11-2019 19:18:21",
+        "08-12-2019 19:18:21", "12-01-2020 19:18:21");
+
+    assertExecutions(data, executions, UTC, false);
+  }
+
+  @Test
+  public void monthlyThirdDayOfWeekExecution() throws SchedulerException {
+    TriggerData data = new TriggerData();
+    data.timingOption = TimingOption.SCHEDULED.getLabel();
+    data.frequency = Frequency.MONTHLY.getLabel();
+    data.startDate = "23-09-2019";
+    data.startTime = "19:18:21";
+    data.monthlyOption = "3";
+    data.monthlyDayOfWeek = "2";
+
+    List<String> executions = Arrays.asList("15-10-2019 19:18:21", "19-11-2019 19:18:21",
+        "17-12-2019 19:18:21", "21-01-2020 19:18:21");
+
+    assertExecutions(data, executions, UTC, false);
+  }
+
+  @Test
+  public void monthlyFourthDayOfWeekExecution() throws SchedulerException {
+    TriggerData data = new TriggerData();
+    data.timingOption = TimingOption.SCHEDULED.getLabel();
+    data.frequency = Frequency.MONTHLY.getLabel();
+    data.startDate = "23-09-2019";
+    data.startTime = "19:18:21";
+    data.monthlyOption = "4";
+    data.monthlyDayOfWeek = "1";
+
+    List<String> executions = Arrays.asList("23-09-2019 19:18:21", "28-10-2019 19:18:21",
+        "25-11-2019 19:18:21", "23-12-2019 19:18:21");
+
+    assertExecutions(data, executions, UTC, false);
+  }
+
+  @Test
+  public void monthlyLastDayOfMonthExecution() throws SchedulerException {
+    TriggerData data = new TriggerData();
+    data.timingOption = TimingOption.SCHEDULED.getLabel();
+    data.frequency = Frequency.MONTHLY.getLabel();
+    data.startDate = "23-09-2019";
+    data.startTime = "19:18:21";
+    data.monthlyOption = "L";
+
+    List<String> executions = Arrays.asList("30-09-2019 19:18:21", "31-10-2019 19:18:21",
+        "30-11-2019 19:18:21", "31-12-2019 19:18:21");
+
+    assertExecutions(data, executions, UTC, false);
+  }
+
+  @Test
+  public void monthlySpecificDateExecution() throws SchedulerException {
+    TriggerData data = new TriggerData();
+    data.timingOption = TimingOption.SCHEDULED.getLabel();
+    data.frequency = Frequency.MONTHLY.getLabel();
+    data.startDate = "23-09-2019";
+    data.startTime = "19:18:21";
+    data.monthlyOption = "S";
+    data.monthlySpecificDay = "23";
+
+    List<String> executions = Arrays.asList("23-09-2019 19:18:21", "23-10-2019 19:18:21",
+        "23-11-2019 19:18:21", "23-12-2019 19:18:21");
+
+    assertExecutions(data, executions, UTC, false);
+  }
+
+  @Test(expected = TriggerGenerationException.class)
+  public void invalidMonthlyDefinition() throws SchedulerException {
+    TriggerData data = new TriggerData();
+    data.timingOption = TimingOption.SCHEDULED.getLabel();
+    data.frequency = Frequency.MONTHLY.getLabel();
+    data.startDate = "23-09-2019";
+    data.startTime = "19:18:21";
+    data.monthlyOption = "unknown";
+
+    assertExecutions(data, Collections.emptyList(), UTC, false);
+  }
+
+  @Test
+  public void cronBasedExecution() throws SchedulerException {
+    TriggerData data = new TriggerData();
+    data.timingOption = TimingOption.SCHEDULED.getLabel();
+    data.frequency = Frequency.CRON.getLabel();
+    data.startDate = "23-09-2019";
+    data.startTime = "16:00:00";
+    data.cron = "0 0 16 ? * 7L *"; // On the last Saturday of the month at 16:00:00
+
+    List<String> executions = Arrays.asList("28-09-2019 16:00:00", "26-10-2019 16:00:00",
+        "30-11-2019 16:00:00", "28-12-2019 16:00:00");
+
+    assertExecutions(data, executions, UTC, false);
+  }
+
+  @Test
+  public void executionFinishesAtExpectedDate() throws SchedulerException {
+    TriggerData data = new TriggerData();
+    data.timingOption = TimingOption.SCHEDULED.getLabel();
+    data.frequency = Frequency.SECONDLY.getLabel();
+    data.startDate = "23-09-2019";
+    data.startTime = "15:10:00";
+    data.secondlyInterval = "30";
+    data.finishesDate = "23-09-2019";
+    data.finishesTime = "15:10:31";
+    data.finishes = "Y";
+
+    List<String> executions = Arrays.asList("23-09-2019 15:10:00", "23-09-2019 15:10:30");
+
+    assertExecutions(data, executions, UTC, true);
   }
 
   @Test
