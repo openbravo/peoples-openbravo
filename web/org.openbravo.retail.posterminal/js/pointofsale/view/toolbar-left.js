@@ -160,6 +160,7 @@ enyo.kind({
   kind: 'OB.UI.ToolbarButton',
   i18nContent: 'OBMOBC_DeleteReceipt',
   i18nContentPaidTicket: 'OBMOBC_CloseReceipt',
+  i18nContentMultiOrder: 'OBMOBC_Close',
   classes: 'obUiButtonDelete',
   events: {
     onShowPopup: '',
@@ -275,12 +276,16 @@ enyo.kind({
     this.removeClass('paidticket');
     this.setLabel(OB.I18N.getLabel(this.i18nContent));
   },
+  addMultiOrderStatus: function() {
+    this.addClass('paidticket');
+    this.setLabel(OB.I18N.getLabel(this.i18nContentMultiOrder));
+  },
   init: function(model) {
     this.model = model;
     this.model.get('leftColumnViewManager').on(
       'multiorder',
       function() {
-        this.addPaidTicketClass();
+        this.addMultiOrderStatus();
         return true;
       },
       this
