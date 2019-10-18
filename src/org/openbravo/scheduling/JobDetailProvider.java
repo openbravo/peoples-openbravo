@@ -27,14 +27,14 @@ import org.quartz.SchedulerException;
 /**
  * Allows to build the detail properties of a Quartz's Job instance.
  */
-class JobDetailProvider {
+public class JobDetailProvider {
 
   private static final JobDetailProvider INSTANCE = new JobDetailProvider();
 
   /**
    * @return the JobDetailProvider singleton instance
    */
-  static JobDetailProvider getInstance() {
+  public static JobDetailProvider getInstance() {
     return INSTANCE;
   }
 
@@ -54,7 +54,7 @@ class JobDetailProvider {
    * @throws SchedulerException
    *           if there is an error building the JobDetail
    */
-  JobDetail createJobDetail(String name, ProcessBundle bundle) throws SchedulerException {
+  public JobDetail createJobDetail(String name, ProcessBundle bundle) throws SchedulerException {
     if (bundle == null) {
       throw new SchedulerException("Process bundle cannot be null.");
     }
