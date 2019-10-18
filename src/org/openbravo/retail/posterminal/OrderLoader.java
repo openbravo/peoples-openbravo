@@ -1143,7 +1143,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
       order.setDocumentStatus("CL");
     } else if (isQuotation) {
       order.setDocumentStatus("UE");
-    } else {
+    } else if (!jsonorder.has("documentStatus")) {
       order.setDocumentStatus("CO");
     }
 
