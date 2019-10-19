@@ -5468,7 +5468,8 @@
         var saveBP = function() {
           if (
             !businessPartner.get('locId') ||
-            !businessPartner.get('shipLocId')
+            !businessPartner.get('shipLocId') ||
+            businessPartner.get('forceRemote')
           ) {
             businessPartner.loadBPLocations(
               null,
