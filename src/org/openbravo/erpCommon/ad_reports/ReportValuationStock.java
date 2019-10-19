@@ -470,7 +470,10 @@ public class ReportValuationStock extends HttpSecureAppServlet {
         totalByCategory.put(row.categoryName, spc);
         spcs.add(spc);
       }
-      spc.addCost(new BigDecimal(row.totalCost));
+      if(StringUtils.isNotBlank(row.totalCost)) {
+        spc.addCost(new BigDecimal(row.totalCost));
+      }
+      
     }
     SummaryProductCategory[] datos = spcs.toArray(new SummaryProductCategory[0]);
     String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportValuationStockPDF.jrxml";
