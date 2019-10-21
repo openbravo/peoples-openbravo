@@ -19,6 +19,7 @@
 package org.openbravo.erpCommon.businessUtility;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.CallableStatement;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -72,6 +73,7 @@ import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.OrderLineOffer;
 import org.openbravo.model.common.order.OrderTax;
 import org.openbravo.model.common.order.OrderlineServiceRelation;
+import org.openbravo.model.common.order.ReplacementOrder;
 import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
@@ -182,8 +184,9 @@ public class CancelAndReplaceUtils {
         Order newOrder = createNotConfirmedReplacementOrderHeader(oldOrder);
         newOrder.setOrganization(
             OBDal.getInstance().getProxy(Organization.class, orderJson.getString("organization")));
-        newOrder.setWarehouse(
-            OBDal.getInstance().getProxy(Warehouse.class, orderJson.getString("warehouse")));
+        JSONObject warehouse = orderJson.getJSONObject("warehouse");
+        newOrder
+            .setWarehouse(OBDal.getInstance().getProxy(Warehouse.class, warehouse.getString("id")));
         String newDocumentNo = CancelAndReplaceUtils.getNextCancelDocNo(oldOrder.getDocumentNo(),
             String.valueOf((i + 1)));
         newOrder.setDocumentNo(newDocumentNo);
@@ -210,6 +213,8 @@ public class CancelAndReplaceUtils {
             newOrderLine.setReservedQuantity(BigDecimal.ZERO);
             newOrderLine.setInvoicedQuantity(BigDecimal.ZERO);
             newOrderLine.setSalesOrder(newOrder);
+            newOrderLine.setOrganization(newOrder.getOrganization());
+            newOrderLine.setWarehouse(newOrder.getWarehouse());
             newOrderLine.setReplacedorderline(oldOrderLine);
             newOrder.getOrderLineList().add(newOrderLine);
             OBDal.getInstance().save(newOrderLine);
@@ -224,10 +229,18 @@ public class CancelAndReplaceUtils {
             orderLines.close();
           }
         }
+
+        setNotConfirmedOrderPaymentSchedule(newOrder);
+
         // Flush before updating Relations between Products and services to ensure all the Order
         // Lines
         // have been calculated properly
-        OBDal.getInstance().flush();
+        OBContext.setCrossOrgReferenceAdminMode();
+        try {
+          OBDal.getInstance().flush();
+        } finally {
+          OBContext.restorePreviousCrossOrgReferenceMode();
+        }
         updateRelationsBetweenOrderLinesProductsAndServices(newOrder);
 
         replacementOrders.add(newOrder);
@@ -239,13 +252,40 @@ public class CancelAndReplaceUtils {
     return replacementOrders;
   }
 
+  private static void setNotConfirmedOrderPaymentSchedule(Order newOrder) {
+    final int pricePrecision = newOrder.getCurrency().getObposPosprecision() == null
+        ? newOrder.getCurrency().getPricePrecision().intValue()
+        : newOrder.getCurrency().getObposPosprecision().intValue();
+
+    BigDecimal orderTotalAmount = newOrder.getGrandTotalAmount();
+    FIN_PaymentSchedule fps = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
+    fps.setId(newOrder.getId());
+    fps.setNewOBObject(true);
+    fps.setOrganization(newOrder.getOrganization());
+    fps.setCurrency(newOrder.getCurrency());
+    fps.setOrder(newOrder);
+
+    newOrder.getFINPaymentScheduleList().add(fps);
+    fps.setFinPaymentmethod(newOrder.getPaymentMethod());
+    fps.setAmount(orderTotalAmount.setScale(pricePrecision, RoundingMode.HALF_UP));
+    fps.setOutstandingAmount(orderTotalAmount.setScale(pricePrecision, RoundingMode.HALF_UP));
+    fps.setDueDate(newOrder.getOrderDate());
+    fps.setExpectedDate(newOrder.getOrderDate());
+    fps.setFINPaymentPriority(newOrder.getFINPaymentPriority());
+    OBDal.getInstance().save(fps);
+    OBDal.getInstance().save(newOrder);
+
+    FIN_AddPayment.createPSD(orderTotalAmount, fps, null, newOrder.getOrganization(),
+        newOrder.getBusinessPartner());
+  }
+
   private static Order createNotConfirmedReplacementOrderHeader(Order oldOrder) {
     Order newOrder = (Order) DalUtil.copy(oldOrder, false, true);
     // Change order values
     newOrder.setProcessed(false);
     newOrder.setPosted("N");
-    newOrder.setDocumentStatus("TMP");
-    newOrder.setDocumentAction("NC");
+    newOrder.setDocumentStatus("NC");
+    newOrder.setDocumentAction("CO");
     newOrder.setGrandTotalAmount(BigDecimal.ZERO);
     newOrder.setSummedLineAmount(BigDecimal.ZERO);
     Date today = new Date();
@@ -819,7 +859,8 @@ public class CancelAndReplaceUtils {
 
       // Iterate old order lines
       orderLines = getOrderLineList(oldOrder);
-      long lineNoCounter = 1, i = 0;
+      long lineNoCounter = 1;
+      long i = 0;
       while (orderLines.next()) {
         OrderLine oldOrderLine = (OrderLine) orderLines.get(0);
 
@@ -990,13 +1031,13 @@ public class CancelAndReplaceUtils {
       oldOrder.setProcessNow(false);
       OBDal.getInstance().save(oldOrder);
 
-      // Complete new order and generate good shipment and sales invoice
-      replacementOrders.forEach(order -> {
-        order.setDocumentStatus("DR");
-        order.setDocumentAction("NC");
-        OBDal.getInstance().save(order);
-        callCOrderPost(order);
-      });
+      for (Order order : replacementOrders) {
+        ReplacementOrder replacement = OBProvider.getInstance().get(ReplacementOrder.class);
+        replacement.setOrder(oldOrder);
+        replacement.setReplacementOrder(order);
+        replacement.setOrganization(order.getOrganization());
+        OBDal.getInstance().save(replacement);
+      }
 
       // Refresh documents
       if (nettingGoodsShipmentId != null) {
