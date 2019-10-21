@@ -278,7 +278,8 @@ enyo.kind({
     onRightToolbarDisabled: ''
   },
   handlers: {
-    onRightToolbarDisabled: 'disabledButton'
+    // on single column, left always enable the cart button
+    onRightToolbarDisabled: ''
   },
   init: function(model) {
     this.model = model;
