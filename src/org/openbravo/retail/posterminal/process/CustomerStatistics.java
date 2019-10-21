@@ -21,6 +21,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
+import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
@@ -115,14 +116,18 @@ public class CustomerStatistics extends JSONProcessSimple {
     BigDecimal noofRecency = BigDecimal.ZERO;
 
     // @formatter:off
-    String recencyHQLQuery = "select EXTRACT(DAY FROM (Date(now()) - coalesce(max(orderDate), now()))) "
-        + " from Order where businessPartner.id=:bpartnerId ";
+    String recencyHQLQuery = "select orderDate from Order "
+        + "where businessPartner.id=:bpartnerId order by orderDate desc";
     // @formatter:on
+
     final Session recencySession = OBDal.getInstance().getSession();
-    final Query<Integer> recencyQuery = recencySession.createQuery(recencyHQLQuery, Integer.class);
+    final Query<Date> recencyQuery = recencySession.createQuery(recencyHQLQuery, Date.class);
     recencyQuery.setParameter("bpartnerId", bp.getId());
-    int recency = recencyQuery.uniqueResult();
-    BigDecimal recencyDays = new BigDecimal(recency);
+    recencyQuery.setMaxResults(1);
+    Date lastOrderDate = recencyQuery.uniqueResult();
+    Long recency = FIN_Utility.getDaysBetween(new Date(),
+        lastOrderDate != null ? lastOrderDate : new Date());
+    BigDecimal recencyDays = new BigDecimal(Math.abs(recency));
 
     recencyMsg = getRecencyMessage(recencyTiming, noofRecency, recencyDays);
     return recencyMsg;
@@ -181,7 +186,7 @@ public class CustomerStatistics extends JSONProcessSimple {
           + " where businessPartner.id=:bpartnerId "
           + " and orderDate < now() ";
       if (startDate != null) {
-        frequencyHQLQuery +=  " and orderDate>=to_date(:startDate, 'YYYY-mm-dd') ";
+        frequencyHQLQuery +=  " and orderDate>= :startDate ";
         parameters.put("startDate", startDate);
       }
     // @formatter:on
@@ -232,7 +237,7 @@ public class CustomerStatistics extends JSONProcessSimple {
           + " where o.businessPartner.id = :bpartnerId and dt.sOSubType <> 'OB' "
           + " and o.orderDate < now() ";
       if (startDate != null) {
-        monetaryValueHQLQuery += " and o.orderDate>=to_date(:startDate, 'YYYY-mm-dd') ";
+        monetaryValueHQLQuery += " and o.orderDate>= :startDate ";
         parameters.put("startDate", startDate);
       }
       // @formatter:on
@@ -270,7 +275,7 @@ public class CustomerStatistics extends JSONProcessSimple {
           + " and dt.return = 'N' "
           + " and o.orderDate < now()";
       if (startDate != null) {
-        averageBasketHQLQuery += " and o.orderDate>=to_date(:startDate, 'YYYY-mm-dd') ";
+        averageBasketHQLQuery += " and o.orderDate>= :startDate ";
         parameters.put("startDate", startDate);
       }
       // @formatter:on
@@ -303,7 +308,11 @@ public class CustomerStatistics extends JSONProcessSimple {
               timingText);
         }
       } else {
-        statisticMsg = String.format(OBMessageUtils.messageBD(messageNoTiming), monetaryValue);
+        if (messageNoTiming != "") {
+          statisticMsg = String.format(OBMessageUtils.messageBD(messageNoTiming), monetaryValue);
+        } else {
+          statisticMsg = monetaryValue.toString();
+        }
       }
     } else {
       if (timingUnit != null) {
@@ -316,8 +325,12 @@ public class CustomerStatistics extends JSONProcessSimple {
               currencySymbol, timingText);
         }
       } else {
-        statisticMsg = String.format(OBMessageUtils.messageBD(messageNoTiming), monetaryValue,
-            currencySymbol);
+        if (messageNoTiming != "") {
+          statisticMsg = String.format(OBMessageUtils.messageBD(messageNoTiming), monetaryValue,
+              currencySymbol);
+        } else {
+          statisticMsg = monetaryValue + currencySymbol;
+        }
       }
     }
     return statisticMsg;
