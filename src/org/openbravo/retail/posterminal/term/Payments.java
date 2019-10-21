@@ -123,6 +123,8 @@ public class Payments extends JSONTerminalProperty {
           if (objPayment[11] != null) {
             payment.put("providerGroup", converter.toJsonObject((BaseOBObject) objPayment[11],
                 DataResolvingMode.FULL_TRANSLATABLE));
+          }
+          if (objPayment[12] != null) {
             payment.put("paymentType",
                 converter.toJsonObject((BaseOBObject) objPayment[12], DataResolvingMode.FULL));
           }
