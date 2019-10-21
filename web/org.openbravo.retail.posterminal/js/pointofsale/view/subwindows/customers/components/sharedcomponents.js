@@ -758,34 +758,6 @@ enyo.kind({
     this.$.invLbl.setContent(OB.I18N.getLabel('OBPOS_LblBillAddr'));
     this.$.statisticsLbl.setContent(OB.I18N.getLabel('OBPOS_LblStatistics'));
     this.attributeContainer = this.$.customerAttributes;
-    //Sort Attributes
-    if (OB.MobileApp.model.get('permissions').OBPOS_CustomerCompSortOrder) {
-      var prefIndex,
-        sortOrder,
-        sortedAttr = [],
-        prefAttr = [];
-      try {
-        sortOrder = JSON.parse(
-          OB.MobileApp.model
-            .get('permissions')
-            .OBPOS_CustomerCompSortOrder.replace(/'/g, '"')
-        );
-        _.each(this.newAttributes, function(attr) {
-          prefIndex = sortOrder.indexOf(attr.modelProperty);
-          if (prefIndex >= 0) {
-            prefAttr[prefIndex] = attr;
-          } else {
-            sortedAttr.push(attr);
-          }
-        });
-        prefAttr = _.filter(prefAttr, function(attr) {
-          return !OB.UTIL.isNullOrUndefined(attr);
-        });
-        this.newAttributes = prefAttr.concat(sortedAttr);
-      } catch (e) {
-        // Don't do anything if exception is thrown
-      }
-    }
 
     //Create Field Group along with Fields
     enyo.forEach(
