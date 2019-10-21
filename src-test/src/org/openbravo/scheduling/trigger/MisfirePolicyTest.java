@@ -67,6 +67,7 @@ public class MisfirePolicyTest extends OBBaseTest {
   @Before
   public void createScheduler() throws SchedulerException {
     scheduler = new StdSchedulerFactory().getScheduler();
+    scheduler.clear(); // delete all previously scheduled data
     monitor = new TestProcessMonitor();
     scheduler.getListenerManager().addJobListener(monitor);
   }
@@ -145,8 +146,8 @@ public class MisfirePolicyTest extends OBBaseTest {
     scheduler.start();
     scheduleJob(data);
 
-    // wait for the job executions
-    Thread.sleep(2500);
+    // wait for the job execution
+    Thread.sleep(1500);
 
     scheduler.shutdown();
 
