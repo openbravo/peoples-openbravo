@@ -30,6 +30,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -68,11 +69,16 @@ public class MisfirePolicyTest extends OBBaseTest {
   private TestProcessMonitor monitor;
 
   @Before
-  public void createScheduler() throws SchedulerException {
+  public void startScheduler() throws SchedulerException {
     scheduler = new StdSchedulerFactory().getScheduler();
-    scheduler.clear(); // delete all previously scheduled data
     monitor = new TestProcessMonitor();
     scheduler.getListenerManager().addJobListener(monitor);
+    scheduler.start();
+  }
+
+  @After
+  public void stopScheduler() throws SchedulerException {
+    scheduler.shutdown();
   }
 
   /**
@@ -98,7 +104,6 @@ public class MisfirePolicyTest extends OBBaseTest {
     Date startDate = dateOf("23-09-2019 00:00:00");
     Date nextExecutionDate = dateOf("30-09-2019 00:00:00");
 
-    scheduler.start();
     String name = SequenceIdData.getUUID();
     ProcessBundle bundle = getProcessBundle();
     Trigger trigger = TriggerProvider.getInstance().createTrigger(name, bundle, data);
@@ -106,8 +111,6 @@ public class MisfirePolicyTest extends OBBaseTest {
 
     // give some little time to ensure that job is not executed
     Thread.sleep(500);
-
-    scheduler.shutdown();
 
     assertThat("Job not executed on misfire", monitor.getJobExecutions(name), equalTo(0));
     assertThat("Next regular execution time", trigger.getFireTimeAfter(startDate),
@@ -124,14 +127,11 @@ public class MisfirePolicyTest extends OBBaseTest {
     data.startTime = "00:00:00";
     data.secondlyInterval = "1";
 
-    scheduler.start();
     String name = SequenceIdData.getUUID();
     scheduleJob(name, data);
 
     // wait for the job executions
     Thread.sleep(2100);
-
-    scheduler.shutdown();
 
     assertThat("Expected number of job executions", monitor.getJobExecutions(name), equalTo(2));
   }
@@ -150,14 +150,11 @@ public class MisfirePolicyTest extends OBBaseTest {
     data.dailyInterval = "1";
     data.dailyOption = "N";
 
-    scheduler.start();
     String name = SequenceIdData.getUUID();
     scheduleJob(name, data);
 
     // give some little time to ensure that job is not executed
     Thread.sleep(500);
-
-    scheduler.shutdown();
 
     assertThat("Job not executed on misfire", monitor.getJobExecutions(name), equalTo(0));
   }

@@ -55,10 +55,14 @@ public class TriggerProviderTest {
   private static final TimeZone UTC = TimeZone.getTimeZone("UTC");
   private static final TimeZone EUROPE_MADRID = TimeZone.getTimeZone("Europe/Madrid");
   private static final TimeZone DEFAULT = TimeZone.getDefault();
+  private static StdSchedulerFactory schedulerFactory = new StdSchedulerFactory();
 
   @After
-  public void restoreTimeZone() {
+  public void cleanUp() throws SchedulerException {
+    // restore default time zone
     TimeZone.setDefault(DEFAULT);
+    // delete scheduled data
+    schedulerFactory.getScheduler().clear();
   }
 
   @Test
@@ -571,7 +575,7 @@ public class TriggerProviderTest {
   private void scheduleJob(String name, Trigger trigger) throws SchedulerException {
     JobDetail jd = JobDetailProvider.getInstance()
         .createJobDetail(name, new ProcessBundle(null, new VariablesSecureApp("0", "0", "0")));
-    new StdSchedulerFactory().getScheduler().scheduleJob(jd, trigger);
+    schedulerFactory.getScheduler().scheduleJob(jd, trigger);
   }
 
   private Date dateOf(String executionDate) {
