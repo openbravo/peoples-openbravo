@@ -488,7 +488,7 @@ enyo.kind({
       return errors;
     }
 
-    function validateSMS(customer, form) {
+    function requiredSMS(customer, form) {
       //Validate that sms field is filled if  'Commercial Auth -> sms' is checked
       var commercialAuthViaSms = customer.get('viasms');
       var alternativePhone = customer.get('alternativePhone');
@@ -514,7 +514,7 @@ enyo.kind({
       }
     }
 
-    function validateEmail(customer, form) {
+    function requitedEmail(customer, form) {
       //Validate that email field is filled if 'Commercial Auth -> email' is checked
       var commercialAuthViaEmail = customer.get('viaemail');
       var email = customer.get('email');
@@ -529,29 +529,6 @@ enyo.kind({
       } else {
         emailField.setMessage();
         return true;
-      }
-    }
-
-    function validateEmailFormat(customer) {
-      //Validate that email have @ and .*
-      var email = customer.get('email');
-      var regex = new RegExp(
-        /^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/
-      );
-      if (email === '') {
-        return true;
-      } else {
-        return regex.test(email) ? true : false;
-      }
-    }
-
-    function validatePhoneFormat(phone) {
-      //Validate that phone only have numbers
-      var regex = new RegExp(/^([0-9])*$/);
-      if (phone === '') {
-        return true;
-      } else {
-        return regex.test(phone) ? true : false;
       }
     }
 
@@ -632,44 +609,14 @@ enyo.kind({
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_TooLongName'));
           return false;
         }
-        if (!validateSMS(customer, form)) {
+        if (!requiredSMS(customer, form)) {
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_PhoneRequired'));
 
           return false;
         }
-        if (!validateEmail(customer, form)) {
+        if (!requitedEmail(customer, form)) {
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_EmailRequired'));
           return false;
-        }
-        var emailField =
-          form.$.customerOnlyFields.$.contactInfo.$.contactInfoFields
-            .children[2];
-        if (!validateEmailFormat(customer)) {
-          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_WrongEmailFormat'));
-          emailField.setMessage(OB.I18N.getLabel('OBPOS_WrongFormat'), true);
-          return false;
-        } else {
-          emailField.setMessage();
-        }
-        var phoneField =
-          form.$.customerOnlyFields.$.contactInfo.$.contactInfoFields
-            .children[0];
-        if (!validatePhoneFormat(customer.get('phone'))) {
-          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_WrongPhoneFormat'));
-          phoneField.setMessage(OB.I18N.getLabel('OBPOS_WrongFormat'), true);
-          return false;
-        } else {
-          phoneField.setMessage();
-        }
-        var altPhoneField =
-          form.$.customerOnlyFields.$.contactInfo.$.contactInfoFields
-            .children[1];
-        if (!validatePhoneFormat(customer.get('alternativePhone'))) {
-          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_WrongAltPhoneFormat'));
-          altPhoneField.setMessage(OB.I18N.getLabel('OBPOS_WrongFormat'), true);
-          return false;
-        } else {
-          altPhoneField.setMessage();
         }
       }
       return true;
