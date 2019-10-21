@@ -38,6 +38,7 @@ import org.openbravo.scheduling.Frequency;
 import org.openbravo.scheduling.JobDetailProvider;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.TimingOption;
+import org.openbravo.test.base.Issue;
 import org.quartz.JobDetail;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
@@ -63,12 +64,12 @@ public class TriggerProviderTest {
     TriggerData data = new TriggerData();
     data.timingOption = TimingOption.IMMEDIATE.getLabel();
 
+    String name = getRandomName();
     Date before = new Date();
-    Trigger trigger = TriggerProvider.getInstance()
-        .createTrigger("test" + System.currentTimeMillis(), null, data);
+    Trigger trigger = TriggerProvider.getInstance().createTrigger(name, null, data);
     Date after = new Date();
 
-    scheduleJob("test" + System.currentTimeMillis(), trigger);
+    scheduleJob(name, trigger);
 
     Date nextFire = trigger.getNextFireTime();
 
@@ -450,18 +451,46 @@ public class TriggerProviderTest {
 
   }
 
+  @Test
+  @Issue("39564")
+  public void dailyEvery1DayDoesNotChangeOnDST() throws SchedulerException {
+    TriggerData data = new TriggerData();
+    data.timingOption = TimingOption.SCHEDULED.getLabel();
+    data.frequency = Frequency.DAILY.getLabel();
+    data.startDate = "26-10-2019";
+    data.startTime = "13:10:00";
+    data.dailyOption = "N";
+    data.dailyInterval = "1";
+
+    List<String> executions = Arrays.asList("26-10-2019 13:10:00", "27-10-2019 13:10:00");
+
+    assertExecutions(data, executions, EUROPE_MADRID, false);
+  }
+
+  @Test
+  @Issue("39564")
+  public void dailyDefaultDoesNotChangeOnDST() throws SchedulerException {
+    TriggerData data = new TriggerData();
+    data.timingOption = TimingOption.SCHEDULED.getLabel();
+    data.frequency = Frequency.DAILY.getLabel();
+    data.startDate = "26-10-2019";
+    data.startTime = "13:10:00";
+
+    List<String> executions = Arrays.asList("26-10-2019 13:10:00", "27-10-2019 13:10:00");
+
+    assertExecutions(data, executions, EUROPE_MADRID, false);
+  }
+
   private void assertExecutions(TriggerData data, List<String> executions, TimeZone tz,
       boolean finishes) throws SchedulerException {
 
     TimeZone.setDefault(tz);
 
-    Trigger trigger = TriggerProvider.getInstance()
-        .createTrigger("test" + System.currentTimeMillis(), null, data);
-
-    scheduleJob("test" + System.currentTimeMillis(), trigger);
+    String name = getRandomName();
+    Trigger trigger = TriggerProvider.getInstance().createTrigger(name, null, data);
+    scheduleJob(name, trigger);
 
     Date nextFire = trigger.getNextFireTime();
-
     assertThat("1st execution", nextFire, is(dateOf(executions.get(0))));
 
     for (int i = 1; i < executions.size(); i++) {
@@ -472,10 +501,13 @@ public class TriggerProviderTest {
     assertThat("Execution finished", trigger.getFireTimeAfter(nextFire) == null, equalTo(finishes));
   }
 
+  private String getRandomName() {
+    return "test" + System.currentTimeMillis();
+  }
+
   private void scheduleJob(String name, Trigger trigger) throws SchedulerException {
     JobDetail jd = JobDetailProvider.getInstance()
         .createJobDetail(name, new ProcessBundle(null, new VariablesSecureApp("0", "0", "0")));
-
     new StdSchedulerFactory().getScheduler().scheduleJob(jd, trigger);
   }
 
