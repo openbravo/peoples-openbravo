@@ -123,6 +123,7 @@ public class MisfirePolicyTest extends OBBaseTest {
     data.startDate = "23-09-2019";
     data.startTime = "00:00:00";
     data.secondlyInterval = "1";
+    data.secondlyRepetitions = "2";
 
     scheduler.start();
     String name = SequenceIdData.getUUID();
@@ -134,29 +135,6 @@ public class MisfirePolicyTest extends OBBaseTest {
     scheduler.shutdown();
 
     assertThat("Expected number of job executions", monitor.getJobExecutions(name), equalTo(2));
-  }
-
-  @Test
-  public void checkMisfirePolicyWithLimitedSecondlySchedule()
-      throws SchedulerException, InterruptedException {
-    TriggerData data = new TriggerData();
-    data.timingOption = TimingOption.SCHEDULED.getLabel();
-    data.frequency = Frequency.SECONDLY.getLabel();
-    data.startDate = "23-09-2019";
-    data.startTime = "00:00:00";
-    data.secondlyInterval = "1";
-    data.secondlyRepetitions = "1";
-
-    scheduler.start();
-    String name = SequenceIdData.getUUID();
-    scheduleJob(name, data);
-
-    // wait for the job execution
-    Thread.sleep(1500);
-
-    scheduler.shutdown();
-
-    assertThat("Expected number of job executions", monitor.getJobExecutions(name), equalTo(1));
   }
 
   /**
