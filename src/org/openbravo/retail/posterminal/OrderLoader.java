@@ -1138,13 +1138,15 @@ public class OrderLoader extends POSDataSynchronizationProcess
         .setScale(pricePrecision, RoundingMode.HALF_UP));
 
     order.setSalesTransaction(true);
-    if (jsonorder.has("obposIsDeleted") && jsonorder.has("isQuotation")
-        && jsonorder.getBoolean("obposIsDeleted")) {
-      order.setDocumentStatus("CL");
-    } else if (isQuotation) {
-      order.setDocumentStatus("UE");
-    } else if (!jsonorder.has("documentStatus")) {
-      order.setDocumentStatus("CO");
+    if (!jsonorder.has("documentStatus")) {
+      if (jsonorder.has("obposIsDeleted") && jsonorder.has("isQuotation")
+          && jsonorder.getBoolean("obposIsDeleted")) {
+        order.setDocumentStatus("CL");
+      } else if (isQuotation) {
+        order.setDocumentStatus("UE");
+      } else {
+        order.setDocumentStatus("CO");
+      }
     }
 
     order.setDocumentAction("--");
