@@ -42,6 +42,8 @@ import org.openbravo.client.kernel.freemarker.test.GenerateComponentTest;
 import org.openbravo.client.kernel.freemarker.test.LabelTest;
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
 import org.openbravo.scheduling.ProcessSchedulingTest;
+import org.openbravo.scheduling.trigger.MisfirePolicyTest;
+import org.openbravo.scheduling.trigger.TriggerProviderTest;
 import org.openbravo.test.accounting.PostDocumentTest;
 import org.openbravo.test.accounting.RecordID2Test;
 import org.openbravo.test.authentication.AuthenticationManagerTest;
@@ -275,6 +277,8 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 
     // scheduling
     ProcessSchedulingTest.class, //
+    TriggerProviderTest.class, //
+    MisfirePolicyTest.class, //
 
     // cdi
     CdiInfrastructure.class, //
