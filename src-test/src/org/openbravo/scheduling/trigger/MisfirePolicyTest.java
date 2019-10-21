@@ -27,6 +27,8 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -107,7 +109,7 @@ public class MisfirePolicyTest extends OBBaseTest {
 
     scheduler.shutdown();
 
-    assertThat("Job not executed on misfire", monitor.getJobExecutions(), equalTo(0));
+    assertThat("Job not executed on misfire", monitor.getJobExecutions(name), equalTo(0));
     assertThat("Next regular execution time", trigger.getFireTimeAfter(startDate),
         is(nextExecutionDate));
   }
@@ -123,14 +125,15 @@ public class MisfirePolicyTest extends OBBaseTest {
     data.secondlyInterval = "1";
 
     scheduler.start();
-    scheduleJob(data);
+    String name = SequenceIdData.getUUID();
+    scheduleJob(name, data);
 
     // wait for the job executions
     Thread.sleep(2500);
 
     scheduler.shutdown();
 
-    assertThat("Job not executed on misfire", monitor.getJobExecutions(), equalTo(2));
+    assertThat("Expected number of job executions", monitor.getJobExecutions(name), equalTo(2));
   }
 
   @Test
@@ -145,14 +148,15 @@ public class MisfirePolicyTest extends OBBaseTest {
     data.secondlyRepetitions = "1";
 
     scheduler.start();
-    scheduleJob(data);
+    String name = SequenceIdData.getUUID();
+    scheduleJob(name, data);
 
     // wait for the job execution
     Thread.sleep(1500);
 
     scheduler.shutdown();
 
-    assertThat("Job not executed on misfire", monitor.getJobExecutions(), equalTo(1));
+    assertThat("Expected number of job executions", monitor.getJobExecutions(name), equalTo(1));
   }
 
   /**
@@ -170,18 +174,18 @@ public class MisfirePolicyTest extends OBBaseTest {
     data.dailyOption = "N";
 
     scheduler.start();
-    scheduleJob(data);
+    String name = SequenceIdData.getUUID();
+    scheduleJob(name, data);
 
     // give some little time to ensure that job is not executed
     Thread.sleep(500);
 
     scheduler.shutdown();
 
-    assertThat("Job not executed on misfire", monitor.getJobExecutions(), equalTo(0));
+    assertThat("Job not executed on misfire", monitor.getJobExecutions(name), equalTo(0));
   }
 
-  private void scheduleJob(TriggerData data) throws SchedulerException {
-    String name = SequenceIdData.getUUID();
+  private void scheduleJob(String name, TriggerData data) throws SchedulerException {
     ProcessBundle bundle = getProcessBundle();
     Trigger trigger = TriggerProvider.getInstance().createTrigger(name, bundle, data);
     scheduleJob(name, trigger, bundle);
@@ -216,10 +220,10 @@ public class MisfirePolicyTest extends OBBaseTest {
   private class TestProcessMonitor implements JobListener {
 
     private static final String NAME = "TestProcessMonitor";
-    private int jobExecutions;
+    private Map<String, Integer> jobExecutions;
 
     public TestProcessMonitor() {
-      jobExecutions = 0;
+      jobExecutions = new HashMap<>();
     }
 
     @Override
@@ -239,11 +243,13 @@ public class MisfirePolicyTest extends OBBaseTest {
 
     @Override
     public void jobWasExecuted(JobExecutionContext context, JobExecutionException jobException) {
-      jobExecutions++;
+      String key = context.getJobDetail().getKey().getName();
+      jobExecutions.putIfAbsent(key, 0);
+      jobExecutions.compute(key, (k, v) -> v + 1);
     }
 
-    public int getJobExecutions() {
-      return jobExecutions;
+    public int getJobExecutions(String name) {
+      return jobExecutions.getOrDefault(name, 0);
     }
   }
 
