@@ -37,6 +37,7 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.ui.ProcessRun;
 import org.openbravo.service.db.DalBaseProcess;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.test.base.Issue;
 
 /**
  * Test cases for process schedule and process runner
@@ -57,10 +58,11 @@ public class ProcessSchedulingTest extends WeldBaseTest {
   private ApplicationScopedBean theBean;
 
   /**
-   * Test case to cover issue #29902. Before its fix it failed throwing an exception due to
+   * Before the fix of its related issue, this test failed throwing an exception due to
    * ProcessRunner attempting to set process run status on an already closed connection.
    */
   @Test
+  @Issue("29902")
   public void processRunnerNotClosingConnection() throws Exception {
     ProcessRun pr = executeBackgroundProcess(MyProcess.class);
 
