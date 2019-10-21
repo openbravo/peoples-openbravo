@@ -123,14 +123,13 @@ public class MisfirePolicyTest extends OBBaseTest {
     data.startDate = "23-09-2019";
     data.startTime = "00:00:00";
     data.secondlyInterval = "1";
-    data.secondlyRepetitions = "2";
 
     scheduler.start();
     String name = SequenceIdData.getUUID();
     scheduleJob(name, data);
 
     // wait for the job executions
-    Thread.sleep(2500);
+    Thread.sleep(2100);
 
     scheduler.shutdown();
 
