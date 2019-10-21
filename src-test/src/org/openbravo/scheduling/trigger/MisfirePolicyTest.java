@@ -31,6 +31,7 @@ import java.util.Date;
 import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.scheduling.Frequency;
 import org.openbravo.scheduling.JobDetailProvider;
 import org.openbravo.scheduling.ProcessBundle;
@@ -96,7 +97,7 @@ public class MisfirePolicyTest extends OBBaseTest {
     Date nextExecutionDate = dateOf("30-09-2019 00:00:00");
 
     scheduler.start();
-    String name = getRandomName();
+    String name = SequenceIdData.getUUID();
     ProcessBundle bundle = getProcessBundle();
     Trigger trigger = TriggerProvider.getInstance().createTrigger(name, bundle, data);
     scheduleJob(name, trigger, bundle);
@@ -179,12 +180,8 @@ public class MisfirePolicyTest extends OBBaseTest {
     assertThat("Job not executed on misfire", monitor.getJobExecutions(), equalTo(0));
   }
 
-  private String getRandomName() {
-    return "test" + System.currentTimeMillis();
-  }
-
   private void scheduleJob(TriggerData data) throws SchedulerException {
-    String name = getRandomName();
+    String name = SequenceIdData.getUUID();
     ProcessBundle bundle = getProcessBundle();
     Trigger trigger = TriggerProvider.getInstance().createTrigger(name, bundle, data);
     scheduleJob(name, trigger, bundle);

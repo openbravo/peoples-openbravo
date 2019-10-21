@@ -35,6 +35,7 @@ import java.util.TimeZone;
 import org.junit.After;
 import org.junit.Test;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.scheduling.Frequency;
 import org.openbravo.scheduling.JobDetailProvider;
 import org.openbravo.scheduling.ProcessBundle;
@@ -65,7 +66,7 @@ public class TriggerProviderTest {
     TriggerData data = new TriggerData();
     data.timingOption = TimingOption.IMMEDIATE.getLabel();
 
-    String name = getRandomName();
+    String name = SequenceIdData.getUUID();
     Date before = new Date();
     Trigger trigger = TriggerProvider.getInstance().createTrigger(name, null, data);
     Date after = new Date();
@@ -549,7 +550,7 @@ public class TriggerProviderTest {
       throws SchedulerException {
     TimeZone.setDefault(tz);
 
-    String name = getRandomName();
+    String name = SequenceIdData.getUUID();
     Trigger trigger = TriggerProvider.getInstance().createTrigger(name, null, data);
     scheduleJob(name, trigger);
 
@@ -565,10 +566,6 @@ public class TriggerProviderTest {
         assertThat("Execution finished", trigger.getFireTimeAfter(nextFire), is(nullValue()));
       }
     }
-  }
-
-  private String getRandomName() {
-    return "test" + System.currentTimeMillis();
   }
 
   private void scheduleJob(String name, Trigger trigger) throws SchedulerException {
