@@ -57,7 +57,7 @@ public class DeprecateLegacyProvider extends ModuleScript {
         ps0.setTimestamp(7, now);
         ps0.setString(8, "100");
         ps0.setString(9, "OBPOS_LEGACYPROVIDER");
-        ps0.setString(10, "Legacy provider");
+        ps0.setString(10, "Legacy Payment Provider");
         ps0.setString(11, "System legacy provider for backward compatibility with then Payment Provider and Refund Provider definitions.");
       
         ps0.executeUpdate();
