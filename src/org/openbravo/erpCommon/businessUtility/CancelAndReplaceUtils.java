@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -285,7 +286,7 @@ public class CancelAndReplaceUtils {
    * Method that given an Order Id it cancels it and creates another one equal but with negative
    * quantities.
    * 
-   * @param newOrderId
+   * @param oldOrderId
    *          Id of the Sales Order to be cancelled.
    * @param jsonorder
    *          Parameter with order information coming from Web POS.
@@ -293,9 +294,32 @@ public class CancelAndReplaceUtils {
    *          flag coming from Web POS. If it is true, it will set the same document of the order to
    *          netting payment.
    */
-  public static Order cancelOrder(String newOrderId, JSONObject jsonorder,
+  public static Order cancelOrder(String oldOrderId, JSONObject jsonorder,
       boolean useOrderDocumentNoForRelatedDocs) {
-    return cancelAndReplaceOrder(newOrderId, jsonorder, useOrderDocumentNoForRelatedDocs, false);
+    final Order oldOrder = OBDal.getInstance().getProxy(Order.class, oldOrderId);
+    return cancelOrder(oldOrder.getId(), oldOrder.getOrganization().getId(), jsonorder,
+        useOrderDocumentNoForRelatedDocs);
+  }
+
+  /**
+   * Method that given an Order Id it cancels it and creates another one equal but with negative
+   * quantities.
+   * 
+   * @param oldOrderId
+   *          Id of the Sales Order to be cancelled.
+   * @param paymentOrganizationId
+   *          Id of the Organization where the netting payment will be created.
+   * @param jsonorder
+   *          Parameter with order information coming from Web POS.
+   * @param useOrderDocumentNoForRelatedDocs
+   *          flag coming from Web POS. If it is true, it will set the same document of the order to
+   *          netting payment.
+   */
+  public static Order cancelOrder(String oldOrderId, String paymentOrganizationId,
+      JSONObject jsonorder, boolean useOrderDocumentNoForRelatedDocs) {
+    final Order oldOrder = OBDal.getInstance().getProxy(Order.class, oldOrderId);
+    return cancelAndReplaceOrder(oldOrder.getId(), Optional.empty(), paymentOrganizationId,
+        jsonorder, useOrderDocumentNoForRelatedDocs, false);
   }
 
   /**
@@ -312,7 +336,31 @@ public class CancelAndReplaceUtils {
    */
   public static Order cancelAndReplaceOrder(String newOrderId, JSONObject jsonorder,
       boolean useOrderDocumentNoForRelatedDocs) {
-    return cancelAndReplaceOrder(newOrderId, jsonorder, useOrderDocumentNoForRelatedDocs, true);
+    final Order newOrder = OBDal.getInstance().getProxy(Order.class, newOrderId);
+    return cancelAndReplaceOrder(newOrder.getId(), newOrder.getOrganization().getId(), jsonorder,
+        useOrderDocumentNoForRelatedDocs);
+  }
+
+  /**
+   * * Method that given an Order Id it cancels it and creates another one equal but with negative
+   * quantities. It also creates a new order replacing the cancelled one.
+   * 
+   * @param newOrderId
+   *          Id of the Sales Order to be cancelled.
+   * @param paymentOrganizationId
+   *          Id of the Organization where the netting payment will be created.
+   * @param jsonorder
+   *          Parameter with order information coming from Web POS
+   * @param useOrderDocumentNoForRelatedDocs
+   *          . flag coming from Web POS. If it is true, it will set the same document of the order
+   *          to netting payment.
+   */
+  public static Order cancelAndReplaceOrder(String newOrderId, String paymentOrganizationId,
+      JSONObject jsonorder, boolean useOrderDocumentNoForRelatedDocs) {
+    return cancelAndReplaceOrder(
+        OBDal.getInstance().getProxy(Order.class, newOrderId).getReplacedorder().getId(),
+        Optional.of(newOrderId), paymentOrganizationId, jsonorder, useOrderDocumentNoForRelatedDocs,
+        true);
   }
 
   /**
@@ -335,15 +383,15 @@ public class CancelAndReplaceUtils {
    *          If replaceOrder == true, the original order will be cancelled and replaced with a new
    *          one, if == false, it will only be cancelled
    */
-  private static Order cancelAndReplaceOrder(String orderId, JSONObject jsonorder,
-      boolean useOrderDocumentNoForRelatedDocs, boolean replaceOrder) {
+  private static Order cancelAndReplaceOrder(String oldOrderId, Optional<String> newOrderId,
+      String paymentOrganizationId, JSONObject jsonorder, boolean useOrderDocumentNoForRelatedDocs,
+      boolean replaceOrder) {
     ScrollableResults orderLines = null;
     ScrollableResults shipmentLines = null;
-    Order newOrder = null;
-    Order oldOrder = null;
+    Order oldOrder = OBDal.getInstance().get(Order.class, oldOrderId);
+    Order newOrder = newOrderId.map(id -> OBDal.getInstance().get(Order.class, id)).orElse(null);
+
     Order inverseOrder = null;
-    String newOrderId = null;
-    String oldOrderId = null;
     String inverseOrderId = null;
     OBContext.setAdminMode(false);
     try {
@@ -355,18 +403,6 @@ public class CancelAndReplaceUtils {
 
       // If replaceOrder == true, the original order will be cancelled and replaced with a new one,
       // if == false, it will only be cancelled
-      if (replaceOrder) {
-        // Get new Order
-        newOrder = OBDal.getInstance().get(Order.class, orderId);
-        newOrderId = newOrder.getId();
-        // Get old Order
-        oldOrder = newOrder.getReplacedorder();
-        oldOrderId = oldOrder.getId();
-      } else {
-        // Get old Order
-        oldOrder = OBDal.getInstance().get(Order.class, orderId);
-        oldOrderId = oldOrder.getId();
-      }
       oldOrder = lockOrder(oldOrder);
 
       // Added check in case Cancel and Replace button is hit more than once
@@ -379,10 +415,7 @@ public class CancelAndReplaceUtils {
       closeOldReservations(oldOrder);
 
       // Refresh documents
-      if (newOrderId != null) {
-        newOrder = OBDal.getInstance().get(Order.class, newOrderId);
-      }
-
+      newOrder = newOrderId.map(id -> OBDal.getInstance().get(Order.class, id)).orElse(null);
       oldOrder = OBDal.getInstance().get(Order.class, oldOrderId);
 
       if (replaceOrder) {
@@ -547,9 +580,8 @@ public class CancelAndReplaceUtils {
               nettingGoodsShipment = OBDal.getInstance()
                   .get(ShipmentInOut.class, nettingGoodsShipmentId);
             }
-            if (replaceOrder) {
-              newOrder = OBDal.getInstance().get(Order.class, newOrderId);
-            }
+
+            newOrder = newOrderId.map(id -> OBDal.getInstance().get(Order.class, id)).orElse(null);
             oldOrder = OBDal.getInstance().get(Order.class, oldOrderId);
             inverseOrder = OBDal.getInstance().get(Order.class, inverseOrderId);
           }
@@ -607,9 +639,8 @@ public class CancelAndReplaceUtils {
       if (nettingGoodsShipmentId != null) {
         nettingGoodsShipment = OBDal.getInstance().get(ShipmentInOut.class, nettingGoodsShipmentId);
       }
-      if (replaceOrder) {
-        newOrder = OBDal.getInstance().get(Order.class, newOrderId);
-      }
+
+      newOrder = newOrderId.map(id -> OBDal.getInstance().get(Order.class, id)).orElse(null);
       oldOrder = OBDal.getInstance().get(Order.class, oldOrderId);
       inverseOrder = OBDal.getInstance().get(Order.class, inverseOrderId);
 
@@ -625,7 +656,9 @@ public class CancelAndReplaceUtils {
       // Payment Creation only to orders with grand total different than ZERO
       // Get the payment schedule detail of the oldOrder
       if (oldOrder.getGrandTotalAmount().compareTo(BigDecimal.ZERO) != 0) {
-        createPayments(oldOrder, newOrder, inverseOrder, jsonorder,
+        final Organization paymentOrganization = OBDal.getInstance()
+            .get(Organization.class, paymentOrganizationId);
+        createPayments(oldOrder, newOrder, inverseOrder, paymentOrganization, jsonorder,
             useOrderDocumentNoForRelatedDocs, replaceOrder, triggersDisabled);
       }
 
@@ -1257,8 +1290,8 @@ public class CancelAndReplaceUtils {
   }
 
   private static void createPayments(Order oldOrder, Order newOrder, Order inverseOrder,
-      JSONObject jsonorder, boolean useOrderDocumentNoForRelatedDocs, boolean replaceOrder,
-      boolean triggersDisabled) {
+      Organization paymentOrganization, JSONObject jsonorder,
+      boolean useOrderDocumentNoForRelatedDocs, boolean replaceOrder, boolean triggersDisabled) {
     try {
       FIN_PaymentSchedule paymentSchedule = getPaymentScheduleOfOrder(oldOrder);
       if (paymentSchedule != null) {
@@ -1296,12 +1329,13 @@ public class CancelAndReplaceUtils {
           }
 
           nettingPayment = payOriginalAndInverseOrder(jsonorder, oldOrder, inverseOrder,
-              outstandingAmount, negativeAmount, useOrderDocumentNoForRelatedDocs);
+              paymentOrganization, outstandingAmount, negativeAmount,
+              useOrderDocumentNoForRelatedDocs);
 
           // Pay of the new order the amount already paid in original order
           if (createPayments && paidAmount.compareTo(BigDecimal.ZERO) != 0) {
-            nettingPayment = createOrUdpatePayment(jsonorder, nettingPayment, newOrder, null,
-                paidAmount, null, null, null);
+            nettingPayment = createOrUdpatePayment(jsonorder, nettingPayment, newOrder,
+                paymentOrganization, null, paidAmount, null, null, null);
             String description = nettingPayment.getDescription() + ": " + newOrder.getDocumentNo();
             String truncatedDescription = (description.length() > 255)
                 ? description.substring(0, 252).concat("...").toString()
@@ -1319,7 +1353,8 @@ public class CancelAndReplaceUtils {
           negativeAmount = outstandingAmount.negate();
           if (outstandingAmount.compareTo(BigDecimal.ZERO) != 0) {
             nettingPayment = payOriginalAndInverseOrder(jsonorder, oldOrder, inverseOrder,
-                outstandingAmount, negativeAmount, useOrderDocumentNoForRelatedDocs);
+                paymentOrganization, outstandingAmount, negativeAmount,
+                useOrderDocumentNoForRelatedDocs);
           }
         }
 
@@ -1355,8 +1390,8 @@ public class CancelAndReplaceUtils {
 
   // Pay original order and inverse order.
   private static FIN_Payment payOriginalAndInverseOrder(JSONObject jsonorder, Order oldOrder,
-      Order inverseOrder, BigDecimal outstandingAmount, BigDecimal negativeAmount,
-      boolean useOrderDocumentNoForRelatedDocs) throws Exception {
+      Order inverseOrder, Organization paymentOrganization, BigDecimal outstandingAmount,
+      BigDecimal negativeAmount, boolean useOrderDocumentNoForRelatedDocs) throws Exception {
     FIN_Payment nettingPayment = null;
     String paymentDocumentNo = null;
     FIN_PaymentMethod paymentPaymentMethod = null;
@@ -1403,14 +1438,14 @@ public class CancelAndReplaceUtils {
 
     // Duplicate payment with negative amount
     nettingPayment = createOrUdpatePayment(jsonorder, nettingPayment, inverseOrder,
-        paymentPaymentMethod, negativeAmount, paymentDocumentType, financialAccount,
-        paymentDocumentNo);
+        paymentOrganization, paymentPaymentMethod, negativeAmount, paymentDocumentType,
+        financialAccount, paymentDocumentNo);
 
     if (outstandingAmount.compareTo(BigDecimal.ZERO) > 0) {
       // Duplicate payment with positive amount
       nettingPayment = createOrUdpatePayment(jsonorder, nettingPayment, oldOrder,
-          paymentPaymentMethod, outstandingAmount, paymentDocumentType, financialAccount,
-          paymentDocumentNo);
+          paymentOrganization, paymentPaymentMethod, outstandingAmount, paymentDocumentType,
+          financialAccount, paymentDocumentNo);
       description += ": " + oldOrder.getDocumentNo() + "\n";
     }
 
@@ -1431,8 +1466,8 @@ public class CancelAndReplaceUtils {
    * payment is null a new payment is created, if not, a new detail is added to the payment.
    */
   private static FIN_Payment createOrUdpatePayment(JSONObject jsonorder, FIN_Payment nettingPayment,
-      Order order, FIN_PaymentMethod paymentPaymentMethod, BigDecimal amount,
-      DocumentType paymentDocumentType, FIN_FinancialAccount financialAccount,
+      Order order, Organization paymentOrganization, FIN_PaymentMethod paymentPaymentMethod,
+      BigDecimal amount, DocumentType paymentDocumentType, FIN_FinancialAccount financialAccount,
       String paymentDocumentNo) throws Exception {
 
     FIN_Payment _nettingPayment = nettingPayment;
@@ -1480,11 +1515,6 @@ public class CancelAndReplaceUtils {
       paymentScheduleDetailAmount.put(paymentScheduleDetailId, amount);
 
       // Call to savePayment in order to create a new payment in
-      final Organization paymentOrganization = jsonorder != null
-          && jsonorder.has("paymentOrganization")
-              ? OBDal.getInstance()
-                  .get(Organization.class, jsonorder.getString("paymentOrganization"))
-              : order.getOrganization();
       _nettingPayment = FIN_AddPayment.savePayment(_nettingPayment, true, paymentDocumentType,
           paymentDocumentNo, order.getBusinessPartner(), paymentPaymentMethod, financialAccount,
           amount.toPlainString(), order.getOrderDate(), paymentOrganization, null,
