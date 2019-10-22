@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,9 +25,7 @@ import static org.openbravo.scheduling.Process.KILLED;
 import static org.openbravo.scheduling.Process.PROCESSING;
 import static org.openbravo.scheduling.Process.SCHEDULED;
 import static org.openbravo.scheduling.Process.SUCCESS;
-import static org.openbravo.scheduling.Process.UNSCHEDULED;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -42,18 +40,24 @@ import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
+import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.quartz.JobKey;
 import org.quartz.JobListener;
 import org.quartz.SchedulerContext;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerListener;
 import org.quartz.Trigger;
+import org.quartz.Trigger.CompletedExecutionInstruction;
+import org.quartz.TriggerKey;
 import org.quartz.TriggerListener;
 
 /**
- * @author awolski
+ * Listens to Scheduler events and JobDetail and Trigger executions in order to set context and
+ * process run information for the application. It also manages the execution of process groups.
  * 
+ * @author awolski
  */
 class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener {
 
@@ -76,7 +80,7 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
     final ProcessContext ctx = bundle.getContext();
     try {
       ProcessRequestData.setContext(getConnection(), ctx.getUser(), ctx.getUser(), SCHEDULED,
-          bundle.getChannel().toString(), ctx.toString(), trigger.getName());
+          bundle.getChannel().toString(), ctx.toString(), trigger.getKey().getName());
 
       try {
         log.debug("jobScheduled for process {}",
@@ -107,7 +111,7 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
       ProcessRequestData.update(getConnection(), ctx.getUser(), ctx.getUser(), SCHEDULED,
           bundle.getChannel().toString(), format(trigger.getPreviousFireTime()),
           OBScheduler.getInstance().getSqlDateTimeFormat(), format(trigger.getNextFireTime()),
-          format(trigger.getFinalFireTime()), ctx.toString(), trigger.getName());
+          format(trigger.getFinalFireTime()), ctx.toString(), trigger.getKey().getName());
 
     } catch (final ServletException e) {
       log.error(e.getMessage(), e);
@@ -131,7 +135,8 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
     final String executionId = SequenceIdData.getUUID();
     try {
       ProcessRunData.insert(getConnection(), ctx.getOrganization(), ctx.getClient(), ctx.getUser(),
-          ctx.getUser(), executionId, PROCESSING, null, null, jec.getJobDetail().getName());
+          ctx.getUser(), executionId, PROCESSING, null, null,
+          jec.getJobDetail().getKey().getName());
 
       bundle.setProcessRunId(executionId);
       jec.put(EXECUTION_ID, executionId);
@@ -192,7 +197,7 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
     final ProcessBundle bundle = (ProcessBundle) trigger.getJobDataMap().get(ProcessBundle.KEY);
     String updatedBy = bundle != null ? bundle.getContext().getUser() : "0";
     try {
-      ProcessRequestData.update(getConnection(), COMPLETE, updatedBy, trigger.getName());
+      ProcessRequestData.update(getConnection(), COMPLETE, updatedBy, trigger.getKey().getName());
 
     } catch (final ServletException e) {
       log.error(e.getMessage(), e);
@@ -203,22 +208,8 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
   }
 
   @Override
-  public void jobUnscheduled(String triggerName, String triggerGroup) {
-    try {
-      /*
-       * This method is never called. See for more details:
-       * https://issues.openbravo.com/view.php?id=38804
-       * 
-       * Once this issue is fixed, consider whether this method should be removed or changed to use
-       * an appropriate updatedBy userID
-       */
-      ProcessRequestData.update(getConnection(), UNSCHEDULED, null, null, null, "0", triggerName);
-    } catch (final ServletException e) {
-      log.error(e.getMessage(), e);
-    } finally {
-      // return connection to pool and remove it from current thread
-      SessionInfo.init();
-    }
+  public void jobUnscheduled(TriggerKey triggerKey) {
+    // Not implemented
   }
 
   @Override
@@ -234,48 +225,6 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
   }
 
   @Override
-  public void jobsPaused(String jobName, String jobGroup) {
-    // Not implemented
-  }
-
-  @Override
-  public void jobsResumed(String jobName, String jobGroup) {
-    // Not implemented
-  }
-
-  @Override
-  public void schedulerError(String msg, SchedulerException e) {
-    // Not implemented
-  }
-
-  @Override
-  public void schedulerShutdown() {
-    // Not implemented
-  }
-
-  @Override
-  public void triggersPaused(String triggerName, String triggerGroup) {
-    // Not implemented
-  }
-
-  @Override
-  public void triggersResumed(String triggerName, String triggerGroup) {
-    // Not implemented
-  }
-
-  @Override
-  public void jobExecutionVetoed(JobExecutionContext jec) {
-    // Not implemented
-  }
-
-  @Override
-  public void triggerComplete(Trigger trigger, JobExecutionContext jec,
-      int triggerInstructionCode) {
-    // Not implemented
-  }
-
-  @Override
-  @SuppressWarnings("unchecked")
   public boolean vetoJobExecution(Trigger trigger, JobExecutionContext jec) {
     JobDataMap jobData = trigger.getJobDataMap();
     Boolean preventConcurrentExecutions = (Boolean) jobData
@@ -307,14 +256,12 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
 
           ProcessBundle jobAlreadyScheduled = (ProcessBundle) job.getTrigger()
               .getJobDataMap()
-              .get("org.openbravo.scheduling.ProcessBundle.KEY");
-          ProcessBundle newJob = (ProcessBundle) trigger.getJobDataMap()
-              .get("org.openbravo.scheduling.ProcessBundle.KEY");
+              .get(ProcessBundle.KEY);
+          ProcessBundle newJob = (ProcessBundle) trigger.getJobDataMap().get(ProcessBundle.KEY);
 
           boolean isSameClient = isSameParam(jobAlreadyScheduled, newJob, "Client");
 
-          if (!isSameClient
-              || (isSameClient && !isSameParam(jobAlreadyScheduled, newJob, "Organization"))) {
+          if (!isSameClient || !isSameParam(jobAlreadyScheduled, newJob, "Organization")) {
             continue;
           }
 
@@ -328,8 +275,7 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
     } else {
       // The process it's a group
       try {
-        ProcessBundle newJob = (ProcessBundle) trigger.getJobDataMap()
-            .get("org.openbravo.scheduling.ProcessBundle.KEY");
+        ProcessBundle newJob = (ProcessBundle) trigger.getJobDataMap().get(ProcessBundle.KEY);
         String concurrent = ProcessRunData.selectConcurrent(getConnection(),
             newJob.getProcessRequestId());
         if (!concurrent.equals("0")) {
@@ -346,13 +292,109 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
 
   }
 
+  @Override
+  public void jobsPaused(String jobGroup) {
+    // Not implemented
+  }
+
+  @Override
+  public void jobsResumed(String jobGroup) {
+    // Not implemented
+  }
+
+  @Override
+  public void schedulerError(String msg, SchedulerException cause) {
+    // Not implemented
+  }
+
+  @Override
+  public void schedulerShutdown() {
+    // Not implemented
+  }
+
+  @Override
+  public void triggersPaused(String triggerGroup) {
+    // Not implemented
+  }
+
+  @Override
+  public void triggersResumed(String triggerGroup) {
+    // Not implemented
+  }
+
+  @Override
+  public void jobExecutionVetoed(JobExecutionContext jec) {
+    // Not implemented
+  }
+
+  @Override
+  public void triggerComplete(Trigger trigger, JobExecutionContext executionContext,
+      CompletedExecutionInstruction triggerInstructionCode) {
+    // Not implemented
+  }
+
+  @Override
+  public void jobAdded(JobDetail jobDetail) {
+    // Not implemented
+  }
+
+  @Override
+  public void jobDeleted(JobKey jobKey) {
+    // Not implemented
+  }
+
+  @Override
+  public void jobPaused(JobKey jobKey) {
+    // Not implemented
+  }
+
+  @Override
+  public void jobResumed(JobKey jobKey) {
+    // Not implemented
+  }
+
+  @Override
+  public void schedulerInStandbyMode() {
+    // Not implemented
+  }
+
+  @Override
+  public void schedulerShuttingdown() {
+    // Not implemented
+  }
+
+  @Override
+  public void schedulerStarted() {
+    // Not implemented
+  }
+
+  @Override
+  public void schedulerStarting() {
+    // Not implemented
+  }
+
+  @Override
+  public void schedulingDataCleared() {
+    // Not implemented
+  }
+
+  @Override
+  public void triggerPaused(TriggerKey triggerKey) {
+    // Not implemented
+  }
+
+  @Override
+  public void triggerResumed(TriggerKey triggerKey) {
+    // Not implemented
+  }
+
   private void stopConcurrency(Trigger trigger, JobExecutionContext jec, String processName) {
     try {
       final ProcessBundle bundle = (ProcessBundle) jec.getMergedJobDataMap().get(ProcessBundle.KEY);
       if (!trigger.mayFireAgain()) {
         String updatedBy = bundle != null ? bundle.getContext().getUser() : "0";
         // This is last execution of this trigger, so set it as complete
-        ProcessRequestData.update(getConnection(), COMPLETE, updatedBy, trigger.getName());
+        ProcessRequestData.update(getConnection(), COMPLETE, updatedBy, trigger.getKey().getName());
       }
 
       // Create a process run as error
@@ -360,7 +402,8 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
         final ProcessContext ctx = bundle.getContext();
         final String executionId = SequenceIdData.getUUID();
         ProcessRunData.insert(getConnection(), ctx.getOrganization(), ctx.getClient(),
-            ctx.getUser(), ctx.getUser(), executionId, PROCESSING, null, null, trigger.getName());
+            ctx.getUser(), ctx.getUser(), executionId, PROCESSING, null, null,
+            trigger.getKey().getName());
         ProcessRunData.update(getConnection(), ctx.getUser(), ERROR, getDuration(0),
             "Concurrent attempt to execute", executionId);
 
@@ -410,11 +453,8 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
       }
     }
 
-    if (newJobParam != null && jobAlreadyScheduledParam != null
-        && newJobParam.equals(jobAlreadyScheduledParam)) {
-      return true;
-    }
-    return false;
+    return newJobParam != null && jobAlreadyScheduledParam != null
+        && newJobParam.equals(jobAlreadyScheduledParam);
   }
 
   /**
@@ -431,15 +471,14 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
     return (ConfigParameters) context.get(ConfigParameters.CONFIG_ATTRIBUTE);
   }
 
-  /**
-   * Formats a date according to the data time format.
-   * 
-   * @param date
-   * @return a formatted date
-   */
-  public final String format(Date date) {
-    final String dateTimeFormat = getConfigParameters().getJavaDateTimeFormat();
-    return date == null ? null : new SimpleDateFormat(dateTimeFormat).format(date);
+  private String format(Date date) {
+    try {
+      return date == null ? null
+          : SchedulerTimeUtils.format(date, getConfigParameters().getJavaDateTimeFormat());
+    } catch (Exception ex) {
+      log.error("Could not format date {}", date, ex);
+      return null;
+    }
   }
 
   /**
@@ -455,7 +494,8 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
     final int minutes = (int) ((duration / 60000) % 60);
     final int hours = (int) (duration / 3600000);
 
-    final String m = (milliseconds < 10 ? "00" : (milliseconds < 100 ? "0" : "")) + milliseconds;
+    final String millis = milliseconds < 100 ? "0" : "";
+    final String m = (milliseconds < 10 ? "00" : millis) + milliseconds;
     final String sec = (seconds < 10 ? "0" : "") + seconds;
     final String min = (minutes < 10 ? "0" : "") + minutes;
     final String hr = (hours < 10 ? "0" : "") + hours;
