@@ -132,9 +132,11 @@ enyo.kind({
     //This inline style is allowed
     var style = '';
     if (this.model.get('bordercolor')) {
-      style += ' border:6px solid ' + this.model.get('bordercolor') + ';';
+      style += ' border-color: ' + this.model.get('bordercolor') + ';';
+    } else {
+      style += ' border-color: ' + this.model.get('backcolor') + ';';
     }
-    style += ' background-color:' + this.model.get('backcolor') + ';';
+    style += ' background-color: ' + this.model.get('backcolor') + ';';
     this.$.coin.addStyles(style);
     if (
       this.$.formElementNumberOfCoins.coreElement.getValue().toString() !==

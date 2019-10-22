@@ -692,103 +692,95 @@
   height: 100%;
 }
 
-.obUiPaymentButton-generic {
-  background-color: #6cb33f;
-  border: 10px solid #6cb33f;
-}
-
-.obUiPaymentButton_coin10 {
-  background-color: #e9b7c3;
-  border: 10px solid #e9b7c3;
-}
-
-.obUiPaymentButton_coin20 {
-  background-color: #bac3de;
-  border: 10px solid #bac3de;
-}
-
-.obUiPaymentButton_coin50 {
-  background-color: #f9bb92;
-  border: 10px solid #f9bb92;
-}
-
-.obUiPaymentButton_coin1 {
-  background-color: #e4e0e3;
-  border: 10px solid #f9e487;
-}
-
-.obUiPaymentButton_coin2 {
-  background-color: #f9e487;
-  border: 10px solid #e4e0e3;
-}
-
-.obUiPaymentButton_coin5 {
-  background-color: #bccdc5;
-  border: 10px solid #bccdc5;
-}
-
-.obUiPaymentButton_coin010 {
-  background-color: #f9e487;
-  border: 10px solid #f9e487;
-}
-
-.obUiPaymentButton_coin020 {
-  background-color: #f9e487;
-  border: 10px solid #f9e487;
-}
-
-.obUiPaymentButton_coin050 {
-  background-color: #f9e487;
-  border: 10px solid #f9e487;
-}
-
-.obUiPaymentButton_coin001 {
-  background-color: #f3bc9e;
-  border: 10px solid #f3bc9e;
-}
-
-.obUiPaymentButton_coin002 {
-  background-color: #f3bc9e;
-  border: 10px solid #f3bc9e;
-}
-
-.obUiPaymentButton_coin005 {
-  background-color: #f3bc9e;
-  border: 10px solid #f3bc9e;
-}
-
 .obUiPaymentButton-btn {
 /* # Inherits: [OB.UI.Button] */
   width: 100%;
   height: 100%;
-  border: none;
+  border-width: 10px;
+  border-style: solid;
   font-size: 18px;
   text-align: center;
   padding: 0px;
   text-decoration: none;
-  background-color: #e2e2e2;
   color: #000000;
   cursor: pointer;
   margin: 0px;
 }
 
-@media screen and (max-width: 842px) {
-  .obUiPaymentButton-btn {
-    font-size: 100%;
-  }
-}
-
 .obUiPaymentButton-btn.btn-over,
 .obUiPaymentButton-btn:hover {
-  opacity: 0.75;
+  filter: brightness(1.02);
 }
 
 .obUiPaymentButton-btn.btn-down,
 .obUiPaymentButton-btn:active {
-  opacity: 1;
-  background-color: #cccccc;
+  filter: saturate(250%) contrast(0.9);
 }
 
+.obUiPaymentButton-generic {
+  background-color: #e2e2e2;
+  border-color: #e2e2e2;
+}
+
+.obUiPaymentButton_coin10 {
+  background-color: #e9b7c3;
+  border-color: #e9b7c3;
+}
+
+.obUiPaymentButton_coin20 {
+  background-color: #bac3de;
+  border-color: #bac3de;
+}
+
+.obUiPaymentButton_coin50 {
+  background-color: #f9bb92;
+  border-color: #f9bb92;
+}
+
+.obUiPaymentButton_coin1 {
+  background-color: #e4e0e3;
+  border-color: #f9e487;
+}
+
+.obUiPaymentButton_coin2 {
+  background-color: #f9e487;
+  border-color: #e4e0e3;
+}
+
+.obUiPaymentButton_coin5 {
+  background-color: #bccdc5;
+  border-color: #bccdc5;
+}
+
+.obUiPaymentButton_coin010 {
+  background-color: #f9e487;
+  border-color: #f9e487;
+}
+
+.obUiPaymentButton_coin020 {
+  background-color: #f9e487;
+  border-color: #f9e487;
+}
+
+.obUiPaymentButton_coin050 {
+  background-color: #f9e487;
+  border-color: #f9e487;
+}
+
+.obUiPaymentButton_coin001 {
+  background-color: #f3bc9e;
+  border-color: #f3bc9e;
+}
+
+.obUiPaymentButton_coin002 {
+  background-color: #f3bc9e;
+  border-color: #f3bc9e;
+}
+
+.obUiPaymentButton_coin005 {
+  background-color: #f3bc9e;
+  border-color: #f3bc9e;
+}
 
 
 /***********************   ***********************/
@@ -13669,16 +13661,26 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposCashUpUiRenderCashPaymentsLine-listItem-coinComponent-coin {
   /*Inherits: [OB.UI.Button]*/
-  background-color: #e2e2e2;
   color: var(--color-primary-darker);
   text-align: center;
   font-weight: normal;
-  border: none;
+  border-color: #e2e2e2;
+  background-color: #e2e2e2;
+  border-width: 6px;
+  border-style: solid;
   border-radius: 4px;
   height: 50px;
   font-size: var(--font-medium);
   text-decoration: none;
   width: 85%;
+}
+
+.obObposCashUpUiRenderCashPaymentsLine-listItem-coinComponent-coin:hover {
+  filter: brightness(1.02);
+}
+
+.obObposCashUpUiRenderCashPaymentsLine-listItem-coinComponent-coin:active {
+  filter: saturate(250%) contrast(0.9);
 }
 
 .obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent {
