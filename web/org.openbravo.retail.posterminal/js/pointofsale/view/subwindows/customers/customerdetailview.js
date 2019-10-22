@@ -355,7 +355,8 @@ enyo.kind({
   components: [
     {
       name: 'buttonContainer',
-      classes: 'obObPosPointOfSaleUiCustomersEditCustomerFooter-buttonContainer'
+      classes:
+        'obUiModal-footer-mainButtons obObPosPointOfSaleUiCustomersEditCustomerFooter-buttonContainer'
     }
   ],
   initComponents: function() {
