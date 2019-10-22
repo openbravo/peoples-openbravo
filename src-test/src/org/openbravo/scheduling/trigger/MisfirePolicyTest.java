@@ -32,6 +32,7 @@ import java.util.Map;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.utility.SequenceIdData;
@@ -118,6 +119,7 @@ public class MisfirePolicyTest extends OBBaseTest {
   }
 
   @Test
+  @Ignore
   public void checkMisfirePolicyWithSecondlySchedule()
       throws SchedulerException, InterruptedException {
     TriggerData data = new TriggerData();
