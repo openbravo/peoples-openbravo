@@ -165,7 +165,7 @@ enyo.kind({
     }
     return this;
   },
-  lineEdit: function() {
+  lineEditCash: function() {
     this.doLineEditCash();
   },
   addUnit: function() {
