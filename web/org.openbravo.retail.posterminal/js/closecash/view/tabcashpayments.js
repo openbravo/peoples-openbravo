@@ -71,7 +71,11 @@ enyo.kind({
   events: {
     onLineEditCash: '',
     onAddUnit: '',
-    onSubUnit: ''
+    onSubUnit: '',
+    onUpdateUnit: ''
+  },
+  handlers: {
+    onNumberChange: 'numberChange'
   },
   components: [
     {
@@ -96,29 +100,22 @@ enyo.kind({
             'obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent',
           components: [
             {
-              name: 'qtyminus',
-              kind: 'OB.UI.Button',
-              avoidDoubleClick: false,
+              kind: 'OB.UI.FormElement',
+              name: 'formElementNumberOfCoins',
               classes:
-                'obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-qtyminus',
-              i18nContent: 'OBMOBC_MinusSign',
-              ontap: 'subUnit'
-            },
-            {
-              name: 'numberOfCoins',
-              kind: 'OB.UI.Button',
-              classes:
-                'obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-numberOfCoins',
-              ontap: 'lineEdit'
-            },
-            {
-              name: 'qtyplus',
-              kind: 'OB.UI.Button',
-              avoidDoubleClick: false,
-              classes:
-                'obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-qtyplus',
-              label: '+',
-              ontap: 'addUnit'
+                'obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-formElementNumberlinesQty',
+              coreElement: {
+                kind: 'OB.UI.FormElement.IntegerEditor',
+                name: 'numberOfCoins',
+                min: 0,
+                focus: function() {
+                  this.formElement.owner.doLineEditCash();
+                },
+                forceNumberChangeAlways: false /* Ideally it should be true, but then the focus is lost each keypress due to changes in the model */,
+                classes:
+                  'obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-numberlinesQty',
+                i18nLabel: 'OBPOS_NumberOfItems'
+              }
             }
           ]
         },
@@ -139,7 +136,14 @@ enyo.kind({
     }
     style += ' background-color:' + this.model.get('backcolor') + ';';
     this.$.coin.addStyles(style);
-    this.$.numberOfCoins.setLabel(this.model.get('numberOfCoins'));
+    if (
+      this.$.formElementNumberOfCoins.coreElement.getValue().toString() !==
+      this.model.get('numberOfCoins').toString()
+    ) {
+      this.$.formElementNumberOfCoins.coreElement.setValue(
+        this.model.get('numberOfCoins')
+      );
+    }
     this.$.total.setContent(
       OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('totalAmount')))
     );
@@ -149,7 +153,12 @@ enyo.kind({
     this.inherited(arguments);
     counted = this.model.get('numberOfCoins');
     if (counted !== null && counted !== undefined) {
-      this.$.numberOfCoins.setLabel(counted);
+      if (
+        this.$.formElementNumberOfCoins.coreElement.getValue().toString() !==
+        counted.toString()
+      ) {
+        this.$.formElementNumberOfCoins.coreElement.setValue(counted);
+      }
       this.$.total.setContent(
         OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('totalAmount')))
       );
@@ -164,6 +173,10 @@ enyo.kind({
   },
   subUnit: function() {
     this.doSubUnit();
+  },
+  numberChange: function(inSender, inEvent) {
+    inEvent.originator = this;
+    this.doUpdateUnit(inEvent);
   }
 });
 
@@ -188,6 +201,7 @@ enyo.kind({
   handlers: {
     onAddUnit: 'addUnit',
     onSubUnit: 'subUnit',
+    onUpdateUnit: 'updateUnit',
     onLineEditCash: 'lineEditCash'
   },
   components: [
@@ -382,18 +396,21 @@ enyo.kind({
   },
 
   setCoinsStatus: function(originator) {
+    if (!originator) {
+      return;
+    }
     // reset previous status
-    if (this.originator && this.originator.$.numberOfCoins) {
-      this.originator.$.numberOfCoins.removeClass(
-        'obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-numberOfCoins_selected'
+    if (this.originator && this.originator.$.formElementNumberOfCoins) {
+      this.originator.$.formElementNumberOfCoins.removeClass(
+        'obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-formElementNumberlinesQty_activeInKeypad'
       );
     }
 
     // set new status
     if (originator && originator !== this.originator) {
       this.originator = originator;
-      this.originator.$.numberOfCoins.addClass(
-        'obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-numberOfCoins_selected'
+      this.originator.$.formElementNumberOfCoins.addClass(
+        'obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-formElementNumberlinesQty_activeInKeypad'
       );
       this.model.trigger('action:SetStatusCoin');
     } else {
@@ -416,6 +433,12 @@ enyo.kind({
   },
   subUnit: function(inSender, inEvent) {
     this.addUnitToCollection(inEvent.originator.model.get('coinValue'), 'sub');
+  },
+  updateUnit: function(inSender, inEvent) {
+    this.addUnitToCollection(
+      inEvent.originator.model.get('coinValue'),
+      inEvent.value
+    );
   },
   addUnitToCollection: function(coinValue, amount) {
     var collection = this.$.paymentsList.collection;
