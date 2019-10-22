@@ -201,7 +201,9 @@ enyo.kind({
         if (this.receipt.get('isEditable') === false) {
           this.manualTap('edit');
         } else {
-          this.manualTap(OB.MobileApp.model.get('terminal').defaultwebpostab);
+          if (!enyo.Panels.isScreenNarrow()) {
+            this.manualTap(OB.MobileApp.model.get('terminal').defaultwebpostab);
+          }
         }
       },
       this

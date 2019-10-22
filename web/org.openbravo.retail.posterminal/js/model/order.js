@@ -479,6 +479,12 @@
           'locationModel',
           new OB.Model.BPLocation(attributes.bp.locationModel)
         );
+        if (attributes.bp.locationBillModel) {
+          bpModel.set(
+            'locationBillModel',
+            new OB.Model.BPLocation(attributes.bp.locationBillModel)
+          );
+        }
         this.set('bp', bpModel);
         this.set('lines', new OrderLineList().reset(attributes.lines));
         this.set(
