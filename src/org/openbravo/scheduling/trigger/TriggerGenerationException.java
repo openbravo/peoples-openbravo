@@ -21,7 +21,7 @@ package org.openbravo.scheduling.trigger;
 import org.quartz.SchedulerException;
 
 /**
- * Class used by the {@link TriggerProvider} to notify about errors during the Trigger generation.
+ * Used by the {@link TriggerProvider} to notify about errors during the Trigger generation.
  */
 @SuppressWarnings("serial")
 public class TriggerGenerationException extends SchedulerException {
