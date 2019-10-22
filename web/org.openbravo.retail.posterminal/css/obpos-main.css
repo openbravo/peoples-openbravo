@@ -2776,7 +2776,7 @@ li.selected > .obUiRenderOrderLine_edit {
   height: 50px;
   background-color: #4d545c;
   border-radius: 4px;
-  margin-top: 4px;
+  margin: 4px 0px 0px 15px;
 }
 
 .obUiShowServicesButton:hover {
