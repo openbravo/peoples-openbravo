@@ -8,7 +8,7 @@
     "prettier"
   ],
   "parserOptions": {
-    "ecmaVersion": 6
+    "ecmaVersion": 9
   },
   "globals": {
     "OB": "writeable",
