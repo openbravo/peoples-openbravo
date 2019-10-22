@@ -64,6 +64,7 @@ import org.openbravo.model.ad.access.OrderLineTax;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.OrderLineOffer;
@@ -107,9 +108,27 @@ public class CancelAndReplaceUtils {
    *          Order that will be cancelled and replaced
    */
   public static Order createReplacementOrder(Order oldOrder) {
+    return createReplacementOrder(oldOrder, oldOrder.getOrganization(), oldOrder.getWarehouse());
+  }
+
+  /**
+   * Process that creates a replacement order in temporary status in order to Cancel and Replace an
+   * original order
+   * 
+   * @param oldOrder
+   *          Order that will be cancelled and replaced
+   * @param organization
+   *          Organization where replacement will be created
+   * @param warehouse
+   *          Warehouse where replacement will be created
+   */
+  public static Order createReplacementOrder(final Order oldOrder, final Organization organization,
+      final Warehouse warehouse) {
     // Create new Order header
     Order newOrder = (Order) DalUtil.copy(oldOrder, false, true);
     // Change order values
+    newOrder.setOrganization(organization);
+    newOrder.setWarehouse(warehouse);
     newOrder.setProcessed(false);
     newOrder.setPosted("N");
     newOrder.setDocumentStatus("TMP");
@@ -137,6 +156,8 @@ public class CancelAndReplaceUtils {
           continue;
         }
         OrderLine newOrderLine = (OrderLine) DalUtil.copy(oldOrderLine, false, true);
+        newOrderLine.setOrganization(organization);
+        newOrderLine.setWarehouse(warehouse);
         newOrderLine.setDeliveredQuantity(BigDecimal.ZERO);
         newOrderLine.setReservedQuantity(BigDecimal.ZERO);
         newOrderLine.setInvoicedQuantity(BigDecimal.ZERO);
