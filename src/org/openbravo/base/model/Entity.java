@@ -856,11 +856,27 @@ public class Entity {
     return help;
   }
 
+  /**
+   * Adds help to this Entity from corresponding table Removes comment escape character sequence and
+   * wraps comments over 100 characters. Makes sure it doesn't generate warnings by escaping "@"
+   *
+   * @param help
+   *          Help comment to add to this entity
+   */
   public void setHelp(String help) {
     if (help != null) {
-      final String helpEscaped = help.replaceAll("\\*/", " ");
-      final String wrappedHelp = WordUtils.wrap(helpEscaped, 100);
-      this.help = wrappedHelp.replaceAll("\n", "\n       ");
+      String helpEscaped = help.replaceAll("\\*/", " ");
+
+      // Add literal when there is no @, so html is escaped
+      if (helpEscaped.indexOf('@') == -1) {
+        helpEscaped = "{@literal " + helpEscaped + "}";
+      } else {
+        // @ must be replaced by {@literal @} so javadoc generates no warnings
+        helpEscaped = helpEscaped.replaceAll("@", "&#64;");
+      }
+      String wrappedHelp = WordUtils.wrap(helpEscaped, 100);
+
+      this.help = wrappedHelp.replaceAll("\n", "\n     *       ");
     } else {
       this.help = help;
     }

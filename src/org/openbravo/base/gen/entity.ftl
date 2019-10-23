@@ -39,7 +39,7 @@ ${i}
 /**
  * Entity class for entity ${entity.name} (stored in table ${entity.tableName}).<#if entity.help??>
  * <br>
- * Help: {@literal ${entity.help}}</#if>
+ * Help: ${entity.help}</#if>
  * <br>
  * NOTE: This class should not be instantiated directly. To instantiate this
  * class the {@link org.openbravo.base.provider.OBProvider} should be used.<#if util.shouldAddDeprecation() && util.isDeprecated(entity)>
@@ -57,14 +57,12 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
     <#if !p.computedColumn>
     <#if p.allowDerivedRead() && !p.isBeingReferenced()>
     /**
-     * Property ${p.name} stored <#if p.columnName??>in column ${p.columnName} </#if>in table ${entity.tableName}<#if !p.isIdentifier()>
-     * @see <#if p.isAuditInfo()>Traceable </#if><#if p.isClientOrOrganization() && p.getColumnName() == "AD_Org_ID">OrganizationEnabled </#if><#if p.isClientOrOrganization() && p.getColumnName() != "AD_Org_ID">ClientEnabled </#if><#if p.isActiveColumn()>ActiveEnabled </#if></#if>
-     * <@addDeprecationMessageIfNeeded property=p />
+     * Property ${p.name} stored <#if p.columnName??>in column ${p.columnName} </#if>in table ${entity.tableName} <@addSeeTag p/>     * <@addDeprecationMessageIfNeeded property=p />
      */
     <#else>
     /**
      * Property ${p.name} stored <#if p.columnName??>in column ${p.columnName} </#if>in table ${entity.tableName}<#if p.help??><br>
-     * Help: {@literal ${p.help}}</#if>
+     * Help: ${p.help}</#if>
      * <@addDeprecationMessageIfNeeded property=p />
      */
     </#if>
@@ -86,7 +84,7 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
     /**
      * Computed column for property ${p.name}<br>
      * <#if p.help??>
-     * Help: {@literal ${p.help}}</#if><br>
+     * Help: ${p.help}</#if><br>
      * Computed from: <br>
      * {@code ${util.formatSqlLogic(p.sqlLogic)}}
      */
@@ -153,7 +151,7 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
 	<#list entity.properties as p>
 	<#if p.oneToMany>
     /**<#if p.targetEntity.help??>
-     * {@literal ${p.targetEntity.help}}<br></#if>
+     * Help: ${p.targetEntity.help}<br></#if>
      * @see ${p.shorterNameTargetEntity}
      * <@addDeprecationMessageIfNeeded property=p/>
      */
@@ -168,7 +166,7 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
     }
 
     /**<#if p.targetEntity.help??>
-     * {@literal ${p.targetEntity.help}}<br></#if>
+     * Help: ${p.targetEntity.help}<br></#if>
      * @see ${p.shorterNameTargetEntity}
      * <@addDeprecationMessageIfNeeded property=p/>
      */
@@ -275,4 +273,13 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
     <#if util.shouldAddDeprecation() && util.isDeprecated(property)>
     @Deprecated
     </#if>
+</#macro>
+
+<#macro addSeeTag property>
+    <#if property.entity.isTraceable() && property.isAuditInfo()>
+
+     * @see Traceable <#elseif property.isClientOrOrganization() && property.getColumnName() == "AD_Org_ID">
+     * @see OrganizationEnabled <#elseif property.isClientOrOrganization() && property.getColumnName() != "AD_Org_ID">
+     * @see ClientEnabled <#elseif property.isActiveColumn()>
+     * @see ActiveEnabled </#if>
 </#macro>
