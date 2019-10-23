@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -645,7 +645,11 @@ html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputHint {
 .OBDateChooserWeekendButtonDown,
 .OBDateChooserWeekendButtonSelected,
 .OBDateChooserWeekendButtonSelectedOver,
-.OBDateChooserWeekendButtonSelectedDown,
+.OBDateChooserWeekendButtonSelectedDown {
+  color: #4C4C4C;
+  font-weight: bold;
+}
+
 .OBDateChooserNavButton,
 .OBDateChooserNavButtonOver,
 .OBDateChooserNavButtonDown,
@@ -655,7 +659,6 @@ html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputHint {
 .OBDateChooserNavButtonSelected,
 .OBDateChooserNavButtonSelectedOver,
 .OBDateChooserNavButtonSelectedDown {
-  font-weight: bold;
   color: #4C4C4C;
 }
 
