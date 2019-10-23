@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TRIGGER M_COSTING_RULE_TRG">
-    <trigger name="M_COSTING_RULE_TRG" table="M_COSTING_RULE" fires="after" insert="true" update="true" delete="true" foreach="row">
+    <trigger name="M_COSTING_RULE_TRG" table="M_COSTING_RULE" fires="after" insert="false" update="true" delete="true" foreach="row">
       <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
