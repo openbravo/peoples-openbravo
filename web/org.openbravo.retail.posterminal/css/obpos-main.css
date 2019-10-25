@@ -7469,7 +7469,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obObposPointOfSaleUiPointOfSale-multiColumn-leftPanel-receiptview {
    /* Inherits: [OB.OBPOSPointOfSale.UI.ReceiptView] */
   float: left;
-  width: 100%;
   touch-action: none;
 }
 
@@ -7784,7 +7783,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   overflow-y: auto;
   display: grid;
   grid-template-rows: minmax(150px, 1fr) auto;
-  height: 100%;
 }
 
 .obObposPointOfSaleUiReceiptView-receiptWrapper-receiptFooter {
