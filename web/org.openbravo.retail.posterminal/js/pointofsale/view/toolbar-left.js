@@ -436,7 +436,7 @@ enyo.kind({
         .get('leftColumnViewManager')
         .isMultiOrder();
       if (requirements.isMultiOrder) {
-        return false;
+        return true;
       }
       requirements.receiptId = receipt.get('id');
       requirements.receiptDocno = receipt.get('documentNo');

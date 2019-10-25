@@ -545,7 +545,7 @@ enyo.kind({
     onShowActionIcons: ''
   },
   handlers: {
-    onRightToolbarDisabled: 'disabledButton',
+    onRightToolbarDisabled: 'disableButton',
     onManageServiceProposal: 'manageServiceProposal'
   },
   init: function(model) {
@@ -575,8 +575,15 @@ enyo.kind({
     //      });
     //    }, this);
   },
+  disableButton: function(inSender, inEvent) {
+    inEvent.subtab ? (this.subtab = inEvent.subtab) : (this.subtab = null);
+    this.disabledButton(inSender, inEvent);
+  },
   disabledButton: function(inSender, inEvent) {
     var isDisabled = inEvent.status;
+    if (inEvent.tab === this.tabToOpen) {
+      isDisabled = false;
+    }
     if (OB.MobileApp.model.hasPermission('OBPOS_disableEditTab', true)) {
       isDisabled = true;
     }
@@ -595,6 +602,22 @@ enyo.kind({
     });
   },
   tap: function(options) {
+    if (this.subtab) {
+      const receiptClass = 'obUiMultiColumn-panels-showReceipt',
+        panels = OB.POS.terminal.$.containerWindow.getRoot().$.multiColumn.$
+          .panels,
+        editToolbarPane = OB.POS.terminal.$.containerWindow.getRoot().$
+          .multiColumn.$.rightPanel.$.toolbarpane.$.edit;
+      if (panels.hasClass(receiptClass)) {
+        panels.removeClass(receiptClass);
+        this.addClass('selected');
+        this.parent.$.toolbarBtnCart.removeClass('selected');
+        editToolbarPane.addClass('selected');
+      } else {
+        this.setSelected(true);
+      }
+      return;
+    }
     if (OB.MobileApp.model.get('serviceSearchMode')) {
       this.setLabel(OB.I18N.getLabel('OBPOS_LblEdit'));
       this.removeClass(this.continueClass);

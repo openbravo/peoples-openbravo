@@ -1454,7 +1454,9 @@ enyo.kind({
       status: true
     });
     this.rightToolbarDisabled(inSender, {
-      status: true
+      status: true,
+      tab: 'edit',
+      subtab: 'discount'
     });
     this.BPSelectionDisabled(inSender, {
       status: true
