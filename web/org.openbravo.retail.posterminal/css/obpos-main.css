@@ -8962,6 +8962,21 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   border-bottom: 0px;
 }
 
+/*
+# Component: actionButtonsContainerScrim
+*/
+.obObposPointOfSaleUiEditLine-msgedit-actionButtonsContainerScrim {}
+
+.obObposPointOfSaleUiEditLine-msgedit-actionButtonsContainerScrim.expanded{
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  z-index: 2;
+}
+
+
 
 .obObposPointOfSaleUiEditLine-propertiesToShow-descLine,
 .obObposPointOfSaleUiEditLine-propertiesToShow-returnReasonLine,
@@ -9121,7 +9136,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   background-color: white;
   width: calc(80% - 80px);
   max-width: 427px;
-  z-index: 2;
+  z-index: 3;
 }
 
 .obObposPointOfSaleUiEditLineShowMoreActionButtons,
@@ -9135,6 +9150,10 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   border-radius: 0px 4px 0px 0px;
   border-left: 1px solid #e8e8e8;
   min-width: 120px;
+}
+
+.obObposPointOfSaleUiEditLineShowLessActionButtons {
+  z-index: 3;
 }
 
 .obObposPointOfSaleUiEditLineShowMoreActionButtons:hover,
