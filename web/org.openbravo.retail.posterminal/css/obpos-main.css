@@ -692,103 +692,95 @@
   height: 100%;
 }
 
-.obUiPaymentButton-generic {
-  background-color: #6cb33f;
-  border: 10px solid #6cb33f;
-}
-
-.obUiPaymentButton_coin10 {
-  background-color: #e9b7c3;
-  border: 10px solid #e9b7c3;
-}
-
-.obUiPaymentButton_coin20 {
-  background-color: #bac3de;
-  border: 10px solid #bac3de;
-}
-
-.obUiPaymentButton_coin50 {
-  background-color: #f9bb92;
-  border: 10px solid #f9bb92;
-}
-
-.obUiPaymentButton_coin1 {
-  background-color: #e4e0e3;
-  border: 10px solid #f9e487;
-}
-
-.obUiPaymentButton_coin2 {
-  background-color: #f9e487;
-  border: 10px solid #e4e0e3;
-}
-
-.obUiPaymentButton_coin5 {
-  background-color: #bccdc5;
-  border: 10px solid #bccdc5;
-}
-
-.obUiPaymentButton_coin010 {
-  background-color: #f9e487;
-  border: 10px solid #f9e487;
-}
-
-.obUiPaymentButton_coin020 {
-  background-color: #f9e487;
-  border: 10px solid #f9e487;
-}
-
-.obUiPaymentButton_coin050 {
-  background-color: #f9e487;
-  border: 10px solid #f9e487;
-}
-
-.obUiPaymentButton_coin001 {
-  background-color: #f3bc9e;
-  border: 10px solid #f3bc9e;
-}
-
-.obUiPaymentButton_coin002 {
-  background-color: #f3bc9e;
-  border: 10px solid #f3bc9e;
-}
-
-.obUiPaymentButton_coin005 {
-  background-color: #f3bc9e;
-  border: 10px solid #f3bc9e;
-}
-
 .obUiPaymentButton-btn {
 /* # Inherits: [OB.UI.Button] */
   width: 100%;
   height: 100%;
-  border: none;
+  border-width: 10px;
+  border-style: solid;
   font-size: 18px;
   text-align: center;
   padding: 0px;
   text-decoration: none;
-  background-color: #e2e2e2;
   color: #000000;
   cursor: pointer;
   margin: 0px;
 }
 
-@media screen and (max-width: 842px) {
-  .obUiPaymentButton-btn {
-    font-size: 100%;
-  }
-}
-
 .obUiPaymentButton-btn.btn-over,
 .obUiPaymentButton-btn:hover {
-  opacity: 0.75;
+  filter: brightness(1.02);
 }
 
 .obUiPaymentButton-btn.btn-down,
 .obUiPaymentButton-btn:active {
-  opacity: 1;
-  background-color: #cccccc;
+  filter: saturate(250%) contrast(0.9);
 }
 
+.obUiPaymentButton-generic {
+  background-color: #e2e2e2;
+  border-color: #e2e2e2;
+}
+
+.obUiPaymentButton_coin10 {
+  background-color: #e9b7c3;
+  border-color: #e9b7c3;
+}
+
+.obUiPaymentButton_coin20 {
+  background-color: #bac3de;
+  border-color: #bac3de;
+}
+
+.obUiPaymentButton_coin50 {
+  background-color: #f9bb92;
+  border-color: #f9bb92;
+}
+
+.obUiPaymentButton_coin1 {
+  background-color: #e4e0e3;
+  border-color: #f9e487;
+}
+
+.obUiPaymentButton_coin2 {
+  background-color: #f9e487;
+  border-color: #e4e0e3;
+}
+
+.obUiPaymentButton_coin5 {
+  background-color: #bccdc5;
+  border-color: #bccdc5;
+}
+
+.obUiPaymentButton_coin010 {
+  background-color: #f9e487;
+  border-color: #f9e487;
+}
+
+.obUiPaymentButton_coin020 {
+  background-color: #f9e487;
+  border-color: #f9e487;
+}
+
+.obUiPaymentButton_coin050 {
+  background-color: #f9e487;
+  border-color: #f9e487;
+}
+
+.obUiPaymentButton_coin001 {
+  background-color: #f3bc9e;
+  border-color: #f3bc9e;
+}
+
+.obUiPaymentButton_coin002 {
+  background-color: #f3bc9e;
+  border-color: #f3bc9e;
+}
+
+.obUiPaymentButton_coin005 {
+  background-color: #f3bc9e;
+  border-color: #f3bc9e;
+}
 
 
 /***********************   ***********************/
@@ -2776,7 +2768,7 @@ li.selected > .obUiRenderOrderLine_edit {
   height: 50px;
   background-color: #4d545c;
   border-radius: 4px;
-  margin-top: 4px;
+  margin: 4px 0px 0px 15px;
 }
 
 .obUiShowServicesButton:hover {
@@ -5457,6 +5449,7 @@ li.selected > .obUiRenderOrderLine_edit {
 /* Inherits: [OB.UI.FormElement.IntegerEditor] */
 }
 
+.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent .obUiFormElement,
 .obUiModalSplitLine-body-header-numberlinesSetter .obUiFormElement,
 .obUiModalSplitLine-body-qtyLines .obUiFormElement {
   display: inline-grid;
@@ -5466,6 +5459,7 @@ li.selected > .obUiRenderOrderLine_edit {
     "obUiFormElement-mainArea";
 }
 
+.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent .obUiFormElement-mainArea,
 .obUiModalSplitLine-body-header-numberlinesSetter .obUiFormElement-mainArea,
 .obUiModalSplitLine-body-qtyLines .obUiFormElement-mainArea {
   display: inline-grid;
@@ -5476,6 +5470,11 @@ li.selected > .obUiRenderOrderLine_edit {
   justify-items: left;
 }
 
+.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent .obUiFormElement-mainArea {
+  grid-template-columns: 0 170px;
+  justify-content: center;
+}
+
 .obUiModalSplitLine-body-header-numberlinesSetter .obUiFormElement-mainArea {
   grid-template-columns: minmax(131px, 31.5%) minmax(160px, 38.5%);
 }
@@ -5484,6 +5483,7 @@ li.selected > .obUiRenderOrderLine_edit {
   grid-template-columns: 45% 55%;
 }
 
+.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent .obUiFormElement-mainArea-label,
 .obUiModalSplitLine-body-header-numberlinesSetter .obUiFormElement-mainArea-label,
 .obUiModalSplitLine-body-qtyLines .obUiFormElement-mainArea-label {
   display: grid;
@@ -5499,6 +5499,7 @@ li.selected > .obUiRenderOrderLine_edit {
   box-sizing: border-box;
 }
 
+.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent .obUiFormElement-mainArea-coreElementArea,
 .obUiModalSplitLine-body-header-numberlinesSetter .obUiFormElement-mainArea-coreElementArea,
 .obUiModalSplitLine-body-qtyLines .obUiFormElement-mainArea-coreElementArea {
   display: grid;
@@ -5508,11 +5509,17 @@ li.selected > .obUiRenderOrderLine_edit {
   text-align: center;
 }
 
+.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent .obUiFormElementIntegerEditor,
 .obUiModalSplitLine-body-header-numberlinesSetter .obUiFormElementIntegerEditor,
 .obUiModalSplitLine-body-qtyLines .obUiFormElementIntegerEditor {
   width: 100%;
 }
 
+.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent .obUiFormElement-icon,
+.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent .obUiFormElement-mainArea-label,
+.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent .obUiFormElement-mainArea-coreElementArea-eraser,
+.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent .obUiFormElement-mainArea-coreElementArea-passwordVisibilityToggle,
+.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent .obUiFormElement-messageArea,
 .obUiModalSplitLine-body-header-numberlinesSetter .obUiFormElement-icon,
 .obUiModalSplitLine-body-header-numberlinesSetter .obUiFormElement-mainArea-label-icon,
 .obUiModalSplitLine-body-header-numberlinesSetter .obUiFormElement-mainArea-coreElementArea-eraser,
@@ -7462,7 +7469,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obObposPointOfSaleUiPointOfSale-multiColumn-leftPanel-receiptview {
    /* Inherits: [OB.OBPOSPointOfSale.UI.ReceiptView] */
   float: left;
-  width: 100%;
   touch-action: none;
 }
 
@@ -7777,7 +7783,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   overflow-y: auto;
   display: grid;
   grid-template-rows: minmax(150px, 1fr) auto;
-  height: 100%;
 }
 
 .obObposPointOfSaleUiReceiptView-receiptWrapper-receiptFooter {
@@ -10232,14 +10237,29 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
-
 /*
 # Component: OB.UI.CustomerTextPropertyAddr
 # Inherits: [OB.UI.CustomerTextProperty]
 */
 .obUiCustomerTextPropertyAddr {}
 
-
+/*
+# Component: OB.UI.CustomerStatisticsTextProperty
+# Inherits: [enyo.Input]
+*/
+.obUiCustomerStatisticsTextProperty {
+  width: 100%;
+  height: 30px;
+  margin: 0px;
+  background-color: white;
+  padding: 4px;
+  margin-bottom: 9px;
+  color: #555555;
+  border: 1px solid #cccccc;
+  font-size: var(--font-medium);
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+    
 /*
 # Component: OB.UI.SwitchShippingInvoicingAddr
 */
@@ -10315,23 +10335,81 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   overflow-x: hidden;
 }
 
+
 .obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields {
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-personalInfo{}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-personalInfo-personalInfoLbl{
+	/* Inherits: [OB.UI.FormSection.Label] */
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-personalInfo-personalInfoFields{
   display: grid;
   grid-auto-flow: row;
   grid-template-columns: 1fr 1fr 1fr;
-  grid-column-gap: 15px;
 }
 
 @media all and (max-aspect-ratio: 9/8) {
-  .obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields {
+  .obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-personalInfo-personalInfoFields {
     display: grid;
     grid-auto-flow: row;
     grid-template-columns: 1fr;
   }
 }
 
-.obObposPointOfSaleUiCustomersEditCreatecustomers-customerOnlyFields-obUiCustomerPropertyLine {
-/* Inherits: [OB.UI.CustomerPropertyLine] */
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-personalInfo-personalInfoFields-obUiCustomerPropertyLine {
+	/* Inherits: [OB.UI.CustomerPropertyLine] */
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-contactInfo{}
+    
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-contactInfo-contactInfoLbl{
+	/* Inherits: [OB.UI.FormSection.Label] */
+} 
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-contactInfo-contactInfoFields{
+  display: grid;
+  grid-auto-flow: row;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+@media all and (max-aspect-ratio: 9/8) {
+  .obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-contactInfo-contactInfoFields {
+    display: grid;
+    grid-auto-flow: row;
+    grid-template-columns: 1fr;
+  }
+}
+
+      
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-contactInfo-contactInfoFields-obUiCustomerPropertyLine {
+	/* Inherits: [OB.UI.CustomerPropertyLine] */
+}
+             
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-otherInfo{}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-otherInfo-otherInfoLbl{
+	/* Inherits: [OB.UI.FormSection.Label] */
+} 
+ 
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-otherInfo-otherInfoFields{
+  display: grid;
+  grid-auto-flow: row;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+@media all and (max-aspect-ratio: 9/8) {
+  .obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-otherInfo-otherInfoFields {
+    display: grid;
+    grid-auto-flow: row;
+    grid-template-columns: 1fr;
+  }
+}
+       
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-otherInfo-otherInfoFields-obUiCustomerPropertyLine {
+	/* Inherits: [OB.UI.CustomerPropertyLine] */
 }
 
 
@@ -10433,11 +10511,37 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obObposPointOfSaleUiCustomersEditCreatecustomers-invoicingAddrFields-obUiCustomerPropertyLine {
 /* Inherits: [OB.UI.CustomerPropertyLine] */
 }
-
 .obObposPointOfSaleUiCustomersEditCreatecustomers-invoicingAddrFields-obUiCustomerPropertyLine .obUiFormElement-icon {
   width: 40px;
 }
 
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-statistics {}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-statistics-statisticsLbl {
+	/*OB.UI.FormSection.Label*/
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-statistics-statisticsFields {
+  display: grid;
+  grid-auto-flow: row;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+@media all and (max-aspect-ratio: 9/8) {
+  .obObposPointOfSaleUiCustomersEditCreatecustomers-statistics-statisticsFields {
+    display: grid;
+    grid-auto-flow: row;
+    grid-template-columns: 1fr;
+  }
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-statisticsFields-obUiCustomerPropertyLine {
+/* Inherits: [OB.UI.CustomerPropertyLine] */
+}
+
+.obObposPointOfSaleUiCustomersEditCreatecustomers-statisticsFields-obUiCustomerPropertyLine .obUiFormElement-icon {
+  width: 40px;
+}
 /*************************   *************************/
 /*         File: editcreatecustomerform.js           */
 /* Folder: js/pointofsale/view/subwindows/customers/ */
@@ -10690,6 +10794,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObPosPointOfSaleUiCustomersEditCustomerFooter-buttonContainer {}
 
+.obObPosPointOfSaleUiCustomersEditCustomerFooter-generic,
 .obObPosPointOfSaleUiCustomersEditCustomerFooter-editbp,
 .obObPosPointOfSaleUiCustomersEditCustomerFooter-assigncustomertoticket,
 .obObPosPointOfSaleUiCustomersEditCustomerFooter-managebpaddress,
@@ -10773,6 +10878,22 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObPosPointOfSaleUiCustomersEditCustomersImpl-contactpreferences {
   /* Inherits: [OB.UI.CustomerCheckComboProperty] */
+}
+
+.obObPosPointOfSaleUiCustomersEditCustomersImpl-recency {
+	/* Inherits: [OB.UI.CustomerSatisticsTextProperty] */
+}
+
+.obObPosPointOfSaleUiCustomersEditCustomersImpl-frequency {
+	/* Inherits: [OB.UI.CustomerSatisticsTextProperty] */
+}
+
+.obObPosPointOfSaleUiCustomersEditCustomersImpl-monetaryValue {
+	/* Inherits: [OB.UI.CustomerSatisticsTextProperty] */
+}
+
+.obObPosPointOfSaleUiCustomersEditCustomersImpl-averageCart {
+	/* Inherits: [OB.UI.CustomerSatisticsTextProperty] */
 }
 
 
@@ -13537,12 +13658,14 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposCashUpUiRenderCashPaymentsLine-listItem-coinComponent-coin {
-  /*Inherits: [OB.UI.MediumButton]*/
-  background-color: #e2e2e2;
+  /*Inherits: [OB.UI.Button]*/
   color: var(--color-primary-darker);
   text-align: center;
   font-weight: normal;
-  border: none;
+  border-color: #e2e2e2;
+  background-color: #e2e2e2;
+  border-width: 6px;
+  border-style: solid;
   border-radius: 4px;
   height: 50px;
   font-size: var(--font-medium);
@@ -13550,81 +13673,21 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   width: 85%;
 }
 
+.obObposCashUpUiRenderCashPaymentsLine-listItem-coinComponent-coin:hover {
+  filter: brightness(1.02);
+}
+
+.obObposCashUpUiRenderCashPaymentsLine-listItem-coinComponent-coin:active {
+  filter: saturate(250%) contrast(0.9);
+}
+
 .obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent {
   width: 55%;
   text-align: center;
 }
 
-.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-qtyminus {
-  /*Inherits: [OB.UI.Button]*/
-  margin: 0px;
-  width: 50px;
-  height: 50px;
-  font-size: 24px;
-  border-radius: 4px 0px 0px 4px;
-  background-color: #4d545c;
-  color: #e8e8e8;
-}
-
-.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-qtyminus:hover {
-  background-color: #3a3f45;
-  opacity: 1;
-}
-
-.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-qtyminus:active {
-  background-color: #232629;
-  opacity: 1;
-}
-
-.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-qtyminus.disabled {
-  background-color: #d0d2d3;
-  opacity: 1;
-  color: #90979f;
-  cursor: default;
-}
-
-.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-numberOfCoins {
-  /*Inherits: [OB.UI.Button]*/
-  background-color: var(--color-primary-lighter);
-  color: var(--color-primary-darker);
-  border: 1px solid #cccccc;
-  margin: 0px;
-  min-width: 70px;
-  height: 50px;
-  font-size: 16px;
-  box-shadow: 0px 0px 4px -1px #8d8d8d;
-}
-
-.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-numberOfCoins_selected {
+.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-formElementNumberlinesQty_activeInKeypad .obUiFormElementInput {
   background-color: #e2e2e2;
-}
-
-.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-qtyplus {
-  /*Inherits: [OB.UI.SmallButton]*/
-  margin: 0px;
-  width: 50px;
-  height: 50px;
-  font-size: 24px;
-  border-radius: 0px 4px 4px 0px;
-  background-color: #4d545c;
-  color: #e8e8e8;
-}
-
-.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-qtyplus:hover {
-  background-color: #3a3f45;
-  opacity: 1;
-}
-
-.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-qtyplus:active {
-  background-color: #232629;
-  opacity: 1;
-}
-
-.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-qtyplus.disabled {
-  background-color: #d0d2d3;
-  opacity: 1;
-  color: #90979f;
-  cursor: default;
 }
 
 .obObposCashUpUiRenderCashPaymentsLine-listItem-total {

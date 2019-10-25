@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018 Openbravo S.L.U.
+ * Copyright (C) 2018-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -25,22 +25,21 @@ public class SearchRelatedReceipts extends ProcessHQLQuery {
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
 
     // Getting orderId for the documentNo
-    final StringBuffer hqlRelatedReceipts = new StringBuffer();
-    hqlRelatedReceipts.append("SELECT o.id AS id, o.documentNo AS documentNo, ");
-    hqlRelatedReceipts.append("o.orderDate AS orderDate, o.grandTotalAmount AS amount, ");
-    hqlRelatedReceipts.append("sum(psd.amount) AS pending ");
-    hqlRelatedReceipts.append("FROM FIN_Payment_ScheduleDetail AS psd ");
-    hqlRelatedReceipts.append("JOIN psd.orderPaymentSchedule AS ps ");
-    hqlRelatedReceipts.append("JOIN ps.order AS o ");
-    hqlRelatedReceipts.append("WHERE o.documentStatus <> 'CL' ");
-    hqlRelatedReceipts.append("AND psd.paymentDetails IS NULL ");
-    hqlRelatedReceipts.append("AND o.businessPartner.id = :bp ");
-    hqlRelatedReceipts.append("AND o.id <> :currentOrder ");
-    hqlRelatedReceipts.append("AND o.$readableSimpleCriteria AND o.$naturalOrgCriteria ");
-    hqlRelatedReceipts.append("GROUP BY o.id, o.documentNo, o.orderDate, o.grandTotalAmount ");
-    hqlRelatedReceipts.append("ORDER BY o.orderDate");
+    final String hqlRelatedReceipts = "SELECT o.id AS id, o.documentNo AS documentNo, " //
+        + "o.orderDate AS orderDate, o.grandTotalAmount AS amount, " //
+        + "sum(psd.amount) AS pending " //
+        + "FROM FIN_Payment_ScheduleDetail AS psd " //
+        + "JOIN psd.orderPaymentSchedule AS ps " //
+        + "JOIN ps.order AS o " //
+        + "WHERE o.documentStatus <> 'CL' " //
+        + "AND psd.paymentDetails IS NULL " //
+        + "AND o.businessPartner.id = :bp " //
+        + "AND o.id <> :currentOrder " //
+        + "AND o.$readableSimpleCriteria AND o.$naturalOrgCriteria " //
+        + "GROUP BY o.id, o.documentNo, o.orderDate, o.grandTotalAmount " //
+        + "ORDER BY o.orderDate"; //
 
-    return Arrays.asList(new String[] { hqlRelatedReceipts.toString() });
+    return Arrays.asList(hqlRelatedReceipts);
   }
 
   @Override
