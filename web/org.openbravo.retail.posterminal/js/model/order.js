@@ -4703,14 +4703,14 @@
       }
 
       if (allDiscountedAmt > 0 && line.get('qty') > 0) {
-        currentDiscountedLinePrice = OB.DEC.toNumber(
-          new BigDecimal(String(line.get('price'))).subtract(
-            new BigDecimal(String(allDiscountedAmt)).divide(
-              new BigDecimal(String(line.get('qty'))),
-              20,
-              OB.DEC.getRoundingMode()
-            )
-          )
+        currentDiscountedLinePrice = OB.DEC.sub(
+          line.get('price'),
+          OB.DEC.div(
+            allDiscountedAmt,
+            line.get('qty'),
+            OB.DEC.getRoundingMode()
+          ),
+          OB.DEC.getRoundingMode()
         );
       } else {
         currentDiscountedLinePrice = line.get('price');
