@@ -36,7 +36,7 @@ import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.OrderlineServiceRelation;
 
 @Dependent
-class CreateReplacementOrderExecutor {
+class CreateReplacementOrderExecutor extends CancelAndReplaceUtils {
   private Order oldOrder;
   private Organization organization;
   private Warehouse warehouse;
@@ -74,13 +74,13 @@ class CreateReplacementOrderExecutor {
     Date today = new Date();
     newOrder.setOrderDate(today);
     newOrder.setReplacedorder(oldOrder);
-    String newDocumentNo = CancelAndReplaceUtils.getNextCancelDocNo(oldOrder.getDocumentNo());
+    String newDocumentNo = getNextCancelDocNo(oldOrder.getDocumentNo());
     newOrder.setDocumentNo(newDocumentNo);
     OBDal.getInstance().save(newOrder);
 
     // Create new Order lines
     long i = 0;
-    try (final ScrollableResults orderLines = CancelAndReplaceUtils.getOrderLineList(oldOrder)) {
+    try (final ScrollableResults orderLines = getOrderLineList(oldOrder)) {
       while (orderLines.next()) {
         OrderLine oldOrderLine = (OrderLine) orderLines.get(0);
         // Skip discount lines as they will be created when booking the replacement order
