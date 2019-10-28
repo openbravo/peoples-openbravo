@@ -590,13 +590,13 @@ public class CancelAndReplaceUtils {
       TriggerHandler.getInstance().enable();
     }
     try {
-      if (newOrdersOptional.isPresent()) {
-        newOrdersOptional.get()
-            .stream()
-            .forEach(newOrder -> runCancelAndReplaceOrderHook(oldOrder, inverseOrder,
-                Optional.of(newOrder), jsonOrder));
+      if (newOrdersOptional.isPresent() && newOrdersOptional.get().size() > 1) {
+        runCancelAndReplaceOrderHook(oldOrder, inverseOrder, newOrdersOptional.get(), jsonOrder,
+            newOrdersOptional.isPresent());
       } else {
-        runCancelAndReplaceOrderHook(oldOrder, inverseOrder, Optional.empty(), jsonOrder);
+        runCancelAndReplaceOrderHook(oldOrder, inverseOrder,
+            newOrdersOptional.map(newOrders -> newOrders.get(0)).orElse(null), jsonOrder,
+            newOrdersOptional.isPresent());
       }
     } finally {
       if (areTriggersDisabled(jsonOrder)) {
@@ -606,11 +606,22 @@ public class CancelAndReplaceUtils {
   }
 
   private static void runCancelAndReplaceOrderHook(Order oldOrder, Order inverseOrder,
-      Optional<Order> newOrder, JSONObject jsonOrder) {
+      Order newOrder, JSONObject jsonOrder, boolean replaceOrder) {
     try {
       WeldUtils.getInstanceFromStaticBeanManager(CancelAndReplaceOrderHookCaller.class)
-          .executeHook(newOrder.isPresent(), areTriggersDisabled(jsonOrder), oldOrder,
-              newOrder.orElse(null), inverseOrder, jsonOrder);
+          .executeHook(replaceOrder, areTriggersDisabled(jsonOrder), oldOrder, newOrder,
+              inverseOrder, jsonOrder);
+    } catch (final Exception e) {
+      throw new OBException(e);
+    }
+  }
+
+  private static void runCancelAndReplaceOrderHook(Order oldOrder, Order inverseOrder,
+      List<Order> newOrders, JSONObject jsonOrder, boolean replaceOrder) {
+    try {
+      WeldUtils.getInstanceFromStaticBeanManager(CancelAndReplaceOrderHookCaller.class)
+          .executeHook(replaceOrder, areTriggersDisabled(jsonOrder), oldOrder, newOrders,
+              inverseOrder, jsonOrder);
     } catch (final Exception e) {
       throw new OBException(e);
     }
