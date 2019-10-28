@@ -455,10 +455,10 @@ public class CancelAndReplaceUtils {
 
           // Create inverse Order line
           final OrderLine inverseOrderLine = createInverseOrderLine(oldOrderLine, inverseOrder,
-              replaceOrder, triggersDisabled);
+              triggersDisabled);
 
           // Netting goods shipment is created
-          if (createNettingGoodsShipment && inverseOrderLine != null) {
+          if (createNettingGoodsShipment) {
             // Create Netting goods shipment Header
             if (nettingGoodsShipment == null) {
               nettingGoodsShipment = createNettingGoodShipmentHeader(oldOrder);
@@ -511,7 +511,7 @@ public class CancelAndReplaceUtils {
               OBDal.getInstance().save(newOrderLine);
             }
             // Shipment lines of original order lines are reassigned to the new order line
-          } else if (associateShipmentToNewReceipt && replaceOrder) {
+          } else if (associateShipmentToNewReceipt) {
             try {
               shipmentLines = getShipmentLineListOfOrderLine(oldOrderLine);
               long k = 0;
@@ -574,10 +574,9 @@ public class CancelAndReplaceUtils {
           OBDal.getInstance().save(oldOrderLine);
 
           // Set inverse order delivered quantity to ordered quantity
-          if (inverseOrderLine != null) {
-            inverseOrderLine.setDeliveredQuantity(inverseOrderLine.getOrderedQuantity());
-            OBDal.getInstance().save(inverseOrderLine);
-          }
+          inverseOrderLine.setDeliveredQuantity(inverseOrderLine.getOrderedQuantity());
+          OBDal.getInstance().save(inverseOrderLine);
+
           if ((++i % 100) == 0) {
             OBDal.getInstance().flush();
             OBDal.getInstance().getSession().clear();
@@ -594,7 +593,7 @@ public class CancelAndReplaceUtils {
       }
       // Create or update the needed services relations
       if (replaceOrder) {
-        updateServicesRelations(jsonorder, oldOrder, inverseOrder, newOrderIdSet, replaceOrder);
+        updateServicesRelations(oldOrder, newOrderIdSet, jsonorder);
       }
       // The netting shipment is flagged as processed.
       if (nettingGoodsShipment != null) {
@@ -764,7 +763,7 @@ public class CancelAndReplaceUtils {
   }
 
   private static Order createInverseOrder(Order oldOrder, String documentNo,
-      boolean triggersDisabled) throws JSONException, ParseException {
+      boolean triggersDisabled) throws ParseException {
     Order inverseOrder = (Order) DalUtil.copy(oldOrder, false, true);
     // Change order values
     inverseOrder.setCreatedBy(OBContext.getOBContext().getUser());
@@ -817,21 +816,10 @@ public class CancelAndReplaceUtils {
   }
 
   private static OrderLine createInverseOrderLine(OrderLine oldOrderLine, Order inverseOrder,
-      boolean replaceOrder, boolean triggersDisabled) {
-    if (!replaceOrder
-        && oldOrderLine.getDeliveredQuantity().compareTo(oldOrderLine.getOrderedQuantity()) == 0) {
-      return null;
-    }
+      boolean triggersDisabled) {
     OrderLine inverseOrderLine = (OrderLine) DalUtil.copy(oldOrderLine, false, true);
     inverseOrderLine.setSalesOrder(inverseOrder);
-    if (!replaceOrder && oldOrderLine.getDeliveredQuantity().compareTo(BigDecimal.ZERO) == 1) {
-      BigDecimal inverseOrderedQuantity = oldOrderLine.getOrderedQuantity()
-          .subtract(oldOrderLine.getDeliveredQuantity())
-          .negate();
-      inverseOrderLine.setOrderedQuantity(inverseOrderedQuantity);
-    } else {
-      inverseOrderLine.setOrderedQuantity(inverseOrderLine.getOrderedQuantity().negate());
-    }
+    inverseOrderLine.setOrderedQuantity(inverseOrderLine.getOrderedQuantity().negate());
     if (triggersDisabled) {
       inverseOrderLine.setLineGrossAmount(oldOrderLine.getLineGrossAmount().negate());
       inverseOrderLine.setLineNetAmount(oldOrderLine.getLineNetAmount().negate());
@@ -994,10 +982,8 @@ public class CancelAndReplaceUtils {
 
   private static void createNewReservations(Order newOrder) {
     if (getEnableStockReservationsPreferenceValue(newOrder.getOrganization())) {
-      ScrollableResults newOrderLines = null;
-      try {
-        // Iterate old order lines
-        newOrderLines = getOrderLineList(newOrder);
+      // Iterate old order lines
+      try (final ScrollableResults newOrderLines = getOrderLineList(newOrder)) {
         int i = 0;
         while (newOrderLines.next()) {
           OrderLine newOrderLine = (OrderLine) newOrderLines.get(0);
@@ -1018,13 +1004,8 @@ public class CancelAndReplaceUtils {
       } catch (Exception e) {
         log4j.error("Error in CancelAndReplaceUtils.createNewReservations", e);
         throw new OBException(e.getMessage(), e);
-      } finally {
-        if (newOrderLines != null) {
-          newOrderLines.close();
-        }
       }
     }
-
   }
 
   private static Reservation getReservationForOrderLine(OrderLine line) {
@@ -1066,7 +1047,7 @@ public class CancelAndReplaceUtils {
    */
   private static void createMTransaction(ShipmentInOutLine line, boolean triggersDisabled) {
     Product prod = line.getProduct();
-    if (prod.getProductType().equals("I") && line.getProduct().isStocked()) {
+    if (prod.getProductType().equals("I") && line.getProduct().isStocked().booleanValue()) {
       // Stock is changed only for stocked products of type "Item"
       MaterialTransaction transaction = OBProvider.getInstance().get(MaterialTransaction.class);
       transaction.setOrganization(line.getOrganization());
@@ -1084,7 +1065,7 @@ public class CancelAndReplaceUtils {
       } else if (prod.getAttributeSet() != null
           && (prod.getUseAttributeSetValueAs() == null
               || !"F".equals(prod.getUseAttributeSetValueAs()))
-          && prod.getAttributeSet().isRequireAtLeastOneValue()) {
+          && prod.getAttributeSet().isRequireAtLeastOneValue().booleanValue()) {
         // Set fake AttributeSetInstance to transaction line for netting shipment as otherwise it
         // will return an error when the product has an attribute set and
         // "Is Required at Least One Value" property of the attribute set is "Y"
@@ -1111,17 +1092,15 @@ public class CancelAndReplaceUtils {
    * new tickets product.
    * 
    * @param oldOrder
-   *          The order that have been canceled.
-   * @param inverseOrder
-   *          The order that is canceling the old order.
-   * @param newOrder
-   *          The order that is replacing the old order.
-   * @param replaceOrder
-   *          If true, the process is C&R, otherwise is a CL process.
+   *          The order that has been canceled.
+   * @param newOrderIdSet
+   *          The orders that are replacing the old order.
+   * @param jsonorder
+   *          Parameter with order information coming from Web POS.
    * @throws JSONException
    */
-  private static void updateServicesRelations(JSONObject jsonorder, Order oldOrder,
-      Order inverseOrder, Set<String> newOrderIdSet, boolean replaceOrder) throws JSONException {
+  private static void updateServicesRelations(Order oldOrder, Set<String> newOrderIdSet,
+      JSONObject jsonorder) throws JSONException {
     final List<String> createdRelations = new ArrayList<>();
     final List<OrderlineServiceRelation> relationsToRemove = new ArrayList<>();
     final OBCriteria<OrderLine> oldOrderLineCriteria = OBDal.getInstance()
@@ -1158,103 +1137,57 @@ public class CancelAndReplaceUtils {
             OBDal.getInstance().save(inverseServiceRelation);
           } else {
             // Is a deferred relation
-            if (replaceOrder) {
-              if (linesRelations.containsKey(serviceRelation.getOrderlineRelated().getId())) {
-                // A product is being replaced, so the service relation must be removed (the new
-                // relation is added in the new ticket synchronization)
-                OrderLine newOrderLine = null;
-                final OBCriteria<OrderLine> newOrderLineCriteria = OBDal.getInstance()
-                    .createCriteria(OrderLine.class);
-                if (jsonorder != null) {
-                  final JSONArray lines = jsonorder.getJSONArray("lines");
-                  for (int i = 0; i < lines.length(); i++) {
-                    final JSONObject line = lines.getJSONObject(i);
-                    if (line.has("linepos")
-                        && (line.getInt("linepos") + 1) * 10 == oldOrderLine.getLineNo()) {
-                      newOrderLineCriteria.add(
-                          Restrictions.eq(OrderLine.PROPERTY_SALESORDER + ".id", newOrderIdSet));
-                      newOrderLineCriteria
-                          .add(Restrictions.eq(OrderLine.PROPERTY_LINENO, (long) ((i + 1) * 10)));
-                      newOrderLineCriteria.setMaxResults(1);
-                      newOrderLine = (OrderLine) newOrderLineCriteria.uniqueResult();
-                      break;
-                    }
+            if (linesRelations.containsKey(serviceRelation.getOrderlineRelated().getId())) {
+              // A product is being replaced, so the service relation must be removed (the new
+              // relation is added in the new ticket synchronization)
+              OrderLine newOrderLine = null;
+              final OBCriteria<OrderLine> newOrderLineCriteria = OBDal.getInstance()
+                  .createCriteria(OrderLine.class);
+              if (jsonorder != null) {
+                final JSONArray lines = jsonorder.getJSONArray("lines");
+                for (int i = 0; i < lines.length(); i++) {
+                  final JSONObject line = lines.getJSONObject(i);
+                  if (line.has("linepos")
+                      && (line.getInt("linepos") + 1) * 10 == oldOrderLine.getLineNo()) {
+                    newOrderLineCriteria
+                        .add(Restrictions.eq(OrderLine.PROPERTY_SALESORDER + ".id", newOrderIdSet));
+                    newOrderLineCriteria
+                        .add(Restrictions.eq(OrderLine.PROPERTY_LINENO, (long) ((i + 1) * 10)));
+                    newOrderLineCriteria.setMaxResults(1);
+                    newOrderLine = (OrderLine) newOrderLineCriteria.uniqueResult();
+                    break;
                   }
-                } else {
-                  newOrderLineCriteria
-                      .add(Restrictions.eq(OrderLine.PROPERTY_REPLACEDORDERLINE, oldOrderLine));
-                  newOrderLineCriteria.setMaxResults(1);
-                  newOrderLine = (OrderLine) newOrderLineCriteria.uniqueResult();
-                }
-                if (newOrderLine != null) {
-                  // The product haven't been removed during the C&R process. The relation must be
-                  // moved from the original order to the new order.
-                  serviceRelation.setOrderlineRelated(newOrderLine);
-                  OBDal.getInstance().save(serviceRelation);
-                } else {
-                  // The product have been removed during the C&R process. The service relation must
-                  // be removed.
-                  relationsToRemove.add(serviceRelation);
                 }
               } else {
-                // A deferred service has been replaced (or canceled), so the relation must also be
-                // created for the inverse order
-                final OrderLine inverseServiceLine = OBDal.getInstance()
-                    .get(OrderLine.class,
-                        linesRelations.get(serviceRelation.getSalesOrderLine().getId()));
-                final OrderlineServiceRelation inverseServiceRelation = (OrderlineServiceRelation) DalUtil
-                    .copy(serviceRelation, false, true);
-                inverseServiceRelation.setSalesOrderLine(inverseServiceLine);
-                inverseServiceRelation.setAmount(inverseServiceRelation.getAmount().negate());
-                inverseServiceRelation.setQuantity(inverseServiceRelation.getQuantity().negate());
-                OBDal.getInstance().save(inverseServiceRelation);
+                newOrderLineCriteria
+                    .add(Restrictions.eq(OrderLine.PROPERTY_REPLACEDORDERLINE, oldOrderLine));
+                newOrderLineCriteria.setMaxResults(1);
+                newOrderLine = (OrderLine) newOrderLineCriteria.uniqueResult();
+              }
+              if (newOrderLine != null) {
+                // The product haven't been removed during the C&R process. The relation must be
+                // moved from the original order to the new order.
+                serviceRelation.setOrderlineRelated(newOrderLine);
+                OBDal.getInstance().save(serviceRelation);
+              } else {
+                // The product have been removed during the C&R process. The service relation must
+                // be removed.
+                relationsToRemove.add(serviceRelation);
               }
             } else {
-              if (!linesRelations.containsKey(serviceRelation.getSalesOrderLine().getId())
-                  && linesRelations.containsKey(serviceRelation.getOrderlineRelated().getId())
-                  && serviceRelation.getOrderlineRelated()
-                      .getSalesOrder()
-                      .getId()
-                      .equals(oldOrder.getId())) {
-                if (serviceRelation.getSalesOrderLine()
-                    .getSalesOrder()
-                    .getId()
-                    .equals(oldOrder.getId())) {
-                  // A product with a related delivered service (in the same ticket) is being
-                  // canceled. The relation between the original product and the service must be
-                  // removed.
-                  relationsToRemove.add(serviceRelation);
-                } else {
-                  if (serviceRelation.getSalesOrderLine().getSalesOrder().isCancelled()
-                      && serviceRelation.getSalesOrderLine()
-                          .getSalesOrder()
-                          .getCancelledorder() != null) {
-                    // A product is being canceled that contains a deferred service that has been
-                    // already canceled. The relation created from the canceled service to the
-                    // original product must be moved to the canceled product.
-                    final OrderLine inverseProductLine = OBDal.getInstance()
-                        .get(OrderLine.class,
-                            linesRelations.get(serviceRelation.getOrderlineRelated().getId()));
-                    serviceRelation.setOrderlineRelated(inverseProductLine);
-                    OBDal.getInstance().save(serviceRelation);
-                  }
-                }
-              } else {
-                // The CL has a service that is being canceled, which is related to a product in
-                // other ticket (the product is deferred) or to a product that have been delivered
-                // in the same ticket. The new cancellation line of this service must also be
-                // related to the product.
-                final OrderLine inverseServiceLine = OBDal.getInstance()
-                    .get(OrderLine.class,
-                        linesRelations.get(serviceRelation.getSalesOrderLine().getId()));
-                final OrderlineServiceRelation inverseServiceRelation = (OrderlineServiceRelation) DalUtil
-                    .copy(serviceRelation, false, true);
-                inverseServiceRelation.setSalesOrderLine(inverseServiceLine);
-                inverseServiceRelation.setAmount(inverseServiceRelation.getAmount().negate());
-                inverseServiceRelation.setQuantity(inverseServiceRelation.getQuantity().negate());
-                OBDal.getInstance().save(inverseServiceRelation);
-              }
+              // A deferred service has been replaced (or canceled), so the relation must also be
+              // created for the inverse order
+              final OrderLine inverseServiceLine = OBDal.getInstance()
+                  .get(OrderLine.class,
+                      linesRelations.get(serviceRelation.getSalesOrderLine().getId()));
+              final OrderlineServiceRelation inverseServiceRelation = (OrderlineServiceRelation) DalUtil
+                  .copy(serviceRelation, false, true);
+              inverseServiceRelation.setSalesOrderLine(inverseServiceLine);
+              inverseServiceRelation.setAmount(inverseServiceRelation.getAmount().negate());
+              inverseServiceRelation.setQuantity(inverseServiceRelation.getQuantity().negate());
+              OBDal.getInstance().save(inverseServiceRelation);
             }
+
           }
         }
       }
@@ -1275,11 +1208,10 @@ public class CancelAndReplaceUtils {
    *          The query to be executed.
    */
   private static void updateInventory(MaterialTransaction transaction) {
-    try {
-      // Stock manipulation
-      org.openbravo.database.ConnectionProvider cp = new DalConnectionProvider(false);
-      CallableStatement updateStockStatement = cp.getConnection()
-          .prepareCall("{call M_UPDATE_INVENTORY (?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+    // Stock manipulation
+    try (final CallableStatement updateStockStatement = new DalConnectionProvider(false)
+        .getConnection()
+        .prepareCall("{call M_UPDATE_INVENTORY (?,?,?,?,?,?,?,?,?,?,?,?,?)}")) {
       // client
       updateStockStatement.setString(1, OBContext.getOBContext().getCurrentClient().getId());
       // org
@@ -1532,8 +1464,8 @@ public class CancelAndReplaceUtils {
     nettingPayment.setFinancialTransactionAmount(BigDecimal.ZERO);
     nettingPayment.setUsedCredit(BigDecimal.ZERO);
     String truncatedDescription = (description.length() > 255)
-        ? description.substring(0, 252).concat("...").toString()
-        : description.toString();
+        ? description.substring(0, 252).concat("...")
+        : description;
     nettingPayment.setDescription(truncatedDescription);
     return nettingPayment;
   }
@@ -1546,7 +1478,7 @@ public class CancelAndReplaceUtils {
   private static FIN_Payment createOrUdpatePayment(JSONObject jsonorder, FIN_Payment nettingPayment,
       Order order, Organization paymentOrganization, FIN_PaymentMethod paymentPaymentMethod,
       BigDecimal amount, DocumentType paymentDocumentType, FIN_FinancialAccount financialAccount,
-      String paymentDocumentNo) throws Exception {
+      String paymentDocumentNo) {
 
     FIN_Payment _nettingPayment = nettingPayment;
     // Get the payment schedule of the order
@@ -1658,9 +1590,7 @@ public class CancelAndReplaceUtils {
 
   private static String getOrderDocumentNoLabel() {
     String language = OBContext.getOBContext().getLanguage().getLanguage();
-    String paymentDescription = Utility.messageBD(new DalConnectionProvider(false),
-        "OrderDocumentno", language);
-    return paymentDescription;
+    return Utility.messageBD(new DalConnectionProvider(false), "OrderDocumentno", language);
   }
 
   private static String getPaymentDocumentNo(boolean useOrderDocumentNoForRelatedDocs, Order order,
