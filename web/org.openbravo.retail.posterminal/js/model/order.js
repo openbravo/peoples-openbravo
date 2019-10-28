@@ -7730,7 +7730,10 @@
                 var provider;
                 var firstpayment =
                   OB.MobileApp.model.paymentnames[payment.get('kind')];
-                if (firstpayment.providerGroup && firstpayment.providerGroup.id !== '0') {
+                if (
+                  firstpayment.providerGroup &&
+                  firstpayment.providerGroup.id !== '0'
+                ) {
                   // Create a provider group instance that allows to return only with the same payment method.
                   var providerGroup = {
                     provider: firstpayment.providerGroup,
