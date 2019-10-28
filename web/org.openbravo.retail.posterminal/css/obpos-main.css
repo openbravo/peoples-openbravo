@@ -15029,13 +15029,17 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.EditLine.DeliveryModesButton
-# Inherits: [OB.UI.SmallButton]
+# Inherits: [OB.UI.Button]
 */
-.obObposPointOfSaleUiEditLineDeliveryModesButton {
-  min-width: 200px;
-  height: 50px;
-  border-radius: 4px;
-  margin-bottom: 10px;
+.obObposPointOfSaleUiEditLineDeliveryModesButton {}
+
+.obObposPointOfSaleUiEditLineDeliveryModesButton .obUiButton-components-icon {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconActButtonDeliveryMode.svg');
+  background-size: auto 16px;
+}
+
+.obObposPointOfSaleUiEditLineDeliveryModesButton.disabled .obUiButton-components-icon {
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconActButtonDeliveryMode_disabled.svg');
 }
 
 /*
