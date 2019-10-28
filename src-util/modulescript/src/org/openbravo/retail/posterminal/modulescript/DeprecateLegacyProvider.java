@@ -66,7 +66,7 @@ public class DeprecateLegacyProvider extends ModuleScript {
       
       PreparedStatement ps1 = cp
           .getPreparedStatement( //
-              "UPDATE OBPOS_APP_PAYMENT_TYPE SET OBPOS_PAYMENTGROUP_ID ='0' \n" + //
+              "UPDATE OBPOS_APP_PAYMENT_TYPE SET OBPOS_PAYMENTGROUP_ID = '0' " + //
               "WHERE OBPOS_PAYMENTGROUP_ID IS NULL AND (PAYMENTPROVIDER IS NOT NULL OR REFUNDPROVIDER IS NOT NULL)");
       ps1.executeUpdate();
       ps1.close();
