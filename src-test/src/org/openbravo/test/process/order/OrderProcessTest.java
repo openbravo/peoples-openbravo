@@ -20,6 +20,7 @@
 package org.openbravo.test.process.order;
 
 import static org.hamcrest.Matchers.comparesEqualTo;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
@@ -65,31 +66,31 @@ public class OrderProcessTest extends OBBaseTest {
 
   private String testNumber;
   private String testDescription;
-  private String documentStatus;
+  private String documentStatusInitial;
+  private String documentStatusFinal;
   private String documentAction;
 
-  public OrderProcessTest(String testNumber, String testDescription, String documentStatus,
-      String documentAction) {
+  public OrderProcessTest(String testNumber, String testDescription, String documentStatusInitial,
+      String documentStatusFinal, String documentAction) {
     this.testNumber = testNumber;
     this.testDescription = testDescription;
-    this.documentStatus = documentStatus;
+    this.documentStatusInitial = documentStatusInitial;
+    this.documentStatusFinal = documentStatusFinal;
     this.documentAction = documentAction;
   }
 
-  /** parameterized possible combinations for taxes computation */
   @Parameters(name = "idx:{0} name:{1}")
   public static Collection<Object[]> params() {
     Object[][] params = new Object[][] {
-        { "01", "Check Order in Not Confirmed can be Closed", "NC", "CL" }, //
-        { "02", "Check Order in Not Confirmed can be Booked", "NC", "CO" }, //
-        { "03", "Check Order in Not Confirmed can be updated to Automatic Evaluation", "NC", "AE" }, //
-        { "04", "Check Order in Automatic Evaluation can be Closed", "AE", "CL" }, //
-        { "05", "Check Order in Automatic Evaluation can be Not Confirmed", "AE", "NC" }, //
-        { "06", "Check Order in Automatic Evaluation updated to Manual Evaluation", "AE", "ME" },
-        { "07", "Check Order in Manual Evaluation can be Closed", "ME", "CL" }, //
-        { "08", "Check Order in Manual Evaluation can be Booked", "ME", "CO" }, //
-        { "09", "Check Order in Manual Evaluation can be updated to Automatic Evaluation", "ME",
-            "AE" }, //
+        { "01", "Check Order status: Not Confirmed -> Booked", "NC", "CO", "CO" }, //
+        { "02", "Check Order status: Not Confirmed -> Closed", "NC", "CL", "CL" }, //
+        { "03", "Check Order status: Not Confirmed -> Automatic Evaluation", "NC", "AE", "RJ" }, //
+        { "04", "Check Order status: Automatic Evaluation -> Not Confirmed", "AE", "NC", "CO" }, //
+        { "05", "Check Order status: Automatic Evaluation -> Closed", "AE", "CL", "CL" }, //
+        { "06", "Check Order status: Automatic Evaluation -> Manual Evaluation", "AE", "ME", "RJ" },
+        { "07", "Check Order status: Manual Evaluation -> Booked", "ME", "CO", "CO" }, //
+        { "08", "Check Order status: Manual Evaluation -> Closed", "ME", "CL", "CL" }, //
+        { "09", "Check Order status: Manual Evaluation -> Automatic Evaluation", "ME", "AE", "RJ" }, //
     };
     return Arrays.asList(params);
   }
@@ -98,7 +99,7 @@ public class OrderProcessTest extends OBBaseTest {
   public void testCOrderPostProcess() {
     setQAAdminContext();
     Order testOrder = createOrder();
-    processOrder(testOrder);
+    updateOrderStatus(testOrder);
     assertOrder(testOrder);
   }
 
@@ -132,11 +133,9 @@ public class OrderProcessTest extends OBBaseTest {
       OBDal.getInstance().flush();
     });
 
-    testOrder.setDocumentStatus(documentStatus);
-    testOrder.setDocumentAction(documentAction);
     OBDal.getInstance().save(testOrder);
     OBDal.getInstance().flush();
-    OBDal.getInstance().refresh(testOrder);
+    processOrder(testOrder);
 
     log.debug("Order Created: %s", testOrder.getDocumentNo());
     log.debug(testDescription);
@@ -144,50 +143,66 @@ public class OrderProcessTest extends OBBaseTest {
     return testOrder;
   }
 
+  private void updateOrderStatus(Order testOrder) {
+    testOrder.setDocumentStatus(documentStatusInitial);
+    testOrder.setDocumentAction(documentAction);
+    OBDal.getInstance().save(testOrder);
+    OBDal.getInstance().flush();
+    processOrder(testOrder);
+  }
+
+  private Order processOrder(Order testOrder) {
+    final List<Object> params = new ArrayList<>();
+    params.add(null);
+    params.add(testOrder.getId());
+    CallStoredProcedure.getInstance()
+        .call(ORDER_COMPLETE_PROCEDURE_NAME, params, null, true, false);
+    OBDal.getInstance().refresh(testOrder);
+    return testOrder;
+  }
+
   private void assertOrder(Order testOrder) {
-    switch (documentAction) {
-      case "CL":
-        assertOrderIsClosed(testOrder);
-        break;
+    switch (documentStatusFinal) {
       case "CO":
         assertOrderIsCompleted(testOrder, new BigDecimal("1000"), new BigDecimal("100"),
             BigDecimal.TEN, BigDecimal.TEN);
         break;
+      case "CL":
+        assertOrderIsClosed(testOrder);
+        break;
       case "NC":
       case "AE":
       case "ME":
-        assertOrderStatus(testOrder, documentAction, new BigDecimal("1000"), new BigDecimal("100"),
-            BigDecimal.TEN, BigDecimal.TEN);
+        assertOrderStatus(testOrder, new BigDecimal("1000"), new BigDecimal("100"), BigDecimal.TEN,
+            BigDecimal.TEN);
         break;
-
       default:
         break;
     }
   }
 
-  private void assertOrderIsClosed(Order testOrder) {
-    assertOrderHeader(testOrder, BigDecimal.ZERO, "CL");
-    assertOrderLines(testOrder, BigDecimal.ZERO, BigDecimal.TEN, BigDecimal.ZERO);
-  }
-
   private void assertOrderIsCompleted(Order testOrder, BigDecimal totalAmount,
       BigDecimal orderedQuantity, BigDecimal grossPrice, BigDecimal unitPrice) {
-    assertOrderHeader(testOrder, totalAmount, "CO");
+    assertOrderHeader(testOrder, totalAmount);
     assertOrderLines(testOrder, orderedQuantity, grossPrice, unitPrice);
 
+    final FIN_PaymentSchedule paymentSchedule = testOrder.getFINPaymentScheduleList().get(0);
     assertThat("Should be one payment schedule", testOrder.getFINPaymentScheduleList().size(),
         comparesEqualTo(1));
-
-    FIN_PaymentSchedule paymentSchedule = testOrder.getFINPaymentScheduleList().get(0);
     assertThat("Payment amount should be " + totalAmount, paymentSchedule.getAmount(),
         comparesEqualTo(totalAmount));
     assertThat("Payment outstanding amount should be 0", paymentSchedule.getOutstandingAmount(),
         comparesEqualTo(totalAmount));
   }
 
-  private void assertOrderStatus(Order testOrder, String docStatus, BigDecimal totalAmount,
+  private void assertOrderIsClosed(Order testOrder) {
+    assertOrderHeader(testOrder, BigDecimal.ZERO);
+    assertOrderLines(testOrder, BigDecimal.ZERO, BigDecimal.TEN, BigDecimal.ZERO);
+  }
+
+  private void assertOrderStatus(Order testOrder, BigDecimal totalAmount,
       BigDecimal orderedQuantity, BigDecimal grossPrice, BigDecimal unitPrice) {
-    assertOrderHeader(testOrder, totalAmount, docStatus);
+    assertOrderHeader(testOrder, totalAmount);
     assertOrderLines(testOrder, orderedQuantity, grossPrice, unitPrice);
   }
 
@@ -208,22 +223,11 @@ public class OrderProcessTest extends OBBaseTest {
     });
   }
 
-  private void assertOrderHeader(Order testOrder, BigDecimal totalAmount,
-      String expectedDocumentStatus) {
+  private void assertOrderHeader(Order testOrder, BigDecimal totalAmount) {
     assertThat("Order should be Booked", testOrder.getDocumentStatus(),
-        comparesEqualTo(expectedDocumentStatus));
+        equalTo(documentStatusFinal));
     assertThat("Order Total amount should be " + totalAmount, testOrder.getGrandTotalAmount(),
         comparesEqualTo(totalAmount));
     assertFalse("Order should not be delived", testOrder.isDelivered());
-  }
-
-  private Order processOrder(Order testOrder) {
-    final List<Object> params = new ArrayList<>();
-    params.add(null);
-    params.add(testOrder.getId());
-    CallStoredProcedure.getInstance()
-        .call(ORDER_COMPLETE_PROCEDURE_NAME, params, null, true, false);
-    OBDal.getInstance().refresh(testOrder);
-    return testOrder;
   }
 }

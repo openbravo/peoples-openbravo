@@ -127,19 +127,19 @@ public class ActionButtonUtility {
           data1.setData("ID", "RE");
           v.addElement(data1);
         } else if (strDocStatus.equals("NC") || strDocStatus.equals("ME")) {
-          data1.setData("ID", "CL");
+          data1.setData("ID", "CO");
           v.addElement(data1);
           data1 = new SQLReturnObject();
-          data1.setData("ID", "CO");
+          data1.setData("ID", "CL");
           v.addElement(data1);
           data1 = new SQLReturnObject();
           data1.setData("ID", "AE");
           v.addElement(data1);
         } else if (strDocStatus.equals("AE")) {
-          data1.setData("ID", "CL");
+          data1.setData("ID", "NC");
           v.addElement(data1);
           data1 = new SQLReturnObject();
-          data1.setData("ID", "NC");
+          data1.setData("ID", "CL");
           v.addElement(data1);
           data1 = new SQLReturnObject();
           data1.setData("ID", "ME");
