@@ -83,7 +83,7 @@ import org.openbravo.service.db.DbUtility;
  * The same behavior of shipments will be implemented with payments.
  */
 @Dependent
-class CancelAndReplaceOrderExecutor extends CancelAndReplaceUtils {
+class ReplaceOrderExecutor extends CancelAndReplaceUtils {
   private Logger log4j = LogManager.getLogger();
   private Map<String, String> linesRelations = new HashMap<>();
   private String oldOrderId;

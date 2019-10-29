@@ -201,11 +201,11 @@ public class CancelAndReplaceUtils {
   public static List<Order> cancelAndReplaceOrder(String oldOrderId, Set<String> newOrderIds,
       String paymentOrganizationId, JSONObject jsonOrder,
       boolean useOrderDocumentNoForRelatedDocs) {
-    final CancelAndReplaceOrderExecutor cancelAndReplaceOrderExecutor = WeldUtils
-        .getInstanceFromStaticBeanManager(CancelAndReplaceOrderExecutor.class);
-    cancelAndReplaceOrderExecutor.init(oldOrderId, newOrderIds, paymentOrganizationId, jsonOrder,
+    final ReplaceOrderExecutor replaceOrderExecutor = WeldUtils
+        .getInstanceFromStaticBeanManager(ReplaceOrderExecutor.class);
+    replaceOrderExecutor.init(oldOrderId, newOrderIds, paymentOrganizationId, jsonOrder,
         useOrderDocumentNoForRelatedDocs);
-    return cancelAndReplaceOrderExecutor.run();
+    return replaceOrderExecutor.run();
   }
 
   /**
