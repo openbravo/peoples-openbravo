@@ -58,6 +58,7 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.OrderLineOffer;
+import org.openbravo.model.common.order.OrderReplacement;
 import org.openbravo.model.common.order.OrderTax;
 import org.openbravo.model.common.order.OrderlineServiceRelation;
 import org.openbravo.model.common.plm.AttributeSetInstance;
@@ -177,15 +178,15 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
   }
 
   private void relateOldOrderAndNewOrder(Order newOrder) {
-    // final ReplacementOrder orderReplacement =
-    // OBProvider.getInstance().get(ReplacementOrder.class);
-    // orderReplacement.setOrganization(oldOrder.getOrganization());
-    // orderReplacement.setOrder(oldOrder);
-    // orderReplacement.setReplacementOrder(newOrder);
-    // OBDal.getInstance().save(orderReplacement);
-    Order oldOrder = OBDal.getInstance().get(Order.class, oldOrderId);
+    final Order oldOrder = OBDal.getInstance().get(Order.class, oldOrderId);
     oldOrder.setReplacementorder(newOrder);
     OBDal.getInstance().save(oldOrder);
+
+    final OrderReplacement orderReplacement = OBProvider.getInstance().get(OrderReplacement.class);
+    orderReplacement.setOrganization(oldOrder.getOrganization());
+    orderReplacement.setSalesOrder(oldOrder);
+    orderReplacement.setReplacement(newOrder);
+    OBDal.getInstance().save(orderReplacement);
   }
 
   private void callCOrderPost(Order newOrder) {
