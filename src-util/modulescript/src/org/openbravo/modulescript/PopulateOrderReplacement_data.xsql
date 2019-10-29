@@ -17,7 +17,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
-<SqlClass name="PopulateReplacementOrderData" package="org.openbravo.modulescript">
+<SqlClass name="PopulateOrderReplacementData" package="org.openbravo.modulescript">
    <SqlClassComment></SqlClassComment>
    <SqlMethod name="select" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
@@ -26,25 +26,21 @@
       ]]>
     </Sql>
    </SqlMethod>
-   <SqlMethod name="populateReplacementOrder" type="preparedStatement" return="rowcount">
+   <SqlMethod name="populateOrderReplacement" type="preparedStatement" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
-      INSERT INTO c_order_replacement
-	  (
-	  c_order_replacement_id, ad_client_id, 
-	  ad_org_id,  isactive, created, 
-	  createdby, updated, updatedby,
-	  c_order_id, c_replacement_order
-	  )
- 	  select get_uuid(), o.ad_client_id, 
- 	  o.ad_org_id, 'Y', now(), 
- 	  '100', now(), '100',
- 	  c_order_id, replacementorder_id
- 	  from c_order o 
- 	  where o.replacementorder_id IS NOT NULL 
-        and not exists (select 1 from c_order_replacement r
-                      where o.c_order_id = r.c_order_id)
+      INSERT INTO c_order_replacement (
+        c_order_replacement_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, c_order_id, c_replacement_id
+      )
+      SELECT get_uuid(), o.ad_client_id, o.ad_org_id, 'Y', now(), '100', now(), '100', o.c_order_id, o.replacementorder_id
+      FROM c_order o
+      WHERE o.replacementorder_id IS NOT NULL
+      AND NOT EXISTS (
+        SELECT 1
+        FROM c_order_replacement r
+        WHERE o.c_order_id = r.c_order_id
+        AND o.replacementorder_id = r.c_replacement_id
+      )
     ]]></Sql>
-    <Field name="dummy" value="void"/>
   </SqlMethod>
  </SqlClass>

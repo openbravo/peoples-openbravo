@@ -20,13 +20,12 @@ package org.openbravo.modulescript;
 
 import org.openbravo.database.ConnectionProvider;
 
-public class PopulateReplacementOrder extends ModuleScript {
+public class PopulateOrderReplacement extends ModuleScript {
 
   @Override
   public void execute() {
     try {
-      ConnectionProvider cp = getConnectionProvider();
-      PopulateReplacementOrderData.populateReplacementOrder(cp);
+      PopulateOrderReplacementData.populateOrderReplacement(getConnectionProvider());
     } catch (Exception e) {
       handleError(e);
     }
