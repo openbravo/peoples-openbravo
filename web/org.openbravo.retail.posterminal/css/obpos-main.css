@@ -7598,11 +7598,23 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   grid-template-columns: repeat(4, calc(100% / 4));
 }
 
+.obObposPointOfSaleUiPointOfSale-mainSubWindow-multiColumn .obUiMultiColumn-rightToolbar .obUiMultiColumnToolbar-standardToolbar-toolbar.obUiMultiColumnToolbar-standardToolbar-toolbar_noBrowse {
+  grid-template-areas: "obObposPointOfSaleUiButtonTabScan obObPosPointOfSaleUiButtonTabSearchCharacteristic obObPosPointOfSaleUiButtonTabEditLine";
+  grid-template-rows: 100%;
+  grid-template-columns: repeat(3, calc(100% / 3));
+}
+
 @media all and (max-aspect-ratio: 9/8) {
   .obObposPointOfSaleUiPointOfSale-mainSubWindow-multiColumn .obUiMultiColumn-rightToolbar .obUiMultiColumnToolbar-standardToolbar-toolbar {
     grid-template-areas: "obUiMainMenu obObposPointOfSaleUiButtonTabScan obObPosPointOfSaleUiButtonTabBrowse obObPosPointOfSaleUiButtonTabSearchCharacteristic obObPosPointOfSaleUiButtonTabEditLine obObposPointOfSaleUiButtonTabCart";
     grid-template-rows: 100%;
     grid-template-columns: repeat(6, calc(100% / 6));
+  }
+
+  .obObposPointOfSaleUiPointOfSale-mainSubWindow-multiColumn .obUiMultiColumn-rightToolbar .obUiMultiColumnToolbar-standardToolbar-toolbar.obUiMultiColumnToolbar-standardToolbar-toolbar_noBrowse {
+    grid-template-areas: "obUiMainMenu obObposPointOfSaleUiButtonTabScan obObPosPointOfSaleUiButtonTabSearchCharacteristic obObPosPointOfSaleUiButtonTabEditLine obObposPointOfSaleUiButtonTabCart";
+    grid-template-rows: 100%;
+    grid-template-columns: repeat(5, calc(100% / 5));
   }
 }
 

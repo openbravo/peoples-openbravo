@@ -519,8 +519,9 @@ enyo.kind({
   initComponents: function() {
     this.inherited(arguments);
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-      //This setStyle is allowed due to an other one in ob-layout
-      this.owner.owner.setStyle('width: 50% !important;');
+      this.owner.addClass(
+        'obUiMultiColumnToolbar-standardToolbar-toolbar_noBrowse'
+      );
     }
   }
 });
