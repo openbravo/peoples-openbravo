@@ -3506,7 +3506,10 @@
               'Save ignored before execute OBPOS_PostAddProductToOrder hook, system has detected that a line is being added when calculate receipt is closed. Ignore line creation'
             );
             if (attrs) {
-              if (attrs.obposEpccode) {
+              if (
+                OB.UTIL.RfidController.isRfidConfigured() &&
+                attrs.obposEpccode
+              ) {
                 OB.UTIL.RfidController.removeEpc(attrs.obposEpccode);
               }
               attrs.cancelOperation = true;
@@ -3622,7 +3625,11 @@
               OB.error(
                 'Before execute OBPOS_GroupedProductPreCreateLine hook, system has detected that line is being added when calculate receipt is closed. Ignore line creation'
               );
-              if (attrs && attrs.obposEpccode) {
+              if (
+                OB.UTIL.RfidController.isRfidConfigured() &&
+                attrs &&
+                attrs.obposEpccode
+              ) {
                 OB.UTIL.RfidController.removeEpc(attrs.obposEpccode);
               }
               return null;
@@ -3647,7 +3654,12 @@
                     OB.error(
                       'After execute OBPOS_GroupedProductPreCreateLine hook, system has detected that line is being added when calculate receipt is closed. Ignore line creation'
                     );
-                    if (args && args.attrs && args.attrs.obposEpccode) {
+                    if (
+                      OB.UTIL.RfidController.isRfidConfigured() &&
+                      args &&
+                      args.attrs &&
+                      args.attrs.obposEpccode
+                    ) {
                       OB.UTIL.RfidController.removeEpc(args.attrs.obposEpccode);
                     }
                     return null;
@@ -3658,7 +3670,12 @@
                         'An add product is executed. At this point, this action is not allowed. Skipping product ' +
                           p.get('_identifier')
                       );
-                      if (args && args.attrs && args.attrs.obposEpccode) {
+                      if (
+                        OB.UTIL.RfidController.isRfidConfigured() &&
+                        args &&
+                        args.attrs &&
+                        args.attrs.obposEpccode
+                      ) {
                         OB.UTIL.RfidController.removeEpc(
                           args.attrs.obposEpccode
                         );
@@ -3747,7 +3764,11 @@
                   'An add product is executed. At this point, this action is not allowed. Skipping product ' +
                     p.get('_identifier')
                 );
-                if (attrs && attrs.obposEpccode) {
+                if (
+                  OB.UTIL.RfidController.isRfidConfigured() &&
+                  attrs &&
+                  attrs.obposEpccode
+                ) {
                   OB.UTIL.RfidController.removeEpc(attrs.obposEpccode);
                 }
                 return;
@@ -3758,7 +3779,11 @@
                 'An add product is executed. At this point, this action is not allowed because calculate Receipt is blocked. Skipping product ' +
                   p.get('_identifier')
               );
-              if (attrs && attrs.obposEpccode) {
+              if (
+                OB.UTIL.RfidController.isRfidConfigured() &&
+                attrs &&
+                attrs.obposEpccode
+              ) {
                 OB.UTIL.RfidController.removeEpc(attrs.obposEpccode);
               }
               return null;
@@ -5000,7 +5025,11 @@
           OB.error(
             'Create line - Trying to add a line when calculate receipt is closed. Ignore line creation'
           );
-          if (attrs && attrs.obposEpccode) {
+          if (
+            OB.UTIL.RfidController.isRfidConfigured() &&
+            attrs &&
+            attrs.obposEpccode
+          ) {
             OB.UTIL.RfidController.removeEpc(attrs.obposEpccode);
           }
           return null;
