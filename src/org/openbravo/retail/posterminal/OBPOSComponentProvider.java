@@ -100,9 +100,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
         "model/currencypanel", "model/country", "model/salesrepresentative", "model/discountset",
         "model/bpartnerset", "model/productcharacteristicvalue", "model/characteristicvalue",
-        "model/characteristic", "model/brand", "model/returnreasons", "model/executor",
-        "model/terminal-model", "model/paymentmethodcashup", "model/taxcashup",
-        "model/returnreasons", "model/offlineprinter", "model/productbom", "model/taxcategorybom",
+        "model/characteristic", "model/brand", "model/executor", "model/terminal-model",
+        "model/paymentmethodcashup", "model/taxcashup", "model/returnreasons",
+        "model/offlineprinter", "model/productbom", "model/taxcategorybom",
         "model/orderassociationsfilter", "model/product-servicelinked", "model/prepaymentrules",
         "components/modalcancel", "components/subwindow", "components/leftsubwindow",
         "components/modalreceiptproperties", "components/modalreceiptlineproperties",
