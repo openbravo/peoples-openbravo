@@ -865,33 +865,27 @@ enyo.kind({
   },
   pointOfSaleLoad: function(inSender, inEvent) {
     if (OB.UTIL.RfidController.isRfidConfigured()) {
-      var protocol = OB.POS.hwserver.url.split('/')[0];
-      if (window.location.protocol === protocol) {
-        if (
-          OB.UTIL.RfidController.get('connectionLost') ||
-          !OB.UTIL.RfidController.get('connected')
-        ) {
-          this.addClass('obUiMenuDisableEnableRFIDReader_switchOffline');
-          return;
-        } else {
-          this.removeClass('obUiMenuDisableEnableRFIDReader_switchOffline');
-        }
-        if (
-          !OB.UTIL.RfidController.get('isRFIDEnabled') ||
-          !OB.UTIL.RfidController.get('reconnectOnScanningFocus')
-        ) {
-          this.addClass('obUiMenuDisableEnableRFIDReader_switchOff');
-          this.removeClass('obUiMenuDisableEnableRFIDReader_switchOn');
-        } else {
-          this.addClass('obUiMenuDisableEnableRFIDReader_switchOn');
-          this.removeClass('obUiMenuDisableEnableRFIDReader_switchOffline');
-        }
+      if (
+        OB.UTIL.RfidController.get('connectionLost') ||
+        !OB.UTIL.RfidController.get('connected')
+      ) {
+        this.addClass('obUiMenuDisableEnableRFIDReader_switchOffline');
+        return;
       } else {
-        this.hide();
-        OB.UTIL.showConfirmation.display(
-          OB.I18N.getLabel('OBPOS_POSHWMProtocolMismatch')
-        );
+        this.removeClass('obUiMenuDisableEnableRFIDReader_switchOffline');
       }
+      if (
+        !OB.UTIL.RfidController.get('isRFIDEnabled') ||
+        !OB.UTIL.RfidController.get('reconnectOnScanningFocus')
+      ) {
+        this.addClass('obUiMenuDisableEnableRFIDReader_switchOff');
+        this.removeClass('obUiMenuDisableEnableRFIDReader_switchOn');
+      } else {
+        this.addClass('obUiMenuDisableEnableRFIDReader_switchOn');
+        this.removeClass('obUiMenuDisableEnableRFIDReader_switchOffline');
+      }
+    } else {
+      this.hide();
     }
   }
 });
