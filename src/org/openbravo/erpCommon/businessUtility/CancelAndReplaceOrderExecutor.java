@@ -160,7 +160,6 @@ class CancelAndReplaceOrderExecutor extends CancelAndReplaceUtils {
 
       // Payment Creation only to orders with grand total different than ZERO
       // Get the payment schedule detail of the oldOrder
-
       final Organization paymentOrganization = OBDal.getInstance()
           .get(Organization.class, paymentOrganizationId);
       createNettingPayment(oldOrder, newOrders, inverseOrder, paymentOrganization);
@@ -617,7 +616,7 @@ class CancelAndReplaceOrderExecutor extends CancelAndReplaceUtils {
                   if (line.has("linepos")
                       && (line.getInt("linepos") + 1) * 10 == oldOrderLine.getLineNo()) {
                     newOrderLineCriteria
-                        .add(Restrictions.eq(OrderLine.PROPERTY_SALESORDER + ".id", newOrderIds));
+                        .add(Restrictions.in(OrderLine.PROPERTY_SALESORDER + ".id", newOrderIds));
                     newOrderLineCriteria
                         .add(Restrictions.eq(OrderLine.PROPERTY_LINENO, (long) ((i + 1) * 10)));
                     newOrderLineCriteria.setMaxResults(1);

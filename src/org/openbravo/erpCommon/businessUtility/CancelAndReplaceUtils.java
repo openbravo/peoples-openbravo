@@ -208,6 +208,36 @@ public class CancelAndReplaceUtils {
     return cancelAndReplaceOrderExecutor.run();
   }
 
+  /**
+   * Process that generates a document number for an order which cancels another order.
+   * 
+   * @param documentNo
+   *          Document number of the cancelled order.
+   * @return The new document number for the order which cancels the old order.
+   */
+  public static String getNextCancelDocNo(String documentNo) {
+    StringBuilder newDocNo = new StringBuilder();
+    String[] splittedDocNo = documentNo.split(HYPHEN);
+    if (splittedDocNo.length > 1) {
+      int nextNumber;
+      try {
+        nextNumber = Integer.parseInt(splittedDocNo[splittedDocNo.length - 1]) + 1;
+        for (int i = 0; i < splittedDocNo.length; i++) {
+          if (i == 0 || i < splittedDocNo.length - 1) {
+            newDocNo.append(splittedDocNo[i] + HYPHEN);
+          } else {
+            newDocNo.append(nextNumber);
+          }
+        }
+      } catch (NumberFormatException nfe) {
+        newDocNo.append(documentNo + HYPHENONE);
+      }
+    } else {
+      newDocNo.append(documentNo + HYPHENONE);
+    }
+    return newDocNo.toString();
+  }
+
   static void throwExceptionIfOrderIsCanceled(Order order) {
     if (order.isCancelled().booleanValue()) {
       throw new OBException(
@@ -518,36 +548,6 @@ public class CancelAndReplaceUtils {
           paymentDocumentType == null ? "" : paymentDocumentType.getId(), false, true);
     }
     return paymentDocumentNo;
-  }
-
-  /**
-   * Process that generates a document number for an order which cancels another order.
-   * 
-   * @param documentNo
-   *          Document number of the cancelled order.
-   * @return The new document number for the order which cancels the old order.
-   */
-  public static String getNextCancelDocNo(String documentNo) {
-    StringBuilder newDocNo = new StringBuilder();
-    String[] splittedDocNo = documentNo.split(HYPHEN);
-    if (splittedDocNo.length > 1) {
-      int nextNumber;
-      try {
-        nextNumber = Integer.parseInt(splittedDocNo[splittedDocNo.length - 1]) + 1;
-        for (int i = 0; i < splittedDocNo.length; i++) {
-          if (i == 0 || i < splittedDocNo.length - 1) {
-            newDocNo.append(splittedDocNo[i] + HYPHEN);
-          } else {
-            newDocNo.append(nextNumber);
-          }
-        }
-      } catch (NumberFormatException nfe) {
-        newDocNo.append(documentNo + HYPHENONE);
-      }
-    } else {
-      newDocNo.append(documentNo + HYPHENONE);
-    }
-    return newDocNo.toString();
   }
 
   static boolean getEnableStockReservationsPreferenceValue(Organization organization) {
