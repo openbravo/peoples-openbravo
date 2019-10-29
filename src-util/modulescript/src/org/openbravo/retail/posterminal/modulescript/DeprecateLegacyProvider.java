@@ -47,7 +47,7 @@ public class DeprecateLegacyProvider extends ModuleScript {
         "  provider," + 
         "  name," + 
         "  description" + 
-        ") values (?,?,?,?,?,?,?,?,?,?,?);");
+        ") values (?,?,?,?,?,?,?,?,?,?,?)");
         ps0.setString(1, "0");
         ps0.setString(2, "0");
         ps0.setString(3, "0");
