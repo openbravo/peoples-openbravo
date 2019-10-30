@@ -15300,27 +15300,8 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OBRDM.UI.ButtonSelectAll
 # Inherits: [OB.UI.SmallButton]
 */
-.obrdmUiButtonSelectAll {
-  display: inline-block;
-  border: none;
-  text-decoration: none;
-  cursor: pointer;
-  opacity: 0.999;
-  font-weight: normal;
-  height: 30px;
-  font-size: 16px;
-  padding: 5px 15px 7px 15px;
-  background-color: #6cb33f;
-  color: #ffffff;
-  width: 160px;
-  margin: 0px 9px 8px 0px;
-}
+.obrdmUiButtonSelectAll {}
 
-@media all and (max-aspect-ratio: 9/8) {
-  .obrdmUiButtonSelectAll {
-    height: 45px;
-  }
-}
 
 /*
 # Component: OBRDM.UI.ButtonAdvancedFilter
@@ -15332,27 +15313,8 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OBRDM.UI.ButtonPrepareSelected
 # Inherits: [OB.UI.SmallButton]
 */
-.obrdmUiButtonPrepareSelected {
-  display: inline-block;
-  border: none;
-  text-decoration: none;
-  background-color: #6cb33f;
-  color: #ffffff;
-  cursor: pointer;
-  opacity: 0.999;
-  font-weight: normal;
-  height: 30px;
-  font-size: 16px;
-  padding: 5px 15px 7px 15px;
-  width: 170px;
-  margin: 0px 9px 8px 0px;
-}
+.obrdmUiButtonPrepareSelected {}
 
-@media all and (max-aspect-ratio: 9/8) {
-  .obrdmUiButtonPrepareSelected {
-    height: 45px;
-  }
-}
 
 /*
 # Component: OBRDM.UI.ModalOrderScrollableHeader
@@ -15362,46 +15324,31 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obrdmUiModalOrderScrollableHeader-filterSelector {
   /* Inherits: [OB.UI.FilterSelectorTableHeader] */
-  padding: 10px;
+  padding: 10px 0 0 0;
 }
 
-.obrdmUiModalOrderScrollableHeader-container1 {
-  padding: 7px;
-}
+.obrdmUiModalOrderFooter {}
 
-.obrdmUiModalOrderScrollableHeader-container1-container1 {
-  display: table;
-  width: 100%;
-}
+.obrdmUiModalOrderFooter-container1 {}
 
-.obrdmUiModalOrderScrollableHeader-container1-container1-container1 {
-  display: table-cell;
-  text-align: right;
-  width: 38%;
-}
-
-.obrdmUiModalOrderScrollableHeader-container1-container1-container1-obrdmUiButtonSelectAll {
-  /* Inherits: [OBRDM.UI.ButtonSelectAll] */
-}
-
-.obrdmUiModalOrderScrollableHeader-container1-container1-container2 {
-  display: table-cell;
-  text-align: center;
-  width: 24%;
-}
-
-.obrdmUiModalOrderScrollableHeader-container1-container1-container2-obrdmUiButtonAdvancedFilter {
+.obrdmUiModalOrderFooter-container1-obrdmUiButtonAdvancedFilter {
   /* Inherits: [OBRDM.UI.ButtonAdvancedFilter] */
 }
 
-.obrdmUiModalOrderScrollableHeader-container1-container1-container3 {
-  display: table-cell;
-  width: 38%;
+.obrdmUiModalOrderFooter-container1-obrdmUiButtonSelectAll {
+  /* Inherits: [OBRDM.UI.ButtonSelectAll] */
 }
 
-.obrdmUiModalOrderScrollableHeader-container1-container1-container3-obrdmUiButtonPrepareSelected {
+.obrdmUiModalOrderFooter-container2 {}
+
+.obrdmUiModalOrderFooter-container2-cancel {
+  /* Inherits: [OB.UI.ModalDialogButton] */
+}
+
+.obrdmUiModalOrderFooter-container2-obrdmUiButtonPrepareSelected {
   /* Inherits: [OBRDM.UI.ButtonPrepareSelected] */
 }
+
 
 /*
 # Component: OBRDM.UI.ListOrdersLine
@@ -15639,30 +15586,21 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /*
 # Component: OBRDM.UI.ListOrders
 */
-.obrdmUiListOrders {}
+.obrdmUiListOrders {
+  height: calc(100% - 1px);
+}
 
 .obrdmUiListOrders-container1 {
-  float: left;
   width: 100%;
-  touch-action: none;
+  height: 100%;
 }
 
-.obrdmUiListOrders-container1-container1 {
-  border-bottom: 1px solid #cccccc;
-}
-
-.obrdmUiListOrders-container1-container1-container1 {
-  float: left;
-  width: 100%;
-  touch-action: none;
-}
-
-.obrdmUiListOrders-container1-container1-container1-stOrderSelector {
+.obrdmUiListOrders-container1-stOrderSelector {
   /* Inherits: [OB.UI.ScrollableTable] */
   max-height: 420px;
 }
 
-.obrdmUiListOrders-container1-container1-container1-renderLoading {
+.obrdmUiListOrders-container1-renderLoading {
   border-bottom: 1px solid #cccccc;
   padding: 20px;
   text-align: center;
