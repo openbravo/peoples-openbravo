@@ -126,23 +126,15 @@ public class ActionButtonUtility {
         } else if (strDocStatus.equals("CO")) {
           data1.setData("ID", "RE");
           v.addElement(data1);
-        } else if (strDocStatus.equals("NC") || strDocStatus.equals("ME")) {
+        } else if (strDocStatus.equals("NC") || strDocStatus.equals("AE")
+            || strDocStatus.equals("ME")) {
           data1.setData("ID", "CO");
           v.addElement(data1);
           data1 = new SQLReturnObject();
           data1.setData("ID", "CL");
           v.addElement(data1);
           data1 = new SQLReturnObject();
-          data1.setData("ID", "AE");
-          v.addElement(data1);
-        } else if (strDocStatus.equals("AE")) {
-          data1.setData("ID", "NC");
-          v.addElement(data1);
-          data1 = new SQLReturnObject();
-          data1.setData("ID", "CL");
-          v.addElement(data1);
-          data1 = new SQLReturnObject();
-          data1.setData("ID", "ME");
+          data1.setData("ID", "RJ");
           v.addElement(data1);
         }
       } else if (strTable.equals("259") && isQuotation) { // Quotations (C_Order)
