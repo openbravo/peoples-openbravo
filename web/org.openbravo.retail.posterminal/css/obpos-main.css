@@ -1867,17 +1867,20 @@ li.selected > .obUiRenderCategory {
 # Inherits: [OB.UI.listItemButton]
 */
 .obUiRenderCategoryTree {
+  height: 48px;
+  border-left: 4px solid transparent;
+  color: #000000;
+  padding: 0px;
+  background-color: #ffffff;
+}
+
+.obUiRenderCategoryTree-container{
   display: grid;
   grid-auto-flow: column;
   grid-template-columns: 1fr auto;
   justify-items: left;
   align-items: center;
-
-  height: 48px;
-  border-left: 4px solid transparent;
-  background-color: #ffffff;
-  color: #000000;
-  padding: 0px;
+  height: 100%;
 }
 
 .obUiRenderCategoryTree:active {
@@ -1890,13 +1893,13 @@ li.selected > .obUiRenderCategoryTree {
   background-color: #e8e8e8;
 }
 
-.obUiRenderCategoryTree-identifierContainer {
+.obUiRenderCategoryTree-container-identifierContainer {
   width: 100%;
   padding: 2px 0px 0px 8px;
   box-sizing: border-box;
 }
 
-.obUiRenderCategoryTree-identifierContainer-identifier {
+.obUiRenderCategoryTree-container-identifierContainer-identifier {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -1905,65 +1908,65 @@ li.selected > .obUiRenderCategoryTree {
   text-overflow: ellipsis;
 }
 
-.obUiRenderCategoryTree-identifierContainer-identifier.identifierAll {
+.obUiRenderCategoryTree-container-identifierContainer-identifier.identifierAll {
   font-weight: bold;
 }
 
-.obUiRenderCategoryTree-identifierContainer-identifier.identifierLevel-0 {
+.obUiRenderCategoryTree-container-identifierContainer-identifier.identifierLevel-0 {
   padding-left: calc(14px * 0);
 }
 
-.obUiRenderCategoryTree-identifierContainer-identifier.identifierLevel-1 {
+.obUiRenderCategoryTree-container-identifierContainer-identifier.identifierLevel-1 {
   padding-left: calc(14px * 1);
 }
 
-.obUiRenderCategoryTree-identifierContainer-identifier.identifierLevel-2 {
+.obUiRenderCategoryTree-container-identifierContainer-identifier.identifierLevel-2 {
   padding-left: calc(14px * 2);
 }
 
-.obUiRenderCategoryTree-identifierContainer-identifier.identifierLevel-3 {
+.obUiRenderCategoryTree-container-identifierContainer-identifier.identifierLevel-3 {
   padding-left: calc(14px * 3);
 }
 
-.obUiRenderCategoryTree-identifierContainer-identifier.identifierLevel-4 {
+.obUiRenderCategoryTree-container-identifierContainer-identifier.identifierLevel-4 {
   padding-left: calc(14px * 4);
 }
 
-.obUiRenderCategoryTree-identifierContainer-identifier.identifierLevel-5 {
+.obUiRenderCategoryTree-container-identifierContainer-identifier.identifierLevel-5 {
   padding-left: calc(14px * 5);
 }
 
-.obUiRenderCategoryTree-identifierContainer-identifier.identifierLevel-6 {
+.obUiRenderCategoryTree-container-identifierContainer-identifier.identifierLevel-6 {
   padding-left: calc(14px * 6);
 }
 
-.obUiRenderCategoryTree-identifierContainer-identifier.identifierLevel-7 {
+.obUiRenderCategoryTree-container-identifierContainer-identifier.identifierLevel-7 {
   padding-left: calc(14px * 7);
 }
 
-.obUiRenderCategoryTree-identifierContainer-identifier.identifierLevel-8 {
+.obUiRenderCategoryTree-container-identifierContainer-identifier.identifierLevel-8 {
   padding-left: calc(14px * 8);
 }
 
-.obUiRenderCategoryTree-identifierContainer-identifier.identifierLevel-9 {
+.obUiRenderCategoryTree-container-identifierContainer-identifier.identifierLevel-9 {
   padding-left: calc(14px * 9);
 }
 
-.obUiRenderCategoryTree-identifierContainer-identifier.identifierLevel-10 {
+.obUiRenderCategoryTree-container-identifierContainer-identifier.identifierLevel-10 {
   padding-left: calc(14px * 10);
 }
 
-.obUiRenderCategoryTree-expandCollapseContainer {
+.obUiRenderCategoryTree-container-expandCollapseContainer {
   text-align: center;
   height: 100%;
 }
 
-.obUiRenderCategoryTree-expandCollapseContainer-expandCollapse {
+.obUiRenderCategoryTree-container-expandCollapseContainer-expandCollapse {
   width: 45px;
   height: 100%;
 }
 
-.obUiRenderCategoryTree-expandCollapse-expand {}
+.obUiRenderCategoryTree-container-expandCollapse-expand {}
 
 
 /*
