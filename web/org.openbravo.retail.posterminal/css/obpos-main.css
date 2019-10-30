@@ -2252,7 +2252,8 @@ li.selected > .obUiRenderCategoryTree {
   font-weight: bold;
 }
 
-.obUiRenderProductCh .obUiButton-components-after {
+.obUiRenderProductCh .obUiButton-components:after {
+  content: '';
   position: absolute;
   border-bottom: 0.5px solid #6f7c89;
   width: calc(100% - 26px);
@@ -2260,7 +2261,8 @@ li.selected > .obUiRenderCategoryTree {
   height: calc(100% - 0.5px);
 }
 
-.obUiRenderProductCh_selected .obUiButton-components-after {
+.obUiRenderProductCh_selected .obUiButton-components:after {
+  content: '';
   position: absolute;
   background-color: #ffffff;
   left: 0px;
@@ -2785,7 +2787,7 @@ li.selected > .obUiRenderOrderLine_edit {
 }
 
 .obUiShowServicesButton .obUiButton-components {
-  grid-template-columns: 0 1fr 0 0;
+  grid-template-columns: 1fr 0;
 }
 
 .obUiShowServicesButton_unreviewed .obUiButton-components-icon,
@@ -2810,7 +2812,8 @@ li.selected > .obUiRenderOrderLine_edit {
   display: none;
 }
 
-.obUiShowServicesButton_reviewed .obUiButton-components-after {
+.obUiShowServicesButton_reviewed .obUiButton-components:after {
+  content: '';
   position: absolute;
   width: 20px;
   height: 20px;
@@ -2977,7 +2980,7 @@ li.selected > .obUiRenderOrderLine_edit {
 }
 
 .obUiRemoveMultiOrders .obUiButton-components {
-  grid-template-columns: 0 1fr 0 0;
+  grid-template-columns: 1fr 0;
 }
 
 .obUiRemoveMultiOrders .obUiButton-components-label {
@@ -5301,7 +5304,7 @@ li.selected > .obUiRenderOrderLine_edit {
 }
 
 .obUiModalSplitLinesTable-line-container1-btnRemove .obUiButton-components {
-  grid-template-columns: 0 1fr 0 0;
+  grid-template-columns: 1fr 0;
 }
 
 .obUiModalSplitLinesTable-line-container1-btnRemove .obUiButton-components-label {
@@ -5403,16 +5406,15 @@ li.selected > .obUiRenderOrderLine_edit {
 
 .obUiModalSplitLine-body-header-infoFields .obUiFormElement-mainArea-coreElementArea {
   display: grid;
-  grid-template-areas: "obUiFormElement-mainArea-coreElementArea-component obUiFormElement-mainArea-coreElementArea-passwordVisibilityToggle obUiFormElement-mainArea-coreElementArea-eraser";
+  grid-template-areas: "obUiFormElement-mainArea-coreElementArea-component obUiFormElement-mainArea-coreElementArea-eraser";
   grid-template-rows: 1fr;
-  grid-template-columns: 1fr auto auto;
+  grid-template-columns: 1fr auto;
   text-align: center;
 }
 
 .obUiModalSplitLine-body-header-infoFields .obUiFormElement-icon,
 .obUiModalSplitLine-body-header-infoFields .obUiFormElement-mainArea-label-icon,
 .obUiModalSplitLine-body-header-infoFields .obUiFormElement-mainArea-coreElementArea-eraser,
-.obUiModalSplitLine-body-header-infoFields .obUiFormElement-mainArea-coreElementArea-passwordVisibilityToggle,
 .obUiModalSplitLine-body-header-infoFields .obUiFormElement-messageArea {
   display: none;
 }
@@ -5506,9 +5508,9 @@ li.selected > .obUiRenderOrderLine_edit {
 .obUiModalSplitLine-body-header-numberlinesSetter .obUiFormElement-mainArea-coreElementArea,
 .obUiModalSplitLine-body-qtyLines .obUiFormElement-mainArea-coreElementArea {
   display: grid;
-  grid-template-areas: "obUiFormElement-mainArea-coreElementArea-component obUiFormElement-mainArea-coreElementArea-passwordVisibilityToggle obUiFormElement-mainArea-coreElementArea-eraser";
+  grid-template-areas: "obUiFormElement-mainArea-coreElementArea-component obUiFormElement-mainArea-coreElementArea-eraser";
   grid-template-rows: 1fr;
-  grid-template-columns: 1fr auto auto;
+  grid-template-columns: 1fr auto;
   text-align: center;
 }
 
@@ -5521,17 +5523,14 @@ li.selected > .obUiRenderOrderLine_edit {
 .obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent .obUiFormElement-icon,
 .obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent .obUiFormElement-mainArea-label,
 .obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent .obUiFormElement-mainArea-coreElementArea-eraser,
-.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent .obUiFormElement-mainArea-coreElementArea-passwordVisibilityToggle,
 .obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent .obUiFormElement-messageArea,
 .obUiModalSplitLine-body-header-numberlinesSetter .obUiFormElement-icon,
 .obUiModalSplitLine-body-header-numberlinesSetter .obUiFormElement-mainArea-label-icon,
 .obUiModalSplitLine-body-header-numberlinesSetter .obUiFormElement-mainArea-coreElementArea-eraser,
-.obUiModalSplitLine-body-header-numberlinesSetter .obUiFormElement-mainArea-coreElementArea-passwordVisibilityToggle,
 .obUiModalSplitLine-body-header-numberlinesSetter .obUiFormElement-messageArea,
 .obUiModalSplitLine-body-qtyLines .obUiFormElement-icon,
 .obUiModalSplitLine-body-qtyLines .obUiFormElement-mainArea-label-icon,
 .obUiModalSplitLine-body-qtyLines .obUiFormElement-mainArea-coreElementArea-eraser,
-.obUiModalSplitLine-body-qtyLines .obUiFormElement-mainArea-coreElementArea-passwordVisibilityToggle,
 .obUiModalSplitLine-body-qtyLines .obUiFormElement-messageArea {
   display: none;
 }
@@ -7103,7 +7102,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposPointOfSaleUiGridKeyboard-backspace .obUiButton-components {
-  grid-template-columns: 0 1fr 0 0;
+  grid-template-columns: 1fr 0;
 }
 
 .obObposPointOfSaleUiGridKeyboard-backspace .obUiButton-components-icon {
@@ -7164,7 +7163,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposPointOfSaleUiGridKeyboard-keyboardkeyEnter .obUiButton-components {
-  grid-template-columns: 0 1fr 0 0;
+  grid-template-columns: 1fr 0;
 }
 
 .obObposPointOfSaleUiGridKeyboard-keyboardkeyEnter .obUiButton-components-icon {
@@ -7884,7 +7883,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiProductDetailsViewButtonAddToTicket .obUiButton-components {
   grid-auto-flow: column;
-  grid-template-columns: 0 30px 1fr 0;
+  grid-template-columns: 30px 1fr;
 
   padding: 0px 10px;
   justify-items: center;
@@ -8704,7 +8703,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposPointOfSaleUiInDevHeader-innerDiv-headerText .obUiButton-components {
-  grid-template-columns: 0 1fr 0;
+  grid-template-columns: 1fr 0;
 }
 
 .obObposPointOfSaleUiInDevHeader-innerDiv-headerText .obUiButton-components-icon {
@@ -8832,7 +8831,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiScan-msgaction-undobutton .obUiButton-components {
   grid-auto-flow: column;
-  grid-template-columns: 0 auto 1fr 0;
+  grid-template-columns: auto 1fr;
   padding: 0px 15px;
 }
 
@@ -8935,7 +8934,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposPointOfSaleUiEditLine-propertiesToShow-general .obUiButton-components {
-  grid-template-columns: 0 30px 1fr 0;
+  grid-template-columns: 30px 1fr;
 
   margin: 0px;
   padding: 0px 10px;
@@ -8954,18 +8953,19 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   padding: 0px 5px 0px 5px;
 }
 
-.obObposPointOfSaleUiEditLine-propertiesToShow-general .obUiButton-components-after {
+.obObposPointOfSaleUiEditLine-propertiesToShow-general .obUiButton-components:after {
+  content: '';
   position: absolute;
   border-right: 0.5px solid #6f7c89;
   height: calc(100% - 26px);
   width: calc(100% - 0.5px);
 }
 
-.obObposPointOfSaleUiEditLine-propertiesToShow-general.disabled .obUiButton-components-after {
+.obObposPointOfSaleUiEditLine-propertiesToShow-general.disabled .obUiButton-components:after {
   border-right: 0px;
 }
 
-.obObposPointOfSaleUiEditLine-msgedit-actionButtonsContainer.expanded .obObposPointOfSaleUiEditLine-propertiesToShow-general .obUiButton-components-after {
+.obObposPointOfSaleUiEditLine-msgedit-actionButtonsContainer.expanded .obObposPointOfSaleUiEditLine-propertiesToShow-general .obUiButton-components:after {
   border-right: 0px;
   border-bottom: 0.5px solid #6f7c89;
   height: calc(100% - 0.5px);
@@ -8973,7 +8973,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   left: 13px;
 }
 
-.obObposPointOfSaleUiEditLine-msgedit-actionButtonsContainer.expanded .obObposPointOfSaleUiEditLine-propertiesToShow-general.disabled .obUiButton-components-after {
+.obObposPointOfSaleUiEditLine-msgedit-actionButtonsContainer.expanded .obObposPointOfSaleUiEditLine-propertiesToShow-general.disabled .obUiButton-components:after {
   border-bottom: 0px;
 }
 
@@ -9550,7 +9550,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiProcessButton .obUiButton-components {
   grid-auto-flow: column;
-  grid-template-columns: 0 30px 1fr 0;
+  grid-template-columns: 30px 1fr;
 
   padding: 0px 10px;
   justify-items: center;
@@ -9623,7 +9623,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 */
 .obObposPointOfSaleUiPrepaymentsDeliveryButton .obUiButton-components {
   grid-auto-flow: row;
-  grid-template-rows: 0 44% 56% 0;
+  grid-template-rows: 44% 56%;
   grid-template-columns: 1fr;
 
   padding: 0px 2px;
@@ -9647,7 +9647,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 */
 .obObposPointOfSaleUiPrepaymentsExactButton .obUiButton-components {
   grid-auto-flow: row;
-  grid-template-rows: 0 44% 56% 0;
+  grid-template-rows: 44% 56%;
   grid-template-columns: 1fr;
 
   padding: 0px 2px;
@@ -9790,7 +9790,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposPointOfSaleUiRemovePayment .obUiButton-components {
-  grid-template-columns: 0 1fr 0 0;
+  grid-template-columns: 1fr 0;
 }
 
 .obObposPointOfSaleUiRemovePayment .obUiButton-components-label {
@@ -11141,7 +11141,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-button .obUiButton-components {
   grid-auto-flow: column;
-  grid-template-columns: 0 1fr auto 0;
+  grid-template-columns: 1fr auto;
   padding: 0px 15px;
 }
 
@@ -12615,7 +12615,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposcashmgmtUiRightToolbarImpl-btnCashMgmt .obUiButton-components {
-  grid-template-rows: auto auto 1fr auto;
+  grid-template-rows: auto 1fr;
 }
 
 .obObposcashmgmtUiRightToolbarImpl-btnCashMgmt .obUiButton-components-label {
@@ -12643,7 +12643,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   }
 }
 
-.obObposcashmgmtUiRightToolbarImpl-btnToggleView  .obUiButton-components-icon {
+.obObposcashmgmtUiRightToolbarImpl-btnToggleView .obUiButton-components-icon {
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabSwitch.svg');
   background-size: 24px;
 }
@@ -12654,13 +12654,10 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposcashmgmtUiRightToolbarImpl-btnToggleView.disabled {}
 
-.obObposcashmgmtUiRightToolbarImpl-btnToggleView .obUiButton-components-before {}
-
 .obObposcashmgmtUiRightToolbarImpl-btnToggleView .obUiButton-components-icon {}
 
 .obObposcashmgmtUiRightToolbarImpl-btnToggleView .obUiButton-components-label {}
 
-.obObposcashmgmtUiRightToolbarImpl-btnToggleView .obUiButton-components-after {}
 
 /*
 # Component: OB.OBPOSCashMgmt.UI.CashManagement
@@ -12961,13 +12958,9 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObPosCashUpUiLeftToolbarImpl-btnToggleView.disabled {}
 
-.obObPosCashUpUiLeftToolbarImpl-btnToggleView .obUiButton-components-before {}
-
 .obObPosCashUpUiLeftToolbarImpl-btnToggleView .obUiButton-components-icon {}
 
 .obObPosCashUpUiLeftToolbarImpl-btnToggleView .obUiButton-components-label {}
-
-.obObPosCashUpUiLeftToolbarImpl-btnToggleView .obUiButton-components-after {}
 
 
 .obObPosCashUpUiLeftToolbarImpl-btnPrevious {
@@ -13055,7 +13048,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObPosCashupUiCashUp-rightToolbar-btnCashUp .obUiButton-components {
-  grid-template-rows: auto auto 1fr auto;
+  grid-template-rows: auto 1fr;
 }
 
 .obObPosCashupUiCashUp-rightToolbar-btnCashUp .obUiButton-components-label {
@@ -13968,7 +13961,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposCashupUiRenderPaymentsLine-listItem-countedContainer-buttonOk .obUiButton-components {
-  grid-template-columns: 0 1fr 0 0;
+  grid-template-columns: 1fr 0;
 }
 
 .obObposCashupUiRenderPaymentsLine-listItem-countedContainer-buttonOk .obUiButton-components-icon {
