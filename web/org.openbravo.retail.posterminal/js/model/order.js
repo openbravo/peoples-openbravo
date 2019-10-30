@@ -4965,7 +4965,7 @@
           id: OB.UTIL.get_UUID(),
           product: p,
           uOM: p.get('uOM'),
-          qty: OB.DEC.number(units),
+          qty: OB.DEC.number(units, p.get('uOMstandardPrecision')),
           price: OB.DEC.number(p.get('standardPrice')),
           priceList: OB.DEC.number(p.get('listPrice')),
           priceIncludesTax: me.get('priceIncludesTax'),
@@ -10083,7 +10083,10 @@
                     id: iter.lineId,
                     product: prod,
                     uOM: iter.uOM,
-                    qty: OB.DEC.number(iter.quantity),
+                    qty: OB.DEC.number(
+                      iter.quantity,
+                      prod.get('uOMstandardPrecision')
+                    ),
                     price: price,
                     priceList:
                       prod.get('listPrice') !== price
