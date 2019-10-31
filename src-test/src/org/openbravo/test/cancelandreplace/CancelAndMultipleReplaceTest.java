@@ -48,11 +48,16 @@ import org.openbravo.test.base.TestConstants.Roles;
 import org.openbravo.test.base.TestConstants.Users;
 import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData;
 import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData1;
+import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData10;
+import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData11;
 import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData2;
 import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData3;
 import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData4;
 import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData5;
 import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData6;
+import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData7;
+import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData8;
+import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData9;
 import org.openbravo.test.cancelandreplace.data.CancelAndReplaceOrderTestData;
 import org.openbravo.test.cancelandreplace.data.CancelAndReplaceOrderTestData.Line;
 
@@ -74,7 +79,10 @@ public class CancelAndMultipleReplaceTest extends WeldBaseTest {
   static final List<CancelAndMultipleReplaceTestData> PARAMS = Arrays.asList(
       new CancelAndMultipleReplaceTestData1(), new CancelAndMultipleReplaceTestData2(),
       new CancelAndMultipleReplaceTestData3(), new CancelAndMultipleReplaceTestData4(),
-      new CancelAndMultipleReplaceTestData5(), new CancelAndMultipleReplaceTestData6());
+      new CancelAndMultipleReplaceTestData5(), new CancelAndMultipleReplaceTestData6(),
+      new CancelAndMultipleReplaceTestData7(), new CancelAndMultipleReplaceTestData8(),
+      new CancelAndMultipleReplaceTestData9(), new CancelAndMultipleReplaceTestData10(),
+      new CancelAndMultipleReplaceTestData11());
 
   /** Defines the values the parameter will take. */
   @Rule
@@ -85,10 +93,11 @@ public class CancelAndMultipleReplaceTest extends WeldBaseTest {
   private @ParameterCdiTest CancelAndMultipleReplaceTestData testData;
 
   /**
-   * Verifies Cancel and Replace functionality API. Clone and existing Order. Click on Cancel and
-   * Replace process that will create a new Order in temporary status. Update the Order depending on
-   * the test executed and finally confirm this order. Different check points have been added in
-   * each stage to verify the results of the processes.
+   * Verifies Cancel and Replace functionality API with more than one replacement. Clone and
+   * existing Order. Click on Cancel and Replace process that will create two new Orders in
+   * temporary status. Update the Orders depending on the test executed and finally confirm those
+   * orders. Different check points have been added in each stage to verify the results of the
+   * processes.
    */
   @Test
   public void cancelAndMultipleReplaceTest() {
@@ -237,7 +246,7 @@ public class CancelAndMultipleReplaceTest extends WeldBaseTest {
     OrderLine orderLine = null;
     for (int i = 0; i < order.getOrderLineList().size(); i++) {
       OrderLine line = order.getOrderLineList().get(i);
-      if (i == index) {
+      if (line.getLineNo() == (index + 1) * 10) {
         orderLine = line;
         orderLine.setOrderedQuantity(lineData.getOrderedQuantity());
         OBDal.getInstance().save(orderLine);
