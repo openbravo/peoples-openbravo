@@ -54,6 +54,7 @@ import org.openbravo.test.base.TestConstants.Users;
 import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData1;
 import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData10;
 import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData11;
+import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData12;
 import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData2;
 import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData3;
 import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData4;
@@ -101,7 +102,8 @@ public class CancelAndReplaceTest extends WeldBaseTest {
       new CancelAndMultipleReplaceTestData4(), new CancelAndMultipleReplaceTestData5(),
       new CancelAndMultipleReplaceTestData6(), new CancelAndMultipleReplaceTestData7(),
       new CancelAndMultipleReplaceTestData8(), new CancelAndMultipleReplaceTestData9(),
-      new CancelAndMultipleReplaceTestData10(), new CancelAndMultipleReplaceTestData11());
+      new CancelAndMultipleReplaceTestData10(), new CancelAndMultipleReplaceTestData11(),
+      new CancelAndMultipleReplaceTestData12());
 
   /** Defines the values the parameter will take. */
   @Rule

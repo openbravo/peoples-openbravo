@@ -88,7 +88,11 @@ class CancelAndReplaceTestUtils {
     newOrder.setNewOBObject(true);
     OBDal.getInstance().save(newOrder);
 
-    order.getOrderLineList().forEach(oldOrderLine -> createOrderLine(newOrder, oldOrderLine));
+    for (int i = 0; i < testData.getNewOrders().size(); i++) {
+      OrderLine oldOrderLine = order.getOrderLineList().size() > i ? order.getOrderLineList().get(i)
+          : order.getOrderLineList().get(0);
+      createOrderLine(newOrder, oldOrderLine, (i + 1) * 10);
+    }
 
     OBDal.getInstance().flush();
     OBDal.getInstance().refresh(newOrder);
@@ -102,15 +106,17 @@ class CancelAndReplaceTestUtils {
     return newOrder;
   }
 
-  static void createOrderLine(Order newOrder, OrderLine oldOrderLine) {
+  static OrderLine createOrderLine(Order newOrder, OrderLine oldOrderLine, long lineNo) {
     OrderLine newOrderLine = (OrderLine) DalUtil.copy(oldOrderLine, false);
     newOrderLine.setDeliveredQuantity(BigDecimal.ZERO);
     newOrderLine.setInvoicedQuantity(BigDecimal.ZERO);
     newOrderLine.setSalesOrder(newOrder);
     newOrderLine.setReplacedorderline(null);
+    newOrderLine.setLineNo(lineNo);
     OBDal.getInstance().save(newOrderLine);
 
     newOrder.getOrderLineList().add(newOrderLine);
+    return newOrderLine;
   }
 
   static void callCOrderPost(Order order) {

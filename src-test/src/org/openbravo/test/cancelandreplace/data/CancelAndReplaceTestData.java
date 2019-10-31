@@ -31,6 +31,8 @@ public abstract class CancelAndReplaceTestData {
   protected static final String SALESORDER_50017_ID = "F1AAB8C608AA434C9FC7FC1D685BA016";
   // Sales order: 50011
   protected static final String SALESORDER_50011_ID = "80AAF8AC57EC4A7EB2F85B3B2675F88C";
+  // Sales order: 50008
+  protected static final String SALESORDER_50008_ID = "A88E5504A1D5443CA4B73EDFB143B848";
 
   private String testNumber;
   private String testDescription;
