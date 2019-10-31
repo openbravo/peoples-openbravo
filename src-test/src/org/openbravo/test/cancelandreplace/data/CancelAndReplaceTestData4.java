@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2016 Openbravo SLU 
+ * All portions are Copyright (C) 2016-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,6 +21,8 @@ package org.openbravo.test.cancelandreplace.data;
 
 import java.math.BigDecimal;
 
+import org.openbravo.test.cancelandreplace.data.CancelAndReplaceOrderTestData.Line;
+
 public class CancelAndReplaceTestData4 extends CancelAndReplaceTestData {
 
   @Override
@@ -29,28 +31,43 @@ public class CancelAndReplaceTestData4 extends CancelAndReplaceTestData {
     setTestDescription(
         "Cancel and Replace of a fully paid Order. Leave lines and quantities as were originally. Netting shipment is created");
     setBpartnerId(BP_CUSTOMER_A);
-    setQuantity(new BigDecimal("2"));
-    setOldOrderDeliveredQuantity(BigDecimal.ZERO);
-    setOldOrderTotalAmount(new BigDecimal("4.14"));
-    setInverseOrderTotalAmount(new BigDecimal("-4.14"));
-    setNewOrderTotalAmount(new BigDecimal("4.14"));
-    setOldOrderStatus("CL");
-    setNewOrderStatus("CO");
-    setInverseOrderStatus("CL");
-    setOldOrderReceivedPayment(new BigDecimal("4.14"));
-    setInverseOrderReceivedPayment(new BigDecimal("-4.14"));
-    setNewOrderReceivedPayment(new BigDecimal("4.14"));
-    setOldOrderOutstandingPayment(BigDecimal.ZERO);
-    setInverseOrderOutstandingPayment(BigDecimal.ZERO);
-    setNewOrderOutstandingPayment(BigDecimal.ZERO);
-    setOldOrderPreviouslyPaidAmount(new BigDecimal("4.14"));
+    setOrderPaid(true);
     setActivateNettingGoodsShipmentPref(true);
     setActivateAssociateNettingGoodsShipmentPref(false);
-    setOldOrderLineDeliveredQuantity(new BigDecimal("2"));
-    setInverseOrderLineDeliveredQuantity(new BigDecimal("-2"));
-    setNewOrderLineDeliveredQuantity(BigDecimal.ZERO);
-    setOldOrderLineShipmentLines(BigDecimal.ONE);
-    setInverseOrderLineShipmentLines(BigDecimal.ONE);
-    setNewOrderLineShipmentLines(BigDecimal.ZERO);
+
+    setOldOrder(new CancelAndReplaceOrderTestData().with(oldOrder -> {
+      oldOrder.delivered = false;
+      oldOrder.totalAmount = new BigDecimal("4.14");
+      oldOrder.status = "CL";
+      oldOrder.paidAmount = new BigDecimal("4.14");
+      oldOrder.outstandingAmount = BigDecimal.ZERO;
+      oldOrder.lines = new Line[] { oldOrder.new Line().with(line -> {
+        line.deliveredQty = new BigDecimal("2");
+        line.shipmentLines = BigDecimal.ONE;
+      }) };
+    }));
+
+    setInverseOrder(new CancelAndReplaceOrderTestData().with(inverseOrder -> {
+      inverseOrder.totalAmount = new BigDecimal("-4.14");
+      inverseOrder.status = "CL";
+      inverseOrder.paidAmount = new BigDecimal("-4.14");
+      inverseOrder.outstandingAmount = BigDecimal.ZERO;
+      inverseOrder.lines = new Line[] { inverseOrder.new Line().with(line -> {
+        line.deliveredQty = new BigDecimal("-2");
+        line.shipmentLines = BigDecimal.ONE;
+      }) };
+    }));
+
+    setNewOrder(new CancelAndReplaceOrderTestData().with(newOrder -> {
+      newOrder.totalAmount = new BigDecimal("4.14");
+      newOrder.status = "CO";
+      newOrder.paidAmount = new BigDecimal("4.14");
+      newOrder.outstandingAmount = BigDecimal.ZERO;
+      newOrder.lines = new Line[] { newOrder.new Line().with(line -> {
+        line.deliveredQty = BigDecimal.ZERO;
+        line.shipmentLines = BigDecimal.ZERO;
+        line.orderedQuantity = new BigDecimal("2");
+      }) };
+    }));
   }
 }
