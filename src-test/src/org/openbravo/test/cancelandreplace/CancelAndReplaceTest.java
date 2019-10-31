@@ -19,19 +19,25 @@
 
 package org.openbravo.test.cancelandreplace;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.Matchers.comparesEqualTo;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Rule;
 import org.junit.Test;
+import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.weld.test.ParameterCdiTest;
 import org.openbravo.base.weld.test.ParameterCdiTestRule;
 import org.openbravo.base.weld.test.WeldBaseTest;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.CancelAndReplaceUtils;
@@ -40,6 +46,19 @@ import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.test.base.TestConstants.Roles;
 import org.openbravo.test.base.TestConstants.Users;
+import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData1;
+import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData10;
+import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData11;
+import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData2;
+import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData3;
+import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData4;
+import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData5;
+import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData6;
+import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData7;
+import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData8;
+import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData9;
+import org.openbravo.test.cancelandreplace.data.CancelAndReplaceOrderTestData;
+import org.openbravo.test.cancelandreplace.data.CancelAndReplaceOrderTestData.Line;
 import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData;
 import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData1;
 import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData10;
@@ -56,27 +75,28 @@ import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData9;
 /**
  * Tests cases to check Cancel and Replace development
  * 
- * 
  */
 public class CancelAndReplaceTest extends WeldBaseTest {
-  private static final Logger log = LogManager.getLogger();
-  // Sales order: 50017
-  private static final String SALESORDER_ID = "F1AAB8C608AA434C9FC7FC1D685BA016";
-  // Goods Shipment: 500014
-  private static final String M_INOUT_ID = "09658144E1AF40AC81A3E5F5C3D0F132";
+
+  private Logger log = LogManager.getLogger();
+
   // Organization Spain
   private static final String ORGANIZATION_ID = "357947E87C284935AD1D783CF6F099A1";
+  // Goods Shipment: 500014
+  private static final String M_INOUT_ID = "09658144E1AF40AC81A3E5F5C3D0F132";
 
-  public CancelAndReplaceTest() {
-  }
-
-  public static final List<CancelAndReplaceTestData> PARAMS = Arrays.asList(
+  static final List<CancelAndReplaceTestData> PARAMS = Arrays.asList(
       new CancelAndReplaceTestData1(), new CancelAndReplaceTestData2(),
       new CancelAndReplaceTestData3(), new CancelAndReplaceTestData4(),
       new CancelAndReplaceTestData5(), new CancelAndReplaceTestData6(),
       new CancelAndReplaceTestData7(), new CancelAndReplaceTestData8(),
       new CancelAndReplaceTestData9(), new CancelAndReplaceTestData10(),
-      new CancelAndReplaceTestData11());
+      new CancelAndReplaceTestData11(), new CancelAndMultipleReplaceTestData1(),
+      new CancelAndMultipleReplaceTestData2(), new CancelAndMultipleReplaceTestData3(),
+      new CancelAndMultipleReplaceTestData4(), new CancelAndMultipleReplaceTestData5(),
+      new CancelAndMultipleReplaceTestData6(), new CancelAndMultipleReplaceTestData7(),
+      new CancelAndMultipleReplaceTestData8(), new CancelAndMultipleReplaceTestData9(),
+      new CancelAndMultipleReplaceTestData10(), new CancelAndMultipleReplaceTestData11());
 
   /** Defines the values the parameter will take. */
   @Rule
@@ -84,33 +104,39 @@ public class CancelAndReplaceTest extends WeldBaseTest {
       PARAMS);
 
   /** This field will take the values defined by parameterValuesRule field. */
-  private @ParameterCdiTest CancelAndReplaceTestData parameter;
+  private @ParameterCdiTest CancelAndReplaceTestData testData;
 
   /**
-   * Verifies Cancel and Replace functionality API. Clone and existing Order. Click on Cancel and
-   * Replace process that will create a new Order in temporary status. Update the Order depending on
-   * the test executed and finally confirm this order. Different check points have been added in
-   * each stage to verify the results of the processes.
+   * Verifies Cancel and Replace functionality API with one or more than one replacement. Clone and
+   * existing Order. Click on Cancel and Replace process that will create two new Orders in
+   * temporary status. Update the Orders depending on the test executed and finally confirm those
+   * orders. Different check points have been added in each stage to verify the results of the
+   * processes.
    */
   @Test
-  public void CancelAndReplaceTests() {
+  public void cancelAndReplaceTest() {
     // Set QA context
     OBContext.setAdminMode();
     try {
       OBContext.setOBContext(Users.OPENBRAVO, Roles.QA_ADMIN_ROLE, QA_TEST_CLIENT_ID,
           ORGANIZATION_ID);
 
-      Order oldOrder = CancelAndReplaceTestUtils.cloneAndCompleteOrder(SALESORDER_ID, parameter);
+      VariablesSecureApp vars = new VariablesSecureApp(Users.OPENBRAVO, QA_TEST_CLIENT_ID,
+          ORGANIZATION_ID, Roles.QA_ADMIN_ROLE,
+          OBContext.getOBContext().getLanguage().getLanguage());
+      RequestContext.get().setVariableSecureApp(vars);
+
+      Order oldOrder = CancelAndReplaceTestUtils.cloneAndCompleteOrder(testData);
 
       // Deliver old order if the test is for fully or partially delivered orders
-      if (parameter.getOldOrder().isDelivered()) {
-        CancelAndReplaceTestUtils.createShipmentFromOrder(oldOrder, M_INOUT_ID, parameter);
+      if (testData.getOldOrder().isDelivered()) {
+        CancelAndReplaceTestUtils.createShipmentFromOrder(oldOrder, M_INOUT_ID, testData);
         OBDal.getInstance().refresh(oldOrder);
       }
 
       // Pay old order if the test is for fully or partially paid orders
-      if (parameter.isOrderPaid()) {
-        CancelAndReplaceTestUtils.createOrderPayment(oldOrder, parameter);
+      if (testData.isOrderPaid()) {
+        CancelAndReplaceTestUtils.createOrderPayment(oldOrder, testData);
         OBDal.getInstance().refresh(oldOrder);
       }
 
@@ -119,12 +145,12 @@ public class CancelAndReplaceTest extends WeldBaseTest {
       boolean createNettingGoodsShipment = CancelAndReplaceTestUtils
           .isPreferenceEnabled(CancelAndReplaceUtils.CREATE_NETTING_SHIPMENT);
 
-      if (parameter.isActivateNettingGoodsShipmentPref() && !createNettingGoodsShipment) {
+      if (testData.isActivateNettingGoodsShipmentPref() && !createNettingGoodsShipment) {
         Preferences.setPreferenceValue(CancelAndReplaceUtils.CREATE_NETTING_SHIPMENT, "Y", true,
             OBContext.getOBContext().getCurrentClient(),
             OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
             null, null, null);
-      } else if (!parameter.isActivateNettingGoodsShipmentPref() && createNettingGoodsShipment) {
+      } else if (!testData.isActivateNettingGoodsShipmentPref() && createNettingGoodsShipment) {
         Preferences.setPreferenceValue(CancelAndReplaceUtils.CREATE_NETTING_SHIPMENT, "N", true,
             OBContext.getOBContext().getCurrentClient(),
             OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
@@ -134,14 +160,14 @@ public class CancelAndReplaceTest extends WeldBaseTest {
       boolean associateShipmentToNewReceipt = CancelAndReplaceTestUtils
           .isPreferenceEnabled(CancelAndReplaceUtils.ASSOCIATE_SHIPMENT_TO_REPLACE_TICKET);
 
-      if (parameter.isActivateAssociateNettingGoodsShipmentPref()) {
+      if (testData.isActivateAssociateNettingGoodsShipmentPref()) {
         if (!associateShipmentToNewReceipt) {
           Preferences.setPreferenceValue(CancelAndReplaceUtils.ASSOCIATE_SHIPMENT_TO_REPLACE_TICKET,
               "Y", true, OBContext.getOBContext().getCurrentClient(),
               OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
               null, null, null);
         }
-      } else if (!parameter.isActivateAssociateNettingGoodsShipmentPref()
+      } else if (!testData.isActivateAssociateNettingGoodsShipmentPref()
           && associateShipmentToNewReceipt) {
         Preferences.setPreferenceValue(CancelAndReplaceUtils.ASSOCIATE_SHIPMENT_TO_REPLACE_TICKET,
             "N", true, OBContext.getOBContext().getCurrentClient(),
@@ -150,57 +176,105 @@ public class CancelAndReplaceTest extends WeldBaseTest {
       }
 
       // Create the new replacement order
-      Order newOrder = CancelAndReplaceUtils.createReplacementOrder(oldOrder);
+      List<Order> newOrders = new ArrayList<>();
+      for (int i = 0; i < testData.getNewOrders().size(); i++) {
+        newOrders.add(CancelAndReplaceUtils.createReplacementOrder(oldOrder));
+      }
+      log.debug("New orders Created:{}",
+          newOrders.stream().map(Order::getDocumentNo).collect(Collectors.toList()));
+      log.debug(testData.getTestDescription());
 
-      log.debug("New order Created:{}", newOrder.getDocumentNo());
-      log.debug(parameter.getTestDescription());
-
-      // Set Quantity to the orderline of the new order in temporary Status
-      OrderLine orderLine = newOrder.getOrderLineList().get(0);
-      orderLine.setOrderedQuantity(parameter.getNewOrder().getLines()[0].getOrderedQuantity());
-      OBDal.getInstance().save(orderLine);
+      updateNewOrders(newOrders);
       OBDal.getInstance().flush();
 
       // Cancel and Replace Sales Order
-      CancelAndReplaceUtils.cancelAndReplaceOrder(newOrder.getId(), null, true);
+      Set<String> newOrderIdSet = newOrders.stream().map(Order::getId).collect(Collectors.toSet());
+      CancelAndReplaceUtils.cancelAndReplaceOrder(oldOrder.getId(), newOrderIdSet,
+          oldOrder.getOrganization().getId(), null, false);
       OBDal.getInstance().flush();
       OBDal.getInstance().commitAndClose();
 
-      oldOrder = OBDal.getInstance().get(Order.class, oldOrder.getId());
-      newOrder = OBDal.getInstance().get(Order.class, newOrder.getId());
+      oldOrder = getOrder(oldOrder.getId());
       Order inverseOrder = oldOrder.getOrderCancelledorderList().get(0);
+      newOrders = refreshOrders(newOrders);
 
       // Sales Orders Grand Total Amounts
-      CancelAndReplaceTestUtils.assertOrderHeader(oldOrder, parameter.getOldOrder());
-      CancelAndReplaceTestUtils.assertOrderHeader(inverseOrder, parameter.getInverseOrder());
-      CancelAndReplaceTestUtils.assertOrderHeader(newOrder, parameter.getNewOrder());
+      CancelAndReplaceTestUtils.assertOrderHeader(oldOrder, testData.getOldOrder());
+      CancelAndReplaceTestUtils.assertOrderHeader(inverseOrder, testData.getInverseOrder());
+      for (int i = 0; i < newOrders.size(); i++) {
+        CancelAndReplaceTestUtils.assertOrderHeader(newOrders.get(i),
+            testData.getNewOrders().get(i));
+      }
 
       // Relations between orders
-      assertEquals(newOrder.getReplacedorder().getId(), oldOrder.getId());
-      assertEquals(inverseOrder.getCancelledorder().getId(), oldOrder.getId());
-      assertEquals(oldOrder.getReplacementorder().getId(), newOrder.getId());
+      final String oldOrderId = oldOrder.getId();
+      newOrders.forEach(newOrder -> assertThat("Wrong Cancelled Order id",
+          newOrder.getReplacedorder().getId(), comparesEqualTo(oldOrderId)));
+      assertThat("Wrong Cancelled Order id", inverseOrder.getCancelledorder().getId(),
+          comparesEqualTo(oldOrderId));
+      // FIXME Remove comment
+      // assertThat("Wrong Replacement Order id", oldOrder.getReplacementorder().getId(),
+      // comparesEqualTo(newOrders.get(newOrders.size() - 1).getId()));
 
       // Sales Orders Received and Outstanding payments
-      CancelAndReplaceTestUtils.assertOrderPayment(oldOrder, parameter.getOldOrder());
-      CancelAndReplaceTestUtils.assertOrderPayment(inverseOrder, parameter.getInverseOrder());
-      CancelAndReplaceTestUtils.assertOrderPayment(newOrder, parameter.getNewOrder());
+      CancelAndReplaceTestUtils.assertOrderPayment(oldOrder, testData.getOldOrder());
+      CancelAndReplaceTestUtils.assertOrderPayment(inverseOrder, testData.getInverseOrder());
+      for (int i = 0; i < newOrders.size(); i++) {
+        CancelAndReplaceTestUtils.assertOrderPayment(newOrders.get(i),
+            testData.getNewOrders().get(i));
+      }
 
       // Assert Lines
-      OrderLine oldOrderLine = oldOrder.getOrderLineList().get(0);
-      OrderLine inverseOrderLine = inverseOrder.getOrderLineList().get(0);
-      OrderLine newOrderLine = newOrder.getOrderLineList().get(0);
-
-      CancelAndReplaceTestUtils.assertOrderLine(oldOrderLine,
-          parameter.getOldOrder().getLines()[0]);
-      CancelAndReplaceTestUtils.assertOrderLine(inverseOrderLine,
-          parameter.getInverseOrder().getLines()[0]);
-      CancelAndReplaceTestUtils.assertOrderLine(newOrderLine,
-          parameter.getNewOrder().getLines()[0]);
+      assertOrderLines(oldOrder.getOrderLineList(), testData.getOldOrder());
+      assertOrderLines(inverseOrder.getOrderLineList(), testData.getInverseOrder());
+      for (int i = 0; i < newOrders.size(); i++) {
+        assertOrderLines(newOrders.get(i).getOrderLineList(), testData.getNewOrders().get(i));
+      }
     } catch (Exception e) {
-      log.error("Error when executing: " + parameter.getTestDescription(), e);
+      log.error("Error when executing: " + testData.getTestDescription(), e);
       assertFalse(true);
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  private List<Order> refreshOrders(List<Order> newOrders) {
+    List<Order> orders = new ArrayList<>(2);
+    newOrders.forEach(order -> orders.add(OBDal.getInstance().get(Order.class, order.getId())));
+    return orders;
+  }
+
+  private void assertOrderLines(List<OrderLine> lines,
+      CancelAndReplaceOrderTestData orderTestData) {
+    for (int i = 0; i < lines.size(); i++) {
+      CancelAndReplaceTestUtils.assertOrderLine(lines.get(i), orderTestData.getLines()[i]);
+    }
+  }
+
+  private void updateNewOrders(List<Order> newOrders) {
+    for (int i = 0; i < newOrders.size(); i++) {
+      updateOrder(i, newOrders.get(i), testData.getNewOrders().get(i).getLines()[0]);
+    }
+  }
+
+  private void updateOrder(int index, Order order, Line lineData) {
+    OrderLine orderLine = null;
+    for (int i = 0; i < order.getOrderLineList().size(); i++) {
+      OrderLine line = order.getOrderLineList().get(i);
+      if (line.getLineNo() == (index + 1) * 10) {
+        orderLine = line;
+        orderLine.setOrderedQuantity(lineData.getOrderedQuantity());
+        OBDal.getInstance().save(orderLine);
+      } else {
+        OBDal.getInstance().remove(line);
+      }
+    }
+    order.getOrderLineList().clear();
+    order.getOrderLineList().add(orderLine);
+    OBDal.getInstance().save(order);
+  }
+
+  private Order getOrder(String orderId) {
+    return OBDal.getInstance().get(Order.class, orderId);
   }
 }

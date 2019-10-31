@@ -19,22 +19,29 @@
 
 package org.openbravo.test.cancelandreplace.data;
 
+import java.util.List;
+
 public abstract class CancelAndReplaceTestData {
 
   /*
    * CONSTANTS:
    */
   protected static final String BP_CUSTOMER_A = "4028E6C72959682B01295F40C3CB02EC";
+  // Sales order: 50017
+  protected static final String SALESORDER_50017_ID = "F1AAB8C608AA434C9FC7FC1D685BA016";
+  // Sales order: 50011
+  protected static final String SALESORDER_50011_ID = "80AAF8AC57EC4A7EB2F85B3B2675F88C";
 
   private String testNumber;
   private String testDescription;
   private String bpartnerId;
+  private String cloneOrderId;
   private boolean activateNettingGoodsShipmentPref;
   private boolean activateAssociateNettingGoodsShipmentPref;
   private boolean orderPaid;
   private CancelAndReplaceOrderTestData oldOrder;
   private CancelAndReplaceOrderTestData inverseOrder;
-  private CancelAndReplaceOrderTestData newOrder;
+  private List<CancelAndReplaceOrderTestData> newOrders;
 
   private String errorMessage;
 
@@ -78,12 +85,12 @@ public abstract class CancelAndReplaceTestData {
     this.inverseOrder = inverseOrder;
   }
 
-  public CancelAndReplaceOrderTestData getNewOrder() {
-    return newOrder;
+  public void setNewOrders(List<CancelAndReplaceOrderTestData> newOrders) {
+    this.newOrders = newOrders;
   }
 
-  public void setNewOrder(CancelAndReplaceOrderTestData newOrder) {
-    this.newOrder = newOrder;
+  public List<CancelAndReplaceOrderTestData> getNewOrders() {
+    return newOrders;
   }
 
   public boolean isActivateNettingGoodsShipmentPref() {
@@ -123,6 +130,14 @@ public abstract class CancelAndReplaceTestData {
 
   public void setOrderPaid(boolean orderPaid) {
     this.orderPaid = orderPaid;
+  }
+
+  public String getCloneOrderId() {
+    return cloneOrderId;
+  }
+
+  public void setCloneOrderId(String cloneOrderId) {
+    this.cloneOrderId = cloneOrderId;
   }
 
 }

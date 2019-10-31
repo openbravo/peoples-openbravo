@@ -70,8 +70,8 @@ class CancelAndReplaceTestUtils {
    * 
    * @return the cloned order
    */
-  static Order cloneAndCompleteOrder(String oldOrderId, CancelAndReplaceTestData testData) {
-    Order order = OBDal.getInstance().get(Order.class, oldOrderId);
+  static Order cloneAndCompleteOrder(CancelAndReplaceTestData testData) {
+    Order order = OBDal.getInstance().get(Order.class, testData.getCloneOrderId());
     Order newOrder = (Order) DalUtil.copy(order, false);
     newOrder.setDocumentNo("C&R Test " + testData.getTestNumber());
     newOrder.setBusinessPartner(

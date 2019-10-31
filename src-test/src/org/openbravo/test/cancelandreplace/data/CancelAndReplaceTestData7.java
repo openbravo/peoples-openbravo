@@ -20,6 +20,7 @@
 package org.openbravo.test.cancelandreplace.data;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 
 import org.openbravo.test.cancelandreplace.data.CancelAndReplaceOrderTestData.Line;
 
@@ -32,6 +33,7 @@ public class CancelAndReplaceTestData7 extends CancelAndReplaceTestData {
         "Cancel and Replace of a not paid Order. Leave lines and quantities as were originally. Original Order is fully delivered. Netting shipment is created");
     setBpartnerId(BP_CUSTOMER_A);
     setOrderPaid(false);
+    setCloneOrderId(SALESORDER_50017_ID);
     setActivateNettingGoodsShipmentPref(true);
     setActivateAssociateNettingGoodsShipmentPref(false);
 
@@ -59,7 +61,7 @@ public class CancelAndReplaceTestData7 extends CancelAndReplaceTestData {
       }) };
     }));
 
-    setNewOrder(new CancelAndReplaceOrderTestData().with(newOrder -> {
+    setNewOrders(Arrays.asList(new CancelAndReplaceOrderTestData().with(newOrder -> {
       newOrder.totalAmount = new BigDecimal("4.14");
       newOrder.status = "CO";
       newOrder.paidAmount = BigDecimal.ZERO;
@@ -69,6 +71,6 @@ public class CancelAndReplaceTestData7 extends CancelAndReplaceTestData {
         line.shipmentLines = BigDecimal.ONE;
         line.orderedQuantity = new BigDecimal("2");
       }) };
-    }));
+    })));
   }
 }

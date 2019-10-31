@@ -24,7 +24,7 @@ import java.util.Arrays;
 
 import org.openbravo.test.cancelandreplace.data.CancelAndReplaceOrderTestData.Line;
 
-public class CancelAndMultipleReplaceTestData4 extends CancelAndMultipleReplaceTestData {
+public class CancelAndMultipleReplaceTestData4 extends CancelAndReplaceTestData {
 
   @Override
   public void initialize() {
@@ -33,6 +33,7 @@ public class CancelAndMultipleReplaceTestData4 extends CancelAndMultipleReplaceT
         "Cancel and Replace of a fully paid Order. Leave lines and quantities as were originally. Netting shipment is created");
     setBpartnerId(BP_CUSTOMER_A);
     setOrderPaid(true);
+    setCloneOrderId(SALESORDER_50011_ID);
     setActivateNettingGoodsShipmentPref(true);
     setActivateAssociateNettingGoodsShipmentPref(false);
 
