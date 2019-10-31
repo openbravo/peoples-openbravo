@@ -61,6 +61,8 @@ import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData;
 
 class CancelAndReplaceTestUtils {
 
+  static final String DOCUMENT_NO_PREFIX = "C&R Test ";
+
   private CancelAndReplaceTestUtils() {
 
   }
@@ -73,7 +75,7 @@ class CancelAndReplaceTestUtils {
   static Order cloneAndCompleteOrder(CancelAndReplaceTestData testData) {
     Order order = OBDal.getInstance().get(Order.class, testData.getCloneOrderId());
     Order newOrder = (Order) DalUtil.copy(order, false);
-    newOrder.setDocumentNo("C&R Test " + testData.getTestNumber());
+    newOrder.setDocumentNo(DOCUMENT_NO_PREFIX + testData.getTestNumber());
     newOrder.setBusinessPartner(
         OBDal.getInstance().get(BusinessPartner.class, testData.getBpartnerId()));
     newOrder.setSummedLineAmount(BigDecimal.ZERO);
@@ -125,7 +127,7 @@ class CancelAndReplaceTestUtils {
     // Clone existing Goods Shipment to use new one in the test
     ShipmentInOut cloneShipment = OBDal.getInstance().get(ShipmentInOut.class, cloneShipmentId);
     ShipmentInOut newShipment = (ShipmentInOut) DalUtil.copy(cloneShipment, false);
-    newShipment.setDocumentNo("C&R Test " + testData.getTestNumber());
+    newShipment.setDocumentNo(DOCUMENT_NO_PREFIX + testData.getTestNumber());
     newShipment.setBusinessPartner(
         OBDal.getInstance().get(BusinessPartner.class, testData.getBpartnerId()));
     newShipment.setId(SequenceIdData.getUUID());
@@ -255,11 +257,14 @@ class CancelAndReplaceTestUtils {
     }
   }
 
-  static void assertOrderHeader(Order order, CancelAndReplaceOrderTestData orderTestData) {
+  static void assertOrderHeader(Order order, CancelAndReplaceOrderTestData orderTestData,
+      String expectedDocumentNo) {
     assertThat("Order Total amount should be " + orderTestData.getTotalAmount(),
         order.getGrandTotalAmount(), comparesEqualTo(orderTestData.getTotalAmount()));
     assertThat("Order should be " + orderTestData.getStatus(), order.getDocumentStatus(),
         comparesEqualTo(orderTestData.getStatus()));
+    assertThat("Order document number should be " + expectedDocumentNo, order.getDocumentNo(),
+        comparesEqualTo(expectedDocumentNo));
   }
 
   static void assertOrderPayment(Order order, CancelAndReplaceOrderTestData orderTestData) {
