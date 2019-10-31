@@ -44,6 +44,7 @@ import org.openbravo.erpCommon.info.ClassicSelectorTest;
 import org.openbravo.test.accounting.PostDocumentTest;
 import org.openbravo.test.accounting.RecordID2Test;
 import org.openbravo.test.authentication.AuthenticationManagerTest;
+import org.openbravo.test.cancelandreplace.CancelAndMultipleReplaceTest;
 import org.openbravo.test.cancelandreplace.CancelAndReplaceTest;
 import org.openbravo.test.centralbroker.CentralBrokerTest;
 import org.openbravo.test.copyLinesFromOrders.CopyLinesFromOrdersTest;
@@ -331,7 +332,8 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     ViewGeneration.class,
 
     // Cancel and Replace Tests
-    CancelAndReplaceTest.class,
+    CancelAndReplaceTest.class, //
+    CancelAndMultipleReplaceTest.class,
 
     // AD_IsOrgIncluded
     Ad_isorgincludedTest.class, //
