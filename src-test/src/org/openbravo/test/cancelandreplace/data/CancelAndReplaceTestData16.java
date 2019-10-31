@@ -24,19 +24,18 @@ import java.util.Arrays;
 
 import org.openbravo.test.cancelandreplace.data.CancelAndReplaceOrderTestData.Line;
 
-public class CancelAndMultipleReplaceTestData3 extends CancelAndReplaceTestData {
+public class CancelAndReplaceTestData16 extends CancelAndReplaceTestData {
 
   @Override
   public void initialize() {
-    setTestNumber("MULTIPLEREPLACE003");
+    setTestNumber("MULTIPLEREPLACE005");
     setTestDescription(
-        "Cancel and Replace of a not paid Order. Decrease quantity of a line. Nothing is delivered in Original Order. Netting goods shipment is not created");
+        "Cancel and Replace of a fully paid Order. Increase quantity of a line. Netting shipment is not created");
     setBpartnerId(BP_CUSTOMER_A);
-    setOrderPaid(false);
+    setOrderPaid(true);
     setCloneOrderId(SALESORDER_50011_ID);
     setActivateNettingGoodsShipmentPref(false);
     setActivateAssociateNettingGoodsShipmentPref(false);
-
     setOldOrder(new CancelAndReplaceOrderTestData().with(oldOrder -> {
       oldOrder.delivered = false;
       oldOrder.totalAmount = new BigDecimal("293.70");
@@ -67,24 +66,24 @@ public class CancelAndMultipleReplaceTestData3 extends CancelAndReplaceTestData 
     }));
 
     setNewOrders(Arrays.asList(new CancelAndReplaceOrderTestData().with(newOrder -> {
-      newOrder.totalAmount = new BigDecimal("45.20");
+      newOrder.totalAmount = new BigDecimal("492.90");
       newOrder.status = "CO";
-      newOrder.paidAmount = BigDecimal.ZERO;
-      newOrder.outstandingAmount = new BigDecimal("45.20");
+      newOrder.paidAmount = new BigDecimal("293.70");
+      newOrder.outstandingAmount = new BigDecimal("199.20");
       newOrder.lines = new Line[] { newOrder.new Line().with(line -> {
         line.deliveredQty = BigDecimal.ZERO;
         line.shipmentLines = BigDecimal.ZERO;
-        line.orderedQuantity = BigDecimal.ONE;
+        line.orderedQuantity = new BigDecimal("12");
       }) };
     }), new CancelAndReplaceOrderTestData().with(newOrder -> {
-      newOrder.totalAmount = new BigDecimal("27.70");
+      newOrder.totalAmount = new BigDecimal("121.20");
       newOrder.status = "CO";
-      newOrder.paidAmount = BigDecimal.ZERO;
-      newOrder.outstandingAmount = new BigDecimal("27.70");
+      newOrder.paidAmount = new BigDecimal("293.70");
+      newOrder.outstandingAmount = new BigDecimal("-172.50");
       newOrder.lines = new Line[] { newOrder.new Line().with(line -> {
         line.deliveredQty = BigDecimal.ZERO;
         line.shipmentLines = BigDecimal.ZERO;
-        line.orderedQuantity = BigDecimal.ONE;
+        line.orderedQuantity = new BigDecimal("18");
       }) };
     })));
   }

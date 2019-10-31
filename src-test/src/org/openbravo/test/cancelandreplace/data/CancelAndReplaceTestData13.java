@@ -24,32 +24,31 @@ import java.util.Arrays;
 
 import org.openbravo.test.cancelandreplace.data.CancelAndReplaceOrderTestData.Line;
 
-public class CancelAndMultipleReplaceTestData9 extends CancelAndReplaceTestData {
+public class CancelAndReplaceTestData13 extends CancelAndReplaceTestData {
 
   @Override
   public void initialize() {
-    setTestNumber("MULTIPLEREPLACE009");
+    setTestNumber("MULTIPLEREPLACE002");
     setTestDescription(
-        "Cancel and Replace of a not paid Order. Decrease quantity of a line. Original Order is partially delivered. Netting goods shipment is not created. Old Shipment is associated to New Order");
+        "Cancel and Replace of a not paid Order. Increase quantity of a line. Nothing is delivered in Original Order. Netting goods shipment is created");
     setBpartnerId(BP_CUSTOMER_A);
     setOrderPaid(false);
     setCloneOrderId(SALESORDER_50011_ID);
-    setActivateNettingGoodsShipmentPref(false);
-    setActivateAssociateNettingGoodsShipmentPref(true);
+    setActivateNettingGoodsShipmentPref(true);
+    setActivateAssociateNettingGoodsShipmentPref(false);
+
     setOldOrder(new CancelAndReplaceOrderTestData().with(oldOrder -> {
-      oldOrder.delivered = true;
+      oldOrder.delivered = false;
       oldOrder.totalAmount = new BigDecimal("293.70");
       oldOrder.status = "CL";
       oldOrder.paidAmount = new BigDecimal("293.70");
       oldOrder.outstandingAmount = BigDecimal.ZERO;
       oldOrder.lines = new Line[] { oldOrder.new Line().with(line -> {
         line.deliveredQty = new BigDecimal("6");
-        line.movementQty = BigDecimal.ONE;
-        line.shipmentLines = BigDecimal.ZERO;
+        line.shipmentLines = BigDecimal.ONE;
       }), oldOrder.new Line().with(line -> {
         line.deliveredQty = new BigDecimal("9");
-        line.movementQty = BigDecimal.ONE;
-        line.shipmentLines = BigDecimal.ZERO;
+        line.shipmentLines = BigDecimal.ONE;
       }) };
     }));
 
@@ -60,32 +59,32 @@ public class CancelAndMultipleReplaceTestData9 extends CancelAndReplaceTestData 
       inverseOrder.outstandingAmount = BigDecimal.ZERO;
       inverseOrder.lines = new Line[] { inverseOrder.new Line().with(line -> {
         line.deliveredQty = new BigDecimal("-6");
-        line.shipmentLines = BigDecimal.ZERO;
+        line.shipmentLines = BigDecimal.ONE;
       }), inverseOrder.new Line().with(line -> {
         line.deliveredQty = new BigDecimal("-9");
-        line.shipmentLines = BigDecimal.ZERO;
+        line.shipmentLines = BigDecimal.ONE;
       }) };
     }));
 
     setNewOrders(Arrays.asList(new CancelAndReplaceOrderTestData().with(newOrder -> {
-      newOrder.totalAmount = new BigDecimal("45.20");
+      newOrder.totalAmount = new BigDecimal("492.90");
       newOrder.status = "CO";
       newOrder.paidAmount = BigDecimal.ZERO;
-      newOrder.outstandingAmount = new BigDecimal("45.20");
+      newOrder.outstandingAmount = new BigDecimal("492.90");
       newOrder.lines = new Line[] { newOrder.new Line().with(line -> {
-        line.deliveredQty = BigDecimal.ONE;
-        line.shipmentLines = BigDecimal.ONE;
-        line.orderedQuantity = BigDecimal.ONE;
+        line.deliveredQty = BigDecimal.ZERO;
+        line.shipmentLines = BigDecimal.ZERO;
+        line.orderedQuantity = new BigDecimal("12");
       }) };
     }), new CancelAndReplaceOrderTestData().with(newOrder -> {
-      newOrder.totalAmount = new BigDecimal("27.70");
+      newOrder.totalAmount = new BigDecimal("121.20");
       newOrder.status = "CO";
       newOrder.paidAmount = BigDecimal.ZERO;
-      newOrder.outstandingAmount = new BigDecimal("27.70");
+      newOrder.outstandingAmount = new BigDecimal("121.20");
       newOrder.lines = new Line[] { newOrder.new Line().with(line -> {
-        line.deliveredQty = BigDecimal.ONE;
-        line.shipmentLines = BigDecimal.ONE;
-        line.orderedQuantity = BigDecimal.ONE;
+        line.deliveredQty = BigDecimal.ZERO;
+        line.shipmentLines = BigDecimal.ZERO;
+        line.orderedQuantity = new BigDecimal("18");
       }) };
     })));
   }

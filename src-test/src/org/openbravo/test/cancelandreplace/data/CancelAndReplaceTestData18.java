@@ -24,30 +24,33 @@ import java.util.Arrays;
 
 import org.openbravo.test.cancelandreplace.data.CancelAndReplaceOrderTestData.Line;
 
-public class CancelAndMultipleReplaceTestData5 extends CancelAndReplaceTestData {
+public class CancelAndReplaceTestData18 extends CancelAndReplaceTestData {
 
   @Override
   public void initialize() {
-    setTestNumber("MULTIPLEREPLACE005");
+    setTestNumber("MULTIPLEREPLACE007");
     setTestDescription(
-        "Cancel and Replace of a fully paid Order. Increase quantity of a line. Netting shipment is not created");
+        "Cancel and Replace of a not paid Order. Leave lines and quantities as were originally. Original Order is fully delivered. Netting shipment is created");
     setBpartnerId(BP_CUSTOMER_A);
-    setOrderPaid(true);
+    setOrderPaid(false);
     setCloneOrderId(SALESORDER_50011_ID);
-    setActivateNettingGoodsShipmentPref(false);
+    setActivateNettingGoodsShipmentPref(true);
     setActivateAssociateNettingGoodsShipmentPref(false);
+
     setOldOrder(new CancelAndReplaceOrderTestData().with(oldOrder -> {
-      oldOrder.delivered = false;
+      oldOrder.delivered = true;
       oldOrder.totalAmount = new BigDecimal("293.70");
       oldOrder.status = "CL";
       oldOrder.paidAmount = new BigDecimal("293.70");
       oldOrder.outstandingAmount = BigDecimal.ZERO;
       oldOrder.lines = new Line[] { oldOrder.new Line().with(line -> {
         line.deliveredQty = new BigDecimal("6");
-        line.shipmentLines = BigDecimal.ZERO;
+        line.movementQty = new BigDecimal("6");
+        line.shipmentLines = BigDecimal.ONE;
       }), oldOrder.new Line().with(line -> {
         line.deliveredQty = new BigDecimal("9");
-        line.shipmentLines = BigDecimal.ZERO;
+        line.movementQty = new BigDecimal("9");
+        line.shipmentLines = BigDecimal.ONE;
       }) };
     }));
 
@@ -58,32 +61,32 @@ public class CancelAndMultipleReplaceTestData5 extends CancelAndReplaceTestData 
       inverseOrder.outstandingAmount = BigDecimal.ZERO;
       inverseOrder.lines = new Line[] { inverseOrder.new Line().with(line -> {
         line.deliveredQty = new BigDecimal("-6");
-        line.shipmentLines = BigDecimal.ZERO;
+        line.shipmentLines = BigDecimal.ONE;
       }), inverseOrder.new Line().with(line -> {
         line.deliveredQty = new BigDecimal("-9");
-        line.shipmentLines = BigDecimal.ZERO;
+        line.shipmentLines = BigDecimal.ONE;
       }) };
     }));
 
     setNewOrders(Arrays.asList(new CancelAndReplaceOrderTestData().with(newOrder -> {
-      newOrder.totalAmount = new BigDecimal("492.90");
+      newOrder.totalAmount = new BigDecimal("248.70");
       newOrder.status = "CO";
-      newOrder.paidAmount = new BigDecimal("293.70");
-      newOrder.outstandingAmount = new BigDecimal("199.20");
+      newOrder.paidAmount = BigDecimal.ZERO;
+      newOrder.outstandingAmount = new BigDecimal("248.70");
       newOrder.lines = new Line[] { newOrder.new Line().with(line -> {
-        line.deliveredQty = BigDecimal.ZERO;
-        line.shipmentLines = BigDecimal.ZERO;
-        line.orderedQuantity = new BigDecimal("12");
+        line.deliveredQty = new BigDecimal("6");
+        line.shipmentLines = BigDecimal.ONE;
+        line.orderedQuantity = new BigDecimal("6");
       }) };
     }), new CancelAndReplaceOrderTestData().with(newOrder -> {
-      newOrder.totalAmount = new BigDecimal("121.20");
+      newOrder.totalAmount = new BigDecimal("71.70");
       newOrder.status = "CO";
-      newOrder.paidAmount = new BigDecimal("293.70");
-      newOrder.outstandingAmount = new BigDecimal("-172.50");
+      newOrder.paidAmount = BigDecimal.ZERO;
+      newOrder.outstandingAmount = new BigDecimal("71.70");
       newOrder.lines = new Line[] { newOrder.new Line().with(line -> {
-        line.deliveredQty = BigDecimal.ZERO;
-        line.shipmentLines = BigDecimal.ZERO;
-        line.orderedQuantity = new BigDecimal("18");
+        line.deliveredQty = new BigDecimal("9");
+        line.shipmentLines = BigDecimal.ONE;
+        line.orderedQuantity = new BigDecimal("9");
       }) };
     })));
   }

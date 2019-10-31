@@ -24,7 +24,7 @@ import java.util.Arrays;
 
 import org.openbravo.test.cancelandreplace.data.CancelAndReplaceOrderTestData.Line;
 
-public class CancelAndMultipleReplaceTestData6 extends CancelAndReplaceTestData {
+public class CancelAndReplaceTestData17 extends CancelAndReplaceTestData {
 
   @Override
   public void initialize() {

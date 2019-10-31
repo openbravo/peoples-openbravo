@@ -24,17 +24,17 @@ import java.util.Arrays;
 
 import org.openbravo.test.cancelandreplace.data.CancelAndReplaceOrderTestData.Line;
 
-public class CancelAndMultipleReplaceTestData1 extends CancelAndReplaceTestData {
+public class CancelAndReplaceTestData15 extends CancelAndReplaceTestData {
 
   @Override
   public void initialize() {
-    setTestNumber("MULTIPLEREPLACE001");
+    setTestNumber("MULTIPLEREPLACE004");
     setTestDescription(
-        "Cancel and Replace of a not paid Order. Leave lines and quantities as were originally. Nothing is delivered in Original Order. Netting shipment is not created");
+        "Cancel and Replace of a fully paid Order. Leave lines and quantities as were originally. Netting shipment is created");
     setBpartnerId(BP_CUSTOMER_A);
-    setOrderPaid(false);
+    setOrderPaid(true);
     setCloneOrderId(SALESORDER_50011_ID);
-    setActivateNettingGoodsShipmentPref(false);
+    setActivateNettingGoodsShipmentPref(true);
     setActivateAssociateNettingGoodsShipmentPref(false);
 
     setOldOrder(new CancelAndReplaceOrderTestData().with(oldOrder -> {
@@ -45,10 +45,10 @@ public class CancelAndMultipleReplaceTestData1 extends CancelAndReplaceTestData 
       oldOrder.outstandingAmount = BigDecimal.ZERO;
       oldOrder.lines = new Line[] { oldOrder.new Line().with(line -> {
         line.deliveredQty = new BigDecimal("6");
-        line.shipmentLines = BigDecimal.ZERO;
+        line.shipmentLines = BigDecimal.ONE;
       }), oldOrder.new Line().with(line -> {
         line.deliveredQty = new BigDecimal("9");
-        line.shipmentLines = BigDecimal.ZERO;
+        line.shipmentLines = BigDecimal.ONE;
       }) };
     }));
 
@@ -59,18 +59,18 @@ public class CancelAndMultipleReplaceTestData1 extends CancelAndReplaceTestData 
       inverseOrder.outstandingAmount = BigDecimal.ZERO;
       inverseOrder.lines = new Line[] { inverseOrder.new Line().with(line -> {
         line.deliveredQty = new BigDecimal("-6");
-        line.shipmentLines = BigDecimal.ZERO;
+        line.shipmentLines = BigDecimal.ONE;
       }), inverseOrder.new Line().with(line -> {
         line.deliveredQty = new BigDecimal("-9");
-        line.shipmentLines = BigDecimal.ZERO;
+        line.shipmentLines = BigDecimal.ONE;
       }) };
     }));
 
     setNewOrders(Arrays.asList(new CancelAndReplaceOrderTestData().with(newOrder -> {
       newOrder.totalAmount = new BigDecimal("248.70");
       newOrder.status = "CO";
-      newOrder.paidAmount = BigDecimal.ZERO;
-      newOrder.outstandingAmount = new BigDecimal("248.70");
+      newOrder.paidAmount = new BigDecimal("293.70");
+      newOrder.outstandingAmount = new BigDecimal("-45.00");
       newOrder.lines = new Line[] { newOrder.new Line().with(line -> {
         line.deliveredQty = BigDecimal.ZERO;
         line.shipmentLines = BigDecimal.ZERO;
@@ -79,8 +79,8 @@ public class CancelAndMultipleReplaceTestData1 extends CancelAndReplaceTestData 
     }), new CancelAndReplaceOrderTestData().with(newOrder -> {
       newOrder.totalAmount = new BigDecimal("71.70");
       newOrder.status = "CO";
-      newOrder.paidAmount = BigDecimal.ZERO;
-      newOrder.outstandingAmount = new BigDecimal("71.70");
+      newOrder.paidAmount = new BigDecimal("293.70");
+      newOrder.outstandingAmount = new BigDecimal("-222.00");
       newOrder.lines = new Line[] { newOrder.new Line().with(line -> {
         line.deliveredQty = BigDecimal.ZERO;
         line.shipmentLines = BigDecimal.ZERO;

@@ -51,25 +51,25 @@ import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.OrderReplacement;
 import org.openbravo.test.base.TestConstants.Roles;
 import org.openbravo.test.base.TestConstants.Users;
-import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData1;
-import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData10;
-import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData11;
-import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData12;
-import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData2;
-import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData3;
-import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData4;
-import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData5;
-import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData6;
-import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData7;
-import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData8;
-import org.openbravo.test.cancelandreplace.data.CancelAndMultipleReplaceTestData9;
 import org.openbravo.test.cancelandreplace.data.CancelAndReplaceOrderTestData;
 import org.openbravo.test.cancelandreplace.data.CancelAndReplaceOrderTestData.Line;
 import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData;
 import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData1;
 import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData10;
 import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData11;
+import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData12;
+import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData13;
+import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData14;
+import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData15;
+import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData16;
+import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData17;
+import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData18;
+import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData19;
 import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData2;
+import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData20;
+import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData21;
+import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData22;
+import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData23;
 import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData3;
 import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData4;
 import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData5;
@@ -97,13 +97,13 @@ public class CancelAndReplaceTest extends WeldBaseTest {
       new CancelAndReplaceTestData5(), new CancelAndReplaceTestData6(),
       new CancelAndReplaceTestData7(), new CancelAndReplaceTestData8(),
       new CancelAndReplaceTestData9(), new CancelAndReplaceTestData10(),
-      new CancelAndReplaceTestData11(), new CancelAndMultipleReplaceTestData1(),
-      new CancelAndMultipleReplaceTestData2(), new CancelAndMultipleReplaceTestData3(),
-      new CancelAndMultipleReplaceTestData4(), new CancelAndMultipleReplaceTestData5(),
-      new CancelAndMultipleReplaceTestData6(), new CancelAndMultipleReplaceTestData7(),
-      new CancelAndMultipleReplaceTestData8(), new CancelAndMultipleReplaceTestData9(),
-      new CancelAndMultipleReplaceTestData10(), new CancelAndMultipleReplaceTestData11(),
-      new CancelAndMultipleReplaceTestData12());
+      new CancelAndReplaceTestData11(), new CancelAndReplaceTestData12(),
+      new CancelAndReplaceTestData13(), new CancelAndReplaceTestData14(),
+      new CancelAndReplaceTestData15(), new CancelAndReplaceTestData16(),
+      new CancelAndReplaceTestData17(), new CancelAndReplaceTestData18(),
+      new CancelAndReplaceTestData19(), new CancelAndReplaceTestData20(),
+      new CancelAndReplaceTestData21(), new CancelAndReplaceTestData22(),
+      new CancelAndReplaceTestData23());
 
   /** Defines the values the parameter will take. */
   @Rule
