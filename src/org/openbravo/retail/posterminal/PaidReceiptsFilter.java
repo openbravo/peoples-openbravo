@@ -100,9 +100,9 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
     hqlPaidReceipts.append(orderTypeHql);
     hqlPaidReceipts.append(" and ord.client.id = $clientId");
     hqlPaidReceipts.append(getOganizationFilter(jsonsent));
-    hqlPaidReceipts.append(
-        " and ord.obposIsDeleted = false and ord.obposApplications is not null and ord.documentStatus <> 'CJ' ");
-    hqlPaidReceipts.append(" and ord.documentStatus <> 'CA' ");
+    hqlPaidReceipts.append(" and ord.obposIsDeleted = false");
+    hqlPaidReceipts.append(" and ord.obposApplications is not null");
+    hqlPaidReceipts.append(" and ord.documentStatus not in ('CJ', 'CA', 'NC', 'AE', 'ME')");
     if (!isPayOpenTicket) {
       hqlPaidReceipts.append(" and (ord.documentStatus <> 'CL' or ord.iscancelled = true) ");
     }
