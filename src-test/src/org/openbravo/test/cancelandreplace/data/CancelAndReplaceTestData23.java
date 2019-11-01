@@ -28,9 +28,9 @@ public class CancelAndReplaceTestData23 extends CancelAndReplaceTestData {
 
   @Override
   public void initialize() {
-    setTestNumber("MULTIREPLACE0012");
+    setTestNumber("CANCELREPLACE0023");
     setTestDescription(
-        "Cancel and Replace of a not paid Order. Decrease quantity of a line. Original Order is partially delivered. Netting goods shipment is not created. Old Shipment is not associated to New Order.");
+        "Cancel and Multiple Replace of a fully paid Order. Leave lines and quantities as were originally. Original Order is fully delivered. Netting goods shipment is created. Old Shipment is associated to New Order.");
     setBpartnerId(BP_CUSTOMER_A);
     setOrderPaid(true);
     setCloneOrderId(SALESORDER_50008_ID);
