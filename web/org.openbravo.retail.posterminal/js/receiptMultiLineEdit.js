@@ -396,12 +396,12 @@ enyo.kind({
   name: 'OBRDM.UI.MultiReceiptPropertiesDialogCancel',
   kind: 'OB.UI.ModalDialogButton',
   classes: 'obrdmUiMultiReceiptPropertiesDialogCancel',
+  i18nLabel: 'OBMOBC_LblCancel',
   tap: function() {
     this.doHideThisPopup();
   },
   initComponents: function() {
     this.inherited(arguments);
-    this.setContent(OB.I18N.getLabel('OBMOBC_LblCancel'));
   }
 });
 

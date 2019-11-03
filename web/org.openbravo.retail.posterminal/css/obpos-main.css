@@ -316,6 +316,10 @@
 
 .obUiModalReceiptLinesProperties-scroller-attributes {}
 
+.obUiModalReceiptLinesProperties-scroller-attributes .obUiFormElement_dataFilter.obUiFormElement {
+  grid-template-columns: auto 30% 1fr;
+}
+
 .obUiModalReceiptLinesProperties-scroller-attributes-obUiPropertyEditLine {
 /* # Inherits: [OB.UI.PropertyEditLine] */
 }
@@ -517,13 +521,18 @@
 
 .obObposPointOfSaleUiPaymentMethods-body-container1 {}
 
-.obObposPointOfSaleUiPaymentMethods-body-container1-container1 {
-  border-bottom: 1px solid #cccccc;
+.obObposPointOfSaleUiPaymentMethods-body-container1-buttonslist {
+  display: grid;
+  grid-auto-flow: row;
+  grid-template-rows: auto;
+  grid-template-columns: repeat(3, calc((100% / 3) - (15px * 2 / 3)));
+  grid-gap: 15px;
+  height: 100%;
 }
 
-.obObposPointOfSaleUiPaymentMethods-body-container1-container1-buttonslist {
-  overflow: auto;
-  max-height: 402px;
+.obObposPointOfSaleUiPaymentMethods-body-container1-buttonslist .obUiButtonKey-button {
+  height: 50px;
+  border-radius: 4px;
 }
 
 
@@ -1103,9 +1112,7 @@
 */
 .obUiModalReceiptsScrollableHeader {}
 
-.obUiModalReceiptsScrollableHeader-filterSelector {
-  padding: 10px 0 0 0;
-}
+.obUiModalReceiptsScrollableHeader-filterSelector {}
 
 
 /*
@@ -1133,9 +1140,7 @@
 */
 .obUiModalVerifiedReturnsScrollableHeader {}
 
-.obUiModalVerifiedReturnsScrollableHeader-filterSelector {
-  padding: 10px 0 0 0;
-}
+.obUiModalVerifiedReturnsScrollableHeader-filterSelector {}
 
 
 /*
@@ -2013,7 +2018,7 @@ li.selected > .obUiRenderCategoryTree {
 }
 
 .obUiRenderProduct_showchdesc {
-  padding: 8px 10px 0px 10px;
+  padding: 6px 3px 0px 12px;
 }
 
 .obUiRenderProduct-container1 {
@@ -3109,19 +3114,34 @@ li.selected > .obUiRenderOrderLine_edit {
   margin-top: 9px;
   width: 45px;
   height: 27px;
+}
 
+.obUiOrderMultiSelect .obUiButton-components,
+.obUiOrderSingleSelect .obUiButton-components {
+  grid-template-columns: 1fr 0px;
+}
+
+.obUiOrderMultiSelect .obUiButton-components-icon,
+.obUiOrderSingleSelect .obUiButton-components-icon {
+  width: 100%;
+  height: 100%;
   background-color: transparent;
   background-repeat: no-repeat;
   background-size: 27px;
   background-position: right center;
 }
 
-.obUiOrderMultiSelect {
+.obUiOrderMultiSelect .obUiButton-components-icon {
   background-image: url('./../img/iconPinSelected.svg');
 }
 
-.obUiOrderSingleSelect {
+.obUiOrderSingleSelect .obUiButton-components-icon {
   background-image: url('./../img/iconPinUnselected.svg');
+}
+
+.obUiOrderMultiSelect .obUiButton-components-label,
+.obUiOrderSingleSelect .obUiButton-components-label {
+  display: none;
 }
 
 .obUiOrderMultiSelect:hover ,
@@ -3144,12 +3164,25 @@ li.selected > .obUiRenderOrderLine_edit {
   margin-top: 3px;
   white-space: nowrap;
   background-color: transparent;
+  width: 40px;
+  height: 40px;
+}
+
+.obUiOrderMultiSelectAll .obUiButton-components {
+  grid-template-columns: 1fr 0px;
+}
+
+.obUiOrderMultiSelectAll .obUiButton-components-icon {
+  width: 100%;
+  height: 100%;
   background-image: url('./../img/iconSelectAll.svg');
   background-repeat: no-repeat;
   background-size: 30px;
   background-position: center center;
-  width: 40px;
-  height: 40px;
+}
+
+.obUiOrderMultiSelectAll .obUiButton-components-label {
+  display: none;
 }
 
 .obUiOrderMultiSelectAll:hover {
@@ -3158,10 +3191,6 @@ li.selected > .obUiRenderOrderLine_edit {
 .obUiOrderMultiSelectAll:active {
   opacity: 1;
   filter: contrast(0.8) brightness(0.8);
-}
-
-.obUiOrderMultiSelectAll .obUiButton-components-label {
-  display: none;
 }
 
 
@@ -3270,6 +3299,7 @@ li.selected > .obUiRenderOrderLine_edit {
 .obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocbutton,
 .obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocshipbutton {
   width: auto;
+  height: 49px;
   box-shadow: 0px 0px 10px -1px #8d8d8d;
   border-radius: 4px;
   background-color: white;
@@ -3962,7 +3992,6 @@ li.selected > .obUiRenderOrderLine_edit {
 
 .obUiModalBpSelectorScrollableHeader-filterSelector {
   /* Inherits: [OB.UI.FilterSelectorTableHeader] */
-  padding: 10px 0 0 0;
 }
 
 .obUiModalBpSelectorFooter-container1 {}
@@ -4203,7 +4232,6 @@ li.selected > .obUiRenderOrderLine_edit {
 .obUiModalBpLocScrollableHeader {}
 
 .obUiModalBpLocScrollableHeader-container1 {
-  padding: 10px 0 0 0;
 }
 
 .obUiModalBpLocScrollableHeader-container1-container1 {
@@ -6287,7 +6315,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obUiModalPayOpenTicketsScrollableHeader {}
 
 .obUiModalPayOpenTicketsScrollableHeader-filterSelector {
-  padding: 10px 0 0 0;
 }
 
 /*
@@ -10481,10 +10508,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   background-size: 18px;
   background-repeat: no-repeat;
   background-position: center 23px;
-}
-
-.obObposPointOfSaleUiCustomersEditCreatecustomers-customerOnlyFields-obUiCustomerPropertyLine.obUiFormElement_isCustom .obUiFormElement-mainArea-coreElementArea {
-  border: 0px;
 }
 
 .obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-shipAndInvAddress {
@@ -15324,7 +15347,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obrdmUiModalOrderScrollableHeader-filterSelector {
   /* Inherits: [OB.UI.FilterSelectorTableHeader] */
-  padding: 10px 0 0 0;
 }
 
 .obrdmUiModalOrderFooter {}
