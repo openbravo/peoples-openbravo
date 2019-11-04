@@ -846,15 +846,17 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
 
       // Pay fully inverse order in C&R.
       final BigDecimal outstandingAmount = getPaymentScheduleOutstandingAmount(paymentSchedule);
-      final BigDecimal paidAmount = paymentSchedule.getAmount().subtract(outstandingAmount);
       final BigDecimal negativeAmount = paymentSchedule.getAmount().negate();
       final FIN_Payment nettingPayment = payOriginalAndInverseOrder(jsonOrder, oldOrder,
           inverseOrder, paymentOrganization, outstandingAmount, negativeAmount,
           useOrderDocumentNoForRelatedDocs);
 
-      newOrders.stream()
-          .forEach(newOrder -> addNewPayments(newOrder, paymentOrganization, nettingPayment,
-              paidAmount));
+      BigDecimal paidAmount = paymentSchedule.getAmount().subtract(outstandingAmount);
+      for (final Order newOrder : newOrders) {
+        paidAmount = paidAmount
+            .subtract(addNewPayments(newOrder, paymentOrganization, nettingPayment, paidAmount));
+      }
+
       processPayment(nettingPayment, jsonOrder);
     } catch (Exception e1) {
       log4j.error("Error in CancelAndReplaceUtils.createPayments", e1);
@@ -868,29 +870,34 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
     }
   }
 
-  private void addNewPayments(Order newOrder, Organization paymentOrganization,
+  private BigDecimal addNewPayments(Order newOrder, Organization paymentOrganization,
       FIN_Payment nettingPayment, BigDecimal paidAmount) {
     try {
       // Only for BackEnd WorkFlow
       // Get the payment schedule of the new order to check the outstanding amount, could
       // have been automatically paid on C_ORDER_POST if is automatically invoiced and the
       // payment method of the financial account is configured as 'Automatic Receipt'
+      final BigDecimal newOutstandingAmount = getPaymentScheduleOfOrder(newOrder)
+          .getOutstandingAmount();
+      final BigDecimal newPaidAmount = paidAmount.min(newOutstandingAmount);
       final boolean createPayments = areTriggersDisabled(jsonOrder)
-          || getPaymentScheduleOfOrder(newOrder).getOutstandingAmount()
-              .compareTo(BigDecimal.ZERO) != 0;
+          || newOutstandingAmount.compareTo(BigDecimal.ZERO) != 0;
 
       // Pay of the new order the amount already paid in original order
-      if (createPayments && paidAmount.compareTo(BigDecimal.ZERO) != 0) {
-        createOrUdpatePayment(nettingPayment, newOrder, paymentOrganization, null, paidAmount, null,
-            null, null);
+      if (createPayments && newPaidAmount.compareTo(BigDecimal.ZERO) != 0) {
+        createOrUdpatePayment(nettingPayment, newOrder, paymentOrganization, null, newPaidAmount,
+            null, null, null);
 
         String description = nettingPayment.getDescription() + ": " + newOrder.getDocumentNo();
         String truncatedDescription = (description.length() > 255)
             ? description.substring(0, 252).concat("...")
             : description;
         nettingPayment.setDescription(truncatedDescription);
+
+        return newPaidAmount;
       }
 
+      return BigDecimal.ZERO;
     } catch (Exception e) {
       throw new OBException(e);
     }
