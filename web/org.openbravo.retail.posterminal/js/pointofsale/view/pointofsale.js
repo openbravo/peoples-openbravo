@@ -2259,6 +2259,11 @@ enyo.kind({
               keyboard: 'toolbarpayment'
             }
           );
+          OB.POS.terminal.$.containerWindow
+            .getRoot()
+            .$.multiColumn.$.panels.addClass(
+              'obUiMultiColumn-panels-showReceipt'
+            );
           return;
         }
         if (changedModel.isOrder()) {
