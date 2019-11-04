@@ -112,15 +112,15 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.ModalRemoveAssociatedTickets',
-  kind: 'OB.UI.ModalAction',
+  kind: 'OB.UI.Modal',
   classes: 'obUiModalRemoveAssociatedTickets',
   handlers: {
     onApplyChanges: 'applyChanges',
     onLineSelected: 'lineSelected'
   },
-  bodyContent: {
+  body: {
     kind: 'Scroller',
-    classes: 'obUiModalRemoveAssociatedTickets-bodyContent-scroller',
+    classes: 'obUiModalRemoveAssociatedTickets-body-scroller',
     thumb: true,
     components: [
       {
@@ -129,24 +129,24 @@ enyo.kind({
       }
     ]
   },
-  bodyButtons: {
-    classes: 'obUiModalRemoveAssociatedTickets-bodyButtons',
+  footer: {
+    classes: 'obUiModalRemoveAssociatedTickets-footer',
     components: [
       {
         kind: 'OB.UI.ModalRemoveAssociations_btnCancel',
         classes:
-          'obUiModalRemoveAssociatedTickets-bodyButtons-obUiModalRemoveAssociationsBtnCancel'
+          'obUiModalRemoveAssociatedTickets-footer-obUiModalRemoveAssociationsBtnCancel'
       },
       {
         kind: 'OB.UI.ModalRemoveAssociations_btnApply',
         classes:
-          'obUiModalRemoveAssociatedTickets-bodyButtons-obUiModalRemoveAssociationsBtnApply'
+          'obUiModalRemoveAssociatedTickets-footer-obUiModalRemoveAssociationsBtnApply'
       }
     ]
   },
   initComponents: function() {
     this.inherited(arguments);
-    this.attributeContainer = this.$.bodyContent.$.attributes;
+    this.attributeContainer = this.$.body.$.attributes;
   },
   lineSelected: function(inSender, inEvent) {
     var lines,
@@ -196,9 +196,9 @@ enyo.kind({
   executeOnShow: function() {
     var me = this;
     OB.UTIL.showLoading(false);
-    this.$.bodyContent.$.attributes.destroyComponents();
+    this.$.body.$.attributes.destroyComponents();
     this.$.header.destroyComponents();
-    this.$.header.createComponent({
+    this.setHeader({
       name: 'ModalRemoveAssociatedTicketsHeader',
       classes:
         'obUiModalRemoveAssociatedTickets-header-modalRemoveAssociatedTicketsHeader',
@@ -224,7 +224,7 @@ enyo.kind({
       ]
     });
     this.$.header.addClass('obUiModalRemoveAssociatedTickets-header');
-    this.$.header.createComponent({
+    this.setHeader({
       name: 'HeaderLabels',
       classes: 'obUiModalRemoveAssociatedTickets-header-headerLabels',
       components: [
@@ -277,7 +277,7 @@ enyo.kind({
         }
       }
 
-      me.$.bodyContent.$.attributes.createComponent({
+      me.$.body.$.attributes.createComponent({
         kind: 'OB.UI.AssociatedOrderLine',
         name: 'line' + lineNum,
         classes:
@@ -287,6 +287,6 @@ enyo.kind({
       lineNum++;
     });
     this.$.header.render();
-    this.$.bodyContent.$.attributes.render();
+    this.$.body.$.attributes.render();
   }
 });

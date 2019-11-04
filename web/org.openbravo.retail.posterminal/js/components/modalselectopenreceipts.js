@@ -32,27 +32,27 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.ModalAction',
+  kind: 'OB.UI.Modal',
   name: 'OB.UI.ModalSelectOpenedReceipt',
   classes: 'obUiModalSelectOpenedReceipt',
   i18nHeader: 'OBPOS_lblHeaderSelectOpenedReceiptModal',
   //body of the popup
-  bodyContent: {
-    classes: 'obUiModalSelectOpenedReceipt-bodyContent',
+  body: {
+    classes: 'obUiModalSelectOpenedReceipt-body',
     components: [
       {
         classes:
-          'obUiModalSelectOpenedReceipt-bodyContent-lblSelectOpenedReceiptModal',
+          'obUiModalSelectOpenedReceipt-body-lblSelectOpenedReceiptModal',
         name: 'lblSelectOpenedReceiptModal'
       },
       {
         classes:
-          'obUiModalSelectOpenedReceipt-bodyContent-listSelectOpenedReceiptModal',
+          'obUiModalSelectOpenedReceipt-body-listSelectOpenedReceiptModal',
         name: 'listSelectOpenedReceiptModal',
         kind: 'OB.UI.OpenedReceiptsList'
       },
       {
-        classes: 'obUiModalSelectOpenedReceipt-bodyContent-container1',
+        classes: 'obUiModalSelectOpenedReceipt-body-container1',
         components: [
           {
             name: 'chkSelectOpenedReceiptModal',
@@ -75,17 +75,17 @@ enyo.kind({
     ]
   },
   //buttons of the popup
-  bodyButtons: {
-    classes: 'obUiModalSelectOpenedReceipt-bodyButtons',
+  footer: {
+    classes: 'obUiModalSelectOpenedReceipt-footer',
     components: [
       {
         classes:
-          'obUiModalSelectOpenedReceipt-bodyButtons-obUiModalSelectOpenedReceiptBtnCancel',
+          'obUiModalSelectOpenedReceipt-footer-obUiModalSelectOpenedReceiptBtnCancel',
         kind: 'OB.UI.ModalSelectOpenedReceipt_btnCancel'
       },
       {
         classes:
-          'obUiModalSelectOpenedReceipt-bodyButtons-obUiModalSelectOpenedReceiptBtnApply',
+          'obUiModalSelectOpenedReceipt-footer-obUiModalSelectOpenedReceiptBtnApply',
         kind: 'OB.UI.ModalSelectOpenedReceipt_btnApply',
         disabled: true,
         checkModifyTax: function(params) {
@@ -194,8 +194,7 @@ enyo.kind({
                     me.owner.owner.args.callback();
                   }
                   if (
-                    me.owner.owner.$.bodyContent.$.chkSelectOpenedReceiptModal
-                      .checked
+                    me.owner.owner.$.body.$.chkSelectOpenedReceiptModal.checked
                   ) {
                     me.owner.owner.doChangeCurrentOrder({
                       newCurrentOrder: orderModel
@@ -238,9 +237,9 @@ enyo.kind({
     //executed when popup is shown.
     //to access to argumens -> this.args
     this.uncheckAllItems();
-    this.$.bodyContent.$.chkSelectOpenedReceiptModal.check();
-    this.$.bodyButtons.$.modalSelectOpenedReceipt_btnApply.setDisabled(true);
-    this.$.bodyContent.$.lblSelectOpenedReceiptModal.setContent(
+    this.$.body.$.chkSelectOpenedReceiptModal.check();
+    this.$.footer.$.modalSelectOpenedReceipt_btnApply.setDisabled(true);
+    this.$.body.$.lblSelectOpenedReceiptModal.setContent(
       OB.I18N.getLabel('OBPOS_LblSelectOpenedReceiptModal', [
         this.args.product.attributes._identifier
       ])
@@ -251,13 +250,13 @@ enyo.kind({
     receiptsList: null
   },
   receiptsListChanged: function(oldValue) {
-    this.$.bodyContent.$.listSelectOpenedReceiptModal.setReceiptsList(
+    this.$.body.$.listSelectOpenedReceiptModal.setReceiptsList(
       this.receiptsList
     );
   },
 
   init: function(model) {
-    this.$.bodyButtons.setStyle('padding-top: 5px');
+    this.$.footer.setStyle('padding-top: 5px');
   },
   events: {
     onChangeCurrentOrder: '',
@@ -267,7 +266,7 @@ enyo.kind({
 
   selectedLine: null,
   uncheckAllItems: function() {
-    var items = this.$.bodyContent.$.listSelectOpenedReceiptModal.$
+    var items = this.$.body.$.listSelectOpenedReceiptModal.$
         .openedreceiptslistitemprinter.$.tbody.$,
       buttonContainer,
       control,
@@ -275,8 +274,8 @@ enyo.kind({
 
     // Remove grey background to 'Create New Receipt' button
     // TODO: Remove this style
-    this.$.bodyContent.$.listSelectOpenedReceiptModal.$.button.setStyle(
-      this.$.bodyContent.$.listSelectOpenedReceiptModal.$.button.style.replace(
+    this.$.body.$.listSelectOpenedReceiptModal.$.button.setStyle(
+      this.$.body.$.listSelectOpenedReceiptModal.$.button.style.replace(
         ' background-color: #cccccc;',
         ''
       )
@@ -315,8 +314,8 @@ enyo.kind({
     line.addClass('obUiOpenedReceiptsListLine_disabled');
 
     // Enable 'Apply' button
-    if (this.$.bodyButtons.$.modalSelectOpenedReceipt_btnApply.disabled) {
-      this.$.bodyButtons.$.modalSelectOpenedReceipt_btnApply.setDisabled(false);
+    if (this.$.footer.$.modalSelectOpenedReceipt_btnApply.disabled) {
+      this.$.footer.$.modalSelectOpenedReceipt_btnApply.setDisabled(false);
     }
   }
 });
