@@ -305,11 +305,11 @@
 /***********************   ***********************/
 /*
 # Component: OB.UI.ModalReceiptLinesProperties
-# Inherits: [OB.UI.ModalAction]
+# Inherits: [OB.UI.Modal]
 */
 .obUiModalReceiptLinesProperties {}
 
-.obUiModalReceiptLinesProperties-bodyContent-scroller {
+.obUiModalReceiptLinesProperties-body-scroller {
 /* # Inherits: [Scroller] */
   overflow-x: hidden !important;
 }
@@ -324,13 +324,13 @@
 /* # Inherits: [OB.UI.PropertyEditLine] */
 }
 
-.obUiModalReceiptLinesProperties-bodyButtons {}
+.obUiModalReceiptLinesProperties-footer {}
 
-.obUiModalReceiptLinesProperties-bodyButtons-receiptLinePropertiesApplyBtn {
+.obUiModalReceiptLinesProperties-footer-receiptLinePropertiesApplyBtn {
 /* # Inherits: [OB.UI.ReceiptPropertiesDialogApply] */
 }
 
-.obUiModalReceiptLinesProperties-bodyButtons-receiptLinePropertiesCancelBtn {
+.obUiModalReceiptLinesProperties-footer-receiptLinePropertiesCancelBtn {
 /* # Inherits: [OB.UI.ReceiptPropertiesDialogCancel] */
 }
 
@@ -362,7 +362,7 @@
 */
 .obUiValidateAction {}
 
-.obUiValidateAction-bodyContent-message {}
+/*.obUiValidateAction-bodyContent-message {}*/
 
 
 
@@ -894,17 +894,17 @@
 
 /*
 # Component: OB.UI.ModalDeleteReceipt
-# Inherits: [OB.UI.ModalAction]
+# Inherits: [OB.UI.Modal]
 */
 .obUiModalDeleteReceipt {}
 
-.obUiModalDeleteReceipt-bodyContent {}
+.obUiModalDeleteReceipt-body {}
 
-.obUiModalDeleteReceipt-bodyButtons {}
+.obUiModalDeleteReceipt-footer {}
 
-.obUiModalDeleteReceipt-bodyButtons-obUiBtnModalApplyDelete {}
+.obUiModalDeleteReceipt-footer-obUiBtnModalApplyDelete {}
 
-.obUiModalDeleteReceipt-bodyButtons-obUiBtnModalCancelDelete {}
+.obUiModalDeleteReceipt-footer-obUiBtnModalCancelDelete {}
 
 
 
@@ -2306,7 +2306,7 @@ li.selected > .obUiRenderCategoryTree {
 /***********************   ***********************/
 /*
 # Component: OB.UI.ModalProviderGroup
-# Inherits: [OB.UI.ModalAction]
+# Inherits: [OB.UI.Modal]
 */
 .obUiModalProviderGroup {}
 
@@ -2314,38 +2314,38 @@ li.selected > .obUiRenderCategoryTree {
   max-height: 600px;
 }
 
-.obUiModalProviderGroup-container1-container1 {}
+.obUiModalProviderGroup-body-container1 {}
 
-.obUiModalProviderGroup-container1-container1-container1 {}
+.obUiModalProviderGroup-body-container1-container1 {}
 
-.obUiModalProviderGroup-container1-container1-container1-lblType {
+.obUiModalProviderGroup-body-container1-container1-lblType {
   float: left;
   padding-left: 30px;
 }
 
-.obUiModalProviderGroup-container1-container1-container1-paymenttype {
+.obUiModalProviderGroup-body-container1-container1-paymenttype {
   float: right;
   font-weight: bold;
   padding-right: 30px;
 }
 
-.obUiModalProviderGroup-container1-container1-container2 {
+.obUiModalProviderGroup-body-container1-container2 {
   clear: both;
 }
 
-.obUiModalProviderGroup-container1-container1-container3 {}
+.obUiModalProviderGroup-body-container1-container3 {}
 
-.obUiModalProviderGroup-container1-container1-container3-description {
+.obUiModalProviderGroup-body-container1-container3-description {
   float: center;
   padding-left: 30px;
   padding-right: 30px;
 }
 
-.obUiModalProviderGroup-container1-container1-container4 {
+.obUiModalProviderGroup-body-container1-container4 {
   clear: both;
 }
 
-.obUiModalProviderGroup-container1-providergroupcomponent {}
+.obUiModalProviderGroup-body-providergroupcomponent {}
 
 
 /*
@@ -2409,7 +2409,7 @@ li.selected > .obUiRenderCategoryTree {
 /***********************   ***********************/
 /*
 # Component: OB.UI.ModalProviderGroupVoid
-# Inherits: [OB.UI.ModalAction]
+# Inherits: [OB.UI.Modal]
 */
 .obUiModalProviderGroupVoid {
   max-height: 600px;
@@ -6613,17 +6613,17 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 /*
 # Component: OB.UI.ModalReactivateQuotation
-# Inherits: [OB.UI.ModalAction]
+# Inherits: [OB.UI.Modal]
 */
 .obUiModalReactivateQuotation {}
 
-.obUiModalReactivateQuotation-bodyContent {}
+/*.obUiModalReactivateQuotation-bodyContent {}*/
 
-.obUiModalReactivateQuotation-bodyButtons {}
+.obUiModalReactivateQuotation-footer {}
 
-.obUiModalReactivateQuotation-bodyButtons-obObposPointOfSaleUiModalsBtnModalReactivateQuotationAccept {}
+.obUiModalReactivateQuotation-footer-obObposPointOfSaleUiModalsBtnModalReactivateQuotationAccept {}
 
-.obUiModalReactivateQuotation-bodyButtons-obObposPointOfSaleUiModalsBtnModalReactivateQuotationCancel {}
+.obUiModalReactivateQuotation-footer-obObposPointOfSaleUiModalsBtnModalReactivateQuotationCancel {}
 
 
 
