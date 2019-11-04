@@ -23,25 +23,24 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.ModalAction',
+  kind: 'OB.UI.Modal',
   name: 'OB.UI.ModalContextChanged',
   classes: 'obUiModalContextChanged',
-  bodyContent: {},
   closeOnEscKey: false,
   autoDismiss: false,
   i18nHeader: 'OBPOS_ContextChanged',
-  bodyButtons: {
-    classes: 'obUiModalContextChanged-bodyButtons',
+  footer: {
+    classes: 'obUiModalContextChanged-footer',
     components: [
       {
-        classes: 'obUiModalContextChanged-bodyButtons-element1',
+        classes: 'obUiModalContextChanged-footer-element1',
         initComponents: function() {
           this.setContent(OB.I18N.getLabel('OBPOS_ContextChangedMessage'));
         }
       },
       {
         classes:
-          'obUiModalContextChanged-bodyButtons-obObpospointofsaleUiModalsBtnModaContextChangedAccept',
+          'obUiModalContextChanged-footer-obObpospointofsaleUiModalsBtnModaContextChangedAccept',
         kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModaContextChangedAccept'
       }
     ]

@@ -2281,18 +2281,18 @@ li.selected > .obUiRenderCategoryTree {
 /***********************   ***********************/
 /*
 # Component: OB.UI.ModalPayment
-# Inherits: [OB.UI.ModalAction]
+# Inherits: [OB.UI.Modal]
 */
 .obUiModalPayment {
   max-height: 600px;
 }
 
-.obUiModalPayment-bodyContent-provider-generic {}
+.obUiModalPayment-body-provider-generic {}
 
 
 /*
 # Component: OB.UI.ModalPaymentVoid
-# Inherits: [OB.UI.ModalAction]
+# Inherits: [OB.UI.Modal]
 */
 .obUiModalPaymentVoid {
   max-height: 600px;
@@ -2350,15 +2350,15 @@ li.selected > .obUiRenderCategoryTree {
 
 /*
 # Component: OB.UI.ModalDeliveryChange
-# Inherits: [OB.UI.ModalAction]
+# Inherits: [OB.UI.Modal]
 */
 .obUiModalDeliveryChange {}
 
-.obUiModalDeliveryChange-bodyContent {}
+.obUiModalDeliveryChange-body {}
 
-.obUiModalDeliveryChange-bodyContent-labelPaymentInformation {}
+.obUiModalDeliveryChange-body-labelPaymentInformation {}
 
-.obUiModalDeliveryChange-bodyContent-paymentOptions {
+.obUiModalDeliveryChange-body-paymentOptions {
   background-color: var(--color-primary-lighter);
   margin: 20px 30px 0 30px;
   text-align: left;
@@ -2374,9 +2374,9 @@ li.selected > .obUiRenderCategoryTree {
 
 .obUiModalDeliveryChange-paymentOptions-returnChange {}
 
-.obUiModalDeliveryChange-bodyButtons {}
+.obUiModalDeliveryChange-footer {}
 
-.obUiModalDeliveryChange-bodyButtons-obUiModalDeliveryChangeButtonOK {}
+.obUiModalDeliveryChange-footer-obUiModalDeliveryChangeButtonOK {}
 
 
 
@@ -6548,32 +6548,32 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 /*
 # Component: OB.UI.ModalCreateOrderFromQuotation
-# Inherits: [OB.UI.ModalAction]
+# Inherits: [OB.UI.Modal]
 */
 .obUiModalCreateOrderFromQuotation {}
 
-.obUiModalCreateOrderFromQuotation-bodyContent {}
+/*.obUiModalCreateOrderFromQuotation-bodyContent {}*/
 
-.obUiModalCreateOrderFromQuotation-bodyButtons {}
+.obUiModalCreateOrderFromQuotation-footer {}
 
-.obUiModalCreateOrderFromQuotation-bodyButtons-element1 {
+.obUiModalCreateOrderFromQuotation-footer-element1 {
   height: 40px;
   width: 120px;
   float: left;
 }
 
-.obUiModalCreateOrderFromQuotation-bodyButtons-container2 {
+.obUiModalCreateOrderFromQuotation-footer-container2 {
   height: 40px;
   width: 50px;
   background-color: rgb(226, 226, 226);
   float: left;
 }
 
-.obUiModalCreateOrderFromQuotation-bodyButtons-container2-obUiupdateprices {
+.obUiModalCreateOrderFromQuotation-footer-container2-obUiupdateprices {
 /* Inherits: [OB.UI.updateprices] */
 }
 
-.obUiModalCreateOrderFromQuotation-bodyButtons-element3 {
+.obUiModalCreateOrderFromQuotation-footer-element3 {
   text-align: left;
   padding: 11px;
   float: left;
@@ -6581,13 +6581,13 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   background: #dddddd;
 }
 
-.obUiModalCreateOrderFromQuotation-bodyButtons-element4 {}
+.obUiModalCreateOrderFromQuotation-footer-element4 {}
 
-.obUiModalCreateOrderFromQuotation-bodyButtons-obObposPointOfSaleUiModalsbtnModalCreateOrderAccept {
+.obUiModalCreateOrderFromQuotation-footer-obObposPointOfSaleUiModalsbtnModalCreateOrderAccept {
 /* Inherits: [OB.OBPOSPointOfSale.UI.Modals.btnModalCreateOrderAccept] */
 }
 
-.obUiModalCreateOrderFromQuotation-bodyButtons-obObposPointOfSaleUiModalsbtnModalCreateOrderCancel {
+.obUiModalCreateOrderFromQuotation-footer-obObposPointOfSaleUiModalsbtnModalCreateOrderCancel {
 /* Inherits: [OB.OBPOSPointOfSale.UI.Modals.btnModalCreateOrderCancel] */
 }
 
@@ -6736,13 +6736,13 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 /*
 # Component: OB.UI.ModalPriceModification
-# Inherits: [OB.UI.ModalAction]
+# Inherits: [OB.UI.Modal]
 */
 .obUiModalPriceModification {}
 
-.obUiModalPriceModification-bodyContent {}
+.obUiModalPriceModification-body {}
 
-.obUiModalPriceModification-bodyContent-labelPriceModification {
+.obUiModalPriceModification-body-labelPriceModification {
   text-align: right;
   padding-right: 10px;
   width: 40%;
@@ -6750,19 +6750,19 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   float: left;
 }
 
-.obUiModalPriceModification-bodyContent-priceModificationReason {
+.obUiModalPriceModification-body-priceModificationReason {
 /* # Inherits: [OB.UI.ModalPriceModificationReason] */
   width: 50%;
   float: left;
 }
 
-.obUiModalPriceModification-bodyButtons {}
+.obUiModalPriceModification-footer {}
 
-.obUiModalPriceModification-bodyButtons-obObposPointOfSaleUiModalsBtnModalPriceModificationAccept {
+.obUiModalPriceModification-footer-obObposPointOfSaleUiModalsBtnModalPriceModificationAccept {
 /* # Inherits: [OB.OBPOSPointOfSale.UI.Modals.btnModalPriceModificationAccept] */
 }
 
-.obUiModalPriceModification-bodyButtons-obObposPointOfSaleUiModalsBtnModalPriceModificationCancel {
+.obUiModalPriceModification-footer-obObposPointOfSaleUiModalsBtnModalPriceModificationCancel {
 /* # Inherits: [OB.OBPOSPointOfSale.UI.Modals.btnModalPriceModificationCancel] */
 }
 
@@ -6805,11 +6805,11 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 */
 .obUiModalContextChanged {}
 
-.obUiModalContextChanged-bodyButtons {}
+.obUiModalContextChanged-footer {}
 
-.obUiModalContextChanged-bodyButtons-element1 {}
+.obUiModalContextChanged-footer-element1 {}
 
-.obUiModalContextChanged-bodyButtons-obObpospointofsaleUiModalsBtnModaContextChangedAccept {
+.obUiModalContextChanged-footer-obObpospointofsaleUiModalsBtnModaContextChangedAccept {
   /*Inherits: [OB.OBPOSPointOfSale.UI.Modals.btnModaContextChangedAccept]*/
 }
 

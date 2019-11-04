@@ -11,10 +11,10 @@
 
 enyo.kind({
   name: 'OB.UI.ModalPayment',
-  kind: 'OB.UI.ModalAction',
+  kind: 'OB.UI.Modal',
   header: '',
   classes: 'obUiModalPayment',
-  bodyContent: {},
+  body: {},
   executeOnShow: function() {
     this.$.header.setContent(
       this.args.receipt && this.args.receipt.getTotal() > 0
@@ -26,18 +26,18 @@ enyo.kind({
           ])
     );
 
-    this.$.bodyContent.destroyComponents();
+    this.$.body.destroyComponents();
     //default values to reset changes done by a payment method
     this.closeOnEscKey = this.dfCloseOnEscKey;
     this.autoDismiss = this.dfAutoDismiss;
     this.executeOnShown = null;
     this.executeBeforeHide = null;
     this.executeOnHide = null;
-    this.$.bodyContent
+    this.$.body
       .createComponent({
         mainPopup: this,
         kind: this.args.provider,
-        classes: 'obUiModalPayment-bodyContent-provider-generic',
+        classes: 'obUiModalPayment-body-provider-generic',
         paymentMethod: this.args.paymentMethod,
         paymentType: this.args.name,
         paymentAmount: this.args.amount,
@@ -64,18 +64,16 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.ModalPaymentVoid',
-  kind: 'OB.UI.ModalAction',
+  kind: 'OB.UI.Modal',
   classes: 'obUiModalPaymentVoid',
   header: '',
-  bodyContent: {},
-  bodyButtons: {},
+  hideCloseButton: true,
   executeOnShow: function() {
-    this.$.header.setContent(
+    this.setHeader(
       OB.I18N.getLabel('OBPOS_LblModalVoidTransaction', [
         OB.I18N.formatCurrency(this.args.amount)
       ])
     );
-    this.$.headerCloseButton.hide();
     this.autoDismiss = false;
   }
 });
