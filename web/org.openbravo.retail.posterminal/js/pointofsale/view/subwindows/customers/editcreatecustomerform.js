@@ -163,7 +163,15 @@ enyo.kind({
         this
       );
     }
-
+    _.each(
+      this.$.body.$.edit_createcustomers_impl.$.customerAttributes.$,
+      function(attribute) {
+        if (attribute.hasClass('obUiFormElement_error')) {
+          attribute.removeClass('obUiFormElement_error');
+          attribute.setMessage();
+        }
+      }
+    );
     var navigationPath =
       this.customer || !this.args.cancelNavigationPath
         ? this.args.navigationPath
