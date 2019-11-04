@@ -11296,15 +11296,15 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /***********************   ***********************/
 /*
 # Component: OB.OBPOSPointOfSale.UI.Modals.ModalStockDiscontinued
-# Inherits: [OB.UI.ModalAction]
+# Inherits: [OB.UI.Modal]
 */
 .obObposPointOfSaleUiModalsModalStockDiscontinued {}
 
-.obObposPointOfSaleUiModalsModalStockDiscontinued-bodyContent {}
+.obObposPointOfSaleUiModalsModalStockDiscontinued-body {}
 
-.obObposPointOfSaleUiModalsModalStockDiscontinued-bodyContent-bodymessage {}
+.obObposPointOfSaleUiModalsModalStockDiscontinued-body-bodymessage {}
 
-.obObposPointOfSaleUiModalsModalStockDiscontinued-bodyButtons-obUiModalDialogButton {
+.obObposPointOfSaleUiModalsModalStockDiscontinued-footer-obUiModalDialogButton {
 /* Inherits: [OB.UI.ModalDialogButton] */
 }
 
@@ -11691,19 +11691,19 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /***********************   ***********************/
 /*
 # Component: OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit
-# Inherits: [OB.UI.ModalAction]
+# Inherits: [OB.UI.Modal]
 */
 .obObposPointOfSaleUiModalsModalEnoughCredit {}
 
-.obObposPointOfSaleUiModalsModalEnoughCredit-bodyContent-popupmessage {}
+/*.obObposPointOfSaleUiModalsModalEnoughCredit-bodyContent-popupmessage {}*/
 
-.obObposPointOfSaleUiModalsModalEnoughCredit-bodyButtons {}
+.obObposPointOfSaleUiModalsModalEnoughCredit-footer {}
 
-.obObposPointOfSaleUiModalsModalEnoughCredit-bodyButtons-obObposPointOfSaleUiModalsModalEnoughCreditComponentsApplyButton {
+.obObposPointOfSaleUiModalsModalEnoughCredit-footer-obObposPointOfSaleUiModalsModalEnoughCreditComponentsApplyButton {
 /* Inherits: [OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit.Components.apply_button] */
 }
 
-.obObposPointOfSaleUiModalsModalEnoughCredit-bodyButtons-obObposPointOfSaleUiModalsModalEnoughCreditComponentsCancelButton {
+.obObposPointOfSaleUiModalsModalEnoughCredit-footer-obObposPointOfSaleUiModalsModalEnoughCreditComponentsCancelButton {
 /* Inherits: [OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit.Components.cancel_button] */
 }
 
@@ -11724,17 +11724,17 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.Modals.modalNotEnoughCredit
-# Inherits: [OB.UI.ModalAction]
+# Inherits: [OB.UI.Modal]
 */
 .obObposPointOfSaleUiModalsModalNotEnoughCredit {
   background-color: white;
 }
 
-.obObposPointOfSaleUiModalsModalNotEnoughCredit-bodyContent-popupmessage {}
+/*.obObposPointOfSaleUiModalsModalNotEnoughCredit-bodyContent-popupmessage {}*/
 
-.obObposPointOfSaleUiModalsModalNotEnoughCredit-bodyButtons {}
+.obObposPointOfSaleUiModalsModalNotEnoughCredit-footer {}
 
-.obObposPointOfSaleUiModalsModalNotEnoughCredit-bodyButtons-obObposPointOfSaleUiModalsModalNotEnoughCreditComponentsOkButton {
+.obObposPointOfSaleUiModalsModalNotEnoughCredit-footer-obObposPointOfSaleUiModalsModalNotEnoughCreditComponentsOkButton {
 /* Inherits: [OB.UI.ModalDialogButton] */
 }
 
@@ -11776,15 +11776,15 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 /*
 # Component: OB.UI.MessageDialog
-# Inherits: [OB.UI.ModalAction]
+# Inherits: [OB.UI.Modal]
 */
 .obUiMessageDialogGeneric {}
 
-.obUiMessageDialogGeneric-bodymessage {}
+/*.obUiMessageDialogGeneric-bodymessage {}*/
 
-.obUiMessageDialogGeneric-bodyButtons {}
+.obUiMessageDialogGeneric-footer {}
 
-.obUiMessageDialogGeneric-bodyButtons-obUiMessageDialogOK {
+.obUiMessageDialogGeneric-footer-obUiMessageDialogOK {
   /*Inherits: [OB.UI.ModalAction]*/
 }
 
@@ -11886,14 +11886,14 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 
 /*
-# Component: ModalDeleteDiscount
-# Inherits: [OB.UI.ModalAction]
+# Component: OB.UI.ModalDeleteDiscount
+# Inherits: [OB.UI.Modal]
 */
 .obUiModalDeleteDiscount {}
 
-.obUiModalDeleteDiscount-bodyContent {}
+.obUiModalDeleteDiscount-body {}
 
-.obUiModalDeleteDiscount-bodyContent-Scroller {
+.obUiModalDeleteDiscount-body-Scroller {
  /*Inherits: [OB.UI.ModalAction]*/
  max-height: 225px;
  background-color: var(--color-primary-lighter);
@@ -11903,7 +11903,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obUiModalDeleteDiscount-Scroller-attributes {}
 
-.obUiModalDeleteDiscount-bodyContent-totalselected {
+.obUiModalDeleteDiscount-body-totalselected {
   font-size: 16px;
   float: right;
   height: 35px;
@@ -11925,17 +11925,17 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   font-weight: bold;
 }
 
-.obUiModalDeleteDiscount-bodyContent-container1 {
+.obUiModalDeleteDiscount-body-container1 {
   clear: both;
 }
 
-.obUiModalDeleteDiscount-bodyButtons {}
+.obUiModalDeleteDiscount-footer {}
 
-.obUiModalDeleteDiscount-bodyButtons-obUiDeleteDiscountDeleteSelected {
+.obUiModalDeleteDiscount-footer-obUiDeleteDiscountDeleteSelected {
   /*Inherits: [OB.UI.DeleteDiscountDeleteSelected]*/
 }
 
-.obUiModalDeleteDiscount-bodyButtons-obUibtnModalCancelDelete {
+.obUiModalDeleteDiscount-footer-obUibtnModalCancelDelete {
   /*Inherits: [OB.UI.btnModalCancelDelete]*/
 }
 
@@ -12083,23 +12083,25 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   background-color: none;
 }
 
-.obUiModalQuotationProductAttributes-header {}
-
-.obUiModalQuotationProductAttributes-header-headerTitle {
+.obUiModalQuotationProductAttributes-header {
   font-size: 24px;
 }
 
-.obUiModalQuotationProductAttributes-bodyButtons {}
+/* .obUiModalQuotationProductAttributes-header-headerTitle {
+  font-size: 24px;
+} */
 
-.obUiModalQuotationProductAttributes-bodyButtons-obUiModalDialogButton1 {
+.obUiModalQuotationProductAttributes-footer {}
+
+.obUiModalQuotationProductAttributes-footer-obUiModalDialogButton1 {
   /*Inherits: [OB.UI.ModalDialogButton]*/
 }
 
-.obUiModalQuotationProductAttributes-bodyButtons-obUiModalDialogButton2 {
+.obUiModalQuotationProductAttributes-footer-obUiModalDialogButton2 {
   /*Inherits: [OB.UI.ModalDialogButton]*/
 }
 
-.obUiModalQuotationProductAttributes-bodyButtons-obUiModalDialogButton3 {
+.obUiModalQuotationProductAttributes-footer-obUiModalDialogButton3 {
   /*Inherits: [OB.UI.ModalDialogButton]*/
 }
 

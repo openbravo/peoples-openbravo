@@ -11,24 +11,24 @@
 
 (function() {
   enyo.kind({
-    kind: 'OB.UI.ModalAction',
+    kind: 'OB.UI.Modal',
     name: 'OB.OBPOSPointOfSale.UI.Modals.ModalStockDiscontinued',
     classes: 'obObposPointOfSaleUiModalsModalStockDiscontinued',
     header: '',
-    bodyContent: {
-      classes: 'obObposPointOfSaleUiModalsModalStockDiscontinued-bodyContent',
+    body: {
+      classes: 'obObposPointOfSaleUiModalsModalStockDiscontinued-body',
       components: [
         {
           name: 'bodymessage',
           classes:
-            'obObposPointOfSaleUiModalsModalStockDiscontinued-bodyContent-bodymessage',
+            'obObposPointOfSaleUiModalsModalStockDiscontinued-body-bodymessage',
           content: ''
         }
       ]
     },
     buttonPushed: false,
     buttons: [],
-    bodyButtons: {},
+    footer: {},
     executeOnHide: function() {
       if (
         !this.buttonPushed &&
@@ -58,10 +58,10 @@
       } else {
         this.$.headerCloseButton.show();
       }
-      this.$.header.setContent(this.args.header);
-      this.$.bodyContent.$.bodymessage.setContent(this.args.message);
+      this.setHeader(this.args.header);
+      this.$.body.$.bodymessage.setContent(this.args.message);
       // Destroy previous buttons
-      _.each(this.$.bodyButtons.getComponents(), function(cmp) {
+      _.each(this.$.footer.getComponents(), function(cmp) {
         if (cmp.kind === 'OB.UI.ModalDialogButton') {
           cmp.destroy();
         }
@@ -71,11 +71,11 @@
       _.each(
         buttons,
         function(btn, indx) {
-          this.$.bodyButtons.createComponent({
+          this.$.footer.createComponent({
             kind: 'OB.UI.ModalDialogButton',
             name: 'btnAction' + indx,
             classes:
-              'obObposPointOfSaleUiModalsModalStockDiscontinued-bodyButtons-obUiModalDialogButton',
+              'obObposPointOfSaleUiModalsModalStockDiscontinued-footer-obUiModalDialogButton',
             content: btn.label,
             isDefaultAction: btn.isDefaultAction,
             action: btn.action,
@@ -91,9 +91,9 @@
         },
         this
       );
-      this.$.bodyButtons.render();
+      this.$.footer.render();
       // Apply display logic
-      _.each(this.$.bodyButtons.getComponents(), function(cmp) {
+      _.each(this.$.footer.getComponents(), function(cmp) {
         if (cmp.displayLogic) {
           cmp.displayLogic(me.attrs);
         }

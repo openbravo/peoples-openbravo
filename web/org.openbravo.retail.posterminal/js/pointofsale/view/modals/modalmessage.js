@@ -11,27 +11,24 @@
 
 (function() {
   enyo.kind({
-    kind: 'OB.UI.ModalAction',
+    kind: 'OB.UI.Modal',
     name: 'OB.UI.MessageDialog',
     classes: 'obUiMessageDialogGeneric',
     header: '',
-    bodyContent: {
-      name: 'bodymessage',
-      classes: 'obUiMessageDialogGeneric-bodymessage',
-      content: ''
-    },
-    bodyButtons: {
-      classes: 'obUiMessageDialogGeneric-bodyButtons',
+    body: '',
+    footer: {
+      classes: 'obUiMessageDialogGeneric-footer',
       components: [
         {
           kind: 'OB.UI.MessageDialogOK',
-          classes: 'obUiMessageDialogGeneric-bodyButtons-obUiMessageDialogOK'
+          classes: 'obUiMessageDialogGeneric-footer-obUiMessageDialogOK'
         }
       ]
     },
     executeOnShow: function() {
-      this.$.header.setContent(this.args.header);
-      this.$.bodyContent.$.bodymessage.setContent(this.args.message);
+      this.setHeader(this.args.header ? this.args.header : this.header);
+      this.$.body.show();
+      this.setBody(this.args.message);
     }
   });
 
