@@ -1312,9 +1312,9 @@ enyo.kind({
       this
     );
   },
-  init: function(model) {
+  init: async function(model) {
     this.model = model;
-    this.reasons = new OB.Collection.ReturnReasonList();
+    this.reasons = new Backbone.Collection();
     this.$.formElementReturnreason.coreElement.setCollection(this.reasons);
 
     this.model.get('order').on(
@@ -1325,27 +1325,19 @@ enyo.kind({
       this
     );
 
-    function errorCallback(tx, error) {
-      OB.UTIL.showError(error);
-    }
-
-    function successCallbackReasons(dataReasons, me) {
-      if (me.destroyed) {
+    try {
+      const dataReasons = await OB.MasterdataModels.ReturnReason.find();
+      if (this.destroyed) {
         return;
       }
-      if (dataReasons && dataReasons.length > 0) {
-        me.reasons.reset(dataReasons.models);
+      if (dataReasons.result && dataReasons.result.length > 0) {
+        this.reasons.reset(dataReasons.result);
       } else {
-        me.reasons.reset();
+        this.reasons.reset();
       }
+    } catch (err) {
+      OB.UTIL.showError(err);
     }
-    OB.Dal.find(
-      OB.Model.ReturnReason,
-      null,
-      successCallbackReasons,
-      errorCallback,
-      this
-    );
   }
 });
 
@@ -1406,7 +1398,7 @@ enyo.kind({
       initComponents: function() {
         this.inherited(arguments);
         this.setValue(this.model.get('id'));
-        this.setContent(this.model.get('_identifier'));
+        this.setContent(this.model.get('name'));
       }
     }),
     renderEmpty: 'enyo.Control'

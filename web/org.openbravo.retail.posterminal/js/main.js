@@ -50,10 +50,6 @@
       name: 'WEBPOS',
       size: 50 * 1024 * 1024,
       displayName: 'Openbravo Web POS'
-    },
-    IndexedDBDatabase: {
-      name: 'WEBPOS',
-      version: 1
     }
   };
 

@@ -75,14 +75,6 @@
             OB.UTIL.VersionManagement.current.posterminal.WebSQLDatabase
               .displayName
         },
-        IndexedDB: {
-          name:
-            OB.UTIL.VersionManagement.current.posterminal.IndexedDBDatabase
-              .name,
-          version:
-            OB.UTIL.VersionManagement.current.posterminal.IndexedDBDatabase
-              .version
-        },
         logDBTrxThreshold: 300,
         logDBStmtThreshold: 1000,
         shouldExecuteBenchmark: true

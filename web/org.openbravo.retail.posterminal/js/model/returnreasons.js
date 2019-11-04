@@ -8,46 +8,11 @@
  */
 
 (function() {
-  class ReturnReasonIDB extends OB.ModelDefinition {
+  class ReturnReason extends OB.MasterdataModelDefinition {
     constructor() {
       super();
       this._endPoint = 'org.openbravo.retail.posterminal.master.ReturnReason';
     }
   }
-  OB.MasterdataController.registerModel(new ReturnReasonIDB());
-
-  var ReturnReason = OB.Data.ExtensibleModel.extend({
-    modelName: 'ReturnReason',
-    tableName: 'c_return_reason',
-    entityName: 'ReturnReason',
-    source: 'org.openbravo.retail.posterminal.master.ReturnReason',
-    dataLimit: OB.Dal.DATALIMIT,
-    indexDBModel: ReturnReasonIDB
-  });
-
-  ReturnReason.addProperties([
-    {
-      name: 'id',
-      column: 'c_return_reason_id',
-      primaryKey: true,
-      type: 'TEXT'
-    },
-    {
-      name: 'searchKey',
-      column: 'searchKey',
-      type: 'TEXT'
-    },
-    {
-      name: 'name',
-      column: 'name',
-      type: 'TEXT'
-    },
-    {
-      name: '_identifier',
-      column: '_identifier',
-      type: 'TEXT'
-    }
-  ]);
-
-  OB.Data.Registry.registerModel(ReturnReason);
+  OB.MasterdataController.registerModel(ReturnReason);
 })();
