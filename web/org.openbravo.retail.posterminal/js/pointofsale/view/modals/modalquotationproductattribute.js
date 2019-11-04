@@ -201,9 +201,7 @@ enyo.kind({
     var me = this,
       lines = me.args.lines,
       i;
-    me.setHeader(
-      OB.I18N.getLabel('OBPOS_QuotationProductAttributeDesc')
-    );
+    me.setHeader(OB.I18N.getLabel('OBPOS_QuotationProductAttributeDesc'));
     i = 0;
     me.$.body.$.quotationLinesComponent.destroyComponents();
     lines.forEach(function(theLine) {
