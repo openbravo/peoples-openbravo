@@ -12789,15 +12789,15 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /***********************   ***********************/
 /*
 # Component: OB.OBPOSCashMgmt.UI.modalFinished
-# Inherits: [OB.UI.ModalAction]
+# Inherits: [OB.UI.Modal]
 */
 .obObposCashMgmtUiModalFinished {}
 
-.obObposCashMgmtUiModalFinished-bodyContent {}
+/*.obObposCashMgmtUiModalFinished-bodyContent {}*/
 
-.obObposCashMgmtUiModalFinished-bodyButtons {}
+.obObposCashMgmtUiModalFinished-footer {}
 
-.obObposCashMgmtUiModalFinished-bodyButtons-obObposCashMgmtUiModalFinishedOkButton {
+.obObposCashMgmtUiModalFinished-footer-obObposCashMgmtUiModalFinishedOkButton {
 /* Inherits: [OB.OBPOSCashMgmt.UI.modalFinished_OkButton] */
 }
 
@@ -12811,15 +12811,15 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 /*
 # Component: OB.OBPOSCashMgmt.UI.modalFinishedWrongly
-# Inherits: [OB.UI.ModalAction]
+# Inherits: [OB.UI.Modal]
 */
 .obObposCashMgmtUiModalFinishedWrongly {}
 
-.obObposCashMgmtUiModalFinishedWrongly-bodyContent {}
+/*.obObposCashMgmtUiModalFinishedWrongly-bodyContent {}*/
 
-.obObposCashMgmtUiModalFinishedWrongly-bodyButtons {}
+.obObposCashMgmtUiModalFinishedWrongly-footer {}
 
-.obObposCashMgmtUiModalFinishedWrongly-bodyButtons-obObposCashMgmtUiModalFinishedWronglyOkButton {
+.obObposCashMgmtUiModalFinishedWrongly-footer-obObposCashMgmtUiModalFinishedWronglyOkButton {
 /* Inherits: [OB.OBPOSCashMgmt.UI.modalFinishedWrongly_OkButton] */
 }
 
@@ -14864,17 +14864,17 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 /*
 # Component: OB.OBPOSCashUp.UI.modalPendingToProcess
-# Inherits: [OB.UI.ModalAction]
+# Inherits: [OB.UI.Modal]
 */
 .obObposCashupUiModalPendingToProcess {}
 
-.obObposCashupUiModalPendingToProcess-bodyContent {}
+/*.obObposCashupUiModalPendingToProcess-bodyContent {}*/
 
-.obObposCashupUiModalPendingToProcess-bodyButtons {}
+.obObposCashupUiModalPendingToProcess-footer {}
 
-.obObposCashupUiModalPendingToProcess-bodyButtons-obObposCashupUiModalPendingToProcessOkButton {}
+.obObposCashupUiModalPendingToProcess-footer-obObposCashupUiModalPendingToProcessOkButton {}
 
-.obObposCashupUiModalPendingToProcess-bodyButtons-obObposCashupUiModalPendingToProcessCancelButton {}
+.obObposCashupUiModalPendingToProcess-footer-obObposCashupUiModalPendingToProcessCancelButton {}
 
 
 
@@ -14907,13 +14907,13 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 /*
 # Component: OB.UI.ModalApprovalReason
-# Inherits: [OB.UI.ModalAction]
+# Inherits: [OB.UI.Modal]
 */
 .obUiModalApprovalReason {}
 
-.obUiModalApprovalReason-bodyContent {}
+.obUiModalApprovalReason-body {}
 
-.obUiModalApprovalReason-bodyContent-labelApprovalReason {
+.obUiModalApprovalReason-body-labelApprovalReason {
   text-align: right;
   padding-right: 10px;
   width: 50%;
@@ -14921,14 +14921,14 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   float: left;
 }
 
-.obUiModalApprovalReason-bodyContent-approvalReason {
+.obUiModalApprovalReason-body-approvalReason {
   width: 45%;
   float: left;
 }
 
-.obUiModalApprovalReason-bodyButtons {}
+.obUiModalApprovalReason-footer {}
 
-.obUiModalApprovalReason-bodyButtons-obUiModalsBtnModalApprovalReasonAccept {}
+.obUiModalApprovalReason-footer-obUiModalsBtnModalApprovalReasonAccept {}
 
 .obposModaApprovalReasonl {}
 
