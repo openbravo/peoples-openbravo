@@ -26,6 +26,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -183,10 +184,9 @@ public class CancelAndReplaceTest extends WeldBaseTest {
       }
 
       // Create the new replacement order
-      List<Order> newOrders = new ArrayList<>();
-      for (int i = 0; i < testData.getNewOrders().size(); i++) {
-        newOrders.add(CancelAndReplaceUtils.createReplacementOrder(oldOrder));
-      }
+      List<Order> newOrders = CancelAndReplaceUtils.createReplacementOrder(oldOrder,
+          Collections.singletonMap(oldOrder.getWarehouse(), testData.getNewOrders().size()));
+
       log.debug("New orders Created:{}",
           newOrders.stream().map(Order::getDocumentNo).collect(Collectors.toList()));
       log.debug(testData.getTestDescription());

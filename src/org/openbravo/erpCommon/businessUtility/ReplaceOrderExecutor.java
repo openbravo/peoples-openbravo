@@ -103,13 +103,6 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
     this.useOrderDocumentNoForRelatedDocs = useOrderDocumentNoForRelatedDocs;
   }
 
-  /**
-   * Process that creates a replacement order in temporary status in order to Cancel and Replace an
-   * original order
-   * 
-   * @param oldOrder
-   *          Order that will be cancelled and replaced
-   */
   List<Order> run() {
     return cancelAndReplaceOrder();
   }

@@ -19,7 +19,11 @@
 package org.openbravo.erpCommon.businessUtility;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.enterprise.context.Dependent;
 
@@ -29,41 +33,44 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.OrderlineServiceRelation;
 
+/**
+ * Process that creates a replacement order in temporary status in order to Cancel and Replace an
+ * original order
+ */
 @Dependent
 class CreateReplacementOrderExecutor extends CancelAndReplaceUtils {
   private Order oldOrder;
-  private Organization organization;
-  private Warehouse warehouse;
+  private Map<Warehouse, Integer> warehouseMap;
 
   @SuppressWarnings("hiding")
-  void init(Order oldOrder, Organization organization, Warehouse warehouse) {
+  void init(Order oldOrder, Map<Warehouse, Integer> warehouseMap) {
     this.oldOrder = oldOrder;
-    this.organization = organization;
-    this.warehouse = warehouse;
+    this.warehouseMap = warehouseMap;
   }
 
-  /**
-   * Process that creates a replacement order in temporary status in order to Cancel and Replace an
-   * original order
-   * 
-   * @param oldOrder
-   *          Order that will be cancelled and replaced
-   */
-  Order run() {
-    return createReplacementOrder();
+  List<Order> run() {
+    final List<Order> replacementOrderList = new ArrayList<>();
+    String documentNo = oldOrder.getDocumentNo();
+    for (final Entry<Warehouse, Integer> warehouseEntry : warehouseMap.entrySet()) {
+      for (int i = 0; i < warehouseEntry.getValue(); i++) {
+        final Order replacementOrder = createReplacementOrder(warehouseEntry.getKey(), documentNo);
+        documentNo = replacementOrder.getDocumentNo();
+        replacementOrderList.add(replacementOrder);
+      }
+    }
+    return replacementOrderList;
   }
 
-  private Order createReplacementOrder() {
+  private Order createReplacementOrder(Warehouse warehouse, String documentNo) {
     // Create new Order header
     Order newOrder = (Order) DalUtil.copy(oldOrder, false, true);
     // Change order values
-    newOrder.setOrganization(organization);
+    newOrder.setOrganization(warehouse.getOrganization());
     newOrder.setWarehouse(warehouse);
     newOrder.setProcessed(false);
     newOrder.setPosted("N");
@@ -74,7 +81,7 @@ class CreateReplacementOrderExecutor extends CancelAndReplaceUtils {
     Date today = new Date();
     newOrder.setOrderDate(today);
     newOrder.setReplacedorder(oldOrder);
-    String newDocumentNo = getNextCancelDocNo(oldOrder.getDocumentNo());
+    String newDocumentNo = getNextCancelDocNo(documentNo);
     newOrder.setDocumentNo(newDocumentNo);
     OBDal.getInstance().save(newOrder);
 
@@ -88,7 +95,7 @@ class CreateReplacementOrderExecutor extends CancelAndReplaceUtils {
           continue;
         }
         OrderLine newOrderLine = (OrderLine) DalUtil.copy(oldOrderLine, false, true);
-        newOrderLine.setOrganization(organization);
+        newOrderLine.setOrganization(warehouse.getOrganization());
         newOrderLine.setWarehouse(warehouse);
         newOrderLine.setDeliveredQuantity(BigDecimal.ZERO);
         newOrderLine.setReservedQuantity(BigDecimal.ZERO);

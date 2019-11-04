@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -86,7 +87,8 @@ public class CancelAndReplaceUtils {
    *          Order that will be cancelled and replaced
    */
   public static Order createReplacementOrder(Order oldOrder) {
-    return createReplacementOrder(oldOrder, oldOrder.getOrganization(), oldOrder.getWarehouse());
+    return createReplacementOrder(oldOrder, Collections.singletonMap(oldOrder.getWarehouse(), 1))
+        .get(0);
   }
 
   /**
@@ -95,12 +97,15 @@ public class CancelAndReplaceUtils {
    * 
    * @param oldOrder
    *          Order that will be cancelled and replaced
+   * @param warehouseMap
+   *          Map with the list of Warehouses where the replacements will be created and the number
+   *          of replacements to create in each one
    */
-  public static Order createReplacementOrder(final Order oldOrder, final Organization organization,
-      final Warehouse warehouse) {
+  public static List<Order> createReplacementOrder(final Order oldOrder,
+      final Map<Warehouse, Integer> warehouseMap) {
     final CreateReplacementOrderExecutor createReplacementOrderExecutor = WeldUtils
         .getInstanceFromStaticBeanManager(CreateReplacementOrderExecutor.class);
-    createReplacementOrderExecutor.init(oldOrder, organization, warehouse);
+    createReplacementOrderExecutor.init(oldOrder, warehouseMap);
     return createReplacementOrderExecutor.run();
   }
 
@@ -146,7 +151,7 @@ public class CancelAndReplaceUtils {
   }
 
   /**
-   * * Method that given an Order Id it cancels it and creates another one equal but with negative
+   * Method that given an Order Id it cancels it and creates another one equal but with negative
    * quantities. It also creates a new order replacing the cancelled one.
    * 
    * @param newOrderId
@@ -165,7 +170,7 @@ public class CancelAndReplaceUtils {
   }
 
   /**
-   * * Method that given an Order Id it cancels it and creates another one equal but with negative
+   * Method that given an Order Id it cancels it and creates another one equal but with negative
    * quantities. It also creates a new order replacing the cancelled one.
    * 
    * @param newOrderId
@@ -185,7 +190,7 @@ public class CancelAndReplaceUtils {
   }
 
   /**
-   * * Method that given an Order Id it cancels it and creates another one equal but with negative
+   * Method that given an Order Id it cancels it and creates another one equal but with negative
    * quantities. It also creates a new order replacing the cancelled one.
    * 
    * @param oldOrderId
