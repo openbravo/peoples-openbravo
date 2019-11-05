@@ -3470,7 +3470,6 @@ enyo.kind({
       negativeLines,
       me = this,
       myModel = this.owner.model,
-      payments,
       paymentStatus,
       prepaymentLayawayLimitAmount,
       receiptHasPrepaymentAmount,
@@ -3628,7 +3627,7 @@ enyo.kind({
                         negativeLines,
                         me,
                         myModel,
-                        payments
+                        paymentStatus.payments
                       );
                     }
                   },
@@ -3638,13 +3637,37 @@ enyo.kind({
                 ]
               );
             } else {
-              continueExecuting(receipt, negativeLines, me, myModel, payments);
+              continueExecuting(
+                receipt,
+                negativeLines,
+                me,
+                myModel,
+                paymentStatus.payments
+              );
             }
           }
         }
       );
     } else {
-      continueExecuting(receipt, negativeLines, me, myModel, payments);
+      if (
+        !allowApproval &&
+        prepaymentLayawayLimitAmount > receipt.getPayment()
+      ) {
+        OB.UTIL.showConfirmation.display(
+          OB.I18N.getLabel('OBMOBC_Error'),
+          OB.I18N.getLabel('OBPOS_PrepaymentUnderLimit_NotAllowed', [
+            prepaymentLayawayLimitAmount
+          ])
+        );
+      } else {
+        continueExecuting(
+          receipt,
+          negativeLines,
+          me,
+          myModel,
+          paymentStatus.payments
+        );
+      }
     }
   }
 });
