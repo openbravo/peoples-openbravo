@@ -213,7 +213,7 @@ enyo.kind({
     this.srsList.reset();
     return true;
   },
-  searchAction: function(inSender, inEvent) {
+  searchAction: async function(inSender, inEvent) {
     var me = this,
       filter = inEvent.srName;
 
@@ -228,7 +228,7 @@ enyo.kind({
           _identifier: null,
           name: OB.I18N.getLabel('OBPOS_None')
         });
-        me.srsList.reset(dataSrs.models);
+        me.srsList.reset(dataSrs);
       } else {
         me.srsList.reset();
       }
@@ -242,15 +242,16 @@ enyo.kind({
       };
     }
 
-    OB.Dal.find(
-      OB.Model.SalesRepresentative,
-      criteria,
-      successCallbackBPs,
-      errorCallback,
-      null,
-      null,
-      true
-    );
+    try {
+      const dataSaleRepresentative = await OB.MasterdataModels.SalesRepresentative.find(
+        OB.Model.SalesRepresentative,
+        criteria
+      );
+      successCallbackBPs(dataSaleRepresentative.result);
+    } catch (err) {
+      errorCallback(err);
+    }
+
     return true;
   },
   srsList: null,
