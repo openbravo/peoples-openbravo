@@ -24,19 +24,24 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import javax.enterprise.context.Dependent;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.common.enterprise.DocumentType;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.OrderlineServiceRelation;
+import org.openbravo.service.db.CallStoredProcedure;
 
 /**
  * Process that creates a replacement order in temporary status in order to Cancel and Replace an
@@ -69,20 +74,31 @@ class CreateReplacementOrderExecutor extends CancelAndReplaceUtils {
   private Order createReplacementOrder(Warehouse warehouse, String documentNo) {
     // Create new Order header
     Order newOrder = (Order) DalUtil.copy(oldOrder, false, true);
+
     // Change order values
-    newOrder.setOrganization(warehouse.getOrganization());
+    final Organization org = warehouse.getOrganization();
+    newOrder.setOrganization(org);
     newOrder.setWarehouse(warehouse);
+
+    if (!oldOrder.getOrganization().getId().equals(org.getId())) {
+      final Optional<DocumentType> docTypeOptional = getDocumentType(org,
+          oldOrder.getDocumentType());
+      if (docTypeOptional.isPresent()) {
+        final DocumentType docType = docTypeOptional.get();
+        newOrder.setDocumentType(docType);
+        newOrder.setTransactionDocument(docType);
+      }
+    }
+
     newOrder.setProcessed(false);
     newOrder.setPosted("N");
     newOrder.setDocumentStatus("TMP");
     newOrder.setDocumentAction("CO");
     newOrder.setGrandTotalAmount(BigDecimal.ZERO);
     newOrder.setSummedLineAmount(BigDecimal.ZERO);
-    Date today = new Date();
-    newOrder.setOrderDate(today);
+    newOrder.setOrderDate(new Date());
     newOrder.setReplacedorder(oldOrder);
-    String newDocumentNo = getNextCancelDocNo(documentNo);
-    newOrder.setDocumentNo(newDocumentNo);
+    newOrder.setDocumentNo(getNextCancelDocNo(documentNo));
     OBDal.getInstance().save(newOrder);
 
     // Create new Order lines
@@ -95,7 +111,7 @@ class CreateReplacementOrderExecutor extends CancelAndReplaceUtils {
           continue;
         }
         OrderLine newOrderLine = (OrderLine) DalUtil.copy(oldOrderLine, false, true);
-        newOrderLine.setOrganization(warehouse.getOrganization());
+        newOrderLine.setOrganization(org);
         newOrderLine.setWarehouse(warehouse);
         newOrderLine.setDeliveredQuantity(BigDecimal.ZERO);
         newOrderLine.setReservedQuantity(BigDecimal.ZERO);
@@ -117,6 +133,21 @@ class CreateReplacementOrderExecutor extends CancelAndReplaceUtils {
     OBDal.getInstance().flush();
     updateRelationsBetweenOrderLinesProductsAndServices(newOrder);
     return newOrder;
+  }
+
+  private Optional<DocumentType> getDocumentType(Organization org, DocumentType docType) {
+    final List<Object> parameters = new ArrayList<>();
+    parameters.add(org.getClient().getId());
+    parameters.add(org.getId());
+    parameters.add(docType.getDocumentCategory());
+    parameters.add(docType.getSOSubType());
+    final String docTypeId = (String) CallStoredProcedure.getInstance()
+        .call("AD_GET_DOCTYPE", parameters, null, false);
+
+    if (StringUtils.isEmpty(docTypeId)) {
+      return Optional.empty();
+    }
+    return Optional.of(OBDal.getInstance().get(DocumentType.class, docTypeId));
   }
 
   /**
