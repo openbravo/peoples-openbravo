@@ -5351,8 +5351,35 @@
           priceIncludesTax = OB.MobileApp.model.get('pricelist')
             .priceIncludesTax;
         }
-        me.set('priceList', bp.get('priceList'));
-        me.set('priceIncludesTax', priceIncludesTax);
+        if (
+          priceIncludesTax !==
+            OB.MobileApp.model.get('pricelist').priceIncludesTax ||
+          bp.get('priceListCurrency') !==
+            OB.MobileApp.model.get('pricelist').currency
+        ) {
+          me.set('priceList', OB.MobileApp.model.get('pricelist').id);
+          me.set(
+            'priceIncludesTax',
+            OB.MobileApp.model.get('pricelist').priceIncludesTax
+          );
+          me.set('currency', OB.MobileApp.model.get('pricelist').currency);
+          OB.UTIL.showConfirmation.display(
+            OB.I18N.getLabel('OBPOS_ChangeOfPriceList'),
+            OB.I18N.getLabel('OBPOS_ChangeOfPriceListConfig', [
+              bp.get('priceListName'),
+              OB.MobileApp.model.get('pricelist')._identifier
+            ]),
+            null,
+            {
+              onHideFunction: function() {
+                me.trigger('change:documentNo', me);
+              }
+            }
+          );
+        } else {
+          me.set('priceList', bp.get('priceList'));
+          me.set('priceIncludesTax', priceIncludesTax);
+        }
       };
 
       finishSaveData = function(callback) {
@@ -9715,20 +9742,33 @@
           ).exec(
             loadCustomerParameters,
             function(data) {
-              isLoadedPartiallyFromBackend = true;
-              callback({
-                bpartner: OB.Dal.transform(OB.Model.BusinessPartner, data[0]),
-                bpLoc: OB.Dal.transform(OB.Model.BPLocation, data[1]),
-                bpBillLoc:
-                  bpLocationId !== bpBillLocationId
-                    ? OB.Dal.transform(OB.Model.BPLocation, data[2])
-                    : null
-              });
+              if (data.length >= 2) {
+                isLoadedPartiallyFromBackend = true;
+                callback({
+                  bpartner: OB.Dal.transform(OB.Model.BusinessPartner, data[0]),
+                  bpLoc: OB.Dal.transform(OB.Model.BPLocation, data[1]),
+                  bpBillLoc:
+                    bpLocationId !== bpBillLocationId
+                      ? OB.Dal.transform(OB.Model.BPLocation, data[2])
+                      : null
+                });
+              } else {
+                OB.UTIL.showConfirmation.display(
+                  OB.I18N.getLabel('OBPOS_InformationTitle'),
+                  OB.I18N.getLabel('OBPOS_NoCustomerForPaidReceipt'),
+                  [
+                    {
+                      label: OB.I18N.getLabel('OBPOS_LblOk'),
+                      isConfirmButton: true
+                    }
+                  ]
+                );
+              }
             },
             function() {
               OB.UTIL.showConfirmation.display(
                 OB.I18N.getLabel('OBPOS_InformationTitle'),
-                OB.I18N.getLabel('OBPOS_NoReceiptLoadedText'),
+                OB.I18N.getLabel('OBPOS_NoCustomerForPaidReceipt'),
                 [
                   {
                     label: OB.I18N.getLabel('OBPOS_LblOk'),
