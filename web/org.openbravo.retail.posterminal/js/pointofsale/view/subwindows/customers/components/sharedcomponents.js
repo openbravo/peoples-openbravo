@@ -55,7 +55,8 @@ enyo.kind({
     onchange: 'change',
     oninput: 'input',
     onSetValue: 'valueSet',
-    onRetrieveValues: 'retrieveValue'
+    onRetrieveValues: 'retrieveValue',
+    onkeydown: 'keydown'
   },
   events: {
     onSaveProperty: '',
@@ -70,8 +71,46 @@ enyo.kind({
   retrieveValue: function(inSender, inEvent) {
     inEvent[this.modelProperty] = this.getValue();
   },
-  input: function() {},
-  change: function() {},
+  input: function(inSender, inEvent) {
+    this.inherited(arguments);
+    let provider = OB.DQMController.getProviderForField(
+      this.modelProperty,
+      OB.DQMController.Suggest
+    );
+    if (provider) {
+      let me = this,
+        value = this.getValue();
+      if (value.length >= 3) {
+        provider.suggest(this.modelProperty, value, function(result) {
+          me.formElement.$.scrim.show();
+          me.formElement.$.suggestionList.createSuggestionList(result, value);
+        });
+      } else {
+        me.formElement.$.suggestionList.$.suggestionListtbody.destroyComponents();
+        me.formElement.$.suggestionList.addClass('u-hideFromUI');
+      }
+    }
+  },
+  blur: function(inSender, inEvent) {
+    this.inherited(arguments);
+    let provider = OB.DQMController.getProviderForField(
+      this.modelProperty,
+      OB.DQMController.Validate
+    );
+    if (provider) {
+      let me = this;
+      let validate = provider.validate(
+        me.modelProperty,
+        me.getValue(),
+        function(result) {}
+      );
+      if (validate) {
+        me.formElement.setMessage();
+      } else {
+        me.formElement.setMessage(OB.I18N.getLabel('OBPOS_WrongFormat'), true);
+      }
+    }
+  },
   loadValue: function(inSender, inEvent) {
     if (inEvent.customer !== undefined) {
       if (inEvent.customer.get(this.modelProperty) !== undefined) {
@@ -83,6 +122,44 @@ enyo.kind({
   },
   saveChange: function(inSender, inEvent) {
     inEvent.customer.set(this.modelProperty, this.getValue());
+  },
+  keydown: function(inSender, inEvent) {
+    this.inherited(arguments);
+    let index,
+      suggestionList = this.formElement.$.suggestionList;
+    if (suggestionList.$.suggestionListtbody.children.length > 0) {
+      index = suggestionList.getActiveElement();
+      //ArrowDown
+      if (inEvent.keyCode === 40) {
+        suggestionList.setActiveElement(index + 1);
+        suggestionList.setInactiveElement(index);
+      }
+      //ArrowUp
+      if (inEvent.keyCode === 38) {
+        if (index > 0) {
+          suggestionList.setActiveElement(index - 1);
+          suggestionList.setInactiveElement(index);
+        }
+      }
+      //Enter
+      if (inEvent.keyCode === 13) {
+        let activeElement =
+          suggestionList.$.suggestionListtbody.children[
+            suggestionList.getActiveElement()
+          ];
+        if (activeElement) {
+          let value =
+            activeElement.value.start +
+            activeElement.value.bold +
+            activeElement.value.end;
+          suggestionList.owner.$.coreElementContainer.children[0].setValue(
+            value
+          );
+          suggestionList.addClass('u-hideFromUI');
+          suggestionList.owner.$.scrim.hide();
+        }
+      }
+    }
   }
 });
 
@@ -488,6 +565,26 @@ enyo.kind({
       return errors;
     }
 
+    function checkWrongFormat(items, customer) {
+      let errors = '';
+      _.each(items, function(item) {
+        if (item.$.msg.content === OB.I18N.getLabel('OBPOS_WrongFormat')) {
+          if (errors) {
+            errors += ', ';
+          }
+          errors += OB.I18N.getLabel(item.coreElement.i18nLabel);
+        }
+      });
+      return errors;
+    }
+
+    function checkFields(items, customer) {
+      let errors = '';
+      errors += checkMandatoryFields(items, customer);
+      errors += checkWrongFormat(items, customer);
+      return errors;
+    }
+
     function requiredSMS(customer, form) {
       //Validate that sms field is filled if  'Commercial Auth -> sms' is checked
       var commercialAuthViaSms = customer.get('viasms');
@@ -536,34 +633,43 @@ enyo.kind({
       if (inEvent.validations) {
         var customer = form.model.get('customer'),
           errors = '';
-        var contactInfoErrors = checkMandatoryFields(
+        var contactInfoErrors = checkFields(
           form.$.customerOnlyFields.$.contactInfo.$.contactInfoFields.children,
           customer
         );
         if (contactInfoErrors) {
-          errors += contactInfoErrors + ', ';
+          errors += contactInfoErrors;
         }
-        var personalInfoErrors = checkMandatoryFields(
+        var personalInfoErrors = checkFields(
           form.$.customerOnlyFields.$.personalInfo.$.personalInfoFields
             .children,
           customer
         );
         if (personalInfoErrors) {
-          errors += personalInfoErrors + ', ';
+          if (errors) {
+            errors += ', ';
+          }
+          errors += personalInfoErrors;
         }
-        var otherInfoErrors = checkMandatoryFields(
+        var otherInfoErrors = checkFields(
           form.$.customerOnlyFields.$.otherInfo.$.otherInfoFields.children,
           customer
         );
         if (otherInfoErrors) {
+          if (errors) {
+            errors += ', ';
+          }
           errors += otherInfoErrors + ', ';
         }
         if (form.$.invoicingAddrFields.showing) {
-          var invoicingErrors = checkMandatoryFields(
+          var invoicingErrors = checkFields(
             form.$.invoicingAddrFields.children,
             customer
           );
           if (invoicingErrors) {
+            if (errors) {
+              errors += ', ';
+            }
             errors +=
               form.$.invoicingAddrFields
                 .getClassAttribute()
@@ -581,10 +687,11 @@ enyo.kind({
             .getClassAttribute()
             .indexOf('twoAddrLayout') === 0
         ) {
-          var shippingErrors = checkMandatoryFields(
+          var shippingErrors = checkFields(
             form.$.shippingAddrFields.children,
             customer
           );
+
           if (shippingErrors) {
             if (errors) {
               errors += ', ';

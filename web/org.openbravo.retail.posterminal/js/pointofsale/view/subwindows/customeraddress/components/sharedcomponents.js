@@ -48,17 +48,54 @@ enyo.kind({
     onchange: 'change',
     oninput: 'input',
     onSetValue: 'valueSet',
-    onRetrieveValues: 'retrieveValue'
+    onRetrieveValues: 'retrieveValue',
+    onkeydown: 'keydown'
   },
   events: {
     onSaveProperty: '',
     onRetrieveCustomer: '',
     onSetValues: ''
   },
-  blur: function() {
+  blur: function(inSender, inEvent) {
     this.inherited(arguments);
+    let provider = OB.DQMController.getProviderForField(
+      this.modelProperty,
+      OB.DQMController.Validate
+    );
+    if (provider) {
+      let me = this;
+      let validate = provider.validate(
+        me.modelProperty,
+        me.getValue(),
+        function(result) {}
+      );
+      if (validate) {
+        me.formElement.setMessage();
+      } else {
+        me.formElement.setMessage(OB.I18N.getLabel('OBPOS_WrongFormat'), true);
+      }
+    }
   },
-  input: function() {},
+  input: function(inSender, inEvent) {
+    this.inherited(arguments);
+    let provider = OB.DQMController.getProviderForField(
+      this.modelProperty,
+      OB.DQMController.Suggest
+    );
+    if (provider) {
+      let me = this,
+        value = this.getValue();
+      if (value.length >= 3) {
+        provider.suggest(this.modelProperty, value, function(result) {
+          me.formElement.$.scrim.show();
+          me.formElement.$.suggestionList.createSuggestionList(result, value);
+        });
+      } else {
+        me.formElement.$.suggestionList.$.suggestionListtbody.destroyComponents();
+        me.formElement.$.suggestionList.addClass('u-hideFromUI');
+      }
+    }
+  },
   change: function() {},
   valueSet: function(inSender, inEvent) {
     if (inEvent.data.hasOwnProperty(this.modelProperty)) {
@@ -93,6 +130,44 @@ enyo.kind({
     }
     if (this.maxlength) {
       this.setAttribute('maxlength', this.maxlength);
+    }
+  },
+  keydown: function(inSender, inEvent) {
+    this.inherited(arguments);
+    let index,
+      suggestionList = this.formElement.$.suggestionList;
+    if (suggestionList.$.suggestionListtbody.children.length > 0) {
+      index = suggestionList.getActiveElement();
+      //ArrowDown
+      if (inEvent.keyCode === 40) {
+        suggestionList.setActiveElement(index + 1);
+        suggestionList.setInactiveElement(index);
+      }
+      //ArrowUp
+      if (inEvent.keyCode === 38) {
+        if (index > 0) {
+          suggestionList.setActiveElement(index - 1);
+          suggestionList.setInactiveElement(index);
+        }
+      }
+      //Enter
+      if (inEvent.keyCode === 13) {
+        let activeElement =
+          suggestionList.$.suggestionListtbody.children[
+            suggestionList.getActiveElement()
+          ];
+        if (activeElement) {
+          let value =
+            activeElement.value.start +
+            activeElement.value.bold +
+            activeElement.value.end;
+          suggestionList.owner.$.coreElementContainer.children[0].setValue(
+            value
+          );
+          suggestionList.addClass('u-hideFromUI');
+          suggestionList.owner.$.scrim.hide();
+        }
+      }
     }
   }
 });
@@ -164,6 +239,7 @@ enyo.kind({
       }
     );
   },
+
   saveCustomerAddr: function(inSender, inEvent) {
     var me = this;
 
@@ -192,28 +268,50 @@ enyo.kind({
         makeSearch: true
       });
     }
+    function checkWrongFormat(items, customer) {
+      let errors = '';
+      _.each(items, function(item) {
+        if (item.$.msg.content === OB.I18N.getLabel('OBPOS_WrongFormat')) {
+          if (errors) {
+            errors += ', ';
+          }
+          errors += OB.I18N.getLabel(item.coreElement.i18nLabel);
+        }
+      });
+      return errors;
+    }
+    function checkMandatoryFields(items, customer) {
+      let errors = '';
+      _.each(items, function(item) {
+        if (item.coreElement && item.coreElement.mandatory) {
+          var value = customer.get(item.coreElement.modelProperty);
+          if (!value) {
+            item.setMessage(OB.I18N.getLabel('OBMOBC_LblMandatoryField'), true);
+            if (errors) {
+              errors += ', ';
+            }
+            errors += OB.I18N.getLabel(item.coreElement.i18nLabel);
+          } else {
+            item.setMessage();
+          }
+        }
+      });
+      return errors;
+    }
 
     function validateForm(form) {
       if (inEvent.validations) {
-        var errors = '',
-          customerAddr = form.model.get('customerAddr');
-        _.each(form.$.customerAddrAttributes.children, function(item) {
-          if (item.coreElement.mandatory) {
-            var value = customerAddr.get(item.coreElement.modelProperty);
-            if (!value) {
-              item.setMessage(
-                OB.I18N.getLabel('OBMOBC_LblMandatoryField'),
-                true
-              );
-              if (errors) {
-                errors += ', ';
-              }
-              errors += OB.I18N.getLabel(item.coreElement.i18nLabel);
-            } else {
-              item.setMessage();
-            }
-          }
-        });
+        let errors = '',
+          customerAddr = form.model.get('customerAddr'),
+          items = form.$.customerAddrAttributes.children;
+        let mandatoryErrors = checkMandatoryFields(items, customerAddr);
+        let formatErrors = checkWrongFormat(items, customerAddr);
+        errors += mandatoryErrors;
+        if (errors && formatErrors) {
+          errors += ', ';
+        }
+        errors += formatErrors;
+
         if (errors) {
           OB.UTIL.showError(
             OB.I18N.getLabel('OBPOS_BPartnerRequiredFields', [errors])
