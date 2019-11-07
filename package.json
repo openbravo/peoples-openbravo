@@ -23,6 +23,7 @@
     "lerna": "~3.18.3"
   },
   "jest": {
+    "testMatch": [ "**/web-test/**/?(*.)+(test).[jt]s?(x)" ],
     "coverageDirectory": "./test-reports/coverage",
     "reporters": [
       "default",
