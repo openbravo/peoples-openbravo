@@ -201,7 +201,9 @@ enyo.kind({
         if (this.receipt.get('isEditable') === false) {
           this.manualTap('edit');
         } else {
-          this.manualTap(OB.MobileApp.model.get('terminal').defaultwebpostab);
+          if (!enyo.Panels.isScreenNarrow()) {
+            this.manualTap(OB.MobileApp.model.get('terminal').defaultwebpostab);
+          }
         }
       },
       this
@@ -276,7 +278,8 @@ enyo.kind({
     onRightToolbarDisabled: ''
   },
   handlers: {
-    onRightToolbarDisabled: 'disabledButton'
+    // on single column, left always enable the cart button
+    onRightToolbarDisabled: ''
   },
   init: function(model) {
     this.model = model;
@@ -516,8 +519,9 @@ enyo.kind({
   initComponents: function() {
     this.inherited(arguments);
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-      //This setStyle is allowed due to an other one in ob-layout
-      this.owner.owner.setStyle('width: 50% !important;');
+      this.owner.addClass(
+        'obUiMultiColumnToolbar-standardToolbar-toolbar_noBrowse'
+      );
     }
   }
 });
@@ -542,7 +546,7 @@ enyo.kind({
     onShowActionIcons: ''
   },
   handlers: {
-    onRightToolbarDisabled: 'disabledButton',
+    onRightToolbarDisabled: 'disableButton',
     onManageServiceProposal: 'manageServiceProposal'
   },
   init: function(model) {
@@ -572,8 +576,15 @@ enyo.kind({
     //      });
     //    }, this);
   },
+  disableButton: function(inSender, inEvent) {
+    inEvent.subtab ? (this.subtab = inEvent.subtab) : (this.subtab = null);
+    this.disabledButton(inSender, inEvent);
+  },
   disabledButton: function(inSender, inEvent) {
     var isDisabled = inEvent.status;
+    if (inEvent.tab === this.tabToOpen) {
+      isDisabled = false;
+    }
     if (OB.MobileApp.model.hasPermission('OBPOS_disableEditTab', true)) {
       isDisabled = true;
     }
@@ -592,6 +603,22 @@ enyo.kind({
     });
   },
   tap: function(options) {
+    if (this.subtab) {
+      const receiptClass = 'obUiMultiColumn-panels-showReceipt',
+        panels = OB.POS.terminal.$.containerWindow.getRoot().$.multiColumn.$
+          .panels,
+        editToolbarPane = OB.POS.terminal.$.containerWindow.getRoot().$
+          .multiColumn.$.rightPanel.$.toolbarpane.$.edit;
+      if (panels.hasClass(receiptClass)) {
+        panels.removeClass(receiptClass);
+        this.addClass('selected');
+        this.parent.$.toolbarBtnCart.removeClass('selected');
+        editToolbarPane.addClass('selected');
+      } else {
+        this.setSelected(true);
+      }
+      return;
+    }
     if (OB.MobileApp.model.get('serviceSearchMode')) {
       this.setLabel(OB.I18N.getLabel('OBPOS_LblEdit'));
       this.removeClass(this.continueClass);

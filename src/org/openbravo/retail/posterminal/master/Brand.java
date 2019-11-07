@@ -74,30 +74,27 @@ public class Brand extends ProcessHQLQuery {
   }
 
   private String getBrandHqlString(final HQLPropertyList brandHQLProperties) {
-    final StringBuilder query = new StringBuilder();
-    query.append(" select");
-    query.append(brandHQLProperties.getHqlSelect());
-    query.append(" from Brand brand");
-    query.append(" where $filtersCriteria");
-    query.append(" and $hqlCriteria");
-    query.append(" and $incrementalUpdateCriteria");
-    query.append(" and brand.active = true");
-    query.append(" and exists (");
-    query.append("   select 1");
-    query.append("   from Product p");
-    query.append("   join p.oBRETCOProlProductList assort");
-    query.append("   where p.brand.id = brand.id");
-    query.append("   and assort.obretcoProductlist.id in :productListIds");
-    query.append(" )");
-    query.append(" and exists (");
-    query.append("   select 1");
-    query.append("   from Organization o");
-    query.append("   where o.id in :orgIds");
-    query.append(
-        "   and ad_org_isinnaturaltree(brand.organization.id, o.id, brand.client.id) = 'Y'");
-    query.append(" )");
-    query.append(" order by brand.name, brand.id");
-    return query.toString();
+    return " select" //
+        + brandHQLProperties.getHqlSelect() //
+        + " from Brand brand" //
+        + " where $filtersCriteria" //
+        + " and $hqlCriteria" //
+        + " and $incrementalUpdateCriteria" //
+        + " and brand.active = true" //
+        + " and exists (" //
+        + "   select 1" //
+        + "   from Product p" //
+        + "   join p.oBRETCOProlProductList assort" //
+        + "   where p.brand.id = brand.id" //
+        + "   and assort.obretcoProductlist.id in :productListIds" //
+        + " )" //
+        + " and exists (" //
+        + "   select 1" //
+        + "   from Organization o" //
+        + "   where o.id in :orgIds" //
+        + "   and ad_org_isinnaturaltree(brand.organization.id, o.id, brand.client.id) = 'Y'" //
+        + " )" //
+        + " order by brand.name, brand.id";
   }
 
   private static boolean isCrossStoreSearch(final JSONObject jsonsent) {

@@ -146,7 +146,7 @@ enyo.kind({
         me.blocked = false;
       }, 500);
     }
-    this.doSaveCustomerAddr();
+    this.doSaveCustomerAddr({ validations: true });
   }
 });
 

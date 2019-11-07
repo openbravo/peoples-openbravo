@@ -367,7 +367,7 @@ enyo.kind({
     // Count payment buttons checking provider group and payment method category
     countbuttons = 0;
     enyo.forEach(payments, function(payment) {
-      if (payment.providerGroup) {
+      if (payment.providerGroup && payment.providerGroup.id !== '0') {
         if (!providerGroups[payment.providerGroup.id]) {
           providerGroups[payment.providerGroup.id] = {
             provider: payment.providerGroup,
@@ -440,7 +440,7 @@ enyo.kind({
               return;
             }
 
-            if (payment.providerGroup) {
+            if (payment.providerGroup && payment.providerGroup.id !== '0') {
               if (providerGroups[payment.providerGroup.id]._button) {
                 btncomponent = null; // already added.
               } else {
@@ -715,7 +715,10 @@ enyo.kind({
           me.payAmountWithProviderGroup(amount, providerGroups[status]);
         } else {
           var exactpayment = allpayments[status] || exactdefault;
-          if (exactpayment.providerGroup) {
+          if (
+            exactpayment.providerGroup &&
+            exactpayment.providerGroup.id !== '0'
+          ) {
             // The exact payment belongs to a provider group so call the provider group payment
             setAmountIfPrepayment();
             me.payAmountWithProviderGroup(

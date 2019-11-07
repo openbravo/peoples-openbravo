@@ -12,9 +12,10 @@
 (function() {
   enyo.kind({
     name: 'OB.OBPOSPointOfSale.UI.EditLine.DeliveryModesButton',
-    kind: 'OB.UI.SmallButton',
+    kind: 'OB.UI.Button',
     i18nContent: 'OBRDM_DeliveryMode',
-    classes: 'obObposPointOfSaleUiEditLineDeliveryModesButton obUiActionButton',
+    classes:
+      'obObposPointOfSaleUiEditLine-propertiesToShow-general obObposPointOfSaleUiEditLineDeliveryModesButton obUiActionButton',
     detailsView: null,
     handlers: {
       onSetMultiSelected: 'setMultiSelected',

@@ -85,8 +85,8 @@ public class AutoRegisterHWM implements WebService {
 
   private HardwareManager syncHardwareManager(Organization org, String hardwareUrl,
       String hardwareName, Boolean receiptPrinter, Boolean pdfPrinter) {
-    OBCriteria<HardwareManager> hardwareQuery = OBDal.getInstance().createCriteria(
-        HardwareManager.class);
+    OBCriteria<HardwareManager> hardwareQuery = OBDal.getInstance()
+        .createCriteria(HardwareManager.class);
     hardwareQuery.add(Restrictions.eq(HardwareManager.PROPERTY_ORGANIZATION, org));
     hardwareQuery.add(Restrictions.eq(HardwareManager.PROPERTY_HARDWAREURL, hardwareUrl));
     hardwareQuery.setMaxResults(1);
@@ -117,8 +117,8 @@ public class AutoRegisterHWM implements WebService {
   }
 
   private void syncTerminalTypes(Organization org, HardwareManager hardwaremng) {
-    OBCriteria<TerminalType> terminaltypeQuery = OBDal.getInstance().createCriteria(
-        TerminalType.class);
+    OBCriteria<TerminalType> terminaltypeQuery = OBDal.getInstance()
+        .createCriteria(TerminalType.class);
     terminaltypeQuery.add(Restrictions.eq(TerminalType.PROPERTY_ORGANIZATION, org));
     terminaltypeQuery.add(Restrictions.eq(TerminalType.PROPERTY_AUTOREGISTERHWMURL, true));
     final ScrollableResults terminalScroller = terminaltypeQuery.scroll(ScrollMode.FORWARD_ONLY);
@@ -146,7 +146,8 @@ public class AutoRegisterHWM implements WebService {
     }
   }
 
-  private void saveHardwareUrl(TerminalType termtype, Organization org, HardwareManager hardwaremng) {
+  private void saveHardwareUrl(TerminalType termtype, Organization org,
+      HardwareManager hardwaremng) {
     HardwareURL hardwareurl = OBProvider.getInstance().get(HardwareURL.class);
     hardwareurl.setClient(termtype.getClient());
     hardwareurl.setOrganization(termtype.getOrganization());
@@ -156,13 +157,14 @@ public class AutoRegisterHWM implements WebService {
   }
 
   private JSONObject getParameters(HttpServletRequest request) {
-    StringBuffer params = new StringBuffer();
+    StringBuilder params = new StringBuilder();
     String line = null;
     JSONObject parameters = null;
     try {
       BufferedReader reader = request.getReader();
-      while ((line = reader.readLine()) != null)
+      while ((line = reader.readLine()) != null) {
         params.append(line);
+      }
       parameters = new JSONObject(params.toString());
     } catch (JSONException | IOException e) {
       throw new IllegalArgumentException("Parameters are mandatory");
