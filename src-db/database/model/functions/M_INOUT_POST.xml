@@ -191,25 +191,6 @@
           RAISE_APPLICATION_ERROR(-20000, '@NotCorrectOrgBpartnerInout@') ;
         END IF;
       END IF;
-
-      SELECT count(*)
-      INTO v_Count
-      FROM M_InOutLine iol
-        INNER JOIN C_OrderLine ol on iol.C_OrderLine_ID = ol.C_OrderLine_ID
-      WHERE iol.M_InOut_ID=v_Record_ID
-        AND EXISTS(
-           SELECT 1
-           FROM C_InvoiceLine il
-             INNER JOIN C_Invoice i on il.C_Invoice_ID = i.C_Invoice_ID
-             INNER JOIN C_OrderLine ol2 on il.C_OrderLine_ID = ol2.C_OrderLine_ID 
-           WHERE ol2.C_OrderLine_ID = ol.C_OrderLine_ID 
-             AND il.M_InOutLine_ID IS NULL
-             AND i.DocStatus = 'CO'
-        );
-      IF v_Count>0 THEN
-        RAISE_APPLICATION_ERROR(-20000, '@OrderLinesAlreadyInvoiced@') ;
-      END IF;
-
        Declare
        v_Message_product VARCHAR(2000);
        Begin
