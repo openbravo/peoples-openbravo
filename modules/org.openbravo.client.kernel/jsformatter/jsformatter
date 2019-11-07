@@ -54,7 +54,7 @@ function formatFiles {
         IGNORE_PATH="--ignore-path $(pwd)/.prettierignore"
     fi
 
-    echo "$@" | xargs -n 250 npm run jsformat -s -- ${FLAGS} ${IGNORE_PATH} || exit 1
+    echo "$@" | xargs -n 250 npm run jsformat --prefix ${OPENBRAVO_ROOT_PATH} -s -- ${FLAGS} ${IGNORE_PATH} || exit 1
 }
 
 function getPrettierIgnorePatterns {
@@ -101,7 +101,7 @@ function runFormatterInModule {
     fi
 
     echo "Formatter check for module $(basename ${BASE})"
-    npm run jsformat -s -- ${FORMATTER_FLAGS} ${IGNORE_PATH} "${BASE}/**/*.js"
+    npm run jsformat --prefix ${OPENBRAVO_ROOT_PATH} -s -- ${FORMATTER_FLAGS} ${IGNORE_PATH} "${BASE}/**/*.js"
 }
 
 #Parse input arguments
