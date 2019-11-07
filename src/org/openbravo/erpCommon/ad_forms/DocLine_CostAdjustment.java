@@ -73,6 +73,14 @@ public class DocLine_CostAdjustment extends DocLine {
     return isSource;
   }
 
+  public void setIsUnitCost(boolean isUnitCost) {
+    this.isUnitCost = isUnitCost;
+  }
+
+  public boolean isUnitCost() {
+    return isUnitCost;
+  }
+
   public void setTrxType(String transactionId) {
     MaterialTransaction transaction = OBDal.getInstance()
         .get(MaterialTransaction.class, transactionId);
@@ -203,14 +211,6 @@ public class DocLine_CostAdjustment extends DocLine {
   public boolean isTransactionNegative() {
     return transactionNegative;
   } // setAmounts
-
-  public boolean isUnitCost() {
-    return isUnitCost;
-  }
-
-  public void setIsUnitCost(boolean isUnitCost) {
-    this.isUnitCost = isUnitCost;
-  }
 
   /**
    * Line Account from Product (or Charge).
