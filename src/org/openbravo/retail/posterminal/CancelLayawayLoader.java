@@ -31,6 +31,7 @@ import org.openbravo.mobile.core.process.OutDatedDataChangeException;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
+import org.openbravo.retail.posterminal.utility.DocumentNoHandler;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 
@@ -131,6 +132,19 @@ public class CancelLayawayLoader extends OrderLoader {
         handlePayments(json, inverseOrder, null);
       } finally {
         TriggerHandler.getInstance().disable();
+      }
+
+      if (json.getJSONArray("payments").length() > 0) {
+        OBContext.setAdminMode(false);
+        try {
+          for (DocumentNoHandler documentNoHandler : documentNoHandlers.get()) {
+            documentNoHandler.setDocumentNoAndSave();
+          }
+          OBDal.getInstance().flush();
+        } finally {
+          documentNoHandlers.set(null);
+          OBContext.restorePreviousMode();
+        }
       }
 
       POSUtils.setDefaultPaymentType(json, inverseOrder);
