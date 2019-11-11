@@ -8,37 +8,19 @@
  */
 
 (function() {
-  var BPCategory = OB.Data.ExtensibleModel.extend({
-    modelName: 'BPCategory',
-    tableName: 'c_bp_group',
-    entityName: 'BPCategory',
-    source: 'org.openbravo.retail.posterminal.master.BPCategory',
-    dataLimit: OB.Dal.DATALIMIT
-  });
+  class BPCategory extends OB.MasterdataModelDefinition {
+    constructor() {
+      super();
 
-  BPCategory.addProperties([
-    {
-      name: 'id',
-      column: 'c_bp_group_id',
-      primaryKey: true,
-      type: 'TEXT'
-    },
-    {
-      name: 'searchKey',
-      column: 'value',
-      type: 'TEXT'
-    },
-    {
-      name: 'name',
-      column: 'name',
-      type: 'TEXT'
-    },
-    {
-      name: '_identifier',
-      column: '_identifier',
-      type: 'TEXT'
+      this._indices = [
+        {
+          indexName: 'name',
+          keyPath: 'name',
+          objectParameters: { unique: false }
+        }
+      ];
+      this._endPoint = 'org.openbravo.retail.posterminal.master.BPCategory';
     }
-  ]);
-
-  OB.Data.Registry.registerModel(BPCategory);
+  }
+  OB.MasterdataController.registerModel(BPCategory);
 })();

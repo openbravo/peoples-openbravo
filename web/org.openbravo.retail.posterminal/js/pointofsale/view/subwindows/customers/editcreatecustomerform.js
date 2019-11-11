@@ -343,28 +343,18 @@ enyo.kind({
       retrievedPropertyForText: '_identifier',
       //property of the retrieved model to get the text of the combo item
       //function to retrieve the data
-      fetchDataFunction: function(args) {
-        var me = this,
-          criteria;
-        criteria = {
-          _orderByClause: '_identifier asc'
-        };
-        OB.Dal.find(
-          OB.Model.BPCategory,
-          criteria,
-          function(data, args) {
-            //This function must be called when the data is ready
-            me.dataReadyFunction(data, args);
-          },
-          function(error) {
-            OB.UTIL.showError(
-              OB.I18N.getLabel('OBPOS_ErrorGettingBPCategories')
-            );
-            //This function must be called when the data is ready
-            me.dataReadyFunction(null, args);
-          },
-          args
-        );
+      fetchDataFunction: async function(args) {
+        var me = this;
+
+        try {
+          const dataSalesRepresentative = await OB.MasterdataModels.BPCategory.findOrderBy(
+            'name'
+          );
+          me.dataReadyFunction(dataSalesRepresentative.result, args);
+        } catch (err) {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_ErrorGettingBPCategories'));
+          me.dataReadyFunction(null, args);
+        }
       },
       i18nLabel: 'OBPOS_BPCategory',
       mandatory: true,
