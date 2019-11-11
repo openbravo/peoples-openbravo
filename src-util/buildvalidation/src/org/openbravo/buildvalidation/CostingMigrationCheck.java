@@ -39,7 +39,8 @@ public class CostingMigrationCheck extends BuildValidation {
     try {
       if (!CostingMigrationCheckData.existsMigrationPreference(cp)
           && CostingMigrationCheckData.existsCostingData(cp)
-          && !CostingMigrationCheckData.existsCostingRuleData(cp)) {
+          && (!CostingMigrationCheckData.existsCostingRuleTable(cp)
+          || !CostingMigrationCheckData.existsCostingRuleData(cp))) {
         errors.add(
             "Legacy cost engine is no longer supported. It is mandatory to run Costing Migration Process before updating the instance.");
       }

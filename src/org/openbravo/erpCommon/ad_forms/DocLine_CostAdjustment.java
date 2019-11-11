@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -46,6 +46,7 @@ public class DocLine_CostAdjustment extends DocLine {
   private String warehouseId;
   private String sourceProcess;
   private boolean isSource;
+  private boolean isUnitCost;
 
   public static final String TRXTYPE_SHIPMENT = "SMT";
   public static final String TRXTYPE_RECEIPT = "RCT";
@@ -70,6 +71,14 @@ public class DocLine_CostAdjustment extends DocLine {
 
   public boolean getIsSource() {
     return isSource;
+  }
+
+  public void setIsUnitCost(boolean isUnitCost) {
+    this.isUnitCost = isUnitCost;
+  }
+
+  public boolean isUnitCost() {
+    return isUnitCost;
   }
 
   public void setTrxType(String transactionId) {

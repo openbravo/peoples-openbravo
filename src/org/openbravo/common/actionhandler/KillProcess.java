@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -60,9 +60,8 @@ public class KillProcess extends BaseProcessActionHandler {
 
       // Get Jobs
       Scheduler scheduler = OBScheduler.getInstance().getScheduler();
-      @SuppressWarnings("unchecked")
       List<JobExecutionContext> jobs = scheduler.getCurrentlyExecutingJobs();
-      if (jobs.size() == 0) {
+      if (jobs.isEmpty()) {
         throw new Exception(OBMessageUtils.getI18NMessage("ProcessNotFound", null));
       }
 

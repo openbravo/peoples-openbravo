@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2016 Openbravo SLU 
+ * All portions are Copyright (C) 2016-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,7 +27,6 @@ OB.CancelAndReplace.ClientSideEventHandlersPreSaveUpdate.showMessage = function 
       newOrderedQuantity = data.orderedQuantity,
       replacementRecords = [];
 
-  view.messageBar.keepOnAutomaticRefresh = true;
 
   callback = function (response, cdata, request) {
     if (cdata && cdata.result.length && cdata.result[0].deliveredQuantity > newOrderedQuantity) {
@@ -56,8 +55,6 @@ OB.CancelAndReplace.ClientSideEventHandlersPreDelete.showMessage = function (vie
   var recordsToDelete = extraParameters.recordsToDelete,
       replacementRecords = [],
       record, deliveredQuantity;
-
-  view.messageBar.keepOnAutomaticRefresh = true;
 
   callback = function (response, cdata, request) {
     for (i = 0; i < cdata.result.length; i++) {
