@@ -411,10 +411,10 @@ enyo.kind({
         var me = this;
 
         try {
-          const dataSalesRepresentative = await OB.MasterdataModels.BPCategory.findOrderBy(
+          const dataBPCategory = await OB.MasterdataModels.BPCategory.findOrderBy(
             'name'
           );
-          me.dataReadyFunction(dataSalesRepresentative.result, args);
+          me.dataReadyFunction(dataBPCategory.result, args);
         } catch (err) {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_ErrorGettingBPCategories'));
           me.dataReadyFunction(null, args);
