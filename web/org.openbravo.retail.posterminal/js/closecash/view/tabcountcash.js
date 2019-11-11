@@ -14,7 +14,8 @@ enyo.kind({
   classes:
     'obObposCashupUiRenderPaymentsLine obObposCashupUiRenderPaymentsLine_notCounted',
   events: {
-    onLineEditCount: ''
+    onLineEditCount: '',
+    onSetPaymentMethodStatus: ''
   },
   components: [
     {
@@ -142,6 +143,7 @@ enyo.kind({
   },
   lineEdit: function() {
     this.doLineEditCount();
+    this.doSetPaymentMethodStatus();
   },
   lineOK: function(inSender, inEvent) {
     this.model.set('counted', this.model.get('expected'));
@@ -152,6 +154,9 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.ListPaymentMethods',
   classes: 'obObposCashupUiListPaymentMethods',
+  handlers: {
+    onSetPaymentMethodStatus: 'setPaymentMethodStatus'
+  },
   events: {
     onCountAllOK: '',
     onShowPopup: ''
@@ -350,6 +355,31 @@ enyo.kind({
         OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerCount
       );
     }
+    this.initPaymentMethod();
+  },
+  setPaymentMethodStatus: function(inSender, inEvent) {
+    // reset previous status
+    if (this.originator && this.originator.$.buttonEdit) {
+      this.originator.$.buttonEdit.removeClass(
+        'obObposCashupUiRenderPaymentsLine-listItem-countedContainer-buttonEdit_selected'
+      );
+    }
+    // set new status
+    if (
+      inEvent &&
+      inEvent.originator &&
+      inEvent.originator !== this.originator
+    ) {
+      this.originator = inEvent.originator;
+      this.originator.$.buttonEdit.addClass(
+        'obObposCashupUiRenderPaymentsLine-listItem-countedContainer-buttonEdit_selected'
+      );
+    } else {
+      this.originator = null;
+    }
+  },
+  initPaymentMethod: function() {
+    this.setPaymentMethodStatus(null);
   },
   verifyStep: function(model, callback) {
     this.model = model;

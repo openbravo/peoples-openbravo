@@ -263,7 +263,12 @@ enyo.kind({
     var totalSelected = 0;
     _.each(this.$.bodyContent.$.attributes.$, function(line) {
       if (line.$.checkboxButtonDiscount.checked === true) {
-        totalSelected = OB.DEC.add(totalSelected, line.$.price.content);
+        totalSelected = OB.DEC.add(
+          totalSelected,
+          parseFloat(
+            line.$.price.content.split(OB.Format.defaultGroupingSymbol).join('')
+          )
+        );
       }
     });
     this.$.bodyContent.$.totalselectedAmt.setContent(

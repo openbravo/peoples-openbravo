@@ -189,7 +189,8 @@ enyo.kind({
     onPaymentMethodKept: 'paymentMethodKept',
     onResetQtyToKeep: 'resetQtyToKeep',
     onHoldActiveCmd: 'holdActiveCmd',
-    onChangeCashupReport: 'changeCashupReport'
+    onChangeCashupReport: 'changeCashupReport',
+    onCommandFired: 'commandHandler'
   },
   published: {
     model: null
@@ -199,7 +200,8 @@ enyo.kind({
     onChangeOption: '',
     onDisablePreviousButton: '',
     onDisableNextButton: '',
-    onEnableNextButton: ''
+    onEnableNextButton: '',
+    onSetPaymentMethodStatus: ''
   },
   components: [
     {
@@ -777,6 +779,21 @@ enyo.kind({
     this.$.cashupMultiColumn.$.rightPanel.$.cashUpKeyboard.setStatus(
       inEvent.originator.model.get('_id')
     );
+  },
+  commandHandler: function(inSender, inEvent) {
+    //On selecting payment method, focus corresponding payment's counted field
+    var paymentList = this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods
+        .$.paymentsList.$.tbody.children,
+      paymentLine;
+    paymentLine = _.find(paymentList, function(payment) {
+      return payment.controls[0].model.get('searchKey') === inEvent.key;
+    });
+
+    if (paymentLine) {
+      this.waterfall('onSetPaymentMethodStatus', {
+        originator: paymentLine.controls[0]
+      });
+    }
   },
   paymentMethodKept: function(inSender, inEvent) {
     var validationResult = this.model.validateCashKeep(inEvent.qtyToKeep);

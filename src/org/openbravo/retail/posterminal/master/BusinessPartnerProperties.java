@@ -44,6 +44,7 @@ public class BusinessPartnerProperties extends ModelExtension {
         add(new HQLProperty("ulist.firstName", "firstName"));
         add(new HQLProperty("ulist.lastName", "lastName"));
         add(new HQLProperty("plist.priceIncludesTax", "priceIncludesTax"));
+        add(new HQLProperty("plist.currency.id", "priceListCurrency"));
         add(new HQLProperty("plist.name", "priceListName"));
         add(new HQLProperty("bp.businessPartnerCategory.id", "businessPartnerCategory"));
         add(new HQLProperty("bp.businessPartnerCategory.name", "businessPartnerCategory_name"));

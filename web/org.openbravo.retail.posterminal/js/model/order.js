@@ -479,6 +479,12 @@
           'locationModel',
           new OB.Model.BPLocation(attributes.bp.locationModel)
         );
+        if (attributes.bp.locationBillModel) {
+          bpModel.set(
+            'locationBillModel',
+            new OB.Model.BPLocation(attributes.bp.locationBillModel)
+          );
+        }
         this.set('bp', bpModel);
         this.set('lines', new OrderLineList().reset(attributes.lines));
         this.set(
@@ -3500,7 +3506,10 @@
               'Save ignored before execute OBPOS_PostAddProductToOrder hook, system has detected that a line is being added when calculate receipt is closed. Ignore line creation'
             );
             if (attrs) {
-              if (attrs.obposEpccode) {
+              if (
+                OB.UTIL.RfidController.isRfidConfigured() &&
+                attrs.obposEpccode
+              ) {
                 OB.UTIL.RfidController.removeEpc(attrs.obposEpccode);
               }
               attrs.cancelOperation = true;
@@ -3616,7 +3625,11 @@
               OB.error(
                 'Before execute OBPOS_GroupedProductPreCreateLine hook, system has detected that line is being added when calculate receipt is closed. Ignore line creation'
               );
-              if (attrs && attrs.obposEpccode) {
+              if (
+                OB.UTIL.RfidController.isRfidConfigured() &&
+                attrs &&
+                attrs.obposEpccode
+              ) {
                 OB.UTIL.RfidController.removeEpc(attrs.obposEpccode);
               }
               return null;
@@ -3641,7 +3654,12 @@
                     OB.error(
                       'After execute OBPOS_GroupedProductPreCreateLine hook, system has detected that line is being added when calculate receipt is closed. Ignore line creation'
                     );
-                    if (args && args.attrs && args.attrs.obposEpccode) {
+                    if (
+                      OB.UTIL.RfidController.isRfidConfigured() &&
+                      args &&
+                      args.attrs &&
+                      args.attrs.obposEpccode
+                    ) {
                       OB.UTIL.RfidController.removeEpc(args.attrs.obposEpccode);
                     }
                     return null;
@@ -3652,7 +3670,12 @@
                         'An add product is executed. At this point, this action is not allowed. Skipping product ' +
                           p.get('_identifier')
                       );
-                      if (args && args.attrs && args.attrs.obposEpccode) {
+                      if (
+                        OB.UTIL.RfidController.isRfidConfigured() &&
+                        args &&
+                        args.attrs &&
+                        args.attrs.obposEpccode
+                      ) {
                         OB.UTIL.RfidController.removeEpc(
                           args.attrs.obposEpccode
                         );
@@ -3741,7 +3764,11 @@
                   'An add product is executed. At this point, this action is not allowed. Skipping product ' +
                     p.get('_identifier')
                 );
-                if (attrs && attrs.obposEpccode) {
+                if (
+                  OB.UTIL.RfidController.isRfidConfigured() &&
+                  attrs &&
+                  attrs.obposEpccode
+                ) {
                   OB.UTIL.RfidController.removeEpc(attrs.obposEpccode);
                 }
                 return;
@@ -3752,7 +3779,11 @@
                 'An add product is executed. At this point, this action is not allowed because calculate Receipt is blocked. Skipping product ' +
                   p.get('_identifier')
               );
-              if (attrs && attrs.obposEpccode) {
+              if (
+                OB.UTIL.RfidController.isRfidConfigured() &&
+                attrs &&
+                attrs.obposEpccode
+              ) {
                 OB.UTIL.RfidController.removeEpc(attrs.obposEpccode);
               }
               return null;
@@ -4672,14 +4703,14 @@
       }
 
       if (allDiscountedAmt > 0 && line.get('qty') > 0) {
-        currentDiscountedLinePrice = OB.DEC.toNumber(
-          new BigDecimal(String(line.get('price'))).subtract(
-            new BigDecimal(String(allDiscountedAmt)).divide(
-              new BigDecimal(String(line.get('qty'))),
-              20,
-              OB.DEC.getRoundingMode()
-            )
-          )
+        currentDiscountedLinePrice = OB.DEC.sub(
+          line.get('price'),
+          OB.DEC.div(
+            allDiscountedAmt,
+            line.get('qty'),
+            OB.DEC.getRoundingMode()
+          ),
+          OB.DEC.getRoundingMode()
         );
       } else {
         currentDiscountedLinePrice = line.get('price');
@@ -4934,7 +4965,7 @@
           id: OB.UTIL.get_UUID(),
           product: p,
           uOM: p.get('uOM'),
-          qty: OB.DEC.number(units),
+          qty: OB.DEC.number(units, p.get('uOMstandardPrecision')),
           price: OB.DEC.number(p.get('standardPrice')),
           priceList: OB.DEC.number(p.get('listPrice')),
           priceIncludesTax: me.get('priceIncludesTax'),
@@ -4994,7 +5025,11 @@
           OB.error(
             'Create line - Trying to add a line when calculate receipt is closed. Ignore line creation'
           );
-          if (attrs && attrs.obposEpccode) {
+          if (
+            OB.UTIL.RfidController.isRfidConfigured() &&
+            attrs &&
+            attrs.obposEpccode
+          ) {
             OB.UTIL.RfidController.removeEpc(attrs.obposEpccode);
           }
           return null;
@@ -5316,8 +5351,35 @@
           priceIncludesTax = OB.MobileApp.model.get('pricelist')
             .priceIncludesTax;
         }
-        me.set('priceList', bp.get('priceList'));
-        me.set('priceIncludesTax', priceIncludesTax);
+        if (
+          priceIncludesTax !==
+            OB.MobileApp.model.get('pricelist').priceIncludesTax ||
+          bp.get('priceListCurrency') !==
+            OB.MobileApp.model.get('pricelist').currency
+        ) {
+          me.set('priceList', OB.MobileApp.model.get('pricelist').id);
+          me.set(
+            'priceIncludesTax',
+            OB.MobileApp.model.get('pricelist').priceIncludesTax
+          );
+          me.set('currency', OB.MobileApp.model.get('pricelist').currency);
+          OB.UTIL.showConfirmation.display(
+            OB.I18N.getLabel('OBPOS_ChangeOfPriceList'),
+            OB.I18N.getLabel('OBPOS_ChangeOfPriceListConfig', [
+              bp.get('priceListName'),
+              OB.MobileApp.model.get('pricelist')._identifier
+            ]),
+            null,
+            {
+              onHideFunction: function() {
+                me.trigger('change:documentNo', me);
+              }
+            }
+          );
+        } else {
+          me.set('priceList', bp.get('priceList'));
+          me.set('priceIncludesTax', priceIncludesTax);
+        }
       };
 
       finishSaveData = function(callback) {
@@ -5468,7 +5530,8 @@
         var saveBP = function() {
           if (
             !businessPartner.get('locId') ||
-            !businessPartner.get('shipLocId')
+            !businessPartner.get('shipLocId') ||
+            businessPartner.get('forceRemote')
           ) {
             businessPartner.loadBPLocations(
               null,
@@ -7723,7 +7786,10 @@
                 var provider;
                 var firstpayment =
                   OB.MobileApp.model.paymentnames[payment.get('kind')];
-                if (firstpayment.providerGroup) {
+                if (
+                  firstpayment.providerGroup &&
+                  firstpayment.providerGroup.id !== '0'
+                ) {
                   // Create a provider group instance that allows to return only with the same payment method.
                   var providerGroup = {
                     provider: firstpayment.providerGroup,
@@ -9676,20 +9742,33 @@
           ).exec(
             loadCustomerParameters,
             function(data) {
-              isLoadedPartiallyFromBackend = true;
-              callback({
-                bpartner: OB.Dal.transform(OB.Model.BusinessPartner, data[0]),
-                bpLoc: OB.Dal.transform(OB.Model.BPLocation, data[1]),
-                bpBillLoc:
-                  bpLocationId !== bpBillLocationId
-                    ? OB.Dal.transform(OB.Model.BPLocation, data[2])
-                    : null
-              });
+              if (data.length >= 2) {
+                isLoadedPartiallyFromBackend = true;
+                callback({
+                  bpartner: OB.Dal.transform(OB.Model.BusinessPartner, data[0]),
+                  bpLoc: OB.Dal.transform(OB.Model.BPLocation, data[1]),
+                  bpBillLoc:
+                    bpLocationId !== bpBillLocationId
+                      ? OB.Dal.transform(OB.Model.BPLocation, data[2])
+                      : null
+                });
+              } else {
+                OB.UTIL.showConfirmation.display(
+                  OB.I18N.getLabel('OBPOS_InformationTitle'),
+                  OB.I18N.getLabel('OBPOS_NoCustomerForPaidReceipt'),
+                  [
+                    {
+                      label: OB.I18N.getLabel('OBPOS_LblOk'),
+                      isConfirmButton: true
+                    }
+                  ]
+                );
+              }
             },
             function() {
               OB.UTIL.showConfirmation.display(
                 OB.I18N.getLabel('OBPOS_InformationTitle'),
-                OB.I18N.getLabel('OBPOS_NoReceiptLoadedText'),
+                OB.I18N.getLabel('OBPOS_NoCustomerForPaidReceipt'),
                 [
                   {
                     label: OB.I18N.getLabel('OBPOS_LblOk'),
@@ -10044,7 +10123,10 @@
                     id: iter.lineId,
                     product: prod,
                     uOM: iter.uOM,
-                    qty: OB.DEC.number(iter.quantity),
+                    qty: OB.DEC.number(
+                      iter.quantity,
+                      prod.get('uOMstandardPrecision')
+                    ),
                     price: price,
                     priceList:
                       prod.get('listPrice') !== price

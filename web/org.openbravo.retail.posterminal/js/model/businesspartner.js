@@ -579,6 +579,11 @@
       type: 'TEXT'
     },
     {
+      name: 'priceListCurrency',
+      column: 'priceListCurrency',
+      type: 'TEXT'
+    },
+    {
       name: 'loaded',
       column: 'loaded',
       type: 'TEXT'

@@ -96,40 +96,49 @@ enyo.kind({
   isExpanded: function() {
     return !(this.$.expand && this.$.expand.getShowing() === true);
   },
+
   components: [
     {
-      classes: 'obUiRenderCategoryTree-identifierContainer',
+      name: 'container',
+      classes: 'obUiRenderCategoryTree-container',
       components: [
         {
-          classes: 'obUiRenderCategoryTree-identifierContainer-identifier',
-          name: 'identifier'
-        }
-      ]
-    },
-    {
-      classes: 'obUiRenderCategoryTree-expandCollapseContainer',
-      components: [
-        {
-          name: 'expandCollapse',
-          classes:
-            'obUiRenderCategoryTree-expandCollapseContainer-expandCollapse',
+          classes: 'obUiRenderCategoryTree-container-identifierContainer',
           components: [
             {
-              classes: 'obUiRenderCategoryTree-expandCollapseContainer-expand',
-              kind: 'OB.UI.RenderCategoryExpand',
-              name: 'expand'
-            },
-            {
               classes:
-                'obUiRenderCategoryTree-expandCollapseContainer-collapse',
-              kind: 'OB.UI.RenderCategoryCollapse',
-              name: 'collapse'
+                'obUiRenderCategoryTree-container-identifierContainer-identifier',
+              name: 'identifier'
             }
-          ],
-          tap: function() {
-            this.owner.categoryExpandCollapse();
-            return true;
-          }
+          ]
+        },
+        {
+          classes: 'obUiRenderCategoryTree-container-expandCollapseContainer',
+          components: [
+            {
+              name: 'expandCollapse',
+              classes:
+                'obUiRenderCategoryTree-container-expandCollapseContainer-expandCollapse',
+              components: [
+                {
+                  classes:
+                    'obUiRenderCategoryTree-container-expandCollapseContainer-expand',
+                  kind: 'OB.UI.RenderCategoryExpand',
+                  name: 'expand'
+                },
+                {
+                  classes:
+                    'obUiRenderCategoryTree-container-expandCollapseContainer-collapse',
+                  kind: 'OB.UI.RenderCategoryCollapse',
+                  name: 'collapse'
+                }
+              ],
+              tap: function() {
+                this.owner.categoryExpandCollapse();
+                return true;
+              }
+            }
+          ]
         }
       ]
     }

@@ -472,6 +472,10 @@ enyo.kind({
         let maxNoOrder = me.getMaxNoOrder(me.order);
         promotionToApply.definition.noOrder = maxNoOrder + 1;
 
+        if (!promotionToApply.definition.applyNext) {
+          OB.Discounts.Pos.removeManualPromotionFromLines(me.order);
+        }
+
         if (
           formElementDiscountsList.requiresQty &&
           !formElementDiscountsList.amt
