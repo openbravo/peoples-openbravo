@@ -14,7 +14,8 @@ import javax.enterprise.event.Observes;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.LockOptions;
+import org.hibernate.query.Query;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -23,7 +24,6 @@ import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductCategory;
@@ -119,14 +119,21 @@ public class ProductListEventHandler extends EntityPersistenceEventObserver {
 
   private OBRETCOProductcategory getAssortmentProductCategory(final OBRETCOProductList assortment,
       final ProductCategory productCategory) {
-    final OBCriteria<OBRETCOProductcategory> qry = OBDal.getInstance()
-        .createCriteria(OBRETCOProductcategory.class);
-    qry.add(Restrictions.eq(OBRETCOProductcategory.PROPERTY_CLIENT + ".id",
-        assortment.getClient().getId()));
-    qry.add(Restrictions.eq(OBRETCOProductcategory.PROPERTY_PRODUCTCATEGORY + ".id",
-        productCategory.getId()));
-    qry.add(Restrictions.eq(OBRETCOProductcategory.PROPERTY_OBRETCOPRODUCTLIST + ".id",
-        assortment.getId()));
+    Query<OBRETCOProductList> assormentQuery = OBDal.getInstance()
+        .getSession()
+        .createQuery("from OBRETCO_ProductList where id=:assortmentId", OBRETCOProductList.class);
+    assormentQuery.setParameter("assortmentId", assortment.getId());
+    assormentQuery.setLockOptions(LockOptions.UPGRADE);
+    OBRETCOProductList lockedAssortment = assormentQuery.uniqueResult();
+    
+    final String query = "from OBRETCO_Productcategory where client.id=:clientId and "
+        + "productCategory.id=:categoryId and obretcoProductlist.id=:assortmentId";
+    Query<OBRETCOProductcategory> qry = OBDal.getInstance()
+        .getSession()
+        .createQuery(query, OBRETCOProductcategory.class);
+    qry.setParameter("clientId", lockedAssortment.getClient().getId());
+    qry.setParameter("categoryId", productCategory.getId());
+    qry.setParameter("assortmentId", lockedAssortment.getId());
     return (OBRETCOProductcategory) qry.uniqueResult();
   }
 

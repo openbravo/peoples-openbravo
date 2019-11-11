@@ -149,25 +149,25 @@ enyo.kind({
 /*delete confirmation modal*/
 
 enyo.kind({
-  kind: 'OB.UI.ModalAction',
+  kind: 'OB.UI.Modal',
   name: 'OB.UI.ModalDeleteReceipt',
   classes: 'obUiModalDeleteReceipt',
   events: {
     onDisableLeftToolbar: ''
   },
-  bodyContent: {
-    classes: 'obUiModalDeleteReceipt-bodyContent',
+  body: {
+    classes: 'obUiModalDeleteReceipt-body',
     i18nContent: 'OBPOS_MsgConfirmDelete' // TODO: add this as part of the message + '\n' + OB.I18N.getLabel('OBPOS_cannotBeUndone')
   },
-  bodyButtons: {
-    classes: 'obUiModalDeleteReceipt-bodyButtons',
+  footer: {
+    classes: 'obUiModalDeleteReceipt-footer',
     components: [
       {
-        classes: 'obUiModalDeleteReceipt-bodyButtons-obUiBtnModalCancelDelete',
+        classes: 'obUiModalDeleteReceipt-footer-obUiBtnModalCancelDelete',
         kind: 'OB.UI.btnModalCancelDelete'
       },
       {
-        classes: 'obUiModalDeleteReceipt-bodyButtons-obUiBtnModalApplyDelete',
+        classes: 'obUiModalDeleteReceipt-footer-obUiBtnModalApplyDelete',
         kind: 'OB.UI.btnModalApplyDelete'
       }
     ]

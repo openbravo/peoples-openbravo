@@ -310,11 +310,16 @@ enyo.kind({
   },
   discountChanged: function(inSender, inEvent) {
     // Build discount container info
-    var formElementDiscountsList = this.$.formElementDiscountsList;
+    var formElementDiscountsList = this.$.formElementDiscountsList,
+      selectedOption = inEvent.originator.getSelected();
     formElementDiscountsList.model = inEvent.model;
     formElementDiscountsList.requiresQty = inEvent.requiresQty;
     formElementDiscountsList.amt = inEvent.amt;
     formElementDiscountsList.units = inEvent.units;
+
+    //Reset all combo options
+    this.discounts.reset(this.discounts.models);
+    inEvent.originator.setSelected(selectedOption);
 
     // Disable keyboard if rule is fixed, otherwise, enable keyboard
     if (

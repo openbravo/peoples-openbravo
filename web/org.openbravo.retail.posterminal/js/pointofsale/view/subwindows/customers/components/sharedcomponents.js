@@ -670,23 +670,15 @@ enyo.kind({
             if (errors) {
               errors += ', ';
             }
-            errors +=
-              form.$.invoicingAddrFields
-                .getClassAttribute()
-                .indexOf('twoAddrLayout') === 0
-                ? OB.I18N.getLabel('OBPOS_LblBillAddr') +
-                  ' [' +
-                  invoicingErrors +
-                  ']'
-                : invoicingErrors;
+            errors += form.$.shipAddress.showing
+              ? OB.I18N.getLabel('OBPOS_LblBillAddr') +
+                ' [' +
+                invoicingErrors +
+                ']'
+              : invoicingErrors;
           }
         }
-        if (
-          form.$.shippingAddrFields.showing &&
-          form.$.shippingAddrFields
-            .getClassAttribute()
-            .indexOf('twoAddrLayout') === 0
-        ) {
+        if (form.$.shippingAddrFields.showing && form.$.shipAddress.showing) {
           var shippingErrors = checkFields(
             form.$.shippingAddrFields.children,
             customer

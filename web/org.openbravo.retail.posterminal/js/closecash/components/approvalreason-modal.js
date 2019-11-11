@@ -18,7 +18,7 @@ enyo.kind({
     this.model.set('approvals', {
       supervisor: this.owner.owner.args.supervisor,
       message: this.owner.owner.args.message,
-      approvalReason: this.owner.owner.$.bodyContent.$.approvalReason.getValue()
+      approvalReason: this.owner.owner.$.body.$.approvalReason.getValue()
     });
     this.owner.owner.approved = true;
     this.doHideThisPopup();
@@ -47,32 +47,32 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.ModalAction',
+  kind: 'OB.UI.Modal',
   name: 'OB.UI.ModalApprovalReason',
   classes: 'obUiModalApprovalReason',
   closeOnEscKey: true,
   autoDismiss: true,
-  bodyContent: {
-    classes: 'obUiModalApprovalReason-bodyContent',
+  body: {
+    classes: 'obUiModalApprovalReason-body',
     components: [
       {
         name: 'labelApprovalReason',
-        classes: 'obUiModalApprovalReason-bodyContent-labelApprovalReason'
+        classes: 'obUiModalApprovalReason-body-labelApprovalReason'
       },
       {
-        classes: 'obUiModalApprovalReason-bodyContent-approvalReason',
+        classes: 'obUiModalApprovalReason-body-approvalReason',
         kind: 'OB.UI.ModalApprovalReasonList',
         name: 'approvalReason'
       }
     ]
   },
   i18nHeader: 'OBPOS_ApprovalReason',
-  bodyButtons: {
-    classes: 'obUiModalApprovalReason-bodyButtons',
+  footer: {
+    classes: 'obUiModalApprovalReason-footer',
     components: [
       {
         classes:
-          'obUiModalApprovalReason-bodyButtons-obUiModalsBtnModalApprovalReasonAccept',
+          'obUiModalApprovalReason-footer-obUiModalsBtnModalApprovalReasonAccept',
         kind: 'OB.UI.Modals.btnModalApprovalReasonAccept'
       }
     ]
@@ -88,8 +88,8 @@ enyo.kind({
   },
   initComponents: function() {
     this.inherited(arguments);
-    this.$.headerCloseButton.show();
-    this.$.bodyContent.$.labelApprovalReason.setContent(
+    this.$.closebutton.show();
+    this.$.body.$.labelApprovalReason.setContent(
       OB.I18N.getLabel('OBPOS_lblApprovalReason')
     );
     var me = this,
@@ -102,9 +102,7 @@ enyo.kind({
         })
       );
     });
-    me.$.bodyContent.$.approvalReason
-      .getCollection()
-      .reset(approvalReasonCollection);
+    me.$.body.$.approvalReason.getCollection().reset(approvalReasonCollection);
   }
 });
 

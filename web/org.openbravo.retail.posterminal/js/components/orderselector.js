@@ -10,14 +10,15 @@
 /*global OB, enyo, Backbone, moment, OBRDM, _ */
 
 enyo.kind({
-  kind: 'OB.UI.SmallButton',
+  kind: 'OB.UI.ModalDialogButton',
   name: 'OBRDM.UI.ButtonSelectAll',
   classes: 'obrdmUiButtonSelectAll',
   i18nLabel: 'OBPOS_lblSelectAll',
-  events: {
-    onSelectAll: ''
-  },
   selectAll: true,
+  initComponents: function() {
+    this.popup = OB.UTIL.getPopupFromComponent(this);
+    this.inherited(arguments);
+  },
   changeTo: function(select) {
     if (!select) {
       this.setContent(OB.I18N.getLabel('OBRDM_LblUnSelectAll'));
@@ -27,7 +28,7 @@ enyo.kind({
     this.selectAll = select;
   },
   tap: function() {
-    this.doSelectAll({
+    this.popup.$.body.$.listOrders.selectAll(null, {
       selectAll: this.selectAll
     });
     this.changeTo(!this.selectAll);
@@ -35,26 +36,27 @@ enyo.kind({
 });
 
 enyo.kind({
-  name: 'OBRDM.UI.ButtonAdvancedFilter',
   kind: 'OB.UI.ButtonAdvancedFilter',
+  name: 'OBRDM.UI.ButtonAdvancedFilter',
   classes: 'obrdmUiButtonAdvancedFilter',
   dialog: 'OBRDM_ModalAdvancedFilterOrder'
 });
 
 enyo.kind({
+  kind: 'OB.UI.ModalDialogButton',
   name: 'OBRDM.UI.ButtonPrepareSelected',
-  kind: 'OB.UI.SmallButton',
   classes: 'obrdmUiButtonPrepareSelected',
   i18nLabel: 'OBRDM_LblPrepareSelected',
-  events: {
-    onPrepareSelected: ''
+  initComponents: function() {
+    this.popup = OB.UTIL.getPopupFromComponent(this);
+    this.inherited(arguments);
   },
   tap: function() {
     if (this.disabled) {
       return;
     }
     this.disableButton(true);
-    this.doPrepareSelected();
+    this.popup.$.body.$.listOrders.prepareSelected();
   },
   preparing: false,
   disableButton: function(isDisabled) {
@@ -73,48 +75,46 @@ enyo.kind({
       kind: 'OB.UI.FilterSelectorTableHeader',
       classes: 'obrdmUiModalOrderScrollableHeader-filterSelector',
       filters: OB.Model.OBRDM_OrderFilter.getProperties()
-    },
+    }
+  ]
+});
+
+enyo.kind({
+  name: 'OBRDM.UI.ModalOrderFooter',
+  classes: 'obrdmUiModalOrderFooter',
+  components: [
     {
-      showing: true,
-      classes: 'obrdmUiModalOrderScrollableHeader-container1',
+      classes:
+        'obUiModal-footer-secondaryButtons obrdmUiModalOrderFooter-container1',
       components: [
         {
-          classes: 'obrdmUiModalOrderScrollableHeader-container1-container1',
-          components: [
-            {
-              classes:
-                'obrdmUiModalOrderScrollableHeader-container1-container1-container1',
-              components: [
-                {
-                  kind: 'OBRDM.UI.ButtonSelectAll',
-                  classes:
-                    'obrdmUiModalOrderScrollableHeader-container1-container1-container1-obrdmUiButtonSelectAll'
-                }
-              ]
-            },
-            {
-              classes:
-                'obrdmUiModalOrderScrollableHeader-container1-container1-container2',
-              components: [
-                {
-                  kind: 'OBRDM.UI.ButtonAdvancedFilter',
-                  classes:
-                    'obrdmUiModalOrderScrollableHeader-container1-container1-container2-obrdmUiButtonAdvancedFilter'
-                }
-              ]
-            },
-            {
-              classes:
-                'obrdmUiModalOrderScrollableHeader-container1-container1-container3',
-              components: [
-                {
-                  kind: 'OBRDM.UI.ButtonPrepareSelected',
-                  classes:
-                    'obrdmUiModalOrderScrollableHeader-container1-container1-container3-obrdmUiButtonPrepareSelected'
-                }
-              ]
-            }
-          ]
+          kind: 'OBRDM.UI.ButtonAdvancedFilter',
+          classes:
+            'obrdmUiModalOrderFooter-container1-obrdmUiButtonAdvancedFilter'
+        },
+        {
+          kind: 'OBRDM.UI.ButtonSelectAll',
+          classes: 'obrdmUiModalOrderFooter-container1-obrdmUiButtonSelectAll'
+        }
+      ]
+    },
+    {
+      classes:
+        'obUiModal-footer-mainButtons obrdmUiModalOrderFooter-container2',
+      components: [
+        {
+          kind: 'OB.UI.ModalDialogButton',
+          i18nContent: 'OBMOBC_LblCancel',
+          classes: 'obrdmUiModalOrderFooter-container2-cancel',
+          tap: function() {
+            this.doHideThisPopup();
+          }
+        },
+        {
+          kind: 'OBRDM.UI.ButtonPrepareSelected',
+          classes:
+            'obrdmUiModalOrderFooter-container2-obrdmUiButtonPrepareSelected',
+          isDefaultAction: true
         }
       ]
     }
@@ -555,32 +555,20 @@ enyo.kind({
       classes: 'obrdmUiListOrders-container1',
       components: [
         {
-          classes: 'obrdmUiListOrders-container1-container1 row-fluid',
-          components: [
-            {
-              classes: 'obrdmUiListOrders-container1-container1-container1',
-              components: [
-                {
-                  name: 'stOrderSelector',
-                  kind: 'OB.UI.ScrollableTable',
-                  classes:
-                    'obrdmUiListOrders-container1-container1-container1-stOrderSelector',
-                  renderHeader: 'OBRDM.UI.ModalOrderScrollableHeader',
-                  renderLine: 'OBRDM.UI.ListOrdersLine',
-                  renderEmpty: 'OB.UI.RenderEmpty'
-                },
-                {
-                  name: 'renderLoading',
-                  classes:
-                    'obrdmUiListOrders-container1-container1-container1-renderLoading',
-                  showing: false,
-                  initComponents: function() {
-                    this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
-                  }
-                }
-              ]
-            }
-          ]
+          name: 'stOrderSelector',
+          kind: 'OB.UI.ScrollableTable',
+          classes: 'obrdmUiListOrders-container1-stOrderSelector',
+          renderHeader: 'OBRDM.UI.ModalOrderScrollableHeader',
+          renderLine: 'OBRDM.UI.ListOrdersLine',
+          renderEmpty: 'OB.UI.RenderEmpty'
+        },
+        {
+          name: 'renderLoading',
+          classes: 'obrdmUiListOrders-container1-renderLoading',
+          showing: false,
+          initComponents: function() {
+            this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
+          }
         }
       ]
     }
@@ -643,7 +631,7 @@ enyo.kind({
       },
       this
     );
-    this.$.stOrderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonPrepareSelected.disableButton(
+    this.popup.$.footer.$.modalOrderFooter.$.buttonPrepareSelected.disableButton(
       mode === 'OFF'
     );
     return true;
@@ -758,7 +746,7 @@ enyo.kind({
           },
           function(args) {
             if (args && args.cancellation && args.cancellation === true) {
-              me.$.stOrderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonPrepareSelected.preparing = false;
+              me.popup.$.footer.$.modalOrderFooter.$.buttonPrepareSelected.preparing = false;
               me.doHideSelector();
               var buttons = [],
                 stockAvail = false;
@@ -840,7 +828,7 @@ enyo.kind({
                 };
 
               me.$.stOrderSelector.$.theader.$.modalOrderScrollableHeader.$.filterSelector.clearFilter();
-              me.$.stOrderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonPrepareSelected.preparing = false;
+              me.popup.$.footer.$.modalOrderFooter.$.buttonPrepareSelected.preparing = false;
               me.doHideSelector({
                 selectorHide: false
               });
@@ -976,7 +964,7 @@ enyo.kind({
       }
     }
 
-    this.$.stOrderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonPrepareSelected.preparing = true;
+    this.popup.$.footer.$.modalOrderFooter.$.buttonPrepareSelected.preparing = true;
     _.each(this.ordersList.models, function(line) {
       if (line.get('ltype') === 'ORDERLINE' && line.get('toPrepare') > 0) {
         obposPrepaymentlimitamt = line.get('obposPrepaymentlimitamt');
@@ -1014,8 +1002,8 @@ enyo.kind({
             if (approved) {
               continueExecution(me);
             } else {
-              me.$.stOrderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonPrepareSelected.preparing = false;
-              me.$.stOrderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonPrepareSelected.disableButton(
+              me.popup.$.footer.$.modalOrderFooter.$.buttonPrepareSelected.preparing = false;
+              me.popup.$.footer.$.modalOrderFooter.$.buttonPrepareSelected.disableButton(
                 false
               );
             }
@@ -1031,13 +1019,9 @@ enyo.kind({
 
   clearAction: function() {
     this.ordersList.reset();
-    this.$.stOrderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonSelectAll.changeTo(
-      true
-    );
-    this.$.stOrderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonSelectAll.setDisabled(
-      true
-    );
-    this.$.stOrderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonPrepareSelected.disableButton(
+    this.popup.$.footer.$.modalOrderFooter.$.buttonSelectAll.changeTo(true);
+    this.popup.$.footer.$.modalOrderFooter.$.buttonSelectAll.setDisabled(true);
+    this.popup.$.footer.$.modalOrderFooter.$.buttonPrepareSelected.disableButton(
       true
     );
     return true;
@@ -1045,9 +1029,7 @@ enyo.kind({
 
   searchAction: function(inSender, inEvent) {
     var me = this;
-    me.$.stOrderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonSelectAll.setDisabled(
-      true
-    );
+    me.popup.$.footer.$.modalOrderFooter.$.buttonSelectAll.setDisabled(true);
 
     if (!inEvent.advanced) {
       this.waterfall('onDisableSearch');
@@ -1069,7 +1051,7 @@ enyo.kind({
         me.waterfall('onEnableSearch');
       }
       if (data && !data.exception) {
-        me.$.stOrderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonSelectAll.setDisabled(
+        me.popup.$.footer.$.modalOrderFooter.$.buttonSelectAll.setDisabled(
           data.length === 0
         );
         var ordersLoaded = new Backbone.Collection();
@@ -1139,9 +1121,7 @@ enyo.kind({
         });
         me.$.stOrderSelector.collection.reset(lines);
         me.$.renderLoading.hide();
-        me.$.stOrderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonSelectAll.changeTo(
-          true
-        );
+        me.popup.$.footer.$.modalOrderFooter.$.buttonSelectAll.changeTo(true);
       } else {
         OB.UTIL.showError(OB.I18N.getLabel(data.exception.message));
         me.$.stOrderSelector.collection.reset();
@@ -1235,10 +1215,10 @@ enyo.kind({
           }
         }
       });
-      me.$.stOrderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonPrepareSelected.disableButton(
+      me.popup.$.footer.$.modalOrderFooter.$.buttonPrepareSelected.disableButton(
         disablePrepareSelected
       );
-      me.$.stOrderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonSelectAll.changeTo(
+      me.popup.$.footer.$.modalOrderFooter.$.buttonSelectAll.changeTo(
         !setAllSelected
       );
     });
@@ -1253,6 +1233,9 @@ enyo.kind({
   i18nHeader: 'OBRDM_LblSelectOrders',
   body: {
     kind: 'OBRDM.UI.ListOrders'
+  },
+  footer: {
+    kind: 'OBRDM.UI.ModalOrderFooter'
   },
   executeOnShow: function() {
     if (!this.initialized) {
@@ -1277,22 +1260,14 @@ enyo.kind({
         });
       }
       if (!this.notClear) {
-        this.$.body.$.listOrders.$.stOrderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonPrepareSelected.disableButton(
+        this.$.body.$.listOrders.popup.$.footer.$.modalOrderFooter.$.buttonPrepareSelected.disableButton(
           true
         );
-        this.$.body.$.listOrders.$.stOrderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonSelectAll.setDisabled(
+        this.$.body.$.listOrders.popup.$.footer.$.modalOrderFooter.$.buttonSelectAll.setDisabled(
           true
         );
       }
       OB.MobileApp.view.scanningFocus(false);
-      if (window.innerWidth <= 395) {
-        this.$.body.$.listOrders.$.stOrderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonAdvancedFilter.setContent(
-          OB.I18N.getLabel('OBPOS_LblAdvancedFilterShort')
-        );
-        this.$.body.$.listOrders.$.stOrderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonPrepareSelected.setContent(
-          OB.I18N.getLabel('OBRDM_LblPrepareSelectedShort')
-        );
-      }
     }
     if (this.args.hookCallback) {
       this.args.hookCallback();
@@ -1312,6 +1287,10 @@ enyo.kind({
   },
   getAdvancedFilterDialog: function() {
     return 'OBRDM_ModalAdvancedFilterOrder';
+  },
+  init: function(model) {
+    this.inherited(arguments);
+    this.$.body.$.listOrders.popup = this;
   }
 });
 
