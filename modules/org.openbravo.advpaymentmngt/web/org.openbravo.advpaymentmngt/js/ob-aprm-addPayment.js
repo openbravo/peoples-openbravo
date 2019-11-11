@@ -405,7 +405,17 @@ OB.APRM.AddPayment.orderInvoiceOnLoadGrid = function(grid) {
   } else {
     OB.APRM.AddPayment.updateInvOrderTotal(this.view.theForm, grid);
   }
+  OB.APRM.AddPayment.refreshEditedSelectedRecordsInGrid(grid);
   OB.APRM.AddPayment.tryToUpdateActualExpected(this.view.theForm);
+};
+
+OB.APRM.AddPayment.refreshEditedSelectedRecordsInGrid = function(grid) {
+  var editedSelectedRecords = grid.editedSelectedRecords;
+  if (editedSelectedRecords && editedSelectedRecords.length > 0) {
+    editedSelectedRecords.forEach(function(record) {
+      OB.APRM.AddPayment.doSelectionChanged(record, true, grid.view);
+    });
+  }
 };
 
 OB.APRM.AddPayment.glitemsOnLoadGrid = function(grid) {

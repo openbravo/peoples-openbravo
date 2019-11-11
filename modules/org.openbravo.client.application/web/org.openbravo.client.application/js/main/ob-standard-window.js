@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -292,6 +292,9 @@ isc.OBStandardWindow.addProperties({
         ]
       });
       this.addChild(theModalMask);
+      // Always force to show popup over mask so when switching tabs before popup is shown,
+      // it still shows in front of mask. Related to issue #42178
+      thePopup.bringToFront();
     } else {
       this.addChild(thePopup);
     }
