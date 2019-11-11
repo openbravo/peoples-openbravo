@@ -85,7 +85,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     OB.Model.OfflinePrinter,
     OB.Model.PaymentMethodCashUp,
     OB.Model.TaxCashUp,
-    OB.Model.Country,
     OB.Model.BPSetLine,
     OB.Model.DiscountBusinessPartnerSet
   ],

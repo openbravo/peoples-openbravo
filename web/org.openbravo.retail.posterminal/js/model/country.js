@@ -8,26 +8,19 @@
  */
 
 (function() {
-  var Country = OB.Data.ExtensibleModel.extend({
-    modelName: 'Country',
-    tableName: 'c_country',
-    entityName: 'Country',
-    source: 'org.openbravo.retail.posterminal.master.Country'
-  });
+  class Country extends OB.MasterdataModelDefinition {
+    constructor() {
+      super();
 
-  Country.addProperties([
-    {
-      name: 'id',
-      column: 'c_country_id',
-      primaryKey: true,
-      type: 'TEXT'
-    },
-    {
-      name: '_identifier',
-      column: '_identifier',
-      type: 'TEXT'
+      this._indices = [
+        {
+          indexName: '_identifier',
+          keyPath: '_identifier',
+          objectParameters: { unique: false }
+        }
+      ];
+      this._endPoint = 'org.openbravo.retail.posterminal.master.Country';
     }
-  ]);
-
-  OB.Data.Registry.registerModel(Country);
+  }
+  OB.MasterdataController.registerModel(Country);
 })();
