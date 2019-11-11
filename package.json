@@ -16,6 +16,7 @@
   "devDependencies": {
     "eslint": "~5.16.0",
     "eslint-config-prettier": "~4.3.0",
+    "eslint-plugin-jest": "~23.0.2",
     "prettier": "~1.18.2",
     "jest": "~24.9.0",
     "jest-html-reporters": "~1.2.0",
@@ -23,7 +24,9 @@
     "lerna": "~3.18.3"
   },
   "jest": {
-    "testMatch": [ "**/web-test/**/?(*.)+(test).[jt]s?(x)" ],
+    "testMatch": [
+      "**/web-test/**/?(*.)+(test).[jt]s?(x)"
+    ],
     "coverageDirectory": "./test-reports/coverage",
     "reporters": [
       "default",

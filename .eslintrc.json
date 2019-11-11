@@ -2,9 +2,11 @@
   "root": true,
   "env": {
     "browser": true,
-    "es6": true
+    "es6": true,
+    "jest": true
   },
-  "extends": ["eslint:recommended", "prettier"],
+  "plugins": ["jest"],
+  "extends": ["eslint:recommended", "prettier", "plugin:jest/recommended", "plugin:jest/style"],
   "parserOptions": {
     "ecmaVersion": 9
   },
