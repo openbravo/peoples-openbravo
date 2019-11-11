@@ -1,16 +1,15 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
-package org.openbravo.retail.posterminal.master;
+package org.openbravo.retail.posterminal.term;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -19,15 +18,11 @@ import javax.inject.Inject;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
-import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery;
-import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery.MasterDataModel;
-import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
 
-@MasterDataModel("ReturnReason")
-public class ReturnReason extends MasterDataProcessHQLQuery {
+public class ReturnReason extends QueryTerminalProperty {
   public static final String returnReasonPropertyExtension = "OBPOS_ReturnReasonExtension";
 
   @Inject
@@ -38,7 +33,7 @@ public class ReturnReason extends MasterDataProcessHQLQuery {
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
 
-    List<String> hqlQueries = new ArrayList<String>();
+    List<String> hqlQueries = new ArrayList<>();
     HQLPropertyList regularReturnReasonHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
 
@@ -59,16 +54,8 @@ public class ReturnReason extends MasterDataProcessHQLQuery {
     return "returnreasons";
   }
 
+  @Override
   public boolean returnList() {
     return false;
-  }
-
-  @Override
-  public List<String> getMasterDataModelProperties() {
-    return ModelExtensionUtils.getPropertyExtensions(extensions)
-        .getProperties()
-        .stream()
-        .map(HQLProperty::getHqlProperty)
-        .collect(Collectors.toList());
   }
 }

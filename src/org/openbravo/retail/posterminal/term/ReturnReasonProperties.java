@@ -1,4 +1,4 @@
-package org.openbravo.retail.posterminal.master;
+package org.openbravo.retail.posterminal.term;
 
 import java.util.ArrayList;
 import java.util.List;
