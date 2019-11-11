@@ -129,7 +129,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.ModalOpenRelatedReceipts',
-  kind: 'OB.UI.ModalAction',
+  kind: 'OB.UI.Modal',
   classes: 'obUiModalOpenRelatedReceipts',
   handlers: {
     onApplyChanges: 'applyChanges',
@@ -137,29 +137,78 @@ enyo.kind({
     onLineSelected: 'lineSelected',
     onExecuteCallback: 'executeCallback'
   },
-  bodyContent: {
+  header: {
+    classes: 'obUiModalOpenRelatedReceipts-header',
+    components: [
+      {
+        name: 'CheckAllHeaderDocNum',
+        classes: 'obUiModalOpenRelatedReceipts-header-checkAllHeaderDocNum',
+        components: [
+          {
+            name: 'headerLbl',
+            classes:
+              'obUiModalOpenRelatedReceipts-checkAllHeaderDocNum-headerLbl span12'
+          },
+          {
+            classes:
+              'obUiModalOpenRelatedReceipts-checkAllHeaderDocNum-element1'
+          }
+        ]
+      },
+      {
+        name: 'CheckAllHeader',
+        classes: 'obUiModalOpenRelatedReceipts-header-checkAllHeader',
+        components: [
+          {
+            name: 'documentNoLbl',
+            classes:
+              'obUiModalOpenRelatedReceipts-checkAllHeader-documentNoLbl span4'
+          },
+          {
+            name: 'orderedDateLbl',
+            classes:
+              'obUiModalOpenRelatedReceipts-checkAllHeader-orderedDateLbl span2'
+          },
+          {
+            name: 'amountLbl',
+            classes:
+              'obUiModalOpenRelatedReceipts-checkAllHeader-amountLbl span2'
+          },
+          {
+            name: 'pendingLbl',
+            classes:
+              'obUiModalOpenRelatedReceipts-checkAllHeader-pendingLbl span2'
+          },
+          {
+            classes: 'obUiModalOpenRelatedReceipts-checkAllHeader-element1'
+          }
+        ]
+      }
+    ]
+  },
+  body: {
     kind: 'Scroller',
-    classes: 'obUiModalOpenRelatedReceipts-bodyContent',
+    classes: 'obUiModalOpenRelatedReceipts-body',
     thumb: true,
     components: [
       {
         name: 'attributes',
-        classes: 'obUiModalOpenRelatedReceipts-bodyContent-attributes'
+        classes: 'obUiModalOpenRelatedReceipts-body-attributes'
       }
     ]
   },
-  bodyButtons: {
-    classes: 'obUiModalOpenRelatedReceipts-bodyButtons',
+  footer: {
+    classes: 'obUiModalOpenRelatedReceipts-footer',
     components: [
       {
         kind: 'OB.UI.OpenRelatedReceipts_btnCancel',
         classes:
-          'obUiModalOpenRelatedReceipts-bodyButtons-obUiOpenRelatedReceiptsBtnCancel'
+          'obUiModalOpenRelatedReceipts-footer-obUiOpenRelatedReceiptsBtnCancel'
       },
       {
         kind: 'OB.UI.OpenRelatedReceipts_btnApply',
         classes:
-          'obUiModalOpenRelatedReceipts-bodyButtons-obUiOpenRelatedReceiptsBtnApply'
+          'obUiModalOpenRelatedReceipts-footer-obUiOpenRelatedReceiptsBtnApply'
       }
     ]
   },
@@ -179,9 +228,9 @@ enyo.kind({
       }
       this.selectedOrders.splice(index, 1);
     }
-    this.$.bodyButtons.$.openRelatedReceipts_btnApply.setDisabled(
+    this.$.footer.$.openRelatedReceipts_btnApply.setDisabled(
       _.reduce(
-        this.$.bodyContent.$.attributes.$,
+        this.$.body.$.attributes.$,
         function(count, line) {
           return line.$.checkboxButtonOpenRelatedReceipts.checked
             ? count + 1
@@ -203,60 +252,23 @@ enyo.kind({
       i;
     this.selectedOrders = JSON.parse(JSON.stringify(this.args.models));
     this.execCallback = true;
-    this.$.bodyContent.$.attributes.destroyComponents();
-    this.$.header.destroyComponents();
-    this.$.header.createComponent({
-      name: 'CheckAllHeaderDocNum',
-      classes: 'obUiModalOpenRelatedReceipts-header-checkAllHeaderDocNum',
-      components: [
-        {
-          content: OB.I18N.getLabel('OBPOS_OpenRelatedReceiptsTitle'),
-          name: 'headerLbl',
-          classes:
-            'obUiModalOpenRelatedReceipts-checkAllHeaderDocNum-headerLbl span12'
-        },
-        {
-          classes: 'obUiModalOpenRelatedReceipts-checkAllHeaderDocNum-element1'
-        }
-      ]
-    });
-    this.$.header.addClass('obUiModalOpenRelatedReceipts-header');
-    this.$.header.createComponent({
-      name: 'CheckAllHeader',
-      classes: 'obUiModalOpenRelatedReceipts-header-checkAllHeader',
-      components: [
-        {
-          name: 'documentNoLbl',
-          content: OB.I18N.getLabel('OBPOS_DocumentNo'),
-          classes:
-            'obUiModalOpenRelatedReceipts-checkAllHeader-documentNoLbl span4'
-        },
-        {
-          name: 'orderedDateLbl',
-          content: OB.I18N.getLabel('OBPOS_DateOrdered'),
-          classes:
-            'obUiModalOpenRelatedReceipts-checkAllHeader-orderedDateLbl span2'
-        },
-        {
-          name: 'amountLbl',
-          content: OB.I18N.getLabel('OBPOS_AmountOfCash'),
-          classes: 'obUiModalOpenRelatedReceipts-checkAllHeader-amountLbl span2'
-        },
-        {
-          name: 'pendingLbl',
-          content: OB.I18N.getLabel('OBPOS_Pending'),
-          classes:
-            'obUiModalOpenRelatedReceipts-checkAllHeader-pendingLbl span2'
-        },
-        {
-          classes: 'obUiModalOpenRelatedReceipts-checkAllHeader-element1'
-        }
-      ]
-    });
-
+    this.$.body.$.attributes.destroyComponents();
+    this.$.header.$.headerLbl.setContent(
+      OB.I18N.getLabel('OBPOS_OpenRelatedReceiptsTitle')
+    );
+    this.$.header.$.documentNoLbl.setContent(
+      OB.I18N.getLabel('OBPOS_DocumentNo')
+    );
+    this.$.header.$.orderedDateLbl.setContent(
+      OB.I18N.getLabel('OBPOS_DateOrdered')
+    );
+    this.$.header.$.amountLbl.setContent(
+      OB.I18N.getLabel('OBPOS_AmountOfCash')
+    );
+    this.$.header.$.pendingLbl.setContent(OB.I18N.getLabel('OBPOS_Pending'));
     for (i = 1; i < this.args.models.length; i++) {
       model = this.args.models[i];
-      this.$.bodyContent.$.attributes.createComponent({
+      this.$.body.$.attributes.createComponent({
         kind: 'OB.UI.RelatedReceipt',
         name: 'line' + lineNum,
         order: model
@@ -266,9 +278,9 @@ enyo.kind({
     this.waterfall('onCheckAll', {
       checked: true
     });
-    this.$.bodyButtons.$.openRelatedReceipts_btnApply.setDisabled(false);
+    this.$.footer.$.openRelatedReceipts_btnApply.setDisabled(false);
     this.$.header.render();
-    this.$.bodyContent.$.attributes.render();
+    this.$.body.$.attributes.render();
   },
   executeOnHide: function() {
     if (this.execCallback) {
@@ -277,6 +289,6 @@ enyo.kind({
   },
   initComponents: function() {
     this.inherited(arguments);
-    this.attributeContainer = this.$.bodyContent.$.attributes;
+    this.attributeContainer = this.$.body.$.attributes;
   }
 });

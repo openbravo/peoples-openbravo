@@ -12,7 +12,6 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.PaymentMethods',
   kind: 'OB.UI.Modal',
   classes: 'obObposPointOfSaleUiPaymentMethods',
-  topPosition: '125px',
   i18nHeader: 'OBPOS_MorePaymentsHeader',
   sideButtons: [],
   handlers: {
@@ -25,17 +24,24 @@ enyo.kind({
         classes: 'obObposPointOfSaleUiPaymentMethods-body-container1',
         components: [
           {
+            name: 'buttonslist',
             classes:
-              'obObposPointOfSaleUiPaymentMethods-body-container1-container1',
-            components: [
-              {
-                name: 'buttonslist',
-                classes:
-                  'obObposPointOfSaleUiPaymentMethods-body-container1-container1-buttonslist'
-              }
-            ]
+              'obObposPointOfSaleUiPaymentMethods-body-container1-buttonslist'
           }
         ]
+      }
+    ]
+  },
+  footer: {
+    classes: 'obUiModal-footer-mainButtons',
+    components: [
+      {
+        kind: 'OB.UI.ModalDialogButton',
+        i18nContent: 'OBRDM_LblClose',
+        isDefaultAction: true,
+        tap: function() {
+          this.doHideThisPopup();
+        }
       }
     ]
   },

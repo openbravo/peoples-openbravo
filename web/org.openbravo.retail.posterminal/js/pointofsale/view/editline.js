@@ -949,10 +949,25 @@ enyo.kind({
                   thumb: true,
                   tap: function() {
                     this.owner.$.actionButtonsContainer.removeClass('expanded');
+                    this.owner.$.actionButtonsContainerScrim.removeClass(
+                      'expanded'
+                    );
                     this.owner.$.showLessActionButtons.setShowing(false);
                   },
                   classes:
                     'obObposPointOfSaleUiEditLine-msgedit-actionButtonsContainer'
+                },
+                {
+                  name: 'actionButtonsContainerScrim',
+                  classes:
+                    'obObposPointOfSaleUiEditLine-msgedit-actionButtonsContainerScrim',
+                  tap: function() {
+                    this.owner.$.actionButtonsContainer.removeClass('expanded');
+                    this.owner.$.actionButtonsContainerScrim.removeClass(
+                      'expanded'
+                    );
+                    this.owner.$.showLessActionButtons.setShowing(false);
+                  }
                 },
                 {
                   kind: 'OB.OBPOSPointOfSale.UI.EditLine.ShowMoreActionButtons',
@@ -1356,6 +1371,7 @@ enyo.kind({
   classes: 'obObposPointOfSaleUiEditLineShowMoreActionButtons',
   tap: function() {
     this.owner.$.actionButtonsContainer.addClass('expanded');
+    this.owner.$.actionButtonsContainerScrim.addClass('expanded');
     this.owner.$.showLessActionButtons.setShowing(true);
   }
 });
@@ -1367,6 +1383,7 @@ enyo.kind({
   classes: 'obObposPointOfSaleUiEditLineShowLessActionButtons',
   tap: function() {
     this.owner.$.actionButtonsContainer.removeClass('expanded');
+    this.owner.$.actionButtonsContainerScrim.removeClass('expanded');
     this.owner.$.showLessActionButtons.setShowing(false);
   }
 });

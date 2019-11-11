@@ -92,27 +92,25 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
         orderTypeHql = "";
     }
 
-    final StringBuilder hqlPaidReceipts = new StringBuilder();
-    hqlPaidReceipts.append("select ");
-    hqlPaidReceipts.append(receiptsHQLProperties.getHqlSelect());
-    hqlPaidReceipts.append(" from Order as ord");
-    hqlPaidReceipts.append(" where $filtersCriteria and $hqlCriteria");
-    hqlPaidReceipts.append(orderTypeHql);
-    hqlPaidReceipts.append(" and ord.client.id = $clientId");
-    hqlPaidReceipts.append(getOganizationFilter(jsonsent));
-    hqlPaidReceipts.append(" and ord.obposIsDeleted = false");
-    hqlPaidReceipts.append(" and ord.obposApplications is not null");
-    hqlPaidReceipts.append(" and ord.documentStatus not in ('CJ', 'CA', 'NC', 'AE', 'ME')");
+    String hqlPaidReceipts = "select " //
+        + receiptsHQLProperties.getHqlSelect() //
+        + " from Order as ord" //
+        + " where $filtersCriteria and $hqlCriteria" //
+        + orderTypeHql //
+        + " and ord.client.id = $clientId" //
+        + getOganizationFilter(jsonsent) //
+        + " and ord.obposIsDeleted = false and ord.obposApplications is not null and ord.documentStatus <> 'CJ' " //
+        + " and ord.documentStatus not in ('CJ', 'CA', 'NC', 'AE', 'ME')";
     if (!isPayOpenTicket) {
-      hqlPaidReceipts.append(" and (ord.documentStatus <> 'CL' or ord.iscancelled = true) ");
+      hqlPaidReceipts += " and (ord.documentStatus <> 'CL' or ord.iscancelled = true) ";
     }
     if ((jsonsent.has("orderByClause") && jsonsent.get("orderByClause") != JSONObject.NULL)
         || (jsonsent.has("orderByProperties")
             && jsonsent.get("orderByProperties") != JSONObject.NULL)) {
-      hqlPaidReceipts.append(" $orderByCriteria");
+      hqlPaidReceipts += " $orderByCriteria";
     }
 
-    return Arrays.asList(new String[] { hqlPaidReceipts.toString() });
+    return Arrays.asList(hqlPaidReceipts);
   }
 
   protected static String getOrderTypeFilter(JSONObject jsonsent) {
@@ -132,19 +130,12 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
         ? org.getOBRETCOCrossStoreOrganization().getId()
         : "";
 
-    final StringBuilder orgFilter = new StringBuilder();
-    if (StringUtils.isNotEmpty(documentNoFilter) && StringUtils.isNotEmpty(crossStoreId)) {
-      final String crossStoreList = StringCollectionUtils
-          .commaSeparated(POSUtils.getOrgListByCrossStoreId(crossStoreId), true);
-
-      orgFilter.append(" and ord.organization.id in (");
-      orgFilter.append(crossStoreList);
-      orgFilter.append(" )");
-    } else {
-      orgFilter.append(" and ord.$orgId");
-    }
-
-    return orgFilter.toString();
+    return StringUtils.isNotEmpty(documentNoFilter) && StringUtils.isNotEmpty(crossStoreId) //
+        ? " and ord.organization.id in (" //
+            + StringCollectionUtils.commaSeparated(POSUtils.getOrgListByCrossStoreId(crossStoreId),
+                true) //
+            + " )" //
+        : " and ord.$orgId";
   }
 
   private static String getColumnFilterValue(JSONObject jsonsent, final String columnFilter) {

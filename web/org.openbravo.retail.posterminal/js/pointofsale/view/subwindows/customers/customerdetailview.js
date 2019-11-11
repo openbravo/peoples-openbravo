@@ -31,8 +31,37 @@ enyo.kind({
     var me = this;
     me.pressedBtn = false;
     me.$.body.$.editcustomers_impl.setCustomer(this.args.businessPartner);
+
+    //Statistics
+    me.$.body.$.editcustomers_impl.$.statistics.setShowing(false);
+    var anonymousCustomer = OB.MobileApp.model.get('businessPartner').id;
+    if (
+      OB.MobileApp.model.get('connectedToERP') &&
+      this.args.businessPartner.id !== anonymousCustomer
+    ) {
+      var process = new OB.DS.Process(
+        'org.openbravo.retail.posterminal.process.CustomerStatistics'
+      );
+      process.exec(
+        {
+          organization: OB.MobileApp.model.get('terminal').organization,
+          bpId: this.args.businessPartner.id
+        },
+        function(data, message) {
+          if (data && data.exception) {
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_GetStatistics_Error'));
+          } else if (data) {
+            me.waterfall('onSetStatisticValue', data);
+          } else {
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_GetStatistics_Error'));
+          }
+        }
+      );
+    }
+
     var customerFooter = this.$.footer.$.editCustomerFooter;
     var buttonContainer = customerFooter.$.buttonContainer;
+
     Object.keys(buttonContainer.$).forEach(function(key, index) {
       if (
         OB.OBPOSPointOfSale.UI.customers.EditCustomerFooter.prototype.customerFooterButtons.find(
@@ -60,6 +89,7 @@ enyo.kind({
     ) {
       if (attribute.name !== 'strategy') {
         if (
+          attribute.coreElement &&
           attribute.coreElement.displayLogic &&
           !attribute.coreElement.displayLogic()
         ) {
@@ -67,6 +97,7 @@ enyo.kind({
         }
       }
     });
+
     return true;
   },
   executeOnHide: function() {
@@ -324,7 +355,8 @@ enyo.kind({
   components: [
     {
       name: 'buttonContainer',
-      classes: 'obObPosPointOfSaleUiCustomersEditCustomerFooter-buttonContainer'
+      classes:
+        'obUiModal-footer-mainButtons obObPosPointOfSaleUiCustomersEditCustomerFooter-buttonContainer'
     }
   ],
   initComponents: function() {
@@ -340,6 +372,33 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.editcustomers_impl',
   kind: 'OB.OBPOSPointOfSale.UI.customers.edit_createcustomers',
   classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl',
+  windowHeader: 'OB.OBPOSPointOfSale.UI.customers.EditCustomerHeader',
+  fieldGroups: [
+    {
+      groupName: 'OBPOS_FG_PersonalInformation',
+      title: 'OBPOS_Personal_Info',
+      sectionName: 'personalInfo',
+      sectionLableName: 'personalInfoLbl',
+      sectionFieldsName: 'personalInfoFields',
+      sectionFieldsLineName: 'personalInfoFieldsLine'
+    },
+    {
+      groupName: 'OBPOS_FG_ContactInformation',
+      title: 'OBPOS_Contact_Info',
+      sectionName: 'contactInfo',
+      sectionLableName: 'contactInfoLbl',
+      sectionFieldsName: 'contactInfoFields',
+      sectionFieldsLineName: 'contactInfoFieldsLine'
+    },
+    {
+      groupName: 'OBPOS_FG_OthersInformation',
+      title: 'OBPOS_Other_Info',
+      sectionName: 'otherInfo',
+      sectionLableName: 'otherInfoLbl',
+      sectionFieldsName: 'otherInfoFields',
+      sectionFieldsLineName: 'otherInfoFieldsLine'
+    }
+  ],
   windowFooter: 'OB.OBPOSPointOfSale.UI.customers.EditCustomerFooter',
   newAttributes: [
     {
@@ -348,6 +407,7 @@ enyo.kind({
       classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-greeting',
       modelProperty: 'greetingName',
       i18nLabel: 'OBPOS_LblGreetings',
+      fgSection: 'OBPOS_FG_PersonalInformation',
       readOnly: true,
       displayLogic: function() {
         return OB.MobileApp.model.hasPermission(
@@ -362,6 +422,7 @@ enyo.kind({
       classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-customerName',
       modelProperty: 'firstName',
       i18nLabel: 'OBPOS_LblName',
+      fgSection: 'OBPOS_FG_PersonalInformation',
       readOnly: true
     },
     {
@@ -371,6 +432,7 @@ enyo.kind({
         'obObPosPointOfSaleUiCustomersEditCustomersImpl-customerLastName',
       modelProperty: 'lastName',
       i18nLabel: 'OBPOS_LblLastName',
+      fgSection: 'OBPOS_FG_PersonalInformation',
       readOnly: true
     },
     {
@@ -379,6 +441,7 @@ enyo.kind({
       classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-customerBpCat',
       modelProperty: 'businessPartnerCategory_name',
       i18nLabel: 'OBPOS_BPCategory',
+      fgSection: 'OBPOS_FG_OthersInformation',
       readOnly: true,
       displayLogic: function() {
         return OB.MobileApp.model.get('terminal').bp_showcategoryselector;
@@ -390,6 +453,7 @@ enyo.kind({
       classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-customerTaxId',
       modelProperty: 'taxID',
       i18nLabel: 'OBPOS_LblTaxId',
+      fgSection: 'OBPOS_FG_PersonalInformation',
       readOnly: true,
       displayLogic: function() {
         return OB.MobileApp.model.get('terminal').bp_showtaxid;
@@ -401,6 +465,7 @@ enyo.kind({
       classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-customerPhone',
       modelProperty: 'phone',
       i18nLabel: 'OBPOS_LblPhone',
+      fgSection: 'OBPOS_FG_ContactInformation',
       readOnly: true
     },
     {
@@ -410,6 +475,7 @@ enyo.kind({
         'obObPosPointOfSaleUiCustomersEditCustomersImpl-alternativePhone',
       modelProperty: 'alternativePhone',
       i18nLabel: 'OBPOS_LblAlternativePhone',
+      fgSection: 'OBPOS_FG_ContactInformation',
       readOnly: true
     },
     {
@@ -418,6 +484,7 @@ enyo.kind({
       classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-customerEmail',
       modelProperty: 'email',
       i18nLabel: 'OBPOS_LblEmail',
+      fgSection: 'OBPOS_FG_ContactInformation',
       readOnly: true
     },
     {
@@ -426,6 +493,7 @@ enyo.kind({
       classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-birthPlace',
       modelProperty: 'birthPlace',
       i18nLabel: 'OBPOS_LblBirthplace',
+      fgSection: 'OBPOS_FG_PersonalInformation',
       readOnly: true,
       displayLogic: function() {
         return OB.MobileApp.model.hasPermission(
@@ -440,6 +508,7 @@ enyo.kind({
       classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-birthDay',
       modelProperty: 'birthDay',
       i18nLabel: 'OBPOS_LblBirthdate',
+      fgSection: 'OBPOS_FG_PersonalInformation',
       readOnly: true,
       displayLogic: function() {
         return OB.MobileApp.model.hasPermission(
@@ -475,6 +544,7 @@ enyo.kind({
       modelProperty: 'language_name',
       readOnly: true,
       i18nLabel: 'OBPOS_LblLanguage',
+      fgSection: 'OBPOS_FG_PersonalInformation',
       displayLogic: function() {
         return OB.MobileApp.model.hasPermission(
           'OBPOS_Cus360ShowLanguage',
@@ -488,6 +558,7 @@ enyo.kind({
       classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-availableCredit',
       modelProperty: 'availableCredit',
       i18nLabel: 'OBPOS_LblAvailableCredit',
+      fgSection: 'OBPOS_FG_OthersInformation',
       readOnly: true,
       displayLogic: function() {
         return OB.MobileApp.model.hasPermission(
@@ -502,6 +573,7 @@ enyo.kind({
       classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-comments',
       modelProperty: 'comments',
       i18nLabel: 'OBPOS_LblComments',
+      fgSection: 'OBPOS_FG_OthersInformation',
       readOnly: true,
       displayLogic: function() {
         return OB.MobileApp.model.hasPermission(
@@ -517,6 +589,7 @@ enyo.kind({
         'obObPosPointOfSaleUiCustomersEditCustomersImpl-customerPriceList',
       modelProperty: 'priceList',
       i18nLabel: 'OBPOS_PriceList',
+      fgSection: 'OBPOS_FG_OthersInformation',
       readOnly: true,
       loadValue: function(inSender, inEvent) {
         if (inEvent.customer !== undefined) {
@@ -544,6 +617,7 @@ enyo.kind({
         'obObPosPointOfSaleUiCustomersEditCustomersImpl-isCustomerConsent',
       modelProperty: 'isCustomerConsent',
       i18nLabel: 'OBPOS_CustomerConsent',
+      fgSection: 'OBPOS_FG_OthersInformation',
       readOnly: true
     },
     {
@@ -552,6 +626,7 @@ enyo.kind({
       classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-commercialauth',
       modelProperty: 'commercialauth',
       i18nLabel: 'OBPOS_CommercialAuth',
+      fgSection: 'OBPOS_FG_ContactInformation',
       readOnly: true,
       displayLogic: function() {
         return OB.MobileApp.model.hasPermission(
@@ -567,6 +642,7 @@ enyo.kind({
         'obObPosPointOfSaleUiCustomersEditCustomersImpl-contactpreferences',
       modelProperty: 'contactpreferences',
       i18nLabel: 'OBPOS_ContactPreferences',
+      fgSection: 'OBPOS_FG_ContactInformation',
       readOnly: true,
       setEditedProperties: function(oldBp, editedBp) {
         editedBp.set('viasms', oldBp.get('viasms'));
@@ -578,6 +654,40 @@ enyo.kind({
           true
         );
       }
+    }
+  ],
+  statisticsAttributes: [
+    {
+      kind: 'OB.UI.CustomerStatisticsTextProperty',
+      name: 'recency',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-recency',
+      i18nLabel: 'OBPOS_LblRecency',
+      textProperty: 'recencyMsg',
+      readOnly: true
+    },
+    {
+      kind: 'OB.UI.CustomerStatisticsTextProperty',
+      name: 'frequency',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-frequency',
+      i18nLabel: 'OBPOS_LblFrequency',
+      textProperty: 'frequencyMsg',
+      readOnly: true
+    },
+    {
+      kind: 'OB.UI.CustomerStatisticsTextProperty',
+      name: 'monetaryValue',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-monetaryValue',
+      i18nLabel: 'OBPOS_LblMonetaryVal',
+      textProperty: 'monetaryValMsg',
+      readOnly: true
+    },
+    {
+      kind: 'OB.UI.CustomerStatisticsTextProperty',
+      name: 'averageCart',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-averageCart',
+      i18nLabel: 'OBPOS_LblAvgCart',
+      textProperty: 'averageBasketMsg',
+      readOnly: true
     }
   ]
 });

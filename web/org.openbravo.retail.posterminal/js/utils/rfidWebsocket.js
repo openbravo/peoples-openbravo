@@ -14,12 +14,20 @@ OB.UTIL.RfidController = new Backbone.Model({
 });
 
 OB.UTIL.RfidController.isRfidConfigured = function() {
-  if (OB.POS.hwserver && OB.POS.modelterminal.get('terminal')) {
-    return (
-      OB.POS.hwserver.url &&
-      OB.POS.modelterminal.get('terminal').terminalType.useRfid &&
-      window.location.protocol === OB.POS.hwserver.url.split('/')[0]
-    );
+  if (
+    OB.POS.hwserver &&
+    OB.POS.modelterminal.get('terminal') &&
+    OB.POS.hwserver.url &&
+    OB.POS.modelterminal.get('terminal').terminalType.useRfid
+  ) {
+    if (OB.UTIL.isHTTPSAvailable()) {
+      return OB.POS.hwserver.url.split('/')[0] === 'http:'
+        ? OB.POS.hwserver.url.indexOf('localhost') !== -1 ||
+            OB.POS.hwserver.url.indexOf('127.') !== -1
+        : true;
+    } else {
+      return OB.POS.hwserver.url.split('/')[0] === 'http:';
+    }
   } else {
     return false;
   }

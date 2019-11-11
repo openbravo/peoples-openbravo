@@ -75,6 +75,15 @@ enyo.kind({
     }
   },
   executeOnHide: function() {
+    _.each(
+      this.$.body.$.edit_createcustomers_impl.$.customerAddrAttributes.$,
+      function(attribute) {
+        if (attribute.hasClass('obUiFormElement_error')) {
+          attribute.removeClass('obUiFormElement_error');
+          attribute.setMessage();
+        }
+      }
+    );
     var navigationPath =
       this.customerAddr || !this.args.cancelNavigationPath
         ? this.args.navigationPath
@@ -146,7 +155,7 @@ enyo.kind({
         me.blocked = false;
       }, 500);
     }
-    this.doSaveCustomerAddr();
+    this.doSaveCustomerAddr({ validations: true });
   }
 });
 

@@ -709,7 +709,11 @@ enyo.kind({
           args.callback(args.dataProducts.at(0), args.attrs);
         } else {
           // If rfid has been used remove code from buffer
-          if (args.attrs && args.attrs.obposEpccode) {
+          if (
+            OB.UTIL.RfidController.isRfidConfigured() &&
+            args.attrs &&
+            args.attrs.obposEpccode
+          ) {
             OB.UTIL.RfidController.removeEpc(args.attrs.obposEpccode);
           }
           OB.UTIL.HookManager.executeHooks(

@@ -53,40 +53,40 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.ModalAction',
+  kind: 'OB.UI.Modal',
   name: 'OB.UI.ModalPriceModification',
   classes: 'obUiModalPriceModification',
   myId: 'modalPriceModification',
   autoDismiss: false,
   closeOnEscKey: false,
-  bodyContent: {
-    classes: 'obUiModalPriceModification-bodyContent',
+  hideCloseButton: true,
+  body: {
+    classes: 'obUiModalPriceModification-body',
     components: [
       {
         name: 'labelPriceModification',
-        classes: 'obUiModalPriceModification-bodyContent-labelPriceModification'
+        classes: 'obUiModalPriceModification-body-labelPriceModification'
       },
       {
         kind: 'OB.UI.ModalPriceModificationReason',
         name: 'priceModificationReason',
-        classes:
-          'obUiModalPriceModification-bodyContent-priceModificationReason'
+        classes: 'obUiModalPriceModification-body-priceModificationReason'
       }
     ]
   },
   i18nHeader: 'OBPOS_PriceModification',
-  bodyButtons: {
-    classes: 'obUiModalPriceModification-bodyButtons',
+  footer: {
+    classes: 'obUiModalPriceModification-footer',
     components: [
       {
         kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalPriceModificationAccept',
         classes:
-          'obUiModalPriceModification-bodyButtons-obObposPointOfSaleUiModalsBtnModalPriceModificationAccept'
+          'obUiModalPriceModification-footer-obObposPointOfSaleUiModalsBtnModalPriceModificationAccept'
       },
       {
         kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalPriceModificationCancel',
         classes:
-          'obUiModalPriceModification-bodyButtons-obObposPointOfSaleUiModalsBtnModalPriceModificationCancel'
+          'obUiModalPriceModification-footer-obObposPointOfSaleUiModalsBtnModalPriceModificationCancel'
       }
     ]
   },
@@ -103,13 +103,13 @@ enyo.kind({
       for (i = 0; i < this.args.selectedModels.length; i++) {
         this.args.selectedModels[i].set(
           'oBPOSPriceModificationReason',
-          me.$.bodyContent.$.priceModificationReason.getValue()
+          me.$.body.$.priceModificationReason.getValue()
         );
       }
     } else {
       this.args.line.set(
         'oBPOSPriceModificationReason',
-        me.$.bodyContent.$.priceModificationReason.getValue()
+        me.$.body.$.priceModificationReason.getValue()
       );
     }
     this.args.callback();
@@ -129,7 +129,7 @@ enyo.kind({
           OB.MobileApp.model.get('priceModificationReasons')[i].id ===
           this.args.line.get('oBPOSPriceModificationReason')
         ) {
-          this.$.bodyContent.$.priceModificationReason.setSelected(i);
+          this.$.body.$.priceModificationReason.setSelected(i);
           break;
         }
       }
@@ -137,7 +137,7 @@ enyo.kind({
   },
   initComponents: function() {
     this.inherited(arguments);
-    this.$.bodyContent.$.labelPriceModification.setContent(
+    this.$.body.$.labelPriceModification.setContent(
       OB.I18N.getLabel('OBPOS_lblPriceModification')
     );
     var priceModificationReasonCollection = [];
@@ -151,9 +151,8 @@ enyo.kind({
         })
       );
     });
-    this.$.bodyContent.$.priceModificationReason
+    this.$.body.$.priceModificationReason
       .getCollection()
       .reset(priceModificationReasonCollection);
-    this.$.headerCloseButton.hide();
   }
 });

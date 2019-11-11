@@ -10,28 +10,25 @@
 /*global OB, enyo */
 
 enyo.kind({
-  kind: 'OB.UI.ModalAction',
+  kind: 'OB.UI.Modal',
   name: 'OB.OBPOSCashUp.UI.modalPendingToProcess',
   classes: 'obObposCashupUiModalPendingToProcess',
   i18nHeader: 'OBPOS_LblReceiptsToProcess',
-  bodyContent: {
-    classes: 'obObposCashupUiModalPendingToProcess-bodyContent',
-    i18nContent: 'OBPOS_MsgReceiptsProcess'
-  },
-  bodyButtons: {
-    classes: 'obObposCashupUiModalPendingToProcess-bodyButtons',
+  i18nBody: 'OBPOS_MsgReceiptsProcess',
+  footer: {
+    classes: 'obObposCashupUiModalPendingToProcess-footer',
     components: [
       {
         //Cancel button
         kind: 'OB.OBPOSCashUp.UI.modalPendingToProcess_CancelButton',
         classes:
-          'obObposCashupUiModalPendingToProcess-bodyButtons-obObposCashupUiModalPendingToProcessCancelButton'
+          'obObposCashupUiModalPendingToProcess-footer-obObposCashupUiModalPendingToProcessCancelButton'
       },
       {
         //OK button
         kind: 'OB.OBPOSCashUp.UI.modalPendingToProcess_OkButton',
         classes:
-          'obObposCashupUiModalPendingToProcess-bodyButtons-obObposCashupUiModalPendingToProcessOkButton'
+          'obObposCashupUiModalPendingToProcess-footer-obObposCashupUiModalPendingToProcessOkButton'
       }
     ]
   }

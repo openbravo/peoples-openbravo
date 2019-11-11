@@ -96,7 +96,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
 
   // DocumentNo Handler are used to collect all needed document numbers and create and set
   // them as late in the process as possible
-  private static ThreadLocal<List<DocumentNoHandler>> documentNoHandlers = new ThreadLocal<List<DocumentNoHandler>>();
+  public static ThreadLocal<List<DocumentNoHandler>> documentNoHandlers = new ThreadLocal<List<DocumentNoHandler>>();
 
   HashMap<String, DocumentType> paymentDocTypes = new HashMap<String, DocumentType>();
   HashMap<String, DocumentType> invoiceDocTypes = new HashMap<String, DocumentType>();

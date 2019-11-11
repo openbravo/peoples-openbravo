@@ -47,7 +47,6 @@ enyo.kind({
       disabled: false,
       i18nLabel: 'OBMOBC_LblCancel',
       stepCount: 0,
-      span: 6,
       tap: function() {
         OB.POS.hwserver.checkDrawer(function() {
           OB.POS.navigate('retail.pointofsale');
@@ -61,7 +60,6 @@ enyo.kind({
       disabled: true,
       i18nLabel: 'OBPOS_LblDone',
       stepCount: 0,
-      span: 6,
       processesToListen: ['showLoading'],
       disableButton: function() {
         this.setDisabled(true);

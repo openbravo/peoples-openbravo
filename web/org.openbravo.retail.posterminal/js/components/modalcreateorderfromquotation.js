@@ -51,50 +51,46 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.ModalAction',
+  kind: 'OB.UI.Modal',
   name: 'OB.UI.ModalCreateOrderFromQuotation',
   classes: 'obUiModalCreateOrderFromQuotation',
   myId: 'modalCreateOrderFromQuotation',
-  bodyContent: {
-    i18nContent: 'OBPOS_QuotationUpdatePricesText',
-    classes: 'obUiModalCreateOrderFromQuotation-bodyContent'
-  },
-  bodyButtons: {
-    classes: 'obUiModalCreateOrderFromQuotation-bodyButtons',
+  i18nBody: 'OBPOS_QuotationUpdatePricesText',
+  footer: {
+    classes: 'obUiModalCreateOrderFromQuotation-footer',
     components: [
       {
-        classes: 'obUiModalCreateOrderFromQuotation-bodyButtons-element1'
+        classes: 'obUiModalCreateOrderFromQuotation-footer-element1'
       },
       {
-        classes: 'obUiModalCreateOrderFromQuotation-bodyButtons-container2',
+        classes: 'obUiModalCreateOrderFromQuotation-footer-container2',
         components: [
           {
             kind: 'OB.UI.updateprices',
             classes:
-              'obUiModalCreateOrderFromQuotation-bodyButtons-container2-obUiupdateprices',
+              'obUiModalCreateOrderFromQuotation-footer-container2-obUiupdateprices',
             myId: 'updatePricesCheck'
           }
         ]
       },
       {
-        classes: 'obUiModalCreateOrderFromQuotation-bodyButtons-element3',
+        classes: 'obUiModalCreateOrderFromQuotation-footer-element3',
         initComponents: function() {
           this.setContent(OB.I18N.getLabel('OBPOS_QuotationUpdatePrices'));
         }
       },
       {
-        classes:
-          'obUiModalCreateOrderFromQuotation-bodyButtons-element4 u-clearBoth'
+        classes: 'obUiModalCreateOrderFromQuotation-footer-element4 u-clearBoth'
       },
       {
         kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalCreateOrderAccept',
         classes:
-          'obUiModalCreateOrderFromQuotation-bodyButtons-obObposPointOfSaleUiModalsbtnModalCreateOrderAccept'
+          'obUiModalCreateOrderFromQuotation-footer-obObposPointOfSaleUiModalsbtnModalCreateOrderAccept'
       },
       {
         kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalCreateOrderCancel',
         classes:
-          'obUiModalCreateOrderFromQuotation-bodyButtons-obObposPointOfSaleUiModalsbtnModalCreateOrderCancel'
+          'obUiModalCreateOrderFromQuotation-footer-obObposPointOfSaleUiModalsbtnModalCreateOrderCancel'
       }
     ]
   },

@@ -29,7 +29,7 @@ enyo.kind({
         kind: 'OB.UI.FormElement',
         name: 'formElementBtnModalMultiSearchInput',
         classes:
-          'obUiFormElement_dataEntry obUiModalMultiOrdersLayaway-body-formElementBtnModalMultiSearchInput',
+          'obUiFormElement_dataFilter obUiModalMultiOrdersLayaway-body-formElementBtnModalMultiSearchInput',
         coreElement: {
           name: 'btnModalMultiSearchInput',
           kind: 'OB.UI.SearchInput',

@@ -11,70 +11,80 @@
 
 enyo.kind({
   name: 'OB.UI.ModalProviderGroup',
-  kind: 'OB.UI.ModalAction',
+  kind: 'OB.UI.Modal',
   classes: 'obUiModalProviderGroup',
   header: '',
   autoDismiss: false,
+  hideCloseButton: true,
   events: {
     onHideThisPopup: ''
   },
-  bodyContent: {
-    classes: 'obUiModalProviderGroup-container1',
+  body: {
+    classes: 'obUiModalProviderGroup-body',
     components: [
       {
-        classes: 'obUiModalProviderGroup-container1-container1',
+        classes: 'obUiModalProviderGroup-body-container1',
         components: [
           {
             classes:
-              'obUiModalProviderGroup-container1-container1-container1 row-fluid',
+              'obUiModalProviderGroup-body-container1-container1 row-fluid',
             components: [
               {
                 name: 'lblType',
                 classes:
-                  'obUiModalProviderGroup-container1-container1-container1-lblType'
+                  'obUiModalProviderGroup-body-container1-container1-lblType'
               },
               {
                 name: 'paymenttype',
                 classes:
-                  'obUiModalProviderGroup-container1-container1-container1-paymenttype'
+                  'obUiModalProviderGroup-body-container1-container1-paymenttype'
               }
             ]
           },
           {
-            classes: 'obUiModalProviderGroup-container1-container1-container2'
+            classes: 'obUiModalProviderGroup-body-container1-container2'
           },
           {
             classes:
-              'obUiModalProviderGroup-container1-container1-container3 row-fluid',
+              'obUiModalProviderGroup-body-container1-container3 row-fluid',
             components: [
               {
                 name: 'description',
                 classes:
-                  'obUiModalProviderGroup-container1-container1-container3-description'
+                  'obUiModalProviderGroup-body-container1-container3-description'
               }
             ]
           },
           {
-            classes: 'obUiModalProviderGroup-container1-container1-container4'
+            classes: 'obUiModalProviderGroup-body-container1-container4'
           }
         ]
       },
       {
-        classes: 'obUiModalProviderGroup-container1-providergroupcomponent',
+        classes: 'obUiModalProviderGroup-body-providergroupcomponent',
         name: 'providergroupcomponent'
       }
     ]
   },
   initComponents: function() {
     this.inherited(arguments);
-    this.$.headerCloseButton.hide();
+  },
+  createProvider: function(providername, refund) {
+    if (refund) {
+      return (
+        enyo.createFromKind(providername + 'Refund') ||
+        enyo.createFromKind(providername)
+      );
+    } else {
+      return enyo.createFromKind(providername);
+    }
   },
   executeOnShow: function() {
     var amount = this.args.amount;
     var refund = this.args.refund;
     var providerGroup = this.args.providerGroup;
 
-    this.$.header.setContent(
+    this.setHeader(
       refund
         ? OB.I18N.getLabel('OBPOS_LblModalReturn', [
             OB.I18N.formatCurrency(amount)
@@ -83,15 +93,9 @@ enyo.kind({
             OB.I18N.formatCurrency(amount)
           ])
     );
-    this.$.bodyContent.$.lblType.setContent(
-      OB.I18N.getLabel('OBPOS_LblModalType')
-    );
-    this.$.bodyContent.$.paymenttype.setContent(
-      providerGroup.provider._identifier
-    );
-    this.$.bodyContent.$.description.setContent(
-      providerGroup.provider.description
-    );
+    this.$.body.$.lblType.setContent(OB.I18N.getLabel('OBPOS_LblModalType'));
+    this.$.body.$.paymenttype.setContent(providerGroup.provider._identifier);
+    this.$.body.$.description.setContent(providerGroup.provider.description);
 
     // Set timeout needed because on ExecuteOnShow
     setTimeout(this.startPaymentRefund.bind(this), 0);
@@ -118,13 +122,16 @@ enyo.kind({
     var refund = this.args.refund;
     var currency = this.args.currency;
     var providerGroup = this.args.providerGroup;
-    var providerinstance = this.args.providerinstance;
+    var providerinstance = this.createProvider(
+      this.args.providername,
+      this.args.refund
+    );
     var attributes = this.args.attributes;
     var i;
 
-    this.$.bodyContent.$.providergroupcomponent.destroyComponents();
+    this.$.body.$.providergroupcomponent.destroyComponents();
     if (providerinstance.providerComponent) {
-      this.$.bodyContent.$.providergroupcomponent
+      this.$.body.$.providergroupcomponent
         .createComponent(providerinstance.providerComponent)
         .render();
     }
