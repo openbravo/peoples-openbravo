@@ -23,11 +23,11 @@ import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
 
 public class ReturnReason extends QueryTerminalProperty {
-  public static final String returnReasonPropertyExtension = "OBPOS_ReturnReasonExtension";
+  public static final String RETURNREASONPROPERTYEXTENSION = "OBPOS_ReturnReasonExtension";
 
   @Inject
   @Any
-  @Qualifier(returnReasonPropertyExtension)
+  @Qualifier(RETURNREASONPROPERTYEXTENSION)
   private Instance<ModelExtension> extensions;
 
   @Override
