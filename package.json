@@ -5,8 +5,8 @@
   "private": true,
   "scripts": {
     "postinstall": "lerna bootstrap --no-ci --hoist",
-    "test": "jest --passWithNoTests",
-    "coverage": "jest --passWithNoTests --coverage",
+    "test": "jest",
+    "coverage": "jest --coverage",
     "jslint": "eslint --max-warnings 0",
     "jsformat": "prettier"
   },
