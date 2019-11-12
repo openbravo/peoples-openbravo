@@ -18,18 +18,18 @@ import org.openbravo.mobile.core.model.ModelExtension;
 @Qualifier(ReturnReason.RETURNREASONPROPERTYEXTENSION)
 public class ReturnReasonProperties extends ModelExtension {
 
+  private static final ArrayList<HQLProperty> PROPERTIES = new ArrayList<>();
+
+  static {
+    PROPERTIES.add(new HQLProperty("reason.id", "id"));
+    PROPERTIES.add(new HQLProperty("reason.searchKey", "searchKey"));
+    PROPERTIES.add(new HQLProperty("reason.name", "name"));
+    PROPERTIES.add(new HQLProperty("reason.name", "_identifier"));
+    PROPERTIES.add(new HQLProperty("reason.active", "active"));
+  }
+
   @Override
   public List<HQLProperty> getHQLProperties(Object params) {
-    ArrayList<HQLProperty> list = new ArrayList<HQLProperty>() {
-      private static final long serialVersionUID = 1L;
-      {
-        add(new HQLProperty("reason.id", "id"));
-        add(new HQLProperty("reason.searchKey", "searchKey"));
-        add(new HQLProperty("reason.name", "name"));
-        add(new HQLProperty("reason.name", "_identifier"));
-        add(new HQLProperty("reason.active", "active"));
-      }
-    };
-    return list;
+    return PROPERTIES;
   }
 }
