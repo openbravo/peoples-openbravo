@@ -1,0 +1,11 @@
+#!/bin/bash
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+
+echo "Copying .eslintrc.json with Airbnb rules to modules with web/app folder"
+for mod in modules/*; do
+  if [[ -d "${mod}/web/$(basename ${mod})/app" ]]; then
+    cp ${SCRIPT_DIR}/eslintrc-airbnb.template ${mod}/web/$(basename ${mod})/app/.eslintrc.json
+    echo "> Copied to ${mod}/app"
+  fi
+done
