@@ -4727,43 +4727,32 @@ li.selected > .obUiRenderOrderLine_edit {
 # Inherits: [OB.UI.Button]
 */
 .obUiReceiptsCounterButton {
-  position: relative;
   outline: none;
-  overflow: hidden;
-  margin: 0px;
-  padding: 0px;
   height: 50px;
   width: 50px;
   background-color: transparent;
   color: black;
-  display: inline-block;
   font-weight: 600;
   border: none;
-  font-size: var(--font-medium-large);
   text-decoration: none;
-  opacity: 1;
+  grid-template-columns: 1fr;
+}
+
+.obUiReceiptsCounterButton .obUiButton-components {
+  grid-template-columns: 1fr;
+}
+
+.obUiReceiptsCounterButton .obUiButton-components-icon {
+  width: 100%;
+  height: 100%;
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconReceiptCounter.svg');
   background-repeat: no-repeat;
   background-size: 40px 40px;
   background-position: center calc(50% + 2px);
+  filter: var(--color-secondary_img);
 }
 
-.obUiReceiptsCounterButton:not(.disabled):hover {
-  opacity: 0.75;
-}
-.obUiReceiptsCounterButton:not(.disabled):active {
-  opacity: 1;
-  filter: contrast(0.8) brightness(0.8);
-}
-.obUiReceiptsCounterButton.disabled {
-  opacity: 0.5;
-}
-
-.obUiReceiptsCounterButton-element1 {
-  display: none;
-}
-
-.obUiReceiptsCounterButton-counter {
+.obUiReceiptsCounterButton .obUiButton-components-label {
   position: absolute;
   top: 0px;
   right: 0px;
@@ -4774,6 +4763,42 @@ li.selected > .obUiRenderOrderLine_edit {
   text-align: center;
   width: 30px;
   font-size: var(--font-medium);
+}
+
+/* hover state */
+.obUiReceiptsCounterButton:not(.disabled):hover .obUiButton-components-icon {
+  filter: var(--color-secondary_hover_img);
+}
+
+.obUiReceiptsCounterButton:not(.disabled):hover .obUiButton-components-label {
+  color: var(--color-on-secondary_hover);
+}
+
+/* active state */
+.obUiReceiptsCounterButton:not(.disabled):active .obUiButton-components-icon {
+  filter: var(--color-secondary_active_img);
+}
+
+.obUiReceiptsCounterButton:not(.disabled):active .obUiButton-components-label {
+  color: var(--color-on-secondary_active);
+}
+
+/* focus state */
+.obUiReceiptsCounterButton:not(:active):not(.disabled):focus .obUiButton-components-icon {
+  filter: var(--color-secondary_img);
+}
+
+.obUiReceiptsCounterButton:not(:active):not(.disabled):focus .obUiButton-components-label {
+  color: var(--color-on-secondary_focus);
+}
+
+/* disabled state */
+.obUiReceiptsCounterButton.disabled .obUiButton-components-icon {
+  filter: var(--color-secondary_disabled_img);
+}
+
+.obUiReceiptsCounterButton.disabled .obUiButton-components-label {
+  color: var(--color-on-secondary_disabled);
 }
 
 
