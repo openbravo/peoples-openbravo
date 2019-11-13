@@ -541,13 +541,18 @@ public class InvoiceUtils {
     for (final FIN_PaymentScheduleDetail psd : paymentScheduleList) {
       if (psd.getPaymentDetails().getFinPayment().getReversedPayment() != null) {
         for (final FIN_PaymentScheduleDetail psd2 : paymentScheduleList) {
-          if (psd.getPaymentDetails()
+          if (psd2.getPaymentDetails()
               .getFinPayment()
               .getId()
-              .equals(psd.getPaymentDetails().getFinPayment().getReversedPayment().getId())) {
+              .equals(psd.getPaymentDetails().getFinPayment().getReversedPayment().getId())
+              && psd2.getPaymentDetails()
+                  .getFinPayment()
+                  .getAmount()
+                  .negate()
+                  .compareTo(psd.getPaymentDetails().getFinPayment().getAmount()) == 0) {
             reversalPSDList.add(psd2);
-            reverseRelation.put(psd.getPaymentDetails().getFinPayment().getId(),
-                psd.getPaymentDetails().getFinPayment().getReversedPayment().getId());
+            reverseRelation.put(
+                psd.getPaymentDetails().getFinPayment().getReversedPayment().getId(), psd2.getId());
             break;
           }
         }
