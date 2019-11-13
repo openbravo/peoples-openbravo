@@ -852,9 +852,10 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
           useOrderDocumentNoForRelatedDocs);
 
       BigDecimal paidAmount = paymentSchedule.getAmount().subtract(outstandingAmount);
-      for (final Order newOrder : newOrders) {
-        paidAmount = paidAmount
-            .subtract(addNewPayments(newOrder, paymentOrganization, nettingPayment, paidAmount));
+      for (int i = 0; i < newOrders.size(); i++) {
+        final Order newOrder = newOrders.get(i);
+        paidAmount = paidAmount.subtract(addNewPayments(newOrder, paymentOrganization,
+            nettingPayment, paidAmount, i == newOrders.size() - 1));
       }
 
       processPayment(nettingPayment, jsonOrder);
@@ -871,7 +872,7 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
   }
 
   private BigDecimal addNewPayments(Order newOrder, Organization paymentOrganization,
-      FIN_Payment nettingPayment, BigDecimal paidAmount) {
+      FIN_Payment nettingPayment, BigDecimal paidAmount, boolean lastOrder) {
     try {
       // Only for BackEnd WorkFlow
       // Get the payment schedule of the new order to check the outstanding amount, could
@@ -879,7 +880,8 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
       // payment method of the financial account is configured as 'Automatic Receipt'
       final BigDecimal newOutstandingAmount = getPaymentScheduleOfOrder(newOrder)
           .getOutstandingAmount();
-      final BigDecimal newPaidAmount = paidAmount.min(newOutstandingAmount);
+      final BigDecimal newPaidAmount = lastOrder ? paidAmount
+          : paidAmount.min(newOutstandingAmount);
       final boolean createPayments = areTriggersDisabled(jsonOrder)
           || newOutstandingAmount.compareTo(BigDecimal.ZERO) != 0;
 
