@@ -24,6 +24,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.businessUtility.Preferences;
@@ -56,10 +57,11 @@ public class Product extends ProcessHQLQuery {
     // Get Product Properties
     List<HQLPropertyList> propertiesList = new ArrayList<>();
 
+    final boolean remoteSearch = isRemoteSearch(jsonsent);
     final String posPrecision = getPosPrecision();
     final boolean isCrossStoreSearch = isCrossStoreSearch(jsonsent);
     final boolean isMultiPriceListSearch = isMultiPriceListSearch(jsonsent);
-    final boolean isRemote = getPreference("OBPOS_remote.product") || isCrossStoreSearch;
+    final boolean isRemote = remoteSearch || isCrossStoreSearch;
     final boolean isMultipricelist = getPreference("OBPOS_EnableMultiPriceList");
 
     Map<String, Object> args = new HashMap<>();
@@ -68,6 +70,7 @@ public class Product extends ProcessHQLQuery {
     args.put("terminalId", getTerminalId(jsonsent));
     args.put("isCrossStoreSearch", isCrossStoreSearch);
     args.put("crossStore", false);
+    args.put("isRemoteSearch", remoteSearch);
     HQLPropertyList regularProductsHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions, args);
     HQLPropertyList regularProductsDiscHQLProperties = ModelExtensionUtils
@@ -100,7 +103,7 @@ public class Product extends ProcessHQLQuery {
       final boolean isCrossStoreSearch = isCrossStoreSearch(jsonsent);
       final boolean isMultiPriceListSearch = isMultiPriceListSearch(jsonsent);
       final boolean isMultipricelist = getPreference("OBPOS_EnableMultiPriceList");
-      final boolean isRemote = getPreference("OBPOS_remote.product") || isCrossStoreSearch;
+      final boolean isRemote = isRemoteSearch(jsonsent) || isCrossStoreSearch;
 
       final Calendar now = Calendar.getInstance();
       final String posId = getTerminalId(jsonsent);
@@ -171,7 +174,7 @@ public class Product extends ProcessHQLQuery {
     final String posPrecision = getPosPrecision();
     final boolean isCrossStoreSearch = isCrossStoreSearch(jsonsent);
     final boolean isMultiPriceListSearch = isMultiPriceListSearch(jsonsent);
-    final boolean isRemote = getPreference("OBPOS_remote.product") || isCrossStoreSearch;
+    final boolean isRemote = isRemoteSearch(jsonsent) || isCrossStoreSearch;
     final boolean useGetForProductImages = getPreference("OBPOS_retail.productImages");
     final boolean isMultipricelist = getPreference("OBPOS_EnableMultiPriceList");
     final boolean executeGenericProductQry = getPreference("OBPOS_ExecuteGenericProductQuery");
@@ -212,9 +215,7 @@ public class Product extends ProcessHQLQuery {
     products.add(packHqlString);
 
     // Generic products
-    boolean isForceRemote = jsonsent.getJSONObject("parameters").has("forceRemote")
-        && jsonsent.getJSONObject("parameters").getBoolean("forceRemote");
-    if (executeGenericProductQry && !isRemote && !isForceRemote) {
+    if (executeGenericProductQry && !isRemote) {
       // BROWSE tab is hidden, we do not need to send generic products
       final String genericProductsHqlString = getGenericProductHqlString(useGetForProductImages,
           regularProductsHQLProperties);
@@ -550,6 +551,24 @@ public class Product extends ProcessHQLQuery {
       log.error("Error while getting crossStoreSearch " + e.getMessage(), e);
     }
     return crossStoreSearch;
+  }
+
+  private boolean isRemoteSearch(final JSONObject jsonsent) {
+    boolean remoteSearch = false;
+    try {
+      remoteSearch = (jsonsent.has("parameters")
+          && jsonsent.getJSONObject("parameters").optBoolean("forceRemote"))
+          || "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true,
+              OBContext.getOBContext().getCurrentClient(),
+              OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+              OBContext.getOBContext().getRole(), null));
+      ;
+    } catch (JSONException e) {
+      log.error("Error while getting forceRemote property " + e.getMessage(), e);
+    } catch (PropertyException e) {
+      throw new OBException(e.getMessage());
+    }
+    return remoteSearch;
   }
 
   @Override
