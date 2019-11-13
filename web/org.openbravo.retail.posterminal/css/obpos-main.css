@@ -1837,13 +1837,17 @@
   color: #000000;
 }
 
+.obUiRenderCategory:hover {
+  border-left-color: var(--color-secondary_hover);
+}
+
 .obUiRenderCategory:active {
   background-color: #c5c5c5;
-  border-left-color: darkgreen;
+  border-left-color: var(--color-secondary_active);
 }
 
 li.selected > .obUiRenderCategory {
-  border-left-color: #6eb43f;
+  border-left-color: var(--color-secondary);
   background-color: #e8e8e8;
 }
 
@@ -1884,13 +1888,17 @@ li.selected > .obUiRenderCategory {
   height: 100%;
 }
 
+.obUiRenderCategoryTree:hover {
+  border-left-color: var(--color-secondary_hover);
+}
+
 .obUiRenderCategoryTree:active {
   background-color: #c5c5c5;
-  border-left-color: darkgreen;
+  border-left-color: var(--color-secondary_active);
 }
 
 li.selected > .obUiRenderCategoryTree {
-  border-left-color: #6eb43f;
+  border-left-color: var(--color-secondary);
   background-color: #e8e8e8;
 }
 
@@ -2484,17 +2492,21 @@ li.selected > .obUiRenderCategoryTree {
 }
 
 li.selected > .obUiRenderOrderLine:not(.obUiRenderOrderLine_edit) {
-  border-left-color: #6eb43f;
+  border-left-color: var(--color-secondary);
 }
 
 li.selected > .obUiRenderOrderLine_edit {
-  border-left-color: #6eb43f;
+  border-left-color: var(--color-secondary);
   background-color: #e8e8e8;
+}
+
+.obUiRenderOrderLine:hover {
+  border-left-color: var(--color-secondary_hover);
 }
 
 .obUiRenderOrderLine:active {
   background-color: #c5c5c5;
-  border-left-color: darkgreen;
+  border-left-color: var(--color-secondary_active);
 }
 
 .obUiRenderOrderLine-checkBoxColumn {
@@ -3125,10 +3137,12 @@ li.selected > .obUiRenderOrderLine_edit {
 
 .obUiOrderMultiSelect .obUiButton-components-icon {
   background-image: url('./../img/iconPinSelected.svg');
+  filter: var(--color-secondary_img);
 }
 
 .obUiOrderSingleSelect .obUiButton-components-icon {
   background-image: url('./../img/iconPinUnselected.svg');
+  filter: var(--color-quaternary-variant_img);
 }
 
 .obUiOrderMultiSelect .obUiButton-components-label,
@@ -3136,15 +3150,48 @@ li.selected > .obUiRenderOrderLine_edit {
   display: none;
 }
 
-.obUiOrderMultiSelect:hover ,
-.obUiOrderSingleSelect:hover {
-  opacity: 0.75;
+/* hover state */
+.obUiOrderMultiSelect:not(.disabled):hover .obUiButton-components-icon,
+.obUiOrderSingleSelect:not(.disabled):hover .obUiButton-components-icon {
+  filter: var(--color-secondary_hover_img);
 }
 
-.obUiOrderMultiSelect:active,
-.obUiOrderSingleSelect:active {
-  opacity: 1;
-  filter: contrast(0.8) brightness(0.8);
+.obUiOrderMultiSelect:not(.disabled):hover .obUiButton-components-label,
+.obUiOrderSingleSelect:not(.disabled):hover .obUiButton-components-label {
+  color: var(--color-on-secondary_hover);
+}
+
+/* active state */
+.obUiOrderMultiSelect:not(.disabled):active .obUiButton-components-icon,
+.obUiOrderSingleSelect:not(.disabled):active .obUiButton-components-icon {
+  filter: var(--color-secondary_active_img);
+}
+
+.obUiOrderMultiSelect:not(.disabled):active .obUiButton-components-label,
+.obUiOrderSingleSelect:not(.disabled):active .obUiButton-components-label {
+  color: var(--color-on-secondary_active);
+}
+
+/* focus state */
+.obUiOrderMultiSelect:not(:active):not(.disabled):focus .obUiButton-components-icon,
+.obUiOrderSingleSelect:not(:active):not(.disabled):focus .obUiButton-components-icon {
+  filter: var(--color-secondary_img);
+}
+
+.obUiOrderMultiSelect:not(:active):not(.disabled):focus .obUiButton-components-label,
+.obUiOrderSingleSelect:not(:active):not(.disabled):focus .obUiButton-components-label {
+  color: var(--color-on-secondary_focus);
+}
+
+/* disabled state */
+.obUiOrderMultiSelect.disabled .obUiButton-components-icon,
+.obUiOrderSingleSelect.disabled .obUiButton-components-icon {
+  filter: var(--color-secondary_disabled_img);
+}
+
+.obUiOrderMultiSelect.disabled .obUiButton-components-label,
+.obUiOrderSingleSelect.disabled .obUiButton-components-label {
+  color: var(--color-on-secondary_disabled);
 }
 
 
@@ -3171,18 +3218,47 @@ li.selected > .obUiRenderOrderLine_edit {
   background-repeat: no-repeat;
   background-size: 30px;
   background-position: center center;
+  filter: var(--color-secondary_img);
 }
 
 .obUiOrderMultiSelectAll .obUiButton-components-label {
   display: none;
 }
 
-.obUiOrderMultiSelectAll:hover {
-  opacity: 0.75;
+/* hover state */
+.obUiOrderMultiSelectAll:not(.disabled):hover .obUiButton-components-icon {
+  filter: var(--color-secondary_hover_img);
 }
-.obUiOrderMultiSelectAll:active {
-  opacity: 1;
-  filter: contrast(0.8) brightness(0.8);
+
+.obUiOrderMultiSelectAll:not(.disabled):hover .obUiButton-components-label {
+  color: var(--color-on-secondary_hover);
+}
+
+/* active state */
+.obUiOrderMultiSelectAll:not(.disabled):active .obUiButton-components-icon {
+  filter: var(--color-secondary_active_img);
+}
+
+.obUiOrderMultiSelectAll:not(.disabled):active .obUiButton-components-label {
+  color: var(--color-on-secondary_active);
+}
+
+/* focus state */
+.obUiOrderMultiSelectAll:not(:active):not(.disabled):focus .obUiButton-components-icon {
+  filter: var(--color-secondary_img);
+}
+
+.obUiOrderMultiSelectAll:not(:active):not(.disabled):focus .obUiButton-components-label {
+  color: var(--color-on-secondary_focus);
+}
+
+/* disabled state */
+.obUiOrderMultiSelectAll.disabled .obUiButton-components-icon {
+  filter: var(--color-secondary_disabled_img);
+}
+
+.obUiOrderMultiSelectAll.disabled .obUiButton-components-label {
+  color: var(--color-on-secondary_disabled);
 }
 
 
@@ -3828,13 +3904,24 @@ li.selected > .obUiRenderOrderLine_edit {
   cursor: pointer;
 }
 
-.obUiOrderDetails:hover {
-  opacity: 0.75;
+/* hover state */
+.obUiOrderDetails:not(.disabled):hover {
+  color: var(--color-secondary_hover);
 }
 
-.obUiOrderDetails:active {
-  opacity: 1;
-  filter: contrast(0.8) brightness(0.8);
+/* active state */
+.obUiOrderDetails:not(.disabled):active {
+  color: var(--color-secondary_active);
+}
+
+/* focus state */
+.obUiOrderDetails:not(:active):not(.disabled):focus {
+  color: var(--color-secondary_focus);
+}
+
+/* disabled state */
+.obUiOrderDetails.disabled .obUiButton-components-label {
+  color: var(--color-secondary_disabled);
 }
 
 
