@@ -19,7 +19,7 @@ enyo.kind({
     var popup = this.owner.owner;
     popup.args.receipt.set(
       'prepaymentChangeMode',
-      popup.$.bodyContent.$.paymentOptions.active.setPrepaymentChange
+      popup.$.body.$.paymentOptions.active.setPrepaymentChange
     );
     popup.args.receipt.set('prepaymentChangeAmt', popup.args.deliveryChange);
     if (popup.args.receipt.get('prepaymentChangeMode')) {
@@ -33,22 +33,23 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.ModalAction',
+  kind: 'OB.UI.Modal',
   name: 'OB.UI.ModalDeliveryChange',
   classes: 'obUiModalDeliveryChange',
   i18nHeader: 'OBPOS_LblActionRequired',
   autoDismiss: false,
-  bodyContent: {
-    classes: 'obUiModalDeliveryChange-bodyContent',
+  hideCloseButton: true,
+  body: {
+    classes: 'obUiModalDeliveryChange-body',
     components: [
       {
         name: 'labelPaymentInformation',
-        classes: 'obUiModalDeliveryChange-bodyContent-labelPaymentInformation'
+        classes: 'obUiModalDeliveryChange-body-labelPaymentInformation'
       },
       {
         name: 'paymentOptions',
         kind: 'Group',
-        classes: 'obUiModalDeliveryChange-bodyContent-paymentOptions',
+        classes: 'obUiModalDeliveryChange-body-paymentOptions',
         components: [
           {
             kind: 'OB.UI.RadioButton',
@@ -80,13 +81,13 @@ enyo.kind({
       }
     ]
   },
-  bodyButtons: {
-    classes: 'obUiModalDeliveryChange-bodyButtons',
+  footer: {
+    classes: 'obUiModalDeliveryChange-footer',
     components: [
       {
         kind: 'OB.UI.ModalDeliveryChangeButtonOK',
         classes:
-          'obUiModalDeliveryChange-bodyButtons-obUiModalDeliveryChangeButtonOK'
+          'obUiModalDeliveryChange-footer-obUiModalDeliveryChangeButtonOK'
       }
     ]
   },
@@ -94,13 +95,12 @@ enyo.kind({
   handlers: {},
   initComponents: function() {
     this.inherited(arguments);
-    this.$.headerCloseButton.hide();
   },
   executeOnShow: function() {
     var symbol = OB.MobileApp.model.get('terminal').symbol,
       symbolAtRight = OB.MobileApp.model.get('terminal')
         .currencySymbolAtTheRight;
-    this.$.bodyContent.$.labelPaymentInformation.setContent(
+    this.$.body.$.labelPaymentInformation.setContent(
       OB.I18N.getLabel('OBPOS_DeliveryChangeMsg', [
         OB.I18N.formatCurrencyWithSymbol(
           this.args.deliveryChange,
@@ -109,12 +109,12 @@ enyo.kind({
         )
       ])
     );
-    this.$.bodyContent.$.keepPaymentLbl.setContent(
+    this.$.body.$.keepPaymentLbl.setContent(
       OB.I18N.getLabel('OBPOS_KeepAsPaymentMsg')
     );
-    this.$.bodyContent.$.returnChangeLbl.setContent(
+    this.$.body.$.returnChangeLbl.setContent(
       OB.I18N.getLabel('OBPOS_ReturnAsChangeMsg')
     );
-    this.$.bodyContent.$.keepPayment.activeRadio();
+    this.$.body.$.keepPayment.activeRadio();
   }
 });

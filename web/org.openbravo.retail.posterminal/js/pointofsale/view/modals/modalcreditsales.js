@@ -10,29 +10,25 @@
 /*global OB, enyo*/
 
 enyo.kind({
-  kind: 'OB.UI.ModalAction',
+  kind: 'OB.UI.Modal',
   name: 'OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit',
   classes: 'obObposPointOfSaleUiModalsModalEnoughCredit',
-  bodyContent: {
-    name: 'popupmessage',
-    classes:
-      'obObposPointOfSaleUiModalsModalEnoughCredit-bodyContent-popupmessage',
-    content: ''
-  },
-  bodyButtons: {
-    classes: 'obObposPointOfSaleUiModalsModalEnoughCredit-bodyButtons',
+  i18nHeader: 'OBPOS_SellingOnCreditHeader',
+  body: '',
+  footer: {
+    classes: 'obObposPointOfSaleUiModalsModalEnoughCredit-footer',
     components: [
       {
         kind:
           'OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit.Components.cancel_button',
         classes:
-          'obObposPointOfSaleUiModalsModalEnoughCredit-bodyButtons-obObposPointOfSaleUiModalsModalEnoughCreditComponentsCancelButton'
+          'obObposPointOfSaleUiModalsModalEnoughCredit-footer-obObposPointOfSaleUiModalsModalEnoughCreditComponentsCancelButton'
       },
       {
         kind:
           'OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit.Components.apply_button',
         classes:
-          'obObposPointOfSaleUiModalsModalEnoughCredit-bodyButtons-obObposPointOfSaleUiModalsModalEnoughCreditComponentsApplyButton'
+          'obObposPointOfSaleUiModalsModalEnoughCredit-footer-obObposPointOfSaleUiModalsModalEnoughCreditComponentsApplyButton'
       }
     ]
   },
@@ -54,20 +50,17 @@ enyo.kind({
         currSymbol = paymentList[i].symbol;
       }
     }
-    this.setHeader(OB.I18N.getLabel('OBPOS_SellingOnCreditHeader'));
     if (this.args.message) {
-      this.$.bodyContent.$.popupmessage.setContent(
-        OB.I18N.getLabel(this.args.message)
-      );
+      this.setBody(OB.I18N.getLabel(this.args.message));
     } else if (this.args.order.get('orderType') === 1) {
-      this.$.bodyContent.$.popupmessage.setContent(
+      this.setBody(
         OB.I18N.getLabel('OBPOS_enoughCreditReturnBody', [
           OB.I18N.formatCurrency(pendingQty * rate) + ' ' + currSymbol,
           bpName
         ])
       );
     } else {
-      this.$.bodyContent.$.popupmessage.setContent(
+      this.setBody(
         OB.I18N.getLabel('OBPOS_enoughCreditBody', [
           OB.I18N.formatCurrency(pendingQty * rate) + ' ' + currSymbol,
           bpName
@@ -164,13 +157,14 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.ModalAction',
+  kind: 'OB.UI.Modal',
   name: 'OB.OBPOSPointOfSale.UI.Modals.modalNotEnoughCredit',
   classes: 'obObposPointOfSaleUiModalsModalNotEnoughCredit',
   i18nHeader: 'OBPOS_notEnoughCreditHeader',
+  body: '',
   executeOnShow: function() {
     if (this.args) {
-      this.$.bodyContent.$.popupmessage.setContent(
+      this.setBody(
         OB.I18N.getLabel('OBPOS_notEnoughCreditBody', [
           this.args.bpName,
           OB.I18N.formatCurrency(this.args.actualCredit)
@@ -178,21 +172,15 @@ enyo.kind({
       );
     }
   },
-  bodyContent: {
-    name: 'popupmessage',
-    classes:
-      'obObposPointOfSaleUiModalsModalNotEnoughCredit-bodyContent-popupmessage',
-    content: ''
-  },
-  bodyButtons: {
-    classes: 'obObposPointOfSaleUiModalsModalNotEnoughCredit-bodyButtons',
+  footer: {
+    classes: 'obObposPointOfSaleUiModalsModalNotEnoughCredit-footer',
     components: [
       {
         kind: 'OB.UI.ModalDialogButton',
         name:
           'OB.OBPOSPointOfSale.UI.Modals.modalNotEnoughCredit.Components.ok_button',
         classes:
-          'obObposPointOfSaleUiModalsModalNotEnoughCredit-bodyButtons-obObposPointOfSaleUiModalsModalNotEnoughCreditComponentsOkButton',
+          'obObposPointOfSaleUiModalsModalNotEnoughCredit-footer-obObposPointOfSaleUiModalsModalNotEnoughCreditComponentsOkButton',
         i18nContent: 'OBMOBC_LblOk',
         isDefaultAction: true,
         init: function(model) {

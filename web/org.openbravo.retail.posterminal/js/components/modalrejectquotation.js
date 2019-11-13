@@ -51,37 +51,37 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.ModalAction',
+  kind: 'OB.UI.Modal',
   name: 'OB.UI.ModalRejectQuotation',
   classes: 'obUiModalRejectQuotation',
   myId: 'modalRejectQuotation',
-  bodyContent: {
-    classes: 'obUiModalRejectQuotation-bodyContent',
+  body: {
+    classes: 'obUiModalRejectQuotation-body',
     components: [
       {
         name: 'labelRejectReason',
-        classes: 'obUiModalRejectQuotation-bodyContent-labelRejectReason'
+        classes: 'obUiModalRejectQuotation-body-labelRejectReason'
       },
       {
-        classes: 'obUiModalRejectQuotation-bodyContent-rejectReason',
+        classes: 'obUiModalRejectQuotation-body-rejectReason',
         kind: 'OB.UI.ModalRejectQuotationRejectReason',
         name: 'rejectReason'
       }
     ]
   },
   i18nHeader: 'OBPOS_RejectQuotation',
-  bodyButtons: {
-    classes: 'obUiModalRejectQuotation-bodyButtons',
+  footer: {
+    classes: 'obUiModalRejectQuotation-footer',
     components: [
       {
         kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalRejectQuotationAccept',
         classes:
-          'obUiModalRejectQuotation-bodyButtons-obObposPointOfSaleUiModalsBtnModalRejectQuotationAccept'
+          'obUiModalRejectQuotation-footer-obObposPointOfSaleUiModalsBtnModalRejectQuotationAccept'
       },
       {
         kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalRejectQuotationCancel',
         classes:
-          'obUiModalRejectQuotation-bodyButtons-obObposPointOfSaleUiModalsBtnModalRejectQuotationCancel'
+          'obUiModalRejectQuotation-footer-obObposPointOfSaleUiModalsBtnModalRejectQuotationCancel'
       }
     ]
   },
@@ -93,12 +93,12 @@ enyo.kind({
   },
   doRejectQuotationDone: function() {
     this.doRejectQuotation({
-      rejectReason: this.$.bodyContent.$.rejectReason.getValue()
+      rejectReason: this.$.body.$.rejectReason.getValue()
     });
   },
   initComponents: function() {
     this.inherited(arguments);
-    this.$.bodyContent.$.labelRejectReason.setContent(
+    this.$.body.$.labelRejectReason.setContent(
       OB.I18N.getLabel('OBPOS_lblRejectReason')
     );
     var rejectReasonCollection = [];
@@ -110,8 +110,6 @@ enyo.kind({
         })
       );
     });
-    this.$.bodyContent.$.rejectReason
-      .getCollection()
-      .reset(rejectReasonCollection);
+    this.$.body.$.rejectReason.getCollection().reset(rejectReasonCollection);
   }
 });

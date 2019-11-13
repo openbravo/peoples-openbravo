@@ -1327,7 +1327,7 @@ enyo.kind({
       this
     );
   },
-  init: async function(model) {
+  init: function(model) {
     this.model = model;
     this.reasons = new Backbone.Collection();
     this.$.formElementReturnreason.coreElement.setCollection(this.reasons);
@@ -1341,12 +1341,12 @@ enyo.kind({
     );
 
     try {
-      const dataReasons = await OB.MasterdataModels.ReturnReason.find();
+      const dataReasons = OB.MobileApp.view.terminal.get('returnreasons');
       if (this.destroyed) {
         return;
       }
-      if (dataReasons.result && dataReasons.result.length > 0) {
-        this.reasons.reset(dataReasons.result);
+      if (dataReasons && dataReasons.length > 0) {
+        this.reasons.reset(dataReasons);
       } else {
         this.reasons.reset();
       }

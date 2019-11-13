@@ -163,7 +163,15 @@ enyo.kind({
         this
       );
     }
-
+    _.each(
+      this.$.body.$.edit_createcustomers_impl.$.customerAttributes.$,
+      function(attribute) {
+        if (attribute.hasClass('obUiFormElement_error')) {
+          attribute.removeClass('obUiFormElement_error');
+          attribute.setMessage();
+        }
+      }
+    );
     var navigationPath =
       this.customer || !this.args.cancelNavigationPath
         ? this.args.navigationPath
@@ -499,6 +507,7 @@ enyo.kind({
         onSetValue: 'valueSet',
         onRetrieveValues: 'retrieveValue'
       },
+      componentType: 'custom',
       valueSet: function(inSender, inEvent) {
         if (inEvent.data.hasOwnProperty(this.modelProperty)) {
           this.setValue(inEvent.data[this.modelProperty]);
@@ -513,12 +522,23 @@ enyo.kind({
           true
         );
       },
+      getDisplayedValue: function() {
+        //To avoid the obUiFormElement_isEmpty CSS class that hides the component
+        return 'dummy';
+      },
+      getCanNullify: function() {
+        //To avoid showing the 'X' icon, since the component has its own
+        return false;
+      },
       loadValue: function(inSender, inEvent) {
         this.setLocale(OB.MobileApp.model.get('terminal').language_string);
         if (inEvent.customer && inEvent.customer.get(this.modelProperty)) {
           this.setValue(new Date(inEvent.customer.get(this.modelProperty)));
         } else {
           this.setValue('');
+        }
+        if (this.formElement) {
+          this.formElement.handleFormElementStyle();
         }
       },
       saveChange: function(inSender, inEvent) {

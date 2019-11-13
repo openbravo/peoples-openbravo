@@ -13,6 +13,7 @@ enyo.kind({
   name: 'OB.UI.OrderMultiSelect',
   classes: 'obUiOrderMultiSelect',
   kind: 'OB.UI.Button',
+  i18nLabel: 'OBPOS_LblDisableMultiselection',
   showing: false,
   events: {
     onToggleSelection: ''
@@ -31,6 +32,7 @@ enyo.kind({
   name: 'OB.UI.OrderSingleSelect',
   classes: 'obUiOrderSingleSelect',
   kind: 'OB.UI.Button',
+  i18nLabel: 'OBPOS_LblEnableMultiselection',
   events: {
     onToggleSelection: ''
   },

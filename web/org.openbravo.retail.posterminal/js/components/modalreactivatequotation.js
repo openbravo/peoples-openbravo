@@ -33,26 +33,23 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.ModalAction',
+  kind: 'OB.UI.Modal',
   name: 'OB.UI.ModalReactivateQuotation',
   myId: 'modalReactivateQuotation',
   classes: 'obUiModalReactivateQuotation',
-  bodyContent: {
-    classes: 'obUiModalReactivateQuotation-bodyContent',
-    i18nContent: 'OBPOS_ReactivateQuotationMessage'
-  },
+  i18nBody: 'OBPOS_ReactivateQuotationMessage',
   i18nHeader: 'OBPOS_ReactivateQuotation',
-  bodyButtons: {
-    classes: 'obUiModalReactivateQuotation-bodyButtons',
+  footer: {
+    classes: 'obUiModalReactivateQuotation-footer',
     components: [
       {
         classes:
-          'obUiModalReactivateQuotation-bodyButtons-obObposPointOfSaleUiModalsBtnModalReactivateQuotationAccept',
+          'obUiModalReactivateQuotation-footer-obObposPointOfSaleUiModalsBtnModalReactivateQuotationAccept',
         kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalReactivateQuotationAccept'
       },
       {
         classes:
-          'obUiModalReactivateQuotation-bodyButtons-obObposPointOfSaleUiModalsBtnModalReactivateQuotationCancel',
+          'obUiModalReactivateQuotation-footer-obObposPointOfSaleUiModalsBtnModalReactivateQuotationCancel',
         kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalReactivateQuotationCancel'
       }
     ]

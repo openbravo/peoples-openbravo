@@ -164,19 +164,19 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.ModalDeleteDiscount',
-  kind: 'OB.UI.ModalAction',
+  kind: 'OB.UI.Modal',
   classes: 'obUiModalDeleteDiscount',
   handlers: {
     onApplyChanges: 'applyChanges',
     onCallbackExecutor: 'callbackExecutor',
     onChangeSelected: 'updateTotal'
   },
-  bodyContent: {
-    classes: 'obUiModalDeleteDiscount-bodyContent',
+  body: {
+    classes: 'obUiModalDeleteDiscount-body',
     components: [
       {
         kind: 'Scroller',
-        classes: 'obUiModalDeleteDiscount-bodyContent-Scroller',
+        classes: 'obUiModalDeleteDiscount-body-Scroller',
         thumb: true,
         components: [
           {
@@ -187,7 +187,7 @@ enyo.kind({
       },
       {
         name: 'totalselected',
-        classes: 'obUiModalDeleteDiscount-bodyContent-totalselected',
+        classes: 'obUiModalDeleteDiscount-body-totalselected',
         components: [
           {
             tag: 'span',
@@ -202,21 +202,21 @@ enyo.kind({
         ]
       },
       {
-        classes: 'obUiModalDeleteDiscount-bodyContent-container1'
+        classes: 'obUiModalDeleteDiscount-body-container1'
       }
     ]
   },
-  bodyButtons: {
-    classes: 'obUiModalDeleteDiscount-bodyButtons',
+  footer: {
+    classes: 'obUiModalDeleteDiscount-footer',
     components: [
       {
         kind: 'OB.UI.DeleteDiscountDeleteSelected',
         classes:
-          'obUiModalDeleteDiscount-bodyButtons-obUiDeleteDiscountDeleteSelected'
+          'obUiModalDeleteDiscount-footer-obUiDeleteDiscountDeleteSelected'
       },
       {
         kind: 'OB.UI.btnModalCancelDelete',
-        classes: 'obUiModalDeleteDiscount-bodyButtons-obUibtnModalCancelDelete'
+        classes: 'obUiModalDeleteDiscount-footer-obUibtnModalCancelDelete'
       }
     ]
   },
@@ -261,7 +261,7 @@ enyo.kind({
   },
   updateTotal: function() {
     var totalSelected = 0;
-    _.each(this.$.bodyContent.$.attributes.$, function(line) {
+    _.each(this.$.body.$.attributes.$, function(line) {
       if (line.$.checkboxButtonDiscount.checked === true) {
         totalSelected = OB.DEC.add(
           totalSelected,
@@ -271,7 +271,7 @@ enyo.kind({
         );
       }
     });
-    this.$.bodyContent.$.totalselectedAmt.setContent(
+    this.$.body.$.totalselectedAmt.setContent(
       OB.I18N.formatCurrency(totalSelected)
     );
   },
@@ -279,9 +279,9 @@ enyo.kind({
     this.promotionsList = [];
     var me = this,
       i;
-    this.$.bodyContent.$.attributes.destroyComponents();
+    this.$.body.$.attributes.destroyComponents();
     this.$.header.destroyComponents();
-    this.$.header.setContent(OB.I18N.getLabel('OBPOS_LblDiscountsDelete'));
+    this.setHeader(OB.I18N.getLabel('OBPOS_LblDiscountsDelete'));
 
     var selectedLinesModel = this.args.selectedLines,
       manualPromotions = OB.Model.Discounts.getManualPromotions();
@@ -332,7 +332,7 @@ enyo.kind({
     //add all promotion lines
     for (i = 0; i < this.promotionsList.length; i++) {
       var lineNumber = i + 1;
-      this.$.bodyContent.$.attributes.createComponent({
+      this.$.body.$.attributes.createComponent({
         kind: 'OB.UI.DeleteDiscountLine',
         name: 'deleteDiscountLine' + lineNumber,
         classes: 'obUiModalDeleteDiscount-attributes-deleteDiscountLineGeneric',
@@ -340,7 +340,7 @@ enyo.kind({
         args: this.args
       });
     }
-    this.$.bodyContent.$.attributes.render();
+    this.$.body.$.attributes.render();
     this.$.header.render();
 
     //calculate total
@@ -348,8 +348,8 @@ enyo.kind({
   },
   initComponents: function() {
     this.inherited(arguments);
-    this.attributeContainer = this.$.bodyContent.$.attributes;
-    this.$.bodyContent.$.totalselectedLbl.setContent(
+    this.attributeContainer = this.$.body.$.attributes;
+    this.$.body.$.totalselectedLbl.setContent(
       OB.I18N.getLabel('OBPOS_LblTotalSelected')
     );
   }

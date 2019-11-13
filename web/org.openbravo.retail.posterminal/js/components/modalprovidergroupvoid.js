@@ -11,14 +11,15 @@
 
 enyo.kind({
   name: 'OB.UI.ModalProviderGroupVoid',
-  kind: 'OB.UI.ModalAction',
+  kind: 'OB.UI.Modal',
   header: '',
   autoDismiss: false,
+  hideCloseButton: true,
   classes: 'obUiModalProviderGroupVoid',
   events: {
     onHideThisPopup: ''
   },
-  bodyContent: {
+  body: {
     classes: 'obUiModalProviderGroupVoid-body',
     components: [
       {
@@ -67,23 +68,20 @@ enyo.kind({
   },
   initComponents: function() {
     this.inherited(arguments);
-    this.$.headerCloseButton.hide();
   },
   executeOnShow: function() {
     var payment = this.args.payment;
     var amount = payment.get('amount');
     var provider = payment.get('paymentData').provider;
 
-    this.$.header.setContent(
+    this.setHeader(
       OB.I18N.getLabel('OBPOS_LblModalVoidTransaction', [
         OB.I18N.formatCurrency(amount)
       ])
     );
-    this.$.bodyContent.$.lblType.setContent(
-      OB.I18N.getLabel('OBPOS_LblModalType')
-    );
-    this.$.bodyContent.$.paymenttype.setContent(provider._identifier);
-    this.$.bodyContent.$.description.setContent(provider.description);
+    this.$.body.$.lblType.setContent(OB.I18N.getLabel('OBPOS_LblModalType'));
+    this.$.body.$.paymenttype.setContent(provider._identifier);
+    this.$.body.$.description.setContent(provider.description);
 
     // Set timeout needed because on ExecuteOnShow
     setTimeout(this.startVoid.bind(this), 0);
@@ -114,9 +112,9 @@ enyo.kind({
     var receipt = this.args.receipt;
     var removeTransaction = this.args.removeTransaction;
 
-    this.$.bodyContent.$.providergroupcomponent.destroyComponents();
+    this.$.body.$.providergroupcomponent.destroyComponents();
     if (providerinstance.providerComponent) {
-      this.$.bodyContent.$.providergroupcomponent
+      this.$.body.$.providergroupcomponent
         .createComponent(providerinstance.providerComponent)
         .render();
     }
