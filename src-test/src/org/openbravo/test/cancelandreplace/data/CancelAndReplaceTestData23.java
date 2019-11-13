@@ -90,9 +90,9 @@ public class CancelAndReplaceTestData23 extends CancelAndReplaceTestData {
     }));
 
     setNewOrders(Arrays.asList(new CancelAndReplaceOrderTestData().with(newOrder -> {
-      newOrder.totalAmount = new BigDecimal("532.80");
+      newOrder.totalAmount = new BigDecimal("488.40");
       newOrder.status = "CO";
-      newOrder.paidAmount = new BigDecimal("532.80");
+      newOrder.paidAmount = new BigDecimal("488.40");
       newOrder.outstandingAmount = BigDecimal.ZERO;
       newOrder.lines = new Line[] { newOrder.new Line().with(line -> {
         line.deliveredQty = new BigDecimal("12");
@@ -100,9 +100,9 @@ public class CancelAndReplaceTestData23 extends CancelAndReplaceTestData {
         line.orderedQuantity = new BigDecimal("12");
       }) };
     }), new CancelAndReplaceOrderTestData().with(newOrder -> {
-      newOrder.totalAmount = new BigDecimal("777.00");
+      newOrder.totalAmount = new BigDecimal("732.60");
       newOrder.status = "CO";
-      newOrder.paidAmount = new BigDecimal("777.00");
+      newOrder.paidAmount = new BigDecimal("732.60");
       newOrder.outstandingAmount = BigDecimal.ZERO;
       newOrder.lines = new Line[] { newOrder.new Line().with(line -> {
         line.deliveredQty = new BigDecimal("18");
@@ -110,9 +110,9 @@ public class CancelAndReplaceTestData23 extends CancelAndReplaceTestData {
         line.orderedQuantity = new BigDecimal("18");
       }) };
     }), new CancelAndReplaceOrderTestData().with(newOrder -> {
-      newOrder.totalAmount = new BigDecimal("154.40");
+      newOrder.totalAmount = new BigDecimal("110.00");
       newOrder.status = "CO";
-      newOrder.paidAmount = new BigDecimal("154.40");
+      newOrder.paidAmount = new BigDecimal("110.00");
       newOrder.outstandingAmount = BigDecimal.ZERO;
       newOrder.lines = new Line[] { newOrder.new Line().with(line -> {
         line.deliveredQty = new BigDecimal("20");
@@ -120,9 +120,9 @@ public class CancelAndReplaceTestData23 extends CancelAndReplaceTestData {
         line.orderedQuantity = new BigDecimal("20");
       }) };
     }), new CancelAndReplaceOrderTestData().with(newOrder -> {
-      newOrder.totalAmount = new BigDecimal("126.90");
+      newOrder.totalAmount = new BigDecimal("82.50");
       newOrder.status = "CO";
-      newOrder.paidAmount = new BigDecimal("126.90");
+      newOrder.paidAmount = new BigDecimal("82.50");
       newOrder.outstandingAmount = BigDecimal.ZERO;
       newOrder.lines = new Line[] { newOrder.new Line().with(line -> {
         line.deliveredQty = new BigDecimal("15");
@@ -130,9 +130,9 @@ public class CancelAndReplaceTestData23 extends CancelAndReplaceTestData {
         line.orderedQuantity = new BigDecimal("15");
       }) };
     }), new CancelAndReplaceOrderTestData().with(newOrder -> {
-      newOrder.totalAmount = new BigDecimal("495.90");
+      newOrder.totalAmount = new BigDecimal("488.40");
       newOrder.status = "CO";
-      newOrder.paidAmount = new BigDecimal("495.90");
+      newOrder.paidAmount = new BigDecimal("488.40");
       newOrder.outstandingAmount = BigDecimal.ZERO;
       newOrder.lines = new Line[] { newOrder.new Line().with(line -> {
         line.deliveredQty = new BigDecimal("12");

@@ -27,6 +27,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -186,6 +187,9 @@ public class CancelAndReplaceTest extends WeldBaseTest {
       // Create the new replacement order
       List<Order> newOrders = CancelAndReplaceUtils.createReplacementOrder(oldOrder,
           Collections.singletonMap(oldOrder.getWarehouse(), testData.getNewOrders().size()));
+      OBDal.getInstance().flush();
+      OBDal.getInstance().commitAndClose();
+      newOrders = refreshOrders(newOrders);
 
       log.debug("New orders Created:{}",
           newOrders.stream().map(Order::getDocumentNo).collect(Collectors.toList()));
@@ -193,9 +197,12 @@ public class CancelAndReplaceTest extends WeldBaseTest {
 
       updateNewOrders(newOrders);
       OBDal.getInstance().flush();
+      OBDal.getInstance().commitAndClose();
 
       // Cancel and Replace Sales Order
-      Set<String> newOrderIdSet = newOrders.stream().map(Order::getId).collect(Collectors.toSet());
+      Set<String> newOrderIdSet = new LinkedHashSet<>();
+      newOrders.forEach(order -> newOrderIdSet.add(order.getId()));
+
       CancelAndReplaceUtils.cancelAndReplaceOrder(oldOrder.getId(), newOrderIdSet,
           oldOrder.getOrganization().getId(), null, false);
       OBDal.getInstance().flush();

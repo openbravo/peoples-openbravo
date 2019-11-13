@@ -69,20 +69,20 @@ public class CancelAndReplaceTestData18 extends CancelAndReplaceTestData {
     }));
 
     setNewOrders(Arrays.asList(new CancelAndReplaceOrderTestData().with(newOrder -> {
-      newOrder.totalAmount = new BigDecimal("248.70");
+      newOrder.totalAmount = new BigDecimal("244.20");
       newOrder.status = "CO";
       newOrder.paidAmount = BigDecimal.ZERO;
-      newOrder.outstandingAmount = new BigDecimal("248.70");
+      newOrder.outstandingAmount = new BigDecimal("244.20");
       newOrder.lines = new Line[] { newOrder.new Line().with(line -> {
         line.deliveredQty = new BigDecimal("6");
         line.shipmentLines = BigDecimal.ONE;
         line.orderedQuantity = new BigDecimal("6");
       }) };
     }), new CancelAndReplaceOrderTestData().with(newOrder -> {
-      newOrder.totalAmount = new BigDecimal("71.70");
+      newOrder.totalAmount = new BigDecimal("49.50");
       newOrder.status = "CO";
       newOrder.paidAmount = BigDecimal.ZERO;
-      newOrder.outstandingAmount = new BigDecimal("71.70");
+      newOrder.outstandingAmount = new BigDecimal("49.50");
       newOrder.lines = new Line[] { newOrder.new Line().with(line -> {
         line.deliveredQty = new BigDecimal("9");
         line.shipmentLines = BigDecimal.ONE;
