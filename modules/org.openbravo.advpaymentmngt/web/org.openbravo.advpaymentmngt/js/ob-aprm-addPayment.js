@@ -968,7 +968,7 @@ OB.APRM.AddPayment.updateActualExpected = function(form) {
       var bslAmountConverted = OB.APRM.AddPayment.getConvertedAmount(
         form,
         bslamount,
-        true
+        false
       );
       if (actpayment.compareTo(bslAmountConverted.abs()) <= 0) {
         actpayment = bslAmountConverted.abs();
@@ -986,22 +986,22 @@ OB.APRM.AddPayment.updateActualExpected = function(form) {
 OB.APRM.AddPayment.getConvertedAmount = function(
   form,
   amount,
-  inverseConversion = false
+  directConversion
 ) {
   var currencyPrecision = form.getItem('StdPrecision').getValue();
   var exchangeRate = new BigDecimal(
     String(form.getItem('conversion_rate').getValue() || 1)
   );
-  if (inverseConversion) {
+  if (directConversion) {
+    return amount
+      .multiply(exchangeRate)
+      .setScale(currencyPrecision, BigDecimal.prototype.ROUND_HALF_UP);
+  } else {
     return amount.divide(
       exchangeRate,
       currencyPrecision,
       BigDecimal.prototype.ROUND_HALF_UP
     );
-  } else {
-    return amount
-      .multiply(exchangeRate)
-      .setScale(currencyPrecision, BigDecimal.prototype.ROUND_HALF_UP);
   }
 };
 
@@ -1281,7 +1281,7 @@ OB.APRM.AddPayment.updateConvertedAmount = function(
     newConvertedAmount = OB.APRM.AddPayment.getConvertedAmount(
       form,
       actualPayment,
-      false
+      true
     );
     exchangeRateItem.setValue(Number(exchangeRate.toString()));
     actualConvertedItem.setValue(Number(newConvertedAmount.toString()));
