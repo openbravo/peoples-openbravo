@@ -318,8 +318,10 @@ enyo.kind({
     formElementDiscountsList.units = inEvent.units;
 
     //Reset all combo options
-    this.discounts.reset(this.discounts.models);
-    inEvent.originator.setSelected(selectedOption);
+    if (!OB.UTIL.isNullOrUndefined(this.discounts)) {
+      this.discounts.reset(this.discounts.models);
+      inEvent.originator.setSelected(selectedOption);
+    }
 
     // Disable keyboard if rule is fixed, otherwise, enable keyboard
     if (

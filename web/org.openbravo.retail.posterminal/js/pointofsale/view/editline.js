@@ -1389,13 +1389,23 @@ enyo.kind({
     i18nLabel: 'OBPOS_ReturnReason',
     classes: 'obObposPointOfSaleUiEditLine-msgedit-returnreason',
     change: function(inSender, inEvent) {
-      var returnReason = this.children[this.getSelected()].getValue();
+      var reason = this.children[this.getSelected()],
+        returnReason = reason.getValue(),
+        returnReasonName = reason.getContent();
       _.each(this.formElement.owner.selectedModels, function(line) {
         if (returnReason === '') {
           line.unset('returnReason');
+          line.unset('returnReasonName');
         } else {
           line.set('returnReason', returnReason);
+          line.set('returnReasonName', returnReasonName);
         }
+      });
+    },
+    actionAfterClear: function() {
+      _.each(this.formElement.owner.selectedModels, function(line) {
+        line.unset('returnReason');
+        line.unset('returnReasonName');
       });
     },
     renderHeader: enyo.kind({
