@@ -6881,18 +6881,40 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /***********************   ***********************/
 /*
 # Component: OB.UI.ListValuesLineCheck
-# Inherits: [OB.UI.CheckboxButton]
+# Inherits: [OB.UI.Button]
 */
 .obUiListValuesLineCheck {
   width: 86%;
   text-align: left;
-  padding-left: 70px;
-  height: 38px;
-  background-position: 10px center;
+  padding-left: 10px;
+  height: 48px;
   vertical-align: middle;
 }
 
-.obUiListValuesLineCheck:focus {}
+.obUiListValuesLineCheck .obUiButton-components {
+  grid-auto-flow: column;
+  grid-template-columns: 50px 1fr;
+}
+
+.obUiListValuesLineCheck .obUiButton-components-icon {
+  width: 100%;
+  height: 100%;;
+  border: none;
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-color: transparent;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconCheck.svg');
+  background-size: 34px 27px;
+  filter: var(--color-quaternary_img);
+}
+
+.obUiListValuesLineCheck.obUiListValuesLineCheck_active .obUiButton-components-icon {
+  filter: var(--color-secondary_img);
+}
+
+.obUiListValuesLineCheck .obUiButton-components-label {
+  color: var(--color-on-surface-variant);
+}
 
 
 /*
@@ -6901,15 +6923,30 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 */
 .obUiListValuesLineChildren {
   width: 14%;
+  height: 48px;
   margin: 0px;
   border: none;
+  vertical-align: middle;
+}
+
+.obUiListValuesLineChildren .obUiButton-components {
+  grid-template-columns: 1fr 0px;
+}
+
+.obUiListValuesLineChildren .obUiButton-components-icon {
+  width: 100%;
+  height: 100%;
   background-repeat: no-repeat;
   background-color: transparent;
-  height: 38px;
-  background-position: center;
-  vertical-align: middle;
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/inspectTree.svg');
   background-size: 31px 27px;
+  background-position: center;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/inspectTree.svg');
+  filter: var(--color-secondary_img);
+}
+
+.obUiListValuesLineChildren .obUiButton-components-label {
+  display: none;
+  color: var(--color-on-surface-variant);
 }
 
 
@@ -6917,7 +6954,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.UI.ListValuesLine
 */
 .obUiListValuesLine {
-  border-bottom: 1px solid #cccccc;
+  border-bottom: var(--separator-slim);
 }
 
 .obUiListValuesLine-obUiListValuesLineCheck {
@@ -7001,26 +7038,50 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /*            Folder: js/components/             */
 /***********************   ***********************/
 /*
-# Component: OB.UI.ListBrandsLine
-# Inherits: [OB.UI.CheckboxButton]
+# Component: OB.UI.ListBrandsLineCheck
+# Inherits: [OB.UI.Button]
 */
-.obUiListBrandsLine {
-  border-bottom: 1px solid #cccccc;
+.obUiListBrandsLineCheck {
+  width: 86%;
   text-align: left;
-  padding-left: 70px;
-  height: 38px;
-  background-position: 10px center;
+  padding-left: 10px;
+  height: 48px;
   vertical-align: middle;
-  width: 100%;
-  outline: none;
 }
 
-.obUiListBrandsLine:focus {}
+.obUiListBrandsLineCheck .obUiButton-components {
+  grid-auto-flow: column;
+  grid-template-columns: 50px 1fr;
+}
 
-.obUiListBrandsLine_active {
+.obUiListBrandsLineCheck .obUiButton-components-icon {
+  width: 100%;
+  height: 100%;;
+  border: none;
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-color: transparent;
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconCheck.svg');
-  filter: var(--color-secondary_img);
   background-size: 34px 27px;
+  filter: var(--color-quaternary_img);
+}
+
+.obUiListBrandsLineCheck.obUiListBrandsLineCheck_active .obUiButton-components-icon {
+  filter: var(--color-secondary_img);
+}
+.obUiListBrandsLineCheck .obUiButton-components-label {
+  color: var(--color-on-surface-variant);
+}
+
+/*
+# Component: OB.UI.ListBrandsLine
+*/
+.obUiListBrandsLine {
+  border-bottom: var(--separator-slim);
+}
+
+.obUiListBrandsLine-obUiListBrandsLineCheck {
+/* # Inherits: [OB.UI.ListValuesLineCheck] */
 }
 
 

@@ -11,25 +11,36 @@
 
 /*items of collection*/
 enyo.kind({
-  name: 'OB.UI.ListBrandsLine',
-  kind: 'OB.UI.CheckboxButton',
-  classes: 'obUiListBrandsLine modal-dialog-btn-check',
+  name: 'OB.UI.ListBrandsLineCheck',
+  kind: 'OB.UI.Button',
+  classes: 'obUiListBrandsLineCheck',
   events: {
     onHideThisPopup: ''
   },
   tap: function() {
     this.inherited(arguments);
-    this.model.set('checked', !this.model.get('checked'));
+    this.parent.model.set('checked', !this.parent.model.get('checked'));
   },
   create: function() {
     this.inherited(arguments);
-    this.setContent(this.model.get('name'));
-    if (this.model.get('checked')) {
-      this.addClass('obUiListBrandsLine_active');
+    this.setLabel(this.parent.model.get('name'));
+    if (this.parent.model.get('checked')) {
+      this.addClass('obUiListBrandsLineCheck_active');
     } else {
-      this.removeClass('obUiListBrandsLine_active');
+      this.removeClass('obUiListBrandsLineCheck_active');
     }
   }
+});
+
+enyo.kind({
+  name: 'OB.UI.ListBrandsLine',
+  classes: 'obUiListBrandsLine',
+  components: [
+    {
+      kind: 'OB.UI.ListBrandsLineCheck',
+      classes: 'obUiListBrandsLine-obUiListBrandsLineCheck'
+    }
+  ]
 });
 
 /*scrollable table (body of modal)*/
