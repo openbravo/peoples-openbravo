@@ -321,7 +321,11 @@ enyo.kind({
                     'payOpenTicketsValidation',
                     execution
                   );
-                  me.showPaymentView();
+                  OB.POS.terminal.$.containerWindow
+                    .getRoot()
+                    .$.multiColumn.$.panels.addClass(
+                      'obUiMultiColumn-panels-showReceipt'
+                    );
                 }
               });
             }
