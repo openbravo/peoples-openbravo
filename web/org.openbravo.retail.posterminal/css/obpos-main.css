@@ -8810,19 +8810,26 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiScan-mainPanel-msgwelcome {
   padding: 6px;
+  align-items: center;
+  display: flex;
+  height: 23px;
+  justify-content: flex-end;
 }
 
 .obObposPointOfSaleUiScan-msgwelcome-msgwelcomeLbl {
-  align-items: center;
-  background-image: url('./../img/OpenbravoWelcomeLogo.svg');
-  background-position-x: calc(100% - 1px);
-  background-repeat: no-repeat;
-  background-size: 95px 23px;
-  display: flex;
   font-size: var(--font-medium);
+  padding: 2px 5px 0px 0px;
+  color: var(--color-secondary);
+}
+
+.obObposPointOfSaleUiScan-msgwelcome-msgwelcomeLogo {
+  width: 93px;
   height: 23px;
-  justify-content: flex-end;
-  padding: 2px 102px 0px 0px;
+  background-image: url('./../img/OpenbravoWelcomeLogo.svg');
+  background-position-x: center center;
+  background-repeat: no-repeat;
+  background-size: auto;
+  filter: var(--color-secondary_img);
 }
 
 .obObposPointOfSaleUiScan-mainPanel-msgaction {

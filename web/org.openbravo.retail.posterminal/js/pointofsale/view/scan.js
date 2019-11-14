@@ -91,6 +91,10 @@ enyo.kind({
             {
               name: 'msgwelcomeLbl',
               classes: 'obObposPointOfSaleUiScan-msgwelcome-msgwelcomeLbl'
+            },
+            {
+              name: 'msgwelcomeLogo',
+              classes: 'obObposPointOfSaleUiScan-msgwelcome-msgwelcomeLogo'
             }
           ]
         },
