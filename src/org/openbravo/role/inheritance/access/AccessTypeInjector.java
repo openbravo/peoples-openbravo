@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2019 Openbravo SLU 
  * All Rights Reserved. 
  ************************************************************************
  */
@@ -204,12 +204,14 @@ public abstract class AccessTypeInjector implements Comparable<AccessTypeInjecto
     try {
       String roleProperty = getRoleProperty();
       Class<T> clazz = (Class<T>) Class.forName(className);
-      final StringBuilder whereClause = new StringBuilder();
-      whereClause.append(" as p ");
-      whereClause.append(" where p.").append(roleProperty).append(" = :roleId");
-      addEntityWhereClause(whereClause);
-      final OBQuery<T> query = OBDal.getInstance().createQuery(clazz, whereClause.toString());
-      query.setNamedParameter("roleId", role.getId());
+      //@formatter:off
+      String whereClause = 
+              " as p " +
+              " where p." + roleProperty + " = :roleId";
+      //@formatter:on
+      whereClause = addEntityWhereClause(whereClause);
+      final OBQuery<T> query = OBDal.getInstance().createQuery(clazz, whereClause)
+              .setNamedParameter("roleId", role.getId());
       doEntityParameterReplacement(query);
       query.setFilterOnActive(false);
       return (List<? extends InheritedAccessEnabled>) query.list();
@@ -233,16 +235,18 @@ public abstract class AccessTypeInjector implements Comparable<AccessTypeInjecto
       String roleId) throws ClassNotFoundException {
     String roleProperty = getRoleProperty();
     Class<T> clazz = (Class<T>) Class.forName(getClassName());
-    final StringBuilder whereClause = new StringBuilder();
-    whereClause.append(" as p");
-    whereClause.append(" where p.").append(roleProperty).append(" = :roleId");
-    whereClause.append(" and p.").append(getSecuredElementName()).append(".id = :elementId");
-    addEntityWhereClause(whereClause);
-    final OBQuery<T> query = OBDal.getInstance().createQuery(clazz, whereClause.toString());
-    query.setNamedParameter("roleId", roleId);
-    query.setNamedParameter("elementId", getSecuredElementIdentifier(access));
-    query.setFilterOnActive(false);
-    query.setMaxResult(1);
+    //@formatter:off
+    String whereClause = 
+            " as p " +
+            " where p." + roleProperty + " = :roleId" +
+            "   and p." + getSecuredElementName() + ".id = :elementId";
+    //@formatter:on
+    whereClause = addEntityWhereClause(whereClause);
+    final OBQuery<T> query = OBDal.getInstance().createQuery(clazz, whereClause)
+            .setNamedParameter("roleId", roleId)
+            .setNamedParameter("elementId", getSecuredElementIdentifier(access))
+            .setFilterOnActive(false)
+            .setMaxResult(1);
     return (InheritedAccessEnabled) query.uniqueResult();
   }
 
@@ -250,9 +254,11 @@ public abstract class AccessTypeInjector implements Comparable<AccessTypeInjecto
    * Includes in the where clause some filtering needed for same cases.
    * 
    * @param whereClause
-   *          The where clause where the particular filtering will be included
+   *          The initial where clause
+   * @return Entity where clause with the filtering included
    */
-  public void addEntityWhereClause(StringBuilder whereClause) {
+  public String addEntityWhereClause(String whereClause) {
+    return whereClause;
   }
 
   /**

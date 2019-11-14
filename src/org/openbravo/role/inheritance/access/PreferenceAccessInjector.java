@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2019 Openbravo SLU 
  * All Rights Reserved. 
  ************************************************************************
  */
@@ -93,11 +93,14 @@ public class PreferenceAccessInjector extends AccessTypeInjector {
   }
 
   @Override
-  public void addEntityWhereClause(StringBuilder whereClause) {
+  public String addEntityWhereClause(String whereClause) {
     // Inheritable preferences are those that are not in the black list and also has a value in
     // the Visible At Role field
-    whereClause.append(" and p.visibleAtRole is not null");
-    whereClause.append(" and p.property not in (:blackList)");
+    //@formatter:off
+    return whereClause + 
+            "   and p.visibleAtRole is not null" +
+            "   and p.property not in (:blackList)";
+    //@formatter:on
   }
 
   @Override

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2019 Openbravo SLU 
  * All Rights Reserved. 
  ************************************************************************
  */
@@ -65,9 +65,9 @@ public class AlertRecipientAccessInjector extends AccessTypeInjector {
   }
 
   @Override
-  public void addEntityWhereClause(StringBuilder whereClause) {
+  public String addEntityWhereClause(String whereClause) {
     // Inheritable alert recipients are those with empty User/Contact field
-    whereClause.append(" and p.userContact is null");
+    return whereClause + " and p.userContact is null";
   }
 
   @Override
