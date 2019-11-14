@@ -79,9 +79,4 @@ public class QueryListComponentProvider extends BaseComponentProvider {
 
     return globalResources;
   }
-
-  @Override
-  public List<String> getTestResources() {
-    return new ArrayList<>();
-  }
 }

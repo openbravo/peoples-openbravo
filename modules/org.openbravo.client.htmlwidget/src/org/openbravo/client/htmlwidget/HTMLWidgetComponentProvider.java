@@ -49,9 +49,4 @@ public class HTMLWidgetComponentProvider extends BaseComponentProvider {
         createStaticResource("web/org.openbravo.client.htmlwidget/js/ob-html-widget.js", false));
     return globalResources;
   }
-
-  @Override
-  public List<String> getTestResources() {
-    return new ArrayList<>();
-  }
 }

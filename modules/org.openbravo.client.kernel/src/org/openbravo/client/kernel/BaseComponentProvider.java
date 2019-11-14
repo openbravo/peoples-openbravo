@@ -95,11 +95,6 @@ public abstract class BaseComponentProvider implements ComponentProvider {
     return this.getClass().getPackage().getName();
   }
 
-  @Override
-  public List<String> getTestResources() {
-    return null;
-  }
-
   protected ComponentResource createComponentResource(ComponentResourceType type, String path) {
     final ComponentResource resource = new ComponentResource();
     resource.setType(type);

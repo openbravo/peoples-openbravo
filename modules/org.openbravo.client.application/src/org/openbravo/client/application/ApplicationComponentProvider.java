@@ -502,9 +502,4 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     obc.setMaxResults(1);
     return obc.uniqueResult() != null;
   }
-
-  @Override
-  public List<String> getTestResources() {
-    return new ArrayList<>();
-  }
 }

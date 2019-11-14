@@ -66,12 +66,6 @@ public interface ComponentProvider {
   public Module getModule();
 
   /**
-   * 
-   * @return the list of JavaScript files that implement unit tests
-   */
-  public List<String> getTestResources();
-
-  /**
    * Computes parameters to add to a link of a resource. The parameters include the version and
    * language of the user.
    * 

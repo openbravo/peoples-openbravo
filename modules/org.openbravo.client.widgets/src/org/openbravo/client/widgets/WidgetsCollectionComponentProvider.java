@@ -19,7 +19,6 @@
 package org.openbravo.client.widgets;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -52,10 +51,5 @@ public class WidgetsCollectionComponentProvider extends BaseComponentProvider {
     globalResources
         .add(createStaticResource("web/org.openbravo.client.widgets/js/ob-twitter.js", false));
     return globalResources;
-  }
-
-  @Override
-  public List<String> getTestResources() {
-    return Collections.emptyList();
   }
 }

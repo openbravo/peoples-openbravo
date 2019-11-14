@@ -103,9 +103,4 @@ public class MyOpenbravoComponentProvider extends BaseComponentProvider {
 
     return globalResources;
   }
-
-  @Override
-  public List<String> getTestResources() {
-    return new ArrayList<>();
-  }
 }
