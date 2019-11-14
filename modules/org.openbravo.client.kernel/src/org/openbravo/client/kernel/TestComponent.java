@@ -25,8 +25,6 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import org.openbravo.model.ad.module.Module;
-
 /**
  * 
  * @author iperdomo
@@ -68,28 +66,7 @@ public class TestComponent extends BaseComponent {
     return this;
   }
 
-  /**
-   * Get the list of static test resources ordered by module dependency
-   * 
-   * @return all static test components to be used by the ui test suite
-   */
   public List<String> getTestResources() {
-    final List<Module> modules = KernelUtils.getInstance().getModulesOrderedByDependency();
-    final List<String> result = new ArrayList<String>();
-    for (Module mod : modules) {
-      for (ComponentProvider provider : componentProviders) {
-        if (provider.getTestResources() == null) {
-          continue;
-        }
-        if (provider.getModule().getId().equals(mod.getId())) {
-          for (String resource : provider.getTestResources()) {
-            if (!"".equals(resource)) {
-              result.add(resource);
-            }
-          }
-        }
-      }
-    }
-    return result;
+    return new ArrayList<>();
   }
 }

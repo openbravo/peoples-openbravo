@@ -52,7 +52,6 @@ public class HTMLWidgetComponentProvider extends BaseComponentProvider {
 
   @Override
   public List<String> getTestResources() {
-    final List<String> testResources = new ArrayList<String>();
-    return testResources;
+    return new ArrayList<>();
   }
 }

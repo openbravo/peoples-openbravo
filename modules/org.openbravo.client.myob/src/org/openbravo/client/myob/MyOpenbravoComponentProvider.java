@@ -106,8 +106,6 @@ public class MyOpenbravoComponentProvider extends BaseComponentProvider {
 
   @Override
   public List<String> getTestResources() {
-    final List<String> testResources = new ArrayList<String>();
-    testResources.add("web/org.openbravo.client.myob/js/test/ob-myopenbravo-test.js");
-    return testResources;
+    return new ArrayList<>();
   }
 }

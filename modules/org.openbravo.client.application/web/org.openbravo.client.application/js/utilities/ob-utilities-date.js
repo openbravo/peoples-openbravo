@@ -27,9 +27,7 @@ OB.Utilities.Date = {};
 // For a two-digit year display format, it establishes where is the frontier
 // between the 20th and the 21st century
 // The range is taken between 1900+centuryReference and 2100-centuryReference-1
-OB.Utilities.Date.centuryReference = 50; // Notice that change this value
-// implies that also the QUnit test
-// case should be changed
+OB.Utilities.Date.centuryReference = 50;
 // ** {{{ OB.Utilities.Date.normalizeDisplayFormat }}} **
 // Repairs the displayFormat definition (passed in as a parameter) to a value
 // expected by the rest of the system. For example mm is replaced by MM,
