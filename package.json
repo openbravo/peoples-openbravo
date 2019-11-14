@@ -4,7 +4,7 @@
   "description": "This contains some utilities used to format and lint Javascript code",
   "private": true,
   "scripts": {
-    "postinstall": "lerna bootstrap --no-ci --hoist",
+    "postinstall": "lerna bootstrap --no-ci --hoist; modules/org.openbravo.client.kernel/eslint-airbnb/copy-config",
     "test": "jest",
     "coverage": "jest --coverage",
     "jslint": "eslint --max-warnings 0",
@@ -18,6 +18,9 @@
     "eslint-config-prettier": "~4.3.0",
     "eslint-plugin-jest": "~23.0.2",
     "prettier": "~1.18.2",
+    "eslint-config-airbnb-base": "~14.0.0",
+    "eslint-plugin-import": "~2.18.2",
+    "eslint-plugin-prettier": "~3.1.1",
     "jest": "~24.9.0",
     "jest-html-reporters": "~1.2.0",
     "xmldom": "~0.1.27",

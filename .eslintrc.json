@@ -5,17 +5,18 @@
     "es6": true,
     "jest": true
   },
-  "plugins": ["jest"],
-  "extends": ["eslint:recommended", "prettier", "plugin:jest/recommended", "plugin:jest/style"],
+  "plugins": ["prettier", "jest"],
+  "extends": ["eslint:recommended", "plugin:jest/recommended", "plugin:jest/style", "plugin:prettier/recommended"],
+
   "parserOptions": {
     "ecmaVersion": 9
   },
   "globals": {
-    "OB": "writable",
-    "Backbone": "readonly",
-    "_": "readonly",
-    "isc": "readonly",
-    "BigDecimal": "readonly"
+    "OB": "writeable",
+    "Backbone": "readable",
+    "_": "readable",
+    "isc": "readable",
+    "BigDecimal": "readable"
   },
   "rules": {
     "eqeqeq": ["warn", "smart"],
