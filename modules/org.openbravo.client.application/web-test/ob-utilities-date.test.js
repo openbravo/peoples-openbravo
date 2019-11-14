@@ -16,7 +16,6 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-/* global describe, it, expect*/
 require('../web/org.openbravo.client.application/js/utilities/ob-utilities-date');
 
 describe('OB.Utilities.Date.*', () => {

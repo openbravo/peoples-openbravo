@@ -16,7 +16,6 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-/* global describe, it, expect*/
 OB = {};
 require('../web/org.openbravo.client.application/js/utilities/ob-utilities');
 
