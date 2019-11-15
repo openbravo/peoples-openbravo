@@ -38,13 +38,6 @@ enyo.kind({
   buttonDisabled: function(inSender, inEvent) {
     this.isEnabled = !inEvent.status;
     this.setDisabled(inEvent.status);
-    if (!this.isEnabled) {
-      this.removeClass('btnlink');
-      this.addClass('btnbp');
-    } else {
-      this.removeClass('btnbp');
-      this.addClass('btnlink');
-    }
   },
   tap: function() {
     var qty = 0;
@@ -125,6 +118,39 @@ enyo.kind({
           } else {
             model.set('generateInvoice', false);
           }
+
+          if (
+            model.get('isEditable') &&
+            !model.get('cloningReceipt') &&
+            OB.MobileApp.model.hasPermission('EnableMultiPriceList', true) &&
+            (model.get('priceIncludesTax') !==
+              OB.MobileApp.model.get('pricelist').priceIncludesTax ||
+              model.get('bp').get('priceListCurrency') !==
+                OB.MobileApp.model.get('pricelist').currency)
+          ) {
+            model.set('priceList', OB.MobileApp.model.get('pricelist').id, {
+              silent: true
+            });
+            model.set(
+              'priceIncludesTax',
+              OB.MobileApp.model.get('pricelist').priceIncludesTax
+            );
+            model.set('currency', OB.MobileApp.model.get('pricelist').currency);
+            OB.UTIL.showConfirmation.display(
+              OB.I18N.getLabel('OBPOS_ChangeOfPriceList'),
+              OB.I18N.getLabel('OBPOS_ChangeOfPriceListConfig', [
+                model.get('bp').get('priceListName'),
+                OB.MobileApp.model.get('pricelist')._identifier
+              ]),
+              null,
+              {
+                onHideFunction: function() {
+                  model.trigger('change:documentNo', model);
+                }
+              }
+            );
+          }
+
           this.renderCustomer(
             model.get('bp').get('id'),
             model.get('bp').get('_identifier')

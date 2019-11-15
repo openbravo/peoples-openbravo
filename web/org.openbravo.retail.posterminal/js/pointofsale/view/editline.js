@@ -949,10 +949,25 @@ enyo.kind({
                   thumb: true,
                   tap: function() {
                     this.owner.$.actionButtonsContainer.removeClass('expanded');
+                    this.owner.$.actionButtonsContainerScrim.removeClass(
+                      'expanded'
+                    );
                     this.owner.$.showLessActionButtons.setShowing(false);
                   },
                   classes:
                     'obObposPointOfSaleUiEditLine-msgedit-actionButtonsContainer'
+                },
+                {
+                  name: 'actionButtonsContainerScrim',
+                  classes:
+                    'obObposPointOfSaleUiEditLine-msgedit-actionButtonsContainerScrim',
+                  tap: function() {
+                    this.owner.$.actionButtonsContainer.removeClass('expanded');
+                    this.owner.$.actionButtonsContainerScrim.removeClass(
+                      'expanded'
+                    );
+                    this.owner.$.showLessActionButtons.setShowing(false);
+                  }
                 },
                 {
                   kind: 'OB.OBPOSPointOfSale.UI.EditLine.ShowMoreActionButtons',
@@ -1312,7 +1327,7 @@ enyo.kind({
       this
     );
   },
-  init: async function(model) {
+  init: function(model) {
     this.model = model;
     this.reasons = new Backbone.Collection();
     this.$.formElementReturnreason.coreElement.setCollection(this.reasons);
@@ -1326,12 +1341,12 @@ enyo.kind({
     );
 
     try {
-      const dataReasons = await OB.MasterdataModels.ReturnReason.find();
+      const dataReasons = OB.MobileApp.view.terminal.get('returnreasons');
       if (this.destroyed) {
         return;
       }
-      if (dataReasons.result && dataReasons.result.length > 0) {
-        this.reasons.reset(dataReasons.result);
+      if (dataReasons && dataReasons.length > 0) {
+        this.reasons.reset(dataReasons);
       } else {
         this.reasons.reset();
       }
@@ -1348,6 +1363,7 @@ enyo.kind({
   classes: 'obObposPointOfSaleUiEditLineShowMoreActionButtons',
   tap: function() {
     this.owner.$.actionButtonsContainer.addClass('expanded');
+    this.owner.$.actionButtonsContainerScrim.addClass('expanded');
     this.owner.$.showLessActionButtons.setShowing(true);
   }
 });
@@ -1359,6 +1375,7 @@ enyo.kind({
   classes: 'obObposPointOfSaleUiEditLineShowLessActionButtons',
   tap: function() {
     this.owner.$.actionButtonsContainer.removeClass('expanded');
+    this.owner.$.actionButtonsContainerScrim.removeClass('expanded');
     this.owner.$.showLessActionButtons.setShowing(false);
   }
 });
@@ -1372,13 +1389,23 @@ enyo.kind({
     i18nLabel: 'OBPOS_ReturnReason',
     classes: 'obObposPointOfSaleUiEditLine-msgedit-returnreason',
     change: function(inSender, inEvent) {
-      var returnReason = this.children[this.getSelected()].getValue();
+      var reason = this.children[this.getSelected()],
+        returnReason = reason.getValue(),
+        returnReasonName = reason.getContent();
       _.each(this.formElement.owner.selectedModels, function(line) {
         if (returnReason === '') {
           line.unset('returnReason');
+          line.unset('returnReasonName');
         } else {
           line.set('returnReason', returnReason);
+          line.set('returnReasonName', returnReasonName);
         }
+      });
+    },
+    actionAfterClear: function() {
+      _.each(this.formElement.owner.selectedModels, function(line) {
+        line.unset('returnReason');
+        line.unset('returnReasonName');
       });
     },
     renderHeader: enyo.kind({

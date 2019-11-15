@@ -23,10 +23,7 @@ enyo.kind({
       name: 'sep0',
       classes: 'obObposPointOfSaleUiToolbarImpl-sep0',
       init: function(model) {
-        if (
-          !OB.MobileApp.model.get('terminal').terminalType.useRfid ||
-          !OB.POS.hwserver.url
-        ) {
+        if (!OB.UTIL.RfidController.isRfidConfigured()) {
           this.hide();
         }
       }

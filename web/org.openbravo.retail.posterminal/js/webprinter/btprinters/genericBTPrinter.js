@@ -7,21 +7,13 @@
  ************************************************************************************
  */
 
-.obUiOrderSingleSelect {
-  cursor: pointer;
-  margin-top: 8px;
-  width: 27px;
-  height: 27px;
-}
-
-.obUiOrderMultiSelect {
-  cursor: pointer;
-  margin-top: 8px;
-  width: 27px;
-  height: 27px;
-}
-
-.obUiOrderMultiSelectAll {
-  margin-top: 6px;
-  white-space: nowrap;
-}
+/*global OB */
+(function() {
+  OB.PRINTERTYPES.GENERICBT.register({
+    name: 'Generic Bluetooth Receipt Printer',
+    genericName: 'BlueTooth Printer',
+    services: ['e7810a71-73ae-499d-8c15-faa9aef0c3f2'],
+    characteristic: 'bef8d6c9-9c21-4c9e-b632-bd58c1009f9f',
+    ESCPOS: OB.ESCPOS.Standard
+  });
+})();

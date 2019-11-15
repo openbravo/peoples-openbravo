@@ -24,13 +24,6 @@ enyo.kind({
   buttonDisabled: function(inSender, inEvent) {
     this.isEnabled = !inEvent.status;
     this.setDisabled(inEvent.status);
-    if (!this.isEnabled) {
-      this.removeClass('obUiRegularButton');
-      this.addClass('obUiSmallBPButton_disabled');
-    } else {
-      this.removeClass('obUiSmallBPButton_disabled');
-      this.addClass('obUiRegularButton');
-    }
   },
   initComponents: function() {
     this.inherited(arguments);

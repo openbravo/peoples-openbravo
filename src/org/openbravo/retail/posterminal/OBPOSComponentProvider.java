@@ -97,19 +97,19 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "webprinter/usbprinters/epsontmt20", "webprinter/usbprinters/epsontmt20ii",
         "webprinter/usbprinters/epsontmt88v", "webprinter/usbprinters/ncr7197",
         "webprinter/usbprinters/startsp100", "webprinter/usbprinters/wincorth230",
+        "webprinter/btprinters/genericBTPrinter", "webprinter/btprinters/zebraZQ320",
 
         "model/currencypanel", "model/country", "model/salesrepresentative", "model/discountset",
         "model/bpartnerset", "model/productcharacteristicvalue", "model/characteristicvalue",
         "model/characteristic", "model/brand", "model/executor", "model/terminal-model",
-        "model/paymentmethodcashup", "model/taxcashup", "model/returnreasons",
-        "model/offlineprinter", "model/productbom", "model/taxcategorybom",
-        "model/orderassociationsfilter", "model/product-servicelinked", "model/prepaymentrules",
-        "components/modalcancel", "components/subwindow", "components/leftsubwindow",
-        "components/modalreceiptproperties", "components/modalreceiptlineproperties",
-        "components/modalnoteditableorder", "components/modalnoteditableline",
-        "components/modalmodulesindev", "components/modalselectprinters",
-        "components/modalmorepaymentmethods", "components/modalDeliveryChange",
-        "components/obpos-gridkeyboard",
+        "model/paymentmethodcashup", "model/taxcashup", "model/offlineprinter", "model/productbom",
+        "model/taxcategorybom", "model/orderassociationsfilter", "model/product-servicelinked",
+        "model/prepaymentrules", "components/modalcancel", "components/subwindow",
+        "components/leftsubwindow", "components/modalreceiptproperties",
+        "components/modalreceiptlineproperties", "components/modalnoteditableorder",
+        "components/modalnoteditableline", "components/modalmodulesindev",
+        "components/modalselectprinters", "components/modalmorepaymentmethods",
+        "components/modalDeliveryChange", "components/obpos-gridkeyboard",
 
         // Web POS window
         "utils/eventbus", "utils/attributeUtils", "utils/cashUpReportUtils",
@@ -165,6 +165,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "pointofsale/view/toolbar-left", "pointofsale/view/toolbar-right", "pointofsale/view/scan",
         "pointofsale/view/editline", "pointofsale/view/payment", "pointofsale/view/ticketdiscount",
         "pointofsale/view/keyboard-toolbars", "pointofsale/view/keyboardorder",
+
         // Point of sale subwindows
         "pointofsale/view/subwindows/customers/components/sharedcomponents",
         "pointofsale/view/subwindows/customers/editcreatecustomerform",
@@ -173,6 +174,11 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "pointofsale/view/subwindows/customeraddress/components/sharedcomponents",
         "pointofsale/view/subwindows/customeraddress/editcreatecustomeraddress",
         "pointofsale/view/subwindows/customeraddress/customeraddrdetailview",
+
+        "pointofsale/view/subwindows/dqm/controller-dqm",
+        "pointofsale/view/subwindows/dqm/customerValidatorProvider",
+        "pointofsale/view/subwindows/dqm/posterminalValidations-dqm",
+
         // Point of sale modals
         "pointofsale/view/modals/modalstockdiscontinued",
         "pointofsale/view/modals/modalstockinstore",
@@ -260,8 +266,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     globalResources.add(createComponentResource(ComponentResourceType.Static,
         prefix + "utils/openhardwareurl.js", ComponentResource.APP_OB3));
 
-    // [TODO] Remove pos-login and obpos-legacy after the renaming
-    final String[] cssDependency = { "pos-login", "new-obpos-main" };
+    final String[] cssDependency = { "obpos-main" };
 
     for (final String resource : resourceDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,

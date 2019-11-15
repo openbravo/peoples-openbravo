@@ -25,22 +25,30 @@
       return Promise.reject('Bluetooth not supported.');
     }
 
+    const filters = [];
+    this.printertype.devices.forEach(function(item) {
+      filters.push({
+        services: item.services,
+        characteristict: item.characteristic
+      });
+    });
+
     return navigator.bluetooth
       .requestDevice({
-        filters: [
-          {
-            services: [this.printertype.device.service]
-          }
-        ]
+        filters: filters
       })
       .then(
         function(device) {
           this.device = device;
-          this.device.addEventListener(
-            'gattserverdisconnected',
-            this.onDisconnected.bind(this)
-          );
-          return this.printertype.device;
+          this.deviceSelected = this.printertype.devices.find(function(d) {
+            return d.genericName === device.name;
+          });
+          if (OB.UTIL.isNullOrUndefined(this.deviceSelected)) {
+            this.deviceSelected = this.printertype.devices.find(function(d) {
+              return d.genericName === 'BlueTooth Printer';
+            });
+          }
+          return this.deviceSelected;
         }.bind(this)
       );
   };
@@ -64,13 +72,13 @@
         .then(
           function(server) {
             this.server = server;
-            return server.getPrimaryService(this.printertype.device.service);
+            return server.getPrimaryService(this.deviceSelected.services);
           }.bind(this)
         )
         .then(
           function(service) {
             return service.getCharacteristic(
-              this.printertype.device.characteristic
+              this.deviceSelected.characteristic
             );
           }.bind(this)
         )

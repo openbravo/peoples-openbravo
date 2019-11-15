@@ -11,7 +11,7 @@
 
 enyo.kind({
   name: 'OB.UI.ModalReceiptLinesProperties',
-  kind: 'OB.UI.ModalAction',
+  kind: 'OB.UI.Modal',
   classes: 'obUiModalReceiptLinesProperties',
   handlers: {
     onApplyChanges: 'applyChanges'
@@ -75,9 +75,9 @@ enyo.kind({
     }
   },
   i18nHeader: 'OBPOS_ReceiptLinePropertiesDialogTitle',
-  bodyContent: {
+  body: {
     kind: 'Scroller',
-    classes: 'obUiModalReceiptLinesProperties-bodyContent-scroller',
+    classes: 'obUiModalReceiptLinesProperties-body-scroller',
     thumb: true,
     components: [
       {
@@ -86,20 +86,20 @@ enyo.kind({
       }
     ]
   },
-  bodyButtons: {
-    classes: 'obUiModalReceiptLinesProperties-bodyButtons',
+  footer: {
+    classes: 'obUiModalReceiptLinesProperties-footer',
     components: [
       {
         kind: 'OB.UI.ReceiptPropertiesDialogCancel',
         name: 'receiptLinePropertiesCancelBtn',
         classes:
-          'obUiModalReceiptLinesProperties-bodyButtons-receiptLinePropertiesCancelBtn'
+          'obUiModalReceiptLinesProperties-footer-receiptLinePropertiesCancelBtn'
       },
       {
         kind: 'OB.UI.ReceiptPropertiesDialogApply',
         name: 'receiptLinePropertiesApplyBtn',
         classes:
-          'obUiModalReceiptLinesProperties-bodyButtons-receiptLinePropertiesApplyBtn'
+          'obUiModalReceiptLinesProperties-footer-receiptLinePropertiesApplyBtn'
       }
     ]
   },
@@ -137,15 +137,14 @@ enyo.kind({
   },
   initComponents: function() {
     this.inherited(arguments);
-    this.attributeContainer = this.$.bodyContent.$.attributes;
-    this.setHeader(OB.I18N.getLabel(this.i18nHeader));
+    this.attributeContainer = this.$.body.$.attributes;
 
     this.propertycomponents = {};
 
     enyo.forEach(
       this.newAttributes,
       function(natt) {
-        var editline = this.$.bodyContent.$.attributes.createComponent({
+        var editline = this.$.body.$.attributes.createComponent({
           kind: 'OB.UI.PropertyEditLine',
           name: 'line_' + natt.name,
           classes:
@@ -266,13 +265,9 @@ enyo.kind({
   header: '',
   classes: 'obUiValidateAction',
   isDefaultAction: true,
-  bodyContent: {
-    name: 'message',
-    classes: 'obUiValidateAction-bodyContent-message',
-    content: ''
-  },
+  i18nBody: 'message',
   executeOnShow: function() {
-    this.$.header.setContent(this.args.header);
-    this.$.bodyContent.$.message.setContent(this.args.message);
+    this.setHeader(this.args.header);
+    this.$.body.$.message.setContent(this.args.message);
   }
 });

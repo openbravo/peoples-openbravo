@@ -63,12 +63,13 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.ModalAction',
+  kind: 'OB.UI.Modal',
   name: 'OB.UI.ModalQuotationProductAttributes',
   i18nHeader: 'OBPOS_QuotationProductAttributesDialogTitle',
   classses: 'obUiModalQuotationProductAttributes',
   autoDismiss: false,
-  bodyContent: {
+  hideCloseButton: true,
+  body: {
     kind: 'Scroller',
     classses: 'obUiModalQuotationProductAttributes-scroller',
     thumb: true,
@@ -86,13 +87,13 @@ enyo.kind({
   handlers: {
     onFieldChanged: 'fieldChanged'
   },
-  bodyButtons: {
-    classes: 'obUiModalQuotationProductAttributes-bodyButtons',
+  footer: {
+    classes: 'obUiModalQuotationProductAttributes-footer',
     components: [
       {
         kind: 'OB.UI.ModalDialogButton',
         classes:
-          'obUiModalQuotationProductAttributes-bodyButtons-obUiModalDialogButton1',
+          'obUiModalQuotationProductAttributes-footer-obUiModalDialogButton1',
         i18nContent: 'OBMOBC_LblOk',
         tap: function() {
           this.owner.owner.saveAction();
@@ -101,7 +102,7 @@ enyo.kind({
       {
         kind: 'OB.UI.ModalDialogButton',
         classes:
-          'obUiModalQuotationProductAttributes-bodyButtons-obUiModalDialogButton2',
+          'obUiModalQuotationProductAttributes-footer-obUiModalDialogButton2',
         i18nContent: 'OBPOS_LblClear',
         tap: function() {
           this.owner.owner.clearAction();
@@ -110,7 +111,7 @@ enyo.kind({
       {
         kind: 'OB.UI.ModalDialogButton',
         classes:
-          'obUiModalQuotationProductAttributes-bodyButtons-obUiModalDialogButton3',
+          'obUiModalQuotationProductAttributes-footer-obUiModalDialogButton3',
         i18nContent: 'OBMOBC_LblCancel',
         tap: function() {
           this.owner.owner.cancelAction();
@@ -123,16 +124,16 @@ enyo.kind({
       i,
       line = me.args.lines;
     for (i = 0; i < line.length; i++) {
-      me.$.bodyContent.$.quotationLinesComponent.$[
+      me.$.body.$.quotationLinesComponent.$[
         'quotationLine' + i
       ].$.valueAttribute.setValue(null);
-      me.$.bodyContent.$.quotationLinesComponent.$[
+      me.$.body.$.quotationLinesComponent.$[
         'quotationLine' + i
       ].$.valueAttribute.addClass(
         'obUiModalQuotationProductAttributes-quotationLinesComponent-quotationLine_clear'
       );
     }
-    me.$.bodyButtons.$.modalDialogButton.setDisabled(true);
+    me.$.footer.$.modalDialogButton.setDisabled(true);
     return;
   },
   cancelAction: function() {
@@ -151,7 +152,7 @@ enyo.kind({
       inpAttribute;
     lineIndex = 0;
     lines.forEach(function(theLine) {
-      inpAttribute = me.$.bodyContent.$.quotationLinesComponent.$[
+      inpAttribute = me.$.body.$.quotationLinesComponent.$[
         'quotationLine' + lineIndex
       ].$.valueAttribute.getValue();
       if (inpAttribute) {
@@ -175,14 +176,14 @@ enyo.kind({
     lineIndex = 0;
     lines.forEach(function(theLine) {
       enteredAttribute = false;
-      inpAttribute = me.$.bodyContent.$.quotationLinesComponent.$[
+      inpAttribute = me.$.body.$.quotationLinesComponent.$[
         'quotationLine' + lineIndex
       ].$.valueAttribute.getValue();
       if (inpAttribute) {
         enteredAttribute = true;
         focusIndex = lines.length === 0 ? 0 : lineIndex + 1;
         if (focusIndex < lines.length) {
-          me.$.bodyContent.$.quotationLinesComponent.$[
+          me.$.body.$.quotationLinesComponent.$[
             'quotationLine' + focusIndex
           ].$.valueAttribute.focus();
         }
@@ -192,7 +193,7 @@ enyo.kind({
       lineIndex++;
     });
     if (enteredAttribute) {
-      me.$.bodyButtons.$.modalDialogButton.setDisabled(false);
+      me.$.footer.$.modalDialogButton.setDisabled(false);
     }
     return true;
   },
@@ -200,40 +201,26 @@ enyo.kind({
     var me = this,
       lines = me.args.lines,
       i;
-    me.$.header.$.headerTitle.setContent(
-      OB.I18N.getLabel('OBPOS_QuotationProductAttributeDesc')
-    );
+    me.setHeader(OB.I18N.getLabel('OBPOS_QuotationProductAttributeDesc'));
     i = 0;
-    me.$.bodyContent.$.quotationLinesComponent.destroyComponents();
+    me.$.body.$.quotationLinesComponent.destroyComponents();
     lines.forEach(function(theLine) {
-      var quotationLine = me.$.bodyContent.$.quotationLinesComponent.createComponent(
-        {
-          kind: 'OB.UI.ModalQuotationProductAttributesScroller.QuotationLines',
-          classes:
-            'obUiModalQuotationProductAttributes-quotationLinesComponent-quotationLine',
-          name: 'quotationLine' + i
-        }
-      );
+      var quotationLine = me.$.body.$.quotationLinesComponent.createComponent({
+        kind: 'OB.UI.ModalQuotationProductAttributesScroller.QuotationLines',
+        classes:
+          'obUiModalQuotationProductAttributes-quotationLinesComponent-quotationLine',
+        name: 'quotationLine' + i
+      });
       quotationLine.$.valueAttribute.focus();
       quotationLine.$.productName.setContent(
         theLine.get('product').get('_identifier')
       );
       i++;
     });
-    me.$.bodyButtons.$.modalDialogButton.setDisabled(true);
-    this.$.headerCloseButton.hide();
-    me.$.bodyContent.render();
+    me.$.footer.$.modalDialogButton.setDisabled(true);
+    me.$.body.render();
   },
   initComponents: function() {
     this.inherited(arguments);
-    this.$.header.createComponent({
-      components: [
-        {
-          name: 'headerTitle',
-          classes: 'obUiModalQuotationProductAttributes-header-headerTitle',
-          type: 'text'
-        }
-      ]
-    });
   }
 });

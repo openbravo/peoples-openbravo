@@ -10,22 +10,19 @@
 /*global OB, enyo */
 
 enyo.kind({
-  kind: 'OB.UI.ModalAction',
+  kind: 'OB.UI.Modal',
   name: 'OB.OBPOSCashMgmt.UI.modalFinished',
   classes: 'obObposCashMgmtUiModalFinished',
   i18nHeader: 'OBPOS_LblDone',
-  bodyContent: {
-    i18nContent: 'OBPOS_FinishCashMgmtDialog',
-    classes: 'obObposCashMgmtUiModalFinished-bodyContent'
-  },
-  bodyButtons: {
-    classes: 'obObposCashMgmtUiModalFinished-bodyButtons',
+  i18nBody: 'OBPOS_FinishCashMgmtDialog',
+  footer: {
+    classes: 'obObposCashMgmtUiModalFinished-footer',
     components: [
       {
         //OK button
         kind: 'OB.OBPOSCashMgmt.UI.modalFinished_OkButton',
         classes:
-          'obObposCashMgmtUiModalFinished-bodyButtons-obObposCashMgmtUiModalFinishedOkButton'
+          'obObposCashMgmtUiModalFinished-footer-obObposCashMgmtUiModalFinishedOkButton'
       }
     ]
   },
@@ -45,22 +42,19 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.ModalAction',
+  kind: 'OB.UI.Modal',
   name: 'OB.OBPOSCashMgmt.UI.modalFinishedWrongly',
   classes: 'obObposCashMgmtUiModalFinishedWrongly',
   i18nHeader: 'OBPOS_CashMgmtWronglyHeader',
-  bodyContent: {
-    i18nContent: 'OBPOS_CashMgmtWrongly',
-    classes: 'obObposCashMgmtUiModalFinishedWrongly-bodyContent'
-  },
-  bodyButtons: {
-    classes: 'obObposCashMgmtUiModalFinishedWrongly-bodyButtons',
+  i18nBody: 'OBPOS_CashMgmtWrongly',
+  footer: {
+    classes: 'obObposCashMgmtUiModalFinishedWrongly-footer',
     components: [
       {
         //OK button
         kind: 'OB.OBPOSCashMgmt.UI.modalFinishedWrongly_OkButton',
         classes:
-          'obObposCashMgmtUiModalFinishedWrongly-bodyButtons-obObposCashMgmtUiModalFinishedWronglyOkButton'
+          'obObposCashMgmtUiModalFinishedWrongly-footer-obObposCashMgmtUiModalFinishedWronglyOkButton'
       }
     ]
   },

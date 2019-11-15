@@ -310,11 +310,18 @@ enyo.kind({
   },
   discountChanged: function(inSender, inEvent) {
     // Build discount container info
-    var formElementDiscountsList = this.$.formElementDiscountsList;
+    var formElementDiscountsList = this.$.formElementDiscountsList,
+      selectedOption = inEvent.originator.getSelected();
     formElementDiscountsList.model = inEvent.model;
     formElementDiscountsList.requiresQty = inEvent.requiresQty;
     formElementDiscountsList.amt = inEvent.amt;
     formElementDiscountsList.units = inEvent.units;
+
+    //Reset all combo options
+    if (!OB.UTIL.isNullOrUndefined(this.discounts)) {
+      this.discounts.reset(this.discounts.models);
+      inEvent.originator.setSelected(selectedOption);
+    }
 
     // Disable keyboard if rule is fixed, otherwise, enable keyboard
     if (
@@ -471,6 +478,10 @@ enyo.kind({
 
         let maxNoOrder = me.getMaxNoOrder(me.order);
         promotionToApply.definition.noOrder = maxNoOrder + 1;
+
+        if (!promotionToApply.definition.applyNext) {
+          OB.Discounts.Pos.removeManualPromotionFromLines(me.order);
+        }
 
         if (
           formElementDiscountsList.requiresQty &&

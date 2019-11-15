@@ -269,7 +269,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.ModalSelectPDFPrinters',
-  kind: 'OB.UI.ModalAction',
+  kind: 'OB.UI.Modal',
   classes: 'obUiModalSelectPDFPrinters',
   handlers: {
     onApplyChanges: 'applyChanges',
