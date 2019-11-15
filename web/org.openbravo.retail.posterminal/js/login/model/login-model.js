@@ -928,7 +928,7 @@
         )
       ) {
         try {
-          const salesrepresentative = await OB.MasterdataModels.SalesRepresentative.getIndices(
+          const salesrepresentative = await OB.MasterdataModels.SalesRepresentative.withId(
             OB.MobileApp.model.get('context').user.id
           );
           if (!salesrepresentative) {
@@ -939,7 +939,7 @@
             OB.MobileApp.model.get('context').user.isSalesRepresentative = true;
           }
         } catch (err) {
-          //nothing to do here
+          OB.error(err.message);
         }
       }
     },

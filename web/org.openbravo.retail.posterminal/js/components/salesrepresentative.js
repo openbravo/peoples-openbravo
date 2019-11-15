@@ -234,22 +234,20 @@ enyo.kind({
       }
     }
 
-    var criteria = {};
+    var criteria;
     if (filter && filter !== '') {
-      criteria._identifier = {
-        operator: OB.Dal.CONTAINS,
-        value: filter
+      criteria = {
+        _identifier: filter
       };
     }
 
     try {
-      const dataSaleRepresentative = await OB.MasterdataModels.SalesRepresentative.find(
-        OB.Model.SalesRepresentative,
+      const dataSalesRepresentative = await OB.MasterdataModels.SalesRepresentative.startsWith(
         criteria
       );
-      successCallbackBPs(dataSaleRepresentative.result);
+      successCallbackBPs(dataSalesRepresentative.result);
     } catch (err) {
-      errorCallback(err);
+      errorCallback(undefined, err.message);
     }
 
     return true;

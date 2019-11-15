@@ -11,8 +11,12 @@
   class SalesRepresentative extends OB.MasterdataModelDefinition {
     constructor() {
       super();
-      this._endPoint =
-        'org.openbravo.retail.posterminal.master.SalesRepresentative';
+      this.indices = [
+        {
+          indexName: '_identifier',
+          keyPath: '_identifier'
+        }
+      ];
     }
   }
   OB.MasterdataController.registerModel(SalesRepresentative);
