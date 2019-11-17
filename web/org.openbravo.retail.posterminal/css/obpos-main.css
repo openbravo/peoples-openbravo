@@ -10234,73 +10234,64 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obUiCustomerCheckOption {
   height: 25px;
   border: 1px solid #8c8c8c;
-  color: #8c8c8c;
+}
+
+.obUiCustomerCheckOption .obUiButton-components {
+  grid-template-columns: 1fr;
+}
+
+.obUiCustomerCheckOption .obUiButton-components-icon {
+  position: absolute;
+  width: 100%;
+  height: 100%;
   background-repeat: no-repeat;
   background-position: 6px center;
-  background-color: transparent;
   background-image: none;
   background-size: 15px auto;
-  padding: 0px 20px 0px 20px;
-  transition: color 0.2s ease-out, background 0.2s ease-out, padding 0.2s ease-out;
+  transition: background 0.2s ease-out;
+  filter: var(--color-secondary_img);
 }
 
-.obUiCustomerCheckOption.active {
-  background-color: white;
+.obUiCustomerCheckOption .obUiButton-components-label {
+  padding: 0px 20px 0px 20px;
+  color: #8c8c8c;
+  transition: color 0.2s ease-out, padding 0.2s ease-out;
+}
+
+.obUiCustomerCheckOption.active .obUiButton-components-icon,
+.obUiCustomerCheckOption.active:active .obUiButton-components-icon,
+.obUiCustomerCheckOption.half-active .obUiButton-components-icon {
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconCheck.svg');
-  /*filter: var(--color-secondary_img);*/
+}
+
+.obUiCustomerCheckOption.active .obUiButton-components-label,
+.obUiCustomerCheckOption.active:not(.disabled):active .obUiButton-components-label,
+.obUiCustomerCheckOption.half-active .obUiButton-components-label {
   padding: 0px 12px 0px 28px;
   color: black;
 }
 
-.obUiCustomerCheckOption.active:active {
-  background-color: white;
-  background-image: none;
-  padding: 0px 20px 0px 20px;
-  color: #8c8c8c;
-}
-
-.obUiCustomerCheckOption.half-active {
-  background-color: white;
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconCheck.svg');
-  /*filter: var(--color-secondary_img);*/
+.obUiCustomerCheckOption.half-active .obUiButton-components-icon,
+.obUiCustomerCheckOption.half-active .obUiButton-components-label {
   opacity: 0.6;
-  padding: 0px 12px 0px 28px;
-  color: black;
 }
 
-.obUiCustomerCheckOption[disabled='disabled']:active {
-  background-color: white;
-  background-image: none;
-  padding: 0px 20px 0px 20px;
-  color: #8c8c8c;
-}
-
-.obUiCustomerCheckOption.active[disabled='disabled']:active {
-  background-color: white;
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconCheck.svg');
-  /*filter: var(--color-secondary_img);*/
-  padding: 0px 12px 0px 28px;
-  color: #8c8c8c;
+.obUiCustomerCheckOption.disabled.active .obUiButton-components-icon {
+  filter: var(--color-secondary_disabled_img);
 }
 
 .obUiCustomerCheckOption:focus {
-  outline-style: solid;
-  outline-color: var(--color-secondary);
   border-color: var(--color-secondary);
 }
 
 .obUiCustomerCheckOption.disabled,
-.obUiCustomerCheckOption.disabled .obUiButton-components-label,
-.obUiCustomerCheckOption:disabled {
+.obUiCustomerCheckOption.disabled .obUiButton-components-label {
   display: block;
   cursor: default;
   color: #8c8c8c;
   border-width: 0px;
 }
 
-.obUiCustomerCheckOption.disabled .obUiButton-components-label {
-  padding-top: 4px;
-}
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.customers.cancelEdit
