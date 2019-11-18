@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2016 Openbravo SLU 
+ * All portions are Copyright (C) 2016-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,46 +19,31 @@
 
 package org.openbravo.test.cancelandreplace.data;
 
-import java.math.BigDecimal;
+import java.util.List;
 
 public abstract class CancelAndReplaceTestData {
 
   /*
    * CONSTANTS:
    */
-  public final String BP_CUSTOMER_A = "4028E6C72959682B01295F40C3CB02EC";
-  public final String FINAL_GOOD_A = "4028E6C72959682B01295ADC1D07022A";
+  protected static final String BP_CUSTOMER_A = "4028E6C72959682B01295F40C3CB02EC";
+  // Sales order: 50017
+  protected static final String SALESORDER_50017_ID = "F1AAB8C608AA434C9FC7FC1D685BA016";
+  // Sales order: 50011
+  protected static final String SALESORDER_50011_ID = "80AAF8AC57EC4A7EB2F85B3B2675F88C";
+  // Sales order: 50008
+  protected static final String SALESORDER_50008_ID = "A88E5504A1D5443CA4B73EDFB143B848";
 
   private String testNumber;
   private String testDescription;
   private String bpartnerId;
-  private BigDecimal quantity;
-  private BigDecimal oldOrderPreviouslyPaidAmount;
-  private BigDecimal oldOrderDeliveredQuantity;
-
-  private BigDecimal oldOrderTotalAmount;
-  private BigDecimal inverseOrderTotalAmount;
-  private BigDecimal newOrderTotalAmount;
-  private String oldOrderStatus;
-  private String inverseOrderStatus;
-  private String newOrderStatus;
-  private BigDecimal oldOrderReceivedPayment;
-  private BigDecimal inverseOrderReceivedPayment;
-  private BigDecimal newOrdeReceivedPayment;
-  private BigDecimal oldOrderOutstandingPayment;
-  private BigDecimal inverseOrderOutstandingPayment;
-  private BigDecimal newOrderOutstandingPayment;
-
+  private String cloneOrderId;
   private boolean activateNettingGoodsShipmentPref;
   private boolean activateAssociateNettingGoodsShipmentPref;
-
-  private BigDecimal oldOrderLineDeliveredQuantity;
-  private BigDecimal inverseOrderLineDeliveredQuantity;
-  private BigDecimal newOrderLineDeliveredQuantity;
-
-  private BigDecimal oldOrderLineShipmentLines;
-  private BigDecimal inverseOrderLineShipmentLines;
-  private BigDecimal newOrderLineShipmentLines;
+  private boolean orderPaid;
+  private CancelAndReplaceOrderTestData oldOrder;
+  private CancelAndReplaceOrderTestData inverseOrder;
+  private List<CancelAndReplaceOrderTestData> newOrders;
 
   private String errorMessage;
 
@@ -68,14 +53,6 @@ public abstract class CancelAndReplaceTestData {
 
   public void setBpartnerId(String bpartnerId) {
     this.bpartnerId = bpartnerId;
-  }
-
-  public BigDecimal getQuantity() {
-    return quantity;
-  }
-
-  public void setQuantity(BigDecimal quantity) {
-    this.quantity = quantity;
   }
 
   public String getTestDescription() {
@@ -94,181 +71,45 @@ public abstract class CancelAndReplaceTestData {
     this.testNumber = testNumber;
   }
 
-  public BigDecimal getOldOrderDeliveredQuantity() {
-    return oldOrderDeliveredQuantity;
+  public CancelAndReplaceOrderTestData getOldOrder() {
+    return oldOrder;
   }
 
-  public void setOldOrderDeliveredQuantity(BigDecimal oldOrderDeliveredQuantity) {
-    this.oldOrderDeliveredQuantity = oldOrderDeliveredQuantity;
+  public void setOldOrder(CancelAndReplaceOrderTestData oldOrder) {
+    this.oldOrder = oldOrder;
   }
 
-  public BigDecimal getOldOrderTotalAmount() {
-    return oldOrderTotalAmount;
+  public CancelAndReplaceOrderTestData getInverseOrder() {
+    return inverseOrder;
   }
 
-  public void setOldOrderTotalAmount(BigDecimal oldOrderTotalAmount) {
-    this.oldOrderTotalAmount = oldOrderTotalAmount;
+  public void setInverseOrder(CancelAndReplaceOrderTestData inverseOrder) {
+    this.inverseOrder = inverseOrder;
   }
 
-  public BigDecimal getInverseOrderTotalAmount() {
-    return inverseOrderTotalAmount;
+  public void setNewOrders(List<CancelAndReplaceOrderTestData> newOrders) {
+    this.newOrders = newOrders;
   }
 
-  public void setInverseOrderTotalAmount(BigDecimal inverseOrderTotalAmount) {
-    this.inverseOrderTotalAmount = inverseOrderTotalAmount;
+  public List<CancelAndReplaceOrderTestData> getNewOrders() {
+    return newOrders;
   }
 
-  public BigDecimal getNewOrderTotalAmount() {
-    return newOrderTotalAmount;
-  }
-
-  public void setNewOrderTotalAmount(BigDecimal newOrderTotalAmount) {
-    this.newOrderTotalAmount = newOrderTotalAmount;
-  }
-
-  public String getOldOrderStatus() {
-    return oldOrderStatus;
-  }
-
-  public void setOldOrderStatus(String oldOrderStatus) {
-    this.oldOrderStatus = oldOrderStatus;
-  }
-
-  public String getInverseOrderStatus() {
-    return inverseOrderStatus;
-  }
-
-  public void setInverseOrderStatus(String inverseOrderStatus) {
-    this.inverseOrderStatus = inverseOrderStatus;
-  }
-
-  public String getNewOrderStatus() {
-    return newOrderStatus;
-  }
-
-  public void setNewOrderStatus(String newOrderStatus) {
-    this.newOrderStatus = newOrderStatus;
-  }
-
-  public BigDecimal getOldOrderReceivedPayment() {
-    return oldOrderReceivedPayment;
-  }
-
-  public void setOldOrderReceivedPayment(BigDecimal oldOrderReceivedPayment) {
-    this.oldOrderReceivedPayment = oldOrderReceivedPayment;
-  }
-
-  public BigDecimal getInverseOrderReceivedPayment() {
-    return inverseOrderReceivedPayment;
-  }
-
-  public void setInverseOrderReceivedPayment(BigDecimal inverseOrderReceivedPayment) {
-    this.inverseOrderReceivedPayment = inverseOrderReceivedPayment;
-  }
-
-  public BigDecimal getNewOrderReceivedPayment() {
-    return newOrdeReceivedPayment;
-  }
-
-  public void setNewOrderReceivedPayment(BigDecimal newOrdeReceivedPayment) {
-    this.newOrdeReceivedPayment = newOrdeReceivedPayment;
-  }
-
-  public BigDecimal getOldOrderOustandingPayment() {
-    return oldOrderOutstandingPayment;
-  }
-
-  public void setOldOrderOutstandingPayment(BigDecimal oldOrderOutstandingPayment) {
-    this.oldOrderOutstandingPayment = oldOrderOutstandingPayment;
-  }
-
-  public BigDecimal getInverseOrderOutstandingPayment() {
-    return inverseOrderOutstandingPayment;
-  }
-
-  public void setInverseOrderOutstandingPayment(BigDecimal inverseOrderOutstandingPayment) {
-    this.inverseOrderOutstandingPayment = inverseOrderOutstandingPayment;
-  }
-
-  public BigDecimal getNewOrderOutstandingPayment() {
-    return newOrderOutstandingPayment;
-  }
-
-  public void setNewOrderOutstandingPayment(BigDecimal newOrderOutstandingPayment) {
-    this.newOrderOutstandingPayment = newOrderOutstandingPayment;
-  }
-
-  public BigDecimal getOldOrderPreviouslyPaidAmount() {
-    return oldOrderPreviouslyPaidAmount;
-  }
-
-  public void setOldOrderPreviouslyPaidAmount(BigDecimal olOrderPreviouslyPaidAmount) {
-    this.oldOrderPreviouslyPaidAmount = olOrderPreviouslyPaidAmount;
+  public boolean isActivateNettingGoodsShipmentPref() {
+    return activateNettingGoodsShipmentPref;
   }
 
   public void setActivateNettingGoodsShipmentPref(boolean activateNettingGoodsShipmentPref) {
     this.activateNettingGoodsShipmentPref = activateNettingGoodsShipmentPref;
   }
 
-  public boolean getActivateNettingGoodsShipmentPref() {
-    return activateNettingGoodsShipmentPref;
+  public boolean isActivateAssociateNettingGoodsShipmentPref() {
+    return activateAssociateNettingGoodsShipmentPref;
   }
 
   public void setActivateAssociateNettingGoodsShipmentPref(
       boolean activateAssociateNettingGoodsShipmentPref) {
     this.activateAssociateNettingGoodsShipmentPref = activateAssociateNettingGoodsShipmentPref;
-  }
-
-  public boolean getActivateAssociateNettingGoodsShipmentPref() {
-    return activateAssociateNettingGoodsShipmentPref;
-  }
-
-  public void setOldOrderLineDeliveredQuantity(BigDecimal oldOrderLineDeliveredQuantity) {
-    this.oldOrderLineDeliveredQuantity = oldOrderLineDeliveredQuantity;
-  }
-
-  public BigDecimal getOldOrderLineDeliveredQuantity() {
-    return oldOrderLineDeliveredQuantity;
-  }
-
-  public void setInverseOrderLineDeliveredQuantity(BigDecimal inverseOrderLineDeliveredQuantity) {
-    this.inverseOrderLineDeliveredQuantity = inverseOrderLineDeliveredQuantity;
-  }
-
-  public BigDecimal getInverseOrderLineDeliveredQuantity() {
-    return inverseOrderLineDeliveredQuantity;
-  }
-
-  public void setNewOrderLineDeliveredQuantity(BigDecimal newOrderLineDeliveredQuantity) {
-    this.newOrderLineDeliveredQuantity = newOrderLineDeliveredQuantity;
-  }
-
-  public BigDecimal getNewOrderLineDeliveredQuantity() {
-    return newOrderLineDeliveredQuantity;
-  }
-
-  public void setOldOrderLineShipmentLines(BigDecimal oldOrderLineShipmentLines) {
-    this.oldOrderLineShipmentLines = oldOrderLineShipmentLines;
-  }
-
-  public BigDecimal getOldOrderLineShipmentLines() {
-    return oldOrderLineShipmentLines;
-  }
-
-  public void setInverseOrderLineShipmentLines(BigDecimal inverseOrderLineShipmentLines) {
-    this.inverseOrderLineShipmentLines = inverseOrderLineShipmentLines;
-  }
-
-  public BigDecimal getInverseOrderLineShipmentLines() {
-    return inverseOrderLineShipmentLines;
-  }
-
-  public void setNewOrderLineShipmentLines(BigDecimal newOrderLineShipmentLines) {
-    this.newOrderLineShipmentLines = newOrderLineShipmentLines;
-  }
-
-  public BigDecimal getNewOrderLineShipmentLines() {
-    return newOrderLineShipmentLines;
   }
 
   public CancelAndReplaceTestData() {
@@ -284,5 +125,21 @@ public abstract class CancelAndReplaceTestData {
   }
 
   public abstract void initialize();
+
+  public boolean isOrderPaid() {
+    return orderPaid;
+  }
+
+  public void setOrderPaid(boolean orderPaid) {
+    this.orderPaid = orderPaid;
+  }
+
+  public String getCloneOrderId() {
+    return cloneOrderId;
+  }
+
+  public void setCloneOrderId(String cloneOrderId) {
+    this.cloneOrderId = cloneOrderId;
+  }
 
 }
