@@ -633,10 +633,14 @@ enyo.kind({
           _.each(
             line.get('relatedLines'),
             function(line2) {
-              if (!line2.deferred && !line.get('originalOrderLineId')) {
-                line2 = OB.MobileApp.model.receipt.attributes.lines.get(
-                  line2.orderlineId
-                ).attributes;
+              if (
+                !line2.deferred &&
+                !line.get('originalOrderLineId') &&
+                OB.MobileApp.model.receipt.get('lines').get(line2.orderlineId)
+              ) {
+                line2 = OB.MobileApp.model.receipt
+                  .get('lines')
+                  .get(line2.orderlineId).attributes;
               }
               trancheValues = OB.UI.SearchServicesFilter.prototype.calculateTranche(
                 line2,
