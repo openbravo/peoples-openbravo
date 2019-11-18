@@ -2,19 +2,25 @@
   "root": true,
   "env": {
     "browser": true,
-    "es6": true
+    "es6": true,
+    "jest": true
   },
-  "extends": ["eslint:recommended", "plugin:prettier/recommended"],
-  "plugins": ["prettier"],
+  "plugins": ["prettier", "jest"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:jest/recommended",
+    "plugin:jest/style",
+    "plugin:prettier/recommended"
+  ],
   "parserOptions": {
     "ecmaVersion": 9
   },
   "globals": {
-    "OB": "writeable",
-    "Backbone": "readable",
-    "_": "readable",
-    "isc": "readable",
-    "BigDecimal": "readable"
+    "OB": "writable",
+    "Backbone": "readonly",
+    "_": "readonly",
+    "isc": "readonly",
+    "BigDecimal": "readonly"
   },
   "rules": {
     "eqeqeq": ["warn", "smart"],

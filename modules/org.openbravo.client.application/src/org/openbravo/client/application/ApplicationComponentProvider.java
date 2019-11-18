@@ -502,17 +502,4 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     obc.setMaxResults(1);
     return obc.uniqueResult() != null;
   }
-
-  @Override
-  public List<String> getTestResources() {
-    final List<String> testResources = new ArrayList<String>();
-    testResources.add("web/org.openbravo.client.application/js/test/ob-ui-test.js");
-    testResources.add("web/org.openbravo.client.application/js/test/ob-property-store-test.js");
-    testResources.add("web/org.openbravo.client.application/js/test/ob-utilities-date-test.js");
-    testResources.add("web/org.openbravo.client.application/js/test/ob-navbar-test.js");
-    testResources.add("web/org.openbravo.client.application/js/test/ob-utilities-number-test.js");
-    testResources
-        .add("web/org.openbravo.client.application/js/test/ob-utilities-valid-url-test.js");
-    return testResources;
-  }
 }
