@@ -131,7 +131,8 @@ enyo.kind({
         'obUiModalReceiptPropertiesImpl-newAttributes-salesrepresentativebutton',
       i18nLabel: 'OBPOS_SalesRepresentative',
       permission: 'OBPOS_salesRepresentative.receipt',
-      permissionOption: 'OBPOS_SR.comboOrModal'
+      permissionOption: 'OBPOS_SR.comboOrModal',
+      hideNullifyButton: true
     },
     {
       kind: 'OB.UI.Customer',

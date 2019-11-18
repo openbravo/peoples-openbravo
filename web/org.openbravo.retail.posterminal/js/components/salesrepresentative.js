@@ -10,7 +10,7 @@
 /*global OB, enyo, Backbone, _ */
 
 enyo.kind({
-  kind: 'OB.UI.SmallButton',
+  kind: 'OB.UI.FormElement.Selector',
   name: 'OB.UI.SalesRepresentative',
   classes: 'obUiSalesRepresentative',
   published: {
@@ -28,10 +28,10 @@ enyo.kind({
   },
   init: function(model) {
     if (!OB.MobileApp.model.hasPermission(this.permission)) {
-      this.parent.parent.parent.hide();
+      this.parent.parent.parent.parent.hide();
     } else {
       if (!OB.MobileApp.model.hasPermission(this.permissionOption, true)) {
-        this.parent.parent.parent.hide();
+        this.parent.parent.parent.parent.hide();
       }
     }
     this.setOrder(model.get('order'));
