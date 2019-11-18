@@ -19,7 +19,7 @@
       return [];
     }
     /* @Override */
-    static validate(property, value, callback) {
+    static validate(oldCustomer, property, value, callback) {
       let result;
       switch (property) {
         case 'phone':
