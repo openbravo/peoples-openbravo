@@ -1481,6 +1481,34 @@ begin
     end loop;
     
   end loop;
+  
+    --materialized views
+  for i in (
+          SELECT md5(upper(matviewname) ||  md5(upper(pg_get_viewdef(matviewname, true)))) as ck, matviewname
+            FROM pg_matviews 
+           WHERE schemaname = CURRENT_SCHEMA() 
+             AND matviewname !~ '^pg_' 
+        ORDER BY matviewname) loop
+    v_md5 := md5(v_md5||i.ck);
+    
+    -- indexes of materialized views
+    for j in (
+             SELECT md5(upper(pg_attribute.attname::text)||UPPER(PG_CLASS.RELNAME)||(CASE PG_INDEX.indisunique WHEN true THEN 'UNIQUE' ELSE 'NONUNIQUE' END)) as ck
+              FROM PG_INDEX, PG_CLASS, PG_CLASS PG_CLASS1, PG_NAMESPACE, pg_attribute
+              WHERE PG_INDEX.indexrelid = PG_CLASS.OID
+              AND PG_INDEX.indrelid = PG_CLASS1.OID
+              AND PG_CLASS.RELNAMESPACE = PG_NAMESPACE.OID
+              AND PG_CLASS1.RELNAMESPACE = PG_NAMESPACE.OID
+              AND PG_NAMESPACE.NSPNAME = CURRENT_SCHEMA()
+              AND PG_INDEX.INDISPRIMARY ='f'
+               AND pg_attribute.attrelid = pg_index.indrelid
+          AND pg_attribute.attnum = ANY (indkey)
+              AND PG_CLASS1.RELNAME = i.matviewname
+              ORDER BY UPPER(PG_CLASS.RELNAME), upper(pg_attribute.attname::text)) loop
+      v_md5 := md5(v_md5||j.ck);
+    end loop;    
+    
+  end loop;  
 
   select db_checksum
     into aux
