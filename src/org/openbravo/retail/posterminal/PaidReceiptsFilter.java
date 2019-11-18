@@ -100,7 +100,7 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
         + " and ord.client.id = $clientId" //
         + getOganizationFilter(jsonsent) //
         + " and ord.obposIsDeleted = false and ord.obposApplications is not null and ord.documentStatus <> 'CJ' " //
-        + " and ord.documentStatus <> 'CA' ";
+        + " and ord.documentStatus not in ('CJ', 'CA', 'NC', 'AE', 'ME')";
     if (!isPayOpenTicket) {
       hqlPaidReceipts += " and (ord.documentStatus <> 'CL' or ord.iscancelled = true) ";
     }

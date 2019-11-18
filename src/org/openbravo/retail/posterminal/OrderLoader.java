@@ -507,6 +507,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
 
       if (!isQuotation && !isDeleted) {
         if (doCancelAndReplace && order.getReplacedorder() != null) {
+          OBContext.setCrossOrgReferenceAdminMode();
           TriggerHandler.getInstance().disable();
           try {
             // Set default payment type to order in case there is no payment on the order
@@ -514,14 +515,14 @@ public class OrderLoader extends POSDataSynchronizationProcess
             // Cancel and Replace the order
             final Organization paymentOrganization = getPaymentOrganization(posTerminal,
                 POSUtils.isCrossStore(order.getReplacedorder(), posTerminal));
-            jsonorder.put("paymentOrganization", paymentOrganization.getId());
-            CancelAndReplaceUtils.cancelAndReplaceOrder(order.getId(), jsonorder,
-                useOrderDocumentNoForRelatedDocs);
+            CancelAndReplaceUtils.cancelAndReplaceOrder(order.getId(), paymentOrganization.getId(),
+                jsonorder, useOrderDocumentNoForRelatedDocs);
           } catch (Exception ex) {
             OBDal.getInstance().rollbackAndClose();
             throw new OBException("CancelAndReplaceUtils.cancelAndReplaceOrder: ", ex);
           } finally {
             TriggerHandler.getInstance().enable();
+            OBContext.restorePreviousCrossOrgReferenceMode();
           }
         }
 
@@ -1138,13 +1139,15 @@ public class OrderLoader extends POSDataSynchronizationProcess
         .setScale(pricePrecision, RoundingMode.HALF_UP));
 
     order.setSalesTransaction(true);
-    if (jsonorder.has("obposIsDeleted") && jsonorder.has("isQuotation")
-        && jsonorder.getBoolean("obposIsDeleted")) {
-      order.setDocumentStatus("CL");
-    } else if (isQuotation) {
-      order.setDocumentStatus("UE");
-    } else {
-      order.setDocumentStatus("CO");
+    if (!jsonorder.has("documentStatus")) {
+      if (jsonorder.has("obposIsDeleted") && jsonorder.has("isQuotation")
+          && jsonorder.getBoolean("obposIsDeleted")) {
+        order.setDocumentStatus("CL");
+      } else if (isQuotation) {
+        order.setDocumentStatus("UE");
+      } else {
+        order.setDocumentStatus("CO");
+      }
     }
 
     order.setDocumentAction("--");
@@ -1800,7 +1803,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
 
   }
 
-  private Organization getPaymentOrganization(final OBPOSApplications posTerminal,
+  protected Organization getPaymentOrganization(final OBPOSApplications posTerminal,
       final boolean isCrossStore) {
     return isCrossStore ? posTerminal.getOrganization().getOBRETCOCrossStoreOrganization()
         : posTerminal.getOrganization();

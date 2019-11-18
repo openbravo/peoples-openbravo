@@ -29,6 +29,7 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.process.OutDatedDataChangeException;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.retail.posterminal.utility.DocumentNoHandler;
@@ -149,8 +150,17 @@ public class CancelLayawayLoader extends OrderLoader {
 
       POSUtils.setDefaultPaymentType(json, inverseOrder);
 
-      CancelAndReplaceUtils.cancelOrder(json.getString("orderid"), json,
-          useOrderDocumentNoForRelatedDocs);
+      OBContext.setCrossOrgReferenceAdminMode();
+      try {
+        final Organization paymentOrganization = getPaymentOrganization(
+            inverseOrder.getObposApplications(),
+            POSUtils.isCrossStore(oldOrder, inverseOrder.getObposApplications()));
+        CancelAndReplaceUtils.cancelOrder(json.getString("orderid"), paymentOrganization.getId(),
+            json, useOrderDocumentNoForRelatedDocs);
+      } finally {
+        OBContext.restorePreviousCrossOrgReferenceMode();
+      }
+
     } catch (Exception ex) {
       OBDal.getInstance().rollbackAndClose();
       throw new OBException("Error in CancelLayawayLoader : " + ex.getMessage(), ex);
