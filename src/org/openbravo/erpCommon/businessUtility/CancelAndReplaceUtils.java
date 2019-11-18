@@ -29,6 +29,7 @@ import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.LockOptions;
 import org.hibernate.ScrollMode;
@@ -243,6 +244,49 @@ public class CancelAndReplaceUtils {
     return newDocNo.toString();
   }
 
+  /**
+   * Method to check if a netting shipment must be generated during the C&amp;R and CL process.
+   * 
+   * @param order
+   *          The order that is being canceled.
+   * @return True if is necessary to create the netting shipment.
+   */
+  public static boolean getCreateNettingGoodsShipmentPreferenceValue(Order order) {
+    boolean createNettingGoodsShipment = false;
+    try {
+      createNettingGoodsShipment = Preferences
+          .getPreferenceValue(CREATE_NETTING_SHIPMENT, true,
+              OBContext.getOBContext().getCurrentClient(), order.getOrganization(),
+              OBContext.getOBContext().getUser(), null, null)
+          .equals("Y");
+    } catch (PropertyException e1) {
+      createNettingGoodsShipment = false;
+    }
+    return createNettingGoodsShipment;
+  }
+
+  /**
+   * Method to check if during the C&amp;R process the shipment lines must be moved from the old
+   * order to the new order.
+   * 
+   * @param order
+   *          The order that is being canceled.
+   * @return True if the shipment lines must be moved to the new order.
+   */
+  public static boolean getAssociateGoodsShipmentToNewSalesOrderPreferenceValue(Order order) {
+    boolean associateShipmentToNewReceipt = false;
+    try {
+      associateShipmentToNewReceipt = Preferences
+          .getPreferenceValue(ASSOCIATE_SHIPMENT_TO_REPLACE_TICKET, true,
+              OBContext.getOBContext().getCurrentClient(), order.getOrganization(),
+              OBContext.getOBContext().getUser(), null, null)
+          .equals("Y");
+    } catch (PropertyException e1) {
+      associateShipmentToNewReceipt = false;
+    }
+    return associateShipmentToNewReceipt;
+  }
+
   static void throwExceptionIfOrderIsCanceled(Order order) {
     if (order.isCancelled().booleanValue()) {
       throw new OBException(
@@ -341,7 +385,7 @@ public class CancelAndReplaceUtils {
   // Pay original order and inverse order.
   static FIN_Payment payOriginalAndInverseOrder(JSONObject jsonOrder, Order oldOrder,
       Order inverseOrder, Organization paymentOrganization, BigDecimal outstandingAmount,
-      BigDecimal negativeAmount, boolean useOrderDocumentNoForRelatedDocs) throws Exception {
+      BigDecimal negativeAmount, boolean useOrderDocumentNoForRelatedDocs) throws JSONException {
     FIN_Payment nettingPayment = null;
     String paymentDocumentNo = null;
     FIN_PaymentMethod paymentPaymentMethod = null;

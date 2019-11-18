@@ -49,7 +49,6 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBDateUtils;
-import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.materialmgmt.ReservationUtils;
 import org.openbravo.model.ad.access.OrderLineTax;
 import org.openbravo.model.common.enterprise.DocumentType;
@@ -903,49 +902,6 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
     } catch (Exception e) {
       throw new OBException(e);
     }
-  }
-
-  /**
-   * Method to check if a netting shipment must be generated during the C&amp;R and CL process.
-   * 
-   * @param order
-   *          The order that is being canceled.
-   * @return True if is necessary to create the netting shipment.
-   */
-  private boolean getCreateNettingGoodsShipmentPreferenceValue(Order order) {
-    boolean createNettingGoodsShipment = false;
-    try {
-      createNettingGoodsShipment = Preferences
-          .getPreferenceValue(CREATE_NETTING_SHIPMENT, true,
-              OBContext.getOBContext().getCurrentClient(), order.getOrganization(),
-              OBContext.getOBContext().getUser(), null, null)
-          .equals("Y");
-    } catch (PropertyException e1) {
-      createNettingGoodsShipment = false;
-    }
-    return createNettingGoodsShipment;
-  }
-
-  /**
-   * Method to check if during the C&amp;R process the shipment lines must be moved from the old
-   * order to the new order.
-   * 
-   * @param order
-   *          The order that is being canceled.
-   * @return True if the shipment lines must be moved to the new order.
-   */
-  public boolean getAssociateGoodsShipmentToNewSalesOrderPreferenceValue(Order order) {
-    boolean associateShipmentToNewReceipt = false;
-    try {
-      associateShipmentToNewReceipt = Preferences
-          .getPreferenceValue(ASSOCIATE_SHIPMENT_TO_REPLACE_TICKET, true,
-              OBContext.getOBContext().getCurrentClient(), order.getOrganization(),
-              OBContext.getOBContext().getUser(), null, null)
-          .equals("Y");
-    } catch (PropertyException e1) {
-      associateShipmentToNewReceipt = false;
-    }
-    return associateShipmentToNewReceipt;
   }
 
   private OrderLine getReplacementOrderLine(String oldOrderLineId) {
