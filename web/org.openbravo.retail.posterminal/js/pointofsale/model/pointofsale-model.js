@@ -76,7 +76,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     },
     OB.Model.ProductServiceLinked, //
     OB.Model.CurrencyPanel,
-    OB.Model.SalesRepresentative,
     OB.Model.Brand,
     OB.Model.ProductCharacteristicValue,
     OB.Model.CharacteristicValue,

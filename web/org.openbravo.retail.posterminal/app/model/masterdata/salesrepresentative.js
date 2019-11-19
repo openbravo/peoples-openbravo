@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-(function() {
+(function SalesRepresentativeDefinition() {
   class SalesRepresentative extends OB.App.MasterdataModel {
     constructor() {
       super();

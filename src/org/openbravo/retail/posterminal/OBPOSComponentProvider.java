@@ -68,7 +68,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     }
     globalResources = new ArrayList<ComponentResource>();
 
-    final String prefix = "web/" + POSUtils.MODULE_JAVA_PACKAGE + "/js/";
+    final String prefix = "web/" + POSUtils.MODULE_JAVA_PACKAGE;
 
     final String[] resourceDependency = { "main", "model/changedbusinesspartners",
         "model/changedbplocation", "model/order", "model/cashup", "model/cashmanagement",
@@ -99,17 +99,17 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "webprinter/usbprinters/startsp100", "webprinter/usbprinters/wincorth230",
         "webprinter/btprinters/genericBTPrinter", "webprinter/btprinters/zebraZQ320",
 
-        "model/currencypanel", "model/country", "model/salesrepresentative", "model/discountset",
-        "model/bpartnerset", "model/productcharacteristicvalue", "model/characteristicvalue",
-        "model/characteristic", "model/brand", "model/executor", "model/terminal-model",
-        "model/paymentmethodcashup", "model/taxcashup", "model/offlineprinter", "model/productbom",
-        "model/taxcategorybom", "model/orderassociationsfilter", "model/product-servicelinked",
-        "model/prepaymentrules", "components/modalcancel", "components/subwindow",
-        "components/leftsubwindow", "components/modalreceiptproperties",
-        "components/modalreceiptlineproperties", "components/modalnoteditableorder",
-        "components/modalnoteditableline", "components/modalmodulesindev",
-        "components/modalselectprinters", "components/modalmorepaymentmethods",
-        "components/modalDeliveryChange", "components/obpos-gridkeyboard",
+        "model/currencypanel", "model/country", "model/discountset", "model/bpartnerset",
+        "model/productcharacteristicvalue", "model/characteristicvalue", "model/characteristic",
+        "model/brand", "model/executor", "model/terminal-model", "model/paymentmethodcashup",
+        "model/taxcashup", "model/offlineprinter", "model/productbom", "model/taxcategorybom",
+        "model/orderassociationsfilter", "model/product-servicelinked", "model/prepaymentrules",
+        "components/modalcancel", "components/subwindow", "components/leftsubwindow",
+        "components/modalreceiptproperties", "components/modalreceiptlineproperties",
+        "components/modalnoteditableorder", "components/modalnoteditableline",
+        "components/modalmodulesindev", "components/modalselectprinters",
+        "components/modalmorepaymentmethods", "components/modalDeliveryChange",
+        "components/obpos-gridkeyboard",
 
         // Web POS window
         "utils/eventbus", "utils/attributeUtils", "utils/cashUpReportUtils",
@@ -268,9 +268,13 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
     final String[] cssDependency = { "obpos-main" };
 
+    final ArrayList<String> appDependency = new ArrayList<String>();
+    // IndexedDB
+    appDependency.add("model/masterdata/salesrepresentative");
+
     for (final String resource : resourceDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,
-          prefix + resource + ".js", POSUtils.APP_NAME));
+          prefix + "/js/" + resource + ".js", POSUtils.APP_NAME));
     }
 
     globalResources.add(createComponentResource(ComponentResourceType.Static,
@@ -278,7 +282,12 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
     for (final String resource : cssDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Stylesheet,
-          prefix + "../css/" + resource + ".css", POSUtils.APP_NAME));
+          prefix + "/css/" + resource + ".css", POSUtils.APP_NAME));
+    }
+
+    for (final String resource : appDependency) {
+      globalResources.add(createComponentResource(ComponentResourceType.Static,
+          prefix + "/app/" + resource + ".js", MobileCoreConstants.APP_IDENTIFIER));
     }
 
     return globalResources;
