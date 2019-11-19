@@ -6032,17 +6032,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 */
 .obUiModalRemoveAssociatedTickets {
   width: 900px;
-  color: #333;
-  overflow: visible;
-  background: var(--color-secondary);
-  padding: 0px;
-}
-
-@media all and (max-aspect-ratio: 9/8) {
-  .obUiModalRemoveAssociatedTickets {
-    left: 10px;
-    margin-left: 0px;
-  }
 }
 
 .obUiModalRemoveAssociatedTickets-header {
