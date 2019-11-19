@@ -22,7 +22,6 @@ import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
-import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
@@ -95,90 +94,71 @@ public class ProductProperties extends ModelExtension {
         .getTerminalById((String) getParam(params, "terminalId"));
     final boolean multiPriceList = (boolean) getParam(params, "multiPriceList");
     final boolean crossStore = (boolean) getParam(params, "crossStore");
+    final boolean isRemote = (boolean) getParam(params, "isRemoteSearch");
 
     if (posDetail == null) {
       throw new OBException("terminal id is not present in session ");
     }
 
     ArrayList<HQLProperty> list = null;
-    try {
-      list = new ArrayList<HQLProperty>() {
-        private static final long serialVersionUID = 1L;
-        {
-          String trlName;
-          try {
-            boolean isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product",
-                true, OBContext.getOBContext().getCurrentClient(),
-                OBContext.getOBContext().getCurrentOrganization(),
-                OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
-
-            if (OBContext.hasTranslationInstalled() && !isRemote) {
-              trlName = "coalesce((select pt.name from ProductTrl AS pt where pt.language='"
-                  + OBContext.getOBContext().getLanguage().getLanguage()
-                  + "'  and pt.product=product), product.name)";
-            } else {
-              trlName = "product.name";
-            }
-            add(new HQLProperty("product.id", "id"));
-            add(new HQLProperty("product.organization.id", "organization"));
-            add(new HQLProperty("product.searchKey", "searchkey"));
-            add(new HQLProperty(trlName, "_identifier"));
-            add(new HQLProperty("product.productCategory.id", "productCategory"));
-            add(new HQLProperty("product.obposScale", "obposScale"));
-            add(new HQLProperty("product.uOM.id", "uOM"));
-            add(new HQLProperty("product.uOM.symbol", "uOMsymbol"));
-            add(new HQLProperty("coalesce(product.uOM.standardPrecision)", "uOMstandardPrecision"));
-            if (isRemote) {
-              add(new HQLProperty("product.uPCEAN", "uPCEAN"));
-            } else {
-              add(new HQLProperty("upper(product.uPCEAN)", "uPCEAN"));
-            }
-            add(new HQLProperty("product.description", "description"));
-            add(new HQLProperty("product.obposGroupedproduct", "groupProduct"));
-            add(new HQLProperty("product.stocked", "stocked"));
-            add(new HQLProperty("product.obposShowstock", "showstock"));
-            add(new HQLProperty("product.isGeneric", "isGeneric"));
-            add(new HQLProperty("product.productStatus.id", "productStatus"));
-            add(new HQLProperty("product.genericProduct.id", "generic_product_id"));
-            add(new HQLProperty("product.brand.id", "brand"));
-            add(new HQLProperty("product.characteristicDescription", "characteristicDescription"));
-            add(new HQLProperty("product.obposShowChDesc", "showchdesc"));
-            add(new HQLProperty("product.productType", "productType"));
-            add(new HQLProperty("product.includedProductCategories", "includeProductCategories"));
-            add(new HQLProperty("product.includedProducts", "includeProducts"));
-            add(new HQLProperty("product.printDescription", "printDescription"));
-            add(new HQLProperty("product.oBPOSAllowAnonymousSale", "oBPOSAllowAnonymousSale"));
-            add(new HQLProperty("product.returnable", "returnable"));
-            add(new HQLProperty("product.overdueReturnDays", "overdueReturnDays"));
-            add(new HQLProperty("product.ispricerulebased", "isPriceRuleBased"));
-            add(new HQLProperty("product.obposProposalType", "proposalType"));
-            add(new HQLProperty("product.obposIsmultiselectable", "availableForMultiline"));
-            add(new HQLProperty("product.linkedToProduct", "isLinkedToProduct"));
-            add(new HQLProperty("product.modifyTax", "modifyTax"));
-            add(new HQLProperty("product.allowDeferredSell", "allowDeferredSell"));
-            add(new HQLProperty("product.deferredSellMaxDays", "deferredSellMaxDays"));
-            add(new HQLProperty("product.quantityRule", "quantityRule"));
-            add(new HQLProperty("product.obposPrintservices", "isPrintServices"));
-            add(new HQLProperty("product.weight", "weight"));
-            if (multiPriceList && !crossStore) {
-              add(new HQLProperty("pp.standardPrice", "currentStandardPrice"));
-            }
-            add(new HQLProperty(String.valueOf(crossStore), "crossStore"));
-          } catch (PropertyNotFoundException e) {
-            if (OBContext.hasTranslationInstalled()) {
-              trlName = "coalesce((select pt.name from ProductTrl AS pt where pt.language='"
-                  + OBContext.getOBContext().getLanguage().getLanguage()
-                  + "'  and pt.product.id = product.id), product.name)";
-            } else {
-              trlName = "product.name";
-            }
-          }
+    list = new ArrayList<HQLProperty>() {
+      private static final long serialVersionUID = 1L;
+      {
+        String trlName;
+        if (OBContext.hasTranslationInstalled() && !isRemote) {
+          trlName = "coalesce((select pt.name from ProductTrl AS pt where pt.language='"
+              + OBContext.getOBContext().getLanguage().getLanguage()
+              + "'  and pt.product=product), product.name)";
+        } else {
+          trlName = "product.name";
         }
-      };
-
-    } catch (PropertyException e) {
-      log.error("Error getting preference: " + e.getMessage(), e);
-    }
+        add(new HQLProperty("product.id", "id"));
+        add(new HQLProperty("product.organization.id", "organization"));
+        add(new HQLProperty("product.searchKey", "searchkey"));
+        add(new HQLProperty(trlName, "_identifier"));
+        add(new HQLProperty("product.productCategory.id", "productCategory"));
+        add(new HQLProperty("product.obposScale", "obposScale"));
+        add(new HQLProperty("product.uOM.id", "uOM"));
+        add(new HQLProperty("product.uOM.symbol", "uOMsymbol"));
+        add(new HQLProperty("coalesce(product.uOM.standardPrecision)", "uOMstandardPrecision"));
+        if (isRemote) {
+          add(new HQLProperty("product.uPCEAN", "uPCEAN"));
+        } else {
+          add(new HQLProperty("upper(product.uPCEAN)", "uPCEAN"));
+        }
+        add(new HQLProperty("product.description", "description"));
+        add(new HQLProperty("product.obposGroupedproduct", "groupProduct"));
+        add(new HQLProperty("product.stocked", "stocked"));
+        add(new HQLProperty("product.obposShowstock", "showstock"));
+        add(new HQLProperty("product.isGeneric", "isGeneric"));
+        add(new HQLProperty("product.productStatus.id", "productStatus"));
+        add(new HQLProperty("product.genericProduct.id", "generic_product_id"));
+        add(new HQLProperty("product.brand.id", "brand"));
+        add(new HQLProperty("product.characteristicDescription", "characteristicDescription"));
+        add(new HQLProperty("product.obposShowChDesc", "showchdesc"));
+        add(new HQLProperty("product.productType", "productType"));
+        add(new HQLProperty("product.includedProductCategories", "includeProductCategories"));
+        add(new HQLProperty("product.includedProducts", "includeProducts"));
+        add(new HQLProperty("product.printDescription", "printDescription"));
+        add(new HQLProperty("product.oBPOSAllowAnonymousSale", "oBPOSAllowAnonymousSale"));
+        add(new HQLProperty("product.returnable", "returnable"));
+        add(new HQLProperty("product.overdueReturnDays", "overdueReturnDays"));
+        add(new HQLProperty("product.ispricerulebased", "isPriceRuleBased"));
+        add(new HQLProperty("product.obposProposalType", "proposalType"));
+        add(new HQLProperty("product.obposIsmultiselectable", "availableForMultiline"));
+        add(new HQLProperty("product.linkedToProduct", "isLinkedToProduct"));
+        add(new HQLProperty("product.modifyTax", "modifyTax"));
+        add(new HQLProperty("product.allowDeferredSell", "allowDeferredSell"));
+        add(new HQLProperty("product.deferredSellMaxDays", "deferredSellMaxDays"));
+        add(new HQLProperty("product.quantityRule", "quantityRule"));
+        add(new HQLProperty("product.obposPrintservices", "isPrintServices"));
+        add(new HQLProperty("product.weight", "weight"));
+        if (multiPriceList && !crossStore) {
+          add(new HQLProperty("pp.standardPrice", "currentStandardPrice"));
+        }
+        add(new HQLProperty(String.valueOf(crossStore), "crossStore"));
+      }
+    };
 
     list.add(new HQLProperty("product.taxCategory.id", "taxCategory", 0));
 

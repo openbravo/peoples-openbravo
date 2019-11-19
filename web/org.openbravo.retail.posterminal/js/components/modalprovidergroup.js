@@ -151,9 +151,10 @@ enyo.kind({
         if (
           _.isNumber(payment.paymentMethod.overpaymentLimit) &&
           amount >
-            receipt.get('gross') +
-              payment.paymentMethod.overpaymentLimit -
+            OB.BIGDEC.sub(
+              receipt.get('gross') + payment.paymentMethod.overpaymentLimit,
               receipt.get('payment')
+            )
         ) {
           this.showMessageAndClose(
             OB.I18N.getLabel('OBPOS_OverpaymentExcededLimit')

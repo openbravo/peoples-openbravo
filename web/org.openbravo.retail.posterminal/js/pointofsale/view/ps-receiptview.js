@@ -23,7 +23,7 @@ enyo.kind({
     onCheckBoxBehaviorForTicketLine: 'checkBoxBehavior',
     onToggleSelectionMode: 'toggleSelectionMode',
     onTableMultiSelectAll: 'tableMultiSelectAll',
-    onChangeOrderCaptionWidth: 'changeOrderCaptionWidth'
+    onAdjustOrderCaption: 'adjustOrderCaption'
   },
   components: [
     {
@@ -83,22 +83,20 @@ enyo.kind({
   tableMultiSelectAll: function(inSender, inEvent) {
     this.waterfall('onMultiSelectAllTable');
   },
-  changeOrderCaptionWidth: function(inSender, inEvent) {
-    if (
-      this.$.orderview.$.listOrderLines.getScrollArea().getScrollBounds()
-        .maxTop !== 0
-    ) {
-      this.$.orderCaptions.$.description.hasNode().style.width =
-        'calc(100% - 285px)';
-    } else if (inEvent.status) {
-      this.$.orderCaptions.$.description.hasNode().style.width =
-        'calc(100% - 270px)';
+  adjustOrderCaption: function(inSender, inEvent) {
+    var containerWidth = this.$.orderview.$.listOrderLines.getBounds().width,
+      receiptLineWidth = this.$.orderview.$.listOrderLines.$.tbody.getBounds()
+        .width,
+      scrollWidth = 0;
+
+    if (containerWidth && receiptLineWidth) {
+      scrollWidth = OB.DEC.sub(containerWidth, receiptLineWidth);
+    }
+
+    if (this.order.get('lines').length > 0 && scrollWidth > 0) {
+      this.$.orderCaptions.setStyle('margin-right: ' + scrollWidth + 'px');
     } else {
-      if (this.$.orderCaptions.$.description.hasNode()) {
-        this.$.orderCaptions.$.description
-          .hasNode()
-          .style.removeProperty('width');
-      }
+      this.$.orderCaptions.setStyle('');
     }
   }
 });

@@ -396,6 +396,8 @@
       callbackOverpaymentExists(function(result) {
         if (result) {
           triggerPaymentAccepted(false);
+        } else {
+          callbackPaymentCancelled();
         }
       });
     } else if (
@@ -410,7 +412,7 @@
         if (result === true) {
           triggerPaymentAccepted(false);
         } else {
-          return;
+          callbackPaymentCancelled();
         }
       });
     } else {

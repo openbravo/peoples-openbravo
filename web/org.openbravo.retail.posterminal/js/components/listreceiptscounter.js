@@ -36,7 +36,7 @@ enyo.kind({
     }
     if (nrItems > 1) {
       if (nrItems < 1000) {
-        this.$.receiptsCounterButton.$.counter.setContent(nrItems - 1);
+        this.$.receiptsCounterButton.$.counter.setContent(nrItems);
       } else {
         this.$.receiptsCounterButton.$.counter.setContent('...');
       }
