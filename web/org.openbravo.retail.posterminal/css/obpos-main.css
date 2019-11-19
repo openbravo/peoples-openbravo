@@ -2532,6 +2532,7 @@ li.selected > .obUiRenderOrderLine_edit {
   background-image: url('./../img/iconServices_ticketline.svg');
   background-repeat: no-repeat;
   background-size: 16px;
+  filter: var(--color-on-surface-secondary_img);
 }
 
 .obUiRenderOrderLine-nameContainner-product {}
@@ -2807,6 +2808,7 @@ li.selected > .obUiRenderOrderLine_edit {
   background-image: url('./../img/iconServices.svg');
   background-repeat: no-repeat;
   background-size: 23px;
+  filter: var(--color-on-primary_img);
 }
 
 .obUiShowServicesButton_unreviewed .obUiButton-components-icon {
@@ -3399,6 +3401,28 @@ li.selected > .obUiRenderOrderLine_edit {
 .obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocbutton .obUiFormElement-mainArea-label,
 .obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocshipbutton .obUiFormElement-mainArea-label {
   color: var(--color-secondary);
+}
+
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBpbutton.obUiFormElement_disabled .obUiFormElement-mainArea-label,
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocbutton.obUiFormElement_disabled .obUiFormElement-mainArea-label,
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocshipbutton.obUiFormElement_disabled .obUiFormElement-mainArea-label {
+  color: var(--color-secondary_disabled);
+}
+
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBpbutton.obUiFormElement_disabled .obUiFormElementSelector:after,
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBpbutton .obUiFormElementSelector.disabled:after,
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocbutton.obUiFormElement_disabled .obUiFormElementSelector:after,
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocbutton .obUiFormElementSelector.disabled:after,
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocshipbutton.obUiFormElement_disabled .obUiFormElementSelector:after,
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocshipbutton .obUiFormElementSelector.disabled:after {
+  display: block;
+  filter: var(--color-secondary_disabled_img);
+}
+
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBpbutton .obUiFormElementSelector:after,
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocbutton .obUiFormElementSelector:after,
+.obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocshipbutton .obUiFormElementSelector:after {
+  filter: var(--color-secondary_img);
 }
 
 .obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBpbutton .obUiFormElement-messageArea,
@@ -4169,6 +4193,7 @@ li.selected > .obUiRenderOrderLine_edit {
   width: 35px;
   height: 24px;
   background-position-y: 0;
+  filter: var(--color-on-surface-secondary_img);
 }
 
 .obUiListBpsSelectorLine-line-textInfo-bottomBillIcon {
@@ -4181,6 +4206,7 @@ li.selected > .obUiRenderOrderLine_edit {
   width: 28px;
   height: 24px;
   background-position-y: 0;
+  filter: var(--color-on-surface-secondary_img);
 }
 
 .obUiListBpsSelectorLine-line-textInfo-element1 {
