@@ -928,7 +928,7 @@
         )
       ) {
         try {
-          const salesrepresentative = await OB.MasterdataModels.SalesRepresentative.withId(
+          const salesrepresentative = await OB.App.MasterdataModels.SalesRepresentative.withId(
             OB.MobileApp.model.get('context').user.id
           );
           if (!salesrepresentative) {

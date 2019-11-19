@@ -8,7 +8,7 @@
  */
 
 (function() {
-  class SalesRepresentative extends OB.MasterdataModelDefinition {
+  class SalesRepresentative extends OB.App.MasterdataModel {
     constructor() {
       super();
       this.indices = [
@@ -19,5 +19,5 @@
       ];
     }
   }
-  OB.MasterdataController.registerModel(SalesRepresentative);
+  OB.App.MasterdataController.registerModel(SalesRepresentative);
 })();
