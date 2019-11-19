@@ -29,7 +29,7 @@ enyo.kind({
   events: {
     onLineChecked: '',
     onShowPopup: '',
-    onChangeOrderCaptionWidth: ''
+    onAdjustOrderCaption: ''
   },
   components: [
     {
@@ -418,7 +418,7 @@ enyo.kind({
       this.$.quantity.hasNode().style.width = '16%';
       this.$.price.hasNode().style.width = '18%';
       this.$.nameContainner.hasNode().style.width = '37%';
-      this.doChangeOrderCaptionWidth({ status: true });
+      this.doAdjustOrderCaption({ status: true });
 
       if (this.$.characteristicsDescription) {
         this.$.characteristicsDescription.addClass(
@@ -443,7 +443,7 @@ enyo.kind({
       this.$.quantity.hasNode().style.removeProperty('width');
       this.$.price.hasNode().style.removeProperty('width');
       this.$.nameContainner.hasNode().style.removeProperty('width');
-      this.doChangeOrderCaptionWidth({ status: false });
+      this.doAdjustOrderCaption({ status: false });
 
       if (this.$.characteristicsDescription) {
         this.$.characteristicsDescription.addClass(

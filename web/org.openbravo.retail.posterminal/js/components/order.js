@@ -241,6 +241,9 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.OrderCaptions',
   classes: 'obUiOrderCaptions',
+  events: {
+    onAdjustOrderCaption: ''
+  },
   components: [
     {
       name: 'description',
@@ -274,7 +277,10 @@ enyo.kind({
         this.setContent(OB.I18N.getLabel(this.i18nContent));
       }
     }
-  ]
+  ],
+  resizeHandler: function() {
+    this.doAdjustOrderCaption();
+  }
 });
 
 enyo.kind({
@@ -600,7 +606,7 @@ enyo.kind({
   events: {
     onReceiptLineSelected: '',
     onRenderPaymentLine: '',
-    onChangeOrderCaptionWidth: ''
+    onAdjustOrderCaption: ''
   },
   handlers: {
     onCheckBoxBehaviorForTicketLine: 'checkBoxBehavior',
@@ -1034,7 +1040,7 @@ enyo.kind({
     this.order.get('lines').on(
       'add remove reset',
       function() {
-        this.doChangeOrderCaptionWidth();
+        this.doAdjustOrderCaption();
       },
       this
     );
