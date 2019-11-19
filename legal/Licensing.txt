@@ -105,7 +105,7 @@ Copyright (c) 2007, Yahoo! Inc. All rights reserved. Code licensed under the BSD
 # log4j-web-2.11.1.jar
 # log4j-slf4j-impl-2.11.1.jar
 # log4j-1.2-api-2.11.1.jar
-# quartz-1.6.2.jar
+# quartz-2.3.1.jar
 # servlet-api.jar 
 # tika-core-0.9.jar
 # wstx-asl-3.0.2.jar
@@ -285,11 +285,6 @@ Copyright 2010-2011 Mathias Bynens <http://mths.be/>
 Based on JSLitmus.js, copyright Robert Kieffer <http://broofa.com/>
 Modified by John-David Dalton <http://allyoucanleet.com/>
 Available under MIT license <http://mths.be/mit>
-
-# qunit.js
-http://docs.jquery.com/QUnit
-Copyright (c) 2011 John Resig, Jörn Zaefferer
-Dual licensed under the MIT (MIT-LICENSE.txt) or GPL (GPL-LICENSE.txt) licenses.
 
 # web/org.openbravo.client.kernel/docs
 Beautiful documentation, dynamically generated from source code in the browser.

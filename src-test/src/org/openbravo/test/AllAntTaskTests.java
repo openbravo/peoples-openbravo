@@ -41,6 +41,9 @@ import org.openbravo.client.kernel.freemarker.test.FreemarkerTemplateProcessorTe
 import org.openbravo.client.kernel.freemarker.test.GenerateComponentTest;
 import org.openbravo.client.kernel.freemarker.test.LabelTest;
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
+import org.openbravo.scheduling.ProcessSchedulingTest;
+import org.openbravo.scheduling.trigger.MisfirePolicyTest;
+import org.openbravo.scheduling.trigger.TriggerProviderTest;
 import org.openbravo.test.accounting.PostDocumentTest;
 import org.openbravo.test.accounting.RecordID2Test;
 import org.openbravo.test.authentication.AuthenticationManagerTest;
@@ -96,6 +99,7 @@ import org.openbravo.test.modularity.MergePropertiesTest;
 import org.openbravo.test.modularity.TableNameTest;
 import org.openbravo.test.preference.PreferenceTest;
 import org.openbravo.test.pricelist.PriceListTest;
+import org.openbravo.test.process.order.OrderProcessTest;
 import org.openbravo.test.productStatus.ProductStatusTest;
 import org.openbravo.test.referencedinventory.ReferencedInventoryTestSuite;
 import org.openbravo.test.reporting.AllJrxmlCompilation;
@@ -103,7 +107,6 @@ import org.openbravo.test.reporting.CompiledReportsCacheTest;
 import org.openbravo.test.reporting.JasperReportsCompilation;
 import org.openbravo.test.role.RoleTestSuite;
 import org.openbravo.test.role.inheritance.RoleInheritanceTestSuite;
-import org.openbravo.test.scheduling.ProcessSchedulingTest;
 import org.openbravo.test.security.AccessLevelTest;
 import org.openbravo.test.security.AllowedOrganizationsTest;
 import org.openbravo.test.security.BypassAccessLevelCheck;
@@ -275,6 +278,8 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 
     // scheduling
     ProcessSchedulingTest.class, //
+    TriggerProviderTest.class, //
+    MisfirePolicyTest.class, //
 
     // cdi
     CdiInfrastructure.class, //
@@ -330,7 +335,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     ViewGeneration.class,
 
     // Cancel and Replace Tests
-    CancelAndReplaceTest.class,
+    CancelAndReplaceTest.class, //
 
     // AD_IsOrgIncluded
     Ad_isorgincludedTest.class, //
@@ -349,7 +354,10 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     ADOrgPersistInfoTestSuite.class,
 
     // Automatic Invoice from Goods Shipment
-    InvoiceFromShipmentTest.class
+    InvoiceFromShipmentTest.class,
+
+    // C_Order_Post
+    OrderProcessTest.class,
 
 })
 public class AllAntTaskTests {

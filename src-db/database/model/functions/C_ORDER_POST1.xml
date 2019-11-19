@@ -271,6 +271,31 @@
     FROM C_DOCTYPE
     WHERE C_DocType_ID=v_DocTypetarget_ID;
 
+  /**
+  * End process if document status is Not Confirmed, Automatic Evaluation or Manual Evaluation
+  */
+  IF (v_DocStatus IN ('NC', 'AE', 'ME') AND v_DocAction = 'CO') THEN
+    UPDATE C_ORDER
+    SET DocStatus = CASE WHEN v_DocStatus IN ('NC', 'ME') THEN 'CO' ELSE 'NC' END,
+        DocAction = '--',
+        Processed = 'Y',
+        Updated = now(),
+        UpdatedBy = v_User
+    WHERE C_Order_ID = v_Record_ID;
+    END_PROCESSING:=TRUE;
+    FINISH_PROCESS:=TRUE;
+  ELSIF (v_DocStatus IN ('NC', 'AE', 'ME') AND v_DocAction = 'RJ') THEN
+    UPDATE C_ORDER
+    SET DocStatus = CASE WHEN v_DocStatus IN ('NC', 'ME') THEN 'AE' ELSE 'ME' END,
+        DocAction = '--',
+        Processed = 'Y',
+        Updated = now(),
+        UpdatedBy = v_User
+    WHERE C_Order_ID = v_Record_ID;
+    END_PROCESSING:=TRUE;
+    FINISH_PROCESS:=TRUE;
+  END IF;
+
   IF(v_isreturndoctype='Y' AND v_DocAction='CO') THEN
     DECLARE
     v_RefReturnQty NUMBER:=0;

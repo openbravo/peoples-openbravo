@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018 Openbravo SLU
+ * All portions are Copyright (C) 2018-2019 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1659,7 +1659,7 @@ public class TestCostingSourceAdjustments extends TestCostingBase {
       // Post cost adjustment 1 and assert it
       TestCostingUtils.postDocument(costAdjustmentList.get(0));
       List<DocumentPostAssert> documentPostAssertList = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList.add(new DocumentPostAssert("61000", BigDecimal.ZERO,
+      documentPostAssertList.add(new DocumentPostAssert("99904", BigDecimal.ZERO,
           quantity1.multiply(price1).add(quantity1.multiply(price2).negate()), null));
       documentPostAssertList.add(new DocumentPostAssert("35000",
           quantity1.multiply(price1).add(quantity1.multiply(price2).negate()), BigDecimal.ZERO,
@@ -1780,7 +1780,7 @@ public class TestCostingSourceAdjustments extends TestCostingBase {
       // Post cost adjustment 1 and assert it
       TestCostingUtils.postDocument(costAdjustmentList.get(0));
       List<DocumentPostAssert> documentPostAssertList = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList.add(new DocumentPostAssert("61000", BigDecimal.ZERO,
+      documentPostAssertList.add(new DocumentPostAssert("99904", BigDecimal.ZERO,
           quantity1.multiply(price4).add(quantity1.multiply(price2).negate()), null));
       documentPostAssertList.add(new DocumentPostAssert("35000",
           quantity1.multiply(price4).add(quantity1.multiply(price2).negate()), BigDecimal.ZERO,

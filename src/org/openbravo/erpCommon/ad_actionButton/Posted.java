@@ -237,7 +237,6 @@ public class Posted extends HttpSecureAppServlet {
           long start = System.currentTimeMillis();
           OBError myMessage = new OBError();
           myMessage.setType("Success");
-          myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
           PostedData[] data = PostedData.select(this, strKey, strTableId);
           try {
             HashMap<String, Integer> hm = ResetAccounting.delete(data[0].client, data[0].org,
@@ -245,6 +244,7 @@ public class Posted extends HttpSecureAppServlet {
             myMessage.setMessage(
                 Utility.parseTranslation(this, vars, vars.getLanguage(), "@UnpostedDocuments@ = "
                     + hm.get("updated") + ", @DeletedEntries@ = " + hm.get("deleted")));
+            myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
           } catch (OBException e) {
             myMessage.setType("Error");
             myMessage.setMessage(

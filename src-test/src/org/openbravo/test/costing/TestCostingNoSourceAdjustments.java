@@ -827,7 +827,7 @@ public class TestCostingNoSourceAdjustments extends TestCostingBase {
       // Post cost adjustment and assert it
       TestCostingUtils.postDocument(costAdjustmentList1.get(0));
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList1.add(new DocumentPostAssert("61000",
+      documentPostAssertList1.add(new DocumentPostAssert("99904",
           quantity1.multiply(price1).add(quantity1.multiply(price2).negate()), BigDecimal.ZERO,
           null));
       documentPostAssertList1.add(new DocumentPostAssert("35000", BigDecimal.ZERO,
@@ -896,7 +896,7 @@ public class TestCostingNoSourceAdjustments extends TestCostingBase {
       // Post cost adjustment 1 and assert it
       TestCostingUtils.postDocument(costAdjustmentList2.get(0));
       List<DocumentPostAssert> documentPostAssertList21 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList21.add(new DocumentPostAssert("61000",
+      documentPostAssertList21.add(new DocumentPostAssert("99904",
           quantity1.multiply(price1).add(quantity1.multiply(price2).negate()), BigDecimal.ZERO,
           null));
       documentPostAssertList21.add(new DocumentPostAssert("35000", BigDecimal.ZERO,
@@ -914,7 +914,7 @@ public class TestCostingNoSourceAdjustments extends TestCostingBase {
       // Post cost adjustment 2 and assert it
       TestCostingUtils.postDocument(costAdjustmentList2.get(1));
       List<DocumentPostAssert> documentPostAssertList22 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList22.add(new DocumentPostAssert("61000", BigDecimal.ZERO,
+      documentPostAssertList22.add(new DocumentPostAssert("99904", BigDecimal.ZERO,
           quantity1.multiply(price1).add(quantity1.multiply(price2).negate()), null));
       documentPostAssertList22.add(new DocumentPostAssert("35000",
           quantity1.multiply(price1).add(quantity1.multiply(price2).negate()), BigDecimal.ZERO,

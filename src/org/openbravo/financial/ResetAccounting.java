@@ -99,6 +99,10 @@ public class ResetAccounting {
       if (CollectionUtils.isNotEmpty(orgIds)) {
         for (String table : tables) {
           List<String> docbasetypes = getDocbasetypes(client, table, localRecordId);
+          if (CollectionUtils.isEmpty(docbasetypes)) {
+            String tableName = OBDal.getInstance().getProxy(Table.class, table).getIdentifier();
+            throw new OBException("@NotDocumentTypeDefinedForTable@: " + tableName);
+          }
           String myQuery = "select distinct e.recordID from FinancialMgmtAccountingFact e where e.organization.id in (:orgIds) and e.client.id = :clientId and e.table.id = :tableId";
           if (localRecordId != null && !"".equals(localRecordId)) {
             myQuery = myQuery + " and e.recordID = :recordId ";

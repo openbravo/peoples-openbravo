@@ -107,6 +107,7 @@ public class DocCostAdjustment extends AcctServer {
         docLine.m_C_BPartner_ID = data[i].cBpartnerId;
         docLine.setSourceProcess(data[i].sourceProcess);
         docLine.setIsSource("Y".equals(data[i].issource));
+        docLine.setIsUnitCost("Y".equals(data[i].isunitcost));
         // -- Source Amounts
         String amt = data[i].adjustmentAmount;
         docLine.setAmount(amt);
@@ -209,8 +210,8 @@ public class DocCostAdjustment extends AcctServer {
       } else if (transactionType.equals(DocLine_CostAdjustment.TRXTYPE_RECEIPT)) {
         Account acct = null;
         // Inventory Asset DR
-        if (line.getIsSource() && ("PDC").equals(line.getSourceProcess())) { // Price Diff
-          // Correction
+        if (line.isUnitCost()) {
+          // Price Diff Correction
           // Invoice Price Variance CR
           acct = p.getAccount(ProductInfo.ACCTTYPE_P_IPV, as, conn);
         } else if (line.getIsSource() && ("LC").equals(line.getSourceProcess())) {

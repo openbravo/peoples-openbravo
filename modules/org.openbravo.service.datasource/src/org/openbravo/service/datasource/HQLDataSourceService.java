@@ -524,7 +524,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
   }
 
   /**
-   * This method replace the column names with their alias
+   * This method replaces the column names with their alias
    * 
    * @param table
    *          the table being filtered

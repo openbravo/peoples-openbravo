@@ -180,6 +180,52 @@ static Logger log4j = LogManager.getLogger();
     return(boolReturn);
   }
 
+  public static boolean existsCostingRuleTable(ConnectionProvider connectionProvider)    throws ServletException {
+    String strSql = "";
+    strSql = strSql + 
+      "        SELECT count(*) as exist" +
+      "        FROM ad_table" +
+      "        WHERE lower(ad_table.tablename) = 'm_costing_rule'" +
+      "        AND EXISTS (SELECT 1 FROM ad_column" +
+      "                             WHERE ad_column.ad_table_id = ad_table.ad_table_id" +
+      "                             AND lower(ad_column.columnname)='isvalidated')";
+
+    ResultSet result;
+    boolean boolReturn = false;
+    PreparedStatement st = null;
+
+    try {
+    st = connectionProvider.getPreparedStatement(strSql);
+
+      result = st.executeQuery();
+      if(result.next()) {
+        boolReturn = !UtilSql.getValue(result, "exist").equals("0");
+      }
+      result.close();
+    } catch(SQLException e){
+      if (log4j.isDebugEnabled()) {
+        log4j.error("SQL error in query: " + strSql, e);
+      } else {
+        log4j.error("SQL error in query: " + strSql + " :" + e);
+      }
+      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
+    } catch(Exception ex){
+      if (log4j.isDebugEnabled()) {
+        log4j.error("Exception in query: " + strSql, ex);
+      } else {
+        log4j.error("Exception in query: " + strSql + " :" + ex);
+      }
+      throw new ServletException("@CODE=@" + ex.getMessage());
+    } finally {
+      try {
+        connectionProvider.releasePreparedStatement(st);
+      } catch(Exception e){
+        log4j.error("Error during release*Statement of query: " + strSql, e);
+      }
+    }
+    return(boolReturn);
+  }
+
   public static boolean existsCostingRuleData(ConnectionProvider connectionProvider)    throws ServletException {
     String strSql = "";
     strSql = strSql + 

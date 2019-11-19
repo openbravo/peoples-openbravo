@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -292,6 +292,9 @@ isc.OBStandardWindow.addProperties({
         ]
       });
       this.addChild(theModalMask);
+      // Always force to show popup over mask so when switching tabs before popup is shown,
+      // it still shows in front of mask. Related to issue #42178
+      thePopup.bringToFront();
     } else {
       this.addChild(thePopup);
     }
@@ -684,7 +687,8 @@ isc.OBStandardWindow.addProperties({
       persDefaultValue,
       views,
       currentView = this.activeView || this.view,
-      length;
+      length,
+      formPersonalizationApplied = false;
 
     // only personalize if there is a professional license
     if (!OB.Utilities.checkProfessionalLicense(null, true)) {
@@ -778,6 +782,7 @@ isc.OBStandardWindow.addProperties({
               this.views[i].viewForm.getDataSource()
             ) {
               this.lastViewApplied = true;
+              formPersonalizationApplied = true;
               OB.Personalization.personalizeForm(
                 personalization.forms[this.views[i].tabId],
                 this.views[i].viewForm
@@ -786,13 +791,16 @@ isc.OBStandardWindow.addProperties({
           }
         }
       }
-    } else {
-      if (this.view.dataLoadDelayedForDefaultSavedView) {
-        // it might happen that the load of the initial grid data was delayed because it had a
-        // default saved view, but then the default saved view is not returned by the WindowSettingsActionHandler.
-        // in that case, detect it and load the grid now
-        this.view.viewGrid.fetchData(this.view.viewGrid.getCriteria());
-      }
+    }
+    if (
+      this.view.dataLoadDelayedForDefaultSavedView &&
+      !defaultView &&
+      !formPersonalizationApplied
+    ) {
+      // it might happen that the load of the initial grid data was delayed because it had a
+      // default saved view, but then the default saved view is not returned by the WindowSettingsActionHandler.
+      // in that case, detect it and load the grid now
+      this.view.viewGrid.fetchData(this.view.viewGrid.getCriteria());
     }
 
     // restore focus as the focusitem may have been hidden now

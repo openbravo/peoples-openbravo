@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -58,8 +58,7 @@ import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
 /**
- * This process activates and deactivates Heartebeat.
- * 
+ * This process activates and deactivates Heartbeat.
  */
 public class TestHeartbeat extends HttpSecureAppServlet {
 
@@ -268,7 +267,8 @@ public class TestHeartbeat extends HttpSecureAppServlet {
         }
       } catch (Exception e) {
         log4j.error(e.getMessage(), e);
-        advisePopUpRefresh(request, response, "ERROR", "Heartbeat Configuration", e.getMessage());
+        String msg = Utility.messageBD(connectionProvider, "HB_ERROR", vars.getLanguage());
+        advisePopUpRefresh(request, response, "ERROR", "Heartbeat Configuration", msg);
       }
     }
   }

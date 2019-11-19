@@ -57,7 +57,7 @@ function lintFiles {
     # ignored files are removed using a script
     FILTERED_FILES=$(node ${SCRIPT_DIR}/filter-eslint-ignored-files.js "$@")
     if [[ -n "${FILTERED_FILES}" ]]; then
-        echo "${FILTERED_FILES}" | xargs -n 250 npm run jslint -s -- ${FLAGS} ${IGNORE_PATH} || exit 1
+        echo "${FILTERED_FILES}" | xargs -n 250 npm run --prefix ${OPENBRAVO_ROOT_PATH} jslint -s -- ${FLAGS} ${IGNORE_PATH} || exit 1
     fi
 }
 
@@ -106,7 +106,7 @@ function runLinterInModule {
     fi
 
     echo "Lint check for module $(basename ${BASE})"
-    npm run jslint -s -- ${LINTER_FLAGS} ${IGNORE_PATH} "${BASE}"
+    npm run jslint --prefix ${OPENBRAVO_ROOT_PATH} -s -- ${LINTER_FLAGS} ${IGNORE_PATH} "${BASE}"
 }
 
 #Parse input arguments

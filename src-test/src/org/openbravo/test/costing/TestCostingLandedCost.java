@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018 Openbravo SLU
+ * All portions are Copyright (C) 2018-2019 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -2697,10 +2697,10 @@ public class TestCostingLandedCost extends TestCostingBase {
       // Post cost adjustment 3 and assert it
       TestCostingUtils.postDocument(costAdjustmentList2.get(2));
       List<DocumentPostAssert> documentPostAssertList1 = new ArrayList<DocumentPostAssert>();
-      documentPostAssertList1.add(new DocumentPostAssert("61000", BigDecimal.ZERO, amount1, null));
+      documentPostAssertList1.add(new DocumentPostAssert("99904", BigDecimal.ZERO, amount1, null));
       documentPostAssertList1.add(new DocumentPostAssert("35000", amount1, BigDecimal.ZERO, null));
       documentPostAssertList1.add(
-          new DocumentPostAssert("61000", BigDecimal.ZERO, costAdjustmentAssertLineAmount9, null));
+          new DocumentPostAssert("99904", BigDecimal.ZERO, costAdjustmentAssertLineAmount9, null));
       documentPostAssertList1.add(
           new DocumentPostAssert("35000", costAdjustmentAssertLineAmount9, BigDecimal.ZERO, null));
       CostAdjustment costAdjustment1 = OBDal.getInstance()

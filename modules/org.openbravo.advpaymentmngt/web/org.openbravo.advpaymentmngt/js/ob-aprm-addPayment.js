@@ -405,7 +405,17 @@ OB.APRM.AddPayment.orderInvoiceOnLoadGrid = function(grid) {
   } else {
     OB.APRM.AddPayment.updateInvOrderTotal(this.view.theForm, grid);
   }
+  OB.APRM.AddPayment.refreshEditedSelectedRecordsInGrid(grid);
   OB.APRM.AddPayment.tryToUpdateActualExpected(this.view.theForm);
+};
+
+OB.APRM.AddPayment.refreshEditedSelectedRecordsInGrid = function(grid) {
+  var editedSelectedRecords = grid.editedSelectedRecords;
+  if (editedSelectedRecords && editedSelectedRecords.length > 0) {
+    editedSelectedRecords.forEach(function(record) {
+      OB.APRM.AddPayment.doSelectionChanged(record, true, grid.view);
+    });
+  }
 };
 
 OB.APRM.AddPayment.glitemsOnLoadGrid = function(grid) {
@@ -955,11 +965,13 @@ OB.APRM.AddPayment.updateActualExpected = function(form) {
       }
     }
     if (bslamount.compareTo(BigDecimal.prototype.ZERO) !== 0) {
-      if (actpayment.compareTo(BigDecimal.prototype.ZERO) === 0) {
-        actpayment = actpayment.add(bslamount.abs());
-        actualPayment.setValue(Number(actpayment));
-      } else if (actpayment.compareTo(bslamount.abs()) < 0) {
-        actpayment = bslamount.abs();
+      var bslAmountConverted = OB.APRM.AddPayment.getConvertedAmount(
+        form,
+        bslamount,
+        false
+      );
+      if (actpayment.compareTo(bslAmountConverted.abs()) <= 0) {
+        actpayment = bslAmountConverted.abs();
         actualPayment.setValue(Number(actpayment));
       }
     }
@@ -969,6 +981,28 @@ OB.APRM.AddPayment.updateActualExpected = function(form) {
 
   // force redraw to ensure display logic is properly executed
   form.redraw();
+};
+
+OB.APRM.AddPayment.getConvertedAmount = function(
+  form,
+  amount,
+  directConversion
+) {
+  var currencyPrecision = form.getItem('StdPrecision').getValue();
+  var exchangeRate = new BigDecimal(
+    String(form.getItem('conversion_rate').getValue() || 1)
+  );
+  if (directConversion) {
+    return amount
+      .multiply(exchangeRate)
+      .setScale(currencyPrecision, BigDecimal.prototype.ROUND_HALF_UP);
+  } else {
+    return amount.divide(
+      exchangeRate,
+      currencyPrecision,
+      BigDecimal.prototype.ROUND_HALF_UP
+    );
+  }
 };
 
 OB.APRM.AddPayment.removeRecordClick = function(rowNum, record) {
@@ -1219,23 +1253,18 @@ OB.APRM.AddPayment.updateConvertedAmount = function(
   form,
   recalcExchangeRate
 ) {
-  var exchangeRate = form.getItem('conversion_rate').getValue(),
-    actualConverted = form.getItem('converted_amount').getValue(),
-    actualPayment = new BigDecimal(
+  var actualPayment = new BigDecimal(
       String(form.getItem('actual_payment').getValue() || 0)
     ),
     actualConvertedItem = form.getItem('converted_amount'),
     exchangeRateItem = form.getItem('conversion_rate'),
     newConvertedAmount = BigDecimal.prototype.ZERO,
-    newExchangeRate = BigDecimal.prototype.ONE,
-    currencyPrecision = form.getItem('StdPrecision').getValue();
+    newExchangeRate = BigDecimal.prototype.ONE;
 
-  if (!actualConverted && !exchangeRate) {
-    return;
-  }
-
-  exchangeRate = new BigDecimal(String(exchangeRate || 1));
-  actualConverted = new BigDecimal(String(actualConverted || 0));
+  var exchangeRate = new BigDecimal(String(exchangeRateItem.getValue() || 1));
+  var actualConverted = new BigDecimal(
+    String(actualConvertedItem.getValue() || 0)
+  );
   if (!actualConverted || !exchangeRate) {
     return;
   }
@@ -1249,9 +1278,11 @@ OB.APRM.AddPayment.updateConvertedAmount = function(
       exchangeRateItem.setValue(Number(newExchangeRate.toString()));
     }
   } else if (exchangeRate) {
-    newConvertedAmount = actualPayment
-      .multiply(exchangeRate)
-      .setScale(currencyPrecision, BigDecimal.prototype.ROUND_HALF_UP);
+    newConvertedAmount = OB.APRM.AddPayment.getConvertedAmount(
+      form,
+      actualPayment,
+      true
+    );
     exchangeRateItem.setValue(Number(exchangeRate.toString()));
     actualConvertedItem.setValue(Number(newConvertedAmount.toString()));
   } else {

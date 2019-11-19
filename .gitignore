@@ -46,6 +46,7 @@ Thumbs.db
 sources
 scripts
 node_modules
+test-reports
 
 # ignore all modules 
 # except those ones included in OB3 distribution

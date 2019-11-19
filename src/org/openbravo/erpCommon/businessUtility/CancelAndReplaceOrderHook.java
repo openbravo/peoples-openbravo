@@ -11,13 +11,16 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016 Openbravo SLU
+ * All portions are Copyright (C) 2016-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
  */
 
 package org.openbravo.erpCommon.businessUtility;
+
+import java.util.List;
+import java.util.Set;
 
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.model.common.order.Order;
@@ -51,4 +54,30 @@ public abstract class CancelAndReplaceOrderHook {
    */
   public abstract void exec(boolean replaceOrder, boolean triggersDisabled, Order oldOrder,
       Order newOrder, Order inverseOrder, JSONObject jsonorder) throws Exception;
+
+  /**
+   * Exec method that hooks extending this class can implement.
+   * 
+   * This method is only executed when running cancel and replace flow for many replacements, using
+   * {@link CancelAndReplaceUtils#cancelAndReplaceOrder(String, Set, String, JSONObject, boolean)}.
+   * 
+   * @param replaceOrder
+   *          boolean that informs if the old sales order has been replaced or not.
+   * @param triggersDisabled
+   *          boolean that informs if triggers have been disabled previous to execute this hook.
+   * @param oldOrder
+   *          Sales Order that has been replaced.
+   * @param newOrders
+   *          New Sales Orders that have replaced the old Sales Order
+   * @param inverseOrder
+   *          New Sales Order equal to old sales order but with negative quantities. Cancellation
+   *          Order.
+   * @param jsonorder
+   *          JSONObject with information of the order coming with values when the hook is invoked
+   *          because the Cancel and Replace has been executed from Web POS.
+   */
+  public void exec(boolean replaceOrder, boolean triggersDisabled, Order oldOrder,
+      List<Order> newOrders, Order inverseOrder, JSONObject jsonorder) throws Exception {
+  }
+
 }
