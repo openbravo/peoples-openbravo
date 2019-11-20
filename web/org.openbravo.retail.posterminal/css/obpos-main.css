@@ -1276,6 +1276,7 @@
   background-image: url('./../../org.openbravo.retail.posterminal/img/iconInfo.svg');
   background-size: 35px 35px;
   background-repeat: no-repeat;
+  filter: var(--color-secondary_img);
 }
 
 .obposUiCrossStoreLine-storeName {
@@ -1345,6 +1346,7 @@
   background-size: 22px 18px;
   background-repeat: no-repeat;
   background-position: 3px 3px;
+  filter: var(--color-secondary_img);
 }
 
 .obposUiStoreInformationLine-container1-addressValue {
@@ -1386,6 +1388,7 @@
   background-size: 17px 17px;
   background-repeat: no-repeat;
   background-position: 3px 3px;
+  filter: var(--color-secondary_img);
 }
 
 .obposUiStoreInformationLine-container2-container1-phoneNumber {
@@ -1415,6 +1418,7 @@
   background-size: 19px 19px;
   background-repeat: no-repeat;
   background-position: 3px 3px;
+  filter: var(--color-secondary_img);
 }
 
 .obposUiStoreInformationLine-container2-container1-faxNumber {
@@ -1446,6 +1450,7 @@
   background-size: 20px 13px;
   background-repeat: no-repeat;
   background-position: 3px 3px;
+  filter: var(--color-secondary_img);
 }
 
 .obposUiStoreInformationLine-container3-email {
@@ -1525,20 +1530,7 @@
 }
 
 .obposUiStoreInformationLine-container7-btnClose {
-  /* Inherits: [OB.UI.Button] */
-  clear: both;
-  width: 160px;
-  display: inline-block;
-  border: none;
-  text-decoration: none;
-  margin: 10px;
-  opacity: 0.999;
-  font-weight: normal;
-  height: 30px;
-  font-size: var(--font-medium);
-  padding: 5px 15px 7px 15px;
-  background-color: var(--color-teriary);
-  color: black;
+  /* Inherits: [OB.UI.ModalDialogButton] */
 }
 
 @media all and (max-aspect-ratio: 9/8) {
@@ -1573,6 +1565,7 @@
   background-repeat: no-repeat;
   background-position: 3px 3px;
   margin-left: 3px;
+  filter: var(--color-secondary_img);
 }
 
 .obposUiStoreInformationScheduleScrollableHeader-container1-openHour {
@@ -8226,6 +8219,10 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiProductDetailsViewBody-container3-container1-productDeliveryModes {
  /* Inherits: [OB.OBPOSPointOfSale.UI.EditLine.DeliveryModesButton] */
+  min-width: 200px;
+  height: 50px;
+  border-radius: var(--component-border-radius) !important;
+  margin-bottom: 10px;
 }
 
 .obObposPointOfSaleUiProductDetailsViewBody-stockHere_error,
