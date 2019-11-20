@@ -38,7 +38,7 @@ public class DatabaseVersionCheck extends BuildValidation {
   private static Logger log4j = LogManager.getLogger();
   private final static String POSTGRES = "PostgreSQL";
   private final static String ORACLE = "Oracle";
-  private final static String MIN_PG_VERSION = "9.3";
+  private final static String MIN_PG_VERSION = "10";
   private final static String MIN_ORA_VERSION = "11.2";
   private final static String[] WARNING_PG_VERSIONS = {};
   private final static String[] WARNING_ORA_VERSIONS = {};
@@ -100,7 +100,7 @@ public class DatabaseVersionCheck extends BuildValidation {
       if (version1[i].equals(version2[i]))
         continue;
       try {
-        return new Integer(version1[i]).compareTo(new Integer(version2[i]));
+        return Integer.valueOf(version1[i]).compareTo(Integer.valueOf(version2[i]));
       } catch (NumberFormatException e) {
         // Not possible to compare
         return -1;
