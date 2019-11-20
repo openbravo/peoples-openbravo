@@ -234,12 +234,9 @@ enyo.kind({
       }
     }
 
-    var criteria;
-    if (filter && filter !== '') {
-      criteria = {
-        _identifier: filter
-      };
-    }
+    const criteria = {
+      _identifier: filter
+    };
 
     try {
       const dataSalesRepresentative = await OB.App.MasterdataModels.SalesRepresentative.startsWith(

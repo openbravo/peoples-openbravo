@@ -85,7 +85,9 @@ enyo.kind({
 
         if (this.collection.length === 0) {
           try {
-            const dataSalesRepresentative = await OB.App.MasterdataModels.SalesRepresentative.find();
+            const dataSalesRepresentative = await OB.App.MasterdataModels.SalesRepresentative.orderedBy(
+              '_identifier'
+            );
 
             if (me.destroyed) {
               return;
