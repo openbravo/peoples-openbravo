@@ -8133,15 +8133,16 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obObposPointOfSaleUiProductDetailsViewButtonClose {
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconClosePopup.svg');
   background-size: 16px auto;
+  filter: invert(67%) sepia(94%) saturate(0%) hue-rotate(304deg) brightness(98%) contrast(103%);
 }
 
 
 .obObposPointOfSaleUiProductDetailsViewButtonClose:hover {
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconClosePopup_hover.svg');
+  filter: invert(51%) sepia(0%) saturate(0%) hue-rotate(143deg) brightness(99%) contrast(85%);
 }
 
 .obObposPointOfSaleUiProductDetailsViewButtonClose:active {
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconClosePopup_active.svg');
+  filter: invert(15%) sepia(0%) saturate(0%) hue-rotate(150deg) brightness(103%) contrast(88%);
 }
 
 
