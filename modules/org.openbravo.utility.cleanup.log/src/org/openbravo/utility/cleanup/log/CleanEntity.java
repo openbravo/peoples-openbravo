@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2019 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -71,7 +71,14 @@ public class CleanEntity {
       ProcessLogger bgLogger) {
     Entity entity = ModelProvider.getInstance().getEntityByTableId(config.getTable().getId());
 
+
     String hql = "delete from " + entity.getName();
+
+    // An alias can be added to the main table, so it can be referenced from HQL subqueries,
+    // See issue https://issues.openbravo.com/view.php?id=41977
+    if (config.getEntityAlias() != null && StringUtils.isAlphanumeric(config.getEntityAlias())) {
+      hql += " " + config.getEntityAlias();
+    }
 
     String where = "";
     if (config.getOlderThan() != 0L) {
