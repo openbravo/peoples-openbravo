@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2016-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2016-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,18 +36,17 @@ import org.apache.logging.log4j.Logger;
  *
  */
 public class ServerVersionChecker implements ServletContextListener {
-  private static final int MINIMUM_TOMCAT_VERSION = 7;
+  private static final String MINIMUM_TOMCAT_VERSION = "7";
 
   private static final Logger log = LogManager.getLogger();
 
   private static String serverName;
-  private static String serverVersion;
+  private static Version serverVersion;
 
   @Override
   public void contextInitialized(ServletContextEvent event) {
-
     String serverInfo = event.getServletContext().getServerInfo();
-    log.debug("Server: " + serverInfo);
+    log.debug("Server: {}", serverInfo);
 
     setServerInfo(serverInfo);
 
@@ -57,13 +56,12 @@ public class ServerVersionChecker implements ServletContextListener {
       return;
     }
 
-    Integer majorVersion = getMajorVersion(serverInfo);
-    if (majorVersion == null) {
-      log.info("Unknown Tomcat version " + serverInfo);
+    if (!serverVersion.isValid()) {
+      log.info("Unknown Tomcat version {}", serverInfo);
       return;
     }
 
-    if (majorVersion.compareTo(MINIMUM_TOMCAT_VERSION) < 0) {
+    if (serverVersion.compareTo(new Version(MINIMUM_TOMCAT_VERSION)) < 0) {
       log.error(
           "The minimum Tomcat version required deploy Openbravo is {}. Trying to deploy it in {} is not allowed. Please, upgrade Tomcat.",
           MINIMUM_TOMCAT_VERSION, serverInfo);
@@ -71,12 +69,12 @@ public class ServerVersionChecker implements ServletContextListener {
     }
   }
 
-  private void setServerInfo(String serverInfo) {
+  private static void setServerInfo(String serverInfo) {
     try {
       Matcher versionMatcher = Pattern.compile("([^\\d/]*)[/]?([\\d\\.]*)").matcher(serverInfo);
       if (versionMatcher.find()) {
         serverName = versionMatcher.group(1);
-        serverVersion = versionMatcher.group(2);
+        serverVersion = new Version(versionMatcher.group(2));
       }
     } catch (Exception ignore) {
     }
@@ -84,18 +82,6 @@ public class ServerVersionChecker implements ServletContextListener {
 
   private boolean isRunningOnTomcat(String serverInfo) {
     return serverInfo.toLowerCase().contains("tomcat");
-  }
-
-  private Integer getMajorVersion(String serverInfo) {
-    try {
-      Matcher versionMatcher = Pattern.compile("[^\\d]*([\\d]*)").matcher(serverInfo);
-      if (versionMatcher.find()) {
-        return Integer.valueOf(versionMatcher.group(1));
-      }
-    } catch (Exception ignore) {
-    }
-
-    return null;
   }
 
   @Override
@@ -109,7 +95,52 @@ public class ServerVersionChecker implements ServletContextListener {
 
   /** Returns current Servlet Container's full version (ie. "8.5.31") */
   public static String getServerVersion() {
-    return serverVersion;
+    return serverVersion.getLiteral();
+  }
+
+  private static class Version implements Comparable<Version> {
+    String literal;
+
+    public Version(String versionLiteral) {
+      literal = versionLiteral;
+    }
+
+    public String getLiteral() {
+      return literal;
+    }
+
+    public boolean isValid() {
+      try {
+        Matcher versionMatcher = Pattern.compile("[^\\d]*([\\d]*)").matcher(literal);
+        if (versionMatcher.find()) {
+          return true;
+        }
+      } catch (Exception ignore) {
+      }
+      return false;
+    }
+
+    @Override
+    public int compareTo(Version o) {
+      if (this.literal.equals(o.literal)) {
+        return 0;
+      }
+      final String[] version1 = this.literal.split("\\.");
+      final String[] version2 = o.literal.split("\\.");
+      final int minorVers = version1.length > version2.length ? version2.length : version1.length;
+      for (int i = 0; i < minorVers; i++) {
+        if (version1[i].equals(version2[i])) {
+          continue;
+        }
+        try {
+          return Integer.valueOf(version1[i]).compareTo(Integer.valueOf(version2[i]));
+        } catch (NumberFormatException e) {
+          // Not possible to compare
+          return -1;
+        }
+      }
+      return 0;
+    }
   }
 
 }
