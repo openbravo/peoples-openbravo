@@ -36,7 +36,7 @@ import org.apache.logging.log4j.Logger;
  *
  */
 public class ServerVersionChecker implements ServletContextListener {
-  private static final String MINIMUM_TOMCAT_VERSION = "7";
+  private static final String MINIMUM_TOMCAT_VERSION = "8.5";
 
   private static final Logger log = LogManager.getLogger();
 
