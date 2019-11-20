@@ -242,7 +242,7 @@ enyo.kind({
     }
 
     try {
-      const dataSalesRepresentative = await OB.MasterdataModels.SalesRepresentative.startsWith(
+      const dataSalesRepresentative = await OB.App.MasterdataModels.SalesRepresentative.startsWith(
         criteria
       );
       successCallbackBPs(dataSalesRepresentative.result);
