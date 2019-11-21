@@ -12,7 +12,7 @@
 /*items of collection*/
 enyo.kind({
   name: 'OB.UI.ListValuesLineCheck',
-  kind: 'OB.UI.CheckboxButton',
+  kind: 'OB.UI.Button',
   classes: 'obUiListValuesLineCheck',
   events: {
     onAddToSelected: ''
@@ -21,7 +21,7 @@ enyo.kind({
     this.inherited(arguments);
     var me = this;
     if (!this.parent.model.get('childrenSelected')) {
-      this.removeClass('half-active');
+      this.removeClass('obUiListValuesLineCheck_half-active');
     }
     this.doAddToSelected({
       value: me.parent.model,
@@ -31,21 +31,23 @@ enyo.kind({
   },
   create: function() {
     this.inherited(arguments);
-    this.setContent(this.parent.model.get('name'));
+    this.setLabel(this.parent.model.get('name'));
     if (this.parent.model.get('selected')) {
-      this.addClass('active');
+      this.addClass('obUiListValuesLineCheck_active');
     } else {
-      this.removeClass('active');
+      this.removeClass('obUiListValuesLineCheck_active');
       if (this.parent.model.get('childrenSelected')) {
-        this.addClass('half-active');
+        this.addClass('obUiListValuesLineCheck_half-active');
       }
     }
   }
 });
+
 enyo.kind({
   name: 'OB.UI.ListValuesLineChildren',
   kind: 'OB.UI.Button',
   classes: 'obUiListValuesLineChildren',
+  i18nLabel: 'OBMOBC_LblMore',
   showing: false,
   childrenArray: [],
   events: {
@@ -69,6 +71,7 @@ enyo.kind({
     });
   }
 });
+
 enyo.kind({
   name: 'OB.UI.ListValuesLine',
   classes: 'obUiListValuesLine',

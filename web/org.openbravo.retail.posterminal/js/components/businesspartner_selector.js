@@ -313,7 +313,6 @@ enyo.kind({
               kind: 'OB.UI.ModalDialogButton',
               classes: 'obUiModalBpSelectorFooter-container1-container2-close',
               i18nLabel: 'OBRDM_LblClose',
-              isDefaultAction: true,
               tap: function() {
                 if (this.disabled === false) {
                   this.doHideThisPopup();

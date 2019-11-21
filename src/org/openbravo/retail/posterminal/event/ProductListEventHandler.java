@@ -125,16 +125,19 @@ public class ProductListEventHandler extends EntityPersistenceEventObserver {
     assormentQuery.setParameter("assortmentId", assortment.getId());
     assormentQuery.setLockOptions(LockOptions.UPGRADE);
     OBRETCOProductList lockedAssortment = assormentQuery.uniqueResult();
-    
-    final String query = "from OBRETCO_Productcategory where client.id=:clientId and "
-        + "productCategory.id=:categoryId and obretcoProductlist.id=:assortmentId";
-    Query<OBRETCOProductcategory> qry = OBDal.getInstance()
-        .getSession()
-        .createQuery(query, OBRETCOProductcategory.class);
-    qry.setParameter("clientId", lockedAssortment.getClient().getId());
-    qry.setParameter("categoryId", productCategory.getId());
-    qry.setParameter("assortmentId", lockedAssortment.getId());
-    return (OBRETCOProductcategory) qry.uniqueResult();
+
+    if (lockedAssortment != null) {
+      final String query = "from OBRETCO_Productcategory where client.id=:clientId and "
+          + "productCategory.id=:categoryId and obretcoProductlist.id=:assortmentId";
+      Query<OBRETCOProductcategory> qry = OBDal.getInstance()
+          .getSession()
+          .createQuery(query, OBRETCOProductcategory.class);
+      qry.setParameter("clientId", lockedAssortment.getClient().getId());
+      qry.setParameter("categoryId", productCategory.getId());
+      qry.setParameter("assortmentId", lockedAssortment.getId());
+      return (OBRETCOProductcategory) qry.uniqueResult();
+    }
+    return null;
   }
 
 }

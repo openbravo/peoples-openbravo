@@ -241,6 +241,9 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.OrderCaptions',
   classes: 'obUiOrderCaptions',
+  events: {
+    onAdjustOrderCaption: ''
+  },
   components: [
     {
       name: 'description',
@@ -274,7 +277,10 @@ enyo.kind({
         this.setContent(OB.I18N.getLabel(this.i18nContent));
       }
     }
-  ]
+  ],
+  resizeHandler: function() {
+    this.doAdjustOrderCaption();
+  }
 });
 
 enyo.kind({
@@ -600,7 +606,7 @@ enyo.kind({
   events: {
     onReceiptLineSelected: '',
     onRenderPaymentLine: '',
-    onChangeOrderCaptionWidth: ''
+    onAdjustOrderCaption: ''
   },
   handlers: {
     onCheckBoxBehaviorForTicketLine: 'checkBoxBehavior',
@@ -633,10 +639,14 @@ enyo.kind({
           _.each(
             line.get('relatedLines'),
             function(line2) {
-              if (!line2.deferred && !line.get('originalOrderLineId')) {
-                line2 = OB.MobileApp.model.receipt.attributes.lines.get(
-                  line2.orderlineId
-                ).attributes;
+              if (
+                !line2.deferred &&
+                !line.get('originalOrderLineId') &&
+                OB.MobileApp.model.receipt.get('lines').get(line2.orderlineId)
+              ) {
+                line2 = OB.MobileApp.model.receipt
+                  .get('lines')
+                  .get(line2.orderlineId).attributes;
               }
               trancheValues = OB.UI.SearchServicesFilter.prototype.calculateTranche(
                 line2,
@@ -1030,7 +1040,7 @@ enyo.kind({
     this.order.get('lines').on(
       'add remove reset',
       function() {
-        this.doChangeOrderCaptionWidth();
+        this.doAdjustOrderCaption();
       },
       this
     );

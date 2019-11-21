@@ -19,7 +19,7 @@
       return [];
     }
     /* @Override */
-    static validate(property, value, callback) {
+    static validate(oldCustomer, property, value, callback) {
       let result;
       switch (property) {
         case 'phone':
@@ -38,9 +38,8 @@
   }
 
   function validateEmailFormat(email) {
-    //Validate that email have @ and .*
-    var regex = new RegExp(
-      /^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/
+    let regex = new RegExp(
+      "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:.[a-zA-Z0-9-]+)*$"
     );
     if (email === '') {
       return true;
@@ -50,13 +49,14 @@
   }
 
   function validatePhoneFormat(phone) {
-    //Validate that phone only have numbers
-    var regex = new RegExp(/^([0-9])*$/);
+    phone = phone.toString().replace(/\s/g, '');
+    let regex = new RegExp(/^([0-9-()+])*$/);
     if (phone === '') {
       return true;
     } else {
       return regex.test(phone) ? true : false;
     }
   }
+
   OB.DQMController.registerProvider(PosterminalValidations);
 })();

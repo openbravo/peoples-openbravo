@@ -919,7 +919,7 @@
       this.postSyncProcessActions();
     },
 
-    postSyncProcessActions: function() {
+    postSyncProcessActions: async function() {
       if (
         OB.MobileApp.model.get('context') &&
         OB.MobileApp.model.get('context').user &&
@@ -927,27 +927,20 @@
           OB.MobileApp.model.get('context').user.isSalesRepresentative
         )
       ) {
-        OB.Dal.get(
-          OB.Model.SalesRepresentative,
-          OB.MobileApp.model.get('context').user.id,
-          function(salesrepresentative) {
-            if (!salesrepresentative) {
-              OB.MobileApp.model.get(
-                'context'
-              ).user.isSalesRepresentative = false;
-            } else {
-              OB.MobileApp.model.get(
-                'context'
-              ).user.isSalesRepresentative = true;
-            }
-          },
-          function() {},
-          function() {
+        try {
+          const salesrepresentative = await OB.App.MasterdataModels.SalesRepresentative.withId(
+            OB.MobileApp.model.get('context').user.id
+          );
+          if (!salesrepresentative.result) {
             OB.MobileApp.model.get(
               'context'
             ).user.isSalesRepresentative = false;
+          } else {
+            OB.MobileApp.model.get('context').user.isSalesRepresentative = true;
           }
-        );
+        } catch (err) {
+          OB.error(err.message);
+        }
       }
     },
 

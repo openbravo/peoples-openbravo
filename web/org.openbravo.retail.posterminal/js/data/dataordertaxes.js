@@ -1184,13 +1184,12 @@
             );
           }
         });
-        var netandtax, adjustment;
+        var netandtax, adjustment, selectedTax;
         netandtax = OB.DEC.add(originalNet, summedTaxAmt);
         if (expectedGross !== netandtax) {
           //An adjustment is needed
           adjustment = OB.DEC.sub(expectedGross, netandtax);
 
-          var selectedTax;
           _.each(taxRates, function(taxRate) {
             if (!taxRate.get('summaryLevel')) {
               var taxId = taxRate.get('id');
@@ -1245,10 +1244,29 @@
           var lineToAdjust = _.max(taxGroup.lines, function(line) {
             return Math.abs(line.get('discountedNet'));
           });
-          lineToAdjust.set(
-            'discountedNet',
-            lineToAdjust.get('discountedNet') + (originalNet - totalNet)
+          var discountedNet = OB.DEC.add(
+            lineToAdjust.get('discountedNet'),
+            OB.DEC.sub(originalNet, totalNet)
           );
+          lineToAdjust.set('discountedNet', discountedNet);
+          // net amount of the line tax should be adjusted based on line net
+          _.each(lineToAdjust.get('taxLines'), function(taxLine, taxLineId) {
+            _.each(taxRates, function(taxRate, taxId) {
+              if (
+                taxRate.get('id') === taxLineId &&
+                OB.UTIL.isNullOrUndefined(taxRate.get('taxBase'))
+              ) {
+                taxLine['net'] = discountedNet;
+              }
+            });
+          });
+          // line tax amount should be adjusted
+          if (selectedTax && adjustment && adjustment !== 0) {
+            lineToAdjust.get('taxLines')[selectedTax]['amount'] = OB.DEC.add(
+              lineToAdjust.get('taxLines')[selectedTax]['amount'],
+              adjustment
+            );
+          }
         }
       });
 

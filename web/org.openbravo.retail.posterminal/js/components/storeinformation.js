@@ -150,7 +150,7 @@ enyo.kind({
         {
           classes: 'obposUiStoreInformationLine-container7-btnClose',
           name: 'btnClose',
-          kind: 'OB.UI.Button',
+          kind: 'OB.UI.ModalDialogButton',
           i18nLabel: 'OBPOS_LblSlaveClose',
           tap: function() {
             if (this.disabled) {
