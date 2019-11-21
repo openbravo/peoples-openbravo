@@ -1099,29 +1099,16 @@
       this.addToListOfCallbacks(callback);
       var me = this;
 
-      if (OB.MobileApp.model.hasPermission('OBPOS_NewDiscounts', true)) {
-        if (
-          this.get('skipApplyPromotions') ||
-          this.get('cloningReceipt') ||
-          me.preventApplyPromotions
-        ) {
-          calculateGrossThenCallbacks();
-        } else {
-          OB.Discounts.Pos.calculateDiscounts(this, () =>
-            calculateGrossThenCallbacks()
-          );
-        }
+      if (
+        this.get('skipApplyPromotions') ||
+        this.get('cloningReceipt') ||
+        me.preventApplyPromotions
+      ) {
+        calculateGrossThenCallbacks();
       } else {
-        this.on('applyPromotionsFinished', function() {
-          me.off('applyPromotionsFinished');
-          calculateGrossThenCallbacks();
-        });
-        // If line is null or undefined, we calculate the Promotions of the receipt
-        if (OB.UTIL.isNullOrUndefined(line) || line.get('splitline')) {
-          OB.Model.Discounts.applyPromotions(this);
-        } else {
-          OB.Model.Discounts.applyPromotions(this, line);
-        }
+        OB.Discounts.Pos.calculateDiscounts(this, () =>
+          calculateGrossThenCallbacks()
+        );
       }
     },
 
@@ -3352,9 +3339,7 @@
         }
       }
       if (p.get('ispack')) {
-        OB.Model.Discounts.discountRules[
-          p.get('productCategory')
-        ].addProductToOrder(this, p, attrs);
+        addPackToOrder(this, p, attrs);
         if (callback) {
           callback(true);
         }
@@ -3815,6 +3800,88 @@
           }
         }
       } // End addProductToOrder
+
+      async function addPackToOrder(order, pack, attrs) {
+        try {
+          const discountPromise = await OB.MasterdataModels.Discount.withId(
+            pack.get('id')
+          );
+          const discount = discountPromise.result;
+
+          if (discount.endingDate && discount.endingDate.length > 0) {
+            var objDate = new Date(discount.endingDate);
+            var now = new Date();
+            var nowWithoutTime = new Date(now.toISOString().split('T')[0]);
+            if (nowWithoutTime > objDate) {
+              OB.UTIL.showConfirmation.display(
+                OB.I18N.getLabel('OBPOS_PackExpired_header'),
+                OB.I18N.getLabel('OBPOS_PackExpired_body', [
+                  discount._identifier,
+                  objDate.toLocaleDateString()
+                ])
+              );
+              return;
+            }
+          }
+
+          let discountArray = [discount];
+          discountArray = await OB.Discounts.Pos.addDiscountsByProductFilter(
+            discountArray
+          );
+
+          var addProductsAndCalculateDiscounts = function(
+            products,
+            index,
+            callback,
+            errorCallback
+          ) {
+            if (index === products.length) {
+              return callback();
+            }
+            OB.Dal.get(
+              OB.Model.Product,
+              products[index].product.id,
+              function(product) {
+                if (product) {
+                  order.addProduct(
+                    product,
+                    products[index].obdiscQty,
+                    {
+                      belongsToPack: true,
+                      blockAddProduct: true
+                    },
+                    attrs,
+                    function() {
+                      addProductsAndCalculateDiscounts(
+                        products,
+                        index + 1,
+                        callback,
+                        errorCallback
+                      );
+                    }
+                  );
+                }
+              },
+              errorCallback
+            );
+          };
+          var errorCallback = function(error) {
+            OB.error('OBDAL error: ' + error, arguments);
+          };
+          order.set('skipApplyPromotions', true);
+          addProductsAndCalculateDiscounts(
+            discountArray[0].products,
+            0,
+            function() {
+              order.set('skipApplyPromotions', false);
+              order.calculateReceipt();
+            },
+            errorCallback
+          );
+        } finally {
+          /* continue regardless of error */
+        }
+      }
 
       function saveRemoteProduct(p) {
         if (
@@ -10057,27 +10124,22 @@
                 prod.get('productType'),
                 prod.get('id'),
                 prod.get('productCategory'),
-                function(data) {
-                  var hasservices;
-                  if (
-                    !OB.UTIL.isNullOrUndefined(data) &&
-                    OB.DEC.number(iter.quantity) > 0
-                  ) {
-                    hasservices = data.hasservices;
-                  }
-                  _.each(iter.promotions, function(promotion) {
-                    OB.Dal.get(
-                      OB.Model.Discount,
-                      promotion.ruleId,
-                      function(discount) {
+                async function(data) {
+                  async function updatePromotions(iter) {
+                    for (let promotion of iter.promotions) {
+                      try {
+                        const discountPromise = await OB.MasterdataModels.Discount.withId(
+                          promotion.ruleId
+                        );
+                        const discount = discountPromise.result;
                         if (
                           discount &&
-                          OB.Model.Discounts.discountRules[
-                            discount.get('discountType')
-                          ].addManual
+                          OB.Discounts.discountRules[
+                            discount.discountType
+                          ].isManualRule()
                         ) {
                           var percentage;
-                          if (discount.get('obdiscPercentage')) {
+                          if (discount.obdiscPercentage) {
                             percentage = OB.DEC.mul(
                               OB.DEC.div(promotion.amt, iter.lineGrossAmount),
                               new BigDecimal('100')
@@ -10086,15 +10148,23 @@
                           promotion.userAmt = percentage
                             ? percentage
                             : promotion.amt;
-                          promotion.discountType = discount.get('discountType');
+                          promotion.discountType = discount.discountType;
                           promotion.manual = true;
                         }
-                      },
-                      function(tx, error) {
+                      } catch (error) {
                         OB.UTIL.showError(error);
                       }
-                    );
-                  });
+                    }
+                  }
+
+                  let hasservices;
+                  if (
+                    !OB.UTIL.isNullOrUndefined(data) &&
+                    OB.DEC.number(iter.quantity) > 0
+                  ) {
+                    hasservices = data.hasservices;
+                  }
+                  await updatePromotions(iter);
                   if (
                     OB.MobileApp.model.hasPermission(
                       'OBPOS_EnableSupportForProductAttributes',

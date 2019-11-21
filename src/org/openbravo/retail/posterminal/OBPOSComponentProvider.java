@@ -99,17 +99,17 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "webprinter/usbprinters/startsp100", "webprinter/usbprinters/wincorth230",
         "webprinter/btprinters/genericBTPrinter", "webprinter/btprinters/zebraZQ320",
 
-        "model/currencypanel", "model/country", "model/salesrepresentative", "model/discountset",
-        "model/bpartnerset", "model/productcharacteristicvalue", "model/characteristicvalue",
-        "model/characteristic", "model/brand", "model/executor", "model/terminal-model",
-        "model/paymentmethodcashup", "model/taxcashup", "model/offlineprinter", "model/productbom",
-        "model/taxcategorybom", "model/orderassociationsfilter", "model/product-servicelinked",
-        "model/prepaymentrules", "components/modalcancel", "components/subwindow",
-        "components/leftsubwindow", "components/modalreceiptproperties",
-        "components/modalreceiptlineproperties", "components/modalnoteditableorder",
-        "components/modalnoteditableline", "components/modalmodulesindev",
-        "components/modalselectprinters", "components/modalmorepaymentmethods",
-        "components/modalDeliveryChange", "components/obpos-gridkeyboard",
+        "model/currencypanel", "model/country", "model/salesrepresentative", "model/bpartnerset",
+        "model/productcharacteristicvalue", "model/characteristicvalue", "model/characteristic",
+        "model/brand", "model/executor", "model/terminal-model", "model/paymentmethodcashup",
+        "model/taxcashup", "model/offlineprinter", "model/productbom", "model/taxcategorybom",
+        "model/orderassociationsfilter", "model/product-servicelinked", "model/prepaymentrules",
+        "components/modalcancel", "components/subwindow", "components/leftsubwindow",
+        "components/modalreceiptproperties", "components/modalreceiptlineproperties",
+        "components/modalnoteditableorder", "components/modalnoteditableline",
+        "components/modalmodulesindev", "components/modalselectprinters",
+        "components/modalmorepaymentmethods", "components/modalDeliveryChange",
+        "components/obpos-gridkeyboard",
 
         // Web POS window
         "utils/eventbus", "utils/attributeUtils", "utils/cashUpReportUtils",
@@ -146,9 +146,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
         // Point of sale models
         "model/pricelist", "model/product-category", "model/product-category-tree", "model/product",
-        "model/productprice", "model/offerpricelist", "model/service-product",
-        "model/service-category", "model/businesspartner", "model/document-sequence",
-        "model/taxRate", "model/taxZone", "model/promotions",
+        "model/productprice", "model/service-product", "model/service-category",
+        "model/businesspartner", "model/document-sequence", "model/taxRate", "model/taxZone",
+        "model/DiscountModel",
 
         "model/servicepricerule", "model/servicepricerulerange",
         "model/servicepricerulerangeprices", "model/servicepriceruleversion",

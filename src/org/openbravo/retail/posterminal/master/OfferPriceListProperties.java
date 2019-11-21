@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2014-2015 Openbravo S.L.U.
+ * Copyright (C) 2014-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -29,14 +29,12 @@ public class OfferPriceListProperties extends ModelExtension {
 
   @Override
   public List<HQLProperty> getHQLProperties(Object params) {
-    ArrayList<HQLProperty> list = new ArrayList<HQLProperty>() {
-      private static final long serialVersionUID = 1L;
-      {
-        add(new HQLProperty("pl.id", "m_offer_pricelist_id"));
-        add(new HQLProperty("pl.priceAdjustment.id", "m_offer_id"));
-        add(new HQLProperty("pl.priceList.id", "m_pricelist_id"));
-      }
-    };
+    final List<HQLProperty> list = new ArrayList<>();
+    list.add(new HQLProperty("pl.id", "id"));
+    list.add(new HQLProperty("pl.priceAdjustment.id", "priceAdjustment"));
+    list.add(new HQLProperty("pl.priceList.id", "m_pricelist_id"));
+    list.add(new HQLProperty("concat(pl.priceAdjustment.name, ' - ', pl.priceList.name)",
+        "_identifier"));
     return list;
   }
 }

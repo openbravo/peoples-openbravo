@@ -8,43 +8,7 @@
  */
 
 (function() {
-  var BPSetLine = OB.Data.ExtensibleModel.extend({
-    modelName: 'BPSetLine',
-    tableName: 'c_bp_set_line',
-    entityName: 'BPSetLine',
-    dataLimit: OB.Dal.DATALIMIT,
-    paginationById: true,
-    source: 'org.openbravo.retail.posterminal.master.BPSetLine'
-  });
+  class BPSetLine extends OB.MasterdataModelDefinition {}
 
-  BPSetLine.addProperties([
-    {
-      name: 'id',
-      column: 'c_bp_set_line_id',
-      primaryKey: true,
-      type: 'TEXT'
-    },
-    {
-      name: 'bpSet',
-      column: 'c_bp_set_id',
-      type: 'TEXT'
-    },
-    {
-      name: 'businessPartner',
-      column: 'c_bpartner_id',
-      type: 'TEXT'
-    },
-    {
-      name: 'startingDate',
-      column: 'startdate',
-      type: 'DATE'
-    },
-    {
-      name: 'endingDate',
-      column: 'enddate',
-      type: 'DATE'
-    }
-  ]);
-
-  OB.Data.Registry.registerModel(BPSetLine);
+  OB.MasterdataController.registerModel(BPSetLine);
 })();

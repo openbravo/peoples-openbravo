@@ -29,7 +29,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     OB.Model.ProductCategoryTree,
     OB.Model.PriceList,
     OB.Model.ProductPrice,
-    OB.Model.OfferPriceList,
     OB.Model.ServiceProduct,
     OB.Model.ServiceProductCategory,
     OB.Model.ServicePriceRule,
@@ -46,34 +45,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     OB.Model.ProductBOM,
     OB.Model.TaxCategoryBOM,
     OB.Model.CancelLayaway,
-    {
-      generatedModel: true,
-      modelName: 'Discount'
-    },
-    {
-      generatedModel: true,
-      modelName: 'DiscountFilterBusinessPartner'
-    },
-    {
-      generatedModel: true,
-      modelName: 'DiscountFilterBusinessPartnerGroup'
-    },
-    {
-      generatedModel: true,
-      modelName: 'DiscountFilterProduct'
-    },
-    {
-      generatedModel: true,
-      modelName: 'DiscountFilterProductCategory'
-    },
-    {
-      generatedModel: true,
-      modelName: 'DiscountFilterRole'
-    },
-    {
-      generatedModel: true,
-      modelName: 'DiscountFilterCharacteristic'
-    },
     OB.Model.ProductServiceLinked, //
     OB.Model.CurrencyPanel,
     OB.Model.SalesRepresentative,
@@ -86,8 +57,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     OB.Model.PaymentMethodCashUp,
     OB.Model.TaxCashUp,
     OB.Model.Country,
-    OB.Model.BPSetLine,
-    OB.Model.DiscountBusinessPartnerSet
+    OB.Model.BPSetLine
   ],
 
   loadUnpaidOrders: function(loadUnpaidOrdersCallback) {
@@ -355,22 +325,15 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
   },
 
   assignManualDiscounts: function(callback) {
-    return function() {
-      OB.Dal.queryUsingCache(
-        OB.Model.Discount,
-        'select * from m_offer where m_offer_type_id in (' +
-          OB.Model.Discounts.getManualPromotions() +
-          ') limit 1',
-        [],
-        function(records, args) {
-          this.set('manualDiscounts', records.length > 0);
-          callback();
-        }.bind(this),
-        callback,
-        {
-          modelsAffectedByCache: ['Discount']
-        }
+    return async function() {
+      // FIXME: this query was done using OB.Dal.queryUsingCache
+      let discountArray = await OB.Discounts.Pos.getDiscounts();
+      discountArray = OB.Discounts.Pos.filterDiscountsByManual(
+        discountArray,
+        true
       );
+      this.set('manualDiscounts', discountArray.length > 0);
+      callback();
     }.bind(this);
   },
 
