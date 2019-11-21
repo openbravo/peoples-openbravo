@@ -3803,7 +3803,7 @@
 
       async function addPackToOrder(order, pack, attrs) {
         try {
-          const discountPromise = await OB.MasterdataModels.Discount.withId(
+          const discountPromise = await OB.App.MasterdataModels.Discount.withId(
             pack.get('id')
           );
           const discount = discountPromise.result;
@@ -10128,7 +10128,7 @@
                   async function updatePromotions(iter) {
                     for (let promotion of iter.promotions) {
                       try {
-                        const discountPromise = await OB.MasterdataModels.Discount.withId(
+                        const discountPromise = await OB.App.MasterdataModels.Discount.withId(
                           promotion.ruleId
                         );
                         const discount = discountPromise.result;

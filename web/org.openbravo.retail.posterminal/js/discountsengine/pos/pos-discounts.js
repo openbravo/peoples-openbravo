@@ -311,8 +311,8 @@
 
     getDiscounts: async function(orderBy) {
       const discountArrayPromise = orderBy
-        ? await OB.MasterdataModels.Discount.orderedBy(orderBy)
-        : await OB.MasterdataModels.Discount.find();
+        ? await OB.App.MasterdataModels.Discount.orderedBy(orderBy)
+        : await OB.App.MasterdataModels.Discount.find();
       return discountArrayPromise.result;
     },
 
@@ -351,7 +351,7 @@
     addDiscountsByRoleFilter: async function(discountArray) {
       return OB.Discounts.Pos.addDiscountFilter(
         discountArray,
-        OB.MasterdataModels.DiscountFilterRole,
+        OB.App.MasterdataModels.DiscountFilterRole,
         'roles'
       );
     },
@@ -359,7 +359,7 @@
     addDiscountsByProductFilter: async function(discountArray) {
       return OB.Discounts.Pos.addDiscountFilter(
         discountArray,
-        OB.MasterdataModels.DiscountFilterProduct,
+        OB.App.MasterdataModels.DiscountFilterProduct,
         'products',
         'product'
       );
@@ -368,7 +368,7 @@
     addDiscountsByProductCategoryFilter: async function(discountArray) {
       return OB.Discounts.Pos.addDiscountFilter(
         discountArray,
-        OB.MasterdataModels.DiscountFilterProductCategory,
+        OB.App.MasterdataModels.DiscountFilterProductCategory,
         'productCategories',
         'productCategory'
       );
@@ -377,7 +377,7 @@
     addDiscountsByCharacteristicFilter: async function(discountArray) {
       return OB.Discounts.Pos.addDiscountFilter(
         discountArray,
-        OB.MasterdataModels.DiscountFilterCharacteristic,
+        OB.App.MasterdataModels.DiscountFilterCharacteristic,
         'productCharacteristics'
       );
     },
@@ -385,7 +385,7 @@
     addDiscountsByBusinessPartnerFilter: async function(discountArray) {
       return OB.Discounts.Pos.addDiscountFilter(
         discountArray,
-        OB.MasterdataModels.DiscountFilterBusinessPartner,
+        OB.App.MasterdataModels.DiscountFilterBusinessPartner,
         'cbpartners',
         'businessPartner'
       );
@@ -394,7 +394,7 @@
     addDiscountsByBusinessPartnerGroupFilter: async function(discountArray) {
       return OB.Discounts.Pos.addDiscountFilter(
         discountArray,
-        OB.MasterdataModels.DiscountFilterBusinessPartnerGroup,
+        OB.App.MasterdataModels.DiscountFilterBusinessPartnerGroup,
         'cbpartnerGroups',
         'businessPartnerCategory'
       );
@@ -403,7 +403,7 @@
     addDiscountsByBusinessPartnerSetFilter: async function(discountArray) {
       return OB.Discounts.Pos.addDiscountFilter(
         discountArray,
-        OB.MasterdataModels.DiscountFilterBusinessPartnerSet,
+        OB.App.MasterdataModels.DiscountFilterBusinessPartnerSet,
         'cbpartnerSets'
       );
     },
@@ -411,7 +411,7 @@
     addDiscountsByPriceListFilter: async function(discountArray) {
       return OB.Discounts.Pos.addDiscountFilter(
         discountArray,
-        OB.MasterdataModels.DiscountFilterPriceList,
+        OB.App.MasterdataModels.DiscountFilterPriceList,
         'pricelists'
       );
     },
@@ -555,7 +555,7 @@
       );
 
       //BPSets
-      const bpSetLineArrayPromise = await OB.MasterdataModels.BPSetLine.find();
+      const bpSetLineArrayPromise = await OB.App.MasterdataModels.BPSetLine.find();
       const bpSetLineArray = bpSetLineArrayPromise.result;
       const bpSetLineArrayByBPSet = bpSetLineArray.reduce(
         (bpSetLineArrayByBPSet, bpSetLine) => {

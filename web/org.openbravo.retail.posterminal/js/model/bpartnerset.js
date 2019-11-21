@@ -8,7 +8,7 @@
  */
 
 (function() {
-  class BPSetLine extends OB.MasterdataModelDefinition {}
+  class BPSetLine extends OB.App.MasterdataModel {}
 
-  OB.MasterdataController.registerModel(BPSetLine);
+  OB.App.MasterdataController.registerModel(BPSetLine);
 })();

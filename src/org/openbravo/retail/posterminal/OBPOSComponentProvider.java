@@ -148,6 +148,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/pricelist", "model/product-category", "model/product-category-tree", "model/product",
         "model/productprice", "model/service-product", "model/service-category",
         "model/businesspartner", "model/document-sequence", "model/taxRate", "model/taxZone",
+        "model/DiscountModel",
 
         "model/servicepricerule", "model/servicepricerulerange",
         "model/servicepricerulerangeprices", "model/servicepriceruleversion",

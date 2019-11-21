@@ -8,7 +8,7 @@
  */
 
 (function() {
-  class Discount extends OB.MasterdataModelDefinition {
+  class Discount extends OB.App.MasterdataModel {
     constructor() {
       super();
       this.indices = [
@@ -24,7 +24,7 @@
       ];
     }
   }
-  class DiscountFilterRole extends OB.MasterdataModelDefinition {
+  class DiscountFilterRole extends OB.App.MasterdataModel {
     constructor() {
       super();
       this.indices = [
@@ -35,7 +35,7 @@
       ];
     }
   }
-  class DiscountFilterBusinessPartner extends OB.MasterdataModelDefinition {
+  class DiscountFilterBusinessPartner extends OB.App.MasterdataModel {
     constructor() {
       super();
       this.indices = [
@@ -46,7 +46,7 @@
       ];
     }
   }
-  class DiscountFilterBusinessPartnerGroup extends OB.MasterdataModelDefinition {
+  class DiscountFilterBusinessPartnerGroup extends OB.App.MasterdataModel {
     constructor() {
       super();
       this.indices = [
@@ -57,7 +57,7 @@
       ];
     }
   }
-  class DiscountFilterBusinessPartnerSet extends OB.MasterdataModelDefinition {
+  class DiscountFilterBusinessPartnerSet extends OB.App.MasterdataModel {
     constructor() {
       super();
       this.indices = [
@@ -68,7 +68,7 @@
       ];
     }
   }
-  class DiscountFilterProduct extends OB.MasterdataModelDefinition {
+  class DiscountFilterProduct extends OB.App.MasterdataModel {
     constructor() {
       super();
       this.indices = [
@@ -79,7 +79,7 @@
       ];
     }
   }
-  class DiscountFilterProductCategory extends OB.MasterdataModelDefinition {
+  class DiscountFilterProductCategory extends OB.App.MasterdataModel {
     constructor() {
       super();
       this.indices = [
@@ -90,7 +90,7 @@
       ];
     }
   }
-  class DiscountFilterCharacteristic extends OB.MasterdataModelDefinition {
+  class DiscountFilterCharacteristic extends OB.App.MasterdataModel {
     constructor() {
       super();
       this.indices = [
@@ -101,7 +101,7 @@
       ];
     }
   }
-  class DiscountFilterPriceList extends OB.MasterdataModelDefinition {
+  class DiscountFilterPriceList extends OB.App.MasterdataModel {
     constructor() {
       super();
       this.indices = [
@@ -113,13 +113,13 @@
     }
   }
 
-  OB.MasterdataController.registerModel(Discount);
-  OB.MasterdataController.registerModel(DiscountFilterRole);
-  OB.MasterdataController.registerModel(DiscountFilterBusinessPartner);
-  OB.MasterdataController.registerModel(DiscountFilterBusinessPartnerGroup);
-  OB.MasterdataController.registerModel(DiscountFilterBusinessPartnerSet);
-  OB.MasterdataController.registerModel(DiscountFilterProduct);
-  OB.MasterdataController.registerModel(DiscountFilterProductCategory);
-  OB.MasterdataController.registerModel(DiscountFilterCharacteristic);
-  OB.MasterdataController.registerModel(DiscountFilterPriceList);
+  OB.App.MasterdataController.registerModel(Discount);
+  OB.App.MasterdataController.registerModel(DiscountFilterRole);
+  OB.App.MasterdataController.registerModel(DiscountFilterBusinessPartner);
+  OB.App.MasterdataController.registerModel(DiscountFilterBusinessPartnerGroup);
+  OB.App.MasterdataController.registerModel(DiscountFilterBusinessPartnerSet);
+  OB.App.MasterdataController.registerModel(DiscountFilterProduct);
+  OB.App.MasterdataController.registerModel(DiscountFilterProductCategory);
+  OB.App.MasterdataController.registerModel(DiscountFilterCharacteristic);
+  OB.App.MasterdataController.registerModel(DiscountFilterPriceList);
 })();
