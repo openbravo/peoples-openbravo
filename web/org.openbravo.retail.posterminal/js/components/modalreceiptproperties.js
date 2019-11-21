@@ -102,7 +102,7 @@ enyo.kind({
               });
               me.dataReadyFunction(dataSalesRepresentative.result, args);
             } else {
-              actualUser = new Backbone.Collection();
+              actualUser = new Backbone.Model();
               actualUser.set(
                 '_identifier',
                 me.model.get('order').get('salesRepresentative$_identifier')
