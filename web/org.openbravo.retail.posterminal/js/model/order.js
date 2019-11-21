@@ -680,7 +680,9 @@
             line.get('product').get('standardPrice') !== price) ||
           (_.isNumber(line.get('discountedLinePrice')) &&
             line.get('discountedLinePrice') !==
-              line.get('product').get('standardPrice'))
+              line.get('product').get('standardPrice')) ||
+          (OB.UTIL.isNullOrUndefined(line.get('discountedLinePrice')) &&
+            line.get('grossListPrice') !== line.get('grossUnitPrice'))
         ) {
           grossUnitPrice = new BigDecimal(price.toString());
           if (OB.DEC.compare(grossListPrice) === 0) {
