@@ -99,10 +99,10 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "webprinter/usbprinters/startsp100", "webprinter/usbprinters/wincorth230",
         "webprinter/btprinters/genericBTPrinter", "webprinter/btprinters/zebraZQ320",
 
-        "model/currencypanel", "model/country", "model/bpartnerset",
-        "model/productcharacteristicvalue", "model/characteristicvalue", "model/characteristic",
-        "model/brand", "model/executor", "model/terminal-model", "model/paymentmethodcashup",
-        "model/taxcashup", "model/offlineprinter", "model/productbom", "model/taxcategorybom",
+        "model/currencypanel", "model/country", "model/productcharacteristicvalue",
+        "model/characteristicvalue", "model/characteristic", "model/brand", "model/executor",
+        "model/terminal-model", "model/paymentmethodcashup", "model/taxcashup",
+        "model/offlineprinter", "model/productbom", "model/taxcategorybom",
         "model/orderassociationsfilter", "model/product-servicelinked", "model/prepaymentrules",
         "components/modalcancel", "components/subwindow", "components/leftsubwindow",
         "components/modalreceiptproperties", "components/modalreceiptlineproperties",
@@ -148,7 +148,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/pricelist", "model/product-category", "model/product-category-tree", "model/product",
         "model/productprice", "model/service-product", "model/service-category",
         "model/businesspartner", "model/document-sequence", "model/taxRate", "model/taxZone",
-        "model/DiscountModel",
 
         "model/servicepricerule", "model/servicepricerulerange",
         "model/servicepricerulerangeprices", "model/servicepriceruleversion",
@@ -268,9 +267,19 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
     final String[] cssDependency = { "obpos-main" };
 
-    final ArrayList<String> appDependency = new ArrayList<String>();
+    final ArrayList<String> appDependency = new ArrayList<>();
     // IndexedDB
+    appDependency.add("model/masterdata/BPSetLineModel");
     appDependency.add("model/masterdata/salesrepresentative");
+    appDependency.add("model/masterdata/discount/DiscountFilterBusinessPartnerGroupModel");
+    appDependency.add("model/masterdata/discount/DiscountFilterBusinessPartnerModel");
+    appDependency.add("model/masterdata/discount/DiscountFilterBusinessPartnerSetModel");
+    appDependency.add("model/masterdata/discount/DiscountFilterCharacteristicModel");
+    appDependency.add("model/masterdata/discount/DiscountFilterPriceListModel");
+    appDependency.add("model/masterdata/discount/DiscountFilterProductCategoryModel");
+    appDependency.add("model/masterdata/discount/DiscountFilterProductModel");
+    appDependency.add("model/masterdata/discount/DiscountFilterRoleModel");
+    appDependency.add("model/masterdata/discount/DiscountModel");
 
     for (final String resource : resourceDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,
