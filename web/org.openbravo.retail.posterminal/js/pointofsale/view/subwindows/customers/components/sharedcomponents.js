@@ -1088,11 +1088,11 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.CustomerCheckOption',
-  kind: 'enyo.Button',
+  kind: 'OB.UI.Button',
   classes: 'obUiCustomerCheckOption',
   checked: false,
   tap: function() {
-    if (this.readOnly) {
+    if (this.readOnly || this.getDisabled()) {
       return;
     }
     this.setChecked(!this.getChecked());
@@ -1140,6 +1140,13 @@ enyo.kind({
   },
   events: {
     onSaveProperty: ''
+  },
+  getCanNullify: function() {
+    return false;
+  },
+  getDisplayedValue: function() {
+    this.inherited(arguments);
+    return true;
   },
   loadValue: function(inSender, inEvent) {
     var me = this;
@@ -1196,8 +1203,8 @@ enyo.kind({
   },
   initComponents: function() {
     this.inherited(arguments);
-    this.$.smsLabelCheck.setContent(OB.I18N.getLabel('OBPOS_LblSms'));
-    this.$.emailLabelCheck.setContent(OB.I18N.getLabel('OBPOS_LblEmail'));
+    this.$.smsLabelCheck.setLabel(OB.I18N.getLabel('OBPOS_LblSms'));
+    this.$.emailLabelCheck.setLabel(OB.I18N.getLabel('OBPOS_LblEmail'));
     if (this.readOnly) {
       this.$.smsLabelCheck.setDisabled(true);
       this.$.emailLabelCheck.setDisabled(true);
