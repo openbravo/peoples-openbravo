@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2016 Openbravo SLU
+ * All portions are Copyright (C) 2015-2019 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -79,6 +79,21 @@ isc.OBComboBoxItem.addProperties({
       // See issue https://issues.openbravo.com/view.php?id=31331
       requestProperties.params = requestProperties.params || {};
       requestProperties.params.recordIdInForm = this.form.recordIdInForm;
+    }
+    if (
+      this.grid &&
+      this.grid.parentElement &&
+      this.grid.parentElement.getClassName() === 'OBPickAndExecuteGrid'
+    ) {
+      // Identify the case when using an Pick & Execute grid and trying to filter with local window parameters
+      // This will add those parameters to the request, so it handles combos in grids in those type of windows correctly
+      // See issue https://issues.openbravo.com/view.php?id=42239
+      requestProperties = requestProperties || {};
+      requestProperties.params = requestProperties.params || {};
+      isc.addProperties(
+        requestProperties.params,
+        this.grid.parentElement.view.theForm.getValues()
+      );
     }
     return this.Super('filterDataBoundPickList', [
       requestProperties,
