@@ -208,7 +208,6 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.ModalPayOpenTicketsFooter',
-  kind: 'OB.UI.ScrollableTableHeader',
   classes: 'obUiModalPayOpenTicketsFooter',
   events: {
     onHideThisPopup: '',
@@ -641,13 +640,17 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.ListMultiOrdersLine',
-  kind: 'OB.UI.CheckboxButton',
+  kind: 'OB.UI.Button',
   classes: 'obUiListMultiOrdersLine',
   events: {
     onHideThisPopup: ''
   },
   tap: function() {
     this.inherited(arguments);
+    if (this.readOnly) {
+      return;
+    }
+    this.setChecked(!this.getChecked());
     if (
       this.model.crossStoreInfo &&
       OB.UTIL.isCrossStoreReceipt(this.model) &&
@@ -680,7 +683,7 @@ enyo.kind({
               button: this
             },
             action: function() {
-              this.args.button.removeClass('active');
+              this.args.button.unCheck();
               return true;
             }
           }
@@ -691,41 +694,64 @@ enyo.kind({
       this.model.trigger('verifyDoneButton', this.model);
     }
   },
-  components: [
-    {
-      name: 'line',
-      classes: 'obUiListMultiOrdersLine-line',
-      components: [
-        {
-          name: 'store',
-          classes: 'obUiListMultiOrdersLine-line-store'
-        },
-        {
-          classes: 'obUiListMultiOrdersLine-line-element1'
-        },
-        {
-          name: 'topLine',
-          classes: 'obUiListMultiOrdersLine-line-topLine'
-        },
-        {
-          name: 'isLayaway',
-          classes: 'obUiListMultiOrdersLine-line-isLayaway'
-        },
-        {
-          name: 'bottonLine',
-          classes: 'obUiListMultiOrdersLine-line-bottonLine'
-        },
-        {
-          classes: 'obUiListMultiOrdersLine-line-element2'
-        }
-      ]
+  toggle: function() {
+    this.setChecked(!this.getChecked());
+  },
+  setChecked: function(value) {
+    if (value) {
+      this.check();
+    } else {
+      this.unCheck();
     }
-  ],
+  },
+  getChecked: function(value) {
+    return this.checked;
+  },
+  check: function() {
+    this.addClass('active');
+    this.checked = true;
+  },
+  unCheck: function() {
+    this.removeClass('active');
+    this.checked = false;
+  },
+  labelComponents: {
+    name: 'line',
+    classes: 'obUiListMultiOrdersLine-line',
+    components: [
+      {
+        name: 'store',
+        classes: 'obUiListMultiOrdersLine-line-store'
+      },
+      {
+        classes: 'obUiListMultiOrdersLine-line-element1'
+      },
+      {
+        name: 'topLine',
+        classes: 'obUiListMultiOrdersLine-line-topLine'
+      },
+      {
+        name: 'isLayaway',
+        classes: 'obUiListMultiOrdersLine-line-isLayaway'
+      },
+      {
+        name: 'bottomLine',
+        classes: 'obUiListMultiOrdersLine-line-bottomLine'
+      },
+      {
+        classes: 'obUiListMultiOrdersLine-line-element2'
+      }
+    ]
+  },
+  initComponents: function() {
+    this.inherited(arguments);
+    this.$.label.createComponent(this.labelComponents);
+  },
   create: function() {
     var returnLabel = '';
     this.inherited(arguments);
     if (this.model.crossStoreInfo) {
-      this.$.store.setContent(
+      this.$.label.$.store.setContent(
         OB.UTIL.isCrossStoreReceipt(this.model)
           ? this.model.get('store')
           : OB.I18N.getLabel('OBPOS_LblThisStore', [
@@ -733,7 +759,7 @@ enyo.kind({
             ])
       );
     } else {
-      this.$.store.setContent('');
+      this.$.label.$.store.setContent('');
     }
     if (
       this.model.get('documentTypeId') ===
@@ -745,7 +771,7 @@ enyo.kind({
       );
       returnLabel = ' (' + OB.I18N.getLabel('OBPOS_ToReturn') + ')';
     }
-    this.$.topLine.setContent(
+    this.$.label.$.topLine.setContent(
       this.model.get('documentNo') +
         ' - ' +
         (this.model.get('bp')
@@ -753,7 +779,7 @@ enyo.kind({
           : this.model.get('businessPartnerName')) +
         returnLabel
     );
-    this.$.bottonLine.setContent(
+    this.$.label.$.bottomLine.setContent(
       (this.model.get('totalamount') || this.model.get('totalamount') === 0
         ? this.model.get('totalamount')
         : this.model.getGross()) +
@@ -761,28 +787,28 @@ enyo.kind({
         OB.I18N.formatDate(new Date(this.model.get('orderDate'))) +
         ') '
     );
-    if (this.model.get('checked')) {
-      this.addClass('active');
-    } else {
-      this.removeClass('active');
-    }
+    this.setChecked(this.model.get('checked'));
 
     switch (this.model.get('orderType')) {
       case 'ORD':
-        this.$.isLayaway.setContent(OB.I18N.getLabel('OBPOS_LblAssignReceipt'));
-        this.$.isLayaway.setClasses('payOpenTicketsIsReceipt');
+        this.$.label.$.isLayaway.setContent(
+          OB.I18N.getLabel('OBPOS_LblAssignReceipt')
+        );
+        this.$.label.$.isLayaway.setClasses('payOpenTicketsIsReceipt');
         break;
 
       case 'LAY':
-        this.$.isLayaway.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
-        this.$.isLayaway.setClasses('payOpenTicketsIsLayaway');
+        this.$.label.$.isLayaway.setContent(
+          OB.I18N.getLabel('OBPOS_LblLayaway')
+        );
+        this.$.label.$.isLayaway.setClasses('payOpenTicketsIsLayaway');
         break;
 
       default:
         break;
     }
     if (this.model.get('orderType') === 'LAY') {
-      this.$.isLayaway.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
+      this.$.label.$.isLayaway.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
     }
     this.render();
   }
