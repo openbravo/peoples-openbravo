@@ -1478,7 +1478,6 @@
   height: 30px;
   font-size: var(--font-medium);
   font-weight: bold;
-  font-family: 'Arial';
   color: var(--color-secondary);
   float: left;
   padding-top: 5px;
@@ -11770,7 +11769,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposPointOfSaleUiModalsModalPaymentsSelect-paymentMethods-items-text {
-  font-family: 'Helvetica Neue', 'Nimbus Sans L', Arial, sans-serif;
   font-size: var(--font-medium);
   height: 40px;
   text-align: center;
