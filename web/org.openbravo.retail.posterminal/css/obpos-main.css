@@ -7821,7 +7821,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   column-gap: 20px;
 
   box-sizing: border-box;
-  height: 367px;
+  height: var(--keypad-height);
   padding: 10px 10px 25px 10px;
 }
 
@@ -7829,7 +7829,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSPointOfSale.UI.BottomRightGridLayoutsContainer
 */
 .obObposPointOfSaleUiBottomRightGridLayoutsContainer {
-  height: 367px;
+  height: var(--keypad-height);
   box-sizing: border-box;
   padding: 10px 10px 25px 10px;
 }
@@ -12382,7 +12382,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   column-gap: 20px;
 
   box-sizing: border-box;
-  height: 367px;
+  height: var(--keypad-height);
   padding: 10px 10px 25px 10px;
 }
 
@@ -13304,7 +13304,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   column-gap: 20px;
 
   box-sizing: border-box;
-  height: 367px;
+  height: var(--keypad-height);
   padding: 10px 10px 25px 10px;
 }
 
