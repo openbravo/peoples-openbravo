@@ -5532,13 +5532,13 @@
         var saveBP = function() {
           if (
             !businessPartner.get('locId') ||
-            !businessPartner.get('shipLocId') ||
-            businessPartner.get('forceRemote')
+            !businessPartner.get('shipLocId')
           ) {
             businessPartner.loadBPLocations(
               null,
               null,
               function(shipping, billing, locations) {
+                businessPartner.set('locations', locations);
                 businessPartner.set(
                   'locationModel',
                   shipping ? shipping : billing
@@ -5588,7 +5588,7 @@
             if (callback) {
               callback();
             }
-          } else {
+          } else if (businessPartner.get(lid)) {
             OB.Dal.get(
               OB.Model.BPLocation,
               businessPartner.get(lid),
@@ -5617,6 +5617,10 @@
                 }
               }
             );
+          } else {
+            if (callback) {
+              callback();
+            }
           }
         };
 
@@ -5634,6 +5638,7 @@
             null,
             null,
             function(shipping, billing, locations) {
+              businessPartner.set('locations', locations);
               businessPartner.set(
                 'locationModel',
                 shipping ? shipping : billing
