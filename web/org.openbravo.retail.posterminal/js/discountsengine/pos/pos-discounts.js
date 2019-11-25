@@ -320,7 +320,9 @@
       discountArray,
       filterModel,
       filterName,
-      filterEntity
+      filterEntity,
+      filterGroup,
+      filterFunction
     ) {
       const filterArrayPromise = await filterModel.orderedBy('_identifier');
       const filterArray = filterArrayPromise.result;
@@ -331,10 +333,17 @@
         );
       }
 
+      if (filterFunction) {
+        await filterFunction(filterArray);
+      }
+
       const filterArrayByDiscount = filterArray.reduce(
         (filterArrayByDiscount, filter) => {
-          (filterArrayByDiscount[filter.priceAdjustment] =
-            filterArrayByDiscount[filter.priceAdjustment] || []).push(filter);
+          const discountFilterGroup = filterGroup
+            ? filter[filterGroup]
+            : filter['priceAdjustment'];
+          (filterArrayByDiscount[discountFilterGroup] =
+            filterArrayByDiscount[discountFilterGroup] || []).push(filter);
           return filterArrayByDiscount;
         },
         {}
@@ -513,8 +522,6 @@
         'discountCacheInitialization'
       );
       OB.Discounts.Pos.ruleImpls = [];
-
-      /* IndexedDB */
 
       OB.Discounts.Pos.ruleImpls = await OB.Discounts.Pos.getDiscounts('id');
 
