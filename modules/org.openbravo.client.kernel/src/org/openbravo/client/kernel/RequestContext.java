@@ -258,7 +258,7 @@ public class RequestContext {
                 return 0;
               }
 
-              // servlet-api 3.1
+              // methods bellow this line were introduced in servlet-api 3.1
               @Override
               public boolean isFinished() {
                 return false;
@@ -453,7 +453,7 @@ public class RequestContext {
       return localInputStream.toString();
     }
 
-    // servlet-api 3.1
+    // methods bellow this line were introduced in servlet-api 3.1
     @Override
     public boolean isFinished() {
       return false;

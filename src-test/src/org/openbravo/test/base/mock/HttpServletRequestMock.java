@@ -421,7 +421,7 @@ public class HttpServletRequestMock implements HttpServletRequest {
   public void logout() throws ServletException {
   }
 
-  // servlet-api 3.1
+  // methods bellow this line were introduced in servlet-api 3.1
   @Override
   public long getContentLengthLong() {
     return 0;

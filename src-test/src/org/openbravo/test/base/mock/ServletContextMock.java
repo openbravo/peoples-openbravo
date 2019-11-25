@@ -434,7 +434,7 @@ public class ServletContextMock implements ServletContext {
   public void setSessionTrackingModes(Set<SessionTrackingMode> sessionTrackingModes) {
   }
 
-  // servlet-api 3.1
+  // methods bellow this line were introduced in servlet-api 3.1
   @Override
   public String getVirtualServerName() {
     return null;
