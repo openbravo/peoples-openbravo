@@ -261,12 +261,12 @@ public class RequestContext {
               // methods bellow this line were introduced in servlet-api 3.1
               @Override
               public boolean isFinished() {
-                return false;
+                return true;
               }
 
               @Override
               public boolean isReady() {
-                return false;
+                return true;
               }
 
               @Override
