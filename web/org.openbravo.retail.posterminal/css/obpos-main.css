@@ -1322,7 +1322,13 @@
 # Inherits: [OB.UI.Modal]
 */
 .obposUiStoreInformation {
-  top: 40px;
+  height: var(--popup-tall);
+}
+
+@media all and (max-aspect-ratio: 9/8) {
+  .obposUiStoreInformation {
+    height: var(--popup-xtall);
+  }
 }
 
 .obposUiStoreInformationLine {
@@ -1505,7 +1511,6 @@
 
 .obposUiStoreInformationLine-container5-storeCallCenterSchedule {
   /* Inherits: [OB.UI.ScrollableTable] */
-  max-height: 140px;
 }
 
 .obposUiStoreInformationLine-container6 {
@@ -1518,24 +1523,12 @@
 
 .obposUiStoreInformationLine-container6-storeSpecialSchedule {
   /* Inherits: [OB.UI.ScrollableTable] */
-  max-height: 140px;
 }
 
-.obposUiStoreInformationLine-container7 {
-  float: left;
-  width: 100%;
-  touch-action: none;
-  text-align: center;
-}
+.obposUiStoreInformationFooter {}
 
-.obposUiStoreInformationLine-container7-btnClose {
+.obposUiStoreInformationFooter-btnClose {
   /* Inherits: [OB.UI.ModalDialogButton] */
-}
-
-@media all and (max-aspect-ratio: 9/8) {
-  .obposUiStoreInformationLine-container7-btnClose {
-    height: 45px;
-  }
 }
 
 /*
@@ -1655,58 +1648,58 @@
 # Component: OBPOS.UI.StoreInformationSpecialScheduleScrollableHeader
 # Inherits: [OB.UI.ScrollableTableHeader]
 */
-.obposUiScrollableTableHeader {
+.obposUiStoreInformationSpecialScheduleScrollableHeader {
   padding: 10px 10px 10px 0px;
   border-bottom: 1px solid #cccccc;
 }
 
-.obposUiScrollableTableHeader-element1 {
+.obposUiStoreInformationSpecialScheduleScrollableHeader-element1 {
   float: left;
   padding-top: 5px;
   width: 15%;
 }
 
-.obposUiScrollableTableHeader-specialOpenHour {
+.obposUiStoreInformationSpecialScheduleScrollableHeader-specialOpenHour {
   float: left;
   width: 41.66%;
   touch-action: none;
   padding-left: 20px;
 }
 
-.obposUiScrollableTableHeader-element2 {
+.obposUiStoreInformationSpecialScheduleScrollableHeader-element2 {
   display: table-cell;
   vertical-align: middle;
   width: 1%;
 }
 
-.obposUiScrollableTableHeader-specialCloseHour {
+.obposUiStoreInformationSpecialScheduleScrollableHeader-specialCloseHour {
   display: table-cell;
   vertical-align: middle;
   width: 30%;
 }
 
 @media (max-width: 525px) {
-  .obposUiScrollableTableHeader-element1 {
+  .obposUiStoreInformationSpecialScheduleScrollableHeader-element1 {
     width: unset !important;
   }
 
-  .obposUiScrollableTableHeader-specialOpenHour {
+  .obposUiStoreInformationSpecialScheduleScrollableHeader-specialOpenHour {
     width: unset;
   }
 
-  .obposUiScrollableTableHeader-element2 {
+  .obposUiStoreInformationSpecialScheduleScrollableHeader-element2 {
     width: 13% !important;
   }
 }
 
 @media (min-width: 490px) and (max-width: 525px) {
-  .obposUiScrollableTableHeader-element2 {
+  .obposUiStoreInformationSpecialScheduleScrollableHeader-element2 {
     width: 20% !important;
   }
 }
 
 @media (min-width: 345px) and (max-width: 375px) {
-  .obposUiScrollableTableHeader-element2 {
+  .obposUiStoreInformationSpecialScheduleScrollableHeader-element2 {
     width: 8% !important;
   }
 }
@@ -1720,7 +1713,7 @@
 .obposUiStoreInformationSpecialScheduleLine-element1 {
   float: left;
   padding-top: 5px;
-  width: 15%;
+  width: 7px;
 }
 
 .obposUiStoreInformationSpecialScheduleLine-openHour {
@@ -8317,6 +8310,9 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   grid-auto-rows: auto;
 }
 
+.obObposPointOfSaleUiProductDetailsView-footer-footer {
+  /* Inherits: [OB.OBPOSPointOfSale.UI.ProductDetailsView_footer] */
+}
 
 
 /***********************   ***********************/
