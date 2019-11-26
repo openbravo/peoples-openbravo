@@ -16,13 +16,16 @@ enyo.kind({
   body: {
     kind: 'OBPOS.UI.StoreInformationLine'
   },
+  footer: {
+    kind: 'OBPOS.UI.StoreInformationFooter'
+  },
   handlers: {
     onHideInfoPopup: 'hidePopup',
     onShowInfoPopup: 'showPopup'
   },
   storeId: null,
   executeOnShow: function() {
-    this.$.header.setContent(this.args.orgName);
+    this.setHeader(this.args.orgName);
     this.storeId = this.args.orgId;
     this.$.body.$.storeInformationLine.loadInfo(this.storeId);
   },
@@ -141,23 +144,6 @@ enyo.kind({
             'OBPOS.UI.StoreInformationSpecialScheduleScrollableHeader',
           renderLine: 'OBPOS.UI.StoreInformationSpecialScheduleLine',
           renderEmpty: 'OB.UI.RenderEmpty'
-        }
-      ]
-    },
-    {
-      classes: 'obposUiStoreInformationLine-container7',
-      components: [
-        {
-          classes: 'obposUiStoreInformationLine-container7-btnClose',
-          name: 'btnClose',
-          kind: 'OB.UI.ModalDialogButton',
-          i18nLabel: 'OBPOS_LblSlaveClose',
-          tap: function() {
-            if (this.disabled) {
-              return true;
-            }
-            this.owner.owner.owner.hide();
-          }
         }
       ]
     }
@@ -342,6 +328,25 @@ enyo.kind({
 });
 
 enyo.kind({
+  name: 'OBPOS.UI.StoreInformationFooter',
+  classes: 'obUiModal-footer-mainButtons obposUiStoreInformationFooter',
+  components: [
+    {
+      classes: 'obposUiStoreInformationFooter-btnClose',
+      name: 'btnClose',
+      kind: 'OB.UI.ModalDialogButton',
+      i18nLabel: 'OBPOS_LblSlaveClose',
+      tap: function() {
+        if (this.disabled) {
+          return true;
+        }
+        this.owner.owner.owner.hide();
+      }
+    }
+  ]
+});
+
+enyo.kind({
   kind: 'OB.UI.ScrollableTableHeader',
   name: 'OBPOS.UI.StoreInformationScheduleScrollableHeader',
   classes: 'obposUiStoreInformationScheduleScrollableHeader',
@@ -416,7 +421,7 @@ enyo.kind({
 enyo.kind({
   name: 'OBPOS.UI.StoreInformationSpecialScheduleScrollableHeader',
   kind: 'OB.UI.ScrollableTableHeader',
-  classes: 'obposUiScrollableTableHeader',
+  classes: 'obposUiStoreInformationSpecialScheduleScrollableHeader',
   components: [
     {
       components: [
@@ -424,14 +429,17 @@ enyo.kind({
           classes: 'obpos-row-store-space'
         },
         {
-          classes: 'obposUiScrollableTableHeader-specialOpenHour',
+          classes:
+            'obposUiStoreInformationSpecialScheduleScrollableHeader-specialOpenHour',
           name: 'specialOpenHour'
         },
         {
-          classes: 'obposUiScrollableTableHeader-element2'
+          classes:
+            'obposUiStoreInformationSpecialScheduleScrollableHeader-element2'
         },
         {
-          classes: 'obposUiScrollableTableHeader-specialCloseHour',
+          classes:
+            'obposUiStoreInformationSpecialScheduleScrollableHeader-specialCloseHour',
           name: 'specialCloseHour'
         }
       ]

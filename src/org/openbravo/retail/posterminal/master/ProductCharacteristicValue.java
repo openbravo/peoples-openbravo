@@ -23,8 +23,11 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
@@ -54,6 +57,13 @@ public class ProductCharacteristicValue extends ProcessHQLQuery {
     return propertiesList;
   }
 
+  private List<String> getUsedInWebPOSCharacteristics() {
+    String hqlQuery = "select id from Characteristic c where c.obposUseonwebpos = true and isactive = 'Y'";
+    final Session session = OBDal.getInstance().getSession();
+    final Query<String> qry = session.createQuery(hqlQuery, String.class);
+    return qry.list();
+  }
+
   @Override
   protected Map<String, Object> getParameterValues(final JSONObject jsonsent) throws JSONException {
     OBContext.setAdminMode(true);
@@ -80,6 +90,7 @@ public class ProductCharacteristicValue extends ProcessHQLQuery {
       }
       paramValues.put("productListId", productList.getId());
       paramValues.put("priceListVersionId", priceListVersion.getId());
+      paramValues.put("characteristicIds", getUsedInWebPOSCharacteristics());
       return paramValues;
     } finally {
       OBContext.restorePreviousMode();
@@ -119,8 +130,7 @@ public class ProductCharacteristicValue extends ProcessHQLQuery {
     query.append(" join product.oBRETCOProlProductList opp");
     query.append(" join product.pricingProductPriceList ppp");
     query.append(" where pcv.$readableSimpleClientCriteria");
-    query.append(" and characteristic.obposUseonwebpos = true");
-    query.append(" and characteristic.active = true");
+    query.append(" and characteristic.id in (:characteristicIds) ");
     if (isCrossStoreSearch) {
       query.append(" and pcv.product.id = :productId");
     } else {

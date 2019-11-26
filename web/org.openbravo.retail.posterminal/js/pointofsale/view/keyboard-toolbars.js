@@ -868,6 +868,7 @@ enyo.kind({
       keypad,
       sideButton,
       keyboard = this.owner.owner,
+      paymentMethodCategory = {},
       isReturnReceipt =
         me.receipt && me.receipt.getPaymentStatus().isNegative ? true : false;
 
@@ -910,7 +911,45 @@ enyo.kind({
             keypad.active = payment.paymentMethod.refundable;
           }
         }
+
+        if (payment.paymentMethod.paymentMethodCategory) {
+          paymentMethodCategory[payment.paymentMethod.paymentMethodCategory] =
+            paymentMethodCategory[
+              payment.paymentMethod.paymentMethodCategory
+            ] || [];
+          paymentMethodCategory[
+            payment.paymentMethod.paymentMethodCategory
+          ].push(payment);
+        }
       });
+
+      for (let key in paymentMethodCategory) {
+        let payments = paymentMethodCategory[key],
+          paymentButtonId = 'paymentMethodCategory.showitems.' + key,
+          refundablePayment = _.find(payments, function(payment) {
+            return payment.paymentMethod.refundable;
+          });
+        if (isReturnReceipt && !refundablePayment) {
+          keyboard.disableCommandKey(me, {
+            disabled: true,
+            commands: [paymentButtonId]
+          });
+          sideButton = _.find(
+            OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons,
+            function(sideBtn) {
+              return sideBtn.btn.command === paymentButtonId;
+            }
+          );
+          if (sideButton) {
+            sideButton.active = false;
+          }
+        } else {
+          keyboard.disableCommandKey(me, {
+            disabled: false,
+            commands: [paymentButtonId]
+          });
+        }
+      }
 
       keyboard.showKeypad('Coins-' + OB.MobileApp.model.get('currency').id); // shows the Coins/Notes panel for the terminal currency
       keyboard.showSidepad('sidedisabled');
