@@ -244,9 +244,12 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonClose',
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ModalCloseButton',
   classes: 'obObposPointOfSaleUiProductDetailsViewButtonClose',
   tap: function() {
+    if (this.getDisabled()) {
+      return;
+    }
     this.leftSubWindow.doCloseLeftSubWindow();
   }
 });
