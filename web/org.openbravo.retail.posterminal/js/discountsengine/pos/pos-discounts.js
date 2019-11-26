@@ -493,12 +493,6 @@
           return a.priority - b.priority;
         });
 
-        // Remove manual discounts
-        discountArray = OB.Discounts.Pos.filterDiscountsByManual(
-          discountArray,
-          false
-        );
-
         // Filter by role
         const roleId = OB.MobileApp.model.get('context').role.id;
         discountArray = OB.Discounts.Pos.filterDiscountsByRole(
@@ -521,44 +515,50 @@
       const execution = OB.UTIL.ProcessController.start(
         'discountCacheInitialization'
       );
-      OB.Discounts.Pos.ruleImpls = [];
 
-      OB.Discounts.Pos.ruleImpls = await OB.Discounts.Pos.getDiscounts('id');
+      let discountArray = await OB.Discounts.Pos.getDiscounts('id');
 
-      OB.Discounts.Pos.ruleImpls = await OB.Discounts.Pos.addDiscountsByRoleFilter(
-        OB.Discounts.Pos.ruleImpls
+      discountArray = await OB.Discounts.Pos.addDiscountsByRoleFilter(
+        discountArray
       );
 
-      OB.Discounts.Pos.ruleImpls = await OB.Discounts.Pos.addDiscountsByProductFilter(
-        OB.Discounts.Pos.ruleImpls
+      discountArray = await OB.Discounts.Pos.addDiscountsByProductFilter(
+        discountArray
       );
 
-      OB.Discounts.Pos.ruleImpls = await OB.Discounts.Pos.addDiscountsByProductCategoryFilter(
-        OB.Discounts.Pos.ruleImpls
+      discountArray = await OB.Discounts.Pos.addDiscountsByProductCategoryFilter(
+        discountArray
       );
 
-      OB.Discounts.Pos.ruleImpls = await OB.Discounts.Pos.addDiscountsByCharacteristicFilter(
-        OB.Discounts.Pos.ruleImpls
+      discountArray = await OB.Discounts.Pos.addDiscountsByCharacteristicFilter(
+        discountArray
       );
 
-      OB.Discounts.Pos.ruleImpls = await OB.Discounts.Pos.addDiscountsByBusinessPartnerFilter(
-        OB.Discounts.Pos.ruleImpls
+      discountArray = await OB.Discounts.Pos.addDiscountsByBusinessPartnerFilter(
+        discountArray
       );
 
-      OB.Discounts.Pos.ruleImpls = await OB.Discounts.Pos.addDiscountsByBusinessPartnerGroupFilter(
-        OB.Discounts.Pos.ruleImpls
+      discountArray = await OB.Discounts.Pos.addDiscountsByBusinessPartnerGroupFilter(
+        discountArray
       );
 
-      OB.Discounts.Pos.ruleImpls = await OB.Discounts.Pos.addDiscountsByBusinessPartnerSetFilter(
-        OB.Discounts.Pos.ruleImpls
+      discountArray = await OB.Discounts.Pos.addDiscountsByBusinessPartnerSetFilter(
+        discountArray
       );
 
-      OB.Discounts.Pos.ruleImpls = await OB.Discounts.Pos.addDiscountsByPriceListFilter(
-        OB.Discounts.Pos.ruleImpls
+      discountArray = await OB.Discounts.Pos.addDiscountsByPriceListFilter(
+        discountArray
       );
 
-      OB.Discounts.Pos.ruleImpls = transformDiscountArray(
-        OB.Discounts.Pos.ruleImpls
+      discountArray = transformDiscountArray(discountArray);
+
+      OB.Discounts.Pos.ruleManualImpls = OB.Discounts.Pos.filterDiscountsByManual(
+        discountArray,
+        true
+      );
+      OB.Discounts.Pos.ruleImpls = OB.Discounts.Pos.filterDiscountsByManual(
+        discountArray,
+        false
       );
 
       //BPSets
