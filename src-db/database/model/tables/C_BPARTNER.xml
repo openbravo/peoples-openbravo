@@ -488,9 +488,9 @@
         <index-column name="functionBasedColumn" functionExpression="UPPER(VALUE)"/>
       </index>
       <unique name="C_BPARTNER_VALUE">
-        <unique-column name="AD_CLIENT_ID"/>
-        <unique-column name="AD_ORG_ID"/>
         <unique-column name="VALUE"/>
+        <unique-column name="AD_ORG_ID"/>
+        <unique-column name="AD_CLIENT_ID"/>
       </unique>
       <check name="C_BPARTNER_CBLOCKING_CHK"><![CDATA[CUSTOMER_BLOCKING IN ('Y', 'N')]]></check>
       <check name="C_BPARTNER_CONSENT_CHK"><![CDATA[IS_CUSTOMER_CONSENT IN ('Y', 'N')]]></check>

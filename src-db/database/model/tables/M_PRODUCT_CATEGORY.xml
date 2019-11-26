@@ -78,8 +78,9 @@
         <reference local="AD_IMAGE_ID" foreign="AD_IMAGE_ID"/>
       </foreign-key>
       <unique name="M_PRODUCT_CATEGORY_VALUE">
-        <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="VALUE"/>
+        <unique-column name="AD_ORG_ID"/>
+        <unique-column name="AD_CLIENT_ID"/>
       </unique>
       <check name="M_PROD_CATEG_ISSUMMARY_CHK"><![CDATA[ISSUMMARY IN ('Y', 'N')]]></check>
       <check name="M_PRODUCT_CATEG_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
