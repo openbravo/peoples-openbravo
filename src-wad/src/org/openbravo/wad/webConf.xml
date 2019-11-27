@@ -12,7 +12,7 @@
     * under the License. 
     * The Original Code is Openbravo ERP. 
     * The Initial Developer of the Original Code is Openbravo SLU
-    * All portions are Copyright (C) 2001-2018 Openbravo SLU 
+    * All portions are Copyright (C) 2001-2019 Openbravo SLU 
     * All Rights Reserved. 
     * Contributor(s):    ______________________________________.
     ************************************************************************
@@ -25,10 +25,10 @@
 
   <PARAMETER id="webapp1" name="webapp1" default="Y" />
   <PARAMETER id="webapp" name="webapp" default="Y" withId="webapp1"
-    boolean='xmlns="http://java.sun.com/xml/ns/j2ee" 
+    boolean='xmlns="http://xmlns.jcp.org/xml/ns/javaee"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
-  version="3.0"' />
+  xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+  version="3.1"' />
   
   <PARAMETER id="fieldSessionTimeOut" name="fieldSessionTimeOut" default="60"/>
 

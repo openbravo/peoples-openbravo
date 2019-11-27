@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ReadListener;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -256,6 +257,21 @@ public class RequestContext {
               public int read() throws IOException {
                 return 0;
               }
+
+              // methods bellow this line were introduced in servlet-api 3.1
+              @Override
+              public boolean isFinished() {
+                return true;
+              }
+
+              @Override
+              public boolean isReady() {
+                return true;
+              }
+
+              @Override
+              public void setReadListener(ReadListener arg0) {
+              }
             };
           } else {
             LocalServletInputStream servletInputStream = new LocalServletInputStream();
@@ -435,6 +451,21 @@ public class RequestContext {
     @Override
     public String toString() {
       return localInputStream.toString();
+    }
+
+    // methods bellow this line were introduced in servlet-api 3.1
+    @Override
+    public boolean isFinished() {
+      return false;
+    }
+
+    @Override
+    public boolean isReady() {
+      return false;
+    }
+
+    @Override
+    public void setReadListener(ReadListener arg0) {
     }
   }
 

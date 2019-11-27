@@ -60,7 +60,7 @@ public class ServletContextMock implements ServletContext {
   private static final Logger log = LogManager.getLogger();
 
   private static final int SERVLET_API_MAJOR_VERSION = 3;
-  private static final int SERVLET_API_MINOR_VERSION = 0;
+  private static final int SERVLET_API_MINOR_VERSION = 1;
 
   private final Map<String, Object> attributes = new HashMap<String, Object>();
   private final Map<String, String> initParameters = new HashMap<String, String>();
@@ -432,6 +432,12 @@ public class ServletContextMock implements ServletContext {
 
   @Override
   public void setSessionTrackingModes(Set<SessionTrackingMode> sessionTrackingModes) {
+  }
+
+  // methods bellow this line were introduced in servlet-api 3.1
+  @Override
+  public String getVirtualServerName() {
+    return null;
   }
 
 }
