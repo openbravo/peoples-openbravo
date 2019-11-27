@@ -54,10 +54,19 @@ create.database: creates the database from scratch.
   </target>
 
 
-
-
   <target name="clean.database.ORACLE">
-    <sql driver="${bbdd.driver}" url="${bbdd.url}" userid="${bbdd.systemUser}" password="${bbdd.systemPassword}" onerror="continue" delimiter="/">
+    <antcall target="clean.database.ORACLE.param">
+      <param name="driver" value="${bbdd.driver}"/>
+      <param name="url" value="${bbdd.url}"/>
+      <param name="systemUser" value="${bbdd.systemUser}"/>
+      <param name="user" value="${bbdd.user}"/>
+      <param name="systemPassword" value="${bbdd.systemPassword}"/>
+      <param name="sid" value="${bbdd.sid}"/>
+    </antcall>
+  </target>	
+
+  <target name="clean.database.ORACLE.param">
+    <sql driver="${driver}" url="${url}" userid="${systemUser}" password="${systemPassword}" onerror="continue" delimiter="/">
       <classpath>
         <fileset dir="${base.lib}">
           <include name="**/*.jar">
@@ -69,9 +78,9 @@ create.database: creates the database from scratch.
         DECLARE
           v_count NUMBER;
         BEGIN
-          SELECT COUNT(*) INTO v_count FROM dba_users WHERE UPPER(username) = UPPER('${bbdd.user}');
+          SELECT COUNT(*) INTO v_count FROM dba_users WHERE UPPER(username) = UPPER('${user}');
           IF (v_count > 0) THEN
-            EXECUTE IMMEDIATE 'DROP USER ${bbdd.user} CASCADE';
+            EXECUTE IMMEDIATE 'DROP USER ${user} CASCADE';
           END IF;
         END;
         /
@@ -79,8 +88,20 @@ create.database: creates the database from scratch.
     </sql>
   </target>
 
+	
   <target name="clean.database.POSTGRE">
-    <sql driver="${bbdd.driver}" url="${bbdd.url}/postgres" userid="${bbdd.systemUser}" password="${bbdd.systemPassword}" autocommit="true">
+    <antcall target="clean.database.POSTGRE.param">
+      <param name="driver" value="${bbdd.driver}"/>
+      <param name="url" value="${bbdd.url}/postgres"/>
+      <param name="systemUser" value="${bbdd.systemUser}"/>
+      <param name="user" value="${bbdd.user}"/>
+      <param name="systemPassword" value="${bbdd.systemPassword}"/>
+      <param name="sid" value="${bbdd.sid}"/>
+    </antcall>
+  </target>		
+	
+  <target name="clean.database.POSTGRE.param">
+    <sql driver="${driver}" url="${url}" userid="${systemUser}" password="${systemPassword}" autocommit="true">
       <classpath>
         <fileset dir="${base.lib}">
           <include name="**/*.jar">
@@ -88,10 +109,10 @@ create.database: creates the database from scratch.
         </fileset>
       </classpath>
       <transaction>
-        DROP DATABASE IF EXISTS ${bbdd.sid};
+        DROP DATABASE IF EXISTS ${sid};
       </transaction>
     </sql>
-    <sql driver="${bbdd.driver}" url="${bbdd.url}/postgres" userid="${bbdd.systemUser}" password="${bbdd.systemPassword}" onerror="continue" autocommit="true">
+    <sql driver="${driver}" url="${url}" userid="${systemUser}" password="${systemPassword}" onerror="continue" autocommit="true">
       <classpath>
         <fileset dir="${base.lib}">
           <include name="**/*.jar">
@@ -99,13 +120,25 @@ create.database: creates the database from scratch.
         </fileset>
       </classpath>
       <transaction>
-        DROP ROLE IF EXISTS ${bbdd.user};
+        DROP ROLE IF EXISTS ${user};
       </transaction>
     </sql>
   </target>
 
   <target name="ORACLE.structure">
-    <sql driver="${bbdd.driver}" url="${bbdd.url}" userid="${bbdd.systemUser}" password="${bbdd.systemPassword}" delimiter="/">
+    <antcall target="ORACLE.structure.param">
+      <param name="driver" value="${bbdd.driver}"/>
+      <param name="url" value="${bbdd.url}"/>
+      <param name="systemUser" value="${bbdd.systemUser}"/>
+      <param name="systemPassword" value="${bbdd.systemPassword}"/>
+      <param name="user" value="${bbdd.user}"/>
+      <param name="password" value="${bbdd.password}"/>
+      <param name="sid" value="${bbdd.sid}"/>
+    </antcall>
+  </target>	
+	
+  <target name="ORACLE.structure.param">
+    <sql driver="${driver}" url="${url}" userid="${systemUser}" password="${systemPassword}" delimiter="/">
       <classpath>
         <fileset dir="${base.lib}">
           <include name="**/*.jar">
@@ -117,7 +150,7 @@ create.database: creates the database from scratch.
         DECLARE
           v_count NUMBER;
         BEGIN
-          SELECT COUNT(*) INTO v_count FROM DBA_USERS WHERE UPPER(USERNAME) = UPPER('${bbdd.user}');
+          SELECT COUNT(*) INTO v_count FROM DBA_USERS WHERE UPPER(USERNAME) = UPPER('${user}');
           IF (v_count > 0) THEN
             RAISE_APPLICATION_ERROR(-20100, '${bbdd.user} ALREADY EXISTS. SELECT ANOTHER USER OR DROP IT FIRST');
           END IF;
@@ -126,7 +159,7 @@ create.database: creates the database from scratch.
       </transaction>
 
     </sql>
-    <sql driver="${bbdd.driver}" url="${bbdd.url}" userid="${bbdd.systemUser}" password="${bbdd.systemPassword}" onerror="continue">
+    <sql driver="${driver}" url="${url}" userid="${systemUser}" password="${systemPassword}" onerror="continue">
       <classpath>
         <fileset dir="${base.lib}">
           <include name="**/*.jar">
@@ -138,7 +171,7 @@ create.database: creates the database from scratch.
         ALTER SYSTEM SET OPEN_CURSORS = 10000 SCOPE=BOTH;
       </transaction>
     </sql>
-    <sql driver="${bbdd.driver}" url="${bbdd.url}" userid="${bbdd.systemUser}" password="${bbdd.systemPassword}">
+    <sql driver="${driver}" url="${url}" userid="${systemUser}" password="${systemPassword}">
       <classpath>
         <fileset dir="${base.lib}">
           <include name="**/*.jar">
@@ -147,26 +180,38 @@ create.database: creates the database from scratch.
       </classpath>
       <transaction>
         --CREATING USER
-        CREATE USER ${bbdd.user} IDENTIFIED BY ${bbdd.password}
+        CREATE USER ${user} IDENTIFIED BY ${password}
         DEFAULT TABLESPACE USERS
         TEMPORARY TABLESPACE TEMP;
 
         --GRANTING USER
-      	grant create session     	to ${bbdd.user};
-      	grant alter  session     	to ${bbdd.user};
-      	grant create table       	to ${bbdd.user};
-      	grant create procedure   	to ${bbdd.user};
-      	grant create trigger     	to ${bbdd.user};
-      	grant create view        	to ${bbdd.user};
-        grant create sequence    	to ${bbdd.user};
-        grant create materialized view 	to ${bbdd.user};
-      	alter user ${bbdd.user} quota unlimited on users;
+      	grant create session     	to ${user};
+      	grant alter  session     	to ${user};
+      	grant create table       	to ${user};
+      	grant create procedure   	to ${user};
+      	grant create trigger     	to ${user};
+      	grant create view        	to ${user};
+        grant create sequence    	to ${user};
+        grant create materialized view 	to ${user};
+      	alter user ${user} quota unlimited on users;
       </transaction>
     </sql>
   </target>
-
+	
   <target name="POSTGRE.structure">
-    <sql driver="${bbdd.driver}" url="${bbdd.url}/postgres" userid="${bbdd.systemUser}" password="${bbdd.systemPassword}" onerror="continue" autocommit="true">
+    <antcall target="POSTGRE.structure.param">
+      <param name="driver" value="${bbdd.driver}"/>
+      <param name="url" value="${bbdd.url}/postgres"/>
+      <param name="systemUser" value="${bbdd.systemUser}"/>
+      <param name="systemPassword" value="${bbdd.systemPassword}"/>
+      <param name="user" value="${bbdd.user}"/>
+      <param name="password" value="${bbdd.password}"/>
+      <param name="sid" value="${bbdd.sid}"/>
+    </antcall>
+  </target>		
+
+  <target name="POSTGRE.structure.param">
+    <sql driver="${driver}" url="${url}" userid="${systemUser}" password="${systemPassword}" onerror="continue" autocommit="true">
       <classpath>
         <fileset dir="${base.lib}">
           <include name="**/*.jar">
@@ -175,12 +220,12 @@ create.database: creates the database from scratch.
       </classpath>
       <transaction>
         --CREATING USER
-        CREATE ROLE ${bbdd.user} LOGIN PASSWORD '${bbdd.password}'
+        CREATE ROLE ${user} LOGIN PASSWORD '${password}'
                CREATEDB CREATEROLE
                VALID UNTIL 'infinity';
       </transaction>
     </sql>
-    <sql driver="${bbdd.driver}" url="${bbdd.url}/postgres" userid="${bbdd.user}" password="${bbdd.password}" autocommit="true">
+    <sql driver="${driver}" url="${url}" userid="${user}" password="${password}" autocommit="true">
       <classpath>
         <fileset dir="${base.lib}">
           <include name="**/*.jar">
@@ -188,7 +233,7 @@ create.database: creates the database from scratch.
         </fileset>
       </classpath>
       <transaction>
-        CREATE DATABASE ${bbdd.sid}
+        CREATE DATABASE ${sid}
                   WITH ENCODING='UTF8'
                   TEMPLATE=template0;
       </transaction>

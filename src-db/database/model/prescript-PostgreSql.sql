@@ -1141,28 +1141,28 @@ SELECT * FROM drop_view('USER_TAB_COLUMNS')
 /-- END
 
 CREATE OR REPLACE VIEW user_tab_columns AS
- SELECT upper(pg_class.relname::text) AS table_name, upper(pg_attribute.attname::text) AS column_name, 
-        (CASE WHEN upper(pg_type.typname::text)='NUMERIC' 
+ SELECT upper(c.relname::text) AS table_name, upper(a.attname::text) AS column_name, 
+        (CASE WHEN upper(t.typname::text)='NUMERIC' 
              THEN 'NUMBER'
-             ELSE upper(pg_type.typname::text)
+             ELSE upper(t.typname::text)
           END) AS data_type,
-        CASE pg_type.typname
-            WHEN 'varchar'::name THEN pg_attribute.atttypmod - 4
-            WHEN 'bpchar'::name THEN pg_attribute.atttypmod - 4
+        CASE t.typname
+            WHEN 'varchar'::name THEN a.atttypmod - 4
+            WHEN 'bpchar'::name THEN a.atttypmod - 4
             ELSE NULL::integer
         END AS char_col_decl_length,
 
-        CASE pg_type.typname
+        CASE t.typname
             WHEN 'bytea'::name THEN 4000
             WHEN 'text'::name THEN 4000
             WHEN 'oid'::name THEN 4000
-            ELSE CASE PG_ATTRIBUTE.ATTLEN 
-                     WHEN -1 THEN PG_ATTRIBUTE.ATTTYPMOD-4 
-                     ELSE PG_ATTRIBUTE.ATTLEN 
+            ELSE CASE a.ATTLEN 
+                     WHEN -1 THEN a.ATTTYPMOD-4 
+                     ELSE a.ATTLEN 
                  END
         END AS data_length,
 
-        CASE pg_type.typname
+        CASE t.typname
             WHEN 'bytea'::name THEN 4000
             WHEN 'text'::name THEN 4000
             WHEN 'oid'::name THEN 4000
@@ -1173,18 +1173,20 @@ CREATE OR REPLACE VIEW user_tab_columns AS
                 END
         END AS data_precision,
         CASE 
-            WHEN upper(pg_type.typname) = 'NUMERIC' and cols.numeric_scale is not null THEN cols.numeric_scale
+            WHEN upper(t.typname) = 'NUMERIC' and cols.numeric_scale is not null THEN cols.numeric_scale
             ELSE 0
         END AS data_scale,
-        CASE pg_attribute.atthasdef
+        CASE a.atthasdef
             WHEN true THEN ( SELECT pg_get_expr(adbin, adrelid)
                FROM pg_attrdef
-              WHERE pg_attrdef.adrelid = pg_class.oid AND pg_attrdef.adnum = pg_attribute.attnum)
+              WHERE pg_attrdef.adrelid = c.oid AND pg_attrdef.adnum = a.attnum)
             ELSE NULL::text
-        END AS data_default, not pg_attribute.attnotnull AS nullable, pg_attribute.attnum AS column_id
-   FROM pg_class, pg_namespace, pg_attribute, pg_type, information_schema.columns cols
-  WHERE pg_attribute.attrelid = pg_class.oid AND pg_attribute.atttypid = pg_type.oid AND pg_class.relnamespace = pg_namespace.oid AND pg_namespace.nspname = current_schema() AND pg_attribute.attnum > 0 
-  AND upper(cols.table_name)=upper(pg_class.relname) AND upper(cols.column_name)=upper(pg_attribute.attname) AND cols.table_schema = current_schema()
+        END AS data_default, not a.attnotnull AS nullable, a.attnum AS column_id, a.*
+   FROM pg_class c JOIN pg_namespace n ON c.relnamespace = n.oid AND n.nspname = current_schema()
+   JOIN pg_attribute a ON a.attrelid = c.oid AND a.attnum > 0
+   JOIN pg_type t ON t.oid = a.atttypid 
+   LEFT JOIN information_schema.columns cols on upper(cols.table_name)=upper(c.relname) AND upper(cols.column_name)=upper(a.attname)
+   WHERE c.relkind in ('r', 'v', 'm')
 /-- END
 
 SELECT * FROM drop_view('v$version')
@@ -1481,6 +1483,34 @@ begin
     end loop;
     
   end loop;
+  
+    --materialized views
+  for i in (
+          SELECT md5(upper(matviewname) ||  md5(upper(pg_get_viewdef(matviewname, true)))) as ck, matviewname
+            FROM pg_matviews 
+           WHERE schemaname = CURRENT_SCHEMA() 
+             AND matviewname !~ '^pg_' 
+        ORDER BY matviewname) loop
+    v_md5 := md5(v_md5||i.ck);
+    
+    -- indexes of materialized views
+    for j in (
+             SELECT md5(upper(pg_attribute.attname::text)||UPPER(PG_CLASS.RELNAME)||(CASE PG_INDEX.indisunique WHEN true THEN 'UNIQUE' ELSE 'NONUNIQUE' END)) as ck
+              FROM PG_INDEX, PG_CLASS, PG_CLASS PG_CLASS1, PG_NAMESPACE, pg_attribute
+              WHERE PG_INDEX.indexrelid = PG_CLASS.OID
+              AND PG_INDEX.indrelid = PG_CLASS1.OID
+              AND PG_CLASS.RELNAMESPACE = PG_NAMESPACE.OID
+              AND PG_CLASS1.RELNAMESPACE = PG_NAMESPACE.OID
+              AND PG_NAMESPACE.NSPNAME = CURRENT_SCHEMA()
+              AND PG_INDEX.INDISPRIMARY ='f'
+               AND pg_attribute.attrelid = pg_index.indrelid
+          AND pg_attribute.attnum = ANY (indkey)
+              AND PG_CLASS1.RELNAME = i.matviewname
+              ORDER BY UPPER(PG_CLASS.RELNAME), upper(pg_attribute.attname::text)) loop
+      v_md5 := md5(v_md5||j.ck);
+    end loop;    
+    
+  end loop;  
 
   select db_checksum
     into aux

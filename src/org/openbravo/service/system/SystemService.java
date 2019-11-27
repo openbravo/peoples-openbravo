@@ -125,11 +125,28 @@ public class SystemService implements OBSingleton {
    * @return the validation result
    */
   public SystemValidationResult validateDatabase(Module module, Database database) {
+    boolean validateAD = true;
+    return validateDatabase(module, database, validateAD);
+  }
+
+  /**
+   * Validates the database for a specific module.
+   *
+   * @param module
+   *          the module to validate
+   * @param database
+   *          the database to read the dbschema from
+   * @param validateAD
+   *          a flag that determines if Application Dictionary checks should be done
+   * @return the validation result
+   */
+  public SystemValidationResult validateDatabase(Module module, Database database,
+      boolean validateAD) {
     final DatabaseValidator databaseValidator = new DatabaseValidator();
     databaseValidator.setValidateModule(module);
     databaseValidator.setDatabase(database);
     databaseValidator.setDbsmExecution(true);
-    return databaseValidator.validate();
+    return databaseValidator.validate(validateAD);
   }
 
   /**

@@ -150,6 +150,9 @@ end loop;
 for c1 in (select * from user_views order by view_name) loop
      v_md5 := dbms_obfuscation_toolkit.md5(input_string => v_md5||c1.view_name||c1.text);
 end loop;
+for c1 in (select * from user_mviews order by mview_name) loop
+     v_md5 := dbms_obfuscation_toolkit.md5(input_string => v_md5||c1.mview_name||c1.query);
+end loop;
 
 
   select db_checksum
