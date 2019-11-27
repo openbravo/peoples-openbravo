@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -26,16 +27,18 @@ import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery;
+import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery.MasterDataModel;
+import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
-import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.retail.config.OBRETCOProductList;
 import org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.retail.posterminal.POSUtils;
-import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
-public class ProductPrice extends ProcessHQLQuery {
+@MasterDataModel("ProductPrice")
+public class ProductPrice extends MasterDataProcessHQLQuery {
   public static final String productPricePropertyExtension = "OBPOS_ProductPriceExtension";
   private static final Logger log = LogManager.getLogger();
 
@@ -63,11 +66,13 @@ public class ProductPrice extends ProcessHQLQuery {
       String pricelist = POSUtils.getPriceListByTerminal(POSTerminal.getSearchKey()).getId();
       OBRETCOProductList productList = POSUtils
           .getProductListByPosterminalId(jsonsent.getString("pos"));
-      Date terminalDate = OBMOBCUtils.calculateServerDate(
-          jsonsent.getJSONObject("parameters").getString("terminalTime"),
-          jsonsent.getJSONObject("parameters")
-              .getJSONObject("terminalTimeOffset")
-              .getLong("value"));
+      // TODO terminalDate not supported
+      // Date terminalDate = OBMOBCUtils.calculateServerDate(
+      // jsonsent.getJSONObject("parameters").getString("terminalTime"),
+      // jsonsent.getJSONObject("parameters")
+      // .getJSONObject("terminalTimeOffset")
+      // .getLong("value"));
+      Date terminalDate = new Date();
       Map<String, Object> paramValues = new HashMap<String, Object>();
       paramValues.put("productListId", productList.getId());
       paramValues.put("validFromDate", terminalDate);
@@ -138,4 +143,12 @@ public class ProductPrice extends ProcessHQLQuery {
     return hqlQueries;
   }
 
+  @Override
+  public List<String> getMasterDataModelProperties() {
+    return ModelExtensionUtils.getPropertyExtensions(extensions)
+        .getProperties()
+        .stream()
+        .map(HQLProperty::getHqlProperty)
+        .collect(Collectors.toList());
+  }
 }

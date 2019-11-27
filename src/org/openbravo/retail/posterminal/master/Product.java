@@ -29,6 +29,8 @@ import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery;
+import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery.MasterDataModel;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
@@ -36,9 +38,9 @@ import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.retail.config.OBRETCOProductList;
 import org.openbravo.retail.posterminal.POSUtils;
-import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
-public class Product extends ProcessHQLQuery {
+@MasterDataModel("Product")
+public class Product extends MasterDataProcessHQLQuery {
   public static final String productPropertyExtension = "OBPOS_ProductExtension";
   public static final String productDiscPropertyExtension = "OBPOS_ProductDiscExtension";
   private static final Logger log = LogManager.getLogger();
@@ -97,8 +99,9 @@ public class Product extends ProcessHQLQuery {
   protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
     try {
       OBContext.setAdminMode(true);
-      final Date terminalDate = getTerminalDate(jsonsent);
-
+      // TODO terminalDate not supported
+      // final Date terminalDate = getTerminalDate(jsonsent);
+      final Date terminalDate = new Date();
       final String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
       final boolean isCrossStoreSearch = isCrossStoreSearch(jsonsent);
       final boolean isMultiPriceListSearch = isMultiPriceListSearch(jsonsent);
@@ -136,8 +139,9 @@ public class Product extends ProcessHQLQuery {
       throws JSONException {
     try {
       OBContext.setAdminMode(true);
-
-      final Date terminalDate = getTerminalDate(jsonsent);
+      // TODO terminalDate not supported
+      // final Date terminalDate = getTerminalDate(jsonsent);
+      final Date terminalDate = new Date();
       final boolean isCrossStoreSearch = isCrossStoreSearch(jsonsent);
       final String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
       final String posId = getTerminalId(jsonsent);
@@ -584,6 +588,12 @@ public class Product extends ProcessHQLQuery {
   @Override
   protected String messageWhenNoFilters() {
     return "OBPOS_ProductSearchTooBroad";
+  }
+
+  // TODO implements getMasterDataModelProperties
+  @Override
+  public List<String> getMasterDataModelProperties() {
+    return new ArrayList<String>();
   }
 
 }

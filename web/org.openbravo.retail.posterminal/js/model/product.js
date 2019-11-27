@@ -8,7 +8,50 @@
  */
 
 (function() {
-  var Product = OB.Data.ExtensibleModel.extend({
+  class Product extends OB.App.MasterdataModel {
+    constructor() {
+      super();
+      this.indices = [
+        new OB.App.Index({
+          name: 'productName_idx',
+          properties: [{ property: '_identifier' }]
+        }),
+        new OB.App.Index({
+          name: 'productCategoryBrowse_idx',
+          properties: [
+            { property: 'productCategory' },
+            { property: 'generic_product_id', isNullable: true }
+          ]
+        }),
+        new OB.App.Index({
+          name: 'bestsellerBrowse_idx',
+          properties: [
+            { property: 'bestseller', isBoolean: true },
+            { property: 'generic_product_id', isNullable: true }
+          ]
+        }),
+        new OB.App.Index({
+          name: 'productCategorySearch_idx',
+          properties: [
+            { property: 'productCategory' },
+            // { property: 'generic_product_id', isNullable: true },
+            { property: 'isGeneric', isBoolean: true }
+          ]
+        }),
+        new OB.App.Index({
+          name: 'bestsellerSearch_idx',
+          properties: [
+            { property: 'bestseller', isBoolean: true },
+            //   { property: 'generic_product_id', isNullable: true },
+            { property: 'isGeneric', isBoolean: true }
+          ]
+        })
+      ];
+    }
+  }
+  OB.App.MasterdataController.registerModel(Product);
+
+  var ProductMD = OB.Data.ExtensibleModel.extend({
     modelName: 'Product',
     tableName: 'm_product',
     entityName: 'Product',
@@ -19,10 +62,11 @@
     remote: 'OBPOS_remote.product',
     initialize: function() {
       this.set('originalStandardPrice', this.get('standardPrice'));
-    }
+    },
+    indexDBModel: Product.prototype.getName()
   });
 
-  Product.addProperties([
+  ProductMD.addProperties([
     {
       name: 'id',
       column: 'm_product_id',
@@ -305,7 +349,7 @@
     }
   ]);
 
-  Product.addIndex([
+  ProductMD.addIndex([
     {
       name: 'obpos_in_prodCat',
       columns: [
@@ -353,5 +397,5 @@
     }
   ]);
 
-  OB.Data.Registry.registerModel(Product);
+  OB.Data.Registry.registerModel(ProductMD);
 })();

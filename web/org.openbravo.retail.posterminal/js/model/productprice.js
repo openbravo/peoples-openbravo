@@ -8,17 +8,34 @@
  */
 
 (function() {
-  var ProductPrice = OB.Data.ExtensibleModel.extend({
+  class ProductPrice extends OB.App.MasterdataModel {
+    constructor() {
+      super();
+      this.indices = [
+        new OB.App.Index({
+          name: 'pricelist_product_idx',
+          properties: [
+            { property: 'm_pricelist_id' },
+            { property: 'm_product_id' }
+          ]
+        })
+      ];
+    }
+  }
+  OB.App.MasterdataController.registerModel(ProductPrice);
+
+  var ProductPriceMD = OB.Data.ExtensibleModel.extend({
     modelName: 'ProductPrice',
     tableName: 'm_productprice',
     entityName: 'ProductPrice',
     source: 'org.openbravo.retail.posterminal.master.ProductPrice',
     includeTerminalDate: true,
     paginationById: true,
-    remote: 'OBPOS_remote.product'
+    remote: 'OBPOS_remote.product',
+    indexDBModel: ProductPrice.prototype.getName()
   });
 
-  ProductPrice.addProperties([
+  ProductPriceMD.addProperties([
     {
       name: 'm_productprice_id',
       column: 'm_productprice_id',
@@ -57,7 +74,7 @@
     }
   ]);
 
-  ProductPrice.addIndex([
+  ProductPriceMD.addIndex([
     {
       name: 'obpos_product_price_list',
       columns: [
@@ -74,5 +91,5 @@
   ]);
 
   //Register the model in the application
-  OB.Data.Registry.registerModel(ProductPrice);
+  OB.Data.Registry.registerModel(ProductPriceMD);
 })();
