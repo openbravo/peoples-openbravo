@@ -76,7 +76,9 @@ enyo.kind({
             leftSubWindow.otherStoresStockModel = new OB.OBPOSPointOfSale.UsedModels.OtherStoresWarehousesStock(
               data
             );
-            me.doOpenOtherStoresStockModal();
+            me.doOpenOtherStoresStockModal({
+              isSelectStore: true
+            });
             leftSubWindow.bodyComponent.$.stockOthers.removeClass(
               'obObposPointOfSaleUiProductDetailsViewButtonStockOtherStore_error'
             );
@@ -87,7 +89,9 @@ enyo.kind({
         }
       );
     } else {
-      this.doOpenOtherStoresStockModal();
+      this.doOpenOtherStoresStockModal({
+        isSelectStore: true
+      });
     }
   }
 });
@@ -303,7 +307,7 @@ enyo.kind({
     }
     return true;
   },
-  openOtherStoresStockModal: function() {
+  openOtherStoresStockModal: function(inSender, inEvent) {
     if (OB.UTIL.isCrossStoreEnabled()) {
       var me = this;
       var selectedStoreCallBack = function(data) {
@@ -353,9 +357,7 @@ enyo.kind({
       };
       if (
         !this.leftSubWindow.forceSelectStore &&
-        event &&
-        event.target.getAttribute('id') !==
-          'terminal_containerWindow_pointOfSale_multiColumn_leftPanel_productdetailsview_leftSubWindowBody_body_stockOthers' &&
+        !inEvent.isSelectStore &&
         (this.leftSubWindow.line ||
           !OB.UTIL.isCrossStoreProduct(this.leftSubWindow.product))
       ) {
