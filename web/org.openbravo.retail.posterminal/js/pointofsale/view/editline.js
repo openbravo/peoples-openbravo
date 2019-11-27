@@ -775,9 +775,8 @@ enyo.kind({
                 var filtered = _.filter(
                   lineModel.get('promotions'),
                   function(prom) {
-                    return OB.Discounts.discountRules[
-                      prom.discountType
-                    ].isManualRule();
+                    return OB.Model.Discounts.discountRules[prom.discountType]
+                      .isManual;
                   },
                   this
                 );
