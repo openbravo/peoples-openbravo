@@ -2772,16 +2772,6 @@ li.selected > .obUiRenderOrderLine_edit {
   margin: 4px 0px 0px 15px;
 }
 
-.obUiShowServicesButton:hover {
-  background-color: var(--color-primary_hover);
-  opacity: 1;
-}
-
-.obUiShowServicesButton:active {
-  background-color: var(--color-primary_active);
-  opacity: 1;
-}
-
 .obUiShowServicesButton .obUiButton-components {
   grid-template-columns: 1fr 0;
 }
@@ -2807,6 +2797,7 @@ li.selected > .obUiRenderOrderLine_edit {
 .obUiShowServicesButton_unreviewed .obUiButton-components-label,
 .obUiShowServicesButton_reviewed .obUiButton-components-label {
   display: none;
+  color: var(--color-on-primary);
 }
 
 .obUiShowServicesButton_reviewed .obUiButton-components:after {
@@ -2816,10 +2807,65 @@ li.selected > .obUiRenderOrderLine_edit {
   height: 20px;
   top: 14px;
   left: 33px;
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-on.svg');
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconCheck.svg');
   background-repeat: no-repeat;
   background-position: center;
   background-size: 20px;
+  filter: var(--color-secondary_img);
+}
+
+/* hover state */
+.obUiShowServicesButton:not(.disabled):hover {
+  background-color: var(--color-primary_hover);
+}
+
+.obUiShowServicesButton:not(.disabled):hover .obUiButton-components-icon {
+  filter: var(--color-on-primary_hover_img);
+}
+
+.obUiShowServicesButton:not(.disabled):hover .obUiButton-components-label {
+  color: var(--color-on-primary_hover);
+}
+
+/* active state */
+.obUiShowServicesButton:not(.disabled):active {
+  background-color: var(--color-primary_active);
+}
+
+.obUiShowServicesButton:not(.disabled):active .obUiButton-components-icon {
+  filter: var(--color-on-primary_active_img);
+}
+
+.obUiShowServicesButton:not(.disabled):active .obUiButton-components-label {
+  color: var(--color-on-primary_active);
+}
+
+/* focus state */
+.obUiShowServicesButton:not(:active):not(.disabled):focus {
+  box-shadow: inset 0px 0 2px 1px var(--color-primary_focus);
+  border-color: var(--color-primary_focus);
+  border-style: solid;
+}
+
+.obUiShowServicesButton:not(:active):not(.disabled):focus .obUiButton-components-icon {
+  filter: var(--color-on-primary_focus_img);
+}
+
+.obUiShowServicesButton:not(:active):not(.disabled):focus .obUiButton-components-label {
+  color: var(--color-on-primary_focus);
+}
+
+/* disabled state */
+.obUiShowServicesButton.disabled {
+  background-color: var(--color-primary_disabled);
+}
+
+.obUiShowServicesButton.disabled .obUiButton-components-icon {
+  filter: var(--color-on-primary_disabled_img);
+}
+
+.obUiShowServicesButton.disabled .obUiButton-components-label {
+  color: var(--color-on-primary_disabled);
 }
 
 
