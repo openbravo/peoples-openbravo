@@ -7,20 +7,17 @@
  ************************************************************************************
  */
 
-(function() {
-  class Country extends OB.MasterdataModelDefinition {
+(function CountryDefinition() {
+  class Country extends OB.App.MasterdataModel {
     constructor() {
       super();
-
-      this._indices = [
-        {
-          indexName: '_identifier',
-          keyPath: '_identifier',
-          objectParameters: { unique: false }
-        }
+      this.indices = [
+        new OB.App.Index({
+          name: '_identifier',
+          properties: [{ property: '_identifier' }]
+        })
       ];
-      this._endPoint = 'org.openbravo.retail.posterminal.master.Country';
     }
   }
-  OB.MasterdataController.registerModel(Country);
+  OB.App.MasterdataController.registerModel(Country);
 })();

@@ -272,7 +272,7 @@ enyo.kind({
       fetchDataFunction: async function(args) {
         var me = this;
         try {
-          const dataCountry = await OB.MasterdataModels.Country.orderedBy(
+          const dataCountry = await OB.App.MasterdataModels.Country.orderedBy(
             '_identifier'
           );
           me.dataReadyFunction(dataCountry.result, args);

@@ -271,6 +271,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     final ArrayList<String> appDependency = new ArrayList<String>();
     // IndexedDB
     appDependency.add("model/masterdata/salesrepresentative");
+    appDependency.add("model/masterdata/bpcategory");
+    appDependency.add("model/masterdata/country");
 
     for (final String resource : resourceDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,

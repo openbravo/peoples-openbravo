@@ -419,7 +419,7 @@ enyo.kind({
         var me = this;
 
         try {
-          const dataBPCategory = await OB.MasterdataModels.BPCategory.orderedBy(
+          const dataBPCategory = await OB.App.MasterdataModels.BPCategory.orderedBy(
             'name'
           );
           me.dataReadyFunction(dataBPCategory.result, args);
@@ -753,7 +753,7 @@ enyo.kind({
       fetchDataFunction: async function(args) {
         var me = this;
         try {
-          const dataCountry = await OB.MasterdataModels.Country.orderedBy(
+          const dataCountry = await OB.App.MasterdataModels.Country.orderedBy(
             '_identifier'
           );
           me.dataReadyFunction(dataCountry.result, args);
@@ -844,7 +844,7 @@ enyo.kind({
       fetchDataFunction: async function(args) {
         var me = this;
         try {
-          const dataCountry = await OB.MasterdataModels.Country.orderedBy(
+          const dataCountry = await OB.App.MasterdataModels.Country.orderedBy(
             '_identifier'
           );
           me.dataReadyFunction(dataCountry.result, args);

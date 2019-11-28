@@ -7,20 +7,17 @@
  ************************************************************************************
  */
 
-(function() {
-  class BPCategory extends OB.MasterdataModelDefinition {
+(function BPCategoryDefinition() {
+  class BPCategory extends OB.App.MasterdataModel {
     constructor() {
       super();
-
-      this._indices = [
-        {
-          indexName: 'name',
-          keyPath: 'name',
-          objectParameters: { unique: false }
-        }
+      this.indices = [
+        new OB.App.Index({
+          name: 'name',
+          properties: [{ property: 'name' }]
+        })
       ];
-      this._endPoint = 'org.openbravo.retail.posterminal.master.BPCategory';
     }
   }
-  OB.MasterdataController.registerModel(BPCategory);
+  OB.App.MasterdataController.registerModel(BPCategory);
 })();
