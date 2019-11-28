@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -36,9 +36,9 @@ enyo.kind({
     }
     if (nrItems > 1) {
       if (nrItems < 1000) {
-        this.$.receiptsCounterButton.$.counter.setContent(nrItems - 1);
+        this.$.receiptsCounterButton.setLabel(nrItems);
       } else {
-        this.$.receiptsCounterButton.$.counter.setContent('...');
+        this.$.receiptsCounterButton.setLabel('...');
       }
       if (receiptLabels) {
         // If the receipt counter button is shown, the receipt top labels should have a right padding to avoid overlapping
@@ -52,7 +52,7 @@ enyo.kind({
       }
       this.show();
     } else {
-      this.$.receiptsCounterButton.$.counter.setContent('');
+      this.$.receiptsCounterButton.setLabel('');
       if (receiptLabels) {
         // If the receipt counter button is not shown, the receipt top labels should reach the right of the receipt area
         // [TODO] Change at the same time as component/order.js
@@ -105,14 +105,5 @@ enyo.kind({
         popup: 'modalreceipts'
       });
     }
-  },
-  components: [
-    {
-      classes: 'obUiReceiptsCounterButton-element1'
-    },
-    {
-      name: 'counter',
-      classes: 'obUiReceiptsCounterButton-counter'
-    }
-  ]
+  }
 });

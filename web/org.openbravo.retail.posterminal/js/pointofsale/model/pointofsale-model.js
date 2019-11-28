@@ -76,7 +76,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     },
     OB.Model.ProductServiceLinked, //
     OB.Model.CurrencyPanel,
-    OB.Model.SalesRepresentative,
     OB.Model.Brand,
     OB.Model.ProductCharacteristicValue,
     OB.Model.CharacteristicValue,
@@ -546,10 +545,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     receipt.on(
       'paymentDone',
       function(openDrawer) {
-        if (receipt.get('paymentDone')) {
+        if (OB.UTIL.ProcessController.isProcessActive('paymentDone')) {
           return true;
         }
-        receipt.set('paymentDone', true);
         var execution = OB.UTIL.ProcessController.start('paymentDone');
 
         function callbackPaymentAccepted(allowedOpenDrawer) {
@@ -562,7 +560,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
         function callbackPaymentCancelled(callbackToExecuteAfter) {
           OB.UTIL.ProcessController.finish('paymentDone', execution);
-          receipt.unset('paymentDone');
           receipt.unset('completeTicket');
           // Review this showLoading false
           //OB.UTIL.showLoading(false);
@@ -1404,6 +1401,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                                               line
                                                 .get('relatedLines')
                                                 .push(newRelatedLine);
+                                              if (!order.get('hasServices')) {
+                                                order.set('hasServices', true);
+                                              }
                                             }
                                           );
                                         }

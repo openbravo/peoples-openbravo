@@ -167,9 +167,14 @@
                 'OBPOS_approval.setPrice',
                 function(approved, supervisor, approvalType) {
                   if (approved) {
-                    var approvals = receipt.get('approvals') || [];
-                    approvals.push({
-                      approvalType: {
+                    var approvals = receipt.get('approvals') || [],
+                      approval = _.find(approvals, function(approval) {
+                        return (
+                          approval.approvalType === 'OBPOS_approval.setPrice'
+                        );
+                      });
+                    if (approval) {
+                      approval.approvalType = {
                         approval: 'OBPOS_approval.setPrice',
                         message: 'OBPOS_approval.setPriceMessage',
                         params: [
@@ -179,11 +184,9 @@
                           ),
                           OB.I18N.formatCurrency(price)
                         ]
-                      },
-                      userContact: supervisor.get('id'),
-                      created: new Date().getTime()
-                    });
-                    receipt.set('approvals', approvals);
+                      };
+                      receipt.set('approvals', approvals);
+                    }
                     callback();
                   }
                 }

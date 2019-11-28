@@ -1279,30 +1279,6 @@ enyo.kind({
             });
             return true;
           }
-          if (
-            OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true) &&
-            OB.MobileApp.model.get('connectedToERP')
-          ) {
-            eventBP.set('forceRemote', true);
-            if (OB.UTIL.isNullOrUndefined(eventBP.get('locId'))) {
-              eventBP.set(
-                'locId',
-                component.model
-                  .get('order')
-                  .get('bp')
-                  .get('locId')
-              );
-            }
-            if (OB.UTIL.isNullOrUndefined(eventBP.get('shipLocId'))) {
-              eventBP.set(
-                'shipLocId',
-                component.model
-                  .get('order')
-                  .get('bp')
-                  .get('shipLocId')
-              );
-            }
-          }
           component.model.get('order').setBPandBPLoc(eventBP, false, true);
           component.model.get('orderList').saveCurrent();
         } else {
@@ -2259,6 +2235,11 @@ enyo.kind({
               keyboard: 'toolbarpayment'
             }
           );
+          OB.POS.terminal.$.containerWindow
+            .getRoot()
+            .$.multiColumn.$.panels.addClass(
+              'obUiMultiColumn-panels-showReceipt'
+            );
           return;
         }
         if (changedModel.isOrder()) {

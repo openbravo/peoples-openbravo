@@ -73,15 +73,22 @@ enyo.kind({
   },
   input: function(inSender, inEvent) {
     this.inherited(arguments);
+    let customer = this.formElement.owner.owner.customer;
     let provider = OB.DQMController.getProviderForField(
       this.modelProperty,
       OB.DQMController.Suggest
     );
     if (provider) {
       let me = this,
-        value = this.getValue();
+        value = this.getValue(),
+        oldCustomer = '';
+      if (customer !== undefined) {
+        oldCustomer = customer.toJSON();
+      }
       if (value.length >= 3) {
-        provider.suggest(this.modelProperty, value, function(result) {
+        provider.suggest(oldCustomer, this.modelProperty, value, function(
+          result
+        ) {
           me.formElement.$.scrim.show();
           me.formElement.$.suggestionList.createSuggestionList(result, value);
         });
@@ -93,13 +100,19 @@ enyo.kind({
   },
   blur: function(inSender, inEvent) {
     this.inherited(arguments);
+    let customer = this.formElement.owner.owner.customer;
     let provider = OB.DQMController.getProviderForField(
       this.modelProperty,
       OB.DQMController.Validate
     );
     if (provider) {
-      let me = this;
+      let me = this,
+        oldCustomer = '';
+      if (customer !== undefined) {
+        oldCustomer = customer.toJSON();
+      }
       let validate = provider.validate(
+        oldCustomer,
         me.modelProperty,
         me.getValue(),
         function(result) {}
@@ -1074,11 +1087,11 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.CustomerCheckOption',
-  kind: 'enyo.Button',
+  kind: 'OB.UI.Button',
   classes: 'obUiCustomerCheckOption',
   checked: false,
   tap: function() {
-    if (this.readOnly) {
+    if (this.readOnly || this.getDisabled()) {
       return;
     }
     this.setChecked(!this.getChecked());
@@ -1126,6 +1139,13 @@ enyo.kind({
   },
   events: {
     onSaveProperty: ''
+  },
+  getCanNullify: function() {
+    return false;
+  },
+  getDisplayedValue: function() {
+    this.inherited(arguments);
+    return true;
   },
   loadValue: function(inSender, inEvent) {
     var me = this;
@@ -1182,8 +1202,8 @@ enyo.kind({
   },
   initComponents: function() {
     this.inherited(arguments);
-    this.$.smsLabelCheck.setContent(OB.I18N.getLabel('OBPOS_LblSms'));
-    this.$.emailLabelCheck.setContent(OB.I18N.getLabel('OBPOS_LblEmail'));
+    this.$.smsLabelCheck.setLabel(OB.I18N.getLabel('OBPOS_LblSms'));
+    this.$.emailLabelCheck.setLabel(OB.I18N.getLabel('OBPOS_LblEmail'));
     if (this.readOnly) {
       this.$.smsLabelCheck.setDisabled(true);
       this.$.emailLabelCheck.setDisabled(true);

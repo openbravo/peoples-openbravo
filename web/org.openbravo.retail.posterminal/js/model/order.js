@@ -680,7 +680,9 @@
             line.get('product').get('standardPrice') !== price) ||
           (_.isNumber(line.get('discountedLinePrice')) &&
             line.get('discountedLinePrice') !==
-              line.get('product').get('standardPrice'))
+              line.get('product').get('standardPrice')) ||
+          (OB.UTIL.isNullOrUndefined(line.get('discountedLinePrice')) &&
+            line.get('grossListPrice') !== line.get('grossUnitPrice'))
         ) {
           grossUnitPrice = new BigDecimal(price.toString());
           if (OB.DEC.compare(grossListPrice) === 0) {
@@ -5530,13 +5532,13 @@
         var saveBP = function() {
           if (
             !businessPartner.get('locId') ||
-            !businessPartner.get('shipLocId') ||
-            businessPartner.get('forceRemote')
+            !businessPartner.get('shipLocId')
           ) {
             businessPartner.loadBPLocations(
               null,
               null,
               function(shipping, billing, locations) {
+                businessPartner.set('locations', locations);
                 businessPartner.set(
                   'locationModel',
                   shipping ? shipping : billing
@@ -5586,7 +5588,7 @@
             if (callback) {
               callback();
             }
-          } else {
+          } else if (businessPartner.get(lid)) {
             OB.Dal.get(
               OB.Model.BPLocation,
               businessPartner.get(lid),
@@ -5615,6 +5617,10 @@
                 }
               }
             );
+          } else {
+            if (callback) {
+              callback();
+            }
           }
         };
 
@@ -5632,6 +5638,7 @@
             null,
             null,
             function(shipping, billing, locations) {
+              businessPartner.set('locations', locations);
               businessPartner.set(
                 'locationModel',
                 shipping ? shipping : billing

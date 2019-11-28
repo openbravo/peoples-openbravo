@@ -29,14 +29,14 @@
      * This method must be ALWAYS override in each subclass
      * Implements the logic to validate each field
      */
-    static validate(property, value) {
+    static validate(oldCustomer, property, value, callback) {
       throw 'validate method not implemented';
     }
     /**
      * This method must be ALWAYS override in each subclass
      * Implements the logic to suggest each field
      */
-    static suggest(property, value) {
+    static suggest(oldCustomer, property, value, callback) {
       throw 'suggest method not implemented';
     }
     /**

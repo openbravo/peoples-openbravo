@@ -10,7 +10,7 @@
 /*global OB, enyo, Backbone, _ */
 
 enyo.kind({
-  kind: 'OB.UI.SmallButton',
+  kind: 'OB.UI.FormElement.Selector',
   name: 'OB.UI.SalesRepresentative',
   classes: 'obUiSalesRepresentative',
   published: {
@@ -28,10 +28,10 @@ enyo.kind({
   },
   init: function(model) {
     if (!OB.MobileApp.model.hasPermission(this.permission)) {
-      this.parent.parent.parent.hide();
+      this.parent.parent.parent.parent.hide();
     } else {
       if (!OB.MobileApp.model.hasPermission(this.permissionOption, true)) {
-        this.parent.parent.parent.hide();
+        this.parent.parent.parent.parent.hide();
       }
     }
     this.setOrder(model.get('order'));
@@ -213,7 +213,7 @@ enyo.kind({
     this.srsList.reset();
     return true;
   },
-  searchAction: function(inSender, inEvent) {
+  searchAction: async function(inSender, inEvent) {
     var me = this,
       filter = inEvent.srName;
 
@@ -228,29 +228,25 @@ enyo.kind({
           _identifier: null,
           name: OB.I18N.getLabel('OBPOS_None')
         });
-        me.srsList.reset(dataSrs.models);
+        me.srsList.reset(dataSrs);
       } else {
         me.srsList.reset();
       }
     }
 
-    var criteria = {};
-    if (filter && filter !== '') {
-      criteria._identifier = {
-        operator: OB.Dal.CONTAINS,
-        value: filter
-      };
+    const criteria = {
+      _identifier: filter
+    };
+
+    try {
+      const dataSalesRepresentative = await OB.App.MasterdataModels.SalesRepresentative.includes(
+        criteria
+      );
+      successCallbackBPs(dataSalesRepresentative.result);
+    } catch (err) {
+      errorCallback(undefined, err.message);
     }
 
-    OB.Dal.find(
-      OB.Model.SalesRepresentative,
-      criteria,
-      successCallbackBPs,
-      errorCallback,
-      null,
-      null,
-      true
-    );
     return true;
   },
   srsList: null,
