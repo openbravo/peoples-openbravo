@@ -1198,6 +1198,9 @@ enyo.kind({
                   me.$.multiColumn.$.leftPanel.$[
                     inEvent.leftSubWindow
                   ].inEvent = inEvent;
+                  if (enyo.Panels.isScreenNarrow()) {
+                    me.$.multiColumn.$.rightToolbar.$.rightToolbar.$.toolbar.$.toolbarBtnCart.tap();
+                  }
                 }
               }
             );
