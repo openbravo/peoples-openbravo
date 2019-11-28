@@ -12,6 +12,7 @@
   v_AttrSetValueType M_Product.AttrSetValueType%TYPE;
   v_productname m_product.name%TYPE;
   v_isgeneric   CHAR(1);
+  v_DateNull DATE := TO_DATE('01-01-1900', 'DD-MM-YYYY');
   /******************************************************************************
   * The contents of this file are subject to the   Compiere License  Version 1.1
   * ("License"); You may not use this file except in compliance with the License
@@ -24,7 +25,7 @@
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
   * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2018 Openbravo S.L.U.
+  * Contributions are Copyright (C) 2001-2019 Openbravo S.L.U.
   ******************************************************************************/
     
 BEGIN
@@ -51,7 +52,29 @@ BEGIN
   WHERE M_Movement_ID=v_ID
     AND(Processed='Y'
     OR Posted='Y') ;
-  IF(v_RO > 0) THEN
+
+  IF (v_RO > 0 AND(
+     (COALESCE(:old.M_MovementLine_ID, '0') <> COALESCE(:new.M_MovementLine_ID, '0'))
+     OR(COALESCE(:old.AD_Client_ID, '0') <> COALESCE(:new.AD_Client_ID, '0'))
+     OR(COALESCE(:old.AD_Org_ID, '0') <> COALESCE(:new.AD_Org_ID, '0'))
+     OR(COALESCE(:old.isactive, '') <> COALESCE(:new.isactive, ''))
+     OR(COALESCE(:old.created, v_DateNull) <> COALESCE(:new.created, v_DateNull))
+     OR(COALESCE(:old.createdby, '0') <> COALESCE(:new.createdby, '0'))
+     OR(COALESCE(:old.M_Movement_ID, '0') <> COALESCE(:new.M_Movement_ID, '0'))
+     OR(COALESCE(:old.M_Locator_ID, '0') <> COALESCE(:new.M_Locator_ID, '0'))
+     OR(COALESCE(:old.M_LocatorTo_ID, '0') <> COALESCE(:new.M_LocatorTo_ID, '0'))
+     OR(COALESCE(:old.M_Product_ID, '0') <> COALESCE(:new.M_Product_ID, '0'))
+     OR(COALESCE(:old.line, 0) <> COALESCE(:new.line, 0))
+     OR(COALESCE(:old.movementqty, 0) <> COALESCE(:new.movementqty, 0))
+     OR(COALESCE(:old.description, '.') <> COALESCE(:new.description, '.'))
+     OR(COALESCE(:old.M_AttributeSetInstance_ID, '0') <> COALESCE(:new.M_AttributeSetInstance_ID, '0'))
+     OR(COALESCE(:old.M_Product_Uom_ID, '0') <> COALESCE(:new.M_Product_Uom_ID, '0'))
+     OR(COALESCE(:old.quantityorder, 0) <> COALESCE(:new.quantityorder, 0))
+     OR(COALESCE(:old.C_Uom_ID, '0') <> COALESCE(:new.C_Uom_ID, '0'))
+     OR(COALESCE(:old.M_Reservation_ID, '0') <> COALESCE(:new.M_Reservation_ID, '0'))
+     OR(COALESCE(:old.C_Aum, '0') <> COALESCE(:new.C_Aum, '0'))
+     OR(COALESCE(:old.aumqty, 0) <> COALESCE(:new.aumqty, 0))
+     OR(COALESCE(:old.M_AttributeSetInstanceTo_ID, '0') <> COALESCE(:new.M_AttributeSetInstanceTo_ID, '0')))) THEN
     RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
   END IF;
   -- Updating inventory
