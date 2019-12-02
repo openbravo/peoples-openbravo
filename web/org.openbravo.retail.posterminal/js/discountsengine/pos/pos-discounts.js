@@ -486,28 +486,6 @@
     },
 
     initCache: async function(basicParams, callback) {
-      function transformDiscountArray(discountArray) {
-        // FIXME: do it in database
-        // Order by priority and id
-        discountArray = discountArray.sort((a, b) => {
-          return a.priority - b.priority;
-        });
-
-        // Filter by role
-        const roleId = OB.MobileApp.model.get('context').role.id;
-        discountArray = OB.Discounts.Pos.filterDiscountsByRole(
-          discountArray,
-          roleId
-        );
-
-        // Set discountPercentage property from discount property
-        discountArray.forEach(
-          discount => (discount.discountPercentage = discount.discount)
-        );
-
-        return discountArray;
-      }
-
       if (OB.Discounts.Pos.isCalculatingCache) {
         return callback();
       }
@@ -550,15 +528,29 @@
         discountArray
       );
 
-      discountArray = transformDiscountArray(discountArray);
+      discountArray = OB.Discounts.Pos.filterDiscountsByRole(
+        discountArray,
+        OB.MobileApp.model.get('context').role.id
+      );
 
-      OB.Discounts.Pos.ruleManualImpls = OB.Discounts.Pos.filterDiscountsByManual(
+      discountArray.forEach(
+        discount => (discount.discountPercentage = discount.discount)
+      );
+
+      OB.Discounts.Pos.manualRuleImpls = OB.Discounts.Pos.filterDiscountsByManual(
         discountArray,
         true
       );
+      OB.Discounts.Pos.manualRuleImpls = OB.Discounts.Pos.manualRuleImpls.sort(
+        (a, b) => a.name.localeCompare(b.name)
+      );
+
       OB.Discounts.Pos.ruleImpls = OB.Discounts.Pos.filterDiscountsByManual(
         discountArray,
         false
+      );
+      OB.Discounts.Pos.ruleImpls = OB.Discounts.Pos.ruleImpls.sort(
+        (a, b) => a.priority - b.priority
       );
 
       //BPSets
