@@ -309,13 +309,6 @@
       }
     },
 
-    getDiscounts: async function(orderBy) {
-      const discountArrayPromise = orderBy
-        ? await OB.App.MasterdataModels.Discount.orderedBy(orderBy)
-        : await OB.App.MasterdataModels.Discount.find();
-      return discountArrayPromise.result;
-    },
-
     addDiscountFilter: async function(
       discountArray,
       filterModel,
@@ -494,7 +487,10 @@
         'discountCacheInitialization'
       );
 
-      let discountArray = await OB.Discounts.Pos.getDiscounts('id');
+      const discountArrayPromise = await OB.App.MasterdataModels.Discount.orderedBy(
+        'name'
+      );
+      let discountArray = discountArrayPromise.result;
 
       discountArray = await OB.Discounts.Pos.addDiscountsByRoleFilter(
         discountArray
@@ -537,20 +533,16 @@
         discount => (discount.discountPercentage = discount.discount)
       );
 
+      discountArray = discountArray.sort((a, b) => a.priority - b.priority);
+
       OB.Discounts.Pos.manualRuleImpls = OB.Discounts.Pos.filterDiscountsByManual(
         discountArray,
         true
-      );
-      OB.Discounts.Pos.manualRuleImpls = OB.Discounts.Pos.manualRuleImpls.sort(
-        (a, b) => a.name.localeCompare(b.name)
       );
 
       OB.Discounts.Pos.ruleImpls = OB.Discounts.Pos.filterDiscountsByManual(
         discountArray,
         false
-      );
-      OB.Discounts.Pos.ruleImpls = OB.Discounts.Pos.ruleImpls.sort(
-        (a, b) => a.priority - b.priority
       );
 
       //BPSets

@@ -94,25 +94,11 @@ enyo.kind({
     var me = this;
     async function loadDiscounts() {
       try {
-        let discountArray = await OB.Discounts.Pos.getDiscounts('name');
-
-        discountArray = await OB.Discounts.Pos.addDiscountsByRoleFilter(
-          discountArray
-        );
-
-        discountArray = OB.Discounts.Pos.filterDiscountsByManual(
-          discountArray,
-          true
-        );
+        let discountArray = OB.Discounts.Pos.manualRuleImpls;
 
         discountArray = OB.Discounts.Pos.filterDiscountsByDate(
           discountArray,
           new Date()
-        );
-
-        discountArray = OB.Discounts.Pos.filterDiscountsByRole(
-          discountArray,
-          OB.MobileApp.model.get('context').role.id
         );
 
         discountArray = OB.Discounts.Pos.filterDiscountsByPriceList(

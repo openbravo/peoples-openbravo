@@ -13,11 +13,6 @@
       super();
       this.indices = [
         {
-          indexName: 'id',
-          keyPath: 'id',
-          objectParameters: { unique: true }
-        },
-        {
           indexName: 'name',
           keyPath: 'name'
         }
