@@ -322,24 +322,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     this.loadModels(function() {});
   },
 
-  assignManualDiscounts: function(callback) {
-    return async function() {
-      // FIXME: this query was done using OB.Dal.queryUsingCache
-      let discountArray = await OB.Discounts.Pos.getDiscounts();
-      discountArray = OB.Discounts.Pos.filterDiscountsByManual(
-        discountArray,
-        true
-      );
-      this.set('manualDiscounts', discountArray.length > 0);
-      callback();
-    }.bind(this);
-  },
-
   initModels: function(callback) {
     var me = this;
-
-    // to be executed at the end
-    callback = this.assignManualDiscounts(callback);
 
     // create and expose the receipt
     var receipt = new OB.Model.Order();
