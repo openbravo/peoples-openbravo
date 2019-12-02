@@ -1322,7 +1322,13 @@
 # Inherits: [OB.UI.Modal]
 */
 .obposUiStoreInformation {
-  top: 40px;
+  height: var(--popup-tall);
+}
+
+@media all and (max-aspect-ratio: 9/8) {
+  .obposUiStoreInformation {
+    height: var(--popup-xtall);
+  }
 }
 
 .obposUiStoreInformationLine {
@@ -1478,7 +1484,6 @@
   height: 30px;
   font-size: var(--font-medium);
   font-weight: bold;
-  font-family: 'Arial';
   color: var(--color-secondary);
   float: left;
   padding-top: 5px;
@@ -1506,7 +1511,6 @@
 
 .obposUiStoreInformationLine-container5-storeCallCenterSchedule {
   /* Inherits: [OB.UI.ScrollableTable] */
-  max-height: 140px;
 }
 
 .obposUiStoreInformationLine-container6 {
@@ -1519,24 +1523,12 @@
 
 .obposUiStoreInformationLine-container6-storeSpecialSchedule {
   /* Inherits: [OB.UI.ScrollableTable] */
-  max-height: 140px;
 }
 
-.obposUiStoreInformationLine-container7 {
-  float: left;
-  width: 100%;
-  touch-action: none;
-  text-align: center;
-}
+.obposUiStoreInformationFooter {}
 
-.obposUiStoreInformationLine-container7-btnClose {
+.obposUiStoreInformationFooter-btnClose {
   /* Inherits: [OB.UI.ModalDialogButton] */
-}
-
-@media all and (max-aspect-ratio: 9/8) {
-  .obposUiStoreInformationLine-container7-btnClose {
-    height: 45px;
-  }
 }
 
 /*
@@ -1656,58 +1648,58 @@
 # Component: OBPOS.UI.StoreInformationSpecialScheduleScrollableHeader
 # Inherits: [OB.UI.ScrollableTableHeader]
 */
-.obposUiScrollableTableHeader {
+.obposUiStoreInformationSpecialScheduleScrollableHeader {
   padding: 10px 10px 10px 0px;
   border-bottom: 1px solid #cccccc;
 }
 
-.obposUiScrollableTableHeader-element1 {
+.obposUiStoreInformationSpecialScheduleScrollableHeader-element1 {
   float: left;
   padding-top: 5px;
   width: 15%;
 }
 
-.obposUiScrollableTableHeader-specialOpenHour {
+.obposUiStoreInformationSpecialScheduleScrollableHeader-specialOpenHour {
   float: left;
   width: 41.66%;
   touch-action: none;
   padding-left: 20px;
 }
 
-.obposUiScrollableTableHeader-element2 {
+.obposUiStoreInformationSpecialScheduleScrollableHeader-element2 {
   display: table-cell;
   vertical-align: middle;
   width: 1%;
 }
 
-.obposUiScrollableTableHeader-specialCloseHour {
+.obposUiStoreInformationSpecialScheduleScrollableHeader-specialCloseHour {
   display: table-cell;
   vertical-align: middle;
   width: 30%;
 }
 
 @media (max-width: 525px) {
-  .obposUiScrollableTableHeader-element1 {
+  .obposUiStoreInformationSpecialScheduleScrollableHeader-element1 {
     width: unset !important;
   }
 
-  .obposUiScrollableTableHeader-specialOpenHour {
+  .obposUiStoreInformationSpecialScheduleScrollableHeader-specialOpenHour {
     width: unset;
   }
 
-  .obposUiScrollableTableHeader-element2 {
+  .obposUiStoreInformationSpecialScheduleScrollableHeader-element2 {
     width: 13% !important;
   }
 }
 
 @media (min-width: 490px) and (max-width: 525px) {
-  .obposUiScrollableTableHeader-element2 {
+  .obposUiStoreInformationSpecialScheduleScrollableHeader-element2 {
     width: 20% !important;
   }
 }
 
 @media (min-width: 345px) and (max-width: 375px) {
-  .obposUiScrollableTableHeader-element2 {
+  .obposUiStoreInformationSpecialScheduleScrollableHeader-element2 {
     width: 8% !important;
   }
 }
@@ -1721,7 +1713,7 @@
 .obposUiStoreInformationSpecialScheduleLine-element1 {
   float: left;
   padding-top: 5px;
-  width: 15%;
+  width: 7px;
 }
 
 .obposUiStoreInformationSpecialScheduleLine-openHour {
@@ -6417,16 +6409,40 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 /*
 # Component: OB.UI.ListMultiOrdersLine
-# Inherits: [OB.UI.CheckboxButton]
+# Inherits: [OB.UI.Button]
 */
 .obUiListMultiOrdersLine {
-  background-position: 10px center;
   vertical-align: middle;
   width: 100%;
   border-bottom: var(--separator-slim);
   text-align: left;
-  padding-left: 70px;
+  padding-left: 10px;
   height: 90px;
+}
+
+.obUiListMultiOrdersLine .obUiButton-components {
+  grid-auto-flow: column;
+  grid-template-columns: 50px 1fr;
+}
+
+.obUiListMultiOrdersLine .obUiButton-components-icon {
+  width: 100%;
+  height: 100%;;
+  border: none;
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-color: transparent;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconCheck.svg');
+  background-size: 34px 27px;
+  filter: var(--color-quaternary_img);
+}
+
+.obUiListMultiOrdersLine.active .obUiButton-components-icon {
+  filter: var(--color-secondary_img);
+}
+
+.obUiListMultiOrdersLine .obUiButton-components-label {
+  color: var(--color-on-surface-variant);
 }
 
 .obUiListMultiOrdersLine:focus {}
@@ -6452,14 +6468,13 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obUiListMultiOrdersLine-line-isLayaway {}
 
-.obUiListMultiOrdersLine-line-bottonLine {
-  color: var(--color-quaternary-variant);
+.obUiListMultiOrdersLine-line-bottomLine {
+  color: var(--color-on-surface-variant-secondary);
 }
 
 .obUiListMultiOrdersLine-line-element2 {
   clear: both;
 }
-
 
 
 /*
@@ -7799,7 +7814,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   column-gap: 20px;
 
   box-sizing: border-box;
-  height: 367px;
+  height: var(--keypad-height);
   padding: 10px 10px 25px 10px;
 }
 
@@ -7807,7 +7822,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSPointOfSale.UI.BottomRightGridLayoutsContainer
 */
 .obObposPointOfSaleUiBottomRightGridLayoutsContainer {
-  height: 367px;
+  height: var(--keypad-height);
   box-sizing: border-box;
   padding: 10px 10px 25px 10px;
 }
@@ -8135,33 +8150,9 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonClose
-# Inherits: [OB.UI.Button]
+# Inherits: [OB.UI.ModalCloseButton]
 */
-.obObposPointOfSaleUiProductDetailsViewButtonClose {
-  margin: 0px;
-  padding: 0px;
-
-  width: 100%;
-  height: 100%;
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-color: transparent;
-}
-
-.obObposPointOfSaleUiProductDetailsViewButtonClose {
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconClosePopup.svg');
-  background-size: 16px auto;
-  filter: invert(67%) sepia(94%) saturate(0%) hue-rotate(304deg) brightness(98%) contrast(103%);
-}
-
-
-.obObposPointOfSaleUiProductDetailsViewButtonClose:hover {
-  filter: invert(51%) sepia(0%) saturate(0%) hue-rotate(143deg) brightness(99%) contrast(85%);
-}
-
-.obObposPointOfSaleUiProductDetailsViewButtonClose:active {
-  filter: invert(15%) sepia(0%) saturate(0%) hue-rotate(150deg) brightness(103%) contrast(88%);
-}
+.obObposPointOfSaleUiProductDetailsViewButtonClose {}
 
 
 /*
@@ -8295,6 +8286,9 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   grid-auto-rows: auto;
 }
 
+.obObposPointOfSaleUiProductDetailsView-footer-footer {
+  /* Inherits: [OB.OBPOSPointOfSale.UI.ProductDetailsView_footer] */
+}
 
 
 /***********************   ***********************/
@@ -11747,7 +11741,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposPointOfSaleUiModalsModalPaymentsSelect-paymentMethods-items-text {
-  font-family: 'Helvetica Neue', 'Nimbus Sans L', Arial, sans-serif;
   font-size: var(--font-medium);
   height: 40px;
   text-align: center;
@@ -12361,7 +12354,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   column-gap: 20px;
 
   box-sizing: border-box;
-  height: 367px;
+  height: var(--keypad-height);
   padding: 10px 10px 25px 10px;
 }
 
@@ -13283,7 +13276,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   column-gap: 20px;
 
   box-sizing: border-box;
-  height: 367px;
+  height: var(--keypad-height);
   padding: 10px 10px 25px 10px;
 }
 

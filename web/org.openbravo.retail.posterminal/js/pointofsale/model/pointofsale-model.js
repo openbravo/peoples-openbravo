@@ -54,8 +54,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     OB.Model.CashUp,
     OB.Model.OfflinePrinter,
     OB.Model.PaymentMethodCashUp,
-    OB.Model.TaxCashUp,
-    OB.Model.Country
+    OB.Model.TaxCashUp
   ],
 
   loadUnpaidOrders: function(loadUnpaidOrdersCallback) {

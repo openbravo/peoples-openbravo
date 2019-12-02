@@ -323,7 +323,9 @@ enyo.kind({
       return;
     }
     if (data) {
-      this.collection.reset(data.models);
+      data.models
+        ? this.collection.reset(data.models)
+        : this.collection.reset(data);
     } else {
       this.collection.reset(null);
       return;
@@ -374,13 +376,10 @@ enyo.kind({
     }
   },
   initComponents: function() {
-    if (
-      this.collectionName &&
-      OB &&
-      OB.Collection &&
-      OB.Collection[this.collectionName]
-    ) {
-      this.collection = new OB.Collection[this.collectionName]();
+    if (this.collectionName) {
+      OB && OB.Collection && OB.Collection[this.collectionName]
+        ? (this.collection = new OB.Collection[this.collectionName]())
+        : (this.collection = new Backbone.Collection());
     } else {
       OB.info('OB.UI.CustomerComboProperty: Collection is required');
     }

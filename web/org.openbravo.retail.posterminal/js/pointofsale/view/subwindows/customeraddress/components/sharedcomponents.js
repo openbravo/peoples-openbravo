@@ -748,7 +748,9 @@ enyo.kind({
       return;
     }
     if (data) {
-      this.collection.reset(data.models);
+      data.models
+        ? this.collection.reset(data.models)
+        : this.collection.reset(data);
     } else {
       this.collection.reset(null);
       return;

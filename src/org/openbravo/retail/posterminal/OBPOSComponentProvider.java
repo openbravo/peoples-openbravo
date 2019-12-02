@@ -66,7 +66,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     if (globalResources != null) {
       return globalResources;
     }
-    globalResources = new ArrayList<ComponentResource>();
+    globalResources = new ArrayList<>();
 
     final String prefix = "web/" + POSUtils.MODULE_JAVA_PACKAGE;
 
@@ -255,15 +255,15 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
     // Unlink onLoad in the ERP
     globalResources.add(createComponentResource(ComponentResourceType.Static,
-        prefix + "utils/unlinkDeviceOnLoad.js", ComponentResource.APP_OB3));
+        prefix + "/js/utils/unlinkDeviceOnLoad.js", ComponentResource.APP_OB3));
     globalResources.add(createComponentResource(ComponentResourceType.Static,
-        prefix + "utils/unlinkDeviceValidation.js", ComponentResource.APP_OB3));
+        prefix + "/js/utils/unlinkDeviceValidation.js", ComponentResource.APP_OB3));
     globalResources.add(createComponentResource(ComponentResourceType.Static,
-        prefix + "/utils/checkChToFilterInWebPos.js", ComponentResource.APP_OB3));
+        prefix + "/js/utils/checkChToFilterInWebPos.js", ComponentResource.APP_OB3));
 
     // Buttons to Open Hardware Manager
     globalResources.add(createComponentResource(ComponentResourceType.Static,
-        prefix + "utils/openhardwareurl.js", ComponentResource.APP_OB3));
+        prefix + "/js/utils/openhardwareurl.js", ComponentResource.APP_OB3));
 
     final String[] cssDependency = { "obpos-main" };
 
@@ -271,6 +271,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     // IndexedDB
     appDependency.add("model/masterdata/BPSetLineModel");
     appDependency.add("model/masterdata/salesrepresentative");
+    appDependency.add("model/masterdata/bpcategory");
+    appDependency.add("model/masterdata/country");
     appDependency.add("model/masterdata/discount/DiscountFilterBusinessPartnerGroupModel");
     appDependency.add("model/masterdata/discount/DiscountFilterBusinessPartnerModel");
     appDependency.add("model/masterdata/discount/DiscountFilterBusinessPartnerSetModel");
@@ -287,7 +289,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     }
 
     globalResources.add(createComponentResource(ComponentResourceType.Static,
-        prefix + "components/errors.js", ComponentResource.APP_OB3));
+        prefix + "/js/components/errors.js", ComponentResource.APP_OB3));
 
     for (final String resource : cssDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Stylesheet,
@@ -302,3 +304,4 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     return globalResources;
   }
 }
+
