@@ -1393,6 +1393,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                                               line
                                                 .get('relatedLines')
                                                 .push(newRelatedLine);
+                                              if (!order.get('hasServices')) {
+                                                order.set('hasServices', true);
+                                              }
                                             }
                                           );
                                         }
