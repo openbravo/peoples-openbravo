@@ -11670,10 +11670,7 @@
       },
       initialize: function(attributes) {
         if (attributes && attributes.discountRule) {
-          this.set(
-            'discountRule',
-            new OB.Model.Discount(attributes.discountRule)
-          );
+          this.set('discountRule', new Backbone.Model(attributes.discountRule));
         }
       }
     })
