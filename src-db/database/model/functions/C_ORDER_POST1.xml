@@ -964,7 +964,8 @@
         FROM C_ORDER c, C_BPARTNER bp
         WHERE c.C_Order_ID=v_Record_ID
           AND c.C_BPARTNER_ID=bp.C_BPARTNER_ID
-          AND Ad_Isorgincluded(c.AD_ORG_ID, bp.AD_ORG_ID, bp.AD_CLIENT_ID)=-1;
+          AND Ad_Isorgincluded(c.AD_ORG_ID, bp.AD_ORG_ID, bp.AD_CLIENT_ID)=-1
+          AND Ad_Isorgincluded(c.AD_ORGTRX_ID, bp.AD_ORG_ID, bp.AD_CLIENT_ID)=-1;
         IF (v_count > 0) THEN
           RAISE_APPLICATION_ERROR(-20000, '@NotCorrectOrgBpartnerOrder@') ;
         END IF;
