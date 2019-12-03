@@ -10141,9 +10141,9 @@
                         const discount = discountPromise.result;
                         if (
                           discount &&
-                          OB.Discounts.discountRules[
+                          OB.Model.Discounts.discountRules[
                             discount.discountType
-                          ].isManualRule()
+                          ].addManual
                         ) {
                           var percentage;
                           if (discount.obdiscPercentage) {
