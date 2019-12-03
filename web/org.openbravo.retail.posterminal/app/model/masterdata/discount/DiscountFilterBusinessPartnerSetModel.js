@@ -12,10 +12,10 @@
     constructor() {
       super();
       this.indices = [
-        {
-          indexName: '_identifier',
-          keyPath: '_identifier'
-        }
+        new OB.App.Index({
+          name: '_identifier',
+          properties: [{ property: '_identifier' }]
+        })
       ];
     }
   }
