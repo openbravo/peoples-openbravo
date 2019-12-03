@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-(function() {
+(function discountModel() {
   class Discount extends OB.App.MasterdataModel {
     constructor() {
       super();

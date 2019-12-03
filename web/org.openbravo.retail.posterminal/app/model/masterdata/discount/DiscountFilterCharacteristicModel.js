@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-(function() {
+(function discountFilterCharacteristicModel() {
   class DiscountFilterCharacteristic extends OB.App.MasterdataModel {
     constructor() {
       super();

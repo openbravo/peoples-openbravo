@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-(function() {
+(function discountFilterProductModel() {
   class DiscountFilterProduct extends OB.App.MasterdataModel {
     constructor() {
       super();

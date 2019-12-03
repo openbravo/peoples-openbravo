@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-(function() {
+(function bpSetLineModel() {
   class BPSetLine extends OB.App.MasterdataModel {}
 
   OB.App.MasterdataController.registerModel(BPSetLine);
