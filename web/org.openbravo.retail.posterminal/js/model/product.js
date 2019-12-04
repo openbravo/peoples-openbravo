@@ -13,8 +13,11 @@
       super();
       this.indices = [
         new OB.App.Index({
-          name: 'productName_idx',
-          properties: [{ property: '_identifier' }]
+          name: 'productNameSearch_idx',
+          properties: [
+            { property: '_identifier' },
+            { property: 'isGeneric', isBoolean: true }
+          ]
         }),
         new OB.App.Index({
           name: 'productCategoryBrowse_idx',
