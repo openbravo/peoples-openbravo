@@ -9284,7 +9284,6 @@
           ) {
             if (
               OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) &&
-              receipt.get('lines').length !== 0 &&
               receipt.get('id') !== null &&
               (receipt.get('documentnoSuffix') <=
                 OB.MobileApp.model.documentnoThreshold ||
