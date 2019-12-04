@@ -276,6 +276,7 @@ public class Product extends MasterDataProcessHQLQuery {
       hql += "left outer join pli.product.image img ";
     }
     hql += "inner join pli.product as product ";
+    hql += "left join product.attributeSet as attrset ";
 
     if (isMultipricelist && allowNoPriceInMainPriceList
         && (!isRemote || isMultiPriceListSearch(jsonsent))) {
@@ -310,6 +311,7 @@ public class Product extends MasterDataProcessHQLQuery {
     if (!useGetForProductImages) {
       genericProductsHqlString += "left outer join product.image img ";
     }
+    genericProductsHqlString += "left join product.attributeSet as attrset ";
     genericProductsHqlString += "left join product.oBRETCOProlProductList as pli left outer join product.pricingProductPriceList ppp "
         + " where $filtersCriteria AND ppp.priceListVersion.id = :priceListVersionId AND product.isGeneric = 'Y' AND (product.$incrementalUpdateCriteria) and exists (select 1 from Product product2 left join product2.oBRETCOProlProductList as pli2, "
         + " PricingProductPrice ppp2 where product.id = product2.genericProduct.id and product2 = ppp2.product and ppp2.priceListVersion.id = :priceListVersionId "
@@ -414,6 +416,7 @@ public class Product extends MasterDataProcessHQLQuery {
     query.append(" select");
     query.append(crossStoreRegularProductsHQLProperties.getHqlSelect());
     query.append(" from Product product");
+    query.append(" left join product.attributeSet as attrset");
     query.append(" left join product.oBRETCOProlProductList pli");
     query.append(" with pli.obretcoProductlist.id = :productListId");
     if (!useGetForProductImages) {

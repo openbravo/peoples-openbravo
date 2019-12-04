@@ -789,7 +789,7 @@ enyo.kind({
   classModel: new Backbone.Model(),
   printReceipt: function(inSender, inEvent) {
     var receipt = this.model.get('order');
-    if (OB.MobileApp.model.hasPermission('OBPOS_print.receipt', true)) {
+    if (OB.MobileApp.model.hasPermission('OBPOS_print.receipt')) {
       if (receipt.get('isPaid') && !receipt.get('isQuotation')) {
         this.doShowPopup({
           popup: 'modalInvoices'
@@ -800,7 +800,7 @@ enyo.kind({
     }
   },
   printSingleReceipt: function(inSender, inEvent) {
-    if (OB.MobileApp.model.hasPermission('OBPOS_print.receipt', true)) {
+    if (OB.MobileApp.model.hasPermission('OBPOS_print.receipt')) {
       if (this.model.get('leftColumnViewManager').isOrder()) {
         var receipt = this.model.get('order');
         if (receipt.get('isPaid')) {
@@ -1198,6 +1198,9 @@ enyo.kind({
                   me.$.multiColumn.$.leftPanel.$[
                     inEvent.leftSubWindow
                   ].inEvent = inEvent;
+                  if (enyo.Panels.isScreenNarrow()) {
+                    me.$.multiColumn.$.rightToolbar.$.rightToolbar.$.toolbar.$.toolbarBtnCart.tap();
+                  }
                 }
               }
             );

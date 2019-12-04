@@ -11,6 +11,7 @@ package org.openbravo.retail.posterminal.master;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -19,12 +20,15 @@ import javax.inject.Inject;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
+import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery;
+import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery.MasterDataModel;
+import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
-import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
-public class Country extends ProcessHQLQuery {
+@MasterDataModel("Country")
+public class Country extends MasterDataProcessHQLQuery {
   public static final String countryPropertyExtension = "OBPOS_CountryExtension";
 
   @Inject
@@ -64,6 +68,15 @@ public class Country extends ProcessHQLQuery {
   @Override
   protected boolean isAdminMode() {
     return true;
+  }
+
+  @Override
+  public List<String> getMasterDataModelProperties() {
+    return ModelExtensionUtils.getPropertyExtensions(extensions)
+        .getProperties()
+        .stream()
+        .map(HQLProperty::getHqlProperty)
+        .collect(Collectors.toList());
   }
 
 }

@@ -1112,7 +1112,10 @@ public class OrderLoader extends POSDataSynchronizationProcess
       }
     }
 
-    if (!jsonorder.getJSONObject("bp").isNull("invoiceTerms")
+    if (!jsonorder.isNull("invoiceTerms") && !jsonorder.getString("invoiceTerms").equals("null")
+        && StringUtils.isNotBlank(jsonorder.getString("invoiceTerms"))) {
+      order.setInvoiceTerms(jsonorder.getString("invoiceTerms"));
+    } else if (!jsonorder.getJSONObject("bp").isNull("invoiceTerms")
         && !jsonorder.getJSONObject("bp").getString("invoiceTerms").equals("null")) {
       order.setInvoiceTerms(jsonorder.getJSONObject("bp").getString("invoiceTerms"));
     } else if (bp.getInvoiceTerms() != null) {
