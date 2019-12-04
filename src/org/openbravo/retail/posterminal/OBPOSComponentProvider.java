@@ -85,11 +85,10 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // "model/terminal",
         // "model/user",
         "utils/ob-utilitiesuipos", "model/bpartnerfilter", "model/orderfilter",
-        "model/crossstorefilter", "model/orders-for-verified-returns-filter", "model/bpcategory",
-        "model/bplocation", // Model
-                            // for
-                            // Customer
-                            // Address
+        "model/crossstorefilter", "model/orders-for-verified-returns-filter", "model/bplocation", // Model
+                                                                                                  // for
+                                                                                                  // Customer
+                                                                                                  // Address
 
         "webprinter/bluetooth", "webprinter/usb", "webprinter/webprinter", "webprinter/escpos",
         "webprinter/standardprinters", "webprinter/typedarrays", "webprinter/testprinter",
@@ -99,7 +98,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "webprinter/usbprinters/startsp100", "webprinter/usbprinters/wincorth230",
         "webprinter/btprinters/genericBTPrinter", "webprinter/btprinters/zebraZQ320",
 
-        "model/currencypanel", "model/country", "model/discountset", "model/bpartnerset",
+        "model/currencypanel", "model/discountset", "model/bpartnerset",
         "model/productcharacteristicvalue", "model/characteristicvalue", "model/characteristic",
         "model/brand", "model/executor", "model/terminal-model", "model/paymentmethodcashup",
         "model/taxcashup", "model/offlineprinter", "model/productbom", "model/taxcategorybom",
@@ -128,7 +127,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/businesspartner_selector", "components/bplocation", // Button for selecting
                                                                         // customer address
         "components/bplocationship", "components/customershipbill",
-        "components/salesrepresentative", "components/listreceiptscounter", "components/menu",
+        "components/listreceiptscounter", "components/menu", "components/salesrepresentative",
         "components/modalselectterminal", "components/popupdraweropened",
         "components/servicesfilter", "components/modalselectopenreceipts",
         "components/modalsplitlines", "components/modalassociatetickets",
@@ -260,7 +259,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     globalResources.add(createComponentResource(ComponentResourceType.Static,
         prefix + "/js/utils/unlinkDeviceValidation.js", ComponentResource.APP_OB3));
     globalResources.add(createComponentResource(ComponentResourceType.Static,
-        prefix + "/js//utils/checkChToFilterInWebPos.js", ComponentResource.APP_OB3));
+        prefix + "/js/utils/checkChToFilterInWebPos.js", ComponentResource.APP_OB3));
 
     // Buttons to Open Hardware Manager
     globalResources.add(createComponentResource(ComponentResourceType.Static,
@@ -270,9 +269,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
     final ArrayList<String> appDependency = new ArrayList<String>();
     // IndexedDB
-    appDependency.add("model/masterdata/salesrepresentative");
-    appDependency.add("model/masterdata/bpcategory");
-    appDependency.add("model/masterdata/country");
+    appDependency.add("model/masterdata/SalesRepresentativeModel");
+    appDependency.add("model/masterdata/BPCategoryModel");
+    appDependency.add("model/masterdata/CountryModel");
 
     for (final String resource : resourceDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,
