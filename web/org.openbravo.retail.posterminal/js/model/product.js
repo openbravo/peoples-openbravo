@@ -27,11 +27,19 @@
           ]
         }),
         new OB.App.Index({
+          name: 'productCategoryBrowseMPL_idx',
+          properties: [{ property: 'productCategory' }]
+        }),
+        new OB.App.Index({
           name: 'bestsellerBrowse_idx',
           properties: [
             { property: 'bestseller', isBoolean: true },
             { property: 'generic_product_id', isNullable: true }
           ]
+        }),
+        new OB.App.Index({
+          name: 'bestsellerBrowseMPL_idx',
+          properties: [{ property: 'bestseller', isBoolean: true }]
         }),
         new OB.App.Index({
           name: 'productCategorySearch_idx',
