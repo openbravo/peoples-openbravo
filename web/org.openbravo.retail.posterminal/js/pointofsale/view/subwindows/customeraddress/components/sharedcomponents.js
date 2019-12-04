@@ -799,16 +799,7 @@ enyo.kind({
     }
   },
   initComponents: function() {
-    if (
-      this.collectionName &&
-      OB &&
-      OB.Collection &&
-      OB.Collection[this.collectionName]
-    ) {
-      this.collection = new OB.Collection[this.collectionName]();
-    } else {
-      OB.info('OB.UI.CustomerAddrComboProperty: Collection is required');
-    }
+    this.collection = new Backbone.Collection();
     this.inherited(arguments);
   }
 });
