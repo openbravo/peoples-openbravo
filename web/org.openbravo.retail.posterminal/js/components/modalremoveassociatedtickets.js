@@ -40,9 +40,6 @@ enyo.kind({
   classes: 'obUiModalRemoveAssociationsBtnCancel',
   isDefaultAction: false,
   i18nContent: 'OBMOBC_LblCancel',
-  events: {
-    onLineSelected: ''
-  },
   tap: function() {
     this.inherited(arguments);
     this.doHideThisPopup();
@@ -50,11 +47,89 @@ enyo.kind({
 });
 
 enyo.kind({
+  kind: 'OB.UI.ModalDialogButton',
+  name: 'OB.UI.ModalRemoveAssociations_btnSelectAll',
+  classes: 'obUiModalRemoveAssociationsBtnSelectAll',
+  i18nContent: 'OBPOS_lblSelectAll',
+  events: {
+    onCheckedAll: ''
+  },
+  checked: false,
+  handlers: {
+    onAllSelected: 'allSelected'
+  },
+  allSelected: function(inSender, inEvent) {
+    if (inEvent.allSelected) {
+      this.checked = true;
+      this.setLabel(OB.I18N.getLabel('OBPOS_lblSelectNone'));
+    } else {
+      this.checked = false;
+      this.setLabel(OB.I18N.getLabel('OBPOS_lblSelectAll'));
+    }
+    return true;
+  },
+  tap: function() {
+    this.checked = !this.checked;
+    if (this.checked) {
+      this.setLabel(OB.I18N.getLabel('OBPOS_lblSelectNone'));
+    } else {
+      this.setLabel(OB.I18N.getLabel('OBPOS_lblSelectAll'));
+    }
+    this.inherited(arguments);
+    this.doCheckedAll({
+      checked: this.checked
+    });
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.CheckboxButtonRemoveAllAssociations',
+  kind: 'OB.UI.CheckboxButton',
+  classes: 'obUiCheckboxButtonRemoveAllAssociations',
+  events: {
+    onCheckedAll: ''
+  },
+  handlers: {
+    onAllSelected: 'allSelected'
+  },
+  allSelected: function(inSender, inEvent) {
+    if (inEvent.allSelected) {
+      this.check();
+    } else {
+      this.unCheck();
+    }
+    return true;
+  },
+  tap: function() {
+    this.inherited(arguments);
+    this.doCheckedAll({
+      checked: this.checked
+    });
+  }
+});
+
+enyo.kind({
   name: 'OB.UI.CheckboxButtonRemoveAssociations',
   kind: 'OB.UI.CheckboxButton',
-  classes: 'obUiCheckboxButtonRemoveAssociations span1',
+  classes: 'obUiCheckboxButtonRemoveAssociations',
+  handlers: {
+    onCheckAll: 'checkAll'
+  },
   events: {
     onLineSelected: ''
+  },
+  checkAll: function(inSender, inEvent) {
+    if (inEvent.checked && !this.checked) {
+      this.check();
+      this.doLineSelected({
+        selected: true
+      });
+    } else if (!inEvent.checked && this.checked) {
+      this.unCheck();
+      this.doLineSelected({
+        selected: false
+      });
+    }
   },
   tap: function() {
     this.inherited(arguments);
@@ -77,31 +152,66 @@ enyo.kind({
       classes: 'obUiAssociatedOrderLine-checkboxButtonRemoveAssociations'
     },
     {
-      name: 'productName',
-      classes: 'obUiAssociatedOrderLine-productName span4'
+      kind: 'OB.UI.FormElement',
+      name: 'formElementProductName',
+      classes: 'obUiAssociatedOrderLine-formElementProductName',
+      coreElement: {
+        kind: 'OB.UI.FormElement.Input',
+        name: 'productName',
+        disabled: true,
+        classes: 'obUiAssociatedOrderLine-productName',
+        i18nLabel: 'OBPOS_LblProductName'
+      }
     },
     {
-      name: 'orderedQuantity',
-      classes: 'obUiAssociatedOrderLine-orderedQuantity span2'
+      kind: 'OB.UI.FormElement',
+      name: 'formElementOrderedQuantity',
+      classes: 'obUiAssociatedOrderLine-formElementOrderedQuantity',
+      coreElement: {
+        kind: 'OB.UI.FormElement.Input',
+        name: 'orderedQuantity',
+        disabled: true,
+        classes: 'obUiAssociatedOrderLine-orderedQuantity',
+        i18nLabel: 'OBPOS_LblQty'
+      }
     },
     {
-      name: 'documentNo',
-      classes: 'obUiAssociatedOrderLine-documentNo span2'
+      kind: 'OB.UI.FormElement',
+      name: 'formElementDocumentNo',
+      classes: 'obUiAssociatedOrderLine-formElementDocumentNo',
+      coreElement: {
+        kind: 'OB.UI.FormElement.Input',
+        name: 'documentNo',
+        disabled: true,
+        classes: 'obUiAssociatedOrderLine-documentNo',
+        i18nLabel: 'OBPOS_ticket'
+      }
     },
     {
-      name: 'customer',
-      classes: 'obUiAssociatedOrderLine-customer span2'
-    },
-    {
-      classes: 'obUiAssociatedOrderLine-element6 u-clearBoth'
+      kind: 'OB.UI.FormElement',
+      name: 'formElementCustomer',
+      classes: 'obUiAssociatedOrderLine-formElementCustomer',
+      coreElement: {
+        kind: 'OB.UI.FormElement.Input',
+        name: 'customer',
+        disabled: true,
+        classes: 'obUiAssociatedOrderLine-customer',
+        i18nLabel: 'OBPOS_LblCustomer'
+      }
     }
   ],
   initComponents: function() {
     this.inherited(arguments);
-    this.$.productName.setContent(this.newAttribute.productName);
-    this.$.orderedQuantity.setContent(this.newAttribute.qty);
-    this.$.documentNo.setContent(this.newAttribute.orderDocumentNo);
-    this.$.customer.setContent(this.newAttribute.bpName);
+    this.$.formElementProductName.coreElement.setValue(
+      this.newAttribute.productName
+    );
+    this.$.formElementOrderedQuantity.coreElement.setValue(
+      this.newAttribute.qty
+    );
+    this.$.formElementDocumentNo.coreElement.setValue(
+      this.newAttribute.orderDocumentNo
+    );
+    this.$.formElementCustomer.coreElement.setValue(this.newAttribute.bpName);
   },
   lineSelected: function(inSender, inEvent) {
     inEvent.selectedLine = this.newAttribute.orderlineId;
@@ -116,22 +226,97 @@ enyo.kind({
   classes: 'obUiModalRemoveAssociatedTickets',
   handlers: {
     onApplyChanges: 'applyChanges',
+    onCheckedAll: 'checkedAll',
     onLineSelected: 'lineSelected'
   },
-  body: {
-    kind: 'Scroller',
-    classes: 'obUiModalRemoveAssociatedTickets-body-scroller',
-    thumb: true,
+  header: {
+    classes: 'obUiModalRemoveAssociatedTickets-header',
     components: [
       {
-        name: 'attributes',
-        classes: 'obUiModalRemoveAssociatedTickets-scroller-attributes'
+        name: 'serviceName',
+        classes: 'obUiModalRemoveAssociatedTickets-header-serviceName'
+      },
+      {
+        name: 'linesLabel',
+        classes: 'obUiModalRemoveAssociatedTickets-header-linesLabel',
+        init: function() {
+          this.setContent(
+            OB.I18N.getLabel('OBPOS_SelectAssociationsToRemoved')
+          );
+        }
+      }
+    ]
+  },
+  body: {
+    classes: 'obUiModalRemoveAssociatedTickets-body',
+    components: [
+      {
+        name: 'scrollerHeader',
+        classes: 'obUiModalRemoveAssociatedTickets-body-scrollerHeader',
+        components: [
+          {
+            kind: 'OB.UI.CheckboxButtonRemoveAllAssociations',
+            name: 'checkboxButtonRemoveAllAssociations',
+            classes:
+              'obUiModalRemoveAssociatedTickets-body-scrollerHeader-checkboxButtonRemoveAllAssociations'
+          },
+          {
+            name: 'productNameLbl',
+            classes:
+              'obUiModalRemoveAssociatedTickets-body-scrollerHeader-productNameLbl',
+            init: function() {
+              this.setContent(OB.I18N.getLabel('OBPOS_LblProductName'));
+            }
+          },
+          {
+            name: 'totalQtyLbl',
+            classes:
+              'obUiModalRemoveAssociatedTickets-body-scrollerHeader-totalQtyLbl',
+            init: function() {
+              this.setContent(OB.I18N.getLabel('OBPOS_LblQty'));
+            }
+          },
+          {
+            name: 'receiptLbl',
+            classes:
+              'obUiModalRemoveAssociatedTickets-body-scrollerHeader-receiptLbl',
+            init: function() {
+              this.setContent(OB.I18N.getLabel('OBPOS_ticket'));
+            }
+          },
+          {
+            name: 'customerLbl',
+            classes:
+              'obUiModalRemoveAssociatedTickets-body-scrollerHeader-customerLbl',
+            init: function() {
+              this.setContent(OB.I18N.getLabel('OBPOS_LblCustomer'));
+            }
+          }
+        ]
+      },
+      {
+        kind: 'Scroller',
+        classes: 'obUiModalRemoveAssociatedTickets-body-scroller',
+        thumb: true,
+        horizontal: 'hidden',
+        components: [
+          {
+            name: 'attributes',
+            classes: 'obUiModalRemoveAssociatedTickets-scroller-attributes'
+          }
+        ]
       }
     ]
   },
   footer: {
-    classes: 'obUiModalRemoveAssociatedTickets-footer',
+    classes:
+      'obUiModal-footer-mainButtons obUiModalRemoveAssociatedTickets-footer',
     components: [
+      {
+        kind: 'OB.UI.ModalRemoveAssociations_btnSelectAll',
+        classes:
+          'obUiModalRemoveAssociatedTickets-footer-obUiModalRemoveAssociationsBtnSelectAll'
+      },
       {
         kind: 'OB.UI.ModalRemoveAssociations_btnCancel',
         classes:
@@ -148,44 +333,64 @@ enyo.kind({
     this.inherited(arguments);
     this.attributeContainer = this.$.body.$.attributes;
   },
+  checkedAll: function(inSender, inEvent) {
+    this.waterfall('onCheckAll', {
+      checked: inEvent.checked
+    });
+    return true;
+  },
   lineSelected: function(inSender, inEvent) {
-    var lines,
-      selectedLine = this.args.selectedLine;
-    if (!selectedLine.linesToAssociate) {
-      selectedLine.linesToAssociate = selectedLine.get('relatedLines');
+    if (inEvent.selected) {
+      this.selectedLines += 1;
+    } else {
+      this.selectedLines -= 1;
+    }
+    if (this.selectedLines === this.numberOfLines) {
+      this.allSelected = true;
+      this.waterfall('onAllSelected', {
+        allSelected: this.allSelected
+      });
+    } else {
+      if (this.allSelected) {
+        this.allSelected = false;
+        this.waterfall('onAllSelected', {
+          allSelected: this.allSelected
+        });
+      }
+    }
+
+    var receiptLine = this.args.selectedLine;
+    if (OB.UTIL.isNullOrUndefined(this.linesToAssociate)) {
+      this.linesToAssociate = JSON.parse(
+        JSON.stringify(receiptLine.get('relatedLines'))
+      );
     }
     if (inEvent.selected) {
-      lines = selectedLine.linesToAssociate.filter(function(relatedLine) {
-        return relatedLine.orderlineId !== inEvent.selectedLine;
+      this.linesToAssociate = this.linesToAssociate.filter(function(line) {
+        return line.orderlineId !== inEvent.selectedLine;
       });
-      selectedLine.linesToAssociate = lines;
     } else {
-      lines = _.find(selectedLine.get('relatedLines'), function(line) {
-        return line.orderlineId === inEvent.selectedLine;
-      });
-      selectedLine.linesToAssociate.push(lines);
+      this.linesToAssociate.push(
+        _.find(receiptLine.get('relatedLines'), function(line) {
+          return line.orderlineId === inEvent.selectedLine;
+        })
+      );
     }
     return true;
   },
   applyChanges: function(inSender, inEvent) {
     var execution = OB.UTIL.ProcessController.start('removeAssociations'),
-      selectedLine = this.args.selectedLine;
-    if (
-      selectedLine.linesToAssociate &&
-      selectedLine.linesToAssociate.length === 0
-    ) {
-      this.args.receipt.deleteLinesFromOrder([selectedLine]);
-    } else if (
-      selectedLine.linesToAssociate &&
-      selectedLine.linesToAssociate.length > 0
-    ) {
-      if (selectedLine.get('quantityRule') === 'PP') {
-        selectedLine.set('qty', selectedLine.get('relatedLines').length);
+      receipt = this.args.receipt,
+      receiptLine = this.args.selectedLine;
+    if (this.linesToAssociate && this.linesToAssociate.length === 0) {
+      receipt.deleteLinesFromOrder([receiptLine]);
+    } else if (this.linesToAssociate && this.linesToAssociate.length > 0) {
+      if (receiptLine.get('quantityRule') === 'PP') {
+        receiptLine.set('qty', receiptLine.get('relatedLines').length);
       }
-      selectedLine.set('relatedLines', selectedLine.linesToAssociate);
-      delete selectedLine.linesToAssociate;
-      this.args.receipt.trigger('updateServicePrices');
-      this.args.receipt.save(function() {
+      receiptLine.set('relatedLines', this.linesToAssociate);
+      receipt.trigger('updateServicePrices');
+      receipt.save(function() {
         OB.UTIL.ProcessController.finish('removeAssociations', execution);
         return true;
       });
@@ -194,72 +399,22 @@ enyo.kind({
     return true;
   },
   executeOnShow: function() {
-    var me = this;
+    var me = this,
+      lineNum = 0;
     OB.UTIL.showLoading(false);
+    this.$.header.$.serviceName.setContent(
+      OB.I18N.getLabel('OBPOS_ServiceHeader', [
+        me.args.selectedLine.get('product').get('_identifier')
+      ])
+    );
     this.$.body.$.attributes.destroyComponents();
-    this.$.header.destroyComponents();
-    this.setHeader({
-      name: 'ModalRemoveAssociatedTicketsHeader',
-      classes:
-        'obUiModalRemoveAssociatedTickets-header-modalRemoveAssociatedTicketsHeader',
-      components: [
-        {
-          content: OB.I18N.getLabel('OBPOS_ServiceHeader', [
-            me.args.selectedLine.get('product').get('_identifier')
-          ]),
-          name: 'serviceName',
-          classes:
-            'obUiModalRemoveAssociatedTickets-modalRemoveAssociatedTicketsHeader-serviceName'
-        },
-        {
-          content: OB.I18N.getLabel('OBPOS_SelectAssociationsToRemoved'),
-          name: 'linesLabel',
-          classes:
-            'obUiModalRemoveAssociatedTickets-modalRemoveAssociatedTicketsHeader-linesLabel'
-        },
-        {
-          classes:
-            'obUiModalRemoveAssociatedTickets-modalRemoveAssociatedTicketsHeader-element3 u-clearBoth'
-        }
-      ]
+    this.numberOfLines = 0;
+    this.selectedLines = 0;
+    this.allSelected = false;
+    this.linesToAssociate = null;
+    this.waterfall('onAllSelected', {
+      allSelected: this.allSelected
     });
-    this.$.header.addClass('obUiModalRemoveAssociatedTickets-header');
-    this.setHeader({
-      name: 'HeaderLabels',
-      classes: 'obUiModalRemoveAssociatedTickets-header-headerLabels',
-      components: [
-        {
-          content: OB.I18N.getLabel('OBPOS_LblProductName'),
-          name: 'productNameLbl',
-          classes:
-            'obUiModalRemoveAssociatedTickets-headerLabels-productNameLbl span4'
-        },
-        {
-          name: 'totalQtyLbl',
-          content: OB.I18N.getLabel('OBPOS_LblQty'),
-          classes:
-            'obUiModalRemoveAssociatedTickets-headerLabels-totalQtyLbl span2'
-        },
-        {
-          name: 'receiptLbl',
-          content: OB.I18N.getLabel('OBPOS_ticket'),
-          classes:
-            'obUiModalRemoveAssociatedTickets-headerLabels-receiptLbl span2'
-        },
-        {
-          content: OB.I18N.getLabel('OBPOS_LblCustomer'),
-          name: 'customerLbl',
-          classes:
-            'obUiModalRemoveAssociatedTickets-headerLabels-customerLbl span2 modal-removeAssociatedTickets-headerLabels-customer'
-        },
-        {
-          classes:
-            'obUiModalRemoveAssociatedTickets-headerLabels-element5 u-clearBoth'
-        }
-      ]
-    });
-
-    var lineNum = 0;
     _.each(me.args.selectedLine.get('relatedLines'), function(relatedLine) {
       if (
         (_.isUndefined(relatedLine.orderDocumentNo) ||
@@ -285,8 +440,8 @@ enyo.kind({
         newAttribute: relatedLine
       });
       lineNum++;
+      me.numberOfLines += 1;
     });
-    this.$.header.render();
     this.$.body.$.attributes.render();
   }
 });

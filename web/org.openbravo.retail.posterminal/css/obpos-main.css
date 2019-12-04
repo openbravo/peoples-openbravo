@@ -5728,96 +5728,19 @@ li.selected > .obUiRenderOrderLine_edit {
 # Component: OB.UI.ButtonSelectAll
 # Inherits: [OB.UI.SmallButton]
 */
-.obUiButtonSelectAll {
-  width: 180px;
-  margin: 0px 8px 6px 0px;
-  background-color: #f8e859;
-  color: black;
-  display: inline-block;
-  font-weight: normal;
-  border: none;
-  height: 30px;
-  font-size: var(--font-medium);
-  padding: 5px 15px 7px 15px;
-  text-decoration: none;
-  opacity: 0.999;
-}
-
-.obUiButtonSelectAll:hover {
-  opacity: 0.75;
-}
-
-.obUiButtonSelectAll:active {
-  opacity: 0.999;
-  background-color: #cccccc;
-}
-
-.obUiButtonSelectAll:disabled,
-.obUiButtonSelectAll[disabled=true]:hover {
-  background-color: #a9a9a9;
-  opacity: 1;
-  cursor: default;
-}
-
-@media all and (max-aspect-ratio: 9/8) {
-  .obUiButtonSelectAll {
-    height: 45px;
-  }
-}
-
+.obUiButtonSelectAll { }
 
 /*
 # Component: OB.UI.SelectorButtonAdvancedFilter
 # Inherits: [OB.UI.ButtonAdvancedFilter]
 */
-.obUiSelectorButtonAdvancedFilter {
-  width: 180px;
-  margin: 0px 8px 6px 0px;
-}
-
+.obUiSelectorButtonAdvancedFilter { }
 
 /*
 # Component: OB.UI.ButtonAssociateSelected
 # Inherits: [OB.UI.SmallButton]
 */
-.obUiButtonAssociateSelected {
-  width: 180px;
-  margin: 0px 8px 6px 0px;
-  text-decoration: none;
-  background-color: var(--color-secondary);
-  color: white;
-  display: inline-block;
-  font-weight: normal;
-  border: none;
-  height: 30px;
-  font-size: var(--font-medium);
-  padding: 5px 15px 7px 15px;
-  text-decoration: none;
-  opacity: 0.999;
-}
-
-.obUiButtonAssociateSelected:hover {
-  opacity: 0.75;
-}
-
-.obUiButtonAssociateSelected:active {
-  opacity: 0.999;
-  background-color: #cccccc;
-}
-
-.obUiButtoobUiButtonAssociateSelectednSelectAll:disabled,
-.obUiButtonAssociateSelected[disabled=true]:hover {
-  background-color: #a9a9a9;
-  opacity: 1;
-  cursor: default;
-}
-
-@media all and (max-aspect-ratio: 9/8) {
-  .obUiButtonAssociateSelected {
-    height: 45px;
-  }
-}
-
+.obUiButtonAssociateSelected { }
 
 /*
 # Component: OB.UI.ModalOrderScrollableHeader
@@ -5874,13 +5797,13 @@ li.selected > .obUiRenderOrderLine_edit {
 # Inherits: [OB.UI.listItemButton]
 */
 .obUiListOrdersLine {
-  height: 40px;
   padding: 0;
   border-bottom: none;
 }
 
 .obUiListOrdersLine-order {
   width: 100%;
+  padding-top: 10px;
 }
 
 .obUiListOrdersLine-order-iconOrder {
@@ -5927,7 +5850,6 @@ li.selected > .obUiRenderOrderLine_edit {
 }
 
 .obUiListOrdersLine-orderline {
-  height: 36px;
   width: 100%;
   padding: 0px 5px 0px 23px;
   border-bottom: none;
@@ -5939,16 +5861,10 @@ li.selected > .obUiRenderOrderLine_edit {
   border-top: 1px solid #ccc;
   height: 100%;
   width: 100%;
+  padding: 4px 0px;
 }
 
-.obUiListOrdersLine-orderline-container1-iconOrderLine {
-  width: 34px;
-  height: 25px;
-  float: left;
-  display: inline-block;
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-off.svg');
-  background-repeat: no-repeat;
-}
+.obUiListOrdersLine-orderline-container1-iconOrderLine { }
 
 .obUiListOrdersLine-orderline-container1-container2 {
   float: left;
@@ -5982,7 +5898,7 @@ li.selected > .obUiRenderOrderLine_edit {
 /* Inherits: [OB.UI.ScrollableTable] */
   overflow-x: hidden;
   overflow-y: auto;
-  max-height: 420px;
+  max-height: 495px;
 }
 
 /* [TODO] Review ob-cell-orderline-right-col1 and ob-cell-orderline-right-col2 and there is no reference of tehm in code */
@@ -6046,69 +5962,163 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 */
 .obUiModalRemoveAssociationsBtnCancel {}
 
+/*
+# Component: OB.UI.CheckboxButtonRemoveAllAssociations
+# Inherits: [OB.UI.CheckboxButton]
+*/
+.obUiCheckboxButtonRemoveAllAssociations {
+  background-position: center center;
+  width: 100%;
+  height: 100%;
+}
 
 /*
 # Component: OB.UI.CheckboxButtonRemoveAssociations
 # Inherits: [OB.UI.CheckboxButton]
 */
 .obUiCheckboxButtonRemoveAssociations {
-  width: 8%;
-  background-position: 15px center;
-  height: 38px;
-  vertical-align: middle;
+  background-position: center center;
+  width: 100%;
+  height: 100%;
 }
 
-.obUiCheckboxButtonRemoveAssociations:focus {
-  outline: none;
-  border-width: 2px;
-  border-color: #0078d7;
-  border-style: solid;
+@media all and (max-aspect-ratio: 9/8) {
+  .obUiCheckboxButtonRemoveAssociations {
+    height: 30px;
+    margin: 12px 0px 0px 0px;
+  }
 }
-
 
 /*
 # Component: OB.UI.AssociatedOrderLine
 */
 .obUiAssociatedOrderLine {
-  border-bottom: 1px solid #cccccc;
-  text-align: center;
-  color: black;
-  padding-top: 9px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-areas: 'obUiAssociatedOrderLine-checkboxButtonRemoveAssociations obUiAssociatedOrderLine-formElementProductName obUiAssociatedOrderLine-formElementOrderedQuantity obUiAssociatedOrderLine-formElementDocumentNo obUiAssociatedOrderLine-formElementCustomer';
+  grid-template-columns: 56px calc(40% - 56px) 10% 25% 25%;
+  align-items: center;
+  min-height: 50px;
+  color: #000000;
+  line-height: initial;
+  border-bottom: var(--separator-slim);
 }
 
-.obUiAssociatedOrderLine-checkboxButtonRemoveAssociations {
-/* # Inherits: [OB.UI.CheckboxButtonRemoveAssociations] */
+@media all and (max-aspect-ratio: 9/8) {
+  .obUiAssociatedOrderLine {
+    grid-template-areas: 'obUiAssociatedOrderLine-checkboxButtonRemoveAssociations obUiAssociatedOrderLine-formElementProductName obUiAssociatedOrderLine-formElementOrderedQuantity'
+                         'obUiAssociatedOrderLine-checkboxButtonRemoveAssociations obUiAssociatedOrderLine-formElementDocumentNo obUiAssociatedOrderLine-formElementDocumentNo'
+                         'obUiAssociatedOrderLine-checkboxButtonRemoveAssociations obUiAssociatedOrderLine-formElementCustomer obUiAssociatedOrderLine-formElementCustomer';
+    grid-template-columns: 56px calc(85% - 56px) 15%;
+    align-items: start;
+  }
+}
+
+.obUiAssociatedOrderLine .obUiFormElement {
+  display: inline-grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "obUiFormElement-mainArea";
+}
+
+.obUiAssociatedOrderLine .obUiFormElement-mainArea {
+  display: inline-grid;
+  grid-auto-flow: row;
+  grid-template-rows: auto auto;
+  grid-template-columns: auto;
+  grid-template-areas:
+  "obUiFormElement-mainArea-label" "obUiFormElement-mainArea-coreElementArea";
+}
+
+.obUiAssociatedOrderLine .obUiFormElement-mainArea-label {
+  display: grid;
+  grid-template-areas: "obUiFormElement-mainArea-label-labelLine obUiFormElement-mainArea-label-icon";
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr auto;
+  color: var(--color-secondary);
+  /*height: 13px;*/
+  align-items: end;
+  font-size: 11px
+}
+
+.obUiAssociatedOrderLine .obUiFormElement-mainArea-coreElementArea {
+  display: grid;
+  grid-template-areas: "obUiFormElement-mainArea-coreElementArea-component obUiFormElement-mainArea-coreElementArea-passwordVisibilityToggle obUiFormElement-mainArea-coreElementArea-eraser";
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr auto auto;
+}
+
+.obUiAssociatedOrderLine .obUiFormElement-icon,
+.obUiAssociatedOrderLine .obUiFormElement-mainArea-label,
+.obUiAssociatedOrderLine .obUiFormElement-mainArea-label-icon,
+.obUiAssociatedOrderLine .obUiFormElement-mainArea-coreElementArea-eraser,
+.obUiAssociatedOrderLine .obUiFormElement-mainArea-coreElementArea-passwordVisibilityToggle,
+.obUiAssociatedOrderLine .obUiFormElement-messageArea {
+  display: none;
+}
+
+@media all and (max-aspect-ratio: 9/8) {
+  .obUiAssociatedOrderLine .obUiFormElement-mainArea-label {
+    display: block;
+  }
+}
+
+.obUiAssociatedOrderLine-formElementProductName {
+  grid-area: obUiAssociatedOrderLine-formElementProductName;
+  text-align: left;
+  padding: 2px;
+  box-sizing: border-box;
 }
 
 .obUiAssociatedOrderLine-productName {
-  line-height: 35px;
-  font-size: var(--font-medium);
-  width: 180px;
-  padding-left: 6px;
+  text-align: inherit;
+}
+
+.obUiAssociatedOrderLine-formElementOrderedQuantity {
+  grid-area: obUiAssociatedOrderLine-formElementOrderedQuantity;
+  text-align: center;
+  padding: 2px;
+  box-sizing: border-box;
 }
 
 .obUiAssociatedOrderLine-orderedQuantity {
-  line-height: 35px;
-  font-size: var(--font-medium);
-  width: 85px;
+  text-align: inherit;
+}
+
+.obUiAssociatedOrderLine-formElementDocumentNo {
+  grid-area: obUiAssociatedOrderLine-formElementDocumentNo;
+  text-align: left;
+  padding: 2px;
+  box-sizing: border-box;
 }
 
 .obUiAssociatedOrderLine-documentNo {
-  line-height: 35px;
-  font-size: var(--font-medium);
-  width: 180px;
-  padding-left: 5px;
+  text-align: inherit;
+}
+
+.obUiAssociatedOrderLine-formElementCustomer {
+  grid-area: obUiAssociatedOrderLine-formElementCustomer;
+  text-align: left;
+  padding: 2px;
+  box-sizing: border-box;
 }
 
 .obUiAssociatedOrderLine-customer {
-  line-height: 35px;
-  font-size: var(--font-medium);
-  width: 250px;
-  padding-left: 20px;
+  text-align: inherit;
 }
 
-.obUiAssociatedOrderLine-element6 {}
-
+.obUiAssociatedOrderLine-productName,
+.obUiAssociatedOrderLine-orderedQuantity,
+.obUiAssociatedOrderLine-documentNo,
+.obUiAssociatedOrderLine-customer {
+  width: 100%;
+  height: 18px;
+  background-color: transparent;
+  border: 0;
+  font-size: var(--font-medium);
+  color: black;
+}
 
 /*
 # Component: OB.UI.ModalRemoveAssociatedTickets
@@ -6118,77 +6128,76 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   width: 900px;
 }
 
-.obUiModalRemoveAssociatedTickets-header {
-  padding-bottom: 0px;
-  margin: 0px;
-  height: 140px;
-}
+.obUiModalRemoveAssociatedTickets-header { }
 
-.obUiModalRemoveAssociatedTickets-header-modalRemoveAssociatedTicketsHeader {
-  text-align: center;
-  color: white;
-}
-
-.obUiModalRemoveAssociatedTickets-modalRemoveAssociatedTicketsHeader-serviceName {
-  line-height: 25px;
-  font-size: var(--font-xlarge);
-}
-
-.obUiModalRemoveAssociatedTickets-modalRemoveAssociatedTicketsHeader-linesLabel {
-  line-height: 25px;
+.obUiModalRemoveAssociatedTickets-header-serviceName {
+  width: 100%;
   font-size: var(--font-large);
+  touch-action: none;
 }
 
-.obUiModalRemoveAssociatedTickets-modalRemoveAssociatedTicketsHeader-element3 {}
+.obUiModalRemoveAssociatedTickets-header-linesLabel {
+  width: 100%;
+  font-size: var(--font-medium);
+  touch-action: none;
+}
 
-.obUiModalRemoveAssociatedTickets-header-headerLabels {
-  overflow: hidden;
-  padding-top: 20px;
-  border-bottom: 3px solid #cccccc;
-  text-align: center;
-  color: black;
-  margin-top: 15px;
-  padding-bottom: 7px;
-  font-weight: bold;
-  background-color: white;
+.obUiModalRemoveAssociatedTickets-body {
+  display: grid;
+  grid-auto-flow: row;
+  grid-template-rows: auto auto 1fr;
+  height: 100%;
+}
+
+.obUiModalRemoveAssociatedTickets-body-scrollerHeader {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-areas: 'obUiModalRemoveAssociatedTickets-body-scrollerHeader-checkboxButtonRemoveAllAssociations obUiModalRemoveAssociatedTickets-body-scrollerHeader-productNameLbl obUiModalRemoveAssociatedTickets-body-scrollerHeader-totalQtyLbl obUiModalRemoveAssociatedTickets-body-scrollerHeader-receiptLbl obUiModalRemoveAssociatedTickets-body-scrollerHeader-customerLbl';
+  grid-template-columns: 56px calc(40% - 56px) 10% 25% 25%;
+  align-items: center;
   height: 40px;
+  padding: 5px 0px;
+  color: var(--color-secondary);
+  font-weight: bold;
+  line-height: initial;
+  border-bottom: var(--separator-slim);
 }
 
-.obUiModalRemoveAssociatedTickets-headerLabels-productNameLbl {
-  line-height: 25px;
-  font-size: var(--font-medium);
-  width: 179px;
-  padding-left: 80px;
+@media all and (max-aspect-ratio: 9/8) {
+  .obUiModalRemoveAssociatedTickets-body-scrollerHeader {
+    display: none;
+  }
 }
 
-.obUiModalRemoveAssociatedTickets-headerLabels-totalQtyLbl {
-  line-height: 25px;
-  font-size: var(--font-medium);
-  width: 85px;
+.obUiModalRemoveAssociatedTickets-body-scrollerHeader-checkboxButtonRemoveAllAssociations {
+  grid-area: obUiModalRemoveAssociatedTickets-body-scrollerHeader-checkboxButtonRemoveAllAssociations;
 }
 
-.obUiModalRemoveAssociatedTickets-headerLabels-receiptLbl {
-  line-height: 25px;
-  font-size: var(--font-medium);
-  width: 180px;
+.obUiModalRemoveAssociatedTickets-body-scrollerHeader-productNameLbl {
+  grid-area: obUiModalRemoveAssociatedTickets-body-scrollerHeader-productNameLbl;
+  text-align: left;
+  padding: 0px 2px;
 }
 
-.obUiModalRemoveAssociatedTickets-headerLabels-customerLbl {
-  line-height: 25px;
-  font-size: var(--font-medium);
-  width: 250px;
-  padding-left: 20px;
+.obUiModalRemoveAssociatedTickets-body-scrollerHeader-totalQtyLbl {
+  grid-area: obUiModalRemoveAssociatedTickets-body-scrollerHeader-totalQtyLbl;
+  text-align: center;
+  padding: 0px 2px;
 }
 
-.obUiModalRemoveAssociatedTickets-headerLabels-element5 {}
-
-.obUiModalRemoveAssociatedTickets-body-scroller {
-/* # Inherits: [Scroller] */
-  max-height: 350px;
-  overflow-x: hidden;
-  background-color: #ffffff;
-  margin-top: -8px;
+.obUiModalRemoveAssociatedTickets-body-scrollerHeader-receiptLbl {
+  grid-area: obUiModalRemoveAssociatedTickets-body-scrollerHeader-receiptLbl;
+  text-align: left;
+  padding: 0px 2px;
 }
+
+.obUiModalRemoveAssociatedTickets-body-scrollerHeader-customerLbl {
+  grid-area: obUiModalRemoveAssociatedTickets-body-scrollerHeader-customerLbl;
+  text-align: left;
+  padding: 0px 2px;
+}
+
+.obUiModalRemoveAssociatedTickets-body-scroller {}
 
 .obUiModalRemoveAssociatedTickets-scroller-attributes {}
 
@@ -6197,6 +6206,17 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obUiModalRemoveAssociatedTickets-footer {}
+
+@media all and (min-aspect-ratio: 9/8) {
+  .obUiModalRemoveAssociatedTickets-footer-obUiModalRemoveAssociationsBtnSelectAll {
+    /* Inherits: [OB.UI.ReturnReceiptDialogSelectAll] */
+    display: none;
+  }
+}
+
+.obUiModalRemoveAssociatedTickets-footer-obUiModalRemoveAssociationsBtnSelectAll {
+/* # Inherits: [OB.UI.ModalRemoveAssociations_btnSelectAll] */
+}
 
 .obUiModalRemoveAssociatedTickets-footer-obUiModalRemoveAssociationsBtnApply {
 /* # Inherits: [OB.UI.ModalRemoveAssociations_btnApply] */
