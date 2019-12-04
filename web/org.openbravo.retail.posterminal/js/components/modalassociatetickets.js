@@ -10,7 +10,7 @@
 /*global OB, enyo, Backbone, moment, _ */
 
 enyo.kind({
-  kind: 'OB.UI.SmallButton',
+  kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.ButtonSelectAll',
   classes: 'obUiButtonSelectAll',
   i18nLabel: 'OBPOS_lblSelectAll',
@@ -27,7 +27,10 @@ enyo.kind({
     this.selectAll = select;
   },
   tap: function() {
-    this.doSelectAll({
+    if (this.disabled) {
+      return true;
+    }
+    this.owner.owner.owner.waterfallDown('onSelectAll', {
       selectAll: this.selectAll
     });
     this.changeTo(!this.selectAll);
@@ -42,7 +45,7 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.SmallButton',
+  kind: 'OB.UI.ModalDialogButton',
   name: 'OB.UI.ButtonAssociateSelected',
   classes: 'obUiButtonAssociateSelected',
   i18nLabel: 'OBPOS_AssociateSelected',
@@ -59,8 +62,11 @@ enyo.kind({
     OB.UTIL.ProcessController.unSubscribe(this.processesToListen, this);
   },
   tap: function() {
+    if (this.disabled) {
+      return true;
+    }
     this.setDisabled(true);
-    this.doAssociateSelected();
+    this.owner.owner.owner.waterfallDown('onAssociateSelected');
   }
 });
 
@@ -75,50 +81,6 @@ enyo.kind({
       kind: 'OB.UI.FilterSelectorTableHeader',
       name: 'filterSelector',
       classes: 'obUiModalOrderScrollableHeader-filterSelector'
-    },
-    {
-      showing: true,
-      classes: 'obUiModalOrderScrollableHeader-container1',
-      components: [
-        {
-          classes: 'obUiModalOrderScrollableHeader-container1-container1',
-          components: [
-            {
-              classes:
-                'obUiModalOrderScrollableHeader-container1-container1-container1',
-              components: [
-                {
-                  kind: 'OB.UI.ButtonSelectAll',
-                  classes:
-                    'obUiModalOrderScrollableHeader-container1-container1-container1-obUiButtonSelectAll'
-                }
-              ]
-            },
-            {
-              classes:
-                'obUiModalOrderScrollableHeader-container1-container1-container2',
-              components: [
-                {
-                  kind: 'OB.UI.SelectorButtonAdvancedFilter',
-                  classes:
-                    'obUiModalOrderScrollableHeader-container1-container1-container2-obUiSelectorButtonAdvancedFilter'
-                }
-              ]
-            },
-            {
-              classes:
-                'obUiModalOrderScrollableHeader-container1-container1-container3',
-              components: [
-                {
-                  kind: 'OB.UI.ButtonAssociateSelected',
-                  classes:
-                    'obUiModalOrderScrollableHeader-container1-container1-container3-obUiButtonAssociateSelected'
-                }
-              ]
-            }
-          ]
-        }
-      ]
     }
   ],
   initComponents: function() {
@@ -394,9 +356,7 @@ enyo.kind({
       },
       this
     );
-    this.$.orderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonAssociateSelected.setDisabled(
-      mode === 'OFF'
-    );
+    this.filterButtons.buttonAssociateSelected.setDisabled(mode === 'OFF');
   },
 
   associateSelected: function(inSender, inEvent) {
@@ -470,15 +430,9 @@ enyo.kind({
 
   clearAction: function() {
     this.ordersList.reset();
-    this.$.orderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonSelectAll.changeTo(
-      true
-    );
-    this.$.orderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonSelectAll.setDisabled(
-      true
-    );
-    this.$.orderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonAssociateSelected.setDisabled(
-      true
-    );
+    this.filterButtons.buttonSelectAll.changeTo(true);
+    this.filterButtons.buttonSelectAll.setDisabled(true);
+    this.filterButtons.buttonAssociateSelected.setDisabled(true);
     return true;
   },
 
@@ -490,9 +444,7 @@ enyo.kind({
       bp = this.parent.parent.receipt.get('bp').get('id'),
       filterModel = OB.Model.OrderAssociationsFilter;
     this.ordersList.reset();
-    me.$.orderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonSelectAll.setDisabled(
-      true
-    );
+    this.filterButtons.buttonSelectAll.setDisabled(true);
     _.each(selectedLine.get('relatedLines'), function(relatedLine) {
       orderLinesToExclude.push(relatedLine.orderlineId);
     });
@@ -524,9 +476,7 @@ enyo.kind({
         me.waterfall('onEnableSearch');
       }
       if (data && !data.exception && data.length > 0) {
-        me.$.orderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonSelectAll.setDisabled(
-          data.length === 0
-        );
+        me.filterButtons.buttonSelectAll.setDisabled(data.length === 0);
         var ordersLoaded = new Backbone.Collection();
         _.each(data.models, function(iter) {
           var order = _.find(ordersLoaded.models, function(ord) {
@@ -623,9 +573,7 @@ enyo.kind({
         });
         me.$.renderLoading.hide();
         me.$.orderSelector.collection.reset(lines);
-        me.$.orderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonSelectAll.changeTo(
-          true
-        );
+        me.filterButtons.buttonSelectAll.changeTo(true);
       } else if (data.exception && data.exception.message) {
         OB.UTIL.showError(OB.I18N.getLabel(data.exception.message));
         me.$.renderLoading.hide();
@@ -723,23 +671,79 @@ enyo.kind({
     this.$.orderSelector.setCollection(this.ordersList);
     this.ordersList.on('verifyAssociateTicketsButton', function(item) {
       if (item.get('toAssociate') > 0) {
-        me.$.orderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonAssociateSelected.setDisabled(
-          false
-        );
+        me.filterButtons.buttonAssociateSelected.setDisabled(false);
       } else {
-        me.$.orderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonAssociateSelected.setDisabled(
-          true
-        );
+        me.filterButtons.buttonAssociateSelected.setDisabled(true);
         _.each(me.ordersList.models, function(e) {
           if (e.get('toAssociate') > 0) {
-            me.$.orderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonAssociateSelected.setDisabled(
-              false
-            );
+            me.filterButtons.buttonAssociateSelected.setDisabled(false);
             return;
           }
         });
       }
     });
+    this.filterButtons = this.parent.parent.$.footer.$.modalAssociateTicketsFooter.$;
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.ModalAssociateTicketsFooter',
+  classes: 'obUiModalAssociateTicketsFooter',
+  components: [
+    {
+      classes: 'obUiModalAssociateTicketsFooter-container1',
+      showing: true,
+      handlers: {
+        onSetShow: 'setShow'
+      },
+      setShow: function(inSender, inEvent) {
+        this.setShowing(inEvent.visibility);
+        return true;
+      },
+      components: [
+        {
+          classes:
+            'obUiModal-footer-secondaryButtons obUiModalAssociateTicketsFooter-container1-container1',
+          components: [
+            {
+              kind: 'OB.UI.ButtonSelectAll',
+              classes:
+                'obUiModalAssociateTicketsFooter-container1-container1-selectAll'
+            },
+            {
+              kind: 'OB.UI.SelectorButtonAdvancedFilter',
+              classes:
+                'obUiModalAssociateTicketsFooter-container1-container1-advancedFilter'
+            }
+          ]
+        },
+        {
+          classes:
+            'obUiModal-footer-mainButtons obUiModalAssociateTicketsFooter-container1-container2',
+          components: [
+            {
+              kind: 'OB.UI.ButtonAssociateSelected',
+              classes:
+                'obUiModalAssociateTicketsFooter-container1-container2-addAssociation'
+            },
+            {
+              kind: 'OB.UI.ModalDialogButton',
+              classes:
+                'obUiModalAssociateTicketsFooter-container1-container2-close',
+              i18nLabel: 'OBRDM_LblClose',
+              tap: function() {
+                if (this.disabled === false) {
+                  this.doHideThisPopup();
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  initComponents: function() {
+    this.inherited(arguments);
   }
 });
 
@@ -752,6 +756,9 @@ enyo.kind({
   body: {
     kind: 'OB.UI.ListOrders',
     classes: 'obUiModalAssociateTickets-body-obUiListOrders'
+  },
+  footer: {
+    kind: 'OB.UI.ModalAssociateTicketsFooter'
   },
   executeOnShow: function() {
     if (
@@ -783,10 +790,10 @@ enyo.kind({
         originServer: this.args.originServer
       });
       if (!this.notClear) {
-        this.$.body.$.listOrders.$.orderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonAssociateSelected.setDisabled(
+        this.$.footer.$.modalAssociateTicketsFooter.$.buttonAssociateSelected.setDisabled(
           true
         );
-        this.$.body.$.listOrders.$.orderSelector.$.theader.$.modalOrderScrollableHeader.$.buttonSelectAll.setDisabled(
+        this.$.footer.$.modalAssociateTicketsFooter.$.buttonSelectAll.setDisabled(
           true
         );
       }
