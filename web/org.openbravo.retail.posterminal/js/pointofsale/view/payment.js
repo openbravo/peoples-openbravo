@@ -2802,12 +2802,21 @@ enyo.kind({
             }
           } else {
             OB.UTIL.ProcessController.finish('tapDoneButton', execution);
-            OB.UTIL.showConfirmation.display(
-              OB.I18N.getLabel('OBMOBC_Error'),
-              OB.I18N.getLabel('OBPOS_PrepaymentUnderLimit_NotAllowed', [
-                prepaymentLimitAmount
-              ])
-            );
+            if (
+              OB.MobileApp.model.hasPermission(
+                'OBRDM_EnableDeliveryModes',
+                true
+              )
+            ) {
+              underTheLimitApprovalCallback();
+            } else {
+              OB.UTIL.showConfirmation.display(
+                OB.I18N.getLabel('OBMOBC_Error'),
+                OB.I18N.getLabel('OBPOS_PrepaymentUnderLimit_NotAllowed', [
+                  prepaymentLimitAmount
+                ])
+              );
+            }
           }
         } else {
           underTheLimitApprovalCallback();
