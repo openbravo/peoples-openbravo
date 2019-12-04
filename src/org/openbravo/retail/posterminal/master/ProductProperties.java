@@ -77,11 +77,9 @@ public class ProductProperties extends ModelExtension {
         }
         add(new HQLProperty("product.obposEditablePrice", "obposEditablePrice"));
         add(new HQLProperty("'false'", "ispack"));
-        add(new HQLProperty(
-            "(select case when atri.id is not null then true else false end from Product as prod left join prod.attributeSet as atri where prod.id = product.id)",
+        add(new HQLProperty("case when product.attributeSet is not null then true else false end",
             "hasAttributes"));
-        add(new HQLProperty(
-            "(select case when atri.serialNo = 'Y' then true else false end from Product as prod left join prod.attributeSet as atri where prod.id = product.id)",
+        add(new HQLProperty("case when attrset.serialNo = 'Y' then true else false end",
             "isSerialNo"));
       }
     });

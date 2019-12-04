@@ -492,6 +492,9 @@ enyo.kind({
     onApplyDiscounts: ''
   },
   tap: function() {
+    if (this.disabled) {
+      return true;
+    }
     this.doApplyDiscounts();
   },
   initComponents: function() {

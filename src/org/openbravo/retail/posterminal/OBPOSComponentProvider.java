@@ -85,11 +85,10 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // "model/terminal",
         // "model/user",
         "utils/ob-utilitiesuipos", "model/bpartnerfilter", "model/orderfilter",
-        "model/crossstorefilter", "model/orders-for-verified-returns-filter", "model/bpcategory",
-        "model/bplocation", // Model
-                            // for
-                            // Customer
-                            // Address
+        "model/crossstorefilter", "model/orders-for-verified-returns-filter", "model/bplocation", // Model
+                                                                                                  // for
+                                                                                                  // Customer
+                                                                                                  // Address
 
         "webprinter/bluetooth", "webprinter/usb", "webprinter/webprinter", "webprinter/escpos",
         "webprinter/standardprinters", "webprinter/typedarrays", "webprinter/testprinter",
@@ -99,17 +98,16 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "webprinter/usbprinters/startsp100", "webprinter/usbprinters/wincorth230",
         "webprinter/btprinters/genericBTPrinter", "webprinter/btprinters/zebraZQ320",
 
-        "model/currencypanel", "model/country", "model/productcharacteristicvalue",
-        "model/characteristicvalue", "model/characteristic", "model/brand", "model/executor",
-        "model/terminal-model", "model/paymentmethodcashup", "model/taxcashup",
-        "model/offlineprinter", "model/productbom", "model/taxcategorybom",
-        "model/orderassociationsfilter", "model/product-servicelinked", "model/prepaymentrules",
-        "components/modalcancel", "components/subwindow", "components/leftsubwindow",
-        "components/modalreceiptproperties", "components/modalreceiptlineproperties",
-        "components/modalnoteditableorder", "components/modalnoteditableline",
-        "components/modalmodulesindev", "components/modalselectprinters",
-        "components/modalmorepaymentmethods", "components/modalDeliveryChange",
-        "components/obpos-gridkeyboard",
+        "model/currencypanel", "model/productcharacteristicvalue", "model/characteristicvalue",
+        "model/characteristic", "model/brand", "model/executor", "model/terminal-model",
+        "model/paymentmethodcashup", "model/taxcashup", "model/offlineprinter", "model/productbom",
+        "model/taxcategorybom", "model/orderassociationsfilter", "model/product-servicelinked",
+        "model/prepaymentrules", "components/modalcancel", "components/subwindow",
+        "components/leftsubwindow", "components/modalreceiptproperties",
+        "components/modalreceiptlineproperties", "components/modalnoteditableorder",
+        "components/modalnoteditableline", "components/modalmodulesindev",
+        "components/modalselectprinters", "components/modalmorepaymentmethods",
+        "components/modalDeliveryChange", "components/obpos-gridkeyboard",
 
         // Web POS window
         "utils/eventbus", "utils/attributeUtils", "utils/cashUpReportUtils",
@@ -128,7 +126,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/businesspartner_selector", "components/bplocation", // Button for selecting
                                                                         // customer address
         "components/bplocationship", "components/customershipbill",
-        "components/salesrepresentative", "components/listreceiptscounter", "components/menu",
+        "components/listreceiptscounter", "components/menu", "components/salesrepresentative",
         "components/modalselectterminal", "components/popupdraweropened",
         "components/servicesfilter", "components/modalselectopenreceipts",
         "components/modalsplitlines", "components/modalassociatetickets",
@@ -269,10 +267,10 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
     final ArrayList<String> appDependency = new ArrayList<>();
     // IndexedDB
+    appDependency.add("model/masterdata/SalesRepresentativeModel");
+    appDependency.add("model/masterdata/BPCategoryModel");
+    appDependency.add("model/masterdata/CountryModel");
     appDependency.add("model/masterdata/BPSetLineModel");
-    appDependency.add("model/masterdata/salesrepresentative");
-    appDependency.add("model/masterdata/bpcategory");
-    appDependency.add("model/masterdata/country");
     appDependency.add("model/masterdata/discount/DiscountFilterBusinessPartnerGroupModel");
     appDependency.add("model/masterdata/discount/DiscountFilterBusinessPartnerModel");
     appDependency.add("model/masterdata/discount/DiscountFilterBusinessPartnerSetModel");
@@ -304,4 +302,3 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     return globalResources;
   }
 }
-

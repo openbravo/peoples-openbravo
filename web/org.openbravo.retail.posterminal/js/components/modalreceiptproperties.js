@@ -161,6 +161,32 @@ enyo.kind({
       classes: 'obUiModalReceiptPropertiesImpl-newAttributes-addressbillbutton',
       hideNullifyButton: true,
       i18nLabel: 'OBPOS_LblBillAddr'
+    },
+    {
+      kind: 'OB.UI.renderComboProperty',
+      name: 'invoiceTermsBox',
+      classes: 'obUiModalReceiptPropertiesImpl-newAttributes-invoiceTermsBox',
+      modelProperty: 'invoiceTerms',
+      i18nLabel: 'OBPOS_InvoiceTerms',
+      retrievedPropertyForValue: 'id',
+      retrievedPropertyForText: 'name',
+      initComponents: function() {
+        this.collection = new Backbone.Collection();
+        this.setCollection(this.collection);
+        _.each(
+          OB.MobileApp.model.get('invoiceTerms'),
+          function(invoiceTerm) {
+            this.collection.add(new Backbone.Model(invoiceTerm));
+          },
+          this
+        );
+      },
+      fetchDataFunction: function(args) {
+        var me = this;
+        setTimeout(function() {
+          me.dataReadyFunction(me.collection, args);
+        }, 0);
+      }
     }
   ],
 

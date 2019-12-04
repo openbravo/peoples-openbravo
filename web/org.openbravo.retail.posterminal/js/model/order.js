@@ -1236,11 +1236,7 @@
     },
 
     getInvoiceTerms: function() {
-      return this.get('invoiceTerms')
-        ? this.get('invoiceTerms')
-        : this.get('bp')
-        ? this.get('bp').get('invoiceTerms')
-        : undefined;
+      return this.get('invoiceTerms');
     },
 
     isNegative: function() {
@@ -9355,6 +9351,7 @@
           ) {
             if (
               OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) &&
+              receipt.get('id') !== null &&
               (receipt.get('documentnoSuffix') <=
                 OB.MobileApp.model.documentnoThreshold ||
                 OB.MobileApp.model.documentnoThreshold === 0)
@@ -11010,6 +11007,7 @@
         order.set('session', OB.MobileApp.model.get('session'));
         order.set('cashVAT', OB.MobileApp.model.get('terminal').cashVat);
         order.set('bp', bp);
+        order.set('invoiceTerms', bp.get('invoiceTerms'));
         if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
           // Set price list for order
           order.set('priceList', bp.get('priceList'));
