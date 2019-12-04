@@ -36,8 +36,6 @@ import javax.inject.Inject;
 import javax.servlet.annotation.WebListener;
 
 import org.apache.log4j.Logger;
-import org.openbravo.base.weld.WeldUtils;
-import org.openbravo.cache.corehelpers.OrganizationStructureCacheInvalidationHelper;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -64,15 +62,16 @@ public class CacheInvalidationBackgroundManager implements CacheInvalidationBack
 
   private Map<String, CacheInvalidationRecord> cacheControl = new HashMap<String, CacheInvalidationRecord>();
 
-  public void listen (@Observes StartEvent event) {
+  public void listen(@Observes StartEvent event) {
     MBeanRegistry.registerMBean("CacheInvalidationBackgroundManager", this);
     this.start();
   }
-  
+
   /**
    * This method starts the cache invalidation background thread
    * 
    */
+  @Override
   public void start() {
     long period;
     try {
@@ -133,21 +132,24 @@ public class CacheInvalidationBackgroundManager implements CacheInvalidationBack
     private Date lastInvalidation;
     private CacheInvalidationHelper invalidationHelper;
     private String name;
-    
-    CacheInvalidationRecord (String name, CacheInvalidationHelper helper){
+
+    CacheInvalidationRecord(String name, CacheInvalidationHelper helper) {
       this.name = name;
       this.invalidationHelper = helper;
     }
-    
+
     public Date getLastInvalidation() {
       return lastInvalidation;
     }
+
     public void setLastInvalidation(Date lastInvalidation) {
       this.lastInvalidation = lastInvalidation;
     }
+
     public CacheInvalidationHelper getInvalidationHelper() {
       return invalidationHelper;
     }
+
     public String getName() {
       return name;
     }
@@ -177,13 +179,14 @@ public class CacheInvalidationBackgroundManager implements CacheInvalidationBack
             return;
           }
           cacheList = cacheCriteria.list();
-          for (Cache cache: cacheList) {
+          for (Cache cache : cacheList) {
             controlRecord = manager.cacheControl.get(cache.getValue());
             if (controlRecord != null) {
-              if (controlRecord.getLastInvalidation() == null ||
-                  controlRecord.getLastInvalidation().compareTo(cache.getLastInvalidation()) < 0) {
+              if (controlRecord.getLastInvalidation() == null || controlRecord.getLastInvalidation()
+                  .compareTo(cache.getLastInvalidation()) < 0) {
                 if (!controlRecord.getInvalidationHelper().invalidateCache()) {
-                  logger.error("Caché invalidation for caché " + controlRecord.getName() + " has failed.");
+                  logger.error(
+                      "Caché invalidation for caché " + controlRecord.getName() + " has failed.");
                 } else {
                   controlRecord.setLastInvalidation(cache.getLastInvalidation());
                   logger.debug("Caché " + controlRecord.getName() + " has been invalidated");
@@ -192,7 +195,7 @@ public class CacheInvalidationBackgroundManager implements CacheInvalidationBack
             }
           }
           OBDal.getInstance().getSession().clear();
-          
+
           try {
             Thread.sleep(timeBetweenThreadExecutions);
           } catch (Exception ignored) {
