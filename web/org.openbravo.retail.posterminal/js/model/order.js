@@ -3799,12 +3799,11 @@
         }
       } // End addProductToOrder
 
-      async function addPackToOrder(order, pack, attrs) {
+      function addPackToOrder(order, pack, attrs) {
         try {
-          const discountPromise = await OB.App.MasterdataModels.Discount.withId(
-            pack.get('id')
+          const discount = OB.Discounts.Pos.ruleImpls.find(
+            discount => discount.id === pack.get('id')
           );
-          const discount = discountPromise.result;
 
           if (discount.endingDate && discount.endingDate.length > 0) {
             var objDate = new Date(discount.endingDate);
@@ -3821,11 +3820,6 @@
               return;
             }
           }
-
-          let discountArray = [discount];
-          discountArray = await OB.Discounts.Pos.addDiscountsByProductFilter(
-            discountArray
-          );
 
           var addProductsAndCalculateDiscounts = function(
             products,
@@ -3868,7 +3862,7 @@
           };
           order.set('skipApplyPromotions', true);
           addProductsAndCalculateDiscounts(
-            discountArray[0].products,
+            discount.products,
             0,
             function() {
               order.set('skipApplyPromotions', false);
@@ -10128,39 +10122,7 @@
                 prod.get('productType'),
                 prod.get('id'),
                 prod.get('productCategory'),
-                async function(data) {
-                  async function updatePromotions(iter) {
-                    for (let promotion of iter.promotions) {
-                      try {
-                        const discountPromise = await OB.App.MasterdataModels.Discount.withId(
-                          promotion.ruleId
-                        );
-                        const discount = discountPromise.result;
-                        if (
-                          discount &&
-                          OB.Model.Discounts.discountRules[
-                            discount.discountType
-                          ].addManual
-                        ) {
-                          var percentage;
-                          if (discount.obdiscPercentage) {
-                            percentage = OB.DEC.mul(
-                              OB.DEC.div(promotion.amt, iter.lineGrossAmount),
-                              new BigDecimal('100')
-                            );
-                          }
-                          promotion.userAmt = percentage
-                            ? percentage
-                            : promotion.amt;
-                          promotion.discountType = discount.discountType;
-                          promotion.manual = true;
-                        }
-                      } catch (error) {
-                        OB.UTIL.showError(error);
-                      }
-                    }
-                  }
-
+                function(data) {
                   let hasservices;
                   if (
                     !OB.UTIL.isNullOrUndefined(data) &&
@@ -10168,7 +10130,35 @@
                   ) {
                     hasservices = data.hasservices;
                   }
-                  await updatePromotions(iter);
+
+                  for (let promotion of iter.promotions) {
+                    try {
+                      const discount = OB.Discounts.Pos.manualRuleImpls.find(
+                        discount => discount.id === promotion.ruleId
+                      );
+                      if (
+                        discount &&
+                        OB.Model.Discounts.discountRules[discount.discountType]
+                          .addManual
+                      ) {
+                        var percentage;
+                        if (discount.obdiscPercentage) {
+                          percentage = OB.DEC.mul(
+                            OB.DEC.div(promotion.amt, iter.lineGrossAmount),
+                            new BigDecimal('100')
+                          );
+                        }
+                        promotion.userAmt = percentage
+                          ? percentage
+                          : promotion.amt;
+                        promotion.discountType = discount.discountType;
+                        promotion.manual = true;
+                      }
+                    } catch (error) {
+                      OB.UTIL.showError(error);
+                    }
+                  }
+
                   if (
                     OB.MobileApp.model.hasPermission(
                       'OBPOS_EnableSupportForProductAttributes',
