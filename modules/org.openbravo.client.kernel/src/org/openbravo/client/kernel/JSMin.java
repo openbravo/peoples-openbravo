@@ -59,8 +59,6 @@
 
 package org.openbravo.client.kernel;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -301,41 +299,24 @@ class JSMin {
     out.flush();
   }
 
+  @SuppressWarnings("serial")
   static class UnterminatedCommentException extends Exception {
     public UnterminatedCommentException(int line, int column) {
       super("Unterminated comment at line " + line + " and column " + column);
     }
   }
 
+  @SuppressWarnings("serial")
   static class UnterminatedStringLiteralException extends Exception {
     public UnterminatedStringLiteralException(int line, int column) {
       super("Unterminated string literal at line " + line + " and column " + column);
     }
   }
 
+  @SuppressWarnings("serial")
   static class UnterminatedRegExpLiteralException extends Exception {
     public UnterminatedRegExpLiteralException(int line, int column) {
       super("Unterminated regular expression at line " + line + " and column " + column);
     }
   }
-
-  public static void main(String arg[]) {
-    try {
-      JSMin jsmin = new JSMin(new FileInputStream(arg[0]), System.out);
-      jsmin.jsmin();
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-    } catch (ArrayIndexOutOfBoundsException e) {
-      e.printStackTrace();
-    } catch (IOException e) {
-      e.printStackTrace();
-    } catch (UnterminatedRegExpLiteralException e) {
-      e.printStackTrace();
-    } catch (UnterminatedCommentException e) {
-      e.printStackTrace();
-    } catch (UnterminatedStringLiteralException e) {
-      e.printStackTrace();
-    }
-  }
-
 }
