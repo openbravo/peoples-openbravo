@@ -487,8 +487,25 @@
         'discountCacheInitialization'
       );
 
-      const discountArrayPromise = await OB.App.MasterdataModels.Discount.find();
-      let discountArray = discountArrayPromise.result;
+      // Fixme: filter by manual discountType
+      const manualDiscountArrayPromise = await OB.App.MasterdataModels.Discount.orderedBy(
+        'name'
+      );
+      const manualDiscountArray = OB.Discounts.Pos.filterDiscountsByManual(
+        manualDiscountArrayPromise.result,
+        true
+      );
+
+      // Fixme: filter by no manual discountType, order by priority
+      const noManualDiscountArrayPromise = await OB.App.MasterdataModels.Discount.orderedBy(
+        'id'
+      );
+      const noManualDiscountArray = OB.Discounts.Pos.filterDiscountsByManual(
+        noManualDiscountArrayPromise.result,
+        false
+      ).sort((a, b) => a.priority - b.priority);
+
+      let discountArray = manualDiscountArray.concat(noManualDiscountArray);
 
       discountArray = await OB.Discounts.Pos.addDiscountsByRoleFilter(
         discountArray
@@ -536,37 +553,9 @@
         true
       );
 
-      // FIXME: sort manual discounts by name in query
-      OB.Discounts.Pos.manualRuleImpls = OB.Discounts.Pos.manualRuleImpls.sort(
-        (a, b) => {
-          if (a.name.substring(0, 1) === a.name.substring(0, 1).toUpperCase()) {
-            if (
-              b.name.substring(0, 1) === b.name.substring(0, 1).toUpperCase()
-            ) {
-              return a.name - b.name;
-            } else {
-              return -1;
-            }
-          } else {
-            if (
-              b.name.substring(0, 1) === b.name.substring(0, 1).toUpperCase()
-            ) {
-              return 1;
-            } else {
-              return a.name - b.name;
-            }
-          }
-        }
-      );
-
       OB.Discounts.Pos.ruleImpls = OB.Discounts.Pos.filterDiscountsByManual(
         discountArray,
         false
-      );
-
-      // FIXME: sort no manual discounts by priority in query
-      OB.Discounts.Pos.ruleImpls = OB.Discounts.Pos.ruleImpls.sort(
-        (a, b) => a.priority - b.priority
       );
 
       //BPSets

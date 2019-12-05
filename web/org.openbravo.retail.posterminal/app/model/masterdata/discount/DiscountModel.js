@@ -15,6 +15,14 @@
         new OB.App.Index({
           name: 'id',
           properties: [{ property: 'id' }]
+        }),
+        new OB.App.Index({
+          name: 'name',
+          properties: [{ property: 'name' }]
+        }),
+        new OB.App.Index({
+          name: 'priority',
+          properties: [{ property: 'priority' }]
         })
       ];
     }
