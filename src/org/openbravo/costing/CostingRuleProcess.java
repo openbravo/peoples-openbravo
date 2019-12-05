@@ -496,11 +496,13 @@ public class CostingRuleProcess implements Process {
     }
     String clientId = rule.getClient().getId();
     String orgId = rule.getOrganization().getId();
+    Warehouse warehouse = (Warehouse) OBDal.getInstance()
+        .getProxy(Warehouse.ENTITY_NAME, warehouseId);
     CostingRuleInit cri = OBProvider.getInstance().get(CostingRuleInit.class);
     cri.setClient((Client) OBDal.getInstance().getProxy(Client.ENTITY_NAME, clientId));
     cri.setOrganization(
         (Organization) OBDal.getInstance().getProxy(Organization.ENTITY_NAME, orgId));
-    cri.setWarehouse((Warehouse) OBDal.getInstance().getProxy(Warehouse.ENTITY_NAME, warehouseId));
+    cri.setWarehouse(warehouse);
     cri.setCostingRule(rule);
     List<CostingRuleInit> criList = rule.getCostingRuleInitList();
     criList.add(cri);
@@ -508,22 +510,18 @@ public class CostingRuleProcess implements Process {
 
     InventoryCount closeInv = OBProvider.getInstance().get(InventoryCount.class);
     closeInv.setClient((Client) OBDal.getInstance().getProxy(Client.ENTITY_NAME, clientId));
-    closeInv.setOrganization(
-        (Organization) OBDal.getInstance().getProxy(Organization.ENTITY_NAME, orgId));
+    closeInv.setOrganization(warehouse.getOrganization());
     closeInv.setName(OBMessageUtils.messageBD("CostCloseInventory"));
-    closeInv
-        .setWarehouse((Warehouse) OBDal.getInstance().getProxy(Warehouse.ENTITY_NAME, warehouseId));
+    closeInv.setWarehouse(warehouse);
     closeInv.setMovementDate(localDate);
     closeInv.setInventoryType("C");
     cri.setCloseInventory(closeInv);
 
     InventoryCount initInv = OBProvider.getInstance().get(InventoryCount.class);
     initInv.setClient((Client) OBDal.getInstance().getProxy(Client.ENTITY_NAME, clientId));
-    initInv.setOrganization(
-        (Organization) OBDal.getInstance().getProxy(Organization.ENTITY_NAME, orgId));
+    initInv.setOrganization(warehouse.getOrganization());
     initInv.setName(OBMessageUtils.messageBD("CostInitInventory"));
-    initInv
-        .setWarehouse((Warehouse) OBDal.getInstance().getProxy(Warehouse.ENTITY_NAME, warehouseId));
+    initInv.setWarehouse(warehouse);
     initInv.setMovementDate(localDate);
     initInv.setInventoryType("O");
     cri.setInitInventory(initInv);
