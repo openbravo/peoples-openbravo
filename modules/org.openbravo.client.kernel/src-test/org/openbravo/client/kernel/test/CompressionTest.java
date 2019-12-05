@@ -19,17 +19,19 @@
 
 package org.openbravo.client.kernel.test;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.openbravo.client.kernel.JSCompressor;
+import org.openbravo.test.base.Issue;
 
 /**
  * Test the compression of a static js file.
@@ -41,18 +43,48 @@ public class CompressionTest {
 
   @Test
   public void testCompression() throws IOException {
-    final JSCompressor compressor = new JSCompressor();
-    final InputStream is = this.getClass().getResourceAsStream("test-compression.js");
-    String line;
-    final StringBuilder sb = new StringBuilder();
-    final BufferedReader reader = new BufferedReader(
-        new InputStreamReader(is, StandardCharsets.UTF_8));
-    while ((line = reader.readLine()) != null) {
-      sb.append(line).append("\n");
+    CompressedResource compressedResource = new CompressedResource("test-compression.js");
+
+    assertThat("Original size is at least twice bigger than original",
+        compressedResource.original.length(),
+        greaterThan(2 * compressedResource.compressed.length()));
+  }
+
+  @Test
+  @Issue("42475")
+  public void compressedTemplateLiteralSpaces() throws IOException {
+    CompressedResource compressedResource = new CompressedResource(
+        "test-compession-spaces-template-literal.js");
+
+    assertThat(compressedResource.compressed,
+        containsString("`this is a \"string literal\" with spaces`"));
+  }
+
+  @Test
+  @Issue("42475")
+  public void compressedTemplateLiteralMultiLine() throws IOException {
+    CompressedResource compressedResource = new CompressedResource(
+        "test-compession-multiline-template-literal.js");
+
+    assertThat("Number of lines after compression", compressedResource.getNumberOfLines(), is(8));
+  }
+
+  private static class CompressedResource {
+    private String original;
+    private String compressed;
+
+    CompressedResource(String resource) throws IOException {
+      try (
+          InputStreamReader is = new InputStreamReader(
+              this.getClass().getResourceAsStream(resource));
+          BufferedReader reader = new BufferedReader(is)) {
+        original = reader.lines().collect(Collectors.joining("\n"));
+        compressed = new JSCompressor().compress(original);
+      }
     }
-    final String compressed = compressor.compress(sb.toString());
-    assertThat("Original size is at least twice bigger than original", sb.length(),
-        greaterThan(2 * compressed.length()));
-    is.close();
+
+    public int getNumberOfLines() {
+      return compressed.split("\n").length - 1;
+    }
   }
 }
