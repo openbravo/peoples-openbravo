@@ -391,7 +391,8 @@ public class PaidReceipts extends JSONProcessSimple {
             + "group by  p.financialAccount.id, p.commercialName ,p.searchKey, "
             + "obpos_currency_rate(p.financialAccount.currency, p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id), "
             + "obpos_currency_rate(p.obposApplications.organization.currency, p.financialAccount.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id), "
-            + "p.financialAccount.currency.iSOCode, p.paymentMethod.openDrawer";
+            + "p.financialAccount.currency.iSOCode, p.paymentMethod.openDrawer, p.active "
+            + "order by p.active desc";
         Query<Object[]> paymentsTypeQuery = OBDal.getInstance()
             .getSession()
             .createQuery(hqlPaymentsType, Object[].class);
