@@ -40,6 +40,7 @@ import org.openbravo.client.kernel.CSSMinifier;
 import org.openbravo.client.kernel.freemarker.test.FreemarkerTemplateProcessorTest;
 import org.openbravo.client.kernel.freemarker.test.GenerateComponentTest;
 import org.openbravo.client.kernel.freemarker.test.LabelTest;
+import org.openbravo.client.kernel.test.CompressionTest;
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
 import org.openbravo.scheduling.ProcessSchedulingTest;
 import org.openbravo.scheduling.trigger.MisfirePolicyTest;
@@ -299,6 +300,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     FreemarkerTemplateProcessorTest.class, //
     GenerateComponentTest.class, //
     LabelTest.class, //
+    CompressionTest.class, //
 
     // buildValidations and moduleScripts
     ExecutionLimitsTest.class, //

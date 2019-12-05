@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,16 +19,17 @@
 
 package org.openbravo.client.kernel.test;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.junit.Assert.assertThat;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 import org.junit.Test;
 import org.openbravo.client.kernel.JSCompressor;
-import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Test the compression of a static js file.
@@ -36,23 +37,22 @@ import org.openbravo.test.base.OBBaseTest;
  * @author mtaal
  */
 
-public class CompressionTest extends OBBaseTest {
+public class CompressionTest {
 
   @Test
-  public void testCompression() throws Exception {
+  public void testCompression() throws IOException {
     final JSCompressor compressor = new JSCompressor();
     final InputStream is = this.getClass().getResourceAsStream("test-compression.js");
     String line;
     final StringBuilder sb = new StringBuilder();
-    final BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+    final BufferedReader reader = new BufferedReader(
+        new InputStreamReader(is, StandardCharsets.UTF_8));
     while ((line = reader.readLine()) != null) {
       sb.append(line).append("\n");
     }
     final String compressed = compressor.compress(sb.toString());
-    assertNotNull(compressed);
-    assertTrue(sb.length() > (2 * compressed.length()));
-    System.err.println(sb.length());
-    System.err.println(compressed.length());
+    assertThat("Original size is at least twice bigger than original", sb.length(),
+        greaterThan(2 * compressed.length()));
     is.close();
   }
 }
