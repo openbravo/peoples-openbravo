@@ -22,7 +22,7 @@
         }),
         new OB.App.Index({
           name: 'priority',
-          properties: [{ property: 'priority' }]
+          properties: [{ property: 'priority', isNullable: true }]
         })
       ];
     }
