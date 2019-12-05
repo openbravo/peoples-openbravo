@@ -478,7 +478,7 @@
       );
     },
 
-    initCache: async function(basicParams, callback) {
+    initCache: async function(callback) {
       if (OB.Discounts.Pos.isCalculatingCache) {
         return callback();
       }
