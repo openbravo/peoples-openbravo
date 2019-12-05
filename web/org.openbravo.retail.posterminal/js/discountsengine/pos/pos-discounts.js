@@ -385,6 +385,7 @@
     },
 
     addDiscountsByBusinessPartnerFilter: async function(discountArray) {
+      // FIXME: Make query remotely in case OBPOS_remote.discount.bp filtering by OB.MobileApp.model.get('businessPartner').id
       return OB.Discounts.Pos.addDiscountFilter(
         discountArray,
         OB.App.MasterdataModels.DiscountFilterBusinessPartner,

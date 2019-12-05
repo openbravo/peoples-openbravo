@@ -10,36 +10,6 @@
 /*global OB, _, moment, Backbone, enyo, BigDecimal*/
 
 (function() {
-  var cachedData = null;
-
-  var findDiscountFilterBusinessPartner = function(criteria, success, fail) {
-    if (
-      criteria.remoteFilters[0].value ===
-      OB.MobileApp.model.get('businessPartner').id
-    ) {
-      if (cachedData) {
-        success(cachedData);
-      } else {
-        OB.Dal.find(
-          OB.Model.DiscountFilterBusinessPartner,
-          criteria,
-          function(discountsBP) {
-            cachedData = discountsBP;
-            success(cachedData);
-          },
-          fail
-        );
-      }
-    } else {
-      OB.Dal.find(
-        OB.Model.DiscountFilterBusinessPartner,
-        criteria,
-        success,
-        fail
-      );
-    }
-  };
-
   // Sales.OrderLine Model
   var OrderLine = Backbone.Model.extend({
     modelName: 'OrderLine',
@@ -5385,7 +5355,12 @@
       }
     },
 
-    setBPandBPLoc: function(businessPartner, showNotif, saveChange, callback) {
+    setBPandBPLoc: async function(
+      businessPartner,
+      showNotif,
+      saveChange,
+      callback
+    ) {
       var me = this,
         undef,
         i,
@@ -5556,32 +5531,11 @@
           if (
             OB.MobileApp.model.hasPermission('OBPOS_remote.discount.bp', true)
           ) {
-            var bp = {
-              columns: ['businessPartner'],
-              operator: 'equals',
-              value: businessPartner.id,
-              isId: true
-            };
-            var remoteCriteria = [bp];
-            var criteriaFilter = {};
-            criteriaFilter.remoteFilters = remoteCriteria;
-            OB.Dal.find(
-              OB.Model.DiscountFilterBusinessPartner,
-              criteriaFilter,
-              function(discountsBP) {
-                _.each(discountsBP.models, function(dsc) {
-                  OB.Dal.saveOrUpdate(
-                    dsc,
-                    function() {},
-                    function() {
-                      OB.error(arguments);
-                    }
-                  );
-                });
-              },
-              function() {
-                OB.error(arguments);
-              }
+            OB.Discounts.Pos.manualRuleImpls = await OB.Discounts.Pos.addDiscountsByBusinessPartnerFilter(
+              OB.Discounts.Pos.manualRuleImpls
+            );
+            OB.Discounts.Pos.ruleImpls = await OB.Discounts.Pos.addDiscountsByBusinessPartnerFilter(
+              OB.Discounts.Pos.ruleImpls
             );
           }
         }
@@ -10572,40 +10526,7 @@
             OB.error(arguments);
           }
         );
-        if (
-          OB.MobileApp.model.hasPermission('OBPOS_remote.discount.bp', true)
-        ) {
-          var bp = {
-            columns: ['businessPartner'],
-            operator: 'equals',
-            value: businessPartner.id,
-            isId: true
-          };
-          var remoteCriteria = [bp];
-          var criteria = {};
-          criteria.remoteFilters = remoteCriteria;
-
-          findDiscountFilterBusinessPartner(
-            criteria,
-            function(discountsBP) {
-              _.each(discountsBP.models, function(dsc) {
-                OB.Dal.saveOrUpdate(
-                  dsc,
-                  function() {},
-                  function() {
-                    OB.error(arguments);
-                  }
-                );
-              });
-              OB.UTIL.showLoading(false);
-            },
-            function() {
-              OB.error(arguments);
-            }
-          );
-        } else {
-          OB.UTIL.showLoading(false);
-        }
+        OB.UTIL.showLoading(false);
       },
 
       addNewQuotation: function() {
