@@ -25,8 +25,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.base.provider.OBProvider;
 
-import net.matthaynes.jsmin.JSMin;
-
 /**
  * Compresses a JavaScript source using JSMin <br>
  * http://code.google.com/p/jsmin-ant-task/
