@@ -182,14 +182,15 @@ class JSMin {
       case 2:
         theA = theB;
 
-        if (theA == '\'' || theA == '"') {
+        boolean templateLiteral = theA == '`';
+        if (theA == '\'' || theA == '"' || templateLiteral) {
           for (;;) {
             out.write(theA);
             theA = get();
             if (theA == theB) {
               break;
             }
-            if (theA <= '\n') {
+            if (!templateLiteral && theA <= '\n') {
               throw new UnterminatedStringLiteralException(line, column);
             }
             if (theA == '\\') {
