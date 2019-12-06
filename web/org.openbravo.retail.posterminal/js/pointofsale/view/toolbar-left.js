@@ -805,14 +805,8 @@ enyo.kind({
                           }
                         }
 
-                        var negativeLines = _.filter(
-                          receipt.get('lines').models,
-                          function(line) {
-                            return line.get('qty') < 0;
-                          }
-                        ).length;
                         if (
-                          negativeLines > 0 &&
+                          me.model.get('order').getGross() < 0 &&
                           !OB.MobileApp.model.get('permissions')[
                             'OBPOS_approval.returns'
                           ]
