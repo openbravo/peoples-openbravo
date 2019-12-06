@@ -39,12 +39,14 @@ import org.openbravo.client.kernel.ApplicationInitializer;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.jmx.MBeanRegistry;
 import org.openbravo.model.ad.system.Cache;
 
 @ApplicationScoped
-public class CacheInvalidationBackgroundManager implements CacheInvalidationBackgroundManagerMBean, ApplicationInitializer {
+public class CacheInvalidationBackgroundManager
+    implements CacheInvalidationBackgroundManagerMBean, ApplicationInitializer {
 
   private static final String CACHE_INVALIDATION_BACKGROUND_MANAGER = "Cache Invalidation Background Manager";
   private static final String CACHE_INVALIDATION_CHECK_PERIOD_PREFERENCE = "CacheInvalidationControlPeriod";
@@ -58,7 +60,7 @@ public class CacheInvalidationBackgroundManager implements CacheInvalidationBack
 
   @Inject
   @Any
-  private Instance<CacheManager<?,?>> cacheManagers;
+  private Instance<CacheManager<?, ?>> cacheManagers;
 
   @Override
   public void initialize() {
@@ -82,7 +84,8 @@ public class CacheInvalidationBackgroundManager implements CacheInvalidationBack
           .parseLong(Preferences.getPreferenceValue(CACHE_INVALIDATION_CHECK_PERIOD_PREFERENCE,
               false, (String) null, null, null, null, null));
     } catch (Exception e) {
-      logger.warn("The CacheInvalidationBackgroundManager will start with the default period: " + Long.toString(DEFAULT_PERIOD) + "ms");
+      logger.warn("The CacheInvalidationBackgroundManager will start with the default period: "
+          + Long.toString(DEFAULT_PERIOD) + "ms");
       period = DEFAULT_PERIOD;
     }
 
@@ -103,15 +106,16 @@ public class CacheInvalidationBackgroundManager implements CacheInvalidationBack
       return;
     }
 
-    for (CacheManager<?,?> cacheManager: cacheManagers) {
-      if (searchKey.equals(cacheManager.getCacheIdentifier())){
+    for (CacheManager<?, ?> cacheManager : cacheManagers) {
+      if (searchKey.equals(cacheManager.getCacheIdentifier())) {
         cacheManager.invalidate();
         return;
       }
     }
-    throw new MBeanException(new NoSuchElementException("The CacheManager for " + searchKey + " was not injected into the CacheInvalidationBackgroundManager"));
+    throw new MBeanException(new NoSuchElementException("The CacheManager for " + searchKey
+        + " was not injected into the CacheInvalidationBackgroundManager"));
   }
-  
+
   @Override
   public void stop() {
     if (executorService == null) {
@@ -165,11 +169,15 @@ public class CacheInvalidationBackgroundManager implements CacheInvalidationBack
           }
           OBDal.getInstance().getSession().clear();
           cacheCriteria = OBDal.getInstance().createCriteria(Cache.class);
-          cacheCriteria.add(Restrictions.not(Restrictions.in(Cache.PROPERTY_SEARCHKEY, missingCacheManagers)));
+          cacheCriteria.add(Restrictions.isNotNull(Cache.PROPERTY_LASTINVALIDATION));
+          if (!missingCacheManagers.isEmpty()) {
+            cacheCriteria.add(
+                Restrictions.not(Restrictions.in(Cache.PROPERTY_SEARCHKEY, missingCacheManagers)));
+          }
           cacheList = cacheCriteria.list();
           for (Cache cache : cacheList) {
             found = false;
-            for (CacheManager<?,?> cacheManager: manager.cacheManagers) {
+            for (CacheManager<?, ?> cacheManager : manager.cacheManagers) {
               if (cache.getSearchKey().equals(cacheManager.getCacheIdentifier())) {
                 cacheManager.invalidateIfExpired(cache.getLastInvalidation());
                 found = true;
@@ -177,10 +185,12 @@ public class CacheInvalidationBackgroundManager implements CacheInvalidationBack
             }
             if (!found) {
               missingCacheManagers.add(cache.getSearchKey());
-              logger.error("The CacheManager for " + cache.getSearchKey() + " was not injected into the CacheInvalidationBackgroundManager");
+              logger.error("The CacheManager for " + cache.getSearchKey()
+                  + " was not injected into the CacheInvalidationBackgroundManager");
             }
           }
-          cacheCriteria.getSession().close();
+          OBDal.getInstance().commitAndClose();
+          SessionInfo.init();
           try {
             Thread.sleep(timeBetweenThreadExecutions);
           } catch (Exception ignored) {
@@ -195,6 +205,6 @@ public class CacheInvalidationBackgroundManager implements CacheInvalidationBack
         OBContext.restorePreviousMode();
       }
     }
-  }
 
+  }
 }
