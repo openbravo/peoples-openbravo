@@ -19,6 +19,8 @@
 
 package org.openbravo.cache;
 
+import javax.management.MBeanException;
+
 public interface CacheInvalidationBackgroundManagerMBean {
 
   /*
@@ -31,11 +33,16 @@ public interface CacheInvalidationBackgroundManagerMBean {
    * all cachés will be invalidated upon startup. The period with which the caché invalidation
    * control table is checked will also be reloaded.
    */
-  public void start();
+  public void start() throws MBeanException;
 
+  /*
+   * Force the invalidation of a cache
+   */
+  public void invalidateCache(String searchKey) throws MBeanException;
+  
   /*
    * Stop the caché invalidation background manager
    */
-  public void stop();
+  public void stop() throws MBeanException;
 
 }

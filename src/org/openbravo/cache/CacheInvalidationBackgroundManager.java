@@ -19,38 +19,38 @@
 
 package org.openbravo.cache;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
-import javax.servlet.annotation.WebListener;
+import javax.management.MBeanException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.hibernate.criterion.Restrictions;
+import org.openbravo.client.kernel.ApplicationInitializer;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.jmx.MBeanRegistry;
+import org.openbravo.model.ad.system.Cache;
 
-@WebListener
 @ApplicationScoped
-public class CacheInvalidationBackgroundManager implements CacheInvalidationBackgroundManagerMBean {
+public class CacheInvalidationBackgroundManager implements CacheInvalidationBackgroundManagerMBean, ApplicationInitializer {
 
-  private static final String CACHE_INVALIDATION_BACKGROUND_MANAGER = "Caché Invalidation Background Manager";
+  private static final String CACHE_INVALIDATION_BACKGROUND_MANAGER = "Cache Invalidation Background Manager";
   private static final String CACHE_INVALIDATION_CHECK_PERIOD_PREFERENCE = "CacheInvalidationControlPeriod";
   private static final long DEFAULT_PERIOD = 10000; // 10 seconds
 
-  private static final Logger logger = Logger.getLogger(CacheInvalidationBackgroundManager.class);
+  private static final Logger logger = LogManager.getLogger();
   public static final String CONTEXT_SYSTEM_USER = "0";
 
   private boolean isShutDown;
@@ -58,13 +58,16 @@ public class CacheInvalidationBackgroundManager implements CacheInvalidationBack
 
   @Inject
   @Any
-  private Instance<CacheInvalidationHelper> invalidationHelpers;
+  private Instance<CacheManager<?,?>> cacheManagers;
 
-  private Map<String, CacheInvalidationRecord> cacheControl = new HashMap<String, CacheInvalidationRecord>();
-
-  public void listen(@Observes StartEvent event) {
+  @Override
+  public void initialize() {
     MBeanRegistry.registerMBean("CacheInvalidationBackgroundManager", this);
-    this.start();
+    try {
+      this.start();
+    } catch (Exception e) {
+      logger.error("Failed to start the CacheInvalidationBackgroundManager", e);
+    }
   }
 
   /**
@@ -72,22 +75,15 @@ public class CacheInvalidationBackgroundManager implements CacheInvalidationBack
    * 
    */
   @Override
-  public void start() {
+  public void start() throws MBeanException {
     long period;
     try {
       period = Long
           .parseLong(Preferences.getPreferenceValue(CACHE_INVALIDATION_CHECK_PERIOD_PREFERENCE,
               false, (String) null, null, null, null, null));
     } catch (Exception e) {
+      logger.warn("The CacheInvalidationBackgroundManager will start with the default period: " + Long.toString(DEFAULT_PERIOD) + "ms");
       period = DEFAULT_PERIOD;
-    }
-
-    Iterator<CacheInvalidationHelper> helpers = invalidationHelpers.iterator();
-    CacheInvalidationRecord record;
-    while (helpers.hasNext()) {
-      CacheInvalidationHelper helper = helpers.next();
-      record = new CacheInvalidationRecord(helper.getCacheRecordSearchKey(), helper);
-      cacheControl.put(record.getName(), record);
     }
 
     executorService = createExecutorService();
@@ -101,6 +97,21 @@ public class CacheInvalidationBackgroundManager implements CacheInvalidationBack
     return !isShutDown;
   }
 
+  @Override
+  public void invalidateCache(String searchKey) throws MBeanException {
+    if (searchKey == null) {
+      return;
+    }
+
+    for (CacheManager<?,?> cacheManager: cacheManagers) {
+      if (searchKey.equals(cacheManager.getCacheIdentifier())){
+        cacheManager.invalidate();
+        return;
+      }
+    }
+    throw new MBeanException(new NoSuchElementException("The CacheManager for " + searchKey + " was not injected into the CacheInvalidationBackgroundManager"));
+  }
+  
   @Override
   public void stop() {
     if (executorService == null) {
@@ -128,33 +139,6 @@ public class CacheInvalidationBackgroundManager implements CacheInvalidationBack
     });
   }
 
-  private class CacheInvalidationRecord {
-    private Date lastInvalidation;
-    private CacheInvalidationHelper invalidationHelper;
-    private String name;
-
-    CacheInvalidationRecord(String name, CacheInvalidationHelper helper) {
-      this.name = name;
-      this.invalidationHelper = helper;
-    }
-
-    public Date getLastInvalidation() {
-      return lastInvalidation;
-    }
-
-    public void setLastInvalidation(Date lastInvalidation) {
-      this.lastInvalidation = lastInvalidation;
-    }
-
-    public CacheInvalidationHelper getInvalidationHelper() {
-      return invalidationHelper;
-    }
-
-    public String getName() {
-      return name;
-    }
-  }
-
   private static class CacheInvalidationThread implements Runnable {
 
     private final CacheInvalidationBackgroundManager manager;
@@ -169,33 +153,34 @@ public class CacheInvalidationBackgroundManager implements CacheInvalidationBack
     public void run() {
       OBCriteria<Cache> cacheCriteria;
       List<Cache> cacheList;
-      CacheInvalidationRecord controlRecord;
+      List<String> missingCacheManagers = new ArrayList<String>();
+      boolean found;
       try {
         OBContext.setOBContext(CONTEXT_SYSTEM_USER);
         OBContext.setAdminMode(false);
-        cacheCriteria = OBDal.getInstance().createCriteria(Cache.class);
+        logger.info("The CacheInvalidationBackgroundManager has started");
         while (true) {
           if (manager.isShutDown) {
             return;
           }
+          OBDal.getInstance().getSession().clear();
+          cacheCriteria = OBDal.getInstance().createCriteria(Cache.class);
+          cacheCriteria.add(Restrictions.not(Restrictions.in(Cache.PROPERTY_SEARCHKEY, missingCacheManagers)));
           cacheList = cacheCriteria.list();
           for (Cache cache : cacheList) {
-            controlRecord = manager.cacheControl.get(cache.getValue());
-            if (controlRecord != null) {
-              if (controlRecord.getLastInvalidation() == null || controlRecord.getLastInvalidation()
-                  .compareTo(cache.getLastInvalidation()) < 0) {
-                if (!controlRecord.getInvalidationHelper().invalidateCache()) {
-                  logger.error(
-                      "Caché invalidation for caché " + controlRecord.getName() + " has failed.");
-                } else {
-                  controlRecord.setLastInvalidation(cache.getLastInvalidation());
-                  logger.debug("Caché " + controlRecord.getName() + " has been invalidated");
-                }
+            found = false;
+            for (CacheManager<?,?> cacheManager: manager.cacheManagers) {
+              if (cache.getSearchKey().equals(cacheManager.getCacheIdentifier())) {
+                cacheManager.invalidateIfExpired(cache.getLastInvalidation());
+                found = true;
               }
             }
+            if (!found) {
+              missingCacheManagers.add(cache.getSearchKey());
+              logger.error("The CacheManager for " + cache.getSearchKey() + " was not injected into the CacheInvalidationBackgroundManager");
+            }
           }
-          OBDal.getInstance().getSession().clear();
-
+          cacheCriteria.getSession().close();
           try {
             Thread.sleep(timeBetweenThreadExecutions);
           } catch (Exception ignored) {
@@ -212,6 +197,4 @@ public class CacheInvalidationBackgroundManager implements CacheInvalidationBack
     }
   }
 
-  static class StartEvent {
-  }
 }
