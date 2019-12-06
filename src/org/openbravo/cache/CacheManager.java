@@ -29,6 +29,10 @@ public abstract class CacheManager<K,V> {
     return cache.get(key);
   }
   
+  public void putEntry(K key, V value) {
+    cache.put(key, value);
+  }
+  
   public void invalidate() {
     cache.clear();
     lastInvalidation = new Date();
