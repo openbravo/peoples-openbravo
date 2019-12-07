@@ -92,7 +92,7 @@ enyo.kind({
   ],
   show: function() {
     var me = this;
-    async function loadDiscounts() {
+    function loadDiscounts() {
       try {
         let discountArray = OB.Discounts.Pos.manualRuleImpls;
 
