@@ -5865,16 +5865,6 @@
             me.save();
           }
         }
-        // remove promotions
-        if (
-          !(
-            options &&
-            !OB.UTIL.isNullOrUndefined(options.applyPromotions) &&
-            options.applyPromotions === false
-          )
-        ) {
-          OB.Model.Discounts.applyPromotions(me);
-        }
       }
 
       function returnLines() {
