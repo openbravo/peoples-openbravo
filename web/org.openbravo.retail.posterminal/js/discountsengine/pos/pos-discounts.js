@@ -317,7 +317,11 @@
       filterGroup,
       filterFunction
     ) {
-      const filterArrayPromise = await filterModel.orderedBy('_identifier');
+      const filterArrayPromise = await filterModel.orderedBy([
+        'priceAdjustment',
+        '_identifier',
+        'id'
+      ]);
       const filterArray = filterArrayPromise.result;
 
       if (filterEntity) {
