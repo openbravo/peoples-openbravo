@@ -1181,7 +1181,7 @@ CREATE OR REPLACE VIEW user_tab_columns AS
                FROM pg_attrdef
               WHERE pg_attrdef.adrelid = c.oid AND pg_attrdef.adnum = a.attnum)
             ELSE NULL::text
-        END AS data_default, not a.attnotnull AS nullable, a.attnum AS column_id, a.*
+        END AS data_default, not a.attnotnull AS nullable, a.attnum AS column_id
    FROM pg_class c JOIN pg_namespace n ON c.relnamespace = n.oid AND n.nspname = current_schema()
    JOIN pg_attribute a ON a.attrelid = c.oid AND a.attnum > 0
    JOIN pg_type t ON t.oid = a.atttypid 
