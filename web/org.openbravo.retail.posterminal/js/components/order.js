@@ -716,6 +716,7 @@ enyo.kind({
     {
       tag: 'ul',
       classes: 'obUiOrderView-totalAndBreakdowns',
+      name: 'totalAndBreakdowns',
       components: [
         {
           tag: 'li',

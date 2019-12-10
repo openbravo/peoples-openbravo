@@ -109,7 +109,7 @@ var ReceiptDeliveryModeDefinition = {
 
 var ReceiptDeliveryDateDefinition = {
   name: 'ReceiptDeliveryDate',
-  kind: 'OB.UI.DatePickerSimple',
+  kind: 'OB.UI.DatePicker',
   classes: 'receiptDeliveryDate',
   modelProperty: 'obrdmDeliveryDateProperty',
   i18nLabel: 'OBRDM_DefaultDeliveryDate',
@@ -128,7 +128,6 @@ var ReceiptDeliveryDateDefinition = {
     }
   },
   loadValue: function(inSender, inEvent) {
-    this.setLocale(OB.MobileApp.model.get('terminal').language_string);
     if (inEvent.modelProperty === 'obrdmDeliveryDateProperty') {
       var cond = this.model.get('obrdmDeliveryModeProperty');
       if (cond === 'PickupInStoreDate' || cond === 'HomeDelivery') {
@@ -184,7 +183,6 @@ var ReceiptDeliveryTimeDefinition = {
     }
   },
   loadValue: function(inSender, inEvent) {
-    this.setLocale(OB.MobileApp.model.get('terminal').language_string);
     if (inEvent.modelProperty === 'obrdmDeliveryTimeProperty') {
       var cond = this.model.get('obrdmDeliveryModeProperty');
       if (cond === 'HomeDelivery') {
