@@ -313,12 +313,12 @@
       discountArray,
       filterModel,
       filterName,
-      filterEntity,
-      filterGroup,
-      filterFunction
+      filterEntity = null,
+      filterGroup = 'priceAdjustment',
+      filterFunction = null
     ) {
       const filterArrayPromise = await filterModel.orderedBy([
-        'priceAdjustment',
+        filterGroup,
         '_identifier',
         'id'
       ]);
@@ -336,9 +336,7 @@
 
       const filterArrayByDiscount = filterArray.reduce(
         (filterArrayByDiscount, filter) => {
-          const discountFilterGroup = filterGroup
-            ? filter[filterGroup]
-            : filter['priceAdjustment'];
+          const discountFilterGroup = filter[filterGroup];
           (filterArrayByDiscount[discountFilterGroup] =
             filterArrayByDiscount[discountFilterGroup] || []).push(filter);
           return filterArrayByDiscount;
