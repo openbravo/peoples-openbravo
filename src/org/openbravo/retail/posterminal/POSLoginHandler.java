@@ -78,7 +78,6 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
     } else if (apps.size() == 1) {
       posTerminal = apps.get(0);
       session.setObposStoreOrg(posTerminal.getOrganization());
-      session.setOBPOSApplications(posTerminal);
     } else {
       // Should never happen
       log4j.error("Terminal " + terminalSearchKey + " is duplicated");
