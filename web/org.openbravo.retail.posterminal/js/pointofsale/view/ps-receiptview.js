@@ -95,8 +95,12 @@ enyo.kind({
 
     if (this.order.get('lines').length > 0 && scrollWidth > 0) {
       this.$.orderCaptions.setStyle('margin-right: ' + scrollWidth + 'px');
+      this.$.orderview.$.totalAndBreakdowns.setStyle(
+        'padding-right: ' + scrollWidth + 'px'
+      );
     } else {
       this.$.orderCaptions.setStyle('');
+      this.$.orderview.$.totalAndBreakdowns.setStyle('');
     }
   }
 });
