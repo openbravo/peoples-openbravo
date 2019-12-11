@@ -272,7 +272,15 @@ enyo.kind({
 
     btn = this.$.btn;
     btn.setContent(this.label || OB.I18N.formatCoins(this.amount));
-    btn.addClass(this.coinClass);
+    if (this.background) {
+      btn.applyStyle('background-color', this.background);
+      btn.applyStyle(
+        'border',
+        '10px solid ' + (this.bordercolor || this.background)
+      );
+    } else {
+      btn.addClass(this.coinClass);
+    }
   },
   tap: function() {
     if (OB.MobileApp.model.hasPermission(this.paymenttype)) {

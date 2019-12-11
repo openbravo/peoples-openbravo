@@ -363,6 +363,7 @@ enyo.kind({
     this.model = model;
   },
   initComponents: function() {
+    this.inherited(arguments);
     this.setContent(OB.I18N.getLabel('OBPOS_LblEdit'));
   }
 });

@@ -125,6 +125,9 @@
       <foreign-key foreignTable="OBRETCO_CMEVENTS" name="OBPOS_CMEVENTS_FK">
         <reference local="OBRETCO_CMEVENTS_ID" foreign="OBRETCO_CMEVENTS_ID"/>
       </foreign-key>
+      <index name="OBPOS_APP_FIN_ACCOUNT" unique="false">
+        <index-column name="FIN_FINANCIAL_ACCOUNT_ID"/>
+      </index>
       <index name="OBPOS_APP_PAYMENT_PAYTYPE" unique="false">
         <index-column name="OBPOS_APP_PAYMENT_TYPE_ID"/>
       </index>
