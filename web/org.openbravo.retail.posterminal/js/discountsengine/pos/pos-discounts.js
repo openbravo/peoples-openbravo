@@ -562,7 +562,9 @@
       );
 
       //BPSets
-      const bpSetLineArrayPromise = await OB.App.MasterdataModels.BPSetLine.find();
+      const bpSetLineArrayPromise = await OB.App.MasterdataModels.BPSetLine.orderedBy(
+        'id'
+      );
       const bpSetLineArray = bpSetLineArrayPromise.result;
       const bpSetLineArrayByBPSet = bpSetLineArray.reduce(
         (bpSetLineArrayByBPSet, bpSetLine) => {
