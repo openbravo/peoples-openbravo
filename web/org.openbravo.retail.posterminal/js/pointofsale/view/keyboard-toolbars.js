@@ -39,7 +39,12 @@ OB.OBPOSPointOfSale.UI.ToolbarDiscounts = {
     var keyboard = this.owner.owner;
     keyboard.showKeypad('basic');
     keyboard.showSidepad('sideenabled');
-    keyboard.defaultcommand = 'line:dto';
+    keyboard.defaultcommand = OB.MobileApp.model.hasPermission(
+      'OBPOS_retail.discountkeyboard',
+      true
+    )
+      ? 'ticket:discount'
+      : 'line:dto';
     keyboard.disableCommandKey(this, {
       disabled: true,
       commands: ['%']
