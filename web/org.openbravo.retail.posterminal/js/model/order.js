@@ -3310,7 +3310,7 @@
           true
         ),
         productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(p);
-      if (enyo.Panels.isScreenNarrow()) {
+      if (OB.UI.MultiColumn.isSingleColumn()) {
         OB.UTIL.showSuccess(
           OB.I18N.getLabel('OBPOS_AddLine', [
             qty ? qty : 1,
