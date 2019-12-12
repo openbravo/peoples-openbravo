@@ -22,23 +22,31 @@
 ************************************************************************/
 v_percent NUMBER:=0;
 BEGIN
-select case when min(a.suma) = 0 then 0 
-         else round(coalesce(sum(abs(inv.qtyinvoiced)), 0)/min(a.suma) * 100, 0) end INTO v_percent
-from m_inoutline minline 
-join c_invoiceline inv on minline.m_inoutline_id=inv.m_inoutline_id,
- (select COALESCE(sum(abs(g.movementqty)), 0) as suma
-      from m_inoutline g where g.m_inout_id =p_minoutid) a
-where minline.m_inout_id=p_minoutid
-and exists (select 1 from c_invoice i where i.c_invoice_id = inv.c_invoice_id
-and i.processed = 'Y'
-and i.docstatus <> 'VO'
-and i.docstatus <> 'CL');
-If (v_percent is NULL) then
-v_percent:=0;
-else if (v_percent > 100) then
-v_percent:=100;
-END IF;
-END IF;
+
+  SELECT CASE WHEN MIN(a.suma) = 0 THEN 0 
+              ELSE ROUND(COALESCE(SUM(ABS(inv.qtyinvoiced)), 0)/MIN(a.suma) * 100, 0) END 
+  INTO v_percent
+  FROM m_inoutline minline 
+  JOIN c_invoiceline inv on minline.m_inoutline_id=inv.m_inoutline_id,
+  (SELECT COALESCE(SUM(ABS(g.movementqty)), 0) AS suma
+   FROM m_inoutline g 
+   WHERE g.m_inout_id =p_minoutid
+  ) a
+  WHERE minline.m_inout_id=p_minoutid
+  AND EXISTS (SELECT 1 
+              FROM c_invoice i 
+              WHERE i.c_invoice_id = inv.c_invoice_id
+              AND i.processed = 'Y'
+              AND i.docstatus <> 'VO'
+              AND i.docstatus <> 'CL'
+              AND i.docstatus <> 'DR');
+
+  IF (v_percent IS NULL) THEN
+    v_percent:=0;
+  ELSIF (v_percent > 100) THEN
+    v_percent:=100;
+  END IF;
+  
 RETURN v_percent;
 END C_GETINVOICESTATUSFROMSHIPMENT
 ]]></body>
