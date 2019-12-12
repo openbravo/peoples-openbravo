@@ -8495,6 +8495,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   line-height: normal;
   padding: 21px 0px 0px 0px;
   color: black;
+  overflow: auto;
 }
 
 .obObposPointOfSaleUiLeftToolbarImpl-menuEntries-obUiMenuReceiptSelector {

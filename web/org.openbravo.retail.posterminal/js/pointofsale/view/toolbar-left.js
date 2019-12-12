@@ -903,7 +903,7 @@ enyo.kind({
     {
       kind: 'OB.UI.FitText',
       name: 'totalButtonDiv',
-      minFontSize: 15,
+      minFontSize: 12,
       maxFontSize: 26,
       maxHeight: 57,
       classes: 'obObposPointOfSaleUiButtonTabPayment-totalButtonDiv buttonText',
