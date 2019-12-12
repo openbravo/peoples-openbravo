@@ -13,6 +13,9 @@ enyo.kind({
   kind: 'OB.UI.Modal',
   name: 'OB.OBPOSPointOfSale.UI.customers.newcustomer',
   classes: 'obObposPointOfSaleUiCustomersNewcustomer',
+  hideCloseButton: true,
+  autoDismiss: false,
+  closeOnEscKey: false,
   events: {
     onShowPopup: '',
     onDisableButton: ''
