@@ -30,7 +30,9 @@ join c_invoiceline inv on minline.m_inoutline_id=inv.m_inoutline_id,
       from m_inoutline g where g.m_inout_id =p_minoutid) a
 where minline.m_inout_id=p_minoutid
 and exists (select 1 from c_invoice i where i.c_invoice_id = inv.c_invoice_id
-and i.processed = 'Y');
+and i.processed = 'Y'
+and i.docstatus <> 'VO'
+and i.docstatus <> 'CL');
 If (v_percent is NULL) then
 v_percent:=0;
 else if (v_percent > 100) then
