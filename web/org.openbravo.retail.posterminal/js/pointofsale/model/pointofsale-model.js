@@ -38,7 +38,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     OB.Model.ServicePriceRuleRangePrices,
     OB.Model.ServicePriceRuleVersion,
     OB.Model.BusinessPartner,
-    OB.Model.BPCategory,
     OB.Model.BPLocation,
     OB.Model.Order,
     OB.Model.DocumentSequence,

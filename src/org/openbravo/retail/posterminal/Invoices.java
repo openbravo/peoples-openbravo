@@ -194,15 +194,18 @@ public class Invoices extends JSONProcessSimple {
         JSONArray listPaymentsType = new JSONArray();
 
         String hqlPaymentsType = "select p.commercialName as name, p.financialAccount.id as account, p.searchKey as searchKey, "
-            + "c_currency_rate(p.financialAccount.currency, p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as rate, "
-            + "c_currency_rate(p.obposApplications.organization.currency, p.financialAccount.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as mulrate, "
+            + "obpos_currency_rate(p.financialAccount.currency, p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as rate, "
+            + "obpos_currency_rate(p.obposApplications.organization.currency, p.financialAccount.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as mulrate, "
             + "p.financialAccount.currency.iSOCode as isocode, "
-            + "p.paymentMethod.openDrawer as openDrawer "
-            + " from OBPOS_App_Payment as p where p.financialAccount.id in (select scheduleDetail.paymentDetails.finPayment.account.id from FIN_Payment_ScheduleDetail as scheduleDetail where scheduleDetail.invoicePaymentSchedule.invoice.id=:invoiceId)"
-            + "group by  p.financialAccount.id, p.commercialName ,p.searchKey,"
-            + "c_currency_rate(p.financialAccount.currency, p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id),"
-            + "c_currency_rate(p.obposApplications.organization.currency, p.financialAccount.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id),"
-            + "p.financialAccount.currency.iSOCode ,p.paymentMethod.openDrawer";
+            + "p.paymentMethod.openDrawer as openDrawer " + "from FIN_Payment_Schedule as ps "
+            + "join ps.fINPaymentScheduleDetailOrderPaymentScheduleList psd "
+            + "join psd.paymentDetails pd " + "join pd.finPayment fp "
+            + "join OBPOS_App_Payment p with fp.account = p.financialAccount "
+            + "where ps.invoice.id=:invoiceId "
+            + "group by  p.financialAccount.id, p.commercialName ,p.searchKey, "
+            + "obpos_currency_rate(p.financialAccount.currency, p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id), "
+            + "obpos_currency_rate(p.obposApplications.organization.currency, p.financialAccount.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id), "
+            + "p.financialAccount.currency.iSOCode, p.paymentMethod.openDrawer ";
         @SuppressWarnings("rawtypes")
         Query paymentsTypeQuery = OBDal.getInstance().getSession().createQuery(hqlPaymentsType);
         paymentsTypeQuery.setParameter("invoiceId", invoiceid);

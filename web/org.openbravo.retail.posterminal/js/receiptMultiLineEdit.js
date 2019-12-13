@@ -869,7 +869,7 @@ enyo.kind({
       }
     },
     {
-      kind: 'OB.UI.DatePickerSimple',
+      kind: 'OB.UI.DatePicker',
       name: 'ReceiptLineDeliveryDate',
       classes: 'obrdmUiModalReceiptMultiLinesImpl-receiptLineDeliveryDate',
       modelProperty: 'obrdmDeliveryDate',
@@ -889,7 +889,6 @@ enyo.kind({
       showProperty: function(row, callback) {
         var oldCaptureTarget = enyo.dispatcher.captureTarget;
         this.model = row;
-        this.setLocale(OB.MobileApp.model.get('terminal').language_string);
         var cond = row.get('obrdmDeliveryMode');
         var show = cond === 'PickupInStoreDate' || cond === 'HomeDelivery';
         if (show) {
@@ -905,10 +904,11 @@ enyo.kind({
       // This function is called when the user accepts on the properties dialog,
       // and applies the value selected to the row.
       applyValue: function(row) {
-        this.getValue().setHours(0);
-        this.getValue().setMinutes(0);
-        this.getValue().setSeconds(0);
-        row.set(this.modelProperty, this.getValue());
+        var value = this.getValue();
+        value.setHours(0);
+        value.setMinutes(0);
+        value.setSeconds(0);
+        row.set(this.modelProperty, value);
         return true;
       }
     },
@@ -933,7 +933,6 @@ enyo.kind({
       showProperty: function(row, callback) {
         var oldCaptureTarget = enyo.dispatcher.captureTarget;
         this.model = row;
-        this.setLocale(OB.MobileApp.model.get('terminal').language_string);
         var cond = row.get('obrdmDeliveryMode');
         var show = cond === 'HomeDelivery';
         if (show) {

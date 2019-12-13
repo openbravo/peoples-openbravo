@@ -3629,7 +3629,7 @@ li.selected > .obUiRenderOrderLine_edit {
 .obUiTotalReceiptLine-lblTotal {
   display: inline-block;
   font-weight: bold;
-  width: calc(100% - 225px);
+  width: calc(100% - 275px);
 }
 
 .obUiTotalReceiptLine-lblTotal_large {
@@ -3659,7 +3659,7 @@ li.selected > .obUiRenderOrderLine_edit {
 
 .obUiTotalReceiptLine-obUiFitTextGross {
   display: inline-block;
-  width: 160px;
+  width: 210px;
   text-align: right;
   font-weight: bold;
 }
@@ -10163,12 +10163,25 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiDiscounts-scroller-formElementCheckSelectAll-checkSelectAll {}
 
+.obObposPointOfSaleUiDiscounts-scroller-formElementDiscountsList .obUiFormElement-mainArea-coreElementArea,
+.obObposPointOfSaleUiDiscounts-scroller-formElementCheckOverride .obUiFormElement-mainArea-coreElementArea,
+.obObposPointOfSaleUiDiscounts-scroller-formElementCheckSelectAll .obUiFormElement-mainArea-coreElementArea {
+  height: 45px;
+}
+
+.obObposPointOfSaleUiDiscounts-scroller-formElementDiscountsList .obUiFormElement-messageArea,
+.obObposPointOfSaleUiDiscounts-scroller-formElementCheckOverride .obUiFormElement-messageArea,
+.obObposPointOfSaleUiDiscounts-scroller-formElementCheckSelectAll .obUiFormElement-messageArea {
+  height: 10px;
+}
+
 .obObposPointOfSaleUiDiscounts-buttons {
   text-align: right;
 }
 
 .obObposPointOfSaleUiDiscounts-buttons-btnApply {
   /*Inherits: [OB.UI.PopupDrawerOpened]*/
+  margin: 0px 10px;
 }
 
 .obObposPointOfSaleUiDiscounts-buttons-btnApply_activate {
@@ -10181,6 +10194,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiDiscounts-buttons-obObposPointOfSaleUiBtnDiscountsCancel {
   /*Inherits: [OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsCancel]*/
+  margin: 0px 10px;
 }
 
 
