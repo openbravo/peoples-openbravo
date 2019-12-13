@@ -144,10 +144,11 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalproductbrand",
 
         // Point of sale models
-        "model/pricelist", "model/product-category", "model/product-category-tree", "model/product",
-        "model/productprice", "model/offerpricelist", "model/service-product",
-        "model/service-category", "model/businesspartner", "model/document-sequence",
-        "model/taxRate", "model/taxZone", "model/promotions",
+        "model/pricelist", "model/product-category", "model/product-category-tree",
+        "model/product-category-tree-new", "model/product", "model/productprice",
+        "model/offerpricelist", "model/service-product", "model/service-category",
+        "model/businesspartner", "model/document-sequence", "model/taxRate", "model/taxZone",
+        "model/promotions",
 
         "model/servicepricerule", "model/servicepricerulerange",
         "model/servicepricerulerangeprices", "model/servicepriceruleversion",

@@ -42,6 +42,9 @@ public class ProductCategoryAndTreeProperties extends ModelExtension {
     list.add(new HQLProperty("pCat.summaryLevel", "summaryLevel"));
     list.add(new HQLProperty("tn.reportSet", "parentId"));
     list.add(new HQLProperty("tn.sequenceNumber", "seqNo"));
+    list.add(new HQLProperty("tn.id", "treeNodeId"));
+    list.add(new HQLProperty("tn.node", "categoryId"));
+
     return list;
   }
 
