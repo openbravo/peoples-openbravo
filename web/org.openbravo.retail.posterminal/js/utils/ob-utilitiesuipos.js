@@ -826,9 +826,7 @@ OB.UTIL.refreshMasterDataInBackgroundSave = function() {
         OB.UTIL.masterdataRefreshStatus = '';
         OB.DS.masterdataBackgroundModels = {};
         OB.UTIL.showLoading(false);
-        if (OB.UTIL.RfidController.isRfidConfigured()) {
-          OB.UTIL.RfidController.connectRFIDDevice();
-        }
+        OB.MobileApp.view.scanningFocus(true);
         OB.MobileApp.model.set('isLoggingIn', false);
       });
     },
@@ -857,9 +855,7 @@ OB.UTIL.refreshMasterDataForeground = function() {
       OB.UTIL.showLoading(true);
       OB.MobileApp.model.loadModels(null, true, function() {
         OB.UTIL.showLoading(false);
-        if (OB.UTIL.RfidController.isRfidConfigured()) {
-          OB.UTIL.RfidController.connectRFIDDevice();
-        }
+        OB.MobileApp.view.scanningFocus(true);
         OB.MobileApp.model.set('isLoggingIn', false);
         OB.UTIL.localStorage.removeItem('neededForeGroundMasterDataRefresh');
         OB.UTIL.masterdataRefreshStatus = '';
