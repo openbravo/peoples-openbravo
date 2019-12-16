@@ -168,13 +168,13 @@ public class Payments extends JSONTerminalProperty {
           if (paymentRounding != null) {
 
             JSONObject paymentRoundingJSON = new JSONObject();
-            paymentRoundingJSON.put("isReturnRounding", paymentRounding.isReturnrounding());
-            paymentRoundingJSON.put("returnRounding", paymentRounding.getReturnrounding());
-            paymentRoundingJSON.put("returnMultiplyBy", paymentRounding.getReturnmultiplyby());
+            paymentRoundingJSON.put("isReturnRounding", paymentRounding.isReturnRounding());
+            paymentRoundingJSON.put("returnRounding", paymentRounding.getReturnRounding());
+            paymentRoundingJSON.put("returnMultiplyBy", paymentRounding.getReturnMultiplyBy());
 
-            paymentRoundingJSON.put("isRalesRounding", paymentRounding.isSalesrounding());
-            paymentRoundingJSON.put("salesRounding", paymentRounding.getSalesrounding());
-            paymentRoundingJSON.put("salesMultiplyBy", paymentRounding.getSalesmultiplyby());
+            paymentRoundingJSON.put("isRalesRounding", paymentRounding.isSalesRounding());
+            paymentRoundingJSON.put("salesRounding", paymentRounding.getSalesRounding());
+            paymentRoundingJSON.put("salesMultiplyBy", paymentRounding.getSalesMultiplyBy());
 
             paymentRoundingJSON.put("roundingPayment",
                 paymentRounding.getRoundingPaymentType().getSearchKey());
