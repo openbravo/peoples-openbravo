@@ -76,13 +76,18 @@ public class POSImportEntryProcessor extends EntityPersistenceEventObserver {
       }
       JSONObject jsonObject = new JSONObject(importEntry.getJsonInfo());
 
-      // TODO: using 2 different ways of writing posTerminal is just not nice...
-      String posTerminalId = ImportProcessUtils.getJSONProperty(jsonObject, "posterminal");
+      // TODO: using 3 different ways of writing posTerminal is just not nice...
+      String posTerminalId = jsonObject.has("posterminal") ? jsonObject.getString("posterminal")
+          : jsonObject.has("posTerminal") ? jsonObject.getString("posTerminal")
+              : jsonObject.has("pos") ? jsonObject.getString("pos") : null;
       if (posTerminalId == null) {
-        posTerminalId = ImportProcessUtils.getJSONProperty(jsonObject, "posTerminal");
-      }
-      if (posTerminalId == null) {
-        posTerminalId = ImportProcessUtils.getJSONProperty(jsonObject, "pos");
+        posTerminalId = ImportProcessUtils.getJSONProperty(jsonObject, "posterminal");
+        if (posTerminalId == null) {
+          posTerminalId = ImportProcessUtils.getJSONProperty(jsonObject, "posTerminal");
+          if (posTerminalId == null) {
+            posTerminalId = ImportProcessUtils.getJSONProperty(jsonObject, "pos");
+          }
+        }
       }
       // handle special case that webpos can send "null" in case of coding error in webpos
       // handle it here
