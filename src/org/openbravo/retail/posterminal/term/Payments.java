@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -17,14 +17,17 @@ import org.apache.commons.codec.binary.Base64;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.mobile.core.process.SimpleQueryBuilder;
 import org.openbravo.retail.posterminal.OBPOSAppPayment;
+import org.openbravo.retail.posterminal.OBPOSAppPaymentRounding;
 import org.openbravo.retail.posterminal.OBPOSCurrencyRounding;
 import org.openbravo.service.json.DataResolvingMode;
 import org.openbravo.service.json.DataToJsonConverter;
@@ -149,6 +152,34 @@ public class Payments extends JSONTerminalProperty {
               payment.put("changeRounding",
                   converter.toJsonObject(obposCurrencyRounding, DataResolvingMode.FULL));
             }
+          }
+
+          // Load Payment Rounding properties
+          OBCriteria<OBPOSAppPaymentRounding> paymentRoundingCriteria = OBDal.getInstance()
+              .createCriteria(OBPOSAppPaymentRounding.class);
+          paymentRoundingCriteria.add(Restrictions.eq(OBPOSAppPaymentRounding.PROPERTY_CURRENCY,
+              appPayment.getPaymentMethod().getCurrency()));
+          paymentRoundingCriteria.add(Restrictions.eq(
+              OBPOSAppPaymentRounding.PROPERTY_OBPOSAPPPAYMENTTYPE, appPayment.getPaymentMethod()));
+          paymentRoundingCriteria.setMaxResults(1);
+
+          OBPOSAppPaymentRounding paymentRounding = (OBPOSAppPaymentRounding) paymentRoundingCriteria
+              .uniqueResult();
+          if (paymentRounding != null) {
+
+            JSONObject paymentRoundingJSON = new JSONObject();
+            paymentRoundingJSON.put("isReturnRounding", paymentRounding.isReturnrounding());
+            paymentRoundingJSON.put("returnRounding", paymentRounding.getReturnrounding());
+            paymentRoundingJSON.put("returnMultiplyBy", paymentRounding.getReturnmultiplyby());
+
+            paymentRoundingJSON.put("isRalesRounding", paymentRounding.isSalesrounding());
+            paymentRoundingJSON.put("salesRounding", paymentRounding.getSalesrounding());
+            paymentRoundingJSON.put("salesMultiplyBy", paymentRounding.getSalesmultiplyby());
+
+            paymentRoundingJSON.put("roundingPayment",
+                paymentRounding.getRoundingPaymentType().getSearchKey());
+
+            payment.put("paymentRounding", paymentRoundingJSON);
           }
 
           respArray.put(payment);
