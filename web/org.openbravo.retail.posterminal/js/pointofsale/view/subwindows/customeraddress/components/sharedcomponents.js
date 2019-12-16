@@ -63,16 +63,14 @@ enyo.kind({
       OB.DQMController.Validate
     );
     if (provider) {
-      let me = this;
-      let validate = provider.validate(
-        me.modelProperty,
-        me.getValue(),
-        function(result) {}
-      );
-      if (validate) {
+      let me = this,
+        result = provider.validate(me.modelProperty, me.getValue(), function(
+          r
+        ) {});
+      if (result && result.status) {
         me.formElement.setMessage();
       } else {
-        me.formElement.setMessage(OB.I18N.getLabel('OBPOS_WrongFormat'), true);
+        me.formElement.setMessage(result.message, true);
       }
     }
   },
@@ -268,23 +266,12 @@ enyo.kind({
         makeSearch: true
       });
     }
-    function checkWrongFormat(items, customer) {
-      let errors = '';
-      _.each(items, function(item) {
-        if (item.$.msg.content === OB.I18N.getLabel('OBPOS_WrongFormat')) {
-          if (errors) {
-            errors += ', ';
-          }
-          errors += OB.I18N.getLabel(item.coreElement.i18nLabel);
-        }
-      });
-      return errors;
-    }
-    function checkMandatoryFields(items, customer) {
+
+    function checkFields(items, customerAddr) {
       let errors = '';
       _.each(items, function(item) {
         if (item.coreElement && item.coreElement.mandatory) {
-          var value = customer.get(item.coreElement.modelProperty);
+          var value = customerAddr.get(item.coreElement.modelProperty);
           if (!value) {
             item.setMessage(OB.I18N.getLabel('OBMOBC_LblMandatoryField'), true);
             if (errors) {
@@ -295,25 +282,27 @@ enyo.kind({
             item.setMessage();
           }
         }
+        if (
+          !OB.UTIL.isNullOrUndefined(item.$.msg.content) &&
+          item.$.msg.content !== '' &&
+          item.$.msg.content !== OB.I18N.getLabel('OBMOBC_LblMandatoryField')
+        ) {
+          if (errors) {
+            errors += ', ';
+          }
+          errors += OB.I18N.getLabel(item.coreElement.i18nLabel);
+        }
       });
       return errors;
     }
 
     function validateForm(form) {
       if (inEvent.validations) {
-        let errors = '',
-          customerAddr = form.model.get('customerAddr'),
-          items = form.$.customerAddrAttributes.children;
-        let mandatoryErrors = checkMandatoryFields(items, customerAddr);
-        let formatErrors = checkWrongFormat(items, customerAddr);
-        errors += mandatoryErrors;
-        if (errors && formatErrors) {
-          errors += ', ';
-        }
-        errors += formatErrors;
-
+        let customerAddr = form.model.get('customerAddr'),
+          items = form.$.customerAddrAttributes.children,
+          errors = checkFields(items, customerAddr);
         if (errors) {
-          OB.UTIL.showError(
+          OB.UTIL.showWarning(
             OB.I18N.getLabel('OBPOS_BPartnerRequiredFields', [errors])
           );
           return false;

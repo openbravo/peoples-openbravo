@@ -111,16 +111,16 @@ enyo.kind({
       if (customer !== undefined) {
         oldCustomer = customer.toJSON();
       }
-      let validate = provider.validate(
+      let result = provider.validate(
         oldCustomer,
         me.modelProperty,
         me.getValue(),
-        function(result) {}
+        function(r) {}
       );
-      if (validate) {
+      if (result && result.status) {
         me.formElement.setMessage();
       } else {
-        me.formElement.setMessage(OB.I18N.getLabel('OBPOS_WrongFormat'), true);
+        me.formElement.setMessage(result.message, true);
       }
     }
   },
@@ -559,8 +559,8 @@ enyo.kind({
       });
     }
 
-    function checkMandatoryFields(items, customer) {
-      var errors = '';
+    function checkFields(items, customer) {
+      let errors = '';
       _.each(items, function(item) {
         if (item.coreElement && item.coreElement.mandatory) {
           var value = customer.get(item.coreElement.modelProperty);
@@ -574,27 +574,17 @@ enyo.kind({
             item.setMessage();
           }
         }
-      });
-      return errors;
-    }
-
-    function checkWrongFormat(items, customer) {
-      let errors = '';
-      _.each(items, function(item) {
-        if (item.$.msg.content === OB.I18N.getLabel('OBPOS_WrongFormat')) {
+        if (
+          !OB.UTIL.isNullOrUndefined(item.$.msg.content) &&
+          item.$.msg.content !== '' &&
+          item.$.msg.content !== OB.I18N.getLabel('OBMOBC_LblMandatoryField')
+        ) {
           if (errors) {
             errors += ', ';
           }
           errors += OB.I18N.getLabel(item.coreElement.i18nLabel);
         }
       });
-      return errors;
-    }
-
-    function checkFields(items, customer) {
-      let errors = '';
-      errors += checkMandatoryFields(items, customer);
-      errors += checkWrongFormat(items, customer);
       return errors;
     }
 
