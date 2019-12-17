@@ -17,8 +17,8 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.ModelExtension;
 
-@Qualifier(ProductCategoryAndTree.productCategoryAndTreePropertyExtension)
-public class ProductCategoryAndTreeProperties extends ModelExtension {
+@Qualifier(ProductCategoryTree.productCategoryTreePropertyExtension)
+public class ProductCategoryTreeProperties extends ModelExtension {
 
   @Override
   public List<HQLProperty> getHQLProperties(Object params) {

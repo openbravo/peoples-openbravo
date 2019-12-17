@@ -41,14 +41,14 @@ import org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.retail.posterminal.POSUtils;
 
 @MasterDataModel("ProductCategoryTree")
-public class ProductCategoryAndTree extends MasterDataProcessHQLQuery {
-  public static final String productCategoryAndTreePropertyExtension = "OBPOS_ProductCategoryAndTreeExtension";
+public class ProductCategoryTree extends MasterDataProcessHQLQuery {
+  public static final String productCategoryTreePropertyExtension = "OBPOS_ProductCategoryTreeExtension";
   public static final String productCategoryTableId = "209";
   public static final Logger log = LogManager.getLogger();
 
   @Inject
   @Any
-  @Qualifier(productCategoryAndTreePropertyExtension)
+  @Qualifier(productCategoryTreePropertyExtension)
   private Instance<ModelExtension> extensions;
 
   @Override

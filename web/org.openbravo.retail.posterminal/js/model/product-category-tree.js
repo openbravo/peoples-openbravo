@@ -29,17 +29,17 @@
   }
   OB.App.MasterdataController.registerModel(ProductCategoryTree);
 
-  var ProductCategoryAndTree = OB.Data.ExtensibleModel.extend({
-    modelName: 'ProductCategoryAndTree',
-    tableName: 'm_product_category_tree_new',
-    entityName: 'ProductCategoryAndTree',
-    source: 'org.openbravo.retail.posterminal.master.ProductCategoryAndTree',
+  let ProductCategoryTreeMD = OB.Data.ExtensibleModel.extend({
+    modelName: 'ProductCategoryTree',
+    tableName: 'm_product_category_tree',
+    entityName: 'ProductCategoryTree',
+    source: 'org.openbravo.retail.posterminal.master.ProductCategoryTree',
     dataLimit: OB.Dal.DATALIMIT,
     includeTerminalDate: true,
     indexDBModel: ProductCategoryTree.prototype.getName()
   });
 
-  ProductCategoryAndTree.addProperties([
+  ProductCategoryTreeMD.addProperties([
     {
       name: 'id',
       column: 'm_product_category_id',
@@ -107,5 +107,5 @@
     }
   ]);
 
-  OB.Data.Registry.registerModel(ProductCategoryAndTree);
+  OB.Data.Registry.registerModel(ProductCategoryTreeMD);
 })();

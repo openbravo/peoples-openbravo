@@ -25,9 +25,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       modelName: 'TaxZone'
     },
     OB.Model.Product,
-    OB.Model.ProductCategory,
     OB.Model.ProductCategoryTree,
-    OB.Model.ProductCategoryAndTree,
     OB.Model.PriceList,
     OB.Model.ProductPrice,
     OB.Model.OfferPriceList,
