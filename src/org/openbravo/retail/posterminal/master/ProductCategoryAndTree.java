@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -28,17 +29,19 @@ import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery;
+import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery.MasterDataModel;
+import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
-import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.pricing.pricelist.PriceListVersion;
 import org.openbravo.retail.config.OBRETCOProductList;
 import org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.retail.posterminal.POSUtils;
-import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
-public class ProductCategoryAndTree extends ProcessHQLQuery {
+@MasterDataModel("ProductCategoryTree")
+public class ProductCategoryAndTree extends MasterDataProcessHQLQuery {
   public static final String productCategoryAndTreePropertyExtension = "OBPOS_ProductCategoryAndTreeExtension";
   public static final String productCategoryTableId = "209";
   public static final Logger log = LogManager.getLogger();
@@ -50,6 +53,7 @@ public class ProductCategoryAndTree extends ProcessHQLQuery {
 
   @Override
   protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
+
     try {
       OBContext.setAdminMode(true);
       String clientId = OBContext.getOBContext().getCurrentClient().getId();
@@ -79,16 +83,18 @@ public class ProductCategoryAndTree extends ProcessHQLQuery {
       Map<String, Object> paramValues = new HashMap<String, Object>();
       paramValues.put("productListId", productList.getId());
       paramValues.put("productListIds", productListIds);
-      paramValues.put("productCategoryTableId", ProductCategoryAndTree.productCategoryTableId);
+      paramValues.put("productCategoryTableId", productCategoryTableId);
       if (isRemote) {
-        paramValues.put("productCategoryTableId", ProductCategoryAndTree.productCategoryTableId);
+        paramValues.put("productCategoryTableId", productCategoryTableId);
       }
       if (!isRemote) {
-        final Date terminalDate = OBMOBCUtils.calculateServerDate(
-            jsonsent.getJSONObject("parameters").getString("terminalTime"),
-            jsonsent.getJSONObject("parameters")
-                .getJSONObject("terminalTimeOffset")
-                .getLong("value"));
+        // final Date terminalDate = OBMOBCUtils.calculateServerDate(
+        // jsonsent.getJSONObject("parameters").getString("terminalTime"),
+        // jsonsent.getJSONObject("parameters")
+        // .getJSONObject("terminalTimeOffset")
+        // .getLong("value"));
+        // TODO not supported terminaldate
+        final Date terminalDate = new Date();
 
         final PriceListVersion priceListVersion = POSUtils.getPriceListVersionByOrgId(orgId,
             terminalDate);
@@ -97,9 +103,9 @@ public class ProductCategoryAndTree extends ProcessHQLQuery {
       if (OBContext.hasTranslationInstalled()) {
         paramValues.put("languageId", OBContext.getOBContext().getLanguage().getId());
       }
-      paramValues.put("productCategoryTableId", CategoryTree.productCategoryTableId);
+      paramValues.put("productCategoryTableId", productCategoryTableId);
       if (isRemote) {
-        paramValues.put("productCategoryTableId", CategoryTree.productCategoryTableId);
+        paramValues.put("productCategoryTableId", productCategoryTableId);
       }
       Calendar now = Calendar.getInstance();
       paramValues.put("endingDate", now.getTime());
@@ -159,11 +165,9 @@ public class ProductCategoryAndTree extends ProcessHQLQuery {
         + " and tn.tree.table.id = :productCategoryTableId"
         + " and (aCat.$incrementalUpdateCriteria " + lastUpdatedFilter   + " pCat.$incrementalUpdateCriteria) " 
         + " and aCat.active = true "
- //       + " and aCat.$naturalOrgCriteria " 
         + " and aCat.$readableSimpleClientCriteria "
         + " and tn.$incrementalUpdateCriteria " 
         + " and tn.active = true "
-   //     + " and tn.$naturalOrgCriteria " 
         + " and tn.$readableSimpleClientCriteria ";
     if (isCrossStore) {
       hqlQuery = hqlQuery
@@ -189,10 +193,7 @@ public class ProductCategoryAndTree extends ProcessHQLQuery {
         + " left outer join pCat.image as img "
         + " where tn.$incrementalUpdateCriteria "
         + " and pCat.active = true "
-//        + " and pCat.$naturalOrgCriteria "
-//        + " and pCat.$readableSimpleClientCriteria "
         + " and pCat.summaryLevel = 'Y'"     
-     //   + " and tn.$naturalOrgCriteria "
         + " and tn.$readableSimpleClientCriteria "
         + " and tn.node = pCat.id "
         + " and tn.tree.table.id = :productCategoryTableId "
@@ -235,7 +236,6 @@ public class ProductCategoryAndTree extends ProcessHQLQuery {
         + " join pt.pricingAdjustmentList p "
         + " where pt.active = true "
         + " and pt.obposIsCategory = true "//
-      //  + " and pt.$naturalOrgCriteria " // 
         + " and pt.$readableSimpleClientCriteria "//
         + " and (p.$incrementalUpdateCriteria) " //
         + " and " + Product.getPackProductWhereClause()//
@@ -247,5 +247,14 @@ public class ProductCategoryAndTree extends ProcessHQLQuery {
   @Override
   protected boolean bypassPreferenceCheck() {
     return true;
+  }
+
+  @Override
+  public List<String> getMasterDataModelProperties() {
+    return ModelExtensionUtils.getPropertyExtensions(extensions)
+        .getProperties()
+        .stream()
+        .map(HQLProperty::getHqlProperty)
+        .collect(Collectors.toList());
   }
 }

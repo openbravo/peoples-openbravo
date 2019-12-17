@@ -8,13 +8,35 @@
  */
 
 (function() {
+  class ProductCategoryTree extends OB.App.MasterdataModel {
+    constructor() {
+      super();
+      this.indices = [
+        new OB.App.Index({
+          name: 'productcategorytree_parentId_idx',
+          properties: [{ property: 'parentId' }]
+        }),
+        new OB.App.Index({
+          name: 'productcategorytree_id_idx',
+          properties: [{ property: 'id' }]
+        }),
+        new OB.App.Index({
+          name: 'productcategorytree_crossstore_idx',
+          properties: [{ property: 'crossStore' }]
+        })
+      ];
+    }
+  }
+  OB.App.MasterdataController.registerModel(ProductCategoryTree);
+
   var ProductCategoryAndTree = OB.Data.ExtensibleModel.extend({
     modelName: 'ProductCategoryAndTree',
     tableName: 'm_product_category_tree_new',
     entityName: 'ProductCategoryAndTree',
     source: 'org.openbravo.retail.posterminal.master.ProductCategoryAndTree',
     dataLimit: OB.Dal.DATALIMIT,
-    includeTerminalDate: true
+    includeTerminalDate: true,
+    indexDBModel: ProductCategoryTree.prototype.getName()
   });
 
   ProductCategoryAndTree.addProperties([
