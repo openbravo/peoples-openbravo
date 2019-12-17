@@ -7462,8 +7462,27 @@
             paymentStatus.pendingAmt,
             payment.get('amount')
           ),
-          paymentLine = null;
-        if (roundingAmount < terminalPayment.paymentRounding.salesMultiplyBy) {
+          paymentLine = null,
+          precision = order.getPrecision(payment),
+          pow = Math.pow(10, precision),
+          mod =
+            (payment.get('amount') * pow) %
+            (terminalPayment.paymentRounding.salesMultiplyBy * pow);
+
+        if (
+          roundingAmount < terminalPayment.paymentRounding.salesMultiplyBy ||
+          paymentStatus.pendingAmt === payment.get('amount')
+        ) {
+          if (mod !== 0) {
+            roundingAmount = mod / pow;
+            payment.set(
+              'amount',
+              OB.DEC.sub(payment.get('amount'), roundingAmount)
+            );
+          }
+          if (order.get('payments').length === 0) {
+            payment.set('index', 0);
+          }
           paymentLine = new OB.Model.PaymentLine({
             kind: terminalPayment.paymentRounding.paymentRoundingType,
             name: OB.MobileApp.model.getPaymentName(
@@ -7481,7 +7500,6 @@
           order.get('payments').add(paymentLine);
         }
       };
-
       payments = this.get('payments');
       precision = this.getPrecision(payment);
       payment.set('amount', OB.DEC.toNumber(payment.get('amount'), precision));
