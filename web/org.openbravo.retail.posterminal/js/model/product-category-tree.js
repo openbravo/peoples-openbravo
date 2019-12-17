@@ -22,7 +22,7 @@
         }),
         new OB.App.Index({
           name: 'productcategorytree_crossstore_idx',
-          properties: [{ property: 'crossStore' }]
+          properties: [{ property: 'crossStore', isBoolean: true }]
         })
       ];
     }
