@@ -10000,7 +10000,7 @@
             i,
             sortedPayments = false;
           _.each(model.receiptLines, function(iter) {
-            var price;
+            var price = OB.DEC.number(iter.unitPrice);
             iter.linepos = linepos;
             var addLineForProduct = function(prod) {
               if (
@@ -10187,16 +10187,6 @@
                 }
               );
             };
-
-            if (order.get('priceIncludesTax')) {
-              price = OB.DEC.number(iter.unitPrice);
-            } else {
-              price = OB.DEC.number(
-                iter.baseNetUnitPrice > 0
-                  ? iter.baseNetUnitPrice
-                  : iter.unitPrice
-              );
-            }
 
             if (!iter.deliveredQuantity) {
               hasNotDeliveredProducts = true;
