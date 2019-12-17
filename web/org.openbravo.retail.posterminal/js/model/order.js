@@ -7406,6 +7406,7 @@
         order,
         paymentSign,
         finalCallback,
+        checkPaymentRounding,
         precision;
 
       if (
@@ -7455,9 +7456,44 @@
         }
       };
 
+      checkPaymentRounding = function(order, payment, terminalPayment) {
+        var paymentStatus = order.getPaymentStatus(),
+          roundingAmount = OB.DEC.sub(
+            paymentStatus.pendingAmt,
+            payment.get('amount')
+          ),
+          paymentLine = null;
+        if (roundingAmount < terminalPayment.paymentRounding.salesMultiplyBy) {
+          paymentLine = new OB.Model.PaymentLine({
+            kind: terminalPayment.paymentRounding.paymentRoundingType,
+            name: OB.MobileApp.model.getPaymentName(
+              terminalPayment.paymentRounding.paymentRoundingType
+            ),
+            amount: roundingAmount,
+            rate: terminalPayment.rate,
+            mulrate: terminalPayment.mulrate,
+            isocode: terminalPayment.isocode,
+            isCash: terminalPayment.paymentMethod.iscash,
+            allowOpenDrawer: terminalPayment.paymentMethod.allowopendrawer,
+            openDrawer: terminalPayment.paymentMethod.openDrawer,
+            printtwice: terminalPayment.paymentMethod.printtwice
+          });
+          order.get('payments').add(paymentLine);
+        }
+      };
+
       payments = this.get('payments');
       precision = this.getPrecision(payment);
       payment.set('amount', OB.DEC.toNumber(payment.get('amount'), precision));
+      if (
+        OB.MobileApp.model.paymentnames[payment.get('kind')].paymentRounding
+      ) {
+        checkPaymentRounding(
+          order,
+          payment,
+          OB.MobileApp.model.paymentnames[payment.get('kind')]
+        );
+      }
       if (this.get('prepaymentChangeMode')) {
         this.unset('prepaymentChangeMode');
         this.adjustPayment();

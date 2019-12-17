@@ -176,8 +176,20 @@ public class Payments extends JSONTerminalProperty {
             paymentRoundingJSON.put("salesRounding", paymentRounding.getSalesRounding());
             paymentRoundingJSON.put("salesMultiplyBy", paymentRounding.getSalesMultiplyBy());
 
-            paymentRoundingJSON.put("roundingPayment",
-                paymentRounding.getRoundingPaymentType().getSearchKey());
+            //@formatter:off
+            String roundingPaymentTypeQuery = " select searchKey"
+                                            + " from OBPOS_App_Payment pay"
+                                            + " where pay.obposApplications.id = :posId"
+                                            + "   and pay.paymentMethod.id = :roundingPaymentTypeId";
+            //@formatter:on
+            Query<String> criteria = OBDal.getInstance()
+                .getSession()
+                .createQuery(roundingPaymentTypeQuery, String.class);
+            criteria.setParameter("posId", posId);
+            criteria.setParameter("roundingPaymentTypeId",
+                paymentRounding.getRoundingPaymentType().getId());
+            criteria.setMaxResults(1);
+            paymentRoundingJSON.put("paymentRoundingType", criteria.uniqueResult());
 
             payment.put("paymentRounding", paymentRoundingJSON);
           }
