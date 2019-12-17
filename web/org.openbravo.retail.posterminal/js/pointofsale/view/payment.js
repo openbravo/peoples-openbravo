@@ -3133,7 +3133,8 @@ enyo.kind({
           !this.model.get('paymentAmount') ||
           this.owner.owner.owner.owner.model
             .get('order')
-            .get('doCancelAndReplace')))
+            .get('doCancelAndReplace'))) ||
+      (this.model.has('roundingPayment') && this.model.get('roundingPayment'))
     ) {
       this.$.removePayment.hide();
       this.$.reversePayment.hide();
