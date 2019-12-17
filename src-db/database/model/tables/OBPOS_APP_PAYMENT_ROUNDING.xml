@@ -84,6 +84,10 @@
       <foreign-key foreignTable="OBPOS_APP_PAYMENT_TYPE" name="OBPOS_PAYTYPE_ROUNDPAY" onDelete="cascade">
         <reference local="ROUNDING_PAYMENT_TYPE_ID" foreign="OBPOS_APP_PAYMENT_TYPE_ID"/>
       </foreign-key>
+      <unique name="OBPOS_APP_PAY_ROUND_TYPE_CURR">
+        <unique-column name="ROUNDING_PAYMENT_TYPE_ID"/>
+        <unique-column name="C_CURRENCY_ID"/>
+      </unique>
       <check name="OBPOS_APPPAYTYPE_CASH_CHK"><![CDATA[ISSALESROUNDING IN ('Y', 'N')]]></check>
       <check name="OBPOS_APPPAYTYPE_COUNTCASH_CHK"><![CDATA[ISRETURNROUNDING IN ('Y', 'N')]]></check>
       <check name="OBPOS_APPPAYTYPE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
