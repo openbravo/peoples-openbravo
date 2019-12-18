@@ -9406,7 +9406,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposPointOfSaleUiEditLine-msgedit-container3 {
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 .obObposPointOfSaleUiEditLine-msgedit-container3-linePropertiesContainer {
