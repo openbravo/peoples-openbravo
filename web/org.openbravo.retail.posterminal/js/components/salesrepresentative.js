@@ -233,13 +233,11 @@ enyo.kind({
         me.srsList.reset();
       }
     }
-
-    const criteria = {
-      _identifier: filter
-    };
-
+    const criteria = new OB.App.Criteria()
+      .criterion('_identifier', filter, 'includes')
+      .build();
     try {
-      const dataSalesRepresentative = await OB.App.MasterdataModels.SalesRepresentative.includes(
+      const dataSalesRepresentative = await OB.App.MasterdataModels.SalesRepresentative.find(
         criteria
       );
       successCallbackBPs(dataSalesRepresentative.result);
