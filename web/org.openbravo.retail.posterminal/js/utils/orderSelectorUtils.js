@@ -144,7 +144,11 @@
       var process = new OB.DS.Process(
         'org.openbravo.retail.posterminal.PaidReceipts'
       );
-      OB.UTIL.showLoading(true);
+      if (!OB.UTIL.showLoading.execution) {
+        OB.UTIL.showLoading.execution = OB.UTIL.ProcessController.start(
+          'loadPaidReceipts'
+        );
+      }
       process.exec(
         {
           orderid: order.get('id'),
@@ -158,7 +162,13 @@
             errorCallback(true, data.exception.message, true);
           } else {
             if (data[0].recordInImportEntry) {
-              OB.UTIL.showLoading(false);
+              if (!OB.UTIL.isNullOrUndefined(OB.UTIL.showLoading.execution)) {
+                OB.UTIL.ProcessController.finish(
+                  'loadPaidReceipts',
+                  OB.UTIL.showLoading.execution
+                );
+                OB.UTIL.showLoading.execution = null;
+              }
               OB.UTIL.showConfirmation.display(
                 OB.I18N.getLabel('OBMOBC_Error'),
                 OB.I18N.getLabel('OBPOS_ReceiptNotSynced', [

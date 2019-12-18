@@ -10450,7 +10450,13 @@
         if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
           this.doRemoteBPSettings(model.get('bp'));
         } else {
-          OB.UTIL.showLoading(false);
+          if (!OB.UTIL.isNullOrUndefined(OB.UTIL.showLoading.execution)) {
+            OB.UTIL.ProcessController.finish(
+              'loadPaidReceipts',
+              OB.UTIL.showLoading.execution
+            );
+            OB.UTIL.showLoading.execution = null;
+          }
         }
 
         this.saveCurrent();
@@ -10665,6 +10671,13 @@
         calledFrom
       ) {
         function openReceiptPermissionError(orderType) {
+          if (!OB.UTIL.isNullOrUndefined(OB.UTIL.showLoading.execution)) {
+            OB.UTIL.ProcessController.finish(
+              'loadPaidReceipts',
+              OB.UTIL.showLoading.execution
+            );
+            OB.UTIL.showLoading.execution = null;
+          }
           if (calledFrom === 'orderSelector' || calledFrom === 'return') {
             OB.UTIL.showConfirmation.display(
               OB.I18N.getLabel('OBMOBC_Error'),
@@ -10721,6 +10734,13 @@
             }
             if (errorCallback) {
               errorCallback();
+            }
+            if (!OB.UTIL.isNullOrUndefined(OB.UTIL.showLoading.execution)) {
+              OB.UTIL.ProcessController.finish(
+                'loadPaidReceipts',
+                OB.UTIL.showLoading.execution
+              );
+              OB.UTIL.showLoading.execution = null;
             }
           };
 
