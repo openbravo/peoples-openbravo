@@ -78,7 +78,7 @@
      
     SELECT C_ORDER.c_order_id, c_orderline.explode
       INTO v_orderID, v_explode
-    FROM C_ORDER JOIN m_pricelist ON c_order.m_pricelist_id = m_pricelist.m_pricelist_id JOIN c_orderline ON c_order.c_order_id = c_orderline.c_order_id
+    FROM C_ORDER JOIN c_orderline ON c_order.c_order_id = c_orderline.c_order_id
     WHERE c_orderline.c_orderline_id=v_Record_ID  FOR UPDATE;
 
     IF (v_explode = 'Y') THEN
@@ -131,7 +131,7 @@
               AND p.IsBOM='Y'
               AND p.IsStocked='N' 
             )
-       ORDER BY l.Line  FOR UPDATE
+       ORDER BY l.Line
        )
     LOOP
       v_Line:=CUR_BOM_Line.Line;
