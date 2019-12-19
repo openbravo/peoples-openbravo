@@ -1701,6 +1701,27 @@
 
       OB.UTIL.clone(_order, this);
 
+      for (var index = 0; index < this.get('payments').models.length; index++) {
+        var payment = this.get('payments').models[index],
+          oldPaymentRoundingLine = payment.has('paymentRoundingLine')
+            ? payment.get('paymentRoundingLine')
+            : null,
+          paymentRoundingLine = null;
+        if (oldPaymentRoundingLine) {
+          paymentRoundingLine = _.find(this.get('payments').models, function(
+            pay
+          ) {
+            if (
+              pay.get('kind') === oldPaymentRoundingLine.kind &&
+              pay.get('amount') === oldPaymentRoundingLine.amount
+            ) {
+              return true;
+            }
+          });
+          payment.set('paymentRoundingLine', paymentRoundingLine);
+        }
+      }
+
       if (
         !OB.UTIL.isNullOrUndefined(this.get('idExecution')) &&
         this.get('idExecution') === idExecution
