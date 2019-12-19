@@ -43,20 +43,38 @@ public class Payments extends JSONTerminalProperty {
     try {
       JSONArray respArray = new JSONArray();
       String posId = jsonsent.getString("pos");
-      String hqlPayments = "select p as payment, pm as paymentMethod, "
-          + "obpos_currency_rate(coalesce(c, pmc), p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as rate, "
-          + "obpos_currency_rate(p.obposApplications.organization.currency, coalesce(c, pmc), null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as mulrate, "
-          + "coalesce(c.iSOCode, pmc.iSOCode) as isocode, "
-          + "coalesce(c.symbol, pmc.symbol) as symbol, coalesce(c.currencySymbolAtTheRight, pmc.currencySymbolAtTheRight) as currencySymbolAtTheRight, "
-          + "coalesce(f.currentBalance, 0) as currentBalance, "
-          + "coalesce(p.paymentMethod.currency.obposPosprecision, p.paymentMethod.currency.pricePrecision) as obposPosprecision, "
-          + "img.bindaryData as image, img.mimetype as mimetype, " + "providerGroup, paymentType "
-          + "from OBPOS_App_Payment as p left join p.financialAccount as f left join f.currency as c "
-          + "left outer join p.paymentMethod as pm left outer join pm.image as img left outer join pm.currency as pmc "
-          + "left outer join pm.obposPaymentgroup as providerGroup left outer join pm.obposPaymentmethodType as paymentType "
-          + "where p.obposApplications.id = :posID  "
-          + "and p.$readableSimpleCriteria and p.$activeCriteria and pm.$activeCriteria"
-          + "order by p.line, p.commercialName";
+      //@formatter:off
+      String hqlPayments = "select p as payment, "
+                         + "  pm as paymentMethod, "
+                         + "  obpos_currency_rate(coalesce(c, pmc), "
+                         + "  p.obposApplications.organization.currency, "
+                         + "  null, "
+                         + "  null, "
+                         + "  p.obposApplications.client.id, "
+                         + "  p.obposApplications.organization.id) as rate, "
+                         + "  obpos_currency_rate(p.obposApplications.organization.currency, coalesce(c, pmc), null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as mulrate, "
+                         + "  coalesce(c.iSOCode, pmc.iSOCode) as isocode, "
+                         + "  coalesce(c.symbol, pmc.symbol) as symbol, "
+                         + "  coalesce(c.currencySymbolAtTheRight, pmc.currencySymbolAtTheRight) as currencySymbolAtTheRight, "
+                         + "  coalesce(f.currentBalance, 0) as currentBalance, "
+                         + "  coalesce(p.paymentMethod.currency.obposPosprecision, p.paymentMethod.currency.pricePrecision) as obposPosprecision, "
+                         + "  img.bindaryData as image, "
+                         + "  img.mimetype as mimetype, " 
+                         + "  providerGroup, "
+                         + "  paymentType "
+                         + "from OBPOS_App_Payment as p "
+                         + "  left join p.financialAccount as f "
+                         + "  left join f.currency as c "
+                         + "  left outer join p.paymentMethod as pm "
+                         + "  left outer join pm.image as img "
+                         + "  left outer join pm.currency as pmc "
+                         + "  left outer join pm.obposPaymentgroup as providerGroup "
+                         + "  left outer join pm.obposPaymentmethodType as paymentType "
+                         + "where p.obposApplications.id = :posID  "
+                         + "  and p.$readableSimpleCriteria "
+                         + "  and p.$activeCriteria and pm.$activeCriteria"
+                         + "order by p.line, p.commercialName";
+      //@formatter:on
 
       SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(hqlPayments,
           OBContext.getOBContext().getCurrentClient().getId(),
@@ -134,12 +152,16 @@ public class Payments extends JSONTerminalProperty {
 
           // If the Payment Method is cash, load the rounding properties of the currency
           if (appPayment.getPaymentMethod().isCash()) {
+            //@formatter:off
+            String query = "from OBPOS_CurrencyRounding cr "
+                         + "where cr.currency.id = :currency "
+                         + "  and cr.active = true "
+                         + "  and AD_ISORGINCLUDED(:storeOrg, cr.organization.id, :storeClient) <> -1 "
+                         + "order by AD_ISORGINCLUDED(:storeOrg, cr.organization.id, :storeClient)";
+            //@formatter:on
             Query<OBPOSCurrencyRounding> roundQuery = OBDal.getInstance()
                 .getSession()
-                .createQuery(
-                    "FROM OBPOS_CurrencyRounding cr where cr.currency.id = :currency AND cr.active = true AND AD_ISORGINCLUDED(:storeOrg, cr.organization.id, :storeClient) <> -1 "
-                        + "order by AD_ISORGINCLUDED(:storeOrg, cr.organization.id, :storeClient)",
-                    OBPOSCurrencyRounding.class);
+                .createQuery(query, OBPOSCurrencyRounding.class);
             roundQuery.setParameter("storeOrg",
                 OBContext.getOBContext().getCurrentOrganization().getId());
             roundQuery.setParameter("storeClient",
