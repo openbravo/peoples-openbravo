@@ -10561,6 +10561,9 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   overflow-x: hidden;
 }
 
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes .enyo-touch-scroller {
+  max-height: 500px;
+}
 
 .obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields {
 }
@@ -10824,9 +10827,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSPointOfSale.UI.customers.edit_createcustomers_impl
 # Inherits: [OB.OBPOSPointOfSale.UI.customers.edit_createcustomers]
 */
-.obObposPointOfSaleUiCustomersEditCreatecustomersImpl {
-  padding: 9px 15px;
-}
+.obObposPointOfSaleUiCustomersEditCreatecustomersImpl {}
 
 .obObposPointOfSaleUiCustomersEditCreatecustomersImpl-newAttributes-greeting {
 /* Inherits: [OB.UI.CustomerComboProperty] */
