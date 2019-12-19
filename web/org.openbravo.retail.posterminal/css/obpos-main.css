@@ -1806,7 +1806,9 @@
   width: calc(100% - 15px);
 }
 
-
+.obUiModalCategoryTree-body-listCategory .enyo-touch-scroller {
+  max-height: 600px;
+}
 
 /***********************   ***********************/
 /*             File: rendercategory.js           */
