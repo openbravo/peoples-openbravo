@@ -1052,7 +1052,7 @@ enyo.kind({
         inEvent.leftSubWindow =
           OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
         this.showLeftSubWindow(inSender, inEvent);
-        if (enyo.Panels.isScreenNarrow()) {
+        if (OB.UI.MultiColumn.isSingleColumn()) {
           this.$.multiColumn.$.rightToolbar.$.rightToolbar.$.toolbar.$.toolbarBtnCart.tap();
         }
         return true;
@@ -1191,6 +1191,9 @@ enyo.kind({
               },
               function(args) {
                 if (args && !args.cancelOperation) {
+                  if (OB.UI.MultiColumn.isSingleColumn()) {
+                    me.$.multiColumn.$.rightToolbar.$.rightToolbar.$.toolbar.$.toolbarBtnCart.tap();
+                  }
                   me.$.multiColumn.$.leftPanel.$.receiptview.setShowing(false);
                   me.$.multiColumn.$.leftPanel.$[
                     inEvent.leftSubWindow
@@ -1198,9 +1201,6 @@ enyo.kind({
                   me.$.multiColumn.$.leftPanel.$[
                     inEvent.leftSubWindow
                   ].inEvent = inEvent;
-                  if (enyo.Panels.isScreenNarrow()) {
-                    me.$.multiColumn.$.rightToolbar.$.rightToolbar.$.toolbar.$.toolbarBtnCart.tap();
-                  }
                 }
               }
             );

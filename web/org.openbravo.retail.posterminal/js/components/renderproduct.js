@@ -159,8 +159,9 @@ enyo.kind({
   ],
   drawPriceBasedOnSize: function() {
     var shouldResizeWork =
-      (enyo.Panels.isScreenNarrow() && document.body.clientWidth <= 466) ||
-      (!enyo.Panels.isScreenNarrow() && document.body.clientWidth <= 925);
+      (OB.UI.MultiColumn.isSingleColumn() &&
+        document.body.clientWidth <= 466) ||
+      (!OB.UI.MultiColumn.isSingleColumn() && document.body.clientWidth <= 925);
     var hideProductImages =
       OB.MobileApp.model.hasPermission('OBPOS_HideProductImages', true) ||
       OB.MobileApp.model.hasPermission(
@@ -173,22 +174,31 @@ enyo.kind({
       var fontSize = '16px;';
       if (price.length === 9) {
         fontSize = '15px;';
-        if (enyo.Panels.isScreenNarrow() && document.body.clientWidth <= 410) {
+        if (
+          OB.UI.MultiColumn.isSingleColumn() &&
+          document.body.clientWidth <= 410
+        ) {
           fontSize = '14px;';
         }
       } else if (price.length === 10) {
         fontSize = '14px;';
-        if (enyo.Panels.isScreenNarrow() && document.body.clientWidth <= 410) {
+        if (
+          OB.UI.MultiColumn.isSingleColumn() &&
+          document.body.clientWidth <= 410
+        ) {
           fontSize = '13px;';
         }
       } else if (price.length === 11) {
         fontSize = '13px;';
-        if (enyo.Panels.isScreenNarrow() && document.body.clientWidth <= 410) {
+        if (
+          OB.UI.MultiColumn.isSingleColumn() &&
+          document.body.clientWidth <= 410
+        ) {
           fontSize = '12px;';
         }
       } else if (price.length > 11) {
         fontSize = '12px;';
-        if (!enyo.Panels.isScreenNarrow()) {
+        if (!OB.UI.MultiColumn.isSingleColumn()) {
           if (
             document.body.clientWidth >= 840 &&
             document.body.clientWidth <= 925

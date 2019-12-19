@@ -128,7 +128,11 @@ public class IssueSalesOrderLines extends JSONProcessSimple {
   private void linkOrderWithShipmentIfOrderIsUnique(final ShipmentInOut shipment,
       final Set<String> orders) {
     if (orders.size() == 1) {
-      shipment.setSalesOrder(OBDal.getInstance().getProxy(Order.class, orders.iterator().next()));
+      Order order = OBDal.getInstance().getProxy(Order.class, orders.iterator().next());
+      shipment.setSalesOrder(order);
+      if (order.getInvoiceList().size() == 1) {
+        shipment.setInvoice(order.getInvoiceList().get(0));
+      }
     }
   }
 

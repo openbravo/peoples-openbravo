@@ -28,6 +28,7 @@
     /**
      * This method must be ALWAYS override in each subclass
      * Implements the logic to validate each field
+     * Output: Object contains status (true | false) and message
      */
     static validate(oldCustomer, property, value, callback) {
       throw 'validate method not implemented';
