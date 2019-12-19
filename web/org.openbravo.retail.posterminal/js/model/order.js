@@ -7497,7 +7497,8 @@
             openDrawer: terminalPayment.paymentMethod.openDrawer,
             printtwice: terminalPayment.paymentMethod.printtwice
           });
-          paymentLine.set('roundingPayment', true);
+          paymentLine.set('paymentRounding', true);
+          payment.set('paymentRoundingLine', paymentLine);
           order.get('payments').add(paymentLine);
         }
       };
@@ -7715,8 +7716,6 @@
           receipt: this
         },
         function(args) {
-          var paymentRoundingType = null,
-            paymentRounding = null;
           if (args.cancellation) {
             if (cancellationCallback) {
               cancellationCallback();
@@ -7724,20 +7723,8 @@
             return true;
           }
           payments.remove(payment);
-          if (
-            OB.MobileApp.model.paymentnames[payment.get('kind')].paymentRounding
-          ) {
-            paymentRoundingType =
-              OB.MobileApp.model.paymentnames[payment.get('kind')]
-                .paymentRounding.paymentRoundingType;
-            paymentRounding = _.find(payments.models, function(p) {
-              if (p.get('kind') === paymentRoundingType) {
-                return p;
-              }
-            });
-            if (paymentRounding && paymentRounding != null) {
-              payments.remove(paymentRounding);
-            }
+          if (payment.has('paymentRoundingLine')) {
+            payments.remove(payment.get('paymentRoundingLine'));
           }
 
           if (!me.get('deletedPayments')) {
