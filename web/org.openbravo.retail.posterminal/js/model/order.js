@@ -7473,13 +7473,13 @@
             : terminalPayment.paymentRounding.salesRounding,
           pow = Math.pow(10, precision),
           paymentDifference =
-            OB.DEC.mul(payment.get('amount'), pow) %
+            OB.DEC.mul(paymentStatus.pendingAmt, pow) %
             OB.DEC.mul(multiplyBy, pow);
 
         if (
-          (roundingAmount !== 0 && roundingAmount < multiplyBy) ||
-          (paymentStatus.pendingAmt === payment.get('amount') &&
-            paymentDifference !== 0)
+          (roundingAmount !== 0 && OB.DEC.abs(roundingAmount) < multiplyBy) ||
+          (paymentDifference !== 0 &&
+            payment.get('amount') >= paymentStatus.pendingAmt)
         ) {
           if (rounding === 'UR') {
             if (paymentDifference !== 0) {
@@ -7502,9 +7502,12 @@
               'amount',
               OB.DEC.add(payment.get('amount'), amountDifference)
             );
-          } else {
-            if (paymentDifference !== 0) {
-              roundingAmount = OB.DEC.div(paymentDifference, pow);
+          } else if (
+            paymentDifference !== 0 &&
+            payment.get('amount') >= paymentStatus.pendingAmt
+          ) {
+            roundingAmount = OB.DEC.div(paymentDifference, pow);
+            if (payment.get('amount') === paymentStatus.pendingAmt) {
               payment.set(
                 'amount',
                 OB.DEC.sub(payment.get('amount'), roundingAmount)
