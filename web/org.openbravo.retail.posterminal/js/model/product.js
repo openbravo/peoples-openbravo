@@ -14,10 +14,7 @@
       this.indices = [
         new OB.App.Index({
           name: 'productNameSearch_idx',
-          properties: [
-            { property: '_identifier' },
-            { property: 'isGeneric', isBoolean: true }
-          ]
+          properties: [{ property: '_identifier' }]
         }),
         new OB.App.Index({
           name: 'productCategoryBrowse_idx',
@@ -45,16 +42,16 @@
           name: 'productCategorySearch_idx',
           properties: [
             { property: 'productCategory' },
-            // { property: 'generic_product_id', isNullable: true },
-            { property: 'isGeneric', isBoolean: true }
+            { property: 'isGeneric', isBoolean: true },
+            { property: 'listPrice', isNullable: true }
           ]
         }),
         new OB.App.Index({
           name: 'bestsellerSearch_idx',
           properties: [
             { property: 'bestseller', isBoolean: true },
-            //   { property: 'generic_product_id', isNullable: true },
-            { property: 'isGeneric', isBoolean: true }
+            { property: 'isGeneric', isBoolean: true },
+            { property: 'listPrice', isNullable: true }
           ]
         })
       ];
