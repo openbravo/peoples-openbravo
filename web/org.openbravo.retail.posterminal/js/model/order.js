@@ -7528,7 +7528,13 @@
             isCash: terminalPayment.paymentMethod.iscash,
             allowOpenDrawer: terminalPayment.paymentMethod.allowopendrawer,
             openDrawer: terminalPayment.paymentMethod.openDrawer,
-            printtwice: terminalPayment.paymentMethod.printtwice
+            printtwice: terminalPayment.paymentMethod.printtwice,
+            date: new Date(),
+            id: OB.UTIL.get_UUID(),
+            oBPOSPOSTerminal: OB.MobileApp.model.get('terminal').id,
+            orderGross: order.getGross(),
+            isPaid: order.get('isPaid'),
+            isReturnOrder: paymentStatus.isNegative
           });
           paymentLine.set('paymentRounding', true);
           payment.set('paymentRoundingLine', paymentLine);
