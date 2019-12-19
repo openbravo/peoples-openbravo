@@ -343,7 +343,7 @@ enyo.kind({
   },
   initComponents: function() {
     //TODO: modal payments
-    var payments,
+    var payments = [],
       paymentsdialog,
       paymentsbuttons,
       countbuttons,
@@ -358,7 +358,11 @@ enyo.kind({
 
     this.inherited(arguments);
 
-    payments = OB.MobileApp.model.get('payments');
+    _.each(OB.MobileApp.model.get('payments'), function(payment) {
+      if (!payment.paymentMethod.isRounding) {
+        payments.push(payment);
+      }
+    });
 
     if (payments.length === 0) {
       this.sideButtons = [];

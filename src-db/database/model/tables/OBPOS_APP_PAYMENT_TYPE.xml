@@ -213,6 +213,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="ISROUNDING" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBPOS_APPPAYTYPE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -281,6 +285,7 @@
       <check name="OBPOS_APP_PAYTYPE_DROPGL_CHK"><![CDATA[ALLOWDROPS = 'N' OR C_GLITEM_DROPS_ID IS NOT NULL]]></check>
       <check name="OBPOS_APP_PAYTYPE_FIXEDAM_CHK"><![CDATA[KEEPFIXEDAMOUNT = 'N' OR AMOUNT IS NOT NULL]]></check>
       <check name="OBPOS_APPPAY_LEAVECREDIT_CHK"><![CDATA[LEAVEASCREDIT IN ('Y', 'N')]]></check>
+      <check name="OBPOS_APPPAYTYP_ISROUNDING_CHK"><![CDATA[ISROUNDING IN ('Y', 'N')]]></check>
       <check name="OBPOS_APPPAYTYPE_AUTO_CHK"><![CDATA[AUTOMATEMOVEMENTTOOTHER IN ('Y', 'N')]]></check>
       <check name="OBPOS_APPPAYTYPE_CASH_CHK"><![CDATA[ISCASH IN ('Y', 'N')]]></check>
       <check name="OBPOS_APPPAYTYPE_CHANGELOG_CHK"><![CDATA[CHANGELESSTHAN IS NULL AND CHANGE_PAYMENT_TYPE_ID IS NULL OR CHANGELESSTHAN IS NOT NULL AND CHANGELESSTHAN > 0 AND CHANGE_PAYMENT_TYPE_ID IS NOT NULL]]></check>
