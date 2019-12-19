@@ -931,11 +931,12 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     } else {
       where.append(" and c." + Costing.PROPERTY_WAREHOUSE + " = :warehouse");
     }
-    where.append("   and c." + Costing.PROPERTY_ENDINGDATE + " = :endDate");
+    where.append("   and c." + Costing.PROPERTY_ENDINGDATE + " <= :endDate");
 
     where.append(" order by ");
     where.append(" trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " desc, ");
-    where.append(" trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " desc");
+    where.append(" trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " desc,");
+    where.append(" c." + Costing.PROPERTY_ENDINGDATE + " desc");
 
     OBQuery<Costing> qryCosting = OBDal.getInstance().createQuery(Costing.class, where.toString());
     qryCosting.setNamedParameter("product", bdCosting.getProduct());
@@ -949,6 +950,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
       qryCosting.setNamedParameter("warehouse", bdCosting.getWarehouse());
     }
     qryCosting.setNamedParameter("endDate", bdCosting.getStartingDate());
+    qryCosting.setFetchSize(1);
 
     qryCosting.setMaxResult(1);
 
