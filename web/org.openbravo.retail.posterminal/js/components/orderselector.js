@@ -937,7 +937,9 @@ enyo.kind({
                       );
 
                       _.each(
-                        OB.MobileApp.view.$.containerWindow.$.pointOfSale.$.multiColumn.$.leftPanel.$.receiptview.$.orderview.$.listOrderLines.$.tbody.getComponents(),
+                        OB.MobileApp.view.$.containerWindow
+                          .getRoot()
+                          .$.multiColumn.$.leftPanel.$.receiptview.$.orderview.$.listOrderLines.$.tbody.getComponents(),
                         function(component) {
                           var renderOrderLine = component.renderline;
                           if (
