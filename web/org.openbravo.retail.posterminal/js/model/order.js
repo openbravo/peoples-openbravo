@@ -7462,27 +7462,57 @@
             paymentStatus.pendingAmt,
             payment.get('amount')
           ),
+          amountDifference = null,
           paymentLine = null,
           precision = order.getPrecision(payment),
+          multiplyBy = paymentStatus.isReturn
+            ? terminalPayment.paymentRounding.returnMultiplyBy
+            : terminalPayment.paymentRounding.salesMultiplyBy,
+          rounding = paymentStatus.isReturn
+            ? terminalPayment.paymentRounding.returnRounding
+            : terminalPayment.paymentRounding.salesRounding,
           pow = Math.pow(10, precision),
-          mod =
-            (payment.get('amount') * pow) %
-            (terminalPayment.paymentRounding.salesMultiplyBy * pow);
+          paymentDifference =
+            OB.DEC.mul(payment.get('amount'), pow) %
+            OB.DEC.mul(multiplyBy, pow);
 
         if (
-          roundingAmount < terminalPayment.paymentRounding.salesMultiplyBy ||
-          paymentStatus.pendingAmt === payment.get('amount')
+          (roundingAmount !== 0 && roundingAmount < multiplyBy) ||
+          (paymentStatus.pendingAmt === payment.get('amount') &&
+            paymentDifference !== 0)
         ) {
-          if (mod !== 0) {
-            roundingAmount = mod / pow;
+          if (rounding === 'UR') {
+            if (paymentDifference !== 0) {
+              amountDifference = OB.DEC.sub(
+                multiplyBy,
+                OB.DEC.div(paymentDifference, pow)
+              );
+              roundingAmount = OB.DEC.mul(amountDifference, -1);
+            } else {
+              amountDifference = OB.DEC.add(
+                roundingAmount,
+                OB.DEC.sub(multiplyBy, roundingAmount)
+              );
+              roundingAmount = OB.DEC.mul(
+                OB.DEC.sub(multiplyBy, roundingAmount),
+                -1
+              );
+            }
             payment.set(
               'amount',
-              OB.DEC.sub(payment.get('amount'), roundingAmount)
+              OB.DEC.add(payment.get('amount'), amountDifference)
             );
+          } else {
+            if (paymentDifference !== 0) {
+              roundingAmount = OB.DEC.div(paymentDifference, pow);
+              payment.set(
+                'amount',
+                OB.DEC.sub(payment.get('amount'), roundingAmount)
+              );
+            }
           }
-          if (order.get('payments').length === 0) {
-            payment.set('index', 0);
-          }
+
+          payment.set('index', order.get('payments').length);
           paymentLine = new OB.Model.PaymentLine({
             kind: terminalPayment.paymentRounding.paymentRoundingType,
             name: OB.MobileApp.model.getPaymentName(
@@ -7596,6 +7626,12 @@
                         );
                       } else {
                         p.set('origAmount', p.get('amount'));
+                      }
+                      if (payment.has('paymentRoundingLine')) {
+                        p.set(
+                          'paymentRoundingLine',
+                          payment.get('paymentRoundingLine')
+                        );
                       }
                       payment.set('date', new Date());
                       executeFinalCallback(true);
