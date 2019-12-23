@@ -8,37 +8,37 @@
  */
 
 (function() {
-  class Product extends OB.App.MasterdataModel {
+  class Product extends OB.App.Class.MasterdataModel {
     constructor() {
       super();
       this.indices = [
-        new OB.App.Index({
+        new OB.App.Class.Index({
           name: 'productNameSearch_idx',
           properties: [{ property: '_identifier' }]
         }),
-        new OB.App.Index({
+        new OB.App.Class.Index({
           name: 'productCategoryBrowse_idx',
           properties: [
             { property: 'productCategory' },
             { property: 'generic_product_id', isNullable: true }
           ]
         }),
-        new OB.App.Index({
+        new OB.App.Class.Index({
           name: 'productCategoryBrowseMPL_idx',
           properties: [{ property: 'productCategory' }]
         }),
-        new OB.App.Index({
+        new OB.App.Class.Index({
           name: 'bestsellerBrowse_idx',
           properties: [
             { property: 'bestseller', isBoolean: true },
             { property: 'generic_product_id', isNullable: true }
           ]
         }),
-        new OB.App.Index({
+        new OB.App.Class.Index({
           name: 'bestsellerBrowseMPL_idx',
           properties: [{ property: 'bestseller', isBoolean: true }]
         }),
-        new OB.App.Index({
+        new OB.App.Class.Index({
           name: 'productCategorySearch_idx',
           properties: [
             { property: 'productCategory' },
@@ -46,7 +46,7 @@
             { property: 'listPrice', isNullable: true }
           ]
         }),
-        new OB.App.Index({
+        new OB.App.Class.Index({
           name: 'bestsellerSearch_idx',
           properties: [
             { property: 'bestseller', isBoolean: true },

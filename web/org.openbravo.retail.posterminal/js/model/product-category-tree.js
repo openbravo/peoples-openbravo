@@ -8,19 +8,19 @@
  */
 
 (function() {
-  class ProductCategoryTree extends OB.App.MasterdataModel {
+  class ProductCategoryTree extends OB.App.Class.MasterdataModel {
     constructor() {
       super();
       this.indices = [
-        new OB.App.Index({
+        new OB.App.Class.Index({
           name: 'productcategorytree_parentId_idx',
           properties: [{ property: 'parentId' }]
         }),
-        new OB.App.Index({
+        new OB.App.Class.Index({
           name: 'productcategorytree_id_idx',
           properties: [{ property: 'id' }]
         }),
-        new OB.App.Index({
+        new OB.App.Class.Index({
           name: 'productcategorytree_crossstore_idx',
           properties: [{ property: 'crossStore', isBoolean: true }]
         })

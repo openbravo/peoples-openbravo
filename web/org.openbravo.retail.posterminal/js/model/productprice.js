@@ -8,11 +8,11 @@
  */
 
 (function() {
-  class ProductPrice extends OB.App.MasterdataModel {
+  class ProductPrice extends OB.App.Class.MasterdataModel {
     constructor() {
       super();
       this.indices = [
-        new OB.App.Index({
+        new OB.App.Class.Index({
           name: 'pricelist_product_idx',
           properties: [
             { property: 'm_pricelist_id' },
