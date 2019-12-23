@@ -7509,20 +7509,19 @@
                 OB.DEC.div(paymentDifference, pow)
               );
               roundingAmount = OB.DEC.mul(amountDifference, -1);
-            } else {
-              amountDifference = OB.DEC.add(
-                roundingAmount,
-                OB.DEC.sub(multiplyBy, roundingAmount)
-              );
-              roundingAmount = OB.DEC.mul(
-                OB.DEC.sub(multiplyBy, roundingAmount),
-                -1
+              if (payment.get('amount') < paymentStatus.pendingAmt) {
+                amountDifference = OB.DEC.add(
+                  amountDifference,
+                  OB.DEC.div(paymentDifference, pow)
+                );
+              }
+            }
+            if (payment.get('amount') <= paymentStatus.pendingAmt) {
+              payment.set(
+                'amount',
+                OB.DEC.add(payment.get('amount'), amountDifference)
               );
             }
-            payment.set(
-              'amount',
-              OB.DEC.add(payment.get('amount'), amountDifference)
-            );
           } else if (
             paymentDifference !== 0 &&
             payment.get('amount') >= paymentStatus.pendingAmt
