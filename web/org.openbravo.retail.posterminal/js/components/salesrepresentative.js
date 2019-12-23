@@ -215,7 +215,8 @@ enyo.kind({
   },
   searchAction: async function(inSender, inEvent) {
     var me = this,
-      filter = inEvent.srName;
+      filter = inEvent.srName,
+      indexedDBPckg = OB.App.Classes.Model.Persistence.IndexedDB;
 
     function errorCallback(tx, error) {
       OB.UTIL.showError(error);
@@ -233,7 +234,7 @@ enyo.kind({
         me.srsList.reset();
       }
     }
-    const criteria = new OB.App.Criteria()
+    const criteria = new indexedDBPckg.Criteria()
       .criterion('_identifier', filter, 'includes')
       .build();
     try {
