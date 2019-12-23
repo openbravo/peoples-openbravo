@@ -13,13 +13,10 @@
   OB.Discounts.Pos = {
     local: true,
 
-    calculateLocal: function(ticket) {
-      if (!OB.Discounts.Pos.ruleImpls) {
-        throw 'Local discount cache is not yet initialized, execute: OB.Discounts.Pos.initCache()';
-      }
+    calculateLocal: function(ticket, rules) {
       return OB.Discounts.applyDiscounts(
         ticket,
-        OB.Discounts.Pos.ruleImpls,
+        rules,
         OB.Discounts.Pos.bpSets
       );
     },
@@ -296,14 +293,30 @@
       const ticketForEngine = OB.Discounts.Pos.translateTicket(receipt);
       let result;
       if (OB.Discounts.Pos.local) {
-        result = OB.Discounts.Pos.calculateLocal(ticketForEngine);
-        this.transformNewEngineManualPromotions(
-          receipt,
-          ticketForEngine.discountsFromUser.manualPromotions,
-          result
+        if (!OB.Discounts.Pos.ruleImpls) {
+          throw 'Local discount cache is not yet initialized, execute: OB.Discounts.Pos.initCache()';
+        }
+        // This hook cannot be asynchronous
+        OB.UTIL.HookManager.executeHooks(
+          'OBPOS_PreApplyNewDiscountEngine',
+          {
+            receipt: receipt,
+            rules: [...OB.Discounts.Pos.ruleImpls]
+          },
+          args => {
+            result = OB.Discounts.Pos.calculateLocal(
+              ticketForEngine,
+              args.rules
+            );
+            this.transformNewEngineManualPromotions(
+              receipt,
+              ticketForEngine.discountsFromUser.manualPromotions,
+              result
+            );
+            OB.Discounts.Pos.applyDiscounts(receipt, result);
+            callback();
+          }
         );
-        OB.Discounts.Pos.applyDiscounts(receipt, result);
-        callback();
       } else {
         result = OB.Discounts.Pos.calculateRemote(receipt, callback);
       }
