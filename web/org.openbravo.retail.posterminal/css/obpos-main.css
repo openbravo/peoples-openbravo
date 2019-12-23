@@ -6637,50 +6637,25 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 */
 .obUiModalInvoicesFooter {}
 
-.obUiModalInvoicesFooter-printReceipt {
-  /* Inherits: [OB.UI.SmallButton] */
-  width: 140px;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-}
-
-.obUiModalInvoicesFooter-printInvoices {
-  /* Inherits: [OB.UI.SmallButton] */
-  width: 140px;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-}
-
 .obUiModalInvoicesFooter-buttonsContainer {
   display: flex;
   border-top: 1px solid #cccccc;
   flex-direction: row;
+  flex-wrap: wrap;
   justify-content: space-around;
   width: 100%;
 }
 
-.obUiModalInvoicesFooter-buttonsContainer-button_comfortable {
-  width: 126px;
-}
-
-.obUiModalInvoicesFooter-buttonsContainer-button_cozy {
-  width: 112px;
-}
-
-.obUiModalInvoicesFooter-buttonsContainer-button_compact {
-  width: 98px;
-}
-
-.obUiModalInvoicesFooter-cancelButton {
+.obUiModalInvoicesFooter .obUiSmallButton {
   /* Inherits: [OB.UI.SmallButton] */
   width: 140px;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-
 }
+
+.obUiModalInvoicesFooter-printReceipt {}
+
+.obUiModalInvoicesFooter-printInvoices {}
+
+.obUiModalInvoicesFooter-cancelButton {}
 
 
 /*
