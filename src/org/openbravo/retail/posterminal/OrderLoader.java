@@ -1302,12 +1302,21 @@ public class OrderLoader extends POSDataSynchronizationProcess
     }
 
     BigDecimal paymentAmt = BigDecimal.valueOf(jsonorder.optDouble("nettingPayment", 0));
+    BigDecimal roundingAmt = BigDecimal.ZERO;
     for (int i = 0; i < payments.length(); i++) {
       final JSONObject payment = payments.getJSONObject(i);
       paymentAmt = paymentAmt
           .add(BigDecimal.valueOf(payment.getDouble("origAmount"))
               .subtract(BigDecimal.valueOf(payment.optDouble("overpayment", 0))))
           .setScale(pricePrecision, RoundingMode.HALF_UP);
+      if (payment.optBoolean("paymentRounding", false)) {
+        roundingAmt = roundingAmt.add(BigDecimal.valueOf(payment.getDouble("paid")));
+      }
+    }
+
+    order.setObposRoundingAmount(roundingAmt);
+    if (createInvoice) {
+      invoice.setObposRoundingAmount(roundingAmt);
     }
 
     // Create a unique payment schedule for all payments
