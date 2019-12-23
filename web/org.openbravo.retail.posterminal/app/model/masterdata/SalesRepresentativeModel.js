@@ -8,11 +8,11 @@
  */
 
 (function SalesRepresentativeDefinition() {
-  class SalesRepresentative extends OB.App.MasterdataModel {
+  class SalesRepresentative extends OB.App.Class.MasterdataModel {
     constructor() {
       super();
       this.indices = [
-        new OB.App.Index({
+        new OB.App.Class.Index({
           name: '_identifier',
           properties: [{ property: '_identifier' }]
         })
