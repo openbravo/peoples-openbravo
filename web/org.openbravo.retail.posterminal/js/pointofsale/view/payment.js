@@ -2599,9 +2599,11 @@ enyo.kind({
           errorMsgLbl = 'OBPOS_NegativePaymentOnReceipt';
         }
       }
-
       payments.each(function(payment) {
-        if (me.alreadyPaid) {
+        if (
+          me.alreadyPaid &&
+          !(payment.has('paymentRounding') && payment.has('paymentRounding'))
+        ) {
           me.avoidCompleteReceipt = true;
           errorMsgLbl = 'OBPOS_UnnecessaryPaymentAdded';
           return false;
