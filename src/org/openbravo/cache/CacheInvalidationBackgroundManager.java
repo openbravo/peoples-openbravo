@@ -35,12 +35,12 @@ import javax.management.MBeanException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.ApplicationInitializer;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.SessionInfo;
-import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.jmx.MBeanRegistry;
 import org.openbravo.model.ad.system.Cache;
 
@@ -49,8 +49,8 @@ public class CacheInvalidationBackgroundManager
     implements CacheInvalidationBackgroundManagerMBean, ApplicationInitializer {
 
   private static final String CACHE_INVALIDATION_BACKGROUND_MANAGER = "Cache Invalidation Background Manager";
-  private static final String CACHE_INVALIDATION_CHECK_PERIOD_PREFERENCE = "CacheInvalidationControlPeriod";
-  private static final long DEFAULT_PERIOD = 10000; // 10 seconds
+  private static final String CACHE_INVALIDATION_CHECK_PERIOD_PROPERTY = "cache.invalidation.check.period";
+  private static final long CACHE_INVALIDATION_DEFAULT_PERIOD = 10000; // 10 seconds
 
   private static final Logger logger = LogManager.getLogger();
   public static final String CONTEXT_SYSTEM_USER = "0";
@@ -72,6 +72,23 @@ public class CacheInvalidationBackgroundManager
     }
   }
 
+  private static long getCacheInvalidationCheckPeriod() {
+    final String propertyValue = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
+        .getProperty(CACHE_INVALIDATION_CHECK_PERIOD_PROPERTY);
+    if (propertyValue == null) {
+      return CACHE_INVALIDATION_DEFAULT_PERIOD;
+    }
+    try {
+      return Long.parseLong(propertyValue);
+    } catch (Exception e) {
+      logger
+          .error("An invalid value was specified in the " + CACHE_INVALIDATION_CHECK_PERIOD_PROPERTY
+              + " property. The default value will be used.");
+      return CACHE_INVALIDATION_DEFAULT_PERIOD;
+    }
+  }
+
   /**
    * This method starts the cache invalidation background thread
    * 
@@ -83,13 +100,7 @@ public class CacheInvalidationBackgroundManager
       throw new MBeanException(
           new IllegalStateException("The CacheInvalidationBackgroundManager is already started"));
     }
-    try {
-      period = Long
-          .parseLong(Preferences.getPreferenceValue(CACHE_INVALIDATION_CHECK_PERIOD_PREFERENCE,
-              false, (String) null, null, null, null, null));
-    } catch (Exception e) {
-      period = DEFAULT_PERIOD;
-    }
+    period = getCacheInvalidationCheckPeriod();
     shutdownRequested = false;
     executorService = createExecutorService();
     CacheInvalidationThread thread = new CacheInvalidationThread(this, period);
