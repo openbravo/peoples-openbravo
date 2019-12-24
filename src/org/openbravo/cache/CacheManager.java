@@ -1,40 +1,44 @@
 package org.openbravo.cache;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.Date;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.util.AnnotationLiteral;
 
-@ApplicationScoped
-public abstract class CacheManager<K, V> {
+public interface CacheManager<K, V> {
 
-  private final ConcurrentMap<K, V> cache = new ConcurrentHashMap<K, V>();
-  private Date lastInvalidation;
+  V getEntry(K key);
 
-  public abstract String getCacheIdentifier();
+  void putEntry(K key, V value);
 
-  public boolean containsKey(K key) {
-    return cache.containsKey(key);
+  void invalidate();
+
+  void invalidateIfExpired(Date expirationDate);
+
+  @javax.inject.Qualifier
+  @Retention(RetentionPolicy.RUNTIME)
+  @Target({ ElementType.TYPE })
+  public @interface Qualifier {
+    String value();
   }
 
-  public V getEntry(K key) {
-    return cache.get(key);
-  }
+  @SuppressWarnings("all")
+  public static class Selector extends AnnotationLiteral<CacheManager.Qualifier>
+      implements CacheManager.Qualifier {
+    private static final long serialVersionUID = 1L;
 
-  public void putEntry(K key, V value) {
-    cache.put(key, value);
-  }
+    final String value;
 
-  public void invalidate() {
-    cache.clear();
-    lastInvalidation = new Date();
-  }
+    public Selector(String value) {
+      this.value = value;
+    }
 
-  public void invalidateIfExpired(Date expirationDate) {
-    if (lastInvalidation == null || lastInvalidation.compareTo(expirationDate) < 0) {
-      cache.clear();
-      lastInvalidation = expirationDate;
+    @Override
+    public String value() {
+      return value;
     }
   }
 

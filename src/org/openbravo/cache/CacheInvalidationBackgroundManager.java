@@ -55,7 +55,7 @@ public class CacheInvalidationBackgroundManager
   private static final Logger logger = LogManager.getLogger();
   public static final String CONTEXT_SYSTEM_USER = "0";
 
-  private boolean isShutDown;
+  private boolean shutdownRequested = false;
   private ExecutorService executorService;
 
   @Inject
@@ -79,25 +79,26 @@ public class CacheInvalidationBackgroundManager
   @Override
   public void start() throws MBeanException {
     long period;
+    if (executorService != null) {
+      throw new MBeanException(
+          new IllegalStateException("The CacheInvalidationBackgroundManager is already started"));
+    }
     try {
       period = Long
           .parseLong(Preferences.getPreferenceValue(CACHE_INVALIDATION_CHECK_PERIOD_PREFERENCE,
               false, (String) null, null, null, null, null));
     } catch (Exception e) {
-      logger.warn("The CacheInvalidationBackgroundManager will start with the default period: "
-          + Long.toString(DEFAULT_PERIOD) + "ms");
       period = DEFAULT_PERIOD;
     }
-
+    shutdownRequested = false;
     executorService = createExecutorService();
     CacheInvalidationThread thread = new CacheInvalidationThread(this, period);
     executorService.execute(thread);
-    isShutDown = false;
   }
 
   @Override
   public boolean isStarted() {
-    return !isShutDown;
+    return executorService != null;
   }
 
   @Override
@@ -105,23 +106,22 @@ public class CacheInvalidationBackgroundManager
     if (searchKey == null) {
       return;
     }
-
-    for (CacheManager<?, ?> cacheManager : cacheManagers) {
-      if (searchKey.equals(cacheManager.getCacheIdentifier())) {
-        cacheManager.invalidate();
-        return;
-      }
+    Instance<CacheManager<?, ?>> qualifiedCacheManagers = cacheManagers
+        .select(new CacheManager.Selector(searchKey));
+    for (CacheManager<?, ?> cacheManager : qualifiedCacheManagers) {
+      cacheManager.invalidate();
     }
     throw new MBeanException(new NoSuchElementException("The CacheManager for " + searchKey
         + " was not injected into the CacheInvalidationBackgroundManager"));
   }
 
   @Override
-  public void stop() {
+  public void stop() throws MBeanException {
     if (executorService == null) {
-      return;
+      throw new MBeanException(
+          new IllegalStateException("The CacheInvalidationBackgroundManager is not started"));
     }
-    isShutDown = true;
+    shutdownRequested = true;
     executorService.shutdownNow();
     executorService = null;
   }
@@ -155,33 +155,32 @@ public class CacheInvalidationBackgroundManager
 
     @Override
     public void run() {
-      OBCriteria<Cache> cacheCriteria;
-      List<Cache> cacheList;
       List<String> missingCacheManagers = new ArrayList<String>();
       boolean found;
-      try {
-        OBContext.setOBContext(CONTEXT_SYSTEM_USER);
-        OBContext.setAdminMode(false);
-        logger.info("The CacheInvalidationBackgroundManager has started");
-        while (true) {
-          if (manager.isShutDown) {
+      OBContext.setOBContext(CONTEXT_SYSTEM_USER);
+      OBContext.setAdminMode(false);
+      logger.info(String.format(
+          "The CacheInvalidationBackgroundManager has started. Check period is: %d ms",
+          timeBetweenThreadExecutions));
+      while (true) {
+        try {
+          if (manager.shutdownRequested) {
             return;
           }
-          OBDal.getInstance().getSession().clear();
-          cacheCriteria = OBDal.getInstance().createCriteria(Cache.class);
+          OBCriteria<Cache> cacheCriteria = OBDal.getInstance().createCriteria(Cache.class);
           cacheCriteria.add(Restrictions.isNotNull(Cache.PROPERTY_LASTINVALIDATION));
           if (!missingCacheManagers.isEmpty()) {
             cacheCriteria.add(
                 Restrictions.not(Restrictions.in(Cache.PROPERTY_SEARCHKEY, missingCacheManagers)));
           }
-          cacheList = cacheCriteria.list();
+          List<Cache> cacheList = cacheCriteria.list();
           for (Cache cache : cacheList) {
             found = false;
-            for (CacheManager<?, ?> cacheManager : manager.cacheManagers) {
-              if (cache.getSearchKey().equals(cacheManager.getCacheIdentifier())) {
-                cacheManager.invalidateIfExpired(cache.getLastInvalidation());
-                found = true;
-              }
+            Instance<CacheManager<?, ?>> qualifiedCacheManagers = manager.cacheManagers
+                .select(new CacheManager.Selector(cache.getSearchKey()));
+            for (CacheManager<?, ?> cacheManager : qualifiedCacheManagers) {
+              cacheManager.invalidateIfExpired(cache.getLastInvalidation());
+              found = true;
             }
             if (!found) {
               missingCacheManagers.add(cache.getSearchKey());
@@ -189,6 +188,7 @@ public class CacheInvalidationBackgroundManager
                   + " was not injected into the CacheInvalidationBackgroundManager");
             }
           }
+          OBDal.getInstance().getSession().clear();
           OBDal.getInstance().commitAndClose();
           SessionInfo.init();
           try {
@@ -196,13 +196,11 @@ public class CacheInvalidationBackgroundManager
           } catch (Exception ignored) {
             break;
           }
-
+        } catch (Throwable e) {
+          logger.error(e.getMessage(), e);
+        } finally {
+          OBContext.restorePreviousMode();
         }
-
-      } catch (Throwable e) {
-        logger.error(e.getMessage(), e);
-      } finally {
-        OBContext.restorePreviousMode();
       }
     }
 
