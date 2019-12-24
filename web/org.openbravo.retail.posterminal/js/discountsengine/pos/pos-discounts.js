@@ -334,14 +334,9 @@
         await filterFunction(filterArray);
       }
 
-      const filterArrayByDiscount = filterArray.reduce(
-        (filterArrayByDiscount, filter) => {
-          const discountFilterGroup = filter[filterGroup];
-          (filterArrayByDiscount[discountFilterGroup] =
-            filterArrayByDiscount[discountFilterGroup] || []).push(filter);
-          return filterArrayByDiscount;
-        },
-        {}
+      const filterArrayByDiscount = OB.App.ArrayUtils.groupBy(
+        filterArray,
+        filterGroup
       );
 
       discountArray.forEach(
@@ -564,13 +559,9 @@
       //BPSets
       const bpSetLineArrayPromise = await OB.App.MasterdataModels.BPSetLine.find();
       const bpSetLineArray = bpSetLineArrayPromise.result;
-      const bpSetLineArrayByBPSet = bpSetLineArray.reduce(
-        (bpSetLineArrayByBPSet, bpSetLine) => {
-          (bpSetLineArrayByBPSet[bpSetLine.bpSet] =
-            bpSetLineArrayByBPSet[bpSetLine.bpSet] || []).push(bpSetLine);
-          return bpSetLineArrayByBPSet;
-        },
-        {}
+      const bpSetLineArrayByBPSet = OB.App.ArrayUtils.groupBy(
+        bpSetLineArray,
+        'bpSet'
       );
       OB.Discounts.Pos.bpSets = bpSetLineArrayByBPSet;
 
