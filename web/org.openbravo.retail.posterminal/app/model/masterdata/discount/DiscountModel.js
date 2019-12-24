@@ -19,10 +19,6 @@
         new OB.App.Class.Index({
           name: 'name',
           properties: [{ property: 'name' }]
-        }),
-        new OB.App.Class.Index({
-          name: 'priority',
-          properties: [{ property: 'priority', isNullable: true }]
         })
       ];
     }

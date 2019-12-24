@@ -438,16 +438,6 @@
       );
     },
 
-    filterDiscountsByManual: function(discountArray, isManual) {
-      const manualDiscountArray = OB.Model.Discounts.getManualPromotions(true);
-
-      return discountArray.filter(discount =>
-        isManual
-          ? manualDiscountArray.includes(discount.discountType)
-          : !manualDiscountArray.includes(discount.discountType)
-      );
-    },
-
     filterDiscountsByDate: function(discountArray, date) {
       return discountArray.filter(
         discount =>
@@ -485,23 +475,27 @@
         'discountCacheInitialization'
       );
 
-      // Fixme: filter by manual discountType
-      const manualDiscountArrayPromise = await OB.App.MasterdataModels.Discount.orderedBy(
-        'name'
-      );
-      const manualDiscountArray = OB.Discounts.Pos.filterDiscountsByManual(
-        manualDiscountArrayPromise.result,
-        true
-      );
+      const manualPromotions = OB.Model.Discounts.getManualPromotions(true);
 
-      // Fixme: filter by no manual discountType, order by priority
-      const noManualDiscountArrayPromise = await OB.App.MasterdataModels.Discount.orderedBy(
-        'id'
+      // Manual discounts must be sorted by name
+      const manualDiscountArrayPromise = await OB.App.MasterdataModels.Discount.find(
+        new OB.App.Class.Criteria()
+          .criterion('discountType', manualPromotions, 'in')
+          .orderBy('name', 'asc')
+          .build()
       );
-      const noManualDiscountArray = OB.Discounts.Pos.filterDiscountsByManual(
-        noManualDiscountArrayPromise.result,
-        false
-      ).sort((a, b) => a.priority - b.priority);
+      const manualDiscountArray = manualDiscountArrayPromise.result;
+
+      // No manual discounts must be sorted by priority (done in memory as null priority goes first) and id
+      const noManualDiscountArrayPromise = await OB.App.MasterdataModels.Discount.find(
+        new OB.App.Class.Criteria()
+          .criterion('discountType', manualPromotions, 'notIn')
+          .orderBy('id', 'asc')
+          .build()
+      );
+      const noManualDiscountArray = noManualDiscountArrayPromise.result.sort(
+        (a, b) => a.priority - b.priority
+      );
 
       let discountArray = manualDiscountArray.concat(noManualDiscountArray);
 
@@ -546,14 +540,12 @@
         discount => (discount.discountPercentage = discount.discount)
       );
 
-      OB.Discounts.Pos.manualRuleImpls = OB.Discounts.Pos.filterDiscountsByManual(
-        discountArray,
-        true
+      OB.Discounts.Pos.manualRuleImpls = discountArray.filter(discount =>
+        manualPromotions.includes(discount.discountType)
       );
 
-      OB.Discounts.Pos.ruleImpls = OB.Discounts.Pos.filterDiscountsByManual(
-        discountArray,
-        false
+      OB.Discounts.Pos.ruleImpls = discountArray.filter(
+        discount => !manualPromotions.includes(discount.discountType)
       );
 
       //BPSets
