@@ -8,11 +8,12 @@
  */
 
 (function discountFilterBusinessPartnerGroupModel() {
-  class DiscountFilterBusinessPartnerGroup extends OB.App.MasterdataModel {
+  class DiscountFilterBusinessPartnerGroup extends OB.App.Class
+    .MasterdataModel {
     constructor() {
       super();
       this.indices = [
-        new OB.App.Index({
+        new OB.App.Class.Index({
           name: 'priceAdjustment_identifier_id',
           properties: [
             { property: 'priceAdjustment' },

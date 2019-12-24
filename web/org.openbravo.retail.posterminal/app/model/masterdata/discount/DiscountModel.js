@@ -8,19 +8,19 @@
  */
 
 (function discountModel() {
-  class Discount extends OB.App.MasterdataModel {
+  class Discount extends OB.App.Class.MasterdataModel {
     constructor() {
       super();
       this.indices = [
-        new OB.App.Index({
+        new OB.App.Class.Index({
           name: 'id',
           properties: [{ property: 'id' }]
         }),
-        new OB.App.Index({
+        new OB.App.Class.Index({
           name: 'name',
           properties: [{ property: 'name' }]
         }),
-        new OB.App.Index({
+        new OB.App.Class.Index({
           name: 'priority',
           properties: [{ property: 'priority', isNullable: true }]
         })
