@@ -14,12 +14,6 @@ public abstract class ConcurrentMapCacheManager<K, V> implements CacheManager<K,
   private final ConcurrentMap<K, V> cache = new ConcurrentHashMap<K, V>();
   private Date lastInvalidation;
 
-  public abstract String getCacheIdentifier();
-
-  public boolean containsKey(K key) {
-    return cache.containsKey(key);
-  }
-
   @Override
   public V getEntry(K key) {
     return cache.get(key);
