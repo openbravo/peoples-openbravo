@@ -7427,7 +7427,6 @@
         order,
         paymentSign,
         finalCallback,
-        checkPaymentRounding,
         precision;
 
       if (
@@ -7477,102 +7476,14 @@
         }
       };
 
-      checkPaymentRounding = function(order, payment, terminalPayment) {
-        var paymentStatus = order.getPaymentStatus(),
-          roundingAmount = OB.DEC.sub(
-            paymentStatus.pendingAmt,
-            payment.get('amount')
-          ),
-          amountDifference = null,
-          paymentLine = null,
-          precision = order.getPrecision(payment),
-          multiplyBy = paymentStatus.isReturn
-            ? terminalPayment.paymentRounding.returnMultiplyBy
-            : terminalPayment.paymentRounding.salesMultiplyBy,
-          rounding = paymentStatus.isReturn
-            ? terminalPayment.paymentRounding.returnRounding
-            : terminalPayment.paymentRounding.salesRounding,
-          pow = Math.pow(10, precision),
-          paymentDifference =
-            OB.DEC.mul(paymentStatus.pendingAmt, pow) %
-            OB.DEC.mul(multiplyBy, pow);
-
-        if (
-          (roundingAmount !== 0 && OB.DEC.abs(roundingAmount) < multiplyBy) ||
-          (paymentDifference !== 0 &&
-            payment.get('amount') >= paymentStatus.pendingAmt)
-        ) {
-          if (rounding === 'UR') {
-            if (paymentDifference !== 0) {
-              amountDifference = OB.DEC.sub(
-                multiplyBy,
-                OB.DEC.div(paymentDifference, pow)
-              );
-              roundingAmount = OB.DEC.mul(amountDifference, -1);
-              if (payment.get('amount') < paymentStatus.pendingAmt) {
-                amountDifference = OB.DEC.add(
-                  amountDifference,
-                  OB.DEC.div(paymentDifference, pow)
-                );
-              }
-            }
-            if (payment.get('amount') <= paymentStatus.pendingAmt) {
-              payment.set(
-                'amount',
-                OB.DEC.add(payment.get('amount'), amountDifference)
-              );
-            }
-          } else if (
-            paymentDifference !== 0 &&
-            payment.get('amount') >= paymentStatus.pendingAmt
-          ) {
-            roundingAmount = OB.DEC.div(paymentDifference, pow);
-            if (payment.get('amount') === paymentStatus.pendingAmt) {
-              payment.set(
-                'amount',
-                OB.DEC.sub(payment.get('amount'), roundingAmount)
-              );
-            }
-          }
-
-          payment.set('index', order.get('payments').length);
-          paymentLine = new OB.Model.PaymentLine({
-            kind: terminalPayment.paymentRounding.paymentRoundingType,
-            name: OB.MobileApp.model.getPaymentName(
-              terminalPayment.paymentRounding.paymentRoundingType
-            ),
-            amount: roundingAmount,
-            rate: terminalPayment.rate,
-            mulrate: terminalPayment.mulrate,
-            isocode: terminalPayment.isocode,
-            isCash: terminalPayment.paymentMethod.iscash,
-            allowOpenDrawer: terminalPayment.paymentMethod.allowopendrawer,
-            openDrawer: terminalPayment.paymentMethod.openDrawer,
-            printtwice: terminalPayment.paymentMethod.printtwice,
-            date: new Date(),
-            id: OB.UTIL.get_UUID(),
-            oBPOSPOSTerminal: OB.MobileApp.model.get('terminal').id,
-            orderGross: order.getGross(),
-            isPaid: order.get('isPaid'),
-            isReturnOrder: paymentStatus.isNegative
-          });
-          paymentLine.set('paymentRounding', true);
-          payment.set('paymentRoundingLine', paymentLine);
-          order.get('payments').add(paymentLine);
-        }
-      };
       payments = this.get('payments');
       precision = this.getPrecision(payment);
       payment.set('amount', OB.DEC.toNumber(payment.get('amount'), precision));
-      if (
-        OB.MobileApp.model.paymentnames[payment.get('kind')].paymentRounding
-      ) {
-        checkPaymentRounding(
-          order,
-          payment,
-          OB.MobileApp.model.paymentnames[payment.get('kind')]
-        );
-      }
+      this.checkPaymentRounding(
+        payment,
+        OB.MobileApp.model.paymentnames[payment.get('kind')]
+      );
+
       if (this.get('prepaymentChangeMode')) {
         this.unset('prepaymentChangeMode');
         this.adjustPayment();
@@ -7750,6 +7661,95 @@
           ); // call with callback, no args
         }
       );
+    },
+
+    checkPaymentRounding: function(payment, terminalPayment) {
+      if (
+        OB.MobileApp.model.paymentnames[payment.get('kind')].paymentRounding
+      ) {
+        var paymentStatus = this.getPaymentStatus(),
+          roundingAmount = OB.DEC.sub(
+            paymentStatus.pendingAmt,
+            payment.get('amount')
+          ),
+          amountDifference = null,
+          paymentLine = null,
+          precision = this.getPrecision(payment),
+          multiplyBy = paymentStatus.isReturn
+            ? terminalPayment.paymentRounding.returnMultiplyBy
+            : terminalPayment.paymentRounding.salesMultiplyBy,
+          rounding = paymentStatus.isReturn
+            ? terminalPayment.paymentRounding.returnRounding
+            : terminalPayment.paymentRounding.salesRounding,
+          pow = Math.pow(10, precision),
+          paymentDifference =
+            OB.DEC.mul(paymentStatus.pendingAmt, pow) %
+            OB.DEC.mul(multiplyBy, pow);
+
+        if (
+          (roundingAmount !== 0 && OB.DEC.abs(roundingAmount) < multiplyBy) ||
+          (paymentDifference !== 0 &&
+            payment.get('amount') >= paymentStatus.pendingAmt)
+        ) {
+          if (rounding === 'UR') {
+            if (paymentDifference !== 0) {
+              amountDifference = OB.DEC.sub(
+                multiplyBy,
+                OB.DEC.div(paymentDifference, pow)
+              );
+              roundingAmount = OB.DEC.mul(amountDifference, -1);
+              if (payment.get('amount') < paymentStatus.pendingAmt) {
+                amountDifference = OB.DEC.add(
+                  amountDifference,
+                  OB.DEC.div(paymentDifference, pow)
+                );
+              }
+            }
+            if (payment.get('amount') <= paymentStatus.pendingAmt) {
+              payment.set(
+                'amount',
+                OB.DEC.add(payment.get('amount'), amountDifference)
+              );
+            }
+          } else if (
+            paymentDifference !== 0 &&
+            payment.get('amount') >= paymentStatus.pendingAmt
+          ) {
+            roundingAmount = OB.DEC.div(paymentDifference, pow);
+            if (payment.get('amount') === paymentStatus.pendingAmt) {
+              payment.set(
+                'amount',
+                OB.DEC.sub(payment.get('amount'), roundingAmount)
+              );
+            }
+          }
+
+          payment.set('index', this.get('payments').length);
+          paymentLine = new OB.Model.PaymentLine({
+            kind: terminalPayment.paymentRounding.paymentRoundingType,
+            name: OB.MobileApp.model.getPaymentName(
+              terminalPayment.paymentRounding.paymentRoundingType
+            ),
+            amount: roundingAmount,
+            rate: terminalPayment.rate,
+            mulrate: terminalPayment.mulrate,
+            isocode: terminalPayment.isocode,
+            isCash: terminalPayment.paymentMethod.iscash,
+            allowOpenDrawer: terminalPayment.paymentMethod.allowopendrawer,
+            openDrawer: terminalPayment.paymentMethod.openDrawer,
+            printtwice: terminalPayment.paymentMethod.printtwice,
+            date: new Date(),
+            id: OB.UTIL.get_UUID(),
+            oBPOSPOSTerminal: OB.MobileApp.model.get('terminal').id,
+            orderGross: this.getGross(),
+            isPaid: this.get('isPaid'),
+            isReturnOrder: paymentStatus.isNegative
+          });
+          paymentLine.set('paymentRounding', true);
+          payment.set('paymentRoundingLine', paymentLine);
+          this.get('payments').add(paymentLine);
+        }
+      }
     },
 
     overpaymentExists: function() {
