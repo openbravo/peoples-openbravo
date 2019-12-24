@@ -5320,7 +5320,11 @@
               null,
               null,
               function(shipping, billing, locations) {
-                businessPartner.set('locationModel', billing);
+                businessPartner.set('locations', locations);
+                businessPartner.set(
+                  'locationModel',
+                  shipping ? shipping : billing
+                );
                 businessPartner.set('locationBillModel', billing);
                 businessPartner.set('locId', billing.get('id'));
                 businessPartner.set('locName', billing.get('name'));
@@ -5378,7 +5382,7 @@
             if (callback) {
               callback();
             }
-          } else {
+          } else if (businessPartner.get(lid)) {
             OB.Dal.get(
               OB.Model.BPLocation,
               businessPartner.get(lid),
@@ -5399,6 +5403,10 @@
                 OB.error(arguments);
               }
             );
+          } else {
+            if (callback) {
+              callback();
+            }
           }
         };
 
@@ -5416,7 +5424,11 @@
             null,
             null,
             function(shipping, billing, locations) {
-              businessPartner.set('locationModel', billing);
+              businessPartner.set('locations', locations);
+              businessPartner.set(
+                'locationModel',
+                shipping ? shipping : billing
+              );
               businessPartner.set('locationBillModel', billing);
               businessPartner.set('locId', billing.get('id'));
               businessPartner.set('locName', billing.get('name'));
