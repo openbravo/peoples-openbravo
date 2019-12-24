@@ -8,11 +8,11 @@
  */
 
 (function BPCategoryDefinition() {
-  class BPCategory extends OB.App.MasterdataModel {
+  class BPCategory extends OB.App.Class.MasterdataModel {
     constructor() {
       super();
       this.indices = [
-        new OB.App.Index({
+        new OB.App.Class.Index({
           name: 'name',
           properties: [{ property: 'name' }]
         })

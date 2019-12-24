@@ -448,4 +448,139 @@
       })
       .join(' + ');
   };
+
+  OB.UTIL.TicketCloseUtils.checkOrdersUpdated = function(
+    order,
+    successCallback,
+    errorCallback
+  ) {
+    var errorPopup = function(offline, errorType) {
+      var title = '',
+        message = '',
+        buttons = [];
+      if (
+        offline &&
+        !OB.MobileApp.model.hasPermission(
+          'OBPOS_AllowToSynchronizeLoadedReceiptsOffline',
+          true
+        )
+      ) {
+        title = OB.I18N.getLabel('OBPOS_ErrorCheckingReceipt');
+        message = OB.I18N.getLabel('OBPOS_NotPossibleToConfirmReceipt', [
+          order.get('documentNo')
+        ]);
+        buttons.push({
+          label: OB.I18N.getLabel('OBMOBC_LblOk'),
+          isConfirmButton: true,
+          action: function() {
+            errorCallback();
+          }
+        });
+      } else if (
+        offline &&
+        OB.MobileApp.model.hasPermission(
+          'OBPOS_AllowToSynchronizeLoadedReceiptsOffline',
+          true
+        )
+      ) {
+        title = OB.I18N.getLabel('OBPOS_UpdatedReceipt');
+        message = OB.I18N.getLabel('OBPOS_NotPossibleToConfirmReceiptWarn', [
+          order.get('documentNo')
+        ]);
+        buttons.push({
+          label: OB.I18N.getLabel('OBMOBC_LblOk'),
+          isConfirmButton: true,
+          action: function() {
+            successCallback();
+          }
+        });
+        buttons.push({
+          label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+          action: function() {
+            errorCallback();
+          }
+        });
+      } else {
+        title = OB.I18N.getLabel('OBPOS_ErrorCheckingReceipt');
+        if (errorType === 'P') {
+          message = OB.I18N.getLabel('OBPOS_SyncPending', [
+            order.get('documentNo')
+          ]);
+        } else if (errorType === 'E') {
+          message = OB.I18N.getLabel('OBPOS_SyncWithErrors', [
+            order.get('documentNo')
+          ]);
+        } else {
+          message = OB.I18N.getLabel('OBPOS_RemoveAndLoad', [
+            order.get('documentNo')
+          ]);
+        }
+
+        buttons.push({
+          label: OB.I18N.getLabel('OBMOBC_LblOk'),
+          isConfirmButton: true,
+          action: function() {
+            errorCallback();
+          }
+        });
+      }
+      OB.UTIL.showConfirmation.display(title, message, buttons, {
+        onHideFunction: function() {
+          errorCallback();
+        }
+      });
+    };
+
+    if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+      successCallback();
+      return;
+    }
+
+    if (!order.get('isLayaway') && !order.get('isPaid')) {
+      successCallback();
+      return;
+    }
+
+    if (!OB.MobileApp.model.get('connectedToERP') || !navigator.onLine) {
+      errorPopup(true);
+      return;
+    }
+
+    var checkUpdated = new OB.DS.Process(
+        'org.openbravo.retail.posterminal.process.CheckUpdated'
+      ),
+      _order = {
+        id: order.id,
+        loaded: order.get('loaded'),
+        lines: []
+      };
+    _.each(order.get('lines').models, function(line) {
+      var _line = {
+        id: line.id,
+        loaded: line.get('loaded')
+      };
+      _order.lines.push(_line);
+    });
+    checkUpdated.exec(
+      {
+        order: _order
+      },
+      function(data) {
+        if (data) {
+          if (data.exception) {
+            errorPopup(false);
+          } else if (data.error) {
+            errorPopup(false, data.type);
+          } else {
+            successCallback();
+          }
+        } else {
+          errorCallback();
+        }
+      },
+      function(data) {
+        errorPopup(true);
+      }
+    );
+  };
 })();

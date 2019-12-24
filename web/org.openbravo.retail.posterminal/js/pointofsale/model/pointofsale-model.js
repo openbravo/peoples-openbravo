@@ -1051,95 +1051,106 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         }
 
         function updateCashup() {
-          auxReceipt.set('timezoneOffset', new Date().getTimezoneOffset());
-          auxReceipt.set('gross', OB.DEC.Zero);
-          auxReceipt.set('isVoided', true);
-          auxReceipt.set('orderType', 3);
-          auxReceipt.prepareToSend(function() {
-            OB.Dal.transaction(function(tx) {
-              OB.UTIL.cashUpReport(
-                auxReceipt,
-                function(cashUp) {
-                  auxReceipt.set(
-                    'cashUpReportInformation',
-                    JSON.parse(cashUp.models[0].get('objToSend'))
-                  );
-                  OB.UTIL.HookManager.executeHooks(
-                    'OBPOS_PreSyncReceipt',
-                    {
-                      receipt: receipt,
-                      model: me,
-                      tx: tx
-                    },
-                    function(args) {
+          OB.UTIL.TicketCloseUtils.checkOrdersUpdated(
+            auxReceipt,
+            function() {
+              auxReceipt.set('timezoneOffset', new Date().getTimezoneOffset());
+              auxReceipt.set('gross', OB.DEC.Zero);
+              auxReceipt.set('isVoided', true);
+              auxReceipt.set('orderType', 3);
+              auxReceipt.prepareToSend(function() {
+                OB.Dal.transaction(function(tx) {
+                  OB.UTIL.cashUpReport(
+                    auxReceipt,
+                    function(cashUp) {
                       auxReceipt.set(
-                        'json',
-                        JSON.stringify(receipt.serializeToSaveJSON())
+                        'cashUpReportInformation',
+                        JSON.parse(cashUp.models[0].get('objToSend'))
                       );
-                      process.exec(
+                      OB.UTIL.HookManager.executeHooks(
+                        'OBPOS_PreSyncReceipt',
                         {
-                          messageId: OB.UTIL.get_UUID(),
-                          data: [
+                          receipt: receipt,
+                          model: me,
+                          tx: tx
+                        },
+                        function(args) {
+                          auxReceipt.set(
+                            'json',
+                            JSON.stringify(receipt.serializeToSaveJSON())
+                          );
+                          process.exec(
                             {
-                              id: auxReceipt.get('id'),
-                              posTerminal: OB.MobileApp.model.get('terminal')
-                                .id,
-                              order: auxReceipt
-                            }
-                          ]
-                        },
-                        function(data) {
-                          if (data && data.exception) {
-                            revertCashupReport(function() {
-                              if (data.exception.message) {
-                                OB.UTIL.showConfirmation.display(
-                                  OB.I18N.getLabel('OBMOBC_Error'),
-                                  data.exception.message
-                                );
+                              messageId: OB.UTIL.get_UUID(),
+                              data: [
+                                {
+                                  id: auxReceipt.get('id'),
+                                  posTerminal: OB.MobileApp.model.get(
+                                    'terminal'
+                                  ).id,
+                                  order: auxReceipt
+                                }
+                              ]
+                            },
+                            function(data) {
+                              if (data && data.exception) {
+                                revertCashupReport(function() {
+                                  if (data.exception.message) {
+                                    OB.UTIL.showConfirmation.display(
+                                      OB.I18N.getLabel('OBMOBC_Error'),
+                                      data.exception.message
+                                    );
+                                  } else {
+                                    OB.UTIL.showError(
+                                      OB.I18N.getLabel(
+                                        'OBPOS_MsgErrorVoidLayaway'
+                                      )
+                                    );
+                                  }
+                                  finishVoidLayaway();
+                                });
                               } else {
-                                OB.UTIL.showError(
-                                  OB.I18N.getLabel('OBPOS_MsgErrorVoidLayaway')
+                                auxReceipt.trigger(
+                                  OB.MobileApp.model.get('terminal')
+                                    .defaultwebpostab
                                 );
+                                OB.Dal.remove(receipt, null, function(tx, err) {
+                                  OB.UTIL.showError(err);
+                                });
+                                OB.UTIL.clone(auxReceipt, receiptForPrinting);
+                                auxReceipt.trigger('print', receiptForPrinting);
+                                orderList.deleteCurrent();
+                                receipt.trigger('change:gross', receipt);
+                                OB.UTIL.showSuccess(
+                                  OB.I18N.getLabel(
+                                    'OBPOS_MsgSuccessVoidLayaway'
+                                  )
+                                );
+                                finishVoidLayaway();
                               }
-                              finishVoidLayaway();
-                            });
-                          } else {
-                            auxReceipt.trigger(
-                              OB.MobileApp.model.get('terminal')
-                                .defaultwebpostab
-                            );
-                            OB.Dal.remove(receipt, null, function(tx, err) {
-                              OB.UTIL.showError(err);
-                            });
-                            OB.UTIL.clone(auxReceipt, receiptForPrinting);
-                            auxReceipt.trigger('print', receiptForPrinting);
-                            orderList.deleteCurrent();
-                            receipt.trigger('change:gross', receipt);
-                            OB.UTIL.showSuccess(
-                              OB.I18N.getLabel('OBPOS_MsgSuccessVoidLayaway')
-                            );
-                            finishVoidLayaway();
-                          }
+                            },
+                            function() {
+                              revertCashupReport(function() {
+                                OB.UTIL.showError(
+                                  OB.I18N.getLabel(
+                                    'OBPOS_OfflineWindowRequiresOnline'
+                                  )
+                                );
+                                finishVoidLayaway();
+                              });
+                            }
+                          );
                         },
-                        function() {
-                          revertCashupReport(function() {
-                            OB.UTIL.showError(
-                              OB.I18N.getLabel(
-                                'OBPOS_OfflineWindowRequiresOnline'
-                              )
-                            );
-                            finishVoidLayaway();
-                          });
-                        }
+                        tx
                       );
                     },
                     tx
                   );
-                },
-                tx
-              );
-            });
-          });
+                });
+              });
+            },
+            finishVoidLayaway
+          );
         }
 
         OB.UTIL.clone(receipt, auxReceipt);
@@ -1171,333 +1182,379 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               cloneOrderForPrinting = new OB.Model.Order(),
               creationDate;
 
-            receipt.prepareToSend(function() {
-              creationDate = new Date();
-              receipt.set('creationDate', OB.I18N.normalizeDate(creationDate));
-              receipt.set(
-                'obposCreatedabsolute',
-                OB.I18N.formatDateISO(creationDate)
-              ); // Absolute date in ISO format
-              receipt.set(
-                'obposAppCashup',
-                OB.MobileApp.model.get('terminal').cashUpId
-              );
-              OB.UTIL.HookManager.executeHooks(
-                'OBPOS_FinishCancelLayaway',
-                {
-                  context: me,
-                  model: me,
-                  receipt: receipt
-                },
-                function(args) {
+            OB.UTIL.TicketCloseUtils.checkOrdersUpdated(
+              receipt.get('canceledorder'),
+              function() {
+                receipt.prepareToSend(function() {
+                  creationDate = new Date();
+                  receipt.set(
+                    'creationDate',
+                    OB.I18N.normalizeDate(creationDate)
+                  );
+                  receipt.set(
+                    'obposCreatedabsolute',
+                    OB.I18N.formatDateISO(creationDate)
+                  ); // Absolute date in ISO format
+                  receipt.set(
+                    'obposAppCashup',
+                    OB.MobileApp.model.get('terminal').cashUpId
+                  );
                   OB.UTIL.HookManager.executeHooks(
-                    'OBPOS_PreSyncReceipt',
+                    'OBPOS_FinishCancelLayaway',
                     {
-                      receipt: receipt,
-                      model: me
+                      context: me,
+                      model: me,
+                      receipt: receipt
                     },
                     function(args) {
-                      OB.Dal.transaction(
-                        function(tx) {
-                          if (receipt.isNegative()) {
-                            receipt.get('payments').forEach(function(payment) {
-                              payment.set(
-                                'amount',
-                                OB.DEC.mul(payment.get('amount'), -1)
-                              );
-                              payment.set(
-                                'origAmount',
-                                OB.DEC.mul(payment.get('origAmount'), -1)
-                              );
-                              payment.set(
-                                'paid',
-                                OB.DEC.mul(payment.get('paid'), -1)
-                              );
-                            });
-                          }
-                          OB.UTIL.cashUpReport(
-                            receipt,
-                            function(cashUp) {
-                              var cancelLayawayModel = new OB.Model.CancelLayaway(),
-                                cancelLayawayObj;
+                      OB.UTIL.HookManager.executeHooks(
+                        'OBPOS_PreSyncReceipt',
+                        {
+                          receipt: receipt,
+                          model: me
+                        },
+                        function(args) {
+                          OB.Dal.transaction(
+                            function(tx) {
+                              if (receipt.isNegative()) {
+                                receipt
+                                  .get('payments')
+                                  .forEach(function(payment) {
+                                    payment.set(
+                                      'amount',
+                                      OB.DEC.mul(payment.get('amount'), -1)
+                                    );
+                                    payment.set(
+                                      'origAmount',
+                                      OB.DEC.mul(payment.get('origAmount'), -1)
+                                    );
+                                    payment.set(
+                                      'paid',
+                                      OB.DEC.mul(payment.get('paid'), -1)
+                                    );
+                                  });
+                              }
+                              OB.UTIL.cashUpReport(
+                                receipt,
+                                function(cashUp) {
+                                  var cancelLayawayModel = new OB.Model.CancelLayaway(),
+                                    cancelLayawayObj;
 
-                              receipt.set(
-                                'cashUpReportInformation',
-                                JSON.parse(cashUp.models[0].get('objToSend'))
-                              );
-                              receipt.set('created', new Date().getTime());
-                              receipt.set(
-                                'json',
-                                JSON.stringify(receipt.serializeToSaveJSON())
-                              );
+                                  receipt.set(
+                                    'cashUpReportInformation',
+                                    JSON.parse(
+                                      cashUp.models[0].get('objToSend')
+                                    )
+                                  );
+                                  receipt.set('created', new Date().getTime());
+                                  receipt.set(
+                                    'json',
+                                    JSON.stringify(
+                                      receipt.serializeToSaveJSON()
+                                    )
+                                  );
 
-                              OB.UTIL.clone(receipt, cloneOrderForNew);
-                              OB.UTIL.clone(receipt, cloneOrderForPrinting);
+                                  OB.UTIL.clone(receipt, cloneOrderForNew);
+                                  OB.UTIL.clone(receipt, cloneOrderForPrinting);
 
-                              cancelLayawayObj = receipt.serializeToJSON();
-                              cancelLayawayModel.set(
-                                'json',
-                                JSON.stringify(cancelLayawayObj)
+                                  cancelLayawayObj = receipt.serializeToJSON();
+                                  cancelLayawayModel.set(
+                                    'json',
+                                    JSON.stringify(cancelLayawayObj)
+                                  );
+                                  OB.Dal.getInTransaction(
+                                    tx,
+                                    OB.Model.Order,
+                                    receipt.id,
+                                    function(model) {
+                                      OB.Dal.removeInTransaction(tx, model);
+                                    }
+                                  );
+                                  OB.Dal.saveInTransaction(
+                                    tx,
+                                    cancelLayawayModel
+                                  );
+                                },
+                                tx
                               );
-                              OB.Dal.getInTransaction(
-                                tx,
-                                OB.Model.Order,
-                                receipt.id,
-                                function(model) {
-                                  OB.Dal.removeInTransaction(tx, model);
-                                }
-                              );
-                              OB.Dal.saveInTransaction(tx, cancelLayawayModel);
                             },
-                            tx
-                          );
-                        },
-                        function() {
-                          //transaction error callback
-                          OB.error(
-                            '[cancellayaway] The transaction failed to be commited. LayawayId: ' +
-                              receipt.get('id')
-                          );
-                          OB.UTIL.ProcessController.finish(
-                            'cancelLayaway',
-                            execution
-                          );
-                        },
-                        function() {
-                          //transaction success callback
-                          OB.info(
-                            '[cancellayaway] Transaction success. LayawayId: ' +
-                              receipt.get('id')
-                          );
+                            function() {
+                              //transaction error callback
+                              OB.error(
+                                '[cancellayaway] The transaction failed to be commited. LayawayId: ' +
+                                  receipt.get('id')
+                              );
+                              OB.UTIL.ProcessController.finish(
+                                'cancelLayaway',
+                                execution
+                              );
+                            },
+                            function() {
+                              //transaction success callback
+                              OB.info(
+                                '[cancellayaway] Transaction success. LayawayId: ' +
+                                  receipt.get('id')
+                              );
 
-                          function cancelAndNew() {
-                            if (
-                              OB.MobileApp.model.hasPermission(
-                                'OBPOS_cancelLayawayAndNew',
-                                true
-                              )
-                            ) {
-                              OB.UTIL.showConfirmation.display(
-                                OB.I18N.getLabel(
-                                  'OBPOS_cancelLayawayAndNewHeader'
-                                ),
-                                OB.I18N.getLabel(
-                                  'OBPOS_cancelLayawayAndNewBody'
-                                ),
-                                [
-                                  {
-                                    label: OB.I18N.getLabel('OBPOS_LblOk'),
-                                    action: function() {
-                                      orderList.addNewOrder();
-                                      var linesMap = {},
-                                        order = orderList.modelorder,
-                                        addRelatedLines,
-                                        addLineToTicket;
+                              function cancelAndNew() {
+                                if (
+                                  OB.MobileApp.model.hasPermission(
+                                    'OBPOS_cancelLayawayAndNew',
+                                    true
+                                  )
+                                ) {
+                                  OB.UTIL.showConfirmation.display(
+                                    OB.I18N.getLabel(
+                                      'OBPOS_cancelLayawayAndNewHeader'
+                                    ),
+                                    OB.I18N.getLabel(
+                                      'OBPOS_cancelLayawayAndNewBody'
+                                    ),
+                                    [
+                                      {
+                                        label: OB.I18N.getLabel('OBPOS_LblOk'),
+                                        action: function() {
+                                          orderList.addNewOrder();
+                                          var linesMap = {},
+                                            order = orderList.modelorder,
+                                            addRelatedLines,
+                                            addLineToTicket;
 
-                                      var finalCallback = function() {
-                                        order.unset('preventServicesUpdate');
-                                        order
-                                          .get('lines')
-                                          .trigger('updateRelations');
-                                      };
+                                          var finalCallback = function() {
+                                            order.unset(
+                                              'preventServicesUpdate'
+                                            );
+                                            order
+                                              .get('lines')
+                                              .trigger('updateRelations');
+                                          };
 
-                                      addRelatedLines = function(index) {
-                                        if (
-                                          index === order.get('lines').length
-                                        ) {
-                                          finalCallback();
-                                          return;
-                                        }
-                                        var line = order.get('lines').at(index),
-                                          oldLine = linesMap[line.id];
-                                        if (oldLine.get('relatedLines')) {
-                                          line.set('relatedLines', []);
-                                          _.each(
-                                            oldLine.get('relatedLines'),
-                                            function(relatedLine) {
-                                              var newRelatedLine = _.clone(
-                                                relatedLine
-                                              );
-                                              // If the service is not a deferred service, the related line, documentNo
-                                              // and orderId must be updated. If it is, is must be marked as deferred
-                                              if (!newRelatedLine.otherTicket) {
-                                                var i,
-                                                  keys = _.keys(linesMap);
-                                                newRelatedLine.orderDocumentNo = order.get(
-                                                  'documentNo'
-                                                );
-                                                newRelatedLine.orderId =
-                                                  order.id;
-                                                for (
-                                                  i = 0;
-                                                  i < keys.length;
-                                                  i++
-                                                ) {
-                                                  var key = keys[i];
+                                          addRelatedLines = function(index) {
+                                            if (
+                                              index ===
+                                              order.get('lines').length
+                                            ) {
+                                              finalCallback();
+                                              return;
+                                            }
+                                            var line = order
+                                                .get('lines')
+                                                .at(index),
+                                              oldLine = linesMap[line.id];
+                                            if (oldLine.get('relatedLines')) {
+                                              line.set('relatedLines', []);
+                                              _.each(
+                                                oldLine.get('relatedLines'),
+                                                function(relatedLine) {
+                                                  var newRelatedLine = _.clone(
+                                                    relatedLine
+                                                  );
+                                                  // If the service is not a deferred service, the related line, documentNo
+                                                  // and orderId must be updated. If it is, is must be marked as deferred
                                                   if (
-                                                    newRelatedLine.orderlineId ===
-                                                    linesMap[key].id
+                                                    !newRelatedLine.otherTicket
                                                   ) {
-                                                    newRelatedLine.orderlineId = key;
-                                                    break;
+                                                    var i,
+                                                      keys = _.keys(linesMap);
+                                                    newRelatedLine.orderDocumentNo = order.get(
+                                                      'documentNo'
+                                                    );
+                                                    newRelatedLine.orderId =
+                                                      order.id;
+                                                    for (
+                                                      i = 0;
+                                                      i < keys.length;
+                                                      i++
+                                                    ) {
+                                                      var key = keys[i];
+                                                      if (
+                                                        newRelatedLine.orderlineId ===
+                                                        linesMap[key].id
+                                                      ) {
+                                                        newRelatedLine.orderlineId = key;
+                                                        break;
+                                                      }
+                                                    }
+                                                  }
+                                                  line
+                                                    .get('relatedLines')
+                                                    .push(newRelatedLine);
+                                                  if (
+                                                    !order.get('hasServices')
+                                                  ) {
+                                                    order.set(
+                                                      'hasServices',
+                                                      true
+                                                    );
                                                   }
                                                 }
-                                              }
-                                              line
-                                                .get('relatedLines')
-                                                .push(newRelatedLine);
-                                              if (!order.get('hasServices')) {
-                                                order.set('hasServices', true);
-                                              }
+                                              );
                                             }
-                                          );
-                                        }
-                                        // Hook to allow any needed relation from an external module
-                                        OB.UTIL.HookManager.executeHooks(
-                                          'OBPOS_CancelAndNewAddLineRelation',
-                                          {
-                                            order: order,
-                                            cloneOrderForNew: cloneOrderForNew,
-                                            line: line,
-                                            oldLine: oldLine,
-                                            linesMap: linesMap
-                                          },
-                                          function(args) {
-                                            addRelatedLines(index + 1);
-                                          }
-                                        );
-                                      };
-
-                                      addLineToTicket = function(idx) {
-                                        if (
-                                          idx ===
-                                          cloneOrderForNew.get('lines').length
-                                        ) {
-                                          addRelatedLines(0);
-                                        } else {
-                                          var line = cloneOrderForNew
-                                            .get('lines')
-                                            .at(idx);
-                                          order.addProduct(
-                                            line.get('product'),
-                                            -line.get('qty'),
-                                            {
-                                              isSilentAddProduct: true
-                                            },
-                                            undefined,
-                                            function(success, orderline) {
-                                              if (success) {
-                                                linesMap[
-                                                  order
-                                                    .get('lines')
-                                                    .at(
-                                                      order.get('lines')
-                                                        .length - 1
-                                                    ).id
-                                                ] = line;
+                                            // Hook to allow any needed relation from an external module
+                                            OB.UTIL.HookManager.executeHooks(
+                                              'OBPOS_CancelAndNewAddLineRelation',
+                                              {
+                                                order: order,
+                                                cloneOrderForNew: cloneOrderForNew,
+                                                line: line,
+                                                oldLine: oldLine,
+                                                linesMap: linesMap
+                                              },
+                                              function(args) {
+                                                addRelatedLines(index + 1);
                                               }
-                                              addLineToTicket(idx + 1);
-                                            }
-                                          );
-                                        }
-                                      };
-
-                                      if (cloneOrderForNew.get('isLayaway')) {
-                                        OB.MobileApp.view.$.containerWindow
-                                          .getRoot()
-                                          .showDivText(null, {
-                                            permission: null,
-                                            orderType: 2
-                                          });
-                                      }
-                                      order.set(
-                                        'bp',
-                                        cloneOrderForNew.get('bp')
-                                      );
-                                      addLineToTicket(0);
-                                    }
-                                  },
-                                  {
-                                    label: OB.I18N.getLabel('OBPOS_Cancel')
-                                  }
-                                ]
-                              );
-                            }
-                          }
-
-                          function syncProcessCallback() {
-                            OB.UTIL.showSuccess(
-                              OB.I18N.getLabel(
-                                'OBPOS_MsgSuccessCancelLayaway',
-                                [receipt.get('canceledorder').get('documentNo')]
-                              )
-                            );
-                            orderList.deleteCurrent();
-                            OB.UTIL.calculateCurrentCash();
-                            OB.UTIL.ProcessController.finish(
-                              'cancelLayaway',
-                              execution
-                            );
-                            receipt.trigger('print', cloneOrderForPrinting, {
-                              callback: cancelAndNew,
-                              forceCallback: true
-                            });
-                          }
-
-                          OB.MobileApp.model.runSyncProcess(
-                            function() {
-                              syncProcessCallback();
-                            },
-                            function() {
-                              if (
-                                OB.MobileApp.model.hasPermission(
-                                  'OBMOBC_SynchronizedMode',
-                                  true
-                                )
-                              ) {
-                                OB.Dal.get(
-                                  OB.Model.Order,
-                                  receipt.get('id'),
-                                  function(loadedReceipt) {
-                                    receipt.clearWith(loadedReceipt);
-                                    //We need to restore the payment tab, as that's what the user should see if synchronization fails
-                                    OB.MobileApp.view.waterfall('onTabChange', {
-                                      tabPanel: 'payment',
-                                      keyboard: 'toolbarpayment',
-                                      edit: false
-                                    });
-                                    receipt.set('hasbeenpaid', 'N');
-                                    receipt.unset('completeTicket');
-                                    receipt.trigger('updatePending');
-                                    OB.Dal.save(
-                                      receipt,
-                                      function() {
-                                        OB.UTIL.calculateCurrentCash(
-                                          function() {
-                                            OB.UTIL.ProcessController.finish(
-                                              'cancelLayaway',
-                                              execution
                                             );
+                                          };
+
+                                          addLineToTicket = function(idx) {
+                                            if (
+                                              idx ===
+                                              cloneOrderForNew.get('lines')
+                                                .length
+                                            ) {
+                                              addRelatedLines(0);
+                                            } else {
+                                              var line = cloneOrderForNew
+                                                .get('lines')
+                                                .at(idx);
+                                              order.addProduct(
+                                                line.get('product'),
+                                                -line.get('qty'),
+                                                {
+                                                  isSilentAddProduct: true
+                                                },
+                                                undefined,
+                                                function(success, orderline) {
+                                                  if (success) {
+                                                    linesMap[
+                                                      order
+                                                        .get('lines')
+                                                        .at(
+                                                          order.get('lines')
+                                                            .length - 1
+                                                        ).id
+                                                    ] = line;
+                                                  }
+                                                  addLineToTicket(idx + 1);
+                                                }
+                                              );
+                                            }
+                                          };
+
+                                          if (
+                                            cloneOrderForNew.get('isLayaway')
+                                          ) {
+                                            OB.MobileApp.view.$.containerWindow
+                                              .getRoot()
+                                              .showDivText(null, {
+                                                permission: null,
+                                                orderType: 2
+                                              });
                                           }
-                                        );
+                                          order.set(
+                                            'bp',
+                                            cloneOrderForNew.get('bp')
+                                          );
+                                          addLineToTicket(0);
+                                        }
                                       },
-                                      null,
-                                      false
-                                    );
+                                      {
+                                        label: OB.I18N.getLabel('OBPOS_Cancel')
+                                      }
+                                    ]
+                                  );
+                                }
+                              }
+
+                              function syncProcessCallback() {
+                                OB.UTIL.showSuccess(
+                                  OB.I18N.getLabel(
+                                    'OBPOS_MsgSuccessCancelLayaway',
+                                    [
+                                      receipt
+                                        .get('canceledorder')
+                                        .get('documentNo')
+                                    ]
+                                  )
+                                );
+                                orderList.deleteCurrent();
+                                OB.UTIL.calculateCurrentCash();
+                                OB.UTIL.ProcessController.finish(
+                                  'cancelLayaway',
+                                  execution
+                                );
+                                receipt.trigger(
+                                  'print',
+                                  cloneOrderForPrinting,
+                                  {
+                                    callback: cancelAndNew,
+                                    forceCallback: true
                                   }
                                 );
-                              } else {
-                                syncProcessCallback();
                               }
+
+                              OB.MobileApp.model.runSyncProcess(
+                                function() {
+                                  syncProcessCallback();
+                                },
+                                function() {
+                                  if (
+                                    OB.MobileApp.model.hasPermission(
+                                      'OBMOBC_SynchronizedMode',
+                                      true
+                                    )
+                                  ) {
+                                    OB.Dal.get(
+                                      OB.Model.Order,
+                                      receipt.get('id'),
+                                      function(loadedReceipt) {
+                                        receipt.clearWith(loadedReceipt);
+                                        //We need to restore the payment tab, as that's what the user should see if synchronization fails
+                                        OB.MobileApp.view.waterfall(
+                                          'onTabChange',
+                                          {
+                                            tabPanel: 'payment',
+                                            keyboard: 'toolbarpayment',
+                                            edit: false
+                                          }
+                                        );
+                                        receipt.set('hasbeenpaid', 'N');
+                                        receipt.unset('completeTicket');
+                                        receipt.trigger('updatePending');
+                                        OB.Dal.save(
+                                          receipt,
+                                          function() {
+                                            OB.UTIL.calculateCurrentCash(
+                                              function() {
+                                                OB.UTIL.ProcessController.finish(
+                                                  'cancelLayaway',
+                                                  execution
+                                                );
+                                              }
+                                            );
+                                          },
+                                          null,
+                                          false
+                                        );
+                                      }
+                                    );
+                                  } else {
+                                    syncProcessCallback();
+                                  }
+                                }
+                              );
                             }
                           );
                         }
                       );
                     }
                   );
-                }
-              );
-            });
+                });
+              },
+              function() {
+                OB.UTIL.ProcessController.finish('cancelLayaway', execution);
+              }
+            );
           };
 
           receipt.canCancelOrder(

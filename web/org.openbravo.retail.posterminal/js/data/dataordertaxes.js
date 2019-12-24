@@ -400,6 +400,7 @@
           bplRegionId +
           "') then 0 else 1 end) as orderRegionTo,  (case when coalesce(c_tax.c_country_id, tz.from_country_id) is null then 1 else 0 end) as orderCountryFrom,  (case when coalesce(c_tax.c_region_id, tz.from_region_id) is null then 1 else 0 end) as orderRegionFrom  from c_tax left join c_tax_zone tz on tz.c_tax_id = c_tax.c_tax_id  where c_tax.sopotype in ('B', 'S') ";
       }
+      sql = sql + " and c_tax.c_taxCategory_id = '" + taxCategory + "'";
       if (
         line.has('originalTaxExempt')
           ? line.get('originalTaxExempt')
@@ -407,7 +408,6 @@
       ) {
         sql = sql + " and c_tax.istaxexempt = 'true'";
       } else {
-        sql = sql + " and c_tax.c_taxCategory_id = '" + taxCategory + "'";
         if (bpTaxCategory) {
           sql =
             sql + " and c_tax.c_bp_taxcategory_id = '" + bpTaxCategory + "'";

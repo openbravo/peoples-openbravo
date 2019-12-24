@@ -24,12 +24,25 @@
             line.get('obposCanbedelivered') ||
             line.get('deliveredQuantity') === line.get('qty')
           ) {
-            var linePrepaymentAmount = me.currentLinePrepaymentAmount(
-              line,
-              prepaymentPerc
-            );
-            line.set('obposLinePrepaymentAmount', linePrepaymentAmount);
-            return OB.DEC.add(memo, linePrepaymentAmount);
+            var linePrepaymentAmount = OB.DEC.Zero;
+            if (
+              OB.MobileApp.model.get('permissions')[
+                'OBRDM_EnableDeliveryModes'
+              ] &&
+              line.get('obrdmDeliveryMode') === 'PickAndCarry'
+            ) {
+              prepaymentPercLimit = 100;
+              linePrepaymentAmount = line.get('price');
+              line.set('obposLinePrepaymentAmount', linePrepaymentAmount);
+              return OB.DEC.add(memo, linePrepaymentAmount);
+            } else {
+              linePrepaymentAmount = me.currentLinePrepaymentAmount(
+                line,
+                prepaymentPerc
+              );
+              line.set('obposLinePrepaymentAmount', linePrepaymentAmount);
+              return OB.DEC.add(memo, linePrepaymentAmount);
+            }
           } else {
             line.set('obposLinePrepaymentAmount', OB.DEC.Zero);
             return memo;
