@@ -8,17 +8,7 @@
  */
 
 (function bpSetLineModel() {
-  class BPSetLine extends OB.App.Class.MasterdataModel {
-    constructor() {
-      super();
-      this.indices = [
-        new OB.App.Class.Index({
-          name: 'id',
-          properties: [{ property: 'id' }]
-        })
-      ];
-    }
-  }
+  class BPSetLine extends OB.App.Class.MasterdataModel {}
 
   OB.App.MasterdataController.registerModel(BPSetLine);
 })();
