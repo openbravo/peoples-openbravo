@@ -7479,7 +7479,7 @@
       payments = this.get('payments');
       precision = this.getPrecision(payment);
       payment.set('amount', OB.DEC.toNumber(payment.get('amount'), precision));
-      this.checkPaymentRounding(
+      this.addPaymentRounding(
         payment,
         OB.MobileApp.model.paymentnames[payment.get('kind')]
       );
@@ -7663,7 +7663,7 @@
       );
     },
 
-    checkPaymentRounding: function(payment, terminalPayment) {
+    addPaymentRounding: function(payment, terminalPayment) {
       if (
         OB.MobileApp.model.paymentnames[payment.get('kind')].paymentRounding
       ) {

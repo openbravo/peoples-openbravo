@@ -659,7 +659,7 @@ enyo.kind({
         receipt.removePayment(roundedPayment.get('paymentRoundingLine'));
         roundedPayment.set('paymentRoundingLine', null);
         if (receipt.get('change') !== 0) {
-          receipt.checkPaymentRounding(
+          receipt.addPaymentRounding(
             roundedPayment,
             OB.MobileApp.model.paymentnames[roundedPayment.get('kind')]
           );
