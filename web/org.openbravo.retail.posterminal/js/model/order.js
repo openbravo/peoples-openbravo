@@ -7654,6 +7654,11 @@
               if (payment.get('reversedPayment')) {
                 payment.get('reversedPayment').set('isReversed', true);
               }
+              if (payment.has('paymentRoundingLine')) {
+                payment
+                  .get('paymentRoundingLine')
+                  .set('roundedPaymentId', payment.get('id'));
+              }
               executeFinalCallback(true);
               OB.UTIL.ProcessController.finish('addPayment', execution);
               return;

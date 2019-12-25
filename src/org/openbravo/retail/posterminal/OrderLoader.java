@@ -1783,6 +1783,12 @@ public class OrderLoader extends POSDataSynchronizationProcess
           ? OBDal.getInstance().get(OBPOSApplications.class, payment.getString("oBPOSPOSTerminal"))
           : null);
 
+      if (payment.optBoolean("paymentRounding", false)) {
+        FIN_Payment roundedPayment = OBDal.getInstance()
+            .getProxy(FIN_Payment.class, payment.getString("roundedPaymentId"));
+        finPayment.setOBPOSRoundedPayment(roundedPayment);
+      }
+
       OBDal.getInstance().save(finPayment);
 
       long t1 = System.currentTimeMillis();
