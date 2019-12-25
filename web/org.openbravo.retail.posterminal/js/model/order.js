@@ -7685,7 +7685,10 @@
           paymentDifference =
             OB.DEC.mul(paymentStatus.pendingAmt, pow) %
             OB.DEC.mul(multiplyBy, pow);
-
+        if (paymentStatus.pendingAmt === 0) {
+          paymentDifference =
+            OB.DEC.mul(payment.get('paid'), pow) % OB.DEC.mul(multiplyBy, pow);
+        }
         if (
           (roundingAmount !== 0 && OB.DEC.abs(roundingAmount) < multiplyBy) ||
           (paymentDifference !== 0 &&
@@ -7748,6 +7751,9 @@
           paymentLine.set('paymentRounding', true);
           payment.set('paymentRoundingLine', paymentLine);
           this.get('payments').add(paymentLine);
+          if (paymentStatus.pendingAmt === 0) {
+            this.calculateReceipt();
+          }
         }
       }
     },

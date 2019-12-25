@@ -559,7 +559,9 @@ enyo.kind({
   },
   showPaymentTab: function() {
     var receipt = this.model.get('order'),
-      me = this;
+      me = this,
+      roundedPayment,
+      paymentStatus;
     if (receipt.get('isQuotation')) {
       var execution = OB.UTIL.ProcessController.start('completeQuotation');
       if (receipt.get('hasbeenpaid') !== 'Y') {
@@ -646,6 +648,23 @@ enyo.kind({
     OB.MobileApp.view.scanningFocus(true);
     if (OB.UTIL.RfidController.isRfidConfigured()) {
       OB.UTIL.RfidController.disconnectRFIDDevice();
+    }
+
+    roundedPayment = _.find(receipt.get('payments').models, function(payment) {
+      return payment.has('paymentRoundingLine') && !payment.get('isPaid');
+    });
+    if (!OB.UTIL.isNullOrUndefined(roundedPayment)) {
+      paymentStatus = receipt.getPaymentStatus();
+      if (paymentStatus.pendingAmt > 0 || receipt.get('change') !== 0) {
+        receipt.removePayment(roundedPayment.get('paymentRoundingLine'));
+        roundedPayment.set('paymentRoundingLine', null);
+        if (receipt.get('change') !== 0) {
+          receipt.checkPaymentRounding(
+            roundedPayment,
+            OB.MobileApp.model.paymentnames[roundedPayment.get('kind')]
+          );
+        }
+      }
     }
   },
   tap: function() {
