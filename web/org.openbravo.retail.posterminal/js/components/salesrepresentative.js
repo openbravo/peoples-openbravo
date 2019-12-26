@@ -234,6 +234,7 @@ enyo.kind({
       }
     }
     const criteria = new OB.App.Class.Criteria()
+      .orderBy('_identifier')
       .criterion('_identifier', filter, 'includes')
       .build();
     try {
