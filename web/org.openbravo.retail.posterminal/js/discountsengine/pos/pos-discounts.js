@@ -309,6 +309,17 @@
       }
     },
 
+    /**
+     * Adds a discount child filter to every discount record inside a list.
+     * Thus, it will be possible to use the filter to decide if the discount should be applied or not.
+     * @param {Object[]} discountArray - The list of discount records where child filter will be added.
+     * @param {Class<MasterdataModel>} filterModel - The masterdata model of the filter added.
+     * @param {string} filterName - The name of the property that will be created in each record of the list with the filter data.
+     * @param {string} filterEntity - In case the filter must include an entity.id property instead of an id property, it indicates the name of entity. By default it will be null.
+     * @param {string} filterGroup - Indicates the name of the property used to group the filter. By default it will be 'priceAdjustment'.
+     * @param {function} filterFunction - Allows to define a function that can be executed to add grandchild filters. By default it will be null.
+     * @return {Object[]} The list of discount records with child filter added.
+     */
     addDiscountFilter: async function(
       discountArray,
       filterModel,
@@ -347,6 +358,11 @@
       return discountArray;
     },
 
+    /**
+     * Adds role filter to every discount record inside a list.
+     * @param {Object[]} discountArray - The list of discount records where role filter will be added.
+     * @return {Object[]} The list of discount records with role filter added.
+     */
     addDiscountsByRoleFilter: async function(discountArray) {
       return OB.Discounts.Pos.addDiscountFilter(
         discountArray,
@@ -355,6 +371,11 @@
       );
     },
 
+    /**
+     * Adds product filter to every discount record inside a list.
+     * @param {Object[]} discountArray - The list of discount records where product filter will be added.
+     * @return {Object[]} The list of discount records with product filter added.
+     */
     addDiscountsByProductFilter: async function(discountArray) {
       return OB.Discounts.Pos.addDiscountFilter(
         discountArray,
@@ -364,6 +385,11 @@
       );
     },
 
+    /**
+     * Adds product category filter to every discount record inside a list.
+     * @param {Object[]} discountArray - The list of discount records where role product category will be added.
+     * @return {Object[]} The list of discount records with product category filter added.
+     */
     addDiscountsByProductCategoryFilter: async function(discountArray) {
       return OB.Discounts.Pos.addDiscountFilter(
         discountArray,
@@ -373,6 +399,11 @@
       );
     },
 
+    /**
+     * Adds characteristic filter to every discount record inside a list.
+     * @param {Object[]} discountArray - The list of discount records where characteristic filter will be added.
+     * @return {Object[]} The list of discount records with characteristic filter added.
+     */
     addDiscountsByCharacteristicFilter: async function(discountArray) {
       return OB.Discounts.Pos.addDiscountFilter(
         discountArray,
@@ -381,6 +412,11 @@
       );
     },
 
+    /**
+     * Adds business partner filter to every discount record inside a list.
+     * @param {Object[]} discountArray - The list of discount records where business partner filter will be added.
+     * @return {Object[]} The list of discount records with business partner filter added.
+     */
     addDiscountsByBusinessPartnerFilter: async function(discountArray) {
       // FIXME: Make query remotely in case OBPOS_remote.discount.bp filtering by OB.MobileApp.model.get('businessPartner').id
       return OB.Discounts.Pos.addDiscountFilter(
@@ -391,6 +427,11 @@
       );
     },
 
+    /**
+     * Adds business partner group filter to every discount record inside a list.
+     * @param {Object[]} discountArray - The list of discount records where business partner group filter will be added.
+     * @return {Object[]} The list of discount records with business partner group filter added.
+     */
     addDiscountsByBusinessPartnerGroupFilter: async function(discountArray) {
       return OB.Discounts.Pos.addDiscountFilter(
         discountArray,
@@ -400,6 +441,11 @@
       );
     },
 
+    /**
+     * Adds business partner set filter to every discount record inside a list.
+     * @param {Object[]} discountArray - The list of discount records where business partner set filter will be added.
+     * @return {Object[]} The list of discount records with business partner set filter added.
+     */
     addDiscountsByBusinessPartnerSetFilter: async function(discountArray) {
       return OB.Discounts.Pos.addDiscountFilter(
         discountArray,
@@ -408,6 +454,11 @@
       );
     },
 
+    /**
+     * Adds price list filter to every discount record inside a list.
+     * @param {Object[]} discountArray - The list of discount records where price list filter will be added.
+     * @return {Object[]} The list of discount records with price list filter added.
+     */
     addDiscountsByPriceListFilter: async function(discountArray) {
       return OB.Discounts.Pos.addDiscountFilter(
         discountArray,
@@ -416,6 +467,15 @@
       );
     },
 
+    /**
+     * Filters a list of discount records applying a given filter.
+     * @param {Object[]} discountArray - The list of discount records where filter will be applied.
+     * @param {string} filterIncludeName - The name of the property indicating if the filter is including or excluding.
+     * @param {string} filterChildrenName - The name of the child filter property.
+     * @param {string} filterIdName - The name of the property with the id that will be filtered.
+     * @param {string} id - Id value used to filter.
+     * @return {Object[]} The list of discounts matching the filter.
+     */
     filterDiscountById: function(
       discountArray,
       filterIncludeName,
@@ -438,6 +498,12 @@
       );
     },
 
+    /**
+     * Filters a list of discount records applying a given date.
+     * @param {Object[]} discountArray - The list of discount records where date filter will be applied.
+     * @param {Object} date - Date to filter discounts.
+     * @return {Object[]} The list of discounts matching the date filter.
+     */
     filterDiscountsByDate: function(discountArray, date) {
       return discountArray.filter(
         discount =>
@@ -446,6 +512,12 @@
       );
     },
 
+    /**
+     * Filters a list of discount records applying a given role.
+     * @param {Object[]} discountArray - The list of discount records where role filter will be applied.
+     * @param {Object} date - Role id to filter discounts.
+     * @return {Object[]} The list of discounts matching the role filter.
+     */
     filterDiscountsByRole: function(discountArray, roleId) {
       return OB.Discounts.Pos.filterDiscountById(
         discountArray,
@@ -456,6 +528,12 @@
       );
     },
 
+    /**
+     * Filters a list of discount records applying a given price list.
+     * @param {Object[]} discountArray - The list of discount records where price list filter will be applied.
+     * @param {Object} date - Price list id to filter discounts.
+     * @return {Object[]} The list of discounts matching the price list filter.
+     */
     filterDiscountsByPriceList: function(discountArray, priceListId) {
       return OB.Discounts.Pos.filterDiscountById(
         discountArray,
@@ -466,6 +544,14 @@
       );
     },
 
+    /**
+     * Reads discount masterdata models from database and creates different caches to use them:
+     *   OB.Discounts.Pos.manualRuleImpls: array with manual discounts and promotions including children filters, filtered by current role and sorted by name.
+     *   OB.Discounts.Pos.ruleImpls: array with not manual discounts and promotions including children filters, filtered by current role and sorted by priority and id (null priorities first).
+     *   OB.Discounts.Pos.bpSets: array with business partner sets.
+     * It also runs OBPOS_DiscountsCacheInitialization hook.
+     * Discount masterdata models should be read from database only here. Wherever discount data is needed, any of these caches should be used.
+     */
     initCache: async function(callback) {
       if (OB.Discounts.Pos.isCalculatingCache) {
         return callback();
