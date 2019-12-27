@@ -28,7 +28,6 @@
 
   OB.Model.Discounts = {
     discountRules: alreadyDefinedRules,
-    executor: new OB.Model.DiscountsExecutor(),
     preventApplyPromotions: false,
     applyPromotionsTimeout: {},
     applyPromotions: function(receipt, line) {
