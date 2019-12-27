@@ -7677,6 +7677,10 @@
             paymentStatus.pendingAmt,
             payment.get('amount')
           ),
+          terminalPaymentRounding =
+            OB.MobileApp.model.paymentnames[
+              terminalPayment.paymentRounding.paymentRoundingType
+            ],
           amountDifference = null,
           paymentLine = null,
           precision = this.getPrecision(payment),
@@ -7739,13 +7743,14 @@
               terminalPayment.paymentRounding.paymentRoundingType
             ),
             amount: roundingAmount,
-            rate: terminalPayment.rate,
-            mulrate: terminalPayment.mulrate,
-            isocode: terminalPayment.isocode,
-            isCash: terminalPayment.paymentMethod.iscash,
-            allowOpenDrawer: terminalPayment.paymentMethod.allowopendrawer,
-            openDrawer: terminalPayment.paymentMethod.openDrawer,
-            printtwice: terminalPayment.paymentMethod.printtwice,
+            rate: terminalPaymentRounding.rate,
+            mulrate: terminalPaymentRounding.mulrate,
+            isocode: terminalPaymentRounding.isocode,
+            isCash: terminalPaymentRounding.paymentMethod.iscash,
+            allowOpenDrawer:
+              terminalPaymentRounding.paymentMethod.allowopendrawer,
+            openDrawer: terminalPaymentRounding.paymentMethod.openDrawer,
+            printtwice: terminalPaymentRounding.paymentMethod.printtwice,
             date: new Date(),
             id: OB.UTIL.get_UUID(),
             oBPOSPOSTerminal: OB.MobileApp.model.get('terminal').id,
