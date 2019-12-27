@@ -7750,7 +7750,7 @@
             id: OB.UTIL.get_UUID(),
             oBPOSPOSTerminal: OB.MobileApp.model.get('terminal').id,
             orderGross: this.getGross(),
-            isPaid: this.get('isPaid'),
+            isPaid: false,
             isReturnOrder: paymentStatus.isNegative
           });
           paymentLine.set('paymentRounding', true);
@@ -7792,6 +7792,7 @@
           receipt: this
         },
         function(args) {
+          var reversedPaymentRoundingId;
           if (args.cancellation) {
             if (cancellationCallback) {
               cancellationCallback();
@@ -7801,6 +7802,11 @@
           payments.remove(payment);
           if (payment.has('paymentRoundingLine')) {
             payments.remove(payment.get('paymentRoundingLine'));
+            reversedPaymentRoundingId = payment
+              .get('paymentRoundingLine')
+              .has('reversedPaymentId')
+              ? payment.get('paymentRoundingLine').get('reversedPaymentId')
+              : null;
           }
 
           if (!me.get('deletedPayments')) {
@@ -7812,9 +7818,18 @@
           if (payment.get('reversedPaymentId')) {
             for (i = 0, max = payments.length; i < max; i++) {
               p = payments.at(i);
-              if (p.get('paymentId') === payment.get('reversedPaymentId')) {
+              if (
+                p.get('paymentId') === payment.get('reversedPaymentId') ||
+                (!OB.UTIL.isNullOrUndefined(reversedPaymentRoundingId) &&
+                  p.get('paymentId') === reversedPaymentRoundingId)
+              ) {
                 p.unset('isReversed');
-                break;
+                if (
+                  OB.UTIL.isNullOrUndefined(reversedPaymentRoundingId) ||
+                  p.get('paymentId') === reversedPaymentRoundingId
+                ) {
+                  break;
+                }
               }
             }
           }
@@ -7841,7 +7856,75 @@
       var payments = this.get('payments'),
         me = this,
         usedPayment,
-        reversalPayment;
+        reversalPayment,
+        reversalPaymentRounding,
+        reversalPaymentRoundingLine,
+        paymentRounding = payment.has('paymentRoundingLine')
+          ? payment.get('paymentRoundingLine')
+          : null;
+
+      function createReversePayment(originalPayment) {
+        var reversePayment = new Backbone.Model();
+        OB.UTIL.clone(originalPayment, reversePayment);
+
+        // Remove the cloned properties that must not be in the payment
+        reversePayment.unset('date');
+        reversePayment.unset('isPaid');
+        reversePayment.unset('isPrePayment');
+        reversePayment.unset('paymentAmount');
+        reversePayment.unset('paymentDate');
+        reversePayment.unset('paymentId');
+
+        // Modify other properties for the reverse payment
+        reversePayment.set(
+          'amount',
+          OB.DEC.sub(OB.DEC.Zero, originalPayment.get('amount'))
+        );
+        reversePayment.set(
+          'origAmount',
+          OB.DEC.sub(OB.DEC.Zero, originalPayment.get('origAmount'))
+        );
+        reversePayment.set(
+          'paid',
+          OB.DEC.sub(OB.DEC.Zero, originalPayment.get('paid'))
+        );
+        if (originalPayment.has('overpayment')) {
+          reversePayment.set(
+            'overpayment',
+            OB.DEC.sub(OB.DEC.Zero, originalPayment.get('overpayment'))
+          );
+        }
+        reversePayment.set(
+          'reversedPaymentId',
+          originalPayment.get('paymentId')
+        );
+        reversePayment.set('reversedPayment', originalPayment);
+        reversePayment.set(
+          'index',
+          OB.DEC.add(
+            OB.DEC.One,
+            originalPayment.has('paymentRounding') &&
+              originalPayment.get('paymentRounding')
+              ? payments.indexOf(originalPayment) + OB.DEC.One
+              : payments.indexOf(originalPayment)
+          )
+        );
+        reversePayment.set('reverseCallback', reverseCallback);
+        reversePayment.set('isReversePayment', true);
+        reversePayment.set(
+          'paymentData',
+          originalPayment.get('paymentData')
+            ? originalPayment.get('paymentData')
+            : null
+        );
+        reversePayment.set(
+          'oBPOSPOSTerminal',
+          originalPayment.get('oBPOSPOSTerminal')
+            ? originalPayment.get('oBPOSPOSTerminal')
+            : null
+        );
+        return reversePayment;
+      }
 
       function reversePaymentConfirmed() {
         OB.UTIL.HookManager.executeHooks(
@@ -7859,54 +7942,10 @@
               return true;
             }
 
-            reversalPayment = new Backbone.Model();
-            OB.UTIL.clone(payment, reversalPayment);
-
-            // Remove the cloned properties that must not be in the payment
-            reversalPayment.unset('date');
-            reversalPayment.unset('isPaid');
-            reversalPayment.unset('isPrePayment');
-            reversalPayment.unset('paymentAmount');
-            reversalPayment.unset('paymentDate');
-            reversalPayment.unset('paymentId');
-
-            // Modify other properties for the reverse payment
-            reversalPayment.set(
-              'amount',
-              OB.DEC.sub(OB.DEC.Zero, payment.get('amount'))
-            );
-            reversalPayment.set(
-              'origAmount',
-              OB.DEC.sub(OB.DEC.Zero, payment.get('origAmount'))
-            );
-            reversalPayment.set(
-              'paid',
-              OB.DEC.sub(OB.DEC.Zero, payment.get('paid'))
-            );
-            if (payment.has('overpayment')) {
-              reversalPayment.set(
-                'overpayment',
-                OB.DEC.sub(OB.DEC.Zero, payment.get('overpayment'))
-              );
+            reversalPayment = createReversePayment(payment);
+            if (!OB.UTIL.isNullOrUndefined(paymentRounding)) {
+              reversalPaymentRounding = createReversePayment(paymentRounding);
             }
-            reversalPayment.set('reversedPaymentId', payment.get('paymentId'));
-            reversalPayment.set('reversedPayment', payment);
-            reversalPayment.set(
-              'index',
-              OB.DEC.add(OB.DEC.One, payments.indexOf(payment))
-            );
-            reversalPayment.set('reverseCallback', reverseCallback);
-            reversalPayment.set('isReversePayment', true);
-            reversalPayment.set(
-              'paymentData',
-              payment.get('paymentData') ? payment.get('paymentData') : null
-            );
-            reversalPayment.set(
-              'oBPOSPOSTerminal',
-              payment.get('oBPOSPOSTerminal')
-                ? payment.get('oBPOSPOSTerminal')
-                : null
-            );
 
             OB.UTIL.HookManager.executeHooks(
               'OBPOS_PreAddReversalPayment',
@@ -7975,6 +8014,16 @@
                       args: reversalPayment.attributes
                     });
                   } else {
+                    if (!OB.UTIL.isNullOrUndefined(paymentRounding)) {
+                      reversalPaymentRoundingLine = new OB.Model.PaymentLine(
+                        reversalPaymentRounding.attributes
+                      );
+                      reversalPayment.set(
+                        'paymentRoundingLine',
+                        reversalPaymentRoundingLine
+                      );
+                      me.addPayment(reversalPaymentRoundingLine);
+                    }
                     me.addPayment(
                       new OB.Model.PaymentLine(reversalPayment.attributes)
                     );
