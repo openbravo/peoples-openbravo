@@ -10008,8 +10008,9 @@
                       );
                       if (
                         discount &&
-                        OB.Model.Discounts.discountRules[discount.discountType]
-                          .addManual
+                        OB.Discounts.discountRules[
+                          discount.discountType
+                        ].isManualRule()
                       ) {
                         var percentage;
                         if (discount.obdiscPercentage) {

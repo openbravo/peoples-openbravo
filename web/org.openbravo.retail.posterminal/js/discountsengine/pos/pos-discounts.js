@@ -310,6 +310,22 @@
     },
 
     /**
+     * Retrieves the list of manual promotions
+     * @return {string[]} An array containg the manual promotions
+     */
+    getManualPromotions: function() {
+      const manualPromotions = [];
+
+      for (let rule in OB.Discounts.discountRules) {
+        if (OB.Discounts.discountRules[rule].isManualRule()) {
+          manualPromotions.push(rule);
+        }
+      }
+
+      return manualPromotions;
+    },
+
+    /**
      * Adds a discount child filter to every discount record inside a list.
      * Thus, it will be possible to use the filter to decide if the discount should be applied or not.
      * @param {Object[]} discountArray - The list of discount records where child filter will be added.
@@ -561,7 +577,7 @@
         'discountCacheInitialization'
       );
 
-      const manualPromotions = OB.Model.Discounts.getManualPromotions(true);
+      const manualPromotions = OB.Discounts.Pos.getManualPromotions();
 
       // Manual discounts must be sorted by name
       const manualDiscountArrayPromise = await OB.App.MasterdataModels.Discount.find(
