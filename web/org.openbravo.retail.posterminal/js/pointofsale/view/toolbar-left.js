@@ -650,15 +650,29 @@ enyo.kind({
       OB.UTIL.RfidController.disconnectRFIDDevice();
     }
 
-    roundedPayment = _.find(receipt.get('payments').models, function(payment) {
-      return payment.has('paymentRoundingLine') && !payment.get('isPaid');
-    });
-    if (!OB.UTIL.isNullOrUndefined(roundedPayment)) {
-      paymentStatus = receipt.getPaymentStatus();
-      if (paymentStatus.pendingAmt > 0 || receipt.get('change') !== 0) {
-        receipt.removePayment(roundedPayment.get('paymentRoundingLine'));
-        roundedPayment.set('paymentRoundingLine', null);
-        if (receipt.get('change') !== 0) {
+    if (receipt.get('payments').length > 0) {
+      roundedPayment = _.find(receipt.get('payments').models, function(
+        payment
+      ) {
+        return payment.has('paymentRoundingLine') && !payment.get('isPaid');
+      });
+
+      roundedPayment = OB.UTIL.isNullOrUndefined(roundedPayment)
+        ? receipt.get('payments').models[
+            receipt.get('payments').models.length - 1
+          ]
+        : roundedPayment;
+
+      if (
+        !OB.UTIL.isNullOrUndefined(roundedPayment) &&
+        !roundedPayment.get('isPaid')
+      ) {
+        paymentStatus = receipt.getPaymentStatus();
+        if (paymentStatus.pendingAmt > 0 || receipt.get('change') !== 0) {
+          if (roundedPayment.has('paymentRoundingLine')) {
+            receipt.removePayment(roundedPayment.get('paymentRoundingLine'));
+          }
+          roundedPayment.set('paymentRoundingLine', null);
           receipt.addPaymentRounding(
             roundedPayment,
             OB.MobileApp.model.paymentnames[roundedPayment.get('kind')]
