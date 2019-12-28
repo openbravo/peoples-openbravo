@@ -86,6 +86,7 @@
       </foreign-key>
       <unique name="OBPOS_APP_PAY_ROUND_TYPE_CURR">
         <unique-column name="ROUNDING_PAYMENT_TYPE_ID"/>
+        <unique-column name="OBPOS_APP_PAYMENT_TYPE_ID"/>
         <unique-column name="C_CURRENCY_ID"/>
       </unique>
       <check name="OBPOS_APPPAYTYPE_CASH_CHK"><![CDATA[ISSALESROUNDING IN ('Y', 'N')]]></check>
