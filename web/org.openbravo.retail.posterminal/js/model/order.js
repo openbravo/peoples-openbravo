@@ -1616,6 +1616,7 @@
       this.set('isNewReceipt', _order.get('isNewReceipt'));
       //we need this data when IsPaid, IsLayaway changes are triggered
       this.set('documentType', _order.get('documentType'));
+      this.set('isQuotation', _order.get('isQuotation'));
 
       //Prevent recalculating service relations during executions of clearWith
       this.set('preventServicesUpdate', true);
