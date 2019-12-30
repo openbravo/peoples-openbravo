@@ -4769,7 +4769,7 @@
         unitsConsumedByTheSameRule = 0,
         discountRule =
           OB.Model.Discounts.discountRules[rule.attributes.discountType];
-      if (discountRule.getIdentifier) {
+      if (discountRule && discountRule.getIdentifier) {
         disc.identifier = discountRule.getIdentifier(rule, discount);
       }
       disc.name = discount.name || rule.get('printName') || rule.get('name');
