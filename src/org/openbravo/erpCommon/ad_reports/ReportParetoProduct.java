@@ -177,7 +177,7 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
         final String processTimeDateFormat = "DD-MM-YYYY HH24:MI:SS";
 
         data = ReportParetoProductData.select(readOnlyCP, strCurrencyId, strClient,
-            legalEntity.getId(), processTime, processTimeDateFormat, strMaxAggDate, strWarehouse,
+            legalEntity.getId(), strMaxAggDate, processTime, processTimeDateFormat, strWarehouse,
             strAD_Org_ID, vars.getLanguage());
       } catch (ServletException ex) {
         myMessage = Utility.translateError(readOnlyCP, vars, vars.getLanguage(), ex.getMessage());

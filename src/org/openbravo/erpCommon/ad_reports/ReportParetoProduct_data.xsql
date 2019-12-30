@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2019 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -44,12 +44,18 @@ with
   (select w.ad_org_id,
           t.m_product_id,
           sum(t.movementqty) as movementqty,
-          case when tc.c_currency_id = ?
-             then sum(case when t.movementqty>=0 then tc.cost else -tc.cost end)
-             else c_currency_convert_precision(sum(case when t.movementqty>=0 then tc.cost else -tc.cost end), tc.c_currency_id, ?, tc.dateacct, null, ?, ?)
-          end as value_per_orgwarehouseproduct
-   from m_transaction_cost tc
-   join m_transaction t on (tc.m_transaction_id = t.m_transaction_id)
+          sum(case when t.movementqty >= 0 then trxcost.cost else -trxcost.cost end) as value_per_orgwarehouseproduct
+   from m_transaction t
+   join (select tc.m_transaction_id,
+                sum(case when tc.c_currency_id = ?
+                then tc.cost
+                else c_currency_convert_precision(tc.cost, tc.c_currency_id, ?, tc.dateacct, null, ?, ?)
+                end) as cost
+         from m_transaction_cost tc
+         where tc.dateacct < to_date(trunc(now())) + 1
+         and tc.dateacct > to_date(?)
+         group by tc.m_transaction_id
+         ) trxcost on trxcost.m_transaction_id = t.m_transaction_id
    join m_locator l on (t.m_locator_id = l.m_locator_id)
    join m_warehouse w on (l.m_warehouse_id = w.m_warehouse_id)
    where t.iscostcalculated = 'Y'
@@ -57,12 +63,10 @@ with
      and t.trxprocessdate >= to_timestamp(?, ?)
      and t.movementdate < to_date(trunc(now())) + 1
      and t.movementdate > to_date(?)
-     and tc.dateacct < to_date(trunc(now())) + 1
-     and tc.dateacct > to_date(?)
      and t.ad_client_id = ?
      and 1=1
      and ad_isorgincluded(w.AD_ORG_ID, ?, w.ad_client_id) <> -1 
-   group by w.ad_org_id, t.m_product_id, tc.c_currency_id, tc.dateacct),
+   group by w.ad_org_id, t.m_product_id),
    
  org_prod_agg (ad_org_id, m_product_id, movementqty, value_per_orgwarehouseproduct) as
  (select wh.ad_org_id,
@@ -145,9 +149,9 @@ order by o.name,
     <Parameter name="cCurrencyConv"/>
     <Parameter name="adClientId"/>
     <Parameter name="legalEntityId"/>
+    <Parameter name="maxaggDate"/>
     <Parameter name="processTime"/>
     <Parameter name="dateTimeFormat"/>
-    <Parameter name="maxaggDate"/>
     <Parameter name="maxaggDate"/>
     <Parameter name="adClientId"/>
     <Parameter name="mWarehouseId" optional="true" after="1=1" text=" AND l.M_WAREHOUSE_ID = ? "/>
