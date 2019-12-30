@@ -424,7 +424,9 @@ enyo.kind({
           linesWithPromotionsLength = 0;
 
         checkFilter = function(prom) {
-          return OB.Discounts.discountRules[prom.discountType].isManualRule();
+          return OB.Discounts.Pos.getManualPromotions().includes(
+            prom.discountType
+          );
         };
 
         selectedLines = _.filter(
@@ -774,9 +776,9 @@ enyo.kind({
                 var filtered = _.filter(
                   lineModel.get('promotions'),
                   function(prom) {
-                    return OB.Discounts.discountRules[
+                    return OB.Discounts.Pos.getManualPromotions().includes(
                       prom.discountType
-                    ].isManualRule();
+                    );
                   },
                   this
                 );

@@ -289,7 +289,9 @@ enyo.kind({
       _.each(line.get('promotions'), function(linePromotions) {
         //check manual promotions
         if (
-          OB.Discounts.discountRules[linePromotions.discountType].isManualRule()
+          OB.Discounts.Pos.getManualPromotions().includes(
+            linePromotions.discountType
+          )
         ) {
           //check if receipt discount
           var promotionExists = false,

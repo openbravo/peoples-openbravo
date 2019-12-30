@@ -314,15 +314,7 @@
      * @return {string[]} An array containg the manual promotions
      */
     getManualPromotions: function() {
-      const manualPromotions = [];
-
-      for (let rule in OB.Discounts.discountRules) {
-        if (OB.Discounts.discountRules[rule].isManualRule()) {
-          manualPromotions.push(rule);
-        }
-      }
-
-      return manualPromotions;
+      return Object.keys(OB.Model.Discounts.discountRules);
     },
 
     /**

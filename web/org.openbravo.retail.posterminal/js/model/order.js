@@ -10082,9 +10082,9 @@
                       );
                       if (
                         discount &&
-                        OB.Discounts.discountRules[
+                        OB.Discounts.Pos.getManualPromotions().includes(
                           discount.discountType
-                        ].isManualRule()
+                        )
                       ) {
                         var percentage;
                         if (discount.obdiscPercentage) {
