@@ -822,7 +822,7 @@ OB.UTIL.refreshMasterDataInBackgroundSave = function() {
     null,
     true,
     function() {
-      OB.Discounts.Pos.initCache({}, function() {
+      OB.Discounts.Pos.initCache(function() {
         OB.UTIL.masterdataRefreshStatus = '';
         OB.DS.masterdataBackgroundModels = {};
         OB.UTIL.showLoading(false);

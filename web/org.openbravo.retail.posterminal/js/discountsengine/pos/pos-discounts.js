@@ -309,36 +309,164 @@
       }
     },
 
-    computeDiscountsQuery(basicParams) {
-      let params = [
-        OB.MobileApp.model.get('context').role.id,
-        OB.MobileApp.model.get('context').role.id
-      ];
-      let discountsFilter =
-        'SELECT M_OFFER_ID FROM M_OFFER WHERE ( 1=1 ' +
-        //Do not include manual promotions
-        ' AND M_OFFER_TYPE_ID NOT IN (' +
-        OB.Model.Discounts.getManualPromotions() +
-        ')' + //
-        //Role filter
-        " AND ((EM_OBDISC_ROLE_SELECTION = 'Y' AND NOT EXISTS (SELECT 1 FROM OBDISC_OFFER_ROLE WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID " +
-        " AND AD_ROLE_ID = ?)) OR (EM_OBDISC_ROLE_SELECTION = 'N' " + //
-        ' AND EXISTS (SELECT 1 FROM OBDISC_OFFER_ROLE WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID ' +
-        ' AND AD_ROLE_ID = ?)))' + //
-        ') ORDER BY PRIORITY, M_OFFER_ID';
+    addDiscountFilter: async function(
+      discountArray,
+      filterModel,
+      filterName,
+      filterEntity = null,
+      filterGroup = 'priceAdjustment',
+      filterFunction = null
+    ) {
+      const filterArrayPromise = await filterModel.orderedBy([
+        filterGroup,
+        '_identifier',
+        'id'
+      ]);
+      const filterArray = filterArrayPromise.result;
 
-      const discountsObj = {
-        params: params,
-        queryFilter: discountsFilter
-      };
-      return discountsObj;
+      if (filterEntity) {
+        filterArray.forEach(
+          filter => (filter[filterEntity] = { id: filter[filterEntity] })
+        );
+      }
+
+      if (filterFunction) {
+        await filterFunction(filterArray);
+      }
+
+      const filterArrayByDiscount = OB.App.ArrayUtils.groupBy(
+        filterArray,
+        filterGroup
+      );
+
+      discountArray.forEach(
+        discount =>
+          (discount[filterName] = filterArrayByDiscount[discount.id] || [])
+      );
+
+      return discountArray;
     },
 
-    translateRule: function(rule) {
-      rule.set('discountPercentage', rule.get('discount'));
+    addDiscountsByRoleFilter: async function(discountArray) {
+      return OB.Discounts.Pos.addDiscountFilter(
+        discountArray,
+        OB.App.MasterdataModels.DiscountFilterRole,
+        'roles'
+      );
     },
 
-    initCache: function(basicParams, callback) {
+    addDiscountsByProductFilter: async function(discountArray) {
+      return OB.Discounts.Pos.addDiscountFilter(
+        discountArray,
+        OB.App.MasterdataModels.DiscountFilterProduct,
+        'products',
+        'product'
+      );
+    },
+
+    addDiscountsByProductCategoryFilter: async function(discountArray) {
+      return OB.Discounts.Pos.addDiscountFilter(
+        discountArray,
+        OB.App.MasterdataModels.DiscountFilterProductCategory,
+        'productCategories',
+        'productCategory'
+      );
+    },
+
+    addDiscountsByCharacteristicFilter: async function(discountArray) {
+      return OB.Discounts.Pos.addDiscountFilter(
+        discountArray,
+        OB.App.MasterdataModels.DiscountFilterCharacteristic,
+        'productCharacteristics'
+      );
+    },
+
+    addDiscountsByBusinessPartnerFilter: async function(discountArray) {
+      // FIXME: Make query remotely in case OBPOS_remote.discount.bp filtering by OB.MobileApp.model.get('businessPartner').id
+      return OB.Discounts.Pos.addDiscountFilter(
+        discountArray,
+        OB.App.MasterdataModels.DiscountFilterBusinessPartner,
+        'cbpartners',
+        'businessPartner'
+      );
+    },
+
+    addDiscountsByBusinessPartnerGroupFilter: async function(discountArray) {
+      return OB.Discounts.Pos.addDiscountFilter(
+        discountArray,
+        OB.App.MasterdataModels.DiscountFilterBusinessPartnerGroup,
+        'cbpartnerGroups',
+        'businessPartnerCategory'
+      );
+    },
+
+    addDiscountsByBusinessPartnerSetFilter: async function(discountArray) {
+      return OB.Discounts.Pos.addDiscountFilter(
+        discountArray,
+        OB.App.MasterdataModels.DiscountFilterBusinessPartnerSet,
+        'cbpartnerSets'
+      );
+    },
+
+    addDiscountsByPriceListFilter: async function(discountArray) {
+      return OB.Discounts.Pos.addDiscountFilter(
+        discountArray,
+        OB.App.MasterdataModels.DiscountFilterPriceList,
+        'pricelists'
+      );
+    },
+
+    filterDiscountById: function(
+      discountArray,
+      filterIncludeName,
+      filterChildrenName,
+      filterIdName,
+      id
+    ) {
+      return discountArray.filter(
+        discount =>
+          (discount[filterIncludeName] === 'Y' &&
+            (!discount[filterChildrenName] ||
+              !discount[filterChildrenName].find(
+                filter => filter[filterIdName] === id
+              ))) ||
+          (discount[filterIncludeName] === 'N' &&
+            (discount[filterChildrenName] &&
+              discount[filterChildrenName].find(
+                filter => filter[filterIdName] === id
+              )))
+      );
+    },
+
+    filterDiscountsByDate: function(discountArray, date) {
+      return discountArray.filter(
+        discount =>
+          new Date(discount.startingDate) <= date &&
+          (!discount.endingDate || new Date(discount.endingDate) >= date)
+      );
+    },
+
+    filterDiscountsByRole: function(discountArray, roleId) {
+      return OB.Discounts.Pos.filterDiscountById(
+        discountArray,
+        'oBDISCIncludedRoles',
+        'roles',
+        'role',
+        roleId
+      );
+    },
+
+    filterDiscountsByPriceList: function(discountArray, priceListId) {
+      return OB.Discounts.Pos.filterDiscountById(
+        discountArray,
+        'includePriceLists',
+        'pricelists',
+        'm_pricelist_id',
+        priceListId
+      );
+    },
+
+    initCache: async function(callback) {
       if (OB.Discounts.Pos.isCalculatingCache) {
         return callback();
       }
@@ -346,253 +474,101 @@
       const execution = OB.UTIL.ProcessController.start(
         'discountCacheInitialization'
       );
-      OB.Discounts.Pos.ruleImpls = [];
-      let discountsQueryObject = OB.Discounts.Pos.computeDiscountsQuery(
-        basicParams
+
+      const manualPromotions = OB.Model.Discounts.getManualPromotions(true);
+
+      // Manual discounts must be sorted by name
+      const manualDiscountArrayPromise = await OB.App.MasterdataModels.Discount.find(
+        new OB.App.Class.Criteria()
+          .criterion('discountType', manualPromotions, 'in')
+          .orderBy('name', 'asc')
+          .build()
       );
-      let discountsQuery =
-        'SELECT * FROM M_OFFER WHERE M_OFFER_ID IN (' +
-        discountsQueryObject.queryFilter +
-        ') ORDER BY PRIORITY, M_OFFER.M_OFFER_ID';
-      OB.Dal.query(
-        OB.Model.Discount,
-        discountsQuery,
-        discountsQueryObject.params,
-        rules => {
-          const finishCallback = function() {
-            OB.UTIL.ProcessController.finish(
-              'discountCacheInitialization',
-              execution
-            );
-            callback();
-            delete OB.Discounts.Pos.isCalculatingCache;
-          };
+      const manualDiscountArray = manualDiscountArrayPromise.result;
 
-          rules.forEach(rule => OB.Discounts.Pos.translateRule(rule));
+      // No manual discounts must be sorted by priority (done in memory as null priority goes first) and id
+      const noManualDiscountArrayPromise = await OB.App.MasterdataModels.Discount.find(
+        new OB.App.Class.Criteria()
+          .criterion('discountType', manualPromotions, 'notIn')
+          .orderBy('id', 'asc')
+          .build()
+      );
+      const noManualDiscountArray = noManualDiscountArrayPromise.result.sort(
+        (a, b) => a.priority - b.priority
+      );
 
-          rules.forEach(rule => {
-            var r = JSON.parse(JSON.stringify(rule));
-            OB.Discounts.Pos.ruleImpls.push(r);
-          });
-          let baseFilter =
-            '  WHERE M_OFFER.M_OFFER_ID IN (' +
-            discountsQueryObject.queryFilter +
-            ') ORDER BY PRIORITY, M_OFFER.M_OFFER_ID';
+      let discountArray = manualDiscountArray.concat(noManualDiscountArray);
 
-          let productFilterQuery =
-            'SELECT * FROM M_OFFER_PRODUCT INNER JOIN M_OFFER ON M_OFFER_PRODUCT.M_OFFER_ID = M_OFFER.M_OFFER_ID' +
-            baseFilter;
-          OB.Dal.query(
-            OB.Model.DiscountFilterProduct,
-            productFilterQuery,
-            discountsQueryObject.params,
-            products => {
-              let prodGroups = products.groupBy(prod =>
-                prod.get('priceAdjustment')
-              );
-              OB.Discounts.Pos.ruleImpls.forEach(rule => {
-                rule.products = [];
-                if (prodGroups[rule.id]) {
-                  prodGroups[rule.id].forEach(discProd => {
-                    const objDiscProd = discProd.toJSON();
-                    objDiscProd.product = { id: discProd.get('product') };
-                    rule.products.push(objDiscProd);
-                  });
-                }
-              });
+      discountArray = await OB.Discounts.Pos.addDiscountsByRoleFilter(
+        discountArray
+      );
 
-              let productCatQuery =
-                'SELECT * FROM M_OFFER_PROD_CAT INNER JOIN M_OFFER ON M_OFFER_PROD_CAT.M_OFFER_ID = M_OFFER.M_OFFER_ID' +
-                baseFilter;
-              OB.Dal.query(
-                OB.Model.DiscountFilterProductCategory,
-                productCatQuery,
-                discountsQueryObject.params,
-                productCategories => {
-                  let catGroups = productCategories.groupBy(prod =>
-                    prod.get('priceAdjustment')
-                  );
-                  OB.Discounts.Pos.ruleImpls.forEach(rule => {
-                    rule.productCategories = [];
-                    if (catGroups[rule.id]) {
-                      catGroups[rule.id].forEach(discCat => {
-                        const objDiscCat = discCat.toJSON();
-                        objDiscCat.productCategory = {
-                          id: discCat.get('productCategory')
-                        };
-                        rule.productCategories.push(objDiscCat);
-                      });
-                    }
-                  });
+      discountArray = await OB.Discounts.Pos.addDiscountsByProductFilter(
+        discountArray
+      );
 
-                  let producCharQuery =
-                    'SELECT * FROM M_OFFER_CHARACTERISTIC INNER JOIN M_OFFER ON M_OFFER_CHARACTERISTIC.M_OFFER_ID = M_OFFER.M_OFFER_ID' +
-                    baseFilter;
-                  OB.Dal.query(
-                    OB.Model.DiscountFilterCharacteristic,
-                    producCharQuery,
-                    discountsQueryObject.params,
-                    productCharacteristics => {
-                      let charGroups = productCharacteristics.groupBy(prod =>
-                        prod.get('offer')
-                      );
-                      OB.Discounts.Pos.ruleImpls.forEach(rule => {
-                        rule.productCharacteristics = [];
-                        if (charGroups[rule.id]) {
-                          charGroups[rule.id].forEach(discChar => {
-                            const objDiscChar = discChar.toJSON();
-                            rule.productCharacteristics.push(objDiscChar);
-                          });
-                        }
-                      });
+      discountArray = await OB.Discounts.Pos.addDiscountsByProductCategoryFilter(
+        discountArray
+      );
 
-                      let bpartnerQuery =
-                        'SELECT * FROM M_OFFER_BPARTNER INNER JOIN M_OFFER ON M_OFFER_BPARTNER.M_OFFER_ID = M_OFFER.M_OFFER_ID' +
-                        baseFilter;
-                      OB.Dal.query(
-                        OB.Model.DiscountFilterBusinessPartner,
-                        bpartnerQuery,
-                        discountsQueryObject.params,
-                        bpartners => {
-                          let bpartnerGroups = bpartners.groupBy(prod =>
-                            prod.get('priceAdjustment')
-                          );
-                          OB.Discounts.Pos.ruleImpls.forEach(rule => {
-                            rule.cbpartners = [];
-                            if (bpartnerGroups[rule.id]) {
-                              bpartnerGroups[rule.id].forEach(discBpartner => {
-                                const objDiscBpartner = discBpartner.toJSON();
-                                objDiscBpartner.businessPartner = {
-                                  id: discBpartner.get('businessPartner')
-                                };
-                                rule.cbpartners.push(objDiscBpartner);
-                              });
-                            }
-                          });
+      discountArray = await OB.Discounts.Pos.addDiscountsByCharacteristicFilter(
+        discountArray
+      );
 
-                          let bpartnerGroupQuery =
-                            'SELECT * FROM M_OFFER_BP_GROUP INNER JOIN M_OFFER ON M_OFFER_BP_GROUP.M_OFFER_ID = M_OFFER.M_OFFER_ID' +
-                            baseFilter;
-                          OB.Dal.query(
-                            OB.Model.DiscountFilterBusinessPartnerGroup,
-                            bpartnerGroupQuery,
-                            discountsQueryObject.params,
-                            bpartnerGroups => {
-                              let bpartnerGroupGroups = bpartnerGroups.groupBy(
-                                prod => prod.get('priceAdjustment')
-                              );
-                              OB.Discounts.Pos.ruleImpls.forEach(rule => {
-                                rule.cbpartnerGroups = [];
-                                if (bpartnerGroupGroups[rule.id]) {
-                                  bpartnerGroupGroups[rule.id].forEach(
-                                    discbpartnerGroup => {
-                                      const objDiscbpartnerGroup = discbpartnerGroup.toJSON();
-                                      objDiscbpartnerGroup.businessPartnerCategory = {
-                                        id: discbpartnerGroup.get(
-                                          'businessPartnerCategory'
-                                        )
-                                      };
-                                      rule.cbpartnerGroups.push(
-                                        objDiscbpartnerGroup
-                                      );
-                                    }
-                                  );
-                                }
-                              });
+      discountArray = await OB.Discounts.Pos.addDiscountsByBusinessPartnerFilter(
+        discountArray
+      );
 
-                              let bpartnerSetQuery =
-                                'SELECT * FROM M_OFFER_BP_SET INNER JOIN M_OFFER ON M_OFFER_BP_SET.M_OFFER_ID = M_OFFER.M_OFFER_ID' +
-                                baseFilter;
-                              OB.Dal.query(
-                                OB.Model.DiscountBusinessPartnerSet,
-                                bpartnerSetQuery,
-                                discountsQueryObject.params,
-                                bpartnerSets => {
-                                  let bpartnerSetGroups = bpartnerSets.groupBy(
-                                    prod => prod.get('discount')
-                                  );
-                                  OB.Discounts.Pos.ruleImpls.forEach(rule => {
-                                    rule.cbpartnerSets = [];
-                                    if (bpartnerSetGroups[rule.id]) {
-                                      bpartnerSetGroups[rule.id].forEach(
-                                        discbpartnerSet => {
-                                          const objDiscbpartnerSet = discbpartnerSet.toJSON();
-                                          rule.cbpartnerSets.push(
-                                            objDiscbpartnerSet
-                                          );
-                                        }
-                                      );
-                                    }
-                                  });
+      discountArray = await OB.Discounts.Pos.addDiscountsByBusinessPartnerGroupFilter(
+        discountArray
+      );
 
-                                  let pricelistQuery =
-                                    'SELECT * FROM M_OFFER_PRICELIST INNER JOIN M_OFFER ON M_OFFER_PRICELIST.M_OFFER_ID = M_OFFER.M_OFFER_ID' +
-                                    baseFilter;
-                                  OB.Dal.query(
-                                    OB.Model.OfferPriceList,
-                                    pricelistQuery,
-                                    discountsQueryObject.params,
-                                    pricelists => {
-                                      let pricelistGroups = pricelists.groupBy(
-                                        prod => prod.get('m_offer_id')
-                                      );
-                                      OB.Discounts.Pos.ruleImpls.forEach(
-                                        rule => {
-                                          rule.pricelists = [];
-                                          if (pricelistGroups[rule.id]) {
-                                            pricelistGroups[rule.id].forEach(
-                                              discpricelist => {
-                                                const objDiscpricelist = discpricelist.toJSON();
-                                                rule.pricelists.push(
-                                                  objDiscpricelist
-                                                );
-                                              }
-                                            );
-                                          }
-                                        }
-                                      );
+      discountArray = await OB.Discounts.Pos.addDiscountsByBusinessPartnerSetFilter(
+        discountArray
+      );
 
-                                      //BPSets
-                                      OB.Dal.find(
-                                        OB.Model.BPSetLine,
-                                        [],
-                                        setLines => {
-                                          let setLinesBySet = setLines.groupBy(
-                                            setLine => setLine.get('bpSet')
-                                          );
-                                          OB.Discounts.Pos.bpSets = JSON.parse(
-                                            JSON.stringify(setLinesBySet)
-                                          );
+      discountArray = await OB.Discounts.Pos.addDiscountsByPriceListFilter(
+        discountArray
+      );
 
-                                          OB.UTIL.HookManager.executeHooks(
-                                            'OBPOS_DiscountsCacheInitialization',
-                                            {
-                                              discounts:
-                                                OB.Discounts.Pos.ruleImpls,
-                                              baseFilter,
-                                              params:
-                                                discountsQueryObject.params
-                                            },
-                                            function(args) {
-                                              finishCallback();
-                                            }
-                                          );
-                                        }
-                                      );
-                                    }
-                                  );
-                                }
-                              );
-                            }
-                          );
-                        }
-                      );
-                    }
-                  );
-                }
-              );
-            }
+      discountArray = OB.Discounts.Pos.filterDiscountsByRole(
+        discountArray,
+        OB.MobileApp.model.get('context').role.id
+      );
+
+      discountArray.forEach(
+        discount => (discount.discountPercentage = discount.discount)
+      );
+
+      OB.Discounts.Pos.manualRuleImpls = discountArray.filter(discount =>
+        manualPromotions.includes(discount.discountType)
+      );
+
+      OB.Discounts.Pos.ruleImpls = discountArray.filter(
+        discount => !manualPromotions.includes(discount.discountType)
+      );
+
+      //BPSets
+      const bpSetLineArrayPromise = await OB.App.MasterdataModels.BPSetLine.find();
+      const bpSetLineArray = bpSetLineArrayPromise.result;
+      const bpSetLineArrayByBPSet = OB.App.ArrayUtils.groupBy(
+        bpSetLineArray,
+        'bpSet'
+      );
+      OB.Discounts.Pos.bpSets = bpSetLineArrayByBPSet;
+
+      OB.UTIL.HookManager.executeHooks(
+        'OBPOS_DiscountsCacheInitialization',
+        {
+          discounts: OB.Discounts.Pos.ruleImpls
+        },
+        function(args) {
+          OB.UTIL.ProcessController.finish(
+            'discountCacheInitialization',
+            execution
           );
+          callback();
+          delete OB.Discounts.Pos.isCalculatingCache;
         }
       );
     }

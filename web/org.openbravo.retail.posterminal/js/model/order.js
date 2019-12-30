@@ -10,36 +10,6 @@
 /*global OB, _, moment, Backbone, enyo, BigDecimal*/
 
 (function() {
-  var cachedData = null;
-
-  var findDiscountFilterBusinessPartner = function(criteria, success, fail) {
-    if (
-      criteria.remoteFilters[0].value ===
-      OB.MobileApp.model.get('businessPartner').id
-    ) {
-      if (cachedData) {
-        success(cachedData);
-      } else {
-        OB.Dal.find(
-          OB.Model.DiscountFilterBusinessPartner,
-          criteria,
-          function(discountsBP) {
-            cachedData = discountsBP;
-            success(cachedData);
-          },
-          fail
-        );
-      }
-    } else {
-      OB.Dal.find(
-        OB.Model.DiscountFilterBusinessPartner,
-        criteria,
-        success,
-        fail
-      );
-    }
-  };
-
   // Sales.OrderLine Model
   var OrderLine = Backbone.Model.extend({
     modelName: 'OrderLine',
@@ -1101,29 +1071,16 @@
       this.addToListOfCallbacks(callback);
       var me = this;
 
-      if (OB.MobileApp.model.hasPermission('OBPOS_NewDiscounts', true)) {
-        if (
-          this.get('skipApplyPromotions') ||
-          this.get('cloningReceipt') ||
-          me.preventApplyPromotions
-        ) {
-          calculateGrossThenCallbacks();
-        } else {
-          OB.Discounts.Pos.calculateDiscounts(this, () =>
-            calculateGrossThenCallbacks()
-          );
-        }
+      if (
+        this.get('skipApplyPromotions') ||
+        this.get('cloningReceipt') ||
+        me.preventApplyPromotions
+      ) {
+        calculateGrossThenCallbacks();
       } else {
-        this.on('applyPromotionsFinished', function() {
-          me.off('applyPromotionsFinished');
-          calculateGrossThenCallbacks();
-        });
-        // If line is null or undefined, we calculate the Promotions of the receipt
-        if (OB.UTIL.isNullOrUndefined(line) || line.get('splitline')) {
-          OB.Model.Discounts.applyPromotions(this);
-        } else {
-          OB.Model.Discounts.applyPromotions(this, line);
-        }
+        OB.Discounts.Pos.calculateDiscounts(this, () =>
+          calculateGrossThenCallbacks()
+        );
       }
     },
 
@@ -5324,7 +5281,12 @@
       }
     },
 
-    setBPandBPLoc: function(businessPartner, showNotif, saveChange, callback) {
+    setBPandBPLoc: async function(
+      businessPartner,
+      showNotif,
+      saveChange,
+      callback
+    ) {
       var me = this,
         undef,
         i,
@@ -5495,32 +5457,11 @@
           if (
             OB.MobileApp.model.hasPermission('OBPOS_remote.discount.bp', true)
           ) {
-            var bp = {
-              columns: ['businessPartner'],
-              operator: 'equals',
-              value: businessPartner.id,
-              isId: true
-            };
-            var remoteCriteria = [bp];
-            var criteriaFilter = {};
-            criteriaFilter.remoteFilters = remoteCriteria;
-            OB.Dal.find(
-              OB.Model.DiscountFilterBusinessPartner,
-              criteriaFilter,
-              function(discountsBP) {
-                _.each(discountsBP.models, function(dsc) {
-                  OB.Dal.saveOrUpdate(
-                    dsc,
-                    function() {},
-                    function() {
-                      OB.error(arguments);
-                    }
-                  );
-                });
-              },
-              function() {
-                OB.error(arguments);
-              }
+            OB.Discounts.Pos.manualRuleImpls = await OB.Discounts.Pos.addDiscountsByBusinessPartnerFilter(
+              OB.Discounts.Pos.manualRuleImpls
+            );
+            OB.Discounts.Pos.ruleImpls = await OB.Discounts.Pos.addDiscountsByBusinessPartnerFilter(
+              OB.Discounts.Pos.ruleImpls
             );
           }
         }
@@ -5849,16 +5790,6 @@
           ) {
             me.save();
           }
-        }
-        // remove promotions
-        if (
-          !(
-            options &&
-            !OB.UTIL.isNullOrUndefined(options.applyPromotions) &&
-            options.applyPromotions === false
-          )
-        ) {
-          OB.Model.Discounts.applyPromotions(me);
         }
       }
 
@@ -10062,43 +9993,42 @@
                 prod.get('id'),
                 prod.get('productCategory'),
                 function(data) {
-                  var hasservices;
+                  let hasservices;
                   if (
                     !OB.UTIL.isNullOrUndefined(data) &&
                     OB.DEC.number(iter.quantity) > 0
                   ) {
                     hasservices = data.hasservices;
                   }
-                  _.each(iter.promotions, function(promotion) {
-                    OB.Dal.get(
-                      OB.Model.Discount,
-                      promotion.ruleId,
-                      function(discount) {
-                        if (
-                          discount &&
-                          OB.Model.Discounts.discountRules[
-                            discount.get('discountType')
-                          ].addManual
-                        ) {
-                          var percentage;
-                          if (discount.get('obdiscPercentage')) {
-                            percentage = OB.DEC.mul(
-                              OB.DEC.div(promotion.amt, iter.lineGrossAmount),
-                              new BigDecimal('100')
-                            );
-                          }
-                          promotion.userAmt = percentage
-                            ? percentage
-                            : promotion.amt;
-                          promotion.discountType = discount.get('discountType');
-                          promotion.manual = true;
+
+                  for (let promotion of iter.promotions) {
+                    try {
+                      const discount = OB.Discounts.Pos.manualRuleImpls.find(
+                        discount => discount.id === promotion.ruleId
+                      );
+                      if (
+                        discount &&
+                        OB.Model.Discounts.discountRules[discount.discountType]
+                          .addManual
+                      ) {
+                        var percentage;
+                        if (discount.obdiscPercentage) {
+                          percentage = OB.DEC.mul(
+                            OB.DEC.div(promotion.amt, iter.lineGrossAmount),
+                            new BigDecimal('100')
+                          );
                         }
-                      },
-                      function(tx, error) {
-                        OB.UTIL.showError(error);
+                        promotion.userAmt = percentage
+                          ? percentage
+                          : promotion.amt;
+                        promotion.discountType = discount.discountType;
+                        promotion.manual = true;
                       }
-                    );
-                  });
+                    } catch (error) {
+                      OB.UTIL.showError(error);
+                    }
+                  }
+
                   if (
                     OB.MobileApp.model.hasPermission(
                       'OBPOS_EnableSupportForProductAttributes',
@@ -10502,40 +10432,7 @@
             OB.error(arguments);
           }
         );
-        if (
-          OB.MobileApp.model.hasPermission('OBPOS_remote.discount.bp', true)
-        ) {
-          var bp = {
-            columns: ['businessPartner'],
-            operator: 'equals',
-            value: businessPartner.id,
-            isId: true
-          };
-          var remoteCriteria = [bp];
-          var criteria = {};
-          criteria.remoteFilters = remoteCriteria;
-
-          findDiscountFilterBusinessPartner(
-            criteria,
-            function(discountsBP) {
-              _.each(discountsBP.models, function(dsc) {
-                OB.Dal.saveOrUpdate(
-                  dsc,
-                  function() {},
-                  function() {
-                    OB.error(arguments);
-                  }
-                );
-              });
-              OB.UTIL.showLoading(false);
-            },
-            function() {
-              OB.error(arguments);
-            }
-          );
-        } else {
-          OB.UTIL.showLoading(false);
-        }
+        OB.UTIL.showLoading(false);
       },
 
       addNewQuotation: function() {
@@ -11595,10 +11492,7 @@
       },
       initialize: function(attributes) {
         if (attributes && attributes.discountRule) {
-          this.set(
-            'discountRule',
-            new OB.Model.Discount(attributes.discountRule)
-          );
+          this.set('discountRule', new Backbone.Model(attributes.discountRule));
         }
       }
     })

@@ -98,17 +98,16 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "webprinter/usbprinters/startsp100", "webprinter/usbprinters/wincorth230",
         "webprinter/btprinters/genericBTPrinter", "webprinter/btprinters/zebraZQ320",
 
-        "model/currencypanel", "model/discountset", "model/bpartnerset",
-        "model/productcharacteristicvalue", "model/characteristicvalue", "model/characteristic",
-        "model/brand", "model/executor", "model/terminal-model", "model/paymentmethodcashup",
-        "model/taxcashup", "model/offlineprinter", "model/productbom", "model/taxcategorybom",
-        "model/orderassociationsfilter", "model/product-servicelinked", "model/prepaymentrules",
-        "components/modalcancel", "components/subwindow", "components/leftsubwindow",
-        "components/modalreceiptproperties", "components/modalreceiptlineproperties",
-        "components/modalnoteditableorder", "components/modalnoteditableline",
-        "components/modalmodulesindev", "components/modalselectprinters",
-        "components/modalmorepaymentmethods", "components/modalDeliveryChange",
-        "components/obpos-gridkeyboard",
+        "model/currencypanel", "model/productcharacteristicvalue", "model/characteristicvalue",
+        "model/characteristic", "model/brand", "model/executor", "model/terminal-model",
+        "model/paymentmethodcashup", "model/taxcashup", "model/offlineprinter", "model/productbom",
+        "model/taxcategorybom", "model/orderassociationsfilter", "model/product-servicelinked",
+        "model/prepaymentrules", "components/modalcancel", "components/subwindow",
+        "components/leftsubwindow", "components/modalreceiptproperties",
+        "components/modalreceiptlineproperties", "components/modalnoteditableorder",
+        "components/modalnoteditableline", "components/modalmodulesindev",
+        "components/modalselectprinters", "components/modalmorepaymentmethods",
+        "components/modalDeliveryChange", "components/obpos-gridkeyboard",
 
         // Web POS window
         "utils/eventbus", "utils/attributeUtils", "utils/cashUpReportUtils",
@@ -145,9 +144,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
         // Point of sale models
         "model/pricelist", "model/product-category-tree", "model/product", "model/productprice",
-        "model/offerpricelist", "model/service-product", "model/service-category",
-        "model/businesspartner", "model/document-sequence", "model/taxRate", "model/taxZone",
-        "model/promotions",
+        "model/service-product", "model/service-category", "model/businesspartner",
+        "model/document-sequence", "model/taxRate", "model/taxZone",
 
         "model/servicepricerule", "model/servicepricerulerange",
         "model/servicepricerulerangeprices", "model/servicepriceruleversion",
@@ -267,11 +265,21 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
     final String[] cssDependency = { "obpos-main" };
 
-    final ArrayList<String> appDependency = new ArrayList<String>();
+    final ArrayList<String> appDependency = new ArrayList<>();
     // IndexedDB
     appDependency.add("model/masterdata/SalesRepresentativeModel");
     appDependency.add("model/masterdata/BPCategoryModel");
     appDependency.add("model/masterdata/CountryModel");
+    appDependency.add("model/masterdata/BPSetLineModel");
+    appDependency.add("model/masterdata/discount/DiscountFilterBusinessPartnerGroupModel");
+    appDependency.add("model/masterdata/discount/DiscountFilterBusinessPartnerModel");
+    appDependency.add("model/masterdata/discount/DiscountFilterBusinessPartnerSetModel");
+    appDependency.add("model/masterdata/discount/DiscountFilterCharacteristicModel");
+    appDependency.add("model/masterdata/discount/DiscountFilterPriceListModel");
+    appDependency.add("model/masterdata/discount/DiscountFilterProductCategoryModel");
+    appDependency.add("model/masterdata/discount/DiscountFilterProductModel");
+    appDependency.add("model/masterdata/discount/DiscountFilterRoleModel");
+    appDependency.add("model/masterdata/discount/DiscountModel");
 
     for (final String resource : resourceDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,

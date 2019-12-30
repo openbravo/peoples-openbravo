@@ -28,7 +28,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     OB.Model.ProductCategoryTree,
     OB.Model.PriceList,
     OB.Model.ProductPrice,
-    OB.Model.OfferPriceList,
     OB.Model.ServiceProduct,
     OB.Model.ServiceProductCategory,
     OB.Model.ServicePriceRule,
@@ -44,34 +43,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     OB.Model.ProductBOM,
     OB.Model.TaxCategoryBOM,
     OB.Model.CancelLayaway,
-    {
-      generatedModel: true,
-      modelName: 'Discount'
-    },
-    {
-      generatedModel: true,
-      modelName: 'DiscountFilterBusinessPartner'
-    },
-    {
-      generatedModel: true,
-      modelName: 'DiscountFilterBusinessPartnerGroup'
-    },
-    {
-      generatedModel: true,
-      modelName: 'DiscountFilterProduct'
-    },
-    {
-      generatedModel: true,
-      modelName: 'DiscountFilterProductCategory'
-    },
-    {
-      generatedModel: true,
-      modelName: 'DiscountFilterRole'
-    },
-    {
-      generatedModel: true,
-      modelName: 'DiscountFilterCharacteristic'
-    },
     OB.Model.ProductServiceLinked, //
     OB.Model.CurrencyPanel,
     OB.Model.Brand,
@@ -81,9 +52,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     OB.Model.CashUp,
     OB.Model.OfflinePrinter,
     OB.Model.PaymentMethodCashUp,
-    OB.Model.TaxCashUp,
-    OB.Model.BPSetLine,
-    OB.Model.DiscountBusinessPartnerSet
+    OB.Model.TaxCashUp
   ],
 
   loadUnpaidOrders: function(loadUnpaidOrdersCallback) {
@@ -350,31 +319,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     this.loadModels(function() {});
   },
 
-  assignManualDiscounts: function(callback) {
-    return function() {
-      OB.Dal.queryUsingCache(
-        OB.Model.Discount,
-        'select * from m_offer where m_offer_type_id in (' +
-          OB.Model.Discounts.getManualPromotions() +
-          ') limit 1',
-        [],
-        function(records, args) {
-          this.set('manualDiscounts', records.length > 0);
-          callback();
-        }.bind(this),
-        callback,
-        {
-          modelsAffectedByCache: ['Discount']
-        }
-      );
-    }.bind(this);
-  },
-
   initModels: function(callback) {
     var me = this;
-
-    // to be executed at the end
-    callback = this.assignManualDiscounts(callback);
 
     // create and expose the receipt
     var receipt = new OB.Model.Order();
@@ -1765,67 +1711,64 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               }
             );
             me.loadUnpaidOrders(function() {
-              OB.Discounts.Pos.initCache(
-                { businessPartner: dataBps.get('id') },
-                function() {
-                  me.printReceipt = new OB.OBPOSPointOfSale.Print.Receipt(me);
-                  // Now, get the hardware manager status
-                  OB.POS.hwserver.status(function(data) {
-                    if (data && data.exception) {
-                      OB.UTIL.showError(data.exception.message);
-                      callback();
-                    } else {
-                      // Save hardware manager information
-                      if (data && data.version) {
-                        // Max database string size: 10
-                        var hwmVersion =
-                          data.version.length > 10
-                            ? data.version.substring(0, 9)
-                            : data.version;
-                        OB.UTIL.localStorage.setItem(
-                          'hardwareManagerVersion',
-                          hwmVersion
-                        );
-                      }
-                      if (data && data.revision) {
-                        // Max database string size: 15
-                        var hwmRevision =
-                          data.revision.length > 15
-                            ? data.version.substring(0, 14)
-                            : data.revision;
-                        OB.UTIL.localStorage.setItem(
-                          'hardwareManagerRevision',
-                          hwmRevision
-                        );
-                      }
-                      if (data && data.javaInfo) {
-                        OB.UTIL.localStorage.setItem(
-                          'hardwareManagerJavaInfo',
-                          data.javaInfo
-                        );
-                      }
-                      // Now that templates has been initialized, print welcome message
-                      OB.POS.hwserver.print(
-                        me.printReceipt.templatewelcome,
-                        {},
-                        function(data) {
-                          if (data && data.exception) {
-                            OB.UTIL.showError(
-                              OB.I18N.getLabel(
-                                'OBPOS_MsgHardwareServerNotAvailable'
-                              )
-                            );
-                            callback();
-                          } else {
-                            callback();
-                          }
-                        },
-                        OB.DS.HWServer.DISPLAY
+              OB.Discounts.Pos.initCache(function() {
+                me.printReceipt = new OB.OBPOSPointOfSale.Print.Receipt(me);
+                // Now, get the hardware manager status
+                OB.POS.hwserver.status(function(data) {
+                  if (data && data.exception) {
+                    OB.UTIL.showError(data.exception.message);
+                    callback();
+                  } else {
+                    // Save hardware manager information
+                    if (data && data.version) {
+                      // Max database string size: 10
+                      var hwmVersion =
+                        data.version.length > 10
+                          ? data.version.substring(0, 9)
+                          : data.version;
+                      OB.UTIL.localStorage.setItem(
+                        'hardwareManagerVersion',
+                        hwmVersion
                       );
                     }
-                  });
-                }
-              );
+                    if (data && data.revision) {
+                      // Max database string size: 15
+                      var hwmRevision =
+                        data.revision.length > 15
+                          ? data.version.substring(0, 14)
+                          : data.revision;
+                      OB.UTIL.localStorage.setItem(
+                        'hardwareManagerRevision',
+                        hwmRevision
+                      );
+                    }
+                    if (data && data.javaInfo) {
+                      OB.UTIL.localStorage.setItem(
+                        'hardwareManagerJavaInfo',
+                        data.javaInfo
+                      );
+                    }
+                    // Now that templates has been initialized, print welcome message
+                    OB.POS.hwserver.print(
+                      me.printReceipt.templatewelcome,
+                      {},
+                      function(data) {
+                        if (data && data.exception) {
+                          OB.UTIL.showError(
+                            OB.I18N.getLabel(
+                              'OBPOS_MsgHardwareServerNotAvailable'
+                            )
+                          );
+                          callback();
+                        } else {
+                          callback();
+                        }
+                      },
+                      OB.DS.HWServer.DISPLAY
+                    );
+                  }
+                });
+              });
             });
           });
         }
