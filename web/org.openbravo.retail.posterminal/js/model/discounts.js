@@ -87,10 +87,6 @@
         // Recalculate all promotions again
         receipt.calculateReceipt();
       }
-    },
-
-    registerRule: function(name, rule) {
-      this.discountRules[name] = rule;
     }
   };
 
