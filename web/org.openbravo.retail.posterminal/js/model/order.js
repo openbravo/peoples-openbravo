@@ -3307,7 +3307,11 @@
         }
       }
       if (p.get('ispack')) {
-        addPackToOrder(this, p, attrs);
+        OB.Data.PackDiscount[p.get('productCategory')].addPackToOrder(
+          this,
+          p,
+          attrs
+        );
         if (callback) {
           callback(true);
         }
@@ -3768,82 +3772,6 @@
           }
         }
       } // End addProductToOrder
-
-      function addPackToOrder(order, pack, attrs) {
-        try {
-          const discount = OB.Discounts.Pos.ruleImpls.find(
-            discount => discount.id === pack.get('id')
-          );
-
-          if (discount.endingDate && discount.endingDate.length > 0) {
-            var objDate = new Date(discount.endingDate);
-            var now = new Date();
-            var nowWithoutTime = new Date(now.toISOString().split('T')[0]);
-            if (nowWithoutTime > objDate) {
-              OB.UTIL.showConfirmation.display(
-                OB.I18N.getLabel('OBPOS_PackExpired_header'),
-                OB.I18N.getLabel('OBPOS_PackExpired_body', [
-                  discount._identifier,
-                  objDate.toLocaleDateString()
-                ])
-              );
-              return;
-            }
-          }
-
-          var addProductsAndCalculateDiscounts = function(
-            products,
-            index,
-            callback,
-            errorCallback
-          ) {
-            if (index === products.length) {
-              return callback();
-            }
-            OB.Dal.get(
-              OB.Model.Product,
-              products[index].product.id,
-              function(product) {
-                if (product) {
-                  order.addProduct(
-                    product,
-                    products[index].obdiscQty,
-                    {
-                      belongsToPack: true,
-                      blockAddProduct: true
-                    },
-                    attrs,
-                    function() {
-                      addProductsAndCalculateDiscounts(
-                        products,
-                        index + 1,
-                        callback,
-                        errorCallback
-                      );
-                    }
-                  );
-                }
-              },
-              errorCallback
-            );
-          };
-          var errorCallback = function(error) {
-            OB.error('OBDAL error: ' + error, arguments);
-          };
-          order.set('skipApplyPromotions', true);
-          addProductsAndCalculateDiscounts(
-            discount.products,
-            0,
-            function() {
-              order.set('skipApplyPromotions', false);
-              order.calculateReceipt();
-            },
-            errorCallback
-          );
-        } finally {
-          /* continue regardless of error */
-        }
-      }
 
       function saveRemoteProduct(p) {
         if (
@@ -11572,6 +11500,85 @@
       }
     })
   });
+
+  OB.Data.PackDiscount = {};
+  OB.Data.PackDiscount['BE5D42E554644B6AA262CCB097753951'] = {
+    addPackToOrder: function(order, pack, attrs) {
+      try {
+        const discount = OB.Discounts.Pos.ruleImpls.find(
+          discount => discount.id === pack.get('id')
+        );
+
+        if (discount.endingDate && discount.endingDate.length > 0) {
+          var objDate = new Date(discount.endingDate);
+          var now = new Date();
+          var nowWithoutTime = new Date(now.toISOString().split('T')[0]);
+          if (nowWithoutTime > objDate) {
+            OB.UTIL.showConfirmation.display(
+              OB.I18N.getLabel('OBPOS_PackExpired_header'),
+              OB.I18N.getLabel('OBPOS_PackExpired_body', [
+                discount._identifier,
+                objDate.toLocaleDateString()
+              ])
+            );
+            return;
+          }
+        }
+
+        var addProductsAndCalculateDiscounts = function(
+          products,
+          index,
+          callback,
+          errorCallback
+        ) {
+          if (index === products.length) {
+            return callback();
+          }
+          OB.Dal.get(
+            OB.Model.Product,
+            products[index].product.id,
+            function(product) {
+              if (product) {
+                order.addProduct(
+                  product,
+                  products[index].obdiscQty,
+                  {
+                    belongsToPack: true,
+                    blockAddProduct: true
+                  },
+                  attrs,
+                  function() {
+                    addProductsAndCalculateDiscounts(
+                      products,
+                      index + 1,
+                      callback,
+                      errorCallback
+                    );
+                  }
+                );
+              }
+            },
+            errorCallback
+          );
+        };
+        var errorCallback = function(error) {
+          OB.error('OBDAL error: ' + error, arguments);
+        };
+        order.set('skipApplyPromotions', true);
+        addProductsAndCalculateDiscounts(
+          discount.products,
+          0,
+          function() {
+            order.set('skipApplyPromotions', false);
+            order.calculateReceipt();
+          },
+          errorCallback
+        );
+      } finally {
+        /* continue regardless of error */
+      }
+    }
+  };
 
   // order model is not registered using standard Registry method because list is
   // because collection is specific
