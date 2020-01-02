@@ -215,7 +215,8 @@ enyo.kind({
                 'obrdmUiListOrdersLine-orderLine-container2-container1 obrdm-cell-orderline-right-col1',
               components: [
                 {
-                  classes: 'obrdmUiListOrdersLine-orderLine-container2-container1-prepare',
+                  classes:
+                    'obrdmUiListOrdersLine-orderLine-container2-container1-prepare',
                   initComponents: function() {
                     this.setContent(OB.I18N.getLabel('OBRDM_LblPrepare'));
                   }
