@@ -7412,8 +7412,6 @@
                 if (saveChanges && !payment.get('changePayment')) {
                   order.adjustPayment();
                   order.trigger('displayTotal');
-                  order.save();
-                  order.trigger('saveCurrent');
                 }
                 OB.UTIL.HookManager.executeHooks(
                   'OBPOS_postAddPayment',
@@ -7423,6 +7421,10 @@
                     receipt: order
                   },
                   function(args2) {
+                    if (saveChanges && !payment.get('changePayment')) {
+                      order.save();
+                      order.trigger('saveCurrent');
+                    }
                     finalCallback();
                   }
                 );

@@ -143,9 +143,9 @@ public class Invoices extends JSONProcessSimple {
             lineAmount = (new BigDecimal(invoiceLine.optString("quantity"))
                 .multiply(new BigDecimal(invoiceLine.optString("unitPrice"))));
           } else {
-            lineAmount = new BigDecimal(invoiceLine.optString("linegrossamount"));
+            lineAmount = new BigDecimal(invoiceLine.optString("lineGrossAmount"));
           }
-          invoiceLine.put("linegrossamount", lineAmount);
+          invoiceLine.put("lineGrossAmount", lineAmount);
 
           invoiceLine.put("promotions", promotions);
 

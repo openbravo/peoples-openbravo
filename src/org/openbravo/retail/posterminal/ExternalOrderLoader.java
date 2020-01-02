@@ -58,6 +58,7 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.order.Order;
+import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.uom.UOM;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
@@ -578,6 +579,17 @@ public class ExternalOrderLoader extends OrderLoader {
       final Order order = OBDal.getInstance().get(Order.class, orderJson.get("id"));
       if (order != null) {
         orderJson.put("loaded", OBMOBCUtils.convertToUTCDateComingFromServer(order.getUpdated()));
+      }
+    }
+    for (int i = 0; i < orderJson.getJSONArray("lines").length(); i++) {
+      JSONObject jsonOrderLine = orderJson.getJSONArray("lines").getJSONObject(i);
+      if (jsonOrderLine.has("id")) {
+        final OrderLine orderLine = OBDal.getInstance()
+            .get(OrderLine.class, jsonOrderLine.optString("id"));
+        if (orderLine != null) {
+          jsonOrderLine.put("loaded",
+              OBMOBCUtils.convertToUTCDateComingFromServer(orderLine.getUpdated()));
+        }
       }
     }
   }
