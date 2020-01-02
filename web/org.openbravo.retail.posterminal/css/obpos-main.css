@@ -5906,13 +5906,13 @@ li.selected > .obUiRenderOrderLine_edit {
 /* [TODO] Review ob-cell-orderline-right-col1 and ob-cell-orderline-right-col2 and there is no reference of tehm in code */
 li.obUiListOrders-orderSelector_obOrder:first-child > button > div.obUiListOrdersLine-order,
 li.obUiListOrders-orderSelector_obOrder + li.obUiListOrders-orderSelector_obOrderline > button > div > div.obUiListOrdersLine-orderline-container1,
-li.obUiListOrders-orderSelector_obOrder + li.obUiListOrders-orderSelector_obOrderline > button > div > div > div.ob-cell-orderline-right-col1:first-child,
-li.obUiListOrders-orderSelector_obOrder + li.obUiListOrders-orderSelector_obOrderline > button > div > div > div.ob-cell-orderline-right-col2:first-child {
+li.obUiListOrders-orderSelector_obOrder + li.obUiListOrders-orderSelector_obOrderline > button > div > div > div.obrdmUiListOrdersLine-orderLine-container2-container1:first-child,
+li.obUiListOrders-orderSelector_obOrder + li.obUiListOrders-orderSelector_obOrderline > button > div > div > div.obrdmUiListOrdersLine-orderLine-container2-container2:first-child {
   border-top: none;
 
 }
 
-li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-child > div.ob-cell-orderline-right-col1:first-child {
+li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-child > div.obrdmUiListOrdersLine-orderLine-container2-container1:first-child {
   border-bottom: none;
 }
 
@@ -15398,7 +15398,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   background-repeat: no-repeat;
 }
 
-.obrdmCheckbox_on {
+.obrdmUiListOrdersLine-orderLine-container1-iconOrderLine.obrdmCheckbox_on, .obrdmCheckbox_on {
   width: 37px;
   height: 30px;
   float: left;
@@ -15414,6 +15414,12 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   display: inline-block;
   background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-off.svg');
   background-repeat: no-repeat;
+}
+
+@media all and (max-aspect-ratio: 9/8) {
+  .obrdmCheckbox_off {
+    width: 33px
+  }
 }
 
 /*
@@ -15476,15 +15482,24 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obrdmUiListOrdersLine {
   height: auto;
   padding: 0px !important;
-  border-bottom: none !important;
+}
+
+.obrdm-orderline {
+  margin-left: 20px
 }
 
 .obrdmUiListOrdersLine-order {
   height: 36px;
-  width: 100%;
+  width: 98%;
   border-top: 1px solid #cccccc;
   border-bottom: 1px solid #cccccc;
   padding: 8px 0px 0px 10px;
+}
+
+@media all and (max-aspect-ratio: 9/8) {
+  .obrdmUiListOrdersLine-order {
+    height: unset;
+  }
 }
 
 .obrdmUiListOrdersLine-order-iconOrder {
@@ -15492,7 +15507,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   height: 30px;
   float: left;
   display: inline-block;
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-half-on.svg');
   background-repeat: no-repeat;
 }
 
@@ -15523,17 +15537,24 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   clear: both;
 }
 
-.obrdmUiListOrdersLine-orderLine {
-  padding-left: 20px;
+@media all and (max-aspect-ratio: 9/8) {
+  .obrdmUiListOrdersLine-orderLine {
+    padding: 0;
+    width: 100%;
+  }
 }
 
 .obrdmUiListOrdersLine-orderLine-container1 {
-  float: left;
+  border-right: 1px solid #ccc;
   display: inline-block;
-  border-top: 1px solid #cccccc;
-  border-right: 1px solid #cccccc;
-  padding: 5px 0px 0px 5px;
-  height: 62px;
+  float: left;
+  padding: 5px 0 0 5px
+}
+
+@media all and (max-aspect-ratio: 9/8) {
+  .obrdmUiListOrdersLine-orderLine-container1 {
+    width: 49%
+  }
 }
 
 .obrdmUiListOrdersLine-orderLine-container1-iconOrderLine {
@@ -15546,6 +15567,12 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   background-repeat: no-repeat;
 }
 
+@media all and (max-aspect-ratio: 9/8) {
+  .obrdmUiListOrdersLine-orderLine-container1-iconOrderLine {
+    width: 33px;
+  }
+}
+
 .obrdmUiListOrdersLine-orderLine-container1-container1 {
   float: left;
   width: 300px;
@@ -15553,22 +15580,46 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   padding-left: 5px;
 }
 
+@media all and (max-aspect-ratio: 9/8) {
+  .obrdmUiListOrdersLine-orderLine-container1-container1 {
+    height: 62px;
+    padding-left: 9px;
+    white-space: pre;
+    width: 86%;
+  }
+}
+
 .obrdmUiListOrdersLine-orderLine-container1-container1-orderlineInfo {
   display: inline-block;
-  width: inherit;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
   margin-top: 4px;
+}
+
+@media all and (max-aspect-ratio: 9/8) {
+  .obrdmUiListOrdersLine-orderLine-container1-container1-orderlineInfo {
+    display: inline-block;
+    width: inherit;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    margin-top: 6px;
+  }
 }
 
 .obrdmUiListOrdersLine-orderLine-container1-container1-orderlineProduct {
   display: inline-block;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
   margin-top: 12px;
   width: 268px;
+}
+
+@media all and (max-aspect-ratio: 9/8) {
+  .obrdmUiListOrdersLine-orderLine-container1-container1-orderlineProduct {
+    display: inline-block;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    margin-top: 10px;
+    width: 98%
+  }
 }
 
 .obrdmUiListOrdersLine-orderLine-container1-container1-orderlineInfoBtn {
@@ -15586,6 +15637,12 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   background-position: 50%;
 }
 
+@media all and (max-aspect-ratio: 9/8) {
+  .obrdmUiListOrdersLine-orderLine-container1-container1-orderlineInfoBtn_normal {
+    display: none;
+  }
+}
+
 .obrdmUiListOrdersLine-orderLine-container1-container1-orderlineInfoBtn_plus {
   background-image: url('./../../org.openbravo.mobile.core/assets/img/info-icon-plus.svg');
   background-repeat: no-repeat;
@@ -15593,16 +15650,54 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   background-color: #7da7d9;
 }
 
+li.obrdm-order:first-child > button > div.obrdm-row-order,
+li.obrdm-order + li.obrdm-orderline > button > div > div.obrdmUiListOrdersLine-orderLine-container1,
+li.obrdm-order + li.obrdm-orderline > button > div > div > div.obrdmUiListOrdersLine-orderLine-container2-container1:first-child,
+li.obrdm-order + li.obrdm-orderline > button > div > div > div.obrdmUiListOrdersLine-orderLine-container2-container2:first-child, 
+li.obrdm-order + li.obrdm-orderline > button > div > div > div.obrdmUiListOrdersLine-orderLine-container2-container3:first-child {
+  border-top: none;
+}
+
+li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdmUiListOrdersLine-orderLine-container2-container1:first-child, 
+li.obrdm-orderline:last-child > button > div > div:last-child > div.obrdmUiListOrdersLine-orderLine-container2-container3:first-child {
+  border-bottom: none;
+}
+
+div.obrdmUiListOrdersLine-orderLine-container2-container1:nth-child(odd),
+div.obrdmUiListOrdersLine-orderLine-container2-container3:nth-child(odd) {
+  border-top: none
+}
+
 .obrdmUiListOrdersLine-orderLine-container2 {
   float: left;
 }
 
+@media all and (max-aspect-ratio: 9/8) {
+  .obrdmUiListOrdersLine-orderLine-container2 {
+    width: 49%; 
+  }
+}
+
 .obrdmUiListOrdersLine-orderLine-container2-container1 {
   border-top: 1px solid #cccccc;
-  width: 174px;
+  width: 159px;
   height: 33px;
   display: inline-block;
   float: left;
+}
+
+@media all and (max-aspect-ratio: 9/8) {
+  .obrdmUiListOrdersLine-orderLine-container2-container1 {
+    border-right: 1px solid #ccc;
+    height: unset;
+    width: 50%;
+  }
+}
+
+.obrdmUiListOrdersLine-orderLine-container2-container1-prepare {
+  float: left;
+  margin-top: 9px;
+  padding-left: 5px;
 }
 
 .obrdmUiListOrdersLine-orderLine-container2-container1-container1 {
@@ -15627,7 +15722,15 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   width: 25px;
   height: 16px;
   float: left;
-  margin-top: 4px;
+  margin-top: 6px;
+  padding: 2px 4px 2px 4px;
+  text-align: center;
+}
+
+@media all and (max-aspect-ratio: 9/8) {
+  .obrdmUiListOrdersLine-orderLine-container2-container1-container1-orderlineQty {
+    margin-top: 5px
+  }
 }
 
 .obrdmUiListOrdersLine-orderLine-container2-container1-container1-element2 {
@@ -15651,10 +15754,24 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   float: left;
 }
 
+@media all and (max-aspect-ratio: 9/8) {
+  .obrdmUiListOrdersLine-orderLine-container2-container2 {
+    border-left: none;
+    width: 49%;
+  }
+}
+
 .obrdmUiListOrdersLine-orderLine-container2-container2-container1 {
+  border-bottom: 1px solid #ccc!important;
   padding: 4px;
   width: 100%;
   height: 26px;
+}
+
+@media all and (max-aspect-ratio: 9/8) {
+  .obrdmUiListOrdersLine-orderLine-container2-container2-container1 {
+    width: unset;
+  }
 }
 
 .obrdmUiListOrdersLine-orderLine-container2-container2-container1-orderlineWarehouse {
@@ -15665,6 +15782,12 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+}
+
+@media all and (max-aspect-ratio: 9/8) {
+  .obrdmUiListOrdersLine-orderLine-container2-container2-container1-orderlineWarehouse {
+    width: 100%;
+  }
 }
 
 .obrdmUiListOrdersLine-orderLine-container2-container2-container1-orderlineWarehouse_disabled {
@@ -15681,21 +15804,32 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obrdmUiListOrdersLine-orderLine-container2-container3 {
   border-top: 1px solid #cccccc;
-  width: 174px;
+  width: 159px;
   height: 33px;
   display: inline-block;
   float: left;
 }
 
+@media all and (max-aspect-ratio: 9/8) {
+  .obrdmUiListOrdersLine-orderLine-container2-container3 {
+    width: 50%;
+  }
+}
+
 .obrdmUiListOrdersLine-orderLine-container2-container3-orderlineDeliveryMode {
   display: inline-block;
-  width: inherit;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
   margin-top: 7px;
   padding-left: 5px;
-  border-bottom: none;
+}
+
+@media all and (max-aspect-ratio: 9/8) {
+  .obrdmUiListOrdersLine-orderLine-container2-container3-orderlineDeliveryMode {
+    display: inline-block;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    width: unset;
+  }
 }
 
 .obrdmUiListOrdersLine-orderLine-container2-element2 {
@@ -15716,7 +15850,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obrdmUiListOrders-container1-stOrderSelector {
   /* Inherits: [OB.UI.ScrollableTable] */
-  max-height: 420px;
+  max-height: 495px;
 }
 
 .obrdmUiListOrders-container1-renderLoading {
