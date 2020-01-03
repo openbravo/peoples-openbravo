@@ -7485,10 +7485,11 @@
                   {
                     paymentAdded: payment,
                     payments: payments,
-                    receipt: order
+                    receipt: order,
+                    saveChanges: saveChanges
                   },
                   function(args2) {
-                    if (saveChanges && !payment.get('changePayment')) {
+                    if (args2.saveChanges && !payment.get('changePayment')) {
                       order.save();
                       order.trigger('saveCurrent');
                     }
