@@ -10084,7 +10084,13 @@
                           ].addManual
                         ) {
                           var percentage;
-                          if (discount.get('obdiscPercentage')) {
+                          if (
+                            (discount.get('discountType') ===
+                              '8338556C0FBF45249512DB343FEFD280' ||
+                              discount.get('discountType') ===
+                                '20E4EC27397344309A2185097392D964') &&
+                            discount.get('obdiscPercentage')
+                          ) {
                             percentage = OB.DEC.mul(
                               OB.DEC.div(promotion.amt, iter.lineGrossAmount),
                               new BigDecimal('100')
