@@ -104,11 +104,11 @@
     });
   }
 
-  function navigateTaxesTree(taxrates, taxid, iteratee) {
-    _.each(taxrates, function(tax) {
-      if (tax.get('taxBase') === taxid) {
-        iteratee(tax);
-        navigateTaxesTree(taxrates, tax.get('id'), iteratee);
+  function navigateTaxesTree(taxRateArray, taxid, iteratee) {
+    taxRateArray.forEach(taxRate => {
+      if (taxRate.taxBase === taxid) {
+        iteratee(taxRate);
+        navigateTaxesTree(taxRateArray, taxRate.id, iteratee);
       }
     });
   }
@@ -473,28 +473,20 @@
           sql: sql
         },
         function(args) {
-          OB.Dal.queryUsingCache(
-            OB.Model.TaxRate,
-            args.sql,
-            [],
-            function(coll) {
-              // success
-              if (coll && coll.length > 0) {
-                fulfill(coll);
-              } else {
-                reject(
-                  OB.I18N.getLabel('OBPOS_TaxNotFound_Message', [
-                    bpName,
-                    bpShipLocName
-                  ])
-                );
-              }
-            },
-            function() {
-              // error
-              reject(OB.I18N.getLabel('OBPOS_TaxCalculationError_Message'));
+          try {
+            if (OB.Taxes.Pos.ruleImpls && OB.Taxes.Pos.ruleImpls.length > 0) {
+              fulfill(OB.Taxes.Pos.ruleImpls);
+            } else {
+              reject(
+                OB.I18N.getLabel('OBPOS_TaxNotFound_Message', [
+                  bpName,
+                  bpShipLocName
+                ])
+              );
             }
-          );
+          } catch (error) {
+            reject(OB.I18N.getLabel('OBPOS_TaxCalculationError_Message'));
+          }
         }
       );
     });
@@ -507,11 +499,13 @@
     var orggross = params.orggross;
     var discountedGross = params.discountedGross;
 
-    return findTaxesCollection(receipt, line, taxCategory).then(function(coll) {
+    return findTaxesCollection(receipt, line, taxCategory).then(function(
+      taxRateArray
+    ) {
       // First calculate the line rate.
       var linerate = BigDecimal.prototype.ONE;
-      var linetaxid = coll.at(0).get('id');
-      var validFromDate = coll.at(0).get('validFromDate');
+      var linetaxid = taxRateArray[0].id;
+      var validFromDate = taxRateArray[0].validFromDate;
       var taxamt = new BigDecimal(String(discountedGross));
       var baseTaxAmt; // Defined here?
       var baseTaxdcAmt; // Defined here?
@@ -519,28 +513,28 @@
       if (!(_.isNull(discountedGross) || _.isUndefined(discountedGross))) {
         taxamtdc = new BigDecimal(String(discountedGross));
       }
-      var fromCountryId = coll.at(0).get('country');
-      var fromRegionId = coll.at(0).get('region');
-      var toCountryId = coll.at(0).get('destinationCountry');
-      var toRegionId = coll.at(0).get('destinationRegion');
-      coll = _.filter(coll.models, function(taxRate) {
-        return (
-          taxRate.get('destinationCountry') === toCountryId &&
-          taxRate.get('destinationRegion') === toRegionId &&
-          taxRate.get('country') === fromCountryId &&
-          taxRate.get('region') === fromRegionId &&
-          taxRate.get('validFromDate') === validFromDate
-        );
-      });
+      var fromCountryId = taxRateArray[0].country;
+      var fromRegionId = taxRateArray[0].region;
+      var toCountryId = taxRateArray[0].destinationCountry;
+      var toRegionId = taxRateArray[0].destinationRegion;
+
+      taxRateArray = taxRateArray.filter(
+        taxRate =>
+          taxRate.destinationCountry === toCountryId &&
+          taxRate.destinationRegion === toRegionId &&
+          taxRate.country === fromCountryId &&
+          taxRate.region === fromRegionId &&
+          taxRate.validFromDate === validFromDate
+      );
 
       var taxeslineAux = {};
       var sortedTaxCollection = [];
 
       var callbackTaxRate = function(taxRate, taxIndex, taxList) {
-        if (!taxRate.get('summaryLevel')) {
-          var taxId = taxRate.get('id');
-          var rate = getTaxRateNumber(taxRate.get('rate'));
-          if (taxRate.get('cascade')) {
+        if (!taxRate.summaryLevel) {
+          var taxId = taxRate.id;
+          var rate = getTaxRateNumber(taxRate.rate);
+          if (taxRate.cascade) {
             linerate = linerate.multiply(rate.add(BigDecimal.prototype.ONE));
             taxamt = taxamt.multiply(
               new BigDecimal(String(OB.DEC.add(1, rate)))
@@ -552,11 +546,11 @@
                 new BigDecimal(String(OB.DEC.add(1, rate)))
               );
             }
-          } else if (taxRate.get('taxBase')) {
-            var baseTax = taxeslineAux[taxRate.get('taxBase')];
+          } else if (taxRate.taxBase) {
+            var baseTax = taxeslineAux[taxRate.taxBase];
             if (!_.isUndefined(baseTax)) {
               //if the baseTax of this tax have been processed, we calculate the taxamt taking into account baseTax amount
-              if (taxRate.get('baseAmount') === 'LNATAX') {
+              if (taxRate.baseAmount === 'LNATAX') {
                 linerate = linerate.multiply(
                   rate.add(BigDecimal.prototype.ONE)
                 );
@@ -608,16 +602,16 @@
             ).multiply(rate);
           }
         } else {
-          linetaxid = taxRate.get('id');
+          linetaxid = taxRate.id;
         }
         //Remove processed tax from the collection
         sortedTaxCollection.push(taxRate);
         taxList.splice(taxList.indexOf(taxRate), 1);
       };
-      var collClone = coll.slice(0);
-      while (collClone.length > 0) {
+      let taxRateArrayClone = taxRateArray.slice(0);
+      while (taxRateArrayClone.length > 0) {
         //Iterate taxes until the collection is empty
-        _.each(collClone, callbackTaxRate);
+        taxRateArrayClone.forEach(callbackTaxRate);
       }
 
       line.get('sortedTaxCollection').push(sortedTaxCollection);
@@ -726,16 +720,16 @@
       var auxNet;
       var callbackTaxLinesCreate = function(taxRate, taxIndex, taxList) {
         auxNet = discountedNet;
-        if (!taxRate.get('summaryLevel')) {
-          var taxId = taxRate.get('id');
-          var rate = new BigDecimal(String(taxRate.get('rate')));
+        if (!taxRate.summaryLevel) {
+          var taxId = taxRate.id;
+          var rate = new BigDecimal(String(taxRate.rate));
           rate = rate.divide(
             new BigDecimal('100'),
             20,
             BigDecimal.prototype.ROUND_HALF_UP
           );
-          if (!taxRate.get('cascade') && taxRate.get('taxBase')) {
-            var baseTax = taxesline[taxRate.get('taxBase')];
+          if (!taxRate.cascade && taxRate.taxBase) {
+            var baseTax = taxesline[taxRate.taxBase];
             if (!_.isUndefined(baseTax)) {
               //if the baseTax of this tax have been processed, we skip this tax till baseTax is processed.
               auxNet = OB.DEC.add(baseTax.net, baseTax.amount);
@@ -752,8 +746,8 @@
           var exactAmount = new BigDecimal(String(auxNet)).multiply(rate);
 
           taxesline[taxId] = {};
-          taxesline[taxId].name = taxRate.get('name');
-          taxesline[taxId].rate = taxRate.get('rate');
+          taxesline[taxId].name = taxRate.name;
+          taxesline[taxId].rate = taxRate.rate;
           taxesline[taxId].net = auxNet;
           taxesline[taxId].amount = amount;
           taxesline[taxId].exactAmount = exactAmount;
@@ -761,10 +755,10 @@
         //Remove processed tax from the collection
         taxList.splice(taxList.indexOf(taxRate), 1);
       };
-      collClone = coll.slice(0);
-      while (collClone.length > 0) {
+      taxRateArrayClone = taxRateArray.slice(0);
+      while (taxRateArrayClone.length > 0) {
         //Iterate taxes until the collection is empty
-        _.each(collClone, callbackTaxLinesCreate);
+        taxRateArrayClone.forEach(callbackTaxLinesCreate);
       }
 
       // We need to make a final adjustment: we will sum all the tax lines,
@@ -776,10 +770,9 @@
         _.isNull(discountedGross) || _.isUndefined(discountedGross)
           ? orggross
           : discountedGross;
-      _.each(coll, function(taxRate) {
-        if (!taxRate.get('summaryLevel')) {
-          var taxId = taxRate.get('id');
-          summedTaxAmt = OB.DEC.add(summedTaxAmt, taxesline[taxId].amount);
+      taxRateArray.forEach(taxRate => {
+        if (!taxRate.summaryLevel) {
+          summedTaxAmt = OB.DEC.add(summedTaxAmt, taxesline[taxRate.id].amount);
         }
       });
       var netandtax, adjustment;
@@ -795,9 +788,9 @@
         //An adjustment is needed
         adjustment = OB.DEC.sub(expectedGross, netandtax);
         var selectedTax;
-        _.each(coll, function(taxRate) {
-          if (!taxRate.get('summaryLevel')) {
-            var taxId = taxRate.get('id');
+        taxRateArray.forEach(taxRate => {
+          if (!taxRate.summaryLevel) {
+            const taxId = taxRate.id;
             //Choose ABS(taxAmt amount - (exactAmount + adjustment)) closest to 0
             if (
               selectedTax === undefined ||
@@ -828,9 +821,9 @@
           taxesline[selectedTax].amount,
           adjustment
         ); // adjust the amout of taxline with greater amount
-        navigateTaxesTree(coll, selectedTax, function(tax) {
-          taxesline[tax.get('id')].net = OB.DEC.add(
-            taxesline[tax.get('id')].net,
+        navigateTaxesTree(taxRateArray, selectedTax, function(taxRate) {
+          taxesline[taxRate.id].net = OB.DEC.add(
+            taxesline[taxRate.id].net,
             adjustment
           ); // adjust the net of taxlines that are son of the taxline with greater amount
         });
@@ -859,8 +852,8 @@
 
       // Calculate receipt taxes
       var taxes = receipt.get('taxes');
-      _.each(coll, function(taxRate) {
-        var taxId = taxRate.get('id');
+      taxRateArray.forEach(taxRate => {
+        const taxId = taxRate.id;
 
         delete taxes[taxId];
         receipt.get('lines').each(function(line) {
@@ -868,7 +861,7 @@
           if (!taxLines || !taxLines[taxId]) {
             return;
           }
-          if (!taxRate.get('summaryLevel')) {
+          if (!taxRate.summaryLevel) {
             if (taxes[taxId]) {
               taxes[taxId].net = OB.DEC.add(
                 taxes[taxId].net,
@@ -880,20 +873,20 @@
               ); // Calculate taxes At Line Level. If At Doc Level, adjustment is done at the end.
             } else {
               taxes[taxId] = {};
-              taxes[taxId].name = taxRate.get('name');
-              taxes[taxId].docTaxAmount = taxRate.get('docTaxAmount');
-              taxes[taxId].rate = taxRate.get('rate');
-              taxes[taxId].taxBase = taxRate.get('taxBase');
-              taxes[taxId].cascade = taxRate.get('cascade');
-              taxes[taxId].lineNo = taxRate.get('lineNo');
+              taxes[taxId].name = taxRate.name;
+              taxes[taxId].docTaxAmount = taxRate.docTaxAmount;
+              taxes[taxId].rate = taxRate.rate;
+              taxes[taxId].taxBase = taxRate.taxBase;
+              taxes[taxId].cascade = taxRate.cascade;
+              taxes[taxId].lineNo = taxRate.lineNo;
               taxes[taxId].net = taxLines[taxId].net;
               taxes[taxId].amount = taxLines[taxId].amount; // Initialize taxes At Line Level. If At Doc Level, adjustment is done at the end.
             }
           }
         });
       });
-      _.each(coll, function(taxRate) {
-        var taxId = taxRate.get('id');
+      taxRateArray.forEach(taxRate => {
+        const taxId = taxRate.id;
         if (taxes[taxId]) {
           taxes[taxId].net = OB.DEC.toNumber(taxes[taxId].net);
           taxes[taxId].amount = OB.DEC.toNumber(taxes[taxId].amount);
@@ -1051,7 +1044,7 @@
       var generateTaxGroupId = function(line) {
         var id = '';
         _.each(line.sortedTaxCollection, function(taxRate) {
-          id += taxRate.get('id');
+          id += taxRate.id;
         });
         return id;
       };
@@ -1129,7 +1122,7 @@
         var linerate = taxGroup.linerateWithPrecision;
         var taxRates = taxGroup.sortedTaxCollection;
 
-        if (taxRates[0].get('docTaxAmount') !== 'D') {
+        if (taxRates[0].docTaxAmount !== 'D') {
           return;
         }
 
@@ -1137,16 +1130,16 @@
         var auxNet;
         _.forEach(taxRates, function(taxRate) {
           auxNet = originalNet;
-          if (!taxRate.get('summaryLevel')) {
-            var taxId = taxRate.get('id');
-            var rate = new BigDecimal(String(taxRate.get('rate')));
+          if (!taxRate.summaryLevel) {
+            var taxId = taxRate.id;
+            var rate = new BigDecimal(String(taxRate.rate));
             rate = rate.divide(
               new BigDecimal('100'),
               20,
               BigDecimal.prototype.ROUND_HALF_UP
             );
-            if (!taxRate.get('cascade') && taxRate.get('taxBase')) {
-              var baseTax = receipt.get('taxes')[taxRate.get('taxBase')];
+            if (!taxRate.cascade && taxRate.taxBase) {
+              var baseTax = receipt.get('taxes')[taxRate.taxBase];
               if (!_.isUndefined(baseTax)) {
                 //if the baseTax of this tax have been processed, we skip this tax till baseTax is processed.
                 auxNet = OB.DEC.add(baseTax.net, baseTax.amount);
@@ -1162,8 +1155,8 @@
             if (!receipt.get('taxes')[taxId]) {
               receipt.get('taxes')[taxId] = {};
             }
-            receipt.get('taxes')[taxId].name = taxRate.get('name');
-            receipt.get('taxes')[taxId].rate = taxRate.get('rate');
+            receipt.get('taxes')[taxId].name = taxRate.name;
+            receipt.get('taxes')[taxId].rate = taxRate.rate;
             receipt.get('taxes')[taxId].net = auxNet;
             receipt.get('taxes')[taxId].amount = amount;
             receipt.get('taxes')[taxId].exactAmount = exactAmount;
@@ -1176,8 +1169,8 @@
         var summedTaxAmt = 0;
         var expectedGross = totalGross;
         _.each(taxRates, function(taxRate) {
-          if (!taxRate.get('summaryLevel')) {
-            var taxId = taxRate.get('id');
+          if (!taxRate.summaryLevel) {
+            var taxId = taxRate.id;
             summedTaxAmt = OB.DEC.add(
               summedTaxAmt,
               receipt.get('taxes')[taxId].amount
@@ -1191,8 +1184,8 @@
           adjustment = OB.DEC.sub(expectedGross, netandtax);
 
           _.each(taxRates, function(taxRate) {
-            if (!taxRate.get('summaryLevel')) {
-              var taxId = taxRate.get('id');
+            if (!taxRate.summaryLevel) {
+              var taxId = taxRate.id;
               //Choose ABS(taxAmt amount - (exactAmount + adjustment)) closest to 0
               if (
                 selectedTax === undefined ||
@@ -1229,9 +1222,9 @@
             receipt.get('taxes')[selectedTax].amount,
             adjustment
           ); // adjust the amout of taxline with greater amount
-          navigateTaxesTree(taxRates, selectedTax, function(tax) {
-            receipt.get('taxes')[tax.get('id')].net = OB.DEC.add(
-              receipt.get('taxes')[tax.get('id')].net,
+          navigateTaxesTree(taxRates, selectedTax, function(taxRate) {
+            receipt.get('taxes')[taxRate.id].net = OB.DEC.add(
+              receipt.get('taxes')[taxRate.id].net,
               adjustment
             ); // adjust the net of taxlines that are son of the taxline with greater amount
           });
@@ -1253,8 +1246,8 @@
           _.each(lineToAdjust.get('taxLines'), function(taxLine, taxLineId) {
             _.each(taxRates, function(taxRate, taxId) {
               if (
-                taxRate.get('id') === taxLineId &&
-                OB.UTIL.isNullOrUndefined(taxRate.get('taxBase'))
+                taxRate.id === taxLineId &&
+                OB.UTIL.isNullOrUndefined(taxRate.taxBase)
               ) {
                 taxLine['net'] = discountedNet;
               }
@@ -1288,23 +1281,24 @@
     var discountedprice = params.discountedprice;
     var discountedNet = params.discountedNet;
 
-    return findTaxesCollection(receipt, line, taxCategory).then(function(coll) {
+    return findTaxesCollection(receipt, line, taxCategory).then(function(
+      taxRateArray
+    ) {
       // First calculate the line rate.
-      var linetaxid = coll.at(0).get('id');
-      var validFromDate = coll.at(0).get('validFromDate');
-      var fromCountryId = coll.at(0).get('country');
-      var fromRegionId = coll.at(0).get('region');
-      var toCountryId = coll.at(0).get('destinationCountry');
-      var toRegionId = coll.at(0).get('destinationRegion');
-      coll = _.filter(coll.models, function(taxRate) {
-        return (
-          taxRate.get('destinationCountry') === toCountryId &&
-          taxRate.get('destinationRegion') === toRegionId &&
-          taxRate.get('country') === fromCountryId &&
-          taxRate.get('region') === fromRegionId &&
-          taxRate.get('validFromDate') === validFromDate
-        );
-      });
+      var linetaxid = taxRateArray[0].id;
+      var validFromDate = taxRateArray[0].validFromDate;
+      var fromCountryId = taxRateArray[0].country;
+      var fromRegionId = taxRateArray[0].region;
+      var toCountryId = taxRateArray[0].destinationCountry;
+      var toRegionId = taxRateArray[0].destinationRegion;
+      taxRateArray = taxRateArray.filter(
+        taxRate =>
+          taxRate.destinationCountry === toCountryId &&
+          taxRate.destinationRegion === toRegionId &&
+          taxRate.country === fromCountryId &&
+          taxRate.region === fromRegionId &&
+          taxRate.validFromDate === validFromDate
+      );
 
       var discountedGross = new BigDecimal(String(discountedNet));
       var linegross = new BigDecimal(String(linenet));
@@ -1318,11 +1312,11 @@
       var taxesline = {};
       var callbackNotInclTax = function(taxRate, taxIndex, taxList) {
         var pricenetAux = pricenet;
-        if (!taxRate.get('summaryLevel')) {
-          var taxId = taxRate.get('id');
-          var rate = getTaxRateNumber(taxRate.get('rate'));
+        if (!taxRate.summaryLevel) {
+          var taxId = taxRate.id;
+          var rate = getTaxRateNumber(taxRate.rate);
           var net = OB.DEC.mul(pricenetAux, line.get('qty')); //=== discountedNet
-          if (taxRate.get('cascade')) {
+          if (taxRate.cascade) {
             linegross = linegross.multiply(rate.add(BigDecimal.prototype.ONE));
             discountedGross = discountedGross.add(
               new BigDecimal(
@@ -1330,8 +1324,8 @@
               )
             );
             pricenetAux = pricenetcascade;
-          } else if (taxRate.get('taxBase')) {
-            var baseTax = taxesline[taxRate.get('taxBase')];
+          } else if (taxRate.taxBase) {
+            var baseTax = taxesline[taxRate.taxBase];
             if (!_.isUndefined(baseTax)) {
               //if the baseTax of this tax have been processed, we skip this tax till baseTax is processed.
               net = OB.DEC.add(
@@ -1379,8 +1373,8 @@
           );
 
           taxesline[taxId] = {};
-          taxesline[taxId].name = taxRate.get('name');
-          taxesline[taxId].rate = taxRate.get('rate');
+          taxesline[taxId].name = taxRate.name;
+          taxesline[taxId].rate = taxRate.rate;
           taxesline[taxId].net = net;
           taxesline[taxId].amount = amount;
           if (taxes[taxId]) {
@@ -1397,9 +1391,9 @@
             taxes[taxId].amount = OB.DEC.add(taxes[taxId].amount, amount);
           } else {
             taxes[taxId] = {};
-            taxes[taxId].name = taxRate.get('name');
-            taxes[taxId].rate = taxRate.get('rate');
-            taxes[taxId].docTaxAmount = taxRate.get('docTaxAmount');
+            taxes[taxId].name = taxRate.name;
+            taxes[taxId].rate = taxRate.rate;
+            taxes[taxId].docTaxAmount = taxRate.docTaxAmount;
             taxes[taxId].net = net;
             if (discountedNet !== linenet) {
               //If we lost precision because the price that we are showing is not the real one
@@ -1415,15 +1409,15 @@
             taxes[taxId].amount = amount;
           }
         } else {
-          linetaxid = taxRate.get('id');
+          linetaxid = taxRate.id;
         }
         //Remove processed tax from the collection
         taxList.splice(taxList.indexOf(taxRate), 1);
       };
-      var collClone = coll.slice(0);
-      while (collClone.length > 0) {
+      const taxRateArrayClone = taxRateArray.slice(0);
+      while (taxRateArrayClone.length > 0) {
         //Iterate taxes until the collection is empty
-        _.each(collClone, callbackNotInclTax);
+        taxRateArrayClone.forEach(callbackNotInclTax);
       }
 
       // Accumulate to taxes line

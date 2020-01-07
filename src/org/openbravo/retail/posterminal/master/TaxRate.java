@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -12,19 +12,24 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery;
+import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery.MasterDataModel;
 import org.openbravo.model.common.enterprise.OrganizationInformation;
 import org.openbravo.model.common.geography.Country;
 import org.openbravo.model.common.geography.Region;
 import org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.retail.posterminal.POSUtils;
-import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
-public class TaxRate extends ProcessHQLQuery {
+@MasterDataModel("TaxRate")
+public class TaxRate extends MasterDataProcessHQLQuery {
 
   @Override
   protected boolean isAdminMode() {
@@ -41,7 +46,7 @@ public class TaxRate extends ProcessHQLQuery {
           .get(0);
       final Country fromCountry = storeInfo.getLocationAddress().getCountry();
       final Region fromRegion = storeInfo.getLocationAddress().getRegion();
-      Map<String, Object> paramValues = new HashMap<String, Object>();
+      Map<String, Object> paramValues = new HashMap<>();
       if (fromCountry != null) {
         paramValues.put("fromCountryId", fromCountry.getId());
       }
@@ -69,8 +74,7 @@ public class TaxRate extends ProcessHQLQuery {
     // FROM
     final OrganizationInformation storeInfo = posDetail.getOrganization()
         .getOrganizationInformationList()
-        .get(0); // FIXME: expected org info?
-                 // IndexOutOfBoundsException?
+        .get(0);
 
     final Country fromCountry = storeInfo.getLocationAddress().getCountry();
     final Region fromRegion = storeInfo.getLocationAddress().getRegion();
@@ -100,11 +104,21 @@ public class TaxRate extends ProcessHQLQuery {
     }
     hql = hql + "and $readableSimpleCriteria order by validFromDate desc, financialMgmtTaxRate.id";
 
-    return Arrays.asList(new String[] { hql });
+    return Arrays.asList(hql);
   }
 
   @Override
   protected boolean bypassPreferenceCheck() {
     return true;
+  }
+
+  @Override
+  public List<String> getMasterDataModelProperties() {
+    return ModelProvider.getInstance()
+        .getEntity(org.openbravo.model.financialmgmt.tax.TaxRate.class)
+        .getProperties()
+        .stream()
+        .map(Property::getName)
+        .collect(Collectors.toList());
   }
 }

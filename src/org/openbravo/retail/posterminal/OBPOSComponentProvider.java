@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2019 Openbravo S.L.U.
+ * Copyright (C) 2013-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -145,7 +145,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // Point of sale models
         "model/pricelist", "model/product-category", "model/product-category-tree", "model/product",
         "model/productprice", "model/service-product", "model/service-category",
-        "model/businesspartner", "model/document-sequence", "model/taxRate", "model/taxZone",
+        "model/businesspartner", "model/document-sequence",
 
         "model/servicepricerule", "model/servicepricerulerange",
         "model/servicepricerulerangeprices", "model/servicepriceruleversion",
@@ -248,6 +248,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalwarehouseselector", "components/orderlineinfopopup",
         "components/orderlineinfostandardpopup",
 
+        // Taxes
+        "taxesengine/pos/pos-taxes",
+
         // Discounts
         "discountsengine/pos/pos-discounts" };
 
@@ -267,10 +270,12 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
     final ArrayList<String> appDependency = new ArrayList<>();
     // IndexedDB
-    appDependency.add("model/masterdata/SalesRepresentativeModel");
     appDependency.add("model/masterdata/BPCategoryModel");
-    appDependency.add("model/masterdata/CountryModel");
     appDependency.add("model/masterdata/BPSetLineModel");
+    appDependency.add("model/masterdata/CountryModel");
+    appDependency.add("model/masterdata/SalesRepresentativeModel");
+    appDependency.add("model/masterdata/TaxRateModel");
+    appDependency.add("model/masterdata/TaxZoneModel");
     appDependency.add("model/masterdata/discount/DiscountFilterBusinessPartnerGroupModel");
     appDependency.add("model/masterdata/discount/DiscountFilterBusinessPartnerModel");
     appDependency.add("model/masterdata/discount/DiscountFilterBusinessPartnerSetModel");
