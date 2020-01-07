@@ -100,7 +100,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
         "model/currencypanel", "model/productcharacteristicvalue", "model/characteristicvalue",
         "model/characteristic", "model/brand", "model/terminal-model", "model/paymentmethodcashup",
-        "model/taxcashup", "model/offlineprinter", "model/productbom", "model/taxcategorybom",
+        "model/taxcashup", "model/offlineprinter", "model/productbom",
         "model/orderassociationsfilter", "model/product-servicelinked", "model/prepaymentrules",
         "components/modalcancel", "components/subwindow", "components/leftsubwindow",
         "components/modalreceiptproperties", "components/modalreceiptlineproperties",
@@ -274,6 +274,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/masterdata/BPSetLineModel");
     appDependency.add("model/masterdata/CountryModel");
     appDependency.add("model/masterdata/SalesRepresentativeModel");
+    appDependency.add("model/masterdata/TaxCategoryBOMModel");
     appDependency.add("model/masterdata/TaxRateModel");
     appDependency.add("model/masterdata/TaxZoneModel");
     appDependency.add("model/masterdata/discount/DiscountFilterBusinessPartnerGroupModel");

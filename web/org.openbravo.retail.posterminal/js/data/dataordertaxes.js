@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2019 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -115,20 +115,15 @@
 
   var isTaxCategoryBOM = function(taxcategory) {
     return new Promise(function(fulfill, reject) {
-      OB.Dal.findUsingCache(
-        'taxCategoryBOM',
-        OB.Model.TaxCategoryBOM,
-        {
-          id: taxcategory
-        },
-        function(data) {
-          fulfill(data.length > 0);
-        },
-        reject,
-        {
-          modelsAffectedByCache: ['TaxCategoryBOM']
-        }
-      );
+      try {
+        fulfill(
+          OB.Taxes.Pos.taxCategoryBOM.find(
+            taxCategory => taxCategory.id === taxcategory
+          )
+        );
+      } catch (error) {
+        reject;
+      }
     });
   };
 

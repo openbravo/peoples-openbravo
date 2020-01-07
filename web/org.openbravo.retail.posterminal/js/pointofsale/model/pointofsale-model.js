@@ -34,7 +34,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     OB.Model.ChangedBusinessPartners,
     OB.Model.ChangedBPlocation,
     OB.Model.ProductBOM,
-    OB.Model.TaxCategoryBOM,
     OB.Model.CancelLayaway,
     OB.Model.ProductServiceLinked, //
     OB.Model.CurrencyPanel,

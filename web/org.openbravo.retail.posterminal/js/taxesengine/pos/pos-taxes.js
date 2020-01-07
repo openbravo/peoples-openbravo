@@ -14,6 +14,7 @@
     /**
      * Reads tax masterdata models from database and creates different caches to use them:
      *   OB.Discounts.Pos.ruleImpls: array with taxes including tax zone filter and sorted by validFromDate and default.
+     *   OB.Taxes.Pos.taxCategoryBOM: array with bom tax categories.
      * Tax masterdata models should be read from database only here. Wherever discount data is needed, any of these caches should be used.
      */
     initCache: async function(callback) {
@@ -39,13 +40,15 @@
         taxZoneArray,
         'tax'
       );
-
       taxRateArray.forEach(
         taxRate =>
           (taxRate['taxZones'] = taxZoneArrayByTaxRate[taxRate.id] || [])
       );
-
       OB.Taxes.Pos.ruleImpls = taxRateArray;
+
+      const taxCategoryBOMArrayPromise = await OB.App.MasterdataModels.TaxCategoryBOM.find();
+      const taxCategoryBOMArray = taxCategoryBOMArrayPromise.result;
+      OB.Taxes.Pos.taxCategoryBOM = taxCategoryBOMArray;
 
       OB.UTIL.ProcessController.finish('taxCacheInitialization', execution);
       callback();
