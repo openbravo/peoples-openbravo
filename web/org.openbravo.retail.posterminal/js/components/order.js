@@ -940,6 +940,7 @@ enyo.kind({
       'paintTaxes',
       function() {
         this.setTaxes();
+        this.$.listOrderLines.setScrollAfterAdd();
       },
       this
     );
