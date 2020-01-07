@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2018 Openbravo SLU
+ * All portions are Copyright (C) 2014-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -50,6 +50,7 @@ import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
+import org.openbravo.model.materialmgmt.cost.TransactionCost;
 import org.openbravo.model.materialmgmt.transaction.InternalConsumptionLine;
 import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
@@ -518,11 +519,15 @@ public abstract class CostingAlgorithmAdjustmentImp {
     switch (calTrxType) {
       case ShipmentVoid:
       case ReceiptVoid:
-      case IntMovementTo:
       case InternalConsVoid:
       case BOMProduct:
       case ManufacturingProduced:
         // The cost of these transaction types does not depend on the date it is calculated.
+        break;
+
+      case IntMovementTo:
+        // get adjustment amount for related Movement From Transaction
+        adjAmt = getAdjAmtFromRelatedMovementFrom(costAdjLine);
         break;
 
       case Receipt:
@@ -693,5 +698,26 @@ public abstract class CostingAlgorithmAdjustmentImp {
     }
 
     return costDimensions;
+  }
+
+  private BigDecimal getAdjAmtFromRelatedMovementFrom(CostAdjustmentLine costAdjLine) {
+    // get Adjusted Amount from related Movement From Transaction
+    MaterialTransaction trx = costAdjLine.getInventoryTransaction();
+    BigDecimal totalAdjAmt = BigDecimal.ZERO;
+    for (MaterialTransaction movementTransaction : trx.getMovementLine()
+        .getMaterialMgmtMaterialTransactionList()) {
+      if (movementTransaction.getId().equals(trx.getId())) {
+        continue;
+      }
+      if (!movementTransaction.isCostCalculated() || movementTransaction.isCostPermanent()) {
+        continue;
+      }
+      for (TransactionCost trxCost : movementTransaction.getTransactionCostList()) {
+        if (trxCost.getCostAdjustmentLine() != null) {
+          totalAdjAmt = totalAdjAmt.add(trxCost.getCost());
+        }
+      }
+    }
+    return totalAdjAmt;
   }
 }
