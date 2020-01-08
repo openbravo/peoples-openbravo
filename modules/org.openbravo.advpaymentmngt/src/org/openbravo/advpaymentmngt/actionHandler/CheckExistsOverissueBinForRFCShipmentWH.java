@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2018 Openbravo SLU
+ * All portions are Copyright (C) 2018-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,7 +26,6 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.common.enterprise.Locator;
 
 public class CheckExistsOverissueBinForRFCShipmentWH extends BaseActionHandler {
@@ -61,12 +60,17 @@ public class CheckExistsOverissueBinForRFCShipmentWH extends BaseActionHandler {
   }
 
   private Locator getOverissueBinForWarehouse(String warehouseId) {
-    StringBuilder sbHQL = new StringBuilder(" as sb");
-    sbHQL.append(" where sb.warehouse.id = :warehouseId");
-    sbHQL.append(" and sb.inventoryStatus.overissue = true");
-    OBQuery<Locator> sbQuery = OBDal.getInstance().createQuery(Locator.class, sbHQL.toString());
-    sbQuery.setNamedParameter("warehouseId", warehouseId);
-    sbQuery.setMaxResult(1);
-    return sbQuery.uniqueResult();
+    //@formatter:off
+    String hql = 
+            "as sb" +
+            " where sb.warehouse.id = :warehouseId" + 
+            "   and sb.inventoryStatus.overissue = true";
+    //@formatter:on
+
+    return OBDal.getInstance()
+        .createQuery(Locator.class, hql)
+        .setNamedParameter("warehouseId", warehouseId)
+        .setMaxResult(1)
+        .uniqueResult();
   }
 }
