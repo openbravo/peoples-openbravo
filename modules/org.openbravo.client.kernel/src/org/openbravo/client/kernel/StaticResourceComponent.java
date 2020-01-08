@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,6 +33,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.kernel.BaseComponentProvider.ComponentResource;
 import org.openbravo.client.kernel.BaseComponentProvider.ComponentResource.ComponentResourceType;
 import org.openbravo.dal.core.OBContext;
@@ -57,24 +58,12 @@ public class StaticResourceComponent extends BaseComponent {
   @Inject
   private StaticResourceProvider resourceProvider;
 
-  private Boolean isInDevelopment;
+  @Inject
+  private ApplicationDictionaryCachedStructures adCachedStructures;
 
   @Override
   public boolean isInDevelopment() {
-    if (isInDevelopment == null) {
-      isInDevelopment = false;
-      for (ComponentProvider provider : componentProviders) {
-        final List<ComponentResource> resources = provider.getGlobalComponentResources();
-        if (resources == null || resources.size() == 0) {
-          continue;
-        }
-        if (provider.getModule().isInDevelopment()) {
-          isInDevelopment = true;
-          return isInDevelopment;
-        }
-      }
-    }
-    return isInDevelopment;
+    return adCachedStructures.isInDevelopment();
   }
 
   /**

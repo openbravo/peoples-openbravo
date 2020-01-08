@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,6 +33,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.kernel.BaseComponentProvider.ComponentResource;
 import org.openbravo.client.kernel.BaseComponentProvider.ComponentResource.ComponentResourceType;
 import org.openbravo.model.ad.module.Module;
@@ -56,33 +57,12 @@ public class StyleSheetResourceComponent extends BaseComponent {
   @Inject
   private StaticResourceProvider resourceProvider;
 
-  private Boolean isInDevelopment;
+  @Inject
+  private ApplicationDictionaryCachedStructures adCachedStructures;
 
   @Override
   public boolean isInDevelopment() {
-    if (isInDevelopment == null) {
-      isInDevelopment = false;
-      final List<Module> modules = KernelUtils.getInstance().getModulesOrderedByDependency();
-      for (Module module : modules) {
-        for (ComponentProvider provider : componentProviders) {
-          final List<ComponentResource> resources = provider.getGlobalComponentResources();
-          if (resources == null || resources.size() == 0) {
-            continue;
-          }
-
-          if (provider.getModule().getId().equals(module.getId())) {
-            for (ComponentResource resource : resources) {
-              if (resource.getType() == ComponentResourceType.Stylesheet
-                  && module.isInDevelopment()) {
-                isInDevelopment = true;
-                break;
-              }
-            }
-          }
-        }
-      }
-    }
-    return isInDevelopment;
+    return adCachedStructures.isInDevelopment();
   }
 
   /**
