@@ -105,7 +105,7 @@ Copyright (c) 2007, Yahoo! Inc. All rights reserved. Code licensed under the BSD
 # log4j-web-2.11.1.jar
 # log4j-slf4j-impl-2.11.1.jar
 # log4j-1.2-api-2.11.1.jar
-# quartz-2.3.1.jar
+# quartz-2.3.2.jar
 # servlet-api.jar 
 # tika-core-0.9.jar
 # wstx-asl-3.0.2.jar
