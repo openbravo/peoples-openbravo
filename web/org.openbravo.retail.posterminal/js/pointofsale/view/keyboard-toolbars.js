@@ -697,7 +697,10 @@ enyo.kind({
             if (
               payPrepayment &&
               pendingPrepayment > 0 &&
-              pendingPrepayment < amount
+              OB.DEC.sub(
+                pendingPrepayment,
+                me.model.get('order').get('paymentWithSign')
+              ) < amount
             ) {
               reminingPrepayment = OB.DEC.sub(
                 pendingPrepayment,
