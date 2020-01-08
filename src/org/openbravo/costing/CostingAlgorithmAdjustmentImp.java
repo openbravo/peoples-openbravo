@@ -700,24 +700,33 @@ public abstract class CostingAlgorithmAdjustmentImp {
     return costDimensions;
   }
 
-  private BigDecimal getAdjAmtFromRelatedMovementFrom(CostAdjustmentLine costAdjLine) {
+  private BigDecimal getAdjAmtFromRelatedMovementFrom(final CostAdjustmentLine costAdjLine) {
     // get Adjusted Amount from related Movement From Transaction
-    MaterialTransaction trx = costAdjLine.getInventoryTransaction();
+    final MaterialTransaction trx = costAdjLine.getInventoryTransaction();
     BigDecimal totalAdjAmt = BigDecimal.ZERO;
-    for (MaterialTransaction movementTransaction : trx.getMovementLine()
+    for (final MaterialTransaction movementTransaction : trx.getMovementLine()
         .getMaterialMgmtMaterialTransactionList()) {
-      if (movementTransaction.getId().equals(trx.getId())) {
+      if (skipAdjustmentsFromTransaction(trx, movementTransaction)) {
         continue;
       }
-      if (!movementTransaction.isCostCalculated() || movementTransaction.isCostPermanent()) {
-        continue;
-      }
-      for (TransactionCost trxCost : movementTransaction.getTransactionCostList()) {
-        if (trxCost.getCostAdjustmentLine() != null) {
-          totalAdjAmt = totalAdjAmt.add(trxCost.getCost());
-        }
+      for (final TransactionCost trxCost : getNotSourceCostAdjustmentLines(movementTransaction)) {
+        totalAdjAmt = totalAdjAmt.add(trxCost.getCost());
       }
     }
     return totalAdjAmt;
+  }
+
+  private boolean skipAdjustmentsFromTransaction(final MaterialTransaction trx,
+      final MaterialTransaction movementTransaction) {
+    return movementTransaction.getId().equals(trx.getId())
+        || !movementTransaction.isCostCalculated() || movementTransaction.isCostPermanent();
+  }
+
+  private List<TransactionCost> getNotSourceCostAdjustmentLines(
+      final MaterialTransaction movementTransaction) {
+    OBCriteria<TransactionCost> obc = OBDal.getInstance().createCriteria(TransactionCost.class);
+    obc.add(Restrictions.eq(TransactionCost.PROPERTY_INVENTORYTRANSACTION, movementTransaction));
+    obc.add(Restrictions.isNotNull(TransactionCost.PROPERTY_COSTADJUSTMENTLINE));
+    return obc.list();
   }
 }
