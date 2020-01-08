@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2016 Openbravo SLU
+ * All portions are Copyright (C) 2012-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -55,7 +55,6 @@ public class ParameterWindowComponent extends BaseTemplateComponent {
 
   static final String BUTTON_LIST_REFERENCE_ID = "FF80818132F94B500132F9575619000A";
 
-  private Boolean inDevelopment = null;
   private String uniqueString = "" + System.currentTimeMillis();
   private Process process;
 
@@ -72,7 +71,7 @@ public class ParameterWindowComponent extends BaseTemplateComponent {
   public String getWindowClientClassName() {
     // see the ViewComponent#correctViewId
     // changes made in this if statement should also be done in that method
-    if (isIndevelopment()) {
+    if (isInDevelopment()) {
       return KernelConstants.ID_PREFIX + process.getId() + KernelConstants.ID_PREFIX + uniqueString;
     }
     return KernelConstants.ID_PREFIX + process.getId();
@@ -80,20 +79,6 @@ public class ParameterWindowComponent extends BaseTemplateComponent {
 
   public void setUniqueString(String uniqueString) {
     this.uniqueString = uniqueString;
-  }
-
-  public boolean isIndevelopment() {
-    if (inDevelopment != null) {
-      return inDevelopment;
-    }
-
-    // check window, tabs and fields
-    inDevelopment = Boolean.FALSE;
-    if (process.getModule().isInDevelopment() && process.getModule().isEnabled()) {
-      inDevelopment = Boolean.TRUE;
-    }
-
-    return inDevelopment;
   }
 
   @Override

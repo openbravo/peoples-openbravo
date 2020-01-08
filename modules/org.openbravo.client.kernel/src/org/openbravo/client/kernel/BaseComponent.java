@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -276,7 +276,20 @@ public abstract class BaseComponent implements Component {
 
   @Override
   public boolean isInDevelopment() {
-    return adcs.isInDevelopment(getModule().getId());
+    return adcs.isInDevelopment();
+  }
+
+  /**
+   * Returns if a module is set or not to 'in development'
+   *
+   * @param moduleId
+   *          Id of the module
+   * @return {@code true} if there are modules in "in development" status. Otherwise, return
+   *         {@code false}
+   * @see ApplicationDictionaryCachedStructures#isInDevelopment(String)
+   */
+  protected boolean isInDevelopment(String moduleId) {
+    return adcs.isInDevelopment(moduleId);
   }
 
   protected String getApplicationName() {

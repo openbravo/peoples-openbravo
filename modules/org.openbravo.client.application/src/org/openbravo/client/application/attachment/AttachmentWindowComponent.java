@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2018 Openbravo SLU
+ * All portions are Copyright (C) 2012-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -48,7 +48,6 @@ public class AttachmentWindowComponent extends BaseTemplateComponent {
   private static final String DEFAULT_TEMPLATE_ID = "01E447F740584E02BA4612F6BDFB900D";
   private static final Logger log = LogManager.getLogger();
 
-  private Boolean inDevelopment = null;
   private String uniqueString = "" + System.currentTimeMillis();
   private Tab tab;
   private AttachmentMethod attMethod;
@@ -69,29 +68,10 @@ public class AttachmentWindowComponent extends BaseTemplateComponent {
   public String getWindowClientClassName() {
     String baseClassName = KernelConstants.ID_PREFIX + tab.getId() + KernelConstants.ID_PREFIX
         + attMethod.getId();
-    if (isIndevelopment()) {
+    if (isInDevelopment()) {
       return baseClassName + KernelConstants.ID_PREFIX + uniqueString;
     }
     return baseClassName;
-  }
-
-  /**
-   * Compares if the module of the class tab variable is in development
-   * 
-   * @return True if the module is in development
-   */
-  public boolean isIndevelopment() {
-    if (inDevelopment != null) {
-      return inDevelopment;
-    }
-
-    // check window, tabs and fields
-    inDevelopment = Boolean.FALSE;
-    if (tab.getModule().isInDevelopment() && tab.getModule().isEnabled()) {
-      inDevelopment = Boolean.TRUE;
-    }
-
-    return inDevelopment;
   }
 
   /**

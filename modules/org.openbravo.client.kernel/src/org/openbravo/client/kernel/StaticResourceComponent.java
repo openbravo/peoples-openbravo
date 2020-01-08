@@ -33,7 +33,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.base.session.OBPropertiesProvider;
-import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.kernel.BaseComponentProvider.ComponentResource;
 import org.openbravo.client.kernel.BaseComponentProvider.ComponentResource.ComponentResourceType;
 import org.openbravo.dal.core.OBContext;
@@ -57,14 +56,6 @@ public class StaticResourceComponent extends BaseComponent {
 
   @Inject
   private StaticResourceProvider resourceProvider;
-
-  @Inject
-  private ApplicationDictionaryCachedStructures adCachedStructures;
-
-  @Override
-  public boolean isInDevelopment() {
-    return adCachedStructures.isInDevelopment();
-  }
 
   /**
    * @return returns this instance
@@ -133,8 +124,9 @@ public class StaticResourceComponent extends BaseComponent {
           "var isomorphicDir='../web/org.openbravo.userinterface.smartclient/isomorphic/';\n");
 
       final String scDevModulePackage = "org.openbravo.userinterface.smartclient.dev";
+      final String scDevModuleId = "5C3673B66CA3494B9981BE61F73A3A85";
       if (KernelUtils.getInstance().isModulePresent(scDevModulePackage)
-          && KernelUtils.getInstance().getModule(scDevModulePackage).isInDevelopment()) {
+          && isInDevelopment(scDevModuleId)) {
         result.append(
             "document.write('<'+'SCRIPT SRC=' + window.isomorphicDir + 'ISC_Combined.uncompressed.js><'+'/SCRIPT>');");
       }
