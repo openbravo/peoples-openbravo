@@ -8,7 +8,17 @@
  */
 
 (function taxZoneModel() {
-  class TaxZone extends OB.App.Class.MasterdataModel {}
+  class TaxZone extends OB.App.Class.MasterdataModel {
+    constructor() {
+      super();
+      this.indices = [
+        new OB.App.Class.Index({
+          name: 'taxRateId',
+          properties: [{ property: 'taxRateId' }]
+        })
+      ];
+    }
+  }
 
   OB.App.MasterdataController.registerModel(TaxZone);
 })();

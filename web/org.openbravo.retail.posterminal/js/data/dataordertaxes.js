@@ -338,144 +338,28 @@
 
   var findTaxesCollection = function(receipt, line, taxCategory) {
     return new Promise(function(fulfill, reject) {
-      // sql parameters
-      var fromRegionOrg = OB.MobileApp.model.get('terminal')
-          .organizationRegionId,
-        fromCountryOrg = OB.MobileApp.model.get('terminal')
-          .organizationCountryId,
-        bpTaxCategory = receipt.get('bp').get('taxCategory'),
-        bpIsExempt = receipt.get('bp').get('taxExempt'),
-        bpShipLocId = receipt.get('bp').get('shipLocId'),
-        bpName =
-          receipt.get('bp').get('name') ||
-          OB.I18N.getLabel('OBPOS_LblEmptyAddress'),
-        bpShipLocName =
-          receipt.get('bp').get('shipLocName') ||
-          OB.I18N.getLabel('OBPOS_LblEmptyAddress'),
-        bplCountryId = receipt.get('bp').get('shipCountryId')
-          ? receipt.get('bp').get('shipCountryId')
-          : null,
-        bplRegionId = receipt.get('bp').get('shipRegionId')
-          ? receipt.get('bp').get('shipRegionId')
-          : null,
-        isCashVat = OB.MobileApp.model.get('terminal').cashVat;
-      // SQL build
-      // the query is ordered by countryId desc and regionId desc
-      // (so, the first record will be the tax with the same country or
-      // region that the customer,
-      // or if toCountryId and toRegionId are nulls then will be ordered
-      // by validfromdate)
-      var sql = '';
-      if (!bplCountryId) {
-        sql =
-          "select c_tax.c_tax_id, c_tax.name,  c_tax.description, c_tax.taxindicator, c_tax.validfrom, c_tax.issummary, c_tax.rate, c_tax.parent_tax_id, (case when c_tax.c_country_id = '" +
-          fromCountryOrg +
-          "' then c_tax.c_country_id else tz.from_country_id end) as c_country_id, (case when c_tax.c_region_id = '" +
-          fromRegionOrg +
-          "' then c_tax.c_region_id else tz.from_region_id end) as c_region_id, (case when c_tax.to_country_id = bpl.countryId then c_tax.to_country_id else tz.to_country_id end) as to_country_id, (case when c_tax.to_region_id = bpl.regionId then c_tax.to_region_id else tz.to_region_id end)  as to_region_id, c_tax.c_taxcategory_id, c_tax.isdefault, c_tax.istaxexempt, c_tax.sopotype, c_tax.cascade, c_tax.c_bp_taxcategory_id,  c_tax.line, c_tax.iswithholdingtax, c_tax.isnotaxable, c_tax.deducpercent, c_tax.originalrate, c_tax.istaxundeductable,  c_tax.istaxdeductable, c_tax.isnovat, c_tax.baseamount, c_tax.c_taxbase_id, c_tax.doctaxamount, c_tax.iscashvat,  c_tax._identifier,  c_tax._idx,  (case when (c_tax.to_country_id = bpl.countryId or tz.to_country_id= bpl.countryId) then 0 else 1 end) as orderCountryTo,  (case when (c_tax.to_region_id = bpl.regionId or tz.to_region_id = bpl.regionId) then 0 else 1 end) as orderRegionTo,  (case when coalesce(c_tax.c_country_id, tz.from_country_id) is null then 1 else 0 end) as orderCountryFrom,  (case when coalesce(c_tax.c_region_id, tz.from_region_id) is null then 1 else 0 end) as orderRegionFrom  from c_tax left join c_tax_zone tz on tz.c_tax_id = c_tax.c_tax_id  join c_bpartner_location bpl on bpl.c_bpartner_location_id = '" +
-          bpShipLocId +
-          "'   where c_tax.sopotype in ('B', 'S') ";
-      } else {
-        sql =
-          "select c_tax.c_tax_id, c_tax.name,  c_tax.description, c_tax.taxindicator, c_tax.validfrom, c_tax.issummary, c_tax.rate, c_tax.parent_tax_id, (case when c_tax.c_country_id = '" +
-          fromCountryOrg +
-          "' then c_tax.c_country_id else tz.from_country_id end) as c_country_id, (case when c_tax.c_region_id = '" +
-          fromRegionOrg +
-          "' then c_tax.c_region_id else tz.from_region_id end) as c_region_id, (case when c_tax.to_country_id = '" +
-          bplCountryId +
-          "' then c_tax.to_country_id else tz.to_country_id end) as to_country_id, (case when c_tax.to_region_id = '" +
-          bplRegionId +
-          "' then c_tax.to_region_id else tz.to_region_id end)  as to_region_id, c_tax.c_taxcategory_id, c_tax.isdefault, c_tax.istaxexempt, c_tax.sopotype, c_tax.cascade, c_tax.c_bp_taxcategory_id,  c_tax.line, c_tax.iswithholdingtax, c_tax.isnotaxable, c_tax.deducpercent, c_tax.originalrate, c_tax.istaxundeductable,  c_tax.istaxdeductable, c_tax.isnovat, c_tax.baseamount, c_tax.c_taxbase_id, c_tax.doctaxamount, c_tax.iscashvat,  c_tax._identifier,  c_tax._idx,  (case when (c_tax.to_country_id = '" +
-          bplCountryId +
-          "' or tz.to_country_id= '" +
-          bplCountryId +
-          "') then 0 else 1 end) as orderCountryTo,  (case when (c_tax.to_region_id = '" +
-          bplRegionId +
-          "' or tz.to_region_id = '" +
-          bplRegionId +
-          "') then 0 else 1 end) as orderRegionTo,  (case when coalesce(c_tax.c_country_id, tz.from_country_id) is null then 1 else 0 end) as orderCountryFrom,  (case when coalesce(c_tax.c_region_id, tz.from_region_id) is null then 1 else 0 end) as orderRegionFrom  from c_tax left join c_tax_zone tz on tz.c_tax_id = c_tax.c_tax_id  where c_tax.sopotype in ('B', 'S') ";
-      }
-      sql = sql + " and c_tax.c_taxCategory_id = '" + taxCategory + "'";
-      if (
-        line.has('originalTaxExempt')
-          ? line.get('originalTaxExempt')
-          : bpIsExempt
-      ) {
-        sql = sql + " and c_tax.istaxexempt = 'true'";
-      } else {
-        if (bpTaxCategory) {
-          sql =
-            sql + " and c_tax.c_bp_taxcategory_id = '" + bpTaxCategory + "'";
-        } else {
-          sql = sql + ' and c_tax.c_bp_taxcategory_id is null';
-        }
-      }
-      if (line.get('originalOrderDate')) {
-        // The taxes calculation is locked so use the originalOrderDate
-        sql =
-          sql +
-          " and c_tax.validFrom <= '" +
-          line.get('originalOrderDate') +
-          "'";
-      } else {
-        sql = sql + ' and c_tax.validFrom <= date()';
-      }
-      if (!bplCountryId) {
-        sql =
-          sql +
-          ' and (c_tax.to_country_id = bpl.countryId   or tz.to_country_id = bpl.countryId   or (c_tax.to_country_id is null       and (not exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id)           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_country_id = bpl.countryId)           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_country_id is null))))';
-        sql =
-          sql +
-          ' and (c_tax.to_region_id = bpl.regionId   or tz.to_region_id = bpl.regionId  or (c_tax.to_region_id is null       and (not exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id)           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_region_id = bpl.regionId)           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_region_id is null))))';
-      } else {
-        sql =
-          sql +
-          " and (c_tax.to_country_id = '" +
-          bplCountryId +
-          "'   or tz.to_country_id = '" +
-          bplCountryId +
-          "'   or (c_tax.to_country_id is null       and (not exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id)           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_country_id = '" +
-          bplCountryId +
-          "')           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_country_id is null))))";
-        sql =
-          sql +
-          " and (c_tax.to_region_id = '" +
-          bplRegionId +
-          "'   or tz.to_region_id = '" +
-          bplRegionId +
-          "'  or (c_tax.to_region_id is null       and (not exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id)           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_region_id = '" +
-          bplRegionId +
-          "')           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_region_id is null))))";
-      }
-      if (isCashVat) {
-        sql =
-          sql +
-          " and (c_tax.isCashVAT ='" +
-          isCashVat +
-          "' OR (c_tax.isCashVAT = 'false' and (c_tax.isWithholdingTax = 'true' or c_tax.rate=0))) ";
-      } else {
-        sql = sql + " and c_tax.isCashVAT ='false' ";
-      }
-      sql =
-        sql +
-        ' order by orderRegionTo, orderRegionFrom, orderCountryTo, orderCountryFrom, c_tax.validFrom desc, c_tax.isdefault desc';
-
       OB.UTIL.HookManager.executeHooks(
         'OBPOS_FindTaxRate',
         {
           context: receipt,
-          line: line,
-          sql: sql
+          line: line
         },
-        function(args) {
+        () => {
           try {
-            if (OB.Taxes.Pos.ruleImpls && OB.Taxes.Pos.ruleImpls.length > 0) {
-              fulfill(OB.Taxes.Pos.ruleImpls);
+            const taxRateArray = OB.Taxes.Pos.calculateTaxes(
+              receipt,
+              line,
+              taxCategory
+            );
+            if (taxRateArray && taxRateArray.length > 0) {
+              fulfill(taxRateArray);
             } else {
               reject(
                 OB.I18N.getLabel('OBPOS_TaxNotFound_Message', [
-                  bpName,
-                  bpShipLocName
+                  receipt.get('bp').get('name') ||
+                    OB.I18N.getLabel('OBPOS_LblEmptyAddress'),
+                  receipt.get('bp').get('shipLocName') ||
+                    OB.I18N.getLabel('OBPOS_LblEmptyAddress')
                 ])
               );
             }
