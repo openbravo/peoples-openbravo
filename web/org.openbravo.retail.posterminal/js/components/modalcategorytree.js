@@ -147,7 +147,10 @@ enyo.kind({
         me.$.body.$.listCategories.loadCategoryTreeLevel(
           models[index].get('id'),
           function(categories) {
-            getSubTreeIds(categories.models, 0, function() {
+            if (categories.models !== undefined) {
+              categories = categories.models;
+            }
+            getSubTreeIds(categories, 0, function() {
               processed.processed = true;
               getSubTreeIds(models, index + 1, callback);
             });
