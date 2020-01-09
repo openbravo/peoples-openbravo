@@ -83,7 +83,7 @@ import org.openbravo.service.db.DbUtility;
 import org.openbravo.service.json.JsonUtils;
 
 public class AddPaymentActionHandler extends BaseProcessActionHandler {
-  private final static Logger log = LogManager.getLogger();
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
@@ -325,7 +325,8 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
       List<FIN_PaymentScheduleDetail> psds = getOrderedPaymentScheduleDetails(psdIds);
       BigDecimal outstandingAmount;
       BigDecimal remainingAmount = paidAmount;
-      boolean isFullPaydAndHasNegativeLines = fullPaydAndHasNegativeLines(psds, paidAmount);
+      boolean isFullPaydAndHasNegativeLines = isFullyPaid(psds, paidAmount)
+          && hasNegativeLines(psds);
       for (FIN_PaymentScheduleDetail psd : psds) {
         BigDecimal assignAmount;
 
@@ -363,20 +364,19 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
     }
   }
 
-  private boolean fullPaydAndHasNegativeLines(List<FIN_PaymentScheduleDetail> psds,
-      BigDecimal paidAmount) {
-    BigDecimal sumOfAmounts = BigDecimal.ZERO;
-    Optional<BigDecimal> sumsOfAmounts = psds.stream()
+  private boolean isFullyPaid(final List<FIN_PaymentScheduleDetail> psds,
+      final BigDecimal paidAmount) {
+    final Optional<BigDecimal> sumOfAmounts = psds.stream()
         .map(FIN_PaymentScheduleDetail::getAmount)
         .reduce(BigDecimal::add);
-    if (sumsOfAmounts.isPresent()) {
-      sumOfAmounts = sumsOfAmounts.get();
-    }
+    return sumOfAmounts.isPresent() && sumOfAmounts.get().compareTo(paidAmount) == 0;
+  }
 
-    List<FIN_PaymentScheduleDetail> negativePsd = psds.stream()
+  private boolean hasNegativeLines(final List<FIN_PaymentScheduleDetail> psds) {
+    final List<FIN_PaymentScheduleDetail> negativePsd = psds.stream()
         .filter(t -> t.getAmount().signum() < 0)
         .collect(Collectors.toList());
-    return sumOfAmounts.compareTo(paidAmount) == 0 && !negativePsd.isEmpty();
+    return !negativePsd.isEmpty();
   }
 
   private void addCredit(FIN_Payment payment, JSONObject jsonparams, BigDecimal differenceAmount)
@@ -474,15 +474,19 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
       }
 
       // Accounting Dimensions
-      BusinessPartner businessPartnerGLItem = (BusinessPartner) accountDimension(glItem,
-          "businessPartner");
-      Product product = (Product) accountDimension(glItem, "product");
-      Project project = (Project) accountDimension(glItem, "project");
-      ABCActivity activity = (ABCActivity) accountDimension(glItem, "cActivityDim");
-      Costcenter costCenter = (Costcenter) accountDimension(glItem, "costCenter");
-      Campaign campaign = (Campaign) accountDimension(glItem, "cCampaignDim");
-      UserDimension1 user1 = (UserDimension1) accountDimension(glItem, "stDimension");
-      UserDimension2 user2 = (UserDimension2) accountDimension(glItem, "ndDimension");
+      BusinessPartner businessPartnerGLItem = (BusinessPartner) getAccountDimension(glItem,
+          "businessPartner", BusinessPartner.class);
+      Product product = (Product) getAccountDimension(glItem, "product", Product.class);
+      Project project = (Project) getAccountDimension(glItem, "project", Project.class);
+      ABCActivity activity = (ABCActivity) getAccountDimension(glItem, "cActivityDim",
+          ABCActivity.class);
+      Costcenter costCenter = (Costcenter) getAccountDimension(glItem, "costCenter",
+          Costcenter.class);
+      Campaign campaign = (Campaign) getAccountDimension(glItem, "cCampaignDim", Campaign.class);
+      UserDimension1 user1 = (UserDimension1) getAccountDimension(glItem, "stDimension",
+          UserDimension1.class);
+      UserDimension2 user2 = (UserDimension2) getAccountDimension(glItem, "ndDimension",
+          UserDimension2.class);
 
       FIN_AddPayment.saveGLItem(payment, glItemAmt,
           OBDal.getInstance().get(GLItem.class, strGLItemId), businessPartnerGLItem, product,
@@ -490,12 +494,12 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
     }
   }
 
-  private BaseOBObject accountDimension(JSONObject glItem, String dimension)
-      throws JSONException, ServletException {
+  private BaseOBObject getAccountDimension(final JSONObject glItem, final String dimension,
+      final Class<?> clazz) throws JSONException, ServletException {
     if (glItem.has(dimension) && glItem.get(dimension) != JSONObject.NULL) {
-      final String strElement = glItem.getString(dimension);
-      checkID(strElement);
-      return OBDal.getInstance().get(UserDimension2.class, strElement);
+      final String dimensionId = glItem.getString(dimension);
+      checkID(dimensionId);
+      return (BaseOBObject) OBDal.getInstance().get(clazz, dimensionId);
     }
     return null;
   }
@@ -659,13 +663,13 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
     return sb.toString();
   }
 
-  private HashMap<String, BigDecimal> getSelectedCreditLinesAndAmount(JSONArray allselection,
-      List<FIN_Payment> selectedCreditPayments) throws JSONException {
-    HashMap<String, BigDecimal> selectedCreditLinesAmounts = new HashMap<>();
+  private HashMap<String, BigDecimal> getSelectedCreditLinesAndAmount(final JSONArray allselection,
+      final List<FIN_Payment> selectedCreditPayments) throws JSONException {
+    final HashMap<String, BigDecimal> selectedCreditLinesAmounts = new HashMap<>();
 
-    for (FIN_Payment creditPayment : selectedCreditPayments) {
+    for (final FIN_Payment creditPayment : selectedCreditPayments) {
       for (int i = 0; i < allselection.length(); i++) {
-        JSONObject selectedRow = allselection.getJSONObject(i);
+        final JSONObject selectedRow = allselection.getJSONObject(i);
         if (selectedRow.getString("id").equals(creditPayment.getId())) {
           selectedCreditLinesAmounts.put(creditPayment.getId(),
               new BigDecimal(selectedRow.getString("paymentAmount")));
