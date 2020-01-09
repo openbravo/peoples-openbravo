@@ -88,10 +88,9 @@
         'taxCacheInitialization'
       );
 
-      const taxRateArrayPromise = await OB.App.MasterdataModels.TaxRate.find(
-        new OB.App.Class.Criteria()
-          .orderBy(['validFromDate', 'default'], 'desc')
-          .build()
+      const taxRateArrayPromise = await OB.App.MasterdataModels.TaxRate.orderedBy(
+        ['validFromDate', 'default'],
+        'desc'
       );
       const taxRateArray = taxRateArrayPromise.result;
 
