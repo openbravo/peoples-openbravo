@@ -101,12 +101,6 @@
         ? 1
         : 0;
     };
-    const sortByValidFromDate = (rule1, rule2) => {
-      return new Date(rule2.validFromDate) - new Date(rule1.validFromDate);
-    };
-    const sortByDefault = (rule1, rule2) => {
-      return rule2.default - rule1.default;
-    };
 
     let result = {};
     result.lines = {};
@@ -126,9 +120,7 @@
             sortByRegionTo(ticket, rule1, rule2) ||
             sortByRegionFrom(rule1, rule2) ||
             sortByCountryTo(ticket, rule1, rule2) ||
-            sortByCountryFrom(rule1, rule2) ||
-            sortByValidFromDate(rule1, rule2) ||
-            sortByDefault(rule1, rule2)
+            sortByCountryFrom(rule1, rule2)
         );
 
       taxes.forEach(rule => {
