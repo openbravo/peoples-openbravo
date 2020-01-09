@@ -7773,6 +7773,9 @@
             paymentStatus.pendingAmt === 0 ||
             paymentStatus.pendingAmt < multiplyBy
           ) {
+            if (payment.has('id')) {
+              paymentLine.set('roundedPaymentId', payment.get('id'));
+            }
             this.calculateReceipt();
           }
         }
