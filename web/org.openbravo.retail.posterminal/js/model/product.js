@@ -57,6 +57,13 @@
             { property: 'isGeneric', isBoolean: true },
             { property: 'listPrice', isNullable: true }
           ]
+        }),
+        new OB.App.Class.Index({
+          name: 'productAndProposalType_idx',
+          properties: [
+            { property: 'productType' },
+            { property: 'proposalType' }
+          ]
         })
       ];
     }
