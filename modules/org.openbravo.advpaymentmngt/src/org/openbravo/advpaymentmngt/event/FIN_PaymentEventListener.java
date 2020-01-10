@@ -75,7 +75,7 @@ class FIN_PaymentEventListener extends EntityPersistenceEventObserver {
     final String documentNo = payment.getDocumentNo();
     final int documentNoLength = documentNo.length();
 
-    if (!oldPaymentProcessed && currentPaymentProcessed
+    if (!Boolean.TRUE.equals(oldPaymentProcessed) && Boolean.TRUE.equals(currentPaymentProcessed)
         && currentPaymentAmount.compareTo(BigDecimal.ZERO) == 0
         && (documentNoLength < CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.length()
             || !CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.equals(documentNo.substring(
@@ -89,7 +89,8 @@ class FIN_PaymentEventListener extends EntityPersistenceEventObserver {
       setDocumentNoToPayment(event, newDocumentNo);
     }
 
-    else if (oldPaymentProcessed && !currentPaymentProcessed
+    else if (Boolean.TRUE.equals(oldPaymentProcessed)
+        && !Boolean.TRUE.equals(currentPaymentProcessed)
         && oldPaymentAmount.compareTo(BigDecimal.ZERO) == 0
         && documentNoLength > CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.length()
         && CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.equals(documentNo
@@ -180,7 +181,7 @@ class FIN_PaymentEventListener extends EntityPersistenceEventObserver {
 
     return OBDal.getInstance()
         .getSession()
-        .createQuery(hql.toString())
+        .createQuery(hql)
         .setParameter("paymentExecutionProcessId", executionProcess.getId())
         .setParameter("paymentId", payment.getId())
         .executeUpdate();
