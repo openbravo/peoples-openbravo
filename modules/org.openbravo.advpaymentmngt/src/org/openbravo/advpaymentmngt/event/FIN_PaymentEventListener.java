@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2019 Openbravo SLU
+ * All portions are Copyright (C) 2012-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -24,7 +24,6 @@ import java.util.List;
 import javax.enterprise.event.Observes;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.query.Query;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
@@ -171,19 +170,20 @@ class FIN_PaymentEventListener extends EntityPersistenceEventObserver {
       return 0;
     }
 
-    int rowCount;
-    final StringBuilder hql = new StringBuilder();
-    hql.append("update APRM_PendingPaymentInvoice ");
-    hql.append("set paymentExecutionProcess.id = :paymentExecutionProcessId ");
-    hql.append("where paymentExecutionProcess.id <> :paymentExecutionProcessId ");
-    hql.append("and payment.id = :paymentId ");
+    //@formatter:off
+    String hql =
+            "update APRM_PendingPaymentInvoice " +
+            "set paymentExecutionProcess.id = :paymentExecutionProcessId " +
+            " where paymentExecutionProcess.id <> :paymentExecutionProcessId " +
+            "   and payment.id = :paymentId ";
+    //@formatter:on
 
-    @SuppressWarnings("rawtypes")
-    Query updateQry = OBDal.getInstance().getSession().createQuery(hql.toString());
-    updateQry.setParameter("paymentExecutionProcessId", executionProcess.getId());
-    updateQry.setParameter("paymentId", payment.getId());
-    rowCount = updateQry.executeUpdate();
-    return rowCount;
+    return OBDal.getInstance()
+        .getSession()
+        .createQuery(hql.toString())
+        .setParameter("paymentExecutionProcessId", executionProcess.getId())
+        .setParameter("paymentId", payment.getId())
+        .executeUpdate();
   }
 
   /**
@@ -196,16 +196,17 @@ class FIN_PaymentEventListener extends EntityPersistenceEventObserver {
       return 0;
     }
 
-    int rowCount;
-    final StringBuilder hql = new StringBuilder();
-    hql.append("delete from APRM_PendingPaymentInvoice ");
-    hql.append("where payment.id = :paymentId ");
+    //@formatter:off
+    String hql =
+            "delete from APRM_PendingPaymentInvoice " +
+            " where payment.id = :paymentId ";
+    //@formatter:on
 
-    @SuppressWarnings("rawtypes")
-    Query updateQry = OBDal.getInstance().getSession().createQuery(hql.toString());
-    updateQry.setParameter("paymentId", payment.getId());
-    rowCount = updateQry.executeUpdate();
-    return rowCount;
+    return OBDal.getInstance()
+        .getSession()
+        .createQuery(hql)
+        .setParameter("paymentId", payment.getId())
+        .executeUpdate();
   }
 
   private void setDocumentNoToPayment(EntityPersistenceEvent event, String newDocumentNo) {
