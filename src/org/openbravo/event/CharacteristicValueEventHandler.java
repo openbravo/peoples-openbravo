@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2019 Openbravo SLU
+ * All portions are Copyright (C) 2013-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -72,21 +72,23 @@ class CharacteristicValueEventHandler extends EntityPersistenceEventObserver {
         .getEntity(CharacteristicValue.ENTITY_NAME);
     final Property codeProperty = prodchValue.getProperty(CharacteristicValue.PROPERTY_CODE);
     if (event.getCurrentState(codeProperty) != event.getPreviousState(codeProperty)) {
-      StringBuilder where = new StringBuilder();
-      where.append("update ProductCharacteristicConf as pcc ");
-      where.append("set code = :code, updated = now(), updatedBy = :user ");
-      where.append("where exists ( ");
-      where.append("    select 1 ");
-      where.append("    from  ProductCharacteristic as pc ");
-      where.append("    where pcc.characteristicOfProduct = pc ");
-      where.append("    and pcc.characteristicValue = :characteristicValue ");
-      where.append("    and pc.characteristicSubset is null ");
-      where.append("    and pcc.code <> :code ");
-      where.append(")");
+      //@formatter:off
+      String hql = "update ProductCharacteristicConf as pcc "
+                 + "set code = :code, "
+                 + "updated = now(), "
+                 + "updatedBy = :user "
+                 + "where exists ( "
+                 + "    select 1 "
+                 + "    from  ProductCharacteristic as pc "
+                 + "    where pcc.characteristicOfProduct = pc "
+                 + "    and pcc.characteristicValue = :characteristicValue "
+                 + "    and pc.characteristicSubset is null "
+                 + "    and pcc.code <> :code) ";
+      //@formatter:on
       try {
         final Session session = OBDal.getInstance().getSession();
         @SuppressWarnings("rawtypes")
-        final Query charConfQuery = session.createQuery(where.toString());
+        final Query charConfQuery = session.createQuery(hql);
         charConfQuery.setParameter("user", OBContext.getOBContext().getUser());
         charConfQuery.setParameter("characteristicValue", chv);
         charConfQuery.setParameter("code", chv.getCode());
