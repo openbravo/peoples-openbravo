@@ -48,6 +48,8 @@ class ProductCharacteristicEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = {
       ModelProvider.getInstance().getEntity(ProductCharacteristic.ENTITY_NAME) };
 
+  private static final String MSG_NEW_VARIANTS_CH_ERROR = "NewVariantChWithVariantsError";
+
   @Override
   protected Entity[] getObservedEntities() {
     return entities;
@@ -72,9 +74,9 @@ class ProductCharacteristicEventHandler extends EntityPersistenceEventObserver {
     final ProductCharacteristic prCh = (ProductCharacteristic) event.getTargetInstance();
     if (prCh.isVariant() && prCh.getProduct().isGeneric()) {
       if (!prCh.getProduct().getProductGenericProductList().isEmpty()) {
-        throw new OBException(OBMessageUtils.messageBD("NewVariantChWithVariantsError"));
+        throw new OBException(OBMessageUtils.messageBD(MSG_NEW_VARIANTS_CH_ERROR));
       }
-      if (prCh.isDefinesPrice()) {
+      if (Boolean.TRUE.equals(prCh.isDefinesPrice())) {
         // Check there is only 1.
         OBCriteria<ProductCharacteristic> criteria = OBDal.getInstance()
             .createCriteria(ProductCharacteristic.class);
@@ -87,7 +89,7 @@ class ProductCharacteristicEventHandler extends EntityPersistenceEventObserver {
           throw new OBException(OBMessageUtils.messageBD("DuplicateDefinesPrice"));
         }
       }
-      if (prCh.isDefinesImage()) {
+      if (Boolean.TRUE.equals(prCh.isDefinesImage())) {
         // Check there is only 1.
         OBCriteria<ProductCharacteristic> criteria = OBDal.getInstance()
             .createCriteria(ProductCharacteristic.class);
@@ -103,7 +105,7 @@ class ProductCharacteristicEventHandler extends EntityPersistenceEventObserver {
       final Entity prodCharEntity = ModelProvider.getInstance()
           .getEntity(ProductCharacteristic.ENTITY_NAME);
 
-      if (prCh.isExplodeConfigurationTab()) {
+      if (Boolean.TRUE.equals(prCh.isExplodeConfigurationTab())) {
         final Property charConfListProperty = prodCharEntity
             .getProperty(ProductCharacteristic.PROPERTY_PRODUCTCHARACTERISTICCONFLIST);
         @SuppressWarnings("unchecked")
@@ -153,9 +155,9 @@ class ProductCharacteristicEventHandler extends EntityPersistenceEventObserver {
       }
     }
 
-    if (!prCh.isVariant() && prCh.getProduct().isGeneric()
+    if (Boolean.FALSE.equals(prCh.isVariant()) && Boolean.TRUE.equals(prCh.getProduct().isGeneric())
         && !prCh.getProduct().getProductGenericProductList().isEmpty()) {
-      throw new OBException(OBMessageUtils.messageBD("NewVariantChWithVariantsError"));
+      throw new OBException(OBMessageUtils.messageBD(MSG_NEW_VARIANTS_CH_ERROR));
     }
     if (prCh.isVariant() && prCh.getProduct().isGeneric()) {
       final Property variantProperty = prodCharEntity
@@ -163,9 +165,9 @@ class ProductCharacteristicEventHandler extends EntityPersistenceEventObserver {
       boolean oldIsVariant = (Boolean) event.getPreviousState(variantProperty);
 
       if (!prCh.getProduct().getProductGenericProductList().isEmpty() && !oldIsVariant) {
-        throw new OBException(OBMessageUtils.messageBD("NewVariantChWithVariantsError"));
+        throw new OBException(OBMessageUtils.messageBD(MSG_NEW_VARIANTS_CH_ERROR));
       }
-      if (prCh.isDefinesPrice()) {
+      if (Boolean.TRUE.equals(prCh.isDefinesPrice())) {
         // Check there is only 1.
         OBCriteria<ProductCharacteristic> criteria = OBDal.getInstance()
             .createCriteria(ProductCharacteristic.class);
@@ -178,7 +180,7 @@ class ProductCharacteristicEventHandler extends EntityPersistenceEventObserver {
           throw new OBException(OBMessageUtils.messageBD("DuplicateDefinesPrice"));
         }
       }
-      if (prCh.isDefinesImage()) {
+      if (Boolean.TRUE.equals(prCh.isDefinesImage())) {
         // Check there is only 1.
         OBCriteria<ProductCharacteristic> criteria = OBDal.getInstance()
             .createCriteria(ProductCharacteristic.class);
@@ -192,7 +194,7 @@ class ProductCharacteristicEventHandler extends EntityPersistenceEventObserver {
         }
       }
 
-      if (prCh.isExplodeConfigurationTab()) {
+      if (Boolean.TRUE.equals(prCh.isExplodeConfigurationTab())) {
         final Property charConfListProperty = prodCharEntity
             .getProperty(ProductCharacteristic.PROPERTY_PRODUCTCHARACTERISTICCONFLIST);
         @SuppressWarnings("unchecked")
