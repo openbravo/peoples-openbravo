@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2017-2018 Openbravo S.L.U.
+ * Copyright (C) 2017-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -32,7 +32,15 @@
               line.get('obrdmDeliveryMode') === 'PickAndCarry'
             ) {
               prepaymentPercLimit = 100;
-              linePrepaymentAmount = line.get('price');
+              linePrepaymentAmount = line.get('gross');
+              if (line.get('promotions') && line.get('promotions').length > 0) {
+                linePrepaymentAmount = OB.DEC.sub(
+                  linePrepaymentAmount,
+                  line.get('promotions').reduce(function(total, model) {
+                    return OB.DEC.add(total, model.amt);
+                  }, 0)
+                );
+              }
               line.set('obposLinePrepaymentAmount', linePrepaymentAmount);
               return OB.DEC.add(memo, linePrepaymentAmount);
             } else {
