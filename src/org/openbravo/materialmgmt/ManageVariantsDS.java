@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2019 Openbravo SLU
+ * All portions are Copyright (C) 2013-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -51,7 +51,6 @@ import org.openbravo.model.common.plm.CharacteristicValue;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductCharacteristic;
 import org.openbravo.model.common.plm.ProductCharacteristicConf;
-import org.openbravo.model.common.plm.ProductCharacteristicValue;
 import org.openbravo.service.datasource.DataSourceProperty;
 import org.openbravo.service.datasource.ReadOnlyDataSourceService;
 import org.openbravo.service.json.JsonUtils;
@@ -191,10 +190,10 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
         }
         searchKey += productNo;
         variantMap.put("searchKey", searchKey);
-
-        StringBuilder where = new StringBuilder();
-        where.append(" as p ");
-        where.append(" where p." + Product.PROPERTY_GENERICPRODUCT + " = :product");
+        //@formatter:off
+        String hql = " as p "
+                   + " where p.genericProduct = :product ";
+        //@formatter:on
 
         String strChDesc = "";
         String strKeyId = "";
@@ -202,7 +201,7 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
         for (i = 0; i < chNumber; i++) {
           ProductCharacteristicConf prChConf = currentValues[i];
           Characteristic characteristic = prChConf.getCharacteristicOfProduct().getCharacteristic();
-          where.append(buildExistsClause(i));
+          hql += buildExistsClause(i);
           if (StringUtils.isNotBlank(strChDesc)) {
             strChDesc += ", ";
           }
@@ -219,8 +218,7 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
         variantMap.put("characteristicDescription", strChDesc);
         variantMap.put("id", strKeyId);
 
-        OBQuery<Product> variantQry = OBDal.getInstance()
-            .createQuery(Product.class, where.toString());
+        OBQuery<Product> variantQry = OBDal.getInstance().createQuery(Product.class, hql);
         variantQry.setNamedParameter("product", product);
         for (i = 0; i < chNumber; i++) {
           ProductCharacteristicConf prChConf = currentValues[i];
@@ -364,16 +362,13 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
   }
 
   private String buildExistsClause(int i) {
-    StringBuffer clause = new StringBuffer();
-    clause
-        .append(" and exists (select 1 from " + ProductCharacteristicValue.ENTITY_NAME + " as pcv");
-    clause.append("    where pcv." + ProductCharacteristicValue.PROPERTY_PRODUCT + " = p");
-    clause.append(
-        "      and pcv." + ProductCharacteristicValue.PROPERTY_CHARACTERISTIC + ".id = :ch" + i);
-    clause.append("      and pcv." + ProductCharacteristicValue.PROPERTY_CHARACTERISTICVALUE
-        + ".id = :chvalue" + i);
-    clause.append("     )");
-    return clause.toString();
+    //@formatter:off
+    return " and exists (select 1 "
+        + "             from ProductCharacteristicValue as pcv "
+        + "             where pcv.product = p "
+        + "             and pcv.characteristic.id = :ch" + i
+        + "             and pcv.characteristicValue.id = :chvalue" + i + ") ";
+    //@formatter:on
   }
 
   private static int getSearchKeyColumnLength() {
