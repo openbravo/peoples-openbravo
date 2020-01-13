@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2018 Openbravo SLU
+ * All portions are Copyright (C) 2014-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,8 +30,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Session;
-import org.hibernate.query.Query;
 import org.openbravo.client.application.OBBindingsConstants;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.service.OBDal;
@@ -77,10 +75,10 @@ abstract class AddOrderOrInvoiceFilterExpressionHandler {
 
   protected String getDefaultPaymentMethod(Map<String, String> requestMap) throws JSONException {
     final String strContext = requestMap.get("context");
-    JSONObject context = new JSONObject(strContext);
+    final JSONObject context = new JSONObject(strContext);
     final String strWindowId = context.getString(OBBindingsConstants.WINDOW_ID_PARAM);
-    AddPaymentDefaultValuesHandler handler = getDefaultsHandler(strWindowId);
-    String paymentMethodId = handler.getDefaultPaymentMethod(requestMap);
+    final AddPaymentDefaultValuesHandler handler = getDefaultsHandler(strWindowId);
+    final String paymentMethodId = handler.getDefaultPaymentMethod(requestMap);
     if (context.has("inpfinPaymentId") && context.get("inpfinPaymentId") != JSONObject.NULL
         && StringUtils.isNotBlank(context.getString("inpfinPaymentId"))) {
       if (hasDetailsWithDifferentPaymentMethods((String) context.get("inpfinPaymentId"))) {
@@ -93,23 +91,27 @@ abstract class AddOrderOrInvoiceFilterExpressionHandler {
   }
 
   private boolean hasDetailsWithDifferentPaymentMethods(String paymentId) {
-    final StringBuilder hqlString = new StringBuilder();
-    hqlString.append("select coalesce(ipspm.id, opspm.id) as pm");
-    hqlString.append(" from FIN_Payment_ScheduleDetail as psd");
-    hqlString.append(" join psd.paymentDetails as pd");
-    hqlString.append(" left join psd.orderPaymentSchedule as ops");
-    hqlString.append(" left join ops.finPaymentmethod as opspm");
-    hqlString.append(" left join psd.invoicePaymentSchedule as ips");
-    hqlString.append(" left join ips.finPaymentmethod as ipspm");
-    hqlString.append(" where pd.finPayment.id = :paymentId");
-    hqlString.append(" and pd.gLItem is null");
-    hqlString.append(" group by coalesce(ipspm, opspm)");
+    //@formatter:off
+    final String hql = 
+            "select coalesce(ipspm.id, opspm.id) as pm" +
+            "  from FIN_Payment_ScheduleDetail as psd" +
+            "    join psd.paymentDetails as pd" +
+            "    left join psd.orderPaymentSchedule as ops" +
+            "    left join ops.finPaymentmethod as opspm" +
+            "    left join psd.invoicePaymentSchedule as ips" +
+            "    left join ips.finPaymentmethod as ipspm" +
+            " where pd.finPayment.id = :paymentId" +
+            "   and pd.gLItem is null" +
+            " group by coalesce(ipspm, opspm)";
+  //@formatter:on
 
-    final Session session = OBDal.getInstance().getSession();
-    final Query<String> query = session.createQuery(hqlString.toString(), String.class);
-    query.setParameter("paymentId", paymentId);
-    FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, paymentId);
-    for (String pmId : query.list()) {
+    final FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, paymentId);
+
+    for (String pmId : OBDal.getInstance()
+        .getSession()
+        .createQuery(hql, String.class)
+        .setParameter("paymentId", paymentId)
+        .list()) {
       if (!payment.getPaymentMethod().getId().equals(pmId)) {
         return true;
       }
