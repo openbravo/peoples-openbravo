@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2019 Openbravo SLU
+ * All portions are Copyright (C) 2013-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -38,7 +38,6 @@ import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.model.ad.access.CharacteristicSubsetValue;
 import org.openbravo.model.common.plm.CharacteristicValue;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductCharacteristic;
@@ -199,17 +198,13 @@ class ProductCharacteristicEventHandler extends EntityPersistenceEventObserver {
         @SuppressWarnings("unchecked")
         List<ProductCharacteristicConf> prChConfs = (List<ProductCharacteristicConf>) event
             .getCurrentState(charConfListProperty);
-
-        StringBuilder hql = new StringBuilder();
-        hql.append(" select cv." + CharacteristicValue.PROPERTY_ID);
-        hql.append(" from " + ProductCharacteristicConf.ENTITY_NAME + " as pcc");
-        hql.append(
-            " join pcc." + ProductCharacteristicConf.PROPERTY_CHARACTERISTICVALUE + " as cv");
-        hql.append(
-            " where pcc." + ProductCharacteristicConf.PROPERTY_CHARACTERISTICOFPRODUCT + " = :pc");
-        Query<String> query = OBDal.getInstance()
-            .getSession()
-            .createQuery(hql.toString(), String.class);
+        //@formatter:off
+        String hql = " select cv.id "
+                   + " from ProductCharacteristicConf as pcc "
+                   + " join pcc.characteristicValue as cv "
+                   + " where pcc.characteristicOfProduct = :pc ";
+        //@formatter:on
+        Query<String> query = OBDal.getInstance().getSession().createQuery(hql, String.class);
         query.setParameter("pc", prCh);
         final List<String> existingValues = query.list();
 
@@ -267,34 +262,30 @@ class ProductCharacteristicEventHandler extends EntityPersistenceEventObserver {
 
     // If a subset is defined insert only values of it.
     if (prCh.getCharacteristicSubset() != null) {
-      StringBuilder hql = new StringBuilder();
-      hql.append(" select cv." + CharacteristicValue.PROPERTY_ID);
-      hql.append(" , coalesce(csv." + CharacteristicSubsetValue.PROPERTY_CODE + ", cv."
-          + CharacteristicValue.PROPERTY_CODE + ")");
-      hql.append(" , cv." + CharacteristicValue.PROPERTY_ACTIVE);
-      hql.append(" from " + CharacteristicSubsetValue.ENTITY_NAME + " as csv");
-      hql.append(" join csv." + CharacteristicSubsetValue.PROPERTY_CHARACTERISTICVALUE + " as cv");
-      hql.append(
-          " where csv." + CharacteristicSubsetValue.PROPERTY_CHARACTERISTICSUBSET + " = :cs");
-      Query<Object[]> query = OBDal.getInstance()
-          .getSession()
-          .createQuery(hql.toString(), Object[].class);
+      //@formatter:off
+      String hql = " select cv.id, "
+                 + "        coalesce(csv.code, cv.code), "
+                 + "        cv.active "
+                 + " from CharacteristicSubsetValue as csv "
+                 + " join csv.characteristicValue as cv "
+                 + " where csv.characteristicSubset = :cs ";
+      //@formatter:on
+      Query<Object[]> query = OBDal.getInstance().getSession().createQuery(hql, Object[].class);
       query.setParameter("cs", prCh.getCharacteristicSubset());
       return query.scroll(ScrollMode.FORWARD_ONLY);
     }
 
     // Add all not summary values.
     else {
-      StringBuilder hql = new StringBuilder();
-      hql.append(" select cv." + CharacteristicValue.PROPERTY_ID);
-      hql.append(" , cv." + CharacteristicValue.PROPERTY_CODE);
-      hql.append(" , cv." + CharacteristicValue.PROPERTY_ACTIVE);
-      hql.append(" from " + CharacteristicValue.ENTITY_NAME + " as cv");
-      hql.append(" where cv." + CharacteristicValue.PROPERTY_CHARACTERISTIC + " = :c");
-      hql.append(" and cv." + CharacteristicValue.PROPERTY_SUMMARYLEVEL + " = false");
-      Query<Object[]> query = OBDal.getInstance()
-          .getSession()
-          .createQuery(hql.toString(), Object[].class);
+      //@formatter:off
+      String hql = " select cv.id, "
+                 + " cv.code, "
+                 + " cv.active "
+                 + " from CharacteristicValue as cv "
+                 + " where cv.characteristic = :c "
+                 + " and cv.summaryLevel = false ";
+      //@formatter:on
+      Query<Object[]> query = OBDal.getInstance().getSession().createQuery(hql, Object[].class);
       query.setParameter("c", prCh.getCharacteristic());
       return query.scroll(ScrollMode.FORWARD_ONLY);
     }
