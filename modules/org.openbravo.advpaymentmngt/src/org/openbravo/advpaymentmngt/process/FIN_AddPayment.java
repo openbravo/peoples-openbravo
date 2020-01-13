@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2019 Openbravo SLU
+ * All portions are Copyright (C) 2010-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -29,10 +29,8 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 
-import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.query.Query;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
@@ -61,7 +59,6 @@ import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
-import org.openbravo.model.financialmgmt.payment.FIN_PaymentPropDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentProposal;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedInvV;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
@@ -1143,20 +1140,21 @@ public class FIN_AddPayment {
     // removed when new security implementation is done
     OBContext.setAdminMode();
     try {
-      StringBuilder hql = new StringBuilder();
-      final Session session = OBDal.getInstance().getSession();
-      hql.append("SELECT distinct(p." + FIN_Payment.PROPERTY_ID + ") ");
-      hql.append("FROM " + FIN_PaymentPropDetail.TABLE_NAME + " as ppd ");
-      hql.append(
-          "inner join ppd." + FIN_PaymentPropDetail.PROPERTY_FINPAYMENTSCHEDULEDETAIL + " as psd ");
-      hql.append("inner join psd." + FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS + " as pd ");
-      hql.append("inner join pd." + FIN_PaymentDetail.PROPERTY_FINPAYMENT + " as p ");
-      hql.append("WHERE ppd." + FIN_PaymentPropDetail.PROPERTY_FINPAYMENTPROPOSAL + "."
-          + FIN_PaymentProposal.PROPERTY_ID + "= :paymentProposalId");
-      final Query<String> obqPay = session.createQuery(hql.toString(), String.class);
-      obqPay.setParameter("paymentProposalId", paymentProposal.getId());
+      //@formatter:off
+      final String hql = 
+                    "SELECT distinct(p.id) " +
+                    "  FROM FIN_Payment_Prop_Detail as ppd " +
+                    "    inner join ppd.fINPaymentScheduledetail as psd " +
+                    "    inner join psd.paymentDetails as pd " +
+                    "    inner join pd.finPayment as p " +
+                    " WHERE ppd.finPaymentProposal.id= :paymentProposalId";
+      //@formatter:on
 
-      return obqPay.list();
+      return OBDal.getInstance()
+          .getSession()
+          .createQuery(hql, String.class)
+          .setParameter("paymentProposalId", paymentProposal.getId())
+          .list();
 
     } catch (Exception e) {
       throw new OBException(e);
