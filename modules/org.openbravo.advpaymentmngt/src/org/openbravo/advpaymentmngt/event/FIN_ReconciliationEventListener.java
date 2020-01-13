@@ -61,7 +61,8 @@ class FIN_ReconciliationEventListener extends EntityPersistenceEventObserver {
     //@formatter:off
     String hql = 
             "update FIN_Reconciliation" +
-            " set startingbalance = startingbalance - :balance , endingBalance = endingBalance - :balance" +
+            " set startingbalance = startingbalance - :balance , " + 
+            "   endingBalance = endingBalance - :balance" +
             " where account.id = :accountId" +
             "   and transactionDate > :date";
     //@formatter:on
