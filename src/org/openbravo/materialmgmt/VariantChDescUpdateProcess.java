@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2018 Openbravo SLU
+ * All portions are Copyright (C) 2013-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -96,17 +96,16 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
         }
         return;
       }
-      StringBuffer where = new StringBuffer();
-      where.append(" as p");
-      where.append(" where p." + Product.PROPERTY_PRODUCTCHARACTERISTICLIST + " is not empty");
+      //@formatter:off
+      String hql = " as p"
+                 + " where p.productCharacteristicList is not empty ";
       if (StringUtils.isNotBlank(strChValueId)) {
-        where.append(" and exists (select 1 from p."
-            + Product.PROPERTY_PRODUCTCHARACTERISTICVALUELIST + " as chv");
-        where.append("    where chv." + ProductCharacteristicValue.PROPERTY_CHARACTERISTICVALUE
-            + ".id = :chvid)");
+        hql += " and exists (select 1 "
+             + "              from p.productCharacteristicValueList as chv "
+             + "              where chv.characteristicValue.id = :chvid) ";
       }
-      OBQuery<Product> productQuery = OBDal.getInstance()
-          .createQuery(Product.class, where.toString());
+      //@formatter:on
+      OBQuery<Product> productQuery = OBDal.getInstance().createQuery(Product.class, hql);
       if (StringUtils.isNotBlank(strChValueId)) {
         productQuery.setNamedParameter("chvid", strChValueId);
       }
@@ -137,12 +136,13 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
 
   private void updateProduct(Product product) {
     String strChDesc = "";
-    StringBuffer where = new StringBuffer();
-    where.append(" as pch");
-    where.append(" where pch." + ProductCharacteristic.PROPERTY_PRODUCT + " = :product");
-    where.append(" order by pch." + ProductCharacteristic.PROPERTY_SEQUENCENUMBER);
+    //@formatter:off
+    String hql = " as pch "
+               + " where pch.product = :product "
+               + " order by pch.sequenceNumber ";
+    //@formatter:on
     OBQuery<ProductCharacteristic> pchQuery = OBDal.getInstance()
-        .createQuery(ProductCharacteristic.class, where.toString());
+        .createQuery(ProductCharacteristic.class, hql);
     pchQuery.setFilterOnActive(false);
     pchQuery.setFilterOnReadableOrganization(false);
     pchQuery.setNamedParameter("product", product);
@@ -151,13 +151,13 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
         strChDesc += ", ";
       }
       strChDesc += pch.getCharacteristic().getName() + ":";
-      where = new StringBuffer();
-      where.append(" as pchv");
-      where.append(
-          " where pchv." + ProductCharacteristicValue.PROPERTY_CHARACTERISTIC + ".id = :ch");
-      where.append("   and pchv." + ProductCharacteristicValue.PROPERTY_PRODUCT + ".id = :product");
+      //@formatter:off
+      hql = " as pchv "
+          + " where pchv.characteristic.id = :ch "
+          + " and pchv.product.id = :product ";
+      //@formatter:on
       OBQuery<ProductCharacteristicValue> pchvQuery = OBDal.getInstance()
-          .createQuery(ProductCharacteristicValue.class, where.toString());
+          .createQuery(ProductCharacteristicValue.class, hql);
       pchvQuery.setFilterOnActive(false);
       pchvQuery.setFilterOnReadableOrganization(false);
       pchvQuery.setNamedParameter("ch", pch.getCharacteristic().getId());
