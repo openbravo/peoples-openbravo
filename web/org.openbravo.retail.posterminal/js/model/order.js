@@ -7674,7 +7674,8 @@
 
     addPaymentRounding: function(payment, terminalPayment) {
       if (
-        OB.MobileApp.model.paymentnames[payment.get('kind')].paymentRounding
+        OB.MobileApp.model.paymentnames[payment.get('kind')].paymentRounding &&
+        !payment.get('isReversePayment')
       ) {
         var paymentStatus = this.getPaymentStatus(),
           roundingAmount = OB.DEC.sub(
@@ -7823,9 +7824,7 @@
             payments.remove(payment.get('paymentRoundingLine'));
             reversedPaymentRoundingId = payment
               .get('paymentRoundingLine')
-              .has('reversedPaymentId')
-              ? payment.get('paymentRoundingLine').get('reversedPaymentId')
-              : null;
+              .get('reversedPaymentId');
           }
 
           if (!me.get('deletedPayments')) {
@@ -7876,6 +7875,7 @@
         me = this,
         usedPayment,
         reversalPayment,
+        reversalPaymentLine,
         reversalPaymentRounding,
         reversalPaymentRoundingLine,
         paymentRounding = payment.has('paymentRoundingLine')
@@ -7893,6 +7893,7 @@
         reversePayment.unset('paymentAmount');
         reversePayment.unset('paymentDate');
         reversePayment.unset('paymentId');
+        reversePayment.unset('paymentRoundingLine');
 
         // Modify other properties for the reverse payment
         reversePayment.set(
@@ -8033,19 +8034,20 @@
                       args: reversalPayment.attributes
                     });
                   } else {
+                    reversalPaymentLine = new OB.Model.PaymentLine(
+                      reversalPayment.attributes
+                    );
+                    me.addPayment(reversalPaymentLine);
                     if (!OB.UTIL.isNullOrUndefined(paymentRounding)) {
                       reversalPaymentRoundingLine = new OB.Model.PaymentLine(
                         reversalPaymentRounding.attributes
                       );
-                      reversalPayment.set(
+                      reversalPaymentLine.set(
                         'paymentRoundingLine',
                         reversalPaymentRoundingLine
                       );
                       me.addPayment(reversalPaymentRoundingLine);
                     }
-                    me.addPayment(
-                      new OB.Model.PaymentLine(reversalPayment.attributes)
-                    );
                   }
                 }
               }
