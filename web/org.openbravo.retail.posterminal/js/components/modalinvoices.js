@@ -284,27 +284,6 @@ enyo.kind({
     }
     // Build the component
     this.inherited(arguments);
-    // Calculate number of buttons
-    if (this.buttons && _.isArray(this.buttons) && this.buttons.length > 1) {
-      // Apply CSS class based on number of buttons
-      if (this.buttons.length === 4) {
-        this.$.modalInvoicesFooter__buttonsContainer.addClass(
-          'obUiModalInvoicesFooter-buttonsContainer-button_comfortable'
-        );
-      } else if (this.buttons.length === 5) {
-        this.$.modalInvoicesFooter__buttonsContainer.addClass(
-          'obUiModalInvoicesFooter-buttonsContainer-button_cozy'
-        );
-      } else if (this.buttons.length >= 6) {
-        this.$.modalInvoicesFooter__buttonsContainer.addClass(
-          'obUiModalInvoicesFooter-buttonsContainer-button_compact'
-        );
-      }
-    } else {
-      OB.warn(
-        'OB.UI.ModalInvoicesFooter component requires at least one button'
-      );
-    }
     OB.UTIL.ProcessController.subscribe(this.processesToListen, this);
   },
   destroyComponents: function() {

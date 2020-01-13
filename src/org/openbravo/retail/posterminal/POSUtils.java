@@ -957,9 +957,13 @@ public class POSUtils {
    * Returns true if Cross Store functionality is enabled for this posTerminal
    */
   public static boolean isCrossStoreEnabled(final OBPOSApplications posTerminal) {
-    final Organization crossOrganization = posTerminal.getOrganization()
-        .getOBRETCOCrossStoreOrganization();
-
+    final Organization crossOrganization;
+    OBContext.setAdminMode(true);
+    try {
+      crossOrganization = posTerminal.getOrganization().getOBRETCOCrossStoreOrganization();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
     return crossOrganization != null;
   }
 

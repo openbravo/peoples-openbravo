@@ -90,7 +90,8 @@ public class ProductCharacteristicValue extends ProcessHQLQuery {
       }
       paramValues.put("productListId", productList.getId());
       paramValues.put("priceListVersionId", priceListVersion.getId());
-      paramValues.put("characteristicIds", getUsedInWebPOSCharacteristics());
+      List<String> characteristicsIds = getUsedInWebPOSCharacteristics();
+      paramValues.put("characteristicIds", characteristicsIds.size() > 0 ? characteristicsIds : "");
       return paramValues;
     } finally {
       OBContext.restorePreviousMode();

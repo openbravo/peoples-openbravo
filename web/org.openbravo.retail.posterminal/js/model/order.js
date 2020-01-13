@@ -926,14 +926,16 @@
         }
       };
 
-      this.get('lines').forEach(function(line) {
-        line.calculateGross();
-      });
-
-      if (this.get('priceIncludesTax')) {
-        this.calculateTaxes(function() {
-          var gross = me.get('lines').reduce(function(memo, e) {
-            var grossLine = e.getGross();
+      if (this.get('isEditable') || this.get('isCancelling')) {
+        this.get('lines').forEach(function(line) {
+          line.calculateGross();
+        });
+      }
+      this.calculateTaxes(function() {
+        var gross, grossLine;
+        if (me.get('priceIncludesTax')) {
+          gross = me.get('lines').reduce(function(memo, e) {
+            grossLine = e.getGross();
             if (e.get('qty') !== 0 && e.get('promotions')) {
               grossLine = e.get('promotions').reduce(function(memo, e) {
                 return OB.DEC.sub(
@@ -949,40 +951,22 @@
             }
             return OB.DEC.add(memo, grossLine);
           }, OB.DEC.Zero);
-          saveAndTriggerEvents(gross, save);
-        });
-      } else {
-        this.calculateTaxes(function() {
-          //If the price doesn't include tax, the discounted gross has already been calculated
-          var gross = me.get('lines').reduce(function(memo, e) {
+        } else {
+          // If the price doesn't include tax, the discounted gross has already been calculated
+          gross = me.get('lines').reduce(function(memo, e) {
             if (_.isUndefined(e.get('discountedGross'))) {
               return memo;
             }
-            var grossLine = e.get('discountedGross');
+            grossLine = e.get('discountedGross');
             if (grossLine) {
               return OB.DEC.add(memo, grossLine);
             } else {
               return memo;
             }
           }, OB.DEC.Zero);
-          if (
-            !me.get('isEditable') &&
-            !me.get('forceCalculateTaxes') &&
-            !OB.UTIL.isNullOrUndefined(me.get('totalamount'))
-          ) {
-            if (gross !== me.get('totalamount')) {
-              OB.warn(
-                'Calculated gross ' +
-                  gross +
-                  ' is not equal to totalamount of the receipt ' +
-                  me.get('totalamount')
-              );
-            }
-            gross = me.get('totalamount');
-          }
-          saveAndTriggerEvents(gross, save);
-        });
-      }
+        }
+        saveAndTriggerEvents(gross, save);
+      });
     },
 
     addToListOfCallbacks: function(callback) {
@@ -1632,6 +1616,7 @@
       this.set('isNewReceipt', _order.get('isNewReceipt'));
       //we need this data when IsPaid, IsLayaway changes are triggered
       this.set('documentType', _order.get('documentType'));
+      this.set('isQuotation', _order.get('isQuotation'));
 
       //Prevent recalculating service relations during executions of clearWith
       this.set('preventServicesUpdate', true);
@@ -7505,17 +7490,20 @@
                 if (saveChanges && !payment.get('changePayment')) {
                   order.adjustPayment();
                   order.trigger('displayTotal');
-                  order.save();
-                  order.trigger('saveCurrent');
                 }
                 OB.UTIL.HookManager.executeHooks(
                   'OBPOS_postAddPayment',
                   {
                     paymentAdded: payment,
                     payments: payments,
-                    receipt: order
+                    receipt: order,
+                    saveChanges: saveChanges
                   },
                   function(args2) {
+                    if (args2.saveChanges && !payment.get('changePayment')) {
+                      order.save();
+                      order.trigger('saveCurrent');
+                    }
                     finalCallback();
                   }
                 );
@@ -10206,7 +10194,13 @@
             i,
             sortedPayments = false;
           _.each(model.receiptLines, function(iter) {
-            var price;
+            var price = OB.DEC.number(iter.unitPrice),
+              lineNet = order.get('priceIncludesTax')
+                ? null
+                : OB.DEC.number(iter.lineGrossAmount || iter.linenetamount),
+              lineGross = order.get('priceIncludesTax')
+                ? OB.DEC.number(iter.lineGrossAmount)
+                : null;
             iter.linepos = linepos;
             var addLineForProduct = function(prod) {
               if (
@@ -10287,7 +10281,13 @@
                           ].addManual
                         ) {
                           var percentage;
-                          if (discount.get('obdiscPercentage')) {
+                          if (
+                            (discount.get('discountType') ===
+                              '8338556C0FBF45249512DB343FEFD280' ||
+                              discount.get('discountType') ===
+                                '20E4EC27397344309A2185097392D964') &&
+                            discount.get('obdiscPercentage')
+                          ) {
                             percentage = OB.DEC.mul(
                               OB.DEC.div(promotion.amt, iter.lineGrossAmount),
                               new BigDecimal('100')
@@ -10343,6 +10343,8 @@
                         ? price
                         : prod.get('listPrice'),
                     grossListPrice: iter.grossListPrice,
+                    net: lineNet,
+                    gross: lineGross,
                     promotions: iter.promotions,
                     description: iter.description,
                     priceIncludesTax: order.get('priceIncludesTax'),
@@ -10393,16 +10395,6 @@
                 }
               );
             };
-
-            if (order.get('priceIncludesTax')) {
-              price = OB.DEC.number(iter.unitPrice);
-            } else {
-              price = OB.DEC.number(
-                iter.baseNetUnitPrice > 0
-                  ? iter.baseNetUnitPrice
-                  : iter.unitPrice
-              );
-            }
 
             if (!iter.deliveredQuantity) {
               hasNotDeliveredProducts = true;

@@ -431,12 +431,7 @@ public class InvoiceUtils {
     invoice.setAccountingDate(invoiceDate);
     invoice.setInvoiceDate(invoiceDate);
     invoice.setSalesTransaction(true);
-    if (invoice.getDocumentType().isReturn()) {
-      invoice.setDocumentStatus("VO");
-    } else {
-      invoice.setDocumentStatus("CO");
-    }
-    ;
+    invoice.setDocumentStatus("CO");
     invoice.setDocumentAction("RE");
     invoice.setAPRMProcessinvoice("RE");
     invoice.setSalesOrder(order);

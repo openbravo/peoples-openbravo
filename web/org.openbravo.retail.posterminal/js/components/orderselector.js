@@ -157,10 +157,10 @@ enyo.kind({
     },
     {
       name: 'orderline',
-      classes: '.obrdmUiListOrdersLine-orderLine',
+      classes: 'obrdmUiListOrdersLine-orderLine',
       components: [
         {
-          classes: '.obrdmUiListOrdersLine-orderLine-container1',
+          classes: 'obrdmUiListOrdersLine-orderLine-container1',
           components: [
             {
               name: 'iconOrderLine',
@@ -215,7 +215,8 @@ enyo.kind({
                 'obrdmUiListOrdersLine-orderLine-container2-container1 obrdm-cell-orderline-right-col1',
               components: [
                 {
-                  classes: 'obrdm-lbl-prepare',
+                  classes:
+                    'obrdmUiListOrdersLine-orderLine-container2-container1-prepare',
                   initComponents: function() {
                     this.setContent(OB.I18N.getLabel('OBRDM_LblPrepare'));
                   }
@@ -366,15 +367,15 @@ enyo.kind({
   },
 
   changeIconClass: function(icon, mode) {
-    icon.removeClass('.obrdmCheckbox_halfOn');
-    icon.removeClass('.obrdmCheckbox_on');
-    icon.removeClass('.obrdmCheckbox_off');
+    icon.removeClass('obrdmCheckbox_halfOn');
+    icon.removeClass('obrdmCheckbox_on');
+    icon.removeClass('obrdmCheckbox_off');
     if (mode === 'OFF') {
-      icon.addClass('.obrdmCheckbox_off');
+      icon.addClass('obrdmCheckbox_off');
     } else if (mode === 'ON') {
-      icon.addClass('.obrdmCheckbox_on');
+      icon.addClass('obrdmCheckbox_on');
     } else {
-      icon.addClass('.obrdmCheckbox_halfOn');
+      icon.addClass('obrdmCheckbox_halfOn');
     }
   },
 
@@ -431,14 +432,14 @@ enyo.kind({
       silent: true
     });
     if (this.model.get('ltype') === 'ORDER') {
-      //this.owner.addClass('obrdm-order');
+      this.owner.addClass('obrdm-order');
       this.$.orderline.hide();
       this.$.order.show();
       this.$.documentNo.setContent(this.model.get('documentNo'));
       this.$.bpName.setContent(' / ' + this.model.get('bpName'));
       this.$.orderedDate.setContent(' / ' + this.model.get('orderedDate'));
     } else {
-      //this.owner.addClass('obrdm-orderline');
+      this.owner.addClass('obrdm-orderline');
       this.$.order.hide();
       this.$.orderline.show();
       this.$.orderlineInfo.setContent(
@@ -937,7 +938,9 @@ enyo.kind({
                       );
 
                       _.each(
-                        OB.MobileApp.view.$.containerWindow.$.pointOfSale.$.multiColumn.$.leftPanel.$.receiptview.$.orderview.$.listOrderLines.$.tbody.getComponents(),
+                        OB.MobileApp.view.$.containerWindow
+                          .getRoot()
+                          .$.multiColumn.$.leftPanel.$.receiptview.$.orderview.$.listOrderLines.$.tbody.getComponents(),
                         function(component) {
                           var renderOrderLine = component.renderline;
                           if (
