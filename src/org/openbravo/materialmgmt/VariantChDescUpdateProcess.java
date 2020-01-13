@@ -39,6 +39,7 @@ import org.openbravo.service.db.DalBaseProcess;
 public class VariantChDescUpdateProcess extends DalBaseProcess {
   private static final Logger log4j = LogManager.getLogger();
   public static final String AD_PROCESS_ID = "58591E3E0F7648E4A09058E037CE49FC";
+  private static final String ERROR_MSG_TYPE = "Error";
 
   @Override
   public void doExecute(ProcessBundle bundle) throws Exception {
@@ -58,16 +59,16 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
       // Postgres wraps the exception into a GenericJDBCException
     } catch (GenericJDBCException ge) {
       log4j.error("Exception processing variant generation", ge);
-      msg.setType("Error");
-      msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error",
+      msg.setType(ERROR_MSG_TYPE);
+      msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), ERROR_MSG_TYPE,
           bundle.getContext().getLanguage()));
       msg.setMessage(ge.getSQLException().getMessage().split("\n")[0]);
       bundle.setResult(msg);
       OBDal.getInstance().rollbackAndClose();
     } catch (final Exception e) {
       log4j.error("Exception processing variant generation", e);
-      msg.setType("Error");
-      msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error",
+      msg.setType(ERROR_MSG_TYPE);
+      msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), ERROR_MSG_TYPE,
           bundle.getContext().getLanguage()));
       msg.setMessage(FIN_Utility.getExceptionMessage(e));
       bundle.setResult(msg);
@@ -135,7 +136,7 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
   }
 
   private void updateProduct(Product product) {
-    String strChDesc = "";
+    StringBuilder strChDesc = new StringBuilder();
     //@formatter:off
     String hql = " as pch "
                + " where pch.product = :product "
@@ -147,10 +148,10 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
     pchQuery.setFilterOnReadableOrganization(false);
     pchQuery.setNamedParameter("product", product);
     for (ProductCharacteristic pch : pchQuery.list()) {
-      if (StringUtils.isNotBlank(strChDesc)) {
-        strChDesc += ", ";
+      if (StringUtils.isNotBlank(strChDesc.toString())) {
+        strChDesc.append(", ");
       }
-      strChDesc += pch.getCharacteristic().getName() + ":";
+      strChDesc.append(pch.getCharacteristic().getName() + ":");
       //@formatter:off
       hql = " as pchv "
           + " where pchv.characteristic.id = :ch "
@@ -163,9 +164,9 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
       pchvQuery.setNamedParameter("ch", pch.getCharacteristic().getId());
       pchvQuery.setNamedParameter("product", product.getId());
       for (ProductCharacteristicValue pchv : pchvQuery.list()) {
-        strChDesc += " " + pchv.getCharacteristicValue().getName();
+        strChDesc.append(" " + pchv.getCharacteristicValue().getName());
       }
     }
-    product.setCharacteristicDescription(strChDesc);
+    product.setCharacteristicDescription(strChDesc.toString());
   }
 }
