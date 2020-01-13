@@ -81,7 +81,7 @@ public class FIN_AddPayment {
    * 
    * If a Refund Amount is given an extra Payment Detail will be created with it.
    * 
-   * @param _payment
+   * @param payment
    *          FIN_Payment where new payment details will be saved.
    * @param isReceipt
    *          boolean to define if the Payment is a Receipt Payment (true) or a Payable Payment
@@ -127,7 +127,7 @@ public class FIN_AddPayment {
    *          id to set in new entities
    * @return The FIN_Payment OBObject containing all the Payment Details.
    */
-  public static FIN_Payment savePayment(FIN_Payment _payment, boolean isReceipt,
+  public static FIN_Payment savePayment(FIN_Payment payment, boolean isReceipt,
       DocumentType docType, String strPaymentDocumentNo, BusinessPartner businessPartner,
       FIN_PaymentMethod paymentMethod, FIN_FinancialAccount finAccount, String strPaymentAmount,
       Date paymentDate, Organization organization, String referenceNo,
@@ -138,11 +138,11 @@ public class FIN_AddPayment {
     dao = new AdvPaymentMngtDao();
 
     BigDecimal assignedAmount = BigDecimal.ZERO;
-    final FIN_Payment payment;
-    if (_payment != null) {
-      payment = _payment;
+    final FIN_Payment currentPayment;
+    if (payment != null) {
+      currentPayment = payment;
     } else {
-      payment = dao.getNewPayment(isReceipt, organization, docType, strPaymentDocumentNo,
+      currentPayment = dao.getNewPayment(isReceipt, organization, docType, strPaymentDocumentNo,
           businessPartner, paymentMethod, finAccount, strPaymentAmount, paymentDate, referenceNo,
           paymentCurrency, finTxnConvertRate, finTxnAmount, paymentId);
       if (doFlush) {
@@ -154,7 +154,7 @@ public class FIN_AddPayment {
       }
     }
 
-    for (FIN_PaymentDetail paymentDetail : payment.getFINPaymentDetailList()) {
+    for (FIN_PaymentDetail paymentDetail : currentPayment.getFINPaymentDetailList()) {
       assignedAmount = assignedAmount.add(paymentDetail.getAmount());
     }
     // FIXME: added to access the FIN_PaymentSchedule and FIN_PaymentScheduleDetail tables to be
@@ -167,16 +167,17 @@ public class FIN_AddPayment {
         // Payment Schedule Detail already linked to a payment detail.
         OBDal.getInstance().refresh(paymentScheduleDetail);
 
-        BigDecimal assignedAmountDiff = updatePaymentDetail(paymentScheduleDetail, payment,
+        BigDecimal assignedAmountDiff = updatePaymentDetail(paymentScheduleDetail, currentPayment,
             paymentDetailAmount, isWriteoff, doFlush);
         assignedAmount = assignedAmount.add(assignedAmountDiff);
       }
       // TODO: Review this condition !=0??
-      if (assignedAmount.compareTo(payment.getAmount()) == -1) {
+      if (assignedAmount.compareTo(currentPayment.getAmount()) == -1) {
         FIN_PaymentScheduleDetail refundScheduleDetail = dao.getNewPaymentScheduleDetail(
-            payment.getOrganization(), payment.getAmount().subtract(assignedAmount), paymentId);
-        dao.getNewPaymentDetail(payment, refundScheduleDetail,
-            payment.getAmount().subtract(assignedAmount), BigDecimal.ZERO, false, null, true,
+            currentPayment.getOrganization(), currentPayment.getAmount().subtract(assignedAmount),
+            paymentId);
+        dao.getNewPaymentDetail(currentPayment, refundScheduleDetail,
+            currentPayment.getAmount().subtract(assignedAmount), BigDecimal.ZERO, false, null, true,
             paymentId);
       }
     } catch (final Exception e) {
@@ -185,7 +186,7 @@ public class FIN_AddPayment {
       OBContext.restorePreviousMode();
     }
 
-    return payment;
+    return currentPayment;
   }
 
   /**
@@ -197,7 +198,7 @@ public class FIN_AddPayment {
    * 
    * If a Refund Amount is given an extra Payment Detail will be created with it.
    * 
-   * @param _payment
+   * @param payment
    *          FIN_Payment where new payment details will be saved.
    * @param isReceipt
    *          boolean to define if the Payment is a Receipt Payment (true) or a Payable Payment
@@ -239,7 +240,7 @@ public class FIN_AddPayment {
    *          Amount of payment in currency of financial account
    * @return The FIN_Payment OBObject containing all the Payment Details.
    */
-  public static FIN_Payment savePayment(FIN_Payment _payment, boolean isReceipt,
+  public static FIN_Payment savePayment(FIN_Payment payment, boolean isReceipt,
       DocumentType docType, String strPaymentDocumentNo, BusinessPartner businessPartner,
       FIN_PaymentMethod paymentMethod, FIN_FinancialAccount finAccount, String strPaymentAmount,
       Date paymentDate, Organization organization, String referenceNo,
@@ -247,7 +248,7 @@ public class FIN_AddPayment {
       HashMap<String, BigDecimal> selectedPaymentScheduleDetailsAmounts, boolean isWriteoff,
       boolean isRefund, Currency paymentCurrency, BigDecimal finTxnConvertRate,
       BigDecimal finTxnAmount) {
-    return savePayment(_payment, isReceipt, docType, strPaymentDocumentNo, businessPartner,
+    return savePayment(payment, isReceipt, docType, strPaymentDocumentNo, businessPartner,
         paymentMethod, finAccount, strPaymentAmount, paymentDate, organization, referenceNo,
         selectedPaymentScheduleDetails, selectedPaymentScheduleDetailsAmounts, isWriteoff, isRefund,
         paymentCurrency, finTxnConvertRate, finTxnAmount, true, null);
@@ -256,14 +257,14 @@ public class FIN_AddPayment {
   /*
    * Temporary method to supply defaults for exchange Rate and converted amount
    */
-  public static FIN_Payment savePayment(FIN_Payment _payment, boolean isReceipt,
+  public static FIN_Payment savePayment(FIN_Payment payment, boolean isReceipt,
       DocumentType docType, String strPaymentDocumentNo, BusinessPartner businessPartner,
       FIN_PaymentMethod paymentMethod, FIN_FinancialAccount finAccount, String strPaymentAmount,
       Date paymentDate, Organization organization, String referenceNo,
       List<FIN_PaymentScheduleDetail> selectedPaymentScheduleDetails,
       HashMap<String, BigDecimal> selectedPaymentScheduleDetailsAmounts, boolean isWriteoff,
       boolean isRefund) {
-    return savePayment(_payment, isReceipt, docType, strPaymentDocumentNo, businessPartner,
+    return savePayment(payment, isReceipt, docType, strPaymentDocumentNo, businessPartner,
         paymentMethod, finAccount, strPaymentAmount, paymentDate, organization, referenceNo,
         selectedPaymentScheduleDetails, selectedPaymentScheduleDetailsAmounts, isWriteoff, isRefund,
         null, null, null, true, null);
@@ -278,7 +279,7 @@ public class FIN_AddPayment {
    * 
    * If a Refund Amount is given an extra Payment Detail will be created with it.
    * 
-   * @param _payment
+   * @param payment
    *          FIN_Payment where new payment details will be saved.
    * @param isReceipt
    *          boolean to define if the Payment is a Receipt Payment (true) or a Payable Payment
@@ -314,14 +315,14 @@ public class FIN_AddPayment {
    *          Force to flush inside the method after creating the payment
    * @return The FIN_Payment OBObject containing all the Payment Details.
    */
-  public static FIN_Payment savePayment(FIN_Payment _payment, boolean isReceipt,
+  public static FIN_Payment savePayment(FIN_Payment payment, boolean isReceipt,
       DocumentType docType, String strPaymentDocumentNo, BusinessPartner businessPartner,
       FIN_PaymentMethod paymentMethod, FIN_FinancialAccount finAccount, String strPaymentAmount,
       Date paymentDate, Organization organization, String referenceNo,
       List<FIN_PaymentScheduleDetail> selectedPaymentScheduleDetails,
       HashMap<String, BigDecimal> selectedPaymentScheduleDetailsAmounts, boolean isWriteoff,
       boolean isRefund, boolean doFlush) {
-    return savePayment(_payment, isReceipt, docType, strPaymentDocumentNo, businessPartner,
+    return savePayment(payment, isReceipt, docType, strPaymentDocumentNo, businessPartner,
         paymentMethod, finAccount, strPaymentAmount, paymentDate, organization, referenceNo,
         selectedPaymentScheduleDetails, selectedPaymentScheduleDetailsAmounts, isWriteoff, isRefund,
         null, null, null, doFlush, null);
@@ -401,8 +402,8 @@ public class FIN_AddPayment {
             .add(paymentScheduleDetail.getWriteoffAmount())
             .subtract(paymentDetailAmount);
         // Assume doubtful debt is always positive
-        BigDecimal doubtFulDebtAmount = BigDecimal.ZERO;
-        if (outStandingPSDs.size() == 0) {
+        BigDecimal doubtFulDebtAmount;
+        if (outStandingPSDs.isEmpty()) {
           doubtFulDebtAmount = getDoubtFulDebtAmount(
               paymentScheduleDetail.getAmount().add(paymentScheduleDetail.getWriteoffAmount()),
               paymentDetailAmount, paymentScheduleDetail.getDoubtfulDebtAmount());
@@ -519,7 +520,7 @@ public class FIN_AddPayment {
   }
 
   public static FIN_Payment setFinancialTransactionAmountAndRate(VariablesSecureApp vars,
-      FIN_Payment payment, BigDecimal _finTxnConvertRate, BigDecimal _finTxnAmount) {
+      FIN_Payment payment, BigDecimal finTxnConvertRate, BigDecimal finTxnAmount) {
     if (payment == null) {
       return payment;
     }
@@ -528,25 +529,26 @@ public class FIN_AddPayment {
     if (paymentAmount == null) {
       paymentAmount = BigDecimal.ZERO;
     }
-    BigDecimal finTxnConvertRate = _finTxnConvertRate;
-    if (finTxnConvertRate == null || finTxnConvertRate.compareTo(BigDecimal.ZERO) <= 0) {
-      finTxnConvertRate = BigDecimal.ONE;
+    BigDecimal currentFinTxnConvertRate = finTxnConvertRate;
+    if (currentFinTxnConvertRate == null
+        || currentFinTxnConvertRate.compareTo(BigDecimal.ZERO) <= 0) {
+      currentFinTxnConvertRate = BigDecimal.ONE;
     }
-    BigDecimal finTxnAmount = _finTxnAmount;
-    if (finTxnAmount == null || finTxnAmount.compareTo(BigDecimal.ZERO) == 0) {
-      finTxnAmount = paymentAmount.multiply(finTxnConvertRate);
+    BigDecimal currentFinTxnAmount = finTxnAmount;
+    if (currentFinTxnAmount == null || currentFinTxnAmount.compareTo(BigDecimal.ZERO) == 0) {
+      currentFinTxnAmount = paymentAmount.multiply(currentFinTxnConvertRate);
     } else if (paymentAmount.compareTo(BigDecimal.ZERO) != 0) {
       // Correct exchange rate for rounding that occurs in UI
-      finTxnConvertRate = finTxnAmount.divide(paymentAmount, MathContext.DECIMAL64);
+      currentFinTxnConvertRate = currentFinTxnAmount.divide(paymentAmount, MathContext.DECIMAL64);
       if (vars != null) {
         DecimalFormat generalQtyRelationFmt = Utility.getFormat(vars, "generalQtyEdition");
-        finTxnConvertRate = finTxnConvertRate
+        currentFinTxnConvertRate = currentFinTxnConvertRate
             .setScale(generalQtyRelationFmt.getMaximumFractionDigits(), RoundingMode.HALF_UP);
       }
     }
 
-    payment.setFinancialTransactionAmount(finTxnAmount);
-    payment.setFinancialTransactionConvertRate(finTxnConvertRate);
+    payment.setFinancialTransactionAmount(currentFinTxnAmount);
+    payment.setFinancialTransactionConvertRate(currentFinTxnConvertRate);
 
     return payment;
   }
@@ -796,7 +798,7 @@ public class FIN_AddPayment {
         pdl.remove(paymentDetail);
         OBDal.getInstance().remove(paymentDetail);
       } else {
-        List<String> pdlIDs = new ArrayList<String>();
+        List<String> pdlIDs = new ArrayList<>();
         for (FIN_PaymentDetail deletePaymentDetail : pdl) {
           pdlIDs.add(deletePaymentDetail.getId());
         }
@@ -867,7 +869,7 @@ public class FIN_AddPayment {
   public static <T extends BaseOBObject> HashMap<String, BigDecimal> getSelectedBaseOBObjectAmount(
       VariablesSecureApp vars, List<T> selectedBaseOBObjects, String htmlElementId)
       throws ServletException {
-    HashMap<String, BigDecimal> selectedBaseOBObjectAmounts = new HashMap<String, BigDecimal>();
+    HashMap<String, BigDecimal> selectedBaseOBObjectAmounts = new HashMap<>();
 
     for (final T o : selectedBaseOBObjects) {
       selectedBaseOBObjectAmounts.put((String) o.getId(),
@@ -910,7 +912,7 @@ public class FIN_AddPayment {
       }
 
       // Update amount and remove payment schedule detail
-      final List<String> removedPDSIds = new ArrayList<String>();
+      final List<String> removedPDSIds = new ArrayList<>();
       for (FIN_PaymentScheduleDetail psdToRemove : psdFilter.list()) {
         psd.setAmount(psd.getAmount().add(psdToRemove.getAmount()));
         psd.setDoubtfulDebtAmount(
@@ -1082,7 +1084,7 @@ public class FIN_AddPayment {
       Date paymentDueDate = paymentSchedule.getDueDate();
       for (FIN_PaymentScheduleDetail psd : paymentSchedule
           .getFINPaymentScheduleDetailInvoicePaymentScheduleList()) {
-        if (!psd.isCanceled() && psd.getPaymentDetails() != null
+        if (!Boolean.TRUE.equals(psd.isCanceled()) && psd.getPaymentDetails() != null
             && (psd.isInvoicePaid() || currentPSD.getId().equals(psd.getId()))) {
           Date paymentDate = psd.getPaymentDetails().getFinPayment().getPaymentDate();
           if (paymentDate.after(paymentDueDate)) {
@@ -1179,8 +1181,7 @@ public class FIN_AddPayment {
    */
   public static OBError processPayment(VariablesSecureApp vars, ConnectionProvider conn,
       String strAction, FIN_Payment payment) throws Exception {
-    OBError myMessage = processPayment(vars, conn, strAction, payment, null, null);
-    return myMessage;
+    return processPayment(vars, conn, strAction, payment, null, null);
   }
 
   /**
@@ -1201,8 +1202,7 @@ public class FIN_AddPayment {
    */
   public static OBError processPayment(VariablesSecureApp vars, ConnectionProvider conn,
       String strAction, FIN_Payment payment, String comingFrom) throws Exception {
-    OBError myMessage = processPayment(vars, conn, strAction, payment, comingFrom, null);
-    return myMessage;
+    return processPayment(vars, conn, strAction, payment, comingFrom, null);
   }
 
   /**
@@ -1227,7 +1227,7 @@ public class FIN_AddPayment {
       String strAction, FIN_Payment payment, String comingFrom, String selectedCreditLineIds)
       throws Exception {
     ProcessBundle pb = new ProcessBundle("6255BE488882480599C81284B70CD9B3", vars).init(conn);
-    HashMap<String, Object> parameters = new HashMap<String, Object>();
+    HashMap<String, Object> parameters = new HashMap<>();
     parameters.put("action", strAction);
     parameters.put("Fin_Payment_ID", payment.getId());
     parameters.put("comingFrom", comingFrom);
@@ -1258,7 +1258,7 @@ public class FIN_AddPayment {
    */
   public static OBError processPayment(ProcessBundle pb, String strAction, FIN_Payment payment,
       String comingFrom, String selectedCreditLineIds, boolean doFlush) throws Exception {
-    HashMap<String, Object> parameters = new HashMap<String, Object>();
+    HashMap<String, Object> parameters = new HashMap<>();
     parameters.put("action", strAction);
     parameters.put("Fin_Payment_ID", payment.getId());
     parameters.put("comingFrom", comingFrom);
@@ -1288,7 +1288,7 @@ public class FIN_AddPayment {
   public static OBError processPaymentProposal(VariablesSecureApp vars, ConnectionProvider conn,
       String strProcessProposalAction, String strFinPaymentProposalId) throws Exception {
     ProcessBundle pb = new ProcessBundle("D16966FBF9604A3D91A50DC83C6EA8E3", vars).init(conn);
-    HashMap<String, Object> parameters = new HashMap<String, Object>();
+    HashMap<String, Object> parameters = new HashMap<>();
     parameters.put("processProposalAction", strProcessProposalAction);
     parameters.put("Fin_Payment_Proposal_ID", strFinPaymentProposalId);
     pb.setParams(parameters);
@@ -1315,7 +1315,7 @@ public class FIN_AddPayment {
   public static OBError processBankStatement(VariablesSecureApp vars, ConnectionProvider conn,
       String strBankStatementAction, String strBankStatementId) throws Exception {
     ProcessBundle pb = new ProcessBundle("58A9261BACEF45DDA526F29D8557272D", vars).init(conn);
-    HashMap<String, Object> parameters = new HashMap<String, Object>();
+    HashMap<String, Object> parameters = new HashMap<>();
     parameters.put("action", strBankStatementAction);
     parameters.put("FIN_Bankstatement_ID", strBankStatementId);
     pb.setParams(parameters);
