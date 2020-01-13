@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016-2019 Openbravo SLU
+ * All portions are Copyright (C) 2016-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -22,7 +22,6 @@ import java.math.BigDecimal;
 
 import javax.enterprise.event.Observes;
 
-import org.hibernate.query.Query;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
@@ -59,19 +58,20 @@ class FIN_ReconciliationEventListener extends EntityPersistenceEventObserver {
    */
   private void updateNextReconciliationsBalance(final FIN_Reconciliation rec) {
     BigDecimal balance = rec.getEndingBalance().subtract(rec.getStartingbalance());
-    StringBuilder update = new StringBuilder();
-    update.append(" update " + FIN_Reconciliation.ENTITY_NAME);
-    update.append(" set " + FIN_Reconciliation.PROPERTY_STARTINGBALANCE + " = "
-        + FIN_Reconciliation.PROPERTY_STARTINGBALANCE + " - :balance");
-    update.append(" , " + FIN_Reconciliation.PROPERTY_ENDINGBALANCE + " = "
-        + FIN_Reconciliation.PROPERTY_ENDINGBALANCE + " - :balance");
-    update.append(" where " + FIN_Reconciliation.PROPERTY_ACCOUNT + ".id = :accountId");
-    update.append(" and " + FIN_Reconciliation.PROPERTY_TRANSACTIONDATE + " > :date");
-    @SuppressWarnings("rawtypes")
-    Query updateQry = OBDal.getInstance().getSession().createQuery(update.toString());
-    updateQry.setParameter("balance", balance);
-    updateQry.setParameter("accountId", rec.getAccount().getId());
-    updateQry.setParameter("date", rec.getTransactionDate());
-    updateQry.executeUpdate();
+    //@formatter:off
+    String hql = 
+            "update FIN_Reconciliation" +
+            " set startingbalance = startingbalance - :balance , endingBalance = endingBalance - :balance" +
+            " where account.id = :accountId" +
+            "   and transactionDate > :date";
+    //@formatter:on
+
+    OBDal.getInstance()
+        .getSession()
+        .createQuery(hql)
+        .setParameter("balance", balance)
+        .setParameter("accountId", rec.getAccount().getId())
+        .setParameter("date", rec.getTransactionDate())
+        .executeUpdate();
   }
 }
