@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,7 +25,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.query.Query;
 import org.openbravo.client.application.FilterExpression;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -81,21 +80,23 @@ public class FundsTransferGLItemDefaultValueExpression implements FilterExpressi
   }
 
   private String getDefaultGLItemFromOrganizationTree(final Organization organization) {
-    StringBuilder hql = new StringBuilder("");
-    hql.append(" select p.aPRMGlitem ");
-    hql.append(" from OrganizationTree t ");
-    hql.append(" join t.parentOrganization p ");
-    hql.append(" join t.organization o ");
-    hql.append(" where o.id = :organizationId ");
-    hql.append(" and p.aPRMGlitem is not null ");
-    hql.append(" order by t.levelno asc ");
+    //@formatter:off
+    final String hql = 
+                  "select p.aPRMGlitem " +
+                  "  from OrganizationTree t " +
+                  "    join t.parentOrganization p " +
+                  "    join t.organization o " +
+                  " where o.id = :organizationId " +
+                  "   and p.aPRMGlitem is not null " +
+                  " order by t.levelno asc ";
+  //@formatter:on
 
-    Query<GLItem> query = OBDal.getInstance()
+    final GLItem glItem = OBDal.getInstance()
         .getSession()
-        .createQuery(hql.toString(), GLItem.class);
-    query.setParameter("organizationId", organization.getId());
-    query.setMaxResults(1);
-    final GLItem glItem = query.uniqueResult();
+        .createQuery(hql, GLItem.class)
+        .setParameter("organizationId", organization.getId())
+        .setMaxResults(1)
+        .uniqueResult();
     return glItem != null ? glItem.getId() : null;
   }
 
