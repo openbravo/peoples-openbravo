@@ -17,35 +17,40 @@
     getLineTaxes(line, rules) {
       // Calculate line net amount and line tax amount with same formula as in C_GET_NET_AMOUNT_FROM_GROSS:
       // lineNetAmount = (lineGrossAmount * lineGrossAmount) / (lineGrossAmount + (lineGrossAmount * taxRate / 100))
-      // lineTaxAmount = lineGrossAmount - lineNetAmount
+      // lineTaxAmount = lineNetAmount * taxRate / 100
       const tax = rules[0];
+      const taxRate = new BigDecimal(String(tax.rate)).divide(
+        new BigDecimal('100'),
+        20,
+        BigDecimal.prototype.ROUND_HALF_UP
+      );
       const lineGrossAmount = new BigDecimal(String(line.amount));
-      const lineNetAmount = lineGrossAmount
-        .multiply(lineGrossAmount)
-        .divide(
-          lineGrossAmount.add(
-            lineGrossAmount
-              .multiply(new BigDecimal(String(tax.rate)))
-              .divide(
-                new BigDecimal('100'),
-                50,
-                BigDecimal.prototype.ROUND_HALF_UP
-              )
-          ),
-          50,
-          BigDecimal.prototype.ROUND_HALF_UP
-        );
-      const lineTaxAmount = lineGrossAmount.add(lineNetAmount.negate());
+      const lineNetAmount = OB.DEC.toNumber(
+        lineGrossAmount
+          .multiply(lineGrossAmount)
+          .divide(
+            lineGrossAmount.add(lineGrossAmount.multiply(taxRate)),
+            20,
+            BigDecimal.prototype.ROUND_HALF_UP
+          )
+      );
+      let lineTaxAmount = OB.DEC.mul(lineNetAmount, taxRate);
+
+      // If line gross amount <> line net amount + line tax amount, we need to adjust the line tax amount
+      lineTaxAmount = OB.DEC.add(
+        lineTaxAmount,
+        OB.DEC.sub(lineGrossAmount, OB.DEC.add(lineNetAmount, lineTaxAmount))
+      );
 
       return {
         id: line.id,
-        gross: OB.DEC.toNumber(lineGrossAmount),
-        net: OB.DEC.toNumber(lineNetAmount),
+        gross: line.amount,
+        net: lineNetAmount,
         tax: tax.id,
         taxes: [
           {
-            base: OB.DEC.toNumber(lineNetAmount),
-            amount: OB.DEC.toNumber(lineTaxAmount),
+            base: lineNetAmount,
+            amount: lineTaxAmount,
             tax: tax
           }
         ]
