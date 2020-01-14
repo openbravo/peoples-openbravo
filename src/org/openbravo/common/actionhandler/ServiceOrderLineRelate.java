@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -99,12 +99,12 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
       boolean existingLinesNegative = existsNegativeLines(mainOrderLine);
 
       // Delete existing rows
-      StringBuffer where = new StringBuffer();
-      where.append(" as rol");
-      where.append(
-          " where " + OrderlineServiceRelation.PROPERTY_SALESORDERLINE + ".id = :orderLineId");
+      //@formatter:off
+      String hql = " as rol "
+                 + " where salesOrderLine.id = :orderLineId ";
+      //@formatter:on
       OBQuery<OrderlineServiceRelation> rol = OBDal.getInstance()
-          .createQuery(OrderlineServiceRelation.class, where.toString());
+          .createQuery(OrderlineServiceRelation.class, hql);
 
       rol.setNamedParameter("orderLineId", mainOrderLine.getId());
       rol.setMaxResult(1000);
@@ -373,13 +373,13 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
   }
 
   private boolean existsNegativeLines(OrderLine mainOrderLine) {
-    StringBuffer where = new StringBuffer();
-    where.append(" as olsr");
-    where.append(
-        " where olsr." + OrderlineServiceRelation.PROPERTY_SALESORDERLINE + " = :salesorderline");
+    //@formatter:off
+    String hql = " as olsr"
+               + " where olsr.salesOrderLine.id = :salesorderline";
+    //@formatter:on
     OBQuery<OrderlineServiceRelation> olsrQry = OBDal.getInstance()
-        .createQuery(OrderlineServiceRelation.class, where.toString());
-    olsrQry.setNamedParameter("salesorderline", mainOrderLine);
+        .createQuery(OrderlineServiceRelation.class, hql);
+    olsrQry.setNamedParameter("salesorderline", mainOrderLine.getId());
     olsrQry.setMaxResult(1);
     OrderlineServiceRelation osr = olsrQry.uniqueResult();
     if (osr != null) {
