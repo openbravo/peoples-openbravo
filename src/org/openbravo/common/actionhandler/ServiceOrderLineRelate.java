@@ -93,8 +93,10 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
       final String orderId = mainOrderLine.getSalesOrder().getId();
       final Long lineNo = ServicePriceUtils.getNewLineNo(orderId);
 
-      // Check if the order line has positive or negative relations. If it has no relations then
-      // false;
+      /*
+       * Check if the order line has positive or negative relations. If it has no relations then
+       * false
+       */
 
       boolean existingLinesNegative = existsNegativeLines(mainOrderLine);
 
@@ -125,11 +127,12 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
       // Check if there are negative quantity and positive quantity lines
       for (int i = 0; i < selectedLines.length(); i++) {
         JSONObject selectedLine = selectedLines.getJSONObject(i);
-        BigDecimal lineAmount = new BigDecimal(selectedLine.getDouble("amount"));
-        BigDecimal lineQuantity = new BigDecimal(selectedLine.getDouble("relatedQuantity"));
-        BigDecimal lineDiscount = new BigDecimal(selectedLine.getDouble("discountsAmount"));
-        BigDecimal linePrice = new BigDecimal(selectedLine.getDouble("price"));
-        BigDecimal lineUnitDiscount = new BigDecimal(selectedLine.getDouble("unitDiscountsAmt"));
+        BigDecimal lineAmount = BigDecimal.valueOf(selectedLine.getDouble("amount"));
+        BigDecimal lineQuantity = BigDecimal.valueOf(selectedLine.getDouble("relatedQuantity"));
+        BigDecimal lineDiscount = BigDecimal.valueOf(selectedLine.getDouble("discountsAmount"));
+        BigDecimal linePrice = BigDecimal.valueOf(selectedLine.getDouble("price"));
+        BigDecimal lineUnitDiscount = BigDecimal
+            .valueOf(selectedLine.getDouble("unitDiscountsAmt"));
         if (lineQuantity.compareTo(BigDecimal.ZERO) < 0) {
           // There are negative quantity lines
           negativeLines = true;
@@ -172,21 +175,20 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
           ServicePriceUtils.deferredSaleAllowed(mainOrderLine, orderLine);
         }
 
-        BigDecimal lineAmount = new BigDecimal(selectedLine.getDouble("amount"));
-        BigDecimal lineQuantity = new BigDecimal(selectedLine.getDouble("relatedQuantity"));
-        BigDecimal lineDiscount = new BigDecimal(selectedLine.getDouble("discountsAmount"));
+        BigDecimal lineAmount = BigDecimal.valueOf(selectedLine.getDouble("amount"));
+        BigDecimal lineQuantity = BigDecimal.valueOf(selectedLine.getDouble("relatedQuantity"));
+        BigDecimal lineDiscount = BigDecimal.valueOf(selectedLine.getDouble("discountsAmount"));
 
-        if (lineQuantity.compareTo(BigDecimal.ZERO) < 0) {
+        if (lineQuantity.compareTo(BigDecimal.ZERO) < 0 && secondOrderline == null
+            && positiveLines) {
           // New order line due to there are positive quantity and negative quantity relations
-          if (secondOrderline == null && positiveLines) {
-            secondOrderline = (OrderLine) DalUtil.copy(mainOrderLine, false);
-            secondOrderline.setLineNo(lineNo);
-            secondOrderline.setId(SequenceIdData.getUUID());
-            secondOrderline.setNewOBObject(true);
-            OBDal.getInstance().save(secondOrderline);
-            OBDal.getInstance().flush();
-            OBDal.getInstance().refresh(secondOrderline);
-          }
+          secondOrderline = (OrderLine) DalUtil.copy(mainOrderLine, false);
+          secondOrderline.setLineNo(lineNo);
+          secondOrderline.setId(SequenceIdData.getUUID());
+          secondOrderline.setNewOBObject(true);
+          OBDal.getInstance().save(secondOrderline);
+          OBDal.getInstance().flush();
+          OBDal.getInstance().refresh(secondOrderline);
         }
 
         OrderlineServiceRelation olsr = OBProvider.getInstance()
@@ -336,7 +338,7 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
       BigDecimal lineQuantity, BigDecimal lineDiscount, BigDecimal linePrice,
       BigDecimal lineUnitDiscount, BigDecimal baseProductPrice, BigDecimal signum) {
 
-    BigDecimal listPrice = BigDecimal.ZERO;
+    BigDecimal listPrice;
     final Currency currency = mainOrderLine.getCurrency();
 
     BigDecimal serviceAmount = ServicePriceUtils.getServiceAmount(mainOrderLine, lineAmount,
@@ -383,7 +385,7 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
     olsrQry.setMaxResult(1);
     OrderlineServiceRelation osr = olsrQry.uniqueResult();
     if (osr != null) {
-      return osr.getQuantity().compareTo(BigDecimal.ZERO) < 0 ? true : false;
+      return osr.getQuantity().compareTo(BigDecimal.ZERO) < 0;
     }
     return false;
   }
