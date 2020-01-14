@@ -89,23 +89,31 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
       final Module migration = OBDal.getInstance()
           .get(Module.class, "4BD3D4B262B048518FE62496EF09D549");
 
-      StringBuilder whereClause = new StringBuilder();
-      whereClause.append(" as i");
-      whereClause.append("   left join i.fINPaymentScheduleList fps ");
-      whereClause.append(" where i.processed=true");
-      whereClause.append(" and (i.paymentComplete=false ");
-      whereClause.append("      or fps.updated >= i.lastCalculatedOnDate ");
-      whereClause.append("      or i.outstandingAmount <> 0");
+      //@formatter:off
+      String hql =
+                    "as i" +
+                    "  left join i.fINPaymentScheduleList fps " +
+                    " where i.processed=true" +
+                    "   and (i.paymentComplete=false " +
+                    "     or fps.updated >= i.lastCalculatedOnDate " +
+                    "     or i.outstandingAmount <> 0";
+      //@formatter:on
+
       if (migration != null) {
-        whereClause.append("  or (i.finalSettlementDate is null");
-        whereClause.append(" and fps.id is not null");
-        whereClause.append(" and i.aprmtIsmigrated = 'N'))");
+        //@formatter:off
+                   hql += 
+                    "     or (i.finalSettlementDate is null" +
+                    "       and fps.id is not null" +
+                    "       and i.aprmtIsmigrated = 'N'))";
+        //@formatter:on
       } else {
-        whereClause.append(" or i.finalSettlementDate is null)");
+        //@formatter:off
+                   hql += 
+                    "   or i.finalSettlementDate is null)";
+        //@formatter:on
       }
 
-      final OBQuery<Invoice> obc = OBDal.getInstance()
-          .createQuery(Invoice.class, whereClause.toString());
+      final OBQuery<Invoice> obc = OBDal.getInstance().createQuery(Invoice.class, hql);
 
       // For Background process execution at system level
       if (OBContext.getOBContext().isInAdministratorMode()) {
