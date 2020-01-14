@@ -7695,6 +7695,7 @@
         if (
           (roundingAmount !== 0 && OB.DEC.abs(roundingAmount) < multiplyBy) ||
           (payment.get('paid') !== 0 &&
+            paymentDifference !== 0 &&
             paymentStatus.pendingAmt < multiplyBy) ||
           (payment.get('paid') === 0 &&
             paymentDifference !== 0 &&
