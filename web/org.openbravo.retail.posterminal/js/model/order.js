@@ -165,6 +165,12 @@
           silent: true
         });
         this.set('gross', OB.DEC.mul(this.get('qty'), this.get('price')));
+        this.set(
+          'discountedGross',
+          this.get('promotions').reduce(function(memo, element) {
+            return OB.DEC.sub(memo, element.actualAmt || element.amt || 0);
+          }, this.get('gross'))
+        );
       } else {
         this.set('gross', null, {
           silent: true
