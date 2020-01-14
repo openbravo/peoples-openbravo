@@ -98,7 +98,7 @@ public class FIN_BankStatementProcess implements org.openbravo.scheduling.Proces
             }
           }
         }
-        if (msg.getType() != null && !msg.getType().toLowerCase().equals("warning")) {
+        if (msg.getType() != null && !msg.getType().equalsIgnoreCase("warning")) {
           // Success
           bankStatement.setProcessed(true);
           bankStatement.setAPRMProcessBankStatement("R");
@@ -205,7 +205,7 @@ public class FIN_BankStatementProcess implements org.openbravo.scheduling.Proces
       obc.addOrderBy(FIN_BankStatementLine.PROPERTY_TRANSACTIONDATE, true);
       obc.setMaxResults(1);
       final List<FIN_BankStatementLine> bst = obc.list();
-      if (bst.size() == 0) {
+      if (bst.isEmpty()) {
         return minDate;
       }
       minDate = bst.get(0).getTransactionDate();
@@ -250,7 +250,6 @@ public class FIN_BankStatementProcess implements org.openbravo.scheduling.Proces
     } finally {
       OBContext.restorePreviousMode();
     }
-    return;
   }
 
 }
