@@ -76,7 +76,7 @@ class ProductCharacteristicEventHandler extends EntityPersistenceEventObserver {
       if (!prCh.getProduct().getProductGenericProductList().isEmpty()) {
         throw new OBException(OBMessageUtils.messageBD(MSG_NEW_VARIANTS_CH_ERROR));
       }
-      if (Boolean.TRUE.equals(prCh.isDefinesPrice())) {
+      if (prCh.isDefinesPrice()) {
         // Check there is only 1.
         OBCriteria<ProductCharacteristic> criteria = OBDal.getInstance()
             .createCriteria(ProductCharacteristic.class);
@@ -89,7 +89,7 @@ class ProductCharacteristicEventHandler extends EntityPersistenceEventObserver {
           throw new OBException(OBMessageUtils.messageBD("DuplicateDefinesPrice"));
         }
       }
-      if (Boolean.TRUE.equals(prCh.isDefinesImage())) {
+      if (prCh.isDefinesImage()) {
         // Check there is only 1.
         OBCriteria<ProductCharacteristic> criteria = OBDal.getInstance()
             .createCriteria(ProductCharacteristic.class);
@@ -105,7 +105,7 @@ class ProductCharacteristicEventHandler extends EntityPersistenceEventObserver {
       final Entity prodCharEntity = ModelProvider.getInstance()
           .getEntity(ProductCharacteristic.ENTITY_NAME);
 
-      if (Boolean.TRUE.equals(prCh.isExplodeConfigurationTab())) {
+      if (prCh.isExplodeConfigurationTab()) {
         final Property charConfListProperty = prodCharEntity
             .getProperty(ProductCharacteristic.PROPERTY_PRODUCTCHARACTERISTICCONFLIST);
         @SuppressWarnings("unchecked")
@@ -155,7 +155,7 @@ class ProductCharacteristicEventHandler extends EntityPersistenceEventObserver {
       }
     }
 
-    if (Boolean.FALSE.equals(prCh.isVariant()) && Boolean.TRUE.equals(prCh.getProduct().isGeneric())
+    if (!prCh.isVariant() && prCh.getProduct().isGeneric()
         && !prCh.getProduct().getProductGenericProductList().isEmpty()) {
       throw new OBException(OBMessageUtils.messageBD(MSG_NEW_VARIANTS_CH_ERROR));
     }
@@ -167,7 +167,7 @@ class ProductCharacteristicEventHandler extends EntityPersistenceEventObserver {
       if (!prCh.getProduct().getProductGenericProductList().isEmpty() && !oldIsVariant) {
         throw new OBException(OBMessageUtils.messageBD(MSG_NEW_VARIANTS_CH_ERROR));
       }
-      if (Boolean.TRUE.equals(prCh.isDefinesPrice())) {
+      if (prCh.isDefinesPrice()) {
         // Check there is only 1.
         OBCriteria<ProductCharacteristic> criteria = OBDal.getInstance()
             .createCriteria(ProductCharacteristic.class);
@@ -180,7 +180,7 @@ class ProductCharacteristicEventHandler extends EntityPersistenceEventObserver {
           throw new OBException(OBMessageUtils.messageBD("DuplicateDefinesPrice"));
         }
       }
-      if (Boolean.TRUE.equals(prCh.isDefinesImage())) {
+      if (prCh.isDefinesImage()) {
         // Check there is only 1.
         OBCriteria<ProductCharacteristic> criteria = OBDal.getInstance()
             .createCriteria(ProductCharacteristic.class);
@@ -194,7 +194,7 @@ class ProductCharacteristicEventHandler extends EntityPersistenceEventObserver {
         }
       }
 
-      if (Boolean.TRUE.equals(prCh.isExplodeConfigurationTab())) {
+      if (prCh.isExplodeConfigurationTab()) {
         final Property charConfListProperty = prodCharEntity
             .getProperty(ProductCharacteristic.PROPERTY_PRODUCTCHARACTERISTICCONFLIST);
         @SuppressWarnings("unchecked")
