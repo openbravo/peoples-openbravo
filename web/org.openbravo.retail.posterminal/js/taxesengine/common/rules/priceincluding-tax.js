@@ -59,7 +59,7 @@
 
     /* @Override */
     getHeaderTaxes(lines) {
-      return lines.reduce(
+      const headerTaxes = lines.reduce(
         (line1, line2) => ({
           gross: line1.gross + line2.gross,
           net: line1.net + line2.net,
@@ -76,6 +76,19 @@
         }),
         { gross: 0, net: 0, taxes: [] }
       );
+
+      // If header gross amount <> header net amount + header tax amount, we need to adjust the header tax amount
+      let taxAmount = headerTaxes.taxes.reduce(
+        (tax1, tax2) => tax1.amount + tax2.amount,
+        { amount: 0 }
+      );
+      taxAmount = OB.DEC.add(
+        taxAmount,
+        OB.DEC.sub(headerTaxes.gross, OB.DEC.add(headerTaxes.net, taxAmount))
+      );
+      headerTaxes.taxes[0].amount = taxAmount;
+
+      return headerTaxes;
     }
   }
 
