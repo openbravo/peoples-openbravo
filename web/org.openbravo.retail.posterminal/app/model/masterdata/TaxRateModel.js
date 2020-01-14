@@ -8,20 +8,7 @@
  */
 
 (function taxRateModel() {
-  class TaxRate extends OB.App.Class.MasterdataModel {
-    constructor() {
-      super();
-      this.indices = [
-        new OB.App.Class.Index({
-          name: 'validFromDate_default',
-          properties: [
-            { property: 'validFromDate' },
-            { property: 'default', isBoolean: true }
-          ]
-        })
-      ];
-    }
-  }
+  class TaxRate extends OB.App.Class.MasterdataModel {}
 
   OB.App.MasterdataController.registerModel(TaxRate);
 })();

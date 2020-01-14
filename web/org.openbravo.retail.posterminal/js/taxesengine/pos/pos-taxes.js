@@ -11,18 +11,17 @@
 (function() {
   OB.Taxes = OB.Taxes || {};
   OB.Taxes.Pos = {
-    translateTicket: function(receipt, line, taxCategory) {
+    translateTicket: function(receipt) {
       let newTicket = {};
       newTicket.id = receipt.get('id');
-      newTicket.date = line.has('originalOrderDate')
-        ? new Date(line.get('originalOrderDate'))
-        : new Date();
+      newTicket.date = new Date();
       newTicket.country = OB.MobileApp.model.get(
         'terminal'
       ).organizationCountryId;
       newTicket.region = OB.MobileApp.model.get(
         'terminal'
       ).organizationRegionId;
+      newTicket.priceIncludesTax = receipt.get('priceIncludesTax');
       newTicket.isCashVat = OB.MobileApp.model.get('terminal').cashVat;
       newTicket.businessPartner = {};
       newTicket.businessPartner.id = receipt.get('bp').id;
@@ -44,40 +43,73 @@
           .get('regionId');
 
       newTicket.lines = [];
-      let newLine = {};
-      newLine.id = line.get('id');
-      newLine.taxExempt = line.get('originalTaxExempt');
-      newLine.product = {};
-      newLine.product.id = line.get('product').id;
-      newLine.product.taxCategory = taxCategory;
-      newTicket.lines.push(newLine);
+      receipt.get('lines').forEach(line => {
+        let newLine = {};
+        newLine.id = line.get('id');
+        newLine.qty = line.get('qty');
+        newLine.amount = line.get('gross');
+        newLine.taxExempt = line.get('originalTaxExempt');
+        newLine.product = {};
+        newLine.product.id = line.get('product').id;
+        newLine.product.taxCategory = line.get('product').get('taxCategory');
+        newLine.product.isBom = OB.Taxes.Pos.taxCategoryBOM.find(
+          taxCategory => taxCategory.id === newLine.product.taxCategory
+        )
+          ? true
+          : false;
+        newTicket.lines.push(newLine);
+      });
 
       return newTicket;
     },
 
-    calculateTaxes(receipt, line, taxCategory) {
+    translateTaxes: function(taxes) {
+      const translateTaxes = taxArray => {
+        return taxArray
+          .map(tax => ({
+            id: tax.tax.id,
+            net: tax.base,
+            amount: tax.amount,
+            name: tax.tax.name,
+            docTaxAmount: tax.tax.docTaxAmount,
+            rate: tax.tax.rate,
+            taxBase: tax.tax.taxBase,
+            cascade: tax.tax.cascade,
+            lineNo: tax.tax.lineNo
+          }))
+          .reduce((obj, item) => ((obj[[item['id']]] = item), obj), {});
+      };
+      taxes.header.taxes = translateTaxes(taxes.header.taxes);
+      taxes.lines.forEach(line => {
+        line.taxes = translateTaxes(line.taxes);
+      });
+      return taxes;
+    },
+
+    /**
+     * Finds the list of taxes that apply to given receipt, line and tax category.
+     * The list will be sorted by applicable region, country, date and default.
+     * @param {Object} receipt - The receipt that taxes will apply to.
+     * @param {Object} line - The receipt line that taxes will apply to.
+     * @param {string} taxCategory - The tax category that must apply to given receipt line.
+     */
+    calculateTaxes(receipt) {
       if (!OB.Taxes.Pos.ruleImpls) {
         throw 'Local tax cache is not yet initialized, execute: OB.Taxes.Pos.initCache()';
       }
 
-      const ticketForEngine = OB.Taxes.Pos.translateTicket(
-        receipt,
-        line,
-        taxCategory
-      );
-      const result = OB.Taxes.applyTaxes(
-        ticketForEngine,
-        OB.Taxes.Pos.ruleImpls
-      );
+      const ticket = OB.Taxes.Pos.translateTicket(receipt);
+      const result = OB.Taxes.calculateTaxes(ticket, OB.Taxes.Pos.ruleImpls);
+      const taxes = OB.Taxes.Pos.translateTaxes(result);
 
-      return result.lines[line.get('id')].taxes;
+      return taxes;
     },
 
     /**
      * Reads tax masterdata models from database and creates different caches to use them:
-     *   OB.Taxes.Pos.ruleImpls: array with taxes including tax zone filter and sorted by validFromDate and default.
-     *   OB.Taxes.Pos.taxCategoryBOM: array with bom tax categories.
-     * Tax masterdata models should be read from database only here. Wherever discount data is needed, any of these caches should be used.
+     *   OB.Taxes.Pos.ruleImpls: array with the result of doing a left join between TaxRate and TaxZone models.
+     *   OB.Taxes.Pos.taxCategoryBOM: array with TaxCategoryBOM model.
+     * Tax masterdata models should be read from database only here. Wherever tax data is needed, any of these caches should be used.
      */
     initCache: async function(callback) {
       if (OB.Taxes.Pos.isCalculatingCache) {
@@ -88,15 +120,10 @@
         'taxCacheInitialization'
       );
 
-      const taxRateArrayPromise = await OB.App.MasterdataModels.TaxRate.orderedBy(
-        ['validFromDate', 'default'],
-        'desc'
-      );
+      const taxRateArrayPromise = await OB.App.MasterdataModels.TaxRate.find();
       const taxRateArray = taxRateArrayPromise.result;
 
-      const taxZoneArrayPromise = await OB.App.MasterdataModels.TaxZone.orderedBy(
-        'taxRateId'
-      );
+      const taxZoneArrayPromise = await OB.App.MasterdataModels.TaxZone.find();
       const taxZoneArray = taxZoneArrayPromise.result;
 
       OB.Taxes.Pos.ruleImpls = taxRateArray.flatMap(taxRate =>
@@ -111,9 +138,17 @@
       const taxCategoryBOMArray = taxCategoryBOMArrayPromise.result;
       OB.Taxes.Pos.taxCategoryBOM = taxCategoryBOMArray;
 
-      OB.UTIL.ProcessController.finish('taxCacheInitialization', execution);
-      callback();
-      delete OB.Taxes.Pos.isCalculatingCache;
+      OB.UTIL.HookManager.executeHooks(
+        'OBPOS_FindTaxRate',
+        {
+          taxes: OB.Taxes.Pos.ruleImpls
+        },
+        () => {
+          OB.UTIL.ProcessController.finish('taxCacheInitialization', execution);
+          callback();
+          delete OB.Taxes.Pos.isCalculatingCache;
+        }
+      );
     }
   };
 })();

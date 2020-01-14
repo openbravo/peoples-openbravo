@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2019 Openbravo S.L.U.
+ * Copyright (C) 2013-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -714,19 +714,10 @@
         if (this.get('priceIncludesTax')) {
           line.set(
             {
-              net: OB.UTIL.getFirstValidValue([
-                OB.DEC.toNumber(line.get('discountedNet')),
-                line.get('net'),
-                OB.DEC.div(gross, line.get('linerate'))
-              ]),
+              net: OB.DEC.toNumber(line.get('discountedNet')),
               pricenet:
                 line.get('qty') !== 0
-                  ? line.get('discountedNet')
-                    ? OB.DEC.div(line.get('discountedNet'), line.get('qty'))
-                    : OB.DEC.div(
-                        OB.DEC.div(gross, line.get('linerate')),
-                        line.get('qty')
-                      )
+                  ? OB.DEC.div(line.get('discountedNet'), line.get('qty'))
                   : 0,
               listPrice: 0,
               standardPrice: 0,

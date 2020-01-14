@@ -249,7 +249,11 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/orderlineinfostandardpopup",
 
         // Taxes
-        "taxesengine/common/tax-engine", "taxesengine/pos/pos-taxes",
+        "taxesengine/common/tax-engine", //
+        "taxesengine/common/tax-rules", //
+        "taxesengine/common/rules/priceincluding-tax", //
+        "taxesengine/common/rules/priceexcluding-tax", //
+        "taxesengine/pos/pos-taxes", //
 
         // Discounts
         "discountsengine/pos/pos-discounts" };

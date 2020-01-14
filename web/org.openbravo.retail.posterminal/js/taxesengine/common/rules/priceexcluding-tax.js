@@ -7,8 +7,22 @@
  ************************************************************************************
  */
 
-(function taxZoneModel() {
-  class TaxZone extends OB.App.Class.MasterdataModel {}
+(function() {
+  class PriceExcludingTax extends OB.Taxes.Tax {
+    constructor(ticket, rules) {
+      super(ticket, rules);
+    }
 
-  OB.App.MasterdataController.registerModel(TaxZone);
+    /* @Override */
+    getLineTaxes(line, rules) {
+      return;
+    }
+
+    /* @Override */
+    getHeaderTaxes(lines) {
+      return;
+    }
+  }
+
+  OB.Taxes.PriceExcludingTax = PriceExcludingTax;
 })();
