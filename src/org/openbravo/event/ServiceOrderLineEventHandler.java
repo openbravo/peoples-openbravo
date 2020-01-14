@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2019 Openbravo SLU
+ * All portions are Copyright (C) 2015-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -181,12 +181,12 @@ class ServiceOrderLineEventHandler extends EntityPersistenceEventObserver {
   }
 
   private OBQuery<OrderlineServiceRelation> relatedServices(OrderLine thisLine) {
-    StringBuilder where = new StringBuilder();
-    where.append(" as rol");
-    where.append(
-        " where " + OrderlineServiceRelation.PROPERTY_ORDERLINERELATED + ".id = :orderLineId");
+    //@formatter:off
+    String hql = " as rol "
+               + " where orderlineRelated.id = :orderLineId";
+    //@formatter:on
     OBQuery<OrderlineServiceRelation> rol = OBDal.getInstance()
-        .createQuery(OrderlineServiceRelation.class, where.toString());
+        .createQuery(OrderlineServiceRelation.class, hql);
 
     rol.setNamedParameter("orderLineId", thisLine.getId());
     return rol;
@@ -199,12 +199,12 @@ class ServiceOrderLineEventHandler extends EntityPersistenceEventObserver {
   }
 
   private OBQuery<OrderlineServiceRelation> relatedProducts(OrderLine thisLine) {
-    StringBuilder where = new StringBuilder();
-    where.append(" as rol");
-    where.append(
-        " where " + OrderlineServiceRelation.PROPERTY_SALESORDERLINE + ".id = :orderLineId");
+    //@formatter:off
+    String hql = " as rol "
+               + " where salesOrderLine.id = :orderLineId";
+    //@formatter:on
     OBQuery<OrderlineServiceRelation> rol = OBDal.getInstance()
-        .createQuery(OrderlineServiceRelation.class, where.toString());
+        .createQuery(OrderlineServiceRelation.class, hql);
 
     rol.setNamedParameter("orderLineId", thisLine.getId());
     return rol;
