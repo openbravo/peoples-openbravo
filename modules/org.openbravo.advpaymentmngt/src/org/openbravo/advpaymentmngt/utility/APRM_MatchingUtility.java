@@ -95,7 +95,7 @@ public class APRM_MatchingUtility {
    */
   private static List<FIN_FinaccTransaction> getManualReconciliationLines(
       FIN_Reconciliation reconciliation) {
-    List<FIN_FinaccTransaction> result = new ArrayList<FIN_FinaccTransaction>();
+    List<FIN_FinaccTransaction> result = new ArrayList<>();
     OBContext.setAdminMode(false);
     try {
       final OBCriteria<FIN_ReconciliationLine_v> obc = OBDal.getInstance()
@@ -121,7 +121,7 @@ public class APRM_MatchingUtility {
   public static void fixMixedLines(FIN_Reconciliation reconciliation) {
     List<FIN_FinaccTransaction> mixedLines = APRM_MatchingUtility
         .getManualReconciliationLines(reconciliation);
-    if (mixedLines.size() > 0) {
+    if (!mixedLines.isEmpty()) {
       // Fix mixing Reconciliation and log the issue
       log4j.warn(
           "Mixing Reconciliations: An error occured which left an inconsistent status for the current reconciliation: "
@@ -182,7 +182,7 @@ public class APRM_MatchingUtility {
     VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
     ConnectionProvider conn = new DalConnectionProvider();
     ProcessBundle pb = new ProcessBundle("FF8080812E2F8EAE012E2F94CF470014", vars).init(conn);
-    HashMap<String, Object> parameters = new HashMap<String, Object>();
+    HashMap<String, Object> parameters = new HashMap<>();
     parameters.put("action", strAction);
     parameters.put("FIN_Reconciliation_ID", reconciliation.getId());
     pb.setParams(parameters);
@@ -259,10 +259,10 @@ public class APRM_MatchingUtility {
    * 
    * 
    */
-  public static boolean matchBankStatementLine(final FIN_BankStatementLine _bankStatementLine,
+  public static boolean matchBankStatementLine(final FIN_BankStatementLine bankStatementLine,
       final FIN_FinaccTransaction transaction, final FIN_Reconciliation reconciliation,
       final String matchLevel, boolean throwException) {
-    matchBankStatementLineToTrx(_bankStatementLine, transaction, reconciliation, matchLevel,
+    matchBankStatementLineToTrx(bankStatementLine, transaction, reconciliation, matchLevel,
         throwException);
     return true;
   }
@@ -281,35 +281,37 @@ public class APRM_MatchingUtility {
    * 
    */
   private static FIN_BankStatementLine matchBankStatementLineToTrx(
-      final FIN_BankStatementLine _bankStatementLine, final FIN_FinaccTransaction transaction,
+      final FIN_BankStatementLine bankStatementLine, final FIN_FinaccTransaction transaction,
       final FIN_Reconciliation reconciliation, final String matchLevel, boolean throwException) {
     FIN_BankStatementLine clonedBSL = null;
     try {
       OBContext.setAdminMode(true);
-      FIN_BankStatementLine bankStatementLine = getLockedBSL(_bankStatementLine.getId());
+      FIN_BankStatementLine currentBankStatementLine = getLockedBSL(bankStatementLine.getId());
 
       if (transaction != null) {
         // Unmatch the previous line
-        if (bankStatementLine.getFinancialAccountTransaction() != null) {
-          log4j.warn("Bank Statement Line Already Matched: " + bankStatementLine.getIdentifier());
-          unmatch(bankStatementLine);
+        if (currentBankStatementLine != null
+            && currentBankStatementLine.getFinancialAccountTransaction() != null) {
+          log4j.warn(
+              "Bank Statement Line Already Matched: " + currentBankStatementLine.getIdentifier());
+          unmatch(currentBankStatementLine);
         }
 
         // Split if necessary (bank line amount != transaction amount)
-        clonedBSL = splitBankStatementLine(reconciliation, bankStatementLine, transaction);
+        clonedBSL = splitBankStatementLine(reconciliation, currentBankStatementLine, transaction);
 
         // Match the transaction
-        bankStatementLine.setFinancialAccountTransaction(transaction);
-        bankStatementLine.setMatchingtype(
+        currentBankStatementLine.setFinancialAccountTransaction(transaction);
+        currentBankStatementLine.setMatchingtype(
             StringUtils.isBlank(matchLevel) ? FIN_MatchedTransaction.MANUALMATCH : matchLevel);
-        bankStatementLine.setMatchedDocument(getMatchedDocument(transaction));
+        currentBankStatementLine.setMatchedDocument(getMatchedDocument(transaction));
         transaction.setStatus(APRMConstants.PAYMENT_STATUS_PAYMENT_CLEARED);
         transaction.setReconciliation(reconciliation);
         if (transaction.getFinPayment() != null) {
           transaction.getFinPayment().setStatus(APRMConstants.PAYMENT_STATUS_PAYMENT_CLEARED);
         }
         OBDal.getInstance().save(transaction);
-        OBDal.getInstance().save(bankStatementLine);
+        OBDal.getInstance().save(currentBankStatementLine);
         OBDal.getInstance().flush();
 
         return clonedBSL;
@@ -332,13 +334,15 @@ public class APRM_MatchingUtility {
     final String MATCHED_AGAINST_CREDIT = "C";
     final String MATCHED_AGAINST_INVOICE = "I";
     final String MATCHED_AGAINST_ORDER = "O";
-    if (!transaction.isCreatedByAlgorithm() || transaction.getFinPayment() == null) {
+    if (Boolean.FALSE.equals(transaction.isCreatedByAlgorithm())
+        || transaction.getFinPayment() == null) {
       return MATCHED_AGAINST_TRANSACTION;
     } else if (transaction.getFinPayment() != null
         && !transaction.getFinPayment().isCreatedByAlgorithm()) {
       return MATCHED_AGAINST_PAYMENT;
-    } else if (transaction.getFinPayment() != null && transaction.isCreatedByAlgorithm()
-        && transaction.getFinPayment().isCreatedByAlgorithm()
+    } else if (transaction.getFinPayment() != null
+        && Boolean.TRUE.equals(transaction.isCreatedByAlgorithm())
+        && Boolean.TRUE.equals(transaction.getFinPayment().isCreatedByAlgorithm())
         && transaction.getFinPayment()
             .getFINPaymentDetailList()
             .get(0)
@@ -352,8 +356,9 @@ public class APRM_MatchingUtility {
             .get(0)
             .getOrderPaymentSchedule() == null) {
       return MATCHED_AGAINST_CREDIT;
-    } else if (transaction.getFinPayment() != null && transaction.isCreatedByAlgorithm()
-        && transaction.getFinPayment().isCreatedByAlgorithm()
+    } else if (transaction.getFinPayment() != null
+        && Boolean.TRUE.equals(transaction.isCreatedByAlgorithm())
+        && Boolean.TRUE.equals(transaction.getFinPayment().isCreatedByAlgorithm())
         && transaction.getFinPayment()
             .getFINPaymentDetailList()
             .get(0)
@@ -369,57 +374,61 @@ public class APRM_MatchingUtility {
   /**
    * Remove the match of a bank statement line with a transaction
    * 
-   * @param _bsline
+   * @param bsline
    *          Bank Statement Line to be unmatched from a transaction
    */
-  public static void unmatch(final FIN_BankStatementLine _bsline) {
+  public static void unmatch(final FIN_BankStatementLine bsline) {
     try {
       OBContext.setAdminMode(true);
-      FIN_BankStatementLine bsline = getLockedBSL(_bsline.getId());
-      final FIN_FinaccTransaction finTrans = bsline.getFinancialAccountTransaction();
-      if (finTrans != null) {
-        finTrans.setReconciliation(null);
-        bsline.setFinancialAccountTransaction(null);
-        bsline.setMatchingtype(null);
-        bsline.setMatchedDocument(null);
+      FIN_BankStatementLine currentBsline = getLockedBSL(bsline.getId());
+      if (currentBsline != null) {
+        final FIN_FinaccTransaction finTrans = currentBsline.getFinancialAccountTransaction();
+        if (finTrans != null) {
+          finTrans.setReconciliation(null);
+          currentBsline.setFinancialAccountTransaction(null);
+          currentBsline.setMatchingtype(null);
+          currentBsline.setMatchedDocument(null);
 
-        OBDal.getInstance().save(finTrans);
-        OBDal.getInstance().save(bsline);
+          OBDal.getInstance().save(finTrans);
+          OBDal.getInstance().save(currentBsline);
 
-        // merge if the bank statement line was split before
-        mergeBankStatementLine(bsline);
+          // merge if the bank statement line was split before
+          mergeBankStatementLine(currentBsline);
 
-        boolean isReceipt = false;
-        if (finTrans.getFinPayment() != null) {
-          isReceipt = finTrans.getFinPayment().isReceipt();
-          finTrans.getFinPayment()
-              .setStatus(isReceipt ? APRMConstants.PAYMENT_STATUS_DEPOSIT_NOT_CLEARED
-                  : APRMConstants.PAYMENT_STATUS_WITHDRAWAL_NOT_CLEARED);
-        } else {
-          isReceipt = finTrans.getDepositAmount().compareTo(finTrans.getPaymentAmount()) > 0;
-        }
-        finTrans.setStatus(isReceipt ? APRMConstants.PAYMENT_STATUS_DEPOSIT_NOT_CLEARED
-            : APRMConstants.PAYMENT_STATUS_WITHDRAWAL_NOT_CLEARED);
-        // Execute un-matching logic defined by algorithm
-        final MatchingAlgorithm ma = bsline.getBankStatement().getAccount().getMatchingAlgorithm();
-        final FIN_MatchingTransaction matchingTransaction = new FIN_MatchingTransaction(
-            ma.getJavaClassName());
-        if (finTrans.isCreatedByAlgorithm()) {
-          matchingTransaction.unmatch(finTrans);
-        }
-        OBDal.getInstance().flush();
-
-        // Do not allow bank statement lines of 0
-        if (bsline.getCramount().compareTo(BigDecimal.ZERO) == 0
-            && bsline.getDramount().compareTo(BigDecimal.ZERO) == 0) {
-          FIN_BankStatement bs = bsline.getBankStatement();
-          bs.setProcessed(false);
-          OBDal.getInstance().save(bs);
-          OBDal.getInstance().remove(bsline);
-          // bs is set a true, because it was the status at the beginning of this function
-          bs.setProcessed(true);
-          OBDal.getInstance().save(bs);
+          boolean isReceipt = false;
+          if (finTrans.getFinPayment() != null) {
+            isReceipt = finTrans.getFinPayment().isReceipt();
+            finTrans.getFinPayment()
+                .setStatus(isReceipt ? APRMConstants.PAYMENT_STATUS_DEPOSIT_NOT_CLEARED
+                    : APRMConstants.PAYMENT_STATUS_WITHDRAWAL_NOT_CLEARED);
+          } else {
+            isReceipt = finTrans.getDepositAmount().compareTo(finTrans.getPaymentAmount()) > 0;
+          }
+          finTrans.setStatus(isReceipt ? APRMConstants.PAYMENT_STATUS_DEPOSIT_NOT_CLEARED
+              : APRMConstants.PAYMENT_STATUS_WITHDRAWAL_NOT_CLEARED);
+          // Execute un-matching logic defined by algorithm
+          final MatchingAlgorithm ma = currentBsline.getBankStatement()
+              .getAccount()
+              .getMatchingAlgorithm();
+          final FIN_MatchingTransaction matchingTransaction = new FIN_MatchingTransaction(
+              ma.getJavaClassName());
+          if (Boolean.TRUE.equals(finTrans.isCreatedByAlgorithm())) {
+            matchingTransaction.unmatch(finTrans);
+          }
           OBDal.getInstance().flush();
+
+          // Do not allow bank statement lines of 0
+          if (currentBsline.getCramount().compareTo(BigDecimal.ZERO) == 0
+              && currentBsline.getDramount().compareTo(BigDecimal.ZERO) == 0) {
+            FIN_BankStatement bs = currentBsline.getBankStatement();
+            bs.setProcessed(false);
+            OBDal.getInstance().save(bs);
+            OBDal.getInstance().remove(currentBsline);
+            // bs is set a true, because it was the status at the beginning of this function
+            bs.setProcessed(true);
+            OBDal.getInstance().save(bs);
+            OBDal.getInstance().flush();
+          }
         }
       }
     } catch (Exception e) {
@@ -465,7 +474,7 @@ public class APRM_MatchingUtility {
       if (totalCredit.compareTo(BigDecimal.ZERO) != 0
           && totalDebit.compareTo(BigDecimal.ZERO) != 0) {
         BigDecimal total = totalCredit.subtract(totalDebit);
-        if (total.compareTo(BigDecimal.ZERO) == -1) {
+        if (total.compareTo(BigDecimal.ZERO) < 0) {
           bsline.setCramount(BigDecimal.ZERO);
           bsline.setDramount(total.abs());
         } else {
@@ -594,7 +603,7 @@ public class APRM_MatchingUtility {
   public static OBError processTransaction(VariablesSecureApp vars, ConnectionProvider conn,
       String strAction, FIN_FinaccTransaction transaction) throws Exception {
     ProcessBundle pb = new ProcessBundle("F68F2890E96D4D85A1DEF0274D105BCE", vars).init(conn);
-    HashMap<String, Object> parameters = new HashMap<String, Object>();
+    HashMap<String, Object> parameters = new HashMap<>();
     parameters.put("action", strAction);
     parameters.put("Fin_FinAcc_Transaction_ID", transaction.getId());
     pb.setParams(parameters);
@@ -657,7 +666,7 @@ public class APRM_MatchingUtility {
     final FIN_Reconciliation newData = OBProvider.getInstance().get(FIN_Reconciliation.class);
     try {
       OBContext.setAdminMode(true);
-      final List<Object> parameters = new ArrayList<Object>();
+      final List<Object> parameters = new ArrayList<>();
       parameters.add(financialAccount.getClient().getId());
       parameters.add(financialAccount.getOrganization().getId());
       parameters.add("REC");
@@ -808,7 +817,7 @@ public class APRM_MatchingUtility {
 
         if (credit.compareTo(BigDecimal.ZERO) != 0 && debit.compareTo(BigDecimal.ZERO) != 0) {
           BigDecimal total = credit.subtract(debit);
-          if (total.compareTo(BigDecimal.ZERO) == -1) {
+          if (total.compareTo(BigDecimal.ZERO) < 0) {
             clonedBSLine.setCramount(BigDecimal.ZERO);
             clonedBSLine.setDramount(total.abs());
           } else {
@@ -816,11 +825,11 @@ public class APRM_MatchingUtility {
             clonedBSLine.setDramount(BigDecimal.ZERO);
           }
         } else {
-          if (credit.compareTo(BigDecimal.ZERO) == -1) {
+          if (credit.compareTo(BigDecimal.ZERO) < 0) {
             clonedBSLine.setCramount(BigDecimal.ZERO);
             clonedBSLine.setDramount(credit.abs());
           }
-          if (debit.compareTo(BigDecimal.ZERO) == -1) {
+          if (debit.compareTo(BigDecimal.ZERO) < 0) {
             clonedBSLine.setDramount(BigDecimal.ZERO);
             clonedBSLine.setCramount(debit.abs());
           }
