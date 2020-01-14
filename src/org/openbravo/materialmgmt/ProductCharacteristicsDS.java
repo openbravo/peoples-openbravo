@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2019 Openbravo SLU
+ * All portions are Copyright (C) 2013-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -197,55 +197,61 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
     } else {
       initialNumOfMissingNodes = missingNodes.size();
     }
+    //@formatter:off
+    String hql = " select c.id,"
+               + "        c.name, "
+               + "        v.id, v.name, "
+               + "        tn.reportSet "
+               + " from ADTreeNode tn, "
+               + "      CharacteristicValue v, "
+               + "      Characteristic c "
+               + " where tn.tree.typeArea ='CH'"
+               + " and tn.node = v.id";
 
-    StringBuilder hqlBuilder = new StringBuilder();
-    hqlBuilder.append(" select c.id, c.name, v.id, v.name, tn.reportSet ");
-    hqlBuilder.append(" from ADTreeNode tn, ");
-    hqlBuilder.append("      CharacteristicValue v, ");
-    hqlBuilder.append("      Characteristic c ");
-    hqlBuilder.append(" where tn.tree.typeArea ='CH'");
-    hqlBuilder.append(" and tn.node = v.id");
     if (addMissingNodes) {
-      hqlBuilder.append(" and v.id in (:missingNodes)");
+      hql +=     " and v.id in (:missingNodes)";
     }
-    hqlBuilder.append(" and v.characteristic = c");
-    hqlBuilder.append(this.getClientOrgFilter());
+
+    hql += "       and v.characteristic = c "
+         + "       and c.client.id = :clientId "
+         + "       and c.organization.id in (:orgIds) ";
 
     if (StringUtils.isNotBlank(gridWhereClause) && parentGridEntity != null) {
-      hqlBuilder.append(
-          " and exists (from ProductCharacteristicValue pcv, " + parentGridEntity + gridWhereClause
-              + "  and pcv.characteristicValue = v and pcv.product = " + productPath + ")");
+      hql += "     and exists (from ProductCharacteristicValue pcv, "
+          +        parentGridEntity
+          +        gridWhereClause
+          +  "     and pcv.characteristicValue = v and pcv.product = " +productPath +") ";
 
     } else if (StringUtils.isNotBlank(customSelectorWhereClause)) {
-      hqlBuilder
-          .append(" and exists (from ProductCharacteristicValue pcv, " + customSelectorWhereClause
-              + "  and pcv.characteristicValue = v and pcv.product = " + productPath + ")");
+      hql += "     and exists (from ProductCharacteristicValue pcv, " + customSelectorWhereClause
+          +  "     and pcv.characteristicValue = v and pcv.product = " +productPath +") ";
 
     } else if (parentGridEntity != null) {
-      hqlBuilder.append(" and exists (from ProductCharacteristicValue pcv, " + parentGridEntity
-          + " as e where pcv.characteristicValue = v and pcv.product = " + productPath + ")");
+      hql += "     and exists (from ProductCharacteristicValue pcv, " + parentGridEntity
+          +  "     as e where pcv.characteristicValue = v and pcv.product = " +productPath +")";
     } else {
       // check if there is a custom where clause defined for the process that triggered the request
       String processId = parameters.get("_processId");
       if (!StringUtils.isBlank(processId)) {
         for (ProductCharacteristicCustomWhereClause customQuery : productCharacteristicCustomQueries
             .select(new ComponentProvider.Selector(processId))) {
-          hqlBuilder.append(
-              " and " + customQuery.getCustomWhereClause(parameters, customQueryParameters));
+          hql += " and "
+              +    customQuery.getCustomWhereClause(parameters, customQueryParameters);
         }
       }
     }
 
-    hqlBuilder.append(" order by c.name, ");
-    hqlBuilder.append("          coalesce(tn.reportSet, '-1'), ");
-    hqlBuilder.append("          tn.sequenceNumber ");
-
-    String hql = hqlBuilder.toString();
+    hql += "       order by c.name, ";
+    hql += "                coalesce(tn.reportSet, '-1'), ";
+    hql += "                tn.sequenceNumber ";
+    //@formatter:off
     log.debug("HQL:\n " + hql);
 
     Query<Object[]> qTree;
     try {
       qTree = OBDal.getInstance().getSession().createQuery(hql, Object[].class);
+      qTree.setParameter("clientId", OBContext.getOBContext().getCurrentClient().getId());
+      qTree.setParameterList("orgIds", this.getOrgFilter());
     } catch (Exception e) {
       if (StringUtils.isNotBlank(customSelectorWhereClause)
           || StringUtils.isNotBlank(gridWhereClause)) {
@@ -340,8 +346,7 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
     return responseData;
   }
 
-  private String getClientOrgFilter() {
-    String clientId = OBContext.getOBContext().getCurrentClient().getId();
+  private Set<String> getOrgFilter() {
     final Set<String> orgs = new HashSet<String>();
     OrganizationStructureProvider orgStructure = OBContext.getOBContext()
         .getOrganizationStructureProvider();
@@ -355,19 +360,6 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
     for (RoleOrganization org : currentRole.getADRoleOrganizationList()) {
       orgs.addAll(orgStructure.getNaturalTree(org.getOrganization().getId()));
     }
-
-    StringBuilder hqlBuilder = new StringBuilder();
-    hqlBuilder.append(" and c.client.id = '" + clientId + "' ");
-    hqlBuilder.append(" and c.organization.id in (");
-    boolean addComma = false;
-    for (String org : orgs) {
-      if (addComma) {
-        hqlBuilder.append(",");
-      }
-      hqlBuilder.append("'" + org + "'");
-      addComma = true;
-    }
-    hqlBuilder.append(") ");
-    return hqlBuilder.toString();
+    return orgs;
   }
 }
