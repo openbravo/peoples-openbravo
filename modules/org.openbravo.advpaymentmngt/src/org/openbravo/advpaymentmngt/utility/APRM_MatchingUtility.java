@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2016 Openbravo SLU
+ * All portions are Copyright (C) 2014-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -616,23 +616,30 @@ public class APRM_MatchingUtility {
       FIN_Reconciliation reconciliation = OBDal.getInstance()
           .get(FIN_Reconciliation.class, strReconciliationId);
       boolean isLastReconciliation = MatchTransactionDao.islastreconciliation(reconciliation);
-      final StringBuilder whereClause = new StringBuilder();
-      whereClause.append(" as bsl ");
-      whereClause.append(" where bsl.").append(FIN_BankStatementLine.PROPERTY_BANKSTATEMENT);
-      whereClause.append(".").append(FIN_BankStatement.PROPERTY_ACCOUNT).append(".id = :account");
-      whereClause.append(" and bsl.bankStatement.processed = 'Y'");
+
+      //@formatter:off
+      String hql =
+              "as bsl " +
+              " where bsl.bankStatement.account.id = :account" +
+              "   and bsl.bankStatement.processed = 'Y'";
+      //@formatter:on
       if (!isLastReconciliation) {
-        whereClause.append(" and  bsl.")
-            .append(FIN_BankStatementLine.PROPERTY_TRANSACTIONDATE)
-            .append(" <= :endingdate");
+        //@formatter:off
+             hql +=
+              "   and  bsl.transactionDate <= :endingdate";
+        //@formatter:on
       }
-      whereClause.append("   and bsl.financialAccountTransaction is null");
-      whereClause.append(" order by bsl.").append(FIN_BankStatementLine.PROPERTY_TRANSACTIONDATE);
-      whereClause.append(", bsl.").append(FIN_BankStatementLine.PROPERTY_LINENO);
-      whereClause.append(", bsl.").append(FIN_BankStatementLine.PROPERTY_BPARTNERNAME);
+      //@formatter:off
+             hql +=
+              "   and bsl.financialAccountTransaction is null" +
+              " order by bsl.transactionDate," +
+              "   bsl.lineNo," +
+              "   bsl.bpartnername";
+      //@formatter:on
+
       final OBQuery<FIN_BankStatementLine> obData = OBDal.getInstance()
-          .createQuery(FIN_BankStatementLine.class, whereClause.toString());
-      obData.setNamedParameter("account", strFinancialAccountId);
+          .createQuery(FIN_BankStatementLine.class, hql)
+          .setNamedParameter("account", strFinancialAccountId);
       if (!isLastReconciliation) {
         obData.setNamedParameter("endingdate", reconciliation.getEndingDate());
       }
