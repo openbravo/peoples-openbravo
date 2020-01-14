@@ -58,7 +58,7 @@ import org.openbravo.service.json.JsonUtils;
 public class ManageVariantsDS extends ReadOnlyDataSourceService {
 
   private static final Logger log = LogManager.getLogger();
-  private static final int searchKeyLength = getSearchKeyColumnLength();
+  private static final int SEARCH_KEY_LENGTH = getSearchKeyColumnLength();
   private static final String MANAGE_VARIANTS_TABLE_ID = "147D4D709FAC4AF0B611ABFED328FA12";
   private static final String ID_REFERENCE_ID = "13";
 
@@ -149,7 +149,7 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
         throw new OBException("HighRecords");
       }
       totalMaxLength += Long.toString(variantNumber).length();
-      boolean useCodes = totalMaxLength <= searchKeyLength;
+      boolean useCodes = totalMaxLength <= SEARCH_KEY_LENGTH;
 
       boolean hasNext = true;
       int productNo = 0;
@@ -169,7 +169,7 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
         variantMap.put("variantCreated", false);
         variantMap.put("obSelected", false);
 
-        String searchKey = product.getSearchKey();
+        StringBuilder searchKey = new StringBuilder().append(product.getSearchKey());
         for (i = 0; i < chNumber; i++) {
           ProductCharacteristicConf prChConf = currentValues[i];
           ProductCharacteristicAux prChConfAux = prChUseCode.get(prChs.get(i));
@@ -181,33 +181,33 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
 
           if (useCodes && prChConfAux.isUseCode() && prChConf != null
               && StringUtils.isNotBlank(prChConf.getCode())) {
-            searchKey += "_" + prChConf.getCode() + "_";
+            searchKey.append("_" + prChConf.getCode() + "_");
           }
         }
         for (int j = 0; j < (Long.toString(variantNumber).length()
             - Integer.toString(productNo).length()); j++) {
-          searchKey += "0";
+          searchKey.append("0");
         }
-        searchKey += productNo;
+        searchKey.append(productNo);
         variantMap.put("searchKey", searchKey);
         //@formatter:off
         String hql = " as p "
                    + " where p.genericProduct = :product ";
         //@formatter:on
 
-        String strChDesc = "";
-        String strKeyId = "";
+        StringBuilder strChDesc = new StringBuilder();
+        StringBuilder strKeyId = new StringBuilder();
         JSONArray valuesArray = new JSONArray();
         for (i = 0; i < chNumber; i++) {
           ProductCharacteristicConf prChConf = currentValues[i];
           Characteristic characteristic = prChConf.getCharacteristicOfProduct().getCharacteristic();
           hql += buildExistsClause(i);
-          if (StringUtils.isNotBlank(strChDesc)) {
-            strChDesc += ", ";
+          if (StringUtils.isNotBlank(strChDesc.toString())) {
+            strChDesc.append(", ");
           }
-          strChDesc += characteristic.getName() + ":";
-          strChDesc += " " + prChConf.getCharacteristicValue().getName();
-          strKeyId += prChConf.getCharacteristicValue().getId();
+          strChDesc.append(characteristic.getName() + ":");
+          strChDesc.append(" " + prChConf.getCharacteristicValue().getName());
+          strKeyId.append(prChConf.getCharacteristicValue().getId());
           JSONObject value = new JSONObject();
           value.put("characteristic", characteristic.getId());
           value.put("characteristicValue", prChConf.getCharacteristicValue().getId());
@@ -382,17 +382,17 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
     private String sortByField;
     private boolean ascending;
 
-    public ResultComparator(String _sortByField, boolean _ascending) {
-      sortByField = _sortByField;
-      ascending = _ascending;
+    public ResultComparator(String sortbyfield, boolean isascending) {
+      sortByField = sortbyfield;
+      ascending = isascending;
     }
 
     @Override
     public int compare(Map<String, Object> map1, Map<String, Object> map2) {
       boolean sortByChanged = false;
       if ("variantCreated".equals(sortByField)) {
-        Boolean o1 = (Boolean) map1.get(sortByField);
-        Boolean o2 = (Boolean) map2.get(sortByField);
+        boolean o1 = (boolean) map1.get(sortByField);
+        boolean o2 = (boolean) map2.get(sortByField);
         if (o1 == o2) {
           sortByField = "characteristicDescription";
           sortByChanged = true;
@@ -427,11 +427,11 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
     private List<CharacteristicValue> filteredValues;
     private Iterator<ProductCharacteristicConf> iterator;
 
-    ProductCharacteristicAux(boolean _useCode, List<ProductCharacteristicConf> _values,
-        List<CharacteristicValue> _filteredValues) {
-      useCode = _useCode;
-      values = _values;
-      filteredValues = _filteredValues;
+    ProductCharacteristicAux(boolean usecode, List<ProductCharacteristicConf> valueslist,
+        List<CharacteristicValue> filteredvalues) {
+      useCode = usecode;
+      values = valueslist;
+      filteredValues = filteredvalues;
     }
 
     public boolean isUseCode() {
