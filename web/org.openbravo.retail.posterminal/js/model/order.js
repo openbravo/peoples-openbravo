@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2019 Openbravo S.L.U.
+ * Copyright (C) 2013-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -4072,7 +4072,42 @@
     },
 
     //Attrs is an object of attributes that will be set in order
-    addProduct: function(p, qty, options, attrs, callback) {
+    addProduct: async function(p, qty, options, attrs, callback) {
+      function successCallback(productPrices) {
+        if (productPrices.length > 0) {
+          p = p.clone();
+          if (
+            OB.UTIL.isNullOrUndefined(p.get('updatePriceFromPricelist')) ||
+            p.get('updatePriceFromPricelist')
+          ) {
+            p.set('standardPrice', productPrices.at(0).get('pricestd'));
+            p.set('listPrice', productPrices.at(0).get('pricelist'));
+          }
+          me.addProductToOrder(p, qty, options, attrs, function(
+            success,
+            orderline
+          ) {
+            OB.UTIL.ProcessController.finish('addProduct', execution);
+            if (callback) {
+              callback(success, orderline);
+            }
+          });
+        } else {
+          OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
+          OB.UTIL.ProcessController.finish('addProduct', execution);
+          if (callback) {
+            callback(false, null);
+          }
+        }
+      }
+      function errorCallback() {
+        OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
+        OB.UTIL.ProcessController.finish('addProduct', execution);
+        if (callback) {
+          callback(false, null);
+        }
+      }
+
       var execution = OB.UTIL.ProcessController.start('addProduct');
       OB.debug('_addProduct');
       var me = this;
@@ -4134,10 +4169,27 @@
       ) {
         var criteria = {};
         if (!OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-          criteria = {
-            m_pricelist_id: this.get('priceList'),
-            m_product_id: p.id
-          };
+          criteria = new OB.App.Class.Criteria()
+            .criterion('m_pricelist_id', this.get('priceList'))
+            .criterion('m_product_id', p.id)
+            .build();
+          try {
+            let productPriceResult = await OB.App.MasterdataModels.ProductPrice.find(
+              criteria
+            );
+            let productPrices = [];
+            for (let i = 0; i < productPrices.result.length; i++) {
+              productPrices.push(
+                OB.Dal.transform(
+                  OB.Model.ProductPrice,
+                  productPriceResult.result[i]
+                )
+              );
+            }
+            successCallback(productPrices);
+          } catch (error) {
+            errorCallback();
+          }
         } else {
           var remoteCriteria = [];
           var productId = {
@@ -4155,49 +4207,18 @@
           remoteCriteria.push(productId);
           remoteCriteria.push(pricelistId);
           criteria.remoteFilters = remoteCriteria;
+
+          OB.Dal.findUsingCache(
+            'productPrice',
+            OB.Model.ProductPrice,
+            criteria,
+            successCallback,
+            errorCallback,
+            {
+              modelsAffectedByCache: ['ProductPrice']
+            }
+          );
         }
-        OB.Dal.findUsingCache(
-          'productPrice',
-          OB.Model.ProductPrice,
-          criteria,
-          function(productPrices) {
-            if (productPrices.length > 0) {
-              p = p.clone();
-              if (
-                OB.UTIL.isNullOrUndefined(p.get('updatePriceFromPricelist')) ||
-                p.get('updatePriceFromPricelist')
-              ) {
-                p.set('standardPrice', productPrices.at(0).get('pricestd'));
-                p.set('listPrice', productPrices.at(0).get('pricelist'));
-              }
-              me.addProductToOrder(p, qty, options, attrs, function(
-                success,
-                orderline
-              ) {
-                OB.UTIL.ProcessController.finish('addProduct', execution);
-                if (callback) {
-                  callback(success, orderline);
-                }
-              });
-            } else {
-              OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
-              OB.UTIL.ProcessController.finish('addProduct', execution);
-              if (callback) {
-                callback(false, null);
-              }
-            }
-          },
-          function() {
-            OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
-            OB.UTIL.ProcessController.finish('addProduct', execution);
-            if (callback) {
-              callback(false, null);
-            }
-          },
-          {
-            modelsAffectedByCache: ['ProductPrice']
-          }
-        );
       } else {
         // With the preference OBPOS_allowProductsNoPriceInMainPricelist
         // it is possible to add product without price in the terminal's main list
@@ -5676,7 +5697,7 @@
         addProductsOfLines = null;
 
       // Remove all lines and insert again with new prices
-      addProductsOfLines = function(
+      addProductsOfLines = async function(
         receipt,
         lines,
         index,
@@ -5738,12 +5759,13 @@
         if (OB.UTIL.isCrossStoreProduct(lines[index].get('product'))) {
           success(lines[index].get('product'));
         } else {
-          OB.Dal.get(
-            OB.Model.Product,
-            lines[index].get('product').id,
-            success,
-            null,
-            function() {
+          try {
+            const product = await OB.App.MasterdataModels.Product.withId(
+              lines[index].get('product').id
+            );
+            if (product.length > 0) {
+              success();
+            } else {
               // Product doesn't exists, execute the same code as it was not included in pricelist
               promotionLines.splice(index, 1);
               lines.splice(index, 1);
@@ -5755,7 +5777,9 @@
                 promotionLines
               );
             }
-          );
+          } catch (error) {
+            OB.error(error.message);
+          }
         }
       };
       _.each(this.get('lines').models, function(line) {
@@ -5913,7 +5937,7 @@
         allLinesCalculated
       );
 
-      this.get('lines').each(function(line) {
+      this.get('lines').each(async function(line) {
         //remove promotions
         line.unset('promotions');
 
@@ -5921,9 +5945,16 @@
           criteria = {};
 
         if (!OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-          criteria = {
-            id: line.get('product').get('id')
-          };
+          try {
+            const product = await OB.App.MasterdataModels.Product.withId(
+              line.get('product').get('id')
+            );
+            successCallbackPrices(
+              OB.Dal.transform(OB.Model.Product, product[0])
+            );
+          } catch (error) {
+            OB.error(error.message);
+          }
         } else {
           criteria = {};
           var remoteCriteria = [];
@@ -5935,8 +5966,16 @@
           };
           remoteCriteria.push(productId);
           criteria.remoteFilters = remoteCriteria;
+          OB.Dal.find(
+            OB.Model.Product,
+            criteria,
+            successCallbackPrices,
+            function() {
+              // TODO: Report error properly.
+            },
+            line
+          );
         }
-
         successCallbackPrices = function(dataPrices) {
           dataPrices.each(function(price) {
             order.setPrice(
@@ -5948,16 +5987,6 @@
           });
           newAllLinesCalculated();
         };
-
-        OB.Dal.find(
-          OB.Model.Product,
-          criteria,
-          successCallbackPrices,
-          function() {
-            // TODO: Report error properly.
-          },
-          line
-        );
       });
     },
 
@@ -9928,13 +9957,14 @@
             order.set('orderType', 1);
           }
         }
-        var loadProducts = function() {
+        var loadProducts = async function() {
           var linepos = 0,
             hasDeliveredProducts = false,
             hasNotDeliveredProducts = false,
             i,
             sortedPayments = false;
-          _.each(model.receiptLines, function(iter) {
+          for (let i = 0; i < model.receiptLines.length; i++) {
+            let iter = model.receiptLines[i];
             var price = OB.DEC.number(iter.unitPrice);
             iter.linepos = linepos;
             var addLineForProduct = function(prod) {
@@ -10135,15 +10165,15 @@
             if (iter.relatedLines && !order.get('hasServices')) {
               order.set('hasServices', true);
             }
-
-            OB.Dal.get(
-              OB.Model.Product,
-              iter.id,
-              function(product) {
-                addLineForProduct(product);
-              },
-              null,
-              function() {
+            try {
+              const product = await OB.App.MasterdataModels.Product.withId(
+                iter.id
+              );
+              if (product.length > 0) {
+                addLineForProduct(
+                  OB.Dal.transform(OB.Model.Product, product.result[0])
+                );
+              } else {
                 //Empty
                 new OB.DS.Request(
                   'org.openbravo.retail.posterminal.master.LoadedProduct'
@@ -10174,9 +10204,11 @@
                   }
                 );
               }
-            );
+            } catch (error) {
+              OB.error(error.message);
+            }
             linepos++;
-          });
+          }
 
           function getReverserPayment(payment, Payments) {
             return _.filter(model.receiptPayments, function(receiptPayment) {
@@ -11527,7 +11559,7 @@
           }
         }
 
-        var addProductsAndCalculateDiscounts = function(
+        var addProductsAndCalculateDiscounts = async function(
           products,
           index,
           callback,
@@ -11536,32 +11568,36 @@
           if (index === products.length) {
             return callback();
           }
-          OB.Dal.get(
-            OB.Model.Product,
-            products[index].product.id,
-            function(product) {
-              if (product) {
-                order.addProduct(
-                  product,
-                  products[index].obdiscQty,
-                  {
-                    belongsToPack: true,
-                    blockAddProduct: true
-                  },
-                  attrs,
-                  function() {
-                    addProductsAndCalculateDiscounts(
-                      products,
-                      index + 1,
-                      callback,
-                      errorCallback
-                    );
-                  }
-                );
-              }
-            },
-            errorCallback
-          );
+          try {
+            const productResult = await OB.App.MasterdataModels.Product.withId(
+              products[index].product.id
+            );
+            let product = OB.Dal.transform(
+              OB.Model.Product,
+              productResult.result[0]
+            );
+            if (product) {
+              order.addProduct(
+                product,
+                products[index].obdiscQty,
+                {
+                  belongsToPack: true,
+                  blockAddProduct: true
+                },
+                attrs,
+                function() {
+                  addProductsAndCalculateDiscounts(
+                    products,
+                    index + 1,
+                    callback,
+                    errorCallback
+                  );
+                }
+              );
+            }
+          } catch (error) {
+            errorCallback();
+          }
         };
         var errorCallback = function(error) {
           OB.error('OBDAL error: ' + error, arguments);

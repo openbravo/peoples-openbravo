@@ -643,11 +643,10 @@ enyo.kind({
     return false;
   },
 
-  searchProduct: function(code, callback, attrs) {
-    var me = this,
-      criteria = {
-        uPCEAN: code
-      };
+  searchProduct: async function(code, callback, attrs) {
+    let me = this,
+      criteria;
+
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
       var uPCEAN = {
         columns: ['uPCEAN'],
@@ -657,20 +656,32 @@ enyo.kind({
       };
       var remoteCriteria = [uPCEAN];
       criteria.remoteFilters = remoteCriteria;
-    }
 
-    OB.Dal.findUsingCache(
-      'productSearch',
-      OB.Model.Product,
-      criteria,
-      function(data) {
+      OB.Dal.findUsingCache(
+        'productSearch',
+        OB.Model.Product,
+        criteria,
+        function(data) {
+          me.searchProductCallback(data, code, callback, attrs);
+        },
+        me.errorCallback,
+        {
+          modelsAffectedByCache: ['Product']
+        }
+      );
+    } else {
+      criteria = new OB.App.Class.Criteria().criterion('uPCEAN', code).build();
+      try {
+        const products = await OB.App.MasterdataModels.Product.find(criteria);
+        let data = [];
+        for (let i = 0; i < products.result.length; i++) {
+          data.push(OB.Dal.transform(OB.Model.Product, products.result[i]));
+        }
         me.searchProductCallback(data, code, callback, attrs);
-      },
-      me.errorCallback,
-      {
-        modelsAffectedByCache: ['Product']
+      } catch (error) {
+        me.errorCallback;
       }
-    );
+    }
   },
 
   searchProductCallback: function(data, code, callback, attrs) {

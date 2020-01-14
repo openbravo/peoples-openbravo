@@ -910,6 +910,7 @@ enyo.kind({
                   OB.Dal.transform(OB.Model.Product, products.result[i])
                 );
               }
+              successCallback(data);
             } catch (error) {
               errorCallback(error);
             }
