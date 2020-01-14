@@ -57,7 +57,7 @@ class CharacteristicValueEventHandler extends EntityPersistenceEventObserver {
   }
 
   public void onTransactionBegin(@Observes TransactionBeginEvent event) {
-    chvalueUpdated.set(null);
+    chvalueUpdated.remove();
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
@@ -103,23 +103,13 @@ class CharacteristicValueEventHandler extends EntityPersistenceEventObserver {
 
   public void onTransactionCompleted(@Observes TransactionCompletedEvent event) {
     String strChValueId = chvalueUpdated.get();
-    chvalueUpdated.set(null);
+    chvalueUpdated.remove();
     if (StringUtils.isBlank(strChValueId)
         || event.getTransaction().getStatus() == TransactionStatus.ROLLED_BACK) {
       return;
     }
     try {
-      VariablesSecureApp vars = null;
-      try {
-        vars = RequestContext.get().getVariablesSecureApp();
-      } catch (Exception e) {
-        vars = new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
-            OBContext.getOBContext().getCurrentClient().getId(),
-            OBContext.getOBContext().getCurrentOrganization().getId(),
-            OBContext.getOBContext().getRole().getId(),
-            OBContext.getOBContext().getLanguage().getLanguage());
-      }
-
+      VariablesSecureApp vars = initializeVars();
       ProcessBundle pb = new ProcessBundle(VariantChDescUpdateProcess.AD_PROCESS_ID, vars)
           .init(new DalConnectionProvider(false));
       HashMap<String, Object> parameters = new HashMap<>();
@@ -130,5 +120,20 @@ class CharacteristicValueEventHandler extends EntityPersistenceEventObserver {
     } catch (Exception e) {
       logger.error("Error executing process", e);
     }
+  }
+
+  private VariablesSecureApp initializeVars() {
+    VariablesSecureApp vars = null;
+    try {
+      vars = RequestContext.get().getVariablesSecureApp();
+    } catch (Exception e) {
+      logger.info("Vars could not be initialized from RequestContext, initializing from OBContext");
+      vars = new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
+          OBContext.getOBContext().getCurrentClient().getId(),
+          OBContext.getOBContext().getCurrentOrganization().getId(),
+          OBContext.getOBContext().getRole().getId(),
+          OBContext.getOBContext().getLanguage().getLanguage());
+    }
+    return vars;
   }
 }
