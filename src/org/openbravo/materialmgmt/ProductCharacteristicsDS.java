@@ -75,13 +75,13 @@ import org.openbravo.userinterface.selector.SelectorField;
  * 
  */
 public class ProductCharacteristicsDS extends DefaultDataSourceService {
-  final static Logger log = LogManager.getLogger();
+  static final Logger log = LogManager.getLogger();
 
-  final static int CHAR_ID = 0;
-  final static int CHAR_NAME = 1;
-  final static int VAL_ID = 2;
-  final static int VAL_NAME = 3;
-  final static int VAL_PARENT = 4;
+  static final int CHAR_ID = 0;
+  static final int CHAR_NAME = 1;
+  static final int VAL_ID = 2;
+  static final int VAL_NAME = 3;
+  static final int VAL_PARENT = 4;
 
   private static final String PRODUCT_CHARACTERISTICS_TABLE_ID = "8E4A6598CA2747B6B0E7257C6F3DEB19";
 
@@ -116,9 +116,9 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
       jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
 
       return jsonResult.toString();
-    } catch (Throwable t) {
-      log.error("Error building characteristics tree", t);
-      return JsonUtils.convertExceptionToJson(t);
+    } catch (Exception e) {
+      log.error("Error building characteristics tree", e);
+      return JsonUtils.convertExceptionToJson(e);
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -170,7 +170,7 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
       } else {
         // check if this is a custom HQL selector
         DataSourceService ds = dataSourceServiceProvider.getDataSource(dsIdentifier);
-        if (ds != null && ds instanceof CustomQuerySelectorDatasource) {
+        if (ds instanceof CustomQuerySelectorDatasource) {
           CustomQuerySelectorDatasource selDS = (CustomQuerySelectorDatasource) ds;
           String selectorId = parameters.get("_selectorDefinition");
           Selector sel = OBDal.getInstance().get(Selector.class, selectorId);
@@ -244,7 +244,7 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
     hql += "       order by c.name, ";
     hql += "                coalesce(tn.reportSet, '-1'), ";
     hql += "                tn.sequenceNumber ";
-    //@formatter:off
+    //@formatter:on
     log.debug("HQL:\n " + hql);
 
     Query<Object[]> qTree;
@@ -329,7 +329,7 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
       responseData.put(value);
     }
 
-    if (missingNodes.size() > 0) {
+    if (!missingNodes.isEmpty()) {
       // we can have missing nodes in case grid criteria has been applied, in this case query for
       // them recursively
       if (addMissingNodes && initialNumOfMissingNodes == missingNodes.size()) {
