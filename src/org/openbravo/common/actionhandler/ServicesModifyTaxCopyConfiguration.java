@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -99,9 +99,12 @@ public class ServicesModifyTaxCopyConfiguration extends BaseProcessActionHandler
 
   private void appendConfig(Product sourceProduct, Product targetProduct) {
     // Remove existing configuration
-    final StringBuilder hqlDelete = new StringBuilder(
-        "delete from M_PRODUCT_SERVICELINKED where product.id = :productId");
-    Query<?> hqlQueryDelete = OBDal.getInstance().getSession().createQuery(hqlDelete.toString());
+    //@formatter:off
+    final String hqlDelete = "delete "
+                           + "from M_PRODUCT_SERVICELINKED "
+                           + "where product.id = :productId";
+    //@formatter:on
+    Query<?> hqlQueryDelete = OBDal.getInstance().getSession().createQuery(hqlDelete);
     hqlQueryDelete.setParameter("productId", targetProduct.getId());
     hqlQueryDelete.executeUpdate();
     // Add new configuration
