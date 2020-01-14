@@ -860,6 +860,11 @@ enyo.kind({
             this.keyboard.status = oldStatus;
             this.keyboard.setStatus(defaultPayment.payment.searchKey);
           }
+        } else if (
+          defaultPayment.providerGroup &&
+          defaultPayment.providerGroup.id !== '0'
+        ) {
+          this.keyboard.setStatus(defaultPayment.providerGroup.id);
         } else {
           this.keyboard.setStatus(defaultPayment.payment.searchKey);
         }
@@ -874,6 +879,7 @@ enyo.kind({
       refundablePayment,
       keypad,
       sideButton,
+      paymentCommand,
       keyboard = this.owner.owner,
       paymentMethodCategory = {},
       isReturnReceipt =
@@ -896,23 +902,27 @@ enyo.kind({
         keypad.active = true;
       });
       _.each(OB.MobileApp.model.paymentnames, function(payment) {
+        paymentCommand =
+          payment.providerGroup && payment.providerGroup.id !== '0'
+            ? payment.providerGroup.id
+            : payment.payment.searchKey;
         keyboard.disableCommandKey(me, {
           disabled: isReturnReceipt ? !payment.paymentMethod.refundable : false,
-          commands: [payment.payment.searchKey]
+          commands: [paymentCommand]
         });
 
         if (isReturnReceipt) {
           sideButton = _.find(
             OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons,
             function(sideBtn) {
-              return sideBtn.btn.command === payment.payment.searchKey;
+              return sideBtn.btn.command === paymentCommand;
             }
           );
           if (sideButton) {
             sideButton.active = payment.paymentMethod.refundable;
           }
           keypad = _.find(keyboard.activekeypads, function(keypad) {
-            return keypad.payment === payment.payment.searchKey;
+            return keypad.payment === paymentCommand;
           });
           if (keypad) {
             keypad.active = payment.paymentMethod.refundable;
@@ -966,8 +976,13 @@ enyo.kind({
         !isReturnReceipt ||
         (isReturnReceipt && me.defaultPayment.paymentMethod.refundable)
       ) {
-        keyboard.defaultcommand = me.defaultPayment.payment.searchKey;
-        keyboard.setStatus(me.defaultPayment.payment.searchKey);
+        paymentCommand =
+          me.defaultPayment.providerGroup &&
+          me.defaultPayment.providerGroup.id !== '0'
+            ? me.defaultPayment.providerGroup.id
+            : me.defaultPayment.payment.searchKey;
+        keyboard.defaultcommand = paymentCommand;
+        keyboard.setStatus(paymentCommand);
       } else {
         refundablePayment = _.find(OB.MobileApp.model.get('payments'), function(
           payment
@@ -975,8 +990,13 @@ enyo.kind({
           return payment.paymentMethod.refundable;
         });
         if (refundablePayment) {
-          keyboard.defaultcommand = refundablePayment.payment.searchKey;
-          keyboard.setStatus(refundablePayment.payment.searchKey);
+          paymentCommand =
+            refundablePayment.providerGroup &&
+            refundablePayment.providerGroup.id !== '0'
+              ? refundablePayment.providerGroup.id
+              : refundablePayment.payment.searchKey;
+          keyboard.defaultcommand = paymentCommand;
+          keyboard.setStatus(paymentCommand);
         } else {
           keyboard.hasActivePayment = false;
           keyboard.lastStatus = '';

@@ -3301,15 +3301,6 @@ li.selected > .obUiRenderOrderLine_edit {
   color: var(--color-on-secondary_active);
 }
 
-/* focus state */
-.obUiOrderMultiSelectAll:not(:active):not(.disabled):focus .obUiButton-components-icon {
-  filter: var(--color-secondary_img);
-}
-
-.obUiOrderMultiSelectAll:not(:active):not(.disabled):focus .obUiButton-components-label {
-  color: var(--color-on-secondary_focus);
-}
-
 /* disabled state */
 .obUiOrderMultiSelectAll.disabled .obUiButton-components-icon {
   filter: var(--color-secondary_disabled_img);
