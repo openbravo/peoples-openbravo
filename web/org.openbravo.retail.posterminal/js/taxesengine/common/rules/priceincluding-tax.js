@@ -97,26 +97,21 @@
 
     // taxRate = rate / 100
     getTaxRate(rate) {
-      return OB.DEC.toNumber(
-        new BigDecimal(String(rate)).divide(
-          new BigDecimal('100'),
-          20,
-          BigDecimal.prototype.ROUND_HALF_UP
-        )
+      return new BigDecimal(String(rate)).divide(
+        new BigDecimal('100'),
+        20,
+        BigDecimal.prototype.ROUND_HALF_UP
       );
     }
 
     // lineNetAmount = (lineGrossAmount * lineGrossAmount) / (lineGrossAmount + (lineGrossAmount * taxRate))
     calculateNetAmount(grossAmount, taxRate) {
-      const grossAmountBigDecimal = new BigDecimal(String(grossAmount));
-      const taxRateBigDecimal = new BigDecimal(String(taxRate));
+      const amount = new BigDecimal(String(grossAmount));
       return OB.DEC.toNumber(
-        grossAmountBigDecimal
-          .multiply(grossAmountBigDecimal)
+        amount
+          .multiply(amount)
           .divide(
-            grossAmountBigDecimal.add(
-              grossAmountBigDecimal.multiply(taxRateBigDecimal)
-            ),
+            amount.add(amount.multiply(taxRate)),
             20,
             BigDecimal.prototype.ROUND_HALF_UP
           )
