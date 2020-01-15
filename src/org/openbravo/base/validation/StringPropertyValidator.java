@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,7 +31,7 @@ import org.openbravo.base.util.Check;
  */
 
 public class StringPropertyValidator extends BasePropertyValidator {
-
+  private static final int MAX_SHOWN_LENGTH = 100;
   private int fieldLength = -1;
   private static final Logger log = LogManager.getLogger();
 
@@ -76,9 +76,10 @@ public class StringPropertyValidator extends BasePropertyValidator {
     Check.isInstanceOf(value, String.class);
     final String str = (String) value;
     if (str.length() > getFieldLength()) {
-      // TODO: i18n this
-      return "Value (" + value + ")  is too long, it has length " + str.length()
-          + ", the maximum allowed length is " + getFieldLength();
+      String val = str.length() <= MAX_SHOWN_LENGTH ? str : (str.substring(0, 100) + "...");
+
+      return "Value too long. Length " + str.length() + ", maximum allowed " + getFieldLength()
+          + " [" + val + "]";
     }
     return null;
   }
