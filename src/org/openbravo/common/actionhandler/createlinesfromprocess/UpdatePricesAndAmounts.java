@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,8 +27,6 @@ import java.util.List;
 import javax.enterprise.context.Dependent;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.hibernate.Session;
-import org.hibernate.query.Query;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.currency.Currency;
@@ -87,7 +85,7 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
         .setScale(stdPrecision, RoundingMode.HALF_UP);
 
     // Processing for Prices Including Taxes
-    if (getInvoice().getPriceList().isPriceIncludesTax()) {
+    if (Boolean.TRUE.equals(getInvoice().getPriceList().isPriceIncludesTax())) {
       BigDecimal grossUnitPrice = orderLine.getGrossUnitPrice();
       BigDecimal grossBaseUnitPrice = orderLine.getBaseGrossUnitPrice();
       BigDecimal grossListPrice = orderLine.getGrossListPrice();
@@ -157,7 +155,7 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
           .setScale(stdPrecision, RoundingMode.HALF_UP);
 
       // Processing for Prices Including Taxes
-      if (getInvoice().getPriceList().isPriceIncludesTax()) {
+      if (Boolean.TRUE.equals(getInvoice().getPriceList().isPriceIncludesTax())) {
         BigDecimal grossUnitPrice = priceStd;
         BigDecimal grossAmount = qtyOrdered.multiply(grossUnitPrice)
             .setScale(stdPrecision, RoundingMode.HALF_UP);
@@ -210,28 +208,32 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
 
   @SuppressWarnings("unchecked")
   private Object[] selectBOMPrices(Product product, PriceList priceList) {
-    StringBuilder obq = new StringBuilder(" SELECT ");
-    obq.append("   TO_NUMBER(M_BOM_PriceStd(:productID, plv.id)), ");
-    obq.append("   TO_NUMBER(M_BOM_PriceList(:productID, plv.id)), ");
-    obq.append("   TO_NUMBER(M_BOM_PriceLimit(:productID, plv.id)), ");
-    obq.append(
-        "   TO_NUMBER(ROUND(TO_NUMBER(M_BOM_PriceStd(:productID, plv.id)), :pricePrecision)) ");
-    obq.append(" from PricingProductPrice pp ");
-    obq.append("   join pp.priceListVersion plv ");
-    obq.append(" where pp.product.id = :productID");
-    obq.append("   and plv.priceList.id = :priceListID");
-    obq.append("   and plv.active = true");
-    obq.append("   and (plv.validFromDate is null or plv.validFromDate <= :validFromDate)");
-    obq.append(" order by plv.validFromDate desc");
+    //@formatter:off
+    String hql =
+            " SELECT " +
+            "   TO_NUMBER(M_BOM_PriceStd(:productID, plv.id)), " +
+            "   TO_NUMBER(M_BOM_PriceList(:productID, plv.id)), " +
+            "   TO_NUMBER(M_BOM_PriceLimit(:productID, plv.id)), " +
+            "   TO_NUMBER(ROUND(TO_NUMBER(M_BOM_PriceStd(:productID, plv.id)), :pricePrecision)) " +
+            " from PricingProductPrice pp " +
+            "   join pp.priceListVersion plv " +
+            " where pp.product.id = :productID" +
+            "   and plv.priceList.id = :priceListID" +
+            "   and plv.active = true" +
+            "   and (plv.validFromDate is null or plv.validFromDate <= :validFromDate)" +
+            " order by plv.validFromDate desc";
+    //@formatter:on
 
-    final Session session = OBDal.getInstance().getSession();
-    final Query<Object[]> obQuery = session.createQuery(obq.toString());
-    obQuery.setParameter("productID", product.getId());
-    obQuery.setParameter("priceListID", priceList.getId());
-    obQuery.setParameter("validFromDate", new Date());
-    obQuery.setParameter("pricePrecision", getInvoice().getCurrency().getPricePrecision());
-    obQuery.setMaxResults(1);
-    List<Object[]> prices = (List<Object[]>) obQuery.getResultList();
+    List<Object[]> prices = OBDal.getInstance()
+        .getSession()
+        .createQuery(hql)
+        .setParameter("productID", product.getId())
+        .setParameter("priceListID", priceList.getId())
+        .setParameter("validFromDate", new Date())
+        .setParameter("pricePrecision", getInvoice().getCurrency().getPricePrecision())
+        .setMaxResults(1)
+        .getResultList();
+
     if (prices.isEmpty()) {
       return ArrayUtils.EMPTY_OBJECT_ARRAY;
     } else {
