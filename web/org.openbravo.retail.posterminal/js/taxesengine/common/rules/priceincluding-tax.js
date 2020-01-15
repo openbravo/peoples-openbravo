@@ -77,16 +77,29 @@
         { gross: 0, net: 0, taxes: [] }
       );
 
+      const taxRate = new BigDecimal(
+        String(headerTaxes.taxes[0].tax.rate)
+      ).divide(new BigDecimal('100'), 20, BigDecimal.prototype.ROUND_HALF_UP);
+      const grossAmount = headerTaxes.gross;
+      const netAmount = OB.DEC.div(grossAmount, OB.DEC.add(1, taxRate));
+      let taxAmount = OB.DEC.mul(netAmount, taxRate);
+
       // If header gross amount <> header net amount + header tax amount, we need to adjust the header tax amount
-      let taxAmount = headerTaxes.taxes.reduce(
-        (tax1, tax2) => tax1.amount + tax2.amount,
-        { amount: 0 }
-      );
       taxAmount = OB.DEC.add(
         taxAmount,
-        OB.DEC.sub(headerTaxes.gross, OB.DEC.add(headerTaxes.net, taxAmount))
+        OB.DEC.sub(grossAmount, OB.DEC.add(netAmount, taxAmount))
       );
+      headerTaxes.taxes[0].base = netAmount;
       headerTaxes.taxes[0].amount = taxAmount;
+
+      // If the header net amount is different than the sum of line net amounts, we need to adjust
+      const adjustment = OB.DEC.sub(netAmount, headerTaxes.net);
+      if (OB.DEC.compare(adjustment) !== 0) {
+        const line = lines.sort((line1, line2) => line2.net - line1.net)[0];
+        line.net = OB.DEC.add(line.net, adjustment);
+        line.taxes[0].base = OB.DEC.add(line.taxes[0].base, adjustment);
+        headerTaxes.net = OB.DEC.add(headerTaxes.net, adjustment);
+      }
 
       return headerTaxes;
     }
