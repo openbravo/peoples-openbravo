@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2019 Openbravo SLU
+ * All portions are Copyright (C) 2014-2020 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -35,7 +35,6 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -178,22 +177,25 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     ids.add("-");
     for (Map<String, Object> record : data) {
       if (contains != null && !"".equals(contains)) {
-        OrderLine purchaseOrderLine = OBDal.getInstance()
-            .get(OrderLine.class, record.get("purchaseOrderLine"));
-        if (purchaseOrderLine.getIdentifier().contains(contains)) {
+        if (OBDal.getInstance()
+            .get(OrderLine.class, record.get("purchaseOrderLine"))
+            .getIdentifier()
+            .contains(contains)) {
           continue;
         }
       }
       ids.add((String) record.get("purchaseOrderLine"));
     }
-    OBCriteria<OrderLine> obc = OBDal.getInstance().createCriteria(OrderLine.class);
-    obc.add(Restrictions.in(OrderLine.PROPERTY_ID, ids));
-    obc.setFilterOnReadableClients(false);
-    obc.setFilterOnReadableOrganization(false);
-    obc.setFilterOnActive(false);
-    obc.addOrderBy(OrderLine.PROPERTY_SALESORDER, false);
-    obc.addOrderBy(OrderLine.PROPERTY_LINENO, true);
-    return obc.list();
+
+    return OBDal.getInstance()
+        .createCriteria(OrderLine.class)
+        .add(Restrictions.in(OrderLine.PROPERTY_ID, ids))
+        .setFilterOnReadableClients(false)
+        .setFilterOnReadableOrganization(false)
+        .setFilterOnActive(false)
+        .addOrderBy(OrderLine.PROPERTY_SALESORDER, false)
+        .addOrderBy(OrderLine.PROPERTY_LINENO, true)
+        .list();
   }
 
   private List<Map<String, Object>> getWarehouseFilterData(Map<String, String> parameters) {
@@ -221,20 +223,24 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     ids.add("-");
     for (Map<String, Object> record : data) {
       if (contains != null && !"".equals(contains)) {
-        Warehouse warehouse = OBDal.getInstance().get(Warehouse.class, record.get("warehouse"));
-        if (warehouse.getIdentifier().contains(contains)) {
+        if (OBDal.getInstance()
+            .get(Warehouse.class, record.get("warehouse"))
+            .getIdentifier()
+            .contains(contains)) {
           continue;
         }
       }
       ids.add((String) record.get("warehouse"));
     }
-    OBCriteria<Warehouse> obc = OBDal.getInstance().createCriteria(Warehouse.class);
-    obc.add(Restrictions.in(Warehouse.PROPERTY_ID, ids));
-    obc.setFilterOnReadableClients(false);
-    obc.setFilterOnReadableOrganization(false);
-    obc.setFilterOnActive(false);
-    obc.addOrderBy(Warehouse.PROPERTY_NAME, true);
-    return obc.list();
+
+    return OBDal.getInstance()
+        .createCriteria(Warehouse.class)
+        .add(Restrictions.in(Warehouse.PROPERTY_ID, ids))
+        .setFilterOnReadableClients(false)
+        .setFilterOnReadableOrganization(false)
+        .setFilterOnActive(false)
+        .addOrderBy(Warehouse.PROPERTY_NAME, true)
+        .list();
   }
 
   private List<Warehouse> getFilteredWarehouse(String contains, Map<String, String> parameters) {
@@ -311,9 +317,11 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
 
   private List<Warehouse> getOnHandWarehouses(Organization organization) {
     List<Warehouse> result = new ArrayList<Warehouse>();
-    OBCriteria<OrgWarehouse> obc = OBDal.getInstance().createCriteria(OrgWarehouse.class);
-    obc.add(Restrictions.eq(OrgWarehouse.PROPERTY_ORGANIZATION, organization));
-    for (OrgWarehouse ow : obc.list()) {
+
+    for (OrgWarehouse ow : OBDal.getInstance()
+        .createCriteria(OrgWarehouse.class)
+        .add(Restrictions.eq(OrgWarehouse.PROPERTY_ORGANIZATION, organization))
+        .list()) {
       result.add(ow.getWarehouse());
     }
     return result;
@@ -351,25 +359,27 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
       }
       ids.add((String) record.get("storageBin"));
     }
-    OBCriteria<Locator> obc = OBDal.getInstance().createCriteria(Locator.class);
-    obc.add(Restrictions.in(Locator.PROPERTY_ID, ids));
-    obc.setFilterOnReadableClients(false);
-    obc.setFilterOnReadableOrganization(false);
-    obc.setFilterOnActive(false);
-    obc.addOrderBy(Locator.PROPERTY_WAREHOUSE, true);
-    obc.addOrderBy(Locator.PROPERTY_ROWX, true);
-    obc.addOrderBy(Locator.PROPERTY_STACKY, true);
-    obc.addOrderBy(Locator.PROPERTY_LEVELZ, true);
-    return obc.list();
+    return OBDal.getInstance()
+        .createCriteria(Locator.class)
+        .add(Restrictions.in(Locator.PROPERTY_ID, ids))
+        .setFilterOnReadableClients(false)
+        .setFilterOnReadableOrganization(false)
+        .setFilterOnActive(false)
+        .addOrderBy(Locator.PROPERTY_WAREHOUSE, true)
+        .addOrderBy(Locator.PROPERTY_ROWX, true)
+        .addOrderBy(Locator.PROPERTY_STACKY, true)
+        .addOrderBy(Locator.PROPERTY_LEVELZ, true)
+        .list();
   }
 
   private List<Locator> getFilteredStorageBin(String contains, Map<String, String> parameters) {
     String strReservation = parameters.get("@MaterialMgmtReservation.id@");
     Reservation reservation = OBDal.getInstance().get(Reservation.class, strReservation);
     new OrganizationStructureProvider().getChildTree(reservation.getOrganization().getId(), true);
-    OBCriteria<Locator> obc = OBDal.getInstance().createCriteria(Locator.class);
-    obc.add(Restrictions.in(Locator.PROPERTY_WAREHOUSE,
-        getOnHandWarehouses(reservation.getOrganization())));
+    OBCriteria<Locator> obc = OBDal.getInstance()
+        .createCriteria(Locator.class)
+        .add(Restrictions.in(Locator.PROPERTY_WAREHOUSE,
+            getOnHandWarehouses(reservation.getOrganization())));
     if (reservation.getWarehouse() != null) {
       obc.add(Restrictions.eq(Locator.PROPERTY_WAREHOUSE, reservation.getWarehouse()));
     }
@@ -419,11 +429,12 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
         obc.add(Restrictions.ilike(Locator.PROPERTY_SEARCHKEY, "%" + contains + "%"));
       }
     }
-    obc.addOrderBy(Locator.PROPERTY_WAREHOUSE, true);
-    obc.addOrderBy(Locator.PROPERTY_ROWX, true);
-    obc.addOrderBy(Locator.PROPERTY_STACKY, true);
-    obc.addOrderBy(Locator.PROPERTY_LEVELZ, true);
-    return obc.list();
+
+    return obc.addOrderBy(Locator.PROPERTY_WAREHOUSE, true)
+        .addOrderBy(Locator.PROPERTY_ROWX, true)
+        .addOrderBy(Locator.PROPERTY_STACKY, true)
+        .addOrderBy(Locator.PROPERTY_LEVELZ, true)
+        .list();
   }
 
   private List<Map<String, Object>> getAttributeSetValueFilterData(Map<String, String> parameters) {
@@ -453,14 +464,14 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     for (Map<String, Object> record : data) {
       ids.add((String) record.get("attributeSetValue"));
     }
-    OBCriteria<AttributeSetInstance> obc = OBDal.getInstance()
-        .createCriteria(AttributeSetInstance.class);
-    obc.add(Restrictions.in(AttributeSetInstance.PROPERTY_ID, ids));
-    obc.setFilterOnReadableClients(false);
-    obc.setFilterOnReadableOrganization(false);
-    obc.setFilterOnActive(false);
-    obc.addOrderBy(AttributeSetInstance.PROPERTY_DESCRIPTION, true);
-    return obc.list();
+    return OBDal.getInstance()
+        .createCriteria(AttributeSetInstance.class)
+        .add(Restrictions.in(AttributeSetInstance.PROPERTY_ID, ids))
+        .setFilterOnReadableClients(false)
+        .setFilterOnReadableOrganization(false)
+        .setFilterOnActive(false)
+        .addOrderBy(AttributeSetInstance.PROPERTY_DESCRIPTION, true)
+        .list();
   }
 
   private List<Map<String, Object>> getInventoryStatusFilterData(Map<String, String> parameters) {
@@ -490,13 +501,15 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     for (Map<String, Object> record : data) {
       ids.add((String) record.get("inventoryStatus"));
     }
-    OBCriteria<InventoryStatus> obc = OBDal.getInstance().createCriteria(InventoryStatus.class);
-    obc.add(Restrictions.in(InventoryStatus.PROPERTY_ID, ids));
-    obc.setFilterOnReadableClients(false);
-    obc.setFilterOnReadableOrganization(false);
-    obc.setFilterOnActive(false);
-    obc.addOrderBy(InventoryStatus.PROPERTY_NAME, true);
-    return obc.list();
+
+    return OBDal.getInstance()
+        .createCriteria(InventoryStatus.class)
+        .add(Restrictions.in(InventoryStatus.PROPERTY_ID, ids))
+        .setFilterOnReadableClients(false)
+        .setFilterOnReadableOrganization(false)
+        .setFilterOnActive(false)
+        .addOrderBy(InventoryStatus.PROPERTY_NAME, true)
+        .list();
   }
 
   private List<Map<String, Object>> getGridData(Map<String, String> parameters) {
@@ -950,64 +963,107 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
       String availableQtyFilterCriteria, String reservedinothersFilterCriteria,
       String releasedFilterCriteria, String allocatedCriteria, String quantityCriteria,
       ArrayList<String> selectedIds, List<InventoryStatus> inventoryStatusFiltered) {
-    List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
-    final StringBuilder hqlString = new StringBuilder();
-    hqlString.append("select rs from MaterialMgmtReservationStock rs ");
-    hqlString.append(" join rs.reservation as r");
-    hqlString.append(" left join rs.storageBin as sb");
-    hqlString.append(" where rs.reservation = :reservation ");
+    List<Map<String, Object>> result = new ArrayList<>();
 
+    //@formatter:off
+    String hql =
+            "select rs from MaterialMgmtReservationStock rs " +
+            "  join rs.reservation as r" +
+            "  left join rs.storageBin as sb" +
+            " where rs.reservation = :reservation ";
+    //@formatter:on
     if (reservation.getAttributeSetValue() != null) {
-      hqlString.append("and rs.attributeSetValue = :attributeSetValue ");
+      //@formatter:off
+      hql +=
+            "   and rs.attributeSetValue = :attributeSetValue ";
+      //@formatter:on
     }
     if (attributeSetInstancesFiltered != null) {
       if (attributeSetInstancesFiltered.isEmpty()) {
-        hqlString.append("and 1 = 2 ");
+        //@formatter:off
+        hql +=
+            "   and 1 = 2 ";
+        //@formatter:on
       } else {
-        hqlString.append("and rs.attributeSetValue in :attributeSetInstancesFiltered ");
+        //@formatter:off
+        hql +=
+            "   and rs.attributeSetValue in :attributeSetInstancesFiltered ";
+        //@formatter:on
       }
     }
     if (reservation.getStorageBin() != null) {
-      hqlString.append("and sb = :storageBin ");
+      //@formatter:off
+      hql += 
+            "   and sb = :storageBin ";
+      //@formatter:on
     }
     if (locatorsFiltered != null) {
       if (locatorsFiltered.isEmpty()) {
-        hqlString.append("and 1 = 2 ");
+        //@formatter:off
+        hql += 
+            "   and 1 = 2 ";
+        //@formatter:on
       } else {
-        hqlString.append("and sb in :locatorsFiltered ");
+        //@formatter:off
+        hql += 
+            "   and sb in :locatorsFiltered ";
+        //@formatter:on
       }
     }
     if (reservation.getWarehouse() != null) {
-      hqlString.append("and sb.warehouse = :warehouse ");
+      //@formatter:off
+      hql += 
+            "   and sb.warehouse = :warehouse ";
+      //@formatter:on
     }
     if (warehousesFiltered != null) {
       if (warehousesFiltered.isEmpty()) {
-        hqlString.append("and 1 = 2 ");
+        //@formatter:off
+        hql += 
+            "   and 1 = 2 ";
+        //@formatter:on
       } else {
-        hqlString.append("and sb.warehouse in :warehousesFiltered ");
+        //@formatter:off
+        hql += 
+            "   and sb.warehouse in :warehousesFiltered ";
+        //@formatter:on
       }
     }
     if (orderLinesFiltered != null) {
       if (orderLinesFiltered.isEmpty()) {
-        hqlString.append("and 1 = 2 ");
+        //@formatter:off
+        hql += 
+            "   and 1 = 2 ";
+        //@formatter:on
       } else {
-        hqlString.append("and rs.salesOrderLine in :orderLinesFiltered ");
+        //@formatter:off
+        hql += 
+            "   and rs.salesOrderLine in :orderLinesFiltered ";
+        //@formatter:on
       }
     }
     if (inventoryStatusFiltered != null) {
       if (inventoryStatusFiltered.isEmpty()) {
-        hqlString.append("and 1 = 2 ");
+        //@formatter:off
+        hql += 
+            "   and 1 = 2 ";
+        //@formatter:on
       } else {
-        hqlString.append("and sb.inventoryStatus in :inventoryStatusFiltered ");
+        //@formatter:off
+        hql += 
+            "   and sb.inventoryStatus in :inventoryStatusFiltered ";
+        //@formatter:on
       }
     }
+    //@formatter:off
+    hql += 
+            " order by rs.salesOrderLine DESC, r.warehouse, sb";
+    //@formatter:on
 
-    hqlString.append(" order by rs.salesOrderLine DESC, r.warehouse, sb");
-
-    final Session session = OBDal.getInstance().getSession();
-    Query<ReservationStock> query = session.createQuery(hqlString.toString(),
-        ReservationStock.class);
-    query.setParameter("reservation", reservation);
+    Query<ReservationStock> query = OBDal.getInstance()
+        .getSession()
+        .createQuery(hql, ReservationStock.class)
+        .setParameter("reservation", reservation);
 
     if (reservation.getAttributeSetValue() != null) {
       query.setParameter("attributeSetValue", reservation.getAttributeSetValue());
@@ -1128,21 +1184,23 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
   private ReservationStock getPrereservedStock(Reservation reservation, Locator sb,
       AttributeSetInstance as) {
     ReservationStock rs = null;
-    final StringBuilder hqlString = new StringBuilder();
-    hqlString.append("select rs from MaterialMgmtReservationStock rs ");
-    hqlString.append("join rs.reservation as r");
-    hqlString.append(" where rs.reservation = :reservation ");
-    hqlString.append(" and rs.storageBin = :storageBin ");
-    hqlString.append(" and rs.attributeSetValue = :attributeSetValue ");
-    hqlString.append(" order by rs.salesOrderLine DESC, r.warehouse, rs.storageBin");
+    //@formatter:off
+    String hql =
+            "select rs from MaterialMgmtReservationStock rs " +
+            "  join rs.reservation as r" +
+            " where rs.reservation = :reservation " +
+            "   and rs.storageBin = :storageBin " +
+            "   and rs.attributeSetValue = :attributeSetValue " +
+            " order by rs.salesOrderLine DESC, r.warehouse, rs.storageBin";
+  //@formatter:on
 
-    final Session session = OBDal.getInstance().getSession();
-    Query<ReservationStock> query = session.createQuery(hqlString.toString(),
-        ReservationStock.class);
-    query.setParameter("reservation", reservation);
-    query.setParameter("storageBin", sb);
-    query.setParameter("attributeSetValue", as);
-    query.setMaxResults(1);
+    Query<ReservationStock> query = OBDal.getInstance()
+        .getSession()
+        .createQuery(hql, ReservationStock.class)
+        .setParameter("reservation", reservation)
+        .setParameter("storageBin", sb)
+        .setParameter("attributeSetValue", as)
+        .setMaxResults(1);
 
     rs = !query.list().isEmpty() ? query.list().get(0) : null;
     return rs;
@@ -1155,55 +1213,78 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
       String releasedFilterCriteria, String allocatedCriteria, String quantityCriteria,
       ArrayList<String> selectedIds) {
     List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
-    final StringBuilder hqlString = new StringBuilder();
-    hqlString.append("select ol from OrderLine as ol ");
-    hqlString.append("join  ol.salesOrder as o ");
-    hqlString.append("where o.salesTransaction = false and o.documentStatus = 'CO' ");
-    hqlString.append("and ol.product = :product ");
-    // Organization filter not required as on hand warehouses is sufficient
-    // hqlString.append("and ol.organization.id in :organizations ");
-    hqlString.append("and o.warehouse in :warehouses ");
 
-    hqlString.append("and not exists ( ");
-
-    hqlString.append("select 1 from MaterialMgmtReservationStock as rs ");
-    hqlString.append("where rs.reservation = :reservation ");
-    hqlString.append("and rs.salesOrderLine = ol ");
-
-    hqlString.append(") ");
+    //@formatter:off
+    String hql =
+            "select ol from OrderLine as ol " +
+            "  join  ol.salesOrder as o " +
+            " where o.salesTransaction = false and o.documentStatus = 'CO' " +
+            "   and ol.product = :product " +
+            "   and o.warehouse in :warehouses " +
+            "   and not exists ( " +
+            "     select 1 from MaterialMgmtReservationStock as rs " +
+            "      where rs.reservation = :reservation " +
+            "        and rs.salesOrderLine = ol " +
+            "   ) ";
+    //@formatter:off
 
     if (reservation.getAttributeSetValue() != null) {
-      hqlString.append("and ol.attributeSetValue = :attributeSetValue ");
+      //@formatter:off
+      hql += 
+            "   and ol.attributeSetValue = :attributeSetValue ";
+      //@formatter:on
     }
     if (attributeSetInstancesFiltered != null) {
       if (attributeSetInstancesFiltered.isEmpty()) {
-        hqlString.append("and 1 = 2 ");
+        //@formatter:off
+        hql += 
+            "   and 1 = 2 ";
+        //@formatter:on
       } else {
-        hqlString.append("and ol.attributeSetValue in :attributeSetInstancesFiltered ");
+        //@formatter:off
+        hql += 
+            "   and ol.attributeSetValue in :attributeSetInstancesFiltered ";
+        //@formatter:on
       }
     }
     if (reservation.getWarehouse() != null) {
-      hqlString.append("and o.warehouse = :warehouse ");
+      //@formatter:off
+      hql += 
+          "   and o.warehouse = :warehouse ";
+      //@formatter:on
     }
     if (warehousesFiltered != null) {
-      hqlString.append("and 1 = 2 ");
+      //@formatter:off
+      hql += 
+          "   and 1 = 2 ";
+      //@formatter:on
     }
     if (orderLinesFiltered != null) {
       if (orderLinesFiltered.isEmpty()) {
-        hqlString.append("and 1 = 2 ");
+        //@formatter:off
+        hql +=
+            "   and 1 = 2 ";
+        //@formatter:on
       } else {
-        hqlString.append("and ol in :orderLinesFiltered ");
+        //@formatter:off
+        hql +=
+            "   and ol in :orderLinesFiltered ";
+        //@formatter:on
       }
     }
-    hqlString.append(
-        "and ol.orderedQuantity <> coalesce((select Sum(mpo.quantity) from ProcurementPOInvoiceMatch as mpo where mpo.salesOrderLine = ol and mpo.goodsShipmentLine is not null),0)");
-    hqlString.append("order by o.documentNo, ol.lineNo");
-    final Session session = OBDal.getInstance().getSession();
-    Query<OrderLine> query = session.createQuery(hqlString.toString(), OrderLine.class);
-    query.setParameter("product", reservation.getProduct());
-    query.setParameter("reservation", reservation);
-    // query.setParameterList("organizations", organizations);
-    query.setParameterList("warehouses", getOnHandWarehouses(reservation.getOrganization()));
+    //@formatter:off
+    hql +=
+            "   and ol.orderedQuantity <> coalesce((select Sum(mpo.quantity) from ProcurementPOInvoiceMatch as mpo where mpo.salesOrderLine = ol and mpo.goodsShipmentLine is not null),0)" +
+            " order by o.documentNo, ol.lineNo";
+    //@formatter:on
+
+    Query<OrderLine> query = OBDal.getInstance()
+        .getSession()
+        .createQuery(hql, OrderLine.class)
+        .setParameter("product", reservation.getProduct())
+        .setParameter("reservation", reservation)
+        .setParameterList("warehouses", getOnHandWarehouses(reservation.getOrganization()));
+
     if (reservation.getAttributeSetValue() != null) {
       query.setParameter("attributeSetValue", reservation.getAttributeSetValue());
     }
@@ -1279,75 +1360,110 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
       String allocatedCriteria, String quantityCriteria, ArrayList<String> selectedIds,
       List<InventoryStatus> inventoryStatusFiltered) {
     List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
-    final StringBuilder hqlString = new StringBuilder();
-    hqlString.append("select sd from MaterialMgmtStorageDetail as sd ");
-    hqlString.append("join sd.storageBin as sb ");
-    hqlString.append("join sb.inventoryStatus as invs ");
-    hqlString.append("where sd.quantityOnHand > 0 and sd.orderUOM is null ");
-    hqlString.append("and sd.product = :product ");
-    hqlString.append("and sd.uOM = :uom ");
-    hqlString.append("and invs.available = true ");
 
-    hqlString.append("and not exists ( ");
-
-    hqlString.append("select 1 from MaterialMgmtReservationStock as rs ");
-    hqlString.append("where rs.reservation = :reservation ");
-    hqlString.append(
-        "and (rs.attributeSetValue = sd.attributeSetValue or rs.attributeSetValue is null) ");
-    hqlString.append("and rs.storageBin = sd.storageBin ");
-
-    hqlString.append(") ");
+    //@formatter:off
+    String hql =
+            "select sd from MaterialMgmtStorageDetail as sd " +
+            "  join sd.storageBin as sb " +
+            "    join sb.inventoryStatus as invs " +
+            " where sd.quantityOnHand > 0 and sd.orderUOM is null " +
+            "   and sd.product = :product " +
+            "   and sd.uOM = :uom " +
+            "   and invs.available = true " +
+            "   and not exists ( " +
+            "     select 1 from MaterialMgmtReservationStock as rs " +
+            "      where rs.reservation = :reservation " +
+            "        and (rs.attributeSetValue = sd.attributeSetValue or rs.attributeSetValue is null) " +
+            "        and rs.storageBin = sd.storageBin " +
+            "   ) ";
+    //@formatter:on
 
     if (reservation.getAttributeSetValue() != null) {
-      hqlString.append("and sd.attributeSetValue = :attributeSetValue ");
+      //@formatter:off
+      hql +=
+            "   and sd.attributeSetValue = :attributeSetValue ";
+      //@formatter:on
     }
     if (attributeSetInstancesFiltered != null) {
       if (attributeSetInstancesFiltered.isEmpty()) {
-        hqlString.append("and 1 = 2 ");
+        //@formatter:off
+        hql +=
+            "   and 1 = 2 ";
+        //@formatter:off
       } else {
-        hqlString.append("and sd.attributeSetValue in :attributeSetInstancesFiltered ");
+        //@formatter:off
+        hql +=
+            "   and sd.attributeSetValue in :attributeSetInstancesFiltered ";
+        //@formatter:on
       }
     }
     if (reservation.getStorageBin() != null) {
-      hqlString.append("and sd.storageBin = :storageBin ");
+      //@formatter:off
+      hql +=
+            "   and sd.storageBin = :storageBin ";
+      //@formatter:on
     }
     if (locatorsFiltered != null) {
       if (locatorsFiltered.isEmpty()) {
-        hqlString.append("and 1 = 2 ");
+        //@formatter:off
+        hql +=
+            "   and 1 = 2 ";
+        //@formatter:on
       } else {
-        hqlString.append("and sd.storageBin in :locatorsFiltered ");
+        //@formatter:off
+        hql +=
+            "   and sd.storageBin in :locatorsFiltered ";
+        //@formatter:on
       }
     }
     if (reservation.getWarehouse() != null) {
-      hqlString.append("and sb.warehouse = :warehouse ");
+      //@formatter:off
+      hql +=
+            "   and sb.warehouse = :warehouse ";
+      //@formatter:on
     }
     if (warehousesFiltered != null) {
       if (warehousesFiltered.isEmpty()) {
-        hqlString.append("and 1 = 2 ");
+        //@formatter:off
+        hql +=
+            "   and 1 = 2 ";
+        //@formatter:on
       } else {
-        hqlString.append("and sb.warehouse in :warehousesFiltered ");
+        //@formatter:off
+        hql +=
+            "   and sb.warehouse in :warehousesFiltered ";
+        //@formatter:on
       }
     }
     if (inventoryStatusFiltered != null) {
       if (inventoryStatusFiltered.isEmpty()) {
-        hqlString.append("and 1 = 2 ");
+        //@formatter:off
+        hql +=
+            "   and 1 = 2 ";
+        //@formatter:on
       } else {
-        hqlString.append("and sb.inventoryStatus in :inventoryStatusFiltered ");
+      //@formatter:off
+        hql +=
+            "   and sb.inventoryStatus in :inventoryStatusFiltered ";
+      //@formatter:on
       }
     }
 
     // Organization Filter not required as reservation for warehouse on hand is sufficent
     // hqlString.append("and sd.organization.id in :organizations ");
-    hqlString.append("and sb.warehouse in :warehouses ");
-    hqlString.append("order by sb.warehouse DESC, sd.storageBin.rowX, sd.storageBin.stackY, ");
-    hqlString.append("sd.storageBin.levelZ, sd.attributeSetValue.description");
 
-    final Session session = OBDal.getInstance().getSession();
-    Query<StorageDetail> query = session.createQuery(hqlString.toString(), StorageDetail.class);
-    query.setParameter("product", reservation.getProduct());
-    query.setParameter("uom", reservation.getUOM());
-
-    query.setParameter("reservation", reservation);
+    //@formatter:off
+    hql +=
+            "   and sb.warehouse in :warehouses " +
+            " order by sb.warehouse DESC, sd.storageBin.rowX, sd.storageBin.stackY, " +
+            "   sd.storageBin.levelZ, sd.attributeSetValue.description";
+    //@formatter:on
+    Query<StorageDetail> query = OBDal.getInstance()
+        .getSession()
+        .createQuery(hql, StorageDetail.class)
+        .setParameter("product", reservation.getProduct())
+        .setParameter("uom", reservation.getUOM())
+        .setParameter("reservation", reservation);
 
     if (reservation.getAttributeSetValue() != null) {
       query.setParameter("attributeSetValue", reservation.getAttributeSetValue());
@@ -1674,18 +1790,30 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     if (orderline != null) {
       return getQtyOnHandFromOrderLine(orderline);
     }
-    final StringBuilder hqlString = new StringBuilder();
-    hqlString.append("select sum(sd.quantityOnHand) from MaterialMgmtStorageDetail sd ");
-    hqlString.append(" where sd.product = :product ");
+
+    //@formatter:off
+    String hql =
+            "select sum(sd.quantityOnHand) from MaterialMgmtStorageDetail sd " +
+            " where sd.product = :product ";
+    //@formatter:on
     if (storageBin != null) {
-      hqlString.append(" and sd.storageBin = :storageBin ");
+      //@formatter:off
+      hql +=
+            "   and sd.storageBin = :storageBin ";
+      //@formatter:on
     }
     if (attribute != null) {
-      hqlString.append(" and sd.attributeSetValue = :attributeSetValue ");
+      //@formatter:off
+      hql +=
+            "   and sd.attributeSetValue = :attributeSetValue ";
+      //@formatter:on
     }
-    final Session session = OBDal.getInstance().getSession();
-    Query<BigDecimal> query = session.createQuery(hqlString.toString(), BigDecimal.class);
-    query.setParameter("product", product);
+
+    Query<BigDecimal> query = OBDal.getInstance()
+        .getSession()
+        .createQuery(hql, BigDecimal.class)
+        .setParameter("product", product);
+
     if (storageBin != null) {
       query.setParameter("storageBin", storageBin);
     }
@@ -1712,40 +1840,51 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
   }
 
   private BigDecimal getQtyReserved(Reservation reservation, OrderLine orderLine) {
-    final StringBuilder hqlString = new StringBuilder();
-    hqlString.append(
-        "select coalesce(sum(rs.quantity - coalesce(rs.released,0)),0) from MaterialMgmtReservationStock rs ");
-    hqlString.append("join rs.reservation as r ");
-    hqlString.append(" where r.rESStatus not in ('CL', 'DR') ");
-    hqlString.append(" and rs.salesOrderLine = :orderLine ");
-    hqlString.append(" and r <> :reservation ");
-    final Session session = OBDal.getInstance().getSession();
-    Query<BigDecimal> query = session.createQuery(hqlString.toString(), BigDecimal.class);
-    query.setParameter("orderLine", orderLine);
-    query.setParameter("reservation", reservation);
-    return query.uniqueResult();
+    //@formatter:off
+    String hql =
+            "select coalesce(sum(rs.quantity - coalesce(rs.released,0)),0) from MaterialMgmtReservationStock rs " +
+            "  join rs.reservation as r " +
+            " where r.rESStatus not in ('CL', 'DR') " +
+            "   and rs.salesOrderLine = :orderLine " +
+            "   and r <> :reservation ";
+    //@formatter:on
+
+    return OBDal.getInstance()
+        .getSession()
+        .createQuery(hql, BigDecimal.class)
+        .setParameter("orderLine", orderLine)
+        .setParameter("reservation", reservation)
+        .uniqueResult();
   }
 
   private BigDecimal getQtyReserved(Reservation reservation, Product product,
       AttributeSetInstance attribute, Locator storageBin) {
-    final StringBuilder hqlString = new StringBuilder();
-    hqlString.append(
-        "select coalesce(sum(rs.quantity - coalesce(rs.released,0)),0) from MaterialMgmtReservationStock rs ");
-    hqlString.append("join rs.reservation as r ");
-    hqlString.append(" where r.rESStatus not in ('CL', 'DR') ");
-    // hqlString.append(" and rs.salesOrderLine is null ");
-    hqlString.append(" and r.product = :product ");
-    hqlString.append(" and r <> :reservation ");
+    //@formatter:off
+    String hql =
+            "select coalesce(sum(rs.quantity - coalesce(rs.released,0)),0) from MaterialMgmtReservationStock rs " +
+            "  join rs.reservation as r " +
+            " where r.rESStatus not in ('CL', 'DR') " +
+            "   and r.product = :product " +
+            "   and r <> :reservation " ;
+    //@formatter:on
     if (attribute != null && !"0".equals(attribute.getId())) {
-      hqlString.append(" and rs.attributeSetValue = :attributeSetValue ");
+      //@formatter:off
+      hql +=
+            "   and rs.attributeSetValue = :attributeSetValue ";
+      //@formatter:on
     }
     if (storageBin != null && !"0".equals(storageBin.getId())) {
-      hqlString.append(" and rs.storageBin = :storageBin ");
+      //@formatter:off
+      hql +=
+            "   and rs.storageBin = :storageBin ";
+      //@formatter:on
     }
-    final Session session = OBDal.getInstance().getSession();
-    Query<BigDecimal> query = session.createQuery(hqlString.toString(), BigDecimal.class);
-    query.setParameter("product", product);
-    query.setParameter("reservation", reservation);
+    Query<BigDecimal> query = OBDal.getInstance()
+        .getSession()
+        .createQuery(hql, BigDecimal.class)
+        .setParameter("product", product)
+        .setParameter("reservation", reservation);
+
     if (attribute != null && !"0".equals(attribute.getId())) {
       query.setParameter("attributeSetValue", attribute);
     }
