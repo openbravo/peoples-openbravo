@@ -125,7 +125,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
   @Override
   protected List<Map<String, Object>> getData(Map<String, String> parameters, int startRow,
       int endRow) {
-    List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+    List<Map<String, Object>> result = new ArrayList<>();
     if (parameters.get(JsonConstants.DISTINCT_PARAMETER) != null) {
       String distinct = parameters.get(JsonConstants.DISTINCT_PARAMETER);
       log4j.debug("Distinct param: " + distinct);
@@ -153,13 +153,13 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
   }
 
   private List<Map<String, Object>> getOrderLineSetValueFilterData(Map<String, String> parameters) {
-    List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+    List<Map<String, Object>> result = new ArrayList<>();
     Map<String, String> filterCriteria = buildCriteria(parameters);
     OBContext.setAdminMode();
     try {
       for (OrderLine o : getOrderLineFromGrid(filterCriteria.get("orderLine$_identifier"),
           getGridData(parameters))) {
-        Map<String, Object> myMap = new HashMap<String, Object>();
+        Map<String, Object> myMap = new HashMap<>();
         myMap.put("id", o.getId());
         myMap.put("name", o.getIdentifier());
         myMap.put("_identifier", o.getIdentifier());
@@ -173,16 +173,15 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
   }
 
   private List<OrderLine> getOrderLineFromGrid(String contains, List<Map<String, Object>> data) {
-    Set<String> ids = new HashSet<String>();
+    Set<String> ids = new HashSet<>();
     ids.add("-");
     for (Map<String, Object> record : data) {
-      if (contains != null && !"".equals(contains)) {
-        if (OBDal.getInstance()
-            .get(OrderLine.class, record.get("purchaseOrderLine"))
-            .getIdentifier()
-            .contains(contains)) {
-          continue;
-        }
+      if (contains != null && !"".equals(contains)
+          && OBDal.getInstance()
+              .get(OrderLine.class, record.get("purchaseOrderLine"))
+              .getIdentifier()
+              .contains(contains)) {
+        continue;
       }
       ids.add((String) record.get("purchaseOrderLine"));
     }
@@ -199,13 +198,13 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
   }
 
   private List<Map<String, Object>> getWarehouseFilterData(Map<String, String> parameters) {
-    List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+    List<Map<String, Object>> result = new ArrayList<>();
     Map<String, String> filterCriteria = buildCriteria(parameters);
     OBContext.setAdminMode();
     try {
       for (Warehouse o : getWarehouseFromGrid(filterCriteria.get("warehouse$_identifier"),
           getGridData(parameters))) {
-        Map<String, Object> myMap = new HashMap<String, Object>();
+        Map<String, Object> myMap = new HashMap<>();
         myMap.put("id", o.getId());
         myMap.put("name", o.getIdentifier());
         myMap.put("_identifier", o.getIdentifier());
@@ -219,16 +218,15 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
   }
 
   private List<Warehouse> getWarehouseFromGrid(String contains, List<Map<String, Object>> data) {
-    Set<String> ids = new HashSet<String>();
+    Set<String> ids = new HashSet<>();
     ids.add("-");
     for (Map<String, Object> record : data) {
-      if (contains != null && !"".equals(contains)) {
-        if (OBDal.getInstance()
-            .get(Warehouse.class, record.get("warehouse"))
-            .getIdentifier()
-            .contains(contains)) {
-          continue;
-        }
+      if (contains != null && !"".equals(contains)
+          && OBDal.getInstance()
+              .get(Warehouse.class, record.get("warehouse"))
+              .getIdentifier()
+              .contains(contains)) {
+        continue;
       }
       ids.add((String) record.get("warehouse"));
     }
@@ -308,7 +306,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
   }
 
   private List<String> getOnHandWarehouseIds(Organization organization) {
-    List<String> result = new ArrayList<String>();
+    List<String> result = new ArrayList<>();
     for (Warehouse o : getOnHandWarehouses(organization)) {
       result.add(o.getId());
     }
@@ -316,7 +314,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
   }
 
   private List<Warehouse> getOnHandWarehouses(Organization organization) {
-    List<Warehouse> result = new ArrayList<Warehouse>();
+    List<Warehouse> result = new ArrayList<>();
 
     for (OrgWarehouse ow : OBDal.getInstance()
         .createCriteria(OrgWarehouse.class)
@@ -328,13 +326,13 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
   }
 
   private List<Map<String, Object>> getStorageFilterData(Map<String, String> parameters) {
-    List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+    List<Map<String, Object>> result = new ArrayList<>();
     Map<String, String> filterCriteria = buildCriteria(parameters);
     OBContext.setAdminMode();
     try {
       for (Locator o : getStorageBinFromGrid(filterCriteria.get("storageBin$_identifier"),
           getGridData(parameters))) {
-        Map<String, Object> myMap = new HashMap<String, Object>();
+        Map<String, Object> myMap = new HashMap<>();
         myMap.put("id", o.getId());
         myMap.put("name", o.getIdentifier());
         myMap.put("_identifier", o.getIdentifier());
@@ -348,7 +346,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
   }
 
   private List<Locator> getStorageBinFromGrid(String contains, List<Map<String, Object>> data) {
-    Set<String> ids = new HashSet<String>();
+    Set<String> ids = new HashSet<>();
     ids.add("-");
     for (Map<String, Object> record : data) {
       if (contains != null && !"".equals(contains)) {
@@ -438,13 +436,13 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
   }
 
   private List<Map<String, Object>> getAttributeSetValueFilterData(Map<String, String> parameters) {
-    List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+    List<Map<String, Object>> result = new ArrayList<>();
     Map<String, String> filterCriteria = buildCriteria(parameters);
     OBContext.setAdminMode();
     try {
       for (AttributeSetInstance o : getAttributeSetValueFromGrid(
           filterCriteria.get("attributeSetValue$_identifier"), getGridData(parameters))) {
-        Map<String, Object> myMap = new HashMap<String, Object>();
+        Map<String, Object> myMap = new HashMap<>();
         myMap.put("id", o.getId());
         myMap.put("name", o.getIdentifier());
         myMap.put("_identifier", o.getIdentifier());
@@ -459,7 +457,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
 
   private List<AttributeSetInstance> getAttributeSetValueFromGrid(String contains,
       List<Map<String, Object>> data) {
-    Set<String> ids = new HashSet<String>();
+    Set<String> ids = new HashSet<>();
     ids.add("-");
     for (Map<String, Object> record : data) {
       ids.add((String) record.get("attributeSetValue"));
@@ -475,13 +473,13 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
   }
 
   private List<Map<String, Object>> getInventoryStatusFilterData(Map<String, String> parameters) {
-    List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+    List<Map<String, Object>> result = new ArrayList<>();
     Map<String, String> filterCriteria = buildCriteria(parameters);
     OBContext.setAdminMode();
     try {
       for (InventoryStatus o : getInventoryStatusFromGrid(
           filterCriteria.get("inventoryStatus$_identifier"), getGridData(parameters))) {
-        Map<String, Object> myMap = new HashMap<String, Object>();
+        Map<String, Object> myMap = new HashMap<>();
         myMap.put("id", o.getId());
         myMap.put("name", o.getIdentifier());
         myMap.put("_identifier", o.getIdentifier());
@@ -496,7 +494,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
 
   private List<InventoryStatus> getInventoryStatusFromGrid(String contains,
       List<Map<String, Object>> data) {
-    Set<String> ids = new HashSet<String>();
+    Set<String> ids = new HashSet<>();
     ids.add("-");
     for (Map<String, Object> record : data) {
       ids.add((String) record.get("inventoryStatus"));
@@ -513,9 +511,9 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
   }
 
   private List<Map<String, Object>> getGridData(Map<String, String> parameters) {
-    List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
-    Map<String, String> filterCriteria = new HashMap<String, String>();
-    ArrayList<String> selectedIds = new ArrayList<String>();
+    List<Map<String, Object>> result = new ArrayList<>();
+    Map<String, String> filterCriteria = new HashMap<>();
+    ArrayList<String> selectedIds = new ArrayList<>();
     try {
       // Builds the criteria based on the fetch parameters
       JSONArray criterias = (JSONArray) JsonUtils.buildCriteria(parameters).get("criteria");
@@ -686,7 +684,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
           reservedinothersFilterCriteria, releasedFilterCriteria, allocatedCriteria,
           quantityCriteria, selectedIds, inventoryStatusFiltered));
 
-      if (orderLinesFiltered == null || orderLinesFiltered.size() == 0) {
+      if (orderLinesFiltered == null || orderLinesFiltered.isEmpty()) {
         result.addAll(getStorageDetail(reservation, organizations, warehousesFiltered,
             locatorsFiltered, attributesFiltered, availableQtyFilterCriteria,
             reservedinothersFilterCriteria, releasedFilterCriteria, allocatedCriteria,
@@ -726,41 +724,41 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
   }
 
   private static class MapComparator implements Comparator<Map<String, Object>> {
-    private String compareBy = "convertedFreightAmount";
+    private String currentCompareBy = "convertedFreightAmount";
     boolean desc = false;
 
-    public MapComparator(String _compareBy) {
-      compareBy = _compareBy;
-      if (compareBy.startsWith("-")) {
+    public MapComparator(String compareBy) {
+      currentCompareBy = compareBy;
+      if (currentCompareBy.startsWith("-")) {
         desc = true;
-        compareBy = compareBy.substring(1);
+        currentCompareBy = currentCompareBy.substring(1);
       }
     }
 
     @Override
     public int compare(Map<String, Object> o1, Map<String, Object> o2) {
-      Object obj1 = o1.get(compareBy);
-      Object obj2 = o2.get(compareBy);
+      Object obj1 = o1.get(currentCompareBy);
+      Object obj2 = o2.get(currentCompareBy);
       if (obj2 == null) {
         return -1;
       } else if (obj1 == null) {
         return 1;
       }
       if (obj1 instanceof BigDecimal) {
-        final BigDecimal v1 = (BigDecimal) o1.get(compareBy);
-        final BigDecimal v2 = (BigDecimal) o2.get(compareBy);
+        final BigDecimal v1 = (BigDecimal) o1.get(currentCompareBy);
+        final BigDecimal v2 = (BigDecimal) o2.get(currentCompareBy);
         return desc ? v2.compareTo(v1) : v1.compareTo(v2);
       } else if (obj1 instanceof String) {
-        final String v1 = ((String) o1.get(compareBy)).toLowerCase();
-        final String v2 = ((String) o2.get(compareBy)).toLowerCase();
+        final String v1 = ((String) o1.get(currentCompareBy)).toLowerCase();
+        final String v2 = ((String) o2.get(currentCompareBy)).toLowerCase();
         return desc ? v2.compareTo(v1) : v1.compareTo(v2);
       } else if (obj1 instanceof BaseOBObject) {
-        final String v1 = ((BaseOBObject) o1.get(compareBy)).getIdentifier();
-        final String v2 = ((BaseOBObject) o2.get(compareBy)).getIdentifier();
+        final String v1 = ((BaseOBObject) o1.get(currentCompareBy)).getIdentifier();
+        final String v2 = ((BaseOBObject) o2.get(currentCompareBy)).getIdentifier();
         return desc ? v2.compareTo(v1) : v1.compareTo(v2);
       } else if (obj1 instanceof Boolean) {
-        final boolean v1 = (Boolean) o1.get(compareBy);
-        final boolean v2 = (Boolean) o2.get(compareBy);
+        final boolean v1 = (Boolean) o1.get(currentCompareBy);
+        final boolean v2 = (Boolean) o2.get(currentCompareBy);
         if (v1 == v2) {
           return 0;
         }
@@ -1068,31 +1066,31 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     if (reservation.getAttributeSetValue() != null) {
       query.setParameter("attributeSetValue", reservation.getAttributeSetValue());
     }
-    if (attributeSetInstancesFiltered != null && attributeSetInstancesFiltered.size() > 0) {
+    if (attributeSetInstancesFiltered != null && !attributeSetInstancesFiltered.isEmpty()) {
       query.setParameterList("attributeSetInstancesFiltered", attributeSetInstancesFiltered);
     }
     if (reservation.getStorageBin() != null) {
       query.setParameter("storageBin", reservation.getStorageBin());
     }
-    if (locatorsFiltered != null && locatorsFiltered.size() > 0) {
+    if (locatorsFiltered != null && !locatorsFiltered.isEmpty()) {
       query.setParameterList("locatorsFiltered", locatorsFiltered);
     }
     if (reservation.getWarehouse() != null) {
       query.setParameter("warehouse", reservation.getWarehouse());
     }
-    if (warehousesFiltered != null && warehousesFiltered.size() > 0) {
+    if (warehousesFiltered != null && !warehousesFiltered.isEmpty()) {
       query.setParameterList("warehousesFiltered", warehousesFiltered);
     }
-    if (orderLinesFiltered != null && orderLinesFiltered.size() > 0) {
+    if (orderLinesFiltered != null && !orderLinesFiltered.isEmpty()) {
       query.setParameterList("orderLinesFiltered", orderLinesFiltered);
     }
-    if (inventoryStatusFiltered != null && inventoryStatusFiltered.size() > 0) {
+    if (inventoryStatusFiltered != null && !inventoryStatusFiltered.isEmpty()) {
       query.setParameterList("inventoryStatusFiltered", inventoryStatusFiltered);
     }
 
     for (ReservationStock rs : query.list()) {
-      Map<String, Object> myMap = new HashMap<String, Object>();
-      if (selectedIds.size() > 0) {
+      Map<String, Object> myMap = new HashMap<>();
+      if (!selectedIds.isEmpty()) {
         for (int i = 0; i < selectedIds.size(); i++) {
           if (!(rs.getId().equals(selectedIds.get(i)))) {
             // Check Filter Criteria
@@ -1168,7 +1166,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     }
 
     for (int i = 0; i < selectedIds.size(); i++) {
-      Map<String, Object> myMap = new HashMap<String, Object>();
+      Map<String, Object> myMap = new HashMap<>();
       ReservationStock rs = OBDal.getInstance().get(ReservationStock.class, selectedIds.get(i));
       if (rs != null) {
         myMap = tomap(rs, reservation);
@@ -1212,7 +1210,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
       String availableQtyFilterCriteria, String reservedinothersFilterCriteria,
       String releasedFilterCriteria, String allocatedCriteria, String quantityCriteria,
       ArrayList<String> selectedIds) {
-    List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+    List<Map<String, Object>> result = new ArrayList<>();
 
     //@formatter:off
     String hql =
@@ -1288,17 +1286,17 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     if (reservation.getAttributeSetValue() != null) {
       query.setParameter("attributeSetValue", reservation.getAttributeSetValue());
     }
-    if (attributeSetInstancesFiltered != null && attributeSetInstancesFiltered.size() > 0) {
+    if (attributeSetInstancesFiltered != null && !attributeSetInstancesFiltered.isEmpty()) {
       query.setParameterList("attributeSetInstancesFiltered", attributeSetInstancesFiltered);
     }
     if (reservation.getWarehouse() != null) {
       query.setParameter("warehouse", reservation.getWarehouse());
     }
-    if (orderLinesFiltered != null && orderLinesFiltered.size() > 0) {
+    if (orderLinesFiltered != null && !orderLinesFiltered.isEmpty()) {
       query.setParameterList("orderLinesFiltered", orderLinesFiltered);
     }
     for (OrderLine orderLine : query.list()) {
-      Map<String, Object> myMap = new HashMap<String, Object>();
+      Map<String, Object> myMap = new HashMap<>();
       myMap.put("id", orderLine.getId());
       myMap.put("obSelected", false);
       myMap.put("reservationStock", null);
@@ -1359,7 +1357,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
       String reservedinothersFilterCriteria, String releasedFilterCriteria,
       String allocatedCriteria, String quantityCriteria, ArrayList<String> selectedIds,
       List<InventoryStatus> inventoryStatusFiltered) {
-    List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+    List<Map<String, Object>> result = new ArrayList<>();
 
     //@formatter:off
     String hql =
@@ -1448,16 +1446,13 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
       //@formatter:on
       }
     }
-
-    // Organization Filter not required as reservation for warehouse on hand is sufficent
-    // hqlString.append("and sd.organization.id in :organizations ");
-
     //@formatter:off
     hql +=
             "   and sb.warehouse in :warehouses " +
             " order by sb.warehouse DESC, sd.storageBin.rowX, sd.storageBin.stackY, " +
             "   sd.storageBin.levelZ, sd.attributeSetValue.description";
     //@formatter:on
+
     Query<StorageDetail> query = OBDal.getInstance()
         .getSession()
         .createQuery(hql, StorageDetail.class)
@@ -1468,26 +1463,25 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     if (reservation.getAttributeSetValue() != null) {
       query.setParameter("attributeSetValue", reservation.getAttributeSetValue());
     }
-    if (attributeSetInstancesFiltered != null && attributeSetInstancesFiltered.size() > 0) {
+    if (attributeSetInstancesFiltered != null && !attributeSetInstancesFiltered.isEmpty()) {
       query.setParameterList("attributeSetInstancesFiltered", attributeSetInstancesFiltered);
     }
     if (reservation.getStorageBin() != null) {
       query.setParameter("storageBin", reservation.getStorageBin());
     }
-    if (locatorsFiltered != null && locatorsFiltered.size() > 0) {
+    if (locatorsFiltered != null && !locatorsFiltered.isEmpty()) {
       query.setParameterList("locatorsFiltered", locatorsFiltered);
     }
     if (reservation.getWarehouse() != null) {
       query.setParameter("warehouse", reservation.getWarehouse());
     }
-    if (warehousesFiltered != null && warehousesFiltered.size() > 0) {
+    if (warehousesFiltered != null && !warehousesFiltered.isEmpty()) {
       query.setParameterList("warehousesFiltered", warehousesFiltered);
     }
-    if (inventoryStatusFiltered != null && inventoryStatusFiltered.size() > 0) {
+    if (inventoryStatusFiltered != null && !inventoryStatusFiltered.isEmpty()) {
       query.setParameterList("inventoryStatusFiltered", inventoryStatusFiltered);
     }
 
-    // query.setParameterList("organizations", organizations);
     query.setParameterList("warehouses", getOnHandWarehouses(reservation.getOrganization()));
     for (int i = 0; i < selectedIds.size(); i++) {
       StorageDetail sd = OBDal.getInstance().get(StorageDetail.class, selectedIds.get(i));
@@ -1501,7 +1495,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     }
 
     for (StorageDetail sd : query.list()) {
-      if (selectedIds.size() > 0) {
+      if (!selectedIds.isEmpty()) {
         for (int i = 0; i < selectedIds.size(); i++) {
           if (!(sd.getId().equals(selectedIds.get(i)))) {
             // Check Filter Criteria
@@ -1580,7 +1574,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
   }
 
   private Map<String, Object> tomap(ReservationStock rs, Reservation reservation) {
-    Map<String, Object> myMap = new HashMap<String, Object>();
+    Map<String, Object> myMap = new HashMap<>();
     myMap.put("id", rs.getId());
     myMap.put("obSelected", true);
     if (ol == null || "".equals(ol)) {
@@ -1639,7 +1633,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
   private List<Map<String, Object>> tomap(StorageDetail sd, boolean obSelected,
       List<Map<String, Object>> result, BigDecimal reservedinothers, Reservation reservation) {
     if (!storageDetailFiltered(result, sd)) {
-      Map<String, Object> myMap = new HashMap<String, Object>();
+      Map<String, Object> myMap = new HashMap<>();
       myMap.put("id", sd.getId());
       myMap.put("obSelected", obSelected);
       if (reservation.getRESStatus().equals("DR")) {
@@ -1824,7 +1818,6 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
   }
 
   private BigDecimal getQtyOnHandFromOrderLine(OrderLine orderline) {
-    // return orderline.getOrderedQuantity().subtract(getQtyReserved(orderline));
     return orderline.getOrderedQuantity();
   }
 
@@ -1895,7 +1888,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
   }
 
   private Map<String, String> buildCriteria(Map<String, String> parameters) {
-    Map<String, String> filterCriteria = new HashMap<String, String>();
+    Map<String, String> filterCriteria = new HashMap<>();
 
     try {
       // Builds the criteria based on the fetch parameters
