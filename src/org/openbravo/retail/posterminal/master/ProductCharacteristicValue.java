@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2019 Openbravo S.L.U.
+ * Copyright (C) 2015-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -20,7 +21,6 @@ import javax.inject.Inject;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Session;
@@ -28,6 +28,9 @@ import org.hibernate.query.Query;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery;
+import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery.MasterDataModel;
+import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
@@ -35,9 +38,9 @@ import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.pricing.pricelist.PriceListVersion;
 import org.openbravo.retail.config.OBRETCOProductList;
 import org.openbravo.retail.posterminal.POSUtils;
-import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
-public class ProductCharacteristicValue extends ProcessHQLQuery {
+@MasterDataModel("ProductCharacteristicValue")
+public class ProductCharacteristicValue extends MasterDataProcessHQLQuery {
   public static final String productCharacteristicValuePropertyExtension = "OBPOS_ProductCharacteristicValueExtension";
   public static final Logger log = LogManager.getLogger();
 
@@ -69,7 +72,8 @@ public class ProductCharacteristicValue extends ProcessHQLQuery {
     OBContext.setAdminMode(true);
     try {
       final String posId = jsonsent.getString("pos");
-      final Date terminalDate = getTerminalDate(jsonsent);
+      // final Date terminalDate = getTerminalDate(jsonsent);
+      final Date terminalDate = new Date();
       final boolean isCrossStoreSearch = isCrossStoreSearch(jsonsent);
       final String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
       final OBRETCOProductList productList = POSUtils.getProductListByPosterminalId(posId);
@@ -81,13 +85,13 @@ public class ProductCharacteristicValue extends ProcessHQLQuery {
         paramValues.put("productId", jsonsent.getJSONObject("remoteParams").getString("productId"));
       }
       // Optional filtering by a list of m_product_id
-      if (jsonsent.getJSONObject("parameters").has("filterProductList")
-          && !jsonsent.getJSONObject("parameters").get("filterProductList").equals("undefined")
-          && !jsonsent.getJSONObject("parameters").get("filterProductList").equals("null")) {
-        final JSONArray filterProductList = jsonsent.getJSONObject("parameters")
-            .getJSONArray("filterProductList");
-        paramValues.put("filterProductList", filterProductList);
-      }
+      // if (jsonsent.getJSONObject("parameters").has("filterProductList")
+      // && !jsonsent.getJSONObject("parameters").get("filterProductList").equals("undefined")
+      // && !jsonsent.getJSONObject("parameters").get("filterProductList").equals("null")) {
+      // final JSONArray filterProductList = jsonsent.getJSONObject("parameters")
+      // .getJSONArray("filterProductList");
+      // paramValues.put("filterProductList", filterProductList);
+      // }
       paramValues.put("productListId", productList.getId());
       paramValues.put("priceListVersionId", priceListVersion.getId());
       List<String> characteristicsIds = getUsedInWebPOSCharacteristics();
@@ -105,9 +109,11 @@ public class ProductCharacteristicValue extends ProcessHQLQuery {
         && !jsonsent.get("lastUpdated").equals("undefined")
         && !jsonsent.get("lastUpdated").equals("null") ? jsonsent.getLong("lastUpdated") : null;
     // Optional filtering by a list of m_product_id
-    final boolean filterProductList = jsonsent.getJSONObject("parameters").has("filterProductList")
-        && !jsonsent.getJSONObject("parameters").get("filterProductList").equals("undefined")
-        && !jsonsent.getJSONObject("parameters").get("filterProductList").equals("null");
+    // final boolean filterProductList =
+    // jsonsent.getJSONObject("parameters").has("filterProductList")
+    // && !jsonsent.getJSONObject("parameters").get("filterProductList").equals("undefined")
+    // && !jsonsent.getJSONObject("parameters").get("filterProductList").equals("null");
+    final boolean filterProductList = false;
     final HQLPropertyList regularProductsCharacteristicHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
 
@@ -176,5 +182,14 @@ public class ProductCharacteristicValue extends ProcessHQLQuery {
       log.error("Error while getting crossStoreSearch " + e.getMessage(), e);
     }
     return crossStoreSearch;
+  }
+
+  @Override
+  public List<String> getMasterDataModelProperties() {
+    return ModelExtensionUtils.getPropertyExtensions(extensions)
+        .getProperties()
+        .stream()
+        .map(HQLProperty::getHqlProperty)
+        .collect(Collectors.toList());
   }
 }
