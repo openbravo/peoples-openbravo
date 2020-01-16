@@ -34,7 +34,7 @@
       throw 'getLineTaxes method not implemented';
     }
 
-    getHeaderTaxes(lines) {
+    getHeaderTaxes(lineTaxes) {
       throw 'getHeaderTaxes method not implemented';
     }
 
@@ -67,6 +67,20 @@
           taxRate.region === rules[0].region &&
           taxRate.validFromDate === rules[0].validFromDate
       );
+    }
+
+    // taxRate = rate / 100
+    getTaxRate(rate) {
+      return new BigDecimal(String(rate)).divide(
+        new BigDecimal('100'),
+        20,
+        BigDecimal.prototype.ROUND_HALF_UP
+      );
+    }
+
+    // taxAmount = netAmount * taxRate
+    calculateTaxAmount(netAmount, taxRate) {
+      return OB.DEC.mul(netAmount, taxRate);
     }
   }
 

@@ -18,7 +18,10 @@
       const tax = rules[0];
       const taxRate = this.getTaxRate(tax.rate);
       const lineGrossAmount = line.amount;
-      const lineNetAmount = this.calculateNetAmount(lineGrossAmount, taxRate);
+      const lineNetAmount = this.calculateNetAmountFromGrossAmount(
+        lineGrossAmount,
+        taxRate
+      );
       let lineTaxAmount = this.calculateTaxAmount(lineNetAmount, taxRate);
 
       // If line gross amount <> line net amount + line tax amount, we need to adjust the highest line tax amount
@@ -29,7 +32,7 @@
 
       return {
         id: line.id,
-        gross: line.amount,
+        gross: lineGrossAmount,
         net: lineNetAmount,
         tax: tax.id,
         taxes: [
@@ -53,7 +56,10 @@
           (line1, line2) => line1 + line2.gross,
           0
         );
-        const netAmount = this.calculateNetAmount(grossAmount, taxRate);
+        const netAmount = this.calculateNetAmountFromGrossAmount(
+          grossAmount,
+          taxRate
+        );
         let taxAmount = this.calculateTaxAmount(netAmount, taxRate);
 
         // If header gross amount <> header net amount + header tax amount, we need to adjust the highest header tax amount
@@ -83,8 +89,8 @@
         (line1, line2) => line1 + line2.gross,
         0
       );
-      const netAmount = lineTaxes.reduce(
-        (line1, line2) => line1 + line2.net,
+      const netAmount = headerTaxes.reduce(
+        (lineTax1, lineTax2) => lineTax1 + lineTax2.base,
         0
       );
 
@@ -95,17 +101,8 @@
       };
     }
 
-    // taxRate = rate / 100
-    getTaxRate(rate) {
-      return new BigDecimal(String(rate)).divide(
-        new BigDecimal('100'),
-        20,
-        BigDecimal.prototype.ROUND_HALF_UP
-      );
-    }
-
-    // lineNetAmount = (lineGrossAmount * lineGrossAmount) / (lineGrossAmount + (lineGrossAmount * taxRate))
-    calculateNetAmount(grossAmount, taxRate) {
+    // netAmount = (grossAmount * grossAmount) / (grossAmount + (grossAmount * taxRate))
+    calculateNetAmountFromGrossAmount(grossAmount, taxRate) {
       const amount = new BigDecimal(String(grossAmount));
       return OB.DEC.toNumber(
         amount
@@ -116,11 +113,6 @@
             BigDecimal.prototype.ROUND_HALF_UP
           )
       );
-    }
-
-    // lineTaxAmount = lineNetAmount * taxRate
-    calculateTaxAmount(netAmount, taxRate) {
-      return OB.DEC.mul(netAmount, taxRate);
     }
   }
 

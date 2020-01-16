@@ -171,11 +171,41 @@
             return OB.DEC.sub(memo, element.actualAmt || element.amt || 0);
           }, this.get('gross'))
         );
+        this.set(
+          'price',
+          this.get('qty') === 0
+            ? 0
+            : OB.DEC.div(this.get('gross'), this.get('qty'))
+        );
+        this.set(
+          'discountedPrice',
+          this.get('qty') === 0
+            ? 0
+            : OB.DEC.div(this.get('discountedGross'), this.get('qty'))
+        );
       } else {
         this.set('gross', null, {
           silent: true
         });
         this.set('net', OB.DEC.mul(this.get('qty'), this.get('price')));
+        this.set(
+          'discountedNet',
+          this.get('promotions').reduce(function(memo, element) {
+            return OB.DEC.sub(memo, element.actualAmt || element.amt || 0);
+          }, this.get('net'))
+        );
+        this.set(
+          'pricenet',
+          this.get('qty') === 0
+            ? 0
+            : OB.DEC.div(this.get('net'), this.get('qty'))
+        );
+        this.set(
+          'discountedNetPrice',
+          this.get('qty') === 0
+            ? 0
+            : OB.DEC.div(this.get('discountedNet'), this.get('qty'))
+        );
       }
     },
 
