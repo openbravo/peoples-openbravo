@@ -106,12 +106,13 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
              + "              where chv.characteristicValue.id = :chvid) ";
       }
       //@formatter:on
-      OBQuery<Product> productQuery = OBDal.getInstance().createQuery(Product.class, hql);
+      OBQuery<Product> productQuery = OBDal.getInstance()
+          .createQuery(Product.class, hql)
+          .setFilterOnReadableOrganization(false)
+          .setFilterOnActive(false);
       if (StringUtils.isNotBlank(strChValueId)) {
         productQuery.setNamedParameter("chvid", strChValueId);
       }
-      productQuery.setFilterOnReadableOrganization(false);
-      productQuery.setFilterOnActive(false);
 
       ScrollableResults products = productQuery.scroll(ScrollMode.FORWARD_ONLY);
       int i = 0;
@@ -139,14 +140,15 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
     StringBuilder strChDesc = new StringBuilder();
     //@formatter:off
     String hql = " as pch "
-               + " where pch.product = :product "
+               + " where pch.product.id = :productId "
                + " order by pch.sequenceNumber ";
     //@formatter:on
     OBQuery<ProductCharacteristic> pchQuery = OBDal.getInstance()
-        .createQuery(ProductCharacteristic.class, hql);
-    pchQuery.setFilterOnActive(false);
-    pchQuery.setFilterOnReadableOrganization(false);
-    pchQuery.setNamedParameter("product", product);
+        .createQuery(ProductCharacteristic.class, hql)
+        .setFilterOnActive(false)
+        .setFilterOnReadableOrganization(false)
+        .setNamedParameter("productId", product.getId());
+
     for (ProductCharacteristic pch : pchQuery.list()) {
       if (StringUtils.isNotBlank(strChDesc.toString())) {
         strChDesc.append(", ");
@@ -154,15 +156,16 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
       strChDesc.append(pch.getCharacteristic().getName() + ":");
       //@formatter:off
       hql = " as pchv "
-          + " where pchv.characteristic.id = :ch "
-          + " and pchv.product.id = :product ";
+          + " where pchv.characteristic.id = :chId "
+          + " and pchv.product.id = :productId ";
       //@formatter:on
       OBQuery<ProductCharacteristicValue> pchvQuery = OBDal.getInstance()
-          .createQuery(ProductCharacteristicValue.class, hql);
-      pchvQuery.setFilterOnActive(false);
-      pchvQuery.setFilterOnReadableOrganization(false);
-      pchvQuery.setNamedParameter("ch", pch.getCharacteristic().getId());
-      pchvQuery.setNamedParameter("product", product.getId());
+          .createQuery(ProductCharacteristicValue.class, hql)
+          .setFilterOnActive(false)
+          .setFilterOnReadableOrganization(false)
+          .setNamedParameter("chId", pch.getCharacteristic().getId())
+          .setNamedParameter("productId", product.getId());
+
       for (ProductCharacteristicValue pchv : pchvQuery.list()) {
         strChDesc.append(" " + pchv.getCharacteristicValue().getName());
       }
