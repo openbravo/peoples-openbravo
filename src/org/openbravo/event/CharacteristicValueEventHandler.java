@@ -25,8 +25,6 @@ import javax.enterprise.event.Observes;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Session;
-import org.hibernate.query.Query;
 import org.hibernate.resource.transaction.spi.TransactionStatus;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -81,18 +79,18 @@ class CharacteristicValueEventHandler extends EntityPersistenceEventObserver {
                  + "    select 1 "
                  + "    from  ProductCharacteristic as pc "
                  + "    where pcc.characteristicOfProduct = pc "
-                 + "    and pcc.characteristicValue = :characteristicValue "
+                 + "    and pcc.characteristicValue.id = :characteristicValueId "
                  + "    and pc.characteristicSubset is null "
                  + "    and pcc.code <> :code) ";
       //@formatter:on
       try {
-        final Session session = OBDal.getInstance().getSession();
-        @SuppressWarnings("rawtypes")
-        final Query charConfQuery = session.createQuery(hql);
-        charConfQuery.setParameter("user", OBContext.getOBContext().getUser());
-        charConfQuery.setParameter("characteristicValue", chv);
-        charConfQuery.setParameter("code", chv.getCode());
-        charConfQuery.executeUpdate();
+        OBDal.getInstance()
+            .getSession()
+            .createQuery(hql)
+            .setParameter("user", OBContext.getOBContext().getUser())
+            .setParameter("characteristicValueId", chv.getId())
+            .setParameter("code", chv.getCode())
+            .executeUpdate();
       } catch (Exception e) {
         logger.error(
             "Error on CharacteristicValueEventHandler. ProductCharacteristicConf could not be updated",
