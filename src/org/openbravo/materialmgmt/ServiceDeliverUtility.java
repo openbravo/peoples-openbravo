@@ -44,10 +44,6 @@ public class ServiceDeliverUtility {
   private static final String UNIQUE_QUANTITY = "UQ";
   private static final String AS_PER_PRODUCT = "PP";
 
-  private ServiceDeliverUtility() {
-    throw new IllegalStateException("ServiceDeliverUtility class");
-  }
-
   public static void deliverServices(final ShipmentInOut shipment) {
     Map<String, BigDecimal> serviceToDeliver = getShipmentServiceOrderlinesAndQtyToDeliver(
         shipment);
