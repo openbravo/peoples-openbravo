@@ -8033,7 +8033,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 */
 .obObposPointOfSaleUiReceiptView,
 .obObposPointOfSaleUiMultiReceiptView {
-  height: 100%;
   position: relative;
   background-color: transparent;
   color: black;
