@@ -60,7 +60,7 @@
         );
         if (OB.DEC.compare(adjustment) !== 0) {
           const line = lines.sort(
-            (line1, line2) => line2.gross - line1.gross
+            (line1, line2) => OB.DEC.abs(line2.gross) - OB.DEC.abs(line1.gross)
           )[0];
           line.gross = OB.DEC.add(line.gross, adjustment);
         }
