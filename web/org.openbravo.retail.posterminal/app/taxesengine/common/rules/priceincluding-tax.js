@@ -7,16 +7,12 @@
  ************************************************************************************
  */
 
-(function() {
+(() => {
   class PriceIncludingTax extends OB.Taxes.Tax {
-    constructor(ticket, rules) {
-      super(ticket, rules);
-    }
-
     /* @Override */
     getLineTaxes(line, rules) {
-      const tax = rules[0];
-      const taxRate = this.getTaxRate(tax.rate);
+      const currentTax = rules[0];
+      const taxRate = this.getTaxRate(currentTax.rate);
       const lineGrossAmount = line.amount;
       const lineNetAmount = this.calculateNetAmountFromGrossAmount(
         lineGrossAmount,
@@ -34,12 +30,12 @@
         id: line.id,
         gross: lineGrossAmount,
         net: lineNetAmount,
-        tax: tax.id,
+        tax: currentTax.id,
         taxes: [
           {
             base: lineNetAmount,
             amount: lineTaxAmount,
-            tax: tax
+            tax: currentTax
           }
         ]
       };
@@ -105,7 +101,7 @@
     }
 
     // netAmount = (grossAmount * grossAmount) / (grossAmount + (grossAmount * taxRate))
-    calculateNetAmountFromGrossAmount(grossAmount, taxRate) {
+    static calculateNetAmountFromGrossAmount(grossAmount, taxRate) {
       const amount = new BigDecimal(String(grossAmount));
       return OB.DEC.toNumber(
         amount
