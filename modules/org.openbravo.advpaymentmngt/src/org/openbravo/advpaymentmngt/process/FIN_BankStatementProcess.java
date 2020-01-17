@@ -166,16 +166,16 @@ public class FIN_BankStatementProcess implements org.openbravo.scheduling.Proces
     //@formatter:off
     final String hql =
                   "as bsl " +
-                  " where bsl.bankStatement.account = :account" +
-                  "   and bsl.bankStatement <> :bankStatement" +
+                  " where bsl.bankStatement.account.id = :accountId" +
+                  "   and bsl.bankStatement.id <> :bankStatementId" +
                   "   and bsl.bankStatement.processed = 'Y'" +
                   " order by bsl.transactionDate desc";
     //@formatter:on
 
     FIN_BankStatementLine line = OBDal.getInstance()
         .createQuery(FIN_BankStatementLine.class, hql)
-        .setNamedParameter("account", bankstatement.getAccount())
-        .setNamedParameter("bankStatement", bankstatement)
+        .setNamedParameter("accountId", bankstatement.getAccount().getId())
+        .setNamedParameter("bankStatementId", bankstatement.getId())
         .setMaxResult(1)
         .uniqueResult();
 
