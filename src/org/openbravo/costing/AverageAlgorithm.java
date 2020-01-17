@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2018 Openbravo SLU
+ * All portions are Copyright (C) 2012-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -43,17 +43,17 @@ public class AverageAlgorithm extends CostingAlgorithm {
 
   @Override
   public BigDecimal getTransactionCost() {
-    BigDecimal trxCost = super.getTransactionCost();
+    final BigDecimal trxCost = super.getTransactionCost();
     // If it is a transaction whose cost has not been calculated based on current average cost
     // calculate new average cost.
     if (modifiesAverage(trxType)) {
-      Costing currentCosting = getProductCost();
-      BigDecimal trxCostWithSign = (transaction.getMovementQuantity().signum() == -1)
+      final Costing currentCosting = getProductCost();
+      final BigDecimal trxCostWithSign = (transaction.getMovementQuantity().signum() == -1)
           ? trxCost.negate()
           : trxCost;
       BigDecimal newCost = null;
-      BigDecimal currentStock = CostingUtils.getCurrentStock(transaction, costOrg, costDimensions,
-          costingRule.isBackdatedTransactionsFixed(), costCurrency);
+      final BigDecimal currentStock = CostingUtils.getCurrentStock(transaction, costOrg,
+          costDimensions, costingRule.isBackdatedTransactionsFixed(), costCurrency);
       BigDecimal currentValuedStock = CostingUtils.getCurrentValuedStock(transaction, costOrg,
           costDimensions, costingRule.isBackdatedTransactionsFixed(), costCurrency);
       if (currentCosting == null) {
@@ -82,7 +82,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
 
   @Override
   protected BigDecimal getOutgoingTransactionCost() {
-    Costing currentCosting = getProductCost();
+    final Costing currentCosting = getProductCost();
     if (currentCosting == null) {
       throw new OBException("@NoAvgCostDefined@ @Organization@: " + costOrg.getName()
           + ", @Product@: " + transaction.getProduct().getName() + ", @Date@: "
@@ -116,8 +116,9 @@ public class AverageAlgorithm extends CostingAlgorithm {
     return super.getReceiptDefaultCost();
   }
 
-  private void insertCost(Costing currentCosting, BigDecimal newCost, BigDecimal currentStock,
-      BigDecimal currentValuedStock, BigDecimal trxCost) {
+  private void insertCost(final Costing currentCosting, final BigDecimal newCost,
+      final BigDecimal currentStock, final BigDecimal currentValuedStock,
+      final BigDecimal trxCost) {
     Date dateTo = getLastDate();
     Date startingDate = null;
     if (currentCosting != null) {
@@ -162,26 +163,41 @@ public class AverageAlgorithm extends CostingAlgorithm {
   }
 
   private Date getStartingDate() {
-    Product product = transaction.getProduct();
-    Date date = transaction.getTransactionProcessDate();
-    StringBuffer where = new StringBuffer();
-    where.append(Costing.PROPERTY_PRODUCT + ".id = :product");
-    where.append("  and " + Costing.PROPERTY_STARTINGDATE + " > :startingDate");
-    where.append("  and " + Costing.PROPERTY_COSTTYPE + " = 'AVA'");
-    where.append("  and " + Costing.PROPERTY_COST + " is not null");
+    final Product product = transaction.getProduct();
+    final Date date = transaction.getTransactionProcessDate();
+
+    //@formatter:off
+    String hql =
+            " product.id = :product" +
+            "   and startingDate > :startingDate" +
+            "   and costType = 'AVA'" +
+            "   and cost is not null";
+    //@formatter:on
     if (costDimensions.get(CostDimension.Warehouse) != null) {
-      where.append("  and " + Costing.PROPERTY_WAREHOUSE + ".id = :warehouse");
+      //@formatter:off
+      hql +=
+            "   and warehouse.id = :warehouse";
+      //@formatter:on
     }
     // FIXME: remove when manufacturing costs are fully migrated
     if (product.isProduction()) {
-      where.append("  and " + Costing.PROPERTY_CLIENT + ".id = :client");
+      //@formatter:off
+      hql +=
+            "  and client.id = :client";
+      //@formatter:on
     } else {
-      where.append("  and " + Costing.PROPERTY_ORGANIZATION + ".id = :org");
+      //@formatter:off
+      hql +=
+            "  and organization.id = :org";
+      //@formatter:on
     }
-    OBQuery<Costing> costQry = OBDal.getInstance().createQuery(Costing.class, where.toString());
-    costQry.setFilterOnReadableOrganization(false);
-    costQry.setNamedParameter("product", product.getId());
-    costQry.setNamedParameter("startingDate", date);
+
+    OBQuery<Costing> costQry = OBDal.getInstance()
+        .createQuery(Costing.class, hql)
+        .setFilterOnReadableOrganization(false)
+        .setNamedParameter("product", product.getId())
+        .setNamedParameter("startingDate", date);
+
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       costQry.setNamedParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
     }
@@ -191,9 +207,8 @@ public class AverageAlgorithm extends CostingAlgorithm {
     } else {
       costQry.setNamedParameter("org", costOrg.getId());
     }
-    costQry.setMaxResult(2);
 
-    List<Costing> costList = costQry.list();
+    List<Costing> costList = costQry.setMaxResult(2).list();
     int size = costList.size();
     // If no average cost is found return null.
     if (size == 0) {
@@ -212,30 +227,47 @@ public class AverageAlgorithm extends CostingAlgorithm {
         costDimensions, costOrg);
   }
 
-  protected static Costing getProductCost(Date date, Product product,
-      HashMap<CostDimension, BaseOBObject> costDimensions, Organization costOrg) {
-    StringBuffer where = new StringBuffer();
-    where.append(Costing.PROPERTY_PRODUCT + ".id = :product");
-    where.append("  and " + Costing.PROPERTY_STARTINGDATE + " <= :startingDate");
-    where.append("  and " + Costing.PROPERTY_ENDINGDATE + " > :endingDate");
-    where.append("  and " + Costing.PROPERTY_COSTTYPE + " = 'AVA'");
-    where.append("  and " + Costing.PROPERTY_COST + " is not null");
+  protected static Costing getProductCost(final Date date, final Product product,
+      final HashMap<CostDimension, BaseOBObject> costDimensions, final Organization costOrg) {
+    //@formatter:off
+    String hql =
+            " product.id = :product" +
+            "   and startingDate <= :startingDate" +
+            "   and endingDate > :endingDate" +
+            "   and costType = 'AVA'" +
+            "   and cost is not null";
+    //@formatter:on
     if (costDimensions.get(CostDimension.Warehouse) != null && !product.isProduction()) {
-      where.append("  and " + Costing.PROPERTY_WAREHOUSE + ".id = :warehouse");
+      //@formatter:off
+      hql +=
+            "   and warehouse.id = :warehouse";
+      //@formatter:on
     } else {
-      where.append("  and " + Costing.PROPERTY_WAREHOUSE + " is null");
+      //@formatter:off
+      hql +=
+            "   and warehouse is null";
+      //@formatter:on
     }
     // FIXME: remove when manufacturing costs are fully migrated
     if (product.isProduction()) {
-      where.append("  and " + Costing.PROPERTY_CLIENT + ".id = :client");
+      //@formatter:off
+      hql +=
+            "  and " + Costing.PROPERTY_CLIENT + ".id = :client";
+      //@formatter:on
     } else {
-      where.append("  and " + Costing.PROPERTY_ORGANIZATION + ".id = :org");
+      //@formatter:off
+      hql +=
+            "  and " + Costing.PROPERTY_ORGANIZATION + ".id = :org";
+      //@formatter:on
     }
-    OBQuery<Costing> costQry = OBDal.getInstance().createQuery(Costing.class, where.toString());
-    costQry.setFilterOnReadableOrganization(false);
-    costQry.setNamedParameter("product", product.getId());
-    costQry.setNamedParameter("startingDate", date);
-    costQry.setNamedParameter("endingDate", date);
+
+    OBQuery<Costing> costQry = OBDal.getInstance()
+        .createQuery(Costing.class, hql)
+        .setFilterOnReadableOrganization(false)
+        .setNamedParameter("product", product.getId())
+        .setNamedParameter("startingDate", date)
+        .setNamedParameter("endingDate", date);
+
     if (costDimensions.get(CostDimension.Warehouse) != null && !product.isProduction()) {
       costQry.setNamedParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
     }
@@ -260,32 +292,52 @@ public class AverageAlgorithm extends CostingAlgorithm {
     return costList.get(0);
   }
 
-  protected static Costing getLastCumulatedCosting(Date date, Product product,
-      HashMap<CostDimension, BaseOBObject> costDimensions, Organization costOrg) {
-    StringBuffer where = new StringBuffer();
-    where.append(Costing.PROPERTY_PRODUCT + ".id = :product");
-    where.append("  and " + Costing.PROPERTY_STARTINGDATE + " <= :startingDate");
-    where.append("  and " + Costing.PROPERTY_COSTTYPE + " = 'AVA'");
-    where.append("  and " + Costing.PROPERTY_COST + " is not null");
-    where.append("  and " + Costing.PROPERTY_TOTALMOVEMENTQUANTITY + " is not null");
-    where.append("  and " + Costing.PROPERTY_TOTALSTOCKVALUATION + " is not null");
+  protected static Costing getLastCumulatedCosting(final Date date, final Product product,
+      final HashMap<CostDimension, BaseOBObject> costDimensions, final Organization costOrg) {
+    //@formatter:off
+    String hql =
+            "product.id = :product" +
+            "  and startingDate <= :startingDate" +
+            "  and costType = 'AVA'" +
+            "  and cost is not null" +
+            "  and totalMovementQuantity is not null" +
+            "  and totalStockValuation is not null";
+    //@formatter:on
     if (costDimensions.get(CostDimension.Warehouse) != null && !product.isProduction()) {
-      where.append("  and " + Costing.PROPERTY_WAREHOUSE + ".id = :warehouse");
+      //@formatter:off
+      hql +=
+            "  and warehouse.id = :warehouse";
+      //@formatter:on
     } else {
-      where.append("  and " + Costing.PROPERTY_WAREHOUSE + " is null");
+      //@formatter:off
+      hql +=
+            "  and warehouse is null";
+      //@formatter:on
     }
     // FIXME: remove when manufacturing costs are fully migrated
     if (product.isProduction()) {
-      where.append("  and " + Costing.PROPERTY_CLIENT + ".id = :client");
+      //@formatter:off
+      hql +=
+            "  and client.id = :client";
+      //@formatter:on
     } else {
-      where.append("  and " + Costing.PROPERTY_ORGANIZATION + ".id = :org");
+      //@formatter:off
+      hql +=
+            "  and organization.id = :org";
+      //@formatter:on
     }
-    where.append("  order by " + Costing.PROPERTY_STARTINGDATE + " desc,");
-    where.append(" " + Costing.PROPERTY_ENDINGDATE + " desc");
-    OBQuery<Costing> costQry = OBDal.getInstance().createQuery(Costing.class, where.toString());
-    costQry.setFilterOnReadableOrganization(false);
-    costQry.setNamedParameter("product", product.getId());
-    costQry.setNamedParameter("startingDate", date);
+    //@formatter:off
+    hql +=
+            " order by startingDate desc," +
+            "   endingDate desc";
+    //@formatter:on
+
+    OBQuery<Costing> costQry = OBDal.getInstance()
+        .createQuery(Costing.class, hql)
+        .setFilterOnReadableOrganization(false)
+        .setNamedParameter("product", product.getId())
+        .setNamedParameter("startingDate", date);
+
     if (costDimensions.get(CostDimension.Warehouse) != null && !product.isProduction()) {
       costQry.setNamedParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
     }
@@ -296,8 +348,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
       costQry.setNamedParameter("org", costOrg.getId());
     }
 
-    costQry.setMaxResult(1);
-    return costQry.uniqueResult();
+    return costQry.setMaxResult(1).uniqueResult();
   }
 
   private Date getLastDate() {
@@ -314,7 +365,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
   /**
    * Return true if the transaction type should be modify the average
    */
-  protected static boolean modifiesAverage(TrxType trxType) {
+  protected static boolean modifiesAverage(final TrxType trxType) {
     switch (trxType) {
       case Receipt:
       case ReceiptVoid:
