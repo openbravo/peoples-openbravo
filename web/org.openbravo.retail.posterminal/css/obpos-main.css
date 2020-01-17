@@ -69,6 +69,19 @@
   background-color: var(--color-secondary);
 }
 
+
+
+/***********************   ***********************/
+/*                 File: index.jsp               */
+/*               Folder: ./                      */
+/***********************   ***********************/
+.ob-body-standard{
+  /* helps prevent ios page scroll */
+  overflow: hidden;
+}
+
+
+
 /***********************   ***********************/
 /*                 File: order.js                */
 /*               Folder: js/model/               */
