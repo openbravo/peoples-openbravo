@@ -488,6 +488,18 @@ enyo.kind({
   showing: false,
   content: '',
 
+  clearLabel: function() {
+    this.removeClass('obUiOrderViewDivText_ToBeLaidaway');
+    this.removeClass('obUiOrderViewDivText_ToBeReturned');
+    this.removeClass('obUiOrderViewDivText_CancelLayaway');
+    this.removeClass('obUiOrderViewDivText_CancelLayawayFromLayaway');
+    this.removeClass('obUiOrderViewDivText_CancelAndReplaceType1');
+    this.removeClass('obUiOrderViewDivText_CancelAndReplaceType2');
+    this.removeClass('obUiOrderViewDivText_layaway');
+    this.removeClass('obUiOrderViewDivText_paid');
+    this.removeClass('obUiOrderViewDivText_quotation');
+  },
+
   changeHasbeenpaid: function(model) {
     if (
       model.get('isQuotation') &&
@@ -508,6 +520,7 @@ enyo.kind({
   },
 
   setQuotationLabel: function(model) {
+    this.clearLabel();
     this.addClass('obUiOrderViewDivText_quotation');
     if (model.get('hasbeenpaid') === 'Y') {
       this.setContent(OB.I18N.getLabel('OBPOS_QuotationUnderEvaluation'));
@@ -518,6 +531,7 @@ enyo.kind({
   },
 
   setPaidLabel: function(model) {
+    this.clearLabel();
     this.addClass('obUiOrderViewDivText_paid');
     if (model.get('iscancelled')) {
       this.setContent(OB.I18N.getLabel('OBPOS_Cancelled'));
@@ -543,6 +557,7 @@ enyo.kind({
   },
 
   setLayawayLabel: function(model) {
+    this.clearLabel();
     this.addClass('obUiOrderViewDivText_layaway');
     if (model.get('iscancelled')) {
       this.setContent(OB.I18N.getLabel('OBPOS_Cancelled'));
@@ -553,6 +568,7 @@ enyo.kind({
   },
 
   setCancelAndReplaceLabel: function(model) {
+    this.clearLabel();
     if (model.get('orderType') === 2) {
       this.addClass('obUiOrderViewDivText_CancelAndReplaceType1');
       this.setContent(
@@ -574,6 +590,7 @@ enyo.kind({
   },
 
   setCancelLayawayLabel: function(model) {
+    this.clearLabel();
     if (model.get('fromLayaway')) {
       this.addClass('obUiOrderViewDivText_CancelLayawayFromLayaway');
       this.setContent(OB.I18N.getLabel('OBPOS_CancelLayaway'));
@@ -585,12 +602,14 @@ enyo.kind({
   },
 
   setToBeReturnedLabel: function(model) {
+    this.clearLabel();
     this.addClass('obUiOrderViewDivText_ToBeReturned');
     this.setContent(OB.I18N.getLabel('OBPOS_ToBeReturned'));
     this.show();
   },
 
   setToBeLaidawayLabel: function(model) {
+    this.clearLabel();
     this.addClass('obUiOrderViewDivText_ToBeLaidaway');
     this.setContent(OB.I18N.getLabel('OBPOS_ToBeLaidaway'));
     this.show();
