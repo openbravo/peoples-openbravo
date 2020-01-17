@@ -949,7 +949,7 @@ enyo.kind({
 });
 
 enyo.kind({
-  name: 'OB.UI.CustomerConsentCheckProperty',
+  name: 'OB.UI.CustomerCheckProperty',
   kind: 'OB.UI.FormElement.Checkbox',
   handlers: {
     onLoadValue: 'loadValue',
