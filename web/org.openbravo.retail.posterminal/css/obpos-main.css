@@ -9390,15 +9390,16 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiEditLine-msgedit-container3 {
   overflow: hidden;
+  padding: 10px 5px 5px 5px;
 }
 
 .obObposPointOfSaleUiEditLine-msgedit-container3-linePropertiesContainer {
 /* Inherits: [Scroller] */
-  padding: 10px 5px 5px 5px;
   line-height: 130%;
   width: 65%;
   overflow-x: hidden;
   display: inline-block;
+  height: 100%;
 }
 
 .obObposPointOfSaleUiEditLine-linePropertiesContainer_withReturnReasons {
