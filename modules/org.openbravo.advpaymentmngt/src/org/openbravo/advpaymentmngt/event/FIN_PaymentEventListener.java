@@ -75,7 +75,7 @@ class FIN_PaymentEventListener extends EntityPersistenceEventObserver {
     final String documentNo = payment.getDocumentNo();
     final int documentNoLength = documentNo.length();
 
-    if (!Boolean.TRUE.equals(oldPaymentProcessed) && Boolean.TRUE.equals(currentPaymentProcessed)
+    if (!oldPaymentProcessed && currentPaymentProcessed
         && currentPaymentAmount.compareTo(BigDecimal.ZERO) == 0
         && (documentNoLength < CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.length()
             || !CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.equals(documentNo.substring(
@@ -89,8 +89,7 @@ class FIN_PaymentEventListener extends EntityPersistenceEventObserver {
       setDocumentNoToPayment(event, newDocumentNo);
     }
 
-    else if (Boolean.TRUE.equals(oldPaymentProcessed)
-        && !Boolean.TRUE.equals(currentPaymentProcessed)
+    else if (oldPaymentProcessed && !currentPaymentProcessed
         && oldPaymentAmount.compareTo(BigDecimal.ZERO) == 0
         && documentNoLength > CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.length()
         && CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.equals(documentNo
