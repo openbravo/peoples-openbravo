@@ -256,7 +256,7 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
       BigDecimal paid = BigDecimal.ZERO;
       for (FIN_PaymentScheduleDetail psd : paymentSchedule
           .getFINPaymentScheduleDetailInvoicePaymentScheduleList()) {
-        if (Boolean.TRUE.equals(psd.isCanceled())) {
+        if (psd.isCanceled()) {
           // If payment scheduled is cancelled don't consider its amount.
           continue;
         }
@@ -381,7 +381,7 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
     } else if (payment.getSettlementCancelled() == null) {
       return paidAmount;
     } else if (payment.getSettlementCancelled().getProcessed().equals("Y")) {
-      if (Boolean.TRUE.equals(payment.isPaymentComplete())) {
+      if (payment.isPaymentComplete()) {
         return getConvertedAmt(payment.getAmount().multiply(multiplier),
             payment.getCurrency().getId(), strCurrencyTo, conversionDate,
             payment.getClient().getId(), payment.getOrganization().getId());
@@ -390,7 +390,7 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
       boolean paymentCompletelyPaid = true;
       for (DebtPayment cancelledPayment : payment.getSettlementCancelled()
           .getFinancialMgmtDebtPaymentSettlementCancelledList()) {
-        if (Boolean.FALSE.equals(cancelledPayment.isPaymentComplete())
+        if (!cancelledPayment.isPaymentComplete()
             && cancelledPayment.getAmount().compareTo(cancelledPayment.getWriteoffAmount()) != 0
             && getMigratedPaymentStatus(cancelledPayment).equals("NOTMIGRATED")) {
           // write off amount is equals to the payment's amount it is considered as paid
@@ -469,7 +469,7 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
       return getConvertedAmt(payment.getAmount().multiply(multiplier),
           payment.getCurrency().getId(), strCurrencyTo, conversionDate, payment.getClient().getId(),
           payment.getOrganization().getId());
-    } else if (Boolean.TRUE.equals(payment.isPaymentComplete())) {
+    } else if (payment.isPaymentComplete()) {
       return BigDecimal.ZERO;
     } else if (payment.getSettlementCancelled() != null
         && payment.getSettlementCancelled().getProcessed().equals("Y")) {
@@ -477,7 +477,7 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
       boolean paymentCompletelyPaid = true;
       for (DebtPayment cancelledPayment : payment.getSettlementCancelled()
           .getFinancialMgmtDebtPaymentSettlementCancelledList()) {
-        if (Boolean.FALSE.equals(cancelledPayment.isPaymentComplete())
+        if (!cancelledPayment.isPaymentComplete()
             && cancelledPayment.getAmount().compareTo(cancelledPayment.getWriteoffAmount()) != 0
             && getMigratedPaymentStatus(cancelledPayment).equals("NOTMIGRATED")) {
           // write off amount is equals to the payment's amount it is considered as paid
@@ -509,7 +509,7 @@ public class FIN_PaymentMonitorProcess extends DalBaseProcess {
             getConvertedAmt(generatedPayment.getAmount(), generatedPayment.getCurrency().getId(),
                 strCurrencyTo, conversionDate, generatedPayment.getClient().getId(),
                 generatedPayment.getOrganization().getId()).multiply(signMultiplier));
-        if (Boolean.TRUE.equals(generatedPayment.isPaymentComplete())) {
+        if (generatedPayment.isPaymentComplete()) {
           continue;
         }
         generatedPaymentOverdueAmount = generatedPaymentOverdueAmount
