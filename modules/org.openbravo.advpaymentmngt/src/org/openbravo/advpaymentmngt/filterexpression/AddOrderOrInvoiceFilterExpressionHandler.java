@@ -18,6 +18,7 @@
  */
 package org.openbravo.advpaymentmngt.filterexpression;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
@@ -90,7 +91,7 @@ abstract class AddOrderOrInvoiceFilterExpressionHandler {
     return paymentMethodId;
   }
 
-  private boolean hasDetailsWithDifferentPaymentMethods(String paymentId) {
+  private boolean hasDetailsWithDifferentPaymentMethods(final String paymentId) {
     //@formatter:off
     final String hql = 
             "select coalesce(ipspm.id, opspm.id) as pm" +
@@ -106,13 +107,14 @@ abstract class AddOrderOrInvoiceFilterExpressionHandler {
   //@formatter:on
 
     final FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, paymentId);
-
-    for (String pmId : OBDal.getInstance()
+    final List<String> paymentMethodIdList = OBDal.getInstance()
         .getSession()
         .createQuery(hql, String.class)
         .setParameter("paymentId", paymentId)
-        .list()) {
-      if (!payment.getPaymentMethod().getId().equals(pmId)) {
+        .list();
+
+    for (final String paymentMethodId : paymentMethodIdList) {
+      if (!payment.getPaymentMethod().getId().equals(paymentMethodId)) {
         return true;
       }
     }
