@@ -738,6 +738,7 @@ enyo.kind({
   executeOnShow: function() {
     this.$.body.$.listValues.parentValue = '0';
     this.$.header.parent.addClass('obUiModalProductCharacteristic_border');
+    this.$.footer.$.modalProductChFooter.$.backChButton.hide();
     this.characteristic = this.args.model;
     this.setHeader(this.args.model.get('_identifier'));
     this.waterfall('onSearchAction');
