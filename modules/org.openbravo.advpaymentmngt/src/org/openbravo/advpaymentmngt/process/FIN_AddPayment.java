@@ -1084,7 +1084,7 @@ public class FIN_AddPayment {
       Date paymentDueDate = paymentSchedule.getDueDate();
       for (FIN_PaymentScheduleDetail psd : paymentSchedule
           .getFINPaymentScheduleDetailInvoicePaymentScheduleList()) {
-        if (!Boolean.TRUE.equals(psd.isCanceled()) && psd.getPaymentDetails() != null
+        if (!psd.isCanceled() && psd.getPaymentDetails() != null
             && (psd.isInvoicePaid() || currentPSD.getId().equals(psd.getId()))) {
           Date paymentDate = psd.getPaymentDetails().getFinPayment().getPaymentDate();
           if (paymentDate.after(paymentDueDate)) {
