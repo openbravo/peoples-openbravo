@@ -257,12 +257,12 @@ public class ServicePriceUtils {
                  + " and (amountUpTo >= :amount or amountUpTo is null) "
                  + " order by amountUpTo, creationDate desc ";
       //@formatter:on
-      OBQuery<ServicePriceRuleRange> sprrQry = OBDal.getInstance()
-          .createQuery(ServicePriceRuleRange.class, hql);
-      sprrQry.setNamedParameter("servicePriceRuleId", servicePriceRule.getId());
-      sprrQry.setNamedParameter("amount", relatedAmount);
-      sprrQry.setMaxResult(1);
-      return sprrQry.uniqueResult();
+      return OBDal.getInstance()
+          .createQuery(ServicePriceRuleRange.class, hql)
+          .setNamedParameter("servicePriceRuleId", servicePriceRule.getId())
+          .setNamedParameter("amount", relatedAmount)
+          .setMaxResult(1)
+          .uniqueResult();
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -284,11 +284,13 @@ public class ServicePriceUtils {
                  + " join o.priceList as pl "
                  + " where e.salesOrderLine.id = :orderLineId ";
       //@formatter:on
-      Query<Object[]> query = OBDal.getInstance().getSession().createQuery(hql, Object[].class);
-      query.setParameter("orderLineId", orderLine.getId());
-      query.setMaxResults(1);
       HashMap<String, BigDecimal> result = new HashMap<String, BigDecimal>();
-      Object[] values = query.uniqueResult();
+      Object[] values = OBDal.getInstance()
+          .getSession()
+          .createQuery(hql, Object[].class)
+          .setParameter("orderLineId", orderLine.getId())
+          .setMaxResults(1)
+          .uniqueResult();
       result.put("amount", (BigDecimal) values[0]);
       result.put("quantity", (BigDecimal) values[1]);
       result.put("price", (BigDecimal) values[2]);
@@ -325,12 +327,14 @@ public class ServicePriceUtils {
           + " and plv.active = true "
           + " order by pl.default desc, plv.validFromDate desc";
       //@formatter:on
-      Query<BigDecimal> ppQry = OBDal.getInstance().getSession().createQuery(hql, BigDecimal.class);
-      ppQry.setParameter("productId", product.getId());
-      ppQry.setParameter("date", date);
-      ppQry.setParameter("pricelistId", priceList.getId());
-      ppQry.setMaxResults(1);
-      return (BigDecimal) ppQry.uniqueResult();
+      return OBDal.getInstance()
+          .getSession()
+          .createQuery(hql, BigDecimal.class)
+          .setParameter("productId", product.getId())
+          .setParameter("date", date)
+          .setParameter("pricelistId", priceList.getId())
+          .setMaxResults(1)
+          .uniqueResult();
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -396,9 +400,9 @@ public class ServicePriceUtils {
       //@formatter:on
       Query<ServicePriceRule> sprvQry = OBDal.getInstance()
           .getSession()
-          .createQuery(hql, ServicePriceRule.class);
-      sprvQry.setParameter("serviceProductId", serviceProduct.getId());
-      sprvQry.setParameter("orderDate", orderDate);
+          .createQuery(hql, ServicePriceRule.class)
+          .setParameter("serviceProductId", serviceProduct.getId())
+          .setParameter("orderDate", orderDate);
       if ("N".equals(serviceProduct.getIncludedProducts()) && relatedLine != null) {
         sprvQry.setParameter("relatedProductId", ol.getProduct().getId());
       }
@@ -426,9 +430,10 @@ public class ServicePriceUtils {
                  + " where ol.salesOrder.id = :orderId "
                  + " order by ol.salesOrder desc ";
       //@formatter:on
-      OBQuery<OrderLine> olQry = OBDal.getInstance().createQuery(OrderLine.class, hql);
-      olQry.setNamedParameter("orderId", orderId);
-      olQry.setMaxResult(1);
+      OBQuery<OrderLine> olQry = OBDal.getInstance()
+          .createQuery(OrderLine.class, hql)
+          .setNamedParameter("orderId", orderId)
+          .setMaxResult(1);
       if (olQry.count() > 0) {
         OrderLine ol = olQry.list().get(0);
         return ol.getLineNo() + 10L;
