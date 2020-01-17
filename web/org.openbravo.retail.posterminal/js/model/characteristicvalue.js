@@ -11,6 +11,12 @@
   class CharacteristicValue extends OB.App.Class.MasterdataModel {
     constructor() {
       super();
+      this.indices = [
+        new OB.App.Class.Index({
+          name: 'characteristicvalue_characteristicid_idx',
+          properties: [{ property: 'characteristic_id' }]
+        })
+      ];
     }
   }
   OB.App.MasterdataController.registerModel(CharacteristicValue);
