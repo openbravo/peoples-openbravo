@@ -192,7 +192,7 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
         variantMap.put("searchKey", searchKey);
         //@formatter:off
         String hql = " as p "
-                   + " where p.genericProduct = :product ";
+                   + " where p.genericProduct.id = :productId ";
         //@formatter:on
 
         StringBuilder strChDesc = new StringBuilder();
@@ -218,13 +218,14 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
         variantMap.put("characteristicDescription", strChDesc);
         variantMap.put("id", strKeyId);
 
-        OBQuery<Product> variantQry = OBDal.getInstance().createQuery(Product.class, hql);
-        variantQry.setNamedParameter("product", product);
+        OBQuery<Product> variantQry = OBDal.getInstance()
+            .createQuery(Product.class, hql)
+            .setNamedParameter("productId", product.getId());
         for (i = 0; i < chNumber; i++) {
           ProductCharacteristicConf prChConf = currentValues[i];
           Characteristic characteristic = prChConf.getCharacteristicOfProduct().getCharacteristic();
-          variantQry.setNamedParameter("ch" + i, characteristic.getId());
-          variantQry.setNamedParameter("chvalue" + i, prChConf.getCharacteristicValue().getId());
+          variantQry.setNamedParameter("ch" + i, characteristic.getId())
+              .setNamedParameter("chvalue" + i, prChConf.getCharacteristicValue().getId());
         }
         Product existingProduct = variantQry.uniqueResult();
         if (existingProduct != null) {
@@ -365,7 +366,7 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
     //@formatter:off
     return " and exists (select 1 "
         + "             from ProductCharacteristicValue as pcv "
-        + "             where pcv.product = p "
+        + "             where pcv.product.id = p.id "
         + "             and pcv.characteristic.id = :ch" + i
         + "             and pcv.characteristicValue.id = :chvalue" + i + ") ";
     //@formatter:on
@@ -404,8 +405,8 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
       }
       // previous if might have changed the value of sortByField
       if (!"variantCreated".equals(sortByField)) {
-        String str1 = (String) map1.get(sortByField);
-        String str2 = (String) map2.get(sortByField);
+        String str1 = map1.get(sortByField).toString();
+        String str2 = map2.get(sortByField).toString();
         if (sortByChanged) {
           sortByField = "variantCreated";
         }
