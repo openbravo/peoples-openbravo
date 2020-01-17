@@ -160,7 +160,7 @@ public class ServicePriceUtils {
             "@ServiceProductPriceListVersionNotFound@ " + serviceProduct.getIdentifier()
                 + ", @Date@: " + OBDateUtils.formatDate(orderline.getOrderDate()));
       }
-      BigDecimal serviceRelatedPrice = BigDecimal.ZERO;
+      BigDecimal serviceRelatedPrice;
       boolean isPriceRuleBased = serviceProduct.isPricerulebased();
       if (!isPriceRuleBased) {
         return BigDecimal.ZERO;
@@ -172,8 +172,9 @@ public class ServicePriceUtils {
               "@ServicePriceRuleVersionNotFound@ " + orderline.getProduct().getIdentifier()
                   + ", @Date@: " + OBDateUtils.formatDate(orderline.getOrderDate()));
         }
-        BigDecimal relatedAmount = BigDecimal.ZERO;
-        BigDecimal findRangeAmount = BigDecimal.ZERO;
+        BigDecimal relatedAmount;
+        BigDecimal findRangeAmount;
+        BigDecimal lineAmt = (lineAmount == null) ? BigDecimal.ZERO : lineAmount;
         if (lineAmount != null) {
           relatedAmount = lineAmount;
         } else {
@@ -210,11 +211,14 @@ public class ServicePriceUtils {
           if (PERCENTAGE.equals(range.getRuleType())) {
             if (!range.isAfterDiscounts() && lineDiscounts != null && lineUnitDiscount != null) {
               relatedAmount = UNIQUE_QUANTITY.equals(serviceProduct.getQuantityRule())
-                  ? lineAmount.add(lineDiscounts)
+                  ? lineAmt.add(lineDiscounts)
                   : linePrice.add(lineUnitDiscount);
             } else {
               relatedAmount = UNIQUE_QUANTITY.equals(serviceProduct.getQuantityRule()) ? lineAmount
                   : linePrice;
+            }
+            if (relatedAmount == null) {
+              relatedAmount = BigDecimal.ZERO;
             }
             serviceRelatedPrice = relatedAmount
                 .multiply(new BigDecimal(range.getPercentage()).divide(new BigDecimal("100.00")));
@@ -310,8 +314,7 @@ public class ServicePriceUtils {
    * @param product
    *          Product to search in Price List
    */
-  public static BigDecimal getProductPrice(Date date, PriceList priceList, Product product)
-      throws OBException {
+  public static BigDecimal getProductPrice(Date date, PriceList priceList, Product product) {
     OBContext.setAdminMode(true);
     try {
       //@formatter:off
@@ -487,11 +490,7 @@ public class ServicePriceUtils {
                 result.put("text", message);
               }
             }
-          } catch (ParseException e) {
-            // TODO Auto-generated catch block
-            log.error(e.getMessage(), e);
-          } catch (JSONException e) {
-            // TODO Auto-generated catch block
+          } catch (ParseException | JSONException e) {
             log.error(e.getMessage(), e);
           }
         }
@@ -525,6 +524,7 @@ public class ServicePriceUtils {
       BigDecimal linesTotalAmount, BigDecimal totalPrice, BigDecimal totalDiscounts,
       BigDecimal unitDiscountsAmt) {
 
+    BigDecimal linesTotalAmt = (linesTotalAmount == null) ? BigDecimal.ZERO : linesTotalAmount;
     OBContext.setAdminMode(true);
     try {
       final Product serviceProduct = orderline.getProduct();
@@ -538,7 +538,7 @@ public class ServicePriceUtils {
             "@ServiceProductPriceListVersionNotFound@ " + serviceProduct.getIdentifier()
                 + ", @Date@: " + OBDateUtils.formatDate(orderline.getOrderDate()));
       }
-      BigDecimal serviceRelatedPrice = BigDecimal.ZERO;
+      BigDecimal serviceRelatedPrice;
       boolean isPriceRuleBased = serviceProduct.isPricerulebased();
       if (!isPriceRuleBased) {
         return false;
@@ -550,7 +550,7 @@ public class ServicePriceUtils {
               "@ServicePriceRuleVersionNotFound@ " + orderline.getProduct().getIdentifier()
                   + ", @Date@: " + OBDateUtils.formatDate(orderline.getOrderDate()));
         }
-        BigDecimal findRangeAmount = BigDecimal.ZERO;
+        BigDecimal findRangeAmount;
 
         if (PERCENTAGE.equals(servicePriceRule.getRuletype())) {
           if (servicePriceRule.isAfterdiscounts()) {
@@ -560,7 +560,7 @@ public class ServicePriceUtils {
           if (!servicePriceRule.isAfterdiscounts() && totalDiscounts != null
               && unitDiscountsAmt != null) {
             findRangeAmount = UNIQUE_QUANTITY.equals(serviceProduct.getQuantityRule())
-                ? linesTotalAmount.add(totalDiscounts)
+                ? linesTotalAmt.add(totalDiscounts)
                 : totalPrice.add(unitDiscountsAmt);
           } else {
             findRangeAmount = UNIQUE_QUANTITY.equals(serviceProduct.getQuantityRule())
