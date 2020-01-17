@@ -13990,7 +13990,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   display: grid;
   grid-template-rows: auto 1fr auto;
 
-  height: 100%;
   overflow-y: auto;
 }
 
@@ -14022,7 +14021,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposCashupUiCashPayments-wrapper-components-body-list {
-  height: 100%;
   width: 100%;
   overflow-y: auto;
 }
