@@ -3361,6 +3361,12 @@ li.selected > .obUiRenderOrderLine_edit {
   margin: 0px;
 }
 
+.obUiOrderHeader .obUiFormElement-mainArea-label-labelLine {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocbutton {
   /*Inherits: [OB.UI.BPLocation]*/
 }
