@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,7 +30,6 @@ import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.Product;
 
@@ -73,17 +72,15 @@ class ProductServiceConfigurationObserver extends EntityPersistenceEventObserver
   }
 
   private void checkNotDeliveredOrders(Product product) {
-    StringBuilder hql = new StringBuilder();
-    hql.append("as ol ");
-    hql.append("join ol." + OrderLine.PROPERTY_SALESORDER + " as o ");
-    hql.append("where o." + Order.PROPERTY_DOCUMENTSTATUS);
-    hql.append(" = 'CO' ");
-    hql.append("and ol." + OrderLine.PROPERTY_PRODUCT);
-    hql.append(" = :product ");
-    hql.append("and ol." + OrderLine.PROPERTY_DELIVEREDQUANTITY + "<> ol."
-        + OrderLine.PROPERTY_ORDEREDQUANTITY);
+    //@formatter:off
+    String hql = "as ol "
+               + "join ol.salesOrder as o "
+               + "where o.documentStatus = 'CO' "
+               + "and ol.product = :product "
+               + "and ol.deliveredQuantity <> ol.orderedQuantity ";
+    //@formatter:on
     OBQuery<OrderLine> notDeliveredOrderLineQuery = OBDal.getInstance()
-        .createQuery(OrderLine.class, hql.toString());
+        .createQuery(OrderLine.class, hql);
     notDeliveredOrderLineQuery.setNamedParameter("product", product);
     notDeliveredOrderLineQuery.setMaxResult(1);
     OrderLine notDeliveredOrderLine = notDeliveredOrderLineQuery.uniqueResult();
