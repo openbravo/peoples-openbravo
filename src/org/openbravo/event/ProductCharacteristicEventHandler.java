@@ -25,7 +25,6 @@ import javax.enterprise.event.Observes;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -204,11 +203,13 @@ class ProductCharacteristicEventHandler extends EntityPersistenceEventObserver {
         String hql = " select cv.id "
                    + " from ProductCharacteristicConf as pcc "
                    + " join pcc.characteristicValue as cv "
-                   + " where pcc.characteristicOfProduct = :pc ";
+                   + " where pcc.characteristicOfProduct.id = :pcID ";
         //@formatter:on
-        Query<String> query = OBDal.getInstance().getSession().createQuery(hql, String.class);
-        query.setParameter("pc", prCh);
-        final List<String> existingValues = query.list();
+        final List<String> existingValues = OBDal.getInstance()
+            .getSession()
+            .createQuery(hql, String.class)
+            .setParameter("pcID", prCh.getId())
+            .list();
 
         ScrollableResults scroll = getValuesToAdd(prCh);
         try {
@@ -270,11 +271,13 @@ class ProductCharacteristicEventHandler extends EntityPersistenceEventObserver {
                  + "        cv.active "
                  + " from CharacteristicSubsetValue as csv "
                  + " join csv.characteristicValue as cv "
-                 + " where csv.characteristicSubset = :cs ";
+                 + " where csv.characteristicSubset.id = :csId ";
       //@formatter:on
-      Query<Object[]> query = OBDal.getInstance().getSession().createQuery(hql, Object[].class);
-      query.setParameter("cs", prCh.getCharacteristicSubset());
-      return query.scroll(ScrollMode.FORWARD_ONLY);
+      return OBDal.getInstance()
+          .getSession()
+          .createQuery(hql, Object[].class)
+          .setParameter("csId", prCh.getCharacteristicSubset().getId())
+          .scroll(ScrollMode.FORWARD_ONLY);
     }
 
     // Add all not summary values.
@@ -284,12 +287,14 @@ class ProductCharacteristicEventHandler extends EntityPersistenceEventObserver {
                  + " cv.code, "
                  + " cv.active "
                  + " from CharacteristicValue as cv "
-                 + " where cv.characteristic = :c "
+                 + " where cv.characteristic.id = :cId "
                  + " and cv.summaryLevel = false ";
       //@formatter:on
-      Query<Object[]> query = OBDal.getInstance().getSession().createQuery(hql, Object[].class);
-      query.setParameter("c", prCh.getCharacteristic());
-      return query.scroll(ScrollMode.FORWARD_ONLY);
+      return OBDal.getInstance()
+          .getSession()
+          .createQuery(hql, Object[].class)
+          .setParameter("cId", prCh.getCharacteristic().getId())
+          .scroll(ScrollMode.FORWARD_ONLY);
     }
   }
 
