@@ -26,7 +26,6 @@ import java.util.Map;
 import javax.persistence.Tuple;
 
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.query.Query;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -44,6 +43,10 @@ public class ServiceDeliverUtility {
 
   private static final String UNIQUE_QUANTITY = "UQ";
   private static final String AS_PER_PRODUCT = "PP";
+
+  private ServiceDeliverUtility() {
+    throw new IllegalStateException("ServiceDeliverUtility class");
+  }
 
   public static void deliverServices(final ShipmentInOut shipment) {
     Map<String, BigDecimal> serviceToDeliver = getShipmentServiceOrderlinesAndQtyToDeliver(
@@ -125,9 +128,11 @@ public class ServiceDeliverUtility {
                + "join sol.product serv "
                + "where iol.shipmentReceipt.id = :shipmentId ";
     //@formatter:on
-    final Query<Tuple> query = OBDal.getInstance().getSession().createQuery(hql, Tuple.class);
-    query.setParameter("shipmentId", shipment.getId());
-    return query.list();
+    return OBDal.getInstance()
+        .getSession()
+        .createQuery(hql, Tuple.class)
+        .setParameter("shipmentId", shipment.getId())
+        .list();
   }
 
   private static ShipmentInOutLine addShipmentLine(ShipmentInOut shipment, String orderlineId,
