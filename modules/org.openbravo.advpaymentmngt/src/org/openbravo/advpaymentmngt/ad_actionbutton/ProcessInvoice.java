@@ -85,7 +85,7 @@ public class ProcessInvoice extends HttpSecureAppServlet {
 
   private static List<FIN_Payment> creditPayments = new ArrayList<>();
   private final AdvPaymentMngtDao dao = new AdvPaymentMngtDao();
-  private static final String PurchaseInvoiceWindow = "183";
+  private static final String PURCHASE_INVOICE_WINDOW_ID = "183";
 
   @Inject
   @Any
@@ -207,7 +207,7 @@ public class ProcessInvoice extends HttpSecureAppServlet {
 
         // In case of void a non paid invoice, create a dummy payment related to it with zero amount
         FIN_Payment dummyPayment = null;
-        if ("RC".equals(strdocaction) && !Boolean.TRUE.equals(invoice.isPaymentComplete())
+        if ("RC".equals(strdocaction) && !invoice.isPaymentComplete()
             && invoice.getTotalPaid().compareTo(BigDecimal.ZERO) == 0) {
           try {
             OBContext.setAdminMode(true);
@@ -259,12 +259,13 @@ public class ProcessInvoice extends HttpSecureAppServlet {
                     " where fps.invoice.id = :invoiceId" +
                     "   and fp.status in ('RPAE', 'RPAP')";
             //@formatter:on
-
-            if (OBDal.getInstance()
+            FIN_Payment payment = OBDal.getInstance()
                 .createQuery(FIN_Payment.class, hql)
                 .setNamedParameter("invoiceId", invoice.getId())
                 .setMaxResult(1)
-                .uniqueResult() != null) {
+                .uniqueResult();
+
+            if (payment != null) {
               msg = new OBError();
               msg.setType("Error");
               msg.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
@@ -372,7 +373,6 @@ public class ProcessInvoice extends HttpSecureAppServlet {
                       "  join fpsd.invoicePaymentSchedule fps" +
                       " where fps.invoice.id = :invoiceId";
               //@formatter:on
-
               FIN_Payment orderPayment = OBDal.getInstance()
                   .createQuery(FIN_Payment.class, fpHQLQuery)
                   .setNamedParameter("invoiceId", invoice.getId())
@@ -380,7 +380,7 @@ public class ProcessInvoice extends HttpSecureAppServlet {
                   .uniqueResult();
 
               final DocumentType docType = FIN_Utility.getDocumentType(invoice.getOrganization(),
-                  Boolean.TRUE.equals(orderPayment.isReceipt()) ? AcctServer.DOCTYPE_ARReceipt
+                  orderPayment.isReceipt() ? AcctServer.DOCTYPE_ARReceipt
                       : AcctServer.DOCTYPE_APPayment);
               final String strPaymentDocumentNo = FIN_Utility.getDocumentNo(docType,
                   docType.getTable() != null ? docType.getTable().getDBTableName() : "");
@@ -403,13 +403,14 @@ public class ProcessInvoice extends HttpSecureAppServlet {
                       " where fps.invoice.id = :invoiceId" +
                       " or fps.invoice.id = :revInvoiceId";
               //@formatter:on
-
-              // Updating dummy payment lines with invoice and reverse invoice
-              for (FIN_PaymentScheduleDetail fpsd : OBDal.getInstance()
+              List<FIN_PaymentScheduleDetail> paymentScheduleDetailList = OBDal.getInstance()
                   .createQuery(FIN_PaymentScheduleDetail.class, psdHQLQuery)
                   .setNamedParameter("invoiceId", invoice.getId())
                   .setNamedParameter("revInvoiceId", revInvoice.getInvoice().getId())
-                  .list()) {
+                  .list();
+
+              // Updating dummy payment lines with invoice and reverse invoice
+              for (FIN_PaymentScheduleDetail fpsd : paymentScheduleDetailList) {
 
                 // Invoice payment detail associated to the order
                 FIN_PaymentDetail invoiceFPDOrder = fpsd.getPaymentDetails();
@@ -636,8 +637,8 @@ public class ProcessInvoice extends HttpSecureAppServlet {
                   invoice.getBusinessPartner(), invoice.isSalesTransaction(),
                   invoice.getCurrency());
               if (creditPayments != null && !creditPayments.isEmpty()) {
-                printPageCreditPaymentGrid(response, vars, strC_Invoice_ID, strdocaction,
-                    strWindowId, strTabId, invoice.getInvoiceDate(), strOrg);
+                printPageCreditPaymentGrid(response, vars, strC_Invoice_ID, strWindowId, strTabId,
+                    invoice.getInvoiceDate(), strOrg);
               }
             }
           } finally {
@@ -868,7 +869,7 @@ public class ProcessInvoice extends HttpSecureAppServlet {
     }
 
     xmlDocument.setParameter("docstatus", strdocstatus);
-    if (strWindowId.equals(PurchaseInvoiceWindow)) {
+    if (strWindowId.equals(PURCHASE_INVOICE_WINDOW_ID)) {
       // VOID action: Reverse sales/purchase invoice by default takes today as document date and
       // accounting date.
       xmlDocument.setParameter("voidedDocumentDate", DateTimeData.today(this));
@@ -908,8 +909,8 @@ public class ProcessInvoice extends HttpSecureAppServlet {
   }
 
   void printPageCreditPaymentGrid(HttpServletResponse response, VariablesSecureApp vars,
-      String strCInvoiceID, String stradTableId, String strWindowId, String strTabId,
-      Date invoiceDate, String strOrg) throws IOException, ServletException {
+      String strCInvoiceID, String strWindowId, String strTabId, Date invoiceDate, String strOrg)
+      throws IOException, ServletException {
     log4j.debug("Output: Credit Payment Grid popup");
     String[] discard = { "" };
     response.setContentType("text/html; charset=UTF-8");
@@ -1036,7 +1037,7 @@ public class ProcessInvoice extends HttpSecureAppServlet {
    *         in other cases.
    */
   private boolean isPaymentMethodConfigured(Invoice invoice) {
-    final FIN_FinancialAccount bpFinAccount = Boolean.TRUE.equals(invoice.isSalesTransaction())
+    final FIN_FinancialAccount bpFinAccount = invoice.isSalesTransaction()
         ? invoice.getBusinessPartner().getAccount()
         : invoice.getBusinessPartner().getPOFinancialAccount();
     if (bpFinAccount != null) {
