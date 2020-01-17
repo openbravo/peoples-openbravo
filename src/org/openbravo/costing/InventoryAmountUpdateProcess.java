@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2018 Openbravo SLU
+ * All portions are Copyright (C) 2014-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
@@ -361,7 +362,11 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
     closeInv.setName(OBMessageUtils.messageBD("InvAmtUpdCloseInventory"));
 
     closeInv.setWarehouse(warehouse);
-    closeInv.setOrganization(warehouse.getOrganization());
+    Organization invOrg =  getTransactionAllowedOrg(warehouse.getOrganization());
+    if(invOrg == null) {
+      invOrg = (Organization) OBDal.getInstance().getProxy(Organization.ENTITY_NAME, orgId);
+    }
+    closeInv.setOrganization(invOrg);
 
     closeInv.setMovementDate(localDate);
     closeInv.setInventoryType("C");
@@ -371,7 +376,7 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
     initInv.setClient(client);
     initInv.setName(OBMessageUtils.messageBD("InvAmtUpdInitInventory"));
     initInv.setWarehouse(warehouse);
-    initInv.setOrganization(warehouse.getOrganization());
+    initInv.setOrganization(invOrg);
     initInv.setMovementDate(localDate);
     initInv.setInventoryType("O");
     inv.setInitInventory(initInv);
@@ -416,5 +421,20 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
     OBDal.getInstance().save(inventory);
     OBDal.getInstance().flush();
     return icl;
+  }
+
+  private Organization getTransactionAllowedOrg(Organization org) {
+    if (org.getOrganizationType().isTransactionsAllowed()) {
+      return org;
+    } else {
+      Organization parentOrg = OBContext.getOBContext()
+          .getOrganizationStructureProvider()
+          .getParentOrg(org);
+      if (parentOrg != null && !StringUtils.equals(parentOrg.getId(), "0")) {
+        return getTransactionAllowedOrg(parentOrg);
+      } else {
+        return null;
+      }
+    }
   }
 }
