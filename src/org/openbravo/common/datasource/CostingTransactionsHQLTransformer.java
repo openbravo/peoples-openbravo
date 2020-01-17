@@ -41,9 +41,6 @@ import org.openbravo.service.datasource.hql.HqlQueryTransformer;
 @ComponentProvider.Qualifier("DFF0A9F7C26C457FA8735A09ACFD5971")
 public class CostingTransactionsHQLTransformer extends HqlQueryTransformer {
 
-  private static final String PROP_ADLIST_PRIORITY = org.openbravo.model.ad.domain.List.PROPERTY_SEQUENCENUMBER;
-  private static final String PROP_ADLIST_REFERENCE = org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE;
-  private static final String PROP_ADLIST_VALUE = org.openbravo.model.ad.domain.List.PROPERTY_SEARCHKEY;
   private static final String MOVEMENTTYPE_REF_ID = "189";
 
   @Override
