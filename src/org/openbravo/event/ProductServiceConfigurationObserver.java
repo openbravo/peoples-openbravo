@@ -28,7 +28,6 @@ import org.openbravo.base.model.Property;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.Product;
@@ -66,7 +65,7 @@ class ProductServiceConfigurationObserver extends EntityPersistenceEventObserver
       qtyRule = "";
     }
     final Product product = OBDal.getInstance().get(Product.class, (String) event.getId());
-    if (linkedToProductPrevious != linkedToProduct || !qtyRulePrevious.equals(qtyRule)) {
+    if (!linkedToProductPrevious.equals(linkedToProduct) || !qtyRulePrevious.equals(qtyRule)) {
       checkNotDeliveredOrders(product);
     }
   }
@@ -79,11 +78,11 @@ class ProductServiceConfigurationObserver extends EntityPersistenceEventObserver
                + "and ol.product = :product "
                + "and ol.deliveredQuantity <> ol.orderedQuantity ";
     //@formatter:on
-    OBQuery<OrderLine> notDeliveredOrderLineQuery = OBDal.getInstance()
-        .createQuery(OrderLine.class, hql);
-    notDeliveredOrderLineQuery.setNamedParameter("product", product);
-    notDeliveredOrderLineQuery.setMaxResult(1);
-    OrderLine notDeliveredOrderLine = notDeliveredOrderLineQuery.uniqueResult();
+    OrderLine notDeliveredOrderLine = OBDal.getInstance()
+        .createQuery(OrderLine.class, hql)
+        .setNamedParameter("product", product)
+        .setMaxResult(1)
+        .uniqueResult();
     if (notDeliveredOrderLine != null) {
       String[] params = { notDeliveredOrderLine.getSalesOrder().getDocumentNo() };
       throw new OBException(OBMessageUtils.getI18NMessage("ServiceCannotBeModified", params));
