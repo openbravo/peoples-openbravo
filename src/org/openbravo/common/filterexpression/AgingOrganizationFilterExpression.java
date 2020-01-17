@@ -26,7 +26,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.model.common.enterprise.OrganizationType;
 
 public class AgingOrganizationFilterExpression implements FilterExpression {
 
@@ -45,17 +44,25 @@ public class AgingOrganizationFilterExpression implements FilterExpression {
   }
 
   private String getValidOrganization(String contextOrgId) {
-    StringBuilder hqlQuery = new StringBuilder();
-    hqlQuery.append(" as o");
-    hqlQuery.append(" join o." + Organization.PROPERTY_ORGANIZATIONTYPE + " as ot");
-    hqlQuery.append(" where ot." + OrganizationType.PROPERTY_TRANSACTIONSALLOWED + " = true");
-    hqlQuery.append(" and o." + Organization.PROPERTY_READY + " = true");
+    //@formatter:off
+    String hql =
+            "as o" +
+            "  join o.organizationType as ot" +
+            " where ot.transactionsAllowed = true" +
+            "   and o.ready = true";
+    //@formatter:on
     if (StringUtils.isNotEmpty(contextOrgId)) {
-      hqlQuery.append(" and o." + Organization.PROPERTY_ID + " = :contextOrgId");
+      //@formatter:off
+      hql +=
+            "   and o.id = :contextOrgId";
+      //@formatter:on
     }
-    hqlQuery.append(" order by o." + Organization.PROPERTY_NAME);
-    final OBQuery<Organization> query = OBDal.getInstance()
-        .createQuery(Organization.class, hqlQuery.toString());
+    //@formatter:off
+    hql +=
+            " order by o.name";
+    //@formatter:on
+
+    final OBQuery<Organization> query = OBDal.getInstance().createQuery(Organization.class, hql);
     if (StringUtils.isNotEmpty(contextOrgId)) {
       query.setNamedParameter("contextOrgId", contextOrgId);
     }
