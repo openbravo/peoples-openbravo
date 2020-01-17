@@ -76,6 +76,7 @@
         if (OB.DEC.compare(adjustment) !== 0) {
           const line = lines.sort((line1, line2) => line2.net - line1.net)[0];
           line.net = OB.DEC.add(line.net, adjustment);
+          line.taxes[0].base = OB.DEC.add(line.taxes[0].base, adjustment);
         }
 
         return {
