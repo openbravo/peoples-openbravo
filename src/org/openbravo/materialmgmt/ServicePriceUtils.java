@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -42,11 +42,8 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.OrderlineServiceRelation;
 import org.openbravo.model.common.plm.Product;
-import org.openbravo.model.common.plm.ServicePriceRuleVersion;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.model.pricing.pricelist.PriceList;
-import org.openbravo.model.pricing.pricelist.PriceListVersion;
-import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.model.pricing.pricelist.ServicePriceRule;
 import org.openbravo.model.pricing.pricelist.ServicePriceRuleRange;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -254,16 +251,14 @@ public class ServicePriceUtils {
       BigDecimal relatedAmount) {
     OBContext.setAdminMode(true);
     try {
-      StringBuffer where = new StringBuffer();
-      where.append("  as sprr");
-      where.append(" where " + ServicePriceRuleRange.PROPERTY_SERVICEPRICERULE
-          + ".id = :servicePriceRuleId");
-      where.append(" and (" + ServicePriceRuleRange.PROPERTY_AMOUNTUPTO + " >= :amount or "
-          + ServicePriceRuleRange.PROPERTY_AMOUNTUPTO + " is null)");
-      where.append(" order by " + ServicePriceRuleRange.PROPERTY_AMOUNTUPTO + ", "
-          + ServicePriceRuleVersion.PROPERTY_CREATIONDATE + " desc");
+      //@formatter:off
+      String hql = " as sprr "
+                 + " where servicepricerule.id = :servicePriceRuleId "
+                 + " and (amountUpTo >= :amount or amountUpTo is null) "
+                 + " order by amountUpTo, creationDate desc ";
+      //@formatter:on
       OBQuery<ServicePriceRuleRange> sprrQry = OBDal.getInstance()
-          .createQuery(ServicePriceRuleRange.class, where.toString());
+          .createQuery(ServicePriceRuleRange.class, hql);
       sprrQry.setNamedParameter("servicePriceRuleId", servicePriceRule.getId());
       sprrQry.setNamedParameter("amount", relatedAmount);
       sprrQry.setMaxResult(1);
@@ -279,17 +274,17 @@ public class ServicePriceUtils {
   public static HashMap<String, BigDecimal> getRelatedAmountAndQty(OrderLine orderLine) {
     OBContext.setAdminMode(true);
     try {
-      StringBuffer strQuery = new StringBuffer();
-      strQuery.append(
-          "select coalesce(sum(e.amount),0), coalesce(sum(e.quantity),0), coalesce(sum(case when pl.priceIncludesTax = false then ol.unitPrice else ol.grossUnitPrice end), 0)");
-      strQuery.append(" from OrderlineServiceRelation as e");
-      strQuery.append(" join e.orderlineRelated as ol");
-      strQuery.append(" join ol.salesOrder as o");
-      strQuery.append(" join o.priceList as pl");
-      strQuery.append(" where e.salesOrderLine.id = :orderLineId");
-      Query<Object[]> query = OBDal.getInstance()
-          .getSession()
-          .createQuery(strQuery.toString(), Object[].class);
+      //@formatter:off
+      String hql = " select coalesce(sum(e.amount),0), "
+                 + "        coalesce(sum(e.quantity),0), "
+                 + "        coalesce(sum(case when pl.priceIncludesTax = false then ol.unitPrice else ol.grossUnitPrice end), 0) "
+                 + " from OrderlineServiceRelation as e "
+                 + " join e.orderlineRelated as ol "
+                 + " join ol.salesOrder as o "
+                 + " join o.priceList as pl "
+                 + " where e.salesOrderLine.id = :orderLineId ";
+      //@formatter:on
+      Query<Object[]> query = OBDal.getInstance().getSession().createQuery(hql, Object[].class);
       query.setParameter("orderLineId", orderLine.getId());
       query.setMaxResults(1);
       HashMap<String, BigDecimal> result = new HashMap<String, BigDecimal>();
@@ -317,27 +312,23 @@ public class ServicePriceUtils {
       throws OBException {
     OBContext.setAdminMode(true);
     try {
-      StringBuffer where = new StringBuffer();
-      where.append(" select pp." + ProductPrice.PROPERTY_LISTPRICE + " as listPrice");
-      where.append(" from " + ProductPrice.ENTITY_NAME + " as pp");
-      where.append("   join pp." + ProductPrice.PROPERTY_PRICELISTVERSION + " as plv");
-      where.append("   join plv." + PriceListVersion.PROPERTY_PRICELIST + " as pl");
-      where.append(" where pp." + ProductPrice.PROPERTY_PRODUCT + ".id = :productId");
-      where.append("   and plv." + PriceListVersion.PROPERTY_VALIDFROMDATE + " <= :date");
-      where.append("   and pl.id = :pricelistId");
-      where.append("   and pl." + PriceList.PROPERTY_ACTIVE + " = true");
-      where.append("   and pp." + ProductPrice.PROPERTY_ACTIVE + " = true");
-      where.append("   and plv." + PriceListVersion.PROPERTY_ACTIVE + " = true");
-      where.append(" order by pl." + PriceList.PROPERTY_DEFAULT + " desc, plv."
-          + PriceListVersion.PROPERTY_VALIDFROMDATE + " desc");
-
-      Query<BigDecimal> ppQry = OBDal.getInstance()
-          .getSession()
-          .createQuery(where.toString(), BigDecimal.class);
+      //@formatter:off
+      String hql = "select pp.listPrice as listPrice "
+          +" from PricingProductPrice as pp "
+          + " join pp.priceListVersion as plv "
+          + " join plv.priceList as pl "
+          + " where pp.product.id = :productId "
+          + " and plv.validFromDate <= :date "
+          + " and pl.id = :pricelistId "
+          + " and pl.active = true "
+          + " and pp.active = true "
+          + " and plv.active = true "
+          + " order by pl.default desc, plv.validFromDate desc";
+      //@formatter:on
+      Query<BigDecimal> ppQry = OBDal.getInstance().getSession().createQuery(hql, BigDecimal.class);
       ppQry.setParameter("productId", product.getId());
       ppQry.setParameter("date", date);
       ppQry.setParameter("pricelistId", priceList.getId());
-
       ppQry.setMaxResults(1);
       return (BigDecimal) ppQry.uniqueResult();
     } finally {
@@ -377,36 +368,35 @@ public class ServicePriceUtils {
       if (relatedLine != null) {
         ol = OBDal.getInstance().get(OrderLine.class, relatedLine);
       }
-      StringBuffer where = new StringBuffer();
-      where.append(" select sprv." + ServicePriceRuleVersion.PROPERTY_SERVICEPRICERULE);
-      where.append(" from " + ServicePriceRuleVersion.ENTITY_NAME + " as sprv");
-      where.append(" left join sprv.relatedProduct rp ");
-      where.append(" left join sprv.relatedProductCategory rpc ");
-      where.append(
-          " where sprv." + ServicePriceRuleVersion.PROPERTY_PRODUCT + ".id = :serviceProductId");
-      where
-          .append(" and sprv." + ServicePriceRuleVersion.PROPERTY_VALIDFROMDATE + " <= :orderDate");
-      where.append("   and sprv." + ServicePriceRuleVersion.PROPERTY_ACTIVE + " = true");
+      //@formatter:off
+      String hql = " select sprv.servicePriceRule "
+                 + " from ServicePriceRuleVersion as sprv "
+                 + " left join sprv.relatedProduct rp "
+                 + " left join sprv.relatedProductCategory rpc "
+                 + " where sprv.product.id = :serviceProductId "
+                 + " and sprv.validFromDate <= :orderDate "
+                 + " and sprv.active = true "
+                 + "";
 
       if ("N".equals(serviceProduct.getIncludedProducts()) && relatedLine != null) {
-        where.append(" and rp is null or rp.relatedProduct.id = :relatedProductId ");
+        hql += " and rp is null or rp.relatedProduct.id = :relatedProductId ";
       } else {
-        where.append(" and rp is null ");
+        hql += " and rp is null ";
       }
-
       if ("N".equals(serviceProduct.getIncludedProductCategories()) && relatedLine != null) {
-        where.append(" and rpc is null or rpc.productCategory.id = :relatedProdCatId ");
+        hql += " and rpc is null or rpc.productCategory.id = :relatedProdCatId ";
       } else {
-        where.append(" and rpc is null ");
+        hql += " and rpc is null ";
       }
 
-      where.append(" order by case when rp is not null then 1 else 0 end desc, "
-          + " case when rpc is not null then 1 else 0 end desc, sprv."
-          + ServicePriceRuleVersion.PROPERTY_VALIDFROMDATE + " desc, sprv."
-          + ServicePriceRuleVersion.PROPERTY_CREATIONDATE + " desc");
+      hql += " order by case when rp is not null then 1 else 0 end desc, "
+          + " case when rpc is not null then 1 else 0 end desc, "
+          + " sprv.validFromDate desc, "
+          + " sprv.creationDate desc ";
+      //@formatter:on
       Query<ServicePriceRule> sprvQry = OBDal.getInstance()
           .getSession()
-          .createQuery(where.toString(), ServicePriceRule.class);
+          .createQuery(hql, ServicePriceRule.class);
       sprvQry.setParameter("serviceProductId", serviceProduct.getId());
       sprvQry.setParameter("orderDate", orderDate);
       if ("N".equals(serviceProduct.getIncludedProducts()) && relatedLine != null) {
@@ -431,11 +421,12 @@ public class ServicePriceUtils {
   public static Long getNewLineNo(String orderId) {
     OBContext.setAdminMode(true);
     try {
-      StringBuffer where = new StringBuffer();
-      where.append(" as ol");
-      where.append(" where ol." + OrderLine.PROPERTY_SALESORDER + ".id = :orderId");
-      where.append(" order by ol." + OrderLine.PROPERTY_LINENO + " desc");
-      OBQuery<OrderLine> olQry = OBDal.getInstance().createQuery(OrderLine.class, where.toString());
+      //@formatter:off
+      String hql = " as ol"
+                 + " where ol.salesOrder.id = :orderId "
+                 + " order by ol.salesOrder desc ";
+      //@formatter:on
+      OBQuery<OrderLine> olQry = OBDal.getInstance().createQuery(OrderLine.class, hql);
       olQry.setNamedParameter("orderId", orderId);
       olQry.setMaxResult(1);
       if (olQry.count() > 0) {
