@@ -23,5 +23,8 @@
       <foreign-key foreignTable="OBPOS_APPLICATIONS" name="EM_OBPOS_APPLICATIONS_PAYMENT">
         <reference local="EM_OBPOS_APPLICATIONS_ID" foreign="OBPOS_APPLICATIONS_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="FIN_PAYMENT" name="EM_OBPOS_FIN_PAYMENT_ROUNDED">
+        <reference local="EM_OBPOS_ROUNDED_PAYMENT_ID" foreign="FIN_PAYMENT_ID"/>
+      </foreign-key>
     </table>
   </database>
