@@ -111,6 +111,10 @@
 
     // netAmount = (grossAmount * grossAmount) / (grossAmount + (grossAmount * taxRate))
     static calculateNetAmountFromGrossAmount(grossAmount, taxRate) {
+      if (OB.DEC.compare(grossAmount) === 0) {
+        return OB.DEC.Zero;
+      }
+
       const amount = new BigDecimal(String(grossAmount));
       return OB.DEC.toNumber(
         amount
