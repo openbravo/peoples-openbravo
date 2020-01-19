@@ -249,11 +249,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/orderlineinfostandardpopup",
 
         // Taxes
-        "taxesengine/common/tax-engine", //
-        "taxesengine/common/tax-rules", //
-        "taxesengine/common/rules/priceincluding-tax", //
-        "taxesengine/common/rules/priceexcluding-tax", //
-        "taxesengine/pos/pos-taxes", //
+        "taxesengine/pos/pos-taxes",
 
         // Discounts
         "discountsengine/pos/pos-discounts" };
@@ -273,7 +269,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     final String[] cssDependency = { "obpos-main" };
 
     final ArrayList<String> appDependency = new ArrayList<>();
-    // IndexedDB
+
+    // Masterdata
     appDependency.add("model/masterdata/BPCategoryModel");
     appDependency.add("model/masterdata/BPSetLineModel");
     appDependency.add("model/masterdata/CountryModel");
@@ -290,6 +287,12 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/masterdata/discount/DiscountFilterProductModel");
     appDependency.add("model/masterdata/discount/DiscountFilterRoleModel");
     appDependency.add("model/masterdata/discount/DiscountModel");
+
+    // Tax engine
+    appDependency.add("taxesengine/common/tax-engine");
+    appDependency.add("taxesengine/common/tax-rules");
+    appDependency.add("taxesengine/common/rules/priceincluding-tax");
+    appDependency.add("taxesengine/common/rules/priceexcluding-tax");
 
     for (final String resource : resourceDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,
