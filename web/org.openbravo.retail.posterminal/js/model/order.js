@@ -164,43 +164,39 @@
         this.set('net', null, {
           silent: true
         });
-        this.set('gross', OB.DEC.mul(this.get('qty'), this.get('price')));
+        this.set('gross', OB.DEC.mul(this.getQty(), this.get('price')));
         this.set(
           'discountedGross',
           OB.DEC.sub(this.get('gross'), this.getTotalAmountOfPromotions())
         );
         this.set(
           'price',
-          this.get('qty') === 0
-            ? 0
-            : OB.DEC.div(this.get('gross'), this.get('qty'))
+          this.getQty() === 0 ? 0 : OB.DEC.div(this.get('gross'), this.getQty())
         );
         this.set(
           'discountedPrice',
-          this.get('qty') === 0
+          this.getQty() === 0
             ? 0
-            : OB.DEC.div(this.get('discountedGross'), this.get('qty'))
+            : OB.DEC.div(this.get('discountedGross'), this.getQty())
         );
       } else {
         this.set('gross', null, {
           silent: true
         });
-        this.set('net', OB.DEC.mul(this.get('qty'), this.get('price')));
+        this.set('net', OB.DEC.mul(this.getQty(), this.get('price')));
         this.set(
           'discountedNet',
           OB.DEC.sub(this.get('net'), this.getTotalAmountOfPromotions())
         );
         this.set(
           'pricenet',
-          this.get('qty') === 0
-            ? 0
-            : OB.DEC.div(this.get('net'), this.get('qty'))
+          this.getQty() === 0 ? 0 : OB.DEC.div(this.get('net'), this.getQty())
         );
         this.set(
           'discountedNetPrice',
-          this.get('qty') === 0
+          this.getQty() === 0
             ? 0
-            : OB.DEC.div(this.get('discountedNet'), this.get('qty'))
+            : OB.DEC.div(this.get('discountedNet'), this.getQty())
         );
       }
     },
