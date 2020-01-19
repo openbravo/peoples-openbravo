@@ -167,9 +167,7 @@
         this.set('gross', OB.DEC.mul(this.get('qty'), this.get('price')));
         this.set(
           'discountedGross',
-          this.get('promotions').reduce(function(memo, element) {
-            return OB.DEC.sub(memo, element.actualAmt || element.amt || 0);
-          }, this.get('gross'))
+          OB.DEC.sub(this.get('gross'), this.getTotalAmountOfPromotions())
         );
         this.set(
           'price',
@@ -190,9 +188,7 @@
         this.set('net', OB.DEC.mul(this.get('qty'), this.get('price')));
         this.set(
           'discountedNet',
-          this.get('promotions').reduce(function(memo, element) {
-            return OB.DEC.sub(memo, element.actualAmt || element.amt || 0);
-          }, this.get('net'))
+          OB.DEC.sub(this.get('net'), this.getTotalAmountOfPromotions())
         );
         this.set(
           'pricenet',
