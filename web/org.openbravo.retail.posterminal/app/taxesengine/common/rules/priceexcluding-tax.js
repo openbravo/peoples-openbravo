@@ -11,11 +11,17 @@
   class PriceExcludingTax extends OB.Taxes.Tax {
     /* @Override */
     getLineTaxes(line, rules) {
+      OB.debug(
+        `PriceExcludingTax: calculating line taxes for ticket with id: ${this.ticket.id} and line with id: ${line.id}`
+      );
       const currentTax = rules[0];
-      const taxRate = this.getTaxRate(currentTax.rate);
+      const taxRate = OB.Taxes.Tax.getTaxRate(currentTax.rate);
       const lineNetAmount = line.amount;
-      const lineTaxAmount = this.calculateTaxAmount(lineNetAmount, taxRate);
-      const lineGrossAmount = this.calculateGrossAmountFromNetAmount(
+      const lineTaxAmount = OB.Taxes.Tax.calculateTaxAmount(
+        lineNetAmount,
+        taxRate
+      );
+      const lineGrossAmount = OB.Taxes.PriceExcludingTax.calculateGrossAmountFromNetAmount(
         lineNetAmount,
         lineTaxAmount
       );
@@ -37,14 +43,17 @@
 
     /* @Override */
     getHeaderTaxes(lineTaxes) {
+      OB.debug(
+        `PriceExcludingTax: calculating header taxes for ticket with id: ${this.ticket.id}`
+      );
       const linesByTax = OB.App.ArrayUtils.groupBy(lineTaxes, 'tax');
       const headerTaxes = Object.keys(linesByTax).map(tax => {
         const lines = linesByTax[tax];
-        const taxRate = this.getTaxRate(lines[0].taxes[0].tax.rate);
+        const taxRate = OB.Taxes.Tax.getTaxRate(lines[0].taxes[0].tax.rate);
 
         const netAmount = lines.reduce((line1, line2) => line1 + line2.net, 0);
-        const taxAmount = this.calculateTaxAmount(netAmount, taxRate);
-        const grossAmount = this.calculateGrossAmountFromNetAmount(
+        const taxAmount = OB.Taxes.Tax.calculateTaxAmount(netAmount, taxRate);
+        const grossAmount = OB.Taxes.PriceExcludingTax.calculateGrossAmountFromNetAmount(
           netAmount,
           taxAmount
         );

@@ -11,14 +11,20 @@
   class PriceIncludingTax extends OB.Taxes.Tax {
     /* @Override */
     getLineTaxes(line, rules) {
+      OB.debug(
+        `PriceIncludingTax: calculating line taxes for ticket with id: ${this.ticket.id} and line with id: ${line.id}`
+      );
       const currentTax = rules[0];
-      const taxRate = this.getTaxRate(currentTax.rate);
+      const taxRate = OB.Taxes.Tax.getTaxRate(currentTax.rate);
       const lineGrossAmount = line.amount;
-      const lineNetAmount = this.calculateNetAmountFromGrossAmount(
+      const lineNetAmount = OB.Taxes.PriceIncludingTax.calculateNetAmountFromGrossAmount(
         lineGrossAmount,
         taxRate
       );
-      let lineTaxAmount = this.calculateTaxAmount(lineNetAmount, taxRate);
+      let lineTaxAmount = OB.Taxes.Tax.calculateTaxAmount(
+        lineNetAmount,
+        taxRate
+      );
 
       // If line gross amount <> line net amount + line tax amount, we need to adjust the highest line tax amount
       lineTaxAmount = OB.DEC.add(
@@ -43,20 +49,23 @@
 
     /* @Override */
     getHeaderTaxes(lineTaxes) {
+      OB.debug(
+        `PriceIncludingTax: calculating header taxes for ticket with id: ${this.ticket.id}`
+      );
       const linesByTax = OB.App.ArrayUtils.groupBy(lineTaxes, 'tax');
       const headerTaxes = Object.keys(linesByTax).map(tax => {
         const lines = linesByTax[tax];
-        const taxRate = this.getTaxRate(lines[0].taxes[0].tax.rate);
+        const taxRate = OB.Taxes.Tax.getTaxRate(lines[0].taxes[0].tax.rate);
 
         const grossAmount = lines.reduce(
           (line1, line2) => line1 + line2.gross,
           0
         );
-        const netAmount = this.calculateNetAmountFromGrossAmount(
+        const netAmount = OB.Taxes.PriceIncludingTax.calculateNetAmountFromGrossAmount(
           grossAmount,
           taxRate
         );
-        let taxAmount = this.calculateTaxAmount(netAmount, taxRate);
+        let taxAmount = OB.Taxes.Tax.calculateTaxAmount(netAmount, taxRate);
 
         // If header gross amount <> header net amount + header tax amount, we need to adjust the highest header tax amount
         taxAmount = OB.DEC.add(

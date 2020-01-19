@@ -43,24 +43,33 @@
       };
       const checkIsCashVAT = rule => {
         return (
-          this.equals(rule.isCashVAT, this.ticket.isCashVat) ||
+          OB.Taxes.Tax.equals(rule.isCashVAT, this.ticket.isCashVat) ||
           (!rule.isCashVAT &&
-            (rule.withholdingTax || this.equals(rule.rate, 0)))
+            (rule.withholdingTax || OB.Taxes.Tax.equals(rule.rate, 0)))
         );
       };
       const checkCountry = rule => {
         const businessPartnerCountry = this.ticket.businessPartner.country;
         return (
-          this.equals(rule.destinationCountry, businessPartnerCountry) ||
-          this.equals(rule.zoneDestinationCountry, businessPartnerCountry) ||
+          OB.Taxes.Tax.equals(
+            rule.destinationCountry,
+            businessPartnerCountry
+          ) ||
+          OB.Taxes.Tax.equals(
+            rule.zoneDestinationCountry,
+            businessPartnerCountry
+          ) ||
           (!rule.destinationCountry && !rule.zoneDestinationCountry)
         );
       };
       const checkRegion = rule => {
         const businessPartnerRegion = this.ticket.businessPartner.region;
         return (
-          this.equals(rule.destinationRegion, businessPartnerRegion) ||
-          this.equals(rule.zoneDestinationRegion, businessPartnerRegion) ||
+          OB.Taxes.Tax.equals(rule.destinationRegion, businessPartnerRegion) ||
+          OB.Taxes.Tax.equals(
+            rule.zoneDestinationRegion,
+            businessPartnerRegion
+          ) ||
           (!rule.destinationRegion && !rule.zoneDestinationRegion)
         );
       };
@@ -80,8 +89,14 @@
         const checkCountryTo = rule => {
           const businessPartnerCountry = this.ticket.businessPartner.country;
           return (
-            this.equals(rule.destinationCountry, businessPartnerCountry) ||
-            this.equals(rule.zoneDestinationCountry, businessPartnerCountry)
+            OB.Taxes.Tax.equals(
+              rule.destinationCountry,
+              businessPartnerCountry
+            ) ||
+            OB.Taxes.Tax.equals(
+              rule.zoneDestinationCountry,
+              businessPartnerCountry
+            )
           );
         };
         if (checkCountryTo(rule1) && !checkCountryTo(rule2)) {
@@ -108,8 +123,14 @@
         const checkRegionTo = rule => {
           const businessPartnerRegion = this.ticket.businessPartner.region;
           return (
-            this.equals(rule.destinationRegion, businessPartnerRegion) ||
-            this.equals(rule.zoneDstinationRegion, businessPartnerRegion)
+            OB.Taxes.Tax.equals(
+              rule.destinationRegion,
+              businessPartnerRegion
+            ) ||
+            OB.Taxes.Tax.equals(
+              rule.zoneDstinationRegion,
+              businessPartnerRegion
+            )
           );
         };
         if (checkRegionTo(rule1) && !checkRegionTo(rule2)) {
@@ -146,19 +167,25 @@
         )
         .map(rule => {
           const updatedRule = rule;
-          updatedRule.country = this.equals(rule.country, this.ticket.country)
+          updatedRule.country = OB.Taxes.Tax.equals(
+            rule.country,
+            this.ticket.country
+          )
             ? rule.country
             : rule.zoneCountry;
-          updatedRule.region = this.equals(rule.region, this.ticket.region)
+          updatedRule.region = OB.Taxes.Tax.equals(
+            rule.region,
+            this.ticket.region
+          )
             ? rule.region
             : rule.zoneRegion;
-          updatedRule.destinationCountry = this.equals(
+          updatedRule.destinationCountry = OB.Taxes.Tax.equals(
             rule.destinationCountry,
             this.ticket.businessPartner.country
           )
             ? rule.destinationCountry
             : rule.zoneDestinationCountry;
-          updatedRule.destinationRegion = this.equals(
+          updatedRule.destinationRegion = OB.Taxes.Tax.equals(
             rule.destinationRegion,
             this.ticket.businessPartner.region
           )
@@ -175,11 +202,12 @@
             line.taxExempt || this.ticket.businessPartner.taxExempt;
           return (
             (isTaxExempt
-              ? this.equals(rule.taxExempt, isTaxExempt)
-              : this.equals(
+              ? OB.Taxes.Tax.equals(rule.taxExempt, isTaxExempt)
+              : OB.Taxes.Tax.equals(
                   rule.businessPartnerTaxCategory,
                   this.ticket.businessPartner.taxCategory
-                )) && this.equals(rule.taxCategory, line.product.taxCategory)
+                )) &&
+            OB.Taxes.Tax.equals(rule.taxCategory, line.product.taxCategory)
           );
         });
       };
@@ -187,17 +215,17 @@
       const filterTaxRulesByLocation = rules => {
         return rules.filter(
           taxRate =>
-            this.equals(
+            OB.Taxes.Tax.equals(
               taxRate.destinationCountry,
               rules[0].destinationCountry
             ) &&
-            this.equals(
+            OB.Taxes.Tax.equals(
               taxRate.destinationRegion,
               rules[0].destinationRegion
             ) &&
-            this.equals(taxRate.country, rules[0].country) &&
-            this.equals(taxRate.region, rules[0].region) &&
-            this.equals(taxRate.validFromDate, rules[0].validFromDate)
+            OB.Taxes.Tax.equals(taxRate.country, rules[0].country) &&
+            OB.Taxes.Tax.equals(taxRate.region, rules[0].region) &&
+            OB.Taxes.Tax.equals(taxRate.validFromDate, rules[0].validFromDate)
         );
       };
 
