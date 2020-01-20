@@ -85,7 +85,7 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
         .setScale(stdPrecision, RoundingMode.HALF_UP);
 
     // Processing for Prices Including Taxes
-    if (Boolean.TRUE.equals(getInvoice().getPriceList().isPriceIncludesTax())) {
+    if (getInvoice().getPriceList().isPriceIncludesTax()) {
       BigDecimal grossUnitPrice = orderLine.getGrossUnitPrice();
       BigDecimal grossBaseUnitPrice = orderLine.getBaseGrossUnitPrice();
       BigDecimal grossListPrice = orderLine.getGrossListPrice();
@@ -155,7 +155,7 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
           .setScale(stdPrecision, RoundingMode.HALF_UP);
 
       // Processing for Prices Including Taxes
-      if (Boolean.TRUE.equals(getInvoice().getPriceList().isPriceIncludesTax())) {
+      if (getInvoice().getPriceList().isPriceIncludesTax()) {
         BigDecimal grossUnitPrice = priceStd;
         BigDecimal grossAmount = qtyOrdered.multiply(grossUnitPrice)
             .setScale(stdPrecision, RoundingMode.HALF_UP);
@@ -210,7 +210,7 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
   private Object[] selectBOMPrices(Product product, PriceList priceList) {
     //@formatter:off
     String hql =
-            " SELECT " +
+            " select " +
             "   TO_NUMBER(M_BOM_PriceStd(:productID, plv.id)), " +
             "   TO_NUMBER(M_BOM_PriceList(:productID, plv.id)), " +
             "   TO_NUMBER(M_BOM_PriceLimit(:productID, plv.id)), " +
