@@ -156,9 +156,9 @@ class UpdateInvoiceLineInformation extends CreateLinesFromProcessHook {
               "as o" +
               " where o.id = :orderId" +
               "   and exists (" +
-              "     select 1 from " + InvoiceLine.ENTITY_NAME + " as il" +
-              "       join il." + InvoiceLine.PROPERTY_SALESORDERLINE + " as ol" +
-              "      where ol." + OrderLine.PROPERTY_SALESORDER + ".id = o.id)";
+              "     select 1 from InvoiceLine as il" +
+              "       join il.salesOrderLine as ol" +
+              "      where ol.salesOrder.id = o.id)";
       //@formatter:on
 
       return OBDal.getInstance()
