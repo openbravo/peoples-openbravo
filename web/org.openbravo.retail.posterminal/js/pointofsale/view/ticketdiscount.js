@@ -243,6 +243,7 @@ enyo.kind({
     }
     comp.setContent(comp.originalText + ' - ' + inEvent.qty + ' ' + comp.units);
     this.$.formElementDiscountsList.amt = inEvent.qty;
+    this.$.formElementDiscountsList.amtChanged = true;
   },
   initComponents: function() {
     this.inherited(arguments);

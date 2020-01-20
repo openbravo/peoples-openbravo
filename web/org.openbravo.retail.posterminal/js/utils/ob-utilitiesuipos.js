@@ -730,6 +730,9 @@ OB.UTIL.checkRefreshMasterData = function() {
   // - ticket close
   // - timeout of force refresh time
   // - window navigation
+  if (OB.MobileApp.view.applicationLocked === true) {
+    return;
+  }
   if (
     OB.MobileApp.model.get('refreshMasterdata') === true &&
     OB.UTIL.refreshMasterDataGetProperty('allowedIncrementalRefresh')
@@ -929,6 +932,9 @@ OB.UTIL.refreshMasterDataGetProperty = function(prop) {
 };
 
 OB.UTIL.loadModelsIncFunc = function() {
+  if (OB.MobileApp.view.applicationLocked === true) {
+    return;
+  }
   var msg = OB.I18N.getLabel(
       OB.MobileApp.view.currentWindow === 'retail.pointofsale'
         ? 'OBPOS_MasterdataWillHappenOnCloseTicket'

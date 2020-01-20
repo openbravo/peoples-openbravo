@@ -215,8 +215,10 @@
   opacity: 0.2;
 }
 
-.obUiSubwindowHeader-closebutton:hover {
-  opacity: 0.5;
+@media (hover: hover) {
+  .obUiSubwindowHeader-closebutton:hover {
+    opacity: 0.5;
+  }
 }
 
 .obUiSubwindowHeader-closebutton-element1 {}
@@ -244,9 +246,22 @@
 
   width: 100%;
   height: 100%;
+  max-height: 588px;
   box-shadow: var(--box-shadow-surface);
   border-radius: var(--component-border-radius);
   background-color: var(--color-surface);
+}
+
+@media (max-width: 700px) {
+  .obUiLeftSubWindow-container1 {
+    max-height: 497px;
+  }
+}
+
+@media (max-width: 933px) {
+  .obUiLeftSubWindow-container1 {
+    max-height: 502px;
+  }
 }
 
 .obUiLeftSubWindow-container1-leftSubWindowHeader {}
@@ -713,9 +728,11 @@
   margin: 0px;
 }
 
-.obUiPaymentButton-btn.btn-over,
-.obUiPaymentButton-btn:hover {
-  filter: brightness(1.02);
+@media (hover: hover) {
+  .obUiPaymentButton-btn.btn-over,
+  .obUiPaymentButton-btn:hover {
+    filter: brightness(1.02);
+  }
 }
 
 .obUiPaymentButton-btn.btn-down,
@@ -1824,8 +1841,10 @@
   color: #000000;
 }
 
-.obUiRenderCategory:hover {
-  border-left-color: var(--color-secondary_hover);
+@media (hover: hover) {
+  .obUiRenderCategory:hover {
+    border-left-color: var(--color-secondary_hover);
+  }
 }
 
 .obUiRenderCategory:active {
@@ -1875,8 +1894,10 @@ li.selected > .obUiRenderCategory {
   height: 100%;
 }
 
-.obUiRenderCategoryTree:hover {
-  border-left-color: var(--color-secondary_hover);
+@media (hover: hover) {
+  .obUiRenderCategoryTree:hover {
+    border-left-color: var(--color-secondary_hover);
+  }
 }
 
 .obUiRenderCategoryTree:active {
@@ -2224,9 +2245,11 @@ li.selected > .obUiRenderCategoryTree {
   z-index: 2;
 }
 
-.obUiRenderProductCh:hover {
-  background-color: var(--color-primary_hover);
-  opacity: 1;
+@media (hover: hover) {
+  .obUiRenderProductCh:hover {
+    background-color: var(--color-primary_hover);
+    opacity: 1;
+  }
 }
 
 .obUiRenderProductCh:active {
@@ -2487,8 +2510,10 @@ li.selected > .obUiRenderOrderLine_edit {
   background-color: #e8e8e8;
 }
 
-.obUiRenderOrderLine:hover {
-  border-left-color: var(--color-secondary_hover);
+@media (hover: hover) {
+  .obUiRenderOrderLine:hover {
+    border-left-color: var(--color-secondary_hover);
+  }
 }
 
 .obUiRenderOrderLine:active {
@@ -2817,16 +2842,18 @@ li.selected > .obUiRenderOrderLine_edit {
 }
 
 /* hover state */
-.obUiShowServicesButton:not(.disabled):hover {
-  background-color: var(--color-primary_hover);
-}
+@media (hover: hover) {
+  .obUiShowServicesButton:not(.disabled):hover {
+    background-color: var(--color-primary_hover);
+  }
 
-.obUiShowServicesButton:not(.disabled):hover .obUiButton-components-icon {
-  filter: var(--color-on-primary_hover_img);
-}
+  .obUiShowServicesButton:not(.disabled):hover .obUiButton-components-icon {
+    filter: var(--color-on-primary_hover_img);
+  }
 
-.obUiShowServicesButton:not(.disabled):hover .obUiButton-components-label {
-  color: var(--color-on-primary_hover);
+  .obUiShowServicesButton:not(.disabled):hover .obUiButton-components-label {
+    color: var(--color-on-primary_hover);
+  }
 }
 
 /* active state */
@@ -3012,10 +3039,12 @@ li.selected > .obUiRenderOrderLine_edit {
   height: 40px;
 }
 
-.obUiRemoveMultiOrders:hover {
-  opacity: 1;
-  background-color: #e8e8e8;
-  border-radius: 50%;
+@media (hover: hover) {
+  .obUiRemoveMultiOrders:hover {
+    opacity: 1;
+    background-color: #e8e8e8;
+    border-radius: 50%;
+  }
 }
 
 .obUiRemoveMultiOrders:active {
@@ -3187,14 +3216,16 @@ li.selected > .obUiRenderOrderLine_edit {
 }
 
 /* hover state */
-.obUiOrderMultiSelect:not(.disabled):hover .obUiButton-components-icon,
-.obUiOrderSingleSelect:not(.disabled):hover .obUiButton-components-icon {
-  filter: var(--color-secondary_hover_img);
-}
+@media (hover: hover) {
+  .obUiOrderMultiSelect:not(.disabled):hover .obUiButton-components-icon,
+  .obUiOrderSingleSelect:not(.disabled):hover .obUiButton-components-icon {
+    filter: var(--color-secondary_hover_img);
+  }
 
-.obUiOrderMultiSelect:not(.disabled):hover .obUiButton-components-label,
-.obUiOrderSingleSelect:not(.disabled):hover .obUiButton-components-label {
-  color: var(--color-on-secondary_hover);
+  .obUiOrderMultiSelect:not(.disabled):hover .obUiButton-components-label,
+  .obUiOrderSingleSelect:not(.disabled):hover .obUiButton-components-label {
+    color: var(--color-on-secondary_hover);
+  }
 }
 
 /* active state */
@@ -3206,17 +3237,6 @@ li.selected > .obUiRenderOrderLine_edit {
 .obUiOrderMultiSelect:not(.disabled):active .obUiButton-components-label,
 .obUiOrderSingleSelect:not(.disabled):active .obUiButton-components-label {
   color: var(--color-on-secondary_active);
-}
-
-/* focus state */
-.obUiOrderMultiSelect:not(:active):not(.disabled):focus .obUiButton-components-icon,
-.obUiOrderSingleSelect:not(:active):not(.disabled):focus .obUiButton-components-icon {
-  filter: var(--color-secondary_img);
-}
-
-.obUiOrderMultiSelect:not(:active):not(.disabled):focus .obUiButton-components-label,
-.obUiOrderSingleSelect:not(:active):not(.disabled):focus .obUiButton-components-label {
-  color: var(--color-on-secondary_focus);
 }
 
 /* disabled state */
@@ -3262,12 +3282,14 @@ li.selected > .obUiRenderOrderLine_edit {
 }
 
 /* hover state */
-.obUiOrderMultiSelectAll:not(.disabled):hover .obUiButton-components-icon {
-  filter: var(--color-secondary_hover_img);
-}
+@media (hover: hover) {
+  .obUiOrderMultiSelectAll:not(.disabled):hover .obUiButton-components-icon {
+    filter: var(--color-secondary_hover_img);
+  }
 
-.obUiOrderMultiSelectAll:not(.disabled):hover .obUiButton-components-label {
-  color: var(--color-on-secondary_hover);
+  .obUiOrderMultiSelectAll:not(.disabled):hover .obUiButton-components-label {
+    color: var(--color-on-secondary_hover);
+  }
 }
 
 /* active state */
@@ -3277,15 +3299,6 @@ li.selected > .obUiRenderOrderLine_edit {
 
 .obUiOrderMultiSelectAll:not(.disabled):active .obUiButton-components-label {
   color: var(--color-on-secondary_active);
-}
-
-/* focus state */
-.obUiOrderMultiSelectAll:not(:active):not(.disabled):focus .obUiButton-components-icon {
-  filter: var(--color-secondary_img);
-}
-
-.obUiOrderMultiSelectAll:not(:active):not(.disabled):focus .obUiButton-components-label {
-  color: var(--color-on-secondary_focus);
 }
 
 /* disabled state */
@@ -3361,6 +3374,12 @@ li.selected > .obUiRenderOrderLine_edit {
   margin: 0px;
 }
 
+.obUiOrderHeader .obUiFormElement-mainArea-label-labelLine {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .obUiFormElement_dataEntry.obUiOrderHeader-buttonComponents-formElementBplocbutton {
   /*Inherits: [OB.UI.BPLocation]*/
 }
@@ -3417,10 +3436,12 @@ li.selected > .obUiRenderOrderLine_edit {
   opacity: 0.7;
 }
 
-.obUiFormElement_dataEntry:not(.obUiFormElement_disabled).obUiOrderHeader-buttonComponents-formElementBpbutton:hover,
-.obUiFormElement_dataEntry:not(.obUiFormElement_disabled).obUiOrderHeader-buttonComponents-formElementBplocbutton:hover,
-.obUiFormElement_dataEntry:not(.obUiFormElement_disabled).obUiOrderHeader-buttonComponents-formElementBplocshipbutton:hover {
-  background-color: #e8e8e8;
+@media (hover: hover) {
+  .obUiFormElement_dataEntry:not(.obUiFormElement_disabled).obUiOrderHeader-buttonComponents-formElementBpbutton:hover,
+  .obUiFormElement_dataEntry:not(.obUiFormElement_disabled).obUiOrderHeader-buttonComponents-formElementBplocbutton:hover,
+  .obUiFormElement_dataEntry:not(.obUiFormElement_disabled).obUiOrderHeader-buttonComponents-formElementBplocshipbutton:hover {
+    background-color: #e8e8e8;
+  }
 }
 
 .obUiFormElement_dataEntry:not(.obUiFormElement_disabled).obUiOrderHeader-buttonComponents-formElementBpbutton:active,
@@ -3838,27 +3859,33 @@ li.selected > .obUiRenderOrderLine_edit {
 
 .obUiOrderView-totalAndBreakdowns,
 .obUiMultiOrderView-totalAndBreakdowns {
-  overflow-y: auto;
   background-color: var(--color-secondary);
   color: var(--color-on-secondary);
-  padding-bottom: 10px;
 }
 
-.obUiOrderView-totalAndBreakdowns-row1 {}
+.obUiOrderView-totalAndBreakdowns-list {
+  padding-bottom: 10px;	
+}
 
-.obUiOrderView-totalAndBreakdowns-row1-totalTaxLine {
+.obUiOrderView-totalAndBreakdowns::-webkit-scrollbar-thumb {
+  background-color: var(--color-on-secondary);
+}
+
+.obUiOrderView-totalAndBreakdowns-list-row1 {}
+
+.obUiOrderView-totalAndBreakdowns-list-row1-totalTaxLine {
   /*Inherits: [OB.UI.TotalTaxLine]*/
 }
 
-.obUiOrderView-totalAndBreakdowns-row1-totalReceiptLine {
+.obUiOrderView-totalAndBreakdowns-list-row1-totalReceiptLine {
   /*Inherits: [OB.UI.TotalReceiptLine]*/
 }
 
-.obUiOrderView-totalAndBreakdowns-row2 {}
+.obUiOrderView-totalAndBreakdowns-list-row2 {}
 
-.obUiOrderView-totalAndBreakdowns-row2-injectedFooter {}
+.obUiOrderView-totalAndBreakdowns-list-row2-injectedFooter {}
 
-.obUiOrderView-totalAndBreakdowns-row2-status {
+.obUiOrderView-totalAndBreakdowns-list-row2-status {
   display: grid;
   grid-template-columns: 35% 1fr;
   grid-template-areas: "obUiBtnReceiptToInvoice obUiOrderViewDivText";
@@ -3868,32 +3895,32 @@ li.selected > .obUiRenderOrderLine_edit {
   padding: 0px 12px;
 }
 
-.obUiOrderView-totalAndBreakdowns-row2-status-divbtninvoice {
+.obUiOrderView-totalAndBreakdowns-list-row2-status-divbtninvoice {
   /*Inherits: [btninvoice]*/
 }
 
-.obUiOrderView-totalAndBreakdowns-row2-status-divText {
+.obUiOrderView-totalAndBreakdowns-list-row2-status-divText {
   /*Inherits: [OB.UI.OrderViewDivText]*/
 }
-.obUiOrderView-totalAndBreakdowns-row3 {}
+.obUiOrderView-totalAndBreakdowns-list-row3 {}
 
-.obUiOrderView-totalAndBreakdowns-row3-taxBreakdown {
+.obUiOrderView-totalAndBreakdowns-list-row3-taxBreakdown {
   /*Inherits: [OB.UI.TaxBreakdown]*/
 }
 
-.obUiOrderView-totalAndBreakdowns-listTaxLines {
-  /*Inherits: [OB.UI.ScrollableTable]*/
+.obUiOrderView-totalAndBreakdowns-list-listTaxLines {
+  /*Inherits: [OB.UI.Table]*/
+  height: auto;
 }
-.obUiOrderView-totalAndBreakdowns-listTaxLines-scrollAreaClasses {}
 
-.obUiOrderView-totalAndBreakdowns-listTaxLines-scrollAreaClasses .obUiScrollableTable-scrollArea-tbody {
+.obUiOrderView-totalAndBreakdowns-list-listTaxLines .obUiTable-tbody {
   list-style-type: disc;
   padding-left: 35px;
 }
 
-.obUiOrderView-totalAndBreakdowns-row5 {}
+.obUiOrderView-totalAndBreakdowns-list-row5 {}
 
-.obUiOrderView-totalAndBreakdowns-row5-paymentBreakdown {
+.obUiOrderView-totalAndBreakdowns-list-row5-paymentBreakdown {
   position: relative;
   display: inline-flex;
   box-sizing: border-box;
@@ -3903,15 +3930,16 @@ li.selected > .obUiRenderOrderLine_edit {
   padding: 10px 12px 0px 12px;
 }
 
-.obUiOrderView-paymentBreakdown-lblTotalPayment {
+.obUiOrderView-paymentBreakdown-list-lblTotalPayment {
   display: inline-block;
 }
 
-.obUiOrderView-totalAndBreakdowns-listPaymentLines {}
+.obUiOrderView-totalAndBreakdowns-list-listPaymentLines {
+  /*Inherits: [OB.UI.Table]*/
+  height: auto;
+}
 
-.obUiOrderView-totalAndBreakdowns-listPaymentLines-scrollArea {}
-
-.obUiOrderView-totalAndBreakdowns-listPaymentLines-scrollArea .obUiScrollableTable-scrollArea-tbody {
+.obUiOrderView-totalAndBreakdowns-list-listPaymentLines .obUiTable-tbody {
   list-style-type: disc;
   padding-left: 35px;
 }
@@ -3963,8 +3991,10 @@ li.selected > .obUiRenderOrderLine_edit {
 }
 
 /* hover state */
-.obUiOrderDetails:not(.disabled):hover {
-  color: var(--color-secondary_hover);
+@media (hover: hover) {
+  .obUiOrderDetails:not(.disabled):hover {
+    color: var(--color-secondary_hover);
+  }
 }
 
 /* active state */
@@ -4006,9 +4036,14 @@ li.selected > .obUiRenderOrderLine_edit {
   /* Instead of "1" to avoid strange displacement effect in buttons on hover effect */
 }
 
-.businesspartner-obUiButton-generic_yellow.btn-over,
-.businesspartner-obUiButton-generic_yellow.btnlink:hover {
+.businesspartner-obUiButton-generic_yellow.btn-over {
   opacity: 0.75;
+}
+
+@media (hover: hover) {
+  .businesspartner-obUiButton-generic_yellow.btnlink:hover {
+    opacity: 0.75;
+  }
 }
 
 .businesspartner-obUiButton-generic_yellow.btn-down,
@@ -4018,11 +4053,18 @@ li.selected > .obUiRenderOrderLine_edit {
   background-color: #cccccc;
 }
 
-.businesspartner-obUiButton-generic_yellow:disabled,
-.businesspartner-obUiButton-generic_yellow[disabled=true]:hover {
+.businesspartner-obUiButton-generic_yellow:disabled {
   background-color: #a9a9a9;
   opacity: 1;
   cursor: default;
+}
+
+@media (hover: hover) {
+  .businesspartner-obUiButton-generic_yellow[disabled=true]:hover {
+    background-color: #a9a9a9;
+    opacity: 1;
+    cursor: default;
+  }
 }
 
 .businesspartner-obUiButton-generic_yellow.fixedheight {
@@ -4806,12 +4848,14 @@ li.selected > .obUiRenderOrderLine_edit {
 }
 
 /* hover state */
-.obUiReceiptsCounterButton:not(.disabled):hover .obUiButton-components-icon {
-  filter: var(--color-secondary_hover_img);
-}
+@media (hover: hover) {
+  .obUiReceiptsCounterButton:not(.disabled):hover .obUiButton-components-icon {
+    filter: var(--color-secondary_hover_img);
+  }
 
-.obUiReceiptsCounterButton:not(.disabled):hover .obUiButton-components-label {
-  color: var(--color-on-secondary_hover);
+  .obUiReceiptsCounterButton:not(.disabled):hover .obUiButton-components-label {
+    color: var(--color-on-secondary_hover);
+  }
 }
 
 /* active state */
@@ -4991,8 +5035,10 @@ li.selected > .obUiRenderOrderLine_edit {
   background-color: transparent;
 }
 
-.obUiMenuDisableEnableRFIDReader:hover {
-  background-color: #e1e1e1;
+@media (hover: hover) {
+  .obUiMenuDisableEnableRFIDReader:hover {
+    background-color: #e1e1e1;
+  }
 }
 
 .disabled.obUiMenuDisableEnableRFIDReader {
@@ -5445,10 +5491,12 @@ li.selected > .obUiRenderOrderLine_edit {
   margin: 0 5px;
 }
 
-.obUiModalSplitLinesTable-line-container1-btnRemove:hover {
-  opacity: 1;
-  background-color: #e8e8e8;
-  border-radius: 50%;
+@media (hover: hover) {
+  .obUiModalSplitLinesTable-line-container1-btnRemove:hover {
+    opacity: 1;
+    background-color: #e8e8e8;
+    border-radius: 50%;
+  }
 }
 
 .obUiModalSplitLinesTable-line-container1-btnRemove:active {
@@ -7285,8 +7333,10 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   color: #333333;
 }
 
-.obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic:not(.disabled):hover {
-  background-color: #e8e8e8;
+@media (hover: hover) {
+  .obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic:not(.disabled):hover {
+    background-color: #e8e8e8;
+  }
 }
 
 .obObposPointOfSaleUiGridKeyboard-obUiActionButton-generic:not(.disabled):active {
@@ -8137,16 +8187,18 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 /* hover state */
-.obObposPointOfSaleUiProductDetailsViewButtonAddToTicket:not(.disabled):hover {
-  background-color: var(--color-secondary_hover);
-}
+@media (hover: hover) {
+  .obObposPointOfSaleUiProductDetailsViewButtonAddToTicket:not(.disabled):hover {
+    background-color: var(--color-secondary_hover);
+  }
+  
+  .obObposPointOfSaleUiProductDetailsViewButtonAddToTicket:not(.disabled):hover .obUiButton-components-icon {
+    filter: var(--color-on-secondary_hover_img);
+  }
 
-.obObposPointOfSaleUiProductDetailsViewButtonAddToTicket:not(.disabled):hover .obUiButton-components-icon {
-  filter: var(--color-on-secondary_hover_img);
-}
-
-.obObposPointOfSaleUiProductDetailsViewButtonAddToTicket:not(.disabled):hover .obUiButton-components-label {
-  color: var(--color-on-secondary_hover);
+  .obObposPointOfSaleUiProductDetailsViewButtonAddToTicket:not(.disabled):hover .obUiButton-components-label {
+    color: var(--color-on-secondary_hover);
+  }
 }
 
 /* active state */
@@ -8897,8 +8949,10 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   color: var(--color-on-message_warning);
 }
 
-.obObposPointOfSaleUiInDevHeader-innerDiv-headerText_warn:hover {
-  filter: brightness(1.02);
+@media (hover: hover) {
+  .obObposPointOfSaleUiInDevHeader-innerDiv-headerText_warn:hover {
+    filter: brightness(1.02);
+  }
 }
 
 .obObposPointOfSaleUiInDevHeader-innerDiv-headerText_warn:active {
@@ -8918,8 +8972,10 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   border: 1px solid var(--color-on-message_error);
 }
 
-.obObposPointOfSaleUiInDevHeader-innerDiv-headerText_error:hover {
-  filter: brightness(1.02);
+@media (hover: hover) {
+  .obObposPointOfSaleUiInDevHeader-innerDiv-headerText_error:hover {
+    filter: brightness(1.02);
+  }
 }
 
 .obObposPointOfSaleUiInDevHeader-innerDiv-headerText_error:active {
@@ -9034,16 +9090,18 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 /* hover state */
-.obObposPointOfSaleUiScan-msgaction-undobutton:not(.disabled):hover {
-  background-color: var(--color-secondary_hover);
-}
+@media (hover: hover) {
+  .obObposPointOfSaleUiScan-msgaction-undobutton:not(.disabled):hover {
+    background-color: var(--color-secondary_hover);
+  }
 
-.obObposPointOfSaleUiScan-msgaction-undobutton:not(.disabled):hover .obUiButton-components-icon {
-  filter: var(--color-on-secondary_hover_img);
-}
+  .obObposPointOfSaleUiScan-msgaction-undobutton:not(.disabled):hover .obUiButton-components-icon {
+    filter: var(--color-on-secondary_hover_img);
+  }
 
-.obObposPointOfSaleUiScan-msgaction-undobutton:not(.disabled):hover .obUiButton-components-label {
-  color: var(--color-on-secondary_hover);
+  .obObposPointOfSaleUiScan-msgaction-undobutton:not(.disabled):hover .obUiButton-components-label {
+    color: var(--color-on-secondary_hover);
+  }
 }
 
 /* active state */
@@ -9355,10 +9413,12 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   z-index: 3;
 }
 
-.obObposPointOfSaleUiEditLineShowMoreActionButtons:hover,
-.obObposPointOfSaleUiEditLineShowLessActionButtons:hover {
-  background-color: var(--color-primary_hover);
-  opacity: 1;
+@media (hover: hover) {
+  .obObposPointOfSaleUiEditLineShowMoreActionButtons:hover,
+  .obObposPointOfSaleUiEditLineShowLessActionButtons:hover {
+    background-color: var(--color-primary_hover);
+    opacity: 1;
+  }
 }
 
 .obObposPointOfSaleUiEditLineShowMoreActionButtons:active,
@@ -9384,15 +9444,16 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiEditLine-msgedit-container3 {
   overflow: hidden;
+  padding: 10px 5px 5px 5px;
 }
 
 .obObposPointOfSaleUiEditLine-msgedit-container3-linePropertiesContainer {
 /* Inherits: [Scroller] */
-  padding: 10px 5px 5px 5px;
   line-height: 130%;
   width: 65%;
   overflow-x: hidden;
   display: inline-block;
+  height: 100%;
 }
 
 .obObposPointOfSaleUiEditLine-linePropertiesContainer_withReturnReasons {
@@ -9765,16 +9826,18 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 /* hover state */
-.obObposPointOfSaleUiProcessButton:not(.disabled):hover {
-  background-color: var(--color-secondary_hover);
-}
+@media (hover: hover) {
+  .obObposPointOfSaleUiProcessButton:not(.disabled):hover {
+    background-color: var(--color-secondary_hover);
+  }
 
-.obObposPointOfSaleUiProcessButton:not(.disabled):hover .obUiButton-components-icon {
-  filter: var(--color-on-secondary_hover_img);
-}
+  .obObposPointOfSaleUiProcessButton:not(.disabled):hover .obUiButton-components-icon {
+    filter: var(--color-on-secondary_hover_img);
+  }
 
-.obObposPointOfSaleUiProcessButton:not(.disabled):hover .obUiButton-components-label {
-  color: var(--color-on-secondary_hover);
+  .obObposPointOfSaleUiProcessButton:not(.disabled):hover .obUiButton-components-label {
+    color: var(--color-on-secondary_hover);
+  }
 }
 
 /* active state */
@@ -9964,10 +10027,12 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   height: 32px;
 }
 
-.obObposPointOfSaleUiRemovePayment:hover {
-  opacity: 1;
-  background-color: #e8e8e8;
-  border-radius: 50%;
+@media (hover: hover) {
+  .obObposPointOfSaleUiRemovePayment:hover {
+    opacity: 1;
+    background-color: #e8e8e8;
+    border-radius: 50%;
+  }
 }
 
 .obObposPointOfSaleUiRemovePayment:active {
@@ -10017,10 +10082,12 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   background-color: transparent;
 }
 
-.obObposPointOfSaleUiReversePayment:hover {
-  opacity: 1;
-  background-color: #e8e8e8;
-  border-radius: 50%;
+@media (hover: hover) {
+  .obObposPointOfSaleUiReversePayment:hover {
+    opacity: 1;
+    background-color: #e8e8e8;
+    border-radius: 50%;
+  }
 }
 
 .obObposPointOfSaleUiReversePayment:active {
@@ -11322,8 +11389,10 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   height: 100%;
 }
 
-.obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-button:hover .obUiButton-components-icon {
-  background-image: url('./../img/iconDropdownModalButton_hover.svg');
+@media (hover: hover) {
+  .obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-button:hover .obUiButton-components-icon {
+    background-image: url('./../img/iconDropdownModalButton_hover.svg');
+  }
 }
 
 .obObposPointOfSaleUiCustomeraddrAssigncustomeraddrtoticketmenu-button:active .obUiButton-components-icon {
@@ -11601,9 +11670,11 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 */
 .obObposPointOfSaleUiModalsModalStockInStoreComponentsStockInStoreLineClickable {}
 
-.obObposPointOfSaleUiModalsModalStockInStoreComponentsStockInStoreLineClickable:hover {
-  opacity: 0.75;
-  cursor: pointer;
+@media (hover: hover) {
+  .obObposPointOfSaleUiModalsModalStockInStoreComponentsStockInStoreLineClickable:hover {
+    opacity: 0.75;
+    cursor: pointer;
+  }
 }
 
 .obObposPointOfSaleUiModalsModalStockInStoreComponentsStockInStoreLineClickable:active {
@@ -13418,8 +13489,10 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   filter: var(--color-secondary_img);
 }
 
-.obObposCashupUiButtonVoid:hover {
-  filter: var(--color-secondary_hover_img);
+@media (hover: hover) {
+  .obObposCashupUiButtonVoid:hover {
+    filter: var(--color-secondary_hover_img);
+  }
 }
 
 .obObposCashupUiButtonVoid:active {
@@ -13612,10 +13685,12 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   border-radius: var(--component-border-radius);
 }
 
-.obObposCashupUiListPendingReceipts-wrapper-components-rowDeleteAll-btnDeleteAll:hover,
-.obObposCashupUiListPendingReceipts-wrapper-components-rowDeleteAll-btnBringAll:hover {
-  background-color: var(--color-primary_hover);
-  opacity: 1;
+@media (hover: hover) {
+  .obObposCashupUiListPendingReceipts-wrapper-components-rowDeleteAll-btnDeleteAll:hover,
+  .obObposCashupUiListPendingReceipts-wrapper-components-rowDeleteAll-btnBringAll:hover {
+    background-color: var(--color-primary_hover);
+    opacity: 1;
+  }
 }
 
 .obObposCashupUiListPendingReceipts-wrapper-components-rowDeleteAll-btnDeleteAll:active,
@@ -13826,8 +13901,10 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   width: 85%;
 }
 
-.obObposCashUpUiRenderCashPaymentsLine-listItem-coinComponent-coin:hover {
-  filter: brightness(1.02);
+@media (hover: hover) {
+  .obObposCashUpUiRenderCashPaymentsLine-listItem-coinComponent-coin:hover {
+    filter: brightness(1.02);
+  }
 }
 
 .obObposCashUpUiRenderCashPaymentsLine-listItem-coinComponent-coin:active {
@@ -14106,9 +14183,11 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   filter: var(--color-on-primary_img);
 }
 
-.obObposCashupUiRenderPaymentsLine-listItem-countedContainer-buttonOk:hover {
-  background-color: var(--color-primary_hover);
-  opacity: 1;
+@media (hover: hover) {
+  .obObposCashupUiRenderPaymentsLine-listItem-countedContainer-buttonOk:hover {
+    background-color: var(--color-primary_hover);
+    opacity: 1;
+  }
 }
 
 .obObposCashupUiRenderPaymentsLine-listItem-countedContainer-buttonOk:active {
@@ -15714,8 +15793,10 @@ div.obrdmUiListOrdersLine-orderLine-container2-container3:nth-child(odd) {
   padding: 1px 0px 0px 4px;
 }
 
-.obrdmUiListOrdersLine-orderLine-container2-container1-container1-element1:hover {
-  background-color: #e9e9e9;
+@media (hover: hover) {
+  .obrdmUiListOrdersLine-orderLine-container2-container1-container1-element1:hover {
+    background-color: #e9e9e9;
+  }
 }
 
 .obrdmUiListOrdersLine-orderLine-container2-container1-container1-orderlineQty {
@@ -15743,8 +15824,10 @@ div.obrdmUiListOrdersLine-orderLine-container2-container3:nth-child(odd) {
   padding: 1px 0px 0px 4px;
 }
 
-.obrdmUiListOrdersLine-orderLine-container2-container1-container1-element2:hover {
-  background-color: #e9e9e9;
+@media (hover: hover) {
+  .obrdmUiListOrdersLine-orderLine-container2-container1-container1-element2:hover {  
+    background-color: #e9e9e9;
+  }
 }
 
 .obrdmUiListOrdersLine-orderLine-container2-container2 {
@@ -15794,8 +15877,10 @@ div.obrdmUiListOrdersLine-orderLine-container2-container3:nth-child(odd) {
   background-color: unset;
 }
 
-.obrdmUiListOrdersLine-orderLine-container2-container2-container1-orderlineWarehouse:hover {
-  opacity: 0.9;
+@media (hover: hover) {
+  .obrdmUiListOrdersLine-orderLine-container2-container2-container1-orderlineWarehouse:hover {
+    opacity: 0.9;
+  }
 }
 
 .obrdmUiListOrdersLine-orderLine-container2-element1 {
