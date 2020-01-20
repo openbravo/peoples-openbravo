@@ -185,7 +185,7 @@ class CreateLinesFromUtil {
     String hql =
             "SELECT il.id, ";
    //@formatter:on
-    if (Boolean.TRUE.equals(isSalesTransaction)) {
+    if (isSalesTransaction) {
       //@formatter:off
       hql +=
             "il.movementQuantity, " +
@@ -206,7 +206,7 @@ class CreateLinesFromUtil {
             "  FROM MaterialMgmtShipmentInOutLine AS il" +
             "    join il.shipmentReceipt sh";
     //@formatter:on
-    if (Boolean.FALSE.equals(isSalesTransaction)) {
+    if (!isSalesTransaction) {
       //@formatter:off
       hql +=
             "    left join il.procurementReceiptInvoiceMatchList mi";
@@ -218,7 +218,7 @@ class CreateLinesFromUtil {
             "   and sh.processed = 'Y'" +
             "   and sh.documentStatus in ('CO', 'CL')";
     //@formatter:on
-    if (Boolean.TRUE.equals(isSalesTransaction)) {
+    if (isSalesTransaction) {
       //@formatter:off
       hql +=
             "   and sh.completelyInvoiced = 'N'" +
