@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -569,11 +569,17 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
         propertyNameAfter = column.getEntityAlias() + "." + JsonConstants.ID;
         addEntryToReplacementMap(replacementMap, propertyNameBefore, propertyNameAfter,
             table.getEntityAlias());
-        // ... or through its identifier
+        // ... or through its identifier...
         Entity refEntity = property.getReferencedProperty().getEntity();
         String identifierPropertyName = refEntity.getIdentifierProperties().get(0).getName();
         propertyNameBefore = property.getName() + "." + identifierPropertyName;
         propertyNameAfter = column.getEntityAlias() + "." + identifierPropertyName;
+        addEntryToReplacementMap(replacementMap, propertyNameBefore, propertyNameAfter,
+            table.getEntityAlias());
+
+        // ... or through its entity name
+        propertyNameBefore = property.getName();
+        propertyNameAfter = column.getEntityAlias();
         addEntryToReplacementMap(replacementMap, propertyNameBefore, propertyNameAfter,
             table.getEntityAlias());
       }
