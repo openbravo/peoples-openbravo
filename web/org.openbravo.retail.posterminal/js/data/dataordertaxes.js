@@ -11,19 +11,31 @@
   const calculateTaxes = function(receipt) {
     try {
       const taxes = OB.Taxes.Pos.calculateTaxes(receipt);
-      receipt.set(
-        {
-          gross: taxes.header.grossAmount,
-          net: taxes.header.netAmount,
-          taxes: taxes.header.taxes
-        },
-        {
-          silent: true
-        }
-      );
-      receipt.get('lines').forEach(line => {
-        const lineTax = taxes.lines.find(lineTax => lineTax.id === line.id);
-        if (lineTax) {
+      const lineError = taxes.lines.find(lineTax => lineTax.error);
+      if (lineError) {
+        const line = receipt
+          .get('lines')
+          .find(line => line.id === lineError.id);
+        const reason = OB.I18N.getLabel('OBPOS_TaxNotFound_Message', [
+          receipt.get('bp').get('name') ||
+            OB.I18N.getLabel('OBPOS_LblEmptyAddress'),
+          receipt.get('bp').get('shipLocName') ||
+            OB.I18N.getLabel('OBPOS_LblEmptyAddress')
+        ]);
+        showTaxCalculationError(receipt, line, reason);
+      } else {
+        receipt.set(
+          {
+            gross: taxes.header.grossAmount,
+            net: taxes.header.netAmount,
+            taxes: taxes.header.taxes
+          },
+          {
+            silent: true
+          }
+        );
+        receipt.get('lines').forEach(line => {
+          const lineTax = taxes.lines.find(lineTax => lineTax.id === line.id);
           if (receipt.get('priceIncludesTax')) {
             line.set(
               {
@@ -50,18 +62,41 @@
               }
             );
           }
-        } else {
-          throw OB.I18N.getLabel('OBPOS_TaxNotFound_Message', [
-            receipt.get('bp').get('name') ||
-              OB.I18N.getLabel('OBPOS_LblEmptyAddress'),
-            receipt.get('bp').get('shipLocName') ||
-              OB.I18N.getLabel('OBPOS_LblEmptyAddress')
-          ]);
-        }
-      });
+        });
+      }
     } catch (error) {
       throw OB.I18N.getLabel('OBPOS_TaxCalculationError_Message');
     }
+  };
+
+  const showTaxCalculationError = function(receipt, line, reason) {
+    var title = OB.I18N.getLabel('OBPOS_TaxNotFound_Header');
+    OB.error(title + ':' + reason);
+    receipt.set(
+      'taxes',
+      {},
+      {
+        silent: true
+      }
+    );
+    line.set('hasTaxError', true, {
+      silent: true
+    });
+    receipt.deleteLinesFromOrder([line], function() {
+      OB.MobileApp.view.$.containerWindow
+        .getRoot()
+        .bubble('onErrorCalcLineTax', {
+          line: line,
+          reason: reason
+        });
+      OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
+        popup: 'OB_UI_MessageDialog',
+        args: {
+          header: title,
+          message: reason
+        }
+      });
+    });
   };
 
   OB.DATA.OrderTaxes = function(modelOfAnOrder) {

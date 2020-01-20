@@ -15,24 +15,33 @@
     }
 
     calculateTaxes() {
+      const taxes = {};
+      taxes.header = {};
+      taxes.lines = [];
+
       const rulesFilteredByTicket = this.filterTaxRulesByTicket(
         this.ticket,
         this.rules
       );
-      const taxes = {};
 
-      taxes.lines = [];
       this.ticket.lines.forEach(line => {
-        const rulesFilteredByLine = this.filterTaxRulesByLine(
-          line,
-          rulesFilteredByTicket
-        );
-        const lineTaxes = this.getLineTaxes(line, rulesFilteredByLine);
-        taxes.lines.push(lineTaxes);
+        try {
+          const rulesFilteredByLine = this.filterTaxRulesByLine(
+            line,
+            rulesFilteredByTicket
+          );
+          taxes.lines.push(this.getLineTaxes(line, rulesFilteredByLine));
+        } catch (lineError) {
+          taxes.lines.push({
+            id: line.id,
+            error: lineError
+          });
+        }
       });
 
-      const headerTaxes = this.getHeaderTaxes(taxes.lines);
-      taxes.header = headerTaxes;
+      if (!taxes.lines.find(line => line.error)) {
+        taxes.header = this.getHeaderTaxes(taxes.lines);
+      }
 
       return taxes;
     }
@@ -48,8 +57,12 @@
             (rule.withholdingTax || OB.Taxes.Tax.equals(rule.rate, 0)))
         );
       };
+      const checkLocation = () => {
+        return this.ticket.businessPartner.address.id;
+      };
       const checkCountry = rule => {
-        const businessPartnerCountry = this.ticket.businessPartner.country;
+        const businessPartnerCountry = this.ticket.businessPartner.address
+          .country;
         return (
           OB.Taxes.Tax.equals(
             rule.destinationCountry,
@@ -63,7 +76,8 @@
         );
       };
       const checkRegion = rule => {
-        const businessPartnerRegion = this.ticket.businessPartner.region;
+        const businessPartnerRegion = this.ticket.businessPartner.address
+          .region;
         return (
           OB.Taxes.Tax.equals(rule.destinationRegion, businessPartnerRegion) ||
           OB.Taxes.Tax.equals(
@@ -87,7 +101,8 @@
       };
       const sortByCountryTo = (rule1, rule2) => {
         const checkCountryTo = rule => {
-          const businessPartnerCountry = this.ticket.businessPartner.country;
+          const businessPartnerCountry = this.ticket.businessPartner.address
+            .country;
           return (
             OB.Taxes.Tax.equals(
               rule.destinationCountry,
@@ -121,7 +136,8 @@
       };
       const sortByRegionTo = (rule1, rule2) => {
         const checkRegionTo = rule => {
-          const businessPartnerRegion = this.ticket.businessPartner.region;
+          const businessPartnerRegion = this.ticket.businessPartner.address
+            .region;
           return (
             OB.Taxes.Tax.equals(
               rule.destinationRegion,
@@ -153,6 +169,7 @@
           rule =>
             checkValidFromDate(rule) &&
             checkIsCashVAT(rule) &&
+            checkLocation() &&
             checkCountry(rule) &&
             checkRegion(rule)
         )
@@ -181,13 +198,13 @@
             : rule.zoneRegion;
           updatedRule.destinationCountry = OB.Taxes.Tax.equals(
             rule.destinationCountry,
-            this.ticket.businessPartner.country
+            this.ticket.businessPartner.address.country
           )
             ? rule.destinationCountry
             : rule.zoneDestinationCountry;
           updatedRule.destinationRegion = OB.Taxes.Tax.equals(
             rule.destinationRegion,
-            this.ticket.businessPartner.region
+            this.ticket.businessPartner.address.region
           )
             ? rule.destinationRegion
             : rule.zoneDestinationRegion;
@@ -245,7 +262,9 @@
       return value1 === value2;
     }
 
-    // taxRate = rate / 100
+    /**
+     * taxRate = rate / 100
+     */
     static getTaxRate(rate) {
       return new BigDecimal(String(rate)).divide(
         new BigDecimal('100'),
@@ -254,11 +273,16 @@
       );
     }
 
-    // taxAmount = netAmount * taxRate
+    /**
+     * taxAmount = netAmount * taxRate
+     */
     static calculateTaxAmount(netAmount, taxRate) {
       return OB.DEC.mul(netAmount, taxRate);
     }
 
+    /**
+     * price = amount / quantity
+     */
     static calculatePriceFromAmount(amount, quantity) {
       if (OB.DEC.compare(quantity) === 0) {
         return OB.DEC.Zero;

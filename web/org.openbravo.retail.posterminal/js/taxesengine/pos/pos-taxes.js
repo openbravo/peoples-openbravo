@@ -29,13 +29,15 @@
         .get('bp')
         .get('taxCategory');
       newTicket.businessPartner.taxExempt = receipt.get('bp').get('taxExempt');
-      newTicket.businessPartner.country =
+      newTicket.businessPartner.address = {};
+      newTicket.businessPartner.address.id = receipt.get('bp').get('shipLocId');
+      newTicket.businessPartner.address.country =
         receipt.get('bp').get('shipCountryId') ||
         receipt
           .get('bp')
           .get('locationModel')
           .get('countryId');
-      newTicket.businessPartner.region =
+      newTicket.businessPartner.address.region =
         receipt.get('bp').get('shipRegionId') ||
         receipt
           .get('bp')
@@ -68,6 +70,10 @@
 
     translateTaxes: function(taxes) {
       const translateTaxes = taxArray => {
+        if (!taxArray) {
+          return {};
+        }
+
         return taxArray
           .map(tax => ({
             id: tax.tax.id,
@@ -82,6 +88,7 @@
           }))
           .reduce((obj, item) => ((obj[[item['id']]] = item), obj), {});
       };
+
       taxes.header.taxes = translateTaxes(taxes.header.taxes);
       taxes.lines.forEach(line => {
         line.taxes = translateTaxes(line.taxes);

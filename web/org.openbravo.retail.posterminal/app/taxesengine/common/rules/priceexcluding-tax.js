@@ -111,7 +111,9 @@
       };
     }
 
-    // grossAmount = netAmount + taxAmount
+    /**
+     * grossAmount = netAmount + taxAmount
+     */
     static calculateGrossAmountFromNetAmount(netAmount, taxAmount) {
       return OB.DEC.add(netAmount, taxAmount);
     }

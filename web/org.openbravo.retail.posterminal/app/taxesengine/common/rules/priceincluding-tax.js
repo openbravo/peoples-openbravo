@@ -123,7 +123,9 @@
       };
     }
 
-    // netAmount = (grossAmount * grossAmount) / (grossAmount + (grossAmount * taxRate))
+    /**
+     * netAmount = (grossAmount * grossAmount) / (grossAmount + (grossAmount * taxRate))
+     */
     static calculateNetAmountFromGrossAmount(grossAmount, taxRate) {
       if (OB.DEC.compare(grossAmount) === 0) {
         return OB.DEC.Zero;
