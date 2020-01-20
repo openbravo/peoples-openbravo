@@ -334,15 +334,13 @@ public class APRM_MatchingUtility {
     final String MATCHED_AGAINST_CREDIT = "C";
     final String MATCHED_AGAINST_INVOICE = "I";
     final String MATCHED_AGAINST_ORDER = "O";
-    if (Boolean.FALSE.equals(transaction.isCreatedByAlgorithm())
-        || transaction.getFinPayment() == null) {
+    if (!transaction.isCreatedByAlgorithm() || transaction.getFinPayment() == null) {
       return MATCHED_AGAINST_TRANSACTION;
     } else if (transaction.getFinPayment() != null
         && !transaction.getFinPayment().isCreatedByAlgorithm()) {
       return MATCHED_AGAINST_PAYMENT;
-    } else if (transaction.getFinPayment() != null
-        && Boolean.TRUE.equals(transaction.isCreatedByAlgorithm())
-        && Boolean.TRUE.equals(transaction.getFinPayment().isCreatedByAlgorithm())
+    } else if (transaction.getFinPayment() != null && transaction.isCreatedByAlgorithm()
+        && transaction.getFinPayment().isCreatedByAlgorithm()
         && transaction.getFinPayment()
             .getFINPaymentDetailList()
             .get(0)
@@ -356,9 +354,8 @@ public class APRM_MatchingUtility {
             .get(0)
             .getOrderPaymentSchedule() == null) {
       return MATCHED_AGAINST_CREDIT;
-    } else if (transaction.getFinPayment() != null
-        && Boolean.TRUE.equals(transaction.isCreatedByAlgorithm())
-        && Boolean.TRUE.equals(transaction.getFinPayment().isCreatedByAlgorithm())
+    } else if (transaction.getFinPayment() != null && transaction.isCreatedByAlgorithm()
+        && transaction.getFinPayment().isCreatedByAlgorithm()
         && transaction.getFinPayment()
             .getFINPaymentDetailList()
             .get(0)
@@ -412,7 +409,7 @@ public class APRM_MatchingUtility {
               .getMatchingAlgorithm();
           final FIN_MatchingTransaction matchingTransaction = new FIN_MatchingTransaction(
               ma.getJavaClassName());
-          if (Boolean.TRUE.equals(finTrans.isCreatedByAlgorithm())) {
+          if (finTrans.isCreatedByAlgorithm()) {
             matchingTransaction.unmatch(finTrans);
           }
           OBDal.getInstance().flush();
