@@ -14931,10 +14931,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObPosCashUpUiPostPrintClose-wrapper-components-body {
-  height: 100%;
-  overflow-y: auto;
-  padding: 10px;
-  box-sizing: border-box;
+  max-height: 100%;
 }
 
 .obObPosCashUpUiPostPrintClose-wrapper-components-body-container1 {}
