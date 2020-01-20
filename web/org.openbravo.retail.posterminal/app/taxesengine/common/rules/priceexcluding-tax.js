@@ -62,8 +62,8 @@
         const taxRate = OB.Taxes.Tax.getTaxRate(lines[0].taxes[0].tax.rate);
 
         const netAmount = lines.reduce(
-          (line1, line2) => line1 + line2.netAmount,
-          0
+          (line1, line2) => OB.DEC.add(line1, line2.netAmount),
+          OB.DEC.Zero
         );
         const taxAmount = OB.Taxes.Tax.calculateTaxAmount(netAmount, taxRate);
         const grossAmount = OB.Taxes.PriceExcludingTax.calculateGrossAmountFromNetAmount(
@@ -74,7 +74,10 @@
         // If the header gross amount is different than the sum of line gross amounts, we need to adjust the highest line gross amount
         const adjustment = OB.DEC.sub(
           grossAmount,
-          lines.reduce((line1, line2) => line1 + line2.grossAmount, 0)
+          lines.reduce(
+            (line1, line2) => OB.DEC.add(line1, line2.grossAmount),
+            OB.DEC.Zero
+          )
         );
         if (OB.DEC.compare(adjustment) !== 0) {
           const line = lines.sort(
@@ -92,12 +95,13 @@
       });
 
       const headerGrossAmount = headerTaxes.reduce(
-        (lineTax1, lineTax2) => lineTax1 + lineTax2.base + lineTax2.amount,
-        0
+        (lineTax1, lineTax2) =>
+          OB.DEC.add(lineTax1, OB.DEC.add(lineTax2.base, lineTax2.amount)),
+        OB.DEC.Zero
       );
       const headerNetAmount = lineTaxes.reduce(
-        (line1, line2) => line1 + line2.netAmount,
-        0
+        (line1, line2) => OB.DEC.add(line1, line2.netAmount),
+        OB.DEC.Zero
       );
 
       return {
