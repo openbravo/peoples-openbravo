@@ -11,26 +11,44 @@
   const calculateTaxes = function(receipt) {
     try {
       const taxes = OB.Taxes.Pos.calculateTaxes(receipt);
-      receipt.set('gross', taxes.header.gross);
-      receipt.set('net', taxes.header.net);
-      receipt.set('taxes', taxes.header.taxes);
+      receipt.set(
+        {
+          gross: taxes.header.grossAmount,
+          net: taxes.header.netAmount,
+          taxes: taxes.header.taxes
+        },
+        {
+          silent: true
+        }
+      );
       receipt.get('lines').forEach(line => {
         const lineTax = taxes.lines.find(lineTax => lineTax.id === line.id);
         if (lineTax) {
           if (receipt.get('priceIncludesTax')) {
-            line.set({
-              net: lineTax.net,
-              discountedNet: lineTax.net,
-              tax: lineTax.tax,
-              taxLines: lineTax.taxes
-            });
+            line.set(
+              {
+                net: lineTax.netAmount,
+                discountedNet: lineTax.netAmount,
+                pricenet: lineTax.netPrice,
+                tax: lineTax.tax,
+                taxLines: lineTax.taxes
+              },
+              {
+                silent: true
+              }
+            );
           } else {
-            line.set({
-              gross: lineTax.gross,
-              discountedGross: lineTax.gross,
-              tax: lineTax.tax,
-              taxLines: lineTax.taxes
-            });
+            line.set(
+              {
+                gross: lineTax.grossAmount,
+                discountedGross: lineTax.grossAmount,
+                tax: lineTax.tax,
+                taxLines: lineTax.taxes
+              },
+              {
+                silent: true
+              }
+            );
           }
         } else {
           throw OB.I18N.getLabel('OBPOS_TaxNotFound_Message', [

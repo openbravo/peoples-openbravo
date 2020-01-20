@@ -258,6 +258,14 @@
     static calculateTaxAmount(netAmount, taxRate) {
       return OB.DEC.mul(netAmount, taxRate);
     }
+
+    static calculatePriceFromAmount(amount, quantity) {
+      if (OB.DEC.compare(quantity) === 0) {
+        return OB.DEC.Zero;
+      }
+
+      return OB.DEC.div(amount, quantity);
+    }
   }
 
   OB.Taxes.Tax = Tax;

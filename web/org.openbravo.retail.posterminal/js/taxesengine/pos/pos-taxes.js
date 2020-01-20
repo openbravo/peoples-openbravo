@@ -50,6 +50,7 @@
         newLine.amount = newTicket.priceIncludesTax
           ? line.get('discountedGross')
           : line.get('discountedNet');
+        newLine.quantity = line.get('qty');
         newLine.taxExempt = line.get('originalTaxExempt');
         newLine.product = {};
         newLine.product.id = line.get('product').id;

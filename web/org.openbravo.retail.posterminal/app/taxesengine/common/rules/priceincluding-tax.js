@@ -17,9 +17,17 @@
       const currentTax = rules[0];
       const taxRate = OB.Taxes.Tax.getTaxRate(currentTax.rate);
       const lineGrossAmount = line.amount;
+      const lineGrossPrice = OB.Taxes.Tax.calculatePriceFromAmount(
+        lineGrossAmount,
+        line.quantity
+      );
       const lineNetAmount = OB.Taxes.PriceIncludingTax.calculateNetAmountFromGrossAmount(
         lineGrossAmount,
         taxRate
+      );
+      const lineNetPrice = OB.Taxes.Tax.calculatePriceFromAmount(
+        lineNetAmount,
+        line.quantity
       );
       let lineTaxAmount = OB.Taxes.Tax.calculateTaxAmount(
         lineNetAmount,
@@ -34,8 +42,10 @@
 
       return {
         id: line.id,
-        gross: lineGrossAmount,
-        net: lineNetAmount,
+        grossAmount: lineGrossAmount,
+        netAmount: lineNetAmount,
+        grossPrice: lineGrossPrice,
+        netPrice: lineNetPrice,
         tax: currentTax.id,
         taxes: [
           {
@@ -58,7 +68,7 @@
         const taxRate = OB.Taxes.Tax.getTaxRate(lines[0].taxes[0].tax.rate);
 
         const grossAmount = lines.reduce(
-          (line1, line2) => line1 + line2.gross,
+          (line1, line2) => line1 + line2.grossAmount,
           0
         );
         const netAmount = OB.Taxes.PriceIncludingTax.calculateNetAmountFromGrossAmount(
@@ -76,13 +86,14 @@
         // If the header net amount is different than the sum of line net amounts, we need to adjust the highest line net amount
         const adjustment = OB.DEC.sub(
           netAmount,
-          lines.reduce((line1, line2) => line1 + line2.net, 0)
+          lines.reduce((line1, line2) => line1 + line2.netAmount, 0)
         );
         if (OB.DEC.compare(adjustment) !== 0) {
           const line = lines.sort(
-            (line1, line2) => OB.DEC.abs(line2.net) - OB.DEC.abs(line1.net)
+            (line1, line2) =>
+              OB.DEC.abs(line2.netAmount) - OB.DEC.abs(line1.netAmount)
           )[0];
-          line.net = OB.DEC.add(line.net, adjustment);
+          line.netAmount = OB.DEC.add(line.netAmount, adjustment);
           line.taxes[0].base = OB.DEC.add(line.taxes[0].base, adjustment);
         }
 
@@ -93,18 +104,18 @@
         };
       });
 
-      const grossAmount = lineTaxes.reduce(
-        (line1, line2) => line1 + line2.gross,
+      const headerGrossAmount = lineTaxes.reduce(
+        (line1, line2) => line1 + line2.grossAmount,
         0
       );
-      const netAmount = headerTaxes.reduce(
+      const headerNetAmount = headerTaxes.reduce(
         (lineTax1, lineTax2) => lineTax1 + lineTax2.base,
         0
       );
 
       return {
-        gross: grossAmount,
-        net: netAmount,
+        grossAmount: headerGrossAmount,
+        netAmount: headerNetAmount,
         taxes: headerTaxes
       };
     }
