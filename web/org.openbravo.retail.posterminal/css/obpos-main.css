@@ -12510,13 +12510,13 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSCashMgmt.UI.ListEventLine
 # Inherits: [OB.UI.SelectButton]
 */
-.obObposcashmgmtUiListEvent {
+.obObposcashmgmtUiListEventLine {
   height: 60px;
   background-color: #dddddd;
   border: 1px solid white;
 }
 
-.obObposcashmgmtUiListEvent-line {
+.obObposcashmgmtUiListEventLine-line {
   padding: 1px 0px 1px 5px;
 }
 
@@ -12535,7 +12535,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   max-height: 600px;
 }
 
-
 /*
 # Component: OB.OBPOSCashMgmt.UI.ModalDepositEvents
 # Inherits: [OB.UI.Modal]
@@ -12546,7 +12545,11 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obposObposcashmgmtUiModalDepositEvents-obObposcashmgmtUiListEvent {}
 
+.obposObposcashmgmtUiModalDepositEvents-footer {}
 
+.obposObposcashmgmtUiModalDepositEvents-footer-modalDepositEventsCancelButton {}
+
+.obUiModalDepositEventsCancel {}
 
 /***********************   ***********************/
 /*               File: cashmgmtinfo              */
