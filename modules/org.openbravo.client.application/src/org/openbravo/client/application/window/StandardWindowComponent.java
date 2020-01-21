@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2018 Openbravo SLU
+ * All portions are Copyright (C) 2010-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -68,7 +68,7 @@ public class StandardWindowComponent extends BaseTemplateComponent {
   public String getWindowClientClassName() {
     // see the ViewComponent#correctViewId
     // changes made in this if statement should also be done in that method
-    if (isIndevelopment()) {
+    if (isInDevelopment()) {
       return KernelConstants.ID_PREFIX + window.getId() + KernelConstants.ID_PREFIX + uniqueString;
     }
     return KernelConstants.ID_PREFIX + getWindowId();
@@ -76,10 +76,6 @@ public class StandardWindowComponent extends BaseTemplateComponent {
 
   public void setUniqueString(String uniqueString) {
     this.uniqueString = uniqueString;
-  }
-
-  public boolean isIndevelopment() {
-    return adcs.isInDevelopment();
   }
 
   @Override

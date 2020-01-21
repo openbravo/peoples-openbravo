@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2019 Openbravo SLU
+ * All portions are Copyright (C) 2013-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -25,8 +25,6 @@ import javax.enterprise.event.Observes;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Session;
-import org.hibernate.query.Query;
 import org.hibernate.resource.transaction.spi.TransactionStatus;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -57,7 +55,7 @@ class CharacteristicValueEventHandler extends EntityPersistenceEventObserver {
   }
 
   public void onTransactionBegin(@Observes TransactionBeginEvent event) {
-    chvalueUpdated.set(null);
+    chvalueUpdated.remove();
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
@@ -72,25 +70,27 @@ class CharacteristicValueEventHandler extends EntityPersistenceEventObserver {
         .getEntity(CharacteristicValue.ENTITY_NAME);
     final Property codeProperty = prodchValue.getProperty(CharacteristicValue.PROPERTY_CODE);
     if (event.getCurrentState(codeProperty) != event.getPreviousState(codeProperty)) {
-      StringBuilder where = new StringBuilder();
-      where.append("update ProductCharacteristicConf as pcc ");
-      where.append("set code = :code, updated = now(), updatedBy = :user ");
-      where.append("where exists ( ");
-      where.append("    select 1 ");
-      where.append("    from  ProductCharacteristic as pc ");
-      where.append("    where pcc.characteristicOfProduct = pc ");
-      where.append("    and pcc.characteristicValue = :characteristicValue ");
-      where.append("    and pc.characteristicSubset is null ");
-      where.append("    and pcc.code <> :code ");
-      where.append(")");
+      //@formatter:off
+      String hql = "update ProductCharacteristicConf as pcc "
+                 + "set code = :code, "
+                 + "updated = now(), "
+                 + "updatedBy = :user "
+                 + "where exists ( "
+                 + "    select 1 "
+                 + "    from  ProductCharacteristic as pc "
+                 + "    where pcc.characteristicOfProduct = pc "
+                 + "    and pcc.characteristicValue.id = :characteristicValueId "
+                 + "    and pc.characteristicSubset is null "
+                 + "    and pcc.code <> :code) ";
+      //@formatter:on
       try {
-        final Session session = OBDal.getInstance().getSession();
-        @SuppressWarnings("rawtypes")
-        final Query charConfQuery = session.createQuery(where.toString());
-        charConfQuery.setParameter("user", OBContext.getOBContext().getUser());
-        charConfQuery.setParameter("characteristicValue", chv);
-        charConfQuery.setParameter("code", chv.getCode());
-        charConfQuery.executeUpdate();
+        OBDal.getInstance()
+            .getSession()
+            .createQuery(hql)
+            .setParameter("user", OBContext.getOBContext().getUser())
+            .setParameter("characteristicValueId", chv.getId())
+            .setParameter("code", chv.getCode())
+            .executeUpdate();
       } catch (Exception e) {
         logger.error(
             "Error on CharacteristicValueEventHandler. ProductCharacteristicConf could not be updated",
@@ -101,23 +101,13 @@ class CharacteristicValueEventHandler extends EntityPersistenceEventObserver {
 
   public void onTransactionCompleted(@Observes TransactionCompletedEvent event) {
     String strChValueId = chvalueUpdated.get();
-    chvalueUpdated.set(null);
+    chvalueUpdated.remove();
     if (StringUtils.isBlank(strChValueId)
         || event.getTransaction().getStatus() == TransactionStatus.ROLLED_BACK) {
       return;
     }
     try {
-      VariablesSecureApp vars = null;
-      try {
-        vars = RequestContext.get().getVariablesSecureApp();
-      } catch (Exception e) {
-        vars = new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
-            OBContext.getOBContext().getCurrentClient().getId(),
-            OBContext.getOBContext().getCurrentOrganization().getId(),
-            OBContext.getOBContext().getRole().getId(),
-            OBContext.getOBContext().getLanguage().getLanguage());
-      }
-
+      VariablesSecureApp vars = initializeVars();
       ProcessBundle pb = new ProcessBundle(VariantChDescUpdateProcess.AD_PROCESS_ID, vars)
           .init(new DalConnectionProvider(false));
       HashMap<String, Object> parameters = new HashMap<>();
@@ -128,5 +118,20 @@ class CharacteristicValueEventHandler extends EntityPersistenceEventObserver {
     } catch (Exception e) {
       logger.error("Error executing process", e);
     }
+  }
+
+  private VariablesSecureApp initializeVars() {
+    VariablesSecureApp vars = null;
+    try {
+      vars = RequestContext.get().getVariablesSecureApp();
+    } catch (Exception e) {
+      logger.info("Vars could not be initialized from RequestContext, initializing from OBContext");
+      vars = new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
+          OBContext.getOBContext().getCurrentClient().getId(),
+          OBContext.getOBContext().getCurrentOrganization().getId(),
+          OBContext.getOBContext().getRole().getId(),
+          OBContext.getOBContext().getLanguage().getLanguage());
+    }
+    return vars;
   }
 }

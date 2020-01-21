@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,6 +21,7 @@ package org.openbravo.base.validation;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Property;
@@ -35,7 +36,7 @@ public class ValidationException extends OBException {
 
   private static final long serialVersionUID = 1L;
 
-  private Map<Property, String> msgs = new HashMap<Property, String>();
+  private Map<Property, String> msgs = new HashMap<>();
 
   public ValidationException() {
     super();
@@ -55,14 +56,11 @@ public class ValidationException extends OBException {
       // during construction
       return "";
     }
-    final StringBuffer sb = new StringBuffer();
-    for (final Property p : msgs.keySet()) {
-      final String msg = msgs.get(p);
-      if (sb.length() > 0) {
-        sb.append("\n");
-      }
-      sb.append(p.getName() + ": " + msg);
-    }
-    return sb.toString();
+
+    return msgs.entrySet()
+        .stream()
+        .map(msgEntry -> msgEntry.getKey().getEntity().getName() + "." + msgEntry.getKey().getName()
+            + ": " + msgEntry.getValue())
+        .collect(Collectors.joining("\n"));
   }
 }

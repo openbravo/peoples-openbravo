@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,7 +27,6 @@ import javax.enterprise.context.Dependent;
 
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
@@ -153,22 +152,24 @@ class UpdatePricesAndAmounts implements CopyFromOrdersProcessImplementationInter
    */
   private ProductPrice getProductPriceInPriceList(final Product product,
       final PriceList priceList) {
-    StringBuilder obq = new StringBuilder("");
-    obq.append(" as pp ");
-    obq.append(" join pp.priceListVersion plv ");
-    obq.append(" where pp.product.id = :productID");
-    obq.append(" and plv.priceList.id = :priceListID");
-    obq.append(" and plv.active = true");
-    obq.append(" and (plv.validFromDate is null or plv.validFromDate <= :validFromDate)");
-    obq.append(" order by plv.validFromDate desc");
+    //@formatter:off
+    String hql =
+            "as pp " +
+            "  join pp.priceListVersion plv " +
+            " where pp.product.id = :productID" +
+            "   and plv.priceList.id = :priceListID" +
+            "   and plv.active = true" +
+            "   and (plv.validFromDate is null or plv.validFromDate <= :validFromDate)" +
+            " order by plv.validFromDate desc";
+    //@formatter:on
 
-    OBQuery<ProductPrice> obQuery = OBDal.getInstance()
-        .createQuery(ProductPrice.class, obq.toString());
-    obQuery.setNamedParameter("productID", product.getId());
-    obQuery.setNamedParameter("priceListID", priceList.getId());
-    obQuery.setNamedParameter("validFromDate", new Date());
-    obQuery.setMaxResult(1);
-    return obQuery.uniqueResult();
+    return OBDal.getInstance()
+        .createQuery(ProductPrice.class, hql)
+        .setNamedParameter("productID", product.getId())
+        .setNamedParameter("priceListID", priceList.getId())
+        .setNamedParameter("validFromDate", new Date())
+        .setMaxResult(1)
+        .uniqueResult();
   }
 
   private static class PriceInformation {

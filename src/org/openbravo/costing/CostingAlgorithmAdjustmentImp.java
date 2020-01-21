@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2018 Openbravo SLU
+ * All portions are Copyright (C) 2014-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -50,6 +50,7 @@ import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
+import org.openbravo.model.materialmgmt.cost.TransactionCost;
 import org.openbravo.model.materialmgmt.transaction.InternalConsumptionLine;
 import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
@@ -518,11 +519,15 @@ public abstract class CostingAlgorithmAdjustmentImp {
     switch (calTrxType) {
       case ShipmentVoid:
       case ReceiptVoid:
-      case IntMovementTo:
       case InternalConsVoid:
       case BOMProduct:
       case ManufacturingProduced:
         // The cost of these transaction types does not depend on the date it is calculated.
+        break;
+
+      case IntMovementTo:
+        // get adjustment amount for related Movement From Transaction
+        adjAmt = getAdjAmtFromRelatedMovementFrom(costAdjLine);
         break;
 
       case Receipt:
@@ -693,5 +698,35 @@ public abstract class CostingAlgorithmAdjustmentImp {
     }
 
     return costDimensions;
+  }
+
+  private BigDecimal getAdjAmtFromRelatedMovementFrom(final CostAdjustmentLine costAdjLine) {
+    // get Adjusted Amount from related Movement From Transaction
+    final MaterialTransaction trx = costAdjLine.getInventoryTransaction();
+    BigDecimal totalAdjAmt = BigDecimal.ZERO;
+    for (final MaterialTransaction movementTransaction : trx.getMovementLine()
+        .getMaterialMgmtMaterialTransactionList()) {
+      if (skipAdjustmentsFromTransaction(trx, movementTransaction)) {
+        continue;
+      }
+      for (final TransactionCost trxCost : getNotSourceCostAdjustmentLines(movementTransaction)) {
+        totalAdjAmt = totalAdjAmt.add(trxCost.getCost());
+      }
+    }
+    return totalAdjAmt;
+  }
+
+  private boolean skipAdjustmentsFromTransaction(final MaterialTransaction trx,
+      final MaterialTransaction movementTransaction) {
+    return movementTransaction.getId().equals(trx.getId())
+        || !movementTransaction.isCostCalculated() || movementTransaction.isCostPermanent();
+  }
+
+  private List<TransactionCost> getNotSourceCostAdjustmentLines(
+      final MaterialTransaction movementTransaction) {
+    OBCriteria<TransactionCost> obc = OBDal.getInstance().createCriteria(TransactionCost.class);
+    obc.add(Restrictions.eq(TransactionCost.PROPERTY_INVENTORYTRANSACTION, movementTransaction));
+    obc.add(Restrictions.isNotNull(TransactionCost.PROPERTY_COSTADJUSTMENTLINE));
+    return obc.list();
   }
 }

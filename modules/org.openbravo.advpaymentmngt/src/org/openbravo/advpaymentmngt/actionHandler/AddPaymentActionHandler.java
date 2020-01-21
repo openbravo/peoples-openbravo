@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2019 Openbravo SLU
+ * All portions are Copyright (C) 2014-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
@@ -45,6 +46,7 @@ import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
@@ -53,7 +55,6 @@ import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
@@ -82,7 +83,7 @@ import org.openbravo.service.db.DbUtility;
 import org.openbravo.service.json.JsonUtils;
 
 public class AddPaymentActionHandler extends BaseProcessActionHandler {
-  final private static Logger log = LogManager.getLogger();
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
@@ -185,7 +186,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
           convertedAmount);
       OBDal.getInstance().save(payment);
 
-      addCredit(payment, jsonparams, differenceAmount, strDifferenceAction);
+      addCredit(payment, jsonparams, differenceAmount);
       addSelectedPSDs(payment, jsonparams, pdToRemove);
       addGLItems(payment, jsonparams);
 
@@ -320,19 +321,20 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
 
       boolean isWriteOff = psdRow.getBoolean("writeoff");
       // psdIds can be grouped
-      List<String> psdIds = Arrays.asList(strPSDIds.replaceAll(" ", "").split(","));
+      List<String> psdIds = Arrays.asList(strPSDIds.replace(" ", "").split(","));
       List<FIN_PaymentScheduleDetail> psds = getOrderedPaymentScheduleDetails(psdIds);
-      BigDecimal outstandingAmount = BigDecimal.ZERO;
+      BigDecimal outstandingAmount;
       BigDecimal remainingAmount = paidAmount;
-      boolean isFullPaydAndHasNegativeLines = fullPaydAndHasNegativeLines(psds, paidAmount);
+      boolean isFullPaydAndHasNegativeLines = isFullyPaid(psds, paidAmount)
+          && hasNegativeLines(psds);
       for (FIN_PaymentScheduleDetail psd : psds) {
-        BigDecimal assignAmount = BigDecimal.ZERO;
+        BigDecimal assignAmount;
 
         if (psd.getPaymentDetails() != null) {
           // This schedule detail comes from an edited payment so outstanding amount needs to be
           // properly calculated
           List<FIN_PaymentScheduleDetail> outStandingPSDs = FIN_AddPayment.getOutstandingPSDs(psd);
-          if (outStandingPSDs.size() > 0) {
+          if (!outStandingPSDs.isEmpty()) {
             outstandingAmount = psd.getAmount().add(outStandingPSDs.get(0).getAmount());
           } else {
             outstandingAmount = psd.getAmount();
@@ -362,21 +364,23 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
     }
   }
 
-  private boolean fullPaydAndHasNegativeLines(List<FIN_PaymentScheduleDetail> psds,
-      BigDecimal paidAmount) {
-    BigDecimal sumOfAmounts = psds.stream()
+  private boolean isFullyPaid(final List<FIN_PaymentScheduleDetail> psds,
+      final BigDecimal paidAmount) {
+    final Optional<BigDecimal> sumOfAmounts = psds.stream()
         .map(FIN_PaymentScheduleDetail::getAmount)
-        .reduce(BigDecimal::add)
-        .get();
-
-    List<FIN_PaymentScheduleDetail> negativePsd = psds.stream()
-        .filter(t -> t.getAmount().signum() < 0)
-        .collect(Collectors.toList());
-    return sumOfAmounts.compareTo(paidAmount) == 0 && !negativePsd.isEmpty();
+        .reduce(BigDecimal::add);
+    return sumOfAmounts.isPresent() && sumOfAmounts.get().compareTo(paidAmount) == 0;
   }
 
-  private void addCredit(FIN_Payment payment, JSONObject jsonparams, BigDecimal differenceAmount,
-      String strDifferenceAction) throws JSONException {
+  private boolean hasNegativeLines(final List<FIN_PaymentScheduleDetail> psds) {
+    final List<FIN_PaymentScheduleDetail> negativePsd = psds.stream()
+        .filter(t -> t.getAmount().signum() < 0)
+        .collect(Collectors.toList());
+    return !negativePsd.isEmpty();
+  }
+
+  private void addCredit(FIN_Payment payment, JSONObject jsonparams, BigDecimal differenceAmount)
+      throws JSONException {
     // Credit to Use Grid
     JSONObject creditToUseGrid = jsonparams.getJSONObject("credit_to_use");
     JSONArray selectedCreditLines = creditToUseGrid.getJSONArray("_selection");
@@ -421,7 +425,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
 
         if (usedCreditAmt.compareTo(BigDecimal.ZERO) > 0) {
           // Set Credit description only when it is actually used
-          final StringBuffer description = new StringBuffer();
+          final StringBuilder description = new StringBuilder();
           if (creditPayment.getDescription() != null
               && !creditPayment.getDescription().equals("")) {
             description.append(creditPayment.getDescription()).append("\n");
@@ -429,7 +433,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
           description.append(String.format(OBMessageUtils.messageBD("APRM_CreditUsedPayment"),
               payment.getDocumentNo()));
           String truncateDescription = (description.length() > 255)
-              ? description.substring(0, 251).concat("...").toString()
+              ? description.substring(0, 251).concat("...")
               : description.toString();
           creditPayment.setDescription(truncateDescription);
           FIN_PaymentProcess.linkCreditPayment(payment, usedCreditAmt, creditPayment);
@@ -470,58 +474,34 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
       }
 
       // Accounting Dimensions
-      BusinessPartner businessPartnerGLItem = null;
-      if (glItem.has("businessPartner") && glItem.get("businessPartner") != JSONObject.NULL) {
-        final String strElement_BP = glItem.getString("businessPartner");
-        checkID(strElement_BP);
-        businessPartnerGLItem = OBDal.getInstance().get(BusinessPartner.class, strElement_BP);
-      }
-      Product product = null;
-      if (glItem.has("product") && glItem.get("product") != JSONObject.NULL) {
-        final String strElement_PR = glItem.getString("product");
-        checkID(strElement_PR);
-        product = OBDal.getInstance().get(Product.class, strElement_PR);
-      }
-      Project project = null;
-      if (glItem.has("project") && glItem.get("project") != JSONObject.NULL) {
-        final String strElement_PJ = glItem.getString("project");
-        checkID(strElement_PJ);
-        project = OBDal.getInstance().get(Project.class, strElement_PJ);
-      }
-      ABCActivity activity = null;
-      if (glItem.has("cActivityDim") && glItem.get("cActivityDim") != JSONObject.NULL) {
-        final String strElement_AY = glItem.getString("cActivityDim");
-        checkID(strElement_AY);
-        activity = OBDal.getInstance().get(ABCActivity.class, strElement_AY);
-      }
-      Costcenter costCenter = null;
-      if (glItem.has("costCenter") && glItem.get("costCenter") != JSONObject.NULL) {
-        final String strElement_CC = glItem.getString("costCenter");
-        checkID(strElement_CC);
-        costCenter = OBDal.getInstance().get(Costcenter.class, strElement_CC);
-      }
-      Campaign campaign = null;
-      if (glItem.has("cCampaignDim") && glItem.get("cCampaignDim") != JSONObject.NULL) {
-        final String strElement_MC = glItem.getString("cCampaignDim");
-        checkID(strElement_MC);
-        campaign = OBDal.getInstance().get(Campaign.class, strElement_MC);
-      }
-      UserDimension1 user1 = null;
-      if (glItem.has("stDimension") && glItem.get("stDimension") != JSONObject.NULL) {
-        final String strElement_U1 = glItem.getString("stDimension");
-        checkID(strElement_U1);
-        user1 = OBDal.getInstance().get(UserDimension1.class, strElement_U1);
-      }
-      UserDimension2 user2 = null;
-      if (glItem.has("ndDimension") && glItem.get("ndDimension") != JSONObject.NULL) {
-        final String strElement_U2 = glItem.getString("ndDimension");
-        checkID(strElement_U2);
-        user2 = OBDal.getInstance().get(UserDimension2.class, strElement_U2);
-      }
+      BusinessPartner businessPartnerGLItem = (BusinessPartner) getAccountDimension(glItem,
+          "businessPartner", BusinessPartner.class);
+      Product product = (Product) getAccountDimension(glItem, "product", Product.class);
+      Project project = (Project) getAccountDimension(glItem, "project", Project.class);
+      ABCActivity activity = (ABCActivity) getAccountDimension(glItem, "cActivityDim",
+          ABCActivity.class);
+      Costcenter costCenter = (Costcenter) getAccountDimension(glItem, "costCenter",
+          Costcenter.class);
+      Campaign campaign = (Campaign) getAccountDimension(glItem, "cCampaignDim", Campaign.class);
+      UserDimension1 user1 = (UserDimension1) getAccountDimension(glItem, "stDimension",
+          UserDimension1.class);
+      UserDimension2 user2 = (UserDimension2) getAccountDimension(glItem, "ndDimension",
+          UserDimension2.class);
+
       FIN_AddPayment.saveGLItem(payment, glItemAmt,
           OBDal.getInstance().get(GLItem.class, strGLItemId), businessPartnerGLItem, product,
           project, campaign, activity, null, costCenter, user1, user2);
     }
+  }
+
+  private BaseOBObject getAccountDimension(final JSONObject glItem, final String dimension,
+      final Class<?> clazz) throws JSONException, ServletException {
+    if (glItem.has(dimension) && glItem.get(dimension) != JSONObject.NULL) {
+      final String dimensionId = glItem.getString(dimension);
+      checkID(dimensionId);
+      return (BaseOBObject) OBDal.getInstance().get(clazz, dimensionId);
+    }
+    return null;
   }
 
   private void removeNotSelectedPaymentDetails(FIN_Payment payment, List<String> pdToRemove) {
@@ -535,7 +515,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
 
         if (pd.getGLItem() == null) {
           List<FIN_PaymentScheduleDetail> outStandingPSDs = FIN_AddPayment.getOutstandingPSDs(psd);
-          if (outStandingPSDs.size() == 0) {
+          if (outStandingPSDs.isEmpty()) {
             FIN_PaymentScheduleDetail newOutstanding = (FIN_PaymentScheduleDetail) DalUtil.copy(psd,
                 false);
             newOutstanding.setPaymentDetails(null);
@@ -647,20 +627,22 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
   }
 
   private List<FIN_PaymentScheduleDetail> getOrderedPaymentScheduleDetails(List<String> psdSet) {
-    StringBuffer where = new StringBuffer();
-    where.append(" as psd");
-    where.append(" where psd." + FIN_PaymentScheduleDetail.PROPERTY_ID + " in (:psdSet)");
-    where.append(" order by psd." + FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS);
-    where.append(", abs(psd." + FIN_PaymentScheduleDetail.PROPERTY_AMOUNT + ")");
-    OBQuery<FIN_PaymentScheduleDetail> orderedPSDs = OBDal.getInstance()
-        .createQuery(FIN_PaymentScheduleDetail.class, where.toString());
-    orderedPSDs.setNamedParameter("psdSet", psdSet);
-    return orderedPSDs.list();
+    //@formatter:off
+    String hql = 
+            "as psd" +
+            " where psd.id in (:psdSet)" +
+            " order by psd.paymentDetails, abs(psd.amount)";
+    //@formatter:on
+
+    return OBDal.getInstance()
+        .createQuery(FIN_PaymentScheduleDetail.class, hql)
+        .setNamedParameter("psdSet", psdSet)
+        .list();
   }
 
   private void checkID(final String id) throws ServletException {
     if (!IsIDFilter.instance.accept(id)) {
-      log.error("Input: " + id + " not accepted by filter: IsIDFilter");
+      log.error("Input: {} not accepted by filter: IsIDFilter", id);
       throw new ServletException("Input: " + id + " is not an accepted input");
     }
   }
@@ -681,13 +663,13 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
     return sb.toString();
   }
 
-  private HashMap<String, BigDecimal> getSelectedCreditLinesAndAmount(JSONArray allselection,
-      List<FIN_Payment> _selectedCreditPayments) throws JSONException {
-    HashMap<String, BigDecimal> selectedCreditLinesAmounts = new HashMap<String, BigDecimal>();
+  private HashMap<String, BigDecimal> getSelectedCreditLinesAndAmount(final JSONArray allselection,
+      final List<FIN_Payment> selectedCreditPayments) throws JSONException {
+    final HashMap<String, BigDecimal> selectedCreditLinesAmounts = new HashMap<>();
 
-    for (FIN_Payment creditPayment : _selectedCreditPayments) {
+    for (final FIN_Payment creditPayment : selectedCreditPayments) {
       for (int i = 0; i < allselection.length(); i++) {
-        JSONObject selectedRow = allselection.getJSONObject(i);
+        final JSONObject selectedRow = allselection.getJSONObject(i);
         if (selectedRow.getString("id").equals(creditPayment.getId())) {
           selectedCreditLinesAmounts.put(creditPayment.getId(),
               new BigDecimal(selectedRow.getString("paymentAmount")));

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -55,35 +55,6 @@ public class StyleSheetResourceComponent extends BaseComponent {
 
   @Inject
   private StaticResourceProvider resourceProvider;
-
-  private Boolean isInDevelopment;
-
-  @Override
-  public boolean isInDevelopment() {
-    if (isInDevelopment == null) {
-      isInDevelopment = false;
-      final List<Module> modules = KernelUtils.getInstance().getModulesOrderedByDependency();
-      for (Module module : modules) {
-        for (ComponentProvider provider : componentProviders) {
-          final List<ComponentResource> resources = provider.getGlobalComponentResources();
-          if (resources == null || resources.size() == 0) {
-            continue;
-          }
-
-          if (provider.getModule().getId().equals(module.getId())) {
-            for (ComponentResource resource : resources) {
-              if (resource.getType() == ComponentResourceType.Stylesheet
-                  && module.isInDevelopment()) {
-                isInDevelopment = true;
-                break;
-              }
-            }
-          }
-        }
-      }
-    }
-    return isInDevelopment;
-  }
 
   /**
    * @return returns this instance

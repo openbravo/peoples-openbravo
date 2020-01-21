@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2018 Openbravo SLU
+ * All portions are Copyright (C) 2014-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
@@ -356,22 +357,21 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
     invList.add(inv);
     invLine.setInventoryAmountUpdateLineInventoriesList(invList);
 
-    InventoryCount closeInv = OBProvider.getInstance().get(InventoryCount.class);
+    final InventoryCount closeInv = OBProvider.getInstance().get(InventoryCount.class);
+    final Organization invOrg = getOrganizationForCloseAndOpenInventories(orgId, warehouse);
     closeInv.setClient(client);
     closeInv.setName(OBMessageUtils.messageBD("InvAmtUpdCloseInventory"));
-
     closeInv.setWarehouse(warehouse);
-    closeInv.setOrganization(warehouse.getOrganization());
-
+    closeInv.setOrganization(invOrg);
     closeInv.setMovementDate(localDate);
     closeInv.setInventoryType("C");
     inv.setCloseInventory(closeInv);
 
-    InventoryCount initInv = OBProvider.getInstance().get(InventoryCount.class);
+    final InventoryCount initInv = OBProvider.getInstance().get(InventoryCount.class);
     initInv.setClient(client);
     initInv.setName(OBMessageUtils.messageBD("InvAmtUpdInitInventory"));
     initInv.setWarehouse(warehouse);
-    initInv.setOrganization(warehouse.getOrganization());
+    initInv.setOrganization(invOrg);
     initInv.setMovementDate(localDate);
     initInv.setInventoryType("O");
     inv.setInitInventory(initInv);
@@ -416,5 +416,34 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
     OBDal.getInstance().save(inventory);
     OBDal.getInstance().flush();
     return icl;
+  }
+
+  private Organization getOrganizationForCloseAndOpenInventories(final String inventoryLineOrgId,
+      final Warehouse warehouse) {
+    Organization invOrg = getTransactionAllowedOrg(warehouse.getOrganization());
+    if (invOrg == null) {
+      return (Organization) OBDal.getInstance()
+          .getProxy(Organization.ENTITY_NAME, inventoryLineOrgId);
+    }
+    return invOrg;
+  }
+
+  private Organization getTransactionAllowedOrg(final Organization org) {
+    if (org.getOrganizationType().isTransactionsAllowed()) {
+      return org;
+    } else {
+      final Organization parentOrg = OBContext.getOBContext()
+          .getOrganizationStructureProvider()
+          .getParentOrg(org);
+      if (parentOrg != null && !isStarOrganization(parentOrg)) {
+        return getTransactionAllowedOrg(parentOrg);
+      } else {
+        return null;
+      }
+    }
+  }
+
+  private boolean isStarOrganization(final Organization parentOrg) {
+    return StringUtils.equals(parentOrg.getId(), "0");
   }
 }

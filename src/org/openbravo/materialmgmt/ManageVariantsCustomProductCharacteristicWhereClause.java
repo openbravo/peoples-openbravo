@@ -58,7 +58,7 @@ public class ManageVariantsCustomProductCharacteristicWhereClause
       hqlWhereClause.append(
           " where pc.characteristic = c and pc.product.id = :productId and pc.variant = true ");
       hqlWhereClause.append(
-          " and (characteristicSubset is null or exists (from CharacteristicSubsetValue csv where csv.characteristicSubset.id = characteristicSubset.id and csv.characteristicValue.id = v.id)))");
+          " and (pc.characteristicSubset is null or exists (from CharacteristicSubsetValue csv where csv.characteristicSubset.id = pc.characteristicSubset.id and csv.characteristicValue.id = v.id)))");
       return hqlWhereClause.toString();
     } catch (JSONException e) {
       log.error("There was a problem when creating a JSONObject from the request parameters", e);

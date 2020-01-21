@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,9 +28,7 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.service.OBCriteria;
@@ -183,41 +181,63 @@ class CreateLinesFromUtil {
   @SuppressWarnings("unchecked")
   static List<InOutLineData> getRelatedNotInvoicedInOutLines(final OrderLine orderLine) {
     Boolean isSalesTransaction = orderLine.getSalesOrder().isSalesTransaction();
-    StringBuilder shipmentHQLQuery = new StringBuilder(" SELECT il.id, ");
+    //@formatter:off
+    String hql =
+            "SELECT il.id, ";
+   //@formatter:on
     if (isSalesTransaction) {
-      shipmentHQLQuery.append(" il.movementQuantity,");
-      shipmentHQLQuery.append(" il.orderQuantity,");
+      //@formatter:off
+      hql +=
+            "il.movementQuantity, " +
+            "il.orderQuantity, ";
+      //@formatter:on
     } else {
-      shipmentHQLQuery.append(" il.movementQuantity - sum(coalesce(mi.quantity,0)),");
-      shipmentHQLQuery.append(
-          " il.orderQuantity * to_number(c_divide(il.movementQuantity - sum(coalesce((mi.quantity),0)), il.movementQuantity)),");
+      //@formatter:off
+      hql +=
+            "il.movementQuantity - sum(coalesce(mi.quantity,0)), " +
+            "il.orderQuantity * to_number(c_divide(il.movementQuantity - sum(coalesce((mi.quantity),0)), il.movementQuantity)), ";
+      //@formatter:on
     }
-    shipmentHQLQuery.append(" il.operativeQuantity,");
-    shipmentHQLQuery.append(" il.operativeUOM.id,");
-    shipmentHQLQuery.append(" il.uOM.id");
-    shipmentHQLQuery.append(" FROM MaterialMgmtShipmentInOutLine AS il");
-    shipmentHQLQuery.append(" join il.shipmentReceipt sh");
+    //@formatter:off
+    hql +=
+            "il.operativeQuantity, " +
+            "il.operativeUOM.id, " +
+            "il.uOM.id " +
+            "  FROM MaterialMgmtShipmentInOutLine AS il" +
+            "    join il.shipmentReceipt sh";
+    //@formatter:on
     if (!isSalesTransaction) {
-      shipmentHQLQuery.append(" left join il.procurementReceiptInvoiceMatchList mi");
+      //@formatter:off
+      hql +=
+            "    left join il.procurementReceiptInvoiceMatchList mi";
+      //@formatter:on
     }
-    shipmentHQLQuery.append(" where il.salesOrderLine.id = :orderLineId");
-    shipmentHQLQuery.append("  and sh.processed = 'Y'");
-    shipmentHQLQuery.append("  and sh.documentStatus in ('CO', 'CL')");
+    //@formatter:off
+    hql +=
+            " where il.salesOrderLine.id = :orderLineId" +
+            "   and sh.processed = 'Y'" +
+            "   and sh.documentStatus in ('CO', 'CL')";
+    //@formatter:on
     if (isSalesTransaction) {
-      shipmentHQLQuery.append("  and sh.completelyInvoiced = 'N'");
-      shipmentHQLQuery.append("  and il.reinvoice = 'N'"); // IsInvoiced='N'
+      //@formatter:off
+      hql +=
+            "   and sh.completelyInvoiced = 'N'" +
+            "   and il.reinvoice = 'N'"; // IsInvoiced='N'
+      //@formatter:on
     } else {
-      shipmentHQLQuery
-          .append(" group by il.id, il.salesOrderLine.id, il.movementQuantity, il.orderQuantity,");
-      shipmentHQLQuery
-          .append("   il.operativeQuantity, il.operativeUOM.id, il.uOM.id, mi.id, mi.quantity");
-      shipmentHQLQuery.append(" having (il.movementQuantity - sum(coalesce(mi.quantity,0)) <> 0)");
+      //@formatter:off
+      hql +=
+            " group by il.id, il.salesOrderLine.id, il.movementQuantity, il.orderQuantity," +
+            "   il.operativeQuantity, il.operativeUOM.id, il.uOM.id, mi.id, mi.quantity" +
+            "     having (il.movementQuantity - sum(coalesce(mi.quantity,0)) <> 0)";
+      //@formatter:on
     }
 
-    final Session session = OBDal.getInstance().getSession();
-    final Query<Object[]> query = session.createQuery(shipmentHQLQuery.toString());
-    query.setParameter("orderLineId", orderLine.getId());
-    return getInOutLinesInformation(query.getResultList());
+    return getInOutLinesInformation(OBDal.getInstance()
+        .getSession()
+        .createQuery(hql)
+        .setParameter("orderLineId", orderLine.getId())
+        .getResultList());
   }
 
   private static List<InOutLineData> getInOutLinesInformation(List<Object[]> inOutLinesData) {

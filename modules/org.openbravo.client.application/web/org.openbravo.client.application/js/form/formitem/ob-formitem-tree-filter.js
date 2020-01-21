@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2019 Openbravo SLU
+ * All portions are Copyright (C) 2013-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -115,6 +115,11 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
       },
 
       copyFunctionsFromGrid: function(grid) {
+        if (grid == null) {
+          // need a grid just to copy some functions
+          // if none is available, create a dummy one
+          grid = isc.OBViewGrid.create({ fields: [], view: {} });
+        }
         this.filterEditorProperties = grid.filterEditorProperties;
         this.checkShowFilterFunnelIcon = grid.checkShowFilterFunnelIcon;
         this.isGridFiltered = grid.isGridFiltered;

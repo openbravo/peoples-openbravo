@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,7 +28,6 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.common.order.Order;
@@ -152,16 +151,21 @@ class UpdateInvoiceLineInformation extends CreateLinesFromProcessHook {
     Order order = isCopiedFromOrderLine() ? ((OrderLine) getCopiedFromLine()).getSalesOrder()
         : ((ShipmentInOutLine) getCopiedFromLine()).getShipmentReceipt().getSalesOrder();
     if (order != null) {
-      StringBuilder where = new StringBuilder();
-      where.append(" as o");
-      where.append(" where o.id = :orderId");
-      where.append("   and exists (");
-      where.append("     select 1 from " + InvoiceLine.ENTITY_NAME + " as il");
-      where.append("       join il." + InvoiceLine.PROPERTY_SALESORDERLINE + " as ol");
-      where.append("     where ol." + OrderLine.PROPERTY_SALESORDER + ".id = o.id)");
-      OBQuery<Order> qryOrder = OBDal.getInstance().createQuery(Order.class, where.toString());
-      qryOrder.setNamedParameter("orderId", order.getId());
-      return qryOrder.count() != 0;
+      //@formatter:off
+      String hql =
+              "as o" +
+              " where o.id = :orderId" +
+              "   and exists (" +
+              "     select 1 from InvoiceLine as il" +
+              "       join il.salesOrderLine as ol" +
+              "      where ol.salesOrder.id = o.id)";
+      //@formatter:on
+
+      return OBDal.getInstance()
+          .createQuery(Order.class, hql)
+          .setNamedParameter("orderId", order.getId())
+          .setMaxResult(1)
+          .uniqueResult() != null;
     }
     return false;
   }
@@ -199,15 +203,18 @@ class UpdateInvoiceLineInformation extends CreateLinesFromProcessHook {
   }
 
   private boolean existsOtherOrdersLinkedToThisInvoice(Order processingOrder) {
-    StringBuilder relatedOrdersHQL = new StringBuilder(" as il ");
-    relatedOrdersHQL.append(" where il.invoice.id = :invId");
-    relatedOrdersHQL.append("  and il.salesOrderLine.salesOrder.id <> :ordId");
+    //@formatter:off
+    String hql =
+            "as il " +
+            " where il.invoice.id = :invId" +
+            "   and il.salesOrderLine.salesOrder.id <> :ordId";
+    //@formatter:on
 
-    OBQuery<InvoiceLine> relatedOrdersQuery = OBDal.getInstance()
-        .createQuery(InvoiceLine.class, relatedOrdersHQL.toString());
-    relatedOrdersQuery.setNamedParameter("invId", getInvoice().getId());
-    relatedOrdersQuery.setNamedParameter("ordId", processingOrder.getId());
-    relatedOrdersQuery.setMaxResult(1);
-    return !relatedOrdersQuery.list().isEmpty();
+    return OBDal.getInstance()
+        .createQuery(InvoiceLine.class, hql)
+        .setNamedParameter("invId", getInvoice().getId())
+        .setNamedParameter("ordId", processingOrder.getId())
+        .setMaxResult(1)
+        .uniqueResult() != null;
   }
 }

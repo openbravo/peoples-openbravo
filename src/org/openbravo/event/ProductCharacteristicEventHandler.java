@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2019 Openbravo SLU
+ * All portions are Copyright (C) 2013-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -25,7 +25,6 @@ import javax.enterprise.event.Observes;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -38,7 +37,6 @@ import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.model.ad.access.CharacteristicSubsetValue;
 import org.openbravo.model.common.plm.CharacteristicValue;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductCharacteristic;
@@ -48,6 +46,8 @@ import org.openbravo.model.common.plm.ProductCharacteristicValue;
 class ProductCharacteristicEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = {
       ModelProvider.getInstance().getEntity(ProductCharacteristic.ENTITY_NAME) };
+
+  private static final String MSG_NEW_VARIANTS_CH_ERROR = "NewVariantChWithVariantsError";
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -73,7 +73,7 @@ class ProductCharacteristicEventHandler extends EntityPersistenceEventObserver {
     final ProductCharacteristic prCh = (ProductCharacteristic) event.getTargetInstance();
     if (prCh.isVariant() && prCh.getProduct().isGeneric()) {
       if (!prCh.getProduct().getProductGenericProductList().isEmpty()) {
-        throw new OBException(OBMessageUtils.messageBD("NewVariantChWithVariantsError"));
+        throw new OBException(OBMessageUtils.messageBD(MSG_NEW_VARIANTS_CH_ERROR));
       }
       if (prCh.isDefinesPrice()) {
         // Check there is only 1.
@@ -156,7 +156,7 @@ class ProductCharacteristicEventHandler extends EntityPersistenceEventObserver {
 
     if (!prCh.isVariant() && prCh.getProduct().isGeneric()
         && !prCh.getProduct().getProductGenericProductList().isEmpty()) {
-      throw new OBException(OBMessageUtils.messageBD("NewVariantChWithVariantsError"));
+      throw new OBException(OBMessageUtils.messageBD(MSG_NEW_VARIANTS_CH_ERROR));
     }
     if (prCh.isVariant() && prCh.getProduct().isGeneric()) {
       final Property variantProperty = prodCharEntity
@@ -164,7 +164,7 @@ class ProductCharacteristicEventHandler extends EntityPersistenceEventObserver {
       boolean oldIsVariant = (Boolean) event.getPreviousState(variantProperty);
 
       if (!prCh.getProduct().getProductGenericProductList().isEmpty() && !oldIsVariant) {
-        throw new OBException(OBMessageUtils.messageBD("NewVariantChWithVariantsError"));
+        throw new OBException(OBMessageUtils.messageBD(MSG_NEW_VARIANTS_CH_ERROR));
       }
       if (prCh.isDefinesPrice()) {
         // Check there is only 1.
@@ -199,19 +199,17 @@ class ProductCharacteristicEventHandler extends EntityPersistenceEventObserver {
         @SuppressWarnings("unchecked")
         List<ProductCharacteristicConf> prChConfs = (List<ProductCharacteristicConf>) event
             .getCurrentState(charConfListProperty);
-
-        StringBuilder hql = new StringBuilder();
-        hql.append(" select cv." + CharacteristicValue.PROPERTY_ID);
-        hql.append(" from " + ProductCharacteristicConf.ENTITY_NAME + " as pcc");
-        hql.append(
-            " join pcc." + ProductCharacteristicConf.PROPERTY_CHARACTERISTICVALUE + " as cv");
-        hql.append(
-            " where pcc." + ProductCharacteristicConf.PROPERTY_CHARACTERISTICOFPRODUCT + " = :pc");
-        Query<String> query = OBDal.getInstance()
+        //@formatter:off
+        String hql = " select cv.id "
+                   + " from ProductCharacteristicConf as pcc "
+                   + " join pcc.characteristicValue as cv "
+                   + " where pcc.characteristicOfProduct.id = :pcID ";
+        //@formatter:on
+        final List<String> existingValues = OBDal.getInstance()
             .getSession()
-            .createQuery(hql.toString(), String.class);
-        query.setParameter("pc", prCh);
-        final List<String> existingValues = query.list();
+            .createQuery(hql, String.class)
+            .setParameter("pcID", prCh.getId())
+            .list();
 
         ScrollableResults scroll = getValuesToAdd(prCh);
         try {
@@ -267,36 +265,36 @@ class ProductCharacteristicEventHandler extends EntityPersistenceEventObserver {
 
     // If a subset is defined insert only values of it.
     if (prCh.getCharacteristicSubset() != null) {
-      StringBuilder hql = new StringBuilder();
-      hql.append(" select cv." + CharacteristicValue.PROPERTY_ID);
-      hql.append(" , coalesce(csv." + CharacteristicSubsetValue.PROPERTY_CODE + ", cv."
-          + CharacteristicValue.PROPERTY_CODE + ")");
-      hql.append(" , cv." + CharacteristicValue.PROPERTY_ACTIVE);
-      hql.append(" from " + CharacteristicSubsetValue.ENTITY_NAME + " as csv");
-      hql.append(" join csv." + CharacteristicSubsetValue.PROPERTY_CHARACTERISTICVALUE + " as cv");
-      hql.append(
-          " where csv." + CharacteristicSubsetValue.PROPERTY_CHARACTERISTICSUBSET + " = :cs");
-      Query<Object[]> query = OBDal.getInstance()
+      //@formatter:off
+      String hql = " select cv.id, "
+                 + "        coalesce(csv.code, cv.code), "
+                 + "        cv.active "
+                 + " from CharacteristicSubsetValue as csv "
+                 + " join csv.characteristicValue as cv "
+                 + " where csv.characteristicSubset.id = :csId ";
+      //@formatter:on
+      return OBDal.getInstance()
           .getSession()
-          .createQuery(hql.toString(), Object[].class);
-      query.setParameter("cs", prCh.getCharacteristicSubset());
-      return query.scroll(ScrollMode.FORWARD_ONLY);
+          .createQuery(hql, Object[].class)
+          .setParameter("csId", prCh.getCharacteristicSubset().getId())
+          .scroll(ScrollMode.FORWARD_ONLY);
     }
 
     // Add all not summary values.
     else {
-      StringBuilder hql = new StringBuilder();
-      hql.append(" select cv." + CharacteristicValue.PROPERTY_ID);
-      hql.append(" , cv." + CharacteristicValue.PROPERTY_CODE);
-      hql.append(" , cv." + CharacteristicValue.PROPERTY_ACTIVE);
-      hql.append(" from " + CharacteristicValue.ENTITY_NAME + " as cv");
-      hql.append(" where cv." + CharacteristicValue.PROPERTY_CHARACTERISTIC + " = :c");
-      hql.append(" and cv." + CharacteristicValue.PROPERTY_SUMMARYLEVEL + " = false");
-      Query<Object[]> query = OBDal.getInstance()
+      //@formatter:off
+      String hql = " select cv.id, "
+                 + " cv.code, "
+                 + " cv.active "
+                 + " from CharacteristicValue as cv "
+                 + " where cv.characteristic.id = :cId "
+                 + " and cv.summaryLevel = false ";
+      //@formatter:on
+      return OBDal.getInstance()
           .getSession()
-          .createQuery(hql.toString(), Object[].class);
-      query.setParameter("c", prCh.getCharacteristic());
-      return query.scroll(ScrollMode.FORWARD_ONLY);
+          .createQuery(hql, Object[].class)
+          .setParameter("cId", prCh.getCharacteristic().getId())
+          .scroll(ScrollMode.FORWARD_ONLY);
     }
   }
 

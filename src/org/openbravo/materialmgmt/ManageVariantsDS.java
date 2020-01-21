@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2019 Openbravo SLU
+ * All portions are Copyright (C) 2013-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -51,7 +51,6 @@ import org.openbravo.model.common.plm.CharacteristicValue;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductCharacteristic;
 import org.openbravo.model.common.plm.ProductCharacteristicConf;
-import org.openbravo.model.common.plm.ProductCharacteristicValue;
 import org.openbravo.service.datasource.DataSourceProperty;
 import org.openbravo.service.datasource.ReadOnlyDataSourceService;
 import org.openbravo.service.json.JsonUtils;
@@ -59,7 +58,7 @@ import org.openbravo.service.json.JsonUtils;
 public class ManageVariantsDS extends ReadOnlyDataSourceService {
 
   private static final Logger log = LogManager.getLogger();
-  private static final int searchKeyLength = getSearchKeyColumnLength();
+  private static final int SEARCH_KEY_LENGTH = getSearchKeyColumnLength();
   private static final String MANAGE_VARIANTS_TABLE_ID = "147D4D709FAC4AF0B611ABFED328FA12";
   private static final String ID_REFERENCE_ID = "13";
 
@@ -150,7 +149,7 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
         throw new OBException("HighRecords");
       }
       totalMaxLength += Long.toString(variantNumber).length();
-      boolean useCodes = totalMaxLength <= searchKeyLength;
+      boolean useCodes = totalMaxLength <= SEARCH_KEY_LENGTH;
 
       boolean hasNext = true;
       int productNo = 0;
@@ -170,7 +169,7 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
         variantMap.put("variantCreated", false);
         variantMap.put("obSelected", false);
 
-        String searchKey = product.getSearchKey();
+        StringBuilder searchKey = new StringBuilder().append(product.getSearchKey());
         for (i = 0; i < chNumber; i++) {
           ProductCharacteristicConf prChConf = currentValues[i];
           ProductCharacteristicAux prChConfAux = prChUseCode.get(prChs.get(i));
@@ -182,33 +181,33 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
 
           if (useCodes && prChConfAux.isUseCode() && prChConf != null
               && StringUtils.isNotBlank(prChConf.getCode())) {
-            searchKey += "_" + prChConf.getCode() + "_";
+            searchKey.append("_" + prChConf.getCode() + "_");
           }
         }
         for (int j = 0; j < (Long.toString(variantNumber).length()
             - Integer.toString(productNo).length()); j++) {
-          searchKey += "0";
+          searchKey.append("0");
         }
-        searchKey += productNo;
+        searchKey.append(productNo);
         variantMap.put("searchKey", searchKey);
+        //@formatter:off
+        String hql = " as p "
+                   + " where p.genericProduct.id = :productId ";
+        //@formatter:on
 
-        StringBuilder where = new StringBuilder();
-        where.append(" as p ");
-        where.append(" where p." + Product.PROPERTY_GENERICPRODUCT + " = :product");
-
-        String strChDesc = "";
-        String strKeyId = "";
+        StringBuilder strChDesc = new StringBuilder();
+        StringBuilder strKeyId = new StringBuilder();
         JSONArray valuesArray = new JSONArray();
         for (i = 0; i < chNumber; i++) {
           ProductCharacteristicConf prChConf = currentValues[i];
           Characteristic characteristic = prChConf.getCharacteristicOfProduct().getCharacteristic();
-          where.append(buildExistsClause(i));
-          if (StringUtils.isNotBlank(strChDesc)) {
-            strChDesc += ", ";
+          hql += buildExistsClause(i);
+          if (StringUtils.isNotBlank(strChDesc.toString())) {
+            strChDesc.append(", ");
           }
-          strChDesc += characteristic.getName() + ":";
-          strChDesc += " " + prChConf.getCharacteristicValue().getName();
-          strKeyId += prChConf.getCharacteristicValue().getId();
+          strChDesc.append(characteristic.getName() + ":");
+          strChDesc.append(" " + prChConf.getCharacteristicValue().getName());
+          strKeyId.append(prChConf.getCharacteristicValue().getId());
           JSONObject value = new JSONObject();
           value.put("characteristic", characteristic.getId());
           value.put("characteristicValue", prChConf.getCharacteristicValue().getId());
@@ -220,13 +219,13 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
         variantMap.put("id", strKeyId);
 
         OBQuery<Product> variantQry = OBDal.getInstance()
-            .createQuery(Product.class, where.toString());
-        variantQry.setNamedParameter("product", product);
+            .createQuery(Product.class, hql)
+            .setNamedParameter("productId", product.getId());
         for (i = 0; i < chNumber; i++) {
           ProductCharacteristicConf prChConf = currentValues[i];
           Characteristic characteristic = prChConf.getCharacteristicOfProduct().getCharacteristic();
-          variantQry.setNamedParameter("ch" + i, characteristic.getId());
-          variantQry.setNamedParameter("chvalue" + i, prChConf.getCharacteristicValue().getId());
+          variantQry.setNamedParameter("ch" + i, characteristic.getId())
+              .setNamedParameter("chvalue" + i, prChConf.getCharacteristicValue().getId());
         }
         Product existingProduct = variantQry.uniqueResult();
         if (existingProduct != null) {
@@ -364,16 +363,13 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
   }
 
   private String buildExistsClause(int i) {
-    StringBuffer clause = new StringBuffer();
-    clause
-        .append(" and exists (select 1 from " + ProductCharacteristicValue.ENTITY_NAME + " as pcv");
-    clause.append("    where pcv." + ProductCharacteristicValue.PROPERTY_PRODUCT + " = p");
-    clause.append(
-        "      and pcv." + ProductCharacteristicValue.PROPERTY_CHARACTERISTIC + ".id = :ch" + i);
-    clause.append("      and pcv." + ProductCharacteristicValue.PROPERTY_CHARACTERISTICVALUE
-        + ".id = :chvalue" + i);
-    clause.append("     )");
-    return clause.toString();
+    //@formatter:off
+    return " and exists (select 1 "
+        + "             from ProductCharacteristicValue as pcv "
+        + "             where pcv.product.id = p.id "
+        + "             and pcv.characteristic.id = :ch" + i
+        + "             and pcv.characteristicValue.id = :chvalue" + i + ") ";
+    //@formatter:on
   }
 
   private static int getSearchKeyColumnLength() {
@@ -387,17 +383,17 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
     private String sortByField;
     private boolean ascending;
 
-    public ResultComparator(String _sortByField, boolean _ascending) {
-      sortByField = _sortByField;
-      ascending = _ascending;
+    public ResultComparator(String sortbyfield, boolean isascending) {
+      sortByField = sortbyfield;
+      ascending = isascending;
     }
 
     @Override
     public int compare(Map<String, Object> map1, Map<String, Object> map2) {
       boolean sortByChanged = false;
       if ("variantCreated".equals(sortByField)) {
-        Boolean o1 = (Boolean) map1.get(sortByField);
-        Boolean o2 = (Boolean) map2.get(sortByField);
+        boolean o1 = (boolean) map1.get(sortByField);
+        boolean o2 = (boolean) map2.get(sortByField);
         if (o1 == o2) {
           sortByField = "characteristicDescription";
           sortByChanged = true;
@@ -409,8 +405,8 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
       }
       // previous if might have changed the value of sortByField
       if (!"variantCreated".equals(sortByField)) {
-        String str1 = (String) map1.get(sortByField);
-        String str2 = (String) map2.get(sortByField);
+        String str1 = map1.get(sortByField).toString();
+        String str2 = map2.get(sortByField).toString();
         if (sortByChanged) {
           sortByField = "variantCreated";
         }
@@ -432,11 +428,11 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
     private List<CharacteristicValue> filteredValues;
     private Iterator<ProductCharacteristicConf> iterator;
 
-    ProductCharacteristicAux(boolean _useCode, List<ProductCharacteristicConf> _values,
-        List<CharacteristicValue> _filteredValues) {
-      useCode = _useCode;
-      values = _values;
-      filteredValues = _filteredValues;
+    ProductCharacteristicAux(boolean usecode, List<ProductCharacteristicConf> valueslist,
+        List<CharacteristicValue> filteredvalues) {
+      useCode = usecode;
+      values = valueslist;
+      filteredValues = filteredvalues;
     }
 
     public boolean isUseCode() {

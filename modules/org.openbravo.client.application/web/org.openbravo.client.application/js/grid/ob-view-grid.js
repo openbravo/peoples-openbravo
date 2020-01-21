@@ -554,7 +554,10 @@ isc.OBViewGrid.addProperties({
     }
 
     // only personalize if there is a professional license
-    if (!OB.Utilities.checkProfessionalLicense(null, true)) {
+    if (
+      !OB.Utilities.checkProfessionalLicense(null, true) &&
+      this.view.standardWindow
+    ) {
       vwState = this.view.standardWindow.getDefaultGridViewState(
         this.view.tabId
       );

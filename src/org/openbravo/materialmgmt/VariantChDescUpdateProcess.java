@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2018 Openbravo SLU
+ * All portions are Copyright (C) 2013-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -39,6 +39,7 @@ import org.openbravo.service.db.DalBaseProcess;
 public class VariantChDescUpdateProcess extends DalBaseProcess {
   private static final Logger log4j = LogManager.getLogger();
   public static final String AD_PROCESS_ID = "58591E3E0F7648E4A09058E037CE49FC";
+  private static final String ERROR_MSG_TYPE = "Error";
 
   @Override
   public void doExecute(ProcessBundle bundle) throws Exception {
@@ -58,16 +59,16 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
       // Postgres wraps the exception into a GenericJDBCException
     } catch (GenericJDBCException ge) {
       log4j.error("Exception processing variant generation", ge);
-      msg.setType("Error");
-      msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error",
+      msg.setType(ERROR_MSG_TYPE);
+      msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), ERROR_MSG_TYPE,
           bundle.getContext().getLanguage()));
       msg.setMessage(ge.getSQLException().getMessage().split("\n")[0]);
       bundle.setResult(msg);
       OBDal.getInstance().rollbackAndClose();
     } catch (final Exception e) {
       log4j.error("Exception processing variant generation", e);
-      msg.setType("Error");
-      msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error",
+      msg.setType(ERROR_MSG_TYPE);
+      msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), ERROR_MSG_TYPE,
           bundle.getContext().getLanguage()));
       msg.setMessage(FIN_Utility.getExceptionMessage(e));
       bundle.setResult(msg);
@@ -96,22 +97,22 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
         }
         return;
       }
-      StringBuffer where = new StringBuffer();
-      where.append(" as p");
-      where.append(" where p." + Product.PROPERTY_PRODUCTCHARACTERISTICLIST + " is not empty");
+      //@formatter:off
+      String hql = " as p"
+                 + " where p.productCharacteristicList is not empty ";
       if (StringUtils.isNotBlank(strChValueId)) {
-        where.append(" and exists (select 1 from p."
-            + Product.PROPERTY_PRODUCTCHARACTERISTICVALUELIST + " as chv");
-        where.append("    where chv." + ProductCharacteristicValue.PROPERTY_CHARACTERISTICVALUE
-            + ".id = :chvid)");
+        hql += " and exists (select 1 "
+             + "              from p.productCharacteristicValueList as chv "
+             + "              where chv.characteristicValue.id = :chvid) ";
       }
+      //@formatter:on
       OBQuery<Product> productQuery = OBDal.getInstance()
-          .createQuery(Product.class, where.toString());
+          .createQuery(Product.class, hql)
+          .setFilterOnReadableOrganization(false)
+          .setFilterOnActive(false);
       if (StringUtils.isNotBlank(strChValueId)) {
         productQuery.setNamedParameter("chvid", strChValueId);
       }
-      productQuery.setFilterOnReadableOrganization(false);
-      productQuery.setFilterOnActive(false);
 
       ScrollableResults products = productQuery.scroll(ScrollMode.FORWARD_ONLY);
       int i = 0;
@@ -136,36 +137,39 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
   }
 
   private void updateProduct(Product product) {
-    String strChDesc = "";
-    StringBuffer where = new StringBuffer();
-    where.append(" as pch");
-    where.append(" where pch." + ProductCharacteristic.PROPERTY_PRODUCT + " = :product");
-    where.append(" order by pch." + ProductCharacteristic.PROPERTY_SEQUENCENUMBER);
+    StringBuilder strChDesc = new StringBuilder();
+    //@formatter:off
+    String hql = " as pch "
+               + " where pch.product.id = :productId "
+               + " order by pch.sequenceNumber ";
+    //@formatter:on
     OBQuery<ProductCharacteristic> pchQuery = OBDal.getInstance()
-        .createQuery(ProductCharacteristic.class, where.toString());
-    pchQuery.setFilterOnActive(false);
-    pchQuery.setFilterOnReadableOrganization(false);
-    pchQuery.setNamedParameter("product", product);
+        .createQuery(ProductCharacteristic.class, hql)
+        .setFilterOnActive(false)
+        .setFilterOnReadableOrganization(false)
+        .setNamedParameter("productId", product.getId());
+
     for (ProductCharacteristic pch : pchQuery.list()) {
-      if (StringUtils.isNotBlank(strChDesc)) {
-        strChDesc += ", ";
+      if (StringUtils.isNotBlank(strChDesc.toString())) {
+        strChDesc.append(", ");
       }
-      strChDesc += pch.getCharacteristic().getName() + ":";
-      where = new StringBuffer();
-      where.append(" as pchv");
-      where.append(
-          " where pchv." + ProductCharacteristicValue.PROPERTY_CHARACTERISTIC + ".id = :ch");
-      where.append("   and pchv." + ProductCharacteristicValue.PROPERTY_PRODUCT + ".id = :product");
+      strChDesc.append(pch.getCharacteristic().getName() + ":");
+      //@formatter:off
+      hql = " as pchv "
+          + " where pchv.characteristic.id = :chId "
+          + " and pchv.product.id = :productId ";
+      //@formatter:on
       OBQuery<ProductCharacteristicValue> pchvQuery = OBDal.getInstance()
-          .createQuery(ProductCharacteristicValue.class, where.toString());
-      pchvQuery.setFilterOnActive(false);
-      pchvQuery.setFilterOnReadableOrganization(false);
-      pchvQuery.setNamedParameter("ch", pch.getCharacteristic().getId());
-      pchvQuery.setNamedParameter("product", product.getId());
+          .createQuery(ProductCharacteristicValue.class, hql)
+          .setFilterOnActive(false)
+          .setFilterOnReadableOrganization(false)
+          .setNamedParameter("chId", pch.getCharacteristic().getId())
+          .setNamedParameter("productId", product.getId());
+
       for (ProductCharacteristicValue pchv : pchvQuery.list()) {
-        strChDesc += " " + pchv.getCharacteristicValue().getName();
+        strChDesc.append(" " + pchv.getCharacteristicValue().getName());
       }
     }
-    product.setCharacteristicDescription(strChDesc);
+    product.setCharacteristicDescription(strChDesc.toString());
   }
 }

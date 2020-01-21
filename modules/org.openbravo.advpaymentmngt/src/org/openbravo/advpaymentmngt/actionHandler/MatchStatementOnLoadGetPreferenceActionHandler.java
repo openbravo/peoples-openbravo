@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015 Openbravo SLU
+ * All portions are Copyright (C) 2015-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,7 +27,6 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.ad.domain.Preference;
 
 public class MatchStatementOnLoadGetPreferenceActionHandler extends BaseActionHandler {
@@ -38,14 +37,16 @@ public class MatchStatementOnLoadGetPreferenceActionHandler extends BaseActionHa
     JSONObject jsonResponse = new JSONObject();
     try {
       OBContext.setAdminMode(true);
-      StringBuffer whereClause = new StringBuffer();
-      whereClause.append(" as p ");
-      whereClause.append(" where p.userContact.id = :userId");
-      whereClause.append("   and p.attribute = 'APRM_NoPersistInfoMessageInMatching' ");
-      OBQuery<Preference> query = OBDal.getInstance()
-          .createQuery(Preference.class, whereClause.toString());
-      query.setNamedParameter("userId", OBContext.getOBContext().getUser().getId());
-      for (Preference preference : query.list()) {
+      //@formatter:off
+      String hql = 
+              " as p " +
+              " where p.userContact.id = :userId" +
+              "   and p.attribute = 'APRM_NoPersistInfoMessageInMatching' ";
+      //@formatter:on
+      for (Preference preference : OBDal.getInstance()
+          .createQuery(Preference.class, hql)
+          .setNamedParameter("userId", OBContext.getOBContext().getUser().getId())
+          .list()) {
         jsonResponse.put("preference", preference.getSearchKey());
         return jsonResponse;
       }

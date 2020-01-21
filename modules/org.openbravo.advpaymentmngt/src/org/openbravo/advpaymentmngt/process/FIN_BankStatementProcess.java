@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2018 Openbravo SLU
+ * All portions are Copyright (C) 2018-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -20,9 +20,7 @@
 package org.openbravo.advpaymentmngt.process;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,7 +32,6 @@ import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
@@ -101,7 +98,7 @@ public class FIN_BankStatementProcess implements org.openbravo.scheduling.Proces
             }
           }
         }
-        if (msg.getType() != null && !msg.getType().toLowerCase().equals("warning")) {
+        if (msg.getType() != null && !msg.getType().equalsIgnoreCase("warning")) {
           // Success
           bankStatement.setProcessed(true);
           bankStatement.setAPRMProcessBankStatement("R");
@@ -166,24 +163,22 @@ public class FIN_BankStatementProcess implements org.openbravo.scheduling.Proces
 
   private Date getMaxBSLDate(FIN_BankStatement bankstatement) {
     // Get last transaction date from previous bank statements
-    final StringBuilder whereClause = new StringBuilder();
-    Map<String, Object> parameters = new HashMap<>(2);
-    whereClause.append(" as bsl ");
-    whereClause.append(" where bsl.");
-    whereClause.append(FIN_BankStatementLine.PROPERTY_BANKSTATEMENT);
-    whereClause.append("." + FIN_BankStatement.PROPERTY_ACCOUNT + " = :account");
-    parameters.put("account", bankstatement.getAccount());
-    whereClause
-        .append(" and bsl." + FIN_BankStatementLine.PROPERTY_BANKSTATEMENT + " <> :bankStatement");
-    parameters.put("bankStatement", bankstatement);
-    whereClause.append(" and bsl.bankStatement.processed = 'Y'");
-    whereClause.append(" order by bsl." + FIN_BankStatementLine.PROPERTY_TRANSACTIONDATE);
-    whereClause.append(" desc");
+    //@formatter:off
+    final String hql =
+                  "as bsl " +
+                  " where bsl.bankStatement.account.id = :accountId" +
+                  "   and bsl.bankStatement.id <> :bankStatementId" +
+                  "   and bsl.bankStatement.processed = 'Y'" +
+                  " order by bsl.transactionDate desc";
+    //@formatter:on
 
-    final OBQuery<FIN_BankStatementLine> obData = OBDal.getInstance()
-        .createQuery(FIN_BankStatementLine.class, whereClause.toString(), parameters);
-    obData.setMaxResult(1);
-    FIN_BankStatementLine line = obData.uniqueResult();
+    FIN_BankStatementLine line = OBDal.getInstance()
+        .createQuery(FIN_BankStatementLine.class, hql)
+        .setNamedParameter("accountId", bankstatement.getAccount().getId())
+        .setNamedParameter("bankStatementId", bankstatement.getId())
+        .setMaxResult(1)
+        .uniqueResult();
+
     if (line != null) {
       return line.getTransactionDate();
     }
@@ -210,7 +205,7 @@ public class FIN_BankStatementProcess implements org.openbravo.scheduling.Proces
       obc.addOrderBy(FIN_BankStatementLine.PROPERTY_TRANSACTIONDATE, true);
       obc.setMaxResults(1);
       final List<FIN_BankStatementLine> bst = obc.list();
-      if (bst.size() == 0) {
+      if (bst.isEmpty()) {
         return minDate;
       }
       minDate = bst.get(0).getTransactionDate();
@@ -255,7 +250,6 @@ public class FIN_BankStatementProcess implements org.openbravo.scheduling.Proces
     } finally {
       OBContext.restorePreviousMode();
     }
-    return;
   }
 
 }

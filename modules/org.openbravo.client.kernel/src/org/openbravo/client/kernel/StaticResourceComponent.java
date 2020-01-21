@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -56,26 +56,6 @@ public class StaticResourceComponent extends BaseComponent {
 
   @Inject
   private StaticResourceProvider resourceProvider;
-
-  private Boolean isInDevelopment;
-
-  @Override
-  public boolean isInDevelopment() {
-    if (isInDevelopment == null) {
-      isInDevelopment = false;
-      for (ComponentProvider provider : componentProviders) {
-        final List<ComponentResource> resources = provider.getGlobalComponentResources();
-        if (resources == null || resources.size() == 0) {
-          continue;
-        }
-        if (provider.getModule().isInDevelopment()) {
-          isInDevelopment = true;
-          return isInDevelopment;
-        }
-      }
-    }
-    return isInDevelopment;
-  }
 
   /**
    * @return returns this instance
@@ -144,8 +124,9 @@ public class StaticResourceComponent extends BaseComponent {
           "var isomorphicDir='../web/org.openbravo.userinterface.smartclient/isomorphic/';\n");
 
       final String scDevModulePackage = "org.openbravo.userinterface.smartclient.dev";
+      final String scDevModuleId = "5C3673B66CA3494B9981BE61F73A3A85";
       if (KernelUtils.getInstance().isModulePresent(scDevModulePackage)
-          && KernelUtils.getInstance().getModule(scDevModulePackage).isInDevelopment()) {
+          && isInDevelopment(scDevModuleId)) {
         result.append(
             "document.write('<'+'SCRIPT SRC=' + window.isomorphicDir + 'ISC_Combined.uncompressed.js><'+'/SCRIPT>');");
       }
