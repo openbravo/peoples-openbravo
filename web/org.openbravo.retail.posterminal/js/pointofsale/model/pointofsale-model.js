@@ -980,7 +980,11 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             warehousename: OB.MobileApp.model.get('warehouses')[0].warehousename
           };
         // Do not calculate the receipt if the ticket is not editable or is being cloned
-        if (!receipt.get('isEditable') || receipt.get('cloningReceipt')) {
+        if (
+          !receipt.get('isEditable') ||
+          receipt.get('skipApplyPromotions') ||
+          receipt.get('cloningReceipt')
+        ) {
           return;
         }
         if (

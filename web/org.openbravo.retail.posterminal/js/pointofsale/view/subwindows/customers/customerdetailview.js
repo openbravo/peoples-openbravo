@@ -611,7 +611,7 @@ enyo.kind({
       }
     },
     {
-      kind: 'OB.UI.CustomerConsentCheckProperty',
+      kind: 'OB.UI.CustomerCheckProperty',
       name: 'isCustomerConsent',
       classes:
         'obObPosPointOfSaleUiCustomersEditCustomersImpl-isCustomerConsent',

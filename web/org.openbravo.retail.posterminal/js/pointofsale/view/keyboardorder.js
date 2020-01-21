@@ -646,7 +646,7 @@ enyo.kind({
   searchProduct: function(code, callback, attrs) {
     var me = this,
       criteria = {
-        uPCEAN: code
+        uPCEAN: code.toUpperCase()
       };
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
       var uPCEAN = {

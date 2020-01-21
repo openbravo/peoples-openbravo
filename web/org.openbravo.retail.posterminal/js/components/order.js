@@ -488,6 +488,18 @@ enyo.kind({
   showing: false,
   content: '',
 
+  clearLabel: function() {
+    this.removeClass('obUiOrderViewDivText_ToBeLaidaway');
+    this.removeClass('obUiOrderViewDivText_ToBeReturned');
+    this.removeClass('obUiOrderViewDivText_CancelLayaway');
+    this.removeClass('obUiOrderViewDivText_CancelLayawayFromLayaway');
+    this.removeClass('obUiOrderViewDivText_CancelAndReplaceType1');
+    this.removeClass('obUiOrderViewDivText_CancelAndReplaceType2');
+    this.removeClass('obUiOrderViewDivText_layaway');
+    this.removeClass('obUiOrderViewDivText_paid');
+    this.removeClass('obUiOrderViewDivText_quotation');
+  },
+
   changeHasbeenpaid: function(model) {
     if (
       model.get('isQuotation') &&
@@ -508,6 +520,7 @@ enyo.kind({
   },
 
   setQuotationLabel: function(model) {
+    this.clearLabel();
     this.addClass('obUiOrderViewDivText_quotation');
     if (model.get('hasbeenpaid') === 'Y') {
       this.setContent(OB.I18N.getLabel('OBPOS_QuotationUnderEvaluation'));
@@ -518,6 +531,7 @@ enyo.kind({
   },
 
   setPaidLabel: function(model) {
+    this.clearLabel();
     this.addClass('obUiOrderViewDivText_paid');
     if (model.get('iscancelled')) {
       this.setContent(OB.I18N.getLabel('OBPOS_Cancelled'));
@@ -543,6 +557,7 @@ enyo.kind({
   },
 
   setLayawayLabel: function(model) {
+    this.clearLabel();
     this.addClass('obUiOrderViewDivText_layaway');
     if (model.get('iscancelled')) {
       this.setContent(OB.I18N.getLabel('OBPOS_Cancelled'));
@@ -553,6 +568,7 @@ enyo.kind({
   },
 
   setCancelAndReplaceLabel: function(model) {
+    this.clearLabel();
     if (model.get('orderType') === 2) {
       this.addClass('obUiOrderViewDivText_CancelAndReplaceType1');
       this.setContent(
@@ -574,6 +590,7 @@ enyo.kind({
   },
 
   setCancelLayawayLabel: function(model) {
+    this.clearLabel();
     if (model.get('fromLayaway')) {
       this.addClass('obUiOrderViewDivText_CancelLayawayFromLayaway');
       this.setContent(OB.I18N.getLabel('OBPOS_CancelLayaway'));
@@ -585,12 +602,14 @@ enyo.kind({
   },
 
   setToBeReturnedLabel: function(model) {
+    this.clearLabel();
     this.addClass('obUiOrderViewDivText_ToBeReturned');
     this.setContent(OB.I18N.getLabel('OBPOS_ToBeReturned'));
     this.show();
   },
 
   setToBeLaidawayLabel: function(model) {
+    this.clearLabel();
     this.addClass('obUiOrderViewDivText_ToBeLaidaway');
     this.setContent(OB.I18N.getLabel('OBPOS_ToBeLaidaway'));
     this.show();
@@ -714,105 +733,115 @@ enyo.kind({
       }
     },
     {
-      tag: 'ul',
+      kind: 'Scroller',
+      thumb: true,
       classes: 'obUiOrderView-totalAndBreakdowns',
       name: 'totalAndBreakdowns',
       components: [
         {
-          tag: 'li',
-          classes: 'obUiOrderView-totalAndBreakdowns-row1',
+          tag: 'ul',
+          name: 'list',
+          classes: 'obUiOrderView-totalAndBreakdowns-list',
           components: [
             {
-              classes: 'obUiOrderView-totalAndBreakdowns-row1-totalTaxLine',
-              kind: 'OB.UI.TotalTaxLine',
-              name: 'totalTaxLine'
-            },
-            {
-              classes: 'obUiOrderView-totalAndBreakdowns-row1-totalReceiptLine',
-              kind: 'OB.UI.TotalReceiptLine',
-              name: 'totalReceiptLine'
-            }
-          ]
-        },
-        {
-          tag: 'li',
-          classes: 'obUiOrderView-totalAndBreakdowns-row2',
-          components: [
-            {
-              classes: 'obUiOrderView-totalAndBreakdowns-row2-injectedFooter',
-              name: 'injectedFooter'
-            },
-            {
-              classes: 'obUiOrderView-totalAndBreakdowns-row2-status',
+              tag: 'li',
+              classes: 'obUiOrderView-totalAndBreakdowns-list-row1',
               components: [
                 {
-                  kind: 'OB.UI.BtnReceiptToInvoice',
                   classes:
-                    'obUiOrderView-totalAndBreakdowns-row2-status-divbtninvoice',
-                  name: 'divbtninvoice',
-                  showing: false
+                    'obUiOrderView-totalAndBreakdowns-list-row1-totalTaxLine',
+                  kind: 'OB.UI.TotalTaxLine',
+                  name: 'totalTaxLine'
                 },
                 {
-                  kind: 'OB.UI.OrderViewDivText',
                   classes:
-                    'obUiOrderView-totalAndBreakdowns-row2-status-divText',
-                  name: 'divText'
+                    'obUiOrderView-totalAndBreakdowns-list-row1-totalReceiptLine',
+                  kind: 'OB.UI.TotalReceiptLine',
+                  name: 'totalReceiptLine'
                 }
               ]
-            }
-          ]
-        },
-        {
-          tag: 'li',
-          classes: 'obUiOrderView-totalAndBreakdowns-row3',
-          components: [
+            },
             {
-              kind: 'OB.UI.TaxBreakdown',
-              classes: 'obUiOrderView-totalAndBreakdowns-row3-taxBreakdown',
-              name: 'taxBreakdown'
-            }
-          ]
-        },
-        {
-          kind: 'OB.UI.ScrollableTable',
-          classes: 'obUiOrderView-totalAndBreakdowns-listTaxLines',
-          name: 'listTaxLines',
-          scrollAreaClasses:
-            'obUiOrderView-totalAndBreakdowns-listTaxLines-scrollAreaClasses',
-          renderLine: 'OB.UI.RenderTaxLine',
-          renderEmpty: 'OB.UI.RenderTaxLineEmpty',
-          //defined on redenderorderline.js
-          listStyle: 'nonselectablelist',
-          columns: ['tax', 'base', 'totaltax']
-        },
-        {
-          tag: 'li',
-          classes: 'obUiOrderView-totalAndBreakdowns-row5',
-          components: [
-            {
-              name: 'paymentBreakdown',
-              classes: 'obUiOrderView-totalAndBreakdowns-row5-paymentBreakdown',
-              showing: false,
+              tag: 'li',
+              classes: 'obUiOrderView-totalAndBreakdowns-list-row2',
               components: [
                 {
-                  classes: 'obUiOrderView-paymentBreakdown-lblTotalPayment',
-                  name: 'lblTotalPayment'
+                  classes:
+                    'obUiOrderView-totalAndBreakdowns-list-row2-injectedFooter',
+                  name: 'injectedFooter'
+                },
+                {
+                  classes: 'obUiOrderView-totalAndBreakdowns-list-row2-status',
+                  components: [
+                    {
+                      kind: 'OB.UI.BtnReceiptToInvoice',
+                      classes:
+                        'obUiOrderView-totalAndBreakdowns-list-row2-status-divbtninvoice',
+                      name: 'divbtninvoice',
+                      showing: false
+                    },
+                    {
+                      kind: 'OB.UI.OrderViewDivText',
+                      classes:
+                        'obUiOrderView-totalAndBreakdowns-list-row2-status-divText',
+                      name: 'divText'
+                    }
+                  ]
                 }
               ]
+            },
+            {
+              tag: 'li',
+              classes: 'obUiOrderView-totalAndBreakdowns-list-row3',
+              components: [
+                {
+                  kind: 'OB.UI.TaxBreakdown',
+                  classes:
+                    'obUiOrderView-totalAndBreakdowns-list-row3-taxBreakdown',
+                  name: 'taxBreakdown'
+                }
+              ]
+            },
+            {
+              kind: 'OB.UI.Table',
+              classes: 'obUiOrderView-totalAndBreakdowns-list-listTaxLines',
+              name: 'listTaxLines',
+              renderLine: 'OB.UI.RenderTaxLine',
+              renderEmpty: 'OB.UI.RenderTaxLineEmpty',
+              //defined on redenderorderline.js
+              listStyle: 'nonselectablelist',
+              columns: ['tax', 'base', 'totaltax']
+            },
+            {
+              tag: 'li',
+              classes: 'obUiOrderView-totalAndBreakdowns-list-row5',
+              components: [
+                {
+                  name: 'paymentBreakdown',
+                  classes:
+                    'obUiOrderView-totalAndBreakdowns-list-row5-paymentBreakdown',
+                  showing: false,
+                  components: [
+                    {
+                      classes:
+                        'obUiOrderView-paymentBreakdown-list-lblTotalPayment',
+                      name: 'lblTotalPayment'
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              kind: 'OB.UI.Table',
+              classes: 'obUiOrderView-totalAndBreakdowns-list-listPaymentLines',
+              name: 'listPaymentLines',
+              showing: false,
+              renderLine: 'OB.UI.RenderPaymentLine',
+              renderEmpty: 'OB.UI.RenderPaymentLineEmpty',
+              //defined on redenderorderline.js
+              listStyle: 'nonselectablelist'
             }
           ]
-        },
-        {
-          kind: 'OB.UI.ScrollableTable',
-          classes: 'obUiOrderView-totalAndBreakdowns-listPaymentLines',
-          name: 'listPaymentLines',
-          showing: false,
-          scrollAreaClasses:
-            'obUiOrderView-totalAndBreakdowns-listPaymentLines-scrollArea',
-          renderLine: 'OB.UI.RenderPaymentLine',
-          renderEmpty: 'OB.UI.RenderPaymentLineEmpty',
-          //defined on redenderorderline.js
-          listStyle: 'nonselectablelist'
         }
       ]
     }
@@ -940,6 +969,7 @@ enyo.kind({
       'paintTaxes',
       function() {
         this.setTaxes();
+        this.$.listOrderLines.setScrollAfterAdd();
       },
       this
     );
