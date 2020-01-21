@@ -75,12 +75,12 @@ class ProductServiceConfigurationObserver extends EntityPersistenceEventObserver
     String hql = "as ol "
                + "join ol.salesOrder as o "
                + "where o.documentStatus = 'CO' "
-               + "and ol.product = :product "
+               + "and ol.product.id = :productId "
                + "and ol.deliveredQuantity <> ol.orderedQuantity ";
     //@formatter:on
     OrderLine notDeliveredOrderLine = OBDal.getInstance()
         .createQuery(OrderLine.class, hql)
-        .setNamedParameter("product", product)
+        .setNamedParameter("productId", product.getId())
         .setMaxResult(1)
         .uniqueResult();
     if (notDeliveredOrderLine != null) {
