@@ -11473,7 +11473,10 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 */
 .obObposPointOfSaleUiCustomeraddrEditCustomerFooter {}
 
-.obObposPointOfSaleUiCustomeraddrEditCustomerFooter-container1 {}
+.obObposPointOfSaleUiCustomeraddrEditCustomerFooter-container1 {
+  display: flex;
+  align-items: center;
+}
 
 .obObposPointOfSaleUiCustomeraddrEditCustomerFooter-container1-container1,
 .obObposPointOfSaleUiCustomeraddrEditCustomerFooter-container1-container2,
