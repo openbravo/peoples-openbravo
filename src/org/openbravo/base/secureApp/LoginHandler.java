@@ -604,11 +604,7 @@ public class LoginHandler extends HttpBaseServlet {
           .setFilterOnReadableOrganization(false)
           .uniqueResult();
 
-      if (PasswordHash.matches(newPassword, user.getPassword())) {
-        throwChangePasswordException("CPDifferentPassword", "CPSamePasswordThanOld", language);
-      } else if (!passwordStrengthChecker.isStrongPassword(newPassword)) {
-        throwChangePasswordException("CPWeakPasswordTitle", "CPPasswordNotStrongEnough", language);
-      } else {
+      if (!passwordStrengthChecker.isStrongPassword(user, newPassword)) {
         user.setPassword(PasswordHash.generateHash(newPassword));
         OBDal.getInstance().commitAndClose();
       }
@@ -617,12 +613,4 @@ public class LoginHandler extends HttpBaseServlet {
     }
   }
 
-  private void throwChangePasswordException(String titleKey, String messageKey, String language)
-      throws ChangePasswordException {
-    OBError errorMsg = new OBError();
-    errorMsg.setType("Error");
-    errorMsg.setTitle(Utility.messageBD(myPool, titleKey, language));
-    errorMsg.setMessage(Utility.messageBD(myPool, messageKey, language));
-    throw new ChangePasswordException(errorMsg.getMessage(), errorMsg);
-  }
 }

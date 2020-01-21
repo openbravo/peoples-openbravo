@@ -29,6 +29,8 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.authentication.AuthenticationExpirationPasswordException;
+import org.openbravo.authentication.ChangePasswordException;
 import org.openbravo.authentication.hashing.PasswordHash;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -63,6 +65,8 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
 
   @Inject
   private PasswordStrengthChecker passwordStrengthChecker;
+
+  JSONObject jsonRequest = null;
 
   /*
    * (non-Javadoc)
@@ -101,32 +105,33 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
     final String confirmPwd = json.getString("confirmPwd");
 
     if (!PasswordHash.matches(currentPwd, user.getPassword())) {
-      return createErrorResponse("currentPwd", "UINAVBA_CurrentPwdIncorrect");
-    }
-    if (currentPwd.equals(newPwd)) {
-      return createErrorResponse("newPwd", "CPDifferentPassword");
+      return createErrorResponse("currentPwd", "UINAVBA_CurrentPwdIncorrect", null);
     }
     if (newPwd == null || newPwd.trim().length() == 0) {
-      return createErrorResponse("currentPwd", "UINAVBA_IncorrectPwd");
+      return createErrorResponse("currentPwd", "UINAVBA_IncorrectPwd", null);
     }
     if (!newPwd.equals(confirmPwd)) {
-      return createErrorResponse("currentPwd", "UINAVBA_UnequalPwd");
+      return createErrorResponse("currentPwd", "UINAVBA_UnequalPwd", null);
     }
-    if (!passwordStrengthChecker.isStrongPassword(newPwd)) {
-      return createErrorResponse("newPwd", "CPPasswordNotStrongEnough");
+    try {
+      passwordStrengthChecker.isStrongPassword(user, newPwd);
+      user.setPassword(PasswordHash.generateHash(newPwd));
+      OBDal.getInstance().flush();
+    } catch (AuthenticationExpirationPasswordException | ChangePasswordException exception) {
+      return createErrorResponse("confirmPwd", null, exception.getMessage());
     }
-    user.setPassword(PasswordHash.generateHash(newPwd));
-    OBDal.getInstance().flush();
     return ApplicationConstants.ACTION_RESULT_SUCCESS;
   }
 
-  private JSONObject createErrorResponse(String fieldName, String messageKey) throws JSONException {
+  private JSONObject createErrorResponse(String fieldName, String messageKey, String messageTxt)
+      throws JSONException {
     final JSONObject response = new JSONObject();
     response.put("result", "error");
     final JSONArray fields = new JSONArray();
     final JSONObject field = new JSONObject();
     field.put("field", fieldName);
     field.put("messageCode", messageKey);
+    field.put("messageText", messageTxt);
     fields.put(field);
     response.put("fields", fields);
     return response;

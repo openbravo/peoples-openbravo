@@ -639,7 +639,13 @@ isc.OBUserProfile.addProperties({
 
             for (i = 0; i < length; i++) {
               var field = data.fields[i];
-              var errorMessage = OB.I18N.getLabel(field.messageCode);
+              var errorMessage =null; 
+              if (field.messageCode){
+            	  errorMessage = OB.I18N.getLabel(field.messageCode);
+              }
+              if (field.messageText){
+            	  errorMessage = field.messageText;
+              }
               pwdForm.addFieldErrors(field.field, errorMessage, true);
               isc.warn(errorMessage, dialogCallback, {
                 icon: '[SKINIMG]Dialog/error.png',

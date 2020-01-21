@@ -18,11 +18,20 @@
  */
 package org.openbravo.service.password;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
+import org.apache.commons.lang.StringUtils;
+import org.openbravo.authentication.ChangePasswordException;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.access.User;
+import org.openbravo.service.db.DalConnectionProvider;
 
 /**
  * Utility class used to check that passwords meets a minimum strength policy.
@@ -34,19 +43,9 @@ import javax.enterprise.context.ApplicationScoped;
  */
 @ApplicationScoped
 public class PasswordStrengthChecker {
-  private static final int MINIMUM_LENGTH = 8;
-  private static final int MIN_REQUIRED_CRITERIA = 3;
-
-  private List<PasswordStrengthCriterion> strengthCriteria;
-
-  @PostConstruct
-  private void init() {
-    strengthCriteria = new ArrayList<>(4);
-    strengthCriteria.add(getUppercaseCriterion());
-    strengthCriteria.add(getLowercaseCriterion());
-    strengthCriteria.add(getDigitsCriterion());
-    strengthCriteria.add(getSpecialCharactersCriterion());
-  }
+  @Inject
+  @Any
+  Instance<PasswordPolicyRule> policyRules;
 
   /**
    * Verifies that the given password meets the minimum strength criteria
@@ -55,63 +54,30 @@ public class PasswordStrengthChecker {
    *          The password to evaluate
    * @return true if the password is strong enough, false otherwise
    */
-  public boolean isStrongPassword(String password) {
-    return hasMinimumLength(password) && (getCriteriaScore(password) >= MIN_REQUIRED_CRITERIA);
-  }
+  public boolean isStrongPassword(User user, String password) {
+    String language = OBContext.getOBContext().getLanguage().getLanguage();
 
-  private int getCriteriaScore(String password) {
-    int score = 0;
-
-    for (PasswordStrengthCriterion criterion : strengthCriteria) {
-      if (criterion.match(password)) {
-        score += 1;
-      }
+    boolean allRulesComply = true;
+    StringBuilder sb = new StringBuilder();
+    for (PasswordPolicyRule rule : policyRules) {
+      sb.append(rule.compliesWithRule(user, password));
     }
-
-    return score;
+    if (StringUtils.isNotBlank(sb.toString())) {
+      allRulesComply = false;
+      throwChangePasswordException(String.format(OBMessageUtils.messageBD("CPWeakPasswordTitle")),
+          sb.toString(), language);
+    }
+    return allRulesComply;
   }
 
-  private boolean hasMinimumLength(String password) {
-    return password.length() >= MINIMUM_LENGTH;
+  private void throwChangePasswordException(String titleKey, String messageKey, String language)
+      throws ChangePasswordException {
+    ConnectionProvider conn = new DalConnectionProvider(false);
+    OBError errorMsg = new OBError();
+    errorMsg.setType("Error");
+    errorMsg.setTitle(Utility.messageBD(conn, titleKey, language));
+    errorMsg.setMessage(Utility.messageBD(conn, messageKey, language));
+    throw new ChangePasswordException(errorMsg.getMessage());
   }
 
-  private PasswordStrengthCriterion getUppercaseCriterion() {
-    return new PasswordStrengthCriterion() {
-      @Override
-      public boolean match(String password) {
-        return password.matches(".*[A-Z].*");
-      }
-    };
-  }
-
-  private PasswordStrengthCriterion getLowercaseCriterion() {
-    return new PasswordStrengthCriterion() {
-      @Override
-      public boolean match(String password) {
-        return password.matches(".*[a-z].*");
-      }
-    };
-  }
-
-  private PasswordStrengthCriterion getDigitsCriterion() {
-    return new PasswordStrengthCriterion() {
-      @Override
-      public boolean match(String password) {
-        return password.matches(".*[0-9].*");
-      }
-    };
-  }
-
-  private PasswordStrengthCriterion getSpecialCharactersCriterion() {
-    return new PasswordStrengthCriterion() {
-      @Override
-      public boolean match(String password) {
-        return password.matches(".*[`~!@#$%€^&*()_\\-+={}\\[\\]|:;\"' <>,.?/].*");
-      }
-    };
-  }
-
-  private interface PasswordStrengthCriterion {
-    boolean match(String password);
-  }
 }
