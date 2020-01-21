@@ -209,43 +209,53 @@
     }
 
     filterTaxRulesByLine(line, rulesFilteredByTicket) {
-      const filterTaxRulesByTaxCategory = rules => {
-        return rules.filter(rule => {
-          const isTaxExempt =
-            line.taxExempt || this.ticket.businessPartner.taxExempt;
-          return (
-            (isTaxExempt
-              ? OB.Taxes.Tax.equals(rule.taxExempt, isTaxExempt)
-              : OB.Taxes.Tax.equals(
-                  rule.businessPartnerTaxCategory,
-                  this.ticket.businessPartner.taxCategory
-                )) &&
-            OB.Taxes.Tax.equals(rule.taxCategory, line.product.taxCategory)
-          );
-        });
-      };
-
-      const filterTaxRulesByLocation = rules => {
-        return rules.filter(
-          taxRate =>
-            OB.Taxes.Tax.equals(
-              taxRate.destinationCountry,
-              rules[0].destinationCountry
-            ) &&
-            OB.Taxes.Tax.equals(
-              taxRate.destinationRegion,
-              rules[0].destinationRegion
-            ) &&
-            OB.Taxes.Tax.equals(taxRate.country, rules[0].country) &&
-            OB.Taxes.Tax.equals(taxRate.region, rules[0].region) &&
-            OB.Taxes.Tax.equals(taxRate.validFromDate, rules[0].validFromDate)
+      const checkTaxCategory = rule => {
+        const isTaxExempt =
+          line.taxExempt || this.ticket.businessPartner.taxExempt;
+        return (
+          (isTaxExempt
+            ? OB.Taxes.Tax.equals(rule.taxExempt, isTaxExempt)
+            : OB.Taxes.Tax.equals(
+                rule.businessPartnerTaxCategory,
+                this.ticket.businessPartner.taxCategory
+              )) &&
+          OB.Taxes.Tax.equals(rule.taxCategory, line.product.taxCategory)
         );
       };
+      const checkLocation = (rule, rulesFilteredByLine) => {
+        return (
+          OB.Taxes.Tax.equals(
+            rule.destinationCountry,
+            rulesFilteredByLine[0].destinationCountry
+          ) &&
+          OB.Taxes.Tax.equals(
+            rule.destinationRegion,
+            rulesFilteredByLine[0].destinationRegion
+          ) &&
+          OB.Taxes.Tax.equals(rule.country, rulesFilteredByLine[0].country) &&
+          OB.Taxes.Tax.equals(rule.region, rulesFilteredByLine[0].region) &&
+          OB.Taxes.Tax.equals(
+            rule.validFromDate,
+            rulesFilteredByLine[0].validFromDate
+          )
+        );
+      };
+      const sortBySummary = (rule1, rule2) => {
+        return rule2.summaryLevel - rule1.summaryLevel;
+      };
+      const sortByLineno = (rule1, rule2) => {
+        return rule2.lineNo - rule1.lineNo;
+      };
 
-      const rulesFilteredByLine = filterTaxRulesByTaxCategory(
-        rulesFilteredByTicket
-      );
-      return filterTaxRulesByLocation(rulesFilteredByLine);
+      return rulesFilteredByTicket
+        .filter(rule => checkTaxCategory(rule))
+        .filter((rule, index, rulesFilteredByLine) =>
+          checkLocation(rule, rulesFilteredByLine)
+        )
+        .sort(
+          (rule1, rule2) =>
+            sortBySummary(rule1, rule2) || sortByLineno(rule1, rule2)
+        );
     }
 
     static equals(value1, value2) {
