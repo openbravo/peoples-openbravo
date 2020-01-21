@@ -431,7 +431,7 @@ public class ServicePriceUtils {
       //@formatter:off
       String hql = " as ol"
                  + " where ol.salesOrder.id = :orderId "
-                 + " order by ol.salesOrder desc ";
+                 + " order by ol.lineNo desc ";
       //@formatter:on
       OBQuery<OrderLine> olQry = OBDal.getInstance()
           .createQuery(OrderLine.class, hql)
