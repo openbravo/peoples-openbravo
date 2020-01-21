@@ -69,6 +69,19 @@
   background-color: var(--color-secondary);
 }
 
+
+
+/***********************   ***********************/
+/*                 File: index.jsp               */
+/*               Folder: ./                      */
+/***********************   ***********************/
+.ob-body-standard{
+  /* helps prevent ios page scroll */
+  overflow: hidden;
+}
+
+
+
 /***********************   ***********************/
 /*                 File: order.js                */
 /*               Folder: js/model/               */
@@ -3859,27 +3872,33 @@ li.selected > .obUiRenderOrderLine_edit {
 
 .obUiOrderView-totalAndBreakdowns,
 .obUiMultiOrderView-totalAndBreakdowns {
-  overflow-y: auto;
   background-color: var(--color-secondary);
   color: var(--color-on-secondary);
-  padding-bottom: 10px;
 }
 
-.obUiOrderView-totalAndBreakdowns-row1 {}
+.obUiOrderView-totalAndBreakdowns-list {
+  padding-bottom: 10px;	
+}
 
-.obUiOrderView-totalAndBreakdowns-row1-totalTaxLine {
+.obUiOrderView-totalAndBreakdowns::-webkit-scrollbar-thumb {
+  background-color: var(--color-on-secondary);
+}
+
+.obUiOrderView-totalAndBreakdowns-list-row1 {}
+
+.obUiOrderView-totalAndBreakdowns-list-row1-totalTaxLine {
   /*Inherits: [OB.UI.TotalTaxLine]*/
 }
 
-.obUiOrderView-totalAndBreakdowns-row1-totalReceiptLine {
+.obUiOrderView-totalAndBreakdowns-list-row1-totalReceiptLine {
   /*Inherits: [OB.UI.TotalReceiptLine]*/
 }
 
-.obUiOrderView-totalAndBreakdowns-row2 {}
+.obUiOrderView-totalAndBreakdowns-list-row2 {}
 
-.obUiOrderView-totalAndBreakdowns-row2-injectedFooter {}
+.obUiOrderView-totalAndBreakdowns-list-row2-injectedFooter {}
 
-.obUiOrderView-totalAndBreakdowns-row2-status {
+.obUiOrderView-totalAndBreakdowns-list-row2-status {
   display: grid;
   grid-template-columns: 35% 1fr;
   grid-template-areas: "obUiBtnReceiptToInvoice obUiOrderViewDivText";
@@ -3889,32 +3908,32 @@ li.selected > .obUiRenderOrderLine_edit {
   padding: 0px 12px;
 }
 
-.obUiOrderView-totalAndBreakdowns-row2-status-divbtninvoice {
+.obUiOrderView-totalAndBreakdowns-list-row2-status-divbtninvoice {
   /*Inherits: [btninvoice]*/
 }
 
-.obUiOrderView-totalAndBreakdowns-row2-status-divText {
+.obUiOrderView-totalAndBreakdowns-list-row2-status-divText {
   /*Inherits: [OB.UI.OrderViewDivText]*/
 }
-.obUiOrderView-totalAndBreakdowns-row3 {}
+.obUiOrderView-totalAndBreakdowns-list-row3 {}
 
-.obUiOrderView-totalAndBreakdowns-row3-taxBreakdown {
+.obUiOrderView-totalAndBreakdowns-list-row3-taxBreakdown {
   /*Inherits: [OB.UI.TaxBreakdown]*/
 }
 
-.obUiOrderView-totalAndBreakdowns-listTaxLines {
-  /*Inherits: [OB.UI.ScrollableTable]*/
+.obUiOrderView-totalAndBreakdowns-list-listTaxLines {
+  /*Inherits: [OB.UI.Table]*/
+  height: auto;
 }
-.obUiOrderView-totalAndBreakdowns-listTaxLines-scrollAreaClasses {}
 
-.obUiOrderView-totalAndBreakdowns-listTaxLines-scrollAreaClasses .obUiScrollableTable-scrollArea-tbody {
+.obUiOrderView-totalAndBreakdowns-list-listTaxLines .obUiTable-tbody {
   list-style-type: disc;
   padding-left: 35px;
 }
 
-.obUiOrderView-totalAndBreakdowns-row5 {}
+.obUiOrderView-totalAndBreakdowns-list-row5 {}
 
-.obUiOrderView-totalAndBreakdowns-row5-paymentBreakdown {
+.obUiOrderView-totalAndBreakdowns-list-row5-paymentBreakdown {
   position: relative;
   display: inline-flex;
   box-sizing: border-box;
@@ -3924,15 +3943,16 @@ li.selected > .obUiRenderOrderLine_edit {
   padding: 10px 12px 0px 12px;
 }
 
-.obUiOrderView-paymentBreakdown-lblTotalPayment {
+.obUiOrderView-paymentBreakdown-list-lblTotalPayment {
   display: inline-block;
 }
 
-.obUiOrderView-totalAndBreakdowns-listPaymentLines {}
+.obUiOrderView-totalAndBreakdowns-list-listPaymentLines {
+  /*Inherits: [OB.UI.Table]*/
+  height: auto;
+}
 
-.obUiOrderView-totalAndBreakdowns-listPaymentLines-scrollArea {}
-
-.obUiOrderView-totalAndBreakdowns-listPaymentLines-scrollArea .obUiScrollableTable-scrollArea-tbody {
+.obUiOrderView-totalAndBreakdowns-list-listPaymentLines .obUiTable-tbody {
   list-style-type: disc;
   padding-left: 35px;
 }
@@ -8013,7 +8033,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 */
 .obObposPointOfSaleUiReceiptView,
 .obObposPointOfSaleUiMultiReceiptView {
-  height: 100%;
   position: relative;
   background-color: transparent;
   color: black;
@@ -13982,7 +14001,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   display: grid;
   grid-template-rows: auto 1fr auto;
 
-  height: 100%;
   overflow-y: auto;
 }
 
@@ -14014,7 +14032,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposCashupUiCashPayments-wrapper-components-body-list {
-  height: 100%;
   width: 100%;
   overflow-y: auto;
 }
@@ -14945,10 +14962,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObPosCashUpUiPostPrintClose-wrapper-components-body {
-  height: 100%;
-  overflow-y: auto;
-  padding: 10px;
-  box-sizing: border-box;
+  max-height: 100%;
 }
 
 .obObPosCashUpUiPostPrintClose-wrapper-components-body-container1 {}

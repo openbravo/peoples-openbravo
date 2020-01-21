@@ -29,7 +29,7 @@ import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
 import org.openbravo.model.ad.access.InvoiceLineTax;
-import org.openbravo.model.common.order.OrderLineOffer;
+import org.openbravo.model.common.invoice.InvoiceLineOffer;
 import org.openbravo.service.json.JsonConstants;
 
 public class Invoices extends JSONProcessSimple {
@@ -108,14 +108,14 @@ public class Invoices extends JSONProcessSimple {
           invoiceLine.put("priceIncludesTax", invoice.getBoolean("priceIncludesTax"));
 
           // promotions per line
-          OBCriteria<OrderLineOffer> qPromotions = OBDal.getInstance()
-              .createCriteria(OrderLineOffer.class);
-          qPromotions.add(Restrictions.eq(OrderLineOffer.PROPERTY_SALESORDERLINE + ".id",
-              (String) invoiceLine.getString("orderlineId")));
-          qPromotions.addOrder(Order.asc(OrderLineOffer.PROPERTY_LINENO));
+          OBCriteria<InvoiceLineOffer> qPromotions = OBDal.getInstance()
+              .createCriteria(InvoiceLineOffer.class);
+          qPromotions.add(Restrictions.eq(InvoiceLineOffer.PROPERTY_INVOICELINE + ".id",
+              (String) invoiceLine.getString("lineId")));
+          qPromotions.addOrder(Order.asc(InvoiceLineOffer.PROPERTY_LINENO));
           JSONArray promotions = new JSONArray();
           boolean hasPromotions = false;
-          for (OrderLineOffer promotion : qPromotions.list()) {
+          for (InvoiceLineOffer promotion : qPromotions.list()) {
             BigDecimal displayedAmount = promotion.getDisplayedTotalAmount();
             if (displayedAmount == null) {
               displayedAmount = promotion.getTotalAmount();
@@ -130,9 +130,6 @@ public class Invoices extends JSONProcessSimple {
             jsonPromo.put("amt", displayedAmount);
             jsonPromo.put("actualAmt", promotion.getTotalAmount());
             jsonPromo.put("hidden", BigDecimal.ZERO.equals(displayedAmount));
-            if (promotion.getObdiscIdentifier() != null) {
-              jsonPromo.put("identifier", promotion.getObdiscIdentifier());
-            }
             promotions.put(jsonPromo);
             hasPromotions = true;
           }
