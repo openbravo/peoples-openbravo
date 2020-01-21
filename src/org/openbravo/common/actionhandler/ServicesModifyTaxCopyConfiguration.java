@@ -26,7 +26,6 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.query.Query;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.dal.core.OBContext;
@@ -68,9 +67,9 @@ public class ServicesModifyTaxCopyConfiguration extends BaseProcessActionHandler
         final JSONObject selectedLine = selectedLines.getJSONObject(i);
         log.debug("{}", selectedLine);
 
-        final Product targetProduct = OBDal.getInstance()
+        final Product originalProduct = OBDal.getInstance()
             .getProxy(Product.class, selectedLine.getString(Product.PROPERTY_ID));
-        appendConfig(serviceProduct, targetProduct);
+        appendConfig(originalProduct, serviceProduct);
       }
 
       errorMessage.put(SEVERITY, "success");
@@ -104,9 +103,12 @@ public class ServicesModifyTaxCopyConfiguration extends BaseProcessActionHandler
                            + "from M_PRODUCT_SERVICELINKED "
                            + "where product.id = :productId";
     //@formatter:on
-    Query<?> hqlQueryDelete = OBDal.getInstance().getSession().createQuery(hqlDelete);
-    hqlQueryDelete.setParameter("productId", targetProduct.getId());
-    hqlQueryDelete.executeUpdate();
+    OBDal.getInstance()
+        .getSession()
+        .createQuery(hqlDelete)
+        .setParameter("productId", targetProduct.getId())
+        .executeUpdate();
+
     // Add new configuration
     OBCriteria<ProductServiceLinked> obc = OBDal.getInstance()
         .createCriteria(ProductServiceLinked.class);
