@@ -69,6 +69,19 @@
   background-color: var(--color-secondary);
 }
 
+
+
+/***********************   ***********************/
+/*                 File: index.jsp               */
+/*               Folder: ./                      */
+/***********************   ***********************/
+.ob-body-standard{
+  /* helps prevent ios page scroll */
+  overflow: hidden;
+}
+
+
+
 /***********************   ***********************/
 /*                 File: order.js                */
 /*               Folder: js/model/               */
@@ -8020,7 +8033,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 */
 .obObposPointOfSaleUiReceiptView,
 .obObposPointOfSaleUiMultiReceiptView {
-  height: 100%;
   position: relative;
   background-color: transparent;
   color: black;
@@ -12498,13 +12510,13 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSCashMgmt.UI.ListEventLine
 # Inherits: [OB.UI.SelectButton]
 */
-.obObposcashmgmtUiListEvent {
+.obObposcashmgmtUiListEventLine {
   height: 60px;
   background-color: #dddddd;
   border: 1px solid white;
 }
 
-.obObposcashmgmtUiListEvent-line {
+.obObposcashmgmtUiListEventLine-line {
   padding: 1px 0px 1px 5px;
 }
 
@@ -12523,7 +12535,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   max-height: 600px;
 }
 
-
 /*
 # Component: OB.OBPOSCashMgmt.UI.ModalDepositEvents
 # Inherits: [OB.UI.Modal]
@@ -12534,7 +12545,11 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obposObposcashmgmtUiModalDepositEvents-obObposcashmgmtUiListEvent {}
 
+.obposObposcashmgmtUiModalDepositEvents-footer {}
 
+.obposObposcashmgmtUiModalDepositEvents-footer-modalDepositEventsCancelButton {}
+
+.obUiModalDepositEventsCancel {}
 
 /***********************   ***********************/
 /*               File: cashmgmtinfo              */
@@ -13978,7 +13993,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   display: grid;
   grid-template-rows: auto 1fr auto;
 
-  height: 100%;
   overflow-y: auto;
 }
 
@@ -14010,7 +14024,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposCashupUiCashPayments-wrapper-components-body-list {
-  height: 100%;
   width: 100%;
   overflow-y: auto;
 }
@@ -14941,10 +14954,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObPosCashUpUiPostPrintClose-wrapper-components-body {
-  height: 100%;
-  overflow-y: auto;
-  padding: 10px;
-  box-sizing: border-box;
+  max-height: 100%;
 }
 
 .obObPosCashUpUiPostPrintClose-wrapper-components-body-container1 {}
