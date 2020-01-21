@@ -57,9 +57,6 @@
             (rule.withholdingTax || OB.Taxes.Tax.equals(rule.rate, 0)))
         );
       };
-      const checkLocation = () => {
-        return this.ticket.businessPartner.address.id;
-      };
       const checkCountry = rule => {
         const businessPartnerCountry = this.ticket.businessPartner.address
           .country;
@@ -169,7 +166,6 @@
           rule =>
             checkValidFromDate(rule) &&
             checkIsCashVAT(rule) &&
-            checkLocation() &&
             checkCountry(rule) &&
             checkRegion(rule)
         )
