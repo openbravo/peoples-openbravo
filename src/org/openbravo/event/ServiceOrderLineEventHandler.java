@@ -185,11 +185,8 @@ class ServiceOrderLineEventHandler extends EntityPersistenceEventObserver {
     String hql = " as rol "
                + " where orderlineRelated.id = :orderLineId";
     //@formatter:on
-    OBQuery<OrderlineServiceRelation> rol = OBDal.getInstance()
-        .createQuery(OrderlineServiceRelation.class, hql);
-
-    rol.setNamedParameter("orderLineId", thisLine.getId());
-    return rol;
+    return OBDal.getInstance().createQuery(OrderlineServiceRelation.class, hql)
+        .setNamedParameter("orderLineId", thisLine.getId());
   }
 
   private boolean hasRelatedProducts(OrderLine thisLine) {
@@ -203,10 +200,7 @@ class ServiceOrderLineEventHandler extends EntityPersistenceEventObserver {
     String hql = " as rol "
                + " where salesOrderLine.id = :orderLineId";
     //@formatter:on
-    OBQuery<OrderlineServiceRelation> rol = OBDal.getInstance()
-        .createQuery(OrderlineServiceRelation.class, hql);
-
-    rol.setNamedParameter("orderLineId", thisLine.getId());
-    return rol;
+    return OBDal.getInstance().createQuery(OrderlineServiceRelation.class, hql)
+        .setNamedParameter("orderLineId", thisLine.getId());
   }
 }
