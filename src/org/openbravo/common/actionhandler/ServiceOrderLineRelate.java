@@ -35,7 +35,6 @@ import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.materialmgmt.ServicePriceUtils;
@@ -105,13 +104,12 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
       String hql = " as rol "
                  + " where salesOrderLine.id = :orderLineId ";
       //@formatter:on
-      OBQuery<OrderlineServiceRelation> rol = OBDal.getInstance()
-          .createQuery(OrderlineServiceRelation.class, hql);
+      scroller = OBDal.getInstance()
+          .createQuery(OrderlineServiceRelation.class, hql)
+          .setNamedParameter("orderLineId", mainOrderLine.getId())
+          .setMaxResult(1000)
+          .scroll(ScrollMode.FORWARD_ONLY);
 
-      rol.setNamedParameter("orderLineId", mainOrderLine.getId());
-      rol.setMaxResult(1000);
-
-      scroller = rol.scroll(ScrollMode.FORWARD_ONLY);
       while (scroller.next()) {
         final OrderlineServiceRelation or = (OrderlineServiceRelation) scroller.get()[0];
         OBDal.getInstance().remove(or);
@@ -379,11 +377,11 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
     String hql = " as olsr"
                + " where olsr.salesOrderLine.id = :salesorderline";
     //@formatter:on
-    OBQuery<OrderlineServiceRelation> olsrQry = OBDal.getInstance()
-        .createQuery(OrderlineServiceRelation.class, hql);
-    olsrQry.setNamedParameter("salesorderline", mainOrderLine.getId());
-    olsrQry.setMaxResult(1);
-    OrderlineServiceRelation osr = olsrQry.uniqueResult();
+    OrderlineServiceRelation osr = OBDal.getInstance()
+        .createQuery(OrderlineServiceRelation.class, hql)
+        .setNamedParameter("salesorderline", mainOrderLine.getId())
+        .setMaxResult(1)
+        .uniqueResult();
     if (osr != null) {
       return osr.getQuantity().compareTo(BigDecimal.ZERO) < 0;
     }
