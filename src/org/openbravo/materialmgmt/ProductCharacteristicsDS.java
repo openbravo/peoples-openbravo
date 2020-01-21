@@ -249,9 +249,11 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
 
     Query<Object[]> qTree;
     try {
-      qTree = OBDal.getInstance().getSession().createQuery(hql, Object[].class);
-      qTree.setParameter("clientId", OBContext.getOBContext().getCurrentClient().getId());
-      qTree.setParameterList("orgIds", this.getOrgFilter());
+      qTree = OBDal.getInstance()
+          .getSession()
+          .createQuery(hql, Object[].class)
+          .setParameter("clientId", OBContext.getOBContext().getCurrentClient().getId())
+          .setParameterList("orgIds", this.getOrgFilter());
     } catch (Exception e) {
       if (StringUtils.isNotBlank(customSelectorWhereClause)
           || StringUtils.isNotBlank(gridWhereClause)) {
