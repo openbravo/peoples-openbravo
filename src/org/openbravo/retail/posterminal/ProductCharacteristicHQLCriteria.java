@@ -31,9 +31,6 @@ public class ProductCharacteristicHQLCriteria extends HQLCriteriaProcess {
     } else {
       sql = getProdCategoryQuery(array_params);
     }
-    if (array_params.length >= 3 && !array_params[3].equals("")) {
-      sql += " and pli.product.brand.id in ('" + getIds(array_params, 3) + "') ";
-    }
     if (array_params.length > 2 && !array_params[2].equals("")) {
       sql = sql + getCharacteristics(array_params[2]);
     }

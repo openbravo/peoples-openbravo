@@ -223,7 +223,6 @@ enyo.kind({
     onRemoveMultiOrders: 'removeMultiOrders',
     onRightToolDisabled: 'rightToolbarDisabled',
     onSelectCharacteristicValue: 'selectCharacteristicValue',
-    onSelectBrand: 'selectBrand',
     onSelectFilter: 'selectFilter',
     onSelectCategoryTreeItem: 'selectCategoryTreeItem',
     onShowLeftHeader: 'doShowLeftHeader',
@@ -542,12 +541,6 @@ enyo.kind({
           name: 'modalproductcharacteristic',
           classes:
             'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalproductcharacteristic'
-        },
-        {
-          kind: 'OB.UI.ModalProductBrand',
-          name: 'modalproductbrand',
-          classes:
-            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalproductbrand'
         },
         {
           kind: 'OB.UI.ModalCategoryTree',
@@ -2001,11 +1994,6 @@ enyo.kind({
   maxLimitAmountError: function(inSender, inEvent) {
     this.waterfallDown('onMaxLimitAmountError', inEvent);
     return true;
-  },
-  selectBrand: function(inSender, inEvent) {
-    this.waterfall('onUpdateBrandFilter', {
-      value: inEvent
-    });
   },
   selectCategoryTreeItem: function(inSender, inEvent) {
     this.waterfall('onSelectCategoryItem', inEvent);

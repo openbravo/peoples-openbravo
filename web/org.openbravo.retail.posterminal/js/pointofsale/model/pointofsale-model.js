@@ -45,7 +45,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     OB.Model.CancelLayaway,
     OB.Model.ProductServiceLinked, //
     OB.Model.CurrencyPanel,
-    OB.Model.Brand,
     OB.Model.ProductCharacteristicValue,
     OB.Model.CharacteristicValue,
     OB.Model.Characteristic,

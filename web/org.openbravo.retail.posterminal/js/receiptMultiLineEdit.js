@@ -593,7 +593,6 @@ enyo.kind({
           category: '',
           filteringBy: '',
           filter: '',
-          brandFilter: '',
           customFilters: '',
           genericParent: ''
         };

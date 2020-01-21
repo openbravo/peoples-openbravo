@@ -201,11 +201,6 @@
       type: 'TEXT'
     },
     {
-      name: 'brand',
-      column: 'brand',
-      type: 'TEXT'
-    },
-    {
       name: 'characteristicDescription',
       column: 'characteristicDescription',
       type: 'TEXT'
@@ -424,15 +419,6 @@
       columns: [
         {
           name: 'productType',
-          sort: 'asc'
-        }
-      ]
-    },
-    {
-      name: 'obpos_in_productbrand',
-      columns: [
-        {
-          name: 'brand',
           sort: 'asc'
         }
       ]

@@ -99,7 +99,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "webprinter/btprinters/genericBTPrinter", "webprinter/btprinters/zebraZQ320",
 
         "model/currencypanel", "model/productcharacteristicvalue", "model/characteristicvalue",
-        "model/characteristic", "model/brand", "model/terminal-model", "model/paymentmethodcashup",
+        "model/characteristic", "model/terminal-model", "model/paymentmethodcashup",
         "model/taxcashup", "model/offlineprinter", "model/productbom", "model/taxcategorybom",
         "model/orderassociationsfilter", "model/product-servicelinked", "model/prepaymentrules",
         "components/modalcancel", "components/subwindow", "components/leftsubwindow",
@@ -140,7 +140,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalrejectquotation", "components/modalPriceModification",
         // Detection of change in context
         "components/modalcontextchanged", "components/modalproductcharacteristic",
-        "components/modalproductbrand",
 
         // Point of sale models
         "model/pricelist", "model/product-category-tree", "model/product", "model/productprice",

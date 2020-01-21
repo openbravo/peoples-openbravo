@@ -41,11 +41,6 @@ public class PCharacteristicHQLCriteria extends HQLCriteriaProcess {
       sql = getProdCategoryQuery(array_params);
       close_exists = true;
     }
-    if (close_exists) {
-      if (array_params.length > 3 && !array_params[3].equals("")) {
-        sql += " and pli.product.brand.id in ('" + getIds(array_params, 3) + "') ";
-      }
-    }
     if (array_params.length > 2 && !array_params[2].equals("")) {
       sql = sql + getCharacteristics(array_params[2]);
     }
