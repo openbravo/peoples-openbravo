@@ -64,6 +64,11 @@
           rules
         );
 
+        OB.Taxes.PriceExcludingTax.adjustLineGrossAmount(
+          groupGrossAmount,
+          groupLines
+        );
+
         return OB.Taxes.Tax.calculateTaxes(
           groupGrossAmount,
           groupNetAmount,
@@ -86,6 +91,27 @@
         netAmount: headerNetAmount,
         taxes: headerTaxes
       };
+    }
+
+    /**
+     * If the header gross amount is different than the sum of line gross amounts, we need to adjust the highest line gross amount
+     */
+    static adjustLineGrossAmount(grossAmount, lines) {
+      const adjustment = OB.DEC.sub(
+        grossAmount,
+        lines.reduce(
+          (line1, line2) => OB.DEC.add(line1, line2.grossAmount),
+          OB.DEC.Zero
+        )
+      );
+
+      if (OB.DEC.compare(adjustment) !== 0) {
+        const line = lines.sort(
+          (line1, line2) =>
+            OB.DEC.abs(line2.grossAmount) - OB.DEC.abs(line1.grossAmount)
+        )[0];
+        line.grossAmount = OB.DEC.add(line.grossAmount, adjustment);
+      }
     }
 
     /**
