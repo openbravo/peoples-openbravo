@@ -4903,7 +4903,6 @@
         // Calculate discountedLinePrice for the next promotion
         this.calculateDiscountedLinePrice(line);
         line.trigger('change');
-        this.save();
       }
     },
 
