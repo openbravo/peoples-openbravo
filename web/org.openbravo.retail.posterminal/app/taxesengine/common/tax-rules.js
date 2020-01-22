@@ -287,6 +287,67 @@
     }
 
     /**
+     * Calculate tax base and amount for each rule
+     */
+    static calculateTaxes(grossAmount, netAmount, rules) {
+      let taxBase = netAmount;
+      const taxes = rules.map(rule => {
+        const taxAmount = OB.Taxes.Tax.calculateTaxAmount(taxBase, rule);
+        const tax = {
+          base: taxBase,
+          amount: taxAmount,
+          tax: rule
+        };
+        taxBase = OB.DEC.add(taxBase, taxAmount);
+        return tax;
+      });
+
+      OB.Taxes.PriceIncludingTax.adjustTaxAmount(grossAmount, netAmount, taxes);
+      return taxes;
+    }
+
+    /**
+     * Adjust the highest tax amount in case gross amount <> net amount + tax amount
+     */
+    static adjustTaxAmount(grossAmount, netAmount, taxes) {
+      const taxAmount = taxes.reduce(
+        (total, tax) => OB.DEC.add(total, tax.amount),
+        OB.DEC.Zero
+      );
+      const adjustment = OB.DEC.sub(
+        grossAmount,
+        OB.DEC.add(netAmount, taxAmount)
+      );
+      if (OB.DEC.compare(adjustment) !== 0) {
+        const tax = taxes.sort(
+          (tax1, tax2) => OB.DEC.abs(tax2.amount) - OB.DEC.abs(tax1.amount)
+        )[0];
+        tax.amount = OB.DEC.add(tax.amount, adjustment);
+      }
+    }
+
+    /**
+     * totalTaxAmount = sum(taxBase * taxRate) for each rule
+     */
+    static calculateTotalTaxAmount(taxBase, rules) {
+      const taxAmount = rules.reduce((total, rule) => {
+        return OB.DEC.add(
+          total,
+          OB.Taxes.Tax.calculateTaxAmount(OB.DEC.add(total, taxBase), rule)
+        );
+      }, OB.DEC.Zero);
+      return taxAmount;
+    }
+
+    /**
+     * taxAmount = taxBase * taxRate
+     */
+    static calculateTaxAmount(taxBase, rule) {
+      const taxRate = OB.Taxes.Tax.getTaxRate(rule.rate);
+      return OB.DEC.mul(taxBase, taxRate);
+    }
+
+    /**
      * taxRate = rate / 100
      */
     static getTaxRate(rate) {
@@ -295,13 +356,6 @@
         20,
         BigDecimal.prototype.ROUND_HALF_UP
       );
-    }
-
-    /**
-     * taxAmount = netAmount * taxRate
-     */
-    static calculateTaxAmount(netAmount, taxRate) {
-      return OB.DEC.mul(netAmount, taxRate);
     }
 
     /**

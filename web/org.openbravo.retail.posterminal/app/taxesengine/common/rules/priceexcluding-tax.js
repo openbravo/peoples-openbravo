@@ -29,7 +29,7 @@
         lineGrossAmount,
         line.quantity
       );
-      const lineTaxes = OB.Taxes.PriceIncludingTax.calculateTaxes(
+      const lineTaxes = OB.Taxes.Tax.calculateTaxes(
         lineGrossAmount,
         lineNetAmount,
         rules
@@ -64,7 +64,7 @@
           rules
         );
 
-        return OB.Taxes.PriceIncludingTax.calculateTaxes(
+        return OB.Taxes.Tax.calculateTaxes(
           groupGrossAmount,
           groupNetAmount,
           rules
@@ -88,55 +88,14 @@
       };
     }
 
-    static calculateTaxes(grossAmount, netAmount, rules) {
-      let taxBase = netAmount;
-      const taxes = rules.map(rule => {
-        const taxRate = OB.Taxes.Tax.getTaxRate(rule.rate);
-        const taxAmount = OB.Taxes.Tax.calculateTaxAmount(taxBase, taxRate);
-        const tax = {
-          base: taxBase,
-          amount: taxAmount,
-          tax: rule
-        };
-        taxBase = OB.DEC.add(taxBase, taxAmount);
-        return tax;
-      });
-
-      OB.Taxes.PriceIncludingTax.adjustTaxAmount(grossAmount, netAmount, taxes);
-      return taxes;
-    }
-
-    /**
-     * If gross amount <> net amount + tax amount, we need to adjust the highest tax amount
-     */
-    static adjustTaxAmount(grossAmount, netAmount, taxes) {
-      const taxAmount = taxes.reduce(
-        (total, tax) => OB.DEC.add(total, tax.amount),
-        OB.DEC.Zero
-      );
-      const adjustment = OB.DEC.sub(
-        grossAmount,
-        OB.DEC.add(netAmount, taxAmount)
-      );
-      if (OB.DEC.compare(adjustment) !== 0) {
-        const tax = taxes.sort(
-          (tax1, tax2) => OB.DEC.abs(tax2.amount) - OB.DEC.abs(tax1.amount)
-        )[0];
-        tax.amount = OB.DEC.add(tax.amount, adjustment);
-      }
-    }
-
     /**
      * grossAmount = netAmount + taxAmount
      */
     static calculateGrossAmountFromNetAmount(netAmount, rules) {
-      const amount = new BigDecimal(String(netAmount));
-      const taxAmount = rules.reduce((total, rule) => {
-        const taxRate = OB.Taxes.Tax.getTaxRate(rule.rate);
-        return total.add(total.add(amount).multiply(taxRate));
-      }, BigDecimal.prototype.ZERO);
-
-      return OB.DEC.add(netAmount, taxAmount);
+      return OB.DEC.add(
+        netAmount,
+        OB.Taxes.Tax.calculateTotalTaxAmount(netAmount, rules)
+      );
     }
   }
 
