@@ -121,7 +121,7 @@
     <SqlMethodComment></SqlMethodComment>
       <Sql>
         <![CDATA[
-        update m_product set characteristic_desc = (characteristic_desc||', '|| 'Brand: ' || ? ) where m_product_id= ? 
+        update m_product set characteristic_desc = (coalesce((characteristic_desc||', '|| 'Brand: ' || ?  ), 'Brand: ' || ? )) where m_product_id= ? 
         ]]>
       </Sql>
       <Parameter name="name"/>
