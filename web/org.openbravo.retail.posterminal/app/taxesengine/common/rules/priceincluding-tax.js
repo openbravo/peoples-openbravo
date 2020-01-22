@@ -76,15 +76,15 @@
         );
       });
 
+      const headerTaxes = groupTaxes.flat();
       const headerGrossAmount = lines.reduce(
         (total, line) => OB.DEC.add(total, line.grossAmount),
         OB.DEC.Zero
       );
-      const headerNetAmount = lines.reduce(
-        (total, line) => OB.DEC.add(total, line.netAmount),
-        OB.DEC.Zero
+      const headerNetAmount = headerTaxes.reduce(
+        (total, headerTax) => OB.DEC.sub(total, headerTax.amount),
+        headerGrossAmount
       );
-      const headerTaxes = groupTaxes.flat();
 
       return {
         grossAmount: headerGrossAmount,
