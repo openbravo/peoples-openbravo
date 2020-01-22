@@ -240,8 +240,18 @@
           )
         );
       };
-      const sortBySummary = (rule1, rule2) => {
-        return rule2.summaryLevel - rule1.summaryLevel;
+      const checkSummary = (rule, rulesFilteredByLine) => {
+        if (rulesFilteredByLine.length === 1) {
+          return !rule.summaryLevel;
+        }
+        const parentRule = rulesFilteredByLine.find(
+          ruleFilteredByLine => ruleFilteredByLine.summaryLevel
+        );
+        return (
+          !rule.summaryLevel &&
+          parentRule &&
+          OB.Taxes.Tax.equals(rule.parentTaxRate, parentRule.id)
+        );
       };
       const sortByLineno = (rule1, rule2) => {
         return rule2.lineNo - rule1.lineNo;
@@ -252,10 +262,10 @@
         .filter((rule, index, rulesFilteredByLine) =>
           checkLocation(rule, rulesFilteredByLine)
         )
-        .sort(
-          (rule1, rule2) =>
-            sortBySummary(rule1, rule2) || sortByLineno(rule1, rule2)
-        );
+        .filter((rule, index, rulesFilteredByLine) =>
+          checkSummary(rule, rulesFilteredByLine)
+        )
+        .sort((rule1, rule2) => sortByLineno(rule1, rule2));
     }
 
     static equals(value1, value2) {
@@ -266,6 +276,14 @@
         return true;
       }
       return value1 === value2;
+    }
+
+    static getParentTaxId(rule) {
+      if (rule.parentTax) {
+        return rule.parentTax;
+      }
+
+      return rule.id;
     }
 
     /**
