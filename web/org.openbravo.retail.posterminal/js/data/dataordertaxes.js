@@ -16,11 +16,11 @@
 
       initializeTaxes(receipt);
       const taxes = OB.Taxes.Pos.calculateTaxes(receipt);
-      const lineError = taxes.lines.find(lineTax => lineTax.error);
-      if (lineError) {
+      const lineTaxError = taxes.lines.find(lineTax => lineTax.error);
+      if (lineTaxError) {
         const line = receipt
           .get('lines')
-          .find(line => line.id === lineError.id);
+          .find(line => line.id === lineTaxError.id);
         reject(line);
       } else {
         setTaxes(receipt, taxes);

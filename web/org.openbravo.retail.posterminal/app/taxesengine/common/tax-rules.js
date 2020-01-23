@@ -25,17 +25,18 @@
       );
 
       this.ticket.lines.forEach(line => {
-        try {
-          const rulesFilteredByLine = this.filterTaxRulesByLine(
-            line,
-            rulesFilteredByTicket
-          );
-          taxes.lines.push(this.getLineTaxes(line, rulesFilteredByLine));
-        } catch (lineError) {
+        const rulesFilteredByLine = this.filterTaxRulesByLine(
+          line,
+          rulesFilteredByTicket
+        );
+
+        if (rulesFilteredByLine.length === 0) {
           taxes.lines.push({
             id: line.id,
-            error: lineError
+            error: 'No tax found'
           });
+        } else {
+          taxes.lines.push(this.getLineTaxes(line, rulesFilteredByLine));
         }
       });
 
