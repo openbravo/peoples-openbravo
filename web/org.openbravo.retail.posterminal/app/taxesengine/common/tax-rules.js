@@ -242,7 +242,7 @@
         );
       };
       const sortByLineno = (rule1, rule2) => {
-        return rule2.lineNo - rule1.lineNo;
+        return rule1.lineNo - rule2.lineNo;
       };
       const sortByTaxBase = (rule1, rule2) => {
         const checkTaxBase = rule => {
