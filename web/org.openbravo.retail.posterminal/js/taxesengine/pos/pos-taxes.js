@@ -48,7 +48,6 @@
       receipt.get('lines').forEach(line => {
         let newLine = {};
         newLine.id = line.get('id');
-        newLine.qty = line.get('qty');
         newLine.amount = newTicket.priceIncludesTax
           ? line.get('discountedGross')
           : line.get('discountedNet');
