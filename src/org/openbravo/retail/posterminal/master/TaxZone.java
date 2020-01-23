@@ -92,7 +92,8 @@ public class TaxZone extends MasterDataProcessHQLQuery {
     final Region fromRegion = storeInfo.getLocationAddress().getRegion();
 
     String hqlTax = "select financialMgmtTaxRate.id from FinancialMgmtTaxRate as financialMgmtTaxRate where "
-        + " financialMgmtTaxRate.salesPurchaseType in ('S', 'B') ";
+        + " financialMgmtTaxRate.salesPurchaseType in ('S', 'B') "
+        + "and financialMgmtTaxRate.summaryLevel = false ";
 
     if (fromCountry != null) {
       hqlTax = hqlTax + "and (financialMgmtTaxRate.country.id = :fromCountryId "

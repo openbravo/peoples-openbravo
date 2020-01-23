@@ -83,7 +83,8 @@ public class TaxRate extends MasterDataProcessHQLQuery {
         + "financialMgmtTaxRate.$readableSimpleClientCriteria AND "
         + "financialMgmtTaxRate.$naturalOrgCriteria AND "
         + "(financialMgmtTaxRate.$incrementalUpdateCriteria) "
-        + "and financialMgmtTaxRate.salesPurchaseType in ('S', 'B') ";
+        + "and financialMgmtTaxRate.salesPurchaseType in ('S', 'B') "
+        + "and financialMgmtTaxRate.summaryLevel = false ";
 
     if (fromCountry != null) {
       hql = hql + "and (financialMgmtTaxRate.country.id = :fromCountryId "
