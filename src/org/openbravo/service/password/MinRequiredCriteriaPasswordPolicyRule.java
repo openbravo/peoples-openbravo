@@ -14,10 +14,10 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.access.User;
-
-import com.openbravo.norauto.passwordpolicy.util.PasswordPolicyUtility;
+import org.openbravo.model.ad.system.SystemInformation;
 
 @ApplicationScoped
 public class MinRequiredCriteriaPasswordPolicyRule implements PasswordPolicyRule {
@@ -31,7 +31,7 @@ public class MinRequiredCriteriaPasswordPolicyRule implements PasswordPolicyRule
   @Override
   public String compliesWithRule(User user, String password) {
     String error = "";
-    MIN_REQUIRED_CRITERIA = PasswordPolicyUtility.getPswCharGroups();
+    MIN_REQUIRED_CRITERIA = getPswCharGroups();
     init();
     if (!(getCriteriaScore(password) >= MIN_REQUIRED_CRITERIA)) {
       error = String.format(OBMessageUtils.messageBD("ADErrorPasswordMinCriteria") + "<br/>",
@@ -99,6 +99,22 @@ public class MinRequiredCriteriaPasswordPolicyRule implements PasswordPolicyRule
         return password.matches(".*[`~!@#$%€^&*()_\\-+={}\\[\\]|:;\"' <>,.?/].*");
       }
     };
+  }
+
+  /**
+   * Get the number the password char groups of the system info
+   * 
+   * @return Password Character Groups number
+   */
+  private int getPswCharGroups() {
+    int charGroups = 0;
+    SystemInformation systemInf = (SystemInformation) OBDal.getInstance()
+        .createCriteria(SystemInformation.class)
+        .uniqueResult();
+    if (systemInf != null && systemInf.getPasswordCharacterGroups() != null) {
+      charGroups = Math.toIntExact(systemInf.getPasswordCharacterGroups());
+    }
+    return charGroups;
   }
 
 }

@@ -10,10 +10,10 @@ package org.openbravo.service.password;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.access.User;
-
-import com.openbravo.norauto.passwordpolicy.util.PasswordPolicyUtility;
+import org.openbravo.model.ad.system.SystemInformation;
 
 @ApplicationScoped
 public class MinLenghtPasswordPolicyRule implements PasswordPolicyRule {
@@ -25,7 +25,7 @@ public class MinLenghtPasswordPolicyRule implements PasswordPolicyRule {
   @Override
   public String compliesWithRule(User user, String password) {
     String error = "";
-    MINIMUM_LENGTH = PasswordPolicyUtility.getPswMinLength();
+    MINIMUM_LENGTH = getPswMinLength();
     if (!hasMinimumLength(password)) {
       error = String.format(OBMessageUtils.messageBD("ADErrorPasswordMinLength") + "<br/>",
           MINIMUM_LENGTH);
@@ -35,5 +35,21 @@ public class MinLenghtPasswordPolicyRule implements PasswordPolicyRule {
 
   public boolean hasMinimumLength(String password) {
     return password.length() >= MINIMUM_LENGTH;
+  }
+
+  /**
+   * Get the minimun lenght of the system info
+   * 
+   * @return Password Minimun Length number
+   */
+  private int getPswMinLength() {
+    int minLength = 0;
+    SystemInformation systemInf = (SystemInformation) OBDal.getInstance()
+        .createCriteria(SystemInformation.class)
+        .uniqueResult();
+    if (systemInf != null && systemInf.getPasswordMinimunLength() != null) {
+      minLength = Math.toIntExact(systemInf.getPasswordMinimunLength());
+    }
+    return minLength;
   }
 }
