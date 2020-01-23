@@ -87,6 +87,7 @@
       );
 
       return {
+        id: this.ticket.id,
         grossAmount: headerGrossAmount,
         netAmount: headerNetAmount,
         taxes: headerTaxes
