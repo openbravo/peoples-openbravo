@@ -84,6 +84,9 @@
       <foreign-key foreignTable="OBPOS_APP_PAYMENT_TYPE" name="OBPOS_PAYTYPE_ROUNDPAY" onDelete="cascade">
         <reference local="ROUNDING_PAYMENT_TYPE_ID" foreign="OBPOS_APP_PAYMENT_TYPE_ID"/>
       </foreign-key>
+      <index name="OBPOS_APPPAYROUND_TERMTYPE" unique="false">
+        <index-column name="OBPOS_APP_PAYMENT_TYPE_ID"/>
+      </index>
       <unique name="OBPOS_APP_PAY_ROUND_TYPE_CURR">
         <unique-column name="ROUNDING_PAYMENT_TYPE_ID"/>
         <unique-column name="OBPOS_APP_PAYMENT_TYPE_ID"/>
