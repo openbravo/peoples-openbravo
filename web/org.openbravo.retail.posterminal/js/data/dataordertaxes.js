@@ -9,62 +9,25 @@
 
 (function() {
   const calculateTaxes = function(receipt) {
-    try {
+    new Promise((resolve, reject) => {
       if (!receipt.get('isEditable') && !receipt.get('forceCalculateTaxes')) {
         return regenerateTaxesInfo(receipt);
       }
 
+      initializeTaxes(receipt);
       const taxes = OB.Taxes.Pos.calculateTaxes(receipt);
       const lineError = taxes.lines.find(lineTax => lineTax.error);
       if (lineError) {
         const line = receipt
           .get('lines')
           .find(line => line.id === lineError.id);
-        return showTaxCalculationError(receipt, line);
+        reject(line);
+      } else {
+        setTaxes(receipt, taxes);
       }
-
-      receipt.set(
-        {
-          gross: taxes.header.grossAmount,
-          net: taxes.header.netAmount,
-          taxes: taxes.header.taxes
-        },
-        {
-          silent: true
-        }
-      );
-      receipt.get('lines').forEach(line => {
-        const lineTax = taxes.lines.find(lineTax => lineTax.id === line.id);
-        if (receipt.get('priceIncludesTax')) {
-          line.set(
-            {
-              net: lineTax.netAmount,
-              discountedNet: lineTax.netAmount,
-              pricenet: lineTax.netPrice,
-              tax: lineTax.tax,
-              taxLines: lineTax.taxes
-            },
-            {
-              silent: true
-            }
-          );
-        } else {
-          line.set(
-            {
-              gross: lineTax.grossAmount,
-              discountedGross: lineTax.grossAmount,
-              tax: lineTax.tax,
-              taxLines: lineTax.taxes
-            },
-            {
-              silent: true
-            }
-          );
-        }
-      });
-    } catch (error) {
-      throw OB.I18N.getLabel('OBPOS_TaxCalculationError_Message');
-    }
+    }).catch(function(line) {
+      showLineTaxError(receipt, line);
+    });
   };
 
   const regenerateTaxesInfo = function(receipt) {
@@ -164,7 +127,60 @@
     receipt.set('taxes', taxesColl);
   };
 
-  const showTaxCalculationError = function(receipt, line) {
+  const initializeTaxes = function(receipt) {
+    receipt.set(
+      {
+        taxes: []
+      },
+      {
+        silent: true
+      }
+    );
+  };
+
+  const setTaxes = function(receipt, taxes) {
+    receipt.set(
+      {
+        gross: taxes.header.grossAmount,
+        net: taxes.header.netAmount,
+        taxes: taxes.header.taxes
+      },
+      {
+        silent: true
+      }
+    );
+    receipt.get('lines').forEach(line => {
+      const lineTax = taxes.lines.find(lineTax => lineTax.id === line.id);
+      if (receipt.get('priceIncludesTax')) {
+        line.set(
+          {
+            net: lineTax.netAmount,
+            discountedNet: lineTax.netAmount,
+            pricenet: lineTax.netPrice,
+            tax: lineTax.tax,
+            taxLines: lineTax.taxes
+          },
+          {
+            silent: true
+          }
+        );
+      } else {
+        line.set(
+          {
+            gross: lineTax.grossAmount,
+            discountedGross: lineTax.grossAmount,
+            tax: lineTax.tax,
+            taxLines: lineTax.taxes
+          },
+          {
+            silent: true
+          }
+        );
+      }
+    });
+  };
+
+  const showLineTaxError = function(receipt, line) {
     const title = OB.I18N.getLabel('OBPOS_TaxNotFound_Header');
     const reason = OB.I18N.getLabel('OBPOS_TaxNotFound_Message', [
       receipt.get('bp').get('name') ||
@@ -173,13 +189,6 @@
         OB.I18N.getLabel('OBPOS_LblEmptyAddress')
     ]);
     OB.error(title + ':' + reason);
-    receipt.set(
-      'taxes',
-      {},
-      {
-        silent: true
-      }
-    );
     line.set('hasTaxError', true, {
       silent: true
     });
