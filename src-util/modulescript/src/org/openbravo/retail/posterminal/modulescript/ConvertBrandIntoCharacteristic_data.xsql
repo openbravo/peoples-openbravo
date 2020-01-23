@@ -125,6 +125,7 @@
         ]]>
       </Sql>
       <Parameter name="name"/>
+	  <Parameter name="name"/>
       <Parameter name="mProductId"/>
   </SqlMethod>
   <SqlMethod name="createPreference" type="preparedStatement" return="rowcount">
