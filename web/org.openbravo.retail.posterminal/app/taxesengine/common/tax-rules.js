@@ -241,21 +241,20 @@
           )
         );
       };
-      const checkSummary = (rule, rulesFilteredByLine) => {
-        if (rulesFilteredByLine.length === 1) {
-          return !rule.summaryLevel;
-        }
-        const parentRule = rulesFilteredByLine.find(
-          ruleFilteredByLine => ruleFilteredByLine.summaryLevel
-        );
-        return (
-          !rule.summaryLevel &&
-          parentRule &&
-          OB.Taxes.Tax.equals(rule.parentTaxRate, parentRule.id)
-        );
-      };
       const sortByLineno = (rule1, rule2) => {
         return rule2.lineNo - rule1.lineNo;
+      };
+      const sortByTaxBase = (rule1, rule2) => {
+        const checkTaxBase = rule => {
+          return rule.taxBase;
+        };
+        if (!checkTaxBase(rule1) && checkTaxBase(rule2)) {
+          return -1;
+        }
+        if (checkTaxBase(rule1) && !checkTaxBase(rule2)) {
+          return 1;
+        }
+        return 0;
       };
 
       return rulesFilteredByTicket
@@ -263,10 +262,10 @@
         .filter((rule, index, rulesFilteredByLine) =>
           checkLocation(rule, rulesFilteredByLine)
         )
-        .filter((rule, index, rulesFilteredByLine) =>
-          checkSummary(rule, rulesFilteredByLine)
-        )
-        .sort((rule1, rule2) => sortByLineno(rule1, rule2));
+        .sort(
+          (rule1, rule2) =>
+            sortByLineno(rule1, rule2) || sortByTaxBase(rule1, rule2)
+        );
     }
 
     static equals(value1, value2) {
