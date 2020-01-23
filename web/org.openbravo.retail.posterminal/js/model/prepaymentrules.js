@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2017-2018 Openbravo S.L.U.
+ * Copyright (C) 2017-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -19,6 +19,8 @@
           .obposPrepaymentPercLimit,
         prepaymentPercLayLimit = OB.MobileApp.model.get('terminal')
           .obposPrepayPercLayLimit,
+        prepaymentLimitAmount = OB.DEC.Zero,
+        prepaymentLayawayLimitAmount = OB.DEC.Zero,
         prepaymentAmount = receipt.get('lines').reduce(function(memo, line) {
           if (
             line.get('obposCanbedelivered') ||
@@ -32,8 +34,30 @@
               line.get('obrdmDeliveryMode') === 'PickAndCarry'
             ) {
               prepaymentPercLimit = 100;
-              linePrepaymentAmount = line.get('price');
+              linePrepaymentAmount = line.get('gross');
+              if (line.get('promotions') && line.get('promotions').length > 0) {
+                linePrepaymentAmount = OB.DEC.sub(
+                  linePrepaymentAmount,
+                  line.get('promotions').reduce(function(total, model) {
+                    return OB.DEC.add(total, model.amt);
+                  }, 0)
+                );
+              }
               line.set('obposLinePrepaymentAmount', linePrepaymentAmount);
+              prepaymentLimitAmount = OB.DEC.add(
+                prepaymentLimitAmount,
+                OB.DEC.div(
+                  OB.DEC.mul(linePrepaymentAmount, prepaymentPercLimit),
+                  100
+                )
+              );
+              prepaymentLayawayLimitAmount = OB.DEC.add(
+                prepaymentLayawayLimitAmount,
+                OB.DEC.div(
+                  OB.DEC.mul(linePrepaymentAmount, prepaymentPercLayLimit),
+                  100
+                )
+              );
               return OB.DEC.add(memo, linePrepaymentAmount);
             } else {
               linePrepaymentAmount = me.currentLinePrepaymentAmount(
@@ -41,21 +65,28 @@
                 prepaymentPerc
               );
               line.set('obposLinePrepaymentAmount', linePrepaymentAmount);
+              prepaymentLimitAmount = OB.DEC.add(
+                prepaymentLimitAmount,
+                OB.DEC.div(
+                  OB.DEC.mul(linePrepaymentAmount, prepaymentPercLimit),
+                  100
+                )
+              );
+              prepaymentLayawayLimitAmount = OB.DEC.add(
+                prepaymentLayawayLimitAmount,
+                OB.DEC.div(
+                  OB.DEC.mul(linePrepaymentAmount, prepaymentPercLayLimit),
+                  100
+                )
+              );
               return OB.DEC.add(memo, linePrepaymentAmount);
             }
           } else {
             line.set('obposLinePrepaymentAmount', OB.DEC.Zero);
             return memo;
           }
-        }, 0),
-        prepaymentLimitAmount = OB.DEC.div(
-          OB.DEC.mul(prepaymentAmount, prepaymentPercLimit),
-          100
-        ),
-        prepaymentLayawayLimitAmount = OB.DEC.div(
-          OB.DEC.mul(prepaymentAmount, prepaymentPercLayLimit),
-          100
-        );
+        }, 0);
+
       callback(
         prepaymentAmount,
         prepaymentLimitAmount,

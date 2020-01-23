@@ -620,11 +620,8 @@ enyo.kind({
   classes: 'obObPosCashUpUiPostPrintClose',
   components: [
     {
-      kind: 'Scroller',
       name: 'scrollArea',
       classes: 'obObPosCashUpUiPostPrintClose-wrapper',
-      thumb: true,
-      horizontal: 'hidden',
       components: [
         {
           classes: 'obObPosCashUpUiPostPrintClose-wrapper-components',
@@ -642,6 +639,9 @@ enyo.kind({
               }
             },
             {
+              kind: 'Scroller',
+              thumb: true,
+              horizontal: 'hidden',
               classes: 'obObPosCashUpUiPostPrintClose-wrapper-components-body',
               components: [
                 {

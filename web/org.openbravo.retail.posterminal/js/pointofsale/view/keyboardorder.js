@@ -646,7 +646,6 @@ enyo.kind({
   searchProduct: async function(code, callback, attrs) {
     let me = this,
       criteria;
-
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
       var uPCEAN = {
         columns: ['uPCEAN'],
@@ -670,7 +669,9 @@ enyo.kind({
         }
       );
     } else {
-      criteria = new OB.App.Class.Criteria().criterion('uPCEAN', code).build();
+      criteria = new OB.App.Class.Criteria()
+        .criterion('uPCEAN', code.toUpperCase())
+        .build();
       try {
         const products = await OB.App.MasterdataModels.Product.find(criteria);
         let data = [];
