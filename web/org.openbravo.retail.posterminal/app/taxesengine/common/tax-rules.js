@@ -291,20 +291,64 @@
      * Calculate tax base and amount for each rule
      */
     static calculateTaxes(grossAmount, netAmount, rules) {
-      let taxBase = netAmount;
+      let accumulatedTaxBase = netAmount;
       const taxes = rules.map(rule => {
-        const taxAmount = OB.Taxes.Tax.calculateTaxAmount(taxBase, rule);
+        const ruleTaxBase = OB.Taxes.Tax.calculateTaxBase(
+          netAmount,
+          accumulatedTaxBase,
+          rule
+        );
+        const ruleTaxAmount = OB.Taxes.Tax.calculateTaxAmount(
+          ruleTaxBase,
+          rule
+        );
         const tax = {
-          base: taxBase,
-          amount: taxAmount,
+          base: ruleTaxBase,
+          amount: ruleTaxAmount,
           tax: rule
         };
-        taxBase = OB.DEC.add(taxBase, taxAmount);
+        accumulatedTaxBase = OB.DEC.add(accumulatedTaxBase, ruleTaxAmount);
         return tax;
       });
 
       OB.Taxes.PriceIncludingTax.adjustTaxAmount(grossAmount, netAmount, taxes);
       return taxes;
+    }
+
+    /**
+     * If rule is cascade or dependant, we take as tax base the tax base of the previous tax,
+     * if not, we take as tax base the net amount
+     */
+    static calculateTaxBase(netAmount, accumulatedTaxBase, rule) {
+      if (rule.taxBase && rule.baseAmount === 'LNATAX') {
+        return accumulatedTaxBase;
+      }
+      return netAmount;
+    }
+
+    /**
+     * totalTaxAmount = sum(taxBase * taxRate) for each rule
+     */
+    static calculateTotalTaxAmount(taxBase, rules) {
+      return rules.reduce((total, rule) => {
+        const ruleTaxBase = OB.Taxes.Tax.calculateTaxBase(
+          taxBase,
+          OB.DEC.add(total, taxBase),
+          rule
+        );
+        return OB.DEC.add(
+          total,
+          OB.Taxes.Tax.calculateTaxAmount(ruleTaxBase, rule)
+        );
+      }, OB.DEC.Zero);
+    }
+
+    /**
+     * taxAmount = taxBase * taxRate
+     */
+    static calculateTaxAmount(taxBase, rule) {
+      const taxRate = OB.Taxes.Tax.getTaxRate(rule.rate);
+      return OB.DEC.mul(taxBase, taxRate);
     }
 
     /**
@@ -325,27 +369,6 @@
         )[0];
         tax.amount = OB.DEC.add(tax.amount, adjustment);
       }
-    }
-
-    /**
-     * totalTaxAmount = sum(taxBase * taxRate) for each rule
-     */
-    static calculateTotalTaxAmount(taxBase, rules) {
-      const taxAmount = rules.reduce((total, rule) => {
-        return OB.DEC.add(
-          total,
-          OB.Taxes.Tax.calculateTaxAmount(OB.DEC.add(total, taxBase), rule)
-        );
-      }, OB.DEC.Zero);
-      return taxAmount;
-    }
-
-    /**
-     * taxAmount = taxBase * taxRate
-     */
-    static calculateTaxAmount(taxBase, rule) {
-      const taxRate = OB.Taxes.Tax.getTaxRate(rule.rate);
-      return OB.DEC.mul(taxBase, taxRate);
     }
 
     /**
