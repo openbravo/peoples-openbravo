@@ -25,32 +25,13 @@
           ]
         }),
         new OB.App.Class.Index({
-          name: 'productCategoryBrowseMPL_idx',
-          properties: [{ property: 'productCategory' }]
-        }),
-        new OB.App.Class.Index({
           name: 'bestsellerBrowse_idx',
           properties: [
             { property: 'bestseller', isBoolean: true },
             { property: 'generic_product_id', isNullable: true }
           ]
         }),
-        new OB.App.Class.Index({
-          name: 'bestsellerBrowseMPL_idx',
-          properties: [{ property: 'bestseller', isBoolean: true }]
-        }),
         //search
-        new OB.App.Class.Index({
-          name: 'simpleSearch_idx',
-          properties: [{ property: 'isGeneric', isBoolean: true }]
-        }),
-        new OB.App.Class.Index({
-          name: 'simpleGenericSearch_idx',
-          properties: [
-            { property: 'isGeneric', isBoolean: true },
-            { property: 'generic_product_id', isNullable: true }
-          ]
-        }),
         new OB.App.Class.Index({
           name: 'productCategorySearch_idx',
           properties: [
@@ -61,24 +42,17 @@
         new OB.App.Class.Index({
           name: 'productCategoryGenericSearch_idx',
           properties: [
-            { property: 'productCategory' },
+            { property: 'isGeneric', isBoolean: true },
             { property: 'generic_product_id', isNullable: true },
-            { property: 'isGeneric', isBoolean: true }
-          ]
-        }),
-        new OB.App.Class.Index({
-          name: 'bestsellerSearch_idx',
-          properties: [
-            { property: 'bestseller', isBoolean: true },
-            { property: 'isGeneric', isBoolean: true }
+            { property: 'productCategory' }
           ]
         }),
         new OB.App.Class.Index({
           name: 'bestsellerGenericSearch_idx',
           properties: [
             { property: 'bestseller', isBoolean: true },
-            { property: 'generic_product_id', isNullable: true },
-            { property: 'isGeneric', isBoolean: true }
+            { property: 'isGeneric', isBoolean: true },
+            { property: 'generic_product_id', isNullable: true }
           ]
         }),
         new OB.App.Class.Index({
