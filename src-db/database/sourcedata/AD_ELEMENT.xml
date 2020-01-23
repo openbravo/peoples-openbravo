@@ -517,10 +517,10 @@ Document Types determine document sequence and processing rules.]]></HELP>
 <!--2A323A5D848A4E0A83568B9C23310CC4-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--2A323A5D848A4E0A83568B9C23310CC4-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--2A323A5D848A4E0A83568B9C23310CC4-->  <COLUMNNAME><![CDATA[C_Glitem_Round_ID]]></COLUMNNAME>
-<!--2A323A5D848A4E0A83568B9C23310CC4-->  <NAME><![CDATA[G/L Item for cash differences rounding]]></NAME>
+<!--2A323A5D848A4E0A83568B9C23310CC4-->  <NAME><![CDATA[G/L Item for Payment Rounding]]></NAME>
 <!--2A323A5D848A4E0A83568B9C23310CC4-->  <PRINTNAME><![CDATA[G/L Item for cash differences rounding]]></PRINTNAME>
-<!--2A323A5D848A4E0A83568B9C23310CC4-->  <DESCRIPTION><![CDATA[In case there are Cash Rounding Differences, this G/L Item reflects this difference.]]></DESCRIPTION>
-<!--2A323A5D848A4E0A83568B9C23310CC4-->  <HELP><![CDATA[In case there are Cash Rounding Differences, this G/L Item reflects this difference.]]></HELP>
+<!--2A323A5D848A4E0A83568B9C23310CC4-->  <DESCRIPTION><![CDATA[In case there are Payment Rounding, this G/L Item reflects this rounding.]]></DESCRIPTION>
+<!--2A323A5D848A4E0A83568B9C23310CC4-->  <HELP><![CDATA[In case there are Payment Rounding, this G/L Item reflects this rounding.]]></HELP>
 <!--2A323A5D848A4E0A83568B9C23310CC4-->  <AD_MODULE_ID><![CDATA[FF808181326CC34901326D53DBCF0018]]></AD_MODULE_ID>
 <!--2A323A5D848A4E0A83568B9C23310CC4-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--2A323A5D848A4E0A83568B9C23310CC4--></AD_ELEMENT>

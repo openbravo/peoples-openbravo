@@ -12624,8 +12624,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--7A678A1F7E7148289EEE3088B45181F3-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--7A678A1F7E7148289EEE3088B45181F3-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--7A678A1F7E7148289EEE3088B45181F3-->  <NAME><![CDATA[C_Glitem_Round_ID]]></NAME>
-<!--7A678A1F7E7148289EEE3088B45181F3-->  <DESCRIPTION><![CDATA[In case there are Cash Rounding Differences, this G/L Item reflects this difference.]]></DESCRIPTION>
-<!--7A678A1F7E7148289EEE3088B45181F3-->  <HELP><![CDATA[In case there are Cash Rounding Differences, this G/L Item reflects this difference.]]></HELP>
+<!--7A678A1F7E7148289EEE3088B45181F3-->  <DESCRIPTION><![CDATA[In case there are Payment Rounding, this G/L Item reflects this rounding.]]></DESCRIPTION>
+<!--7A678A1F7E7148289EEE3088B45181F3-->  <HELP><![CDATA[In case there are Payment Rounding, this G/L Item reflects this rounding.]]></HELP>
 <!--7A678A1F7E7148289EEE3088B45181F3-->  <COLUMNNAME><![CDATA[C_Glitem_Round_ID]]></COLUMNNAME>
 <!--7A678A1F7E7148289EEE3088B45181F3-->  <AD_TABLE_ID><![CDATA[B096FDF43917472D8FDE9693E9CCFFD4]]></AD_TABLE_ID>
 <!--7A678A1F7E7148289EEE3088B45181F3-->  <AD_REFERENCE_ID><![CDATA[18]]></AD_REFERENCE_ID>
