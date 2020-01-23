@@ -363,9 +363,9 @@
         OB.DEC.add(netAmount, taxAmount)
       );
       if (OB.DEC.compare(adjustment) !== 0) {
-        const tax = taxes.sort(
-          (tax1, tax2) => OB.DEC.abs(tax2.amount) - OB.DEC.abs(tax1.amount)
-        )[0];
+        const tax = taxes.reduce((tax1, tax2) => {
+          return tax1.amount < tax2.amount ? tax1 : tax2;
+        });
         tax.amount = OB.DEC.add(tax.amount, adjustment);
       }
     }

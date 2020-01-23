@@ -105,10 +105,9 @@
         )
       );
       if (OB.DEC.compare(adjustment) !== 0) {
-        const line = lines.sort(
-          (line1, line2) =>
-            OB.DEC.abs(line2.netAmount) - OB.DEC.abs(line1.netAmount)
-        )[0];
+        const line = lines.reduce((line1, line2) => {
+          return line1.netAmount > line2.netAmount ? line1 : line2;
+        });
         line.netAmount = OB.DEC.add(line.netAmount, adjustment);
         line.taxes[0].base = OB.DEC.add(line.taxes[0].base, adjustment);
       }
