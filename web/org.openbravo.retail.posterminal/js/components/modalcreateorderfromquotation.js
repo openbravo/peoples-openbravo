@@ -27,7 +27,8 @@ enyo.kind({
     onCreateOrderFromQuotation: ''
   },
   tap: function() {
-    var checked = !this.owner.$.updateprices.checked;
+    var checked = !this.owner.$.formElementCheckUpdatePrice.$
+      .coreElementContainer.$.checkUpdatePrice.checked;
     this.doHideThisPopup();
     this.parent.parent.parent.theQuotation.createOrderFromQuotation(checked);
   }
@@ -35,15 +36,13 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.updateprices',
-  kind: 'OB.UI.CheckboxButton',
+  kind: 'OB.UI.FormElement.Checkbox',
   classes: 'obUiUpdateprices',
   checked: false,
   init: function() {
-    this.checked = !OB.MobileApp.model.get('permissions')[
-      'OBPOS_quotation.defaultNotFirm'
-    ];
-    this.addRemoveClass('obUiUpdateprices_active', this.checked);
-
+    this.setChecked(
+      !OB.MobileApp.model.get('permissions')['OBPOS_quotation.defaultNotFirm']
+    );
     this.setDisabled(
       !OB.MobileApp.model.hasPermission('OBPOS_quotation.editableFirmCheck')
     );
@@ -55,28 +54,23 @@ enyo.kind({
   name: 'OB.UI.ModalCreateOrderFromQuotation',
   classes: 'obUiModalCreateOrderFromQuotation',
   myId: 'modalCreateOrderFromQuotation',
+  i18nHeader: 'OBPOS_QuotationUpdatePrices_Title',
   i18nBody: 'OBPOS_QuotationUpdatePricesText',
   footer: {
     classes: 'obUiModalCreateOrderFromQuotation-footer',
     components: [
       {
-        classes: 'obUiModalCreateOrderFromQuotation-footer-element1'
-      },
-      {
-        classes: 'obUiModalCreateOrderFromQuotation-footer-container2',
-        components: [
-          {
-            kind: 'OB.UI.updateprices',
-            classes:
-              'obUiModalCreateOrderFromQuotation-footer-container2-obUiupdateprices',
-            myId: 'updatePricesCheck'
-          }
-        ]
-      },
-      {
-        classes: 'obUiModalCreateOrderFromQuotation-footer-element3',
-        initComponents: function() {
-          this.setContent(OB.I18N.getLabel('OBPOS_QuotationUpdatePrices'));
+        name: 'formElementCheckUpdatePrice',
+        kind: 'OB.UI.FormElement',
+        classes:
+          'obUiFormElement_dataEntry obUiModalCreateOrderFromQuotation-footer-formElementCheckUpdatePrice',
+        coreElement: {
+          kind: 'OB.UI.updateprices',
+          name: 'checkUpdatePrice',
+          i18nLabel: 'OBPOS_QuotationUpdatePrices',
+          classes:
+            'obUiModalCreateOrderFromQuotation-footer-formElementCheckUpdatePrice-checkUpdatePrice',
+          myId: 'updatePricesCheck'
         }
       },
       {
