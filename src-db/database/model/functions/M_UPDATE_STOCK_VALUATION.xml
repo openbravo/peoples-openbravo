@@ -34,7 +34,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2014-2016 Openbravo SLU
+* All portions are Copyright (C) 2014-2020 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -84,9 +84,7 @@ BEGIN
 
   IF (v_stock = 0) THEN
     v_unit_price := 0;
-    IF (p_stock <> 0 OR v_count = 0) THEN
-      v_valuation := 0;
-    END IF;
+    v_valuation := 0;
   ELSE
     v_unit_price := ROUND(v_valuation/v_stock, v_costprecission);
   END IF;
