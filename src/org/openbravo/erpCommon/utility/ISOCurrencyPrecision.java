@@ -68,7 +68,7 @@ public class ISOCurrencyPrecision {
    *         for currency standard precision
    */
   public static int getCurrencyPrecisionInISO4217Spec(String paramISOCode) {
-    log4j.debug("Starting getCurrencyPrecisionInISO4217Spec at: " + new Date());
+    log4j.debug("Starting getCurrencyPrecisionInISO4217Spec at: {}", new Date());
 
     try {
       Document doc = getISOCurrencyDocument();
@@ -83,7 +83,7 @@ public class ISOCurrencyPrecision {
     } catch (Exception e) {
       throw new OBException(e.getMessage(), e);
     } finally {
-      log4j.debug("Ending getCurrencyPrecisionInISO4217Spec at: " + new Date());
+      log4j.debug("Ending getCurrencyPrecisionInISO4217Spec at: {}", new Date());
     }
   }
 
@@ -101,7 +101,7 @@ public class ISOCurrencyPrecision {
       Document doc = dBuilder.parse(isoXMLDoc);
       doc.getDocumentElement().normalize();
       long t2 = System.currentTimeMillis();
-      log4j.debug("createDocumentFromFile took: " + (t2 - t1) + " ms");
+      log4j.debug("createDocumentFromFile took: {} ms", (t2 - t1));
       return doc;
     }
   }
