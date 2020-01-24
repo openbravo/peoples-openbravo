@@ -36,7 +36,7 @@ function installNodePackagesIfNeeded {
         echo -e "eslint and/or prettier command not found. Running npm install\n"
         originalDir="$(pwd)"
         cd "${1}"
-        npm install
+        npm ci
         cd "${originalDir}"
     fi
     echo "Npm and all required tools are installed. Done!"
