@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2016-2019 Openbravo S.L.U.
+ * Copyright (C) 2016-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -22,6 +22,8 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.mobile.core.model.HQLEntity;
+import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
@@ -63,10 +65,22 @@ public class LoadedCustomer extends ProcessHQLQuery {
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
+    boolean useGroupBy = false;
+    String groupByExpression = "";
     List<String> customers = new ArrayList<String>();
     HQLPropertyList bpartnerHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions);
     HQLPropertyList bpartnerLocHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensionsLoc);
+
+    List<HQLEntity> entityExtensions = ModelExtensionUtils.getEntityExtensions(extensions);
+    final String entitiesJoined = ModelExtensionUtils.getHQLEntitiesJoined(entityExtensions);
+    for (HQLProperty property : bpartnerHQLProperties.getProperties()) {
+      if (property.isIncludeInGroupBy()) {
+        groupByExpression = bpartnerHQLProperties.getHqlGroupBy();
+        useGroupBy = true;
+        break;
+      }
+    }
 
     StringBuilder bpartnerHQLQuery = new StringBuilder();
     bpartnerHQLQuery.append("select ");
@@ -78,6 +92,7 @@ public class LoadedCustomer extends ProcessHQLQuery {
     bpartnerHQLQuery.append(" left outer join bp.language AS lang ");
     bpartnerHQLQuery.append(" left outer join bp.greeting grt ");
     bpartnerHQLQuery.append(" left outer join bp.businessPartnerLocationList AS bpsl");
+    bpartnerHQLQuery.append(entitiesJoined);
     bpartnerHQLQuery.append(" where bp.id = :businessPartnerId");
     bpartnerHQLQuery.append(" and bpl.id in (");
     bpartnerHQLQuery.append("   select max(bpls.id) as bpLocId");
@@ -101,7 +116,10 @@ public class LoadedCustomer extends ProcessHQLQuery {
     bpartnerHQLQuery.append("   and bpls.businessPartner.id = bp.id");
     bpartnerHQLQuery.append("   and bpls.$readableSimpleClientCriteria");
     bpartnerHQLQuery.append(" ))");
-    bpartnerHQLQuery.append(" order by bp.name");
+    if (useGroupBy) {
+      bpartnerHQLQuery.append(" group by " + groupByExpression);
+    }
+    bpartnerHQLQuery.append("order by bp.name");
     customers.add(bpartnerHQLQuery.toString());
 
     final StringBuilder bpartnerShipLocHQLQuery = new StringBuilder();
