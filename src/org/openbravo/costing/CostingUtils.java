@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2018 Openbravo SLU
+ * All portions are Copyright (C) 2012-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -928,5 +928,33 @@ public class CostingUtils {
     qry.setParameter("shipmentInOutID", shipmentInOutId);
     qry.setMaxResults(1);
     return !qry.list().isEmpty();
+  }
+
+  public static Organization getOrganizationForCloseAndOpenInventories(final String OrgId,
+      final Warehouse warehouse) {
+    Organization invOrg = getTransactionAllowedOrg(warehouse.getOrganization());
+    if (invOrg == null) {
+      return (Organization) OBDal.getInstance().getProxy(Organization.ENTITY_NAME, OrgId);
+    }
+    return invOrg;
+  }
+
+  private static Organization getTransactionAllowedOrg(final Organization org) {
+    if (org.getOrganizationType().isTransactionsAllowed()) {
+      return org;
+    } else {
+      final Organization parentOrg = OBContext.getOBContext()
+          .getOrganizationStructureProvider()
+          .getParentOrg(org);
+      if (parentOrg != null && !isStarOrganization(parentOrg)) {
+        return getTransactionAllowedOrg(parentOrg);
+      } else {
+        return null;
+      }
+    }
+  }
+
+  private static boolean isStarOrganization(final Organization parentOrg) {
+    return StringUtils.equals(parentOrg.getId(), "0");
   }
 }
