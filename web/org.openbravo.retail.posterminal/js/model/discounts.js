@@ -203,8 +203,12 @@
             _.each(receipt.get('lines').models, function(line) {
               if (OB.UTIL.isNullOrUndefined(line.get('originalOrderLineId'))) {
                 // Clean the promotions only if the line is not a return
-                line.set('promotions', []);
-                line.set('promotionCandidates', []);
+                line.set('promotions', [], {
+                  silent: true
+                });
+                line.set('promotionCandidates', [], {
+                  silent: true
+                });
               }
             });
           }

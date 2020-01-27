@@ -1465,7 +1465,10 @@
           return payment.get('isPrePayment');
         }),
         function(memo, pymnt) {
-          return OB.DEC.add(memo, pymnt.get('origAmount'));
+          return OB.DEC.add(
+            memo,
+            OB.DEC.sub(pymnt.get('origAmount'), pymnt.get('overpayment') || 0)
+          );
         },
         OB.DEC.Zero
       );
@@ -4924,7 +4927,6 @@
         // Calculate discountedLinePrice for the next promotion
         this.calculateDiscountedLinePrice(line);
         line.trigger('change');
-        this.save();
       }
     },
 
@@ -10341,7 +10343,9 @@
                     ),
                     price: price,
                     priceList:
-                      prod.get('listPrice') !== price
+                      prod.get('listPrice') !== price &&
+                      !OB.UTIL.isNullOrUndefined(order.get('isLayaway')) &&
+                      !order.get('isLayaway')
                         ? price
                         : prod.get('listPrice'),
                     grossListPrice: iter.grossListPrice,
