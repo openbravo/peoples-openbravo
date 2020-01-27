@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2018 Openbravo SLU
+ * All portions are Copyright (C) 2014-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -35,7 +35,6 @@ import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.weld.WeldUtils;
@@ -43,15 +42,12 @@ import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.financialmgmt.calendar.Period;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.TransactionCost;
-import org.openbravo.model.materialmgmt.transaction.InventoryCount;
-import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 
 public class CostAdjustmentProcess {
@@ -101,18 +97,19 @@ public class CostAdjustmentProcess {
   private void doChecks(String strCostAdjId, JSONObject message) {
     CostAdjustment costAdjustment = OBDal.getInstance().get(CostAdjustment.class, strCostAdjId);
 
-    // check if there is period closed between reference date and max transaction date
-    StringBuffer query = new StringBuffer();
-    query.append(" select min(" + CostAdjustmentLine.PROPERTY_ACCOUNTINGDATE + ") as mindate");
-    query.append(" from " + CostAdjustmentLine.ENTITY_NAME);
-    query.append(" where " + CostAdjustmentLine.PROPERTY_COSTADJUSTMENT + " = :ca");
-    query.append("   and " + CostAdjustmentLine.PROPERTY_ISSOURCE + " = true");
+    //@formatter:off
+    final String hql =
+                  "select min(accountingDate) as mindate" +
+                  "  from CostAdjustmentLine" +
+                  " where costAdjustment = :ca" +
+                  "   and isSource = true";
+    //@formatter:on
 
-    Query<Date> qryMinDate = OBDal.getInstance()
+    Date minDate = OBDal.getInstance()
         .getSession()
-        .createQuery(query.toString(), Date.class);
-    qryMinDate.setParameter("ca", costAdjustment);
-    Date minDate = qryMinDate.uniqueResult();
+        .createQuery(hql, Date.class)
+        .setParameter("ca", costAdjustment)
+        .uniqueResult();
     try {
       Date maxDate = CostingUtils.getMaxTransactionDate(costAdjustment.getOrganization());
       Period periodClosed = CostingUtils.periodClosed(costAdjustment.getOrganization(), minDate,
@@ -154,24 +151,26 @@ public class CostAdjustmentProcess {
    */
 
   private void checkPermanentelyAdjustedTrx(String strCostAdjId) throws OBException {
-    StringBuffer where = new StringBuffer();
-    where.append(" as cal");
-    where.append(" join cal." + CostAdjustmentLine.PROPERTY_COSTADJUSTMENT + " as ca");
-    where.append(" join cal." + CostAdjustmentLine.PROPERTY_INVENTORYTRANSACTION + " as trx");
-    where.append(" left join trx." + MaterialTransaction.PROPERTY_PHYSICALINVENTORYLINE + " as il");
-    where.append(" left join il." + InventoryCountLine.PROPERTY_PHYSINVENTORY + " as i");
-    where.append(" where ca." + CostAdjustment.PROPERTY_ID + " = :strCostAdjId");
-    where.append(" and coalesce(i." + InventoryCount.PROPERTY_INVENTORYTYPE + ", 'N') <> 'O'");
-    where.append(" and trx." + MaterialTransaction.PROPERTY_ISCOSTPERMANENT + " = true");
-    where.append(" and cal." + CostAdjustmentLine.PROPERTY_ADJUSTMENTAMOUNT + " <> 0");
-    where.append(" and cal." + CostAdjustmentLine.PROPERTY_UNITCOST + " = true");
-    where.append(" order by cal." + CostAdjustmentLine.PROPERTY_LINENO);
+    //@formatter:off
+    final String hql =
+            "as cal" +
+            "  join cal.costAdjustment as ca" +
+            "  join cal.inventoryTransaction as trx" +
+            "  left join trx.physicalInventoryLine as il" +
+            "  left join il.physInventory as i" +
+            " where ca.id = :strCostAdjId" +
+            "   and coalesce(i.inventoryType, 'N') <> 'O'" +
+            "   and trx.isCostPermanent = true" +
+            "   and cal.adjustmentAmount <> 0" +
+            "   and cal.unitCost = true" +
+            " order by cal.lineNo";
+    //@formatter:on
 
-    OBQuery<CostAdjustmentLine> qry = OBDal.getInstance()
-        .createQuery(CostAdjustmentLine.class, where.toString());
-    qry.setNamedParameter("strCostAdjId", strCostAdjId);
+    ScrollableResults lines = OBDal.getInstance()
+        .createQuery(CostAdjustmentLine.class, hql)
+        .setNamedParameter("strCostAdjId", strCostAdjId)
+        .scroll(ScrollMode.FORWARD_ONLY);
 
-    ScrollableResults lines = qry.scroll(ScrollMode.FORWARD_ONLY);
     long count = 1L;
     try {
       String strLines = "";
@@ -199,22 +198,19 @@ public class CostAdjustmentProcess {
   }
 
   private void initializeLines(CostAdjustment costAdjustment) {
-    // initialize is related transaction adjusted flag to false
-    StringBuilder updateQuery = new StringBuilder("update ");
-    updateQuery.append(CostAdjustmentLine.ENTITY_NAME);
-    updateQuery.append(" set ");
-    updateQuery.append(CostAdjustmentLine.PROPERTY_ISRELATEDTRANSACTIONADJUSTED);
-    updateQuery.append(" = false where ");
-    updateQuery.append(CostAdjustmentLine.PROPERTY_COSTADJUSTMENT);
-    updateQuery.append(".id = :adjustmentId and ");
-    updateQuery.append(CostAdjustmentLine.PROPERTY_ISRELATEDTRANSACTIONADJUSTED);
-    updateQuery.append(" = true ");
-    @SuppressWarnings("rawtypes")
-    Query adjustmentLineQuery = OBDal.getInstance()
+    //@formatter:off
+    final String hql =
+            "update CostAdjustmentLine" +
+            " set isRelatedTransactionAdjusted = false " +
+            " where costAdjustment.id = :adjustmentId " +
+            "   and isRelatedTransactionAdjusted = true ";
+    //@formatter:on
+
+    OBDal.getInstance()
         .getSession()
-        .createQuery(updateQuery.toString());
-    adjustmentLineQuery.setParameter("adjustmentId", costAdjustment.getId());
-    adjustmentLineQuery.executeUpdate();
+        .createQuery(hql)
+        .setParameter("adjustmentId", costAdjustment.getId())
+        .executeUpdate();
   }
 
   private void calculateAdjustmentAmount(String strCostAdjustmentId) {
