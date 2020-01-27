@@ -108,7 +108,9 @@
 
       if (OB.DEC.compare(adjustment) !== 0) {
         const line = lines.reduce((line1, line2) => {
-          return line1.grossAmount > line2.grossAmount ? line1 : line2;
+          return OB.DEC.abs(line1.grossAmount) > OB.DEC.abs(line2.grossAmount)
+            ? line1
+            : line2;
         });
         line.grossAmount = OB.DEC.add(line.grossAmount, adjustment);
       }

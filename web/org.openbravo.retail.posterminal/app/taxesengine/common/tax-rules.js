@@ -348,7 +348,9 @@
     }
 
     /**
-     * Adjust the highest tax amount in case gross amount <> net amount + tax amount
+     * Adjust the tax amount with the highest variance in case gross amount <> net amount + tax amount
+     * The tax amount with the highest variance will be the lowest abs(rounded tax amount - (exact tax amount + adjustment))
+     * The tax base of dependant taxes will be adjusted as well
      */
     static adjustTaxAmount(grossAmount, netAmount, taxes) {
       const taxAmount = taxes.reduce(
@@ -360,10 +362,32 @@
         OB.DEC.add(netAmount, taxAmount)
       );
       if (OB.DEC.compare(adjustment) !== 0) {
-        const tax = taxes.reduce((tax1, tax2) => {
-          return tax1.amount < tax2.amount ? tax1 : tax2;
+        const adjustedTax = taxes.reduce((tax1, tax2) => {
+          const calculateDifference = tax => {
+            return new BigDecimal(String(tax.amount))
+              .subtract(
+                OB.Taxes.Tax.calculateTaxAmount(tax.base, tax.tax).add(
+                  new BigDecimal(String(adjustment))
+                )
+              )
+              .abs();
+          };
+          return calculateDifference(tax1).compareTo(
+            calculateDifference(tax2)
+          ) > 0
+            ? tax1
+            : tax2;
         });
-        tax.amount = OB.DEC.add(tax.amount, adjustment);
+        adjustedTax.amount = OB.DEC.add(adjustedTax.amount, adjustment);
+        taxes
+          .filter(childTax =>
+            OB.Taxes.Tax.equals(childTax.tax.taxBase, adjustedTax.tax.id)
+          )
+          .map(childTax => {
+            const updatedChildTax = childTax;
+            updatedChildTax.base = OB.DEC.add(childTax.base, adjustment);
+            return updatedChildTax;
+          });
       }
     }
 
