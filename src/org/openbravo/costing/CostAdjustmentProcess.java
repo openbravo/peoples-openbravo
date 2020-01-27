@@ -62,30 +62,31 @@ public class CostAdjustmentProcess {
   /**
    * Method to process a cost adjustment.
    * 
-   * @param _costAdjustment
+   * @param costAdjustment
    *          the cost adjustment to be processed.
    * @return the message to be shown to the user properly formatted and translated to the user
    *         language.
    * @throws OBException
    *           when there is an error that prevents the cost adjustment to be processed.
    */
-  private JSONObject processCostAdjustment(CostAdjustment _costAdjustment) throws OBException {
-    CostAdjustment costAdjustment = _costAdjustment;
+  private JSONObject processCostAdjustment(CostAdjustment costAdjustment) throws OBException {
+    CostAdjustment currentCostAdjustment = costAdjustment;
     JSONObject message = new JSONObject();
     OBContext.setAdminMode(false);
     try {
       message.put("severity", "success");
       message.put("title", "");
       message.put("text", OBMessageUtils.messageBD("Success"));
-      doChecks(costAdjustment.getId(), message);
-      initializeLines(costAdjustment);
-      calculateAdjustmentAmount(costAdjustment.getId());
-      doPostProcessChecks(costAdjustment.getId(), message);
+      doChecks(currentCostAdjustment.getId(), message);
+      initializeLines(currentCostAdjustment);
+      calculateAdjustmentAmount(currentCostAdjustment.getId());
+      doPostProcessChecks(currentCostAdjustment.getId(), message);
 
-      costAdjustment = OBDal.getInstance().get(CostAdjustment.class, costAdjustment.getId());
-      costAdjustment.setProcessed(true);
-      costAdjustment.setDocumentStatus("CO");
-      OBDal.getInstance().save(costAdjustment);
+      currentCostAdjustment = OBDal.getInstance()
+          .get(CostAdjustment.class, currentCostAdjustment.getId());
+      currentCostAdjustment.setProcessed(true);
+      currentCostAdjustment.setDocumentStatus("CO");
+      OBDal.getInstance().save(currentCostAdjustment);
     } catch (JSONException ignore) {
     } finally {
       OBContext.restorePreviousMode();
@@ -186,7 +187,7 @@ public class CostAdjustmentProcess {
       if (!strLines.isEmpty()) {
         strLines = strLines.substring(0, strLines.length() - 2);
         String errorMessage = OBMessageUtils.messageBD("CostAdjustmentWithPermanentLines");
-        HashMap<String, String> map = new HashMap<String, String>();
+        HashMap<String, String> map = new HashMap<>();
         map.put("lines", strLines);
         throw new OBException(OBMessageUtils.parseTranslation(errorMessage, map));
       }
