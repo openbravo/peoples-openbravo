@@ -123,8 +123,9 @@
       }
 
       const amount = new BigDecimal(String(grossAmount));
-      const taxAmount = new BigDecimal(
-        String(OB.Taxes.Tax.calculateTotalTaxAmount(grossAmount, rules))
+      const taxAmount = OB.Taxes.Tax.calculateTotalTaxAmount(
+        grossAmount,
+        rules
       );
 
       return OB.DEC.toNumber(

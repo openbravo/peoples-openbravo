@@ -297,9 +297,8 @@
           accumulatedTaxBase,
           rule
         );
-        const ruleTaxAmount = OB.Taxes.Tax.calculateTaxAmount(
-          ruleTaxBase,
-          rule
+        const ruleTaxAmount = OB.DEC.toNumber(
+          OB.Taxes.Tax.calculateTaxAmount(ruleTaxBase, rule)
         );
         const tax = {
           base: ruleTaxBase,
@@ -335,19 +334,17 @@
           OB.DEC.add(total, taxBase),
           rule
         );
-        return OB.DEC.add(
-          total,
-          OB.Taxes.Tax.calculateTaxAmount(ruleTaxBase, rule)
-        );
-      }, OB.DEC.Zero);
+        return total.add(OB.Taxes.Tax.calculateTaxAmount(ruleTaxBase, rule));
+      }, BigDecimal.prototype.ZERO);
     }
 
     /**
      * taxAmount = taxBase * taxRate
      */
     static calculateTaxAmount(taxBase, rule) {
+      const amount = new BigDecimal(String(taxBase));
       const taxRate = OB.Taxes.Tax.getTaxRate(rule.rate);
-      return OB.DEC.mul(taxBase, taxRate);
+      return amount.multiply(taxRate);
     }
 
     /**
