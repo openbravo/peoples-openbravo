@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2019 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -46,12 +46,7 @@ public class Payments extends JSONTerminalProperty {
       //@formatter:off
       String hqlPayments = "select p as payment, "
                          + "  pm as paymentMethod, "
-                         + "  obpos_currency_rate(coalesce(c, pmc), "
-                         + "  p.obposApplications.organization.currency, "
-                         + "  null, "
-                         + "  null, "
-                         + "  p.obposApplications.client.id, "
-                         + "  p.obposApplications.organization.id) as rate, "
+                         + "  obpos_currency_rate(coalesce(c, pmc), p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as rate, "
                          + "  obpos_currency_rate(p.obposApplications.organization.currency, coalesce(c, pmc), null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as mulrate, "
                          + "  coalesce(c.iSOCode, pmc.iSOCode) as isocode, "
                          + "  coalesce(c.symbol, pmc.symbol) as symbol, "
@@ -72,7 +67,8 @@ public class Payments extends JSONTerminalProperty {
                          + "  left outer join pm.obposPaymentmethodType as paymentType "
                          + "where p.obposApplications.id = :posID  "
                          + "  and p.$readableSimpleCriteria "
-                         + "  and p.$activeCriteria and pm.$activeCriteria"
+                         + "  and p.$activeCriteria "
+                         + "  and pm.$activeCriteria"
                          + "order by p.line, p.commercialName";
       //@formatter:on
 
