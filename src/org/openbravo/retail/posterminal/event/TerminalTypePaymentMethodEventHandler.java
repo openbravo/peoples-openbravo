@@ -95,7 +95,7 @@ public class TerminalTypePaymentMethodEventHandler extends EntityPersistenceEven
     TerminalTypePaymentMethod ttpm = (TerminalTypePaymentMethod) event.getTargetInstance();
     OBContext.setAdminMode(true);
     try {
-      if (ttpm.isRounding()) {
+      if (ttpm.isRounding().booleanValue()) {
         //@formatter:off
         String hql = "select p.name from OBPOS_App_Payment_Type p "
             + " where p.obposTerminaltype.id = :posId "
