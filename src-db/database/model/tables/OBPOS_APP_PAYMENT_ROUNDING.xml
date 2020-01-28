@@ -37,36 +37,36 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="OBPOS_APP_ROUNDING_TYPE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <column name="C_CURRENCY_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ISSALESROUNDING" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="SALEROUNDING" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ISRETURNROUNDING" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="SALEROUNDINGMODE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="SALESMULTIPLYBY" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
+      <column name="SALEROUNDINGMULTIPLE" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
-      <column name="RETURNMULTIPLYBY" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
+      <column name="RETURNROUNDING" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="RETURNROUNDINGMODE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="RETURNROUNDINGMULTIPLE" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
         <default><![CDATA[0]]></default>
-        <onCreateDefault/>
-      </column>
-      <column name="RETURNROUNDING" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="SALESROUNDING" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="ROUNDING_PAYMENT_TYPE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
         <onCreateDefault/>
       </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBPOS_APPPAYROUND_AD_CLIENT">
@@ -75,25 +75,22 @@
       <foreign-key foreignTable="AD_ORG" name="OBPOS_APPPAYROUND_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CURRENCY" name="OBPOS_APPPAYROUND_CURR">
+      <foreign-key foreignTable="C_CURRENCY" name="OBPOS_APPPAYROUND_C_CUR">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
       <foreign-key foreignTable="OBPOS_APP_PAYMENT_TYPE" name="OBPOS_APPPAYROUND_PAY_TYPE">
         <reference local="OBPOS_APP_PAYMENT_TYPE_ID" foreign="OBPOS_APP_PAYMENT_TYPE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="OBPOS_APP_PAYMENT_TYPE" name="OBPOS_PAYTYPE_ROUNDPAY" onDelete="cascade">
-        <reference local="ROUNDING_PAYMENT_TYPE_ID" foreign="OBPOS_APP_PAYMENT_TYPE_ID"/>
+      <foreign-key foreignTable="OBPOS_APP_PAYMENT_TYPE" name="OBPOS_APPPAYROUND_ROUND_TYPE">
+        <reference local="OBPOS_APP_ROUNDING_TYPE_ID" foreign="OBPOS_APP_PAYMENT_TYPE_ID"/>
       </foreign-key>
-      <index name="OBPOS_APPPAYROUND_TERMTYPE" unique="false">
-        <index-column name="OBPOS_APP_PAYMENT_TYPE_ID"/>
-      </index>
-      <unique name="OBPOS_APP_PAY_ROUND_TYPE_CURR">
-        <unique-column name="ROUNDING_PAYMENT_TYPE_ID"/>
+      <unique name="OBPOS_APPPAYROUND_UQ">
         <unique-column name="OBPOS_APP_PAYMENT_TYPE_ID"/>
+        <unique-column name="OBPOS_APP_ROUNDING_TYPE_ID"/>
         <unique-column name="C_CURRENCY_ID"/>
       </unique>
       <check name="OBPOS_APP_PAYROUND_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="OBPOS_APP_PAYROUND_RETURN_CHK"><![CDATA[ISRETURNROUNDING IN ('Y', 'N')]]></check>
-      <check name="OBPOS_APP_PAYROUND_SALES_CHK"><![CDATA[ISSALESROUNDING IN ('Y', 'N')]]></check>
+      <check name="OBPOS_APP_PAYROUND_RETURN_CHK"><![CDATA[RETURNROUNDING IN ('Y', 'N')]]></check>
+      <check name="OBPOS_APP_PAYROUND_SALE_CHK"><![CDATA[SALEROUNDING IN ('Y', 'N')]]></check>
     </table>
   </database>

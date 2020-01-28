@@ -522,8 +522,9 @@ Here it is defined the payment method (cash, card, etc...) and also which action
 <!--7E23D73EA769452A89FC6C32055C9D03-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--7E23D73EA769452A89FC6C32055C9D03-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--7E23D73EA769452A89FC6C32055C9D03-->  <NAME><![CDATA[Payment Rounding]]></NAME>
-<!--7E23D73EA769452A89FC6C32055C9D03-->  <DESCRIPTION><![CDATA[Define the payment method used for rounding the order total amount]]></DESCRIPTION>
-<!--7E23D73EA769452A89FC6C32055C9D03-->  <HELP><![CDATA[Defines each of the currencies that can be rounded by the payment method. When creating the POS terminal based on this type, all currencies defined here will be rounded if applicable for the payment method used, in case it is configured and the total amount is paid, a new line is created in the payment informatión with the Rounding Payment Method]]></HELP>
+<!--7E23D73EA769452A89FC6C32055C9D03-->  <DESCRIPTION><![CDATA[Allows to define rounding rules to apply to the payments made in Web POS.]]></DESCRIPTION>
+<!--7E23D73EA769452A89FC6C32055C9D03-->  <HELP><![CDATA[Allows to define rounding rules to apply to the payments made in Web POS.
+Rounding rules can be defined for a payment method and can be enabled for sales and returns.]]></HELP>
 <!--7E23D73EA769452A89FC6C32055C9D03-->  <AD_TABLE_ID><![CDATA[BA323713D0F94666AD2E8F0637F16F34]]></AD_TABLE_ID>
 <!--7E23D73EA769452A89FC6C32055C9D03-->  <AD_WINDOW_ID><![CDATA[8AC4D0AC73A44547ACE1FC6A39D00F7F]]></AD_WINDOW_ID>
 <!--7E23D73EA769452A89FC6C32055C9D03-->  <SEQNO><![CDATA[21]]></SEQNO>

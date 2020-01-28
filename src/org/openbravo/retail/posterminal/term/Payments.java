@@ -186,13 +186,13 @@ public class Payments extends JSONTerminalProperty {
           if (paymentRounding != null) {
 
             JSONObject paymentRoundingJSON = new JSONObject();
+            paymentRoundingJSON.put("isSalesRounding", paymentRounding.isSaleRounding());
+            paymentRoundingJSON.put("salesRounding", paymentRounding.getSaleRoundingMode());
+            paymentRoundingJSON.put("salesMultiplyBy", paymentRounding.getSaleRoundingMultiple());
             paymentRoundingJSON.put("isReturnRounding", paymentRounding.isReturnRounding());
-            paymentRoundingJSON.put("returnRounding", paymentRounding.getReturnRounding());
-            paymentRoundingJSON.put("returnMultiplyBy", paymentRounding.getReturnMultiplyBy());
-
-            paymentRoundingJSON.put("isRalesRounding", paymentRounding.isSalesRounding());
-            paymentRoundingJSON.put("salesRounding", paymentRounding.getSalesRounding());
-            paymentRoundingJSON.put("salesMultiplyBy", paymentRounding.getSalesMultiplyBy());
+            paymentRoundingJSON.put("returnRounding", paymentRounding.getReturnRoundingMode());
+            paymentRoundingJSON.put("returnMultiplyBy",
+                paymentRounding.getReturnRoundingMultiple());
 
             //@formatter:off
             String roundingPaymentTypeQuery = " select searchKey"
@@ -205,7 +205,7 @@ public class Payments extends JSONTerminalProperty {
                 .createQuery(roundingPaymentTypeQuery, String.class);
             criteria.setParameter("posId", posId);
             criteria.setParameter("roundingPaymentTypeId",
-                paymentRounding.getRoundingPaymentType().getId());
+                paymentRounding.getObposAppRoundingType().getId());
             criteria.setMaxResults(1);
             paymentRoundingJSON.put("paymentRoundingType", criteria.uniqueResult());
 
