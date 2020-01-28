@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2019 Openbravo S.L.U.
+ * Copyright (C) 2013-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -3469,31 +3469,6 @@
           }
         }
 
-        function addProdCharsToProduct(orderline, addProdCharCallback) {
-          //Add prod char information to product object
-          if (
-            !p.get('productCharacteristics') &&
-            p.get('characteristicDescription') &&
-            !OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)
-          ) {
-            OB.Dal.find(
-              OB.Model.ProductCharacteristicValue,
-              { product: p.get('id') },
-              function(productcharacteristics) {
-                let newProd = OB.UTIL.clone(p);
-                newProd.set(
-                  'productCharacteristics',
-                  productcharacteristics.toJSON()
-                );
-                orderline.set('product', newProd);
-                addProdCharCallback();
-              }
-            );
-          } else {
-            addProdCharCallback();
-          }
-        }
-
         function execPostAddProductToOrderHook() {
           if (me.isCalculateReceiptLocked === true || !line) {
             OB.error(
@@ -3551,11 +3526,9 @@
                   }
                 }
               }
-              addProdCharsToProduct(args.orderline, function() {
-                if (callback) {
-                  callback(true, args.orderline);
-                }
-              });
+              if (callback) {
+                callback(true, args.orderline);
+              }
             }
           );
         }
@@ -4247,6 +4220,7 @@
       cancelCallback
     ) {
       var executeAddProduct,
+        addProdCharsToProduct,
         finalCallback,
         me = this,
         attributeSearchAllowed = OB.MobileApp.model.hasPermission(
@@ -4258,6 +4232,7 @@
           callback(success, orderline);
         }
       };
+
       // do not allow generic products to be added to the receipt
       if (p && p.get('isGeneric')) {
         OB.UTIL.showI18NWarning('OBPOS_GenericNotAllowed');
@@ -4301,120 +4276,150 @@
         finalCallback(false, null);
         return;
       }
-      OB.UTIL.HookManager.executeHooks(
-        'OBPOS_AddProductToOrder',
-        {
-          receipt: this,
-          productToAdd: p,
-          qtyToAdd: qty,
-          options: options,
-          attrs: attrs
-        },
-        function(args) {
-          if (args && args.receipt && args.receipt.get('deferredOrder')) {
-            args.receipt.unset('deferredOrder', {
-              silent: true
-            });
-          }
-          if (args && args.useLines) {
-            me._drawLinesDistribution(args);
-            finalCallback(false, null);
-            return;
-          }
-          if (OB.UTIL.isNullOrUndefined(args.attrs)) {
-            args.attrs = {};
-          }
-          args.attrs.hasMandatoryServices = false;
-          args.attrs.hasRelatedServices = false;
-          executeAddProduct = function() {
-            var isQuotationAndAttributeAllowed =
-              args.receipt.get('isQuotation') &&
-              OB.MobileApp.model.hasPermission(
-                'OBPOS_AskForAttributesWhenCreatingQuotation',
-                true
+
+      addProdCharsToProduct = function(productWithChars, addProdCharCallback) {
+        //Add prod char information to product object
+        if (
+          !productWithChars.get('productCharacteristics') &&
+          productWithChars.get('characteristicDescription') &&
+          !OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)
+        ) {
+          OB.Dal.find(
+            OB.Model.ProductCharacteristicValue,
+            { product: productWithChars.get('id') },
+            function(productcharacteristics) {
+              productWithChars.set(
+                'productCharacteristics',
+                productcharacteristics.toJSON()
               );
-            if (
-              (!args || !args.options || !args.options.line) &&
-              attributeSearchAllowed &&
-              p.get('hasAttributes') &&
-              qty >= 1 &&
-              (!args.receipt.get('isQuotation') ||
-                isQuotationAndAttributeAllowed)
-            ) {
-              OB.MobileApp.view.waterfall('onShowPopup', {
-                popup: 'modalProductAttribute',
-                args: {
-                  callback: function(attributeValue) {
-                    if (!OB.UTIL.isNullOrUndefined(attributeValue)) {
-                      if (_.isEmpty(attributeValue)) {
-                        // the attributes for layaways accepts empty values, but for manage later easy to be null instead ""
-                        attributeValue = null;
-                      }
-                      attrs.attributeValue = attributeValue;
-                      me._addProduct(p, qty, options, attrs, function(
-                        success,
-                        orderline
-                      ) {
-                        finalCallback(success, orderline);
-                      });
-                    } else {
-                      finalCallback(false, null);
-                    }
-                  },
-                  options: options
-                }
-              });
-            } else {
-              me._addProduct(p, qty, options, attrs, function(
-                success,
-                orderline
-              ) {
-                finalCallback(success, orderline);
+              addProdCharCallback();
+            }
+          );
+        } else {
+          addProdCharCallback();
+        }
+      };
+      var context = this;
+      var productWithChars = OB.UTIL.clone(p);
+      addProdCharsToProduct(productWithChars, function() {
+        OB.UTIL.HookManager.executeHooks(
+          'OBPOS_AddProductToOrder',
+          {
+            receipt: context,
+            productToAdd: productWithChars,
+            qtyToAdd: qty,
+            options: options,
+            attrs: attrs
+          },
+          function(args) {
+            if (args && args.receipt && args.receipt.get('deferredOrder')) {
+              args.receipt.unset('deferredOrder', {
+                silent: true
               });
             }
-          };
-
-          if (
-            (!args.options || !args.options.isSilentAddProduct) &&
-            args.productToAdd.get('productType') !== 'S' &&
-            (!args.attrs || !args.attrs.originalOrderLineId)
-          ) {
-            var productId =
-              args.productToAdd.get('isNew') &&
-              OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)
-                ? null
-                : args.productToAdd.get('forceFilterId')
-                ? args.productToAdd.get('forceFilterId')
-                : args.productToAdd.id;
-            args.receipt._loadRelatedServices(
-              args.productToAdd.get('productType'),
-              productId,
-              args.productToAdd.get('productCategory'),
-              function(data) {
-                if (data) {
-                  if (data.hasservices) {
-                    args.attrs.hasRelatedServices = true;
+            if (args && args.useLines) {
+              me._drawLinesDistribution(args);
+              finalCallback(false, null);
+              return;
+            }
+            if (OB.UTIL.isNullOrUndefined(args.attrs)) {
+              args.attrs = {};
+            }
+            args.attrs.hasMandatoryServices = false;
+            args.attrs.hasRelatedServices = false;
+            executeAddProduct = function() {
+              var isQuotationAndAttributeAllowed =
+                args.receipt.get('isQuotation') &&
+                OB.MobileApp.model.hasPermission(
+                  'OBPOS_AskForAttributesWhenCreatingQuotation',
+                  true
+                );
+              if (
+                (!args || !args.options || !args.options.line) &&
+                attributeSearchAllowed &&
+                productWithChars.get('hasAttributes') &&
+                qty >= 1 &&
+                (!args.receipt.get('isQuotation') ||
+                  isQuotationAndAttributeAllowed)
+              ) {
+                OB.MobileApp.view.waterfall('onShowPopup', {
+                  popup: 'modalProductAttribute',
+                  args: {
+                    callback: function(attributeValue) {
+                      if (!OB.UTIL.isNullOrUndefined(attributeValue)) {
+                        if (_.isEmpty(attributeValue)) {
+                          // the attributes for layaways accepts empty values, but for manage later easy to be null instead ""
+                          attributeValue = null;
+                        }
+                        attrs.attributeValue = attributeValue;
+                        me._addProduct(
+                          productWithChars,
+                          qty,
+                          options,
+                          attrs,
+                          function(success, orderline) {
+                            finalCallback(success, orderline);
+                          }
+                        );
+                      } else {
+                        finalCallback(false, null);
+                      }
+                    },
+                    options: options
                   }
-                  if (data.hasmandatoryservices) {
-                    args.attrs.hasMandatoryServices = true;
-                  }
-                }
-                executeAddProduct();
-                if (
-                  !OB.UTIL.isNullOrUndefined(args.attrs) &&
-                  args.attrs.cancelOperation
+                });
+              } else {
+                me._addProduct(productWithChars, qty, options, attrs, function(
+                  success,
+                  orderline
                 ) {
-                  if (cancelCallback instanceof Function) {
-                    cancelCallback();
+                  finalCallback(success, orderline);
+                });
+              }
+            };
+
+            if (
+              (!args.options || !args.options.isSilentAddProduct) &&
+              args.productToAdd.get('productType') !== 'S' &&
+              (!args.attrs || !args.attrs.originalOrderLineId)
+            ) {
+              var productId =
+                args.productToAdd.get('isNew') &&
+                OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)
+                  ? null
+                  : args.productToAdd.get('forceFilterId')
+                  ? args.productToAdd.get('forceFilterId')
+                  : args.productToAdd.id;
+              args.receipt._loadRelatedServices(
+                args.productToAdd.get('productType'),
+                productId,
+                args.productToAdd.get('productCategory'),
+                function(data) {
+                  if (data) {
+                    if (data.hasservices) {
+                      args.attrs.hasRelatedServices = true;
+                    }
+                    if (data.hasmandatoryservices) {
+                      args.attrs.hasMandatoryServices = true;
+                    }
+                  }
+                  executeAddProduct();
+                  if (
+                    !OB.UTIL.isNullOrUndefined(args.attrs) &&
+                    args.attrs.cancelOperation
+                  ) {
+                    if (cancelCallback instanceof Function) {
+                      cancelCallback();
+                    }
                   }
                 }
-              }
-            );
-          } else {
-            executeAddProduct();
+              );
+            } else {
+              executeAddProduct();
+            }
           }
-        }
-      );
+        );
+      });
     },
 
     /**
