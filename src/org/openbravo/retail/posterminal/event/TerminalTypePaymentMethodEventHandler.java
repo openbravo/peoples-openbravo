@@ -45,6 +45,7 @@ public class TerminalTypePaymentMethodEventHandler extends EntityPersistenceEven
     }
     checkNoAutomaticDepositNotInCashup(event);
     checkIfCurrencyRoundingExists(event);
+    checkRoundingGLItemForPaymentRounding(event);
   }
 
   public void onSave(@Observes EntityNewEvent event) {
@@ -54,6 +55,7 @@ public class TerminalTypePaymentMethodEventHandler extends EntityPersistenceEven
     checkNoAutomaticDepositNotInCashup(event);
     checkIfCurrencyRoundingExists(event);
     checkIfRoundingPaymentExists(event);
+    checkRoundingGLItemForPaymentRounding(event);
   }
 
   private void checkNoAutomaticDepositNotInCashup(EntityPersistenceEvent event) {
@@ -109,6 +111,18 @@ public class TerminalTypePaymentMethodEventHandler extends EntityPersistenceEven
           throw new OBException(String.format(
               OBMessageUtils.messageBD("OBPOS_PaymentRoundingNotAllowed"), paymentRoundingName));
         }
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  private void checkRoundingGLItemForPaymentRounding(EntityPersistenceEvent event) {
+    TerminalTypePaymentMethod ttpm = (TerminalTypePaymentMethod) event.getTargetInstance();
+    OBContext.setAdminMode(true);
+    try {
+      if (ttpm.isRounding().booleanValue() && ttpm.getGlitemRound() == null) {
+        throw new OBException(OBMessageUtils.messageBD("OBPOS_GLItemForPaymentRoundingRequired"));
       }
     } finally {
       OBContext.restorePreviousMode();
