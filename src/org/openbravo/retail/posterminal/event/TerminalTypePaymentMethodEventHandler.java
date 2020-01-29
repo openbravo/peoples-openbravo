@@ -59,7 +59,7 @@ public class TerminalTypePaymentMethodEventHandler extends EntityPersistenceEven
   }
 
   private void checkNoAutomaticDepositNotInCashup(EntityPersistenceEvent event) {
-    TerminalTypePaymentMethod ttpm = (TerminalTypePaymentMethod) event.getTargetInstance();
+    final TerminalTypePaymentMethod ttpm = (TerminalTypePaymentMethod) event.getTargetInstance();
     if (!ttpm.isCountpaymentincashup().booleanValue()
         && !ttpm.getPaymentMethod().isAutomaticDeposit().booleanValue()) {
       throw new OBException(Utility.messageBD(new DalConnectionProvider(false),
@@ -70,7 +70,7 @@ public class TerminalTypePaymentMethodEventHandler extends EntityPersistenceEven
   }
 
   private void checkIfCurrencyRoundingExists(EntityPersistenceEvent event) {
-    TerminalTypePaymentMethod ttpm = (TerminalTypePaymentMethod) event.getTargetInstance();
+    final TerminalTypePaymentMethod ttpm = (TerminalTypePaymentMethod) event.getTargetInstance();
     OBContext.setAdminMode(true);
     try {
       if (ttpm.getChangeLessThan() != null && ttpm.getChangePaymentType() != null) {
@@ -95,7 +95,7 @@ public class TerminalTypePaymentMethodEventHandler extends EntityPersistenceEven
   }
 
   private void checkIfRoundingPaymentExists(EntityPersistenceEvent event) {
-    TerminalTypePaymentMethod ttpm = (TerminalTypePaymentMethod) event.getTargetInstance();
+    final TerminalTypePaymentMethod ttpm = (TerminalTypePaymentMethod) event.getTargetInstance();
     OBContext.setAdminMode(true);
     try {
       if (ttpm.isRounding().booleanValue()) {
@@ -119,7 +119,7 @@ public class TerminalTypePaymentMethodEventHandler extends EntityPersistenceEven
   }
 
   private void checkRoundingGLItemForPaymentRounding(EntityPersistenceEvent event) {
-    TerminalTypePaymentMethod ttpm = (TerminalTypePaymentMethod) event.getTargetInstance();
+    final TerminalTypePaymentMethod ttpm = (TerminalTypePaymentMethod) event.getTargetInstance();
     OBContext.setAdminMode(true);
     try {
       if (ttpm.isRounding().booleanValue() && ttpm.getGlitemRound() == null) {
