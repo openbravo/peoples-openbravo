@@ -7686,6 +7686,9 @@
           rounding = paymentStatus.isReturn
             ? terminalPayment.paymentRounding.returnRoundingMode
             : terminalPayment.paymentRounding.saleRoundingMode,
+          roundingEnabled = paymentStatus.isReturn
+            ? terminalPayment.paymentRounding.returnRounding
+            : terminalPayment.paymentRounding.saleRounding,
           pow = Math.pow(10, precision),
           paymentDifference =
             OB.DEC.mul(paymentStatus.pendingAmt, pow) %
@@ -7696,13 +7699,14 @@
             OB.DEC.mul(payment.get('paid'), pow) % OB.DEC.mul(multiplyBy, pow);
         }
         if (
-          (roundingAmount !== 0 && OB.DEC.abs(roundingAmount) < multiplyBy) ||
-          (payment.get('paid') !== 0 &&
-            paymentDifference !== 0 &&
-            paymentStatus.pendingAmt < multiplyBy) ||
-          (payment.get('paid') === 0 &&
-            paymentDifference !== 0 &&
-            payment.get('amount') >= paymentStatus.pendingAmt)
+          roundingEnabled &&
+          ((roundingAmount !== 0 && OB.DEC.abs(roundingAmount) < multiplyBy) ||
+            (payment.get('paid') !== 0 &&
+              paymentDifference !== 0 &&
+              paymentStatus.pendingAmt < multiplyBy) ||
+            (payment.get('paid') === 0 &&
+              paymentDifference !== 0 &&
+              payment.get('amount') >= paymentStatus.pendingAmt))
         ) {
           if (rounding === 'UR') {
             if (paymentDifference !== 0) {
