@@ -31,14 +31,12 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.query.Query;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostingAlgorithm.CostDimension;
 import org.openbravo.costing.CostingServer.TrxType;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
@@ -55,7 +53,6 @@ import org.openbravo.model.materialmgmt.transaction.InternalConsumptionLine;
 import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ProductionLine;
-import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 
 @Dependent
@@ -85,19 +82,19 @@ public abstract class CostingAlgorithmAdjustmentImp {
    * @param costAdjLine
    *          The Cost Adjustment Line that it is processed.
    */
-  protected void init(CostAdjustmentLine costAdjLine) {
+  protected void init(final CostAdjustmentLine costAdjLine) {
     strCostAdjLineId = costAdjLine.getId();
     strCostAdjId = costAdjLine.getCostAdjustment().getId();
     MaterialTransaction transaction = costAdjLine.getInventoryTransaction();
     strTransactionId = transaction.getId();
     isManufacturingProduct = transaction.getProduct().isProduction();
-    CostingServer costingServer = new CostingServer(transaction);
+    final CostingServer costingServer = new CostingServer(transaction);
     strCostOrgId = costingServer.getOrganization().getId();
     strCostCurrencyId = transaction.getCurrency().getId();
     costCurPrecission = transaction.getCurrency().getCostingPrecision().intValue();
     stdCurPrecission = transaction.getCurrency().getStandardPrecision().intValue();
     trxType = CostingServer.TrxType.getTrxType(transaction);
-    CostingRule costingRule = costingServer.getCostingRule();
+    final CostingRule costingRule = costingServer.getCostingRule();
     strCostingRuleId = costingRule.getId();
     startingDate = CostingUtils.getCostingRuleStartingDate(costingRule);
     strClientId = costingRule.getClient().getId();
@@ -105,7 +102,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
         && !transaction.getTransactionProcessDate()
             .before(CostingUtils.getCostingRuleFixBackdatedFrom(costingRule));
 
-    HashMap<CostDimension, BaseOBObject> costDimensions = CostingUtils.getEmptyDimensions();
+    final HashMap<CostDimension, BaseOBObject> costDimensions = CostingUtils.getEmptyDimensions();
     // Production products cannot be calculated by warehouse dimension.
     if (costingRule.isWarehouseDimension()) {
       costDimensions.put(CostDimension.Warehouse, transaction.getStorageBin().getWarehouse());
@@ -133,32 +130,33 @@ public abstract class CostingAlgorithmAdjustmentImp {
    * Process to include in the Cost Adjustment the required lines of transactions whose cost needs
    * to be adjusted as a consequence of other lines already included.
    */
-  protected void searchRelatedTransactionCosts(CostAdjustmentLine _costAdjLine) {
+  protected void searchRelatedTransactionCosts(final CostAdjustmentLine costAdjLine) {
     boolean searchRelatedTransactions = true;
-    CostAdjustmentLine costAdjLine;
-    if (_costAdjLine != null) {
-      costAdjLine = _costAdjLine;
+    CostAdjustmentLine currentCostAdjLine;
+    if (costAdjLine != null) {
+      currentCostAdjLine = costAdjLine;
       searchRelatedTransactions = false;
     } else {
-      costAdjLine = getCostAdjLine();
+      currentCostAdjLine = getCostAdjLine();
     }
 
     // Backdated transactions are inserted with a null adjustment amount, in case we are not
     // adjusting a Inventory Amount Update transaction.
-    if (costAdjLine.isBackdatedTrx() && costAdjLine.getAdjustmentAmount() == null) {
-      calculateBackdatedTrxAdjustment(costAdjLine);
+    if (currentCostAdjLine.isBackdatedTrx() && currentCostAdjLine.getAdjustmentAmount() == null) {
+      calculateBackdatedTrxAdjustment(currentCostAdjLine);
     }
 
     // Negative stock correction are inserted with a null adjustment amount, in case we are not
     // adjusting a Inventory Closing transaction.
-    if (costAdjLine.isNegativeStockCorrection() && costAdjLine.getAdjustmentAmount() == null) {
-      calculateNegativeStockCorrectionAdjustmentAmount(costAdjLine);
+    if (currentCostAdjLine.isNegativeStockCorrection()
+        && currentCostAdjLine.getAdjustmentAmount() == null) {
+      calculateNegativeStockCorrectionAdjustmentAmount(currentCostAdjLine);
     }
 
-    if (costAdjLine.isSource()) {
+    if (currentCostAdjLine.isSource()) {
       addCostDependingTrx(null);
-      if (BigDecimal.ZERO.compareTo(costAdjLine.getAdjustmentAmount()) == 0) {
-        costAdjLine.setNeedsPosting(Boolean.FALSE);
+      if (BigDecimal.ZERO.compareTo(currentCostAdjLine.getAdjustmentAmount()) == 0) {
+        currentCostAdjLine.setNeedsPosting(Boolean.FALSE);
       }
     }
 
@@ -167,15 +165,15 @@ public abstract class CostingAlgorithmAdjustmentImp {
     }
   }
 
-  protected void addCostDependingTrx(CostAdjustmentLine costAdjLine) {
+  protected void addCostDependingTrx(final CostAdjustmentLine costAdjLine) {
     // Some transaction costs are directly related to other transaction costs. These relationships
     // must be kept when the original transaction cost is adjusted adjusting as well the dependent
     // transactions.
-    TrxType _trxType = trxType;
+    TrxType currentTrxType = trxType;
     if (costAdjLine != null) {
-      _trxType = TrxType.getTrxType(costAdjLine.getInventoryTransaction());
+      currentTrxType = TrxType.getTrxType(costAdjLine.getInventoryTransaction());
     }
-    switch (_trxType) {
+    switch (currentTrxType) {
       case Shipment:
         searchReturnShipments(costAdjLine);
       case Receipt:
@@ -194,6 +192,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
         searchManufacturingProduced(costAdjLine);
         break;
       case InventoryDecrease:
+        break;
       case InventoryIncrease:
         searchOpeningInventory(costAdjLine);
       default:
@@ -202,16 +201,16 @@ public abstract class CostingAlgorithmAdjustmentImp {
   }
 
   protected CostAdjustmentLine insertCostAdjustmentLine(
-      CostAdjustmentLineParameters lineParameters) {
+      final CostAdjustmentLineParameters lineParameters) {
     return insertCostAdjustmentLine(lineParameters, null);
   }
 
   @Deprecated
-  protected CostAdjustmentLine insertCostAdjustmentLine(MaterialTransaction trx,
-      BigDecimal adjustmentamt, CostAdjustmentLine _parentLine) {
+  protected CostAdjustmentLine insertCostAdjustmentLine(final MaterialTransaction trx,
+      final BigDecimal adjustmentamt, final CostAdjustmentLine parentLine) {
     final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(trx,
         adjustmentamt, getCostAdj());
-    return insertCostAdjustmentLine(lineParameters, _parentLine);
+    return insertCostAdjustmentLine(lineParameters, parentLine);
 
   }
 
@@ -222,33 +221,33 @@ public abstract class CostingAlgorithmAdjustmentImp {
    *          Material transaction
    * @param adjustmentamt
    *          Adjustment amount
-   * @param _parentLine
+   * @param parentLine
    *          Cost Adjustment Line
    * 
    */
-  protected CostAdjustmentLine insertCostAdjustmentLine(CostAdjustmentLineParameters lineParameters,
-      CostAdjustmentLine _parentLine) {
+  protected CostAdjustmentLine insertCostAdjustmentLine(
+      final CostAdjustmentLineParameters lineParameters, final CostAdjustmentLine parentLine) {
     Date dateAcct = lineParameters.getTransaction().getMovementDate();
 
-    CostAdjustmentLine parentLine;
-    if (_parentLine == null) {
-      parentLine = getCostAdjLine();
+    CostAdjustmentLine currentParentLine;
+    if (parentLine == null) {
+      currentParentLine = getCostAdjLine();
     } else {
-      parentLine = _parentLine;
+      currentParentLine = parentLine;
     }
-    Date parentAcctDate = parentLine.getAccountingDate();
+    Date parentAcctDate = currentParentLine.getAccountingDate();
     if (parentAcctDate == null) {
-      parentAcctDate = parentLine.getInventoryTransaction().getMovementDate();
+      parentAcctDate = currentParentLine.getInventoryTransaction().getMovementDate();
     }
 
     if (dateAcct.before(parentAcctDate)) {
       dateAcct = parentAcctDate;
     }
 
-    CostAdjustmentLine newCAL = CostAdjustmentUtils.insertCostAdjustmentLine(lineParameters,
+    final CostAdjustmentLine newCAL = CostAdjustmentUtils.insertCostAdjustmentLine(lineParameters,
         dateAcct, getNextLineNo());
-    if (!newCAL.getId().equals(parentLine.getId())) {
-      newCAL.setParentCostAdjustmentLine(parentLine);
+    if (!newCAL.getId().equals(currentParentLine.getId())) {
+      newCAL.setParentCostAdjustmentLine(currentParentLine);
       OBDal.getInstance().save(newCAL);
     }
 
@@ -258,18 +257,19 @@ public abstract class CostingAlgorithmAdjustmentImp {
 
   private Long getNextLineNo() {
     if (nextLineNo == null) {
-      StringBuffer where = new StringBuffer();
-      where.append(" select max(" + CostAdjustmentLine.PROPERTY_LINENO + ")");
-      where.append(" from " + CostAdjustmentLine.ENTITY_NAME + " as cal");
-      where.append(
-          " where cal." + CostAdjustmentLine.PROPERTY_COSTADJUSTMENT + ".id = :costAdjustment");
-      Query<Long> calQry = OBDal.getInstance()
-          .getSession()
-          .createQuery(where.toString(), Long.class);
-      calQry.setParameter("costAdjustment", strCostAdjId);
-      calQry.setMaxResults(1);
+      //@formatter:off
+      final String hql =
+                  "select max(lineNo)" +
+                  "  from CostAdjustmentLine as cal"+
+                  " where cal.costAdjustment.id = :costAdjustment";
+      //@formatter:on
 
-      nextLineNo = calQry.uniqueResult();
+      nextLineNo = OBDal.getInstance()
+          .getSession()
+          .createQuery(hql, Long.class)
+          .setParameter("costAdjustment", strCostAdjId)
+          .setMaxResults(1)
+          .uniqueResult();
     }
     nextLineNo += 10L;
     return nextLineNo;
@@ -279,14 +279,14 @@ public abstract class CostingAlgorithmAdjustmentImp {
    * When the cost of a Closing Inventory is adjusted it is needed to adjust with the same amount
    * the related Opening Inventory.
    */
-  protected void searchOpeningInventory(CostAdjustmentLine _costAdjLine) {
-    CostAdjustmentLine costAdjLine;
-    if (_costAdjLine != null) {
-      costAdjLine = _costAdjLine;
+  protected void searchOpeningInventory(final CostAdjustmentLine costAdjLine) {
+    CostAdjustmentLine currentCostAdjLine;
+    if (costAdjLine != null) {
+      currentCostAdjLine = costAdjLine;
     } else {
-      costAdjLine = getCostAdjLine();
+      currentCostAdjLine = getCostAdjLine();
     }
-    InventoryCountLine invline = costAdjLine.getInventoryTransaction()
+    final InventoryCountLine invline = currentCostAdjLine.getInventoryTransaction()
         .getPhysicalInventoryLine()
         .getRelatedInventory();
     if (invline == null) {
@@ -298,31 +298,32 @@ public abstract class CostingAlgorithmAdjustmentImp {
     }
 
     final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(deptrx,
-        costAdjLine.getAdjustmentAmount(), getCostAdj());
-    insertCostAdjustmentLine(lineParameters, _costAdjLine);
+        currentCostAdjLine.getAdjustmentAmount(), getCostAdj());
+    insertCostAdjustmentLine(lineParameters, costAdjLine);
   }
 
-  protected void searchManufacturingProduced(CostAdjustmentLine _costAdjLine) {
-    CostAdjustmentLine costAdjLine;
-    if (_costAdjLine != null) {
-      costAdjLine = _costAdjLine;
+  protected void searchManufacturingProduced(final CostAdjustmentLine costAdjLine) {
+    CostAdjustmentLine currentCostAdjLine;
+    if (costAdjLine != null) {
+      currentCostAdjLine = costAdjLine;
     } else {
-      costAdjLine = getCostAdjLine();
+      currentCostAdjLine = getCostAdjLine();
     }
-    ProductionLine pl = costAdjLine.getInventoryTransaction().getProductionLine();
+    final ProductionLine pl = currentCostAdjLine.getInventoryTransaction().getProductionLine();
 
-    OBCriteria<ProductionLine> critPL = OBDal.getInstance().createCriteria(ProductionLine.class);
+    final OBCriteria<ProductionLine> critPL = OBDal.getInstance()
+        .createCriteria(ProductionLine.class)
+        .add(Restrictions.eq(ProductionLine.PROPERTY_PRODUCTIONPLAN, pl.getProductionPlan()))
+        .add(Restrictions.eq(ProductionLine.PROPERTY_PRODUCTIONTYPE, "+"))
+        .addOrderBy(ProductionLine.PROPERTY_COMPONENTCOST, true);
     critPL.createAlias(ProductionLine.PROPERTY_PRODUCT, "pr");
-    critPL.add(Restrictions.eq(ProductionLine.PROPERTY_PRODUCTIONPLAN, pl.getProductionPlan()));
-    critPL.add(Restrictions.eq(ProductionLine.PROPERTY_PRODUCTIONTYPE, "+"));
-    critPL.addOrderBy(ProductionLine.PROPERTY_COMPONENTCOST, true);
 
-    BigDecimal pendingAmt = costAdjLine.getAdjustmentAmount();
+    BigDecimal pendingAmt = currentCostAdjLine.getAdjustmentAmount();
     CostAdjustmentLine lastAdjLine = null;
     for (ProductionLine pline : critPL.list()) {
-      BigDecimal adjAmt = costAdjLine.getAdjustmentAmount();
+      BigDecimal adjAmt = currentCostAdjLine.getAdjustmentAmount();
       if (pline.getComponentCost() != null) {
-        adjAmt = costAdjLine.getAdjustmentAmount().multiply(pline.getComponentCost());
+        adjAmt = currentCostAdjLine.getAdjustmentAmount().multiply(pline.getComponentCost());
         pendingAmt = pendingAmt.subtract(adjAmt);
       }
       if (!pline.getProduct().isStocked() || !"I".equals(pline.getProduct().getProductType())) {
@@ -333,14 +334,14 @@ public abstract class CostingAlgorithmAdjustmentImp {
             pline.getId());
         continue;
       }
-      MaterialTransaction prodtrx = pline.getMaterialMgmtMaterialTransactionList().get(0);
+      final MaterialTransaction prodtrx = pline.getMaterialMgmtMaterialTransactionList().get(0);
       if (!prodtrx.isCostCalculated() || prodtrx.isCostPermanent()) {
         continue;
       }
 
       final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(prodtrx,
           adjAmt, getCostAdj());
-      CostAdjustmentLine newCAL = insertCostAdjustmentLine(lineParameters, _costAdjLine);
+      final CostAdjustmentLine newCAL = insertCostAdjustmentLine(lineParameters, costAdjLine);
 
       lastAdjLine = newCAL;
     }
@@ -351,20 +352,21 @@ public abstract class CostingAlgorithmAdjustmentImp {
     }
   }
 
-  protected void searchBOMProducts(CostAdjustmentLine _costAdjLine) {
-    CostAdjustmentLine costAdjLine;
-    if (_costAdjLine != null) {
-      costAdjLine = _costAdjLine;
+  protected void searchBOMProducts(final CostAdjustmentLine costAdjLine) {
+    CostAdjustmentLine currentCostAdjLine;
+    if (costAdjLine != null) {
+      currentCostAdjLine = costAdjLine;
     } else {
-      costAdjLine = getCostAdjLine();
+      currentCostAdjLine = getCostAdjLine();
     }
-    ProductionLine pl = costAdjLine.getInventoryTransaction().getProductionLine();
-    OBCriteria<ProductionLine> critBOM = OBDal.getInstance().createCriteria(ProductionLine.class);
+    final ProductionLine pl = currentCostAdjLine.getInventoryTransaction().getProductionLine();
+    final OBCriteria<ProductionLine> critBOM = OBDal.getInstance()
+        .createCriteria(ProductionLine.class)
+        .add(Restrictions.eq(ProductionLine.PROPERTY_PRODUCTIONPLAN, pl.getProductionPlan()))
+        .add(Restrictions.gt(ProductionLine.PROPERTY_MOVEMENTQUANTITY, BigDecimal.ZERO))
+        .add(Restrictions.eq("pr." + Product.PROPERTY_STOCKED, true))
+        .add(Restrictions.eq("pr." + Product.PROPERTY_PRODUCTTYPE, "I"));
     critBOM.createAlias(ProductionLine.PROPERTY_PRODUCT, "pr");
-    critBOM.add(Restrictions.eq(ProductionLine.PROPERTY_PRODUCTIONPLAN, pl.getProductionPlan()));
-    critBOM.add(Restrictions.gt(ProductionLine.PROPERTY_MOVEMENTQUANTITY, BigDecimal.ZERO));
-    critBOM.add(Restrictions.eq("pr." + Product.PROPERTY_STOCKED, true));
-    critBOM.add(Restrictions.eq("pr." + Product.PROPERTY_PRODUCTTYPE, "I"));
     for (ProductionLine pline : critBOM.list()) {
       if (pline.getMaterialMgmtMaterialTransactionList().isEmpty()) {
         log4j.error("BOM Produced with id {} has no related transaction (M_Transaction).",
@@ -376,45 +378,46 @@ public abstract class CostingAlgorithmAdjustmentImp {
         continue;
       }
       final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(prodtrx,
-          costAdjLine.getAdjustmentAmount(), getCostAdj());
+          currentCostAdjLine.getAdjustmentAmount(), getCostAdj());
       lineParameters.setUnitCost(true);
-      insertCostAdjustmentLine(lineParameters, _costAdjLine);
+      insertCostAdjustmentLine(lineParameters, costAdjLine);
     }
   }
 
-  protected void searchVoidInternalConsumption(CostAdjustmentLine _costAdjLine) {
-    CostAdjustmentLine costAdjLine;
-    if (_costAdjLine != null) {
-      costAdjLine = _costAdjLine;
+  protected void searchVoidInternalConsumption(final CostAdjustmentLine costAdjLine) {
+    CostAdjustmentLine currentCostAdjLine;
+    if (costAdjLine != null) {
+      currentCostAdjLine = costAdjLine;
     } else {
-      costAdjLine = getCostAdjLine();
+      currentCostAdjLine = getCostAdjLine();
     }
 
-    List<InternalConsumptionLine> intConsVoidedList = costAdjLine.getInventoryTransaction()
+    final List<InternalConsumptionLine> intConsVoidedList = currentCostAdjLine
+        .getInventoryTransaction()
         .getInternalConsumptionLine()
         .getMaterialMgmtInternalConsumptionLineVoidedInternalConsumptionLineList();
 
     if (intConsVoidedList.isEmpty()) {
       return;
     }
-    InternalConsumptionLine intCons = intConsVoidedList.get(0);
-    MaterialTransaction voidedTrx = intCons.getMaterialMgmtMaterialTransactionList().get(0);
+    final InternalConsumptionLine intCons = intConsVoidedList.get(0);
+    final MaterialTransaction voidedTrx = intCons.getMaterialMgmtMaterialTransactionList().get(0);
     if (!voidedTrx.isCostCalculated() || voidedTrx.isCostPermanent()) {
       return;
     }
     final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(voidedTrx,
-        costAdjLine.getAdjustmentAmount(), getCostAdj());
-    insertCostAdjustmentLine(lineParameters, _costAdjLine);
+        currentCostAdjLine.getAdjustmentAmount(), getCostAdj());
+    insertCostAdjustmentLine(lineParameters, costAdjLine);
   }
 
-  protected void searchIntMovementTo(CostAdjustmentLine _costAdjLine) {
-    CostAdjustmentLine costAdjLine;
-    if (_costAdjLine != null) {
-      costAdjLine = _costAdjLine;
+  protected void searchIntMovementTo(final CostAdjustmentLine costAdjLine) {
+    CostAdjustmentLine currentCostAdjLine;
+    if (costAdjLine != null) {
+      currentCostAdjLine = costAdjLine;
     } else {
-      costAdjLine = getCostAdjLine();
+      currentCostAdjLine = getCostAdjLine();
     }
-    MaterialTransaction transaction = costAdjLine.getInventoryTransaction();
+    final MaterialTransaction transaction = currentCostAdjLine.getInventoryTransaction();
     for (MaterialTransaction movementTransaction : transaction.getMovementLine()
         .getMaterialMgmtMaterialTransactionList()) {
       if (movementTransaction.getId().equals(transaction.getId())) {
@@ -424,19 +427,19 @@ public abstract class CostingAlgorithmAdjustmentImp {
         continue;
       }
       final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(
-          movementTransaction, costAdjLine.getAdjustmentAmount(), getCostAdj());
-      insertCostAdjustmentLine(lineParameters, _costAdjLine);
+          movementTransaction, currentCostAdjLine.getAdjustmentAmount(), getCostAdj());
+      insertCostAdjustmentLine(lineParameters, costAdjLine);
     }
   }
 
-  protected void searchVoidInOut(CostAdjustmentLine _costAdjLine) {
-    CostAdjustmentLine costAdjLine;
-    if (_costAdjLine != null) {
-      costAdjLine = _costAdjLine;
+  protected void searchVoidInOut(final CostAdjustmentLine costAdjLine) {
+    final CostAdjustmentLine currentCostAdjLine;
+    if (costAdjLine != null) {
+      currentCostAdjLine = costAdjLine;
     } else {
-      costAdjLine = getCostAdjLine();
+      currentCostAdjLine = getCostAdjLine();
     }
-    ShipmentInOutLine voidedinoutline = costAdjLine.getInventoryTransaction()
+    ShipmentInOutLine voidedinoutline = currentCostAdjLine.getInventoryTransaction()
         .getGoodsShipmentLine()
         .getCanceledInoutLine();
     if (voidedinoutline == null) {
@@ -447,45 +450,49 @@ public abstract class CostingAlgorithmAdjustmentImp {
         continue;
       }
       final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(trx,
-          costAdjLine.getAdjustmentAmount(), getCostAdj());
-      insertCostAdjustmentLine(lineParameters, _costAdjLine);
+          currentCostAdjLine.getAdjustmentAmount(), getCostAdj());
+      insertCostAdjustmentLine(lineParameters, costAdjLine);
     }
   }
 
-  protected void searchReturnShipments(CostAdjustmentLine _costAdjLine) {
-    CostAdjustmentLine costAdjLine;
-    if (_costAdjLine != null) {
-      costAdjLine = _costAdjLine;
+  protected void searchReturnShipments(final CostAdjustmentLine costAdjLine) {
+    final CostAdjustmentLine currentCostAdjLine;
+    if (costAdjLine != null) {
+      currentCostAdjLine = costAdjLine;
     } else {
-      costAdjLine = getCostAdjLine();
+      currentCostAdjLine = getCostAdjLine();
     }
-    ShipmentInOutLine inoutline = costAdjLine.getInventoryTransaction().getGoodsShipmentLine();
-    BigDecimal costAdjAmt = costAdjLine.getAdjustmentAmount();
-    int precission = getCostCurrency().getStandardPrecision().intValue();
-    StringBuffer where = new StringBuffer();
-    where.append(" as trx");
-    where.append(" join trx." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + " as iol");
-    where.append(" join iol." + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + " as io");
-    where.append(" join iol." + ShipmentInOutLine.PROPERTY_SALESORDERLINE + " as ol");
-    where.append(" where ol." + OrderLine.PROPERTY_GOODSSHIPMENTLINE + " = :shipment");
-    where.append(" and io." + ShipmentInOut.PROPERTY_DOCUMENTSTATUS + " <> 'VO'");
-    OBQuery<MaterialTransaction> qryTrx = OBDal.getInstance()
-        .createQuery(MaterialTransaction.class, where.toString());
-    qryTrx.setFilterOnReadableOrganization(false);
-    qryTrx.setNamedParameter("shipment", inoutline);
-    ScrollableResults trxs = qryTrx.scroll(ScrollMode.FORWARD_ONLY);
+    final ShipmentInOutLine inoutline = currentCostAdjLine.getInventoryTransaction()
+        .getGoodsShipmentLine();
+    final BigDecimal costAdjAmt = currentCostAdjLine.getAdjustmentAmount();
+    final int precission = getCostCurrency().getStandardPrecision().intValue();
+    //@formatter:off
+    final String hql =
+                  "as trx" +
+                  "  join trx.goodsShipmentLine as iol" +
+                  "  join iol.shipmentReceipt as io" +
+                  "  join iol.salesOrderLine as ol" +
+                  " where ol.goodsShipmentLine = :shipment" +
+                  "   and io.documentStatus <> 'VO'";
+    //@formatter:on
+
+    final ScrollableResults trxs = OBDal.getInstance()
+        .createQuery(MaterialTransaction.class, hql)
+        .setFilterOnReadableOrganization(false)
+        .setNamedParameter("shipment", inoutline)
+        .scroll(ScrollMode.FORWARD_ONLY);
     try {
       int counter = 0;
       while (trxs.next()) {
         counter++;
 
-        MaterialTransaction trx = (MaterialTransaction) trxs.get()[0];
+        final MaterialTransaction trx = (MaterialTransaction) trxs.get()[0];
         if (trx.isCostCalculated() && !trx.isCostPermanent()) {
           BigDecimal adjAmt = costAdjAmt.multiply(trx.getMovementQuantity().abs())
               .divide(inoutline.getMovementQuantity().abs(), precission, RoundingMode.HALF_UP);
           final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(trx,
               adjAmt, getCostAdj());
-          insertCostAdjustmentLine(lineParameters, _costAdjLine);
+          insertCostAdjustmentLine(lineParameters, costAdjLine);
         }
 
         if (counter % 1000 == 0) {
@@ -499,13 +506,13 @@ public abstract class CostingAlgorithmAdjustmentImp {
   }
 
   protected abstract void calculateNegativeStockCorrectionAdjustmentAmount(
-      CostAdjustmentLine costAdjLine);
+      final CostAdjustmentLine costAdjLine);
 
   protected abstract void getRelatedTransactionsByAlgorithm();
 
-  protected void calculateBackdatedTrxAdjustment(CostAdjustmentLine costAdjLine) {
+  protected void calculateBackdatedTrxAdjustment(final CostAdjustmentLine costAdjLine) {
     BigDecimal adjAmt = BigDecimal.ZERO;
-    TrxType calTrxType = TrxType.getTrxType(costAdjLine.getInventoryTransaction());
+    final TrxType calTrxType = TrxType.getTrxType(costAdjLine.getInventoryTransaction());
 
     if (costAdjLine.getInventoryTransaction().isCostPermanent() && costAdjLine.isUnitCost()) {
       costAdjLine.setCurrency(
@@ -539,22 +546,19 @@ public abstract class CostingAlgorithmAdjustmentImp {
         adjAmt = getDefaultCostDifference(calTrxType, costAdjLine);
         break;
       case ShipmentReturn:
-        if (hasReturnedReceipt(costAdjLine)) {
-          // If the return receipt has a original receipt the cost amount does not depend on the
-          // date.
-          break;
-        }
+        // If the return receipt has a original receipt the cost amount does not depend on the
+        // date.
+        break;
       case ShipmentNegative:
         // These transaction types are calculated using the default cost. Check if there is a
         // difference.
         adjAmt = getDefaultCostDifference(calTrxType, costAdjLine);
         break;
       case InventoryIncrease:
+        break;
       case InventoryOpening:
-        if (inventoryHasCost(costAdjLine)) {
-          // If the inventory line defines a unit cost it does not depend on the date.
-          break;
-        }
+        // If the inventory line defines a unit cost it does not depend on the date.
+        break;
       case InternalConsNegative:
         // These transaction types are calculated using the default cost. Check if there is a
         // difference.
@@ -563,18 +567,25 @@ public abstract class CostingAlgorithmAdjustmentImp {
       case InventoryClosing:
         adjAmt = getInventoryClosingAmt(costAdjLine);
         break;
-
       case Shipment:
+        break;
       case ReceiptReturn:
+        break;
       case ReceiptNegative:
+        break;
       case InventoryDecrease:
+        break;
       case IntMovementFrom:
+        break;
       case InternalCons:
+        break;
       case BOMPart:
+        break;
       case ManufacturingConsumed:
         // These transactions are calculated as regular outgoing transactions. The adjustment amount
         // needs to be calculated by the algorithm.
         adjAmt = getOutgoingBackdatedTrxAdjAmt(costAdjLine);
+        break;
       default:
         break;
     }
@@ -587,30 +598,31 @@ public abstract class CostingAlgorithmAdjustmentImp {
 
   protected abstract BigDecimal getOutgoingBackdatedTrxAdjAmt(CostAdjustmentLine costAdjLine);
 
-  protected BigDecimal getDefaultCostDifference(TrxType calTrxType,
-      CostAdjustmentLine costAdjLine) {
-    MaterialTransaction trx = costAdjLine.getInventoryTransaction();
-    BusinessPartner bp = CostingUtils.getTrxBusinessPartner(trx, calTrxType);
-    Organization costOrg = getCostOrg();
+  protected BigDecimal getDefaultCostDifference(final TrxType calTrxType,
+      final CostAdjustmentLine costAdjLine) {
+    final MaterialTransaction trx = costAdjLine.getInventoryTransaction();
+    final BusinessPartner bp = CostingUtils.getTrxBusinessPartner(trx, calTrxType);
+    final Organization costOrg = getCostOrg();
     Date trxDate = CostAdjustmentUtils.getLastTrxDateOfMvmntDate(trx.getMovementDate(),
         trx.getProduct(), costOrg, getCostDimensions());
     if (trxDate == null) {
       trxDate = trx.getTransactionProcessDate();
     }
 
-    BigDecimal defaultCost = CostingUtils.getDefaultCost(trx.getProduct(),
+    final BigDecimal defaultCost = CostingUtils.getDefaultCost(trx.getProduct(),
         trx.getMovementQuantity(), costOrg, trxDate, trx.getMovementDate(), bp, getCostCurrency(),
         getCostDimensions());
-    BigDecimal trxCalculatedCost = CostAdjustmentUtils.getTrxCost(trx, true, getCostCurrency());
+    final BigDecimal trxCalculatedCost = CostAdjustmentUtils.getTrxCost(trx, true,
+        getCostCurrency());
     return defaultCost.subtract(trxCalculatedCost);
   }
 
-  private BigDecimal getInventoryClosingAmt(CostAdjustmentLine costAdjLine) {
-    MaterialTransaction trx = costAdjLine.getInventoryTransaction();
+  private BigDecimal getInventoryClosingAmt(final CostAdjustmentLine costAdjLine) {
+    final MaterialTransaction trx = costAdjLine.getInventoryTransaction();
     // currentBalanceOnDate already includes the cost of the inventory closing. The balance after an
     // inventory closing should be zero, so the adjustment amount should be de current balance
     // negated.
-    BigDecimal currentBalanceOnDate = CostAdjustmentUtils
+    final BigDecimal currentBalanceOnDate = CostAdjustmentUtils
         .getValuedStockOnMovementDateByAttrAndLocator(trx.getProduct(), getCostOrg(),
             trx.getMovementDate(), getCostDimensions(), trx.getStorageBin(),
             trx.getAttributeSetValue(), getCostCurrency(), true);
@@ -625,7 +637,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
    *          the adjustment line to check.
    * @return true if there is a related order line.
    */
-  private boolean hasOrder(CostAdjustmentLine costAdjLine) {
+  private boolean hasOrder(final CostAdjustmentLine costAdjLine) {
     return costAdjLine.getInventoryTransaction().getGoodsShipmentLine() != null
         && costAdjLine.getInventoryTransaction().getGoodsShipmentLine().getSalesOrderLine() != null;
   }
@@ -637,7 +649,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
    *          the adjustment line to check.
    * @return true if there is a unit cost.
    */
-  private boolean inventoryHasCost(CostAdjustmentLine costAdjLine) {
+  private boolean inventoryHasCost(final CostAdjustmentLine costAdjLine) {
     return costAdjLine.getInventoryTransaction().getPhysicalInventoryLine() != null
         && costAdjLine.getInventoryTransaction().getPhysicalInventoryLine().getCost() != null;
   }
@@ -649,8 +661,8 @@ public abstract class CostingAlgorithmAdjustmentImp {
    *          the adjustment line to check.
    * @return true if there is a original shipment line.
    */
-  private boolean hasReturnedReceipt(CostAdjustmentLine costAdjLine) {
-    OrderLine shipmentLine = costAdjLine.getInventoryTransaction()
+  private boolean hasReturnedReceipt(final CostAdjustmentLine costAdjLine) {
+    final OrderLine shipmentLine = costAdjLine.getInventoryTransaction()
         .getGoodsShipmentLine()
         .getSalesOrderLine();
     return shipmentLine != null && shipmentLine.getGoodsShipmentLine() != null;
@@ -681,7 +693,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
   }
 
   public HashMap<CostDimension, BaseOBObject> getCostDimensions() {
-    HashMap<CostDimension, BaseOBObject> costDimensions = new HashMap<CostDimension, BaseOBObject>();
+    final HashMap<CostDimension, BaseOBObject> costDimensions = new HashMap<>();
     for (CostDimension costDimension : costDimensionIds.keySet()) {
       switch (costDimension) {
         case Warehouse:
@@ -724,9 +736,10 @@ public abstract class CostingAlgorithmAdjustmentImp {
 
   private List<TransactionCost> getNotSourceCostAdjustmentLines(
       final MaterialTransaction movementTransaction) {
-    OBCriteria<TransactionCost> obc = OBDal.getInstance().createCriteria(TransactionCost.class);
-    obc.add(Restrictions.eq(TransactionCost.PROPERTY_INVENTORYTRANSACTION, movementTransaction));
-    obc.add(Restrictions.isNotNull(TransactionCost.PROPERTY_COSTADJUSTMENTLINE));
-    return obc.list();
+    return OBDal.getInstance()
+        .createCriteria(TransactionCost.class)
+        .add(Restrictions.eq(TransactionCost.PROPERTY_INVENTORYTRANSACTION, movementTransaction))
+        .add(Restrictions.isNotNull(TransactionCost.PROPERTY_COSTADJUSTMENTLINE))
+        .list();
   }
 }
