@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2019 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -131,7 +131,9 @@ enyo.kind({
       me = this;
 
     function successLocations(dataBps) {
-      if (dataBps && dataBps.length > 1) {
+      if (bp.get(me.locId) === bp.get(OB.UI.BPLocation.prototype.locId)) {
+        me.changeStyle(false);
+      } else if (dataBps && dataBps.length > 1) {
         me.changeStyle(true);
       } else if (
         dataBps &&
