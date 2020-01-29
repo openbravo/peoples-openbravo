@@ -277,6 +277,10 @@ enyo.kind({
                     },
                     {
                       classes:
+                        'obObposCashupUiCashPayments-wrapper-components-body-footer-container4'
+                    },
+                    {
+                      classes:
                         'obObposCashupUiCashPayments-wrapper-components-body-footer-container3',
                       components: [
                         {
