@@ -86,7 +86,6 @@
       </foreign-key>
       <unique name="OBPOS_APPPAYROUND_UQ">
         <unique-column name="OBPOS_APP_PAYMENT_TYPE_ID"/>
-        <unique-column name="OBPOS_APP_ROUNDING_TYPE_ID"/>
         <unique-column name="C_CURRENCY_ID"/>
       </unique>
       <check name="OBPOS_APP_PAYROUND_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
