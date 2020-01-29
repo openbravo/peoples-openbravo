@@ -184,14 +184,14 @@ public class Payments extends JSONTerminalProperty {
           OBPOSAppPaymentRounding paymentRounding = (OBPOSAppPaymentRounding) paymentRoundingCriteria
               .uniqueResult();
           if (paymentRounding != null) {
-
-            JSONObject paymentRoundingJSON = new JSONObject();
-            paymentRoundingJSON.put("isSalesRounding", paymentRounding.isSaleRounding());
-            paymentRoundingJSON.put("salesRounding", paymentRounding.getSaleRoundingMode());
-            paymentRoundingJSON.put("salesMultiplyBy", paymentRounding.getSaleRoundingMultiple());
-            paymentRoundingJSON.put("isReturnRounding", paymentRounding.isReturnRounding());
-            paymentRoundingJSON.put("returnRounding", paymentRounding.getReturnRoundingMode());
-            paymentRoundingJSON.put("returnMultiplyBy",
+            final JSONObject paymentRoundingJSON = new JSONObject();
+            paymentRoundingJSON.put("saleRounding", paymentRounding.isSaleRounding());
+            paymentRoundingJSON.put("saleRoundingMode", paymentRounding.getSaleRoundingMode());
+            paymentRoundingJSON.put("saleRoundingMultiple",
+                paymentRounding.getSaleRoundingMultiple());
+            paymentRoundingJSON.put("returnRounding", paymentRounding.isReturnRounding());
+            paymentRoundingJSON.put("returnRoundingMode", paymentRounding.getReturnRoundingMode());
+            paymentRoundingJSON.put("returnRoundingMultiple",
                 paymentRounding.getReturnRoundingMultiple());
 
             //@formatter:off

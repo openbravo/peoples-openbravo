@@ -7681,11 +7681,11 @@
           paymentLine = null,
           precision = this.getPrecision(payment),
           multiplyBy = paymentStatus.isReturn
-            ? terminalPayment.paymentRounding.returnMultiplyBy
-            : terminalPayment.paymentRounding.salesMultiplyBy,
+            ? terminalPayment.paymentRounding.returnRoundingMultiple
+            : terminalPayment.paymentRounding.saleRoundingMultiple,
           rounding = paymentStatus.isReturn
-            ? terminalPayment.paymentRounding.returnRounding
-            : terminalPayment.paymentRounding.salesRounding,
+            ? terminalPayment.paymentRounding.returnRoundingMode
+            : terminalPayment.paymentRounding.saleRoundingMode,
           pow = Math.pow(10, precision),
           paymentDifference =
             OB.DEC.mul(paymentStatus.pendingAmt, pow) %
