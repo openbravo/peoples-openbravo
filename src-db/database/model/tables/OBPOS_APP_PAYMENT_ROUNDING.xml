@@ -46,7 +46,7 @@
         <onCreateDefault/>
       </column>
       <column name="SALEROUNDING" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
-        <default/>
+        <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
       <column name="SALEROUNDINGMODE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
@@ -54,11 +54,11 @@
         <onCreateDefault/>
       </column>
       <column name="SALEROUNDINGMULTIPLE" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
-        <default><![CDATA[0]]></default>
+        <default><![CDATA[1]]></default>
         <onCreateDefault/>
       </column>
       <column name="RETURNROUNDING" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
-        <default/>
+        <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
       <column name="RETURNROUNDINGMODE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
@@ -66,7 +66,7 @@
         <onCreateDefault/>
       </column>
       <column name="RETURNROUNDINGMULTIPLE" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
-        <default><![CDATA[0]]></default>
+        <default><![CDATA[1]]></default>
         <onCreateDefault/>
       </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBPOS_APPPAYROUND_AD_CLIENT">
