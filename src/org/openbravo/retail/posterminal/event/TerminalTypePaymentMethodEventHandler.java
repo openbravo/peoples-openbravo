@@ -60,9 +60,10 @@ public class TerminalTypePaymentMethodEventHandler extends EntityPersistenceEven
 
   private void checkNoAutomaticDepositNotInCashup(EntityPersistenceEvent event) {
     TerminalTypePaymentMethod ttpm = (TerminalTypePaymentMethod) event.getTargetInstance();
-    if (!ttpm.isCountpaymentincashup() && !ttpm.getPaymentMethod().isAutomaticDeposit()) {
+    if (!ttpm.isCountpaymentincashup().booleanValue()
+        && !ttpm.getPaymentMethod().isAutomaticDeposit().booleanValue()) {
       throw new OBException(Utility.messageBD(new DalConnectionProvider(false),
-          ttpm.isRounding() ? "OBPOS_NotAutoPayNotDepositRounding"
+          ttpm.isRounding().booleanValue() ? "OBPOS_NotAutoPayNotDepositRounding"
               : "OBPOS_NotAutoPayNotDepositCashup",
           OBContext.getOBContext().getLanguage().getLanguage()));
     }
