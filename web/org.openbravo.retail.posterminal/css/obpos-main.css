@@ -9432,12 +9432,25 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /* Inherits: [enyo.Option] */
 }
 
-.obObposPointOfSaleUiEditLine-msgedit-container3 {
-  overflow: hidden;
+.obObposPointOfSaleUiEditLine-msgedit-scroller {
+  /* Inherits: [Scroller] */
+}
+
+.obObposPointOfSaleUiEditLine-msgedit-scroller-container1 {
+  overflow: auto;
   padding: 10px 5px 5px 5px;
 }
 
-.obObposPointOfSaleUiEditLine-msgedit-container3-linePropertiesContainer {
+@media all and (max-aspect-ratio: 9/8) {
+  .obObposPointOfSaleUiEditLine-msgedit-scroller-container1 {
+    display: grid;
+    grid-template-areas:
+      'obObposPointOfSaleUiEditLine-msgedit-scroller-container1-contextImage'
+      'obObposPointOfSaleUiEditLine-msgedit-scroller-container1-linePropertiesContainer';
+  }
+}
+
+.obObposPointOfSaleUiEditLine-msgedit-scroller-container1-linePropertiesContainer {
 /* Inherits: [Scroller] */
   line-height: 130%;
   width: 65%;
@@ -9446,17 +9459,31 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   height: 100%;
 }
 
+@media all and (max-aspect-ratio: 9/8) {
+  .obObposPointOfSaleUiEditLine-msgedit-scroller-container1-linePropertiesContainer {
+    grid-area: obObposPointOfSaleUiEditLine-msgedit-scroller-container1-linePropertiesContainer;
+    width: 100%;
+  }
+}
+
 .obObposPointOfSaleUiEditLine-linePropertiesContainer_withReturnReasons {
   max-height: 110px;
 }
 
 .obObposPointOfSaleUiEditLine-linePropertiesContainer_withoutReturnReasons {}
 
-.obObposPointOfSaleUiEditLine-msgedit-container3-contextImage {
+.obObposPointOfSaleUiEditLine-msgedit-scroller-container1-contextImage {
   text-align: right;
   max-height: 134px;
   display: inline-block;
   vertical-align: top;
+}
+
+@media all and (max-aspect-ratio: 9/8) {
+  .obObposPointOfSaleUiEditLine-msgedit-scroller-container1-contextImage {
+    grid-area: obObposPointOfSaleUiEditLine-msgedit-scroller-container1-contextImage;
+    text-align: center;
+  }
 }
 
 .obObposPointOfSaleUiEditLine-msgedit-container3-contextImage_withReturnReasons {

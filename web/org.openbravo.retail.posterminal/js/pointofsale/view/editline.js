@@ -994,43 +994,50 @@ enyo.kind({
                 'obObposPointOfSaleUiEditLine-msgedit-formElementReturnreason'
             },
             {
-              classes: 'obObposPointOfSaleUiEditLine-msgedit-container3',
+              classes: 'obObposPointOfSaleUiEditLine-msgedit-scroller',
+              kind: 'Scroller',
               components: [
                 {
                   classes:
-                    'obObposPointOfSaleUiEditLine-msgedit-container3-linePropertiesContainer',
-                  kind: 'Scroller',
-                  name: 'linePropertiesContainer',
-                  thumb: true
-                },
-                {
-                  classes:
-                    'obObposPointOfSaleUiEditLine-msgedit-container3-contextImage',
-                  name: 'contextImage',
+                    'obObposPointOfSaleUiEditLine-msgedit-scroller-container1',
                   components: [
                     {
                       classes:
-                        'obObposPointOfSaleUiEditLine-contextImage-container1',
+                        'obObposPointOfSaleUiEditLine-msgedit-scroller-container1-linePropertiesContainer',
+                      kind: 'Scroller',
+                      name: 'linePropertiesContainer',
+                      thumb: true
+                    },
+                    {
+                      classes:
+                        'obObposPointOfSaleUiEditLine-msgedit-scroller-container1-contextImage',
+                      name: 'contextImage',
                       components: [
                         {
-                          tag: 'div',
                           classes:
-                            'obObposPointOfSaleUiEditLine-contextImage-container1-container1',
-                          contentType: 'image/png',
+                            'obObposPointOfSaleUiEditLine-contextImage-container1',
                           components: [
                             {
-                              tag: 'img',
-                              name: 'icon',
+                              tag: 'div',
                               classes:
-                                'obObposPointOfSaleUiEditLine-contextImage-container1-container1-icon'
+                                'obObposPointOfSaleUiEditLine-contextImage-container1-container1',
+                              contentType: 'image/png',
+                              components: [
+                                {
+                                  tag: 'img',
+                                  name: 'icon',
+                                  classes:
+                                    'obObposPointOfSaleUiEditLine-contextImage-container1-container1-icon'
+                                }
+                              ]
+                            },
+                            {
+                              name: 'editlineimage',
+                              kind: 'OB.UI.Thumbnail',
+                              classes:
+                                'obObposPointOfSaleUiEditLine-contextImage-container1-editlineimage'
                             }
                           ]
-                        },
-                        {
-                          name: 'editlineimage',
-                          kind: 'OB.UI.Thumbnail',
-                          classes:
-                            'obObposPointOfSaleUiEditLine-contextImage-container1-editlineimage'
                         }
                       ]
                     }
