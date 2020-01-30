@@ -27,7 +27,7 @@ public class CancelAndReplaceHook extends CancelAndReplaceOrderHook {
   public void exec(boolean replaceOrder, boolean triggersDisabled, Order oldOrder, Order newOrder,
       Order inverseOrder, JSONObject jsonorder) throws Exception {
     if (jsonorder != null) {
-      if (oldOrder.isObposIslayaway()) {
+      if (oldOrder.isObposIslayaway().booleanValue()) {
         oldOrder.setObposIslayaway(false);
         inverseOrder.setObposIslayaway(false);
       }
@@ -36,7 +36,9 @@ public class CancelAndReplaceHook extends CancelAndReplaceOrderHook {
       final OBPOSApplications posTerminal = OBDal.getInstance()
           .get(OBPOSApplications.class, jsonorder.getString("posTerminal"));
       inverseOrder.setObposApplications(posTerminal);
-      if (inverseOrder.getObposRoundingAmount().compareTo(BigDecimal.ZERO) != 0) {
+
+      if (inverseOrder.getObposRoundingAmount() != null
+          && inverseOrder.getObposRoundingAmount().compareTo(BigDecimal.ZERO) != 0) {
         inverseOrder.setObposRoundingAmount(inverseOrder.getObposRoundingAmount().negate());
       }
     }

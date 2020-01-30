@@ -266,8 +266,12 @@ public class OrderGroupingProcessor {
         if (!success) {
           continue;
         }
-        invoice.setObposRoundingAmount(
-            invoice.getObposRoundingAmount().add(order.getObposRoundingAmount()));
+        if (invoice.getObposRoundingAmount() != null) {
+          invoice.setObposRoundingAmount(
+              invoice.getObposRoundingAmount().add(order.getObposRoundingAmount()));
+        } else {
+          invoice.setObposRoundingAmount(order.getObposRoundingAmount());
+        }
         log.debug("processed payment");
       }
     }
