@@ -43,7 +43,6 @@ import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
-import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
@@ -632,32 +631,6 @@ public abstract class CostingAlgorithmAdjustmentImp {
   private boolean hasOrder(final CostAdjustmentLine costAdjLine) {
     return costAdjLine.getInventoryTransaction().getGoodsShipmentLine() != null
         && costAdjLine.getInventoryTransaction().getGoodsShipmentLine().getSalesOrderLine() != null;
-  }
-
-  /**
-   * Checks if the inventory line has a unit cost defined.
-   * 
-   * @param costAdjLine
-   *          the adjustment line to check.
-   * @return true if there is a unit cost.
-   */
-  private boolean inventoryHasCost(final CostAdjustmentLine costAdjLine) {
-    return costAdjLine.getInventoryTransaction().getPhysicalInventoryLine() != null
-        && costAdjLine.getInventoryTransaction().getPhysicalInventoryLine().getCost() != null;
-  }
-
-  /**
-   * Checks if the returned receipt line has a related original shipment line.
-   * 
-   * @param costAdjLine
-   *          the adjustment line to check.
-   * @return true if there is a original shipment line.
-   */
-  private boolean hasReturnedReceipt(final CostAdjustmentLine costAdjLine) {
-    final OrderLine shipmentLine = costAdjLine.getInventoryTransaction()
-        .getGoodsShipmentLine()
-        .getSalesOrderLine();
-    return shipmentLine != null && shipmentLine.getGoodsShipmentLine() != null;
   }
 
   public CostAdjustmentLine getCostAdjLine() {
