@@ -14,20 +14,20 @@ import java.math.RoundingMode;
 import javax.servlet.ServletException;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.mobile.core.process.SimpleQueryBuilder;
 import org.openbravo.retail.posterminal.OBPOSAppPayment;
-import org.openbravo.retail.posterminal.OBPOSAppPaymentRounding;
 import org.openbravo.retail.posterminal.OBPOSCurrencyRounding;
 import org.openbravo.service.json.DataResolvingMode;
 import org.openbravo.service.json.DataToJsonConverter;
@@ -172,42 +172,46 @@ public class Payments extends JSONTerminalProperty {
             }
           }
 
-          // Load Payment Rounding properties
-          OBCriteria<OBPOSAppPaymentRounding> paymentRoundingCriteria = OBDal.getInstance()
-              .createCriteria(OBPOSAppPaymentRounding.class);
-          paymentRoundingCriteria.add(Restrictions.eq(OBPOSAppPaymentRounding.PROPERTY_CURRENCY,
-              appPayment.getPaymentMethod().getCurrency()));
-          paymentRoundingCriteria.add(Restrictions.eq(
-              OBPOSAppPaymentRounding.PROPERTY_OBPOSAPPPAYMENTTYPE, appPayment.getPaymentMethod()));
-          paymentRoundingCriteria.setMaxResults(1);
-
-          OBPOSAppPaymentRounding paymentRounding = (OBPOSAppPaymentRounding) paymentRoundingCriteria
+          //@formatter:off
+          String roundingPaymentQuery = " select paymentRounding.obposAppRoundingType.name, paymentRounding.saleRounding, "
+                                      + "   paymentRounding.saleRoundingMode, paymentRounding.saleRoundingMultiple,"
+                                      + "   paymentRounding.returnRounding, paymentRounding.returnRoundingMode,"
+                                      + "   paymentRounding.returnRoundingMultiple, paymentType.searchKey"
+                                      + " from OBPOS_App_Payment_Rounding paymentRounding"
+                                      + "   join paymentRounding.obposAppRoundingType roundPaymentType"
+                                      + "   left join roundPaymentType.oBPOSAppPaymentList as paymentType"
+                                      + " where paymentRounding.obposAppPaymentType.id = :paymentTypeId"
+                                      + "   and paymentRounding.currency.id = :currencyId"
+                                      + "   and (case when (paymentType is null)  "
+                                      + "     then :posId"
+                                      + "     else paymentType.obposApplications.id end) = :posId";
+          //@formatter:on
+          final Object[] paymentRounding = OBDal.getInstance()
+              .getSession()
+              .createQuery(roundingPaymentQuery, Object[].class)
+              .setParameter("paymentTypeId", appPayment.getPaymentMethod().getId())
+              .setParameter("currencyId", appPayment.getPaymentMethod().getCurrency().getId())
+              .setParameter("posId", posId)
+              .setMaxResults(1)
               .uniqueResult();
-          if (paymentRounding != null) {
-            final JSONObject paymentRoundingJSON = new JSONObject();
-            paymentRoundingJSON.put("saleRounding", paymentRounding.isSaleRounding());
-            paymentRoundingJSON.put("saleRoundingMode", paymentRounding.getSaleRoundingMode());
-            paymentRoundingJSON.put("saleRoundingMultiple",
-                paymentRounding.getSaleRoundingMultiple());
-            paymentRoundingJSON.put("returnRounding", paymentRounding.isReturnRounding());
-            paymentRoundingJSON.put("returnRoundingMode", paymentRounding.getReturnRoundingMode());
-            paymentRoundingJSON.put("returnRoundingMultiple",
-                paymentRounding.getReturnRoundingMultiple());
 
-            //@formatter:off
-            String roundingPaymentTypeQuery = " select searchKey"
-                                            + " from OBPOS_App_Payment pay"
-                                            + " where pay.obposApplications.id = :posId"
-                                            + "   and pay.paymentMethod.id = :roundingPaymentTypeId";
-            //@formatter:on
-            Query<String> criteria = OBDal.getInstance()
-                .getSession()
-                .createQuery(roundingPaymentTypeQuery, String.class);
-            criteria.setParameter("posId", posId);
-            criteria.setParameter("roundingPaymentTypeId",
-                paymentRounding.getObposAppRoundingType().getId());
-            criteria.setMaxResults(1);
-            paymentRoundingJSON.put("paymentRoundingType", criteria.uniqueResult());
+          // Load Rounding Payment properties
+          if (paymentRounding != null) {
+            if (paymentRounding[7] == null
+                || StringUtils.isEmpty(String.valueOf(paymentRounding[7]))) {
+              final String roundingPaymentMethodName = String.valueOf(paymentRounding[0]);
+              throw new OBException(String.format(
+                  OBMessageUtils.messageBD("OBPOS_RoundingPaymentNotDefinedInTouchpoint"),
+                  roundingPaymentMethodName));
+            }
+            final JSONObject paymentRoundingJSON = new JSONObject();
+            paymentRoundingJSON.put("saleRounding", paymentRounding[1]);
+            paymentRoundingJSON.put("saleRoundingMode", paymentRounding[2]);
+            paymentRoundingJSON.put("saleRoundingMultiple", paymentRounding[3]);
+            paymentRoundingJSON.put("returnRounding", paymentRounding[4]);
+            paymentRoundingJSON.put("returnRoundingMode", paymentRounding[5]);
+            paymentRoundingJSON.put("returnRoundingMultiple", paymentRounding[6]);
+            paymentRoundingJSON.put("paymentRoundingType", paymentRounding[7]);
 
             payment.put("paymentRounding", paymentRoundingJSON);
           }
