@@ -402,9 +402,6 @@ enyo.kind({
   },
 
   setCoinsStatus: function(originator) {
-    if (!originator) {
-      return;
-    }
     // reset previous status
     if (this.originator && this.originator.$.formElementNumberOfCoins) {
       this.originator.$.formElementNumberOfCoins.removeClass(
