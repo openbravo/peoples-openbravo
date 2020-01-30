@@ -930,9 +930,25 @@ public class CostingUtils {
     return !qry.list().isEmpty();
   }
 
+  /**
+   * For the given {@link Warehouse} parameter, this method returns an {@link Organization} that
+   * allows to create Transactions. If the Organization of the Warehouse is valid, it returns this
+   * Organization, if not, it looks for a valid one in the parent Organizations of the Warehouse
+   * Organization. If no valid Organization is found, the Organization of the id given as a
+   * parameter is returned.
+   * 
+   * @param OrgId
+   *          The identifier of an {@link Organization} object
+   * @param warehouse
+   *          The {@link Warehouse} for which the Opening and Close Inventories are going to be
+   *          created
+   * @return An {@link Organization} that allows to create transactions that is the Organization or
+   *         one of the parent Organizations of the given {@link Warehouse}. If no one is found, it
+   *         returns the Organization of the given id as a parameter
+   */
   public static Organization getOrganizationForCloseAndOpenInventories(final String OrgId,
       final Warehouse warehouse) {
-    Organization invOrg = getTransactionAllowedOrg(warehouse.getOrganization());
+    final Organization invOrg = getTransactionAllowedOrg(warehouse.getOrganization());
     if (invOrg == null) {
       return (Organization) OBDal.getInstance().getProxy(Organization.ENTITY_NAME, OrgId);
     }
