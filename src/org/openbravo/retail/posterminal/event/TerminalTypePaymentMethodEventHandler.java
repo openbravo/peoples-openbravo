@@ -54,7 +54,6 @@ public class TerminalTypePaymentMethodEventHandler extends EntityPersistenceEven
     }
     checkNoAutomaticDepositNotInCashup(event);
     checkIfCurrencyRoundingExists(event);
-    checkIfRoundingPaymentExists(event);
     checkRoundingGLItemForPaymentRounding(event);
   }
 
@@ -87,30 +86,6 @@ public class TerminalTypePaymentMethodEventHandler extends EntityPersistenceEven
           throw new OBException(
               String.format(OBMessageUtils.messageBD("OBPOS_ChangeLogicNotAllowed"),
                   ttpm.getCurrency().getISOCode()));
-        }
-      }
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-  }
-
-  private void checkIfRoundingPaymentExists(EntityPersistenceEvent event) {
-    final TerminalTypePaymentMethod ttpm = (TerminalTypePaymentMethod) event.getTargetInstance();
-    OBContext.setAdminMode(true);
-    try {
-      if (ttpm.isRounding().booleanValue()) {
-        //@formatter:off
-        String hql = "select p.name from OBPOS_App_Payment_Type p "
-            + " where p.obposTerminaltype.id = :posId "
-            + "   and p.isRounding = true ";
-        //@formatter:on
-        Query<String> query = OBDal.getInstance().getSession().createQuery(hql, String.class);
-        query.setParameter("posId", ttpm.getObposTerminaltype().getId());
-        query.setMaxResults(1);
-        String paymentRoundingName = query.uniqueResult();
-        if (paymentRoundingName != null) {
-          throw new OBException(String.format(
-              OBMessageUtils.messageBD("OBPOS_PaymentRoundingNotAllowed"), paymentRoundingName));
         }
       }
     } finally {
