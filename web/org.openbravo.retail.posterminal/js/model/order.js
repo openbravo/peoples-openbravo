@@ -172,10 +172,6 @@
             : OB.DEC.sub(this.get('gross'), this.getDiscount())
         );
         this.set(
-          'price',
-          this.getQty() === 0 ? 0 : OB.DEC.div(this.get('gross'), this.getQty())
-        );
-        this.set(
           'discountedPrice',
           this.getQty() === 0
             ? 0
@@ -191,10 +187,6 @@
           OB.DEC.compare(this.get('net')) === 0
             ? this.get('net')
             : OB.DEC.sub(this.get('net'), this.getDiscount())
-        );
-        this.set(
-          'pricenet',
-          this.getQty() === 0 ? 0 : OB.DEC.div(this.get('net'), this.getQty())
         );
         this.set(
           'discountedNetPrice',
