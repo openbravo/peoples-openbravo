@@ -9929,6 +9929,7 @@
         order.set('checked', model.checked); //TODO: what is this for, where it comes from?
         order.set('orderDate', OB.I18N.normalizeDate(model.orderDate));
         order.set('creationDate', OB.I18N.normalizeDate(model.creationDate));
+        order.set('updatedBy', OB.MobileApp.model.usermodel.id);
         order.set('paidPartiallyOnCredit', false);
         order.set('paidOnCredit', false);
         order.set('session', OB.MobileApp.model.get('session'));
@@ -9955,7 +9956,6 @@
         if (model.isLayaway) {
           order.set('isLayaway', true);
           order.set('id', model.orderid);
-          order.set('createdBy', OB.MobileApp.model.usermodel.id);
           order.set('hasbeenpaid', 'N');
         } else {
           order.set('isPaid', true);
