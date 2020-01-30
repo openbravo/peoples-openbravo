@@ -181,7 +181,6 @@ public class Payments extends JSONTerminalProperty {
                                       + "   join paymentRounding.obposAppRoundingType roundPaymentType"
                                       + "   left join roundPaymentType.oBPOSAppPaymentList as paymentType"
                                       + " where paymentRounding.obposAppPaymentType.id = :paymentTypeId"
-                                      + "   and paymentRounding.currency.id = :currencyId"
                                       + "   and (case when (paymentType is null)  "
                                       + "     then :posId"
                                       + "     else paymentType.obposApplications.id end) = :posId";
@@ -190,7 +189,6 @@ public class Payments extends JSONTerminalProperty {
               .getSession()
               .createQuery(roundingPaymentQuery, Object[].class)
               .setParameter("paymentTypeId", appPayment.getPaymentMethod().getId())
-              .setParameter("currencyId", appPayment.getPaymentMethod().getCurrency().getId())
               .setParameter("posId", posId)
               .setMaxResults(1)
               .uniqueResult();
