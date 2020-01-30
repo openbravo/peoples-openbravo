@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2016 Openbravo SLU
+ * All portions are Copyright (C) 2014-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -33,13 +33,11 @@ import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
-import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.db.DbUtility;
 
@@ -47,23 +45,23 @@ public class CostingRuleProcessOnProcessHandler extends BaseActionHandler {
   private static final Logger log4j = LogManager.getLogger();
 
   @Override
-  protected JSONObject execute(Map<String, Object> parameters, String content) {
-    JSONObject jsonResponse = new JSONObject();
+  protected JSONObject execute(final Map<String, Object> parameters, final String content) {
+    final JSONObject jsonResponse = new JSONObject();
     JSONObject msg = new JSONObject();
     final VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
     try {
       OBContext.setAdminMode(true);
-      JSONObject jsonRequest = new JSONObject(content);
+      final JSONObject jsonRequest = new JSONObject(content);
       final String ruleId = jsonRequest.getString("ruleId");
-      CostingRule rule = OBDal.getInstance().get(CostingRule.class, ruleId);
-      OrganizationStructureProvider osp = OBContext.getOBContext()
+      final CostingRule rule = OBDal.getInstance().get(CostingRule.class, ruleId);
+      final OrganizationStructureProvider osp = OBContext.getOBContext()
           .getOrganizationStructureProvider(rule.getClient().getId());
       final Set<String> childOrgs = osp.getChildTree(rule.getOrganization().getId(), true);
       final Set<String> naturalOrgs = osp.getNaturalTree(rule.getOrganization().getId());
 
       String message = null;
       // Checks
-      CostingRule prevCostingRule = getPreviousRule(rule);
+      final CostingRule prevCostingRule = getPreviousRule(rule);
       boolean existsPreviousRule = prevCostingRule != null;
       boolean existsTransactions = existsTransactions(naturalOrgs, childOrgs);
       if (!existsPreviousRule && existsTransactions) {
@@ -72,8 +70,8 @@ public class CostingRuleProcessOnProcessHandler extends BaseActionHandler {
           message = Utility.parseTranslation(new DalConnectionProvider(false), vars,
               vars.getLanguage(), "@CostingRuleStartingDateNullNoPeriodClosed@");
         } else if (rule.getOrganization().getOrganizationType().isLegalEntity()) {
-          Date movementDateInClosedPeriod = checkTransactionsWithMovDateInClosedPeriod(naturalOrgs,
-              childOrgs, rule);
+          final Date movementDateInClosedPeriod = checkTransactionsWithMovDateInClosedPeriod(
+              naturalOrgs, childOrgs, rule);
           if (movementDateInClosedPeriod != null) {
             message = Utility.parseTranslation(new DalConnectionProvider(false), vars,
                 vars.getLanguage(), "@CostNotCalculatedForTrxWithMovDateInPeriodClosed@");
@@ -89,8 +87,8 @@ public class CostingRuleProcessOnProcessHandler extends BaseActionHandler {
       jsonResponse.put("message", msg);
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
-      Throwable ex = DbUtility.getUnderlyingSQLException(e);
-      String message = OBMessageUtils.translateError(ex.getMessage()).getMessage();
+      final Throwable ex = DbUtility.getUnderlyingSQLException(e);
+      final String message = OBMessageUtils.translateError(ex.getMessage()).getMessage();
       log4j.error(message, e);
       try {
         msg = new JSONObject();
@@ -106,16 +104,16 @@ public class CostingRuleProcessOnProcessHandler extends BaseActionHandler {
     return jsonResponse;
   }
 
-  private Date checkTransactionsWithMovDateInClosedPeriod(Set<String> naturalOrgs,
-      Set<String> childOrgs, CostingRule rule) {
+  private Date checkTransactionsWithMovDateInClosedPeriod(final Set<String> naturalOrgs,
+      final Set<String> childOrgs, final CostingRule rule) {
     CostingUtilsData[] data = null;
     Date movementDateInPeriodClosed = null;
     try {
-      String strDateFormat = OBPropertiesProvider.getInstance()
+      final String strDateFormat = OBPropertiesProvider.getInstance()
           .getOpenbravoProperties()
           .getProperty("dateFormat.java");
       final SimpleDateFormat dateFormat = new SimpleDateFormat(strDateFormat);
-      String strDateFrom = dateFormat.format(CostingUtils.getCostingRuleStartingDate(rule));
+      final String strDateFrom = dateFormat.format(CostingUtils.getCostingRuleStartingDate(rule));
 
       data = CostingUtilsData.selectTransactionsInClosedPeriod(new DalConnectionProvider(false),
           Utility.getInStrSet(naturalOrgs), strDateFrom, Utility.getInStrSet(childOrgs),
@@ -131,37 +129,43 @@ public class CostingRuleProcessOnProcessHandler extends BaseActionHandler {
     return movementDateInPeriodClosed;
   }
 
-  private CostingRule getPreviousRule(CostingRule rule) {
-    StringBuffer where = new StringBuffer();
-    where.append(" as cr");
-    where.append(" where cr." + CostingRule.PROPERTY_ORGANIZATION + " = :ruleOrg");
-    where.append("   and cr." + CostingRule.PROPERTY_VALIDATED + " = true");
-    where.append("   order by cr." + CostingRule.PROPERTY_STARTINGDATE + " desc");
+  private CostingRule getPreviousRule(final CostingRule rule) {
+    //@formatter:off
+    final String hql =
+                  "as cr" +
+                  " where cr.organization = :ruleOrg" +
+                  "   and cr.validated = true" +
+                  " order by cr.startingDate desc";
+    //@formatter:on
 
-    OBQuery<CostingRule> crQry = OBDal.getInstance()
-        .createQuery(CostingRule.class, where.toString());
-    crQry.setFilterOnReadableOrganization(false);
-    crQry.setNamedParameter("ruleOrg", rule.getOrganization());
-    crQry.setMaxResult(1);
-    return crQry.uniqueResult();
+    return OBDal.getInstance()
+        .createQuery(CostingRule.class, hql)
+        .setFilterOnReadableOrganization(false)
+        .setNamedParameter("ruleOrg", rule.getOrganization())
+        .setMaxResult(1)
+        .uniqueResult();
   }
 
-  private boolean existsTransactions(Set<String> naturalOrgs, Set<String> childOrgs) {
-    StringBuffer where = new StringBuffer();
-    where.append(" as p");
-    where.append(" where p." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
-    where.append("   and p." + Product.PROPERTY_STOCKED + " = true");
-    where.append("   and p." + Product.PROPERTY_ORGANIZATION + ".id in (:porgs)");
-    where.append("   and exists (select 1 from " + MaterialTransaction.ENTITY_NAME);
-    where.append("     where " + MaterialTransaction.PROPERTY_PRODUCT + " = p");
-    where
-        .append("      and " + MaterialTransaction.PROPERTY_ORGANIZATION + " .id in (:childOrgs))");
+  private boolean existsTransactions(final Set<String> naturalOrgs, final Set<String> childOrgs) {
+    //@formatter:off
+    final String hql =
+                  "as p" +
+                  " where p.productType = 'I'" +
+                  "   and p.stocked = true" +
+                  "   and p.organization.id in (:porgs)" +
+                  "   and exists (" +
+                  "     select 1 from MaterialMgmtMaterialTransaction" +
+                  "      where product = p" +
+                  "        and organization .id in (:childOrgs)" +
+                  "     )";
+    //@formatter:on
 
-    OBQuery<Product> pQry = OBDal.getInstance().createQuery(Product.class, where.toString());
-    pQry.setFilterOnReadableOrganization(false);
-    pQry.setNamedParameter("porgs", naturalOrgs);
-    pQry.setNamedParameter("childOrgs", childOrgs);
-    pQry.setMaxResult(1);
-    return pQry.uniqueResult() != null;
+    return OBDal.getInstance()
+        .createQuery(Product.class, hql)
+        .setFilterOnReadableOrganization(false)
+        .setNamedParameter("porgs", naturalOrgs)
+        .setNamedParameter("childOrgs", childOrgs)
+        .setMaxResult(1)
+        .uniqueResult() != null;
   }
 }
