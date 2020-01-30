@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2019 Openbravo SLU
+ * All portions are Copyright (C) 2012-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -34,7 +34,6 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
-import org.hibernate.query.Query;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
@@ -60,7 +59,6 @@ import org.openbravo.model.materialmgmt.transaction.InternalMovement;
 import org.openbravo.model.materialmgmt.transaction.InventoryCount;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ProductionTransaction;
-import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.model.materialmgmt.transaction.TransactionLast;
 import org.openbravo.model.procurement.ReceiptInvoiceMatch;
 
@@ -201,22 +199,24 @@ public class CostingServer {
     // check if landed cost need to be processed
     if (trxType == TrxType.Receipt || trxType == TrxType.ReceiptReturn
         || trxType == TrxType.ReceiptNegative) {
-      StringBuffer where = new StringBuffer();
-      where.append(" as lc");
-      where.append(" where not exists ");
-      where.append("   (select 1 from " + MaterialTransaction.ENTITY_NAME + " mtrans");
-      where.append("     join mtrans." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + " iol");
-      where.append("   where iol." + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + ".id = :inoutId");
-      where.append("     and mtrans." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + "= false");
-      where.append("   )");
-      where.append("   and lc." + LandedCostCost.PROPERTY_LANDEDCOST + " is null");
-      where.append("   and lc." + LandedCostCost.PROPERTY_GOODSSHIPMENT + ".id = :inoutId");
-      OBQuery<LandedCostCost> qry = OBDal.getInstance()
-          .createQuery(LandedCostCost.class, where.toString());
-      qry.setNamedParameter("inoutId",
-          transaction.getGoodsShipmentLine().getShipmentReceipt().getId());
+      //@formatter:off
+      String hql =
+              "as lc" +
+              " where not exists (" +
+              "   select 1 from MaterialMgmtMaterialTransaction mtrans" +
+              "     join mtrans.goodsShipmentLine iol" +
+              "    where iol.shipmentReceipt.id = :inoutId" +
+              "      and mtrans.isCostCalculated= false" +
+              "   )" +
+              "   and lc.landedCost is null" +
+              "   and lc.goodsShipment.id = :inoutId";
+      //@formatter:on
 
-      ScrollableResults lcLines = qry.scroll(ScrollMode.FORWARD_ONLY);
+      ScrollableResults lcLines = OBDal.getInstance()
+          .createQuery(LandedCostCost.class, hql)
+          .setNamedParameter("inoutId",
+              transaction.getGoodsShipmentLine().getShipmentReceipt().getId())
+          .scroll(ScrollMode.FORWARD_ONLY);
       try {
         LandedCost landedCost = null;
 
@@ -401,15 +401,20 @@ public class CostingServer {
 
   private ScrollableResults getCostAdjustmentLines(final MaterialTransaction origInOutLineTrx) {
 
-    final String hqlQuery = "select tc.cost as cost, ca.sourceProcess as sourceProcess "
-        + "from TransactionCost tc join tc.costAdjustmentLine tal " + "join tal.costAdjustment ca "
-        + "where tc.inventoryTransaction = :transactionId";
+    //@formatter:off
+    final String hqlQuery = 
+                  "select tc.cost as cost, ca.sourceProcess as sourceProcess " +
+                  "  from TransactionCost tc join tc.costAdjustmentLine tal " + 
+                  "    join tal.costAdjustment ca " +
+                  " where tc.inventoryTransaction = :transactionId";
+    //@formatter:on
 
-    final Query<Tuple> query = OBDal.getInstance().getSession().createQuery(hqlQuery, Tuple.class);
-    query.setParameter("transactionId", origInOutLineTrx);
-    query.setFetchSize(1000);
-
-    return query.scroll(ScrollMode.FORWARD_ONLY);
+    return OBDal.getInstance()
+        .getSession()
+        .createQuery(hqlQuery, Tuple.class)
+        .setParameter("transactionId", origInOutLineTrx)
+        .setFetchSize(1000)
+        .scroll(ScrollMode.FORWARD_ONLY);
   }
 
   private boolean createAdjustment(String type, BigDecimal amount) {
@@ -570,24 +575,28 @@ public class CostingServer {
   }
 
   private CostingRule getCostDimensionRule() {
-    StringBuffer where = new StringBuffer();
-    where.append(CostingRule.PROPERTY_ORGANIZATION + " = :organization");
-    where.append(" and (" + CostingRule.PROPERTY_STARTINGDATE + " is null ");
-    where.append("   or " + CostingRule.PROPERTY_STARTINGDATE + " <= :startdate)");
-    where.append(" and (" + CostingRule.PROPERTY_ENDINGDATE + " is null");
-    where.append("   or " + CostingRule.PROPERTY_ENDINGDATE + " >= :enddate )");
-    where.append(" and " + CostingRule.PROPERTY_VALIDATED + " = true");
-    where.append(" order by case when " + CostingRule.PROPERTY_STARTINGDATE
-        + " is null then 1 else 0 end, " + CostingRule.PROPERTY_STARTINGDATE + " desc");
-    OBQuery<CostingRule> crQry = OBDal.getInstance()
-        .createQuery(CostingRule.class, where.toString());
-    crQry.setFilterOnReadableOrganization(false);
-    crQry.setNamedParameter("organization", organization);
-    crQry.setNamedParameter("startdate", transaction.getTransactionProcessDate());
-    crQry.setNamedParameter("enddate", transaction.getTransactionProcessDate());
-    crQry.setMaxResult(1);
-    List<CostingRule> costRules = crQry.list();
-    if (costRules.size() == 0) {
+    //@formatter:off
+    final String hql = 
+                  " organization = :organization" +
+                  "   and (startingDate is null " +
+                  "   or startingDate <= :startdate)" +
+                  "   and (endingDate is null" +
+                  "   or endingDate >= :enddate )" +
+                  "   and validated = true" +
+                  " order by case when startingDate is null then 1 else 0 end" +
+                  "   , startingDate desc";
+    //@formatter:on
+
+    final List<CostingRule> costRules = OBDal.getInstance()
+        .createQuery(CostingRule.class, hql)
+        .setFilterOnReadableOrganization(false)
+        .setNamedParameter("organization", organization)
+        .setNamedParameter("startdate", transaction.getTransactionProcessDate())
+        .setNamedParameter("enddate", transaction.getTransactionProcessDate())
+        .setMaxResult(1)
+        .list();
+
+    if (costRules.isEmpty()) {
       throw new OBException(
           "@NoCostingRuleFoundForOrganizationAndDate@ @Organization@: " + organization.getName()
               + ", @Date@: " + OBDateUtils.formatDate(transaction.getTransactionProcessDate()));
