@@ -1743,8 +1743,8 @@ public class OrderLoader extends POSDataSynchronizationProcess
         doFlush = true;
       }
 
-      // If there is a rounding payment method add a new payment detail against "Rounded Difference"
-      // GL Item
+      // If there is a rounding payment method set the G/L Item for Payment Rounding to the payment
+      // detail
       if (paymentType.getPaymentMethod().isRounding()) {
         if (paymentType.getPaymentMethod().getGlitemRound() == null) {
           throw new OBException(
@@ -1752,6 +1752,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
                   paymentType.getPaymentMethod().getSearchKey()));
 
         }
+        // The rounding payment can only have one payment detail
         Optional<FIN_PaymentDetail> paymentDetail = finPayment.getFINPaymentDetailList()
             .stream()
             .findFirst();
