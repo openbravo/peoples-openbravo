@@ -8,27 +8,121 @@
  */
 
 (function() {
-  const calculateTaxes = function(receipt) {
-    new Promise((resolve, reject) => {
-      if (!receipt.get('isEditable') && !receipt.get('forceCalculateTaxes')) {
-        return regenerateTaxesInfo(receipt);
-      }
+  const calculateTaxes = async function(receipt) {
+    if (!receipt.get('isEditable') && !receipt.get('forceCalculateTaxes')) {
+      return regenerateTaxesInfo(receipt);
+    }
 
-      initializeTaxes(receipt);
-      const taxes = OB.Taxes.Pos.calculateTaxes(receipt);
-      const lineTaxError = taxes.lines.find(lineTax => lineTax.error);
-      if (lineTaxError) {
-        const line = receipt
-          .get('lines')
-          .find(line => line.id === lineTaxError.id);
-        reject(line);
-      } else {
-        setTaxes(receipt, taxes);
-      }
-    }).catch(function(line) {
-      showLineTaxError(receipt, line);
-    });
+    initializeTaxes(receipt);
+    await modifyProductTaxCategoryByService(receipt);
+    const taxes = OB.Taxes.Pos.calculateTaxes(receipt);
+    setTaxes(receipt, taxes);
+
+    // Does any receipt line require a price change?
+    if (
+      receipt
+        .get('lines')
+        .filter(line => line.get('product').has('modifiedTaxCategory'))
+        .map(line =>
+          line.set(
+            'discountedGross',
+            OB.DEC.mul(
+              OB.DEC.div(
+                line.get('discountedGross'),
+                line.get('previousLineRate')
+              ),
+              line.get('lineRate')
+            )
+          )
+        ).length > 0
+    ) {
+      const taxes2 = OB.Taxes.Pos.calculateTaxes(receipt);
+      setTaxes(receipt, taxes2);
+    }
   };
+
+  const initializeTaxes = function(receipt) {
+    receipt.set(
+      {
+        taxes: []
+      },
+      {
+        silent: true
+      }
+    );
+  };
+
+  // For each service with *modifyTax* flag activated, look in linked product category table
+  // and check if it is necessary to modify the tax category of service related lines
+  function modifyProductTaxCategoryByService(receipt) {
+    return new Promise(function(resolve, reject) {
+      receipt.get('lines').forEach(line => {
+        line.set('previousLineRate', line.get('lineRate'));
+        line.get('product').unset('modifiedTaxCategory');
+      });
+      const serviceLines = receipt
+        .get('lines')
+        .filter(
+          serviceLine =>
+            serviceLine.get('product').get('modifyTax') &&
+            serviceLine.get('relatedLines') &&
+            !serviceLine.get('obposIsDeleted')
+        );
+      for (var i = 0; i < serviceLines.length; i++) {
+        var serviceLine = serviceLines[i];
+        // serviceLines.forEach(serviceLine => {
+        const serviceId = serviceLine.get('product').get('id');
+        const criteria = {
+          product: serviceId
+        };
+        if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+          var remoteCriteria = [
+            {
+              columns: ['product'],
+              operator: 'equals',
+              value: serviceId
+            }
+          ];
+          criteria.remoteFilters = remoteCriteria;
+        }
+        OB.Dal.findUsingCache(
+          'ProductServiceLinked',
+          OB.Model.ProductServiceLinked,
+          criteria,
+          relatedProductCategories => {
+            relatedProductCategories.forEach(relatedProductCategory => {
+              serviceLine
+                .get('relatedLines')
+                .filter(
+                  relatedProduct =>
+                    relatedProduct.productCategory ===
+                    relatedProductCategory.get('productCategory')
+                )
+                .forEach(relatedProduct => {
+                  const relatedLine = receipt
+                    .get('lines')
+                    .find(line => line.id === relatedProduct.orderlineId);
+                  relatedLine
+                    .get('product')
+                    .set(
+                      'modifiedTaxCategory',
+                      relatedProductCategory.get('taxCategory')
+                    );
+                });
+            });
+            resolve();
+            return;
+          },
+          reject,
+          {
+            modelsAffectedByCache: ['ProductServiceLinked']
+          }
+        );
+        return;
+      }
+      resolve();
+    });
+  }
 
   const regenerateTaxesInfo = function(receipt) {
     const value = _.map(receipt.get('lines').models, function(line) {
@@ -127,56 +221,63 @@
     receipt.set('taxes', taxesColl);
   };
 
-  const initializeTaxes = function(receipt) {
-    receipt.set(
-      {
-        taxes: []
-      },
-      {
-        silent: true
-      }
-    );
-  };
-
   const setTaxes = function(receipt, taxes) {
-    receipt.set(
-      {
-        gross: taxes.header.grossAmount,
-        net: taxes.header.netAmount,
-        taxes: taxes.header.taxes
-      },
-      {
-        silent: true
+    // We use Promise.reject to show async message in case of error
+    new Promise((resolve, reject) => {
+      const lineTaxError = taxes.lines.find(lineTax => lineTax.error);
+      if (lineTaxError) {
+        const line = receipt
+          .get('lines')
+          .find(line => line.id === lineTaxError.id);
+        return reject(line);
       }
-    );
-    receipt.get('lines').forEach(line => {
-      const lineTax = taxes.lines.find(lineTax => lineTax.id === line.id);
-      if (receipt.get('priceIncludesTax')) {
-        line.set(
-          {
-            net: lineTax.netAmount,
-            discountedNet: lineTax.netAmount,
-            pricenet: lineTax.netPrice,
-            tax: lineTax.tax,
-            taxLines: lineTax.taxes
-          },
-          {
-            silent: true
-          }
-        );
-      } else {
-        line.set(
-          {
-            gross: lineTax.grossAmount,
-            discountedGross: lineTax.grossAmount,
-            tax: lineTax.tax,
-            taxLines: lineTax.taxes
-          },
-          {
-            silent: true
-          }
-        );
-      }
+
+      receipt.set(
+        {
+          gross: taxes.header.grossAmount,
+          net: taxes.header.netAmount,
+          taxes: taxes.header.taxes
+        },
+        {
+          silent: true
+        }
+      );
+      receipt.get('lines').forEach(line => {
+        const lineTax = taxes.lines.find(lineTax => lineTax.id === line.id);
+        if (receipt.get('priceIncludesTax')) {
+          line.set(
+            {
+              gross: lineTax.grossAmount,
+              discountedGross: lineTax.grossAmount,
+              net: lineTax.netAmount,
+              discountedNet: lineTax.netAmount,
+              price: lineTax.grossPrice,
+              pricenet: lineTax.netPrice,
+              lineRate: lineTax.lineRate,
+              tax: lineTax.tax,
+              taxLines: lineTax.taxes
+            },
+            {
+              silent: true
+            }
+          );
+        } else {
+          line.set(
+            {
+              gross: lineTax.grossAmount,
+              discountedGross: lineTax.grossAmount,
+              lineRate: lineTax.lineRate,
+              tax: lineTax.tax,
+              taxLines: lineTax.taxes
+            },
+            {
+              silent: true
+            }
+          );
+        }
+      });
+    }).catch(function(line) {
+      showLineTaxError(receipt, line);
     });
   };
 
@@ -210,9 +311,10 @@
   };
 
   OB.DATA.OrderTaxes = function(modelOfAnOrder) {
-    modelOfAnOrder.calculateTaxes = function(callback) {
-      calculateTaxes(this);
-      this.trigger('paintTaxes');
+    modelOfAnOrder.calculateTaxes = async function(callback) {
+      var me = this;
+      await calculateTaxes(me);
+      me.trigger('paintTaxes');
       callback();
     };
   };

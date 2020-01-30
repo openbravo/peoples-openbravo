@@ -55,7 +55,11 @@
         newLine.taxExempt = line.get('originalTaxExempt');
         newLine.product = {};
         newLine.product.id = line.get('product').id;
-        newLine.product.taxCategory = line.get('product').get('taxCategory');
+        newLine.product.taxCategory = line.has('originalTaxCategory')
+          ? line.get('originalTaxCategory')
+          : line.get('product').has('modifiedTaxCategory')
+          ? line.get('product').get('modifiedTaxCategory')
+          : line.get('product').get('taxCategory');
         newLine.product.isBom = OB.Taxes.Pos.taxCategoryBOM.find(
           taxCategory => taxCategory.id === newLine.product.taxCategory
         )
@@ -87,9 +91,20 @@
           }))
           .reduce((obj, item) => ((obj[[item['id']]] = item), obj), {});
       };
+      const calculateLineRate = taxArray => {
+        return taxArray.reduce(
+          (total, tax) =>
+            OB.DEC.mul(
+              total,
+              OB.DEC.add(OB.DEC.One, OB.DEC.div(tax.tax.rate, 100))
+            ),
+          OB.DEC.One
+        );
+      };
 
       taxes.header.taxes = translateTaxes(taxes.header.taxes);
       taxes.lines.forEach(line => {
+        line.lineRate = calculateLineRate(line.taxes);
         line.taxes = translateTaxes(line.taxes);
       });
       return taxes;
