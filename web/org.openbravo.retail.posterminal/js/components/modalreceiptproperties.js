@@ -92,15 +92,12 @@ enyo.kind({
             if (me.destroyed) {
               return;
             }
-            if (
-              dataSalesRepresentative.result &&
-              dataSalesRepresentative.result.length > 0
-            ) {
-              dataSalesRepresentative.result.unshift({
+            if (dataSalesRepresentative && dataSalesRepresentative.length > 0) {
+              dataSalesRepresentative.unshift({
                 id: null,
                 _identifier: null
               });
-              me.dataReadyFunction(dataSalesRepresentative.result, args);
+              me.dataReadyFunction(dataSalesRepresentative, args);
             } else {
               actualUser = new Backbone.Model();
               actualUser.set(
@@ -111,8 +108,8 @@ enyo.kind({
                 'id',
                 me.model.get('order').get('salesRepresentative')
               );
-              dataSalesRepresentative.result.models = [actualUser];
-              me.dataReadyFunction(dataSalesRepresentative.result, args);
+              dataSalesRepresentative.models = [actualUser];
+              me.dataReadyFunction(dataSalesRepresentative, args);
             }
           } catch (err) {
             OB.UTIL.showError(

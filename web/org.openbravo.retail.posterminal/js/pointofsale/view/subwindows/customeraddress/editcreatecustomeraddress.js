@@ -275,7 +275,7 @@ enyo.kind({
           const dataCountry = await OB.App.MasterdataModels.Country.orderedBy(
             '_identifier'
           );
-          me.dataReadyFunction(dataCountry.result, args);
+          me.dataReadyFunction(dataCountry, args);
         } catch (err) {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_ErrorGettingCountries'));
           me.dataReadyFunction(null, args);

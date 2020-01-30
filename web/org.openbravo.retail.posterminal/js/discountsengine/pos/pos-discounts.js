@@ -349,12 +349,11 @@
       filterGroup = 'priceAdjustment',
       filterFunction = null
     ) {
-      const filterArrayPromise = await filterModel.orderedBy([
+      const filterArray = await filterModel.orderedBy([
         filterGroup,
         '_identifier',
         'id'
       ]);
-      const filterArray = filterArrayPromise.result;
 
       if (filterEntity) {
         filterArray.forEach(
@@ -585,26 +584,23 @@
       const manualPromotions = OB.Discounts.Pos.getManualPromotions();
 
       // Manual discounts must be sorted by name
-      const manualDiscountArrayPromise = await OB.App.MasterdataModels.Discount.find(
+      const manualDiscounts = await OB.App.MasterdataModels.Discount.find(
         new OB.App.Class.Criteria()
           .criterion('discountType', manualPromotions, 'in')
           .orderBy('name', 'asc')
           .build()
       );
-      const manualDiscountArray = manualDiscountArrayPromise.result;
 
       // No manual discounts must be sorted by priority (done in memory as null priority goes first) and id
-      const noManualDiscountArrayPromise = await OB.App.MasterdataModels.Discount.find(
+      const noManualDiscounts = await OB.App.MasterdataModels.Discount.find(
         new OB.App.Class.Criteria()
           .criterion('discountType', manualPromotions, 'notIn')
           .orderBy('id', 'asc')
           .build()
       );
-      const noManualDiscountArray = noManualDiscountArrayPromise.result.sort(
-        (a, b) => a.priority - b.priority
-      );
+      noManualDiscounts.sort((a, b) => a.priority - b.priority);
 
-      let discountArray = manualDiscountArray.concat(noManualDiscountArray);
+      let discountArray = manualDiscounts.concat(noManualDiscounts);
 
       discountArray = await OB.Discounts.Pos.addDiscountsByRoleFilter(
         discountArray
@@ -656,8 +652,7 @@
       );
 
       //BPSets
-      const bpSetLineArrayPromise = await OB.App.MasterdataModels.BPSetLine.find();
-      const bpSetLineArray = bpSetLineArrayPromise.result;
+      const bpSetLineArray = await OB.App.MasterdataModels.BPSetLine.find();
       const bpSetLineArrayByBPSet = OB.App.ArrayUtils.groupBy(
         bpSetLineArray,
         'bpSet'

@@ -241,7 +241,7 @@ enyo.kind({
       const dataSalesRepresentative = await OB.App.MasterdataModels.SalesRepresentative.find(
         criteria
       );
-      successCallbackBPs(dataSalesRepresentative.result);
+      successCallbackBPs(dataSalesRepresentative);
     } catch (err) {
       errorCallback(undefined, err.message);
     }
