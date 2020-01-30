@@ -10141,9 +10141,7 @@
                     ),
                     price: price,
                     priceList:
-                      prod.get('listPrice') !== price &&
-                      !OB.UTIL.isNullOrUndefined(order.get('isLayaway')) &&
-                      !order.get('isLayaway')
+                      prod.get('listPrice') !== price
                         ? price
                         : prod.get('listPrice'),
                     grossListPrice: iter.grossListPrice,
