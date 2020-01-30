@@ -18,6 +18,18 @@ enyo.kind({
   body: {
     kind: 'OB.OBPOSCashMgmt.UI.ListEvents',
     classes: 'obposObposcashmgmtUiModalDepositEvents-obObposcashmgmtUiListEvent'
+  },
+  footer: {
+    classes:
+      'obUiModal-footer-mainButtons obposObposcashmgmtUiModalDepositEvents-footer',
+    components: [
+      {
+        kind: 'OB.UI.ModalDepositEventsCancel',
+        classes:
+          'obposObposcashmgmtUiModalDepositEvents-footer-modalDepositEventsCancelButton',
+        name: 'modalDepositEventsCancelButton'
+      }
+    ]
   }
 });
 
@@ -55,14 +67,14 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSCashMgmt.UI.ListEventLine',
   kind: 'OB.UI.SelectButton',
-  classes: 'obObposcashmgmtUiListEvent',
+  classes: 'obObposcashmgmtUiListEventLine',
   events: {
     onHideThisPopup: ''
   },
   components: [
     {
       name: 'line',
-      classes: 'obObposcashmgmtUiListEvent-line'
+      classes: 'obObposcashmgmtUiListEventLine-line'
     }
   ],
   tap: function() {
@@ -73,5 +85,18 @@ enyo.kind({
   create: function() {
     this.inherited(arguments);
     this.$.line.setContent(this.model.get('name'));
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.ModalDepositEventsCancel',
+  kind: 'OB.UI.ModalDialogButton',
+  classes: 'obUiModalDepositEventsCancel',
+  tap: function() {
+    this.doHideThisPopup();
+  },
+  initComponents: function() {
+    this.inherited(arguments);
+    this.setContent(OB.I18N.getLabel('OBMOBC_LblCancel'));
   }
 });
