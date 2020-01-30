@@ -74,10 +74,10 @@ public class CostingServer {
   private CostingAlgorithm costingAlgorithm;
   private Currency currency;
   private Organization organization;
-  final static String strCategoryLandedCost = "LDC";
-  final static String strTableLandedCost = "M_LandedCost";
+  static final String STR_CATEGORY_LANDED_COST = "LDC";
+  static final String STR_TABLE_LANDED_COST = "M_LandedCost";
 
-  public CostingServer(MaterialTransaction transaction) {
+  public CostingServer(final MaterialTransaction transaction) {
     this.transaction = transaction;
     init();
   }
@@ -139,7 +139,6 @@ public class CostingServer {
       } finally {
         OBContext.restorePreviousMode();
       }
-      return;
     } finally {
       // Every Transaction must be set as Processed = 'Y' after going through this method
       transaction.setProcessed(true);
@@ -171,7 +170,7 @@ public class CostingServer {
   }
 
   private void checkCostAdjustments() {
-    TrxType trxType = TrxType.getTrxType(transaction);
+    final TrxType trxType = TrxType.getTrxType(transaction);
     boolean adjustmentAlreadyCreated = false;
 
     boolean checkPriceCorrectionTrxs = false;
@@ -190,7 +189,8 @@ public class CostingServer {
     if (checkPriceCorrectionTrxs && transaction.isCheckpricedifference()
         && !StringUtils.equals(transaction.getCostingAlgorithm().getJavaClassName(),
             "org.openbravo.costing.StandardAlgorithm")) {
-      JSONObject message = PriceDifferenceProcess.processPriceDifferenceTransaction(transaction);
+      final JSONObject message = PriceDifferenceProcess
+          .processPriceDifferenceTransaction(transaction);
       if (message.has("documentNo")) {
         adjustmentAlreadyCreated = true;
       }
@@ -200,19 +200,19 @@ public class CostingServer {
     if (trxType == TrxType.Receipt || trxType == TrxType.ReceiptReturn
         || trxType == TrxType.ReceiptNegative) {
       //@formatter:off
-      String hql =
-              "as lc" +
-              " where not exists (" +
-              "   select 1 from MaterialMgmtMaterialTransaction mtrans" +
-              "     join mtrans.goodsShipmentLine iol" +
-              "    where iol.shipmentReceipt.id = :inoutId" +
-              "      and mtrans.isCostCalculated= false" +
-              "   )" +
-              "   and lc.landedCost is null" +
-              "   and lc.goodsShipment.id = :inoutId";
+      final String hql =
+                    "as lc" +
+                    " where not exists (" +
+                    "   select 1 from MaterialMgmtMaterialTransaction mtrans" +
+                    "     join mtrans.goodsShipmentLine iol" +
+                    "    where iol.shipmentReceipt.id = :inoutId" +
+                    "      and mtrans.isCostCalculated= false" +
+                    "   )" +
+                    "   and lc.landedCost is null" +
+                    "   and lc.goodsShipment.id = :inoutId";
       //@formatter:on
 
-      ScrollableResults lcLines = OBDal.getInstance()
+      final ScrollableResults lcLines = OBDal.getInstance()
           .createQuery(LandedCostCost.class, hql)
           .setNamedParameter("inoutId",
               transaction.getGoodsShipmentLine().getShipmentReceipt().getId())
@@ -223,8 +223,8 @@ public class CostingServer {
         while (lcLines.next()) {
           if (landedCost == null) {
             final DocumentType docType = FIN_Utility.getDocumentType(organization,
-                strCategoryLandedCost);
-            final String docNo = FIN_Utility.getDocumentNo(docType, strTableLandedCost);
+                STR_CATEGORY_LANDED_COST);
+            final String docNo = FIN_Utility.getDocumentNo(docType, STR_TABLE_LANDED_COST);
 
             landedCost = OBProvider.getInstance().get(LandedCost.class);
             landedCost.setReferenceDate(new Date());
@@ -233,7 +233,7 @@ public class CostingServer {
             landedCost.setOrganization(organization);
             OBDal.getInstance().save(landedCost);
 
-            LCReceipt lcReceipt = OBProvider.getInstance().get(LCReceipt.class);
+            final LCReceipt lcReceipt = OBProvider.getInstance().get(LCReceipt.class);
             lcReceipt.setLandedCost(landedCost);
             lcReceipt.setOrganization(organization);
             lcReceipt.setGoodsShipment(transaction.getGoodsShipmentLine().getShipmentReceipt());
@@ -249,7 +249,7 @@ public class CostingServer {
 
         if (landedCost != null) {
           OBDal.getInstance().flush();
-          JSONObject message = LandedCostProcess.doProcessLandedCost(landedCost);
+          final JSONObject message = LandedCostProcess.doProcessLandedCost(landedCost);
           if (message.has("documentNo")) {
             adjustmentAlreadyCreated = true;
           }
@@ -289,10 +289,10 @@ public class CostingServer {
         if (trxType == TrxType.InventoryOpening && transaction.getMovementDate()
             .compareTo(CostingUtils.getCostingRuleStartingDate(getCostingRule())) >= 0) {
           OBDal.getInstance().refresh(transaction.getPhysicalInventoryLine().getPhysInventory());
-          if (transaction.getPhysicalInventoryLine()
+          if (!transaction.getPhysicalInventoryLine()
               .getPhysInventory()
               .getInventoryAmountUpdateLineInventoriesInitInventoryList()
-              .size() > 0
+              .isEmpty()
               && CostingUtils.isLastOpeningTransaction(transaction,
                   getCostingRule().isWarehouseDimension())) {
             // BDT = Backdated transaction
@@ -336,9 +336,10 @@ public class CostingServer {
     if (checkNegativeStockCorrectionTrxs
         && AverageAlgorithm.modifiesAverage(TrxType.getTrxType(transaction))
         && !adjustmentAlreadyCreated) {
-      BigDecimal currentStock = CostAdjustmentUtils.getStockOnTransactionDate(getOrganization(),
-          transaction, costingAlgorithm.costDimensions, transaction.getProduct().isProduction(),
-          costingRule.isBackdatedTransactionsFixed(), transaction.getCurrency());
+      final BigDecimal currentStock = CostAdjustmentUtils.getStockOnTransactionDate(
+          getOrganization(), transaction, costingAlgorithm.costDimensions,
+          transaction.getProduct().isProduction(), costingRule.isBackdatedTransactionsFixed(),
+          transaction.getCurrency());
       if (currentStock.compareTo(transaction.getMovementQuantity()) < 0
           || (trxType != TrxType.InventoryOpening
               && currentStock.compareTo(transaction.getMovementQuantity()) == 0
@@ -353,12 +354,13 @@ public class CostingServer {
 
     // check if closing inventory needs to be adjusted due to a remainder value
     if (trxType == TrxType.InventoryClosing) {
-      BigDecimal currentStock = CostAdjustmentUtils.getStockOnTransactionDate(getOrganization(),
-          transaction, costingAlgorithm.costDimensions, transaction.getProduct().isProduction(),
-          costingRule.isBackdatedTransactionsFixed(), transaction.getCurrency());
+      final BigDecimal currentStock = CostAdjustmentUtils.getStockOnTransactionDate(
+          getOrganization(), transaction, costingAlgorithm.costDimensions,
+          transaction.getProduct().isProduction(), costingRule.isBackdatedTransactionsFixed(),
+          transaction.getCurrency());
 
       if (BigDecimal.ZERO.compareTo(currentStock) == 0) {
-        BigDecimal currentValuedStock = CostAdjustmentUtils.getValuedStockOnTransactionDate(
+        final BigDecimal currentValuedStock = CostAdjustmentUtils.getValuedStockOnTransactionDate(
             getOrganization(), transaction, costingAlgorithm.costDimensions,
             transaction.getProduct().isProduction(), costingRule.isBackdatedTransactionsFixed(),
             transaction.getCurrency());
@@ -379,18 +381,18 @@ public class CostingServer {
   }
 
   private void createCostAdjustmentForVoidedReceiptOrShipment() {
-    MaterialTransaction origInOutLineTrx = transaction.getGoodsShipmentLine()
+    final MaterialTransaction origInOutLineTrx = transaction.getGoodsShipmentLine()
         .getCanceledInoutLine()
         .getMaterialMgmtMaterialTransactionList()
         .get(0);
-    boolean isCostPermanent = transaction.isCostPermanent();
+    final boolean isCostPermanent = transaction.isCostPermanent();
     transaction.setCostPermanent(false);
     OBDal.getInstance().save(transaction);
     try (ScrollableResults scroll = getCostAdjustmentLines(origInOutLineTrx)) {
       while (scroll.next()) {
-        Tuple result = (Tuple) scroll.get()[0];
-        BigDecimal cost = (BigDecimal) result.get("cost");
-        String sourceProcess = (String) result.get("sourceProcess");
+        final Tuple result = (Tuple) scroll.get()[0];
+        final BigDecimal cost = (BigDecimal) result.get("cost");
+        final String sourceProcess = (String) result.get("sourceProcess");
         createAdjustment(sourceProcess, cost);
       }
     }
@@ -418,7 +420,7 @@ public class CostingServer {
   }
 
   private boolean createAdjustment(String type, BigDecimal amount) {
-    CostAdjustment costAdjustmentHeader = CostAdjustmentUtils
+    final CostAdjustment costAdjustmentHeader = CostAdjustmentUtils
         .insertCostAdjustmentHeader(transaction.getOrganization(), type);
     final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(
         transaction, amount, costAdjustmentHeader);
@@ -455,15 +457,15 @@ public class CostingServer {
       case Receipt:
       case ReceiptReturn:
       case ReceiptVoid:
-      case ReceiptNegative: {
-        org.openbravo.model.materialmgmt.transaction.ShipmentInOut inout = transaction
+      case ReceiptNegative:
+        final org.openbravo.model.materialmgmt.transaction.ShipmentInOut inout = transaction
             .getGoodsShipmentLine()
             .getShipmentReceipt();
         if (!"N".equals(inout.getPosted()) || !"Y".equals(inout.getPosted())) {
           inout.setPosted("N");
           OBDal.getInstance().save(inout);
           // Set for the Match Invoices associated
-          List<ReceiptInvoiceMatch> invoiceMatchList = transaction.getGoodsShipmentLine()
+          final List<ReceiptInvoiceMatch> invoiceMatchList = transaction.getGoodsShipmentLine()
               .getProcurementReceiptInvoiceMatchList();
           if (invoiceMatchList != null && !invoiceMatchList.isEmpty()) {
             for (ReceiptInvoiceMatch invoiceMatch : invoiceMatchList) {
@@ -475,43 +477,39 @@ public class CostingServer {
           }
         }
         break;
-      }
       case InventoryDecrease:
       case InventoryIncrease:
       case InventoryOpening:
-      case InventoryClosing: {
-        InventoryCount inventory = transaction.getPhysicalInventoryLine().getPhysInventory();
+      case InventoryClosing:
+        final InventoryCount inventory = transaction.getPhysicalInventoryLine().getPhysInventory();
         if (!"N".equals(inventory.getPosted()) || !"Y".equals(inventory.getPosted())) {
           inventory.setPosted("N");
           OBDal.getInstance().save(inventory);
         }
         break;
-      }
       case IntMovementFrom:
-      case IntMovementTo: {
-        InternalMovement movement = transaction.getMovementLine().getMovement();
+      case IntMovementTo:
+        final InternalMovement movement = transaction.getMovementLine().getMovement();
         if (!"N".equals(movement.getPosted()) || !"Y".equals(movement.getPosted())) {
           movement.setPosted("N");
           OBDal.getInstance().save(movement);
         }
         break;
-      }
       case InternalCons:
       case InternalConsNegative:
-      case InternalConsVoid: {
-        InternalConsumption consumption = transaction.getInternalConsumptionLine()
+      case InternalConsVoid:
+        final InternalConsumption consumption = transaction.getInternalConsumptionLine()
             .getInternalConsumption();
         if (!"N".equals(consumption.getPosted()) || !"Y".equals(consumption.getPosted())) {
           consumption.setPosted("N");
           OBDal.getInstance().save(consumption);
         }
         break;
-      }
       case BOMPart:
       case BOMProduct:
       case ManufacturingConsumed:
-      case ManufacturingProduced: {
-        ProductionTransaction production = transaction.getProductionLine()
+      case ManufacturingProduced:
+        final ProductionTransaction production = transaction.getProductionLine()
             .getProductionPlan()
             .getProduction();
         if (!"N".equals(production.getPosted()) || !"Y".equals(production.getPosted())) {
@@ -519,7 +517,6 @@ public class CostingServer {
           OBDal.getInstance().save(production);
         }
         break;
-      }
       case Unknown:
         throw new OBException("@UnknownTrxType@: " + transaction.getIdentifier());
       default:
@@ -535,7 +532,8 @@ public class CostingServer {
     // In case the product is Manufacturing type it is forced to use Average Algorithm
     if (transaction.getProduct().isProduction()
         && !"org.openbravo.costing.StandardAlgorithm".equals(costAlgorithm.getJavaClassName())) {
-      OBQuery<org.openbravo.model.materialmgmt.cost.CostingAlgorithm> caQry = OBDal.getInstance()
+      final OBQuery<org.openbravo.model.materialmgmt.cost.CostingAlgorithm> caQry = OBDal
+          .getInstance()
           .createQuery(org.openbravo.model.materialmgmt.cost.CostingAlgorithm.class,
               org.openbravo.model.materialmgmt.cost.CostingAlgorithm.PROPERTY_JAVACLASSNAME
                   + " = 'org.openbravo.costing.AverageAlgorithm'");
@@ -547,7 +545,8 @@ public class CostingServer {
 
     try {
       final Class<?> clz = OBClassLoader.getInstance().loadClass(costAlgorithm.getJavaClassName());
-      CostingAlgorithm algorithm = (CostingAlgorithm) clz.getDeclaredConstructor().newInstance();
+      final CostingAlgorithm algorithm = (CostingAlgorithm) clz.getDeclaredConstructor()
+          .newInstance();
       algorithm.init(this);
       return algorithm;
     } catch (Exception e) {
@@ -558,7 +557,7 @@ public class CostingServer {
   }
 
   private void createTransactionCost() {
-    TransactionCost transactionCost = OBProvider.getInstance().get(TransactionCost.class);
+    final TransactionCost transactionCost = OBProvider.getInstance().get(TransactionCost.class);
     transactionCost.setInventoryTransaction(transaction);
     transactionCost.setOrganization(transaction.getOrganization());
     transactionCost.setCost(trxCost);
@@ -628,7 +627,7 @@ public class CostingServer {
     if (organization != null) {
       return organization;
     }
-    Organization org = OBContext.getOBContext()
+    final Organization org = OBContext.getOBContext()
         .getOrganizationStructureProvider(transaction.getClient().getId())
         .getLegalEntity(transaction.getOrganization());
     if (org == null) {
@@ -674,10 +673,10 @@ public class CostingServer {
     /**
      * Given a Material Management transaction returns its type.
      */
-    public static TrxType getTrxType(MaterialTransaction transaction) {
+    public static TrxType getTrxType(final MaterialTransaction transaction) {
       if (transaction.getGoodsShipmentLine() != null) {
         // Receipt / Shipment
-        org.openbravo.model.materialmgmt.transaction.ShipmentInOut inout = transaction
+        final org.openbravo.model.materialmgmt.transaction.ShipmentInOut inout = transaction
             .getGoodsShipmentLine()
             .getShipmentReceipt();
         if (inout.isSalesTransaction()) {
@@ -719,7 +718,7 @@ public class CostingServer {
         }
       } else if (transaction.getPhysicalInventoryLine() != null) {
         // Physical Inventory
-        String invType = transaction.getPhysicalInventoryLine()
+        final String invType = transaction.getPhysicalInventoryLine()
             .getPhysInventory()
             .getInventoryType();
         if ("O".equals(invType)) {
