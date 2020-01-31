@@ -11,8 +11,10 @@ package org.openbravo.retail.posterminal.event;
 
 import javax.enterprise.event.Observes;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
@@ -25,6 +27,8 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.common.currency.Currency;
+import org.openbravo.retail.posterminal.OBPOSAppPaymentRounding;
 import org.openbravo.retail.posterminal.TerminalTypePaymentMethod;
 import org.openbravo.service.db.DalConnectionProvider;
 
@@ -46,6 +50,7 @@ public class TerminalTypePaymentMethodEventHandler extends EntityPersistenceEven
     checkNoAutomaticDepositNotInCashup(event);
     checkIfCurrencyRoundingExists(event);
     checkRoundingGLItemForPaymentRounding(event);
+    checkPaymentRoundingCurrency(event);
   }
 
   public void onSave(@Observes EntityNewEvent event) {
@@ -99,6 +104,33 @@ public class TerminalTypePaymentMethodEventHandler extends EntityPersistenceEven
     try {
       if (ttpm.isRounding().booleanValue() && ttpm.getGlitemRound() == null) {
         throw new OBException(OBMessageUtils.messageBD("OBPOS_GLItemForPaymentRoundingRequired"));
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  private void checkPaymentRoundingCurrency(EntityUpdateEvent event) {
+    final TerminalTypePaymentMethod ttpm = (TerminalTypePaymentMethod) event.getTargetInstance();
+    final Entity ttpmEntity = ModelProvider.getInstance()
+        .getEntity(TerminalTypePaymentMethod.ENTITY_NAME);
+    OBContext.setAdminMode(true);
+    try {
+      final Currency previousCurrencyState = (Currency) event
+          .getPreviousState(ttpmEntity.getProperty(TerminalTypePaymentMethod.PROPERTY_CURRENCY));
+      final Currency currencyState = (Currency) event
+          .getCurrentState(ttpmEntity.getProperty(TerminalTypePaymentMethod.PROPERTY_CURRENCY));
+      if (ttpm.isRounding().booleanValue()
+          && !StringUtils.equals(previousCurrencyState.getId(), currencyState.getId())) {
+        final OBPOSAppPaymentRounding paymentRounding = (OBPOSAppPaymentRounding) OBDal
+            .getInstance()
+            .createCriteria(OBPOSAppPaymentRounding.class)
+            .add(Restrictions.eq("obposAppRoundingType.id", ttpm.getId()))
+            .setMaxResults(1)
+            .uniqueResult();
+        if (paymentRounding != null) {
+          throw new OBException(OBMessageUtils.messageBD("OBPOS_PaymentRoundingCurrencyInUse"));
+        }
       }
     } finally {
       OBContext.restorePreviousMode();
