@@ -66,8 +66,8 @@ public class DocMatchInv extends AcctServer {
   }
 
   @Override
-  public void loadObjectFieldProvider(ConnectionProvider conn,
-      @SuppressWarnings("hiding") String adClientId, String id) throws ServletException {
+  public void loadObjectFieldProvider(ConnectionProvider conn, String adClientId, String id)
+      throws ServletException {
     setObjectFieldProvider(DocMatchInvData.selectRegistro(conn, adClientId, id));
   }
 
