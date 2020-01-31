@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2019 Openbravo SLU
+ * All portions are Copyright (C) 2012-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -510,7 +510,9 @@ public class CostingRuleProcess implements Process {
 
     InventoryCount closeInv = OBProvider.getInstance().get(InventoryCount.class);
     closeInv.setClient((Client) OBDal.getInstance().getProxy(Client.ENTITY_NAME, clientId));
-    closeInv.setOrganization(warehouse.getOrganization());
+    final Organization invOrg = CostingUtils.getOrganizationForCloseAndOpenInventories(orgId,
+        warehouse);
+    closeInv.setOrganization(invOrg);
     closeInv.setName(OBMessageUtils.messageBD("CostCloseInventory"));
     closeInv.setWarehouse(warehouse);
     closeInv.setMovementDate(localDate);
@@ -519,7 +521,7 @@ public class CostingRuleProcess implements Process {
 
     InventoryCount initInv = OBProvider.getInstance().get(InventoryCount.class);
     initInv.setClient((Client) OBDal.getInstance().getProxy(Client.ENTITY_NAME, clientId));
-    initInv.setOrganization(warehouse.getOrganization());
+    initInv.setOrganization(invOrg);
     initInv.setName(OBMessageUtils.messageBD("CostInitInventory"));
     initInv.setWarehouse(warehouse);
     initInv.setMovementDate(localDate);

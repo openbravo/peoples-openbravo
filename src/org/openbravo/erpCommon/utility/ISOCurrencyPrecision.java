@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2017-2019 Openbravo SLU
+ * All portions are Copyright (C) 2017-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -30,6 +30,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.client.application.report.ReportingUtils;
+import org.openbravo.dal.core.DalContextListener;
 import org.openbravo.dal.xml.XMLUtil;
 import org.openbravo.erpCommon.ad_callouts.SL_Currency_StdPrecision;
 import org.w3c.dom.Document;
@@ -66,7 +68,7 @@ public class ISOCurrencyPrecision {
    *         for currency standard precision
    */
   public static int getCurrencyPrecisionInISO4217Spec(String paramISOCode) {
-    log4j.debug("Starting getCurrencyPrecisionInISO4217Spec at: " + new Date());
+    log4j.debug("Starting getCurrencyPrecisionInISO4217Spec at: {}", new Date());
 
     try {
       Document doc = getISOCurrencyDocument();
@@ -81,15 +83,16 @@ public class ISOCurrencyPrecision {
     } catch (Exception e) {
       throw new OBException(e.getMessage(), e);
     } finally {
-      log4j.debug("Ending getCurrencyPrecisionInISO4217Spec at: " + new Date());
+      log4j.debug("Ending getCurrencyPrecisionInISO4217Spec at: {}", new Date());
     }
   }
 
   private static Document getISOCurrencyDocument()
       throws IOException, ParserConfigurationException, SAXException {
     long t1 = System.currentTimeMillis();
-    try (InputStream isoXMLDoc = ISOCurrencyPrecision.class
-        .getResourceAsStream("../ad_callouts/ISO_4217.xml")) {
+    try (InputStream isoXMLDoc = DalContextListener.getServletContext()
+        .getResourceAsStream(
+            ReportingUtils.getBaseDesign() + "/org/openbravo/erpCommon/ad_callouts/ISO_4217.xml")) {
       if (isoXMLDoc == null) {
         return null;
       }
@@ -98,7 +101,7 @@ public class ISOCurrencyPrecision {
       Document doc = dBuilder.parse(isoXMLDoc);
       doc.getDocumentElement().normalize();
       long t2 = System.currentTimeMillis();
-      log4j.debug("createDocumentFromFile took: " + (t2 - t1) + " ms");
+      log4j.debug("createDocumentFromFile took: {} ms", (t2 - t1));
       return doc;
     }
   }

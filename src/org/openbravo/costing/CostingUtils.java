@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2018 Openbravo SLU
+ * All portions are Copyright (C) 2012-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -928,5 +928,49 @@ public class CostingUtils {
     qry.setParameter("shipmentInOutID", shipmentInOutId);
     qry.setMaxResults(1);
     return !qry.list().isEmpty();
+  }
+
+  /**
+   * For the given {@link Warehouse} parameter, this method returns an {@link Organization} that
+   * allows to create Transactions. If the Organization of the Warehouse is valid, it returns this
+   * Organization, if not, it looks for a valid one in the parent Organizations of the Warehouse
+   * Organization. If no valid Organization is found, the Organization of the id given as a
+   * parameter is returned.
+   * 
+   * @param OrgId
+   *          The identifier of an {@link Organization} object
+   * @param warehouse
+   *          The {@link Warehouse} for which the Opening and Close Inventories are going to be
+   *          created
+   * @return An {@link Organization} that allows to create transactions that is the Organization or
+   *         one of the parent Organizations of the given {@link Warehouse}. If no one is found, it
+   *         returns the Organization of the given id as a parameter
+   */
+  public static Organization getOrganizationForCloseAndOpenInventories(final String OrgId,
+      final Warehouse warehouse) {
+    final Organization invOrg = getTransactionAllowedOrg(warehouse.getOrganization());
+    if (invOrg == null) {
+      return (Organization) OBDal.getInstance().getProxy(Organization.ENTITY_NAME, OrgId);
+    }
+    return invOrg;
+  }
+
+  private static Organization getTransactionAllowedOrg(final Organization org) {
+    if (org.getOrganizationType().isTransactionsAllowed()) {
+      return org;
+    } else {
+      final Organization parentOrg = OBContext.getOBContext()
+          .getOrganizationStructureProvider()
+          .getParentOrg(org);
+      if (parentOrg != null && !isStarOrganization(parentOrg)) {
+        return getTransactionAllowedOrg(parentOrg);
+      } else {
+        return null;
+      }
+    }
+  }
+
+  private static boolean isStarOrganization(final Organization parentOrg) {
+    return StringUtils.equals(parentOrg.getId(), "0");
   }
 }
