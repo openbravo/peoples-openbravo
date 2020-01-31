@@ -18,26 +18,24 @@
     const taxes = OB.Taxes.Pos.calculateTaxes(receipt);
     setTaxes(receipt, taxes);
 
-    // Does any receipt line require a price change?
-    if (
-      receipt
-        .get('lines')
-        .filter(line => line.get('product').has('modifiedTaxCategory'))
-        .map(line =>
-          line.set(
-            'discountedGross',
+    const recalculatedLines = receipt
+      .get('lines')
+      .filter(line => line.get('product').has('modifiedTaxCategory'))
+      .map(line =>
+        line.set(
+          'discountedGross',
+          OB.DEC.mul(
             OB.DEC.mul(
-              OB.DEC.div(
-                line.get('discountedGross'),
-                line.get('previousLineRate')
-              ),
+              OB.DEC.div(line.get('price'), line.get('previousLineRate')),
               line.get('lineRate')
-            )
+            ),
+            line.get('qty')
           )
-        ).length > 0
-    ) {
-      const taxes2 = OB.Taxes.Pos.calculateTaxes(receipt);
-      setTaxes(receipt, taxes2);
+        )
+      );
+    if (recalculatedLines.length > 0) {
+      const recalculatedTaxes = OB.Taxes.Pos.calculateTaxes(receipt);
+      setTaxes(receipt, recalculatedTaxes);
     }
   };
 
