@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2016-2018 Openbravo S.L.U.
+ * Copyright (C) 2016-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -24,13 +24,13 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.mobile.core.process.PropertyByType;
+import org.openbravo.model.ad.access.User;
 import org.openbravo.service.json.JsonToDataConverter;
 
 public class UpdateCashup {
@@ -87,13 +87,17 @@ public class UpdateCashup {
     if (cashUp == null) {
       // create the cashup if no exists
       try {
+        String userIdFromJson = jsonCashup.getString("userId");
+        User dalUser = OBDal.getInstance().get(User.class, userIdFromJson);
         cashUp = OBProvider.getInstance().get(OBPOSAppCashup.class);
+        cashUp.setCreatedBy(dalUser);
+        cashUp.setUpdatedBy(dalUser);
         cashUp.setId(cashUpId);
         cashUp.setOrganization(posTerminal.getOrganization());
         cashUp.setCashUpDate(cashUpDate);
         cashUp.setCreationDate(cashUpReportDate);
         cashUp.setPOSTerminal(posTerminal);
-        cashUp.setUserContact(OBContext.getOBContext().getUser());
+        cashUp.setUserContact(dalUser);
         cashUp.setBeingprocessed(jsonCashup.getString("isbeingprocessed").equalsIgnoreCase("Y"));
         cashUp.setNewOBObject(true);
         OBDal.getInstance().save(cashUp);

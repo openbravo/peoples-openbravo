@@ -232,7 +232,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "actions/invoicereceipt", "actions/keyboardevent", "actions/layawayreceipt",
         "actions/opendrawer", "actions/openreceipt", "actions/payopenreceipts",
         "actions/printreceipt", "actions/returnline", "actions/returnreceipt", "actions/scancode",
-        "actions/showreceiptproperties", "actions/showstockline", "actions/splitline",
+        "actions/selectpdfprinter", "actions/selectprinter", "actions/showreceiptproperties",
+        "actions/showstockline", "actions/splitline",
 
         "utils/preScanningFocusHook", "utils/orderSelectorUtils", "utils/stockUtils",
         "utils/productStatusUtils",

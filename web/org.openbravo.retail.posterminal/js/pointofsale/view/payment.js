@@ -3160,10 +3160,22 @@ enyo.kind({
   events: {
     onRemovePayment: ''
   },
+  putDisabled: function(status) {
+    if (status === false) {
+      this.setDisabled(false);
+      this.removeClass('disabled');
+      this.disabled = false;
+      return;
+    }
+    this.setDisabled(true);
+    this.addClass('disabled');
+    this.disabled = true;
+  },
   tap: function() {
     var me = this;
     if (_.isUndefined(this.deleting) || this.deleting === false) {
       this.deleting = true;
+      this.putDisabled(true);
       this.removeClass('obObposPointOfSaleUiRemovePayment_iconClearPayment');
       this.addClass('obObposPointOfSaleUiRemovePayment_iconLoading');
       this.bubble('onMaxLimitAmountError', {
