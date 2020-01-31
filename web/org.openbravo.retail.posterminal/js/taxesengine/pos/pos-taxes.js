@@ -144,23 +144,18 @@
         'taxCacheInitialization'
       );
 
-      const taxRateArrayPromise = await OB.App.MasterdataModels.TaxRate.find();
-      const taxRateArray = taxRateArrayPromise.result;
+      const taxRates = await OB.App.MasterdataModels.TaxRate.find();
+      const taxZones = await OB.App.MasterdataModels.TaxZone.find();
 
-      const taxZoneArrayPromise = await OB.App.MasterdataModels.TaxZone.find();
-      const taxZoneArray = taxZoneArrayPromise.result;
-
-      OB.Taxes.Pos.ruleImpls = taxRateArray.flatMap(taxRate =>
-        taxZoneArray.some(taxZone => taxZone.taxRateId === taxRate.id)
-          ? taxZoneArray
+      OB.Taxes.Pos.ruleImpls = taxRates.flatMap(taxRate =>
+        taxZones.some(taxZone => taxZone.taxRateId === taxRate.id)
+          ? taxZones
               .filter(taxZone => taxZone.taxRateId === taxRate.id)
               .map(taxZone => ({ ...taxZone, ...taxRate }))
           : { ...taxRate }
       );
 
-      const taxCategoryBOMArrayPromise = await OB.App.MasterdataModels.TaxCategoryBOM.find();
-      const taxCategoryBOMArray = taxCategoryBOMArrayPromise.result;
-      OB.Taxes.Pos.taxCategoryBOM = taxCategoryBOMArray;
+      OB.Taxes.Pos.taxCategoryBOM = await OB.App.MasterdataModels.TaxCategoryBOM.find();
 
       OB.UTIL.HookManager.executeHooks(
         'OBPOS_FindTaxRate',
