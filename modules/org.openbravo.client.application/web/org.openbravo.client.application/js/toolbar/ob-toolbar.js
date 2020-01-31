@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2019 Openbravo SLU
+ * All portions are Copyright (C) 2010-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):   Sreedhar Sirigiri (TDS), Mallikarjun M (TDS)
  ************************************************************************
@@ -361,7 +361,8 @@ isc.OBToolbar.addClassProperties({
             'ExportToCsv',
             this.view.standardWindow.windowId
           ) === 'N' ||
-          this.view.isShowingTree
+          this.view.isShowingTree ||
+          this.view.viewGrid.filterHasChanged
       );
     },
     keyboardShortcutId: 'ToolBar_Export'
