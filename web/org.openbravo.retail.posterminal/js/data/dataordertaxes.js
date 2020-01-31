@@ -26,7 +26,7 @@
       .filter(line => line.get('product').has('modifiedTaxCategory'))
       .map(line =>
         line.set(
-          'discountedGross',
+          'gross',
           OB.DEC.mul(
             OB.DEC.mul(
               OB.DEC.div(line.get('price'), line.get('previousLineRate')),
@@ -246,11 +246,8 @@
         if (receipt.get('priceIncludesTax')) {
           line.set(
             {
-              gross: lineTax.grossAmount,
-              discountedGross: lineTax.grossAmount,
               net: lineTax.netAmount,
               discountedNet: lineTax.netAmount,
-              price: lineTax.grossPrice,
               pricenet: lineTax.netPrice,
               lineRate: lineTax.lineRate,
               tax: lineTax.tax,
