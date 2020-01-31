@@ -9,15 +9,18 @@
 
 (function() {
   const calculateTaxes = async function(receipt) {
+    // If receipt is not editable, we regenerate taxes info instead of recalculate it
     if (!receipt.get('isEditable') && !receipt.get('forceCalculateTaxes')) {
       return regenerateTaxesInfo(receipt);
     }
 
+    // We calculate taxes info
     initializeTaxes(receipt);
     await modifyProductTaxCategoryByService(receipt);
     const taxes = OB.Taxes.Pos.calculateTaxes(receipt);
     setTaxes(receipt, taxes);
 
+    // In case of services with modifyTax flag activated, we need to recalculate taxes info
     const recalculatedLines = receipt
       .get('lines')
       .filter(line => line.get('product').has('modifiedTaxCategory'))
@@ -50,7 +53,7 @@
     );
   };
 
-  // For each service with *modifyTax* flag activated, look in linked product category table
+  // For each service with modifyTax flag activated, look in linked product category table
   // and check if it is necessary to modify the tax category of service related lines
   function modifyProductTaxCategoryByService(receipt) {
     return new Promise(function(resolve, reject) {
@@ -66,9 +69,8 @@
             serviceLine.get('relatedLines') &&
             !serviceLine.get('obposIsDeleted')
         );
-      for (var i = 0; i < serviceLines.length; i++) {
-        var serviceLine = serviceLines[i];
-        // serviceLines.forEach(serviceLine => {
+      for (let i = 0; i < serviceLines.length; i++) {
+        const serviceLine = serviceLines[i];
         const serviceId = serviceLine.get('product').get('id');
         const criteria = {
           product: serviceId
@@ -109,7 +111,6 @@
                 });
             });
             resolve();
-            return;
           },
           reject,
           {
