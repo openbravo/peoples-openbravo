@@ -7662,7 +7662,7 @@
         }
       );
     },
-
+    //Add a payment rounding line related to the payment if it's needed
     addPaymentRounding: function(payment, terminalPayment) {
       if (
         OB.MobileApp.model.paymentnames[payment.get('kind')].paymentRounding &&
@@ -7694,10 +7694,21 @@
             OB.DEC.mul(paymentStatus.pendingAmt, pow) %
             OB.DEC.mul(multiplyBy, pow);
 
+        //If receipt total amount is less than equal rounding multiple in Sales/Return
+        //no rounding payment line is created
+        if (OB.DEC.abs(paymentStatus.totalAmt) <= multiplyBy) {
+          return;
+        }
+        //If receipt is totally paid the last payment paid amount is used to compute the
+        //rounding amount
         if (paymentStatus.pendingAmt === 0) {
           paymentDifference =
             OB.DEC.mul(payment.get('paid'), pow) % OB.DEC.mul(multiplyBy, pow);
         }
+        //(Rounding enabled for Sales/Returns) &&
+        //((the remaining to paid is less than rounding multiple in Sales/Return) ||
+        // (the paid amount is less than rounding multiple in Sales/Return with a rounding difference) ||
+        // (the payment totally paid the receipt or create an overpayment with a rounding difference))
         if (
           roundingEnabled &&
           ((roundingAmount !== 0 && OB.DEC.abs(roundingAmount) < multiplyBy) ||
@@ -7733,6 +7744,7 @@
             payment.get('amount') >= paymentStatus.pendingAmt
           ) {
             roundingAmount = OB.DEC.div(paymentDifference, pow);
+            //Substract the rounding amount when the payment totally paid the receipt
             if (payment.get('amount') === paymentStatus.pendingAmt) {
               payment.set(
                 'amount',
@@ -7742,6 +7754,7 @@
           }
 
           payment.set('index', this.get('payments').length);
+          //Create the rounding payment line
           paymentLine = new OB.Model.PaymentLine({
             kind: terminalPayment.paymentRounding.paymentRoundingType,
             name: OB.MobileApp.model.getPaymentName(
@@ -7766,6 +7779,7 @@
           paymentLine.set('paymentRounding', true);
           payment.set('paymentRoundingLine', paymentLine);
           this.get('payments').add(paymentLine);
+
           if (
             paymentStatus.pendingAmt === 0 ||
             paymentStatus.pendingAmt < multiplyBy
@@ -7773,6 +7787,8 @@
             if (payment.has('id')) {
               paymentLine.set('roundedPaymentId', payment.get('id'));
             }
+            //When exists a rounding payment line and the receipt total amount change it's necessary
+            //to calculate the receipt to properly set the receipt payment status
             this.calculateReceipt();
           }
         }
