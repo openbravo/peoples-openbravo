@@ -92,6 +92,10 @@
           .reduce((obj, item) => ((obj[[item['id']]] = item), obj), {});
       };
       const calculateLineRate = taxArray => {
+        if (!taxArray) {
+          return null;
+        }
+
         return taxArray.reduce(
           (total, tax) =>
             OB.DEC.mul(
