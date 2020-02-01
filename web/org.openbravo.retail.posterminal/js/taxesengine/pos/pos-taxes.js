@@ -49,8 +49,12 @@
         let newLine = {};
         newLine.id = line.get('id');
         newLine.amount = newTicket.priceIncludesTax
-          ? line.get('discountedGross')
-          : line.get('discountedNet');
+          ? line.has('discountedGross')
+            ? line.get('discountedGross')
+            : line.get('gross')
+          : line.has('discountedNet')
+          ? line.get('discountedNet')
+          : line.get('net');
         newLine.quantity = line.get('qty');
         newLine.taxExempt = line.get('originalTaxExempt');
         newLine.product = {};
