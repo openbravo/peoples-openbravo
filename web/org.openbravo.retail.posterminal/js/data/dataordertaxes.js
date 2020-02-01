@@ -100,12 +100,14 @@
                   const relatedLine = receipt
                     .get('lines')
                     .find(line => line.id === relatedProduct.orderlineId);
-                  relatedLine
-                    .get('product')
-                    .set(
-                      'modifiedTaxCategory',
-                      relatedProductCategory.get('taxCategory')
-                    );
+                  if (relatedLine) {
+                    relatedLine
+                      .get('product')
+                      .set(
+                        'modifiedTaxCategory',
+                        relatedProductCategory.get('taxCategory')
+                      );
+                  }
                 });
             });
             resolve();
