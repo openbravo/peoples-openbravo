@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2018 Openbravo S.L.U.
+ * Copyright (C) 2013-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -37,6 +37,7 @@ public class BPLocationProperties extends ModelExtension {
         add(new HQLProperty("bploc.shipToAddress", "isShipTo"));
         add(new HQLProperty("COALESCE(bplocRegion.name,'')", "regionName"));
         add(new HQLProperty("COALESCE(bplocRegion.id,'')", "regionId"));
+        add(new HQLProperty("bploc.creationDate", "creationDate"));
         add(new HQLProperty(
             "COALESCE(bplocAddress.addressLine1 || CASE WHEN bplocAddress.addressLine2 IS NOT NULL THEN ' ' END || bplocAddress.addressLine2, bplocAddress.addressLine1, bplocAddress.addressLine2, bplocAddress.postalCode, bplocAddress.cityName)",
             "_identifier"));

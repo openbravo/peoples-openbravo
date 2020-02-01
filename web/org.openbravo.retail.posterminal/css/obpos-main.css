@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019 Openbravo S.L.U.
+ * Copyright (C) 2019-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -6749,26 +6749,9 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 /*
 # Component: OB.UI.updateprices
-# Inherits: [OB.UI.CheckboxButton]
+# Inherits: [OB.UI.FormElement.Checkbox]
 */
-.obUiUpdateprices {
-  height: 38px;
-  background-position: 10px center;
-  vertical-align: middle;
-  width: 100%;
-}
-
-.obUiUpdateprices:focus {
-  outline: none;
-  border-width: 2px;
-  border-color: #0078d7;
-  border-style: solid;
-  background-position: 8px center !important;
-}
-.obUiUpdateprices_active {
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-on.svg');
-  background-size: 34px 27px;
-}
+.obUiUpdateprices {}
 
 
 /*
@@ -6781,29 +6764,12 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obUiModalCreateOrderFromQuotation-footer {}
 
-.obUiModalCreateOrderFromQuotation-footer-element1 {
-  height: 40px;
-  width: 120px;
-  float: left;
+.obUiModalCreateOrderFromQuotation-footer-formElementCheckUpdatePrice {
+/* Inherits: [OB.UI.FormElement] */
 }
 
-.obUiModalCreateOrderFromQuotation-footer-container2 {
-  height: 40px;
-  width: 50px;
-  background-color: rgb(226, 226, 226);
-  float: left;
-}
-
-.obUiModalCreateOrderFromQuotation-footer-container2-obUiupdateprices {
+.obUiModalCreateOrderFromQuotation-footer-formElementCheckUpdatePrice-checkUpdatePrice {
 /* Inherits: [OB.UI.updateprices] */
-}
-
-.obUiModalCreateOrderFromQuotation-footer-element3 {
-  text-align: left;
-  padding: 11px;
-  float: left;
-  width: 248px;
-  background: #dddddd;
 }
 
 .obUiModalCreateOrderFromQuotation-footer-element4 {}
@@ -9402,11 +9368,23 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   display: block;
   box-shadow: var(--box-shadow-surface);
   border-radius: var(--component-border-radius);
-  background-color: white;
+  background-color: var(--color-primary);
   width: calc(80% - 80px);
   max-width: 427px;
   z-index: 3;
+  height: auto;
+  max-height: 50%;
+  overflow: auto !important;
+  cursor: default;
+  user-select: none;
 }
+
+@media all and (max-aspect-ratio: 9/8) {
+  .obObposPointOfSaleUiEditLine-msgedit-actionButtonsContainer.expanded {
+    overflow: hidden !important;
+  }
+}
+
 
 .obObposPointOfSaleUiEditLineShowMoreActionButtons,
 .obObposPointOfSaleUiEditLineShowLessActionButtons {
@@ -9454,12 +9432,25 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /* Inherits: [enyo.Option] */
 }
 
-.obObposPointOfSaleUiEditLine-msgedit-container3 {
-  overflow: hidden;
+.obObposPointOfSaleUiEditLine-msgedit-scroller {
+  /* Inherits: [Scroller] */
+}
+
+.obObposPointOfSaleUiEditLine-msgedit-scroller-container1 {
+  overflow: auto;
   padding: 10px 5px 5px 5px;
 }
 
-.obObposPointOfSaleUiEditLine-msgedit-container3-linePropertiesContainer {
+@media all and (max-aspect-ratio: 9/8) {
+  .obObposPointOfSaleUiEditLine-msgedit-scroller-container1 {
+    display: grid;
+    grid-template-areas:
+      'obObposPointOfSaleUiEditLine-msgedit-scroller-container1-contextImage'
+      'obObposPointOfSaleUiEditLine-msgedit-scroller-container1-linePropertiesContainer';
+  }
+}
+
+.obObposPointOfSaleUiEditLine-msgedit-scroller-container1-linePropertiesContainer {
 /* Inherits: [Scroller] */
   line-height: 130%;
   width: 65%;
@@ -9468,17 +9459,31 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   height: 100%;
 }
 
+@media all and (max-aspect-ratio: 9/8) {
+  .obObposPointOfSaleUiEditLine-msgedit-scroller-container1-linePropertiesContainer {
+    grid-area: obObposPointOfSaleUiEditLine-msgedit-scroller-container1-linePropertiesContainer;
+    width: 100%;
+  }
+}
+
 .obObposPointOfSaleUiEditLine-linePropertiesContainer_withReturnReasons {
   max-height: 110px;
 }
 
 .obObposPointOfSaleUiEditLine-linePropertiesContainer_withoutReturnReasons {}
 
-.obObposPointOfSaleUiEditLine-msgedit-container3-contextImage {
+.obObposPointOfSaleUiEditLine-msgedit-scroller-container1-contextImage {
   text-align: right;
   max-height: 134px;
   display: inline-block;
   vertical-align: top;
+}
+
+@media all and (max-aspect-ratio: 9/8) {
+  .obObposPointOfSaleUiEditLine-msgedit-scroller-container1-contextImage {
+    grid-area: obObposPointOfSaleUiEditLine-msgedit-scroller-container1-contextImage;
+    text-align: center;
+  }
 }
 
 .obObposPointOfSaleUiEditLine-msgedit-container3-contextImage_withReturnReasons {
@@ -14059,7 +14064,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obObposCashupUiCashPayments-wrapper-components-body-footer {
   display: grid;
   grid-template-areas: 'obObposCashupUiCashPayments-wrapper-components-body-footer-container1 obObposCashupUiCashPayments-wrapper-components-body-footer-container2'
-                       'obObposCashupUiCashPayments-wrapper-components-body-footer-container3 obObposCashupUiCashPayments-wrapper-components-body-footer-container3';
+                       'obObposCashupUiCashPayments-wrapper-components-body-footer-container4 obObposCashupUiCashPayments-wrapper-components-body-footer-container3';
   grid-gap: 10px;
   grid-template-columns: 1fr 1fr;
 
@@ -14077,13 +14082,12 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: flex-start;
+  justify-content: space-between;
   overflow: auto;
 }
 
 .obObposCashupUiCashPayments-wrapper-components-body-footer-container1-totalLbl {
   overflow: hidden;
-  padding-right: 30px;
 }
 
 .obObposCashupUiCashPayments-wrapper-components-body-footer-container1-total {
@@ -14098,35 +14102,45 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: flex-end;
+  justify-content: space-between;
   overflow: auto;
 }
 
 .obObposCashupUiCashPayments-wrapper-components-body-footer-container2-countedLbl {
-  overflow: hidden;	
+  overflow: hidden;
 }
 
 .obObposCashupUiCashPayments-wrapper-components-body-footer-container2-counted {
   /*Inherits: [OB.OBPOSCashUp.UI.RenderTotal]*/
-  padding-left: 30px;
   overflow: hidden;
+  padding-left: 5px;
+  flex-grow: 1;
+}
+
+.obObposCashupUiCashPayments-wrapper-components-body-footer-container4 {
+  grid-area: obObposCashupUiCashPayments-wrapper-components-body-footer-container4;
 }
 
 .obObposCashupUiCashPayments-wrapper-components-body-footer-container3 {
   grid-area: obObposCashupUiCashPayments-wrapper-components-body-footer-container3;
   text-align: right;
   line-height: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  overflow: auto;
 }
 
 .obObposCashupUiCashPayments-wrapper-components-body-footer-container3-differenceLbl {
-  display: inline-block;
+  overflow: hidden;
 }
 
 .obObposCashupUiCashPayments-wrapper-components-body-footer-container3-difference {
   /*Inherits: [OB.OBPOSCashUp.UI.RenderTotal]*/
-  display: inline-block;
-  padding: 0px 0px 0px 5px;
-  min-width: 20%;
+  overflow: hidden;
+  padding-left: 5px;
+  flex-grow: 1;
 }
 
 
