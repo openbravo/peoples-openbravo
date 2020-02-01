@@ -24,18 +24,16 @@
     const recalculatedLines = receipt
       .get('lines')
       .filter(line => line.get('product').has('modifiedTaxCategory'))
-      .map(line =>
+      .map(line => {
         line.set(
-          'gross',
+          'price',
           OB.DEC.mul(
-            OB.DEC.mul(
-              OB.DEC.div(line.get('price'), line.get('previousLineRate')),
-              line.get('lineRate')
-            ),
-            line.get('qty')
+            OB.DEC.div(line.get('price'), line.get('previousLineRate')),
+            line.get('lineRate')
           )
-        )
-      );
+        );
+        line.set('gross', OB.DEC.mul(line.get('price'), line.get('qty')));
+      });
     if (recalculatedLines.length > 0) {
       const recalculatedTaxes = OB.Taxes.Pos.calculateTaxes(receipt);
       setTaxes(receipt, recalculatedTaxes);
@@ -308,9 +306,8 @@
 
   OB.DATA.OrderTaxes = function(modelOfAnOrder) {
     modelOfAnOrder.calculateTaxes = async function(callback) {
-      var me = this;
-      await calculateTaxes(me);
-      me.trigger('paintTaxes');
+      await calculateTaxes(this);
+      this.trigger('paintTaxes');
       callback();
     };
   };
