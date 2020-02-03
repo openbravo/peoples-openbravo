@@ -28,6 +28,9 @@ enyo.kind({
     this.selectAll = select;
   },
   tap: function() {
+    if (this.disabled) {
+      return;
+    }
     this.popup.$.body.$.listOrders.selectAll(null, {
       selectAll: this.selectAll
     });
