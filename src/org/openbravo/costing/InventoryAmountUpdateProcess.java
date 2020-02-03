@@ -39,7 +39,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.materialmgmt.InventoryCountProcess;
 import org.openbravo.model.ad.system.Client;
@@ -56,7 +55,6 @@ import org.openbravo.model.materialmgmt.cost.InventoryAmountUpdate;
 import org.openbravo.model.materialmgmt.cost.InventoryAmountUpdateLine;
 import org.openbravo.model.materialmgmt.transaction.InventoryCount;
 import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
-import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.service.db.DbUtility;
 
 public class InventoryAmountUpdateProcess extends BaseActionHandler {
@@ -117,19 +115,20 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
           log.error("Error waiting between processing close an open inventories", e);
         }
 
-        StringBuffer where = new StringBuffer();
-        where.append(" as inv");
-        where.append(" where exists (");
-        where.append("      select 1 from " + InvAmtUpdLnInventories.ENTITY_NAME + " invAmtUpd");
-        where.append("      where invAmtUpd." + InvAmtUpdLnInventories.PROPERTY_CAINVENTORYAMTLINE
-            + "." + InventoryAmountUpdateLine.PROPERTY_CAINVENTORYAMT + ".id =:invAmtUpdId");
-        where.append(
-            "        and invAmtUpd." + InvAmtUpdLnInventories.PROPERTY_INITINVENTORY + "= inv)");
-        OBQuery<InventoryCount> qry = OBDal.getInstance()
-            .createQuery(InventoryCount.class, where.toString());
-        qry.setNamedParameter("invAmtUpdId", invAmtUpdId);
+        //@formatter:off
+        final String hql =
+                " as inv" +
+                " where exists (" +
+                "      select 1 from InventoryAmountUpdateLineInventories invAmtUpd" +
+                "       where invAmtUpd.caInventoryamtline.caInventoryamt.id =:invAmtUpdId" +
+                "         and invAmtUpd.initInventory = inv" +
+                "      )";
+        //@formatter:on
 
-        ScrollableResults invLines = qry.scroll(ScrollMode.FORWARD_ONLY);
+        ScrollableResults invLines = OBDal.getInstance()
+            .createQuery(InventoryCount.class, hql)
+            .setNamedParameter("invAmtUpdId", invAmtUpdId)
+            .scroll(ScrollMode.FORWARD_ONLY);
         try {
           while (invLines.next()) {
             final InventoryCount inventory = (InventoryCount) invLines.get()[0];
@@ -248,90 +247,113 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
   private ScrollableResults getStockLines(Set<String> childOrgs, Date date, Product product,
       Warehouse warehouse, boolean backdatedTransactionsFixed) {
     Date localDate = date;
-    StringBuffer select = new StringBuffer();
-    StringBuffer subSelect = new StringBuffer();
-
-    select.append("select trx." + MaterialTransaction.PROPERTY_ATTRIBUTESETVALUE + ".id");
-    select.append(", trx." + MaterialTransaction.PROPERTY_UOM + ".id");
-    select.append(", trx." + MaterialTransaction.PROPERTY_ORDERUOM + ".id");
-    select.append(", trx." + MaterialTransaction.PROPERTY_STORAGEBIN + ".id");
-    select.append(", loc." + Locator.PROPERTY_WAREHOUSE + ".id");
-    select.append(", sum(trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + ")");
-    select.append(", sum(trx." + MaterialTransaction.PROPERTY_ORDERQUANTITY + ")");
-    select.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
-    select.append("    join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as loc");
-    select.append(" where trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    //@formatter:off
+    String hqlSelect =
+            "select trx.attributeSetValue.id" +
+            "  , trx.uOM.id" +
+            "  , trx.orderUOM.id" +
+            "  , trx.storageBin.id" +
+            "  , loc.warehouse.id" +
+            "  , sum(trx.movementQuantity)" +
+            "  , sum(trx.orderQuantity)" +
+            " from MaterialMgmtMaterialTransaction as trx" +
+            "    join trx.storageBin as loc" +
+            " where trx.organization.id in (:orgs)";
+    //@formatter:on
     if (localDate != null) {
       if (backdatedTransactionsFixed) {
-        select.append("   and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " <= :date");
+        //@formatter:off
+        hqlSelect +=
+            "   and trx.movementDate <= :date";
+        //@formatter:on
       } else {
-        subSelect
-            .append("select min(trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + ")");
-        subSelect.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
+        //@formatter:off
+        String hqlSubSelect =
+                "select min(trx.transactionProcessDate)" +
+                " from MaterialMgmtMaterialTransaction as trx";
+        //@formatter:on
         if (warehouse != null) {
-          subSelect
-              .append("   join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
+          //@formatter:off
+          hqlSubSelect +=
+                "   join trx.storageBin as locator";
+          //@formatter:on
         }
-        subSelect.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :product");
-        subSelect.append(" and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :date");
+        //@formatter:off
+        hqlSubSelect +=
+                " where trx.product.id = :product" +
+                "   and trx.movementDate > :date" +
         // Include only transactions that have its cost calculated
-        subSelect.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
+                "   and trx.isCostCalculated = true";
+        //@formatter:on
         if (warehouse != null) {
-          subSelect.append("  and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouse");
+          //@formatter:off
+          hqlSubSelect +=
+                "   and locator.warehouse.id = :warehouse";
+          //@formatter:on
         }
-        subSelect
-            .append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+        //@formatter:off
+        hqlSubSelect +=
+                "   and trx.organization.id in (:orgs)";
+        //@formatter:on
 
         Query<Date> trxsubQry = OBDal.getInstance()
             .getSession()
-            .createQuery(subSelect.toString(), Date.class);
-        trxsubQry.setParameter("date", localDate);
-        trxsubQry.setParameter("product", product.getId());
+            .createQuery(hqlSubSelect, Date.class)
+            .setParameter("date", localDate)
+            .setParameter("product", product.getId());
         if (warehouse != null) {
           trxsubQry.setParameter("warehouse", warehouse.getId());
         }
-        trxsubQry.setParameterList("orgs", childOrgs);
-        Date trxprocessDate = trxsubQry.uniqueResult();
+        Date trxprocessDate = trxsubQry.setParameterList("orgs", childOrgs).uniqueResult();
         if (trxprocessDate != null) {
           localDate = trxprocessDate;
-          select.append(
-              "   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " < :date");
+          //@formatter:off
+          hqlSelect +=
+                "   and trx.transactionProcessDate < :date";
+          //@formatter:on
         } else {
-          select.append("   and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " <= :date");
+          //@formatter:off
+          hqlSelect +=
+                "   and trx.movementDate <= :date";
+          //@formatter:on
         }
       }
     }
     if (warehouse != null) {
-      select.append("   and loc." + Locator.PROPERTY_WAREHOUSE + " = :warehouse");
+      //@formatter:off
+      hqlSelect +=
+                "   and loc.warehouse = :warehouse";
+      //@formatter:on
     }
-    select.append("   and trx." + MaterialTransaction.PROPERTY_PRODUCT + " = :product");
-    select.append(" group by trx." + MaterialTransaction.PROPERTY_ATTRIBUTESETVALUE + ".id");
-    select.append(", trx." + MaterialTransaction.PROPERTY_UOM + ".id");
-    select.append(", trx." + MaterialTransaction.PROPERTY_ORDERUOM + ".id");
-    select.append(", trx." + MaterialTransaction.PROPERTY_STORAGEBIN + ".id");
-    select.append(", loc." + Locator.PROPERTY_WAREHOUSE + ".id");
-    select.append(" having ");
-    select.append(" sum(trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + ") <> 0");
-    select.append(" order by loc." + Locator.PROPERTY_WAREHOUSE + ".id");
-    select.append(", trx." + MaterialTransaction.PROPERTY_STORAGEBIN + ".id");
-    select.append(", trx." + MaterialTransaction.PROPERTY_ATTRIBUTESETVALUE + ".id");
-    select.append(", trx." + MaterialTransaction.PROPERTY_UOM + ".id");
-    select.append(", trx." + MaterialTransaction.PROPERTY_ORDERUOM + ".id");
+    //@formatter:off
+    hqlSelect +=
+            "   and trx.product = :product" +
+            " group by trx.attributeSetValue.id" +
+            "   , trx.uOM.id" +
+            "   , trx.orderUOM.id" +
+            "   , trx.storageBin.id" +
+            "   , loc.warehouse.id" +
+            "   having sum(trx.movementQuantity) <> 0" +
+            " order by loc.warehouse.id" +
+            "   , trx.storageBin.id" +
+            "   , trx.attributeSetValue.id" +
+            "   , trx.uOM.id" +
+            "   , trx.orderUOM.id";
+    //@formatter:on
 
     Query<Object[]> stockLinesQry = OBDal.getInstance()
         .getSession()
-        .createQuery(select.toString(), Object[].class);
-    stockLinesQry.setParameterList("orgs", childOrgs);
+        .createQuery(hqlSelect, Object[].class)
+        .setParameterList("orgs", childOrgs);
     if (localDate != null) {
       stockLinesQry.setParameter("date", localDate);
     }
     if (warehouse != null) {
       stockLinesQry.setParameter("warehouse", warehouse);
     }
-    stockLinesQry.setParameter("product", product);
-    stockLinesQry.setFetchSize(1000);
-    ScrollableResults stockLines = stockLinesQry.scroll(ScrollMode.FORWARD_ONLY);
-    return stockLines;
+    return stockLinesQry.setParameter("product", product)
+        .setFetchSize(1000)
+        .scroll(ScrollMode.FORWARD_ONLY);
   }
 
   private InvAmtUpdLnInventories createInventorieLine(InventoryAmountUpdateLine invLine,
