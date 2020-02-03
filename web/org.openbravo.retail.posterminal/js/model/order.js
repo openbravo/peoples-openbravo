@@ -4164,12 +4164,9 @@
               criteria
             );
             let productPrices = [];
-            for (let i = 0; i < productPrices.result.length; i++) {
+            for (let i = 0; i < productPrices.length; i++) {
               productPrices.push(
-                OB.Dal.transform(
-                  OB.Model.ProductPrice,
-                  productPriceResult.result[i]
-                )
+                OB.Dal.transform(OB.Model.ProductPrice, productPriceResult[i])
               );
             }
             successCallback(productPrices);
@@ -10166,7 +10163,7 @@
               );
               if (product.length > 0) {
                 addLineForProduct(
-                  OB.Dal.transform(OB.Model.Product, product.result[0])
+                  OB.Dal.transform(OB.Model.Product, product[0])
                 );
               } else {
                 //Empty
@@ -11567,10 +11564,7 @@
             const productResult = await OB.App.MasterdataModels.Product.withId(
               products[index].product.id
             );
-            let product = OB.Dal.transform(
-              OB.Model.Product,
-              productResult.result[0]
-            );
+            let product = OB.Dal.transform(OB.Model.Product, productResult[0]);
             if (product) {
               order.addProduct(
                 product,

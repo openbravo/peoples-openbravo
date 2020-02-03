@@ -905,10 +905,8 @@ enyo.kind({
                 criteria
               );
               let data = [];
-              for (let i = 0; i < products.result.length; i++) {
-                data.push(
-                  OB.Dal.transform(OB.Model.Product, products.result[i])
-                );
+              for (let i = 0; i < products.length; i++) {
+                data.push(OB.Dal.transform(OB.Model.Product, products[i]));
               }
               successCallback(data);
             } catch (error) {

@@ -675,8 +675,8 @@ enyo.kind({
       try {
         const products = await OB.App.MasterdataModels.Product.find(criteria);
         let data = [];
-        for (let i = 0; i < products.result.length; i++) {
-          data.push(OB.Dal.transform(OB.Model.Product, products.result[i]));
+        for (let i = 0; i < products.length; i++) {
+          data.push(OB.Dal.transform(OB.Model.Product, products[i]));
         }
         me.searchProductCallback(data, code, callback, attrs);
       } catch (error) {

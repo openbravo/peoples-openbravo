@@ -224,12 +224,9 @@ enyo.kind({
           criteria
         );
         let dataValues = [];
-        for (let i = 0; i < characteristics.result.length; i++) {
+        for (let i = 0; i < characteristics.length; i++) {
           dataValues.push(
-            OB.Dal.transform(
-              OB.Model.CharacteristicValue,
-              characteristics.result[i]
-            )
+            OB.Dal.transform(OB.Model.CharacteristicValue, characteristics[i])
           );
         }
         resetValueList(dataValues);
