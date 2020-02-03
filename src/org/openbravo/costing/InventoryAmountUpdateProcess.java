@@ -61,32 +61,32 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
   private static final Logger log = LogManager.getLogger();
 
   @Override
-  protected JSONObject execute(Map<String, Object> parameters, String data) {
-    JSONObject result = new JSONObject();
+  protected JSONObject execute(final Map<String, Object> parameters, final String data) {
+    final JSONObject result = new JSONObject();
     JSONObject errorMessage = new JSONObject();
     OBContext.setAdminMode(true);
 
     try {
       final JSONObject jsonData = new JSONObject(data);
 
-      String orgId = jsonData.getString("inpadOrgId");
-      String invAmtUpdId = jsonData.getString("M_Ca_Inventoryamt_ID");
+      final String orgId = jsonData.getString("inpadOrgId");
+      final String invAmtUpdId = jsonData.getString("M_Ca_Inventoryamt_ID");
       InventoryAmountUpdate invAmtUpd = OBDal.getInstance()
           .get(InventoryAmountUpdate.class, invAmtUpdId);
       final OBCriteria<InventoryAmountUpdateLine> qLines = OBDal.getInstance()
           .createCriteria(InventoryAmountUpdateLine.class);
       qLines.add(Restrictions.eq(InventoryAmountUpdateLine.PROPERTY_CAINVENTORYAMT, invAmtUpd));
 
-      ScrollableResults scrollLines = qLines.scroll(ScrollMode.FORWARD_ONLY);
+      final ScrollableResults scrollLines = qLines.scroll(ScrollMode.FORWARD_ONLY);
       try {
         int cnt = 0;
         while (scrollLines.next()) {
           final InventoryAmountUpdateLine line = (InventoryAmountUpdateLine) scrollLines.get()[0];
-          String lineId = line.getId();
-          CostingRule rule = CostingUtils.getCostDimensionRule(
+          final String lineId = line.getId();
+          final CostingRule rule = CostingUtils.getCostDimensionRule(
               OBDal.getInstance().get(Organization.class, orgId), line.getReferenceDate());
-          String ruleId = rule.getId();
-          OrganizationStructureProvider osp = OBContext.getOBContext()
+          final String ruleId = rule.getId();
+          final OrganizationStructureProvider osp = OBContext.getOBContext()
               .getOrganizationStructureProvider(rule.getClient().getId());
           final Set<String> childOrgs = osp.getChildTree(rule.getOrganization().getId(), true);
           if (!rule.isWarehouseDimension()) {
@@ -149,8 +149,8 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
       OBDal.getInstance().rollbackAndClose();
       log.error(e.getMessage(), e);
       try {
-        Throwable ex = DbUtility.getUnderlyingSQLException(e);
-        String message = OBMessageUtils.translateError(ex.getMessage()).getMessage();
+        final Throwable ex = DbUtility.getUnderlyingSQLException(e);
+        final String message = OBMessageUtils.translateError(ex.getMessage()).getMessage();
         errorMessage = new JSONObject();
         errorMessage.put("severity", "error");
         errorMessage.put("title", OBMessageUtils.messageBD("Error"));
@@ -164,32 +164,32 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
     return result;
   }
 
-  protected void createInventories(String lineId, Warehouse warehouse, String ruleId,
-      Set<String> childOrgs, Date date) {
+  protected void createInventories(final String lineId, final Warehouse warehouse,
+      final String ruleId, final Set<String> childOrgs, final Date date) {
 
-    CostingRule costRule = OBDal.getInstance().get(CostingRule.class, ruleId);
+    final CostingRule costRule = OBDal.getInstance().get(CostingRule.class, ruleId);
     InventoryAmountUpdateLine line = OBDal.getInstance()
         .get(InventoryAmountUpdateLine.class, lineId);
-    ScrollableResults stockLines = getStockLines(childOrgs, date, line.getProduct(), warehouse,
-        costRule.isBackdatedTransactionsFixed());
+    final ScrollableResults stockLines = getStockLines(childOrgs, date, line.getProduct(),
+        warehouse, costRule.isBackdatedTransactionsFixed());
     // The key of the Map is the concatenation of orgId and warehouseId
-    Map<String, String> inventories = new HashMap<String, String>();
-    Map<String, Long> maxLineNumbers = new HashMap<String, Long>();
-    InventoryCountLine closingInventoryLine = null;
+    final Map<String, String> inventories = new HashMap<>();
+    final Map<String, Long> maxLineNumbers = new HashMap<>();
+    final InventoryCountLine closingInventoryLine = null;
     InventoryCountLine openInventoryLine = null;
     int i = 1;
     try {
       while (stockLines.next()) {
-        Object[] stockLine = stockLines.get();
-        String attrSetInsId = (String) stockLine[0];
-        String uomId = (String) stockLine[1];
-        String orderUOMId = (String) stockLine[2];
-        String locatorId = (String) stockLine[3];
-        String warehouseId = (String) stockLine[4];
-        BigDecimal qty = (BigDecimal) stockLine[5];
-        BigDecimal orderQty = (BigDecimal) stockLine[6];
+        final Object[] stockLine = stockLines.get();
+        final String attrSetInsId = (String) stockLine[0];
+        final String uomId = (String) stockLine[1];
+        final String orderUOMId = (String) stockLine[2];
+        final String locatorId = (String) stockLine[3];
+        final String warehouseId = (String) stockLine[4];
+        final BigDecimal qty = (BigDecimal) stockLine[5];
+        final BigDecimal orderQty = (BigDecimal) stockLine[6];
         //
-        String invId = inventories.get(warehouseId);
+        final String invId = inventories.get(warehouseId);
         InvAmtUpdLnInventories inv = null;
         if (invId == null) {
           inv = createInventorieLine(line, warehouseId, date);
@@ -198,7 +198,7 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
         } else {
           inv = OBDal.getInstance().get(InvAmtUpdLnInventories.class, invId);
         }
-        Long lineNo = (maxLineNumbers.get(inv.getId()) == null ? 0L
+        final Long lineNo = (maxLineNumbers.get(inv.getId()) == null ? 0L
             : maxLineNumbers.get(inv.getId())) + 10L;
         maxLineNumbers.put(inv.getId(), lineNo);
 
@@ -244,8 +244,8 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
     }
   }
 
-  private ScrollableResults getStockLines(Set<String> childOrgs, Date date, Product product,
-      Warehouse warehouse, boolean backdatedTransactionsFixed) {
+  private ScrollableResults getStockLines(final Set<String> childOrgs, final Date date,
+      final Product product, final Warehouse warehouse, final boolean backdatedTransactionsFixed) {
     Date localDate = date;
     //@formatter:off
     String hqlSelect =
@@ -296,7 +296,7 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
                 "   and trx.organization.id in (:orgs)";
         //@formatter:on
 
-        Query<Date> trxsubQry = OBDal.getInstance()
+        final Query<Date> trxsubQry = OBDal.getInstance()
             .getSession()
             .createQuery(hqlSubSelect, Date.class)
             .setParameter("date", localDate)
@@ -304,7 +304,7 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
         if (warehouse != null) {
           trxsubQry.setParameter("warehouse", warehouse.getId());
         }
-        Date trxprocessDate = trxsubQry.setParameterList("orgs", childOrgs).uniqueResult();
+        final Date trxprocessDate = trxsubQry.setParameterList("orgs", childOrgs).uniqueResult();
         if (trxprocessDate != null) {
           localDate = trxprocessDate;
           //@formatter:off
@@ -341,7 +341,7 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
             "   , trx.orderUOM.id";
     //@formatter:on
 
-    Query<Object[]> stockLinesQry = OBDal.getInstance()
+    final Query<Object[]> stockLinesQry = OBDal.getInstance()
         .getSession()
         .createQuery(hqlSelect, Object[].class)
         .setParameterList("orgs", childOrgs);
@@ -356,25 +356,26 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
         .scroll(ScrollMode.FORWARD_ONLY);
   }
 
-  private InvAmtUpdLnInventories createInventorieLine(InventoryAmountUpdateLine invLine,
-      String warehouseId, Date date) {
+  private InvAmtUpdLnInventories createInventorieLine(final InventoryAmountUpdateLine invLine,
+      final String warehouseId, final Date date) {
     Date localDate = date;
     if (localDate == null) {
       localDate = new Date();
     }
-    Client client = (Client) OBDal.getInstance()
+    final Client client = (Client) OBDal.getInstance()
         .getProxy(Client.ENTITY_NAME, invLine.getClient().getId());
-    String orgId = invLine.getOrganization().getId();
-    Warehouse warehouse = (Warehouse) OBDal.getInstance()
+    final String orgId = invLine.getOrganization().getId();
+    final Warehouse warehouse = (Warehouse) OBDal.getInstance()
         .getProxy(Warehouse.ENTITY_NAME, warehouseId);
-    InvAmtUpdLnInventories inv = OBProvider.getInstance().get(InvAmtUpdLnInventories.class);
+    final InvAmtUpdLnInventories inv = OBProvider.getInstance().get(InvAmtUpdLnInventories.class);
     inv.setClient(client);
     inv.setOrganization(
         (Organization) OBDal.getInstance().getProxy(Organization.ENTITY_NAME, orgId));
     inv.setWarehouse(warehouse);
 
     inv.setCaInventoryamtline(invLine);
-    List<InvAmtUpdLnInventories> invList = invLine.getInventoryAmountUpdateLineInventoriesList();
+    final List<InvAmtUpdLnInventories> invList = invLine
+        .getInventoryAmountUpdateLineInventoriesList();
     invList.add(inv);
     invLine.setInventoryAmountUpdateLineInventoriesList(invList);
 
@@ -406,11 +407,12 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
     return inv;
   }
 
-  private InventoryCountLine insertInventoryLine(InventoryCount inventory, String productId,
-      String attrSetInsId, String uomId, String orderUOMId, String locatorId, BigDecimal qtyCount,
-      BigDecimal qtyBook, BigDecimal orderQtyCount, BigDecimal orderQtyBook, Long lineNo,
-      InventoryCountLine relatedInventoryLine, BigDecimal cost) {
-    InventoryCountLine icl = OBProvider.getInstance().get(InventoryCountLine.class);
+  private InventoryCountLine insertInventoryLine(final InventoryCount inventory,
+      final String productId, final String attrSetInsId, final String uomId,
+      final String orderUOMId, final String locatorId, final BigDecimal qtyCount,
+      final BigDecimal qtyBook, final BigDecimal orderQtyCount, final BigDecimal orderQtyBook,
+      final Long lineNo, final InventoryCountLine relatedInventoryLine, final BigDecimal cost) {
+    final InventoryCountLine icl = OBProvider.getInstance().get(InventoryCountLine.class);
     icl.setClient(inventory.getClient());
     icl.setOrganization(inventory.getOrganization());
     icl.setPhysInventory(inventory);
@@ -432,7 +434,7 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
     if (cost != null) {
       icl.setCost(cost);
     }
-    List<InventoryCountLine> invLines = inventory.getMaterialMgmtInventoryCountLineList();
+    final List<InventoryCountLine> invLines = inventory.getMaterialMgmtInventoryCountLineList();
     invLines.add(icl);
     inventory.setMaterialMgmtInventoryCountLineList(invLines);
     OBDal.getInstance().save(inventory);
