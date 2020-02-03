@@ -1476,7 +1476,10 @@
           return payment.get('isPrePayment');
         }),
         function(memo, pymnt) {
-          return OB.DEC.add(memo, pymnt.get('origAmount'));
+          return OB.DEC.add(
+            memo,
+            OB.DEC.sub(pymnt.get('origAmount'), pymnt.get('overpayment') || 0)
+          );
         },
         OB.DEC.Zero
       );
