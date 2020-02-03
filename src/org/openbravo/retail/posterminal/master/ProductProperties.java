@@ -132,6 +132,8 @@ public class ProductProperties extends ModelExtension {
         add(new HQLProperty("product.productStatus.id", "productStatus"));
         add(new HQLProperty("product.genericProduct.id", "generic_product_id"));
         add(new HQLProperty("product.characteristicDescription", "characteristicDescription"));
+        add(new HQLProperty("product.characteristicDescription||','",
+            "characteristicDescriptionSearch"));
         add(new HQLProperty("product.obposShowChDesc", "showchdesc"));
         add(new HQLProperty("product.productType", "productType"));
         add(new HQLProperty("product.includedProductCategories", "includeProductCategories"));
