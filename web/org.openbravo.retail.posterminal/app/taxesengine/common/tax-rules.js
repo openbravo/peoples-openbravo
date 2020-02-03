@@ -142,7 +142,7 @@
               businessPartnerRegion
             ) ||
             OB.Taxes.Tax.equals(
-              rule.zoneDstinationRegion,
+              rule.zoneDestinationRegion,
               businessPartnerRegion
             )
           );
