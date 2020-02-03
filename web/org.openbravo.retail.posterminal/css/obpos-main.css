@@ -9389,10 +9389,21 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   display: block;
   box-shadow: var(--box-shadow-surface);
   border-radius: var(--component-border-radius);
-  background-color: white;
+  background-color: var(--color-primary);
   width: calc(80% - 80px);
   max-width: 427px;
   z-index: 3;
+  height: auto;
+  max-height: 50%;
+  overflow: auto !important;
+  cursor: default;
+  user-select: none;
+}
+
+@media all and (max-aspect-ratio: 9/8) {
+  .obObposPointOfSaleUiEditLine-msgedit-actionButtonsContainer.expanded {
+    overflow: hidden !important;
+  }
 }
 
 .obObposPointOfSaleUiEditLineShowMoreActionButtons,

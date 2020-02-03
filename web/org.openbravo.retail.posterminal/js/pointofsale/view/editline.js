@@ -948,11 +948,17 @@ enyo.kind({
                   kind: 'Scroller',
                   thumb: true,
                   tap: function() {
+                    this.owner.$.actionButtonsContainer.resetContainer();
+                    this.owner.$.showLessActionButtons.setShowing(false);
+                  },
+                  resetContainer: function() {
                     this.owner.$.actionButtonsContainer.removeClass('expanded');
                     this.owner.$.actionButtonsContainerScrim.removeClass(
                       'expanded'
                     );
-                    this.owner.$.showLessActionButtons.setShowing(false);
+                    this.owner.$.actionButtonsContainer
+                      .hasNode()
+                      .scrollTo(0, 0);
                   },
                   classes:
                     'obObposPointOfSaleUiEditLine-msgedit-actionButtonsContainer'
@@ -962,10 +968,7 @@ enyo.kind({
                   classes:
                     'obObposPointOfSaleUiEditLine-msgedit-actionButtonsContainerScrim',
                   tap: function() {
-                    this.owner.$.actionButtonsContainer.removeClass('expanded');
-                    this.owner.$.actionButtonsContainerScrim.removeClass(
-                      'expanded'
-                    );
+                    this.owner.$.actionButtonsContainer.resetContainer();
                     this.owner.$.showLessActionButtons.setShowing(false);
                   }
                 },
@@ -1382,8 +1385,7 @@ enyo.kind({
   i18nContent: 'OBMOBC_LblShowLess',
   classes: 'obObposPointOfSaleUiEditLineShowLessActionButtons',
   tap: function() {
-    this.owner.$.actionButtonsContainer.removeClass('expanded');
-    this.owner.$.actionButtonsContainerScrim.removeClass('expanded');
+    this.owner.$.actionButtonsContainer.resetContainer();
     this.owner.$.showLessActionButtons.setShowing(false);
   }
 });
