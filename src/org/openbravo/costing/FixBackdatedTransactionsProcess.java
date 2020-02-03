@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2018 Openbravo SLU
+ * All portions are Copyright (C) 2014-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -52,13 +52,13 @@ public class FixBackdatedTransactionsProcess extends BaseProcessActionHandler {
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
     costAdjHeader = null;
-    JSONObject jsonResponse = new JSONObject();
+    final JSONObject jsonResponse = new JSONObject();
 
-    OBError msg = new OBError();
-    JSONObject jsonRequest;
+    final OBError msg = new OBError();
+    final JSONObject jsonRequest;
     try {
       jsonRequest = new JSONObject(content);
-      JSONObject jsonparams = jsonRequest.getJSONObject("_params");
+      final JSONObject jsonparams = jsonRequest.getJSONObject("_params");
       final String ruleId = jsonRequest.getString("M_Costing_Rule_ID");
       Date fixbackdatedfrom = null;
       CostingRule rule = OBDal.getInstance().get(CostingRule.class, ruleId);
@@ -92,14 +92,14 @@ public class FixBackdatedTransactionsProcess extends BaseProcessActionHandler {
         OrganizationStructureProvider osp = OBContext.getOBContext()
             .getOrganizationStructureProvider(rule.getClient().getId());
         final Set<String> childOrgs = osp.getChildTree(rule.getOrganization().getId(), true);
-        ScrollableResults transactions = getTransactions(childOrgs, fixbackdatedfrom,
+        final ScrollableResults transactions = getTransactions(childOrgs, fixbackdatedfrom,
             rule.getEndingDate());
         int i = 0;
         try {
-          SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+          final SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
           Date lastMovementDate = dateFormat.parse("01-01-1900");
           while (transactions.next()) {
-            MaterialTransaction trx = (MaterialTransaction) transactions.get()[0];
+            final MaterialTransaction trx = (MaterialTransaction) transactions.get()[0];
             if (trx.getMovementDate().compareTo(lastMovementDate) < 0) {
               createCostAdjustmenHeader(rule.getOrganization());
               final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(
@@ -124,10 +124,10 @@ public class FixBackdatedTransactionsProcess extends BaseProcessActionHandler {
 
       } catch (final Exception e) {
         OBDal.getInstance().rollbackAndClose();
-        String message = DbUtility.getUnderlyingSQLException(e).getMessage();
+        final String message = DbUtility.getUnderlyingSQLException(e).getMessage();
         log4j.error(message, e);
 
-        JSONObject errorMessage = new JSONObject();
+        final JSONObject errorMessage = new JSONObject();
         errorMessage.put("severity", "error");
         errorMessage.put("title", OBMessageUtils.messageBD("Error"));
         errorMessage.put("text", message);
@@ -140,7 +140,7 @@ public class FixBackdatedTransactionsProcess extends BaseProcessActionHandler {
 
       if (costAdjHeader != null) {
         try {
-          JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjHeader);
+          final JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjHeader);
 
           if (message.get("severity") != "success") {
             throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@") + ": "
@@ -154,9 +154,9 @@ public class FixBackdatedTransactionsProcess extends BaseProcessActionHandler {
           throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@"));
         } catch (Exception e) {
           OBDal.getInstance().rollbackAndClose();
-          String message = DbUtility.getUnderlyingSQLException(e).getMessage();
+          final String message = DbUtility.getUnderlyingSQLException(e).getMessage();
           log4j.error(message, e);
-          JSONObject errorMessage = new JSONObject();
+          final JSONObject errorMessage = new JSONObject();
 
           errorMessage.put("severity", "error");
           errorMessage.put("title", OBMessageUtils.messageBD("Error"));
@@ -170,7 +170,7 @@ public class FixBackdatedTransactionsProcess extends BaseProcessActionHandler {
         msg.setMessage(OBMessageUtils.messageBD("Success"));
       }
 
-      JSONObject errorMessage = new JSONObject();
+      final JSONObject errorMessage = new JSONObject();
 
       errorMessage.put("severity", "success");
       errorMessage.put("text", msg.getMessage());
@@ -184,35 +184,42 @@ public class FixBackdatedTransactionsProcess extends BaseProcessActionHandler {
 
   }
 
-  private ScrollableResults getTransactions(Set<String> childOrgs, Date startDate, Date endDate) {
-    StringBuffer select = new StringBuffer();
-    select.append("select trx as trx");
-    select.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
-    select.append(" where trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
-    select.append(" and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
-    select.append(
-        " and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " >= (:startDate)");
-    if (endDate != null) {
-      select.append(
-          " and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " < (:endDate)");
-    }
-    select.append(" order by trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
+  private ScrollableResults getTransactions(final Set<String> childOrgs, final Date startDate,
+      final Date endDate) {
+    //@formatter:off
+    String hql =
+            "select trx as trx" +
+            "  from MaterialMgmtMaterialTransaction as trx" +
+            " where trx.organization.id in (:orgs)" +
+            "   and trx.isCostCalculated = true" +
+            "   and trx.transactionProcessDate >= (:startDate)";
+    //@formatter:on
 
-    Query<MaterialTransaction> stockLinesQry = OBDal.getInstance()
+    if (endDate != null) {
+      //@formatter:off
+      hql +=
+            " and trx.transactionProcessDate < (:endDate)";
+      //@formatter:on
+    }
+    //@formatter:off
+    hql +=
+        " order by trx.transactionProcessDate";
+    //@formatter:on
+
+    final Query<MaterialTransaction> stockLinesQry = OBDal.getInstance()
         .getSession()
-        .createQuery(select.toString(), MaterialTransaction.class);
-    stockLinesQry.setParameterList("orgs", childOrgs);
-    stockLinesQry.setParameter("startDate", startDate);
+        .createQuery(hql, MaterialTransaction.class)
+        .setParameterList("orgs", childOrgs)
+        .setParameter("startDate", startDate);
+
     if (endDate != null) {
       stockLinesQry.setParameter("endDate", endDate);
     }
 
-    stockLinesQry.setFetchSize(1000);
-    ScrollableResults stockLines = stockLinesQry.scroll(ScrollMode.FORWARD_ONLY);
-    return stockLines;
+    return stockLinesQry.setFetchSize(1000).scroll(ScrollMode.FORWARD_ONLY);
   }
 
-  private static void createCostAdjustmenHeader(Organization org) {
+  private static void createCostAdjustmenHeader(final Organization org) {
     if (costAdjHeader == null) {
       costAdjHeader = CostAdjustmentUtils.insertCostAdjustmentHeader(org, "BDT");
     }
