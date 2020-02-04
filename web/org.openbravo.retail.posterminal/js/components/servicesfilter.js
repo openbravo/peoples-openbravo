@@ -14,6 +14,8 @@ enyo.kind({
   name: 'OB.UI.SearchServicesFilter',
   classes: 'obUiSearchServicesFilter',
   filterName: 'ServicesFilter',
+  //force remote mode until services are migrated to indexedDB
+  forceRemote: true,
   published: {
     type: 'PANEL',
     productId: null,
@@ -579,6 +581,8 @@ enyo.kind({
   name: 'OB.UI.MandatoryServicesFilter',
   classes: 'obUiMandatoryServicesFilter',
   filterName: 'MandatoryServicesFilter',
+  //force remote mode until services are migrated to indexedDB
+  forceRemote: true,
   published: {
     type: 'HIDDEN'
   },
@@ -607,6 +611,8 @@ enyo.kind({
   name: 'OB.UI.FinalMandatoryServicesFilter',
   classes: 'obUiFinalMandatoryServicesFilter',
   filterName: 'FinalMandatoryServicesFilter',
+  //force remote mode until services are migrated to indexedDB
+  forceRemote: true,
   published: {
     type: 'PANEL'
   },
