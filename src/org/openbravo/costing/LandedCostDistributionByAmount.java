@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2018 Openbravo SLU
+ * All portions are Copyright (C) 2014-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -24,36 +24,32 @@ import java.util.Date;
 
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.query.Query;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.LCReceipt;
 import org.openbravo.model.materialmgmt.cost.LCReceiptLineAmt;
 import org.openbravo.model.materialmgmt.cost.LandedCost;
 import org.openbravo.model.materialmgmt.cost.LandedCostCost;
-import org.openbravo.model.materialmgmt.cost.TransactionCost;
-import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 
 public class LandedCostDistributionByAmount extends LandedCostDistributionAlgorithm {
 
   @Override
-  public void distributeAmount(LandedCostCost lcCost, boolean isMatching) {
+  public void distributeAmount(final LandedCostCost lcCost, final boolean isMatching) {
     // Calculate total amount of all receipt lines assigned to the landed cost.
     LandedCostCost localLcCost = lcCost;
     localLcCost = (LandedCostCost) OBDal.getInstance()
         .getProxy(LandedCostCost.ENTITY_NAME, localLcCost.getId());
-    LandedCost landedCost = localLcCost.getLandedCost();
+    final LandedCost landedCost = localLcCost.getLandedCost();
     // Get the currency of the Landed Cost Cost
-    String strCurId = localLcCost.getCurrency().getId();
-    String strOrgId = landedCost.getOrganization().getId();
-    Date dateReference = landedCost.getReferenceDate();
-    int precission = localLcCost.getCurrency().getCostingPrecision().intValue();
+    final String strCurId = localLcCost.getCurrency().getId();
+    final String strOrgId = landedCost.getOrganization().getId();
+    final Date dateReference = landedCost.getReferenceDate();
+    final int precission = localLcCost.getCurrency().getCostingPrecision().intValue();
     BigDecimal baseAmt;
     if (isMatching) {
       baseAmt = localLcCost.getMatchingAmount().subtract(localLcCost.getAmount());
@@ -64,13 +60,13 @@ public class LandedCostDistributionByAmount extends LandedCostDistributionAlgori
     BigDecimal totalAmt = BigDecimal.ZERO;
 
     // Loop to get all receipts amounts and calculate the total.
-    OBCriteria<LCReceipt> critLCRL = OBDal.getInstance().createCriteria(LCReceipt.class);
+    final OBCriteria<LCReceipt> critLCRL = OBDal.getInstance().createCriteria(LCReceipt.class);
     critLCRL.add(Restrictions.eq(LCReceipt.PROPERTY_LANDEDCOST, landedCost));
     ScrollableResults receiptCosts = getReceiptCosts(landedCost, false);
     int i = 0;
     try {
       while (receiptCosts.next()) {
-        String strTrxCur = (String) receiptCosts.get()[2];
+        final String strTrxCur = (String) receiptCosts.get()[2];
         BigDecimal trxAmt = (BigDecimal) receiptCosts.get()[3];
         if (!strTrxCur.equals(strCurId)) {
           trxAmt = getConvertedAmount(trxAmt, strTrxCur, strCurId, dateReference, strOrgId);
@@ -93,9 +89,9 @@ public class LandedCostDistributionByAmount extends LandedCostDistributionAlgori
     receiptCosts = getReceiptCosts(landedCost, true);
     i = 0;
     while (receiptCosts.next()) {
-      ShipmentInOutLine receiptline = OBDal.getInstance()
+      final ShipmentInOutLine receiptline = OBDal.getInstance()
           .get(ShipmentInOutLine.class, receiptCosts.get()[1]);
-      String strTrxCurId = (String) receiptCosts.get()[2];
+      final String strTrxCurId = (String) receiptCosts.get()[2];
       BigDecimal trxAmt = (BigDecimal) receiptCosts.get()[3];
 
       if (!strTrxCurId.equals(strCurId)) {
@@ -113,9 +109,9 @@ public class LandedCostDistributionByAmount extends LandedCostDistributionAlgori
         }
       }
       pendingAmt = pendingAmt.subtract(receiptAmt);
-      LCReceipt lcrl = (LCReceipt) OBDal.getInstance()
+      final LCReceipt lcrl = (LCReceipt) OBDal.getInstance()
           .getProxy(LCReceipt.ENTITY_NAME, receiptCosts.get()[0]);
-      LCReceiptLineAmt lcrla = OBProvider.getInstance().get(LCReceiptLineAmt.class);
+      final LCReceiptLineAmt lcrla = OBProvider.getInstance().get(LCReceiptLineAmt.class);
       lcrla.setLandedCostCost((LandedCostCost) OBDal.getInstance()
           .getProxy(LandedCostCost.ENTITY_NAME, localLcCost.getId()));
       localLcCost = (LandedCostCost) OBDal.getInstance()
@@ -134,41 +130,46 @@ public class LandedCostDistributionByAmount extends LandedCostDistributionAlgori
     }
   }
 
-  private ScrollableResults getReceiptCosts(LandedCost landedCost, boolean doOrderBy) {
-    StringBuffer qry = new StringBuffer();
-    qry.append("select lcr.id as lcreceipt"); // 0
-    qry.append("   , iol.id as receiptline"); // 1
-    qry.append("   , trx." + MaterialTransaction.PROPERTY_CURRENCY + ".id as currency"); // 2
-    qry.append("   , sum(tc." + TransactionCost.PROPERTY_COST + ") as cost"); // 3
-    qry.append(" from " + TransactionCost.ENTITY_NAME + " as tc");
-    qry.append("   join tc." + TransactionCost.PROPERTY_INVENTORYTRANSACTION + " as trx");
-    qry.append("   join trx." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + " as iol");
-    qry.append(" , " + LCReceipt.ENTITY_NAME + " as lcr");
-    qry.append(" where tc." + CostAdjustmentLine.PROPERTY_UNITCOST + " = true");
-    qry.append(" and iol." + ShipmentInOutLine.PROPERTY_MOVEMENTQUANTITY + " >= 0");
-    qry.append("   and ((lcr." + LCReceipt.PROPERTY_GOODSSHIPMENTLINE + " is not null");
-    qry.append("        and lcr." + LCReceipt.PROPERTY_GOODSSHIPMENTLINE + " = iol)");
-    qry.append("         or (lcr." + LCReceipt.PROPERTY_GOODSSHIPMENTLINE + " is null");
-    qry.append("        and lcr." + LCReceipt.PROPERTY_GOODSSHIPMENT + " = iol."
-        + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + "))");
-    qry.append("   and lcr." + LCReceipt.PROPERTY_LANDEDCOST + ".id = :landedCost");
-    qry.append(" group by lcr.id, iol.id, trx." + MaterialTransaction.PROPERTY_CURRENCY
-        + ".id, iol." + ShipmentInOutLine.PROPERTY_LINENO);
+  private ScrollableResults getReceiptCosts(final LandedCost landedCost, final boolean doOrderBy) {
+    //@formatter:off
+    String hql =
+            "select lcr.id as lcreceipt" +
+            "  , iol.id as receiptline" +
+            "  , trx.currency.id as currency" +
+            "  , sum(tc.cost) as cost" +
+            " from TransactionCost as tc" +
+            "   join tc.inventoryTransaction as trx" +
+            "   join trx.goodsShipmentLine as iol" +
+            "     , LandedCostReceipt as lcr" +
+            " where tc.unitCost = true" +
+            "   and iol.movementQuantity >= 0" +
+            "   and ((lcr.goodsShipmentLine is not null" +
+            "   and lcr.goodsShipmentLine = iol)" +
+            "   or (lcr.goodsShipmentLine is null" +
+            "   and lcr.goodsShipment = iol.shipmentReceipt))" +
+            "   and lcr.landedCost.id = :landedCost" +
+            " group by lcr.id" +
+            "   , iol.id" +
+            "   , trx.currency.id" +
+            "   , iol.lineNo";
+    //@formatter:on
     if (doOrderBy) {
-      qry.append(" order by iol." + ShipmentInOutLine.PROPERTY_LINENO);
-      qry.append(" , sum(tc." + TransactionCost.PROPERTY_COST + ")");
+      //@formatter:off
+      hql +=
+            " order by iol.lineNo" +
+            "   , sum(tc.cost)";
+      //@formatter:on
     }
 
-    Query<Object[]> qryReceiptCosts = OBDal.getInstance()
+    return OBDal.getInstance()
         .getSession()
-        .createQuery(qry.toString(), Object[].class);
-    qryReceiptCosts.setParameter("landedCost", landedCost.getId());
-
-    return qryReceiptCosts.scroll();
+        .createQuery(hql, Object[].class)
+        .setParameter("landedCost", landedCost.getId())
+        .scroll();
   }
 
-  private BigDecimal getConvertedAmount(BigDecimal trxAmt, String strCurFromId, String strCurToId,
-      Date dateReference, String strOrgId) {
+  private BigDecimal getConvertedAmount(final BigDecimal trxAmt, final String strCurFromId,
+      final String strCurToId, final Date dateReference, final String strOrgId) {
     return FinancialUtils.getConvertedAmount(trxAmt,
         OBDal.getInstance().get(Currency.class, strCurFromId),
         OBDal.getInstance().get(Currency.class, strCurToId), dateReference,
