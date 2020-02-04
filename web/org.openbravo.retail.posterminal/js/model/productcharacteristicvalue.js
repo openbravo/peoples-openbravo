@@ -10,11 +10,14 @@
   class ProductCharacteristicValue extends OB.App.Class.MasterdataModel {
     constructor() {
       super();
-
       this.indices = [
         new OB.App.Class.Index({
           name: 'productCharacteristics_obposFilteronwebpos_idx',
           properties: [{ property: 'obposFilteronwebpos', isBoolean: true }]
+        }),
+        new OB.App.Class.Index({
+          name: 'productCharacteristics_product_idx',
+          properties: [{ property: 'product' }]
         })
       ];
     }

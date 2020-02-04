@@ -3418,26 +3418,27 @@
           }
         }
 
-        function addProdCharsToProduct(orderline, addProdCharCallback) {
+        async function addProdCharsToProduct(orderline, addProdCharCallback) {
           //Add prod char information to product object
           if (
             !p.get('productCharacteristics') &&
             p.get('characteristicDescription') &&
             !OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)
           ) {
-            OB.Dal.find(
-              OB.Model.ProductCharacteristicValue,
-              { product: p.get('id') },
-              function(productcharacteristics) {
-                let newProd = OB.UTIL.clone(p);
-                newProd.set(
-                  'productCharacteristics',
-                  productcharacteristics.toJSON()
-                );
-                orderline.set('product', newProd);
-                addProdCharCallback();
-              }
+            const criteria = new OB.App.Class.Criteria()
+              .criterion('product', p.get('id'))
+              .build();
+            const productCharacteristics = await OB.App.MasterdataModels.ProductCharacteristicValue.find(
+              criteria
             );
+            try {
+              let newProd = OB.UTIL.clone(p);
+              newProd.set('productCharacteristics', productCharacteristics);
+              orderline.set('product', newProd);
+              addProdCharCallback();
+            } catch (error) {
+              OB.UTIL.showError(error);
+            }
           } else {
             addProdCharCallback();
           }
