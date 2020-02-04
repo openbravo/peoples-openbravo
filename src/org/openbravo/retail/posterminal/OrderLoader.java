@@ -923,6 +923,10 @@ public class OrderLoader extends POSDataSynchronizationProcess
             String discountinstance = jsonPromotion.getString("discountinstance");
             promotion.setObposDiscountinstance(discountinstance);
           }
+          if (promotion.getDisplayedTotalAmount() == null
+              && promotion.getTotalAmount().compareTo(BigDecimal.ZERO) == 0) {
+            promotion.setDisplayedTotalAmount(BigDecimal.ZERO);
+          }
           promotion.setId(OBMOBCUtils.getUUIDbyString(orderline.getId() + p));
           promotion.setNewOBObject(true);
           orderline.getOrderLineOfferList().add(promotion);
