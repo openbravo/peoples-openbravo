@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2019 Openbravo S.L.U.
+ * Copyright (C) 2013-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -110,28 +110,21 @@ enyo.kind({
       ]
     }
   ],
-  productCharacteristicValueFilterQualifier: 'ProductCH_Filter',
   clearAction: function(inSender, inEvent) {
     this.valuesList.reset();
     this.initialValuesList = null;
     return true;
   },
   searchAction: async function(inSender, inEvent) {
-    var me = this,
-      i,
-      j,
+    let me = this,
       productCharacteristic =
         inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$
           .searchCharacteristic.$.searchCharacteristicTabContent.$
           .searchProductCharacteristicHeader.parent,
-      forceRemote = false;
-    var productFilterText,
-      productCategory,
+      forceRemote = false,
       resetValueList,
-      characteristic = [],
       crossStoreSearch;
 
-    productFilterText = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.formElementProductFilterText.coreElement.getValue();
     crossStoreSearch =
       inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$
         .searchCharacteristic.$.searchCharacteristicTabContent.$
@@ -157,8 +150,15 @@ enyo.kind({
 
     resetValueList = function(dataValues) {
       if (dataValues && dataValues.length > 0) {
-        var modelsList,
+        let modelsList, initialModelsList;
+        if (
+          OB.MobileApp.model.hasPermission('OBPOS_remote.product', true) ||
+          forceRemote
+        ) {
+          initialModelsList = dataValues.models;
+        } else {
           initialModelsList = dataValues;
+        }
         // Remove Characteristic Parent with No Child
         me.validateChildrenTree(initialModelsList, '0');
         initialModelsList = _.filter(initialModelsList, function(model) {
@@ -205,9 +205,6 @@ enyo.kind({
       }
     };
 
-    productCategory = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.getProductCategoryFilter(
-      forceRemote
-    );
     if (
       !OB.MobileApp.model.hasPermission('OBPOS_remote.product', true) &&
       !forceRemote
@@ -233,102 +230,16 @@ enyo.kind({
       } catch (error) {
         OB.UTIL.showError(error);
       }
-
       return true;
     } else {
-      var remoteCriteria = [],
-        characteristicParams = '',
-        characteristicValue = [];
-      var productFilter = {},
+      let remoteCriteria = [],
         criteria = {},
-        productText,
         characteristicfilter = {
           columns: ['characteristic_id'],
           operator: 'equals',
           value: this.parent.parent.characteristic.get('id'),
           isId: true
         };
-      // product name and category filter
-      if (productFilterText !== undefined || productCategory !== undefined) {
-        // characteristic filter
-        if (me.parent.parent.model.get('filter').length > 0) {
-          for (i = 0; i < me.parent.parent.model.get('filter').length; i++) {
-            if (
-              !characteristic.includes(
-                me.parent.parent.model.get('filter')[i].characteristic_id
-              )
-            ) {
-              characteristic.push(
-                me.parent.parent.model.get('filter')[i].characteristic_id
-              );
-            }
-          }
-          for (i = 0; i < characteristic.length; i++) {
-            for (j = 0; j < me.parent.parent.model.get('filter').length; j++) {
-              if (
-                characteristic[i] ===
-                me.parent.parent.model.get('filter')[j].characteristic_id
-              ) {
-                characteristicValue.push(
-                  me.parent.parent.model.get('filter')[j].id
-                );
-              }
-            }
-            if (i > 0) {
-              characteristicParams += ';';
-            }
-            characteristicParams += characteristicValue;
-            characteristicValue = [];
-          }
-        }
-        var productCat = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.getSelectedCategories(),
-          category =
-            productCat.indexOf('OBPOS_bestsellercategory') >= 0
-              ? 'OBPOS_bestsellercategory'
-              : productCat.indexOf('__all__') >= 0
-              ? '__all__'
-              : [productCategory.value];
-        productFilter.columns = [];
-        productFilter.operator = OB.Dal.FILTER;
-        productFilter.value = this.productCharacteristicValueFilterQualifier;
-        if (
-          OB.MobileApp.model.hasPermission('OBPOS_remote.product', true) ||
-          (crossStoreSearch && crossStoreSearch.checked)
-        ) {
-          productText =
-            (OB.MobileApp.model.hasPermission(
-              'OBPOS_remote.product' + OB.Dal.USESCONTAINS,
-              true
-            )
-              ? '%'
-              : '') +
-            productFilterText +
-            '%';
-        } else {
-          productText = '%' + productFilterText + '%';
-        }
-        productFilter.params = [
-          productText,
-          productCategory.filter ? productCategory.params[0] : category,
-          characteristicParams,
-          OB.MobileApp.model.get('terminal').id
-        ];
-        remoteCriteria.push(productFilter);
-      }
-      // external modules filter
-      criteria.hqlCriteria = [];
-      productCharacteristic.customFilters.forEach(function(hqlFilter) {
-        if (!_.isUndefined(hqlFilter.hqlCriteriaCharacteristicsValue)) {
-          var hqlCriteriaFilter = hqlFilter.hqlCriteriaCharacteristicsValue();
-          if (!_.isUndefined(hqlCriteriaFilter)) {
-            hqlCriteriaFilter.forEach(function(filter) {
-              if (filter) {
-                remoteCriteria.push(filter);
-              }
-            });
-          }
-        }
-      });
       remoteCriteria.push(characteristicfilter);
       criteria.remoteFilters = remoteCriteria;
       criteria.forceRemote = forceRemote;
