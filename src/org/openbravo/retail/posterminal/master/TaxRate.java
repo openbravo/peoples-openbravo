@@ -79,31 +79,33 @@ public class TaxRate extends MasterDataProcessHQLQuery {
     final Country fromCountry = storeInfo.getLocationAddress().getCountry();
     final Region fromRegion = storeInfo.getLocationAddress().getRegion();
 
-    String hql = "from FinancialMgmtTaxRate as financialMgmtTaxRate where "
-        + "financialMgmtTaxRate.$readableSimpleClientCriteria AND "
-        + "financialMgmtTaxRate.$naturalOrgCriteria AND "
-        + "(financialMgmtTaxRate.$incrementalUpdateCriteria) "
-        + "and financialMgmtTaxRate.salesPurchaseType in ('S', 'B') "
-        + "and financialMgmtTaxRate.summaryLevel = false ";
+    String hql = " from FinancialMgmtTaxRate as financialMgmtTaxRate"
+        + " where financialMgmtTaxRate.$readableSimpleCriteria"
+        + " and financialMgmtTaxRate.$readableSimpleClientCriteria"
+        + " and financialMgmtTaxRate.$naturalOrgCriteria"
+        + " and financialMgmtTaxRate.$incrementalUpdateCriteria"
+        + " and financialMgmtTaxRate.salesPurchaseType in ('S', 'B')"
+        + " and (financialMgmtTaxRate.summaryLevel = false"
+        + " or exists (select 1 from FinancialMgmtTaxCategory as financialMgmtTaxCategory where financialMgmtTaxRate.taxCategory.id = financialMgmtTaxCategory.id and financialMgmtTaxCategory.asbom = true))";
 
     if (fromCountry != null) {
-      hql = hql + "and (financialMgmtTaxRate.country.id = :fromCountryId "
-          + "  or (financialMgmtTaxRate.country is null and (not exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate))"
-          + "  or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromCountry.id = :fromCountryId )"
-          + "  or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromCountry is null)))";
+      hql = hql + " and (financialMgmtTaxRate.country.id = :fromCountryId"
+          + " or (financialMgmtTaxRate.country is null and (not exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate))"
+          + " or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromCountry.id = :fromCountryId)"
+          + " or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromCountry is null)))";
     } else {
-      hql = hql + "and financialMgmtTaxRate.country is null ";
+      hql = hql + " and financialMgmtTaxRate.country is null";
     }
     if (fromRegion != null) {
-      hql = hql + "and (financialMgmtTaxRate.region.id = :fromRegionId  "
+      hql = hql + " and (financialMgmtTaxRate.region.id = :fromRegionId"
           + " or (financialMgmtTaxRate.region is null and (not exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate))"
-          + " or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromRegion.id = :fromRegionId )"
-          + "  or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromRegion is null)))";
+          + " or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromRegion.id = :fromRegionId)"
+          + " or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromRegion is null)))";
 
     } else {
-      hql = hql + "and financialMgmtTaxRate.region is null ";
+      hql = hql + " and financialMgmtTaxRate.region is null";
     }
-    hql = hql + "and $readableSimpleCriteria order by validFromDate desc, financialMgmtTaxRate.id";
+    hql = hql + " order by validFromDate desc, financialMgmtTaxRate.id";
 
     return Arrays.asList(hql);
   }

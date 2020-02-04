@@ -91,52 +91,53 @@ public class TaxZone extends MasterDataProcessHQLQuery {
     final Country fromCountry = storeInfo.getLocationAddress().getCountry();
     final Region fromRegion = storeInfo.getLocationAddress().getRegion();
 
-    String hqlTax = "select financialMgmtTaxRate.id from FinancialMgmtTaxRate as financialMgmtTaxRate where "
-        + " financialMgmtTaxRate.salesPurchaseType in ('S', 'B') "
-        + "and financialMgmtTaxRate.summaryLevel = false ";
+    String hqlTax = " select financialMgmtTaxRate.id from FinancialMgmtTaxRate as financialMgmtTaxRate"
+        + " where financialMgmtTaxRate.salesPurchaseType in ('S', 'B')"
+        + " and (financialMgmtTaxRate.summaryLevel = false"
+        + " or exists (select 1 from FinancialMgmtTaxCategory as financialMgmtTaxCategory where financialMgmtTaxRate.taxCategory.id = financialMgmtTaxCategory.id and financialMgmtTaxCategory.asbom = true))";
 
     if (fromCountry != null) {
-      hqlTax = hqlTax + "and (financialMgmtTaxRate.country.id = :fromCountryId "
-          + "  or (financialMgmtTaxRate.country is null and (not exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate))"
-          + "  or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromCountry.id = :fromCountryId )"
-          + "  or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromCountry is null)))";
+      hqlTax = hqlTax + " and (financialMgmtTaxRate.country.id = :fromCountryId"
+          + " or (financialMgmtTaxRate.country is null and (not exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate))"
+          + " or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromCountry.id = :fromCountryId)"
+          + " or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromCountry is null)))";
     } else {
-      hqlTax = hqlTax + "and financialMgmtTaxRate.country is null ";
+      hqlTax = hqlTax + " and financialMgmtTaxRate.country is null";
     }
     if (fromRegion != null) {
-      hqlTax = hqlTax + "and (financialMgmtTaxRate.region.id = :fromRegionId "
+      hqlTax = hqlTax + " and (financialMgmtTaxRate.region.id = :fromRegionId"
           + " or (financialMgmtTaxRate.region is null and (not exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate))"
-          + "  or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromRegion.id =  :fromRegionId )"
-          + "  or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromRegion is null)))";
+          + " or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromRegion.id =  :fromRegionId)"
+          + " or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromRegion is null)))";
 
     } else {
-      hqlTax = hqlTax + "and financialMgmtTaxRate.region is null ";
+      hqlTax = hqlTax + " and financialMgmtTaxRate.region is null";
     }
 
     HQLPropertyList regularTaxZoneHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
 
-    String hql = "select " + regularTaxZoneHQLProperties.getHqlSelect()
-        + " from FinancialMgmtTaxZone as financialMgmtTaxZone "
-        + " join financialMgmtTaxZone.tax as tax where "
-        + "financialMgmtTaxZone.$readableSimpleClientCriteria AND "
-        + "financialMgmtTaxZone.$naturalOrgCriteria AND "
-        + "(financialMgmtTaxZone.$incrementalUpdateCriteria) " + "and financialMgmtTaxZone.tax in ("
-        + hqlTax + ")";
+    String hql = " select " + regularTaxZoneHQLProperties.getHqlSelect()
+        + " from FinancialMgmtTaxZone as financialMgmtTaxZone"
+        + " join financialMgmtTaxZone.tax as tax"
+        + " where financialMgmtTaxZone.$readableSimpleClientCriteria"
+        + " and financialMgmtTaxZone.$naturalOrgCriteria"
+        + " and financialMgmtTaxZone.$incrementalUpdateCriteria"
+        + " and financialMgmtTaxZone.tax in (" + hqlTax + ")";
 
     if (fromCountry != null) {
       hql = hql
-          + "and (financialMgmtTaxZone.fromCountry.id = :fromCountryId or financialMgmtTaxZone.fromCountry is null) ";
+          + " and (financialMgmtTaxZone.fromCountry.id = :fromCountryId or financialMgmtTaxZone.fromCountry is null)";
     } else {
-      hql = hql + "and financialMgmtTaxZone.fromCountry is null ";
+      hql = hql + " and financialMgmtTaxZone.fromCountry is null";
     }
     if (fromRegion != null) {
       hql = hql
-          + "and (financialMgmtTaxZone.fromRegion.id = :fromRegionId or financialMgmtTaxZone.fromRegion is null) ";
+          + " and (financialMgmtTaxZone.fromRegion.id = :fromRegionId or financialMgmtTaxZone.fromRegion is null)";
     } else {
-      hql = hql + "and financialMgmtTaxZone.fromRegion is null ";
+      hql = hql + " and financialMgmtTaxZone.fromRegion is null";
     }
-    hql = hql + "order by financialMgmtTaxZone.id asc";
+    hql = hql + " order by financialMgmtTaxZone.id asc";
 
     return Arrays.asList(hql);
   }
