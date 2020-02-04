@@ -26,11 +26,15 @@ enyo.kind({
   events: {
     onCreateOrderFromQuotation: ''
   },
+  initComponents: function() {
+    this.popup = OB.UTIL.getPopupFromComponent(this);
+    this.inherited(arguments);
+  },
   tap: function() {
-    var checked = !this.owner.$.formElementCheckUpdatePrice.$
-      .coreElementContainer.$.checkUpdatePrice.checked;
+    var checked = !this.popup.$.footer.$.formElementCheckUpdatePrice.coreElement
+      .checked;
     this.doHideThisPopup();
-    this.parent.parent.parent.theQuotation.createOrderFromQuotation(checked);
+    this.popup.theQuotation.createOrderFromQuotation(checked);
   }
 });
 
