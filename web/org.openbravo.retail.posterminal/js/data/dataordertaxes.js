@@ -20,21 +20,24 @@
     const taxes = OB.Taxes.Pos.calculateTaxes(receipt);
     setTaxes(receipt, taxes);
 
-    // In case of services with modifyTax flag activated, we need to recalculate taxes info
-    const recalculatedLines = receipt
-      .get('lines')
-      .filter(line => line.get('product').get('modifiedTax'))
-      .map(line => {
-        line.set(
-          'price',
-          OB.DEC.mul(
-            OB.DEC.div(line.get('price'), line.get('previousLineRate')),
-            line.get('lineRate')
-          )
-        );
-        line.set('gross', OB.DEC.mul(line.get('price'), line.get('qty')));
-      });
-    if (recalculatedLines.length > 0) {
+    // In case of services with modifyTax flag activated in price including taxes,
+    // we need to recalculate taxes info
+    if (
+      receipt.get('priceIncludesTax') &&
+      receipt
+        .get('lines')
+        .filter(line => line.get('product').get('modifiedTax'))
+        .map(line => {
+          line.set(
+            'price',
+            OB.DEC.mul(
+              OB.DEC.div(line.get('price'), line.get('previousLineRate')),
+              line.get('lineRate')
+            )
+          );
+          line.set('gross', OB.DEC.mul(line.get('price'), line.get('qty')));
+        }).length > 0
+    ) {
       const recalculatedTaxes = OB.Taxes.Pos.calculateTaxes(receipt);
       setTaxes(receipt, recalculatedTaxes);
     }
