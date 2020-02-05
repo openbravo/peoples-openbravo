@@ -53,30 +53,37 @@
       );
 
       const linesByParentTaxId = OB.App.ArrayUtils.groupBy(lines, 'tax');
-      const groupTaxes = Object.values(linesByParentTaxId).map(groupLines => {
-        const rules = groupLines[0].taxes.map(lineTax => lineTax.tax);
-        const groupGrossAmount = groupLines.reduce(
-          (total, line) => OB.DEC.add(total, line.grossAmount),
-          OB.DEC.Zero
-        );
-        const groupNetAmount = OB.Taxes.PriceIncludingTax.calculateNetAmountFromGrossAmount(
-          groupGrossAmount,
-          rules
-        );
+      const headerTaxes = Object.values(linesByParentTaxId).flatMap(
+        groupLines => {
+          const rules = groupLines[0].taxes.map(lineTax => lineTax.tax);
+          if (rules[0].docTaxAmount !== 'D') {
+            return OB.Taxes.Tax.calculateTaxesFromLinesTaxes(groupLines, rules);
+          }
 
-        OB.Taxes.PriceIncludingTax.adjustLineNetAmount(
-          groupNetAmount,
-          groupLines
-        );
+          const groupGrossAmount = groupLines.reduce(
+            (total, line) => OB.DEC.add(total, line.grossAmount),
+            OB.DEC.Zero
+          );
+          const groupNetAmount = OB.Taxes.PriceIncludingTax.calculateNetAmountFromGrossAmount(
+            groupGrossAmount,
+            rules
+          );
 
-        return OB.Taxes.Tax.calculateTaxes(
-          groupGrossAmount,
-          groupNetAmount,
-          rules
-        );
-      });
+          const groupTaxes = OB.Taxes.Tax.calculateTaxes(
+            groupGrossAmount,
+            groupNetAmount,
+            rules
+          );
 
-      const headerTaxes = groupTaxes.flat();
+          OB.Taxes.PriceIncludingTax.adjustLineNetAmount(
+            groupNetAmount,
+            groupLines
+          );
+
+          return groupTaxes;
+        }
+      );
+
       const headerGrossAmount = lines.reduce(
         (total, line) => OB.DEC.add(total, line.grossAmount),
         OB.DEC.Zero

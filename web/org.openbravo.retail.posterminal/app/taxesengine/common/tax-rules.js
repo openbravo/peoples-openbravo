@@ -314,6 +314,27 @@
     }
 
     /**
+     * Calculate tax base and amount for each rule
+     */
+    static calculateTaxesFromLinesTaxes(lines, rules) {
+      return rules.map(rule => {
+        return lines
+          .flatMap(line => line.taxes)
+          .filter(lineTaxes => lineTaxes.tax.id === rule.id)
+          .reduce(
+            (total, line) => {
+              return {
+                base: OB.DEC.add(total.base, line.base),
+                amount: OB.DEC.add(total.amount, line.amount),
+                tax: total.tax
+              };
+            },
+            { base: OB.DEC.Zero, amount: OB.DEC.Zero, tax: rule }
+          );
+      });
+    }
+
+    /**
      * If rule is cascade or dependant, we take as tax base the tax base of the previous tax,
      * if not, we take as tax base the net amount
      */
