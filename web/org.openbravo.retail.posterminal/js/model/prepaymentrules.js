@@ -15,13 +15,15 @@
     execute: function(receipt, callback) {
       var me = this,
         prepaymentPerc = OB.MobileApp.model.get('terminal').obposPrepaymentPerc,
-        prepaymentPercLimit = OB.MobileApp.model.get('terminal')
-          .obposPrepaymentPercLimit,
+        prepaymentPercLimit,
         prepaymentPercLayLimit = OB.MobileApp.model.get('terminal')
           .obposPrepayPercLayLimit,
         prepaymentLimitAmount = OB.DEC.Zero,
         prepaymentLayawayLimitAmount = OB.DEC.Zero,
         prepaymentAmount = receipt.get('lines').reduce(function(memo, line) {
+          debugger;
+          prepaymentPercLimit = OB.MobileApp.model.get('terminal')
+            .obposPrepaymentPercLimit;
           if (
             line.get('obposCanbedelivered') ||
             line.get('deliveredQuantity') === line.get('qty')
