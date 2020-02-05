@@ -21,6 +21,7 @@ import javax.inject.Inject;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Session;
@@ -72,8 +73,7 @@ public class ProductCharacteristicValue extends MasterDataProcessHQLQuery {
     OBContext.setAdminMode(true);
     try {
       final String posId = jsonsent.getString("pos");
-      // final Date terminalDate = getTerminalDate(jsonsent);
-      final Date terminalDate = new Date();
+      final Date terminalDate = getTerminalDate(jsonsent);
       final boolean isCrossStoreSearch = isCrossStoreSearch(jsonsent);
       final String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
       final OBRETCOProductList productList = POSUtils.getProductListByPosterminalId(posId);
@@ -85,13 +85,13 @@ public class ProductCharacteristicValue extends MasterDataProcessHQLQuery {
         paramValues.put("productId", jsonsent.getJSONObject("remoteParams").getString("productId"));
       }
       // Optional filtering by a list of m_product_id
-      // if (jsonsent.getJSONObject("parameters").has("filterProductList")
-      // && !jsonsent.getJSONObject("parameters").get("filterProductList").equals("undefined")
-      // && !jsonsent.getJSONObject("parameters").get("filterProductList").equals("null")) {
-      // final JSONArray filterProductList = jsonsent.getJSONObject("parameters")
-      // .getJSONArray("filterProductList");
-      // paramValues.put("filterProductList", filterProductList);
-      // }
+      if (jsonsent.getJSONObject("parameters").has("filterProductList")
+          && !jsonsent.getJSONObject("parameters").get("filterProductList").equals("undefined")
+          && !jsonsent.getJSONObject("parameters").get("filterProductList").equals("null")) {
+        final JSONArray filterProductList = jsonsent.getJSONObject("parameters")
+            .getJSONArray("filterProductList");
+        paramValues.put("filterProductList", filterProductList);
+      }
       paramValues.put("productListId", productList.getId());
       paramValues.put("priceListVersionId", priceListVersion.getId());
       List<String> characteristicsIds = getUsedInWebPOSCharacteristics();
@@ -109,11 +109,9 @@ public class ProductCharacteristicValue extends MasterDataProcessHQLQuery {
         && !jsonsent.get("lastUpdated").equals("undefined")
         && !jsonsent.get("lastUpdated").equals("null") ? jsonsent.getLong("lastUpdated") : null;
     // Optional filtering by a list of m_product_id
-    // final boolean filterProductList =
-    // jsonsent.getJSONObject("parameters").has("filterProductList")
-    // && !jsonsent.getJSONObject("parameters").get("filterProductList").equals("undefined")
-    // && !jsonsent.getJSONObject("parameters").get("filterProductList").equals("null");
-    final boolean filterProductList = false;
+    final boolean filterProductList = jsonsent.getJSONObject("parameters").has("filterProductList")
+        && !jsonsent.getJSONObject("parameters").get("filterProductList").equals("undefined")
+        && !jsonsent.getJSONObject("parameters").get("filterProductList").equals("null");
     final HQLPropertyList regularProductsCharacteristicHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
 

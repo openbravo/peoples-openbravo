@@ -33,6 +33,7 @@ import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
+import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.retail.config.OBRETCOProductList;
 import org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.retail.posterminal.POSUtils;
@@ -66,13 +67,11 @@ public class ProductPrice extends MasterDataProcessHQLQuery {
       String pricelist = POSUtils.getPriceListByTerminal(POSTerminal.getSearchKey()).getId();
       OBRETCOProductList productList = POSUtils
           .getProductListByPosterminalId(jsonsent.getString("pos"));
-      // TODO terminalDate not supported
-      // Date terminalDate = OBMOBCUtils.calculateServerDate(
-      // jsonsent.getJSONObject("parameters").getString("terminalTime"),
-      // jsonsent.getJSONObject("parameters")
-      // .getJSONObject("terminalTimeOffset")
-      // .getLong("value"));
-      Date terminalDate = new Date();
+      Date terminalDate = OBMOBCUtils.calculateServerDate(
+          jsonsent.getJSONObject("parameters").getString("terminalTime"),
+          jsonsent.getJSONObject("parameters")
+              .getJSONObject("terminalTimeOffset")
+              .getLong("value"));
       Map<String, Object> paramValues = new HashMap<String, Object>();
       paramValues.put("productListId", productList.getId());
       paramValues.put("validFromDate", terminalDate);

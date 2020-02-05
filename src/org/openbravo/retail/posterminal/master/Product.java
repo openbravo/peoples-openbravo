@@ -99,9 +99,7 @@ public class Product extends MasterDataProcessHQLQuery {
   protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
     try {
       OBContext.setAdminMode(true);
-      // TODO terminalDate not supported
-      // final Date terminalDate = getTerminalDate(jsonsent);
-      final Date terminalDate = new Date();
+      final Date terminalDate = getTerminalDate(jsonsent);
       final String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
       final boolean isCrossStoreSearch = isCrossStoreSearch(jsonsent);
       final boolean isMultiPriceListSearch = isMultiPriceListSearch(jsonsent);
@@ -139,9 +137,7 @@ public class Product extends MasterDataProcessHQLQuery {
       throws JSONException {
     try {
       OBContext.setAdminMode(true);
-      // TODO terminalDate not supported
-      // final Date terminalDate = getTerminalDate(jsonsent);
-      final Date terminalDate = new Date();
+      final Date terminalDate = getTerminalDate(jsonsent);
       final boolean isCrossStoreSearch = isCrossStoreSearch(jsonsent);
       final String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
       final String posId = getTerminalId(jsonsent);

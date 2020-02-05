@@ -35,6 +35,7 @@ import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
+import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.pricing.pricelist.PriceListVersion;
 import org.openbravo.retail.config.OBRETCOProductList;
 import org.openbravo.retail.posterminal.OBPOSApplications;
@@ -88,13 +89,11 @@ public class ProductCategoryTree extends MasterDataProcessHQLQuery {
         paramValues.put("productCategoryTableId", productCategoryTableId);
       }
       if (!isRemote) {
-        // final Date terminalDate = OBMOBCUtils.calculateServerDate(
-        // jsonsent.getJSONObject("parameters").getString("terminalTime"),
-        // jsonsent.getJSONObject("parameters")
-        // .getJSONObject("terminalTimeOffset")
-        // .getLong("value"));
-        // TODO not supported terminaldate
-        final Date terminalDate = new Date();
+        final Date terminalDate = OBMOBCUtils.calculateServerDate(
+            jsonsent.getJSONObject("parameters").getString("terminalTime"),
+            jsonsent.getJSONObject("parameters")
+                .getJSONObject("terminalTimeOffset")
+                .getLong("value"));
 
         final PriceListVersion priceListVersion = POSUtils.getPriceListVersionByOrgId(orgId,
             terminalDate);
