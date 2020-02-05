@@ -1075,6 +1075,7 @@
           if (me.pendingCalculateReceipt) {
             OB.UTIL.ProcessController.finish('calculateReceipt', execution);
             OB.MobileApp.view.waterfall('calculatedReceipt');
+            me.trigger('calculatedReceipt');
             me.pendingCalculateReceipt = false;
             me.calculatingReceipt = false;
             me.calculateReceipt();
