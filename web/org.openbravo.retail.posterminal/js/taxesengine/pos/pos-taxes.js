@@ -153,7 +153,9 @@
       );
 
       const taxRates = await OB.App.MasterdataModels.TaxRate.find();
-      const taxZones = await OB.App.MasterdataModels.TaxZone.find();
+      const taxZones = await OB.App.MasterdataModels.TaxZone.find(
+        new OB.App.Class.Criteria().limit(1500).build()
+      );
 
       OB.Taxes.Pos.ruleImpls = taxRates.flatMap(taxRate =>
         taxZones.some(taxZone => taxZone.taxRateId === taxRate.id)
