@@ -270,6 +270,13 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/masterdata/BPCategoryModel");
     appDependency.add("model/masterdata/CountryModel");
     appDependency.add("model/masterdata/BPSetLineModel");
+    appDependency.add("model/masterdata/ProductModel");
+    appDependency.add("model/masterdata/ProductPriceModel");
+    appDependency.add("model/masterdata/ProductCategoryTreeModel");
+    appDependency.add("model/masterdata/CharacteristicModel");
+    appDependency.add("model/masterdata/CharacteristicValueModel");
+    appDependency.add("model/masterdata/ProductCharacteristicValueModel");
+    appDependency.add("model/masterdata/BPSetLineModel");
     appDependency.add("model/masterdata/discount/DiscountFilterBusinessPartnerGroupModel");
     appDependency.add("model/masterdata/discount/DiscountFilterBusinessPartnerModel");
     appDependency.add("model/masterdata/discount/DiscountFilterBusinessPartnerSetModel");
@@ -279,6 +286,11 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/masterdata/discount/DiscountFilterProductModel");
     appDependency.add("model/masterdata/discount/DiscountFilterRoleModel");
     appDependency.add("model/masterdata/discount/DiscountModel");
+
+    for (final String resource : appDependency) {
+      globalResources.add(createComponentResource(ComponentResourceType.Static,
+          prefix + "/app/" + resource + ".js", MobileCoreConstants.APP_IDENTIFIER));
+    }
 
     for (final String resource : resourceDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,
@@ -291,11 +303,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     for (final String resource : cssDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Stylesheet,
           prefix + "/css/" + resource + ".css", POSUtils.APP_NAME));
-    }
-
-    for (final String resource : appDependency) {
-      globalResources.add(createComponentResource(ComponentResourceType.Static,
-          prefix + "/app/" + resource + ".js", MobileCoreConstants.APP_IDENTIFIER));
     }
 
     return globalResources;

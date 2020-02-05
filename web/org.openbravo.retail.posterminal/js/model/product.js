@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2019 Openbravo S.L.U.
+ * Copyright (C) 2013-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -8,66 +8,7 @@
  */
 
 (function() {
-  class Product extends OB.App.Class.MasterdataModel {
-    constructor() {
-      super();
-      this.indices = [
-        new OB.App.Class.Index({
-          name: 'productId_idx',
-          properties: [{ property: 'id' }]
-        }),
-        //browse
-        new OB.App.Class.Index({
-          name: 'productCategoryBrowse_idx',
-          properties: [
-            { property: 'productCategory' },
-            { property: 'generic_product_id', isNullable: true }
-          ]
-        }),
-        new OB.App.Class.Index({
-          name: 'bestsellerBrowse_idx',
-          properties: [
-            { property: 'bestseller', isBoolean: true },
-            { property: 'generic_product_id', isNullable: true }
-          ]
-        }),
-        //search
-        new OB.App.Class.Index({
-          name: 'productCategorySearch_idx',
-          properties: [
-            { property: 'productCategory' },
-            { property: 'isGeneric', isBoolean: true }
-          ]
-        }),
-        new OB.App.Class.Index({
-          name: 'productCategoryGenericSearch_idx',
-          properties: [
-            { property: 'isGeneric', isBoolean: true },
-            { property: 'generic_product_id', isNullable: true },
-            { property: 'productCategory' }
-          ]
-        }),
-        new OB.App.Class.Index({
-          name: 'bestsellerGenericSearch_idx',
-          properties: [
-            { property: 'bestseller', isBoolean: true },
-            { property: 'isGeneric', isBoolean: true },
-            { property: 'generic_product_id', isNullable: true }
-          ]
-        }),
-        new OB.App.Class.Index({
-          name: 'productAndProposalType_idx',
-          properties: [
-            { property: 'productType' },
-            { property: 'proposalType' }
-          ]
-        })
-      ];
-    }
-  }
-  OB.App.MasterdataController.registerModel(Product);
-
-  var ProductMD = OB.Data.ExtensibleModel.extend({
+  var Product = OB.Data.ExtensibleModel.extend({
     modelName: 'Product',
     tableName: 'm_product',
     entityName: 'Product',
@@ -79,10 +20,10 @@
     initialize: function() {
       this.set('originalStandardPrice', this.get('standardPrice'));
     },
-    indexDBModel: Product.prototype.getName()
+    indexDBModel: OB.App.MasterdataModels.Product.getName()
   });
 
-  ProductMD.addProperties([
+  Product.addProperties([
     {
       name: 'id',
       column: 'm_product_id',
@@ -360,7 +301,7 @@
     }
   ]);
 
-  ProductMD.addIndex([
+  Product.addIndex([
     {
       name: 'obpos_in_prodCat',
       columns: [
@@ -398,6 +339,5 @@
       ]
     }
   ]);
-
-  OB.Data.Registry.registerModel(ProductMD);
+  OB.Data.Registry.registerModel(Product);
 })();

@@ -7,24 +7,7 @@
  ************************************************************************************
  */
 (function() {
-  class Characteristic extends OB.App.Class.MasterdataModel {
-    constructor() {
-      super();
-      this.indices = [
-        new OB.App.Class.Index({
-          name: 'characteristicId_idx',
-          properties: [{ property: 'id' }]
-        }),
-        new OB.App.Class.Index({
-          name: 'characteristicName_idx',
-          properties: [{ property: '_identifier' }]
-        })
-      ];
-    }
-  }
-  OB.App.MasterdataController.registerModel(Characteristic);
-
-  let CharacteristicMD = OB.Data.ExtensibleModel.extend({
+  let Characteristic = OB.Data.ExtensibleModel.extend({
     modelName: 'Characteristic',
     tableName: 'm_characteristic',
     entityName: 'Characteristic',
@@ -32,10 +15,10 @@
     dataLimit: OB.Dal.DATALIMIT,
     remoteDataLimit: OB.Dal.REMOTE_DATALIMIT,
     source: 'org.openbravo.retail.posterminal.master.Characteristic',
-    indexDBModel: Characteristic.prototype.getName()
+    indexDBModel: OB.App.MasterdataModels.Characteristic.getName()
   });
 
-  CharacteristicMD.addProperties([
+  Characteristic.addProperties([
     {
       name: 'id',
       column: 'id',
@@ -49,5 +32,5 @@
     }
   ]);
 
-  OB.Data.Registry.registerModel(CharacteristicMD);
+  OB.Data.Registry.registerModel(Characteristic);
 })();

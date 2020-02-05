@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019 Openbravo S.L.U.
+ * Copyright (C) 2019-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -8,38 +8,17 @@
  */
 
 (function() {
-  class ProductCategoryTree extends OB.App.Class.MasterdataModel {
-    constructor() {
-      super();
-      this.indices = [
-        new OB.App.Class.Index({
-          name: 'productcategorytree_parentId_idx',
-          properties: [{ property: 'parentId' }]
-        }),
-        new OB.App.Class.Index({
-          name: 'productcategorytree_id_idx',
-          properties: [{ property: 'id' }]
-        }),
-        new OB.App.Class.Index({
-          name: 'productcategorytree_crossstore_idx',
-          properties: [{ property: 'crossStore', isBoolean: true }]
-        })
-      ];
-    }
-  }
-  OB.App.MasterdataController.registerModel(ProductCategoryTree);
-
-  let ProductCategoryTreeMD = OB.Data.ExtensibleModel.extend({
+  let ProductCategoryTree = OB.Data.ExtensibleModel.extend({
     modelName: 'ProductCategoryTree',
     tableName: 'm_product_category_tree',
     entityName: 'ProductCategoryTree',
     source: 'org.openbravo.retail.posterminal.master.ProductCategoryTree',
     dataLimit: OB.Dal.DATALIMIT,
     includeTerminalDate: true,
-    indexDBModel: ProductCategoryTree.prototype.getName()
+    indexDBModel: OB.App.MasterdataModels.ProductCategoryTree.getName()
   });
 
-  ProductCategoryTreeMD.addProperties([
+  ProductCategoryTree.addProperties([
     {
       name: 'id',
       column: 'm_product_category_id',
@@ -107,5 +86,5 @@
     }
   ]);
 
-  OB.Data.Registry.registerModel(ProductCategoryTreeMD);
+  OB.Data.Registry.registerModel(ProductCategoryTree);
 })();

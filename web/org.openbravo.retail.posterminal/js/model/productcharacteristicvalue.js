@@ -7,24 +7,7 @@
  ************************************************************************************
  */
 (function() {
-  class ProductCharacteristicValue extends OB.App.Class.MasterdataModel {
-    constructor() {
-      super();
-      this.indices = [
-        new OB.App.Class.Index({
-          name: 'productCharacteristics_obposFilteronwebpos_idx',
-          properties: [{ property: 'obposFilteronwebpos', isBoolean: true }]
-        }),
-        new OB.App.Class.Index({
-          name: 'productCharacteristics_product_idx',
-          properties: [{ property: 'product' }]
-        })
-      ];
-    }
-  }
-  OB.App.MasterdataController.registerModel(ProductCharacteristicValue);
-
-  var ProductCharacteristicValueMD = OB.Data.ExtensibleModel.extend({
+  var ProductCharacteristicValue = OB.Data.ExtensibleModel.extend({
     modelName: 'ProductCharacteristicValue',
     tableName: 'm_product_ch_value',
     entityName: 'ProductCharacteristicValue',
@@ -33,10 +16,10 @@
     includeTerminalDate: true,
     remote: 'OBPOS_remote.product',
     dataLimit: OB.Dal.DATALIMIT,
-    indexDBModel: ProductCharacteristicValue.prototype.getName()
+    indexDBModel: OB.App.MasterdataModels.ProductCharacteristicValue.getName()
   });
 
-  ProductCharacteristicValueMD.addProperties([
+  ProductCharacteristicValue.addProperties([
     {
       name: 'id',
       column: 'm_product_ch_value_id',
@@ -75,7 +58,7 @@
     }
   ]);
 
-  ProductCharacteristicValueMD.addIndex([
+  ProductCharacteristicValue.addIndex([
     {
       name: 'm_ch_vl_prod_idx',
       columns: [
@@ -91,5 +74,5 @@
     }
   ]);
 
-  OB.Data.Registry.registerModel(ProductCharacteristicValueMD);
+  OB.Data.Registry.registerModel(ProductCharacteristicValue);
 })();

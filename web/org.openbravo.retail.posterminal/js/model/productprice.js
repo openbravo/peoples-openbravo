@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2019 Openbravo S.L.U.
+ * Copyright (C) 2015-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -8,23 +8,7 @@
  */
 
 (function() {
-  class ProductPrice extends OB.App.Class.MasterdataModel {
-    constructor() {
-      super();
-      this.indices = [
-        new OB.App.Class.Index({
-          name: 'pricelist_product_idx',
-          properties: [
-            { property: 'm_pricelist_id' },
-            { property: 'm_product_id' }
-          ]
-        })
-      ];
-    }
-  }
-  OB.App.MasterdataController.registerModel(ProductPrice);
-
-  var ProductPriceMD = OB.Data.ExtensibleModel.extend({
+  var ProductPrice = OB.Data.ExtensibleModel.extend({
     modelName: 'ProductPrice',
     tableName: 'm_productprice',
     entityName: 'ProductPrice',
@@ -32,10 +16,10 @@
     includeTerminalDate: true,
     paginationById: true,
     remote: 'OBPOS_remote.product',
-    indexDBModel: ProductPrice.prototype.getName()
+    indexDBModel: OB.App.MasterdataModels.ProductPrice.getName()
   });
 
-  ProductPriceMD.addProperties([
+  ProductPrice.addProperties([
     {
       name: 'm_productprice_id',
       column: 'm_productprice_id',
@@ -74,7 +58,7 @@
     }
   ]);
 
-  ProductPriceMD.addIndex([
+  ProductPrice.addIndex([
     {
       name: 'obpos_product_price_list',
       columns: [
@@ -91,5 +75,5 @@
   ]);
 
   //Register the model in the application
-  OB.Data.Registry.registerModel(ProductPriceMD);
+  OB.Data.Registry.registerModel(ProductPrice);
 })();
