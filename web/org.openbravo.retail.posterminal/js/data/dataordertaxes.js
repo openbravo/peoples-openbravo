@@ -23,7 +23,7 @@
     // In case of services with modifyTax flag activated, we need to recalculate taxes info
     const recalculatedLines = receipt
       .get('lines')
-      .filter(line => line.get('product').has('modifiedTaxCategory'))
+      .filter(line => line.get('product').get('modifiedTax'))
       .map(line => {
         line.set(
           'price',
@@ -57,6 +57,9 @@
     return new Promise(function(resolve, reject) {
       receipt.get('lines').forEach(line => {
         line.set('previousLineRate', line.get('lineRate'));
+        line
+          .get('product')
+          .set('modifiedTax', line.get('product').has('modifiedTaxCategory'));
         line.get('product').unset('modifiedTaxCategory');
       });
       const serviceLines = receipt
@@ -101,6 +104,7 @@
                     .get('lines')
                     .find(line => line.id === relatedProduct.orderlineId);
                   if (relatedLine) {
+                    relatedLine.get('product').set('modifiedTax', true);
                     relatedLine
                       .get('product')
                       .set(
