@@ -2599,9 +2599,11 @@ enyo.kind({
           errorMsgLbl = 'OBPOS_NegativePaymentOnReceipt';
         }
       }
-
       payments.each(function(payment) {
-        if (me.alreadyPaid) {
+        if (
+          me.alreadyPaid &&
+          !(payment.has('paymentRounding') && payment.get('paymentRounding'))
+        ) {
           me.avoidCompleteReceipt = true;
           errorMsgLbl = 'OBPOS_UnnecessaryPaymentAdded';
           return false;
@@ -3129,6 +3131,22 @@ enyo.kind({
       this.$.removePayment.hide();
       this.$.reversePayment.hide();
     } else if (
+      this.model.has('paymentRounding') &&
+      this.model.get('paymentRounding')
+    ) {
+      this.$.removePayment.hide();
+      if (this.model.get('isPaid') && !this.model.get('isReversePayment')) {
+        this.$.reversePayment.removeClass(
+          'obObposPointOfSaleUiReversePayment_iconReversePayment'
+        );
+        this.$.reversePayment.removeClass('obObposPointOfSaleUiReversePayment');
+        this.$.reversePayment.addClass(
+          'obObposPointOfSaleUiReversePaymentRounding'
+        );
+      } else {
+        this.$.reversePayment.hide();
+      }
+    } else if (
       this.model.get('isPrePayment') &&
       OB.MobileApp.model.hasPermission('OBPOS_EnableReversePayments', true)
     ) {
@@ -3206,6 +3224,12 @@ enyo.kind({
   },
   tap: function() {
     var me = this;
+    if (
+      me.owner.model.has('paymentRounding') &&
+      me.owner.model.get('paymentRounding')
+    ) {
+      return;
+    }
     if (
       OB.MobileApp.model.get('terminal').id !==
       me.owner.model.get('oBPOSPOSTerminal')

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2019 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -1306,12 +1307,21 @@ public class OrderLoader extends POSDataSynchronizationProcess
     }
 
     BigDecimal paymentAmt = BigDecimal.valueOf(jsonorder.optDouble("nettingPayment", 0));
+    BigDecimal roundingAmt = BigDecimal.ZERO;
     for (int i = 0; i < payments.length(); i++) {
       final JSONObject payment = payments.getJSONObject(i);
       paymentAmt = paymentAmt
           .add(BigDecimal.valueOf(payment.getDouble("origAmount"))
               .subtract(BigDecimal.valueOf(payment.optDouble("overpayment", 0))))
           .setScale(pricePrecision, RoundingMode.HALF_UP);
+      if (payment.optBoolean("paymentRounding", false)) {
+        roundingAmt = roundingAmt.add(BigDecimal.valueOf(payment.getDouble("paid")));
+      }
+    }
+
+    order.setObposRoundingAmount(roundingAmt);
+    if (createInvoice) {
+      invoice.setObposRoundingAmount(roundingAmt);
     }
 
     // Create a unique payment schedule for all payments
@@ -1737,6 +1747,24 @@ public class OrderLoader extends POSDataSynchronizationProcess
         doFlush = true;
       }
 
+      // If there is a rounding payment method set the G/L Item for Payment Rounding to the payment
+      // detail
+      if (paymentType.getPaymentMethod().isRounding()) {
+        if (paymentType.getPaymentMethod().getGlitemRound() == null) {
+          throw new OBException(
+              String.format(OBMessageUtils.messageBD("OBPOS_MissingRoundingDifference"),
+                  paymentType.getPaymentMethod().getSearchKey()));
+
+        }
+        // The rounding payment can only have one payment detail
+        Optional<FIN_PaymentDetail> paymentDetail = finPayment.getFINPaymentDetailList()
+            .stream()
+            .findFirst();
+        paymentDetail
+            .ifPresent(pd -> pd.setGLItem(paymentType.getPaymentMethod().getGlitemRound()));
+        doFlush = true;
+      }
+
       // Do the flush if needed
       if (doFlush) {
         OBDal.getInstance().flush();
@@ -1777,6 +1805,12 @@ public class OrderLoader extends POSDataSynchronizationProcess
       finPayment.setOBPOSPOSTerminal(payment.has("oBPOSPOSTerminal")
           ? OBDal.getInstance().get(OBPOSApplications.class, payment.getString("oBPOSPOSTerminal"))
           : null);
+
+      if (payment.optBoolean("paymentRounding", false)) {
+        FIN_Payment roundedPayment = OBDal.getInstance()
+            .getProxy(FIN_Payment.class, payment.getString("roundedPaymentId"));
+        finPayment.setOBPOSRoundedPayment(roundedPayment);
+      }
 
       OBDal.getInstance().save(finPayment);
 

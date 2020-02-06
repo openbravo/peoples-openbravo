@@ -10123,6 +10123,17 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconloading.gif');
 }
 
+.obObposPointOfSaleUiReversePaymentRounding {
+  margin: 0px;
+  padding: 0px;
+  cursor: default;
+  width: 32px;
+  height: 32px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-color: transparent;
+}
+
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.CreditButton
