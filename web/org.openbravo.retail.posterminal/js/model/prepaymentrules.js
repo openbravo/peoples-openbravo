@@ -21,7 +21,6 @@
         prepaymentLimitAmount = OB.DEC.Zero,
         prepaymentLayawayLimitAmount = OB.DEC.Zero,
         prepaymentAmount = receipt.get('lines').reduce(function(memo, line) {
-          debugger;
           prepaymentPercLimit = OB.MobileApp.model.get('terminal')
             .obposPrepaymentPercLimit;
           if (
