@@ -530,7 +530,6 @@ public class DefaultJsonDataService implements JsonDataService {
 
   private DataEntityQueryService createSetQueryService(Map<String, String> parameters,
       boolean forCountOperation, boolean forSubEntity, boolean filterOnReadableOrganizations) {
-    boolean hasSubentity = false;
     String entityName = parameters.get(JsonConstants.ENTITYNAME);
     final DataEntityQueryService queryService = OBProvider.getInstance()
         .get(DataEntityQueryService.class);
@@ -543,7 +542,10 @@ public class DefaultJsonDataService implements JsonDataService {
     log.trace("Generating QueryService for entity {} with profile {}", entityName, currentProfile);
 
     boolean includeOrgFilter = includeOrgFilter(parameters);
-    if (!forSubEntity && parameters.get(JsonConstants.DISTINCT_PARAMETER) != null) {
+
+    boolean hasSubentity = !forSubEntity
+        && parameters.get(JsonConstants.DISTINCT_PARAMETER) != null;
+    if (hasSubentity) {
       // this is the main entity of a 'contains' (used in FK drop down lists), it will create also
       // info for subentity
 
@@ -603,7 +605,6 @@ public class DefaultJsonDataService implements JsonDataService {
         // -Another one for subentity
         String baseCriteria = "";
         String subCriteria = "";
-        hasSubentity = true;
         if (!StringUtils.isEmpty(parameters.get("criteria"))) {
           String criteria = parameters.get("criteria");
           for (String criterion : criteria.split(JsonConstants.IN_PARAMETER_SEPARATOR)) {
