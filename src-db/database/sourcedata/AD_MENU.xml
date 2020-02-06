@@ -1726,20 +1726,6 @@
 <!--346-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--346--></AD_MENU>
 
-<!--347--><AD_MENU>
-<!--347-->  <AD_MENU_ID><![CDATA[347]]></AD_MENU_ID>
-<!--347-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--347-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--347-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--347-->  <NAME><![CDATA[Print Invoices]]></NAME>
-<!--347-->  <DESCRIPTION><![CDATA[Print Invoices to paper or send PDF]]></DESCRIPTION>
-<!--347-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--347-->  <ACTION><![CDATA[P]]></ACTION>
-<!--347-->  <AD_PROCESS_ID><![CDATA[200]]></AD_PROCESS_ID>
-<!--347-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--347-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
-<!--347--></AD_MENU>
-
 <!--349--><AD_MENU>
 <!--349-->  <AD_MENU_ID><![CDATA[349]]></AD_MENU_ID>
 <!--349-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

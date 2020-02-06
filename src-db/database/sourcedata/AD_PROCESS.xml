@@ -1671,30 +1671,6 @@ NOTE: You will not be able to close the fiscal year if you close all its periods
 <!--199-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
 <!--199--></AD_PROCESS>
 
-<!--200--><AD_PROCESS>
-<!--200-->  <AD_PROCESS_ID><![CDATA[200]]></AD_PROCESS_ID>
-<!--200-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--200-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--200-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--200-->  <VALUE><![CDATA[Invoice_Print]]></VALUE>
-<!--200-->  <NAME><![CDATA[Print Invoices]]></NAME>
-<!--200-->  <DESCRIPTION><![CDATA[Print Invoices to paper or send PDF]]></DESCRIPTION>
-<!--200-->  <HELP><![CDATA[Remark: If you enter just a Document No FROM value, all invoices greater or equal to that document number are printed; alternatively, you may use the % character as a wildcard.]]></HELP>
-<!--200-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--200-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--200-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--200-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--200-->  <CLASSNAME><![CDATA[ad_process/PrintInvoices.html]]></CLASSNAME>
-<!--200-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--200-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--200-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--200-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--200-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--200-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--200-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--200-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--200--></AD_PROCESS>
-
 <!--202--><AD_PROCESS>
 <!--202-->  <AD_PROCESS_ID><![CDATA[202]]></AD_PROCESS_ID>
 <!--202-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

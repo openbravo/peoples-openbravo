@@ -1657,103 +1657,6 @@ Usually, company's internal identifiers for various records (products, customers
 <!--268-->  <AD_ELEMENT_ID><![CDATA[1922]]></AD_ELEMENT_ID>
 <!--268--></AD_PROCESS_PARA>
 
-<!--275--><AD_PROCESS_PARA>
-<!--275-->  <AD_PROCESS_PARA_ID><![CDATA[275]]></AD_PROCESS_PARA_ID>
-<!--275-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--275-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--275-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--275-->  <NAME><![CDATA[Email PDF]]></NAME>
-<!--275-->  <DESCRIPTION><![CDATA[Email Invoice PDF files to customer]]></DESCRIPTION>
-<!--275-->  <HELP><![CDATA[Email Invoice PDF files to customer]]></HELP>
-<!--275-->  <AD_PROCESS_ID><![CDATA[200]]></AD_PROCESS_ID>
-<!--275-->  <SEQNO><![CDATA[10]]></SEQNO>
-<!--275-->  <AD_REFERENCE_ID><![CDATA[20]]></AD_REFERENCE_ID>
-<!--275-->  <COLUMNNAME><![CDATA[EmailPDF]]></COLUMNNAME>
-<!--275-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--275-->  <FIELDLENGTH><![CDATA[0]]></FIELDLENGTH>
-<!--275-->  <ISMANDATORY><![CDATA[N]]></ISMANDATORY>
-<!--275-->  <ISRANGE><![CDATA[N]]></ISRANGE>
-<!--275-->  <AD_ELEMENT_ID><![CDATA[1953]]></AD_ELEMENT_ID>
-<!--275--></AD_PROCESS_PARA>
-
-<!--276--><AD_PROCESS_PARA>
-<!--276-->  <AD_PROCESS_PARA_ID><![CDATA[276]]></AD_PROCESS_PARA_ID>
-<!--276-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--276-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--276-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--276-->  <NAME><![CDATA[Invoice Date]]></NAME>
-<!--276-->  <DESCRIPTION><![CDATA[The time listed on the invoice.]]></DESCRIPTION>
-<!--276-->  <HELP><![CDATA[The Date Invoice indicates the date printed on the invoice.]]></HELP>
-<!--276-->  <AD_PROCESS_ID><![CDATA[200]]></AD_PROCESS_ID>
-<!--276-->  <SEQNO><![CDATA[20]]></SEQNO>
-<!--276-->  <AD_REFERENCE_ID><![CDATA[15]]></AD_REFERENCE_ID>
-<!--276-->  <COLUMNNAME><![CDATA[DateInvoiced]]></COLUMNNAME>
-<!--276-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--276-->  <FIELDLENGTH><![CDATA[10]]></FIELDLENGTH>
-<!--276-->  <ISMANDATORY><![CDATA[N]]></ISMANDATORY>
-<!--276-->  <ISRANGE><![CDATA[Y]]></ISRANGE>
-<!--276-->  <AD_ELEMENT_ID><![CDATA[267]]></AD_ELEMENT_ID>
-<!--276--></AD_PROCESS_PARA>
-
-<!--277--><AD_PROCESS_PARA>
-<!--277-->  <AD_PROCESS_PARA_ID><![CDATA[277]]></AD_PROCESS_PARA_ID>
-<!--277-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--277-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--277-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--277-->  <NAME><![CDATA[Business Partner]]></NAME>
-<!--277-->  <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
-<!--277-->  <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a customer, vendor, employee or any combination of these.]]></HELP>
-<!--277-->  <AD_PROCESS_ID><![CDATA[200]]></AD_PROCESS_ID>
-<!--277-->  <SEQNO><![CDATA[30]]></SEQNO>
-<!--277-->  <AD_REFERENCE_ID><![CDATA[30]]></AD_REFERENCE_ID>
-<!--277-->  <AD_REFERENCE_VALUE_ID><![CDATA[800057]]></AD_REFERENCE_VALUE_ID>
-<!--277-->  <COLUMNNAME><![CDATA[C_BPartner_ID]]></COLUMNNAME>
-<!--277-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--277-->  <FIELDLENGTH><![CDATA[0]]></FIELDLENGTH>
-<!--277-->  <ISMANDATORY><![CDATA[N]]></ISMANDATORY>
-<!--277-->  <ISRANGE><![CDATA[N]]></ISRANGE>
-<!--277-->  <AD_ELEMENT_ID><![CDATA[187]]></AD_ELEMENT_ID>
-<!--277--></AD_PROCESS_PARA>
-
-<!--278--><AD_PROCESS_PARA>
-<!--278-->  <AD_PROCESS_PARA_ID><![CDATA[278]]></AD_PROCESS_PARA_ID>
-<!--278-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--278-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--278-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--278-->  <NAME><![CDATA[Invoice]]></NAME>
-<!--278-->  <DESCRIPTION><![CDATA[A document listing products, quantities and prices, payment terms, etc.]]></DESCRIPTION>
-<!--278-->  <HELP><![CDATA[The Invoice ID uniquely identifies an Invoice Document.]]></HELP>
-<!--278-->  <AD_PROCESS_ID><![CDATA[200]]></AD_PROCESS_ID>
-<!--278-->  <SEQNO><![CDATA[40]]></SEQNO>
-<!--278-->  <AD_REFERENCE_ID><![CDATA[30]]></AD_REFERENCE_ID>
-<!--278-->  <AD_REFERENCE_VALUE_ID><![CDATA[800059]]></AD_REFERENCE_VALUE_ID>
-<!--278-->  <COLUMNNAME><![CDATA[C_Invoice_ID]]></COLUMNNAME>
-<!--278-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--278-->  <FIELDLENGTH><![CDATA[0]]></FIELDLENGTH>
-<!--278-->  <ISMANDATORY><![CDATA[N]]></ISMANDATORY>
-<!--278-->  <ISRANGE><![CDATA[N]]></ISRANGE>
-<!--278-->  <AD_ELEMENT_ID><![CDATA[1008]]></AD_ELEMENT_ID>
-<!--278--></AD_PROCESS_PARA>
-
-<!--279--><AD_PROCESS_PARA>
-<!--279-->  <AD_PROCESS_PARA_ID><![CDATA[279]]></AD_PROCESS_PARA_ID>
-<!--279-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--279-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--279-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--279-->  <NAME><![CDATA[Mail Template]]></NAME>
-<!--279-->  <DESCRIPTION><![CDATA[A template used to organize and send mail using a standard format.]]></DESCRIPTION>
-<!--279-->  <HELP><![CDATA[The Mail Template indicates the mail template for return messages.]]></HELP>
-<!--279-->  <AD_PROCESS_ID><![CDATA[200]]></AD_PROCESS_ID>
-<!--279-->  <SEQNO><![CDATA[15]]></SEQNO>
-<!--279-->  <AD_REFERENCE_ID><![CDATA[19]]></AD_REFERENCE_ID>
-<!--279-->  <COLUMNNAME><![CDATA[R_MailText_ID]]></COLUMNNAME>
-<!--279-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--279-->  <FIELDLENGTH><![CDATA[0]]></FIELDLENGTH>
-<!--279-->  <ISMANDATORY><![CDATA[N]]></ISMANDATORY>
-<!--279-->  <ISRANGE><![CDATA[N]]></ISRANGE>
-<!--279-->  <AD_ELEMENT_ID><![CDATA[1515]]></AD_ELEMENT_ID>
-<!--279--></AD_PROCESS_PARA>
-
 <!--280--><AD_PROCESS_PARA>
 <!--280-->  <AD_PROCESS_PARA_ID><![CDATA[280]]></AD_PROCESS_PARA_ID>
 <!--280-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -2101,25 +2004,6 @@ Usually, company's internal identifiers for various records (products, customers
 <!--300-->  <ISRANGE><![CDATA[N]]></ISRANGE>
 <!--300-->  <AD_ELEMENT_ID><![CDATA[1615]]></AD_ELEMENT_ID>
 <!--300--></AD_PROCESS_PARA>
-
-<!--301--><AD_PROCESS_PARA>
-<!--301-->  <AD_PROCESS_PARA_ID><![CDATA[301]]></AD_PROCESS_PARA_ID>
-<!--301-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--301-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--301-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--301-->  <NAME><![CDATA[Document No.]]></NAME>
-<!--301-->  <DESCRIPTION><![CDATA[An often automatically generated identifier for all documents.]]></DESCRIPTION>
-<!--301-->  <HELP><![CDATA[The document number is usually automatically generated by the system and determined by the document type of the document. If the document is not saved, the preliminary number is displayed in "<>". If the document type of your document has no automatic document sequence defined, the field will be empty when creating a new document. This is for documents which usually have an external number (like vendor invoice).  If you leave the field empty, the system will generate a document number for you. The document sequence used for this fallback number is defined in the "Document Sequence" window with the name "DocumentNo_<TableName>", where TableName is the actual name of the table inside the database (e.g. C_Order).]]></HELP>
-<!--301-->  <AD_PROCESS_ID><![CDATA[200]]></AD_PROCESS_ID>
-<!--301-->  <SEQNO><![CDATA[50]]></SEQNO>
-<!--301-->  <AD_REFERENCE_ID><![CDATA[10]]></AD_REFERENCE_ID>
-<!--301-->  <COLUMNNAME><![CDATA[DocumentNo]]></COLUMNNAME>
-<!--301-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--301-->  <FIELDLENGTH><![CDATA[20]]></FIELDLENGTH>
-<!--301-->  <ISMANDATORY><![CDATA[N]]></ISMANDATORY>
-<!--301-->  <ISRANGE><![CDATA[Y]]></ISRANGE>
-<!--301-->  <AD_ELEMENT_ID><![CDATA[290]]></AD_ELEMENT_ID>
-<!--301--></AD_PROCESS_PARA>
 
 <!--302--><AD_PROCESS_PARA>
 <!--302-->  <AD_PROCESS_PARA_ID><![CDATA[302]]></AD_PROCESS_PARA_ID>
