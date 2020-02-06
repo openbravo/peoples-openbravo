@@ -131,7 +131,7 @@
           };
           return calculateDifference(tax1).compareTo(
             calculateDifference(tax2)
-          ) > 0
+          ) < 0
             ? tax1
             : tax2;
         });
