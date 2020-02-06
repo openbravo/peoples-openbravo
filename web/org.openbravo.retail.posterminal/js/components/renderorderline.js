@@ -657,12 +657,14 @@ enyo.kind({
       );
       this.$.amount.setContent(this.model.printAmount());
     } else {
-      var receipt = this.owner.owner.owner.owner.order;
-      this.$.name.setContent(
-        OB.MobileApp.model.getPaymentName(this.model.get('kind')) ||
-          this.model.get('name')
-      );
-      this.$.amount.setContent(this.model.printAmountWithSignum(receipt));
+      if (!OB.UTIL.isNullOrUndefined(this.owner.owner)) {
+        var receipt = this.owner.owner.owner.owner.order;
+        this.$.name.setContent(
+          OB.MobileApp.model.getPaymentName(this.model.get('kind')) ||
+            this.model.get('name')
+        );
+        this.$.amount.setContent(this.model.printAmountWithSignum(receipt));
+      }
     }
     if (
       this &&

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2019 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -892,71 +892,21 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.MenuSelectPrinter',
-  kind: 'OB.UI.MenuAction',
-  classes: 'obUiMenuSelectPrinter',
-  permission: 'OBPOS_retail.selectprinter',
-  events: {
-    onModalSelectPrinters: ''
-  },
-  i18nLabel: 'OBPOS_MenuSelectPrinter',
-  init: function(model) {
-    this.displayLogic();
-  },
-  tap: function() {
-    if (this.disabled) {
-      return true;
-    }
-    this.inherited(arguments); // Manual dropdown menu closure
-    if (OB.MobileApp.model.hasPermission(this.permission)) {
-      this.doModalSelectPrinters();
-    }
-  },
-  displayLogic: function() {
-    if (
-      !OB.MobileApp.model.get('terminal').terminalType.selectprinteralways &&
-      _.any(OB.POS.modelterminal.get('hardwareURL'), function(printer) {
-        return printer.hasReceiptPrinter;
-      })
-    ) {
-      this.show();
-    } else {
-      this.hide();
-    }
+  kind: 'OB.UI.ActionMenuAction',
+  classes: 'obUiMenuReturn',
+  action: {
+    window: 'retail.pointofsale',
+    name: 'selectPrinter'
   }
 });
 
 enyo.kind({
   name: 'OB.UI.MenuSelectPDFPrinter',
-  kind: 'OB.UI.MenuAction',
-  classes: 'obUiMenuSelectPDFPrinter',
-  permission: 'OBPOS_retail.selectprinter',
-  events: {
-    onModalSelectPDFPrinters: ''
-  },
-  i18nLabel: 'OBPOS_MenuSelectPDFPrinter',
-  init: function(model) {
-    this.displayLogic();
-  },
-  tap: function() {
-    if (this.disabled) {
-      return true;
-    }
-    this.inherited(arguments); // Manual dropdown menu closure
-    if (OB.MobileApp.model.hasPermission(this.permission)) {
-      this.doModalSelectPDFPrinters();
-    }
-  },
-  displayLogic: function() {
-    if (
-      !OB.MobileApp.model.get('terminal').terminalType.selectprinteralways &&
-      _.any(OB.POS.modelterminal.get('hardwareURL'), function(printer) {
-        return printer.hasPDFPrinter;
-      })
-    ) {
-      this.show();
-    } else {
-      this.hide();
-    }
+  kind: 'OB.UI.ActionMenuAction',
+  classes: 'obUiMenuReturn',
+  action: {
+    window: 'retail.pointofsale',
+    name: 'selectPDFPrinter'
   }
 });
 

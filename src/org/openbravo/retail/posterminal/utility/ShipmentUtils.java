@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018-2019 Openbravo S.L.U.
+ * Copyright (C) 2018-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -689,10 +689,9 @@ public class ShipmentUtils {
       if (proc instanceof OrderLoaderPreAddShipmentLineHook) {
         OrderLoaderPreAddShipmentLineHook_Response hookResponse = ((OrderLoaderPreAddShipmentLineHook) proc)
             .exec(action, jsonorderline, orderline, jsonorder, order, bin);
-        if (hookResponse == null) {
-          return null;
+        if (hookResponse != null) {
+          return hookResponse;
         }
-        return hookResponse;
       }
     }
     return null;
