@@ -10631,6 +10631,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes {
 /* Inherits: [Scroller] */
   overflow-x: hidden;
+  height: 100%;
 }
 
 .obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes .enyo-touch-scroller {
@@ -10638,6 +10639,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields {
+  padding: 9px 15px;
 }
 
 .obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-customerOnlyFields-personalInfo{}
@@ -10754,6 +10756,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   display: grid;
   grid-auto-flow: column;
   grid-gap: 15px;
+  padding: 9px 15px;
 }
 
 @media all and (max-aspect-ratio: 9/8) {
@@ -10812,7 +10815,9 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   width: 40px;
 }
 
-.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-statistics {}
+.obObposPointOfSaleUiCustomersEditCreatecustomers-customerAttributes-statistics {
+  padding: 9px 15px;
+}
 
 .obObposPointOfSaleUiCustomersEditCreatecustomers-statistics-statisticsLbl {
 	/*OB.UI.FormSection.Label*/
@@ -10899,7 +10904,9 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSPointOfSale.UI.customers.edit_createcustomers_impl
 # Inherits: [OB.OBPOSPointOfSale.UI.customers.edit_createcustomers]
 */
-.obObposPointOfSaleUiCustomersEditCreatecustomersImpl {}
+.obObposPointOfSaleUiCustomersEditCreatecustomersImpl {
+  height: 100%;
+}
 
 .obObposPointOfSaleUiCustomersEditCreatecustomersImpl-newAttributes-greeting {
 /* Inherits: [OB.UI.CustomerComboProperty] */
@@ -11104,7 +11111,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Inherits: [OB.OBPOSPointOfSale.UI.customers.edit_createcustomers]
 */
 .obObPosPointOfSaleUiCustomersEditCustomersImpl {
-  padding: 9px 15px;
+  height: 100%;
 }
 
 .obObPosPointOfSaleUiCustomersEditCustomersImpl-greeting {
