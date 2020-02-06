@@ -269,10 +269,7 @@
     }
 
     static equals(value1, value2) {
-      if (
-        OB.UTIL.isNullOrUndefined(value1) &&
-        OB.UTIL.isNullOrUndefined(value2)
-      ) {
+      if (!value1 && !value2) {
         return true;
       }
       return value1 === value2;
