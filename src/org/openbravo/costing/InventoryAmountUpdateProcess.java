@@ -121,7 +121,7 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
                 " where exists (" +
                 "      select 1 from InventoryAmountUpdateLineInventories invAmtUpd" +
                 "       where invAmtUpd.caInventoryamtline.caInventoryamt.id =:invAmtUpdId" +
-                "         and invAmtUpd.initInventory = inv" +
+                "         and invAmtUpd.initInventory.id = inv.id" +
                 "      )";
         //@formatter:on
 
@@ -258,7 +258,7 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
             "  , sum(trx.orderQuantity)" +
             " from MaterialMgmtMaterialTransaction as trx" +
             "    join trx.storageBin as loc" +
-            " where trx.organization.id in (:orgs)";
+            " where trx.organization.id in (:orgIds)";
     //@formatter:on
     if (localDate != null) {
       if (backdatedTransactionsFixed) {
@@ -280,7 +280,7 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
         }
         //@formatter:off
         hqlSubSelect +=
-                " where trx.product.id = :product" +
+                " where trx.product.id = :productId" +
                 "   and trx.movementDate > :date" +
         // Include only transactions that have its cost calculated
                 "   and trx.isCostCalculated = true";
@@ -288,23 +288,23 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
         if (warehouse != null) {
           //@formatter:off
           hqlSubSelect +=
-                "   and locator.warehouse.id = :warehouse";
+                "   and locator.warehouse.id = :warehouseId";
           //@formatter:on
         }
         //@formatter:off
         hqlSubSelect +=
-                "   and trx.organization.id in (:orgs)";
+                "   and trx.organization.id in (:orgIds)";
         //@formatter:on
 
         final Query<Date> trxsubQry = OBDal.getInstance()
             .getSession()
             .createQuery(hqlSubSelect, Date.class)
             .setParameter("date", localDate)
-            .setParameter("product", product.getId());
+            .setParameter("productId", product.getId());
         if (warehouse != null) {
-          trxsubQry.setParameter("warehouse", warehouse.getId());
+          trxsubQry.setParameter("warehouseId", warehouse.getId());
         }
-        final Date trxprocessDate = trxsubQry.setParameterList("orgs", childOrgs).uniqueResult();
+        final Date trxprocessDate = trxsubQry.setParameterList("orgIds", childOrgs).uniqueResult();
         if (trxprocessDate != null) {
           localDate = trxprocessDate;
           //@formatter:off
@@ -322,12 +322,12 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
     if (warehouse != null) {
       //@formatter:off
       hqlSelect +=
-                "   and loc.warehouse = :warehouse";
+                "   and loc.warehouse.id = :warehouseId";
       //@formatter:on
     }
     //@formatter:off
     hqlSelect +=
-            "   and trx.product = :product" +
+            "   and trx.product.id = :productId" +
             " group by trx.attributeSetValue.id" +
             "   , trx.uOM.id" +
             "   , trx.orderUOM.id" +
@@ -344,14 +344,14 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
     final Query<Object[]> stockLinesQry = OBDal.getInstance()
         .getSession()
         .createQuery(hqlSelect, Object[].class)
-        .setParameterList("orgs", childOrgs);
+        .setParameterList("orgIds", childOrgs);
     if (localDate != null) {
       stockLinesQry.setParameter("date", localDate);
     }
     if (warehouse != null) {
-      stockLinesQry.setParameter("warehouse", warehouse);
+      stockLinesQry.setParameter("warehouseId", warehouse.getId());
     }
-    return stockLinesQry.setParameter("product", product)
+    return stockLinesQry.setParameter("productId", product.getId())
         .setFetchSize(1000)
         .scroll(ScrollMode.FORWARD_ONLY);
   }
