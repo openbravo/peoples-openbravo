@@ -261,13 +261,13 @@ public abstract class CostingAlgorithmAdjustmentImp {
       final String hql =
                   "select max(lineNo)" +
                   "  from CostAdjustmentLine as cal"+
-                  " where cal.costAdjustment.id = :costAdjustment";
+                  " where cal.costAdjustment.id = :costAdjustmentId";
       //@formatter:on
 
       nextLineNo = OBDal.getInstance()
           .getSession()
           .createQuery(hql, Long.class)
-          .setParameter("costAdjustment", strCostAdjId)
+          .setParameter("costAdjustmentId", strCostAdjId)
           .setMaxResults(1)
           .uniqueResult();
     }
@@ -472,14 +472,14 @@ public abstract class CostingAlgorithmAdjustmentImp {
                   "  join trx.goodsShipmentLine as iol" +
                   "  join iol.shipmentReceipt as io" +
                   "  join iol.salesOrderLine as ol" +
-                  " where ol.goodsShipmentLine = :shipment" +
+                  " where ol.goodsShipmentLine.id = :shipmentId" +
                   "   and io.documentStatus <> 'VO'";
     //@formatter:on
 
     final ScrollableResults trxs = OBDal.getInstance()
         .createQuery(MaterialTransaction.class, hql)
         .setFilterOnReadableOrganization(false)
-        .setNamedParameter("shipment", inoutline)
+        .setNamedParameter("shipmentId", inoutline.getId())
         .scroll(ScrollMode.FORWARD_ONLY);
     try {
       int counter = 0;
@@ -555,7 +555,6 @@ public abstract class CostingAlgorithmAdjustmentImp {
         adjAmt = getDefaultCostDifference(calTrxType, costAdjLine);
         break;
       case InventoryIncrease:
-        break;
       case InventoryOpening:
         // If the inventory line defines a unit cost it does not depend on the date.
         break;
@@ -568,19 +567,12 @@ public abstract class CostingAlgorithmAdjustmentImp {
         adjAmt = getInventoryClosingAmt(costAdjLine);
         break;
       case Shipment:
-        break;
       case ReceiptReturn:
-        break;
       case ReceiptNegative:
-        break;
       case InventoryDecrease:
-        break;
       case IntMovementFrom:
-        break;
       case InternalCons:
-        break;
       case BOMPart:
-        break;
       case ManufacturingConsumed:
         // These transactions are calculated as regular outgoing transactions. The adjustment amount
         // needs to be calculated by the algorithm.
