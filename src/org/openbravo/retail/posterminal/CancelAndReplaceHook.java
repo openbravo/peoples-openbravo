@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2016-2019 Openbravo S.L.U.
+ * Copyright (C) 2016-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -8,6 +8,8 @@
  */
 
 package org.openbravo.retail.posterminal;
+
+import java.math.BigDecimal;
 
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.dal.service.OBDal;
@@ -25,7 +27,7 @@ public class CancelAndReplaceHook extends CancelAndReplaceOrderHook {
   public void exec(boolean replaceOrder, boolean triggersDisabled, Order oldOrder, Order newOrder,
       Order inverseOrder, JSONObject jsonorder) throws Exception {
     if (jsonorder != null) {
-      if (oldOrder.isObposIslayaway()) {
+      if (oldOrder.isObposIslayaway().booleanValue()) {
         oldOrder.setObposIslayaway(false);
         inverseOrder.setObposIslayaway(false);
       }
@@ -34,6 +36,11 @@ public class CancelAndReplaceHook extends CancelAndReplaceOrderHook {
       final OBPOSApplications posTerminal = OBDal.getInstance()
           .get(OBPOSApplications.class, jsonorder.getString("posTerminal"));
       inverseOrder.setObposApplications(posTerminal);
+
+      if (inverseOrder.getObposRoundingAmount() != null
+          && inverseOrder.getObposRoundingAmount().compareTo(BigDecimal.ZERO) != 0) {
+        inverseOrder.setObposRoundingAmount(inverseOrder.getObposRoundingAmount().negate());
+      }
     }
   }
 }
