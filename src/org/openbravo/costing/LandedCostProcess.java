@@ -148,15 +148,15 @@ public class LandedCostProcess {
                   "       join iol.shipmentReceipt as io" +
                   "     where trx.isCostCalculated = false" +
                   "       and iol.movementQuantity >= 0" +
-                  "       and ((lcrrl is not null and lcrrl = iol)" +
-                  "       or (lcrrl is null and lcrr = io))" +
+                  "       and ((lcrrl is not null and lcrrl.id = iol.id)" +
+                  "       or (lcrrl is null and lcrr.id = io.id))" +
                   "   )" +
-                  "   and lcr.landedCost = :landedcost";
+                  "   and lcr.landedCost.id = :landedCostId";
     //@formatter:on
 
     final OBQuery<LCReceipt> qryTrx = OBDal.getInstance()
         .createQuery(LCReceipt.class, hql)
-        .setNamedParameter("landedcost", landedCost);
+        .setNamedParameter("landedCostId", landedCost.getId());
 
     if (qryTrx.count() > 0) {
       String strReceiptNumbers = "";
@@ -224,16 +224,15 @@ public class LandedCostProcess {
                   " select sum(rla.amount) as amt" +
                   "   , rla.landedCostCost.currency.id as lcCostCurrency" +
                   "   , gsl.id as receipt" +
-                  "   , (" +
-                  "       select transactionProcessDate " +
-                  "         from MaterialMgmtMaterialTransaction as transaction " +
-                  "        where goodsShipmentLine.id = gsl.id" +
+                  "   , (select transactionProcessDate " +
+                  "      from MaterialMgmtMaterialTransaction as transaction " +
+                  "      where goodsShipmentLine.id = gsl.id" +
                   "     ) as trxprocessdate" +
                   "  from LandedCostReceiptLineAmt as rla" +
                   "    join rla.landedCostReceipt as rl" +
                   "    join rl.goodsShipment as gs" +
                   "    join rla.goodsShipmentLine as gsl" +
-                  " where rl.landedCost = :lc" +
+                  " where rl.landedCost.id = :landedCostId" +
                   "   and rla.isMatchingAdjustment = false " +
                   " group by rla.landedCostCost.currency.id" +
                   "   , gsl.id" +
@@ -248,7 +247,7 @@ public class LandedCostProcess {
     final ScrollableResults receiptamts = OBDal.getInstance()
         .getSession()
         .createQuery(hql, Object[].class)
-        .setParameter("lc", landedCost)
+        .setParameter("landedCostId", landedCost.getId())
         .scroll(ScrollMode.FORWARD_ONLY);
 
     int i = 0;
