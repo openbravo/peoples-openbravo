@@ -16,7 +16,8 @@
     includeTerminalDate: true,
     paginationById: true,
     remote: 'OBPOS_remote.product',
-    indexDBModel: OB.App.MasterdataModels.ProductPrice.getName()
+    indexDBModel: OB.App.MasterdataModels.ProductPrice.getName(),
+    legacyModel: true
   });
 
   ProductPrice.addProperties([

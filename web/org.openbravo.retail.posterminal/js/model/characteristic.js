@@ -15,7 +15,8 @@
     dataLimit: OB.Dal.DATALIMIT,
     remoteDataLimit: OB.Dal.REMOTE_DATALIMIT,
     source: 'org.openbravo.retail.posterminal.master.Characteristic',
-    indexDBModel: OB.App.MasterdataModels.Characteristic.getName()
+    indexDBModel: OB.App.MasterdataModels.Characteristic.getName(),
+    legacyModel: true
   });
 
   Characteristic.addProperties([

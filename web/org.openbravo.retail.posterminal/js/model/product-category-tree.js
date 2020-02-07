@@ -15,7 +15,8 @@
     source: 'org.openbravo.retail.posterminal.master.ProductCategoryTree',
     dataLimit: OB.Dal.DATALIMIT,
     includeTerminalDate: true,
-    indexDBModel: OB.App.MasterdataModels.ProductCategoryTree.getName()
+    indexDBModel: OB.App.MasterdataModels.ProductCategoryTree.getName(),
+    legacyModel: true
   });
 
   ProductCategoryTree.addProperties([

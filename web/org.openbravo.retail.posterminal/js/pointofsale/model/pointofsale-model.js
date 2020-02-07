@@ -24,10 +24,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       generatedModel: true,
       modelName: 'TaxZone'
     },
-    OB.Model.Product,
-    OB.Model.ProductCategoryTree,
     OB.Model.PriceList,
-    OB.Model.ProductPrice,
     OB.Model.ServiceProduct,
     OB.Model.ServiceProductCategory,
     OB.Model.ServicePriceRule,
@@ -45,9 +42,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     OB.Model.CancelLayaway,
     OB.Model.ProductServiceLinked, //
     OB.Model.CurrencyPanel,
-    OB.Model.ProductCharacteristicValue,
-    OB.Model.CharacteristicValue,
-    OB.Model.Characteristic,
     OB.Model.CashUp,
     OB.Model.OfflinePrinter,
     OB.Model.PaymentMethodCashUp,

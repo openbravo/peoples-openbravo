@@ -16,7 +16,8 @@
     includeTerminalDate: true,
     remote: 'OBPOS_remote.product',
     dataLimit: OB.Dal.DATALIMIT,
-    indexDBModel: OB.App.MasterdataModels.ProductCharacteristicValue.getName()
+    indexDBModel: OB.App.MasterdataModels.ProductCharacteristicValue.getName(),
+    legacyModel: true
   });
 
   ProductCharacteristicValue.addProperties([

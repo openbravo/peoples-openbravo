@@ -20,7 +20,8 @@
     initialize: function() {
       this.set('originalStandardPrice', this.get('standardPrice'));
     },
-    indexDBModel: OB.App.MasterdataModels.Product.getName()
+    indexDBModel: OB.App.MasterdataModels.Product.getName(),
+    legacyModel: true
   });
 
   Product.addProperties([

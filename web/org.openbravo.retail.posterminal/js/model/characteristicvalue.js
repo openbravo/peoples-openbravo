@@ -15,7 +15,8 @@
     remote: 'OBPOS_remote.product',
     dataLimit: OB.Dal.DATALIMIT,
     source: 'org.openbravo.retail.posterminal.master.CharacteristicValue',
-    indexDBModel: OB.App.MasterdataModels.CharacteristicValue.getName()
+    indexDBModel: OB.App.MasterdataModels.CharacteristicValue.getName(),
+    legacyModel: true
   });
 
   CharacteristicValue.addProperties([
