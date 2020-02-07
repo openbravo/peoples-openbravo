@@ -640,8 +640,8 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
         areBackdatedTrxFixed);
     if (costing == null) {
       // In case the backdated transaction is on a date where the stock was not initialized there
-      // costing.
-      // Try again with average algorithm getProductCost method using the movement date as
+      // isn't any costing entry related to an inventory transaction which results in a null
+      // costing. Try again with average algorithm getProductCost method using the movement date as
       // parameter.
       costing = AverageAlgorithm.getProductCost(trx.getMovementDate(), trx.getProduct(),
           getCostDimensions(), getCostOrg());
@@ -696,6 +696,9 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
             "   and (";
     //@formatter:on
 
+    // Consider only transactions with movement date equal or later than the movement date of the
+    // adjusted transaction. But for transactions with the same movement date only those with a
+    // transaction date after the process date of the adjusted transaction.
     if (costingRule.isBackdatedTransactionsFixed()) {
       //@formatter:off
       hql +=
@@ -716,6 +719,8 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     //@formatter:on
 
     if (costingRule.isBackdatedTransactionsFixed()) {
+      // If there are more than one trx on the same trx process date filter out those types with
+      // less priority and / or higher quantity.
       //@formatter:off
       hql +=
             "   ) or (trx.transactionProcessDate >= :fixbdt" +
@@ -767,7 +772,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
             "   , trx.id";
     //@formatter:on
 
-    OBQuery<MaterialTransaction> trxQry = OBDal.getInstance()
+    final OBQuery<MaterialTransaction> trxQry = OBDal.getInstance()
         .createQuery(MaterialTransaction.class, hql)
         .setFilterOnReadableOrganization(false)
         .setFilterOnReadableClients(false)
@@ -875,6 +880,8 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
             "   or (trx.movementDate = :mvtdate";
       //@formatter:on
     }
+    // If there are more than one trx on the same trx process date filter out those types with less
+    // priority and / or higher quantity.
     //@formatter:off
     hql +=
             "   and (trx.transactionProcessDate < :trxdate" +
@@ -891,6 +898,11 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
             "  ))";
       //@formatter:on
     }
+
+    // Include only transactions that have its cost calculated
+    //@formatter:off
+    hql += "  and trx.isCostCalculated = true";
+    //@formatter:on
 
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       //@formatter:off
@@ -987,7 +999,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
             "   c.endingDate desc";
     //@formatter:on
 
-    OBQuery<Costing> qryCosting = OBDal.getInstance()
+    final OBQuery<Costing> qryCosting = OBDal.getInstance()
         .createQuery(Costing.class, hql)
         .setNamedParameter("product", bdCosting.getProduct());
     // FIXME: remove when manufacturing costs are fully migrated
@@ -1000,7 +1012,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
       qryCosting.setNamedParameter("warehouse", bdCosting.getWarehouse());
     }
 
-    Costing lastCosting = qryCosting.setNamedParameter("endDate", bdCosting.getStartingDate())
+    final Costing lastCosting = qryCosting.setNamedParameter("endDate", bdCosting.getStartingDate())
         .setFetchSize(1)
         .setMaxResult(1)
         .uniqueResult();
@@ -1080,6 +1092,8 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
             "   and c.warehouse = :warehouse";
       //@formatter:on
     }
+    // The starting date of the costing needs to be before the reference date to avoid the case when
+    // the given transaction has a related average costing.
     //@formatter:off
     hql +=
             "   and c.id != :sourceid" +
