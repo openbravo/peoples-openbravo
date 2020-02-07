@@ -58,6 +58,10 @@
             { property: 'productType' },
             { property: 'proposalType' }
           ]
+        }),
+        new OB.App.Class.Index({
+          name: 'productUPC_idx',
+          properties: [{ property: 'uPCEAN' }]
         })
       ];
     }

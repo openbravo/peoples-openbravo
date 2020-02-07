@@ -718,7 +718,13 @@ enyo.kind({
         };
         if (args.dataProducts && args.dataProducts.length > 0) {
           OB.debug('productfound');
-          args.callback(args.dataProducts.at(0), args.attrs);
+          let data;
+          if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+            data = args.dataProducts.at(0);
+          } else {
+            data = args.dataProducts[0];
+          }
+          args.callback(data, args.attrs);
         } else {
           // If rfid has been used remove code from buffer
           if (
