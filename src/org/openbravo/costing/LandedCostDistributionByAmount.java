@@ -144,10 +144,10 @@ public class LandedCostDistributionByAmount extends LandedCostDistributionAlgori
             " where tc.unitCost = true" +
             "   and iol.movementQuantity >= 0" +
             "   and ((lcr.goodsShipmentLine is not null" +
-            "   and lcr.goodsShipmentLine = iol)" +
+            "   and lcr.goodsShipmentLine.id = iol.id)" +
             "   or (lcr.goodsShipmentLine is null" +
-            "   and lcr.goodsShipment = iol.shipmentReceipt))" +
-            "   and lcr.landedCost.id = :landedCost" +
+            "   and lcr.goodsShipment.id = iol.shipmentReceipt.id))" +
+            "   and lcr.landedCost.id = :landedCostId" +
             " group by lcr.id" +
             "   , iol.id" +
             "   , trx.currency.id" +
@@ -164,7 +164,7 @@ public class LandedCostDistributionByAmount extends LandedCostDistributionAlgori
     return OBDal.getInstance()
         .getSession()
         .createQuery(hql, Object[].class)
-        .setParameter("landedCost", landedCost.getId())
+        .setParameter("landedCostId", landedCost.getId())
         .scroll();
   }
 
