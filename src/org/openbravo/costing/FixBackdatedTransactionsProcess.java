@@ -190,7 +190,7 @@ public class FixBackdatedTransactionsProcess extends BaseProcessActionHandler {
     String hql =
             "select trx as trx" +
             "  from MaterialMgmtMaterialTransaction as trx" +
-            " where trx.organization.id in (:orgs)" +
+            " where trx.organization.id in (:orgIds)" +
             "   and trx.isCostCalculated = true" +
             "   and trx.transactionProcessDate >= (:startDate)";
     //@formatter:on
@@ -209,7 +209,7 @@ public class FixBackdatedTransactionsProcess extends BaseProcessActionHandler {
     final Query<MaterialTransaction> stockLinesQry = OBDal.getInstance()
         .getSession()
         .createQuery(hql, MaterialTransaction.class)
-        .setParameterList("orgs", childOrgs)
+        .setParameterList("orgIds", childOrgs)
         .setParameter("startDate", startDate);
 
     if (endDate != null) {
