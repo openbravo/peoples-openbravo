@@ -911,7 +911,11 @@
         }
       };
 
-      if (this.get('isEditable') || this.get('isCancelling')) {
+      if (
+        this.get('isEditable') ||
+        this.get('forceCalculateTaxes') ||
+        this.get('isCancelling')
+      ) {
         this.get('lines').forEach(function(line) {
           line.calculateGross();
         });
