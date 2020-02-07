@@ -514,19 +514,19 @@ public abstract class CostingAlgorithm {
             "  join trx.productionLine as pl " +
             "  join pl.productionPlan as pp" +
             " where pp.lineNo < :line" +
-            "   and pp.production.id = :production" +
-            "   and pl.product.id = :product" +
+            "   and pp.production.id = :productionId" +
+            "   and pl.product.id = :productId" +
             "   and pl.movementQuantity > 0" +
             "   and trx.isCostCalculated = false";
     //@formatter:on
 
-    ProductionPlan productionPlan = transaction.getProductionLine().getProductionPlan();
+    final ProductionPlan productionPlan = transaction.getProductionLine().getProductionPlan();
 
     return OBDal.getInstance()
         .createQuery(MaterialTransaction.class, hql)
         .setNamedParameter("line", productionPlan.getLineNo())
-        .setNamedParameter("production", productionPlan.getProduction().getId())
-        .setNamedParameter("product", transaction.getProduct().getId())
+        .setNamedParameter("productionId", productionPlan.getProduction().getId())
+        .setNamedParameter("productId", transaction.getProduct().getId())
         .list();
   }
 
