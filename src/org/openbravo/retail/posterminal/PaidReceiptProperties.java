@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2019 Openbravo S.L.U.
+ * Copyright (C) 2013-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -34,6 +34,8 @@ public class PaidReceiptProperties extends ModelExtension {
         add(new HQLProperty("ord.documentNo", "documentNo"));
         add(new HQLProperty("ord.orderDate", "orderDate"));
         add(new HQLProperty("ord.creationDate", "creationDate"));
+        add(new HQLProperty("ord.createdBy.id", "createdBy"));
+        add(new HQLProperty("ord.updatedBy.id", "updatedBy"));
         add(new HQLProperty("ord.businessPartner.id", "bp"));
         add(new HQLProperty("ord.partnerAddress.id", "bpLocId"));
         add(new HQLProperty("ord.invoiceAddress.id", "bpBillLocId"));

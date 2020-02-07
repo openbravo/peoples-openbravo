@@ -13,11 +13,18 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="EM_OBPOS_ROUNDED_PAYMENT_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="OBPOS_APP_CASHUP" name="EM_OBPOS_APP_CASHUP_FINPAYMENT">
         <reference local="EM_OBPOS_APP_CASHUP_ID" foreign="OBPOS_APP_CASHUP_ID"/>
       </foreign-key>
       <foreign-key foreignTable="OBPOS_APPLICATIONS" name="EM_OBPOS_APPLICATIONS_PAYMENT">
         <reference local="EM_OBPOS_APPLICATIONS_ID" foreign="OBPOS_APPLICATIONS_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="FIN_PAYMENT" name="EM_OBPOS_FIN_PAYMENT_ROUNDED">
+        <reference local="EM_OBPOS_ROUNDED_PAYMENT_ID" foreign="FIN_PAYMENT_ID"/>
       </foreign-key>
     </table>
   </database>

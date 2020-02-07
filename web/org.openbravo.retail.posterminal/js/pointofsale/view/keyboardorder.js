@@ -338,6 +338,7 @@ enyo.kind({
         if (
           payment.paymentMethod.iscash &&
           payment.paymentMethod.showkeypad &&
+          OB.MobileApp.model.hasPermission(payment.payment.searchKey) &&
           !currenciesManaged[payment.paymentMethod.currency]
         ) {
           // register that is already built

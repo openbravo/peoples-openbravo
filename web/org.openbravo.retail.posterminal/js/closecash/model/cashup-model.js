@@ -560,7 +560,10 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
                   return;
                 }
 
-                if (!auxPay.paymentMethod.countpaymentincashup) {
+                if (
+                  !auxPay.paymentMethod.countpaymentincashup &&
+                  !auxPay.paymentMethod.isRounding
+                ) {
                   return;
                 }
 
@@ -588,41 +591,43 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
                     countInCashup: auxPay.paymentMethod.countpaymentincashup
                   })
                 );
-                cashUpReport.get('drops').push(
-                  new Backbone.Model({
-                    searchKey: p.get('searchKey'),
-                    origAmount: OB.UTIL.currency.toDefaultCurrency(
-                      fromCurrencyId,
-                      OB.DEC.add(0, p.get('totalReturns'))
-                    ),
-                    amount: OB.DEC.add(0, p.get('totalReturns')),
-                    description: p.get('name') + paymentSharedStr,
-                    currency: fromCurrencyId,
-                    isocode: auxPay.isocode,
-                    rate: p.get('rate'),
-                    countInCashup: auxPay.paymentMethod.countpaymentincashup
-                  })
-                );
-                startings.push(
-                  new Backbone.Model({
-                    searchKey: p.get('searchKey'),
-                    origAmount: OB.UTIL.currency.toDefaultCurrency(
-                      fromCurrencyId,
-                      p.get('startingCash')
-                    ),
-                    amount: OB.DEC.add(0, p.get('startingCash')),
-                    description:
-                      OB.I18N.getLabel('OBPOS_LblStarting') +
-                      ' ' +
-                      p.get('name') +
-                      paymentSharedStr,
-                    currency: fromCurrencyId,
-                    isocode: auxPay.isocode,
-                    rate: p.get('rate'),
-                    paymentId: p.get('paymentmethod_id'),
-                    countInCashup: auxPay.paymentMethod.countpaymentincashup
-                  })
-                );
+                if (auxPay.paymentMethod.countpaymentincashup) {
+                  cashUpReport.get('drops').push(
+                    new Backbone.Model({
+                      searchKey: p.get('searchKey'),
+                      origAmount: OB.UTIL.currency.toDefaultCurrency(
+                        fromCurrencyId,
+                        OB.DEC.add(0, p.get('totalReturns'))
+                      ),
+                      amount: OB.DEC.add(0, p.get('totalReturns')),
+                      description: p.get('name') + paymentSharedStr,
+                      currency: fromCurrencyId,
+                      isocode: auxPay.isocode,
+                      rate: p.get('rate'),
+                      countInCashup: auxPay.paymentMethod.countpaymentincashup
+                    })
+                  );
+                  startings.push(
+                    new Backbone.Model({
+                      searchKey: p.get('searchKey'),
+                      origAmount: OB.UTIL.currency.toDefaultCurrency(
+                        fromCurrencyId,
+                        p.get('startingCash')
+                      ),
+                      amount: OB.DEC.add(0, p.get('startingCash')),
+                      description:
+                        OB.I18N.getLabel('OBPOS_LblStarting') +
+                        ' ' +
+                        p.get('name') +
+                        paymentSharedStr,
+                      currency: fromCurrencyId,
+                      isocode: auxPay.isocode,
+                      rate: p.get('rate'),
+                      paymentId: p.get('paymentmethod_id'),
+                      countInCashup: auxPay.paymentMethod.countpaymentincashup
+                    })
+                  );
+                }
               },
               this
             );

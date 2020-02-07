@@ -484,6 +484,17 @@ public class PaidReceipts extends JSONProcessSimple {
               paidReceiptPayment.put("oBPOSPOSTerminalSearchKey",
                   objectIn.has("posTerminalSearchKey") ? objectIn.get("posTerminalSearchKey")
                       : null);
+              if (objectIn.has("roundedPaymentId")) {
+                String roundedPaymentId = (String) objectIn.get("roundedPaymentId");
+                paidReceiptPayment.put("roundedPaymentId", roundedPaymentId);
+                paidReceiptPayment.put("paymentRounding", true);
+                for (int k = 0; k < listpaidReceiptsPayments.length(); k++) {
+                  JSONObject roundedPayment = listpaidReceiptsPayments.getJSONObject(k);
+                  if (StringUtils.equals(roundedPaymentId, roundedPayment.getString("paymentId"))) {
+                    roundedPayment.put("paymentRoundingLine", paidReceiptPayment);
+                  }
+                }
+              }
               // Call all payments in processes injected.
               executeHooks(paymentsInProcesses, paidReceiptPayment, null,
                   (String) objectIn.get("paymentId"));

@@ -329,6 +329,10 @@ enyo.kind({
                     },
                     {
                       classes:
+                        'obObposCashupUiCashPayments-wrapper-components-body-footer-container4'
+                    },
+                    {
+                      classes:
                         'obObposCashupUiCashPayments-wrapper-components-body-footer-container3',
                       components: [
                         {
@@ -398,9 +402,6 @@ enyo.kind({
   },
 
   setCoinsStatus: function(originator) {
-    if (!originator) {
-      return;
-    }
     // reset previous status
     if (this.originator && this.originator.$.formElementNumberOfCoins) {
       this.originator.$.formElementNumberOfCoins.removeClass(

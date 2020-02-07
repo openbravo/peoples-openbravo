@@ -72,7 +72,8 @@ OB.UTIL.HookManager.registerHook('OBPOS_RenderOrderLine', function(
               OB.I18N.getLabel('OBRDM_DeliveryMode') +
               ': ' +
               deliveryName,
-            classes: 'obPosRenderOrderLine-element1'
+            classes: 'obPosRenderOrderLine-element1',
+            name: 'deliveryModeText'
           },
           {
             content: showDate

@@ -213,6 +213,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="ISROUNDING" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBPOS_APPPAYTYPE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -291,6 +295,7 @@
       <check name="OBPOS_APPPAYTYPE_DROPS_CHK"><![CDATA[ALLOWDROPS IN ('Y', 'N')]]></check>
       <check name="OBPOS_APPPAYTYPE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="OBPOS_APPPAYTYPE_ISREVERS_CHK"><![CDATA[ISREVERSABLE IN ('Y', 'N')]]></check>
+      <check name="OBPOS_APPPAYTYPE_ISROUND_CHK"><![CDATA[ISROUNDING IN ('Y', 'N')]]></check>
       <check name="OBPOS_APPPAYTYPE_KEYPAD_CHK"><![CDATA[SHOWKEYPAD IN ('Y', 'N')]]></check>
       <check name="OBPOS_APPPAYTYPE_MOVEEVRY_CHK"><![CDATA[ALLOWMOVEEVERYTHING IN ('Y', 'N')]]></check>
       <check name="OBPOS_APPPAYTYPE_OVERPAY_CHK"><![CDATA[ALLOWOVERPAYMENT IN ('Y', 'N')]]></check>
