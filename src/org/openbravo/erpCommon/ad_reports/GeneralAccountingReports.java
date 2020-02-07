@@ -693,8 +693,10 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       throw new ServletException(ex);
     }
     xmlDocument.setParameter("orgs", Utility.arrayDobleEntrada("arrOrgs", new FieldProvider[0]));
-    xmlDocument.setParameter("accountingReports", Utility.arrayDobleEntrada("arrAccountingReports",
-        GeneralAccountingReportsData.selectRptDouble(readOnlyCP, OBContext.getOBContext().getRole().getId())));
+    xmlDocument.setParameter("accountingReports",
+        Utility.arrayDobleEntrada("arrAccountingReports",
+            GeneralAccountingReportsData.selectRptDouble(readOnlyCP, Utility.getContext(readOnlyCP,
+                vars, "#AccessibleOrgTree", "GeneralAccountingReports"))));
     xmlDocument.setParameter("years", Utility.arrayDobleEntrada("arrYears", new FieldProvider[0]));
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
