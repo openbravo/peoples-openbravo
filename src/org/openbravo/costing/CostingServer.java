@@ -59,6 +59,7 @@ import org.openbravo.model.materialmgmt.transaction.InternalMovement;
 import org.openbravo.model.materialmgmt.transaction.InventoryCount;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ProductionTransaction;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.TransactionLast;
 import org.openbravo.model.procurement.ReceiptInvoiceMatch;
 
@@ -405,16 +406,18 @@ public class CostingServer {
 
     //@formatter:off
     final String hqlQuery = 
-                  "select tc.cost as cost, ca.sourceProcess as sourceProcess " +
-                  "  from TransactionCost tc join tc.costAdjustmentLine tal " + 
-                  "    join tal.costAdjustment ca " +
-                  " where tc.inventoryTransaction = :transactionId";
+                  " select tc.cost as cost, " + 
+                  "   ca.sourceProcess as sourceProcess " +
+                  " from TransactionCost tc " + 
+                  "   join tc.costAdjustmentLine tal " + 
+                  "   join tal.costAdjustment ca " +
+                  " where tc.inventoryTransaction.id = :transactionId";
     //@formatter:on
 
     return OBDal.getInstance()
         .getSession()
         .createQuery(hqlQuery, Tuple.class)
-        .setParameter("transactionId", origInOutLineTrx)
+        .setParameter("transactionId", origInOutLineTrx.getId())
         .setFetchSize(1000)
         .scroll(ScrollMode.FORWARD_ONLY);
   }
@@ -458,69 +461,87 @@ public class CostingServer {
       case ReceiptReturn:
       case ReceiptVoid:
       case ReceiptNegative:
-        final org.openbravo.model.materialmgmt.transaction.ShipmentInOut inout = transaction
-            .getGoodsShipmentLine()
-            .getShipmentReceipt();
-        if (!"N".equals(inout.getPosted()) || !"Y".equals(inout.getPosted())) {
-          inout.setPosted("N");
-          OBDal.getInstance().save(inout);
-          // Set for the Match Invoices associated
-          final List<ReceiptInvoiceMatch> invoiceMatchList = transaction.getGoodsShipmentLine()
-              .getProcurementReceiptInvoiceMatchList();
-          if (invoiceMatchList != null && !invoiceMatchList.isEmpty()) {
-            for (ReceiptInvoiceMatch invoiceMatch : invoiceMatchList) {
-              if (!"N".equals(invoiceMatch.getPosted()) || !"Y".equals(invoiceMatch.getPosted())) {
-                invoiceMatch.setPosted("N");
-                OBDal.getInstance().save(invoiceMatch);
-              }
-            }
-          }
-        }
+        unpostShipmentsAndMatchedInvoices();
         break;
       case InventoryDecrease:
       case InventoryIncrease:
       case InventoryOpening:
       case InventoryClosing:
-        final InventoryCount inventory = transaction.getPhysicalInventoryLine().getPhysInventory();
-        if (!"N".equals(inventory.getPosted()) || !"Y".equals(inventory.getPosted())) {
-          inventory.setPosted("N");
-          OBDal.getInstance().save(inventory);
-        }
+        unpostPhysicalInventory();
         break;
       case IntMovementFrom:
       case IntMovementTo:
-        final InternalMovement movement = transaction.getMovementLine().getMovement();
-        if (!"N".equals(movement.getPosted()) || !"Y".equals(movement.getPosted())) {
-          movement.setPosted("N");
-          OBDal.getInstance().save(movement);
-        }
+        unpostGoodsMovement();
         break;
       case InternalCons:
       case InternalConsNegative:
       case InternalConsVoid:
-        final InternalConsumption consumption = transaction.getInternalConsumptionLine()
-            .getInternalConsumption();
-        if (!"N".equals(consumption.getPosted()) || !"Y".equals(consumption.getPosted())) {
-          consumption.setPosted("N");
-          OBDal.getInstance().save(consumption);
-        }
+        unpostInternalConsumption();
         break;
       case BOMPart:
       case BOMProduct:
       case ManufacturingConsumed:
       case ManufacturingProduced:
-        final ProductionTransaction production = transaction.getProductionLine()
-            .getProductionPlan()
-            .getProduction();
-        if (!"N".equals(production.getPosted()) || !"Y".equals(production.getPosted())) {
-          production.setPosted("N");
-          OBDal.getInstance().save(production);
-        }
+        unpostProduction();
         break;
       case Unknown:
         throw new OBException("@UnknownTrxType@: " + transaction.getIdentifier());
       default:
         throw new OBException("@UnknownTrxType@: " + transaction.getIdentifier());
+    }
+  }
+
+  private void unpostShipmentsAndMatchedInvoices() {
+    final ShipmentInOut inout = transaction.getGoodsShipmentLine().getShipmentReceipt();
+    if (!"N".equals(inout.getPosted()) || !"Y".equals(inout.getPosted())) {
+      inout.setPosted("N");
+      OBDal.getInstance().save(inout);
+      // Set for the Match Invoices associated
+      final List<ReceiptInvoiceMatch> invoiceMatchList = transaction.getGoodsShipmentLine()
+          .getProcurementReceiptInvoiceMatchList();
+      if (invoiceMatchList != null && !invoiceMatchList.isEmpty()) {
+        for (ReceiptInvoiceMatch invoiceMatch : invoiceMatchList) {
+          if (!"N".equals(invoiceMatch.getPosted()) || !"Y".equals(invoiceMatch.getPosted())) {
+            invoiceMatch.setPosted("N");
+            OBDal.getInstance().save(invoiceMatch);
+          }
+        }
+      }
+    }
+  }
+
+  private void unpostPhysicalInventory() {
+    final InventoryCount inventory = transaction.getPhysicalInventoryLine().getPhysInventory();
+    if (!"N".equals(inventory.getPosted()) || !"Y".equals(inventory.getPosted())) {
+      inventory.setPosted("N");
+      OBDal.getInstance().save(inventory);
+    }
+  }
+
+  private void unpostGoodsMovement() {
+    final InternalMovement movement = transaction.getMovementLine().getMovement();
+    if (!"N".equals(movement.getPosted()) || !"Y".equals(movement.getPosted())) {
+      movement.setPosted("N");
+      OBDal.getInstance().save(movement);
+    }
+  }
+
+  private void unpostInternalConsumption() {
+    final InternalConsumption consumption = transaction.getInternalConsumptionLine()
+        .getInternalConsumption();
+    if (!"N".equals(consumption.getPosted()) || !"Y".equals(consumption.getPosted())) {
+      consumption.setPosted("N");
+      OBDal.getInstance().save(consumption);
+    }
+  }
+
+  private void unpostProduction() {
+    final ProductionTransaction production = transaction.getProductionLine()
+        .getProductionPlan()
+        .getProduction();
+    if (!"N".equals(production.getPosted()) || !"Y".equals(production.getPosted())) {
+      production.setPosted("N");
+      OBDal.getInstance().save(production);
     }
   }
 
@@ -576,7 +597,7 @@ public class CostingServer {
   private CostingRule getCostDimensionRule() {
     //@formatter:off
     final String hql = 
-                  " organization = :organization" +
+                  " organization.id = :organizationId" +
                   "   and (startingDate is null " +
                   "   or startingDate <= :startdate)" +
                   "   and (endingDate is null" +
@@ -589,7 +610,7 @@ public class CostingServer {
     final List<CostingRule> costRules = OBDal.getInstance()
         .createQuery(CostingRule.class, hql)
         .setFilterOnReadableOrganization(false)
-        .setNamedParameter("organization", organization)
+        .setNamedParameter("organizationId", organization.getId())
         .setNamedParameter("startdate", transaction.getTransactionProcessDate())
         .setNamedParameter("enddate", transaction.getTransactionProcessDate())
         .setMaxResult(1)
