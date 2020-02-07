@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,6 +30,7 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -224,15 +225,14 @@ public class RuntimeModelTest extends OBBaseTest {
 
   @Test
   public void testIdentifiers() {
-    final List<String> errors = new ArrayList<>();
-    for (final Table t : allTables) {
-      if (!t.isView() && t.isActive() && t.getIdentifierColumns().size() == 0) {
-        errors.add("Table " + t.getTableName() + " from module "
-            + t.getThePackage().getModule().getJavaPackage()
-            + " does not have any columns marked as identifier columns. ");
-      }
-    }
-    assertThat("Tables which are missing identifier columns: " + errors, errors, hasSize(0));
+    final List<String> errors = allTables.stream()
+        .filter(t -> !t.isView() && t.isActive() && t.getIdentifierColumns().isEmpty())
+        .map(table -> "Table " + table.getTableName() + " from module "
+            + table.getThePackage().getModule().getJavaPackage()
+            + " does not have any columns marked as identifier columns. ")
+        .collect(Collectors.toList());
+    assertThat("Tables which are missing identifier columns: \n\t" + String.join("\n\t", errors),
+        errors, hasSize(0));
   }
 
   /**
