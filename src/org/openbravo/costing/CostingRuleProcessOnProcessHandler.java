@@ -133,7 +133,7 @@ public class CostingRuleProcessOnProcessHandler extends BaseActionHandler {
     //@formatter:off
     final String hql =
                   "as cr" +
-                  " where cr.organization = :ruleOrg" +
+                  " where cr.organization.id = :ruleOrgId" +
                   "   and cr.validated = true" +
                   " order by cr.startingDate desc";
     //@formatter:on
@@ -141,30 +141,31 @@ public class CostingRuleProcessOnProcessHandler extends BaseActionHandler {
     return OBDal.getInstance()
         .createQuery(CostingRule.class, hql)
         .setFilterOnReadableOrganization(false)
-        .setNamedParameter("ruleOrg", rule.getOrganization())
+        .setNamedParameter("ruleOrgId", rule.getOrganization().getId())
         .setMaxResult(1)
         .uniqueResult();
   }
 
-  private boolean existsTransactions(final Set<String> naturalOrgs, final Set<String> childOrgs) {
+  private boolean existsTransactions(final Set<String> naturalOrgIds,
+      final Set<String> childOrgIds) {
     //@formatter:off
     final String hql =
                   "as p" +
                   " where p.productType = 'I'" +
                   "   and p.stocked = true" +
-                  "   and p.organization.id in (:porgs)" +
+                  "   and p.organization.id in (:productOrgIds)" +
                   "   and exists (" +
                   "     select 1 from MaterialMgmtMaterialTransaction" +
-                  "      where product = p" +
-                  "        and organization .id in (:childOrgs)" +
+                  "      where product.id = p.id" +
+                  "        and organization .id in (:childOrgIds)" +
                   "     )";
     //@formatter:on
 
     return OBDal.getInstance()
         .createQuery(Product.class, hql)
         .setFilterOnReadableOrganization(false)
-        .setNamedParameter("porgs", naturalOrgs)
-        .setNamedParameter("childOrgs", childOrgs)
+        .setNamedParameter("productOrgIds", naturalOrgIds)
+        .setNamedParameter("childOrgIds", childOrgIds)
         .setMaxResult(1)
         .uniqueResult() != null;
   }
