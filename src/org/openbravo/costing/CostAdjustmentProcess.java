@@ -96,8 +96,10 @@ public class CostAdjustmentProcess {
   }
 
   private void doChecks(String strCostAdjId, JSONObject message) {
-    CostAdjustment costAdjustment = OBDal.getInstance().get(CostAdjustment.class, strCostAdjId);
+    final CostAdjustment costAdjustment = OBDal.getInstance()
+        .get(CostAdjustment.class, strCostAdjId);
 
+    // check if there is period closed between reference date and max transaction date
     //@formatter:off
     final String hql =
                   "select min(accountingDate) as mindate" +
@@ -106,7 +108,7 @@ public class CostAdjustmentProcess {
                   "   and isSource = true";
     //@formatter:on
 
-    Date minDate = OBDal.getInstance()
+    final Date minDate = OBDal.getInstance()
         .getSession()
         .createQuery(hql, Date.class)
         .setParameter("ca", costAdjustment)
@@ -167,7 +169,7 @@ public class CostAdjustmentProcess {
             " order by cal.lineNo";
     //@formatter:on
 
-    ScrollableResults lines = OBDal.getInstance()
+    final ScrollableResults lines = OBDal.getInstance()
         .createQuery(CostAdjustmentLine.class, hql)
         .setNamedParameter("strCostAdjId", strCostAdjId)
         .scroll(ScrollMode.FORWARD_ONLY);
@@ -199,6 +201,7 @@ public class CostAdjustmentProcess {
   }
 
   private void initializeLines(CostAdjustment costAdjustment) {
+    // initialize is related transaction adjusted flag to false
     //@formatter:off
     final String hql =
             "update CostAdjustmentLine" +
