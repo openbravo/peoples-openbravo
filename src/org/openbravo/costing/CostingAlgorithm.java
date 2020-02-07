@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2019 Openbravo SLU
+ * All portions are Copyright (C) 2012-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -32,7 +32,6 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostingServer.TrxType;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
@@ -102,7 +101,7 @@ public abstract class CostingAlgorithm {
    */
   public BigDecimal getTransactionCost() throws OBException {
     log4j.debug("Starting getTransactionCost() for transaction: " + transaction.getIdentifier());
-    long t1 = System.currentTimeMillis();
+    final long t1 = System.currentTimeMillis();
     try {
       if (transaction.getMovementQuantity().compareTo(BigDecimal.ZERO) == 0
           && getZeroMovementQtyCost() != null) {
@@ -509,25 +508,26 @@ public abstract class CostingAlgorithm {
   }
 
   private List<MaterialTransaction> getPendingWIPBOMTransactions() {
-    StringBuilder where = new StringBuilder();
-    where.append(" as trx ");
-    where.append("  join trx." + MaterialTransaction.PROPERTY_PRODUCTIONLINE + " as pl ");
-    where.append("  join pl." + ProductionLine.PROPERTY_PRODUCTIONPLAN + " as pp");
-    where.append(" where pp." + ProductionPlan.PROPERTY_LINENO + " < :line");
-    where.append("   and pp." + ProductionPlan.PROPERTY_PRODUCTION + " = :production");
-    where.append("   and pl." + ProductionLine.PROPERTY_PRODUCT + " = :product");
-    where.append("   and pl." + ProductionLine.PROPERTY_MOVEMENTQUANTITY + " > 0");
-    where.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = false");
+    //@formatter:off
+    String hql =
+            "as trx " +
+            "  join trx.productionLine as pl " +
+            "  join pl.productionPlan as pp" +
+            " where pp.lineNo < :line" +
+            "   and pp.production.id = :productionId" +
+            "   and pl.product.id = :productId" +
+            "   and pl.movementQuantity > 0" +
+            "   and trx.isCostCalculated = false";
+    //@formatter:on
 
-    OBQuery<MaterialTransaction> pendingWIPBOMs = OBDal.getInstance()
-        .createQuery(MaterialTransaction.class, where.toString());
+    final ProductionPlan productionPlan = transaction.getProductionLine().getProductionPlan();
 
-    ProductionPlan productionPlan = transaction.getProductionLine().getProductionPlan();
-    pendingWIPBOMs.setNamedParameter("line", productionPlan.getLineNo());
-    pendingWIPBOMs.setNamedParameter("production", productionPlan.getProduction());
-    pendingWIPBOMs.setNamedParameter("product", transaction.getProduct());
-
-    return pendingWIPBOMs.list();
+    return OBDal.getInstance()
+        .createQuery(MaterialTransaction.class, hql)
+        .setNamedParameter("line", productionPlan.getLineNo())
+        .setNamedParameter("productionId", productionPlan.getProduction().getId())
+        .setNamedParameter("productId", transaction.getProduct().getId())
+        .list();
   }
 
   /**
@@ -541,7 +541,7 @@ public abstract class CostingAlgorithm {
         .getProductionPlan()
         .getManufacturingProductionLineList();
     // Remove produced BOM line.
-    List<ProductionLine> parts = new ArrayList<ProductionLine>(productionLines);
+    List<ProductionLine> parts = new ArrayList<>(productionLines);
     parts.remove(transaction.getProductionLine());
     BigDecimal totalCost = BigDecimal.ZERO;
     for (ProductionLine prodLine : parts) {
@@ -620,7 +620,7 @@ public abstract class CostingAlgorithm {
   private void calculateWorkEffortCost(ProductionTransaction production) {
 
     try {
-      List<Object> params = new ArrayList<Object>();
+      List<Object> params = new ArrayList<>();
       params.add(production.getId());
       params.add(OBContext.getOBContext().getUser().getId());
       CallStoredProcedure.getInstance().call("MA_PRODUCTION_COST", params, null, true, false);

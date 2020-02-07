@@ -3,6 +3,15 @@
 In order to run these scripts, you need to have npm and nodejs installed.
 
 ## Enabling pre-commit checking:
+Apply these lines depending on the SCM used:
+
+### Git
+From repo folder run this command:
+```
+git config core.hooksPath .githooks
+```
+
+### Mercurial
 Add these lines in your hgrc file:
 ```
 [hooks]

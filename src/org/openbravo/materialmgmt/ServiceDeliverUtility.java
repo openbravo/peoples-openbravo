@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2019 Openbravo SLU
+ * All portions are Copyright (C) 2019-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -26,7 +26,6 @@ import java.util.Map;
 import javax.persistence.Tuple;
 
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.query.Query;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -109,24 +108,27 @@ public class ServiceDeliverUtility {
   }
 
   private static List<Tuple> getServiceRelated(ShipmentInOut shipment) {
-    StringBuilder hql = new StringBuilder();
-    hql.append(
-        "select ol.id || serv.id as id, iol.movementQuantity as movementQuantity, ol.orderedQuantity as orderedQuantity, ");
-    hql.append(
-        "ol.deliveredQuantity as deliveredQuantity, sol.id as serviceOrderLineId, serv.quantityRule as quantityRule, ");
-    hql.append(
-        "sol.orderedQuantity as serviceOrderedQuantity, sol.deliveredQuantity as serviceDeliveredQuantity ");
-    hql.append("from MaterialMgmtShipmentInOutLine iol ");
-    hql.append("join iol.salesOrderLine ol ");
-    hql.append("join ol.orderlineServiceRelationCOrderlineRelatedIDList srol ");
-    hql.append("join srol.salesOrderLine sol ");
-    hql.append("join sol.product serv ");
-    hql.append("where iol.shipmentReceipt.id = :shipmentId ");
-    final Query<Tuple> query = OBDal.getInstance()
+    //@formatter:off
+    String hql = "select ol.id || serv.id as id, "
+               + "       iol.movementQuantity as movementQuantity, "
+               + "       ol.orderedQuantity as orderedQuantity, "
+               + "       ol.deliveredQuantity as deliveredQuantity, "
+               + "       sol.id as serviceOrderLineId, "
+               + "       serv.quantityRule as quantityRule, "
+               + "       sol.orderedQuantity as serviceOrderedQuantity, "
+               + "       sol.deliveredQuantity as serviceDeliveredQuantity "
+               + "from MaterialMgmtShipmentInOutLine iol "
+               + "join iol.salesOrderLine ol "
+               + "join ol.orderlineServiceRelationCOrderlineRelatedIDList srol "
+               + "join srol.salesOrderLine sol "
+               + "join sol.product serv "
+               + "where iol.shipmentReceipt.id = :shipmentId ";
+    //@formatter:on
+    return OBDal.getInstance()
         .getSession()
-        .createQuery(hql.toString(), Tuple.class);
-    query.setParameter("shipmentId", shipment.getId());
-    return query.list();
+        .createQuery(hql, Tuple.class)
+        .setParameter("shipmentId", shipment.getId())
+        .list();
   }
 
   private static ShipmentInOutLine addShipmentLine(ShipmentInOut shipment, String orderlineId,

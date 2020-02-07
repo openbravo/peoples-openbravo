@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,15 +19,18 @@
 
 package org.openbravo.test.model;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -222,19 +225,14 @@ public class RuntimeModelTest extends OBBaseTest {
 
   @Test
   public void testIdentifiers() {
-    final ArrayList<String> tables = new ArrayList<String>();
-    for (final Table t : allTables) {
-      if (!t.isView() && t.isActive() && t.getIdentifierColumns().size() == 0) {
-        tables.add(t.getTableName());
-      }
-    }
-    if (tables.size() != 0) {
-      log.debug(tables.size() + " tables without Identifier columns");
-      for (final String tableName : tables) {
-        log.debug(tableName);
-      }
-    }
-    assertEquals(0, tables.size());
+    final List<String> errors = allTables.stream()
+        .filter(t -> !t.isView() && t.isActive() && t.getIdentifierColumns().isEmpty())
+        .map(table -> "Table " + table.getTableName() + " from module "
+            + table.getThePackage().getModule().getJavaPackage()
+            + " does not have any columns marked as identifier columns. ")
+        .collect(Collectors.toList());
+    assertThat("Tables which are missing identifier columns: \n\t" + String.join("\n\t", errors),
+        errors, hasSize(0));
   }
 
   /**
