@@ -15,7 +15,7 @@
   function extendHWResource(resource, template) {
     var terminal = OB.MobileApp.model.get('terminal');
 
-    if (terminal[template + 'IsPdf'] === 'true') {
+    if (terminal[template + 'IsPdf'] === true) {
       resource.ispdf = true;
       resource.printer = terminal[template + 'Printer'];
       var i = 0,
