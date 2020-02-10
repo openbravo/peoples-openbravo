@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2019 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -124,44 +124,43 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
           .getOrganizationStructureProvider(terminalObj.getClient().getId())
           .getNaturalTree(terminalObj.getOrganization().getId()));
 
-      String extraFilter = "";
-      if (!doFilterUserOnlyByTerminalAccessPreference()) {
-        extraFilter = "not exists(from OBPOS_TerminalAccess ta where ta.userContact = user) or ";
-      }
+      final boolean filterUserOnlyByTerminalAccess = doFilterUserOnlyByTerminalAccessPreference();
 
       String hqlUser = "select distinct user.name, user.username, user.id, user.firstName, user.lastName "
           + "from ADUser user, ADUserRoles userRoles, ADRole role, "
-          + "ADFormAccess formAccess, OBPOS_Applications terminal "
-          + "where user.active = true and " + "userRoles.active = true and "
-          + "role.active = true and " + "formAccess.active = true and "
-          + "user.username is not null and " + "user.password is not null and "
-          + "exists (from ADRoleOrganization ro where ro.role = role and ro.organization = terminal.organization) and "
-          + "(" + extraFilter
-          + "exists(from OBPOS_TerminalAccess ta where ta.userContact = user and ta.pOSTerminal=terminal)) and "
+          + "ADFormAccess formAccess, OBPOS_Applications terminal, ADRoleOrganization ro "
+          + (filterUserOnlyByTerminalAccess ? ", OBPOS_TerminalAccess ta " : "")
+          + (approvalType.length() > 0 ? ", ADPreference p " : "")
+          + "where user.active = true and user.username is not null and user.password is not null and "
+          + "userRoles.active = true and role.active = true and formAccess.active = true and "
           + "terminal.searchKey = :theTerminalSearchKey and "
           + "user.id = userRoles.userContact.id and userRoles.role.id = role.id and "
           + "userRoles.role.id = formAccess.role.id and "
           + "userRoles.role.forPortalUsers = false and "
+          + "ro.role = role and ro.organization = terminal.organization and "
           + "formAccess.specialForm.id = :webPOSFormId and "
-          + "((user.organization.id in (:orgList)) or (terminal.organization.id in (:orgList)))";
+          + "((user.organization.id in (:orgList)) or (terminal.organization.id in (:orgList))) "
+          + (filterUserOnlyByTerminalAccess
+              ? "and ta.userContact = user and ta.pOSTerminal=terminal "
+              : "");
 
+      // checking supervisor users for sent approval type
       Map<String, String> iterParameter = new HashMap<>();
-      if (approvalType.length() != 0) {
-        // checking supervisor users for sent approval type
+      if (approvalType.length() > 0) {
+        hqlUser += "and (";
         for (int i = 0; i < approvalType.length(); i++) {
-          hqlUser += "and exists (from ADPreference as p where property =  :iter" + i
-              + " and active = true and to_char(searchKey) = 'Y'"
-              + "   and (userContact = user or exists (from ADUserRoles r"
-              + "                  where r.role = p.visibleAtRole"
-              + "                    and r.userContact = user)) "
-              + "   and (p.visibleAtOrganization = terminal.organization "
-              + "   or p.visibleAtOrganization.id in (:orgList) "
-              + "   or p.visibleAtOrganization is null)) ";
+          hqlUser += "(p.property = :iter" + i + " "
+              + "and p.active = true and to_char(p.searchKey) = 'Y' "
+              + "and (p.userContact = user or p.visibleAtRole = role) "
+              + "and (p.visibleAtOrganization = terminal.organization "
+              + "or p.visibleAtOrganization.id in (:orgList) "
+              + "or p.visibleAtOrganization is null)) or ";
           iterParameter.put("iter" + i, approvalType.getString(i));
         }
+        hqlUser += "(1 = 0)) ";
       }
-
       hqlUser += "order by user.name";
+
       Query<Object[]> qryUser = OBDal.getInstance()
           .getSession()
           .createQuery(hqlUser, Object[].class);
