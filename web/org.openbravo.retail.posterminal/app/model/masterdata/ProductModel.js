@@ -12,10 +12,6 @@
       super();
       this.indices = [
         new OB.App.Class.Index({
-          name: 'productId_idx',
-          properties: [{ property: 'id' }]
-        }),
-        new OB.App.Class.Index({
           name: 'productCategoryBrowse_idx',
           properties: [
             { property: 'productCategory' },

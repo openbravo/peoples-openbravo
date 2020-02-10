@@ -16,10 +16,6 @@
           properties: [{ property: 'parentId' }]
         }),
         new OB.App.Class.Index({
-          name: 'productcategorytree_id_idx',
-          properties: [{ property: 'id' }]
-        }),
-        new OB.App.Class.Index({
           name: 'productcategorytree_crossstore_idx',
           properties: [{ property: 'crossStore', isBoolean: true }]
         })

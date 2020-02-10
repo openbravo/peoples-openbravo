@@ -12,10 +12,6 @@
       super();
       this.indices = [
         new OB.App.Class.Index({
-          name: 'characteristicId_idx',
-          properties: [{ property: 'id' }]
-        }),
-        new OB.App.Class.Index({
           name: 'characteristicName_idx',
           properties: [{ property: '_identifier' }]
         })
