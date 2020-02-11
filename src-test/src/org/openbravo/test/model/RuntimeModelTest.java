@@ -19,9 +19,11 @@
 
 package org.openbravo.test.model;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -219,19 +221,15 @@ public class RuntimeModelTest extends OBBaseTest {
 
   @Test
   public void testIdentifiers() {
-    final ArrayList<String> tables = new ArrayList<String>();
+    final List<String> errors = new ArrayList<>();
     for (final Table t : allTables) {
       if (!t.isView() && t.isActive() && t.getIdentifierColumns().size() == 0) {
-        tables.add(t.getTableName());
+        errors.add("Table " + t.getTableName() + " from module "
+            + t.getThePackage().getModule().getJavaPackage()
+            + " does not have any columns marked as identifier columns. ");
       }
     }
-    if (tables.size() != 0) {
-      log.debug(tables.size() + " tables without Identifier columns");
-      for (final String tableName : tables) {
-        log.debug(tableName);
-      }
-    }
-    assertEquals(0, tables.size());
+    assertThat("Tables which are missing identifier columns: " + errors, errors, hasSize(0));
   }
 
   /**
