@@ -19,19 +19,11 @@
       taxes.header = {};
       taxes.lines = [];
 
-      const rulesFilteredByTicket = OB.Taxes.filterRulesByTicket(
-        this.ticket,
-        this.rules
-      );
-
       this.ticket.lines.forEach(line => {
-        const lineTaxes = this.calculateLineTaxes(rulesFilteredByTicket, line);
+        const lineTaxes = this.calculateLineTaxes(line);
 
         if (line.bomLines) {
-          const lineBomTaxes = this.calculateLineBOMTaxes(
-            rulesFilteredByTicket,
-            line
-          );
+          const lineBomTaxes = this.calculateLineBOMTaxes(line);
           lineTaxes.taxes = lineBomTaxes.flatMap(
             lineBomTax => lineBomTax.taxes
           );
@@ -59,11 +51,11 @@
       return taxes;
     }
 
-    calculateLineTaxes(rulesFilteredByTicket, line) {
+    calculateLineTaxes(line) {
       const rulesFilteredByLine = OB.Taxes.filterRulesByTicketLine(
         this.ticket,
         line,
-        rulesFilteredByTicket
+        this.rules
       );
 
       if (rulesFilteredByLine.length === 0) {
@@ -76,7 +68,7 @@
       return this.getLineTaxes(line, rulesFilteredByLine);
     }
 
-    calculateLineBOMTaxes(rulesFilteredByTicket, line) {
+    calculateLineBOMTaxes(line) {
       const bomGroups = line.bomLines
         .reduce((result, bomLine) => {
           const bomGroup = result.find(
@@ -103,7 +95,7 @@
           OB.DEC.mul(bomGroup.amount, line.amount),
           bomTotalAmount
         );
-        return this.calculateLineTaxes(rulesFilteredByTicket, bomLine);
+        return this.calculateLineTaxes(bomLine);
       });
     }
 

@@ -19,9 +19,10 @@
   OB.Taxes = OB.Taxes || {};
 
   OB.Taxes.calculateTaxes = (ticket, rules) => {
+    const rulesFilteredByTicket = OB.Taxes.filterRulesByTicket(ticket, rules);
     const rule = ticket.priceIncludesTax
-      ? new OB.Taxes.PriceIncludingTax(ticket, rules)
-      : new OB.Taxes.PriceExcludingTax(ticket, rules);
+      ? new OB.Taxes.PriceIncludingTax(ticket, rulesFilteredByTicket)
+      : new OB.Taxes.PriceExcludingTax(ticket, rulesFilteredByTicket);
     return rule.calculateTaxes();
   };
 
