@@ -1787,7 +1787,7 @@ enyo.kind({
     );
     this.orderList.on(
       'loadedMultiOrder remove amountToLayaway',
-      function() {
+      function(callback) {
         var me = this,
           total = OB.DEC.Zero,
           prepayment = OB.DEC.Zero,
@@ -1815,6 +1815,9 @@ enyo.kind({
               });
             }
             me.$.totalMultiReceiptLine.renderQty(me.orderList.length);
+            if (callback && callback instanceof Function) {
+              callback();
+            }
             return;
           }
           var order = me.orderList.at(idx);
