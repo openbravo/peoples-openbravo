@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -67,7 +67,7 @@ public class BPLocation extends ProcessHQLQuery {
     }
     hql += ") and bploc.$readableSimpleClientCriteria AND " + "bploc.$naturalOrgCriteria "
         + " and bploc.$paginationByIdCriteria " //
-        + "ORDER BY bploc.id";
+        + "ORDER BY bploc.creationDate desc";
     hqlQueries.add(hql);
     return hqlQueries;
   }

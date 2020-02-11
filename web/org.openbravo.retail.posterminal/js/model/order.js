@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2019 Openbravo S.L.U.
+ * Copyright (C) 2013-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -1690,6 +1690,27 @@
 
       OB.UTIL.clone(_order, this);
 
+      for (var index = 0; index < this.get('payments').models.length; index++) {
+        var payment = this.get('payments').models[index],
+          oldPaymentRoundingLine = payment.has('paymentRoundingLine')
+            ? payment.get('paymentRoundingLine')
+            : null,
+          paymentRoundingLine = null;
+        if (oldPaymentRoundingLine) {
+          paymentRoundingLine = _.find(this.get('payments').models, function(
+            pay
+          ) {
+            if (
+              pay.get('kind') === oldPaymentRoundingLine.kind &&
+              pay.get('amount') === oldPaymentRoundingLine.amount
+            ) {
+              return true;
+            }
+          });
+          payment.set('paymentRoundingLine', paymentRoundingLine);
+        }
+      }
+
       if (
         !OB.UTIL.isNullOrUndefined(this.get('idExecution')) &&
         this.get('idExecution') === idExecution
@@ -2338,7 +2359,7 @@
             checkStockActions.push('discontinued');
           }
 
-          if (negativeQty && OB.UTIL.isCrossStoreProduct(product)) {
+          if (negativeQty && OB.UTIL.isCrossStoreLine(line)) {
             checkStockActions.push('crossStore');
           }
 
@@ -2733,7 +2754,7 @@
           checkStockActions.push('discontinued');
         }
 
-        if (negativeQty && OB.UTIL.isCrossStoreProduct(product)) {
+        if (negativeQty && OB.UTIL.isCrossStoreLine(line)) {
           checkStockActions.push('crossStore');
         }
 
@@ -3401,16 +3422,25 @@
             )
           ) {
             var positiveQty = OB.DEC.compare(qty) > 0,
+              isCrossStore = false,
               checkStockActions = [];
 
             if (positiveQty && productStatus.restrictsaleoutofstock) {
               checkStockActions.push('discontinued');
             }
 
+            if (line) {
+              isCrossStore = OB.UTIL.isCrossStoreLine(line);
+            } else if (attrs && attrs.organization) {
+              isCrossStore = OB.UTIL.isCrossStoreOrganization(
+                attrs.organization
+              );
+            }
+
             if (
               positiveQty &&
-              (OB.UTIL.isCrossStoreProduct(p) &&
-                (!line || OB.DEC.compare(line.get('qty')) > 0))
+              isCrossStore &&
+              (!line || OB.DEC.compare(OB.DEC.add(line.get('qty'), qty)) > 0)
             ) {
               checkStockActions.push('crossStore');
             }
@@ -3459,31 +3489,6 @@
             );
           } else {
             stockCallback();
-          }
-        }
-
-        function addProdCharsToProduct(orderline, addProdCharCallback) {
-          //Add prod char information to product object
-          if (
-            !p.get('productCharacteristics') &&
-            p.get('characteristicDescription') &&
-            !OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)
-          ) {
-            OB.Dal.find(
-              OB.Model.ProductCharacteristicValue,
-              { product: p.get('id') },
-              function(productcharacteristics) {
-                let newProd = OB.UTIL.clone(p);
-                newProd.set(
-                  'productCharacteristics',
-                  productcharacteristics.toJSON()
-                );
-                orderline.set('product', newProd);
-                addProdCharCallback();
-              }
-            );
-          } else {
-            addProdCharCallback();
           }
         }
 
@@ -3547,11 +3552,9 @@
                   }
                 }
               }
-              addProdCharsToProduct(args.orderline, function() {
-                if (callback) {
-                  callback(true, args.orderline);
-                }
-              });
+              if (callback) {
+                callback(true, args.orderline);
+              }
             }
           );
         }
@@ -4270,6 +4273,7 @@
       cancelCallback
     ) {
       var executeAddProduct,
+        addProdCharsToProduct,
         finalCallback,
         me = this,
         attributeSearchAllowed = OB.MobileApp.model.hasPermission(
@@ -4281,6 +4285,7 @@
           callback(success, orderline);
         }
       };
+
       // do not allow generic products to be added to the receipt
       if (p && p.get('isGeneric')) {
         OB.UTIL.showI18NWarning('OBPOS_GenericNotAllowed');
@@ -4324,120 +4329,150 @@
         finalCallback(false, null);
         return;
       }
-      OB.UTIL.HookManager.executeHooks(
-        'OBPOS_AddProductToOrder',
-        {
-          receipt: this,
-          productToAdd: p,
-          qtyToAdd: qty,
-          options: options,
-          attrs: attrs
-        },
-        function(args) {
-          if (args && args.receipt && args.receipt.get('deferredOrder')) {
-            args.receipt.unset('deferredOrder', {
-              silent: true
-            });
-          }
-          if (args && args.useLines) {
-            me._drawLinesDistribution(args);
-            finalCallback(false, null);
-            return;
-          }
-          if (OB.UTIL.isNullOrUndefined(args.attrs)) {
-            args.attrs = {};
-          }
-          args.attrs.hasMandatoryServices = false;
-          args.attrs.hasRelatedServices = false;
-          executeAddProduct = function() {
-            var isQuotationAndAttributeAllowed =
-              args.receipt.get('isQuotation') &&
-              OB.MobileApp.model.hasPermission(
-                'OBPOS_AskForAttributesWhenCreatingQuotation',
-                true
+
+      addProdCharsToProduct = function(productWithChars, addProdCharCallback) {
+        //Add prod char information to product object
+        if (
+          !productWithChars.get('productCharacteristics') &&
+          productWithChars.get('characteristicDescription') &&
+          !OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)
+        ) {
+          OB.Dal.find(
+            OB.Model.ProductCharacteristicValue,
+            { product: productWithChars.get('id') },
+            function(productcharacteristics) {
+              productWithChars.set(
+                'productCharacteristics',
+                productcharacteristics.toJSON()
               );
-            if (
-              (!args || !args.options || !args.options.line) &&
-              attributeSearchAllowed &&
-              p.get('hasAttributes') &&
-              qty >= 1 &&
-              (!args.receipt.get('isQuotation') ||
-                isQuotationAndAttributeAllowed)
-            ) {
-              OB.MobileApp.view.waterfall('onShowPopup', {
-                popup: 'modalProductAttribute',
-                args: {
-                  callback: function(attributeValue) {
-                    if (!OB.UTIL.isNullOrUndefined(attributeValue)) {
-                      if (_.isEmpty(attributeValue)) {
-                        // the attributes for layaways accepts empty values, but for manage later easy to be null instead ""
-                        attributeValue = null;
-                      }
-                      attrs.attributeValue = attributeValue;
-                      me._addProduct(p, qty, options, attrs, function(
-                        success,
-                        orderline
-                      ) {
-                        finalCallback(success, orderline);
-                      });
-                    } else {
-                      finalCallback(false, null);
-                    }
-                  },
-                  options: options
-                }
-              });
-            } else {
-              me._addProduct(p, qty, options, attrs, function(
-                success,
-                orderline
-              ) {
-                finalCallback(success, orderline);
+              addProdCharCallback();
+            }
+          );
+        } else {
+          addProdCharCallback();
+        }
+      };
+      var context = this;
+      var productWithChars = OB.UTIL.clone(p);
+      addProdCharsToProduct(productWithChars, function() {
+        OB.UTIL.HookManager.executeHooks(
+          'OBPOS_AddProductToOrder',
+          {
+            receipt: context,
+            productToAdd: productWithChars,
+            qtyToAdd: qty,
+            options: options,
+            attrs: attrs
+          },
+          function(args) {
+            if (args && args.receipt && args.receipt.get('deferredOrder')) {
+              args.receipt.unset('deferredOrder', {
+                silent: true
               });
             }
-          };
-
-          if (
-            (!args.options || !args.options.isSilentAddProduct) &&
-            args.productToAdd.get('productType') !== 'S' &&
-            (!args.attrs || !args.attrs.originalOrderLineId)
-          ) {
-            var productId =
-              args.productToAdd.get('isNew') &&
-              OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)
-                ? null
-                : args.productToAdd.get('forceFilterId')
-                ? args.productToAdd.get('forceFilterId')
-                : args.productToAdd.id;
-            args.receipt._loadRelatedServices(
-              args.productToAdd.get('productType'),
-              productId,
-              args.productToAdd.get('productCategory'),
-              function(data) {
-                if (data) {
-                  if (data.hasservices) {
-                    args.attrs.hasRelatedServices = true;
+            if (args && args.useLines) {
+              me._drawLinesDistribution(args);
+              finalCallback(false, null);
+              return;
+            }
+            if (OB.UTIL.isNullOrUndefined(args.attrs)) {
+              args.attrs = {};
+            }
+            args.attrs.hasMandatoryServices = false;
+            args.attrs.hasRelatedServices = false;
+            executeAddProduct = function() {
+              var isQuotationAndAttributeAllowed =
+                args.receipt.get('isQuotation') &&
+                OB.MobileApp.model.hasPermission(
+                  'OBPOS_AskForAttributesWhenCreatingQuotation',
+                  true
+                );
+              if (
+                (!args || !args.options || !args.options.line) &&
+                attributeSearchAllowed &&
+                productWithChars.get('hasAttributes') &&
+                qty >= 1 &&
+                (!args.receipt.get('isQuotation') ||
+                  isQuotationAndAttributeAllowed)
+              ) {
+                OB.MobileApp.view.waterfall('onShowPopup', {
+                  popup: 'modalProductAttribute',
+                  args: {
+                    callback: function(attributeValue) {
+                      if (!OB.UTIL.isNullOrUndefined(attributeValue)) {
+                        if (_.isEmpty(attributeValue)) {
+                          // the attributes for layaways accepts empty values, but for manage later easy to be null instead ""
+                          attributeValue = null;
+                        }
+                        attrs.attributeValue = attributeValue;
+                        me._addProduct(
+                          productWithChars,
+                          qty,
+                          options,
+                          attrs,
+                          function(success, orderline) {
+                            finalCallback(success, orderline);
+                          }
+                        );
+                      } else {
+                        finalCallback(false, null);
+                      }
+                    },
+                    options: options
                   }
-                  if (data.hasmandatoryservices) {
-                    args.attrs.hasMandatoryServices = true;
-                  }
-                }
-                executeAddProduct();
-                if (
-                  !OB.UTIL.isNullOrUndefined(args.attrs) &&
-                  args.attrs.cancelOperation
+                });
+              } else {
+                me._addProduct(productWithChars, qty, options, attrs, function(
+                  success,
+                  orderline
                 ) {
-                  if (cancelCallback instanceof Function) {
-                    cancelCallback();
+                  finalCallback(success, orderline);
+                });
+              }
+            };
+
+            if (
+              (!args.options || !args.options.isSilentAddProduct) &&
+              args.productToAdd.get('productType') !== 'S' &&
+              (!args.attrs || !args.attrs.originalOrderLineId)
+            ) {
+              var productId =
+                args.productToAdd.get('isNew') &&
+                OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)
+                  ? null
+                  : args.productToAdd.get('forceFilterId')
+                  ? args.productToAdd.get('forceFilterId')
+                  : args.productToAdd.id;
+              args.receipt._loadRelatedServices(
+                args.productToAdd.get('productType'),
+                productId,
+                args.productToAdd.get('productCategory'),
+                function(data) {
+                  if (data) {
+                    if (data.hasservices) {
+                      args.attrs.hasRelatedServices = true;
+                    }
+                    if (data.hasmandatoryservices) {
+                      args.attrs.hasMandatoryServices = true;
+                    }
+                  }
+                  executeAddProduct();
+                  if (
+                    !OB.UTIL.isNullOrUndefined(args.attrs) &&
+                    args.attrs.cancelOperation
+                  ) {
+                    if (cancelCallback instanceof Function) {
+                      cancelCallback();
+                    }
                   }
                 }
-              }
-            );
-          } else {
-            executeAddProduct();
+              );
+            } else {
+              executeAddProduct();
+            }
           }
-        }
-      );
+        );
+      });
     },
 
     /**
@@ -7446,6 +7481,11 @@
       payments = this.get('payments');
       precision = this.getPrecision(payment);
       payment.set('amount', OB.DEC.toNumber(payment.get('amount'), precision));
+      this.addPaymentRounding(
+        payment,
+        OB.MobileApp.model.paymentnames[payment.get('kind')]
+      );
+
       if (this.get('prepaymentChangeMode')) {
         this.unset('prepaymentChangeMode');
         this.adjustPayment();
@@ -7532,6 +7572,16 @@
                       } else {
                         p.set('origAmount', p.get('amount'));
                       }
+                      if (payment.has('paymentRoundingLine')) {
+                        p.set(
+                          'paymentRoundingLine',
+                          payment.get('paymentRoundingLine')
+                        );
+                        p.get('paymentRoundingLine').set(
+                          'roundedPaymentId',
+                          p.get('id')
+                        );
+                      }
                       payment.set('date', new Date());
                       executeFinalCallback(true);
                       OB.UTIL.ProcessController.finish('addPayment', execution);
@@ -7613,6 +7663,11 @@
               if (payment.get('reversedPayment')) {
                 payment.get('reversedPayment').set('isReversed', true);
               }
+              if (payment.has('paymentRoundingLine')) {
+                payment
+                  .get('paymentRoundingLine')
+                  .set('roundedPaymentId', payment.get('id'));
+              }
               executeFinalCallback(true);
               OB.UTIL.ProcessController.finish('addPayment', execution);
               return;
@@ -7620,6 +7675,138 @@
           ); // call with callback, no args
         }
       );
+    },
+    //Add a payment rounding line related to the payment if it's needed
+    addPaymentRounding: function(payment, terminalPayment) {
+      if (
+        OB.MobileApp.model.paymentnames[payment.get('kind')].paymentRounding &&
+        !payment.get('isReversePayment')
+      ) {
+        var paymentStatus = this.getPaymentStatus(),
+          roundingAmount = OB.DEC.sub(
+            paymentStatus.pendingAmt,
+            payment.get('amount')
+          ),
+          terminalPaymentRounding =
+            OB.MobileApp.model.paymentnames[
+              terminalPayment.paymentRounding.paymentRoundingType
+            ],
+          amountDifference = null,
+          paymentLine = null,
+          precision = this.getPrecision(payment),
+          multiplyBy = paymentStatus.isReturn
+            ? terminalPayment.paymentRounding.returnRoundingMultiple
+            : terminalPayment.paymentRounding.saleRoundingMultiple,
+          rounding = paymentStatus.isReturn
+            ? terminalPayment.paymentRounding.returnRoundingMode
+            : terminalPayment.paymentRounding.saleRoundingMode,
+          roundingEnabled = paymentStatus.isReturn
+            ? terminalPayment.paymentRounding.returnRounding
+            : terminalPayment.paymentRounding.saleRounding,
+          pow = Math.pow(10, precision),
+          paymentDifference =
+            OB.DEC.mul(paymentStatus.pendingAmt, pow) %
+            OB.DEC.mul(multiplyBy, pow);
+
+        //If receipt total amount is less than equal rounding multiple in Sales/Return
+        //no rounding payment line is created
+        if (OB.DEC.abs(paymentStatus.totalAmt) <= multiplyBy) {
+          return;
+        }
+        //If receipt is totally paid the last payment paid amount is used to compute the
+        //rounding amount
+        if (paymentStatus.pendingAmt === 0) {
+          paymentDifference =
+            OB.DEC.mul(payment.get('paid'), pow) % OB.DEC.mul(multiplyBy, pow);
+        }
+        //(Rounding enabled for Sales/Returns) &&
+        //((the remaining to paid is less than rounding multiple in Sales/Return) ||
+        // (the paid amount is less than rounding multiple in Sales/Return with a rounding difference) ||
+        // (the payment totally paid the receipt or create an overpayment with a rounding difference))
+        if (
+          roundingEnabled &&
+          ((roundingAmount !== 0 && OB.DEC.abs(roundingAmount) < multiplyBy) ||
+            (payment.get('paid') !== 0 &&
+              paymentDifference !== 0 &&
+              paymentStatus.pendingAmt < multiplyBy) ||
+            (payment.get('paid') === 0 &&
+              paymentDifference !== 0 &&
+              payment.get('amount') >= paymentStatus.pendingAmt))
+        ) {
+          if (rounding === 'UR') {
+            if (paymentDifference !== 0) {
+              amountDifference = OB.DEC.sub(
+                multiplyBy,
+                OB.DEC.div(paymentDifference, pow)
+              );
+              roundingAmount = OB.DEC.mul(amountDifference, -1);
+              if (payment.get('amount') < paymentStatus.pendingAmt) {
+                amountDifference = OB.DEC.add(
+                  amountDifference,
+                  OB.DEC.div(paymentDifference, pow)
+                );
+              }
+            }
+            if (payment.get('amount') <= paymentStatus.pendingAmt) {
+              payment.set(
+                'amount',
+                OB.DEC.add(payment.get('amount'), amountDifference)
+              );
+            }
+          } else if (
+            paymentDifference !== 0 &&
+            payment.get('amount') >= paymentStatus.pendingAmt
+          ) {
+            roundingAmount = OB.DEC.div(paymentDifference, pow);
+            //Substract the rounding amount when the payment totally paid the receipt
+            if (payment.get('amount') === paymentStatus.pendingAmt) {
+              payment.set(
+                'amount',
+                OB.DEC.sub(payment.get('amount'), roundingAmount)
+              );
+            }
+          }
+
+          payment.set('index', this.get('payments').length);
+          //Create the rounding payment line
+          paymentLine = new OB.Model.PaymentLine({
+            kind: terminalPayment.paymentRounding.paymentRoundingType,
+            name: OB.MobileApp.model.getPaymentName(
+              terminalPayment.paymentRounding.paymentRoundingType
+            ),
+            amount: roundingAmount,
+            rate: terminalPaymentRounding.rate,
+            mulrate: terminalPaymentRounding.mulrate,
+            isocode: terminalPaymentRounding.isocode,
+            isCash: terminalPaymentRounding.paymentMethod.iscash,
+            allowOpenDrawer:
+              terminalPaymentRounding.paymentMethod.allowopendrawer,
+            openDrawer: terminalPaymentRounding.paymentMethod.openDrawer,
+            printtwice: terminalPaymentRounding.paymentMethod.printtwice,
+            date: new Date(),
+            id: OB.UTIL.get_UUID(),
+            oBPOSPOSTerminal: OB.MobileApp.model.get('terminal').id,
+            orderGross: this.getGross(),
+            isPaid: false,
+            isReturnOrder: paymentStatus.isNegative
+          });
+          paymentLine.set('paymentRounding', true);
+          payment.set('paymentRoundingLine', paymentLine);
+          this.get('payments').add(paymentLine);
+
+          if (
+            paymentStatus.pendingAmt === 0 ||
+            paymentStatus.pendingAmt < multiplyBy
+          ) {
+            if (payment.has('id')) {
+              paymentLine.set('roundedPaymentId', payment.get('id'));
+            }
+            //When exists a rounding payment line and the receipt total amount change it's necessary
+            //to calculate the receipt to properly set the receipt payment status
+            this.calculateReceipt();
+          }
+        }
+      }
     },
 
     overpaymentExists: function() {
@@ -7651,6 +7838,7 @@
           receipt: this
         },
         function(args) {
+          var reversedPaymentRoundingId;
           if (args.cancellation) {
             if (cancellationCallback) {
               cancellationCallback();
@@ -7658,6 +7846,13 @@
             return true;
           }
           payments.remove(payment);
+          if (payment.has('paymentRoundingLine')) {
+            payments.remove(payment.get('paymentRoundingLine'));
+            reversedPaymentRoundingId = payment
+              .get('paymentRoundingLine')
+              .get('reversedPaymentId');
+          }
+
           if (!me.get('deletedPayments')) {
             me.set('deletedPayments', [payment]);
           } else {
@@ -7667,9 +7862,18 @@
           if (payment.get('reversedPaymentId')) {
             for (i = 0, max = payments.length; i < max; i++) {
               p = payments.at(i);
-              if (p.get('paymentId') === payment.get('reversedPaymentId')) {
+              if (
+                p.get('paymentId') === payment.get('reversedPaymentId') ||
+                (!OB.UTIL.isNullOrUndefined(reversedPaymentRoundingId) &&
+                  p.get('paymentId') === reversedPaymentRoundingId)
+              ) {
                 p.unset('isReversed');
-                break;
+                if (
+                  OB.UTIL.isNullOrUndefined(reversedPaymentRoundingId) ||
+                  p.get('paymentId') === reversedPaymentRoundingId
+                ) {
+                  break;
+                }
               }
             }
           }
@@ -7696,7 +7900,77 @@
       var payments = this.get('payments'),
         me = this,
         usedPayment,
-        reversalPayment;
+        reversalPayment,
+        reversalPaymentLine,
+        reversalPaymentRounding,
+        reversalPaymentRoundingLine,
+        paymentRounding = payment.has('paymentRoundingLine')
+          ? payment.get('paymentRoundingLine')
+          : null;
+
+      function createReversePayment(originalPayment) {
+        var reversePayment = new Backbone.Model();
+        OB.UTIL.clone(originalPayment, reversePayment);
+
+        // Remove the cloned properties that must not be in the payment
+        reversePayment.unset('date');
+        reversePayment.unset('isPaid');
+        reversePayment.unset('isPrePayment');
+        reversePayment.unset('paymentAmount');
+        reversePayment.unset('paymentDate');
+        reversePayment.unset('paymentId');
+        reversePayment.unset('paymentRoundingLine');
+
+        // Modify other properties for the reverse payment
+        reversePayment.set(
+          'amount',
+          OB.DEC.sub(OB.DEC.Zero, originalPayment.get('amount'))
+        );
+        reversePayment.set(
+          'origAmount',
+          OB.DEC.sub(OB.DEC.Zero, originalPayment.get('origAmount'))
+        );
+        reversePayment.set(
+          'paid',
+          OB.DEC.sub(OB.DEC.Zero, originalPayment.get('paid'))
+        );
+        if (originalPayment.has('overpayment')) {
+          reversePayment.set(
+            'overpayment',
+            OB.DEC.sub(OB.DEC.Zero, originalPayment.get('overpayment'))
+          );
+        }
+        reversePayment.set(
+          'reversedPaymentId',
+          originalPayment.get('paymentId')
+        );
+        reversePayment.set('reversedPayment', originalPayment);
+        reversePayment.set(
+          'index',
+          OB.DEC.add(
+            OB.DEC.One,
+            originalPayment.has('paymentRounding') &&
+              originalPayment.get('paymentRounding')
+              ? payments.indexOf(originalPayment) + OB.DEC.One
+              : payments.indexOf(originalPayment)
+          )
+        );
+        reversePayment.set('reverseCallback', reverseCallback);
+        reversePayment.set('isReversePayment', true);
+        reversePayment.set(
+          'paymentData',
+          originalPayment.get('paymentData')
+            ? originalPayment.get('paymentData')
+            : null
+        );
+        reversePayment.set(
+          'oBPOSPOSTerminal',
+          originalPayment.get('oBPOSPOSTerminal')
+            ? originalPayment.get('oBPOSPOSTerminal')
+            : null
+        );
+        return reversePayment;
+      }
 
       function reversePaymentConfirmed() {
         OB.UTIL.HookManager.executeHooks(
@@ -7714,54 +7988,10 @@
               return true;
             }
 
-            reversalPayment = new Backbone.Model();
-            OB.UTIL.clone(payment, reversalPayment);
-
-            // Remove the cloned properties that must not be in the payment
-            reversalPayment.unset('date');
-            reversalPayment.unset('isPaid');
-            reversalPayment.unset('isPrePayment');
-            reversalPayment.unset('paymentAmount');
-            reversalPayment.unset('paymentDate');
-            reversalPayment.unset('paymentId');
-
-            // Modify other properties for the reverse payment
-            reversalPayment.set(
-              'amount',
-              OB.DEC.sub(OB.DEC.Zero, payment.get('amount'))
-            );
-            reversalPayment.set(
-              'origAmount',
-              OB.DEC.sub(OB.DEC.Zero, payment.get('origAmount'))
-            );
-            reversalPayment.set(
-              'paid',
-              OB.DEC.sub(OB.DEC.Zero, payment.get('paid'))
-            );
-            if (payment.has('overpayment')) {
-              reversalPayment.set(
-                'overpayment',
-                OB.DEC.sub(OB.DEC.Zero, payment.get('overpayment'))
-              );
+            reversalPayment = createReversePayment(payment);
+            if (!OB.UTIL.isNullOrUndefined(paymentRounding)) {
+              reversalPaymentRounding = createReversePayment(paymentRounding);
             }
-            reversalPayment.set('reversedPaymentId', payment.get('paymentId'));
-            reversalPayment.set('reversedPayment', payment);
-            reversalPayment.set(
-              'index',
-              OB.DEC.add(OB.DEC.One, payments.indexOf(payment))
-            );
-            reversalPayment.set('reverseCallback', reverseCallback);
-            reversalPayment.set('isReversePayment', true);
-            reversalPayment.set(
-              'paymentData',
-              payment.get('paymentData') ? payment.get('paymentData') : null
-            );
-            reversalPayment.set(
-              'oBPOSPOSTerminal',
-              payment.get('oBPOSPOSTerminal')
-                ? payment.get('oBPOSPOSTerminal')
-                : null
-            );
 
             OB.UTIL.HookManager.executeHooks(
               'OBPOS_PreAddReversalPayment',
@@ -7830,9 +8060,20 @@
                       args: reversalPayment.attributes
                     });
                   } else {
-                    me.addPayment(
-                      new OB.Model.PaymentLine(reversalPayment.attributes)
+                    reversalPaymentLine = new OB.Model.PaymentLine(
+                      reversalPayment.attributes
                     );
+                    me.addPayment(reversalPaymentLine);
+                    if (!OB.UTIL.isNullOrUndefined(paymentRounding)) {
+                      reversalPaymentRoundingLine = new OB.Model.PaymentLine(
+                        reversalPaymentRounding.attributes
+                      );
+                      reversalPaymentLine.set(
+                        'paymentRoundingLine',
+                        reversalPaymentRoundingLine
+                      );
+                      me.addPayment(reversalPaymentRoundingLine);
+                    }
                   }
                 }
               }
@@ -9924,6 +10165,7 @@
         order.set('checked', model.checked); //TODO: what is this for, where it comes from?
         order.set('orderDate', OB.I18N.normalizeDate(model.orderDate));
         order.set('creationDate', OB.I18N.normalizeDate(model.creationDate));
+        order.set('updatedBy', OB.MobileApp.model.usermodel.id);
         order.set('paidPartiallyOnCredit', false);
         order.set('paidOnCredit', false);
         order.set('session', OB.MobileApp.model.get('session'));
@@ -9950,7 +10192,6 @@
         if (model.isLayaway) {
           order.set('isLayaway', true);
           order.set('id', model.orderid);
-          order.set('createdBy', OB.MobileApp.model.usermodel.id);
           order.set('hasbeenpaid', 'N');
         } else {
           order.set('isPaid', true);
@@ -10136,9 +10377,7 @@
                     ),
                     price: price,
                     priceList:
-                      prod.get('listPrice') !== price &&
-                      !OB.UTIL.isNullOrUndefined(order.get('isLayaway')) &&
-                      !order.get('isLayaway')
+                      prod.get('listPrice') !== price
                         ? price
                         : prod.get('listPrice'),
                     grossListPrice: iter.grossListPrice,
@@ -11416,6 +11655,11 @@
               payment.set('date', new Date());
               payment.set('isReturnOrder', false);
               payment.set('id', OB.UTIL.get_UUID());
+              if (payment.has('paymentRoundingLine')) {
+                payment
+                  .get('paymentRoundingLine')
+                  .set('roundedPaymentId', payment.get('id'));
+              }
               payments.add(payment);
               order.adjustPayment();
               order.trigger('displayTotal');
@@ -11542,7 +11786,6 @@
       this.get('payments').reset();
       this.set('openDrawer', false);
       this.set('additionalInfo', null);
-      this.unset('paymentDone');
       OB.MobileApp.model.set('isMultiOrderState', false);
       OB.UTIL.localStorage.removeItem('multiOrdersPayment');
     },

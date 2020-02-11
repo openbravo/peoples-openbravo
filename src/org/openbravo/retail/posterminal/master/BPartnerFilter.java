@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2016 Openbravo S.L.U.
+ * Copyright (C) 2016-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -27,6 +27,8 @@ import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.mobile.core.model.HQLEntity;
+import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
@@ -67,14 +69,29 @@ public class BPartnerFilter extends ProcessHQLQueryValidated {
     HQLPropertyList bpHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions,
         jsonsent);
 
+    List<HQLEntity> entityExtensions = ModelExtensionUtils.getEntityExtensions(extensions);
+    final String entitiesJoined = ModelExtensionUtils.getHQLEntitiesJoined(entityExtensions);
+    boolean useGroupBy = false;
+    String groupByExpression = "";
+    for (HQLProperty property : bpHQLProperties.getProperties()) {
+      if (property.isIncludeInGroupBy()) {
+        groupByExpression = bpHQLProperties.getHqlGroupBy();
+        useGroupBy = true;
+        break;
+      }
+    }
+
     String hql = "SELECT " + bpHQLProperties.getHqlSelect();
     if (location) {
       hql = hql
-          + "FROM BusinessPartnerLocation bpl left outer join bpl.businessPartner AS bp join bp.aDUserList AS ulist "
-          + getWhereClause(location, jsonsent);
+          + "FROM BusinessPartnerLocation bpl left outer join bpl.businessPartner AS bp join bp.aDUserList AS ulist ";
     } else {
-      hql = hql + "FROM BusinessPartner bp left outer join bp.aDUserList AS ulist  "
-          + getWhereClause(location, jsonsent);
+      hql = hql + "FROM BusinessPartner bp left outer join bp.aDUserList AS ulist ";
+    }
+    hql = hql + entitiesJoined + getWhereClause(location, jsonsent);
+    if (useGroupBy) {
+      hql += "GROUP BY " + groupByExpression;
+      hql += "HAVING $havingCriteria ";
     }
     hql = hql + "$orderByCriteria";
 

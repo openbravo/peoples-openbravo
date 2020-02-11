@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2019 Openbravo S.L.U.
+ * Copyright (C) 2013-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -495,7 +495,8 @@ enyo.kind({
     disabled: false
   },
   handlers: {
-    onRightToolbarDisabled: 'toggleVisibility'
+    onRightToolbarDisabled: 'toggleVisibility',
+    ontap: 'showServices'
   },
   addServicesFilter: function(orderline) {
     var product = orderline.get('product');
@@ -519,15 +520,15 @@ enyo.kind({
       }
     });
   },
-  tap: function(inSender, inEvent) {
+  showServices: function(inSender, inEvent) {
     var product = this.owner.model.get('product'),
       orderline = this.owner.model;
     if (product) {
       this.addServicesFilter(orderline);
       orderline.set('obposServiceProposed', true);
       OB.MobileApp.model.receipt.save();
-      return true;
     }
+    return true;
   },
   toggleVisibility: function(inSender, inEvent) {
     this.isVisible = !inEvent.status;
@@ -657,12 +658,14 @@ enyo.kind({
       );
       this.$.amount.setContent(this.model.printAmount());
     } else {
-      var receipt = this.owner.owner.owner.owner.order;
-      this.$.name.setContent(
-        OB.MobileApp.model.getPaymentName(this.model.get('kind')) ||
-          this.model.get('name')
-      );
-      this.$.amount.setContent(this.model.printAmountWithSignum(receipt));
+      if (!OB.UTIL.isNullOrUndefined(this.owner.owner)) {
+        var receipt = this.owner.owner.owner.owner.order;
+        this.$.name.setContent(
+          OB.MobileApp.model.getPaymentName(this.model.get('kind')) ||
+            this.model.get('name')
+        );
+        this.$.amount.setContent(this.model.printAmountWithSignum(receipt));
+      }
     }
     if (
       this &&
