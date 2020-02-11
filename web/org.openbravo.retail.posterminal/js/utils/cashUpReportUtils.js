@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2019 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -140,7 +140,11 @@
         if (
           !(order.has('isQuotation') && order.get('isQuotation')) &&
           !order.get('isPaid') &&
-          !(order.get('isLayaway') && !order.get('voidLayaway'))
+          ((OB.MobileApp.model.get('terminal').countLayawayAsSales &&
+            !(order.get('isLayaway') && !order.get('voidLayaway'))) ||
+            (!OB.MobileApp.model.get('terminal').countLayawayAsSales &&
+              order.isFullyPaid() &&
+              (order.get('isLayaway') && !order.get('voidLayaway'))))
         ) {
           _.each(order.get('lines').models, function(line) {
             if (order.get('priceIncludesTax')) {
