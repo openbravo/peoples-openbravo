@@ -12,7 +12,7 @@
   OB.Taxes = OB.Taxes || {};
   OB.Taxes.Pos = {
     translateTicket: function(receipt) {
-      let newTicket = {};
+      const newTicket = {};
       newTicket.id = receipt.get('id');
       newTicket.date = new Date();
       newTicket.country = OB.MobileApp.model.get(
@@ -46,7 +46,7 @@
 
       newTicket.lines = [];
       receipt.get('lines').forEach(line => {
-        let newLine = {};
+        const newLine = {};
         newLine.id = line.get('id');
         newLine.amount = newTicket.priceIncludesTax
           ? line.has('discountedGross')
@@ -64,11 +64,27 @@
           : line.get('product').has('modifiedTaxCategory')
           ? line.get('product').get('modifiedTaxCategory')
           : line.get('product').get('taxCategory');
-        newLine.product.isBom = OB.Taxes.Pos.taxCategoryBOM.find(
-          taxCategory => taxCategory.id === newLine.product.taxCategory
-        )
-          ? true
-          : false;
+
+        if (line.get('product').has('productBOM')) {
+          newLine.bomLines = [];
+          line
+            .get('product')
+            .get('productBOM')
+            .forEach(bomLine => {
+              const newBomLine = {};
+              newBomLine.id = bomLine.id;
+              newBomLine.amount = OB.DEC.mul(
+                bomLine.bomprice,
+                bomLine.bomquantity
+              );
+              newBomLine.quantity = bomLine.bomquantity;
+              newBomLine.product = {};
+              newBomLine.product.id = bomLine.bomproduct;
+              newBomLine.product.taxCategory = bomLine.bomtaxcategory;
+              newLine.bomLines.push(newBomLine);
+            });
+        }
+
         newTicket.lines.push(newLine);
       });
 

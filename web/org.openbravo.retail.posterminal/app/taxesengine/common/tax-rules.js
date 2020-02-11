@@ -25,26 +25,85 @@
       );
 
       this.ticket.lines.forEach(line => {
-        const rulesFilteredByLine = this.filterTaxRulesByLine(
-          line,
-          rulesFilteredByTicket
-        );
+        const lineTaxes = this.calculateLineTaxes(rulesFilteredByTicket, line);
 
-        if (rulesFilteredByLine.length === 0) {
-          taxes.lines.push({
-            id: line.id,
-            error: 'No tax found'
-          });
-        } else {
-          taxes.lines.push(this.getLineTaxes(line, rulesFilteredByLine));
+        if (line.bomLines) {
+          const lineBomTaxes = this.calculateLineBOMTaxes(
+            rulesFilteredByTicket,
+            line
+          );
+          lineTaxes.taxes = lineBomTaxes.flatMap(
+            lineBomTax => lineBomTax.taxes
+          );
+          lineTaxes.bomLines = lineBomTaxes;
+          lineTaxes.grossAmount = lineBomTaxes.reduce(
+            (total, bomLine) => OB.DEC.add(total, bomLine.grossAmount),
+            OB.DEC.Zero
+          );
+          lineTaxes.netAmount = lineBomTaxes.reduce(
+            (total, bomLine) => OB.DEC.add(total, bomLine.netAmount),
+            OB.DEC.Zero
+          );
         }
+
+        taxes.lines.push(lineTaxes);
       });
 
       if (!taxes.lines.find(line => line.error)) {
-        taxes.header = this.getHeaderTaxes(taxes.lines);
+        const lineTaxes = taxes.lines.flatMap(line =>
+          line.bomLines ? line.bomLines : line
+        );
+        taxes.header = this.getHeaderTaxes(lineTaxes);
       }
 
       return taxes;
+    }
+
+    calculateLineTaxes(rulesFilteredByTicket, line) {
+      const rulesFilteredByLine = this.filterTaxRulesByLine(
+        line,
+        rulesFilteredByTicket
+      );
+
+      if (rulesFilteredByLine.length === 0) {
+        return {
+          id: line.id,
+          error: 'No tax found'
+        };
+      }
+
+      return this.getLineTaxes(line, rulesFilteredByLine);
+    }
+
+    calculateLineBOMTaxes(rulesFilteredByTicket, line) {
+      const bomGroups = line.bomLines
+        .reduce((result, bomLine) => {
+          const bomGroup = result.find(
+            group => group.product.taxCategory === bomLine.product.taxCategory
+          );
+          if (bomGroup) {
+            bomGroup.amount = OB.DEC.add(bomGroup.amount, bomLine.amount);
+          } else {
+            result.push(bomLine);
+          }
+          return result;
+        }, [])
+        .sort((a, b) => a.amount - b.amount);
+
+      // FIXME: adjust the bigger amount if necessary
+      const bomTotalAmount = bomGroups.reduce(
+        (total, bomGroup) => OB.DEC.add(total, bomGroup.amount),
+        OB.DEC.Zero
+      );
+
+      return bomGroups.flatMap(bomGroup => {
+        const bomLine = bomGroup;
+        bomLine.amount = OB.DEC.div(
+          OB.DEC.mul(bomGroup.amount, line.amount),
+          bomTotalAmount
+        );
+        return this.calculateLineTaxes(rulesFilteredByTicket, bomLine);
+      });
     }
 
     filterTaxRulesByTicket() {

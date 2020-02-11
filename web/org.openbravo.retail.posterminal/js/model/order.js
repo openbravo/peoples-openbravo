@@ -4233,7 +4233,7 @@
       }
     },
 
-    addProductToOrder: function(
+    addProductToOrder: async function(
       p,
       qty,
       options,
@@ -4242,6 +4242,7 @@
       cancelCallback
     ) {
       var executeAddProduct,
+        addProductBOMToProduct,
         addProdCharsToProduct,
         finalCallback,
         me = this,
@@ -4299,6 +4300,21 @@
         return;
       }
 
+      // Add BOM information to product
+      addProductBOMToProduct = async function() {
+        if (
+          !p.has('productBOM') &&
+          OB.Taxes.Pos.taxCategoryBOM.find(
+            taxCategory => taxCategory.id === p.get('taxCategory')
+          )
+        ) {
+          const productBOM = await OB.App.MasterdataModels.ProductBOM.find(
+            new OB.App.Class.Criteria().criterion('product', p.id).build()
+          );
+          p.set('productBOM', productBOM);
+        }
+      };
+
       addProdCharsToProduct = function(productWithChars, addProdCharCallback) {
         //Add prod char information to product object
         if (
@@ -4321,7 +4337,9 @@
           addProdCharCallback();
         }
       };
+
       var context = this;
+      await addProductBOMToProduct();
       var productWithChars = OB.UTIL.clone(p);
       addProdCharsToProduct(productWithChars, function() {
         OB.UTIL.HookManager.executeHooks(
