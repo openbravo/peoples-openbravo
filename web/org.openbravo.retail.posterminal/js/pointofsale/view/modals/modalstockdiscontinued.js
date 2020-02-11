@@ -76,7 +76,7 @@
             name: 'btnAction' + indx,
             classes:
               'obObposPointOfSaleUiModalsModalStockDiscontinued-footer-obUiModalDialogButton',
-            content: btn.label,
+            label: btn.label,
             isDefaultAction: btn.isDefaultAction,
             action: btn.action,
             displayLogic: btn.displayLogic,
