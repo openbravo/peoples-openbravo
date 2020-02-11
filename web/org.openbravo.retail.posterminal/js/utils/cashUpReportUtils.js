@@ -314,7 +314,12 @@
                 amount = _.isNumber(payment.get('amountRounded'))
                   ? payment.get('amountRounded')
                   : payment.get('amount');
-                if (amount < 0) {
+                if (
+                  amount < 0 ||
+                  (payment.has('paymentRounding') &&
+                    payment.get('paymentRounding') &&
+                    payment.get('isReturnOrder'))
+                ) {
                   auxPay.set(
                     'totalReturns',
                     OB.DEC.sub(auxPay.get('totalReturns'), amount, precision)
