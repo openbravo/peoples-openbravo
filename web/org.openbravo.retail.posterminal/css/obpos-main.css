@@ -6736,26 +6736,9 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 /*
 # Component: OB.UI.updateprices
-# Inherits: [OB.UI.CheckboxButton]
+# Inherits: [OB.UI.FormElement.Checkbox]
 */
-.obUiUpdateprices {
-  height: 38px;
-  background-position: 10px center;
-  vertical-align: middle;
-  width: 100%;
-}
-
-.obUiUpdateprices:focus {
-  outline: none;
-  border-width: 2px;
-  border-color: #0078d7;
-  border-style: solid;
-  background-position: 8px center !important;
-}
-.obUiUpdateprices_active {
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-on.svg');
-  background-size: 34px 27px;
-}
+.obUiUpdateprices {}
 
 
 /*
@@ -6768,29 +6751,12 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obUiModalCreateOrderFromQuotation-footer {}
 
-.obUiModalCreateOrderFromQuotation-footer-element1 {
-  height: 40px;
-  width: 120px;
-  float: left;
+.obUiModalCreateOrderFromQuotation-footer-formElementCheckUpdatePrice {
+/* Inherits: [OB.UI.FormElement] */
 }
 
-.obUiModalCreateOrderFromQuotation-footer-container2 {
-  height: 40px;
-  width: 50px;
-  background-color: rgb(226, 226, 226);
-  float: left;
-}
-
-.obUiModalCreateOrderFromQuotation-footer-container2-obUiupdateprices {
+.obUiModalCreateOrderFromQuotation-footer-formElementCheckUpdatePrice-checkUpdatePrice {
 /* Inherits: [OB.UI.updateprices] */
-}
-
-.obUiModalCreateOrderFromQuotation-footer-element3 {
-  text-align: left;
-  padding: 11px;
-  float: left;
-  width: 248px;
-  background: #dddddd;
 }
 
 .obUiModalCreateOrderFromQuotation-footer-element4 {}
