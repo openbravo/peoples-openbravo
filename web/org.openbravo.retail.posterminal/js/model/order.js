@@ -6742,7 +6742,7 @@
                             keyboard: 'toolbarpayment',
                             edit: false
                           });
-                        });
+                        }, true);
                       });
                     });
                   }

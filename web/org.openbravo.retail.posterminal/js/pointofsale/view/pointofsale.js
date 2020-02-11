@@ -2031,6 +2031,10 @@ enyo.kind({
         .get('multiOrdersList')
         .add(iter);
     });
+    me.model
+      .get('multiOrders')
+      .get('multiOrdersList')
+      .trigger('loadedMultiOrder');
     OB.UTIL.HookManager.executeHooks(
       'OBPOS_hookPostMultiOrder',
       {
