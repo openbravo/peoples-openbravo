@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018-2019 Openbravo S.L.U.
+ * Copyright (C) 2018-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -181,7 +181,8 @@ enyo.kind({
     isDeliveryService: true
   },
   handlers: {
-    onSetMultiSelected: 'setMultiSelected'
+    onSetMultiSelected: 'setMultiSelected',
+    ontap: 'showServices'
   },
   initComponents: function() {
     this.inherited(arguments);
@@ -201,15 +202,15 @@ enyo.kind({
       this.hide();
     }
   },
-  tap: function(inSender, inEvent) {
+  showServices: function(inSender, inEvent) {
     var orderline = this.owner.model,
       product = orderline.get('product');
     if (product) {
       this.addServicesFilter(orderline);
       orderline.set('deliveryServiceProposed', true);
       OB.MobileApp.model.receipt.save();
-      return true;
     }
+    return true;
   },
   setMultiSelected: function(inSender, inEvent) {
     if (
