@@ -19,36 +19,23 @@
       taxes.header = {};
       taxes.lines = [];
 
-      this.ticket.lines.forEach(line => {
-        const lineTaxes = this.calculateLineTaxes(line);
+      // Calculate taxes for each ticket line
+      taxes.lines = this.ticket.lines.map(line => this.applyLineTaxes(line));
 
-        if (line.bomLines) {
-          const lineBomTaxes = this.calculateLineBOMTaxes(line);
-          lineTaxes.taxes = lineBomTaxes.flatMap(
-            lineBomTax => lineBomTax.taxes
-          );
-          lineTaxes.bomLines = lineBomTaxes;
-          lineTaxes.grossAmount = lineBomTaxes.reduce(
-            (total, bomLine) => OB.DEC.add(total, bomLine.grossAmount),
-            OB.DEC.Zero
-          );
-          lineTaxes.netAmount = lineBomTaxes.reduce(
-            (total, bomLine) => OB.DEC.add(total, bomLine.netAmount),
-            OB.DEC.Zero
-          );
-        }
-
-        taxes.lines.push(lineTaxes);
-      });
-
+      // Calculate taxes for ticket header in case there was no error calculating taxes for ticket lines
       if (!taxes.lines.find(line => line.error)) {
-        const lineTaxes = taxes.lines.flatMap(line =>
-          line.bomLines ? line.bomLines : line
-        );
-        taxes.header = this.getHeaderTaxes(lineTaxes);
+        taxes.header = this.applyHeaderTaxes(taxes.lines);
       }
 
       return taxes;
+    }
+
+    applyLineTaxes(line) {
+      if (line.bomLines) {
+        return this.calculateLineBOMTaxes(line);
+      }
+
+      return this.calculateLineTaxes(line);
     }
 
     calculateLineTaxes(line) {
@@ -89,7 +76,8 @@
         OB.DEC.Zero
       );
 
-      return bomGroups.flatMap(bomGroup => {
+      const lineTaxes = this.calculateLineTaxes(line);
+      const lineBomTaxes = bomGroups.flatMap(bomGroup => {
         const bomLine = bomGroup;
         bomLine.amount = OB.DEC.div(
           OB.DEC.mul(bomGroup.amount, line.amount),
@@ -97,8 +85,33 @@
         );
         return this.calculateLineTaxes(bomLine);
       });
+
+      lineTaxes.taxes = lineBomTaxes.flatMap(lineBomTax => lineBomTax.taxes);
+      lineTaxes.bomLines = lineBomTaxes;
+      lineTaxes.grossAmount = lineBomTaxes.reduce(
+        (total, bomLine) => OB.DEC.add(total, bomLine.grossAmount),
+        OB.DEC.Zero
+      );
+      lineTaxes.netAmount = lineBomTaxes.reduce(
+        (total, bomLine) => OB.DEC.add(total, bomLine.netAmount),
+        OB.DEC.Zero
+      );
+
+      return lineTaxes;
     }
 
+    applyHeaderTaxes(lines) {
+      // Lines with bom taxes are split by each different tax category
+      const lineTaxes = lines.flatMap(line =>
+        line.bomLines ? line.bomLines : line
+      );
+
+      return this.getHeaderTaxes(lineTaxes);
+    }
+
+    /**
+     * Return parent rule id if given rule has a parent, otherwise return given rule id
+     */
     static getParentTaxId(rule) {
       if (rule.parentTax) {
         return rule.parentTax;
