@@ -147,7 +147,7 @@
       }
 
       const ticket = OB.Taxes.Pos.translateTicket(receipt);
-      const result = OB.Taxes.calculateTaxes(ticket, OB.Taxes.Pos.ruleImpls);
+      const result = OB.Taxes.applyTaxes(ticket, OB.Taxes.Pos.ruleImpls);
       const taxes = OB.Taxes.Pos.translateTaxes(result);
 
       return taxes;

@@ -14,7 +14,7 @@
       this.rules = rules;
     }
 
-    calculateTaxes() {
+    applyTaxes() {
       const taxes = {};
       taxes.header = {};
       taxes.lines = [];
