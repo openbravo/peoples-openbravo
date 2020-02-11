@@ -2335,7 +2335,7 @@
             checkStockActions.push('discontinued');
           }
 
-          if (negativeQty && OB.UTIL.isCrossStoreProduct(product)) {
+          if (negativeQty && OB.UTIL.isCrossStoreLine(line)) {
             checkStockActions.push('crossStore');
           }
 
@@ -2730,7 +2730,7 @@
           checkStockActions.push('discontinued');
         }
 
-        if (negativeQty && OB.UTIL.isCrossStoreProduct(product)) {
+        if (negativeQty && OB.UTIL.isCrossStoreLine(line)) {
           checkStockActions.push('crossStore');
         }
 
@@ -3400,16 +3400,25 @@
             )
           ) {
             var positiveQty = OB.DEC.compare(qty) > 0,
+              isCrossStore = false,
               checkStockActions = [];
 
             if (positiveQty && productStatus.restrictsaleoutofstock) {
               checkStockActions.push('discontinued');
             }
 
+            if (line) {
+              isCrossStore = OB.UTIL.isCrossStoreLine(line);
+            } else if (attrs && attrs.organization) {
+              isCrossStore = OB.UTIL.isCrossStoreOrganization(
+                attrs.organization
+              );
+            }
+
             if (
               positiveQty &&
-              (OB.UTIL.isCrossStoreProduct(p) &&
-                (!line || OB.DEC.compare(line.get('qty')) > 0))
+              isCrossStore &&
+              (!line || OB.DEC.compare(OB.DEC.add(line.get('qty'), qty)) > 0)
             ) {
               checkStockActions.push('crossStore');
             }
