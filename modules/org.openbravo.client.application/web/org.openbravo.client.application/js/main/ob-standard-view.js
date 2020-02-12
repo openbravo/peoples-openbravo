@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2019 Openbravo SLU
+ * All portions are Copyright (C) 2010-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -2415,6 +2415,10 @@ isc.OBStandardView.addProperties({
       // Include grid selected properties in the request
       // This way we retrieve the same record information which is obtained when refreshing the whole grid
       params._selectedProperties = this.viewGrid.getSelectedProperties();
+      // We're going to refresh the grid filtering by the ID of the selected record
+      // Set the flags required to avoid applying any other filter clauses
+      params._directNavigation = true;
+      params._targetRecordId = this.viewGrid.getSelectedRecord().id;
       requestProperties.params = params;
       this.getDataSource().fetchData(criteria, callback, requestProperties);
     }
