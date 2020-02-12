@@ -181,7 +181,12 @@
           : { ...taxRate }
       );
 
-      OB.Taxes.Pos.taxCategoryBOM = await OB.App.MasterdataModels.TaxCategoryBOM.find();
+      OB.Taxes.Pos.taxCategory = await OB.App.MasterdataModels.TaxCategory.find(
+        new OB.App.Class.Criteria().orderBy(['default', 'name'], 'desc').build()
+      );
+      OB.Taxes.Pos.taxCategoryBOM = await OB.App.MasterdataModels.TaxCategoryBOM.find(
+        new OB.App.Class.Criteria().orderBy(['default', 'name'], 'desc').build()
+      );
 
       OB.UTIL.HookManager.executeHooks(
         'OBPOS_FindTaxRate',

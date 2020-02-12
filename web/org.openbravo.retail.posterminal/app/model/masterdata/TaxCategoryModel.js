@@ -7,8 +7,8 @@
  ************************************************************************************
  */
 
-(function taxCategoryBOMModel() {
-  class TaxCategoryBOM extends OB.App.Class.MasterdataModel {
+(function taxCategoryModel() {
+  class TaxCategory extends OB.App.Class.MasterdataModel {
     constructor() {
       super();
       this.indices = [
@@ -23,5 +23,5 @@
     }
   }
 
-  OB.App.MasterdataController.registerModel(TaxCategoryBOM);
+  OB.App.MasterdataController.registerModel(TaxCategory);
 })();
