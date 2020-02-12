@@ -181,6 +181,7 @@
           : { ...taxRate }
       );
 
+      // FIXME: order by default desc and by name asc
       OB.Taxes.Pos.taxCategory = await OB.App.MasterdataModels.TaxCategory.find(
         new OB.App.Class.Criteria().orderBy(['default', 'name'], 'desc').build()
       );
