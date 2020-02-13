@@ -23,7 +23,8 @@
       taxes.lines = this.ticket.lines.map(line => this.applyLineTaxes(line));
 
       // Calculate taxes for ticket header in case there was no error calculating taxes for ticket lines
-      if (!taxes.lines.find(line => line.error)) {
+      const lineWithError = taxes.lines.find(line => line.error);
+      if (!lineWithError) {
         taxes.header = this.applyHeaderTaxes(taxes.lines);
       }
 
@@ -85,6 +86,13 @@
         );
         return this.calculateLineTaxes(bomLine);
       });
+
+      const bomLineWithError = lineBomTaxes.find(bomLine => bomLine.error);
+      lineTaxes.error =
+        lineTaxes.error || bomLineWithError ? bomLineWithError.error : null;
+      if (lineTaxes.error) {
+        return lineTaxes;
+      }
 
       lineTaxes.taxes = lineBomTaxes.flatMap(lineBomTax => lineBomTax.taxes);
       lineTaxes.bomLines = lineBomTaxes;
