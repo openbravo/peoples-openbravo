@@ -253,12 +253,15 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           multiOrderList.reset(checkedMultiOrders);
 
           // MultiOrder payments
-          var payments = JSON.parse(
-            OB.UTIL.localStorage.getItem('multiOrdersPayment')
-          );
-          _.each(payments, function(payment) {
-            multiOrders.addPayment(new OB.Model.PaymentLine(payment));
-          });
+          var multiOrderAddPayments = function() {
+            var payments = JSON.parse(
+              OB.UTIL.localStorage.getItem('multiOrdersPayment')
+            );
+            _.each(payments, function(payment) {
+              multiOrders.addPayment(new OB.Model.PaymentLine(payment));
+            });
+          };
+          multiOrderList.trigger('loadedMultiOrder', multiOrderAddPayments);
         } else if (me.isValidMultiOrderState()) {
           multiOrders.resetValues();
           me.get('leftColumnViewManager').setOrderMode();

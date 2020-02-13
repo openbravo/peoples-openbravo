@@ -11764,12 +11764,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   padding: 8px 10px 8px 10px;
   text-decoration: none;
   text-align: left;
-  cursor: pointer;
   border-bottom: var(--separator-slim);
-}
-
-.obObposPointOfSaleUiModalsModalStockInOtherStoresComponentsStockInOtherStoresLine:active {
-  background-color: var(--color-quaternary-variant);
 }
 
 .obObposPointOfSaleUiModalsModalStockInOtherStoresComponentsStockInOtherStoresLine-line {
