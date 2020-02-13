@@ -73,10 +73,7 @@
             .forEach(bomLine => {
               const newBomLine = {};
               newBomLine.id = bomLine.id;
-              newBomLine.amount = OB.DEC.mul(
-                bomLine.bomprice,
-                bomLine.bomquantity
-              );
+              newBomLine.amount = bomLine.bomamount;
               newBomLine.quantity = bomLine.bomquantity;
               newBomLine.product = {};
               newBomLine.product.id = bomLine.bomproduct;

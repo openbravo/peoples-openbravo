@@ -16,6 +16,7 @@
 
     // We calculate taxes info
     initializeTaxes(receipt);
+    calculateBOMLineAmount(receipt);
     await modifyProductTaxCategoryByService(receipt);
     const taxes = OB.Taxes.Pos.calculateTaxes(receipt);
     setTaxes(receipt, taxes);
@@ -52,6 +53,32 @@
         silent: true
       }
     );
+  };
+
+  const calculateBOMLineAmount = function(receipt) {
+    // We use Promise.reject to show async message in case of error
+    new Promise((resolve, reject) => {
+      receipt.get('lines').forEach(line => {
+        if (line.get('product').has('productBOM')) {
+          line
+            .get('product')
+            .get('productBOM')
+            .forEach(bomLine => {
+              if (!bomLine.bomprice) {
+                return reject(line);
+              }
+
+              bomLine.bomamount = OB.DEC.mul(
+                bomLine.bomprice,
+                bomLine.bomquantity
+              );
+            });
+        }
+      });
+    }).catch(function(line) {
+      const error = OB.I18N.getLabel('OBPOS_BOM_NoPrice');
+      showLineTaxError(receipt, line, error);
+    });
   };
 
   // For each service with modifyTax flag activated, look in linked product category table
@@ -280,19 +307,19 @@
         }
       });
     }).catch(function(line) {
-      showLineTaxError(receipt, line);
+      const error = OB.I18N.getLabel('OBPOS_TaxNotFound_Message', [
+        receipt.get('bp').get('name') ||
+          OB.I18N.getLabel('OBPOS_LblEmptyAddress'),
+        receipt.get('bp').get('shipLocName') ||
+          OB.I18N.getLabel('OBPOS_LblEmptyAddress')
+      ]);
+      showLineTaxError(receipt, line, error);
     });
   };
 
-  const showLineTaxError = function(receipt, line) {
+  const showLineTaxError = function(receipt, line, error) {
     const title = OB.I18N.getLabel('OBPOS_TaxNotFound_Header');
-    const reason = OB.I18N.getLabel('OBPOS_TaxNotFound_Message', [
-      receipt.get('bp').get('name') ||
-        OB.I18N.getLabel('OBPOS_LblEmptyAddress'),
-      receipt.get('bp').get('shipLocName') ||
-        OB.I18N.getLabel('OBPOS_LblEmptyAddress')
-    ]);
-    OB.error(title + ':' + reason);
+    OB.error(title + ':' + error);
     line.set('hasTaxError', true, {
       silent: true
     });
@@ -301,13 +328,13 @@
         .getRoot()
         .bubble('onErrorCalcLineTax', {
           line: line,
-          reason: reason
+          reason: error
         });
       OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
         popup: 'OB_UI_MessageDialog',
         args: {
           header: title,
-          message: reason
+          message: error
         }
       });
     });
