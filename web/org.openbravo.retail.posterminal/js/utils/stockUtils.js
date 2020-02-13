@@ -88,6 +88,26 @@
       var stockActions = [];
 
       if (
+        OB.UTIL.StockUtils.hasStockAction(checkStockActions, 'stockValidation')
+      ) {
+        var stockValidationAction = {
+          actionName: 'stockValidation'
+        };
+        stockValidationAction.allowToAdd = true;
+        stockValidationAction.askConfirmation = true;
+        stockValidationAction.allowMessage = OB.I18N.getLabel(
+          'OBPOS_NotStockValidation',
+          [
+            product.get('_identifier'),
+            allLinesQty,
+            warehouse.warehousename,
+            warehouse.warehouseqty
+          ]
+        );
+        stockActions.push(stockValidationAction);
+      }
+
+      if (
         OB.UTIL.StockUtils.hasStockAction(checkStockActions, 'discontinued')
       ) {
         var discontinuedAction = {
@@ -174,7 +194,8 @@
           line: line,
           product: product,
           attrs: attrs,
-          warehouse: warehouse
+          warehouse: warehouse,
+          allLinesQty: allLinesQty
         },
         function(args) {
           if (args.cancelOperation) {
@@ -374,6 +395,14 @@
         return;
       }
 
+      if (
+        positiveQty &&
+        OB.MobileApp.model.hasPermission('OBPOS_EnableStockValidation', true) &&
+        OB.UTIL.ProcessController.isProcessActive('createOrderFromQuotation')
+      ) {
+        checkStockActions.push('stockValidation');
+      }
+
       if (positiveQty && productStatus.restrictsaleoutofstock) {
         checkStockActions.push('discontinued');
       }
@@ -503,7 +532,10 @@
         return;
       }
       var order = orders[idxOrder];
-      if (order.get('isEditable')) {
+      if (
+        (order.get('isEditable') && !order.get('isQuotation')) ||
+        OB.UTIL.ProcessController.isProcessActive('createOrderFromQuotation')
+      ) {
         checkOrderLineStock(0, order, function() {
           checkOrderStock(idxOrder + 1);
         });

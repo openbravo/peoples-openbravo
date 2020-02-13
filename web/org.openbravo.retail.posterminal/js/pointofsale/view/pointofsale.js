@@ -1613,56 +1613,78 @@ enyo.kind({
       return;
     }
     if (
-      OB.MobileApp.model.hasPermission(
+      !this.model.get('order').get('isQuotation') &&
+      (OB.MobileApp.model.hasPermission(
         'OBPOS_CheckStockForNotSaleWithoutStock',
         true
-      )
+      ) ||
+        OB.MobileApp.model.hasPermission('OBPOS_EnableStockValidation', true))
     ) {
       var product = inEvent.line.get('product'),
         negativeQty = OB.DEC.compare(inEvent.line.get('qty')) < 0,
         productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(product),
         checkStockActions = [];
 
-      if (negativeQty && productStatus.restrictsaleoutofstock) {
-        checkStockActions.push('discontinued');
-      }
-
-      if (negativeQty && OB.UTIL.isCrossStoreProduct(product)) {
-        checkStockActions.push('crossStore');
-      }
-
-      OB.UTIL.HookManager.executeHooks(
-        'OBPOS_CheckStockReturnLine',
-        {
-          order: this.model.get('order'),
-          line: inEvent.line,
-          checkStockActions: checkStockActions
-        },
-        function(args) {
-          if (args.cancelOperation) {
-            return;
-          }
-          if (args.checkStockActions.length) {
-            var qtyAdded = -inEvent.line.get('qty') - inEvent.line.get('qty');
-            me.model
-              .get('order')
-              .getStoreStock(
-                inEvent.line.get('product'),
-                qtyAdded,
-                inEvent,
-                null,
-                args.checkStockActions,
-                function(hasStock) {
-                  if (hasStock) {
-                    me.model.get('order').returnLine(inEvent.line);
-                  }
+      var getLineStock = function() {
+        if (checkStockActions.length) {
+          var qtyAdded = OB.DEC.mul(inEvent.line.get('qty'), -2);
+          me.model
+            .get('order')
+            .getStoreStock(
+              inEvent.line.get('product'),
+              qtyAdded,
+              inEvent,
+              null,
+              checkStockActions,
+              function(hasStock) {
+                if (hasStock) {
+                  me.model.get('order').returnLine(inEvent.line);
                 }
-              );
-          } else {
-            me.model.get('order').returnLine(inEvent.line);
-          }
+              }
+            );
+        } else {
+          me.model.get('order').returnLine(inEvent.line);
         }
-      );
+      };
+
+      if (
+        negativeQty &&
+        OB.MobileApp.model.hasPermission('OBPOS_EnableStockValidation', true)
+      ) {
+        checkStockActions.push('stockValidation');
+      }
+
+      if (
+        OB.MobileApp.model.hasPermission(
+          'OBPOS_CheckStockForNotSaleWithoutStock',
+          true
+        )
+      ) {
+        if (negativeQty && productStatus.restrictsaleoutofstock) {
+          checkStockActions.push('discontinued');
+        }
+
+        if (negativeQty && OB.UTIL.isCrossStoreProduct(product)) {
+          checkStockActions.push('crossStore');
+        }
+
+        OB.UTIL.HookManager.executeHooks(
+          'OBPOS_CheckStockReturnLine',
+          {
+            order: this.model.get('order'),
+            line: inEvent.line,
+            checkStockActions: checkStockActions
+          },
+          function(args) {
+            if (args.cancelOperation) {
+              return;
+            }
+            getLineStock();
+          }
+        );
+      } else {
+        getLineStock();
+      }
     } else {
       this.model.get('order').returnLine(inEvent.line);
     }
