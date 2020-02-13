@@ -29,20 +29,6 @@
         .get('bp')
         .get('taxCategory');
       newTicket.businessPartner.taxExempt = receipt.get('bp').get('taxExempt');
-      newTicket.businessPartner.address = {};
-      newTicket.businessPartner.address.id = receipt.get('bp').get('shipLocId');
-      newTicket.businessPartner.address.country =
-        receipt.get('bp').get('shipCountryId') ||
-        receipt
-          .get('bp')
-          .get('locationModel')
-          .get('countryId');
-      newTicket.businessPartner.address.region =
-        receipt.get('bp').get('shipRegionId') ||
-        receipt
-          .get('bp')
-          .get('locationModel')
-          .get('regionId');
 
       newTicket.lines = [];
       receipt.get('lines').forEach(line => {

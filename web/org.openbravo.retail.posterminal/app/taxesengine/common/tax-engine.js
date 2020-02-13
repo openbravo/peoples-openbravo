@@ -38,18 +38,16 @@
       );
     };
     const checkCountry = rule => {
-      const businessPartnerCountry = ticket.businessPartner.address.country;
       return (
-        OB.Taxes.equals(rule.destinationCountry, businessPartnerCountry) ||
-        OB.Taxes.equals(rule.zoneDestinationCountry, businessPartnerCountry) ||
+        OB.Taxes.equals(rule.destinationCountry, ticket.country) ||
+        OB.Taxes.equals(rule.zoneDestinationCountry, ticket.country) ||
         (!rule.destinationCountry && !rule.zoneDestinationCountry)
       );
     };
     const checkRegion = rule => {
-      const businessPartnerRegion = ticket.businessPartner.address.region;
       return (
-        OB.Taxes.equals(rule.destinationRegion, businessPartnerRegion) ||
-        OB.Taxes.equals(rule.zoneDestinationRegion, businessPartnerRegion) ||
+        OB.Taxes.equals(rule.destinationRegion, ticket.region) ||
+        OB.Taxes.equals(rule.zoneDestinationRegion, ticket.region) ||
         (!rule.destinationRegion && !rule.zoneDestinationRegion)
       );
     };
@@ -67,10 +65,9 @@
     };
     const sortByCountryTo = (rule1, rule2) => {
       const checkCountryTo = rule => {
-        const businessPartnerCountry = ticket.businessPartner.address.country;
         return (
-          OB.Taxes.equals(rule.destinationCountry, businessPartnerCountry) ||
-          OB.Taxes.equals(rule.zoneDestinationCountry, businessPartnerCountry)
+          OB.Taxes.equals(rule.destinationCountry, ticket.country) ||
+          OB.Taxes.equals(rule.zoneDestinationCountry, ticket.country)
         );
       };
       if (checkCountryTo(rule1) && !checkCountryTo(rule2)) {
@@ -95,10 +92,9 @@
     };
     const sortByRegionTo = (rule1, rule2) => {
       const checkRegionTo = rule => {
-        const businessPartnerRegion = ticket.businessPartner.address.region;
         return (
-          OB.Taxes.equals(rule.destinationRegion, businessPartnerRegion) ||
-          OB.Taxes.equals(rule.zoneDestinationRegion, businessPartnerRegion)
+          OB.Taxes.equals(rule.destinationRegion, ticket.region) ||
+          OB.Taxes.equals(rule.zoneDestinationRegion, ticket.region)
         );
       };
       if (checkRegionTo(rule1) && !checkRegionTo(rule2)) {
@@ -143,13 +139,13 @@
           : rule.zoneRegion;
         updatedRule.destinationCountry = OB.Taxes.equals(
           rule.destinationCountry,
-          ticket.businessPartner.address.country
+          ticket.country
         )
           ? rule.destinationCountry
           : rule.zoneDestinationCountry;
         updatedRule.destinationRegion = OB.Taxes.equals(
           rule.destinationRegion,
-          ticket.businessPartner.address.region
+          ticket.region
         )
           ? rule.destinationRegion
           : rule.zoneDestinationRegion;
