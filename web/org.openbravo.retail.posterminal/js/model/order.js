@@ -4309,19 +4309,11 @@
         return;
       }
 
-      // Add BOM information to product
       addProductBOMToProduct = async function() {
-        if (
-          !p.has('productBOM') &&
-          OB.Taxes.Pos.taxCategoryBOM.find(
-            taxCategory => taxCategory.id === p.get('taxCategory')
-          )
-        ) {
-          const productBOM = await OB.App.MasterdataModels.ProductBOM.find(
-            new OB.App.Class.Criteria().criterion('product', p.id).build()
-          );
-          p.set('productBOM', productBOM);
-        }
+        const productBOM = await OB.App.MasterdataModels.ProductBOM.find(
+          new OB.App.Class.Criteria().criterion('product', p.id).build()
+        );
+        p.set('productBOM', productBOM);
       };
 
       addProdCharsToProduct = function(productWithChars, addProdCharCallback) {
@@ -4348,7 +4340,17 @@
       };
 
       var context = this;
-      await addProductBOMToProduct();
+
+      // In case product is BOM and it doesn't have BOM information yet, add it
+      if (
+        !p.has('productBOM') &&
+        OB.Taxes.Pos.taxCategoryBOM.find(
+          taxCategory => taxCategory.id === p.get('taxCategory')
+        )
+      ) {
+        await addProductBOMToProduct();
+      }
+
       var productWithChars = OB.UTIL.clone(p);
       addProdCharsToProduct(productWithChars, function() {
         OB.UTIL.HookManager.executeHooks(
