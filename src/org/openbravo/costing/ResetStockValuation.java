@@ -28,6 +28,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.query.Query;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
+import org.openbravo.client.application.process.ResponseActionsBuilder.MessageType;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
@@ -38,12 +39,10 @@ public class ResetStockValuation extends BaseProcessActionHandler {
   private static final Logger log = LogManager.getLogger();
 
   @Override
-  protected JSONObject doExecute(Map<String, Object> parameters, String content) {
+  protected JSONObject doExecute(final Map<String, Object> parameters, final String content) {
     try {
-      JSONObject result = new JSONObject();
-
-      JSONObject request = new JSONObject(content);
-      JSONObject params = request.getJSONObject("_params");
+      final JSONObject request = new JSONObject(content);
+      final JSONObject params = request.getJSONObject("_params");
 
       // Do validations on param values
       String strOrgID = null;
@@ -51,11 +50,7 @@ public class ResetStockValuation extends BaseProcessActionHandler {
         strOrgID = (String) params.get("AD_Org_ID");
       }
 
-      JSONObject msg = doResetStockValuation(strOrgID);
-
-      result.put("message", msg);
-      result.put("retryExecution", true);
-      return result;
+      return doResetStockValuation(strOrgID);
 
     } catch (JSONException e) {
       log.error("Error in process", e);
@@ -63,59 +58,57 @@ public class ResetStockValuation extends BaseProcessActionHandler {
     }
   }
 
-  public static JSONObject doResetStockValuation(String strOrgID) {
-    try {
-      JSONObject msg = new JSONObject();
-      boolean errorMessage = false;
-      // delete existing records
+  public static JSONObject doResetStockValuation(final String strOrgID) {
+    deleteOldRecords(strOrgID);
+    return createNewResetedRecods(strOrgID);
+  }
+
+  private static void deleteOldRecords(final String strOrgID) {
+    // delete existing records
+    //@formatter:off
+    String hql =
+            "delete from  M_Stock_Valuation sv" +
+            " where sv.client.id = :clientId";
+    //@formatter:on
+    if (strOrgID != null) {
       //@formatter:off
-      String hql =
-              "delete from  M_Stock_Valuation sv" +
-              " where sv.client.id = :clientId";
+      hql +=
+            "   and sv.organization.id = :orgId";
       //@formatter:on
-      if (strOrgID != null) {
-        //@formatter:off
-        hql +=
-              "   and sv.organization.id = :org";
-        //@formatter:on
-      }
-
-      @SuppressWarnings("rawtypes")
-      Query delQry = OBDal.getInstance()
-          .getSession()
-          .createQuery(hql)
-          .setParameter("clientId", OBContext.getOBContext().getCurrentClient().getId());
-      if (strOrgID != null) {
-        delQry.setParameter("org", strOrgID);
-      }
-      delQry.executeUpdate();
-
-      List<Object> storedProcedureParams = new ArrayList<Object>();
-      storedProcedureParams.add(OBContext.getOBContext().getCurrentClient().getId());
-      storedProcedureParams.add(strOrgID);
-      storedProcedureParams.add(null);
-      try {
-        CallStoredProcedure.getInstance()
-            .call("M_INITIALIZE_STOCK_VALUATION", storedProcedureParams, null, false, false);
-      } catch (Exception e) {
-        errorMessage = true;
-        msg.put("severity", "error");
-        msg.put("title", OBMessageUtils.messageBD("Error"));
-        msg.put("message", OBMessageUtils.translateError(e.getMessage()));
-      }
-
-      if (!errorMessage) {
-        msg.put("severity", "success");
-        msg.put("message", OBMessageUtils.messageBD("Success"));
-      }
-
-      return msg;
-
-    } catch (JSONException e) {
-      log.error("Error in process", e);
-      return new JSONObject();
     }
 
+    @SuppressWarnings("rawtypes")
+    final Query delQry = OBDal.getInstance()
+        .getSession()
+        .createQuery(hql)
+        .setParameter("clientId", OBContext.getOBContext().getCurrentClient().getId());
+    if (strOrgID != null) {
+      delQry.setParameter("orgId", strOrgID);
+    }
+    delQry.executeUpdate();
+  }
+
+  private static JSONObject createNewResetedRecods(final String strOrgID) {
+    final List<Object> storedProcedureParams = new ArrayList<>();
+    storedProcedureParams.add(OBContext.getOBContext().getCurrentClient().getId());
+    storedProcedureParams.add(strOrgID);
+    storedProcedureParams.add(null);
+    try {
+      CallStoredProcedure.getInstance()
+          .call("M_INITIALIZE_STOCK_VALUATION", storedProcedureParams, null, false, false);
+    } catch (Exception e) {
+      return getResponseBuilder()
+          .showMsgInProcessView(MessageType.ERROR, OBMessageUtils.messageBD("Error"),
+              OBMessageUtils.translateError(e.getMessage()).getMessage())
+          .retryExecution()
+          .build();
+    }
+
+    return getResponseBuilder()
+        .showMsgInProcessView(MessageType.SUCCESS, OBMessageUtils.messageBD("Success"),
+            OBMessageUtils.messageBD("Success"))
+        .retryExecution()
+        .build();
   }
 
 }
