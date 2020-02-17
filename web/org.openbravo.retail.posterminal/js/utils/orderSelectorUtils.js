@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018-2019 Openbravo S.L.U.
+ * Copyright (C) 2018-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -57,6 +57,10 @@
       currentOriginServer;
 
     checkListCallback = function() {
+      OB.UTIL.ProcessController.finish(
+        'loadPaidReceipts',
+        me.listOfExecution.shift()
+      );
       if (me.listOfReceipts && me.listOfReceipts.length > 0) {
         var currentReceipt = me.listOfReceipts.shift();
         loadOrdersProcess(
@@ -71,10 +75,7 @@
       }
     };
 
-    errorCallback = function(unsetLoading, msg, msgInPopup) {
-      if (unsetLoading) {
-        OB.UTIL.showLoading(false);
-      }
+    errorCallback = function(msg, msgInPopup) {
       if (msg) {
         if (msgInPopup) {
           OB.UTIL.showConfirmation.display('', msg);
@@ -124,7 +125,7 @@
           },
           function(args) {
             if (args.cancelOperation) {
-              errorCallback(false);
+              errorCallback();
               return;
             }
             currentOrderList.newPaidReceipt(data[0], function(newOrder) {
@@ -136,7 +137,7 @@
           }
         );
       } else {
-        errorCallback(true);
+        errorCallback();
       }
     };
 
@@ -144,7 +145,6 @@
       var process = new OB.DS.Process(
         'org.openbravo.retail.posterminal.PaidReceipts'
       );
-      OB.UTIL.showLoading(true);
       process.exec(
         {
           orderid: order.get('id'),
@@ -155,21 +155,13 @@
         },
         function(data) {
           if (data && data.exception) {
-            errorCallback(true, data.exception.message, true);
+            errorCallback(data.exception.message, true);
           } else {
             if (data[0].recordInImportEntry) {
-              OB.UTIL.showLoading(false);
+              errorCallback();
               OB.UTIL.showConfirmation.display(
                 OB.I18N.getLabel('OBMOBC_Error'),
-                OB.I18N.getLabel('OBPOS_ReceiptNotSynced', [
-                  data[0].documentNo
-                ]),
-                null,
-                {
-                  onHideFunction: function() {
-                    errorCallback(true);
-                  }
-                }
+                OB.I18N.getLabel('OBPOS_ReceiptNotSynced', [data[0].documentNo])
               );
             } else {
               orderLoaded(data);
@@ -177,7 +169,7 @@
           }
         },
         function(error) {
-          errorCallback(true);
+          errorCallback();
         },
         true,
         5000
@@ -185,6 +177,10 @@
     };
 
     loadOrders = function(models) {
+      OB.UTIL.ProcessController.finish(
+        'loadPaidReceipts',
+        me.listOfExecution.shift()
+      );
       context.doShowPopup({
         popup: 'modalOpenRelatedReceipts',
         args: {
@@ -196,7 +192,9 @@
               var process = new OB.DS.Process(
                 'org.openbravo.retail.posterminal.process.OpenRelatedReceipts'
               );
-              OB.UTIL.showLoading(true);
+              me.listOfExecution.push(
+                OB.UTIL.ProcessController.start('loadPaidReceipts')
+              );
               process.exec(
                 {
                   orders: selectedModels,
@@ -204,7 +202,7 @@
                 },
                 function(data) {
                   if (data && data.exception) {
-                    errorCallback(true, data.exception.message, true);
+                    errorCallback(data.exception.message, true);
                   } else if (data && data.length > 0) {
                     var loadOrder;
                     loadOrder = function(idx) {
@@ -222,13 +220,12 @@
                     loadOrder(0);
                   } else {
                     errorCallback(
-                      true,
                       OB.I18N.getLabel('OBPOS_RelatedReceiptNotFound')
                     );
                   }
                 },
                 function(error) {
-                  errorCallback(true);
+                  errorCallback();
                 },
                 true,
                 5000
@@ -250,6 +247,9 @@
       currentOrderList = orderList;
       currentContext = context;
       currentOriginServer = originServer;
+      me.listOfExecution.push(
+        OB.UTIL.ProcessController.start('loadPaidReceipts')
+      );
       orderList.checkForDuplicateReceipts(
         model,
         function(order) {
@@ -272,7 +272,7 @@
               },
               function(data) {
                 if (data && data.exception) {
-                  errorCallback(true, data.exception.message, true);
+                  errorCallback(data.exception.message, true);
                 } else {
                   if (data.length > 0) {
                     var models = [currentModel],
@@ -310,7 +310,7 @@
                 }
               },
               function(error) {
-                errorCallback(true);
+                errorCallback();
               }
             );
           } else {
@@ -324,6 +324,7 @@
       );
     };
 
+    me.listOfExecution = me.listOfExecution || [];
     if (me.loadingReceipt) {
       OB.UTIL.OrderSelectorUtils.addToListOfReceipts(
         model,
