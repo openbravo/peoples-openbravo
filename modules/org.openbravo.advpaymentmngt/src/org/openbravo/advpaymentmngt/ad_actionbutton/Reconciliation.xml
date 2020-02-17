@@ -34,6 +34,7 @@
     <PARAMETER id="paramBeginBalance" name="beginBalance" attribute="value" format="euroEdition"/>
     <PARAMETER id="paramEndBalance" name="endBalance" attribute="value" format="euroEdition"/>
     <PARAMETER id="paramPrecision" name="precision" attribute="value"/>
+    <PARAMETER id="paramGlDifference" name="glDifference" attribute="value" format="euroEdition"/>
     
     <PARAMETER id="inpCalcBeginnigBalance" name="calcBeginningBalance" attribute="value" format="euroEdition"/>
     <PARAMETER id="inpCalcEndingBalance" name="calcEndingBalance" attribute="value" format="euroEdition"/>

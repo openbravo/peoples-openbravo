@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2019 Openbravo SLU
+ * All portions are Copyright (C) 2010-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +43,7 @@ import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.filter.IsIDFilter;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
@@ -57,6 +59,7 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.financialmgmt.accounting.FIN_FinancialAccountAccounting;
+import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
@@ -71,6 +74,7 @@ public class Reconciliation extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   private AdvPaymentMngtDao dao;
   Set<FIN_FinaccTransaction> transactionsToBePosted = new HashSet<FIN_FinaccTransaction>();
+  private static final String BP_WITHDRAWAL = "BPW";
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -120,9 +124,11 @@ public class Reconciliation extends HttpSecureAppServlet {
       String strStatementDate = vars.getStringParameter("inpStatementDate");
       String strBeginBalance = vars.getNumericParameter("inpBeginBalance");
       String strEndBalance = vars.getNumericParameter("inpEndBalance");
+      String strGlItemDiff = vars.getNumericParameter("inpGlDifference");
+
       boolean process = vars.commandIn("PROCESS");
       processReconciliation(response, vars, strTabId, strFinancialAccountId, strDifference,
-          strStatementDate, strBeginBalance, strEndBalance, process);
+          strStatementDate, strBeginBalance, strEndBalance, strGlItemDiff, process);
 
     } else if (vars.commandIn("UPDATESTATUS")) {
       String strFinancialAccountId = vars.getStringParameter("inpFinFinancialAccountId", "");
@@ -181,7 +187,7 @@ public class Reconciliation extends HttpSecureAppServlet {
 
   private void processReconciliation(HttpServletResponse response, VariablesSecureApp vars,
       String strTabId, String strFinancialAccountId, String strDifference, String strStatementDate,
-      String strBeginBalance, String strEndBalance, boolean process)
+      String strBeginBalance, String strEndBalance, String strGlItemDiff, boolean process)
       throws IOException, ServletException {
 
     log4j.debug(
@@ -214,7 +220,8 @@ public class Reconciliation extends HttpSecureAppServlet {
         String strMessage = "";
         boolean raiseException = false;
 
-        if (new BigDecimal(strDifference).compareTo(BigDecimal.ZERO) != 0) {
+        if ((new BigDecimal(strDifference).subtract(new BigDecimal(strGlItemDiff)))
+            .compareTo(BigDecimal.ZERO) != 0) {
           strMessage = "@APRM_ReconciliationDiscrepancy@" + " " + strDifference;
           raiseException = true;
         }
@@ -278,6 +285,18 @@ public class Reconciliation extends HttpSecureAppServlet {
             printPageClosePopUpAndRefreshParent(response, vars);
             return;
           }
+        }
+
+        // Difference transaction
+        LineNumberUtil lineNoUtil = new LineNumberUtil();
+        BigDecimal bdGlItemDiff = new BigDecimal(strGlItemDiff).negate();
+
+        // Do no create a difference transaction if the amount is 0.00
+        // If transaction is created with amount 0, a constratint is violated
+        if (bdGlItemDiff.compareTo(BigDecimal.ZERO) != 0) {
+          FIN_FinaccTransaction finTrxDiff = createTransaction(account, BP_WITHDRAWAL,
+              reconciliation.getTransactionDate(), account.getAprmGlitemDiff(), bdGlItemDiff,
+              lineNoUtil, null, "GL Item: Differences", reconciliation);
         }
 
         for (APRM_FinaccTransactionV finacctrxv : reconciliation.getAPRMFinaccTransactionVList()) {
@@ -667,6 +686,61 @@ public class Reconciliation extends HttpSecureAppServlet {
       return false;
     }
     return true;
+  }
+
+  private static FIN_FinaccTransaction createTransaction(FIN_FinancialAccount account,
+      String trxType, Date trxDate, GLItem glitem, BigDecimal amount, LineNumberUtil lineNoUtil,
+      FIN_FinaccTransaction sourceTrx, String description, FIN_Reconciliation reconciliation) {
+    FIN_FinaccTransaction trx = OBProvider.getInstance().get(FIN_FinaccTransaction.class);
+
+    trx.setAccount(account);
+    trx.setTransactionType(trxType);
+    trx.setTransactionDate(trxDate);
+    trx.setDateAcct(trxDate);
+    trx.setGLItem(glitem);
+    trx.setCurrency(account.getCurrency());
+    // if (BP_DEPOSIT.equalsIgnoreCase(trxType)) {
+    // trx.setDepositAmount(amount);
+    // } else {
+    trx.setPaymentAmount(amount);
+    // }
+    // If the user has access to the Organization of the Financial Account, the Transaction is
+    // created for it. If not, the Organization of the context is used instead
+    if (OBContext.getOBContext()
+        .getWritableOrganizations()
+        .contains(account.getOrganization().getId())) {
+      trx.setOrganization(account.getOrganization());
+    } else {
+      trx.setOrganization(OBContext.getOBContext().getCurrentOrganization());
+    }
+
+    Long line = lineNoUtil.getNextLineNumber(account);
+    trx.setLineNo(line);
+
+    trx.setAprmFinaccTransOrigin(sourceTrx);
+    trx.setDescription(description);
+    trx.setReconciliation(reconciliation);
+
+    OBDal.getInstance().save(trx);
+    OBDal.getInstance().flush();
+
+    return trx;
+  }
+
+  private static class LineNumberUtil {
+    private HashMap<FIN_FinancialAccount, Long> lastLineNo = new HashMap<FIN_FinancialAccount, Long>();
+
+    protected Long getNextLineNumber(FIN_FinancialAccount account) {
+      Long lineNo = lastLineNo.get(account);
+
+      if (lineNo == null) {
+        lineNo = TransactionsDao.getTransactionMaxLineNo(account);
+      }
+      lineNo += 10;
+      lastLineNo.put(account, lineNo);
+
+      return lineNo;
+    }
   }
 
 }

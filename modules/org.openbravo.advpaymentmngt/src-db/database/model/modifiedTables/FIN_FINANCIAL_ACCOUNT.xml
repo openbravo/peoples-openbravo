@@ -37,6 +37,16 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
+      <column name="EM_APRM_GLITEM_DIFF" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <foreign-key foreignTable="C_GLITEM" name="EM_APRM_GLITEM_FK">
+        <reference local="EM_APRM_GLITEM_DIFF" foreign="C_GLITEM_ID"/>
+      </foreign-key>
+      <index name="EM_APRM_GLITEM_FKI" unique="false">
+        <index-column name="EM_APRM_GLITEM_DIFF"/>
+      </index>
       <check name="EM_APRM_FIN_FINACC_ISFUNDS_CHK"><![CDATA[EM_APRM_ISFUNDSTRANS_ENABLED IN ('Y', 'N')]]></check>
     </table>
   </database>
