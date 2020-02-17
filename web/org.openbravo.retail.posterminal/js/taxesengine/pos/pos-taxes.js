@@ -15,12 +15,6 @@
       const newTicket = {};
       newTicket.id = receipt.get('id');
       newTicket.date = new Date();
-      newTicket.country = OB.MobileApp.model.get(
-        'terminal'
-      ).organizationCountryId;
-      newTicket.region = OB.MobileApp.model.get(
-        'terminal'
-      ).organizationRegionId;
       newTicket.priceIncludesTax = receipt.get('priceIncludesTax');
       newTicket.isCashVat = OB.MobileApp.model.get('terminal').cashVat;
       newTicket.businessPartner = {};
@@ -34,6 +28,22 @@
       receipt.get('lines').forEach(line => {
         const newLine = {};
         newLine.id = line.get('id');
+        newLine.country =
+          line.get('obrdmDeliveryMode') === 'HomeDelivery'
+            ? receipt.get('bp').get('shipCountryId') ||
+              receipt
+                .get('bp')
+                .get('locationModel')
+                .get('countryId')
+            : line.get('organization').country;
+        newLine.region =
+          line.get('obrdmDeliveryMode') === 'HomeDelivery'
+            ? receipt.get('bp').get('shipRegionId') ||
+              receipt
+                .get('bp')
+                .get('locationModel')
+                .get('regionId')
+            : line.get('organization').region;
         newLine.amount = newTicket.priceIncludesTax
           ? line.has('discountedGross')
             ? line.get('discountedGross')

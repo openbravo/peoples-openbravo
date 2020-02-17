@@ -37,6 +37,22 @@
           (rule.withholdingTax || OB.Taxes.equals(rule.rate, 0)))
       );
     };
+    const sortByDate = (rule1, rule2) => {
+      return new Date(rule2.validFromDate) - new Date(rule1.validFromDate);
+    };
+    const sortByDefault = (rule1, rule2) => {
+      return rule2.default - rule1.default;
+    };
+
+    return rules
+      .filter(rule => checkValidFromDate(rule) && checkIsCashVAT(rule))
+      .sort(
+        (rule1, rule2) =>
+          sortByDate(rule1, rule2) || sortByDefault(rule1, rule2)
+      );
+  };
+
+  OB.Taxes.filterRulesByTicketLine = (ticket, line, rules) => {
     const checkCountry = rule => {
       return (
         OB.Taxes.equals(rule.destinationCountry, ticket.country) ||
@@ -49,6 +65,17 @@
         OB.Taxes.equals(rule.destinationRegion, ticket.region) ||
         OB.Taxes.equals(rule.zoneDestinationRegion, ticket.region) ||
         (!rule.destinationRegion && !rule.zoneDestinationRegion)
+      );
+    };
+    const checkTaxCategory = rule => {
+      const isTaxExempt = line.taxExempt || ticket.businessPartner.taxExempt;
+      return (
+        (isTaxExempt
+          ? OB.Taxes.equals(rule.taxExempt, isTaxExempt)
+          : OB.Taxes.equals(
+              rule.businessPartnerTaxCategory,
+              ticket.businessPartner.taxCategory
+            )) && OB.Taxes.equals(rule.taxCategory, line.product.taxCategory)
       );
     };
     const sortByCountryFrom = (rule1, rule2) => {
@@ -105,66 +132,6 @@
       }
       return 0;
     };
-    const sortByDate = (rule1, rule2) => {
-      return new Date(rule2.validFromDate) - new Date(rule1.validFromDate);
-    };
-    const sortByDefault = (rule1, rule2) => {
-      return rule2.default - rule1.default;
-    };
-
-    return rules
-      .filter(
-        rule =>
-          checkValidFromDate(rule) &&
-          checkIsCashVAT(rule) &&
-          checkCountry(rule) &&
-          checkRegion(rule)
-      )
-      .sort(
-        (rule1, rule2) =>
-          sortByRegionTo(rule1, rule2) ||
-          sortByRegionFrom(rule1, rule2) ||
-          sortByCountryTo(rule1, rule2) ||
-          sortByCountryFrom(rule1, rule2) ||
-          sortByDate(rule1, rule2) ||
-          sortByDefault(rule1, rule2)
-      )
-      .map(rule => {
-        const updatedRule = rule;
-        updatedRule.country = OB.Taxes.equals(rule.country, ticket.country)
-          ? rule.country
-          : rule.zoneCountry;
-        updatedRule.region = OB.Taxes.equals(rule.region, ticket.region)
-          ? rule.region
-          : rule.zoneRegion;
-        updatedRule.destinationCountry = OB.Taxes.equals(
-          rule.destinationCountry,
-          ticket.country
-        )
-          ? rule.destinationCountry
-          : rule.zoneDestinationCountry;
-        updatedRule.destinationRegion = OB.Taxes.equals(
-          rule.destinationRegion,
-          ticket.region
-        )
-          ? rule.destinationRegion
-          : rule.zoneDestinationRegion;
-        return updatedRule;
-      });
-  };
-
-  OB.Taxes.filterRulesByTicketLine = (ticket, line, rules) => {
-    const checkTaxCategory = rule => {
-      const isTaxExempt = line.taxExempt || ticket.businessPartner.taxExempt;
-      return (
-        (isTaxExempt
-          ? OB.Taxes.equals(rule.taxExempt, isTaxExempt)
-          : OB.Taxes.equals(
-              rule.businessPartnerTaxCategory,
-              ticket.businessPartner.taxCategory
-            )) && OB.Taxes.equals(rule.taxCategory, line.product.taxCategory)
-      );
-    };
     const checkLocation = (rule, rulesFilteredByLine) => {
       return (
         OB.Taxes.equals(
@@ -200,7 +167,39 @@
     };
 
     return rules
-      .filter(rule => checkTaxCategory(rule))
+      .filter(
+        rule =>
+          checkCountry(rule) && checkRegion(rule) && checkTaxCategory(rule)
+      )
+      .sort(
+        (rule1, rule2) =>
+          sortByRegionTo(rule1, rule2) ||
+          sortByRegionFrom(rule1, rule2) ||
+          sortByCountryTo(rule1, rule2) ||
+          sortByCountryFrom(rule1, rule2)
+      )
+      .map(rule => {
+        const updatedRule = rule;
+        updatedRule.country = OB.Taxes.equals(rule.country, ticket.country)
+          ? rule.country
+          : rule.zoneCountry;
+        updatedRule.region = OB.Taxes.equals(rule.region, ticket.region)
+          ? rule.region
+          : rule.zoneRegion;
+        updatedRule.destinationCountry = OB.Taxes.equals(
+          rule.destinationCountry,
+          ticket.country
+        )
+          ? rule.destinationCountry
+          : rule.zoneDestinationCountry;
+        updatedRule.destinationRegion = OB.Taxes.equals(
+          rule.destinationRegion,
+          ticket.region
+        )
+          ? rule.destinationRegion
+          : rule.zoneDestinationRegion;
+        return updatedRule;
+      })
       .filter((rule, index, rulesFilteredByLine) =>
         checkLocation(rule, rulesFilteredByLine)
       )

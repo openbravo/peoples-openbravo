@@ -963,7 +963,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             id: OB.MobileApp.model.get('terminal').organization,
             name: OB.I18N.getLabel('OBPOS_LblThisStore', [
               OB.MobileApp.model.get('terminal').organization$_identifier
-            ])
+            ]),
+            country: OB.MobileApp.model.get('terminal').organizationCountryId,
+            region: OB.MobileApp.model.get('terminal').organizationRegionId
           },
           terminalWarehouse = {
             id: OB.MobileApp.model.get('warehouses')[0].warehouseid,

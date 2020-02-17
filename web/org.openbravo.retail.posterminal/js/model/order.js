@@ -4946,7 +4946,9 @@
     createLine: function(p, units, options, attrs) {
       var me = this,
         orgId,
-        orgName;
+        orgName,
+        country,
+        region;
       if (
         OB.UTIL.isNullOrUndefined(attrs) ||
         OB.UTIL.isNullOrUndefined(attrs.organization)
@@ -4956,6 +4958,8 @@
           orgName = OB.I18N.getLabel('OBPOS_LblThisStore', [
             OB.MobileApp.model.get('terminal').organization$_identifier
           ]);
+          country = OB.MobileApp.model.get('terminal').organizationCountryId;
+          region = OB.MobileApp.model.get('terminal').organizationRegionId;
         } else {
           orgId = me.get('organization');
           _.each(OB.MobileApp.model.get('store'), function(s) {
@@ -4968,6 +4972,8 @@
       } else {
         orgId = attrs.organization.id;
         orgName = attrs.organization.name;
+        country = attrs.organization.country;
+        region = attrs.organization.region;
       }
 
       function createLineAux(p, units, options, attrs, me) {
@@ -4990,7 +4996,9 @@
           priceIncludesTax: me.get('priceIncludesTax'),
           organization: {
             id: orgId,
-            name: orgName
+            name: orgName,
+            country: country,
+            region: region
           },
           warehouse: {
             id:
