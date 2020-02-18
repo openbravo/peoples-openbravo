@@ -47,12 +47,12 @@ import org.openbravo.service.db.CallStoredProcedure;
 
 public class RMInsertOrphanLine implements org.openbravo.scheduling.Process {
 
-  final static String ITEM = "I";
-  final static String SERVICE = "S";
+  static final String ITEM = "I";
+  static final String SERVICE = "S";
 
   @Override
-  public void execute(ProcessBundle bundle) throws Exception {
-    OBError msg = new OBError();
+  public void execute(final ProcessBundle bundle) throws Exception {
+    final OBError msg = new OBError();
     msg.setType("Success");
     msg.setTitle(OBMessageUtils.messageBD("Success"));
 
@@ -68,112 +68,39 @@ public class RMInsertOrphanLine implements org.openbravo.scheduling.Process {
 
     OBContext.setAdminMode(true);
     try {
-      Order order = OBDal.getInstance().get(Order.class, strOrderId);
-      Product product = OBDal.getInstance().get(Product.class, strProductId);
+      final Order order = OBDal.getInstance().get(Order.class, strOrderId);
+      final Product product = getProductOrphanLine(strProductId);
+      final AttributeSetInstance attrSetInstance = getAttributeSetInstanceOrphanLine(
+          strAttributeSetInstanceId);
 
-      if (!product.isReturnable()) {
-        throw new OBException(
-            "@Product@ '" + product.getIdentifier() + "' @ServiceIsNotReturnable@");
-      }
-      AttributeSetInstance attrSetInstance = null;
-      if (strAttributeSetInstanceId != null) {
-        attrSetInstance = OBDal.getInstance()
-            .get(AttributeSetInstance.class, strAttributeSetInstanceId);
-      }
       if (product.getAttributeSet() != null
           && (strAttributeSetInstanceId == null || strAttributeSetInstanceId.equals(""))
           && (product.getUseAttributeSetValueAs() == null
-              || product.getUseAttributeSetValueAs() != "F")) {
+              || !product.getUseAttributeSetValueAs().equals("F"))) {
         throw new OBException("@productWithoutAttributeSet@");
       }
 
-      OrderLine newOrderLine = OBProvider.getInstance().get(OrderLine.class);
-      newOrderLine.setSalesOrder(order);
-      newOrderLine.setOrganization(order.getOrganization());
-      newOrderLine.setLineNo(getNewLineNo(order));
-      newOrderLine.setOrderDate(order.getOrderDate());
-      newOrderLine.setWarehouse(order.getWarehouse());
-      newOrderLine.setCurrency(order.getCurrency());
-      newOrderLine.setProduct(product);
-      newOrderLine.setAttributeSetValue(attrSetInstance);
-      newOrderLine.setUOM(product.getUOM());
-      newOrderLine.setOrderedQuantity(returnedQty.negate());
+      final OrderLine newOrderLine = createNewOrderLine(returnedQty, strUnitPrice, order, product,
+          attrSetInstance, strReturnReason);
 
-      if (UOMUtil.isUomManagementEnabled()) {
-        newOrderLine.setOperativeQuantity(returnedQty.negate());
-        newOrderLine.setOperativeUOM(product.getUOM());
-      }
-
-      if (strUnitPrice.isEmpty()) {
-        ProductPrice productPrice = getProductPrice(product, order.getOrderDate(),
-            order.isSalesTransaction(), order.getPriceList());
-        newOrderLine.setUnitPrice(productPrice.getStandardPrice());
-        newOrderLine.setListPrice(productPrice.getListPrice());
-        newOrderLine.setPriceLimit(productPrice.getPriceLimit());
-        newOrderLine.setStandardPrice(productPrice.getStandardPrice());
-        if (order.getPriceList().isPriceIncludesTax()) {
-          newOrderLine.setGrossUnitPrice(productPrice.getStandardPrice());
-          newOrderLine
-              .setLineGrossAmount(productPrice.getStandardPrice().multiply(returnedQty).negate());
-          newOrderLine.setUnitPrice(BigDecimal.ZERO);
-        }
-      } else {
-        BigDecimal unitPrice = new BigDecimal(strUnitPrice);
-        newOrderLine.setUnitPrice(unitPrice);
-        newOrderLine.setListPrice(unitPrice);
-        newOrderLine.setPriceLimit(unitPrice);
-        newOrderLine.setStandardPrice(unitPrice);
-        if (order.getPriceList().isPriceIncludesTax()) {
-          newOrderLine.setGrossUnitPrice(unitPrice);
-          newOrderLine.setLineGrossAmount(unitPrice.multiply(returnedQty).negate());
-          newOrderLine.setUnitPrice(BigDecimal.ZERO);
-        }
-      }
       // tax
-      TaxRate tax = null;
-      if (strTaxId.isEmpty()) {
-        List<Object> parameters = new ArrayList<Object>();
-        parameters.add(product.getId());
-        parameters.add(order.getOrderDate());
-        parameters.add(order.getOrganization().getId());
-        parameters.add(order.getWarehouse().getId());
-        parameters.add(order.getInvoiceAddress().getId());
-        parameters.add(order.getPartnerAddress().getId());
+      final TaxRate tax = getTaxForNewOrderLine(strTaxId, order, product);
 
-        if (order.getProject() != null) {
-          parameters.add(order.getProject().getId());
-        } else {
-          parameters.add(null);
-        }
-        parameters.add("Y");
-
-        String strDefaultTaxId = (String) CallStoredProcedure.getInstance()
-            .call("C_Gettax", parameters, null);
-        if (strDefaultTaxId == null || strDefaultTaxId.equals("")) {
-          OBDal.getInstance().rollbackAndClose();
-          Map<String, String> errorParameters = new HashMap<String, String>();
-          errorParameters.put("product", product.getName());
-          String message = OBMessageUtils.messageBD("InsertOrphanNoTaxFoundForProduct");
-          msg.setMessage(OBMessageUtils.parseTranslation(message, errorParameters));
-          msg.setTitle(OBMessageUtils.messageBD("Error"));
-          msg.setType("Error");
-          bundle.setResult(msg);
-          return;
-        }
-        tax = OBDal.getInstance().get(TaxRate.class, strDefaultTaxId);
+      if (tax != null) {
+        newOrderLine.setTax(tax);
       } else {
-        tax = OBDal.getInstance().get(TaxRate.class, strTaxId);
+        OBDal.getInstance().rollbackAndClose();
+        final Map<String, String> errorParameters = new HashMap<>();
+        errorParameters.put("product", product.getName());
+        final String message = OBMessageUtils.messageBD("InsertOrphanNoTaxFoundForProduct");
+        msg.setMessage(OBMessageUtils.parseTranslation(message, errorParameters));
+        msg.setTitle(OBMessageUtils.messageBD("Error"));
+        msg.setType("Error");
+        bundle.setResult(msg);
+        return;
       }
 
-      newOrderLine.setTax(tax);
-
-      if (strReturnReason.isEmpty()) {
-        newOrderLine.setReturnReason(order.getReturnReason());
-      } else {
-        newOrderLine.setReturnReason(OBDal.getInstance().get(ReturnReason.class, strReturnReason));
-      }
-
-      List<OrderLine> orderLines = order.getOrderLineList();
+      final List<OrderLine> orderLines = order.getOrderLineList();
       orderLines.add(newOrderLine);
       order.setOrderLineList(orderLines);
 
@@ -188,27 +115,132 @@ public class RMInsertOrphanLine implements org.openbravo.scheduling.Process {
     bundle.setResult(msg);
   }
 
-  private Long getNewLineNo(Order order) {
+  private TaxRate getTaxForNewOrderLine(final String strTaxId, final Order order,
+      final Product product) {
+    TaxRate tax;
+    if (strTaxId.isEmpty()) {
+      final List<Object> parameters = new ArrayList<>();
+      parameters.add(product.getId());
+      parameters.add(order.getOrderDate());
+      parameters.add(order.getOrganization().getId());
+      parameters.add(order.getWarehouse().getId());
+      parameters.add(order.getInvoiceAddress().getId());
+      parameters.add(order.getPartnerAddress().getId());
+
+      if (order.getProject() != null) {
+        parameters.add(order.getProject().getId());
+      } else {
+        parameters.add(null);
+      }
+      parameters.add("Y");
+
+      final String strDefaultTaxId = (String) CallStoredProcedure.getInstance()
+          .call("C_Gettax", parameters, null);
+      if (strDefaultTaxId == null || strDefaultTaxId.equals("")) {
+        return null;
+      }
+      tax = OBDal.getInstance().get(TaxRate.class, strDefaultTaxId);
+    } else {
+      tax = OBDal.getInstance().get(TaxRate.class, strTaxId);
+    }
+    return tax;
+  }
+
+  private OrderLine createNewOrderLine(final BigDecimal returnedQty, final String strUnitPrice,
+      final Order order, final Product product, final AttributeSetInstance attrSetInstance,
+      final String strReturnReason) {
+    final OrderLine newOrderLine = OBProvider.getInstance().get(OrderLine.class);
+    newOrderLine.setSalesOrder(order);
+    newOrderLine.setOrganization(order.getOrganization());
+    newOrderLine.setLineNo(getNewLineNo(order));
+    newOrderLine.setOrderDate(order.getOrderDate());
+    newOrderLine.setWarehouse(order.getWarehouse());
+    newOrderLine.setCurrency(order.getCurrency());
+    newOrderLine.setProduct(product);
+    newOrderLine.setAttributeSetValue(attrSetInstance);
+    newOrderLine.setUOM(product.getUOM());
+    newOrderLine.setOrderedQuantity(returnedQty.negate());
+
+    if (UOMUtil.isUomManagementEnabled()) {
+      newOrderLine.setOperativeQuantity(returnedQty.negate());
+      newOrderLine.setOperativeUOM(product.getUOM());
+    }
+
+    if (strUnitPrice.isEmpty()) {
+      final ProductPrice productPrice = getProductPrice(product, order.getOrderDate(),
+          order.isSalesTransaction(), order.getPriceList());
+      newOrderLine.setUnitPrice(productPrice.getStandardPrice());
+      newOrderLine.setListPrice(productPrice.getListPrice());
+      newOrderLine.setPriceLimit(productPrice.getPriceLimit());
+      newOrderLine.setStandardPrice(productPrice.getStandardPrice());
+      if (order.getPriceList().isPriceIncludesTax()) {
+        newOrderLine.setGrossUnitPrice(productPrice.getStandardPrice());
+        newOrderLine
+            .setLineGrossAmount(productPrice.getStandardPrice().multiply(returnedQty).negate());
+        newOrderLine.setUnitPrice(BigDecimal.ZERO);
+      }
+    } else {
+      final BigDecimal unitPrice = new BigDecimal(strUnitPrice);
+      newOrderLine.setUnitPrice(unitPrice);
+      newOrderLine.setListPrice(unitPrice);
+      newOrderLine.setPriceLimit(unitPrice);
+      newOrderLine.setStandardPrice(unitPrice);
+      if (order.getPriceList().isPriceIncludesTax()) {
+        newOrderLine.setGrossUnitPrice(unitPrice);
+        newOrderLine.setLineGrossAmount(unitPrice.multiply(returnedQty).negate());
+        newOrderLine.setUnitPrice(BigDecimal.ZERO);
+      }
+    }
+
+    if (strReturnReason.isEmpty()) {
+      newOrderLine.setReturnReason(order.getReturnReason());
+    } else {
+      newOrderLine.setReturnReason(OBDal.getInstance().get(ReturnReason.class, strReturnReason));
+    }
+
+    return newOrderLine;
+  }
+
+  private AttributeSetInstance getAttributeSetInstanceOrphanLine(
+      final String strAttributeSetInstanceId) {
+    AttributeSetInstance attrSetInstance = null;
+    if (strAttributeSetInstanceId != null) {
+      attrSetInstance = OBDal.getInstance()
+          .get(AttributeSetInstance.class, strAttributeSetInstanceId);
+    }
+    return attrSetInstance;
+  }
+
+  private Product getProductOrphanLine(final String strProductId) {
+    final Product product = OBDal.getInstance().get(Product.class, strProductId);
+
+    if (!product.isReturnable()) {
+      throw new OBException("@Product@ '" + product.getIdentifier() + "' @ServiceIsNotReturnable@");
+    }
+    return product;
+  }
+
+  private Long getNewLineNo(final Order order) {
     //@formatter:off
-    String hqlWhere =
+    final String hqlWhere =
             "as ol" +
             " where ol.salesOrder = :order" +
             " order by ol.lineNo desc";
     //@formatter:on
 
-    OBQuery<OrderLine> olQry = OBDal.getInstance()
+    final OBQuery<OrderLine> olQry = OBDal.getInstance()
         .createQuery(OrderLine.class, hqlWhere)
         .setNamedParameter("order", order);
 
     if (olQry.count() > 0) {
-      OrderLine ol = olQry.list().get(0);
+      final OrderLine ol = olQry.list().get(0);
       return ol.getLineNo() + 10L;
     }
     return 10L;
   }
 
-  private ProductPrice getProductPrice(Product product, Date date, boolean useSalesPriceList,
-      PriceList priceList) throws OBException {
+  private ProductPrice getProductPrice(final Product product, final Date date,
+      final boolean useSalesPriceList, final PriceList priceList) {
     //@formatter:off
     String hqlWhere =
             "as pp" +
@@ -234,7 +266,7 @@ public class RMInsertOrphanLine implements org.openbravo.scheduling.Process {
             "   , plv.validFromDate desc";
     //@formatter:on
 
-    OBQuery<ProductPrice> ppQry = OBDal.getInstance()
+    final OBQuery<ProductPrice> ppQry = OBDal.getInstance()
         .createQuery(ProductPrice.class, hqlWhere)
         .setNamedParameter("product", product)
         .setNamedParameter("date", date);
@@ -244,7 +276,7 @@ public class RMInsertOrphanLine implements org.openbravo.scheduling.Process {
       ppQry.setNamedParameter("salespricelist", useSalesPriceList);
     }
 
-    List<ProductPrice> ppList = ppQry.list();
+    final List<ProductPrice> ppList = ppQry.list();
     if (ppList.isEmpty()) {
       // No product price found.
       throw new OBException("@PriceListVersionNotFound@. @Product@: " + product.getIdentifier()
