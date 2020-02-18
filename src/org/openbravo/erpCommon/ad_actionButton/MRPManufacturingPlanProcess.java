@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2018 Openbravo SLU
+ * All portions are Copyright (C) 2012-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -29,7 +29,6 @@ import org.hibernate.ScrollableResults;
 import org.hibernate.query.Query;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.mrp.ProductionRun;
@@ -165,28 +164,36 @@ public class MRPManufacturingPlanProcess extends DalBaseProcess {
   }
 
   private void deleteNotFixedLines(String strManufacturingMRPID) {
-    StringBuffer deleteLines = new StringBuffer();
-    deleteLines.append(" delete from " + ProductionRunLine.ENTITY_NAME);
-    deleteLines.append(" where " + ProductionRunLine.PROPERTY_MANUFACTURINGPLAN + ".id = :prodRun");
-    deleteLines.append("   and " + ProductionRunLine.PROPERTY_FIXED + " = false");
+    //@formatter:off
+    final String hqlDelete =
+            "delete from MRPProductionRunLine" +
+            " where manufacturingPlan.id = :prodRunId" +
+            "   and fixed = false";
+    //@formatter:on
+
     @SuppressWarnings("rawtypes")
-    Query delete = OBDal.getInstance().getSession().createQuery(deleteLines.toString());
-    delete.setParameter("prodRun", strManufacturingMRPID);
+    Query delete = OBDal.getInstance()
+        .getSession()
+        .createQuery(hqlDelete)
+        .setParameter("prodRunId", strManufacturingMRPID);
+
     delete.executeUpdate();
     OBDal.getInstance().flush();
   }
 
   private ScrollableResults getLinesToUpdate(String productionRunId) {
-    StringBuffer where = new StringBuffer();
-    where.append(" where " + ProductionRunLine.PROPERTY_MANUFACTURINGPLAN + ".id = :prodRun");
-    where.append("   and " + ProductionRunLine.PROPERTY_QUANTITY + " < 0");
-    where.append("   and " + ProductionRunLine.PROPERTY_TRANSACTIONTYPE + " <> 'WR'");
-    OBQuery<ProductionRunLine> prlQry = OBDal.getInstance()
-        .createQuery(ProductionRunLine.class, where.toString());
-    prlQry.setNamedParameter("prodRun", productionRunId);
+    //@formatter:off
+    final String hqlWhere =
+                  " where manufacturingPlan.id = :prodRunId" +
+                  "   and quantity < 0" +
+                  "   and transactionType <> 'WR'";
+    //@formatter:on
 
-    prlQry.setFetchSize(1000);
-    return prlQry.scroll(ScrollMode.FORWARD_ONLY);
+    return OBDal.getInstance()
+        .createQuery(ProductionRunLine.class, hqlWhere)
+        .setNamedParameter("prodRunId", productionRunId)
+        .setFetchSize(1000)
+        .scroll(ScrollMode.FORWARD_ONLY);
   }
 
 }
