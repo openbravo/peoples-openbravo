@@ -47,6 +47,8 @@ import org.openbravo.service.db.DalConnectionProvider;
 @Dependent
 @Qualifier(CopyFromOrdersProcessImplementationInterface.COPY_FROM_ORDER_PROCESS_HOOK_QUALIFIER)
 class UpdateTax implements CopyFromOrdersProcessImplementationInterface {
+  private static final String ALTERNATE_TAX_BASE_AMOUNT_WITH_TAXAMOUNT = "TBATAX";
+  private static final String ALTERNATE_TAX_BASE_AMOUNT = "TBA";
   private static final Logger log = LogManager.getLogger();
 
   @Override
@@ -65,7 +67,14 @@ class UpdateTax implements CopyFromOrdersProcessImplementationInterface {
     TaxRate tax = OBDal.getInstance()
         .getProxy(TaxRate.class, getCurrentTaxId(newOrderLine.getProduct(), processingOrder));
     newOrderLine.setTax(tax);
-    newOrderLine.setTaxableAmount(orderLine.getTaxableAmount());
+    if (hasAlternateTaxAmount(tax) && hasAlternateTaxAmount(orderLine.getTax())) {
+      newOrderLine.setTaxableAmount(orderLine.getTaxableAmount());
+    }
+  }
+
+  private boolean hasAlternateTaxAmount(final TaxRate tax) {
+    return tax.getBaseAmount().equals(ALTERNATE_TAX_BASE_AMOUNT)
+        || tax.getBaseAmount().equals(ALTERNATE_TAX_BASE_AMOUNT_WITH_TAXAMOUNT);
   }
 
   /**
