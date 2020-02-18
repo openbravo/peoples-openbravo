@@ -581,6 +581,33 @@
         'discountCacheInitialization'
       );
 
+      const data = await OB.Discounts.Pos.loadData();
+      Object.assign(OB.Discounts.Pos, data);
+
+      OB.UTIL.HookManager.executeHooks(
+        'OBPOS_DiscountsCacheInitialization',
+        {
+          discounts: OB.Discounts.Pos.ruleImpls
+        },
+        function(args) {
+          OB.UTIL.ProcessController.finish(
+            'discountCacheInitialization',
+            execution
+          );
+          callback();
+          delete OB.Discounts.Pos.isCalculatingCache;
+        }
+      );
+    },
+
+    /**
+     * Reads the discount masterdata model information from database.
+     * This information is used to initialize the discount caches.
+     * @return {Object} The discount masterdata model information.
+     * @see {@link OB.Discounts.Pos.initCache}
+     */
+    loadData: async function() {
+      const data = {};
       const manualPromotions = OB.Discounts.Pos.getManualPromotions();
 
       // Manual discounts must be sorted by name
@@ -639,32 +666,19 @@
         discount => (discount.discountPercentage = discount.discount)
       );
 
-      OB.Discounts.Pos.manualRuleImpls = discounts.filter(discount =>
+      data.manualRuleImpls = discounts.filter(discount =>
         manualPromotions.includes(discount.discountType)
       );
 
-      OB.Discounts.Pos.ruleImpls = discounts.filter(
+      data.ruleImpls = discounts.filter(
         discount => !manualPromotions.includes(discount.discountType)
       );
 
       //BPSets
       const bpSetLines = await OB.App.MasterdataModels.BPSetLine.find();
-      OB.Discounts.Pos.bpSets = OB.App.ArrayUtils.groupBy(bpSetLines, 'bpSet');
+      data.bpSets = OB.App.ArrayUtils.groupBy(bpSetLines, 'bpSet');
 
-      OB.UTIL.HookManager.executeHooks(
-        'OBPOS_DiscountsCacheInitialization',
-        {
-          discounts: OB.Discounts.Pos.ruleImpls
-        },
-        () => {
-          OB.UTIL.ProcessController.finish(
-            'discountCacheInitialization',
-            execution
-          );
-          callback();
-          delete OB.Discounts.Pos.isCalculatingCache;
-        }
-      );
+      return data;
     }
   };
 })();

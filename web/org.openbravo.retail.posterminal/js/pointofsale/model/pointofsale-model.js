@@ -208,12 +208,15 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           multiOrderList.reset(checkedMultiOrders);
 
           // MultiOrder payments
-          var payments = JSON.parse(
-            OB.UTIL.localStorage.getItem('multiOrdersPayment')
-          );
-          _.each(payments, function(payment) {
-            multiOrders.addPayment(new OB.Model.PaymentLine(payment));
-          });
+          var multiOrderAddPayments = function() {
+            var payments = JSON.parse(
+              OB.UTIL.localStorage.getItem('multiOrdersPayment')
+            );
+            _.each(payments, function(payment) {
+              multiOrders.addPayment(new OB.Model.PaymentLine(payment));
+            });
+          };
+          multiOrderList.trigger('loadedMultiOrder', multiOrderAddPayments);
         } else if (me.isValidMultiOrderState()) {
           multiOrders.resetValues();
           me.get('leftColumnViewManager').setOrderMode();
@@ -861,19 +864,26 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       function(openDrawer) {
         this.get('multiOrders').trigger('disableDoneButton');
         var me = this,
+          execution,
           paymentstatus = this.get('multiOrders'),
           overpayment = OB.DEC.sub(
             paymentstatus.get('payment'),
             paymentstatus.get('total')
           ),
           orders = paymentstatus.get('multiOrdersList'),
+          paymentCancel,
           triggerPaymentAccepted,
           triggerPaymentAcceptedImpl;
 
-        if (paymentstatus.get('paymentDone')) {
+        if (OB.UTIL.ProcessController.isProcessActive('paymentDone')) {
           return true;
         }
-        paymentstatus.set('paymentDone', true);
+        execution = OB.UTIL.ProcessController.start('paymentDone');
+
+        paymentCancel = function() {
+          OB.UTIL.ProcessController.finish('paymentDone', execution);
+          paymentstatus.trigger('paymentCancel');
+        };
 
         triggerPaymentAccepted = function(orders, index) {
           if (index === orders.length) {
@@ -900,7 +910,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                       currentOrder.unset('completeTicket');
                     }
                   );
-                  me.get('multiOrders').trigger('paymentCancel');
+                  paymentCancel();
                   return;
                 }
                 triggerPaymentAccepted(orders, index + 1);
@@ -910,6 +920,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         };
 
         triggerPaymentAcceptedImpl = function() {
+          OB.UTIL.ProcessController.finish('paymentDone', execution);
           me.get('multiOrders').trigger('paymentAccepted');
         };
 
@@ -938,7 +949,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               {
                 label: OB.I18N.getLabel('OBMOBC_LblCancel'),
                 action: function() {
-                  paymentstatus.trigger('paymentCancel');
+                  paymentCancel();
                 }
               }
             ],

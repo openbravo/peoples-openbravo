@@ -534,7 +534,7 @@ enyo.kind({
           args.meObject.saveCustomer(args.inSender, args.inEvent);
         } else {
           OB.UTIL.showError(args.error);
-          me.waterfall('onDisableButton', {
+          me.parent.parent.waterfall('onDisableButton', {
             disabled: false
           });
         }
@@ -758,9 +758,8 @@ enyo.kind({
           }
           customerEdited = args.customer;
           args.customer.saveCustomer(function(result) {
-            me.waterfall('onDisableButton', {
-              disabled: false
-            });
+            enableButtonsCallback(false);
+
             if (result && !inEvent.silent) {
               me.bubble('onCancelClose', {
                 customer: customerEdited

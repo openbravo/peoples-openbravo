@@ -310,6 +310,24 @@ enyo.kind({
       action: {
         window: 'retail.pointofsale',
         name: 'deleteLine'
+      },
+      processesToListen: ['calculateReceipt', 'addProduct'],
+      disabled: false,
+      disableButton: function() {
+        this.updateDisabled(true);
+      },
+      enableButton: function() {
+        this.updateDisabled(false);
+      },
+      updateDisabled: function(value) {
+        if (
+          OB.UTIL.ProcessController.getProcessesInExecByOBj(this).length > 0 &&
+          !value
+        ) {
+          value = true;
+        }
+        this.disabled = value;
+        this.setDisabled(value);
       }
     },
     {

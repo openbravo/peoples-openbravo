@@ -1786,64 +1786,76 @@ enyo.kind({
       this
     );
     this.orderList.on(
-      'reset add remove amountToLayaway',
-      function() {
-        var total = OB.DEC.Zero,
+      'loadedMultiOrder remove amountToLayaway',
+      function(callback) {
+        var me = this,
+          total = OB.DEC.Zero,
           prepayment = OB.DEC.Zero,
           prepaymentLimit = OB.DEC.Zero,
           existingPayment = OB.DEC.Zero,
           amountToLayaway = OB.DEC.Zero;
-        _.each(this.orderList.models, function(order) {
-          order.getPrepaymentAmount();
-          if (OB.UTIL.isNullOrUndefined(order.get('amountToLayaway'))) {
-            total = OB.DEC.add(total, order.getPending());
-          } else {
-            total = OB.DEC.add(total, order.get('amountToLayaway'));
-            amountToLayaway = OB.DEC.add(
-              amountToLayaway,
-              order.get('amountToLayaway')
-            );
+
+        var calculatePrepayment = function(idx) {
+          if (idx === me.orderList.length) {
+            me.total = total;
+            me.prepayment = prepayment;
+            me.prepaymentLimit = prepaymentLimit;
+            me.amountToLayaway = amountToLayaway;
+            me.existingPayment = existingPayment;
+            me.multiOrders.set('total', me.total);
+            me.multiOrders.set('obposPrepaymentamt', me.prepayment);
+            me.multiOrders.set('obposPrepaymentlimitamt', me.prepaymentLimit);
+            me.multiOrders.set('amountToLayaway', me.amountToLayaway);
+            me.multiOrders.set('existingPayment', me.existingPayment);
+            me.$.totalMultiReceiptLine.renderTotal(me.total);
+            me.listMultiOrders.reset(me.orderList.models);
+            if (model.get('leftColumnViewManager').isMultiOrder()) {
+              me.doChangeTotal({
+                newTotal: me.total
+              });
+            }
+            me.$.totalMultiReceiptLine.renderQty(me.orderList.length);
+            if (callback && callback instanceof Function) {
+              callback();
+            }
+            return;
           }
-          prepayment = OB.DEC.add(
-            prepayment,
-            order.get('obposPrepaymentamt') - order.get('payment') > 0
-              ? order.get('obposPrepaymentamt') - order.get('payment')
-              : 0
-          );
-          if (
-            order.get('amountToLayaway') &&
-            order.get('amountToLayaway') < order.getGross()
-          ) {
-            prepaymentLimit = OB.DEC.add(
-              prepaymentLimit,
-              order.get('obposPrepaymentlaylimitamt')
+          var order = me.orderList.at(idx);
+          order.getPrepaymentAmount(function() {
+            if (OB.UTIL.isNullOrUndefined(order.get('amountToLayaway'))) {
+              total = OB.DEC.add(total, order.getPending());
+            } else {
+              total = OB.DEC.add(total, order.get('amountToLayaway'));
+              amountToLayaway = OB.DEC.add(
+                amountToLayaway,
+                order.get('amountToLayaway')
+              );
+            }
+            prepayment = OB.DEC.add(
+              prepayment,
+              order.get('obposPrepaymentamt') - order.get('payment') > 0
+                ? order.get('obposPrepaymentamt') - order.get('payment')
+                : 0
             );
-          } else {
-            prepaymentLimit = OB.DEC.add(
-              prepaymentLimit,
-              order.get('obposPrepaymentlimitamt')
-            );
-          }
-          existingPayment = OB.DEC.add(existingPayment, order.get('payment'));
-        });
-        this.total = total;
-        this.prepayment = prepayment;
-        this.prepaymentLimit = prepaymentLimit;
-        this.amountToLayaway = amountToLayaway;
-        this.existingPayment = existingPayment;
-        this.multiOrders.set('total', this.total);
-        this.multiOrders.set('obposPrepaymentamt', this.prepayment);
-        this.multiOrders.set('obposPrepaymentlimitamt', this.prepaymentLimit);
-        this.multiOrders.set('amountToLayaway', this.amountToLayaway);
-        this.multiOrders.set('existingPayment', this.existingPayment);
-        this.$.totalMultiReceiptLine.renderTotal(this.total);
-        this.listMultiOrders.reset(this.orderList.models);
-        if (model.get('leftColumnViewManager').isMultiOrder()) {
-          this.doChangeTotal({
-            newTotal: this.total
-          });
-        }
-        this.$.totalMultiReceiptLine.renderQty(this.orderList.length);
+            if (
+              order.get('amountToLayaway') &&
+              order.get('amountToLayaway') < order.getGross()
+            ) {
+              prepaymentLimit = OB.DEC.add(
+                prepaymentLimit,
+                order.get('obposPrepaymentlaylimitamt')
+              );
+            } else {
+              prepaymentLimit = OB.DEC.add(
+                prepaymentLimit,
+                order.get('obposPrepaymentlimitamt')
+              );
+            }
+            existingPayment = OB.DEC.add(existingPayment, order.get('payment'));
+            calculatePrepayment(idx + 1);
+          }, true);
+        };
+        calculatePrepayment(0);
       },
       this
     );
