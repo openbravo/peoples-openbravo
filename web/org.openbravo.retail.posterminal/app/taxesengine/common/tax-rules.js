@@ -181,7 +181,7 @@
      * if not, we take as tax base the net amount
      */
     static calculateTaxBase(netAmount, accumulatedTaxBase, rule) {
-      if (rule.taxBase && rule.baseAmount === 'LNATAX') {
+      if (rule.cascade || (rule.taxBase && rule.baseAmount === 'LNATAX')) {
         return accumulatedTaxBase;
       }
       return netAmount;
