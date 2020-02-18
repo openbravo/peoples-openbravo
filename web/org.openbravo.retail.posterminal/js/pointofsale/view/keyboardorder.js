@@ -648,13 +648,14 @@ enyo.kind({
     let me = this,
       criteria;
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-      var uPCEAN = {
+      criteria = {};
+      let uPCEAN = {
         columns: ['uPCEAN'],
         operator: 'equals',
         fieldType: 'forceString',
         value: code
       };
-      var remoteCriteria = [uPCEAN];
+      let remoteCriteria = [uPCEAN];
       criteria.remoteFilters = remoteCriteria;
 
       OB.Dal.findUsingCache(
