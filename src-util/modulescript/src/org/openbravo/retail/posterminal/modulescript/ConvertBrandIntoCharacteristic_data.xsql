@@ -144,6 +144,14 @@
       ]]>
     </Sql>
   </SqlMethod>
+  <SqlMethod name="existBrand" type="preparedStatement" return="boolean">
+    <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        <![CDATA[
+          select count(*) as existbrand from m_characteristic where name ='Brand'
+        ]]>
+      </Sql>
+  </SqlMethod>
   <SqlMethod name="hasPreference" type="preparedStatement" return="boolean">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
