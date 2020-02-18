@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -41,7 +41,6 @@ import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.pricing.pricelist.PriceList;
-import org.openbravo.model.pricing.pricelist.PriceListVersion;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.CallStoredProcedure;
@@ -190,12 +189,17 @@ public class RMInsertOrphanLine implements org.openbravo.scheduling.Process {
   }
 
   private Long getNewLineNo(Order order) {
-    StringBuffer where = new StringBuffer();
-    where.append(" as ol");
-    where.append(" where ol." + OrderLine.PROPERTY_SALESORDER + " = :order");
-    where.append(" order by ol." + OrderLine.PROPERTY_LINENO + " desc");
-    OBQuery<OrderLine> olQry = OBDal.getInstance().createQuery(OrderLine.class, where.toString());
-    olQry.setNamedParameter("order", order);
+    //@formatter:off
+    String hqlWhere =
+            "as ol" +
+            " where ol.salesOrder = :order" +
+            " order by ol.lineNo desc";
+    //@formatter:on
+
+    OBQuery<OrderLine> olQry = OBDal.getInstance()
+        .createQuery(OrderLine.class, hqlWhere)
+        .setNamedParameter("order", order);
+
     if (olQry.count() > 0) {
       OrderLine ol = olQry.list().get(0);
       return ol.getLineNo() + 10L;
@@ -205,24 +209,35 @@ public class RMInsertOrphanLine implements org.openbravo.scheduling.Process {
 
   private ProductPrice getProductPrice(Product product, Date date, boolean useSalesPriceList,
       PriceList priceList) throws OBException {
-    StringBuffer where = new StringBuffer();
-    where.append(" as pp");
-    where.append("   join pp." + ProductPrice.PROPERTY_PRICELISTVERSION + " as plv");
-    where.append("   join plv." + PriceListVersion.PROPERTY_PRICELIST + " as pl");
-    where.append(" where pp." + ProductPrice.PROPERTY_PRODUCT + " = :product");
-    where.append("   and plv." + PriceListVersion.PROPERTY_VALIDFROMDATE + " <= :date");
+    //@formatter:off
+    String hqlWhere =
+            "as pp" +
+            "  join pp.priceListVersion as plv" +
+            "  join plv.priceList as pl" +
+            " where pp.product = :product" +
+            "   and plv.validFromDate <= :date";
+    //@formatter:on
     if (priceList != null) {
-      where.append("   and pl = :pricelist");
+      //@formatter:off
+      hqlWhere +=
+            "   and pl = :pricelist";
+      //@formatter:on
     } else {
-      where.append("   and pl." + PriceList.PROPERTY_SALESPRICELIST + " = :salespricelist");
+      //@formatter:off
+      hqlWhere +=
+            "   and pl.salesPriceList = :salespricelist";
+      //@formatter:on
     }
-    where.append(" order by pl." + PriceList.PROPERTY_DEFAULT + " desc, plv."
-        + PriceListVersion.PROPERTY_VALIDFROMDATE + " desc");
+    //@formatter:off
+    hqlWhere +=
+            " order by pl.default desc" +
+            "   , plv.validFromDate desc";
+    //@formatter:on
 
     OBQuery<ProductPrice> ppQry = OBDal.getInstance()
-        .createQuery(ProductPrice.class, where.toString());
-    ppQry.setNamedParameter("product", product);
-    ppQry.setNamedParameter("date", date);
+        .createQuery(ProductPrice.class, hqlWhere)
+        .setNamedParameter("product", product)
+        .setNamedParameter("date", date);
     if (priceList != null) {
       ppQry.setNamedParameter("pricelist", priceList);
     } else {
