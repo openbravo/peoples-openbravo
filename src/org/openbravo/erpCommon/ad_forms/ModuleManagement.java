@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2019 Openbravo SLU
+ * All portions are Copyright (C) 2008-2020 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -2705,7 +2705,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
     OBDataset ad = new OBDataset(platform, db, "AD");
 
     List<String> tablesModified = new ArrayList<>();
-    boolean datachange = ad.hasChanged(connection, super.log4j, tablesModified);
+    boolean datachange = ad.hasChanged(connection, tablesModified);
     if (datachange) {
       if (localChanges == null) {
         localChanges = Utility.messageBD(this, "ErrorLocalChanges", vars.getLanguage());

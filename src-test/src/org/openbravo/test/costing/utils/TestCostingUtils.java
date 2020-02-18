@@ -2464,7 +2464,6 @@ public class TestCostingUtils {
       invoiceLineClone.setListPrice(price);
       invoiceLineClone.setStandardPrice(price);
       invoiceLineClone.setLineNetAmount(quantity.multiply(price));
-      invoiceLineClone.setTaxAmount(quantity.multiply(price));
       invoiceLineClone.setTaxableAmount(quantity.multiply(price));
       if (bpartnerId != null) {
         invoiceLineClone
@@ -2519,7 +2518,6 @@ public class TestCostingUtils {
           invoiceLine.setListPrice(price);
           invoiceLine.setStandardPrice(price);
           invoiceLine.setLineNetAmount(orderLine.getOrderedQuantity().multiply(price));
-          invoiceLine.setTaxAmount(orderLine.getOrderedQuantity().multiply(price));
         }
 
         else {
@@ -2528,8 +2526,6 @@ public class TestCostingUtils {
           invoiceLine.setStandardPrice(orderLine.getUnitPrice());
           invoiceLine
               .setLineNetAmount(orderLine.getOrderedQuantity().multiply(orderLine.getUnitPrice()));
-          invoiceLine
-              .setTaxAmount(orderLine.getOrderedQuantity().multiply(orderLine.getUnitPrice()));
         }
 
         OBCriteria<ShipmentInOutLine> criteria = OBDal.getInstance()
@@ -2599,7 +2595,6 @@ public class TestCostingUtils {
           invoiceLine.setListPrice(price);
           invoiceLine.setStandardPrice(price);
           invoiceLine.setLineNetAmount(movementLine.getMovementQuantity().multiply(price));
-          invoiceLine.setTaxAmount(movementLine.getMovementQuantity().multiply(price));
         }
 
         else {
@@ -2607,8 +2602,6 @@ public class TestCostingUtils {
           invoiceLine.setListPrice(movementLine.getSalesOrderLine().getUnitPrice());
           invoiceLine.setStandardPrice(movementLine.getSalesOrderLine().getUnitPrice());
           invoiceLine.setLineNetAmount(movementLine.getMovementQuantity()
-              .multiply(movementLine.getSalesOrderLine().getUnitPrice()));
-          invoiceLine.setTaxAmount(movementLine.getMovementQuantity()
               .multiply(movementLine.getSalesOrderLine().getUnitPrice()));
         }
 
@@ -2683,7 +2676,6 @@ public class TestCostingUtils {
         invoiceLine.setListPrice(priceList.get(i));
         invoiceLine.setStandardPrice(priceList.get(i));
         invoiceLine.setLineNetAmount(quantityList.get(i).multiply(priceList.get(i)));
-        invoiceLine.setTaxAmount(quantityList.get(i).multiply(priceList.get(i)));
 
         OBCriteria<ShipmentInOutLine> criteria = OBDal.getInstance()
             .createCriteria(ShipmentInOutLine.class);
@@ -2755,7 +2747,6 @@ public class TestCostingUtils {
         invoiceLine.setListPrice(priceList.get(i));
         invoiceLine.setStandardPrice(priceList.get(i));
         invoiceLine.setLineNetAmount(movementLine.getMovementQuantity().multiply(priceList.get(i)));
-        invoiceLine.setTaxAmount(movementLine.getMovementQuantity().multiply(priceList.get(i)));
         invoiceLine.setTaxableAmount(movementLine.getMovementQuantity().multiply(priceList.get(i)));
 
         if (movement.getSalesOrder() != null) {

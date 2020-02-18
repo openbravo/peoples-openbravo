@@ -39,7 +39,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.materialmgmt.InventoryCountProcess;
 import org.openbravo.model.ad.system.Client;
@@ -56,39 +55,38 @@ import org.openbravo.model.materialmgmt.cost.InventoryAmountUpdate;
 import org.openbravo.model.materialmgmt.cost.InventoryAmountUpdateLine;
 import org.openbravo.model.materialmgmt.transaction.InventoryCount;
 import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
-import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.service.db.DbUtility;
 
 public class InventoryAmountUpdateProcess extends BaseActionHandler {
   private static final Logger log = LogManager.getLogger();
 
   @Override
-  protected JSONObject execute(Map<String, Object> parameters, String data) {
-    JSONObject result = new JSONObject();
+  protected JSONObject execute(final Map<String, Object> parameters, final String data) {
+    final JSONObject result = new JSONObject();
     JSONObject errorMessage = new JSONObject();
     OBContext.setAdminMode(true);
 
     try {
       final JSONObject jsonData = new JSONObject(data);
 
-      String orgId = jsonData.getString("inpadOrgId");
-      String invAmtUpdId = jsonData.getString("M_Ca_Inventoryamt_ID");
+      final String orgId = jsonData.getString("inpadOrgId");
+      final String invAmtUpdId = jsonData.getString("M_Ca_Inventoryamt_ID");
       InventoryAmountUpdate invAmtUpd = OBDal.getInstance()
           .get(InventoryAmountUpdate.class, invAmtUpdId);
       final OBCriteria<InventoryAmountUpdateLine> qLines = OBDal.getInstance()
           .createCriteria(InventoryAmountUpdateLine.class);
       qLines.add(Restrictions.eq(InventoryAmountUpdateLine.PROPERTY_CAINVENTORYAMT, invAmtUpd));
 
-      ScrollableResults scrollLines = qLines.scroll(ScrollMode.FORWARD_ONLY);
+      final ScrollableResults scrollLines = qLines.scroll(ScrollMode.FORWARD_ONLY);
       try {
         int cnt = 0;
         while (scrollLines.next()) {
           final InventoryAmountUpdateLine line = (InventoryAmountUpdateLine) scrollLines.get()[0];
-          String lineId = line.getId();
-          CostingRule rule = CostingUtils.getCostDimensionRule(
+          final String lineId = line.getId();
+          final CostingRule rule = CostingUtils.getCostDimensionRule(
               OBDal.getInstance().get(Organization.class, orgId), line.getReferenceDate());
-          String ruleId = rule.getId();
-          OrganizationStructureProvider osp = OBContext.getOBContext()
+          final String ruleId = rule.getId();
+          final OrganizationStructureProvider osp = OBContext.getOBContext()
               .getOrganizationStructureProvider(rule.getClient().getId());
           final Set<String> childOrgs = osp.getChildTree(rule.getOrganization().getId(), true);
           if (!rule.isWarehouseDimension()) {
@@ -117,19 +115,20 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
           log.error("Error waiting between processing close an open inventories", e);
         }
 
-        StringBuffer where = new StringBuffer();
-        where.append(" as inv");
-        where.append(" where exists (");
-        where.append("      select 1 from " + InvAmtUpdLnInventories.ENTITY_NAME + " invAmtUpd");
-        where.append("      where invAmtUpd." + InvAmtUpdLnInventories.PROPERTY_CAINVENTORYAMTLINE
-            + "." + InventoryAmountUpdateLine.PROPERTY_CAINVENTORYAMT + ".id =:invAmtUpdId");
-        where.append(
-            "        and invAmtUpd." + InvAmtUpdLnInventories.PROPERTY_INITINVENTORY + "= inv)");
-        OBQuery<InventoryCount> qry = OBDal.getInstance()
-            .createQuery(InventoryCount.class, where.toString());
-        qry.setNamedParameter("invAmtUpdId", invAmtUpdId);
+        //@formatter:off
+        final String hql =
+                " as inv" +
+                " where exists (" +
+                "      select 1 from InventoryAmountUpdateLineInventories invAmtUpd" +
+                "       where invAmtUpd.caInventoryamtline.caInventoryamt.id =:invAmtUpdId" +
+                "         and invAmtUpd.initInventory.id = inv.id" +
+                "      )";
+        //@formatter:on
 
-        ScrollableResults invLines = qry.scroll(ScrollMode.FORWARD_ONLY);
+        ScrollableResults invLines = OBDal.getInstance()
+            .createQuery(InventoryCount.class, hql)
+            .setNamedParameter("invAmtUpdId", invAmtUpdId)
+            .scroll(ScrollMode.FORWARD_ONLY);
         try {
           while (invLines.next()) {
             final InventoryCount inventory = (InventoryCount) invLines.get()[0];
@@ -150,8 +149,8 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
       OBDal.getInstance().rollbackAndClose();
       log.error(e.getMessage(), e);
       try {
-        Throwable ex = DbUtility.getUnderlyingSQLException(e);
-        String message = OBMessageUtils.translateError(ex.getMessage()).getMessage();
+        final Throwable ex = DbUtility.getUnderlyingSQLException(e);
+        final String message = OBMessageUtils.translateError(ex.getMessage()).getMessage();
         errorMessage = new JSONObject();
         errorMessage.put("severity", "error");
         errorMessage.put("title", OBMessageUtils.messageBD("Error"));
@@ -165,32 +164,32 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
     return result;
   }
 
-  protected void createInventories(String lineId, Warehouse warehouse, String ruleId,
-      Set<String> childOrgs, Date date) {
+  protected void createInventories(final String lineId, final Warehouse warehouse,
+      final String ruleId, final Set<String> childOrgs, final Date date) {
 
-    CostingRule costRule = OBDal.getInstance().get(CostingRule.class, ruleId);
+    final CostingRule costRule = OBDal.getInstance().get(CostingRule.class, ruleId);
     InventoryAmountUpdateLine line = OBDal.getInstance()
         .get(InventoryAmountUpdateLine.class, lineId);
-    ScrollableResults stockLines = getStockLines(childOrgs, date, line.getProduct(), warehouse,
-        costRule.isBackdatedTransactionsFixed());
+    final ScrollableResults stockLines = getStockLines(childOrgs, date, line.getProduct(),
+        warehouse, costRule.isBackdatedTransactionsFixed());
     // The key of the Map is the concatenation of orgId and warehouseId
-    Map<String, String> inventories = new HashMap<String, String>();
-    Map<String, Long> maxLineNumbers = new HashMap<String, Long>();
-    InventoryCountLine closingInventoryLine = null;
+    final Map<String, String> inventories = new HashMap<>();
+    final Map<String, Long> maxLineNumbers = new HashMap<>();
+    final InventoryCountLine closingInventoryLine = null;
     InventoryCountLine openInventoryLine = null;
     int i = 1;
     try {
       while (stockLines.next()) {
-        Object[] stockLine = stockLines.get();
-        String attrSetInsId = (String) stockLine[0];
-        String uomId = (String) stockLine[1];
-        String orderUOMId = (String) stockLine[2];
-        String locatorId = (String) stockLine[3];
-        String warehouseId = (String) stockLine[4];
-        BigDecimal qty = (BigDecimal) stockLine[5];
-        BigDecimal orderQty = (BigDecimal) stockLine[6];
+        final Object[] stockLine = stockLines.get();
+        final String attrSetInsId = (String) stockLine[0];
+        final String uomId = (String) stockLine[1];
+        final String orderUOMId = (String) stockLine[2];
+        final String locatorId = (String) stockLine[3];
+        final String warehouseId = (String) stockLine[4];
+        final BigDecimal qty = (BigDecimal) stockLine[5];
+        final BigDecimal orderQty = (BigDecimal) stockLine[6];
         //
-        String invId = inventories.get(warehouseId);
+        final String invId = inventories.get(warehouseId);
         InvAmtUpdLnInventories inv = null;
         if (invId == null) {
           inv = createInventorieLine(line, warehouseId, date);
@@ -199,7 +198,7 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
         } else {
           inv = OBDal.getInstance().get(InvAmtUpdLnInventories.class, invId);
         }
-        Long lineNo = (maxLineNumbers.get(inv.getId()) == null ? 0L
+        final Long lineNo = (maxLineNumbers.get(inv.getId()) == null ? 0L
             : maxLineNumbers.get(inv.getId())) + 10L;
         maxLineNumbers.put(inv.getId(), lineNo);
 
@@ -245,114 +244,138 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
     }
   }
 
-  private ScrollableResults getStockLines(Set<String> childOrgs, Date date, Product product,
-      Warehouse warehouse, boolean backdatedTransactionsFixed) {
+  private ScrollableResults getStockLines(final Set<String> childOrgs, final Date date,
+      final Product product, final Warehouse warehouse, final boolean backdatedTransactionsFixed) {
     Date localDate = date;
-    StringBuffer select = new StringBuffer();
-    StringBuffer subSelect = new StringBuffer();
-
-    select.append("select trx." + MaterialTransaction.PROPERTY_ATTRIBUTESETVALUE + ".id");
-    select.append(", trx." + MaterialTransaction.PROPERTY_UOM + ".id");
-    select.append(", trx." + MaterialTransaction.PROPERTY_ORDERUOM + ".id");
-    select.append(", trx." + MaterialTransaction.PROPERTY_STORAGEBIN + ".id");
-    select.append(", loc." + Locator.PROPERTY_WAREHOUSE + ".id");
-    select.append(", sum(trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + ")");
-    select.append(", sum(trx." + MaterialTransaction.PROPERTY_ORDERQUANTITY + ")");
-    select.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
-    select.append("    join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as loc");
-    select.append(" where trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    //@formatter:off
+    String hqlSelect =
+            "select trx.attributeSetValue.id" +
+            "  , trx.uOM.id" +
+            "  , trx.orderUOM.id" +
+            "  , trx.storageBin.id" +
+            "  , loc.warehouse.id" +
+            "  , sum(trx.movementQuantity)" +
+            "  , sum(trx.orderQuantity)" +
+            " from MaterialMgmtMaterialTransaction as trx" +
+            "    join trx.storageBin as loc" +
+            " where trx.organization.id in (:orgIds)";
+    //@formatter:on
     if (localDate != null) {
       if (backdatedTransactionsFixed) {
-        select.append("   and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " <= :date");
+        //@formatter:off
+        hqlSelect +=
+            "   and trx.movementDate <= :date";
+        //@formatter:on
       } else {
-        subSelect
-            .append("select min(trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + ")");
-        subSelect.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
+        //@formatter:off
+        String hqlSubSelect =
+                "select min(trx.transactionProcessDate)" +
+                " from MaterialMgmtMaterialTransaction as trx";
+        //@formatter:on
         if (warehouse != null) {
-          subSelect
-              .append("   join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
+          //@formatter:off
+          hqlSubSelect +=
+                "   join trx.storageBin as locator";
+          //@formatter:on
         }
-        subSelect.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :product");
-        subSelect.append(" and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :date");
+        //@formatter:off
+        hqlSubSelect +=
+                " where trx.product.id = :productId" +
+                "   and trx.movementDate > :date" +
         // Include only transactions that have its cost calculated
-        subSelect.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
+                "   and trx.isCostCalculated = true";
+        //@formatter:on
         if (warehouse != null) {
-          subSelect.append("  and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouse");
+          //@formatter:off
+          hqlSubSelect +=
+                "   and locator.warehouse.id = :warehouseId";
+          //@formatter:on
         }
-        subSelect
-            .append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+        //@formatter:off
+        hqlSubSelect +=
+                "   and trx.organization.id in (:orgIds)";
+        //@formatter:on
 
-        Query<Date> trxsubQry = OBDal.getInstance()
+        final Query<Date> trxsubQry = OBDal.getInstance()
             .getSession()
-            .createQuery(subSelect.toString(), Date.class);
-        trxsubQry.setParameter("date", localDate);
-        trxsubQry.setParameter("product", product.getId());
+            .createQuery(hqlSubSelect, Date.class)
+            .setParameter("date", localDate)
+            .setParameter("productId", product.getId());
         if (warehouse != null) {
-          trxsubQry.setParameter("warehouse", warehouse.getId());
+          trxsubQry.setParameter("warehouseId", warehouse.getId());
         }
-        trxsubQry.setParameterList("orgs", childOrgs);
-        Date trxprocessDate = trxsubQry.uniqueResult();
+        final Date trxprocessDate = trxsubQry.setParameterList("orgIds", childOrgs).uniqueResult();
         if (trxprocessDate != null) {
           localDate = trxprocessDate;
-          select.append(
-              "   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " < :date");
+          //@formatter:off
+          hqlSelect +=
+                "   and trx.transactionProcessDate < :date";
+          //@formatter:on
         } else {
-          select.append("   and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " <= :date");
+          //@formatter:off
+          hqlSelect +=
+                "   and trx.movementDate <= :date";
+          //@formatter:on
         }
       }
     }
     if (warehouse != null) {
-      select.append("   and loc." + Locator.PROPERTY_WAREHOUSE + " = :warehouse");
+      //@formatter:off
+      hqlSelect +=
+                "   and loc.warehouse.id = :warehouseId";
+      //@formatter:on
     }
-    select.append("   and trx." + MaterialTransaction.PROPERTY_PRODUCT + " = :product");
-    select.append(" group by trx." + MaterialTransaction.PROPERTY_ATTRIBUTESETVALUE + ".id");
-    select.append(", trx." + MaterialTransaction.PROPERTY_UOM + ".id");
-    select.append(", trx." + MaterialTransaction.PROPERTY_ORDERUOM + ".id");
-    select.append(", trx." + MaterialTransaction.PROPERTY_STORAGEBIN + ".id");
-    select.append(", loc." + Locator.PROPERTY_WAREHOUSE + ".id");
-    select.append(" having ");
-    select.append(" sum(trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + ") <> 0");
-    select.append(" order by loc." + Locator.PROPERTY_WAREHOUSE + ".id");
-    select.append(", trx." + MaterialTransaction.PROPERTY_STORAGEBIN + ".id");
-    select.append(", trx." + MaterialTransaction.PROPERTY_ATTRIBUTESETVALUE + ".id");
-    select.append(", trx." + MaterialTransaction.PROPERTY_UOM + ".id");
-    select.append(", trx." + MaterialTransaction.PROPERTY_ORDERUOM + ".id");
+    //@formatter:off
+    hqlSelect +=
+            "   and trx.product.id = :productId" +
+            " group by trx.attributeSetValue.id" +
+            "   , trx.uOM.id" +
+            "   , trx.orderUOM.id" +
+            "   , trx.storageBin.id" +
+            "   , loc.warehouse.id" +
+            "   having sum(trx.movementQuantity) <> 0" +
+            " order by loc.warehouse.id" +
+            "   , trx.storageBin.id" +
+            "   , trx.attributeSetValue.id" +
+            "   , trx.uOM.id" +
+            "   , trx.orderUOM.id";
+    //@formatter:on
 
-    Query<Object[]> stockLinesQry = OBDal.getInstance()
+    final Query<Object[]> stockLinesQry = OBDal.getInstance()
         .getSession()
-        .createQuery(select.toString(), Object[].class);
-    stockLinesQry.setParameterList("orgs", childOrgs);
+        .createQuery(hqlSelect, Object[].class)
+        .setParameterList("orgIds", childOrgs);
     if (localDate != null) {
       stockLinesQry.setParameter("date", localDate);
     }
     if (warehouse != null) {
-      stockLinesQry.setParameter("warehouse", warehouse);
+      stockLinesQry.setParameter("warehouseId", warehouse.getId());
     }
-    stockLinesQry.setParameter("product", product);
-    stockLinesQry.setFetchSize(1000);
-    ScrollableResults stockLines = stockLinesQry.scroll(ScrollMode.FORWARD_ONLY);
-    return stockLines;
+    return stockLinesQry.setParameter("productId", product.getId())
+        .setFetchSize(1000)
+        .scroll(ScrollMode.FORWARD_ONLY);
   }
 
-  private InvAmtUpdLnInventories createInventorieLine(InventoryAmountUpdateLine invLine,
-      String warehouseId, Date date) {
+  private InvAmtUpdLnInventories createInventorieLine(final InventoryAmountUpdateLine invLine,
+      final String warehouseId, final Date date) {
     Date localDate = date;
     if (localDate == null) {
       localDate = new Date();
     }
-    Client client = (Client) OBDal.getInstance()
+    final Client client = (Client) OBDal.getInstance()
         .getProxy(Client.ENTITY_NAME, invLine.getClient().getId());
-    String orgId = invLine.getOrganization().getId();
-    Warehouse warehouse = (Warehouse) OBDal.getInstance()
+    final String orgId = invLine.getOrganization().getId();
+    final Warehouse warehouse = (Warehouse) OBDal.getInstance()
         .getProxy(Warehouse.ENTITY_NAME, warehouseId);
-    InvAmtUpdLnInventories inv = OBProvider.getInstance().get(InvAmtUpdLnInventories.class);
+    final InvAmtUpdLnInventories inv = OBProvider.getInstance().get(InvAmtUpdLnInventories.class);
     inv.setClient(client);
     inv.setOrganization(
         (Organization) OBDal.getInstance().getProxy(Organization.ENTITY_NAME, orgId));
     inv.setWarehouse(warehouse);
 
     inv.setCaInventoryamtline(invLine);
-    List<InvAmtUpdLnInventories> invList = invLine.getInventoryAmountUpdateLineInventoriesList();
+    final List<InvAmtUpdLnInventories> invList = invLine
+        .getInventoryAmountUpdateLineInventoriesList();
     invList.add(inv);
     invLine.setInventoryAmountUpdateLineInventoriesList(invList);
 
@@ -384,11 +407,12 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
     return inv;
   }
 
-  private InventoryCountLine insertInventoryLine(InventoryCount inventory, String productId,
-      String attrSetInsId, String uomId, String orderUOMId, String locatorId, BigDecimal qtyCount,
-      BigDecimal qtyBook, BigDecimal orderQtyCount, BigDecimal orderQtyBook, Long lineNo,
-      InventoryCountLine relatedInventoryLine, BigDecimal cost) {
-    InventoryCountLine icl = OBProvider.getInstance().get(InventoryCountLine.class);
+  private InventoryCountLine insertInventoryLine(final InventoryCount inventory,
+      final String productId, final String attrSetInsId, final String uomId,
+      final String orderUOMId, final String locatorId, final BigDecimal qtyCount,
+      final BigDecimal qtyBook, final BigDecimal orderQtyCount, final BigDecimal orderQtyBook,
+      final Long lineNo, final InventoryCountLine relatedInventoryLine, final BigDecimal cost) {
+    final InventoryCountLine icl = OBProvider.getInstance().get(InventoryCountLine.class);
     icl.setClient(inventory.getClient());
     icl.setOrganization(inventory.getOrganization());
     icl.setPhysInventory(inventory);
@@ -410,7 +434,7 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
     if (cost != null) {
       icl.setCost(cost);
     }
-    List<InventoryCountLine> invLines = inventory.getMaterialMgmtInventoryCountLineList();
+    final List<InventoryCountLine> invLines = inventory.getMaterialMgmtInventoryCountLineList();
     invLines.add(icl);
     inventory.setMaterialMgmtInventoryCountLineList(invLines);
     OBDal.getInstance().save(inventory);

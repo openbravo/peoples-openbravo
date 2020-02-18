@@ -1016,7 +1016,7 @@ public class ProcessInvoice extends HttpSecureAppServlet {
         .list()) {
       for (FIN_PaymentDetailV pdv : OBDao
           .getFilteredCriteria(FIN_PaymentDetailV.class,
-              Restrictions.eq(FIN_PaymentDetailV.PROPERTY_INVOICEPAYMENTPLAN, ps))
+              Restrictions.eq(FIN_PaymentDetailV.PROPERTY_PAYMENTPLANINVOICE, ps))
           .list()) {
         if (pdv.getPayment() != null && !"RPVOID".equals(pdv.getPayment().getStatus())) {
           return true;

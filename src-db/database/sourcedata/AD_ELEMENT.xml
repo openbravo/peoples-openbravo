@@ -8632,20 +8632,6 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1514-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--1514--></AD_ELEMENT>
 
-<!--1515--><AD_ELEMENT>
-<!--1515-->  <AD_ELEMENT_ID><![CDATA[1515]]></AD_ELEMENT_ID>
-<!--1515-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1515-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1515-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1515-->  <COLUMNNAME><![CDATA[R_MailText_ID]]></COLUMNNAME>
-<!--1515-->  <NAME><![CDATA[Mail Template]]></NAME>
-<!--1515-->  <PRINTNAME><![CDATA[Mail Template]]></PRINTNAME>
-<!--1515-->  <DESCRIPTION><![CDATA[A template used to organize and send mail using a standard format.]]></DESCRIPTION>
-<!--1515-->  <HELP><![CDATA[The Mail Template indicates the mail template for return messages.]]></HELP>
-<!--1515-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1515-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
-<!--1515--></AD_ELEMENT>
-
 <!--1522--><AD_ELEMENT>
 <!--1522-->  <AD_ELEMENT_ID><![CDATA[1522]]></AD_ELEMENT_ID>
 <!--1522-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -10907,20 +10893,6 @@ The fact of using a given product type does not mean a different accounting. All
 <!--1951-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1951-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--1951--></AD_ELEMENT>
-
-<!--1953--><AD_ELEMENT>
-<!--1953-->  <AD_ELEMENT_ID><![CDATA[1953]]></AD_ELEMENT_ID>
-<!--1953-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1953-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1953-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1953-->  <COLUMNNAME><![CDATA[EmailPDF]]></COLUMNNAME>
-<!--1953-->  <NAME><![CDATA[Email PDF]]></NAME>
-<!--1953-->  <PRINTNAME><![CDATA[Email PDF]]></PRINTNAME>
-<!--1953-->  <DESCRIPTION><![CDATA[Email Invoice PDF files to customer]]></DESCRIPTION>
-<!--1953-->  <HELP><![CDATA[Email Invoice PDF files to customer]]></HELP>
-<!--1953-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1953-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
-<!--1953--></AD_ELEMENT>
 
 <!--1978--><AD_ELEMENT>
 <!--1978-->  <AD_ELEMENT_ID><![CDATA[1978]]></AD_ELEMENT_ID>

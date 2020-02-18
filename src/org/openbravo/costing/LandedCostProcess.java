@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2018 Openbravo SLU
+ * All portions are Copyright (C) 2014-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -37,7 +37,6 @@ import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.util.OBClassLoader;
@@ -56,11 +55,9 @@ import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.LCDistributionAlgorithm;
 import org.openbravo.model.materialmgmt.cost.LCMatched;
 import org.openbravo.model.materialmgmt.cost.LCReceipt;
-import org.openbravo.model.materialmgmt.cost.LCReceiptLineAmt;
 import org.openbravo.model.materialmgmt.cost.LandedCost;
 import org.openbravo.model.materialmgmt.cost.LandedCostCost;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
-import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 
 public class LandedCostProcess {
@@ -72,14 +69,14 @@ public class LandedCostProcess {
   /**
    * Method to process a Landed Cost.
    * 
-   * @param _landedCost
+   * @param landedCost
    *          the landed cost to be processed.
    * @return the message to be shown to the user properly formatted and translated to the user
    *         language.
    */
-  public JSONObject processLandedCost(LandedCost _landedCost) {
-    LandedCost landedCost = _landedCost;
-    JSONObject message = new JSONObject();
+  public JSONObject processLandedCost(final LandedCost landedCost) {
+    LandedCost currentLandedCost = landedCost;
+    final JSONObject message = new JSONObject();
     OBContext.setAdminMode(false);
     try {
       message.put("severity", "success");
@@ -87,33 +84,33 @@ public class LandedCostProcess {
       message.put("text", OBMessageUtils.messageBD("Success"));
       try {
         log.debug("Start doChecks");
-        doChecks(landedCost, message);
+        doChecks(currentLandedCost, message);
       } catch (OBException e) {
         message.put("severity", "error");
         message.put("text", e.getMessage());
         return message;
       }
       log.debug("Start Distribute Amounts");
-      distributeAmounts(landedCost);
+      distributeAmounts(currentLandedCost);
       log.debug("Start generateCostAdjustment");
 
-      landedCost = OBDal.getInstance().get(LandedCost.class, landedCost.getId());
+      currentLandedCost = OBDal.getInstance().get(LandedCost.class, currentLandedCost.getId());
 
       // If active costing rule uses Standard Algorithm, cost adjustment will not be created
-      Organization org = OBContext.getOBContext()
-          .getOrganizationStructureProvider(landedCost.getClient().getId())
-          .getLegalEntity(landedCost.getOrganization());
+      final Organization org = OBContext.getOBContext()
+          .getOrganizationStructureProvider(currentLandedCost.getClient().getId())
+          .getLegalEntity(currentLandedCost.getOrganization());
       if (!StringUtils.equals(CostingUtils.getCostDimensionRule(org, new Date())
           .getCostingAlgorithm()
           .getJavaClassName(), "org.openbravo.costing.StandardAlgorithm")) {
-        CostAdjustment ca = generateCostAdjustment(landedCost.getId(), message);
-        landedCost.setCostAdjustment(ca);
+        final CostAdjustment ca = generateCostAdjustment(currentLandedCost.getId(), message);
+        currentLandedCost.setCostAdjustment(ca);
         message.put("documentNo", ca.getDocumentNo());
       }
 
-      landedCost.setDocumentStatus("CO");
-      landedCost.setProcessed(Boolean.TRUE);
-      OBDal.getInstance().save(landedCost);
+      currentLandedCost.setDocumentStatus("CO");
+      currentLandedCost.setProcessed(Boolean.TRUE);
+      OBDal.getInstance().save(currentLandedCost);
       OBDal.getInstance().flush();
     } catch (JSONException ignore) {
     } finally {
@@ -122,7 +119,7 @@ public class LandedCostProcess {
     return message;
   }
 
-  private void doChecks(LandedCost landedCost, JSONObject message) {
+  private void doChecks(final LandedCost landedCost, final JSONObject message) {
     // Check there are Receipt Lines and Costs.
     OBCriteria<LandedCost> critLC = OBDal.getInstance().createCriteria(LandedCost.class);
     critLC.add(Restrictions.sizeEq(LandedCost.PROPERTY_LANDEDCOSTCOSTLIST, 0));
@@ -139,23 +136,28 @@ public class LandedCostProcess {
     }
 
     // Check that all related receipt lines with movementqty >=0 have their cost already calculated.
-    StringBuffer where = new StringBuffer();
-    where.append("\n  as lcr ");
-    where.append("\n  left join lcr." + LCReceipt.PROPERTY_GOODSSHIPMENT + " lcrr");
-    where.append("\n  left join lcr." + LCReceipt.PROPERTY_GOODSSHIPMENTLINE + " lcrrl");
-    where.append("\n  where exists (");
-    where.append("\n    select 1");
-    where.append("\n    from " + MaterialTransaction.ENTITY_NAME + " as trx");
-    where.append("\n    join trx." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + " as iol");
-    where.append("\n    join iol." + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + " as io");
-    where.append("\n    where trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = false");
-    where.append("\n    and iol." + ShipmentInOutLine.PROPERTY_MOVEMENTQUANTITY + " >= 0");
-    where.append("\n    and ((lcrrl is not null and lcrrl = iol)");
-    where.append("\n    or (lcrrl is null and lcrr = io))");
-    where.append("\n  )");
-    where.append("\n  and lcr." + LCReceipt.PROPERTY_LANDEDCOST + " = :landedcost");
-    OBQuery<LCReceipt> qryTrx = OBDal.getInstance().createQuery(LCReceipt.class, where.toString());
-    qryTrx.setNamedParameter("landedcost", landedCost);
+    //@formatter:off
+    final String hql =
+                  "as lcr " +
+                  "  left join lcr.goodsShipment lcrr" +
+                  "  left join lcr.goodsShipmentLine lcrrl" +
+                  " where exists (" +
+                  "   select 1" +
+                  "     from MaterialMgmtMaterialTransaction as trx" +
+                  "       join trx.goodsShipmentLine as iol" +
+                  "       join iol.shipmentReceipt as io" +
+                  "     where trx.isCostCalculated = false" +
+                  "       and iol.movementQuantity >= 0" +
+                  "       and ((lcrrl is not null and lcrrl.id = iol.id)" +
+                  "       or (lcrrl is null and lcrr.id = io.id))" +
+                  "   )" +
+                  "   and lcr.landedCost.id = :landedCostId";
+    //@formatter:on
+
+    final OBQuery<LCReceipt> qryTrx = OBDal.getInstance()
+        .createQuery(LCReceipt.class, hql)
+        .setNamedParameter("landedCostId", landedCost.getId());
+
     if (qryTrx.count() > 0) {
       String strReceiptNumbers = "";
       for (LCReceipt lcrl : qryTrx.list()) {
@@ -168,7 +170,7 @@ public class LandedCostProcess {
           strReceiptNumbers += lcrl.getGoodsShipment().getIdentifier();
         }
       }
-      String errorMsg = OBMessageUtils.messageBD("LandedCostReceiptWithoutCosts");
+      final String errorMsg = OBMessageUtils.messageBD("LandedCostReceiptWithoutCosts");
       log.error("Processed and Cost Calculated check error");
       throw new OBException(errorMsg + "\n" + strReceiptNumbers);
     }
@@ -179,8 +181,9 @@ public class LandedCostProcess {
     }
   }
 
-  private void distributeAmounts(LandedCost landedCost) {
-    OBCriteria<LandedCostCost> criteria = OBDal.getInstance().createCriteria(LandedCostCost.class);
+  private void distributeAmounts(final LandedCost landedCost) {
+    final OBCriteria<LandedCostCost> criteria = OBDal.getInstance()
+        .createCriteria(LandedCostCost.class);
     criteria.add(Restrictions.eq(LandedCostCost.PROPERTY_LANDEDCOST, landedCost));
     criteria.addOrderBy(LandedCostCost.PROPERTY_LINENO, true);
     for (LandedCostCost lcCost : criteria.list()) {
@@ -200,14 +203,15 @@ public class LandedCostProcess {
     OBDal.getInstance().flush();
   }
 
-  private CostAdjustment generateCostAdjustment(String strLandedCostId, JSONObject message) {
-    LandedCost landedCost = OBDal.getInstance().get(LandedCost.class, strLandedCostId);
-    Date referenceDate = landedCost.getReferenceDate();
+  private CostAdjustment generateCostAdjustment(final String strLandedCostId,
+      final JSONObject message) {
+    final LandedCost landedCost = OBDal.getInstance().get(LandedCost.class, strLandedCostId);
+    final Date referenceDate = landedCost.getReferenceDate();
     CostAdjustment ca = CostAdjustmentUtils.insertCostAdjustmentHeader(landedCost.getOrganization(),
         "LC");
 
-    String strResult = OBMessageUtils.messageBD("LandedCostProcessed");
-    Map<String, String> map = new HashMap<String, String>();
+    final String strResult = OBMessageUtils.messageBD("LandedCostProcessed");
+    final Map<String, String> map = new HashMap<>();
     map.put("documentNo", ca.getDocumentNo());
     try {
       message.put("title", OBMessageUtils.messageBD("Success"));
@@ -215,53 +219,53 @@ public class LandedCostProcess {
     } catch (JSONException ignore) {
     }
 
-    StringBuffer hql = new StringBuffer();
-    hql.append(" select sum(rla." + LCReceiptLineAmt.PROPERTY_AMOUNT + ") as amt");
-    hql.append(
-        "   , rla." + LCReceiptLineAmt.PROPERTY_LANDEDCOSTCOST + ".currency.id as lcCostCurrency");
-    hql.append("   , gsl." + ShipmentInOutLine.PROPERTY_ID + " as receipt");
-    hql.append("   , (select " + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " from "
-        + MaterialTransaction.ENTITY_NAME + " as transaction where "
-        + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + ".id = gsl."
-        + ShipmentInOutLine.PROPERTY_ID + ") as trxprocessdate");
-    hql.append(" from " + LCReceiptLineAmt.ENTITY_NAME + " as rla");
-    hql.append("   join rla." + LCReceiptLineAmt.PROPERTY_LANDEDCOSTRECEIPT + " as rl");
-    hql.append("   join rl." + LCReceipt.PROPERTY_GOODSSHIPMENT + " as gs");
-    hql.append("   join rla." + LCReceiptLineAmt.PROPERTY_GOODSSHIPMENTLINE + " as gsl");
-    hql.append(" where rl." + LCReceipt.PROPERTY_LANDEDCOST + " = :lc");
-    hql.append("   and rla." + LCReceiptLineAmt.PROPERTY_ISMATCHINGADJUSTMENT + " = false ");
-    hql.append(" group by rla." + LCReceiptLineAmt.PROPERTY_LANDEDCOSTCOST + ".currency.id");
-    hql.append(" , gsl." + ShipmentInOutLine.PROPERTY_ID);
-    hql.append(" , gs." + ShipmentInOut.PROPERTY_DOCUMENTNO);
-    hql.append(" , gsl." + ShipmentInOutLine.PROPERTY_LINENO);
-    hql.append(" order by trxprocessdate");
-    hql.append(" , gs." + ShipmentInOut.PROPERTY_DOCUMENTNO);
-    hql.append(" , gsl." + ShipmentInOutLine.PROPERTY_LINENO);
-    hql.append(" , amt");
+    //@formatter:off
+    final String hql =
+                  " select sum(rla.amount) as amt" +
+                  "   , rla.landedCostCost.currency.id as lcCostCurrency" +
+                  "   , gsl.id as receipt" +
+                  "   , (select transactionProcessDate " +
+                  "      from MaterialMgmtMaterialTransaction as transaction " +
+                  "      where goodsShipmentLine.id = gsl.id" +
+                  "     ) as trxprocessdate" +
+                  "  from LandedCostReceiptLineAmt as rla" +
+                  "    join rla.landedCostReceipt as rl" +
+                  "    join rl.goodsShipment as gs" +
+                  "    join rla.goodsShipmentLine as gsl" +
+                  " where rl.landedCost.id = :landedCostId" +
+                  "   and rla.isMatchingAdjustment = false " +
+                  " group by rla.landedCostCost.currency.id" +
+                  "   , gsl.id" +
+                  "   , gs.documentNo" +
+                  "   , gsl.lineNo" +
+                  " order by trxprocessdate" +
+                  "   , gs.documentNo" +
+                  "   , gsl.lineNo" +
+                  "   , amt";
+    //@formatter:on
 
-    Query<Object[]> qryLCRLA = OBDal.getInstance()
+    final ScrollableResults receiptamts = OBDal.getInstance()
         .getSession()
-        .createQuery(hql.toString(), Object[].class);
-    qryLCRLA.setParameter("lc", landedCost);
+        .createQuery(hql, Object[].class)
+        .setParameter("landedCostId", landedCost.getId())
+        .scroll(ScrollMode.FORWARD_ONLY);
 
-    ScrollableResults receiptamts = qryLCRLA.scroll(ScrollMode.FORWARD_ONLY);
     int i = 0;
     try {
       while (receiptamts.next()) {
         log.debug("Process receipt amounts");
-        Object[] receiptAmt = receiptamts.get();
-        BigDecimal amt = (BigDecimal) receiptAmt[0];
-        Currency lcCostCurrency = OBDal.getInstance().get(Currency.class, receiptAmt[1]);
-        ShipmentInOutLine receiptLine = OBDal.getInstance()
+        final Object[] receiptAmt = receiptamts.get();
+        final BigDecimal amt = (BigDecimal) receiptAmt[0];
+        final Currency lcCostCurrency = OBDal.getInstance().get(Currency.class, receiptAmt[1]);
+        final ShipmentInOutLine receiptLine = OBDal.getInstance()
             .get(ShipmentInOutLine.class, receiptAmt[2]);
-        // MaterialTransaction receiptLine = (MaterialTransaction) record[1];
-        MaterialTransaction trx = receiptLine.getMaterialMgmtMaterialTransactionList().get(0);
+        final MaterialTransaction trx = receiptLine.getMaterialMgmtMaterialTransactionList().get(0);
         final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(trx,
             amt, ca, lcCostCurrency);
         lineParameters.setSource(true);
         lineParameters.setUnitCost(false);
         lineParameters.setNeedPosting(false);
-        Long lineNo = (i + 1) * 10L;
+        final Long lineNo = (i + 1) * 10L;
         CostAdjustmentUtils.insertCostAdjustmentLine(lineParameters, referenceDate, lineNo);
 
         if (i % 100 == 0) {
@@ -281,7 +285,7 @@ public class LandedCostProcess {
   }
 
   private LandedCostDistributionAlgorithm getDistributionAlgorithm(
-      LCDistributionAlgorithm lcDistAlg) {
+      final LCDistributionAlgorithm lcDistAlg) {
     LandedCostDistributionAlgorithm lcDistAlgInstance;
     try {
       Class<?> clz = null;
@@ -290,22 +294,22 @@ public class LandedCostProcess {
           .getInstanceFromStaticBeanManager(clz);
     } catch (Exception e) {
       log.error("Error loading distribution algorithm: " + lcDistAlg.getJavaClassName(), e);
-      String strError = OBMessageUtils.messageBD("LCDistributionAlgorithmNotFound");
-      Map<String, String> map = new HashMap<String, String>();
+      final String strError = OBMessageUtils.messageBD("LCDistributionAlgorithmNotFound");
+      final Map<String, String> map = new HashMap<>();
       map.put("distalg", lcDistAlg.getIdentifier());
       throw new OBException(OBMessageUtils.parseTranslation(strError, map));
     }
     return lcDistAlgInstance;
   }
 
-  public static JSONObject doProcessLandedCost(LandedCost landedCost) {
-    LandedCostProcess lcp = WeldUtils.getInstanceFromStaticBeanManager(LandedCostProcess.class);
-    JSONObject message = lcp.processLandedCost(landedCost);
-    return message;
+  public static JSONObject doProcessLandedCost(final LandedCost landedCost) {
+    final LandedCostProcess lcp = WeldUtils
+        .getInstanceFromStaticBeanManager(LandedCostProcess.class);
+    return lcp.processLandedCost(landedCost);
   }
 
-  private void matchCostWithInvoiceLine(LandedCostCost lcc) {
-    LCMatched lcm = OBProvider.getInstance().get(LCMatched.class);
+  private void matchCostWithInvoiceLine(final LandedCostCost lcc) {
+    final LCMatched lcm = OBProvider.getInstance().get(LCMatched.class);
     lcm.setOrganization(lcc.getOrganization());
     lcm.setLandedCostCost(lcc);
     lcm.setAmount(lcc.getAmount());
@@ -316,22 +320,23 @@ public class LandedCostProcess {
         .createCriteria(ConversionRateDoc.class);
     conversionRateDoc.add(
         Restrictions.eq(ConversionRateDoc.PROPERTY_INVOICE, lcm.getInvoiceLine().getInvoice()));
-    ConversionRateDoc invoiceconversionrate = (ConversionRateDoc) conversionRateDoc.uniqueResult();
-    Currency currency = lcc.getOrganization().getCurrency() != null
+    final ConversionRateDoc invoiceconversionrate = (ConversionRateDoc) conversionRateDoc
+        .uniqueResult();
+    final Currency currency = lcc.getOrganization().getCurrency() != null
         ? lcc.getOrganization().getCurrency()
         : lcc.getOrganization().getClient().getCurrency();
-    ConversionRate landedCostrate = FinancialUtils.getConversionRate(
+    final ConversionRate landedCostrate = FinancialUtils.getConversionRate(
         lcc.getLandedCost().getReferenceDate(), lcc.getCurrency(), currency, lcc.getOrganization(),
         lcc.getClient());
 
     if (invoiceconversionrate != null
         && invoiceconversionrate.getRate() != landedCostrate.getMultipleRateBy()) {
-      BigDecimal amount = lcc.getAmount()
+      final BigDecimal amount = lcc.getAmount()
           .multiply(invoiceconversionrate.getRate())
           .subtract(lcc.getAmount().multiply(landedCostrate.getMultipleRateBy()))
           .divide(landedCostrate.getMultipleRateBy(), currency.getStandardPrecision().intValue(),
               RoundingMode.HALF_UP);
-      LCMatched lcmCm = OBProvider.getInstance().get(LCMatched.class);
+      final LCMatched lcmCm = OBProvider.getInstance().get(LCMatched.class);
       lcmCm.setOrganization(lcc.getOrganization());
       lcmCm.setLandedCostCost(lcc);
       lcmCm.setAmount(amount);
@@ -348,7 +353,7 @@ public class LandedCostProcess {
 
     lcc.setMatched(Boolean.TRUE);
     lcc.setProcessed(Boolean.TRUE);
-    OBCriteria<LCMatched> critMatched = OBDal.getInstance().createCriteria(LCMatched.class);
+    final OBCriteria<LCMatched> critMatched = OBDal.getInstance().createCriteria(LCMatched.class);
     critMatched.add(Restrictions.eq(LCMatched.PROPERTY_LANDEDCOSTCOST, lcc));
     critMatched.setProjection(Projections.sum(LCMatched.PROPERTY_AMOUNT));
     BigDecimal matchedAmt = (BigDecimal) critMatched.uniqueResult();

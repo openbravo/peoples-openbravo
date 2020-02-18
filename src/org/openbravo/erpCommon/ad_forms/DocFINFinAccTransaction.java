@@ -1475,6 +1475,7 @@ public class DocFINFinAccTransaction extends AcctServer {
     return account;
   }
 
+  @Deprecated
   public Account getAccountReconciliation(ConnectionProvider conn, FIN_FinancialAccount finAccount,
       AcctSchema as) throws ServletException {
     OBContext.setAdminMode();

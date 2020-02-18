@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -62,7 +62,6 @@ class UpdateTax extends CreateLinesFromProcessHook {
   @Override
   public void exec() {
     updateTaxRate();
-    updateTaxAmount();
     updateTaxableAmount();
   }
 
@@ -118,15 +117,6 @@ class UpdateTax extends CreateLinesFromProcessHook {
       }
     }
     return taxID;
-  }
-
-  private void updateTaxAmount() {
-    int stdPrecision = getInvoice().getCurrency().getStandardPrecision().intValue();
-    BigDecimal taxAmt = getInvoiceLine().getLineNetAmount()
-        .multiply(getInvoiceLine().getTax().getRate())
-        .divide(new BigDecimal("100"), RoundingMode.HALF_EVEN)
-        .setScale(stdPrecision, RoundingMode.HALF_UP);
-    getInvoiceLine().setTaxAmount(taxAmt);
   }
 
   private void updateTaxableAmount() {
