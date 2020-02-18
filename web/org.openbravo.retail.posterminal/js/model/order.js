@@ -3832,7 +3832,7 @@
       return true;
     },
 
-    _loadRelatedServices: function(
+    _loadRelatedServices: async function(
       productType,
       productId,
       productCategory,
@@ -3846,43 +3846,44 @@
           forceRemote ||
           OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)
         ) {
-          var process = new OB.DS.Process(
-            'org.openbravo.retail.posterminal.process.HasServices'
-          );
           var params = {},
             date = new Date();
           params.terminalTime = date;
           params.terminalTimeOffset = date.getTimezoneOffset();
-          process.exec(
-            {
-              product: productId,
-              productCategory: productCategory,
-              parameters: params,
-              remoteFilters: [
-                {
-                  columns: [],
-                  operator: 'filter',
-                  value: 'OBRDM_DeliveryServiceFilter',
-                  params: [false]
-                }
-              ]
-            },
-            function(data, message) {
-              if (data && data.exception) {
-                //ERROR or no connection
-                OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
-                callback(null);
-              } else if (data) {
-                callback(data);
-              } else {
-                callback(null);
+
+          const body = {
+            product: productId,
+            productCategory: productCategory,
+            parameters: params,
+            remoteFilters: [
+              {
+                columns: [],
+                operator: 'filter',
+                value: 'OBRDM_DeliveryServiceFilter',
+                params: [false]
               }
-            },
-            function(error) {
+            ]
+          };
+          try {
+            let data = await OB.App.Request.mobileServiceRequest(
+              'org.openbravo.retail.posterminal.process.HasServices',
+              body
+            );
+            data = data.response.data;
+
+            if (data && data.exception) {
+              //ERROR or no connection
               OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
               callback(null);
+            } else if (data) {
+              callback(data);
+            } else {
+              callback(null);
             }
-          );
+          } catch (error) {
+            OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
+            callback(null);
+          }
         } else {
           //non-high volumes: websql
           var criteria = {};
@@ -5731,7 +5732,7 @@
             const product = await OB.App.MasterdataModels.Product.withId(
               lines[index].get('product').id
             );
-            if (product.length > 0) {
+            if (product) {
               success();
             } else {
               // Product doesn't exists, execute the same code as it was not included in pricelist
@@ -5909,17 +5910,36 @@
         //remove promotions
         line.unset('promotions');
 
-        var successCallbackPrices,
-          criteria = {};
+        let criteria = {},
+          successCallbackPrices = function(dataPrices) {
+            if (
+              !OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)
+            ) {
+              order.setPrice(
+                line,
+                dataPrices.get('standardPrice', {
+                  setUndo: false
+                })
+              );
+            } else {
+              dataPrices.each(function(price) {
+                order.setPrice(
+                  line,
+                  price.get('standardPrice', {
+                    setUndo: false
+                  })
+                );
+              });
+            }
 
+            newAllLinesCalculated();
+          };
         if (!OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
           try {
             const product = await OB.App.MasterdataModels.Product.withId(
               line.get('product').get('id')
             );
-            successCallbackPrices(
-              OB.Dal.transform(OB.Model.Product, product[0])
-            );
+            successCallbackPrices(OB.Dal.transform(OB.Model.Product, product));
           } catch (error) {
             OB.error(error.message);
           }
@@ -5944,17 +5964,6 @@
             line
           );
         }
-        successCallbackPrices = function(dataPrices) {
-          dataPrices.each(function(price) {
-            order.setPrice(
-              line,
-              price.get('standardPrice', {
-                setUndo: false
-              })
-            );
-          });
-          newAllLinesCalculated();
-        };
       });
     },
 
@@ -10132,7 +10141,7 @@
             order.set('orderType', 1);
           }
         }
-        var loadProducts = async function() {
+        let loadProducts = async function() {
           var linepos = 0,
             hasDeliveredProducts = false,
             hasNotDeliveredProducts = false,
@@ -10148,7 +10157,7 @@
                 ? OB.DEC.number(iter.lineGrossAmount)
                 : null;
             iter.linepos = linepos;
-            var addLineForProduct = function(prod) {
+            var addLineForProduct = async function(prod) {
               if (
                 OB.MobileApp.model.hasPermission(
                   'OBPOS_remote.product',
@@ -10203,11 +10212,11 @@
                 }
               }
               // Set product services
-              order._loadRelatedServices(
+              await order._loadRelatedServices(
                 prod.get('productType'),
                 prod.get('id'),
                 prod.get('productCategory'),
-                function(data) {
+                async function(data) {
                   let hasservices;
                   if (
                     !OB.UTIL.isNullOrUndefined(data) &&
@@ -10352,9 +10361,9 @@
               const product = await OB.App.MasterdataModels.Product.withId(
                 iter.id
               );
-              if (product.length > 0) {
-                addLineForProduct(
-                  OB.Dal.transform(OB.Model.Product, product[0])
+              if (product) {
+                await addLineForProduct(
+                  OB.Dal.transform(OB.Model.Product, product)
                 );
               } else {
                 //Empty
@@ -11760,7 +11769,7 @@
             const productResult = await OB.App.MasterdataModels.Product.withId(
               products[index].product.id
             );
-            let product = OB.Dal.transform(OB.Model.Product, productResult[0]);
+            let product = OB.Dal.transform(OB.Model.Product, productResult);
             if (product) {
               order.addProduct(
                 product,
