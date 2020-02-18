@@ -149,6 +149,31 @@ public class CashCloseProcessor {
       associateTransactions(paymentType, reconciliation, slaveCashupIds);
     }
 
+    // Reconciliate payment methods of type "Defined in SabeBox"
+    JSONArray cashPaymentMethodInfo = jsonCashup.getJSONArray("cashPaymentMethodInfo");
+    for (int i = 0; i < cashPaymentMethodInfo.length(); i++) {
+      // Check if current payment method is from Safe Box
+      JSONObject cashPaymentMethodInfoObj = cashPaymentMethodInfo.getJSONObject(i);
+      OBPOSAppPayment paymentMethod = OBDal.getInstance()
+          .get(OBPOSAppPayment.class, cashPaymentMethodInfoObj.getString("paymentmethod_id"));
+
+      if (!paymentMethod.getPaymentMethod().isSafebox()) {
+        continue;
+      }
+
+      FIN_Reconciliation reconciliation = createReconciliation(new JSONObject(), posTerminal,
+          paymentMethod.getFinancialAccount(), currentDate, paymentMethod, slaveCashupIds);
+
+      arrayReconciliations.add(reconciliation);
+      OBDal.getInstance().save(reconciliation);
+
+      OBPOSAppCashReconcil recon = createCashUpReconciliation(posTerminal, paymentMethod,
+          reconciliation, cashUp);
+      OBDal.getInstance().save(recon);
+
+      associateTransactions(paymentMethod, reconciliation, slaveCashupIds);
+    }
+
     for (FIN_Reconciliation reconciliation : arrayReconciliations) {
       reconciliation.setDocumentNo(getReconciliationDocumentNo(reconciliation.getDocumentType()));
       OBDal.getInstance().save(reconciliation);
@@ -262,7 +287,8 @@ public class CashCloseProcessor {
     reconciliation.setDocumentNo("99999999temp");
     reconciliation.setEndingDate(currentDate);
     reconciliation.setTransactionDate(currentDate);
-    if (!cashCloseObj.getJSONObject("paymentMethod").isNull("amountToKeep")) {
+    if (cashCloseObj.has("paymentMethod")
+        && !cashCloseObj.getJSONObject("paymentMethod").isNull("amountToKeep")) {
       reconciliation.setEndingBalance(BigDecimal
           .valueOf(cashCloseObj.getJSONObject("paymentMethod").getDouble("amountToKeep")));
     } else {
