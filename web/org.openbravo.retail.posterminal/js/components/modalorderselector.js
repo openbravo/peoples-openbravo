@@ -782,6 +782,7 @@ enyo.kind({
     this.receiptList.on(
       'click',
       function(model) {
+        me.doHideSelector();
         if (!this.$.openreceiptslistitemprinter.multiselect) {
           if (model.crossStoreInfo && OB.UTIL.isCrossStoreReceipt(model)) {
             OB.UTIL.showConfirmation.display(

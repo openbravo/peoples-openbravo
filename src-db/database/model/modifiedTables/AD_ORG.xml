@@ -161,6 +161,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="EM_OBPOS_LAYAWAY_AS_SALES" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault><![CDATA['Y']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="C_DOCTYPE" name="EM_OBPOS_DOC_AD_ORG">
         <reference local="EM_OBPOS_C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>

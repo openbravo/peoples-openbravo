@@ -2312,47 +2312,70 @@
             ),
             checkStockActions = [];
 
-          if (negativeQty && productStatus.restrictsaleoutofstock) {
-            checkStockActions.push('discontinued');
-          }
-
-          if (negativeQty && OB.UTIL.isCrossStoreLine(line)) {
-            checkStockActions.push('crossStore');
-          }
-
-          OB.UTIL.HookManager.executeHooks(
-            'OBPOS_CheckStockDeleteLine',
-            {
-              order: me,
-              line: line,
-              checkStockActions: checkStockActions
-            },
-            function(args) {
-              if (args.cancelOperation) {
-                return;
-              }
-              if (args.checkStockActions.length) {
-                var qtyAdded = -line.get('qty'),
-                  options = {
-                    line: line
-                  };
-                me.getStoreStock(
-                  product,
-                  qtyAdded,
-                  options,
-                  null,
-                  args.checkStockActions,
-                  function(hasStock) {
-                    if (hasStock) {
-                      checkLineStock(idx + 1);
-                    }
+          var getLineStock = function() {
+            if (checkStockActions.length) {
+              var qtyAdded = -line.get('qty'),
+                options = {
+                  line: line
+                };
+              me.getStoreStock(
+                product,
+                qtyAdded,
+                options,
+                null,
+                checkStockActions,
+                function(hasStock) {
+                  if (hasStock) {
+                    checkLineStock(idx + 1);
                   }
-                );
-              } else {
-                checkLineStock(idx + 1);
-              }
+                }
+              );
+            } else {
+              checkLineStock(idx + 1);
             }
-          );
+          };
+
+          if (
+            negativeQty &&
+            OB.MobileApp.model.hasPermission(
+              'OBPOS_EnableStockValidation',
+              true
+            )
+          ) {
+            checkStockActions.push('stockValidation');
+          }
+
+          if (
+            OB.MobileApp.model.hasPermission(
+              'OBPOS_CheckStockForNotSaleWithoutStock',
+              true
+            )
+          ) {
+            if (negativeQty && productStatus.restrictsaleoutofstock) {
+              checkStockActions.push('discontinued');
+            }
+
+            if (negativeQty && OB.UTIL.isCrossStoreLine(line)) {
+              checkStockActions.push('crossStore');
+            }
+
+            OB.UTIL.HookManager.executeHooks(
+              'OBPOS_CheckStockDeleteLine',
+              {
+                order: me,
+                line: line,
+                checkStockActions: checkStockActions
+              },
+              function(args) {
+                if (args.cancelOperation) {
+                  return;
+                }
+                getLineStock();
+              }
+            );
+          } else {
+            getLineStock();
+          }
         }
       }
 
@@ -2455,10 +2478,12 @@
       }
 
       if (
-        OB.MobileApp.model.hasPermission(
+        !this.get('isQuotation') &&
+        (OB.MobileApp.model.hasPermission(
           'OBPOS_CheckStockForNotSaleWithoutStock',
           true
-        )
+        ) ||
+          OB.MobileApp.model.hasPermission('OBPOS_EnableStockValidation', true))
       ) {
         // Check the stock for the negative lines to remove
         checkLineStock(0);
@@ -2697,62 +2722,84 @@
       // Check the stock for each negative discontinued line that is related to a deleting line
       if (
         !isSelectedLine &&
-        OB.MobileApp.model.hasPermission(
+        !this.get('isQuotation') &&
+        (OB.MobileApp.model.hasPermission(
           'OBPOS_CheckStockForNotSaleWithoutStock',
           true
-        )
+        ) ||
+          OB.MobileApp.model.hasPermission('OBPOS_EnableStockValidation', true))
       ) {
         var product = line.get('product'),
           negativeQty = OB.DEC.compare(line.get('qty')) < 0,
           productStatus = OB.UTIL.ProductStatusUtils.getProductStatus(product),
           checkStockActions = [];
 
-        if (negativeQty && productStatus.restrictsaleoutofstock) {
-          checkStockActions.push('discontinued');
-        }
-
-        if (negativeQty && OB.UTIL.isCrossStoreLine(line)) {
-          checkStockActions.push('crossStore');
-        }
-
-        OB.UTIL.HookManager.executeHooks(
-          'OBPOS_CheckStockDeleteLine',
-          {
-            order: me,
-            line: line,
-            checkStockActions: checkStockActions
-          },
-          function(args) {
-            if (args.cancelOperation) {
-              if (callback && callback instanceof Function) {
-                callback();
-              }
-              return;
-            }
-            if (args.checkStockActions.length) {
-              var qtyAdded = -line.get('qty'),
-                options = {
-                  line: line
-                };
-              me.getStoreStock(
-                line.get('product'),
-                qtyAdded,
-                options,
-                null,
-                args.checkStockActions,
-                function(hasStock) {
-                  if (hasStock) {
-                    deleteLineOnceChecked();
-                  } else if (callback) {
-                    callback();
-                  }
+        var getLineStock = function() {
+          if (checkStockActions.length) {
+            var qtyAdded = -line.get('qty'),
+              options = {
+                line: line
+              };
+            me.getStoreStock(
+              product,
+              qtyAdded,
+              options,
+              null,
+              checkStockActions,
+              function(hasStock) {
+                if (hasStock) {
+                  deleteLineOnceChecked();
+                } else if (callback) {
+                  callback();
                 }
-              );
-            } else {
-              deleteLineOnceChecked();
-            }
+              }
+            );
+          } else {
+            deleteLineOnceChecked();
           }
-        );
+        };
+
+        if (
+          negativeQty &&
+          OB.MobileApp.model.hasPermission('OBPOS_EnableStockValidation', true)
+        ) {
+          checkStockActions.push('stockValidation');
+        }
+
+        if (
+          OB.MobileApp.model.hasPermission(
+            'OBPOS_CheckStockForNotSaleWithoutStock',
+            true
+          )
+        ) {
+          if (negativeQty && productStatus.restrictsaleoutofstock) {
+            checkStockActions.push('discontinued');
+          }
+
+          if (negativeQty && OB.UTIL.isCrossStoreLine(line)) {
+            checkStockActions.push('crossStore');
+          }
+
+          OB.UTIL.HookManager.executeHooks(
+            'OBPOS_CheckStockDeleteLine',
+            {
+              order: me,
+              line: line,
+              checkStockActions: checkStockActions
+            },
+            function(args) {
+              if (args.cancelOperation) {
+                if (callback && callback instanceof Function) {
+                  callback();
+                }
+                return;
+              }
+              getLineStock();
+            }
+          );
+        } else {
+          getLineStock();
+        }
       } else {
         deleteLineOnceChecked();
       }
@@ -3374,16 +3421,62 @@
 
       function addProductToOrder() {
         function checkLineStock(stockCallback) {
+          if (me.get('isQuotation')) {
+            stockCallback();
+            return;
+          }
+          var positiveQty = OB.DEC.compare(qty) > 0,
+            isCrossStore = false,
+            checkStockActions = [],
+            stockValidation = false,
+            scanningProduct =
+              !_.isUndefined(attrs) &&
+              attrs.kindOriginator === 'OB.OBPOSPointOfSale.UI.KeyboardOrder' &&
+              attrs.isScanning
+                ? true
+                : false;
+
+          function getLineStock() {
+            if (
+              checkStockActions.length &&
+              (stockValidation || !scanningProduct)
+            ) {
+              me.getStoreStock(
+                p,
+                qty,
+                options,
+                attrs,
+                checkStockActions,
+                function(hasStock) {
+                  if (hasStock) {
+                    stockCallback();
+                  } else if (callback && callback instanceof Function) {
+                    callback(false, null);
+                  }
+                }
+              );
+            } else {
+              stockCallback();
+            }
+          }
+
+          if (
+            positiveQty &&
+            OB.MobileApp.model.hasPermission(
+              'OBPOS_EnableStockValidation',
+              true
+            )
+          ) {
+            checkStockActions.push('stockValidation');
+            stockValidation = true;
+          }
+
           if (
             OB.MobileApp.model.hasPermission(
               'OBPOS_CheckStockForNotSaleWithoutStock',
               true
             )
           ) {
-            var positiveQty = OB.DEC.compare(qty) > 0,
-              isCrossStore = false,
-              checkStockActions = [];
-
             if (positiveQty && productStatus.restrictsaleoutofstock) {
               checkStockActions.push('discontinued');
             }
@@ -3420,34 +3513,11 @@
                   }
                   return;
                 }
-                if (
-                  args.checkStockActions.length &&
-                  (_.isUndefined(attrs) ||
-                    attrs.kindOriginator !==
-                      'OB.OBPOSPointOfSale.UI.KeyboardOrder' ||
-                    !attrs.isScanning)
-                ) {
-                  me.getStoreStock(
-                    p,
-                    qty,
-                    options,
-                    attrs,
-                    args.checkStockActions,
-                    function(hasStock) {
-                      if (hasStock) {
-                        stockCallback();
-                      } else if (callback && callback instanceof Function) {
-                        callback(false, null);
-                      }
-                    }
-                  );
-                } else {
-                  stockCallback();
-                }
+                getLineStock();
               }
             );
           } else {
-            stockCallback();
+            getLineStock();
           }
         }
 
@@ -5954,16 +6024,26 @@
           };
           remoteCriteria.push(productId);
           criteria.remoteFilters = remoteCriteria;
-          OB.Dal.find(
-            OB.Model.Product,
-            criteria,
-            successCallbackPrices,
-            function() {
-              // TODO: Report error properly.
-            },
-            line
-          );
         }
+
+        successCallbackPrices = function(dataPrices) {
+          dataPrices.each(function(price) {
+            order.setPrice(line, price.get('standardPrice'), {
+              setUndo: false
+            });
+          });
+          newAllLinesCalculated();
+        };
+
+        OB.Dal.find(
+          OB.Model.Product,
+          criteria,
+          successCallbackPrices,
+          function() {
+            // TODO: Report error properly.
+          },
+          line
+        );
       });
     },
 
@@ -6658,7 +6738,7 @@
                             keyboard: 'toolbarpayment',
                             edit: false
                           });
-                        });
+                        }, true);
                       });
                     });
                   }
@@ -6745,7 +6825,9 @@
     },
 
     createOrderFromQuotation: function(updatePrices, callback) {
-      var idMap = {},
+      var me = this,
+        execution = OB.UTIL.ProcessController.start('createOrderFromQuotation'),
+        idMap = {},
         oldIdMap = {},
         oldId,
         productHasAttribute = false,
@@ -6759,158 +6841,191 @@
           true
         ),
         callQuotationAttrs;
-      OB.UTIL.HookManager.executeHooks(
-        'OBPOS_PreCreateOrderFromQuotation',
-        {
-          updatePrices: updatePrices,
-          order: this
-        },
-        function(args) {
-          if (args && args.cancelOperation && args.cancelOperation === true) {
-            if (callback) {
-              callback(false);
-            }
-            return;
-          }
-          args.order.get('lines').each(function(line) {
-            oldId = line.get('id');
-            line.set('id', OB.UTIL.get_UUID());
-            //issue 25055 -> If we don't do the following prices and taxes are calculated
-            //wrongly because the calculation starts with discountedNet instead of
-            //the real net.
-            //It only happens if the order is created from quotation just after save the quotation
-            //(without load the quotation from quotations window)
-            if (!this.get('priceIncludesTax')) {
-              line.set('net', line.get('nondiscountednet'));
-            }
-
-            //issues 24994 & 24993
-            //if the order is created from quotation just after save the quotation
-            //(without load the quotation from quotations window). The order has the fields added
-            //by adjust prices. We need to work without these values
-            //price not including taxes
-            line.unset('nondiscountedprice');
-            line.unset('nondiscountednet');
-            //price including taxes
-            line.unset('netFull');
-            line.unset('grossListPrice');
-            line.unset('grossUnitPrice');
-            line.unset('lineGrossAmount');
-            line.unset('obposQtytodeliver');
-            idMap[line.get('id')] = OB.UTIL.get_UUID();
-            line.set('id', idMap[line.get('id')]);
-            if (line.get('hasRelatedServices')) {
-              oldIdMap[oldId] = line.get('id');
-            }
-          }, args.order);
-
-          args.order.set('oldId', args.order.get('id'));
-          args.order.set('id', null);
-          args.order.set('isQuotation', false);
-          args.order.set(
-            'orderType',
-            OB.MobileApp.model.get('terminal').terminalType.layawayorder ? 2 : 0
-          );
-          args.order.set(
-            'generateInvoice',
-            OB.MobileApp.model.get('terminal').terminalType.generateInvoice
-          );
-          args.order.set(
-            'documentType',
-            OB.UTIL.isCrossStoreReceipt(args.order)
-              ? args.order.get('lines').models[0].get('documentTypeId')
-              : OB.MobileApp.model.get('terminal').terminalType.documentType
-          );
-          args.order.set('createdBy', OB.MobileApp.model.get('orgUserId'));
-          if (OB.MobileApp.model.get('context').user.isSalesRepresentative) {
-            args.order.set(
-              'salesRepresentative',
-              OB.MobileApp.model.get('context').user.id
-            );
-          } else {
-            args.order.set('salesRepresentative', null);
-          }
-          args.order.set('hasbeenpaid', 'N');
-          args.order.set('skipApplyPromotions', false);
-          args.order.set('isPaid', false);
-          args.order.set('isEditable', true);
-          args.order.set('orderDate', OB.I18N.normalizeDate(new Date()));
-          args.order.set('creationDate', null);
-          var nextDocumentno = OB.MobileApp.model.getNextDocumentno();
-          args.order.set(
-            'documentnoPrefix',
-            OB.MobileApp.model.get('terminal').docNoPrefix
-          );
-          args.order.set('documentnoSuffix', nextDocumentno.documentnoSuffix);
-          args.order.set('quotationnoPrefix', -1);
-          args.order.set('quotationnoSuffix', -1);
-          args.order.set('returnnoPrefix', -1);
-          args.order.set('returnnoSuffix', -1);
-          args.order.set('documentNo', nextDocumentno.documentNo);
-          args.order.set('posTerminal', OB.MobileApp.model.get('terminal').id);
-          args.order.set('session', OB.MobileApp.model.get('session'));
-          args.order.unset('deletedLines');
-          args.order.save();
-
-          args.order.get('lines').each(function(line) {
-            var productAttributes = line.get('product').get('hasAttributes');
-            if (
-              OB.UTIL.isNullOrUndefined(productAttributes) === false &&
-              productAttributes
-            ) {
-              productWithAttributeValue.push(line);
-              productHasAttribute = productAttributes;
-            }
-            if (line.get('relatedLines')) {
-              line.get('relatedLines').forEach(function(rl) {
-                rl.orderId = args.order.get('id');
-                rl.orderDocumentNo = args.order.get('documentNo');
-                if (oldIdMap[rl.orderlineId]) {
-                  rl.orderlineId = oldIdMap[rl.orderlineId];
+      OB.UTIL.StockUtils.checkOrderLinesStock([this], function(hasStock) {
+        if (hasStock) {
+          OB.UTIL.HookManager.executeHooks(
+            'OBPOS_PreCreateOrderFromQuotation',
+            {
+              updatePrices: updatePrices,
+              order: me
+            },
+            function(args) {
+              if (
+                args &&
+                args.cancelOperation &&
+                args.cancelOperation === true
+              ) {
+                OB.UTIL.ProcessController.finish(
+                  'createOrderFromQuotation',
+                  execution
+                );
+                if (callback) {
+                  callback(false);
                 }
-              });
-            }
-          }, args.order);
-
-          callQuotationAttrs = function(order) {
-            OB.UTIL.showSuccess(
-              OB.I18N.getLabel('OBPOS_QuotationCreatedOrder')
-            );
-            // This event is used in stock validation module.
-            order.trigger('orderCreatedFromQuotation');
-            //call quotation attributes popup
-            if (
-              attributeSearchAllowed &&
-              needAttributeWhenCreatingQuotation === false &&
-              productHasAttribute
-            ) {
-              OB.MobileApp.view.waterfall('onShowPopup', {
-                popup: 'modalQuotationProductAttributes',
-                args: {
-                  lines: productWithAttributeValue,
-                  quotationProductAttribute: order
+                return;
+              }
+              args.order.get('lines').each(function(line) {
+                oldId = line.get('id');
+                line.set('id', OB.UTIL.get_UUID());
+                //issue 25055 -> If we don't do the following prices and taxes are calculated
+                //wrongly because the calculation starts with discountedNet instead of
+                //the real net.
+                //It only happens if the order is created from quotation just after save the quotation
+                //(without load the quotation from quotations window)
+                if (!this.get('priceIncludesTax')) {
+                  line.set('net', line.get('nondiscountednet'));
                 }
-              });
+
+                //issues 24994 & 24993
+                //if the order is created from quotation just after save the quotation
+                //(without load the quotation from quotations window). The order has the fields added
+                //by adjust prices. We need to work without these values
+                //price not including taxes
+                line.unset('nondiscountedprice');
+                line.unset('nondiscountednet');
+                //price including taxes
+                line.unset('netFull');
+                line.unset('grossListPrice');
+                line.unset('grossUnitPrice');
+                line.unset('lineGrossAmount');
+                line.unset('obposQtytodeliver');
+                idMap[line.get('id')] = OB.UTIL.get_UUID();
+                line.set('id', idMap[line.get('id')]);
+                if (line.get('hasRelatedServices')) {
+                  oldIdMap[oldId] = line.get('id');
+                }
+              }, args.order);
+
+              args.order.set('oldId', args.order.get('id'));
+              args.order.set('id', null);
+              args.order.set('isQuotation', false);
+              args.order.set(
+                'orderType',
+                OB.MobileApp.model.get('terminal').terminalType.layawayorder
+                  ? 2
+                  : 0
+              );
+              args.order.set(
+                'generateInvoice',
+                OB.MobileApp.model.get('terminal').terminalType.generateInvoice
+              );
+              args.order.set(
+                'documentType',
+                OB.UTIL.isCrossStoreReceipt(args.order)
+                  ? args.order.get('lines').models[0].get('documentTypeId')
+                  : OB.MobileApp.model.get('terminal').terminalType.documentType
+              );
+              args.order.set('createdBy', OB.MobileApp.model.get('orgUserId'));
+              if (
+                OB.MobileApp.model.get('context').user.isSalesRepresentative
+              ) {
+                args.order.set(
+                  'salesRepresentative',
+                  OB.MobileApp.model.get('context').user.id
+                );
+              } else {
+                args.order.set('salesRepresentative', null);
+              }
+              args.order.set('hasbeenpaid', 'N');
+              args.order.set('skipApplyPromotions', false);
+              args.order.set('isPaid', false);
+              args.order.set('isEditable', true);
+              args.order.set('orderDate', OB.I18N.normalizeDate(new Date()));
+              args.order.set('creationDate', null);
+              var nextDocumentno = OB.MobileApp.model.getNextDocumentno();
+              args.order.set(
+                'documentnoPrefix',
+                OB.MobileApp.model.get('terminal').docNoPrefix
+              );
+              args.order.set(
+                'documentnoSuffix',
+                nextDocumentno.documentnoSuffix
+              );
+              args.order.set('quotationnoPrefix', -1);
+              args.order.set('quotationnoSuffix', -1);
+              args.order.set('returnnoPrefix', -1);
+              args.order.set('returnnoSuffix', -1);
+              args.order.set('documentNo', nextDocumentno.documentNo);
+              args.order.set(
+                'posTerminal',
+                OB.MobileApp.model.get('terminal').id
+              );
+              args.order.set('session', OB.MobileApp.model.get('session'));
+              args.order.unset('deletedLines');
+              args.order.save();
+
+              args.order.get('lines').each(function(line) {
+                var productAttributes = line
+                  .get('product')
+                  .get('hasAttributes');
+                if (
+                  OB.UTIL.isNullOrUndefined(productAttributes) === false &&
+                  productAttributes
+                ) {
+                  productWithAttributeValue.push(line);
+                  productHasAttribute = productAttributes;
+                }
+                if (line.get('relatedLines')) {
+                  line.get('relatedLines').forEach(function(rl) {
+                    rl.orderId = args.order.get('id');
+                    rl.orderDocumentNo = args.order.get('documentNo');
+                    if (oldIdMap[rl.orderlineId]) {
+                      rl.orderlineId = oldIdMap[rl.orderlineId];
+                    }
+                  });
+                }
+              }, args.order);
+
+              callQuotationAttrs = function(order) {
+                OB.UTIL.showSuccess(
+                  OB.I18N.getLabel('OBPOS_QuotationCreatedOrder')
+                );
+                OB.UTIL.ProcessController.finish(
+                  'createOrderFromQuotation',
+                  execution
+                );
+                // This event is used in stock validation module.
+                order.trigger('orderCreatedFromQuotation');
+                //call quotation attributes popup
+                if (
+                  attributeSearchAllowed &&
+                  needAttributeWhenCreatingQuotation === false &&
+                  productHasAttribute
+                ) {
+                  OB.MobileApp.view.waterfall('onShowPopup', {
+                    popup: 'modalQuotationProductAttributes',
+                    args: {
+                      lines: productWithAttributeValue,
+                      quotationProductAttribute: order
+                    }
+                  });
+                }
+                if (callback) {
+                  callback(true);
+                }
+              };
+              if (updatePrices) {
+                args.order.updatePrices(function(order) {
+                  order.calculateReceipt(function() {
+                    callQuotationAttrs(order);
+                  });
+                });
+              } else {
+                args.order.set('skipApplyPromotions', true);
+                args.order.calculateReceipt(function() {
+                  args.order.unset('skipApplyPromotions');
+                  callQuotationAttrs(args.order);
+                });
+              }
             }
-            if (callback) {
-              callback(true);
-            }
-          };
-          if (updatePrices) {
-            args.order.updatePrices(function(order) {
-              order.calculateReceipt(function() {
-                callQuotationAttrs(order);
-              });
-            });
-          } else {
-            args.order.set('skipApplyPromotions', true);
-            args.order.calculateReceipt(function() {
-              args.order.unset('skipApplyPromotions');
-              callQuotationAttrs(args.order);
-            });
-          }
+          );
+        } else {
+          OB.UTIL.ProcessController.finish(
+            'createOrderFromQuotation',
+            execution
+          );
         }
-      );
+      });
     },
 
     reactivateQuotation: function() {
@@ -6931,6 +7046,7 @@
         line.unset('grossListPrice');
         line.unset('grossUnitPrice');
         line.unset('lineGrossAmount');
+        line.unset('promotions');
         idMap[line.get('id')] = OB.UTIL.get_UUID();
         line.set('id', idMap[line.get('id')]);
         if (line.get('hasRelatedServices')) {
@@ -11666,7 +11782,6 @@
       this.get('payments').reset();
       this.set('openDrawer', false);
       this.set('additionalInfo', null);
-      this.unset('paymentDone');
       OB.MobileApp.model.set('isMultiOrderState', false);
       OB.UTIL.localStorage.removeItem('multiOrdersPayment');
     },

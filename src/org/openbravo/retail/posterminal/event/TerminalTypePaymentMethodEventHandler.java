@@ -24,6 +24,7 @@ import org.openbravo.client.kernel.event.EntityPersistenceEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
@@ -111,26 +112,27 @@ public class TerminalTypePaymentMethodEventHandler extends EntityPersistenceEven
   }
 
   private void checkPaymentRoundingCurrency(EntityUpdateEvent event) {
-    final TerminalTypePaymentMethod ttpm = (TerminalTypePaymentMethod) event.getTargetInstance();
-    final Entity ttpmEntity = ModelProvider.getInstance()
-        .getEntity(TerminalTypePaymentMethod.ENTITY_NAME);
     OBContext.setAdminMode(true);
     try {
-      final Currency previousCurrencyState = (Currency) event
+      final TerminalTypePaymentMethod ttpm = (TerminalTypePaymentMethod) event.getTargetInstance();
+      final Entity ttpmEntity = ModelProvider.getInstance()
+          .getEntity(TerminalTypePaymentMethod.ENTITY_NAME);
+      final Currency previousCurrency = (Currency) event
           .getPreviousState(ttpmEntity.getProperty(TerminalTypePaymentMethod.PROPERTY_CURRENCY));
-      final Currency currencyState = (Currency) event
+      final Currency currentCurrency = (Currency) event
           .getCurrentState(ttpmEntity.getProperty(TerminalTypePaymentMethod.PROPERTY_CURRENCY));
+
+      final OBCriteria<OBPOSAppPaymentRounding> relatedPaymentRoundingQuery = OBDal.getInstance()
+          .createCriteria(OBPOSAppPaymentRounding.class)
+          .add(Restrictions.eq(OBPOSAppPaymentRounding.PROPERTY_OBPOSAPPROUNDINGTYPE + ".id",
+              ttpm.getId()))
+          .setFilterOnActive(false)
+          .setMaxResults(1);
+
       if (ttpm.isRounding().booleanValue()
-          && !StringUtils.equals(previousCurrencyState.getId(), currencyState.getId())) {
-        final OBPOSAppPaymentRounding paymentRounding = (OBPOSAppPaymentRounding) OBDal
-            .getInstance()
-            .createCriteria(OBPOSAppPaymentRounding.class)
-            .add(Restrictions.eq("obposAppRoundingType.id", ttpm.getId()))
-            .setMaxResults(1)
-            .uniqueResult();
-        if (paymentRounding != null) {
-          throw new OBException(OBMessageUtils.messageBD("OBPOS_PaymentRoundingCurrencyInUse"));
-        }
+          && !StringUtils.equals(previousCurrency.getId(), currentCurrency.getId())
+          && relatedPaymentRoundingQuery.uniqueResult() != null) {
+        throw new OBException("@OBPOS_PaymentRoundingCurrencyInUse@");
       }
     } finally {
       OBContext.restorePreviousMode();

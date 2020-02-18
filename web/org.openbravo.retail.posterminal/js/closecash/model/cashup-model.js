@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2014-2019 Openbravo S.L.U.
+ * Copyright (C) 2014-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -591,22 +591,22 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
                     countInCashup: auxPay.paymentMethod.countpaymentincashup
                   })
                 );
+                cashUpReport.get('drops').push(
+                  new Backbone.Model({
+                    searchKey: p.get('searchKey'),
+                    origAmount: OB.UTIL.currency.toDefaultCurrency(
+                      fromCurrencyId,
+                      OB.DEC.add(0, p.get('totalReturns'))
+                    ),
+                    amount: OB.DEC.add(0, p.get('totalReturns')),
+                    description: p.get('name') + paymentSharedStr,
+                    currency: fromCurrencyId,
+                    isocode: auxPay.isocode,
+                    rate: p.get('rate'),
+                    countInCashup: auxPay.paymentMethod.countpaymentincashup
+                  })
+                );
                 if (auxPay.paymentMethod.countpaymentincashup) {
-                  cashUpReport.get('drops').push(
-                    new Backbone.Model({
-                      searchKey: p.get('searchKey'),
-                      origAmount: OB.UTIL.currency.toDefaultCurrency(
-                        fromCurrencyId,
-                        OB.DEC.add(0, p.get('totalReturns'))
-                      ),
-                      amount: OB.DEC.add(0, p.get('totalReturns')),
-                      description: p.get('name') + paymentSharedStr,
-                      currency: fromCurrencyId,
-                      isocode: auxPay.isocode,
-                      rate: p.get('rate'),
-                      countInCashup: auxPay.paymentMethod.countpaymentincashup
-                    })
-                  );
                   startings.push(
                     new Backbone.Model({
                       searchKey: p.get('searchKey'),
