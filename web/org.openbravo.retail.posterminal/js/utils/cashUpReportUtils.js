@@ -314,7 +314,12 @@
                 amount = _.isNumber(payment.get('amountRounded'))
                   ? payment.get('amountRounded')
                   : payment.get('amount');
-                if (amount < 0) {
+                if (
+                  amount < 0 ||
+                  (payment.has('paymentRounding') &&
+                    payment.get('paymentRounding') &&
+                    payment.get('isReturnOrder'))
+                ) {
                   auxPay.set(
                     'totalReturns',
                     OB.DEC.sub(auxPay.get('totalReturns'), amount, precision)
@@ -793,10 +798,11 @@
           payment.payment.active === true ||
           (payment.payment.active === false && deposits !== 0 && drops !== 0)
         ) {
-          // Set startingCash to zero on slave terminal and payment method is share
+          // Set startingCash to zero on slave terminal and payment method is share or rounding
           if (
-            OB.POS.modelterminal.get('terminal').isslave &&
-            payment.paymentMethod.isshared
+            (OB.POS.modelterminal.get('terminal').isslave &&
+              payment.paymentMethod.isshared) ||
+            payment.paymentMethod.isRounding
           ) {
             startingCash = OB.DEC.Zero;
           }
