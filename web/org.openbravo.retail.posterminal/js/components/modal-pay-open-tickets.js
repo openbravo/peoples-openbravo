@@ -450,12 +450,10 @@ enyo.kind({
         .indexOf(iter.id);
       if (idx !== -1) {
         var order = me.owner.owner.model.get('orderList').at(idx);
-        order.getPrepaymentAmount(function() {
-          order.set('checked', true);
-          order.save();
-          selectedMultiOrders.push(order);
-          addOrdersToOrderList();
-        });
+        order.set('checked', true);
+        order.save();
+        selectedMultiOrders.push(order);
+        addOrdersToOrderList();
       } else {
         process.exec(
           {
@@ -508,11 +506,9 @@ enyo.kind({
                     order.set('checked', iter.get('checked'));
                     OB.DATA.OrderTaxes(order);
                     order.set('belongsToMultiOrder', true);
-                    order.getPrepaymentAmount(function() {
-                      order.calculateReceipt(function() {
-                        selectedMultiOrders.push(order);
-                        addOrdersToOrderList();
-                      });
+                    order.calculateReceipt(function() {
+                      selectedMultiOrders.push(order);
+                      addOrdersToOrderList();
                     });
                   }
                 });

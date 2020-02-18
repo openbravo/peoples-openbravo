@@ -585,7 +585,6 @@ enyo.kind({
         this.$.layawayaction.setDisabled(false);
         this.$.donebutton.setDisabled(false);
         this.$.creditsalesaction.setDisabled(false);
-        this.receipt.unset('paymentDone');
         OB.UTIL.showLoading(false);
       },
       this
@@ -593,7 +592,6 @@ enyo.kind({
     this.model.get('multiOrders').on(
       'paymentCancel',
       function() {
-        this.model.get('multiOrders').unset('paymentDone');
         OB.UTIL.showLoading(false);
       },
       this
