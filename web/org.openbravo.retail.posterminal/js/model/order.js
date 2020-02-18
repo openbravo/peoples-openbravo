@@ -6024,6 +6024,16 @@
           };
           remoteCriteria.push(productId);
           criteria.remoteFilters = remoteCriteria;
+
+          OB.Dal.find(
+            OB.Model.Product,
+            criteria,
+            successCallbackPrices,
+            function() {
+              // TODO: Report error properly.
+            },
+            line
+          );
         }
 
         successCallbackPrices = function(dataPrices) {
@@ -6034,16 +6044,6 @@
           });
           newAllLinesCalculated();
         };
-
-        OB.Dal.find(
-          OB.Model.Product,
-          criteria,
-          successCallbackPrices,
-          function() {
-            // TODO: Report error properly.
-          },
-          line
-        );
       });
     },
 
@@ -10483,34 +10483,34 @@
                 );
               } else {
                 //Empty
-                new OB.DS.Request(
-                  'org.openbravo.retail.posterminal.master.LoadedProduct'
-                ).exec(
-                  {
+                try {
+                  let data = await OB.App.Request.mobileServiceRequest(
+                    'org.openbravo.retail.posterminal.master.LoadedProduct',
+                    body
+                  );
+                  data = data.response.data;
+                  const body = {
                     productId: iter.id,
                     salesOrderLineId: iter.lineId
-                  },
-                  function(data) {
-                    addLineForProduct(
-                      OB.Dal.transform(OB.Model.Product, data[0])
+                  };
+                  await addLineForProduct(
+                    OB.Dal.transform(OB.Model.Product, data[0])
+                  );
+                } catch (error) {
+                  if (NoFoundProduct) {
+                    NoFoundProduct = false;
+                    OB.UTIL.showConfirmation.display(
+                      OB.I18N.getLabel('OBPOS_InformationTitle'),
+                      OB.I18N.getLabel('OBPOS_NoReceiptLoadedText'),
+                      [
+                        {
+                          label: OB.I18N.getLabel('OBPOS_LblOk'),
+                          isConfirmButton: true
+                        }
+                      ]
                     );
-                  },
-                  function() {
-                    if (NoFoundProduct) {
-                      NoFoundProduct = false;
-                      OB.UTIL.showConfirmation.display(
-                        OB.I18N.getLabel('OBPOS_InformationTitle'),
-                        OB.I18N.getLabel('OBPOS_NoReceiptLoadedText'),
-                        [
-                          {
-                            label: OB.I18N.getLabel('OBPOS_LblOk'),
-                            isConfirmButton: true
-                          }
-                        ]
-                      );
-                    }
                   }
-                );
+                }
               }
             } catch (error) {
               OB.error(error.message);
