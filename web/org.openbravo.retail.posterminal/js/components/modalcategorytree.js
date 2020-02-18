@@ -103,7 +103,9 @@ enyo.kind({
             return;
           }
           var me = this;
-          this.loadSubTreeIds(category.id, category.id, function(childrenIds) {
+          this.loadSubTreeIds(category.id, "'" + category.id + "'", function(
+            childrenIds
+          ) {
             me.doSelectCategoryTreeItem({
               category: category,
               children: childrenIds,
@@ -141,7 +143,7 @@ enyo.kind({
           category: categoryId,
           processed: models[index].get('childs') === 0
         };
-      childrenIds += ", '" + categoryId + "'";
+      childrenIds += ",'" + categoryId + "'";
       treeProcessed.push(processed);
       if (models[index].get('childs') > 0) {
         me.$.body.$.listCategories.loadCategoryTreeLevel(
@@ -164,7 +166,7 @@ enyo.kind({
     this.$.body.$.listCategories.loadCategoryTreeLevel(
       parentCategoryId,
       function(categories) {
-        if (categories.length !== 0) {
+        if (categories.models !== undefined || categories.length !== 0) {
           getSubTreeIds(categories, 0, callbackTreeIds);
         } else {
           callbackTreeIds(childrenIds);
