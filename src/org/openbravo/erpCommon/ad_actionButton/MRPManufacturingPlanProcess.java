@@ -42,7 +42,7 @@ public class MRPManufacturingPlanProcess extends DalBaseProcess {
   private static final String NULL = null;
 
   @Override
-  protected void doExecute(ProcessBundle bundle) throws Exception {
+  protected void doExecute(final ProcessBundle bundle) throws Exception {
     OBError msg = new OBError();
     msg.setType("Success");
     msg.setTitle(OBMessageUtils.messageBD("Success"));
@@ -96,7 +96,7 @@ public class MRPManufacturingPlanProcess extends DalBaseProcess {
       // v_Product_ID,
       // v_Product_Category_ID, v_BPartner_ID, v_BP_Group_ID, NULL, v_TimeHorizon,
       // v_PlanningDate, 'Y');
-      List<Object> parameters = new ArrayList<Object>();
+      List<Object> parameters = new ArrayList<>();
       parameters.add(userId);
       parameters.add(orgId);
       parameters.add(clientId);
@@ -119,7 +119,7 @@ public class MRPManufacturingPlanProcess extends DalBaseProcess {
       // v_ResultStr:='Explode';
       // MRP_RUN_EXPLODE(v_User_ID, v_Org_ID, v_Client_ID, v_Record_ID, v_Planner_ID, v_TimeHorizon,
       // v_PlanningDate, v_SecurityMargin);
-      parameters = new ArrayList<Object>();
+      parameters = new ArrayList<>();
       parameters.add(userId);
       parameters.add(orgId);
       parameters.add(clientId);
@@ -136,7 +136,7 @@ public class MRPManufacturingPlanProcess extends DalBaseProcess {
       // v_ResultStr:='ProcessPlan';
       // MRP_PROCESSPLAN(v_User_ID, v_Org_ID, v_Client_ID, v_Record_ID, v_Planner_ID, v_TimeHorizon,
       // v_PlanningDate, v_SecurityMargin);
-      parameters = new ArrayList<Object>();
+      parameters = new ArrayList<>();
       parameters.add(userId);
       parameters.add(orgId);
       parameters.add(clientId);
@@ -163,7 +163,7 @@ public class MRPManufacturingPlanProcess extends DalBaseProcess {
 
   }
 
-  private void deleteNotFixedLines(String strManufacturingMRPID) {
+  private void deleteNotFixedLines(final String strManufacturingMRPID) {
     //@formatter:off
     final String hqlDelete =
             "delete from MRPProductionRunLine" +
@@ -172,7 +172,7 @@ public class MRPManufacturingPlanProcess extends DalBaseProcess {
     //@formatter:on
 
     @SuppressWarnings("rawtypes")
-    Query delete = OBDal.getInstance()
+    final Query delete = OBDal.getInstance()
         .getSession()
         .createQuery(hqlDelete)
         .setParameter("prodRunId", strManufacturingMRPID);
@@ -181,7 +181,7 @@ public class MRPManufacturingPlanProcess extends DalBaseProcess {
     OBDal.getInstance().flush();
   }
 
-  private ScrollableResults getLinesToUpdate(String productionRunId) {
+  private ScrollableResults getLinesToUpdate(final String productionRunId) {
     //@formatter:off
     final String hqlWhere =
                   " where manufacturingPlan.id = :prodRunId" +
