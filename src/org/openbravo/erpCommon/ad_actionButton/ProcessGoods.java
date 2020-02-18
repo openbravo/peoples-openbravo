@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2019 Openbravo SLU
+ * All portions are Copyright (C) 2012-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -35,7 +35,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.hibernate.query.Query;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -56,7 +55,6 @@ import org.openbravo.materialmgmt.InvoiceGeneratorFromGoodsShipment;
 import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.common.invoice.Invoice;
-import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 import org.openbravo.model.materialmgmt.transaction.InventoryCount;
 import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
@@ -433,31 +431,29 @@ public class ProcessGoods extends HttpSecureAppServlet {
   }
 
   private List<String> getReceiptLinesWithoutStock(String receiptId) {
-    StringBuffer where = new StringBuffer();
-    where.append(" select iol." + ShipmentInOutLine.PROPERTY_ID);
-    where.append(" from " + ShipmentInOutLine.ENTITY_NAME + " as iol");
-    where.append(" where iol." + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + " = :receipt");
-    where.append(" and iol." + ShipmentInOutLine.PROPERTY_ATTRIBUTESETVALUE + " is not null");
-    where.append(" and not exists (");
-    where.append("   select 1 ");
-    where.append("   from " + StorageDetail.ENTITY_NAME + " as sd");
-    where.append("   where sd." + StorageDetail.PROPERTY_PRODUCT + " = iol."
-        + ShipmentInOutLine.PROPERTY_PRODUCT);
-    where.append("   and sd." + StorageDetail.PROPERTY_STORAGEBIN + " = iol."
-        + ShipmentInOutLine.PROPERTY_STORAGEBIN);
-    where.append("   and sd." + StorageDetail.PROPERTY_ATTRIBUTESETVALUE + " = iol."
-        + ShipmentInOutLine.PROPERTY_ATTRIBUTESETVALUE);
-    where.append(
-        "   and sd." + StorageDetail.PROPERTY_UOM + " = iol." + ShipmentInOutLine.PROPERTY_UOM);
-    where.append("   and coalesce(sd." + StorageDetail.PROPERTY_ORDERUOM + ", '0') = coalesce(iol."
-        + ShipmentInOutLine.PROPERTY_ORDERUOM + ", '0')");
-    where.append(" )");
+    //@formatter:off
+    final String hql =
+                  "select iol.id" +
+                  "  from MaterialMgmtShipmentInOutLine as iol" +
+                  " where iol.shipmentReceipt.id = :receiptId" +
+                  "   and iol.attributeSetValue is not null" +
+                  "   and not exists (" +
+                  "     select 1 " +
+                  "       from MaterialMgmtStorageDetail as sd" +
+                  "      where sd.product.id = iol.product.id" +
+                  "        and sd.storageBin.id = iol.storageBin.id" +
+                  "        and sd.attributeSetValue = iol.attributeSetValue" +            
+                  "        and sd.uOM = iol.uOM" +
+                  "        and coalesce(sd.orderUOM, '0') = coalesce(iol.orderUOM, '0')" +
+                  "     )";
+    //@formatter:on
 
-    Query<String> qry = OBDal.getInstance()
+    return OBDal.getInstance()
         .getSession()
-        .createQuery(where.toString(), String.class);
-    qry.setParameter("receipt", OBDal.getInstance().get(ShipmentInOut.class, receiptId));
-    return qry.list();
+        .createQuery(hql, String.class)
+        .setParameter("receiptId", OBDal.getInstance().get(ShipmentInOut.class, receiptId).getId())
+        .list();
+
   }
 
   private void createInventory(ShipmentInOut receipt, List<String> receiptLineIdList,
@@ -520,16 +516,20 @@ public class ProcessGoods extends HttpSecureAppServlet {
   }
 
   private List<PriceList> getAvailableSalesPriceList(final ShipmentInOut shipment) {
-    String hql = "from PricingPriceList pl" //
-        + " where pl.client.id = :clientId" //
-        + " and Ad_Isorgincluded(:shipmentOrgId, pl.organization.id, :clientId) <> -1 "//
-        + " and pl.salesPriceList = true";
+    //@formatter:off
+    String hql = 
+            "  from PricingPriceList pl" +
+            " where pl.client.id = :clientId" +
+            "   and Ad_Isorgincluded(:shipmentOrgId, pl.organization.id, :clientId) <> -1 " +
+            "   and pl.salesPriceList = true";
+    //@formatter:on
 
-    Query<PriceList> query = OBDal.getInstance().getSession().createQuery(hql, PriceList.class);
-    query.setParameter("clientId", shipment.getClient().getId());
-    query.setParameter("shipmentOrgId", shipment.getOrganization().getId());
-
-    return query.list();
+    return OBDal.getInstance()
+        .getSession()
+        .createQuery(hql, PriceList.class)
+        .setParameter("clientId", shipment.getClient().getId())
+        .setParameter("shipmentOrgId", shipment.getOrganization().getId())
+        .list();
   }
 
   private FieldProvider[] getFieldProviderFromPriceLists(final List<PriceList> priceLists) {
