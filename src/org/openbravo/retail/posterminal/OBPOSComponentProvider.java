@@ -71,8 +71,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     final String prefix = "web/" + POSUtils.MODULE_JAVA_PACKAGE + "/js/";
 
     final String[] resourceDependency = { "main", "model/changedbusinesspartners",
-        "model/changedbplocation", "model/order", "model/cashup", "model/cashmanagement",
-        "model/cancelLayaway", "login/model/login-model",
+        "model/changedbplocation", "model/order", "model/cashup", "model/countsafebox",
+        "model/cashmanagement", "model/cancelLayaway", "login/model/login-model",
         // Common components
         "datasource",
         // "data/dal",
@@ -131,9 +131,10 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/bplocationship", "components/customershipbill",
         "components/salesrepresentative", "components/listreceiptscounter", "components/menu",
         "components/modalselectterminal", "components/popupdraweropened",
-        "components/servicesfilter", "components/modalselectopenreceipts",
-        "components/modalsplitlines", "components/modalassociatetickets",
-        "components/modalremoveassociatedtickets", "components/openRelatedReceiptsModal",
+        "components/servicesfilter", "components/modalsafebox",
+        "components/modalselectopenreceipts", "components/modalsplitlines",
+        "components/modalassociatetickets", "components/modalremoveassociatedtickets",
+        "components/openRelatedReceiptsModal",
 
         // Old Tickets
         "components/modalpaidreceipts", "components/modal-pay-open-tickets",
@@ -211,6 +212,16 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "closecash/components/approvalreason-modal",
 
         "closecash/model/daycash",
+
+        // Count Safe Box window
+        "countsafebox/model/countsafebox-steps", "countsafebox/model/countsafebox-print",
+        "countsafebox/model/countsafebox-model", "countsafebox/view/countsafebox",
+        "countsafebox/view/countsafeboxkeyboard", "countsafebox/view/countsafeboxinfo",
+        "countsafebox/view/tabsafeboxlist", "countsafebox/view/tabcashpayments",
+        "countsafebox/view/tabcountcash", "countsafebox/view/tabcashtokeep",
+        "countsafebox/view/tabpostprintclose", "countsafebox/components/countsafebox-modals",
+        "countsafebox/components/countsafebox-approvalreason-modal",
+
         // Core resources
         "../../org.openbravo.client.application/js/utilities/ob-utilities-number",
         "../../org.openbravo.client.application/js/utilities/ob-utilities-date",
