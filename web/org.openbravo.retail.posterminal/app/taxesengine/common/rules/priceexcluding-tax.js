@@ -41,6 +41,7 @@
         netAmount: lineNetAmount,
         grossPrice: lineGrossPrice,
         netPrice: lineNetPrice,
+        quantity: line.quantity,
         tax: parentTaxId,
         taxes: lineTaxes
       };
@@ -120,6 +121,10 @@
             : line2;
         });
         line.grossAmount = OB.DEC.add(line.grossAmount, adjustment);
+        line.grossPrice = OB.Taxes.Tax.calculatePriceFromAmount(
+          line.grossAmount,
+          line.quantity
+        );
       }
     }
 

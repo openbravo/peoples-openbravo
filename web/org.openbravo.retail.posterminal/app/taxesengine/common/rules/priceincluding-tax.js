@@ -41,6 +41,7 @@
         netAmount: lineNetAmount,
         grossPrice: lineGrossPrice,
         netPrice: lineNetPrice,
+        quantity: line.quantity,
         tax: parentTaxId,
         taxes: lineTaxes
       };
@@ -119,6 +120,10 @@
             : line2;
         });
         line.netAmount = OB.DEC.add(line.netAmount, adjustment);
+        line.netPrice = OB.Taxes.Tax.calculatePriceFromAmount(
+          line.netAmount,
+          line.quantity
+        );
         const adjustedTax = line.taxes.reduce((tax1, tax2) => {
           const calculateDifference = tax => {
             return new BigDecimal(String(tax.amount))
