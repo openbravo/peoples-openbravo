@@ -9954,7 +9954,7 @@
         return OB.Collection.OrderList.newOrder(bp, propertiesToReset);
       },
 
-      loadCustomer: function(model, callback) {
+      loadCustomer: async function(model, callback) {
         var bpId,
           bpLocId,
           bpBillLocId,
@@ -10145,7 +10145,7 @@
         );
       },
 
-      newPaidReceipt: function(model, callback) {
+      newPaidReceipt: async function(model, callback) {
         var order = new Order(),
           lines,
           newline,
@@ -10263,6 +10263,137 @@
             hasNotDeliveredProducts = false,
             i,
             sortedPayments = false;
+
+          function getReverserPayment(payment, Payments) {
+            return _.filter(model.receiptPayments, function(receiptPayment) {
+              return receiptPayment.paymentId === payment.reversedPaymentId;
+            })[0];
+          }
+          i = 0;
+          // Sort payments array, puting reverser payments inmediatly after their reversed payment
+          while (i < model.receiptPayments.length) {
+            var payment = model.receiptPayments[i];
+            if (payment.reversedPaymentId && !payment.isSorted) {
+              var reversed_index = model.receiptPayments.indexOf(
+                getReverserPayment(payment, model.receiptPayments)
+              );
+              payment.isSorted = true;
+              if (i < reversed_index) {
+                model.receiptPayments.splice(i, 1);
+                model.receiptPayments.splice(reversed_index, 0, payment);
+                sortedPayments = true;
+              } else if (i > reversed_index + 1) {
+                model.receiptPayments.splice(i, 1);
+                model.receiptPayments.splice(reversed_index + 1, 0, payment);
+                sortedPayments = true;
+              }
+            } else {
+              i++;
+            }
+          }
+          if (sortedPayments) {
+            model.receiptPayments.forEach(function(receitPayment) {
+              if (receitPayment.isSorted) {
+                delete receitPayment.isSorted;
+              }
+            });
+          }
+          //order.set('payments', model.receiptPayments);
+          payments = new PaymentLineList();
+          _.each(model.receiptPayments, function(iter) {
+            var paymentProp;
+            curPayment = new PaymentLine();
+            for (paymentProp in iter) {
+              if (iter.hasOwnProperty(paymentProp)) {
+                if (paymentProp === 'paymentDate') {
+                  if (
+                    !OB.UTIL.isNullOrUndefined(iter[paymentProp]) &&
+                    moment(iter[paymentProp]).isValid()
+                  ) {
+                    curPayment.set(
+                      paymentProp,
+                      OB.I18N.normalizeDate(new Date(iter[paymentProp]))
+                    );
+                  } else {
+                    curPayment.set(paymentProp, null);
+                  }
+                } else {
+                  curPayment.set(paymentProp, iter[paymentProp]);
+                }
+              }
+            }
+            curPayment.set('orderGross', order.get('gross'));
+            curPayment.set('isPaid', order.get('isPaid'));
+            curPayment.set('date', new Date(iter.paymentDate));
+            payments.add(curPayment);
+          });
+          order.set('payments', payments);
+          order.adjustPayment();
+
+          order.set(
+            'isPartiallyDelivered',
+            hasDeliveredProducts && hasNotDeliveredProducts ? true : false
+          );
+          if (hasDeliveredProducts && !hasNotDeliveredProducts) {
+            order.set('isFullyDelivered', true);
+          }
+          if (order.get('isPartiallyDelivered')) {
+            var partiallyPaid = 0;
+            _.each(
+              _.filter(order.get('receiptLines'), function(reciptLine) {
+                return reciptLine.deliveredQuantity;
+              }),
+              function(deliveredLine) {
+                partiallyPaid = OB.DEC.add(
+                  partiallyPaid,
+                  OB.DEC.mul(
+                    deliveredLine.deliveredQuantity,
+                    deliveredLine.grossUnitPrice
+                  )
+                );
+              }
+            );
+            order.set('deliveredQuantityAmount', partiallyPaid);
+            if (
+              order.get('deliveredQuantityAmount') &&
+              order.get('deliveredQuantityAmount') > order.get('payment')
+            ) {
+              order.set('isDeliveredGreaterThanGross', true);
+            }
+          }
+
+          taxes = {};
+          _.each(model.receiptTaxes, function(iter) {
+            var taxProp;
+            taxes[iter.taxid] = {};
+            for (taxProp in iter) {
+              if (iter.hasOwnProperty(taxProp)) {
+                taxes[iter.taxid][taxProp] = iter[taxProp];
+              }
+            }
+          });
+          order.set('taxes', taxes);
+
+          if (!model.isLayaway && !model.isQuotation) {
+            if (
+              model.totalamount > 0 &&
+              order.get('payment') < model.totalamount
+            ) {
+              order.set('paidOnCredit', true);
+            } else if (
+              model.totalamount < 0 &&
+              (order.get('payment') === 0 ||
+                OB.DEC.abs(model.totalamount) > order.get('payment'))
+            ) {
+              order.set('paidOnCredit', true);
+            }
+          }
+          if (model.receiptLines.length === 0) {
+            order.set('json', JSON.stringify(order.toJSON()));
+            callback(order);
+            OB.UTIL.ProcessController.finish('newPaidReceipt', execution);
+          }
+
           for (let i = 0; i < model.receiptLines.length; i++) {
             let iter = model.receiptLines[i];
             var price = OB.DEC.number(iter.unitPrice),
@@ -10517,150 +10648,20 @@
             }
             linepos++;
           }
-
-          function getReverserPayment(payment, Payments) {
-            return _.filter(model.receiptPayments, function(receiptPayment) {
-              return receiptPayment.paymentId === payment.reversedPaymentId;
-            })[0];
-          }
-          i = 0;
-          // Sort payments array, puting reverser payments inmediatly after their reversed payment
-          while (i < model.receiptPayments.length) {
-            var payment = model.receiptPayments[i];
-            if (payment.reversedPaymentId && !payment.isSorted) {
-              var reversed_index = model.receiptPayments.indexOf(
-                getReverserPayment(payment, model.receiptPayments)
-              );
-              payment.isSorted = true;
-              if (i < reversed_index) {
-                model.receiptPayments.splice(i, 1);
-                model.receiptPayments.splice(reversed_index, 0, payment);
-                sortedPayments = true;
-              } else if (i > reversed_index + 1) {
-                model.receiptPayments.splice(i, 1);
-                model.receiptPayments.splice(reversed_index + 1, 0, payment);
-                sortedPayments = true;
-              }
-            } else {
-              i++;
-            }
-          }
-          if (sortedPayments) {
-            model.receiptPayments.forEach(function(receitPayment) {
-              if (receitPayment.isSorted) {
-                delete receitPayment.isSorted;
-              }
-            });
-          }
-          //order.set('payments', model.receiptPayments);
-          payments = new PaymentLineList();
-          _.each(model.receiptPayments, function(iter) {
-            var paymentProp;
-            curPayment = new PaymentLine();
-            for (paymentProp in iter) {
-              if (iter.hasOwnProperty(paymentProp)) {
-                if (paymentProp === 'paymentDate') {
-                  if (
-                    !OB.UTIL.isNullOrUndefined(iter[paymentProp]) &&
-                    moment(iter[paymentProp]).isValid()
-                  ) {
-                    curPayment.set(
-                      paymentProp,
-                      OB.I18N.normalizeDate(new Date(iter[paymentProp]))
-                    );
-                  } else {
-                    curPayment.set(paymentProp, null);
-                  }
-                } else {
-                  curPayment.set(paymentProp, iter[paymentProp]);
-                }
-              }
-            }
-            curPayment.set('orderGross', order.get('gross'));
-            curPayment.set('isPaid', order.get('isPaid'));
-            curPayment.set('date', new Date(iter.paymentDate));
-            payments.add(curPayment);
-          });
-          order.set('payments', payments);
-          order.adjustPayment();
-
-          order.set(
-            'isPartiallyDelivered',
-            hasDeliveredProducts && hasNotDeliveredProducts ? true : false
-          );
-          if (hasDeliveredProducts && !hasNotDeliveredProducts) {
-            order.set('isFullyDelivered', true);
-          }
-          if (order.get('isPartiallyDelivered')) {
-            var partiallyPaid = 0;
-            _.each(
-              _.filter(order.get('receiptLines'), function(reciptLine) {
-                return reciptLine.deliveredQuantity;
-              }),
-              function(deliveredLine) {
-                partiallyPaid = OB.DEC.add(
-                  partiallyPaid,
-                  OB.DEC.mul(
-                    deliveredLine.deliveredQuantity,
-                    deliveredLine.grossUnitPrice
-                  )
-                );
-              }
-            );
-            order.set('deliveredQuantityAmount', partiallyPaid);
-            if (
-              order.get('deliveredQuantityAmount') &&
-              order.get('deliveredQuantityAmount') > order.get('payment')
-            ) {
-              order.set('isDeliveredGreaterThanGross', true);
-            }
-          }
-
-          taxes = {};
-          _.each(model.receiptTaxes, function(iter) {
-            var taxProp;
-            taxes[iter.taxid] = {};
-            for (taxProp in iter) {
-              if (iter.hasOwnProperty(taxProp)) {
-                taxes[iter.taxid][taxProp] = iter[taxProp];
-              }
-            }
-          });
-          order.set('taxes', taxes);
-
-          if (!model.isLayaway && !model.isQuotation) {
-            if (
-              model.totalamount > 0 &&
-              order.get('payment') < model.totalamount
-            ) {
-              order.set('paidOnCredit', true);
-            } else if (
-              model.totalamount < 0 &&
-              (order.get('payment') === 0 ||
-                OB.DEC.abs(model.totalamount) > order.get('payment'))
-            ) {
-              order.set('paidOnCredit', true);
-            }
-          }
-          if (model.receiptLines.length === 0) {
-            order.set('json', JSON.stringify(order.toJSON()));
-            callback(order);
-            OB.UTIL.ProcessController.finish('newPaidReceipt', execution);
-          }
         };
 
-        this.loadCustomer(
+        await this.loadCustomer(
           {
             bpId: model.bp,
             bpLocId: model.bpLocId,
             bpBillLocId: model.bpBillLocId || model.bpLocId
           },
-          function(bp, loc, billLoc) {
+          async function(bp, loc, billLoc) {
             order.set('bp', bp);
             order.set('gross', model.totalamount);
             order.set('net', model.totalNetAmount);
             order.trigger('change:bp', order);
-            loadProducts();
+            await loadProducts();
           }
         );
       },
