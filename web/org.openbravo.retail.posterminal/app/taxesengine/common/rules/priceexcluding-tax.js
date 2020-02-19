@@ -10,11 +10,8 @@
 (() => {
   class PriceExcludingTax extends OB.Taxes.Tax {
     /* @Override */
+    // eslint-disable-next-line class-methods-use-this
     getLineTaxes(line, rules) {
-      OB.debug(
-        `PriceExcludingTax: calculating line taxes for ticket with id: ${this.ticket.id} and line with id: ${line.id}`
-      );
-
       const parentTaxId = OB.Taxes.Tax.getParentTaxId(rules[0]);
       const lineNetAmount = line.amount;
       const lineNetPrice = OB.Taxes.Tax.calculatePriceFromAmount(
@@ -49,10 +46,6 @@
 
     /* @Override */
     getHeaderTaxes(lines) {
-      OB.debug(
-        `PriceExcludingTax: calculating header taxes for ticket with id: ${this.ticket.id}`
-      );
-
       const linesByParentTaxId = OB.App.ArrayUtils.groupBy(lines, 'tax');
       const headerTaxes = Object.values(linesByParentTaxId).flatMap(
         groupLines => {

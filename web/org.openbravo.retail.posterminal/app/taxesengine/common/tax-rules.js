@@ -117,6 +117,20 @@
       return this.getHeaderTaxes(lineTaxes);
     }
 
+    // eslint-disable-next-line no-unused-vars
+    getLineTaxes(line, rules) {
+      throw new Error(
+        `${this.constructor.name} does not implement getLineTaxes()`
+      );
+    }
+
+    // eslint-disable-next-line no-unused-vars
+    getHeaderTaxes(lines) {
+      throw new Error(
+        `${this.constructor.name} does not implement getHeaderTaxes()`
+      );
+    }
+
     /**
      * Return parent rule id if given rule has a parent, otherwise return given rule id
      */
