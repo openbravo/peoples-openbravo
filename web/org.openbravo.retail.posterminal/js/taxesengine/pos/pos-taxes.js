@@ -182,17 +182,9 @@
         new OB.App.Class.Criteria().orderBy(['default', 'name'], 'desc').build()
       );
 
-      OB.UTIL.HookManager.executeHooks(
-        'OBPOS_FindTaxRate',
-        {
-          taxes: OB.Taxes.Pos.ruleImpls
-        },
-        () => {
-          OB.UTIL.ProcessController.finish('taxCacheInitialization', execution);
-          callback();
-          delete OB.Taxes.Pos.isCalculatingCache;
-        }
-      );
+      OB.UTIL.ProcessController.finish('taxCacheInitialization', execution);
+      callback();
+      delete OB.Taxes.Pos.isCalculatingCache;
     }
   };
 })();
