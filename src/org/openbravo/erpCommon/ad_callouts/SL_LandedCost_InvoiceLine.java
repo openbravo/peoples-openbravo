@@ -30,13 +30,13 @@ import org.openbravo.model.common.invoice.InvoiceLine;
 public class SL_LandedCost_InvoiceLine extends SimpleCallout {
 
   @Override
-  protected void execute(CalloutInfo info) throws ServletException {
-    VariablesSecureApp vars = info.vars;
-    String strInvLineId = vars.getStringParameter("inpcInvoicelineId");
+  protected void execute(final CalloutInfo info) throws ServletException {
+    final VariablesSecureApp vars = info.vars;
+    final String strInvLineId = vars.getStringParameter("inpcInvoicelineId");
     String strAmount = "";
     String strCurrencyId = "";
     if (!"".equals(strInvLineId)) {
-      InvoiceLine invoiceLine = OBDal.getInstance().get(InvoiceLine.class, strInvLineId);
+      final InvoiceLine invoiceLine = OBDal.getInstance().get(InvoiceLine.class, strInvLineId);
       strAmount = getAmount(invoiceLine);
       strCurrencyId = invoiceLine.getInvoice().getCurrency().getId();
       info.addResult("inpcCurrencyId", strCurrencyId);
@@ -46,7 +46,7 @@ public class SL_LandedCost_InvoiceLine extends SimpleCallout {
     info.addResult("inpamount", strAmount);
   }
 
-  private String getAmount(InvoiceLine invoiceLine) {
+  private String getAmount(final InvoiceLine invoiceLine) {
     BigDecimal totalAssigned = BigDecimal.ZERO;
     OBContext.setAdminMode(false);
     try {
