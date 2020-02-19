@@ -151,7 +151,7 @@
         return tax;
       });
 
-      OB.Taxes.PriceIncludingTax.adjustTaxAmount(grossAmount, netAmount, taxes);
+      OB.Taxes.Tax.adjustTaxAmount(grossAmount, netAmount, taxes);
       return taxes;
     }
 
