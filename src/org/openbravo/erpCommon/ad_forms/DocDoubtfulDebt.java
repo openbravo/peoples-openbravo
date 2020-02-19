@@ -44,16 +44,16 @@ public class DocDoubtfulDebt extends AcctServer {
   public DocDoubtfulDebt() {
   }
 
-  public DocDoubtfulDebt(String AD_Client_ID, String AD_Org_ID,
-      ConnectionProvider connectionProvider) {
+  public DocDoubtfulDebt(final String AD_Client_ID, final String AD_Org_ID,
+      final ConnectionProvider connectionProvider) {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
   @Override
-  public void loadObjectFieldProvider(ConnectionProvider conn, String p_AD_Client_ID, String Id)
-      throws ServletException {
-    DoubtfulDebt dd = OBDal.getInstance().get(DoubtfulDebt.class, Id);
-    FieldProviderFactory[] data = new FieldProviderFactory[1];
+  public void loadObjectFieldProvider(final ConnectionProvider conn, final String pAdClientId,
+      final String id) throws ServletException {
+    final DoubtfulDebt dd = OBDal.getInstance().get(DoubtfulDebt.class, id);
+    final FieldProviderFactory[] data = new FieldProviderFactory[1];
     data[0] = new FieldProviderFactory(null);
     FieldProviderFactory.setField(data[0], "AD_Client_ID", dd.getClient().getId());
     FieldProviderFactory.setField(data[0], "AD_Org_ID", dd.getOrganization().getId());
@@ -90,7 +90,7 @@ public class DocDoubtfulDebt extends AcctServer {
   }
 
   @Override
-  public boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn) {
+  public boolean loadDocumentDetails(final FieldProvider[] data, final ConnectionProvider conn) {
     loadDocumentType();
     Amounts[AMTTYPE_Gross] = data[0].getField("Amount");
     // p_lines = loadLines();
@@ -103,11 +103,11 @@ public class DocDoubtfulDebt extends AcctServer {
   }
 
   @Override
-  public Fact createFact(AcctSchema as, ConnectionProvider conn, Connection con,
-      VariablesSecureApp vars) throws ServletException {
+  public Fact createFact(final AcctSchema as, final ConnectionProvider conn, final Connection con,
+      final VariablesSecureApp vars) throws ServletException {
     String strClassname = "";
     final Fact fact = new Fact(this, as, Fact.POST_Actual);
-    String Fact_Acct_Group_ID = SequenceIdData.getUUID();
+    String factAcctGroupID = SequenceIdData.getUUID();
 
     try {
       OBContext.setAdminMode(false);
@@ -126,7 +126,7 @@ public class DocDoubtfulDebt extends AcctServer {
           .setNamedParameter("documentType", DocumentType)
           .list();
 
-      if (acctSchemaTableDocTypes != null && acctSchemaTableDocTypes.size() > 0
+      if (acctSchemaTableDocTypes != null && !acctSchemaTableDocTypes.isEmpty()
           && acctSchemaTableDocTypes.get(0).getCreatefactTemplate() != null) {
         strClassname = acctSchemaTableDocTypes.get(0).getCreatefactTemplate().getClassname();
       }
@@ -144,14 +144,14 @@ public class DocDoubtfulDebt extends AcctServer {
             .setNamedParameter("acctSchemaID", as.m_C_AcctSchema_ID)
             .setNamedParameter("tableID", AD_Table_ID)
             .list();
-        if (acctSchemaTables != null && acctSchemaTables.size() > 0
+        if (acctSchemaTables != null && !acctSchemaTables.isEmpty()
             && acctSchemaTables.get(0).getCreatefactTemplate() != null) {
           strClassname = acctSchemaTables.get(0).getCreatefactTemplate().getClassname();
         }
       }
       if (!strClassname.equals("")) {
         try {
-          DocDoubtfulDebtTemplate newTemplate = (DocDoubtfulDebtTemplate) Class
+          final DocDoubtfulDebtTemplate newTemplate = (DocDoubtfulDebtTemplate) Class
               .forName(strClassname)
               .getDeclaredConstructor()
               .newInstance();
@@ -160,33 +160,33 @@ public class DocDoubtfulDebt extends AcctServer {
           log4j.error("Error while creating new instance for DocUnbilledRevenueTemplate - ", e);
         }
       }
-      DoubtfulDebt dd = OBDal.getInstance().get(DoubtfulDebt.class, Record_ID);
-      BigDecimal bpAmountConverted = convertAmount(new BigDecimal(Amounts[AMTTYPE_Gross]),
+      final DoubtfulDebt dd = OBDal.getInstance().get(DoubtfulDebt.class, Record_ID);
+      final BigDecimal bpAmountConverted = convertAmount(new BigDecimal(Amounts[AMTTYPE_Gross]),
           !dd.getFINPaymentSchedule().getInvoice().isSalesTransaction(), DateAcct, TABLEID_Invoice,
           dd.getFINPaymentSchedule().getInvoice().getId(), C_Currency_ID, as.m_C_Currency_ID, null,
-          as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn, false);
+          as, fact, factAcctGroupID, nextSeqNo(SeqNo), conn, false);
       // Doubtful debt recognition
       fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, true, false, true, conn),
-          this.C_Currency_ID, bpAmountConverted.toString(), "", Fact_Acct_Group_ID,
-          nextSeqNo(SeqNo), DocumentType, conn);
+          this.C_Currency_ID, bpAmountConverted.toString(), "", factAcctGroupID, nextSeqNo(SeqNo),
+          DocumentType, conn);
       fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, true, false, false, conn),
-          this.C_Currency_ID, "", bpAmountConverted.toString(), Fact_Acct_Group_ID,
-          nextSeqNo(SeqNo), DocumentType, conn);
+          this.C_Currency_ID, "", bpAmountConverted.toString(), factAcctGroupID, nextSeqNo(SeqNo),
+          DocumentType, conn);
       // Provision
-      Fact_Acct_Group_ID = SequenceIdData.getUUID();
+      factAcctGroupID = SequenceIdData.getUUID();
 
       // Assign expense to the dimensions of the invoice lines
       BigDecimal assignedAmount = BigDecimal.ZERO;
-      DocDoubtfulDebtData[] data = DocDoubtfulDebtData.select(conn,
+      final DocDoubtfulDebtData[] data = DocDoubtfulDebtData.select(conn,
           dd.getFINPaymentSchedule().getInvoice().getId());
-      Currency currency = OBDal.getInstance().get(Currency.class, C_Currency_ID);
+      final Currency currency = OBDal.getInstance().get(Currency.class, C_Currency_ID);
       for (int i = 0; i < data.length; i++) {
         BigDecimal lineAmount = bpAmountConverted.multiply(new BigDecimal(data[i].percentage))
             .setScale(currency.getStandardPrecision().intValue(), RoundingMode.HALF_UP);
         if (i == data.length - 1) {
           lineAmount = bpAmountConverted.subtract(assignedAmount);
         }
-        DocLine line = new DocLine(DocumentType, Record_ID, "");
+        final DocLine line = new DocLine(DocumentType, Record_ID, "");
         line.m_A_Asset_ID = data[i].aAssetId;
         line.m_M_Product_ID = data[i].mProductId;
         line.m_C_Project_ID = data[i].cProjectId;
@@ -199,13 +199,13 @@ public class DocDoubtfulDebt extends AcctServer {
         line.m_User2_ID = data[i].user2id;
         line.m_AD_Org_ID = data[i].adOrgId;
         fact.createLine(line, getAccountBPartnerBadDebt(C_BPartner_ID, true, as, conn),
-            this.C_Currency_ID, lineAmount.toString(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+            this.C_Currency_ID, lineAmount.toString(), "", factAcctGroupID, nextSeqNo(SeqNo),
             DocumentType, conn);
         assignedAmount = assignedAmount.add(lineAmount);
       }
       fact.createLine(null, getAccountBPartnerAllowanceForDoubtfulDebt(C_BPartner_ID, as, conn),
-          this.C_Currency_ID, "", bpAmountConverted.toString(), Fact_Acct_Group_ID,
-          nextSeqNo(SeqNo), DocumentType, conn);
+          this.C_Currency_ID, "", bpAmountConverted.toString(), factAcctGroupID, nextSeqNo(SeqNo),
+          DocumentType, conn);
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -216,12 +216,12 @@ public class DocDoubtfulDebt extends AcctServer {
   }
 
   @Override
-  public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
+  public boolean getDocumentConfirmation(final ConnectionProvider conn, final String strRecordId) {
     return true;
   }
 
-  public String nextSeqNo(String oldSeqNo) {
-    BigDecimal seqNo = new BigDecimal(oldSeqNo);
+  public String nextSeqNo(final String oldSeqNo) {
+    final BigDecimal seqNo = new BigDecimal(oldSeqNo);
     SeqNo = (seqNo.add(new BigDecimal("10"))).toString();
     return SeqNo;
   }
