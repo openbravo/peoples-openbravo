@@ -138,7 +138,7 @@
       }
       return 0;
     };
-    const checkLocation = (rule, rulesFilteredByLine) => {
+    const checkLocationAndDate = (rule, rulesFilteredByLine) => {
       return (
         equals(
           rule.destinationCountry,
@@ -204,7 +204,7 @@
         return updatedRule;
       })
       .filter((rule, index, rulesFilteredByLine) =>
-        checkLocation(rule, rulesFilteredByLine)
+        checkLocationAndDate(rule, rulesFilteredByLine)
       )
       .sort(
         (rule1, rule2) =>
