@@ -57,6 +57,11 @@
     }
 
     calculateLineBOMTaxes(line) {
+      const bomTotalAmount = line.bomLines.reduce(
+        (total, bomLine) => OB.DEC.add(total, bomLine.amount),
+        OB.DEC.Zero
+      );
+
       const bomGroups = line.bomLines
         .reduce((result, bomLine) => {
           const bomGroup = result.find(
@@ -69,22 +74,35 @@
           }
           return result;
         }, [])
+        .map(bomGroup => {
+          const bomLine = bomGroup;
+          bomLine.amount = OB.DEC.div(
+            OB.DEC.mul(bomGroup.amount, line.amount),
+            bomTotalAmount
+          );
+          return bomLine;
+        })
         .sort((a, b) => a.amount - b.amount);
 
-      // FIXME: adjust the bigger amount if necessary
-      const bomTotalAmount = bomGroups.reduce(
-        (total, bomGroup) => OB.DEC.add(total, bomGroup.amount),
-        OB.DEC.Zero
+      const adjustment = OB.DEC.sub(
+        line.amount,
+        bomGroups.reduce(
+          (total, bomGroup) => OB.DEC.add(total, bomGroup.amount),
+          OB.DEC.Zero
+        )
       );
+      if (OB.DEC.compare(adjustment) !== 0) {
+        const bomGroup = bomGroups.reduce((bomGroup1, bomGroup2) => {
+          return OB.DEC.abs(bomGroup1.amount) > OB.DEC.abs(bomGroup2.amount)
+            ? bomGroup1
+            : bomGroup2;
+        });
+        bomGroup.amount = OB.DEC.add(bomGroup.amount);
+      }
 
       const lineTaxes = this.calculateLineTaxes(line);
       const lineBomTaxes = bomGroups.flatMap(bomGroup => {
-        const bomLine = bomGroup;
-        bomLine.amount = OB.DEC.div(
-          OB.DEC.mul(bomGroup.amount, line.amount),
-          bomTotalAmount
-        );
-        return this.calculateLineTaxes(bomLine);
+        return this.calculateLineTaxes(bomGroup);
       });
 
       const bomLineWithError = lineBomTaxes.find(bomLine => bomLine.error);
