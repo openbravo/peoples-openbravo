@@ -10614,16 +10614,16 @@
                 );
               } else {
                 //Empty
+                const body = {
+                  productId: iter.id,
+                  salesOrderLineId: iter.lineId
+                };
                 try {
                   let data = await OB.App.Request.mobileServiceRequest(
                     'org.openbravo.retail.posterminal.master.LoadedProduct',
                     body
                   );
                   data = data.response.data;
-                  const body = {
-                    productId: iter.id,
-                    salesOrderLineId: iter.lineId
-                  };
                   await addLineForProduct(
                     OB.Dal.transform(OB.Model.Product, data[0])
                   );
