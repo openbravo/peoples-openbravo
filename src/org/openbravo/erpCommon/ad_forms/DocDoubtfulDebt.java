@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2018 Openbravo SLU
+ * All portions are Copyright (C) 2013-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,7 +28,6 @@ import javax.servlet.ServletException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
@@ -107,23 +106,25 @@ public class DocDoubtfulDebt extends AcctServer {
   public Fact createFact(AcctSchema as, ConnectionProvider conn, Connection con,
       VariablesSecureApp vars) throws ServletException {
     String strClassname = "";
-    final StringBuilder whereClause = new StringBuilder();
     final Fact fact = new Fact(this, as, Fact.POST_Actual);
     String Fact_Acct_Group_ID = SequenceIdData.getUUID();
 
     try {
       OBContext.setAdminMode(false);
-      whereClause.append(" as astdt ");
-      whereClause.append(" where astdt.acctschemaTable.accountingSchema.id = :acctSchemaID");
-      whereClause.append(" and astdt.acctschemaTable.table.id = :tableID");
-      whereClause.append(" and astdt.documentCategory = :documentType");
+      //@formatter:off
+      final String hql =
+              "as astdt " +
+              " where astdt.acctschemaTable.accountingSchema.id = :acctSchemaID" +
+              "   and astdt.acctschemaTable.table.id = :tableID" +
+              "   and astdt.documentCategory = :documentType";
+      //@formatter:on
 
-      final OBQuery<AcctSchemaTableDocType> obqParameters = OBDal.getInstance()
-          .createQuery(AcctSchemaTableDocType.class, whereClause.toString());
-      obqParameters.setNamedParameter("acctSchemaID", as.m_C_AcctSchema_ID);
-      obqParameters.setNamedParameter("tableID", AD_Table_ID);
-      obqParameters.setNamedParameter("documentType", DocumentType);
-      final List<AcctSchemaTableDocType> acctSchemaTableDocTypes = obqParameters.list();
+      final List<AcctSchemaTableDocType> acctSchemaTableDocTypes = OBDal.getInstance()
+          .createQuery(AcctSchemaTableDocType.class, hql)
+          .setNamedParameter("acctSchemaID", as.m_C_AcctSchema_ID)
+          .setNamedParameter("tableID", AD_Table_ID)
+          .setNamedParameter("documentType", DocumentType)
+          .list();
 
       if (acctSchemaTableDocTypes != null && acctSchemaTableDocTypes.size() > 0
           && acctSchemaTableDocTypes.get(0).getCreatefactTemplate() != null) {
@@ -131,16 +132,18 @@ public class DocDoubtfulDebt extends AcctServer {
       }
 
       if (strClassname.equals("")) {
-        final StringBuilder whereClause2 = new StringBuilder();
-        whereClause2.append(" as ast ");
-        whereClause2.append(" where ast.accountingSchema.id = :acctSchemaID");
-        whereClause2.append(" and ast.table.id = :tableID");
+        //@formatter:off
+        final String hqlWhere =
+                      "as ast " +
+                      " where ast.accountingSchema.id = :acctSchemaID" +
+                      "   and ast.table.id = :tableID";
+        //@formatter:on
 
-        final OBQuery<AcctSchemaTable> obqParameters2 = OBDal.getInstance()
-            .createQuery(AcctSchemaTable.class, whereClause2.toString());
-        obqParameters2.setNamedParameter("acctSchemaID", as.m_C_AcctSchema_ID);
-        obqParameters2.setNamedParameter("tableID", AD_Table_ID);
-        final List<AcctSchemaTable> acctSchemaTables = obqParameters2.list();
+        final List<AcctSchemaTable> acctSchemaTables = OBDal.getInstance()
+            .createQuery(AcctSchemaTable.class, hqlWhere)
+            .setNamedParameter("acctSchemaID", as.m_C_AcctSchema_ID)
+            .setNamedParameter("tableID", AD_Table_ID)
+            .list();
         if (acctSchemaTables != null && acctSchemaTables.size() > 0
             && acctSchemaTables.get(0).getCreatefactTemplate() != null) {
           strClassname = acctSchemaTables.get(0).getCreatefactTemplate().getClassname();
