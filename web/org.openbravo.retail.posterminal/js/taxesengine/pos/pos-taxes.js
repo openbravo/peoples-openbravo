@@ -109,13 +109,20 @@
           return null;
         }
 
-        return taxArray.reduce(
-          (total, tax) =>
-            OB.DEC.mul(
-              total,
-              OB.DEC.add(OB.DEC.One, OB.DEC.div(tax.tax.rate, 100))
-            ),
-          OB.DEC.One
+        return OB.DEC.toNumber(
+          taxArray.reduce(
+            (total, tax) =>
+              total.multiply(
+                BigDecimal.prototype.ONE.add(
+                  new BigDecimal(String(tax.tax.rate)).divide(
+                    new BigDecimal('100'),
+                    20,
+                    BigDecimal.prototype.ROUND_HALF_UP
+                  )
+                )
+              ),
+            BigDecimal.prototype.ONE
+          )
         );
       };
 
