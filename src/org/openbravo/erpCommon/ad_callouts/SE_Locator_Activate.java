@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2018 Openbravo SLU
+ * All portions are Copyright (C) 2012-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,15 +19,11 @@
 
 package org.openbravo.erpCommon.ad_callouts;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.servlet.ServletException;
 
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Warehouse;
@@ -84,50 +80,43 @@ public class SE_Locator_Activate extends SimpleCallout {
    * This means that the storage bin should not be deactivated.
    */
   private boolean storageIsNotEmpty(String strLocator) {
-    final StringBuilder hsqlScript = new StringBuilder();
-    final Map<String, Object> parameters = new HashMap<>(1);
+    //@formatter:off
+    final String hql =
+                  "as sd " +
+                  " where sd.storageBin.id = :storageBinId " +
+                  "   and (coalesce (sd.quantityOnHand,0) <> 0)" +
+                  "   or (coalesce (sd.onHandOrderQuanity,0) <> 0)" +
+                  "   or (coalesce (sd.quantityInDraftTransactions,0) <> 0)" +
+                  "   or (coalesce (sd.quantityOrderInDraftTransactions,0) <> 0)";
+    //@formatter:on
 
-    hsqlScript.append(" as sd ");
-    hsqlScript
-        .append(" where sd." + StorageDetail.PROPERTY_STORAGEBIN + ".id = :storageBinId and ");
-    parameters.put("storageBinId", strLocator);
-    hsqlScript.append(" (coalesce (sd." + StorageDetail.PROPERTY_QUANTITYONHAND + ",0) <> 0)");
-    hsqlScript.append(" or coalesce (sd." + StorageDetail.PROPERTY_ONHANDORDERQUANITY + ",0) <> 0");
-    hsqlScript.append(
-        " or coalesce (sd." + StorageDetail.PROPERTY_QUANTITYINDRAFTTRANSACTIONS + ",0) <> 0");
-    hsqlScript.append(" or coalesce (sd." + StorageDetail.PROPERTY_QUANTITYORDERINDRAFTTRANSACTIONS
-        + ",0) <> 0) ");
-
-    final OBQuery<StorageDetail> query = OBDal.getInstance()
-        .createQuery(StorageDetail.class, hsqlScript.toString());
-    query.setNamedParameters(parameters);
-    query.setMaxResult(1);
-    return query.uniqueResult() != null;
+    return OBDal.getInstance()
+        .createQuery(StorageDetail.class, hql)
+        .setNamedParameter("storageBinId", strLocator)
+        .setMaxResult(1)
+        .uniqueResult() != null;
   }
 
   /**
    * This method returns true if the warehouse has pending shipments or receipts.
    */
-  private Boolean warehouseWithPendingReceipts(String warehouse) {
-    final StringBuilder hsqlScript = new StringBuilder();
-    final Map<String, Object> parameters = new HashMap<>(1);
+  private Boolean warehouseWithPendingReceipts(String warehouseId) {
+    //@formatter:off
+    final String hql =
+                  " as sp" +
+                  "   left join sp.warehouse as w" +
+                  "  where w.id = :warehouseId" +
+                  "    and ((coalesce (sp.orderedQuantity,0) <> 0)" +
+                  "    or (coalesce (sp.orderedQuantityOrder,0) <> 0)" +
+                  "    or (coalesce (sp.reservedQuantity,0) <> 0)" +
+                  "    or (coalesce (sp.reservedQuantityOrder,0) <> 0)) ";
+    //@formatter:on
 
-    hsqlScript.append(" as sp");
-    hsqlScript.append(" left join sp.warehouse as w");
-    hsqlScript.append(" where w.id = :warehouseId and");
-    parameters.put("warehouseId", warehouse);
-    hsqlScript.append(" (coalesce (sp." + StoragePending.PROPERTY_ORDEREDQUANTITY + ",0) <> 0");
-    hsqlScript
-        .append(" or coalesce (sp." + StoragePending.PROPERTY_ORDEREDQUANTITYORDER + ",0) <> 0");
-    hsqlScript.append(" or coalesce (sp." + StoragePending.PROPERTY_RESERVEDQUANTITY + ",0) <> 0");
-    hsqlScript
-        .append(" or coalesce (sp." + StoragePending.PROPERTY_RESERVEDQUANTITYORDER + ",0) <> 0) ");
-
-    final OBQuery<StoragePending> query = OBDal.getInstance()
-        .createQuery(StoragePending.class, hsqlScript.toString());
-    query.setNamedParameters(parameters);
-    query.setMaxResult(1);
-    return query.uniqueResult() != null;
+    return OBDal.getInstance()
+        .createQuery(StoragePending.class, hql)
+        .setNamedParameter("warehouseId", warehouseId)
+        .setMaxResult(1)
+        .uniqueResult() != null;
   }
 
   /**
