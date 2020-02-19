@@ -149,6 +149,7 @@
     /**
      * Reads tax masterdata models from database and creates different caches to use them:
      *   OB.Taxes.Pos.ruleImpls: array with the result of doing a left join between TaxRate and TaxZone models.
+     *   OB.Taxes.Pos.taxCategory: array with TaxCategory model.
      *   OB.Taxes.Pos.taxCategoryBOM: array with TaxCategoryBOM model.
      * Tax masterdata models should be read from database only here. Wherever tax data is needed, any of these caches should be used.
      */
@@ -161,12 +162,28 @@
         'taxCacheInitialization'
       );
 
+      const data = await OB.Taxes.Pos.loadData();
+      Object.assign(OB.Taxes.Pos, data);
+
+      OB.UTIL.ProcessController.finish('taxCacheInitialization', execution);
+      callback();
+      delete OB.Taxes.Pos.isCalculatingCache;
+    },
+
+    /**
+     * Reads the tax masterdata model information from database.
+     * This information is used to initialize the tax caches.
+     * @return {Object} The tax masterdata model information.
+     * @see {@link OB.Taxes.Pos.initCache}
+     */
+    loadData: async function() {
+      const data = {};
+
       const taxRates = await OB.App.MasterdataModels.TaxRate.find();
       const taxZones = await OB.App.MasterdataModels.TaxZone.find(
         new OB.App.Class.Criteria().limit(1500).build()
       );
-
-      OB.Taxes.Pos.ruleImpls = taxRates.flatMap(taxRate =>
+      data.ruleImpls = taxRates.flatMap(taxRate =>
         taxZones.some(taxZone => taxZone.taxRateId === taxRate.id)
           ? taxZones
               .filter(taxZone => taxZone.taxRateId === taxRate.id)
@@ -175,16 +192,14 @@
       );
 
       // FIXME: order by default desc and by name asc
-      OB.Taxes.Pos.taxCategory = await OB.App.MasterdataModels.TaxCategory.find(
+      data.taxCategory = await OB.App.MasterdataModels.TaxCategory.find(
         new OB.App.Class.Criteria().orderBy(['default', 'name'], 'desc').build()
       );
-      OB.Taxes.Pos.taxCategoryBOM = await OB.App.MasterdataModels.TaxCategoryBOM.find(
+      data.taxCategoryBOM = await OB.App.MasterdataModels.TaxCategoryBOM.find(
         new OB.App.Class.Criteria().orderBy(['default', 'name'], 'desc').build()
       );
 
-      OB.UTIL.ProcessController.finish('taxCacheInitialization', execution);
-      callback();
-      delete OB.Taxes.Pos.isCalculatingCache;
+      return data;
     }
   };
 })();
