@@ -179,9 +179,11 @@
     loadData: async function() {
       const data = {};
 
-      const taxRates = await OB.App.MasterdataModels.TaxRate.find();
+      const taxRates = await OB.App.MasterdataModels.TaxRate.find(
+        new OB.App.Class.Criteria().limit(10000).build()
+      );
       const taxZones = await OB.App.MasterdataModels.TaxZone.find(
-        new OB.App.Class.Criteria().limit(1500).build()
+        new OB.App.Class.Criteria().limit(10000).build()
       );
       data.ruleImpls = taxRates.flatMap(taxRate =>
         taxZones.some(taxZone => taxZone.taxRateId === taxRate.id)
@@ -193,10 +195,18 @@
 
       // FIXME: order by default desc and by name asc
       data.taxCategory = await OB.App.MasterdataModels.TaxCategory.find(
-        new OB.App.Class.Criteria().orderBy(['default', 'name'], 'desc').build()
+        new OB.App.Class.Criteria()
+          .orderBy(['default', 'name'], 'desc')
+          .limit(10000)
+          .build()
       );
+
+      // FIXME: order by default desc and by name asc
       data.taxCategoryBOM = await OB.App.MasterdataModels.TaxCategoryBOM.find(
-        new OB.App.Class.Criteria().orderBy(['default', 'name'], 'desc').build()
+        new OB.App.Class.Criteria()
+          .orderBy(['default', 'name'], 'desc')
+          .limit(10000)
+          .build()
       );
 
       return data;
