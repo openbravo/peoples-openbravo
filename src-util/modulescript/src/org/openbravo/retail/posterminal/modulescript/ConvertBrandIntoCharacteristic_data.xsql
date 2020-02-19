@@ -32,7 +32,7 @@
     <SqlMethodComment></SqlMethodComment>
       <Sql>
         <![CDATA[
-          select ad_client_id , count(*) as numbrands from m_brand group by ad_client_id;
+          select ad_client_id , count(*) as numbrands from m_brand group by ad_client_id
         ]]>
       </Sql>
   </SqlMethod>
@@ -43,7 +43,7 @@
         INSERT INTO m_characteristic(
 		m_characteristic_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, name, 
 		description, ad_tree_id, isvariant, isexplodeconf, em_obpos_filteronwebpos, em_obpos_useonwebpos)
-		VALUES (?, ?,'0', 'Y', now(), '100', now(), '100', 'Brand', null, '899D83A7B7E24F57911A91AE82DCA496','N', 'Y', 'Y', 'Y'); 
+		VALUES (?, ?,'0', 'Y', now(), '100', now(), '100', 'Brand', null, '899D83A7B7E24F57911A91AE82DCA496','N', 'Y', 'Y', 'Y')
         ]]>
       </Sql>
       <Parameter name="id"/>
@@ -56,7 +56,7 @@
         INSERT INTO m_ch_value(
 		m_ch_value_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, 
 		m_characteristic_id, name, issummary, skcode, description, add_products)
-		VALUES (?, ?, ?,'Y', now(), '100', now(), '100', ?, ?, 'N', null, null, 'N');
+		VALUES (?, ?, ?,'Y', now(), '100', now(), '100', ?, ?, 'N', null, null, 'N')
         ]]>
       </Sql>
       <Parameter name="brandId"/>
@@ -69,9 +69,9 @@
     <SqlMethodComment></SqlMethodComment>
       <Sql>
         <![CDATA[
-        INSERT INTO public.ad_treenode(
+        INSERT INTO ad_treenode(
 		ad_treenode_id, ad_tree_id, node_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, parent_id, seqno)
-		VALUES (get_uuid(), '899D83A7B7E24F57911A91AE82DCA496', ?, ?, ?,'Y', now(), '100', now(), '100', '0', '999');
+		VALUES (get_uuid(), '899D83A7B7E24F57911A91AE82DCA496', ?, ?, ?,'Y', now(), '100', now(), '100', '0', '999')
         ]]>
       </Sql>
       <Parameter name="brandId"/>
@@ -82,7 +82,7 @@
     <SqlMethodComment></SqlMethodComment>
       <Sql>
         <![CDATA[
-	      select p.m_product_id, p.m_brand_id , p.ad_client_id , p.ad_org_id , b.name from m_product p, m_brand b  where p.m_brand_id=b.m_brand_id and p.ad_client_id=?;
+	      select p.m_product_id, p.m_brand_id , p.ad_client_id , p.ad_org_id , b.name from m_product p, m_brand b  where p.m_brand_id=b.m_brand_id and p.ad_client_id=?
         ]]>
       </Sql>
       <Parameter name="adClientId"/>
@@ -91,10 +91,10 @@
     <SqlMethodComment></SqlMethodComment>
       <Sql>
         <![CDATA[
-        INSERT INTO public.m_product_ch(
+        INSERT INTO m_product_ch(
 		m_product_ch_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, m_product_id, m_characteristic_id, seqno, 
 		isvariant, m_ch_subset_id, define_price, define_image, pricelist_type, isexplodeconf)
-		VALUES (get_uuid(), ?, ?, 'Y', now(), '100', now(), '100', ?, ?,'90', 'N', null, 'N', 'N', 'SALES', 'N');
+		VALUES (get_uuid(), ?, ?, 'Y', now(), '100', now(), '100', ?, ?,'90', 'N', null, 'N', 'N', 'SALES', 'N')
         ]]>
       </Sql>
       <Parameter name="adClientId"/>
@@ -106,9 +106,9 @@
     <SqlMethodComment></SqlMethodComment>
       <Sql>
         <![CDATA[
-        INSERT INTO public.m_product_ch_value(
+        INSERT INTO m_product_ch_value(
 		m_product_ch_value_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, m_product_id, m_characteristic_id, m_ch_value_id)
-		VALUES (get_uuid(), ?, ?, 'Y', now(), '100', now(), '100',?,?,?);
+		VALUES (get_uuid(), ?, ?, 'Y', now(), '100', now(), '100',?,?,?)
         ]]>
       </Sql>
       <Parameter name="adClientId"/>
