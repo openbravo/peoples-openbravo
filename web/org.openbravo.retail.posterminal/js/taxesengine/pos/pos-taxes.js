@@ -19,7 +19,7 @@
       newTicket.isCashVat = OB.MobileApp.model.get('terminal').cashVat;
       newTicket.businessPartner = {};
       newTicket.businessPartner.id = receipt.get('bp').id;
-      newTicket.businessPartner.taxCategory = receipt
+      newTicket.businessPartner.businessPartnerTaxCategory = receipt
         .get('bp')
         .get('taxCategory');
       newTicket.businessPartner.taxExempt = receipt.get('bp').get('taxExempt');

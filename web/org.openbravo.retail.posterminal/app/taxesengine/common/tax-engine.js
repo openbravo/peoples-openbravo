@@ -80,7 +80,7 @@
           ? equals(rule.taxExempt, isTaxExempt)
           : equals(
               rule.businessPartnerTaxCategory,
-              ticket.businessPartner.taxCategory
+              ticket.businessPartner.businessPartnerTaxCategory
             )) && equals(rule.taxCategory, line.product.taxCategory)
       );
     };
