@@ -126,9 +126,6 @@
         <index-column name="C_INVOICELINE_ID"/>
         <whereClause><![CDATA[C_INVOICELINE_ID IS NOT NULL]]></whereClause>
       </index>
-      <index name="M_COSTING_M_PRODUCT_ID" unique="false">
-        <index-column name="M_PRODUCT_ID"/>
-      </index>
       <index name="M_COSTING_PRODUCT_DATE" unique="false">
         <index-column name="M_PRODUCT_ID"/>
         <index-column name="DATEFROM"/>
