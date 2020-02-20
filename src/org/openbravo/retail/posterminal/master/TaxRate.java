@@ -14,14 +14,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.model.ModelProvider;
-import org.openbravo.base.model.Property;
+import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery;
 import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery.MasterDataModel;
+import org.openbravo.mobile.core.model.HQLProperty;
+import org.openbravo.mobile.core.model.ModelExtension;
+import org.openbravo.mobile.core.model.ModelExtensionUtils;
 import org.openbravo.model.common.enterprise.OrganizationInformation;
 import org.openbravo.model.common.geography.Country;
 import org.openbravo.model.common.geography.Region;
@@ -30,6 +36,12 @@ import org.openbravo.retail.posterminal.POSUtils;
 
 @MasterDataModel("TaxRate")
 public class TaxRate extends MasterDataProcessHQLQuery {
+  public static final String taxRatePropertyExtension = "OBPOS_TaxRateExtension";
+
+  @Inject
+  @Any
+  @Qualifier(taxRatePropertyExtension)
+  private Instance<ModelExtension> extensions;
 
   @Override
   protected boolean isAdminMode() {
@@ -79,7 +91,8 @@ public class TaxRate extends MasterDataProcessHQLQuery {
     final Country fromCountry = storeInfo.getLocationAddress().getCountry();
     final Region fromRegion = storeInfo.getLocationAddress().getRegion();
 
-    String hql = " from FinancialMgmtTaxRate as financialMgmtTaxRate"
+    String hql = " select " + ModelExtensionUtils.getPropertyExtensions(extensions).getHqlSelect()
+        + " from FinancialMgmtTaxRate as financialMgmtTaxRate"
         + " where financialMgmtTaxRate.$readableSimpleCriteria"
         + " and financialMgmtTaxRate.$readableSimpleClientCriteria"
         + " and financialMgmtTaxRate.$naturalOrgCriteria"
@@ -117,11 +130,10 @@ public class TaxRate extends MasterDataProcessHQLQuery {
 
   @Override
   public List<String> getMasterDataModelProperties() {
-    return ModelProvider.getInstance()
-        .getEntity(org.openbravo.model.financialmgmt.tax.TaxRate.class)
+    return ModelExtensionUtils.getPropertyExtensions(extensions)
         .getProperties()
         .stream()
-        .map(Property::getName)
+        .map(HQLProperty::getHqlProperty)
         .collect(Collectors.toList());
   }
 }
