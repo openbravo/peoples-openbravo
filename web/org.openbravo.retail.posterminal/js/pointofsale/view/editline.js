@@ -1176,9 +1176,6 @@ enyo.kind({
           }
         }
         this.$.formElementReturnreason.show();
-        this.$.linePropertiesContainer.addClass(
-          'obObposPointOfSaleUiEditLine-linePropertiesContainer_withReturnReasons'
-        );
         this.$.linePropertiesContainer.removeClass(
           'obObposPointOfSaleUiEditLine-linePropertiesContainer_withoutReturnReasons'
         );
@@ -1189,9 +1186,6 @@ enyo.kind({
         this.$.formElementReturnreason.hide();
         this.$.linePropertiesContainer.addClass(
           'obObposPointOfSaleUiEditLine-linePropertiesContainer_withoutReturnReasons'
-        );
-        this.$.linePropertiesContainer.removeClass(
-          'obObposPointOfSaleUiEditLine-linePropertiesContainer_withReturnReasons'
         );
         this.$.contextImage.removeClass(
           'obObposPointOfSaleUiEditLine-msgedit-container3-contextImage_withReturnReasons'
