@@ -305,6 +305,17 @@
 
       return OB.DEC.div(amount, quantity);
     }
+
+    /**
+     * Group line taxes by taxId in order to compute them at header level
+     */
+    static groupLinesByTax(lines) {
+      const result = [];
+      return lines.reduce((object, item) => {
+        (result[item.tax] = object[item.tax] || []).push(item);
+        return result;
+      }, {});
+    }
   }
 
   OB.Taxes.Tax = Tax;

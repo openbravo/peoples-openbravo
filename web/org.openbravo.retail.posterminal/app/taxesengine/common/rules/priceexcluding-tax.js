@@ -46,7 +46,7 @@
 
     /* @Override */
     getHeaderTaxes(lines) {
-      const linesByParentTaxId = OB.App.ArrayUtils.groupBy(lines, 'tax');
+      const linesByParentTaxId = OB.Taxes.Tax.groupLinesByTax(lines);
       const headerTaxes = Object.values(linesByParentTaxId).flatMap(
         groupLines => {
           const rules = groupLines[0].taxes.flatMap(lineTax => lineTax.tax);
