@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2018 Openbravo SLU
+ * All portions are Copyright (C) 2014-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -33,12 +33,8 @@ import org.openbravo.costing.CostingServer.TrxType;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
-import org.openbravo.model.materialmgmt.cost.InvAmtUpdLnInventories;
-import org.openbravo.model.materialmgmt.transaction.InventoryCount;
-import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 
 @ComponentProvider.Qualifier("org.openbravo.costing.StandardAlgorithm")
@@ -47,7 +43,7 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
   @Override
   protected void getRelatedTransactionsByAlgorithm() {
     ScrollableResults trxs;
-    MaterialTransaction transaction = getTransaction();
+    final MaterialTransaction transaction = getTransaction();
 
     // Case Inventory Amount Update backdated (modifying the cost in the past)
     if (trxType == TrxType.InventoryOpening) {
@@ -66,11 +62,12 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
     int i = 0;
     try {
       while (trxs.next()) {
-        MaterialTransaction trx = OBDal.getInstance().get(MaterialTransaction.class, trxs.get()[0]);
+        final MaterialTransaction trx = OBDal.getInstance()
+            .get(MaterialTransaction.class, trxs.get()[0]);
         BigDecimal adjAmount;
 
         if (trxType == TrxType.InventoryOpening) {
-          BigDecimal cost = transaction.getPhysicalInventoryLine().getCost();
+          final BigDecimal cost = transaction.getPhysicalInventoryLine().getCost();
           adjAmount = trx.getMovementQuantity().abs().multiply(cost).subtract(trx.getTotalCost());
         } else {
           adjAmount = transaction.getMovementQuantity();
@@ -93,9 +90,9 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
   }
 
   @Override
-  protected BigDecimal getOutgoingBackdatedTrxAdjAmt(CostAdjustmentLine costAdjLine) {
+  protected BigDecimal getOutgoingBackdatedTrxAdjAmt(final CostAdjustmentLine costAdjLine) {
     // Calculate the standard cost on the transaction's movement date and adjust the cost if needed.
-    MaterialTransaction trx = costAdjLine.getInventoryTransaction();
+    final MaterialTransaction trx = costAdjLine.getInventoryTransaction();
 
     Date trxDate = CostAdjustmentUtils.getLastTrxDateOfMvmntDate(trx.getMovementDate(),
         trx.getProduct(), getCostOrg(), getCostDimensions());
@@ -103,21 +100,22 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
       trxDate = trx.getTransactionProcessDate();
     }
 
-    BigDecimal cost = CostingUtils.getStandardCost(trx.getProduct(), getCostOrg(), trxDate,
+    final BigDecimal cost = CostingUtils.getStandardCost(trx.getProduct(), getCostOrg(), trxDate,
         getCostDimensions(), getCostCurrency());
 
-    BigDecimal expectedCostAmt = trx.getMovementQuantity().abs().multiply(cost);
-    BigDecimal currentCost = trx.getTransactionCost();
+    final BigDecimal expectedCostAmt = trx.getMovementQuantity().abs().multiply(cost);
+    final BigDecimal currentCost = trx.getTransactionCost();
     return expectedCostAmt.subtract(currentCost);
   }
 
   @Override
-  protected void calculateNegativeStockCorrectionAdjustmentAmount(CostAdjustmentLine costAdjLine) {
+  protected void calculateNegativeStockCorrectionAdjustmentAmount(
+      final CostAdjustmentLine costAdjLine) {
     // Do nothing
   }
 
   @Override
-  protected void addCostDependingTrx(CostAdjustmentLine costAdjLine) {
+  protected void addCostDependingTrx(final CostAdjustmentLine costAdjLine) {
     // Do nothing.
     // All transactions are calculated using the current standard cost so there is no need to
     // specifically search for dependent transactions.
@@ -127,7 +125,7 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
    * Returns transactions with movement/process date after trx and before next Inventory Amount
    * Update
    */
-  private ScrollableResults getLaterTransactions(MaterialTransaction trx) {
+  private ScrollableResults getLaterTransactions(final MaterialTransaction trx) {
 
     final OrganizationStructureProvider osp = OBContext.getOBContext()
         .getOrganizationStructureProvider(trx.getClient().getId());
@@ -140,94 +138,118 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
     final Warehouse warehouse = (Warehouse) costDimensions.get(CostDimension.Warehouse);
 
     // Get the movement date of the first Inventory Amount Update after trx
-    StringBuffer dateWhere = new StringBuffer();
-    dateWhere.append(" select trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " as trxdate");
-    dateWhere.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
-    dateWhere.append(" join trx." + MaterialTransaction.PROPERTY_PHYSICALINVENTORYLINE + " as il");
-    dateWhere.append(" join il." + InventoryCountLine.PROPERTY_PHYSINVENTORY + " as i");
-    dateWhere.append(" where trx." + MaterialTransaction.PROPERTY_CLIENT + " = :client");
-    dateWhere.append(" and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
-    dateWhere.append(" and trx." + MaterialTransaction.PROPERTY_PRODUCT + " = :product");
-    dateWhere.append(" and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
-    dateWhere.append(" and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :date");
-    dateWhere.append(
-        " and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " > :startdate");
-    dateWhere.append(" and i." + InventoryCount.PROPERTY_INVENTORYTYPE + " = 'O'");
+    //@formatter:off
+    String hqlDateWhere =
+            "select trx.movementDate as trxdate" +
+            "  from MaterialMgmtMaterialTransaction as trx" +
+            "    join trx.physicalInventoryLine as il" +
+            "    join il.physInventory as i" +
+            " where trx.client.id = :clientId" +
+            "   and trx.organization.id in (:orgIds)" +
+            "   and trx.product.id = :productId" +
+            "   and trx.isCostCalculated = true" +
+            "   and trx.movementDate > :date" +
+            "   and trx.transactionProcessDate > :startdate" +
+            "   and i.inventoryType = 'O'";
+    //@formatter:on
     if (warehouse != null) {
-      dateWhere.append(" and i." + InventoryCount.PROPERTY_WAREHOUSE + " = :warehouse");
+      //@formatter:off
+      hqlDateWhere +=
+            "   and i.warehouse.id = :warehouseId";
+      //@formatter:on
     }
-    dateWhere.append(" order by trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE);
+    //@formatter:off
+    hqlDateWhere +=
+            " order by trx.movementDate";
+    //@formatter:on
 
-    Query<Date> dateQry = OBDal.getInstance()
+    final Query<Date> dateQry = OBDal.getInstance()
         .getSession()
-        .createQuery(dateWhere.toString(), Date.class);
-    dateQry.setParameter("client", trx.getClient());
-    dateQry.setParameterList("orgs", orgs);
-    dateQry.setParameter("product", trx.getProduct());
-    dateQry.setParameter("date", trx.getMovementDate());
-    dateQry.setParameter("startdate", startingDate);
+        .createQuery(hqlDateWhere, Date.class)
+        .setParameter("clientId", trx.getClient().getId())
+        .setParameterList("orgIds", orgs)
+        .setParameter("productId", trx.getProduct().getId())
+        .setParameter("date", trx.getMovementDate())
+        .setParameter("startdate", startingDate);
+
     if (warehouse != null) {
-      dateQry.setParameter("warehouse", warehouse);
+      dateQry.setParameter("warehouseId", warehouse.getId());
     }
-    dateQry.setMaxResults(1);
-    Date date = dateQry.uniqueResult();
+
+    final Date date = dateQry.setMaxResults(1).uniqueResult();
 
     // Get transactions with movement/process date after trx and before next Inventory Amount Update
     // (include closing inventory lines and exclude opening inventory lines of it)
-    StringBuffer where = new StringBuffer();
-    where.append(" select trx." + MaterialTransaction.PROPERTY_ID + " as trxid");
-    where.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
-    where.append(" join trx. " + MaterialTransaction.PROPERTY_STORAGEBIN + " as l");
-    where.append(" left join trx." + MaterialTransaction.PROPERTY_PHYSICALINVENTORYLINE + " as il");
-    where.append(" left join il." + InventoryCountLine.PROPERTY_PHYSINVENTORY + " as i");
-    where.append(" left join i."
-        + InventoryCount.PROPERTY_INVENTORYAMOUNTUPDATELINEINVENTORIESCLOSEINVENTORYLIST
-        + " as iaui");
-    where.append(" where trx." + MaterialTransaction.PROPERTY_CLIENT + " = :client");
-    where.append(" and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
-    where.append(" and trx." + MaterialTransaction.PROPERTY_PRODUCT + " = :product");
-    where.append(" and coalesce(iaui." + InvAmtUpdLnInventories.PROPERTY_CAINVENTORYAMTLINE
-        + ", '0') <> :iaul");
-    where.append(" and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
-    where.append(
-        " and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " > :startdate");
-    where.append(" and coalesce(i." + InventoryCount.PROPERTY_INVENTORYTYPE + ", 'N') <> 'O'");
+    //@formatter:off
+    String hqlWhere =
+            "select trx.id as trxid" +
+            "  from MaterialMgmtMaterialTransaction as trx" +
+            "    join trx.storageBin as l" +
+            "    left join trx.physicalInventoryLine as il" +
+            "    left join il.physInventory as i" +
+            "    left join i.inventoryAmountUpdateLineInventoriesCloseInventoryList as iaui" +
+            " where trx.client.id = :clientId" +
+            "   and trx.organization.id in (:orgIds)" +
+            "   and trx.product.id = :productId" +
+            "   and coalesce(iaui.caInventoryamtline, '0') <> :iaul" +
+            "   and trx.isCostCalculated = true" +
+            "   and trx.transactionProcessDate > :startdate" +
+            "   and coalesce(i.inventoryType, 'N') <> 'O'";
+    //@formatter:on
     if (warehouse != null) {
-      where.append(" and l." + Locator.PROPERTY_WAREHOUSE + " = :warehouse");
+      //@formatter:off
+      hqlWhere +=
+            "   and l.warehouse.id = :warehouseId";
+      //@formatter:on
     }
     if (areBackdatedTrxFixed) {
-      where.append(" and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :dateFrom");
+      //@formatter:off
+      hqlWhere +=
+            "   and trx.movementDate > :dateFrom";
+      //@formatter:on
       if (date != null) {
-        where.append(" and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " <= :dateTo");
+        //@formatter:off
+        hqlWhere +=
+            "   and trx.movementDate <= :dateTo";
+        //@formatter:on
       }
-      where.append(" order by trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE);
+      //@formatter:off
+      hqlWhere +=
+            "   order by trx.movementDate";
+      //@formatter:on
     } else {
-      where.append(" and case when coalesce(i." + InventoryCount.PROPERTY_INVENTORYTYPE
-          + ", 'N') <> 'N' then trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " else trx."
-          + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " end > :dateFrom");
+      //@formatter:off
+      hqlWhere +=
+            "   and case when coalesce(i.inventoryType, 'N') <> 'N' then trx.movementDate else trx.transactionProcessDate end > :dateFrom";
+      //@formatter:on
       if (date != null) {
-        where.append(" and case when coalesce(i." + InventoryCount.PROPERTY_INVENTORYTYPE
-            + ", 'N') <> 'N' then trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " else trx."
-            + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " end <= :dateTo");
+        //@formatter:off
+        hqlWhere +=
+            "   and case when coalesce(i.inventoryType, 'N') <> 'N' then trx.movementDate else trx.transactionProcessDate end <= :dateTo";
+        //@formatter:on
       }
-      where.append(" order by trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
+      //@formatter:off
+      hqlWhere +=
+            " order by trx.transactionProcessDate";
+      //@formatter:on
     }
 
-    Query<String> qry = OBDal.getInstance()
+    final Query<String> qry = OBDal.getInstance()
         .getSession()
-        .createQuery(where.toString(), String.class);
-    qry.setParameter("client", trx.getClient());
-    qry.setParameterList("orgs", orgs);
-    qry.setParameter("product", trx.getProduct());
-    qry.setParameter("iaul",
-        trx.getPhysicalInventoryLine()
-            .getPhysInventory()
-            .getInventoryAmountUpdateLineInventoriesInitInventoryList()
-            .get(0)
-            .getCaInventoryamtline());
-    qry.setParameter("startdate", startingDate);
+        .createQuery(hqlWhere, String.class)
+        .setParameter("clientId", trx.getClient().getId())
+        .setParameterList("orgIds", orgs)
+        .setParameter("productId", trx.getProduct().getId())
+        .setParameter("iaul",
+            trx.getPhysicalInventoryLine()
+                .getPhysInventory()
+                .getInventoryAmountUpdateLineInventoriesInitInventoryList()
+                .get(0)
+                .getCaInventoryamtline())
+        .setParameter("startdate", startingDate);
+
     if (warehouse != null) {
-      qry.setParameter("warehouse", warehouse);
+      qry.setParameter("warehouseId", warehouse.getId());
     }
     qry.setParameter("dateFrom", trx.getMovementDate());
     if (date != null) {
@@ -240,7 +262,7 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
    * Returns opening physical inventory transactions created by a Inventory Amount Update and
    * created after trx
    */
-  private ScrollableResults getLaterOpeningTransactions(MaterialTransaction trx) {
+  private ScrollableResults getLaterOpeningTransactions(final MaterialTransaction trx) {
 
     final OrganizationStructureProvider osp = OBContext.getOBContext()
         .getOrganizationStructureProvider(trx.getClient().getId());
@@ -252,41 +274,53 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
     }
     final Warehouse warehouse = (Warehouse) costDimensions.get(CostDimension.Warehouse);
 
-    StringBuffer where = new StringBuffer();
-    where.append(" select min(trx." + MaterialTransaction.PROPERTY_ID + ") as trxid");
-    where.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
-    where.append(" join trx." + MaterialTransaction.PROPERTY_PHYSICALINVENTORYLINE + " as il");
-    where.append(" join il." + InventoryCountLine.PROPERTY_PHYSINVENTORY + " as i");
-    where.append(
-        " join i." + InventoryCount.PROPERTY_INVENTORYAMOUNTUPDATELINEINVENTORIESINITINVENTORYLIST
-            + " as iaui");
-    where.append(" where trx." + MaterialTransaction.PROPERTY_CLIENT + " = :client");
-    where.append(" and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
-    where.append(" and trx." + MaterialTransaction.PROPERTY_PRODUCT + " = :product");
-    where.append(" and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
-    where.append(" and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :date");
-    where.append(
-        " and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " > :startdate");
-    where.append(" and i." + InventoryCount.PROPERTY_INVENTORYTYPE + " = 'O'");
+    //@formatter:off
+    String hqlWhere =
+            "select min(trx.id) as trxid" +
+            "  from MaterialMgmtMaterialTransaction as trx" +
+            "    join trx.physicalInventoryLine as il" +
+            "    join il.physInventory as i" +
+            "    join i.inventoryAmountUpdateLineInventoriesInitInventoryList as iaui" +
+            " where trx.client.id = :clientId" +
+            "   and trx.organization.id in (:orgIds)" +
+            "   and trx.product.id = :productId" +
+            "   and trx.isCostCalculated = true" +
+            "   and trx.movementDate > :date" +
+            "   and trx.transactionProcessDate > :startdate" +
+            "   and i.inventoryType = 'O'";
+    //@formatter:off
     if (warehouse != null) {
-      where.append(" and iaui." + InvAmtUpdLnInventories.PROPERTY_WAREHOUSE + " = :warehouse");
+      //@formatter:off
+      hqlWhere +=
+            "   and iaui.warehouse.id = :warehouseId";
+      //@formatter:on
     }
-    where.append(" group by iaui." + InvAmtUpdLnInventories.PROPERTY_CAINVENTORYAMTLINE);
+    //@formatter:off
+    hqlWhere +=
+            " group by iaui.caInventoryamtline";
+    //@formatter:on
     if (warehouse != null) {
-      where.append(" , iaui." + InvAmtUpdLnInventories.PROPERTY_WAREHOUSE);
+      //@formatter:off
+      hqlWhere +=
+            "   , iaui.warehouse.id";
+      //@formatter:on
     }
-    where.append(" order by min(trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + ")");
+    //@formatter:off
+    hqlWhere +=
+            " order by min(trx.movementDate)";
+    //@formatter:on
 
-    Query<String> qry = OBDal.getInstance()
+    final Query<String> qry = OBDal.getInstance()
         .getSession()
-        .createQuery(where.toString(), String.class);
-    qry.setParameter("client", trx.getClient());
-    qry.setParameterList("orgs", orgs);
-    qry.setParameter("product", trx.getProduct());
-    qry.setParameter("date", trx.getMovementDate());
-    qry.setParameter("startdate", startingDate);
+        .createQuery(hqlWhere, String.class)
+        .setParameter("clientId", trx.getClient().getId())
+        .setParameterList("orgIds", orgs)
+        .setParameter("productId", trx.getProduct().getId())
+        .setParameter("date", trx.getMovementDate())
+        .setParameter("startdate", startingDate);
+
     if (warehouse != null) {
-      qry.setParameter("warehouse", warehouse);
+      qry.setParameter("warehouseId", warehouse.getId());
     }
     return qry.scroll(ScrollMode.FORWARD_ONLY);
   }
