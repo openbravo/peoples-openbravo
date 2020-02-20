@@ -138,11 +138,11 @@ public class SafeBoxes extends JSONProcessSimple {
 
           // Save values in result JSON
           safeBoxPaymentMethodCounting.put("depositBalance",
-              safeBoxPaymentMethodTransaction.getLong("depositBalance"));
+              safeBoxPaymentMethodTransaction.getDouble("depositBalance"));
           safeBoxPaymentMethodCounting.put("paymentBalance",
-              safeBoxPaymentMethodTransaction.getLong("paymentBalance"));
+              safeBoxPaymentMethodTransaction.getDouble("paymentBalance"));
           safeBoxPaymentMethodCounting.put("initialBalance",
-              safeBoxPaymentMethodAccount.getLong("initialBalance"));
+              safeBoxPaymentMethodAccount.getDouble("initialBalance"));
 
           safeBoxPaymentMethod.put("safeBoxCounting", safeBoxPaymentMethodCounting);
         }
