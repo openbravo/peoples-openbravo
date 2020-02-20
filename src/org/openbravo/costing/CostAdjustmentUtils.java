@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2018 Openbravo SLU
+ * All portions are Copyright (C) 2014-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -42,7 +42,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
@@ -55,9 +54,6 @@ import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.Costing;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
-import org.openbravo.model.materialmgmt.cost.TransactionCost;
-import org.openbravo.model.materialmgmt.transaction.InventoryCount;
-import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.TransactionLast;
 
@@ -83,7 +79,8 @@ public class CostAdjustmentUtils {
    *          Inventory Amount Update - PDC: Price Difference Correction - LC: Landed Cost - BDT:
    *          Backdated Transaction
    */
-  public static CostAdjustment insertCostAdjustmentHeader(Organization org, String sourceProcess) {
+  public static CostAdjustment insertCostAdjustmentHeader(final Organization org,
+      final String sourceProcess) {
 
     final DocumentType docType = FIN_Utility.getDocumentType(org, strCategoryCostAdj);
     final String docNo = FIN_Utility.getDocumentNo(docType, strTableCostAdj);
@@ -91,7 +88,7 @@ public class CostAdjustmentUtils {
         .getOrganizationStructureProvider(OBContext.getOBContext().getCurrentClient().getId())
         .getLegalEntity(org);
 
-    CostAdjustment costAdjustment = OBProvider.getInstance().get(CostAdjustment.class);
+    final CostAdjustment costAdjustment = OBProvider.getInstance().get(CostAdjustment.class);
     costAdjustment.setOrganization(orgLegal);
     costAdjustment.setDocumentType(docType);
     costAdjustment.setDocumentNo(docNo);
@@ -118,35 +115,36 @@ public class CostAdjustmentUtils {
    * @param isSource
    */
   @Deprecated
-  public static CostAdjustmentLine insertCostAdjustmentLine(MaterialTransaction transaction,
-      CostAdjustment costAdjustmentHeader, BigDecimal costAdjusted, boolean isSource,
-      Date accountingDate) {
-    Long lineNo = getNewLineNo(costAdjustmentHeader);
+  public static CostAdjustmentLine insertCostAdjustmentLine(final MaterialTransaction transaction,
+      final CostAdjustment costAdjustmentHeader, final BigDecimal costAdjusted,
+      final boolean isSource, final Date accountingDate) {
+    final Long lineNo = getNewLineNo(costAdjustmentHeader);
     return insertCostAdjustmentLine(transaction, costAdjustmentHeader, costAdjusted, isSource,
         accountingDate, lineNo);
   }
 
   @Deprecated
-  public static CostAdjustmentLine insertCostAdjustmentLine(MaterialTransaction transaction,
-      CostAdjustment costAdjustmentHeader, BigDecimal costAdjusted, boolean isSource,
-      Date accountingDate, Currency currency) {
-    Long lineNo = getNewLineNo(costAdjustmentHeader);
+  public static CostAdjustmentLine insertCostAdjustmentLine(final MaterialTransaction transaction,
+      final CostAdjustment costAdjustmentHeader, final BigDecimal costAdjusted,
+      final boolean isSource, final Date accountingDate, final Currency currency) {
+    final Long lineNo = getNewLineNo(costAdjustmentHeader);
     return insertCostAdjustmentLine(transaction, costAdjustmentHeader, costAdjusted, isSource,
         accountingDate, lineNo, currency);
   }
 
   @Deprecated
-  public static CostAdjustmentLine insertCostAdjustmentLine(MaterialTransaction transaction,
-      CostAdjustment costAdjustmentHeader, BigDecimal costAdjusted, boolean isSource,
-      Date accountingDate, Long lineNo) {
+  public static CostAdjustmentLine insertCostAdjustmentLine(final MaterialTransaction transaction,
+      final CostAdjustment costAdjustmentHeader, final BigDecimal costAdjusted,
+      final boolean isSource, final Date accountingDate, final Long lineNo) {
     return insertCostAdjustmentLine(transaction, costAdjustmentHeader, costAdjusted, isSource,
         accountingDate, lineNo, null);
   }
 
   @Deprecated
-  public static CostAdjustmentLine insertCostAdjustmentLine(MaterialTransaction transaction,
-      CostAdjustment costAdjustmentHeader, BigDecimal costAdjusted, boolean isSource,
-      Date accountingDate, Long lineNo, Currency currency) {
+  public static CostAdjustmentLine insertCostAdjustmentLine(final MaterialTransaction transaction,
+      final CostAdjustment costAdjustmentHeader, final BigDecimal costAdjusted,
+      final boolean isSource, final Date accountingDate, final Long lineNo,
+      final Currency currency) {
     final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(
         transaction, costAdjusted, costAdjustmentHeader, currency);
     lineParameters.setSource(isSource);
@@ -221,70 +219,66 @@ public class CostAdjustmentUtils {
   }
 
   private static CostAdjustmentLine getExistingCostAdjustmentLine(
-      CostAdjustmentLineParameters lineParameters, Date accountingDate) {
-    StringBuilder hql = new StringBuilder("");
-    hql.append(" costAdjustment.id = :costAdjustmentId ");
-    hql.append(" and inventoryTransaction.id = :transactionId ");
-    hql.append(" and isRelatedTransactionAdjusted = false ");
-    hql.append(" and currency.id = :currencyId ");
-    hql.append(" and isSource = :isSource ");
-    hql.append(" and accountingDate = :accountingDate");
-    hql.append(" and unitCost = :isUnitCost ");
-    hql.append(" and isBackdatedTrx = :isBackdatedTrx");
-    hql.append(" and isNegativeStockCorrection = :isNegativeCorrection");
+      final CostAdjustmentLineParameters lineParameters, final Date accountingDate) {
+    //@formatter:off
+    final String hql =
+                  "   costAdjustment.id = :costAdjustmentId " +
+                  "   and inventoryTransaction.id = :transactionId " +
+                  "   and isRelatedTransactionAdjusted = false " +
+                  "   and currency.id = :currencyId " +
+                  "   and isSource = :isSource " +
+                  "   and accountingDate = :accountingDate" +
+                  "   and unitCost = :isUnitCost " +
+                  "   and isBackdatedTrx = :isBackdatedTrx" +
+                  "   and isNegativeStockCorrection = :isNegativeCorrection";
+    //@formatter:on
 
-    OBQuery<CostAdjustmentLine> obc = OBDal.getInstance()
-        .createQuery(CostAdjustmentLine.class, hql.toString());
-    obc.setNamedParameter("costAdjustmentId", lineParameters.getCostAdjustmentHeader().getId());
-    obc.setNamedParameter("transactionId", lineParameters.getTransaction().getId());
-    obc.setNamedParameter("currencyId", lineParameters.getCurrency().getId());
-    obc.setNamedParameter("isSource", lineParameters.isSource());
-    obc.setNamedParameter("accountingDate", accountingDate);
-    obc.setNamedParameter("isUnitCost", lineParameters.isUnitCost());
-    obc.setNamedParameter("isBackdatedTrx", lineParameters.isBackdatedTransaction());
-    obc.setNamedParameter("isNegativeCorrection", lineParameters.isNegativeCorrection());
-
-    obc.setMaxResult(1);
-
-    CostAdjustmentLine costAdjustmentLine = (CostAdjustmentLine) obc.uniqueResult();
-    return costAdjustmentLine;
+    return OBDal.getInstance()
+        .createQuery(CostAdjustmentLine.class, hql)
+        .setNamedParameter("costAdjustmentId", lineParameters.getCostAdjustmentHeader().getId())
+        .setNamedParameter("transactionId", lineParameters.getTransaction().getId())
+        .setNamedParameter("currencyId", lineParameters.getCurrency().getId())
+        .setNamedParameter("isSource", lineParameters.isSource())
+        .setNamedParameter("accountingDate", accountingDate)
+        .setNamedParameter("isUnitCost", lineParameters.isUnitCost())
+        .setNamedParameter("isBackdatedTrx", lineParameters.isBackdatedTransaction())
+        .setNamedParameter("isNegativeCorrection", lineParameters.isNegativeCorrection())
+        .setMaxResult(1)
+        .uniqueResult();
   }
 
-  public static boolean isNeededBackdatedCostAdjustment(MaterialTransaction transaction,
-      boolean includeWarehouseDimension, Date startingDate) {
+  public static boolean isNeededBackdatedCostAdjustment(final MaterialTransaction transaction,
+      final boolean includeWarehouseDimension, final Date startingDate) {
     TransactionLast lastTransaction = CostAdjustmentUtils.getLastTransaction(transaction,
         includeWarehouseDimension);
     if (lastTransaction == null) {
       lastTransaction = CostAdjustmentUtils.insertLastTransaction(transaction,
           includeWarehouseDimension);
     }
-    if (lastTransaction != null && CostAdjustmentUtils.compareToLastTransaction(transaction,
-        lastTransaction, startingDate) < 0) {
-      return true;
-    } else {
-      return false;
-    }
+
+    return (lastTransaction != null && CostAdjustmentUtils.compareToLastTransaction(transaction,
+        lastTransaction, startingDate) < 0);
   }
 
-  public static TransactionLast getLastTransaction(MaterialTransaction trx,
-      boolean includeWarehouseDimension) {
+  public static TransactionLast getLastTransaction(final MaterialTransaction trx,
+      final boolean includeWarehouseDimension) {
     final Organization orgLegal = OBContext.getOBContext()
         .getOrganizationStructureProvider(trx.getClient().getId())
         .getLegalEntity(trx.getOrganization());
-    OBCriteria<TransactionLast> obc = OBDal.getInstance().createCriteria(TransactionLast.class);
-    obc.add(Restrictions.eq(TransactionLast.PROPERTY_PRODUCT, trx.getProduct()));
-    obc.add(Restrictions.eq(TransactionLast.PROPERTY_ORGANIZATION, orgLegal));
+    final OBCriteria<TransactionLast> obc = OBDal.getInstance()
+        .createCriteria(TransactionLast.class)
+        .add(Restrictions.eq(TransactionLast.PROPERTY_PRODUCT, trx.getProduct()))
+        .add(Restrictions.eq(TransactionLast.PROPERTY_ORGANIZATION, orgLegal));
     if (includeWarehouseDimension) {
       obc.add(
           Restrictions.eq(TransactionLast.PROPERTY_WAREHOUSE, trx.getStorageBin().getWarehouse()));
     }
-    obc.setMaxResults(1);
-    return (TransactionLast) obc.uniqueResult();
+    return (TransactionLast) obc.setMaxResults(1).uniqueResult();
   }
 
-  public static int compareToLastTransaction(MaterialTransaction trx,
-      TransactionLast lastTransaction, Date startingDate) {
-    MaterialTransaction lastTrx = lastTransaction.getInventoryTransaction();
+  public static int compareToLastTransaction(final MaterialTransaction trx,
+      final TransactionLast lastTransaction, final Date startingDate) {
+    final MaterialTransaction lastTrx = lastTransaction.getInventoryTransaction();
 
     // If trx is the same as lastTransaction or is from previous costing rule, return 0
     if (trx.getId().equals(lastTrx.getId())
@@ -292,14 +286,14 @@ public class CostAdjustmentUtils {
       return 0;
     }
 
-    int compareMovementDate = DateUtils.truncate(trx.getMovementDate(), Calendar.DATE)
+    final int compareMovementDate = DateUtils.truncate(trx.getMovementDate(), Calendar.DATE)
         .compareTo(DateUtils.truncate(lastTrx.getMovementDate(), Calendar.DATE));
-    int compareProcessDate = trx.getTransactionProcessDate()
+    final int compareProcessDate = trx.getTransactionProcessDate()
         .compareTo(lastTrx.getTransactionProcessDate());
-    Long trxPrio = CostAdjustmentUtils.getTrxTypePrio(trx.getMovementType());
-    Long lastPrio = CostAdjustmentUtils.getTrxTypePrio(lastTrx.getMovementType());
-    int comparePriority = trxPrio.compareTo(lastPrio);
-    int compareQty = trx.getMovementQuantity().compareTo(lastTrx.getMovementQuantity());
+    final Long trxPrio = CostAdjustmentUtils.getTrxTypePrio(trx.getMovementType());
+    final Long lastPrio = CostAdjustmentUtils.getTrxTypePrio(lastTrx.getMovementType());
+    final int comparePriority = trxPrio.compareTo(lastPrio);
+    final int compareQty = trx.getMovementQuantity().compareTo(lastTrx.getMovementQuantity());
 
     // If trx was processed after lastTrx
     if (compareProcessDate > 0 || (compareProcessDate == 0
@@ -316,49 +310,64 @@ public class CostAdjustmentUtils {
     return 0;
   }
 
-  private static TransactionLast insertLastTransaction(MaterialTransaction trx,
-      boolean includeWarehouseDimension) {
-    OrganizationStructureProvider osp = OBContext.getOBContext()
+  private static TransactionLast insertLastTransaction(final MaterialTransaction trx,
+      final boolean includeWarehouseDimension) {
+    final OrganizationStructureProvider osp = OBContext.getOBContext()
         .getOrganizationStructureProvider(trx.getClient().getId());
     final Organization orgLegal = osp.getLegalEntity(trx.getOrganization());
-    Set<String> orgs = osp.getChildTree(orgLegal.getId(), true);
+    final Set<String> orgs = osp.getChildTree(orgLegal.getId(), true);
 
-    StringBuffer where = new StringBuffer();
-    where.append(" select trx." + MaterialTransaction.PROPERTY_ID);
-    where.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
+    //@formatter:off
+    String hql =
+            "select trx.id" +
+            "  from MaterialMgmtMaterialTransaction as trx";
+    //@formatter:on
     if (includeWarehouseDimension) {
-      where.append(" join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
+      //@formatter:off
+      hql +=
+            "    join trx.storageBin as locator";
+      //@formatter:on
     }
-    where.append(" , " + org.openbravo.model.ad.domain.List.ENTITY_NAME + " as trxtype");
-    where.append(" where trxtype." + CostAdjustmentUtils.propADListValue + " = trx."
-        + MaterialTransaction.PROPERTY_MOVEMENTTYPE);
-    where.append(" and trxtype." + CostAdjustmentUtils.propADListReference + ".id = :refId");
-    where.append(" and trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :productId");
-    where.append(" and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgIds)");
+    //@formatter:off
+    hql +=
+            "    , ADList as trxtype" +
+            " where trxtype.searchKey = trx.movementType" +
+            "   and trxtype.reference.id = :refId" +
+            "   and trx.product.id = :productId" +
+            "   and trx.organization.id in (:orgIds)";
+    //@formatter:on
     if (includeWarehouseDimension) {
-      where.append(" and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouseId");
+      //@formatter:off
+      hql +=
+            "   and locator.warehouse.id = :warehouseId";
+      //@formatter:on
     }
-    where.append(" and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
-    where.append(" order by trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " desc");
-    where.append(" , trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " desc");
-    where.append(" , trxtype." + propADListPriority + " desc");
-    where.append(" , trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " asc");
-    where.append(" , trx." + MaterialTransaction.PROPERTY_ID + " desc");
-    Query<String> trxQry = OBDal.getInstance()
+    //@formatter:off
+    hql +=
+            "   and trx.isCostCalculated = true" +
+            " order by trx.movementDate desc" +
+            "   , trx.transactionProcessDate desc" +
+            "   , trxtype.sequenceNumber desc" +
+            "   , trx.movementQuantity asc" +
+            "   , trx.id desc";
+    //@formatter:on
+
+    final Query<String> trxQry = OBDal.getInstance()
         .getSession()
-        .createQuery(where.toString(), String.class);
-    trxQry.setParameter("refId", CostAdjustmentUtils.MovementTypeRefID);
-    trxQry.setParameter("productId", trx.getProduct().getId());
-    trxQry.setParameterList("orgIds", orgs);
+        .createQuery(hql, String.class)
+        .setParameter("refId", CostAdjustmentUtils.MovementTypeRefID)
+        .setParameter("productId", trx.getProduct().getId())
+        .setParameterList("orgIds", orgs);
+
     if (includeWarehouseDimension) {
       trxQry.setParameter("warehouseId", trx.getStorageBin().getWarehouse().getId());
     }
-    trxQry.setMaxResults(1);
-    String transactionId = trxQry.uniqueResult();
+
+    String transactionId = trxQry.setMaxResults(1).uniqueResult();
 
     TransactionLast lastTransaction = null;
     if (transactionId != null) {
-      MaterialTransaction transaction = OBDal.getInstance()
+      final MaterialTransaction transaction = OBDal.getInstance()
           .get(MaterialTransaction.class, transactionId);
       lastTransaction = OBProvider.getInstance().get(TransactionLast.class);
       lastTransaction.setClient(transaction.getClient());
@@ -375,25 +384,29 @@ public class CostAdjustmentUtils {
     return lastTransaction;
   }
 
-  private static Long getNewLineNo(CostAdjustment cadj) {
-    StringBuffer where = new StringBuffer();
-    where.append(" select max(" + CostAdjustmentLine.PROPERTY_LINENO + ")");
-    where.append(" from " + CostAdjustmentLine.ENTITY_NAME + " as cal");
-    where.append(
-        " where cal." + CostAdjustmentLine.PROPERTY_COSTADJUSTMENT + ".id = :costAdjustment");
-    Query<Long> calQry = OBDal.getInstance().getSession().createQuery(where.toString(), Long.class);
-    calQry.setParameter("costAdjustment", cadj.getId());
-    calQry.setMaxResults(1);
+  private static Long getNewLineNo(final CostAdjustment cadj) {
+    //@formatter:off
+    final String hql =
+                  "select max(lineNo)" +
+                  "  from CostAdjustmentLine as cal" +
+                  " where cal.costAdjustment.id = :costAdjustment";
+    //@formatter:on
 
-    Long lineNo = calQry.uniqueResult();
+    final Long lineNo = OBDal.getInstance()
+        .getSession()
+        .createQuery(hql, Long.class)
+        .setParameter("costAdjustment", cadj.getId())
+        .setMaxResults(1)
+        .uniqueResult();
+
     if (lineNo != null) {
       return lineNo + 10L;
     }
     return 10L;
   }
 
-  public static BigDecimal getTrxCost(MaterialTransaction trx, boolean justUnitCost,
-      Currency currency) {
+  public static BigDecimal getTrxCost(final MaterialTransaction trx, final boolean justUnitCost,
+      final Currency currency) {
     if (!trx.isCostCalculated()) {
       // Transaction hasn't been calculated yet.
       log4j.error("  *** No cost found for transaction {} with id {}", trx.getIdentifier(),
@@ -401,36 +414,44 @@ public class CostAdjustmentUtils {
       throw new OBException("@NoCostFoundForTrxOnDate@ @Transaction@: " + trx.getIdentifier());
     }
 
-    StringBuffer select = new StringBuffer();
-    select.append(" select sum(tc." + TransactionCost.PROPERTY_COST + ") as cost");
-    select.append(" , tc." + TransactionCost.PROPERTY_CURRENCY + ".id as currency");
-    select.append(" , tc." + TransactionCost.PROPERTY_COSTDATE + " as date");
-    select.append(" from " + TransactionCost.ENTITY_NAME + " as tc");
-    select.append(" where tc." + TransactionCost.PROPERTY_INVENTORYTRANSACTION + ".id = :trxId");
+    //@formatter:off
+    String hql =
+            "select sum(tc.cost) as cost" +
+            "  , tc.currency.id as currency" +
+            "  , tc.costDate as date" +
+            "  from TransactionCost as tc" +
+            " where tc.inventoryTransaction.id = :trxId";
+    //@formatter:on
     if (justUnitCost) {
-      select.append(" and tc." + TransactionCost.PROPERTY_UNITCOST + " = true");
+      //@formatter:off
+      hql +=
+            "   and tc.unitCost = true";
+      //@formatter:on
     }
-    select.append(" group by tc." + TransactionCost.PROPERTY_CURRENCY);
-    select.append(" , tc." + TransactionCost.PROPERTY_COSTDATE);
+    //@formatter:off
+    hql +=
+            " group by tc.currency" +
+            " , tc.costDate";
+    //@formatter:on
 
-    Query<Object[]> qry = OBDal.getInstance()
+    final ScrollableResults scroll = OBDal.getInstance()
         .getSession()
-        .createQuery(select.toString(), Object[].class);
-    qry.setParameter("trxId", trx.getId());
-    ScrollableResults scroll = qry.scroll(ScrollMode.FORWARD_ONLY);
+        .createQuery(hql, Object[].class)
+        .setParameter("trxId", trx.getId())
+        .scroll(ScrollMode.FORWARD_ONLY);
 
     BigDecimal cost = BigDecimal.ZERO;
     try {
       while (scroll.next()) {
-        Object[] resultSet = scroll.get();
-        BigDecimal costAmt = (BigDecimal) resultSet[0];
-        String origCurId = (String) resultSet[1];
+        final Object[] resultSet = scroll.get();
+        final BigDecimal costAmt = (BigDecimal) resultSet[0];
+        final String origCurId = (String) resultSet[1];
 
         if (StringUtils.equals(origCurId, currency.getId())) {
           cost = cost.add(costAmt);
         } else {
-          Currency origCur = OBDal.getInstance().get(Currency.class, origCurId);
-          Date convDate = (Date) resultSet[2];
+          final Currency origCur = OBDal.getInstance().get(Currency.class, origCurId);
+          final Date convDate = (Date) resultSet[2];
           cost = cost.add(FinancialUtils.getConvertedAmount(costAmt, origCur, currency, convDate,
               trx.getOrganization(), FinancialUtils.PRECISION_COSTING));
         }
@@ -445,89 +466,117 @@ public class CostAdjustmentUtils {
    * Calculates the stock of the product on the given date and for the given cost dimensions. It
    * only takes transactions that have its cost calculated.
    */
-  public static BigDecimal getStockOnMovementDate(Product product, Organization org, Date _date,
+  public static BigDecimal getStockOnMovementDate(Product product, Organization org, Date date,
       HashMap<CostDimension, BaseOBObject> costDimensions, boolean backdatedTransactionsFixed) {
     // Get child tree of organizations.
-    Date date = _date;
-    Set<String> orgs = OBContext.getOBContext()
+    Date currentDate = date;
+    final Set<String> orgs = OBContext.getOBContext()
         .getOrganizationStructureProvider()
         .getChildTree(org.getId(), true);
 
-    StringBuffer subSelect = new StringBuffer();
-    subSelect.append(" select min(case when coalesce(i." + InventoryCount.PROPERTY_INVENTORYTYPE
-        + ", 'N') <> 'N' then trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " else trx."
-        + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " end)");
-    subSelect.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
+    //@formatter:off
+    String hql =
+            "select min(case when coalesce(i.inventoryType, 'N') <> 'N' then trx.movementDate else trx.transactionProcessDate end)" +
+            "  from MaterialMgmtMaterialTransaction as trx";
+    //@formatter:on
     if (costDimensions.get(CostDimension.Warehouse) != null) {
-      subSelect.append("   join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
+      //@formatter:off
+      hql +=
+            "   join trx.storageBin as locator";
+      //@formatter:on
     }
-    subSelect.append(
-        "   left join trx." + MaterialTransaction.PROPERTY_PHYSICALINVENTORYLINE + " as il");
-    subSelect.append("   left join il." + InventoryCountLine.PROPERTY_PHYSINVENTORY + " as i");
-    subSelect.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :product");
-    subSelect.append(" and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :date");
-    // Include only transactions that have its cost calculated
-    subSelect.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
+    //@formatter:off
+    hql +=
+            "   left join trx.physicalInventoryLine as il" +
+            "   left join il.physInventory as i" +
+            " where trx.product.id = :product" +
+            "   and trx.movementDate > :date" +
+            "   and trx.isCostCalculated = true";
+    //@formatter:on
     if (costDimensions.get(CostDimension.Warehouse) != null) {
-      subSelect.append("  and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouse");
+      //@formatter:off
+      hql +=
+            "  and locator.warehouse.id = :warehouse";
+      //@formatter:on
     }
-    subSelect.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    //@formatter:off
+    hql +=
+            "   and trx.organization.id in (:orgs)";
+    //@formatter:on
 
-    Query<Date> trxsubQry = OBDal.getInstance()
+    final Query<Date> trxsubQry = OBDal.getInstance()
         .getSession()
-        .createQuery(subSelect.toString(), Date.class);
-    trxsubQry.setParameter("date", date);
-    trxsubQry.setParameter("product", product.getId());
+        .createQuery(hql, Date.class)
+        .setParameter("date", currentDate)
+        .setParameter("product", product.getId());
+
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       trxsubQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
     }
-    trxsubQry.setParameterList("orgs", orgs);
-    Date trxprocessDate = trxsubQry.uniqueResult();
 
-    StringBuffer select = new StringBuffer();
-    select
-        .append(" select sum(trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + ") as stock");
-    select.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
+    final Date trxprocessDate = trxsubQry.setParameterList("orgs", orgs).uniqueResult();
+
+    //@formatter:off
+    String hqlSelect =
+            " select sum(trx.movementQuantity) as stock" +
+            " from MaterialMgmtMaterialTransaction as trx";
+    //@formatter:on
     if (costDimensions.get(CostDimension.Warehouse) != null) {
-      select.append("   join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
+      //@formatter:off
+      hqlSelect +=
+              "   join trx.storageBin as locator";
+      //@formatter:on
     }
 
     Date backdatedTrxFrom = null;
     if (backdatedTransactionsFixed) {
-      CostingRule costRule = CostingUtils.getCostDimensionRule(org, date);
+      final CostingRule costRule = CostingUtils.getCostDimensionRule(org, currentDate);
       backdatedTrxFrom = CostingUtils.getCostingRuleFixBackdatedFrom(costRule);
     }
 
     if (trxprocessDate != null
         && (!backdatedTransactionsFixed || trxprocessDate.before(backdatedTrxFrom))) {
-      date = trxprocessDate;
-      select.append(
-          " left join trx." + MaterialTransaction.PROPERTY_PHYSICALINVENTORYLINE + " as il");
-      select.append(" left join il." + InventoryCountLine.PROPERTY_PHYSINVENTORY + " as i");
-      select.append(" where case when coalesce(i." + InventoryCount.PROPERTY_INVENTORYTYPE
-          + ", 'N') <> 'N' then trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " else trx."
-          + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " end < :date");
+      currentDate = trxprocessDate;
+      //@formatter:off
+      hqlSelect +=
+              "   left join trx.physicalInventoryLine as il" +
+              "   left join il.physInventory as i" +
+              " where case when coalesce(i.inventoryType, 'N') <> 'N' then trx.movementDate else trx.transactionProcessDate end < :date";
+      //@formatter:on
     } else {
-      select.append(" where trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " <= :date");
+      //@formatter:off
+      hqlSelect +=
+              " where trx.movementDate <= :date";
+      //@formatter:on
     }
 
-    select.append(" and trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :product");
-    // Include only transactions that have its cost calculated
-    select.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
+    //@formatter:off
+    hqlSelect +=
+              "   and trx.product.id = :product" +
+              "   and trx.isCostCalculated = true";
+    //@formatter:on
     if (costDimensions.get(CostDimension.Warehouse) != null) {
-      select.append("  and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouse");
+      //@formatter:off
+      hqlSelect +=
+              "   and locator.warehouse.id = :warehouse";
+      //@formatter:on
     }
-    select.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
-    Query<BigDecimal> trxQry = OBDal.getInstance()
+    //@formatter:off
+    hqlSelect +=
+              "   and trx.organization.id in (:orgs)";
+    //@formatter:on
+
+    final Query<BigDecimal> trxQry = OBDal.getInstance()
         .getSession()
-        .createQuery(select.toString(), BigDecimal.class);
-    trxQry.setParameter("product", product.getId());
-    trxQry.setParameter("date", date);
+        .createQuery(hqlSelect, BigDecimal.class)
+        .setParameter("product", product.getId())
+        .setParameter("date", currentDate);
+
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       trxQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
     }
-    trxQry.setParameterList("orgs", orgs);
-    BigDecimal stock = trxQry.uniqueResult();
+
+    final BigDecimal stock = trxQry.setParameterList("orgs", orgs).uniqueResult();
     return (stock != null) ? stock : BigDecimal.ZERO;
   }
 
@@ -535,13 +584,15 @@ public class CostAdjustmentUtils {
    * Calculates the stock of the product on the given date and for the given cost dimensions. It
    * only takes transactions that have its cost calculated.
    */
-  public static BigDecimal getStockOnTransactionDate(Organization costorg, MaterialTransaction trx,
-      HashMap<CostDimension, BaseOBObject> _costDimensions, boolean isManufacturingProduct,
-      boolean areBackdatedTrxFixed, Currency currency) {
-    Date date = areBackdatedTrxFixed ? trx.getMovementDate() : trx.getTransactionProcessDate();
-    Costing costing = AverageAlgorithm.getLastCumulatedCosting(date, trx.getProduct(),
-        _costDimensions, costorg);
-    return getStockOnTransactionDate(costorg, trx, _costDimensions, isManufacturingProduct,
+  public static BigDecimal getStockOnTransactionDate(final Organization costorg,
+      final MaterialTransaction trx, final HashMap<CostDimension, BaseOBObject> costDimensions,
+      final boolean isManufacturingProduct, final boolean areBackdatedTrxFixed,
+      final Currency currency) {
+    final Date date = areBackdatedTrxFixed ? trx.getMovementDate()
+        : trx.getTransactionProcessDate();
+    final Costing costing = AverageAlgorithm.getLastCumulatedCosting(date, trx.getProduct(),
+        costDimensions, costorg);
+    return getStockOnTransactionDate(costorg, trx, costDimensions, isManufacturingProduct,
         areBackdatedTrxFixed, currency, costing);
   }
 
@@ -549,32 +600,33 @@ public class CostAdjustmentUtils {
    * Calculates the stock of the product on the given date and for the given cost dimensions. It
    * only takes transactions that have its cost calculated.
    */
-  public static BigDecimal getStockOnTransactionDate(Organization costorg, MaterialTransaction trx,
-      HashMap<CostDimension, BaseOBObject> _costDimensions, boolean isManufacturingProduct,
-      boolean areBackdatedTrxFixed, Currency currency, Costing costing) {
+  public static BigDecimal getStockOnTransactionDate(final Organization costorg,
+      final MaterialTransaction trx, final HashMap<CostDimension, BaseOBObject> costDimensions,
+      final boolean isManufacturingProduct, final boolean areBackdatedTrxFixed,
+      final Currency currency, final Costing costing) {
 
     // Get child tree of organizations.
-    OrganizationStructureProvider osp = OBContext.getOBContext()
+    final OrganizationStructureProvider osp = OBContext.getOBContext()
         .getOrganizationStructureProvider(trx.getClient().getId());
     Set<String> orgs = osp.getChildTree(costorg.getId(), true);
-    HashMap<CostDimension, BaseOBObject> costDimensions = _costDimensions;
+    HashMap<CostDimension, BaseOBObject> currentCostDimensions = costDimensions;
     if (isManufacturingProduct) {
       orgs = osp.getChildTree("0", false);
-      costDimensions = CostingUtils.getEmptyDimensions();
+      currentCostDimensions = CostingUtils.getEmptyDimensions();
     }
-    CostingRule costingRule = CostingUtils.getCostDimensionRule(costorg,
+    final CostingRule costingRule = CostingUtils.getCostDimensionRule(costorg,
         trx.getTransactionProcessDate());
 
     BigDecimal cumulatedStock = null;
     int costingPrecision = currency.getCostingPrecision().intValue();
-    MaterialTransaction ctrx = costing != null ? costing.getInventoryTransaction() : null;
+    final MaterialTransaction ctrx = costing != null ? costing.getInventoryTransaction() : null;
     boolean existsCumulatedStockOnTrxDate = ctrx != null
         && costing.getTotalMovementQuantity() != null;
 
     // Backdated transactions can't use cumulated values
     if (existsCumulatedStockOnTrxDate && costingRule.isBackdatedTransactionsFixed()) {
-      Date trxMovementDate = DateUtils.truncate(trx.getMovementDate(), Calendar.DATE);
-      Date ctrxMovementDate = DateUtils.truncate(ctrx.getMovementDate(), Calendar.DATE);
+      final Date trxMovementDate = DateUtils.truncate(trx.getMovementDate(), Calendar.DATE);
+      final Date ctrxMovementDate = DateUtils.truncate(ctrx.getMovementDate(), Calendar.DATE);
       if (trxMovementDate.compareTo(ctrxMovementDate) < 0
           || (trxMovementDate.compareTo(ctrxMovementDate) == 0 && trx.getTransactionProcessDate()
               .compareTo(ctrx.getTransactionProcessDate()) <= 0)) {
@@ -589,140 +641,154 @@ public class CostAdjustmentUtils {
       }
     }
 
-    StringBuffer select = new StringBuffer();
-    select
-        .append(" select sum(trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + ") as stock");
-
-    select.append("\n from " + MaterialTransaction.ENTITY_NAME + " as trx");
-    if (costDimensions.get(CostDimension.Warehouse) != null) {
-      select.append("\n join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
+    //@formatter:off
+    String hql =
+            "select sum(trx.movementQuantity) as stock" +
+            "  from MaterialMgmtMaterialTransaction as trx";
+    //@formatter:on
+    if (currentCostDimensions.get(CostDimension.Warehouse) != null) {
+      //@formatter:off
+      hql +=
+            "    join trx.storageBin as locator";
+      //@formatter:on
     }
-    select.append("\n , " + org.openbravo.model.ad.domain.List.ENTITY_NAME + " as trxtype");
-
-    select.append("\n where trxtype." + propADListReference + ".id = :refid");
-    select.append(
-        "  and trxtype." + propADListValue + " = trx." + MaterialTransaction.PROPERTY_MOVEMENTTYPE);
-    select.append("   and trx." + MaterialTransaction.PROPERTY_PRODUCT + " = :product");
-    // Include only transactions that have its cost calculated. Should be all.
-    select.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
+    //@formatter:off
+    hql +=
+            "    , ADList as trxtype" +
+            " where trxtype.reference.id = :refid" +
+            "   and trxtype.searchKey = trx.movementType" +
+            "   and trx.product = :product" +
+            "   and trx.isCostCalculated = true";
+    //@formatter:on
 
     if (existsCumulatedStockOnTrxDate) {
       if (costingRule.isBackdatedTransactionsFixed()) {
-        select.append(" and (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :cmvtdate");
-        select.append(" or (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = :cmvtdate");
+        //@formatter:off
+        hql +=
+            "   and (trx.movementDate > :cmvtdate" +
+            "   or (trx.movementDate = :cmvtdate";
+        //@formatter:on
       }
-      select.append(
-          " and (trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " > :ctrxdate");
-      select.append(
-          " or (trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " = :ctrxdate");
-      // If the costing Transaction is an M- exclude the M+ Transactions with same movementDate and
-      // TrxProcessDate due to how data is going to be ordered in further queries using the priority
+      //@formatter:off
+      hql +=
+            "   and (trx.transactionProcessDate > :ctrxdate" +
+            "   or (trx.transactionProcessDate = :ctrxdate";
+      //@formatter:on
       if (costing.getInventoryTransaction().getMovementType().equals("M-")) {
-        select.append(
-            " and (( trx." + MaterialTransaction.PROPERTY_MOVEMENTTYPE + " <> 'M+' and trxtype."
-                + CostAdjustmentUtils.propADListPriority + " > :ctrxtypeprio)");
+        //@formatter:off
+        hql +=
+            "   and (( trx.movementType <> 'M+' and trxtype.sequenceNumber > :ctrxtypeprio)";
+        //@formatter:on
       } else {
-        select
-            .append(" and (trxtype." + CostAdjustmentUtils.propADListPriority + " > :ctrxtypeprio");
+        //@formatter:off
+        hql +=
+            "   and (trxtype.sequenceNumber > :ctrxtypeprio";
+        //@formatter:on
       }
-      select.append(" or (trxtype." + CostAdjustmentUtils.propADListPriority + " = :ctrxtypeprio");
-      select.append(" and (trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " < :ctrxqty");
-      select.append(" or (trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :ctrxqty");
-      select.append(" and trx." + MaterialTransaction.PROPERTY_ID + " > :ctrxid");
-      select.append(" ))))))");
+      //@formatter:off
+      hql +=
+            "   or (trxtype.sequenceNumber = :ctrxtypeprio" +
+            "   and (trx.movementQuantity < :ctrxqty" +
+            "   or (trx.movementQuantity = :ctrxqty" +
+            "   and trx.id > :ctrxid" +
+            "   ))))))";
+      //@formatter:on
       if (costingRule.isBackdatedTransactionsFixed()) {
-        select.append(" ))");
+        //@formatter:off
+        hql +=
+            "   ))";
+        //@formatter:on
       }
     }
-
-    select.append("  and ( ");
-
-    if (costingRule.isBackdatedTransactionsFixed()) {
-      select.append("  (");
-      select.append("   trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " < :fixbdt");
-      select.append("   and  (");
-    }
-
-    // If there are more than one trx on the same trx process date filter out those types with less
-    // priority and / or higher quantity.
-    select.append("    trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " < :trxdate");
-    select.append("    or (");
-    select
-        .append("     trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " = :trxdate");
-    select.append("     and (");
-    select.append("      trxtype." + propADListPriority + " < :trxtypeprio");
-    select.append("      or (");
-    select.append("       trxtype." + propADListPriority + " = :trxtypeprio");
-    select.append("       and trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " > :trxqty");
-    select.append("        or (");
-    select.append("         trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :trxqty");
-    select.append("         and trx." + MaterialTransaction.PROPERTY_ID + " <= :trxid");
-    select.append("   ))))");
+    //@formatter:off
+    hql +=
+            "   and ( ";
+    //@formatter:on
 
     if (costingRule.isBackdatedTransactionsFixed()) {
-      select.append(" )) or (");
-      select.append("  trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " >= :fixbdt");
-      select.append("  and (");
-      select.append("   trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :mvtdate");
-      select.append("   or (");
-      select.append("    trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = :mvtdate");
-      // If there are more than one trx on the same trx process date filter out those types with
-      // less priority and / or higher quantity.
-      select.append("    and (");
-      select.append(
-          "     trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " < :trxdate");
-      select.append("     or (");
-      select.append(
-          "      trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " = :trxdate");
-      select.append("      and (");
-      select.append("       trxtype." + propADListPriority + " < :trxtypeprio");
-      select.append("       or (");
-      select.append("        trxtype." + propADListPriority + " = :trxtypeprio");
-      select.append(
-          "        and trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " > :trxqty");
-      select.append("        or (");
-      select.append("         trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :trxqty");
-      select.append("         and trx." + MaterialTransaction.PROPERTY_ID + " <= :trxid");
-      select.append("    ))))");
-      select.append("   ))))");
+      //@formatter:off
+      hql +=
+            "   (trx.transactionProcessDate < :fixbdt" +
+            "   and  (";
+      //@formatter:on
     }
 
-    select.append("  )");
+    //@formatter:off
+    hql +=
+            "   trx.transactionProcessDate < :trxdate" +
+            "   or (trx.transactionProcessDate = :trxdate" +
+            "   and (trxtype.sequenceNumber < :trxtypeprio" +
+            "   or (trxtype.sequenceNumber = :trxtypeprio" +
+            "   and trx.movementQuantity > :trxqty" +
+            "   or (trx.movementQuantity = :trxqty" +
+            "   and trx.id <= :trxid" +
+            "   ))))";
+    //@formatter:on
 
-    if (costDimensions.get(CostDimension.Warehouse) != null) {
-      select.append("  and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouse");
+    if (costingRule.isBackdatedTransactionsFixed()) {
+      //@formatter:off
+      hql +=
+            "   )) or (" +
+            "   trx.transactionProcessDate >= :fixbdt" +
+            "   and (trx.movementDate < :mvtdate" +
+            "   or (trx.movementDate = :mvtdate" +
+            "   and (trx.transactionProcessDate < :trxdate" +
+            "   or (trx.transactionProcessDate = :trxdate" +
+            "   and (trxtype.sequenceNumber < :trxtypeprio" +
+            "   or (trxtype.sequenceNumber = :trxtypeprio" +
+            "   and trx.movementQuantity > :trxqty" +
+            "   or (trx.movementQuantity = :trxqty" +
+            "   and trx.id <= :trxid" +
+            "   ))))" +
+            "   ))))";
+      //@formatter:on
     }
 
-    select.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    //@formatter:off
+    hql +=
+            "   )";
+    //@formatter:on
 
-    Query<BigDecimal> trxQry = OBDal.getInstance()
+    if (currentCostDimensions.get(CostDimension.Warehouse) != null) {
+      //@formatter:off
+      hql +=
+            "   and locator.warehouse.id = :warehouse";
+      //@formatter:on
+    }
+
+    //@formatter:off
+    hql +=
+            "   and trx.organization.id in (:orgs)";
+    //@formatter:on
+
+    final Query<BigDecimal> trxQry = OBDal.getInstance()
         .getSession()
-        .createQuery(select.toString(), BigDecimal.class);
-    trxQry.setParameter("refid", MovementTypeRefID);
-    trxQry.setParameter("product", trx.getProduct());
-    trxQry.setParameter("trxdate", trx.getTransactionProcessDate());
-    trxQry.setParameter("trxtypeprio", getTrxTypePrio(trx.getMovementType()));
-    trxQry.setParameter("trxqty", trx.getMovementQuantity());
-    trxQry.setParameter("trxid", trx.getId());
-    trxQry.setParameterList("orgs", orgs);
+        .createQuery(hql, BigDecimal.class)
+        .setParameter("refid", MovementTypeRefID)
+        .setParameter("product", trx.getProduct())
+        .setParameter("trxdate", trx.getTransactionProcessDate())
+        .setParameter("trxtypeprio", getTrxTypePrio(trx.getMovementType()))
+        .setParameter("trxqty", trx.getMovementQuantity())
+        .setParameter("trxid", trx.getId())
+        .setParameterList("orgs", orgs);
 
     if (existsCumulatedStockOnTrxDate) {
       if (costingRule.isBackdatedTransactionsFixed()) {
         trxQry.setParameter("cmvtdate", ctrx.getMovementDate());
       }
-      trxQry.setParameter("ctrxdate", ctrx.getTransactionProcessDate());
-      trxQry.setParameter("ctrxtypeprio", getTrxTypePrio(ctrx.getMovementType()));
-      trxQry.setParameter("ctrxqty", ctrx.getMovementQuantity());
-      trxQry.setParameter("ctrxid", ctrx.getId());
+      trxQry.setParameter("ctrxdate", ctrx.getTransactionProcessDate())
+          .setParameter("ctrxtypeprio", getTrxTypePrio(ctrx.getMovementType()))
+          .setParameter("ctrxqty", ctrx.getMovementQuantity())
+          .setParameter("ctrxid", ctrx.getId());
     }
 
     if (costingRule.isBackdatedTransactionsFixed()) {
-      trxQry.setParameter("mvtdate", trx.getMovementDate());
-      trxQry.setParameter("fixbdt", CostingUtils.getCostingRuleFixBackdatedFrom(costingRule));
+      trxQry.setParameter("mvtdate", trx.getMovementDate())
+          .setParameter("fixbdt", CostingUtils.getCostingRuleFixBackdatedFrom(costingRule));
     }
 
-    if (costDimensions.get(CostDimension.Warehouse) != null) {
-      trxQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
+    if (currentCostDimensions.get(CostDimension.Warehouse) != null) {
+      trxQry.setParameter("warehouse", currentCostDimensions.get(CostDimension.Warehouse).getId());
     }
 
     BigDecimal stock = trxQry.uniqueResult();
@@ -740,10 +806,11 @@ public class CostAdjustmentUtils {
    * dimensions and for the given currency. It only takes transactions that have its cost
    * calculated.
    */
-  public static BigDecimal getValuedStockOnMovementDate(Product product, Organization org,
-      Date _date, HashMap<CostDimension, BaseOBObject> _costDimensions, Currency currency,
-      boolean backdatedTransactionsFixed) {
-    return getValuedStockOnMovementDateByAttrAndLocator(product, org, _date, _costDimensions, null,
+  public static BigDecimal getValuedStockOnMovementDate(final Product product,
+      final Organization org, final Date date,
+      final HashMap<CostDimension, BaseOBObject> costDimensions, final Currency currency,
+      final boolean backdatedTransactionsFixed) {
+    return getValuedStockOnMovementDateByAttrAndLocator(product, org, date, costDimensions, null,
         null, currency, backdatedTransactionsFixed);
   }
 
@@ -752,112 +819,142 @@ public class CostAdjustmentUtils {
    * dimensions and for the given currency. It only takes transactions that have its cost
    * calculated.
    */
-  public static BigDecimal getValuedStockOnMovementDateByAttrAndLocator(Product product,
-      Organization org, Date _date, HashMap<CostDimension, BaseOBObject> _costDimensions,
-      Locator locator, AttributeSetInstance asi, Currency currency,
-      boolean backdatedTransactionsFixed) {
-    Date date = _date;
-    HashMap<CostDimension, BaseOBObject> costDimensions = _costDimensions;
+  public static BigDecimal getValuedStockOnMovementDateByAttrAndLocator(final Product product,
+      final Organization org, final Date date,
+      final HashMap<CostDimension, BaseOBObject> costDimensions, final Locator locator,
+      final AttributeSetInstance asi, final Currency currency,
+      final boolean backdatedTransactionsFixed) {
+    Date currentDate = date;
+    HashMap<CostDimension, BaseOBObject> currentCostDimensions = costDimensions;
 
     // Get child tree of organizations.
-    OrganizationStructureProvider osp = OBContext.getOBContext()
+    final OrganizationStructureProvider osp = OBContext.getOBContext()
         .getOrganizationStructureProvider(org.getClient().getId());
     Set<String> orgs = osp.getChildTree(org.getId(), true);
     if (product.isProduction()) {
       orgs = osp.getChildTree("0", false);
-      costDimensions = CostingUtils.getEmptyDimensions();
+      currentCostDimensions = CostingUtils.getEmptyDimensions();
     }
 
-    StringBuffer subSelect = new StringBuffer();
-    subSelect.append(" select min(case when coalesce(i." + InventoryCount.PROPERTY_INVENTORYTYPE
-        + ", 'N') <> 'N' then trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " else trx."
-        + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " end)");
-    subSelect.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
-    if (costDimensions.get(CostDimension.Warehouse) != null) {
-      subSelect.append("   join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
+    //@formatter:off
+    String hql =
+        "select min(case when coalesce(i.inventoryType, 'N') <> 'N' then trx.movementDate else trx.transactionProcessDate end)" +
+        "  from MaterialMgmtMaterialTransaction as trx";
+    //@formatter:on
+    if (currentCostDimensions.get(CostDimension.Warehouse) != null) {
+      //@formatter:off
+      hql +=
+        "    join trx.storageBin as locator";
+      //@formatter:on
     }
-    subSelect.append(
-        "   left join trx." + MaterialTransaction.PROPERTY_PHYSICALINVENTORYLINE + " as il");
-    subSelect.append("   left join il." + InventoryCountLine.PROPERTY_PHYSINVENTORY + " as i");
-    subSelect.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :product");
-    subSelect.append(" and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :date");
-    // Include only transactions that have its cost calculated
-    subSelect.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
-    if (costDimensions.get(CostDimension.Warehouse) != null) {
-      subSelect.append("  and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouse");
-    }
-    subSelect.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    //@formatter:off
+    hql +=
+        "   left join trx.physicalInventoryLine as il" +
+        "   left join il.physInventory as i" +
+        " where trx.product.id = :productId" +
+        "   and trx.movementDate > :date" +
+        "   and trx.isCostCalculated = true";
+    //@formatter:on
 
-    Query<Date> trxsubQry = OBDal.getInstance()
+    if (currentCostDimensions.get(CostDimension.Warehouse) != null) {
+      //@formatter:off
+      hql +=
+        "   and locator.warehouse.id = :warehouse";
+      //@formatter:on
+    }
+    //@formatter:off
+    hql +=
+        "   and trx.organization.id in (:orgs)";
+    //@formatter:on
+
+    final Query<Date> trxsubQry = OBDal.getInstance()
         .getSession()
-        .createQuery(subSelect.toString(), Date.class);
-    trxsubQry.setParameter("date", date);
-    trxsubQry.setParameter("product", product.getId());
-    if (costDimensions.get(CostDimension.Warehouse) != null) {
-      trxsubQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
+        .createQuery(hql, Date.class)
+        .setParameter("date", currentDate)
+        .setParameter("productId", product.getId());
+    if (currentCostDimensions.get(CostDimension.Warehouse) != null) {
+      trxsubQry.setParameter("warehouse",
+          currentCostDimensions.get(CostDimension.Warehouse).getId());
     }
     trxsubQry.setParameterList("orgs", orgs);
-    Date trxprocessDate = trxsubQry.uniqueResult();
+    final Date trxprocessDate = trxsubQry.uniqueResult();
 
-    StringBuffer select = new StringBuffer();
-    select.append(" select sum(case");
-    select.append("     when trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY
-        + " < 0 then -tc." + TransactionCost.PROPERTY_COST);
-    select.append("     else tc." + TransactionCost.PROPERTY_COST + " end ) as cost");
-    select.append(" , tc." + TransactionCost.PROPERTY_CURRENCY + ".id as currency");
-    select.append(" , tc." + TransactionCost.PROPERTY_ACCOUNTINGDATE + " as mdate");
-    select.append(" , sum(trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + ") as stock");
-
-    select.append(" from " + TransactionCost.ENTITY_NAME + " as tc");
-    select.append("  join tc." + TransactionCost.PROPERTY_INVENTORYTRANSACTION + " as trx");
-    if (costDimensions.get(CostDimension.Warehouse) != null) {
-      select.append("  join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
+    //@formatter:off
+    String hqlSelect =
+            "select sum(case when trx.movementQuantity < 0 then -tc.cost else tc.cost end ) as cost" +
+            " , tc.currency.id as currency" +
+            " , tc.accountingDate as mdate" +
+            " , sum(trx.movementQuantity) as stock" +
+            "  from TransactionCost as tc" +
+            "    join tc.inventoryTransaction as trx";
+    //@formatter:on
+    if (currentCostDimensions.get(CostDimension.Warehouse) != null) {
+      //@formatter:off
+      hqlSelect +=
+            "    join trx.storageBin as locator";
+      //@formatter:on
     }
 
     Date backdatedTrxFrom = null;
     if (backdatedTransactionsFixed) {
-      CostingRule costRule = CostingUtils.getCostDimensionRule(org, date);
+      CostingRule costRule = CostingUtils.getCostDimensionRule(org, currentDate);
       backdatedTrxFrom = CostingUtils.getCostingRuleFixBackdatedFrom(costRule);
     }
 
     if (trxprocessDate != null
         && (!backdatedTransactionsFixed || trxprocessDate.before(backdatedTrxFrom))) {
-      date = trxprocessDate;
-      select.append(
-          " left join trx." + MaterialTransaction.PROPERTY_PHYSICALINVENTORYLINE + " as il");
-      select.append(" left join il." + InventoryCountLine.PROPERTY_PHYSINVENTORY + " as i");
-      select.append(" where case when coalesce(i." + InventoryCount.PROPERTY_INVENTORYTYPE
-          + ", 'N') <> 'N' then trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " else trx."
-          + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " end < :date");
+      currentDate = trxprocessDate;
+      //@formatter:off
+      hqlSelect +=
+            "    left join trx.physicalInventoryLine as il" +
+            "    left join il.physInventory as i" +
+            " where case when coalesce(i.inventoryType, 'N') <> 'N' then trx.movementDate else trx.transactionProcessDate end < :date";
+      //@formatter:on
     } else {
-      select.append(" where trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " <= :date");
+      //@formatter:off
+      hqlSelect +=
+            " where trx.movementDate <= :date";
+      //@formatter:on
     }
+    //@formatter:off
+    hqlSelect +=
+            "   and trx.product = :product" +
+            "   and trx.isCostCalculated = true";
+    //@formatter:on
 
-    select.append(" and trx." + MaterialTransaction.PROPERTY_PRODUCT + " = :product");
-    // Include only transactions that have its cost calculated
-    select.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
-
-    if (costDimensions.get(CostDimension.Warehouse) != null) {
-      select.append("  and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouse");
+    if (currentCostDimensions.get(CostDimension.Warehouse) != null) {
+      //@formatter:off
+      hqlSelect +=
+            "   and locator.warehouse.id = :warehouse";
+      //@formatter:on
     }
     if (locator != null) {
-      select.append("   and trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " = :locator");
+      //@formatter:off
+      hqlSelect +=
+            "   and trx.storageBin = :locator";
+      //@formatter:on
     }
     if (asi != null) {
-      select.append("   and trx." + MaterialTransaction.PROPERTY_ATTRIBUTESETVALUE + " = :asi");
+      //@formatter:off
+      hqlSelect +=
+            "   and trx.attributeSetValue = :asi";
+      //@formatter:on
     }
-    select.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    //@formatter:off
+    hqlSelect +=
+            "   and trx.organization.id in (:orgs)" +
+            " group by tc.currency" + 
+            "   , tc.accountingDate";
+    //@formatter:on
 
-    select.append(" group by tc." + TransactionCost.PROPERTY_CURRENCY);
-    select.append("   , tc." + TransactionCost.PROPERTY_ACCOUNTINGDATE);
-
-    Query<Object[]> trxQry = OBDal.getInstance()
+    final Query<Object[]> trxQry = OBDal.getInstance()
         .getSession()
-        .createQuery(select.toString(), Object[].class);
-    trxQry.setParameter("product", product);
-    trxQry.setParameter("date", date);
-    if (costDimensions.get(CostDimension.Warehouse) != null) {
-      trxQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
+        .createQuery(hqlSelect, Object[].class)
+        .setParameter("product", product)
+        .setParameter("date", currentDate);
+
+    if (currentCostDimensions.get(CostDimension.Warehouse) != null) {
+      trxQry.setParameter("warehouse", currentCostDimensions.get(CostDimension.Warehouse).getId());
     }
     if (locator != null) {
       trxQry.setParameter("locator", locator);
@@ -867,19 +964,19 @@ public class CostAdjustmentUtils {
     }
     trxQry.setParameterList("orgs", orgs);
 
-    ScrollableResults scroll = trxQry.scroll(ScrollMode.FORWARD_ONLY);
+    final ScrollableResults scroll = trxQry.scroll(ScrollMode.FORWARD_ONLY);
     BigDecimal sum = BigDecimal.ZERO;
     try {
       while (scroll.next()) {
-        Object[] resultSet = scroll.get();
-        BigDecimal origAmt = (BigDecimal) resultSet[0];
-        String origCurId = (String) resultSet[1];
+        final Object[] resultSet = scroll.get();
+        final BigDecimal origAmt = (BigDecimal) resultSet[0];
+        final String origCurId = (String) resultSet[1];
 
         if (StringUtils.equals(origCurId, currency.getId())) {
           sum = sum.add(origAmt);
         } else {
-          Currency origCur = OBDal.getInstance().get(Currency.class, origCurId);
-          Date convDate = (Date) resultSet[2];
+          final Currency origCur = OBDal.getInstance().get(Currency.class, origCurId);
+          final Date convDate = (Date) resultSet[2];
           sum = sum.add(FinancialUtils.getConvertedAmount(origAmt, origCur, currency, convDate, org,
               FinancialUtils.PRECISION_COSTING));
         }
@@ -895,13 +992,15 @@ public class CostAdjustmentUtils {
    * dimensions and for the given currency. It only takes transactions that have its cost
    * calculated.
    */
-  public static BigDecimal getValuedStockOnTransactionDate(Organization costorg,
-      MaterialTransaction trx, HashMap<CostDimension, BaseOBObject> _costDimensions,
-      boolean isManufacturingProduct, boolean areBackdatedTrxFixed, Currency currency) {
-    Date date = areBackdatedTrxFixed ? trx.getMovementDate() : trx.getTransactionProcessDate();
-    Costing costing = AverageAlgorithm.getLastCumulatedCosting(date, trx.getProduct(),
-        _costDimensions, costorg);
-    return getValuedStockOnTransactionDate(costorg, trx, _costDimensions, isManufacturingProduct,
+  public static BigDecimal getValuedStockOnTransactionDate(final Organization costorg,
+      final MaterialTransaction trx, final HashMap<CostDimension, BaseOBObject> costDimensions,
+      final boolean isManufacturingProduct, final boolean areBackdatedTrxFixed,
+      final Currency currency) {
+    final Date date = areBackdatedTrxFixed ? trx.getMovementDate()
+        : trx.getTransactionProcessDate();
+    final Costing costing = AverageAlgorithm.getLastCumulatedCosting(date, trx.getProduct(),
+        costDimensions, costorg);
+    return getValuedStockOnTransactionDate(costorg, trx, costDimensions, isManufacturingProduct,
         areBackdatedTrxFixed, currency, costing);
   }
 
@@ -910,33 +1009,33 @@ public class CostAdjustmentUtils {
    * dimensions and for the given currency. It only takes transactions that have its cost
    * calculated.
    */
-  public static BigDecimal getValuedStockOnTransactionDate(Organization costorg,
-      MaterialTransaction trx, HashMap<CostDimension, BaseOBObject> _costDimensions,
-      boolean isManufacturingProduct, boolean areBackdatedTrxFixed, Currency currency,
-      Costing costing) {
+  public static BigDecimal getValuedStockOnTransactionDate(final Organization costorg,
+      final MaterialTransaction trx, final HashMap<CostDimension, BaseOBObject> costDimensions,
+      boolean isManufacturingProduct, boolean areBackdatedTrxFixed, final Currency currency,
+      final Costing costing) {
 
     // Get child tree of organizations.
-    OrganizationStructureProvider osp = OBContext.getOBContext()
+    final OrganizationStructureProvider osp = OBContext.getOBContext()
         .getOrganizationStructureProvider(trx.getClient().getId());
     Set<String> orgs = osp.getChildTree(costorg.getId(), true);
-    HashMap<CostDimension, BaseOBObject> costDimensions = _costDimensions;
+    HashMap<CostDimension, BaseOBObject> currentCostDimensions = costDimensions;
     if (isManufacturingProduct) {
       orgs = osp.getChildTree("0", false);
-      costDimensions = CostingUtils.getEmptyDimensions();
+      currentCostDimensions = CostingUtils.getEmptyDimensions();
     }
-    CostingRule costingRule = CostingUtils.getCostDimensionRule(costorg,
+    final CostingRule costingRule = CostingUtils.getCostDimensionRule(costorg,
         trx.getTransactionProcessDate());
 
     BigDecimal cumulatedValuation = null;
     int costingPrecision = currency.getCostingPrecision().intValue();
-    MaterialTransaction ctrx = costing != null ? costing.getInventoryTransaction() : null;
+    final MaterialTransaction ctrx = costing != null ? costing.getInventoryTransaction() : null;
     boolean existsCumulatedValuationOnTrxDate = ctrx != null
         && costing.getTotalStockValuation() != null;
 
     // Backdated transactions can't use cumulated values
     if (existsCumulatedValuationOnTrxDate && costingRule.isBackdatedTransactionsFixed()) {
-      Date trxMovementDate = DateUtils.truncate(trx.getMovementDate(), Calendar.DATE);
-      Date ctrxMovementDate = DateUtils.truncate(ctrx.getMovementDate(), Calendar.DATE);
+      final Date trxMovementDate = DateUtils.truncate(trx.getMovementDate(), Calendar.DATE);
+      final Date ctrxMovementDate = DateUtils.truncate(ctrx.getMovementDate(), Calendar.DATE);
       if (trxMovementDate.compareTo(ctrxMovementDate) < 0
           || (trxMovementDate.compareTo(ctrxMovementDate) == 0 && trx.getTransactionProcessDate()
               .compareTo(ctrx.getTransactionProcessDate()) <= 0)) {
@@ -956,146 +1055,156 @@ public class CostAdjustmentUtils {
       }
     }
 
-    StringBuffer select = new StringBuffer();
-    select.append(" select sum(case");
-    select.append("     when trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY
-        + " < 0 then -tc." + TransactionCost.PROPERTY_COST);
-    select.append("     else tc." + TransactionCost.PROPERTY_COST + " end ) as cost");
-    select.append(" , tc." + TransactionCost.PROPERTY_CURRENCY + ".id as currency");
-    select.append(" , tc." + TransactionCost.PROPERTY_ACCOUNTINGDATE + " as mdate");
-    select.append(" , sum(trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + ") as stock");
-
-    select.append("\n from " + TransactionCost.ENTITY_NAME + " as tc");
-    select.append("\n  join tc." + TransactionCost.PROPERTY_INVENTORYTRANSACTION + " as trx");
-    if (costDimensions.get(CostDimension.Warehouse) != null) {
-      select.append("\n  join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
+    //@formatter:off
+    String hql =
+            "select sum(case when trx.movementQuantity  < 0 then -tc.cost else tc.cost end ) as cost" +
+            " , tc.currency.id as currency" +
+            " , tc.accountingDate as mdate" +
+            " , sum(trx.movementQuantity) as stock" +
+            "  from TransactionCost as tc" +
+            "    join tc.inventoryTransaction as trx";
+    //@formatter:on
+    if (currentCostDimensions.get(CostDimension.Warehouse) != null) {
+      //@formatter:off
+      hql +=
+            "    join trx.storageBin as locator";
+      //@formatter:on
     }
-    select.append("\n , " + org.openbravo.model.ad.domain.List.ENTITY_NAME + " as trxtype");
-
-    select.append("\n where trxtype." + propADListReference + ".id = :refid");
-    select.append(
-        "  and trxtype." + propADListValue + " = trx." + MaterialTransaction.PROPERTY_MOVEMENTTYPE);
-    select.append("  and trx." + MaterialTransaction.PROPERTY_PRODUCT + " = :product");
-    // Include only transactions that have its cost calculated
-    select.append("  and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
-
+    //@formatter:off
+    hql +=
+            "    , ADList as trxtype" +
+            " where trxtype.reference.id = :refid" +
+            "   and trxtype.searchKey = trx.movementType" +
+            "   and trx.product = :product" +
+            "   and trx.isCostCalculated = true";
+    //@formatter:on
     if (existsCumulatedValuationOnTrxDate) {
       if (costingRule.isBackdatedTransactionsFixed()) {
-        select.append(" and (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :cmvtdate");
-        select.append(" or (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = :cmvtdate");
+        //@formatter:off
+        hql +=
+            "   and (trx.movementDate > :cmvtdate" +
+            "   or (trx.movementDate = :cmvtdate";
+        //@formatter:on
       }
-      select.append(
-          " and (trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " > :ctrxdate");
-      select.append(
-          " or (trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " = :ctrxdate");
-      // If the costing Transaction is an M- exclude the M+ Transactions with same movementDate and
-      // TrxProcessDate due to how data is going to be ordered in further queries using the priority
+      //@formatter:off
+      hql +=
+            "   and (trx.transactionProcessDate > :ctrxdate" +
+            "   or (trx.transactionProcessDate = :ctrxdate";
+      //@formatter:on
       if (costing.getInventoryTransaction().getMovementType().equals("M-")) {
-        select.append(
-            " and (( trx." + MaterialTransaction.PROPERTY_MOVEMENTTYPE + " <> 'M+' and trxtype."
-                + CostAdjustmentUtils.propADListPriority + " > :ctrxtypeprio)");
+        //@formatter:off
+        hql +=
+            "   and (( trx.movementType <> 'M+' and trxtype.sequenceNumber > :ctrxtypeprio)";
+        //@formatter:on
       } else {
-        select
-            .append(" and (trxtype." + CostAdjustmentUtils.propADListPriority + " > :ctrxtypeprio");
+        //@formatter:off
+        hql +=
+            "   and (trxtype.sequenceNumber > :ctrxtypeprio";
+        //@formatter:on
       }
-      select.append(" or (trxtype." + CostAdjustmentUtils.propADListPriority + " = :ctrxtypeprio");
-      select.append(" and (trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " < :ctrxqty");
-      select.append(" or (trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :ctrxqty");
-      select.append(" and trx." + MaterialTransaction.PROPERTY_ID + " > :ctrxid");
-      select.append(" ))))))");
+      //@formatter:off
+      hql +=
+            "   or (trxtype.sequenceNumber = :ctrxtypeprio" +
+            "   and (trx.movementQuantity < :ctrxqty" +
+            "   or (trx.movementQuantity = :ctrxqty" +
+            "   and trx.id > :ctrxid" +
+            "   ))))))";
+      //@formatter:on
       if (costingRule.isBackdatedTransactionsFixed()) {
-        select.append(" ))");
+        //@formatter:off
+        hql +=
+            "   ))";
+        //@formatter:on
       }
     }
-
-    select.append("  and (");
-
-    if (costingRule.isBackdatedTransactionsFixed()) {
-      select
-          .append("   ( trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " < :fixbdt");
-      select.append(" and (");
-    }
-
-    // If there are more than one trx on the same trx process date filter out those types with less
-    // priority and / or higher quantity.
-    select.append("  trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " < :trxdate");
-    select.append("  or (");
-    select.append("   trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " = :trxdate");
-    select.append("   and (");
-    select.append("    trxtype." + propADListPriority + " < :trxtypeprio");
-    select.append("    or (");
-    select.append("     trxtype." + propADListPriority + " = :trxtypeprio");
-    select.append("     and trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " > :trxqty");
-    select.append("        or (");
-    select.append("         trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :trxqty");
-    select.append("         and trx." + MaterialTransaction.PROPERTY_ID + " <= :trxid");
-    select.append(" ))))");
+    //@formatter:off
+    hql +=
+            "   and (";
+    //@formatter:on
 
     if (costingRule.isBackdatedTransactionsFixed()) {
-      select.append(" )) or (");
-      select
-          .append("   trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " >= :fixbdt");
-      select.append("   and (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :mvtdate");
-      select.append("   or (");
-      select.append("    trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = :mvtdate");
-      // If there are more than one trx on the same trx process date filter out those types with
-      // less priority and / or higher quantity.
-      select.append(" and (");
-      select.append("  trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " < :trxdate");
-      select.append("  or (");
-      select
-          .append("   trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " = :trxdate");
-      select.append("   and (");
-      select.append("    trxtype." + propADListPriority + " < :trxtypeprio");
-      select.append("    or (");
-      select.append("     trxtype." + propADListPriority + " = :trxtypeprio");
-      select.append("     and trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " > :trxqty");
-      select.append("        or (");
-      select.append("         trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :trxqty");
-      select.append("         and trx." + MaterialTransaction.PROPERTY_ID + " <= :trxid");
-      select.append("  ))))))");
-      select.append(" ))");
+      //@formatter:off
+      hql +=
+            "   ( trx.transactionProcessDate < :fixbdt" +
+            "   and (";
+      //@formatter:on
     }
+    //@formatter:off
+    hql +=
+            "   trx.transactionProcessDate < :trxdate" +
+            "   or (trx.transactionProcessDate = :trxdate" +
+            "   and (trxtype.sequenceNumber < :trxtypeprio" +
+            "   or (trxtype.sequenceNumber = :trxtypeprio" +
+            "   and trx.movementQuantity > :trxqty" +
+            "   or (trx.movementQuantity = :trxqty" +
+            "   and trx.id <= :trxid" +
+            "   ))))";
+    //@formatter:on
 
-    select.append(" )");
-
-    if (costDimensions.get(CostDimension.Warehouse) != null) {
-      select.append("  and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouse");
+    if (costingRule.isBackdatedTransactionsFixed()) {
+      //@formatter:off
+      hql +=
+            "   )) or (" +
+            "   trx.transactionProcessDate >= :fixbdt" +
+            "   and (trx.movementDate < :mvtdate" +
+            "   or (trx.movementDate = :mvtdate" +
+            "   and (trx.transactionProcessDate < :trxdate" +
+            "   or (trx.transactionProcessDate = :trxdate" +
+            "   and (trxtype.sequenceNumber < :trxtypeprio" +
+            "   or (trxtype.sequenceNumber = :trxtypeprio" +
+            "   and trx.movementQuantity > :trxqty" +
+            "   or (trx.movementQuantity = :trxqty" +
+            "   and trx.id <= :trxid" +
+            "   ))))))" +
+            "   ))";
+      //@formatter:on
     }
+    //@formatter:off
+    hql +=
+            "   )";
+    //@formatter:on
 
-    select.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    if (currentCostDimensions.get(CostDimension.Warehouse) != null) {
+      //@formatter:off
+      hql +=
+            "   and locator.warehouse.id = :warehouse";
+      //@formatter:on
+    }
+    //@formatter:off
+    hql +=
+            "   and trx.organization.id in (:orgs)" +
+            " group by tc.currency" +
+            "   , tc.accountingDate";
+    //@formatter:on
 
-    select.append(" group by tc." + TransactionCost.PROPERTY_CURRENCY);
-    select.append("   , tc." + TransactionCost.PROPERTY_ACCOUNTINGDATE);
-
-    Query<Object[]> trxQry = OBDal.getInstance()
+    final Query<Object[]> trxQry = OBDal.getInstance()
         .getSession()
-        .createQuery(select.toString(), Object[].class);
-    trxQry.setParameter("refid", MovementTypeRefID);
-    trxQry.setParameter("product", trx.getProduct());
-    trxQry.setParameter("trxdate", trx.getTransactionProcessDate());
-    trxQry.setParameter("trxtypeprio", getTrxTypePrio(trx.getMovementType()));
-    trxQry.setParameter("trxqty", trx.getMovementQuantity());
-    trxQry.setParameter("trxid", trx.getId());
-    trxQry.setParameterList("orgs", orgs);
+        .createQuery(hql, Object[].class)
+        .setParameter("refid", MovementTypeRefID)
+        .setParameter("product", trx.getProduct())
+        .setParameter("trxdate", trx.getTransactionProcessDate())
+        .setParameter("trxtypeprio", getTrxTypePrio(trx.getMovementType()))
+        .setParameter("trxqty", trx.getMovementQuantity())
+        .setParameter("trxid", trx.getId())
+        .setParameterList("orgs", orgs);
 
     if (existsCumulatedValuationOnTrxDate) {
       if (costingRule.isBackdatedTransactionsFixed()) {
         trxQry.setParameter("cmvtdate", ctrx.getMovementDate());
       }
-      trxQry.setParameter("ctrxdate", ctrx.getTransactionProcessDate());
-      trxQry.setParameter("ctrxtypeprio", getTrxTypePrio(ctrx.getMovementType()));
-      trxQry.setParameter("ctrxqty", ctrx.getMovementQuantity());
-      trxQry.setParameter("ctrxid", ctrx.getId());
+      trxQry.setParameter("ctrxdate", ctrx.getTransactionProcessDate())
+          .setParameter("ctrxtypeprio", getTrxTypePrio(ctrx.getMovementType()))
+          .setParameter("ctrxqty", ctrx.getMovementQuantity())
+          .setParameter("ctrxid", ctrx.getId());
     }
 
     if (costingRule.isBackdatedTransactionsFixed()) {
-      trxQry.setParameter("mvtdate", trx.getMovementDate());
-      trxQry.setParameter("fixbdt", CostingUtils.getCostingRuleFixBackdatedFrom(costingRule));
+      trxQry.setParameter("mvtdate", trx.getMovementDate())
+          .setParameter("fixbdt", CostingUtils.getCostingRuleFixBackdatedFrom(costingRule));
     }
 
-    if (costDimensions.get(CostDimension.Warehouse) != null) {
-      trxQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
+    if (currentCostDimensions.get(CostDimension.Warehouse) != null) {
+      trxQry.setParameter("warehouse", currentCostDimensions.get(CostDimension.Warehouse).getId());
     }
 
     ScrollableResults scroll = trxQry.scroll(ScrollMode.FORWARD_ONLY);
@@ -1129,8 +1238,8 @@ public class CostAdjustmentUtils {
    * Returns the last transaction process date of a non backdated transactions for the given
    * movement date or previous date.
    */
-  public static Date getLastTrxDateOfMvmntDate(Date refDate, Product product, Organization org,
-      HashMap<CostDimension, BaseOBObject> costDimensions) {
+  public static Date getLastTrxDateOfMvmntDate(final Date refDate, final Product product,
+      final Organization org, final HashMap<CostDimension, BaseOBObject> costDimensions) {
     OrganizationStructureProvider osp = OBContext.getOBContext()
         .getOrganizationStructureProvider(org.getClient().getId());
     Set<String> orgs = osp.getChildTree(org.getId(), true);
@@ -1139,26 +1248,40 @@ public class CostAdjustmentUtils {
     // Calculate the transaction process date of the first transaction with a movement date
     // after the given date. Any transaction with a transaction process date after this min date on
     // the given date or before is a backdated transaction.
-    StringBuffer select = new StringBuffer();
-    select.append(
-        " select min(trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + ") as date");
-    select.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
+
+    //@formatter:off
+    String hql =
+            "select min(trx.transactionProcessDate) as date" +
+            "  from MaterialMgmtMaterialTransaction as trx";
+    //@formatter:on
     if (wh != null) {
-      select.append("    join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as loc");
+      //@formatter:off
+      hql +=
+            "    join trx.storageBin as loc";
+      //@formatter:on
     }
-    select.append(" where trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
-    select.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
-    select.append("   and trx." + MaterialTransaction.PROPERTY_PRODUCT + " = :product");
-    select.append("   and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :mvntdate");
+    //@formatter:off
+    hql +=
+            " where trx.isCostCalculated = true" +
+            "   and trx.organization.id in (:orgIds)" +
+            "   and trx.product.id = :productId" +
+            "   and trx.movementDate > :mvntdate";
+    //@formatter:on
+
     if (wh != null) {
-      select.append("   and loc." + Locator.PROPERTY_WAREHOUSE + " = :warehouse");
+      //@formatter:off
+      hql +=
+            "   and loc.warehouse = :warehouse";
+    //@formatter:on
     }
+
     Query<Date> qryMinDate = OBDal.getInstance()
         .getSession()
-        .createQuery(select.toString(), Date.class);
-    qryMinDate.setParameterList("orgs", orgs);
-    qryMinDate.setParameter("product", product);
-    qryMinDate.setParameter("mvntdate", refDate);
+        .createQuery(hql, Date.class)
+        .setParameterList("orgIds", orgs)
+        .setParameter("productId", product.getId())
+        .setParameter("mvntdate", refDate);
+
     if (wh != null) {
       qryMinDate.setParameter("warehouse", wh);
     }
@@ -1169,31 +1292,41 @@ public class CostAdjustmentUtils {
 
     // Get the last transaction process date of transactions with movement date equal or before the
     // given date and a transaction process date before the previously calculated min date.
-    select = new StringBuffer();
-    select.append(
-        " select max(trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + ") as date");
-    select.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
+    //@formatter:off
+    String hqlSelect =
+            "select max(trx.transactionProcessDate) as date" +
+            "  from MaterialMgmtMaterialTransaction as trx";
+    //@formatter:on
     if (wh != null) {
-      select.append("    join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as loc");
+      //@formatter:off
+      hqlSelect +=
+            "    join trx.storageBin as loc";
+      //@formatter:on
     }
-    select.append(" where trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
-    select.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
-    select.append("   and trx." + MaterialTransaction.PROPERTY_PRODUCT + " = :product");
-    select.append("   and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " <= :mvntdate");
-    select.append(
-        "   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " < :trxdate");
+    //@formatter:off
+    hqlSelect +=
+            " where trx.isCostCalculated = true" +
+            "   and trx.organization.id in (:orgIds)" +
+            "   and trx.product.id = :productId" +
+            "   and trx.movementDate <= :mvntdate" +
+            "   and trx.transactionProcessDate < :trxdate";
+    //@formatter:on
     if (wh != null) {
-      select.append("   and loc." + Locator.PROPERTY_WAREHOUSE + " = :warehouse");
+      //@formatter:off
+      hqlSelect +=
+            "   and loc.warehouse.id = :warehouseId";
+      //@formatter:on
     }
-    Query<Date> qryMaxDate = OBDal.getInstance()
+    final Query<Date> qryMaxDate = OBDal.getInstance()
         .getSession()
-        .createQuery(select.toString(), Date.class);
-    qryMaxDate.setParameterList("orgs", orgs);
-    qryMaxDate.setParameter("product", product);
-    qryMaxDate.setParameter("mvntdate", refDate);
-    qryMaxDate.setParameter("trxdate", minNextDate);
+        .createQuery(hqlSelect, Date.class)
+        .setParameterList("orgIds", orgs)
+        .setParameter("productId", product.getId())
+        .setParameter("mvntdate", refDate)
+        .setParameter("trxdate", minNextDate);
+
     if (wh != null) {
-      qryMaxDate.setParameter("warehouse", wh);
+      qryMaxDate.setParameter("warehouseId", wh.getId());
     }
 
     return qryMaxDate.uniqueResult();
@@ -1202,8 +1335,8 @@ public class CostAdjustmentUtils {
   /**
    * Returns the priority of the given movementType.
    */
-  public static long getTrxTypePrio(String mvmntType) {
-    OBCriteria<org.openbravo.model.ad.domain.List> crList = OBDal.getInstance()
+  public static long getTrxTypePrio(final String mvmntType) {
+    final OBCriteria<org.openbravo.model.ad.domain.List> crList = OBDal.getInstance()
         .createCriteria(org.openbravo.model.ad.domain.List.class);
     crList.createAlias(propADListReference, "ref");
     crList.add(Restrictions.eq("ref.id", MovementTypeRefID));
