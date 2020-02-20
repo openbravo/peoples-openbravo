@@ -275,7 +275,12 @@
         });
         adjustedTax.amount = OB.DEC.add(adjustedTax.amount, adjustment);
         taxes
-          .filter(childTax => childTax.tax.taxBase === adjustedTax.tax.id)
+          .filter(
+            childTax =>
+              childTax.tax.id !== adjustedTax.tax.id &&
+              (childTax.tax.cascade ||
+                childTax.tax.taxBase === adjustedTax.tax.id)
+          )
           .map(childTax => {
             const updatedChildTax = childTax;
             updatedChildTax.base = OB.DEC.add(childTax.base, adjustment);
