@@ -156,6 +156,9 @@
     const sortByLineno = (rule1, rule2) => {
       return rule1.lineNo - rule2.lineNo;
     };
+    const sortByCascade = (rule1, rule2) => {
+      return rule1.cascade - rule2.cascade;
+    };
     const sortByTaxBase = (rule1, rule2) => {
       const checkTaxBase = rule => {
         return rule.taxBase;
@@ -208,7 +211,9 @@
       )
       .sort(
         (rule1, rule2) =>
-          sortByLineno(rule1, rule2) || sortByTaxBase(rule1, rule2)
+          sortByLineno(rule1, rule2) ||
+          sortByCascade(rule1, rule2) ||
+          sortByTaxBase(rule1, rule2)
       );
   };
 })();
