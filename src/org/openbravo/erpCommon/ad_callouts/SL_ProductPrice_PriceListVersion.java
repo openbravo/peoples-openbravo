@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2012-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,12 +21,10 @@ package org.openbravo.erpCommon.ad_callouts;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.query.Query;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.Role;
-import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.pricing.pricelist.PriceListVersion;
 
 /* Replaced by {@link org.openbravo.event.ProductPriceObserver.ProductPriceObserver},
@@ -38,7 +36,7 @@ import org.openbravo.model.pricing.pricelist.PriceListVersion;
 public class SL_ProductPrice_PriceListVersion extends SimpleCallout {
 
   @Override
-  protected void execute(CalloutInfo info) throws ServletException {
+  protected void execute(final CalloutInfo info) throws ServletException {
 
     String strChanged = info.getLastFieldChanged();
     if (log4j.isDebugEnabled()) {
@@ -46,34 +44,38 @@ public class SL_ProductPrice_PriceListVersion extends SimpleCallout {
     }
 
     // Parameters
-    String strPriceListV = info.getStringParameter("inpmPricelistVersionId", IsIDFilter.instance);
-    String strOrg = info.getStringParameter("inpadOrgId", IsIDFilter.instance);
+    final String strPriceListV = info.getStringParameter("inpmPricelistVersionId",
+        IsIDFilter.instance);
+    final String strOrg = info.getStringParameter("inpadOrgId", IsIDFilter.instance);
 
     // If the role has access to the Price List Version Organization, we set this organization to
     // the record.
-    PriceListVersion plv = OBDal.getInstance().get(PriceListVersion.class, strPriceListV);
+    final PriceListVersion plv = OBDal.getInstance().get(PriceListVersion.class, strPriceListV);
     final String plvOrgId = plv.getOrganization().getId();
-    Role role = OBDal.getInstance().get(Role.class, info.vars.getRole());
+    final Role role = OBDal.getInstance().get(Role.class, info.vars.getRole());
     boolean hasAccessTo = hasRoleOrganizationAccess(role.getId(), plvOrgId)
         || (StringUtils.contains(role.getUserLevel(), "C") && StringUtils.equals(plvOrgId, "0"));
     info.addResult("inpadOrgId", ((hasAccessTo) ? plvOrgId : strOrg));
   }
 
-  private boolean hasRoleOrganizationAccess(String roleId, String orgId) {
+  private boolean hasRoleOrganizationAccess(final String roleId, final String orgId) {
     try {
       OBContext.setAdminMode(false);
-      StringBuffer hqlString = new StringBuffer();
-      hqlString.append(" select " + RoleOrganization.PROPERTY_ORGANIZATION + ".id");
-      hqlString.append(" from " + RoleOrganization.ENTITY_NAME);
-      hqlString.append(" where " + RoleOrganization.PROPERTY_ROLE + ".id = :roleId");
-      hqlString.append(" and " + RoleOrganization.PROPERTY_ORGANIZATION + ".id = :orgId");
-      Query<String> query = OBDal.getInstance()
+      //@formatter:off
+      final String hql =
+                    "select organization.id" +
+                    "  from ADRoleOrganization" +
+                    " where role.id = :roleId" +
+                    "   and organization.id = :orgId";
+      //@formatter:on
+
+      return OBDal.getInstance()
           .getSession()
-          .createQuery(hqlString.toString(), String.class);
-      query.setParameter("roleId", roleId);
-      query.setParameter("orgId", orgId);
-      query.setMaxResults(1);
-      return query.uniqueResult() != null;
+          .createQuery(hql, String.class)
+          .setParameter("roleId", roleId)
+          .setParameter("orgId", orgId)
+          .setMaxResults(1)
+          .uniqueResult() != null;
     } finally {
       OBContext.restorePreviousMode();
     }
