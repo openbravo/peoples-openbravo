@@ -586,20 +586,6 @@
         }
       });
 
-      // move terminal log model to the end of models to sync since has less priority
-      var i,
-        indexTerminalLogModel = -1;
-      for (i = 0; i < this.get('dataSyncModels').length; i++) {
-        if (this.get('dataSyncModels')[i].name === 'OBMOBC_TerminalLog') {
-          indexTerminalLogModel = i;
-        }
-      }
-      if (indexTerminalLogModel !== -1) {
-        this.get('dataSyncModels').push(
-          this.get('dataSyncModels').splice(indexTerminalLogModel, 1)[0]
-        );
-      }
-
       this.on('ready', function() {
         OB.debug("next process: 'retail.pointofsale' window");
         if (this.get('terminal').currencyFormat) {
@@ -960,6 +946,7 @@
               OB.MobileApp.model.off('change:isLoggingIn', null, this);
               this.runSyncProcess(function() {
                 OB.UTIL.sendLastTerminalStatusValues();
+                OB.App.SynchronizationBuffer.start();
               });
             }
           },
@@ -970,6 +957,7 @@
         //but we will attempt to send all pending orders automatically
         this.runSyncProcess(function() {
           OB.UTIL.sendLastTerminalStatusValues();
+          OB.App.SynchronizationBuffer.start();
         });
       }
     },
