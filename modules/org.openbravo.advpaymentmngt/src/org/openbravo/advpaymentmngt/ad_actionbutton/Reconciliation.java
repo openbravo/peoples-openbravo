@@ -294,9 +294,9 @@ public class Reconciliation extends HttpSecureAppServlet {
         // Do no create a difference transaction if the amount is 0.00
         // If transaction is created with amount 0, a constratint is violated
         if (bdGlItemDiff.compareTo(BigDecimal.ZERO) != 0) {
-          FIN_FinaccTransaction finTrxDiff = createTransaction(account, BP_WITHDRAWAL,
-              reconciliation.getTransactionDate(), account.getAprmGlitemDiff(), bdGlItemDiff,
-              lineNoUtil, null, "GL Item: Differences", reconciliation);
+          createTransaction(account, BP_WITHDRAWAL, reconciliation.getTransactionDate(),
+              account.getAprmGlitemDiff(), bdGlItemDiff, lineNoUtil, null, "GL Item: Differences",
+              reconciliation);
         }
 
         for (APRM_FinaccTransactionV finacctrxv : reconciliation.getAPRMFinaccTransactionVList()) {
