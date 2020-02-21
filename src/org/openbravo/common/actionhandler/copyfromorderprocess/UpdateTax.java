@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -47,6 +47,8 @@ import org.openbravo.service.db.DalConnectionProvider;
 @Dependent
 @Qualifier(CopyFromOrdersProcessImplementationInterface.COPY_FROM_ORDER_PROCESS_HOOK_QUALIFIER)
 class UpdateTax implements CopyFromOrdersProcessImplementationInterface {
+  private static final String ALTERNATE_TAX_BASE_AMOUNT_WITH_TAXAMOUNT = "TBATAX";
+  private static final String ALTERNATE_TAX_BASE_AMOUNT = "TBA";
   private static final Logger log = LogManager.getLogger();
 
   @Override
@@ -65,6 +67,14 @@ class UpdateTax implements CopyFromOrdersProcessImplementationInterface {
     TaxRate tax = OBDal.getInstance()
         .getProxy(TaxRate.class, getCurrentTaxId(newOrderLine.getProduct(), processingOrder));
     newOrderLine.setTax(tax);
+    if (hasAlternateTaxAmount(tax) && hasAlternateTaxAmount(orderLine.getTax())) {
+      newOrderLine.setTaxableAmount(orderLine.getTaxableAmount());
+    }
+  }
+
+  private boolean hasAlternateTaxAmount(final TaxRate tax) {
+    return tax.getBaseAmount().equals(ALTERNATE_TAX_BASE_AMOUNT)
+        || tax.getBaseAmount().equals(ALTERNATE_TAX_BASE_AMOUNT_WITH_TAXAMOUNT);
   }
 
   /**
