@@ -4383,7 +4383,9 @@
         const productBOM = await OB.App.MasterdataModels.ProductBOM.find(
           new OB.App.Class.Criteria().criterion('product', p.id).build()
         );
-        p.set('productBOM', productBOM);
+        if (productBOM.length > 0) {
+          p.set('productBOM', productBOM);
+        }
       };
 
       addProdCharsToProduct = function(productWithChars, addProdCharCallback) {
