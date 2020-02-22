@@ -357,7 +357,7 @@
                       '[receipt.closed] Transaction success. ReceiptId: ' +
                         frozenReceipt.get('id')
                     );
-                    OB.info(
+                    OB.debug(
                       'Ticket closed: ',
                       frozenReceipt
                         .get('json')
