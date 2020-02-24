@@ -94,7 +94,6 @@ public class TaxRate extends MasterDataProcessHQLQuery {
     //@formatter:off
     String hql = " select " + ModelExtensionUtils.getPropertyExtensions(extensions).getHqlSelect()
         + " from FinancialMgmtTaxRate as tr"
-        + " left join tr.parentTaxRate as ptr"
         + " where tr.$readableSimpleCriteria"
         + " and tr.$readableSimpleClientCriteria"
         + " and tr.$naturalOrgCriteria"

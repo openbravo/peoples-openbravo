@@ -29,38 +29,29 @@ public class TaxRateProperties extends ModelExtension {
     list.add(new HQLProperty("tr.summaryLevel", "summaryLevel"));
     list.add(new HQLProperty("tr.rate", "rate"));
     list.add(new HQLProperty("tr.parentTaxRate.id", "parentTaxRate"));
+    list.add(new HQLProperty("tr.validFromDate", "validFromDate"));
+    list.add(new HQLProperty("tr.taxCategory.id", "taxCategory"));
+    list.add(new HQLProperty("tr.businessPartnerTaxCategory.id", "businessPartnerTaxCategory"));
+    list.add(new HQLProperty("tr.salesPurchaseType", "salesPurchaseType"));
+    list.add(new HQLProperty("tr.docTaxAmount", "docTaxAmount"));
+    list.add(new HQLProperty("tr.country.id", "country"));
+    list.add(new HQLProperty("tr.region.id", "region"));
+    list.add(new HQLProperty("tr.destinationCountry.id", "destinationCountry"));
+    list.add(new HQLProperty("tr.destinationRegion.id", "destinationRegion"));
     list.add(new HQLProperty("tr.lineNo", "lineNo"));
     list.add(new HQLProperty("tr.cascade", "cascade"));
     list.add(new HQLProperty("tr.baseAmount", "baseAmount"));
     list.add(new HQLProperty("tr.taxBase.id", "taxBase"));
+    list.add(new HQLProperty("tr.default", "default"));
+    list.add(new HQLProperty("tr.taxExempt", "taxExempt"));
+    list.add(new HQLProperty("tr.withholdingTax", "withholdingTax"));
+    list.add(new HQLProperty("tr.notTaxable", "notTaxable"));
+    list.add(new HQLProperty("tr.notTaxdeductable", "notTaxdeductable"));
+    list.add(new HQLProperty("tr.istaxdeductable", "istaxdeductable"));
     list.add(new HQLProperty("tr.originalRate", "originalRate"));
     list.add(new HQLProperty("tr.deductableRate", "deductableRate"));
-
-    list.add(new HQLProperty("coalesce(ptr.validFromDate, tr.validFromDate)", "validFromDate"));
-    list.add(new HQLProperty("coalesce(ptr.taxCategory.id, tr.taxCategory.id)", "taxCategory"));
-    list.add(new HQLProperty(
-        "coalesce(ptr.businessPartnerTaxCategory.id, tr.businessPartnerTaxCategory.id)",
-        "businessPartnerTaxCategory"));
-    list.add(new HQLProperty("coalesce(ptr.salesPurchaseType, tr.salesPurchaseType)",
-        "salesPurchaseType"));
-    list.add(new HQLProperty("coalesce(ptr.docTaxAmount, tr.docTaxAmount)", "docTaxAmount"));
-    list.add(new HQLProperty("coalesce(ptr.country.id, tr.country.id)", "country"));
-    list.add(new HQLProperty("coalesce(ptr.region.id, tr.region.id)", "region"));
-    list.add(new HQLProperty("coalesce(ptr.destinationCountry.id, tr.destinationCountry.id)",
-        "destinationCountry"));
-    list.add(new HQLProperty("coalesce(ptr.destinationRegion.id, tr.destinationRegion.id)",
-        "destinationRegion"));
-
-    list.add(new HQLProperty("coalesce(ptr.default, tr.default)", "default"));
-    list.add(new HQLProperty("coalesce(ptr.taxExempt, tr.taxExempt)", "taxExempt"));
-    list.add(new HQLProperty("coalesce(ptr.withholdingTax, tr.withholdingTax)", "withholdingTax"));
-    list.add(new HQLProperty("coalesce(ptr.notTaxable, tr.notTaxable)", "notTaxable"));
-    list.add(
-        new HQLProperty("coalesce(ptr.notTaxdeductable, tr.notTaxdeductable)", "notTaxdeductable"));
-    list.add(
-        new HQLProperty("coalesce(ptr.istaxdeductable, tr.istaxdeductable)", "istaxdeductable"));
-    list.add(new HQLProperty("coalesce(ptr.noVAT, tr.noVAT)", "noVAT"));
-    list.add(new HQLProperty("coalesce(ptr.isCashVAT, tr.isCashVAT)", "isCashVAT"));
+    list.add(new HQLProperty("tr.noVAT", "noVAT"));
+    list.add(new HQLProperty("tr.isCashVAT", "isCashVAT"));
 
     return list;
   }
