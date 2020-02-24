@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,15 +25,12 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.codec.binary.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.query.Query;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
@@ -583,26 +580,32 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
    * @throws OBException
    *           If more than one amortization line exists for the given period.
    */
-  private AmortizationLine getAmortizationLine(Asset asset, Date startDate, Date endDate)
-      throws OBException {
-    StringBuilder whereClause = new StringBuilder();
-    final Map<String, Object> parameters = new HashMap<>();
-    whereClause.append(" as aml join aml.amortization as am ");
-    whereClause.append(" where aml.asset.id = :assetId ");
+  private AmortizationLine getAmortizationLine(Asset asset, Date startDate, Date endDate) {
+    //@formatter:off
+    String hql =
+            "as aml join aml.amortization as am" +
+            " where aml.asset.id = :assetId";
+    //@formatter:on
     if (startDate != null) {
-      whereClause.append("       and am.startingDate = :startDate");
+      //@formatter:off
+      hql += 
+            "   and am.startingDate = :startDate";
+      //@formatter:on
     }
-    whereClause.append("       and am.endingDate = :endDate");
+    //@formatter:off
+    hql +=
+            "   and am.endingDate = :endDate";
+    //@formatter:on
+
     final OBQuery<AmortizationLine> obq = OBDal.getInstance()
-        .createQuery(AmortizationLine.class, whereClause.toString());
-    obq.setFilterOnReadableOrganization(false);
-    parameters.put("assetId", asset.getId());
+        .createQuery(AmortizationLine.class, hql)
+        .setFilterOnReadableOrganization(false)
+        .setNamedParameter("assetId", asset.getId());
     if (startDate != null) {
-      parameters.put("startDate", startDate);
+      obq.setNamedParameter("startDate", startDate);
     }
-    parameters.put("endDate", endDate);
-    obq.setNamedParameters(parameters);
-    List<AmortizationLine> amortizationLineList = obq.list();
+    obq.setNamedParameter("endDate", endDate);
+    final List<AmortizationLine> amortizationLineList = obq.list();
     if (amortizationLineList.isEmpty()) {
       return null;
     } else if (amortizationLineList.size() > 1) {
@@ -750,12 +753,18 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
    *         is no amortization line related to the given asset.
    */
   private Long getMaxSeqNoAsset(Asset asset) {
-    StringBuilder hql = new StringBuilder();
-    hql.append(" select coalesce(max(al.sEQNoAsset), 0) as maxSeqNoAsset ");
-    hql.append(" from FinancialMgmtAmortizationLine as al where al.asset.id = :assetId");
-    Query<Long> query = OBDal.getInstance().getSession().createQuery(hql.toString(), Long.class);
-    query.setParameter("assetId", asset.getId());
-    Long maxSeqNoAsset = query.uniqueResult();
+    //@formatter:off
+    final String hql =
+                  " select coalesce(max(al.sEQNoAsset), 0) as maxSeqNoAsset " +
+                  "   from FinancialMgmtAmortizationLine as al " +
+                  "  where al.asset.id = :assetId";
+    //@formatter:on
+
+    final Long maxSeqNoAsset = OBDal.getInstance()
+        .getSession()
+        .createQuery(hql, Long.class)
+        .setParameter("assetId", asset.getId())
+        .uniqueResult();
     if (maxSeqNoAsset != null) {
       return maxSeqNoAsset;
     }
@@ -771,13 +780,17 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
    *         0 if there is no amortization line related to the given amortization.
    */
   private Long getMaxLineNo(Amortization amortization) {
-    StringBuilder hql = new StringBuilder();
-    hql.append(" select coalesce(max(al.lineNo), 0) as maxSeqNoAsset ");
-    hql.append(
-        " from FinancialMgmtAmortizationLine as al where al.amortization.id = :amortizationId");
-    Query<Long> query = OBDal.getInstance().getSession().createQuery(hql.toString(), Long.class);
-    query.setParameter("amortizationId", amortization.getId());
-    Long maxSeqNoAsset = query.uniqueResult();
+    //@formatter:off
+    final String hql =
+                  "select coalesce(max(al.lineNo), 0) as maxSeqNoAsset " +
+                  "  from FinancialMgmtAmortizationLine as al" +
+                  " where al.amortization.id = :amortizationId";
+    //@formatter:on
+    final Long maxSeqNoAsset = OBDal.getInstance()
+        .getSession()
+        .createQuery(hql, Long.class)
+        .setParameter("amortizationId", amortization.getId())
+        .uniqueResult();
     if (maxSeqNoAsset != null) {
       return maxSeqNoAsset;
     }
