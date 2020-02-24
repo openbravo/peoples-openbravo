@@ -670,6 +670,10 @@
           gross = line.get('gross'),
           totalDiscount = 0,
           grossListPrice = line.get('grossListPrice') || line.get('priceList'),
+          creationPriceList =
+            line.get('creationListPrice') ||
+            line.get('grossListPrice') ||
+            line.get('priceList'),
           grossUnitPrice,
           discountPercentage,
           base;
@@ -688,11 +692,11 @@
           if (OB.DEC.compare(grossListPrice) === 0) {
             discountPercentage = OB.DEC.Zero;
           } else {
-            discountPercentage = OB.DEC.toBigDecimal(grossListPrice)
+            discountPercentage = OB.DEC.toBigDecimal(creationPriceList)
               .subtract(grossUnitPrice)
               .multiply(new BigDecimal('100'))
               .divide(
-                OB.DEC.toBigDecimal(grossListPrice),
+                OB.DEC.toBigDecimal(creationPriceList),
                 2,
                 BigDecimal.prototype.ROUND_HALF_UP
               );
@@ -10504,6 +10508,15 @@
                       : null,
                     lineGrossAmount: iter.lineGrossAmount
                   });
+
+                  if (!order.get('isQuotation')) {
+                    newline.set(
+                      'creationListPrice',
+                      iter.priceIncludesTax
+                        ? iter.grossListPrice
+                        : iter.listPrice
+                    );
+                  }
 
                   // copy verbatim not owned properties -> modular properties.
                   _.each(iter, function(value, key) {
