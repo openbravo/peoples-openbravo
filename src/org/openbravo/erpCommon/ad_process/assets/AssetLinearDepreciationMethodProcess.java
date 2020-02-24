@@ -69,7 +69,7 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
   private static final MathContext mc = new MathContext(32, RoundingMode.HALF_UP);
 
   @Override
-  public void doExecute(ProcessBundle bundle) throws Exception {
+  public void doExecute(final ProcessBundle bundle) throws Exception {
     OBError msg = new OBError();
     try {
       final String strAssetId = (String) bundle.getParams().get("A_Asset_ID");
@@ -81,7 +81,7 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
       log4j.error("Exception found in AssetLinearDepreciationMethodProcess process: ", e);
 
       Throwable ex = DbUtility.getUnderlyingSQLException(e);
-      String message = OBMessageUtils.translateError(ex.getMessage()).getMessage();
+      final String message = OBMessageUtils.translateError(ex.getMessage()).getMessage();
       msg.setType("Error");
       msg.setTitle(OBMessageUtils.messageBD("Error"));
       msg.setMessage(message);
@@ -91,8 +91,8 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
     }
   }
 
-  public OBError generateAmortizationPlan(Asset asset) throws Exception {
-    OBError msg = new OBError();
+  public OBError generateAmortizationPlan(final Asset asset) {
+    final OBError msg = new OBError();
     msg.setType("Success");
     msg.setTitle(OBMessageUtils.messageBD("Success"));
 
@@ -107,7 +107,7 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
 
     log4j.debug("A_ASSET_POST: " + asset.getName() + " - " + asset.getDocumentNo());
 
-    Calendar calStart = Calendar.getInstance();
+    final Calendar calStart = Calendar.getInstance();
     calStart.setTime(startDate);
     calStart.set(Calendar.HOUR, 0);
     calStart.set(Calendar.MINUTE, 0);
@@ -115,34 +115,35 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
     startDate = calStart.getTime();
 
     // End date is calculated based on depreciation type
-    Calendar calRealEnd = Calendar.getInstance();
+    final Calendar calRealEnd = Calendar.getInstance();
     calRealEnd.setTime(startDate);
-    String depreciationType = asset.getDepreciationType(); // Linear
-    String calculateType = asset.getCalculateType(); // Time or Percentage
-    String amortizationFrequency = asset.getAmortize(); // Monthly or Yearly
-    BigDecimal uselifeMonths = asset.getUsableLifeMonths() == null ? BigDecimal.ZERO
+    final String depreciationType = asset.getDepreciationType(); // Linear
+    final String calculateType = asset.getCalculateType(); // Time or Percentage
+    final String amortizationFrequency = asset.getAmortize(); // Monthly or Yearly
+    final BigDecimal uselifeMonths = asset.getUsableLifeMonths() == null ? BigDecimal.ZERO
         : new BigDecimal(asset.getUsableLifeMonths());
-    boolean is30DayMonth = asset.isEveryMonthIs30Days();
-    boolean is365DayYear = asset.isEveryMonthIs30Days();
-    BigDecimal uselifeYears = asset.getUsableLifeYears() == null ? BigDecimal.ZERO
+    final boolean is30DayMonth = asset.isEveryMonthIs30Days();
+    final boolean is365DayYear = asset.isEveryMonthIs30Days();
+    final BigDecimal uselifeYears = asset.getUsableLifeYears() == null ? BigDecimal.ZERO
         : new BigDecimal(asset.getUsableLifeYears());
-    BigDecimal annualDepreciation = asset.getAnnualDepreciation() == null ? BigDecimal.ZERO
+    final BigDecimal annualDepreciation = asset.getAnnualDepreciation() == null ? BigDecimal.ZERO
         : asset.getAnnualDepreciation();
-    BigDecimal depreciationAmount = asset.getDepreciationAmt() == null ? BigDecimal.ZERO
+    final BigDecimal depreciationAmount = asset.getDepreciationAmt() == null ? BigDecimal.ZERO
         : asset.getDepreciationAmt();
-    BigDecimal previouslyDepreciatedAmount = asset.getPreviouslyDepreciatedAmt() == null
+    final BigDecimal previouslyDepreciatedAmount = asset.getPreviouslyDepreciatedAmt() == null
         ? BigDecimal.ZERO
         : asset.getPreviouslyDepreciatedAmt();
 
     BigDecimal totalPeriods = BigDecimal.ZERO; // Total amortization lines (records in the tab)
     BigDecimal amountPerPeriod = BigDecimal.ZERO; // Amount to depreciate per period (month or year)
 
-    List<AmortizationLine> amortizationLineList = asset.getFinancialMgmtAmortizationLineList();
+    final List<AmortizationLine> amortizationLineList = asset
+        .getFinancialMgmtAmortizationLineList();
 
     // Remove unprocessed Amortization and its line when recalculating
-    List<AmortizationLine> amortizationLineListToRemove = new ArrayList<AmortizationLine>();
+    final List<AmortizationLine> amortizationLineListToRemove = new ArrayList<>();
     for (AmortizationLine al : amortizationLineList) {
-      Amortization amortization = OBDal.getInstance()
+      final Amortization amortization = OBDal.getInstance()
           .get(Amortization.class, al.getAmortization().getId());
       if (StringUtils.equals(amortization.getProcessed(), "N")) {
         amortizationLineListToRemove.add(al);
@@ -152,15 +153,15 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
     }
     asset.getFinancialMgmtAmortizationLineList().removeAll(amortizationLineListToRemove);
     OBDal.getInstance().flush();
-    BigDecimal alreadyAmortizedPeriods = new BigDecimal(amortizationLineList.size());
+    final BigDecimal alreadyAmortizedPeriods = new BigDecimal(amortizationLineList.size());
     // When recalculating the amortization the asset can be partially amortized
     BigDecimal alreadyAmortizedAmount = BigDecimal.ZERO;
     Calendar maxAmortizationDateCal = (Calendar) calStart.clone();
     for (AmortizationLine al : amortizationLineList) {
       alreadyAmortizedAmount = alreadyAmortizedAmount.add(al.getAmortizationAmount());
-      Date amortizationEndDate = al.getAmortization().getEndingDate();
+      final Date amortizationEndDate = al.getAmortization().getEndingDate();
       if (amortizationEndDate.compareTo(maxAmortizationDateCal.getTime()) > 0) {
-        Calendar cal = Calendar.getInstance();
+        final Calendar cal = Calendar.getInstance();
         cal.setTime(amortizationEndDate);
         // Add one because you want to new the next day
         cal.add(Calendar.DATE, 1);
@@ -169,9 +170,9 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
     }
 
     // Total amount to be depreciated (including already depreciated amount)
-    BigDecimal amount = depreciationAmount.subtract(previouslyDepreciatedAmount);
+    final BigDecimal amount = depreciationAmount.subtract(previouslyDepreciatedAmount);
     // Pending amount to be depreciated
-    BigDecimal pendingAmountToAmortize = amount.subtract(alreadyAmortizedAmount);
+    final BigDecimal pendingAmountToAmortize = amount.subtract(alreadyAmortizedAmount);
     BigDecimal totalDays = BigDecimal.ZERO;
 
     boolean isMonthly = false;
@@ -407,7 +408,7 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
 
         if (amortizationLine != null) {
           // Recalculate percentage because the amount could have been changed
-          BigDecimal proportionaldPercentage = amortizationLine.getAmortizationAmount()
+          final BigDecimal proportionaldPercentage = amortizationLine.getAmortizationAmount()
               .multiply(HUNDRED)
               .divide(amount, stdPrecision, RoundingMode.HALF_UP);
           totalizedAmount = totalizedAmount.add(amortizationLine.getAmortizationAmount());
@@ -415,7 +416,7 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
           if (amortizationLine.getAmortizationPercentage() != null
               && amortizationLine.getAmortizationPercentage()
                   .compareTo(proportionaldPercentage) != 0) {
-            Amortization amortization = amortizationLine.getAmortization();
+            final Amortization amortization = amortizationLine.getAmortization();
             boolean isAmortizationProcessed = false;
             if (amortization != null) {
               isAmortizationProcessed = "Y".equals(amortization.getProcessed());
@@ -461,7 +462,7 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
           proportionalAmount = proportionalAmount.setScale(stdPrecision, RoundingMode.HALF_UP);
 
           // Last period. Adjust for avoiding rounding issues.
-          if (((!isPercentage && new BigDecimal(contPeriods).compareTo(totalPeriods) == 0))
+          if ((!isPercentage && new BigDecimal(contPeriods).compareTo(totalPeriods) == 0)
               || totalizedAmount.add(proportionalAmount).compareTo(amount) > 0) {
             proportionalAmount = amount.subtract(totalizedAmount);
             proportionaldPercentage = HUNDRED.subtract(totalizedPercentage);
@@ -498,13 +499,12 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
             }
 
             // Calculate amortization line number because the amortization can already exists.
-            Long lineNo = getMaxLineNo(amortization) + 10L;
+            final Long lineNo = getMaxLineNo(amortization) + 10L;
 
             // Create the amortization line
             amortizationLine = createNewAmortizationLine(amortization, lineNo, seqNoAsset, asset,
                 proportionaldPercentage, proportionalAmount, asset.getCurrency(),
-                asset.getProject(), null /* campaign */, null /* activity */, null /* user1 */,
-                null /* user2 */, null /* costcenter */);
+                asset.getProject(), null /* user1 */, null /* user2 */, null /* costcenter */);
 
             seqNoAsset += 10L;
           }
@@ -539,23 +539,24 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
    *          End date.
    * @return amortization period matching given start/end date, organization and project.
    */
-  private Amortization getAmortization(Organization org, Date startDate, Date endDate,
-      Project project) {
-    OBCriteria<Amortization> obc = OBDal.getInstance().createCriteria(Amortization.class);
-    obc.add(Restrictions.eq(Amortization.PROPERTY_ORGANIZATION, org));
+  private Amortization getAmortization(final Organization org, final Date startDate,
+      final Date endDate, final Project project) {
+    final OBCriteria<Amortization> obc = OBDal.getInstance()
+        .createCriteria(Amortization.class)
+        .add(Restrictions.eq(Amortization.PROPERTY_ORGANIZATION, org));
     if (startDate != null) {
       obc.add(Restrictions.eq(Amortization.PROPERTY_STARTINGDATE, startDate));
     }
-    obc.add(Restrictions.eq(Amortization.PROPERTY_ENDINGDATE, endDate));
-    obc.add(Restrictions.eq(Amortization.PROPERTY_PROCESSED, "N"));
+    obc.add(Restrictions.eq(Amortization.PROPERTY_ENDINGDATE, endDate))
+        .add(Restrictions.eq(Amortization.PROPERTY_PROCESSED, "N"));
     if (project != null) {
       obc.add(Restrictions.eq(Amortization.PROPERTY_PROJECT, project));
     } else {
       obc.add(Restrictions.isNull(Amortization.PROPERTY_PROJECT));
     }
     obc.setFilterOnReadableOrganization(false);
-    List<Amortization> amortizationList = obc.list();
-    if (amortizationList.size() == 0) {
+    final List<Amortization> amortizationList = obc.list();
+    if (amortizationList.isEmpty()) {
       return null;
     } else if (amortizationList.size() > 1) {
       throw new OBException("More than one amortization exist from "
@@ -580,7 +581,8 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
    * @throws OBException
    *           If more than one amortization line exists for the given period.
    */
-  private AmortizationLine getAmortizationLine(Asset asset, Date startDate, Date endDate) {
+  private AmortizationLine getAmortizationLine(final Asset asset, final Date startDate,
+      final Date endDate) {
     //@formatter:off
     String hql =
             "as aml join aml.amortization as am" +
@@ -620,10 +622,11 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
    * 
    * @return Amortization
    */
-  private Amortization createNewAmortization(Organization organization, String name,
-      String description, Date startDate, Date endDate, Currency currency, Project project,
-      Campaign campaign, ABCActivity activity, UserDimension1 user1, UserDimension2 user2) {
-    Amortization am = OBProvider.getInstance().get(Amortization.class);
+  private Amortization createNewAmortization(final Organization organization, final String name,
+      final String description, final Date startDate, final Date endDate, final Currency currency,
+      final Project project, final Campaign campaign, final ABCActivity activity,
+      final UserDimension1 user1, final UserDimension2 user2) {
+    final Amortization am = OBProvider.getInstance().get(Amortization.class);
     am.setOrganization(organization);
     am.setName(name);
     am.setDescription(description);
@@ -646,11 +649,12 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
    * 
    * @return Amortization line.
    */
-  private AmortizationLine createNewAmortizationLine(Amortization amortization, Long lineNo,
-      Long assetSeqNo, Asset asset, BigDecimal amortizationPercentage,
-      BigDecimal amortizationAmount, Currency currency, Project project, Campaign campaign,
-      ABCActivity activity, UserDimension1 user1, UserDimension2 user2, Costcenter costCenter) {
-    AmortizationLine aml = OBProvider.getInstance().get(AmortizationLine.class);
+  private AmortizationLine createNewAmortizationLine(final Amortization amortization,
+      final Long lineNo, final Long assetSeqNo, final Asset asset,
+      final BigDecimal amortizationPercentage, final BigDecimal amortizationAmount,
+      final Currency currency, final Project project, final UserDimension1 user1,
+      final UserDimension2 user2, final Costcenter costCenter) {
+    final AmortizationLine aml = OBProvider.getInstance().get(AmortizationLine.class);
     aml.setOrganization(amortization.getOrganization());
     aml.setAmortization(amortization);
     aml.setLineNo(lineNo);
@@ -676,7 +680,7 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
    * 
    * @param startDate
    *          Start date.
-   * @param _endDate
+   * @param endDate
    *          End date.
    * @param isYearly
    *          Is yearly amortization.
@@ -685,11 +689,11 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
    * @return total days between given dates being the months of 30 days and years of 365 (no
    *         leap-years). The result can have decimals.
    */
-  private BigDecimal getDaysBetweenProportionalPeriods(Calendar startDate, Calendar _endDate,
-      boolean isYearly, boolean isMonthly) {
-    Calendar calAux = (Calendar) startDate.clone();
-    Calendar endDate = (Calendar) _endDate.clone();
-    endDate.add(Calendar.DATE, -1);
+  private BigDecimal getDaysBetweenProportionalPeriods(final Calendar startDate,
+      final Calendar endDate, final boolean isYearly, final boolean isMonthly) {
+    final Calendar calAux = (Calendar) startDate.clone();
+    final Calendar currentEndDate = (Calendar) endDate.clone();
+    currentEndDate.add(Calendar.DATE, -1);
     int currentYear = startDate.get(Calendar.YEAR);
     int currentMonth = startDate.get(Calendar.MONTH);
     int currentMonthDay = startDate.get(Calendar.DAY_OF_MONTH);
@@ -697,8 +701,8 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
     int lastDayOfMonth = startDate.getActualMaximum(Calendar.DAY_OF_MONTH);
     int lastDayOfYear = startDate.getActualMaximum(Calendar.DAY_OF_YEAR);
     BigDecimal totalDays = BigDecimal.ZERO;
-    boolean endOfRange = false;
-    for (; !calAux.after(endDate); calAux.add(Calendar.DATE, 1)) {
+    for (; !calAux.after(currentEndDate); calAux.add(Calendar.DATE, 1)) {
+      boolean endOfRange = false;
       if (currentYear != calAux.get(Calendar.YEAR)) {
         currentYear = calAux.get(Calendar.YEAR);
         lastDayOfYear = calAux.getActualMaximum(Calendar.DAY_OF_YEAR);
@@ -711,19 +715,9 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
       currentMonthDay = calAux.get(Calendar.DAY_OF_MONTH);
       currentYearDay = calAux.get(Calendar.DAY_OF_YEAR);
 
-      // Month
-      if (isMonthly && currentMonthDay == lastDayOfMonth) {
-        endOfRange = true;
-      }
-      // Year
-      if (isYearly && currentYearDay == lastDayOfYear) {
-        endOfRange = true;
-      }
-
-      // Last day of range (last iteration in the loop)
-      if (calAux.compareTo(endDate) == 0) {
-        endOfRange = true;
-      }
+      endOfRange = (isMonthly && currentMonthDay == lastDayOfMonth)
+          || (isYearly && currentYearDay == lastDayOfYear)
+          || (calAux.compareTo(currentEndDate) == 0);
 
       if (endOfRange) {
         BigDecimal proportionalDays = BigDecimal.ZERO;
@@ -737,7 +731,6 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
         }
 
         totalDays = totalDays.add(proportionalDays);
-        endOfRange = false;
       }
     }
 
@@ -752,7 +745,7 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
    * @return Max asset sequence number in amortization lines related to the given asset. 0 if there
    *         is no amortization line related to the given asset.
    */
-  private Long getMaxSeqNoAsset(Asset asset) {
+  private Long getMaxSeqNoAsset(final Asset asset) {
     //@formatter:off
     final String hql =
                   " select coalesce(max(al.sEQNoAsset), 0) as maxSeqNoAsset " +
@@ -779,7 +772,7 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
    * @return max asset sequence number in amortization lines that belong to the given amortization.
    *         0 if there is no amortization line related to the given amortization.
    */
-  private Long getMaxLineNo(Amortization amortization) {
+  private Long getMaxLineNo(final Amortization amortization) {
     //@formatter:off
     final String hql =
                   "select coalesce(max(al.lineNo), 0) as maxSeqNoAsset " +
