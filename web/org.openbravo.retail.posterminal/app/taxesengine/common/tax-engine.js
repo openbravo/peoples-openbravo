@@ -37,6 +37,9 @@
     const checkValidFromDate = rule => {
       return new Date(rule.validFromDate) <= new Date(ticket.date);
     };
+    const checkSummary = rule => {
+      return !rule.summaryLevel || rule.isBom;
+    };
     const checkIsCashVAT = rule => {
       return (
         equals(rule.isCashVAT, ticket.isCashVat) ||
@@ -51,7 +54,10 @@
     };
 
     return rules
-      .filter(rule => checkValidFromDate(rule) && checkIsCashVAT(rule))
+      .filter(
+        rule =>
+          checkValidFromDate(rule) && checkSummary(rule) && checkIsCashVAT(rule)
+      )
       .sort(
         (rule1, rule2) =>
           sortByDate(rule1, rule2) || sortByDefault(rule1, rule2)
