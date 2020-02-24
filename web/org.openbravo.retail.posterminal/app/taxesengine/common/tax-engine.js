@@ -67,15 +67,15 @@
   OB.Taxes.filterRulesByTicketLine = (ticket, line, rules) => {
     const checkCountry = rule => {
       return (
-        equals(rule.destinationCountry, ticket.country) ||
-        equals(rule.zoneDestinationCountry, ticket.country) ||
+        equals(rule.destinationCountry, line.country) ||
+        equals(rule.zoneDestinationCountry, line.country) ||
         (!rule.destinationCountry && !rule.zoneDestinationCountry)
       );
     };
     const checkRegion = rule => {
       return (
-        equals(rule.destinationRegion, ticket.region) ||
-        equals(rule.zoneDestinationRegion, ticket.region) ||
+        equals(rule.destinationRegion, line.region) ||
+        equals(rule.zoneDestinationRegion, line.region) ||
         (!rule.destinationRegion && !rule.zoneDestinationRegion)
       );
     };
@@ -105,8 +105,8 @@
     const sortByCountryTo = (rule1, rule2) => {
       const checkCountryTo = rule => {
         return (
-          equals(rule.destinationCountry, ticket.country) ||
-          equals(rule.zoneDestinationCountry, ticket.country)
+          equals(rule.destinationCountry, line.country) ||
+          equals(rule.zoneDestinationCountry, line.country)
         );
       };
       if (checkCountryTo(rule1) && !checkCountryTo(rule2)) {
@@ -132,8 +132,8 @@
     const sortByRegionTo = (rule1, rule2) => {
       const checkRegionTo = rule => {
         return (
-          equals(rule.destinationRegion, ticket.region) ||
-          equals(rule.zoneDestinationRegion, ticket.region)
+          equals(rule.destinationRegion, line.region) ||
+          equals(rule.zoneDestinationRegion, line.region)
         );
       };
       if (checkRegionTo(rule1) && !checkRegionTo(rule2)) {
@@ -192,21 +192,21 @@
       )
       .map(rule => {
         const updatedRule = rule;
-        updatedRule.country = equals(rule.country, ticket.country)
+        updatedRule.country = equals(rule.country, line.country)
           ? rule.country
           : rule.zoneCountry;
-        updatedRule.region = equals(rule.region, ticket.region)
+        updatedRule.region = equals(rule.region, line.region)
           ? rule.region
           : rule.zoneRegion;
         updatedRule.destinationCountry = equals(
           rule.destinationCountry,
-          ticket.country
+          line.country
         )
           ? rule.destinationCountry
           : rule.zoneDestinationCountry;
         updatedRule.destinationRegion = equals(
           rule.destinationRegion,
-          ticket.region
+          line.region
         )
           ? rule.destinationRegion
           : rule.zoneDestinationRegion;
