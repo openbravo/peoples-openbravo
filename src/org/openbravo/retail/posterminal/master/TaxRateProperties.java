@@ -30,7 +30,8 @@ public class TaxRateProperties extends ModelExtension {
     list.add(new HQLProperty("tr.rate", "rate"));
     list.add(new HQLProperty("tr.parentTaxRate.id", "parentTaxRate"));
     list.add(new HQLProperty("tr.validFromDate", "validFromDate"));
-    list.add(new HQLProperty("tr.taxCategory.id", "taxCategory"));
+    list.add(new HQLProperty("tc.id", "taxCategory"));
+    list.add(new HQLProperty("tc.asbom", "isBom"));
     list.add(new HQLProperty("tr.businessPartnerTaxCategory.id", "businessPartnerTaxCategory"));
     list.add(new HQLProperty("tr.salesPurchaseType", "salesPurchaseType"));
     list.add(new HQLProperty("tr.docTaxAmount", "docTaxAmount"));

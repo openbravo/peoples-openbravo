@@ -94,13 +94,14 @@ public class TaxRate extends MasterDataProcessHQLQuery {
     //@formatter:off
     String hql = " select " + ModelExtensionUtils.getPropertyExtensions(extensions).getHqlSelect()
         + " from FinancialMgmtTaxRate as tr"
+        + " join tr.taxCategory as tc"
         + " where tr.$readableSimpleCriteria"
         + " and tr.$readableSimpleClientCriteria"
         + " and tr.$naturalOrgCriteria"
         + " and tr.$incrementalUpdateCriteria"
         + " and tr.salesPurchaseType in ('S', 'B')"
         + " and (tr.summaryLevel = false"
-        + " or exists (select 1 from FinancialMgmtTaxCategory as tc where tr.taxCategory.id = tc.id and tc.asbom = true))";
+        + " or tc.asbom = true)";
     //@formatter:on
 
     if (fromCountry != null) {
