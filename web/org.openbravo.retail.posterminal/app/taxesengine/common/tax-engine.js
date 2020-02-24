@@ -65,6 +65,24 @@
   };
 
   OB.Taxes.filterRulesByTicketLine = (ticket, line, rules) => {
+    const joinRuleAndZone = rule => {
+      return rule.taxZones
+        ? rule.taxZones.map(zone => ({ ...zone, ...rule }))
+        : rule;
+    };
+    const groupRuleAndZone = (rulesAndZones, rule) => {
+      const updatedRule = rule;
+      delete updatedRule.taxRateId;
+      delete updatedRule.zoneCountry;
+      delete updatedRule.zoneRegion;
+      delete updatedRule.zoneDestinationCountry;
+      delete updatedRule.zoneDestinationRegion;
+      delete updatedRule.taxZones;
+
+      return rulesAndZones.includes(updatedRule)
+        ? rulesAndZones
+        : [...rulesAndZones, updatedRule];
+    };
     const checkCountry = rule => {
       return (
         equals(rule.destinationCountry, line.country) ||
@@ -144,6 +162,28 @@
       }
       return 0;
     };
+    const updateRuleLocation = rule => {
+      const updatedRule = rule;
+      updatedRule.country = equals(rule.country, line.country)
+        ? rule.country
+        : rule.zoneCountry;
+      updatedRule.region = equals(rule.region, line.region)
+        ? rule.region
+        : rule.zoneRegion;
+      updatedRule.destinationCountry = equals(
+        rule.destinationCountry,
+        line.country
+      )
+        ? rule.destinationCountry
+        : rule.zoneDestinationCountry;
+      updatedRule.destinationRegion = equals(
+        rule.destinationRegion,
+        line.region
+      )
+        ? rule.destinationRegion
+        : rule.zoneDestinationRegion;
+      return updatedRule;
+    };
     const checkLocationAndDate = (rule, rulesFilteredByLine) => {
       return (
         equals(
@@ -179,6 +219,7 @@
     };
 
     return rules
+      .flatMap(rule => joinRuleAndZone(rule))
       .filter(
         rule =>
           checkCountry(rule) && checkRegion(rule) && checkTaxCategory(rule)
@@ -190,30 +231,13 @@
           sortByCountryTo(rule1, rule2) ||
           sortByCountryFrom(rule1, rule2)
       )
-      .map(rule => {
-        const updatedRule = rule;
-        updatedRule.country = equals(rule.country, line.country)
-          ? rule.country
-          : rule.zoneCountry;
-        updatedRule.region = equals(rule.region, line.region)
-          ? rule.region
-          : rule.zoneRegion;
-        updatedRule.destinationCountry = equals(
-          rule.destinationCountry,
-          line.country
-        )
-          ? rule.destinationCountry
-          : rule.zoneDestinationCountry;
-        updatedRule.destinationRegion = equals(
-          rule.destinationRegion,
-          line.region
-        )
-          ? rule.destinationRegion
-          : rule.zoneDestinationRegion;
-        return updatedRule;
-      })
+      .map(rule => updateRuleLocation(rule))
       .filter((rule, index, rulesFilteredByLine) =>
         checkLocationAndDate(rule, rulesFilteredByLine)
+      )
+      .reduce(
+        (rulesAndZones, rule) => groupRuleAndZone(rulesAndZones, rule),
+        []
       )
       .sort(
         (rule1, rule2) =>

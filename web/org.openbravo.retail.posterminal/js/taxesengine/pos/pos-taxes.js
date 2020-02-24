@@ -155,7 +155,7 @@
 
     /**
      * Reads tax masterdata models from database and creates different caches to use them:
-     *   OB.Taxes.Pos.ruleImpls: array with the result of doing a left join between TaxRate and TaxZone models.
+     *   OB.Taxes.Pos.ruleImpls: array with TaxRate model including TaxZone information.
      *   OB.Taxes.Pos.taxCategory: array with TaxCategory model.
      *   OB.Taxes.Pos.taxCategoryBOM: array with TaxCategoryBOM model.
      * Tax masterdata models should be read from database only here. Wherever tax data is needed, any of these caches should be used.
@@ -192,13 +192,15 @@
       const taxZones = await OB.App.MasterdataModels.TaxZone.find(
         new OB.App.Class.Criteria().limit(10000).build()
       );
-      data.ruleImpls = taxRates.flatMap(taxRate =>
-        taxZones.some(taxZone => taxZone.taxRateId === taxRate.id)
-          ? taxZones
-              .filter(taxZone => taxZone.taxRateId === taxRate.id)
-              .map(taxZone => ({ ...taxZone, ...taxRate }))
-          : { ...taxRate }
+
+      const taxZonesByTaxRateId = OB.App.ArrayUtils.groupBy(
+        taxZones,
+        'taxRateId'
       );
+      data.ruleImpls = taxRates.map(taxRate => {
+        taxRate.taxZones = taxZonesByTaxRateId[taxRate.id];
+        return taxRate;
+      });
 
       // FIXME: order by default desc and by name asc
       data.taxCategory = await OB.App.MasterdataModels.TaxCategory.find(
