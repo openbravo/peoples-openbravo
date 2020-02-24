@@ -49,7 +49,7 @@
       const linesByParentTaxId = OB.Taxes.Tax.groupLinesByTax(lines);
       const headerTaxes = Object.values(linesByParentTaxId).flatMap(
         groupLines => {
-          const rules = groupLines[0].taxes.flatMap(lineTax => lineTax.tax);
+          const rules = groupLines[0].taxes.map(lineTax => lineTax.tax);
           if (rules[0].docTaxAmount !== 'D') {
             return OB.Taxes.Tax.calculateTaxesFromLinesTaxes(groupLines, rules);
           }

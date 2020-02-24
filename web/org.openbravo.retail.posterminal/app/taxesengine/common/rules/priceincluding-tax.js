@@ -106,6 +106,7 @@
           OB.DEC.Zero
         )
       );
+
       if (OB.DEC.compare(adjustment) !== 0) {
         const line = lines.reduce((line1, line2) => {
           return OB.DEC.abs(line1.netAmount) > OB.DEC.abs(line2.netAmount)
