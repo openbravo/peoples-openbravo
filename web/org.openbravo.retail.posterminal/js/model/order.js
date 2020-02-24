@@ -3191,12 +3191,6 @@
             deletedline.set('qty', 0);
             // Set prices as 0
             deletedline.set('gross', 0);
-            // Calulate Taxes
-            if (this.get('priceIncludesTax')) {
-              OB.DATA.LineTaxesIncPrice(this, deletedline);
-            } else {
-              OB.DATA.LineTaxesExcPrice(this, deletedline);
-            }
           }
           // Sets the tax if it has been deleted
           deletedline.set(
@@ -10969,9 +10963,10 @@
         }
       },
       loadCurrent: function(isNew) {
-        OB.App.State.TerminalLog.setContext({
-          context: this.current.get('documentNo')
-        });
+        OB.MobileApp.model.set(
+          'terminalLogContext',
+          this.current.get('documentNo')
+        );
         // Check if the current order to be loaded should be deleted
         if (this.current.get('obposIsDeleted') && this.current.get('id')) {
           var deletedOrderDocNo = this.current.get('documentNo');
