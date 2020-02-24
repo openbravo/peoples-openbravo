@@ -79,7 +79,9 @@
       delete updatedRule.zoneDestinationRegion;
       delete updatedRule.taxZones;
 
-      return rulesAndZones.includes(updatedRule)
+      return rulesAndZones.find(
+        ruleAndZone => ruleAndZone.id === updatedRule.id
+      )
         ? rulesAndZones
         : [...rulesAndZones, updatedRule];
     };
@@ -219,11 +221,9 @@
     };
 
     return rules
+      .filter(rule => checkTaxCategory(rule))
       .flatMap(rule => joinRuleAndZone(rule))
-      .filter(
-        rule =>
-          checkCountry(rule) && checkRegion(rule) && checkTaxCategory(rule)
-      )
+      .filter(rule => checkCountry(rule) && checkRegion(rule))
       .sort(
         (rule1, rule2) =>
           sortByRegionTo(rule1, rule2) ||
