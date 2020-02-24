@@ -206,21 +206,12 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "closecash/model/cashup-steps", "closecash/model/cashup-print",
         "closecash/model/cashup-model", "closecash/view/closecash", "closecash/view/closekeyboard",
         "closecash/view/closeinfo", "closecash/view/tabpendingreceipts",
-        "closecash/view/tabcashmaster", "closecash/view/tabcashpayments",
-        "closecash/view/tabcountcash", "closecash/view/tabcashtokeep",
-        "closecash/view/tabpostprintclose", "closecash/components/cashup-modals",
-        "closecash/components/approvalreason-modal",
+        "closecash/view/tabsafeboxlist", "closecash/view/tabcashmaster",
+        "closecash/view/tabcashpayments", "closecash/view/tabcountcash",
+        "closecash/view/tabcashtokeep", "closecash/view/tabpostprintclose",
+        "closecash/components/cashup-modals", "closecash/components/approvalreason-modal",
 
         "closecash/model/daycash",
-
-        // Count Safe Box window
-        "countsafebox/model/countsafebox-steps", "countsafebox/model/countsafebox-print",
-        "countsafebox/model/countsafebox-model", "countsafebox/view/countsafebox",
-        "countsafebox/view/countsafeboxkeyboard", "countsafebox/view/countsafeboxinfo",
-        "countsafebox/view/tabsafeboxlist", "countsafebox/view/tabcashpayments",
-        "countsafebox/view/tabcountcash", "countsafebox/view/tabcashtokeep",
-        "countsafebox/view/tabpostprintclose", "countsafebox/components/countsafebox-modals",
-        "countsafebox/components/countsafebox-approvalreason-modal",
 
         // Core resources
         "../../org.openbravo.client.application/js/utilities/ob-utilities-number",

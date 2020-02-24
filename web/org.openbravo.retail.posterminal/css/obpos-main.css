@@ -6292,6 +6292,49 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 
 /***********************   ***********************/
+/*             File: modalsafebox.js             */
+/*             Folder: js/components             */
+/***********************   ***********************/
+/*
+# Component: OB.UI.ModalSafeBox_buttonCheck
+# Inherits: OB.UI.ModalDialogButton
+*/
+.obUiModalSafeBoxButtonCheck {}
+
+
+/*
+# Component: OB.UI.ModalSafeBox_buttonSkip
+# Inherits: OB.UI.ModalDialogButton
+*/
+.obUiModalSafeBoxSkipButton {}
+
+
+/*
+# Component: OB.UI.ModalSafeBox
+# Inherits: OB.UI.Modal
+*/
+.obUiModalSafeBox {}
+
+.obUiModalSafeBox-body {}
+
+.obUiModalSafeBox-body-safeBoxInput {
+/* # Inherits: [enyo.Input] */
+  width: 100%;
+}
+
+.obUiModalSafeBox-footer {}
+
+.obUiModalSafeBox-footer-checkButton {
+/* # Inherits: [OB.UI.ModalSafeBox_buttonCheck] */
+}
+
+.obUiModalSafeBox-footer-skipButton {
+/* # Inherits: [OB.UI.ModalSafeBox_buttonSkip] */
+}
+
+
+
+/***********************   ***********************/
 /*        File: openRelatedReceiptsModal.js      */
 /*           Folder: js/components               */
 /***********************   ***********************/
@@ -7684,6 +7727,10 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-OBPOSModalAdvancedFilterOrders {
   /* Inherits: [OB.UI.ModalAdvancedFilterOrders] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-OBPOSModalSafeBox {
+  /* Inherits: [OB.UI.ModalSafeBox] */
 }
 
 .obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-OBPOSModalCrossStoreSelector {
