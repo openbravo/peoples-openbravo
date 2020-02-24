@@ -825,6 +825,11 @@ public class OrderLoader extends POSDataSynchronizationProcess
       if (lineNetAmount.compareTo(BigDecimal.ZERO) < 0) {
         orderline.setReturnline("Y");
       }
+      if (jsonOrderLine.has("isVerifiedReturn") && jsonOrderLine.getBoolean("isVerifiedReturn")
+          && !jsonOrderLine.getBoolean("priceIncludesTax")) {
+        orderline.setListPrice(BigDecimal.valueOf(jsonOrderLine.getDouble("creationListPrice"))
+            .setScale(pricePrecision, RoundingMode.HALF_UP));
+      }
 
       orderline.setDeliveredQuantity(jsonOrderLine.has("obposQtytodeliver")
           ? (BigDecimal.valueOf(jsonOrderLine.getDouble("obposQtytodeliver")).stripTrailingZeros())
