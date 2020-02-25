@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2012-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,7 +28,6 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.materialmgmt.ReservationUtils;
@@ -165,35 +164,37 @@ public class MRPPurchaseCreateReservations extends DalBaseProcess {
   }
 
   private ScrollableResults getPRLinesIncoming(PurchasingRun mrpPurchaseRun) {
-    StringBuffer where = new StringBuffer();
-    where.append(" where " + PurchasingRunLine.PROPERTY_PURCHASINGPLAN + ".id = :purchaserun");
-    where.append("   and " + PurchasingRunLine.PROPERTY_QUANTITY + " > 0");
-    where.append(" order by " + PurchasingRunLine.PROPERTY_PRODUCT + ","
-        + PurchasingRunLine.PROPERTY_PLANNEDDATE + ", CASE "
-        + PurchasingRunLine.PROPERTY_TRANSACTIONTYPE
-        + " WHEN 'ST' THEN 0 WHEN 'MS' THEN 2 ELSE 1 END");
+    //@formatter:off
+    final String hql =
+                  " where purchasingPlan.id = :purchaserun" +
+                  "   and quantity > 0" +
+                  " order by product" +
+                  "   ,plannedDate " +
+                  "   , CASE transactionType WHEN 'ST' THEN 0 WHEN 'MS' THEN 2 ELSE 1 END";
+    //@formatter:on
 
-    OBQuery<PurchasingRunLine> soQry = OBDal.getInstance()
-        .createQuery(PurchasingRunLine.class, where.toString());
-    soQry.setNamedParameter("purchaserun", mrpPurchaseRun.getId());
-    soQry.setFetchSize(1000);
-    return soQry.scroll(ScrollMode.FORWARD_ONLY);
+    return OBDal.getInstance()
+        .createQuery(PurchasingRunLine.class, hql)
+        .setNamedParameter("purchaserun", mrpPurchaseRun.getId())
+        .setFetchSize(1000)
+        .scroll(ScrollMode.FORWARD_ONLY);
   }
 
   private ScrollableResults getPRLinesOutgoing(PurchasingRun mrpPurchaseRun) {
-    StringBuffer where = new StringBuffer();
-    where.append(" where " + PurchasingRunLine.PROPERTY_PURCHASINGPLAN + ".id = :purchaserun");
-    where.append("   and " + PurchasingRunLine.PROPERTY_QUANTITY + " < 0");
-    where.append(" order by " + PurchasingRunLine.PROPERTY_PRODUCT + ","
-        + PurchasingRunLine.PROPERTY_PLANNEDDATE + ", CASE "
-        + PurchasingRunLine.PROPERTY_TRANSACTIONTYPE
-        + " WHEN 'ST' THEN 0 WHEN 'MS' THEN 2 ELSE 3 END");
+    //@formatter:off
+    final String hql =
+                  " where purchasingPlan.id = :purchaserun" +
+                  "   and quantity < 0" +
+                  " order by product" +
+                  "   , plannedDate" +
+                  "   , CASE transactionType WHEN 'ST' THEN 0 WHEN 'MS' THEN 2 ELSE 3 END";
+    //@formatter:on
 
-    OBQuery<PurchasingRunLine> soQry = OBDal.getInstance()
-        .createQuery(PurchasingRunLine.class, where.toString());
-    soQry.setNamedParameter("purchaserun", mrpPurchaseRun.getId());
-    soQry.setFetchSize(1000);
-    return soQry.scroll(ScrollMode.FORWARD_ONLY);
+    return OBDal.getInstance()
+        .createQuery(PurchasingRunLine.class, hql)
+        .setNamedParameter("purchaserun", mrpPurchaseRun.getId())
+        .setFetchSize(1000)
+        .scroll(ScrollMode.FORWARD_ONLY);
   }
 
   private void processOrder(Order salesOrder) throws OBException {
