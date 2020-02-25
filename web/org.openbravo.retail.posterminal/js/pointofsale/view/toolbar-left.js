@@ -926,7 +926,7 @@ enyo.kind({
               function(data) {
                 successCallback(data);
               },
-              errorCallback()
+              errorCallback
             );
           } else {
             criteria = new OB.App.Class.Criteria()
