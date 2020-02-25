@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,7 +38,6 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -65,7 +64,6 @@ import org.openbravo.erpCommon.utility.OBLedgerUtils;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.erpCommon.utility.WindowTreeData;
-import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.accounting.OrganizationClosing;
 import org.openbravo.model.financialmgmt.calendar.Calendar;
@@ -511,16 +509,23 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
   }
 
   private ArrayList<Year> getOrderedPreviousYears(Date startingDate, Calendar calendar) {
-    final StringBuilder hqlString = new StringBuilder();
     ArrayList<Year> result = new ArrayList<Year>();
-    hqlString.append("select y");
-    hqlString.append(" from FinancialMgmtYear y, FinancialMgmtPeriod as p");
-    hqlString.append(
-        " where p.year = y  and p.endingDate < :date and y.calendar = :calendar order by p.startingDate");
-    final Session session = OBDal.getReadOnlyInstance().getSession();
-    final Query<Year> query = session.createQuery(hqlString.toString(), Year.class);
-    query.setParameter("date", startingDate);
-    query.setParameter("calendar", calendar);
+    //@formatter:off
+    final String hql =
+                  "select y" +
+                  "  from FinancialMgmtYear y" +
+                  "    , FinancialMgmtPeriod as p" +
+                  " where p.year = y" +
+                  "   and p.endingDate < :date " +
+                  "   and y.calendar.id = :calendarId" +
+                  " order by p.startingDate";
+    
+    //@formatter:on
+    final Query<Year> query = OBDal.getReadOnlyInstance()
+        .getSession()
+        .createQuery(hql, Year.class)
+        .setParameter("date", startingDate)
+        .setParameter("calendarId", calendar.getId());
     for (Year previousYear : query.list()) {
       if (!(result.contains(previousYear))) {
         result.add(previousYear);
@@ -530,17 +535,21 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
   }
 
   private HashMap<String, Date> getStartingEndingDate(Year year) {
-    final StringBuilder hqlString = new StringBuilder();
     HashMap<String, Date> result = new HashMap<String, Date>();
     result.put("startingDate", null);
     result.put("endingDate", null);
-    hqlString.append("select min(p.startingDate) as startingDate, max(p.endingDate) as endingDate");
-    hqlString.append(" from FinancialMgmtPeriod as p");
-    hqlString.append(" where p.year = :year");
+    //@formatter:off
+    final String hql =
+                  "select min(p.startingDate) as startingDate" +
+                  "  , max(p.endingDate) as endingDate" +
+                  "  from FinancialMgmtPeriod as p" +
+                  " where p.year.id = :yearId";
+    //@formatter:on
 
-    final Session session = OBDal.getReadOnlyInstance().getSession();
-    final Query<Object[]> query = session.createQuery(hqlString.toString(), Object[].class);
-    query.setParameter("year", year);
+    final Query<Object[]> query = OBDal.getReadOnlyInstance()
+        .getSession()
+        .createQuery(hql, Object[].class)
+        .setParameter("yearId", year.getId());
     for (Object[] values : query.list()) {
       result.put("startingDate", (Date) values[0]);
       result.put("endingDate", (Date) values[1]);
@@ -707,15 +716,18 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
   private List<String> getRoleOrganizationList(String roleId) {
     try {
       OBContext.setAdminMode(false);
-      StringBuffer hqlString = new StringBuffer();
-      hqlString.append(" select " + RoleOrganization.PROPERTY_ORGANIZATION + ".id");
-      hqlString.append(" from " + RoleOrganization.ENTITY_NAME);
-      hqlString.append(" where " + RoleOrganization.PROPERTY_ROLE + ".id = :roleId");
-      Query<String> query = OBDal.getReadOnlyInstance()
+      //@formatter:off
+      final String hql =
+                    " select organization.id" +
+                    " from ADRoleOrganization" +
+                    " where role.id = :roleId";
+      //@formatter:on
+
+      return OBDal.getReadOnlyInstance()
           .getSession()
-          .createQuery(hqlString.toString(), String.class);
-      query.setParameter("roleId", roleId);
-      return query.list();
+          .createQuery(hql, String.class)
+          .setParameter("roleId", roleId)
+          .list();
     } finally {
       OBContext.restorePreviousMode();
     }
