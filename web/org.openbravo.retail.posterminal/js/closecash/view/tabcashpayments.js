@@ -75,7 +75,8 @@ enyo.kind({
     onUpdateUnit: ''
   },
   handlers: {
-    onNumberChange: 'numberChange'
+    onNumberChange: 'numberChange',
+    onNumberFocus: 'numberFocus'
   },
   components: [
     {
@@ -108,10 +109,7 @@ enyo.kind({
                 kind: 'OB.UI.FormElement.IntegerEditor',
                 name: 'numberOfCoins',
                 min: 0,
-                focus: function() {
-                  this.formElement.owner.doLineEditCash();
-                },
-                forceNumberChangeAlways: false /* Ideally it should be true, but then the focus is lost each keypress due to changes in the model */,
+                forceNumberChangeAlways: true /* Ideally it should be true, but then the focus is lost each keypress due to changes in the model */,
                 classes:
                   'obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-numberlinesQty',
                 i18nLabel: 'OBPOS_NumberOfItems'
@@ -177,8 +175,14 @@ enyo.kind({
     this.doSubUnit();
   },
   numberChange: function(inSender, inEvent) {
+    if (this.model.get('numberOfCoins') !== inEvent.value) {
+      inEvent.originator = this;
+      this.doUpdateUnit(inEvent);
+    }
+  },
+  numberFocus: function(inSender, inEvent) {
     inEvent.originator = this;
-    this.doUpdateUnit(inEvent);
+    this.doLineEditCash(inEvent);
   }
 });
 
