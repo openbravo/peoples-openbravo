@@ -47,14 +47,14 @@ public class MRPPurchaseCreateReservations extends DalBaseProcess {
   // private ProcessLogger logger;
 
   @Override
-  public void doExecute(ProcessBundle bundle) throws Exception {
+  public void doExecute(final ProcessBundle bundle) throws Exception {
     // logger = bundle.getLogger();
-    Map<String, Object> params = bundle.getParams();
+    final Map<String, Object> params = bundle.getParams();
 
-    String strMRPRunId = (String) params.get("MRP_Run_Purchase_ID");
-    PurchasingRun mrpPurchaseRun = OBDal.getInstance().get(PurchasingRun.class, strMRPRunId);
+    final String strMRPRunId = (String) params.get("MRP_Run_Purchase_ID");
+    final PurchasingRun mrpPurchaseRun = OBDal.getInstance().get(PurchasingRun.class, strMRPRunId);
 
-    String strMWarehosueID = (String) params.get("mWarehouseId");
+    final String strMWarehosueID = (String) params.get("mWarehouseId");
 
     // Execute Create Orders process.
     OBContext.setAdminMode(true);
@@ -64,7 +64,7 @@ public class MRPPurchaseCreateReservations extends DalBaseProcess {
     } finally {
       OBContext.restorePreviousMode();
     }
-    Map<String, String> createOrderParams = new HashMap<String, String>();
+    final Map<String, String> createOrderParams = new HashMap<>();
     createOrderParams.put("M_Warehouse_ID", strMWarehosueID);
     try {
       final ProcessInstance pinstance = CallProcess.getInstance()
@@ -72,21 +72,21 @@ public class MRPPurchaseCreateReservations extends DalBaseProcess {
 
       if (pinstance.getResult() == 0L) {
         OBDal.getInstance().rollbackAndClose();
-        OBError oberror = OBMessageUtils.getProcessInstanceMessage(pinstance);
+        final OBError oberror = OBMessageUtils.getProcessInstanceMessage(pinstance);
         bundle.setResult(oberror);
         return;
       }
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
-      OBError messsage = OBMessageUtils
+      final OBError messsage = OBMessageUtils
           .translateError(DbUtility.getUnderlyingSQLException(e).getMessage());
       bundle.setResult(messsage);
       return;
     }
 
     // Create reservations
-    ScrollableResults outgoingRLs = getPRLinesOutgoing(mrpPurchaseRun);
-    ScrollableResults incomingRLs = getPRLinesIncoming(mrpPurchaseRun);
+    final ScrollableResults outgoingRLs = getPRLinesOutgoing(mrpPurchaseRun);
+    final ScrollableResults incomingRLs = getPRLinesIncoming(mrpPurchaseRun);
     int i = 1;
     BigDecimal currentStock = BigDecimal.ZERO;
 
@@ -94,13 +94,13 @@ public class MRPPurchaseCreateReservations extends DalBaseProcess {
     String productID = "";
     try {
       while (outgoingRLs.next()) {
-        PurchasingRunLine outgoingLine = (PurchasingRunLine) outgoingRLs.get(0);
+        final PurchasingRunLine outgoingLine = (PurchasingRunLine) outgoingRLs.get(0);
         if (!productID.equals(outgoingLine.getProduct().getId())) {
           productID = outgoingLine.getProduct().getId();
           currentStock = BigDecimal.ZERO;
         }
         BigDecimal quantity = outgoingLine.getQuantity().negate();
-        boolean isSalesOrderLine = outgoingLine.getSalesOrderLine() != null
+        final boolean isSalesOrderLine = outgoingLine.getSalesOrderLine() != null
             && outgoingLine.getSalesOrderLine().getSalesOrder().isSalesTransaction();
         while (quantity.signum() == 1) {
           if (currentStock.signum() < 1 && incomingRLs.next()) {
@@ -117,20 +117,20 @@ public class MRPPurchaseCreateReservations extends DalBaseProcess {
                   processOrder(incomingLine.getSalesOrderLine().getSalesOrder());
                 } catch (OBException e) {
                   OBDal.getInstance().rollbackAndClose();
-                  OBError error = OBMessageUtils.translateError(e.getMessage());
+                  final OBError error = OBMessageUtils.translateError(e.getMessage());
                   bundle.setResult(error);
                   return;
                 }
               }
             }
           }
-          BigDecimal consumedQuantity = currentStock.min(quantity);
+          final BigDecimal consumedQuantity = currentStock.min(quantity);
           currentStock = currentStock.subtract(consumedQuantity);
           quantity = quantity.subtract(consumedQuantity);
           if (isSalesOrderLine) {
-            Reservation reservation = ReservationUtils
+            final Reservation reservation = ReservationUtils
                 .getReservationFromOrder(outgoingLine.getSalesOrderLine());
-            if (reservation.getReservedQty().compareTo(reservation.getQuantity()) == -1) {
+            if (reservation.getReservedQty().compareTo(reservation.getQuantity()) < 0) {
               if (incomingLine.getTransactionType().equals("PP")
                   && incomingLine.getSalesOrderLine() != null) {
                 ReservationUtils.reserveStockManual(reservation, incomingLine.getSalesOrderLine(),
@@ -157,13 +157,13 @@ public class MRPPurchaseCreateReservations extends DalBaseProcess {
       incomingRLs.close();
       outgoingRLs.close();
     }
-    OBError message = new OBError();
+    final OBError message = new OBError();
     message.setType("Success");
     message.setTitle(OBMessageUtils.messageBD("Success"));
     bundle.setResult(message);
   }
 
-  private ScrollableResults getPRLinesIncoming(PurchasingRun mrpPurchaseRun) {
+  private ScrollableResults getPRLinesIncoming(final PurchasingRun mrpPurchaseRun) {
     //@formatter:off
     final String hql =
                   " where purchasingPlan.id = :purchaserun" +
@@ -180,7 +180,7 @@ public class MRPPurchaseCreateReservations extends DalBaseProcess {
         .scroll(ScrollMode.FORWARD_ONLY);
   }
 
-  private ScrollableResults getPRLinesOutgoing(PurchasingRun mrpPurchaseRun) {
+  private ScrollableResults getPRLinesOutgoing(final PurchasingRun mrpPurchaseRun) {
     //@formatter:off
     final String hql =
                   " where purchasingPlan.id = :purchaserun" +
@@ -197,7 +197,7 @@ public class MRPPurchaseCreateReservations extends DalBaseProcess {
         .scroll(ScrollMode.FORWARD_ONLY);
   }
 
-  private void processOrder(Order salesOrder) throws OBException {
+  private void processOrder(final Order salesOrder) {
     OBContext.setAdminMode(true);
     Process process = null;
     try {
@@ -214,7 +214,7 @@ public class MRPPurchaseCreateReservations extends DalBaseProcess {
         throw new OBException(oberror.getMessage());
       }
     } catch (Exception e) {
-      Throwable t = DbUtility.getUnderlyingSQLException(e);
+      final Throwable t = DbUtility.getUnderlyingSQLException(e);
       throw new OBException(OBMessageUtils.parseTranslation(t.getMessage()), t);
     }
   }
