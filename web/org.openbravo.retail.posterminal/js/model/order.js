@@ -5803,7 +5803,7 @@
               lines[index].get('product').id
             );
             if (product) {
-              success();
+              success(OB.Dal.transform(OB.Model.Product, product));
             } else {
               // Product doesn't exists, execute the same code as it was not included in pricelist
               promotionLines.splice(index, 1);
