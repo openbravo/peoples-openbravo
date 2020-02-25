@@ -106,7 +106,7 @@ class NoteEventHandler extends EntityPersistenceEventObserver {
         if (tabId != null) {
           Tab tab = OBDal.getInstance().get(Tab.class, tabId);
 
-          if (tab.isReadOnly() || tab.getUIPattern().equals("RO")) {
+          if (tab.getUIPattern().equals("RO")) {
             isReadOnly = true;
           } else {
             if (roleId != null) {

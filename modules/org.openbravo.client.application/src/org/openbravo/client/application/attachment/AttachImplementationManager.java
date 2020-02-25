@@ -600,12 +600,6 @@ public class AttachImplementationManager {
         OBDal.getInstance().save(metadataStoredValue);
       }
     }
-    if (StringUtils.isNotBlank(attachment.getText())) {
-      // Attachment was stored using old implementation.
-      // The metadata has been saved using the new implementation so the text column can be reset.
-      attachment.setText(null);
-      OBDal.getInstance().save(attachment);
-    }
 
     return metadataValues;
   }

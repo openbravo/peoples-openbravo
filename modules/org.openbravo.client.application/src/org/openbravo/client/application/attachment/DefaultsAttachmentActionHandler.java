@@ -112,12 +112,6 @@ public class DefaultsAttachmentActionHandler extends BaseActionHandler {
 
             defaults.put(param.getDBColumnName(), parsedValue);
             continue;
-          } else if (attachment.getAttachmentConf() == null
-              && "description".equals(param.getDBColumnName())) {
-            // Attachment done using old attachment system. The description is stored in the
-            // attachment.text property.
-            defaults.put(param.getDBColumnName(), attachment.getText());
-            continue;
           }
         }
         if (param.getDefaultValue() != null) {

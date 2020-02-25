@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2020 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -146,7 +146,6 @@ public class SessionLogin {
       session.setWebSession(getWebSession());
       session.setRemoteAddress(getRemoteAddr());
       session.setRemoteHost(getRemoteHost());
-      session.setProcessed(getProcessed());
       session.setServerUrl(serverUrl);
       // save inactive session for failed and webservice logins
       boolean sessionActive = !status.equals("F") && !status.equals("WS");
@@ -186,7 +185,6 @@ public class SessionLogin {
       session.setWebSession(getWebSession());
       session.setRemoteAddress(getRemoteAddr());
       session.setRemoteHost(getRemoteHost());
-      session.setProcessed(getProcessed());
       OBDal.getInstance().flush();
     } catch (Exception e) {
       log4j.error("Error updating session in DB", e);
@@ -253,10 +251,6 @@ public class SessionLogin {
 
   private String getRemoteHost() {
     return ((this.remoteHost == null) ? "" : this.remoteHost);
-  }
-
-  private boolean getProcessed() {
-    return ((this.processed == null) ? false : this.processed.equals("Y"));
   }
 
   public void setUserName(String strUser) {

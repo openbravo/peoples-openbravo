@@ -1726,10 +1726,7 @@ public class OBViewFieldHandler {
     }
 
     public boolean isShowSummary() {
-      if (field.isOBUIAPPShowSummary() != null || field.getObuiappSummaryfn() != null) {
-        return field.getObuiappSummaryfn() != null || field.isOBUIAPPShowSummary();
-      }
-      return false;
+      return field.getObuiappSummaryfn() != null;
     }
 
     public String getSummaryFunction() {
