@@ -10330,38 +10330,6 @@
           order.set('payments', payments);
           order.adjustPayment();
 
-          order.set(
-            'isPartiallyDelivered',
-            hasDeliveredProducts && hasNotDeliveredProducts ? true : false
-          );
-          if (hasDeliveredProducts && !hasNotDeliveredProducts) {
-            order.set('isFullyDelivered', true);
-          }
-          if (order.get('isPartiallyDelivered')) {
-            var partiallyPaid = 0;
-            _.each(
-              _.filter(order.get('receiptLines'), function(reciptLine) {
-                return reciptLine.deliveredQuantity;
-              }),
-              function(deliveredLine) {
-                partiallyPaid = OB.DEC.add(
-                  partiallyPaid,
-                  OB.DEC.mul(
-                    deliveredLine.deliveredQuantity,
-                    deliveredLine.grossUnitPrice
-                  )
-                );
-              }
-            );
-            order.set('deliveredQuantityAmount', partiallyPaid);
-            if (
-              order.get('deliveredQuantityAmount') &&
-              order.get('deliveredQuantityAmount') > order.get('payment')
-            ) {
-              order.set('isDeliveredGreaterThanGross', true);
-            }
-          }
-
           taxes = {};
           _.each(model.receiptTaxes, function(iter) {
             var taxProp;
@@ -10528,6 +10496,42 @@
                     );
                     order.set('lines', lines);
                     order.set('qty', orderQty);
+                    order.set(
+                      'isPartiallyDelivered',
+                      hasDeliveredProducts && hasNotDeliveredProducts
+                        ? true
+                        : false
+                    );
+                    if (hasDeliveredProducts && !hasNotDeliveredProducts) {
+                      order.set('isFullyDelivered', true);
+                    }
+                    if (order.get('isPartiallyDelivered')) {
+                      var partiallyPaid = 0;
+                      _.each(
+                        _.filter(order.get('receiptLines'), function(
+                          reciptLine
+                        ) {
+                          return reciptLine.deliveredQuantity;
+                        }),
+                        function(deliveredLine) {
+                          partiallyPaid = OB.DEC.add(
+                            partiallyPaid,
+                            OB.DEC.mul(
+                              deliveredLine.deliveredQuantity,
+                              deliveredLine.grossUnitPrice
+                            )
+                          );
+                        }
+                      );
+                      order.set('deliveredQuantityAmount', partiallyPaid);
+                      if (
+                        order.get('deliveredQuantityAmount') &&
+                        order.get('deliveredQuantityAmount') >
+                          order.get('payment')
+                      ) {
+                        order.set('isDeliveredGreaterThanGross', true);
+                      }
+                    }
                     order.set('json', JSON.stringify(order.toJSON()));
                     callback(order);
                     OB.UTIL.ProcessController.finish(
