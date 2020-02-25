@@ -71,7 +71,7 @@
         : rule;
     };
     const groupRuleAndZone = (rulesAndZones, rule) => {
-      const updatedRule = rule;
+      const updatedRule = { ...rule };
       delete updatedRule.taxRateId;
       delete updatedRule.zoneCountry;
       delete updatedRule.zoneRegion;
@@ -165,7 +165,7 @@
       return 0;
     };
     const updateRuleLocation = rule => {
-      const updatedRule = rule;
+      const updatedRule = { ...rule };
       updatedRule.country = equals(rule.country, line.country)
         ? rule.country
         : rule.zoneCountry;
