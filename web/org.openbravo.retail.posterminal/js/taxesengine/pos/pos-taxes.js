@@ -202,18 +202,16 @@
         return taxRate;
       });
 
-      // FIXME: order by default desc and by name asc
       data.taxCategory = await OB.App.MasterdataModels.TaxCategory.find(
         new OB.App.Class.Criteria()
-          .orderBy(['default', 'name'], 'desc')
+          .orderBy(['default', 'name'], ['desc', 'asc'])
           .limit(10000)
           .build()
       );
 
-      // FIXME: order by default desc and by name asc
       data.taxCategoryBOM = await OB.App.MasterdataModels.TaxCategoryBOM.find(
         new OB.App.Class.Criteria()
-          .orderBy(['default', 'name'], 'desc')
+          .orderBy(['default', 'name'], ['desc', 'asc'])
           .limit(10000)
           .build()
       );
