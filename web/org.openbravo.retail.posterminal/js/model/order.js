@@ -4084,8 +4084,8 @@
             OB.UTIL.isNullOrUndefined(p.get('updatePriceFromPricelist')) ||
             p.get('updatePriceFromPricelist')
           ) {
-            p.set('standardPrice', productPrices.at(0).get('pricestd'));
-            p.set('listPrice', productPrices.at(0).get('pricelist'));
+            p.set('standardPrice', productPrices[0].get('pricestd'));
+            p.set('listPrice', productPrices[0].get('pricelist'));
           }
           me.addProductToOrder(p, qty, options, attrs, function(
             success,
@@ -4182,7 +4182,7 @@
               criteria
             );
             let productPrices = [];
-            for (let i = 0; i < productPrices.length; i++) {
+            for (let i = 0; i < productPriceResult.length; i++) {
               productPrices.push(
                 OB.Dal.transform(OB.Model.ProductPrice, productPriceResult[i])
               );

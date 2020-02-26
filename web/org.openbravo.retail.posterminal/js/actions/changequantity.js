@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019 Openbravo S.L.U.
+ * Copyright (C) 2019-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -171,8 +171,22 @@
       validateQuantity()
         .then(
           function() {
-            var selection = [];
-            var deletedlines = [];
+            var selection = [],
+              deletedlines = [],
+              finalCallback;
+
+            finalCallback = _.after(selectedReceiptLines.length, function() {
+              if (deletedlines.length > 0) {
+                view.deleteLine(view, {
+                  selectedReceiptLines: deletedlines
+                });
+              }
+              receipt.set('multipleUndo', null);
+              receipt.trigger('scan');
+              view.setMultiSelectionItems(view, {
+                selection: selection
+              });
+            });
             receipt.set('undo', null);
             if (selectedReceiptLines && selectedReceiptLines.length > 1) {
               receipt.set('multipleUndo', true);
@@ -192,6 +206,9 @@
                     options: {
                       line: line,
                       blockAddProduct: true
+                    },
+                    callback: function() {
+                      finalCallback();
                     }
                   });
                 } else {
@@ -205,6 +222,9 @@
                         options: {
                           line: line,
                           blockAddProduct: true
+                        },
+                        callback: function() {
+                          finalCallback();
                         }
                       });
                     }
@@ -212,16 +232,6 @@
                 }
               }
             }, this);
-            if (deletedlines.length > 0) {
-              view.deleteLine(view, {
-                selectedReceiptLines: deletedlines
-              });
-            }
-            receipt.set('multipleUndo', null);
-            receipt.trigger('scan');
-            view.setMultiSelectionItems(view, {
-              selection: selection
-            });
           }.bind(this)
         )
         .catch(function(error) {
