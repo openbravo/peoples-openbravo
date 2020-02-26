@@ -10,7 +10,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2019 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2020 Openbravo S.L.U.
  ******************************************************************************/
 package org.openbravo.erpCommon.ad_forms;
 
@@ -185,7 +185,7 @@ class TranslationHandler extends DefaultHandler {
       // Update section
       m_sql = m_updateSQL + m_sql;
       if (log4j.isDebugEnabled()) {
-        log4j.debug(m_sql);
+        log4j.debug("{} with parameters {}", m_sql, parameters);
       }
       // Execute
       int no = 0;
@@ -201,7 +201,7 @@ class TranslationHandler extends DefaultHandler {
 
         no = st.executeUpdate();
       } catch (Exception e) {
-        log4j.error("183:" + m_sql + e.toString());
+        log4j.error("Failed query importing translation: {} with parameters {}", m_sql, parameters);
       } finally {
         try {
           DB.releaseTransactionalPreparedStatement(st);
@@ -217,9 +217,10 @@ class TranslationHandler extends DefaultHandler {
         }
         m_updateCount++;
       } else if (no == 0) {
-        log4j.info("Not Found - " + m_sql);
+        log4j.info("Not found translatable element - Table:{}, {}_ID={}, AD_Language={}",
+            m_TableName, m_TableName, m_curID, m_AD_Language);
       } else {
-        log4j.error("Update Rows=" + no + " (Should be 1) - " + m_sql);
+        log4j.error("Update Rows={} (Should be 1) - {} with parameters {}", no, m_sql, parameters);
       }
     } else if (qName.equals(TranslationManager.XML_VALUE_TAG)) {
       String value = "";
