@@ -146,7 +146,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
         "model/pricelist", "model/product-category-tree", "model/product", "model/productprice",
         "model/service-product", "model/service-category", "model/businesspartner",
-        "model/document-sequence", "model/servicepricerule", "model/servicepricerulerange",
+        "model/servicepricerule", "model/servicepricerulerange",
         "model/servicepricerulerangeprices", "model/servicepriceruleversion",
 
         "model/obpos-supervisor-model",
@@ -302,6 +302,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/masterdata/discount/DiscountFilterProductModel");
     appDependency.add("model/masterdata/discount/DiscountFilterRoleModel");
     appDependency.add("model/masterdata/discount/DiscountModel");
+    // Business-Object
+    appDependency.add("model/business-object/document-sequence/DocumentSequence");
 
     for (final String resource : appDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,
