@@ -924,6 +924,8 @@ enyo.kind({
         if (inEvent.showTime) {
           this.owner.owner.show();
           this.setValue(this.model.get('obrdmDeliveryDate'));
+          this.$.minutePicker.setStyle('width: 64px !important;');
+          this.$.hourPicker.setStyle('width: 64px !important;');
         } else {
           this.owner.owner.hide();
         }
