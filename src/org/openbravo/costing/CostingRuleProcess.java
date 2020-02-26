@@ -285,12 +285,15 @@ public class CostingRuleProcess implements Process {
     //@formatter:off
     final String hqlInsert =
                   "insert into TransactionCost" +
-                  "  (id, client, organization, creationDate, createdBy, updated, updatedBy" +
-                  "    , active, inventoryTransaction, cost, costDate, currency, accountingDate" +
+                  "  (id, client, organization, " + 
+                  "   creationDate, createdBy, updated, updatedBy, " +
+                  "   active, inventoryTransaction, cost, " + 
+                  "   costDate, currency, accountingDate" +
                   "  )" +
-                  " select get_uuid(), t.client, t.organization, now(), t.createdBy, now(), t.updatedBy" +
-                  "   , t.active, t, cast(0 as big_decimal), t.transactionProcessDate, t.client.currency" +
-                  "   , coalesce(io.accountingDate, t.movementDate)" +
+                  " select get_uuid(), t.client, t.organization, " + 
+                  "   now(), t.createdBy, now(), t.updatedBy, " +
+                  "   t.active, t, cast(0 as big_decimal), " + 
+                  "   t.transactionProcessDate, t.client.currency , coalesce(io.accountingDate, t.movementDate)" +
                   "   from MaterialMgmtMaterialTransaction as t" +
                   "     left join t.goodsShipmentLine as iol" +
                   "     left join iol.shipmentReceipt as io" +
@@ -451,8 +454,9 @@ public class CostingRuleProcess implements Process {
   private ScrollableResults getStockLines(final Set<String> childOrgs, final Date date) {
     //@formatter:off
     String hql =
-            "select trx.product.id, trx.attributeSetValue.id, trx.uOM.id, trx.orderUOM.id, trx.storageBin.id" +
-            "  , loc.warehouse.id, sum(trx.movementQuantity), sum(trx.orderQuantity)" +
+            "select trx.product.id, trx.attributeSetValue.id, trx.uOM.id, " + 
+            "    trx.orderUOM.id, trx.storageBin.id, loc.warehouse.id, " + 
+            "    sum(trx.movementQuantity), sum(trx.orderQuantity)" +
             "  from MaterialMgmtMaterialTransaction as trx" +
             "    join trx.storageBin as loc" +
             " where trx.organization.id in (:orgsIds)";
@@ -467,12 +471,12 @@ public class CostingRuleProcess implements Process {
     hql +=
             "   and trx.product.productType = 'I'" +
             "   and trx.product.stocked = true" +
-            " group by trx.product.id, trx.attributeSetValue.id, trx.uOM.id, trx.orderUOM.id" +
-            "   , trx.storageBin.id, loc.warehouse.id" +
+            " group by trx.product.id, trx.attributeSetValue.id, trx.uOM.id, " + 
+            "   trx.orderUOM.id, trx.storageBin.id, loc.warehouse.id" +
             "   having sum(trx.movementQuantity) <> 0" +
             "     or sum(trx.orderQuantity) <> 0" +
-            " order by loc.warehouse.id, trx.product.id, trx.storageBin.id" +
-            "   , trx.attributeSetValue.id, trx.uOM.id, trx.orderUOM.id";
+            " order by loc.warehouse.id, trx.product.id, trx.storageBin.id, " +
+            "   trx.attributeSetValue.id, trx.uOM.id, trx.orderUOM.id";
     //@formatter:on
 
     @SuppressWarnings("rawtypes")
