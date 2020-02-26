@@ -363,7 +363,7 @@ public class CostAdjustmentUtils {
       trxQry.setParameter("warehouseId", trx.getStorageBin().getWarehouse().getId());
     }
 
-    String transactionId = trxQry.setMaxResults(1).uniqueResult();
+    final String transactionId = trxQry.setMaxResults(1).uniqueResult();
 
     TransactionLast lastTransaction = null;
     if (transactionId != null) {
@@ -475,43 +475,47 @@ public class CostAdjustmentUtils {
         .getChildTree(org.getId(), true);
 
     //@formatter:off
-    String hql =
-            "select min(case when coalesce(i.inventoryType, 'N') <> 'N' then trx.movementDate else trx.transactionProcessDate end)" +
+    String subSelectHql =
+            "select min(case when coalesce(i.inventoryType, 'N') <> 'N' " + 
+            "           then trx.movementDate " + 
+            "           else trx.transactionProcessDate " + 
+            "           end)" +
             "  from MaterialMgmtMaterialTransaction as trx";
     //@formatter:on
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       //@formatter:off
-      hql +=
+      subSelectHql +=
             "   join trx.storageBin as locator";
       //@formatter:on
     }
     //@formatter:off
-    hql +=
+    subSelectHql +=
             "   left join trx.physicalInventoryLine as il" +
             "   left join il.physInventory as i" +
-            " where trx.product.id = :product" +
+            " where trx.product.id = :productId" +
             "   and trx.movementDate > :date" +
+    // Include only transactions that have its cost calculated
             "   and trx.isCostCalculated = true";
     //@formatter:on
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       //@formatter:off
-      hql +=
-            "  and locator.warehouse.id = :warehouse";
+      subSelectHql +=
+            "  and locator.warehouse.id = :warehouseId";
       //@formatter:on
     }
     //@formatter:off
-    hql +=
+    subSelectHql +=
             "   and trx.organization.id in (:orgs)";
     //@formatter:on
 
     final Query<Date> trxsubQry = OBDal.getInstance()
         .getSession()
-        .createQuery(hql, Date.class)
+        .createQuery(subSelectHql, Date.class)
         .setParameter("date", currentDate)
-        .setParameter("product", product.getId());
+        .setParameter("productId", product.getId());
 
     if (costDimensions.get(CostDimension.Warehouse) != null) {
-      trxsubQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
+      trxsubQry.setParameter("warehouseId", costDimensions.get(CostDimension.Warehouse).getId());
     }
 
     final Date trxprocessDate = trxsubQry.setParameterList("orgs", orgs).uniqueResult();
@@ -541,7 +545,10 @@ public class CostAdjustmentUtils {
       hqlSelect +=
               "   left join trx.physicalInventoryLine as il" +
               "   left join il.physInventory as i" +
-              " where case when coalesce(i.inventoryType, 'N') <> 'N' then trx.movementDate else trx.transactionProcessDate end < :date";
+              " where case when coalesce(i.inventoryType, 'N') <> 'N' " + 
+              "       then trx.movementDate " + 
+              "       else trx.transactionProcessDate " + 
+              "       end < :date";
       //@formatter:on
     } else {
       //@formatter:off
@@ -550,15 +557,16 @@ public class CostAdjustmentUtils {
       //@formatter:on
     }
 
+    // Include only transactions that have its cost calculated
     //@formatter:off
     hqlSelect +=
-              "   and trx.product.id = :product" +
+              "   and trx.product.id = :productId" +
               "   and trx.isCostCalculated = true";
     //@formatter:on
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       //@formatter:off
       hqlSelect +=
-              "   and locator.warehouse.id = :warehouse";
+              "   and locator.warehouse.id = :warehouseId";
       //@formatter:on
     }
     //@formatter:off
@@ -569,11 +577,11 @@ public class CostAdjustmentUtils {
     final Query<BigDecimal> trxQry = OBDal.getInstance()
         .getSession()
         .createQuery(hqlSelect, BigDecimal.class)
-        .setParameter("product", product.getId())
+        .setParameter("productId", product.getId())
         .setParameter("date", currentDate);
 
     if (costDimensions.get(CostDimension.Warehouse) != null) {
-      trxQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
+      trxQry.setParameter("warehouseId", costDimensions.get(CostDimension.Warehouse).getId());
     }
 
     final BigDecimal stock = trxQry.setParameterList("orgs", orgs).uniqueResult();
@@ -657,7 +665,8 @@ public class CostAdjustmentUtils {
             "    , ADList as trxtype" +
             " where trxtype.reference.id = :refid" +
             "   and trxtype.searchKey = trx.movementType" +
-            "   and trx.product = :product" +
+            "   and trx.product.id = :productId" +
+    // Include only transactions that have its cost calculated. Should be all.
             "   and trx.isCostCalculated = true";
     //@formatter:on
 
@@ -674,6 +683,8 @@ public class CostAdjustmentUtils {
             "   and (trx.transactionProcessDate > :ctrxdate" +
             "   or (trx.transactionProcessDate = :ctrxdate";
       //@formatter:on
+      // If the costing Transaction is an M- exclude the M+ Transactions with same movementDate and
+      // TrxProcessDate due to how data is going to be ordered in further queries using the priority
       if (costing.getInventoryTransaction().getMovementType().equals("M-")) {
         //@formatter:off
         hql +=
@@ -713,6 +724,8 @@ public class CostAdjustmentUtils {
       //@formatter:on
     }
 
+    // If there are more than one trx on the same trx process date filter out those types with less
+    // priority and / or higher quantity.
     //@formatter:off
     hql +=
             "   trx.transactionProcessDate < :trxdate" +
@@ -732,6 +745,8 @@ public class CostAdjustmentUtils {
             "   trx.transactionProcessDate >= :fixbdt" +
             "   and (trx.movementDate < :mvtdate" +
             "   or (trx.movementDate = :mvtdate" +
+      // If there are more than one trx on the same trx process date filter out those types with
+      // less priority and / or higher quantity.
             "   and (trx.transactionProcessDate < :trxdate" +
             "   or (trx.transactionProcessDate = :trxdate" +
             "   and (trxtype.sequenceNumber < :trxtypeprio" +
@@ -752,7 +767,7 @@ public class CostAdjustmentUtils {
     if (currentCostDimensions.get(CostDimension.Warehouse) != null) {
       //@formatter:off
       hql +=
-            "   and locator.warehouse.id = :warehouse";
+            "   and locator.warehouse.id = :warehouseId";
       //@formatter:on
     }
 
@@ -765,7 +780,7 @@ public class CostAdjustmentUtils {
         .getSession()
         .createQuery(hql, BigDecimal.class)
         .setParameter("refid", MovementTypeRefID)
-        .setParameter("product", trx.getProduct())
+        .setParameter("productId", trx.getProduct().getId())
         .setParameter("trxdate", trx.getTransactionProcessDate())
         .setParameter("trxtypeprio", getTrxTypePrio(trx.getMovementType()))
         .setParameter("trxqty", trx.getMovementQuantity())
@@ -788,7 +803,8 @@ public class CostAdjustmentUtils {
     }
 
     if (currentCostDimensions.get(CostDimension.Warehouse) != null) {
-      trxQry.setParameter("warehouse", currentCostDimensions.get(CostDimension.Warehouse).getId());
+      trxQry.setParameter("warehouseId",
+          currentCostDimensions.get(CostDimension.Warehouse).getId());
     }
 
     BigDecimal stock = trxQry.uniqueResult();
@@ -837,43 +853,47 @@ public class CostAdjustmentUtils {
     }
 
     //@formatter:off
-    String hql =
-        "select min(case when coalesce(i.inventoryType, 'N') <> 'N' then trx.movementDate else trx.transactionProcessDate end)" +
+    String subSelectHql =
+        "select min(case when coalesce(i.inventoryType, 'N') <> 'N' " + 
+        "           then trx.movementDate " + 
+        "           else trx.transactionProcessDate " + 
+        "           end)" +
         "  from MaterialMgmtMaterialTransaction as trx";
     //@formatter:on
     if (currentCostDimensions.get(CostDimension.Warehouse) != null) {
       //@formatter:off
-      hql +=
+      subSelectHql +=
         "    join trx.storageBin as locator";
       //@formatter:on
     }
     //@formatter:off
-    hql +=
+    subSelectHql +=
         "   left join trx.physicalInventoryLine as il" +
         "   left join il.physInventory as i" +
         " where trx.product.id = :productId" +
         "   and trx.movementDate > :date" +
+    // Include only transactions that have its cost calculated
         "   and trx.isCostCalculated = true";
     //@formatter:on
 
     if (currentCostDimensions.get(CostDimension.Warehouse) != null) {
       //@formatter:off
-      hql +=
-        "   and locator.warehouse.id = :warehouse";
+      subSelectHql +=
+        "   and locator.warehouse.id = :warehouseId";
       //@formatter:on
     }
     //@formatter:off
-    hql +=
+    subSelectHql +=
         "   and trx.organization.id in (:orgs)";
     //@formatter:on
 
     final Query<Date> trxsubQry = OBDal.getInstance()
         .getSession()
-        .createQuery(hql, Date.class)
+        .createQuery(subSelectHql, Date.class)
         .setParameter("date", currentDate)
         .setParameter("productId", product.getId());
     if (currentCostDimensions.get(CostDimension.Warehouse) != null) {
-      trxsubQry.setParameter("warehouse",
+      trxsubQry.setParameter("warehouseId",
           currentCostDimensions.get(CostDimension.Warehouse).getId());
     }
     trxsubQry.setParameterList("orgs", orgs);
@@ -881,7 +901,10 @@ public class CostAdjustmentUtils {
 
     //@formatter:off
     String hqlSelect =
-            "select sum(case when trx.movementQuantity < 0 then -tc.cost else tc.cost end ) as cost" +
+            "select sum(case when trx.movementQuantity < 0 " + 
+            "           then -tc.cost " + 
+            "           else tc.cost " + 
+            "           end ) as cost" +
             " , tc.currency.id as currency" +
             " , tc.accountingDate as mdate" +
             " , sum(trx.movementQuantity) as stock" +
@@ -908,7 +931,10 @@ public class CostAdjustmentUtils {
       hqlSelect +=
             "    left join trx.physicalInventoryLine as il" +
             "    left join il.physInventory as i" +
-            " where case when coalesce(i.inventoryType, 'N') <> 'N' then trx.movementDate else trx.transactionProcessDate end < :date";
+            " where case when coalesce(i.inventoryType, 'N') <> 'N' " + 
+            "       then trx.movementDate " + 
+            "       else trx.transactionProcessDate " + 
+            "       end < :date";
       //@formatter:on
     } else {
       //@formatter:off
@@ -918,31 +944,32 @@ public class CostAdjustmentUtils {
     }
     //@formatter:off
     hqlSelect +=
-            "   and trx.product = :product" +
+            "   and trx.product.id = :productId" +
+    // Include only transactions that have its cost calculated
             "   and trx.isCostCalculated = true";
     //@formatter:on
 
     if (currentCostDimensions.get(CostDimension.Warehouse) != null) {
       //@formatter:off
       hqlSelect +=
-            "   and locator.warehouse.id = :warehouse";
+            "   and locator.warehouse.id = :warehouseId";
       //@formatter:on
     }
     if (locator != null) {
       //@formatter:off
       hqlSelect +=
-            "   and trx.storageBin = :locator";
+            "   and trx.storageBin.id = :locatorId";
       //@formatter:on
     }
     if (asi != null) {
       //@formatter:off
       hqlSelect +=
-            "   and trx.attributeSetValue = :asi";
+            "   and trx.attributeSetValue.id = :asiId";
       //@formatter:on
     }
     //@formatter:off
     hqlSelect +=
-            "   and trx.organization.id in (:orgs)" +
+            "   and trx.organization.id in (:orgIds)" +
             " group by tc.currency" + 
             "   , tc.accountingDate";
     //@formatter:on
@@ -950,19 +977,20 @@ public class CostAdjustmentUtils {
     final Query<Object[]> trxQry = OBDal.getInstance()
         .getSession()
         .createQuery(hqlSelect, Object[].class)
-        .setParameter("product", product)
+        .setParameter("productId", product.getId())
         .setParameter("date", currentDate);
 
     if (currentCostDimensions.get(CostDimension.Warehouse) != null) {
-      trxQry.setParameter("warehouse", currentCostDimensions.get(CostDimension.Warehouse).getId());
+      trxQry.setParameter("warehouseId",
+          currentCostDimensions.get(CostDimension.Warehouse).getId());
     }
     if (locator != null) {
-      trxQry.setParameter("locator", locator);
+      trxQry.setParameter("locatorId", locator.getId());
     }
     if (asi != null) {
-      trxQry.setParameter("asi", asi);
+      trxQry.setParameter("asiId", asi.getId());
     }
-    trxQry.setParameterList("orgs", orgs);
+    trxQry.setParameterList("orgIds", orgs);
 
     final ScrollableResults scroll = trxQry.scroll(ScrollMode.FORWARD_ONLY);
     BigDecimal sum = BigDecimal.ZERO;
@@ -1057,7 +1085,10 @@ public class CostAdjustmentUtils {
 
     //@formatter:off
     String hql =
-            "select sum(case when trx.movementQuantity  < 0 then -tc.cost else tc.cost end ) as cost" +
+            "select sum(case when trx.movementQuantity  < 0 " + 
+            "           then -tc.cost " + 
+            "           else tc.cost " + 
+            "           end ) as cost" +
             " , tc.currency.id as currency" +
             " , tc.accountingDate as mdate" +
             " , sum(trx.movementQuantity) as stock" +
@@ -1075,7 +1106,8 @@ public class CostAdjustmentUtils {
             "    , ADList as trxtype" +
             " where trxtype.reference.id = :refid" +
             "   and trxtype.searchKey = trx.movementType" +
-            "   and trx.product = :product" +
+            "   and trx.product.id = :productId" +
+    // Include only transactions that have its cost calculated
             "   and trx.isCostCalculated = true";
     //@formatter:on
     if (existsCumulatedValuationOnTrxDate) {
@@ -1091,6 +1123,8 @@ public class CostAdjustmentUtils {
             "   and (trx.transactionProcessDate > :ctrxdate" +
             "   or (trx.transactionProcessDate = :ctrxdate";
       //@formatter:on
+      // If the costing Transaction is an M- exclude the M+ Transactions with same movementDate and
+      // TrxProcessDate due to how data is going to be ordered in further queries using the priority
       if (costing.getInventoryTransaction().getMovementType().equals("M-")) {
         //@formatter:off
         hql +=
@@ -1129,6 +1163,8 @@ public class CostAdjustmentUtils {
             "   and (";
       //@formatter:on
     }
+    // If there are more than one trx on the same trx process date filter out those types with less
+    // priority and / or higher quantity.
     //@formatter:off
     hql +=
             "   trx.transactionProcessDate < :trxdate" +
@@ -1148,6 +1184,8 @@ public class CostAdjustmentUtils {
             "   trx.transactionProcessDate >= :fixbdt" +
             "   and (trx.movementDate < :mvtdate" +
             "   or (trx.movementDate = :mvtdate" +
+      // If there are more than one trx on the same trx process date filter out those types with
+      // less priority and / or higher quantity.
             "   and (trx.transactionProcessDate < :trxdate" +
             "   or (trx.transactionProcessDate = :trxdate" +
             "   and (trxtype.sequenceNumber < :trxtypeprio" +
@@ -1167,12 +1205,12 @@ public class CostAdjustmentUtils {
     if (currentCostDimensions.get(CostDimension.Warehouse) != null) {
       //@formatter:off
       hql +=
-            "   and locator.warehouse.id = :warehouse";
+            "   and locator.warehouse.id = :warehouseId";
       //@formatter:on
     }
     //@formatter:off
     hql +=
-            "   and trx.organization.id in (:orgs)" +
+            "   and trx.organization.id in (:orgIds)" +
             " group by tc.currency" +
             "   , tc.accountingDate";
     //@formatter:on
@@ -1181,12 +1219,12 @@ public class CostAdjustmentUtils {
         .getSession()
         .createQuery(hql, Object[].class)
         .setParameter("refid", MovementTypeRefID)
-        .setParameter("product", trx.getProduct())
+        .setParameter("productId", trx.getProduct().getId())
         .setParameter("trxdate", trx.getTransactionProcessDate())
         .setParameter("trxtypeprio", getTrxTypePrio(trx.getMovementType()))
         .setParameter("trxqty", trx.getMovementQuantity())
         .setParameter("trxid", trx.getId())
-        .setParameterList("orgs", orgs);
+        .setParameterList("orgIds", orgs);
 
     if (existsCumulatedValuationOnTrxDate) {
       if (costingRule.isBackdatedTransactionsFixed()) {
@@ -1204,7 +1242,8 @@ public class CostAdjustmentUtils {
     }
 
     if (currentCostDimensions.get(CostDimension.Warehouse) != null) {
-      trxQry.setParameter("warehouse", currentCostDimensions.get(CostDimension.Warehouse).getId());
+      trxQry.setParameter("warehouseId",
+          currentCostDimensions.get(CostDimension.Warehouse).getId());
     }
 
     ScrollableResults scroll = trxQry.scroll(ScrollMode.FORWARD_ONLY);
@@ -1271,7 +1310,7 @@ public class CostAdjustmentUtils {
     if (wh != null) {
       //@formatter:off
       hql +=
-            "   and loc.warehouse = :warehouse";
+            "   and loc.warehouse.id = :warehouseId";
     //@formatter:on
     }
 
@@ -1283,7 +1322,7 @@ public class CostAdjustmentUtils {
         .setParameter("mvntdate", refDate);
 
     if (wh != null) {
-      qryMinDate.setParameter("warehouse", wh);
+      qryMinDate.setParameter("warehouseId", wh.getId());
     }
     Date minNextDate = qryMinDate.uniqueResult();
     if (minNextDate == null) {
