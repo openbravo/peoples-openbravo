@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016-2019 Openbravo SLU
+ * All portions are Copyright (C) 2016-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -368,10 +368,11 @@ public class CancelAndReplaceUtils {
 
   static BigDecimal getPaymentScheduleOutstandingAmount(FIN_PaymentSchedule paymentSchedule) {
     // @formatter:off
-    final String hql = "select coalesce(sum(psd.amount), 0) as amount"
-        + " from FIN_Payment_ScheduleDetail as psd"
-        + " where psd.orderPaymentSchedule.id = :paymentScheduleId"
-        + " and psd.paymentDetails is null";
+    final String hql = 
+                  "select coalesce(sum(psd.amount), 0) as amount" +
+                  "  from FIN_Payment_ScheduleDetail as psd" +
+                  " where psd.orderPaymentSchedule.id = :paymentScheduleId" +
+                  "   and psd.paymentDetails is null";
     // @formatter:on
 
     return OBDal.getInstance()
@@ -624,10 +625,17 @@ public class CancelAndReplaceUtils {
   }
 
   static Order lockOrder(Order order) {
+    // @formatter:off
+    final String hql = 
+                  "select c" +
+                  "  from Order c" +
+                  " where id = :orderId";
+    // @formatter:on
+
     return OBDal.getInstance()
         .getSession()
-        .createQuery("select c from Order c where id = :id", Order.class)
-        .setParameter("id", order.getId())
+        .createQuery(hql, Order.class)
+        .setParameter("orderId", order.getId())
         .setMaxResults(1)
         .setLockOptions(LockOptions.UPGRADE)
         .uniqueResult();
