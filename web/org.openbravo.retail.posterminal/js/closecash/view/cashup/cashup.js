@@ -61,6 +61,23 @@ enyo.kind({
       showing: false
     }
   ],
+  modalComponents: [
+    {
+      kind: 'OB.UI.ModalCancel',
+      name: 'modalCancel',
+      classes: 'obObPosCloseCashUiCloseCash-modalCancel'
+    },
+    {
+      kind: 'OB.OBPOSCashUp.UI.modalPendingToProcess',
+      name: 'modalPendingToProcess',
+      classes: 'obObPosCashupUiCashUp-modalPendingToProcess'
+    },
+    {
+      kind: 'OB.UI.ModalSelectPrinters',
+      name: 'modalSelectPrinters',
+      classes: 'obObPosCloseCashUiCloseCash-modalSelectPrinters'
+    }
+  ],
   finalAction: function() {
     OB.POS.navigate('retail.pointofsale');
   },

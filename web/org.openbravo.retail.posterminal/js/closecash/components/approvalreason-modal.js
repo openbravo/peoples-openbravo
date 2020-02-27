@@ -106,8 +106,8 @@ enyo.kind({
   }
 });
 
-OB.UI.WindowView.registerPopup('OB.OBPOSCashUp.UI.CashUp', {
-  kind: 'OB.UI.ModalApprovalReason',
-  classes: 'obposModaApprovalReasonl',
-  name: 'OBPOS_modalApprovalReason'
-});
+// OB.UI.WindowView.registerPopup('OB.OBPOSCashUp.UI.CashUp', {
+//   kind: 'OB.UI.ModalApprovalReason',
+//   classes: 'obposModalApprovalReason',
+//   name: 'OBPOS_modalApprovalReason'
+// });

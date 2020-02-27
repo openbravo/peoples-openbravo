@@ -213,7 +213,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // Cash Up window
         "closecash/model/cashup/cashup-steps", "closecash/model/cashup/cashup-model",
         "closecash/view/cashup/cashup", "closecash/view/cashup/tabpendingreceipts",
-        "closecash/view/cashup/tabcashmaster", "closecash/components/cashup-modals",
+        "closecash/view/cashup/tabcashmaster", "closecash/components/cashup/cashup-modals",
+        "closecash/components/cashup/cashup-popups",
 
         // Safe Box window
         "closecash/view/countsafebox/tabsafeboxlist",
