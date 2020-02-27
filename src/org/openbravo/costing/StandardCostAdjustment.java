@@ -191,7 +191,7 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
             " where trx.client.id = :clientId" +
             "   and trx.organization.id in (:orgIds)" +
             "   and trx.product.id = :productId" +
-            "   and coalesce(iaui.caInventoryamtline, '0') <> :iaul" +
+            "   and coalesce(iaui.caInventoryamtline.id, '0') <> :inventoryAmountUpdateLineId" +
             "   and trx.isCostCalculated = true" +
             "   and trx.transactionProcessDate > :startdate" +
             "   and coalesce(i.inventoryType, 'N') <> 'O'";
@@ -220,12 +220,18 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
     } else {
       //@formatter:off
       hqlWhere +=
-            "   and case when coalesce(i.inventoryType, 'N') <> 'N' then trx.movementDate else trx.transactionProcessDate end > :dateFrom";
+            "   and case when coalesce(i.inventoryType, 'N') <> 'N' " +
+            "       then trx.movementDate " +
+            "       else trx.transactionProcessDate " +
+            "       end > :dateFrom";
       //@formatter:on
       if (date != null) {
         //@formatter:off
         hqlWhere +=
-            "   and case when coalesce(i.inventoryType, 'N') <> 'N' then trx.movementDate else trx.transactionProcessDate end <= :dateTo";
+            "   and case when coalesce(i.inventoryType, 'N') <> 'N' " +
+            "       then trx.movementDate " +
+            "       else trx.transactionProcessDate " +
+            "       end <= :dateTo";
         //@formatter:on
       }
       //@formatter:off
@@ -240,12 +246,13 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
         .setParameter("clientId", trx.getClient().getId())
         .setParameterList("orgIds", orgs)
         .setParameter("productId", trx.getProduct().getId())
-        .setParameter("iaul",
+        .setParameter("inventoryAmountUpdateLineId",
             trx.getPhysicalInventoryLine()
                 .getPhysInventory()
                 .getInventoryAmountUpdateLineInventoriesInitInventoryList()
                 .get(0)
-                .getCaInventoryamtline())
+                .getCaInventoryamtline()
+                .getId())
         .setParameter("startdate", startingDate);
 
     if (warehouse != null) {
@@ -288,7 +295,7 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
             "   and trx.movementDate > :date" +
             "   and trx.transactionProcessDate > :startdate" +
             "   and i.inventoryType = 'O'";
-    //@formatter:off
+    //@formatter:on
     if (warehouse != null) {
       //@formatter:off
       hqlWhere +=
