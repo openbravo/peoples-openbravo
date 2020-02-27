@@ -58,9 +58,6 @@
         <index-column name="C_BPARTNER_ID"/>
         <index-column name="M_OFFER_BPARTNER_ID"/>
       </index>
-      <index name="M_OFFERBP_OFFER_IDX" unique="false">
-        <index-column name="M_OFFER_ID"/>
-      </index>
       <unique name="M_OFFER_BPARTNER_UNIQUE">
         <unique-column name="C_BPARTNER_ID"/>
         <unique-column name="M_OFFER_ID"/>

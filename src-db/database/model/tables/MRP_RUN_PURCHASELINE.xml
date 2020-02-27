@@ -120,9 +120,6 @@
       <foreign-key foreignTable="MRP_SALESFORECASTLINE" name="MRP_SALESFORECASTLINE_PURCHASE">
         <reference local="MRP_SALESFORECASTLINE_ID" foreign="MRP_SALESFORECASTLINE_ID"/>
       </foreign-key>
-      <index name="MRP_RUN_PURCHLINE_PURCHASE_ID" unique="false">
-        <index-column name="MRP_RUN_PURCHASE_ID"/>
-      </index>
       <index name="MRP_RUN_PURHCLINE_PURCH_PROD" unique="false">
         <index-column name="MRP_RUN_PURCHASE_ID"/>
         <index-column name="M_PRODUCT_ID"/>

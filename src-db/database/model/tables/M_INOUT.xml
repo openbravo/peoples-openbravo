@@ -345,9 +345,6 @@
         <index-column name="C_BPARTNER_ID"/>
         <index-column name="MOVEMENTDATE"/>
       </index>
-      <index name="M_INOUT_BPARTNER" unique="false">
-        <index-column name="C_BPARTNER_ID"/>
-      </index>
       <index name="M_INOUT_DOCUMENTNO_ID" unique="false">
         <index-column name="DOCUMENTNO"/>
         <index-column name="M_INOUT_ID"/>

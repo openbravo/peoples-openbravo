@@ -139,9 +139,6 @@
         <index-column name="MRP_RUN_PRODUCTION_ID"/>
         <index-column name="M_PRODUCT_ID"/>
       </index>
-      <index name="MRP_RUN_PRODLINE_PRODUCTION_ID" unique="false">
-        <index-column name="MRP_RUN_PRODUCTION_ID"/>
-      </index>
       <index name="MRP_RUN_PRODUCTIONLINE_PARENT" unique="false">
         <index-column name="PARENT_ID"/>
         <whereClause><![CDATA[PARENT_ID IS NOT NULL]]></whereClause>

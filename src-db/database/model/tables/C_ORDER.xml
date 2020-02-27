@@ -486,9 +486,6 @@
         <index-column name="DATEORDERED"/>
         <index-column name="C_ORDER_ID"/>
       </index>
-      <index name="C_ORDER_DOCNO" unique="false">
-        <index-column name="DOCUMENTNO"/>
-      </index>
       <index name="C_ORDER_DOCUMENTNO_ID" unique="false">
         <index-column name="DOCUMENTNO"/>
         <index-column name="C_ORDER_ID"/>
