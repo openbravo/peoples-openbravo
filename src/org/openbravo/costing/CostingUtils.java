@@ -543,7 +543,10 @@ public class CostingUtils {
 
     //@formatter:off
     String hql =
-            "select sum(case when trx.movementQuantity < 0 then -tc.cost else tc.cost end ) as cost," +
+            "select sum(case when trx.movementQuantity < 0 " +
+            "           then -tc.cost " +
+            "           else tc.cost " +
+            "           end ) as cost," +
             "  tc.currency.id as currency," +
             "  tc.accountingDate as mdate" +
             "  from TransactionCost as tc" +
@@ -760,7 +763,10 @@ public class CostingUtils {
                   "   and (endingDate is null" +
                   "   or endingDate >= :enddate )" +
                   "   and validated = true" +
-                  " order by case when startingDate is null then 1 else 0 end, startingDate desc";
+                  " order by case when startingDate is null " +
+                  "          then 1 " +
+                  "          else 0 " +
+                  "          end, startingDate desc";
     //@formatter:on
 
     CostingRule costRule = OBDal.getInstance()
@@ -930,7 +936,7 @@ public class CostingUtils {
             "    join i.inventoryAmountUpdateLineInventoriesInitInventoryList as iaui" +
             "    join iaui.warehouse as w" +
             " where i.inventoryType = 'O'" +
-            "   and iaui.caInventoryamtline = :iaul";
+            "   and iaui.caInventoryamtline = :inventoryAmountUpdateLineId";
     //@formatter:on
     if (includeWarehouseDimension) {
       //@formatter:off
@@ -948,12 +954,13 @@ public class CostingUtils {
     Query<String> qry = OBDal.getInstance()
         .getSession()
         .createQuery(hql, String.class)
-        .setParameter("iaul",
+        .setParameter("inventoryAmountUpdateLineId",
             trx.getPhysicalInventoryLine()
                 .getPhysInventory()
                 .getInventoryAmountUpdateLineInventoriesInitInventoryList()
                 .get(0)
-                .getCaInventoryamtline());
+                .getCaInventoryamtline()
+                .getId());
     if (includeWarehouseDimension) {
       qry.setParameter("warehouseId", trx.getStorageBin().getWarehouse().getId());
     }
