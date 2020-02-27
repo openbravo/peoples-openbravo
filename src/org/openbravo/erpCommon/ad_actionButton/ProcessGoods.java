@@ -199,18 +199,20 @@ public class ProcessGoods extends HttpSecureAppServlet {
 
     OBError myMessage = null;
     try {
-      final ShipmentInOut goods = getGoodsShipmentInOut(strdocaction, strM_Inout_ID);
+      final ShipmentInOut goodsShipmentInOut = (ShipmentInOut) OBDal.getInstance()
+          .getProxy(ShipmentInOut.ENTITY_NAME, strM_Inout_ID);
+      goodsShipmentInOut.setDocumentAction(strdocaction);
+      OBDal.getInstance().save(goodsShipmentInOut);
+      OBDal.getInstance().flush();
 
-      Process process = getProcessGoodsShipmentInOt();
-
-      Map<String, String> parameters = parseDateGoodsShipmentInOut(strVoidMinoutDate,
+      Map<String, String> parameters = getFormatedDateParameters(strVoidMinoutDate,
           strVoidMinoutAcctDate);
-
       final ProcessInstance pinstance = CallProcess.getInstance()
-          .call(process, strM_Inout_ID, parameters);
-      OBDal.getInstance().getSession().refresh(goods);
-      goods.setProcessGoodsJava(goods.getDocumentAction());
-      OBDal.getInstance().save(goods);
+          .call(getProcessGoodsShipmentInOt(), strM_Inout_ID, parameters);
+
+      OBDal.getInstance().getSession().refresh(goodsShipmentInOut);
+      goodsShipmentInOut.setProcessGoodsJava(goodsShipmentInOut.getDocumentAction());
+      OBDal.getInstance().save(goodsShipmentInOut);
       OBDal.getInstance().flush();
       OBDal.getInstance().commitAndClose();
 
@@ -222,7 +224,7 @@ public class ProcessGoods extends HttpSecureAppServlet {
 
       if (invoiceIfPossible && GOODS_SHIPMENT_WINDOW.equals(strWindowId)
           && !"Error".equalsIgnoreCase(myMessage.getType())) {
-        myMessage = createInvoice(vars, goods);
+        myMessage = createInvoice(vars, goodsShipmentInOut);
         log4j.debug(myMessage.getMessage());
         vars.setMessage(strTabId, myMessage);
       }
@@ -238,18 +240,7 @@ public class ProcessGoods extends HttpSecureAppServlet {
     }
   }
 
-  private void generateErrorProcessReceipt(final HttpServletResponse response,
-      final VariablesSecureApp vars, final String strTabId, Exception ex) throws IOException {
-    final OBError myMessage;
-    myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-    if (!myMessage.isConnectionAvailable()) {
-      bdErrorConnection(response);
-    } else {
-      vars.setMessage(strTabId, myMessage);
-    }
-  }
-
-  private Map<String, String> parseDateGoodsShipmentInOut(final String strVoidMinoutDate,
+  private Map<String, String> getFormatedDateParameters(final String strVoidMinoutDate,
       final String strVoidMinoutAcctDate) {
     Map<String, String> parameters = null;
     if (!strVoidMinoutDate.isEmpty() && !strVoidMinoutAcctDate.isEmpty()) {
@@ -271,16 +262,6 @@ public class ProcessGoods extends HttpSecureAppServlet {
     return parameters;
   }
 
-  private ShipmentInOut getGoodsShipmentInOut(final String strdocaction,
-      final String strM_Inout_ID) {
-    final ShipmentInOut goods = (ShipmentInOut) OBDal.getInstance()
-        .getProxy(ShipmentInOut.ENTITY_NAME, strM_Inout_ID);
-    goods.setDocumentAction(strdocaction);
-    OBDal.getInstance().save(goods);
-    OBDal.getInstance().flush();
-    return goods;
-  }
-
   private Process getProcessGoodsShipmentInOt() {
     Process process = null;
     try {
@@ -290,6 +271,17 @@ public class ProcessGoods extends HttpSecureAppServlet {
       OBContext.restorePreviousMode();
     }
     return process;
+  }
+
+  private void generateErrorProcessReceipt(final HttpServletResponse response,
+      final VariablesSecureApp vars, final String strTabId, Exception ex) throws IOException {
+    final OBError myMessage;
+    myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+    if (!myMessage.isConnectionAvailable()) {
+      bdErrorConnection(response);
+    } else {
+      vars.setMessage(strTabId, myMessage);
+    }
   }
 
   private OBError createInvoice(final VariablesSecureApp vars, final ShipmentInOut goodShipment)
@@ -514,16 +506,16 @@ public class ProcessGoods extends HttpSecureAppServlet {
                   "       from MaterialMgmtStorageDetail as sd" +
                   "      where sd.product.id = iol.product.id" +
                   "        and sd.storageBin.id = iol.storageBin.id" +
-                  "        and sd.attributeSetValue = iol.attributeSetValue" +            
-                  "        and sd.uOM = iol.uOM" +
-                  "        and coalesce(sd.orderUOM, '0') = coalesce(iol.orderUOM, '0')" +
+                  "        and sd.attributeSetValue.id = iol.attributeSetValue.id" +
+                  "        and sd.uOM.id = iol.uOM.id" +
+                  "        and coalesce(sd.orderUOM.id, '0') = coalesce(iol.orderUOM.id, '0')" +
                   "     )";
     //@formatter:on
 
     return OBDal.getInstance()
         .getSession()
         .createQuery(hql, String.class)
-        .setParameter("receiptId", OBDal.getInstance().get(ShipmentInOut.class, receiptId).getId())
+        .setParameter("receiptId", receiptId)
         .list();
 
   }
