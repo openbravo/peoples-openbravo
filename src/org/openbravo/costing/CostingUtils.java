@@ -936,7 +936,7 @@ public class CostingUtils {
             "    join i.inventoryAmountUpdateLineInventoriesInitInventoryList as iaui" +
             "    join iaui.warehouse as w" +
             " where i.inventoryType = 'O'" +
-            "   and iaui.caInventoryamtline = :inventoryAmountUpdateLineId";
+            "   and iaui.caInventoryamtline.id = :inventoryAmountUpdateLineId";
     //@formatter:on
     if (includeWarehouseDimension) {
       //@formatter:off
