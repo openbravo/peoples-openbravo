@@ -82,8 +82,11 @@
             !line.has('hasDeliveryServices') &&
             line.get('obrdmDeliveryMode') === 'HomeDelivery'
           ) {
+            //force remote mode until services are migrated to indexedDB
+            var forceRemote = true;
             //Trigger Delivery Services Search
             if (
+              forceRemote ||
               OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)
             ) {
               var process = new OB.DS.Process(
@@ -664,8 +667,13 @@ enyo.kind({
       carrierLines &&
       carrierLines.length === this.args.selectedLines.length
     ) {
+      //force remote mode until services are migrated to indexedDB
+      var forceRemote = true;
       //Trigger Delivery Services Search
-      if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+      if (
+        forceRemote ||
+        OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)
+      ) {
         var process = new OB.DS.Process(
           'org.openbravo.retail.posterminal.process.HasDeliveryServices'
         );
