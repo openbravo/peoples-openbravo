@@ -304,6 +304,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/masterdata/discount/DiscountModel");
     // Business-Object
     appDependency.add("model/business-object/document-sequence/DocumentSequence");
+    appDependency.add("model/business-object/document-sequence/DocumentSequenceUtils");
+    appDependency.add("model/business-object/document-sequence/actions/UpdateSequence");
 
     for (final String resource : appDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,
