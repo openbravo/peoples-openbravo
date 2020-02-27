@@ -1453,7 +1453,10 @@
     );
   };
 
-  OB.UTIL.cashupAddPaymentWithMovement = function(paymentWithMovement, values) {
+  OB.UTIL.closeCashAddPaymentWithMovement = function(
+    paymentWithMovement,
+    values
+  ) {
     _.each(values, function(value) {
       var searchKey = value.get('searchKey');
       var item = _.find(paymentWithMovement, function(p) {

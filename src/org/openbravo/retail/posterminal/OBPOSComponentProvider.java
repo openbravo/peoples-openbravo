@@ -202,16 +202,21 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
         "cashmgmt/components/cashmgmt-modals",
 
-        // Cash Up window
-        "closecash/model/cashup-steps", "closecash/model/cashup-print",
-        "closecash/model/cashup-model", "closecash/view/closecash", "closecash/view/closekeyboard",
-        "closecash/view/closeinfo", "closecash/view/tabpendingreceipts",
-        "closecash/view/tabsafeboxlist", "closecash/view/tabcashmaster",
+        // Close Cash Common
+        "closecash/model/closecash-steps", "closecash/model/closecash-print",
+        "closecash/model/closecash-model", "closecash/view/closecash",
+        "closecash/view/closekeyboard", "closecash/view/closeinfo",
         "closecash/view/tabcashpayments", "closecash/view/tabcountcash",
         "closecash/view/tabcashtokeep", "closecash/view/tabpostprintclose",
-        "closecash/components/cashup-modals", "closecash/components/approvalreason-modal",
+        "closecash/components/approvalreason-modal",
 
-        "closecash/model/daycash",
+        // Cash Up window
+        "closecash/model/cashup/cashup-steps", "closecash/model/cashup/cashup-model",
+        "closecash/view/cashup/cashup", "closecash/view/cashup/tabpendingreceipts",
+        "closecash/view/cashup/tabcashmaster", "closecash/components/cashup-modals",
+
+        // Safe Box window
+        "closecash/view/countsafebox/tabsafeboxlist",
 
         // Core resources
         "../../org.openbravo.client.application/js/utilities/ob-utilities-number",
