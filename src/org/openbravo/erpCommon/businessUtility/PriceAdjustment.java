@@ -63,41 +63,51 @@ public class PriceAdjustment {
    * Calculates price actual from price standard applying the Price Adjustments that fit the rules.
    * 
    */
-  public static BigDecimal calculatePriceActual(BaseOBObject orderOrInvoice, Product product,
-      BigDecimal qty, BigDecimal priceStd) {
+  public static BigDecimal calculatePriceActual(final BaseOBObject orderOrInvoice,
+      final Product product, final BigDecimal qty, final BigDecimal priceStd) {
     BigDecimal priceActual = priceStd;
     try {
-      int precision = ((Currency) orderOrInvoice.get(Invoice.PROPERTY_CURRENCY)).getPricePrecision()
+      final int precision = ((Currency) orderOrInvoice.get(Invoice.PROPERTY_CURRENCY))
+          .getPricePrecision()
           .intValue();
       for (org.openbravo.model.pricing.priceadjustment.PriceAdjustment promo : getApplicablePriceAdjustments(
           orderOrInvoice, qty, product, false)) {
-        log.debug("promo: " + promo + "- " + promo.getDiscount());
-        boolean applyDiscount = true;
-        if (promo.isMultiple() && promo.getMultiple() != null
-            && qty.remainder(promo.getMultiple()).compareTo(BigDecimal.ZERO) != 0) {
-          applyDiscount = false;
-        }
-        if (promo.getFixedPrice() != null && applyDiscount) {
-          priceActual = promo.getFixedPrice();
-        } else {
-          if (applyDiscount) {
-            priceActual = priceActual.subtract(promo.getDiscountAmount())
-                .multiply(
-                    BigDecimal.ONE.subtract(promo.getDiscount().divide(BigDecimal.valueOf(100))))
-                .setScale(precision, RoundingMode.HALF_UP);
-          }
-        }
+        log.debug("promo:" + promo + "-" + promo.getDiscount());
+
+        priceActual = applyDiscountPriceActual(qty, priceActual, precision, promo);
+
         if (!promo.isApplyNext()) {
           break;
         }
       }
       log.debug("Actual:" + priceStd + "->" + priceActual);
       return priceActual;
-    } catch (Throwable t) {
+    } catch (Exception t) {
       log.error("Error calculating price actual with adjustments, returning price std (" + priceStd
           + ") order/invoice:" + orderOrInvoice + " - product: " + product + " - qty:" + qty);
       return priceStd;
     }
+  }
+
+  private static BigDecimal applyDiscountPriceActual(final BigDecimal qty,
+      final BigDecimal priceActual, final int precision,
+      final org.openbravo.model.pricing.priceadjustment.PriceAdjustment promo) {
+    boolean applyDiscount = true;
+    BigDecimal localPriceActual = priceActual;
+    if (promo.isMultiple() && promo.getMultiple() != null
+        && qty.remainder(promo.getMultiple()).compareTo(BigDecimal.ZERO) != 0) {
+      applyDiscount = false;
+    }
+    if (promo.getFixedPrice() != null && applyDiscount) {
+      localPriceActual = promo.getFixedPrice();
+    } else {
+      if (applyDiscount) {
+        localPriceActual = localPriceActual.subtract(promo.getDiscountAmount())
+            .multiply(BigDecimal.ONE.subtract(promo.getDiscount().divide(BigDecimal.valueOf(100))))
+            .setScale(precision, RoundingMode.HALF_UP);
+      }
+    }
+    return localPriceActual;
   }
 
   /**
@@ -105,40 +115,21 @@ public class PriceAdjustment {
    * rules.
    * 
    */
-  public static BigDecimal calculatePriceStd(BaseOBObject orderOrInvoice, Product product,
-      BigDecimal qty, BigDecimal priceActual) {
+  public static BigDecimal calculatePriceStd(final BaseOBObject orderOrInvoice,
+      final Product product, final BigDecimal qty, final BigDecimal priceActual) {
     BigDecimal priceStd = priceActual;
     try {
-      int precision = ((Currency) orderOrInvoice.get(Invoice.PROPERTY_CURRENCY)).getPricePrecision()
+      final int precision = ((Currency) orderOrInvoice.get(Invoice.PROPERTY_CURRENCY))
+          .getPricePrecision()
           .intValue();
       for (org.openbravo.model.pricing.priceadjustment.PriceAdjustment promo : getApplicablePriceAdjustments(
           orderOrInvoice, qty, product, true)) {
-        boolean applyDiscount = true;
-        if (promo.isMultiple() && promo.getMultiple() != null
-            && qty.remainder(promo.getMultiple()).compareTo(BigDecimal.ZERO) != 0) {
-          applyDiscount = false;
-        }
-        log.debug("promo: " + promo + "- " + promo.getDiscount());
-        if (applyDiscount) {
-          // Avoids divide by zero error
-          if (BigDecimal.ONE.subtract(promo.getDiscount().divide(BigDecimal.valueOf(100)))
-              .compareTo(BigDecimal.ZERO) != 0) {
-            priceStd = priceStd.add(promo.getDiscountAmount())
-                .divide(
-                    BigDecimal.ONE.subtract(promo.getDiscount().divide(BigDecimal.valueOf(100))),
-                    precision, RoundingMode.HALF_UP);
-          } else {
-            // 100 % Discount in price adjustment results in priceStd = Zero
-            priceStd = BigDecimal.ZERO;
-          }
-
-        }
-
+        priceStd = applyDiscountPriceStd(qty, priceStd, precision, promo);
       }
-
       log.debug("Std:" + priceActual + "->" + priceStd);
       return priceStd;
-    } catch (Throwable t) {
+
+    } catch (Exception t) {
       log.error(
           "Error calculating price std with adjustments, returning price actual (" + priceActual
               + ") order/invoice:" + orderOrInvoice + " - product: " + product + " - qty:" + qty);
@@ -146,11 +137,83 @@ public class PriceAdjustment {
     }
   }
 
+  private static BigDecimal applyDiscountPriceStd(final BigDecimal qty, final BigDecimal priceStd,
+      final int precision,
+      final org.openbravo.model.pricing.priceadjustment.PriceAdjustment promo) {
+    boolean applyDiscount = true;
+    BigDecimal localPriceStd = priceStd;
+    if (promo.isMultiple() && promo.getMultiple() != null
+        && qty.remainder(promo.getMultiple()).compareTo(BigDecimal.ZERO) != 0) {
+      applyDiscount = false;
+    }
+    log.debug("promo:" + promo + "-" + promo.getDiscount());
+    if (applyDiscount) {
+      // Avoids divide by zero error
+      if (BigDecimal.ONE.subtract(promo.getDiscount().divide(BigDecimal.valueOf(100)))
+          .compareTo(BigDecimal.ZERO) != 0) {
+        localPriceStd = localPriceStd.add(promo.getDiscountAmount())
+            .divide(BigDecimal.ONE.subtract(promo.getDiscount().divide(BigDecimal.valueOf(100))),
+                precision, RoundingMode.HALF_UP);
+      } else {
+        // 100 % Discount in price adjustment results in priceStd = Zero
+        localPriceStd = BigDecimal.ZERO;
+      }
+
+    }
+    return localPriceStd;
+  }
+
   private static List<org.openbravo.model.pricing.priceadjustment.PriceAdjustment> getApplicablePriceAdjustments(
-      BaseOBObject orderOrInvoice, BigDecimal qty, Product product, boolean reverse) {
+      final BaseOBObject orderOrInvoice, final BigDecimal qty, final Product product,
+      final boolean reverse) {
+
+    final String hql = getHQLApplicablePriceAdjustments();
+
+    final OBQuery<org.openbravo.model.pricing.priceadjustment.PriceAdjustment> hqlQuery = OBDal
+        .getInstance()
+        .createQuery(org.openbravo.model.pricing.priceadjustment.PriceAdjustment.class, hql)
+        .setNamedParameter("clientId",
+            ((Client) orderOrInvoice.get(Invoice.PROPERTY_CLIENT)).getId())
+        .setNamedParameter("orgId",
+            ((Organization) orderOrInvoice.get(Invoice.PROPERTY_ORGANIZATION)).getId())
+        .setNamedParameter("priceListId",
+            ((PriceList) orderOrInvoice.get(Invoice.PROPERTY_PRICELIST)).getId())
+        .setNamedParameter("bpId",
+            ((BusinessPartner) orderOrInvoice.get(Invoice.PROPERTY_BUSINESSPARTNER)).getId());
+
+    if (orderOrInvoice instanceof Invoice) {
+      hqlQuery.setNamedParameter("date", ((Invoice) orderOrInvoice).getInvoiceDate());
+    } else {
+      hqlQuery.setNamedParameter("date", ((Order) orderOrInvoice).getOrderDate());
+    }
+
+    final List<org.openbravo.model.pricing.priceadjustment.PriceAdjustment> queryList = hqlQuery
+        .setNamedParameter("qty", qty)
+        .setNamedParameter("productId", product.getId())
+        .list();
+
+    return reverse ? reverseResultList(queryList) : queryList;
+  }
+
+  private static List<org.openbravo.model.pricing.priceadjustment.PriceAdjustment> reverseResultList(
+      final List<org.openbravo.model.pricing.priceadjustment.PriceAdjustment> ql) {
+    List<org.openbravo.model.pricing.priceadjustment.PriceAdjustment> result;
+    // when reversing the list, special care must be taken with cascades
+    result = new ArrayList<>();
+    for (int i = ql.size() - 1; i >= 0; i--) {
+      org.openbravo.model.pricing.priceadjustment.PriceAdjustment promo = ql.get(i);
+      if (!promo.isApplyNext()) {
+        result = new ArrayList<>();
+      }
+      result.add(promo);
+    }
+    return result;
+  }
+
+  private static String getHQLApplicablePriceAdjustments() {
     //@formatter:off
     String hql = 
-            "as p " +
+            "as p" +
             " where active = true" +
             "   and client.id = :clientId" +
             "   and ad_isorgincluded(:orgId, p.organization.id, p.client.id) <> -1" +
@@ -163,45 +226,45 @@ public class PriceAdjustment {
             "   and (" +
             "     (includePriceLists='Y'" +
             "     and not exists (" +
-            "       select 1 " +
+            "       select 1" +
             "         from PricingAdjustmentPriceList pl" +
             "        where active = true" +
             "          and pl.priceAdjustment = p" +
             "          and pl.priceList.id = :priceListId" +
             "       )" +
-            "     ) " +
+            "     )" +
             "     or (includePriceLists='N' and exists (" +
-            "       select 1 " +
+            "       select 1" +
             "         from PricingAdjustmentPriceList pl" +
             "        where active = true" +
             "          and pl.priceAdjustment = p" +
             "          and pl.priceList.id = :priceListId" +
             "       )" +
-            "   )) " +
+            "   ))" +
             // Business Partner
             "   and (" +
-            "     (includedBusinessPartners = 'Y' " +
+            "     (includedBusinessPartners = 'Y'" +
             "     and not exists (" +
-            "       select 1 " +
+            "       select 1" +
             "         from PricingAdjustmentBusinessPartner bp" +
             "        where active = true" +
             "          and bp.priceAdjustment = p" +
             "          and bp.businessPartner.id = :bpId" +
             "       )" +
-            "     ) " +
+            "     )" +
             "     or (includedBusinessPartners = 'N' and exists (" +
             "       select 1" +
             "         from PricingAdjustmentBusinessPartner bp" +
             "        where active = true" +
             "          and bp.priceAdjustment = p" +
             "          and bp.businessPartner.id = :bpId" +
-            "       ) " +
+            "       )" +
             "   ))" +
             // Business Partner Category
             "   and (" +
             "     (includedBPCategories = 'Y' and not exists (" +
-            "       select 1 " +
-            "         from BusinessPartner bp " +
+            "       select 1" +
+            "         from BusinessPartner bp" +
             "           , PricingAdjustmentBusinessPartnerGroup bpc" +
             "        where bpc.active = true" +
             "          and bpc.priceAdjustment = p" +
@@ -210,7 +273,7 @@ public class PriceAdjustment {
             "       )" +
             "     )" +
             "     or (includedBPCategories = 'N' and exists (" +
-            "       select 1 " +
+            "       select 1" +
             "         from BusinessPartner bp" +
             "           , PricingAdjustmentBusinessPartnerGroup bpc" +
             "        where bpc.active = true" +
@@ -228,14 +291,14 @@ public class PriceAdjustment {
             "          and pr.priceAdjustment = p" +
             "          and pr.product.id = :productId" +
             "       )" +
-            "     ) " +
+            "     )" +
             "     or (includedProducts = 'N' and exists (" +
             "       select 1" +
             "         from PricingAdjustmentProduct pr" +
             "        where active = true" +
             "          and pr.priceAdjustment = p" +
             "          and pr.product.id = :productId" +
-            "       ) " +
+            "       )" +
             "   ))" +
             // Product Category
             "   and (" +
@@ -257,12 +320,12 @@ public class PriceAdjustment {
             "          and pc.priceAdjustment = p" +
             "          and pr.id = :productId" +
             "          and pc.productCategory = pr.productCategory" +
-            "       ) " +
+            "       )" +
             "   ))" +
             // Organization
             "   and (" +
             "     (includedOrganizations='Y' and not exists (" +
-            "       select 1 " +
+            "       select 1" +
             "         from PricingAdjustmentOrganization o" +
             "        where active = true" +
             "          and o.priceAdjustment = p" +
@@ -270,7 +333,7 @@ public class PriceAdjustment {
             "       )" +
             "     )" +
             "     or (includedOrganizations='N' and exists (" +
-            "       select 1 " +
+            "       select 1" +
             "         from PricingAdjustmentOrganization o" +
             "        where active = true" +
             "          and o.priceAdjustment = p" +
@@ -280,75 +343,43 @@ public class PriceAdjustment {
             // Product characteristic
             "   and (" +
             "     (includedCharacteristics='Y' and not exists (" +
-            "       select 1 " +
-            "         from Characteristic c " +
-            "           join c.pricingAdjustmentCharacteristicList pac " +
-            "           join c.productCharacteristicValueList pcv " +
-            "        where  pcv.product.id = :productId " +
-            "          and pac.offer = p " +
-            "          and m_isparent_ch_value(pcv.characteristicValue.id, pac.chValue.id, pac.characteristic.id) != -1 " +
+            "       select 1" +
+            "         from Characteristic c" +
+            "           join c.pricingAdjustmentCharacteristicList pac" +
+            "           join c.productCharacteristicValueList pcv" +
+            "        where  pcv.product.id = :productId" +
+            "          and pac.offer = p" +
+            "          and m_isparent_ch_value(pcv.characteristicValue.id, pac.chValue.id, pac.characteristic.id) != -1" +
             "       )" +
-            "     ) " +
+            "     )" +
             "     or (includedCharacteristics='N' and exists("+
-            "       select 1 " +
-            "         from Characteristic c " +
-            "           join c.pricingAdjustmentCharacteristicList pac " +
-            "           join c.productCharacteristicValueList pcv " +
-            "        where  pcv.product.id = :productId " +
-            "          and pac.offer = p " +
-            "          and m_isparent_ch_value(pcv.characteristicValue.id, pac.chValue.id, pac.characteristic.id) != -1 " +
-            "       ) " +
+            "       select 1" +
+            "         from Characteristic c" +
+            "           join c.pricingAdjustmentCharacteristicList pac" +
+            "           join c.productCharacteristicValueList pcv" +
+            "        where  pcv.product.id = :productId" +
+            "          and pac.offer = p" +
+            "          and m_isparent_ch_value(pcv.characteristicValue.id, pac.chValue.id, pac.characteristic.id) != -1" +
+            "       )" +
             "   ))";
     //@formatter:on
 
-    PriceAdjustment priceAdInstance = WeldUtils
+    final PriceAdjustment priceAdInstance = WeldUtils
         .getInstanceFromStaticBeanManager(PriceAdjustment.class);
 
     if (priceAdInstance.extensions != null) {
       for (Iterator<? extends Object> extIter = priceAdInstance.extensions.iterator(); extIter
           .hasNext();) {
-        PriceAdjustmentHqlExtension ext = (PriceAdjustmentHqlExtension) extIter.next();
+        final PriceAdjustmentHqlExtension ext = (PriceAdjustmentHqlExtension) extIter.next();
         hql += ext.getHQLStringExtension();
       }
     }
     //@formatter:off
     hql += 
-            " order by priority, id";
+            " order by priority" +
+            "   , id";
     //@formatter:on
 
-    OBQuery<org.openbravo.model.pricing.priceadjustment.PriceAdjustment> q = OBDal.getInstance()
-        .createQuery(org.openbravo.model.pricing.priceadjustment.PriceAdjustment.class, hql)
-        .setNamedParameter("clientId",
-            ((Client) orderOrInvoice.get(Invoice.PROPERTY_CLIENT)).getId())
-        .setNamedParameter("orgId",
-            ((Organization) orderOrInvoice.get(Invoice.PROPERTY_ORGANIZATION)).getId())
-        .setNamedParameter("priceListId",
-            ((PriceList) orderOrInvoice.get(Invoice.PROPERTY_PRICELIST)).getId())
-        .setNamedParameter("bpId",
-            ((BusinessPartner) orderOrInvoice.get(Invoice.PROPERTY_BUSINESSPARTNER)).getId());
-
-    if (orderOrInvoice instanceof Invoice) {
-      q.setNamedParameter("date", ((Invoice) orderOrInvoice).getInvoiceDate());
-    } else {
-      q.setNamedParameter("date", ((Order) orderOrInvoice).getOrderDate());
-    }
-
-    List<org.openbravo.model.pricing.priceadjustment.PriceAdjustment> ql = q
-        .setNamedParameter("qty", qty)
-        .setNamedParameter("productId", product.getId())
-        .list();
-    List<org.openbravo.model.pricing.priceadjustment.PriceAdjustment> result = ql;
-    if (reverse) {
-      // when reversing the list, special care must be taken with cascades
-      result = new ArrayList<org.openbravo.model.pricing.priceadjustment.PriceAdjustment>();
-      for (int i = ql.size() - 1; i >= 0; i--) {
-        org.openbravo.model.pricing.priceadjustment.PriceAdjustment promo = ql.get(i);
-        if (!promo.isApplyNext()) {
-          result = new ArrayList<org.openbravo.model.pricing.priceadjustment.PriceAdjustment>();
-        }
-        result.add(promo);
-      }
-    }
-    return result;
+    return hql;
   }
 }
