@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,11 +34,14 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.pricing.pricelist.PriceList;
 
 /**
  * This class is in charge of calculating prices for Discounts &amp; Promotions of Price Adjustment
@@ -145,132 +148,158 @@ public class PriceAdjustment {
 
   private static List<org.openbravo.model.pricing.priceadjustment.PriceAdjustment> getApplicablePriceAdjustments(
       BaseOBObject orderOrInvoice, BigDecimal qty, Product product, boolean reverse) {
-    String hql = "as p ";
-    hql += "where active = true ";
-    hql += "and client = :client ";
-    hql += "and ad_isorgincluded(:orgId, p.organization.id, p.client.id) <> -1 ";
-    hql += "and (endingDate is null or trunc(endingDate) + 1 > :date) ";
-    hql += "and trunc(startingDate)<=:date ";
-    hql += "and p.discountType.id = '5D4BAF6BB86D4D2C9ED3D5A6FC051579' ";
-    hql += "and (minQuantity is null or minQuantity <= :qty) ";
-    hql += "and (maxQuantity is null or maxQuantity >= :qty) ";
-
-    // price list
-    hql += "and ((includePriceLists='Y' ";
-    hql += "  and not exists (select 1 ";
-    hql += "         from PricingAdjustmentPriceList pl";
-    hql += "        where active = true";
-    hql += "          and pl.priceAdjustment = p";
-    hql += "          and pl.priceList = :priceList)) ";
-    hql += "   or (includePriceLists='N' ";
-    hql += "  and  exists (select 1 ";
-    hql += "         from PricingAdjustmentPriceList pl";
-    hql += "        where active = true";
-    hql += "          and pl.priceAdjustment = p";
-    hql += "          and pl.priceList.id = :priceList)) ";
-    hql += "    ) ";
-
-    // Business Partner
-    hql += "and ((includedBusinessPartners = 'Y' ";
-    hql += "and not exists (select 1 ";
-    hql += "        from PricingAdjustmentBusinessPartner bp";
-    hql += "       where active = true";
-    hql += "         and bp.priceAdjustment = p";
-    hql += "         and bp.businessPartner = :bp)) ";
-    hql += "      or (includedBusinessPartners = 'N'";
-    hql += "  and exists (select 1";
-    hql += "        from PricingAdjustmentBusinessPartner bp";
-    hql += "         where active = true";
-    hql += "         and bp.priceAdjustment = p";
-    hql += "         and bp.businessPartner = :bp)) ";
-    hql += "    ) ";
-
-    // Business Partner Category
-    hql += "and ((includedBPCategories = 'Y' ";
-    hql += "and not exists (select 1 ";
-    hql += "          from BusinessPartner bp, ";
-    hql += "               PricingAdjustmentBusinessPartnerGroup bpc";
-    hql += "         where bpc.active = true";
-    hql += "           and bpc.priceAdjustment = p";
-    hql += "           and bp = :bp";
-    hql += "           and bp.businessPartnerCategory = bpc.businessPartnerCategory))";
-    hql += "  or (includedBPCategories = 'N'";
-    hql += " and exists (select 1 ";
-    hql += "          from BusinessPartner bp, ";
-    hql += "               PricingAdjustmentBusinessPartnerGroup bpc";
-    hql += "         where bpc.active = true";
-    hql += "           and bpc.priceAdjustment = p";
-    hql += "           and bp = :bp";
-    hql += "           and bp.businessPartnerCategory = bpc.businessPartnerCategory))";
-    hql += "    ) ";
-
-    // Product
-    hql += "and ((includedProducts = 'Y' ";
-    hql += "and not exists (select 1";
-    hql += "          from PricingAdjustmentProduct pr";
-    hql += "         where active = true";
-    hql += "           and pr.priceAdjustment = p";
-    hql += "           and pr.product = :product)) ";
-    hql += "        or (includedProducts = 'N'";
-    hql += "and exists (select 1";
-    hql += "          from PricingAdjustmentProduct pr";
-    hql += "         where active = true";
-    hql += "           and pr.priceAdjustment = p";
-    hql += "           and pr.product = :product)) ";
-    hql += "    ) ";
-
-    // Product Category
-    hql += "and ((includedProductCategories ='Y' ";
-    hql += "and not exists (select 1";
-    hql += "          from PricingAdjustmentProductCategory pc, Product pr";
-    hql += "          where pc.active = true";
-    hql += "            and pc.priceAdjustment = p";
-    hql += "            and pr = :product";
-    hql += "            and pc.productCategory = pr.productCategory)) ";
-    hql += "           or (includedProductCategories ='N'";
-    hql += "and exists (select 1";
-    hql += "          from PricingAdjustmentProductCategory pc, Product pr";
-    hql += "          where pc.active = true";
-    hql += "            and pc.priceAdjustment = p";
-    hql += "            and pr = :product";
-    hql += "            and pc.productCategory = pr.productCategory)) ";
-    hql += "    ) ";
-
-    // organization
-    hql += "and ((includedOrganizations='Y' ";
-    hql += "  and not exists (select 1 ";
-    hql += "         from PricingAdjustmentOrganization o";
-    hql += "        where active = true";
-    hql += "          and o.priceAdjustment = p";
-    hql += "          and o.organization.id = :orgId)) ";
-    hql += "   or (includedOrganizations='N' ";
-    hql += "  and  exists (select 1 ";
-    hql += "         from PricingAdjustmentOrganization o";
-    hql += "        where active = true";
-    hql += "          and o.priceAdjustment = p";
-    hql += "          and o.organization.id = :orgId )) ";
-    hql += "    ) ";
-
-    // product characteristic
-    hql += "and ((includedCharacteristics='Y' ";
-    hql += "  and not exists (select 1 ";
-    hql += "         from Characteristic c ";
-    hql += "           join c.pricingAdjustmentCharacteristicList pac ";
-    hql += "           join c.productCharacteristicValueList pcv ";
-    hql += "         where  pcv.product = :product ";
-    hql += "          and pac.offer = p ";
-    hql += "          and m_isparent_ch_value(pcv.characteristicValue.id, pac.chValue.id, pac.characteristic.id) != -1 ";
-    hql += "          )) ";
-    hql += "   or (includedCharacteristics='N' ";
-    hql += "  and  exists (select 1 ";
-    hql += "         from Characteristic c ";
-    hql += "           join c.pricingAdjustmentCharacteristicList pac ";
-    hql += "           join c.productCharacteristicValueList pcv ";
-    hql += "         where  pcv.product = :product ";
-    hql += "          and pac.offer = p ";
-    hql += "          and m_isparent_ch_value(pcv.characteristicValue.id, pac.chValue.id, pac.characteristic.id) != -1 ";
-    hql += "          )) ";
-    hql += "    ) ";
+    //@formatter:off
+    String hql = 
+            "as p " +
+            " where active = true" +
+            "   and client.id = :clientId" +
+            "   and ad_isorgincluded(:orgId, p.organization.id, p.client.id) <> -1" +
+            "   and (endingDate is null or trunc(endingDate) + 1 > :date)" +
+            "   and trunc(startingDate)<=:date" +
+            "   and p.discountType.id = '5D4BAF6BB86D4D2C9ED3D5A6FC051579'" +
+            "   and (minQuantity is null or minQuantity <= :qty)" +
+            "   and (maxQuantity is null or maxQuantity >= :qty)" +
+            // price list
+            "   and (" +
+            "     (includePriceLists='Y'" +
+            "     and not exists (" +
+            "       select 1 " +
+            "         from PricingAdjustmentPriceList pl" +
+            "        where active = true" +
+            "          and pl.priceAdjustment = p" +
+            "          and pl.priceList.id = :priceListId" +
+            "       )" +
+            "     ) " +
+            "     or (includePriceLists='N' and exists (" +
+            "       select 1 " +
+            "         from PricingAdjustmentPriceList pl" +
+            "        where active = true" +
+            "          and pl.priceAdjustment = p" +
+            "          and pl.priceList.id = :priceListId" +
+            "       )" +
+            "   )) " +
+            // Business Partner
+            "   and (" +
+            "     (includedBusinessPartners = 'Y' " +
+            "     and not exists (" +
+            "       select 1 " +
+            "         from PricingAdjustmentBusinessPartner bp" +
+            "        where active = true" +
+            "          and bp.priceAdjustment = p" +
+            "          and bp.businessPartner.id = :bpId" +
+            "       )" +
+            "     ) " +
+            "     or (includedBusinessPartners = 'N' and exists (" +
+            "       select 1" +
+            "         from PricingAdjustmentBusinessPartner bp" +
+            "        where active = true" +
+            "          and bp.priceAdjustment = p" +
+            "          and bp.businessPartner.id = :bpId" +
+            "       ) " +
+            "   ))" +
+            // Business Partner Category
+            "   and (" +
+            "     (includedBPCategories = 'Y' and not exists (" +
+            "       select 1 " +
+            "         from BusinessPartner bp " +
+            "           , PricingAdjustmentBusinessPartnerGroup bpc" +
+            "        where bpc.active = true" +
+            "          and bpc.priceAdjustment = p" +
+            "          and bp.id = :bpId" +
+            "          and bp.businessPartnerCategory = bpc.businessPartnerCategory" +
+            "       )" +
+            "     )" +
+            "     or (includedBPCategories = 'N' and exists (" +
+            "       select 1 " +
+            "         from BusinessPartner bp" +
+            "           , PricingAdjustmentBusinessPartnerGroup bpc" +
+            "        where bpc.active = true" +
+            "          and bpc.priceAdjustment = p" +
+            "          and bp.id = :bpId" +
+            "          and bp.businessPartnerCategory = bpc.businessPartnerCategory" +
+            "       )" +
+            "   ))" +
+            // Product
+            "   and (" +
+            "     (includedProducts = 'Y' and not exists (" +
+            "       select 1" +
+            "         from PricingAdjustmentProduct pr" +
+            "        where active = true" +
+            "          and pr.priceAdjustment = p" +
+            "          and pr.product.id = :productId" +
+            "       )" +
+            "     ) " +
+            "     or (includedProducts = 'N' and exists (" +
+            "       select 1" +
+            "         from PricingAdjustmentProduct pr" +
+            "        where active = true" +
+            "          and pr.priceAdjustment = p" +
+            "          and pr.product.id = :productId" +
+            "       ) " +
+            "   ))" +
+            // Product Category
+            "   and (" +
+            "     (includedProductCategories ='Y' and not exists (" +
+            "       select 1" +
+            "         from PricingAdjustmentProductCategory pc" +
+            "           , Product pr" +
+            "        where pc.active = true" +
+            "          and pc.priceAdjustment = p" +
+            "          and pr.id = :productId" +
+            "          and pc.productCategory = pr.productCategory" +
+            "       )" +
+            "     )" +
+            "     or (includedProductCategories ='N' and exists (" +
+            "       select 1" +
+            "         from PricingAdjustmentProductCategory pc" +
+            "           , Product pr" +
+            "        where pc.active = true" +
+            "          and pc.priceAdjustment = p" +
+            "          and pr.id = :productId" +
+            "          and pc.productCategory = pr.productCategory" +
+            "       ) " +
+            "   ))" +
+            // Organization
+            "   and (" +
+            "     (includedOrganizations='Y' and not exists (" +
+            "       select 1 " +
+            "         from PricingAdjustmentOrganization o" +
+            "        where active = true" +
+            "          and o.priceAdjustment = p" +
+            "          and o.organization.id = :orgId" +
+            "       )" +
+            "     )" +
+            "     or (includedOrganizations='N' and exists (" +
+            "       select 1 " +
+            "         from PricingAdjustmentOrganization o" +
+            "        where active = true" +
+            "          and o.priceAdjustment = p" +
+            "          and o.organization.id = :orgId" +
+            "       )" +
+            "   ))" +
+            // Product characteristic
+            "   and (" +
+            "     (includedCharacteristics='Y' and not exists (" +
+            "       select 1 " +
+            "         from Characteristic c " +
+            "           join c.pricingAdjustmentCharacteristicList pac " +
+            "           join c.productCharacteristicValueList pcv " +
+            "        where  pcv.product.id = :productId " +
+            "          and pac.offer = p " +
+            "          and m_isparent_ch_value(pcv.characteristicValue.id, pac.chValue.id, pac.characteristic.id) != -1 " +
+            "       )" +
+            "     ) " +
+            "     or (includedCharacteristics='N' and exists("+
+            "       select 1 " +
+            "         from Characteristic c " +
+            "           join c.pricingAdjustmentCharacteristicList pac " +
+            "           join c.productCharacteristicValueList pcv " +
+            "        where  pcv.product.id = :productId " +
+            "          and pac.offer = p " +
+            "          and m_isparent_ch_value(pcv.characteristicValue.id, pac.chValue.id, pac.characteristic.id) != -1 " +
+            "       ) " +
+            "   ))";
+    //@formatter:on
 
     PriceAdjustment priceAdInstance = WeldUtils
         .getInstanceFromStaticBeanManager(PriceAdjustment.class);
@@ -282,26 +311,32 @@ public class PriceAdjustment {
         hql += ext.getHQLStringExtension();
       }
     }
-
-    hql += " order by priority, id";
+    //@formatter:off
+    hql += 
+            " order by priority, id";
+    //@formatter:on
 
     OBQuery<org.openbravo.model.pricing.priceadjustment.PriceAdjustment> q = OBDal.getInstance()
-        .createQuery(org.openbravo.model.pricing.priceadjustment.PriceAdjustment.class, hql);
-    q.setNamedParameter("client", orderOrInvoice.get(Invoice.PROPERTY_CLIENT));
-    q.setNamedParameter("orgId",
-        ((Organization) orderOrInvoice.get(Invoice.PROPERTY_ORGANIZATION)).getId());
-    q.setNamedParameter("priceList", orderOrInvoice.get(Invoice.PROPERTY_PRICELIST));
-    q.setNamedParameter("bp", orderOrInvoice.get(Invoice.PROPERTY_BUSINESSPARTNER));
+        .createQuery(org.openbravo.model.pricing.priceadjustment.PriceAdjustment.class, hql)
+        .setNamedParameter("clientId",
+            ((Client) orderOrInvoice.get(Invoice.PROPERTY_CLIENT)).getId())
+        .setNamedParameter("orgId",
+            ((Organization) orderOrInvoice.get(Invoice.PROPERTY_ORGANIZATION)).getId())
+        .setNamedParameter("priceListId",
+            ((PriceList) orderOrInvoice.get(Invoice.PROPERTY_PRICELIST)).getId())
+        .setNamedParameter("bpId",
+            ((BusinessPartner) orderOrInvoice.get(Invoice.PROPERTY_BUSINESSPARTNER)).getId());
 
     if (orderOrInvoice instanceof Invoice) {
       q.setNamedParameter("date", ((Invoice) orderOrInvoice).getInvoiceDate());
     } else {
       q.setNamedParameter("date", ((Order) orderOrInvoice).getOrderDate());
     }
-    q.setNamedParameter("qty", qty);
-    q.setNamedParameter("product", product);
 
-    List<org.openbravo.model.pricing.priceadjustment.PriceAdjustment> ql = q.list();
+    List<org.openbravo.model.pricing.priceadjustment.PriceAdjustment> ql = q
+        .setNamedParameter("qty", qty)
+        .setNamedParameter("productId", product.getId())
+        .list();
     List<org.openbravo.model.pricing.priceadjustment.PriceAdjustment> result = ql;
     if (reverse) {
       // when reversing the list, special care must be taken with cascades
