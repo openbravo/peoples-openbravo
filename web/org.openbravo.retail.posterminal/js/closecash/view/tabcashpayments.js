@@ -183,6 +183,7 @@ enyo.kind({
   numberFocus: function(inSender, inEvent) {
     inEvent.originator = this;
     this.doLineEditCash(inEvent);
+    this.$.formElementNumberOfCoins.inputField.$.numberQty.selectContents();
   }
 });
 

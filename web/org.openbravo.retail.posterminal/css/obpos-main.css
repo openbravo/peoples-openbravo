@@ -14000,7 +14000,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposCloseCashUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-formElementNumberlinesQty_activeInKeypad .obUiFormElementInput {
-  background-color: var(--color-teriary);
+  background-color: var(--color-on-tertiary_focus);
 }
 
 .obObposCloseCashUiRenderCashPaymentsLine-listItem-total {

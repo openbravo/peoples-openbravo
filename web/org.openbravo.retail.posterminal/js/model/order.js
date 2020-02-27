@@ -670,6 +670,10 @@
           gross = line.get('gross'),
           totalDiscount = 0,
           grossListPrice = line.get('grossListPrice') || line.get('priceList'),
+          creationPriceList =
+            line.get('creationListPrice') ||
+            line.get('grossListPrice') ||
+            line.get('priceList'),
           grossUnitPrice,
           discountPercentage,
           base;
@@ -688,11 +692,11 @@
           if (OB.DEC.compare(grossListPrice) === 0) {
             discountPercentage = OB.DEC.Zero;
           } else {
-            discountPercentage = OB.DEC.toBigDecimal(grossListPrice)
+            discountPercentage = OB.DEC.toBigDecimal(creationPriceList)
               .subtract(grossUnitPrice)
               .multiply(new BigDecimal('100'))
               .divide(
-                OB.DEC.toBigDecimal(grossListPrice),
+                OB.DEC.toBigDecimal(creationPriceList),
                 2,
                 BigDecimal.prototype.ROUND_HALF_UP
               );
@@ -3187,12 +3191,6 @@
             deletedline.set('qty', 0);
             // Set prices as 0
             deletedline.set('gross', 0);
-            // Calulate Taxes
-            if (this.get('priceIncludesTax')) {
-              OB.DATA.LineTaxesIncPrice(this, deletedline);
-            } else {
-              OB.DATA.LineTaxesExcPrice(this, deletedline);
-            }
           }
           // Sets the tax if it has been deleted
           deletedline.set(
@@ -10505,6 +10503,15 @@
                     lineGrossAmount: iter.lineGrossAmount
                   });
 
+                  if (!order.get('isQuotation')) {
+                    newline.set(
+                      'creationListPrice',
+                      iter.priceIncludesTax
+                        ? iter.grossListPrice
+                        : iter.listPrice
+                    );
+                  }
+
                   // copy verbatim not owned properties -> modular properties.
                   _.each(iter, function(value, key) {
                     if (!newline.ownProperties[key]) {
@@ -10956,9 +10963,10 @@
         }
       },
       loadCurrent: function(isNew) {
-        OB.App.State.TerminalLog.setContext({
-          context: this.current.get('documentNo')
-        });
+        OB.MobileApp.model.set(
+          'terminalLogContext',
+          this.current.get('documentNo')
+        );
         // Check if the current order to be loaded should be deleted
         if (this.current.get('obposIsDeleted') && this.current.get('id')) {
           var deletedOrderDocNo = this.current.get('documentNo');
