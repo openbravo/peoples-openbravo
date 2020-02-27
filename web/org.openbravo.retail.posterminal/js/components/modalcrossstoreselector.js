@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019 Openbravo S.L.U.
+ * Copyright (C) 2019-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -268,6 +268,8 @@ enyo.kind({
       var data = {
         orgId: this.model.get('orgId'),
         orgName: this.model.get('orgName'),
+        countryId: this.model.get('countryId'),
+        regionId: this.model.get('regionId'),
         warehouseid: this.model.get('warehouseId'),
         warehousename: this.model.get('warehouseName'),
         stock: this.model.get('stock'),

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -12,19 +12,36 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery;
+import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery.MasterDataModel;
+import org.openbravo.mobile.core.model.HQLProperty;
+import org.openbravo.mobile.core.model.ModelExtension;
+import org.openbravo.mobile.core.model.ModelExtensionUtils;
 import org.openbravo.model.common.enterprise.OrganizationInformation;
 import org.openbravo.model.common.geography.Country;
 import org.openbravo.model.common.geography.Region;
 import org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.retail.posterminal.POSUtils;
-import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
-public class TaxRate extends ProcessHQLQuery {
+@MasterDataModel("TaxRate")
+public class TaxRate extends MasterDataProcessHQLQuery {
+  public static final String taxRatePropertyExtension = "OBPOS_TaxRateExtension";
+
+  @Inject
+  @Any
+  @Qualifier(taxRatePropertyExtension)
+  private Instance<ModelExtension> extensions;
 
   @Override
   protected boolean isAdminMode() {
@@ -41,7 +58,7 @@ public class TaxRate extends ProcessHQLQuery {
           .get(0);
       final Country fromCountry = storeInfo.getLocationAddress().getCountry();
       final Region fromRegion = storeInfo.getLocationAddress().getRegion();
-      Map<String, Object> paramValues = new HashMap<String, Object>();
+      Map<String, Object> paramValues = new HashMap<>();
       if (fromCountry != null) {
         paramValues.put("fromCountryId", fromCountry.getId());
       }
@@ -69,42 +86,57 @@ public class TaxRate extends ProcessHQLQuery {
     // FROM
     final OrganizationInformation storeInfo = posDetail.getOrganization()
         .getOrganizationInformationList()
-        .get(0); // FIXME: expected org info?
-                 // IndexOutOfBoundsException?
+        .get(0);
 
     final Country fromCountry = storeInfo.getLocationAddress().getCountry();
     final Region fromRegion = storeInfo.getLocationAddress().getRegion();
 
-    String hql = "from FinancialMgmtTaxRate as financialMgmtTaxRate where "
-        + "financialMgmtTaxRate.$readableSimpleClientCriteria AND "
-        + "financialMgmtTaxRate.$naturalOrgCriteria AND "
-        + "(financialMgmtTaxRate.$incrementalUpdateCriteria) "
-        + "and financialMgmtTaxRate.salesPurchaseType in ('S', 'B') ";
+    //@formatter:off
+    String hql = " select " + ModelExtensionUtils.getPropertyExtensions(extensions).getHqlSelect()
+        + " from FinancialMgmtTaxRate as tr"
+        + " join tr.taxCategory as tc"
+        + " where tr.$readableSimpleCriteria"
+        + " and tr.$readableSimpleClientCriteria"
+        + " and tr.$naturalOrgCriteria"
+        + " and tr.$incrementalUpdateCriteria"
+        + " and tr.salesPurchaseType in ('S', 'B')"
+        + " and (tr.summaryLevel = false"
+        + " or tc.asbom = true)";
+    //@formatter:on
 
     if (fromCountry != null) {
-      hql = hql + "and (financialMgmtTaxRate.country.id = :fromCountryId "
-          + "  or (financialMgmtTaxRate.country is null and (not exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate))"
-          + "  or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromCountry.id = :fromCountryId )"
-          + "  or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromCountry is null)))";
+      hql = hql + " and (tr.country.id = :fromCountryId"
+          + " or (tr.country is null and (not exists (select 1 from FinancialMgmtTaxZone as tz where tz.tax.id = tr.id))"
+          + " or exists (select 1 from FinancialMgmtTaxZone as tz where tz.tax.id = tr.id and tz.fromCountry.id = :fromCountryId)"
+          + " or exists (select 1 from FinancialMgmtTaxZone as tz where tz.tax.id = tr.id and tz.fromCountry is null)))";
     } else {
-      hql = hql + "and financialMgmtTaxRate.country is null ";
+      hql = hql + " and tr.country is null";
     }
     if (fromRegion != null) {
-      hql = hql + "and (financialMgmtTaxRate.region.id = :fromRegionId  "
-          + " or (financialMgmtTaxRate.region is null and (not exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate))"
-          + " or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromRegion.id = :fromRegionId )"
-          + "  or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromRegion is null)))";
+      hql = hql + " and (tr.region.id = :fromRegionId"
+          + " or (tr.region is null and (not exists (select 1 from FinancialMgmtTaxZone as tz where tz.tax.id = tr.id))"
+          + " or exists (select 1 from FinancialMgmtTaxZone as tz where tz.tax.id = tr.id and tz.fromRegion.id = :fromRegionId)"
+          + " or exists (select 1 from FinancialMgmtTaxZone as tz where tz.tax.id = tr.id and tz.fromRegion is null)))";
 
     } else {
-      hql = hql + "and financialMgmtTaxRate.region is null ";
+      hql = hql + " and tr.region is null";
     }
-    hql = hql + "and $readableSimpleCriteria order by validFromDate desc, financialMgmtTaxRate.id";
+    hql = hql + " order by tr.validFromDate desc, tr.id";
 
-    return Arrays.asList(new String[] { hql });
+    return Arrays.asList(hql);
   }
 
   @Override
   protected boolean bypassPreferenceCheck() {
     return true;
+  }
+
+  @Override
+  public List<String> getMasterDataModelProperties() {
+    return ModelExtensionUtils.getPropertyExtensions(extensions)
+        .getProperties()
+        .stream()
+        .map(HQLProperty::getHqlProperty)
+        .collect(Collectors.toList());
   }
 }
