@@ -100,14 +100,13 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
         "model/currencypanel", "model/productcharacteristicvalue", "model/characteristicvalue",
         "model/characteristic", "model/brand", "model/terminal-model", "model/paymentmethodcashup",
-        "model/taxcashup", "model/offlineprinter", "model/productbom", "model/taxcategorybom",
-        "model/orderassociationsfilter", "model/product-servicelinked", "model/prepaymentrules",
-        "components/modalcancel", "components/subwindow", "components/leftsubwindow",
-        "components/modalreceiptproperties", "components/modalreceiptlineproperties",
-        "components/modalnoteditableorder", "components/modalnoteditableline",
-        "components/modalmodulesindev", "components/modalselectprinters",
-        "components/modalmorepaymentmethods", "components/modalDeliveryChange",
-        "components/obpos-gridkeyboard",
+        "model/taxcashup", "model/offlineprinter", "model/orderassociationsfilter",
+        "model/product-servicelinked", "model/prepaymentrules", "components/modalcancel",
+        "components/subwindow", "components/leftsubwindow", "components/modalreceiptproperties",
+        "components/modalreceiptlineproperties", "components/modalnoteditableorder",
+        "components/modalnoteditableline", "components/modalmodulesindev",
+        "components/modalselectprinters", "components/modalmorepaymentmethods",
+        "components/modalDeliveryChange", "components/obpos-gridkeyboard",
 
         // Web POS window
         "utils/eventbus", "utils/attributeUtils", "utils/cashUpReportUtils",
@@ -145,7 +144,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // Point of sale models
         "model/pricelist", "model/product-category", "model/product-category-tree", "model/product",
         "model/productprice", "model/service-product", "model/service-category",
-        "model/businesspartner", "model/document-sequence", "model/taxRate", "model/taxZone",
+        "model/businesspartner", "model/document-sequence",
 
         "model/servicepricerule", "model/servicepricerulerange",
         "model/servicepricerulerangeprices", "model/servicepriceruleversion",
@@ -249,6 +248,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalwarehouseselector", "components/orderlineinfopopup",
         "components/orderlineinfostandardpopup",
 
+        // Taxes
+        "taxesengine/pos/pos-taxes",
+
         // Discounts
         "discountsengine/pos/pos-discounts" };
 
@@ -267,11 +269,17 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     final String[] cssDependency = { "obpos-main" };
 
     final ArrayList<String> appDependency = new ArrayList<>();
-    // IndexedDB
-    appDependency.add("model/masterdata/SalesRepresentativeModel");
+
+    // Masterdata
     appDependency.add("model/masterdata/BPCategoryModel");
-    appDependency.add("model/masterdata/CountryModel");
     appDependency.add("model/masterdata/BPSetLineModel");
+    appDependency.add("model/masterdata/CountryModel");
+    appDependency.add("model/masterdata/ProductBOMModel");
+    appDependency.add("model/masterdata/SalesRepresentativeModel");
+    appDependency.add("model/masterdata/TaxCategoryModel");
+    appDependency.add("model/masterdata/TaxCategoryBOMModel");
+    appDependency.add("model/masterdata/TaxRateModel");
+    appDependency.add("model/masterdata/TaxZoneModel");
     appDependency.add("model/masterdata/discount/DiscountFilterBusinessPartnerGroupModel");
     appDependency.add("model/masterdata/discount/DiscountFilterBusinessPartnerModel");
     appDependency.add("model/masterdata/discount/DiscountFilterBusinessPartnerSetModel");
@@ -281,6 +289,12 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/masterdata/discount/DiscountFilterProductModel");
     appDependency.add("model/masterdata/discount/DiscountFilterRoleModel");
     appDependency.add("model/masterdata/discount/DiscountModel");
+
+    // Tax engine
+    appDependency.add("taxesengine/common/tax-engine");
+    appDependency.add("taxesengine/common/tax-rules");
+    appDependency.add("taxesengine/common/rules/priceincluding-tax");
+    appDependency.add("taxesengine/common/rules/priceexcluding-tax");
 
     for (final String resource : resourceDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,

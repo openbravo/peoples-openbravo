@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2019 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -16,14 +16,6 @@ OB.OBPOSPointOfSale.UI = OB.OBPOSPointOfSale.UI || {};
 //Window model
 OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
   models: [
-    {
-      generatedModel: true,
-      modelName: 'TaxRate'
-    },
-    {
-      generatedModel: true,
-      modelName: 'TaxZone'
-    },
     OB.Model.Product,
     OB.Model.ProductCategory,
     OB.Model.ProductCategoryTree,
@@ -41,8 +33,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     OB.Model.DocumentSequence,
     OB.Model.ChangedBusinessPartners,
     OB.Model.ChangedBPlocation,
-    OB.Model.ProductBOM,
-    OB.Model.TaxCategoryBOM,
     OB.Model.CancelLayaway,
     OB.Model.ProductServiceLinked, //
     OB.Model.CurrencyPanel,
@@ -984,7 +974,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             id: OB.MobileApp.model.get('terminal').organization,
             name: OB.I18N.getLabel('OBPOS_LblThisStore', [
               OB.MobileApp.model.get('terminal').organization$_identifier
-            ])
+            ]),
+            country: OB.MobileApp.model.get('terminal').organizationCountryId,
+            region: OB.MobileApp.model.get('terminal').organizationRegionId
           },
           terminalWarehouse = {
             id: OB.MobileApp.model.get('warehouses')[0].warehouseid,
@@ -1727,62 +1719,64 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               }
             );
             me.loadUnpaidOrders(function() {
-              OB.Discounts.Pos.initCache(function() {
-                me.printReceipt = new OB.OBPOSPointOfSale.Print.Receipt(me);
-                // Now, get the hardware manager status
-                OB.POS.hwserver.status(function(data) {
-                  if (data && data.exception) {
-                    OB.UTIL.showError(data.exception.message);
-                    callback();
-                  } else {
-                    // Save hardware manager information
-                    if (data && data.version) {
-                      // Max database string size: 10
-                      var hwmVersion =
-                        data.version.length > 10
-                          ? data.version.substring(0, 9)
-                          : data.version;
-                      OB.UTIL.localStorage.setItem(
-                        'hardwareManagerVersion',
-                        hwmVersion
+              OB.Taxes.Pos.initCache(function() {
+                OB.Discounts.Pos.initCache(function() {
+                  me.printReceipt = new OB.OBPOSPointOfSale.Print.Receipt(me);
+                  // Now, get the hardware manager status
+                  OB.POS.hwserver.status(function(data) {
+                    if (data && data.exception) {
+                      OB.UTIL.showError(data.exception.message);
+                      callback();
+                    } else {
+                      // Save hardware manager information
+                      if (data && data.version) {
+                        // Max database string size: 10
+                        var hwmVersion =
+                          data.version.length > 10
+                            ? data.version.substring(0, 9)
+                            : data.version;
+                        OB.UTIL.localStorage.setItem(
+                          'hardwareManagerVersion',
+                          hwmVersion
+                        );
+                      }
+                      if (data && data.revision) {
+                        // Max database string size: 15
+                        var hwmRevision =
+                          data.revision.length > 15
+                            ? data.version.substring(0, 14)
+                            : data.revision;
+                        OB.UTIL.localStorage.setItem(
+                          'hardwareManagerRevision',
+                          hwmRevision
+                        );
+                      }
+                      if (data && data.javaInfo) {
+                        OB.UTIL.localStorage.setItem(
+                          'hardwareManagerJavaInfo',
+                          data.javaInfo
+                        );
+                      }
+                      // Now that templates has been initialized, print welcome message
+                      OB.POS.hwserver.print(
+                        me.printReceipt.templatewelcome,
+                        {},
+                        function(data) {
+                          if (data && data.exception) {
+                            OB.UTIL.showError(
+                              OB.I18N.getLabel(
+                                'OBPOS_MsgHardwareServerNotAvailable'
+                              )
+                            );
+                            callback();
+                          } else {
+                            callback();
+                          }
+                        },
+                        OB.DS.HWServer.DISPLAY
                       );
                     }
-                    if (data && data.revision) {
-                      // Max database string size: 15
-                      var hwmRevision =
-                        data.revision.length > 15
-                          ? data.version.substring(0, 14)
-                          : data.revision;
-                      OB.UTIL.localStorage.setItem(
-                        'hardwareManagerRevision',
-                        hwmRevision
-                      );
-                    }
-                    if (data && data.javaInfo) {
-                      OB.UTIL.localStorage.setItem(
-                        'hardwareManagerJavaInfo',
-                        data.javaInfo
-                      );
-                    }
-                    // Now that templates has been initialized, print welcome message
-                    OB.POS.hwserver.print(
-                      me.printReceipt.templatewelcome,
-                      {},
-                      function(data) {
-                        if (data && data.exception) {
-                          OB.UTIL.showError(
-                            OB.I18N.getLabel(
-                              'OBPOS_MsgHardwareServerNotAvailable'
-                            )
-                          );
-                          callback();
-                        } else {
-                          callback();
-                        }
-                      },
-                      OB.DS.HWServer.DISPLAY
-                    );
-                  }
+                  });
                 });
               });
             });

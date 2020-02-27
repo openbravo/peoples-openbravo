@@ -164,12 +164,36 @@
         this.set('net', null, {
           silent: true
         });
-        this.set('gross', OB.DEC.mul(this.get('qty'), this.get('price')));
+        this.set('gross', OB.DEC.mul(this.getQty(), this.get('price')));
+        this.set(
+          'discountedGross',
+          OB.DEC.compare(this.get('gross')) === 0
+            ? this.get('gross')
+            : OB.DEC.sub(this.get('gross'), this.getDiscount())
+        );
+        this.set(
+          'discountedPrice',
+          this.getQty() === 0
+            ? 0
+            : OB.DEC.div(this.get('discountedGross'), this.getQty())
+        );
       } else {
         this.set('gross', null, {
           silent: true
         });
-        this.set('net', OB.DEC.mul(this.get('qty'), this.get('price')));
+        this.set('net', OB.DEC.mul(this.getQty(), this.get('price')));
+        this.set(
+          'discountedNet',
+          OB.DEC.compare(this.get('net')) === 0
+            ? this.get('net')
+            : OB.DEC.sub(this.get('net'), this.getDiscount())
+        );
+        this.set(
+          'discountedNetPrice',
+          this.getQty() === 0
+            ? 0
+            : OB.DEC.div(this.get('discountedNet'), this.getQty())
+        );
       }
     },
 
@@ -718,19 +742,10 @@
         if (this.get('priceIncludesTax')) {
           line.set(
             {
-              net: OB.UTIL.getFirstValidValue([
-                OB.DEC.toNumber(line.get('discountedNet')),
-                line.get('net'),
-                OB.DEC.div(gross, line.get('linerate'))
-              ]),
+              net: OB.DEC.toNumber(line.get('discountedNet')),
               pricenet:
                 line.get('qty') !== 0
-                  ? line.get('discountedNet')
-                    ? OB.DEC.div(line.get('discountedNet'), line.get('qty'))
-                    : OB.DEC.div(
-                        OB.DEC.div(gross, line.get('linerate')),
-                        line.get('qty')
-                      )
+                  ? OB.DEC.div(line.get('discountedNet'), line.get('qty'))
                   : 0,
               listPrice: 0,
               standardPrice: 0,
@@ -900,7 +915,11 @@
         }
       };
 
-      if (this.get('isEditable') || this.get('isCancelling')) {
+      if (
+        this.get('isEditable') ||
+        this.get('forceCalculateTaxes') ||
+        this.get('isCancelling')
+      ) {
         this.get('lines').forEach(function(line) {
           line.calculateGross();
         });
@@ -4291,7 +4310,7 @@
       }
     },
 
-    addProductToOrder: function(
+    addProductToOrder: async function(
       p,
       qty,
       options,
@@ -4300,6 +4319,7 @@
       cancelCallback
     ) {
       var executeAddProduct,
+        addProductBOMToProduct,
         addProdCharsToProduct,
         finalCallback,
         me = this,
@@ -4357,6 +4377,15 @@
         return;
       }
 
+      addProductBOMToProduct = async function() {
+        const productBOM = await OB.App.MasterdataModels.ProductBOM.find(
+          new OB.App.Class.Criteria().criterion('product', p.id).build()
+        );
+        if (productBOM.length > 0) {
+          p.set('productBOM', productBOM);
+        }
+      };
+
       addProdCharsToProduct = function(productWithChars, addProdCharCallback) {
         //Add prod char information to product object
         if (
@@ -4379,7 +4408,19 @@
           addProdCharCallback();
         }
       };
+
       var context = this;
+
+      // In case product is BOM and it doesn't have BOM information yet, add it
+      if (
+        !p.has('productBOM') &&
+        OB.Taxes.Pos.taxCategoryBOM.find(
+          taxCategory => taxCategory.id === p.get('taxCategory')
+        )
+      ) {
+        await addProductBOMToProduct();
+      }
+
       var productWithChars = OB.UTIL.clone(p);
       addProdCharsToProduct(productWithChars, function() {
         OB.UTIL.HookManager.executeHooks(
@@ -4975,7 +5016,9 @@
     createLine: function(p, units, options, attrs) {
       var me = this,
         orgId,
-        orgName;
+        orgName,
+        country,
+        region;
       if (
         OB.UTIL.isNullOrUndefined(attrs) ||
         OB.UTIL.isNullOrUndefined(attrs.organization)
@@ -4985,6 +5028,8 @@
           orgName = OB.I18N.getLabel('OBPOS_LblThisStore', [
             OB.MobileApp.model.get('terminal').organization$_identifier
           ]);
+          country = OB.MobileApp.model.get('terminal').organizationCountryId;
+          region = OB.MobileApp.model.get('terminal').organizationRegionId;
         } else {
           orgId = me.get('organization');
           _.each(OB.MobileApp.model.get('store'), function(s) {
@@ -4997,6 +5042,8 @@
       } else {
         orgId = attrs.organization.id;
         orgName = attrs.organization.name;
+        country = attrs.organization.country;
+        region = attrs.organization.region;
       }
 
       function createLineAux(p, units, options, attrs, me) {
@@ -5019,7 +5066,9 @@
           priceIncludesTax: me.get('priceIncludesTax'),
           organization: {
             id: orgId,
-            name: orgName
+            name: orgName,
+            country: country,
+            region: region
           },
           warehouse: {
             id:

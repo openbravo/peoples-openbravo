@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019 Openbravo S.L.U.
+ * Copyright (C) 2019-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -333,7 +333,7 @@
     /**
      * Adds a discount child filter to every discount record inside a list.
      * Thus, it will be possible to use the filter to decide if the discount should be applied or not.
-     * @param {Object[]} discountArray - The list of discount records where child filter will be added.
+     * @param {Object[]} discounts - The list of discount records where child filter will be added.
      * @param {Class<MasterdataModel>} filterModel - The masterdata model of the filter added.
      * @param {string} filterName - The name of the property that will be created in each record of the list with the filter data.
      * @param {string} filterEntity - In case the filter must include an entity.id property instead of an id property, it indicates the name of entity. By default it will be null.
@@ -342,7 +342,7 @@
      * @return {Object[]} The list of discount records with child filter added.
      */
     addDiscountFilter: async function(
-      discountArray,
+      discounts,
       filterModel,
       filterName,
       filterEntity = null,
@@ -370,22 +370,22 @@
         filterGroup
       );
 
-      discountArray.forEach(
+      discounts.forEach(
         discount =>
           (discount[filterName] = filterArrayByDiscount[discount.id] || [])
       );
 
-      return discountArray;
+      return discounts;
     },
 
     /**
      * Adds role filter to every discount record inside a list.
-     * @param {Object[]} discountArray - The list of discount records where role filter will be added.
+     * @param {Object[]} discounts - The list of discount records where role filter will be added.
      * @return {Object[]} The list of discount records with role filter added.
      */
-    addDiscountsByRoleFilter: async function(discountArray) {
+    addDiscountsByRoleFilter: async function(discounts) {
       return OB.Discounts.Pos.addDiscountFilter(
-        discountArray,
+        discounts,
         OB.App.MasterdataModels.DiscountFilterRole,
         'roles'
       );
@@ -393,12 +393,12 @@
 
     /**
      * Adds product filter to every discount record inside a list.
-     * @param {Object[]} discountArray - The list of discount records where product filter will be added.
+     * @param {Object[]} discounts - The list of discount records where product filter will be added.
      * @return {Object[]} The list of discount records with product filter added.
      */
-    addDiscountsByProductFilter: async function(discountArray) {
+    addDiscountsByProductFilter: async function(discounts) {
       return OB.Discounts.Pos.addDiscountFilter(
-        discountArray,
+        discounts,
         OB.App.MasterdataModels.DiscountFilterProduct,
         'products',
         'product'
@@ -407,12 +407,12 @@
 
     /**
      * Adds product category filter to every discount record inside a list.
-     * @param {Object[]} discountArray - The list of discount records where role product category will be added.
+     * @param {Object[]} discounts - The list of discount records where role product category will be added.
      * @return {Object[]} The list of discount records with product category filter added.
      */
-    addDiscountsByProductCategoryFilter: async function(discountArray) {
+    addDiscountsByProductCategoryFilter: async function(discounts) {
       return OB.Discounts.Pos.addDiscountFilter(
-        discountArray,
+        discounts,
         OB.App.MasterdataModels.DiscountFilterProductCategory,
         'productCategories',
         'productCategory'
@@ -421,12 +421,12 @@
 
     /**
      * Adds characteristic filter to every discount record inside a list.
-     * @param {Object[]} discountArray - The list of discount records where characteristic filter will be added.
+     * @param {Object[]} discounts - The list of discount records where characteristic filter will be added.
      * @return {Object[]} The list of discount records with characteristic filter added.
      */
-    addDiscountsByCharacteristicFilter: async function(discountArray) {
+    addDiscountsByCharacteristicFilter: async function(discounts) {
       return OB.Discounts.Pos.addDiscountFilter(
-        discountArray,
+        discounts,
         OB.App.MasterdataModels.DiscountFilterCharacteristic,
         'productCharacteristics'
       );
@@ -434,13 +434,13 @@
 
     /**
      * Adds business partner filter to every discount record inside a list.
-     * @param {Object[]} discountArray - The list of discount records where business partner filter will be added.
+     * @param {Object[]} discounts - The list of discount records where business partner filter will be added.
      * @return {Object[]} The list of discount records with business partner filter added.
      */
-    addDiscountsByBusinessPartnerFilter: async function(discountArray) {
+    addDiscountsByBusinessPartnerFilter: async function(discounts) {
       // FIXME: Make query remotely in case OBPOS_remote.discount.bp filtering by OB.MobileApp.model.get('businessPartner').id
       return OB.Discounts.Pos.addDiscountFilter(
-        discountArray,
+        discounts,
         OB.App.MasterdataModels.DiscountFilterBusinessPartner,
         'cbpartners',
         'businessPartner'
@@ -449,12 +449,12 @@
 
     /**
      * Adds business partner group filter to every discount record inside a list.
-     * @param {Object[]} discountArray - The list of discount records where business partner group filter will be added.
+     * @param {Object[]} discounts - The list of discount records where business partner group filter will be added.
      * @return {Object[]} The list of discount records with business partner group filter added.
      */
-    addDiscountsByBusinessPartnerGroupFilter: async function(discountArray) {
+    addDiscountsByBusinessPartnerGroupFilter: async function(discounts) {
       return OB.Discounts.Pos.addDiscountFilter(
-        discountArray,
+        discounts,
         OB.App.MasterdataModels.DiscountFilterBusinessPartnerGroup,
         'cbpartnerGroups',
         'businessPartnerCategory'
@@ -463,12 +463,12 @@
 
     /**
      * Adds business partner set filter to every discount record inside a list.
-     * @param {Object[]} discountArray - The list of discount records where business partner set filter will be added.
+     * @param {Object[]} discounts - The list of discount records where business partner set filter will be added.
      * @return {Object[]} The list of discount records with business partner set filter added.
      */
-    addDiscountsByBusinessPartnerSetFilter: async function(discountArray) {
+    addDiscountsByBusinessPartnerSetFilter: async function(discounts) {
       return OB.Discounts.Pos.addDiscountFilter(
-        discountArray,
+        discounts,
         OB.App.MasterdataModels.DiscountFilterBusinessPartnerSet,
         'cbpartnerSets'
       );
@@ -476,12 +476,12 @@
 
     /**
      * Adds price list filter to every discount record inside a list.
-     * @param {Object[]} discountArray - The list of discount records where price list filter will be added.
+     * @param {Object[]} discounts - The list of discount records where price list filter will be added.
      * @return {Object[]} The list of discount records with price list filter added.
      */
-    addDiscountsByPriceListFilter: async function(discountArray) {
+    addDiscountsByPriceListFilter: async function(discounts) {
       return OB.Discounts.Pos.addDiscountFilter(
-        discountArray,
+        discounts,
         OB.App.MasterdataModels.DiscountFilterPriceList,
         'pricelists'
       );
@@ -489,7 +489,7 @@
 
     /**
      * Filters a list of discount records applying a given filter.
-     * @param {Object[]} discountArray - The list of discount records where filter will be applied.
+     * @param {Object[]} discounts - The list of discount records where filter will be applied.
      * @param {string} filterIncludeName - The name of the property indicating if the filter is including or excluding.
      * @param {string} filterChildrenName - The name of the child filter property.
      * @param {string} filterIdName - The name of the property with the id that will be filtered.
@@ -497,13 +497,13 @@
      * @return {Object[]} The list of discounts matching the filter.
      */
     filterDiscountById: function(
-      discountArray,
+      discounts,
       filterIncludeName,
       filterChildrenName,
       filterIdName,
       id
     ) {
-      return discountArray.filter(
+      return discounts.filter(
         discount =>
           (discount[filterIncludeName] === 'Y' &&
             (!discount[filterChildrenName] ||
@@ -520,12 +520,12 @@
 
     /**
      * Filters a list of discount records applying a given date.
-     * @param {Object[]} discountArray - The list of discount records where date filter will be applied.
+     * @param {Object[]} discounts - The list of discount records where date filter will be applied.
      * @param {Object} date - Date to filter discounts.
      * @return {Object[]} The list of discounts matching the date filter.
      */
-    filterDiscountsByDate: function(discountArray, date) {
-      return discountArray.filter(
+    filterDiscountsByDate: function(discounts, date) {
+      return discounts.filter(
         discount =>
           new Date(discount.startingDate) <= date &&
           (!discount.endingDate || new Date(discount.endingDate) >= date)
@@ -534,13 +534,13 @@
 
     /**
      * Filters a list of discount records applying a given role.
-     * @param {Object[]} discountArray - The list of discount records where role filter will be applied.
+     * @param {Object[]} discounts - The list of discount records where role filter will be applied.
      * @param {Object} date - Role id to filter discounts.
      * @return {Object[]} The list of discounts matching the role filter.
      */
-    filterDiscountsByRole: function(discountArray, roleId) {
+    filterDiscountsByRole: function(discounts, roleId) {
       return OB.Discounts.Pos.filterDiscountById(
-        discountArray,
+        discounts,
         'oBDISCIncludedRoles',
         'roles',
         'role',
@@ -550,13 +550,13 @@
 
     /**
      * Filters a list of discount records applying a given price list.
-     * @param {Object[]} discountArray - The list of discount records where price list filter will be applied.
+     * @param {Object[]} discounts - The list of discount records where price list filter will be applied.
      * @param {Object} date - Price list id to filter discounts.
      * @return {Object[]} The list of discounts matching the price list filter.
      */
-    filterDiscountsByPriceList: function(discountArray, priceListId) {
+    filterDiscountsByPriceList: function(discounts, priceListId) {
       return OB.Discounts.Pos.filterDiscountById(
-        discountArray,
+        discounts,
         'includePriceLists',
         'pricelists',
         'm_pricelist_id',
@@ -627,64 +627,56 @@
       );
       noManualDiscounts.sort((a, b) => a.priority - b.priority);
 
-      let discountArray = manualDiscounts.concat(noManualDiscounts);
+      let discounts = manualDiscounts.concat(noManualDiscounts);
 
-      discountArray = await OB.Discounts.Pos.addDiscountsByRoleFilter(
-        discountArray
+      discounts = await OB.Discounts.Pos.addDiscountsByRoleFilter(discounts);
+
+      discounts = await OB.Discounts.Pos.addDiscountsByProductFilter(discounts);
+
+      discounts = await OB.Discounts.Pos.addDiscountsByProductCategoryFilter(
+        discounts
       );
 
-      discountArray = await OB.Discounts.Pos.addDiscountsByProductFilter(
-        discountArray
+      discounts = await OB.Discounts.Pos.addDiscountsByCharacteristicFilter(
+        discounts
       );
 
-      discountArray = await OB.Discounts.Pos.addDiscountsByProductCategoryFilter(
-        discountArray
+      discounts = await OB.Discounts.Pos.addDiscountsByBusinessPartnerFilter(
+        discounts
       );
 
-      discountArray = await OB.Discounts.Pos.addDiscountsByCharacteristicFilter(
-        discountArray
+      discounts = await OB.Discounts.Pos.addDiscountsByBusinessPartnerGroupFilter(
+        discounts
       );
 
-      discountArray = await OB.Discounts.Pos.addDiscountsByBusinessPartnerFilter(
-        discountArray
+      discounts = await OB.Discounts.Pos.addDiscountsByBusinessPartnerSetFilter(
+        discounts
       );
 
-      discountArray = await OB.Discounts.Pos.addDiscountsByBusinessPartnerGroupFilter(
-        discountArray
+      discounts = await OB.Discounts.Pos.addDiscountsByPriceListFilter(
+        discounts
       );
 
-      discountArray = await OB.Discounts.Pos.addDiscountsByBusinessPartnerSetFilter(
-        discountArray
-      );
-
-      discountArray = await OB.Discounts.Pos.addDiscountsByPriceListFilter(
-        discountArray
-      );
-
-      discountArray = OB.Discounts.Pos.filterDiscountsByRole(
-        discountArray,
+      discounts = OB.Discounts.Pos.filterDiscountsByRole(
+        discounts,
         OB.MobileApp.model.get('context').role.id
       );
 
-      discountArray.forEach(
+      discounts.forEach(
         discount => (discount.discountPercentage = discount.discount)
       );
 
-      data.manualRuleImpls = discountArray.filter(discount =>
+      data.manualRuleImpls = discounts.filter(discount =>
         manualPromotions.includes(discount.discountType)
       );
 
-      data.ruleImpls = discountArray.filter(
+      data.ruleImpls = discounts.filter(
         discount => !manualPromotions.includes(discount.discountType)
       );
 
       //BPSets
-      const bpSetLineArray = await OB.App.MasterdataModels.BPSetLine.find();
-      const bpSetLineArrayByBPSet = OB.App.ArrayUtils.groupBy(
-        bpSetLineArray,
-        'bpSet'
-      );
-      data.bpSets = bpSetLineArrayByBPSet;
+      const bpSetLines = await OB.App.MasterdataModels.BPSetLine.find();
+      data.bpSets = OB.App.ArrayUtils.groupBy(bpSetLines, 'bpSet');
 
       return data;
     }
