@@ -995,11 +995,15 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           OB.UTIL.clone(receipt, auxReceipt);
           auxReceipt.set('isLayaway', false);
           auxReceipt.set('orderType', 2);
-          OB.UTIL.cashUpReport(auxReceipt, function() {
+          const cashUpReportSuccessCallback = function() {
             if (callback instanceof Function) {
               callback();
             }
-          });
+          };
+          OB.UTIL.cashUpReport(auxReceipt, undefined);
+          OB.App.State.Cashup.updateCashup({ tickets: [auxReceipt] }).then(() =>
+            cashUpReportSuccessCallback()
+          );
         }
 
         function updateCashup() {
@@ -1012,92 +1016,89 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               auxReceipt.set('orderType', 3);
               auxReceipt.prepareToSend(function() {
                 OB.Dal.transaction(function(tx) {
-                  OB.UTIL.cashUpReport(
-                    auxReceipt,
-                    function(cashUp) {
-                      auxReceipt.set(
-                        'cashUpReportInformation',
-                        JSON.parse(cashUp.models[0].get('objToSend'))
-                      );
-                      OB.UTIL.HookManager.executeHooks(
-                        'OBPOS_PreSyncReceipt',
-                        {
-                          receipt: receipt,
-                          model: me,
-                          tx: tx
-                        },
-                        function(args) {
-                          auxReceipt.set(
-                            'json',
-                            JSON.stringify(receipt.serializeToSaveJSON())
-                          );
-                          process.exec(
-                            {
-                              messageId: OB.UTIL.get_UUID(),
-                              data: [
-                                {
-                                  id: auxReceipt.get('id'),
-                                  posTerminal: OB.MobileApp.model.get(
-                                    'terminal'
-                                  ).id,
-                                  order: auxReceipt
-                                }
-                              ]
-                            },
-                            function(data) {
-                              if (data && data.exception) {
-                                revertCashupReport(function() {
-                                  if (data.exception.message) {
-                                    OB.UTIL.showConfirmation.display(
-                                      OB.I18N.getLabel('OBMOBC_Error'),
-                                      data.exception.message
-                                    );
-                                  } else {
-                                    OB.UTIL.showError(
-                                      OB.I18N.getLabel(
-                                        'OBPOS_MsgErrorVoidLayaway'
-                                      )
-                                    );
-                                  }
-                                  finishVoidLayaway();
-                                });
-                              } else {
-                                auxReceipt.trigger(
-                                  OB.MobileApp.model.get('terminal')
-                                    .defaultwebpostab
-                                );
-                                OB.Dal.remove(receipt, null, function(tx, err) {
-                                  OB.UTIL.showError(err);
-                                });
-                                OB.UTIL.clone(auxReceipt, receiptForPrinting);
-                                auxReceipt.trigger('print', receiptForPrinting);
-                                orderList.deleteCurrent();
-                                receipt.trigger('change:gross', receipt);
-                                OB.UTIL.showSuccess(
-                                  OB.I18N.getLabel(
-                                    'OBPOS_MsgSuccessVoidLayaway'
-                                  )
-                                );
-                                finishVoidLayaway();
+                  const cashUpReportSuccessCallback = function() {
+                    auxReceipt.set(
+                      'cashUpReportInformation',
+                      OB.App.State.Cashup.Utils.getCashup()
+                    );
+                    OB.UTIL.HookManager.executeHooks(
+                      'OBPOS_PreSyncReceipt',
+                      {
+                        receipt: receipt,
+                        model: me,
+                        tx: tx
+                      },
+                      function(args) {
+                        auxReceipt.set(
+                          'json',
+                          JSON.stringify(receipt.serializeToSaveJSON())
+                        );
+                        process.exec(
+                          {
+                            messageId: OB.UTIL.get_UUID(),
+                            data: [
+                              {
+                                id: auxReceipt.get('id'),
+                                posTerminal: OB.MobileApp.model.get('terminal')
+                                  .id,
+                                order: auxReceipt
                               }
-                            },
-                            function() {
+                            ]
+                          },
+                          function(data) {
+                            if (data && data.exception) {
                               revertCashupReport(function() {
-                                OB.UTIL.showError(
-                                  OB.I18N.getLabel(
-                                    'OBPOS_OfflineWindowRequiresOnline'
-                                  )
-                                );
+                                if (data.exception.message) {
+                                  OB.UTIL.showConfirmation.display(
+                                    OB.I18N.getLabel('OBMOBC_Error'),
+                                    data.exception.message
+                                  );
+                                } else {
+                                  OB.UTIL.showError(
+                                    OB.I18N.getLabel(
+                                      'OBPOS_MsgErrorVoidLayaway'
+                                    )
+                                  );
+                                }
                                 finishVoidLayaway();
                               });
+                            } else {
+                              auxReceipt.trigger(
+                                OB.MobileApp.model.get('terminal')
+                                  .defaultwebpostab
+                              );
+                              OB.Dal.remove(receipt, null, function(tx, err) {
+                                OB.UTIL.showError(err);
+                              });
+                              OB.UTIL.clone(auxReceipt, receiptForPrinting);
+                              auxReceipt.trigger('print', receiptForPrinting);
+                              orderList.deleteCurrent();
+                              receipt.trigger('change:gross', receipt);
+                              OB.UTIL.showSuccess(
+                                OB.I18N.getLabel('OBPOS_MsgSuccessVoidLayaway')
+                              );
+                              finishVoidLayaway();
                             }
-                          );
-                        },
-                        tx
-                      );
-                    },
-                    tx
-                  );
+                          },
+                          function() {
+                            revertCashupReport(function() {
+                              OB.UTIL.showError(
+                                OB.I18N.getLabel(
+                                  'OBPOS_OfflineWindowRequiresOnline'
+                                )
+                              );
+                              finishVoidLayaway();
+                            });
+                          }
+                        );
+                      },
+                      tx
+                    );
+                  };
+                  OB.UTIL.cashUpReport(auxReceipt, undefined, tx);
+                  OB.App.State.Cashup.updateCashup({
+                    tickets: [auxReceipt]
+                  }).then(() => cashUpReportSuccessCallback());
                 });
               });
             },
@@ -1111,7 +1112,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           OB.UTIL.rebuildCashupFromServer(function() {
             auxReceipt.set(
               'obposAppCashup',
-              OB.MobileApp.model.get('terminal').cashUpId
+              OB.App.State.Cashup.Utils.getCashupId()
             );
             updateCashup();
           });
@@ -1149,7 +1150,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                   ); // Absolute date in ISO format
                   receipt.set(
                     'obposAppCashup',
-                    OB.MobileApp.model.get('terminal').cashUpId
+                    OB.App.State.Cashup.Utils.getCashupId()
                   );
                   OB.UTIL.HookManager.executeHooks(
                     'OBPOS_FinishCancelLayaway',
@@ -1186,49 +1187,45 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                                     );
                                   });
                               }
-                              OB.UTIL.cashUpReport(
-                                receipt,
-                                function(cashUp) {
-                                  var cancelLayawayModel = new OB.Model.CancelLayaway(),
-                                    cancelLayawayObj;
+                              const cashUpReportSuccessCallback = function() {
+                                var cancelLayawayModel = new OB.Model.CancelLayaway(),
+                                  cancelLayawayObj;
 
-                                  receipt.set(
-                                    'cashUpReportInformation',
-                                    JSON.parse(
-                                      cashUp.models[0].get('objToSend')
-                                    )
-                                  );
-                                  receipt.set('created', new Date().getTime());
-                                  receipt.set(
-                                    'json',
-                                    JSON.stringify(
-                                      receipt.serializeToSaveJSON()
-                                    )
-                                  );
+                                receipt.set(
+                                  'cashUpReportInformation',
+                                  OB.App.State.Cashup.Utils.getCashup()
+                                );
+                                receipt.set('created', new Date().getTime());
+                                receipt.set(
+                                  'json',
+                                  JSON.stringify(receipt.serializeToSaveJSON())
+                                );
 
-                                  OB.UTIL.clone(receipt, cloneOrderForNew);
-                                  OB.UTIL.clone(receipt, cloneOrderForPrinting);
+                                OB.UTIL.clone(receipt, cloneOrderForNew);
+                                OB.UTIL.clone(receipt, cloneOrderForPrinting);
 
-                                  cancelLayawayObj = receipt.serializeToJSON();
-                                  cancelLayawayModel.set(
-                                    'json',
-                                    JSON.stringify(cancelLayawayObj)
-                                  );
-                                  OB.Dal.getInTransaction(
-                                    tx,
-                                    OB.Model.Order,
-                                    receipt.id,
-                                    function(model) {
-                                      OB.Dal.removeInTransaction(tx, model);
-                                    }
-                                  );
-                                  OB.Dal.saveInTransaction(
-                                    tx,
-                                    cancelLayawayModel
-                                  );
-                                },
-                                tx
-                              );
+                                cancelLayawayObj = receipt.serializeToJSON();
+                                cancelLayawayModel.set(
+                                  'json',
+                                  JSON.stringify(cancelLayawayObj)
+                                );
+                                OB.Dal.getInTransaction(
+                                  tx,
+                                  OB.Model.Order,
+                                  receipt.id,
+                                  function(model) {
+                                    OB.Dal.removeInTransaction(tx, model);
+                                  }
+                                );
+                                OB.Dal.saveInTransaction(
+                                  tx,
+                                  cancelLayawayModel
+                                );
+                              };
+                              OB.UTIL.cashUpReport(receipt, undefined, tx);
+                              OB.App.State.Cashup.updateCashup({
+                                tickets: [receipt]
+                              }).then(() => cashUpReportSuccessCallback());
                             },
                             function() {
                               //transaction error callback

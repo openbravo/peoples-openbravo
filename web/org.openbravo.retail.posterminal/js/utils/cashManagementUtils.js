@@ -228,15 +228,9 @@
                               cashUpResults,
                               null,
                               function(cashUpReport) {
-                                var parseCashUp = JSON.parse(
-                                  cashUpReport.at(0).get('objToSend')
-                                );
-                                parseCashUp.objToSend = JSON.stringify(
-                                  parseCashUp
-                                );
                                 cashManagementTransactionToAdd.set(
                                   'cashUpReportInformation',
-                                  parseCashUp
+                                  OB.App.State.Cashup.Utils.getCashup()
                                 );
                                 cashManagementTransactionToAdd.set(
                                   'json',

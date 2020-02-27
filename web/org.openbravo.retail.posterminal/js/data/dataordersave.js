@@ -76,7 +76,7 @@
         }
 
         // 4. verify that a cashupId is available
-        var cashupId = OB.MobileApp.model.get('terminal').cashUpId;
+        var cashupId = OB.App.State.Cashup.Utils.getCashupId();
         if (!cashupId) {
           OB.error(
             'The receipt has been closed with empty cashUpId (current value: ' +
@@ -295,7 +295,7 @@
 
                   frozenReceipt.set(
                     'obposAppCashup',
-                    OB.MobileApp.model.get('terminal').cashUpId
+                    OB.App.State.Cashup.Utils.getCashupId()
                   );
                   // convert returns
                   if (receipt.isNegative()) {
@@ -529,45 +529,46 @@
                           frozenReceipt
                         );
                         OB.trace('Calculationg cashup information.');
-                        OB.UTIL.cashUpReport(
-                          frozenReceipt,
-                          function(cashUp) {
-                            frozenReceipt.set(
-                              'cashUpReportInformation',
-                              JSON.parse(cashUp.models[0].get('objToSend'))
+                        const cashUpReportSuccessCallback = function() {
+                          frozenReceipt.set(
+                            'cashUpReportInformation',
+                            OB.App.State.Cashup.Utils.getCashup()
+                          );
+                          frozenReceipt.set(
+                            'json',
+                            JSON.stringify(frozenReceipt.serializeToJSON())
+                          );
+                          OB.UTIL.setScanningFocus(true);
+                          if (
+                            OB.MobileApp.model.hasPermission(
+                              'OBMOBC_SynchronizedMode',
+                              true
+                            )
+                          ) {
+                            OB.Dal.saveInTransaction(
+                              tx,
+                              frozenReceipt,
+                              function() {
+                                executePreSyncReceipt(tx);
+                              }
                             );
-                            frozenReceipt.set(
-                              'json',
-                              JSON.stringify(frozenReceipt.serializeToJSON())
+                          } else {
+                            OB.UTIL.calculateCurrentCash(null, tx);
+                            OB.trace('Saving receipt.');
+                            OB.Dal.saveInTransaction(
+                              tx,
+                              frozenReceipt,
+                              function() {
+                                executePreSyncReceipt(tx);
+                              }
                             );
-                            OB.UTIL.setScanningFocus(true);
-                            if (
-                              OB.MobileApp.model.hasPermission(
-                                'OBMOBC_SynchronizedMode',
-                                true
-                              )
-                            ) {
-                              OB.Dal.saveInTransaction(
-                                tx,
-                                frozenReceipt,
-                                function() {
-                                  executePreSyncReceipt(tx);
-                                }
-                              );
-                            } else {
-                              OB.UTIL.calculateCurrentCash(null, tx);
-                              OB.trace('Saving receipt.');
-                              OB.Dal.saveInTransaction(
-                                tx,
-                                frozenReceipt,
-                                function() {
-                                  executePreSyncReceipt(tx);
-                                }
-                              );
-                            }
-                          },
-                          tx
-                        );
+                          }
+                        };
+
+                        OB.UTIL.cashUpReport(frozenReceipt, undefined, tx);
+                        OB.App.State.Cashup.updateCashup({
+                          tickets: [frozenReceipt]
+                        }).then(() => cashUpReportSuccessCallback());
                       },
                       function() {
                         // the transaction failed
@@ -731,78 +732,79 @@
           await OB.MobileApp.model.setTicketDocumentNo(currentReceipt);
 
           OB.UTIL.calculateCurrentCash(null, tx);
-          OB.UTIL.cashUpReport(
-            currentReceipt,
-            function(cashUp) {
-              currentReceipt.set(
-                'cashUpReportInformation',
-                JSON.parse(cashUp.models[0].get('objToSend'))
-              );
-              OB.UTIL.HookManager.executeHooks(
-                'OBPOS_PreSyncReceipt',
-                {
-                  receipt: currentReceipt,
-                  model: model,
-                  tx: tx,
-                  isMultiOrder: true
-                },
-                function(args) {
-                  currentReceipt.set(
-                    'json',
-                    JSON.stringify(currentReceipt.serializeToSaveJSON())
-                  );
-                  OB.UTIL.setScanningFocus(true);
-                  currentReceipt.set('hasbeenpaid', 'Y');
-                  OB.Dal.saveInTransaction(
-                    tx,
-                    currentReceipt,
-                    function() {
-                      OB.info(
-                        'Multiorders ticket closed',
-                        currentReceipt
-                          .get('json')
-                          .replace(/logclientErrors/g, 'logErrors'),
-                        'caller: ' +
-                          OB.UTIL.getStackTrace('Backbone.Events.trigger', true)
-                      );
+          const cashUpReportSuccessCallback = function() {
+            currentReceipt.set(
+              'cashUpReportInformation',
+              OB.App.State.Cashup.Utils.getCashup()
+            );
+            OB.UTIL.HookManager.executeHooks(
+              'OBPOS_PreSyncReceipt',
+              {
+                receipt: currentReceipt,
+                model: model,
+                tx: tx,
+                isMultiOrder: true
+              },
+              function(args) {
+                currentReceipt.set(
+                  'json',
+                  JSON.stringify(currentReceipt.serializeToSaveJSON())
+                );
+                OB.UTIL.setScanningFocus(true);
+                currentReceipt.set('hasbeenpaid', 'Y');
+                OB.Dal.saveInTransaction(
+                  tx,
+                  currentReceipt,
+                  function() {
+                    OB.info(
+                      'Multiorders ticket closed',
+                      currentReceipt
+                        .get('json')
+                        .replace(/logclientErrors/g, 'logErrors'),
+                      'caller: ' +
+                        OB.UTIL.getStackTrace('Backbone.Events.trigger', true)
+                    );
 
-                      _.each(
-                        me.context.get('orderList').models,
-                        function(mdl) {
-                          if (mdl.get('id') === currentReceipt.get('id')) {
-                            mdl.set('hasbeenpaid', 'Y');
-                            return true;
-                          }
-                        },
-                        this
-                      );
+                    _.each(
+                      me.context.get('orderList').models,
+                      function(mdl) {
+                        if (mdl.get('id') === currentReceipt.get('id')) {
+                          mdl.set('hasbeenpaid', 'Y');
+                          return true;
+                        }
+                      },
+                      this
+                    );
 
-                      OB.Dal.getInTransaction(
-                        tx,
-                        OB.Model.Order,
-                        me.receipt.get('id'),
-                        function(savedReceipt) {
-                          if (
-                            !OB.UTIL.isNullOrUndefined(
-                              savedReceipt.get('amountToLayaway')
-                            ) &&
-                            savedReceipt.get('generateInvoice')
-                          ) {
-                            me.hasInvLayaways = true;
-                          }
-                          recursiveSaveFn(receiptIndex + 1);
-                        },
-                        null
-                      );
-                    },
-                    function() {
-                      recursiveSaveFn(receiptIndex + 1);
-                    }
-                  );
-                }
-              );
-            },
-            tx
+                    OB.Dal.getInTransaction(
+                      tx,
+                      OB.Model.Order,
+                      me.receipt.get('id'),
+                      function(savedReceipt) {
+                        if (
+                          !OB.UTIL.isNullOrUndefined(
+                            savedReceipt.get('amountToLayaway')
+                          ) &&
+                          savedReceipt.get('generateInvoice')
+                        ) {
+                          me.hasInvLayaways = true;
+                        }
+                        recursiveSaveFn(receiptIndex + 1);
+                      },
+                      null
+                    );
+                  },
+                  function() {
+                    recursiveSaveFn(receiptIndex + 1);
+                  }
+                );
+              }
+            );
+          };
+
+          OB.UTIL.cashUpReport(currentReceipt, undefined, tx);
+          OB.App.State.Cashup.updateCashup({ tickets: [currentReceipt] }).then(
+            () => cashUpReportSuccessCallback()
           );
         } else {
           OB.MobileApp.model.runSyncProcess(
@@ -1061,7 +1063,7 @@
                             ); // Absolute date in ISO format
                             currentReceipt.set(
                               'obposAppCashup',
-                              OB.MobileApp.model.get('terminal').cashUpId
+                              OB.App.State.Cashup.Utils.getCashupId()
                             );
                             if (
                               OB.UTIL.isNullOrUndefined(

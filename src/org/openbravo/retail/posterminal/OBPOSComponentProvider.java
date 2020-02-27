@@ -313,6 +313,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/business-object/ticket/TicketUtils");
     appDependency.add("model/business-object/ticket/AddApprovalsModelHook");
     appDependency.add("model/business-object/ticket/ApplyDiscountsAndTaxesModelHook");
+    // Cashup
+    appDependency.add("model/business-object/cashup/Cashup");
+    appDependency.add("model/business-object/cashup/CashupUtils");
 
     for (final String resource : appDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,

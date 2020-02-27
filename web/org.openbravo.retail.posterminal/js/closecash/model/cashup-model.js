@@ -126,529 +126,473 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       this
     );
 
+    finish = function() {
+      if (synch1 && synch2 && synch3) {
+        me.finishLoad();
+      }
+    };
+
     this.set('orderlist', new OB.Collection.OrderList());
     this.set('paymentList', new Backbone.Collection());
-    OB.Dal.find(
-      OB.Model.CashUp,
-      {
-        isprocessed: 'N'
-      },
-      function(cashUp) {
-        OB.Dal.find(
-          OB.Model.PaymentMethodCashUp,
-          {
-            cashup_id: cashUp.at(0).get('id'),
-            _orderByClause: 'lineNo asc'
-          },
-          function(payMthds) {
-            //OB.Dal.find success
-            // Get list of active payments
-            _.each(OB.MobileApp.model.get('payments'), function(payment) {
-              if (
-                payment.payment.active === true &&
-                payment.paymentMethod.countpaymentincashup
-              ) {
-                activePaymentsList.push(payment);
-              }
-            });
-            _.each(
-              activePaymentsList,
-              function(payment, index) {
-                expected = 0;
-                var auxPay = payMthds.filter(function(payMthd) {
-                  return payMthd.get('paymentmethod_id') === payment.payment.id;
-                })[0];
-                if (!auxPay) {
-                  //We cannot find this payment in local database, it must be a new payment method, we skip it.
-                  return;
-                }
+    const payMthds = new Backbone.Collection(
+      OB.App.State.Cashup.Utils.getPaymentMethods()
+    );
 
-                // Not add shared payment to slave terminal
-                if (
-                  !terminalSlave ||
-                  !OB.MobileApp.model.paymentnames[payment.payment.searchKey]
-                    .paymentMethod.isshared
-                ) {
-                  auxPay.set('_id', payment.payment.searchKey);
-                  auxPay.set('isocode', payment.isocode);
-                  auxPay.set('paymentMethod', payment.paymentMethod);
-                  auxPay.set('id', payment.payment.id);
-                  if (auxPay.get('totalDeposits') === null) {
-                    auxPay.set('totalDeposits', 0);
-                  }
-                  if (auxPay.get('totalDrops') === null) {
-                    auxPay.set('totalDrops', 0);
-                  }
-                  var cStartingCash = auxPay.get('startingCash');
-                  var cTotalReturns = auxPay.get('totalReturns');
-                  var cTotalSales = auxPay.get('totalSales');
-                  var cTotalDeposits = OB.DEC.sub(
-                    auxPay.get('totalDeposits'),
-                    OB.DEC.abs(auxPay.get('totalDrops'))
-                  );
-                  expected = OB.DEC.add(
-                    OB.DEC.add(
-                      cStartingCash,
-                      OB.DEC.sub(
-                        cTotalSales,
-                        cTotalReturns,
-                        payment.obposPosprecision
-                      ),
-                      payment.obposPosprecision
-                    ),
-                    cTotalDeposits,
-                    payment.obposPosprecision
-                  );
-                  var fromCurrencyId = auxPay.get('paymentMethod').currency;
-                  auxPay.set(
-                    'expected',
-                    OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, expected)
-                  );
-                  auxPay.set('foreignExpected', expected);
-                  var paymentShared =
-                    (OB.POS.modelterminal.get('terminal').ismaster ||
-                      OB.POS.modelterminal.get('terminal').isslave) &&
-                    OB.MobileApp.model.paymentnames[payment.payment.searchKey]
-                      .paymentMethod.isshared;
-                  if (paymentShared) {
-                    auxPay.set(
-                      'name',
-                      auxPay.get('name') +
-                        (paymentShared
-                          ? OB.I18N.getLabel('OBPOS_LblPaymentMethodShared')
-                          : '')
-                    );
-                  }
-                  tempList.add(auxPay);
-                }
+    //OB.Dal.find success
+    // Get list of active payments
+    _.each(OB.MobileApp.model.get('payments'), function(payment) {
+      if (
+        payment.payment.active === true &&
+        payment.paymentMethod.countpaymentincashup
+      ) {
+        activePaymentsList.push(payment);
+      }
+    });
+    _.each(
+      activePaymentsList,
+      function(payment, index) {
+        expected = 0;
+        var auxPay = payMthds.filter(function(payMthd) {
+          return payMthd.get('paymentMethodId') === payment.payment.id;
+        })[0];
+        if (!auxPay) {
+          //We cannot find this payment in local database, it must be a new payment method, we skip it.
+          return;
+        }
 
-                if (index === activePaymentsList.length - 1) {
-                  if (terminalSlave && tempList.length === 0) {
-                    // Desactivate all steps
-                    me.cashupStepsDefinition[
-                      me.stepIndex('OB.CashUp.PaymentMethods')
-                    ].active = false;
-                  }
-                  if (
-                    OB.MobileApp.model.hasPermission(
-                      'OBPOS_retail.cashupGroupExpectedPayment',
-                      true
-                    )
-                  ) {
-                    // Split payment methods
-                    var expectedList = _.filter(tempList.models, function(pm) {
-                        return pm.get('expected') !== 0;
-                      }),
-                      emptyList = _.filter(tempList.models, function(pm) {
-                        return pm.get('expected') === 0;
-                      });
-
-                    me.set(
-                      'paymentExpectedList',
-                      new Backbone.Collection(expectedList)
-                    );
-                    me.set(
-                      'paymentEmptyList',
-                      new Backbone.Collection(emptyList)
-                    );
-
-                    if (emptyList.length > 0) {
-                      emptyList[0].set('firstEmptyPayment', true);
-                    }
-                    var models = expectedList.concat(emptyList);
-
-                    me.get('paymentList').reset(models);
-                  } else {
-                    me.get('paymentList').reset(tempList.models);
-                  }
-                  // Active/Desactive CashPayments and CashToKeep tabs
-                  var i,
-                    cashPayments = false,
-                    cashToKeep = false,
-                    paymentsIndex = me.stepIndex('OB.CashUp.CashPayments'),
-                    toKeepIndex = me.stepIndex('OB.CashUp.CashToKeep');
-                  for (i = 0; i < tempList.length; i++) {
-                    if (
-                      me.cashupsteps[paymentsIndex].isSubstepAvailable(me, i)
-                    ) {
-                      cashPayments = true;
-                    }
-                    if (me.cashupsteps[toKeepIndex].isSubstepAvailable(me, i)) {
-                      cashToKeep = true;
-                    }
-                  }
-                  me.cashupStepsDefinition[paymentsIndex].active = cashPayments;
-                  me.cashupStepsDefinition[toKeepIndex].active = cashToKeep;
-                  me.set(
-                    'totalExpected',
-                    _.reduce(
-                      me.get('paymentList').models,
-                      function(total, model) {
-                        return OB.DEC.add(total, model.get('expected'));
-                      },
-                      0
-                    )
-                  );
-                  me.set(
-                    'totalDifference',
-                    OB.DEC.sub(
-                      me.get('totalDifference'),
-                      me.get('totalExpected')
-                    )
-                  );
-                  me.setIgnoreStep3();
-                }
-              },
-              this
+        // Not add shared payment to slave terminal
+        if (
+          !terminalSlave ||
+          !OB.MobileApp.model.paymentnames[payment.payment.searchKey]
+            .paymentMethod.isshared
+        ) {
+          auxPay.set('_id', payment.payment.searchKey);
+          auxPay.set('isocode', payment.isocode);
+          auxPay.set('paymentMethod', payment.paymentMethod);
+          auxPay.set('id', payment.payment.id);
+          if (auxPay.get('totalDeposits') === null) {
+            auxPay.set('totalDeposits', 0);
+          }
+          if (auxPay.get('totalDrops') === null) {
+            auxPay.set('totalDrops', 0);
+          }
+          var cStartingCash = auxPay.get('startingCash');
+          var cTotalReturns = auxPay.get('totalReturns');
+          var cTotalSales = auxPay.get('totalSales');
+          var cTotalDeposits = OB.DEC.sub(
+            auxPay.get('totalDeposits'),
+            OB.DEC.abs(auxPay.get('totalDrops'))
+          );
+          expected = OB.DEC.add(
+            OB.DEC.add(
+              cStartingCash,
+              OB.DEC.sub(cTotalSales, cTotalReturns, payment.obposPosprecision),
+              payment.obposPosprecision
+            ),
+            cTotalDeposits,
+            payment.obposPosprecision
+          );
+          var fromCurrencyId = auxPay.get('paymentMethod').currency;
+          auxPay.set(
+            'expected',
+            OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, expected)
+          );
+          auxPay.set('foreignExpected', expected);
+          var paymentShared =
+            (OB.POS.modelterminal.get('terminal').ismaster ||
+              OB.POS.modelterminal.get('terminal').isslave) &&
+            OB.MobileApp.model.paymentnames[payment.payment.searchKey]
+              .paymentMethod.isshared;
+          if (paymentShared) {
+            auxPay.set(
+              'name',
+              auxPay.get('name') +
+                (paymentShared
+                  ? OB.I18N.getLabel('OBPOS_LblPaymentMethodShared')
+                  : '')
             );
-            me.cashupStepsDefinition[
-              me.stepIndex('OB.CashUp.CashPayments')
-            ].loaded = true;
+          }
+          tempList.add(auxPay);
+        }
+
+        if (index === activePaymentsList.length - 1) {
+          if (terminalSlave && tempList.length === 0) {
+            // Desactivate all steps
             me.cashupStepsDefinition[
               me.stepIndex('OB.CashUp.PaymentMethods')
-            ].loaded = true;
-            synch1 = true;
-            finish();
+            ].active = false;
           }
+          if (
+            OB.MobileApp.model.hasPermission(
+              'OBPOS_retail.cashupGroupExpectedPayment',
+              true
+            )
+          ) {
+            // Split payment methods
+            var expectedList = _.filter(tempList.models, function(pm) {
+                return pm.get('expected') !== 0;
+              }),
+              emptyList = _.filter(tempList.models, function(pm) {
+                return pm.get('expected') === 0;
+              });
+
+            me.set(
+              'paymentExpectedList',
+              new Backbone.Collection(expectedList)
+            );
+            me.set('paymentEmptyList', new Backbone.Collection(emptyList));
+
+            if (emptyList.length > 0) {
+              emptyList[0].set('firstEmptyPayment', true);
+            }
+            var models = expectedList.concat(emptyList);
+
+            me.get('paymentList').reset(models);
+          } else {
+            me.get('paymentList').reset(tempList.models);
+          }
+          // Active/Desactive CashPayments and CashToKeep tabs
+          var i,
+            cashPayments = false,
+            cashToKeep = false,
+            paymentsIndex = me.stepIndex('OB.CashUp.CashPayments'),
+            toKeepIndex = me.stepIndex('OB.CashUp.CashToKeep');
+          for (i = 0; i < tempList.length; i++) {
+            if (me.cashupsteps[paymentsIndex].isSubstepAvailable(me, i)) {
+              cashPayments = true;
+            }
+            if (me.cashupsteps[toKeepIndex].isSubstepAvailable(me, i)) {
+              cashToKeep = true;
+            }
+          }
+          me.cashupStepsDefinition[paymentsIndex].active = cashPayments;
+          me.cashupStepsDefinition[toKeepIndex].active = cashToKeep;
+          me.set(
+            'totalExpected',
+            _.reduce(
+              me.get('paymentList').models,
+              function(total, model) {
+                return OB.DEC.add(total, model.get('expected'));
+              },
+              0
+            )
+          );
+          me.set(
+            'totalDifference',
+            OB.DEC.sub(me.get('totalDifference'), me.get('totalExpected'))
+          );
+          me.setIgnoreStep3();
+        }
+      },
+      this
+    );
+    me.cashupStepsDefinition[
+      me.stepIndex('OB.CashUp.CashPayments')
+    ].loaded = true;
+    me.cashupStepsDefinition[
+      me.stepIndex('OB.CashUp.PaymentMethods')
+    ].loaded = true;
+    synch1 = true;
+    finish();
+
+    this.set('cashUpReport', new Backbone.Collection());
+    cashUpReport = new Backbone.Model(OB.App.State.Cashup.Utils.getCashup());
+
+    initModelsCallback();
+
+    cashUpReport.set('deposits', []);
+    cashUpReport.set('drops', []);
+    OB.Dal.find(
+      OB.Model.CashManagement,
+      {
+        cashup_id: cashUpReport.get('id'),
+        type: 'deposit'
+      },
+      function(cashMgmts) {
+        _.forEach(cashMgmts.models, function(cashMgmt, index) {
+          var payment = _.filter(OB.MobileApp.model.get('payments'), function(
+            pay
+          ) {
+            return pay.payment.id === cashMgmt.get('paymentMethodId');
+          })[0];
+          cashMgmt.set(
+            'countInCashup',
+            payment.paymentMethod.countpaymentincashup
+          );
+          cashMgmt.set(
+            'searchKey',
+            'cashMgmtDeposit' +
+              index +
+              payment.payment.searchKey.replace('_', '') +
+              cashMgmt.get('amount')
+          );
+        });
+        cashUpReport.set('deposits', cashMgmts.models);
+        cashUpReport.set(
+          'totalDeposits',
+          _.reduce(
+            cashMgmts.models,
+            function(accum, trx) {
+              return OB.DEC.add(accum, trx.get('origAmount'));
+            },
+            0
+          )
+        );
+      },
+      this
+    );
+    OB.Dal.find(
+      OB.Model.CashManagement,
+      {
+        cashup_id: cashUpReport.get('id'),
+        type: 'drop'
+      },
+      function(cashMgmts) {
+        _.forEach(cashMgmts.models, function(cashMgmt, index) {
+          var payment = _.filter(OB.MobileApp.model.get('payments'), function(
+            pay
+          ) {
+            return pay.payment.id === cashMgmt.get('paymentMethodId');
+          })[0];
+          cashMgmt.set(
+            'countInCashup',
+            payment.paymentMethod.countpaymentincashup
+          );
+          cashMgmt.set(
+            'searchKey',
+            'cashMgmtDrop' +
+              index +
+              payment.payment.searchKey.replace('_', '') +
+              cashMgmt.get('amount')
+          );
+        });
+        cashUpReport.set('drops', cashMgmts.models);
+        cashUpReport.set(
+          'totalDrops',
+          _.reduce(
+            cashMgmts.models,
+            function(accum, trx) {
+              return OB.DEC.add(accum, trx.get('origAmount'));
+            },
+            0
+          )
         );
       },
       this
     );
 
-    this.set('cashUpReport', new Backbone.Collection());
-    OB.Dal.find(
-      OB.Model.CashUp,
-      {
-        isprocessed: 'N'
-      },
-      function(cashUp) {
-        cashUpReport = cashUp.at(0);
+    const cashup = OB.App.State.Cashup.Utils.getCashup();
+    cashUpReport.set(
+      'salesTaxes',
+      new Backbone.Collection(
+        cashup.cashTaxInfo.filter(tax => {
+          return tax.orderType !== 1;
+        })
+      ).models
+    );
+    cashUpReport.set(
+      'returnsTaxes',
+      new Backbone.Collection(
+        cashup.cashTaxInfo.filter(tax => {
+          return tax.orderType === 1;
+        })
+      ).models
+    );
 
-        initModelsCallback();
-
-        cashUpReport.set('deposits', []);
-        cashUpReport.set('drops', []);
-        OB.Dal.find(
-          OB.Model.CashManagement,
-          {
-            cashup_id: cashUpReport.get('id'),
-            type: 'deposit'
-          },
-          function(cashMgmts) {
-            _.forEach(cashMgmts.models, function(cashMgmt, index) {
-              var payment = _.filter(
-                OB.MobileApp.model.get('payments'),
-                function(pay) {
-                  return pay.payment.id === cashMgmt.get('paymentMethodId');
-                }
-              )[0];
-              cashMgmt.set(
-                'countInCashup',
-                payment.paymentMethod.countpaymentincashup
-              );
-              cashMgmt.set(
-                'searchKey',
-                'cashMgmtDeposit' +
-                  index +
-                  payment.payment.searchKey.replace('_', '') +
-                  cashMgmt.get('amount')
-              );
-            });
-            cashUpReport.set('deposits', cashMgmts.models);
-            cashUpReport.set(
-              'totalDeposits',
-              _.reduce(
-                cashMgmts.models,
-                function(accum, trx) {
-                  return OB.DEC.add(accum, trx.get('origAmount'));
-                },
-                0
-              )
+    //OB.Dal.find success
+    cashUpReport.set(
+      'totalStartings',
+      _.reduce(
+        payMthds.models,
+        function(accum, trx) {
+          if (
+            OB.MobileApp.model.paymentnames[trx.get('searchKey')] &&
+            OB.MobileApp.model.paymentnames[trx.get('searchKey')].paymentMethod
+              .countpaymentincashup
+          ) {
+            // Not accumulate shared payments on slave terminal
+            if (
+              terminalSlave &&
+              OB.MobileApp.model.paymentnames[trx.get('searchKey')]
+                .paymentMethod.isshared
+            ) {
+              return accum;
+            }
+            var fromCurrencyId =
+              OB.MobileApp.model.paymentnames[trx.get('searchKey')]
+                .paymentMethod.currency;
+            var cStartingCash = OB.UTIL.currency.toDefaultCurrency(
+              fromCurrencyId,
+              trx.get('startingCash')
             );
-          },
-          this
+            return OB.DEC.add(accum, cStartingCash);
+          }
+          return accum;
+        },
+        0
+      )
+    );
+
+    cashUpReport.set(
+      'totalDeposits',
+      _.reduce(
+        payMthds.models,
+        function(accum, trx) {
+          if (OB.MobileApp.model.paymentnames[trx.get('searchKey')]) {
+            // Not accumulate shared payments on slave terminal
+            if (
+              terminalSlave &&
+              OB.MobileApp.model.paymentnames[trx.get('searchKey')]
+                .paymentMethod.isshared
+            ) {
+              return accum;
+            }
+            var fromCurrencyId =
+              OB.MobileApp.model.paymentnames[trx.get('searchKey')]
+                .paymentMethod.currency;
+            var cTotalDeposits = OB.UTIL.currency.toDefaultCurrency(
+              fromCurrencyId,
+              OB.DEC.add(trx.get('totalDeposits'), trx.get('totalSales'))
+            );
+            return OB.DEC.add(accum, cTotalDeposits);
+          }
+          return accum;
+        },
+        0
+      )
+    );
+
+    cashUpReport.set(
+      'totalDrops',
+      _.reduce(
+        payMthds.models,
+        function(accum, trx) {
+          if (OB.MobileApp.model.paymentnames[trx.get('searchKey')]) {
+            // Not accumulate shared payments on slave terminal
+            if (
+              terminalSlave &&
+              OB.MobileApp.model.paymentnames[trx.get('searchKey')]
+                .paymentMethod.isshared
+            ) {
+              return accum;
+            }
+            var fromCurrencyId =
+              OB.MobileApp.model.paymentnames[trx.get('searchKey')]
+                .paymentMethod.currency;
+            var cTotalDrops = OB.UTIL.currency.toDefaultCurrency(
+              fromCurrencyId,
+              OB.DEC.add(trx.get('totalDrops'), trx.get('totalReturns'))
+            );
+            return OB.DEC.add(accum, cTotalDrops);
+          }
+          return accum;
+        },
+        0
+      )
+    );
+
+    _.each(
+      payMthds.models,
+      function(p) {
+        var auxPay = OB.MobileApp.model.get('payments').filter(function(pay) {
+          return pay.payment.id === p.get('paymentmethod_id');
+        })[0];
+        if (!auxPay) {
+          //We cannot find this payment in local database, it must be a new payment method, we skip it.
+          return;
+        }
+        // Not add shared payment to slave terminal
+        if (
+          terminalSlave &&
+          OB.MobileApp.model.paymentnames[auxPay.payment.searchKey]
+            .paymentMethod.isshared
+        ) {
+          return;
+        }
+
+        if (
+          !auxPay.paymentMethod.countpaymentincashup &&
+          !auxPay.paymentMethod.isRounding
+        ) {
+          return;
+        }
+
+        var fromCurrencyId = auxPay.paymentMethod.currency,
+          paymentShared =
+            (OB.POS.modelterminal.get('terminal').ismaster ||
+              OB.POS.modelterminal.get('terminal').isslave) &&
+            OB.MobileApp.model.paymentnames[auxPay.payment.searchKey]
+              .paymentMethod.isshared,
+          paymentSharedStr = paymentShared
+            ? OB.I18N.getLabel('OBPOS_LblPaymentMethodShared')
+            : '';
+        cashUpReport.get('deposits').push(
+          new Backbone.Model({
+            searchKey: p.get('searchKey'),
+            origAmount: OB.UTIL.currency.toDefaultCurrency(
+              fromCurrencyId,
+              OB.DEC.add(0, p.get('totalSales'))
+            ),
+            amount: OB.DEC.add(0, p.get('totalSales')),
+            description: p.get('name') + paymentSharedStr,
+            currency: fromCurrencyId,
+            isocode: auxPay.isocode,
+            rate: p.get('rate'),
+            countInCashup: auxPay.paymentMethod.countpaymentincashup
+          })
         );
-        OB.Dal.find(
-          OB.Model.CashManagement,
-          {
-            cashup_id: cashUpReport.get('id'),
-            type: 'drop'
-          },
-          function(cashMgmts) {
-            _.forEach(cashMgmts.models, function(cashMgmt, index) {
-              var payment = _.filter(
-                OB.MobileApp.model.get('payments'),
-                function(pay) {
-                  return pay.payment.id === cashMgmt.get('paymentMethodId');
-                }
-              )[0];
-              cashMgmt.set(
-                'countInCashup',
-                payment.paymentMethod.countpaymentincashup
-              );
-              cashMgmt.set(
-                'searchKey',
-                'cashMgmtDrop' +
-                  index +
-                  payment.payment.searchKey.replace('_', '') +
-                  cashMgmt.get('amount')
-              );
-            });
-            cashUpReport.set('drops', cashMgmts.models);
-            cashUpReport.set(
-              'totalDrops',
-              _.reduce(
-                cashMgmts.models,
-                function(accum, trx) {
-                  return OB.DEC.add(accum, trx.get('origAmount'));
-                },
-                0
-              )
-            );
-          },
-          this
+        cashUpReport.get('drops').push(
+          new Backbone.Model({
+            searchKey: p.get('searchKey'),
+            origAmount: OB.UTIL.currency.toDefaultCurrency(
+              fromCurrencyId,
+              OB.DEC.add(0, p.get('totalReturns'))
+            ),
+            amount: OB.DEC.add(0, p.get('totalReturns')),
+            description: p.get('name') + paymentSharedStr,
+            currency: fromCurrencyId,
+            isocode: auxPay.isocode,
+            rate: p.get('rate'),
+            countInCashup: auxPay.paymentMethod.countpaymentincashup
+          })
         );
-        OB.Dal.find(
-          OB.Model.TaxCashUp,
-          {
-            cashup_id: cashUpReport.get('id'),
-            orderType: {
-              operator: '!=',
-              value: '1'
-            },
-            _orderByClause: 'name asc'
-          },
-          function(taxcashups) {
-            cashUpReport.set('salesTaxes', taxcashups.models);
-          },
-          this
-        );
-
-        OB.Dal.find(
-          OB.Model.TaxCashUp,
-          {
-            cashup_id: cashUpReport.get('id'),
-            orderType: '1',
-            _orderByClause: 'name asc'
-          },
-          function(taxcashups) {
-            cashUpReport.set('returnsTaxes', taxcashups.models);
-          },
-          this
-        );
-
-        OB.Dal.find(
-          OB.Model.PaymentMethodCashUp,
-          {
-            cashup_id: cashUpReport.get('id'),
-            _orderByClause: 'lineNo asc'
-          },
-          function(payMthds) {
-            //OB.Dal.find success
-            cashUpReport.set(
-              'totalStartings',
-              _.reduce(
-                payMthds.models,
-                function(accum, trx) {
-                  if (
-                    OB.MobileApp.model.paymentnames[trx.get('searchKey')] &&
-                    OB.MobileApp.model.paymentnames[trx.get('searchKey')]
-                      .paymentMethod.countpaymentincashup
-                  ) {
-                    // Not accumulate shared payments on slave terminal
-                    if (
-                      terminalSlave &&
-                      OB.MobileApp.model.paymentnames[trx.get('searchKey')]
-                        .paymentMethod.isshared
-                    ) {
-                      return accum;
-                    }
-                    var fromCurrencyId =
-                      OB.MobileApp.model.paymentnames[trx.get('searchKey')]
-                        .paymentMethod.currency;
-                    var cStartingCash = OB.UTIL.currency.toDefaultCurrency(
-                      fromCurrencyId,
-                      trx.get('startingCash')
-                    );
-                    return OB.DEC.add(accum, cStartingCash);
-                  }
-                  return accum;
-                },
-                0
-              )
-            );
-
-            cashUpReport.set(
-              'totalDeposits',
-              _.reduce(
-                payMthds.models,
-                function(accum, trx) {
-                  if (OB.MobileApp.model.paymentnames[trx.get('searchKey')]) {
-                    // Not accumulate shared payments on slave terminal
-                    if (
-                      terminalSlave &&
-                      OB.MobileApp.model.paymentnames[trx.get('searchKey')]
-                        .paymentMethod.isshared
-                    ) {
-                      return accum;
-                    }
-                    var fromCurrencyId =
-                      OB.MobileApp.model.paymentnames[trx.get('searchKey')]
-                        .paymentMethod.currency;
-                    var cTotalDeposits = OB.UTIL.currency.toDefaultCurrency(
-                      fromCurrencyId,
-                      OB.DEC.add(
-                        trx.get('totalDeposits'),
-                        trx.get('totalSales')
-                      )
-                    );
-                    return OB.DEC.add(accum, cTotalDeposits);
-                  }
-                  return accum;
-                },
-                0
-              )
-            );
-
-            cashUpReport.set(
-              'totalDrops',
-              _.reduce(
-                payMthds.models,
-                function(accum, trx) {
-                  if (OB.MobileApp.model.paymentnames[trx.get('searchKey')]) {
-                    // Not accumulate shared payments on slave terminal
-                    if (
-                      terminalSlave &&
-                      OB.MobileApp.model.paymentnames[trx.get('searchKey')]
-                        .paymentMethod.isshared
-                    ) {
-                      return accum;
-                    }
-                    var fromCurrencyId =
-                      OB.MobileApp.model.paymentnames[trx.get('searchKey')]
-                        .paymentMethod.currency;
-                    var cTotalDrops = OB.UTIL.currency.toDefaultCurrency(
-                      fromCurrencyId,
-                      OB.DEC.add(trx.get('totalDrops'), trx.get('totalReturns'))
-                    );
-                    return OB.DEC.add(accum, cTotalDrops);
-                  }
-                  return accum;
-                },
-                0
-              )
-            );
-
-            _.each(
-              payMthds.models,
-              function(p) {
-                var auxPay = OB.MobileApp.model
-                  .get('payments')
-                  .filter(function(pay) {
-                    return pay.payment.id === p.get('paymentmethod_id');
-                  })[0];
-                if (!auxPay) {
-                  //We cannot find this payment in local database, it must be a new payment method, we skip it.
-                  return;
-                }
-                // Not add shared payment to slave terminal
-                if (
-                  terminalSlave &&
-                  OB.MobileApp.model.paymentnames[auxPay.payment.searchKey]
-                    .paymentMethod.isshared
-                ) {
-                  return;
-                }
-
-                if (
-                  !auxPay.paymentMethod.countpaymentincashup &&
-                  !auxPay.paymentMethod.isRounding
-                ) {
-                  return;
-                }
-
-                var fromCurrencyId = auxPay.paymentMethod.currency,
-                  paymentShared =
-                    (OB.POS.modelterminal.get('terminal').ismaster ||
-                      OB.POS.modelterminal.get('terminal').isslave) &&
-                    OB.MobileApp.model.paymentnames[auxPay.payment.searchKey]
-                      .paymentMethod.isshared,
-                  paymentSharedStr = paymentShared
-                    ? OB.I18N.getLabel('OBPOS_LblPaymentMethodShared')
-                    : '';
-                cashUpReport.get('deposits').push(
-                  new Backbone.Model({
-                    searchKey: p.get('searchKey'),
-                    origAmount: OB.UTIL.currency.toDefaultCurrency(
-                      fromCurrencyId,
-                      OB.DEC.add(0, p.get('totalSales'))
-                    ),
-                    amount: OB.DEC.add(0, p.get('totalSales')),
-                    description: p.get('name') + paymentSharedStr,
-                    currency: fromCurrencyId,
-                    isocode: auxPay.isocode,
-                    rate: p.get('rate'),
-                    countInCashup: auxPay.paymentMethod.countpaymentincashup
-                  })
-                );
-                cashUpReport.get('drops').push(
-                  new Backbone.Model({
-                    searchKey: p.get('searchKey'),
-                    origAmount: OB.UTIL.currency.toDefaultCurrency(
-                      fromCurrencyId,
-                      OB.DEC.add(0, p.get('totalReturns'))
-                    ),
-                    amount: OB.DEC.add(0, p.get('totalReturns')),
-                    description: p.get('name') + paymentSharedStr,
-                    currency: fromCurrencyId,
-                    isocode: auxPay.isocode,
-                    rate: p.get('rate'),
-                    countInCashup: auxPay.paymentMethod.countpaymentincashup
-                  })
-                );
-                if (auxPay.paymentMethod.countpaymentincashup) {
-                  startings.push(
-                    new Backbone.Model({
-                      searchKey: p.get('searchKey'),
-                      origAmount: OB.UTIL.currency.toDefaultCurrency(
-                        fromCurrencyId,
-                        p.get('startingCash')
-                      ),
-                      amount: OB.DEC.add(0, p.get('startingCash')),
-                      description:
-                        OB.I18N.getLabel('OBPOS_LblStarting') +
-                        ' ' +
-                        p.get('name') +
-                        paymentSharedStr,
-                      currency: fromCurrencyId,
-                      isocode: auxPay.isocode,
-                      rate: p.get('rate'),
-                      paymentId: p.get('paymentmethod_id'),
-                      countInCashup: auxPay.paymentMethod.countpaymentincashup
-                    })
-                  );
-                }
-              },
-              this
-            );
-            cashUpReport.set('startings', startings);
-            //FIXME: We are not sure if other finds are done.
-            OB.UTIL.HookManager.executeHooks(
-              'OBPOS_EditCashupReport',
-              {
-                cashUpReport: cashUpReport
-              },
-              function(args) {
-                me.get('cashUpReport').add(args.cashUpReport);
-                synch2 = true;
-                finish();
-              }
-            );
-          },
-          this
-        );
+        if (auxPay.paymentMethod.countpaymentincashup) {
+          startings.push(
+            new Backbone.Model({
+              searchKey: p.get('searchKey'),
+              origAmount: OB.UTIL.currency.toDefaultCurrency(
+                fromCurrencyId,
+                p.get('startingCash')
+              ),
+              amount: OB.DEC.add(0, p.get('startingCash')),
+              description:
+                OB.I18N.getLabel('OBPOS_LblStarting') +
+                ' ' +
+                p.get('name') +
+                paymentSharedStr,
+              currency: fromCurrencyId,
+              isocode: auxPay.isocode,
+              rate: p.get('rate'),
+              paymentId: p.get('paymentmethod_id'),
+              countInCashup: auxPay.paymentMethod.countpaymentincashup
+            })
+          );
+        }
       },
       this
+    );
+    cashUpReport.set('startings', startings);
+    //FIXME: We are not sure if other finds are done.
+    OB.UTIL.HookManager.executeHooks(
+      'OBPOS_EditCashupReport',
+      {
+        cashUpReport: cashUpReport
+      },
+      function(args) {
+        me.get('cashUpReport').add(args.cashUpReport);
+        synch2 = true;
+        finish();
+      }
     );
 
     this.get('paymentList').on(
@@ -715,12 +659,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     );
 
     this.printCashUp = new OB.OBPOSCashUp.Print.CashUp();
-
-    finish = function() {
-      if (synch1 && synch2 && synch3) {
-        me.finishLoad();
-      }
-    };
   },
   loadModels: function(loadModelsCallback) {
     loadModelsCallback();
@@ -1105,285 +1043,208 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
   propertyFunctions: [],
   processAndFinishCashUp: function() {
     OB.UTIL.showLoading(true);
-    var currentMe = this;
+    var me = this;
     OB.Dal.transaction(function(tx) {
+      const cashUp = new Backbone.Collection([
+        OB.App.State.Cashup.Utils.getCashup()
+      ]);
+
+      var i,
+        paymentMethodInfo,
+        objToSend = {}; // created empty instead load from cashup, since in state is no longer stored the objToSend
+      var now = new Date();
+      objToSend.cashUpDate = OB.I18N.normalizeDate(now);
+      objToSend.lastcashupeportdate = OB.I18N.normalizeDate(now);
+      objToSend.timezoneOffset = now.getTimezoneOffset();
+      for (i = 0; i < me.additionalProperties.length; i++) {
+        objToSend[me.additionalProperties[i]] = me.propertyFunctions[i](
+          OB.POS.modelterminal.get('terminal').id,
+          cashUp.at(0)
+        );
+      }
+      var cashCloseArray = [];
+      objToSend.cashCloseInfo = cashCloseArray;
+      _.each(
+        me.get('paymentList').models,
+        function(curModel) {
+          var cashCloseInfo = {
+            expected: 0,
+            difference: 0,
+            paymentTypeId: 0,
+            paymentMethod: {}
+          };
+          // Set cashclose info
+          cashCloseInfo.id = OB.UTIL.get_UUID();
+          cashCloseInfo.paymentTypeId = curModel.get('id');
+          cashCloseInfo.difference = curModel.get('difference');
+          cashCloseInfo.foreignDifference = curModel.get('foreignDifference');
+          cashCloseInfo.expected = curModel.get('expected');
+          cashCloseInfo.foreignExpected = curModel.get('foreignExpected');
+          paymentMethodInfo = curModel.get('paymentMethod');
+          paymentMethodInfo.amountToKeep = curModel.get('qtyToKeep');
+          cashCloseInfo.paymentMethod = paymentMethodInfo;
+          objToSend.cashCloseInfo.push(cashCloseInfo);
+        },
+        me
+      );
+      objToSend.approvals = me.get('approvals');
+      var cashMgmtIds = [];
+      objToSend.cashMgmtIds = cashMgmtIds;
       OB.Dal.findInTransaction(
         tx,
-        OB.Model.CashUp,
+        OB.Model.CashManagement,
         {
-          isprocessed: 'N'
+          cashup_id: cashUp.at(0).get('id')
         },
-        function(cashUp) {
-          OB.UTIL.composeCashupInfo(
-            cashUp,
-            currentMe,
-            function(cashUp, me) {
-              var i,
-                paymentMethodInfo,
-                objToSend = JSON.parse(cashUp.at(0).get('objToSend'));
-              var now = new Date();
-              objToSend.cashUpDate = OB.I18N.normalizeDate(now);
-              objToSend.lastcashupeportdate = OB.I18N.normalizeDate(now);
-              objToSend.timezoneOffset = now.getTimezoneOffset();
-              for (i = 0; i < me.additionalProperties.length; i++) {
-                objToSend[me.additionalProperties[i]] = me.propertyFunctions[i](
-                  OB.POS.modelterminal.get('terminal').id,
-                  cashUp.at(0)
+        function(cashMgmts) {
+          _.each(cashMgmts.models, function(cashMgmt) {
+            objToSend.cashMgmtIds.push(cashMgmt.get('id'));
+          });
+          cashUp.at(0).set('userId', OB.MobileApp.model.get('context').user.id);
+          objToSend.userId = OB.MobileApp.model.get('context').user.id;
+          objToSend.isprocessed = 'Y';
+          cashUp.at(0).set('objToSend', JSON.stringify(objToSend));
+          cashUp.at(0).set('isprocessed', 'Y');
+
+          var callbackFinishedSuccess = function() {
+            OB.UTIL.showLoading(true);
+            me.set('finished', true);
+            if (
+              OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)
+            ) {
+              OB.UTIL.localStorage.setItem(
+                'lastProcessedCashup',
+                cashUp.at(0).get('id')
+              );
+            }
+            if (OB.MobileApp.model.hasPermission('OBPOS_print.cashup')) {
+              var cashUpReport = new OB.Model.CashUp(),
+                countCashSummary = me.getCountCashSummary();
+              OB.UTIL.clone(me.get('cashUpReport').at(0), cashUpReport);
+              if (
+                OB.MobileApp.model.hasPermission(
+                  'OBPOS_retail.cashupRemoveUnusedPayment',
+                  true
+                )
+              ) {
+                var paymentWithMovement = [];
+                if (
+                  OB.MobileApp.view.currentWindow !== 'retail.cashuppartial'
+                ) {
+                  OB.UTIL.cashupAddPaymentWithSummaryMovement(
+                    paymentWithMovement,
+                    countCashSummary.countedSummary
+                  );
+                  OB.UTIL.cashupAddPaymentWithSummaryMovement(
+                    paymentWithMovement,
+                    countCashSummary.differenceSummary
+                  );
+                  OB.UTIL.cashupAddPaymentWithSummaryMovement(
+                    paymentWithMovement,
+                    countCashSummary.qtyToKeepSummary
+                  );
+                  OB.UTIL.cashupAddPaymentWithSummaryMovement(
+                    paymentWithMovement,
+                    countCashSummary.qtyToDepoSummary
+                  );
+                }
+                OB.UTIL.cashupAddPaymentWithSummaryMovement(
+                  paymentWithMovement,
+                  countCashSummary.expectedSummary
                 );
+                OB.UTIL.cashupAddPaymentWithMovement(
+                  paymentWithMovement,
+                  cashUpReport.get('startings')
+                );
+                OB.UTIL.cashupAddPaymentWithMovement(
+                  paymentWithMovement,
+                  cashUpReport.get('drops')
+                );
+                OB.UTIL.cashupAddPaymentWithMovement(
+                  paymentWithMovement,
+                  cashUpReport.get('deposits')
+                );
+                countCashSummary.expectedSummary = OB.UTIL.cashupGetPaymentWithMovement(
+                  paymentWithMovement,
+                  countCashSummary.expectedSummary
+                );
+                cashUpReport.set(
+                  'startings',
+                  OB.UTIL.cashupGetPaymentWithMovement(
+                    paymentWithMovement,
+                    cashUpReport.get('startings')
+                  )
+                );
+                cashUpReport.set(
+                  'drops',
+                  OB.UTIL.cashupGetPaymentWithMovement(
+                    paymentWithMovement,
+                    cashUpReport.get('drops')
+                  )
+                );
+                cashUpReport.set(
+                  'deposits',
+                  OB.UTIL.cashupGetPaymentWithMovement(
+                    paymentWithMovement,
+                    cashUpReport.get('deposits')
+                  )
+                );
+                if (
+                  OB.MobileApp.view.currentWindow !== 'retail.cashuppartial'
+                ) {
+                  countCashSummary.countedSummary = OB.UTIL.cashupGetPaymentWithMovement(
+                    paymentWithMovement,
+                    countCashSummary.countedSummary
+                  );
+                  countCashSummary.differenceSummary = OB.UTIL.cashupGetPaymentWithMovement(
+                    paymentWithMovement,
+                    countCashSummary.differenceSummary
+                  );
+                  countCashSummary.qtyToKeepSummary = OB.UTIL.cashupGetPaymentWithMovement(
+                    paymentWithMovement,
+                    countCashSummary.qtyToKeepSummary
+                  );
+                  countCashSummary.qtyToDepoSummary = OB.UTIL.cashupGetPaymentWithMovement(
+                    paymentWithMovement,
+                    countCashSummary.qtyToDepoSummary
+                  );
+                }
               }
-              var cashCloseArray = [];
-              objToSend.cashCloseInfo = cashCloseArray;
-              _.each(
-                me.get('paymentList').models,
-                function(curModel) {
-                  var cashCloseInfo = {
-                    expected: 0,
-                    difference: 0,
-                    paymentTypeId: 0,
-                    paymentMethod: {}
-                  };
-                  // Set cashclose info
-                  cashCloseInfo.id = OB.UTIL.get_UUID();
-                  cashCloseInfo.paymentTypeId = curModel.get('id');
-                  cashCloseInfo.difference = curModel.get('difference');
-                  cashCloseInfo.foreignDifference = curModel.get(
-                    'foreignDifference'
-                  );
-                  cashCloseInfo.expected = curModel.get('expected');
-                  cashCloseInfo.foreignExpected = curModel.get(
-                    'foreignExpected'
-                  );
-                  paymentMethodInfo = curModel.get('paymentMethod');
-                  paymentMethodInfo.amountToKeep = curModel.get('qtyToKeep');
-                  cashCloseInfo.paymentMethod = paymentMethodInfo;
-                  objToSend.cashCloseInfo.push(cashCloseInfo);
-                },
-                me
-              );
-              objToSend.approvals = me.get('approvals');
-              var cashMgmtIds = [];
-              objToSend.cashMgmtIds = cashMgmtIds;
-              OB.Dal.findInTransaction(
-                tx,
-                OB.Model.CashManagement,
-                {
-                  cashup_id: cashUp.at(0).get('id')
-                },
-                function(cashMgmts) {
-                  _.each(cashMgmts.models, function(cashMgmt) {
-                    objToSend.cashMgmtIds.push(cashMgmt.get('id'));
-                  });
-                  cashUp
-                    .at(0)
-                    .set('userId', OB.MobileApp.model.get('context').user.id);
-                  objToSend.userId = OB.MobileApp.model.get('context').user.id;
-                  objToSend.isprocessed = 'Y';
-                  cashUp.at(0).set('objToSend', JSON.stringify(objToSend));
-                  cashUp.at(0).set('isprocessed', 'Y');
 
-                  OB.Dal.saveInTransaction(
-                    tx,
-                    cashUp.at(0),
-                    function() {
-                      var callbackFinishedSuccess = function() {
-                        OB.UTIL.showLoading(true);
-                        me.set('finished', true);
-                        if (
-                          OB.MobileApp.model.hasPermission(
-                            'OBMOBC_SynchronizedMode',
-                            true
-                          )
-                        ) {
-                          OB.UTIL.localStorage.setItem(
-                            'lastProcessedCashup',
-                            cashUp.at(0).get('id')
-                          );
-                        }
-                        if (
-                          OB.MobileApp.model.hasPermission('OBPOS_print.cashup')
-                        ) {
-                          var cashUpReport = new OB.Model.CashUp(),
-                            countCashSummary = me.getCountCashSummary();
-                          OB.UTIL.clone(
-                            me.get('cashUpReport').at(0),
-                            cashUpReport
-                          );
-                          if (
-                            OB.MobileApp.model.hasPermission(
-                              'OBPOS_retail.cashupRemoveUnusedPayment',
-                              true
-                            )
-                          ) {
-                            var paymentWithMovement = [];
-                            if (
-                              OB.MobileApp.view.currentWindow !==
-                              'retail.cashuppartial'
-                            ) {
-                              OB.UTIL.cashupAddPaymentWithSummaryMovement(
-                                paymentWithMovement,
-                                countCashSummary.countedSummary
-                              );
-                              OB.UTIL.cashupAddPaymentWithSummaryMovement(
-                                paymentWithMovement,
-                                countCashSummary.differenceSummary
-                              );
-                              OB.UTIL.cashupAddPaymentWithSummaryMovement(
-                                paymentWithMovement,
-                                countCashSummary.qtyToKeepSummary
-                              );
-                              OB.UTIL.cashupAddPaymentWithSummaryMovement(
-                                paymentWithMovement,
-                                countCashSummary.qtyToDepoSummary
-                              );
-                            }
-                            OB.UTIL.cashupAddPaymentWithSummaryMovement(
-                              paymentWithMovement,
-                              countCashSummary.expectedSummary
-                            );
-                            OB.UTIL.cashupAddPaymentWithMovement(
-                              paymentWithMovement,
-                              cashUpReport.get('startings')
-                            );
-                            OB.UTIL.cashupAddPaymentWithMovement(
-                              paymentWithMovement,
-                              cashUpReport.get('drops')
-                            );
-                            OB.UTIL.cashupAddPaymentWithMovement(
-                              paymentWithMovement,
-                              cashUpReport.get('deposits')
-                            );
-                            countCashSummary.expectedSummary = OB.UTIL.cashupGetPaymentWithMovement(
-                              paymentWithMovement,
-                              countCashSummary.expectedSummary
-                            );
-                            cashUpReport.set(
-                              'startings',
-                              OB.UTIL.cashupGetPaymentWithMovement(
-                                paymentWithMovement,
-                                cashUpReport.get('startings')
-                              )
-                            );
-                            cashUpReport.set(
-                              'drops',
-                              OB.UTIL.cashupGetPaymentWithMovement(
-                                paymentWithMovement,
-                                cashUpReport.get('drops')
-                              )
-                            );
-                            cashUpReport.set(
-                              'deposits',
-                              OB.UTIL.cashupGetPaymentWithMovement(
-                                paymentWithMovement,
-                                cashUpReport.get('deposits')
-                              )
-                            );
-                            if (
-                              OB.MobileApp.view.currentWindow !==
-                              'retail.cashuppartial'
-                            ) {
-                              countCashSummary.countedSummary = OB.UTIL.cashupGetPaymentWithMovement(
-                                paymentWithMovement,
-                                countCashSummary.countedSummary
-                              );
-                              countCashSummary.differenceSummary = OB.UTIL.cashupGetPaymentWithMovement(
-                                paymentWithMovement,
-                                countCashSummary.differenceSummary
-                              );
-                              countCashSummary.qtyToKeepSummary = OB.UTIL.cashupGetPaymentWithMovement(
-                                paymentWithMovement,
-                                countCashSummary.qtyToKeepSummary
-                              );
-                              countCashSummary.qtyToDepoSummary = OB.UTIL.cashupGetPaymentWithMovement(
-                                paymentWithMovement,
-                                countCashSummary.qtyToDepoSummary
-                              );
-                            }
-                          }
+              me.printCashUp.print(cashUpReport, countCashSummary, true);
+            }
+          };
+          var callbackFinishedWrongly = function() {
+            me.set('finishedWrongly', true);
+          };
 
-                          me.printCashUp.print(
-                            cashUpReport,
-                            countCashSummary,
-                            true
-                          );
-                        }
-                      };
-                      var callbackFinishedWrongly = function() {
-                        // reset to N
-                        cashUp.at(0).set('isprocessed', 'N');
-                        OB.Dal.saveInTransaction(tx, cashUp.at(0));
-                        me.set('finishedWrongly', true);
-                      };
-
-                      var callbackFunc = function() {
-                        var synchronizedPreferenceValue;
-                        // prevent synchronized mode for cashups
-                        synchronizedPreferenceValue = OB.MobileApp.model.setSynchronizedPreference(
-                          false
-                        );
-                        OB.UTIL.HookManager.executeHooks(
-                          'OBPOS_PrePrintCashupHook',
-                          {
-                            cashupModel: me
-                          },
-                          function(args) {
-                            OB.MobileApp.model.runSyncProcess(
-                              function() {
-                                if (
-                                  !OB.MobileApp.model.get('terminal')
-                                    .ismaster &&
-                                  !OB.MobileApp.model.get('terminal').isslave
-                                ) {
-                                  OB.MobileApp.model.setSynchronizedPreference(
-                                    synchronizedPreferenceValue
-                                  );
-                                  callbackFinishedSuccess();
-                                  return;
-                                }
-                                OB.Dal.find(
-                                  OB.Model.CashUp,
-                                  {
-                                    isprocessed: 'N'
-                                  },
-                                  function(cashUps) {
-                                    OB.UTIL.composeCashupInfo(
-                                      cashUps,
-                                      null,
-                                      function() {
-                                        OB.MobileApp.model.runSyncProcess(
-                                          function() {
-                                            OB.MobileApp.model.setSynchronizedPreference(
-                                              synchronizedPreferenceValue
-                                            );
-                                            callbackFinishedSuccess();
-                                          }
-                                        );
-                                      }
-                                    );
-                                  }
-                                );
-                              },
-                              function() {
-                                OB.MobileApp.model.setSynchronizedPreference(
-                                  synchronizedPreferenceValue
-                                );
-                                callbackFinishedWrongly();
-                              }
-                            );
-                          }
-                        );
-                      };
-                      callbackFunc();
-                    },
-                    null
-                  );
-                },
-                null,
-                this
-              );
-            },
-            tx
+          var synchronizedPreferenceValue;
+          // prevent synchronized mode for cashups
+          synchronizedPreferenceValue = OB.MobileApp.model.setSynchronizedPreference(
+            false
           );
-        }
+          OB.UTIL.HookManager.executeHooks(
+            'OBPOS_PrePrintCashupHook',
+            {
+              cashupModel: me
+            },
+            function(args) {
+              OB.App.State.Global.completeCashup({ newCashup: cashUp.at(0) })
+                .then(() => {
+                  OB.MobileApp.model.setSynchronizedPreference(
+                    synchronizedPreferenceValue
+                  );
+                  callbackFinishedSuccess();
+                })
+                .catch(e => {
+                  OB.error(e.stack);
+                  callbackFinishedWrongly();
+                });
+            }
+          );
+        },
+        null,
+        this
       );
     });
   }

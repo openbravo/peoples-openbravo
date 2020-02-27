@@ -588,30 +588,27 @@
             },
             function(currentCashup) {
               if (currentCashup.length === 0) {
-                OB.UTIL.initCashUp(
-                  function() {
-                    var cashUpId = data.at(0).get('id');
-                    OB.Dal.find(
-                      OB.Model.CashUp,
-                      {
-                        id: cashUpId
-                      },
-                      function(cU) {
-                        if (cU.length !== 0) {
-                          if (!cU.at(0).get('objToSend')) {
-                            OB.UTIL.composeCashupInfo(data, null, function() {
-                              OB.MobileApp.model.runSyncProcess();
-                            });
-                          }
+                const onInitCashupSucess = function() {
+                  var cashUpId = data.at(0).get('id');
+                  OB.Dal.find(
+                    OB.Model.CashUp,
+                    {
+                      id: cashUpId
+                    },
+                    function(cU) {
+                      if (cU.length !== 0) {
+                        if (!cU.at(0).get('objToSend')) {
+                          OB.UTIL.composeCashupInfo(data, null, function() {
+                            OB.MobileApp.model.runSyncProcess();
+                          });
                         }
                       }
-                    );
-                    endCallback();
-                  },
-                  null,
-                  true,
-                  data.at(0)
-                );
+                    }
+                  );
+                  endCallback();
+                };
+                // TODO : remove postprocesing
+                OB.UTIL.initCashUp(onInitCashupSucess, null, true, data.at(0));
               } else {
                 endCallback();
                 OB.UTIL.HookManager.executeHooks(
@@ -669,76 +666,83 @@
 
         var terminal = this.get('terminal');
 
-        OB.UTIL.initCashUp(
-          function() {
-            function finishAndNavigate() {
-              OB.UTIL.calculateCurrentCash(function() {
-                OB.UTIL.HookManager.executeHooks(
-                  'OBPOS_LoadPOSWindow',
-                  {},
-                  function(args) {
-                    if (
-                      args &&
-                      args.cancellation &&
-                      args.cancellation === true
-                    ) {
-                      return;
-                    }
-                    var nextWindow = OB.MobileApp.model.get('nextWindow');
-                    if (nextWindow) {
-                      OB.POS.navigate(nextWindow);
-                      OB.MobileApp.model.unset('nextWindow');
-                    } else {
-                      OB.POS.navigate(OB.MobileApp.model.get('defaultWindow'));
-                    }
+        const onInitCashupSucess = function() {
+          function finishAndNavigate() {
+            OB.UTIL.calculateCurrentCash(function() {
+              OB.UTIL.HookManager.executeHooks(
+                'OBPOS_LoadPOSWindow',
+                {},
+                function(args) {
+                  if (args && args.cancellation && args.cancellation === true) {
+                    return;
                   }
-                );
-              }, null);
-            }
-            if (
-              !OB.MobileApp.model.get('terminal').ismaster &&
-              !OB.MobileApp.model.get('terminal').isslave
-            ) {
-              finishAndNavigate();
-            } else {
-              OB.Dal.find(
-                OB.Model.CashUp,
-                {
-                  isprocessed: 'N'
-                },
-                function(cashUps) {
-                  OB.UTIL.composeCashupInfo(cashUps, null, finishAndNavigate);
+                  var nextWindow = OB.MobileApp.model.get('nextWindow');
+                  if (nextWindow) {
+                    OB.POS.navigate(nextWindow);
+                    OB.MobileApp.model.unset('nextWindow');
+                  } else {
+                    OB.POS.navigate(OB.MobileApp.model.get('defaultWindow'));
+                  }
                 }
               );
-            }
-          },
-          function() {
-            //There was an error when retrieving the cashup from the backend.
-            // This means that there is a cashup saved as an error, and we don't have
-            //the necessary information to have a working cashup in the client side.
-            //We therefore need to logout
-            OB.UTIL.showConfirmation.display(
-              OB.I18N.getLabel('OBPOS_CashupErrors'),
-              OB.I18N.getLabel('OBPOS_CashupErrorsMsg'),
-              [
-                {
-                  label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                  isConfirmButton: true,
-                  action: function() {
-                    OB.UTIL.showLoading(true);
-                    me.logout();
-                  }
-                }
-              ],
+            }, null);
+          }
+          if (
+            !OB.MobileApp.model.get('terminal').ismaster &&
+            !OB.MobileApp.model.get('terminal').isslave
+          ) {
+            finishAndNavigate();
+          } else {
+            OB.Dal.find(
+              OB.Model.CashUp,
               {
-                onHideFunction: function() {
+                isprocessed: 'N'
+              },
+              function(cashUps) {
+                OB.UTIL.composeCashupInfo(cashUps, null, finishAndNavigate);
+              }
+            );
+          }
+        };
+
+        const onInitCashupError = function() {
+          //There was an error when retrieving the cashup from the backend.
+          // This means that there is a cashup saved as an error, and we don't have
+          //the necessary information to have a working cashup in the client side.
+          //We therefore need to logout
+          OB.UTIL.showConfirmation.display(
+            OB.I18N.getLabel('OBPOS_CashupErrors'),
+            OB.I18N.getLabel('OBPOS_CashupErrorsMsg'),
+            [
+              {
+                label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                isConfirmButton: true,
+                action: function() {
                   OB.UTIL.showLoading(true);
                   me.logout();
                 }
               }
-            );
-          }
-        );
+            ],
+            {
+              onHideFunction: function() {
+                OB.UTIL.showLoading(true);
+                me.logout();
+              }
+            }
+          );
+        };
+
+        // TODO: remove call to old initCashup
+        OB.UTIL.initCashUp(undefined, onInitCashupError);
+        OB.App.State.Cashup.initCashup()
+          .then(() => {
+            onInitCashupSucess();
+          })
+          .catch(e => {
+            onInitCashupError();
+            OB.error(e);
+          });
+
         // Set Hardware..
         OB.POS.hwserver = new OB.DS.HWServer(
           this.get('hardwareURL'),
