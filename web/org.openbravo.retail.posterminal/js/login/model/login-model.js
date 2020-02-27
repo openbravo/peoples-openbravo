@@ -250,9 +250,9 @@
                     OB.MobileApp.model.saveDocumentSequence(
                       OB.MobileApp.model.get('terminal').lastDocumentNumber,
                       OB.MobileApp.model.get('terminal')
-                        .lastQuotationDocumentNumber,
-                      OB.MobileApp.model.get('terminal')
                         .lastReturnDocumentNumber,
+                      OB.MobileApp.model.get('terminal')
+                        .lastQuotationDocumentNumber,
                       function() {
                         if (OB.MobileApp.model.orderList) {
                           OB.MobileApp.model.orderList.synchronizeCurrentOrder();
@@ -362,8 +362,7 @@
                             );
                           }
                         );
-                      },
-                      tx
+                      }
                     );
                   });
                 } else {
@@ -1534,133 +1533,20 @@
      */
     saveDocumentSequence: function(
       documentnoSuffix,
-      quotationnoSuffix,
       returnnoSuffix,
-      callback,
-      tx
+      quotationnoSuffix,
+      callback
     ) {
-      var me = this;
-
-      if (me.restartingDocNo === true) {
-        if (callback) {
-          callback();
-        }
-        return;
-      }
-
-      // if the document sequence is trying to be initialized but it has already been initialized, do nothing
-      if (
-        documentnoSuffix === -1 &&
-        quotationnoSuffix === -1 &&
-        returnnoSuffix === -1 &&
-        this.documentnoThreshold >= 0 &&
-        this.quotationnoThreshold >= 0 &&
-        this.returnnoThreshold >= 0
-      ) {
-        if (callback) {
-          callback();
-        }
-        return;
-      }
-
-      //If documentnoSuffix === 0 || quotationnoSuffix === 0 || returnnoSuffix === 0, it means that we have restarted documentNo prefix, so we block this method while we save the new documentNo in localStorage
-      if (
-        documentnoSuffix === 0 ||
-        quotationnoSuffix === 0 ||
-        returnnoSuffix === 0
-      ) {
-        me.restartingDocNo = true;
-      }
-
-      // verify that the values are higher than the local variables
-      if (
-        documentnoSuffix > this.documentnoThreshold ||
-        documentnoSuffix === 0
-      ) {
-        this.documentnoThreshold = documentnoSuffix;
-      }
-      if (
-        quotationnoSuffix > this.quotationnoThreshold ||
-        quotationnoSuffix === 0
-      ) {
-        this.quotationnoThreshold = quotationnoSuffix;
-      }
-      if (returnnoSuffix > this.returnnoThreshold || returnnoSuffix === 0) {
-        this.returnnoThreshold = returnnoSuffix;
-      }
-
-      var processDocumentSequenceList = function(documentSequenceList) {
-        var docSeq;
-        if (documentSequenceList && documentSequenceList.length > 0) {
-          // There can only be one documentSequence model in the list (posSearchKey is unique)
-          docSeq = documentSequenceList.models[0];
-          // verify if the new values are higher and if it is not undefined or 0
-          if (docSeq.get('documentSequence') > me.documentnoThreshold) {
-            me.documentnoThreshold = docSeq.get('documentSequence');
-          }
-          if (
-            docSeq.get('quotationDocumentSequence') > me.quotationnoThreshold
-          ) {
-            me.quotationnoThreshold = docSeq.get('quotationDocumentSequence');
-          }
-          if (docSeq.get('returnDocumentSequence') > me.returnnoThreshold) {
-            me.returnnoThreshold = docSeq.get('returnDocumentSequence');
-          }
-        } else {
-          // There is not a document sequence for the pos, create it
-          docSeq = new OB.Model.DocumentSequence();
-          docSeq.set('posSearchKey', me.get('terminal').searchKey);
-        }
-
-        // deprecation 27911 starts
-        OB.MobileApp.model.set(
-          'documentsequence',
-          me.getLastDocumentnoSuffixInOrderlist()
-        );
-        OB.MobileApp.model.set(
-          'quotationDocumentSequence',
-          me.getLastQuotationnoSuffixInOrderlist()
-        );
-        OB.MobileApp.model.set(
-          'returnDocumentSequence',
-          me.getLastReturnnoSuffixInOrderlist()
-        );
-        if (!me.isSeqNoReadyEventSent) {
-          me.isSeqNoReadyEventSent = true;
-          me.trigger('seqNoReady');
-        }
-        // deprecation 27911 ends
-        // update the database
-        docSeq.set('documentSequence', me.documentnoThreshold);
-        docSeq.set('quotationDocumentSequence', me.quotationnoThreshold);
-        docSeq.set('returnDocumentSequence', me.returnnoThreshold);
-        OB.Dal.saveInTransaction(
-          tx,
-          docSeq,
-          function() {
-            if (callback) {
-              callback();
-            }
-            me.restartingDocNo = false;
-          },
-          function() {
-            me.restartingDocNo = false;
-          }
-        );
+      const documentSequenceFromBackend = {
+        newOrderSequence: documentnoSuffix,
+        newReturnSequence: returnnoSuffix,
+        newQuotationSequence: quotationnoSuffix
       };
+      OB.App.State.DocumentSequence.updateSequence(documentSequenceFromBackend);
 
-      // verify the database values
-      OB.Dal.findInTransaction(
-        tx,
-        OB.Model.DocumentSequence,
-        {
-          posSearchKey: this.get('terminal').searchKey
-        },
-        processDocumentSequenceList,
-        function() {
-          me.restartingDocNo = false;
-        }
-      );
+      if (callback) {
+        callback();
+      }
     },
 
     /**
@@ -1675,19 +1561,11 @@
       callback,
       tx
     ) {
-      if (quotationnoSuffix >= 0) {
-        documentnoSuffix = -1;
-        returnnoSuffix = -1;
-      } else if (returnnoSuffix >= 0) {
-        documentnoSuffix = -1;
-        quotationnoSuffix = -1;
-      }
       this.saveDocumentSequence(
         documentnoSuffix,
-        quotationnoSuffix,
         returnnoSuffix,
-        callback,
-        tx
+        quotationnoSuffix,
+        callback
       );
     },
 
@@ -1782,16 +1660,17 @@
 
     // call this method to get a new order document number
     getNextDocumentno: function() {
-      var next = this.getLastDocumentnoSuffixInOrderlist() + 1;
+      const sequenceNumber = OB.App.State.DocumentSequence.Utils.getNextSequenceNumber(
+        OB.App.State.getState().DocumentSequence.orderSequence
+      );
+
       return {
-        documentnoSuffix: next,
-        documentNo:
-          OB.MobileApp.model.get('terminal').docNoPrefix +
-          (OB.Model.Order.prototype.includeDocNoSeperator ? '/' : '') +
-          OB.UTIL.padNumber(
-            next,
-            OB.MobileApp.model.get('terminal').documentnoPadding
-          )
+        documentnoSuffix: sequenceNumber,
+        documentNo: OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
+          OB.MobileApp.model.get('terminal').docNoPrefix,
+          OB.MobileApp.model.get('terminal').documentnoPadding,
+          sequenceNumber
+        )
       };
     },
     // call this method to get a new quotation document number

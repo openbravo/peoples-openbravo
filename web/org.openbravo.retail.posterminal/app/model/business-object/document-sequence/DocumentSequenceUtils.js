@@ -14,20 +14,52 @@
 (() => {
   OB.App.StateAPI.DocumentSequence.registerUtilityFunctions({
     /**
-     * Returns the highest sequence between two sequences.
+     * Returns the highest sequence number between two sequence numbers.
      *
-     * @returns {number} The highest sequence.
+     * @returns {number} The highest sequence number.
      */
-    getHighestSequence(sequence1, sequence2) {
-      if (!sequence1) {
-        return sequence2;
+    getHighestSequenceNumber(sequenceNumber1, sequenceNumber2) {
+      if (!sequenceNumber1 && sequenceNumber1 !== 0) {
+        return sequenceNumber2;
       }
 
-      if (!sequence2) {
-        return sequence1;
+      if (!sequenceNumber2 && sequenceNumber2 !== 0) {
+        return sequenceNumber1;
       }
 
-      return sequence1 > sequence2 ? sequence1 : sequence2;
+      return sequenceNumber1 > sequenceNumber2
+        ? sequenceNumber1
+        : sequenceNumber2;
+    },
+
+    /**
+     * Returns the sequence number increased in one or zero if it is undefined.
+     *
+     * @returns {number} The next sequence number.
+     */
+    getNextSequenceNumber(sequenceNumber) {
+      if (!sequenceNumber && sequenceNumber !== 0) {
+        return 0;
+      }
+
+      return sequenceNumber + 1;
+    },
+
+    /**
+     * Returns the sequence number increased in one or zero if it is undefined.
+     *
+     * @returns {number} The next sequence number.
+     */
+    calculateDocumentNumber(
+      documentNumberPrefix,
+      documentNumberPadding,
+      sequenceNumber
+    ) {
+      return (
+        documentNumberPrefix +
+        '/' +
+        OB.UTIL.padNumber(sequenceNumber, documentNumberPadding)
+      );
     }
   });
 })();

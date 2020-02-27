@@ -23,15 +23,15 @@
         newQuotationSequence
       } = payload;
 
-      newState.orderSequence = OB.App.State.DocumentSequence.Utils.getHighestSequence(
+      newState.orderSequence = OB.App.State.DocumentSequence.Utils.getHighestSequenceNumber(
         newState.orderSequence,
         newOrderSequence
       );
-      newState.returnSequence = OB.App.State.DocumentSequence.Utils.getHighestSequence(
+      newState.returnSequence = OB.App.State.DocumentSequence.Utils.getHighestSequenceNumber(
         newState.returnSequence,
         newReturnSequence
       );
-      newState.quotationSequence = OB.App.State.DocumentSequence.Utils.getHighestSequence(
+      newState.quotationSequence = OB.App.State.DocumentSequence.Utils.getHighestSequenceNumber(
         newState.quotationSequence,
         newQuotationSequence
       );

@@ -641,43 +641,6 @@ enyo.kind({
     return true;
   },
 
-  getNextOrderPreNoSuffixInPinckinglist: function(tx, callback) {
-    var criteria = {
-        posSearchKey: OB.MobileApp.model.get('terminalName')
-      },
-      suffixNext;
-    OB.Dal.findInTransaction(tx, OB.Model.DocumentSequence, criteria, function(
-      documentSequenceList
-    ) {
-      if (documentSequenceList && documentSequenceList.length !== 0) {
-        suffixNext =
-          documentSequenceList.at(0).get('orderPreDocumentSequence') + 1;
-        callback({
-          orderprenoPreffix: OB.MobileApp.model.get('terminal')
-            .orderPreDocNoPrefix,
-          orderprenoSuffix: suffixNext
-        });
-      }
-    });
-  },
-
-  updateOrderPreDocSequence: function(suffix, tx) {
-    var newValue = suffix - 1,
-      criteria = {
-        posSearchKey: OB.MobileApp.model.get('terminalName')
-      },
-      docSeqModel;
-    OB.Dal.findInTransaction(tx, OB.Model.DocumentSequence, criteria, function(
-      documentSequenceList
-    ) {
-      if (documentSequenceList && documentSequenceList.length !== 0) {
-        docSeqModel = documentSequenceList.at(0);
-        docSeqModel.set('orderPreDocumentSequence', newValue);
-      }
-      OB.Dal.saveInTransaction(tx, docSeqModel, null, null);
-    });
-  },
-
   prepareSelected: function(inSender, inEvent) {
     var showApproval = false,
       me = this,
