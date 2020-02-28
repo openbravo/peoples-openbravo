@@ -750,7 +750,11 @@ OB.UTIL.checkRefreshMasterData = function() {
         );
       } else {
         OB.UTIL.clearFlagAndTimersRefreshMasterData();
-        if (OB.DS.masterdataBackgroundModels.totalLength > 0) {
+        if (
+          OB.DS.masterdataBackgroundModels.totalLength +
+            OB.App.MasterdataController.modifiedMasterdataModels.length >
+          0
+        ) {
           OB.UTIL.refreshMasterDataInBackgroundSave();
         } else {
           OB.info('No updates in the masterdata.');
@@ -806,8 +810,12 @@ OB.UTIL.refreshMasterDataInBackgroundRequest = function(callback) {
     null,
     true,
     function() {
-      OB.UTIL.masterdataRefreshStatus = 'background-request-finished';
-      callback();
+      OB.App.MasterdataController.requestIncrementalMasterdata().then(
+        function() {
+          OB.UTIL.masterdataRefreshStatus = 'background-request-finished';
+          callback();
+        }
+      );
     },
     'background-request'
   );
@@ -825,13 +833,15 @@ OB.UTIL.refreshMasterDataInBackgroundSave = function() {
     null,
     true,
     function() {
-      OB.Taxes.Pos.initCache(function() {
-        OB.Discounts.Pos.initCache(function() {
-          OB.UTIL.masterdataRefreshStatus = '';
-          OB.DS.masterdataBackgroundModels = {};
-          OB.UTIL.showLoading(false);
-          OB.MobileApp.view.scanningFocus(true);
-          OB.MobileApp.model.set('isLoggingIn', false);
+      OB.App.MasterdataController.putIncrementalMasterdata().then(function() {
+        OB.Taxes.Pos.initCache(function() {
+          OB.Discounts.Pos.initCache(function() {
+            OB.UTIL.masterdataRefreshStatus = '';
+            OB.DS.masterdataBackgroundModels = {};
+            OB.UTIL.showLoading(false);
+            OB.MobileApp.view.scanningFocus(true);
+            OB.MobileApp.model.set('isLoggingIn', false);
+          });
         });
       });
     },
@@ -859,11 +869,17 @@ OB.UTIL.refreshMasterDataForeground = function() {
       OB.MobileApp.model.set('isLoggingIn', true);
       OB.UTIL.showLoading(true);
       OB.MobileApp.model.loadModels(null, true, function() {
-        OB.UTIL.showLoading(false);
-        OB.MobileApp.view.scanningFocus(true);
-        OB.MobileApp.model.set('isLoggingIn', false);
-        OB.UTIL.localStorage.removeItem('neededForeGroundMasterDataRefresh');
-        OB.UTIL.masterdataRefreshStatus = '';
+        OB.App.MasterdataController.incrementalMasterdataRefresh().then(
+          function() {
+            OB.UTIL.showLoading(false);
+            OB.MobileApp.view.scanningFocus(true);
+            OB.MobileApp.model.set('isLoggingIn', false);
+            OB.UTIL.localStorage.removeItem(
+              'neededForeGroundMasterDataRefresh'
+            );
+            OB.UTIL.masterdataRefreshStatus = '';
+          }
+        );
       });
     }
   }, 1000);
