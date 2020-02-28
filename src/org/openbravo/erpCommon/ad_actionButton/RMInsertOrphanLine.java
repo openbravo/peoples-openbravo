@@ -69,9 +69,18 @@ public class RMInsertOrphanLine implements org.openbravo.scheduling.Process {
     OBContext.setAdminMode(true);
     try {
       final Order order = OBDal.getInstance().get(Order.class, strOrderId);
-      final Product product = getProductOrphanLine(strProductId);
-      final AttributeSetInstance attrSetInstance = getAttributeSetInstanceOrphanLine(
-          strAttributeSetInstanceId);
+      final Product product = OBDal.getInstance().get(Product.class, strProductId);
+
+      if (!product.isReturnable()) {
+        throw new OBException(
+            "@Product@ '" + product.getIdentifier() + "' @ServiceIsNotReturnable@");
+      }
+
+      AttributeSetInstance attrSetInstance = null;
+      if (strAttributeSetInstanceId != null) {
+        attrSetInstance = OBDal.getInstance()
+            .get(AttributeSetInstance.class, strAttributeSetInstanceId);
+      }
 
       if (product.getAttributeSet() != null
           && (strAttributeSetInstanceId == null || strAttributeSetInstanceId.equals(""))
@@ -82,7 +91,6 @@ public class RMInsertOrphanLine implements org.openbravo.scheduling.Process {
 
       final OrderLine newOrderLine = createNewOrderLine(returnedQty, strUnitPrice, order, product,
           attrSetInstance, strReturnReason);
-
       // tax
       final TaxRate tax = getTaxForNewOrderLine(strTaxId, order, product);
 
@@ -113,37 +121,6 @@ public class RMInsertOrphanLine implements org.openbravo.scheduling.Process {
     }
 
     bundle.setResult(msg);
-  }
-
-  private TaxRate getTaxForNewOrderLine(final String strTaxId, final Order order,
-      final Product product) {
-    TaxRate tax;
-    if (strTaxId.isEmpty()) {
-      final List<Object> parameters = new ArrayList<>();
-      parameters.add(product.getId());
-      parameters.add(order.getOrderDate());
-      parameters.add(order.getOrganization().getId());
-      parameters.add(order.getWarehouse().getId());
-      parameters.add(order.getInvoiceAddress().getId());
-      parameters.add(order.getPartnerAddress().getId());
-
-      if (order.getProject() != null) {
-        parameters.add(order.getProject().getId());
-      } else {
-        parameters.add(null);
-      }
-      parameters.add("Y");
-
-      final String strDefaultTaxId = (String) CallStoredProcedure.getInstance()
-          .call("C_Gettax", parameters, null);
-      if (strDefaultTaxId == null || strDefaultTaxId.equals("")) {
-        return null;
-      }
-      tax = OBDal.getInstance().get(TaxRate.class, strDefaultTaxId);
-    } else {
-      tax = OBDal.getInstance().get(TaxRate.class, strTaxId);
-    }
-    return tax;
   }
 
   private OrderLine createNewOrderLine(final BigDecimal returnedQty, final String strUnitPrice,
@@ -201,36 +178,17 @@ public class RMInsertOrphanLine implements org.openbravo.scheduling.Process {
     return newOrderLine;
   }
 
-  private AttributeSetInstance getAttributeSetInstanceOrphanLine(
-      final String strAttributeSetInstanceId) {
-    AttributeSetInstance attrSetInstance = null;
-    if (strAttributeSetInstanceId != null) {
-      attrSetInstance = OBDal.getInstance()
-          .get(AttributeSetInstance.class, strAttributeSetInstanceId);
-    }
-    return attrSetInstance;
-  }
-
-  private Product getProductOrphanLine(final String strProductId) {
-    final Product product = OBDal.getInstance().get(Product.class, strProductId);
-
-    if (!product.isReturnable()) {
-      throw new OBException("@Product@ '" + product.getIdentifier() + "' @ServiceIsNotReturnable@");
-    }
-    return product;
-  }
-
   private Long getNewLineNo(final Order order) {
     //@formatter:off
     final String hqlWhere =
             "as ol" +
-            " where ol.salesOrder = :order" +
+            " where ol.salesOrder.id = :orderId" +
             " order by ol.lineNo desc";
     //@formatter:on
 
     final OBQuery<OrderLine> olQry = OBDal.getInstance()
         .createQuery(OrderLine.class, hqlWhere)
-        .setNamedParameter("order", order);
+        .setNamedParameter("orderId", order.getId());
 
     if (olQry.count() > 0) {
       final OrderLine ol = olQry.list().get(0);
@@ -246,13 +204,13 @@ public class RMInsertOrphanLine implements org.openbravo.scheduling.Process {
             "as pp" +
             "  join pp.priceListVersion as plv" +
             "  join plv.priceList as pl" +
-            " where pp.product = :product" +
+            " where pp.product.id = :productId" +
             "   and plv.validFromDate <= :date";
     //@formatter:on
     if (priceList != null) {
       //@formatter:off
       hqlWhere +=
-            "   and pl = :pricelist";
+            "   and pl.id = :pricelistId";
       //@formatter:on
     } else {
       //@formatter:off
@@ -268,10 +226,10 @@ public class RMInsertOrphanLine implements org.openbravo.scheduling.Process {
 
     final OBQuery<ProductPrice> ppQry = OBDal.getInstance()
         .createQuery(ProductPrice.class, hqlWhere)
-        .setNamedParameter("product", product)
+        .setNamedParameter("productId", product.getId())
         .setNamedParameter("date", date);
     if (priceList != null) {
-      ppQry.setNamedParameter("pricelist", priceList);
+      ppQry.setNamedParameter("pricelistId", priceList.getId());
     } else {
       ppQry.setNamedParameter("salespricelist", useSalesPriceList);
     }
@@ -283,5 +241,36 @@ public class RMInsertOrphanLine implements org.openbravo.scheduling.Process {
           + " @Date@: " + OBDateUtils.formatDate(date));
     }
     return ppList.get(0);
+  }
+
+  private TaxRate getTaxForNewOrderLine(final String strTaxId, final Order order,
+      final Product product) {
+    TaxRate tax;
+    if (strTaxId.isEmpty()) {
+      final List<Object> parameters = new ArrayList<>();
+      parameters.add(product.getId());
+      parameters.add(order.getOrderDate());
+      parameters.add(order.getOrganization().getId());
+      parameters.add(order.getWarehouse().getId());
+      parameters.add(order.getInvoiceAddress().getId());
+      parameters.add(order.getPartnerAddress().getId());
+
+      if (order.getProject() != null) {
+        parameters.add(order.getProject().getId());
+      } else {
+        parameters.add(null);
+      }
+      parameters.add("Y");
+
+      final String strDefaultTaxId = (String) CallStoredProcedure.getInstance()
+          .call("C_Gettax", parameters, null);
+      if (strDefaultTaxId == null || strDefaultTaxId.equals("")) {
+        return null;
+      }
+      tax = OBDal.getInstance().get(TaxRate.class, strDefaultTaxId);
+    } else {
+      tax = OBDal.getInstance().get(TaxRate.class, strTaxId);
+    }
+    return tax;
   }
 }
