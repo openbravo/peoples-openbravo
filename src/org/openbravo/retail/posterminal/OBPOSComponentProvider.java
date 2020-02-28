@@ -141,17 +141,10 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalcontextchanged", "components/modalproductcharacteristic",
 
         // Point of sale models
-<<<<<<< working copy
+
         "model/pricelist", "model/product-category-tree", "model/product", "model/productprice",
         "model/service-product", "model/service-category", "model/businesspartner",
-        "model/document-sequence", "model/taxRate", "model/taxZone",
-=======
-        "model/pricelist", "model/product-category", "model/product-category-tree", "model/product",
-        "model/productprice", "model/service-product", "model/service-category",
-        "model/businesspartner", "model/document-sequence",
->>>>>>> merge rev
-
-        "model/servicepricerule", "model/servicepricerulerange",
+        "model/document-sequence", "model/servicepricerule", "model/servicepricerulerange",
         "model/servicepricerulerangeprices", "model/servicepriceruleversion",
 
         "model/obpos-supervisor-model",
@@ -279,23 +272,18 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/masterdata/BPCategoryModel");
     appDependency.add("model/masterdata/BPSetLineModel");
     appDependency.add("model/masterdata/CountryModel");
-<<<<<<< working copy
-    appDependency.add("model/masterdata/BPSetLineModel");
     appDependency.add("model/masterdata/ProductModel");
     appDependency.add("model/masterdata/ProductPriceModel");
     appDependency.add("model/masterdata/ProductCategoryTreeModel");
     appDependency.add("model/masterdata/CharacteristicModel");
     appDependency.add("model/masterdata/CharacteristicValueModel");
     appDependency.add("model/masterdata/ProductCharacteristicValueModel");
-    appDependency.add("model/masterdata/BPSetLineModel");
-=======
     appDependency.add("model/masterdata/ProductBOMModel");
     appDependency.add("model/masterdata/SalesRepresentativeModel");
     appDependency.add("model/masterdata/TaxCategoryModel");
     appDependency.add("model/masterdata/TaxCategoryBOMModel");
     appDependency.add("model/masterdata/TaxRateModel");
     appDependency.add("model/masterdata/TaxZoneModel");
->>>>>>> merge rev
     appDependency.add("model/masterdata/discount/DiscountFilterBusinessPartnerGroupModel");
     appDependency.add("model/masterdata/discount/DiscountFilterBusinessPartnerModel");
     appDependency.add("model/masterdata/discount/DiscountFilterBusinessPartnerSetModel");
@@ -306,18 +294,15 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/masterdata/discount/DiscountFilterRoleModel");
     appDependency.add("model/masterdata/discount/DiscountModel");
 
-<<<<<<< working copy
     for (final String resource : appDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,
           prefix + "/app/" + resource + ".js", MobileCoreConstants.APP_IDENTIFIER));
     }
-=======
-    // Tax engine
+
     appDependency.add("taxesengine/common/tax-engine");
     appDependency.add("taxesengine/common/tax-rules");
     appDependency.add("taxesengine/common/rules/priceincluding-tax");
     appDependency.add("taxesengine/common/rules/priceexcluding-tax");
->>>>>>> merge rev
 
     for (final String resource : resourceDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,
