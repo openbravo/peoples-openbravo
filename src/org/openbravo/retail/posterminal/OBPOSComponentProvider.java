@@ -293,16 +293,16 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/masterdata/discount/DiscountFilterProductModel");
     appDependency.add("model/masterdata/discount/DiscountFilterRoleModel");
     appDependency.add("model/masterdata/discount/DiscountModel");
+    // Tax
+    appDependency.add("taxesengine/common/tax-engine");
+    appDependency.add("taxesengine/common/tax-rules");
+    appDependency.add("taxesengine/common/rules/priceincluding-tax");
+    appDependency.add("taxesengine/common/rules/priceexcluding-tax");
 
     for (final String resource : appDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,
           prefix + "/app/" + resource + ".js", MobileCoreConstants.APP_IDENTIFIER));
     }
-
-    appDependency.add("taxesengine/common/tax-engine");
-    appDependency.add("taxesengine/common/tax-rules");
-    appDependency.add("taxesengine/common/rules/priceincluding-tax");
-    appDependency.add("taxesengine/common/rules/priceexcluding-tax");
 
     for (final String resource : resourceDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,
