@@ -199,6 +199,7 @@
                 if (newqty === 0) {
                   // If final quantity will be 0 then request approval
                   deletedlines.push(line);
+                  finalCallback();
                 } else if (newqty > 0) {
                   view.addProductToOrder(view, {
                     product: line.get('product'),
@@ -230,6 +231,8 @@
                     }
                   );
                 }
+              } else {
+                finalCallback();
               }
             }, this);
           }.bind(this)
