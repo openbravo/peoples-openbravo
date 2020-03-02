@@ -112,7 +112,14 @@ public class DefaultJsonDataService implements JsonDataService {
 
   public String fetch(Map<String, String> parameters, boolean filterOnReadableOrganizations) {
     try {
-      final String entityName = parameters.get(JsonConstants.ENTITYNAME);
+      String entityName = parameters.get(JsonConstants.ENTITYNAME);
+      if ("ProductByPriceAndWarehouse".equals(entityName)
+          && !parameters.containsKey("_requestType")) {
+        // request for drop down: using simplified view
+        entityName = "ProductByPriceAndWarehouse2";
+        parameters.put(JsonConstants.ENTITYNAME, entityName);
+      }
+
       Check.isNotNull(entityName, "The name of the service/entityname should not be null");
       Check.isNotNull(parameters, "The parameters should not be null");
 

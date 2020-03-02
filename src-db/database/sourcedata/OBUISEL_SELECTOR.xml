@@ -560,6 +560,51 @@ where @additional_filters@
 <!--7B07F521E4804C89B7956E584989CC16-->  <CUSTOM_QUERY><![CDATA[N]]></CUSTOM_QUERY>
 <!--7B07F521E4804C89B7956E584989CC16--></OBUISEL_SELECTOR>
 
+<!--7F556DB05C294B8280B1EB4DE4FC4AA8--><OBUISEL_SELECTOR>
+<!--7F556DB05C294B8280B1EB4DE4FC4AA8-->  <OBUISEL_SELECTOR_ID><![CDATA[7F556DB05C294B8280B1EB4DE4FC4AA8]]></OBUISEL_SELECTOR_ID>
+<!--7F556DB05C294B8280B1EB4DE4FC4AA8-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--7F556DB05C294B8280B1EB4DE4FC4AA8-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--7F556DB05C294B8280B1EB4DE4FC4AA8-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--7F556DB05C294B8280B1EB4DE4FC4AA8-->  <NAME><![CDATA[New Complex Product Selector]]></NAME>
+<!--7F556DB05C294B8280B1EB4DE4FC4AA8-->  <AD_REFERENCE_ID><![CDATA[08BAE489DF6745EBA3DB9A664F461DD8]]></AD_REFERENCE_ID>
+<!--7F556DB05C294B8280B1EB4DE4FC4AA8-->  <AD_TABLE_ID><![CDATA[208]]></AD_TABLE_ID>
+<!--7F556DB05C294B8280B1EB4DE4FC4AA8-->  <FILTER_EXPRESSION><![CDATA[if (OB.getParameters().get('inpcCurrencyId') && (OB.getWindowId() == '207' || OB.getWindowId() == '94EAA455D2644E04AB25D93BE5157B6D')) { " pp.priceListVersion.priceList.currency.id = '" + OB.getParameters().get('inpcCurrencyId') + "'" } else if (OB.getParameters().get('inpcCurrencyId')) { " pp.priceListVersion.priceList.salesPriceList = " + OB.isSalesTransaction()  + " AND pp.priceListVersion.priceList.currency.id = '" + OB.getParameters().get('inpcCurrencyId') + "'" }]]></FILTER_EXPRESSION>
+<!--7F556DB05C294B8280B1EB4DE4FC4AA8-->  <OBCLKER_TEMPLATE_ID><![CDATA[9314DE8599AD44E7BFC4CC50699042AB]]></OBCLKER_TEMPLATE_ID>
+<!--7F556DB05C294B8280B1EB4DE4FC4AA8-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--7F556DB05C294B8280B1EB4DE4FC4AA8-->  <VALUEFIELD_ID><![CDATA[0D7672455E6E408B9FA351A9FBF8255A]]></VALUEFIELD_ID>
+<!--7F556DB05C294B8280B1EB4DE4FC4AA8-->  <DISPLAYFIELD_ID><![CDATA[3CCD1ECEF4D2492385DC9CFCA56C44B2]]></DISPLAYFIELD_ID>
+<!--7F556DB05C294B8280B1EB4DE4FC4AA8-->  <SUGGESTIONTEXTMATCHSTYLE><![CDATA[substring]]></SUGGESTIONTEXTMATCHSTYLE>
+<!--7F556DB05C294B8280B1EB4DE4FC4AA8-->  <POPUPTEXTMATCHSTYLE><![CDATA[substring]]></POPUPTEXTMATCHSTYLE>
+<!--7F556DB05C294B8280B1EB4DE4FC4AA8-->  <HQL><![CDATA[select pp.product.id as prodId, 
+          pp.product.name as prodName,
+          pp.priceListVersion.id as plv,
+          pp.product.searchKey as searchKey,
+          pp.priceListVersion.priceList.currency.id as currency,
+          pp.priceLimit as priceLimit,
+          pp.product.uOM.id as uom,
+          pp.standardPrice as stdPrice,
+          pp.listPrice as netListPrice,
+           coalesce((select sum(quantityOnHand)
+              from MaterialMgmtStorageDetail sd
+             where sd.product = pp.product
+                and sd.storageBin.warehouse.id = @M_Warehouse_ID@),0) as stock
+  from PricingProductPrice as pp
+where @additional_filters@]]></HQL>
+<!--7F556DB05C294B8280B1EB4DE4FC4AA8-->  <ENTITY_ALIAS><![CDATA[pp]]></ENTITY_ALIAS>
+<!--7F556DB05C294B8280B1EB4DE4FC4AA8-->  <CUSTOM_QUERY><![CDATA[Y]]></CUSTOM_QUERY>
+<!--7F556DB05C294B8280B1EB4DE4FC4AA8-->  <HQL_PICKLIST><![CDATA[select pp.product.id as prodId, 
+          pp.product.name as prodName,
+          pp.priceListVersion.id as plv,
+          pp.product.searchKey as searchKey,
+          pp.priceListVersion.priceList.currency.id as currency,
+          pp.priceLimit as priceLimit,
+          pp.product.uOM.id as uom,
+          pp.standardPrice as stdPrice,
+          pp.listPrice as netListPrice
+  from PricingProductPrice as pp
+where @additional_filters@]]></HQL_PICKLIST>
+<!--7F556DB05C294B8280B1EB4DE4FC4AA8--></OBUISEL_SELECTOR>
+
 <!--814758DD755642E9BF38BD2E5AD713EC--><OBUISEL_SELECTOR>
 <!--814758DD755642E9BF38BD2E5AD713EC-->  <OBUISEL_SELECTOR_ID><![CDATA[814758DD755642E9BF38BD2E5AD713EC]]></OBUISEL_SELECTOR_ID>
 <!--814758DD755642E9BF38BD2E5AD713EC-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

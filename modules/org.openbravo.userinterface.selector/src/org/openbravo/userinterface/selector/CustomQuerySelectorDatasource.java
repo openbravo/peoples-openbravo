@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2019 Openbravo SLU
+ * All portions are Copyright (C) 2011-2020 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -44,7 +44,9 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Hibernate;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
+import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.BigDecimalDomainType;
 import org.openbravo.base.model.domaintype.BooleanDomainType;
 import org.openbravo.base.model.domaintype.DateDomainType;
@@ -53,14 +55,19 @@ import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
 import org.openbravo.base.model.domaintype.LongDomainType;
 import org.openbravo.base.model.domaintype.StringEnumerateDomainType;
 import org.openbravo.base.model.domaintype.UniqueIdDomainType;
+import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.ParameterUtils;
+import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
+import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.service.datasource.DataSourceUtils;
 import org.openbravo.service.datasource.ReadOnlyDataSourceService;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.AdvancedQueryBuilder;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
@@ -108,15 +115,11 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       Hibernate.initialize(fields);
 
       // Parse the hql in case that optional filters are required
-      String hql = parseOptionalFilters(parameters, sel, xmlDateFormat, typedParameters,
-          namedParameters);
+      String hql = parseOptionalFilters(parameters, sel, xmlDateFormat, typedParameters);
+      hql = substituteContextParameters(hql, typedParameters);
+      hql += getSortClause(sel, parameters, hql);
 
-      String sortBy = parameters.get("_sortBy");
-      hql += getSortClause(sortBy, sel);
-
-      Query<Tuple> selQuery = OBDal.getInstance()
-          .getSession()
-          .createQuery(hql, Tuple.class);
+      Query<Tuple> selQuery = OBDal.getInstance().getSession().createQuery(hql, Tuple.class);
 
       selQuery.setParameterList("clients", (String[]) namedParameters.get("clients"));
       if (namedParameters.containsKey("orgs")) {
@@ -162,10 +165,94 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
         }
         parameters.put(JsonConstants.RESPONSE_TOTALROWS, String.valueOf(totalRows));
       }
+    } catch (Exception e) {
+      log.error("Could not execute custom Query for selector " + selectorId, e);
     } finally {
       OBContext.restorePreviousMode();
     }
     return result;
+  }
+
+  // TODO: This is copied from AdvanceQueryBuilder -> think on how to centralize
+  private String substituteContextParameters(String currentWhereClause,
+      List<Object> typedParameters) {
+    // This method will check for any remaining @param@s
+    // If there are still some in the whereclause, they will be resolved by calling the getContext()
+    // method
+    if (!currentWhereClause.contains("@")) {
+      return currentWhereClause;
+    }
+    String localWhereClause = currentWhereClause;
+    String tabId = RequestContext.get().getRequestParameter("tabId");
+    Tab tab = null;
+    while (localWhereClause.contains("@")) {
+      int firstAtIndex = localWhereClause.indexOf("@");
+      String prefix = localWhereClause.substring(0, firstAtIndex);
+      String restOfClause = localWhereClause.substring(firstAtIndex + 1);
+      int secondAtIndex = restOfClause.indexOf("@");
+      if (secondAtIndex == -1) {
+        // No second @. We return the clause as it is
+        return localWhereClause;
+      }
+      String suffix = restOfClause.substring(secondAtIndex + 1);
+      String param = restOfClause.substring(0, secondAtIndex);
+      String paramValue = "";
+
+      // Try to select the value from the request instead of picking it from the context
+      // Look if param is an ID
+      if (param.substring(param.length() - 3).toUpperCase().equals("_ID")
+          && !StringUtils.isEmpty(tabId)) {
+        VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
+        Entity paramEntity = ModelProvider.getInstance()
+            .getEntityByTableName(param.substring(0, param.length() - 3));
+
+        if (tab == null) {
+          tab = OBDal.getInstance().get(Tab.class, tabId);
+        }
+        Tab ancestorTab = KernelUtils.getInstance().getParentTab(tab);
+        boolean checkIsNotNull = false;
+
+        while (ancestorTab != null && paramValue.equals("")) {
+
+          Entity tabEntity = ModelProvider.getInstance()
+              .getEntityByTableName(ancestorTab.getTable().getDBTableName());
+
+          if (tabEntity.equals(paramEntity)) {
+            paramValue = vars.getStringParameter("@" + paramEntity.getName() + ".id@");
+          } else {
+            try {
+              Property prop = tabEntity.getPropertyByColumnName(param, checkIsNotNull);
+              if (prop == null) {
+                paramValue = "";
+              } else {
+                paramValue = vars.getStringParameter("@" + tabEntity + "." + prop.getName() + "@");
+              }
+            } catch (Exception ignore) {
+              // ignoring exception as the property might be found from context.
+              // for eg., refer issue https://issues.openbravo.com/view.php?id=26871
+            }
+          }
+          ancestorTab = KernelUtils.getInstance().getParentTab(ancestorTab);
+        }
+      }
+
+      // If paramValue has not been brought form the request, select it from context
+      if (paramValue.equals("")) {
+        paramValue = Utility.getContext(new DalConnectionProvider(false),
+            RequestContext.get().getVariablesSecureApp(), param,
+            RequestContext.get().getRequestParameter("windowId") != null
+                ? RequestContext.get().getRequestParameter("windowId")
+                : "");
+      }
+
+      // not found, try to get the parameter directly from the request object
+      if (paramValue.equals("") && RequestContext.get().getRequestParameter(param) != null) {
+        paramValue = RequestContext.get().getRequestParameter(param);
+      }
+
+      localWhereClause = prefix + getTypedParameterAlias(typedParameters, paramValue) + suffix;
+    }
+    return localWhereClause;
   }
 
   /**
@@ -226,7 +313,8 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
   public String parseOptionalFilters(Map<String, String> parameters, Selector sel,
       SimpleDateFormat xmlDateFormat, List<Object> typedParameters,
       Map<String, Object> namedParameters) {
-    String hql = sel.getHQL();
+    String hql = geSelectorHQL(sel, parameters);
+
     if (!hql.contains(ADDITIONAL_FILTERS)) {
       return hql;
     }
@@ -323,6 +411,13 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     }
     hql = hql.replace(ADDITIONAL_FILTERS, additionalFilter);
     return hql;
+  }
+
+  private String geSelectorHQL(Selector sel, Map<String, String> parameters) {
+    boolean fromPickList = parameters.containsKey("_componentId")
+        && parameters.get("_componentId").startsWith("isc_PickListMenu");
+
+    return fromPickList && sel.getHQLPicklist() != null ? sel.getHQLPicklist() : sel.getHQL();
   }
 
   /**
@@ -457,14 +552,19 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
    *          String of grid's field names concatenated by JsonConstants.IN_PARAMETER_SEPARATOR.
    * @param sel
    *          the selector that it is being displayed.
+   * @param parameters
+   * @param hql
    * @return a String with the HQL Sort By clause.
    */
-  private String getSortClause(String sortBy, Selector sel) {
-    StringBuffer sortByClause = new StringBuffer();
+  private String getSortClause(Selector sel, Map<String, String> parameters, String hql) {
+    String sortBy = parameters.get("_sortBy");
+
     boolean sortByDesc = false;
     if (sortBy != null && sortBy.startsWith("-")) {
       sortByDesc = true;
     }
+
+    StringBuilder sortByClause = new StringBuilder();
     // If grid is manually filtered sortBy is not empty
     if (StringUtils.isNotEmpty(sortBy)) {
       if (sortBy.contains(JsonConstants.IN_PARAMETER_SEPARATOR)) {
@@ -473,7 +573,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
           if (sortByDesc) {
             fieldName = fieldName.substring(1, fieldName.length());
           }
-          int fieldSortIndex = getFieldSortIndex(fieldName, sel);
+          int fieldSortIndex = getFieldSortIndex(fieldName, hql);
           if (fieldSortIndex > 0) {
             if (sortByClause.length() > 0) {
               sortByClause.append(", ");
@@ -492,7 +592,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
         } else {
           fieldName = sortBy;
         }
-        int fieldSortIndex = getFieldSortIndex(fieldName, sel);
+        int fieldSortIndex = getFieldSortIndex(fieldName, hql);
         if (fieldSortIndex > 0) {
           if (sortByDesc) {
             sortByClause.append(fieldSortIndex + " desc");
@@ -510,7 +610,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
           Restrictions.eq(SelectorField.PROPERTY_SHOWINGRID, true));
       selFieldsCrit.addOrderBy(SelectorField.PROPERTY_SORTNO, true);
       for (SelectorField selField : selFieldsCrit.list()) {
-        int fieldSortIndex = getFieldSortIndex(selField.getDisplayColumnAlias(), sel);
+        int fieldSortIndex = getFieldSortIndex(selField.getDisplayColumnAlias(), hql);
         if (fieldSortIndex > 0) {
           sortByClause.append(fieldSortIndex + ", ");
         }
@@ -564,16 +664,15 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
    * @param fieldName
    *          Grid's field name or display alias of the related selector field it is desired to
    *          order by.
-   * @param sel
-   *          The Selector that it is being used.
+   * @param hql
    * @return The index of the query column related to the field. Note that 0 will be returned if
    *         there is no query column with an alias equal to the provided field name.
    */
-  private int getFieldSortIndex(String fieldName, Selector sel) {
+  private int getFieldSortIndex(String fieldName, String hql) {
     @SuppressWarnings("deprecation")
     final String[] queryAliases = OBDal.getInstance()
         .getSession()
-        .createQuery(sel.getHQL().replace(ADDITIONAL_FILTERS, "1=1"))
+        .createQuery(hql.replace(ADDITIONAL_FILTERS, "1=1"))
         .getReturnAliases();
 
     for (int i = 0; i < queryAliases.length; i++) {
