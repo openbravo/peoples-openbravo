@@ -113,8 +113,8 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       final VariablesSecureApp vars) throws ServletException, IOException {
     final String strDateFrom = vars.getGlobalVariable("inpDateFrom",
         "GeneralAccountingReports|dateFrom", "");
-    final String strDateTo = vars.getGlobalVariable("inpDateTo",
-        "GeneralAccountingReports|dateTo", "");
+    final String strDateTo = vars.getGlobalVariable("inpDateTo", "GeneralAccountingReports|dateTo",
+        "");
     final String strDateFromRef = vars.getGlobalVariable("inpDateFromRef",
         "GeneralAccountingReports|dateFromRef", "");
     final String strDateToRef = vars.getGlobalVariable("inpDateToRef",
@@ -123,8 +123,8 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
         "GeneralAccountingReports|asDateTo", "");
     final String strAsDateToRef = vars.getGlobalVariable("inpAsDateToRef",
         "GeneralAccountingReports|asDateToRef", "");
-    final String strPageNo = vars.getGlobalVariable("inpPageNo",
-        "GeneralAccountingReports|PageNo", "1");
+    final String strPageNo = vars.getGlobalVariable("inpPageNo", "GeneralAccountingReports|PageNo",
+        "1");
     final String strElementValue = vars.getGlobalVariable("inpcElementvalueId",
         "GeneralAccountingReports|C_ElementValue_ID", "");
     final String strConImporte = vars.getGlobalVariable("inpConImporte",
@@ -549,7 +549,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
                   "select y" +
                   "  from FinancialMgmtYear y" +
                   "    , FinancialMgmtPeriod as p" +
-                  " where p.year = y" +
+                  " where p.year.id = y.id" +
                   "   and p.endingDate < :date " +
                   "   and y.calendar.id = :calendarId" +
                   " order by p.startingDate";
