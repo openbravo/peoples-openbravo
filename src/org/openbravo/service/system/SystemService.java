@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009-2018 Openbravo SLU
+ * All portions are Copyright (C) 2009-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -394,7 +394,7 @@ public class SystemService implements OBSingleton {
 
   private void disableConstraints(Platform platform) throws FileNotFoundException, IOException {
     log4j.info("Disabling constraints...");
-    Database xmlModel = getModelFromDatabase(platform);
+    Database xmlModel = getTablesFromDatabase(platform);
     Connection con = null;
     try {
       con = platform.borrowConnection();
@@ -411,6 +411,14 @@ public class SystemService implements OBSingleton {
         platform.returnConnection(con);
       }
     }
+  }
+
+  private Database getTablesFromDatabase(Platform platform) {
+    ExcludeFilter excludeFilter = DBSMOBUtil.getInstance()
+        .getExcludeFilter(new File(OBPropertiesProvider.getInstance()
+            .getOpenbravoProperties()
+            .getProperty("source.path")));
+    return platform.loadTablesFromDatabase(excludeFilter);
   }
 
   /**

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2018 Openbravo SLU
+ * All portions are Copyright (C) 2014-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -36,7 +36,6 @@ import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.base.weld.WeldUtils;
@@ -48,8 +47,6 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.LCDistributionAlgorithm;
 import org.openbravo.model.materialmgmt.cost.LCMatched;
-import org.openbravo.model.materialmgmt.cost.LCReceipt;
-import org.openbravo.model.materialmgmt.cost.LCReceiptLineAmt;
 import org.openbravo.model.materialmgmt.cost.LandedCostCost;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
@@ -63,56 +60,57 @@ public class LCMatchingProcess {
   /**
    * Method to process a Landed Cost.
    * 
-   * @param _lcCost
+   * @param lcCost
    *          the landed cost to be processed.
    * @return the message to be shown to the user properly formatted and translated to the user
    *         language.
    */
-  public JSONObject processLCMatching(LandedCostCost _lcCost) {
-    LandedCostCost lcCost = _lcCost;
-    JSONObject message = new JSONObject();
+  public JSONObject processLCMatching(final LandedCostCost lcCost) {
+    LandedCostCost currentLcCost = lcCost;
+    final JSONObject message = new JSONObject();
     OBContext.setAdminMode(true);
     try {
       message.put("severity", "success");
       message.put("title", "");
       message.put("text", OBMessageUtils.messageBD("Success"));
       try {
-        doChecks(lcCost, message);
+        doChecks(currentLcCost, message);
       } catch (OBException e) {
         message.put("severity", "error");
         message.put("text", e.getMessage());
         return message;
       }
-      OBCriteria<LCMatched> critMatched = OBDal.getInstance().createCriteria(LCMatched.class);
-      critMatched.add(Restrictions.eq(LCMatched.PROPERTY_LANDEDCOSTCOST, lcCost));
+      final OBCriteria<LCMatched> critMatched = OBDal.getInstance().createCriteria(LCMatched.class);
+      critMatched.add(Restrictions.eq(LCMatched.PROPERTY_LANDEDCOSTCOST, currentLcCost));
       critMatched.setProjection(Projections.sum(LCMatched.PROPERTY_AMOUNT));
-      BigDecimal matchedAmt = (BigDecimal) critMatched.uniqueResult();
+      final BigDecimal matchedAmt = (BigDecimal) critMatched.uniqueResult();
       if (matchedAmt != null) {
-        lcCost.setMatchingAmount(matchedAmt);
-        OBDal.getInstance().save(lcCost);
+        currentLcCost.setMatchingAmount(matchedAmt);
+        OBDal.getInstance().save(currentLcCost);
       }
 
-      if (lcCost.isMatchingAdjusted() && lcCost.getAmount().compareTo(matchedAmt) != 0) {
-        distributeAmounts(lcCost);
-        lcCost = OBDal.getInstance().get(LandedCostCost.class, lcCost.getId());
+      if (currentLcCost.isMatchingAdjusted()
+          && currentLcCost.getAmount().compareTo(matchedAmt) != 0) {
+        distributeAmounts(currentLcCost);
+        currentLcCost = OBDal.getInstance().get(LandedCostCost.class, currentLcCost.getId());
         // If active costing rule uses Standard Algorithm, cost adjustment will not be created
-        Organization org = OBContext.getOBContext()
-            .getOrganizationStructureProvider(lcCost.getClient().getId())
-            .getLegalEntity(lcCost.getOrganization());
+        final Organization org = OBContext.getOBContext()
+            .getOrganizationStructureProvider(currentLcCost.getClient().getId())
+            .getLegalEntity(currentLcCost.getOrganization());
         if (!StringUtils.equals(CostingUtils.getCostDimensionRule(org, new Date())
             .getCostingAlgorithm()
             .getJavaClassName(), "org.openbravo.costing.StandardAlgorithm")) {
-          String strMatchCAId = generateCostAdjustment(lcCost.getId(), message);
-          lcCost.setMatchingCostAdjustment((CostAdjustment) OBDal.getInstance()
+          final String strMatchCAId = generateCostAdjustment(currentLcCost.getId(), message);
+          currentLcCost.setMatchingCostAdjustment((CostAdjustment) OBDal.getInstance()
               .getProxy(CostAdjustment.ENTITY_NAME, strMatchCAId));
         }
-        OBDal.getInstance().save(lcCost);
+        OBDal.getInstance().save(currentLcCost);
       }
 
-      lcCost = OBDal.getInstance().get(LandedCostCost.class, lcCost.getId());
-      lcCost.setMatched(Boolean.TRUE);
-      lcCost.setProcessed(Boolean.TRUE);
-      OBDal.getInstance().save(lcCost);
+      currentLcCost = OBDal.getInstance().get(LandedCostCost.class, currentLcCost.getId());
+      currentLcCost.setMatched(Boolean.TRUE);
+      currentLcCost.setProcessed(Boolean.TRUE);
+      OBDal.getInstance().save(currentLcCost);
     } catch (JSONException ignore) {
     } finally {
       OBContext.restorePreviousMode();
@@ -120,9 +118,9 @@ public class LCMatchingProcess {
     return message;
   }
 
-  private void doChecks(LandedCostCost lcCost, JSONObject message) {
+  private void doChecks(final LandedCostCost lcCost, final JSONObject message) {
     // Check there are Matching Lines.
-    OBCriteria<LandedCostCost> critLCMatched = OBDal.getInstance()
+    final OBCriteria<LandedCostCost> critLCMatched = OBDal.getInstance()
         .createCriteria(LandedCostCost.class);
     critLCMatched.add(Restrictions.sizeEq(LandedCostCost.PROPERTY_LANDEDCOSTMATCHEDLIST, 0));
     critLCMatched.add(Restrictions.eq(LandedCostCost.PROPERTY_ID, lcCost.getId()));
@@ -136,55 +134,58 @@ public class LCMatchingProcess {
     }
   }
 
-  private void distributeAmounts(LandedCostCost lcCost) {
+  private void distributeAmounts(final LandedCostCost lcCost) {
     // Load distribution algorithm
-    LandedCostDistributionAlgorithm lcDistAlg = getDistributionAlgorithm(
+    final LandedCostDistributionAlgorithm lcDistAlg = getDistributionAlgorithm(
         lcCost.getLandedCostDistributionAlgorithm());
 
     lcDistAlg.distributeAmount(lcCost, true);
     OBDal.getInstance().flush();
   }
 
-  private String generateCostAdjustment(String strLCCostId, JSONObject message)
+  private String generateCostAdjustment(final String strLCCostId, final JSONObject message)
       throws JSONException {
-    LandedCostCost lcCost = OBDal.getInstance().get(LandedCostCost.class, strLCCostId);
-    Date referenceDate = lcCost.getAccountingDate();
+    final LandedCostCost lcCost = OBDal.getInstance().get(LandedCostCost.class, strLCCostId);
+    final Date referenceDate = lcCost.getAccountingDate();
     CostAdjustment ca = CostAdjustmentUtils.insertCostAdjustmentHeader(lcCost.getOrganization(),
         "LC");
 
-    String strResult = OBMessageUtils.messageBD("LCMatchingProcessed");
-    Map<String, String> map = new HashMap<String, String>();
+    final String strResult = OBMessageUtils.messageBD("LCMatchingProcessed");
+    final Map<String, String> map = new HashMap<>();
     map.put("documentNo", ca.getDocumentNo());
     message.put("title", OBMessageUtils.messageBD("Success"));
     message.put("text", OBMessageUtils.parseTranslation(strResult, map));
 
-    StringBuffer hql = new StringBuffer();
-    hql.append(" select sum(rla." + LCReceiptLineAmt.PROPERTY_AMOUNT + ") as amt");
-    hql.append("   , rla." + LCReceipt.PROPERTY_GOODSSHIPMENTLINE + ".id as receipt");
-    hql.append("   , (select " + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " from "
-        + MaterialTransaction.ENTITY_NAME + " as transaction where "
-        + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + ".id = rla."
-        + LCReceipt.PROPERTY_GOODSSHIPMENTLINE + ".id) as trxprocessdate");
-    hql.append(" from " + LCReceiptLineAmt.ENTITY_NAME + " as rla");
-    hql.append(" where rla." + LCReceiptLineAmt.PROPERTY_LANDEDCOSTCOST + " = :lcc");
-    hql.append("   and rla." + LCReceiptLineAmt.PROPERTY_ISMATCHINGADJUSTMENT + " = true ");
-    hql.append(" group by rla." + LCReceipt.PROPERTY_GOODSSHIPMENTLINE + ".id");
-    hql.append(" order by trxprocessdate, amt");
+    //@formatter:off
+    final String hql =
+                  "select sum(rla.amount) as amt" +
+                  "  , rla.goodsShipmentLine.id as receipt" +
+                  "  , (" +
+                  "      select transactionProcessDate " + 
+                  "        from MaterialMgmtMaterialTransaction as transaction " +
+                  "       where goodsShipmentLine.id = rla.goodsShipmentLine.id" +
+                  "    ) as trxprocessdate" +
+                  "  from LandedCostReceiptLineAmt as rla" +
+                  " where rla.landedCostCost.id = :lccId" +
+                  "   and rla.isMatchingAdjustment = true " +
+                  " group by rla.goodsShipmentLine.id" +
+                  " order by trxprocessdate, amt";
+    //@formatter:on
 
-    Query<Object[]> qryLCRLA = OBDal.getInstance()
+    final ScrollableResults receiptamts = OBDal.getInstance()
         .getSession()
-        .createQuery(hql.toString(), Object[].class);
-    qryLCRLA.setParameter("lcc", lcCost);
+        .createQuery(hql, Object[].class)
+        .setParameter("lccId", lcCost.getId())
+        .scroll(ScrollMode.FORWARD_ONLY);
 
-    ScrollableResults receiptamts = qryLCRLA.scroll(ScrollMode.FORWARD_ONLY);
     int i = 0;
     try {
       while (receiptamts.next()) {
-        Object[] receiptAmt = receiptamts.get();
-        BigDecimal amt = (BigDecimal) receiptAmt[0];
-        ShipmentInOutLine receiptLine = OBDal.getInstance()
+        final Object[] receiptAmt = receiptamts.get();
+        final BigDecimal amt = (BigDecimal) receiptAmt[0];
+        final ShipmentInOutLine receiptLine = OBDal.getInstance()
             .get(ShipmentInOutLine.class, receiptAmt[1]);
-        MaterialTransaction trx = receiptLine.getMaterialMgmtMaterialTransactionList().get(0);
+        final MaterialTransaction trx = receiptLine.getMaterialMgmtMaterialTransactionList().get(0);
         final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(trx,
             amt, ca, lcCost.getCurrency());
         lineParameters.setSource(true);
@@ -208,7 +209,7 @@ public class LCMatchingProcess {
   }
 
   private LandedCostDistributionAlgorithm getDistributionAlgorithm(
-      LCDistributionAlgorithm lcDistAlg) {
+      final LCDistributionAlgorithm lcDistAlg) {
     LandedCostDistributionAlgorithm lcDistAlgInstance;
     try {
       Class<?> clz = null;
@@ -217,8 +218,8 @@ public class LCMatchingProcess {
           .getInstanceFromStaticBeanManager(clz);
     } catch (Exception e) {
       log.error("Error loading distribution algorithm: " + lcDistAlg.getJavaClassName(), e);
-      String strError = OBMessageUtils.messageBD("LCDistributionAlgorithmNotFound");
-      Map<String, String> map = new HashMap<String, String>();
+      final String strError = OBMessageUtils.messageBD("LCDistributionAlgorithmNotFound");
+      final Map<String, String> map = new HashMap<>();
       map.put("distalg", lcDistAlg.getIdentifier());
       throw new OBException(OBMessageUtils.parseTranslation(strError, map));
     }
@@ -226,9 +227,9 @@ public class LCMatchingProcess {
   }
 
   public static JSONObject doProcessLCMatching(LandedCostCost lcCost) {
-    LCMatchingProcess lcp = WeldUtils.getInstanceFromStaticBeanManager(LCMatchingProcess.class);
-    JSONObject message = lcp.processLCMatching(lcCost);
-    return message;
+    final LCMatchingProcess lcp = WeldUtils
+        .getInstanceFromStaticBeanManager(LCMatchingProcess.class);
+    return lcp.processLCMatching(lcCost);
   }
 
 }
