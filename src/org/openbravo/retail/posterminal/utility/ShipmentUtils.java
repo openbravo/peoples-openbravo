@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -47,6 +48,7 @@ import org.openbravo.model.ad.access.InvoiceLineTax;
 import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Locator;
+import org.openbravo.model.common.enterprise.OrgWarehouse;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.InvoiceLine;
@@ -213,7 +215,12 @@ public class ShipmentUtils {
       List<Locator> lineLocatorList = warehouse.getId().equals(order.getWarehouse().getId())
           ? locatorList
           : getLocatorList(warehouse);
-      if (lineLocatorList.size() == 1) {
+      List<OrgWarehouse> activeOrgWarehouse = order.getOrganization()
+          .getOrganizationWarehouseList()
+          .stream()
+          .filter(s -> s.isActive())
+          .collect(Collectors.toList());
+      if (activeOrgWarehouse.size() == 1 && lineLocatorList.size() == 1) {
         foundSingleBin = lineLocatorList.get(0);
       }
 
@@ -317,6 +324,10 @@ public class ShipmentUtils {
               while (pendingQty.compareTo(BigDecimal.ZERO) > 0 && bins.next()) {
                 // TODO: Can we safely clear session here?
                 StockProposed stock = (StockProposed) bins.get(0);
+                if (!stock.getStorageDetail().getStorageBin().getWarehouse().isActive()) {
+                  continue;
+                }
+
                 BigDecimal qty;
                 OrderLoaderPreAddShipmentLineHook_Response standardSaleBinHookResponse = null;
 
@@ -364,6 +375,12 @@ public class ShipmentUtils {
 
                 usedBins.put(stock.getStorageDetail().getStorageBin().getId(), objShipmentLine);
 
+                if (lineNo == 10 && !stock.getStorageDetail()
+                    .getStorageBin()
+                    .getWarehouse()
+                    .equals(shipment.getWarehouse())) {
+                  shipment.setWarehouse(stock.getStorageDetail().getStorageBin().getWarehouse());
+                }
               }
             } finally {
               bins.close();
