@@ -82,15 +82,16 @@ enyo.kind({
     onShowPopup: ''
   },
   tap: function() {
+    var bp = OB.MobileApp.model.receipt.get('bp');
     if (!this.disabled) {
       this.doShowPopup({
         popup: 'modalcustomeraddress',
         args: {
-          presetCustomesLocation: OB.MobileApp.model.receipt
-            .get('bp')
-            .get('locId'),
+          presetCustomerLocation: bp.get('locId'),
           target: 'order',
           clean: true,
+          manageAddress:
+            bp.get(this.locId) === bp.get(OB.UI.BPLocationShip.prototype.locId),
           navigationPath: []
         }
       });
@@ -805,13 +806,20 @@ enyo.kind({
     ) {
       this.addClass('obUiListSelectorLine_equalLocId');
     }
-    if (this.model.get('isBillTo') && this.model.get('isShipTo')) {
-      this.$.bottomShipIcon.addClass('addresshipitems');
-      this.$.bottomBillIcon.addClass('addressbillitems');
-    } else if (this.model.get('isBillTo')) {
-      this.$.bottomBillIcon.addClass('addressbillitems');
-    } else if (this.model.get('isShipTo')) {
-      this.$.bottomShipIcon.addClass('addresshipitems');
+    if (this.owner.owner.owner.owner.manageAddress) {
+      if (this.model.get('isBillTo') && this.model.get('isShipTo')) {
+        this.$.bottomShipIcon.show();
+        this.$.bottomBillIcon.show();
+      } else if (this.model.get('isBillTo')) {
+        this.$.bottomBillIcon.show();
+        this.$.bottomShipIcon.hide();
+      } else if (this.model.get('isShipTo')) {
+        this.$.bottomShipIcon.show();
+        this.$.bottomBillIcon.hide();
+      }
+    } else {
+      this.$.bottomShipIcon.hide();
+      this.$.bottomBillIcon.hide();
     }
     // Context menu
     if (this.$.btnContextMenu.$.menu.itemsCount === 0) {
@@ -1114,9 +1122,9 @@ enyo.kind({
           true
         )
       );
-      if (this.args.presetCustomesLocation) {
+      if (this.args.presetCustomerLocation) {
         this.$.body.$.listBpsLoc.loadPresetCustomerLocation(
-          this.args.presetCustomesLocation
+          this.args.presetCustomerLocation
         );
       }
     } else if (this.args.makeSearch) {
@@ -1151,14 +1159,20 @@ enyo.kind({
   },
   changedTitle: function(bp) {
     if (this.args.manageAddress) {
-      this.$.header.setContent(
-        OB.I18N.getLabel('OBPOS_LblManageCustomerAddresses', [
-          (this.args.businessPartner
-            ? this.args.businessPartner
-            : this.model.get('order').get('bp')
-          ).get('name')
-        ])
-      );
+      if (this.args.presetCustomerLocation) {
+        this.$.header.setContent(
+          OB.I18N.getLabel('OBPOS_LblAssignCustomerAddress')
+        );
+      } else {
+        this.$.header.setContent(
+          OB.I18N.getLabel('OBPOS_LblManageCustomerAddresses', [
+            (this.args.businessPartner
+              ? this.args.businessPartner
+              : this.model.get('order').get('bp')
+            ).get('name')
+          ])
+        );
+      }
       return;
     }
 

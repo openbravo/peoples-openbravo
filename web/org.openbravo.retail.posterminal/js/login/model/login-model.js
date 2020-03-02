@@ -660,7 +660,14 @@
                 OB.UTIL.HookManager.executeHooks(
                   'OBPOS_LoadPOSWindow',
                   {},
-                  function() {
+                  function(args) {
+                    if (
+                      args &&
+                      args.cancellation &&
+                      args.cancellation === true
+                    ) {
+                      return;
+                    }
                     var nextWindow = OB.MobileApp.model.get('nextWindow');
                     if (nextWindow) {
                       OB.POS.navigate(nextWindow);
