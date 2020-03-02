@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012-2019 Openbravo SLU
+ * All portions are Copyright (C) 2012-2020 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,7 +26,6 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.openbravo.base.provider.OBProvider;
@@ -177,17 +176,20 @@ public class DimensionDisplayUtility {
       }
 
       // Get the corresponding level for the table
-      StringBuilder hql = new StringBuilder();
-      final Session session = OBDal.getInstance().getSession();
-      hql.append(" select distinct dm." + DimensionMapping.PROPERTY_LEVEL);
-      hql.append(" from " + DimensionMapping.ENTITY_NAME + " as dm ");
-      hql.append(" where dm." + DimensionMapping.PROPERTY_TABLE + ".id = :tableId ");
-      hql.append(
-          "       and dm." + DimensionMapping.PROPERTY_ACCOUNTINGDIMENSION + " = :dimension");
-      final Query<String> queryLevel = session.createQuery(hql.toString(), String.class);
-      queryLevel.setParameter("tableId", tableId);
-      queryLevel.setParameter("dimension", dimension);
-      List<String> levelList = queryLevel.list();
+      //@formatter:off
+      final String hql =
+                    "select distinct dm.level" +
+                    "  from ADDimensionMapping as dm " +
+                    " where dm.table.id = :tableId " +
+                    "   and dm.accountingDimension = :dimension";
+      //@formatter:on
+
+      final List<String> levelList = OBDal.getInstance()
+          .getSession()
+          .createQuery(hql, String.class)
+          .setParameter("tableId", tableId)
+          .setParameter("dimension", dimension)
+          .list();
       int size = levelList.size();
       if (size == 0) {
         log4j.error("Same table (" + tableId + ") does not map with any levels.");
@@ -422,25 +424,27 @@ public class DimensionDisplayUtility {
       sessionVariables.add(ELEMENT + "_" + dimension);
 
       // Load new accounting dimension visibility session variable
-      StringBuilder hql = new StringBuilder();
-      final Session session = OBDal.getInstance().getSession();
-      hql.append(" select distinct dm.%s ");
-      hql.append(" from " + DimensionMapping.ENTITY_NAME + " as dm ");
-      hql.append(" where dm." + DimensionMapping.PROPERTY_TABLE + ".id = :tableId ");
-      hql.append(
-          "       and dm." + DimensionMapping.PROPERTY_ACCOUNTINGDIMENSION + " = :dimension");
+      //@formatter:off
+      final String hql =
+                    "select distinct dm.%s " +
+                    "  from ADDimensionMapping as dm " +
+                    " where dm.table.id = :tableId " +
+                    "   and dm.accountingDimension = :dimension";
+      //@formatter:on
 
-      final Query<String> queryDoc = session.createQuery(
-          String.format(hql.toString(), DimensionMapping.PROPERTY_DOCUMENTCATEGORY), String.class);
-      queryDoc.setParameter("tableId", tableId);
-      queryDoc.setParameter("dimension", dimension);
-      List<String> docBaseTypeList = queryDoc.list();
+      final List<String> docBaseTypeList = OBDal.getInstance()
+          .getSession()
+          .createQuery(String.format(hql, DimensionMapping.PROPERTY_DOCUMENTCATEGORY), String.class)
+          .setParameter("tableId", tableId)
+          .setParameter("dimension", dimension)
+          .list();
 
-      final Query<String> queryLevel = session.createQuery(
-          String.format(hql.toString(), DimensionMapping.PROPERTY_LEVEL), String.class);
-      queryLevel.setParameter("tableId", tableId);
-      queryLevel.setParameter("dimension", dimension);
-      List<String> levelList = queryLevel.list();
+      final List<String> levelList = OBDal.getInstance()
+          .getSession()
+          .createQuery(String.format(hql, DimensionMapping.PROPERTY_LEVEL), String.class)
+          .setParameter("tableId", tableId)
+          .setParameter("dimension", dimension)
+          .list();
 
       for (String doc : docBaseTypeList) {
         for (String level : levelList) {
@@ -468,16 +472,19 @@ public class DimensionDisplayUtility {
     Map<String, String> sessionVariablesMap = new HashMap<>();
     try {
       OBContext.setAdminMode(true);
-      StringBuilder hql = new StringBuilder();
-      final Session session = OBDal.getInstance().getSession();
-      hql.append(" select   dm." + DimensionMapping.PROPERTY_ACCOUNTINGDIMENSION + ", ");
-      hql.append("          dm." + DimensionMapping.PROPERTY_LEVEL + ", ");
-      hql.append("          max(dm." + DimensionMapping.PROPERTY_ISMANDATORY + ")");
-      hql.append(" from " + DimensionMapping.ENTITY_NAME + " as dm ");
-      hql.append(" group by dm." + DimensionMapping.PROPERTY_ACCOUNTINGDIMENSION + ", ");
-      hql.append("          dm." + DimensionMapping.PROPERTY_LEVEL);
+      //@formatter:off
+      final String hql =
+                    "select dm.accountingDimension" +
+                    "  , dm.level" +
+                    "  , max(dm.ismandatory)" +
+                    "  from ADDimensionMapping as dm" +
+                    " group by dm.accountingDimension" +
+                    "   , dm.level";
+      //@formatter:on
 
-      final Query<Object[]> queryRO = session.createQuery(hql.toString(), Object[].class);
+      final Query<Object[]> queryRO = OBDal.getInstance()
+          .getSession()
+          .createQuery(hql, Object[].class);
       for (Object[] ro : queryRO.list()) {
         String dim = (String) ro[0];
         String level = (String) ro[1];
@@ -498,19 +505,21 @@ public class DimensionDisplayUtility {
   public static List<Object[]> getGroupDimensionMapping(List<String> dimensionList) {
     try {
       OBContext.setAdminMode(true);
-      StringBuilder hql = new StringBuilder();
-      final Session session = OBDal.getInstance().getSession();
-      hql.append(" select   dm." + DimensionMapping.PROPERTY_ACCOUNTINGDIMENSION + ", ");
-      hql.append("          dm." + DimensionMapping.PROPERTY_DOCUMENTCATEGORY);
-      hql.append(" from " + DimensionMapping.ENTITY_NAME + " as dm ");
-      hql.append(
-          " where dm." + DimensionMapping.PROPERTY_ACCOUNTINGDIMENSION + " IN (:dimensionList) ");
-      hql.append(" group by dm." + DimensionMapping.PROPERTY_ACCOUNTINGDIMENSION + ", ");
-      hql.append("          dm." + DimensionMapping.PROPERTY_DOCUMENTCATEGORY);
+      //@formatter:off
+      final String hql =
+                    "select dm.accountingDimension" +
+                    "  , dm.documentCategory" +
+                    "  from ADDimensionMapping as dm" +
+                    " where dm.accountingDimension IN (:dimensionList)" +
+                    " group by dm.accountingDimension" +
+                    "   , dm.documentCategory";
+      //@formatter:on
 
-      final Query<Object[]> q = session.createQuery(hql.toString(), Object[].class);
-      q.setParameterList("dimensionList", dimensionList);
-      return q.list();
+      return OBDal.getInstance()
+          .getSession()
+          .createQuery(hql, Object[].class)
+          .setParameterList("dimensionList", dimensionList)
+          .list();
 
     } catch (Exception e) {
       log4j.error("Error on getGroupDimensionMapping", e);
@@ -596,25 +605,27 @@ public class DimensionDisplayUtility {
       sessionVariables.add(ELEMENT + "_" + dimension);
 
       // Load new accounting dimension visibility session variable
-      StringBuilder hql = new StringBuilder();
-      final Session session = OBDal.getInstance().getSession();
-      hql.append(" select distinct dm.%s ");
-      hql.append(" from " + DimensionMapping.ENTITY_NAME + " as dm ");
-      hql.append(" where dm." + DimensionMapping.PROPERTY_TABLE + ".id = :tableId ");
-      hql.append(
-          "       and dm." + DimensionMapping.PROPERTY_ACCOUNTINGDIMENSION + " = :dimension");
+      //@formatter:off
+      final String hql =
+                    "select distinct dm.%s " +
+                    "  from ADDimensionMapping as dm " +
+                    " where dm.table.id = :tableId " +
+                    "   and dm.accountingDimension = :dimension";
+      //@formatter:on
 
-      final Query<String> queryDoc = session.createQuery(
-          String.format(hql.toString(), DimensionMapping.PROPERTY_DOCUMENTCATEGORY), String.class);
-      queryDoc.setParameter("tableId", tableId);
-      queryDoc.setParameter("dimension", dimension);
-      List<String> docBaseTypeList = queryDoc.list();
+      final List<String> docBaseTypeList = OBDal.getInstance()
+          .getSession()
+          .createQuery(String.format(hql, DimensionMapping.PROPERTY_DOCUMENTCATEGORY), String.class)
+          .setParameter("tableId", tableId)
+          .setParameter("dimension", dimension)
+          .list();
 
-      final Query<String> queryLevel = session.createQuery(
-          String.format(hql.toString(), DimensionMapping.PROPERTY_LEVEL), String.class);
-      queryLevel.setParameter("tableId", tableId);
-      queryLevel.setParameter("dimension", dimension);
-      List<String> levelList = queryLevel.list();
+      final List<String> levelList = OBDal.getInstance()
+          .getSession()
+          .createQuery(String.format(hql, DimensionMapping.PROPERTY_LEVEL), String.class)
+          .setParameter("tableId", tableId)
+          .setParameter("dimension", dimension)
+          .list();
 
       for (String doc : docBaseTypeList) {
         for (String level : levelList) {
@@ -682,17 +693,20 @@ public class DimensionDisplayUtility {
       }
 
       // Get the corresponding level for the table
-      StringBuilder hql = new StringBuilder();
-      final Session session = OBDal.getInstance().getSession();
-      hql.append(" select distinct dm." + DimensionMapping.PROPERTY_LEVEL);
-      hql.append(" from " + DimensionMapping.ENTITY_NAME + " as dm ");
-      hql.append(" where dm." + DimensionMapping.PROPERTY_TABLE + ".id = :tableId ");
-      hql.append(
-          "       and dm." + DimensionMapping.PROPERTY_ACCOUNTINGDIMENSION + " = :dimension");
-      final Query<String> queryLevel = session.createQuery(hql.toString(), String.class);
-      queryLevel.setParameter("tableId", tableId);
-      queryLevel.setParameter("dimension", dimension);
-      List<String> levelList = queryLevel.list();
+      //@formatter:off
+      final String hql =
+                    "select distinct dm.level" +
+                    "  from ADDimensionMapping as dm " +
+                    " where dm.table.id = :tableId " +
+                    "   and dm.accountingDimension = :dimension";
+      //@formatter:on
+
+      final List<String> levelList = OBDal.getInstance()
+          .getSession()
+          .createQuery(hql, String.class)
+          .setParameter("tableId", tableId)
+          .setParameter("dimension", dimension)
+          .list();
       int size = levelList.size();
       if (size == 0) {
         log4j.error("Same table (" + tableId + ") does not map with any levels.");
