@@ -91,7 +91,7 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
     }
   }
 
-  public OBError generateAmortizationPlan(final Asset asset) {
+  public OBError generateAmortizationPlan(final Asset asset) throws Exception {
     final OBError msg = new OBError();
     msg.setType("Success");
     msg.setTitle(OBMessageUtils.messageBD("Success"));
