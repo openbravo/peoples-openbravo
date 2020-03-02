@@ -166,16 +166,20 @@ public class MRPPurchaseCreateReservations extends DalBaseProcess {
   private ScrollableResults getPRLinesIncoming(final PurchasingRun mrpPurchaseRun) {
     //@formatter:off
     final String hql =
-                  " where purchasingPlan.id = :purchaserun" +
+                  " where purchasingPlan.id = :purchaserunId" +
                   "   and quantity > 0" +
                   " order by product" +
                   "   ,plannedDate " +
-                  "   , CASE transactionType WHEN 'ST' THEN 0 WHEN 'MS' THEN 2 ELSE 1 END";
+                  "   , case transactionType " +
+                  "       when 'ST' then 0 " +
+                  "       when 'MS' then 2 " +
+                  "       else 1 " +
+                  "     end";
     //@formatter:on
 
     return OBDal.getInstance()
         .createQuery(PurchasingRunLine.class, hql)
-        .setNamedParameter("purchaserun", mrpPurchaseRun.getId())
+        .setNamedParameter("purchaserunId", mrpPurchaseRun.getId())
         .setFetchSize(1000)
         .scroll(ScrollMode.FORWARD_ONLY);
   }
@@ -183,16 +187,20 @@ public class MRPPurchaseCreateReservations extends DalBaseProcess {
   private ScrollableResults getPRLinesOutgoing(final PurchasingRun mrpPurchaseRun) {
     //@formatter:off
     final String hql =
-                  " where purchasingPlan.id = :purchaserun" +
+                  " where purchasingPlan.id = :purchaserunId" +
                   "   and quantity < 0" +
                   " order by product" +
                   "   , plannedDate" +
-                  "   , CASE transactionType WHEN 'ST' THEN 0 WHEN 'MS' THEN 2 ELSE 3 END";
+                  "   , case transactionType " +
+                  "       when 'ST' then 0 " +
+                  "       when 'MS' then 2 " +
+                  "       else 3 " +
+                  "     end";
     //@formatter:on
 
     return OBDal.getInstance()
         .createQuery(PurchasingRunLine.class, hql)
-        .setNamedParameter("purchaserun", mrpPurchaseRun.getId())
+        .setNamedParameter("purchaserunId", mrpPurchaseRun.getId())
         .setFetchSize(1000)
         .scroll(ScrollMode.FORWARD_ONLY);
   }
