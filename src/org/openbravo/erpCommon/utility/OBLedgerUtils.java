@@ -45,7 +45,7 @@ public class OBLedgerUtils {
    * 
    * @return String ledgerId ledger id for the given organization. Null if not found
    */
-  public static String getOrgLedger(String orgId) {
+  public static String getOrgLedger(final String orgId) {
     try {
       OBContext.setAdminMode(true);
 
@@ -60,19 +60,19 @@ public class OBLedgerUtils {
         return null;
       }
 
-      String acctSchemaId = getOrgLedgerRecursive(org);
+      final String acctSchemaId = getOrgLedgerRecursive(org);
       if (StringUtils.isNotEmpty(acctSchemaId)) {
         // Get general ledger of organization tree
         return acctSchemaId;
       }
 
-      String clientId = StringUtils.equals(orgId, "0")
+      final String clientId = StringUtils.equals(orgId, "0")
           ? OBContext.getOBContext().getCurrentClient().getId()
           : org.getClient().getId();
       // Get client base general ledger
       return getClientLedger(clientId);
 
-    } catch (Exception e) {
+    } catch (final Exception e) {
       log4j.error("Impossible to get ledger for organization id " + orgId, e);
       return null;
     } finally {
@@ -90,7 +90,7 @@ public class OBLedgerUtils {
    * @return the General Ledger Id of the organization in case the organization or one of its parent
    *         has a General Ledger defined.
    */
-  private static String getOrgLedgerRecursive(Organization org) {
+  private static String getOrgLedgerRecursive(final Organization org) {
 
     if (org.getGeneralLedger() != null) {
       // Get general ledger of organization
@@ -103,11 +103,11 @@ public class OBLedgerUtils {
     }
 
     // Loop through parent organization list
-    OrganizationStructureProvider osp = OBContext.getOBContext()
+    final OrganizationStructureProvider osp = OBContext.getOBContext()
         .getOrganizationStructureProvider(org.getClient().getId());
-    List<String> parentOrgIds = osp.getParentList(org.getId(), false);
+    final List<String> parentOrgIds = osp.getParentList(org.getId(), false);
     for (String orgId : parentOrgIds) {
-      Organization parentOrg = OBDal.getInstance().get(Organization.class, orgId);
+      final Organization parentOrg = OBDal.getInstance().get(Organization.class, orgId);
       if (parentOrg.getGeneralLedger() != null) {
         return parentOrg.getGeneralLedger().getId();
       }
@@ -116,7 +116,7 @@ public class OBLedgerUtils {
     return null;
   }
 
-  private static String getClientLedger(String clientId) {
+  private static String getClientLedger(final String clientId) {
     //@formatter:off
     final String hql =
                   "select id" +
