@@ -120,7 +120,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     /* Improved Balance Sheet */
     final String strCompareTo = vars.getGlobalVariable("inpCompareTo",
         "GeneralAccountingReports|compareTo", "Y");
-  
+
     final String strLevel = vars.getGlobalVariable("inpLevel", "GeneralAccountingReports|level",
         "");
     printPageDataSheet(response, vars, "", "", strDateFrom, strDateTo, strPageNo, strDateFromRef,
@@ -659,41 +659,6 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     final ToolBar toolbar = new ToolBar(readOnlyCP, vars.getLanguage(), "GeneralAccountingReports",
         false, "", "", "", false, "ad_reports", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
-
-    setParametersXml(vars, strAgno, strAgnoRef, strDateFrom, strDateTo, strPageNo, strDateFromRef,
-        strDateToRef, strAsDateTo, strAsDateToRef, strElementValue, strConImporte, strOrg, strLevel,
-        strConCodigo, strcAcctSchemaId, strCompareTo, xmlDocument, readOnlyCP, toolbar);
-    try {
-      final ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "LIST", "",
-          "C_ElementValue level", "",
-          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "GeneralAccountingReports"),
-          Utility.getContext(readOnlyCP, vars, "#User_Client", "GeneralAccountingReports"), 0);
-      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "GeneralAccountingReports",
-          "");
-      xmlDocument.setData("reportLevel", "liststructure", comboTableData.select(false));
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
-    xmlDocument.setParameter("orgs", Utility.arrayDobleEntrada("arrOrgs", new FieldProvider[0]));
-    xmlDocument.setParameter("accountingReports",
-        Utility.arrayDobleEntrada("arrAccountingReports",
-            GeneralAccountingReportsData.selectRptDouble(readOnlyCP, Utility.getContext(readOnlyCP,
-                vars, "#AccessibleOrgTree", "GeneralAccountingReports"))));
-    xmlDocument.setParameter("years", Utility.arrayDobleEntrada("arrYears", new FieldProvider[0]));
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
-
-  private void setParametersXml(final VariablesSecureApp vars, final String strAgno,
-      final String strAgnoRef, final String strDateFrom, final String strDateTo,
-      final String strPageNo, final String strDateFromRef, final String strDateToRef,
-      final String strAsDateTo, final String strAsDateToRef, final String strElementValue,
-      final String strConImporte, final String strOrg, final String strLevel,
-      final String strConCodigo, final String strcAcctSchemaId, final String strCompareTo,
-      final XmlDocument xmlDocument, final ConnectionProvider readOnlyCP, final ToolBar toolbar)
-      throws ServletException {
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
     try {
@@ -757,6 +722,27 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
             Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "GeneralAccountingReports"),
             Utility.getContext(readOnlyCP, vars, "#User_Client", "GeneralAccountingReports"),
             strcAcctSchemaId));
+    try {
+      final ComboTableData comboTableData = new ComboTableData(vars, readOnlyCP, "LIST", "",
+          "C_ElementValue level", "",
+          Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "GeneralAccountingReports"),
+          Utility.getContext(readOnlyCP, vars, "#User_Client", "GeneralAccountingReports"), 0);
+      Utility.fillSQLParameters(readOnlyCP, vars, null, comboTableData, "GeneralAccountingReports",
+          "");
+      xmlDocument.setData("reportLevel", "liststructure", comboTableData.select(false));
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+    xmlDocument.setParameter("orgs", Utility.arrayDobleEntrada("arrOrgs", new FieldProvider[0]));
+    xmlDocument.setParameter("accountingReports",
+        Utility.arrayDobleEntrada("arrAccountingReports",
+            GeneralAccountingReportsData.selectRptDouble(readOnlyCP, Utility.getContext(readOnlyCP,
+                vars, "#AccessibleOrgTree", "GeneralAccountingReports"))));
+    xmlDocument.setParameter("years", Utility.arrayDobleEntrada("arrYears", new FieldProvider[0]));
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close();
   }
 
   private List<String> getRoleOrganizationList(final String roleId) {
