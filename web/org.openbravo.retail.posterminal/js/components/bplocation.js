@@ -804,12 +804,14 @@ enyo.kind({
       this.addClass('obUiListSelectorLine_equalLocId');
     }
     if (this.model.get('isBillTo') && this.model.get('isShipTo')) {
-      this.$.bottomShipIcon.addClass('addresshipitems');
-      this.$.bottomBillIcon.addClass('addressbillitems');
+      this.$.bottomShipIcon.show();
+      this.$.bottomBillIcon.show();
     } else if (this.model.get('isBillTo')) {
-      this.$.bottomBillIcon.addClass('addressbillitems');
+      this.$.bottomBillIcon.show();
+      this.$.bottomShipIcon.hide();
     } else if (this.model.get('isShipTo')) {
-      this.$.bottomShipIcon.addClass('addresshipitems');
+      this.$.bottomShipIcon.show();
+      this.$.bottomBillIcon.hide();
     }
     // Context menu
     if (this.$.btnContextMenu.$.menu.itemsCount === 0) {

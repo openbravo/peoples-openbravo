@@ -4514,17 +4514,33 @@ li.selected > .obUiRenderOrderLine_edit {
 }
 
 .obUiListSelectorLine-line-textInfo-element1-identifier {
-  isplay: table-cell;
+  display: table-cell;
 }
 
+.obUiListSelectorLine-line-textInfo-element1-bottomShipIcon {
+  display: table-cell;
+  background-image: url('../../web/org.openbravo.retail.posterminal/img/iconShippingAddress.svg');
+  background-position: 6px;
+  background-repeat: no-repeat;
+  background-size: 21px 21px;
+  padding: 0px 6px;
+  height: 22px;
+  width: 22px;
+}
 
-.obUiListSelectorLine-line-textInfo-element1-bottomShipIcon {}
-
-
-.obUiListSelectorLine-line-textInfo-element1-bottomBillIcon {}
-
+.obUiListSelectorLine-line-textInfo-element1-bottomBillIcon {
+  display: table-cell;
+  background-image: url('../../web/org.openbravo.retail.posterminal/img/iconInvoicingAddress.svg');
+  background-position: 6px;
+  background-repeat: no-repeat;
+  background-size: 16px 18px;
+  padding: 0px 6px;
+  height: 22px;
+  width: 22px;
+}
 
 .obUiListSelectorLine-line-textInfo-element1-element1 {
+  display: table-cell;
   clear: both;
 }
 
