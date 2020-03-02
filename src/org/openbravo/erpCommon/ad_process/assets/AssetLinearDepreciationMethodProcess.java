@@ -586,7 +586,8 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
     //@formatter:off
     String hql =
             "as aml join aml.amortization as am" +
-            " where aml.asset.id = :assetId";
+            " where aml.asset.id = :assetId" +
+            "   and am.endingDate = :endDate";
     //@formatter:on
     if (startDate != null) {
       //@formatter:off
@@ -594,19 +595,15 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
             "   and am.startingDate = :startDate";
       //@formatter:on
     }
-    //@formatter:off
-    hql +=
-            "   and am.endingDate = :endDate";
-    //@formatter:on
 
     final OBQuery<AmortizationLine> obq = OBDal.getInstance()
         .createQuery(AmortizationLine.class, hql)
         .setFilterOnReadableOrganization(false)
         .setNamedParameter("assetId", asset.getId());
+    obq.setNamedParameter("endDate", endDate);
     if (startDate != null) {
       obq.setNamedParameter("startDate", startDate);
     }
-    obq.setNamedParameter("endDate", endDate);
     final List<AmortizationLine> amortizationLineList = obq.list();
     if (amortizationLineList.isEmpty()) {
       return null;
