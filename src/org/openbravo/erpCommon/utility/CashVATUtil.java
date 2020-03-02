@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013-2019 Openbravo SLU
+ * All portions are Copyright (C) 2013-2020 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,9 +31,7 @@ import javax.servlet.ServletException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.query.Query;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
@@ -326,19 +324,22 @@ public class CashVATUtil {
     try {
       OBContext.setAdminMode(true);
 
-      final StringBuffer hql = new StringBuffer();
-      hql.append(" select itcv.id ");
-      hql.append(" from InvoiceTaxCashVAT itcv ");
-      hql.append(" inner join itcv.invoiceTax it ");
-      hql.append(" where it.invoice.id = :invoiceId ");
-      hql.append(" and itcv.isManualSettlement = true ");
+      //@formatter:off
+      final String hql =
+                    "select itcv.id " +
+                    "  from InvoiceTaxCashVAT itcv " +
+                    "    inner join itcv.invoiceTax it " +
+                    " where it.invoice.id = :invoiceId " +
+                    "   and itcv.isManualSettlement = true ";
+      //@formatter:on
 
-      final Session session = OBDal.getInstance().getSession();
-      final Query<String> query = session.createQuery(hql.toString(), String.class);
-      query.setParameter("invoiceId", invoice.getId());
-      query.setMaxResults(1);
-
-      return !query.list().isEmpty();
+      return !OBDal.getInstance()
+          .getSession()
+          .createQuery(hql, String.class)
+          .setParameter("invoiceId", invoice.getId())
+          .setMaxResults(1)
+          .list()
+          .isEmpty();
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -373,26 +374,24 @@ public class CashVATUtil {
       final String cInvoiceTaxID) {
     try {
       OBContext.setAdminMode(true);
-      final StringBuffer hql = new StringBuffer();
-      hql.append(" select 100 - sum(coalesce(itcv." + InvoiceTaxCashVAT_V.PROPERTY_PERCENTAGE
-          + ", 0)) as percentage, ");
-      hql.append("  max(it." + InvoiceTax.PROPERTY_TAXABLEAMOUNT + ") - sum(coalesce(itcv."
-          + InvoiceTaxCashVAT_V.PROPERTY_TAXABLEAMOUNT + ", 0)) as taxableAmt, ");
-      hql.append("  max(it." + InvoiceTax.PROPERTY_TAXAMOUNT + ") - sum(coalesce(itcv."
-          + InvoiceTaxCashVAT_V.PROPERTY_TAXAMOUNT + ", 0)) as taxAmt ");
+      //@formatter:off
+      final String hql =
+                    "select 100 - sum(coalesce(itcv.percentage, 0)) as percentage" +
+                    "  , max(it.taxableAmount) - sum(coalesce(itcv.taxableAmount, 0)) as taxableAmt" +
+                    "  , max(it.taxAmount) - sum(coalesce(itcv.taxAmount, 0)) as taxAmt " +
+                    "  from C_InvoiceTax_CashVAT_V as itcv " +
+                    "    right outer join itcv.invoiceTax as it " +
+                    " where it.id = :cInvoiceTaxID " +
+                    "   and coalesce(itcv.canceled, 'N') = 'N' ";
+      //@formatter:on
 
-      hql.append(" from " + InvoiceTaxCashVAT_V.ENTITY_NAME + " as itcv ");
-      hql.append(" right outer join itcv." + InvoiceTaxCashVAT_V.PROPERTY_INVOICETAX + " as it ");
-      hql.append(" where it." + InvoiceTax.PROPERTY_ID + "= :cInvoiceTaxID ");
-      hql.append(" and coalesce(itcv." + InvoiceTaxCashVAT_V.PROPERTY_CANCELED + ", 'N') = 'N' ");
-
-      final Session session = OBDal.getInstance().getSession();
-      final Query<Object[]> query = session.createQuery(hql.toString(), Object[].class);
-      query.setParameter("cInvoiceTaxID", cInvoiceTaxID);
+      final Object[] o = OBDal.getInstance()
+          .getSession()
+          .createQuery(hql, Object[].class)
+          .setParameter("cInvoiceTaxID", cInvoiceTaxID)
+          .uniqueResult();
 
       final Map<String, BigDecimal> result = new HashMap<String, BigDecimal>();
-
-      final Object[] o = query.uniqueResult();
       result.put("percentage", (BigDecimal) o[0]);
       result.put("taxableAmt", (BigDecimal) o[1]);
       result.put("taxAmt", (BigDecimal) o[2]);
@@ -413,24 +412,27 @@ public class CashVATUtil {
       final String cInvoiceId) {
     try {
       OBContext.setAdminMode(true);
-      final StringBuffer hql = new StringBuffer();
-      hql.append(" select coalesce(sum(" + InvoiceTaxCashVAT_V.PROPERTY_PERCENTAGE + "), 0) ");
-      hql.append(" from " + InvoiceTaxCashVAT_V.ENTITY_NAME);
-      hql.append(
-          " where " + InvoiceTaxCashVAT_V.PROPERTY_TAX + "." + TaxRate.PROPERTY_ID + " = :taxId ");
-      hql.append(" and " + InvoiceTaxCashVAT_V.PROPERTY_INVOICE + "." + Invoice.PROPERTY_ID
-          + " = :invoiceId ");
-      hql.append(" and " + InvoiceTaxCashVAT_V.PROPERTY_CANCELED + " = false ");
-      hql.append(" and (" + InvoiceTaxCashVAT_V.PROPERTY_ISPREPAYMENT + " = true ");
-      hql.append("      or " + InvoiceTaxCashVAT_V.PROPERTY_ISPAIDATINVOICING + " = true) ");
-      hql.append(" group by " + InvoiceTaxCashVAT_V.PROPERTY_TAX + "." + TaxRate.PROPERTY_ID + ", "
-          + InvoiceTaxCashVAT_V.PROPERTY_INVOICE + "." + Invoice.PROPERTY_ID);
+      //@formatter:off
+      final String hql =
+                    "select coalesce(sum(percentage), 0) " +
+                    "  from C_InvoiceTax_CashVAT_V" +
+                    " where tax.id = :taxId " +
+                    "   and invoice.id = :invoiceId " +
+                    "   and canceled = false " +
+                    "   and (" + 
+                    "     isPrepayment = true " +
+                    "     or isPaidAtInvoicing = true" +
+                    "   ) " +
+                    " group by tax.id" +
+                    "   , invoice.id";
+      //@formatter:on
 
-      final Session session = OBDal.getInstance().getSession();
-      final Query<BigDecimal> query = session.createQuery(hql.toString(), BigDecimal.class);
-      query.setParameter("taxId", cTaxID);
-      query.setParameter("invoiceId", cInvoiceId);
-      final BigDecimal percentage = query.uniqueResult();
+      final BigDecimal percentage = OBDal.getInstance()
+          .getSession()
+          .createQuery(hql, BigDecimal.class)
+          .setParameter("taxId", cTaxID)
+          .setParameter("invoiceId", cInvoiceId)
+          .uniqueResult();
       return percentage == null ? BigDecimal.ZERO : percentage;
     } finally {
       OBContext.restorePreviousMode();
