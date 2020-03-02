@@ -239,8 +239,6 @@ public class DocMovement extends AcctServer {
 
   /**
    * Get Document Confirmation
-   * 
-   * not used
    */
   @Override
   public boolean getDocumentConfirmation(final ConnectionProvider conn, final String strRecordId) {
