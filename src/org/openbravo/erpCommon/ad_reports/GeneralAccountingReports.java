@@ -95,20 +95,6 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     }
   }
 
-  private void commandCmbyearFunctionality(final HttpServletResponse response,
-      final VariablesSecureApp vars) throws ServletException, IOException {
-    final String strOrg = vars.getStringParameter("inpOrganizacion", "");
-    final String strAgno = vars.getStringParameter("inpAgno", "");
-    final ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
-    final GeneralAccountingReportsData[] data = GeneralAccountingReportsData
-        .selectYearsDouble(readOnlyCP, vars.getUserClient(), strOrg);
-    final String combobox = getJSONComboBox(data, strAgno, false);
-    response.setContentType("text/html; charset=UTF-8");
-    final PrintWriter out = response.getWriter();
-    out.println("objson = " + combobox);
-    out.close();
-  }
-
   private void commandDefaultFunctionality(final HttpServletResponse response,
       final VariablesSecureApp vars) throws ServletException, IOException {
     final String strDateFrom = vars.getGlobalVariable("inpDateFrom",
@@ -134,55 +120,12 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     /* Improved Balance Sheet */
     final String strCompareTo = vars.getGlobalVariable("inpCompareTo",
         "GeneralAccountingReports|compareTo", "Y");
-
+  
     final String strLevel = vars.getGlobalVariable("inpLevel", "GeneralAccountingReports|level",
         "");
     printPageDataSheet(response, vars, "", "", strDateFrom, strDateTo, strPageNo, strDateFromRef,
         strDateToRef, strAsDateTo, strAsDateToRef, strElementValue, strConImporte, "", strLevel,
         strConCodigo, "", strCompareTo);
-  }
-
-  private void commandCmborgFunctionality(final HttpServletResponse response,
-      final VariablesSecureApp vars) throws ServletException, IOException {
-    final String strAccSchema = vars.getStringParameter("inpcAcctSchemaId");
-    String strAcctRpt = vars.getStringParameter("inpcElementvalueId", "");
-    if (StringUtils.isNotEmpty(strAcctRpt)) {
-      strAcctRpt = strAcctRpt.substring(1);
-    }
-    final String strOrg = vars.getStringParameter("inpOrganizacion", "");
-    StringBuilder strOrgList = new StringBuilder();
-    final List<String> orgList = getRoleOrganizationList(
-        OBContext.getOBContext().getRole().getId());
-    int i = 0;
-    for (String org : orgList) {
-      if (i == 0) {
-        strOrgList.append("'" + org + "'");
-      } else {
-        strOrgList.append(",'" + org + "'");
-      }
-      i++;
-    }
-    final ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
-    final GeneralAccountingReportsData[] data = GeneralAccountingReportsData.selectOrgsDouble(
-        readOnlyCP, vars.getClient(), strOrgList.toString(), strAccSchema, strAcctRpt);
-    final String combobox = getJSONComboBox(data, strOrg, false);
-    response.setContentType("text/html; charset=UTF-8");
-    final PrintWriter out = response.getWriter();
-    out.println("objson = " + combobox);
-    out.close();
-  }
-
-  private void commandLedgerFunctionality(final HttpServletResponse response,
-      final VariablesSecureApp vars) throws IOException {
-    String strOrg = vars.getStringParameter("inpOrganizacion");
-    if (StringUtils.isEmpty(strOrg)) {
-      strOrg = vars.getOrg();
-    }
-    final String strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
-    response.setContentType("text/html; charset=UTF-8");
-    final PrintWriter out = response.getWriter();
-    out.print(StringEscapeUtils.escapeHtml(strcAcctSchemaId));
-    out.close();
   }
 
   private void commandFindFunctionality(final HttpServletRequest request,
@@ -224,6 +167,63 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     printPagePDF(request, response, vars, strAgno, strAgnoRef, strDateFrom, strDateTo,
         strDateFromRef, strDateToRef, strAsDateTo, strAsDateToRef, strElementValue, strConImporte,
         strOrg, strLevel, strConCodigo, strcAcctSchemaId, strPageNo, strCompareTo);
+  }
+
+  private void commandLedgerFunctionality(final HttpServletResponse response,
+      final VariablesSecureApp vars) throws IOException {
+    String strOrg = vars.getStringParameter("inpOrganizacion");
+    if (StringUtils.isEmpty(strOrg)) {
+      strOrg = vars.getOrg();
+    }
+    final String strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
+    response.setContentType("text/html; charset=UTF-8");
+    final PrintWriter out = response.getWriter();
+    out.print(StringEscapeUtils.escapeHtml(strcAcctSchemaId));
+    out.close();
+  }
+
+  private void commandCmborgFunctionality(final HttpServletResponse response,
+      final VariablesSecureApp vars) throws ServletException, IOException {
+    final String strAccSchema = vars.getStringParameter("inpcAcctSchemaId");
+    String strAcctRpt = vars.getStringParameter("inpcElementvalueId", "");
+    if (StringUtils.isNotEmpty(strAcctRpt)) {
+      strAcctRpt = strAcctRpt.substring(1);
+    }
+    final String strOrg = vars.getStringParameter("inpOrganizacion", "");
+    StringBuilder strOrgList = new StringBuilder();
+    final List<String> orgList = getRoleOrganizationList(
+        OBContext.getOBContext().getRole().getId());
+    int i = 0;
+    for (String org : orgList) {
+      if (i == 0) {
+        strOrgList.append("'" + org + "'");
+      } else {
+        strOrgList.append(",'" + org + "'");
+      }
+      i++;
+    }
+    final ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    final GeneralAccountingReportsData[] data = GeneralAccountingReportsData.selectOrgsDouble(
+        readOnlyCP, vars.getClient(), strOrgList.toString(), strAccSchema, strAcctRpt);
+    final String combobox = getJSONComboBox(data, strOrg, false);
+    response.setContentType("text/html; charset=UTF-8");
+    final PrintWriter out = response.getWriter();
+    out.println("objson = " + combobox);
+    out.close();
+  }
+
+  private void commandCmbyearFunctionality(final HttpServletResponse response,
+      final VariablesSecureApp vars) throws ServletException, IOException {
+    final String strOrg = vars.getStringParameter("inpOrganizacion", "");
+    final String strAgno = vars.getStringParameter("inpAgno", "");
+    final ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
+    final GeneralAccountingReportsData[] data = GeneralAccountingReportsData
+        .selectYearsDouble(readOnlyCP, vars.getUserClient(), strOrg);
+    final String combobox = getJSONComboBox(data, strAgno, false);
+    response.setContentType("text/html; charset=UTF-8");
+    final PrintWriter out = response.getWriter();
+    out.println("objson = " + combobox);
+    out.close();
   }
 
   private String getJSONComboBox(final GeneralAccountingReportsData[] data,
