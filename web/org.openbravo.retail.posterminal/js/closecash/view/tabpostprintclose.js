@@ -281,6 +281,40 @@ enyo.kind({
 });
 
 enyo.kind({
+  name: 'OBPOSCloseCash.UI.ppc_transactionsTable',
+  kind: 'OB.OBPOSCloseCash.UI.ppc_table',
+  classes: 'obObPosCloseCashUiPpcTransactionsTable',
+  tag: 'ul',
+  components: [
+    {
+      tag: 'li',
+      classes:
+        'obObPosCloseCashUiPostPrintClose-wrapper-components-body-container2-container1-container1 selected',
+      components: [
+        {
+          kind: 'OB.OBPOSCloseCash.UI.ppc_salesTable',
+          name: 'sales',
+          classes:
+            'obObPosCloseCashUiPostPrintClose-wrapper-components-body-container2-container1-container1-sales'
+        },
+        {
+          kind: 'OB.OBPOSCloseCash.UI.ppc_returnsTable',
+          name: 'returns',
+          classes:
+            'obObPosCloseCashUiPostPrintClose-wrapper-components-body-container2-container1-container1-returns'
+        },
+        {
+          kind: 'OB.OBPOSCloseCash.UI.ppc_totalTransactionsTable',
+          name: 'totaltransactions',
+          classes:
+            'obObPosCloseCashUiPostPrintClose-wrapper-components-body-container2-container1-container1-totaltransactions'
+        }
+      ]
+    }
+  ]
+});
+
+enyo.kind({
   name: 'OB.OBPOSCloseCash.UI.ppc_salesTable',
   kind: 'OB.OBPOSCloseCash.UI.ppc_table',
   classes: 'obObPosCloseCashUiPpcSalesTable',
@@ -621,6 +655,47 @@ enyo.kind({
     summary: null
   },
   classes: 'obObPosCloseCashUiPostPrintClose',
+  headerComponents: [
+    {
+      tag: 'img',
+      classes: 'obObPosCloseCashUiPostPrintClose-headerContainer-img',
+      initComponents: function() {
+        if (OB.MobileApp.model.get('terminal').organizationImage) {
+          this.setAttribute(
+            'src',
+            'data:' +
+              OB.MobileApp.model.get('terminal').organizationImageMime +
+              ';base64,' +
+              OB.MobileApp.model.get('terminal').organizationImage
+          );
+        }
+      }
+    },
+    {
+      name: 'store',
+      classes: 'obObPosCloseCashUiPostPrintClose-headerContainer-store'
+    },
+    {
+      name: 'terminal',
+      classes: 'obObPosCloseCashUiPostPrintClose-headerContainer-terminal'
+    },
+    {
+      name: 'user',
+      classes: 'obObPosCloseCashUiPostPrintClose-headerContainer-user'
+    },
+    {
+      name: 'openingtime',
+      classes: 'obObPosCloseCashUiPostPrintClose-headerContainer-openingtime'
+    },
+    {
+      name: 'time',
+      classes: 'obObPosCloseCashUiPostPrintClose-headerContainer-time'
+    },
+    {
+      classes: 'obObPosCloseCashUiPostPrintClose-headerContainer-element1'
+    }
+  ],
+  transactionComponents: [],
   components: [
     {
       name: 'scrollArea',
@@ -658,60 +733,9 @@ enyo.kind({
                         'obObPosCloseCashUiPostPrintClose-wrapper-components-body-container1-container1',
                       components: [
                         {
+                          name: 'headerContainer',
                           classes:
-                            'obObPosCloseCashUiPostPrintClose-wrapper-components-body-container1-container1-container1',
-                          components: [
-                            {
-                              tag: 'img',
-                              classes:
-                                'obObPosCloseCashUiPostPrintClose-wrapper-components-body-container1-container1-container1-img',
-                              initComponents: function() {
-                                if (
-                                  OB.MobileApp.model.get('terminal')
-                                    .organizationImage
-                                ) {
-                                  this.setAttribute(
-                                    'src',
-                                    'data:' +
-                                      OB.MobileApp.model.get('terminal')
-                                        .organizationImageMime +
-                                      ';base64,' +
-                                      OB.MobileApp.model.get('terminal')
-                                        .organizationImage
-                                  );
-                                }
-                              }
-                            },
-                            {
-                              name: 'store',
-                              classes:
-                                'obObPosCloseCashUiPostPrintClose-wrapper-components-body-container1-container1-container1-store'
-                            },
-                            {
-                              name: 'terminal',
-                              classes:
-                                'obObPosCloseCashUiPostPrintClose-wrapper-components-body-container1-container1-container1-terminal'
-                            },
-                            {
-                              name: 'user',
-                              classes:
-                                'obObPosCloseCashUiPostPrintClose-wrapper-components-body-container1-container1-container1-user'
-                            },
-                            {
-                              name: 'openingtime',
-                              classes:
-                                'obObPosCloseCashUiPostPrintClose-wrapper-components-body-container1-container1-container1-openingtime'
-                            },
-                            {
-                              name: 'time',
-                              classes:
-                                'obObPosCloseCashUiPostPrintClose-wrapper-components-body-container1-container1-container1-time'
-                            },
-                            {
-                              classes:
-                                'obObPosCloseCashUiPostPrintClose-wrapper-components-body-container1-container1-container1-element1'
-                            }
-                          ]
+                            'obObPosCloseCashUiPostPrintClose-wrapper-components-body-container1-container1-headerContainer'
                         }
                       ]
                     },
@@ -723,51 +747,11 @@ enyo.kind({
                 },
                 //FIXME: Iterate taxes
                 {
+                  name: 'transactionContainer',
+                  // classes:
+                  //   'obObPosCloseCashUiPostPrintClose-wrapper-components-body-container2 row-fluid',
                   classes:
-                    'obObPosCloseCashUiPostPrintClose-wrapper-components-body-container2 row-fluid',
-                  components: [
-                    {
-                      tag: 'ul',
-                      classes:
-                        'obObPosCloseCashUiPostPrintClose-wrapper-components-body-container2-container1',
-                      components: [
-                        {
-                          tag: 'li',
-                          classes:
-                            'obObPosCloseCashUiPostPrintClose-wrapper-components-body-container2-container1-container1 selected',
-                          components: [
-                            {
-                              kind: 'OB.OBPOSCloseCash.UI.ppc_salesTable',
-                              name: 'sales',
-                              classes:
-                                'obObPosCloseCashUiPostPrintClose-wrapper-components-body-container2-container1-container1-sales'
-                            },
-                            {
-                              kind: 'OB.OBPOSCloseCash.UI.ppc_returnsTable',
-                              name: 'returns',
-                              classes:
-                                'obObPosCloseCashUiPostPrintClose-wrapper-components-body-container2-container1-container1-returns'
-                            },
-                            {
-                              kind:
-                                'OB.OBPOSCloseCash.UI.ppc_totalTransactionsTable',
-                              name: 'totaltransactions',
-                              classes:
-                                'obObPosCloseCashUiPostPrintClose-wrapper-components-body-container2-container1-container1-totaltransactions'
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      classes:
-                        'obObPosCloseCashUiPostPrintClose-wrapper-components-body-container2-element1'
-                    },
-                    {
-                      classes:
-                        'obObPosCloseCashUiPostPrintClose-wrapper-components-body-container2-element2'
-                    }
-                  ]
+                    'obObPosCloseCashUiPostPrintClose-wrapper-components-body-transactionContainer row-fluid'
                 },
                 {
                   classes:
@@ -832,31 +816,53 @@ enyo.kind({
   ],
 
   paymentWithMovement: [],
-
+  componentCreation: function() {
+    // To be implemented in extended components
+  },
+  componentInitialization: function() {
+    // To be implemented in extended components
+  },
+  modelChanger: function() {
+    // To be implemented in extended components
+  },
+  stepDisplayer: function() {
+    // To be implemented in extended components
+  },
   create: function() {
     this.inherited(arguments);
-    this.$.store.setContent(
+
+    //Create components for header
+    this.headerComponents.forEach(headerComponent => {
+      this.$.headerContainer.createComponent(headerComponent);
+    });
+    // Create components for transactions
+    this.transactionComponents.forEach(headerComponent => {
+      this.$.transactionContainer.createComponent(headerComponent);
+    });
+
+    this.$.headerContainer.$.store.setContent(
       OB.I18N.getLabel('OBPOS_LblStore') +
         ': ' +
         OB.MobileApp.model.get('terminal').organization$_identifier
     );
-    this.$.terminal.setContent(
+    this.$.headerContainer.$.terminal.setContent(
       OB.I18N.getLabel('OBPOS_LblTerminal') +
         ': ' +
         OB.MobileApp.model.get('terminal')._identifier
     );
-    this.$.user.setContent(
+    this.$.headerContainer.$.user.setContent(
       OB.I18N.getLabel('OBPOS_LblUser') +
         ': ' +
         OB.MobileApp.model.get('context').user._identifier
     );
-    this.$.time.setContent(
+    this.$.headerContainer.$.time.setContent(
       OB.I18N.getLabel('OBPOS_LblCloseTime') +
         ': ' +
         OB.I18N.formatDate(new Date()) +
         ' - ' +
         OB.I18N.formatHour(new Date())
     );
+    this.componentCreation();
   },
 
   init: function(model) {
@@ -868,36 +874,17 @@ enyo.kind({
     );
 
     this.model.get('closeCashReport').on('add', closeCashReport => {
-      this.$.openingtime.setContent(
+      this.$.headerContainer.$.openingtime.setContent(
         OB.I18N.getLabel('OBPOS_LblOpenTime') +
           ': ' +
           OB.I18N.formatDate(new Date(closeCashReport.get('creationDate'))) +
           ' - ' +
           OB.I18N.formatHour(new Date(closeCashReport.get('creationDate')))
       );
-      this.$.sales.setValue('netsales', closeCashReport.get('netSales'));
-      this.$.sales.setCollection(closeCashReport.get('salesTaxes'));
-      this.$.sales.setValue('totalsales', closeCashReport.get('grossSales'));
-
-      this.$.returns.setValue('netreturns', closeCashReport.get('netReturns'));
-      this.$.returns.setCollection(closeCashReport.get('returnsTaxes'));
-      this.$.returns.setValue(
-        'totalreturns',
-        closeCashReport.get('grossReturns')
-      );
-
-      this.$.totaltransactions.setValue(
-        'totaltransactionsline',
-        closeCashReport.get('totalRetailTransactions')
-      );
-
-      if (!OB.POS.modelterminal.get('terminal').ismaster) {
-        this.closeCashReportChanged(closeCashReport);
-      }
     });
 
     this.model.on('change:time', () => {
-      this.$.time.setContent(
+      this.$.headerContainer.$.time.setContent(
         OB.I18N.getLabel('OBPOS_LblCloseTime') +
           ': ' +
           OB.I18N.formatDate(this.model.get('time')) +
@@ -905,6 +892,8 @@ enyo.kind({
           OB.I18N.formatHour(this.model.get('time'))
       );
     });
+
+    this.componentInitialization();
   },
 
   filterMovements: function(closeCashReport, isSummary) {
@@ -1078,19 +1067,6 @@ enyo.kind({
       this.model.get('closeCashReport').at(0),
       false
     );
-    this.$.sales.setValue('netsales', this.model.get('netSales'));
-    this.$.sales.setCollection(this.model.get('salesTaxes'));
-    this.$.sales.setValue('totalsales', this.model.get('grossSales'));
-
-    this.$.returns.setValue('netreturns', this.model.get('netReturns'));
-    this.$.returns.setCollection(this.model.get('returnsTaxes'));
-    this.$.returns.setValue('totalreturns', this.model.get('grossReturns'));
-
-    this.$.totaltransactions.setValue(
-      'totaltransactionsline',
-      this.model.get('totalRetailTransactions')
-    );
-
     this.$.startingsTable.setCollection(filtered.startings);
     this.$.startingsTable.setValue(
       'totalstartings',
@@ -1107,7 +1083,7 @@ enyo.kind({
     );
 
     this.model.on('change:time', () => {
-      this.$.time.setContent(
+      this.$.headerContainer.$.time.setContent(
         OB.I18N.getLabel('OBPOS_LblCloseTime') +
           ': ' +
           OB.I18N.formatDate(this.model.get('time')) +
@@ -1115,6 +1091,8 @@ enyo.kind({
           OB.I18N.formatHour(this.model.get('time'))
       );
     });
+
+    this.modelChanger();
   },
 
   displayStep: function(model) {
@@ -1125,17 +1103,11 @@ enyo.kind({
       this.$.expectedTable.hide();
       this.$.depositsTable.hide();
       this.$.dropsTable.hide();
-      this.$.sales.hide();
-      this.$.totaltransactions.hide();
-      this.$.returns.hide();
     } else {
       this.$.differenceTable.show();
       this.$.expectedTable.show();
       this.$.depositsTable.show();
       this.$.dropsTable.show();
-      this.$.sales.show();
-      this.$.totaltransactions.show();
-      this.$.returns.show();
     }
 
     // this function is invoked when displayed.
@@ -1174,13 +1146,14 @@ enyo.kind({
       }
     }
     this.setSummary(model.getCountCashSummary());
-    this.$.time.setContent(
+    this.$.headerContainer.$.time.setContent(
       OB.I18N.getLabel('OBPOS_LblCloseTime') +
         ': ' +
         OB.I18N.formatDate(new Date()) +
         ' - ' +
         OB.I18N.formatHour(new Date())
     );
+    this.stepDisplayer();
     this.render();
   }
 });

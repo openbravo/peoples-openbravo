@@ -56,7 +56,7 @@ enyo.kind({
     {
       classes:
         'obObPosCloseCashUiCloseCash-closeCashMultiColumn-closeCashLeftPanel-postPrintClose',
-      kind: 'OB.OBPOSCloseCash.UI.PostPrintClose',
+      kind: 'OB.OBPOSCashUp.UI.PostPrintClose',
       name: 'postPrintClose',
       showing: false
     }

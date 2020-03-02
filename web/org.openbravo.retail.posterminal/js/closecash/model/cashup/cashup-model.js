@@ -635,7 +635,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
       }
     );
   },
-  // [TODO] What to do with this logic????
   isFinishedWizard: function(step) {
     // Adjust step to array index
     var postPrintAndClose = this.stepIndex('OB.CloseCash.PostPrintAndClose');
@@ -644,7 +643,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
     }
     return false;
   },
-  // [TODO] What to do with this logic????
   isPaymentMethodListVisible: function() {
     // Adjust step to array index
     return this.get('step') - 1 === this.stepIndex('OB.CloseCash.CashPayments');
