@@ -74,15 +74,6 @@ public class SE_Locator_Activate extends SimpleCallout {
     }
   }
 
-  private void deactivateWarehouse(final CalloutInfo info, final String strWarehouse) {
-    final Warehouse warehouse = OBDal.getInstance().get(Warehouse.class, strWarehouse);
-    if (numberOfActiveStorageBins(warehouse) > 0) {
-      info.addResult("MESSAGE", OBMessageUtils.messageBD("M_WAREHOUSE_ACTIVE_CHECK_ACTIVES"));
-    } else if (warehouseWithPendingReceipts(warehouse.getId())) {
-      info.addResult("MESSAGE", OBMessageUtils.messageBD("M_WAREHOUSE_ACTIVE_CHECK_ENTRIES"));
-    }
-  }
-
   /**
    * This method returns true if the storage bin with the id passed as argument has stock inside.
    * This means that the storage bin should not be deactivated.
@@ -97,12 +88,34 @@ public class SE_Locator_Activate extends SimpleCallout {
                   "   or (coalesce (sd.quantityInDraftTransactions,0) <> 0)" +
                   "   or (coalesce (sd.quantityOrderInDraftTransactions,0) <> 0)";
     //@formatter:on
-
+  
     return OBDal.getInstance()
         .createQuery(StorageDetail.class, hql)
         .setNamedParameter("storageBinId", strLocator)
         .setMaxResult(1)
         .uniqueResult() != null;
+  }
+
+  private void deactivateWarehouse(final CalloutInfo info, final String strWarehouse) {
+    final Warehouse warehouse = OBDal.getInstance().get(Warehouse.class, strWarehouse);
+    if (numberOfActiveStorageBins(warehouse) > 0) {
+      info.addResult("MESSAGE", OBMessageUtils.messageBD("M_WAREHOUSE_ACTIVE_CHECK_ACTIVES"));
+    } else if (warehouseWithPendingReceipts(warehouse.getId())) {
+      info.addResult("MESSAGE", OBMessageUtils.messageBD("M_WAREHOUSE_ACTIVE_CHECK_ENTRIES"));
+    }
+  }
+
+  /**
+   * This method returns the number of Active Storage Bins a Warehouse has.
+   */
+  private int numberOfActiveStorageBins(final Warehouse warehouse) {
+    int number = 0;
+    for (Locator locator : warehouse.getLocatorList()) {
+      if (locator.isActive()) {
+        number++;
+      }
+    }
+    return number;
   }
 
   /**
@@ -125,19 +138,6 @@ public class SE_Locator_Activate extends SimpleCallout {
         .setNamedParameter("warehouseId", warehouseId)
         .setMaxResult(1)
         .uniqueResult() != null;
-  }
-
-  /**
-   * This method returns the number of Active Storage Bins a Warehouse has.
-   */
-  private int numberOfActiveStorageBins(final Warehouse warehouse) {
-    int number = 0;
-    for (Locator locator : warehouse.getLocatorList()) {
-      if (locator.isActive()) {
-        number++;
-      }
-    }
-    return number;
   }
 
 }
