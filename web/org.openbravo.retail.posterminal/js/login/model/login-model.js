@@ -1599,35 +1599,7 @@
       }
       return lastSuffix;
     },
-    // get the first quotation number available
-    getLastQuotationnoSuffixInOrderlist: function() {
-      var lastSuffix = null;
-      var i;
-      if (
-        OB.MobileApp.model.orderList &&
-        OB.MobileApp.model.orderList.length > 0
-      ) {
-        for (i = 0; i < OB.MobileApp.model.orderList.length; i++) {
-          var order = OB.MobileApp.model.orderList.models[i];
-          if (
-            order.get('isQuotation') &&
-            order.get('quotationnoPrefix') ===
-              OB.MobileApp.model.get('terminal').quotationDocNoPrefix
-          ) {
-            if (
-              OB.UTIL.isNullOrUndefined(lastSuffix) ||
-              (lastSuffix && order.get('quotationnoSuffix') > lastSuffix)
-            ) {
-              lastSuffix = order.get('quotationnoSuffix');
-            }
-          }
-        }
-      }
-      if (lastSuffix === null || lastSuffix < this.quotationnoThreshold) {
-        lastSuffix = this.quotationnoThreshold;
-      }
-      return lastSuffix;
-    },
+
     // get the first return number available
     getLastReturnnoSuffixInOrderlist: function() {
       var lastSuffix = null;
@@ -1658,10 +1630,43 @@
       return lastSuffix;
     },
 
+    // get the first quotation number available
+    getLastQuotationnoSuffixInOrderlist: function() {
+      var lastSuffix = null;
+      var i;
+      if (
+        OB.MobileApp.model.orderList &&
+        OB.MobileApp.model.orderList.length > 0
+      ) {
+        for (i = 0; i < OB.MobileApp.model.orderList.length; i++) {
+          var order = OB.MobileApp.model.orderList.models[i];
+          if (
+            order.get('isQuotation') &&
+            order.get('quotationnoPrefix') ===
+              OB.MobileApp.model.get('terminal').quotationDocNoPrefix
+          ) {
+            if (
+              OB.UTIL.isNullOrUndefined(lastSuffix) ||
+              (lastSuffix && order.get('quotationnoSuffix') > lastSuffix)
+            ) {
+              lastSuffix = order.get('quotationnoSuffix');
+            }
+          }
+        }
+      }
+      if (lastSuffix === null || lastSuffix < this.quotationnoThreshold) {
+        lastSuffix = this.quotationnoThreshold;
+      }
+      return lastSuffix;
+    },
+
     // call this method to get a new order document number
     getNextDocumentno: function() {
       const orderSequenceNumber = OB.App.State.DocumentSequence.Utils.getNextSequenceNumber(
-        OB.App.State.getState().DocumentSequence.orderSequence
+        OB.App.State.DocumentSequence.Utils.getHighestSequenceNumber(
+          OB.App.State.getState().DocumentSequence.orderSequence,
+          this.getLastDocumentnoSuffixInOrderlist()
+        )
       );
 
       return {
@@ -1677,7 +1682,10 @@
     // call this method to get a new Return document number
     getNextReturnno: function() {
       const returnSequenceNumber = OB.App.State.DocumentSequence.Utils.getNextSequenceNumber(
-        OB.App.State.getState().DocumentSequence.returnSequence
+        OB.App.State.DocumentSequence.Utils.getHighestSequenceNumber(
+          OB.App.State.getState().DocumentSequence.returnSequence,
+          this.getLastReturnnoSuffixInOrderlist()
+        )
       );
 
       return {
@@ -1693,7 +1701,10 @@
     // call this method to get a new quotation document number
     getNextQuotationno: function() {
       const quotationSequenceNumber = OB.App.State.DocumentSequence.Utils.getNextSequenceNumber(
-        OB.App.State.getState().DocumentSequence.quotationSequence
+        OB.App.State.DocumentSequence.Utils.getHighestSequenceNumber(
+          OB.App.State.getState().DocumentSequence.quotationSequence,
+          this.getLastQuotationnoSuffixInOrderlist()
+        )
       );
 
       return {
