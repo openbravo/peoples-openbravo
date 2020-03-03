@@ -19,6 +19,7 @@
 package org.openbravo.retail.posterminal;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
@@ -97,6 +98,7 @@ public class ApplicationCacheComponent extends MobileCoreApplicationCacheCompone
     resources
         .add("../../org.openbravo.mobile.core/OBCLKER_Kernel/StyleSheetResources?_appName=WebPOS");
 
+    resources.sort(Comparator.comparing(String::toString));
     return resources;
   }
 
