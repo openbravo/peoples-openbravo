@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -101,26 +101,31 @@ class UOMConversionEventHandler extends EntityPersistenceEventObserver {
 
   // Check if exists another record using this uomFrom - uomTo
   private boolean existsRecord(Client client, UOM uomFrom, UOM uomTo) {
-    StringBuilder hql = new StringBuilder();
-    hql.append("SELECT t1." + UOMConversion.PROPERTY_ID + " ");
-    hql.append("FROM " + UOMConversion.ENTITY_NAME + " as t1 ");
-    hql.append("WHERE t1." + UOMConversion.PROPERTY_UOM + " = :uomFrom ");
-    hql.append("AND t1." + UOMConversion.PROPERTY_TOUOM + " = :uomTo ");
-    hql.append("AND t1." + UOMConversion.PROPERTY_ACTIVE + " = 'Y' ");
+    //@formatter:off
+    String hql =
+            "select t1.id" +
+            "  from UOMConversion as t1 " +
+            " where t1.uOM.id = :uomFromId" +
+            "   and t1.toUOM.id = :uomToId" +
+            "   and t1.active = 'Y' ";
+    //@formatter:on
     if (!client.getId().equals("0")) {
-      hql.append("AND t1." + UOMConversion.PROPERTY_CLIENT + " = :client");
+      //@formatter:off
+      hql +=
+            "   and t1.client.id = :clientId";
+      //@formatter:on
     }
 
     final Query<String> query = OBDal.getInstance()
         .getSession()
-        .createQuery(hql.toString(), String.class);
-    query.setParameter("uomFrom", uomFrom);
-    query.setParameter("uomTo", uomTo);
+        .createQuery(hql, String.class)
+        .setParameter("uomFromId", uomFrom.getId())
+        .setParameter("uomToId", uomTo.getId());
     if (!client.getId().equals("0")) {
-      query.setParameter("client", client);
+      query.setParameter("clientId", client.getId());
     }
-    query.setMaxResults(1);
-    return !query.list().isEmpty();
+
+    return !query.setMaxResults(1).list().isEmpty();
   }
 
 }
