@@ -32,23 +32,26 @@ import org.openbravo.model.common.invoice.Invoice;
 
 class InvoiceEventHandler extends EntityPersistenceEventObserver {
 
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(Invoice.ENTITY_NAME) };
+  private static final Entity[] entities = {
+      ModelProvider.getInstance().getEntity(Invoice.ENTITY_NAME) };
 
   @Override
   protected Entity[] getObservedEntities() {
     return entities;
   }
 
-  public void onUpdate(@Observes EntityUpdateEvent event) {
+  public void onUpdate(final @Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
     final Entity invoiceEntity = ModelProvider.getInstance().getEntity(Invoice.ENTITY_NAME);
     final Property businessPartnerProperty = invoiceEntity
         .getProperty(Invoice.PROPERTY_BUSINESSPARTNER);
-    String invoiceId = (String) event.getTargetInstance().getId();
-    String newBPId = ((BusinessPartner) event.getCurrentState(businessPartnerProperty)).getId();
-    String oldBPId = ((BusinessPartner) event.getPreviousState(businessPartnerProperty)).getId();
+    final String invoiceId = (String) event.getTargetInstance().getId();
+    final String newBPId = ((BusinessPartner) event.getCurrentState(businessPartnerProperty))
+        .getId();
+    final String oldBPId = ((BusinessPartner) event.getPreviousState(businessPartnerProperty))
+        .getId();
 
     // Remove discount information
     if (!StringUtils.equals(newBPId, oldBPId)) {
