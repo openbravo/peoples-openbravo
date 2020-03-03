@@ -34,7 +34,6 @@ import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
@@ -48,21 +47,22 @@ class OrderEventHandler extends EntityPersistenceEventObserver {
   private static final String DO_NOT_SYNC_WAREHOUSE_PREFERENCE = "DoNotSyncWarehouse";
   private static final String DO_NOT_SYNC_DATE_DELIVERED_PREFERENCE = "DoNotSyncDateDelivered";
   private static final String DO_NOT_SYNC_DATE_ORDERED_PREFERENCE = "DoNotSyncDateOrdered";
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(Order.ENTITY_NAME) };
+  private static final Entity[] entities = {
+      ModelProvider.getInstance().getEntity(Order.ENTITY_NAME) };
 
   @Override
   protected Entity[] getObservedEntities() {
     return entities;
   }
 
-  public void onUpdate(@Observes EntityUpdateEvent event) {
+  public void onUpdate(final @Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
 
-    OrderParameters orderParameters = getOrderParameters(event);
+    final OrderParameters orderParameters = getOrderParameters(event);
 
-    List<OrderLine> orderLines = getOrderLines(orderParameters);
+    final List<OrderLine> orderLines = getOrderLines(orderParameters);
     if (CollectionUtils.isNotEmpty(orderLines)) {
       updateOrderLinesValues(orderParameters, orderLines);
     }
@@ -72,20 +72,20 @@ class OrderEventHandler extends EntityPersistenceEventObserver {
     }
   }
 
-  public void onDelete(@Observes EntityDeleteEvent event) {
+  public void onDelete(final @Observes EntityDeleteEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
     final Entity orderEntity = ModelProvider.getInstance().getEntity(Order.ENTITY_NAME);
     final Property quotationProperty = orderEntity.getProperty(Order.PROPERTY_QUOTATION);
-    Order quotation = (Order) event.getCurrentState(quotationProperty);
+    final Order quotation = (Order) event.getCurrentState(quotationProperty);
     if (quotation != null) {
       quotation.setDocumentStatus("UE");
     }
   }
 
   private OrderParameters getOrderParameters(final EntityUpdateEvent event) {
-    OrderParameters orderParameters = new OrderParameters();
+    final OrderParameters orderParameters = new OrderParameters();
     final Entity orderEntity = ModelProvider.getInstance().getEntity(Order.ENTITY_NAME);
     final Property orderDateProperty = orderEntity.getProperty(Order.PROPERTY_ORDERDATE);
     final Property scheduledDateProperty = orderEntity
@@ -110,10 +110,11 @@ class OrderEventHandler extends EntityPersistenceEventObserver {
   }
 
   private List<OrderLine> getOrderLines(final OrderParameters orderParameters) {
-    OBCriteria<OrderLine> orderLineCriteria = OBDal.getInstance().createCriteria(OrderLine.class);
-    orderLineCriteria.add(Restrictions.eq(OrderLine.PROPERTY_SALESORDER,
-        OBDal.getInstance().get(Order.class, orderParameters.getOrderId())));
-    return orderLineCriteria.list();
+    return OBDal.getInstance()
+        .createCriteria(OrderLine.class)
+        .add(Restrictions.eq(OrderLine.PROPERTY_SALESORDER,
+            OBDal.getInstance().get(Order.class, orderParameters.getOrderId())))
+        .list();
   }
 
   private void updateOrderLinesValues(final OrderParameters orderParameters,
@@ -185,7 +186,7 @@ class OrderEventHandler extends EntityPersistenceEventObserver {
           OBContext.getOBContext().getCurrentClient(),
           OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
           OBContext.getOBContext().getRole(), null);
-    } catch (PropertyException e) {
+    } catch (final PropertyException e) {
       // if property not found, sync the field
       syncField = Preferences.NO;
     }
