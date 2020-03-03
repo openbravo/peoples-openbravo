@@ -29,7 +29,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.order.OrderLine;
 
 class OrderLineEventHandler extends EntityPersistenceEventObserver {
-  private static Entity[] entities = {
+  private static final Entity[] entities = {
       ModelProvider.getInstance().getEntity(OrderLine.ENTITY_NAME) };
 
   @Override
@@ -37,7 +37,7 @@ class OrderLineEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onDelete(@Observes EntityDeleteEvent event) {
+  public void onDelete(final @Observes EntityDeleteEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -45,7 +45,7 @@ class OrderLineEventHandler extends EntityPersistenceEventObserver {
     removeSoPoReference(event);
   }
 
-  private void removeSoPoReference(EntityDeleteEvent event) {
+  private void removeSoPoReference(final EntityDeleteEvent event) {
     try {
       OBContext.setAdminMode(true);
       final OrderLine thisLine = (OrderLine) event.getTargetInstance();
