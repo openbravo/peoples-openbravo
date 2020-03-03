@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2019 Openbravo SLU
+ * All portions are Copyright (C) 2015-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,7 +20,6 @@ package org.openbravo.event;
 
 import javax.enterprise.event.Observes;
 
-import org.hibernate.query.Query;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
@@ -50,17 +49,21 @@ class OrderLineEventHandler extends EntityPersistenceEventObserver {
     try {
       OBContext.setAdminMode(true);
       final OrderLine thisLine = (OrderLine) event.getTargetInstance();
-      final StringBuilder hql = new StringBuilder();
-      hql.append(" update from OrderLine ol ");
-      hql.append(" set ol.sOPOReference.id = null ");
-      hql.append(" where ol.sOPOReference.id = :thisLine ");
-      hql.append(" and ol.client.id = :clientId ");
 
-      @SuppressWarnings("rawtypes")
-      Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
-      query.setParameter("thisLine", thisLine.getId());
-      query.setParameter("clientId", thisLine.getClient().getId());
-      query.executeUpdate();
+      //@formatter:off
+      final String hql =
+                    "update from OrderLine ol " +
+                    " set ol.sOPOReference.id = null " +
+                    " where ol.sOPOReference.id = :thisLineId " +
+                    "   and ol.client.id = :clientId ";
+      //@formatter:on
+
+      OBDal.getInstance()
+          .getSession()
+          .createQuery(hql)
+          .setParameter("thisLineId", thisLine.getId())
+          .setParameter("clientId", thisLine.getClient().getId())
+          .executeUpdate();
     } finally {
       OBContext.restorePreviousMode();
     }
