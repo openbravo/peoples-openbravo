@@ -297,7 +297,7 @@ enyo.kind({
   init: function() {
     // Create dinamically modal components
     this.modalComponents.forEach(modal => {
-      this.$.closeCashMultiColumn.createComponent(modal);
+      this.createComponent(modal);
     });
     // Create dinamically Left Panel components
     this.letfPanelComponents.forEach(component => {

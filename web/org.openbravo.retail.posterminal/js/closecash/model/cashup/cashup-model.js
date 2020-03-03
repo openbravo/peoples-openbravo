@@ -758,24 +758,24 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
                               OB.MobileApp.view.currentWindow !==
                               'retail.cashuppartial'
                             ) {
-                              OB.UTIL.cashupAddPaymentWithSummaryMovement(
+                              OB.UTIL.closeCashAddPaymentWithSummaryMovement(
                                 paymentWithMovement,
                                 countCashSummary.countedSummary
                               );
-                              OB.UTIL.cashupAddPaymentWithSummaryMovement(
+                              OB.UTIL.closeCashAddPaymentWithSummaryMovement(
                                 paymentWithMovement,
                                 countCashSummary.differenceSummary
                               );
-                              OB.UTIL.cashupAddPaymentWithSummaryMovement(
+                              OB.UTIL.closeCashAddPaymentWithSummaryMovement(
                                 paymentWithMovement,
                                 countCashSummary.qtyToKeepSummary
                               );
-                              OB.UTIL.cashupAddPaymentWithSummaryMovement(
+                              OB.UTIL.closeCashAddPaymentWithSummaryMovement(
                                 paymentWithMovement,
                                 countCashSummary.qtyToDepoSummary
                               );
                             }
-                            OB.UTIL.cashupAddPaymentWithSummaryMovement(
+                            OB.UTIL.closeCashAddPaymentWithSummaryMovement(
                               paymentWithMovement,
                               countCashSummary.expectedSummary
                             );
@@ -791,27 +791,27 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
                               paymentWithMovement,
                               cashUpReport.get('deposits')
                             );
-                            countCashSummary.expectedSummary = OB.UTIL.cashupGetPaymentWithMovement(
+                            countCashSummary.expectedSummary = OB.UTIL.closeCashGetPaymentWithMovement(
                               paymentWithMovement,
                               countCashSummary.expectedSummary
                             );
                             cashUpReport.set(
                               'startings',
-                              OB.UTIL.cashupGetPaymentWithMovement(
+                              OB.UTIL.closeCashGetPaymentWithMovement(
                                 paymentWithMovement,
                                 cashUpReport.get('startings')
                               )
                             );
                             cashUpReport.set(
                               'drops',
-                              OB.UTIL.cashupGetPaymentWithMovement(
+                              OB.UTIL.closeCashGetPaymentWithMovement(
                                 paymentWithMovement,
                                 cashUpReport.get('drops')
                               )
                             );
                             cashUpReport.set(
                               'deposits',
-                              OB.UTIL.cashupGetPaymentWithMovement(
+                              OB.UTIL.closeCashGetPaymentWithMovement(
                                 paymentWithMovement,
                                 cashUpReport.get('deposits')
                               )
@@ -820,19 +820,19 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
                               OB.MobileApp.view.currentWindow !==
                               'retail.cashuppartial'
                             ) {
-                              countCashSummary.countedSummary = OB.UTIL.cashupGetPaymentWithMovement(
+                              countCashSummary.countedSummary = OB.UTIL.closeCashGetPaymentWithMovement(
                                 paymentWithMovement,
                                 countCashSummary.countedSummary
                               );
-                              countCashSummary.differenceSummary = OB.UTIL.cashupGetPaymentWithMovement(
+                              countCashSummary.differenceSummary = OB.UTIL.closeCashGetPaymentWithMovement(
                                 paymentWithMovement,
                                 countCashSummary.differenceSummary
                               );
-                              countCashSummary.qtyToKeepSummary = OB.UTIL.cashupGetPaymentWithMovement(
+                              countCashSummary.qtyToKeepSummary = OB.UTIL.closeCashGetPaymentWithMovement(
                                 paymentWithMovement,
                                 countCashSummary.qtyToKeepSummary
                               );
-                              countCashSummary.qtyToDepoSummary = OB.UTIL.cashupGetPaymentWithMovement(
+                              countCashSummary.qtyToDepoSummary = OB.UTIL.closeCashGetPaymentWithMovement(
                                 paymentWithMovement,
                                 countCashSummary.qtyToDepoSummary
                               );

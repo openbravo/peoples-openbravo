@@ -1135,7 +1135,7 @@ enyo.kind({
           },
           data => {
             if (data && !data.exception) {
-              this.owner.$.cashMaster.updateCloseCashModel(model, data, () => {
+              this.owner.$.cashMaster.updateCashUpModel(model, data, () => {
                 this.closeCashReportChanged(model.get('closeCashReport').at(0));
               });
             }
