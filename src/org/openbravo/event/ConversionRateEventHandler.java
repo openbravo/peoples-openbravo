@@ -35,7 +35,7 @@ import org.openbravo.model.common.currency.ConversionRate;
 import org.openbravo.model.common.currency.Currency;
 
 class ConversionRateEventHandler extends EntityPersistenceEventObserver {
-  private static Entity[] entities = {
+  private static final Entity[] entities = {
       ModelProvider.getInstance().getEntity(ConversionRate.ENTITY_NAME) };
 
   @Override
@@ -43,7 +43,7 @@ class ConversionRateEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onNew(@Observes EntityNewEvent event) {
+  public void onNew(final @Observes EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -57,7 +57,7 @@ class ConversionRateEventHandler extends EntityPersistenceEventObserver {
     }
   }
 
-  public void onUpdate(@Observes EntityUpdateEvent event) {
+  public void onUpdate(final @Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -72,8 +72,8 @@ class ConversionRateEventHandler extends EntityPersistenceEventObserver {
   }
 
   // Check if exists another record using this currencyFrom - currencyTo in the same dates
-  private boolean existsRecord(String id, Client client, Currency currencyFrom, Currency currencyTo,
-      Date validFrom, Date validTo) {
+  private boolean existsRecord(final String id, final Client client, final Currency currencyFrom,
+      final Currency currencyTo, final Date validFrom, final Date validTo) {
     //@formatter:off
     final String hql = 
                   "select t.id" +
@@ -109,5 +109,4 @@ class ConversionRateEventHandler extends EntityPersistenceEventObserver {
         .list()
         .isEmpty();
   }
-
 }
