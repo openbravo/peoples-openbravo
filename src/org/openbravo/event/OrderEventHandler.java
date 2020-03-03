@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,7 +26,6 @@ import javax.enterprise.event.Observes;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.query.Query;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -42,7 +41,6 @@ import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.order.Order;
-import org.openbravo.model.common.order.OrderDiscount;
 import org.openbravo.model.common.order.OrderLine;
 
 class OrderEventHandler extends EntityPersistenceEventObserver {
@@ -199,13 +197,17 @@ class OrderEventHandler extends EntityPersistenceEventObserver {
   }
 
   private void removeDiscountInformationFromOrder(final OrderParameters orderParameters) {
-    StringBuilder deleteHql = new StringBuilder();
-    deleteHql.append(" delete from " + OrderDiscount.ENTITY_NAME);
-    deleteHql.append(" where " + OrderDiscount.PROPERTY_SALESORDER + ".id = :orderId");
-    @SuppressWarnings("rawtypes")
-    Query deleteQry = OBDal.getInstance().getSession().createQuery(deleteHql.toString());
-    deleteQry.setParameter("orderId", orderParameters.getOrderId());
-    deleteQry.executeUpdate();
+    //@formatter:off
+    final String deleteHql =
+                    " delete from OrderDiscount" +
+                    " where salesOrder.id = :orderId";
+    //@formatter:on
+
+    OBDal.getInstance()
+        .getSession()
+        .createQuery(deleteHql)
+        .setParameter("orderId", orderParameters.getOrderId())
+        .executeUpdate();
   }
 
   private class OrderParameters {
