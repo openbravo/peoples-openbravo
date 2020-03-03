@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,7 +22,6 @@ import java.util.Date;
 
 import javax.enterprise.event.Observes;
 
-import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -75,32 +74,40 @@ class ConversionRateEventHandler extends EntityPersistenceEventObserver {
   // Check if exists another record using this currencyFrom - currencyTo in the same dates
   private boolean existsRecord(String id, Client client, Currency currencyFrom, Currency currencyTo,
       Date validFrom, Date validTo) {
-    StringBuilder hql = new StringBuilder();
-    hql.append(" SELECT t." + ConversionRate.PROPERTY_ID);
-    hql.append(" FROM " + ConversionRate.ENTITY_NAME + " as t");
-    hql.append(" WHERE :id != t. " + ConversionRate.PROPERTY_ID);
-    hql.append(" AND :client = t. " + ConversionRate.PROPERTY_CLIENT);
-    hql.append(" AND :currencyFrom = t. " + ConversionRate.PROPERTY_CURRENCY);
-    hql.append(" AND :currencyTo = t. " + ConversionRate.PROPERTY_TOCURRENCY);
-    hql.append(" AND ((:validFrom between t." + ConversionRate.PROPERTY_VALIDFROMDATE + " AND t."
-        + ConversionRate.PROPERTY_VALIDTODATE);
-    hql.append(" OR :validTo between t." + ConversionRate.PROPERTY_VALIDFROMDATE + " AND t."
-        + ConversionRate.PROPERTY_VALIDTODATE + ")");
-    hql.append(" OR (:validFrom < t." + ConversionRate.PROPERTY_VALIDFROMDATE + " AND :validTo > t."
-        + ConversionRate.PROPERTY_VALIDTODATE + "))");
+    //@formatter:off
+    final String hql = 
+                  "select t.id" +
+                  "  from CurrencyConversionRate as t" +
+                  " where t.id != :currencyConversionRateId" +
+                  "   and t.client.id = :clientId" +
+                  "   and t.currency.id = :currencyFromId" +
+                  "   and t.toCurrency.id = :currencyToId" +
+                  "   and" +
+                  "     (" +
+                  "       (" +
+                  "         :validFrom between t.validFromDate and t.validToDate" +
+                  "         or :validTo between t.validFromDate and t.validToDate" +
+                  "       )" +
+                  "       or" +
+                  "         (" +
+                  "           :validFrom < t.validFromDate" +
+                  "           and :validTo > t.validToDate" +
+                  "         )" +
+                  "     )";
+    //@formatter:on
 
-    final Query<String> query = OBDal.getInstance()
+    return !OBDal.getInstance()
         .getSession()
-        .createQuery(hql.toString(), String.class);
-    query.setParameter("id", id);
-    query.setParameter("client", client);
-    query.setParameter("currencyFrom", currencyFrom);
-    query.setParameter("currencyTo", currencyTo);
-    query.setParameter("validFrom", validFrom);
-    query.setParameter("validTo", validTo);
-
-    query.setMaxResults(1);
-    return !query.list().isEmpty();
+        .createQuery(hql, String.class)
+        .setParameter("currencyConversionRateId", id)
+        .setParameter("clientId", client.getId())
+        .setParameter("currencyFromId", currencyFrom.getId())
+        .setParameter("currencyToId", currencyTo.getId())
+        .setParameter("validFrom", validFrom)
+        .setParameter("validTo", validTo)
+        .setMaxResults(1)
+        .list()
+        .isEmpty();
   }
 
 }
