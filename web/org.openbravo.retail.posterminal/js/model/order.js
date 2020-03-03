@@ -4230,7 +4230,9 @@
             'productPrice',
             OB.Model.ProductPrice,
             criteria,
-            successCallback,
+            function(productPrices) {
+              successCallback(productPrices.models);
+            },
             errorCallback,
             {
               modelsAffectedByCache: ['ProductPrice']
