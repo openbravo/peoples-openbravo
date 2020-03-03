@@ -81,7 +81,7 @@
       <foreign-key foreignTable="M_ATTRIBUTESETINSTANCE" name="M_STORAGE_PENDING_M_ATTRIBUTES">
         <reference local="M_ATTRIBUTESETINSTANCE_ID" foreign="M_ATTRIBUTESETINSTANCE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="M_STORAGE_PENDING_M_PRODUCT">
+      <foreign-key foreignTable="M_PRODUCT" name="M_STORAGE_PENDING_M_PRODUCT" onDelete="cascade">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCT_UOM" name="M_STORAGE_PENDING_M_PRODUCT_UO">

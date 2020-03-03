@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,8 +22,6 @@ import java.math.BigDecimal;
 
 import javax.servlet.ServletException;
 
-import org.hibernate.Session;
-import org.hibernate.query.Query;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -32,13 +30,13 @@ import org.openbravo.model.common.invoice.InvoiceLine;
 public class SL_LandedCost_InvoiceLine extends SimpleCallout {
 
   @Override
-  protected void execute(CalloutInfo info) throws ServletException {
-    VariablesSecureApp vars = info.vars;
-    String strInvLineId = vars.getStringParameter("inpcInvoicelineId");
+  protected void execute(final CalloutInfo info) throws ServletException {
+    final VariablesSecureApp vars = info.vars;
+    final String strInvLineId = vars.getStringParameter("inpcInvoicelineId");
     String strAmount = "";
     String strCurrencyId = "";
     if (!"".equals(strInvLineId)) {
-      InvoiceLine invoiceLine = OBDal.getInstance().get(InvoiceLine.class, strInvLineId);
+      final InvoiceLine invoiceLine = OBDal.getInstance().get(InvoiceLine.class, strInvLineId);
       strAmount = getAmount(invoiceLine);
       strCurrencyId = invoiceLine.getInvoice().getCurrency().getId();
       info.addResult("inpcCurrencyId", strCurrencyId);
@@ -48,18 +46,22 @@ public class SL_LandedCost_InvoiceLine extends SimpleCallout {
     info.addResult("inpamount", strAmount);
   }
 
-  private String getAmount(InvoiceLine invoiceLine) {
+  private String getAmount(final InvoiceLine invoiceLine) {
     BigDecimal totalAssigned = BigDecimal.ZERO;
     OBContext.setAdminMode(false);
     try {
-      final StringBuilder hqlString = new StringBuilder();
-      hqlString.append("select coalesce(sum(e.amount),0)");
-      hqlString.append(" from LandedCostCost as e");
-      hqlString.append(" where e.invoiceLine = :invoiceLine");
-      final Session session = OBDal.getInstance().getSession();
-      final Query<BigDecimal> query = session.createQuery(hqlString.toString(), BigDecimal.class);
-      query.setParameter("invoiceLine", invoiceLine);
-      totalAssigned = (BigDecimal) query.uniqueResult();
+      //@formatter:off
+      final String hql =
+                    "select coalesce(sum(e.amount),0)" +
+                    "  from LandedCostCost as e" +
+                    " where e.invoiceLine.id = :invoiceLineId";
+      //@formatter:on
+
+      totalAssigned = OBDal.getInstance()
+          .getSession()
+          .createQuery(hql, BigDecimal.class)
+          .setParameter("invoiceLineId", invoiceLine.getId())
+          .uniqueResult();
 
     } finally {
       OBContext.restorePreviousMode();

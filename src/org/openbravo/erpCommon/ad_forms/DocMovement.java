@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2019 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2020 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -28,7 +28,6 @@ import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
@@ -84,27 +83,27 @@ public class DocMovement extends AcctServer {
    * @return document lines (DocLine_Material)
    */
   public DocLine[] loadLines(ConnectionProvider conn) {
-    ArrayList<Object> list = new ArrayList<Object>();
+    ArrayList<Object> list = new ArrayList<>();
     DocLineMovementData[] data = null;
     OBContext.setAdminMode(false);
     try {
       data = DocLineMovementData.select(conn, Record_ID);
       for (int i = 0; i < data.length; i++) {
-        String Line_ID = data[i].getField("mMovementlineId");
-        DocLine_Material docLine = new DocLine_Material(DocumentType, Record_ID, Line_ID);
+        String lineId = data[i].getField("mMovementlineId");
+        DocLine_Material docLine = new DocLine_Material(DocumentType, Record_ID, lineId);
         docLine.loadAttributes(data[i], this);
         docLine.setQty(data[i].getField("MovementQty"), conn);
         docLine.m_M_Locator_ID = data[i].getField("M_Locator_ID");
         docLine.m_M_LocatorTo_ID = data[i].getField("M_LocatorTo_ID");
         // Get related M_Transaction_ID
-        InternalMovementLine movLine = OBDal.getInstance().get(InternalMovementLine.class, Line_ID);
-        if (movLine.getMaterialMgmtMaterialTransactionList().size() > 0) {
+        InternalMovementLine movLine = OBDal.getInstance().get(InternalMovementLine.class, lineId);
+        if (!movLine.getMaterialMgmtMaterialTransactionList().isEmpty()) {
           // Internal movement lines have 2 related transactions, both of them with the same cost
           docLine.setTransaction(movLine.getMaterialMgmtMaterialTransactionList().get(0));
         }
 
         //
-        log4jDocMovement.debug("Movement line: " + Line_ID + " loaded.");
+        log4jDocMovement.debug("Movement line: " + lineId + " loaded.");
         list.add(docLine);
       }
     } catch (ServletException e) {
@@ -184,10 +183,10 @@ public class DocMovement extends AcctServer {
         throw new IllegalStateException();
       }
       String costs = line.getProductCosts(DateAcct, as, conn, con);
-      BigDecimal b_Costs = new BigDecimal(costs);
+      BigDecimal bCosts = new BigDecimal(costs);
       // Inventory DR CR
       dr = fact.createLine(line, line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),
-          costCurrency.getId(), (b_Costs.negate()).toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+          costCurrency.getId(), (bCosts.negate()).toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
           DocumentType, conn); // from
       // (-)
       // CR
@@ -240,22 +239,23 @@ public class DocMovement extends AcctServer {
 
   /**
    * Get Document Confirmation
-   * 
-   * not used
    */
   @Override
-  public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
-    StringBuilder where = new StringBuilder();
-    where.append(" as trx");
-    where.append(" join trx." + MaterialTransaction.PROPERTY_MOVEMENTLINE + " as ml");
-    where.append(" where ml." + InternalMovementLine.PROPERTY_MOVEMENT + ".id = :recordId");
-    where.append(" and (trx." + MaterialTransaction.PROPERTY_TRANSACTIONCOST + " is null");
-    where.append(" or trx." + MaterialTransaction.PROPERTY_TRANSACTIONCOST + " <> 0)");
-    OBQuery<MaterialTransaction> qry = OBDal.getInstance()
-        .createQuery(MaterialTransaction.class, where.toString());
-    qry.setNamedParameter("recordId", strRecordId);
-    qry.setMaxResult(1);
-    if (qry.uniqueResult() == null) {
+  public boolean getDocumentConfirmation(final ConnectionProvider conn, final String strRecordId) {
+    //@formatter:off
+    final String hql =
+                  "as trx" +
+                  "  join trx.movementLine as ml" +
+                  " where ml.movement.id = :recordId" +
+                  "   and (trx.transactionCost is null" +
+                  "   or trx.transactionCost <> 0)";
+    //@formatter:on
+
+    if (OBDal.getInstance()
+        .createQuery(MaterialTransaction.class, hql)
+        .setNamedParameter("recordId", strRecordId)
+        .setMaxResult(1)
+        .uniqueResult() == null) {
       setStatus(STATUS_DocumentDisabled);
       return false;
     }
