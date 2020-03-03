@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2019 Openbravo SLU
+ * All portions are Copyright (C) 2010-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1012,6 +1012,13 @@ isc.OBGrid.addProperties({
               'Default/org.openbravo.client.application/images/grid/applyPendingChanges.png'
           );
           this._iconEnabled = true;
+
+          // Disable export to CSV button as actual filter doesn't match with current values in UI.
+          // There is no need to re-enable it as it will be handled by button's logic once data is received.
+          const grid = this.parentElement;
+          grid.view &&
+            grid.view.toolBar &&
+            grid.view.toolBar.setLeftMemberDisabled('export', true);
         },
         align: 'center',
         prompt: OB.I18N.getLabel('OBUIAPP_ApplyFilters'),
