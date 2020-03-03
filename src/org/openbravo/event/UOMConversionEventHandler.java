@@ -35,7 +35,7 @@ import org.openbravo.model.common.uom.UOM;
 import org.openbravo.model.common.uom.UOMConversion;
 
 class UOMConversionEventHandler extends EntityPersistenceEventObserver {
-  private static Entity[] entities = {
+  private static final Entity[] entities = {
       ModelProvider.getInstance().getEntity(UOMConversion.ENTITY_NAME) };
 
   @Override
@@ -43,7 +43,7 @@ class UOMConversionEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onNew(@Observes EntityNewEvent event) {
+  public void onNew(final @Observes EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -56,7 +56,7 @@ class UOMConversionEventHandler extends EntityPersistenceEventObserver {
     }
   }
 
-  public void onUpdate(@Observes EntityUpdateEvent event) {
+  public void onUpdate(final @Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -100,7 +100,7 @@ class UOMConversionEventHandler extends EntityPersistenceEventObserver {
   }
 
   // Check if exists another record using this uomFrom - uomTo
-  private boolean existsRecord(Client client, UOM uomFrom, UOM uomTo) {
+  private boolean existsRecord(final Client client, final UOM uomFrom, final UOM uomTo) {
     //@formatter:off
     String hql =
             "select t1.id" +
