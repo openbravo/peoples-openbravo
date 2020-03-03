@@ -4833,7 +4833,7 @@
       if (discountRule.getIdentifier) {
         disc.identifier = discountRule.getIdentifier(rule, discount);
       }
-      disc.name = discount.name || rule.get('printName') || rule.get('name');
+      disc.name = rule.get('printName') || discount.name || rule.get('name');
       disc.ruleId = rule.id || rule.get('ruleId');
       disc.discountinstance = discount.discountinstance;
       disc.rule = rule;
