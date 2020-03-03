@@ -1660,45 +1660,49 @@
 
     // call this method to get a new order document number
     getNextDocumentno: function() {
-      const sequenceNumber = OB.App.State.DocumentSequence.Utils.getNextSequenceNumber(
+      const orderSequenceNumber = OB.App.State.DocumentSequence.Utils.getNextSequenceNumber(
         OB.App.State.getState().DocumentSequence.orderSequence
       );
 
       return {
-        documentnoSuffix: sequenceNumber,
+        documentnoSuffix: orderSequenceNumber,
         documentNo: OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
           OB.MobileApp.model.get('terminal').docNoPrefix,
           OB.MobileApp.model.get('terminal').documentnoPadding,
-          sequenceNumber
+          orderSequenceNumber
         )
       };
     },
-    // call this method to get a new quotation document number
-    getNextQuotationno: function() {
-      var next = this.getLastQuotationnoSuffixInOrderlist() + 1;
-      return {
-        quotationnoSuffix: next,
-        documentNo:
-          OB.MobileApp.model.get('terminal').quotationDocNoPrefix +
-          (OB.Model.Order.prototype.includeDocNoSeperator ? '/' : '') +
-          OB.UTIL.padNumber(
-            next,
-            OB.MobileApp.model.get('terminal').documentnoPadding
-          )
-      };
-    },
+
     // call this method to get a new Return document number
     getNextReturnno: function() {
-      var next = this.getLastReturnnoSuffixInOrderlist() + 1;
+      const returnSequenceNumber = OB.App.State.DocumentSequence.Utils.getNextSequenceNumber(
+        OB.App.State.getState().DocumentSequence.returnSequence
+      );
+
       return {
-        documentnoSuffix: next,
-        documentNo:
-          OB.MobileApp.model.get('terminal').returnDocNoPrefix +
-          (OB.Model.Order.prototype.includeDocNoSeperator ? '/' : '') +
-          OB.UTIL.padNumber(
-            next,
-            OB.MobileApp.model.get('terminal').documentnoPadding
-          )
+        documentnoSuffix: returnSequenceNumber,
+        documentNo: OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
+          OB.MobileApp.model.get('terminal').returnDocNoPrefix,
+          OB.MobileApp.model.get('terminal').documentnoPadding,
+          returnSequenceNumber
+        )
+      };
+    },
+
+    // call this method to get a new quotation document number
+    getNextQuotationno: function() {
+      const quotationSequenceNumber = OB.App.State.DocumentSequence.Utils.getNextSequenceNumber(
+        OB.App.State.getState().DocumentSequence.quotationSequence
+      );
+
+      return {
+        quotationnoSuffix: quotationSequenceNumber,
+        documentNo: OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
+          OB.MobileApp.model.get('terminal').quotationDocNoPrefix,
+          OB.MobileApp.model.get('terminal').documentnoPadding,
+          quotationSequenceNumber
+        )
       };
     },
 
