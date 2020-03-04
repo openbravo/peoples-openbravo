@@ -82,7 +82,7 @@
           );
           return bomLine;
         })
-        .sort((a, b) => a.amount - b.amount);
+        .sort((a, b) => OB.DEC.abs(a.amount) - OB.DEC.abs(b.amount));
 
       const adjustment = OB.DEC.sub(
         line.amount,
