@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2018 Openbravo SLU
+ * All portions are Copyright (C) 2012-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -31,7 +31,6 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.OBContext;
@@ -46,9 +45,7 @@ import org.openbravo.model.common.currency.ConversionRateDoc;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.Product;
-import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.pricing.pricelist.PriceList;
-import org.openbravo.model.pricing.pricelist.PriceListVersion;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.service.db.CallStoredProcedure;
 
@@ -150,29 +147,43 @@ public class FinancialUtils {
    */
   public static ProductPrice getProductPrice(Product product, Date date, boolean useSalesPriceList,
       PriceList priceList, boolean throwException, boolean usePriceIncludeTax) throws OBException {
-    StringBuffer where = new StringBuffer();
-    where.append(" as pp");
-    where.append("   join pp." + ProductPrice.PROPERTY_PRICELISTVERSION + " as plv");
-    where.append("   join plv." + PriceListVersion.PROPERTY_PRICELIST + " as pl");
-    where.append(" where pp." + ProductPrice.PROPERTY_PRODUCT + " = :product");
-    where.append("   and plv." + PriceListVersion.PROPERTY_VALIDFROMDATE + " <= :date");
+    //@formatter:off
+    String hql =
+            "as pp" +
+            "  join pp.priceListVersion as plv" +
+            "  join plv.priceList as pl" +
+            " where pp.product.id = :productId" +
+            "   and plv.validFromDate <= :date";
+    //@formatter:on
     if (priceList != null) {
-      where.append("   and pl = :pricelist");
+      //@formatter:off
+      hql +=
+            "   and pl.id = :pricelistId";
+      //@formatter:on
     } else {
-      where.append("   and pl." + PriceList.PROPERTY_SALESPRICELIST + " = :salespricelist");
+      //@formatter:off
+      hql +=
+            "   and pl.salesPriceList = :salespricelist";
+      //@formatter:on
     }
     if (!usePriceIncludeTax) {
-      where.append("   and pl." + PriceList.PROPERTY_PRICEINCLUDESTAX + " = false");
+      //@formatter:off
+      hql +=
+            "   and pl.priceIncludesTax = false";
+      //@formatter:on
     }
-    where.append(" order by pl." + PriceList.PROPERTY_DEFAULT + " desc, plv."
-        + PriceListVersion.PROPERTY_VALIDFROMDATE + " desc");
+    //@formatter:off
+    hql +=
+            " order by pl.default desc" +
+            "   , plv.validFromDate desc";
+    //@formatter:on
 
     OBQuery<ProductPrice> ppQry = OBDal.getInstance()
-        .createQuery(ProductPrice.class, where.toString());
-    ppQry.setNamedParameter("product", product);
-    ppQry.setNamedParameter("date", date);
+        .createQuery(ProductPrice.class, hql)
+        .setNamedParameter("productId", product.getId())
+        .setNamedParameter("date", date);
     if (priceList != null) {
-      ppQry.setNamedParameter("pricelist", priceList);
+      ppQry.setNamedParameter("pricelistId", priceList.getId());
     } else {
       ppQry.setNamedParameter("salespricelist", useSalesPriceList);
     }
@@ -399,20 +410,21 @@ public class FinancialUtils {
    */
   public static ScrollableResults getPaymentsWithCredit(String businessPartnerId,
       String currencyId) {
-    StringBuilder hql = new StringBuilder();
-    hql.append(" SELECT t1." + FIN_Payment.PROPERTY_ID);
-    hql.append(" FROM " + FIN_Payment.ENTITY_NAME + " as t1");
-    hql.append(" WHERE t1." + FIN_Payment.PROPERTY_BUSINESSPARTNER + ".id = :businessPartnerId");
-    hql.append(" AND t1." + FIN_Payment.PROPERTY_CURRENCY + ".id = :currencyId");
-    hql.append(" AND t1." + FIN_Payment.PROPERTY_GENERATEDCREDIT + " <> 0");
-    hql.append(" AND t1." + FIN_Payment.PROPERTY_GENERATEDCREDIT + " <> t1."
-        + FIN_Payment.PROPERTY_USEDCREDIT);
-    final Query<String> query = OBDal.getInstance()
+    //@formatter:off
+    final String hql =
+                  "select t1.id" +
+                  "  from FIN_Payment as t1" +
+                  " where t1.businessPartner.id = :businessPartnerId" +
+                  "   and t1.currency.id = :currencyId" +
+                  "   and t1.generatedCredit <> 0" +
+                  "   and t1.generatedCredit <> t1.usedCredit";
+    //@formatter:on
+
+    return OBDal.getInstance()
         .getSession()
-        .createQuery(hql.toString(), String.class);
-    query.setParameter("businessPartnerId", businessPartnerId);
-    query.setParameter("currencyId", currencyId);
-    ScrollableResults scroll = query.scroll(ScrollMode.SCROLL_SENSITIVE);
-    return scroll;
+        .createQuery(hql, String.class)
+        .setParameter("businessPartnerId", businessPartnerId)
+        .setParameter("currencyId", currencyId)
+        .scroll(ScrollMode.SCROLL_SENSITIVE);
   }
 }
