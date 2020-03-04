@@ -59,8 +59,9 @@ public class FinancialUtils {
   /**
    * @see #getProductStdPrice(Product, Date, boolean, PriceList, Currency, Organization)
    */
-  public static BigDecimal getProductStdPrice(Product product, Date date, boolean useSalesPriceList,
-      Currency currency, Organization organization) throws OBException {
+  public static BigDecimal getProductStdPrice(final Product product, final Date date,
+      final boolean useSalesPriceList, final Currency currency, final Organization organization)
+      throws OBException {
     return getProductStdPrice(product, date, useSalesPriceList, null, currency, organization);
   }
 
@@ -87,9 +88,10 @@ public class FinancialUtils {
    * @throws OBException
    *           when no valid ProductPrice is found.
    */
-  public static BigDecimal getProductStdPrice(Product product, Date date, boolean useSalesPriceList,
-      PriceList pricelist, Currency currency, Organization organization) throws OBException {
-    ProductPrice pp = getProductPrice(product, date, useSalesPriceList, pricelist);
+  public static BigDecimal getProductStdPrice(final Product product, final Date date,
+      final boolean useSalesPriceList, final PriceList pricelist, final Currency currency,
+      final Organization organization) throws OBException {
+    final ProductPrice pp = getProductPrice(product, date, useSalesPriceList, pricelist);
     BigDecimal price = pp.getStandardPrice();
     if (!pp.getPriceListVersion().getPriceList().getCurrency().getId().equals(currency.getId())) {
       // Conversion is needed.
@@ -103,24 +105,25 @@ public class FinancialUtils {
   /**
    * @see #getProductPrice(Product, Date, boolean, PriceList, boolean)
    */
-  public static ProductPrice getProductPrice(Product product, Date date, boolean useSalesPriceList)
-      throws OBException {
+  public static ProductPrice getProductPrice(final Product product, final Date date,
+      final boolean useSalesPriceList) throws OBException {
     return getProductPrice(product, date, useSalesPriceList, null, true);
   }
 
   /**
    * @see #getProductPrice(Product, Date, boolean, PriceList, boolean)
    */
-  public static ProductPrice getProductPrice(Product product, Date date, boolean useSalesPriceList,
-      PriceList priceList) throws OBException {
+  public static ProductPrice getProductPrice(final Product product, final Date date,
+      final boolean useSalesPriceList, final PriceList priceList) throws OBException {
     return getProductPrice(product, date, useSalesPriceList, priceList, true);
   }
 
   /**
    * @see #getProductPrice(Product, Date, boolean, PriceList, boolean, boolean)
    */
-  public static ProductPrice getProductPrice(Product product, Date date, boolean useSalesPriceList,
-      PriceList priceList, boolean throwException) throws OBException {
+  public static ProductPrice getProductPrice(final Product product, final Date date,
+      final boolean useSalesPriceList, final PriceList priceList, final boolean throwException)
+      throws OBException {
     return getProductPrice(product, date, useSalesPriceList, priceList, throwException, true);
   }
 
@@ -145,8 +148,9 @@ public class FinancialUtils {
    * @throws OBException
    *           when no valid ProductPrice is found and throwException is true.
    */
-  public static ProductPrice getProductPrice(Product product, Date date, boolean useSalesPriceList,
-      PriceList priceList, boolean throwException, boolean usePriceIncludeTax) throws OBException {
+  public static ProductPrice getProductPrice(final Product product, final Date date,
+      final boolean useSalesPriceList, final PriceList priceList, final boolean throwException,
+      final boolean usePriceIncludeTax) throws OBException {
     //@formatter:off
     String hql =
             "as pp" +
@@ -178,7 +182,7 @@ public class FinancialUtils {
             "   , plv.validFromDate desc";
     //@formatter:on
 
-    OBQuery<ProductPrice> ppQry = OBDal.getInstance()
+    final OBQuery<ProductPrice> ppQry = OBDal.getInstance()
         .createQuery(ProductPrice.class, hql)
         .setNamedParameter("productId", product.getId())
         .setNamedParameter("date", date);
@@ -188,7 +192,7 @@ public class FinancialUtils {
       ppQry.setNamedParameter("salespricelist", useSalesPriceList);
     }
 
-    List<ProductPrice> ppList = ppQry.list();
+    final List<ProductPrice> ppList = ppQry.list();
     if (ppList.isEmpty()) {
       // No product price found.
       if (throwException) {
@@ -216,11 +220,11 @@ public class FinancialUtils {
    *          Organization of the document that needs to be converted.
    * @return a valid ConversionRate for the given parameters, null if none is found.
    */
-  public static ConversionRate getConversionRate(Date date, Currency fromCurrency,
-      Currency toCurrency, Organization org, Client client) {
+  public static ConversionRate getConversionRate(final Date date, final Currency fromCurrency,
+      final Currency toCurrency, final Organization org, final Client client) {
     ConversionRate conversionRate;
     // Conversion rate records do not get into account timestamp.
-    Date dateWithoutTimestamp = DateUtils.setHours(
+    final Date dateWithoutTimestamp = DateUtils.setHours(
         DateUtils.setMinutes(DateUtils.setSeconds(DateUtils.setMilliseconds(date, 0), 0), 0), 0);
     // Readable Client Org filters to false as organization is filtered explicitly.
     OBContext.setAdminMode(false);
@@ -248,7 +252,7 @@ public class FinancialUtils {
                 .getParentOrg(org),
             client);
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       log4j.error("Exception calculating conversion rate.", e);
       return null;
     } finally {
@@ -261,8 +265,9 @@ public class FinancialUtils {
    * {@link FinancialUtils#getConvertedAmount(BigDecimal, Currency, Currency, Date, Organization, String, List)}
    * with an empty list of conversion rates at document level
    */
-  public static BigDecimal getConvertedAmount(BigDecimal amount, Currency curFrom, Currency curTo,
-      Date date, Organization org, String strPrecision) throws OBException {
+  public static BigDecimal getConvertedAmount(final BigDecimal amount, final Currency curFrom,
+      final Currency curTo, final Date date, final Organization org, final String strPrecision)
+      throws OBException {
     return getConvertedAmount(amount, curFrom, curTo, date, org, strPrecision,
         Collections.<ConversionRateDoc> emptyList());
   }
@@ -289,15 +294,15 @@ public class FinancialUtils {
    * @throws OBException
    *           when no Conversion Rate is found for the given parameters.
    */
-  public static BigDecimal getConvertedAmount(BigDecimal amount, Currency curFrom, Currency curTo,
-      Date date, Organization org, String strPrecision, List<ConversionRateDoc> rateDocs)
-      throws OBException {
+  public static BigDecimal getConvertedAmount(final BigDecimal amount, final Currency curFrom,
+      final Currency curTo, final Date date, Organization org, final String strPrecision,
+      final List<ConversionRateDoc> rateDocs) throws OBException {
     Check.isNotNull(rateDocs, OBMessageUtils.messageBD("ParameterMissing") + " (rateDocs)");
     if (curFrom.getId().equals(curTo.getId()) || amount.signum() == 0) {
       return amount;
     }
     BigDecimal rate = null;
-    if (rateDocs.size() > 0) {
+    if (!rateDocs.isEmpty()) {
       for (ConversionRateDoc rateDoc : rateDocs) {
         if (curFrom.getId().equals(rateDoc.getCurrency().getId())
             && curTo.getId().equals(rateDoc.getToCurrency().getId())) {
@@ -307,7 +312,7 @@ public class FinancialUtils {
       }
     }
     if (rate == null) {
-      ConversionRate cr = getConversionRate(date, curFrom, curTo, org, org.getClient());
+      final ConversionRate cr = getConversionRate(date, curFrom, curTo, org, org.getClient());
       if (cr == null) {
         throw new OBException("@NoCurrencyConversion@ " + curFrom.getISOCode() + " @to@ "
             + curTo.getISOCode() + " @ForDate@ " + OBDateUtils.formatDate(date)
@@ -328,13 +333,12 @@ public class FinancialUtils {
    * Returns the Currency of a Legal Entity. If there is no one defined, returns the currency of the
    * Client.
    */
-  public static Currency getLegalEntityCurrency(Organization organization) {
-    Organization legalEntity = OBContext.getOBContext()
+  public static Currency getLegalEntityCurrency(final Organization organization) {
+    final Organization legalEntity = OBContext.getOBContext()
         .getOrganizationStructureProvider(organization.getClient().getId())
         .getLegalEntity(organization);
-    Currency currency = (legalEntity.getCurrency() != null) ? legalEntity.getCurrency()
+    return (legalEntity.getCurrency() != null) ? legalEntity.getCurrency()
         : organization.getClient().getCurrency();
-    return currency;
   }
 
   /**
@@ -355,12 +359,14 @@ public class FinancialUtils {
    * @deprecated Use {@link #calculateNetAmtFromGross} instead
    */
   @Deprecated
-  public static BigDecimal calculateNetFromGross(String strTaxId, BigDecimal grossAmount,
-      int pricePrecision, BigDecimal alternateAmount, BigDecimal quantity) {
+  public static BigDecimal calculateNetFromGross(final String strTaxId,
+      final BigDecimal grossAmount, final int pricePrecision, final BigDecimal alternateAmount,
+      final BigDecimal quantity) {
     if (grossAmount.compareTo(BigDecimal.ZERO) == 0) {
       return BigDecimal.ZERO;
     }
-    final List<Object> parameters = new ArrayList<Object>();
+
+    final List<Object> parameters = new ArrayList<>();
     parameters.add(strTaxId);
     parameters.add(grossAmount);
     // TODO: Alternate Base Amount
@@ -369,9 +375,7 @@ public class FinancialUtils {
     parameters.add(quantity);
 
     final String procedureName = "C_GET_NET_PRICE_FROM_GROSS";
-    final BigDecimal lineNetAmount = (BigDecimal) CallStoredProcedure.getInstance()
-        .call(procedureName, parameters, null);
-    return lineNetAmount;
+    return (BigDecimal) CallStoredProcedure.getInstance().call(procedureName, parameters, null);
   }
 
   /**
@@ -387,29 +391,27 @@ public class FinancialUtils {
    *          alternate amount in case the tax uses it.
    * @return the net unit price
    */
-  public static BigDecimal calculateNetAmtFromGross(String strTaxId, BigDecimal grossAmount,
-      int stdPrecision, BigDecimal alternateAmount) {
+  public static BigDecimal calculateNetAmtFromGross(final String strTaxId,
+      final BigDecimal grossAmount, final int stdPrecision, final BigDecimal alternateAmount) {
     if (grossAmount.compareTo(BigDecimal.ZERO) == 0) {
       return BigDecimal.ZERO;
     }
 
-    final List<Object> parameters = new ArrayList<Object>();
+    final List<Object> parameters = new ArrayList<>();
     parameters.add(strTaxId);
     parameters.add(grossAmount);
     parameters.add(alternateAmount);
     parameters.add(stdPrecision);
 
     final String procedureName = "C_GET_NET_AMOUNT_FROM_GROSS";
-    final BigDecimal lineNetAmount = (BigDecimal) CallStoredProcedure.getInstance()
-        .call(procedureName, parameters, null);
-    return lineNetAmount;
+    return (BigDecimal) CallStoredProcedure.getInstance().call(procedureName, parameters, null);
   }
 
   /**
    * Get all the payment details with available credit
    */
-  public static ScrollableResults getPaymentsWithCredit(String businessPartnerId,
-      String currencyId) {
+  public static ScrollableResults getPaymentsWithCredit(final String businessPartnerId,
+      final String currencyId) {
     //@formatter:off
     final String hql =
                   "select t1.id" +
