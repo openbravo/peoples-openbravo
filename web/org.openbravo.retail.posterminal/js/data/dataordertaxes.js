@@ -482,12 +482,27 @@
               if (coll && coll.length > 0) {
                 fulfill(coll);
               } else {
-                reject(
-                  OB.I18N.getLabel('OBPOS_TaxNotFound_Message', [
-                    bpName,
-                    bpShipLocName
-                  ])
-                );
+                if (
+                  OB.UTIL.isNullOrUndefined(
+                    OB.MobileApp.model.get('taxCategoryName')
+                  )
+                ) {
+                  reject(
+                    OB.I18N.getLabel('OBPOS_TaxNotFound_Message', [
+                      bpName,
+                      bpShipLocName
+                    ])
+                  );
+                } else {
+                  reject(
+                    OB.I18N.getLabel('OBPOS_TaxWithCategoryNotFound_Message', [
+                      bpName,
+                      bpShipLocName,
+                      OB.MobileApp.model.get('taxCategoryName')
+                    ])
+                  );
+                  OB.MobileApp.model.unset('taxCategoryName');
+                }
               }
             },
             function() {
@@ -497,6 +512,21 @@
           );
         }
       );
+    });
+  };
+
+  var getTaxCategoryName = function(params) {
+    return new Promise(function(resolve) {
+      if (!OB.UTIL.isNullOrUndefined(OB.Model.TaxCategory)) {
+        OB.Dal.get(
+          OB.Model.TaxCategory,
+          params.line.get('product').get('taxCategory'),
+          function(taxcategory) {
+            OB.MobileApp.model.set('taxCategoryName', taxcategory.get('name'));
+          }
+        );
+      }
+      resolve(params);
     });
   };
 
@@ -1005,6 +1035,7 @@
             orggross: orggross,
             discountedGross: discountedGross
           }) //
+            .then(getTaxCategoryName)
             .then(calcProductTaxesIncPrice);
         }
       })
