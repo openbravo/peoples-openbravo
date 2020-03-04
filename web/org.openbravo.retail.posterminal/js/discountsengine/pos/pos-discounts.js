@@ -349,11 +349,12 @@
       filterGroup = 'priceAdjustment',
       filterFunction = null
     ) {
-      const filterArray = await filterModel.orderedBy([
-        filterGroup,
-        '_identifier',
-        'id'
-      ]);
+      const filterArray = await filterModel.find(
+        new OB.App.Class.Criteria()
+          .orderBy([filterGroup, '_identifier', 'id'], 'asc')
+          .limit(10000)
+          .build()
+      );
 
       if (filterEntity) {
         filterArray.forEach(
@@ -438,7 +439,6 @@
      * @return {Object[]} The list of discount records with business partner filter added.
      */
     addDiscountsByBusinessPartnerFilter: async function(discounts) {
-      // FIXME: Make query remotely in case OBPOS_remote.discount.bp filtering by OB.MobileApp.model.get('businessPartner').id
       return OB.Discounts.Pos.addDiscountFilter(
         discounts,
         OB.App.MasterdataModels.DiscountFilterBusinessPartner,
@@ -615,6 +615,7 @@
         new OB.App.Class.Criteria()
           .criterion('discountType', manualPromotions, 'in')
           .orderBy('name', 'asc')
+          .limit(10000)
           .build()
       );
 
@@ -623,6 +624,7 @@
         new OB.App.Class.Criteria()
           .criterion('discountType', manualPromotions, 'notIn')
           .orderBy('id', 'asc')
+          .limit(10000)
           .build()
       );
       noManualDiscounts.sort((a, b) => a.priority - b.priority);
@@ -675,7 +677,9 @@
       );
 
       //BPSets
-      const bpSetLines = await OB.App.MasterdataModels.BPSetLine.find();
+      const bpSetLines = await OB.App.MasterdataModels.BPSetLine.find(
+        new OB.App.Class.Criteria().limit(10000).build()
+      );
       data.bpSets = OB.App.ArrayUtils.groupBy(bpSetLines, 'bpSet');
 
       return data;

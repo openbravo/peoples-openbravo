@@ -97,6 +97,7 @@
 
     /**
      * If the header gross amount is different than the sum of line gross amounts, we need to adjust the highest line gross amount
+     * Last tax amount of this line will be adjusted as well.
      */
     static adjustLineGrossAmount(grossAmount, lines) {
       const adjustment = OB.DEC.sub(
@@ -118,6 +119,10 @@
           line.grossAmount,
           line.quantity
         );
+        const adjustedTax = line.taxes.reduce((tax1, tax2) => {
+          return OB.DEC.abs(tax1.base) <= OB.DEC.abs(tax2.base) ? tax2 : tax1;
+        });
+        adjustedTax.amount = OB.DEC.add(adjustedTax.amount, adjustment);
       }
     }
 

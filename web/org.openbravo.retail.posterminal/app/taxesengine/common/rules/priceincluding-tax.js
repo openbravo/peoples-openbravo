@@ -97,6 +97,7 @@
 
     /**
      * If the header net amount is different than the sum of line net amounts, we need to adjust the highest line net amount
+     * First tax base and amount of this line will be adjusted as well.
      */
     static adjustLineNetAmount(netAmount, lines) {
       const adjustment = OB.DEC.sub(
@@ -119,34 +120,10 @@
           line.quantity
         );
         const adjustedTax = line.taxes.reduce((tax1, tax2) => {
-          const calculateDifference = tax => {
-            return new BigDecimal(String(tax.amount))
-              .subtract(
-                OB.Taxes.Tax.calculateTaxAmount(tax.base, tax.tax).add(
-                  new BigDecimal(String(adjustment))
-                )
-              )
-              .abs();
-          };
-          return calculateDifference(tax1).compareTo(
-            calculateDifference(tax2)
-          ) < 0
-            ? tax1
-            : tax2;
+          return OB.DEC.abs(tax1.base) <= OB.DEC.abs(tax2.base) ? tax1 : tax2;
         });
         adjustedTax.base = OB.DEC.add(adjustedTax.base, adjustment);
-        line.taxes
-          .filter(
-            childTax =>
-              childTax.tax.id !== adjustedTax.tax.id &&
-              (childTax.tax.cascade ||
-                childTax.tax.taxBase === adjustedTax.tax.id)
-          )
-          .map(childTax => {
-            const updatedChildTax = childTax;
-            updatedChildTax.amount = OB.DEC.sub(childTax.amount, adjustment);
-            return updatedChildTax;
-          });
+        adjustedTax.amount = OB.DEC.sub(adjustedTax.amount, adjustment);
       }
     }
 

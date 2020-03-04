@@ -82,7 +82,7 @@
           );
           return bomLine;
         })
-        .sort((a, b) => a.amount - b.amount);
+        .sort((a, b) => OB.DEC.abs(a.amount) - OB.DEC.abs(b.amount));
 
       const adjustment = OB.DEC.sub(
         line.amount,
@@ -121,6 +121,14 @@
       lineTaxes.netAmount = lineBomTaxes.reduce(
         (total, bomLine) => OB.DEC.add(total, bomLine.netAmount),
         OB.DEC.Zero
+      );
+      lineTaxes.grossPrice = OB.Taxes.Tax.calculatePriceFromAmount(
+        lineTaxes.grossAmount,
+        lineTaxes.quantity
+      );
+      lineTaxes.netPrice = OB.Taxes.Tax.calculatePriceFromAmount(
+        lineTaxes.netAmount,
+        lineTaxes.quantity
       );
 
       return lineTaxes;
@@ -244,7 +252,7 @@
 
     /**
      * Adjust the tax amount with the highest variance in case gross amount <> net amount + tax amount
-     * The tax amount with the highest variance will be the lowest abs(rounded tax amount - (exact tax amount + adjustment))
+     * The tax amount with the highest variance will be the one with the lowest abs(rounded tax amount + adjustment - exact tax amount)
      * The tax base of dependant taxes will be adjusted as well
      */
     static adjustTaxAmount(grossAmount, netAmount, taxes) {
@@ -260,16 +268,13 @@
         const adjustedTax = taxes.reduce((tax1, tax2) => {
           const calculateDifference = tax => {
             return new BigDecimal(String(tax.amount))
-              .subtract(
-                OB.Taxes.Tax.calculateTaxAmount(tax.base, tax.tax).add(
-                  new BigDecimal(String(adjustment))
-                )
-              )
+              .add(new BigDecimal(String(adjustment)))
+              .subtract(OB.Taxes.Tax.calculateTaxAmount(tax.base, tax.tax))
               .abs();
           };
           return calculateDifference(tax1).compareTo(
             calculateDifference(tax2)
-          ) > 0
+          ) <= 0
             ? tax1
             : tax2;
         });
