@@ -439,7 +439,6 @@
      * @return {Object[]} The list of discount records with business partner filter added.
      */
     addDiscountsByBusinessPartnerFilter: async function(discounts) {
-      // FIXME: Make query remotely in case OBPOS_remote.discount.bp filtering by OB.MobileApp.model.get('businessPartner').id
       return OB.Discounts.Pos.addDiscountFilter(
         discounts,
         OB.App.MasterdataModels.DiscountFilterBusinessPartner,
