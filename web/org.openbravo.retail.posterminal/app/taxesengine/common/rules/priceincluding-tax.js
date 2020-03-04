@@ -97,7 +97,7 @@
 
     /**
      * If the header net amount is different than the sum of line net amounts, we need to adjust the highest line net amount
-     * Last tax base and amount of this line will be adjusted as well.
+     * First tax base and amount of this line will be adjusted as well.
      */
     static adjustLineNetAmount(netAmount, lines) {
       const adjustment = OB.DEC.sub(
