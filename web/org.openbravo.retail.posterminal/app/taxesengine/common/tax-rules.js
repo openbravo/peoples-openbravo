@@ -244,7 +244,7 @@
 
     /**
      * Adjust the tax amount with the highest variance in case gross amount <> net amount + tax amount
-     * The tax amount with the highest variance will be the lowest abs(rounded tax amount - (exact tax amount + adjustment))
+     * The tax amount with the highest variance will be the one with the lowest abs(rounded tax amount + adjustment - exact tax amount)
      * The tax base of dependant taxes will be adjusted as well
      */
     static adjustTaxAmount(grossAmount, netAmount, taxes) {
@@ -260,16 +260,13 @@
         const adjustedTax = taxes.reduce((tax1, tax2) => {
           const calculateDifference = tax => {
             return new BigDecimal(String(tax.amount))
-              .subtract(
-                OB.Taxes.Tax.calculateTaxAmount(tax.base, tax.tax).add(
-                  new BigDecimal(String(adjustment))
-                )
-              )
+              .add(new BigDecimal(String(adjustment)))
+              .subtract(OB.Taxes.Tax.calculateTaxAmount(tax.base, tax.tax))
               .abs();
           };
           return calculateDifference(tax1).compareTo(
             calculateDifference(tax2)
-          ) > 0
+          ) <= 0
             ? tax1
             : tax2;
         });
