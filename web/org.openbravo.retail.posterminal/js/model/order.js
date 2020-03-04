@@ -8539,11 +8539,13 @@
               }
             });
             lineProm = linesToReduce.shift();
-            lineProm.set('qty', l.get('qty'));
-            lineProm.set('promotions', l.get('promotions'));
-            lineProm.set('promotionCandidates', l.get('promotionCandidates'));
-            lineProm.set('qtyToApplyDiscount', l.get('qtyToApplyDiscount'));
-            lineProm.trigger('change');
+            if (!OB.UTIL.isNullOrUndefined(lineProm)) {
+              lineProm.set('qty', l.get('qty'));
+              lineProm.set('promotions', l.get('promotions'));
+              lineProm.set('promotionCandidates', l.get('promotionCandidates'));
+              lineProm.set('qtyToApplyDiscount', l.get('qtyToApplyDiscount'));
+              lineProm.trigger('change');
+            }
             _.each(linesToReduce, function(line) {
               if (line.get('qty') > qtyToReduce) {
                 line.set(
