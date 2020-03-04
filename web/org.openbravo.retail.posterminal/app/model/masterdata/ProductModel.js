@@ -58,6 +58,10 @@
         new OB.App.Class.Index({
           name: 'productUPC_idx',
           properties: [{ property: 'uPCEAN' }]
+        }),
+        new OB.App.Class.Index({
+          name: 'productIsGeneric_idx',
+          properties: [{ property: 'isGeneric', isBoolean: true }]
         })
       ];
     }
