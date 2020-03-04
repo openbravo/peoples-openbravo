@@ -122,6 +122,14 @@
         (total, bomLine) => OB.DEC.add(total, bomLine.netAmount),
         OB.DEC.Zero
       );
+      lineTaxes.grossPrice = OB.Taxes.Tax.calculatePriceFromAmount(
+        lineTaxes.grossAmount,
+        lineTaxes.quantity
+      );
+      lineTaxes.netPrice = OB.Taxes.Tax.calculatePriceFromAmount(
+        lineTaxes.netAmount,
+        lineTaxes.quantity
+      );
 
       return lineTaxes;
     }
