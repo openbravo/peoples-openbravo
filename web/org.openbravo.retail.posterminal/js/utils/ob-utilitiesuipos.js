@@ -436,7 +436,7 @@ OB.UTIL.getPriceListName = function(priceListId, callback) {
 
 /**
  * Generic approval checker. It validates user/password can approve the approvalType.
- * It can work online in case that user has done at least once the same approvalType
+ * It can work offline in case that user has done at least once the same approvalType
  * in this same browser. Data regarding privileged users is stored in supervisor table
  */
 OB.UTIL.checkApproval = function(
