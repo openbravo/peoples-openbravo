@@ -1054,7 +1054,7 @@ enyo.kind({
 
         // Show the payment list only in synchronized tickets and in C&R
         if (
-          model.get('isLayaway') ||
+          (model.get('isLayaway') && model.getPayment() > 0) ||
           model.get('isPaid') ||
           model.get('doCancelAndReplace')
         ) {

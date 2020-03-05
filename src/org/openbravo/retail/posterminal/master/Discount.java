@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2019 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -14,15 +14,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.base.model.ModelProvider;
-import org.openbravo.base.model.Property;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
@@ -227,11 +224,6 @@ public class Discount extends MasterDataProcessHQLQuery {
 
   @Override
   public List<String> getMasterDataModelProperties() {
-    return ModelProvider.getInstance()
-        .getEntity(PriceAdjustment.class)
-        .getProperties()
-        .stream()
-        .map(Property::getName)
-        .collect(Collectors.toList());
+    return getPropertiesFrom(PriceAdjustment.class);
   }
 }

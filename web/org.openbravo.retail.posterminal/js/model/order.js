@@ -4802,7 +4802,7 @@
       if (discountRule && discountRule.getIdentifier) {
         disc.identifier = discountRule.getIdentifier(rule, discount);
       }
-      disc.name = discount.name || rule.get('printName') || rule.get('name');
+      disc.name = rule.get('printName') || discount.name || rule.get('name');
       disc.ruleId = rule.id || rule.get('ruleId');
       disc.discountinstance = discount.discountinstance;
       disc.rule = rule;
@@ -10859,10 +10859,9 @@
         }
       },
       loadCurrent: function(isNew) {
-        OB.MobileApp.model.set(
-          'terminalLogContext',
-          this.current.get('documentNo')
-        );
+        OB.App.State.TerminalLog.setContext({
+          context: this.current.get('documentNo')
+        });
         // Check if the current order to be loaded should be deleted
         if (this.current.get('obposIsDeleted') && this.current.get('id')) {
           var deletedOrderDocNo = this.current.get('documentNo');

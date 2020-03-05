@@ -10,7 +10,6 @@ package org.openbravo.retail.posterminal.master;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -18,8 +17,6 @@ import javax.inject.Inject;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.base.model.ModelProvider;
-import org.openbravo.base.model.Property;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery;
 import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery.MasterDataModel;
@@ -58,11 +55,6 @@ public class TaxCategoryBOM extends MasterDataProcessHQLQuery {
 
   @Override
   public List<String> getMasterDataModelProperties() {
-    return ModelProvider.getInstance()
-        .getEntity(org.openbravo.model.financialmgmt.tax.TaxCategory.class)
-        .getProperties()
-        .stream()
-        .map(Property::getName)
-        .collect(Collectors.toList());
+    return getPropertiesFrom(org.openbravo.model.financialmgmt.tax.TaxCategory.class);
   }
 }
