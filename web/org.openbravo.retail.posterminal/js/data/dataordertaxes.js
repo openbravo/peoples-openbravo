@@ -343,6 +343,11 @@
 
   var findTaxesCollection = function(receipt, line, taxCategory) {
     return new Promise(function(fulfill, reject) {
+      var taxCategoryName = null;
+      if (taxCategory instanceof Object) {
+        taxCategoryName = taxCategory.name;
+        taxCategory = taxCategory.id;
+      }
       // sql parameters
       var fromRegionOrg = OB.MobileApp.model.get('terminal')
           .organizationRegionId,
@@ -482,11 +487,7 @@
               if (coll && coll.length > 0) {
                 fulfill(coll);
               } else {
-                if (
-                  OB.UTIL.isNullOrUndefined(
-                    OB.MobileApp.model.get('taxCategoryName')
-                  )
-                ) {
+                if (OB.UTIL.isNullOrUndefined(taxCategoryName)) {
                   reject(
                     OB.I18N.getLabel('OBPOS_TaxNotFound_Message', [
                       bpName,
@@ -498,10 +499,9 @@
                     OB.I18N.getLabel('OBPOS_TaxWithCategoryNotFound_Message', [
                       bpName,
                       bpShipLocName,
-                      OB.MobileApp.model.get('taxCategoryName')
+                      taxCategoryName
                     ])
                   );
-                  OB.MobileApp.model.unset('taxCategoryName');
                 }
               }
             },
@@ -518,15 +518,25 @@
   var getTaxCategoryName = function(params) {
     return new Promise(function(resolve) {
       if (!OB.UTIL.isNullOrUndefined(OB.Model.TaxCategory)) {
-        OB.Dal.get(
+        OB.Dal.findUsingCache(
+          'taxCategory',
           OB.Model.TaxCategory,
-          params.line.get('product').get('taxCategory'),
+          {
+            id: params.line.get('product').get('taxCategory')
+          },
           function(taxcategory) {
-            OB.MobileApp.model.set('taxCategoryName', taxcategory.get('name'));
+            if (taxcategory.length > 0) {
+              params.taxCategory = taxcategory.models[0].toJSON();
+            }
+            resolve(params);
+          },
+          {
+            modelsAffectedByCache: ['TaxCategory']
           }
         );
+      } else {
+        resolve(params);
       }
-      resolve(params);
     });
   };
 
