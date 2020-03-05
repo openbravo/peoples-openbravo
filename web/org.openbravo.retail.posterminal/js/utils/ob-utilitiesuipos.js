@@ -508,149 +508,45 @@ OB.UTIL.checkApproval = function(
           callback(approved, backboneSupervisor, approvalType, true, null);
         }
       },
-      fail: function(inSender, inResponse) {
+      fail: async function(inSender, inResponse) {
         // offline
         OB.UTIL.ProcessController.finish('checkApproval', execution);
-        OB.Dal.find(
-          OB.Model.Supervisor,
-          {
-            name: username
-          },
-          enyo.bind(this, function(users) {
-            var supervisor,
-              countApprovals = 0,
-              approved = false;
-            if (users.models.length === 0) {
-              countApprovals = 0;
-              OB.Dal.find(
-                OB.Model.User,
-                null,
-                enyo.bind(this, function(users) {
-                  _.each(users.models, function(user) {
-                    if (
-                      username === user.get('name') &&
-                      OB.Model.PasswordHash.checkPassword(user, password)
-                    ) {
-                      _.each(
-                        approvalType,
-                        function(perm) {
-                          var approvalToCheck =
-                            typeof perm === 'object' ? perm.approval : perm;
-                          if (
-                            JSON.parse(user.get('terminalinfo')).permissions[
-                              approvalToCheck
-                            ]
-                          ) {
-                            countApprovals += 1;
-                            supervisor = user;
-                          }
-                        },
-                        this
-                      );
-                    }
-                  });
-                  if (countApprovals === approvalType.length) {
-                    approved = true;
-                    callback(approved, supervisor, approvalType, true, null);
-                  } else {
-                    callback(
-                      false,
-                      null,
-                      null,
-                      false,
-                      OB.I18N.getLabel('OBPOS_UserCannotApprove', [username])
-                    );
-                  }
-                }),
-                function() {}
-              );
-            } else {
-              supervisor = users.models[0];
-              if (OB.Model.PasswordHash.checkPassword(supervisor, password)) {
-                _.each(
-                  approvalType,
-                  function(perm) {
-                    var approvalToCheck =
-                      typeof perm === 'object' ? perm.approval : perm;
-                    if (
-                      _.contains(
-                        JSON.parse(supervisor.get('permissions')),
-                        approvalToCheck
-                      )
-                    ) {
-                      countApprovals += 1;
-                    }
-                  },
-                  this
-                );
-                if (countApprovals === approvalType.length) {
-                  approved = true;
-                  callback(approved, supervisor, approvalType, true, null);
-                } else {
-                  countApprovals = 0;
-                  OB.Dal.find(
-                    OB.Model.User,
-                    null,
-                    enyo.bind(this, function(users) {
-                      _.each(users.models, function(user) {
-                        if (
-                          username === user.get('name') &&
-                          OB.Model.PasswordHash.checkPassword(user, password)
-                        ) {
-                          _.each(
-                            approvalType,
-                            function(perm) {
-                              var approvalToCheck =
-                                typeof perm === 'object' ? perm.approval : perm;
-                              if (
-                                JSON.parse(user.get('terminalinfo'))
-                                  .permissions[approvalToCheck]
-                              ) {
-                                countApprovals += 1;
-                                supervisor = user;
-                              }
-                            },
-                            this
-                          );
-                        }
-                      });
-                      if (countApprovals === approvalType.length) {
-                        approved = true;
-                        callback(
-                          approved,
-                          supervisor,
-                          approvalType,
-                          true,
-                          null
-                        );
-                      } else {
-                        callback(
-                          false,
-                          null,
-                          null,
-                          false,
-                          OB.I18N.getLabel('OBPOS_UserCannotApprove', [
-                            username
-                          ])
-                        );
-                      }
-                    }),
-                    function() {}
-                  );
-                }
-              } else {
-                callback(
-                  false,
-                  null,
-                  null,
-                  false,
-                  OB.I18N.getLabel('OBPOS_InvalidUserPassword')
-                );
-              }
-            }
-          }),
-          function() {}
+
+        const supervisor = await OB.App.OfflineUser.login(username, password);
+        if (!supervisor) {
+          callback(
+            false,
+            null,
+            null,
+            false,
+            OB.I18N.getLabel('OBPOS_InvalidUserPassword')
+          );
+          return;
+        }
+
+        const approved = OB.App.OfflineUser.canApprove(
+          supervisor,
+          approvalType
         );
+
+        if (approved) {
+          // TODO: using backbone model to keep compatibilty in callbacks
+          supervisor.permissions = JSON.stringify(
+            supervisor.approvePermissions
+          );
+          delete supervisor.approvePermissions;
+          const backboneSupervisor = new OB.Model.Supervisor(supervisor);
+
+          callback(approved, backboneSupervisor, approvalType, true, null);
+        } else {
+          callback(
+            false,
+            null,
+            null,
+            false,
+            OB.I18N.getLabel('OBPOS_UserCannotApprove', [username])
+          );
+        }
       }
     });
 
