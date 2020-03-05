@@ -470,13 +470,7 @@
           'creationDate',
           OB.I18N.normalizeDate(attributes.creationDate)
         );
-        this.set('documentnoPrefix', attributes.documentnoPrefix);
-        this.set('quotationnoPrefix', attributes.quotationnoPrefix);
-        this.set('returnnoPrefix', attributes.returnnoPrefix);
-        this.set('documentnoSuffix', attributes.documentnoSuffix);
-        this.set('quotationnoSuffix', attributes.quotationnoSuffix);
-        this.set('returnnoSuffix', attributes.returnnoSuffix);
-        this.set('documentNo', attributes.documentNo);
+        this.setDocumentNoBasedOnOrderType();
         this.setUndo('InitializeAttr', attributes.undo);
         bpModel = new OB.Model.BusinessPartner(attributes.bp);
         bpModel.set(
@@ -1102,50 +1096,58 @@
       }
     },
 
-    setDocumentNo: function(isReturn, isOrder) {
+    // FIXME: Move to utils method in Ticket model
+    setDocumentNoBasedOnOrderType: function() {
+      if (this.get('isQuotation')) {
+        this.setDocumentNo(false, false, true);
+      } else if (this.getOrderType() === 0) {
+        this.setDocumentNo(false, true, false);
+      } else if (this.getOrderType() === 1) {
+        this.setDocumentNo(true, false, false);
+      }
+    },
+
+    setDocumentNo: function(isReturn, isOrder, isQuotation) {
       var order = this,
         nextDocumentNo;
       if (order.get('isModified')) {
         return;
       }
-      if (
-        isOrder &&
-        order.get('documentnoPrefix') !==
-          OB.MobileApp.model.get('terminal').docNoPrefix
-      ) {
+
+      order.unset('documentnoPrefix');
+      order.unset('documentnoSuffix');
+      order.unset('returnnoPrefix');
+      order.unset('returnnoSuffix');
+      order.unset('quotationnoPrefix');
+      order.unset('quotationnoSuffix');
+
+      if (isOrder) {
         nextDocumentNo = OB.MobileApp.model.getNextDocumentno();
-        order.set('returnnoPrefix', -1);
-        order.set('returnnoSuffix', -1);
         order.set(
           'documentnoPrefix',
           OB.MobileApp.model.get('terminal').docNoPrefix
         );
         order.set('documentnoSuffix', nextDocumentNo.documentnoSuffix);
-        order.set('quotationnoPrefix', -1);
-        order.set('quotationnoSuffix', -1);
         order.set('documentNo', nextDocumentNo.documentNo);
         order.trigger('saveCurrent');
-      } else if (
-        OB.MobileApp.model.get('terminal').returnDocNoPrefix &&
-        isReturn
-      ) {
-        if (
-          order.get('returnnoPrefix') !==
+      } else if (isReturn) {
+        nextDocumentNo = OB.MobileApp.model.getNextReturnno();
+        order.set(
+          'returnnoPrefix',
           OB.MobileApp.model.get('terminal').returnDocNoPrefix
-        ) {
-          nextDocumentNo = OB.MobileApp.model.getNextReturnno();
-          order.set(
-            'returnnoPrefix',
-            OB.MobileApp.model.get('terminal').returnDocNoPrefix
-          );
-          order.set('returnnoSuffix', nextDocumentNo.documentnoSuffix);
-          order.set('documentnoPrefix', -1);
-          order.set('documentnoSuffix', -1);
-          order.set('quotationnoPrefix', -1);
-          order.set('quotationnoSuffix', -1);
-          order.set('documentNo', nextDocumentNo.documentNo);
-          order.trigger('saveCurrent');
-        }
+        );
+        order.set('returnnoSuffix', nextDocumentNo.documentnoSuffix);
+        order.set('documentNo', nextDocumentNo.documentNo);
+        order.trigger('saveCurrent');
+      } else if (isQuotation) {
+        nextDocumentNo = OB.MobileApp.model.getNextQuotationno();
+        order.set(
+          'quotationnoPrefix',
+          OB.MobileApp.model.get('terminal').quotationDocNoPrefix
+        );
+        order.set('quotationnoSuffix', nextDocumentNo.quotationnoSuffix);
+        order.set('documentNo', nextDocumentNo.documentNo);
+        order.trigger('saveCurrent');
       }
     },
 
@@ -1552,12 +1554,6 @@
       );
       this.set('orderDate', OB.I18N.normalizeDate(new Date()));
       this.set('creationDate', null);
-      this.set('documentnoPrefix', -1);
-      this.set('quotationnoPrefix', -1);
-      this.set('returnnoPrefix', -1);
-      this.set('documentnoSuffix', -1);
-      this.set('quotationnoSuffix', -1);
-      this.set('returnnoSuffix', -1);
       this.set('documentNo', '');
       this.set('undo', null);
       this.set('bp', null);
@@ -7123,13 +7119,7 @@
         OB.MobileApp.model.get('terminal').terminalType
           .documentTypeForQuotations
       );
-      var nextQuotationno = OB.MobileApp.model.getNextQuotationno();
-      this.set(
-        'quotationnoPrefix',
-        OB.MobileApp.model.get('terminal').quotationDocNoPrefix
-      );
-      this.set('quotationnoSuffix', nextQuotationno.quotationnoSuffix);
-      this.set('documentNo', nextQuotationno.documentNo);
+      this.setDocumentNoBasedOnOrderType();
     },
 
     createQuotationFromOrder: function() {
@@ -7257,20 +7247,7 @@
               args.order.set('isEditable', true);
               args.order.set('orderDate', OB.I18N.normalizeDate(new Date()));
               args.order.set('creationDate', null);
-              var nextDocumentno = OB.MobileApp.model.getNextDocumentno();
-              args.order.set(
-                'documentnoPrefix',
-                OB.MobileApp.model.get('terminal').docNoPrefix
-              );
-              args.order.set(
-                'documentnoSuffix',
-                nextDocumentno.documentnoSuffix
-              );
-              args.order.set('quotationnoPrefix', -1);
-              args.order.set('quotationnoSuffix', -1);
-              args.order.set('returnnoPrefix', -1);
-              args.order.set('returnnoSuffix', -1);
-              args.order.set('documentNo', nextDocumentno.documentNo);
+              args.order.setDocumentNoBasedOnOrderType();
               args.order.set(
                 'posTerminal',
                 OB.MobileApp.model.get('terminal').id
@@ -7354,8 +7331,7 @@
     },
 
     reactivateQuotation: function() {
-      var nextQuotationno,
-        idMap = {},
+      var idMap = {},
         oldIdMap = {},
         oldId,
         me = this;
@@ -7389,13 +7365,7 @@
       //Sometimes the Id of Quotation is null.
       if (this.get('id') && !_.isNull(this.get('id'))) {
         this.set('oldId', this.get('id'));
-        nextQuotationno = OB.MobileApp.model.getNextQuotationno();
-        this.set(
-          'quotationnoPrefix',
-          OB.MobileApp.model.get('terminal').quotationDocNoPrefix
-        );
-        this.set('quotationnoSuffix', nextQuotationno.quotationnoSuffix);
-        this.set('documentNo', nextQuotationno.documentNo);
+        this.setDocumentNoBasedOnOrderType();
       } else {
         //this shouldn't happen.
         OB.UTIL.showConfirmation.display(
@@ -10538,10 +10508,6 @@
         order.set('paidOnCredit', false);
         order.set('session', OB.MobileApp.model.get('session'));
         order.set('skipApplyPromotions', true);
-        order.set(
-          'documentnoPrefix',
-          OB.MobileApp.model.get('terminal').docNoPrefix
-        ); // hack to prevent change number
         if (model.isQuotation) {
           order.set('isQuotation', true);
           order.set('oldId', model.orderid);
@@ -11543,14 +11509,7 @@
         order.set('isLayaway', false);
         order.set('isPartiallyDelivered', false);
         order.set('taxes', {});
-
-        var nextDocumentno = OB.MobileApp.model.getNextDocumentno();
-        order.set(
-          'documentnoPrefix',
-          OB.MobileApp.model.get('terminal').docNoPrefix
-        );
-        order.set('documentnoSuffix', nextDocumentno.documentnoSuffix);
-        order.set('documentNo', nextDocumentno.documentNo);
+        order.setDocumentNoBasedOnOrderType();
         order.set('print', true);
         order.set('sendEmail', false);
         order.set('openDrawer', false);
