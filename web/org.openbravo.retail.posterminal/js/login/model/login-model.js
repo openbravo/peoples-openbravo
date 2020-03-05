@@ -245,121 +245,118 @@
                     terminalName: terminalModel.get('terminalName')
                   };
 
+                  // Save in state Document Sequence values read from backend
+                  OB.App.State.DocumentSequence.updateSequence({
+                    newOrderSequence: OB.MobileApp.model.get('terminal')
+                      .lastDocumentNumber,
+                    newReturnSequence: OB.MobileApp.model.get('terminal')
+                      .lastReturnDocumentNumber,
+                    newQuotationSequence: OB.MobileApp.model.get('terminal')
+                      .lastQuotationDocumentNumber
+                  });
+
                   // update the local database with the document sequence received
                   OB.Dal.transaction(function(tx) {
-                    OB.MobileApp.model.saveDocumentSequence(
-                      OB.MobileApp.model.get('terminal').lastDocumentNumber,
-                      OB.MobileApp.model.get('terminal')
-                        .lastReturnDocumentNumber,
-                      OB.MobileApp.model.get('terminal')
-                        .lastQuotationDocumentNumber,
-                      function() {
-                        if (OB.MobileApp.model.orderList) {
-                          OB.MobileApp.model.orderList.synchronizeCurrentOrder();
+                    if (OB.MobileApp.model.orderList) {
+                      OB.MobileApp.model.orderList.synchronizeCurrentOrder();
+                    }
+                    OB.UTIL.HookManager.executeHooks(
+                      'OBPOS_PostDocumentSequenceUpdated',
+                      {
+                        tx: tx
+                      },
+                      function(args) {
+                        if (args && args.cancelOperation) {
+                          return;
+                        }
+                        OB.UTIL.localStorage.setItem(
+                          'terminalId',
+                          data[0].terminal.id
+                        );
+                        terminalModel.set(
+                          'useBarcode',
+                          terminalModel.get('terminal').terminalType
+                            .usebarcodescanner
+                        );
+                        terminalModel.set(
+                          'useEmbededBarcode',
+                          terminalModel.get('terminal').terminalType
+                            .useembededbarcodescanner
+                        );
+                        //Set document types from organization to terminaltype object
+                        terminalModel.get(
+                          'terminal'
+                        ).terminalType.documentType = OB.MobileApp.model.get(
+                          'context'
+                        ).organization.obposCDoctype;
+                        terminalModel.get(
+                          'terminal'
+                        ).terminalType.documentTypeForReturns = OB.MobileApp.model.get(
+                          'context'
+                        ).organization.obposCDoctyperet;
+                        terminalModel.get(
+                          'terminal'
+                        ).terminalType.documentTypeForReconciliations = OB.MobileApp.model.get(
+                          'context'
+                        ).organization.obposCDoctyperecon;
+                        terminalModel.get(
+                          'terminal'
+                        ).terminalType.documentTypeForQuotations = OB.MobileApp.model.get(
+                          'context'
+                        ).organization.obposCDoctypequot;
+
+                        if (!terminalModel.usermodel) {
+                          OB.MobileApp.model.loadingErrorsActions(
+                            'The terminal.usermodel should be loaded at this point'
+                          );
+                        } else if (
+                          OB.MobileApp.model.attributes.loadManifeststatus &&
+                          OB.MobileApp.model.attributes.loadManifeststatus
+                            .type === 'error' &&
+                          !OB.RR.RequestRouter.ignoreManifestLoadError()
+                        ) {
+                          var error =
+                            OB.MobileApp.model.attributes.loadManifeststatus;
+                          OB.debug(
+                            error.reason + ' failed to load: ' + error.url
+                          );
+                          OB.UTIL.showConfirmation.display(
+                            OB.I18N.getLabel('OBPOS_TitleFailedAppCache'),
+                            enyo.format(
+                              '%s %s: %s',
+                              OB.I18N.getLabel('OBPOS_FailedAppCache'),
+                              error.type,
+                              error.message
+                            ),
+                            [
+                              {
+                                label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                                isConfirmButton: true
+                              }
+                            ],
+                            {
+                              autoDismiss: false,
+                              onHideFunction: function(popup) {
+                                OB.UTIL.showLoading(true);
+                                terminalModel.set(
+                                  'terminalCorrectlyLoadedFromBackend',
+                                  true
+                                );
+                                terminalModel.propertiesReady(me.properties);
+                              }
+                            }
+                          );
+                        } else {
+                          terminalModel.set(
+                            'terminalCorrectlyLoadedFromBackend',
+                            true
+                          );
+                          terminalModel.propertiesReady(me.properties);
                         }
                         OB.UTIL.HookManager.executeHooks(
-                          'OBPOS_PostDocumentSequenceUpdated',
+                          'OBPOS_TerminalLoadedFromBackend',
                           {
-                            tx: tx
-                          },
-                          function(args) {
-                            if (args && args.cancelOperation) {
-                              return;
-                            }
-                            OB.UTIL.localStorage.setItem(
-                              'terminalId',
-                              data[0].terminal.id
-                            );
-                            terminalModel.set(
-                              'useBarcode',
-                              terminalModel.get('terminal').terminalType
-                                .usebarcodescanner
-                            );
-                            terminalModel.set(
-                              'useEmbededBarcode',
-                              terminalModel.get('terminal').terminalType
-                                .useembededbarcodescanner
-                            );
-                            //Set document types from organization to terminaltype object
-                            terminalModel.get(
-                              'terminal'
-                            ).terminalType.documentType = OB.MobileApp.model.get(
-                              'context'
-                            ).organization.obposCDoctype;
-                            terminalModel.get(
-                              'terminal'
-                            ).terminalType.documentTypeForReturns = OB.MobileApp.model.get(
-                              'context'
-                            ).organization.obposCDoctyperet;
-                            terminalModel.get(
-                              'terminal'
-                            ).terminalType.documentTypeForReconciliations = OB.MobileApp.model.get(
-                              'context'
-                            ).organization.obposCDoctyperecon;
-                            terminalModel.get(
-                              'terminal'
-                            ).terminalType.documentTypeForQuotations = OB.MobileApp.model.get(
-                              'context'
-                            ).organization.obposCDoctypequot;
-
-                            if (!terminalModel.usermodel) {
-                              OB.MobileApp.model.loadingErrorsActions(
-                                'The terminal.usermodel should be loaded at this point'
-                              );
-                            } else if (
-                              OB.MobileApp.model.attributes
-                                .loadManifeststatus &&
-                              OB.MobileApp.model.attributes.loadManifeststatus
-                                .type === 'error' &&
-                              !OB.RR.RequestRouter.ignoreManifestLoadError()
-                            ) {
-                              var error =
-                                OB.MobileApp.model.attributes
-                                  .loadManifeststatus;
-                              OB.debug(
-                                error.reason + ' failed to load: ' + error.url
-                              );
-                              OB.UTIL.showConfirmation.display(
-                                OB.I18N.getLabel('OBPOS_TitleFailedAppCache'),
-                                enyo.format(
-                                  '%s %s: %s',
-                                  OB.I18N.getLabel('OBPOS_FailedAppCache'),
-                                  error.type,
-                                  error.message
-                                ),
-                                [
-                                  {
-                                    label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                                    isConfirmButton: true
-                                  }
-                                ],
-                                {
-                                  autoDismiss: false,
-                                  onHideFunction: function(popup) {
-                                    OB.UTIL.showLoading(true);
-                                    terminalModel.set(
-                                      'terminalCorrectlyLoadedFromBackend',
-                                      true
-                                    );
-                                    terminalModel.propertiesReady(
-                                      me.properties
-                                    );
-                                  }
-                                }
-                              );
-                            } else {
-                              terminalModel.set(
-                                'terminalCorrectlyLoadedFromBackend',
-                                true
-                              );
-                              terminalModel.propertiesReady(me.properties);
-                            }
-                            OB.UTIL.HookManager.executeHooks(
-                              'OBPOS_TerminalLoadedFromBackend',
-                              {
-                                data: data[0].terminal.id
-                              }
-                            );
+                            data: data[0].terminal.id
                           }
                         );
                       }
@@ -1521,152 +1518,58 @@
       }
     },
 
-    // these variables will keep the minimum value that the document order could have
-    // they feed from the local database, and the server
-    documentnoThreshold: -1,
-    quotationnoThreshold: -1,
-    returnnoThreshold: -1,
-    isSeqNoReadyEventSent: false,
-    /**
-     * Save the new values if are higher than the last known values
-     * - the minimum sequence number can only grow
-     */
-    saveDocumentSequence: function(
-      documentnoSuffix,
-      returnnoSuffix,
-      quotationnoSuffix,
-      callback
-    ) {
-      const documentSequenceFromBackend = {
-        newOrderSequence: documentnoSuffix,
-        newReturnSequence: returnnoSuffix,
-        newQuotationSequence: quotationnoSuffix
-      };
-      OB.App.State.DocumentSequence.updateSequence(documentSequenceFromBackend);
-
-      if (callback) {
-        callback();
-      }
-    },
-
     /**
      * Updates the document sequence. This method should only be called when an order has been sent to the server
      * If the order is a quotation, only update the quotationno
      * If the order is a return, only update the returnno
      */
-    updateDocumentSequenceWhenOrderSaved: function(
-      documentnoSuffix,
-      quotationnoSuffix,
-      returnnoSuffix,
-      callback,
-      tx
-    ) {
-      this.saveDocumentSequence(
-        documentnoSuffix,
-        returnnoSuffix,
-        quotationnoSuffix,
-        callback
-      );
+    setTicketDocumentNo: function(ticket) {
+      this.setDocumentNoBasedOnOrderType(ticket);
+      OB.App.State.DocumentSequence.updateSequence({
+        newOrderSequence: ticket.get('documentnoSuffix'),
+        newReturnSequence: ticket.get('returnnoSuffix'),
+        newQuotationSequence: ticket.get('quotationnoSuffix')
+      });
     },
 
-    // get the first document number available
-    getLastDocumentnoSuffixInOrderlist: function() {
-      var lastSuffix = null;
-      var i;
-      if (
-        OB.MobileApp.model.orderList &&
-        OB.MobileApp.model.orderList.length > 0
-      ) {
-        for (i = 0; i < OB.MobileApp.model.orderList.length; i++) {
-          var order = OB.MobileApp.model.orderList.models[i];
-          if (
-            !order.get('isPaid') &&
-            !order.get('isQuotation') &&
-            order.get('documentnoPrefix') ===
-              OB.MobileApp.model.get('terminal').docNoPrefix
-          ) {
-            if (
-              OB.UTIL.isNullOrUndefined(lastSuffix) ||
-              (lastSuffix && order.get('documentnoSuffix') > lastSuffix)
-            ) {
-              lastSuffix = order.get('documentnoSuffix');
-            }
-          }
-        }
+    // FIXME: Move to utils method in Ticket model
+    setDocumentNoBasedOnOrderType: function(ticket) {
+      var nextDocumentNo;
+      if (ticket.get('isModified')) {
+        return;
       }
-      if (lastSuffix === null || lastSuffix < this.documentnoThreshold) {
-        lastSuffix = this.documentnoThreshold;
-      }
-      return lastSuffix;
-    },
 
-    // get the first return number available
-    getLastReturnnoSuffixInOrderlist: function() {
-      var lastSuffix = null;
-      var i;
-      if (
-        OB.MobileApp.model.orderList &&
-        OB.MobileApp.model.orderList.length > 0
-      ) {
-        for (i = 0; i < OB.MobileApp.model.orderList.length; i++) {
-          var order = OB.MobileApp.model.orderList.models[i];
-          if (
-            (order.getOrderType() === 1 || order.get('gross') < 0) &&
-            order.get('returnnoPrefix') ===
-              OB.MobileApp.model.get('terminal').returnDocNoPrefix
-          ) {
-            if (
-              OB.UTIL.isNullOrUndefined(lastSuffix) ||
-              (lastSuffix && order.get('returnnoSuffix') > lastSuffix)
-            ) {
-              lastSuffix = order.get('returnnoSuffix');
-            }
-          }
-        }
+      if (ticket.get('isQuotation')) {
+        nextDocumentNo = OB.MobileApp.model.getNextQuotationno();
+        ticket.set(
+          'quotationnoPrefix',
+          OB.MobileApp.model.get('terminal').quotationDocNoPrefix
+        );
+        ticket.set('quotationnoSuffix', nextDocumentNo.quotationnoSuffix);
+        ticket.set('documentNo', nextDocumentNo.documentNo);
+      } else if (ticket.getOrderType() === 0) {
+        nextDocumentNo = OB.MobileApp.model.getNextDocumentno();
+        ticket.set(
+          'documentnoPrefix',
+          OB.MobileApp.model.get('terminal').docNoPrefix
+        );
+        ticket.set('documentnoSuffix', nextDocumentNo.documentnoSuffix);
+        ticket.set('documentNo', nextDocumentNo.documentNo);
+      } else if (ticket.getOrderType() === 1) {
+        nextDocumentNo = OB.MobileApp.model.getNextReturnno();
+        ticket.set(
+          'returnnoPrefix',
+          OB.MobileApp.model.get('terminal').returnDocNoPrefix
+        );
+        ticket.set('returnnoSuffix', nextDocumentNo.documentnoSuffix);
+        ticket.set('documentNo', nextDocumentNo.documentNo);
       }
-      if (lastSuffix === null || lastSuffix < this.returnnoThreshold) {
-        lastSuffix = this.returnnoThreshold;
-      }
-      return lastSuffix;
-    },
-
-    // get the first quotation number available
-    getLastQuotationnoSuffixInOrderlist: function() {
-      var lastSuffix = null;
-      var i;
-      if (
-        OB.MobileApp.model.orderList &&
-        OB.MobileApp.model.orderList.length > 0
-      ) {
-        for (i = 0; i < OB.MobileApp.model.orderList.length; i++) {
-          var order = OB.MobileApp.model.orderList.models[i];
-          if (
-            order.get('isQuotation') &&
-            order.get('quotationnoPrefix') ===
-              OB.MobileApp.model.get('terminal').quotationDocNoPrefix
-          ) {
-            if (
-              OB.UTIL.isNullOrUndefined(lastSuffix) ||
-              (lastSuffix && order.get('quotationnoSuffix') > lastSuffix)
-            ) {
-              lastSuffix = order.get('quotationnoSuffix');
-            }
-          }
-        }
-      }
-      if (lastSuffix === null || lastSuffix < this.quotationnoThreshold) {
-        lastSuffix = this.quotationnoThreshold;
-      }
-      return lastSuffix;
     },
 
     // call this method to get a new order document number
     getNextDocumentno: function() {
       const orderSequenceNumber = OB.App.State.DocumentSequence.Utils.getNextSequenceNumber(
-        OB.App.State.DocumentSequence.Utils.getHighestSequenceNumber(
-          OB.App.State.getState().DocumentSequence.orderSequence,
-          this.getLastDocumentnoSuffixInOrderlist()
-        )
+        OB.App.State.getState().DocumentSequence.orderSequence
       );
 
       return {
@@ -1682,10 +1585,7 @@
     // call this method to get a new Return document number
     getNextReturnno: function() {
       const returnSequenceNumber = OB.App.State.DocumentSequence.Utils.getNextSequenceNumber(
-        OB.App.State.DocumentSequence.Utils.getHighestSequenceNumber(
-          OB.App.State.getState().DocumentSequence.returnSequence,
-          this.getLastReturnnoSuffixInOrderlist()
-        )
+        OB.App.State.getState().DocumentSequence.returnSequence
       );
 
       return {
@@ -1701,10 +1601,7 @@
     // call this method to get a new quotation document number
     getNextQuotationno: function() {
       const quotationSequenceNumber = OB.App.State.DocumentSequence.Utils.getNextSequenceNumber(
-        OB.App.State.DocumentSequence.Utils.getHighestSequenceNumber(
-          OB.App.State.getState().DocumentSequence.quotationSequence,
-          this.getLastQuotationnoSuffixInOrderlist()
-        )
+        OB.App.State.getState().DocumentSequence.quotationSequence
       );
 
       return {

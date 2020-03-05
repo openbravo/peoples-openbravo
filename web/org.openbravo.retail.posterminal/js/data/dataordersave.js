@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2019 Openbravo S.L.U.
+ * Copyright (C) 2013-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -490,20 +490,15 @@
                         ) {
                           OB.Dal.transaction(function(tx) {
                             OB.UTIL.calculateCurrentCash(null, tx);
-                            OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(
-                              frozenReceipt.get('documentnoSuffix'),
-                              frozenReceipt.get('quotationnoSuffix'),
-                              frozenReceipt.get('returnnoSuffix'),
-                              function() {
-                                // the trigger is fired on the receipt object, as there is only 1 that is being updated
-                                receipt.trigger('integrityOk', frozenReceipt); // Is important for module print last receipt. This module listen trigger.
-                                syncSuccessCallback(function() {
-                                  serverMessageForQuotation(frozenReceipt);
-                                  closeParamCallback();
-                                }, eventParams);
-                              },
-                              tx
+                            OB.MobileApp.model.setTicketDocumentNo(
+                              frozenReceipt
                             );
+                            // the trigger is fired on the receipt object, as there is only 1 that is being updated
+                            receipt.trigger('integrityOk', frozenReceipt); // Is important for module print last receipt. This module listen trigger.
+                            syncSuccessCallback(function() {
+                              serverMessageForQuotation(frozenReceipt);
+                              closeParamCallback();
+                            }, eventParams);
                           });
                         } else {
                           syncSuccessCallback(function() {
@@ -581,21 +576,16 @@
                               );
                             } else {
                               OB.UTIL.calculateCurrentCash(null, tx);
-                              OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(
-                                frozenReceipt.get('documentnoSuffix'),
-                                frozenReceipt.get('quotationnoSuffix'),
-                                frozenReceipt.get('returnnoSuffix'),
+                              OB.MobileApp.model.setTicketDocumentNo(
+                                frozenReceipt
+                              );
+                              OB.trace('Saving receipt.');
+                              OB.Dal.saveInTransaction(
+                                tx,
+                                frozenReceipt,
                                 function() {
-                                  OB.trace('Saving receipt.');
-                                  OB.Dal.saveInTransaction(
-                                    tx,
-                                    frozenReceipt,
-                                    function() {
-                                      executePreSyncReceipt(tx);
-                                    }
-                                  );
-                                },
-                                tx
+                                  executePreSyncReceipt(tx);
+                                }
                               );
                             }
                           },
@@ -884,13 +874,7 @@
                         me.context
                           .get('multiOrders')
                           .trigger('integrityOk', theReceipt);
-                        OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(
-                          theReceipt.get('documentnoSuffix'),
-                          theReceipt.get('quotationnoSuffix'),
-                          theReceipt.get('returnnoSuffix'),
-                          null,
-                          tx
-                        );
+                        OB.MobileApp.model.setTicketDocumentNo(theReceipt);
                         me.context.get('orderList').current = theReceipt;
                         me.context.get('orderList').deleteCurrent();
                       }

@@ -1082,41 +1082,6 @@ enyo.kind({
       },
       this
     );
-    // Change Document No based on return lines
-    this.order.get('lines').on(
-      'add change:qty change:relatedLines updateRelations',
-      function() {
-        if (
-          this.order.get('isEditable') &&
-          !this.order.get('isModified') &&
-          !this.order.get('isLayaway') &&
-          !this.order.get('isQuotation') &&
-          !this.order.get('doCancelAndReplace') &&
-          !this.order.get('cancelLayaway')
-        ) {
-          var negativeLinesLength = _.filter(
-            this.order.get('lines').models,
-            function(line) {
-              return line.get('qty') < 0;
-            }
-          ).length;
-          if (
-            (negativeLinesLength > 0 &&
-              negativeLinesLength === this.order.get('lines').models.length) ||
-            (negativeLinesLength > 0 &&
-              OB.MobileApp.model.get('permissions')
-                .OBPOS_SalesWithOneLineNegativeAsReturns)
-          ) {
-            //isReturn
-            this.order.setDocumentNo(true, false);
-          } else {
-            //isOrder
-            this.order.setDocumentNo(false, true);
-          }
-        }
-      },
-      this
-    );
 
     this.order.get('lines').on(
       'add change:qty change:relatedLines updateRelations',

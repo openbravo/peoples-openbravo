@@ -45,44 +45,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         var currentOrder = {},
           loadOrderStr;
 
-        // Getting Max Document No, Quotation No from Unpaid orders
-        var maxDocumentNo = 0,
-          maxQuotationNo = 0,
-          maxReturnNo = 0;
-        _.each(ordersNotPaid.models, function(order) {
-          if (order) {
-            if (order.get('documentnoSuffix') > maxDocumentNo) {
-              maxDocumentNo = order.get('documentnoSuffix');
-            }
-            if (order.get('quotationnoSuffix') > maxQuotationNo) {
-              maxQuotationNo = order.get('quotationnoSuffix');
-            }
-            if (order.get('returnnoSuffix') > maxReturnNo) {
-              maxReturnNo = order.get('returnnoSuffix');
-            }
-          }
-        });
-
-        // Setting the Max Document No, Quotation No to their respective Threshold
-        if (
-          maxDocumentNo > 0 &&
-          OB.MobileApp.model.documentnoThreshold < maxDocumentNo
-        ) {
-          OB.MobileApp.model.documentnoThreshold = maxDocumentNo;
-        }
-        if (
-          maxQuotationNo > 0 &&
-          OB.MobileApp.model.quotationnoThreshold < maxQuotationNo
-        ) {
-          OB.MobileApp.model.quotationnoThreshold = maxQuotationNo;
-        }
-        if (
-          maxReturnNo > 0 &&
-          OB.MobileApp.model.returnnoThreshold < maxReturnNo
-        ) {
-          OB.MobileApp.model.returnnoThreshold = maxReturnNo;
-        }
-
         // Removing Orders which are created in other users session
         var outOfSessionOrder = _.filter(ordersNotPaid.models, function(order) {
           if (

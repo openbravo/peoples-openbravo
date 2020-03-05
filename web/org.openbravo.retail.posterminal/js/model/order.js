@@ -470,7 +470,6 @@
           'creationDate',
           OB.I18N.normalizeDate(attributes.creationDate)
         );
-        this.setDocumentNoBasedOnOrderType();
         this.setUndo('InitializeAttr', attributes.undo);
         bpModel = new OB.Model.BusinessPartner(attributes.bp);
         bpModel.set(
@@ -1093,61 +1092,6 @@
         OB.Discounts.Pos.calculateDiscounts(this, () =>
           calculateGrossThenCallbacks()
         );
-      }
-    },
-
-    // FIXME: Move to utils method in Ticket model
-    setDocumentNoBasedOnOrderType: function() {
-      if (this.get('isQuotation')) {
-        this.setDocumentNo(false, false, true);
-      } else if (this.getOrderType() === 0) {
-        this.setDocumentNo(false, true, false);
-      } else if (this.getOrderType() === 1) {
-        this.setDocumentNo(true, false, false);
-      }
-    },
-
-    setDocumentNo: function(isReturn, isOrder, isQuotation) {
-      var order = this,
-        nextDocumentNo;
-      if (order.get('isModified')) {
-        return;
-      }
-
-      order.unset('documentnoPrefix');
-      order.unset('documentnoSuffix');
-      order.unset('returnnoPrefix');
-      order.unset('returnnoSuffix');
-      order.unset('quotationnoPrefix');
-      order.unset('quotationnoSuffix');
-
-      if (isOrder) {
-        nextDocumentNo = OB.MobileApp.model.getNextDocumentno();
-        order.set(
-          'documentnoPrefix',
-          OB.MobileApp.model.get('terminal').docNoPrefix
-        );
-        order.set('documentnoSuffix', nextDocumentNo.documentnoSuffix);
-        order.set('documentNo', nextDocumentNo.documentNo);
-        order.trigger('saveCurrent');
-      } else if (isReturn) {
-        nextDocumentNo = OB.MobileApp.model.getNextReturnno();
-        order.set(
-          'returnnoPrefix',
-          OB.MobileApp.model.get('terminal').returnDocNoPrefix
-        );
-        order.set('returnnoSuffix', nextDocumentNo.documentnoSuffix);
-        order.set('documentNo', nextDocumentNo.documentNo);
-        order.trigger('saveCurrent');
-      } else if (isQuotation) {
-        nextDocumentNo = OB.MobileApp.model.getNextQuotationno();
-        order.set(
-          'quotationnoPrefix',
-          OB.MobileApp.model.get('terminal').quotationDocNoPrefix
-        );
-        order.set('quotationnoSuffix', nextDocumentNo.quotationnoSuffix);
-        order.set('documentNo', nextDocumentNo.documentNo);
-        order.trigger('saveCurrent');
       }
     },
 
@@ -7119,7 +7063,6 @@
         OB.MobileApp.model.get('terminal').terminalType
           .documentTypeForQuotations
       );
-      this.setDocumentNoBasedOnOrderType();
     },
 
     createQuotationFromOrder: function() {
@@ -7247,7 +7190,6 @@
               args.order.set('isEditable', true);
               args.order.set('orderDate', OB.I18N.normalizeDate(new Date()));
               args.order.set('creationDate', null);
-              args.order.setDocumentNoBasedOnOrderType();
               args.order.set(
                 'posTerminal',
                 OB.MobileApp.model.get('terminal').id
@@ -7365,7 +7307,6 @@
       //Sometimes the Id of Quotation is null.
       if (this.get('id') && !_.isNull(this.get('id'))) {
         this.set('oldId', this.get('id'));
-        this.setDocumentNoBasedOnOrderType();
       } else {
         //this shouldn't happen.
         OB.UTIL.showConfirmation.display(
@@ -9752,36 +9693,27 @@
             function(args) {
               model.set('json', JSON.stringify(model.serializeToSaveJSON()));
               model.set('hasbeenpaid', 'Y');
-              OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(
-                model.get('documentnoSuffix'),
-                model.get('quotationnoSuffix'),
-                model.get('returnnoSuffix'),
-                function() {
-                  OB.Dal.saveInTransaction(tx, model, function() {
-                    if (
-                      orderList &&
-                      model.get('session') === OB.MobileApp.model.get('session')
-                    ) {
-                      var orderListModel = _.find(orderList.models, function(
-                        m
-                      ) {
-                        return m.get('id') === model.get('id');
-                      });
-                      if (orderListModel) {
-                        orderList.saveCurrent();
-                        orderList.load(orderListModel);
-                      }
-                      orderList.deleteCurrent();
-                      orderList.synchronizeCurrentOrder();
-                    }
-                    model.setIsCalculateGrossLockState(false);
-                    if (callback && callback instanceof Function) {
-                      callback();
-                    }
+              OB.MobileApp.model.setTicketDocumentNo(model);
+              OB.Dal.saveInTransaction(tx, model, function() {
+                if (
+                  orderList &&
+                  model.get('session') === OB.MobileApp.model.get('session')
+                ) {
+                  var orderListModel = _.find(orderList.models, function(m) {
+                    return m.get('id') === model.get('id');
                   });
-                },
-                tx
-              );
+                  if (orderListModel) {
+                    orderList.saveCurrent();
+                    orderList.load(orderListModel);
+                  }
+                  orderList.deleteCurrent();
+                  orderList.synchronizeCurrentOrder();
+                }
+                model.setIsCalculateGrossLockState(false);
+                if (callback && callback instanceof Function) {
+                  callback();
+                }
+              });
             }
           );
         });
@@ -9856,10 +9788,7 @@
           ) {
             if (
               OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) &&
-              receipt.get('id') !== null &&
-              (receipt.get('documentnoSuffix') <=
-                OB.MobileApp.model.documentnoThreshold ||
-                OB.MobileApp.model.documentnoThreshold === 0)
+              receipt.get('id') !== null
             ) {
               receipt.setIsCalculateReceiptLockState(true);
               receipt.setIsCalculateGrossLockState(true);
@@ -11509,7 +11438,6 @@
         order.set('isLayaway', false);
         order.set('isPartiallyDelivered', false);
         order.set('taxes', {});
-        order.setDocumentNoBasedOnOrderType();
         order.set('print', true);
         order.set('sendEmail', false);
         order.set('openDrawer', false);
