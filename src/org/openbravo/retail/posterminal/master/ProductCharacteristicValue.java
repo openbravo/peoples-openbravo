@@ -13,7 +13,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -31,7 +30,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery;
 import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery.MasterDataModel;
-import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
@@ -184,10 +182,6 @@ public class ProductCharacteristicValue extends MasterDataProcessHQLQuery {
 
   @Override
   public List<String> getMasterDataModelProperties() {
-    return ModelExtensionUtils.getPropertyExtensions(extensions)
-        .getProperties()
-        .stream()
-        .map(HQLProperty::getHqlProperty)
-        .collect(Collectors.toList());
+    return getPropertiesFrom(extensions);
   }
 }
