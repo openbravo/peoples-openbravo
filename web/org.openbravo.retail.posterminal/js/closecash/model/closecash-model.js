@@ -190,10 +190,9 @@ OB.OBPOSCloseCash.Model.CloseCash = OB.Model.TerminalWindowModel.extend({
     }
     return 'OBPOS_LblNextStep';
   },
-  // [TODO] This maybe is something that could be generic function
   isFinishedWizard: function(step) {
     // Adjust step to array index
-    const postPrintAndClose = this.stepIndex('OB.CashUp.PostPrintAndClose');
+    const postPrintAndClose = this.stepIndex('OB.CloseCash.PostPrintAndClose');
     if (this.stepsDefinition[postPrintAndClose].active) {
       return step === postPrintAndClose + 2;
     }

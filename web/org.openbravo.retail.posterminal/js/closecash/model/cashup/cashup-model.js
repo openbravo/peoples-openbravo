@@ -118,7 +118,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
             OB.MobileApp.model.get('payments').forEach(payment => {
               if (
                 payment.payment.active === true &&
-                payment.paymentMethod.countpaymentincashup
+                payment.paymentMethod.countpaymentincashup &&
+                !payment.paymentMethod.issafebox
               ) {
                 activePaymentsList.push(payment);
               }
@@ -305,7 +306,10 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
           cashMgmts => {
             cashMgmts.models.forEach((cashMgmt, index) => {
               const payment = OB.MobileApp.model.get('payments').filter(pay => {
-                return pay.payment.id === cashMgmt.get('paymentMethodId');
+                return (
+                  pay.payment.id === cashMgmt.get('paymentMethodId') &&
+                  !pay.paymentMethod.issafebox
+                );
               })[0];
               cashMgmt.set(
                 'countInCashup',
@@ -337,7 +341,10 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
           cashMgmts => {
             cashMgmts.models.forEach((cashMgmt, index) => {
               const payment = OB.MobileApp.model.get('payments').filter(pay => {
-                return pay.payment.id === cashMgmt.get('paymentMethodId');
+                return (
+                  pay.payment.id === cashMgmt.get('paymentMethodId') &&
+                  !pay.paymentMethod.issafebox
+                );
               })[0];
               cashMgmt.set(
                 'countInCashup',
@@ -477,7 +484,10 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
             let startings = [];
             payMthds.models.forEach(p => {
               const auxPay = OB.MobileApp.model.get('payments').filter(pay => {
-                return pay.payment.id === p.get('paymentmethod_id');
+                return (
+                  pay.payment.id === p.get('paymentmethod_id') &&
+                  !pay.paymentMethod.issafebox
+                );
               })[0];
               if (!auxPay) {
                 //We cannot find this payment in local database, it must be a new payment method, we skip it.
@@ -668,6 +678,11 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
               objToSend.cashUpDate = OB.I18N.normalizeDate(now);
               objToSend.lastcashupeportdate = OB.I18N.normalizeDate(now);
               objToSend.timezoneOffset = now.getTimezoneOffset();
+              if (OB.UTIL.localStorage.getItem('currentSafeBox')) {
+                objToSend.currentSafeBox = JSON.parse(
+                  OB.UTIL.localStorage.getItem('currentSafeBox')
+                ).searchKey;
+              }
               for (let i = 0; i < this.additionalProperties.length; i++) {
                 objToSend[
                   this.additionalProperties[i]
@@ -844,6 +859,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
                             countCashSummary,
                             true
                           );
+                          // Remove current safe box at the end of cashup
+                          OB.UTIL.localStorage.removeItem('currentSafeBox');
                         }
                       };
                       const callbackFinishedWrongly = () => {
@@ -924,6 +941,47 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
         }
       );
     });
+  },
+  closeCashReportChanged: function(closeCashReport, closeCashReportComponent) {
+    closeCashReportComponent.$.openingtime.setContent(
+      OB.I18N.getLabel('OBPOS_LblOpenTime') +
+        ': ' +
+        OB.I18N.formatDate(new Date(closeCashReport.get('creationDate'))) +
+        ' - ' +
+        OB.I18N.formatHour(new Date(closeCashReport.get('creationDate')))
+    );
+    closeCashReportComponent.$.sales.setValue(
+      'netsales',
+      closeCashReport.get('netSales')
+    );
+    closeCashReportComponent.$.sales.setCollection(
+      closeCashReport.get('salesTaxes')
+    );
+    closeCashReportComponent.$.sales.setValue(
+      'totalsales',
+      closeCashReport.get('grossSales')
+    );
+
+    closeCashReportComponent.$.returns.setValue(
+      'netreturns',
+      closeCashReport.get('netReturns')
+    );
+    closeCashReportComponent.$.returns.setCollection(
+      closeCashReport.get('returnsTaxes')
+    );
+    closeCashReportComponent.$.returns.setValue(
+      'totalreturns',
+      closeCashReport.get('grossReturns')
+    );
+
+    closeCashReportComponent.$.totaltransactions.setValue(
+      'totaltransactionsline',
+      closeCashReport.get('totalRetailTransactions')
+    );
+
+    if (!OB.POS.modelterminal.get('terminal').ismaster) {
+      closeCashReportComponent.closeCashReportChanged(closeCashReport);
+    }
   }
 });
 

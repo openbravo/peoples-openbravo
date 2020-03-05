@@ -303,14 +303,15 @@ public class CountSafeBoxProcessor {
     CashManagementEvents cashMgmtClosureEvent = null;
     for (CashManagementEvents cashMgmtEvent : orgCashMngmtEvents) {
       if (cashMgmtEvent.getPaymentMethod().getId() == paymentType.getPaymentMethod().getId()
-          && cashMgmtEvent.getEventtype().equals("CL")) {
+          && cashMgmtEvent.getEventtype().equals("CL")
+          && cashMgmtEvent.getFinancialAccount() != null) {
         cashMgmtClosureEvent = cashMgmtEvent;
         break;
       }
     }
     if (cashMgmtClosureEvent == null) {
       throw new OBException(
-          "There is no close event defined for the payment method in organization window");
+          "There is no close event defined for the payment method with a financial account in organization window");
     }
     FIN_FinancialAccount accountFrom = paymentType.getFINFinancialaccount();
     FIN_FinancialAccount accountTo = cashMgmtClosureEvent.getFinancialAccount();

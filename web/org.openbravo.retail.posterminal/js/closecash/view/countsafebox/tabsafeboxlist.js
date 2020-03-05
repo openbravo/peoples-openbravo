@@ -12,6 +12,7 @@
 enyo.kind({
   name: 'OB.OBPOSCountSafeBox.UI.ButtonCountSafeBox',
   kind: 'OB.UI.RadioButton',
+  classes: 'obObposCountSafeBoxUiButtonCountSafeBox',
   initComponents: function() {
     return this;
   }
@@ -19,86 +20,53 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSCountSafeBox.UI.SafeBoxHeader',
-  classes: 'cashupDisplayFlex',
-  style: 'align-items: center; height: 48px;',
+  classes: 'obObposCountSafeBoxUiSafeBoxHeader',
   components: [
     {
       name: 'name',
-      style:
-        'display: table-cell; vertical-align: middle; padding: 2px 0px 2px 5px;'
-    },
-    {
-      name: 'searchkey',
-      style:
-        'display: table-cell; vertical-align: middle; padding: 2px 0px 2px 5px;'
+      classes: 'obObposCountSafeBoxUiSafeBoxHeader-name'
     },
     {
       name: 'user',
-      style:
-        'display: table-cell; vertical-align: middle; padding: 2px 5px 2px 5px;'
-    }
-  ]
-});
-
-enyo.kind({
-  name: 'OB.OBPOSCountSafeBox.UI.InfoSafeBox',
-  classes: 'infoSafeBox',
-  components: [
-    {
-      name: 'safeBoxHeader',
-      kind: 'OB.OBPOSCountSafeBox.UI.SafeBoxHeader'
+      classes: 'obObposCountSafeBoxUiSafeBoxHeader-user'
     }
   ]
 });
 
 enyo.kind({
   name: 'OB.OBPOSCountSafeBox.UI.RenderSafeBoxLine',
+  classes: 'obObposCountSafeBoxUiRenderSafeBoxLine',
   events: {
     onCountSafeBox: ''
   },
   components: [
     {
-      style:
-        'display: table; height: 42px; width: 100%; border-bottom: 1px solid #cccccc;',
-      components: [
-        {
-          classes: 'buttonVoid',
-          components: [
-            {
-              name: 'countSafeBox',
-              kind: 'OB.OBPOSCountSafeBox.UI.ButtonCountSafeBox',
-              ontap: 'countSafeBox'
-            }
-          ]
-        },
-        {
-          name: 'infoSafeBox',
-          kind: 'OB.OBPOSCountSafeBox.UI.InfoSafeBox'
-        },
-        {
-          style: 'clear: both;'
-        }
-      ]
+      name: 'countSafeBox',
+      kind: 'OB.OBPOSCountSafeBox.UI.ButtonCountSafeBox',
+      classes: 'obObposCountSafeBoxUiRenderSafeBoxLine-countSafeBox',
+      ontap: 'countSafeBox'
+    },
+    {
+      name: 'safeBoxHeader',
+      kind: 'OB.OBPOSCountSafeBox.UI.SafeBoxHeader',
+      classes: 'obObposCountSafeBoxUiRenderSafeBoxLine-safeBoxHeader'
     }
   ],
   create: function() {
     this.inherited(arguments);
 
-    this.$.infoSafeBox.$.safeBoxHeader.$.name.setContent(
-      this.model.get('safeBoxName')
-    );
-    this.$.infoSafeBox.$.safeBoxHeader.$.searchkey.setContent(
-      this.model.get('safeBoxSearchKey')
+    this.$.safeBoxHeader.$.name.setContent(
+      `${this.model.get('safeBoxName')} (${this.model.get(
+        'safeBoxSearchKey'
+      )}) `
     );
     // Safe Box User is not a mandatory field
     if (this.model.get('safeBoxUserName')) {
-      this.$.infoSafeBox.$.safeBoxHeader.$.user.show();
-      this.$.infoSafeBox.$.safeBoxHeader.$.user.setContent(
-        this.model.get('safeBoxUserName')
-      );
+      this.$.safeBoxHeader.$.user.show();
+      this.$.safeBoxHeader.$.user.setContent(this.model.get('safeBoxUserName'));
     } else {
-      this.$.infoSafeBox.$.safeBoxHeader.$.user.hide();
-      this.$.infoSafeBox.$.safeBoxHeader.$.user.setContent('');
+      this.$.safeBoxHeader.$.user.hide();
+      this.$.safeBoxHeader.$.user.setContent('');
     }
 
     this.safeBox = this.model.attributes;
@@ -110,6 +78,7 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSCountSafeBox.UI.ListSafeBoxes',
+  classes: 'obObposCountSafeBoxUiListSafeBoxes',
   published: {
     collection: null
   },
@@ -118,66 +87,37 @@ enyo.kind({
   },
   components: [
     {
-      classes: 'tab-pane',
+      classes: 'obObposCountSafeBoxUiListSafeBoxes-wrapper',
       components: [
         {
-          style: 'overflow:auto; height: 500px; margin: 5px',
+          classes: 'obObposCountSafeBoxUiListSafeBoxes-wrapper-components',
           components: [
             {
-              style: 'background-color: #ffffff; color: black; padding: 5px;',
+              name: 'stepsheader',
+              classes:
+                'obObposCountSafeBoxUiListSafeBoxes-wrapper-components-title',
+              renderHeader: function(step, count) {
+                this.setContent(
+                  OB.I18N.getLabel('OBPOS_LblStepNumber', [step, count]) +
+                    ' ' +
+                    OB.I18N.getLabel('OBPOS_LblStepSafeBoxList') +
+                    OB.OBPOSCloseCash.UI.CloseCash.getTitleExtensions()
+                );
+              }
+            },
+            {
+              classes:
+                'obObposCountSafeBoxUiListSafeBoxes-wrapper-components-body',
+              kind: 'Group',
               components: [
                 {
-                  classes: 'row-fluid',
-                  components: [
-                    {
-                      classes: 'span12',
-                      components: [
-                        {
-                          name: 'stepsheader',
-                          style:
-                            'padding: 10px; border-bottom: 1px solid #cccccc; text-align:center;',
-                          renderHeader: function(step, count) {
-                            this.setContent(
-                              OB.I18N.getLabel('OBPOS_LblStepNumber', [
-                                step,
-                                count
-                              ]) +
-                                ' ' +
-                                OB.I18N.getLabel('OBPOS_LblStepSafeBoxList') +
-                                OB.OBPOSCloseCash.UI.CloseCash.getTitleExtensions()
-                            );
-                          }
-                        }
-                      ]
-                    },
-                    {
-                      style: 'clear: both;'
-                    }
-                  ]
-                },
-                {
-                  classes: 'row-fluid',
-                  components: [
-                    {
-                      style: 'span12',
-                      components: [
-                        {
-                          classes: 'row-fluid',
-                          kind: 'Group',
-                          components: [
-                            {
-                              name: 'safeBoxesList',
-                              kind: 'OB.UI.Table',
-                              renderLine:
-                                'OB.OBPOSCountSafeBox.UI.RenderSafeBoxLine',
-                              renderEmpty: 'OB.UI.RenderEmpty',
-                              listStyle: 'list'
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
+                  name: 'safeBoxesList',
+                  kind: 'OB.UI.Table',
+                  classes:
+                    'obObposCountSafeBoxUiListSafeBoxes-wrapper-components-body-formkeep',
+                  renderLine: 'OB.OBPOSCountSafeBox.UI.RenderSafeBoxLine',
+                  renderEmpty: 'OB.UI.RenderEmpty',
+                  listStyle: 'list'
                 }
               ]
             }

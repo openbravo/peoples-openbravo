@@ -217,7 +217,11 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "closecash/components/cashup/cashup-modals", "closecash/components/cashup/cashup-popups",
 
         // Safe Box window
-        "closecash/view/countsafebox/tabsafeboxlist",
+        "closecash/model/countsafebox/countsafebox-steps",
+        "closecash/model/countsafebox/countsafebox-model",
+        "closecash/view/countsafebox/countsafebox", "closecash/view/countsafebox/tabsafeboxlist",
+        "closecash/view/countsafebox/countsafeboxpostprintclose",
+        "closecash/components/countsafebox/countsafebox-popups",
 
         // Core resources
         "../../org.openbravo.client.application/js/utilities/ob-utilities-number",

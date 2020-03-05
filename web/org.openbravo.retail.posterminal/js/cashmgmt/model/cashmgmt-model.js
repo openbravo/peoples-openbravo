@@ -61,6 +61,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
         var isError = !OB.UTIL.isNullOrUndefined(
           _.find(me.payments.models, function(pay) {
             return (
+              !pay.get('issafebox') &&
               p.iscash &&
               p.id === pay.get('paymentmethod_id') &&
               p.type === 'drop' &&
@@ -554,6 +555,9 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
                       resolve();
                       return;
                     }
+                    // Set is this payment is defined in safe box
+                    pay.set('issafebox', paymentMth.issafebox);
+
                     if (paymentMth.allowdeposits || paymentMth.allowdrops) {
                       if (
                         me

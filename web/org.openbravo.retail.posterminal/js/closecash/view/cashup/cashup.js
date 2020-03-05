@@ -79,7 +79,17 @@ enyo.kind({
     }
   ],
   finalAction: function() {
-    OB.POS.navigate('retail.pointofsale');
+    if (JSON.parse(OB.UTIL.localStorage.getItem('isSafeBox'))) {
+      // Open drawer to insert the Safe Box
+      OB.POS.hwserver.openDrawer(
+        false,
+        OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerCount
+      );
+      OB.UTIL.showLoggingOut(true);
+      OB.MobileApp.model.logout();
+    } else {
+      OB.POS.navigate('retail.pointofsale');
+    }
   },
   initializeWindow: function() {
     // Step 0
@@ -169,7 +179,9 @@ OB.POS.registerWindow({
   route: 'retail.cashup',
   online: false,
   menuPosition: 20,
-  menuI18NLabel: 'OBPOS_LblCloseCash',
+  menuI18NLabel: JSON.parse(OB.UTIL.localStorage.getItem('isSafeBox'))
+    ? 'OBPOS_LblRemoveSafeBox'
+    : 'OBPOS_LblCloseCash',
   permission: 'OBPOS_retail.cashup',
   approvalType: 'OBPOS_approval.cashup',
   rfidState: false,

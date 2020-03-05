@@ -382,6 +382,7 @@
 
           // If a safe box is defined in this terminal and that safe box is assign to
           // a user, check the current logged user before continue login process
+          // except if the user is a Safe Box Manager
           if (
             !OB.UTIL.isNullOrUndefined(
               OB.UTIL.localStorage.getItem('currentSafeBox')
@@ -392,7 +393,12 @@
             );
             if (
               !OB.UTIL.isNullOrUndefined(currentSafeBox.userId) &&
-              currentSafeBox.userId !== OB.MobileApp.model.usermodel.get('id')
+              currentSafeBox.userId !==
+                OB.MobileApp.model.usermodel.get('id') &&
+              !OB.MobileApp.model.hasPermission(
+                'OBPOS_approval.manager.safebox',
+                true
+              )
             ) {
               handleError({
                 exception: {

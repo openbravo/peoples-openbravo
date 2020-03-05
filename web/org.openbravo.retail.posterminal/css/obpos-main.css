@@ -15092,6 +15092,11 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   text-align: center;
 }
 
+.obObPosCloseCashUiPostPrintClose-headerContainer-safebox {
+  padding: 5px;
+  text-align: center;
+}
+
 .obObPosCloseCashUiPostPrintClose-headerContainer-element1 {
   padding: 0px 0px 10px 0px;
 }
@@ -15163,6 +15168,107 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obObPosCloseCashUiPostPrintClose-wrapper-components-body-container3-qtyToDepoTable {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_cashQtyToDepoTable] */
 }
+
+
+
+/***********************   ***********************/
+/*          File: tabpostprintclose.js           */
+/*    Folder: js/closecash/view/countsafebox/    */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSCountSafeBox.UI.ButtonCountSafeBox
+# Inherits: [OB.UI.RadioButton]
+*/
+.obObposCountSafeBoxUiButtonCountSafeBox {
+  padding-top: 0px;
+  padding-right: 0px;
+  padding-bottom: 0px;
+  padding-left: 40px;
+  margin-top: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  margin-left: 10px;
+  display: block;
+  background-position: left center !important;
+}
+
+
+/*
+# Component: OB.OBPOSCountSafeBox.UI.SafeBoxHeader
+*/
+.obObposCountSafeBoxUiSafeBoxHeader {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  padding: 0px 20px 0px 0px;
+}
+
+.obObposCountSafeBoxUiSafeBoxHeader-name {}
+
+.obObposCountSafeBoxUiSafeBoxHeader-user {}
+
+
+/*
+# Component: OB.OBPOSCountSafeBox.UI.RenderSafeBoxLine
+*/
+.obObposCountSafeBoxUiRenderSafeBoxLine {
+  display: flex;
+  align-items: center;
+  height: 42px;
+  width: 100%;
+  border-bottom: 1px solid #cccccc;
+}
+
+.obObposCountSafeBoxUiRenderSafeBoxLine-countSafeBox {
+  /* Inherits: OB.OBPOSCountSafeBox.UI.ButtonCountSafeBox */
+}
+
+.obObposCountSafeBoxUiRenderSafeBoxLine-safeBoxHeader {
+  /* Inherits: OB.OBPOSCountSafeBox.UI.ButtonCountSafeBox */
+}
+
+
+/*
+# Component: OB.OBPOSCountSafeBox.UI.ListSafeBoxes
+*/
+.obObposCountSafeBoxUiListSafeBoxes {
+  height: 100%;
+}
+
+.obObposCountSafeBoxUiListSafeBoxes-wrapper {
+  padding: var(--panel-top-padding) var(--panel-inner-side-padding) var(--panel-bottom-padding) var(--panel-outer-side-padding);
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.obObposCountSafeBoxUiListSafeBoxes-wrapper-components {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  border-bottom: var(--separator-slim);
+  overflow-y: auto;
+  background-color: var(--color-surface);
+  box-shadow: var(--box-shadow-surface);
+  border-radius: var(--component-border-radius);
+  height: calc(100% - 1px);
+}
+
+.obObposCountSafeBoxUiListSafeBoxes-wrapper-components-title {
+  padding: 12px;
+  border-bottom: var(--separator-slim);
+  text-align: center;
+  font-weight: bold;
+  font-size: var(--font-large);
+  color: var(--color-secondary);
+}
+
+.obObposCountSafeBoxUiListSafeBoxes-wrapper-components-body {
+  height: 100%;
+  overflow-y: auto;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.obObposCountSafeBoxUiListSafeBoxes-wrapper-components-body-formkeep {}
 
 
 

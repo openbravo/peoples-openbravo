@@ -92,9 +92,14 @@ enyo.kind({
       }
 
       // In case the safe box has a user asigned, check if it is the same as logged
+      // or it is a safe box manager
       if (
         !OB.UTIL.isNullOrUndefined(validSafeBox.userId) &&
-        validSafeBox.userId !== OB.MobileApp.model.usermodel.get('id')
+        validSafeBox.userId !== OB.MobileApp.model.usermodel.get('id') &&
+        !OB.MobileApp.model.hasPermission(
+          'OBPOS_approval.manager.safebox',
+          true
+        )
       ) {
         OB.UTIL.showWarning(
           OB.I18N.getLabel('OBPOS_SafeBoxAssignedToOtherUser')
@@ -107,6 +112,12 @@ enyo.kind({
         'currentSafeBox',
         JSON.stringify(validSafeBox)
       );
+      // Open drawer to insert the Safe Box
+      OB.POS.hwserver.openDrawer(
+        false,
+        OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerCount
+      );
+
       this.hide();
       this.args.callback();
     }
