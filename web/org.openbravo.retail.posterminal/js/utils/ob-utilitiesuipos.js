@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2019 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -470,7 +470,7 @@ OB.UTIL.checkApproval = function(
         approvalType: JSON.stringify(approvalList),
         attributes: JSON.stringify(attrs)
       },
-      success: function(inSender, inResponse) {
+      success: async function(inSender, inResponse) {
         OB.UTIL.ProcessController.finish('checkApproval', execution);
         var approved = false;
         if (inResponse.error) {
@@ -486,81 +486,26 @@ OB.UTIL.checkApproval = function(
               OB.I18N.getLabel('OBPOS_UserCannotApprove', [username])
             );
           }
+
           // saving supervisor in local so next time it is possible to approve offline
-          OB.Dal.find(
-            OB.Model.Supervisor,
+          const supervisor = await OB.App.OfflineUser.upsertSupervisor(
             {
-              id: inResponse.data.userId
+              id: inResponse.data.userId,
+              name: username
             },
-            enyo.bind(this, function(users) {
-              var supervisor,
-                permissions = [];
-              if (users.models.length === 0) {
-                // new user
-                if (inResponse.data.canApprove) {
-                  // insert in local db only in case it is supervisor for current type
-                  supervisor = new OB.Model.Supervisor();
-                  supervisor.set('id', inResponse.data.userId);
-                  supervisor.set('name', username);
-                  OB.Model.PasswordHash.updatePasswordIfNeeded(
-                    supervisor,
-                    password
-                  );
-                  supervisor.set('created', new Date().toString());
-                  // Set all permissions
-                  if (inResponse.data.preference) {
-                    _.each(
-                      inResponse.data.preference,
-                      function(perm) {
-                        permissions.push(perm);
-                      },
-                      this
-                    );
-                    supervisor.set('permissions', JSON.stringify(permissions));
-                  } else {
-                    supervisor.set('permissions', JSON.stringify(approvalType));
-                  }
-                  OB.Dal.save(supervisor, null, null, true);
-                }
-              } else {
-                // update existent user granting or revoking permission
-                supervisor = users.models[0];
-                OB.Model.PasswordHash.updatePasswordIfNeeded(
-                  supervisor,
-                  password
-                );
-                if (supervisor.get('permissions')) {
-                  permissions = JSON.parse(supervisor.get('permissions'));
-                }
-                if (inResponse.data.canApprove) {
-                  // grant permission if it does not exist
-                  _.each(
-                    approvalType,
-                    function(perm) {
-                      if (!_.contains(permissions, perm)) {
-                        permissions.push(perm);
-                      }
-                    },
-                    this
-                  );
-                } else {
-                  // revoke permission if it exists
-                  _.each(
-                    approvalType,
-                    function(perm) {
-                      if (_.contains(permissions, perm)) {
-                        permissions = _.without(permissions, perm);
-                      }
-                    },
-                    this
-                  );
-                }
-                supervisor.set('permissions', JSON.stringify(permissions));
-                OB.Dal.save(supervisor);
-              }
-              callback(approved, supervisor, approvalType, true, null);
-            })
+            password,
+            approvalType,
+            inResponse.data.approvableTypes
           );
+
+          // TODO: using backbone model to keep compatibilty in callbacks
+          supervisor.permissions = JSON.stringify(
+            supervisor.approvePermissions
+          );
+          delete supervisor.approvePermissions;
+          const backboneSupervisor = new OB.Model.Supervisor(supervisor);
+
+          callback(approved, backboneSupervisor, approvalType, true, null);
         }
       },
       fail: function(inSender, inResponse) {
