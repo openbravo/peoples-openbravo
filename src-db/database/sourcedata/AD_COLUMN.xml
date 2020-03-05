@@ -19066,8 +19066,7 @@ In case this value is not set, it will be defaulted to the one defined in Openbr
 <!--B004860797B843E1BE4B88AC2EDFE4BD-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--B004860797B843E1BE4B88AC2EDFE4BD-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--B004860797B843E1BE4B88AC2EDFE4BD-->  <NAME><![CDATA[Payment Method]]></NAME>
-<!--B004860797B843E1BE4B88AC2EDFE4BD-->  <DESCRIPTION><![CDATA[Payment method which will be used for the payments generated in this Gift Card]]></DESCRIPTION>
-<!--B004860797B843E1BE4B88AC2EDFE4BD-->  <HELP><![CDATA[Payment method which will be used for the payments generated in this Gift Card]]></HELP>
+<!--B004860797B843E1BE4B88AC2EDFE4BD-->  <DESCRIPTION><![CDATA[It is the method by which payment is expected to be made or received.]]></DESCRIPTION>
 <!--B004860797B843E1BE4B88AC2EDFE4BD-->  <COLUMNNAME><![CDATA[FIN_Paymentmethod_ID]]></COLUMNNAME>
 <!--B004860797B843E1BE4B88AC2EDFE4BD-->  <AD_TABLE_ID><![CDATA[159B34BF029146E4904795DBBEC53E36]]></AD_TABLE_ID>
 <!--B004860797B843E1BE4B88AC2EDFE4BD-->  <AD_REFERENCE_ID><![CDATA[19]]></AD_REFERENCE_ID>
