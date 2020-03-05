@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2018 Openbravo SLU
+ * All portions are Copyright (C) 2012-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -29,7 +29,6 @@ import org.hibernate.ScrollableResults;
 import org.hibernate.query.Query;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.mrp.ProductionRun;
@@ -43,7 +42,7 @@ public class MRPManufacturingPlanProcess extends DalBaseProcess {
   private static final String NULL = null;
 
   @Override
-  protected void doExecute(ProcessBundle bundle) throws Exception {
+  protected void doExecute(final ProcessBundle bundle) throws Exception {
     OBError msg = new OBError();
     msg.setType("Success");
     msg.setTitle(OBMessageUtils.messageBD("Success"));
@@ -97,7 +96,7 @@ public class MRPManufacturingPlanProcess extends DalBaseProcess {
       // v_Product_ID,
       // v_Product_Category_ID, v_BPartner_ID, v_BP_Group_ID, NULL, v_TimeHorizon,
       // v_PlanningDate, 'Y');
-      List<Object> parameters = new ArrayList<Object>();
+      List<Object> parameters = new ArrayList<>();
       parameters.add(userId);
       parameters.add(orgId);
       parameters.add(clientId);
@@ -120,7 +119,7 @@ public class MRPManufacturingPlanProcess extends DalBaseProcess {
       // v_ResultStr:='Explode';
       // MRP_RUN_EXPLODE(v_User_ID, v_Org_ID, v_Client_ID, v_Record_ID, v_Planner_ID, v_TimeHorizon,
       // v_PlanningDate, v_SecurityMargin);
-      parameters = new ArrayList<Object>();
+      parameters = new ArrayList<>();
       parameters.add(userId);
       parameters.add(orgId);
       parameters.add(clientId);
@@ -137,7 +136,7 @@ public class MRPManufacturingPlanProcess extends DalBaseProcess {
       // v_ResultStr:='ProcessPlan';
       // MRP_PROCESSPLAN(v_User_ID, v_Org_ID, v_Client_ID, v_Record_ID, v_Planner_ID, v_TimeHorizon,
       // v_PlanningDate, v_SecurityMargin);
-      parameters = new ArrayList<Object>();
+      parameters = new ArrayList<>();
       parameters.add(userId);
       parameters.add(orgId);
       parameters.add(clientId);
@@ -164,29 +163,37 @@ public class MRPManufacturingPlanProcess extends DalBaseProcess {
 
   }
 
-  private void deleteNotFixedLines(String strManufacturingMRPID) {
-    StringBuffer deleteLines = new StringBuffer();
-    deleteLines.append(" delete from " + ProductionRunLine.ENTITY_NAME);
-    deleteLines.append(" where " + ProductionRunLine.PROPERTY_MANUFACTURINGPLAN + ".id = :prodRun");
-    deleteLines.append("   and " + ProductionRunLine.PROPERTY_FIXED + " = false");
+  private void deleteNotFixedLines(final String strManufacturingMRPID) {
+    //@formatter:off
+    final String hqlDelete =
+            "delete from MRPProductionRunLine" +
+            " where manufacturingPlan.id = :prodRunId" +
+            "   and fixed = false";
+    //@formatter:on
+
     @SuppressWarnings("rawtypes")
-    Query delete = OBDal.getInstance().getSession().createQuery(deleteLines.toString());
-    delete.setParameter("prodRun", strManufacturingMRPID);
+    final Query delete = OBDal.getInstance()
+        .getSession()
+        .createQuery(hqlDelete)
+        .setParameter("prodRunId", strManufacturingMRPID);
+
     delete.executeUpdate();
     OBDal.getInstance().flush();
   }
 
-  private ScrollableResults getLinesToUpdate(String productionRunId) {
-    StringBuffer where = new StringBuffer();
-    where.append(" where " + ProductionRunLine.PROPERTY_MANUFACTURINGPLAN + ".id = :prodRun");
-    where.append("   and " + ProductionRunLine.PROPERTY_QUANTITY + " < 0");
-    where.append("   and " + ProductionRunLine.PROPERTY_TRANSACTIONTYPE + " <> 'WR'");
-    OBQuery<ProductionRunLine> prlQry = OBDal.getInstance()
-        .createQuery(ProductionRunLine.class, where.toString());
-    prlQry.setNamedParameter("prodRun", productionRunId);
+  private ScrollableResults getLinesToUpdate(final String productionRunId) {
+    //@formatter:off
+    final String hqlWhere =
+                  " where manufacturingPlan.id = :prodRunId" +
+                  "   and quantity < 0" +
+                  "   and transactionType <> 'WR'";
+    //@formatter:on
 
-    prlQry.setFetchSize(1000);
-    return prlQry.scroll(ScrollMode.FORWARD_ONLY);
+    return OBDal.getInstance()
+        .createQuery(ProductionRunLine.class, hqlWhere)
+        .setNamedParameter("prodRunId", productionRunId)
+        .setFetchSize(1000)
+        .scroll(ScrollMode.FORWARD_ONLY);
   }
 
 }
