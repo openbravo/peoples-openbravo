@@ -8,32 +8,28 @@
  */
 
 /**
- * @fileoverview defines the Document Sequence Updates Sequence action that updates document sequence with payload information
+ * @fileoverview defines the Document Sequence Initialize Sequence action that updates document sequence with payload information
  */
 
 (() => {
   OB.App.StateAPI.DocumentSequence.registerAction(
-    'updateSequence',
+    'initializeSequence',
     (state, payload) => {
       const newState = { ...state };
 
-      const {
-        newOrderSequence,
-        newReturnSequence,
-        newQuotationSequence
-      } = payload;
+      const { orderSequence, returnSequence, quotationSequence } = payload;
 
       newState.orderSequence = OB.App.State.DocumentSequence.Utils.getHighestSequenceNumber(
         newState.orderSequence,
-        newOrderSequence
+        orderSequence
       );
       newState.returnSequence = OB.App.State.DocumentSequence.Utils.getHighestSequenceNumber(
         newState.returnSequence,
-        newReturnSequence
+        returnSequence
       );
       newState.quotationSequence = OB.App.State.DocumentSequence.Utils.getHighestSequenceNumber(
         newState.quotationSequence,
-        newQuotationSequence
+        quotationSequence
       );
 
       return newState;

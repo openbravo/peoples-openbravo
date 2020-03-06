@@ -246,12 +246,12 @@
                   };
 
                   // Save in state Document Sequence values read from backend
-                  OB.App.State.DocumentSequence.updateSequence({
-                    newOrderSequence: OB.MobileApp.model.get('terminal')
+                  OB.App.State.DocumentSequence.initializeSequence({
+                    orderSequence: OB.MobileApp.model.get('terminal')
                       .lastDocumentNumber,
-                    newReturnSequence: OB.MobileApp.model.get('terminal')
+                    returnSequence: OB.MobileApp.model.get('terminal')
                       .lastReturnDocumentNumber,
-                    newQuotationSequence: OB.MobileApp.model.get('terminal')
+                    quotationSequence: OB.MobileApp.model.get('terminal')
                       .lastQuotationDocumentNumber
                   });
 
@@ -1518,100 +1518,44 @@
       }
     },
 
-    /**
-     * Updates the document sequence. This method should only be called when an order has been sent to the server
-     * If the order is a quotation, only update the quotationno
-     * If the order is a return, only update the returnno
-     */
-    setTicketDocumentNo: function(ticket) {
-      this.setDocumentNoBasedOnOrderType(ticket);
-      OB.App.State.DocumentSequence.updateSequence({
-        newOrderSequence: ticket.get('documentnoSuffix'),
-        newReturnSequence: ticket.get('returnnoSuffix'),
-        newQuotationSequence: ticket.get('quotationnoSuffix')
-      });
-    },
-
-    // FIXME: Move to utils method in Ticket model
-    setDocumentNoBasedOnOrderType: function(ticket) {
-      var nextDocumentNo;
-      if (ticket.get('isModified')) {
+    // FIXME: this method should be moved to completeTicket global action.
+    // This global action will increase sequence in DocumentSequence model
+    // and set documentno in Ticket model based on the increased sequence
+    setTicketDocumentNo: async function(ticket) {
+      if (ticket.get('documentNo')) {
         return;
       }
 
+      let sequence;
+      let documentNumberPrefix;
       if (ticket.get('isQuotation')) {
-        nextDocumentNo = OB.MobileApp.model.getNextQuotationno();
-        ticket.set(
-          'quotationnoPrefix',
-          OB.MobileApp.model.get('terminal').quotationDocNoPrefix
-        );
-        ticket.set('quotationnoSuffix', nextDocumentNo.quotationnoSuffix);
-        ticket.set('documentNo', nextDocumentNo.documentNo);
-      } else if (ticket.getOrderType() === 0) {
-        nextDocumentNo = OB.MobileApp.model.getNextDocumentno();
-        ticket.set(
-          'documentnoPrefix',
-          OB.MobileApp.model.get('terminal').docNoPrefix
-        );
-        ticket.set('documentnoSuffix', nextDocumentNo.documentnoSuffix);
-        ticket.set('documentNo', nextDocumentNo.documentNo);
+        sequence = 'quotationSequence';
+        documentNumberPrefix = OB.MobileApp.model.get('terminal')
+          .quotationDocNoPrefix;
       } else if (ticket.getOrderType() === 1) {
-        nextDocumentNo = OB.MobileApp.model.getNextReturnno();
-        ticket.set(
-          'returnnoPrefix',
-          OB.MobileApp.model.get('terminal').returnDocNoPrefix
-        );
-        ticket.set('returnnoSuffix', nextDocumentNo.documentnoSuffix);
-        ticket.set('documentNo', nextDocumentNo.documentNo);
+        sequence = 'returnSequence';
+        documentNumberPrefix = OB.MobileApp.model.get('terminal')
+          .returnDocNoPrefix;
+      } else {
+        sequence = 'orderSequence';
+        documentNumberPrefix = OB.MobileApp.model.get('terminal').docNoPrefix;
       }
-    },
 
-    // call this method to get a new order document number
-    getNextDocumentno: function() {
-      const orderSequenceNumber = OB.App.State.DocumentSequence.Utils.getNextSequenceNumber(
-        OB.App.State.getState().DocumentSequence.orderSequence
-      );
+      await OB.App.State.DocumentSequence.increaseSequence({
+        sequence: sequence
+      });
+      const sequenceNumber = OB.App.State.getState().DocumentSequence[sequence];
+      const documentNumberPadding = OB.MobileApp.model.get('terminal')
+        .documentnoPadding;
 
-      return {
-        documentnoSuffix: orderSequenceNumber,
-        documentNo: OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
-          OB.MobileApp.model.get('terminal').docNoPrefix,
-          OB.MobileApp.model.get('terminal').documentnoPadding,
-          orderSequenceNumber
+      ticket.set(
+        'documentNo',
+        OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
+          documentNumberPrefix,
+          documentNumberPadding,
+          sequenceNumber
         )
-      };
-    },
-
-    // call this method to get a new Return document number
-    getNextReturnno: function() {
-      const returnSequenceNumber = OB.App.State.DocumentSequence.Utils.getNextSequenceNumber(
-        OB.App.State.getState().DocumentSequence.returnSequence
       );
-
-      return {
-        documentnoSuffix: returnSequenceNumber,
-        documentNo: OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
-          OB.MobileApp.model.get('terminal').returnDocNoPrefix,
-          OB.MobileApp.model.get('terminal').documentnoPadding,
-          returnSequenceNumber
-        )
-      };
-    },
-
-    // call this method to get a new quotation document number
-    getNextQuotationno: function() {
-      const quotationSequenceNumber = OB.App.State.DocumentSequence.Utils.getNextSequenceNumber(
-        OB.App.State.getState().DocumentSequence.quotationSequence
-      );
-
-      return {
-        quotationnoSuffix: quotationSequenceNumber,
-        documentNo: OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
-          OB.MobileApp.model.get('terminal').quotationDocNoPrefix,
-          OB.MobileApp.model.get('terminal').documentnoPadding,
-          quotationSequenceNumber
-        )
-      };
     },
 
     getPaymentName: function(key) {
