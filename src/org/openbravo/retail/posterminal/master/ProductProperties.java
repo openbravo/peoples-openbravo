@@ -150,6 +150,8 @@ public class ProductProperties extends ModelExtension {
           add(new HQLProperty("pp.standardPrice", "currentStandardPrice"));
         }
         add(new HQLProperty(String.valueOf(crossStore), "crossStore"));
+        add(new HQLProperty("product.obposMaxpriceassocprod", "obposMaxpriceassocprod"));
+        add(new HQLProperty("product.obposMinpriceassocprod", "obposMinpriceassocprod"));
       }
     };
 

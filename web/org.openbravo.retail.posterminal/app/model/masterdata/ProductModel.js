@@ -62,6 +62,61 @@
         new OB.App.Class.Index({
           name: 'productIsGeneric_idx',
           properties: [{ property: 'isGeneric', isBoolean: true }]
+        }),
+        new OB.App.Class.Index({
+          name: 'productServicesFilter_idx',
+          properties: [
+            { property: 'isGeneric', isBoolean: true },
+            { property: 'productType', isNullable: true },
+            {
+              property: 'isLinkedToProduct',
+              isBoolean: true
+            },
+            { property: 'proposalType', isNullable: true }
+          ]
+        }),
+        new OB.App.Class.Index({
+          name: 'productServicesFilter2_idx',
+          properties: [
+            { property: 'isGeneric', isBoolean: true },
+            { property: 'productType', isNullable: true },
+            {
+              property: 'isLinkedToProduct',
+              isBoolean: true
+            },
+            { property: 'availableForMultiline', isBoolean: true },
+            { property: 'proposalType', isNullable: true }
+          ]
+        }),
+        new OB.App.Class.Index({
+          name: 'productIncludeProducts_idx',
+          properties: [
+            { property: 'includeProducts', isBoolean: true, isNullable: true }
+          ]
+        }),
+        new OB.App.Class.Index({
+          name: 'productIncludeProductCategories_idx',
+          properties: [
+            {
+              property: 'includeProductCategories',
+              isBoolean: true,
+              isNullable: true
+            }
+          ]
+        }),
+        new OB.App.Class.Index({
+          name: 'productHasServicesFilter_idx',
+          properties: [
+            { property: 'productType', isNullable: true },
+            {
+              property: 'isLinkedToProduct',
+              isBoolean: true
+            },
+            {
+              property: 'obrdmIsdeliveryservice',
+              isBoolean: true
+            }
+          ]
         })
       ];
     }

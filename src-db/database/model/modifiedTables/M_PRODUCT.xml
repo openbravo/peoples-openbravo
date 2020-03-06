@@ -49,6 +49,14 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <column name="EM_OBPOS_MAXPRICEASSOCPROD" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="EM_OBPOS_MINPRICEASSOCPROD" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <index name="EM_OBPOS_M_PRODUCT_PRODUCTTYPE" unique="false">
         <index-column name="PRODUCTTYPE"/>
       </index>

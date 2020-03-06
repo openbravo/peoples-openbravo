@@ -3927,12 +3927,7 @@
       line
     ) {
       if (productType !== 'S' && (!line || !line.get('originalOrderLineId'))) {
-        //force remote mode until services are migrated to indexedDB
-        var forceRemote = true;
-        if (
-          forceRemote ||
-          OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)
-        ) {
+        if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
           var params = {},
             date = new Date();
           params.terminalTime = date;
@@ -3972,69 +3967,36 @@
             callback(null);
           }
         } else {
-          //non-high volumes: websql
-          var criteria = {};
-
-          criteria._whereClause = '';
-          criteria.params = [];
-
-          criteria._whereClause =
-            " as product where product.productType = 'S' and (product.isLinkedToProduct = 'true' and ";
-
-          //including/excluding products
-          criteria._whereClause +=
-            "((product.includeProducts = 'Y' and not exists (select 1 from m_product_service sp where product.m_product_id = sp.m_product_id and sp.m_related_product_id = ? ))";
-          criteria._whereClause +=
-            "or (product.includeProducts = 'N' and exists (select 1 from m_product_service sp where product.m_product_id = sp.m_product_id and sp.m_related_product_id = ? ))";
-          criteria._whereClause += 'or product.includeProducts is null) ';
-
-          //including/excluding product categories
-          criteria._whereClause +=
-            "and ((product.includeProductCategories = 'Y' and not exists (select 1 from m_product_category_service spc where product.m_product_id = spc.m_product_id and spc.m_product_category_id =  ? )) ";
-          criteria._whereClause +=
-            "or (product.includeProductCategories = 'N' and exists (select 1 from m_product_category_service spc where product.m_product_id = spc.m_product_id and spc.m_product_category_id  = ? )) ";
-          criteria._whereClause +=
-            'or product.includeProductCategories is null)) ';
-
-          criteria.params.push(productId);
-          criteria.params.push(productId);
-          criteria.params.push(productCategory);
-          criteria.params.push(productCategory);
-          OB.UTIL.HookManager.executeHooks(
-            'OBPOS_LoadRelatedServices_ExtendCriteria',
-            {
-              criteria: criteria
-            },
-            function(args) {
-              OB.Dal.findUsingCache(
-                'productServiceCache',
-                OB.Model.Product,
-                args.criteria,
-                function(data) {
-                  if (data) {
-                    data.hasservices = data.length > 0;
-                    data.hasmandatoryservices = _.find(data.models, function(
-                      model
-                    ) {
-                      return model.get('proposalType') === 'MP';
-                    });
-                    callback(data);
-                  } else {
-                    callback(null);
-                  }
-                },
-                function(trx, error) {
-                  OB.error(
-                    OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices')
-                  );
-                  callback(null);
-                },
-                {
-                  modelsAffectedByCache: ['Product']
-                }
-              );
-            }
+          //non-high volumes: indexedDB
+          let criteria = new OB.App.Class.Criteria();
+          criteria = await OB.UTIL.servicesFilter(
+            criteria,
+            productId,
+            productCategory
           );
+          criteria.criterion('obrdmIsdeliveryservice', false);
+          try {
+            const products = await OB.App.MasterdataModels.Product.find(
+              criteria.build()
+            );
+            let data = [];
+            for (let i = 0; i < products.length; i++) {
+              data.push(OB.Dal.transform(OB.Model.Product, products[i]));
+            }
+
+            if (data) {
+              data.hasservices = data.length > 0;
+              data.hasmandatoryservices = _.find(data[0], function(model) {
+                return model.proposalType === 'MP';
+              });
+              callback(data);
+            } else {
+              callback(null);
+            }
+          } catch (error) {
+            OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
+            callback(null);
+          }
         }
       } else {
         callback(null);

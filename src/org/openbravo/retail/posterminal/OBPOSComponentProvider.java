@@ -111,9 +111,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // Web POS window
         "utils/eventbus", "utils/attributeUtils", "utils/cashUpReportUtils",
         "utils/cashManagementUtils", "utils/ticketCloseUtils", "utils/prepaymentUtils",
-        "components/keypadcoins", "data/dataordersave", "data/dataordertaxes",
-        "data/datacustomersave", "data/datacustomeraddrsave", "data/dataorderdiscount",
-        "components/modalreceipts", "components/modalorderselector",
+        "utils/servicesUtils", "components/keypadcoins", "data/dataordersave",
+        "data/dataordertaxes", "data/datacustomersave", "data/datacustomeraddrsave",
+        "data/dataorderdiscount", "components/modalreceipts", "components/modalorderselector",
         "components/modalcrossstoreselector", "components/storeinformation",
         "components/modalmultiorderslayaway", "components/modalcategorytree",
         "components/rendercategory", "components/renderproduct", "components/renderproductch",
@@ -280,6 +280,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/masterdata/ProductCharacteristicValueModel");
     appDependency.add("model/masterdata/ProductBOMModel");
     appDependency.add("model/masterdata/SalesRepresentativeModel");
+    appDependency.add("model/masterdata/ServiceProductModel");
+    appDependency.add("model/masterdata/ServiceProductCategoryModel");
     appDependency.add("model/masterdata/TaxCategoryModel");
     appDependency.add("model/masterdata/TaxCategoryBOMModel");
     appDependency.add("model/masterdata/TaxRateModel");
