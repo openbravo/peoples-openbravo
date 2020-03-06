@@ -569,7 +569,7 @@ public class ReportValuationStock extends HttpSecureAppServlet {
       if (StringUtils.isNotBlank(strWarehouse)) {
         //@formatter:off
         hql +=
-              "   and loc.warehouse.id = :whId";
+              "   and loc.warehouse.id = :warehouseId";
         //@formatter:on
       }
       //@formatter:off
@@ -597,7 +597,7 @@ public class ReportValuationStock extends HttpSecureAppServlet {
       }
       whereQry.setNamedParameter("orgIds", orgs);
       if (StringUtils.isNotBlank(strWarehouse)) {
-        whereQry.setNamedParameter("whId", strWarehouse);
+        whereQry.setNamedParameter("warehouseId", strWarehouse);
       }
 
       if (StringUtils.isNotBlank(strCategoryProduct)) {
@@ -617,14 +617,14 @@ public class ReportValuationStock extends HttpSecureAppServlet {
     final String hql =
                   "select e.id " +
                   " from Warehouse as e" +
-                  " where e.organization.id in (:orgListIds)" +
+                  " where e.organization.id in (:orgIds)" +
                   " and e.client.id = :clientId";
     //@formatter:on
 
     return OBDal.getReadOnlyInstance()
         .getSession()
         .createQuery(hql, String.class)
-        .setParameterList("orgListIds", osp.getNaturalTree(orgId))
+        .setParameterList("orgIds", osp.getNaturalTree(orgId))
         .setParameter("clientId", clientId)
         .list();
   }
