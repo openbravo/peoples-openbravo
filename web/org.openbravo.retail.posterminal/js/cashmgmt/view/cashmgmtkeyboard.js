@@ -151,6 +151,14 @@ enyo.kind({
         ) {
           return true;
         }
+        if (
+          paymentMethod.paymentMethod.issafebox &&
+          OB.UTIL.isNullOrUndefined(
+            OB.UTIL.localStorage.getItem('currentSafeBox')
+          )
+        ) {
+          return true;
+        }
         var payment = paymentMethod.payment,
           i;
         if (paymentMethod.paymentMethod.allowdeposits) {
