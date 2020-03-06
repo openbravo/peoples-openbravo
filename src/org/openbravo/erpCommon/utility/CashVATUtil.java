@@ -32,6 +32,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
@@ -333,13 +334,13 @@ public class CashVATUtil {
                     "   and itcv.isManualSettlement = true ";
       //@formatter:on
 
-      return !OBDal.getInstance()
+      final Query<String> query = OBDal.getInstance()
           .getSession()
           .createQuery(hql, String.class)
           .setParameter("invoiceId", invoice.getId())
-          .setMaxResults(1)
-          .list()
-          .isEmpty();
+          .setMaxResults(1);
+
+      return !query.list().isEmpty();
     } finally {
       OBContext.restorePreviousMode();
     }
