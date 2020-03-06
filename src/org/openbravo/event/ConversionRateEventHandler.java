@@ -22,6 +22,7 @@ import java.util.Date;
 
 import javax.enterprise.event.Observes;
 
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -96,7 +97,7 @@ class ConversionRateEventHandler extends EntityPersistenceEventObserver {
                   "     )";
     //@formatter:on
 
-    return !OBDal.getInstance()
+    final Query<String> query = OBDal.getInstance()
         .getSession()
         .createQuery(hql, String.class)
         .setParameter("currencyConversionRateId", id)
@@ -105,8 +106,8 @@ class ConversionRateEventHandler extends EntityPersistenceEventObserver {
         .setParameter("currencyToId", currencyTo.getId())
         .setParameter("validFrom", validFrom)
         .setParameter("validTo", validTo)
-        .setMaxResults(1)
-        .list()
-        .isEmpty();
+        .setMaxResults(1);
+
+    return !query.list().isEmpty();
   }
 }
