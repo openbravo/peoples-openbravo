@@ -488,7 +488,7 @@ OB.UTIL.checkApproval = function(
           }
 
           // saving supervisor in local so next time it is possible to approve offline
-          const supervisor = await OB.App.OfflineUser.upsertSupervisor(
+          const supervisor = await OB.App.OfflineSession.upsertSupervisor(
             {
               id: inResponse.data.userId,
               name: username
@@ -512,7 +512,10 @@ OB.UTIL.checkApproval = function(
         // offline
         OB.UTIL.ProcessController.finish('checkApproval', execution);
 
-        const supervisor = await OB.App.OfflineUser.login(username, password);
+        const supervisor = await OB.App.OfflineSession.login(
+          username,
+          password
+        );
         if (!supervisor) {
           callback(
             false,
@@ -524,7 +527,7 @@ OB.UTIL.checkApproval = function(
           return;
         }
 
-        const approved = OB.App.OfflineUser.canApprove(
+        const approved = OB.App.OfflineSession.canApprove(
           supervisor,
           approvalType
         );

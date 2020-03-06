@@ -11164,12 +11164,14 @@
                 }
                 // Getting Other Session User's username
 
-                OB.App.OfflineUser.sessionWithId(existingOrder.get('session'))
+                OB.App.OfflineSession.sessionWithId(
+                  existingOrder.get('session')
+                )
                   .then(session => {
                     if (!session) {
                       return null;
                     }
-                    return OB.App.OfflineUser.withId(
+                    return OB.App.OfflineSession.withId(
                       this.model.get('updatedBy')
                     );
                   })

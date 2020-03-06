@@ -144,7 +144,7 @@ enyo.kind({
     if (this.model.get('session') === OB.MobileApp.model.get('session')) {
       this.$.buttonBringContainer.addClass('u-hideFromUI');
     } else {
-      OB.App.OfflineUser.withId(this.model.get('updatedBy')).then(user => {
+      OB.App.OfflineSession.withId(this.model.get('updatedBy')).then(user => {
         if (
           user &&
           !_.isUndefined(this.$.infoPendingReceipt) &&
