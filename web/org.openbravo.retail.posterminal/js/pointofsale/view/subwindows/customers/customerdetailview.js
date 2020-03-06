@@ -756,16 +756,24 @@ enyo.kind({
       );
       column.preset.id = '';
       column.preset.name = '';
-      this.doShowPopup({
-        popup: this.args.navigationPath[this.args.navigationPath.length - 1],
-        args: {
-          businessPartner: this.args.businessPartner,
-          target: this.args.target,
-          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPop(
-            this.args.navigationPath
-          )
-        }
-      });
+      if (
+        OB.UTIL.isNullOrUndefined(
+          this.$.body.$.receiptsList.$.openreceiptslistitemprinter.selectedModel
+        )
+      ) {
+        this.doShowPopup({
+          popup: this.args.navigationPath[this.args.navigationPath.length - 1],
+          args: {
+            businessPartner: this.args.businessPartner,
+            target: this.args.target,
+            navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPop(
+              this.args.navigationPath
+            )
+          }
+        });
+      } else {
+        this.$.body.$.receiptsList.$.openreceiptslistitemprinter.selectedModel = null;
+      }
     }
   }
 });
