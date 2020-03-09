@@ -124,11 +124,11 @@
       );
       lineTaxes.grossPrice = OB.Taxes.Tax.calculatePriceFromAmount(
         lineTaxes.grossAmount,
-        lineTaxes.quantity
+        lineTaxes.qty
       );
       lineTaxes.netPrice = OB.Taxes.Tax.calculatePriceFromAmount(
         lineTaxes.netAmount,
-        lineTaxes.quantity
+        lineTaxes.qty
       );
 
       return lineTaxes;
@@ -306,14 +306,14 @@
     }
 
     /**
-     * price = amount / quantity
+     * price = amount / qty
      */
-    static calculatePriceFromAmount(amount, quantity) {
-      if (OB.DEC.compare(quantity) === 0) {
+    static calculatePriceFromAmount(amount, qty) {
+      if (OB.DEC.compare(qty) === 0) {
         return OB.DEC.Zero;
       }
 
-      return OB.DEC.div(amount, quantity);
+      return OB.DEC.div(amount, qty);
     }
 
     /**

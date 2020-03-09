@@ -43,7 +43,7 @@
           : line.has('discountedNet')
           ? line.get('discountedNet')
           : line.get('net');
-        newLine.quantity = line.get('qty');
+        newLine.qty = line.get('qty');
         newLine.taxExempt = line.get('originalTaxExempt');
         newLine.product = {};
         newLine.product.id = line.get('product').id;
@@ -62,7 +62,7 @@
               const newBomLine = {};
               newBomLine.id = bomLine.id;
               newBomLine.amount = bomLine.bomamount;
-              newBomLine.quantity = bomLine.bomquantity;
+              newBomLine.qty = bomLine.bomquantity;
               newBomLine.product = {};
               newBomLine.product.id = bomLine.bomproduct;
               newBomLine.product.taxCategory = bomLine.bomtaxcategory;

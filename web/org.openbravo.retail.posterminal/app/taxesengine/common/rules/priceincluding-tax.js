@@ -16,7 +16,7 @@
       const lineGrossAmount = line.amount;
       const lineGrossPrice = OB.Taxes.Tax.calculatePriceFromAmount(
         lineGrossAmount,
-        line.quantity
+        line.qty
       );
       const lineNetAmount = OB.Taxes.PriceIncludingTax.calculateNetAmountFromGrossAmount(
         lineGrossAmount,
@@ -24,7 +24,7 @@
       );
       const lineNetPrice = OB.Taxes.Tax.calculatePriceFromAmount(
         lineNetAmount,
-        line.quantity
+        line.qty
       );
       const lineTaxes = OB.Taxes.Tax.calculateTaxes(
         lineGrossAmount,
@@ -38,7 +38,7 @@
         netAmount: lineNetAmount,
         grossPrice: lineGrossPrice,
         netPrice: lineNetPrice,
-        quantity: line.quantity,
+        qty: line.qty,
         tax: parentTaxId,
         taxes: lineTaxes
       };
@@ -117,7 +117,7 @@
         line.netAmount = OB.DEC.add(line.netAmount, adjustment);
         line.netPrice = OB.Taxes.Tax.calculatePriceFromAmount(
           line.netAmount,
-          line.quantity
+          line.qty
         );
         const adjustedTax = line.taxes.reduce((tax1, tax2) => {
           return OB.DEC.abs(tax1.base) <= OB.DEC.abs(tax2.base) ? tax1 : tax2;
