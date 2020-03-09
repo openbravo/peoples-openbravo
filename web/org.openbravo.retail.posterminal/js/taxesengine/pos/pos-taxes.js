@@ -30,19 +30,11 @@
         newLine.id = line.get('id');
         newLine.country =
           line.get('obrdmDeliveryMode') === 'HomeDelivery'
-            ? receipt.get('bp').get('shipCountryId') ||
-              receipt
-                .get('bp')
-                .get('locationModel')
-                .get('countryId')
+            ? receipt.get('bp').get('shipCountryId')
             : line.get('organization').country;
         newLine.region =
           line.get('obrdmDeliveryMode') === 'HomeDelivery'
-            ? receipt.get('bp').get('shipRegionId') ||
-              receipt
-                .get('bp')
-                .get('locationModel')
-                .get('regionId')
+            ? receipt.get('bp').get('shipRegionId')
             : line.get('organization').region;
         newLine.amount = newTicket.priceIncludesTax
           ? line.has('discountedGross')
