@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2019 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -663,7 +663,7 @@ enyo.kind({
         OB.Model.Product,
         criteria,
         function(data) {
-          me.searchProductCallback(data, code, callback, attrs);
+          me.searchProductCallback(data.models, code, callback, attrs);
         },
         me.errorCallback,
         {
@@ -721,7 +721,7 @@ enyo.kind({
         if (args.dataProducts && args.dataProducts.length > 0) {
           OB.debug('productfound');
           let data;
-          if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+          if (dataProducts instanceof Backbone.Collection) {
             data = args.dataProducts.at(0);
           } else {
             data = args.dataProducts[0];
