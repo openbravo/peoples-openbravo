@@ -426,6 +426,13 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
                   ) {
                     return accum;
                   }
+                  // Not accumulate if payment method is defined in safe box
+                  if (
+                    OB.MobileApp.model.paymentnames[trx.get('searchKey')]
+                      .paymentMethod.issafebox
+                  ) {
+                    return accum;
+                  }
                   const fromCurrencyId =
                     OB.MobileApp.model.paymentnames[trx.get('searchKey')]
                       .paymentMethod.currency;
