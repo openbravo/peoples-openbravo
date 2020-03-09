@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2018 Openbravo SLU
+ * All portions are Copyright (C) 2012-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -229,26 +229,30 @@ public class ReservationUtils {
    * @return true if there are Reservations created against this Stock, false otherwise
    */
   public static boolean existsReservationForStock(StorageDetail storageDetail) {
-    StringBuilder hql = new StringBuilder();
-    hql.append("select 1 ");
-    hql.append("from MaterialMgmtReservationStock ");
-    hql.append("where exists (select 1");
-    hql.append("              from MaterialMgmtReservationStock rs");
-    hql.append("              join rs.reservation r");
-    hql.append("              where r.product = :product");
-    hql.append("              and coalesce(rs.storageBin, r.storageBin) = :storageBin");
-    hql.append(
-        "              and coalesce(rs.attributeSetValue, r.attributeSetValue) = :attributeSetValue");
-    hql.append("              and r.uOM = :uom");
-    hql.append("              and rs.quantity > rs.released)");
+    //@formatter:off
+    final String hql = 
+            "select 1" +
+            "  from MaterialMgmtReservationStock" +
+            " where exists" +
+            "   (" +
+            "     select 1" +
+            "       from MaterialMgmtReservationStock rs" +
+            "         join rs.reservation r" +
+            "      where r.product.id = :productId" +
+            "        and coalesce(rs.storageBin.id, r.storageBin.id) = :storageBinId" +
+            "        and coalesce(rs.attributeSetValue.id, r.attributeSetValue.id) = :attributeSetValueId" +
+            "        and r.uOM.id = :uomId" +
+            "        and rs.quantity > rs.released" +
+            "   )";
+    //@formatter:on
 
-    Query<Object> query = OBDal.getInstance()
+    final Query<Object> query = OBDal.getInstance()
         .getSession()
-        .createQuery(hql.toString(), Object.class);
-    query.setParameter("product", storageDetail.getProduct());
-    query.setParameter("storageBin", storageDetail.getStorageBin());
-    query.setParameter("attributeSetValue", storageDetail.getAttributeSetValue());
-    query.setParameter("uom", storageDetail.getUOM());
+        .createQuery(hql, Object.class)
+        .setParameter("productId", storageDetail.getProduct().getId())
+        .setParameter("storageBinId", storageDetail.getStorageBin().getId())
+        .setParameter("attributeSetValueId", storageDetail.getAttributeSetValue().getId())
+        .setParameter("uomId", storageDetail.getUOM().getId());
 
     return !query.list().isEmpty();
   }
@@ -262,23 +266,25 @@ public class ReservationUtils {
    */
   public static List<ReservationStock> getReservationStockFromStorageDetail(
       StorageDetail storageDetail) {
-    StringBuilder hql = new StringBuilder();
-    hql.append("select rs");
-    hql.append(" from MaterialMgmtReservationStock rs");
-    hql.append(" join rs.reservation r");
-    hql.append(" where r.product = :product");
-    hql.append(" and coalesce(rs.storageBin, r.storageBin) = :storageBin");
-    hql.append(" and coalesce(rs.attributeSetValue, r.attributeSetValue) = :attributeSetValue");
-    hql.append(" and r.uOM = :uom");
-    hql.append(" and rs.quantity > rs.released");
+    //@formatter:off
+    final String hql = 
+            "select rs" +
+            "  from MaterialMgmtReservationStock rs" +
+            "    join rs.reservation r" +
+            " where r.product.id = :productId" +
+            "   and coalesce(rs.storageBin.id, r.storageBin.id) = :storageBinId" +
+            "   and coalesce(rs.attributeSetValue.id, r.attributeSetValue.id) = :attributeSetValueId" +
+            "   and r.uOM.id = :uomId" +
+            "   and rs.quantity > rs.released";
+    //@formatter:on
 
-    Query<ReservationStock> query = OBDal.getInstance()
+    final Query<ReservationStock> query = OBDal.getInstance()
         .getSession()
-        .createQuery(hql.toString(), ReservationStock.class);
-    query.setParameter("product", storageDetail.getProduct());
-    query.setParameter("storageBin", storageDetail.getStorageBin());
-    query.setParameter("attributeSetValue", storageDetail.getAttributeSetValue());
-    query.setParameter("uom", storageDetail.getUOM());
+        .createQuery(hql, ReservationStock.class)
+        .setParameter("productId", storageDetail.getProduct().getId())
+        .setParameter("storageBinId", storageDetail.getStorageBin().getId())
+        .setParameter("attributeSetValueId", storageDetail.getAttributeSetValue().getId())
+        .setParameter("uomId", storageDetail.getUOM().getId());
 
     return query.list();
   }
