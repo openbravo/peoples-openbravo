@@ -70,7 +70,12 @@
           if (bomGroup) {
             bomGroup.amount = OB.DEC.add(bomGroup.amount, bomLine.amount);
           } else {
-            result.push(bomLine);
+            const updatedLine = { ...line };
+            updatedLine.id = bomLine.id;
+            updatedLine.amount = bomLine.amount;
+            updatedLine.quantity = bomLine.quantity;
+            updatedLine.product = bomLine.product;
+            result.push(updatedLine);
           }
           return result;
         }, [])
