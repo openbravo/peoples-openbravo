@@ -304,6 +304,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
             type: 'deposit'
           },
           cashMgmts => {
+            let deposits = [];
             cashMgmts.models.forEach((cashMgmt, index) => {
               const payment = OB.MobileApp.model.get('payments').filter(pay => {
                 return (
@@ -311,22 +312,25 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
                   !pay.paymentMethod.issafebox
                 );
               })[0];
-              cashMgmt.set(
-                'countInCashup',
-                payment.paymentMethod.countpaymentincashup
-              );
-              cashMgmt.set(
-                'searchKey',
-                'cashMgmtDeposit' +
-                  index +
-                  payment.payment.searchKey.replace('_', '') +
-                  cashMgmt.get('amount')
-              );
+              if (payment) {
+                cashMgmt.set(
+                  'countInCashup',
+                  payment.paymentMethod.countpaymentincashup
+                );
+                cashMgmt.set(
+                  'searchKey',
+                  'cashMgmtDeposit' +
+                    index +
+                    payment.payment.searchKey.replace('_', '') +
+                    cashMgmt.get('amount')
+                );
+                deposits.push(cashMgmt);
+              }
             });
-            closeCashReport.set('deposits', cashMgmts.models);
+            closeCashReport.set('deposits', deposits);
             closeCashReport.set(
               'totalDeposits',
-              cashMgmts.models.reduce((accum, trx) => {
+              deposits.reduce((accum, trx) => {
                 return OB.DEC.add(accum, trx.get('origAmount'));
               }, 0)
             );
@@ -339,6 +343,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
             type: 'drop'
           },
           cashMgmts => {
+            let drops = [];
             cashMgmts.models.forEach((cashMgmt, index) => {
               const payment = OB.MobileApp.model.get('payments').filter(pay => {
                 return (
@@ -346,22 +351,25 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
                   !pay.paymentMethod.issafebox
                 );
               })[0];
-              cashMgmt.set(
-                'countInCashup',
-                payment.paymentMethod.countpaymentincashup
-              );
-              cashMgmt.set(
-                'searchKey',
-                'cashMgmtDrop' +
-                  index +
-                  payment.payment.searchKey.replace('_', '') +
-                  cashMgmt.get('amount')
-              );
+              if (payment) {
+                cashMgmt.set(
+                  'countInCashup',
+                  payment.paymentMethod.countpaymentincashup
+                );
+                cashMgmt.set(
+                  'searchKey',
+                  'cashMgmtDrop' +
+                    index +
+                    payment.payment.searchKey.replace('_', '') +
+                    cashMgmt.get('amount')
+                );
+                drops.push(cashMgmt);
+              }
             });
-            closeCashReport.set('drops', cashMgmts.models);
+            closeCashReport.set('drops', drops);
             closeCashReport.set(
               'totalDrops',
-              cashMgmts.models.reduce((accum, trx) => {
+              drops.reduce((accum, trx) => {
                 return OB.DEC.add(accum, trx.get('origAmount'));
               }, 0)
             );
@@ -443,6 +451,13 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
                   ) {
                     return accum;
                   }
+                  // Not accumulate if payment method is defined in safe box
+                  if (
+                    OB.MobileApp.model.paymentnames[trx.get('searchKey')]
+                      .paymentMethod.issafebox
+                  ) {
+                    return accum;
+                  }
                   const fromCurrencyId =
                     OB.MobileApp.model.paymentnames[trx.get('searchKey')]
                       .paymentMethod.currency;
@@ -465,6 +480,13 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
                     terminalSlave &&
                     OB.MobileApp.model.paymentnames[trx.get('searchKey')]
                       .paymentMethod.isshared
+                  ) {
+                    return accum;
+                  }
+                  // Not accumulate if payment method is defined in safe box
+                  if (
+                    OB.MobileApp.model.paymentnames[trx.get('searchKey')]
+                      .paymentMethod.issafebox
                   ) {
                     return accum;
                   }
