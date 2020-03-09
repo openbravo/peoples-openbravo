@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2017 Openbravo SLU
+* All portions are Copyright (C) 2001-2020 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -465,7 +465,7 @@
           DESCRIPTION, M_PRODUCT_ID, QTYINVOICED, PRICELIST,
           PRICEACTUAL, PRICELIMIT, LINENETAMT, LINE_GROSS_AMOUNT, C_CHARGE_ID,
           CHARGEAMT, C_UOM_ID, C_TAX_ID, S_RESOURCEASSIGNMENT_ID,
-          TAXAMT, M_ATTRIBUTESETINSTANCE_ID, ISDESCRIPTION,
+          M_ATTRIBUTESETINSTANCE_ID, ISDESCRIPTION,
           QUANTITYORDER, M_PRODUCT_UOM_ID, PRICESTD, M_OFFER_ID,
           ISDEFERRED, DEFPLANTYPE, PERIODNUMBER, C_PERIOD_ID,
           C_PROJECT_ID, USER1_ID, USER2_ID,
@@ -479,7 +479,7 @@
           v_description, CUR_INVOICE.M_PRODUCT_ID, 0, 0,
           0, 0, CUR_INVOICE.LINENET, CUR_INVOICE.GROSS_AMOUNT, NULL,
           0, CUR_INVOICE.C_UOM_ID, CUR_INVOICE.C_TAX_ID, NULL,
-          0, NULL, 'N',
+          NULL, 'N',
           NULL, NULL, 0, NULL,
           v_isdeferred_inv, v_defplantype_inv, v_periodnumber_inv, v_period_inv,
           CUR_INVOICE.c_project_id, CUR_INVOICE.user1_id, CUR_INVOICE.user2_id,

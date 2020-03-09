@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2019 Openbravo SLU
+* All portions are Copyright (C) 2001-2020 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -300,7 +300,7 @@
    PRICELIST, PRICEACTUAL,
    PRICELIMIT, LINENETAMT,
    C_CHARGE_ID, CHARGEAMT, C_UOM_ID, C_TAX_ID, S_RESOURCEASSIGNMENT_ID,
-            TAXAMT, M_ATTRIBUTESETINSTANCE_ID, ISDESCRIPTION,
+            M_ATTRIBUTESETINSTANCE_ID, ISDESCRIPTION,
             QUANTITYORDER, M_PRODUCT_UOM_ID, PriceStd,
             ISDEFERRED, DEFPLANTYPE, PERIODNUMBER, C_PERIOD_ID 
           )
@@ -313,7 +313,7 @@
             v_priceList, v_priceActual,
             v_priceLimit, ROUND(v_priceActual*v_auxQty, 2),
             NULL, 0, Cur_Outs.C_UOM_ID, v_Tax_ID, NULL,
-            0, Cur_Outs.M_AttributeSetInstance_ID, 'N',
+            Cur_Outs.M_AttributeSetInstance_ID, 'N',
             Cur_Outs.quantityOrder*(v_auxQty/Cur_Outs.MovementQty), Cur_Outs.M_Product_UOM_ID, v_priceActual,
             v_isdeferred_inv, v_defplantype_inv, v_periodnumber_inv, v_period_inv
           )
@@ -336,7 +336,7 @@
             PRICEACTUAL, PRICELIMIT,
    LINENETAMT, C_CHARGE_ID,
             CHARGEAMT, C_UOM_ID, C_TAX_ID, S_RESOURCEASSIGNMENT_ID,
-            TAXAMT, M_ATTRIBUTESETINSTANCE_ID, ISDESCRIPTION,
+            M_ATTRIBUTESETINSTANCE_ID, ISDESCRIPTION,
             QUANTITYORDER, M_PRODUCT_UOM_ID, PriceStd
           )
           VALUES
@@ -348,7 +348,7 @@
             v_priceActual, v_priceLimit,
             ROUND(v_priceActual*v_auxQty, 2), NULL,
             0, Cur_Outs.C_UOM_ID, v_Tax_ID, NULL,
-            0, Cur_Outs.M_AttributeSetInstance_ID, 'N',
+            Cur_Outs.M_AttributeSetInstance_ID, 'N',
             Cur_Outs.quantityOrder*(v_auxQty/Cur_Outs.MovementQty), Cur_Outs.M_Product_UOM_ID, v_priceActual
           )
           ;
