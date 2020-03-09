@@ -311,7 +311,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
     for (final String resource : appDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,
-          prefix + "/app/" + resource + ".js", MobileCoreConstants.APP_IDENTIFIER));
+          prefix + "/app/" + resource + ".js", POSUtils.APP_NAME));
     }
 
     return globalResources;
