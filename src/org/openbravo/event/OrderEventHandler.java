@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,7 +26,6 @@ import javax.enterprise.event.Observes;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.query.Query;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -35,14 +34,12 @@ import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.order.Order;
-import org.openbravo.model.common.order.OrderDiscount;
 import org.openbravo.model.common.order.OrderLine;
 
 class OrderEventHandler extends EntityPersistenceEventObserver {
@@ -50,21 +47,22 @@ class OrderEventHandler extends EntityPersistenceEventObserver {
   private static final String DO_NOT_SYNC_WAREHOUSE_PREFERENCE = "DoNotSyncWarehouse";
   private static final String DO_NOT_SYNC_DATE_DELIVERED_PREFERENCE = "DoNotSyncDateDelivered";
   private static final String DO_NOT_SYNC_DATE_ORDERED_PREFERENCE = "DoNotSyncDateOrdered";
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(Order.ENTITY_NAME) };
+  private static final Entity[] entities = {
+      ModelProvider.getInstance().getEntity(Order.ENTITY_NAME) };
 
   @Override
   protected Entity[] getObservedEntities() {
     return entities;
   }
 
-  public void onUpdate(@Observes EntityUpdateEvent event) {
+  public void onUpdate(final @Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
 
-    OrderParameters orderParameters = getOrderParameters(event);
+    final OrderParameters orderParameters = getOrderParameters(event);
 
-    List<OrderLine> orderLines = getOrderLines(orderParameters);
+    final List<OrderLine> orderLines = getOrderLines(orderParameters);
     if (CollectionUtils.isNotEmpty(orderLines)) {
       updateOrderLinesValues(orderParameters, orderLines);
     }
@@ -74,20 +72,20 @@ class OrderEventHandler extends EntityPersistenceEventObserver {
     }
   }
 
-  public void onDelete(@Observes EntityDeleteEvent event) {
+  public void onDelete(final @Observes EntityDeleteEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
     final Entity orderEntity = ModelProvider.getInstance().getEntity(Order.ENTITY_NAME);
     final Property quotationProperty = orderEntity.getProperty(Order.PROPERTY_QUOTATION);
-    Order quotation = (Order) event.getCurrentState(quotationProperty);
+    final Order quotation = (Order) event.getCurrentState(quotationProperty);
     if (quotation != null) {
       quotation.setDocumentStatus("UE");
     }
   }
 
   private OrderParameters getOrderParameters(final EntityUpdateEvent event) {
-    OrderParameters orderParameters = new OrderParameters();
+    final OrderParameters orderParameters = new OrderParameters();
     final Entity orderEntity = ModelProvider.getInstance().getEntity(Order.ENTITY_NAME);
     final Property orderDateProperty = orderEntity.getProperty(Order.PROPERTY_ORDERDATE);
     final Property scheduledDateProperty = orderEntity
@@ -112,10 +110,11 @@ class OrderEventHandler extends EntityPersistenceEventObserver {
   }
 
   private List<OrderLine> getOrderLines(final OrderParameters orderParameters) {
-    OBCriteria<OrderLine> orderLineCriteria = OBDal.getInstance().createCriteria(OrderLine.class);
-    orderLineCriteria.add(Restrictions.eq(OrderLine.PROPERTY_SALESORDER,
-        OBDal.getInstance().get(Order.class, orderParameters.getOrderId())));
-    return orderLineCriteria.list();
+    return OBDal.getInstance()
+        .createCriteria(OrderLine.class)
+        .add(Restrictions.eq(OrderLine.PROPERTY_SALESORDER,
+            OBDal.getInstance().get(Order.class, orderParameters.getOrderId())))
+        .list();
   }
 
   private void updateOrderLinesValues(final OrderParameters orderParameters,
@@ -187,7 +186,7 @@ class OrderEventHandler extends EntityPersistenceEventObserver {
           OBContext.getOBContext().getCurrentClient(),
           OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
           OBContext.getOBContext().getRole(), null);
-    } catch (PropertyException e) {
+    } catch (final PropertyException e) {
       // if property not found, sync the field
       syncField = Preferences.NO;
     }
@@ -199,13 +198,17 @@ class OrderEventHandler extends EntityPersistenceEventObserver {
   }
 
   private void removeDiscountInformationFromOrder(final OrderParameters orderParameters) {
-    StringBuilder deleteHql = new StringBuilder();
-    deleteHql.append(" delete from " + OrderDiscount.ENTITY_NAME);
-    deleteHql.append(" where " + OrderDiscount.PROPERTY_SALESORDER + ".id = :orderId");
-    @SuppressWarnings("rawtypes")
-    Query deleteQry = OBDal.getInstance().getSession().createQuery(deleteHql.toString());
-    deleteQry.setParameter("orderId", orderParameters.getOrderId());
-    deleteQry.executeUpdate();
+    //@formatter:off
+    final String deleteHql =
+                    " delete from OrderDiscount" +
+                    " where salesOrder.id = :orderId";
+    //@formatter:on
+
+    OBDal.getInstance()
+        .getSession()
+        .createQuery(deleteHql)
+        .setParameter("orderId", orderParameters.getOrderId())
+        .executeUpdate();
   }
 
   private class OrderParameters {

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2017-2019 Openbravo SLU
+ * All portions are Copyright (C) 2017-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -21,7 +21,6 @@ package org.openbravo.event;
 import javax.enterprise.event.Observes;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.query.Query;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -30,37 +29,43 @@ import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.invoice.Invoice;
-import org.openbravo.model.common.invoice.InvoiceDiscount;
 
 class InvoiceEventHandler extends EntityPersistenceEventObserver {
 
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(Invoice.ENTITY_NAME) };
+  private static final Entity[] entities = {
+      ModelProvider.getInstance().getEntity(Invoice.ENTITY_NAME) };
 
   @Override
   protected Entity[] getObservedEntities() {
     return entities;
   }
 
-  public void onUpdate(@Observes EntityUpdateEvent event) {
+  public void onUpdate(final @Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
     final Entity invoiceEntity = ModelProvider.getInstance().getEntity(Invoice.ENTITY_NAME);
     final Property businessPartnerProperty = invoiceEntity
         .getProperty(Invoice.PROPERTY_BUSINESSPARTNER);
-    String invoiceId = (String) event.getTargetInstance().getId();
-    String newBPId = ((BusinessPartner) event.getCurrentState(businessPartnerProperty)).getId();
-    String oldBPId = ((BusinessPartner) event.getPreviousState(businessPartnerProperty)).getId();
+    final String invoiceId = (String) event.getTargetInstance().getId();
+    final String newBPId = ((BusinessPartner) event.getCurrentState(businessPartnerProperty))
+        .getId();
+    final String oldBPId = ((BusinessPartner) event.getPreviousState(businessPartnerProperty))
+        .getId();
 
     // Remove discount information
     if (!StringUtils.equals(newBPId, oldBPId)) {
-      StringBuilder deleteHql = new StringBuilder();
-      deleteHql.append(" delete from " + InvoiceDiscount.ENTITY_NAME);
-      deleteHql.append(" where " + InvoiceDiscount.PROPERTY_INVOICE + ".id = :invoiceId");
-      @SuppressWarnings("rawtypes")
-      Query deleteQry = OBDal.getInstance().getSession().createQuery(deleteHql.toString());
-      deleteQry.setParameter("invoiceId", invoiceId);
-      deleteQry.executeUpdate();
+      //@formatter:off
+      final String deleteHql =
+                      "delete from InvoiceDiscount" +
+                      " where invoice.id = :invoiceId";
+      //@formatter:on
+
+      OBDal.getInstance()
+          .getSession()
+          .createQuery(deleteHql)
+          .setParameter("invoiceId", invoiceId)
+          .executeUpdate();
     }
   }
 }

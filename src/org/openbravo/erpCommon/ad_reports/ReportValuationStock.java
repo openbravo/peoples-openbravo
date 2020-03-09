@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2020 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,7 +36,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -60,9 +59,7 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.cost.CostingAlgorithm;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
@@ -470,10 +467,10 @@ public class ReportValuationStock extends HttpSecureAppServlet {
         totalByCategory.put(row.categoryName, spc);
         spcs.add(spc);
       }
-      if(StringUtils.isNotBlank(row.totalCost)) {
+      if (StringUtils.isNotBlank(row.totalCost)) {
         spc.addCost(new BigDecimal(row.totalCost));
       }
-      
+
     }
     SummaryProductCategory[] datos = spcs.toArray(new SummaryProductCategory[0]);
     String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportValuationStockPDF.jrxml";
@@ -513,17 +510,19 @@ public class ReportValuationStock extends HttpSecureAppServlet {
     try {
       OBContext.setAdminMode(true);
 
-      StringBuffer where = new StringBuffer();
-      where.append(" as cosrule");
-      where.append(" where cosrule." + CostingRule.PROPERTY_ORGANIZATION + ".id = :org");
-      where.append(" and cosrule." + CostingRule.PROPERTY_VALIDATED + " = true");
-      where.append(" order by " + CostingRule.PROPERTY_STARTINGDATE + " desc");
+      //@formatter:off
+      String hql =
+              " as cosrule" +
+              " where cosrule.organization.id = :orgId" +
+              " and cosrule.validated = true" +
+              " order by startingDate desc";
+      //@formatter:on
 
-      OBQuery<CostingRule> whereQry = OBDal.getReadOnlyInstance()
-          .createQuery(CostingRule.class, where.toString());
-      whereQry.setNamedParameter("org", legalEntity.getId());
-      whereQry.setMaxResult(1);
-      CostingRule cr = whereQry.uniqueResult();
+      CostingRule cr = OBDal.getReadOnlyInstance()
+          .createQuery(CostingRule.class, hql)
+          .setNamedParameter("orgId", legalEntity.getId())
+          .setMaxResult(1)
+          .uniqueResult();
       if (cr == null) {
         return null;
       }
@@ -558,25 +557,36 @@ public class ReportValuationStock extends HttpSecureAppServlet {
     try {
       OBContext.setAdminMode(true);
 
-      StringBuffer where = new StringBuffer();
-      where.append(" as trx");
-      where.append(" join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as loc");
-      where.append(" join trx." + MaterialTransaction.PROPERTY_PRODUCT + " as p");
-      where.append(" where trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :maxDate");
-      where.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = false");
-      where.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+      //@formatter:off
+      String hql =
+              " as trx" +
+              " join trx.storageBin as loc" +
+              " join trx.product as p" +
+              " where trx.movementDate < :maxDate" +
+              "   and trx.isCostCalculated = false" +
+              "   and trx.organization.id in (:orgIds)";
+      //@formatter:on
       if (StringUtils.isNotBlank(strWarehouse)) {
-        where.append("   and loc." + Locator.PROPERTY_WAREHOUSE + ".id = :wh");
+        //@formatter:off
+        hql +=
+              "   and loc.warehouse.id = :warehouseId";
+        //@formatter:on
       }
-      where.append("   and p." + Product.PROPERTY_STOCKED + " = true");
+      //@formatter:off
+      hql +=
+              "   and p.stocked = true";
+      //@formatter:on
       if (StringUtils.isNotBlank(strCategoryProduct)) {
-        where.append("   and p." + Product.PROPERTY_PRODUCTCATEGORY + ".id = :prodCategory");
+        //@formatter:off
+        hql +=
+              "   and p.productCategory.id = :prodCategoryId";
+        //@formatter:on
       }
-
-      OBQuery<MaterialTransaction> whereQry = OBDal.getReadOnlyInstance()
-          .createQuery(MaterialTransaction.class, where.toString());
-      whereQry.setFilterOnReadableClients(false);
-      whereQry.setFilterOnReadableOrganization(false);
+      //@formatter:on
+      final OBQuery<MaterialTransaction> whereQry = OBDal.getReadOnlyInstance()
+          .createQuery(MaterialTransaction.class, hql)
+          .setFilterOnReadableClients(false)
+          .setFilterOnReadableOrganization(false);
       try {
         ConnectionProvider readOnlyCP = DalConnectionProvider.getReadOnlyConnectionProvider();
         whereQry.setNamedParameter("maxDate",
@@ -585,13 +595,13 @@ public class ReportValuationStock extends HttpSecureAppServlet {
         // DoNothing parse exception not expected.
         log4j.error("error parsing date: " + strDate, e);
       }
-      whereQry.setNamedParameter("orgs", orgs);
+      whereQry.setNamedParameter("orgIds", orgs);
       if (StringUtils.isNotBlank(strWarehouse)) {
-        whereQry.setNamedParameter("wh", strWarehouse);
+        whereQry.setNamedParameter("warehouseId", strWarehouse);
       }
 
       if (StringUtils.isNotBlank(strCategoryProduct)) {
-        whereQry.setNamedParameter("prodCategory", strCategoryProduct);
+        whereQry.setNamedParameter("prodCategoryId", strCategoryProduct);
       }
       whereQry.setMaxResult(1);
       return whereQry.uniqueResult() != null;
@@ -603,17 +613,20 @@ public class ReportValuationStock extends HttpSecureAppServlet {
   private List<String> getWarehouses(String clientId, String orgId) {
     final OrganizationStructureProvider osp = OBContext.getOBContext()
         .getOrganizationStructureProvider(clientId);
-    final StringBuilder hqlString = new StringBuilder();
-    hqlString.append("select e.id ");
-    hqlString.append(" from Warehouse as e");
-    hqlString.append(" where e.organization.id in (:orgList)");
-    hqlString.append(" and e.client.id = :clientId");
-    Query<String> qry = OBDal.getReadOnlyInstance()
+    //@formatter:off
+    final String hql =
+                  "select e.id " +
+                  " from Warehouse as e" +
+                  " where e.organization.id in (:orgIds)" +
+                  " and e.client.id = :clientId";
+    //@formatter:on
+
+    return OBDal.getReadOnlyInstance()
         .getSession()
-        .createQuery(hqlString.toString(), String.class);
-    qry.setParameterList("orgList", osp.getNaturalTree(orgId));
-    qry.setParameter("clientId", clientId);
-    return qry.list();
+        .createQuery(hql, String.class)
+        .setParameterList("orgIds", osp.getNaturalTree(orgId))
+        .setParameter("clientId", clientId)
+        .list();
   }
 
   @Override

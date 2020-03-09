@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,7 +36,7 @@ import org.openbravo.model.common.currency.ConversionRate;
 import org.openbravo.model.common.currency.Currency;
 
 class ConversionRateEventHandler extends EntityPersistenceEventObserver {
-  private static Entity[] entities = {
+  private static final Entity[] entities = {
       ModelProvider.getInstance().getEntity(ConversionRate.ENTITY_NAME) };
 
   @Override
@@ -44,7 +44,7 @@ class ConversionRateEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onNew(@Observes EntityNewEvent event) {
+  public void onNew(final @Observes EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -58,7 +58,7 @@ class ConversionRateEventHandler extends EntityPersistenceEventObserver {
     }
   }
 
-  public void onUpdate(@Observes EntityUpdateEvent event) {
+  public void onUpdate(final @Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -73,34 +73,41 @@ class ConversionRateEventHandler extends EntityPersistenceEventObserver {
   }
 
   // Check if exists another record using this currencyFrom - currencyTo in the same dates
-  private boolean existsRecord(String id, Client client, Currency currencyFrom, Currency currencyTo,
-      Date validFrom, Date validTo) {
-    StringBuilder hql = new StringBuilder();
-    hql.append(" SELECT t." + ConversionRate.PROPERTY_ID);
-    hql.append(" FROM " + ConversionRate.ENTITY_NAME + " as t");
-    hql.append(" WHERE :id != t. " + ConversionRate.PROPERTY_ID);
-    hql.append(" AND :client = t. " + ConversionRate.PROPERTY_CLIENT);
-    hql.append(" AND :currencyFrom = t. " + ConversionRate.PROPERTY_CURRENCY);
-    hql.append(" AND :currencyTo = t. " + ConversionRate.PROPERTY_TOCURRENCY);
-    hql.append(" AND ((:validFrom between t." + ConversionRate.PROPERTY_VALIDFROMDATE + " AND t."
-        + ConversionRate.PROPERTY_VALIDTODATE);
-    hql.append(" OR :validTo between t." + ConversionRate.PROPERTY_VALIDFROMDATE + " AND t."
-        + ConversionRate.PROPERTY_VALIDTODATE + ")");
-    hql.append(" OR (:validFrom < t." + ConversionRate.PROPERTY_VALIDFROMDATE + " AND :validTo > t."
-        + ConversionRate.PROPERTY_VALIDTODATE + "))");
+  private boolean existsRecord(final String id, final Client client, final Currency currencyFrom,
+      final Currency currencyTo, final Date validFrom, final Date validTo) {
+    //@formatter:off
+    final String hql = 
+                  "select t.id" +
+                  "  from CurrencyConversionRate as t" +
+                  " where t.id != :currencyConversionRateId" +
+                  "   and t.client.id = :clientId" +
+                  "   and t.currency.id = :currencyFromId" +
+                  "   and t.toCurrency.id = :currencyToId" +
+                  "   and" +
+                  "     (" +
+                  "       (" +
+                  "         :validFrom between t.validFromDate and t.validToDate" +
+                  "         or :validTo between t.validFromDate and t.validToDate" +
+                  "       )" +
+                  "       or" +
+                  "         (" +
+                  "           :validFrom < t.validFromDate" +
+                  "           and :validTo > t.validToDate" +
+                  "         )" +
+                  "     )";
+    //@formatter:on
 
     final Query<String> query = OBDal.getInstance()
         .getSession()
-        .createQuery(hql.toString(), String.class);
-    query.setParameter("id", id);
-    query.setParameter("client", client);
-    query.setParameter("currencyFrom", currencyFrom);
-    query.setParameter("currencyTo", currencyTo);
-    query.setParameter("validFrom", validFrom);
-    query.setParameter("validTo", validTo);
+        .createQuery(hql, String.class)
+        .setParameter("currencyConversionRateId", id)
+        .setParameter("clientId", client.getId())
+        .setParameter("currencyFromId", currencyFrom.getId())
+        .setParameter("currencyToId", currencyTo.getId())
+        .setParameter("validFrom", validFrom)
+        .setParameter("validTo", validTo)
+        .setMaxResults(1);
 
-    query.setMaxResults(1);
     return !query.list().isEmpty();
   }
-
 }
