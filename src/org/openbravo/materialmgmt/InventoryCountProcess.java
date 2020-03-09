@@ -67,7 +67,7 @@ public class InventoryCountProcess implements Process {
   private Instance<InventoryCountProcessHook> inventoryCountProcesses;
 
   @Override
-  public void execute(ProcessBundle bundle) throws Exception {
+  public void execute(final ProcessBundle bundle) throws Exception {
     OBError msg = new OBError();
     msg.setType("Success");
     msg.setTitle(OBMessageUtils.messageBD("Success"));
@@ -101,7 +101,7 @@ public class InventoryCountProcess implements Process {
 
       bundle.setResult(msg);
 
-    } catch (GenericJDBCException ge) {
+    } catch (final GenericJDBCException ge) {
       log4j.error("Exception processing physical inventory", ge);
       msg.setType("Error");
       msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error",
@@ -129,18 +129,18 @@ public class InventoryCountProcess implements Process {
 
   }
 
-  public OBError processInventory(InventoryCount inventory) throws OBException {
+  public OBError processInventory(final InventoryCount inventory) {
     return processInventory(inventory, true);
   }
 
-  public OBError processInventory(InventoryCount inventory, boolean checkReservationQty)
-      throws OBException {
+  public OBError processInventory(final InventoryCount inventory,
+      final boolean checkReservationQty) {
     return processInventory(inventory, checkReservationQty, false);
   }
 
-  public OBError processInventory(InventoryCount inventory, boolean checkReservationQty,
-      boolean checkPermanentCost) throws OBException {
-    OBError msg = new OBError();
+  public OBError processInventory(final InventoryCount inventory, final boolean checkReservationQty,
+      final boolean checkPermanentCost) {
+    final OBError msg = new OBError();
     msg.setType("Success");
     msg.setTitle(OBMessageUtils.messageBD("Success"));
     runChecks(inventory);
@@ -255,9 +255,8 @@ public class InventoryCountProcess implements Process {
 
     try {
       executeHooks(inventoryCountProcesses, inventory);
-    } catch (Exception e) {
-      OBException obException = new OBException(e.getMessage(), e.getCause());
-      throw obException;
+    } catch (final Exception e) {
+      throw new OBException(e.getMessage(), e.getCause());
     }
     inventory.setProcessed(true);
     OBDal.getInstance().flush();
@@ -269,7 +268,7 @@ public class InventoryCountProcess implements Process {
     return msg;
   }
 
-  private void runChecks(InventoryCount inventory) throws OBException {
+  private void runChecks(final InventoryCount inventory) {
     try {
       executeHooks(inventoryCountChecks, inventory);
     } catch (Exception genericException) {
@@ -278,28 +277,29 @@ public class InventoryCountProcess implements Process {
     checkInventoryAlreadyProcessed(inventory);
     checkMandatoryAttributesWithoutVavlue(inventory);
     checkDuplicatedProducts(inventory);
-    Organization org = inventory.getOrganization();
+    final Organization org = inventory.getOrganization();
     checkIfOrganizationIsReady(org);
     checkOrganizationAllowsTransactions(org);
     checkDifferentLegalInLinesAndHeader(inventory, org);
     checkPeriodsNotAvailable(inventory, org);
   }
 
-  private void checkInventoryAlreadyProcessed(InventoryCount inventory) {
+  private void checkInventoryAlreadyProcessed(final InventoryCount inventory) {
     if (inventory.isProcessed()) {
       throw new OBException(OBMessageUtils.parseTranslation("@AlreadyPosted@"));
     }
   }
 
-  private void checkMandatoryAttributesWithoutVavlue(InventoryCount inventory) {
-    InventoryCountLine inventoryLine = getLineWithMandatoryAttributeWithoutValue(inventory);
+  private void checkMandatoryAttributesWithoutVavlue(final InventoryCount inventory) {
+    final InventoryCountLine inventoryLine = getLineWithMandatoryAttributeWithoutValue(inventory);
     if (inventoryLine != null) {
       throw new OBException(OBMessageUtils.parseTranslation(
           "@Inline@ " + (inventoryLine).getLineNo() + " @productWithoutAttributeSet@"));
     }
   }
 
-  private InventoryCountLine getLineWithMandatoryAttributeWithoutValue(InventoryCount inventory) {
+  private InventoryCountLine getLineWithMandatoryAttributeWithoutValue(
+      final InventoryCount inventory) {
     //@formatter:off
     final String hqlWhere =
                   "as icl" +
@@ -341,11 +341,11 @@ public class InventoryCountProcess implements Process {
         .uniqueResult();
   }
 
-  private void checkDuplicatedProducts(InventoryCount inventory) {
-    List<InventoryCountLine> inventoryLineList = getLinesWithDuplicatedProducts(inventory);
+  private void checkDuplicatedProducts(final InventoryCount inventory) {
+    final List<InventoryCountLine> inventoryLineList = getLinesWithDuplicatedProducts(inventory);
     if (!inventoryLineList.isEmpty()) {
-      StringBuilder errorMessage = new StringBuilder("");
-      for (InventoryCountLine icl2 : inventoryLineList) {
+      final StringBuilder errorMessage = new StringBuilder("");
+      for (final InventoryCountLine icl2 : inventoryLineList) {
         errorMessage.append(icl2.getLineNo().toString() + ", ");
       }
       throw new OBException(OBMessageUtils
@@ -353,7 +353,7 @@ public class InventoryCountProcess implements Process {
     }
   }
 
-  private List<InventoryCountLine> getLinesWithDuplicatedProducts(InventoryCount inventory) {
+  private List<InventoryCountLine> getLinesWithDuplicatedProducts(final InventoryCount inventory) {
     //@formatter:off
     final String hqlWhere =
                   "as icl" +
@@ -383,26 +383,27 @@ public class InventoryCountProcess implements Process {
         .list();
   }
 
-  private void checkIfOrganizationIsReady(Organization org) {
+  private void checkIfOrganizationIsReady(final Organization org) {
     if (!org.isReady()) {
       throw new OBException(OBMessageUtils.parseTranslation("@OrgHeaderNotReady@"));
     }
   }
 
-  private void checkOrganizationAllowsTransactions(Organization org) {
+  private void checkOrganizationAllowsTransactions(final Organization org) {
     if (!org.getOrganizationType().isTransactionsAllowed()) {
       throw new OBException(OBMessageUtils.parseTranslation("@OrgHeaderNotTransAllowed@"));
     }
   }
 
-  private void checkDifferentLegalInLinesAndHeader(InventoryCount inventory, Organization org) {
-    OrganizationStructureProvider osp = OBContext.getOBContext()
+  private void checkDifferentLegalInLinesAndHeader(final InventoryCount inventory,
+      final Organization org) {
+    final OrganizationStructureProvider osp = OBContext.getOBContext()
         .getOrganizationStructureProvider(inventory.getClient().getId());
-    Organization inventoryLegalOrBusinessUnitOrg = osp.getLegalEntityOrBusinessUnit(org);
-    List<InventoryCountLine> inventoryLineList = getLinesWithDifferentOrganizationThanHeader(
+    final Organization inventoryLegalOrBusinessUnitOrg = osp.getLegalEntityOrBusinessUnit(org);
+    final List<InventoryCountLine> inventoryLineList = getLinesWithDifferentOrganizationThanHeader(
         inventory, org);
     if (!inventoryLineList.isEmpty()) {
-      for (InventoryCountLine inventoryLine : inventoryLineList) {
+      for (final InventoryCountLine inventoryLine : inventoryLineList) {
         if (!inventoryLegalOrBusinessUnitOrg.getId()
             .equals(osp.getLegalEntityOrBusinessUnit(inventoryLine.getOrganization()).getId())) {
           throw new OBException(OBMessageUtils.parseTranslation("@LinesAndHeaderDifferentLEorBU@"));
@@ -412,7 +413,7 @@ public class InventoryCountProcess implements Process {
   }
 
   private List<InventoryCountLine> getLinesWithDifferentOrganizationThanHeader(
-      InventoryCount inventory, Organization org) {
+      final InventoryCount inventory, final Organization org) {
     //@formatter:off
     final String hql = 
                   "as py "+
@@ -427,10 +428,10 @@ public class InventoryCountProcess implements Process {
         .list();
   }
 
-  private void checkPeriodsNotAvailable(InventoryCount inventory, Organization org) {
-    OrganizationStructureProvider osp = OBContext.getOBContext()
+  private void checkPeriodsNotAvailable(final InventoryCount inventory, final Organization org) {
+    final OrganizationStructureProvider osp = OBContext.getOBContext()
         .getOrganizationStructureProvider(inventory.getClient().getId());
-    Organization inventoryLegalOrBusinessUnitOrg = osp.getLegalEntityOrBusinessUnit(org);
+    final Organization inventoryLegalOrBusinessUnitOrg = osp.getLegalEntityOrBusinessUnit(org);
     if (inventoryLegalOrBusinessUnitOrg.getOrganizationType().isLegalEntityWithAccounting()) {
       //@formatter:off
       final String hqlWhere =
@@ -459,16 +460,17 @@ public class InventoryCountProcess implements Process {
     }
   }
 
-  private void updateDateInventory(InventoryCount inventory) {
+  private void updateDateInventory(final InventoryCount inventory) {
 
     try {
-      for (InventoryCountLine invCountLine : inventory.getMaterialMgmtInventoryCountLineList()) {
+      for (final InventoryCountLine invCountLine : inventory
+          .getMaterialMgmtInventoryCountLineList()) {
         if (invCountLine.getQuantityCount().compareTo(invCountLine.getBookQuantity()) == 0
             || (invCountLine.getOrderQuantity() != null
                 && invCountLine.getQuantityOrderBook() != null && invCountLine.getOrderQuantity()
                     .compareTo(invCountLine.getQuantityOrderBook()) == 0)) {
-          org.openbravo.database.ConnectionProvider cp = new DalConnectionProvider(false);
-          CallableStatement updateStockStatement = cp.getConnection()
+          final org.openbravo.database.ConnectionProvider cp = new DalConnectionProvider(false);
+          final CallableStatement updateStockStatement = cp.getConnection()
               .prepareCall("{call M_UPDATE_INVENTORY (?,?,?,?,?,?,?,?,?,?,?,?,?)}");
           // client
           updateStockStatement.setString(1, invCountLine.getClient().getId());
@@ -506,13 +508,13 @@ public class InventoryCountProcess implements Process {
         }
       }
       OBDal.getInstance().flush();
-    } catch (Exception e) {
+    } catch (final Exception e) {
       log4j.error("Error in updateDateInventory while Inventory Count Process", e);
       throw new OBException(e.getMessage(), e);
     }
   }
 
-  private void checkStock(InventoryCount inventory) {
+  private void checkStock(final InventoryCount inventory) {
     String attribute;
     //@formatter:off
     final String hql =
@@ -544,25 +546,26 @@ public class InventoryCountProcess implements Process {
         .list();
 
     if (!resultList.isEmpty()) {
-      StorageDetail storageDetail = OBDal.getInstance().get(StorageDetail.class, resultList.get(0));
+      final StorageDetail storageDetail = OBDal.getInstance()
+          .get(StorageDetail.class, resultList.get(0));
       attribute = (!storageDetail.getAttributeSetValue().getIdentifier().isEmpty())
           ? " @PCS_ATTRIBUTE@ '" + storageDetail.getAttributeSetValue().getIdentifier() + "', "
           : "";
       throw new OBException(Utility
           .messageBD(new DalConnectionProvider(), "insuffient_stock",
               OBContext.getOBContext().getLanguage().getLanguage())
-          .replaceAll("%1", storageDetail.getProduct().getIdentifier())
-          .replaceAll("%2", attribute)
-          .replaceAll("%3", storageDetail.getUOM().getIdentifier())
-          .replaceAll("%4", storageDetail.getStorageBin().getIdentifier()));
+          .replace("%1", storageDetail.getProduct().getIdentifier())
+          .replace("%2", attribute)
+          .replace("%3", storageDetail.getUOM().getIdentifier())
+          .replace("%4", storageDetail.getStorageBin().getIdentifier()));
     }
   }
 
-  private void executeHooks(Instance<? extends Object> hooks, InventoryCount inventory)
+  private void executeHooks(final Instance<? extends Object> hooks, final InventoryCount inventory)
       throws Exception {
     if (hooks != null) {
-      for (Iterator<? extends Object> procIter = hooks.iterator(); procIter.hasNext();) {
-        Object proc = procIter.next();
+      for (final Iterator<? extends Object> procIter = hooks.iterator(); procIter.hasNext();) {
+        final Object proc = procIter.next();
         if (proc instanceof InventoryCountProcessHook) {
           ((InventoryCountProcessHook) proc).exec(inventory);
         } else {
