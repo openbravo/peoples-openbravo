@@ -16,7 +16,7 @@
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
   * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2014 Openbravo S.L.U.
+  * Contributions are Copyright (C) 2001-2020 Openbravo S.L.U.
   ******************************************************************************/
  -- Logistice
  v_ResultStr     VARCHAR2(2000) := '';
@@ -41,7 +41,6 @@ TYPE RECORD IS REF CURSOR;
  v_C_PaymentMethod_ID    varchar2(32);
  v_C_PaymentTerm_ID    varchar2(32);
  v_C_Currency_ID     varchar2(32);
- v_PaymentRule     VARCHAR(60);
  v_M_PriceList_ID    varchar2(32);
  v_POReference     varchar2(20);
  v_Product_ID     varchar2(32);
@@ -105,7 +104,7 @@ BEGIN
       Cur_Data RECORD;
       BEGIN
         FOR Cur_Data IN (SELECT com.Name, com.C_Currency_ID, com.C_BPartner_ID, pl.C_BPartner_Location_ID,
-            PaymentRulePO, PO_Paymentmethod_ID, PO_PaymentTerm_ID, PO_PriceList_ID,
+            PO_Paymentmethod_ID, PO_PaymentTerm_ID, PO_PriceList_ID,
             POReference, IsDiscountPrinted, com.M_Product_ID, C_UOM_ID, p.name as bpartnername
             FROM  C_BPARTNER p, C_COMMISSION com LEFT JOIN C_BPARTNER_LOCATION pl ON com.C_BPartner_ID = pl.C_BPartner_ID
                                               LEFT JOIN M_Product prd ON com.M_Product_ID = prd.M_Product_ID
@@ -115,7 +114,6 @@ BEGIN
           v_C_Currency_ID:=Cur_Data.C_Currency_ID;
           v_C_BPartner_ID:=Cur_Data.C_BPartner_ID;
           v_C_BPartner_Location_ID:=Cur_Data.C_BPartner_Location_ID;
-          v_PaymentRule:=Cur_Data.PaymentRulePO;
 		  v_C_PaymentMethod_ID:=Cur_Data.PO_Paymentmethod_ID;
           v_C_PaymentTerm_ID:=Cur_Data.PO_PaymentTerm_ID;
           v_M_PriceList_ID:=Cur_Data.PO_PriceList_ID;
@@ -128,9 +126,6 @@ BEGIN
         END LOOP;
       END;
   --
-  IF (v_PaymentRule IS NULL) THEN
-   v_PaymentRule := 'P';
-  END IF;
   IF (v_IsDiscountPrinted IS NULL) THEN
    v_IsDiscountPrinted := 'N';
   END IF;
@@ -169,7 +164,7 @@ BEGIN
    DateInvoiced, DatePrinted, IsPrinted, DateAcct, TaxDate,
    FIN_Paymentmethod_ID, C_PaymentTerm_ID, C_BPartner_ID, C_BPartner_Location_ID, AD_User_ID,
    POReference, DateOrdered, IsDiscountPrinted,
-   C_Currency_ID, PaymentRule, C_Charge_ID, ChargeAmt,
+   C_Currency_ID, C_Charge_ID, ChargeAmt,
    TotalLines, GrandTotal,
    M_PriceList_ID, C_Campaign_ID, C_Project_ID, C_Activity_ID)
   VALUES
@@ -180,7 +175,7 @@ BEGIN
    CUR_ComRun.Updated, NULL, 'N', CUR_ComRun.Updated, CUR_ComRun.Updated, -- DateInvoiced=DateAcct
    v_C_PaymentMethod_ID, v_C_PaymentTerm_ID, v_C_BPartner_ID, v_C_BPartner_Location_ID, NULL,
    v_POReference, CUR_ComRun.Updated, v_IsDiscountPrinted,
-   v_C_Currency_ID, v_PaymentRule, NULL, 0,
+   v_C_Currency_ID, NULL, 0,
    0, 0,
    v_M_PriceList_ID, NULL, NULL, NULL);
 

@@ -41,7 +41,6 @@
     v_Doctype_ID VARCHAR2(32) ;
     v_Invoice_ID VARCHAR2(32) ;
     v_DocumentNo NVARCHAR2(60) ;
-    v_PaymentRule VARCHAR(60) ;
     v_PaymentTerm_ID VARCHAR2(32) ;
     v_Currency_ID VARCHAR2(32) ;
     v_IsTaxIncluded CHAR(1) ;
@@ -182,10 +181,8 @@
         IF(v_DocumentNo IS NULL) THEN
           Ad_Sequence_Doc('DocumentNo_C_Invoice', Cur_Outs.AD_Client_ID, 'Y', v_DocumentNo) ;
         END IF;
-        SELECT PAYMENTRULEPO,
-          PO_PAYMENTTERM_ID
-        INTO v_PaymentRule,
-          v_PaymentTerm_ID
+        SELECT PO_PAYMENTTERM_ID
+        INTO v_PaymentTerm_ID
         FROM C_BPARTNER
         WHERE C_BPartner_ID=v_BPartner_ID;
         SELECT C_Currency_ID,
@@ -207,7 +204,7 @@
             ISPRINTED, SALESREP_ID, DATEINVOICED, TAXDATE,
             DATEPRINTED, DATEACCT, C_BPARTNER_ID, C_BPARTNER_LOCATION_ID,
             POREFERENCE, ISDISCOUNTPRINTED, DATEORDERED, C_CURRENCY_ID,
-            PAYMENTRULE, C_PAYMENTTERM_ID, C_CHARGE_ID, CHARGEAMT,
+            C_PAYMENTTERM_ID, C_CHARGE_ID, CHARGEAMT,
             TOTALLINES, GRANDTOTAL, M_PRICELIST_ID, ISTAXINCLUDED,
             C_CAMPAIGN_ID, C_PROJECT_ID, C_ACTIVITY_ID,
             CREATEFROM, GENERATETO, AD_USER_ID,
@@ -223,7 +220,7 @@
             'N', NULL, v_DateInvoiced, v_DateInvoiced,
             NULL, v_DateInvoiced, v_BPartner_ID, v_BPLocation_ID,
             v_ReferenceNo, 'Y', NULL, v_Currency_ID,
-            v_PaymentRule, v_PaymentTerm_ID, NULL, 0,
+            v_PaymentTerm_ID, NULL, 0,
             0, 0, Cur_Outs.M_PriceList_ID, v_IsTaxIncluded,
             NULL, v_Project_ID, NULL,
              'N', 'N', NULL,

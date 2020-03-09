@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2010-2018 Openbravo SLU
+* All portions are Copyright (C) 2010-2020 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -42,7 +42,6 @@ v_DocTypeTarget_ID VARCHAR2(32);
 v_IsSOTrx C_INVOICE.IsSOTrx%TYPE;
 v_GrandTotal NUMBER:=0;
 v_PaymentTerm C_INVOICE.C_PaymentTerm_ID%TYPE;
-v_PaymentRule C_INVOICE.PaymentRule%TYPE;
 v_Currency_ID VARCHAR2(32);
 v_bpCurrency_id VARCHAR2(32);
 v_BPartner_ID VARCHAR2(32);
@@ -124,13 +123,13 @@ BEGIN
   -- Reading the invoice
   v_ResultStr:='ReadingInvoice';
   SELECT ad_client_id, ad_org_id, c_doctypetarget_id, IsSOTrx,
-      grandtotal, C_PaymentTerm_ID, PaymentRule, C_Currency_ID,
+      grandtotal, C_PaymentTerm_ID, C_Currency_ID,
       C_BPartner_ID, DateInvoiced, totallines, fin_paymentmethod_id,
       fin_payment_priority_id, documentNo, poreference,
       c_project_id, c_campaign_id, c_activity_id, user1_id, user2_id, c_costcenter_id,
       IsCashVAT, prepaymentamt
   INTO v_Client_ID, v_Org_ID, v_DocTypeTarget_ID, v_IsSOTrx,
-      v_GrandTotal, v_PaymentTerm, v_PaymentRule, v_Currency_ID,
+      v_GrandTotal, v_PaymentTerm, v_Currency_ID,
       v_BPartner_ID, v_DateInvoiced, v_totallines, v_PaymentMethod,
       v_PaymentPriority, v_documentno, v_poreference,
       v_project_id, v_campaign_id, v_activity_id, v_user1, v_user2, v_costcenter,
@@ -284,7 +283,6 @@ BEGIN
         SELECT count(*) INTO v_paymentcount
         FROM (
             SELECT line, percentage, onremainder, excludetax,
-                   COALESCE(paymentrule, v_paymentrule) AS paymentrule,
                    (CASE isduefixed WHEN 'N' THEN  null ELSE fixmonthday END) AS fixmonthday,
                    (CASE isduefixed WHEN 'N' THEN  null ELSE fixmonthday2 END) AS Fixmonthday2,
                    (CASE isduefixed WHEN 'N' THEN  null ELSE fixmonthday3 END) AS fixmonthday3,
@@ -295,7 +293,6 @@ BEGIN
             UNION
             -- Header of paymentTerm is processed at last
             SELECT 9999 AS line, 100 AS percentage, 'Y' AS onremainder, 'N' AS excludetax,
-                   v_paymentRule AS paymentrule,
                    (CASE isduefixed WHEN 'N' THEN  null ELSE fixmonthday END) AS fixmonthday,
                    (CASE isduefixed WHEN 'N' THEN  null ELSE fixmonthday2 END) AS Fixmonthday2,
                    (CASE isduefixed WHEN 'N' THEN  null ELSE fixmonthday3 END) AS fixmonthday3,
@@ -305,7 +302,6 @@ BEGIN
 
         FOR cur_payments IN (
             SELECT line, percentage, onremainder, excludetax,
-                   COALESCE(cptl.paymentrule, v_paymentrule) AS paymentrule,
                    (CASE isduefixed WHEN 'N' THEN  null ELSE fixmonthday END) AS fixmonthday,
                    (CASE isduefixed WHEN 'N' THEN  null ELSE fixmonthday2 END) AS Fixmonthday2,
                    (CASE isduefixed WHEN 'N' THEN  null ELSE fixmonthday3 END) AS fixmonthday3,
@@ -318,7 +314,6 @@ BEGIN
             UNION
             -- Header of paymentTerm is processed at last
             SELECT 9999 AS line, 100 AS percentage, 'Y' AS onremainder, 'N' AS excludetax,
-                   v_paymentRule AS paymentrule,
                    (CASE isduefixed WHEN 'N' THEN  null ELSE fixmonthday END) AS fixmonthday,
                    (CASE isduefixed WHEN 'N' THEN  null ELSE fixmonthday2 END) AS Fixmonthday2,
                    (CASE isduefixed WHEN 'N' THEN  null ELSE fixmonthday3 END) AS fixmonthday3,
