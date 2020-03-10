@@ -2414,7 +2414,7 @@ enyo.kind({
         if (model.get('generateInvoice') && !model.get('cloningReceipt')) {
           OB.MobileApp.actionsRegistry.execute({
             window: 'retail.pointofsale',
-            name: 'invoiceReceipt'
+            name: 'issueSimplifiedInvoice'
           });
         }
       },
