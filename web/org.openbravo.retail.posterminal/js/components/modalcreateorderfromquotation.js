@@ -81,14 +81,15 @@ enyo.kind({
         classes: 'obUiModalCreateOrderFromQuotation-footer-element4 u-clearBoth'
       },
       {
-        kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalCreateOrderAccept',
-        classes:
-          'obUiModalCreateOrderFromQuotation-footer-obObposPointOfSaleUiModalsbtnModalCreateOrderAccept'
-      },
-      {
         kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalCreateOrderCancel',
         classes:
           'obUiModalCreateOrderFromQuotation-footer-obObposPointOfSaleUiModalsbtnModalCreateOrderCancel'
+      },
+      {
+        kind: 'OB.OBPOSPointOfSale.UI.Modals.btnModalCreateOrderAccept',
+        classes:
+          'obUiModalCreateOrderFromQuotation-footer-obObposPointOfSaleUiModalsbtnModalCreateOrderAccept',
+        isDefaultAction: true
       }
     ]
   },
