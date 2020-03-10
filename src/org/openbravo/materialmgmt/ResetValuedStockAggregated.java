@@ -59,7 +59,7 @@ public class ResetValuedStockAggregated extends BaseProcessActionHandler {
    * Resets the values of the Aggregated Table for the selected Legal Entity
    */
   @Override
-  protected JSONObject doExecute(Map<String, Object> parameters, String content) {
+  protected JSONObject doExecute(final Map<String, Object> parameters, final String content) {
     JSONObject request;
     JSONObject result = new JSONObject();
 
@@ -67,43 +67,43 @@ public class ResetValuedStockAggregated extends BaseProcessActionHandler {
       OBContext.setAdminMode(true);
 
       request = new JSONObject(content);
-      JSONObject params = request.getJSONObject("_params");
+      final JSONObject params = request.getJSONObject("_params");
       result.put("retryExecution", true);
 
-      JSONObject msg = new JSONObject();
-      Organization legalEntity = OBDal.getInstance()
+      final JSONObject msg = new JSONObject();
+      final Organization legalEntity = OBDal.getInstance()
           .get(Organization.class, params.getString("ad_org_id"));
 
       // Remove existing data in Aggregated Table
       deleteAggregatedValuesFromDate(null, legalEntity);
 
       // Get Closed Periods that need to be aggregated
-      List<Period> periodList = getClosedPeriodsToAggregate(new Date(),
+      final List<Period> periodList = getClosedPeriodsToAggregate(new Date(),
           legalEntity.getClient().getId(), legalEntity.getId());
 
-      DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+      final DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
       Date startingDate = formatter.parse("01-01-0000");
-      int totalNumberOfPeriods = periodList.size();
+      final int totalNumberOfPeriods = periodList.size();
       int contPeriodNumber = 0;
-      long start = System.currentTimeMillis();
+      final long start = System.currentTimeMillis();
 
       log4j.debug("[ResetValuedStockAggregated] Total number of Periods to aggregate: "
           + totalNumberOfPeriods);
 
-      for (Period period : periodList) {
-        long startPeriod = System.currentTimeMillis();
+      for (final Period period : periodList) {
+        final long startPeriod = System.currentTimeMillis();
         if (noAggregatedDataForPeriod(period)
             && costingRuleDefindedForPeriod(legalEntity, period)) {
           insertValuesIntoValuedStockAggregated(legalEntity, period, startingDate);
           startingDate = period.getEndingDate();
         }
-        long elapsedTimePeriod = (System.currentTimeMillis() - startPeriod);
+        final long elapsedTimePeriod = (System.currentTimeMillis() - startPeriod);
         contPeriodNumber++;
         log4j.debug("[ResetValuedStockAggregated] Periods processed: " + contPeriodNumber + " of "
             + totalNumberOfPeriods);
         log4j.debug("[ResetValuedStockAggregated] Time to process period: " + elapsedTimePeriod);
       }
-      long elapsedTime = (System.currentTimeMillis() - start);
+      final long elapsedTime = (System.currentTimeMillis() - start);
       log4j.debug("[ResetValuedStockAggregated] Time to process all periods: " + elapsedTime);
 
       msg.put("severity", "success");
@@ -111,15 +111,15 @@ public class ResetValuedStockAggregated extends BaseProcessActionHandler {
       result.put("message", msg);
       return result;
 
-    } catch (Exception e) {
+    } catch (final Exception e) {
       OBDal.getInstance().rollbackAndClose();
       log4j.error("Error in doExecute() method of ResetValuedStockAggregated class", e);
       try {
-        JSONObject msg = new JSONObject();
+        final JSONObject msg = new JSONObject();
         msg.put("severity", "error");
         msg.put("text", OBMessageUtils.messageBD("ErrorAggregatingData"));
         result.put("message", msg);
-      } catch (JSONException e1) {
+      } catch (final JSONException e1) {
         log4j.error("Error in doExecute() method of ResetValuedStockAggregated class", e1);
       }
       return result;
@@ -131,16 +131,16 @@ public class ResetValuedStockAggregated extends BaseProcessActionHandler {
   /*
    * Remove aggregated values for the selected Legal Entity and from the selected date
    */
-  private void deleteAggregatedValuesFromDate(Date date, Organization legalEntity) {
+  private void deleteAggregatedValuesFromDate(final Date date, final Organization legalEntity) {
     try {
       Date dateFrom = date;
       if (dateFrom == null) {
-        DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        final DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
         dateFrom = formatter.parse("01-01-0000");
       }
-      OrganizationStructureProvider osp = OBContext.getOBContext()
+      final OrganizationStructureProvider osp = OBContext.getOBContext()
           .getOrganizationStructureProvider(legalEntity.getClient().getId());
-      Set<String> orgIds = osp.getNaturalTree(legalEntity.getId());
+      final Set<String> orgIds = osp.getNaturalTree(legalEntity.getId());
 
       //@formatter:off
       final String hqlDelete = 
@@ -158,7 +158,7 @@ public class ResetValuedStockAggregated extends BaseProcessActionHandler {
       log4j.debug(
           "[ResetValuedStockAggregated] No. of records deleted from aggregated table: " + deleted);
 
-    } catch (ParseException e) {
+    } catch (final ParseException e) {
       log4j.error(
           "Error in deleteAggregatedValuesFromDate() method of ResetValuedStockAggregated class",
           e);
@@ -168,29 +168,30 @@ public class ResetValuedStockAggregated extends BaseProcessActionHandler {
   /*
    * Return true if there is not Aggregated data for the selected Period
    */
-  public static boolean noAggregatedDataForPeriod(Period period) {
-    OBCriteria<ValuedStockAggregated> obc = OBDal.getInstance()
-        .createCriteria(ValuedStockAggregated.class);
-    obc.add(Restrictions.eq(ValuedStockAggregated.PROPERTY_PERIOD, period));
+  public static boolean noAggregatedDataForPeriod(final Period period) {
+    final OBCriteria<ValuedStockAggregated> obc = OBDal.getInstance()
+        .createCriteria(ValuedStockAggregated.class)
+        .add(Restrictions.eq(ValuedStockAggregated.PROPERTY_PERIOD, period));
+
     return obc.list().isEmpty();
   }
 
   // Creates aggregated information for the selected Legal Entity and Period
-  public static void insertValuesIntoValuedStockAggregated(Organization legalEntity, Period period,
-      Date startingDate) {
+  public static void insertValuesIntoValuedStockAggregated(final Organization legalEntity,
+      final Period period, final Date startingDate) {
     try {
 
-      OrganizationStructureProvider osp = OBContext.getOBContext()
+      final OrganizationStructureProvider osp = OBContext.getOBContext()
           .getOrganizationStructureProvider(legalEntity.getClient().getId());
-      Set<String> orgs = osp.getNaturalTree(legalEntity.getId());
-      String orgIds = Utility.getInStrSet(orgs);
+      final Set<String> orgs = osp.getNaturalTree(legalEntity.getId());
+      final String orgIds = Utility.getInStrSet(orgs);
 
-      List<CostingRule> costingRulesList = getCostingRules(legalEntity, period.getStartingDate(),
-          period.getEndingDate());
-      for (CostingRule costingRule : costingRulesList) {
-        String crStartingDate = costingRule.getStartingDate() == null ? null
+      final List<CostingRule> costingRulesList = getCostingRules(legalEntity,
+          period.getStartingDate(), period.getEndingDate());
+      for (final CostingRule costingRule : costingRulesList) {
+        final String crStartingDate = costingRule.getStartingDate() == null ? null
             : OBDateUtils.formatDate(costingRule.getStartingDate());
-        String crEndingDate = costingRule.getEndingDate() == null ? null
+        final String crEndingDate = costingRule.getEndingDate() == null ? null
             : OBDateUtils.formatDate(costingRule.getEndingDate());
         GenerateValuedStockAggregatedData.insertData(OBDal.getInstance().getConnection(),
             new DalConnectionProvider(), legalEntity.getId(), period.getId(),
@@ -201,15 +202,15 @@ public class ResetValuedStockAggregated extends BaseProcessActionHandler {
             legalEntity.getId());
       }
 
-    } catch (ServletException e) {
+    } catch (final ServletException e) {
       log4j.error(
           "Error in insertValuesIntoValuedStockAggregated() method of ResetValuedStockAggregated class",
           e);
     }
   }
 
-  private static List<CostingRule> getCostingRules(Organization legalEntity, Date startingDate,
-      Date endingDate) {
+  private static List<CostingRule> getCostingRules(final Organization legalEntity,
+      final Date startingDate, final Date endingDate) {
 
     //@formatter:off
     final String hqlWhere = 
@@ -252,7 +253,8 @@ public class ResetValuedStockAggregated extends BaseProcessActionHandler {
     return query.list();
   }
 
-  public static boolean costingRuleDefindedForPeriod(Organization legalEntity, Period period) {
+  public static boolean costingRuleDefindedForPeriod(final Organization legalEntity,
+      final Period period) {
     //@formatter:off
     final String hqlWhere =
                   "as cr" +
@@ -281,16 +283,16 @@ public class ResetValuedStockAggregated extends BaseProcessActionHandler {
   /*
    * Returns a list of the Periods that needs to be aggregated for the selected Legal Entity
    */
-  public static List<Period> getClosedPeriodsToAggregate(Date endDate, String clientId,
-      String organizationID) {
+  public static List<Period> getClosedPeriodsToAggregate(final Date endDate, final String clientId,
+      final String organizationID) {
 
-    Organization org = OBDal.getInstance().get(Organization.class, organizationID);
-    Organization legalEntity = OBContext.getOBContext()
+    final Organization org = OBDal.getInstance().get(Organization.class, organizationID);
+    final Organization legalEntity = OBContext.getOBContext()
         .getOrganizationStructureProvider(clientId)
         .getLegalEntity(org);
 
-    Date firstNotClosedPeriodStartingDate = getStartingDateFirstNotClosedPeriod(legalEntity);
-    Date lastAggregatedPeriodDateTo = getLastDateToFromAggregatedTable(legalEntity);
+    final Date firstNotClosedPeriodStartingDate = getStartingDateFirstNotClosedPeriod(legalEntity);
+    final Date lastAggregatedPeriodDateTo = getLastDateToFromAggregatedTable(legalEntity);
 
     //@formatter:off
     final String hqlWhere =
@@ -316,20 +318,19 @@ public class ResetValuedStockAggregated extends BaseProcessActionHandler {
   /*
    * Get last Date of for which the data has been aggregated for this Legal Entity
    */
-  private static Date getLastDateToFromAggregatedTable(Organization legalEntity) {
+  private static Date getLastDateToFromAggregatedTable(final Organization legalEntity) {
     Date dateTo = null;
-
-    OBCriteria<ValuedStockAggregated> obc = OBDal.getInstance()
-        .createCriteria(ValuedStockAggregated.class);
-    obc.add(Restrictions.eq(ValuedStockAggregated.PROPERTY_ORGANIZATION, legalEntity));
-    obc.setProjection(Projections.max(ValuedStockAggregated.PROPERTY_ENDINGDATE));
     try {
-      dateTo = (Date) obc.uniqueResult();
+      dateTo = (Date) OBDal.getInstance()
+          .createCriteria(ValuedStockAggregated.class)
+          .add(Restrictions.eq(ValuedStockAggregated.PROPERTY_ORGANIZATION, legalEntity))
+          .setProjection(Projections.max(ValuedStockAggregated.PROPERTY_ENDINGDATE))
+          .uniqueResult();
       if (dateTo == null) {
-        DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-        dateTo = (Date) formatter.parse("01-01-0001");
+        final DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        dateTo = formatter.parse("01-01-0001");
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       log4j.error(
           "Error in getDateToFromLastAggregatedPeriod() method of ResetValuedStockAggregated class",
           e);
@@ -340,7 +341,7 @@ public class ResetValuedStockAggregated extends BaseProcessActionHandler {
   /*
    * Get the starting date of the first Period that is not closed for this Legal Entity
    */
-  private static Date getStartingDateFirstNotClosedPeriod(Organization legalEntity) {
+  private static Date getStartingDateFirstNotClosedPeriod(final Organization legalEntity) {
     Date startingDate = null;
 
     //@formatter:off
@@ -383,14 +384,14 @@ public class ResetValuedStockAggregated extends BaseProcessActionHandler {
         .setMaxResults(1);
 
     try {
-      List<Date> objetctList = trxQry.list();
-      if (objetctList.size() > 0) {
+      final List<Date> objetctList = trxQry.list();
+      if (!objetctList.isEmpty()) {
         startingDate = objetctList.get(0);
       } else {
-        DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-        startingDate = (Date) formatter.parse("01-01-9999");
+        final DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        startingDate = formatter.parse("01-01-9999");
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       log4j.error(
           "Error in getStartingDateFirstNotClosedPeriod() method of ResetValuedStockAggregated class",
           e);
