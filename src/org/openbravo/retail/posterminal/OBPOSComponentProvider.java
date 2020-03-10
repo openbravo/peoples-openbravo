@@ -301,6 +301,10 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("taxesengine/common/rules/priceincluding-tax");
     appDependency.add("taxesengine/common/rules/priceexcluding-tax");
 
+    for (final String resource : appDependency) {
+      globalResources.add(createComponentResource(ComponentResourceType.Static,
+          prefix + "/app/" + resource + ".js", POSUtils.APP_NAME));
+    }
 
     for (final String resource : resourceDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,
@@ -313,11 +317,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     for (final String resource : cssDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Stylesheet,
           prefix + "/css/" + resource + ".css", POSUtils.APP_NAME));
-    }
-
-    for (final String resource : appDependency) {
-      globalResources.add(createComponentResource(ComponentResourceType.Static,
-          prefix + "/app/" + resource + ".js", POSUtils.APP_NAME));
     }
 
     return globalResources;
