@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016-2018 Openbravo SLU
+ * All portions are Copyright (C) 2016-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -140,18 +140,21 @@ public class ResetValuedStockAggregated extends BaseProcessActionHandler {
       }
       OrganizationStructureProvider osp = OBContext.getOBContext()
           .getOrganizationStructureProvider(legalEntity.getClient().getId());
-      Set<String> orgs = osp.getNaturalTree(legalEntity.getId());
+      Set<String> orgIds = osp.getNaturalTree(legalEntity.getId());
 
-      StringBuffer delete = new StringBuffer();
-      delete.append(" delete from " + ValuedStockAggregated.ENTITY_NAME);
-      delete.append(" where " + ValuedStockAggregated.PROPERTY_STARTINGDATE + " >= :dateFrom");
-      delete.append(" and " + ValuedStockAggregated.PROPERTY_ORGANIZATION + ".id in :orgs");
+      //@formatter:off
+      final String hqlDelete = 
+                    "delete from ValuedStockAggregated" +
+                    " where startingDate >= :dateFrom" +
+                    "   and organization.id in :orgIds";
+      //@formatter:on
 
-      @SuppressWarnings("rawtypes")
-      Query queryDelete = OBDal.getInstance().getSession().createQuery(delete.toString());
-      queryDelete.setParameter("dateFrom", dateFrom);
-      queryDelete.setParameterList("orgs", orgs);
-      int deleted = queryDelete.executeUpdate();
+      final int deleted = OBDal.getInstance()
+          .getSession()
+          .createQuery(hqlDelete)
+          .setParameter("dateFrom", dateFrom)
+          .setParameterList("orgIds", orgIds)
+          .executeUpdate();
       log4j.debug(
           "[ResetValuedStockAggregated] No. of records deleted from aggregated table: " + deleted);
 
@@ -208,39 +211,69 @@ public class ResetValuedStockAggregated extends BaseProcessActionHandler {
   private static List<CostingRule> getCostingRules(Organization legalEntity, Date startingDate,
       Date endingDate) {
 
-    StringBuilder where = new StringBuilder();
-    where.append(" as cr");
-    where.append(" where cr.organization.id = :org");
-    where.append(" and");
-    where.append(" (((cr.startingDate <= :startingDate or cr.startingDate is null)");
-    where.append(" and (cr.endingDate > :startingDate or cr.endingDate is null))");
-    where.append(" or");
-    where.append(" ((cr.startingDate < :endingDate or cr.startingDate is null)");
-    where.append(" and (cr.endingDate >= :endingDate or cr.endingDate is null)))");
+    //@formatter:off
+    final String hqlWhere = 
+                  "as cr" +
+                  " where cr.organization.id = :orgId" +
+                  "   and" +
+                  "     (" +
+                  "       (" +
+                  "         (" +
+                  "           cr.startingDate <= :startingDate" +
+                  "           or cr.startingDate is null" +
+                  "         )" +
+                  "         and " +
+                  "           (" +
+                  "             cr.endingDate > :startingDate" +
+                  "             or cr.endingDate is null" +
+                  "           )" +
+                  "       )" +
+                  "       or" +
+                  "       (" +
+                  "         (" +
+                  "           cr.startingDate < :endingDate" +
+                  "           or cr.startingDate is null" +
+                  "         )" +
+                  "         and " +
+                  "           (" +
+                  "             cr.endingDate >= :endingDate" +
+                  "             or cr.endingDate is null" +
+                  "           )" +
+                  "       )" +
+                  "     )";
+    //@formatter:on
 
-    OBQuery<CostingRule> query = OBDal.getInstance()
-        .createQuery(CostingRule.class, where.toString());
-    query.setNamedParameter("org", legalEntity.getId());
-    query.setNamedParameter("startingDate", startingDate);
-    query.setNamedParameter("endingDate", endingDate);
+    final OBQuery<CostingRule> query = OBDal.getInstance()
+        .createQuery(CostingRule.class, hqlWhere)
+        .setNamedParameter("orgId", legalEntity.getId())
+        .setNamedParameter("startingDate", startingDate)
+        .setNamedParameter("endingDate", endingDate);
 
     return query.list();
   }
 
   public static boolean costingRuleDefindedForPeriod(Organization legalEntity, Period period) {
-    StringBuilder where = new StringBuilder();
-    where.append(" as cr");
-    where.append(" where cr.organization.id in (:org)");
-    where.append(" and");
-    where.append(" (cr.startingDate is null or cr.startingDate <= :endingDate)");
-    where.append(" and");
-    where.append(" (cr.endingDate is null or cr.endingDate >= :startingDate)");
+    //@formatter:off
+    final String hqlWhere =
+                  "as cr" +
+                  " where cr.organization.id in (:orgId)" +
+                  "   and" +
+                  "     (" +
+                  "       cr.startingDate is null" +
+                  "       or cr.startingDate <= :endingDate" +
+                  "     )" +
+                  "     and" +
+                  "       (" +
+                  "         cr.endingDate is null" +
+                  "         or cr.endingDate >= :startingDate" +
+                  "       )";
+    //@formatter:on
 
-    OBQuery<CostingRule> query = OBDal.getInstance()
-        .createQuery(CostingRule.class, where.toString());
-    query.setNamedParameter("org", legalEntity.getId());
-    query.setNamedParameter("endingDate", period.getEndingDate());
-    query.setNamedParameter("startingDate", period.getStartingDate());
+    final OBQuery<CostingRule> query = OBDal.getInstance()
+        .createQuery(CostingRule.class, hqlWhere)
+        .setNamedParameter("orgId", legalEntity.getId())
+        .setNamedParameter("endingDate", period.getEndingDate())
+        .setNamedParameter("startingDate", period.getStartingDate());
 
     return !query.list().isEmpty();
   }
@@ -259,20 +292,23 @@ public class ResetValuedStockAggregated extends BaseProcessActionHandler {
     Date firstNotClosedPeriodStartingDate = getStartingDateFirstNotClosedPeriod(legalEntity);
     Date lastAggregatedPeriodDateTo = getLastDateToFromAggregatedTable(legalEntity);
 
-    StringBuffer where = new StringBuffer();
-    where.append(" as p");
-    where.append(" where p.organization.id in (:org)");
-    where.append(" and p.periodType = 'S'");
-    where.append(" and p.endingDate <= :endDate");
-    where.append(" and p.endingDate <= :firstNotClosedPeriodStartingDate");
-    where.append(" and p.startingDate >= :lastAggregatedPeriodDateTo");
-    where.append(" order by p.endingDate asc");
+    //@formatter:off
+    final String hqlWhere =
+                  "as p" +
+                  " where p.organization.id in (:orgId)" +
+                  "   and p.periodType = 'S'" +
+                  "   and p.endingDate <= :endDate" +
+                  "   and p.endingDate <= :firstNotClosedPeriodStartingDate" +
+                  "   and p.startingDate >= :lastAggregatedPeriodDateTo" +
+                  " order by p.endingDate asc";
+    //@formatter:on
 
-    OBQuery<Period> query = OBDal.getInstance().createQuery(Period.class, where.toString());
-    query.setNamedParameter("org", legalEntity.getId());
-    query.setNamedParameter("endDate", endDate);
-    query.setNamedParameter("firstNotClosedPeriodStartingDate", firstNotClosedPeriodStartingDate);
-    query.setNamedParameter("lastAggregatedPeriodDateTo", lastAggregatedPeriodDateTo);
+    final OBQuery<Period> query = OBDal.getInstance()
+        .createQuery(Period.class, hqlWhere)
+        .setNamedParameter("orgId", legalEntity.getId())
+        .setNamedParameter("endDate", endDate)
+        .setNamedParameter("firstNotClosedPeriodStartingDate", firstNotClosedPeriodStartingDate)
+        .setNamedParameter("lastAggregatedPeriodDateTo", lastAggregatedPeriodDateTo);
 
     return query.list();
   }
@@ -307,42 +343,44 @@ public class ResetValuedStockAggregated extends BaseProcessActionHandler {
   private static Date getStartingDateFirstNotClosedPeriod(Organization legalEntity) {
     Date startingDate = null;
 
-    StringBuffer select = new StringBuffer();
-    select.append(" select min(p.startingDate)");
-    select.append(" from FinancialMgmtPeriod p");
-    select.append(" where p.periodType = 'S'");
-    select.append(" and   ( 'C' <> (select case");
-    select.append(
-        "                    when (max(pc.periodStatus) = min(pc.periodStatus) and min(pc.periodStatus) = 'O') then 'O'");
-    select.append(
-        "                    when (max(pc.periodStatus) = min(pc.periodStatus) and min(pc.periodStatus) = 'C') then 'C'");
-    select.append(
-        "                    when (max(pc.periodStatus) = min(pc.periodStatus) and min(pc.periodStatus) = 'P') then 'P'");
-    select.append(
-        "                    when (max(pc.periodStatus) = min(pc.periodStatus) and min(pc.periodStatus) = 'N') then 'N'");
-    select.append("                   else 'M' end");
-    select.append("                 from FinancialMgmtPeriodControl pc");
-    select.append("                 where pc.period = p)");
-    select.append("    and 'P' <> (select case");
-    select.append(
-        "                    when (max(pc.periodStatus) = min(pc.periodStatus) and min(pc.periodStatus) = 'O') then 'O'");
-    select.append(
-        "                    when (max(pc.periodStatus) = min(pc.periodStatus) and min(pc.periodStatus) = 'C') then 'C'");
-    select.append(
-        "                    when (max(pc.periodStatus) = min(pc.periodStatus) and min(pc.periodStatus) = 'P') then 'P'");
-    select.append(
-        "                    when (max(pc.periodStatus) = min(pc.periodStatus) and min(pc.periodStatus) = 'N') then 'N'");
-    select.append("                   else 'M' end");
-    select.append("                 from FinancialMgmtPeriodControl pc");
-    select.append("                 where pc.period = p)");
-    select.append("       )");
-    select.append(" and p.organization.id in (:org)");
+    //@formatter:off
+    final String hqlSelect =
+            "select min(p.startingDate)" +
+            "  from FinancialMgmtPeriod p" +
+            " where p.periodType = 'S'" +
+            "   and" +
+            "     (" +
+            "       'C' <> " +
+            "         (" +
+            "           select case" +
+            "             when (max(pc.periodStatus) = min(pc.periodStatus) and min(pc.periodStatus) = 'O') then 'O'" +
+            "             when (max(pc.periodStatus) = min(pc.periodStatus) and min(pc.periodStatus) = 'C') then 'C'" +
+            "             when (max(pc.periodStatus) = min(pc.periodStatus) and min(pc.periodStatus) = 'P') then 'P'" +
+            "             when (max(pc.periodStatus) = min(pc.periodStatus) and min(pc.periodStatus) = 'N') then 'N'" +
+            "               else 'M' end" +
+            "             from FinancialMgmtPeriodControl pc" +
+            "            where pc.period = p" +
+            "         )" +
+            "       and 'P' <> " +
+            "         (" +
+            "           select case" +
+            "             when (max(pc.periodStatus) = min(pc.periodStatus) and min(pc.periodStatus) = 'O') then 'O'" +
+            "             when (max(pc.periodStatus) = min(pc.periodStatus) and min(pc.periodStatus) = 'C') then 'C'" +
+            "             when (max(pc.periodStatus) = min(pc.periodStatus) and min(pc.periodStatus) = 'P') then 'P'" +
+            "             when (max(pc.periodStatus) = min(pc.periodStatus) and min(pc.periodStatus) = 'N') then 'N'" +
+            "               else 'M' end" +
+            "             from FinancialMgmtPeriodControl pc" +
+            "            where pc.period = p" +
+            "         )" +
+            "     )" +
+            "   and p.organization.id in (:orgId)";
+    //@formatter:on
 
-    Query<Date> trxQry = OBDal.getInstance()
+    final Query<Date> trxQry = OBDal.getInstance()
         .getSession()
-        .createQuery(select.toString(), Date.class);
-    trxQry.setParameter("org", legalEntity.getId());
-    trxQry.setMaxResults(1);
+        .createQuery(hqlSelect, Date.class)
+        .setParameter("orgId", legalEntity.getId())
+        .setMaxResults(1);
 
     try {
       List<Date> objetctList = trxQry.list();
