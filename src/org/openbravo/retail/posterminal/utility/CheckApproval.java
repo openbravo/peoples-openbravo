@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2019 Openbravo S.L.U.
+ * Copyright (C) 2013-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -58,6 +58,26 @@ public class CheckApproval extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
+    try {
+      JSONObject jsonError = new JSONObject();
+      jsonError.put("message", "Method not supported: GET");
+
+      JSONObject result = new JSONObject();
+      result.put("status", 1);
+      result.put("error", jsonError);
+      PrintWriter out = response.getWriter();
+      response.setContentType("application/json");
+      response.setCharacterEncoding("UTF-8");
+      out.print(result.toString());
+      out.flush();
+    } catch (Exception e) {
+      log.error("Error in CheckApproval: ", e);
+    }
+  }
+
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
     // always set the cors headers
     AllowedCrossDomainsHandler.getInstance().setCORSHeaders(request, response);

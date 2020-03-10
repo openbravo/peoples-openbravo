@@ -460,7 +460,7 @@ OB.UTIL.checkApproval = function(
     checkApprovalRequest = new enyo.Ajax({
       url: '../../org.openbravo.retail.posterminal.utility.CheckApproval',
       cacheBust: false,
-      method: 'GET',
+      method: 'POST',
       handleAs: 'json',
       timeout: 20000,
       data: {
@@ -470,7 +470,6 @@ OB.UTIL.checkApproval = function(
         approvalType: JSON.stringify(approvalList),
         attributes: JSON.stringify(attrs)
       },
-      contentType: 'application/json;charset=utf-8',
       success: function(inSender, inResponse) {
         OB.UTIL.ProcessController.finish('checkApproval', execution);
         var approved = false;
