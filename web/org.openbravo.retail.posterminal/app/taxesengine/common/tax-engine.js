@@ -66,9 +66,18 @@
 
   OB.Taxes.filterRulesByTicketLine = (ticket, line, rules) => {
     const joinRuleAndZone = rule => {
-      return rule.taxZones
+      const updatedRule = rule.taxZones
         ? rule.taxZones.map(zone => ({ ...zone, ...rule }))
         : rule;
+
+      updatedRule.zoneCountry = rule.zoneCountry || rule.country;
+      updatedRule.zoneRegion = rule.zoneRegion || rule.region;
+      updatedRule.zoneDestinationCountry =
+        rule.zoneDestinationCountry || rule.destinationCountry;
+      updatedRule.zoneDestinationRegion =
+        rule.zoneDestinationRegion || rule.destinationRegion;
+
+      return updatedRule;
     };
     const groupRuleAndZone = (rulesAndZones, rule) => {
       const updatedRule = { ...rule };

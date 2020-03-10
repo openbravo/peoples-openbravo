@@ -31,18 +31,22 @@
         newLine.country =
           line.get('obrdmDeliveryMode') === 'HomeDelivery'
             ? receipt.get('bp').get('shipCountryId') ||
-              receipt
-                .get('bp')
-                .get('locationModel')
-                .get('countryId')
+              receipt.get('bp').get('shipLocId')
+              ? receipt
+                  .get('bp')
+                  .get('locationModel')
+                  .get('countryId')
+              : null
             : line.get('organization').country;
         newLine.region =
           line.get('obrdmDeliveryMode') === 'HomeDelivery'
             ? receipt.get('bp').get('shipRegionId') ||
-              receipt
-                .get('bp')
-                .get('locationModel')
-                .get('regionId')
+              receipt.get('bp').get('shipLocId')
+              ? receipt
+                  .get('bp')
+                  .get('locationModel')
+                  .get('regionId')
+              : null
             : line.get('organization').region;
         newLine.amount = newTicket.priceIncludesTax
           ? line.has('discountedGross')
@@ -51,7 +55,7 @@
           : line.has('discountedNet')
           ? line.get('discountedNet')
           : line.get('net');
-        newLine.quantity = line.get('qty');
+        newLine.qty = line.get('qty');
         newLine.taxExempt = line.get('originalTaxExempt');
         newLine.product = {};
         newLine.product.id = line.get('product').id;
@@ -70,7 +74,7 @@
               const newBomLine = {};
               newBomLine.id = bomLine.id;
               newBomLine.amount = bomLine.bomamount;
-              newBomLine.quantity = bomLine.bomquantity;
+              newBomLine.qty = bomLine.bomquantity;
               newBomLine.product = {};
               newBomLine.product.id = bomLine.bomproduct;
               newBomLine.product.taxCategory = bomLine.bomtaxcategory;

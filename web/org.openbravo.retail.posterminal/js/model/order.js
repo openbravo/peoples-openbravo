@@ -4966,6 +4966,8 @@
           _.each(OB.MobileApp.model.get('store'), function(s) {
             if (s.id === orgId) {
               orgName = s.name;
+              country = s.country;
+              region = s.region;
               return;
             }
           });

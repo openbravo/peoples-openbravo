@@ -70,7 +70,12 @@
           if (bomGroup) {
             bomGroup.amount = OB.DEC.add(bomGroup.amount, bomLine.amount);
           } else {
-            result.push(bomLine);
+            const updatedLine = { ...line };
+            updatedLine.id = bomLine.id;
+            updatedLine.amount = bomLine.amount;
+            updatedLine.quantity = bomLine.quantity;
+            updatedLine.product = bomLine.product;
+            result.push(updatedLine);
           }
           return result;
         }, [])
@@ -124,11 +129,11 @@
       );
       lineTaxes.grossPrice = OB.Taxes.Tax.calculatePriceFromAmount(
         lineTaxes.grossAmount,
-        lineTaxes.quantity
+        lineTaxes.qty
       );
       lineTaxes.netPrice = OB.Taxes.Tax.calculatePriceFromAmount(
         lineTaxes.netAmount,
-        lineTaxes.quantity
+        lineTaxes.qty
       );
 
       return lineTaxes;
@@ -306,14 +311,14 @@
     }
 
     /**
-     * price = amount / quantity
+     * price = amount / qty
      */
-    static calculatePriceFromAmount(amount, quantity) {
-      if (OB.DEC.compare(quantity) === 0) {
+    static calculatePriceFromAmount(amount, qty) {
+      if (OB.DEC.compare(qty) === 0) {
         return OB.DEC.Zero;
       }
 
-      return OB.DEC.div(amount, quantity);
+      return OB.DEC.div(amount, qty);
     }
 
     /**

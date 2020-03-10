@@ -226,7 +226,11 @@
                       id: organization,
                       name: OB.I18N.getLabel('OBPOS_LblThisStore', [
                         terminalModel.get('terminal').organization$_identifier
-                      ])
+                      ]),
+                      country: OB.MobileApp.model.get('terminal')
+                        .organizationCountryId,
+                      region: OB.MobileApp.model.get('terminal')
+                        .organizationRegionId
                     });
                     terminalModel.get('store').splice(1, 0, {
                       id: 'all_' + organization,
