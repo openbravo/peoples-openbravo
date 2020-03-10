@@ -59,8 +59,9 @@ enyo.kind({
         criteria.criterion('availableForMultiline', true);
       }
       for (const orderLine of value.orderlineList) {
-        const discountedPrice = orderLine.get('discountedPrice');
-
+        const discountedPrice =
+          orderLine.get('discountedPrice') ||
+          orderLine.get('discountedLinePrice');
         criteria.multiCriterion(
           [
             new OB.App.Class.Criterion('obposMinpriceassocprod', null),
@@ -85,7 +86,9 @@ enyo.kind({
         );
       }
     } else if (value.productId) {
-      const discountedPrice = this.orderline.get('discountedPrice');
+      const discountedPrice =
+        value.orderline.get('discountedPrice') ||
+        value.orderline.get('discountedLinePrice');
       criteria.multiCriterion(
         [
           new OB.App.Class.Criterion('obposMinpriceassocprod', null),
