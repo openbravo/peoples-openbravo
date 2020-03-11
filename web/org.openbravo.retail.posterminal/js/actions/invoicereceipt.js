@@ -11,13 +11,13 @@
 
 (function() {
   const isInvoiceTicketActive = view => {
-    const receipt = view.model.get('order');
-    const generateInvoice = view.state.readState({
-      name: 'receipt.generateInvoice'
-    });
     const isQuotation = view.state.readState({
       name: 'receipt.isQuotation'
     });
+    const generateInvoice = view.state.readState({
+      name: 'receipt.generateInvoice'
+    });
+    const receipt = view.model.get('order');
     return (
       !isQuotation &&
       !generateInvoice &&
@@ -65,7 +65,7 @@
     new OB.Actions.CommandAction({
       window: 'retail.pointofsale',
       name: 'issueFullInvoice',
-      permission: 'OBPOS_receipt.invoice',
+      permission: 'OBPOS_receipt.fullinvoice',
       properties: {
         i18nContent: 'OBPOS_LblIssueFullInvoice'
       },
