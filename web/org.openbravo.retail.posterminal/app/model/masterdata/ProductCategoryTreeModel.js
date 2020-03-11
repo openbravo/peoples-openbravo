@@ -12,8 +12,11 @@
       super();
       this.indices = [
         new OB.App.Class.Index({
-          name: 'productcategorytree_parentId_idx',
-          properties: [{ property: 'parentId' }]
+          name: 'productcategorytree_parentIdcrossstore_idx',
+          properties: [
+            { property: 'parentId' },
+            { property: 'crossStore', isBoolean: true }
+          ]
         }),
         new OB.App.Class.Index({
           name: 'productcategorytree_crossstore_idx',

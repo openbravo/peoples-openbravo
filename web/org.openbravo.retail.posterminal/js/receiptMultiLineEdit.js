@@ -87,50 +87,51 @@
             if (
               OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)
             ) {
-              var process = new OB.DS.Process(
-                'org.openbravo.retail.posterminal.process.HasDeliveryServices'
-              );
-              var date = new Date();
-              process.exec(
-                {
-                  lines: [
-                    {
-                      lineId: line.id,
-                      product: line.get('product').get('id'),
-                      productCategory: line
-                        .get('product')
-                        .get('productCategory')
-                    }
-                  ],
-                  terminalTime: date,
-                  terminalTimeOffset: date.getTimezoneOffset(),
-                  remoteFilters: [
-                    {
-                      columns: [],
-                      operator: 'filter',
-                      value: 'OBRDM_DeliveryServiceFilter',
-                      params: [true]
-                    }
-                  ]
-                },
-                function(data, message) {
-                  if (data && data.exception) {
-                    //ERROR or no connection
-                    OB.UTIL.showError(
-                      OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices')
-                    );
-                  } else if (data) {
-                    line.set(
-                      'hasDeliveryServices',
-                      data[0].hasDeliveryServices
-                    );
-                  } else {
-                    OB.UTIL.showError(
-                      OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices')
-                    );
+              const date = new Date();
+              const body = {
+                lines: [
+                  {
+                    lineId: line.id,
+                    product: line.get('product').get('id'),
+                    productCategory: line.get('product').get('productCategory')
                   }
+                ],
+                terminalTime: date,
+                terminalTimeOffset: date.getTimezoneOffset(),
+                remoteFilters: [
+                  {
+                    columns: [],
+                    operator: 'filter',
+                    value: 'OBRDM_DeliveryServiceFilter',
+                    params: [true]
+                  }
+                ]
+              };
+
+              try {
+                let data = await OB.App.Request.mobileServiceRequest(
+                  'org.openbravo.retail.posterminal.process.HasDeliveryServices',
+                  body
+                );
+                data = data.response.data;
+
+                if (data && data.exception) {
+                  //ERROR or no connection
+                  OB.UTIL.showError(
+                    OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices')
+                  );
+                } else if (data) {
+                  line.set('hasDeliveryServices', data[0].hasDeliveryServices);
+                } else {
+                  OB.UTIL.showError(
+                    OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices')
+                  );
                 }
-              );
+              } catch (error) {
+                OB.UTIL.showError(
+                  OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices')
+                );
+              }
             } else {
               let criteria = new OB.App.Class.Criteria();
               criteria = await OB.UTIL.servicesFilter(
@@ -476,7 +477,7 @@ enyo.kind({
       });
     }
   },
-  applyChanges: function(inSender, inEvent) {
+  applyChanges: async function(inSender, inEvent) {
     var i,
       diff,
       att,
@@ -645,39 +646,43 @@ enyo.kind({
     ) {
       //Trigger Delivery Services Search
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-        var process = new OB.DS.Process(
-          'org.openbravo.retail.posterminal.process.HasDeliveryServices'
-        );
-        var date = new Date();
-        process.exec(
-          {
-            lines: carrierLines,
-            terminalTime: date,
-            terminalTimeOffset: date.getTimezoneOffset(),
-            remoteFilters: [
-              {
-                columns: [],
-                operator: 'filter',
-                value: 'OBRDM_DeliveryServiceFilter',
-                params: [true]
-              }
-            ]
-          },
-          async function(data, message) {
-            if (data && data.exception) {
-              //ERROR or no connection
-              OB.UTIL.showError(
-                OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices')
-              );
-            } else if (data) {
-              await countDeliveryServices(data);
-            } else {
-              OB.UTIL.showError(
-                OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices')
-              );
+        const date = new Date();
+        const body = {
+          lines: carrierLines,
+          terminalTime: date,
+          terminalTimeOffset: date.getTimezoneOffset(),
+          remoteFilters: [
+            {
+              columns: [],
+              operator: 'filter',
+              value: 'OBRDM_DeliveryServiceFilter',
+              params: [true]
             }
+          ]
+        };
+        try {
+          let data = await OB.App.Request.mobileServiceRequest(
+            'org.openbravo.retail.posterminal.process.HasDeliveryServices',
+            body
+          );
+          data = data.response.data;
+          if (data && data.exception) {
+            //ERROR or no connection
+            OB.UTIL.showError(
+              OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices')
+            );
+          } else if (data) {
+            await countDeliveryServices(data);
+          } else {
+            OB.UTIL.showError(
+              OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices')
+            );
           }
-        );
+        } catch (error) {
+          OB.UTIL.showError(
+            OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices')
+          );
+        }
       } else {
         var hasDeliveryServices = async function(line, callback) {
           let criteria = new OB.App.Class.Criteria();
