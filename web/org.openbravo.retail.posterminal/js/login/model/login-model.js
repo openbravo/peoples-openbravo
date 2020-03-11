@@ -247,12 +247,23 @@
 
                   // Save in state Document Sequence values read from backend
                   OB.App.State.DocumentSequence.initializeSequence({
-                    orderSequence: OB.MobileApp.model.get('terminal')
-                      .lastDocumentNumber,
-                    returnSequence: OB.MobileApp.model.get('terminal')
-                      .lastReturnDocumentNumber,
-                    quotationSequence: OB.MobileApp.model.get('terminal')
-                      .lastQuotationDocumentNumber
+                    sequences: [
+                      {
+                        sequenceName: 'orderSequence',
+                        sequenceNumber: OB.MobileApp.model.get('terminal')
+                          .lastDocumentNumber
+                      },
+                      {
+                        sequenceName: 'returnSequence',
+                        sequenceNumber: OB.MobileApp.model.get('terminal')
+                          .lastReturnDocumentNumber
+                      },
+                      {
+                        sequenceName: 'quotationSequence',
+                        sequenceNumber: OB.MobileApp.model.get('terminal')
+                          .lastQuotationDocumentNumber
+                      }
+                    ]
                   });
 
                   // update the local database with the document sequence received

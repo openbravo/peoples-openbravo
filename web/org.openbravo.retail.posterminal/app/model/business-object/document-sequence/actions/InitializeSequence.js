@@ -8,7 +8,8 @@
  */
 
 /**
- * @fileoverview defines the Document Sequence Initialize Sequence action that updates document sequence with payload information
+ * @fileoverview defines the Document Sequence Initialize Sequence action that updates state sequences with the sequences present in the payload.
+ * The highest sequence number between the one in the state and the one in the payload will be keep.
  */
 
 (() => {
@@ -16,21 +17,16 @@
     'initializeSequence',
     (state, payload) => {
       const newState = { ...state };
+      const { sequences } = payload;
 
-      const { orderSequence, returnSequence, quotationSequence } = payload;
-
-      newState.orderSequence = OB.App.State.DocumentSequence.Utils.getHighestSequenceNumber(
-        newState.orderSequence,
-        orderSequence
-      );
-      newState.returnSequence = OB.App.State.DocumentSequence.Utils.getHighestSequenceNumber(
-        newState.returnSequence,
-        returnSequence
-      );
-      newState.quotationSequence = OB.App.State.DocumentSequence.Utils.getHighestSequenceNumber(
-        newState.quotationSequence,
-        quotationSequence
-      );
+      sequences.forEach(sequence => {
+        newState[
+          sequence.sequenceName
+        ] = OB.App.State.DocumentSequence.Utils.getHighestSequenceNumber(
+          newState[sequence.sequenceName],
+          sequence.sequenceNumber
+        );
+      });
 
       return newState;
     }
