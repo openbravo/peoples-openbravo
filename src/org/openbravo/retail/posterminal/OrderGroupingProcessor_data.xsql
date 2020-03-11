@@ -157,7 +157,7 @@
         select get_uuid(), i.ad_client_id, i.ad_org_id, 'Y', i.created, i.createdby, i.updated, i.updatedby,
         i.c_invoice_id, ol.c_orderline_id, max(iol.m_inoutline_id), row_number() over (partition by i.c_invoice_id order by o.documentno, ol.line) * 10 as line,
         ol.description, ol.m_product_id, ol.qtyordered, ol.pricelist, ol.priceactual, ol.pricelimit, ol.linenetamt,
-        ol.c_uom_id, 0, ol.m_attributesetinstance_id, ol.pricestd,
+        ol.c_uom_id, ol.c_tax_id, ol.m_attributesetinstance_id, ol.pricestd,
         ol.linenetamt , (case when pl.istaxincluded = 'Y' then ol.line_gross_amount else 0 end), ol.gross_unit_price,
         ol.c_bpartner_id, ol.grosspricestd, ol.grosspricelist,
         ol.a_asset_id, ol.c_project_id, ol.user1_id, ol.user2_id, ol.c_costcenter_id
@@ -210,7 +210,7 @@
         select get_uuid(), i.ad_client_id, i.ad_org_id, 'Y', i.created, i.createdby, i.updated, i.updatedby,
         i.c_invoice_id, ol.c_orderline_id, max(iol.m_inoutline_id), row_number() over (partition by i.c_invoice_id order by o.documentno, ol.line asc) * 10 as line,
         ol.description, ol.m_product_id, ol.qtyordered, ol.pricelist, ol.priceactual, ol.pricelimit, ol.linenetamt,
-        ol.c_uom_id, 0, ol.m_attributesetinstance_id, ol.pricestd,
+        ol.c_uom_id, ol.c_tax_id, ol.m_attributesetinstance_id, ol.pricestd,
         ol.linenetamt , (case when pl.istaxincluded = 'Y' then ol.line_gross_amount else 0 end), ol.gross_unit_price,
         ol.c_bpartner_id, ol.grosspricestd, ol.grosspricelist,
         ol.a_asset_id, ol.c_project_id, ol.user1_id, ol.user2_id, ol.c_costcenter_id
