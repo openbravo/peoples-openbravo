@@ -1566,6 +1566,7 @@
         sequenceNumber: sequenceNumber,
         documentNo: OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
           documentNumberPrefix,
+          OB.Model.Order.prototype.includeDocNoSeperator,
           documentNumberPadding,
           sequenceNumber
         )

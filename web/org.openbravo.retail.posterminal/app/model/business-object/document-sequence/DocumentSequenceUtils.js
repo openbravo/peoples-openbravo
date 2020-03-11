@@ -46,18 +46,19 @@
     },
 
     /**
-     * Returns the sequence number increased in one or zero if it is undefined.
+     * Generates a document number based on given prefix and sequence number.
      *
-     * @returns {number} The next sequence number.
+     * @returns {number} The document number.
      */
     calculateDocumentNumber(
       documentNumberPrefix,
+      includeSeparator,
       documentNumberPadding,
       sequenceNumber
     ) {
       return (
         documentNumberPrefix +
-        '/' +
+        (includeSeparator ? '/' : '') +
         OB.UTIL.padNumber(sequenceNumber, documentNumberPadding)
       );
     }
