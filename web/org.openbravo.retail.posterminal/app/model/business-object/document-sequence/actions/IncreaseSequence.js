@@ -19,14 +19,13 @@
     'increaseSequence',
     (state, payload) => {
       const newState = { ...state };
+      const { sequenceName } = payload;
 
-      const { sequence } = payload;
-
-      if (newState[sequence] || newState[sequence] === 0) {
+      if (newState[sequenceName] || newState[sequenceName] === 0) {
         newState[
-          sequence
+          sequenceName
         ] = OB.App.State.DocumentSequence.Utils.getNextSequenceNumber(
-          newState[sequence]
+          newState[sequenceName]
         );
       }
 

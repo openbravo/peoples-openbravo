@@ -1526,30 +1526,32 @@
         return;
       }
 
-      let sequence;
+      let sequenceName;
       let documentNumberPrefix;
       if (ticket.get('isQuotation')) {
-        sequence = 'quotationSequence';
+        sequenceName = 'quotationSequence';
         documentNumberPrefix = OB.MobileApp.model.get('terminal')
           .quotationDocNoPrefix;
       } else if (ticket.getOrderType() === 1) {
-        sequence = 'returnSequence';
+        sequenceName = 'returnSequence';
         documentNumberPrefix = OB.MobileApp.model.get('terminal')
           .returnDocNoPrefix;
       } else {
-        sequence = 'orderSequence';
+        sequenceName = 'orderSequence';
         documentNumberPrefix = OB.MobileApp.model.get('terminal').docNoPrefix;
       }
 
       await OB.App.State.DocumentSequence.increaseSequence({
-        sequence: sequence
+        sequenceName: sequenceName
       });
-      const sequenceNumber = OB.App.State.getState().DocumentSequence[sequence];
+      const sequenceNumber = OB.App.State.getState().DocumentSequence[
+        sequenceName
+      ];
       const documentNumberPadding = OB.MobileApp.model.get('terminal')
         .documentnoPadding;
 
       ticket.set({
-        sequence: sequence,
+        sequenceName: sequenceName,
         sequenceNumber: sequenceNumber,
         documentNo: OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
           documentNumberPrefix,
