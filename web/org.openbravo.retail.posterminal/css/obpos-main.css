@@ -9482,10 +9482,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   }
 }
 
-.obObposPointOfSaleUiEditLine-linePropertiesContainer_withReturnReasons {
-  max-height: 110px;
-}
-
 .obObposPointOfSaleUiEditLine-linePropertiesContainer_withoutReturnReasons {}
 
 .obObposPointOfSaleUiEditLine-msgedit-scroller-container1-contextImage {
