@@ -49,7 +49,7 @@ public class ReservationUtils {
   String exito;
 
   public static Reservation createReserveFromSalesOrderLine(final OrderLine soLine,
-      final boolean doProcess) {
+      final boolean doProcess) throws OBException {
     if (!soLine.getSalesOrder().isSalesTransaction()) {
       throw new OBException(OBMessageUtils.messageBD("cannotReservePurchaseOrder", false));
     }
@@ -76,7 +76,7 @@ public class ReservationUtils {
     return null;
   }
 
-  public static OBError reserveStockAuto(final Reservation reservation) {
+  public static OBError reserveStockAuto(final Reservation reservation) throws OBException {
 
     OBDal.getInstance().flush();
     CSResponse cs = null;
@@ -108,7 +108,8 @@ public class ReservationUtils {
    */
 
   public static ReservationStock reserveStockManual(final Reservation reservation,
-      final BaseOBObject obObject, final BigDecimal quantity, final String allocated) {
+      final BaseOBObject obObject, final BigDecimal quantity, final String allocated)
+      throws OBException {
 
     String strType = "";
 
@@ -149,7 +150,8 @@ public class ReservationUtils {
    * <li>CL Close</li>
    * </ul>
    */
-  public static OBError processReserve(final Reservation reservation, final String action) {
+  public static OBError processReserve(final Reservation reservation, final String action)
+      throws OBException {
 
     OBContext.setAdminMode(true);
     Process process = null;
@@ -191,7 +193,7 @@ public class ReservationUtils {
    */
 
   public static OBError reallocateStock(final Reservation reservation, final Locator storageBin,
-      final AttributeSetInstance asi, final BigDecimal quantity) {
+      final AttributeSetInstance asi, final BigDecimal quantity) throws OBException {
 
     OBDal.getInstance().flush();
     CSResponse cs = null;
