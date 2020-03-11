@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,6 +36,7 @@ public class DocLine_FINPayment extends DocLineCashVATReady_PaymentTransactionRe
   String isPrepayment = "";
   boolean isPrepaymentAgainstInvoice = false;
   BigDecimal doubtFulDebtAmount = BigDecimal.ZERO;
+  String AmountExcludingCredit = "";
 
   @Deprecated
   Invoice invoice = null;
@@ -148,6 +149,13 @@ public class DocLine_FINPayment extends DocLineCashVATReady_PaymentTransactionRe
   }
 
   /**
+   * @return the amountExcludingCredit
+   */
+  public String getAmountExcludingCredit() {
+    return AmountExcludingCredit;
+  }
+
+  /**
    * @return the line_ID
    */
   public String getLine_ID() {
@@ -199,6 +207,14 @@ public class DocLine_FINPayment extends DocLineCashVATReady_PaymentTransactionRe
   @Override
   public void setAmount(String amount) {
     Amount = amount;
+  }
+
+  /**
+   * @param amountExcludingCredit
+   *          the amountExcludingCredit to set
+   */
+  public void setAmountExcludingCredit(String amountExcludingCredit) {
+    AmountExcludingCredit = amountExcludingCredit;
   }
 
   public BigDecimal getDoubtFulDebtAmount() {

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2019 Openbravo SLU
+ * All portions are Copyright (C) 2010-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -95,7 +95,12 @@ public class DocFINPayment extends AcctServer {
       return null;
     }
 
-    FieldProviderFactory[] data = new FieldProviderFactory[paymentDetails.size()];
+    int noOfPaymentDetails = paymentDetails.size();
+    BigDecimal usedCredit = payment.getUsedCredit();
+    BigDecimal creditAmtToAdjust = usedCredit.divide(new BigDecimal(noOfPaymentDetails),
+        payment.getCurrency().getPricePrecision().intValue(), RoundingMode.HALF_UP);
+    BigDecimal totalCreditAdjusted = BigDecimal.ZERO;
+    FieldProviderFactory[] data = new FieldProviderFactory[noOfPaymentDetails];
     String psId = null;
     String pdId = null;
     BigDecimal totalAmount = BigDecimal.ZERO;
@@ -155,6 +160,14 @@ public class DocFINPayment extends AcctServer {
             totalAmount = amount;
           }
           FieldProviderFactory.setField(data[i], "Amount", totalAmount.toString());
+          BigDecimal amountExcludingCredit = totalAmount.subtract(creditAmtToAdjust);
+          totalCreditAdjusted = totalCreditAdjusted.add(creditAmtToAdjust);
+          if (i == noOfPaymentDetails - 1) {
+            amountExcludingCredit = amountExcludingCredit
+                .subtract(usedCredit.subtract(totalCreditAdjusted));
+          }
+          FieldProviderFactory.setField(data[i], "AmountExcludingCredit",
+              amountExcludingCredit.toString());
         }
         psId = psi != null ? psi.getId() : null;
 
