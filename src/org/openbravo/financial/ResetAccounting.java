@@ -53,7 +53,7 @@ public class ResetAccounting {
   private static final Logger log4j = LogManager.getLogger();
 
   public static HashMap<String, Integer> delete(String adClientId, String adOrgId,
-      List<String> tableIds, String strdatefrom, String strdateto) {
+      List<String> tableIds, String strdatefrom, String strdateto) throws OBException {
     if (tableIds.isEmpty()) {
       return delete(adClientId, adOrgId, "", null, strdatefrom, strdateto);
     } else {
@@ -278,7 +278,7 @@ public class ResetAccounting {
             final String tableName = table.getDBTableName();
             final String tableIdName = table.getDBTableName() + "_Id";
 
-            final String strUpdate = updateTable(tableName, tableIdName, table.getId(), false);
+            final String strUpdate = updateTableOneRecord(tableName, tableIdName, table.getId());
 
             updated = OBDal.getInstance()
                 .getSession()
@@ -339,7 +339,7 @@ public class ResetAccounting {
         tableName = table.getDBTableName();
         tableIdName = table.getDBTableName() + "_Id";
 
-        final String strUpdate = updateTable(tableName, tableIdName, table.getId(), true);
+        final String strUpdate = updateTableMultipleRecords(tableName, tableIdName, table.getId());
 
         final int updated = OBDal.getInstance()
             .getSession()
@@ -378,45 +378,57 @@ public class ResetAccounting {
     }
   }
 
-  private static String updateTable(final String tableName, final String tableIdName,
-      final String tableId, final boolean isInTransactionsCase) {
-    final String inCase;
-    final boolean hasProcessingColumnValue = hasProcessingColumn(tableId);
+  private static String updateTableOneRecord(final String tableName, final String tableIdName,
+      final String tableId) {
+    return updateTable(tableName, tableIdName, tableId, false);
+  }
 
-    if (isInTransactionsCase) {
-      inCase = " in (:transactionIds) ";
-    } else {
-      inCase = " = :recordID ";
-    }
+  private static String updateTableMultipleRecords(final String tableName, final String tableIdName,
+      final String tableId) {
+    return updateTable(tableName, tableIdName, tableId, true);
+  }
+
+  private static String updateTable(final String tableName, final String tableIdName,
+      final String tableId, final boolean multipleRecords) {
+    String strUpdate;
+    if (hasProcessingColumn(tableId)) {
     //@formatter:off
-    String strUpdate = 
-          "update " + tableName +
-          "  set posted='N'";
-    //@formatter:on
-    if (hasProcessingColumnValue) {
-      //@formatter:off
-      strUpdate += 
-          "    , processing='N'";
-      //@formatter:on
-    }
-    //@formatter:off
-    strUpdate += 
+      strUpdate =
+          " update " + tableName +
+          "  set posted='N', " +
+          "      processing='N' " +
           " where " +
           "   (" +
-          "     posted<>'N'" +
-          "     or posted is null";
+          "     posted<>'N' " +
+          "     or posted is null " +
+          "     or processing='N' " +
+          "   )";
     //@formatter:on
-    if (hasProcessingColumnValue) {
+    } else {
       //@formatter:off
-      strUpdate += 
-          "     or processing='N'";
-      //@formatter:on
-    }
-    //@formatter:off 
-    strUpdate +=
-          "   )" +
-          " and " + tableIdName + inCase;
+      strUpdate =
+          " update " + tableName +
+          "  set posted='N', " +
+          " where " +
+          "   (" +
+          "     posted<>'N' " +
+          "     or posted is null " +
+          "   )";
     //@formatter:on
+    }
+
+    if (multipleRecords) {
+      //@formatter:off
+      strUpdate +=
+          "   and " + tableIdName + " in (:transactionIds) ";
+      //@formatter:on
+    } else {
+    //@formatter:off
+      strUpdate +=
+          "   and " + tableIdName + " = :recordID ";
+    //@formatter:on
+    }
+
     return strUpdate;
   }
 
@@ -498,14 +510,15 @@ public class ResetAccounting {
             .createNativeQuery(strUpdate)
             .setParameterList("orgIds",
                 new OrganizationStructureProvider().getNaturalTree(adOrgId));
+        if (!("".equals(dateto)) || !("".equals(datefrom))) {
+          update.setParameter("tableDate", tableDate);
+        }
         try {
           if (!("".equals(datefrom))) {
-            update.setParameter("tableDate", tableDate)
-                .setParameter("dateFrom", OBDateUtils.getDate(datefrom));
+            update.setParameter("dateFrom", OBDateUtils.getDate(datefrom));
           }
           if (!("".equals(dateto))) {
-            update.setParameter("tableDate", tableDate)
-                .setParameter("dateTo", OBDateUtils.getDate(dateto));
+            update.setParameter("dateTo", OBDateUtils.getDate(dateto));
           }
         } catch (final ParseException e) {
           log4j.error("Restore - Error parsisng dates", e);
