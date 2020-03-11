@@ -129,17 +129,17 @@ public class InventoryCountProcess implements Process {
 
   }
 
-  public OBError processInventory(final InventoryCount inventory) {
+  public OBError processInventory(final InventoryCount inventory) throws OBException {
     return processInventory(inventory, true);
   }
 
-  public OBError processInventory(final InventoryCount inventory,
-      final boolean checkReservationQty) {
+  public OBError processInventory(final InventoryCount inventory, final boolean checkReservationQty)
+      throws OBException {
     return processInventory(inventory, checkReservationQty, false);
   }
 
   public OBError processInventory(final InventoryCount inventory, final boolean checkReservationQty,
-      final boolean checkPermanentCost) {
+      final boolean checkPermanentCost) throws OBException {
     final OBError msg = new OBError();
     msg.setType("Success");
     msg.setTitle(OBMessageUtils.messageBD("Success"));
@@ -328,6 +328,7 @@ public class InventoryCountProcess implements Process {
                   "              and sd.attributeSetValue = '0'" +
                   "              and sd.uOM.id = icl.uOM.id" +
                   "              and sd.quantityOnHand <> 0" +
+                  "              and sd.quantityInDraftTransactions <> 0" +
                   "         )" +
                   "       )" +
                   "     )" +
