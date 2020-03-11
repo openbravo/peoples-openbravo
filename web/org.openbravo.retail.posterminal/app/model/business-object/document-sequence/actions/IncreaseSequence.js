@@ -12,6 +12,9 @@
  */
 
 (() => {
+  // FIXME: Move to global complete ticket action.
+  // It should read information from Terminal (sequence prefix and padding) and DocumentSequence (sequenceNumber) models
+  // It should update Ticket (sequence, sequenceNumber and documentNo) and DocumentSequence (sequenceNumber) models
   OB.App.StateAPI.DocumentSequence.registerAction(
     'increaseSequence',
     (state, payload) => {
@@ -19,7 +22,7 @@
 
       const { sequence } = payload;
 
-      if (newState[sequence]) {
+      if (newState[sequence] || newState[sequence] === 0) {
         newState[
           sequence
         ] = OB.App.State.DocumentSequence.Utils.getNextSequenceNumber(
