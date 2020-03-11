@@ -25,6 +25,7 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -1172,7 +1173,9 @@ public class OrderLoader extends POSDataSynchronizationProcess
     if (!doCancelAndReplace && !doCancelLayaway) {
       final OBPOSApplications terminal = order.getObposApplications();
       if (terminal.getEntity().hasProperty(jsonorder.getString("sequenceName"))) {
-        terminal.set(jsonorder.getString("sequenceName"), jsonorder.optLong("sequenceNumber"));
+        terminal.set(jsonorder.getString("sequenceName"), Long.max(
+            (Long) ObjectUtils.defaultIfNull(terminal.get(jsonorder.getString("sequenceName")), 0L),
+            jsonorder.optLong("sequenceNumber")));
         OBDal.getInstance().save(terminal);
       }
     }
