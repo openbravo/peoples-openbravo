@@ -1548,14 +1548,15 @@
       const documentNumberPadding = OB.MobileApp.model.get('terminal')
         .documentnoPadding;
 
-      ticket.set(
-        'documentNo',
-        OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
+      ticket.set({
+        sequence: sequence,
+        sequenceNumber: sequenceNumber,
+        documentNo: OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
           documentNumberPrefix,
           documentNumberPadding,
           sequenceNumber
         )
-      );
+      });
     },
 
     getPaymentName: function(key) {
