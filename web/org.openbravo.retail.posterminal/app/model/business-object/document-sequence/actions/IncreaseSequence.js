@@ -13,7 +13,7 @@
 
 (() => {
   // FIXME: Move to global complete ticket action.
-  // It should read information from Terminal (sequence prefix and padding) and DocumentSequence (sequenceNumber) models
+  // It should read information from Terminal (sequence prefix and padding), Ticket (orderType) and DocumentSequence (sequenceNumber) models
   // It should update Ticket (sequence, sequenceNumber and documentNo) and DocumentSequence (sequenceNumber) models
   OB.App.StateAPI.DocumentSequence.registerAction(
     'increaseSequence',

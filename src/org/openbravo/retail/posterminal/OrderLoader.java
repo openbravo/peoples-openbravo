@@ -1170,71 +1170,10 @@ public class OrderLoader extends POSDataSynchronizationProcess
     order.setDelivered(deliver);
 
     if (!doCancelAndReplace && !doCancelLayaway) {
-      if (order.getDocumentNo().indexOf("/") > -1) {
-        long documentno = Long
-            .parseLong(order.getDocumentNo().substring(order.getDocumentNo().lastIndexOf("/") + 1));
-
-        if (isQuotation) {
-          if (order.getObposApplications().getQuotationslastassignednum() == null
-              || documentno > order.getObposApplications().getQuotationslastassignednum()) {
-            OBPOSApplications terminal = order.getObposApplications();
-            terminal.setQuotationslastassignednum(documentno);
-            OBDal.getInstance().save(terminal);
-          }
-        } else if (jsonorder.optLong("returnnoSuffix", -1L) > -1L) {
-          if (order.getObposApplications().getReturnslastassignednum() == null
-              || documentno > order.getObposApplications().getReturnslastassignednum()) {
-            OBPOSApplications terminal = order.getObposApplications();
-            terminal.setReturnslastassignednum(documentno);
-            OBDal.getInstance().save(terminal);
-          }
-        } else {
-          if (order.getObposApplications().getLastassignednum() == null
-              || documentno > order.getObposApplications().getLastassignednum()) {
-            OBPOSApplications terminal = order.getObposApplications();
-            terminal.setLastassignednum(documentno);
-            OBDal.getInstance().save(terminal);
-          }
-        }
-      } else {
-        long documentno;
-        if (isQuotation) {
-          if (jsonorder.has("quotationnoPrefix")) {
-            documentno = Long.parseLong(
-                order.getDocumentNo().replace(jsonorder.getString("quotationnoPrefix"), ""));
-
-            if (order.getObposApplications().getQuotationslastassignednum() == null
-                || documentno > order.getObposApplications().getQuotationslastassignednum()) {
-              OBPOSApplications terminal = order.getObposApplications();
-              terminal.setQuotationslastassignednum(documentno);
-              OBDal.getInstance().save(terminal);
-            }
-          }
-        } else if (jsonorder.optLong("returnnoSuffix", -1L) > -1L) {
-          if (jsonorder.has("returnnoPrefix")) {
-            documentno = Long.parseLong(
-                order.getDocumentNo().replace(jsonorder.getString("returnnoPrefix"), ""));
-
-            if (order.getObposApplications().getReturnslastassignednum() == null
-                || documentno > order.getObposApplications().getReturnslastassignednum()) {
-              OBPOSApplications terminal = order.getObposApplications();
-              terminal.setReturnslastassignednum(documentno);
-              OBDal.getInstance().save(terminal);
-            }
-          }
-        } else {
-          if (jsonorder.has("documentnoPrefix")) {
-            documentno = Long.parseLong(
-                order.getDocumentNo().replace(jsonorder.getString("documentnoPrefix"), ""));
-
-            if (order.getObposApplications().getLastassignednum() == null
-                || documentno > order.getObposApplications().getLastassignednum()) {
-              OBPOSApplications terminal = order.getObposApplications();
-              terminal.setLastassignednum(documentno);
-              OBDal.getInstance().save(terminal);
-            }
-          }
-        }
+      final OBPOSApplications terminal = order.getObposApplications();
+      if (terminal.getEntity().hasProperty(jsonorder.getString("sequenceName"))) {
+        terminal.set(jsonorder.getString("sequenceName"), jsonorder.optLong("sequenceNumber"));
+        OBDal.getInstance().save(terminal);
       }
     }
 

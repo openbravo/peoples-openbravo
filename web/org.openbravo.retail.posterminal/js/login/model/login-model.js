@@ -249,17 +249,17 @@
                   OB.App.State.DocumentSequence.initializeSequence({
                     sequences: [
                       {
-                        sequenceName: 'orderSequence',
+                        sequenceName: 'lastassignednum',
                         sequenceNumber: OB.MobileApp.model.get('terminal')
                           .lastDocumentNumber
                       },
                       {
-                        sequenceName: 'returnSequence',
+                        sequenceName: 'returnslastassignednum',
                         sequenceNumber: OB.MobileApp.model.get('terminal')
                           .lastReturnDocumentNumber
                       },
                       {
-                        sequenceName: 'quotationSequence',
+                        sequenceName: 'quotationslastassignednum',
                         sequenceNumber: OB.MobileApp.model.get('terminal')
                           .lastQuotationDocumentNumber
                       }
@@ -1540,15 +1540,15 @@
       let sequenceName;
       let documentNumberPrefix;
       if (ticket.get('isQuotation')) {
-        sequenceName = 'quotationSequence';
+        sequenceName = 'quotationslastassignednum';
         documentNumberPrefix = OB.MobileApp.model.get('terminal')
           .quotationDocNoPrefix;
       } else if (ticket.getOrderType() === 1) {
-        sequenceName = 'returnSequence';
+        sequenceName = 'returnslastassignednum';
         documentNumberPrefix = OB.MobileApp.model.get('terminal')
           .returnDocNoPrefix;
       } else {
-        sequenceName = 'orderSequence';
+        sequenceName = 'lastassignednum';
         documentNumberPrefix = OB.MobileApp.model.get('terminal').docNoPrefix;
       }
 
