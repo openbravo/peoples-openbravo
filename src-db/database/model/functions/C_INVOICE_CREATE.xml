@@ -25,7 +25,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2017 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2020 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -434,7 +434,7 @@
                   DatePrinted, IsPrinted, DateAcct, TaxDate, 
                   C_PaymentTerm_ID,
                   C_BPartner_ID, C_BPartner_Location_ID, AD_User_ID, POReference,
-                  DateOrdered, IsDiscountPrinted, C_Currency_ID, PaymentRule,
+                  DateOrdered, IsDiscountPrinted, C_Currency_ID,
                   C_Charge_ID, ChargeAmt, IsSelfService, TotalLines,
                   GrandTotal, M_PriceList_ID, C_Campaign_ID, C_Project_ID,
                   C_CostCenter_ID, A_Asset_ID,
@@ -451,7 +451,7 @@
                   NULL, 'N', v_DateInvoiced, v_DateInvoiced, -- DateInvoiced=DateAcct
                   Cur_Order.C_PaymentTerm_ID, Cur_Order.C_BPartner_ID, Cur_Order.BillTo_ID, Cur_Order.AD_User_ID,
                   Cur_Order.POReference, Cur_Order.DateOrdered, Cur_Order.IsDiscountPrinted, Cur_Order.C_Currency_ID,
-                  Cur_Order.PaymentRule, Cur_Order.C_Charge_ID, Cur_Order.ChargeAmt, Cur_Order.IsSelfService,
+                  Cur_Order.C_Charge_ID, Cur_Order.ChargeAmt, Cur_Order.IsSelfService,
                   0, 0, Cur_Order.M_PriceList_ID, Cur_Order.C_Campaign_ID, Cur_Order.C_Project_ID,
                   Cur_Order.C_CostCenter_ID, Cur_Order.A_Asset_ID, 
                   Cur_Order.C_Activity_ID, Cur_Order.AD_OrgTrx_ID, Cur_Order.User1_ID,
@@ -1134,7 +1134,7 @@
                       DateAcct, TaxDate,
                       C_PaymentTerm_ID, C_BPartner_ID, C_BPartner_Location_ID, AD_User_ID,
                       POReference, DateOrdered, IsDiscountPrinted, C_Currency_ID,
-                      PaymentRule, C_Charge_ID, ChargeAmt, IsSelfService,
+                      C_Charge_ID, ChargeAmt, IsSelfService,
                       TotalLines, GrandTotal, M_PriceList_ID, C_Campaign_ID,
                       C_Project_ID, C_Activity_ID, AD_OrgTrx_ID, User1_ID,
                       C_CostCenter_ID, A_Asset_ID, 
@@ -1151,7 +1151,7 @@
                       v_DateInvoiced, v_DateInvoiced, -- DateInvoiced=DateAcct
                       Cur_InvoiceSchedule.C_PaymentTerm_ID, Cur_InvoiceSchedule.C_BPartner_ID, Cur_InvoiceSchedule.BillTo_ID, Cur_InvoiceSchedule.AD_User_ID,
                       Cur_InvoiceSchedule.POReference, Cur_InvoiceSchedule.DateOrdered, Cur_InvoiceSchedule.IsDiscountPrinted, Cur_InvoiceSchedule.C_Currency_ID,
-                      Cur_InvoiceSchedule.PaymentRule, NULL, 0, 'N',
+                      NULL, 0, 'N',
                       0, 0, Cur_InvoiceSchedule.M_PriceList_ID, Cur_InvoiceSchedule.C_Campaign_ID,
                       Cur_InvoiceSchedule.C_Project_ID, Cur_InvoiceSchedule.C_Activity_ID, Cur_InvoiceSchedule.AD_OrgTrx_ID, Cur_InvoiceSchedule.User1_ID,
                       Cur_InvoiceSchedule.C_CostCenter_ID, Cur_InvoiceSchedule.A_Asset_ID, 

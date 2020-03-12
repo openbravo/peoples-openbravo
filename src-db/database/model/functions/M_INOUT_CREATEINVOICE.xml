@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2019 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2020 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -92,7 +92,6 @@
       v_DocType_ID VARCHAR2(32) ;
       v_DocumentNo C_INVOICE.DocumentNo%TYPE;
       v_IsDiscountPrinted CHAR(1) ;
-      v_PaymentRule VARCHAR2(60) ;
       v_C_PaymentTerm_ID VARCHAR2(32) ;
       v_C_Currency_ID VARCHAR2(32) ;
       v_M_PriceList_ID VARCHAR2(32) ;
@@ -152,13 +151,9 @@
           -- Create Invoice from Shipment
         ELSE
           v_ResultStr:='GetBPartnerInfo'; -- P=OnCredit
-          SELECT IsDiscountPrinted,(
-            CASE WHEN PaymentRulePO IS NULL THEN 'P' ELSE PaymentRulePO
-            END
-            ),
+          SELECT IsDiscountPrinted,
             PO_PaymentTerm_ID
           INTO v_IsDiscountPrinted,
-            v_PaymentRule,
             v_C_PaymentTerm_ID
           FROM C_BPARTNER
           WHERE C_BPartner_ID=CUR_Shipment.C_BPartner_ID;
@@ -239,7 +234,7 @@
               DateInvoiced, DatePrinted, IsPrinted, TaxDate,
               DateAcct, C_PaymentTerm_ID, C_BPartner_ID, C_BPartner_Location_ID,
               AD_User_ID, POReference, DateOrdered, IsDiscountPrinted,
-              C_Currency_ID, PaymentRule, C_Charge_ID, ChargeAmt,
+              C_Currency_ID, C_Charge_ID, ChargeAmt,
               TotalLines, GrandTotal, M_PriceList_ID, C_Campaign_ID,
               C_Project_ID, C_Activity_ID, AD_OrgTrx_ID, User1_ID,
               User2_ID, fin_paymentmethod_id, C_Costcenter_ID,
@@ -255,7 +250,7 @@
               trunc(now()), NULL, 'N', now(),
               trunc(now()), v_C_PaymentTerm_ID, CUR_Shipment.C_BPartner_ID, CUR_Shipment.C_BPartner_Location_ID,
               CUR_Shipment.AD_User_ID, NULL, CUR_Shipment.DateOrdered, v_IsDiscountPrinted,
-              v_C_Currency_ID, v_PaymentRule, NULL, 0,
+              v_C_Currency_ID, NULL, 0,
               0, 0, v_M_PriceList_ID, CUR_Shipment.C_Campaign_ID,
               CUR_Shipment.C_Project_ID, CUR_Shipment.C_Activity_ID, CUR_Shipment.AD_OrgTrx_ID, CUR_Shipment.User1_ID,
               CUR_Shipment.User2_ID, v_fin_paymentmethod_id, CUR_Shipment.C_Costcenter_ID,

@@ -22,7 +22,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2019 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2020 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -74,7 +74,6 @@
   v_DocType_ID VARCHAR2(32);
   v_DocTypeTarget_ID VARCHAR2(32);
   v_isreturndoctype CHAR(1);
-  v_PaymentRule C_INVOICE.PaymentRule%TYPE;
   v_PaymentTerm C_INVOICE.C_PaymentTerm_ID%TYPE;
   v_DateAcct DATE;
   v_DateInvoiced DATE;
@@ -253,14 +252,14 @@ BEGIN --BODY
   v_ResultStr:='ReadingInvoice';
    SELECT i.Processing, i.Processed, i.DocAction, i.DocStatus,
       i.C_DocType_ID, i.C_DocTypeTarget_ID,
-      i.PaymentRule, i.C_PaymentTerm_ID, i.DateAcct, i.DateInvoiced,
+      i.C_PaymentTerm_ID, i.DateAcct, i.DateInvoiced,
       i.AD_Client_ID, i.AD_Org_ID, i.UpdatedBy, i.DocumentNo,
       i.IsSOTrx, i.C_BPartner_ID, i.AD_User_ID,
       i.C_Currency_ID, i.POReference, i.Posted,
       i.c_Project_Id, i.C_WithHolding_ID, i.IsCashVat, i.prepaymentamt
   INTO v_Processing, v_Processed, v_DocAction, v_DocStatus,
       v_DocType_ID, v_DocTypeTarget_ID,
-      v_PaymentRule, v_PaymentTerm, v_DateAcct, v_DateInvoiced,
+      v_PaymentTerm, v_DateAcct, v_DateInvoiced,
       v_Client_ID, v_Org_ID, v_UpdatedBy, v_DocumentNo,
       v_IsSOTrx, v_BPartner_ID, v_BPartner_User_ID,
       v_Currency_ID, v_POReference, v_Posted,
@@ -618,7 +617,7 @@ IF (NOT FINISH_PROCESS) THEN
               DateInvoiced, DatePrinted, IsPrinted, TaxDate,
               DateAcct, C_PaymentTerm_ID, C_BPartner_ID, C_BPartner_Location_ID,
               AD_User_ID, POReference, DateOrdered, IsDiscountPrinted,
-              C_Currency_ID, PaymentRule, C_Charge_ID, ChargeAmt,
+              C_Currency_ID, C_Charge_ID, ChargeAmt,
               TotalLines, GrandTotal, M_PriceList_ID, C_Campaign_ID,
               C_Project_ID, C_Activity_ID, AD_OrgTrx_ID, User1_ID,
               User2_ID, fin_paymentmethod_id, C_CostCenter_ID,
@@ -632,7 +631,7 @@ IF (NOT FINISH_PROCESS) THEN
             TRUNC(now()), NULL, 'N', NULL,
             TRUNC(now()), C_PaymentTerm_ID, C_BPartner_ID, C_BPartner_Location_ID,
             AD_User_ID, POReference, DateOrdered, IsDiscountPrinted,
-            C_Currency_ID, PaymentRule, C_Charge_ID, ChargeAmt * -1,
+            C_Currency_ID, C_Charge_ID, ChargeAmt * -1,
             0, 0, --Totals are recalculed adding invoice lines
             M_PriceList_ID, C_Campaign_ID,
             C_Project_ID, C_Activity_ID, AD_OrgTrx_ID, User1_ID,
@@ -1270,7 +1269,7 @@ IF (NOT FINISH_PROCESS) THEN
            DESCRIPTION, M_PRODUCT_ID, QTYINVOICED, PRICELIST,
            PRICEACTUAL, PRICELIMIT, LINENETAMT, C_CHARGE_ID,
            CHARGEAMT, C_UOM_ID, C_TAX_ID, S_RESOURCEASSIGNMENT_ID,
-           TAXAMT, M_ATTRIBUTESETINSTANCE_ID, ISDESCRIPTION,
+           M_ATTRIBUTESETINSTANCE_ID, ISDESCRIPTION,
            QUANTITYORDER, M_PRODUCT_UOM_ID, PRICESTD,
            GROSS_UNIT_PRICE, TAXBASEAMT, LINE_GROSS_AMOUNT,
            ISDEFERRED, DEFPLANTYPE, PERIODNUMBER, C_PERIOD_ID,
@@ -1284,7 +1283,7 @@ IF (NOT FINISH_PROCESS) THEN
            Cur_CInvoiceDiscount.NAME, Cur_CInvoiceDiscount.M_PRODUCT_ID, 1, v_Discount,
            v_Discount, v_Discount, v_Discount, NULL,
            0, Cur_CInvoiceDiscount.C_UOM_ID, Cur_TaxDiscount.C_TAX_ID, NULL,
-           NULL, NULL, 'N' ,
+           NULL, 'N' ,
            NULL, NULL, v_Discount,
            ROUND(v_gross_unit_price, v_pricePrecision), v_Discount  ,ROUND(v_line_gross_amount, v_pricePrecision),
            v_isdeferred_inv, v_defplantype_inv, v_periodnumber_inv, v_period_inv,
@@ -1566,14 +1565,14 @@ IF (NOT FINISH_PROCESS) THEN
             END IF;
             FOR CUR_PAYMENTS IN
               (SELECT LINE, PERCENTAGE, ONREMAINDER, EXCLUDETAX,
-                   COALESCE(PAYMENTRULE, v_PaymentRule) AS PAYMENTRULE, FIXMONTHDAY, FIXMONTHDAY2, FIXMONTHDAY3,
+                   PAYMENTRULE AS PAYMENTRULE, FIXMONTHDAY, FIXMONTHDAY2, FIXMONTHDAY3,
                    NETDAYS, FIXMONTHOFFSET, NETDAY, ISNEXTBUSINESSDAY
                FROM C_PAYMENTTERMLINE
                WHERE C_PAYMENTTERM_ID=v_PaymentTerm
                UNION
                -- Header of paymentTerm is processed at last
                SELECT 9999 AS LINE, 100 AS PERCENTAGE, 'Y' AS ONREMAINDER, 'N' AS EXCLUDETAX,
-                   v_PaymentRule AS PAYMENTRULE, FIXMONTHDAY, FIXMONTHDAY2, FIXMONTHDAY3,
+                   null AS PAYMENTRULE, FIXMONTHDAY, FIXMONTHDAY2, FIXMONTHDAY3,
                    NETDAYS, FIXMONTHOFFSET, NETDAY, ISNEXTBUSINESSDAY
                FROM C_PAYMENTTERM
                WHERE C_PAYMENTTERM_ID=v_PaymentTerm

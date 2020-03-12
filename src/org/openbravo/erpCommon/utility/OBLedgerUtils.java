@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016-2018 Openbravo SLU
+ * All portions are Copyright (C) 2016-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,12 +23,10 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.query.Query;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.model.financialmgmt.accounting.coa.AcctSchema;
 
 /**
  * Utilities to get AcctSchema
@@ -47,7 +45,7 @@ public class OBLedgerUtils {
    * 
    * @return String ledgerId ledger id for the given organization. Null if not found
    */
-  public static String getOrgLedger(String orgId) {
+  public static String getOrgLedger(final String orgId) {
     try {
       OBContext.setAdminMode(true);
 
@@ -62,19 +60,19 @@ public class OBLedgerUtils {
         return null;
       }
 
-      String acctSchemaId = getOrgLedgerRecursive(org);
+      final String acctSchemaId = getOrgLedgerRecursive(org);
       if (StringUtils.isNotEmpty(acctSchemaId)) {
         // Get general ledger of organization tree
         return acctSchemaId;
       }
 
-      String clientId = StringUtils.equals(orgId, "0")
+      final String clientId = StringUtils.equals(orgId, "0")
           ? OBContext.getOBContext().getCurrentClient().getId()
           : org.getClient().getId();
       // Get client base general ledger
       return getClientLedger(clientId);
 
-    } catch (Exception e) {
+    } catch (final Exception e) {
       log4j.error("Impossible to get ledger for organization id " + orgId, e);
       return null;
     } finally {
@@ -92,7 +90,7 @@ public class OBLedgerUtils {
    * @return the General Ledger Id of the organization in case the organization or one of its parent
    *         has a General Ledger defined.
    */
-  private static String getOrgLedgerRecursive(Organization org) {
+  private static String getOrgLedgerRecursive(final Organization org) {
 
     if (org.getGeneralLedger() != null) {
       // Get general ledger of organization
@@ -105,11 +103,11 @@ public class OBLedgerUtils {
     }
 
     // Loop through parent organization list
-    OrganizationStructureProvider osp = OBContext.getOBContext()
+    final OrganizationStructureProvider osp = OBContext.getOBContext()
         .getOrganizationStructureProvider(org.getClient().getId());
-    List<String> parentOrgIds = osp.getParentList(org.getId(), false);
+    final List<String> parentOrgIds = osp.getParentList(org.getId(), false);
     for (String orgId : parentOrgIds) {
-      Organization parentOrg = OBDal.getInstance().get(Organization.class, orgId);
+      final Organization parentOrg = OBDal.getInstance().get(Organization.class, orgId);
       if (parentOrg.getGeneralLedger() != null) {
         return parentOrg.getGeneralLedger().getId();
       }
@@ -118,17 +116,20 @@ public class OBLedgerUtils {
     return null;
   }
 
-  private static String getClientLedger(String clientId) {
-    StringBuffer where = new StringBuffer();
-    where.append(" select " + AcctSchema.PROPERTY_ID);
-    where.append(" from " + AcctSchema.ENTITY_NAME);
-    where.append(" where " + AcctSchema.PROPERTY_CLIENT + ".id = :clientId");
-    where.append(" order by " + AcctSchema.PROPERTY_NAME);
-    Query<String> qry = OBDal.getInstance()
+  private static String getClientLedger(final String clientId) {
+    //@formatter:off
+    final String hql =
+                  "select id" +
+                  "  from FinancialMgmtAcctSchema" +
+                  " where client.id = :clientId" +
+                  " order by name";
+    //@formatter:on
+
+    return OBDal.getInstance()
         .getSession()
-        .createQuery(where.toString(), String.class);
-    qry.setParameter("clientId", clientId);
-    qry.setMaxResults(1);
-    return (String) qry.uniqueResult();
+        .createQuery(hql, String.class)
+        .setParameter("clientId", clientId)
+        .setMaxResults(1)
+        .uniqueResult();
   }
 }
