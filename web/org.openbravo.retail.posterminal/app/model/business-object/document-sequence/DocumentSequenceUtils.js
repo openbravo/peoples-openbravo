@@ -14,25 +14,6 @@
 (() => {
   OB.App.StateAPI.DocumentSequence.registerUtilityFunctions({
     /**
-     * Returns the highest sequence number between two sequence numbers.
-     *
-     * @returns {number} The highest sequence number.
-     */
-    getHighestSequenceNumber(sequenceNumber1, sequenceNumber2) {
-      if (!sequenceNumber1 && sequenceNumber1 !== 0) {
-        return sequenceNumber2;
-      }
-
-      if (!sequenceNumber2 && sequenceNumber2 !== 0) {
-        return sequenceNumber1;
-      }
-
-      return sequenceNumber1 > sequenceNumber2
-        ? sequenceNumber1
-        : sequenceNumber2;
-    },
-
-    /**
      * Returns the sequence number increased in one or zero if it is undefined.
      *
      * @returns {number} The next sequence number.

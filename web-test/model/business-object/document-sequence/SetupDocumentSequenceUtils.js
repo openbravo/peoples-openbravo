@@ -7,12 +7,14 @@
  ************************************************************************************
  */
 
-require('./SetupDocumentSequence');
+require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/document-sequence/DocumentSequenceUtils');
 
-describe('Document Sequence Model', () => {
-  it('should have an empty object in its initial state', () => {
-    const initialState = OB.App.StateAPI.DocumentSequence.initialState;
-    const expectedState = {};
-    expect(initialState).toEqual(expectedState);
-  });
+OB.App.State = {
+  DocumentSequence: {
+    Utils: {}
+  }
+};
+
+OB.App.StateAPI.DocumentSequence.utilities.forEach(util => {
+  OB.App.State.DocumentSequence.Utils[util.functionName] = util.implementation;
 });

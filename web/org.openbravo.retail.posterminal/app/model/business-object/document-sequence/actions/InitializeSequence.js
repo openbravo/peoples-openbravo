@@ -20,11 +20,9 @@
       const { sequences } = payload;
 
       sequences.forEach(sequence => {
-        newState[
-          sequence.sequenceName
-        ] = OB.App.State.DocumentSequence.Utils.getHighestSequenceNumber(
-          newState[sequence.sequenceName],
-          sequence.sequenceNumber
+        newState[sequence.sequenceName] = Math.max(
+          newState[sequence.sequenceName] || 0,
+          sequence.sequenceNumber || 0
         );
       });
 
