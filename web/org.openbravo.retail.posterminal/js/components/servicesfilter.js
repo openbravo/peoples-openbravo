@@ -124,6 +124,7 @@ enyo.kind({
       minimumSelected = 999999999999,
       maximumSelected = 0,
       filters;
+    OB.MobileApp.model.set('serviceSearchLaunched', true);
     if (this.orderlineList && this.orderlineList.length > 0) {
       prodList = this.orderlineList.map(function(line) {
         var product = line.get('product');
