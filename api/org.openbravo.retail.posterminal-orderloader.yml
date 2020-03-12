@@ -1,0 +1,572 @@
+openapi: 3.0.1
+info:
+  title: External Order Loader Web Service API
+  description: This is the API for consuming the Order Loader Web Service
+  contact:
+    name: Openbravo
+    url: https://www.openbravo.com
+  version: 1.0.0
+
+servers:
+  - url: ${contextURL}
+
+paths:
+  /org.openbravo.mobile.core.service.jsonrest/org.openbravo.retail.posterminal.ExternalOrderLoader:
+    post:
+      tags:
+        - External Order Loader Web Service
+      summary: Create a ticket in Openbravo
+      description: The ticket/order loading api provides a webservice which can be used to create tickets in Openbravo 
+      operationId: create order
+      security:
+        - BasicAuth: []
+      requestBody:
+        description: The ticket whose sales order will be created
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Request'
+            examples:
+              ticket1:
+                value:
+                summary: Creating a complete order, shipped and paid
+                description: Gives an example of creating a ticket with a minimal json.
+      responses:
+        200:
+          description: Shows the created order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+              examples:
+                result1:
+                  value:
+                  summary: Shows the created order
+                  description: The Order Loader output after process the received request
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        500:
+          description: Error Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                error1:
+                  value:
+                    error: "Ticket validation failed: organization cannot be null"
+                  summary: Mandatory parameter not found error
+components:
+  schemas:
+    Request:
+      type: object
+      properties:
+        messageId:
+          type: string
+        posTerminal:
+          type: string
+        channel:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Order'
+      required:
+        - posTerminal
+        - channel
+        - data
+      description: Input for EOL WS. The messageId is optional but it makes sense to use it because if you send the same message twice Openbravo will register this and automatically ignore the second/subsequent message if the first one is processed already. The code of the pos terminal corresponds to the search key of the pos terminal.Set the channel property always with the value External
+    Order:
+      type: object
+      properties:
+        currency:
+          type: string
+        step:
+          type: string
+        grossAmount:
+          type: number
+          format: double
+        netAmount:
+          type: number
+          format: double         
+        businessPartner:
+          type: string
+        id:
+          type: string
+        lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/Line'
+        payments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Payment'
+        taxes:
+          $ref: '#/components/schemas/Tax'
+        approvals:
+          type: array
+          items:
+            $ref: '#/components/schemas/Approval'
+      required:
+        - currency
+        - step
+        - grossAmount
+        - netAmount
+        - lines
+        - payments
+        - taxes
+      description: Ticket or order to be created. For Currency use the isoCode as the value. For step always send the value "all". The grossAmount is the total amount of the order including taxes, the netAmount is the total amount of the order excluding taxes. The businessPartner should be the database id, name or searchkey of the business partner, if not set then the default defined for the pos terminal is used.
+    Line:
+      type: object
+      properties:
+        id:
+          type: string
+        product:
+          type: string
+        qty:
+          type: number
+          format: double
+        grossAmount:
+          type: number
+          format: double
+        netAmount:
+          type: number
+          format: double
+        taxAmount:
+          type: number
+          format: double
+        taxLines:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaxLine'
+        promotions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Promotion'
+      required:
+        - qty
+        - product
+        - grossAmount
+        - netAmount
+        - taxAmount
+        - taxLines
+      description: Information for the line. For product can be used the database id, name, search key or ean of the product. The grossAmount should be the total amount including taxes. The netAmount is the amount excluding taxes.
+    Payment:
+      type: object
+      properties:
+        paidAmount:
+          type: number
+          format: double
+        date:
+          type: string
+          format: YYYY-MM-DDTHH:mm:ss'
+        kind:
+          type: string
+        rate:
+          type: string
+        isocode:
+          type: string
+      required:
+        - paidAmount
+        - date
+        - kind
+        - rate
+        - isocode
+      description: Information for the payment. The paid amount is the payment in the currency of the order header. The kind refers to the payment method, the eligible payment methods are defined by POS terminal
+    Tax:
+      type: object
+      properties:
+        rate:
+          type: number
+          format: double
+        netAmount:
+          type: number
+          format: double
+        taxAmount:
+          type: number
+          format: double
+        amount:
+          type: number
+          format: double
+        net:
+          type: number
+          format: double
+      required:
+        - netAmount
+        - taxAmount
+      description: Information for the header tax.
+    TaxLine:
+      type: object
+      properties:
+        rate:
+          type: number
+          format: double
+        netAmount:
+          type: number
+          format: double
+        taxAmount:
+          type: number
+          format: double
+        amount:
+          type: number
+          format: double
+        net:
+          type: number
+          format: double
+      required:
+        - netAmount
+        - taxAmount
+      description: Information for the line tax.
+    Promotion:
+      type: object
+      properties:
+        name:
+          type: string
+        discountRule:
+          type: string
+        amount:
+          type: number
+          format: double
+        baseUnitPrice:
+          type: number
+          format: double
+        discountType:
+          type: string
+        displayedTotalAmount:
+          type: number
+          format: double
+        obdiscQtyoffer:
+          type: number
+          format: double
+        quantity:
+          type: number
+          format: double
+        unitDiscount:
+          type: number
+          format: double
+      required:
+        - name
+        - discountRule
+        - amount
+        - quantity
+      description: Information for the promotion applied to the line.  
+    Approval:
+      type: object
+      properties:
+        approvalType:
+          type: string
+        userContact:
+          type: string
+        created:
+          type: number
+          format: double
+      required:
+        - approvalType
+        - userContact
+        - created
+      description: Information for the approvals. Possible values are (OBPOS_approval.discounts) Web POS Discretionary Discount Approval, (OBPOS_approval.opendrawer.cashup) Web POS Open Drawer approval Cash Up, (OBPOS_approval.setPrice) Web POS set Price approval, (OBPOS_approval.returns) Web POS Returns Approval,   
+    Result:
+      type: object
+      properties:
+        response:
+          $ref: '#/components/schemas/Response'
+      description: Information for the result of calling WS.
+    Response:
+      type: object
+      properties:
+        status:
+          type: number
+          format: double
+        result:
+          type: string
+        orders:
+          type: array
+          items:
+            $ref: '#/components/schemas/OutputOrder'
+    OutputOrder:
+      type: object
+      properties:
+        currency:
+          type: string
+        step:
+          type: string
+        grossAmount:
+          type: number
+          format: double
+        netAmount:
+          type: number
+          format: double         
+        businessPartner:
+          type: string
+        id:
+          type: string
+        lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/OutputLine'
+        payments:
+          type: array
+          items:
+            $ref: '#/components/schemas/OutputPayment'
+        taxes:
+          $ref: '#/components/schemas/Tax'
+        approvals:
+          type: array
+          items:
+            $ref: '#/components/schemas/Approval'
+        posTerminal:
+          type: string
+        payment:
+          type: number
+          format: double
+        isQuotation:
+          type: boolean
+        isLayaway:
+          type: boolean
+        isReturn:
+          type: boolean 
+        obposAppCashup:
+          type: string
+        created:
+          type: number
+          format: double
+        change:
+          type: number
+          format: double
+        timezoneOffset:
+          type: number
+          format: double
+        generateInvoice:
+          type: boolean
+        orderDate:
+          type: string
+          format: YYYY-MM-DDTHH:mm:ss
+        creationDate:
+          type: string
+          format: YYYY-MM-DDTHH:mm:ss
+        obposCreatedabsolute:
+          type: string
+          format: YYYY-MM-DDTHH:mm:ss
+        organization:
+          type: string
+        client:
+          type: string 
+        obposApplications:
+          type: string
+        documentType:
+          type: string
+        warehouse:
+          type: string
+        priceList:
+          type: string
+        priceIncludesTax:
+          type: boolean
+        documentNo:
+          type: string
+        orderType:
+          type: string
+        gross:
+          type: number
+          format: double 
+        net:
+          type: number
+          format: double
+        bp:
+          $ref: '#/components/schemas/OutputBusinessPartner'
+    OutputBusinessPartner:
+      type: object
+      properties:
+        _identifier:
+          type: string
+        _entityName:
+          type: string 
+        id:
+          type: string
+        client:
+          type: string
+        client$_identifier:
+          type: string
+        organization:
+          type: string
+        organization$_identifier:
+          type: string
+        active:
+          type: boolean
+        creationDate:
+          type: string
+          format: YYYY-MM-DDTHH:mm:ss
+        searchKey:
+          type: string
+        name:
+          type: string
+        name2:
+          type: string 
+        description:
+          type: string
+        summaryLevel:
+          type: boolean
+        businessPartnerCategory:
+          type: string
+        businessPartnerCategory$_identifier:
+          type: string
+        oneTimeTransaction:
+          type: boolean
+        potentialCustomer:
+          type: boolean
+        vendor:
+          type: boolean
+        customer:
+          type: boolean
+        employee:
+          type: boolean
+        isSalesRepresentative:
+          type: boolean
+        referenceNo:
+          type: string
+        dUNS:
+          type: string
+        uRL:
+          type: string
+        language:
+          type: string
+        language$_identifier:
+          type: string
+        taxID:
+          type: string
+        taxExempt:
+          type: boolean
+        invoiceSchedule:
+          type: string
+        locId:
+          type: string 
+    OutputLine:
+      type: object
+      properties:
+        product:
+          $ref: '#/components/schemas/OutputProduct'
+        id:
+          type: string
+        qty:
+          type: number
+          format: double
+        grossAmount:
+          type: number
+          format: double
+        netAmount:
+          type: number
+          format: double
+        taxAmount:
+          type: number
+          format: double
+        taxLines:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaxLine'
+        uOM:
+          type: string
+        promotions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Promotion' 
+        tax:
+          type: string
+        lineRate:
+          type: number
+          format: double
+        priceIncludesTax:
+          type: boolean
+        netListPrice:
+          type: number
+          format: double
+        grossListPrice:
+          type: number
+          format: double
+        netPrice:
+          type: number
+          format: double
+        grossPrice:
+          type: number
+          format: double
+        discountedNet:
+          type: number
+          format: double
+        discountedLinePrice:
+          type: number
+          format: double
+        discountPercentage:
+          type: number
+          format: double
+        listPrice:
+          type: number
+          format: double
+        priceList:
+          type: number
+          format: double
+        standardPrice:
+          type: number
+          format: double
+        lineGrossAmount:
+          type: number
+          format: double
+        unitPrice:
+          type: number
+          format: double
+        net:
+          type: number
+          format: double
+        gross:
+          type: number
+          format: double
+    OutputPayment:
+      type: object
+      properties:
+        paidAmount:
+          type: number
+          format: double
+        date:
+          type: string
+          format: YYYY-MM-DDTHH:mm:ss'
+        kind:
+          type: string
+        rate:
+          type: string
+        isocode:
+          type: string
+        currency:
+          type: string
+        amount:
+          type: number
+          format: double
+        origAmount:
+          type: number
+          format: double
+        paid:
+          type: number
+          format: double     
+        mulrate:
+          type: string    
+    OutputProduct:
+      type: object
+      properties:
+        id:
+          type: string
+        _identifier:
+          type: string
+        searchKey:
+          type: string
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+  responses:
+    UnauthorizedError:
+      description: Authentication information is missing or invalid
+      headers:
+        WWW_Authenticate:
+          schema:
+            type: string
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
