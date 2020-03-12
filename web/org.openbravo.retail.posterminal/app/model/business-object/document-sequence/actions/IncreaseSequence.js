@@ -22,11 +22,7 @@
       const { sequenceName } = payload;
 
       if (newState[sequenceName] || newState[sequenceName] === 0) {
-        newState[
-          sequenceName
-        ] = OB.App.State.DocumentSequence.Utils.getNextSequenceNumber(
-          newState[sequenceName]
-        );
+        newState[sequenceName] = newState[sequenceName] + 1;
       }
 
       return newState;

@@ -66,53 +66,56 @@ describe('Document Sequence Initialize Sequence action', () => {
   });
 
   it('should initialize sequence if one sequence in state and higher sequence in payload', () => {
-    const currentState = deepfreeze({ orderSequence: 0 });
+    const currentState = deepfreeze({ orderSequence: 0, returnSequence: 0 });
     const sequences = [{ sequenceName: 'orderSequence', sequenceNumber: 1 }];
 
     const newState = OB.App.StateAPI.DocumentSequence.initializeSequence(
       currentState,
       { sequences: sequences }
     );
-    const expectedState = { orderSequence: 1 };
+    const expectedState = { orderSequence: 1, returnSequence: 0 };
 
     expect(newState).toEqual(expectedState);
   });
 
   it('should initialize sequence if one sequence in state and lower sequence in payload', () => {
-    const currentState = deepfreeze({ orderSequence: 1 });
+    const currentState = deepfreeze({ orderSequence: 1, returnSequence: 1 });
     const sequences = [{ sequenceName: 'orderSequence', sequenceNumber: 0 }];
 
     const newState = OB.App.StateAPI.DocumentSequence.initializeSequence(
       currentState,
       { sequences: sequences }
     );
-    const expectedState = { orderSequence: 1 };
+    const expectedState = { orderSequence: 1, returnSequence: 1 };
 
     expect(newState).toEqual(expectedState);
   });
 
   it('should initialize sequence if one sequence in state and very higher sequence in payload', () => {
-    const currentState = deepfreeze({ orderSequence: 1 });
-    const sequences = [{ sequenceName: 'orderSequence', sequenceNumber: 10 }];
+    const currentState = deepfreeze({ orderSequence: 1, returnSequence: 1 });
+    const sequences = [{ sequenceName: 'orderSequence', sequenceNumber: 1000 }];
 
     const newState = OB.App.StateAPI.DocumentSequence.initializeSequence(
       currentState,
       { sequences: sequences }
     );
-    const expectedState = { orderSequence: 10 };
+    const expectedState = { orderSequence: 1000, returnSequence: 1 };
 
     expect(newState).toEqual(expectedState);
   });
 
   it('should initialize sequence if one sequence in state and very lower sequence in payload', () => {
-    const currentState = deepfreeze({ orderSequence: 10 });
+    const currentState = deepfreeze({
+      orderSequence: 1000,
+      returnSequence: 1000
+    });
     const sequences = [{ sequenceName: 'orderSequence', sequenceNumber: 1 }];
 
     const newState = OB.App.StateAPI.DocumentSequence.initializeSequence(
       currentState,
       { sequences: sequences }
     );
-    const expectedState = { orderSequence: 10 };
+    const expectedState = { orderSequence: 1000, returnSequence: 1000 };
 
     expect(newState).toEqual(expectedState);
   });
@@ -131,14 +134,14 @@ describe('Document Sequence Initialize Sequence action', () => {
   });
 
   it('should initialize sequence if one sequence in state and undefined sequence in payload', () => {
-    const currentState = deepfreeze({ orderSequence: 10 });
+    const currentState = deepfreeze({ orderSequence: 1000 });
     const sequences = [{ sequenceName: 'orderSequence' }];
 
     const newState = OB.App.StateAPI.DocumentSequence.initializeSequence(
       currentState,
       { sequences: sequences }
     );
-    const expectedState = { orderSequence: 10 };
+    const expectedState = { orderSequence: 1000 };
 
     expect(newState).toEqual(expectedState);
   });
@@ -157,14 +160,14 @@ describe('Document Sequence Initialize Sequence action', () => {
   });
 
   it('should initialize sequence if one sequence in state and null sequence in payload', () => {
-    const currentState = deepfreeze({ orderSequence: 10 });
+    const currentState = deepfreeze({ orderSequence: 1000 });
     const sequences = [{ sequenceName: 'orderSequence', sequenceNumber: null }];
 
     const newState = OB.App.StateAPI.DocumentSequence.initializeSequence(
       currentState,
       { sequences: sequences }
     );
-    const expectedState = { orderSequence: 10 };
+    const expectedState = { orderSequence: 1000 };
 
     expect(newState).toEqual(expectedState);
   });
