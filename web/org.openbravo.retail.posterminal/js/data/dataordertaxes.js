@@ -286,11 +286,18 @@
         }
       });
     }).catch(function(line) {
-      const error = OB.I18N.getLabel('OBPOS_TaxNotFound_Message', [
+      const taxCategoryName = OB.Taxes.Pos.taxCategory
+        .concat(OB.Taxes.Pos.taxCategoryBOM)
+        .find(
+          taxCategory =>
+            taxCategory.id === line.get('product').get('taxCategory')
+        ).name;
+      const error = OB.I18N.getLabel('OBPOS_TaxWithCategoryNotFound_Message', [
         receipt.get('bp').get('name') ||
           OB.I18N.getLabel('OBPOS_LblEmptyAddress'),
         receipt.get('bp').get('shipLocName') ||
-          OB.I18N.getLabel('OBPOS_LblEmptyAddress')
+          OB.I18N.getLabel('OBPOS_LblEmptyAddress'),
+        taxCategoryName
       ]);
       showLineTaxError(receipt, line, error);
     });

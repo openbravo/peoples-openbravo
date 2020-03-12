@@ -782,6 +782,7 @@ enyo.kind({
     this.receiptList.on(
       'click',
       function(model) {
+        this.$.openreceiptslistitemprinter.selectedModel = model;
         me.doHideSelector();
         if (!this.$.openreceiptslistitemprinter.multiselect) {
           if (model.crossStoreInfo && OB.UTIL.isCrossStoreReceipt(model)) {
@@ -826,6 +827,7 @@ enyo.kind({
             id: model.get('id')
           });
         }
+        this.$.openreceiptslistitemprinter.selectedModel = model;
       },
       this
     );

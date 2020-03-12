@@ -9482,10 +9482,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   }
 }
 
-.obObposPointOfSaleUiEditLine-linePropertiesContainer_withReturnReasons {
-  max-height: 110px;
-}
-
 .obObposPointOfSaleUiEditLine-linePropertiesContainer_withoutReturnReasons {}
 
 .obObposPointOfSaleUiEditLine-msgedit-scroller-container1-contextImage {
@@ -13458,7 +13454,8 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   column-gap: calc(2 * var(--panel-components-separation));
 
   box-sizing: border-box;
-  height: var(--keypad-height);
+  min-height: var(--keypad-height);
+  height: 100%;
   padding: var(--panel-components-separation) var(--panel-outer-side-padding) var(--panel-bottom-padding) var(--panel-inner-side-padding);
 }
 
