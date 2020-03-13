@@ -1559,11 +1559,17 @@
 
       let sequenceName;
       let documentNumberPrefix;
-      if (ticket.get('isQuotation')) {
+      if (
+        ticket.get('isQuotation') &&
+        OB.MobileApp.model.get('terminal').quotationDocNoPrefix
+      ) {
         sequenceName = 'quotationslastassignednum';
         documentNumberPrefix = OB.MobileApp.model.get('terminal')
           .quotationDocNoPrefix;
-      } else if (ticket.getOrderType() === 1) {
+      } else if (
+        ticket.getOrderType() === 1 &&
+        OB.MobileApp.model.get('terminal').returnDocNoPrefix
+      ) {
         sequenceName = 'returnslastassignednum';
         documentNumberPrefix = OB.MobileApp.model.get('terminal')
           .returnDocNoPrefix;
