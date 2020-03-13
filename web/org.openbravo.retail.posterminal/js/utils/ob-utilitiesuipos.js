@@ -1102,13 +1102,16 @@ OB.UTIL.getCalculatedPriceForService = function(
           product.get('id') +
           "'";
         criteria._whereClause += " and sprv.validFromDate <= date('now')";
-        if (includedProducts === 'N') {
+        if (includedProducts === 'N' || includedProducts === false) {
           criteria._whereClause +=
             " and (sprv.relatedProduct is null or sprv.relatedProduct = '" +
             relatedLineMap.product +
             "')";
         }
-        if (includedProductCategories === 'N') {
+        if (
+          includedProductCategories === 'N' ||
+          includedProductCategories === false
+        ) {
           criteria._whereClause +=
             " and (sprv.relatedProductCategory is null or sprv.relatedProductCategory = '" +
             relatedLineMap.productCategory +
@@ -1130,13 +1133,16 @@ OB.UTIL.getCalculatedPriceForService = function(
             relatedAmt +
             ')';
         }
-        if (includedProducts === 'N') {
+        if (includedProducts === 'N' || includedProducts === false) {
           criteria._whereClause +=
             " and (relatedProduct is null or relatedProduct = '" +
             relatedLineMap.product +
             "')";
         }
-        if (includedProductCategories === 'N') {
+        if (
+          includedProductCategories === 'N' ||
+          includedProductCategories === false
+        ) {
           criteria._whereClause +=
             " and (relatedProductCategory is null or relatedProductCategory = '" +
             relatedLineMap.productCategory +
