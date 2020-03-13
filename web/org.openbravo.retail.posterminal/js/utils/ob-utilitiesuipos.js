@@ -447,7 +447,6 @@ OB.UTIL.checkApproval = function(
   windowModel,
   attrs
 ) {
-  OB.Dal.initCache(OB.Model.Supervisor, [], null, null);
   var approvalList = [];
   approvalType.forEach(function(approvalType) {
     approvalList.push(
