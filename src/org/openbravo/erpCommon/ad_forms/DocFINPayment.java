@@ -95,12 +95,12 @@ public class DocFINPayment extends AcctServer {
       return null;
     }
 
-    int noOfPaymentDetails = paymentDetails.size();
-    BigDecimal usedCredit = payment.getUsedCredit();
-    BigDecimal creditAmtToAdjust = usedCredit.divide(new BigDecimal(noOfPaymentDetails),
+    final int noOfPaymentDetails = paymentDetails.size();
+    final BigDecimal usedCredit = payment.getUsedCredit();
+    final BigDecimal creditAmtToAdjust = usedCredit.divide(new BigDecimal(noOfPaymentDetails),
         payment.getCurrency().getPricePrecision().intValue(), RoundingMode.HALF_UP);
     BigDecimal totalCreditAdjusted = BigDecimal.ZERO;
-    FieldProviderFactory[] data = new FieldProviderFactory[noOfPaymentDetails];
+    final FieldProviderFactory[] data = new FieldProviderFactory[noOfPaymentDetails];
     String psId = null;
     String pdId = null;
     BigDecimal totalAmount = BigDecimal.ZERO;
@@ -162,7 +162,7 @@ public class DocFINPayment extends AcctServer {
           FieldProviderFactory.setField(data[i], "Amount", totalAmount.toString());
           BigDecimal amountExcludingCredit = totalAmount.subtract(creditAmtToAdjust);
           totalCreditAdjusted = totalCreditAdjusted.add(creditAmtToAdjust);
-          if (i == noOfPaymentDetails - 1) {
+          if (i == noOfPaymentDetails - 1) { // Last Payment Detail
             amountExcludingCredit = amountExcludingCredit
                 .subtract(usedCredit.subtract(totalCreditAdjusted));
           }
