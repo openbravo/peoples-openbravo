@@ -108,6 +108,16 @@ public class Terminal extends JSONProcessSimple {
         lastReturnDocumentNumber = POSUtils
             .getLastDocumentNumberReturnForPOS(pOSTerminal.getSearchKey(), returnsDocTypeId);
       }
+
+      final int lastSimplifiedInvoiceDocumentNumber = convertLongToIntOrZeroIfNull(
+          pOSTerminal.getSimplifiedinvoiceslastassignednum());
+      final int lastFullInvoiceDocumentNumber = convertLongToIntOrZeroIfNull(
+          pOSTerminal.getFullinvoiceslastassignednum());
+      final int lastSimplifiedReturnInvoiceDocumentNumber = convertLongToIntOrZeroIfNull(
+          pOSTerminal.getSimplifiedreturninvoiceslastassignednum());
+      final int lastFullReturnInvoiceDocumentNumber = convertLongToIntOrZeroIfNull(
+          pOSTerminal.getFullreturninvoiceslastassignednum());
+
       String warehouseId = POSUtils.getWarehouseForTerminal(pOSTerminal).getId();
       final org.openbravo.model.pricing.pricelist.PriceList priceList = POSUtils
           .getPriceListByTerminal(pOSTerminal.getSearchKey());
@@ -192,8 +202,13 @@ public class Terminal extends JSONProcessSimple {
           + "pricelist.currency.symbol as symbol, " + "'" + warehouseId + "' as warehouse, "
           + lastDocumentNumber + " as lastDocumentNumber, " + lastQuotationDocumentNumber
           + " as lastQuotationDocumentNumber, " + lastReturnDocumentNumber
-          + " as lastReturnDocumentNumber, " + "'" + regionId + "'" + " as organizationRegionId, "
-          + "'" + countryId + "'" + " as organizationCountryId, orginfo.cashVAT as cashVat, '"
+          + " as lastReturnDocumentNumber, " + lastSimplifiedInvoiceDocumentNumber
+          + " as lastSimplifiedInvoiceDocumentNumber, " + lastFullInvoiceDocumentNumber
+          + " as lastFullInvoiceDocumentNumber, " + lastSimplifiedReturnInvoiceDocumentNumber
+          + " as lastSimplifiedReturnInvoiceDocumentNumber, " + lastFullReturnInvoiceDocumentNumber
+          + " as lastFullReturnInvoiceDocumentNumber, " + "'" + regionId + "'"
+          + " as organizationRegionId, " + "'" + countryId + "'"
+          + " as organizationCountryId, orginfo.cashVAT as cashVat, '"
           + ProcessHQLQuery.escape(storeAddress) + "' as organizationAddressIdentifier, "
           + sessionTimeout + " as sessionTimeout, " + selectOrgImage
           + regularTerminalHQLProperties.getHqlSelect()
@@ -313,6 +328,10 @@ public class Terminal extends JSONProcessSimple {
       }
     }
     return 59;
+  }
+
+  private int convertLongToIntOrZeroIfNull(final Long longValue) {
+    return longValue != null ? longValue.intValue() : 0;
   }
 
 }

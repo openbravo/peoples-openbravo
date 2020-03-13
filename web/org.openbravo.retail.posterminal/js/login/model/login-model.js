@@ -262,6 +262,26 @@
                         sequenceName: 'quotationslastassignednum',
                         sequenceNumber: OB.MobileApp.model.get('terminal')
                           .lastQuotationDocumentNumber
+                      },
+                      {
+                        sequenceName: 'simplifiedinvoiceslastassignednum',
+                        sequenceNumber: OB.MobileApp.model.get('terminal')
+                          .lastSimplifiedInvoiceDocumentNumber
+                      },
+                      {
+                        sequenceName: 'fullinvoiceslastassignednum',
+                        sequenceNumber: OB.MobileApp.model.get('terminal')
+                          .lastFullInvoiceDocumentNumber
+                      },
+                      {
+                        sequenceName: 'simplifiedreturninvoiceslastassignednum',
+                        sequenceNumber: OB.MobileApp.model.get('terminal')
+                          .lastSimplifiedReturnInvoiceDocumentNumber
+                      },
+                      {
+                        sequenceName: 'fullreturninvoiceslastassignednum',
+                        sequenceNumber: OB.MobileApp.model.get('terminal')
+                          .lastFullReturnInvoiceDocumentNumber
                       }
                     ]
                   });

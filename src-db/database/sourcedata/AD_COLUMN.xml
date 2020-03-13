@@ -5149,7 +5149,7 @@ If selected, there is no need of identification of the customer (i.e. Informatio
 <!--292DC25C17384C2583F7289F3FAD4619-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--292DC25C17384C2583F7289F3FAD4619-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--292DC25C17384C2583F7289F3FAD4619-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--292DC25C17384C2583F7289F3FAD4619-->  <NAME><![CDATA[Simpinvlastassignednum]]></NAME>
+<!--292DC25C17384C2583F7289F3FAD4619-->  <NAME><![CDATA[Simplifiedinvoiceslastassignednum]]></NAME>
 <!--292DC25C17384C2583F7289F3FAD4619-->  <DESCRIPTION><![CDATA[Last number used in simplified invoice document sequence.]]></DESCRIPTION>
 <!--292DC25C17384C2583F7289F3FAD4619-->  <HELP><![CDATA[Last number used in simplified invoice document sequence.]]></HELP>
 <!--292DC25C17384C2583F7289F3FAD4619-->  <COLUMNNAME><![CDATA[Simpinvlastassignednum]]></COLUMNNAME>
@@ -10779,7 +10779,7 @@ This path should be relative to web/org.openbravo.retail.posterminal]]></HELP>
 <!--6941CA62DDBF42F4B439FBF3CF5567D0-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--6941CA62DDBF42F4B439FBF3CF5567D0-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--6941CA62DDBF42F4B439FBF3CF5567D0-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--6941CA62DDBF42F4B439FBF3CF5567D0-->  <NAME><![CDATA[Fullretinvlastassignednum]]></NAME>
+<!--6941CA62DDBF42F4B439FBF3CF5567D0-->  <NAME><![CDATA[Fullreturninvoiceslastassignednum]]></NAME>
 <!--6941CA62DDBF42F4B439FBF3CF5567D0-->  <DESCRIPTION><![CDATA[Last number used in full return invoice document sequence.]]></DESCRIPTION>
 <!--6941CA62DDBF42F4B439FBF3CF5567D0-->  <HELP><![CDATA[Last number used in full return invoice document sequence.]]></HELP>
 <!--6941CA62DDBF42F4B439FBF3CF5567D0-->  <COLUMNNAME><![CDATA[Fullretinvlastassignednum]]></COLUMNNAME>
@@ -15184,7 +15184,7 @@ Document Types determine document sequence and processing rules.]]></HELP>
 <!--930BC7C2BF14401D8994C4FDC849114D-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--930BC7C2BF14401D8994C4FDC849114D-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--930BC7C2BF14401D8994C4FDC849114D-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--930BC7C2BF14401D8994C4FDC849114D-->  <NAME><![CDATA[Simpretinvlastassignednum]]></NAME>
+<!--930BC7C2BF14401D8994C4FDC849114D-->  <NAME><![CDATA[Simplifiedreturninvoiceslastassignednum]]></NAME>
 <!--930BC7C2BF14401D8994C4FDC849114D-->  <DESCRIPTION><![CDATA[Last number used in simplified return invoice document sequence.]]></DESCRIPTION>
 <!--930BC7C2BF14401D8994C4FDC849114D-->  <HELP><![CDATA[Last number used in simplified return invoice document sequence.]]></HELP>
 <!--930BC7C2BF14401D8994C4FDC849114D-->  <COLUMNNAME><![CDATA[Simpretinvlastassignednum]]></COLUMNNAME>
@@ -21145,7 +21145,7 @@ This path should be relative to web/org.openbravo.retail.posterminal]]></HELP>
 <!--D696599F8CD74121BDEF035448ED2042-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--D696599F8CD74121BDEF035448ED2042-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--D696599F8CD74121BDEF035448ED2042-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--D696599F8CD74121BDEF035448ED2042-->  <NAME><![CDATA[Fullinvlastassignednum]]></NAME>
+<!--D696599F8CD74121BDEF035448ED2042-->  <NAME><![CDATA[Fullinvoiceslastassignednum]]></NAME>
 <!--D696599F8CD74121BDEF035448ED2042-->  <DESCRIPTION><![CDATA[Last number used in full invoice document sequence.]]></DESCRIPTION>
 <!--D696599F8CD74121BDEF035448ED2042-->  <HELP><![CDATA[Last number used in full invoice document sequence.]]></HELP>
 <!--D696599F8CD74121BDEF035448ED2042-->  <COLUMNNAME><![CDATA[Fullinvlastassignednum]]></COLUMNNAME>
