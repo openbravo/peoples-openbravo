@@ -697,7 +697,7 @@ IF (NOT FINISH_PROCESS) THEN
               Financial_Invoice_Line, Account_ID,Taxbaseamt,
               gross_unit_price, line_gross_amount,
               isdeferred, defplantype, periodnumber, c_period_id,
-              c_bpartner_id, c_project_id, c_projectline_id, a_asset_id,
+              M_AttributeSetInstance_ID, c_bpartner_id, c_project_id, c_projectline_id, a_asset_id,
               user1_id, user2_id, c_costcenter_id,
               C_AUM, AUMQTY)
             VALUES
@@ -711,7 +711,7 @@ IF (NOT FINISH_PROCESS) THEN
               Cur_InvoiceLine.Financial_Invoice_Line, Cur_InvoiceLine.Account_ID,Cur_InvoiceLine.Taxbaseamt * -1,
               Cur_InvoiceLine.gross_unit_price, Cur_InvoiceLine.line_gross_amount * -1,
               Cur_InvoiceLine.isdeferred, Cur_InvoiceLine.defplantype, Cur_InvoiceLine.periodnumber, Cur_InvoiceLine.c_period_id,
-              Cur_InvoiceLine.c_bpartner_id, Cur_InvoiceLine.c_project_id, Cur_InvoiceLine.c_projectline_id, Cur_InvoiceLine.a_asset_id,
+              Cur_InvoiceLine.M_AttributeSetInstance_ID, Cur_InvoiceLine.c_bpartner_id, Cur_InvoiceLine.c_project_id, Cur_InvoiceLine.c_projectline_id, Cur_InvoiceLine.a_asset_id,
               Cur_InvoiceLine.user1_id, Cur_InvoiceLine.user2_id, Cur_InvoiceLine.C_CostCenter_ID,
               Cur_InvoiceLine.C_AUM, Cur_InvoiceLine.AUMQTY
             );
