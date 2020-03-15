@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019 Openbravo S.L.U.
+ * Copyright (C) 2019-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -67,6 +67,7 @@ public class IssueSalesOrderLines extends JSONProcessSimple {
       JSONArray ordersFromJson = json.getJSONArray("orders");
       StringBuilder shipmentDocumentNumbers = new StringBuilder();
       Map<String, BigDecimal> qtyDeliveredByOrderLine = new HashMap<>();
+      final JSONArray deliveredOrders = new JSONArray();
       for (int i = 0; i < ordersFromJson.length(); i++) {
         final JSONObject orderFromJson = (JSONObject) ordersFromJson.get(i);
         JSONArray linesFromJson = orderFromJson.getJSONArray("lines");
@@ -88,6 +89,10 @@ public class IssueSalesOrderLines extends JSONProcessSimple {
         final Invoice invoice = shipmentGenerator.invoiceShipmentIfPossible();
 
         executeHooks(invoiceShipmentHook, orderFromJson, shipment, invoice);
+        final JSONObject jsonOrder = new JSONObject();
+        jsonOrder.put("id", orderFromJson.getString("order"));
+        jsonOrder.put("invoiceId", invoice != null ? invoice.getId() : "null");
+        deliveredOrders.put(jsonOrder);
 
         if (i > 0) {
           shipmentDocumentNumbers.append(", ");
@@ -102,7 +107,7 @@ public class IssueSalesOrderLines extends JSONProcessSimple {
       jsonData.put("response", String.format(OBMessageUtils.messageBD("OBRDM_ShipmentDocNoCreated"),
           shipmentDocumentNumbers.toString()));
       jsonData.put("qtyDeliveredByOrderLine", qtyDeliveredByOrderLine);
-
+      jsonData.put("deliveredOrders", deliveredOrders);
       jsonResponse.put(JsonConstants.RESPONSE_DATA, jsonData);
 
     } catch (Exception e) {

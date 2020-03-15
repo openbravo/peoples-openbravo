@@ -968,6 +968,21 @@ enyo.kind({
                                 }
                               }
                             );
+
+                            OB.UTIL.HookManager.executeHooks(
+                              'OBPOS_PostIssueSalesOrder',
+                              {
+                                orders: data.deliveredOrders
+                              },
+                              function(args) {
+                                OB.debug(
+                                  'Executed hooks of OBPOS_PostIssueSalesOrder'
+                                );
+                                if (args.callback) {
+                                  args.callback();
+                                }
+                              }
+                            );
                           }
                         }
                       }
