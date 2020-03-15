@@ -12,9 +12,14 @@ package org.openbravo.retail.posterminal.process;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -30,10 +35,12 @@ import org.openbravo.materialmgmt.ServiceDeliverUtility;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
+import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
+import org.openbravo.retail.posterminal.InvoiceShipmentHook;
 import org.openbravo.retail.posterminal.JSONProcessSimple;
 import org.openbravo.service.json.JsonConstants;
 
@@ -46,6 +53,10 @@ public class IssueSalesOrderLines extends JSONProcessSimple {
   private static final Logger log = LogManager.getLogger();
 
   private GoodsShipmentGenerator shipmentGenerator;
+
+  @Inject
+  @Any
+  private Instance<InvoiceShipmentHook> invoiceShipmentHook;
 
   @Override
   public JSONObject exec(JSONObject json) {
@@ -74,7 +85,10 @@ public class IssueSalesOrderLines extends JSONProcessSimple {
                                      // further processing
         ServiceDeliverUtility.deliverServices(shipment);
         shipmentGenerator.processShipment();
-        shipmentGenerator.invoiceShipmentIfPossible();
+        final Invoice invoice = shipmentGenerator.invoiceShipmentIfPossible();
+
+        executeHooks(invoiceShipmentHook, orderFromJson, shipment, invoice);
+
         if (i > 0) {
           shipmentDocumentNumbers.append(", ");
         }
@@ -160,4 +174,11 @@ public class IssueSalesOrderLines extends JSONProcessSimple {
     return message.replaceAll("<.*?>", "");
   }
 
+  private void executeHooks(Instance<? extends Object> hooks, JSONObject jsonorder,
+      ShipmentInOut shipment, Invoice invoice) throws Exception {
+    for (Iterator<? extends Object> procIter = hooks.iterator(); procIter.hasNext();) {
+      Object proc = procIter.next();
+      ((InvoiceShipmentHook) proc).exec(jsonorder, shipment, invoice);
+    }
+  }
 }

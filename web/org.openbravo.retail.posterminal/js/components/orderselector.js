@@ -902,68 +902,79 @@ enyo.kind({
                 }
               });
 
-              var process = new OB.DS.Process(
-                'org.openbravo.retail.posterminal.process.IssueSalesOrderLines'
-              );
-              process.exec(
-                {
-                  orders: groupedLinesToPrepare
-                },
-                function(data) {
-                  var message;
-                  if (data && data.exception) {
-                    message = data.exception.status.errorMessage;
-                    OB.UTIL.showConfirmation.display(
-                      OB.I18N.getLabel('OBMOBC_Error'),
-                      message,
-                      [
-                        {
-                          label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                          action: function() {
-                            return true;
-                          }
-                        }
-                      ]
+              OB.Dal.transaction(function(tx) {
+                OB.UTIL.HookManager.executeHooks(
+                  'OBPOS_PreIssueSalesOrder',
+                  {
+                    orders: groupedLinesToPrepare,
+                    tx: tx
+                  },
+                  function() {
+                    var process = new OB.DS.Process(
+                      'org.openbravo.retail.posterminal.process.IssueSalesOrderLines'
                     );
-                  } else {
-                    if (data && data.response) {
-                      OB.UTIL.showConfirmation.display(
-                        OB.I18N.getLabel('OBRDM_IssueSalesOrderTitle'),
-                        data.response,
-                        [
-                          {
-                            label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                            action: function() {
-                              return true;
-                            }
-                          }
-                        ]
-                      );
-
-                      _.each(
-                        OB.MobileApp.view.$.containerWindow
-                          .getRoot()
-                          .$.multiColumn.$.leftPanel.$.receiptview.$.orderview.$.listOrderLines.$.tbody.getComponents(),
-                        function(component) {
-                          var renderOrderLine = component.renderline;
-                          if (
-                            data.qtyDeliveredByOrderLine.hasOwnProperty(
-                              renderOrderLine.model.get('id')
-                            )
-                          ) {
-                            renderOrderLine.model.set(
-                              'deliveredQuantity',
-                              data.qtyDeliveredByOrderLine[
-                                renderOrderLine.model.get('id')
+                    process.exec(
+                      {
+                        orders: groupedLinesToPrepare
+                      },
+                      function(data) {
+                        var message;
+                        if (data && data.exception) {
+                          message = data.exception.status.errorMessage;
+                          OB.UTIL.showConfirmation.display(
+                            OB.I18N.getLabel('OBMOBC_Error'),
+                            message,
+                            [
+                              {
+                                label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                                action: function() {
+                                  return true;
+                                }
+                              }
+                            ]
+                          );
+                        } else {
+                          if (data && data.response) {
+                            OB.UTIL.showConfirmation.display(
+                              OB.I18N.getLabel('OBRDM_IssueSalesOrderTitle'),
+                              data.response,
+                              [
+                                {
+                                  label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                                  action: function() {
+                                    return true;
+                                  }
+                                }
                               ]
+                            );
+
+                            _.each(
+                              OB.MobileApp.view.$.containerWindow
+                                .getRoot()
+                                .$.multiColumn.$.leftPanel.$.receiptview.$.orderview.$.listOrderLines.$.tbody.getComponents(),
+                              function(component) {
+                                var renderOrderLine = component.renderline;
+                                if (
+                                  data.qtyDeliveredByOrderLine.hasOwnProperty(
+                                    renderOrderLine.model.get('id')
+                                  )
+                                ) {
+                                  renderOrderLine.model.set(
+                                    'deliveredQuantity',
+                                    data.qtyDeliveredByOrderLine[
+                                      renderOrderLine.model.get('id')
+                                    ]
+                                  );
+                                }
+                              }
                             );
                           }
                         }
-                      );
-                    }
+                      }
+                    );
                   }
-                }
-              );
+                );
+              });
             }
           }
         );

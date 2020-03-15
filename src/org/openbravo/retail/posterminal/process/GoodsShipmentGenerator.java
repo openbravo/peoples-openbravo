@@ -32,6 +32,7 @@ import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
+import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.Product;
@@ -183,13 +184,12 @@ class GoodsShipmentGenerator {
   /**
    * Automatically generate invoice from Goods Shipment, if possible
    */
-  void invoiceShipmentIfPossible() {
+  Invoice invoiceShipmentIfPossible() {
     OBDal.getInstance().refresh(this.shipment);
     InvoiceGeneratorFromGoodsShipment invoiceGenerator = new InvoiceGeneratorFromGoodsShipment(
         this.shipment.getId());
     invoiceGenerator.setAllowInvoicePOSOrder(true);
-    invoiceGenerator.createInvoiceConsideringInvoiceTerms(true);
-
+    return invoiceGenerator.createInvoiceConsideringInvoiceTerms(true);
   }
 
   /**
