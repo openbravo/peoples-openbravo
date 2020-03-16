@@ -1560,6 +1560,40 @@
       let sequenceName;
       let documentNumberPrefix;
       if (
+        ticket.get('generateInvoice') &&
+        ticket.get('fullInvoice') &&
+        ticket.getOrderType() === 1 &&
+        OB.MobileApp.model.get('terminal').fullretinvdocnoPrefix
+      ) {
+        sequenceName = 'fullreturninvoiceslastassignednum';
+        documentNumberPrefix = OB.MobileApp.model.get('terminal')
+          .fullretinvdocnoPrefix;
+      } else if (
+        ticket.get('generateInvoice') &&
+        !ticket.get('fullInvoice') &&
+        ticket.getOrderType() === 1 &&
+        OB.MobileApp.model.get('terminal').simpretinvdocnoPrefix
+      ) {
+        sequenceName = 'simplifiedreturninvoiceslastassignednum';
+        documentNumberPrefix = OB.MobileApp.model.get('terminal')
+          .simpretinvdocnoPrefix;
+      } else if (
+        ticket.get('generateInvoice') &&
+        ticket.get('fullInvoice') &&
+        OB.MobileApp.model.get('terminal').fullinvdocnoPrefix
+      ) {
+        sequenceName = 'fullinvoiceslastassignednum';
+        documentNumberPrefix = OB.MobileApp.model.get('terminal')
+          .fullinvdocnoPrefix;
+      } else if (
+        ticket.get('generateInvoice') &&
+        !ticket.get('fullInvoice') &&
+        OB.MobileApp.model.get('terminal').simpinvdocnoPrefix
+      ) {
+        sequenceName = 'simplifiedinvoiceslastassignednum';
+        documentNumberPrefix = OB.MobileApp.model.get('terminal')
+          .simpinvdocnoPrefix;
+      } else if (
         ticket.get('isQuotation') &&
         OB.MobileApp.model.get('terminal').quotationDocNoPrefix
       ) {
