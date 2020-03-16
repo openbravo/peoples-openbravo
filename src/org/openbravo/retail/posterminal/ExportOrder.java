@@ -77,27 +77,37 @@ public class ExportOrder extends PaidReceipts {
 
   private void transformOrderTaxes(JSONObject order) throws JSONException {
     if (order.has("receiptTaxes")) {
-      renameArrayPropertyInObject(order, "receiptTaxes", "taxes");
-      JSONArray orderTaxes = order.getJSONArray("taxes");
+      JSONArray orderTaxes = order.getJSONArray("receiptTaxes");
+      JSONObject outputOrderTaxes = new JSONObject();
       for (int i = 0; i < orderTaxes.length(); i++) {
         JSONObject tax = (JSONObject) orderTaxes.get(i);
         renameStringPropertyInObject(tax, "taxid", "id");
-        renameStringPropertyInObject(tax, "identifier", "name");
         renameNumericPropertyInObject(tax, "taxRate", "rate");
+        addTaxAsProperty(outputOrderTaxes, tax);
       }
+      order.remove("receiptTaxes");
+      order.put("taxes", outputOrderTaxes);
     }
+  }
+
+  private void addTaxAsProperty(JSONObject outputOrderTaxes, JSONObject tax) throws JSONException {
+    String taxName = tax.has("name") ? tax.getString("name") : tax.getString("identifier");
+    tax.remove(tax.has("name") ? "name" : "identifier");
+    outputOrderTaxes.put(taxName, tax);
   }
 
   private void transformOrderLineTaxes(JSONObject line) throws JSONException {
     if (line.has("taxes")) {
-      renameArrayPropertyInObject(line, "taxes", "taxLines");
-      JSONArray taxLines = line.getJSONArray("taxLines");
+      JSONArray taxLines = line.getJSONArray("taxes");
+      JSONObject outputOrderLineTaxes = new JSONObject();
       for (int i = 0; i < taxLines.length(); i++) {
         JSONObject lineTax = (JSONObject) taxLines.get(i);
         renameStringPropertyInObject(lineTax, "taxId", "id");
-        renameStringPropertyInObject(lineTax, "identifier", "name");
         renameNumericPropertyInObject(lineTax, "taxRate", "rate");
+        addTaxAsProperty(outputOrderLineTaxes, lineTax);
       }
+      line.remove("taxes");
+      line.put("taxLines", outputOrderLineTaxes);
     }
   }
 
