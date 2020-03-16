@@ -26,6 +26,71 @@ enyo.kind({
   },
 
   addCriteria: async function(criteria, value, condition) {
+    const me = this;
+    let trancheValues = [];
+
+    function quantityRuleCriteria(quantityRule, minCriteria, maxCriteria) {
+      let quantityCriteria = new OB.App.Class.Criteria();
+      quantityCriteria
+        .criterion('quantityRule', quantityRule)
+        .innerCriteria(minCriteria)
+        .innerCriteria(maxCriteria);
+      return quantityCriteria;
+    }
+
+    function minCriteria(value) {
+      let minCriteria = new OB.App.Class.Criteria();
+      minCriteria.multiCriterion(
+        [
+          new OB.App.Class.Criterion('obposMinpriceassocprod', null),
+          new OB.App.Class.Criterion(
+            'obposMinpriceassocprod',
+            value,
+            'lowerOrEqualThan'
+          )
+        ],
+        'or'
+      );
+      return minCriteria;
+    }
+
+    function maxCriteria(value) {
+      let maxCriteria = new OB.App.Class.Criteria();
+      maxCriteria.multiCriterion(
+        [
+          new OB.App.Class.Criterion('obposMaxpriceassocprod', null),
+          new OB.App.Class.Criterion(
+            'obposMaxpriceassocprod',
+            value,
+            'greaterOrEqualThan'
+          )
+        ],
+        'or'
+      );
+      return maxCriteria;
+    }
+    function servicesCriteria() {
+      let servicesCriteria = new OB.App.Class.Criteria();
+      servicesCriteria
+        .criterion('isPriceRuleBased', false)
+        .innerCriteria(
+          quantityRuleCriteria(
+            'UQ',
+            minCriteria(trancheValues[0]),
+            maxCriteria(trancheValues[0])
+          )
+        )
+        .innerCriteria(
+          quantityRuleCriteria(
+            'PP',
+            minCriteria(trancheValues[1]),
+            maxCriteria(trancheValues[2])
+          )
+        )
+        .operator('or');
+      return servicesCriteria;
+    }
+
     if (value.productList && value.productList.length > 0) {
       let productCategoryList = [],
         productList = [];
@@ -59,58 +124,20 @@ enyo.kind({
         criteria.criterion('availableForMultiline', true);
       }
       for (const orderLine of value.orderlineList) {
-        const discountedPrice =
-          orderLine.get('discountedPrice') ||
-          orderLine.get('discountedLinePrice');
-        criteria.multiCriterion(
-          [
-            new OB.App.Class.Criterion('obposMinpriceassocprod', null),
-            new OB.App.Class.Criterion(
-              'obposMinpriceassocprod',
-              discountedPrice,
-              'lowerOrEqualThan'
-            )
-          ],
-          'or'
-        );
-        criteria.multiCriterion(
-          [
-            new OB.App.Class.Criterion('obposMaxpriceassocprod', null),
-            new OB.App.Class.Criterion(
-              'obposMaxpriceassocprod',
-              discountedPrice,
-              'greaterOrEqualThan'
-            )
-          ],
-          'or'
+        trancheValues = me.calculateTranche(
+          orderLine.attributes,
+          trancheValues
         );
       }
+      for (let i = 0; i < value.productList.length; i++) {
+        criteria.innerCriteria(servicesCriteria());
+      }
     } else if (value.productId) {
-      const discountedPrice =
-        value.orderline.get('discountedPrice') ||
-        value.orderline.get('discountedLinePrice');
-      criteria.multiCriterion(
-        [
-          new OB.App.Class.Criterion('obposMinpriceassocprod', null),
-          new OB.App.Class.Criterion(
-            'obposMinpriceassocprod',
-            discountedPrice,
-            'lowerOrEqualThan'
-          )
-        ],
-        'or'
+      trancheValues = me.calculateTranche(
+        value.orderline.attributes,
+        trancheValues
       );
-      criteria.multiCriterion(
-        [
-          new OB.App.Class.Criterion('obposMaxpriceassocprod', null),
-          new OB.App.Class.Criterion(
-            'obposMaxpriceassocprod',
-            discountedPrice,
-            'greaterOrEqualThan'
-          )
-        ],
-        'or'
-      );
+      criteria.innerCriteria(servicesCriteria());
     }
   },
   hqlCriteria: function() {
