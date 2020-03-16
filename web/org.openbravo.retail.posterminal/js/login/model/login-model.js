@@ -1588,8 +1588,8 @@
         .documentnoPadding;
 
       ticket.set({
-        sequenceName: sequenceName,
-        sequenceNumber: sequenceNumber,
+        obposSequencename: sequenceName,
+        obposSequencenumber: sequenceNumber,
         documentNo: OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
           documentNumberPrefix,
           OB.Model.Order.prototype.includeDocNoSeperator,

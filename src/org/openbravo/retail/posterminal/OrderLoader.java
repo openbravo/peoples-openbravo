@@ -1172,10 +1172,12 @@ public class OrderLoader extends POSDataSynchronizationProcess
 
     if (!doCancelAndReplace && !doCancelLayaway) {
       final OBPOSApplications terminal = order.getObposApplications();
-      if (terminal.getEntity().hasProperty(jsonorder.getString("sequenceName"))) {
-        terminal.set(jsonorder.getString("sequenceName"), Long.max(
-            (Long) ObjectUtils.defaultIfNull(terminal.get(jsonorder.getString("sequenceName")), 0L),
-            jsonorder.optLong("sequenceNumber")));
+      if (terminal.getEntity().hasProperty(jsonorder.getString("obposSequencename"))) {
+        terminal.set(jsonorder.getString("obposSequencename"),
+            Long.max(
+                (Long) ObjectUtils
+                    .defaultIfNull(terminal.get(jsonorder.getString("obposSequencename")), 0L),
+                jsonorder.optLong("obposSequencenumber")));
         OBDal.getInstance().save(terminal);
       }
     }
