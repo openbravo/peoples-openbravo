@@ -87,6 +87,7 @@ public class PriceAdjustment {
           + ") order/invoice:" + orderOrInvoice + " - product: " + product + " - qty:" + qty);
       return priceStd;
     }
+
   }
 
   private static BigDecimal applyDiscountPriceActual(final BigDecimal qty,
@@ -189,7 +190,7 @@ public class PriceAdjustment {
 
     final List<org.openbravo.model.pricing.priceadjustment.PriceAdjustment> queryList = hqlQuery
         .setNamedParameter("qty", qty)
-        .setNamedParameter("productId", product.getId())
+        .setNamedParameter("productId", (product != null ? product.getId() : ""))
         .list();
 
     return reverse ? reverseResultList(queryList) : queryList;
