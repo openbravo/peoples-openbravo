@@ -58,6 +58,7 @@
       },
       command: function(view) {
         invoiceTicket(view);
+        view.model.get('order').set('fullInvoice', false);
       }
     })
   );
@@ -74,6 +75,7 @@
       },
       command: function(view) {
         invoiceTicket(view);
+        view.model.get('order').set('fullInvoice', true);
       }
     })
   );
