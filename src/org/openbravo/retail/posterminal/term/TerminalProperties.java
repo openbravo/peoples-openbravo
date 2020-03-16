@@ -66,12 +66,12 @@ public class TerminalProperties extends ModelExtension {
     list.add(new HQLProperty("org.obretcoShowtaxid", "bp_showtaxid"));
     list.add(new HQLProperty("org.obretcoShowbpcategory", "bp_showcategoryselector"));
     list.add(new HQLProperty("pos.orderdocnoPrefix", "docNoPrefix"));
-    list.add(new HQLProperty("pos.quotationdocnoPrefix", "quotationDocNoPrefix"));
     list.add(new HQLProperty("pos.returndocnoPrefix", "returnDocNoPrefix"));
-    list.add(new HQLProperty("pos.simpinvdocnoPrefix", "simpInvDocNoPrefix"));
-    list.add(new HQLProperty("pos.fullinvdocnoPrefix", "fullInvDocNoPrefix"));
-    list.add(new HQLProperty("pos.simpretinvdocnoPrefix", "simpRetInvDocNoPrefix"));
-    list.add(new HQLProperty("pos.fullretinvdocnoPrefix", "fullRetInvDocNoPrefix"));
+    list.add(new HQLProperty("pos.quotationdocnoPrefix", "quotationDocNoPrefix"));
+    list.add(new HQLProperty("pos.simpinvdocnoPrefix", "simplifiedInvoiceDocNoPrefix"));
+    list.add(new HQLProperty("pos.fullinvdocnoPrefix", "fullInvoiceDocNoPrefix"));
+    list.add(new HQLProperty("pos.simpretinvdocnoPrefix", "simplifiedReturnInvoiceDocNoPrefix"));
+    list.add(new HQLProperty("pos.fullretinvdocnoPrefix", "fullReturnInvoiceDocNoPrefix"));
     list.add(new HQLProperty("pos.obposTerminaltype.allowpayoncredit", "allowpayoncredit"));
     list.add(new HQLProperty("pos.obposTerminaltype.multiChange", "multiChange"));
     list.add(new HQLProperty("org.obposCountDiffLimit", "organizationCountDiffLimit"));

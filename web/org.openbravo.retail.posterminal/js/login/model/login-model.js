@@ -250,43 +250,56 @@
                     sequences: [
                       {
                         sequenceName: 'lastassignednum',
+                        sequencePrefix: OB.MobileApp.model.get('terminal')
+                          .docNoPrefix,
                         sequenceNumber: OB.MobileApp.model.get('terminal')
                           .lastDocumentNumber
                       },
                       {
                         sequenceName: 'returnslastassignednum',
+                        sequencePrefix: OB.MobileApp.model.get('terminal')
+                          .returnDocNoPrefix,
                         sequenceNumber: OB.MobileApp.model.get('terminal')
                           .lastReturnDocumentNumber
                       },
                       {
                         sequenceName: 'quotationslastassignednum',
+                        sequencePrefix: OB.MobileApp.model.get('terminal')
+                          .quotationDocNoPrefix,
                         sequenceNumber: OB.MobileApp.model.get('terminal')
                           .lastQuotationDocumentNumber
                       },
                       {
                         sequenceName: 'simplifiedinvoiceslastassignednum',
+                        sequencePrefix: OB.MobileApp.model.get('terminal')
+                          .simplifiedInvoiceDocNoPrefix,
                         sequenceNumber: OB.MobileApp.model.get('terminal')
                           .lastSimplifiedInvoiceDocumentNumber
                       },
                       {
                         sequenceName: 'fullinvoiceslastassignednum',
+                        sequencePrefix: OB.MobileApp.model.get('terminal')
+                          .fullInvoiceDocNoPrefix,
                         sequenceNumber: OB.MobileApp.model.get('terminal')
                           .lastFullInvoiceDocumentNumber
                       },
                       {
                         sequenceName: 'simplifiedreturninvoiceslastassignednum',
+                        sequencePrefix: OB.MobileApp.model.get('terminal')
+                          .simplifiedReturnInvoiceDocNoPrefix,
                         sequenceNumber: OB.MobileApp.model.get('terminal')
                           .lastSimplifiedReturnInvoiceDocumentNumber
                       },
                       {
                         sequenceName: 'fullreturninvoiceslastassignednum',
+                        sequencePrefix: OB.MobileApp.model.get('terminal')
+                          .fullReturnInvoiceDocNoPrefix,
                         sequenceNumber: OB.MobileApp.model.get('terminal')
                           .lastFullReturnInvoiceDocumentNumber
                       }
                     ]
                   });
 
-                  // update the local database with the document sequence received
                   OB.Dal.transaction(function(tx) {
                     if (OB.MobileApp.model.orderList) {
                       OB.MobileApp.model.orderList.synchronizeCurrentOrder();
@@ -1558,66 +1571,53 @@
       }
 
       let sequenceName;
-      let documentNumberPrefix;
       if (
         ticket.get('generateInvoice') &&
         ticket.get('fullInvoice') &&
         ticket.getOrderType() === 1 &&
-        OB.MobileApp.model.get('terminal').fullretinvdocnoPrefix
+        OB.MobileApp.model.get('terminal').fullReturnInvoiceDocNoPrefix
       ) {
         sequenceName = 'fullreturninvoiceslastassignednum';
-        documentNumberPrefix = OB.MobileApp.model.get('terminal')
-          .fullretinvdocnoPrefix;
       } else if (
         ticket.get('generateInvoice') &&
         !ticket.get('fullInvoice') &&
         ticket.getOrderType() === 1 &&
-        OB.MobileApp.model.get('terminal').simpretinvdocnoPrefix
+        OB.MobileApp.model.get('terminal').simplifiedReturnInvoiceDocNoPrefix
       ) {
         sequenceName = 'simplifiedreturninvoiceslastassignednum';
-        documentNumberPrefix = OB.MobileApp.model.get('terminal')
-          .simpretinvdocnoPrefix;
       } else if (
         ticket.get('generateInvoice') &&
         ticket.get('fullInvoice') &&
-        OB.MobileApp.model.get('terminal').fullinvdocnoPrefix
+        OB.MobileApp.model.get('terminal').fullInvoiceDocNoPrefix
       ) {
         sequenceName = 'fullinvoiceslastassignednum';
-        documentNumberPrefix = OB.MobileApp.model.get('terminal')
-          .fullinvdocnoPrefix;
       } else if (
         ticket.get('generateInvoice') &&
         !ticket.get('fullInvoice') &&
-        OB.MobileApp.model.get('terminal').simpinvdocnoPrefix
+        OB.MobileApp.model.get('terminal').simplifiedInvoiceDocNoPrefix
       ) {
         sequenceName = 'simplifiedinvoiceslastassignednum';
-        documentNumberPrefix = OB.MobileApp.model.get('terminal')
-          .simpinvdocnoPrefix;
       } else if (
         ticket.get('isQuotation') &&
         OB.MobileApp.model.get('terminal').quotationDocNoPrefix
       ) {
         sequenceName = 'quotationslastassignednum';
-        documentNumberPrefix = OB.MobileApp.model.get('terminal')
-          .quotationDocNoPrefix;
       } else if (
         ticket.getOrderType() === 1 &&
         OB.MobileApp.model.get('terminal').returnDocNoPrefix
       ) {
         sequenceName = 'returnslastassignednum';
-        documentNumberPrefix = OB.MobileApp.model.get('terminal')
-          .returnDocNoPrefix;
       } else {
         sequenceName = 'lastassignednum';
-        documentNumberPrefix = OB.MobileApp.model.get('terminal').docNoPrefix;
       }
 
       await OB.App.State.DocumentSequence.increaseSequence({
         sequenceName: sequenceName
       });
-      const sequenceNumber = OB.App.State.getState().DocumentSequence[
-        sequenceName
-      ];
+      const {
+        sequencePrefix,
+        sequenceNumber
+      } = OB.App.State.getState().DocumentSequence[sequenceName];
       const documentNumberPadding = OB.MobileApp.model.get('terminal')
         .documentnoPadding;
 
@@ -1625,7 +1625,7 @@
         obposSequencename: sequenceName,
         obposSequencenumber: sequenceNumber,
         documentNo: OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
-          documentNumberPrefix,
+          sequencePrefix,
           OB.Model.Order.prototype.includeDocNoSeperator,
           documentNumberPadding,
           sequenceNumber

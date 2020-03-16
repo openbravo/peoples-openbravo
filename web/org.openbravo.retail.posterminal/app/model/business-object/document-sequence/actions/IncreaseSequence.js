@@ -21,8 +21,11 @@
       const newState = { ...state };
       const { sequenceName } = payload;
 
-      if (newState[sequenceName] || newState[sequenceName] === 0) {
-        newState[sequenceName] = newState[sequenceName] + 1;
+      if (newState[sequenceName]) {
+        const newStateSequence = { ...newState[sequenceName] };
+        newStateSequence.sequenceNumber =
+          newState[sequenceName].sequenceNumber + 1;
+        newState[sequenceName] = newStateSequence;
       }
 
       return newState;

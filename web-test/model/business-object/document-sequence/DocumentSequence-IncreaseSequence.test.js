@@ -16,107 +16,112 @@ describe('Document Sequence Increment Sequence action', () => {
   it('should keep same state if empty state and null sequenceName in payload', () => {
     const currentState = deepfreeze({});
     const sequenceName = null;
-
     const newState = OB.App.StateAPI.DocumentSequence.increaseSequence(
       currentState,
       { sequenceName: sequenceName }
     );
     const expectedState = {};
-
     expect(newState).toEqual(expectedState);
   });
 
   it('should keep same state if empty state and undefined sequenceName in payload', () => {
     const currentState = deepfreeze({});
     const sequenceName = undefined;
-
     const newState = OB.App.StateAPI.DocumentSequence.increaseSequence(
       currentState,
       { sequenceName: sequenceName }
     );
     const expectedState = {};
-
     expect(newState).toEqual(expectedState);
   });
 
   it('should keep same state if one sequence in state and null sequenceName in payload', () => {
-    const currentState = deepfreeze({ orderSequence: 0 });
+    const currentState = deepfreeze({
+      orderSequence: { sequencePrefix: 'OS', sequenceNumber: 0 }
+    });
     const sequenceName = null;
-
     const newState = OB.App.StateAPI.DocumentSequence.increaseSequence(
       currentState,
       { sequenceName: sequenceName }
     );
-    const expectedState = { orderSequence: 0 };
-
+    const expectedState = {
+      orderSequence: { sequencePrefix: 'OS', sequenceNumber: 0 }
+    };
     expect(newState).toEqual(expectedState);
   });
 
   it('should keep same state if one sequence in state and undefined sequenceName in payload', () => {
-    const currentState = deepfreeze({ orderSequence: 0 });
+    const currentState = deepfreeze({
+      orderSequence: { sequencePrefix: 'OS', sequenceNumber: 0 }
+    });
     const sequenceName = undefined;
-
     const newState = OB.App.StateAPI.DocumentSequence.increaseSequence(
       currentState,
       { sequenceName: sequenceName }
     );
-    const expectedState = { orderSequence: 0 };
-
+    const expectedState = {
+      orderSequence: { sequencePrefix: 'OS', sequenceNumber: 0 }
+    };
     expect(newState).toEqual(expectedState);
   });
 
   it('should keep same state if empty state and one sequenceName in payload', () => {
     const currentState = deepfreeze({});
     const sequenceName = 'orderSequence';
-
     const newState = OB.App.StateAPI.DocumentSequence.increaseSequence(
       currentState,
       { sequenceName: sequenceName }
     );
     const expectedState = {};
-
     expect(newState).toEqual(expectedState);
   });
 
   it('should keep same state if one sequence in state and different sequence in payload', () => {
-    const currentState = deepfreeze({ orderSequence: 0 });
+    const currentState = deepfreeze({
+      orderSequence: { sequencePrefix: 'OS', sequenceNumber: 0 }
+    });
     const sequenceName = 'returnSequence';
-
     const newState = OB.App.StateAPI.DocumentSequence.increaseSequence(
       currentState,
       { sequenceName: sequenceName }
     );
-    const expectedState = { orderSequence: 0 };
-
+    const expectedState = {
+      orderSequence: { sequencePrefix: 'OS', sequenceNumber: 0 }
+    };
     expect(newState).toEqual(expectedState);
   });
 
   it('should increase sequence if one sequence in state with a low value and same sequence in payload', () => {
-    const currentState = deepfreeze({ orderSequence: 0, returnSequence: 0 });
+    const currentState = deepfreeze({
+      orderSequence: { sequencePrefix: 'OS', sequenceNumber: 0 },
+      returnSequence: { sequencePrefix: 'RS', sequenceNumber: 0 }
+    });
     const sequenceName = 'orderSequence';
-
     const newState = OB.App.StateAPI.DocumentSequence.increaseSequence(
       currentState,
       { sequenceName: sequenceName }
     );
-    const expectedState = { orderSequence: 1, returnSequence: 0 };
-
+    const expectedState = {
+      orderSequence: { sequencePrefix: 'OS', sequenceNumber: 1 },
+      returnSequence: { sequencePrefix: 'RS', sequenceNumber: 0 }
+    };
     expect(newState).toEqual(expectedState);
   });
 
   it('should increase sequence if one sequence in state with a high value and same sequence in payload', () => {
     const currentState = deepfreeze({
-      orderSequence: 1000,
-      returnSequence: 1000
+      orderSequence: { sequencePrefix: 'OS', sequenceNumber: 1000 },
+      returnSequence: { sequencePrefix: 'RS', sequenceNumber: 1000 }
     });
     const sequenceName = 'orderSequence';
-
     const newState = OB.App.StateAPI.DocumentSequence.increaseSequence(
       currentState,
       { sequenceName: sequenceName }
     );
-    const expectedState = { orderSequence: 1001, returnSequence: 1000 };
-
+    const expectedState = {
+      orderSequence: { sequencePrefix: 'OS', sequenceNumber: 1001 },
+      returnSequence: { sequencePrefix: 'RS', sequenceNumber: 1000 }
+    };
     expect(newState).toEqual(expectedState);
   });
 });

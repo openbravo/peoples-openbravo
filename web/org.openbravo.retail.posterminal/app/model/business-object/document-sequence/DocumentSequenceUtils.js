@@ -19,13 +19,13 @@
      * @returns {number} The document number.
      */
     calculateDocumentNumber(
-      documentNumberPrefix,
+      sequencePrefix,
       includeSeparator,
       documentNumberPadding,
       sequenceNumber
     ) {
       return (
-        documentNumberPrefix +
+        sequencePrefix +
         (includeSeparator ? '/' : '') +
         OB.UTIL.padNumber(sequenceNumber, documentNumberPadding)
       );

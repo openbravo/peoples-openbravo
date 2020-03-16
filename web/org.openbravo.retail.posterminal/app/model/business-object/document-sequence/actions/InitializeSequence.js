@@ -10,6 +10,7 @@
 /**
  * @fileoverview defines the Document Sequence Initialize Sequence action that updates state sequences with the sequences present in the payload.
  * The highest sequence number between the one in the state and the one in the payload will be keep.
+ * In case sequence prefix has been changed, sequence number will be reset to zero.
  */
 
 (() => {
@@ -20,10 +21,18 @@
       const { sequences } = payload;
 
       sequences.forEach(sequence => {
-        newState[sequence.sequenceName] = Math.max(
-          newState[sequence.sequenceName] || 0,
-          sequence.sequenceNumber || 0
-        );
+        const newStateSequence = { ...newState[sequence.sequenceName] };
+        newStateSequence.sequencePrefix = sequence.sequencePrefix;
+        newStateSequence.sequenceNumber =
+          newState[sequence.sequenceName] &&
+          newState[sequence.sequenceName].sequencePrefix ===
+            sequence.sequencePrefix
+            ? Math.max(
+                newState[sequence.sequenceName].sequenceNumber || 0,
+                sequence.sequenceNumber || 0
+              )
+            : 0;
+        newState[sequence.sequenceName] = newStateSequence;
       });
 
       return newState;
