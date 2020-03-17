@@ -490,9 +490,6 @@
                         ) {
                           OB.Dal.transaction(function(tx) {
                             OB.UTIL.calculateCurrentCash(null, tx);
-                            OB.MobileApp.model.setTicketDocumentNo(
-                              frozenReceipt
-                            );
                             // the trigger is fired on the receipt object, as there is only 1 that is being updated
                             receipt.trigger('integrityOk', frozenReceipt); // Is important for module print last receipt. This module listen trigger.
                             syncSuccessCallback(function() {
@@ -551,7 +548,10 @@
                         OB.trace('Calculationg cashup information.');
                         OB.UTIL.cashUpReport(
                           frozenReceipt,
-                          function(cashUp) {
+                          async function(cashUp) {
+                            await OB.MobileApp.model.setTicketDocumentNo(
+                              frozenReceipt
+                            );
                             frozenReceipt.set(
                               'cashUpReportInformation',
                               JSON.parse(cashUp.models[0].get('objToSend'))
@@ -576,9 +576,6 @@
                               );
                             } else {
                               OB.UTIL.calculateCurrentCash(null, tx);
-                              OB.MobileApp.model.setTicketDocumentNo(
-                                frozenReceipt
-                              );
                               OB.trace('Saving receipt.');
                               OB.Dal.saveInTransaction(
                                 tx,
@@ -768,7 +765,8 @@
                   tx: tx,
                   isMultiOrder: true
                 },
-                function(args) {
+                async function(args) {
+                  await OB.MobileApp.model.setTicketDocumentNo(currentReceipt);
                   currentReceipt.set(
                     'json',
                     JSON.stringify(currentReceipt.serializeToSaveJSON())
@@ -874,7 +872,6 @@
                         me.context
                           .get('multiOrders')
                           .trigger('integrityOk', theReceipt);
-                        OB.MobileApp.model.setTicketDocumentNo(theReceipt);
                         me.context.get('orderList').current = theReceipt;
                         me.context.get('orderList').deleteCurrent();
                       }

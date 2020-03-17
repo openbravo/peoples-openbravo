@@ -9691,10 +9691,10 @@
               model: model,
               tx: tx
             },
-            function(args) {
+            async function(args) {
+              await OB.MobileApp.model.setTicketDocumentNo(model);
               model.set('json', JSON.stringify(model.serializeToSaveJSON()));
               model.set('hasbeenpaid', 'Y');
-              OB.MobileApp.model.setTicketDocumentNo(model);
               OB.Dal.saveInTransaction(tx, model, function() {
                 if (
                   orderList &&
