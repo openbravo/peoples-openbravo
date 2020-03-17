@@ -31,7 +31,7 @@
                 newState[sequence.sequenceName].sequenceNumber || 0,
                 sequence.sequenceNumber || 0
               )
-            : 0;
+            : sequence.sequenceNumber || 0;
         newState[sequence.sequenceName] = newStateSequence;
       });
 
