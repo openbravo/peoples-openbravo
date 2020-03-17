@@ -1566,7 +1566,7 @@
     // This global action will increase sequence in DocumentSequence model
     // and set documentno in Ticket model based on the increased sequence
     setTicketDocumentNo: async function(ticket) {
-      if (ticket.get('isModified')) {
+      if (ticket.get('documentNo')) {
         return;
       }
 
