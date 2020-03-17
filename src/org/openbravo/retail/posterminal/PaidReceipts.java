@@ -121,7 +121,10 @@ public class PaidReceipts extends JSONProcessSimple {
       paymentDateFormat
           .setTimeZone(TimeZone.getTimeZone(Calendar.getInstance().getTimeZone().getID()));
 
-      String orderid = jsonsent.getString("orderid");
+      String orderid = jsonsent.has("documentNo")
+          ? getOrderIdFromDocNo(jsonsent.getString("documentNo"))
+          : jsonsent.getString("orderid");
+
       if (jsonsent.has("pos") && jsonsent.getString("pos") != null) {
         String posId = jsonsent.getString("pos");
         posTerminal = OBDal.getInstance().get(OBPOSApplications.class, posId);
@@ -667,6 +670,19 @@ public class PaidReceipts extends JSONProcessSimple {
       OBContext.restorePreviousMode();
     }
     return result;
+  }
+
+  private String getOrderIdFromDocNo(String documentNo) {
+    OBCriteria<org.openbravo.model.common.order.Order> queryOrder = OBDal.getInstance()
+        .createCriteria(org.openbravo.model.common.order.Order.class);
+    queryOrder.add(
+        Restrictions.eq(org.openbravo.model.common.order.Order.PROPERTY_DOCUMENTNO, documentNo));
+    queryOrder.setMaxResults(1);
+    org.openbravo.model.common.order.Order order = (org.openbravo.model.common.order.Order) queryOrder.uniqueResult();
+    if(order == null) {
+      throw new OBException("Can not be found any order with the provided document No: " + documentNo);
+    }
+    return order.getId();
   }
 
   private void setOverpayment(JSONObject objectIn, JSONObject paidReceiptPayment)

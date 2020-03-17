@@ -15,22 +15,117 @@ paths:
     post:
       tags:
         - External Order Loader Web Service
-      summary: Create a ticket in Openbravo
-      description: The ticket/order loading api provides a webservice which can be used to create tickets in Openbravo 
+      summary: Create an order in Openbravo
+      description: The ticket/order loader api provides a webservice which can be used to create tickets in Openbravo 
       operationId: create order
       security:
         - BasicAuth: []
       requestBody:
-        description: The ticket whose sales order will be created
+        description: The request with orders will be created
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/Request'
             examples:
-              ticket1:
-                value:
-                summary: Creating a complete order, shipped and paid
-                description: Gives an example of creating a ticket with a minimal json.
+              request1:
+                value: {
+				    "messageId": "MessageId01",
+				    "posTerminal": "VBS-1",
+				    "channel": "External",
+				    "data": [{
+				        "currency": "EUR",
+				        "step": "create",
+				        "grossAmount": 13.53,
+				        "netAmount": 11.00,
+				        "businessPartner": "VBS/C0001",
+				        "lines": [{
+				            "product": "WVG/S0011",
+				            "qty": 2,
+				            "grossAmount": 7.38,
+				            "netAmount": 6,
+				            "taxAmount": 1.38,
+				            "taxLines": {
+				                "Entregas IVA 21%": {
+				                    "rate": 23,
+				                    "netAmount": 6,
+				                    "taxAmount": 1.38
+				                }
+				             }
+				        },{
+				            "product": "WVG/B0017",
+				            "qty": 2,
+				            "grossAmount": 6.15,
+				            "netAmount": 5.0,
+				            "taxAmount": 1.15,
+				            "taxLines": {
+				                "Entregas IVA 21%": {
+				                    "rate": 23,
+				                    "netAmount": 5,
+				                    "taxAmount": 1.15
+				                }
+				             }
+				        }],
+				        "taxes": {
+				            "Entregas IVA 21%": {
+				                "rate": 23,
+				                "grossAmount": 13.53,
+				                "netAmount": 11.00,
+				                "taxAmount": 2.53
+				            }
+				        }
+				    }]
+				}
+                summary: Creating a simple order with two lines.
+                description: Gives an example of creating an order with a minimal json.
+              request2:
+                value: {
+				    "messageId": "MessageId02",
+				    "posTerminal": "VBS-1",
+				    "channel": "External",
+				    "data": [{
+				        "currency": "EUR",
+				        "payment": 12.10,
+				        "grossAmount": 12.10,
+				        "netAmount": 10.00,
+				        "businessPartner": "VBS/C0001",
+				        "lines": [{
+				            "product": "WVG/S0011",
+				            "qty": 2,
+				            "grossAmount": 12.10,
+				            "netAmount": 10.0,
+				            "taxAmount": 2.1,
+				            "taxLines": {
+				                "Entregas IVA 21%": {
+				                    "rate": 21,
+				                    "netAmount": 10.0,
+				                    "taxAmount": 2.10
+				                }
+				             },
+				             "promotions": [{
+				                "discountRule": "disc_5_ var_perc",
+				                "amount": 5,
+				                "quantity": 2,
+				                "baseUnitPrice": 7.5,
+				                "unitDiscount": 2.50
+				            }]
+				        }],
+				        "payments": [{
+				            "paidAmount": 12.1,
+				            "kind": "OBPOS_payment.cash",
+				            "rate": "1",
+				            "isocode": "EUR"
+				        }],
+				        "taxes": {
+				            "Entregas IVA 21%": {
+				                "rate": 21,
+				                "netAmount": 10.00,
+				                "taxAmount": 2.1
+				            }
+				        }
+				    }]
+				}
+                summary: Creating a complete order with promotions, shipped and paid.
+                description: Gives an example of creating a complete order with promotions, payments and generating shipment.
       responses:
         200:
           description: Shows the created order
@@ -41,8 +136,16 @@ paths:
               examples:
                 result1:
                   value:
-                  summary: Shows the created order
-                  description: The Order Loader output after process the received request
+                    response:
+                      status: 0
+                      result: 0
+                      contextInfo:
+                        userId: 100
+                        roleId: 463683CFA16C40C0A4EC8CF934114146
+                        orgId: D270A5AC50874F8BA67A88EE977F8E3B
+                        clientId: 39363B0921BB4293B48383844325E84C
+                  summary: Shows the order was successfully created
+                  description: Shows the order was successfully created
         401:
           $ref: '#/components/responses/UnauthorizedError'
         500:
@@ -102,7 +205,7 @@ components:
           items:
             $ref: '#/components/schemas/Payment'
         taxes:
-          $ref: '#/components/schemas/Tax'
+          $ref: '#/components/schemas/TaxIdentifier'
         approvals:
           type: array
           items:
@@ -136,9 +239,7 @@ components:
           type: number
           format: double
         taxLines:
-          type: array
-          items:
-            $ref: '#/components/schemas/TaxLine'
+          $ref: '#/components/schemas/TaxIdentifier'
         promotions:
           type: array
           items:
@@ -173,6 +274,13 @@ components:
         - rate
         - isocode
       description: Information for the payment. The paid amount is the payment in the currency of the order header. The kind refers to the payment method, the eligible payment methods are defined by POS terminal
+    TaxIdentifier:
+      type: object
+      properties:
+        taxName:
+          type: string
+          $ref: '#/components/schemas/Tax'
+      description: The taxes is not an array but a json object where the property name is the identification of the tax. The database id, name or tax search key can be used.
     Tax:
       type: object
       properties:
@@ -185,26 +293,7 @@ components:
         taxAmount:
           type: number
           format: double
-        amount:
-          type: number
-          format: double
-        net:
-          type: number
-          format: double
-      required:
-        - netAmount
-        - taxAmount
-      description: Information for the header tax.
-    TaxLine:
-      type: object
-      properties:
-        rate:
-          type: number
-          format: double
-        netAmount:
-          type: number
-          format: double
-        taxAmount:
+        grossAmount:
           type: number
           format: double
         amount:
@@ -216,7 +305,7 @@ components:
       required:
         - netAmount
         - taxAmount
-      description: Information for the line tax.
+      description: Information for the header/line tax.    
     Promotion:
       type: object
       properties:
@@ -279,285 +368,33 @@ components:
           format: double
         result:
           type: string
-        orders:
-          type: array
-          items:
-            $ref: '#/components/schemas/OutputOrder'
-    OutputOrder:
+        contextInfo:
+          $ref: '#/components/schemas/ContextInfo'
+        error:
+          $ref: '#/components/schemas/Error'
+        totalRows:
+          type: number
+          format: double
+      description: Only a success or failure message is retrieved. If the process was success the status will be returned as 0 else an error is indicated by the status property which will have value -1. The error message can be be found in the message property of the error object.
+    ContextInfo:
       type: object
       properties:
-        currency:
+        userId:
           type: string
-        step:
+        roleId:
           type: string
-        grossAmount:
-          type: number
-          format: double
-        netAmount:
-          type: number
-          format: double         
-        businessPartner:
+        orgId:
           type: string
-        id:
-          type: string
-        lines:
-          type: array
-          items:
-            $ref: '#/components/schemas/OutputLine'
-        payments:
-          type: array
-          items:
-            $ref: '#/components/schemas/OutputPayment'
-        taxes:
-          $ref: '#/components/schemas/Tax'
-        approvals:
-          type: array
-          items:
-            $ref: '#/components/schemas/Approval'
-        posTerminal:
-          type: string
-        payment:
-          type: number
-          format: double
-        isQuotation:
-          type: boolean
-        isLayaway:
-          type: boolean
-        isReturn:
-          type: boolean 
-        obposAppCashup:
-          type: string
-        created:
-          type: number
-          format: double
-        change:
-          type: number
-          format: double
-        timezoneOffset:
-          type: number
-          format: double
-        generateInvoice:
-          type: boolean
-        orderDate:
-          type: string
-          format: YYYY-MM-DDTHH:mm:ss
-        creationDate:
-          type: string
-          format: YYYY-MM-DDTHH:mm:ss
-        obposCreatedabsolute:
-          type: string
-          format: YYYY-MM-DDTHH:mm:ss
-        organization:
-          type: string
-        client:
-          type: string 
-        obposApplications:
-          type: string
-        documentType:
-          type: string
-        warehouse:
-          type: string
-        priceList:
-          type: string
-        priceIncludesTax:
-          type: boolean
-        documentNo:
-          type: string
-        orderType:
-          type: string
-        gross:
-          type: number
-          format: double 
-        net:
-          type: number
-          format: double
-        bp:
-          $ref: '#/components/schemas/OutputBusinessPartner'
-    OutputBusinessPartner:
-      type: object
-      properties:
-        _identifier:
-          type: string
-        _entityName:
-          type: string 
-        id:
-          type: string
-        client:
-          type: string
-        client$_identifier:
-          type: string
-        organization:
-          type: string
-        organization$_identifier:
-          type: string
-        active:
-          type: boolean
-        creationDate:
-          type: string
-          format: YYYY-MM-DDTHH:mm:ss
-        searchKey:
-          type: string
-        name:
-          type: string
-        name2:
-          type: string 
-        description:
-          type: string
-        summaryLevel:
-          type: boolean
-        businessPartnerCategory:
-          type: string
-        businessPartnerCategory$_identifier:
-          type: string
-        oneTimeTransaction:
-          type: boolean
-        potentialCustomer:
-          type: boolean
-        vendor:
-          type: boolean
-        customer:
-          type: boolean
-        employee:
-          type: boolean
-        isSalesRepresentative:
-          type: boolean
-        referenceNo:
-          type: string
-        dUNS:
-          type: string
-        uRL:
-          type: string
-        language:
-          type: string
-        language$_identifier:
-          type: string
-        taxID:
-          type: string
-        taxExempt:
-          type: boolean
-        invoiceSchedule:
-          type: string
-        locId:
-          type: string 
-    OutputLine:
-      type: object
-      properties:
-        product:
-          $ref: '#/components/schemas/OutputProduct'
-        id:
-          type: string
-        qty:
-          type: number
-          format: double
-        grossAmount:
-          type: number
-          format: double
-        netAmount:
-          type: number
-          format: double
-        taxAmount:
-          type: number
-          format: double
-        taxLines:
-          type: array
-          items:
-            $ref: '#/components/schemas/TaxLine'
-        uOM:
-          type: string
-        promotions:
-          type: array
-          items:
-            $ref: '#/components/schemas/Promotion' 
-        tax:
-          type: string
-        lineRate:
-          type: number
-          format: double
-        priceIncludesTax:
-          type: boolean
-        netListPrice:
-          type: number
-          format: double
-        grossListPrice:
-          type: number
-          format: double
-        netPrice:
-          type: number
-          format: double
-        grossPrice:
-          type: number
-          format: double
-        discountedNet:
-          type: number
-          format: double
-        discountedLinePrice:
-          type: number
-          format: double
-        discountPercentage:
-          type: number
-          format: double
-        listPrice:
-          type: number
-          format: double
-        priceList:
-          type: number
-          format: double
-        standardPrice:
-          type: number
-          format: double
-        lineGrossAmount:
-          type: number
-          format: double
-        unitPrice:
-          type: number
-          format: double
-        net:
-          type: number
-          format: double
-        gross:
-          type: number
-          format: double
-    OutputPayment:
-      type: object
-      properties:
-        paidAmount:
-          type: number
-          format: double
-        date:
-          type: string
-          format: YYYY-MM-DDTHH:mm:ss'
-        kind:
-          type: string
-        rate:
-          type: string
-        isocode:
-          type: string
-        currency:
-          type: string
-        amount:
-          type: number
-          format: double
-        origAmount:
-          type: number
-          format: double
-        paid:
-          type: number
-          format: double     
-        mulrate:
-          type: string    
-    OutputProduct:
-      type: object
-      properties:
-        id:
-          type: string
-        _identifier:
-          type: string
-        searchKey:
+        clientId:
           type: string
     Error:
       type: object
       properties:
         message:
+          type: string
+        messageType:
+          type: string
+        title:
           type: string
   responses:
     UnauthorizedError:
