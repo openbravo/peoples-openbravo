@@ -7156,6 +7156,7 @@
 
               args.order.set('oldId', args.order.get('id'));
               args.order.set('id', null);
+              args.order.set('documentNo', '');
               args.order.set('isQuotation', false);
               args.order.set(
                 'orderType',
