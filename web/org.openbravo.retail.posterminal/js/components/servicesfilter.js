@@ -113,10 +113,17 @@ enyo.kind({
         productCategoryList
       );
     } else if (this.productId) {
+      let productId =
+        value.orderline.get('product').get('forceFilterId') ||
+        value.orderline.get('product').get('id');
+
+      let productCategory = this.orderline
+        .get('product')
+        .get('productCategory');
       criteria = await OB.UTIL.servicesFilter(
         criteria,
-        value.productId,
-        value.orderline.get('product').get('productCategory')
+        productId,
+        productCategory
       );
     }
     if (value.productList && value.productList.length > 0) {
