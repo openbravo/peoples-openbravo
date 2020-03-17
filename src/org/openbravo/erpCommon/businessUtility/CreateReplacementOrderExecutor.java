@@ -53,7 +53,7 @@ class CreateReplacementOrderExecutor extends CancelAndReplaceUtils {
   private Map<Warehouse, Integer> warehouseMap;
 
   @SuppressWarnings("hiding")
-  void init(Order oldOrder, Map<Warehouse, Integer> warehouseMap) {
+  void init(final Order oldOrder, final Map<Warehouse, Integer> warehouseMap) {
     this.oldOrder = oldOrder;
     this.warehouseMap = warehouseMap;
   }
@@ -71,7 +71,7 @@ class CreateReplacementOrderExecutor extends CancelAndReplaceUtils {
     return replacementOrderList;
   }
 
-  private Order createReplacementOrder(Warehouse warehouse, String documentNo) {
+  private Order createReplacementOrder(final Warehouse warehouse, final String documentNo) {
     // Create new Order header
     Order newOrder = (Order) DalUtil.copy(oldOrder, false, true);
 
@@ -105,12 +105,12 @@ class CreateReplacementOrderExecutor extends CancelAndReplaceUtils {
     long i = 0;
     try (final ScrollableResults orderLines = getOrderLineList(oldOrder)) {
       while (orderLines.next()) {
-        OrderLine oldOrderLine = (OrderLine) orderLines.get(0);
+        final OrderLine oldOrderLine = (OrderLine) orderLines.get(0);
         // Skip discount lines as they will be created when booking the replacement order
         if (oldOrderLine.getOrderDiscount() != null) {
           continue;
         }
-        OrderLine newOrderLine = (OrderLine) DalUtil.copy(oldOrderLine, false, true);
+        final OrderLine newOrderLine = (OrderLine) DalUtil.copy(oldOrderLine, false, true);
         newOrderLine.setOrganization(org);
         newOrderLine.setWarehouse(warehouse);
         newOrderLine.setDeliveredQuantity(BigDecimal.ZERO);
@@ -135,7 +135,8 @@ class CreateReplacementOrderExecutor extends CancelAndReplaceUtils {
     return newOrder;
   }
 
-  private Optional<DocumentType> getDocumentType(Organization org, DocumentType docType) {
+  private Optional<DocumentType> getDocumentType(final Organization org,
+      final DocumentType docType) {
     final List<Object> parameters = new ArrayList<>();
     parameters.add(org.getClient().getId());
     parameters.add(org.getId());
@@ -158,7 +159,7 @@ class CreateReplacementOrderExecutor extends CancelAndReplaceUtils {
    * @param order
    *          The new created order where the lines will be updated
    */
-  private void updateRelationsBetweenOrderLinesProductsAndServices(Order order) {
+  private void updateRelationsBetweenOrderLinesProductsAndServices(final Order order) {
     int i = 0;
     try (
         final ScrollableResults newOrderLines = getOrderLinesListWithReplacedLineWithRelatedService(
@@ -174,7 +175,7 @@ class CreateReplacementOrderExecutor extends CancelAndReplaceUtils {
     }
   }
 
-  private ScrollableResults getOrderLinesListWithReplacedLineWithRelatedService(Order order) {
+  private ScrollableResults getOrderLinesListWithReplacedLineWithRelatedService(final Order order) {
     //@formatter:off
     final String hql = 
                   "select ol " +
@@ -191,11 +192,11 @@ class CreateReplacementOrderExecutor extends CancelAndReplaceUtils {
         .scroll(ScrollMode.FORWARD_ONLY);
   }
 
-  private void updateOrderLineRelatedServices(OrderLine orderLine) {
+  private void updateOrderLineRelatedServices(final OrderLine orderLine) {
     final Order order = orderLine.getSalesOrder();
     final OrderLine replacedOrderLine = orderLine.getReplacedorderline();
 
-    for (OrderlineServiceRelation replacedRelatedService : replacedOrderLine
+    for (final OrderlineServiceRelation replacedRelatedService : replacedOrderLine
         .getOrderlineServiceRelationList()) {
       final OrderLine replacedRelatedOrderLine = replacedRelatedService.getOrderlineRelated();
       final OrderLine orderLineReplacingRelatedOrderLine = getOrderLineReplacingRelatedOrderLine(
@@ -213,8 +214,8 @@ class CreateReplacementOrderExecutor extends CancelAndReplaceUtils {
    *          The replaced order line that is searching for
    * @return The order line that is replacing the one passed as parameter
    */
-  private OrderLine getOrderLineReplacingRelatedOrderLine(Order order,
-      OrderLine replacedOrderLine) {
+  private OrderLine getOrderLineReplacingRelatedOrderLine(final Order order,
+      final OrderLine replacedOrderLine) {
     return (OrderLine) OBDal.getInstance()
         .createCriteria(OrderLine.class)
         .add(Restrictions.eq(OrderLine.PROPERTY_SALESORDER, order))
@@ -223,14 +224,15 @@ class CreateReplacementOrderExecutor extends CancelAndReplaceUtils {
         .uniqueResult();
   }
 
-  private void addNewOrderLineServiceRelation(OrderLine orderLine, OrderLine orderLineRelated) {
+  private void addNewOrderLineServiceRelation(final OrderLine orderLine,
+      final OrderLine orderLineRelated) {
     final OrderlineServiceRelation newOrderLineServiceRelation = getNewOrderLineServiceRelation(
         orderLine, orderLineRelated);
     orderLine.getOrderlineServiceRelationList().add(newOrderLineServiceRelation);
   }
 
-  private OrderlineServiceRelation getNewOrderLineServiceRelation(OrderLine orderLine,
-      OrderLine orderLineRelated) {
+  private OrderlineServiceRelation getNewOrderLineServiceRelation(final OrderLine orderLine,
+      final OrderLine orderLineRelated) {
     final OrderlineServiceRelation newOrderLineServiceRelation = OBProvider.getInstance()
         .get(OrderlineServiceRelation.class);
     newOrderLineServiceRelation.setClient(orderLine.getClient());
