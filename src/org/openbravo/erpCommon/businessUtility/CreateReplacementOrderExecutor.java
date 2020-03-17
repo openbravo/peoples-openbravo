@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2019 Openbravo SLU
+ * All portions are Copyright (C) 2019-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -175,16 +175,18 @@ class CreateReplacementOrderExecutor extends CancelAndReplaceUtils {
   }
 
   private ScrollableResults getOrderLinesListWithReplacedLineWithRelatedService(Order order) {
-    final StringBuilder hql = new StringBuilder("");
-    hql.append(" select ol ");
-    hql.append(" from OrderLine ol");
-    hql.append(" join ol.replacedorderline rol "); // Explicit join to avoid null values
-    hql.append(" where rol.orderlineServiceRelationList is not empty");
-    hql.append(" and ol.salesOrder.id = :orderId");
+    //@formatter:off
+    final String hql = 
+                  "select ol " +
+                  "  from OrderLine ol" +
+                  "    join ol.replacedorderline rol " + // Explicit join to avoid null values
+                  " where rol.orderlineServiceRelationList is not empty" +
+                  "   and ol.salesOrder.id = :orderId";
+    //@formatter:on
 
     return OBDal.getInstance()
         .getSession()
-        .createQuery(hql.toString(), OrderLine.class)
+        .createQuery(hql, OrderLine.class)
         .setParameter("orderId", order.getId())
         .scroll(ScrollMode.FORWARD_ONLY);
   }
