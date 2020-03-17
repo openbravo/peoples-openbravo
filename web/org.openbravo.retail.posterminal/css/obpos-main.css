@@ -13454,8 +13454,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   column-gap: calc(2 * var(--panel-components-separation));
 
   box-sizing: border-box;
-  min-height: var(--keypad-height);
-  height: 100%;
+  height: var(--keypad-height);
   padding: var(--panel-components-separation) var(--panel-outer-side-padding) var(--panel-bottom-padding) var(--panel-inner-side-padding);
 }
 
