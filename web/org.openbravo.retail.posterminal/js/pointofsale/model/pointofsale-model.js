@@ -17,8 +17,6 @@ OB.OBPOSPointOfSale.UI = OB.OBPOSPointOfSale.UI || {};
 OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
   models: [
     OB.Model.PriceList,
-    OB.Model.ServiceProduct,
-    OB.Model.ServiceProductCategory,
     OB.Model.ServicePriceRule,
     OB.Model.ServicePriceRuleRange,
     OB.Model.ServicePriceRuleRangePrices,
