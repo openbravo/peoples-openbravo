@@ -11041,9 +11041,7 @@
         }
       },
       loadCurrent: function(isNew) {
-        OB.App.State.TerminalLog.setContext({
-          context: this.current.get('documentNo')
-        });
+        OB.MobileApp.model.set('terminalLogContext', this.current.get('id'));
         // Check if the current order to be loaded should be deleted
         if (this.current.get('obposIsDeleted') && this.current.get('id')) {
           var deletedOrderDocNo = this.current.get('documentNo');
