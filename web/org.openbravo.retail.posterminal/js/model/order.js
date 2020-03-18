@@ -423,7 +423,7 @@
         attributes.id = orderId;
       }
       var bpModel;
-      if (attributes && attributes.documentNo) {
+      if (attributes && attributes.id) {
         this.set('id', attributes.id);
         this.set('client', attributes.client);
         this.set('organization', attributes.organization);
