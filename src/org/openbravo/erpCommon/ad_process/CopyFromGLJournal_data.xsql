@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -153,10 +153,10 @@
       <![CDATA[
         INSERT INTO GL_JOURNALLINE (GL_JOURNALLINE_ID, AD_CLIENT_ID, AD_ORG_ID, CREATED, CREATEDBY, 
         UPDATED, UPDATEDBY, GL_JOURNAL_ID,LINE, ISGENERATED, DESCRIPTION,AMTSOURCEDR, AMTSOURCECR, C_CURRENCY_ID, 
-        CURRENCYRATETYPE, CURRENCYRATE, DATEACCT,AMTACCTDR, AMTACCTCR, C_UOM_ID,QTY, C_VALIDCOMBINATION_ID,
+        CURRENCYRATETYPE, CURRENCYRATE, AMTACCTDR, AMTACCTCR, C_UOM_ID,QTY, C_VALIDCOMBINATION_ID,
         USER1_ID, USER2_ID, C_CAMPAIGN_ID, C_PROJECT_ID, C_ACTIVITY_ID, C_SALESREGION_ID, M_PRODUCT_ID, C_BPARTNER_ID,  A_ASSET_ID,  C_COSTCENTER_ID,
         OPEN_ITEMS, FIN_FINANCIAL_ACCOUNT_ID, FIN_PAYMENTMETHOD_ID,  C_GLITEM_ID, PAYMENTDATE, FIN_PAYMENT_ID) 
-        VALUES (?,?,?,now(),?,now(),?,?,TO_NUMBER(?),?,?,TO_NUMBER(?),TO_NUMBER(?),?,?,TO_NUMBER(?),now(),TO_NUMBER(?),
+        VALUES (?,?,?,now(),?,now(),?,?,TO_NUMBER(?),?,?,TO_NUMBER(?),TO_NUMBER(?),?,?,TO_NUMBER(?),TO_NUMBER(?),
         TO_NUMBER(?),?,TO_NUMBER(?), ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,
         ?,?,?,?,TO_DATE(?), ?)
       ]]>
