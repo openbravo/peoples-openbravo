@@ -566,14 +566,16 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
         .createCriteria(OrderLine.class);
     oldOrderLineCriteria.add(Restrictions.eq(OrderLine.PROPERTY_SALESORDER + ".id", oldOrderId));
     for (final OrderLine oldOrderLine : oldOrderLineCriteria.list()) {
-      final StringBuilder where = new StringBuilder();
-      where.append(
-          " WHERE (" + OrderlineServiceRelation.PROPERTY_SALESORDERLINE + " = :salesorderline");
-      where.append(
-          " OR " + OrderlineServiceRelation.PROPERTY_ORDERLINERELATED + " = :salesorderline)");
+      //@formatter:off
+      final String hqlWhere =
+                    " where salesOrderLine.id = :salesorderlineId" +
+                    "   or orderlineRelated.id = :salesorderlineId";
+      //@formatter:on
+
       final OBQuery<OrderlineServiceRelation> serviceRelationQuery = OBDal.getInstance()
-          .createQuery(OrderlineServiceRelation.class, where.toString());
-      serviceRelationQuery.setNamedParameter("salesorderline", oldOrderLine);
+          .createQuery(OrderlineServiceRelation.class, hqlWhere)
+          .setNamedParameter("salesorderlineId", oldOrderLine.getId());
+
       for (final OrderlineServiceRelation serviceRelation : serviceRelationQuery.list()) {
         if (!createdRelations.contains(serviceRelation.getId())) {
           createdRelations.add(serviceRelation.getId());
