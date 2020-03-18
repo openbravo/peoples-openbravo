@@ -38,6 +38,7 @@ public class BPLocationProperties extends ModelExtension {
         add(new HQLProperty("COALESCE(bplocRegion.name,'')", "regionName"));
         add(new HQLProperty("COALESCE(bplocRegion.id,'')", "regionId"));
         add(new HQLProperty("bploc.creationDate", "creationDate"));
+        add(new HQLProperty("bploc.updated", "updated"));
         add(new HQLProperty(
             "COALESCE(bplocAddress.addressLine1 || CASE WHEN bplocAddress.addressLine2 IS NOT NULL THEN ' ' END || bplocAddress.addressLine2, bplocAddress.addressLine1, bplocAddress.addressLine2, bplocAddress.postalCode, bplocAddress.cityName)",
             "_identifier"));
