@@ -240,20 +240,20 @@ public class InventoryCountProcess implements Process {
             "    and p.productType = 'I'";
     //@formatter:on
 
-    final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-    OBDal.getInstance()
-        .getSession()
-        .createQuery(hqlInsert)
-        .setParameter("invId", inventory.getId())
-        .setParameter("userId", OBContext.getOBContext().getUser().getId())
-        .setParameter("currentDate", dateFormatter.format(new Date()))
-        .executeUpdate();
-
-    if (!"C".equals(inventory.getInventoryType()) && !"O".equals(inventory.getInventoryType())) {
-      checkStock(inventory);
-    }
-
     try {
+      final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+      OBDal.getInstance()
+          .getSession()
+          .createQuery(hqlInsert)
+          .setParameter("invId", inventory.getId())
+          .setParameter("userId", OBContext.getOBContext().getUser().getId())
+          .setParameter("currentDate", dateFormatter.format(new Date()))
+          .executeUpdate();
+
+      if (!"C".equals(inventory.getInventoryType()) && !"O".equals(inventory.getInventoryType())) {
+        checkStock(inventory);
+      }
+
       executeHooks(inventoryCountProcesses, inventory);
     } catch (final Exception e) {
       throw new OBException(e.getMessage(), e.getCause());
