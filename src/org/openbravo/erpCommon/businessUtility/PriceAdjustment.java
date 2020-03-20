@@ -73,8 +73,7 @@ public class PriceAdjustment {
       for (org.openbravo.model.pricing.priceadjustment.PriceAdjustment promo : getApplicablePriceAdjustments(
           orderOrInvoice, qty, product, false)) {
         log.debug("promo:" + promo + "-" + promo.getDiscount());
-
-        priceActual = applyDiscountPriceActual(qty, priceActual, precision, promo);
+        priceActual = getPriceActualWithDiscountsApplied(qty, priceActual, precision, promo);
 
         if (!promo.isApplyNext()) {
           break;
@@ -90,25 +89,25 @@ public class PriceAdjustment {
 
   }
 
-  private static BigDecimal applyDiscountPriceActual(final BigDecimal qty,
-      final BigDecimal priceActual, final int precision,
+  private static BigDecimal getPriceActualWithDiscountsApplied(final BigDecimal qty,
+      final BigDecimal originalPriceActual, final int precision,
       final org.openbravo.model.pricing.priceadjustment.PriceAdjustment promo) {
     boolean applyDiscount = true;
-    BigDecimal localPriceActual = priceActual;
+    BigDecimal priceActual = originalPriceActual;
     if (promo.isMultiple() && promo.getMultiple() != null
         && qty.remainder(promo.getMultiple()).compareTo(BigDecimal.ZERO) != 0) {
       applyDiscount = false;
     }
     if (promo.getFixedPrice() != null && applyDiscount) {
-      localPriceActual = promo.getFixedPrice();
+      priceActual = promo.getFixedPrice();
     } else {
       if (applyDiscount) {
-        localPriceActual = localPriceActual.subtract(promo.getDiscountAmount())
+        priceActual = priceActual.subtract(promo.getDiscountAmount())
             .multiply(BigDecimal.ONE.subtract(promo.getDiscount().divide(BigDecimal.valueOf(100))))
             .setScale(precision, RoundingMode.HALF_UP);
       }
     }
-    return localPriceActual;
+    return priceActual;
   }
 
   /**
@@ -125,7 +124,7 @@ public class PriceAdjustment {
           .intValue();
       for (org.openbravo.model.pricing.priceadjustment.PriceAdjustment promo : getApplicablePriceAdjustments(
           orderOrInvoice, qty, product, true)) {
-        priceStd = applyDiscountPriceStd(qty, priceStd, precision, promo);
+        priceStd = getPriceStdWithDiscountsApplied(qty, priceStd, precision, promo);
       }
       log.debug("Std:" + priceActual + "->" + priceStd);
       return priceStd;
@@ -138,11 +137,11 @@ public class PriceAdjustment {
     }
   }
 
-  private static BigDecimal applyDiscountPriceStd(final BigDecimal qty, final BigDecimal priceStd,
+  private static BigDecimal getPriceStdWithDiscountsApplied(final BigDecimal qty, final BigDecimal originalPriceStd,
       final int precision,
       final org.openbravo.model.pricing.priceadjustment.PriceAdjustment promo) {
     boolean applyDiscount = true;
-    BigDecimal localPriceStd = priceStd;
+    BigDecimal priceStd = originalPriceStd;
     if (promo.isMultiple() && promo.getMultiple() != null
         && qty.remainder(promo.getMultiple()).compareTo(BigDecimal.ZERO) != 0) {
       applyDiscount = false;
@@ -152,16 +151,16 @@ public class PriceAdjustment {
       // Avoids divide by zero error
       if (BigDecimal.ONE.subtract(promo.getDiscount().divide(BigDecimal.valueOf(100)))
           .compareTo(BigDecimal.ZERO) != 0) {
-        localPriceStd = localPriceStd.add(promo.getDiscountAmount())
+        priceStd = priceStd.add(promo.getDiscountAmount())
             .divide(BigDecimal.ONE.subtract(promo.getDiscount().divide(BigDecimal.valueOf(100))),
                 precision, RoundingMode.HALF_UP);
       } else {
         // 100 % Discount in price adjustment results in priceStd = Zero
-        localPriceStd = BigDecimal.ZERO;
+        priceStd = BigDecimal.ZERO;
       }
 
     }
-    return localPriceStd;
+    return priceStd;
   }
 
   private static List<org.openbravo.model.pricing.priceadjustment.PriceAdjustment> getApplicablePriceAdjustments(
