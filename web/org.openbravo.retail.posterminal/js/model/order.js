@@ -7308,6 +7308,7 @@
       //Sometimes the Id of Quotation is null.
       if (this.get('id') && !_.isNull(this.get('id'))) {
         this.set('oldId', this.get('id'));
+        this.set('documentNo', '');
       } else {
         //this shouldn't happen.
         OB.UTIL.showConfirmation.display(
