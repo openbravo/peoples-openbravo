@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2016 Openbravo S.L.U.
+ * Copyright (C) 2015-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -19,12 +19,14 @@ import javax.inject.Inject;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
+import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery;
+import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery.MasterDataModel;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
-import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
-public class ServicePriceRule extends ProcessHQLQuery {
+@MasterDataModel("ServicePriceRule")
+public class ServicePriceRule extends MasterDataProcessHQLQuery {
   public static final String servicePriceRulePropertyExtension = "OBPOS_ServicePriceRuleExtension";
 
   @Inject
@@ -55,5 +57,10 @@ public class ServicePriceRule extends ProcessHQLQuery {
         + "order by spr.id asc");
 
     return hqlQueries;
+  }
+
+  @Override
+  public List<String> getMasterDataModelProperties() {
+    return getPropertiesFrom(org.openbravo.model.pricing.pricelist.ServicePriceRule.class);
   }
 }

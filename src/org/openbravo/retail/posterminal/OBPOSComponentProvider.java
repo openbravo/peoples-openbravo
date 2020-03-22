@@ -280,6 +280,10 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/masterdata/ProductCharacteristicValueModel");
     appDependency.add("model/masterdata/ProductBOMModel");
     appDependency.add("model/masterdata/SalesRepresentativeModel");
+    appDependency.add("model/masterdata/ServicePriceRuleModel");
+    appDependency.add("model/masterdata/ServicePriceRuleVersionModel");
+    appDependency.add("model/masterdata/ServicePriceRuleRangeModel");
+    appDependency.add("model/masterdata/ServicePriceRuleRangePricesModel");
     appDependency.add("model/masterdata/ServiceProductModel");
     appDependency.add("model/masterdata/ServiceProductCategoryModel");
     appDependency.add("model/masterdata/TaxCategoryModel");
