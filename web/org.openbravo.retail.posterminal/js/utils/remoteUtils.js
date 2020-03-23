@@ -11,11 +11,10 @@
 OB.UTIL.remoteSearch = function(model) {
   let isRemoteSearch = false;
   if (
-    OB.MobileApp.model.hasPermission(
-      'OBPOS_remote.' + model.toLowerCase(),
-      true
-    ) ||
-    OB.App.MasterdataController.isLoadingCacheForModel(model)
+    OB.MobileApp.model.hasPermission(model.prototype.remote, true) ||
+    OB.App.MasterdataController.isLoadingCacheForModel(
+      model.prototype.modelName
+    )
   ) {
     isRemoteSearch = true;
   }
