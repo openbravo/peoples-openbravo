@@ -12,6 +12,21 @@
       super();
       this.indices = [
         new OB.App.Class.Index({
+          name: 'productSearchCache_idx',
+          properties: [
+            { property: '_identifier' },
+            { property: 'uPCEAN' },
+            { property: 'searchkey' },
+            { property: 'bestseller' },
+            { property: 'productCategory' },
+            { property: 'isGeneric' },
+            { property: 'characteristicDescriptionSearch' },
+            { property: 'listPrice' },
+            { property: 'ispack' }
+          ],
+          searchSupport: true
+        }),
+        new OB.App.Class.Index({
           name: 'productCategoryBrowse_idx',
           properties: [
             { property: 'productCategory' },
@@ -22,29 +37,6 @@
           name: 'bestsellerBrowse_idx',
           properties: [
             { property: 'bestseller', isBoolean: true },
-            { property: 'generic_product_id', isNullable: true }
-          ]
-        }),
-        new OB.App.Class.Index({
-          name: 'productCategorySearch_idx',
-          properties: [
-            { property: 'productCategory' },
-            { property: 'isGeneric', isBoolean: true }
-          ]
-        }),
-        new OB.App.Class.Index({
-          name: 'productCategoryGenericSearch_idx',
-          properties: [
-            { property: 'isGeneric', isBoolean: true },
-            { property: 'generic_product_id', isNullable: true },
-            { property: 'productCategory' }
-          ]
-        }),
-        new OB.App.Class.Index({
-          name: 'bestsellerGenericSearch_idx',
-          properties: [
-            { property: 'bestseller', isBoolean: true },
-            { property: 'isGeneric', isBoolean: true },
             { property: 'generic_product_id', isNullable: true }
           ]
         }),
