@@ -11019,7 +11019,7 @@
         if (
           model &&
           this.current &&
-          model.get('documentNo') === this.current.get('documentNo')
+          model.get('id') === this.current.get('id')
         ) {
           return;
         }
