@@ -61,6 +61,6 @@ public class ServicePriceRule extends MasterDataProcessHQLQuery {
 
   @Override
   public List<String> getMasterDataModelProperties() {
-    return getPropertiesFrom(org.openbravo.model.pricing.pricelist.ServicePriceRule.class);
+    return getPropertiesFrom(extensions);
   }
 }
