@@ -1,0 +1,409 @@
+openapi: 3.0.1
+info:
+  title: External Order Loader Web Service API
+  description: This is the API for consuming the Order Loader Web Service
+  contact:
+    name: Openbravo
+    url: https://www.openbravo.com
+  version: 1.0.0
+
+servers:
+  - url: ${contextURL}
+
+paths:
+  /org.openbravo.mobile.core.service.jsonrest/org.openbravo.retail.posterminal.ExternalOrderLoader:
+    post:
+      tags:
+        - External Order Loader Web Service
+      summary: Create an order in Openbravo
+      description: The ticket/order loader api provides a webservice which can be used to create tickets in Openbravo 
+      operationId: create order
+      security:
+        - BasicAuth: []
+      requestBody:
+        description: The request with orders will be created
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Request'
+            examples:
+              request1:
+                value: {
+				    "messageId": "MessageId01",
+				    "posTerminal": "VBS-1",
+				    "channel": "External",
+				    "data": [{
+				        "currency": "EUR",
+				        "step": "create",
+				        "grossAmount": 13.53,
+				        "netAmount": 11.00,
+				        "businessPartner": "VBS/C0001",
+				        "lines": [{
+				            "product": "WVG/S0011",
+				            "qty": 2,
+				            "grossAmount": 7.38,
+				            "netAmount": 6,
+				            "taxAmount": 1.38,
+				            "taxLines": {
+				                "Entregas IVA 21%": {
+				                    "rate": 23,
+				                    "netAmount": 6,
+				                    "taxAmount": 1.38
+				                }
+				             }
+				        },{
+				            "product": "WVG/B0017",
+				            "qty": 2,
+				            "grossAmount": 6.15,
+				            "netAmount": 5.0,
+				            "taxAmount": 1.15,
+				            "taxLines": {
+				                "Entregas IVA 21%": {
+				                    "rate": 23,
+				                    "netAmount": 5,
+				                    "taxAmount": 1.15
+				                }
+				             }
+				        }],
+				        "taxes": {
+				            "Entregas IVA 21%": {
+				                "rate": 23,
+				                "grossAmount": 13.53,
+				                "netAmount": 11.00,
+				                "taxAmount": 2.53
+				            }
+				        }
+				    }]
+				}
+                summary: Creating a simple order with two lines.
+                description: Gives an example of creating an order with a minimal json.
+              request2:
+                value: {
+				    "messageId": "MessageId02",
+				    "posTerminal": "VBS-1",
+				    "channel": "External",
+				    "data": [{
+				        "currency": "EUR",
+				        "payment": 12.10,
+				        "grossAmount": 12.10,
+				        "netAmount": 10.00,
+				        "businessPartner": "VBS/C0001",
+				        "lines": [{
+				            "product": "WVG/S0011",
+				            "qty": 2,
+				            "grossAmount": 12.10,
+				            "netAmount": 10.0,
+				            "taxAmount": 2.1,
+				            "taxLines": {
+				                "Entregas IVA 21%": {
+				                    "rate": 21,
+				                    "netAmount": 10.0,
+				                    "taxAmount": 2.10
+				                }
+				             },
+				             "promotions": [{
+				                "discountRule": "disc_5_ var_perc",
+				                "amount": 5,
+				                "quantity": 2,
+				                "baseUnitPrice": 7.5,
+				                "unitDiscount": 2.50
+				            }]
+				        }],
+				        "payments": [{
+				            "paidAmount": 12.1,
+				            "kind": "OBPOS_payment.cash",
+				            "rate": "1",
+				            "isocode": "EUR"
+				        }],
+				        "taxes": {
+				            "Entregas IVA 21%": {
+				                "rate": 21,
+				                "netAmount": 10.00,
+				                "taxAmount": 2.1
+				            }
+				        }
+				    }]
+				}
+                summary: Creating a complete order with promotions, shipped and paid.
+                description: Gives an example of creating a complete order with promotions, payments and generating shipment.
+      responses:
+        200:
+          description: Shows the created order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+              examples:
+                result1:
+                  value:
+                    response:
+                      status: 0
+                      result: 0
+                      contextInfo:
+                        userId: 100
+                        roleId: 463683CFA16C40C0A4EC8CF934114146
+                        orgId: D270A5AC50874F8BA67A88EE977F8E3B
+                        clientId: 39363B0921BB4293B48383844325E84C
+                  summary: Shows the order was successfully created
+                  description: Shows the order was successfully created
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        500:
+          description: Error Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                error1:
+                  value:
+                    error: "Ticket validation failed: organization cannot be null"
+                  summary: Mandatory parameter not found error
+components:
+  schemas:
+    Request:
+      type: object
+      properties:
+        messageId:
+          type: string
+        posTerminal:
+          type: string
+        channel:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Order'
+      required:
+        - posTerminal
+        - channel
+        - data
+      description: Input for EOL WS. The messageId is optional but it makes sense to use it because if you send the same message twice Openbravo will register this and automatically ignore the second/subsequent message if the first one is processed already. The code of the pos terminal corresponds to the search key of the pos terminal.Set the channel property always with the value External
+    Order:
+      type: object
+      properties:
+        currency:
+          type: string
+        step:
+          type: string
+        grossAmount:
+          type: number
+          format: double
+        netAmount:
+          type: number
+          format: double         
+        businessPartner:
+          type: string
+        id:
+          type: string
+        lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/Line'
+        payments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Payment'
+        taxes:
+          $ref: '#/components/schemas/TaxIdentifier'
+        approvals:
+          type: array
+          items:
+            $ref: '#/components/schemas/Approval'
+      required:
+        - currency
+        - step
+        - grossAmount
+        - netAmount
+        - lines
+        - payments
+        - taxes
+      description: Ticket or order to be created. For Currency use the isoCode as the value. For step always send the value "all". The grossAmount is the total amount of the order including taxes, the netAmount is the total amount of the order excluding taxes. The businessPartner should be the database id, name or searchkey of the business partner, if not set then the default defined for the pos terminal is used.
+    Line:
+      type: object
+      properties:
+        id:
+          type: string
+        product:
+          type: string
+        qty:
+          type: number
+          format: double
+        grossAmount:
+          type: number
+          format: double
+        netAmount:
+          type: number
+          format: double
+        taxAmount:
+          type: number
+          format: double
+        taxLines:
+          $ref: '#/components/schemas/TaxIdentifier'
+        promotions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Promotion'
+      required:
+        - qty
+        - product
+        - grossAmount
+        - netAmount
+        - taxAmount
+        - taxLines
+      description: Information for the line. For product can be used the database id, name, search key or ean of the product. The grossAmount should be the total amount including taxes. The netAmount is the amount excluding taxes.
+    Payment:
+      type: object
+      properties:
+        paidAmount:
+          type: number
+          format: double
+        date:
+          type: string
+          format: YYYY-MM-DDTHH:mm:ss'
+        kind:
+          type: string
+        rate:
+          type: string
+        isocode:
+          type: string
+      required:
+        - paidAmount
+        - date
+        - kind
+        - rate
+        - isocode
+      description: Information for the payment. The paid amount is the payment in the currency of the order header. The kind refers to the payment method, the eligible payment methods are defined by POS terminal
+    TaxIdentifier:
+      type: object
+      properties:
+        taxName:
+          type: string
+          $ref: '#/components/schemas/Tax'
+      description: The taxes is not an array but a json object where the property name is the identification of the tax. The database id, name or tax search key can be used.
+    Tax:
+      type: object
+      properties:
+        rate:
+          type: number
+          format: double
+        netAmount:
+          type: number
+          format: double
+        taxAmount:
+          type: number
+          format: double
+        grossAmount:
+          type: number
+          format: double
+        amount:
+          type: number
+          format: double
+        net:
+          type: number
+          format: double
+      required:
+        - netAmount
+        - taxAmount
+      description: Information for the header/line tax.    
+    Promotion:
+      type: object
+      properties:
+        name:
+          type: string
+        discountRule:
+          type: string
+        amount:
+          type: number
+          format: double
+        baseUnitPrice:
+          type: number
+          format: double
+        discountType:
+          type: string
+        displayedTotalAmount:
+          type: number
+          format: double
+        obdiscQtyoffer:
+          type: number
+          format: double
+        quantity:
+          type: number
+          format: double
+        unitDiscount:
+          type: number
+          format: double
+      required:
+        - name
+        - discountRule
+        - amount
+        - quantity
+      description: Information for the promotion applied to the line.  
+    Approval:
+      type: object
+      properties:
+        approvalType:
+          type: string
+        userContact:
+          type: string
+        created:
+          type: number
+          format: double
+      required:
+        - approvalType
+        - userContact
+        - created
+      description: Information for the approvals. Possible values are (OBPOS_approval.discounts) Web POS Discretionary Discount Approval, (OBPOS_approval.opendrawer.cashup) Web POS Open Drawer approval Cash Up, (OBPOS_approval.setPrice) Web POS set Price approval, (OBPOS_approval.returns) Web POS Returns Approval,   
+    Result:
+      type: object
+      properties:
+        response:
+          $ref: '#/components/schemas/Response'
+      description: Information for the result of calling WS.
+    Response:
+      type: object
+      properties:
+        status:
+          type: number
+          format: double
+        result:
+          type: string
+        contextInfo:
+          $ref: '#/components/schemas/ContextInfo'
+        error:
+          $ref: '#/components/schemas/Error'
+        totalRows:
+          type: number
+          format: double
+      description: Only a success or failure message is retrieved. If the process was success the status will be returned as 0 else an error is indicated by the status property which will have value -1. The error message can be be found in the message property of the error object.
+    ContextInfo:
+      type: object
+      properties:
+        userId:
+          type: string
+        roleId:
+          type: string
+        orgId:
+          type: string
+        clientId:
+          type: string
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        messageType:
+          type: string
+        title:
+          type: string
+  responses:
+    UnauthorizedError:
+      description: Authentication information is missing or invalid
+      headers:
+        WWW_Authenticate:
+          schema:
+            type: string
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic

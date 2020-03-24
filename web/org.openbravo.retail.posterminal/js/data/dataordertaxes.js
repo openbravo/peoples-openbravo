@@ -343,11 +343,6 @@
 
   var findTaxesCollection = function(receipt, line, taxCategory) {
     return new Promise(function(fulfill, reject) {
-      var taxCategoryName = null;
-      if (taxCategory instanceof Object) {
-        taxCategoryName = taxCategory.name;
-        taxCategory = taxCategory.id;
-      }
       // sql parameters
       var fromRegionOrg = OB.MobileApp.model.get('terminal')
           .organizationRegionId,
@@ -487,22 +482,12 @@
               if (coll && coll.length > 0) {
                 fulfill(coll);
               } else {
-                if (OB.UTIL.isNullOrUndefined(taxCategoryName)) {
-                  reject(
-                    OB.I18N.getLabel('OBPOS_TaxNotFound_Message', [
-                      bpName,
-                      bpShipLocName
-                    ])
-                  );
-                } else {
-                  reject(
-                    OB.I18N.getLabel('OBPOS_TaxWithCategoryNotFound_Message', [
-                      bpName,
-                      bpShipLocName,
-                      taxCategoryName
-                    ])
-                  );
-                }
+                reject(
+                  OB.I18N.getLabel('OBPOS_TaxNotFound_Message', [
+                    bpName,
+                    bpShipLocName
+                  ])
+                );
               }
             },
             function() {
@@ -512,31 +497,6 @@
           );
         }
       );
-    });
-  };
-
-  var getTaxCategoryName = function(params) {
-    return new Promise(function(resolve) {
-      if (!OB.UTIL.isNullOrUndefined(OB.Model.TaxCategory)) {
-        OB.Dal.findUsingCache(
-          'taxCategory',
-          OB.Model.TaxCategory,
-          {
-            id: params.line.get('product').get('taxCategory')
-          },
-          function(taxcategory) {
-            if (taxcategory.length > 0) {
-              params.taxCategory = taxcategory.models[0].toJSON();
-            }
-            resolve(params);
-          },
-          {
-            modelsAffectedByCache: ['TaxCategory']
-          }
-        );
-      } else {
-        resolve(params);
-      }
     });
   };
 
@@ -1045,7 +1005,6 @@
             orggross: orggross,
             discountedGross: discountedGross
           }) //
-            .then(getTaxCategoryName)
             .then(calcProductTaxesIncPrice);
         }
       })

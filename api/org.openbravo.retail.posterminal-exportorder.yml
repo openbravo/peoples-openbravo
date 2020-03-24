@@ -1,0 +1,640 @@
+openapi: 3.0.1
+info:
+  title: Export Order Web Service API
+  description: This is the API for consuming the ExportOrder Web Service
+  contact:
+    name: Openbravo
+    url: https://www.openbravo.com
+  version: 1.0.0
+
+servers:
+  - url: ${contextURL}
+
+paths:
+  /org.openbravo.mobile.core.service.jsonrest/org.openbravo.retail.posterminal.ExportOrder:
+    post:
+      tags:
+        - Paid Receipts Web Service
+      summary: Gets the order information from Openbravo
+      description: The ExportOrder provides a webservice which can be used to get order information from Openbravo 
+      operationId: get an order information
+      security:
+        - BasicAuth: []
+      requestBody:
+        description: The ticket being requested
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Request'
+            examples:
+              ticket1:
+                value: {
+                	"orderid": "DC57302D4E58C2C7AD79BAB884FEC710"
+                }
+                summary: Get a ticket by its order ID
+                description: Gives an example of getting a ticket by ID from Openbravo.
+              ticket2:
+                value: {
+                	"documentNo": "VBS1/0000023"
+                }
+                summary: Get a ticket by its document number
+                description: Gives an example of getting a ticket by Document No from Openbravo.
+      responses:
+        200:
+          description: Shows the retrieved order information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Result'
+              examples:
+                result1:
+                  summary: Shows the retrieved order
+                  value: {
+					  "response": {
+					    "requestStreamConnectionTime": 1584150556885,
+					    "requestDataLoadedTime": 1584150556888,
+					    "responseDataSentTime": 1584150556888,
+					    "data": [
+					      {
+					        "posTerminal$_identifier": "VBS POS Terminal",
+					        "documentType": "511A9371A0F74195AA3F6D66C722729D",
+					        "priceIncludesTax": true,
+					        "currency$_identifier": "EUR",
+					        "bp": "ABD91C9D3BC94175B876FBBE9CACA008",
+					        "documentTypeReturnId": "B0745E66713C49199CE719BF5B88AF5C",
+					        "priceList": "496CF965DF9744D2A41248392D1DE407",
+					        "loaded": "2020-03-12T20:54:54.910Z",
+					        "documentNo": "VBS1/0000023",
+					        "organization$_identifier": "Vall Blanca Store",
+					        "iscancelled": false,
+					        "isModified": "false",
+					        "client": "39363B0921BB4293B48383844325E84C",
+					        "currency": "102",
+					        "cashVAT": false,
+					        "updatedBy": "100",
+					        "totalNetAmount": 10,
+					        "posTerminal": "9104513C2D0741D4850AE8493998A7C8",
+					        "isLayaway": false,
+					        "rtpRespsuccess": false,
+					        "bpLocId": "2AA7EADDF7EC405899262DDA3E572436",
+					        "creationDate": "2020-03-12T20:54:54.910Z",
+					        "warehouse": "A154EC30A296479BB078B0AFFD74CA22",
+					        "isQuotation": false,
+					        "rtpResponse": false,
+					        "invoiceTerms": "I",
+					        "totalamount": 12.1,
+					        "createdBy": "100",
+					        "organization": "D270A5AC50874F8BA67A88EE977F8E3B",
+					        "bpBillLocId": "2AA7EADDF7EC405899262DDA3E572436",
+					        "orderDate": "2020-03-12T03:00:00.000Z",
+					        "businessPartner$_identifier": "VBS Customer",
+					        "trxOrganization": "",
+					        "invoiceCreated": true,
+					        "generateInvoice": true,
+					        "obrlpcoCoupons": [],
+					        "obcpotfCoupons": [],
+					        "recordInImportEntry": false,
+					        "id": "BF5DD35220FD451F8467F5F214FCCEAC",
+					        "lines": [
+					          {
+					            "orderId": "BF5DD35220FD451F8467F5F214FCCEAC",
+					            "grossUnitPrice": 6.05,
+					            "obresmsQtysenttokitchen": 0,
+					            "loaded": "2020-03-12T20:54:55.204Z",
+					            "uOM": "100",
+					            "deliveredQuantity": 2,
+					            "obposIspaid": false,
+					            "grossListPrice": 6.05,
+					            "quotationDocumentTypeId": "0A1D4A2DB7144D81A821E31A9B332ACB",
+					            "baseNetUnitPrice": 5,
+					            "unitPrice": 6.05,
+					            "pricePrecision": 2,
+					            "taxExempt": false,
+					            "obposCanbedelivered": false,
+					            "tax": "5235D8E99A2749EFA17A5C92A52AEFC6",
+					            "warehouse": "A154EC30A296479BB078B0AFFD74CA22",
+					            "taxCategory": "FF80818123B7FC160123B804AB88000B",
+					            "obwplQtyinpicking": -2,
+					            "returnable": true,
+					            "overdueReturnDays": 999999999999,
+					            "obtaxexIstaxexempt": false,
+					            "remainingQuantity": 2,
+					            "documentTypeId": "511A9371A0F74195AA3F6D66C722729D",
+					            "discountPercentage": 0,
+					            "shippedQuantity": 0,
+					            "productType": "I",
+					            "invoicedQuantity": 2,
+					            "listPrice": 5,
+					            "warehousename": "Vall Blanca Store Warehouse",
+					            "organization": {
+					              "id": "D270A5AC50874F8BA67A88EE977F8E3B",
+					              "name": "Vall Blanca Store"
+					            },
+					            "priceIncludesTax": true,
+					            "shipmentlines": [],
+					            "promotions": [
+					              {
+					                "discountType": "20E4EC27397344309A2185097392D964",
+					                "name": "disc_5_ var_perc",
+					                "actualAmt": 5,
+					                "hidden": false,
+					                "displayedTotalAmount": 5,
+					                "obdiscQtyoffer": 2,
+					                "discountRule": "08C2C89DB15443478B659A8645828F63",
+					                "amount": 5,
+					                "quantity": 2
+					              }
+					            ],
+					            "productId": "CEB0751EC82C426FA82FE8F55E47578D",
+					            "product": "Ski skin",
+					            "id": "9E724492AC2247FA8785517498ACCE29",
+					            "qty": 2,
+					            "grossAmount": 12.1,
+					            "netAmount": 10,
+					            "taxLines": {
+					              "Entregas IVA 21%": {
+					                "taxAmount": 2.1,
+					                "taxableAmount": 10,
+					                "docTaxAmount": "D",
+					                "lineNo": 10,
+					                "cascade": false,
+					                "id": "5235D8E99A2749EFA17A5C92A52AEFC6",
+					                "rate": 21
+					              }
+					            }
+					          }
+					        ],
+					        "payments": [
+					          {
+					            "amount": 12.1,
+					            "paymentDate": "2020-03-12 00:00:00",
+					            "name": "Cash",
+					            "kind": "OBPOS_payment.cash",
+					            "rate": "1",
+					            "mulrate": "1.000000000000",
+					            "isocode": "EUR",
+					            "openDrawer": false,
+					            "isPrePayment": true,
+					            "paymentId": "19D4AE6BAF2E4289BB0CA1CE3248FEBE",
+					            "oBPOSPOSTerminal": "9104513C2D0741D4850AE8493998A7C8",
+					            "oBPOSPOSTerminalSearchKey": "VBS-1",
+					            "coupons": [],
+					            "obpmaiInfo": {},
+					            "paidAmount": 12.1
+					          }
+					        ],
+					        "taxes": {
+					          "Entregas IVA 21%": {
+					            "rate": 21,
+					            "net": 10,
+					            "amount": 2.1,
+					            "gross": 12.1,
+					            "cascade": false,
+					            "docTaxAmount": "D",
+					            "lineNo": 10,
+					            "id": "5235D8E99A2749EFA17A5C92A52AEFC6"
+					          }
+					        }
+					      }
+					    ],
+					    "status": 0,
+					    "contextInfo": {
+					      "userId": "100",
+					      "roleId": "E717F902C44C455793463450495FF36B",
+					      "orgId": "0",
+					      "clientId": "39363B0921BB4293B48383844325E84C"
+					    },
+					    "sourceVersion": "2d9b980a0512a05fe3cafa38b43b97ef"
+					  }
+					}
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        500:
+          description: Error Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                error1:
+                  value:
+                    error: "Error"
+                  summary: Mandatory parameter not found error
+components:
+  schemas:
+    Request:
+      type: object
+      properties:
+        orderid:
+          type: string
+        documentNo:
+          type: string
+      description: Should be provided the ticket document number or its order ID.
+    Result:
+      type: object
+      properties:
+        response:
+          $ref: '#/components/schemas/Response'
+      description: Information for the result of calling WS.
+    Response:
+      type: object
+      properties:
+        status:
+          type: number
+          format: double
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Order'
+        contextInfo:
+          $ref: '#/components/schemas/ContextInfo'
+        sourceVersion:
+          type: string
+    ContextInfo:
+      type: object
+      properties:
+        userId:
+          type: string
+        roleId:
+          type: string
+        orgId:
+          type: string
+        clientId:
+          type: string
+    Order:
+      type: object
+      properties:
+        posTerminal$_identifier:
+          type: string
+        documentType:
+          type: string         
+        priceIncludesTax:
+          type: boolean
+        currency$_identifier:
+          type: string
+        bp:
+          type: string
+        documentTypeReturnId:
+          type: string
+        priceList:
+          type: string  
+        loaded:
+          type: string
+          format: YYYY-MM-DDTHH:mm:ss 
+        documentNo:
+          type: string
+        organization$_identifier:
+          type: string
+        iscancelled:
+          type: boolean
+        isModified:
+          type: boolean
+        client:
+          type: string
+        currency:
+          type: string
+        cashVAT:
+          type: boolean
+        updatedBy:
+          type: string
+        totalNetAmount:
+          type: number
+          format: double 
+        posTerminal:
+          type: string
+        isLayaway:
+          type: boolean
+        rtpRespsuccess:
+          type: boolean             
+        bpLocId:
+          type: string
+        creationDate:
+          type: string
+          format: YYYY-MM-DDTHH:mm:ss
+        warehouse:
+          type: string  
+        isQuotation:
+          type: boolean
+        rtpResponse:
+          type: boolean   
+        invoiceTerms:
+          type: string
+        totalamount:
+          type: number
+          format: double 
+        createdBy:
+          type: string
+        organization:
+          type: string
+        bpBillLocId:
+          type: string
+        orderDate:
+          type: string
+          format: YYYY-MM-DDTHH:mm:ss  
+        businessPartner$_identifier:
+          type: string
+        id:
+          type: string
+        trxOrganization:
+          type: string
+        invoiceCreated:
+          type: boolean           
+        generateInvoice:
+          type: boolean         
+        lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/Line'
+        payments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Payment'
+        taxes:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaxHeaderIdentifier'
+        approvals:
+          type: array
+          items:
+            $ref: '#/components/schemas/Approval'
+        recordInImportEntry:
+          type: boolean        
+    Line:
+      type: object
+      properties:
+        orderId:
+          type: string
+        grossUnitPrice:
+          type: number
+          format: double
+        obresmsQtysenttokitchen:
+          type: number
+          format: double
+        loaded:
+          type: string
+          format: YYYY-MM-DDTHH:mm:ss'
+        uOM:
+          type: string
+        deliveredQuantity:
+          type: number
+          format: double
+        obposIspaid:
+          type: boolean
+        grossListPrice:
+          type: number
+          format: double
+        quotationDocumentTypeId:
+          type: string
+        productId:
+          type: string
+        baseNetUnitPrice:
+          type: number
+          format: double          
+        unitPrice:
+          type: number
+          format: double
+        pricePrecision:
+          type: number
+          format: double
+        taxExempt:
+          type: boolean
+        obposCanbedelivered:
+          type: boolean 
+        tax:
+          type: string 
+        warehouse:
+          type: string 
+        taxCategory:
+          type: string
+        obwplQtyinpicking:
+          type: number
+          format: double
+        returnable:
+          type: boolean
+        overdueReturnDays:
+          type: number
+          format: double
+        product:
+          type: string
+        obtaxexIstaxexempt:
+          type: boolean
+        remainingQuantity:
+          type: number
+          format: double
+        grossAmount:
+          type: number
+          format: double
+        documentTypeId:
+          type: string
+        discountPercentage:
+          type: number
+          format: double
+        shippedQuantity:
+          type: number
+          format: double
+        productType:
+          type: string
+        qty:
+          type: number
+          format: double
+        id:
+          type: string
+        netAmount:
+          type: number
+          format: double
+        invoicedQuantity:
+          type: number
+          format: double
+        listPrice:
+          type: number
+          format: double   
+        warehousename:
+          type: string
+        organization:
+          $ref: '#/components/schemas/Organization'
+        priceIncludesTax:
+          type: boolean
+        shipmentLines:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShipmentLine'        
+        taxLines:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaxLineIdentifier'                   
+        promotions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Promotion'           
+    Organization:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string   
+    Payment:
+      type: object
+      properties:
+        amount:
+          type: number
+          format: double
+        paidAmount:
+          type: number
+          format: double
+        paymentDate:
+          type: string
+          format: YYYY-MM-DDTHH:mm:ss'
+        name:
+          type: string
+        kind:
+          type: string
+        rate:
+          type: string     
+        mulrate:
+          type: string
+        openDrawer:
+          type: boolean
+        isPrePayment:
+          type: boolean          
+        paymentId:
+          type: string
+        oBPOSPOSTerminal:
+          type: string
+        oBPOSPOSTerminalSearchKey:
+          type: string
+    TaxHeaderIdentifier:
+      type: object
+      properties:
+        taxName:
+          type: string
+          $ref: '#/components/schemas/TaxHeader'
+      description: The taxes is not an array but a json object where the property name is the identification of the tax. The database id, name or tax search key can be used.
+    TaxHeader:
+      type: object
+      properties:
+        id:
+          type: string 
+        rate:
+          type: number
+          format: double
+        net:
+          type: number
+          format: double
+        amount:
+          type: number
+          format: double
+        gross:
+          type: number
+          format: double
+        cascade:
+          type: boolean
+        docTaxAmount:
+          type: string  
+        lineNo:
+          type: number
+          format: double
+      description: Information for the header tax.
+    TaxLineIdentifier:
+      type: object
+      properties:
+        taxName:
+          type: string
+          $ref: '#/components/schemas/TaxLine'
+      description: The taxes is not an array but a json object where the property name is the identification of the tax. The database id, name or tax search key can be used.
+    TaxLine:
+      type: object
+      properties:
+        id:
+          type: string 
+        taxAmount:
+          type: number
+          format: double
+        taxableAmount:
+          type: number
+          format: double
+        taxRate:
+          type: number
+          format: double
+        docTaxAmount:
+          type: string  
+        lineNo:
+          type: number
+          format: double
+        cascade:
+          type: boolean
+      description: Information for the line tax.
+    Promotion:
+      type: object
+      properties:
+        discountRule:
+          type: string
+        discountType:
+          type: string
+        name:
+          type: string          
+        amount:
+          type: number
+          format: double
+        actualAmt:
+          type: number
+          format: double
+        hidden:
+          type: boolean 
+        displayedTotalAmount:
+          type: number
+          format: double
+        quantity:
+          type: number
+          format: double
+        obdiscQtyoffer:
+          type: number
+          format: double
+      description: Information for the promotion applied to the line. 
+    ShipmentLine:
+      type: object
+      properties:
+        shipLineId:
+          type: string
+        shipmentlineNo:
+          type: number
+          format: double
+        shipment:
+          type: string
+        remainingQty:
+          type: number
+          format: double
+        qty:
+          type: number
+          format: double
+    Approval:
+      type: object
+      properties:
+        approvalType:
+          type: string
+        userContact:
+          type: string
+        created:
+          type: number
+          format: double
+      description: Information for the approvals. Possible values are (OBPOS_approval.discounts) Web POS Discretionary Discount Approval, (OBPOS_approval.opendrawer.cashup) Web POS Open Drawer approval Cash Up, (OBPOS_approval.setPrice) Web POS set Price approval, (OBPOS_approval.returns) Web POS Returns Approval,   
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        messageType:
+          type: string
+        title:
+          type: string
+  responses:
+    UnauthorizedError:
+      description: Authentication information is missing or invalid
+      headers:
+        WWW_Authenticate:
+          schema:
+            type: string
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic

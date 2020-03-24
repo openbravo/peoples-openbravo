@@ -55,6 +55,7 @@ public class AttributesUtils {
           attrSICrit.add(Restrictions.eq(AttributeSetInstance.PROPERTY_DESCRIPTION,
               validatedAttributeSetInstanceDescription));
           attrSICrit.addOrderBy("id", false);
+          attrSICrit.setMaxResults(2);
           List<AttributeSetInstance> attrSIList = attrSICrit.list();
           if (attrSIList.isEmpty() && attrSIList.size() == 0) {
             // Att Set instance Id not found -> Create New One
@@ -80,10 +81,11 @@ public class AttributesUtils {
             querySdetail.setNamedParameter("attsetdescription",
                 validatedAttributeSetInstanceDescription);
             querySdetail.setNamedParameter("orgid", posTerminalOrganizationId);
-            List<StorageDetail> lstSDResults = querySdetail.list();
-            if (lstSDResults.size() > 0) {
+            querySdetail.setMaxResult(1);
+            StorageDetail lstSDResults = querySdetail.uniqueResult();
+            if (lstSDResults != null) {
               // Pick the first one (query was ordered by qtyOnHand and Att Set instance id)
-              attrSetInst = lstSDResults.get(0).getAttributeSetValue();
+              attrSetInst = lstSDResults.getAttributeSetValue();
             } else {
               // There is no stock. Use the first one found in Att Set instance table
               attrSetInst = attrSIList.get(0);
