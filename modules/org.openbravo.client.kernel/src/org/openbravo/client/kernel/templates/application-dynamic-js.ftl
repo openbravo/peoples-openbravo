@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009-2019 Openbravo SLU
+ * All portions are Copyright (C) 2009-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -74,3 +74,4 @@ OB.Application.companyImage = {
     '${key}': '${data.companyImageLogoData[key]}'<#if key_has_next>,</#if>
   </#list>
 };
+OB.Application.communityBrandingUrl = '${data.communityBrandingUrl?js_string}'

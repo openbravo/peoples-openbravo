@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -66,7 +66,7 @@
         INSERT INTO C_INVOICELINE (C_InvoiceLine_ID, C_Invoice_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, 
             CREATED, CREATEDBY, UPDATED, UPDATEDBY, LINE, DESCRIPTION, M_PRODUCT_ID, 
             QTYINVOICED, PRICELIST, PRICEACTUAL, PRICELIMIT, LINENETAMT, C_CHARGE_ID, CHARGEAMT, C_UOM_ID, C_TAX_ID, 
-            S_RESOURCEASSIGNMENT_ID, TAXAMT, M_ATTRIBUTESETINSTANCE_ID, ISDESCRIPTION, QUANTITYORDER, M_PRODUCT_UOM_ID, 
+            S_RESOURCEASSIGNMENT_ID, M_ATTRIBUTESETINSTANCE_ID, ISDESCRIPTION, QUANTITYORDER, M_PRODUCT_UOM_ID, 
             PRICESTD, ACCOUNT_ID,FINANCIAL_INVOICE_LINE,
             gross_unit_price, line_gross_amount, grosspricelist, grosspricestd,
             isdeferred, defplantype, periodnumber, c_period_id,
@@ -76,7 +76,7 @@
         SELECT ?, ?, ?, ?, 'Y', now(), ?, now(), ?,
         (SELECT COALESCE(MAX(LINE),0)+10 FROM C_InvoiceLine WHERE C_Invoice_ID = ?), l.DESCRIPTION, l.M_PRODUCT_ID,
         TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), l.C_CHARGE_ID, l.CHARGEAMT, l.C_UOM_ID, ?,
-        l.S_RESOURCEASSIGNMENT_ID, l.TAXAMT, l.M_ATTRIBUTESETINSTANCE_ID, l.ISDESCRIPTION, l.QUANTITYORDER, l.M_PRODUCT_UOM_ID,
+        l.S_RESOURCEASSIGNMENT_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ISDESCRIPTION, l.QUANTITYORDER, l.M_PRODUCT_UOM_ID,
         l.PRICESTD, l.ACCOUNT_ID,l.FINANCIAL_INVOICE_LINE,
         TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?),
         l.isdeferred, l.defplantype, l.periodnumber, l.c_period_id,

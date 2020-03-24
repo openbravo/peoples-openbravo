@@ -17,7 +17,7 @@
     * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
     * All Rights Reserved.
     * Contributor(s): Openbravo SLU
-    * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
+    * Contributions are Copyright (C) 2001-2020 Openbravo, S.L.U.
     *
     * Specifically, this derivative work is based upon the following Compiere
     * file and version.
@@ -39,11 +39,7 @@ BEGIN
   IF(INSERTING OR UPDATING) THEN
     -- Adds retrocompatibity to code that uses the Show IBAN/Generic columns
     IF (:NEW.BANKFORMAT IS NULL) THEN
-      IF (:NEW.SHOWIBAN='Y') THEN
-	:NEW.BANKFORMAT:='IBAN';
-      ELSE
-	:NEW.BANKFORMAT:='GENERIC';
-      END IF;  
+      :NEW.BANKFORMAT:='GENERIC';
     END IF;
 
     IF (:NEW.IBAN IS NOT NULL) THEN

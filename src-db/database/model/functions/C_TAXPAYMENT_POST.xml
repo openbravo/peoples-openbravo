@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2018 Openbravo SLU
+* All portions are Copyright (C) 2001-2020 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -272,9 +272,9 @@ BEGIN
       begin
       v_line := v_line + 10;
       insert
-      into gl_journalline(gl_journalline_id,   ad_client_id,   ad_org_id,   isactive,   created,   createdby,   updated,   updatedby, gl_journal_id, line, c_currency_id, currencyratetype, dateacct, c_validcombination_id, AMTSOURCEDR, AMTSOURCECR, AMTACCTDR, AMTACCTCR)
+      into gl_journalline(gl_journalline_id,   ad_client_id,   ad_org_id,   isactive,   created,   createdby,   updated,   updatedby, gl_journal_id, line, c_currency_id, currencyratetype, c_validcombination_id, AMTSOURCEDR, AMTSOURCECR, AMTACCTDR, AMTACCTCR)
       values
-      (v_gl_journallineid, v_client_id, v_org_id,'Y', now(), v_createdby, now(), v_updatedby, v_gl_journalid, v_line, v_currency_id, v_currencyratetype, v_date, cur_line.acct_id, v_debit, v_credit, v_debit, v_credit);
+      (v_gl_journallineid, v_client_id, v_org_id,'Y', now(), v_createdby, now(), v_updatedby, v_gl_journalid, v_line, v_currency_id, v_currencyratetype, cur_line.acct_id, v_debit, v_credit, v_debit, v_credit);
       end;
       end if;
 
@@ -320,9 +320,9 @@ BEGIN
       ad_sequence_next('GL_JournalLine', v_record_id, v_gl_journallineid);
      insert
      into gl_journalline(gl_journalline_id,   ad_client_id,   ad_org_id,   isactive,   created,   createdby,   updated,   updatedby, gl_journal_id,    
-     line, c_currency_id, currencyratetype, dateacct, c_validcombination_id, AMTSOURCEDR, AMTSOURCECR, AMTACCTDR, AMTACCTCR)
+     line, c_currency_id, currencyratetype, c_validcombination_id, AMTSOURCEDR, AMTSOURCECR, AMTACCTDR, AMTACCTCR)
                  values (v_gl_journallineid,   v_client_id,      v_org_id,        'Y',     now(), v_createdby,   now(), v_updatedby, v_gl_journalid, 
-                 v_line, v_currency_id, v_currencyratetype, v_date, v_glitem_acct, v_totaldebit, v_totalcredit, v_totaldebit, v_totalcredit);
+                 v_line, v_currency_id, v_currencyratetype, v_glitem_acct, v_totaldebit, v_totalcredit, v_totaldebit, v_totalcredit);
 
     GL_JOURNAL_POST(null, v_gl_journalid);
 

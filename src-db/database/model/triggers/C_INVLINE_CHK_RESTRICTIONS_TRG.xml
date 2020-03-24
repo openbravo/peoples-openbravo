@@ -18,7 +18,7 @@
     * under the License.
     * The Original Code is Openbravo ERP.
     * The Initial Developer of the Original Code is Openbravo SLU
-    * All portions are Copyright (C) 2001-2017 Openbravo SLU
+    * All portions are Copyright (C) 2001-2020 Openbravo SLU
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
@@ -61,7 +61,6 @@ BEGIN
       OR(COALESCE(:OLD.CHARGEAMT, 0) <> COALESCE(:NEW.CHARGEAMT, 0))
       OR(COALESCE(:OLD.C_UOM_ID, '0') <> COALESCE(:NEW.C_UOM_ID, '0'))
       OR(COALESCE(:OLD.C_TAX_ID, '0') <> COALESCE(:NEW.C_TAX_ID, '0'))
-      OR(COALESCE(:OLD.TAXAMT, 0) <> COALESCE(:NEW.TAXAMT, 0))
       OR(COALESCE(:OLD.M_ATTRIBUTESETINSTANCE_ID, '0') <> COALESCE(:NEW.M_ATTRIBUTESETINSTANCE_ID, '0'))
       OR(COALESCE(:OLD.QUANTITYORDER, 0) <> COALESCE(:NEW.QUANTITYORDER, 0))
       OR(COALESCE(:OLD.C_ORDERLINE_ID, '0') <> COALESCE(:NEW.C_ORDERLINE_ID, '0'))

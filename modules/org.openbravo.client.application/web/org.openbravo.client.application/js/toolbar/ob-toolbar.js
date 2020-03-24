@@ -354,6 +354,9 @@ isc.OBToolbar.addClassProperties({
     sortPosition: 80,
     prompt: OB.I18N.getLabel('OBUIAPP_ExportGrid'),
     updateState: function() {
+      // Note that there is also logic in ob-grid that disables this button
+      // when editing the filters having lazy filtering enabled
+      // See https://issues.openbravo.com/view.php?id=43291 for more info
       this.setDisabled(
         this.view.isShowingForm ||
           this.view.viewGrid.getTotalRows() === 0 ||

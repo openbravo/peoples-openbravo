@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2016 Openbravo SLU
+ * All portions are Copyright (C) 2001-2020 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -74,7 +74,6 @@
     <Parameter name="cActivityId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_ACTIVITY_ID = ?]]></Parameter>
     <Parameter name="cCampaignId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_CAMPAIGN_ID = ?]]></Parameter>
     <Parameter name="cBpartnerLocationId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_BPARTNER_LOCATION_ID = ?]]></Parameter>
-    <Parameter name="paymentrule" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.PAYMENTRULE = ?]]></Parameter>
     <Parameter name="paymentmethodId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.FIN_PAYMENTMETHOD_ID = ?]]></Parameter>
     <Parameter name="cPaymentTermId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_PAYMENTTERM_ID = ?]]></Parameter>
     <Parameter name="cCostcenterId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_COSTCENTER_ID = ?]]></Parameter>
@@ -107,7 +106,6 @@
     <Parameter name="cActivityId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_ACTIVITY_ID = ?]]></Parameter>
     <Parameter name="cCampaignId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_CAMPAIGN_ID = ?]]></Parameter>
     <Parameter name="cBpartnerLocationId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_BPARTNER_LOCATION_ID = ?]]></Parameter>
-    <Parameter name="paymentrule" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.PAYMENTRULE = ?]]></Parameter>
     <Parameter name="paymentmethodId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.FIN_PAYMENTMETHOD_ID = ?]]></Parameter>
     <Parameter name="cPaymentTermId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_PAYMENTTERM_ID = ?]]></Parameter>
     <Parameter name="cCostcenterId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_COSTCENTER_ID = ?]]></Parameter>
@@ -291,7 +289,7 @@
          , C_DocTypeTarget_ID, DateInvoiced, DateAcct, TaxDate
          , C_BPartner_ID, C_BPartner_Location_ID, AD_User_ID, M_PriceList_ID
          , C_Currency_ID, SalesRep_ID, IsDiscountPrinted, C_Charge_ID
-         , ChargeAmt, PaymentRule, FIN_PaymentMethod_ID, C_PaymentTerm_ID, CreateFrom
+         , ChargeAmt, FIN_PaymentMethod_ID, C_PaymentTerm_ID, CreateFrom
          
          , GenerateTo, C_Project_ID, C_Activity_ID, C_Campaign_ID
          , AD_OrgTrx_ID, User1_ID, User2_ID, TotalLines
@@ -307,7 +305,7 @@
          , (?), TO_DATE(?), TO_DATE(?), TO_DATE(?)
          , (?), (?), (?), (?)
          , (?), (?), (?), (?)
-         , TO_NUMBER(?), (?), (?), (?), (?)
+         , TO_NUMBER(?), (?), (?), (?)
          
          , (?), (?), (?), (?)
          , (?), (?), (?), TO_NUMBER(?)
@@ -345,7 +343,6 @@
 <Parameter name="isdiscountprinted"/>
 <Parameter name="cChargeId"/>
 <Parameter name="chargeamt"/>
-<Parameter name="paymentrule"/>
 <Parameter name="paymentmethodId"/>
 <Parameter name="cPaymenttermId"/>
 <Parameter name="createfrom"/>

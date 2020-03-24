@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2019 Openbravo SLU
+ * All portions are Copyright (C) 2019-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -93,8 +93,9 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
   private boolean useOrderDocumentNoForRelatedDocs;
 
   @SuppressWarnings("hiding")
-  void init(String oldOrderId, Set<String> newOrderIds, String paymentOrganizationId,
-      JSONObject jsonOrder, boolean useOrderDocumentNoForRelatedDocs) {
+  void init(final String oldOrderId, final Set<String> newOrderIds,
+      final String paymentOrganizationId, final JSONObject jsonOrder,
+      final boolean useOrderDocumentNoForRelatedDocs) {
     this.oldOrderId = oldOrderId;
     this.newOrderIds = newOrderIds;
     this.paymentOrganizationId = paymentOrganizationId;
@@ -110,7 +111,7 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
     OBContext.setAdminMode(false);
     try {
       Order oldOrder = OBDal.getInstance().get(Order.class, oldOrderId);
-      List<Order> newOrders = newOrderIds.stream()
+      final List<Order> newOrders = newOrderIds.stream()
           .map(newOrderId -> OBDal.getInstance().get(Order.class, newOrderId))
           .collect(Collectors.toList());
       oldOrder = lockOrder(oldOrder);
@@ -160,8 +161,8 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
       runCancelAndReplaceOrderHooks(oldOrder, inverseOrder, Optional.of(newOrders), jsonOrder);
 
       return newOrders;
-    } catch (Exception e1) {
-      Throwable e2 = DbUtility.getUnderlyingSQLException(e1);
+    } catch (final Exception e1) {
+      final Throwable e2 = DbUtility.getUnderlyingSQLException(e1);
       log4j.error("Error executing Cancel and Replace", e1);
       throw new OBException(e2.getMessage());
     } finally {
@@ -169,7 +170,7 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
     }
   }
 
-  private void relateOldOrderAndNewOrder(Order newOrder) {
+  private void relateOldOrderAndNewOrder(final Order newOrder) {
     final Order oldOrder = OBDal.getInstance().get(Order.class, oldOrderId);
     oldOrder.setReplacementorder(newOrder);
     OBDal.getInstance().save(oldOrder);
@@ -181,7 +182,7 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
     OBDal.getInstance().save(orderReplacement);
   }
 
-  private void callCOrderPost(Order newOrder) {
+  private void callCOrderPost(final Order newOrder) {
     newOrder.setDocumentStatus("DR");
     OBDal.getInstance().save(newOrder);
     final List<Object> parameters = new ArrayList<>();
@@ -191,7 +192,7 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
     CallStoredProcedure.getInstance().call(procedureName, parameters, null, true, false);
   }
 
-  private void callCOrderTaxAdjustment(Order order) {
+  private void callCOrderTaxAdjustment(final Order order) {
     final List<Object> parameters = new ArrayList<>();
     parameters.add(order.getId());
     parameters.add(2);
@@ -200,9 +201,9 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
     CallStoredProcedure.getInstance().call(procedureName, parameters, null, true, false);
   }
 
-  private Order createInverseOrder(Order oldOrder, String documentNo, boolean triggersDisabled)
-      throws ParseException {
-    Order inverseOrder = (Order) DalUtil.copy(oldOrder, false, true);
+  private Order createInverseOrder(final Order oldOrder, final String documentNo,
+      final boolean triggersDisabled) throws ParseException {
+    final Order inverseOrder = (Order) DalUtil.copy(oldOrder, false, true);
     // Change order values
     inverseOrder.setCreatedBy(OBContext.getOBContext().getUser());
     inverseOrder.setPosted("N");
@@ -217,7 +218,7 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
       inverseOrder.setSummedLineAmount(BigDecimal.ZERO);
     }
 
-    Date today = new Date();
+    final Date today = new Date();
     inverseOrder.setOrderDate(OBDateUtils.getDate(OBDateUtils.formatDate(today)));
     inverseOrder.setCreationDate(today);
     inverseOrder.setUpdated(today);
@@ -243,7 +244,7 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
     Order oldOrder = OBDal.getInstance().get(Order.class, oldOrderId);
 
     // Get documentNo for the inverse Order Header coming from jsonOrder, if exists
-    String negativeDocNo = jsonOrder != null && jsonOrder.has("negativeDocNo")
+    final String negativeDocNo = jsonOrder != null && jsonOrder.has("negativeDocNo")
         ? jsonOrder.getString("negativeDocNo")
         : null;
 
@@ -255,8 +256,9 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
     ShipmentInOut nettingShipment = null;
 
     // Get preferences values
-    boolean createNettingGoodsShipment = getCreateNettingGoodsShipmentPreferenceValue(oldOrder);
-    boolean associateShipmentToNewReceipt = getAssociateGoodsShipmentToNewSalesOrderPreferenceValue(
+    final boolean createNettingGoodsShipment = getCreateNettingGoodsShipmentPreferenceValue(
+        oldOrder);
+    final boolean associateShipmentToNewReceipt = getAssociateGoodsShipmentToNewSalesOrderPreferenceValue(
         oldOrder);
 
     // Iterate old order lines
@@ -280,7 +282,7 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
         // Create Netting goods shipment Line for the old order line
         BigDecimal movementQty = oldOrderLine.getOrderedQuantity()
             .subtract(oldOrderLine.getDeliveredQuantity());
-        BigDecimal oldOrderLineDeliveredQty = oldOrderLine.getDeliveredQuantity();
+        final BigDecimal oldOrderLineDeliveredQty = oldOrderLine.getDeliveredQuantity();
         oldOrderLine.setDeliveredQuantity(BigDecimal.ZERO);
         OBDal.getInstance().save(oldOrderLine);
         OBDal.getInstance().flush();
@@ -296,11 +298,11 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
         }
 
         // Get the the new order line that replaces the old order line, should be only one
-        OrderLine newOrderLine = getReplacementOrderLine(oldOrderLine.getId());
+        final OrderLine newOrderLine = getReplacementOrderLine(oldOrderLine.getId());
         if (newOrderLine != null) {
           // Create Netting goods shipment Line for the new order line
           movementQty = oldOrderLineDeliveredQty;
-          BigDecimal newOrderLineDeliveredQty = newOrderLine.getDeliveredQuantity();
+          final BigDecimal newOrderLineDeliveredQty = newOrderLine.getDeliveredQuantity();
           newOrderLine.setDeliveredQuantity(BigDecimal.ZERO);
           OBDal.getInstance().save(newOrderLine);
           OBDal.getInstance().flush();
@@ -323,18 +325,18 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
       } else if (associateShipmentToNewReceipt) {
         try (final ScrollableResults shipmentLines = getShipmentLineListOfOrderLine(oldOrderLine)) {
           long k = 0;
-          List<ShipmentInOut> shipments = new ArrayList<>();
-          List<ShipmentInOutLine> shipLines = new ArrayList<>();
+          final List<ShipmentInOut> shipments = new ArrayList<>();
+          final List<ShipmentInOutLine> shipLines = new ArrayList<>();
           while (shipmentLines.next()) {
-            ShipmentInOutLine shipLine = (ShipmentInOutLine) shipmentLines.get(0);
+            final ShipmentInOutLine shipLine = (ShipmentInOutLine) shipmentLines.get(0);
             // The netting shipment is flagged as unprocessed.
-            ShipmentInOut shipment = shipLine.getShipmentReceipt();
+            final ShipmentInOut shipment = shipLine.getShipmentReceipt();
             if (shipment.isProcessed().booleanValue()) {
               unprocessShipmentHeader(shipment);
               shipments.add(shipment);
             }
             // Get the the new order line that replaces the old order line, should be only one
-            OrderLine newOrderLine = getReplacementOrderLine(oldOrderLine.getId());
+            final OrderLine newOrderLine = getReplacementOrderLine(oldOrderLine.getId());
             if (newOrderLine != null) {
               shipLine.setSalesOrderLine(newOrderLine);
               if (jsonOrder == null) {
@@ -355,7 +357,7 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
           }
           OBDal.getInstance().flush();
           // The netting shipment is flagged as processed.
-          for (ShipmentInOut ship : shipments) {
+          for (final ShipmentInOut ship : shipments) {
             OBDal.getInstance().refresh(ship);
             processShipmentHeader(ship);
           }
@@ -366,7 +368,7 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
         // line. Do this only in backend workflow, as everything is always delivered in Web POS
       } else if (jsonOrder == null) {
         // Get the the new order line that replaces the old order line, should be only one
-        OrderLine newOrderLine = getReplacementOrderLine(oldOrderLine.getId());
+        final OrderLine newOrderLine = getReplacementOrderLine(oldOrderLine.getId());
         if (newOrderLine != null) {
           newOrderLine.setDeliveredQuantity(oldOrderLine.getDeliveredQuantity());
         }
@@ -405,11 +407,11 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
     return inverseOrder;
   }
 
-  private void createInverseOrderTaxes(Order oldOrder, Order inverseOrder) {
-    for (OrderTax orderTax : oldOrder.getOrderTaxList()) {
-      OrderTax inverseOrderTax = (OrderTax) DalUtil.copy(orderTax, false, true);
-      BigDecimal inverseTaxAmount = orderTax.getTaxAmount().negate();
-      BigDecimal inverseTaxableAmount = orderTax.getTaxableAmount().negate();
+  private void createInverseOrderTaxes(final Order oldOrder, final Order inverseOrder) {
+    for (final OrderTax orderTax : oldOrder.getOrderTaxList()) {
+      final OrderTax inverseOrderTax = (OrderTax) DalUtil.copy(orderTax, false, true);
+      final BigDecimal inverseTaxAmount = orderTax.getTaxAmount().negate();
+      final BigDecimal inverseTaxableAmount = orderTax.getTaxableAmount().negate();
       inverseOrderTax.setTaxAmount(inverseTaxAmount);
       inverseOrderTax.setTaxableAmount(inverseTaxableAmount);
       inverseOrderTax.setSalesOrder(inverseOrder);
@@ -419,8 +421,8 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
     OBDal.getInstance().flush();
   }
 
-  private OrderLine createInverseOrderLine(OrderLine oldOrderLine, Order inverseOrder) {
-    OrderLine inverseOrderLine = (OrderLine) DalUtil.copy(oldOrderLine, false, true);
+  private OrderLine createInverseOrderLine(final OrderLine oldOrderLine, final Order inverseOrder) {
+    final OrderLine inverseOrderLine = (OrderLine) DalUtil.copy(oldOrderLine, false, true);
     inverseOrderLine.setSalesOrder(inverseOrder);
     inverseOrderLine.setOrderedQuantity(inverseOrderLine.getOrderedQuantity().negate());
     if (areTriggersDisabled(jsonOrder)) {
@@ -448,8 +450,9 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
     return inverseOrderLine;
   }
 
-  private void createInverseOrderLineDiscounts(OrderLine oldOrderLine, OrderLine inverseOrderLine) {
-    for (OrderLineOffer orderLineOffer : oldOrderLine.getOrderLineOfferList()) {
+  private void createInverseOrderLineDiscounts(final OrderLine oldOrderLine,
+      final OrderLine inverseOrderLine) {
+    for (final OrderLineOffer orderLineOffer : oldOrderLine.getOrderLineOfferList()) {
       final OrderLineOffer inverseOrderLineOffer = (OrderLineOffer) DalUtil.copy(orderLineOffer,
           false, true);
       inverseOrderLineOffer
@@ -465,12 +468,13 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
     OBDal.getInstance().flush();
   }
 
-  private void createInverseOrderLineTaxes(OrderLine oldOrderLine, OrderLine inverseOrderLine) {
-    for (OrderLineTax orderLineTax : oldOrderLine.getOrderLineTaxList()) {
+  private void createInverseOrderLineTaxes(final OrderLine oldOrderLine,
+      final OrderLine inverseOrderLine) {
+    for (final OrderLineTax orderLineTax : oldOrderLine.getOrderLineTaxList()) {
       final OrderLineTax inverseOrderLineTax = (OrderLineTax) DalUtil.copy(orderLineTax, false,
           true);
-      BigDecimal inverseTaxAmount = orderLineTax.getTaxAmount().negate();
-      BigDecimal inverseTaxableAmount = orderLineTax.getTaxableAmount().negate();
+      final BigDecimal inverseTaxAmount = orderLineTax.getTaxAmount().negate();
+      final BigDecimal inverseTaxableAmount = orderLineTax.getTaxableAmount().negate();
       inverseOrderLineTax.setTaxAmount(inverseTaxAmount);
       inverseOrderLineTax.setTaxableAmount(inverseTaxableAmount);
       inverseOrderLineTax.setSalesOrder(inverseOrderLine.getSalesOrder());
@@ -482,17 +486,17 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
     OBDal.getInstance().flush();
   }
 
-  private ShipmentInOut createNettingGoodShipmentHeader(Order oldOrder) {
+  private ShipmentInOut createNettingGoodShipmentHeader(final Order oldOrder) {
     ShipmentInOut nettingGoodsShipment = null;
     nettingGoodsShipment = OBProvider.getInstance().get(ShipmentInOut.class);
     nettingGoodsShipment.setOrganization(oldOrder.getOrganization());
-    DocumentType goodsShipmentDocumentType = FIN_Utility.getDocumentType(oldOrder.getOrganization(),
-        DOCTYPE_MatShipment);
+    final DocumentType goodsShipmentDocumentType = FIN_Utility
+        .getDocumentType(oldOrder.getOrganization(), DOCTYPE_MatShipment);
     nettingGoodsShipment.setDocumentType(goodsShipmentDocumentType);
     nettingGoodsShipment.setWarehouse(oldOrder.getWarehouse());
     nettingGoodsShipment.setBusinessPartner(oldOrder.getBusinessPartner());
     nettingGoodsShipment.setPartnerAddress(oldOrder.getPartnerAddress());
-    Date today = new Date();
+    final Date today = new Date();
     nettingGoodsShipment.setMovementDate(today);
     nettingGoodsShipment.setAccountingDate(today);
     nettingGoodsShipment.setSalesOrder(null);
@@ -503,7 +507,7 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
     nettingGoodsShipment.setMovementType("C-");
     nettingGoodsShipment.setProcessGoodsJava("--");
     nettingGoodsShipment.setSalesTransaction(oldOrder.isSalesTransaction());
-    String nettingGoodsShipmentDocumentNo = FIN_Utility
+    final String nettingGoodsShipmentDocumentNo = FIN_Utility
         .getDocumentNo(nettingGoodsShipment.getDocumentType(), ShipmentInOut.TABLE_NAME);
     nettingGoodsShipment.setDocumentNo(nettingGoodsShipmentDocumentNo);
     OBDal.getInstance().save(nettingGoodsShipment);
@@ -524,15 +528,15 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
    * @param triggersDisabled
    *          Flag that tells if triggers are disabled or not while executing this method.
    */
-  private ShipmentInOutLine createNettingShipmentLine(ShipmentInOut nettingGoodsShipment,
-      OrderLine orderLine, long lineNoCounter, BigDecimal movementQty) {
+  private ShipmentInOutLine createNettingShipmentLine(final ShipmentInOut nettingGoodsShipment,
+      final OrderLine orderLine, final long lineNoCounter, final BigDecimal movementQty) {
     ShipmentInOutLine newGoodsShipmentLine = null;
     newGoodsShipmentLine = OBProvider.getInstance().get(ShipmentInOutLine.class);
     newGoodsShipmentLine.setOrganization(orderLine.getOrganization());
     newGoodsShipmentLine.setProduct(orderLine.getProduct());
     newGoodsShipmentLine.setUOM(orderLine.getUOM());
     // Get first storage bin
-    Locator locator1 = nettingGoodsShipment.getWarehouse().getLocatorList().get(0);
+    final Locator locator1 = nettingGoodsShipment.getWarehouse().getLocatorList().get(0);
     newGoodsShipmentLine.setStorageBin(locator1);
     newGoodsShipmentLine.setLineNo(10 * lineNoCounter);
     newGoodsShipmentLine.setSalesOrderLine(orderLine);
@@ -564,16 +568,18 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
     final List<OrderlineServiceRelation> relationsToRemove = new ArrayList<>();
     final OBCriteria<OrderLine> oldOrderLineCriteria = OBDal.getInstance()
         .createCriteria(OrderLine.class);
-    oldOrderLineCriteria.add(Restrictions.eq(OrderLine.PROPERTY_SALESORDER + ".id", oldOrderId));
+    oldOrderLineCriteria.add(Restrictions.eq("salesOrder.id", oldOrderId));
     for (final OrderLine oldOrderLine : oldOrderLineCriteria.list()) {
-      final StringBuilder where = new StringBuilder();
-      where.append(
-          " WHERE (" + OrderlineServiceRelation.PROPERTY_SALESORDERLINE + " = :salesorderline");
-      where.append(
-          " OR " + OrderlineServiceRelation.PROPERTY_ORDERLINERELATED + " = :salesorderline)");
+      //@formatter:off
+      final String hqlWhere =
+                    " where salesOrderLine.id = :salesorderlineId" +
+                    "   or orderlineRelated.id = :salesorderlineId";
+      //@formatter:on
+
       final OBQuery<OrderlineServiceRelation> serviceRelationQuery = OBDal.getInstance()
-          .createQuery(OrderlineServiceRelation.class, where.toString());
-      serviceRelationQuery.setNamedParameter("salesorderline", oldOrderLine);
+          .createQuery(OrderlineServiceRelation.class, hqlWhere)
+          .setNamedParameter("salesorderlineId", oldOrderLine.getId());
+
       for (final OrderlineServiceRelation serviceRelation : serviceRelationQuery.list()) {
         if (!createdRelations.contains(serviceRelation.getId())) {
           createdRelations.add(serviceRelation.getId());
@@ -608,18 +614,15 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
                   final JSONObject line = lines.getJSONObject(i);
                   if (line.has("linepos")
                       && (line.getInt("linepos") + 1) * 10 == oldOrderLine.getLineNo()) {
-                    newOrderLineCriteria
-                        .add(Restrictions.in(OrderLine.PROPERTY_SALESORDER + ".id", newOrderIds));
-                    newOrderLineCriteria
-                        .add(Restrictions.eq(OrderLine.PROPERTY_LINENO, (long) ((i + 1) * 10)));
+                    newOrderLineCriteria.add(Restrictions.in("salesOrder.id", newOrderIds));
+                    newOrderLineCriteria.add(Restrictions.eq("lineNo", (long) ((i + 1) * 10)));
                     newOrderLineCriteria.setMaxResults(1);
                     newOrderLine = (OrderLine) newOrderLineCriteria.uniqueResult();
                     break;
                   }
                 }
               } else {
-                newOrderLineCriteria
-                    .add(Restrictions.eq(OrderLine.PROPERTY_REPLACEDORDERLINE, oldOrderLine));
+                newOrderLineCriteria.add(Restrictions.eq("replacedorderline", oldOrderLine));
                 newOrderLineCriteria.setMaxResults(1);
                 newOrderLine = (OrderLine) newOrderLineCriteria.uniqueResult();
               }
@@ -658,19 +661,20 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
     linesRelations.clear();
   }
 
-  private void createNewReservations(Order newOrder) {
+  private void createNewReservations(final Order newOrder) {
     if (getEnableStockReservationsPreferenceValue(newOrder.getOrganization())) {
       // Iterate old order lines
       try (final ScrollableResults newOrderLines = getOrderLineList(newOrder)) {
         int i = 0;
         while (newOrderLines.next()) {
-          OrderLine newOrderLine = (OrderLine) newOrderLines.get(0);
+          final OrderLine newOrderLine = (OrderLine) newOrderLines.get(0);
           if (newOrderLine.getDeliveredQuantity() != null && newOrderLine.getOrderedQuantity()
               .subtract(newOrderLine.getDeliveredQuantity())
               .compareTo(BigDecimal.ZERO) == 0) {
             continue;
           }
-          Reservation reservation = getReservationForOrderLine(newOrderLine.getReplacedorderline());
+          final Reservation reservation = getReservationForOrderLine(
+              newOrderLine.getReplacedorderline());
           if (reservation != null) {
             ReservationUtils.createReserveFromSalesOrderLine(newOrderLine, true);
           }
@@ -679,17 +683,17 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
             OBDal.getInstance().getSession().clear();
           }
         }
-      } catch (Exception e) {
+      } catch (final Exception e) {
         log4j.error("Error in CancelAndReplaceUtils.createNewReservations", e);
         throw new OBException(e.getMessage(), e);
       }
     }
   }
 
-  private ScrollableResults getShipmentLineListOfOrderLine(OrderLine line) {
+  private ScrollableResults getShipmentLineListOfOrderLine(final OrderLine line) {
     return OBDal.getInstance()
         .createCriteria(ShipmentInOutLine.class)
-        .add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SALESORDERLINE, line))
+        .add(Restrictions.eq("salesOrderLine", line))
         .setFilterOnReadableOrganization(false)
         .scroll(ScrollMode.FORWARD_ONLY);
   }
@@ -707,11 +711,12 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
    * @param triggersDisabled
    *          Flag that tells if triggers are disabled or not while executing this method.
    */
-  private void createMTransaction(ShipmentInOutLine line) {
-    Product prod = line.getProduct();
+  private void createMTransaction(final ShipmentInOutLine line) {
+    final Product prod = line.getProduct();
     if (prod.getProductType().equals("I") && line.getProduct().isStocked().booleanValue()) {
       // Stock is changed only for stocked products of type "Item"
-      MaterialTransaction transaction = OBProvider.getInstance().get(MaterialTransaction.class);
+      final MaterialTransaction transaction = OBProvider.getInstance()
+          .get(MaterialTransaction.class);
       transaction.setOrganization(line.getOrganization());
       transaction.setMovementType(line.getShipmentReceipt().getMovementType());
       transaction.setProduct(prod);
@@ -731,7 +736,7 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
         // Set fake AttributeSetInstance to transaction line for netting shipment as otherwise it
         // will return an error when the product has an attribute set and
         // "Is Required at Least One Value" property of the attribute set is "Y"
-        AttributeSetInstance attr = OBProvider.getInstance().get(AttributeSetInstance.class);
+        final AttributeSetInstance attr = OBProvider.getInstance().get(AttributeSetInstance.class);
         attr.setAttributeSet(prod.getAttributeSet());
         attr.setDescription("1");
         OBDal.getInstance().save(attr);
@@ -756,7 +761,7 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
    * @param updateStockStatement
    *          The query to be executed.
    */
-  private void updateInventory(MaterialTransaction transaction) {
+  private void updateInventory(final MaterialTransaction transaction) {
     // Stock manipulation
     try (final CallableStatement updateStockStatement = new DalConnectionProvider(false)
         .getConnection()
@@ -797,7 +802,7 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
 
       updateStockStatement.execute();
 
-    } catch (Exception e) {
+    } catch (final Exception e) {
       log4j.error("Error in CancelAndReplaceUtils.updateInventory", e);
       throw new OBException(e.getMessage(), e);
     }
@@ -809,7 +814,7 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
    * 
    * @param shipment
    */
-  private void processShipmentHeader(ShipmentInOut shipment) {
+  private void processShipmentHeader(final ShipmentInOut shipment) {
     shipment.setProcessed(true);
     shipment.setDocumentStatus("CO");
     shipment.setDocumentAction("--");
@@ -823,7 +828,7 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
    * 
    * @param shipment
    */
-  private void unprocessShipmentHeader(ShipmentInOut shipment) {
+  private void unprocessShipmentHeader(final ShipmentInOut shipment) {
     shipment.setProcessed(false);
     shipment.setDocumentStatus("DR");
     shipment.setDocumentAction("CO");
@@ -831,8 +836,8 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
     OBDal.getInstance().flush();
   }
 
-  private void createNettingPayment(Order oldOrder, List<Order> newOrders, Order inverseOrder,
-      Organization paymentOrganization) {
+  private void createNettingPayment(final Order oldOrder, final List<Order> newOrders,
+      final Order inverseOrder, final Organization paymentOrganization) {
     try {
       if (oldOrder.getGrandTotalAmount().compareTo(BigDecimal.ZERO) == 0) {
         return;
@@ -858,20 +863,20 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
       }
 
       processPayment(nettingPayment, jsonOrder);
-    } catch (Exception e1) {
+    } catch (final Exception e1) {
       log4j.error("Error in CancelAndReplaceUtils.createPayments", e1);
       try {
         OBDal.getInstance().getConnection().rollback();
-      } catch (Exception e2) {
+      } catch (final Exception e2) {
         throw new OBException(e2);
       }
-      Throwable e3 = DbUtility.getUnderlyingSQLException(e1);
+      final Throwable e3 = DbUtility.getUnderlyingSQLException(e1);
       throw new OBException(e3);
     }
   }
 
-  private BigDecimal addNewPayments(Order newOrder, Organization paymentOrganization,
-      FIN_Payment nettingPayment, BigDecimal paidAmount, boolean lastOrder) {
+  private BigDecimal addNewPayments(final Order newOrder, final Organization paymentOrganization,
+      final FIN_Payment nettingPayment, final BigDecimal paidAmount, final boolean lastOrder) {
     try {
       // Only for BackEnd WorkFlow
       // Get the payment schedule of the new order to check the outstanding amount, could
@@ -889,8 +894,9 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
         createOrUdpatePayment(nettingPayment, newOrder, paymentOrganization, null, newPaidAmount,
             null, null, null);
 
-        String description = nettingPayment.getDescription() + ": " + newOrder.getDocumentNo();
-        String truncatedDescription = (description.length() > 255)
+        final String description = nettingPayment.getDescription() + ": "
+            + newOrder.getDocumentNo();
+        final String truncatedDescription = (description.length() > 255)
             ? description.substring(0, 252).concat("...")
             : description;
         nettingPayment.setDescription(truncatedDescription);
@@ -899,16 +905,16 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
       }
 
       return BigDecimal.ZERO;
-    } catch (Exception e) {
+    } catch (final Exception e) {
       throw new OBException(e);
     }
   }
 
-  private OrderLine getReplacementOrderLine(String oldOrderLineId) {
+  private OrderLine getReplacementOrderLine(final String oldOrderLineId) {
     return (OrderLine) OBDal.getInstance()
         .createCriteria(OrderLine.class)
-        .add(Restrictions.eq(OrderLine.PROPERTY_REPLACEDORDERLINE + ".id", oldOrderLineId))
-        .add(Restrictions.in(OrderLine.PROPERTY_SALESORDER + ".id", newOrderIds))
+        .add(Restrictions.eq("replacedorderline.id", oldOrderLineId))
+        .add(Restrictions.in("salesOrder.id", newOrderIds))
         .setFilterOnReadableOrganization(false)
         .setMaxResults(1)
         .uniqueResult();

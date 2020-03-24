@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2018 Openbravo SLU
+ * All portions are Copyright (C) 2012-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -48,8 +48,8 @@ public class ReservationUtils {
   String returnValue;
   String exito;
 
-  public static Reservation createReserveFromSalesOrderLine(OrderLine soLine, boolean doProcess)
-      throws OBException {
+  public static Reservation createReserveFromSalesOrderLine(final OrderLine soLine,
+      final boolean doProcess) throws OBException {
     if (!soLine.getSalesOrder().isSalesTransaction()) {
       throw new OBException(OBMessageUtils.messageBD("cannotReservePurchaseOrder", false));
     }
@@ -66,7 +66,7 @@ public class ReservationUtils {
       cs = ReservationUtilsData.createReserveFromSalesOrderLine(
           OBDal.getInstance().getConnection(false), new DalConnectionProvider(false),
           soLine.getId(), doProcess ? "Y" : "N", OBContext.getOBContext().getUser().getId());
-    } catch (ServletException e) {
+    } catch (final ServletException e) {
     }
 
     if (cs != null && cs.returnValue != null) {
@@ -76,7 +76,7 @@ public class ReservationUtils {
     return null;
   }
 
-  public static OBError reserveStockAuto(Reservation reservation) throws OBException {
+  public static OBError reserveStockAuto(final Reservation reservation) throws OBException {
 
     OBDal.getInstance().flush();
     CSResponse cs = null;
@@ -84,8 +84,8 @@ public class ReservationUtils {
       cs = ReservationUtilsData.reserveStockAuto(OBDal.getInstance().getConnection(false),
           new DalConnectionProvider(false), reservation.getId(),
           OBContext.getOBContext().getUser().getId());
-    } catch (ServletException e) {
-      String message = OBMessageUtils.translateError(e.getMessage()).getMessage();
+    } catch (final ServletException e) {
+      final String message = OBMessageUtils.translateError(e.getMessage()).getMessage();
       throw new OBException(message, e);
     }
 
@@ -94,7 +94,7 @@ public class ReservationUtils {
       message = cs.returnValue;
     }
 
-    OBError obmessage = new OBError();
+    final OBError obmessage = new OBError();
     obmessage.setType("SUCCESS");
     obmessage.setMessage(message);
     return obmessage;
@@ -107,8 +107,9 @@ public class ReservationUtils {
    * - OrderLine: reserves stock pending to receipt purchase order line.
    */
 
-  public static ReservationStock reserveStockManual(Reservation reservation, BaseOBObject obObject,
-      BigDecimal quantity, String allocated) throws OBException {
+  public static ReservationStock reserveStockManual(final Reservation reservation,
+      final BaseOBObject obObject, final BigDecimal quantity, final String allocated)
+      throws OBException {
 
     String strType = "";
 
@@ -127,8 +128,8 @@ public class ReservationUtils {
           new DalConnectionProvider(false), reservation.getId(), strType,
           obObject.getId().toString(), quantity.toString(),
           OBContext.getOBContext().getUser().getId(), allocated);
-    } catch (ServletException e) {
-      String message = OBMessageUtils.translateError(e.getMessage()).getMessage();
+    } catch (final ServletException e) {
+      final String message = OBMessageUtils.translateError(e.getMessage()).getMessage();
       throw new OBException(message, e);
     }
 
@@ -149,7 +150,8 @@ public class ReservationUtils {
    * <li>CL Close</li>
    * </ul>
    */
-  public static OBError processReserve(Reservation reservation, String action) throws OBException {
+  public static OBError processReserve(final Reservation reservation, final String action)
+      throws OBException {
 
     OBContext.setAdminMode(true);
     Process process = null;
@@ -159,7 +161,7 @@ public class ReservationUtils {
       OBContext.restorePreviousMode();
     }
 
-    Map<String, String> parameters = new HashMap<String, String>();
+    final Map<String, String> parameters = new HashMap<>();
     parameters.put("RES_Action", action);
 
     final ProcessInstance pinstance = CallProcess.getInstance()
@@ -176,9 +178,9 @@ public class ReservationUtils {
    *          Sales Order Line owner of the reservation.
    * @return a Reservation related to the Sales Order Line
    */
-  public static Reservation getReservationFromOrder(OrderLine salesOrderLine) {
+  public static Reservation getReservationFromOrder(final OrderLine salesOrderLine) {
     OBDal.getInstance().refresh(salesOrderLine);
-    for (Reservation res : salesOrderLine.getMaterialMgmtReservationList()) {
+    for (final Reservation res : salesOrderLine.getMaterialMgmtReservationList()) {
       if (!StringUtils.equals(res.getRESStatus(), "CL")) {
         return res;
       }
@@ -190,8 +192,8 @@ public class ReservationUtils {
    * Function to reallocate given reservation stock on given attributes and storage bin.
    */
 
-  public static OBError reallocateStock(Reservation reservation, Locator storageBin,
-      AttributeSetInstance asi, BigDecimal quantity) throws OBException {
+  public static OBError reallocateStock(final Reservation reservation, final Locator storageBin,
+      final AttributeSetInstance asi, final BigDecimal quantity) throws OBException {
 
     OBDal.getInstance().flush();
     CSResponse cs = null;
@@ -199,8 +201,8 @@ public class ReservationUtils {
       cs = ReservationUtilsData.reallocateStock(OBDal.getInstance().getConnection(false),
           new DalConnectionProvider(false), reservation.getId(), storageBin.getId(), asi.getId(),
           quantity.toPlainString(), OBContext.getOBContext().getUser().getId());
-    } catch (ServletException e) {
-      String message = OBMessageUtils.translateError(e.getMessage()).getMessage();
+    } catch (final ServletException e) {
+      final String message = OBMessageUtils.translateError(e.getMessage()).getMessage();
       throw new OBException(message, e);
     }
 
@@ -210,9 +212,9 @@ public class ReservationUtils {
     }
     result.setType("Success");
     result.setMessage(OBMessageUtils.messageBD("Success", false));
-    if (cs.returnValue == "0") {
+    if (cs.returnValue.equals("0")) {
       result.setType("Error");
-    } else if (cs.returnValue == "2") {
+    } else if (cs.returnValue.equals("2")) {
       result.setType("Warning");
     }
     if (StringUtils.isNotEmpty(cs.returnValueMsg)) {
@@ -228,27 +230,31 @@ public class ReservationUtils {
    *          A StorageDetail object that contains the information about the Stock
    * @return true if there are Reservations created against this Stock, false otherwise
    */
-  public static boolean existsReservationForStock(StorageDetail storageDetail) {
-    StringBuilder hql = new StringBuilder();
-    hql.append("select 1 ");
-    hql.append("from MaterialMgmtReservationStock ");
-    hql.append("where exists (select 1");
-    hql.append("              from MaterialMgmtReservationStock rs");
-    hql.append("              join rs.reservation r");
-    hql.append("              where r.product = :product");
-    hql.append("              and coalesce(rs.storageBin, r.storageBin) = :storageBin");
-    hql.append(
-        "              and coalesce(rs.attributeSetValue, r.attributeSetValue) = :attributeSetValue");
-    hql.append("              and r.uOM = :uom");
-    hql.append("              and rs.quantity > rs.released)");
+  public static boolean existsReservationForStock(final StorageDetail storageDetail) {
+    //@formatter:off
+    final String hql = 
+            "select 1" +
+            "  from MaterialMgmtReservationStock" +
+            " where exists" +
+            "   (" +
+            "     select 1" +
+            "       from MaterialMgmtReservationStock rs" +
+            "         join rs.reservation r" +
+            "      where r.product.id = :productId" +
+            "        and coalesce(rs.storageBin.id, r.storageBin.id) = :storageBinId" +
+            "        and coalesce(rs.attributeSetValue.id, r.attributeSetValue.id) = :attributeSetValueId" +
+            "        and r.uOM.id = :uomId" +
+            "        and rs.quantity > rs.released" +
+            "   )";
+    //@formatter:on
 
-    Query<Object> query = OBDal.getInstance()
+    final Query<Object> query = OBDal.getInstance()
         .getSession()
-        .createQuery(hql.toString(), Object.class);
-    query.setParameter("product", storageDetail.getProduct());
-    query.setParameter("storageBin", storageDetail.getStorageBin());
-    query.setParameter("attributeSetValue", storageDetail.getAttributeSetValue());
-    query.setParameter("uom", storageDetail.getUOM());
+        .createQuery(hql, Object.class)
+        .setParameter("productId", storageDetail.getProduct().getId())
+        .setParameter("storageBinId", storageDetail.getStorageBin().getId())
+        .setParameter("attributeSetValueId", storageDetail.getAttributeSetValue().getId())
+        .setParameter("uomId", storageDetail.getUOM().getId());
 
     return !query.list().isEmpty();
   }
@@ -261,24 +267,26 @@ public class ReservationUtils {
    * @return a list of related Reservations Stock
    */
   public static List<ReservationStock> getReservationStockFromStorageDetail(
-      StorageDetail storageDetail) {
-    StringBuilder hql = new StringBuilder();
-    hql.append("select rs");
-    hql.append(" from MaterialMgmtReservationStock rs");
-    hql.append(" join rs.reservation r");
-    hql.append(" where r.product = :product");
-    hql.append(" and coalesce(rs.storageBin, r.storageBin) = :storageBin");
-    hql.append(" and coalesce(rs.attributeSetValue, r.attributeSetValue) = :attributeSetValue");
-    hql.append(" and r.uOM = :uom");
-    hql.append(" and rs.quantity > rs.released");
+      final StorageDetail storageDetail) {
+    //@formatter:off
+    final String hql = 
+            "select rs" +
+            "  from MaterialMgmtReservationStock rs" +
+            "    join rs.reservation r" +
+            " where r.product.id = :productId" +
+            "   and coalesce(rs.storageBin.id, r.storageBin.id) = :storageBinId" +
+            "   and coalesce(rs.attributeSetValue.id, r.attributeSetValue.id) = :attributeSetValueId" +
+            "   and r.uOM.id = :uomId" +
+            "   and rs.quantity > rs.released";
+    //@formatter:on
 
-    Query<ReservationStock> query = OBDal.getInstance()
+    final Query<ReservationStock> query = OBDal.getInstance()
         .getSession()
-        .createQuery(hql.toString(), ReservationStock.class);
-    query.setParameter("product", storageDetail.getProduct());
-    query.setParameter("storageBin", storageDetail.getStorageBin());
-    query.setParameter("attributeSetValue", storageDetail.getAttributeSetValue());
-    query.setParameter("uom", storageDetail.getUOM());
+        .createQuery(hql, ReservationStock.class)
+        .setParameter("productId", storageDetail.getProduct().getId())
+        .setParameter("storageBinId", storageDetail.getStorageBin().getId())
+        .setParameter("attributeSetValueId", storageDetail.getAttributeSetValue().getId())
+        .setParameter("uomId", storageDetail.getUOM().getId());
 
     return query.list();
   }

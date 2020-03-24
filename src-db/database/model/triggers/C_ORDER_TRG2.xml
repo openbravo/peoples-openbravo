@@ -35,14 +35,12 @@ BEGIN
     END IF;
 
   IF(UPDATING)
-    THEN  IF((COALESCE(:old.PaymentRule, '.') <> COALESCE(:NEW.PaymentRule, '.')
-    OR COALESCE(:old.C_PaymentTerm_ID, '0') <> COALESCE(:NEW.C_PaymentTerm_ID, '0')
+    THEN  IF((COALESCE(:old.C_PaymentTerm_ID, '0') <> COALESCE(:NEW.C_PaymentTerm_ID, '0')
     OR COALESCE(:old.DateAcct, v_DateNull) <> COALESCE(:NEW.DateAcct, v_DateNull)))
     THEN
     -- Propagate Changes of Payment Info to existing invoices
   UPDATE C_Invoice
-    SET PaymentRule=:new.PaymentRule,
-    C_PaymentTerm_ID=:new.C_PaymentTerm_ID,
+    SET C_PaymentTerm_ID=:new.C_PaymentTerm_ID,
     DateAcct=:new.DateAcct
   WHERE C_Order_ID=:new.C_Order_ID
     AND DocStatus NOT IN('RE', 'CL', 'CO', 'VO') ;

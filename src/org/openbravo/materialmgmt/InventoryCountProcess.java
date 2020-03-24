@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2019 Openbravo SLU
+ * All portions are Copyright (C) 2012-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,30 +34,23 @@ import javax.inject.Inject;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Session;
 import org.hibernate.exception.GenericJDBCException;
-import org.hibernate.query.Query;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.materialmgmt.hook.InventoryCountCheckHook;
 import org.openbravo.materialmgmt.hook.InventoryCountProcessHook;
-import org.openbravo.model.ad.access.User;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.model.common.plm.AttributeSetInstance;
-import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.calendar.PeriodControl;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 import org.openbravo.model.materialmgmt.transaction.InventoryCount;
 import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
-import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.scheduling.Process;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -74,7 +67,7 @@ public class InventoryCountProcess implements Process {
   private Instance<InventoryCountProcessHook> inventoryCountProcesses;
 
   @Override
-  public void execute(ProcessBundle bundle) throws Exception {
+  public void execute(final ProcessBundle bundle) throws Exception {
     OBError msg = new OBError();
     msg.setType("Success");
     msg.setTitle(OBMessageUtils.messageBD("Success"));
@@ -108,7 +101,7 @@ public class InventoryCountProcess implements Process {
 
       bundle.setResult(msg);
 
-    } catch (GenericJDBCException ge) {
+    } catch (final GenericJDBCException ge) {
       log4j.error("Exception processing physical inventory", ge);
       msg.setType("Error");
       msg.setTitle(OBMessageUtils.messageBD(bundle.getConnection(), "Error",
@@ -136,120 +129,134 @@ public class InventoryCountProcess implements Process {
 
   }
 
-  public OBError processInventory(InventoryCount inventory) throws OBException {
+  public OBError processInventory(final InventoryCount inventory) throws OBException {
     return processInventory(inventory, true);
   }
 
-  public OBError processInventory(InventoryCount inventory, boolean checkReservationQty)
+  public OBError processInventory(final InventoryCount inventory, final boolean checkReservationQty)
       throws OBException {
     return processInventory(inventory, checkReservationQty, false);
   }
 
-  public OBError processInventory(InventoryCount inventory, boolean checkReservationQty,
-      boolean checkPermanentCost) throws OBException {
-    OBError msg = new OBError();
+  public OBError processInventory(final InventoryCount inventory, final boolean checkReservationQty,
+      final boolean checkPermanentCost) throws OBException {
+    final OBError msg = new OBError();
     msg.setType("Success");
     msg.setTitle(OBMessageUtils.messageBD("Success"));
     runChecks(inventory);
 
-    StringBuffer insert = new StringBuffer();
-    insert.append("insert into " + MaterialTransaction.ENTITY_NAME + "(");
-    insert.append(" id ");
-    insert.append(", " + MaterialTransaction.PROPERTY_ACTIVE);
-    insert.append(", " + MaterialTransaction.PROPERTY_CLIENT);
-    insert.append(", " + MaterialTransaction.PROPERTY_ORGANIZATION);
-    insert.append(", " + MaterialTransaction.PROPERTY_CREATIONDATE);
-    insert.append(", " + MaterialTransaction.PROPERTY_CREATEDBY);
-    insert.append(", " + MaterialTransaction.PROPERTY_UPDATED);
-    insert.append(", " + MaterialTransaction.PROPERTY_UPDATEDBY);
-    insert.append(", " + MaterialTransaction.PROPERTY_MOVEMENTTYPE);
-    insert.append(", " + MaterialTransaction.PROPERTY_CHECKRESERVEDQUANTITY);
-    insert.append(", " + MaterialTransaction.PROPERTY_ISCOSTPERMANENT);
-    insert.append(", " + MaterialTransaction.PROPERTY_MOVEMENTDATE);
-    insert.append(", " + MaterialTransaction.PROPERTY_STORAGEBIN);
-    insert.append(", " + MaterialTransaction.PROPERTY_PRODUCT);
-    insert.append(", " + MaterialTransaction.PROPERTY_ATTRIBUTESETVALUE);
-    insert.append(", " + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY);
-    insert.append(", " + MaterialTransaction.PROPERTY_UOM);
-    insert.append(", " + MaterialTransaction.PROPERTY_ORDERQUANTITY);
-    insert.append(", " + MaterialTransaction.PROPERTY_ORDERUOM);
-    insert.append(", " + MaterialTransaction.PROPERTY_PHYSICALINVENTORYLINE);
-    insert.append(", " + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
-    // select from inventory line
-    insert.append(" ) \n select get_uuid() ");
-    insert.append(", e." + InventoryCountLine.PROPERTY_ACTIVE);
-    insert.append(", e." + InventoryCountLine.PROPERTY_CLIENT);
-    insert.append(", e." + InventoryCountLine.PROPERTY_ORGANIZATION);
-    insert.append(", now()");
-    insert.append(", u");
-    insert.append(", now()");
-    insert.append(", u");
-    insert.append(", 'I+'");
+    //@formatter:off
+    String hqlInsert =
+            "insert into MaterialMgmtMaterialTransaction" +
+            "  (" +
+            "    id " +
+            "    , active" +
+            "    , client" +
+            "    , organization" +
+            "    , creationDate" +
+            "    , createdBy" +
+            "    , updated" +
+            "    , updatedBy" +
+            "    , movementType" +
+            "    , checkReservedQuantity" +
+            "    , isCostPermanent" +
+            "    , movementDate" +
+            "    , storageBin" +
+            "    , product" +
+            "    , attributeSetValue" +
+            "    , movementQuantity" +
+            "    , uOM" +
+            "    , orderQuantity" +
+            "    , orderUOM" +
+            "    , physicalInventoryLine" +
+            "    , transactionProcessDate" +
+            // select from inventory line
+            "  )" +
+            " select get_uuid()" +
+            "   , e.active" +
+            "   , e.client" +
+            "   , e.organization" +
+            "   , now()" +
+            "   , u" +
+            "   , now()" +
+            "   , u" +
+            "   , 'I+'";
+    //@formatter:on
     // We have to set check reservation quantity flag equal to checkReservationQty
     // InventoryCountLine.PROPERTY_ACTIVE-->> Y
     // InventoryCountLine.PROPERTY_PHYSINVENTORY + "." + InventoryCount.PROPERTY_PROCESSED -->> N
     if (checkReservationQty) {
-      insert.append(", e." + InventoryCountLine.PROPERTY_ACTIVE);
+      //@formatter:off
+      hqlInsert += 
+            "   , e.active";
+      //@formatter:on
     } else {
-      insert.append(", e." + InventoryCountLine.PROPERTY_PHYSINVENTORY + "."
-          + InventoryCount.PROPERTY_PROCESSED);
+      //@formatter:off
+      hqlInsert +=
+            "   , e.physInventory.processed";
+      //@formatter:on
     }
     // We have to set check permanent cost flag
     // InventoryCountLine.PROPERTY_ACTIVE-->> Y
     // InventoryCountLine.PROPERTY_PHYSINVENTORY + "." + InventoryCount.PROPERTY_PROCESSED -->> N
     if (checkPermanentCost) {
-      insert.append(", e." + InventoryCountLine.PROPERTY_ACTIVE);
+      //@formatter:off
+      hqlInsert +=
+            "   , e.active";
+      //@formatter:on
     } else {
-      insert.append(", e." + InventoryCountLine.PROPERTY_PHYSINVENTORY + "."
-          + InventoryCount.PROPERTY_PROCESSED);
+      //@formatter:off
+      hqlInsert +=
+            "   , e.physInventory.processed";
+      //@formatter:on
     }
-    insert.append(", e." + InventoryCountLine.PROPERTY_PHYSINVENTORY + "."
-        + InventoryCount.PROPERTY_MOVEMENTDATE);
-    insert.append(", e." + InventoryCountLine.PROPERTY_STORAGEBIN);
-    insert.append(", e." + InventoryCountLine.PROPERTY_PRODUCT);
-    insert.append(", asi");
-    insert.append(", e." + InventoryCountLine.PROPERTY_QUANTITYCOUNT + " - COALESCE(" + "e."
-        + InventoryCountLine.PROPERTY_BOOKQUANTITY + ", 0)");
-    insert.append(", e." + InventoryCountLine.PROPERTY_UOM);
-    insert.append(", e." + InventoryCountLine.PROPERTY_ORDERQUANTITY + " - COALESCE(" + "e."
-        + InventoryCountLine.PROPERTY_QUANTITYORDERBOOK + ", 0)");
-    insert.append(", e." + InventoryCountLine.PROPERTY_ORDERUOM);
-    insert.append(", e");
-    insert.append(", to_timestamp(to_char(:currentDate), to_char('DD-MM-YYYY HH24:MI:SS'))");
-    insert.append(" \nfrom " + InventoryCountLine.ENTITY_NAME + " as e");
-    insert.append(" , " + User.ENTITY_NAME + " as u");
-    insert.append(" , " + AttributeSetInstance.ENTITY_NAME + " as asi");
-    insert.append(" , " + Product.ENTITY_NAME + " as p");
-    insert.append(" \nwhere e." + InventoryCountLine.PROPERTY_PHYSINVENTORY + ".id = :inv");
-    insert.append(" and (e." + InventoryCountLine.PROPERTY_QUANTITYCOUNT + " != e."
-        + InventoryCountLine.PROPERTY_BOOKQUANTITY);
-    insert.append(" or e." + InventoryCountLine.PROPERTY_ORDERQUANTITY + " != e."
-        + InventoryCountLine.PROPERTY_QUANTITYORDERBOOK + ")");
-    insert.append(" and u.id = :user");
-    insert.append(
-        " and asi.id = COALESCE(e." + InventoryCountLine.PROPERTY_ATTRIBUTESETVALUE + ".id , '0')");
-    // Non Stockable Products should not generate warehouse transactions
-    insert.append(" and e." + InventoryCountLine.PROPERTY_PRODUCT + ".id = p.id and p."
-        + Product.PROPERTY_STOCKED + " = 'Y' and p." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
-
-    @SuppressWarnings("rawtypes")
-    Query queryInsert = OBDal.getInstance().getSession().createQuery(insert.toString());
-    queryInsert.setParameter("inv", inventory.getId());
-    queryInsert.setParameter("user", OBContext.getOBContext().getUser().getId());
-    final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-    queryInsert.setParameter("currentDate", dateFormatter.format(new Date()));
-    // queryInsert.setBoolean("checkReservation", checkReservationQty);
-    queryInsert.executeUpdate();
-
-    if (!"C".equals(inventory.getInventoryType()) && !"O".equals(inventory.getInventoryType())) {
-      checkStock(inventory);
-    }
+    //@formatter:off
+    hqlInsert +=
+            "   , e.physInventory.movementDate" +
+            "   , e.storageBin" +
+            "   , e.product" +
+            "   , asi" +
+            "   , e.quantityCount - COALESCE(" + "e.bookQuantity, 0)" +
+            "   , e.uOM" +
+            "   , e.orderQuantity - COALESCE(" + "e.quantityOrderBook, 0)" +
+            "   , e.orderUOM" +
+            "   , e" +
+            "   , to_timestamp(to_char(:currentDate), to_char('DD-MM-YYYY HH24:MI:SS'))" +
+            "   from MaterialMgmtInventoryCountLine as e" +
+            "     , ADUser as u" +
+            "     , AttributeSetInstance as asi" +
+            "     , Product as p" +
+            "  where e.physInventory.id = :invId" +
+            "    and " +
+            "      (" +
+            "        e.quantityCount != e.bookQuantity" +
+            "        or e.orderQuantity != e.quantityOrderBook" +
+            "      )" +
+            "    and u.id = :userId" +
+            "    and asi.id = COALESCE(e.attributeSetValue.id , '0')" +
+            // Non Stockable Products should not generate warehouse transactions
+            "    and e.product.id = p.id" +
+            "    and p.stocked = 'Y'" +
+            "    and p.productType = 'I'";
+    //@formatter:on
 
     try {
+      final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+      OBDal.getInstance()
+          .getSession()
+          .createQuery(hqlInsert)
+          .setParameter("invId", inventory.getId())
+          .setParameter("userId", OBContext.getOBContext().getUser().getId())
+          .setParameter("currentDate", dateFormatter.format(new Date()))
+          .executeUpdate();
+
+      if (!"C".equals(inventory.getInventoryType()) && !"O".equals(inventory.getInventoryType())) {
+        checkStock(inventory);
+      }
+
       executeHooks(inventoryCountProcesses, inventory);
-    } catch (Exception e) {
-      OBException obException = new OBException(e.getMessage(), e.getCause());
-      throw obException;
+    } catch (final Exception e) {
+      throw new OBException(e.getMessage(), e.getCause());
     }
     inventory.setProcessed(true);
     OBDal.getInstance().flush();
@@ -261,7 +268,7 @@ public class InventoryCountProcess implements Process {
     return msg;
   }
 
-  private void runChecks(InventoryCount inventory) throws OBException {
+  private void runChecks(final InventoryCount inventory) {
     try {
       executeHooks(inventoryCountChecks, inventory);
     } catch (Exception genericException) {
@@ -270,64 +277,76 @@ public class InventoryCountProcess implements Process {
     checkInventoryAlreadyProcessed(inventory);
     checkMandatoryAttributesWithoutVavlue(inventory);
     checkDuplicatedProducts(inventory);
-    Organization org = inventory.getOrganization();
+    final Organization org = inventory.getOrganization();
     checkIfOrganizationIsReady(org);
     checkOrganizationAllowsTransactions(org);
     checkDifferentLegalInLinesAndHeader(inventory, org);
     checkPeriodsNotAvailable(inventory, org);
   }
 
-  private void checkInventoryAlreadyProcessed(InventoryCount inventory) {
+  private void checkInventoryAlreadyProcessed(final InventoryCount inventory) {
     if (inventory.isProcessed()) {
       throw new OBException(OBMessageUtils.parseTranslation("@AlreadyPosted@"));
     }
   }
 
-  private void checkMandatoryAttributesWithoutVavlue(InventoryCount inventory) {
-    InventoryCountLine inventoryLine = getLineWithMandatoryAttributeWithoutValue(inventory);
+  private void checkMandatoryAttributesWithoutVavlue(final InventoryCount inventory) {
+    final InventoryCountLine inventoryLine = getLineWithMandatoryAttributeWithoutValue(inventory);
     if (inventoryLine != null) {
       throw new OBException(OBMessageUtils.parseTranslation(
           "@Inline@ " + (inventoryLine).getLineNo() + " @productWithoutAttributeSet@"));
     }
   }
 
-  private InventoryCountLine getLineWithMandatoryAttributeWithoutValue(InventoryCount inventory) {
-    StringBuilder where = new StringBuilder();
-    where.append(" as icl ");
-    where.append("   join icl.product as p ");
-    where.append("   join icl.storageBin as sb ");
-    where.append("   join p.attributeSet as aset ");
-    where.append(" where icl.physInventory.id = :inventory ");
-    where.append("   and aset.requireAtLeastOneValue = true ");
-    where.append("   and coalesce(p.useAttributeSetValueAs, '-') <> 'F' ");
-    where.append("   and coalesce(icl.attributeSetValue, '0') = '0' ");
-    // Allow to regularize to 0 any existing Stock without attribute for this Product
-    // (this situation can happen when there is a bug in a different part of the code,
-    // but the user should be able always to zero this stock)
-    where.append("   and (icl.quantityCount <> 0 ");
-    where.append("        or (icl.quantityCount = 0 ");
-    where.append("            and not exists (select 1 from MaterialMgmtStorageDetail sd ");
-    where.append("                                     where sd.storageBin.id = sb.id ");
-    where.append("                                     and sd.product.id = p.id ");
-    where.append("                                     and sd.attributeSetValue = '0' ");
-    where.append("                                     and sd.uOM.id = icl.uOM.id ");
-    where.append("                                     and sd.quantityOnHand <> 0 ");
-    where.append("                                    and sd.quantityInDraftTransactions <> 0 ) ");
-    where.append("                           ) ");
-    where.append("           ) ");
-    where.append("  order by icl.lineNo ");
-    OBQuery<InventoryCountLine> query = OBDal.getInstance()
-        .createQuery(InventoryCountLine.class, where.toString());
-    query.setNamedParameter("inventory", inventory.getId());
-    query.setMaxResult(1);
-    return query.uniqueResult();
+  private InventoryCountLine getLineWithMandatoryAttributeWithoutValue(
+      final InventoryCount inventory) {
+    //@formatter:off
+    final String hqlWhere =
+                  "as icl" +
+                  "  join icl.product as p" +
+                  "  join icl.storageBin as sb" +
+                  "  join p.attributeSet as aset" +
+                  " where icl.physInventory.id = :inventoryId" +
+                  "   and aset.requireAtLeastOneValue = true" +
+                  "   and coalesce(p.useAttributeSetValueAs, '-') <> 'F'" +
+                  "   and coalesce(icl.attributeSetValue, '0') = '0' " +
+                  // Allow to regularize to 0 any existing Stock without attribute for this Product
+                  // (this situation can happen when there is a bug in a different part of the code,
+                  // but the user should be able always to zero this stock)
+                  "   and" +
+                  "     (" +
+                  "       icl.quantityCount <> 0" +
+                  "       or" +
+                  "       (" +
+                  "         icl.quantityCount = 0" +
+                  "         and not exists" +
+                  "         (" +
+                  "           select 1" +
+                  "             from MaterialMgmtStorageDetail sd" +
+                  "            where sd.storageBin.id = sb.id" +
+                  "              and sd.product.id = p.id" +
+                  "              and sd.attributeSetValue = '0'" +
+                  "              and sd.uOM.id = icl.uOM.id" +
+                  "              and sd.quantityOnHand <> 0" +
+                  "              and sd.quantityInDraftTransactions <> 0" +
+                  "         )" +
+                  "       )" +
+                  "     )" +
+                  "  order by icl.lineNo ";
+    //@formatter:on
+
+    return OBDal.getInstance()
+        .createQuery(InventoryCountLine.class, hqlWhere)
+        .setNamedParameter("inventoryId", inventory.getId())
+        .setMaxResult(1)
+        .uniqueResult();
   }
 
-  private void checkDuplicatedProducts(InventoryCount inventory) {
-    List<InventoryCountLine> inventoryLineList = getLinesWithDuplicatedProducts(inventory);
+  private void checkDuplicatedProducts(final InventoryCount inventory) {
+    final List<InventoryCountLine> inventoryLineList = getLinesWithDuplicatedProducts(inventory);
     if (!inventoryLineList.isEmpty()) {
-      StringBuilder errorMessage = new StringBuilder("");
-      for (InventoryCountLine icl2 : inventoryLineList) {
+      final StringBuilder errorMessage = new StringBuilder("");
+      for (final InventoryCountLine icl2 : inventoryLineList) {
         errorMessage.append(icl2.getLineNo().toString() + ", ");
       }
       throw new OBException(OBMessageUtils
@@ -335,51 +354,57 @@ public class InventoryCountProcess implements Process {
     }
   }
 
-  private List<InventoryCountLine> getLinesWithDuplicatedProducts(InventoryCount inventory) {
-    StringBuilder where = new StringBuilder();
-    where.append(" as icl");
-    where.append(" where icl.physInventory.id = :inventory");
-    where.append("   and exists (select 1 ");
-    where.append("               from MaterialMgmtInventoryCountLine as icl2");
-    where.append("               where icl.physInventory = icl2.physInventory");
-    where.append("               and icl.product = icl2.product");
-    where.append(
-        "                and coalesce(icl.attributeSetValue, '0') = coalesce(icl2.attributeSetValue, '0')");
-    where.append("               and coalesce(icl.orderUOM, '0') = coalesce(icl2.orderUOM, '0')");
-    where.append("               and coalesce(icl.uOM, '0') = coalesce(icl2.uOM, '0')");
-    where.append("               and icl.storageBin = icl2.storageBin");
-    where.append("               and icl.lineNo <> icl2.lineNo)");
-    where.append(" order by icl.product");
-    where.append(", icl.attributeSetValue");
-    where.append(", icl.storageBin");
-    where.append(", icl.orderUOM");
-    where.append(", icl.lineNo");
-    OBQuery<InventoryCountLine> query = OBDal.getInstance()
-        .createQuery(InventoryCountLine.class, where.toString());
-    query.setNamedParameter("inventory", inventory.getId());
-    return query.list();
+  private List<InventoryCountLine> getLinesWithDuplicatedProducts(final InventoryCount inventory) {
+    //@formatter:off
+    final String hqlWhere =
+                  "as icl" +
+                  " where icl.physInventory.id = :inventoryId" +
+                  "   and exists" +
+                  "     (" +
+                  "       select 1 " +
+                  "         from MaterialMgmtInventoryCountLine as icl2" +
+                  "        where icl.physInventory = icl2.physInventory" +
+                  "          and icl.product = icl2.product" +
+                  "          and coalesce(icl.attributeSetValue, '0') = coalesce(icl2.attributeSetValue, '0')" +
+                  "          and coalesce(icl.orderUOM, '0') = coalesce(icl2.orderUOM, '0')" +
+                  "          and coalesce(icl.uOM, '0') = coalesce(icl2.uOM, '0')" +
+                  "          and icl.storageBin = icl2.storageBin" +
+                  "          and icl.lineNo <> icl2.lineNo" +
+                  "     )" +
+                  " order by icl.product" +
+                  "   , icl.attributeSetValue" +
+                  "   , icl.storageBin" +
+                  "   , icl.orderUOM" +
+                  "   , icl.lineNo";
+    //@formatter:on
+
+    return OBDal.getInstance()
+        .createQuery(InventoryCountLine.class, hqlWhere)
+        .setNamedParameter("inventoryId", inventory.getId())
+        .list();
   }
 
-  private void checkIfOrganizationIsReady(Organization org) {
+  private void checkIfOrganizationIsReady(final Organization org) {
     if (!org.isReady()) {
       throw new OBException(OBMessageUtils.parseTranslation("@OrgHeaderNotReady@"));
     }
   }
 
-  private void checkOrganizationAllowsTransactions(Organization org) {
+  private void checkOrganizationAllowsTransactions(final Organization org) {
     if (!org.getOrganizationType().isTransactionsAllowed()) {
       throw new OBException(OBMessageUtils.parseTranslation("@OrgHeaderNotTransAllowed@"));
     }
   }
 
-  private void checkDifferentLegalInLinesAndHeader(InventoryCount inventory, Organization org) {
-    OrganizationStructureProvider osp = OBContext.getOBContext()
+  private void checkDifferentLegalInLinesAndHeader(final InventoryCount inventory,
+      final Organization org) {
+    final OrganizationStructureProvider osp = OBContext.getOBContext()
         .getOrganizationStructureProvider(inventory.getClient().getId());
-    Organization inventoryLegalOrBusinessUnitOrg = osp.getLegalEntityOrBusinessUnit(org);
-    List<InventoryCountLine> inventoryLineList = getLinesWithDifferentOrganizationThanHeader(
+    final Organization inventoryLegalOrBusinessUnitOrg = osp.getLegalEntityOrBusinessUnit(org);
+    final List<InventoryCountLine> inventoryLineList = getLinesWithDifferentOrganizationThanHeader(
         inventory, org);
     if (!inventoryLineList.isEmpty()) {
-      for (InventoryCountLine inventoryLine : inventoryLineList) {
+      for (final InventoryCountLine inventoryLine : inventoryLineList) {
         if (!inventoryLegalOrBusinessUnitOrg.getId()
             .equals(osp.getLegalEntityOrBusinessUnit(inventoryLine.getOrganization()).getId())) {
           throw new OBException(OBMessageUtils.parseTranslation("@LinesAndHeaderDifferentLEorBU@"));
@@ -389,54 +414,64 @@ public class InventoryCountProcess implements Process {
   }
 
   private List<InventoryCountLine> getLinesWithDifferentOrganizationThanHeader(
-      InventoryCount inventory, Organization org) {
-    OBQuery<InventoryCountLine> query = OBDal.getInstance()
-        .createQuery(InventoryCountLine.class,
-            InventoryCountLine.PROPERTY_PHYSINVENTORY + ".id = :inventory and "
-                + InventoryCountLine.PROPERTY_ORGANIZATION + ".id <> :organization");
-    query.setNamedParameter("inventory", inventory.getId());
-    query.setNamedParameter("organization", org.getId());
-    return query.list();
+      final InventoryCount inventory, final Organization org) {
+    //@formatter:off
+    final String hql = 
+                  "as py "+
+                  " where py.physInventory.id = :inventoryId" +
+                  "   and py.organization.id <> :organizationId";
+    //@formatter:on
+
+    return OBDal.getInstance()
+        .createQuery(InventoryCountLine.class, hql)
+        .setNamedParameter("inventoryId", inventory.getId())
+        .setNamedParameter("organizationId", org.getId())
+        .list();
   }
 
-  private void checkPeriodsNotAvailable(InventoryCount inventory, Organization org) {
-    OrganizationStructureProvider osp = OBContext.getOBContext()
+  private void checkPeriodsNotAvailable(final InventoryCount inventory, final Organization org) {
+    final OrganizationStructureProvider osp = OBContext.getOBContext()
         .getOrganizationStructureProvider(inventory.getClient().getId());
-    Organization inventoryLegalOrBusinessUnitOrg = osp.getLegalEntityOrBusinessUnit(org);
+    final Organization inventoryLegalOrBusinessUnitOrg = osp.getLegalEntityOrBusinessUnit(org);
     if (inventoryLegalOrBusinessUnitOrg.getOrganizationType().isLegalEntityWithAccounting()) {
-      StringBuilder where = new StringBuilder();
-      where.append(" as pc ");
-      where.append("   join pc.period as p");
-      where.append(" where p.startingDate <= :dateStarting");
-      where.append("   and p.endingDate >= :dateEnding");
-      where.append("   and pc.documentCategory = 'MMI' ");
-      where.append("   and pc.organization.id = :org");
-      where.append("   and pc.periodStatus = 'O'");
-      OBQuery<PeriodControl> query = OBDal.getInstance()
-          .createQuery(PeriodControl.class, where.toString());
-      query.setFilterOnReadableClients(false);
-      query.setFilterOnReadableOrganization(false);
-      query.setNamedParameter("dateStarting", inventory.getMovementDate());
-      query.setNamedParameter("dateEnding",
-          DateUtils.truncate(inventory.getMovementDate(), Calendar.DATE));
-      query.setNamedParameter("org", osp.getPeriodControlAllowedOrganization(org).getId());
-      query.setMaxResult(1);
-      if (query.uniqueResult() == null) {
+      //@formatter:off
+      final String hqlWhere =
+                    "as pc " +
+                    "  join pc.period as p" +
+                    " where p.startingDate <= :dateStarting" +
+                    "   and p.endingDate >= :dateEnding" +
+                    "   and pc.documentCategory = 'MMI' " +
+                    "   and pc.organization.id = :orgId" +
+                    "   and pc.periodStatus = 'O'";
+      //@formatter:on
+
+      final PeriodControl result = OBDal.getInstance()
+          .createQuery(PeriodControl.class, hqlWhere)
+          .setFilterOnReadableClients(false)
+          .setFilterOnReadableOrganization(false)
+          .setNamedParameter("dateStarting", inventory.getMovementDate())
+          .setNamedParameter("dateEnding",
+              DateUtils.truncate(inventory.getMovementDate(), Calendar.DATE))
+          .setNamedParameter("orgId", osp.getPeriodControlAllowedOrganization(org).getId())
+          .setMaxResult(1)
+          .uniqueResult();
+      if (result == null) {
         throw new OBException(OBMessageUtils.parseTranslation("@PeriodNotAvailable@"));
       }
     }
   }
 
-  private void updateDateInventory(InventoryCount inventory) {
+  private void updateDateInventory(final InventoryCount inventory) {
 
     try {
-      for (InventoryCountLine invCountLine : inventory.getMaterialMgmtInventoryCountLineList()) {
+      for (final InventoryCountLine invCountLine : inventory
+          .getMaterialMgmtInventoryCountLineList()) {
         if (invCountLine.getQuantityCount().compareTo(invCountLine.getBookQuantity()) == 0
             || (invCountLine.getOrderQuantity() != null
                 && invCountLine.getQuantityOrderBook() != null && invCountLine.getOrderQuantity()
                     .compareTo(invCountLine.getQuantityOrderBook()) == 0)) {
-          org.openbravo.database.ConnectionProvider cp = new DalConnectionProvider(false);
-          CallableStatement updateStockStatement = cp.getConnection()
+          final org.openbravo.database.ConnectionProvider cp = new DalConnectionProvider(false);
+          final CallableStatement updateStockStatement = cp.getConnection()
               .prepareCall("{call M_UPDATE_INVENTORY (?,?,?,?,?,?,?,?,?,?,?,?,?)}");
           // client
           updateStockStatement.setString(1, invCountLine.getClient().getId());
@@ -474,58 +509,64 @@ public class InventoryCountProcess implements Process {
         }
       }
       OBDal.getInstance().flush();
-    } catch (Exception e) {
+    } catch (final Exception e) {
       log4j.error("Error in updateDateInventory while Inventory Count Process", e);
       throw new OBException(e.getMessage(), e);
     }
   }
 
-  private void checkStock(InventoryCount inventory) {
+  private void checkStock(final InventoryCount inventory) {
     String attribute;
-    final StringBuilder hqlString = new StringBuilder();
-    hqlString.append("select sd.id ");
-    hqlString.append(" from MaterialMgmtInventoryCountLine as icl");
-    hqlString.append(" , MaterialMgmtStorageDetail as sd");
-    hqlString.append(" , Locator as l");
-    hqlString.append(" , MaterialMgmtInventoryStatus as invs");
-    hqlString.append(" where icl.physInventory.id = :physInventoryId");
-    hqlString.append("   and sd.product = icl.product");
-    hqlString.append("   and (sd.quantityOnHand < 0");
-    hqlString.append("     or sd.onHandOrderQuanity < 0");
-    hqlString.append("     )");
-    // Check only negative Stock for the Bins of the Lines of the Physical Inventory
-    hqlString.append("   and sd.storageBin.id = icl.storageBin.id");
-    hqlString.append("   and l.id = icl.storageBin.id");
-    hqlString.append("   and l.inventoryStatus.id = invs.id");
-    hqlString.append("   and invs.overissue = false");
-    hqlString.append(" order by icl.lineNo");
+    //@formatter:off
+    final String hql =
+                  "select sd.id " +
+                  "  from MaterialMgmtInventoryCountLine as icl" +
+                  "    , MaterialMgmtStorageDetail as sd" +
+                  "    , Locator as l" +
+                  "    , MaterialMgmtInventoryStatus as invs" +
+                  " where icl.physInventory.id = :physInventoryId" +
+                  "   and sd.product = icl.product" +
+                  "   and " +
+                  "     (" +
+                  "       sd.quantityOnHand < 0" +
+                  "       or sd.onHandOrderQuanity < 0" +
+                  "     )" +
+                  // Check only negative Stock for the Bins of the Lines of the Physical Inventory
+                  "   and sd.storageBin.id = icl.storageBin.id" +
+                  "   and l.id = icl.storageBin.id" +
+                  "   and l.inventoryStatus.id = invs.id" +
+                  "   and invs.overissue = false" +
+                  " order by icl.lineNo";
+    //@formatter:on
 
-    final Session session = OBDal.getInstance().getSession();
-    final Query<String> query = session.createQuery(hqlString.toString(), String.class);
-    query.setParameter("physInventoryId", inventory.getId());
-    query.setMaxResults(1);
+    final List<String> resultList = OBDal.getInstance()
+        .getSession()
+        .createQuery(hql, String.class)
+        .setParameter("physInventoryId", inventory.getId())
+        .setMaxResults(1)
+        .list();
 
-    if (!query.list().isEmpty()) {
-      StorageDetail storageDetail = OBDal.getInstance()
-          .get(StorageDetail.class, query.list().get(0).toString());
+    if (!resultList.isEmpty()) {
+      final StorageDetail storageDetail = OBDal.getInstance()
+          .get(StorageDetail.class, resultList.get(0));
       attribute = (!storageDetail.getAttributeSetValue().getIdentifier().isEmpty())
           ? " @PCS_ATTRIBUTE@ '" + storageDetail.getAttributeSetValue().getIdentifier() + "', "
           : "";
       throw new OBException(Utility
           .messageBD(new DalConnectionProvider(), "insuffient_stock",
               OBContext.getOBContext().getLanguage().getLanguage())
-          .replaceAll("%1", storageDetail.getProduct().getIdentifier())
-          .replaceAll("%2", attribute)
-          .replaceAll("%3", storageDetail.getUOM().getIdentifier())
-          .replaceAll("%4", storageDetail.getStorageBin().getIdentifier()));
+          .replace("%1", storageDetail.getProduct().getIdentifier())
+          .replace("%2", attribute)
+          .replace("%3", storageDetail.getUOM().getIdentifier())
+          .replace("%4", storageDetail.getStorageBin().getIdentifier()));
     }
   }
 
-  private void executeHooks(Instance<? extends Object> hooks, InventoryCount inventory)
+  private void executeHooks(final Instance<? extends Object> hooks, final InventoryCount inventory)
       throws Exception {
     if (hooks != null) {
-      for (Iterator<? extends Object> procIter = hooks.iterator(); procIter.hasNext();) {
-        Object proc = procIter.next();
+      for (final Iterator<? extends Object> procIter = hooks.iterator(); procIter.hasNext();) {
+        final Object proc = procIter.next();
         if (proc instanceof InventoryCountProcessHook) {
           ((InventoryCountProcessHook) proc).exec(inventory);
         } else {

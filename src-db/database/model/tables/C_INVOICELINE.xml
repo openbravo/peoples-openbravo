@@ -105,10 +105,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="TAXAMT" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
-        <default><![CDATA[0]]></default>
-        <onCreateDefault/>
-      </column>
       <column name="M_ATTRIBUTESETINSTANCE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
