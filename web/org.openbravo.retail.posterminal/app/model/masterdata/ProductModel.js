@@ -22,7 +22,8 @@
             { property: 'isGeneric' },
             { property: 'characteristicDescriptionSearch' },
             { property: 'listPrice' },
-            { property: 'ispack' }
+            { property: 'ispack' },
+            { property: 'generic_product_id' }
           ],
           searchSupport: true
         }),
