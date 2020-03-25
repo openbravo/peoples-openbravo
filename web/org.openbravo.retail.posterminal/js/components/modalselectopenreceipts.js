@@ -89,7 +89,7 @@ enyo.kind({
         kind: 'OB.UI.ModalSelectOpenedReceipt_btnApply',
         disabled: true,
         checkModifyTax: function(params) {
-          return new Promise(function(resolve, reject) {
+          return new Promise(async function(resolve, reject) {
             function promiseResolve() {
               resolve(params);
             }
@@ -98,52 +98,89 @@ enyo.kind({
               params.attrs.relatedLines &&
               params.attrs.relatedLines.length > 0
             ) {
-              OB.Dal.findUsingCache(
-                'ProductServiceLinked',
-                OB.Model.ProductServiceLinked,
-                {
-                  product: params.product.get('id')
-                },
-                function(data) {
-                  var i, j;
-                  for (i = 0; i < params.attrs.relatedLines.length; i++) {
-                    for (j = 0; j < data.length; j++) {
-                      if (
-                        params.attrs.relatedLines[i].productCategory ===
-                        data.at(j).get('productCategory')
-                      ) {
-                        // Found taxes modification configuration
-                        // resolve after displaying confirmation message
-                        OB.UTIL.showConfirmation.display(
-                          OB.I18N.getLabel(
-                            'OBPOS_lblHeaderSelectOpenedReceiptModal'
-                          ),
-                          OB.I18N.getLabel('OBPOS_WillNotModifyTax'),
-                          [
-                            {
-                              label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                              isConfirmButton: true,
-                              action: promiseResolve
-                            }
-                          ],
+              var checkCategory = function(data) {
+                var i, j, model;
+                for (i = 0; i < params.attrs.relatedLines.length; i++) {
+                  for (j = 0; j < data.length; j++) {
+                    if (data[j] instanceof Backbone.Model) {
+                      model = data[j];
+                    } else {
+                      model = OB.Dal.transform(
+                        OB.Model.ProductServiceLinked,
+                        data[j]
+                      );
+                    }
+                    if (
+                      params.attrs.relatedLines[i].productCategory ===
+                      model.get('productCategory')
+                    ) {
+                      // Found taxes modification configuration
+                      // resolve after displaying confirmation message
+                      OB.UTIL.showConfirmation.display(
+                        OB.I18N.getLabel(
+                          'OBPOS_lblHeaderSelectOpenedReceiptModal'
+                        ),
+                        OB.I18N.getLabel('OBPOS_WillNotModifyTax'),
+                        [
                           {
-                            autoDismiss: false,
-                            onHideFunction: promiseResolve
+                            label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                            isConfirmButton: true,
+                            action: promiseResolve
                           }
-                        );
-                        return;
-                      }
+                        ],
+                        {
+                          autoDismiss: false,
+                          onHideFunction: promiseResolve
+                        }
+                      );
+                      return;
                     }
                   }
-                  // Not found taxes modification configuration
-                  // resolve silently
-                  promiseResolve();
-                },
-                reject,
-                {
-                  modelsAffectedByCache: ['ProductServiceLinked']
                 }
-              );
+                // Not found taxes modification configuration
+                // resolve silently
+                promiseResolve();
+              };
+              if (
+                OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)
+              ) {
+                const criteria = {
+                  product: params.product.get('id'),
+                  remoteFilters: [
+                    {
+                      columns: ['product'],
+                      operator: 'equals',
+                      value: params.product.get('id')
+                    }
+                  ]
+                };
+                OB.Dal.findUsingCache(
+                  'ProductServiceLinked',
+                  OB.Model.ProductServiceLinked,
+                  criteria,
+                  function(data) {
+                    checkCategory(data.models);
+                  },
+                  reject,
+                  {
+                    modelsAffectedByCache: ['ProductServiceLinked']
+                  }
+                );
+              } else {
+                const criteria = new OB.App.Class.Criteria().criterion(
+                  'product',
+                  params.product.get('id')
+                );
+                try {
+                  const data = await OB.App.MasterdataModels.ProductServiceLinked.find(
+                    criteria.build()
+                  );
+                  checkCategory(data);
+                } catch (error) {
+                  OB.error(error.message);
+                  reject();
+                }
+              }
             } else {
               // Product to add does not modify taxes
               // resolve silently

@@ -160,7 +160,7 @@
   function modifyProductTaxCategoryByService(receipt) {
     // For each service with modifyTax flag activated, look in linked product category table
     // and check if it is necessary to modify the tax category of service related lines
-    return new Promise(function(resolve, reject) {
+    return new Promise(async function(resolve, reject) {
       receipt.get('lines').forEach(line => {
         line.set('previousLineRate', line.get('lineRate'));
         line
@@ -176,57 +176,81 @@
             serviceLine.get('relatedLines') &&
             !serviceLine.get('obposIsDeleted')
         );
+      var updateLineTax = function(relatedProductCategories, serviceLine) {
+        relatedProductCategories.forEach(function(relatedProductCategory) {
+          var model;
+          if (relatedProductCategory instanceof Backbone.Model) {
+            model = relatedProductCategory;
+          } else {
+            model = OB.Dal.transform(
+              OB.Model.ProductServiceLinked,
+              relatedProductCategory
+            );
+          }
+          serviceLine
+            .get('relatedLines')
+            .filter(
+              relatedProduct =>
+                relatedProduct.productCategory === model.get('productCategory')
+            )
+            .forEach(relatedProduct => {
+              const relatedLine = receipt
+                .get('lines')
+                .find(line => line.id === relatedProduct.orderlineId);
+              if (relatedLine) {
+                relatedLine.get('product').set('modifiedTax', true);
+                relatedLine
+                  .get('product')
+                  .set('modifiedTaxCategory', model.get('taxCategory'));
+              }
+            });
+        });
+      };
       for (let i = 0; i < serviceLines.length; i++) {
         const serviceLine = serviceLines[i];
         const serviceId = serviceLine.get('product').get('id');
-        const criteria = {
-          product: serviceId
-        };
         if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-          var remoteCriteria = [
+          const criteria = {
+            product: serviceId,
+            remoteFilters: [
+              {
+                columns: ['product'],
+                operator: 'equals',
+                value: serviceId
+              }
+            ]
+          };
+          OB.Dal.findUsingCache(
+            'ProductServiceLinked',
+            OB.Model.ProductServiceLinked,
+            criteria,
+            function(relatedProductCategories) {
+              updateLineTax(relatedProductCategories.models, serviceLine);
+              resolve();
+            },
+            reject,
             {
-              columns: ['product'],
-              operator: 'equals',
-              value: serviceId
+              modelsAffectedByCache: ['ProductServiceLinked']
             }
-          ];
-          criteria.remoteFilters = remoteCriteria;
-        }
-        OB.Dal.findUsingCache(
-          'ProductServiceLinked',
-          OB.Model.ProductServiceLinked,
-          criteria,
-          relatedProductCategories => {
-            relatedProductCategories.forEach(relatedProductCategory => {
-              serviceLine
-                .get('relatedLines')
-                .filter(
-                  relatedProduct =>
-                    relatedProduct.productCategory ===
-                    relatedProductCategory.get('productCategory')
-                )
-                .forEach(relatedProduct => {
-                  const relatedLine = receipt
-                    .get('lines')
-                    .find(line => line.id === relatedProduct.orderlineId);
-                  if (relatedLine) {
-                    relatedLine.get('product').set('modifiedTax', true);
-                    relatedLine
-                      .get('product')
-                      .set(
-                        'modifiedTaxCategory',
-                        relatedProductCategory.get('taxCategory')
-                      );
-                  }
-                });
-            });
+          );
+        } else {
+          const criteria = new OB.App.Class.Criteria().criterion(
+            'product',
+            serviceId
+          );
+          try {
+            const relatedProductCategories = await OB.App.MasterdataModels.ProductServiceLinked.find(
+              criteria.build()
+            );
+            if (relatedProductCategories) {
+              updateLineTax(relatedProductCategories, serviceLine);
+            }
             resolve();
-          },
-          reject,
-          {
-            modelsAffectedByCache: ['ProductServiceLinked']
+          } catch (error) {
+            OB.error(error.message);
+            reject();
           }
-        );
+        }
         return;
       }
       resolve();
