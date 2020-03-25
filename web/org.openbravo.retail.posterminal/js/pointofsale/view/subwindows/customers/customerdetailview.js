@@ -595,10 +595,10 @@ enyo.kind({
         if (inEvent.customer !== undefined) {
           if (inEvent.customer.get(this.modelProperty) !== undefined) {
             var me = this;
-            OB.UTIL.getPriceListName(
+            OB.UTIL.getPriceList(
               inEvent.customer.get(this.modelProperty),
-              function(name) {
-                me.setValue(name);
+              function(priceList) {
+                me.setValue(priceList ? priceList.get('name') : '');
               }
             );
           }

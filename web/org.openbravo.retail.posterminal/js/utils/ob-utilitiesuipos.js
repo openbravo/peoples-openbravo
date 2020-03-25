@@ -407,30 +407,35 @@ OB.UTIL.Math.sign = function(x) {
   return x > 0 ? 1 : -1;
 };
 
-OB.UTIL.getPriceListName = function(priceListId, callback) {
+OB.UTIL.getPriceList = async function(priceListId, callback) {
   if (priceListId) {
     if (OB.MobileApp.model.get('pricelist').id === priceListId) {
-      callback(OB.MobileApp.model.get('pricelist').name);
-    } else {
-      OB.Dal.findUsingCache(
-        'PriceListName',
-        OB.Model.PriceList,
-        { m_pricelist_id: priceListId },
-        function(pList) {
-          if (pList.length > 0) {
-            callback(pList.at(0).get('name'));
-          } else {
-            callback();
-          }
-        },
-        function() {
-          callback();
-        },
-        { modelsAffectedByCache: ['PriceList'] }
+      callback(
+        OB.Dal.transform(OB.Model.PriceList, {
+          id: priceListId,
+          name: OB.MobileApp.model.get('pricelist').name,
+          priceIncludesTax: OB.MobileApp.model.get('pricelist')
+            .priceIncludesTax,
+          c_currency_id: OB.MobileApp.model.get('pricelist').currency
+        })
       );
+    } else {
+      try {
+        const priceList = await OB.App.MasterdataModels.PriceList.withId(
+          priceListId
+        );
+        if (priceList) {
+          callback(OB.Dal.transform(OB.Model.PriceList, priceList));
+        } else {
+          callback();
+        }
+      } catch (error) {
+        OB.UTIL.showError(error);
+        callback();
+      }
     }
   } else {
-    callback('');
+    callback();
   }
 };
 

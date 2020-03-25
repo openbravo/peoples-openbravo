@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2019 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -68,10 +68,8 @@ enyo.kind({
       );
     };
     if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
-      OB.UTIL.getPriceListName(this.order.get('priceList'), function(
-        priceListName
-      ) {
-        content += ' - ' + priceListName;
+      OB.UTIL.getPriceList(this.order.get('priceList'), function(priceList) {
+        content += ' - ' + (priceList ? priceList.get('name') : '');
         setContentHookFn();
       });
     } else {

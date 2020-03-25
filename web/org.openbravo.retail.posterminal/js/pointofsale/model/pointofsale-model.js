@@ -16,7 +16,6 @@ OB.OBPOSPointOfSale.UI = OB.OBPOSPointOfSale.UI || {};
 //Window model
 OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
   models: [
-    OB.Model.PriceList,
     OB.Model.BusinessPartner,
     OB.Model.BPLocation,
     OB.Model.Order,
