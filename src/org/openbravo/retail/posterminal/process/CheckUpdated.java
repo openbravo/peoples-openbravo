@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019 Openbravo S.L.U.
+ * Copyright (C) 2019-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -67,8 +67,7 @@ public class CheckUpdated extends JSONProcessSimple {
         + "WHERE importStatus = 'Initial' " //
         + "AND (typeofdata = 'Order' OR typeofdata = 'OBPOS_CancelLayaway' OR typeofdata = 'OBPOS_VoidLayaway') " //
         + "AND jsonInfo LIKE :orderId";
-    final Query<String> importEntryQuery = session.createQuery(importEntryHQL.toString(),
-        String.class);
+    final Query<String> importEntryQuery = session.createQuery(importEntryHQL, String.class);
     importEntryQuery.setParameter("orderId", whereClause);
     importEntryQuery.setMaxResults(1);
     return importEntryQuery.uniqueResult() != null;
@@ -82,8 +81,8 @@ public class CheckUpdated extends JSONProcessSimple {
         + "WHERE orderstatus = 'N' " //
         + "AND (typeofdata = 'Order' OR typeofdata = 'OBPOS_CancelLayaway' OR typeofdata = 'OBPOS_VoidLayaway') " //
         + "AND jsonInfo LIKE :orderId";
-    final Query<String> errorWhileImportingQuery = session
-        .createQuery(errorWhileImportingHQL.toString(), String.class);
+    final Query<String> errorWhileImportingQuery = session.createQuery(errorWhileImportingHQL,
+        String.class);
     errorWhileImportingQuery.setParameter("orderId", whereClause);
     errorWhileImportingQuery.setMaxResults(1);
     return errorWhileImportingQuery.uniqueResult() != null;
