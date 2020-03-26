@@ -277,13 +277,6 @@
                           .lastSimplifiedInvoiceDocumentNumber
                       },
                       {
-                        sequenceName: 'fullinvoiceslastassignednum',
-                        sequencePrefix: OB.MobileApp.model.get('terminal')
-                          .fullInvoiceDocNoPrefix,
-                        sequenceNumber: OB.MobileApp.model.get('terminal')
-                          .lastFullInvoiceDocumentNumber
-                      },
-                      {
                         sequenceName: 'simplifiedreturninvoiceslastassignednum',
                         sequencePrefix: OB.MobileApp.model.get('terminal')
                           .simplifiedReturnInvoiceDocNoPrefix,
@@ -291,11 +284,32 @@
                           .lastSimplifiedReturnInvoiceDocumentNumber
                       },
                       {
+                        sequenceName: 'fullinvoiceslastassignednum',
+                        sequencePrefix: OB.MobileApp.model.get('terminal')
+                          .fullInvoiceDocNoPrefix,
+                        sequenceNumber: OB.MobileApp.model.get('terminal')
+                          .lastFullInvoiceDocumentNumber
+                      },
+                      {
                         sequenceName: 'fullreturninvoiceslastassignednum',
                         sequencePrefix: OB.MobileApp.model.get('terminal')
                           .fullReturnInvoiceDocNoPrefix,
                         sequenceNumber: OB.MobileApp.model.get('terminal')
                           .lastFullReturnInvoiceDocumentNumber
+                      },
+                      {
+                        sequenceName: 'aggregatedinvoiceslastassignednum',
+                        sequencePrefix: OB.MobileApp.model.get('terminal')
+                          .aggregatedInvoiceDocNoPrefix,
+                        sequenceNumber: OB.MobileApp.model.get('terminal')
+                          .lastAggregatedInvoiceDocumentNumber
+                      },
+                      {
+                        sequenceName: 'aggregatedreturninvoiceslastassignednum',
+                        sequencePrefix: OB.MobileApp.model.get('terminal')
+                          .aggregatedReturnInvoiceDocNoPrefix,
+                        sequenceNumber: OB.MobileApp.model.get('terminal')
+                          .lastAggregatedReturnInvoiceDocumentNumber
                       }
                     ]
                   });
