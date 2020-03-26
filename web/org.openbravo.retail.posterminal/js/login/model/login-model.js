@@ -1586,32 +1586,6 @@
 
       let sequenceName;
       if (
-        ticket.get('generateInvoice') &&
-        ticket.get('fullInvoice') &&
-        ticket.getOrderType() === 1 &&
-        OB.MobileApp.model.get('terminal').fullReturnInvoiceDocNoPrefix
-      ) {
-        sequenceName = 'fullreturninvoiceslastassignednum';
-      } else if (
-        ticket.get('generateInvoice') &&
-        !ticket.get('fullInvoice') &&
-        ticket.getOrderType() === 1 &&
-        OB.MobileApp.model.get('terminal').simplifiedReturnInvoiceDocNoPrefix
-      ) {
-        sequenceName = 'simplifiedreturninvoiceslastassignednum';
-      } else if (
-        ticket.get('generateInvoice') &&
-        ticket.get('fullInvoice') &&
-        OB.MobileApp.model.get('terminal').fullInvoiceDocNoPrefix
-      ) {
-        sequenceName = 'fullinvoiceslastassignednum';
-      } else if (
-        ticket.get('generateInvoice') &&
-        !ticket.get('fullInvoice') &&
-        OB.MobileApp.model.get('terminal').simplifiedInvoiceDocNoPrefix
-      ) {
-        sequenceName = 'simplifiedinvoiceslastassignednum';
-      } else if (
         ticket.get('isQuotation') &&
         OB.MobileApp.model.get('terminal').quotationDocNoPrefix
       ) {
