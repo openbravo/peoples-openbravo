@@ -8578,6 +8578,8 @@ This path should be relative to web/org.openbravo.retail.posterminal]]></HELP>
 <!--4DAF1225B7234239BD9C7A3F5037C231-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--4DAF1225B7234239BD9C7A3F5037C231-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--4DAF1225B7234239BD9C7A3F5037C231-->  <NAME><![CDATA[Separateinvoiceforreturns]]></NAME>
+<!--4DAF1225B7234239BD9C7A3F5037C231-->  <DESCRIPTION><![CDATA[Return Orders will be invoiced in cash up process grouped by business partner using an Aggregated Return Invoice.]]></DESCRIPTION>
+<!--4DAF1225B7234239BD9C7A3F5037C231-->  <HELP><![CDATA[Return Orders will be invoiced in cash up process grouped by business partner using an Aggregated Return Invoice.]]></HELP>
 <!--4DAF1225B7234239BD9C7A3F5037C231-->  <COLUMNNAME><![CDATA[Separateinvoiceforreturns]]></COLUMNNAME>
 <!--4DAF1225B7234239BD9C7A3F5037C231-->  <AD_TABLE_ID><![CDATA[1ECA0B99F44F4FD1854B7DDA9292A75F]]></AD_TABLE_ID>
 <!--4DAF1225B7234239BD9C7A3F5037C231-->  <AD_REFERENCE_ID><![CDATA[20]]></AD_REFERENCE_ID>
@@ -18753,8 +18755,8 @@ In case this value is not set, it will be defaulted to the one defined in Openbr
 <!--B3C50444835F4AD6AF62C0F98D04CD6D-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--B3C50444835F4AD6AF62C0F98D04CD6D-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--B3C50444835F4AD6AF62C0F98D04CD6D-->  <NAME><![CDATA[Generate Invoice]]></NAME>
-<!--B3C50444835F4AD6AF62C0F98D04CD6D-->  <DESCRIPTION><![CDATA[If checked, an invoice will be automatically generated for every order]]></DESCRIPTION>
-<!--B3C50444835F4AD6AF62C0F98D04CD6D-->  <HELP><![CDATA[If checked, a sales invoice will be automatically generated for every sales order. This is actually a default value, and can always be changed from the Web POS once the order has been created, by clicking on the "Invoice" button.]]></HELP>
+<!--B3C50444835F4AD6AF62C0F98D04CD6D-->  <DESCRIPTION><![CDATA[One Simplified Invoice will be generated for each Sales Order.]]></DESCRIPTION>
+<!--B3C50444835F4AD6AF62C0F98D04CD6D-->  <HELP><![CDATA[One Simplified Invoice will be generated for each Sales Order.]]></HELP>
 <!--B3C50444835F4AD6AF62C0F98D04CD6D-->  <COLUMNNAME><![CDATA[Generateinvoice]]></COLUMNNAME>
 <!--B3C50444835F4AD6AF62C0F98D04CD6D-->  <AD_TABLE_ID><![CDATA[1ECA0B99F44F4FD1854B7DDA9292A75F]]></AD_TABLE_ID>
 <!--B3C50444835F4AD6AF62C0F98D04CD6D-->  <AD_REFERENCE_ID><![CDATA[20]]></AD_REFERENCE_ID>
@@ -24350,8 +24352,8 @@ If this option is not checked, then the barcode scanners will not be detected in
 <!--F32F3AED2CEC43B7B253DCF74D0F2040-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--F32F3AED2CEC43B7B253DCF74D0F2040-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--F32F3AED2CEC43B7B253DCF74D0F2040-->  <NAME><![CDATA[Grouping orders]]></NAME>
-<!--F32F3AED2CEC43B7B253DCF74D0F2040-->  <DESCRIPTION><![CDATA[Group Orders in One Invoice]]></DESCRIPTION>
-<!--F32F3AED2CEC43B7B253DCF74D0F2040-->  <HELP><![CDATA[In the cash up process, orders without invoice are grouped in one invoice per business partner.]]></HELP>
+<!--F32F3AED2CEC43B7B253DCF74D0F2040-->  <DESCRIPTION><![CDATA[Sales Orders will be invoiced in cash up process grouped by business partner using an Aggregated Invoice.]]></DESCRIPTION>
+<!--F32F3AED2CEC43B7B253DCF74D0F2040-->  <HELP><![CDATA[Sales Orders will be invoiced in cash up process grouped by business partner using an Aggregated Invoice.]]></HELP>
 <!--F32F3AED2CEC43B7B253DCF74D0F2040-->  <COLUMNNAME><![CDATA[Groupingorders]]></COLUMNNAME>
 <!--F32F3AED2CEC43B7B253DCF74D0F2040-->  <AD_TABLE_ID><![CDATA[1ECA0B99F44F4FD1854B7DDA9292A75F]]></AD_TABLE_ID>
 <!--F32F3AED2CEC43B7B253DCF74D0F2040-->  <AD_REFERENCE_ID><![CDATA[20]]></AD_REFERENCE_ID>

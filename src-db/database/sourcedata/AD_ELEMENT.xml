@@ -228,8 +228,10 @@
 <!--13234950EC42428D91D6127A87B7D2D8-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--13234950EC42428D91D6127A87B7D2D8-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--13234950EC42428D91D6127A87B7D2D8-->  <COLUMNNAME><![CDATA[Separateinvoiceforreturns]]></COLUMNNAME>
-<!--13234950EC42428D91D6127A87B7D2D8-->  <NAME><![CDATA[Separate Invoice for Returns]]></NAME>
-<!--13234950EC42428D91D6127A87B7D2D8-->  <PRINTNAME><![CDATA[Separate Invoice for Returns]]></PRINTNAME>
+<!--13234950EC42428D91D6127A87B7D2D8-->  <NAME><![CDATA[Generate Aggregated Return Invoices]]></NAME>
+<!--13234950EC42428D91D6127A87B7D2D8-->  <PRINTNAME><![CDATA[Generate Aggregated Return Invoices]]></PRINTNAME>
+<!--13234950EC42428D91D6127A87B7D2D8-->  <DESCRIPTION><![CDATA[Return Orders will be invoiced in cash up process grouped by business partner using an Aggregated Return Invoice.]]></DESCRIPTION>
+<!--13234950EC42428D91D6127A87B7D2D8-->  <HELP><![CDATA[Return Orders will be invoiced in cash up process grouped by business partner using an Aggregated Return Invoice.]]></HELP>
 <!--13234950EC42428D91D6127A87B7D2D8-->  <AD_MODULE_ID><![CDATA[FF808181326CC34901326D53DBCF0018]]></AD_MODULE_ID>
 <!--13234950EC42428D91D6127A87B7D2D8-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--13234950EC42428D91D6127A87B7D2D8--></AD_ELEMENT>
@@ -547,10 +549,10 @@ Document Types determine document sequence and processing rules.]]></HELP>
 <!--293FFEE1EB8B4C8E99914352EC1BB394-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--293FFEE1EB8B4C8E99914352EC1BB394-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--293FFEE1EB8B4C8E99914352EC1BB394-->  <COLUMNNAME><![CDATA[generateinvoice]]></COLUMNNAME>
-<!--293FFEE1EB8B4C8E99914352EC1BB394-->  <NAME><![CDATA[Generate Invoice for Orders]]></NAME>
-<!--293FFEE1EB8B4C8E99914352EC1BB394-->  <PRINTNAME><![CDATA[Generate Invoice for Orders]]></PRINTNAME>
-<!--293FFEE1EB8B4C8E99914352EC1BB394-->  <DESCRIPTION><![CDATA[If checked, an invoice will be automatically generated for every order]]></DESCRIPTION>
-<!--293FFEE1EB8B4C8E99914352EC1BB394-->  <HELP><![CDATA[If checked, a sales invoice will be automatically generated for every sales order. This is actually a default value, and can always be changed from the Web POS once the order has been created, by clicking on the "Invoice" button.]]></HELP>
+<!--293FFEE1EB8B4C8E99914352EC1BB394-->  <NAME><![CDATA[Generate Simplified Invoices]]></NAME>
+<!--293FFEE1EB8B4C8E99914352EC1BB394-->  <PRINTNAME><![CDATA[Generate Simplified Invoices]]></PRINTNAME>
+<!--293FFEE1EB8B4C8E99914352EC1BB394-->  <DESCRIPTION><![CDATA[One Simplified Invoice will be generated for each Sales Order.]]></DESCRIPTION>
+<!--293FFEE1EB8B4C8E99914352EC1BB394-->  <HELP><![CDATA[One Simplified Invoice will be generated for each Sales Order.]]></HELP>
 <!--293FFEE1EB8B4C8E99914352EC1BB394-->  <AD_MODULE_ID><![CDATA[FF808181326CC34901326D53DBCF0018]]></AD_MODULE_ID>
 <!--293FFEE1EB8B4C8E99914352EC1BB394-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--293FFEE1EB8B4C8E99914352EC1BB394--></AD_ELEMENT>
@@ -1422,10 +1424,10 @@ This path should be relative to web/org.openbravo.retail.posterminal]]></HELP>
 <!--62DB91A540B340E6A7AC39459569FFAA-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--62DB91A540B340E6A7AC39459569FFAA-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--62DB91A540B340E6A7AC39459569FFAA-->  <COLUMNNAME><![CDATA[Groupingorders]]></COLUMNNAME>
-<!--62DB91A540B340E6A7AC39459569FFAA-->  <NAME><![CDATA[Group Orders in One Invoice]]></NAME>
-<!--62DB91A540B340E6A7AC39459569FFAA-->  <PRINTNAME><![CDATA[Group Orders in One Invoice]]></PRINTNAME>
-<!--62DB91A540B340E6A7AC39459569FFAA-->  <DESCRIPTION><![CDATA[Group Orders in One Invoice]]></DESCRIPTION>
-<!--62DB91A540B340E6A7AC39459569FFAA-->  <HELP><![CDATA[In the cash up process, orders without invoice are grouped in one invoice per business partner.]]></HELP>
+<!--62DB91A540B340E6A7AC39459569FFAA-->  <NAME><![CDATA[Generate Aggregated Invoices]]></NAME>
+<!--62DB91A540B340E6A7AC39459569FFAA-->  <PRINTNAME><![CDATA[Generate Aggregated Invoices]]></PRINTNAME>
+<!--62DB91A540B340E6A7AC39459569FFAA-->  <DESCRIPTION><![CDATA[Sales Orders will be invoiced in cash up process grouped by business partner using an Aggregated Invoice.]]></DESCRIPTION>
+<!--62DB91A540B340E6A7AC39459569FFAA-->  <HELP><![CDATA[Sales Orders will be invoiced in cash up process grouped by business partner using an Aggregated Invoice.]]></HELP>
 <!--62DB91A540B340E6A7AC39459569FFAA-->  <AD_MODULE_ID><![CDATA[FF808181326CC34901326D53DBCF0018]]></AD_MODULE_ID>
 <!--62DB91A540B340E6A7AC39459569FFAA-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--62DB91A540B340E6A7AC39459569FFAA--></AD_ELEMENT>
