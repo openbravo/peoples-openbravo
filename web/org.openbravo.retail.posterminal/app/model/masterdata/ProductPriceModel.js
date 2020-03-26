@@ -19,6 +19,7 @@
           ]
         })
       ];
+      this.setPaginationById(true);
     }
   }
   OB.App.MasterdataController.registerModel(ProductPrice);
