@@ -405,22 +405,12 @@ enyo.kind({
 });
 
 enyo.kind({
-  name: 'OB.UI.MenuSimplifiedInvoice',
+  name: 'OB.UI.MenuInvoice',
   kind: 'OB.UI.ActionMenuAction',
-  classes: 'obUiMenuSimplifiedInvoice',
+  classes: 'obUiMenuInvoice',
   action: {
     window: 'retail.pointofsale',
-    name: 'issueSimplifiedInvoice'
-  }
-});
-
-enyo.kind({
-  name: 'OB.UI.MenuFullInvoice',
-  kind: 'OB.UI.ActionMenuAction',
-  classes: 'obUiMenuFullInvoice',
-  action: {
-    window: 'retail.pointofsale',
-    name: 'issueFullInvoice'
+    name: 'invoiceReceipt'
   }
 });
 
