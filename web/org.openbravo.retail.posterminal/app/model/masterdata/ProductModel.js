@@ -12,22 +12,6 @@
       super();
       this.indices = [
         new OB.App.Class.Index({
-          name: 'productSearchCache_idx',
-          properties: [
-            { property: '_identifier' },
-            { property: 'uPCEAN' },
-            { property: 'searchkey' },
-            { property: 'bestseller' },
-            { property: 'productCategory' },
-            { property: 'isGeneric' },
-            { property: 'characteristicDescriptionSearch' },
-            { property: 'listPrice' },
-            { property: 'ispack' },
-            { property: 'generic_product_id' }
-          ],
-          searchSupport: true
-        }),
-        new OB.App.Class.Index({
           name: 'productCategoryBrowse_idx',
           properties: [
             { property: 'productCategory' },
@@ -111,6 +95,18 @@
             }
           ]
         })
+      ];
+      this.searchProperties = [
+        '_identifier',
+        'uPCEAN',
+        'searchkey',
+        'bestseller',
+        'productCategory',
+        'isGeneric',
+        'characteristicDescriptionSearch',
+        'listPrice',
+        'ispack',
+        'generic_product_id'
       ];
     }
   }
