@@ -73,7 +73,7 @@ public class ProductDiscProperties extends ModelExtension {
         add(new HQLProperty("p.id", "id"));
         add(new HQLProperty(discountNameTrl, "searchkey"));
         add(new HQLProperty(discountNameTrl, "_identifier"));
-        add(new HQLProperty("round(p.obdiscPrice, " + posPrecision + ")", "listPrice"));
+        add(new HQLProperty("coalesce(round(p.obdiscPrice, " + posPrecision + "),0)", "listPrice"));
         add(new HQLProperty("round(p.obdiscPrice, " + posPrecision + ")", "standardPrice"));
         add(new HQLProperty("p.obdiscUpc", "uPCEAN"));
         try {
