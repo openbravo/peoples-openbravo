@@ -154,17 +154,13 @@ enyo.kind({
                     }
                   ]
                 };
-                OB.Dal.findUsingCache(
-                  'ProductServiceLinked',
+                OB.Dal.find(
                   OB.Model.ProductServiceLinked,
                   criteria,
                   function(data) {
                     checkCategory(data.models);
                   },
-                  reject,
-                  {
-                    modelsAffectedByCache: ['ProductServiceLinked']
-                  }
+                  reject
                 );
               } else {
                 const criteria = new OB.App.Class.Criteria().criterion(

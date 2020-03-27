@@ -658,17 +658,13 @@ enyo.kind({
       let remoteCriteria = [uPCEAN];
       criteria.remoteFilters = remoteCriteria;
 
-      OB.Dal.findUsingCache(
-        'productSearch',
+      OB.Dal.find(
         OB.Model.Product,
         criteria,
         function(data) {
           me.searchProductCallback(data.models, code, callback, attrs);
         },
-        me.errorCallback,
-        {
-          modelsAffectedByCache: ['Product']
-        }
+        me.errorCallback
       );
     } else {
       criteria = new OB.App.Class.Criteria()

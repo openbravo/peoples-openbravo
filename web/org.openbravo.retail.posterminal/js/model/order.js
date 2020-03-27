@@ -4188,17 +4188,13 @@
           remoteCriteria.push(pricelistId);
           criteria.remoteFilters = remoteCriteria;
 
-          OB.Dal.findUsingCache(
-            'productPrice',
+          OB.Dal.find(
             OB.Model.ProductPrice,
             criteria,
             function(productPrices) {
               successCallback(productPrices.models);
             },
-            errorCallback,
-            {
-              modelsAffectedByCache: ['ProductPrice']
-            }
+            errorCallback
           );
         }
       } else {

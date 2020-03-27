@@ -220,18 +220,14 @@
               }
             ]
           };
-          OB.Dal.findUsingCache(
-            'ProductServiceLinked',
+          OB.Dal.find(
             OB.Model.ProductServiceLinked,
             criteria,
             function(relatedProductCategories) {
               updateLineTax(relatedProductCategories.models, serviceLine);
               resolve();
             },
-            reject,
-            {
-              modelsAffectedByCache: ['ProductServiceLinked']
-            }
+            reject
           );
         } else {
           const criteria = new OB.App.Class.Criteria().criterion(
