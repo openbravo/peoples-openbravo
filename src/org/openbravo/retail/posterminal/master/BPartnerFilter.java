@@ -100,15 +100,14 @@ public class BPartnerFilter extends ProcessHQLQueryValidated {
   }
 
   protected String getWhereClause(boolean isLocation, JSONObject jsonsent) {
+    String whereClause = "WHERE $filtersCriteria AND bp.customer = true AND "
+        + "bp.priceList IS NOT NULL AND bp.$readableSimpleClientCriteria AND "
+        + "bp.$naturalOrgCriteria AND bp.active = true AND $hqlCriteria ";
+
     if (isLocation) {
-      return "WHERE $filtersCriteria AND bp.customer = true AND "
-          + "bp.priceList IS NOT NULL AND bpl.$readableSimpleClientCriteria AND "
-          + "bpl.$naturalOrgCriteria AND bp.active = true AND bpl.active = true ";
-    } else {
-      return "WHERE $filtersCriteria AND bp.customer = true AND "
-          + "bp.priceList IS NOT NULL AND bp.$readableSimpleClientCriteria AND "
-          + "bp.$naturalOrgCriteria AND bp.active = true ";
+      return whereClause + " AND bpl.active = true ";
     }
+    return whereClause;
   }
 
   public static Map<String, Object> getParams(JSONObject jsonsent) {

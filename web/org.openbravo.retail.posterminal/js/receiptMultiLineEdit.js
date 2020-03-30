@@ -510,7 +510,7 @@ enyo.kind({
     var dateSelected = diff.obrdmDeliveryDate.getValue();
     var today = new Date();
     if (diff.obrdmDeliveryDate.owner.owner.getShowing()) {
-      if (dateSelected !== null) {
+      if (dateSelected !== null && dateSelected !== '') {
         if (
           new Date(dateSelected.toDateString()) < new Date(today.toDateString())
         ) {
@@ -925,8 +925,6 @@ enyo.kind({
         if (inEvent.showTime) {
           this.owner.owner.show();
           this.setValue(this.model.get('obrdmDeliveryDate'));
-          this.$.minutePicker.setStyle('width: 64px !important;');
-          this.$.hourPicker.setStyle('width: 64px !important;');
         } else {
           this.owner.owner.hide();
         }

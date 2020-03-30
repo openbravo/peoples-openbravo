@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -59,6 +59,10 @@ public class CustomerLoader extends POSDataSynchronizationProcess
   @Any
   private Instance<CustomerAddrCreationHook> customerAddrCreations;
 
+  @Inject
+  @Any
+  private Instance<CustomerAfterCreationHook> customerAfterCreations;
+
   @Override
   protected String getImportQualifier() {
     return "BusinessPartner";
@@ -99,6 +103,9 @@ public class CustomerLoader extends POSDataSynchronizationProcess
 
       editLocation(customer, jsoncustomer);
       editBPartnerContact(customer, jsoncustomer);
+      OBDal.getInstance().flush();
+
+      executeAfterCreationHooks(customerAfterCreations, jsoncustomer, customer);
       OBDal.getInstance().flush();
     } finally {
       OBContext.restorePreviousMode();
@@ -442,6 +449,14 @@ public class CustomerLoader extends POSDataSynchronizationProcess
       greeting = jsonCustomer.getString("greetingId");
       Greeting gr = OBDal.getInstance().get(Greeting.class, greeting);
       customer.setGreeting(gr);
+    }
+  }
+
+  private void executeAfterCreationHooks(Instance<CustomerAfterCreationHook> hooks,
+      JSONObject jsonCustomer, BusinessPartner customer) throws Exception {
+    for (Iterator<CustomerAfterCreationHook> procIter = hooks.iterator(); procIter.hasNext();) {
+      CustomerAfterCreationHook proc = procIter.next();
+      proc.exec(jsonCustomer, customer);
     }
   }
 

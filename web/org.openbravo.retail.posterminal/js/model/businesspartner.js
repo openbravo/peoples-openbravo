@@ -309,6 +309,7 @@
           isId: true
         };
         criteria.remoteFilters = [filterBpartnerId];
+        criteria._orderByClause = 'updated desc';
       }
       errorCallback = function() {
         OB.error(

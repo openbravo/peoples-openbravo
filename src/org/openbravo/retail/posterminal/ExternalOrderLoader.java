@@ -1179,7 +1179,12 @@ public class ExternalOrderLoader extends OrderLoader {
         // TODO: sort by prio, check for active...
         wh = posTerminal.getOrganization().getOrganizationWarehouseList().get(0).getWarehouse();
       }
-      orderJson.put("warehouse", wh.getId());
+      if (wh != null) {
+        orderJson.put("warehouse", wh.getId());
+      } else {
+        throw new OBException(posTerminal.getOrganization().getName()
+            + " organization does not have a defined warehouse", true);
+      }
     }
 
   }

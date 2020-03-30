@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019 Openbravo S.L.U.
+ * Copyright (C) 2019-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -22,20 +22,25 @@ public class CrossStoreInfoProperties extends ModelExtension {
   @Override
   public List<HQLProperty> getHQLProperties(Object params) {
     final List<HQLProperty> list = new ArrayList<>();
-
-    final StringBuilder address = new StringBuilder();
-    address.append("CONCAT(");
-    address.append(" COALESCE(l.addressLine1, '')");
-    address.append(" , CASE WHEN l.addressLine2 IS NOT NULL THEN CONCAT(' - ',l.addressLine2) END");
-    address.append(" , ' '");
-    address.append(" , COALESCE(l.postalCode, '')");
-    address.append(" , ' '");
-    address.append(" , COALESCE(l.cityName, '')");
-    address.append(" , CASE WHEN r.name IS NOT NULL THEN CONCAT(' (',r.name,')') END");
-    address.append(" , ' '");
-    address.append(" , COALESCE(c.name, '')");
-    address.append(")");
-    list.add(new HQLProperty(address.toString(), "address"));
+    //@formatter:off
+    final String addressHQL = ""
+    + "CONCAT("
+    + "  COALESCE(l.addressLine1, ''), "
+    + "  CASE WHEN l.addressLine2 IS NOT NULL THEN "
+    + "    CONCAT(' - ',l.addressLine2) "
+    + "  END, "
+    + "  ' ', "
+    + "  COALESCE(l.postalCode, ''), "
+    + "  ' ', "
+    + "  COALESCE(l.cityName, ''), "
+    + "  CASE WHEN r.name IS NOT NULL THEN "
+    + "    CONCAT(' (',r.name,')') "
+    + "  END, "
+    + "  ' ', "
+    + "  COALESCE(c.name, '')"
+    + ")";
+    //@formatter:on
+    list.add(new HQLProperty(addressHQL, "address"));
     list.add(new HQLProperty("u.phone", "phone"));
     list.add(new HQLProperty("u.alternativePhone", "alternativePhone"));
     list.add(new HQLProperty("u.email", "email"));
@@ -43,5 +48,4 @@ public class CrossStoreInfoProperties extends ModelExtension {
 
     return list;
   }
-
 }

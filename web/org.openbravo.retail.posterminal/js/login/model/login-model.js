@@ -1423,11 +1423,16 @@
     },
 
     cleanSessionInfo: function() {
-      this.cleanTerminalData();
+      return new Promise(resolve => {
+        OB.UTIL.HookManager.executeHooks('OBPOS_PreLogoutAction', {}, () => {
+          this.cleanTerminalData();
+          resolve();
+        });
+      });
     },
 
     preLoginActions: function() {
-      this.cleanSessionInfo();
+      this.cleanTerminalData();
     },
 
     preLogoutActions: function(finalCallback) {
@@ -1437,8 +1442,7 @@
       function removeOneModel(model, collection, callback) {
         if (collection.length === 0) {
           if (callback && callback instanceof Function) {
-            me.cleanSessionInfo();
-            callback();
+            me.cleanSessionInfo().then(() => callback());
           }
           return;
         }
@@ -1457,8 +1461,7 @@
           removeOneModel(collection.at(0), collection, finalCallback);
         } else {
           if (finalCallback && finalCallback instanceof Function) {
-            me.cleanSessionInfo();
-            finalCallback();
+            me.cleanSessionInfo().then(() => finalCallback());
           }
         }
       }
