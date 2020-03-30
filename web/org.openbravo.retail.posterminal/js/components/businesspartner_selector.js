@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2016-2019 Openbravo S.L.U.
+ * Copyright (C) 2016-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -872,20 +872,30 @@ enyo.kind({
           return col.column === flt.column;
         });
         if (column) {
-          var operator = column.operator
-            ? column.operator
-            : OB.MobileApp.model.hasPermission(
-                'OBPOS_remote.customer_usesContains',
-                true
-              )
-            ? OB.Dal.CONTAINS
-            : OB.Dal.STARTSWITH;
-          criteria.remoteFilters.push({
-            columns: [column.name],
-            operator: operator,
-            value: flt.value,
-            location: column.location
-          });
+          if (column.hqlFilter) {
+            criteria.remoteFilters.push({
+              value: flt.hqlFilter,
+              columns: [column.name],
+              operator: OB.Dal.FILTER,
+              params: [flt.value],
+              location: column.location
+            });
+          } else {
+            var operator = column.operator
+              ? column.operator
+              : OB.MobileApp.model.hasPermission(
+                  'OBPOS_remote.customer_usesContains',
+                  true
+                )
+              ? OB.Dal.CONTAINS
+              : OB.Dal.STARTSWITH;
+            criteria.remoteFilters.push({
+              columns: [column.name],
+              operator: operator,
+              value: flt.value,
+              location: column.location
+            });
+          }
         }
       });
       if (OB.MobileApp.model.hasPermission('OBPOS_customerLimit', true)) {

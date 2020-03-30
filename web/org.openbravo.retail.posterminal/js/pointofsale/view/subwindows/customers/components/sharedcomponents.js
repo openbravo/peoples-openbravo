@@ -592,10 +592,8 @@ enyo.kind({
       var commercialAuthViaSms = customer.get('viasms');
       var alternativePhone = customer.get('alternativePhone');
       var phone = customer.get('phone');
-      var phoneField =
-        form.$.customerOnlyFields.$.contactInfo.$.contactInfoFields.children[0];
-      var altPhoneField =
-        form.$.customerOnlyFields.$.contactInfo.$.contactInfoFields.children[1];
+      var phoneField = form.attributeComponents.customerPhone;
+      var altPhoneField = form.attributeComponents.alternativePhone;
       if (commercialAuthViaSms && (phone === '' && alternativePhone === '')) {
         phoneField.setMessage(
           OB.I18N.getLabel('OBMOBC_LblMandatoryField'),
@@ -617,8 +615,7 @@ enyo.kind({
       //Validate that email field is filled if 'Commercial Auth -> email' is checked
       var commercialAuthViaEmail = customer.get('viaemail');
       var email = customer.get('email');
-      var emailField =
-        form.$.customerOnlyFields.$.contactInfo.$.contactInfoFields.children[2];
+      var emailField = form.attributeComponents.customerEmail;
       if (commercialAuthViaEmail && email === '') {
         emailField.setMessage(
           OB.I18N.getLabel('OBMOBC_LblMandatoryField'),
@@ -806,6 +803,8 @@ enyo.kind({
     this.$.statisticsLbl.setContent(OB.I18N.getLabel('OBPOS_LblStatistics'));
     this.attributeContainer = this.$.customerAttributes;
 
+    this.attributeComponents = {};
+
     //Create Field Group along with Fields
     enyo.forEach(
       this.fieldGroups,
@@ -846,9 +845,9 @@ enyo.kind({
               natt.fgSection = 'OBPOS_FG_OthersInformation';
             }
             if (natt.fgSection === fg.groupName) {
-              this.$.customerOnlyFields.$[fg.sectionName].$[
-                fg.sectionFieldsName
-              ].createComponent(
+              this.attributeComponents[natt.name] = this.$.customerOnlyFields.$[
+                fg.sectionName
+              ].$[fg.sectionFieldsName].createComponent(
                 {
                   kind: 'OB.UI.CustomerPropertyLine',
                   name: 'line_' + natt.name,
@@ -871,7 +870,9 @@ enyo.kind({
     enyo.forEach(
       this.sameAddrCheckAttributes,
       function(natt) {
-        this.$.customerOnlyFields.createComponent(
+        this.attributeComponents[
+          natt.name
+        ] = this.$.customerOnlyFields.createComponent(
           {
             kind: 'OB.UI.CustomerPropertyLine',
             name: 'line_' + natt.name,
@@ -887,7 +888,9 @@ enyo.kind({
     enyo.forEach(
       this.shipAddrAttributes,
       function(natt) {
-        this.$.shippingAddrFields.createComponent(
+        this.attributeComponents[
+          natt.name
+        ] = this.$.shippingAddrFields.createComponent(
           {
             kind: 'OB.UI.CustomerPropertyLine',
             name: 'line_' + natt.name,
@@ -906,7 +909,9 @@ enyo.kind({
     enyo.forEach(
       this.invAddrAttributes,
       function(natt) {
-        this.$.invoicingAddrFields.createComponent(
+        this.attributeComponents[
+          natt.name
+        ] = this.$.invoicingAddrFields.createComponent(
           {
             kind: 'OB.UI.CustomerPropertyLine',
             name: 'line_' + natt.name,
@@ -925,7 +930,9 @@ enyo.kind({
     enyo.forEach(
       this.statisticsAttributes,
       function(natt) {
-        this.$.statisticsFields.createComponent(
+        this.attributeComponents[
+          natt.name
+        ] = this.$.statisticsFields.createComponent(
           {
             kind: 'OB.UI.CustomerPropertyLine',
             name: 'line_' + natt.name,

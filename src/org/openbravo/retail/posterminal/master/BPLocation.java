@@ -66,8 +66,14 @@ public class BPLocation extends ProcessHQLQuery {
       hql += " OR (bplocAddress.$incrementalUpdateCriteria) ";
     }
     hql += ") and bploc.$readableSimpleClientCriteria AND " + "bploc.$naturalOrgCriteria "
-        + " and bploc.$paginationByIdCriteria " //
-        + "ORDER BY bploc.creationDate desc";
+        + " and bploc.$paginationByIdCriteria ";
+    
+    if (jsonsent.has("orderByClause") && jsonsent.get("orderByClause") != JSONObject.NULL) {
+      hql = hql + "$orderByCriteria";
+    } else {
+      hql = hql + "ORDER BY bploc.updated desc"; 
+    }
+    
     hqlQueries.add(hql);
     return hqlQueries;
   }

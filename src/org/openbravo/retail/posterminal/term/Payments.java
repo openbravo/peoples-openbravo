@@ -56,6 +56,7 @@ public class Payments extends JSONTerminalProperty {
                          + "  img.bindaryData as image, "
                          + "  img.mimetype as mimetype, " 
                          + "  providerGroup, "
+                         + "  providerGroupImage.bindaryData as pgimage, providerGroupImage.mimetype as pgmimetype, "
                          + "  paymentType "
                          + "from OBPOS_App_Payment as p "
                          + "  left join p.financialAccount as f "
@@ -64,6 +65,7 @@ public class Payments extends JSONTerminalProperty {
                          + "  left outer join pm.image as img "
                          + "  left outer join pm.currency as pmc "
                          + "  left outer join pm.obposPaymentgroup as providerGroup "
+                         + "  left outer join providerGroup.image as providerGroupImage "
                          + "  left outer join pm.obposPaymentmethodType as paymentType "
                          + "where p.obposApplications.id = :posID  "
                          + "  and p.$readableSimpleCriteria "
@@ -138,12 +140,19 @@ public class Payments extends JSONTerminalProperty {
             payment.put("image", objPayment[9]);
           }
           if (objPayment[11] != null) {
-            payment.put("providerGroup", converter.toJsonObject((BaseOBObject) objPayment[11],
-                DataResolvingMode.FULL_TRANSLATABLE));
+            JSONObject providerGroup = converter.toJsonObject((BaseOBObject) objPayment[11],
+                DataResolvingMode.FULL_TRANSLATABLE);
+            if (objPayment[12] != null && objPayment[13] != null) {
+              providerGroup.put("image", "data:" + objPayment[13] + ";base64,"
+                  + Base64.encodeBase64String((byte[]) objPayment[12]));
+            } else {
+              providerGroup.put("image", objPayment[12]);
+            }
+            payment.put("providerGroup", providerGroup);
           }
-          if (objPayment[12] != null) {
+          if (objPayment[14] != null) {
             payment.put("paymentType",
-                converter.toJsonObject((BaseOBObject) objPayment[12], DataResolvingMode.FULL));
+                converter.toJsonObject((BaseOBObject) objPayment[14], DataResolvingMode.FULL));
           }
 
           // If the Payment Method is cash, load the rounding properties of the currency

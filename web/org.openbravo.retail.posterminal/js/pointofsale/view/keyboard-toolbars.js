@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2019 Openbravo S.L.U.
+ * Copyright (C) 2013-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -879,6 +879,49 @@ enyo.kind({
       }
     }
   },
+  prepaymentSelection: function(
+    paymentToolBarComponents,
+    dafaultPaymentCommand
+  ) {
+    var keyboard = this.owner.owner,
+      defaultPaymentComp,
+      defaultPaymentButton;
+
+    //Fetch default payment button if available in toolbar(sometimes default payment will be in more option)
+    defaultPaymentComp = _.find(paymentToolBarComponents, function(
+      toolBarPayment
+    ) {
+      return (
+        toolBarPayment.btn &&
+        toolBarPayment.btn.command === dafaultPaymentCommand
+      );
+    });
+
+    if (defaultPaymentComp) {
+      defaultPaymentButton = defaultPaymentComp.$[dafaultPaymentCommand];
+    }
+
+    OB.UTIL.HookManager.executeHooks(
+      'OBMOBC_PrePaymentSelected',
+      {
+        paymentSelected: defaultPaymentButton,
+        paymentInfo: dafaultPaymentCommand,
+        model: keyboard.model,
+        receipt: keyboard.receipt
+      },
+      function(args) {
+        if (args && args.cancellation && args.cancellation === true) {
+          keyboard.hasActivePayment = false;
+          keyboard.lastStatus = '';
+          keyboard.defaultcommand = '';
+          keyboard.setStatus('');
+          return;
+        }
+        keyboard.defaultcommand = dafaultPaymentCommand;
+        keyboard.setStatus(dafaultPaymentCommand);
+      }
+    );
+  },
   shown: function() {
     var me = this,
       refundablePayment,
@@ -986,8 +1029,7 @@ enyo.kind({
           me.defaultPayment.providerGroup.id !== '0'
             ? me.defaultPayment.providerGroup.id
             : me.defaultPayment.payment.searchKey;
-        keyboard.defaultcommand = paymentCommand;
-        keyboard.setStatus(paymentCommand);
+        this.prepaymentSelection(this.getComponents(), paymentCommand);
       } else {
         refundablePayment = _.find(OB.MobileApp.model.get('payments'), function(
           payment
@@ -1000,8 +1042,7 @@ enyo.kind({
             refundablePayment.providerGroup.id !== '0'
               ? refundablePayment.providerGroup.id
               : refundablePayment.payment.searchKey;
-          keyboard.defaultcommand = paymentCommand;
-          keyboard.setStatus(paymentCommand);
+          this.prepaymentSelection(this.getComponents(), paymentCommand);
         } else {
           keyboard.hasActivePayment = false;
           keyboard.lastStatus = '';
