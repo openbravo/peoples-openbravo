@@ -280,7 +280,8 @@
       termProperty: 'orderType',
       propertyId: 'id',
       propertyName: 'name',
-      operator: '='
+      operator: '=',
+      excludeValues: ['QT']
     },
     {
       name: 'iscancelled',
