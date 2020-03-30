@@ -1081,6 +1081,10 @@
   color: rgb(248, 148, 29);
 }
 
+.obUiReceiptSelectorRender-lineInfoContainerSecondRow-orderType_dr {
+  color: rgb(0, 120, 215);
+}
+
 .obUiReceiptSelectorRender-lineInfoContainerSecondRow-orderType_default {
   color: rgb(108, 179, 63);
 }
@@ -6562,7 +6566,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   border-bottom: var(--separator-slim);
   text-align: left;
   padding-left: 10px;
-  height: 90px;
 }
 
 .obUiListMultiOrdersLine .obUiButton-components {

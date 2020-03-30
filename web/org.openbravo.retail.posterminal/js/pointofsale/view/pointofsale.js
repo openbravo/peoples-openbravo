@@ -377,6 +377,12 @@ enyo.kind({
             'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-ObUiModalAdvancedFilterReceipts'
         },
         {
+          kind: 'OB.UI.ModalAdvancedFilterPayOpenTickets',
+          name: 'OB_UI_ModalAdvancedFilterPayOpenTickets',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-ObUiModalAdvancedFilterReceipts'
+        },
+        {
           kind: 'OB.UI.ModalAdvancedFilterVerifiedReturns',
           name: 'modalAdvancedFilterVerifiedReturns',
           classes:

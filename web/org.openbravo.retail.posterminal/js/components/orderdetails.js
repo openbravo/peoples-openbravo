@@ -48,7 +48,10 @@ enyo.kind({
         );
       }
     }
-    var content = OB.I18N.formatHour(orderDate) + ' - ' + docNo;
+    var content = OB.I18N.formatHour(orderDate);
+    if (OB.UTIL.isNotEmptyString(docNo)) {
+      content += ' - ' + docNo;
+    }
     this.setContentDetail(content, docNo, orderDate);
   },
   setContentDetail: function(content, docNo, orderDate) {
