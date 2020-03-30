@@ -66,10 +66,11 @@ enyo.kind({
                 label: OB.I18N.getLabel('OBMOBC_Continue'),
                 isConfirmButton: true,
                 args: {
+                  button: this,
                   model: model
                 },
                 action: function() {
-                  this.waterfall('onChangeCheck', {
+                  this.args.button.waterfall('onChangeCheck', {
                     id: this.args.model.get('id')
                   });
                   this.args.model.trigger('verifyDoneButton', this.args.model);
@@ -82,9 +83,6 @@ enyo.kind({
                   button: this
                 },
                 action: function() {
-                  this.waterfall('onChangeCheck', {
-                    id: this.args.model.get('id')
-                  });
                   return true;
                 }
               }
