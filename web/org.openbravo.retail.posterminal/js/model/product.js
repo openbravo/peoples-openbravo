@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2019 Openbravo S.L.U.
+ * Copyright (C) 2013-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -19,7 +19,9 @@
     remote: 'OBPOS_remote.product',
     initialize: function() {
       this.set('originalStandardPrice', this.get('standardPrice'));
-    }
+    },
+    indexDBModel: OB.App.MasterdataModels.Product.getName(),
+    legacyModel: true
   });
 
   Product.addProperties([
@@ -112,11 +114,6 @@
     {
       name: 'generic_product_id',
       column: 'generic_product_id',
-      type: 'TEXT'
-    },
-    {
-      name: 'brand',
-      column: 'brand',
       type: 'TEXT'
     },
     {
@@ -341,17 +338,7 @@
           sort: 'asc'
         }
       ]
-    },
-    {
-      name: 'obpos_in_productbrand',
-      columns: [
-        {
-          name: 'brand',
-          sort: 'asc'
-        }
-      ]
     }
   ]);
-
   OB.Data.Registry.registerModel(Product);
 })();

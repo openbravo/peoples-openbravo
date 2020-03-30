@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2019 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -29,6 +29,8 @@ import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery;
+import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery.MasterDataModel;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
@@ -36,9 +38,9 @@ import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.retail.config.OBRETCOProductList;
 import org.openbravo.retail.posterminal.POSUtils;
-import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
-public class Product extends ProcessHQLQuery {
+@MasterDataModel("Product")
+public class Product extends MasterDataProcessHQLQuery {
   public static final String productPropertyExtension = "OBPOS_ProductExtension";
   public static final String productDiscPropertyExtension = "OBPOS_ProductDiscExtension";
   private static final Logger log = LogManager.getLogger();
@@ -98,7 +100,6 @@ public class Product extends ProcessHQLQuery {
     try {
       OBContext.setAdminMode(true);
       final Date terminalDate = getTerminalDate(jsonsent);
-
       final String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
       final boolean isCrossStoreSearch = isCrossStoreSearch(jsonsent);
       final boolean isMultiPriceListSearch = isMultiPriceListSearch(jsonsent);
@@ -136,7 +137,6 @@ public class Product extends ProcessHQLQuery {
       throws JSONException {
     try {
       OBContext.setAdminMode(true);
-
       final Date terminalDate = getTerminalDate(jsonsent);
       final boolean isCrossStoreSearch = isCrossStoreSearch(jsonsent);
       final String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
@@ -589,4 +589,8 @@ public class Product extends ProcessHQLQuery {
     return "OBPOS_ProductSearchTooBroad";
   }
 
+  @Override
+  public List<String> getMasterDataModelProperties() {
+    return getPropertiesFrom(extensions);
+  }
 }

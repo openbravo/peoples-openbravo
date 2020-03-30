@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2018 Openbravo S.L.U.
+ * Copyright (C) 2015-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -26,6 +26,8 @@ import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery;
+import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery.MasterDataModel;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
@@ -33,9 +35,9 @@ import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.retail.config.OBRETCOProductList;
 import org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.retail.posterminal.POSUtils;
-import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
-public class ProductPrice extends ProcessHQLQuery {
+@MasterDataModel("ProductPrice")
+public class ProductPrice extends MasterDataProcessHQLQuery {
   public static final String productPricePropertyExtension = "OBPOS_ProductPriceExtension";
   private static final Logger log = LogManager.getLogger();
 
@@ -138,4 +140,8 @@ public class ProductPrice extends ProcessHQLQuery {
     return hqlQueries;
   }
 
+  @Override
+  public List<String> getMasterDataModelProperties() {
+    return getPropertiesFrom(extensions);
+  }
 }

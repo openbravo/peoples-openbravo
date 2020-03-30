@@ -76,13 +76,11 @@ public class LoadedProduct extends ProcessHQLQuery {
     Map<String, Object> paramValues = new HashMap<String, Object>();
     final PriceListVersion priceListVersion = POSUtils.getPriceListVersionByOrgId(
         OBContext.getOBContext().getCurrentOrganization().getId(), new Date());
-    paramValues.put("productId",
-        jsonsent.getJSONObject("parameters").getJSONObject("productId").getString("value"));
+    paramValues.put("productId", jsonsent.getString("productId"));
     paramValues.put("orgId", OBContext.getOBContext().getCurrentOrganization().getId());
     paramValues.put("priceListVersionId", priceListVersion.getId());
-    paramValues.put("salesOrderLineId", jsonsent.getJSONObject("parameters").has("salesOrderLineId")
-        ? jsonsent.getJSONObject("parameters").getJSONObject("salesOrderLineId").getString("value")
-        : "");
+    paramValues.put("salesOrderLineId",
+        jsonsent.has("salesOrderLineId") ? jsonsent.getString("salesOrderLineId") : "");
     return paramValues;
   }
 }

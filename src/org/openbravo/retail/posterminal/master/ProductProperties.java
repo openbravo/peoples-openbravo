@@ -15,7 +15,6 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
@@ -25,8 +24,6 @@ import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
-import org.openbravo.retail.posterminal.OBPOSApplications;
-import org.openbravo.retail.posterminal.POSUtils;
 
 @Qualifier(Product.productPropertyExtension)
 public class ProductProperties extends ModelExtension {
@@ -36,7 +33,7 @@ public class ProductProperties extends ModelExtension {
   @Override
   public List<HQLProperty> getHQLProperties(final Object params) {
     final List<HQLProperty> list = ProductProperties.getMainProductHQLProperties(params);
-    final boolean crossStore = (boolean) getParam(params, "crossStore");
+    final boolean crossStore = (params == null) ? false : (boolean) getParam(params, "crossStore");
 
     list.addAll(new ArrayList<HQLProperty>() {
       private static final long serialVersionUID = 1L;
@@ -88,15 +85,12 @@ public class ProductProperties extends ModelExtension {
   }
 
   public static List<HQLProperty> getMainProductHQLProperties(final Object params) {
-    final OBPOSApplications posDetail = POSUtils
-        .getTerminalById((String) getParam(params, "terminalId"));
-    final boolean multiPriceList = (boolean) getParam(params, "multiPriceList");
-    final boolean crossStore = (boolean) getParam(params, "crossStore");
-    final boolean isRemote = (boolean) getParam(params, "isRemoteSearch");
 
-    if (posDetail == null) {
-      throw new OBException("terminal id is not present in session ");
-    }
+    final boolean multiPriceList = (params == null) ? false
+        : (boolean) getParam(params, "multiPriceList");
+    final boolean crossStore = (params == null) ? false : (boolean) getParam(params, "crossStore");
+    final boolean isRemote = (params == null) ? false
+        : (boolean) getParam(params, "isRemoteSearch");
 
     ArrayList<HQLProperty> list = null;
     list = new ArrayList<HQLProperty>() {
@@ -131,8 +125,9 @@ public class ProductProperties extends ModelExtension {
         add(new HQLProperty("product.isGeneric", "isGeneric"));
         add(new HQLProperty("product.productStatus.id", "productStatus"));
         add(new HQLProperty("product.genericProduct.id", "generic_product_id"));
-        add(new HQLProperty("product.brand.id", "brand"));
         add(new HQLProperty("product.characteristicDescription", "characteristicDescription"));
+        add(new HQLProperty("product.characteristicDescription||','",
+            "characteristicDescriptionSearch"));
         add(new HQLProperty("product.obposShowChDesc", "showchdesc"));
         add(new HQLProperty("product.productType", "productType"));
         add(new HQLProperty("product.includedProductCategories", "includeProductCategories"));
@@ -155,6 +150,8 @@ public class ProductProperties extends ModelExtension {
           add(new HQLProperty("pp.standardPrice", "currentStandardPrice"));
         }
         add(new HQLProperty(String.valueOf(crossStore), "crossStore"));
+        add(new HQLProperty("product.obposMaxpriceassocprod", "obposMaxpriceassocprod"));
+        add(new HQLProperty("product.obposMinpriceassocprod", "obposMinpriceassocprod"));
       }
     };
 

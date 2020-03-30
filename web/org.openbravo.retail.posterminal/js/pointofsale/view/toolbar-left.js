@@ -783,7 +783,37 @@ enyo.kind({
         this.showPaymentTab();
         return;
       }
-      OB.UTIL.StockUtils.checkOrderLinesStock([receipt], function(hasStock) {
+      OB.UTIL.StockUtils.checkOrderLinesStock([receipt], async function(
+        hasStock
+      ) {
+        function successCallback(data) {
+          if (
+            data &&
+            data.length > 0 &&
+            !receipt.get('isPaid') &&
+            !receipt.get('isLayaway')
+          ) {
+            OB.UTIL.ProcessController.finish(
+              'totalAmountValidation',
+              execution
+            );
+            receipt.trigger('showProductList', null, 'final', function() {
+              execution = OB.UTIL.ProcessController.start(
+                'totalAmountValidation'
+              );
+              completePayment();
+              me.doClearUserInput();
+            });
+          } else {
+            completePayment();
+            me.doClearUserInput();
+          }
+        }
+        function errorCallback(trx, error) {
+          completePayment();
+          me.doClearUserInput();
+        }
+
         if (hasStock) {
           var completePayment = function() {
             OB.UTIL.HookManager.executeHooks(
@@ -890,41 +920,32 @@ enyo.kind({
               value: false,
               fieldType: 'forceString'
             });
+            OB.Dal.find(
+              OB.Model.Product,
+              criteria,
+              function(data) {
+                successCallback(data);
+              },
+              errorCallback
+            );
           } else {
-            criteria.productType = 'S';
-            criteria.proposalType = 'FMA';
-          }
-          OB.Dal.find(
-            OB.Model.Product,
-            criteria,
-            function(data) {
-              if (
-                data &&
-                data.length > 0 &&
-                !receipt.get('isPaid') &&
-                !receipt.get('isLayaway')
-              ) {
-                OB.UTIL.ProcessController.finish(
-                  'totalAmountValidation',
-                  execution
-                );
-                receipt.trigger('showProductList', null, 'final', function() {
-                  execution = OB.UTIL.ProcessController.start(
-                    'totalAmountValidation'
-                  );
-                  completePayment();
-                  me.doClearUserInput();
-                });
-              } else {
-                completePayment();
-                me.doClearUserInput();
+            criteria = new OB.App.Class.Criteria()
+              .criterion('productType', 'S')
+              .criterion('proposalType', 'FMA')
+              .build();
+            try {
+              const products = await OB.App.MasterdataModels.Product.find(
+                criteria
+              );
+              let data = [];
+              for (let i = 0; i < products.length; i++) {
+                data.push(OB.Dal.transform(OB.Model.Product, products[i]));
               }
-            },
-            function(trx, error) {
-              completePayment();
-              me.doClearUserInput();
+              successCallback(data);
+            } catch (error) {
+              errorCallback(error);
             }
-          );
+          }
         } else {
           OB.UTIL.ProcessController.finish('totalAmountValidation', execution);
         }

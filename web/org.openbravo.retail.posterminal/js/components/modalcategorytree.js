@@ -138,18 +138,21 @@ enyo.kind({
         return;
       }
 
-      var categoryId = models[index].get('categoryId'),
+      var categoryId = models[index].get('id'),
         processed = {
           category: categoryId,
           processed: models[index].get('childs') === 0
         };
-      childrenIds += ", '" + categoryId + "'";
+      childrenIds += ",'" + categoryId + "'";
       treeProcessed.push(processed);
       if (models[index].get('childs') > 0) {
         me.$.body.$.listCategories.loadCategoryTreeLevel(
-          models[index].get('categoryId'),
+          models[index].get('id'),
           function(categories) {
-            getSubTreeIds(categories.models, 0, function() {
+            if (categories.models !== undefined) {
+              categories = categories.models;
+            }
+            getSubTreeIds(categories, 0, function() {
               processed.processed = true;
               getSubTreeIds(models, index + 1, callback);
             });
@@ -163,8 +166,8 @@ enyo.kind({
     this.$.body.$.listCategories.loadCategoryTreeLevel(
       parentCategoryId,
       function(categories) {
-        if (categories.models.length !== 0) {
-          getSubTreeIds(categories.models, 0, callbackTreeIds);
+        if (categories.models !== undefined || categories.length !== 0) {
+          getSubTreeIds(categories, 0, callbackTreeIds);
         } else {
           callbackTreeIds(childrenIds);
         }

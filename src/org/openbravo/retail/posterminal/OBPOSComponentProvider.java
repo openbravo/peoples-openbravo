@@ -99,7 +99,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "webprinter/btprinters/genericBTPrinter", "webprinter/btprinters/zebraZQ320",
 
         "model/currencypanel", "model/productcharacteristicvalue", "model/characteristicvalue",
-        "model/characteristic", "model/brand", "model/terminal-model", "model/paymentmethodcashup",
+        "model/characteristic", "model/terminal-model", "model/paymentmethodcashup",
         "model/taxcashup", "model/offlineprinter", "model/orderassociationsfilter",
         "model/product-servicelinked", "model/prepaymentrules", "components/modalcancel",
         "components/subwindow", "components/leftsubwindow", "components/modalreceiptproperties",
@@ -111,9 +111,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // Web POS window
         "utils/eventbus", "utils/attributeUtils", "utils/cashUpReportUtils",
         "utils/cashManagementUtils", "utils/ticketCloseUtils", "utils/prepaymentUtils",
-        "components/keypadcoins", "data/dataordersave", "data/dataordertaxes",
-        "data/datacustomersave", "data/datacustomeraddrsave", "data/dataorderdiscount",
-        "components/modalreceipts", "components/modalorderselector",
+        "utils/servicesUtils", "utils/remoteUtils", "components/keypadcoins", "data/dataordersave",
+        "data/dataordertaxes", "data/datacustomersave", "data/datacustomeraddrsave",
+        "data/dataorderdiscount", "components/modalreceipts", "components/modalorderselector",
         "components/modalcrossstoreselector", "components/storeinformation",
         "components/modalmultiorderslayaway", "components/modalcategorytree",
         "components/rendercategory", "components/renderproduct", "components/renderproductch",
@@ -139,14 +139,12 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalrejectquotation", "components/modalPriceModification",
         // Detection of change in context
         "components/modalcontextchanged", "components/modalproductcharacteristic",
-        "components/modalproductbrand",
 
         // Point of sale models
-        "model/pricelist", "model/product-category", "model/product-category-tree", "model/product",
-        "model/productprice", "model/service-product", "model/service-category",
-        "model/businesspartner", "model/document-sequence",
 
-        "model/servicepricerule", "model/servicepricerulerange",
+        "model/pricelist", "model/product-category-tree", "model/product", "model/productprice",
+        "model/service-product", "model/service-category", "model/businesspartner",
+        "model/document-sequence", "model/servicepricerule", "model/servicepricerulerange",
         "model/servicepricerulerangeprices", "model/servicepriceruleversion",
 
         "model/obpos-supervisor-model",
@@ -274,8 +272,22 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/masterdata/BPCategoryModel");
     appDependency.add("model/masterdata/BPSetLineModel");
     appDependency.add("model/masterdata/CountryModel");
+    appDependency.add("model/masterdata/PriceListModel");
+    appDependency.add("model/masterdata/ProductModel");
+    appDependency.add("model/masterdata/ProductPriceModel");
+    appDependency.add("model/masterdata/ProductCategoryTreeModel");
+    appDependency.add("model/masterdata/CharacteristicModel");
+    appDependency.add("model/masterdata/CharacteristicValueModel");
+    appDependency.add("model/masterdata/ProductCharacteristicValueModel");
     appDependency.add("model/masterdata/ProductBOMModel");
+    appDependency.add("model/masterdata/ProductServiceLinkedModel");
     appDependency.add("model/masterdata/SalesRepresentativeModel");
+    appDependency.add("model/masterdata/ServicePriceRuleModel");
+    appDependency.add("model/masterdata/ServicePriceRuleVersionModel");
+    appDependency.add("model/masterdata/ServicePriceRuleRangeModel");
+    appDependency.add("model/masterdata/ServicePriceRuleRangePricesModel");
+    appDependency.add("model/masterdata/ServiceProductModel");
+    appDependency.add("model/masterdata/ServiceProductCategoryModel");
     appDependency.add("model/masterdata/TaxCategoryModel");
     appDependency.add("model/masterdata/TaxCategoryBOMModel");
     appDependency.add("model/masterdata/TaxRateModel");
@@ -289,12 +301,16 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/masterdata/discount/DiscountFilterProductModel");
     appDependency.add("model/masterdata/discount/DiscountFilterRoleModel");
     appDependency.add("model/masterdata/discount/DiscountModel");
-
-    // Tax engine
+    // Tax
     appDependency.add("taxesengine/common/tax-engine");
     appDependency.add("taxesengine/common/tax-rules");
     appDependency.add("taxesengine/common/rules/priceincluding-tax");
     appDependency.add("taxesengine/common/rules/priceexcluding-tax");
+
+    for (final String resource : appDependency) {
+      globalResources.add(createComponentResource(ComponentResourceType.Static,
+          prefix + "/app/" + resource + ".js", POSUtils.APP_NAME));
+    }
 
     for (final String resource : resourceDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,
@@ -307,11 +323,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     for (final String resource : cssDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Stylesheet,
           prefix + "/css/" + resource + ".css", POSUtils.APP_NAME));
-    }
-
-    for (final String resource : appDependency) {
-      globalResources.add(createComponentResource(ComponentResourceType.Static,
-          prefix + "/app/" + resource + ".js", POSUtils.APP_NAME));
     }
 
     return globalResources;

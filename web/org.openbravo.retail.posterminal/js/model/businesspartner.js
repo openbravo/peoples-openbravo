@@ -116,20 +116,12 @@
           );
           saveCallback();
         } else {
-          OB.Dal.get(
-            OB.Model.PriceList,
-            me.get('priceList'),
-            function(pList) {
-              me.set('priceIncludesTax', pList.get('priceIncludesTax'));
-              saveCallback();
-            },
-            function() {
-              saveCallback();
-            },
-            function() {
-              saveCallback();
+          OB.UTIL.getPriceList(me.get('priceList'), function(priceList) {
+            if (priceList) {
+              me.set('priceIncludesTax', priceList.get('priceIncludesTax'));
             }
-          );
+            saveCallback();
+          });
         }
       } else {
         saveCallback();

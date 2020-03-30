@@ -101,10 +101,6 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <column name="PRODUCT_SRCH_CONF" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
-        <default><![CDATA[STD]]></default>
-        <onCreateDefault/>
-      </column>
       <column name="SHOWTAXBREAKDOWN" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>

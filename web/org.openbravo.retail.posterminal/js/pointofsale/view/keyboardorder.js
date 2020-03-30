@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2019 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -644,34 +644,43 @@ enyo.kind({
     return false;
   },
 
-  searchProduct: function(code, callback, attrs) {
-    var me = this,
-      criteria = {
-        uPCEAN: code.toUpperCase()
-      };
+  searchProduct: async function(code, callback, attrs) {
+    let me = this,
+      criteria;
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-      var uPCEAN = {
+      criteria = {};
+      let uPCEAN = {
         columns: ['uPCEAN'],
         operator: 'equals',
         fieldType: 'forceString',
         value: code
       };
-      var remoteCriteria = [uPCEAN];
+      let remoteCriteria = [uPCEAN];
       criteria.remoteFilters = remoteCriteria;
-    }
 
-    OB.Dal.findUsingCache(
-      'productSearch',
-      OB.Model.Product,
-      criteria,
-      function(data) {
+      OB.Dal.find(
+        OB.Model.Product,
+        criteria,
+        function(data) {
+          me.searchProductCallback(data.models, code, callback, attrs);
+        },
+        me.errorCallback
+      );
+    } else {
+      criteria = new OB.App.Class.Criteria()
+        .criterion('uPCEAN', code.toUpperCase())
+        .build();
+      try {
+        const products = await OB.App.MasterdataModels.Product.find(criteria);
+        let data = [];
+        for (let i = 0; i < products.length; i++) {
+          data.push(OB.Dal.transform(OB.Model.Product, products[i]));
+        }
         me.searchProductCallback(data, code, callback, attrs);
-      },
-      me.errorCallback,
-      {
-        modelsAffectedByCache: ['Product']
+      } catch (error) {
+        me.errorCallback;
       }
-    );
+    }
   },
 
   searchProductCallback: function(data, code, callback, attrs) {
@@ -707,7 +716,13 @@ enyo.kind({
         };
         if (args.dataProducts && args.dataProducts.length > 0) {
           OB.debug('productfound');
-          args.callback(args.dataProducts.at(0), args.attrs);
+          let data;
+          if (dataProducts instanceof Backbone.Collection) {
+            data = args.dataProducts.at(0);
+          } else {
+            data = args.dataProducts[0];
+          }
+          args.callback(data, args.attrs);
         } else {
           // If rfid has been used remove code from buffer
           if (

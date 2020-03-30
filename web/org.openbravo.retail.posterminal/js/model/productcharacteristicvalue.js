@@ -1,12 +1,11 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2019 Openbravo S.L.U.
+ * Copyright (C) 2015-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
-
 (function() {
   var ProductCharacteristicValue = OB.Data.ExtensibleModel.extend({
     modelName: 'ProductCharacteristicValue',
@@ -16,7 +15,9 @@
       'org.openbravo.retail.posterminal.master.ProductCharacteristicValue',
     includeTerminalDate: true,
     remote: 'OBPOS_remote.product',
-    dataLimit: OB.Dal.DATALIMIT
+    dataLimit: OB.Dal.DATALIMIT,
+    indexDBModel: OB.App.MasterdataModels.ProductCharacteristicValue.getName(),
+    legacyModel: true
   });
 
   ProductCharacteristicValue.addProperties([

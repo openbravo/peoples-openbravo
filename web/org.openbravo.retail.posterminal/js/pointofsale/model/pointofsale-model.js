@@ -16,17 +16,6 @@ OB.OBPOSPointOfSale.UI = OB.OBPOSPointOfSale.UI || {};
 //Window model
 OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
   models: [
-    OB.Model.Product,
-    OB.Model.ProductCategory,
-    OB.Model.ProductCategoryTree,
-    OB.Model.PriceList,
-    OB.Model.ProductPrice,
-    OB.Model.ServiceProduct,
-    OB.Model.ServiceProductCategory,
-    OB.Model.ServicePriceRule,
-    OB.Model.ServicePriceRuleRange,
-    OB.Model.ServicePriceRuleRangePrices,
-    OB.Model.ServicePriceRuleVersion,
     OB.Model.BusinessPartner,
     OB.Model.BPLocation,
     OB.Model.Order,
@@ -34,12 +23,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     OB.Model.ChangedBusinessPartners,
     OB.Model.ChangedBPlocation,
     OB.Model.CancelLayaway,
-    OB.Model.ProductServiceLinked, //
     OB.Model.CurrencyPanel,
-    OB.Model.Brand,
-    OB.Model.ProductCharacteristicValue,
-    OB.Model.CharacteristicValue,
-    OB.Model.Characteristic,
     OB.Model.CashUp,
     OB.Model.OfflinePrinter,
     OB.Model.PaymentMethodCashUp,
