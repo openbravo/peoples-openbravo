@@ -1229,6 +1229,12 @@
 
     isNegative: function() {
       var isNegative;
+      if (this.get('cancelAndReplaceChangePending')) {
+        this.set('isNegative', true, {
+          silent: true
+        });
+        return true;
+      }
       if (OB.UTIL.isNullOrUndefined(this.get('isNegative'))) {
         var processedPaymentsAmount = OB.DEC.Zero,
           loadedFromBackend = this.get('isLayaway') || this.get('isPaid');
@@ -1345,6 +1351,9 @@
         processedPaymentsAmount = OB.DEC.Zero,
         paymentsAmount = OB.DEC.Zero,
         isNegative = this.isNegative(),
+        cancelAndReplaceChangePending = this.get(
+          'cancelAndReplaceChangePending'
+        ),
         remainingToPay,
         done,
         pending,
@@ -1366,9 +1375,10 @@
           );
         } else {
           if (
-            loadedFromBackend ||
-            !isNegative ||
-            payment.get('isReversePayment')
+            !cancelAndReplaceChangePending &&
+            (loadedFromBackend ||
+              !isNegative ||
+              payment.get('isReversePayment'))
           ) {
             paymentsAmount = OB.DEC.add(
               paymentsAmount,
@@ -4893,7 +4903,9 @@
         disc.extraProperties = {};
         var key;
         for (key in discount.extraProperties) {
-          if (discount.extraProperties.hasOwnProperty(key)) {
+          if (
+            Object.prototype.hasOwnProperty.call(discount.extraProperties, key)
+          ) {
             disc[key] = discount.extraProperties[key];
             disc.extraProperties[key] = discount.extraProperties[key];
           }
@@ -5080,11 +5092,13 @@
                 : attrs.originalLine.get('warehouse').warehousename
           },
           isEditable:
-            options && options.hasOwnProperty('isEditable')
+            options &&
+            Object.prototype.hasOwnProperty.call(options, 'isEditable')
               ? options.isEditable
               : true,
           isDeletable:
-            options && options.hasOwnProperty('isDeletable')
+            options &&
+            Object.prototype.hasOwnProperty.call(options, 'isDeletable')
               ? options.isDeletable
               : true
         });
@@ -7382,13 +7396,17 @@
       );
 
       // Set the 'isNegative' value
-      if (loadedFromBackend) {
-        isNegative = OB.DEC.compare(this.getGross()) === -1;
+      if (this.get('cancelAndReplaceChangePending')) {
+        isNegative = true;
       } else {
-        if (OB.DEC.compare(this.getGross()) === -1) {
-          isNegative = processedPaymentsAmount >= this.getGross();
+        if (loadedFromBackend) {
+          isNegative = OB.DEC.compare(this.getGross()) === -1;
         } else {
-          isNegative = processedPaymentsAmount > this.getGross();
+          if (OB.DEC.compare(this.getGross()) === -1) {
+            isNegative = processedPaymentsAmount >= this.getGross();
+          } else {
+            isNegative = processedPaymentsAmount > this.getGross();
+          }
         }
       }
       if (
@@ -7438,6 +7456,7 @@
         // This doesn't affect to reversal payments but to the payments introduced to add the quantity reversed
         if (
           isNegative &&
+          !this.get('cancelAndReplaceChangePending') &&
           loadedFromBackend &&
           !p.get('reversedPaymentId') &&
           !p.get('signChanged')
@@ -7779,6 +7798,8 @@
                   'cancelAndReplace',
                   order.get('doCancelAndReplace')
                 );
+              } else if (order.get('cancelAndReplaceChangePending')) {
+                payment.set('cancelAndReplace', true);
               }
 
               payments.add(payment, {
@@ -9298,7 +9319,7 @@
       desc += '], Taxes: [';
       i = 0;
       for (propt in this.get('taxes')) {
-        if (this.get('taxes').hasOwnProperty(propt)) {
+        if (Object.prototype.hasOwnProperty.call(this.get('taxes'), propt)) {
           var obj = this.get('taxes')[propt];
           if (i !== 0) {
             desc += ',';
