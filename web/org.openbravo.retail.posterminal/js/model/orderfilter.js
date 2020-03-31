@@ -281,7 +281,7 @@
       propertyId: 'id',
       propertyName: 'name',
       operator: '=',
-      excludeValues: ['QT']
+      excludeValues: ['QT', 'RET']
     },
     {
       name: 'iscancelled',
