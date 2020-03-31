@@ -122,14 +122,14 @@ public class OrderGroupingProcessor {
 
     TerminalType terminalType = posTerminal.getObposTerminaltype();
     Organization organization = posTerminal.getOrganization();
-    if (organization.getObposCDoctype().getDocumentTypeForInvoice() == null) {
+    if (organization.getObposCDoctype().getObposDoctypeagrrinvoice() == null) {
       throw new OBException(
           String.format(OBMessageUtils.messageBD("OBPOS_DocTypeInvValidationOnCashup"),
               organization.getObposCDoctype().getName()));
     }
 
     if (terminalType.isSeparateinvoiceforreturns()
-        && organization.getObposCDoctyperet().getDocumentTypeForInvoice() == null) {
+        && organization.getObposCDoctyperet().getObposDoctypeagrrinvoice() == null) {
       throw new OBException(
           String.format(OBMessageUtils.messageBD("OBPOS_DocTypeInvValidationOnCashup"),
               organization.getObposCDoctyperet().getName()));
