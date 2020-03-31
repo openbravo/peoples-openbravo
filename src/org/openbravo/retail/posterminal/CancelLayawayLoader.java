@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2019 Openbravo S.L.U.
+ * Copyright (C) 2015-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -11,8 +11,6 @@ package org.openbravo.retail.posterminal;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
@@ -23,8 +21,6 @@ import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.CancelAndReplaceUtils;
-import org.openbravo.erpCommon.businessUtility.Preferences;
-import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.process.OutDatedDataChangeException;
@@ -39,24 +35,8 @@ import org.openbravo.service.json.JsonConstants;
 @DataSynchronization(entity = "OBPOS_CancelLayaway")
 public class CancelLayawayLoader extends OrderLoader {
 
-  private static final Logger log = LogManager.getLogger();
-
   @Override
   public JSONObject saveRecord(JSONObject json) throws Exception {
-
-    boolean useOrderDocumentNoForRelatedDocs = false;
-
-    try {
-      useOrderDocumentNoForRelatedDocs = "Y"
-          .equals(Preferences.getPreferenceValue("OBPOS_UseOrderDocumentNoForRelatedDocs", true,
-              OBContext.getOBContext().getCurrentClient(),
-              OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
-              OBContext.getOBContext().getRole(), null));
-    } catch (PropertyException e1) {
-      log.error(
-          "Error getting OBPOS_UseOrderDocumentNoForRelatedDocs preference: " + e1.getMessage(),
-          e1);
-    }
 
     try {
       JSONObject jsoncashup = null;
@@ -156,7 +136,7 @@ public class CancelLayawayLoader extends OrderLoader {
             inverseOrder.getObposApplications(),
             POSUtils.isCrossStore(oldOrder, inverseOrder.getObposApplications()));
         CancelAndReplaceUtils.cancelOrder(json.getString("orderid"), paymentOrganization.getId(),
-            json, useOrderDocumentNoForRelatedDocs);
+            json, false);
       } finally {
         OBContext.restorePreviousCrossOrgReferenceMode();
       }

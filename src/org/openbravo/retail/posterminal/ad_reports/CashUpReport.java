@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2019 Openbravo SLU
+ * All portions are Copyright (C) 2013-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -316,8 +316,10 @@ public class CashUpReport extends HttpSecureAppServlet {
       // SALES TAXES
       final Query<Object[]> salesTaxesQuery = OBDal.getReadOnlyInstance()
           .getSession()
-          .createQuery("SELECT name, STR(ABS(amount)) FROM OBPOS_Taxcashup "
-              + " WHERE obpos_app_cashup_id = :cashupId AND ordertype='0' ORDER BY name ", Object[].class);
+          .createQuery(
+              "SELECT name, STR(ABS(amount)) FROM OBPOS_Taxcashup "
+                  + " WHERE obpos_app_cashup_id = :cashupId AND ordertype='0' ORDER BY name ",
+              Object[].class);
       salesTaxesQuery.setParameter("cashupId", cashupId);
       final JRDataSource salesTaxesDataSource = new ListOfArrayDataSource(salesTaxesQuery.list(),
           new String[] { "LABEL", "VALUE" });
@@ -325,8 +327,10 @@ public class CashUpReport extends HttpSecureAppServlet {
       // RETURNS TAXES
       final Query<Object[]> returnsTaxesQuery = OBDal.getReadOnlyInstance()
           .getSession()
-          .createQuery("SELECT name, STR(ABS(amount)) FROM OBPOS_Taxcashup "
-              + " WHERE obpos_app_cashup_id = :cashupId AND ordertype='1' ORDER BY name ", Object[].class);
+          .createQuery(
+              "SELECT name, STR(ABS(amount)) FROM OBPOS_Taxcashup "
+                  + " WHERE obpos_app_cashup_id = :cashupId AND ordertype='1' ORDER BY name ",
+              Object[].class);
       returnsTaxesQuery.setParameter("cashupId", cashupId);
       final JRDataSource returnTaxesDatasource = new ListOfArrayDataSource(returnsTaxesQuery.list(),
           new String[] { "LABEL", "VALUE" });
@@ -414,7 +418,7 @@ public class CashUpReport extends HttpSecureAppServlet {
       }
     } catch (PropertyException e1) {
       log.error(
-          "Error getting OBPOS_UseOrderDocumentNoForRelatedDocs preference: " + e1.getMessage(),
+          "Error getting OBPOS_retail.cashupRemoveUnusedPayment preference: " + e1.getMessage(),
           e1);
     }
 
