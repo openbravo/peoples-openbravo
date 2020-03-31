@@ -989,6 +989,10 @@
   float: left;
 }
 
+.obUiReceiptSelectorRender-line-center-iconCheck { 
+  margin-top: 18px;  
+}
+
 .obUiReceiptSelectorRender-line-iconCheck_disactive {
   background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-off.svg');
 }

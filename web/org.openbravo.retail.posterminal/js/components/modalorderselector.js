@@ -262,8 +262,14 @@ enyo.kind({
               OB.MobileApp.model.get('terminal').organization$_identifier
             ])
       );
+      this.$.iconCheck.addClass(
+        'obUiReceiptSelectorRender-line-center-iconCheck'
+      );
     } else {
       this.$.store.setContent('');
+      this.$.iconCheck.removeClass(
+        'obUiReceiptSelectorRender-line-center-iconCheck'
+      );
     }
 
     this.$.date.setContent(OB.I18N.formatDate(orderDate));
