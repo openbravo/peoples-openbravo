@@ -23168,11 +23168,11 @@ If this option is not checked, then the barcode scanners will not be detected in
 <!--E67118A61EA74C8BAFA514BC162EA057-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--E67118A61EA74C8BAFA514BC162EA057-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--E67118A61EA74C8BAFA514BC162EA057-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--E67118A61EA74C8BAFA514BC162EA057-->  <NAME><![CDATA[EM_Obpos_Doctypeagrrinvoice_ID]]></NAME>
+<!--E67118A61EA74C8BAFA514BC162EA057-->  <NAME><![CDATA[EM_Obpos_Doctypeaggrinvoice_ID]]></NAME>
 <!--E67118A61EA74C8BAFA514BC162EA057-->  <DESCRIPTION><![CDATA[Document type used for aggregated invoices generated from this sales document]]></DESCRIPTION>
 <!--E67118A61EA74C8BAFA514BC162EA057-->  <HELP><![CDATA[The Document Type for Aggregated Invoice indicates the document type that will be used when an aggregated invoice is generated from this sales document.
 This field will display only when the base document type is Sales Order.]]></HELP>
-<!--E67118A61EA74C8BAFA514BC162EA057-->  <COLUMNNAME><![CDATA[EM_Obpos_Doctypeagrrinvoice_ID]]></COLUMNNAME>
+<!--E67118A61EA74C8BAFA514BC162EA057-->  <COLUMNNAME><![CDATA[EM_Obpos_Doctypeaggrinvoice_ID]]></COLUMNNAME>
 <!--E67118A61EA74C8BAFA514BC162EA057-->  <AD_TABLE_ID><![CDATA[217]]></AD_TABLE_ID>
 <!--E67118A61EA74C8BAFA514BC162EA057-->  <AD_REFERENCE_ID><![CDATA[18]]></AD_REFERENCE_ID>
 <!--E67118A61EA74C8BAFA514BC162EA057-->  <AD_REFERENCE_VALUE_ID><![CDATA[170]]></AD_REFERENCE_VALUE_ID>

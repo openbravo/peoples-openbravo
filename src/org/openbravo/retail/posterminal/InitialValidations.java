@@ -119,7 +119,16 @@ public class InitialValidations {
     } else if (documentType.getDocumentTypeForShipment() == null) {
       throw new OBException(String.format(
           OBMessageUtils.messageBD("OBPOS_DocTypeShipmentNotConfigured"), documentType.getName()));
+    } else if (documentType.getObposDoctypesimpinvoice() == null) {
+      throw new OBException(
+          String.format(OBMessageUtils.messageBD("OBPOS_DocTypeSimplifiedInvoiceNotConfigured"),
+              documentType.getName()));
+    } else if (documentType.getObposDoctypeaggrinvoice() == null) {
+      throw new OBException(
+          String.format(OBMessageUtils.messageBD("OBPOS_DocTypeAggregatedInvoiceNotConfigured"),
+              documentType.getName()));
     }
+
     if (returnDocumentType.getDocumentTypeForInvoice() == null) {
       throw new OBException(
           String.format(OBMessageUtils.messageBD("OBPOS_DocTypeReturnInvoiceNotConfigured"),
@@ -128,6 +137,14 @@ public class InitialValidations {
       throw new OBException(
           String.format(OBMessageUtils.messageBD("OBPOS_DocTypeReturnShipmentNotConfigured"),
               returnDocumentType.getName()));
+    } else if (returnDocumentType.getObposDoctypesimpinvoice() == null) {
+      throw new OBException(String.format(
+          OBMessageUtils.messageBD("OBPOS_DocTypeSimplifiedReturnInvoiceNotConfigured"),
+          returnDocumentType.getName()));
+    } else if (returnDocumentType.getObposDoctypeaggrinvoice() == null) {
+      throw new OBException(String.format(
+          OBMessageUtils.messageBD("OBPOS_DocTypeAggregatedReturnInvoiceNotConfigured"),
+          returnDocumentType.getName()));
     }
 
     String whereclausePM = " as e where e.obposApplications=:terminal and e.financialAccount is not null "

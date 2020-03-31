@@ -101,10 +101,9 @@ public class InvoiceUtils {
         : orderDocType.getObposDoctypesimpinvoice();
 
     if (invoiceDocType == null) {
-      throw new OBException("There is no 'Document type for "
-          + (isFullInvoice ? "Invoice" : "Simplified Invoice")
-          + "' defined for the specified Document Type. The document type for invoices can be configured in the Document Type window, and it should be configured for the document type: "
-          + orderDocType.getName());
+      throw new OBException(
+          String.format(OBMessageUtils.messageBD(isFullInvoice ? "OBPOS_DocTypeInvoiceNotConfigured"
+              : "OBPOS_DocTypeSimplifiedInvoiceNotConfigured"), orderDocType.getName()));
     }
 
     return invoiceDocType;

@@ -122,17 +122,17 @@ public class OrderGroupingProcessor {
 
     TerminalType terminalType = posTerminal.getObposTerminaltype();
     Organization organization = posTerminal.getOrganization();
-    if (organization.getObposCDoctype().getObposDoctypeagrrinvoice() == null) {
+    if (organization.getObposCDoctype().getObposDoctypeaggrinvoice() == null) {
       throw new OBException(
-          String.format(OBMessageUtils.messageBD("OBPOS_DocTypeInvValidationOnCashup"),
+          String.format(OBMessageUtils.messageBD("OBPOS_DocTypeAggregatedInvoiceNotConfigured"),
               organization.getObposCDoctype().getName()));
     }
 
     if (terminalType.isSeparateinvoiceforreturns()
-        && organization.getObposCDoctyperet().getObposDoctypeagrrinvoice() == null) {
-      throw new OBException(
-          String.format(OBMessageUtils.messageBD("OBPOS_DocTypeInvValidationOnCashup"),
-              organization.getObposCDoctyperet().getName()));
+        && organization.getObposCDoctyperet().getObposDoctypeaggrinvoice() == null) {
+      throw new OBException(String.format(
+          OBMessageUtils.messageBD("OBPOS_DocTypeAggregatedReturnInvoiceNotConfigured"),
+          organization.getObposCDoctyperet().getName()));
     }
 
     final String strExecutionId = SequenceIdData.getUUID().substring(0, 30);
