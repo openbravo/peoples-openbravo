@@ -191,13 +191,21 @@ enyo.kind({
             break;
 
           case 'totalamountFrom':
-            if (order.attributes.gross < remoteFilters.params[0]) {
+            if (order.attributes.totalamountFrom < remoteFilters.params[0]) {
               popedElements.push(order);
             }
             break;
 
           case 'totalamountTo':
-            if (order.attributes.gross > remoteFilters.params[0]) {
+            if (order.attributes.totalamountTo > remoteFilters.params[0]) {
+              popedElements.push(order);
+            }
+            break;
+          case 'orderType':
+            if (
+              remoteFilters.isId &&
+              order.attributes.orderType !== remoteFilters.value
+            ) {
               popedElements.push(order);
             }
             break;
