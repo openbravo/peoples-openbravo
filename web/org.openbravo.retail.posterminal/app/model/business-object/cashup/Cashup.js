@@ -412,7 +412,7 @@
    * Complete the cashup
    */
   OB.App.StateAPI.Global.registerActions({
-    completeCashup(state, payload) {
+    completeCashupAndCreateNew(state, payload) {
       const newState = { ...state };
 
       // read cashup from cashup window,
@@ -470,7 +470,7 @@
       return newState;
     }
   });
-  OB.App.StateAPI.Global.completeCashup.addActionPreparation(
+  OB.App.StateAPI.Global.completeCashupAndCreateNew.addActionPreparation(
     async (state, payload) => {
       const newPayload = { ...payload };
 
