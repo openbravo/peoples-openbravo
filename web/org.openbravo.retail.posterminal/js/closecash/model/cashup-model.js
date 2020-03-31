@@ -1229,7 +1229,10 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
               cashupModel: me
             },
             function(args) {
-              OB.App.State.Global.completeCashup({ newCashup: cashUp.at(0) })
+              const filteredCashup = OB.App.State.Cashup.Utils.filterOnlyNeededDataForCompleteCashup(
+                cashUp.at(0)
+              );
+              OB.App.State.Global.completeCashup({ newCashup: filteredCashup })
                 .then(() => {
                   OB.MobileApp.model.setSynchronizedPreference(
                     synchronizedPreferenceValue

@@ -316,6 +316,21 @@
     // this function should be deleted
     getCashupId() {
       return OB.App.State.persistence.getState().Cashup.id;
+    },
+
+    filterOnlyNeededDataForCompleteCashup(cashup) {
+      const newCashup = {};
+      newCashup.objToSend = {};
+
+      newCashup.objToSend.cashCloseInfo = cashup.objToSend.cashCloseInfo;
+      newCashup.objToSend.cashMgmtIds = cashup.objToSend.cashMgmtIds;
+      newCashup.objToSend.cashUpDate = cashup.objToSend.cashUpDate;
+      newCashup.objToSend.timezoneOffset = cashup.objToSend.timezoneOffset;
+      newCashup.objToSend.lastcashupeportdate =
+        cashup.objToSend.lastcashupeportdate;
+      newCashup.objToSend.approvals = cashup.objToSend.approvals;
+
+      return newCashup;
     }
   });
 })();
