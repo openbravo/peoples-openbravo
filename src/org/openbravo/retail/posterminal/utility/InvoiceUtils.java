@@ -62,7 +62,6 @@ import org.openbravo.service.db.CallStoredProcedure;
 public class InvoiceUtils {
 
   HashMap<String, DocumentType> paymentDocTypes = new HashMap<>();
-  HashMap<String, DocumentType> invoiceDocTypes = new HashMap<>();
   HashMap<String, DocumentType> shipmentDocTypes = new HashMap<>();
   HashMap<String, JSONArray> invoicelineserviceList;
 
@@ -96,19 +95,19 @@ public class InvoiceUtils {
     invoice.set("creationDate", new Date(value));
   }
 
-  private DocumentType getInvoiceDocumentType(String documentTypeId) {
-    if (invoiceDocTypes.get(documentTypeId) != null) {
-      return invoiceDocTypes.get(documentTypeId);
+  private DocumentType getInvoiceDocumentType(String orderDocTypeId, boolean isFullInvoice) {
+    final DocumentType orderDocType = OBDal.getInstance().get(DocumentType.class, orderDocTypeId);
+    final DocumentType invoiceDocType = isFullInvoice ? orderDocType.getDocumentTypeForInvoice()
+        : orderDocType.getObposDoctypesimpinvoice();
+
+    if (invoiceDocType == null) {
+      throw new OBException("There is no 'Document type for "
+          + (isFullInvoice ? "Invoice" : "Simplified Invoice")
+          + "' defined for the specified Document Type. The document type for invoices can be configured in the Document Type window, and it should be configured for the document type: "
+          + orderDocType.getName());
     }
-    DocumentType orderDocType = OBDal.getInstance().get(DocumentType.class, documentTypeId);
-    final DocumentType docType = orderDocType.getDocumentTypeForInvoice();
-    invoiceDocTypes.put(documentTypeId, docType);
-    if (docType == null) {
-      throw new OBException(
-          "There is no 'Document type for Invoice' defined for the specified Document Type. The document type for invoices can be configured in the Document Type window, and it should be configured for the document type: "
-              + orderDocType.getName());
-    }
-    return docType;
+
+    return invoiceDocType;
   }
 
   private void createInvoiceAndLines(final JSONObject jsoninvoice, final Invoice invoice,
@@ -403,8 +402,10 @@ public class InvoiceUtils {
     invoice.setOrganization(order.getOrganization());
     invoice.setTrxOrganization(order.getTrxOrganization());
     invoice.setDescription(description);
-    invoice.setDocumentType(getInvoiceDocumentType(order.getDocumentType().getId()));
-    invoice.setTransactionDocument(getInvoiceDocumentType(order.getDocumentType().getId()));
+    final DocumentType docType = getInvoiceDocumentType(order.getDocumentType().getId(),
+        jsoninvoice.getBoolean("fullInvoice"));
+    invoice.setDocumentType(docType);
+    invoice.setTransactionDocument(docType);
 
     final Date orderDate = OBMOBCUtils.calculateServerDatetime(jsoninvoice.getString("orderDate"),
         Long.parseLong(jsoninvoice.getString("timezoneOffset")));
