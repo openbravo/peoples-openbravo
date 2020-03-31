@@ -1589,25 +1589,6 @@
         this.set('isEditable', _order.get('isEditable'));
       }
 
-      if (_order.get('isLayaway')) {
-        if (
-          OB.MobileApp.model.get('terminal').terminalType.generateInvoice &&
-          OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice', true)
-        ) {
-          if (
-            OB.MobileApp.model.hasPermission(
-              'OBPOS_retail.restricttaxidinvoice',
-              true
-            ) &&
-            !_order.get('bp').get('taxID')
-          ) {
-            _order.set('generateInvoice', false);
-          } else {
-            _order.set('generateInvoice', true);
-          }
-        }
-      }
-
       if (_order.get('replacedorder_documentNo')) {
         this.set(
           'replacedorder_documentNo',
@@ -11370,31 +11351,6 @@
             'priceIncludesTax',
             OB.MobileApp.model.get('pricelist').priceIncludesTax
           );
-        }
-        if (OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice')) {
-          if (
-            OB.MobileApp.model.hasPermission(
-              'OBPOS_retail.restricttaxidinvoice',
-              true
-            ) &&
-            !bp.get('taxID')
-          ) {
-            if (
-              OB.MobileApp.model.get('terminal').terminalType.generateInvoice
-            ) {
-              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
-            } else {
-              OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
-            }
-            order.set('generateInvoice', false);
-          } else {
-            order.set(
-              'generateInvoice',
-              OB.MobileApp.model.get('terminal').terminalType.generateInvoice
-            );
-          }
-        } else {
-          order.set('generateInvoice', false);
         }
         order.set('currency', OB.MobileApp.model.get('terminal').currency);
         order.set(
