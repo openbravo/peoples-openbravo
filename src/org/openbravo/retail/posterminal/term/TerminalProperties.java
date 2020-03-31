@@ -72,8 +72,6 @@ public class TerminalProperties extends ModelExtension {
     list.add(new HQLProperty("pos.fullretinvdocnoPrefix", "fullReturnInvoiceDocNoPrefix"));
     list.add(new HQLProperty("pos.simpinvdocnoPrefix", "simplifiedInvoiceDocNoPrefix"));
     list.add(new HQLProperty("pos.simpretinvdocnoPrefix", "simplifiedReturnInvoiceDocNoPrefix"));
-    list.add(new HQLProperty("pos.aggrinvdocnoPrefix", "aggregatedInvoiceDocNoPrefix"));
-    list.add(new HQLProperty("pos.aggrretinvdocnoPrefix", "aggregatedReturnInvoiceDocNoPrefix"));
     list.add(new HQLProperty("pos.obposTerminaltype.allowpayoncredit", "allowpayoncredit"));
     list.add(new HQLProperty("pos.obposTerminaltype.multiChange", "multiChange"));
     list.add(new HQLProperty("org.obposCountDiffLimit", "organizationCountDiffLimit"));
