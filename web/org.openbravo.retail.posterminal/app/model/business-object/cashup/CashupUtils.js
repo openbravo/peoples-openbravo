@@ -49,13 +49,13 @@
         [
           {
             label: OB.I18N.getLabel('OBMOBC_Reload'),
-            action: function() {
+            action() {
               window.location.reload();
             }
           }
         ],
         {
-          onShowFunction: function(popup) {
+          onShowFunction(popup) {
             popup.$.headerCloseButton.hide();
           },
           autoDismiss: false
@@ -63,7 +63,7 @@
       );
     },
 
-    resetStatistics(newCashup) {
+    resetStatistics() {
       // TODO: modify state instead run methods
       // TODO !!!!!!!!!!!
       // OB.UTIL.localStorage.setItem('transitionsToOnline', 0);
@@ -81,7 +81,7 @@
         let drops = terminalPayment.payment.totalDrops;
 
         if (lastCashUpPayments && lastCashUpPayments.length > 1) {
-          const lastCashUpPayment = lastCashUpPayments.filter(function(
+          const lastCashUpPayment = lastCashUpPayments.filter(function filter(
             lastCahupPaymentFilter
           ) {
             return (
@@ -125,8 +125,9 @@
             id: terminalPayment.newUuid,
             paymentMethodId: terminalPayment.payment.id,
             searchKey: terminalPayment.payment.searchKey,
+            // eslint-disable-next-line no-underscore-dangle
             name: terminalPayment.payment._identifier,
-            startingCash: startingCash,
+            startingCash,
             totalSales: OB.DEC.Zero,
             totalReturns: OB.DEC.Zero,
             totalDeposits: deposits,
@@ -159,6 +160,7 @@
         id: paymentMethodCashUpModel.id,
         paymentMethodId: paymentMethodCashUpModel.paymentmethod_id,
         searchKey: paymentMethodCashUpModel.searchKey,
+        // eslint-disable-next-line no-underscore-dangle
         name: paymentMethodCashUpModel._identifier,
         startingCash: paymentMethodCashUpModel.startingCash,
         totalSales: paymentMethodCashUpModel.totalSales,
@@ -260,7 +262,7 @@
       newCashup.cashPaymentMethodInfo = [...newCashup.cashPaymentMethodInfo];
 
       terminalPayments.forEach(terminalPayment => {
-        let startingCash = terminalPayment.currentBalance;
+        const startingCash = terminalPayment.currentBalance;
         // get the cashup payment that matches with the payment method of the terminal
         const cashupPayment = cashup.cashPaymentMethodInfo.filter(
           cashupPaymentForFilter => {
@@ -279,8 +281,9 @@
             id: terminalPayment.newUuid,
             paymentMethodId: terminalPayment.payment.id,
             searchKey: terminalPayment.payment.searchKey,
+            // eslint-disable-next-line no-underscore-dangle
             name: terminalPayment.payment._identifier,
-            startingCash: startingCash,
+            startingCash,
             totalSales: OB.DEC.Zero,
             totalReturns: OB.DEC.Zero,
             totalDeposits: OB.DEC.Zero,
@@ -290,11 +293,11 @@
             lineNo: terminalPayment.lineNo,
             newPaymentMethod: true
           });
-        } else {
-          if (cashupPayment.name !== terminalPayment.payment._identifier) {
-            // name of a payment method has change in the backend, updating it in the pos cashup
-            cashupPayment.name = terminalPayment.payment._identifier;
-          }
+          // eslint-disable-next-line no-underscore-dangle
+        } else if (cashupPayment.name !== terminalPayment.payment._identifier) {
+          // name of a payment method has change in the backend, updating it in the pos cashup
+          // eslint-disable-next-line no-underscore-dangle
+          cashupPayment.name = terminalPayment.payment._identifier;
         }
       });
       return newCashup;
