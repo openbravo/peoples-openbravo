@@ -9893,6 +9893,7 @@
         invoice.set('isInvoice', true);
         invoice.unset('isBeingClosed');
         invoice.get('lines').reset();
+        invoice.set('fullInvoice', this.get('fullInvoice'));
 
         this.get('lines').forEach(function(ol) {
           var originalQty = ol.get('qty'),

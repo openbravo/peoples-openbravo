@@ -431,7 +431,8 @@ public class OrderLoader extends POSDataSynchronizationProcess
             jsoninvoice = jsonorder;
           }
 
-          invoice = iu.createNewInvoice(jsoninvoice, order, documentNoHandlers.get());
+          invoice = iu.createNewInvoice(jsoninvoice, order);
+          updateTerminalDocumentSequence(order.getObposApplications(), jsoninvoice);
         }
 
         if (log.isDebugEnabled()) {
@@ -1152,15 +1153,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
     order.setDelivered(deliver);
 
     if (!doCancelAndReplace && !doCancelLayaway) {
-      final OBPOSApplications terminal = order.getObposApplications();
-      if (terminal.getEntity().hasProperty(jsonorder.optString("obposSequencename"))) {
-        terminal.set(jsonorder.getString("obposSequencename"),
-            Long.max(
-                (Long) ObjectUtils
-                    .defaultIfNull(terminal.get(jsonorder.getString("obposSequencename")), 0L),
-                jsonorder.optLong("obposSequencenumber")));
-        OBDal.getInstance().save(terminal);
-      }
+      updateTerminalDocumentSequence(order.getObposApplications(), jsonorder);
     }
 
     String userHqlWhereClause = " usr where usr.businessPartner = :bp and usr.organization.id in (:orgs) order by username";
@@ -1849,6 +1842,16 @@ public class OrderLoader extends POSDataSynchronizationProcess
 
     } catch (JSONException e) {
       log.error("Error creating approvals for order" + order, e);
+    }
+  }
+
+  private void updateTerminalDocumentSequence(final OBPOSApplications terminal, JSONObject json)
+      throws JSONException {
+    if (terminal.getEntity().hasProperty(json.optString("obposSequencename"))) {
+      terminal.set(json.getString("obposSequencename"), Long.max(
+          (Long) ObjectUtils.defaultIfNull(terminal.get(json.getString("obposSequencename")), 0L),
+          json.optLong("obposSequencenumber")));
+      OBDal.getInstance().save(terminal);
     }
   }
 

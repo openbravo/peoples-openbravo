@@ -66,8 +66,7 @@ public class InvoiceUtils {
   HashMap<String, DocumentType> shipmentDocTypes = new HashMap<>();
   HashMap<String, JSONArray> invoicelineserviceList;
 
-  public Invoice createNewInvoice(JSONObject jsoninvoice, Order order,
-      List<DocumentNoHandler> docNoHandlers) {
+  public Invoice createNewInvoice(JSONObject jsoninvoice, Order order) {
     final Invoice invoice = OBProvider.getInstance().get(Invoice.class);
     try {
 
@@ -84,18 +83,12 @@ public class InvoiceUtils {
         invoicelineReferences.add(OBDal.getInstance().get(OrderLine.class, invoiceLineId));
       }
 
-      createInvoiceAndLines(jsoninvoice, invoice, order, invoicelines, invoicelineReferences,
-          docNoHandlers);
+      createInvoiceAndLines(jsoninvoice, invoice, order, invoicelines, invoicelineReferences);
     } catch (JSONException e) {
       // won't happen
     }
 
     return invoice;
-  }
-
-  private void addDocumentNoHandler(BaseOBObject bob, Entity entity, DocumentType docTypeTarget,
-      DocumentType docType, List<DocumentNoHandler> documentNoHandlers) {
-    documentNoHandlers.add(new DocumentNoHandler(bob, entity, docTypeTarget, docType));
   }
 
   private void updateAuditInfo(Invoice invoice, JSONObject jsoninvoice) throws JSONException {
@@ -120,9 +113,8 @@ public class InvoiceUtils {
 
   private void createInvoiceAndLines(final JSONObject jsoninvoice, final Invoice invoice,
       final Order order, final JSONArray invoicelines,
-      final ArrayList<OrderLine> invoicelineReferences, final List<DocumentNoHandler> docNoHandlers)
-      throws JSONException {
-    createInvoice(invoice, order, jsoninvoice, docNoHandlers);
+      final ArrayList<OrderLine> invoicelineReferences) throws JSONException {
+    createInvoice(invoice, order, jsoninvoice);
     OBDal.getInstance().save(invoice);
     createInvoiceLines(invoice, order, jsoninvoice, invoicelines, invoicelineReferences);
     updateAuditInfo(invoice, jsoninvoice);
@@ -380,8 +372,8 @@ public class InvoiceUtils {
     }
   }
 
-  private void createInvoice(Invoice invoice, Order order, JSONObject jsoninvoice,
-      List<DocumentNoHandler> docNoHandlers) throws JSONException {
+  private void createInvoice(Invoice invoice, Order order, JSONObject jsoninvoice)
+      throws JSONException {
     Entity invoiceEntity = ModelProvider.getInstance().getEntity(Invoice.class);
     JSONPropertyToEntity.fillBobFromJSON(invoiceEntity, invoice, jsoninvoice,
         jsoninvoice.getLong("timezoneOffset"));
@@ -413,10 +405,6 @@ public class InvoiceUtils {
     invoice.setDescription(description);
     invoice.setDocumentType(getInvoiceDocumentType(order.getDocumentType().getId()));
     invoice.setTransactionDocument(getInvoiceDocumentType(order.getDocumentType().getId()));
-
-    invoice.setDocumentNo(getDummyDocumentNo());
-    addDocumentNoHandler(invoice, invoiceEntity, invoice.getTransactionDocument(),
-        invoice.getDocumentType(), docNoHandlers);
 
     final Date orderDate = OBMOBCUtils.calculateServerDatetime(jsoninvoice.getString("orderDate"),
         Long.parseLong(jsoninvoice.getString("timezoneOffset")));
@@ -1002,10 +990,6 @@ public class InvoiceUtils {
       }
     }
     return calculatedDueDate.getTime();
-  }
-
-  private String getDummyDocumentNo() {
-    return "DOCNO" + System.currentTimeMillis();
   }
 
   /**
