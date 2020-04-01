@@ -26,7 +26,10 @@ OB.UTIL.HookManager.registerHook(
           'lines[*].product.img',
           'lines[*].product._filter'
         ],
-        resetEvents: ['paintTaxes']
+        resetEvents: ['paintTaxes'],
+        mapProperties: {
+          bp: 'businessPartner'
+        }
       }
     );
     backboneCurrentTicket.trigger('change'); // forces backbone -> state propagation
