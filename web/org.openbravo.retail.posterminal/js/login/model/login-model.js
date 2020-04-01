@@ -1620,10 +1620,7 @@
         OB.MobileApp.model.get('terminal').fullReturnInvoiceDocNoPrefix
       ) {
         invoice.set('obposSequencename', 'fullreturninvoiceslastassignednum');
-      } else if (
-        !invoice.get('fullInvoice') &&
-        OB.MobileApp.model.get('terminal').simplifiedInvoiceDocNoPrefix
-      ) {
+      } else if (!invoice.get('fullInvoice')) {
         invoice.set('obposSequencename', 'simplifiedinvoiceslastassignednum');
       } else {
         invoice.set('obposSequencename', 'fullinvoiceslastassignednum');

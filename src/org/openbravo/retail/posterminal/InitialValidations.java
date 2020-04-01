@@ -147,6 +147,13 @@ public class InitialValidations {
           returnDocumentType.getName()));
     }
 
+    if (posTerminal.getObposTerminaltype().isGenerateInvoice().booleanValue()
+        && posTerminal.getSimpinvdocnoPrefix() == null) {
+      throw new OBException(String.format(
+          OBMessageUtils.messageBD("OBPOS_SimplifiedInvoiceSequencePrefixNotConfigured"),
+          returnDocumentType.getName()));
+    }
+
     String whereclausePM = " as e where e.obposApplications=:terminal and e.financialAccount is not null "
         + "and not exists (select 1 from FinancialMgmtFinAccPaymentMethod as pmacc where "
         + "pmacc.paymentMethod = e.paymentMethod.paymentMethod and pmacc.account = e.financialAccount"
