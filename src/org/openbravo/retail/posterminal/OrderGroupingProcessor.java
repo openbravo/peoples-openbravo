@@ -87,7 +87,11 @@ public class OrderGroupingProcessor {
     ConnectionProvider conn = new DalConnectionProvider(false);
 
     long t0 = System.currentTimeMillis();
-    long t1, t2, t3, t4, t5, t6, t7, t8, t9, t10;
+    long t1 = t0;
+    long t2 = t0;
+    long t3 = t0;
+    long t4 = t0;
+
     final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
     final String strUserId = OBContext.getOBContext().getUser().getId();
     final String strCurrentDate = dateFormatter.format(currentDate);
@@ -167,26 +171,9 @@ public class OrderGroupingProcessor {
       t4 = System.currentTimeMillis();
       // insert invoice tax
       OrderGroupingProcessorData.insertInvoiceTaxGrouping(conn, strExecutionId);
-    } else {
-      // insert invoice headers
-      OrderGroupingProcessorData.insertHeaderNoGrouping(conn, strCurrentDate, strUserId,
-          strExecutionId, strInvDescription, strLang, cashUpId);
-      t1 = System.currentTimeMillis();
-      // insert invoice lines
-      OrderGroupingProcessorData.insertLinesNoGrouping(conn, cashUpId, strExecutionId);
-      t2 = System.currentTimeMillis();
-      OrderGroupingProcessorData.updateQtyOrderLinesNoGrouping(conn, strExecutionId);
-      // insert invoice lines Tax
-      OrderGroupingProcessorData.insertTaxLinesNoGrouping(conn, strExecutionId);
-      t3 = System.currentTimeMillis();
-      // insert offer lines
-      OrderGroupingProcessorData.insertOfferLinesNoGrouping(conn, strExecutionId);
-      t4 = System.currentTimeMillis();
-      // insert invoice tax
-      OrderGroupingProcessorData.insertInvoiceTaxNoGrouping(conn, strExecutionId);
     }
 
-    t5 = System.currentTimeMillis();
+    final long t5 = System.currentTimeMillis();
 
     // check if there are orderlines splitted by inoutlines
     OrderGroupingProcessorData[] orderLinesToSplit = OrderGroupingProcessorData
@@ -243,12 +230,12 @@ public class OrderGroupingProcessor {
       OBDal.getInstance().flush();
     }
 
-    t6 = System.currentTimeMillis();
+    final long t6 = System.currentTimeMillis();
 
     // insert payment schedule
     OrderGroupingProcessorData.insertPaymentSchedule(conn, strCurrentDate, strExecutionId);
 
-    t7 = System.currentTimeMillis();
+    final long t7 = System.currentTimeMillis();
 
     // update payment schedule of orders
     OrderGroupingProcessorData[] arrayOrderAndInvoiceId = OrderGroupingProcessorData
@@ -276,7 +263,7 @@ public class OrderGroupingProcessor {
       }
     }
 
-    t8 = System.currentTimeMillis();
+    final long t8 = System.currentTimeMillis();
 
     OrderGroupingProcessorData[] arrayInvoicesId = OrderGroupingProcessorData.selectInvoiceId(conn,
         strExecutionId);
@@ -293,11 +280,11 @@ public class OrderGroupingProcessor {
       executeHooks(invoice, cashUpId);
     }
 
-    t9 = System.currentTimeMillis();
+    final long t9 = System.currentTimeMillis();
 
     OBDal.getInstance().flush();
 
-    t10 = System.currentTimeMillis();
+    final long t10 = System.currentTimeMillis();
 
     log.debug("time execution query Headers: " + (t1 - t0));
     log.debug("time execution query Lines: " + (t2 - t1));
