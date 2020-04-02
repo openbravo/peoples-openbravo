@@ -402,7 +402,7 @@ public class InvoiceUtils {
     invoice.setTrxOrganization(order.getTrxOrganization());
     invoice.setDescription(description);
     final DocumentType docType = getInvoiceDocumentType(order.getDocumentType().getId(),
-        jsoninvoice.getBoolean("fullInvoice"));
+        jsoninvoice.optBoolean("fullInvoice"));
     invoice.setDocumentType(docType);
     invoice.setTransactionDocument(docType);
 
