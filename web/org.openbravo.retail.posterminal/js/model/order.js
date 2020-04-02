@@ -6201,12 +6201,11 @@
 
     setOrderInvoice: function() {
       var me = this;
-      if (OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice')) {
-        this.set('generateInvoice', true);
-        this.save(function() {
-          me.trigger('saveCurrent');
-        });
-      }
+      this.set('generateInvoice', true);
+      this.set('fullInvoice', true);
+      this.save(function() {
+        me.trigger('saveCurrent');
+      });
     },
 
     updatePrices: function(callback) {
@@ -7348,12 +7347,14 @@
     },
     resetOrderInvoice: function() {
       var me = this;
-      if (OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice')) {
-        this.set('generateInvoice', false);
-        this.save(function() {
-          me.trigger('saveCurrent');
-        });
-      }
+      this.set(
+        'generateInvoice',
+        OB.MobileApp.model.get('terminal').terminalType.generateInvoice
+      );
+      this.set('fullInvoice', false);
+      this.save(function() {
+        me.trigger('saveCurrent');
+      });
     },
     getPrecision: function(payment) {
       var terminalpayment =
@@ -11891,7 +11892,11 @@
         _.each(
           this.get('multiOrdersList').models,
           function(order) {
-            order.unset('generateInvoice');
+            order.set(
+              'generateInvoice',
+              OB.MobileApp.model.get('terminal').terminalType.generateInvoice
+            );
+            order.set('fullInvoice', false);
           },
           this
         );
@@ -11902,6 +11907,7 @@
         this.get('multiOrdersList').models,
         function(order) {
           order.set('generateInvoice', true);
+          order.set('fullInvoice', true);
         },
         this
       );

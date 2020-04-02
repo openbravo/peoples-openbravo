@@ -991,9 +991,9 @@ enyo.kind({
       this
     );
     this.order.on(
-      'change:generateInvoice',
+      'change:fullInvoice',
       function(model) {
-        if (model.get('generateInvoice')) {
+        if (model.get('fullInvoice')) {
           this.$.divbtninvoice.show();
         } else {
           this.$.divbtninvoice.hide();

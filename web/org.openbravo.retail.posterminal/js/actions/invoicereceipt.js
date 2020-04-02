@@ -42,7 +42,6 @@
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
           view.cancelReceiptToInvoice();
         } else {
-          receipt.set('fullInvoice', true);
           view.receiptToInvoice();
         }
       }
