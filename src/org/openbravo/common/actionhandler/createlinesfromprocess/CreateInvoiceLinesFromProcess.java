@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -89,6 +89,7 @@ public class CreateInvoiceLinesFromProcess {
       lastLineNo = getLastLineNoOfCurrentInvoice(currentInvoice);
       return createInvoiceLines(currentInvoice, getLinesToProcess(selectedLinesParam));
     } catch (Exception e) {
+      OBDal.getInstance().rollbackAndClose();
       throw new OBException(e);
     } finally {
       OBContext.restorePreviousMode();

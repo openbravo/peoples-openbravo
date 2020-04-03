@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2017-2018 Openbravo SLU
+ * All portions are Copyright (C) 2017-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -37,34 +37,44 @@ public class PriceDifferenceUtil {
 
   public static final String ALL_ORGANIZATIONS = "0";
 
-  public static void setTransactionsReadyForPriceAdjustment(List<String> productIds,
+  public static void setTransactionsReadyForPriceAdjustment(List<String> products,
       Date movementdate, Organization organization) throws JSONException {
+    //@formatter:off
+    String hqlUpdate = 
+            "update MaterialMgmtMaterialTransaction trx" +
+            "  set checkpricedifference = 'Y'" +
+            "   where exists" +
+            "     (" +
+            "       select 1" +
+            "         from ProcurementReceiptInvoiceMatch mpo" +
+            "        where trx.isCostCalculated = 'Y'" +
+            "          and mpo.goodsShipmentLine.id = trx.goodsShipmentLine.id" +
+            "          and trx.movementDate >= :date" +
+            "          and trx.organization.id in (:orgIds)" +
+            "          and trx.client.id = :clientId" +
+            "     )";
+    //@formatter:on
 
-    String strUpdate = "UPDATE MaterialMgmtMaterialTransaction trx"
-        + " SET checkpricedifference = 'Y'" + " WHERE exists (" + " SELECT 1"
-        + " FROM  ProcurementReceiptInvoiceMatch mpo"
-        + " WHERE trx.isCostCalculated = 'Y' and mpo.goodsShipmentLine.id = trx.goodsShipmentLine.id  "
-        + " AND trx.movementDate >= :date and trx.organization.id in (:orgIds)"
-        + " AND trx.client.id = :clientId)";
-
-    if (!productIds.isEmpty()) {
-      strUpdate = strUpdate.concat(" AND product.id IN :productIds ");
+    if (!products.isEmpty()) {
+      //@formatter:off
+      hqlUpdate += 
+            "     and product.id IN :productIds ";
+      //@formatter:on
     }
 
-    Set<String> products = new HashSet<String>();
-    products.addAll(productIds);
+    final Set<String> productIds = new HashSet<>();
+    productIds.addAll(products);
     @SuppressWarnings("rawtypes")
-    Query update = OBDal.getInstance().getSession().createQuery(strUpdate);
-
-    if (!productIds.isEmpty()) {
-      update.setParameterList("productIds", products);
+    final Query update = OBDal.getInstance().getSession().createQuery(hqlUpdate);
+    if (!products.isEmpty()) {
+      update.setParameterList("productIds", productIds);
     }
-    update.setParameterList("orgIds",
-        new OrganizationStructureProvider().getChildTree(organization.getId(), true));
-    update.setParameter("date", movementdate);
-    update.setParameter("clientId", OBContext.getOBContext().getCurrentClient().getId());
-
-    update.executeUpdate();
+    update
+        .setParameterList("orgIds",
+            new OrganizationStructureProvider().getChildTree(organization.getId(), true))
+        .setParameter("date", movementdate)
+        .setParameter("clientId", OBContext.getOBContext().getCurrentClient().getId())
+        .executeUpdate();
   }
 
   public static List<Organization> getLegalOrganizationList(String orgId) {
