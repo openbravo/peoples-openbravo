@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2018 Openbravo SLU
+ * All portions are Copyright (C) 2010-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,6 +31,7 @@ import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.application.Process;
 import org.openbravo.client.application.ProcessAccess;
+import org.openbravo.client.application.process.ResponseActionsBuilder.MessageType;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.EntityAccessChecker;
@@ -38,10 +39,12 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.ad.access.WindowAccess;
 import org.openbravo.model.ad.ui.Window;
+import org.openbravo.service.db.DbUtility;
 
 /**
  * 
@@ -55,11 +58,11 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
 
   @Override
   protected final JSONObject execute(Map<String, Object> parameters, String content) {
-
+    String processId = null;
     try {
       OBContext.setAdminMode(true);
 
-      final String processId = (String) parameters.get("processId");
+      processId = (String) parameters.get("processId");
       Check.isNotNull(processId, "Process ID missing in request");
 
       final Process processDefinition = OBDal.getInstance().get(Process.class, processId);
@@ -150,8 +153,15 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
       return doExecute(parameters, updatedContent);
 
     } catch (Exception e) {
-      log.error("Error trying to execute process request: " + e.getMessage(), e);
-      return new JSONObject();
+      log.error("Error trying to execute process [{}]: ", processId, e);
+      OBDal.getInstance().rollbackAndClose();
+
+      final Throwable ex = DbUtility
+          .getUnderlyingSQLException(e.getCause() != null ? e.getCause() : e);
+      OBError msg = OBMessageUtils.translateError(ex.getMessage());
+      return getResponseBuilder()
+          .showMsgInProcessView(MessageType.ERROR, msg.getTitle(), msg.getMessage())
+          .build();
     } finally {
       OBContext.restorePreviousMode();
     }
