@@ -28,6 +28,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -131,13 +132,15 @@ public class JSONWebServices extends BaseWSTest {
           "/org.openbravo.service.json.jsonrest/" + wsPart, method);
       hc.connect();
       final InputStream is = hc.getInputStream();
-      BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+      try (BufferedReader reader = new BufferedReader(
+          new InputStreamReader(is, StandardCharsets.UTF_8))) {
 
-      String line;
-      while ((line = reader.readLine()) != null) {
-        sb.append(line).append("\n");
+        String line;
+        while ((line = reader.readLine()) != null) {
+          sb.append(line).append("\n");
+        }
+        return sb.toString();
       }
-      return sb.toString();
     } catch (Exception e) {
       throw new OBException("Exception when executing ws: " + wsPart, e);
     }
