@@ -432,6 +432,7 @@
         this.set('updatedBy', attributes.updatedBy);
         this.set('orderType', attributes.orderType); // 0: Sales order, 1: Return order
         this.set('generateInvoice', attributes.generateInvoice);
+        this.set('fullInvoice', attributes.fullInvoice);
         this.set('isQuotation', attributes.isQuotation);
         this.set('oldId', attributes.oldId);
         this.set('priceList', attributes.priceList);
