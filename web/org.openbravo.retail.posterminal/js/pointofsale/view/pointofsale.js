@@ -2417,7 +2417,7 @@ enyo.kind({
       'change:bp',
       function(model) {
         // if the receip is cloning, then the called to taxIdValidation is not done because this function does a save
-        if (model.get('generateInvoice') && !model.get('cloningReceipt')) {
+        if (model.get('fullInvoice') && !model.get('cloningReceipt')) {
           OB.MobileApp.actionsRegistry.execute({
             window: 'retail.pointofsale',
             name: 'invoiceReceipt'
