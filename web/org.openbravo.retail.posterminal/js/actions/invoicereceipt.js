@@ -30,19 +30,10 @@
       },
       command: function(view) {
         const receipt = view.model.get('order');
-
-        if (!OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice')) {
-          view.cancelReceiptToInvoice();
-        } else if (!OB.MobileApp.model.get('terminal').fullInvoiceDocNoPrefix) {
-          OB.UTIL.showError(
-            OB.I18N.getLabel('OBPOS_FullInvoiceSequencePrefixNotConfigured')
-          );
-          view.cancelReceiptToInvoice();
-        } else if (!receipt.get('bp').get('taxID')) {
-          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
-          view.cancelReceiptToInvoice();
-        } else {
+        if (receipt.checkFullInvoice(true)) {
           view.receiptToInvoice();
+        } else {
+          view.cancelReceiptToInvoice();
         }
       }
     })

@@ -6200,10 +6200,44 @@
       });
     },
 
+    checkFullInvoice: function(showError) {
+      if (showError) {
+        if (!OB.MobileApp.model.get('terminal').fullInvoiceDocNoPrefix) {
+          OB.UTIL.showError(
+            OB.I18N.getLabel('OBPOS_FullInvoiceSequencePrefixNotConfigured')
+          );
+        } else if (!this.get('bp').get('taxID')) {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
+        }
+      }
+
+      return (
+        OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice') &&
+        OB.MobileApp.model.get('terminal').fullInvoiceDocNoPrefix &&
+        this.get('bp').get('taxID')
+      );
+    },
+
+    setFullInvoice: function(active) {
+      this.set(
+        'generateInvoice',
+        active ||
+          OB.MobileApp.model.get('terminal').terminalType.generateInvoice
+      );
+      this.set('fullInvoice', active);
+    },
+
     setOrderInvoice: function() {
       var me = this;
-      this.set('generateInvoice', true);
-      this.set('fullInvoice', true);
+      this.setFullInvoice(true);
+      this.save(function() {
+        me.trigger('saveCurrent');
+      });
+    },
+
+    resetOrderInvoice: function() {
+      var me = this;
+      this.setFullInvoice(false);
       this.save(function() {
         me.trigger('saveCurrent');
       });
@@ -7345,17 +7379,6 @@
           }
         }
       );
-    },
-    resetOrderInvoice: function() {
-      var me = this;
-      this.set(
-        'generateInvoice',
-        OB.MobileApp.model.get('terminal').terminalType.generateInvoice
-      );
-      this.set('fullInvoice', false);
-      this.save(function() {
-        me.trigger('saveCurrent');
-      });
     },
     getPrecision: function(payment) {
       var terminalpayment =

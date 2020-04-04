@@ -90,11 +90,9 @@ enyo.kind({
       'change:bp',
       function(model) {
         if (model.get('bp')) {
-          model.set(
-            'generateInvoice',
-            OB.MobileApp.model.get('terminal').terminalType.generateInvoice
+          model.setFullInvoice(
+            model.get('fullInvoice') && model.checkFullInvoice(false)
           );
-          model.set('fullInvoice', false);
 
           if (
             model.get('isEditable') &&
