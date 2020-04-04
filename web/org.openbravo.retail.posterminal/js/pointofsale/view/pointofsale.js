@@ -2413,6 +2413,20 @@ enyo.kind({
       this
     );
 
+    receipt.on(
+      'change:bp',
+      function(model) {
+        // if the receip is cloning, then the called to taxIdValidation is not done because this function does a save
+        if (model.get('fullInvoice') && !model.get('cloningReceipt')) {
+          OB.MobileApp.actionsRegistry.execute({
+            window: 'retail.pointofsale',
+            name: 'invoiceReceipt'
+          });
+        }
+      },
+      this
+    );
+
     this.$.multiColumn.$.leftPanel.$.receiptview.setOrder(receipt);
     this.$.multiColumn.$.leftPanel.$.receiptview.setOrderList(receiptList);
     this.$.multiColumn.$.rightPanel.$.toolbarpane.setModel(this.model);

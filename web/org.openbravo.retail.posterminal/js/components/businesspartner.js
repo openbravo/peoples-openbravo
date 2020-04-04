@@ -75,14 +75,11 @@ enyo.kind({
       'change:bp',
       function(model) {
         if (model.get('bp')) {
-          if (model.get('fullInvoice')) {
-            OB.MobileApp.actionsRegistry.execute({
-              window: 'retail.pointofsale',
-              name: 'invoiceReceipt'
-            });
-          } else {
-            model.resetOrderInvoice();
-          }
+          model.set(
+            'generateInvoice',
+            OB.MobileApp.model.get('terminal').terminalType.generateInvoice
+          );
+          model.set('fullInvoice', false);
           this.renderCustomer(model.get('bp').get('_identifier'));
         } else {
           this.renderCustomer('');
