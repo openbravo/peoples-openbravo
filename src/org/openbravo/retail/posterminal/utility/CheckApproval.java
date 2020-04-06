@@ -11,6 +11,7 @@ package org.openbravo.retail.posterminal.utility;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +31,6 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.query.Query;
 import org.openbravo.authentication.hashing.PasswordHash;
 import org.openbravo.base.secureApp.AllowedCrossDomainsHandler;
 import org.openbravo.dal.core.OBContext;
@@ -111,56 +111,52 @@ public class CheckApproval extends HttpServlet {
         result.put("error", jsonError);
       } else {
         String supervisorId = supervisor.get().getId();
-        String approvals = "'" + approvalType.getString(0) + "'";
-        for (int i = 1; i < approvalType.length(); i++) {
-          approvals = approvals + ",'" + approvalType.getString(i) + "'";
+
+        List<String> approvals = new ArrayList<>(approvalType.length());
+        for (int i = 0; i < approvalType.length(); i++) {
+          approvals.add(approvalType.getString(i));
         }
 
         Set<String> naturalTreeOrgList = OBContext.getOBContext()
             .getOrganizationStructureProvider(client)
             .getNaturalTree(organization);
 
-        String hqlQuery = "select p.property from ADPreference as p"
-            + " where property IS NOT NULL " + "   and active = true" //
+        // @formatter:off
+        String hqlQuery =
+              "select p.property"
+            + "  from ADPreference as p"
+            + " where active = true"
             + "   and (case when length(searchKey)<>1 then 'X' else to_char(searchKey) end) = 'Y'"
-            + "   and (userContact.id = :user" + "        or exists (from ADUserRoles r"
+            + "   and (userContact.id = :user"
+            + "        or exists (from ADUserRoles r"
             + "                  where r.role = p.visibleAtRole"
             + "                    and r.userContact.id = :user"
             + "                    and r.active=true))"
             + "   and (p.visibleAtOrganization.id = :org "
-            + "   or p.visibleAtOrganization.id in (:orgList) "
-            + "   or p.visibleAtOrganization is null) group by p.property";
+            + "        or p.visibleAtOrganization.id in (:orgList) "
+            + "        or p.visibleAtOrganization is null)"
+            + "   and property in (:approvals)"
+            + " group by p.property";
+        // @formatter:on
 
-        Query<String> preferenceQuery = OBDal.getInstance()
+        List<String> preferenceList = OBDal.getInstance()
             .getSession()
-            .createQuery(hqlQuery, String.class);
-        preferenceQuery.setParameter("user", supervisorId);
-        preferenceQuery.setParameter("org", organization);
-        preferenceQuery.setParameterList("orgList", naturalTreeOrgList);
+            .createQuery(hqlQuery, String.class)
+            .setParameter("user", supervisorId)
+            .setParameter("org", organization)
+            .setParameterList("orgList", naturalTreeOrgList)
+            .setParameterList("approvals", approvals)
+            .list();
 
-        List<String> preferenceList = preferenceQuery.list();
-        if (preferenceList.isEmpty()) {
-          result.put("status", 1);
-          JSONObject jsonError = new JSONObject();
-          jsonError.put("message",
-              OBMessageUtils.getI18NMessage("OBPOS_UserCannotApprove", new String[] { username }));
-          result.put("error", jsonError);
-        } else {
-          result.put("status", 0);
-          JSONObject jsonData = new JSONObject();
-          JSONObject jsonPreference = new JSONObject();
-          Integer c = 0;
-          for (String preference : preferenceList) {
-            jsonPreference.put(preference, preference);
-            if (approvals.contains(preference)) {
-              c++;
-            }
-          }
-          jsonData.put("userId", supervisorId);
-          jsonData.put("canApprove", c >= approvalType.length());
-          jsonData.put("preference", jsonPreference);
-          result.put("data", jsonData);
-        }
+        result.put("status", 0);
+        JSONObject jsonData = new JSONObject();
+        jsonData.put("userId", supervisorId);
+        jsonData.put("canApprove", preferenceList.size() == approvalType.length());
+        // we need to send the types that can be approved because of the case of n approvals
+        // required but only some of them accepted
+        jsonData.put("approvableTypes", new JSONArray(preferenceList));
+        result.put("data", jsonData);
+
         executeApprovalCheckHook(username, password, terminal, approvalType, attributes);
         if (attributes.has("msg")) {
           result.put("status", 1);

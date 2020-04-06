@@ -11019,69 +11019,64 @@
                   orderTypeMsg = OB.I18N.getLabel('OBPOS_Quotation');
                 }
                 // Getting Other Session User's username
-                OB.Dal.find(
-                  OB.Model.Session,
-                  {
-                    id: existingOrder.get('session')
-                  },
-                  function(sessions) {
-                    if (sessions.length > 0) {
-                      OB.Dal.find(
-                        OB.Model.User,
+
+                OB.App.OfflineSession.sessionWithId(
+                  existingOrder.get('session')
+                )
+                  .then(session => {
+                    if (!session) {
+                      return null;
+                    }
+                    return OB.App.OfflineSession.withId(
+                      this.model.get('updatedBy')
+                    );
+                  })
+                  .then(user => {
+                    if (!user) {
+                      return;
+                    }
+                    OB.UTIL.showConfirmation.display(
+                      enyo.format(
+                        OB.I18N.getLabel('OBPOS_ticketAlreadyOpenedInSession'),
+                        orderTypeMsg,
+                        existingOrder.get('documentNo'),
+                        user.name
+                      ),
+                      enyo.format(
+                        OB.I18N.getLabel(
+                          'OBPOS_MsgConfirmSaveInCurrentSession'
+                        ),
+                        user.name
+                      ),
+                      [
                         {
-                          id: sessions.models[0].get('user')
-                        },
-                        function(users) {
-                          if (users.length > 0) {
-                            OB.UTIL.showConfirmation.display(
-                              enyo.format(
-                                OB.I18N.getLabel(
-                                  'OBPOS_ticketAlreadyOpenedInSession'
-                                ),
-                                orderTypeMsg,
-                                existingOrder.get('documentNo'),
-                                users.models[0].get('name')
-                              ),
-                              enyo.format(
-                                OB.I18N.getLabel(
-                                  'OBPOS_MsgConfirmSaveInCurrentSession'
-                                ),
-                                users.models[0].get('name')
-                              ),
-                              [
-                                {
-                                  label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                                  action: function() {
-                                    OB.Dal.remove(
-                                      existingOrder,
-                                      function() {
-                                        callback(model);
-                                      },
-                                      OB.UTIL.showError
-                                    );
-                                  }
-                                },
-                                {
-                                  label: OB.I18N.getLabel('OBMOBC_LblCancel'),
-                                  action: function() {
-                                    if (errorCallback) {
-                                      errorCallback();
-                                    }
-                                  }
-                                }
-                              ],
-                              {
-                                onHideFunction: function(dialog) {
-                                  return true;
-                                }
-                              }
+                          label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                          action: function() {
+                            OB.Dal.remove(
+                              existingOrder,
+                              function() {
+                                callback(model);
+                              },
+                              OB.UTIL.showError
                             );
                           }
+                        },
+                        {
+                          label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+                          action: function() {
+                            if (errorCallback) {
+                              errorCallback();
+                            }
+                          }
                         }
-                      );
-                    }
-                  }
-                );
+                      ],
+                      {
+                        onHideFunction: function(dialog) {
+                          return true;
+                        }
+                      }
+                    );
+                  });
               } else {
                 return callback(model);
               }
