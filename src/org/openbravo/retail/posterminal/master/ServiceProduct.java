@@ -19,12 +19,14 @@ import javax.inject.Inject;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
+import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery;
+import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery.MasterDataModel;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
-import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
-public class ServiceProduct extends ProcessHQLQuery {
+@MasterDataModel("ServiceProduct")
+public class ServiceProduct extends MasterDataProcessHQLQuery {
   public static final String serviceProductPropertyExtension = "OBPOS_ServiceProductExtension";
 
   @Inject
@@ -55,5 +57,10 @@ public class ServiceProduct extends ProcessHQLQuery {
         + "order by sp.id");
 
     return hqlQueries;
+  }
+
+  @Override
+  public List<String> getMasterDataModelProperties() {
+    return getPropertiesFrom(extensions);
   }
 }

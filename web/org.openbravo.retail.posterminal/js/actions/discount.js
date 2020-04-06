@@ -28,7 +28,10 @@
 
         var active = isEditable && currentView === 'order';
         active = active && view.model.get('order').get('lines').length > 0;
-        active = active && view.model.get('manualDiscounts');
+        active =
+          active &&
+          OB.Discounts.Pos.manualRuleImpls &&
+          OB.Discounts.Pos.manualRuleImpls.length > 0;
         return active;
       },
       command: function(view) {

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019 Openbravo S.L.U.
+ * Copyright (C) 2019-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -19,14 +19,16 @@ import javax.inject.Inject;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
+import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery;
+import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery.MasterDataModel;
 import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
 import org.openbravo.model.common.businesspartner.BusinessPartnerSetLine;
-import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
-public class BPSetLine extends ProcessHQLQuery {
+@MasterDataModel("BPSetLine")
+public class BPSetLine extends MasterDataProcessHQLQuery {
   public static final String bpSetLinePropertyExtension = "OBPOS_BusinessPartnerSetLineExtension";
 
   @Inject
@@ -36,7 +38,7 @@ public class BPSetLine extends ProcessHQLQuery {
 
   @Override
   protected List<HQLPropertyList> getHqlProperties(JSONObject jsonsent) {
-    List<HQLPropertyList> propertiesList = new ArrayList<HQLPropertyList>();
+    List<HQLPropertyList> propertiesList = new ArrayList<>();
     HQLPropertyList regularCountryHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
 
@@ -67,7 +69,7 @@ public class BPSetLine extends ProcessHQLQuery {
     }
     hql += " order by c.id asc";
 
-    return Arrays.asList(new String[] { hql });
+    return Arrays.asList(hql);
   }
 
   @Override
@@ -85,7 +87,7 @@ public class BPSetLine extends ProcessHQLQuery {
 
     @Override
     public List<HQLProperty> getHQLProperties(Object params) {
-      ArrayList<HQLProperty> list = new ArrayList<HQLProperty>();
+      ArrayList<HQLProperty> list = new ArrayList<>();
       list.add(new HQLProperty("c.id", "id"));
       list.add(new HQLProperty("c.bpSet.id", "bpSet"));
       list.add(new HQLProperty("c.businessPartner.id", "businessPartner"));
@@ -94,6 +96,11 @@ public class BPSetLine extends ProcessHQLQuery {
       return list;
     }
 
+  }
+
+  @Override
+  public List<String> getMasterDataModelProperties() {
+    return getPropertiesFrom(extensions);
   }
 
 }

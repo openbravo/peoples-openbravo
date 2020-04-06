@@ -54,7 +54,8 @@
         });
       }
     },
-    init: function(model) {
+
+    init: async function(model) {
       this.model = model;
       this.model
         .get('order')
@@ -77,7 +78,7 @@
       this.model
         .get('order')
         .get('lines')
-        .on('add', function(line) {
+        .on('add', async function(line) {
           if (
             !line.has('hasDeliveryServices') &&
             line.get('obrdmDeliveryMode') === 'HomeDelivery'
@@ -86,100 +87,78 @@
             if (
               OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)
             ) {
-              var process = new OB.DS.Process(
-                'org.openbravo.retail.posterminal.process.HasDeliveryServices'
-              );
-              var date = new Date();
-              process.exec(
-                {
-                  lines: [
-                    {
-                      lineId: line.id,
-                      product: line.get('product').get('id'),
-                      productCategory: line
-                        .get('product')
-                        .get('productCategory')
-                    }
-                  ],
-                  terminalTime: date,
-                  terminalTimeOffset: date.getTimezoneOffset(),
-                  remoteFilters: [
-                    {
-                      columns: [],
-                      operator: 'filter',
-                      value: 'OBRDM_DeliveryServiceFilter',
-                      params: [true]
-                    }
-                  ]
-                },
-                function(data, message) {
-                  if (data && data.exception) {
-                    //ERROR or no connection
-                    OB.UTIL.showError(
-                      OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices')
-                    );
-                  } else if (data) {
-                    line.set(
-                      'hasDeliveryServices',
-                      data[0].hasDeliveryServices
-                    );
-                  } else {
-                    OB.UTIL.showError(
-                      OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices')
-                    );
+              const date = new Date();
+              const body = {
+                lines: [
+                  {
+                    lineId: line.id,
+                    product: line.get('product').get('id'),
+                    productCategory: line.get('product').get('productCategory')
                   }
-                }
-              );
-            } else {
-              var criteria = {};
-
-              criteria._whereClause = '';
-              criteria.params = [];
-
-              criteria._whereClause =
-                " as product where product.productType = 'S' and product.obrdmIsdeliveryservice = 'true' and (product.isLinkedToProduct = 'true' and ";
-
-              //including/excluding products
-              criteria._whereClause +=
-                "((product.includeProducts = 'Y' and not exists (select 1 from m_product_service sp where product.m_product_id = sp.m_product_id and sp.m_related_product_id = ? ))";
-              criteria._whereClause +=
-                "or (product.includeProducts = 'N' and exists (select 1 from m_product_service sp where product.m_product_id = sp.m_product_id and sp.m_related_product_id = ? ))";
-              criteria._whereClause += 'or product.includeProducts is null) ';
-
-              //including/excluding product categories
-              criteria._whereClause +=
-                "and ((product.includeProductCategories = 'Y' and not exists (select 1 from m_product_category_service spc where product.m_product_id = spc.m_product_id and spc.m_product_category_id =  ? )) ";
-              criteria._whereClause +=
-                "or (product.includeProductCategories = 'N' and exists (select 1 from m_product_category_service spc where product.m_product_id = spc.m_product_id and spc.m_product_category_id  = ? )) ";
-              criteria._whereClause +=
-                'or product.includeProductCategories is null)) ';
-
-              criteria.params.push(line.get('product').get('id'));
-              criteria.params.push(line.get('product').get('id'));
-              criteria.params.push(line.get('product').get('productCategory'));
-              criteria.params.push(line.get('product').get('productCategory'));
-
-              OB.Dal.findUsingCache(
-                'deliveryServiceCache',
-                OB.Model.Product,
-                criteria,
-                function(data) {
-                  if (data && data.length > 0) {
-                    line.set('hasDeliveryServices', true);
-                  } else {
-                    line.set('hasDeliveryServices', false);
+                ],
+                terminalTime: date,
+                terminalTimeOffset: date.getTimezoneOffset(),
+                remoteFilters: [
+                  {
+                    columns: [],
+                    operator: 'filter',
+                    value: 'OBRDM_DeliveryServiceFilter',
+                    params: [true]
                   }
-                },
-                function(trx, error) {
+                ]
+              };
+
+              try {
+                let data = await OB.App.Request.mobileServiceRequest(
+                  'org.openbravo.retail.posterminal.process.HasDeliveryServices',
+                  body
+                );
+                data = data.response.data;
+
+                if (data && data.exception) {
+                  //ERROR or no connection
                   OB.UTIL.showError(
                     OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices')
                   );
-                  line.set('hasDeliveryServices', false);
-                },
-                {
-                  modelsAffectedByCache: ['Product']
+                } else if (data) {
+                  line.set('hasDeliveryServices', data[0].hasDeliveryServices);
+                } else {
+                  OB.UTIL.showError(
+                    OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices')
+                  );
                 }
+              } catch (error) {
+                OB.UTIL.showError(
+                  OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices')
+                );
+              }
+            } else {
+              let criteria = new OB.App.Class.Criteria();
+              criteria = await OB.UTIL.servicesFilter(
+                criteria,
+                line.get('product').get('id'),
+                line.get('product').get('productCategory')
               );
+              criteria.criterion('obrdmIsdeliveryservice', true);
+              try {
+                const products = await OB.App.MasterdataModels.Product.find(
+                  criteria.build()
+                );
+                let data = [];
+                for (let i = 0; i < products.length; i++) {
+                  data.push(OB.Dal.transform(OB.Model.Product, products[i]));
+                }
+
+                if (data && data.length > 0) {
+                  line.set('hasDeliveryServices', true);
+                } else {
+                  line.set('hasDeliveryServices', false);
+                }
+              } catch (error) {
+                OB.UTIL.showError(
+                  OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices')
+                );
+              }
             }
           }
         });
@@ -498,7 +477,7 @@ enyo.kind({
       });
     }
   },
-  applyChanges: function(inSender, inEvent) {
+  applyChanges: async function(inSender, inEvent) {
     var i,
       diff,
       att,
@@ -560,6 +539,7 @@ enyo.kind({
 
     this.model.get('order').save();
     this.model.get('orderList').saveCurrent();
+    this.model.get('order').calculateReceipt();
     if (this.args.selectedLines) {
       carrierLines = this.args.selectedLines
         .filter(function(l) {
@@ -574,7 +554,7 @@ enyo.kind({
         });
     }
 
-    function countDeliveryServices(data) {
+    async function countDeliveryServices(data) {
       var countLines = 0;
       data.forEach(function(res) {
         var orderLine = me.args.selectedLines.find(function(l) {
@@ -593,7 +573,6 @@ enyo.kind({
           category: '',
           filteringBy: '',
           filter: '',
-          brandFilter: '',
           customFilters: '',
           genericParent: ''
         };
@@ -637,7 +616,7 @@ enyo.kind({
                   }
                 );
                 me.bubble('onAddProduct', {
-                  product: data.at(0),
+                  product: data[0],
                   attrs: attrs
                 });
               } else if (data && data.length > 1) {
@@ -667,95 +646,77 @@ enyo.kind({
     ) {
       //Trigger Delivery Services Search
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-        var process = new OB.DS.Process(
-          'org.openbravo.retail.posterminal.process.HasDeliveryServices'
-        );
-        var date = new Date();
-        process.exec(
-          {
-            lines: carrierLines,
-            terminalTime: date,
-            terminalTimeOffset: date.getTimezoneOffset(),
-            remoteFilters: [
-              {
-                columns: [],
-                operator: 'filter',
-                value: 'OBRDM_DeliveryServiceFilter',
-                params: [true]
-              }
-            ]
-          },
-          function(data, message) {
-            if (data && data.exception) {
-              //ERROR or no connection
-              OB.UTIL.showError(
-                OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices')
-              );
-            } else if (data) {
-              countDeliveryServices(data);
-            } else {
-              OB.UTIL.showError(
-                OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices')
-              );
-            }
-          }
-        );
-      } else {
-        var hasDeliveryServices = function(line, callback) {
-          var criteria = {};
-
-          criteria._whereClause = '';
-          criteria.params = [];
-
-          criteria._whereClause =
-            " as product where product.productType = 'S' and product.obrdmIsdeliveryservice = 'true' and (product.isLinkedToProduct = 'true' and ";
-
-          //including/excluding products
-          criteria._whereClause +=
-            "((product.includeProducts = 'Y' and not exists (select 1 from m_product_service sp where product.m_product_id = sp.m_product_id and sp.m_related_product_id = ? ))";
-          criteria._whereClause +=
-            "or (product.includeProducts = 'N' and exists (select 1 from m_product_service sp where product.m_product_id = sp.m_product_id and sp.m_related_product_id = ? ))";
-          criteria._whereClause += 'or product.includeProducts is null) ';
-
-          //including/excluding product categories
-          criteria._whereClause +=
-            "and ((product.includeProductCategories = 'Y' and not exists (select 1 from m_product_category_service spc where product.m_product_id = spc.m_product_id and spc.m_product_category_id =  ? )) ";
-          criteria._whereClause +=
-            "or (product.includeProductCategories = 'N' and exists (select 1 from m_product_category_service spc where product.m_product_id = spc.m_product_id and spc.m_product_category_id  = ? )) ";
-          criteria._whereClause +=
-            'or product.includeProductCategories is null)) ';
-
-          criteria.params.push(line.get('product').get('id'));
-          criteria.params.push(line.get('product').get('id'));
-          criteria.params.push(line.get('product').get('productCategory'));
-          criteria.params.push(line.get('product').get('productCategory'));
-
-          OB.Dal.findUsingCache(
-            'deliveryServiceCache',
-            OB.Model.Product,
-            criteria,
-            function(data) {
-              if (data && data.length > 0) {
-                callback(true);
-              } else {
-                callback(false);
-              }
-            },
-            function(trx, error) {
-              OB.UTIL.showError(
-                OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices')
-              );
-              callback(false);
-            },
+        const date = new Date();
+        const body = {
+          lines: carrierLines,
+          terminalTime: date,
+          terminalTimeOffset: date.getTimezoneOffset(),
+          remoteFilters: [
             {
-              modelsAffectedByCache: ['Product']
+              columns: [],
+              operator: 'filter',
+              value: 'OBRDM_DeliveryServiceFilter',
+              params: [true]
             }
+          ]
+        };
+        try {
+          let data = await OB.App.Request.mobileServiceRequest(
+            'org.openbravo.retail.posterminal.process.HasDeliveryServices',
+            body
           );
+          data = data.response.data;
+          if (data && data.exception) {
+            //ERROR or no connection
+            OB.UTIL.showError(
+              OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices')
+            );
+          } else if (data) {
+            await countDeliveryServices(data);
+          } else {
+            OB.UTIL.showError(
+              OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices')
+            );
+          }
+        } catch (error) {
+          OB.UTIL.showError(
+            OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices')
+          );
+        }
+      } else {
+        var hasDeliveryServices = async function(line, callback) {
+          let criteria = new OB.App.Class.Criteria();
+          criteria = await OB.UTIL.servicesFilter(
+            criteria,
+            line.get('product').get('id'),
+            line.get('product').get('productCategory')
+          );
+          criteria.criterion('obrdmIsdeliveryservice', true);
+          try {
+            const products = await OB.App.MasterdataModels.Product.find(
+              criteria.build()
+            );
+            let data = [];
+            for (let i = 0; i < products.length; i++) {
+              data.push(OB.Dal.transform(OB.Model.Product, products[i]));
+            }
+
+            if (data && data.length > 0) {
+              callback(true);
+            } else {
+              callback(false);
+            }
+          } catch (error) {
+            OB.UTIL.showError(
+              OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices')
+            );
+            callback(false);
+          }
         };
 
         var data = [];
-        var finalCallback = _.after(carrierLines.length, function() {
-          countDeliveryServices(data);
+        var finalCallback = _.after(carrierLines.length, async function() {
+          await countDeliveryServices(data);
         });
 
         me.args.selectedLines.forEach(function(carrierLine) {

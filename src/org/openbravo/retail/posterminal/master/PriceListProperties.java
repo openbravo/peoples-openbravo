@@ -24,7 +24,7 @@ public class PriceListProperties extends ModelExtension {
     ArrayList<HQLProperty> list = new ArrayList<HQLProperty>() {
       private static final long serialVersionUID = 1L;
       {
-        add(new HQLProperty("pl.id", "m_pricelist_id"));
+        add(new HQLProperty("pl.id", "id"));
         add(new HQLProperty("pl.name", "name"));
         add(new HQLProperty("pl.priceIncludesTax", "priceIncludesTax"));
         add(new HQLProperty("pl.currency.id", "c_currency_id"));

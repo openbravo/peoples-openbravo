@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2017 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -23,14 +23,16 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery;
+import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery.MasterDataModel;
 import org.openbravo.model.pricing.priceadjustment.PriceAdjustment;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.retail.config.OBRETCOProductList;
 import org.openbravo.retail.posterminal.POSUtils;
-import org.openbravo.retail.posterminal.ProcessHQLQuery;
 import org.openbravo.service.json.JsonUtils;
 
-public class Discount extends ProcessHQLQuery {
+@MasterDataModel("Discount")
+public class Discount extends MasterDataProcessHQLQuery {
 
   public static final Logger log = LogManager.getLogger();
 
@@ -43,7 +45,7 @@ public class Discount extends ProcessHQLQuery {
   protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
     try {
       OBContext.setAdminMode(true);
-      Map<String, Object> paramValues = new HashMap<String, Object>();
+      Map<String, Object> paramValues = new HashMap<>();
 
       // Optional filtering by a list of m_offer_id
       // Used for this class and whom inherit this class
@@ -183,7 +185,6 @@ public class Discount extends ProcessHQLQuery {
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
     JSONObject today = new JSONObject();
     JSONObject value = new JSONObject();
-    JSONArray filterPromotionList = new JSONArray();
 
     // Optional filtering by a list of m_offer_id
     // Used for this class and whom inherit this class
@@ -191,7 +192,7 @@ public class Discount extends ProcessHQLQuery {
         && jsonsent.getJSONObject("parameters").has("filterPromotionList")
         && !jsonsent.getJSONObject("parameters").get("filterPromotionList").equals("undefined")
         && !jsonsent.getJSONObject("parameters").get("filterPromotionList").equals("null")) {
-      filterPromotionList = jsonsent.getJSONObject("parameters")
+      final JSONArray filterPromotionList = jsonsent.getJSONObject("parameters")
           .getJSONArray("filterPromotionList");
       today.put("filterPromotionList", filterPromotionList);
     }
@@ -213,14 +214,16 @@ public class Discount extends ProcessHQLQuery {
   }
 
   protected List<String> prepareQuery(JSONObject jsonsent) throws JSONException {
-    String hql = getPromotionsHQL(jsonsent, true);
-    hql += "order by priority, id";
-
-    return Arrays.asList(new String[] { hql });
+    return Arrays.asList(getPromotionsHQL(jsonsent, true) + "order by priority, id");
   }
 
   @Override
   protected boolean bypassPreferenceCheck() {
     return true;
+  }
+
+  @Override
+  public List<String> getMasterDataModelProperties() {
+    return getPropertiesFrom(PriceAdjustment.class);
   }
 }

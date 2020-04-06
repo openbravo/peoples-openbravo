@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2019 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -20,14 +20,17 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.erpCommon.utility.StringCollectionUtils;
+import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery.MasterDataModel;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
 import org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.retail.posterminal.POSUtils;
 
+@MasterDataModel("DiscountFilterProduct")
 public class DiscountFilterProduct extends Discount {
   public static final String discFilterProductPropertyExtension = "PricingAdjustmentProduct";
+
   @Inject
   @Any
   @Qualifier(discFilterProductPropertyExtension)
@@ -72,5 +75,11 @@ public class DiscountFilterProduct extends Discount {
     query.append(" )");
     query.append(" order by ap.id");
     return query.toString();
+  }
+
+  @Override
+  public List<String> getMasterDataModelProperties() {
+    return getPropertiesFrom(extensions);
+
   }
 }

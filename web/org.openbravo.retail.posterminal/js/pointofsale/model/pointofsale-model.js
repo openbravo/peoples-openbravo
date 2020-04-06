@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2019 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -16,79 +16,18 @@ OB.OBPOSPointOfSale.UI = OB.OBPOSPointOfSale.UI || {};
 //Window model
 OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
   models: [
-    {
-      generatedModel: true,
-      modelName: 'TaxRate'
-    },
-    {
-      generatedModel: true,
-      modelName: 'TaxZone'
-    },
-    OB.Model.Product,
-    OB.Model.ProductCategory,
-    OB.Model.ProductCategoryTree,
-    OB.Model.PriceList,
-    OB.Model.ProductPrice,
-    OB.Model.OfferPriceList,
-    OB.Model.ServiceProduct,
-    OB.Model.ServiceProductCategory,
-    OB.Model.ServicePriceRule,
-    OB.Model.ServicePriceRuleRange,
-    OB.Model.ServicePriceRuleRangePrices,
-    OB.Model.ServicePriceRuleVersion,
     OB.Model.BusinessPartner,
-    OB.Model.BPCategory,
     OB.Model.BPLocation,
     OB.Model.Order,
     OB.Model.DocumentSequence,
     OB.Model.ChangedBusinessPartners,
     OB.Model.ChangedBPlocation,
-    OB.Model.ProductBOM,
-    OB.Model.TaxCategoryBOM,
     OB.Model.CancelLayaway,
-    {
-      generatedModel: true,
-      modelName: 'Discount'
-    },
-    {
-      generatedModel: true,
-      modelName: 'DiscountFilterBusinessPartner'
-    },
-    {
-      generatedModel: true,
-      modelName: 'DiscountFilterBusinessPartnerGroup'
-    },
-    {
-      generatedModel: true,
-      modelName: 'DiscountFilterProduct'
-    },
-    {
-      generatedModel: true,
-      modelName: 'DiscountFilterProductCategory'
-    },
-    {
-      generatedModel: true,
-      modelName: 'DiscountFilterRole'
-    },
-    {
-      generatedModel: true,
-      modelName: 'DiscountFilterCharacteristic'
-    },
-    OB.Model.ProductServiceLinked, //
     OB.Model.CurrencyPanel,
-    OB.Model.SalesRepresentative,
-    OB.Model.Brand,
-    OB.Model.ProductCharacteristicValue,
-    OB.Model.CharacteristicValue,
-    OB.Model.Characteristic,
-    OB.Model.ReturnReason,
     OB.Model.CashUp,
     OB.Model.OfflinePrinter,
     OB.Model.PaymentMethodCashUp,
-    OB.Model.TaxCashUp,
-    OB.Model.Country,
-    OB.Model.BPSetLine,
-    OB.Model.DiscountBusinessPartnerSet
+    OB.Model.TaxCashUp
   ],
 
   loadUnpaidOrders: function(loadUnpaidOrdersCallback) {
@@ -358,31 +297,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     this.loadModels(function() {});
   },
 
-  assignManualDiscounts: function(callback) {
-    return function() {
-      OB.Dal.queryUsingCache(
-        OB.Model.Discount,
-        'select * from m_offer where m_offer_type_id in (' +
-          OB.Model.Discounts.getManualPromotions() +
-          ') limit 1',
-        [],
-        function(records, args) {
-          this.set('manualDiscounts', records.length > 0);
-          callback();
-        }.bind(this),
-        callback,
-        {
-          modelsAffectedByCache: ['Discount']
-        }
-      );
-    }.bind(this);
-  },
-
   initModels: function(callback) {
     var me = this;
-
-    // to be executed at the end
-    callback = this.assignManualDiscounts(callback);
 
     // create and expose the receipt
     var receipt = new OB.Model.Order();
@@ -1042,7 +958,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             id: OB.MobileApp.model.get('terminal').organization,
             name: OB.I18N.getLabel('OBPOS_LblThisStore', [
               OB.MobileApp.model.get('terminal').organization$_identifier
-            ])
+            ]),
+            country: OB.MobileApp.model.get('terminal').organizationCountryId,
+            region: OB.MobileApp.model.get('terminal').organizationRegionId
           },
           terminalWarehouse = {
             id: OB.MobileApp.model.get('warehouses')[0].warehouseid,
@@ -1785,9 +1703,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               }
             );
             me.loadUnpaidOrders(function() {
-              OB.Discounts.Pos.initCache(
-                { businessPartner: dataBps.get('id') },
-                function() {
+              OB.Taxes.Pos.initCache(function() {
+                OB.Discounts.Pos.initCache(function() {
                   me.printReceipt = new OB.OBPOSPointOfSale.Print.Receipt(me);
                   // Now, get the hardware manager status
                   OB.POS.hwserver.status(function(data) {
@@ -1844,8 +1761,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                       );
                     }
                   });
-                }
-              );
+                });
+              });
             });
           });
         }

@@ -47,6 +47,8 @@ import org.openbravo.mobile.core.servercontroller.MobileServerController;
 import org.openbravo.mobile.core.servercontroller.MobileServerRequestExecutor;
 import org.openbravo.mobile.core.servercontroller.MobileServerUtils;
 import org.openbravo.model.ad.access.OrderLineTax;
+import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.enterprise.OrganizationInformation;
 import org.openbravo.model.common.order.OrderLineOffer;
 import org.openbravo.service.json.JsonConstants;
 
@@ -188,6 +190,16 @@ public class PaidReceipts extends JSONProcessSimple {
               new String[] { paidReceipt.get("organization$_identifier").toString() });
         }
         orderOrganization.put("name", organizationIdentifier);
+
+        final Organization org = OBDal.getInstance()
+            .get(Organization.class, orderOrganization.getString("id"));
+        final OrganizationInformation orgInfo = org.getOrganizationInformationList().get(0);
+        if (orgInfo.getLocationAddress().getCountry() != null) {
+          orderOrganization.put("country", orgInfo.getLocationAddress().getCountry().getId());
+        }
+        if (orgInfo.getLocationAddress().getRegion() != null) {
+          orderOrganization.put("region", orgInfo.getLocationAddress().getRegion().getId());
+        }
 
         JSONArray paidReceiptsLines = hqlPropertiesLines.getJSONArray(paidReceiptsLinesQuery);
 

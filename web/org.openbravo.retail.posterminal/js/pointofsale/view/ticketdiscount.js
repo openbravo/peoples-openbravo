@@ -92,63 +92,30 @@ enyo.kind({
   ],
   show: function() {
     var me = this;
-    me.$.btnApply.setDisabled(true);
-    me.discounts.reset();
-    me.order.trigger('showDiscount');
-    //uncheck lines
-    this.doCheckAllTicketLines({
-      status: false
-    });
-    //load discounts
-    OB.Dal.find(
-      OB.Model.Discount,
-      {
-        _whereClause:
-          'where m_offer_type_id in (' +
-          OB.Model.Discounts.getManualPromotions() +
-          ") AND date('now') BETWEEN DATEFROM AND COALESCE(date(DATETO), date('9999-12-31'))" +
-          // filter by order price list
-          ' AND (' +
-          " (pricelist_selection = 'Y' AND NOT EXISTS " + //
-          " (SELECT 1 FROM m_offer_pricelist opl WHERE m_offer.m_offer_id = opl.m_offer_id AND opl.m_pricelist_id = '" +
-          me.order.get('priceList') +
-          "'))" + //
-          " OR (pricelist_selection = 'N' AND EXISTS " + //
-          " (SELECT 1 FROM m_offer_pricelist opl WHERE m_offer.m_offer_id = opl.m_offer_id AND opl.m_pricelist_id = '" +
-          me.order.get('priceList') +
-          "')))" + //
-          // filter discretionary discounts by current role
-          " AND ((EM_OBDISC_ROLE_SELECTION = 'Y'" + //
-          ' AND NOT EXISTS' + //
-          ' (SELECT 1' + //
-          ' FROM OBDISC_OFFER_ROLE' + //
-          ' WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID' + //
-          "   AND AD_ROLE_ID = '" +
-          OB.MobileApp.model.get('context').role.id +
-          "'" + //
-          ' ))' + //
-          " OR (EM_OBDISC_ROLE_SELECTION = 'N'" + //
-          ' AND EXISTS' + //
-          ' (SELECT 1' + //
-          ' FROM OBDISC_OFFER_ROLE' + //
-          ' WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID' + //
-          "   AND AD_ROLE_ID = '" +
-          OB.MobileApp.model.get('context').role.id +
-          "'" + //
-          ' )))' //
-      },
-      function(promos) {
-        promos.comparator = function(model) {
+    function loadDiscounts() {
+      try {
+        let discountArray = OB.Discounts.Pos.manualRuleImpls;
+
+        discountArray = OB.Discounts.Pos.filterDiscountsByDate(
+          discountArray,
+          new Date()
+        );
+
+        discountArray = OB.Discounts.Pos.filterDiscountsByPriceList(
+          discountArray,
+          me.order.get('priceList')
+        );
+
+        discountArray.comparator = function(model) {
           return model.get('_identifier');
         };
-        promos.sort();
-        me.discounts.reset(promos.models);
+        me.discounts.reset(discountArray);
         if (
           OB.MobileApp.model.hasPermission('OBPOS_AutoSelectDiscounts', true)
         ) {
-          var selectedModels = OB.MobileApp.view.$.containerWindow.getRoot().$
-              .multiColumn.$.rightPanel.$.keyboard.selectedModels,
-            i;
+          let selectedModels = OB.MobileApp.view.$.containerWindow.getRoot().$
+            .multiColumn.$.rightPanel.$.keyboard.selectedModels;
+          let i;
           for (i = 0; i < selectedModels.length; i++) {
             selectedModels[i].trigger('check');
           }
@@ -161,13 +128,13 @@ enyo.kind({
           );
         }
         //set the keyboard for selected discount
-        if (promos.length > 0) {
-          var model = promos.at(0);
-          var rule =
+        if (me.discounts.length > 0) {
+          let model = me.discounts.at(0);
+          let rule =
             OB.Model.Discounts.discountRules[model.get('discountType')];
-          var amt = 0;
-          var requiresQty = !rule.isFixed; // If fixed discount, no requires qty
-          var units;
+          let amt = 0;
+          let requiresQty = !rule.isFixed; // If fixed discount, no requires qty
+          let units;
           if (rule.isAmount) {
             amt = model.get('disctTotalamountdisc')
               ? model.get('disctTotalamountdisc')
@@ -191,8 +158,7 @@ enyo.kind({
             }
           );
         }
-      },
-      function() {
+      } catch (err) {
         //show an error in combo
         var tr;
         me.discounts.reset();
@@ -209,9 +175,9 @@ enyo.kind({
         if (
           OB.MobileApp.model.hasPermission('OBPOS_AutoSelectDiscounts', true)
         ) {
-          var selectedModels = OB.MobileApp.view.$.containerWindow.getRoot().$
-              .multiColumn.$.rightPanel.$.keyboard.selectedModels,
-            i;
+          let selectedModels = OB.MobileApp.view.$.containerWindow.getRoot().$
+            .multiColumn.$.rightPanel.$.keyboard.selectedModels;
+          let i;
           for (i = 0; i < selectedModels.length; i++) {
             selectedModels[i].trigger('check');
           }
@@ -224,7 +190,16 @@ enyo.kind({
           );
         }
       }
-    );
+    }
+
+    me.$.btnApply.setDisabled(true);
+    me.discounts.reset();
+    me.order.trigger('showDiscount');
+    //uncheck lines
+    this.doCheckAllTicketLines({
+      status: false
+    });
+    loadDiscounts();
     this.inherited(arguments);
   },
   disableKeyboard: function() {
@@ -271,12 +246,8 @@ enyo.kind({
     this.$.formElementDiscountsList.amtChanged = true;
   },
   initComponents: function() {
-    var discountsModel = Backbone.Collection.extend({
-      model: OB.Model.Discounts
-    });
     this.inherited(arguments);
-
-    this.discounts = new discountsModel();
+    this.discounts = new Backbone.Collection();
     this.$.formElementDiscountsList.coreElement.setCollection(this.discounts);
   },
   ticketLineChecked: function(inSender, inEvent) {

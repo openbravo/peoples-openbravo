@@ -226,7 +226,11 @@
                       id: organization,
                       name: OB.I18N.getLabel('OBPOS_LblThisStore', [
                         terminalModel.get('terminal').organization$_identifier
-                      ])
+                      ]),
+                      country: OB.MobileApp.model.get('terminal')
+                        .organizationCountryId,
+                      region: OB.MobileApp.model.get('terminal')
+                        .organizationRegionId
                     });
                     terminalModel.get('store').splice(1, 0, {
                       id: 'all_' + organization,
@@ -912,7 +916,7 @@
       this.postSyncProcessActions();
     },
 
-    postSyncProcessActions: function() {
+    postSyncProcessActions: async function() {
       if (
         OB.MobileApp.model.get('context') &&
         OB.MobileApp.model.get('context').user &&
@@ -920,27 +924,20 @@
           OB.MobileApp.model.get('context').user.isSalesRepresentative
         )
       ) {
-        OB.Dal.get(
-          OB.Model.SalesRepresentative,
-          OB.MobileApp.model.get('context').user.id,
-          function(salesrepresentative) {
-            if (!salesrepresentative) {
-              OB.MobileApp.model.get(
-                'context'
-              ).user.isSalesRepresentative = false;
-            } else {
-              OB.MobileApp.model.get(
-                'context'
-              ).user.isSalesRepresentative = true;
-            }
-          },
-          function() {},
-          function() {
+        try {
+          const salesrepresentative = await OB.App.MasterdataModels.SalesRepresentative.withId(
+            OB.MobileApp.model.get('context').user.id
+          );
+          if (!salesrepresentative) {
             OB.MobileApp.model.get(
               'context'
             ).user.isSalesRepresentative = false;
+          } else {
+            OB.MobileApp.model.get('context').user.isSalesRepresentative = true;
           }
-        );
+        } catch (err) {
+          OB.error(err.message);
+        }
       }
     },
 

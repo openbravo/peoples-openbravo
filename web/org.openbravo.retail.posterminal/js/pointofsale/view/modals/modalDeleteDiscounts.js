@@ -283,13 +283,16 @@ enyo.kind({
     this.$.header.destroyComponents();
     this.setHeader(OB.I18N.getLabel('OBPOS_LblDiscountsDelete'));
 
-    var selectedLinesModel = this.args.selectedLines,
-      manualPromotions = OB.Model.Discounts.getManualPromotions();
+    var selectedLinesModel = this.args.selectedLines;
     _.each(selectedLinesModel, function(line) {
       //for Each Line check all Promotions
       _.each(line.get('promotions'), function(linePromotions) {
         //check manual promotions
-        if (manualPromotions.indexOf(linePromotions.discountType) !== -1) {
+        if (
+          OB.Discounts.Pos.getManualPromotions().includes(
+            linePromotions.discountType
+          )
+        ) {
           //check if receipt discount
           var promotionExists = false,
             i;
