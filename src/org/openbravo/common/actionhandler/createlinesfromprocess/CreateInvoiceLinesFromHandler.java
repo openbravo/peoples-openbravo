@@ -29,6 +29,7 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.client.application.process.ResponseActionsBuilder.MessageType;
+import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.service.db.DbUtility;
@@ -78,9 +79,9 @@ abstract class CreateInvoiceLinesFromHandler<T extends BaseOBObject>
   private JSONObject showExceptionInViewAndRetry(Exception e) {
     final Throwable ex = DbUtility
         .getUnderlyingSQLException(e.getCause() != null ? e.getCause() : e);
+    final OBError msg = OBMessageUtils.translateError(ex.getMessage());
     return getResponseBuilder()
-        .showMsgInProcessView(MessageType.ERROR, OBMessageUtils.messageBD("error"),
-            OBMessageUtils.parseTranslation(ex.getMessage()), true)
+        .showMsgInProcessView(MessageType.ERROR, msg.getTitle(), msg.getMessage(), true)
         .retryExecution()
         .build();
   }
