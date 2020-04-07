@@ -117,7 +117,7 @@ public class TaxZone extends MasterDataProcessHQLQuery {
 
     String hql = " select " + regularTaxZoneHQLProperties.getHqlSelect()
         + " from FinancialMgmtTaxZone as financialMgmtTaxZone"
-        + " join financialMgmtTaxZone.tax as tax"
+        + " join financialMgmtTaxZone.tax as financialMgmtTaxRate"
         + " where financialMgmtTaxZone.$readableSimpleClientCriteria"
         + " and financialMgmtTaxZone.$naturalOrgCriteria"
         + " and financialMgmtTaxZone.$incrementalUpdateCriteria"

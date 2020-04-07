@@ -23,13 +23,18 @@ public class TaxZoneProperties extends ModelExtension {
     final List<HQLProperty> list = new ArrayList<>();
 
     list.add(new HQLProperty("financialMgmtTaxZone.id", "id"));
-    list.add(new HQLProperty("financialMgmtTaxZone.tax.id", "taxRateId"));
+    list.add(new HQLProperty("financialMgmtTaxRate.id", "taxRateId"));
     list.add(new HQLProperty("financialMgmtTaxZone.fromCountry.id", "zoneCountry"));
     list.add(new HQLProperty("financialMgmtTaxZone.fromRegion.id", "zoneRegion"));
     list.add(
         new HQLProperty("financialMgmtTaxZone.destinationCountry.id", "zoneDestinationCountry"));
     list.add(new HQLProperty("financialMgmtTaxZone.destinationRegion.id", "zoneDestinationRegion"));
-
+    list.add(new HQLProperty("financialMgmtTaxRate.name", "name"));
+    list.add(new HQLProperty("financialMgmtTaxRate.rate", "rate"));
+    list.add(new HQLProperty("financialMgmtTaxRate.taxCategory.id", "taxCategory"));
+    list.add(new HQLProperty("financialMgmtTaxRate.summaryLevel", "summaryLevel"));
+    list.add(new HQLProperty("financialMgmtTaxRate.businessPartnerTaxCategory.id",
+        "businessPartnerTaxCategory"));
     return list;
   }
 
