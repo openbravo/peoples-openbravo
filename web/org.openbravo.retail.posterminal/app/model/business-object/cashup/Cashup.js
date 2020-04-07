@@ -159,6 +159,7 @@
 
   /**
    * Update the cashup , after a ticket done
+   * TODO: this action will disapear when ticket is included in the state
    */
   OB.App.StateAPI.Cashup.registerActions({
     updateCashup(cashup, payload) {
@@ -188,8 +189,7 @@
         if (
           !(order.has('isQuotation') && order.get('isQuotation')) &&
           !order.get('isPaid') &&
-          // / PAYLOAD !!!!
-
+          // TODO: save and read these info from PAYLOAD
           ((OB.MobileApp.model.get('terminal').countLayawayAsSales &&
             !(order.get('isLayaway') && !order.get('voidLayaway'))) ||
             (!OB.MobileApp.model.get('terminal').countLayawayAsSales &&

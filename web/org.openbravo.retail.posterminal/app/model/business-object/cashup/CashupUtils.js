@@ -319,16 +319,19 @@
     },
 
     filterOnlyNeededDataForCompleteCashup(cashup) {
-      const newCashup = {};
-      newCashup.objToSend = {};
+      const unFilteredObjToSend = JSON.parse(cashup.get('objToSend'));
+      const filteredObjToSend = {};
 
-      newCashup.objToSend.cashCloseInfo = cashup.objToSend.cashCloseInfo;
-      newCashup.objToSend.cashMgmtIds = cashup.objToSend.cashMgmtIds;
-      newCashup.objToSend.cashUpDate = cashup.objToSend.cashUpDate;
-      newCashup.objToSend.timezoneOffset = cashup.objToSend.timezoneOffset;
-      newCashup.objToSend.lastcashupeportdate =
-        cashup.objToSend.lastcashupeportdate;
-      newCashup.objToSend.approvals = cashup.objToSend.approvals;
+      filteredObjToSend.cashCloseInfo = unFilteredObjToSend.cashCloseInfo;
+      filteredObjToSend.cashMgmtIds = unFilteredObjToSend.cashMgmtIds;
+      filteredObjToSend.cashUpDate = unFilteredObjToSend.cashUpDate;
+      filteredObjToSend.timezoneOffset = unFilteredObjToSend.timezoneOffset;
+      filteredObjToSend.lastcashupeportdate =
+        unFilteredObjToSend.lastcashupeportdate;
+      filteredObjToSend.approvals = unFilteredObjToSend.approvals;
+
+      const newCashup = new Backbone.Model();
+      newCashup.set('objToSend', JSON.stringify(filteredObjToSend));
 
       return newCashup;
     }
