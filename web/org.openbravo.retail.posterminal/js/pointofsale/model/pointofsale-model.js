@@ -1001,9 +1001,11 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             }
           };
           OB.UTIL.cashUpReport(auxReceipt, undefined);
-          OB.App.State.Cashup.updateCashup({ tickets: [auxReceipt] }).then(() =>
-            cashUpReportSuccessCallback()
-          );
+          OB.App.State.Cashup.updateCashup({
+            tickets: [auxReceipt],
+            countLayawayAsSales: OB.MobileApp.model.get('terminal')
+              .countLayawayAsSales
+          }).then(() => cashUpReportSuccessCallback());
         }
 
         function updateCashup() {
@@ -1097,7 +1099,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                   };
                   OB.UTIL.cashUpReport(auxReceipt, undefined, tx);
                   OB.App.State.Cashup.updateCashup({
-                    tickets: [auxReceipt]
+                    tickets: [auxReceipt],
+                    countLayawayAsSales: OB.MobileApp.model.get('terminal')
+                      .countLayawayAsSales
                   }).then(() => cashUpReportSuccessCallback());
                 });
               });
@@ -1224,7 +1228,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                               };
                               OB.UTIL.cashUpReport(receipt, undefined, tx);
                               OB.App.State.Cashup.updateCashup({
-                                tickets: [receipt]
+                                tickets: [receipt],
+                                countLayawayAsSales: OB.MobileApp.model.get(
+                                  'terminal'
+                                ).countLayawayAsSales
                               }).then(() => cashUpReportSuccessCallback());
                             },
                             function() {

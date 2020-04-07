@@ -163,8 +163,9 @@
    */
   OB.App.StateAPI.Cashup.registerActions({
     updateCashup(cashup, payload) {
-      const { tickets } = payload;
       const newCashup = { ...cashup };
+
+      const { tickets, countLayawayAsSales } = payload;
 
       // TODO: update statistics
 
@@ -189,10 +190,9 @@
         if (
           !(order.has('isQuotation') && order.get('isQuotation')) &&
           !order.get('isPaid') &&
-          // TODO: save and read these info from PAYLOAD
-          ((OB.MobileApp.model.get('terminal').countLayawayAsSales &&
+          ((countLayawayAsSales &&
             !(order.get('isLayaway') && !order.get('voidLayaway'))) ||
-            (!OB.MobileApp.model.get('terminal').countLayawayAsSales &&
+            (!countLayawayAsSales &&
               order.isFullyPaid() &&
               (order.get('isLayaway') && !order.get('voidLayaway'))))
         ) {
