@@ -1474,6 +1474,7 @@
       this.set('documentType', null);
       this.set('orderType', 0); // 0: Sales order, 1: Return order
       this.set('generateInvoice', false);
+      this.set('fullInvoice', false);
       this.set('isQuotation', false);
       this.set('oldId', null);
       this.set('priceList', null);
@@ -11356,6 +11357,7 @@
           OB.MobileApp.model.get('terminal').terminalType.layawayorder ? 2 : 0
         ); // 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
         order.set('generateInvoice', false);
+        order.set('fullInvoice', false);
         order.set('isQuotation', false);
         order.set('oldId', null);
         order.set('session', OB.MobileApp.model.get('session'));
