@@ -16,11 +16,9 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
@@ -49,49 +47,29 @@ public class AttributesUtils {
           // Generate a valid description for given values
           validatedAttributeSetInstanceDescription = AttributesUtils
               .generateValidAttSetInstanceDescription(attributeValue, product);
-          // Try to find an Att Set Intance Id with given description
-          OBCriteria<AttributeSetInstance> attrSICrit = OBDal.getInstance()
-              .createCriteria(AttributeSetInstance.class);
-          attrSICrit.add(Restrictions.eq(AttributeSetInstance.PROPERTY_DESCRIPTION,
-              validatedAttributeSetInstanceDescription));
-          attrSICrit.addOrderBy("id", false);
-          attrSICrit.setMaxResults(2);
-          List<AttributeSetInstance> attrSIList = attrSICrit.list();
-          if (attrSIList.isEmpty() && attrSIList.size() == 0) {
-            // Att Set instance Id not found -> Create New One
+          String stDetailWhereClause = " as e WHERE e.attributeSetValue.id "
+              + " in (select id from AttributeSetInstance attseti "
+              + " where attseti.description = :attsetdescription) "
+              + " AND e.product.id = :productId AND e.storageBin.warehouse.id "
+              + " in (select warehouse.id from OrganizationWarehouse orgwh "
+              + " where orgwh.organization.id = :orgid) ORDER BY e.quantityOnHand desc, e.attributeSetValue.id ";
+          OBQuery<StorageDetail> querySdetail = OBDal.getInstance()
+              .createQuery(StorageDetail.class, stDetailWhereClause);
+          querySdetail.setNamedParameter("attsetdescription",
+              validatedAttributeSetInstanceDescription);
+          querySdetail.setNamedParameter("productId", productId);
+          querySdetail.setNamedParameter("orgid", posTerminalOrganizationId);
+          querySdetail.setMaxResult(1);
+          StorageDetail lstSDResults = querySdetail.uniqueResult();
+          if (lstSDResults != null) {
+            // Pick the first one (query was ordered by qtyOnHand and Att Set instance id)
+            attrSetInst = lstSDResults.getAttributeSetValue();
+          } else {
+            // There is no stock. Use the first one found in Att Set instance table
             attrSetInst = AttributesUtils
                 .createAttributeSetValue(validatedAttributeSetInstanceDescription, product);
-            return attrSetInst;
-          } else if (attrSIList.size() == 1) {
-            // Just one Att Set instance Id found -> Use it
-            attrSetInst = attrSIList.get(0);
-            return attrSetInst;
-          } else {
-            // Issue 37308: We have found several Att Set Instances with the same description.
-            // Lets try to find one which have stock
-            // inside the warehouses used by the store
-            String stDetailWhereClause = " as e WHERE e.attributeSetValue.id "
-                + " in (select id from AttributeSetInstance attseti "
-                + " where attseti.description = :attsetdescription) "
-                + " AND e.quantityOnHand > 0 AND e.storageBin.warehouse.id "
-                + " in (select warehouse.id from OrganizationWarehouse orgwh "
-                + " where orgwh.organization.id = :orgid) ORDER BY e.quantityOnHand desc, e.attributeSetValue.id ";
-            OBQuery<StorageDetail> querySdetail = OBDal.getInstance()
-                .createQuery(StorageDetail.class, stDetailWhereClause);
-            querySdetail.setNamedParameter("attsetdescription",
-                validatedAttributeSetInstanceDescription);
-            querySdetail.setNamedParameter("orgid", posTerminalOrganizationId);
-            querySdetail.setMaxResult(1);
-            StorageDetail lstSDResults = querySdetail.uniqueResult();
-            if (lstSDResults != null) {
-              // Pick the first one (query was ordered by qtyOnHand and Att Set instance id)
-              attrSetInst = lstSDResults.getAttributeSetValue();
-            } else {
-              // There is no stock. Use the first one found in Att Set instance table
-              attrSetInst = attrSIList.get(0);
-            }
-            return attrSetInst;
           }
+          return attrSetInst;
         } else {
           // return null because given values are empty
           return attrSetInst;
