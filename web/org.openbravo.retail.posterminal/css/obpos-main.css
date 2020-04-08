@@ -9186,7 +9186,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   grid-template-columns: auto 1fr;
 }
 
-
 .obObposPointOfSaleUiLineProperty-propertyLabel {
   width: 95px;
   text-align: right;
@@ -9204,16 +9203,24 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /*
 # Component: OB.OBPOSPointOfSale.UI.LinePropertyDiv
 */
-.obObposPointOfSaleUiLinePropertyDiv {}
+.obObposPointOfSaleUiLinePropertyDiv {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: auto 1fr;
+}
 
-.obObposPointOfSaleUiLinePropertyDiv-container1 {}
+.obObposPointOfSaleUiLinePropertyDiv-propertyLabel {
+  width: 95px;
+  text-align: right;
+  color: var(--color-secondary);
+  font-weight: bold;
+}
 
-.obObposPointOfSaleUiLinePropertyDiv-container1-propertyLabel {}
+.obObposPointOfSaleUiLinePropertyDiv-propertyValueWrapper {
+  padding-left: 12px;
+}
 
-.obObposPointOfSaleUiLinePropertyDiv-container1-container2 {}
-
-.obObposPointOfSaleUiLinePropertyDiv-container1-container2-propertyValue {}
-
+.obObposPointOfSaleUiLinePropertyDiv-propertyValueWrapper-propertyValue {}
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.EditLine
