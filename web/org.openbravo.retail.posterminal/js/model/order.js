@@ -9037,7 +9037,11 @@
             }
           });
         }
-        qtyPending = OB.DEC.sub(l.get('qty'), qtyReserved);
+        qtyPending = OB.DEC.sub(
+          l.get('qty'),
+          qtyReserved,
+          OB.DEC.getRoundingMode()
+        );
         l.set('qty', qtyPending);
         l.set('promotions', promotionsApplyNext);
         l.set('promotionsCascadeApplied', promotionsCascadeApplied);
