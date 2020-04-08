@@ -253,8 +253,8 @@
           newPayload.tickets.push(ticket);
         }
       });
-      if (newPayload.tickets.lenth === 0) {
-        throw new OB.App.Class.ActionCanceled('');
+      if (newPayload.tickets.length === 0) {
+        throw new OB.App.Class.ActionCanceled('tickets length is 0');
       }
 
       return newPayload;

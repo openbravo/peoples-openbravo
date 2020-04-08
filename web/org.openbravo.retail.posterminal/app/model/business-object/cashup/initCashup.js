@@ -96,7 +96,7 @@
             if (lastBackendCashupData.exception) {
               // error reading payments of backend last cashup, show popup and reload
               OB.App.State.Cashup.Utils.showPopupNotEnoughDataInCache();
-              // TODO throw ;
+              throw new OB.App.Class.ActionCanceled('notEnoughDataInCache');
             }
             // is the first cashup of the terminal, initialize all payments to 0
             newPayload.lastCashUpPayments = null;
