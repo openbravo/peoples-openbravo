@@ -6652,18 +6652,43 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Inherits: [OB.UI.CheckboxButton]
 */
 .obUiListInvoicesLine {
-  height: 38px;
-  background-position: 10px center;
   vertical-align: middle;
   width: 100%;
-  border-bottom: 1px solid #cccccc;
+  border-bottom: var(--separator-slim);
   text-align: left;
-  padding-left: 70px;
-  height: 58px;
+  padding-left: 10px;
+  height: 90px;
 }
 
+.obUiListInvoicesLine .obUiButton-components {
+  grid-auto-flow: column;
+  grid-template-columns: 50px 1fr;
+}
+
+.obUiListInvoicesLine .obUiButton-components-icon {
+  width: 100%;
+  height: 100%;;
+  border: none;
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-color: transparent;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconCheck.svg');
+  background-size: 34px 27px;
+  filter: var(--color-quaternary_img);
+}
+
+.obUiListInvoicesLine.active .obUiButton-components-icon {
+  filter: var(--color-secondary_img);
+}
+
+.obUiListInvoicesLine .obUiButton-components-label {
+  color: var(--color-on-surface-variant);
+}
+
+.obUiListInvoicesLine:focus {}
+
 .obUiListInvoicesLine-line {
-  line-height: 23px;
+  line-height: 30px;
   display: inline;
 }
 
@@ -6678,7 +6703,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obUiListInvoicesLine-line-element1 {
   clear: both;
 }
-
 
 /*
 # Component: OB.UI.ListInvoices
