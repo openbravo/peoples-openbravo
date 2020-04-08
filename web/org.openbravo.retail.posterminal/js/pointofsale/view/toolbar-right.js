@@ -562,7 +562,13 @@ enyo.kind({
             this.model.get('order').get('lines').length > 0
           ) {
             this.currentLine = lineSelected;
-            this.setDisabled(false);
+            if (
+              OB.MobileApp.model.hasPermission('OBPOS_disableEditTab', true)
+            ) {
+              this.setDisabled(true);
+            } else {
+              this.setDisabled(false);
+            }
           } else {
             this.setDisabled(true);
           }
