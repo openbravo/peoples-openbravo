@@ -307,12 +307,7 @@ enyo.kind({
 
     // Remove grey background to 'Create New Receipt' button
     // TODO: Remove this style
-    this.$.body.$.listSelectOpenedReceiptModal.$.button.setStyle(
-      this.$.body.$.listSelectOpenedReceiptModal.$.button.style.replace(
-        ' background-color: #cccccc;',
-        ''
-      )
-    );
+    this.$.body.$.listSelectOpenedReceiptModal.$.button.removeClass('selected');
 
     // Remove grey background to opened receipts list
     for (control in items) {
@@ -326,12 +321,7 @@ enyo.kind({
                 'openedReceiptsListLine'
               ) {
                 // TODO: Remove this style
-                buttonContainer[openedReceiptsListLine].setStyle(
-                  buttonContainer[openedReceiptsListLine].style.replace(
-                    ' background-color: #cccccc;',
-                    ''
-                  )
-                );
+                buttonContainer[openedReceiptsListLine].removeClass('selected');
               }
             }
           }
@@ -344,7 +334,7 @@ enyo.kind({
     this.uncheckAllItems();
 
     // Add grey background to the new selected line
-    line.addClass('obUiOpenedReceiptsListLine_disabled');
+    line.addClass('selected');
 
     // Enable 'Apply' button
     if (this.$.footer.$.modalSelectOpenedReceipt_btnApply.disabled) {
