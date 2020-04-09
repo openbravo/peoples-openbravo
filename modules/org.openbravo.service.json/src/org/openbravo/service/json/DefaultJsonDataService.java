@@ -383,6 +383,9 @@ public class DefaultJsonDataService implements JsonDataService {
     boolean completeSelectionInCurrentPage = selectionInCurrentPage == selectedIds.size();
     if (completeSelectionInCurrentPage) {
       selected.addAll(unselected);
+      if (queryService.getFirstResult() > selectionInCurrentPage) {
+        selected = selected.stream().skip(selectionInCurrentPage).collect(toList());
+      }
       return selected;
     }
 
@@ -398,6 +401,11 @@ public class DefaultJsonDataService implements JsonDataService {
         // fix pagination to prevent selection appearing in all pages
         log.trace("Skipping {} rows for {}", idsOutOfCurrentPage, criteria);
         gridRows = selected.stream().skip(idsOutOfCurrentPage).collect(toList());
+        if (queryService.getFirstResult() > 0 && selectionInCurrentPage > 0) {
+          // Remove selected items if those have been already shown in previous pages, removing
+          // duplicates
+          gridRows = gridRows.stream().skip(selectionInCurrentPage).collect(toList());
+        }
       } else {
         gridRows = selected;
       }
