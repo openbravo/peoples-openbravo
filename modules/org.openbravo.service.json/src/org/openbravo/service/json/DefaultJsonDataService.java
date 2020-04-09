@@ -161,10 +161,14 @@ public class DefaultJsonDataService implements JsonDataService {
         final boolean isPickAndEdit = StringUtils.isNotEmpty(isPickAndEditParam)
             ? Boolean.valueOf(isPickAndEditParam)
             : Boolean.FALSE;
-
+        // Retrieve parameter to identify if the fetch request comes from a multi selector
+        String isMultiSelectorParam = parameters.get(JsonConstants.IS_MULTI_SELECTOR);
+        final boolean isMultiSelector = StringUtils.isNotEmpty(isMultiSelectorParam)
+            ? Boolean.valueOf(isMultiSelectorParam)
+            : Boolean.FALSE;
         final String startRowStr = parameters.get(JsonConstants.STARTROW_PARAMETER);
         final String endRowStr;
-        if (isPickAndEdit) {
+        if (isPickAndEdit || isMultiSelector) {
           endRowStr = getEndRowForSelectedRecords(parameters, startRowStr);
           if (endRowStr != null
               && !endRowStr.equals(parameters.get(JsonConstants.ENDROW_PARAMETER))) {
@@ -250,7 +254,7 @@ public class DefaultJsonDataService implements JsonDataService {
         } else {
           long t = System.currentTimeMillis();
           bobs = queryService.list();
-          log.debug("query time:" + (System.currentTimeMillis() - t));
+          log.debug("query time: {}", System.currentTimeMillis() - t);
 
           // If the request is done from a P&E window, then we should adapt the page size to include
           // all selected records into the response
@@ -260,12 +264,32 @@ public class DefaultJsonDataService implements JsonDataService {
                   .toString(Integer.parseInt(endRowStr) + JsonConstants.PAE_DATA_PAGE_SIZE);
               parameters.put(JsonConstants.ENDROW_PARAMETER, newEndRow);
               log.debug(
-                  "The amount of selected records is higher than the page size, increasing page size to "
-                      + newEndRow);
+                  "The amount of selected records is higher than the page size, increasing page size to {}",
+                  newEndRow);
               return fetch(parameters, filterOnReadableOrganizations);
             }
+            bobs = getFixedMultiSelection(queryService, bobs);
+          }
 
-            bobs = getFixedPNESelection(queryService, bobs);
+          // Multi selectors adapt the page size to include all selected records at the top of the
+          // response
+          if (isMultiSelector) {
+            // Check if endrow should be updated, update it if necessary and rerun this fetch
+            if (endRowStr != null && startRowStr != null) {
+              int nSelected = DataSourceUtils.getNumberOfSelectedRecords(parameters);
+              int nElements = Integer.parseInt(endRowStr) - Integer.parseInt(startRowStr);
+              if (nSelected > nElements) {
+                String newEndRow = Integer
+                    .toString(Integer.parseInt(endRowStr) + (nSelected - nElements));
+                parameters.put(JsonConstants.ENDROW_PARAMETER, newEndRow);
+                log.debug(
+                    "The amount of selected records is higher than the page size, increasing page size to {}",
+                    newEndRow);
+                return fetch(parameters, filterOnReadableOrganizations);
+              }
+            }
+
+            bobs = getFixedMultiSelection(queryService, bobs);
           }
         }
 
@@ -279,8 +303,15 @@ public class DefaultJsonDataService implements JsonDataService {
           // computedMaxResults is one too much, if we got one to much then correct
           // the result and up the count so that the grid knows that there are more
           if (bobs.size() >= computedMaxResults) {
-            bobs = bobs.subList(0, bobs.size() - 1);
             count++;
+          }
+
+          // Redo fetch if missing elements on last fetch, from start, to take into consideration
+          // non selected elements in between selected elements
+          if (bobs.isEmpty() && startRow > 0 && (isPickAndEdit || isMultiSelector)) {
+            parameters.put(JsonConstants.STARTROW_PARAMETER, "0");
+            parameters.put(JsonConstants.ENDROW_PARAMETER, count + computedMaxResults + "");
+            return fetch(parameters);
           }
         }
 
@@ -325,11 +356,11 @@ public class DefaultJsonDataService implements JsonDataService {
   }
 
   /**
-   * Fixes selected records for P&E datasource requests ensuring all selected records are placed on
-   * top of not selected ones. If the complete selection was not initially fetched in current page,
-   * an additional query to retrieve it will be executed.
+   * Fixes selected records for multi-selection datasource (P&E and multiple selectors) requests
+   * ensuring all selected records are placed on top of not selected ones. If the complete selection
+   * was not initially fetched in current page, an additional query to retrieve it will be executed.
    */
-  private List<BaseOBObject> getFixedPNESelection(DataEntityQueryService queryService,
+  private List<BaseOBObject> getFixedMultiSelection(DataEntityQueryService queryService,
       List<BaseOBObject> bobs) {
     JSONObject criteria = queryService.getQueryBuilder().getCriteria();
     Set<String> selectedIds = DataSourceUtils.getSelectedRecordsFromCriteria(criteria);
@@ -355,7 +386,7 @@ public class DefaultJsonDataService implements JsonDataService {
       return selected;
     }
 
-    log.debug("P&E doesn't contain all selection, querying again to get it {}", criteria);
+    log.debug("Initial query doesn't contain all selection, querying again to get it {}", criteria);
 
     List<BaseOBObject> gridRows = bobs;
     try {

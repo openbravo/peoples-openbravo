@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2018 Openbravo SLU
+ * All portions are Copyright (C) 2009-2020 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -131,6 +131,8 @@ public class JsonConstants {
   public static final String WHERE_CLAUSE_HAS_BEEN_CHECKED = "whereClauseHasBeenChecked";
   public static final String WINDOW_ID = "windowId";
   public static final String DATASOURCE_NAME = "dataSourceName";
+
+  public static final String IS_MULTI_SELECTOR = "isMultiSelector";
 
   public static final String UNDEFINED = "undefined";
   public static final String NULL = "null";

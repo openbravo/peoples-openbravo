@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009-2018 Openbravo SLU
+ * All portions are Copyright (C) 2009-2020 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -92,6 +92,7 @@ public class SelectorComponent extends BaseTemplateComponent {
   private static final String FOURCELLS = "FourCells";
   private static final String FIVECELLS = "FiveCells";
   private static final String CUSTOM_QUERY_DS = "F8DD408F2F3A414188668836F84C21AF";
+  private static final String MULTI_SELECTOR_REFERENCE = "87E6CFF8F71548AFA33F181C317970B5";
 
   private org.openbravo.userinterface.selector.Selector selector;
   private List<SelectorField> selectorFields;
@@ -112,6 +113,17 @@ public class SelectorComponent extends BaseTemplateComponent {
     IdentifierOutField.setOutFieldName(JsonConstants.IDENTIFIER);
     IdentifierOutField.setTabFieldName("");
     IdentifierOutField.setOutSuffix("");
+  }
+
+  /**
+   * Determines if the selector is a MultiSelector or not
+   *
+   * @return True if the selector is a multi selector, False otherwise
+   */
+  private boolean isMultiSelector() {
+    org.openbravo.model.ad.domain.Reference parentReference = getSelector().getReference()
+        .getParentReference();
+    return parentReference != null && MULTI_SELECTOR_REFERENCE.equals(parentReference.getId());
   }
 
   private static DomainType getDomainType(SelectorField selectorField) {
@@ -423,6 +435,9 @@ public class SelectorComponent extends BaseTemplateComponent {
     final String extraProperties = getAdditionalProperties(getSelector(), false);
     if (extraProperties.length() > 0) {
       dsParameters.put(JsonConstants.ADDITIONAL_PROPERTIES_PARAMETER, extraProperties.toString());
+    }
+    if (isMultiSelector()) {
+      dsParameters.put(JsonConstants.IS_MULTI_SELECTOR, "true");
     }
 
     final Component component = componentProvider.getComponent(dataSourceId, dsParameters);
