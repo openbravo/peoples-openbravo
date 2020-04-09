@@ -1593,7 +1593,7 @@
       ) {
         order.set('obposSequencename', 'quotationslastassignednum');
       } else if (
-        order.getOrderType() === 1 &&
+        this.isReturn(order) &&
         OB.MobileApp.model.get('terminal').returnDocNoPrefix
       ) {
         order.set('obposSequencename', 'returnslastassignednum');
@@ -1607,7 +1607,7 @@
     setInvoiceDocumentNo: async function(invoice) {
       if (
         !invoice.get('fullInvoice') &&
-        invoice.getOrderType() === 1 &&
+        this.isReturn(invoice) &&
         OB.MobileApp.model.get('terminal').simplifiedReturnInvoiceDocNoPrefix
       ) {
         invoice.set(
@@ -1616,7 +1616,7 @@
         );
       } else if (
         invoice.get('fullInvoice') &&
-        invoice.getOrderType() === 1 &&
+        this.isReturn(invoice) &&
         OB.MobileApp.model.get('terminal').fullReturnInvoiceDocNoPrefix
       ) {
         invoice.set('obposSequencename', 'fullreturninvoiceslastassignednum');
@@ -1655,6 +1655,18 @@
           sequenceNumber
         )
       });
+    },
+
+    isReturn: function(document) {
+      const negativeLines = document
+        .get('lines')
+        .filter(line => line.get('qty') < 0).length;
+      return (
+        negativeLines === document.get('lines').length ||
+        (negativeLines > 0 &&
+          OB.MobileApp.model.get('permissions')
+            .OBPOS_SalesWithOneLineNegativeAsReturns)
+      );
     },
 
     getPaymentName: function(key) {
