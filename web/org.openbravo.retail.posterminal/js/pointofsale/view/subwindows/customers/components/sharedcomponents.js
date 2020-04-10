@@ -1086,6 +1086,17 @@ enyo.kind({
   kind: 'OB.UI.Button',
   classes: 'obUiCustomerCheckOption',
   checked: false,
+  handlers: {
+    onkeydown: 'keydownHandler'
+  },
+  keydownHandler: function(inSender, inEvent) {
+    var keyCode = inEvent.keyCode;
+    if (keyCode === 32) {
+      //Handle SPACE key to check and uncheck
+      this.tap();
+      return true;
+    }
+  },
   tap: function() {
     if (this.readOnly || this.getDisabled()) {
       return;
