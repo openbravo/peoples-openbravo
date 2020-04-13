@@ -34,7 +34,7 @@
 
       // create new message with current cashup
       const newMessagePayload = {
-        id: OB.UTIL.get_UUID(),
+        id: OB.App.UUID.generate(),
         terminal: payload.terminal,
         cacheSessionId: payload.cacheSessionId,
         data: [oldCashup]
@@ -76,7 +76,6 @@
     async (state, payload) => {
       const newPayload = { ...payload };
 
-      newPayload.newUuid = OB.UTIL.get_UUID();
       newPayload.creationDate = new Date().toISOString();
       newPayload.currentDate = new Date();
       newPayload.userId = OB.MobileApp.model.get('context').user.id;
@@ -84,11 +83,6 @@
       newPayload.terminalIsSlave = OB.POS.modelterminal.get('terminal').isslave;
 
       newPayload.terminalPayments = [...OB.MobileApp.model.get('payments')];
-
-      newPayload.terminalPayments.forEach(payment => {
-        // eslint-disable-next-line no-param-reassign
-        payment.newUuid = OB.UTIL.get_UUID();
-      });
 
       newPayload.terminal = OB.MobileApp.model.get(
         'logConfiguration'

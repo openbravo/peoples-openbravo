@@ -178,7 +178,7 @@
               );
             } else {
               newCashup.cashTaxInfo.push({
-                id: OB.UTIL.get_UUID(), // not totally pure, but acepted since cannot predict in the action preparation how many new uuid will be needed
+                id: OB.App.UUID.generate(),
                 name: newCashupTax.taxName,
                 amount: newCashupTax.taxAmount,
                 orderType: newCashupTax.taxOrderType

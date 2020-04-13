@@ -122,7 +122,7 @@
             startingCash = OB.DEC.Zero;
           }
           paymentMethods.push({
-            id: terminalPayment.newUuid,
+            id: OB.App.UUID.generate(),
             paymentMethodId: terminalPayment.payment.id,
             searchKey: terminalPayment.payment.searchKey,
             // eslint-disable-next-line no-underscore-dangle
@@ -178,7 +178,7 @@
       const { cashup } = payload;
       const newCashup = { ...cashup };
 
-      newCashup.id = payload.payload.newUuid;
+      newCashup.id = OB.App.UUID.generate();
       newCashup.netSales = OB.DEC.Zero;
       newCashup.grossSales = OB.DEC.Zero;
       newCashup.netReturns = OB.DEC.Zero;
@@ -278,7 +278,7 @@
         ) {
           // a new payment methods was added in the backend, add it to the pos cashup
           newCashup.cashPaymentMethodInfo.push({
-            id: terminalPayment.newUuid,
+            id: OB.App.UUID.generate(),
             paymentMethodId: terminalPayment.payment.id,
             searchKey: terminalPayment.payment.searchKey,
             // eslint-disable-next-line no-underscore-dangle
