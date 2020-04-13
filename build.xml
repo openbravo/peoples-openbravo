@@ -371,10 +371,8 @@ export.database: exports database structure and data to xml files.
     <MigrateAttachments/>
   </target>
 
-  <target name="smartbuild" depends="init">
+  <target name="smartbuild" depends="init, core.lib">
     <property name="smart.mode" value="true" />
-    <property name="onlyIfModified" value="true" />
-    <antcall target="core.lib" />
     
     <condition property="no.local">
       <not>
@@ -632,11 +630,7 @@ export.database: exports database structure and data to xml files.
     <ant dir="${base.src}" target="translate" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <target name="install.source" depends="init, cleanSubfolders, create.database, wad.lib, trl.lib, compile.complete.deploy">
-    <echo message="applying modules" />    
-    <antcall inheritall="true" inheritrefs="true" target="apply.module" />
-
-    <antcall inheritall="true" target="import.sample.data" />
+  <target name="install.source" depends="init, cleanSubfolders, create.database, wad.lib, trl.lib, compile.complete.deploy, apply.module, import.sample.data">
     <updatesystemstatus v="RB51"/> 
     <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
 
