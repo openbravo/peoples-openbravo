@@ -12,7 +12,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2019 Openbravo SLU
+* All portions are Copyright (C) 2001-2020 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************
@@ -87,7 +87,6 @@ export.database: exports database structure and data to xml files.
   <property name="rd" value="false" />
   <property name="local" value="true" />
   <property name="apply.modules.complete.compilation" value="false" />
-  <property name="calculate.core.revision" value="true"/>
   <property name="stopOnWadError" value="false"/>
   <property name="friendlyWarnings" value="false"/>
   <property name="checkTranslationConsistency" value="true"/>
@@ -107,14 +106,6 @@ export.database: exports database structure and data to xml files.
     </not>
   </condition>
 
-  <condition property="calculate.core.rev">
-   <istrue value="${calculate.core.revision}"/>
-  </condition>
-  
-  <condition property="xml.core.rev">
-     <isfalse value="${calculate.core.revision}"/>
-  </condition>
-  
   <condition property="deploy.mode" value="class">
     <not>
       <isset property="${deploy.mode}" />
@@ -904,66 +895,6 @@ export.database: exports database structure and data to xml files.
     </taskdef>
     <configurationApp nonInteractive="${nonInteractive}" acceptLicense="${acceptLicense}"/>
     </target>
-  
-  <target name="package.core" depends="init, set.version.number">
-	<property name="tmpdir" value="${java.io.tmpdir}/ob.core${core.rev}" />
-   
-  	<exec executable="hg" >
-  		<arg value="archive"/>
-  		<arg value="${tmpdir}"/>
-  	</exec>
-  	
-  	<replaceregexp file="${tmpdir}/src-db/database/sourcedata/AD_MODULE.xml"
-                   match="(VERSION.*\[CDATA\[).*\..*\.(.*)(\]\])"
-                   replace="\1${core.rev}\3"
-                   byline="true"/>
-    
-    <delete includeEmptyDirs="true">
-      <fileset dir="${tmpdir}/modules" includes="**/*" defaultexcludes="no"/>
-    </delete>
-    
-    <zip destfile="${basedir}/core-${core.rev}.obx" basedir="${tmpdir}"/>
-    
-    <delete dir="${tmpdir}"/>
-
-   </target>
- 
-  <target name="set.version.number" depends="set.version.from.file, set.version.calculated"/>
-  
-  <target name="set.version.calculated" if="calculate.core.rev">
-    <echo message="calculating core revision..."/>
-    <exec executable="hg" outputproperty="hg.idno" failifexecutionfails="false">
-      <arg value="id"/>
-      <arg value="-n"/>
-    </exec>
-        <propertyfile file="currentRevision.tmp">
-          <entry key="core.rev" value="3.0.${hg.idno}"/>
-        </propertyfile>
-        <replaceregexp file="currentRevision.tmp"
-                       match="\+"
-                       replace=""
-                       byline="true"
-        />
-        <loadproperties> 
-          <file file="currentRevision.tmp"/> 
-        </loadproperties>
-        <delete file="currentRevision.tmp"/>
-  </target>
-  
-  <target name="set.version.from.file" if="xml.core.rev">
-    <echo message="reading core revision from xml file..."/>
-    <loadfile property="core.rev" srcfile="${basedir}/src-db/database/sourcedata/AD_MODULE.xml">
-      <filterchain>
-        <linecontains>
-          <contains value="VERSION>"/>
-        </linecontains>
-        <tokenfilter>
-            <replaceregex pattern="(.*VERSION.*\[CDATA\[)(.*\..*\..*)(\]\].*)" replace="\2"/>
-        </tokenfilter>
-        <striplinebreaks/>
-      </filterchain>
-    </loadfile>
-  </target>
   
   <target name="validate.wad">
     <ant dir="${base.src}" target="wadvalidation" inheritAll="true" inheritRefs="true" />
