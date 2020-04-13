@@ -93,16 +93,9 @@ export.database: exports database structure and data to xml files.
   <property name="buildValidation" value="true"/>
   <property name="modules" value=""/> 
  
-  <condition property="xdoclint.missing" value="" else="-Xdoclint:-missing">
-    <equals arg1="${ant.java.version}" arg2="1.7"/>
-  </condition>
-
   <condition property="html.version" value="-html5" else="">
     <not>
-      <or>
-        <equals arg1="${ant.java.version}" arg2="1.7"/>
-        <equals arg1="${ant.java.version}" arg2="1.8"/>
-      </or>
+      <equals arg1="${ant.java.version}" arg2="1.8"/>
     </not>
   </condition>
 
@@ -518,8 +511,8 @@ export.database: exports database structure and data to xml files.
     <ant dir="${base.src}" target="compile.src.gen" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <target name="generate.java.doc">
-    <javadoc Windowtitle="${title}" access="protected" Header="${header}" Footer="${footer}" destdir="${build.docs}" maxmemory="1024M" failonerror="yes" additionalparam="${xdoclint.missing} ${html.version}" source="8">
+  <target name="generate.java.doc" depends="init">
+    <javadoc Windowtitle="${title}" access="protected" Header="${header}" Footer="${footer}" destdir="${build.docs}" maxmemory="1024M" failonerror="yes" additionalparam="-Xdoclint:-missing ${html.version}" source="8">
       <sourcepath>
         <pathelement path="${base.src}" />
         <pathelement path="${base.src.test}/src" />
