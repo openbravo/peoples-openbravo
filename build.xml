@@ -75,7 +75,6 @@ export.database: exports database structure and data to xml files.
   <property name="jakarta.home" location="${env.CATALINA_HOME}" />
   <property name="module" value="%" />
   <property name="apply.on.create" value="false" />
-  <property name="apply.on.update" value="true" />
   <property name="obx.export.RD" value="false" />
   <property name="obx.export.DB" value="false" />
   <property name="obx.export.CS" value="false" />
@@ -93,16 +92,9 @@ export.database: exports database structure and data to xml files.
   <property name="buildValidation" value="true"/>
   <property name="modules" value=""/> 
  
-  <condition property="xdoclint.missing" value="" else="-Xdoclint:-missing">
-    <equals arg1="${ant.java.version}" arg2="1.7"/>
-  </condition>
-
   <condition property="html.version" value="-html5" else="">
     <not>
-      <or>
-        <equals arg1="${ant.java.version}" arg2="1.7"/>
-        <equals arg1="${ant.java.version}" arg2="1.8"/>
-      </or>
+      <equals arg1="${ant.java.version}" arg2="1.8"/>
     </not>
   </condition>
 
@@ -124,13 +116,6 @@ export.database: exports database structure and data to xml files.
     <or>
       <equals arg1="yes" arg2="${apply.on.create}" />
       <equals arg1="true" arg2="${apply.on.create}" />
-    </or>
-  </condition>
-
-  <condition property="apply.modules.on.update">
-    <or>
-      <equals arg1="yes" arg2="${apply.on.update}" />
-      <equals arg1="true" arg2="${apply.on.update}" />
     </or>
   </condition>
 
@@ -378,10 +363,8 @@ export.database: exports database structure and data to xml files.
     <MigrateAttachments/>
   </target>
 
-  <target name="smartbuild" depends="init">
+  <target name="smartbuild" depends="init, core.lib">
     <property name="smart.mode" value="true" />
-    <property name="onlyIfModified" value="true" />
-    <antcall target="core.lib" />
     
     <condition property="no.local">
       <not>
@@ -518,8 +501,8 @@ export.database: exports database structure and data to xml files.
     <ant dir="${base.src}" target="compile.src.gen" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <target name="generate.java.doc">
-    <javadoc Windowtitle="${title}" access="protected" Header="${header}" Footer="${footer}" destdir="${build.docs}" maxmemory="1024M" failonerror="yes" additionalparam="${xdoclint.missing} ${html.version}" source="8">
+  <target name="generate.java.doc" depends="init">
+    <javadoc Windowtitle="${title}" access="protected" Header="${header}" Footer="${footer}" destdir="${build.docs}" maxmemory="1024M" failonerror="yes" additionalparam="-Xdoclint:-missing ${html.version}" source="8">
       <sourcepath>
         <pathelement path="${base.src}" />
         <pathelement path="${base.src.test}/src" />
@@ -639,11 +622,7 @@ export.database: exports database structure and data to xml files.
     <ant dir="${base.src}" target="translate" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <target name="install.source" depends="init, cleanSubfolders, create.database, wad.lib, trl.lib, compile.complete.deploy">
-    <echo message="applying modules" />    
-    <antcall inheritall="true" inheritrefs="true" target="apply.module" />
-
-    <antcall inheritall="true" target="import.sample.data" />
+  <target name="install.source" depends="init, cleanSubfolders, create.database, wad.lib, trl.lib, compile.complete.deploy, apply.module, import.sample.data">
     <updatesystemstatus v="RB51"/> 
     <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
 
@@ -687,10 +666,6 @@ export.database: exports database structure and data to xml files.
 
   <target name="import.sample.data" depends="init, core.lib">
     <ant dir="${base.db}" target="import.sample.data" inheritAll="true" inheritRefs="true" />
-  </target>
-
-  <target name="db.apply.modules" if="apply.modules.on.update">
-    <antcall inheritall="true" inheritrefs="true" target="apply.module" />
   </target>
 
   <target name="db.apply.modules.sampledata" if="apply.modules.on.create">
