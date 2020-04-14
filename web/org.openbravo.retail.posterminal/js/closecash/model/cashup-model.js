@@ -1233,7 +1233,19 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
                 cashUp.at(0)
               );
               OB.App.State.Global.completeCashupAndCreateNew({
-                completeCashup: { cashupWindowCashup: filteredCashup }
+                completeCashup: {
+                  cashupWindowCashup: filteredCashup,
+                  terminal: OB.MobileApp.model.get('logConfiguration')
+                    .deviceIdentifier,
+                  cacheSessionId: OB.UTIL.localStorage.getItem('cacheSessionId')
+                },
+                createCashup: {
+                  currentDate: OB.App.Date.getDate(),
+                  userId: OB.MobileApp.model.get('context').user.id,
+                  posterminal: OB.MobileApp.model.get('terminal').id,
+                  terminalIsSlave: OB.POS.modelterminal.get('terminal').isslave,
+                  terminalPayments: OB.MobileApp.model.get('payments')
+                }
               })
                 .then(() => {
                   OB.MobileApp.model.setSynchronizedPreference(

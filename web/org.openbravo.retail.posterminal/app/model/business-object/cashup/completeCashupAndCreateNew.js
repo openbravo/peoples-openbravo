@@ -79,25 +79,4 @@
       return newState;
     }
   });
-  OB.App.StateAPI.Global.completeCashupAndCreateNew.addActionPreparation(
-    async (state, payload) => {
-      const newPayload = { ...payload };
-
-      newPayload.createCashup = {
-        currentDate: OB.App.Date.getDate(),
-        userId: OB.MobileApp.model.get('context').user.id,
-        posterminal: OB.MobileApp.model.get('terminal').id,
-        terminalIsSlave: OB.POS.modelterminal.get('terminal').isslave,
-        terminalPayments: OB.MobileApp.model.get('payments')
-      };
-
-      newPayload.completeCashup = {
-        ...newPayload.completeCashup,
-        terminal: OB.MobileApp.model.get('logConfiguration').deviceIdentifier,
-        cacheSessionId: OB.UTIL.localStorage.getItem('cacheSessionId')
-      };
-
-      return newPayload;
-    }
-  );
 })();

@@ -103,13 +103,6 @@
           }
         }
       }
-      newPayload.currentDate = OB.App.Date.getDate();
-      newPayload.userId = OB.MobileApp.model.get('context').user.id;
-      newPayload.posterminal = OB.MobileApp.model.get('terminal').id;
-      newPayload.terminalIsSlave = OB.POS.modelterminal.get('terminal').isslave;
-
-      newPayload.terminalPayments = OB.MobileApp.model.get('payments');
-
       return newPayload;
     }
   );
