@@ -740,7 +740,7 @@
           })
           .catch(e => {
             onInitCashupError();
-            OB.error(e);
+            OB.error(e.stack);
           });
 
         // Set Hardware..
