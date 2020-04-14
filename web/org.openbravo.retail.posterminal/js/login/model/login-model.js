@@ -735,7 +735,7 @@
         // TODO: remove call to old initCashup
         OB.UTIL.initCashUp(undefined, onInitCashupError);
         OB.App.State.Cashup.initCashup({
-          currentDate: OB.App.Date.getDate(),
+          currentDate: new Date(),
           userId: OB.MobileApp.model.get('context').user.id,
           terminalId: OB.MobileApp.model.get('terminal').id,
           terminalIsSlave: OB.POS.modelterminal.get('terminal').isslave,
