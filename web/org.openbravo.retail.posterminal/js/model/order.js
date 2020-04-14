@@ -2097,16 +2097,8 @@
     deleteLinesFromOrder: function(selectedModels, callback) {
       var me = this,
         pointofsale = OB.MobileApp.view.$.containerWindow.getRoot(),
-        finalCallback,
         i,
-        execution = OB.UTIL.ProcessController.start('deleteLine');
-
-      finalCallback = function(result) {
-        if (callback) {
-          callback(result || false);
-        }
-        OB.UTIL.ProcessController.finish('deleteLine', execution);
-      };
+        execution;
 
       function postDeleteLine() {
         var cleanReceipt,
@@ -2129,6 +2121,7 @@
           me.unset('deleting');
           me.get('lines').trigger('updateRelations');
           me.save();
+          OB.UTIL.ProcessController.finish('deleteLine', execution);
           OB.UTIL.HookManager.executeHooks(
             'OBPOS_PostDeleteLine',
             {
@@ -2136,7 +2129,9 @@
               selectedLines: selectedModels
             },
             function(args) {
-              finalCallback(true);
+              if (callback) {
+                callback(true);
+              }
             }
           );
         };
@@ -2281,9 +2276,9 @@
           },
           function(args) {
             if (args && args.cancelOperation && args.cancelOperation === true) {
-              finalCallback(false);
               return;
             }
+            execution = OB.UTIL.ProcessController.start('deleteLine');
             me.get('lines').forEach(function(line, idx) {
               line.set('undoPosition', idx);
             });
@@ -2326,7 +2321,9 @@
                 });
                 preDeleteLine();
               } else {
-                finalCallback(false);
+                if (callback) {
+                  callback(false);
+                }
                 return;
               }
             }
@@ -2363,9 +2360,6 @@
                 function(hasStock) {
                   if (hasStock) {
                     checkLineStock(idx + 1);
-                  } else {
-                    finalCallback();
-                    return true;
                   }
                 }
               );
@@ -2407,7 +2401,6 @@
               },
               function(args) {
                 if (args.cancelOperation) {
-                  finalCallback();
                   return;
                 }
                 getLineStock();
@@ -2421,7 +2414,9 @@
 
       //If there are no lines to delete, continue
       if (!selectedModels || !selectedModels.length) {
-        finalCallback(true);
+        if (callback) {
+          callback(true);
+        }
         return;
       }
 
@@ -2430,7 +2425,6 @@
         pointofsale.doShowPopup({
           popup: 'modalNotEditableOrder'
         });
-        finalCallback();
         return true;
       }
 
@@ -2445,7 +2439,9 @@
             OB.I18N.getLabel('OBMOBC_Error'),
             OB.I18N.getLabel('OBPOS_CancelReplaceDeleteLine')
           );
-          finalCallback(false);
+          if (callback) {
+            callback(false);
+          }
           return;
         }
       }
@@ -2508,7 +2504,6 @@
                   }
                 ]
               );
-              finalCallback();
               return;
             }
           }
