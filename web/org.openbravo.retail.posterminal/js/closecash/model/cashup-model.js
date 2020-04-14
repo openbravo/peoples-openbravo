@@ -1233,16 +1233,16 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
                 cashUp.at(0)
               );
               OB.App.State.Global.completeCashupAndCreateNew({
-                completeCashup: {
+                completedCashupParams: {
                   cashupWindowCashup: filteredCashup,
-                  terminal: OB.MobileApp.model.get('logConfiguration')
+                  terminalName: OB.MobileApp.model.get('logConfiguration')
                     .deviceIdentifier,
                   cacheSessionId: OB.UTIL.localStorage.getItem('cacheSessionId')
                 },
-                createCashup: {
+                newCashupParams: {
                   currentDate: OB.App.Date.getDate(),
                   userId: OB.MobileApp.model.get('context').user.id,
-                  posterminal: OB.MobileApp.model.get('terminal').id,
+                  terminalId: OB.MobileApp.model.get('terminal').id,
                   terminalIsSlave: OB.POS.modelterminal.get('terminal').isslave,
                   terminalPayments: OB.MobileApp.model.get('payments')
                 }

@@ -18,7 +18,7 @@
       const newState = { ...state };
 
       // read cashup from cashup window,
-      const { cashupWindowCashup } = payload.completeCashup;
+      const { cashupWindowCashup } = payload.completedCashupParams;
 
       const oldCashup = { ...newState.Cashup };
 
@@ -33,10 +33,10 @@
       oldCashup.isprocessed = 'Y';
 
       // create new message with current cashup
-      const { terminal, cacheSessionId } = payload.completeCashup;
+      const { terminalName, cacheSessionId } = payload.completedCashupParams;
       const newMessagePayload = {
         id: OB.App.UUID.generate(),
-        terminal,
+        terminal: terminalName,
         cacheSessionId,
         data: [oldCashup]
       };
@@ -54,14 +54,14 @@
         terminalPayments,
         currentDate,
         userId,
-        posterminal
-      } = payload.createCashup;
+        terminalId
+      } = payload.newCashupParams;
 
       OB.App.State.Cashup.Utils.resetStatistics();
 
       newCashup = OB.App.State.Cashup.Utils.createNewCashupFromScratch({
         newCashup,
-        payload: { currentDate, userId, posterminal }
+        payload: { currentDate, userId, posterminal: terminalId }
       });
 
       const lastCashUpPayments = oldCashup.cashCloseInfo;
