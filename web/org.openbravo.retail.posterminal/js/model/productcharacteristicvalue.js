@@ -16,6 +16,7 @@
     includeTerminalDate: true,
     remote: 'OBPOS_remote.product',
     dataLimit: OB.Dal.DATALIMIT,
+    paginationById: true,
     indexDBModel: OB.App.MasterdataModels.ProductCharacteristicValue.getName(),
     legacyModel: true
   });

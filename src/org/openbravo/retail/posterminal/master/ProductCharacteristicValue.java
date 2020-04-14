@@ -156,6 +156,7 @@ public class ProductCharacteristicValue extends MasterDataProcessHQLQuery {
         query.append(" or product.$incrementalUpdateCriteria)");
       }
     }
+    query.append(" and pcv.$paginationByIdCriteria ");
     query.append(" order by pcv.id");
     return query.toString();
   }
