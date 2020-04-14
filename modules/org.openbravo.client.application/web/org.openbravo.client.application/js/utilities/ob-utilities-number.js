@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2015 Openbravo SLU
+ * All portions are Copyright (C) 2011-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -40,7 +40,7 @@ OB.Utilities.Number.roundJSNumber = function(num, dec) {
     return NaN;
   }
   strNum = typeof num === 'string' ? num : String(num);
-  return parseFloat(
+  return Number(
     new BigDecimal(strNum).setScale(dec, BigDecimal.prototype.ROUND_HALF_UP)
   );
 };
@@ -210,6 +210,9 @@ OB.Utilities.Number.OBPlainToOBMasked = function(
   if (decNumber.length > decMask.length) {
     decNumber = '0.' + decNumber;
     decNumber = OB.Utilities.Number.roundJSNumber(decNumber, decMask.length);
+    if (isNaN(decNumber)) {
+      return number;
+    }
     decNumber = decNumber.toString();
 
     // Check if the number is on Scientific notation
@@ -333,8 +336,14 @@ OB.Utilities.Number.OBMaskedToJS = function(
     decSeparator,
     groupSeparator
   );
+  /* Remove hidden character when copying from windows calculator
+   * See issue #43483
+   */
+  if (calcNumber.indexOf('\u202C') !== -1) {
+    calcNumber = calcNumber.replace('\u202C', '');
+  }
   calcNumber = calcNumber.replace(decSeparator, '.');
-  var numberResult = parseFloat(calcNumber);
+  var numberResult = Number(calcNumber);
   if (isNaN(numberResult)) {
     return numberStr;
   }
