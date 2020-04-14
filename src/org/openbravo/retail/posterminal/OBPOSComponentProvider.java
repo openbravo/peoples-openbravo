@@ -250,7 +250,10 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "taxesengine/pos/pos-taxes",
 
         // Discounts
-        "discountsengine/pos/pos-discounts" };
+        "discountsengine/pos/pos-discounts",
+
+        // state models
+        "../app/model/business-object/ticket/Ticket" };
 
     // Unlink onLoad in the ERP
     globalResources.add(createComponentResource(ComponentResourceType.Static,
