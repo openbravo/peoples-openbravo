@@ -1233,7 +1233,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
                 cashUp.at(0)
               );
               OB.App.State.Global.completeCashupAndCreateNew({
-                newCashup: filteredCashup
+                completeCashup: { cashupWindowCashup: filteredCashup }
               })
                 .then(() => {
                   OB.MobileApp.model.setSynchronizedPreference(

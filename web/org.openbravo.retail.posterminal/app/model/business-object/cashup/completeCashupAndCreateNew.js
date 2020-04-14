@@ -18,7 +18,7 @@
       const newState = { ...state };
 
       // read cashup from cashup window,
-      const cashupWindowCashup = payload.newCashup;
+      const { cashupWindowCashup } = payload.completeCashup;
 
       const oldCashup = { ...newState.Cashup };
 
@@ -33,10 +33,11 @@
       oldCashup.isprocessed = 'Y';
 
       // create new message with current cashup
+      const { terminal, cacheSessionId } = payload.completeCashup;
       const newMessagePayload = {
         id: OB.App.UUID.generate(),
-        terminal: payload.terminal,
-        cacheSessionId: payload.cacheSessionId,
+        terminal,
+        cacheSessionId,
         data: [oldCashup]
       };
       const newMessage = OB.App.State.Messages.Utils.createNewMessage(
@@ -48,13 +49,19 @@
 
       // initialize the new cashup
       let newCashup = {};
-      const { terminalIsSlave, terminalPayments } = payload;
+      const {
+        terminalIsSlave,
+        terminalPayments,
+        currentDate,
+        userId,
+        posterminal
+      } = payload.createCashup;
 
       OB.App.State.Cashup.Utils.resetStatistics();
 
       newCashup = OB.App.State.Cashup.Utils.createNewCashupFromScratch({
         newCashup,
-        payload
+        payload: { currentDate, userId, posterminal }
       });
 
       const lastCashUpPayments = oldCashup.cashCloseInfo;
@@ -76,19 +83,19 @@
     async (state, payload) => {
       const newPayload = { ...payload };
 
-      newPayload.currentDate = OB.App.Date.getDate();
-      newPayload.userId = OB.MobileApp.model.get('context').user.id;
-      newPayload.posterminal = OB.MobileApp.model.get('terminal').id;
-      newPayload.terminalIsSlave = OB.POS.modelterminal.get('terminal').isslave;
+      newPayload.createCashup = {
+        currentDate: OB.App.Date.getDate(),
+        userId: OB.MobileApp.model.get('context').user.id,
+        posterminal: OB.MobileApp.model.get('terminal').id,
+        terminalIsSlave: OB.POS.modelterminal.get('terminal').isslave,
+        terminalPayments: [...OB.MobileApp.model.get('payments')]
+      };
 
-      newPayload.terminalPayments = [...OB.MobileApp.model.get('payments')];
-
-      newPayload.terminal = OB.MobileApp.model.get(
-        'logConfiguration'
-      ).deviceIdentifier;
-      newPayload.cacheSessionId = OB.UTIL.localStorage.getItem(
-        'cacheSessionId'
-      );
+      newPayload.completeCashup = {
+        ...newPayload.completeCashup,
+        terminal: OB.MobileApp.model.get('logConfiguration').deviceIdentifier,
+        cacheSessionId: OB.UTIL.localStorage.getItem('cacheSessionId')
+      };
 
       return newPayload;
     }
