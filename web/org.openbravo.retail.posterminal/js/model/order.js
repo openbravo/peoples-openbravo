@@ -3640,9 +3640,12 @@
                   ? -data.result
                   : data.result,
                 options,
-                attrs
+                attrs,
+                callback
               );
-              execPostAddProductToOrderHook();
+              if (line !== false) {
+                execPostAddProductToOrderHook();
+              }
             }
           });
         } else {
@@ -3788,18 +3791,22 @@
                         args.p,
                         args.attrs.relatedLines[0].qty,
                         args.options,
-                        args.attrs
+                        args.attrs,
+                        callback
                       );
                     } else {
                       line = args.receipt.createLine(
                         args.p,
                         args.qty,
                         args.options,
-                        args.attrs
+                        args.attrs,
+                        callback
                       );
                     }
                   }
-                  execPostAddProductToOrderHook();
+                  if (line !== false) {
+                    execPostAddProductToOrderHook();
+                  }
                 }
               );
             });
@@ -3843,20 +3850,22 @@
                 newLine = false;
               } else {
                 if (p.get('avoidSplitProduct')) {
-                  line = me.createLine(p, qty, options, attrs);
+                  line = me.createLine(p, qty, options, attrs, callback);
                 } else {
                   if (qty >= 0) {
                     for (count = 0; count < qty; count++) {
-                      line = me.createLine(p, 1, options, attrs);
+                      line = me.createLine(p, 1, options, attrs, callback);
                     }
                   } else {
                     for (count = 0; count > qty; count--) {
-                      line = me.createLine(p, -1, options, attrs);
+                      line = me.createLine(p, -1, options, attrs, callback);
                     }
                   }
                 }
               }
-              execPostAddProductToOrderHook();
+              if (line !== false) {
+                execPostAddProductToOrderHook();
+              }
             });
           }
         }
@@ -4950,7 +4959,7 @@
     },
 
     //Attrs is an object of attributes that will be set in order line
-    createLine: function(p, units, options, attrs) {
+    createLine: function(p, units, options, attrs, callback) {
       var me = this,
         orgId,
         orgName,
@@ -4992,7 +5001,10 @@
             (options && options.allowLayawayWithReturn) || false
           )
         ) {
-          return;
+          if (callback) {
+            callback(false);
+          }
+          return false;
         }
         // Get prices from BP pricelist
         var newline = new OrderLine({
