@@ -9878,9 +9878,7 @@
       return false;
     },
     getScannableDocumentNo: function() {
-      return this.get('documentNo')
-        .replace(/-/g, '\\-')
-        .replace(/\+/g, '\\+');
+      return this.get('documentNo');
     },
     turnEditable: function(callback) {
       if (
