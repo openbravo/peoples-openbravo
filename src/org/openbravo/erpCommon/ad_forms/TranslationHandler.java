@@ -201,7 +201,8 @@ class TranslationHandler extends DefaultHandler {
 
         no = st.executeUpdate();
       } catch (Exception e) {
-        log4j.error("Failed query importing translation: {} with parameters {}", m_sql, parameters);
+        log4j.error("Failed query importing translation: {} with parameters {}. Exception: {}",
+            m_sql, parameters, e.getMessage());
       } finally {
         try {
           DB.releaseTransactionalPreparedStatement(st);
