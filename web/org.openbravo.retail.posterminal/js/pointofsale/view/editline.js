@@ -46,25 +46,17 @@ enyo.kind({
   classes: 'obObposPointOfSaleUiLinePropertyDiv',
   components: [
     {
-      classes:
-        'obObposPointOfSaleUiLinePropertyDiv-container1 row-fluid u-clearBoth',
+      name: 'propertyLabel',
+      classes: 'obObposPointOfSaleUiLinePropertyDiv-propertyLabel'
+    },
+    {
+      classes: 'obObposPointOfSaleUiLinePropertyDiv-propertyValueWrapper',
       components: [
         {
-          name: 'propertyLabel',
+          tag: 'span',
+          name: 'propertyValue',
           classes:
-            'obObposPointOfSaleUiLinePropertyDiv-container1-propertyLabel span4'
-        },
-        {
-          classes:
-            'obObposPointOfSaleUiLinePropertyDiv-container1-container2 span8',
-          components: [
-            {
-              tag: 'div',
-              name: 'propertyValue',
-              classes:
-                'obObposPointOfSaleUiLinePropertyDiv-container1-container2-propertyValue'
-            }
-          ]
+            'obObposPointOfSaleUiLinePropertyDiv-propertyValueWrapper-propertyValue'
         }
       ]
     }
