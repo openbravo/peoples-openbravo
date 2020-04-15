@@ -199,10 +199,18 @@ public class SequenceProductCreate implements Process {
 
   }
 
-  private static Long getLineNum(String SequenceId) throws Exception {
-    String hql = "  SELECT COALESCE(MAX(l.lineNo),0)+10 AS DefaultValue FROM ManufacturingOperationProduct l WHERE l.mASequence.id= :sequenceId";
-    Query<Long> q = OBDal.getInstance().getSession().createQuery(hql, Long.class);
-    q.setParameter("sequenceId", SequenceId);
+  private static Long getLineNum(String sequenceId) {
+    //@formatter:off
+    final String hql = 
+                  "SELECT COALESCE(MAX(l.lineNo),0)+10 AS DefaultValue" +
+                  "  FROM ManufacturingOperationProduct l" +
+                  " WHERE l.mASequence.id= :sequenceId";
+    //@formatter:on
+
+    final Query<Long> q = OBDal.getInstance()
+        .getSession()
+        .createQuery(hql, Long.class)
+        .setParameter("sequenceId", sequenceId);
     try {
       Long result = q.uniqueResult();
       return result == null ? 0L : result;
