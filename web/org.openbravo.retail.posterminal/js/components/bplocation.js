@@ -90,8 +90,7 @@ enyo.kind({
           locationButton: true,
           target: 'order',
           clean: true,
-          manageAddress:
-            bp.get(this.locId) === bp.get(OB.UI.BPLocationShip.prototype.locId),
+          manageAddress: bp.get('locId') === bp.get('shipLocId'),
           navigationPath: []
         }
       });
@@ -132,7 +131,7 @@ enyo.kind({
       me = this;
 
     function successLocations(dataBps) {
-      if (bp.get(me.locId) === bp.get(OB.UI.BPLocation.prototype.locId)) {
+      if (bp.get('shipLocId') === bp.get('locId')) {
         me.changeStyle(false);
       } else if (dataBps && dataBps.length > 1) {
         me.changeStyle(true);
