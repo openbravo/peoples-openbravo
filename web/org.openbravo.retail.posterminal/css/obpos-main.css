@@ -5330,7 +5330,7 @@ li.selected > .obUiRenderOrderLine_edit {
   background-repeat: no-repeat;
   background-color: transparent;
 
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-off.svg');
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconCheck.svg');
   background-size: 34px 27px;
 }
 
