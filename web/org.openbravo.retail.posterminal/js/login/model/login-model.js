@@ -450,21 +450,11 @@
             );
           };
 
-          OB.Dal.find(
-            OB.Model.CashUp,
-            {
-              isprocessed: 'N'
-            },
-            function(cashUps) {
-              if (cashUps.length === 1) {
-                params.cashUpId = cashUps.at(0).get('id');
-              }
-              loadTerminalModel();
-            },
-            function() {
-              loadTerminalModel();
-            }
-          );
+          const currentCashUpId = OB.App.State.Cashup.Utils.getCashupId();
+          if (currentCashUpId !== null) {
+            params.cashUpId = currentCashUpId;
+          }
+          loadTerminalModel();
         }
       });
 
