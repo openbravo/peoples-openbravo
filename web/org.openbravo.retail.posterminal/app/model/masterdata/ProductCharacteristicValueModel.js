@@ -20,6 +20,7 @@
           properties: [{ property: 'product' }]
         })
       ];
+      this.setPaginationById(true);
     }
   }
   OB.App.MasterdataController.registerModel(ProductCharacteristicValue);

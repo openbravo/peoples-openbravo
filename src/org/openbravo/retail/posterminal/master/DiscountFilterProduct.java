@@ -73,6 +73,7 @@ public class DiscountFilterProduct extends Discount {
     query.append("   " + getPromotionsHQL(jsonsent, false));
     query.append("   and ap.priceAdjustment.id = p.id");
     query.append(" )");
+    query.append(" and ap.$paginationByIdCriteria");
     query.append(" order by ap.id");
     return query.toString();
   }

@@ -14,6 +14,7 @@
     entityName: 'PriceList',
     source: 'org.openbravo.retail.posterminal.master.PriceList',
     includeTerminalDate: true,
+    paginationById: true,
     indexDBModel: OB.App.MasterdataModels.PriceList.getName(),
     legacyModel: true
   });

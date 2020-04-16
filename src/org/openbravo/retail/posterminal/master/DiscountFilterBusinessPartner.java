@@ -54,6 +54,7 @@ public class DiscountFilterBusinessPartner extends Discount {
 
     hql += " and exists (select 1 " + getPromotionsHQL(jsonsent, false);
     hql += "              and bp.priceAdjustment = p) ";
+    hql += "and bp.$paginationByIdCriteria ";
     hql += "order by bp.priceAdjustment.id asc";
 
     return Arrays.asList(hql);

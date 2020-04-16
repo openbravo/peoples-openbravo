@@ -53,7 +53,8 @@ public class ProductServiceLinked extends MasterDataProcessHQLQuery {
             + "where exists (select 1 " //
             + Product.createRegularProductHql(false, false, jsonsent, false, false) //
             + " and pli.product.id = psl.product.id) " //
-            + "and psl.$filtersCriteria and psl.$naturalOrgCriteria and psl.$incrementalUpdateCriteria");
+            + "and psl.$filtersCriteria and psl.$naturalOrgCriteria and psl.$incrementalUpdateCriteria "
+            + "and psl.$paginationByIdCriteria order by psl.id asc");
   }
 
   @Override

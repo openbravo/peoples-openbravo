@@ -55,7 +55,8 @@ public class DiscountBusinessPartnerSet extends MasterDataProcessHQLQuery {
     String hql = "select" + regularCountryHQLProperties.getHqlSelect()
         + "from PricingAdjustmentBusinessPartnerSet c where c.$incrementalUpdateCriteria "
         + "and c.$naturalOrgCriteria "
-        + "and c.$readableSimpleClientCriteria and c.$activeCriteria order by c.id asc";
+        + "and c.$readableSimpleClientCriteria and c.$activeCriteria "
+        + "and c.$paginationByIdCriteria order by c.id asc";
 
     return Arrays.asList(hql);
   }
