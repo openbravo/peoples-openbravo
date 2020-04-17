@@ -41,6 +41,7 @@ describe('Ticket.setQuantity action preparation', () => {
           qty: 1,
           price: 10,
           priceList: 10,
+          isEditable: true,
           product: { listPrice: 10 }
         },
         {
@@ -48,6 +49,7 @@ describe('Ticket.setQuantity action preparation', () => {
           qty: 1,
           price: 20,
           priceList: 20,
+          isEditable: true,
           product: { listPrice: 20 }
         },
         {
@@ -55,6 +57,7 @@ describe('Ticket.setQuantity action preparation', () => {
           qty: 1,
           price: 30,
           priceList: 30,
+          isEditable: true,
           product: { listPrice: 30 }
         }
       ]
@@ -108,10 +111,41 @@ describe('Ticket.setQuantity action preparation', () => {
       await expect(
         state.Ticket.setPrice({ lineIds: ['1'], price: -1 })
       ).rejects.toThrow();
+    });
 
+    it('cat set price=0', async () => {
       await expect(
         state.Ticket.setPrice({ lineIds: ['1'], price: 0 })
       ).resolves.not.toThrow();
+    });
+  });
+
+  describe('restrictions', () => {
+    it('cannot set price to replaced return lines', async () => {
+      persistence.getState.mockReturnValue({
+        Ticket: {
+          lines: [
+            {
+              id: '1',
+              qty: -1,
+              replacedorderline: true,
+              price: 10,
+              priceList: 10,
+              product: { listPrice: 10 }
+            }
+          ]
+        }
+      });
+
+      let error;
+      try {
+        await state.Ticket.setPrice({ lineIds: ['1'], price: 5 });
+      } catch (e) {
+        error = e;
+      }
+      expect(error).toMatchObject({
+        info: { errorConfirmation: 'OBPOS_CancelReplaceReturnPriceChange' }
+      });
     });
   });
 });

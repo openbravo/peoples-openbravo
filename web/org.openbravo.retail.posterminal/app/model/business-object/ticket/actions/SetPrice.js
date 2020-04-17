@@ -54,12 +54,44 @@
     }
   }
 
+  function checkRestrictions(ticket, lines, price) {
+    if (lines.some(l => l.replacedorderline && l.qty < 0)) {
+      throw new OB.App.Class.ActionCanceled(
+        'Setting price to replaced return lines',
+        {
+          errorConfirmation: 'OBPOS_CancelReplaceReturnPriceChange'
+        }
+      );
+    }
+
+    // TODO: check this + add tests
+    const canModifyVerifiedReturn =
+      !ticket.isPaid &&
+      OB.MobileApp.model.hasPermission(
+        'OBPOS_ModifyPriceVerifiedReturns',
+        true
+      );
+    if (
+      !canModifyVerifiedReturn &&
+      lines.some(
+        l => !l.isEditable && !(l.originalDocumentNo && price < l.price)
+      )
+    ) {
+      throw new OB.App.Class.ActionCanceled('Cannot change price', {
+        errorMsg: 'OBPOS_CannotChangePrice'
+      });
+    }
+  }
+
   OB.App.StateAPI.Ticket.setPrice.addActionPreparation(
     async (state, payload) => {
       const ticket = state.Ticket;
       const { price, lineIds } = payload;
 
       checkParameters(ticket, lineIds, price);
+
+      const lines = ticket.lines.filter(l => lineIds.includes(l.id));
+      checkRestrictions(ticket, lines, price);
 
       return payload;
     }
