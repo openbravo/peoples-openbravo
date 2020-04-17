@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2019 Openbravo SLU
+ * All portions are Copyright (C) 2019-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -142,9 +142,12 @@ describe('OB.Utilities.Number.*', () => {
 
   describe('OB.Utilities.Number.roundJSNumber works properly when the parameter is NaN', () => {
     it.each`
-      number   | decimals | expected
-      ${'a'}   | ${2}     | ${NaN}
-      ${'12a'} | ${2}     | ${NaN}
+      number     | decimals | expected
+      ${'a'}     | ${2}     | ${NaN}
+      ${'12a'}   | ${2}     | ${NaN}
+      ${'1.1.1'} | ${2}     | ${NaN}
+      ${'1..55'} | ${2}     | ${NaN}
+      ${'1,,15'} | ${2}     | ${NaN}
     `(
       "should return $expected when rounding '$number'",
       ({ number, decimals, expected }) => {
