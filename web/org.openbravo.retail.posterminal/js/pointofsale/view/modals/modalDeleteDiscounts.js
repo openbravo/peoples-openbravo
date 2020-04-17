@@ -227,26 +227,44 @@ enyo.kind({
     return true;
   },
   callbackExecutor: function(inSender, inEvent) {
-    var receipt = this.args.receipt,
-      linePromotions,
-      selectedLines = this.args.selectedLines,
-      i,
-      j,
-      k;
+    const receipt = this.args.receipt;
 
-    for (i = 0; i < this.promotionsList.length; i++) {
+    for (let i = 0; i < this.promotionsList.length; i++) {
       if (this.promotionsList[i].deleteDiscount) {
-        for (j = 0; j < selectedLines.length; j++) {
-          linePromotions = selectedLines[j].get('promotions');
-          for (k = 0; k < linePromotions.length; k++) {
-            if (
-              linePromotions[k].ruleId ===
-                this.promotionsList[i].promotionObj.ruleId &&
-              linePromotions[k].discountinstance ===
-                this.promotionsList[i].promotionObj.discountinstance
-            ) {
-              linePromotions.splice(k, 1);
-              break;
+        const promotionObj = this.promotionsList[i].promotionObj;
+        let selectedLines = [];
+        this.args.selectedLines.forEach(selectedLine => {
+          selectedLines.push(selectedLine.get('id'));
+        });
+        if (
+          receipt.get('discountsFromUser') &&
+          receipt.get('discountsFromUser').manualPromotions
+        ) {
+          const manualPromotion = receipt
+            .get('discountsFromUser')
+            .manualPromotions.find(manualPromotion => {
+              return (
+                promotionObj.ruleId === manualPromotion.ruleId &&
+                promotionObj.discountinstance ===
+                  manualPromotion.discountinstance
+              );
+            });
+          if (manualPromotion) {
+            let linesToApply = [...manualPromotion.linesToApply];
+            for (let j = 0; j < selectedLines.length; j++) {
+              linesToApply.splice(linesToApply.indexOf(selectedLines[j]), 1);
+            }
+            if (linesToApply.length === 0) {
+              receipt
+                .get('discountsFromUser')
+                .manualPromotions.splice(
+                  receipt
+                    .get('discountsFromUser')
+                    .manualPromotions.indexOf(manualPromotion),
+                  1
+                );
+            } else {
+              manualPromotion.linesToApply = linesToApply;
             }
           }
         }

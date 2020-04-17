@@ -4678,35 +4678,36 @@
     },
 
     addManualPromotionToList: function(promotionToApply) {
-      var me = this;
-      var singlePromotionsList = [];
-      var rule = promotionToApply.rule;
-      if (!this.get('orderManualPromotions')) {
-        this.set(
-          'orderManualPromotions',
-          new OB.Collection.OrderManualPromotionsList()
-        );
-      }
+      const discountsFromUser = { ...this.get('discountsFromUser') } || {},
+        rule = promotionToApply.rule,
+        discountRule = promotionToApply.discountRule;
+      let bytotalManualPromotions =
+        discountsFromUser && discountsFromUser.bytotalManualPromotions
+          ? [...discountsFromUser.bytotalManualPromotions]
+          : [];
+
       if (
         !rule.obdiscAllowmultipleinstan ||
-        this.get('orderManualPromotions').length <= 0
+        bytotalManualPromotions.length <= 0
       ) {
         // Check there is no other manual promotion with the same ruleId and hasMultiDiscount set as false or undefined
-        singlePromotionsList = _.filter(
-          this.get('orderManualPromotions').models,
-          function(promotion) {
-            return (
-              promotion.get('rule').obdiscAllowmultipleinstan ===
-                rule.obdiscAllowmultipleinstan &&
-              promotion.get('rule').id === rule.id
-            );
-          }
-        );
+        const singlePromotionsList = _.filter(bytotalManualPromotions, function(
+          bytotalManualPromotion
+        ) {
+          return (
+            bytotalManualPromotion.obdiscAllowmultipleinstan ===
+              rule.obdiscAllowmultipleinstan &&
+            bytotalManualPromotion.id === rule.id
+          );
+        });
 
         if (singlePromotionsList.length > 0) {
           //  There should be only one rule in the list with previous conditions in manual promotions list
           _.forEach(singlePromotionsList, function(singlePromotion) {
-            me.get('orderManualPromotions').remove(singlePromotion);
+            bytotalManualPromotions.splice(
+              bytotalManualPromotions.indexOf(singlePromotion),
+              1
+            );
           });
         }
       }
@@ -4716,7 +4717,50 @@
       ) {
         rule.discountinstance = OB.UTIL.get_UUID();
       }
-      this.get('orderManualPromotions').push(promotionToApply);
+
+      let bytotalManualPromotionObj = {};
+
+      for (let key in discountRule.attributes) {
+        bytotalManualPromotionObj[key] = discountRule.attributes[key];
+      }
+
+      // Override some configuration from manualPromotions
+      if (bytotalManualPromotionObj.disctTotalamountdisc) {
+        bytotalManualPromotionObj.disctTotalamountdisc = rule.userAmt;
+      } else if (bytotalManualPromotionObj.disctTotalpercdisc) {
+        bytotalManualPromotionObj.disctTotalpercdisc = rule.userAmt;
+      }
+      bytotalManualPromotionObj.noOrder = rule.noOrder;
+      bytotalManualPromotionObj.discountinstance = rule.discountinstance;
+      if (
+        OB.Model.Discounts.discountRules[
+          bytotalManualPromotionObj.discountType
+        ] &&
+        OB.Model.Discounts.discountRules[bytotalManualPromotionObj.discountType]
+          .getIdentifier
+      ) {
+        let promotionName = OB.Model.Discounts.discountRules[
+          bytotalManualPromotionObj.discountType
+        ].getIdentifier(discountRule, bytotalManualPromotionObj);
+        bytotalManualPromotionObj.name = promotionName;
+        bytotalManualPromotionObj._identifier = promotionName;
+      }
+      bytotalManualPromotionObj.products = [];
+      bytotalManualPromotionObj.includedProducts = 'Y';
+      bytotalManualPromotionObj.productCategories = [];
+      bytotalManualPromotionObj.includedProductCategories = 'Y';
+      bytotalManualPromotionObj.productCharacteristics = [];
+      bytotalManualPromotionObj.includedCharacteristics = 'Y';
+      bytotalManualPromotionObj.allweekdays = true;
+
+      bytotalManualPromotions.push(bytotalManualPromotionObj);
+
+      bytotalManualPromotions = bytotalManualPromotions.sort((a, b) => {
+        return a.noOrder - b.noOrder;
+      });
+
+      discountsFromUser.bytotalManualPromotions = bytotalManualPromotions;
+      this.set('discountsFromUser', discountsFromUser);
     },
 
     getCurrentDiscountedLinePrice: function(line, ignoreExecutedAtTheEndPromo) {
@@ -5763,17 +5807,10 @@
     removeAndInsertLines: function(callback) {
       var me = this,
         orderlines = [],
-        promotionlines = [],
         addProductsOfLines = null;
 
       // Remove all lines and insert again with new prices
-      addProductsOfLines = async function(
-        receipt,
-        lines,
-        index,
-        callback,
-        promotionLines
-      ) {
+      addProductsOfLines = async function(receipt, lines, index, callback) {
         var success = function(product) {
           var attrs;
           if (!OB.UTIL.isNullOrUndefined(lines[index].get('splitline'))) {
@@ -5791,30 +5828,63 @@
             undefined,
             attrs,
             function(isInPriceList) {
+              const oldLineId = lines[index].get('id');
               if (isInPriceList) {
-                me.get('lines')
+                const newLineId = me
+                  .get('lines')
                   .at(index)
-                  .set('promotions', promotionLines[index]);
+                  .get('id');
+                if (
+                  me.get('discountsFromUser') &&
+                  me.get('discountsFromUser').manualPromotions
+                ) {
+                  me.get('discountsFromUser').manualPromotions.forEach(
+                    manualPromotion => {
+                      if (
+                        manualPromotion.linesToApply.indexOf(oldLineId) !== -1
+                      ) {
+                        manualPromotion.linesToApply.splice(
+                          manualPromotion.linesToApply.indexOf(oldLineId),
+                          1,
+                          newLineId
+                        );
+                      }
+                    }
+                  );
+                }
+
                 me.get('lines')
                   .at(index)
                   .calculateGross();
-                addProductsOfLines(
-                  receipt,
-                  lines,
-                  index + 1,
-                  callback,
-                  promotionLines
-                );
+                addProductsOfLines(receipt, lines, index + 1, callback);
               } else {
-                promotionLines.splice(index, 1);
+                if (
+                  me.get('discountsFromUser') &&
+                  me.get('discountsFromUser').manualPromotions
+                ) {
+                  me.get('discountsFromUser').manualPromotions.forEach(
+                    manualPromotion => {
+                      if (
+                        manualPromotion.linesToApply.indexOf(oldLineId) !== -1
+                      ) {
+                        manualPromotion.linesToApply.splice(
+                          manualPromotion.linesToApply.indexOf(oldLineId),
+                          1
+                        );
+                        if (manualPromotion.linesToApply.length === 0) {
+                          me.get('discountsFromUser').manualPromotions.splice(
+                            me
+                              .get('discountsFromUser')
+                              .manualPromotions.indexOf(manualPromotion),
+                            1
+                          );
+                        }
+                      }
+                    }
+                  );
+                }
                 lines.splice(index, 1);
-                addProductsOfLines(
-                  receipt,
-                  lines,
-                  index,
-                  callback,
-                  promotionLines
-                );
+                addProductsOfLines(receipt, lines, index, callback);
               }
             }
           );
@@ -5837,15 +5907,8 @@
               success(OB.Dal.transform(OB.Model.Product, product));
             } else {
               // Product doesn't exists, execute the same code as it was not included in pricelist
-              promotionLines.splice(index, 1);
               lines.splice(index, 1);
-              addProductsOfLines(
-                receipt,
-                lines,
-                index,
-                callback,
-                promotionLines
-              );
+              addProductsOfLines(receipt, lines, index, callback);
             }
           } catch (error) {
             OB.error(error.message);
@@ -5854,12 +5917,11 @@
       };
       _.each(this.get('lines').models, function(line) {
         orderlines.push(line);
-        promotionlines.push(line.get('promotions'));
       });
       me.set('skipCalculateReceipt', true);
       this.deleteLinesFromOrder(orderlines, function(deleted) {
         if (deleted) {
-          addProductsOfLines(me, orderlines, 0, callback, promotionlines);
+          addProductsOfLines(me, orderlines, 0, callback);
         } else {
           me.set('skipCalculateReceipt', false);
           callback(false);

@@ -133,14 +133,12 @@
     },
 
     removeManualPromotionFromLines(receipt) {
-      receipt.get('lines').models.forEach(line => {
-        if (line.get('promotions') && line.get('promotions').length > 0) {
-          let exludeManualPromotions = line.get('promotions').filter(promo => {
-            return !promo.manual;
-          });
-          line.set('promotions', exludeManualPromotions || []);
-        }
-      });
+      if (
+        receipt.get('discountsFromUser') &&
+        receipt.get('discountsFromUser').manualPromotions
+      ) {
+        receipt.get('discountsFromUser').manualPromotions = [];
+      }
     },
 
     translateTicket: function(receipt) {
@@ -170,69 +168,11 @@
         newLine.promotions = [];
         newTicket.lines.push(newLine);
       });
-      if (receipt.get('coupons')) {
-        newTicket.discountsFromUser.coupons = JSON.parse(
-          JSON.stringify(receipt.get('coupons'))
-        );
+      if (receipt.get('discountsFromUser')) {
+        newTicket.discountsFromUser = {
+          ...receipt.get('discountsFromUser')
+        };
       }
-      if (receipt.get('orderManualPromotions')) {
-        let bytotalManualPromotions = [];
-        let orderManualPromotions = receipt.get('orderManualPromotions').models;
-        orderManualPromotions.forEach(bytotalManualPromotion => {
-          let rule = new Backbone.Model(
-              bytotalManualPromotion.get('discountRule')
-            ),
-            bytotalManualPromotionObj = {};
-          for (let key in rule.attributes) {
-            bytotalManualPromotionObj[key] = rule.attributes[key];
-          }
-
-          // Override some configuration from manualPromotions
-          if (bytotalManualPromotionObj.disctTotalamountdisc) {
-            bytotalManualPromotionObj.disctTotalamountdisc = bytotalManualPromotion.get(
-              'rule'
-            ).userAmt;
-          } else if (bytotalManualPromotionObj.disctTotalpercdisc) {
-            bytotalManualPromotionObj.disctTotalpercdisc = bytotalManualPromotion.get(
-              'rule'
-            ).userAmt;
-          }
-          bytotalManualPromotionObj.noOrder = bytotalManualPromotion.get(
-            'rule'
-          ).noOrder;
-          bytotalManualPromotionObj.discountinstance = bytotalManualPromotion.get(
-            'rule'
-          ).discountinstance;
-          if (
-            OB.Model.Discounts.discountRules[
-              bytotalManualPromotionObj.discountType
-            ] &&
-            OB.Model.Discounts.discountRules[
-              bytotalManualPromotionObj.discountType
-            ].getIdentifier
-          ) {
-            let promotionName = OB.Model.Discounts.discountRules[
-              bytotalManualPromotionObj.discountType
-            ].getIdentifier(rule, bytotalManualPromotionObj);
-            bytotalManualPromotionObj.name = promotionName;
-            bytotalManualPromotionObj._identifier = promotionName;
-          }
-          bytotalManualPromotionObj.products = [];
-          bytotalManualPromotionObj.includedProducts = 'Y';
-          bytotalManualPromotionObj.productCategories = [];
-          bytotalManualPromotionObj.includedProductCategories = 'Y';
-          bytotalManualPromotionObj.productCharacteristics = [];
-          bytotalManualPromotionObj.includedCharacteristics = 'Y';
-          bytotalManualPromotionObj.allweekdays = true;
-
-          bytotalManualPromotions.push(bytotalManualPromotionObj);
-        });
-        newTicket.discountsFromUser.bytotalManualPromotions = bytotalManualPromotions;
-      }
-
-      let manualPromotions = this.translateManualPromotionsForEngine(receipt);
-      newTicket.discountsFromUser.manualPromotions = manualPromotions;
-      this.removeManualPromotionFromLines(receipt);
       return newTicket;
     },
 
