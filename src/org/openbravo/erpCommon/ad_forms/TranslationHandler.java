@@ -200,6 +200,16 @@ class TranslationHandler extends DefaultHandler {
         }
 
         no = st.executeUpdate();
+        if (no == 1) {
+          log4j.debug(m_sql);
+          m_updateCount++;
+        } else if (no == 0) {
+          log4j.info("Not found translatable element - Table:{}, {}_ID={}, AD_Language={}",
+              m_TableName, m_TableName, m_curID, m_AD_Language);
+        } else {
+          log4j.error("Update Rows={} (Should be 1) - {} with parameters {}", no, m_sql,
+              parameters);
+        }
       } catch (Exception e) {
         log4j.error("Failed query importing translation: {} with parameters {}. Exception: {}",
             m_sql, parameters, e.getMessage());
@@ -210,18 +220,6 @@ class TranslationHandler extends DefaultHandler {
           // This exception is ignored.
         }
         parameters.clear();
-      }
-
-      if (no == 1) {
-        if (log4j.isDebugEnabled()) {
-          log4j.debug(m_sql);
-        }
-        m_updateCount++;
-      } else if (no == 0) {
-        log4j.info("Not found translatable element - Table:{}, {}_ID={}, AD_Language={}",
-            m_TableName, m_TableName, m_curID, m_AD_Language);
-      } else {
-        log4j.error("Update Rows={} (Should be 1) - {} with parameters {}", no, m_sql, parameters);
       }
     } else if (qName.equals(TranslationManager.XML_VALUE_TAG)) {
       String value = "";
