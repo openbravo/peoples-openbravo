@@ -8146,9 +8146,9 @@
       }
 
       function stopReverse() {
-        sender.deleting = false;
-        sender.removeClass('btn-icon-loading');
-        sender.addClass('btn-icon-reversePayment');
+        if (reverseCallback) {
+          reverseCallback();
+        }
       }
 
       usedPayment = _.filter(OB.MobileApp.model.get('payments'), function(
