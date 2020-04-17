@@ -66,8 +66,17 @@
         var price = OB.I18N.parseNumber(editboxvalue);
         var receipt = view.model.get('order');
         var setPrices = function() {
-          receipt.setPrices(selectedReceiptLines, price);
-          receipt.trigger('scan');
+          const lineIds = selectedReceiptLines.map(l => l.id);
+          OB.App.State.Ticket.setPrice({ lineIds, price })
+            .then(() => {
+              //TODO: remove this once implemented at ticket level
+              receipt.calculateReceipt();
+
+              receipt.trigger('scan');
+            })
+            .catch(e => {
+              // TODO: handle error in UI
+            });
         };
         var validatePrice = function() {
           if (
