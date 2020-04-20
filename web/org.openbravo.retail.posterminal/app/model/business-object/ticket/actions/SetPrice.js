@@ -38,7 +38,7 @@
       lid => !ticketLineIds.includes(lid)
     );
     if (notPresentLineIds.length !== 0) {
-      throw new Error(`not found lineId3s: [${notPresentLineIds.join(',')}]`);
+      throw new Error(`not found lineIds: [${notPresentLineIds.join(',')}]`);
     }
 
     if (price === undefined) {
