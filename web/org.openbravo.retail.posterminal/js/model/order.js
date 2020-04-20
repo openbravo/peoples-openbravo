@@ -6630,7 +6630,6 @@
           me.set('session', OB.MobileApp.model.get('session'));
 
           me.unset('invoiceCreated');
-          me.setFullInvoice(false, true);
           me.set(
             'documentType',
             OB.MobileApp.model.get('terminal').terminalType.documentType
