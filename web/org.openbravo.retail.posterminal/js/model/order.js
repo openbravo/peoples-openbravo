@@ -9914,6 +9914,7 @@
         invoice.set('isInvoice', true);
         invoice.unset('isBeingClosed');
         invoice.get('lines').reset();
+        invoice.set('documentNo', '');
         invoice.set('fullInvoice', this.get('fullInvoice'));
 
         this.get('lines').forEach(function(ol) {
