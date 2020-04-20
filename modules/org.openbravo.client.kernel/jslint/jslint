@@ -35,6 +35,7 @@ it will be executed for each module that has a .eslintignore file in its root.
  Options:
   -f                Fixes errors/warnings that can automatically be fixed (Adds --fix argument to ESLint)
   -h                Display this help and exit
+  -g                Git support, use git show and stdin as input
 
 "
 }
@@ -53,11 +54,23 @@ function lintFiles {
         IGNORE_PATH="--ignore-path $(pwd)/.eslintignore"
     fi
 
-    # Since eslint complains when ignoring a file explicitly passed and there's no way to workaround that via CLI,
-    # ignored files are removed using a script
-    FILTERED_FILES=$(node ${SCRIPT_DIR}/filter-eslint-ignored-files.js "$@")
-    if [[ -n "${FILTERED_FILES}" ]]; then
-        echo "${FILTERED_FILES}" | xargs -n 250 npm run --prefix ${OPENBRAVO_ROOT_PATH} jslint -s -- ${FLAGS} ${IGNORE_PATH} || exit 1
+    # If git is specified git show will be used to only show staged changes,
+    # realpath is needed for this to work, hash command is used to check for existence
+    if [[ $1 == "GIT" ]] && hash realpath 2>/dev/null; then
+      FILTERED_FILES=$(node ${SCRIPT_DIR}/filter-eslint-ignored-files.js "${@:2}")
+      if [[ -n "${FILTERED_FILES}" ]]; then
+          for FILE in ${FILTERED_FILES} ; do
+            FILE_NO_ABS=$(realpath --relative-to="$(pwd)" "$FILE")
+            git show :${FILE_NO_ABS} | npm run --prefix ${OPENBRAVO_ROOT_PATH} jslint -s -- ${FLAGS} ${IGNORE_PATH} --stdin --stdin-filename ${FILE}
+          done
+      fi
+    else
+      # Since eslint complains when ignoring a file explicitly passed and there's no way to workaround that via CLI,
+      # ignored files are removed using a script
+      FILTERED_FILES=$(node ${SCRIPT_DIR}/filter-eslint-ignored-files.js "$@")
+      if [[ -n "${FILTERED_FILES}" ]]; then
+          echo "${FILTERED_FILES}" | xargs -n 250 npm run --prefix ${OPENBRAVO_ROOT_PATH} jslint -s -- ${FLAGS} ${IGNORE_PATH} || exit 1
+      fi
     fi
 }
 
@@ -110,10 +123,13 @@ function runLinterInModule {
 }
 
 #Parse input arguments
-while getopts ":fh" arg; do
+while getopts ":fgh" arg; do
     case ${arg} in
         f )
             FIX=true
+        ;;
+        g )
+            GIT=true
         ;;
         h )
             usage
@@ -137,7 +153,11 @@ fi
 
 if [[ $# > 0 ]]; then
     files=$(convertPathsToAbsolute $@)
-    lintFiles ${files}
+    if [[ ${GIT} == true ]]; then
+      lintFiles "GIT" ${files}
+    else
+      lintFiles ${files}
+    fi
 else
     lintAllFiles
 fi

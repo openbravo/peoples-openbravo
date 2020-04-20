@@ -52,7 +52,7 @@ do
 done
 
 if [[ -n "${FILES[*]}" ]]; then
-    ${OPENBRAVO_ROOT_PATH}/modules/org.openbravo.client.kernel/jsformatter/jsformatter ${FLAGS} ${FILES[*]} || exit 1
+    ${OPENBRAVO_ROOT_PATH}/modules/org.openbravo.client.kernel/jsformatter/jsformatter -g ${FLAGS} ${FILES[*]} || exit 1
 fi
 
 exit 0
