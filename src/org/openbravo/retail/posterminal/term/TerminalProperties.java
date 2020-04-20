@@ -33,7 +33,7 @@ public class TerminalProperties extends ModelExtension {
   @Override
   public List<HQLProperty> getHQLProperties(final Object params) {
 
-    final ArrayList<HQLProperty> list = new ArrayList<HQLProperty>();
+    final ArrayList<HQLProperty> list = new ArrayList<>();
     list.add(new HQLProperty("pos.id", "id"));
     list.add(new HQLProperty("(COALESCE(pos.defaultCustomer.id, org.obretcoCBpartner.id))",
         "businessPartner"));
@@ -99,14 +99,20 @@ public class TerminalProperties extends ModelExtension {
     addTemplateProperty(Organization.PROPERTY_OBPOSTICKETTEMPLATE, "printTicketTemplate", list);
     addTemplateProperty(Organization.PROPERTY_OBPOSRETURNTEMPLATE, "printReturnTemplate", list);
     addTemplateProperty(Organization.PROPERTY_OBPOSINVOICETEMPLATE, "printInvoiceTemplate", list);
+    addTemplateProperty(Organization.PROPERTY_OBPOSSINVTEMPLATE, "printSimplifiedInvoiceTemplate",
+        list);
     addTemplateProperty(Organization.PROPERTY_OBPOSRETINVTEMPLATE, "printReturnInvoiceTemplate",
         list);
+    addTemplateProperty(Organization.PROPERTY_OBPOSRETSINVTEMPLATE,
+        "printSimplifiedReturnInvoiceTemplate", list);
     addTemplateProperty(Organization.PROPERTY_OBPOSLAYAWAYTEMPLATE, "printLayawayTemplate", list);
     addTemplateProperty(Organization.PROPERTY_OBPOSCLOSEDRECEIPTTEMPLATE,
         "printClosedReceiptTemplate", list);
     addTemplateProperty(Organization.PROPERTY_OBPOSQUOTTEMPLATE, "printQuotationTemplate", list);
     addTemplateProperty(Organization.PROPERTY_OBPOSCLOINVTEMPLATE, "printClosedInvoiceTemplate",
         list);
+    addTemplateProperty(Organization.PROPERTY_OBPOSCLOSINVTEMPLATE,
+        "printSimplifiedClosedInvoiceTemplate", list);
     addTemplateProperty(Organization.PROPERTY_OBPOSCANCRPTTEMPLATE, "printCanceledReceiptTemplate",
         list);
     addTemplateProperty(Organization.PROPERTY_OBPOSCANCLAYAWAYTMPLT, "printCanceledLayawayTemplate",

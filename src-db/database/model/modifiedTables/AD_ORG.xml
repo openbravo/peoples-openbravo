@@ -165,6 +165,21 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault><![CDATA['Y']]></onCreateDefault>
       </column>
+      <column name="EM_OBPOS_SINV_TEMPLATE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="EM_OBPOS_RETSINV_TEMPLATE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="EM_OBPOS_CLOSINV_TEMPLATE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <foreign-key foreignTable="OBPOS_PRINT_TEMPLATE" name="EM_OBPOS_CLOSINV_TEMPLATE_ID">
+        <reference local="EM_OBPOS_CLOSINV_TEMPLATE_ID" foreign="OBPOS_PRINT_TEMPLATE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_DOCTYPE" name="EM_OBPOS_DOC_AD_ORG">
         <reference local="EM_OBPOS_C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>
@@ -215,6 +230,12 @@
       </foreign-key>
       <foreign-key foreignTable="OBPOS_PRINT_TEMPLATE" name="EM_OBPOS_ORG_WELCOMETEMP">
         <reference local="EM_OBPOS_WELCOME_TEMPLATE_ID" foreign="OBPOS_PRINT_TEMPLATE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="OBPOS_PRINT_TEMPLATE" name="EM_OBPOS_RETSINV_TEMPLATE_ID">
+        <reference local="EM_OBPOS_RETSINV_TEMPLATE_ID" foreign="OBPOS_PRINT_TEMPLATE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="OBPOS_PRINT_TEMPLATE" name="EM_OBPOS_SINV_TEMPLATE_ID">
+        <reference local="EM_OBPOS_SINV_TEMPLATE_ID" foreign="OBPOS_PRINT_TEMPLATE_ID"/>
       </foreign-key>
       <check name="EM_OBPOS_ORG_FORMAT"><![CDATA[EM_OBPOS_FORMAT_DECIMAL IS NULL AND EM_OBPOS_FORMAT_GROUP IS NULL OR EM_OBPOS_FORMAT_DECIMAL IS NOT NULL AND EM_OBPOS_FORMAT_GROUP IS NOT NULL]]></check>
       <check name="EM_OBPOS_QUOTATION_ANONYBP_CHK"><![CDATA[EM_OBPOS_QUOTATION_ANONYMOUSBP IN ('Y', 'N')]]></check>

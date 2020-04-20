@@ -79,6 +79,14 @@
         OB.OBPOSPointOfSale.Print.ReceiptTemplateInvoice
     );
     extendHWResource(this.templateinvoice, 'printInvoiceTemplate');
+    this.templatesimplifiedinvoice = new OB.DS.HWResource(
+      terminal.printSimplifiedInvoiceTemplate ||
+        OB.OBPOSPointOfSale.Print.ReceiptTemplateSimplifiedInvoice
+    );
+    extendHWResource(
+      this.templatesimplifiedinvoice,
+      'printSimplifiedInvoiceTemplate'
+    );
     this.templatereturn = new OB.DS.HWResource(
       terminal.printReturnTemplate ||
         OB.OBPOSPointOfSale.Print.ReceiptTemplateReturn
@@ -89,6 +97,14 @@
         OB.OBPOSPointOfSale.Print.ReceiptTemplateReturnInvoice
     );
     extendHWResource(this.templatereturninvoice, 'printReturnInvoiceTemplate');
+    this.templatesimplifiedreturninvoice = new OB.DS.HWResource(
+      terminal.printSimplifiedReturnInvoiceTemplate ||
+        OB.OBPOSPointOfSale.Print.ReceiptTemplateSimplifiedReturnInvoice
+    );
+    extendHWResource(
+      this.templatesimplifiedreturninvoice,
+      'printSimplifiedReturnInvoiceTemplate'
+    );
     this.templatelayaway = new OB.DS.HWResource(
       terminal.printLayawayTemplate ||
         OB.OBPOSPointOfSale.Print.ReceiptTemplateLayaway
@@ -137,6 +153,14 @@
         OB.OBPOSPointOfSale.Print.ClosedInvoiceTemplate
     );
     extendHWResource(this.templateclosedinvoice, 'printClosedInvoiceTemplate');
+    this.templatesimplifiedclosedinvoice = new OB.DS.HWResource(
+      terminal.printSimplifiedClosedInvoiceTemplate ||
+        OB.OBPOSPointOfSale.Print.SimplifiedClosedInvoiceTemplate
+    );
+    extendHWResource(
+      this.templatesimplifiedclosedinvoice,
+      'printSimplifiedClosedInvoiceTemplate'
+    );
     this.templatecanceledreceipt = new OB.DS.HWResource(
       terminal.printCanceledReceiptTemplate ||
         OB.OBPOSPointOfSale.Print.CanceledReceiptTemplate
@@ -304,13 +328,25 @@
           args.template = me.templatecanceledlayaway;
         } else if (receipt.get('isInvoice')) {
           if (receipt.get('orderType') === 1 || hasNegativeLines) {
-            args.template = me.templatereturninvoice;
+            if (receipt.get('fullInvoice')) {
+              args.template = me.templatereturninvoice;
+            } else {
+              args.template = me.templatesimplifiedreturninvoice;
+            }
           } else if (receipt.get('isQuotation')) {
             args.template = me.templatequotation;
           } else if (receipt.get('isPaid')) {
-            args.template = me.templateclosedinvoice;
+            if (receipt.get('fullInvoice')) {
+              args.template = me.templateclosedinvoice;
+            } else {
+              args.template = me.templatesimplifiedclosedinvoice;
+            }
           } else {
-            args.template = me.templateinvoice;
+            if (receipt.get('fullInvoice')) {
+              args.template = me.templateinvoice;
+            } else {
+              args.template = me.templatesimplifiedinvoice;
+            }
           }
         } else {
           if (receipt.get('isPaid')) {
@@ -726,10 +762,14 @@
     '../org.openbravo.retail.posterminal/res/printclosedreceipt.xml';
   OB.OBPOSPointOfSale.Print.ReceiptTemplateInvoice =
     '../org.openbravo.retail.posterminal/res/printinvoice.xml';
+  OB.OBPOSPointOfSale.Print.ReceiptTemplateSimplifiedInvoice =
+    '../org.openbravo.retail.posterminal/res/printsimplifiedinvoice.xml';
   OB.OBPOSPointOfSale.Print.ReceiptTemplateReturn =
     '../org.openbravo.retail.posterminal/res/printreturn.xml';
   OB.OBPOSPointOfSale.Print.ReceiptTemplateReturnInvoice =
     '../org.openbravo.retail.posterminal/res/printreturninvoice.xml';
+  OB.OBPOSPointOfSale.Print.ReceiptTemplateSimplifiedReturnInvoice =
+    '../org.openbravo.retail.posterminal/res/printsimplifiedreturninvoice.xml';
   OB.OBPOSPointOfSale.Print.ReceiptLine = PrintReceiptLine;
   OB.OBPOSPointOfSale.Print.ReceiptLineTemplate =
     '../org.openbravo.retail.posterminal/res/printline.xml';
@@ -751,6 +791,8 @@
     '../org.openbravo.retail.posterminal/res/printquotation.xml';
   OB.OBPOSPointOfSale.Print.ClosedInvoiceTemplate =
     '../org.openbravo.retail.posterminal/res/printclosedinvoice.xml';
+  OB.OBPOSPointOfSale.Print.SimplifiedClosedInvoiceTemplate =
+    '../org.openbravo.retail.posterminal/res/printsimplifiedclosedinvoice.xml';
   OB.OBPOSPointOfSale.Print.CanceledReceiptTemplate =
     '../org.openbravo.retail.posterminal/res/printcanceledreceipt.xml';
   OB.OBPOSPointOfSale.Print.CanceledLayawayTemplate =
