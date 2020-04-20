@@ -6990,7 +6990,6 @@
                       me.set('canceledorder', clonedReceipt);
                       me.set('orderDate', new Date());
                       me.set('documentNo', me.get('documentNo') + '*R*');
-                      me.unset('generateInvoice');
                       me.set(
                         'nettingPayment',
                         OB.DEC.sub(me.getPayment(), me.getGross())
