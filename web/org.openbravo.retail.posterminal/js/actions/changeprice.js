@@ -74,9 +74,7 @@
 
               receipt.trigger('scan');
             })
-            .catch(e => {
-              // TODO: handle error in UI
-            });
+            .catch(OB.App.Class.ActionCanceledUIHandler.handle);
         };
         var validatePrice = function() {
           if (
