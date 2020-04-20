@@ -1798,51 +1798,6 @@
       }
     },
 
-    setPrices: function(selectedModels, price, options, callback) {
-      var me = this,
-        cancelChange = false,
-        finalCallback = function() {
-          if (callback && callback instanceof Function) {
-            callback();
-          }
-        };
-      if (selectedModels.length > 1) {
-        var setNextPrice;
-        this.set('undo', null);
-        this.set('multipleUndo', true);
-        _.each(selectedModels, function(model) {
-          if (model.get('replacedorderline') && model.get('qty') < 0) {
-            cancelChange = true;
-          }
-        });
-        if (cancelChange) {
-          OB.UTIL.showConfirmation.display(
-            OB.I18N.getLabel('OBMOBC_Error'),
-            OB.I18N.getLabel('OBPOS_CancelReplaceReturnPriceChange')
-          );
-          return;
-        }
-        setNextPrice = function(idx) {
-          if (idx === selectedModels.length) {
-            me.preventOrderSave(false);
-            me.unset('skipCalculateReceipt');
-            me.set('multipleUndo', null);
-            me.calculateReceipt();
-            finalCallback();
-            return;
-          }
-          me.setPrice(selectedModels[idx], price, options, function() {
-            setNextPrice(idx + 1);
-          });
-        };
-        this.set('skipCalculateReceipt', true);
-        this.preventOrderSave(true);
-        setNextPrice(0);
-      } else {
-        this.setPrice(selectedModels[0], price, options, finalCallback);
-      }
-    },
-
     setPrice: function(line, price, options, callback) {
       OB.UTIL.HookManager.executeHooks(
         'OBPOS_PreSetPrice',
