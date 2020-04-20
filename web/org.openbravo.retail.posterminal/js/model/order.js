@@ -341,6 +341,16 @@
       // amount - change...
       date: null
     },
+    getAmount: function() {
+      if (this.get('rate')) {
+        return (
+          this.get('origAmount') ||
+          OB.DEC.div(this.get('amount'), this.get('mulrate'))
+        );
+      } else {
+        return this.get('amount');
+      }
+    },
     printAmount: function() {
       if (this.get('rate')) {
         return OB.I18N.formatCurrency(
@@ -367,9 +377,9 @@
         order.isNegative();
       // if the ticket is a paid return, new payments must be displayed in negative
       if (paidReturn) {
-        return OB.I18N.formatCurrency(OB.DEC.mul(this.printAmount(), -1));
+        return OB.I18N.formatCurrency(OB.DEC.mul(this.getAmount(), -1));
       } else {
-        return OB.I18N.formatCurrency(this.printAmount());
+        return OB.I18N.formatCurrency(this.getAmount());
       }
     }
   });
