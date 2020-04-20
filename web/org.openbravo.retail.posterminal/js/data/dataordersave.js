@@ -565,7 +565,6 @@
                           }
                         };
 
-                        OB.UTIL.cashUpReport(frozenReceipt, undefined, tx);
                         OB.App.State.Cashup.updateCashup({
                           tickets: [frozenReceipt],
                           countLayawayAsSales: OB.MobileApp.model.get(
@@ -805,7 +804,6 @@
             );
           };
 
-          OB.UTIL.cashUpReport(currentReceipt, undefined, tx);
           OB.App.State.Cashup.updateCashup({
             tickets: [currentReceipt],
             countLayawayAsSales: OB.MobileApp.model.get('terminal')

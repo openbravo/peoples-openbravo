@@ -524,125 +524,6 @@
         }
       });
 
-      this.get('dataSyncModels').push({
-        name: 'Cash Up',
-        model: OB.Model.CashUp,
-        modelFunc: 'OB.Model.CashUp',
-        isPersistent: true,
-        className: 'org.openbravo.retail.posterminal.ProcessCashClose',
-        timeout: 600000,
-        timePerRecord: 10000,
-        getIdentifier: function(model) {
-          return OB.I18N.formatDateISO(new Date(model.creationDate));
-        },
-        getCriteria: function() {
-          if (
-            OB.UTIL.isNullOrUndefined(OB.MobileApp.model.get('terminal')) ||
-            (OB.MobileApp.model.get('terminal') &&
-              (OB.MobileApp.model.get('terminal').ismaster ||
-                OB.MobileApp.model.get('terminal').isslave))
-          ) {
-            return {};
-          } else {
-            return {
-              isprocessed: 'Y'
-            };
-          }
-        },
-        changesPendingCriteria: {
-          isprocessed: 'Y'
-        },
-        removeSyncedElemsCallback: function(dataToSync, tx, requestCallback) {
-          OB.UTIL.deleteCashUps(dataToSync, tx, requestCallback);
-        },
-        postProcessingFunction: function(data, callback) {
-          function endCallback() {
-            // Get Cashup id, if objToSend is not filled compose and synchronize
-            OB.UTIL.calculateCurrentCash(
-              function() {
-                if (callback) {
-                  callback();
-                }
-              },
-              null,
-              data.at(0)
-            );
-          }
-          if (data.at(0).get('isprocessed') === 'N') {
-            return endCallback();
-          }
-          OB.Dal.find(
-            OB.Model.CashUp,
-            {
-              isprocessed: 'N'
-            },
-            function(currentCashup) {
-              if (currentCashup.length === 0) {
-                const onInitCashupSucess = function() {
-                  var cashUpId = data.at(0).get('id');
-                  OB.Dal.find(
-                    OB.Model.CashUp,
-                    {
-                      id: cashUpId
-                    },
-                    function(cU) {
-                      if (cU.length !== 0) {
-                        if (!cU.at(0).get('objToSend')) {
-                          OB.UTIL.composeCashupInfo(data, null, function() {
-                            OB.MobileApp.model.runSyncProcess();
-                          });
-                        }
-                      }
-                    }
-                  );
-                  endCallback();
-                };
-                // TODO : remove postprocesing
-                OB.UTIL.initCashUp(onInitCashupSucess, null, true, data.at(0));
-              } else {
-                endCallback();
-                OB.UTIL.HookManager.executeHooks(
-                  'OBPOS_PostProcessingNoNewCashup',
-                  {},
-                  function() {
-                    return;
-                  }
-                );
-              }
-            }
-          );
-        },
-        // skip the syncing of the cashup if it is the same as the last one
-        preSendModel: function(me, dataToSync) {
-          if (dataToSync.length === 0) {
-            return;
-          } else {
-            if (
-              dataToSync.length === 1 &&
-              this.model === OB.Model.CashUp &&
-              !OB.UTIL.isNullOrUndefined(
-                OB.UTIL.localStorage.getItem('lastCashupSendInfo')
-              ) &&
-              OB.UTIL.localStorage.getItem('lastCashupSendInfo') ===
-                dataToSync.models[0].get('objToSend')
-            ) {
-              me.skipSyncModel = true;
-            }
-            OB.UTIL.localStorage.setItem(
-              'lastCashupSendInfo',
-              dataToSync.models[0].get('objToSend')
-            );
-          }
-        },
-        // keep track of successfull send
-        successSendModel: function() {
-          OB.UTIL.localStorage.setItem(
-            'lastCashupInfo',
-            OB.UTIL.localStorage.getItem('lastCashupSendInfo')
-          );
-        }
-      });
-
       this.on('ready', function() {
         OB.debug("next process: 'retail.pointofsale' window");
         if (this.get('terminal').currencyFormat) {
@@ -650,9 +531,6 @@
         }
         // register models which are cached during synchronized transactions
         OB.MobileApp.model.addSyncCheckpointModel(OB.Model.Order);
-        OB.MobileApp.model.addSyncCheckpointModel(OB.Model.PaymentMethodCashUp);
-        OB.MobileApp.model.addSyncCheckpointModel(OB.Model.TaxCashUp);
-        OB.MobileApp.model.addSyncCheckpointModel(OB.Model.CashUp);
 
         var terminal = this.get('terminal');
 
@@ -683,15 +561,16 @@
           ) {
             finishAndNavigate();
           } else {
-            OB.Dal.find(
-              OB.Model.CashUp,
-              {
-                isprocessed: 'N'
-              },
-              function(cashUps) {
-                OB.UTIL.composeCashupInfo(cashUps, null, finishAndNavigate);
-              }
-            );
+            // TODO - shared payments
+            // OB.Dal.find(
+            //   OB.Model.CashUp,
+            //   {
+            //     isprocessed: 'N'
+            //   },
+            //   function(cashUps) {
+            //     OB.UTIL.composeCashupInfo(cashUps, null, finishAndNavigate);
+            //   }
+            // );
           }
         };
 
@@ -722,8 +601,6 @@
           );
         };
 
-        // TODO: remove call to old initCashup
-        OB.UTIL.initCashUp(undefined, onInitCashupError);
         OB.App.State.Cashup.initCashup({
           currentDate: new Date(),
           userId: OB.MobileApp.model.get('context').user.id,

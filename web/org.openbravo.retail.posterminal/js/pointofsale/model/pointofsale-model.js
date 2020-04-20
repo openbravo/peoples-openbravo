@@ -23,10 +23,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     OB.Model.ChangedBPlocation,
     OB.Model.CancelLayaway,
     OB.Model.CurrencyPanel,
-    OB.Model.CashUp,
-    OB.Model.OfflinePrinter,
-    OB.Model.PaymentMethodCashUp,
-    OB.Model.TaxCashUp
+    OB.Model.OfflinePrinter
   ],
 
   loadUnpaidOrders: function(loadUnpaidOrdersCallback) {
@@ -1000,7 +997,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               callback();
             }
           };
-          OB.UTIL.cashUpReport(auxReceipt, undefined);
           OB.App.State.Cashup.updateCashup({
             tickets: [auxReceipt],
             countLayawayAsSales: OB.MobileApp.model.get('terminal')
@@ -1097,7 +1093,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                       tx
                     );
                   };
-                  OB.UTIL.cashUpReport(auxReceipt, undefined, tx);
                   OB.App.State.Cashup.updateCashup({
                     tickets: [auxReceipt],
                     countLayawayAsSales: OB.MobileApp.model.get('terminal')
@@ -1226,7 +1221,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                                   cancelLayawayModel
                                 );
                               };
-                              OB.UTIL.cashUpReport(receipt, undefined, tx);
                               OB.App.State.Cashup.updateCashup({
                                 tickets: [receipt],
                                 countLayawayAsSales: OB.MobileApp.model.get(
