@@ -64,7 +64,8 @@
       );
     }
 
-    // TODO: check this + add tests
+    // in a verified return it's only allowed to change price with permissions
+    // and even with permissions only to decrease the price
     const canModifyVerifiedReturn =
       !ticket.isPaid &&
       OB.MobileApp.model.hasPermission(
@@ -72,9 +73,10 @@
         true
       );
     if (
-      !canModifyVerifiedReturn &&
       lines.some(
-        l => !l.isEditable && !(l.originalDocumentNo && price < l.price)
+        l =>
+          !l.isEditable &&
+          !(canModifyVerifiedReturn && l.originalDocumentNo && price < l.price)
       )
     ) {
       throw new OB.App.Class.ActionCanceled('Cannot change price', {

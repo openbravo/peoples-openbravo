@@ -64,6 +64,23 @@ describe('Ticket.setQuantity action preparation', () => {
     }
   };
 
+  const basicReturn = {
+    Ticket: {
+      isPaid: false,
+      lines: [
+        {
+          id: '1',
+          qty: 1,
+          price: 10,
+          priceList: 10,
+          isEditable: false,
+          originalDocumentNo: '0001',
+          product: { listPrice: 10 }
+        }
+      ]
+    }
+  };
+
   const persistence = {
     initialize: jest.fn(),
     getState: jest.fn(() => basicTicket),
@@ -145,6 +162,60 @@ describe('Ticket.setQuantity action preparation', () => {
       }
       expect(error).toMatchObject({
         info: { errorConfirmation: 'OBPOS_CancelReplaceReturnPriceChange' }
+      });
+    });
+
+    describe('verified return', () => {
+      it('cannot increase price without permission', async () => {
+        persistence.getState.mockReturnValue(basicReturn);
+
+        let error;
+        try {
+          await state.Ticket.setPrice({ lineIds: ['1'], price: 15 });
+        } catch (e) {
+          error = e;
+        }
+        expect(error).toMatchObject({
+          info: { errorMsg: 'OBPOS_CannotChangePrice' }
+        });
+      });
+
+      it('cannot decrease price without permission', async () => {
+        persistence.getState.mockReturnValue(basicReturn);
+
+        let error;
+        try {
+          await state.Ticket.setPrice({ lineIds: ['1'], price: 5 });
+        } catch (e) {
+          error = e;
+        }
+        expect(error).toMatchObject({
+          info: { errorMsg: 'OBPOS_CannotChangePrice' }
+        });
+      });
+
+      it('can decrease price with permission', async () => {
+        persistence.getState.mockReturnValue(basicReturn);
+        OB.MobileApp.model.hasPermission.mockReturnValue(true);
+
+        await expect(
+          state.Ticket.setPrice({ lineIds: ['1'], price: 5 })
+        ).resolves.not.toThrow();
+      });
+
+      it('cannot increse price even with permission', async () => {
+        persistence.getState.mockReturnValue(basicReturn);
+        OB.MobileApp.model.hasPermission.mockReturnValue(true);
+
+        let error;
+        try {
+          await state.Ticket.setPrice({ lineIds: ['1'], price: 15 });
+        } catch (e) {
+          error = e;
+        }
+        expect(error).toMatchObject({
+          info: { errorMsg: 'OBPOS_CannotChangePrice' }
+        });
       });
     });
   });
