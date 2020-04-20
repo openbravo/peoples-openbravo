@@ -91,7 +91,8 @@ enyo.kind({
       function(model) {
         if (model.get('bp')) {
           model.setFullInvoice(
-            model.get('fullInvoice') && model.checkFullInvoice(false)
+            model.get('fullInvoice') && model.checkFullInvoice(false),
+            true
           );
 
           if (

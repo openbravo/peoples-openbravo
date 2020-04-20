@@ -1473,8 +1473,7 @@
       this.set('updatedBy', null);
       this.set('documentType', null);
       this.set('orderType', 0); // 0: Sales order, 1: Return order
-      this.set('generateInvoice', false);
-      this.set('fullInvoice', false);
+      this.setFullInvoice(false, false);
       this.set('isQuotation', false);
       this.set('oldId', null);
       this.set('priceList', null);
@@ -6219,18 +6218,20 @@
       );
     },
 
-    setFullInvoice: function(active) {
+    setFullInvoice: function(active, applyDefaultConfiguration) {
       this.set(
         'generateInvoice',
         active ||
-          OB.MobileApp.model.get('terminal').terminalType.generateInvoice
+          (applyDefaultConfiguration
+            ? OB.MobileApp.model.get('terminal').terminalType.generateInvoice
+            : active)
       );
       this.set('fullInvoice', active);
     },
 
     setOrderInvoice: function() {
       var me = this;
-      this.setFullInvoice(true);
+      this.setFullInvoice(true, true);
       this.save(function() {
         me.trigger('saveCurrent');
       });
@@ -6238,7 +6239,7 @@
 
     resetOrderInvoice: function() {
       var me = this;
-      this.setFullInvoice(false);
+      this.setFullInvoice(false, true);
       this.save(function() {
         me.trigger('saveCurrent');
       });
@@ -6629,10 +6630,7 @@
           me.set('session', OB.MobileApp.model.get('session'));
 
           me.unset('invoiceCreated');
-          me.set(
-            'generateInvoice',
-            OB.MobileApp.model.get('terminal').terminalType.generateInvoice
-          );
+          me.setFullInvoice(false, true);
           me.set(
             'documentType',
             OB.MobileApp.model.get('terminal').terminalType.documentType
@@ -7060,7 +7058,7 @@
     createQuotation: function() {
       if (OB.MobileApp.model.hasPermission('OBPOS_receipt.quotation')) {
         this.set('isQuotation', true);
-        this.set('generateInvoice', false);
+        this.setFullInvoice(false, false);
         this.set(
           'documentType',
           OB.MobileApp.model.get('terminal').terminalType
@@ -7072,7 +7070,7 @@
 
     setQuotationProperties: function() {
       this.set('isQuotation', true);
-      this.set('generateInvoice', false);
+      this.setFullInvoice(false, false);
       this.set('orderType', 0);
       this.set(
         'documentType',
@@ -7180,10 +7178,7 @@
                   ? 2
                   : 0
               );
-              args.order.set(
-                'generateInvoice',
-                OB.MobileApp.model.get('terminal').terminalType.generateInvoice
-              );
+              args.order.setFullInvoice(false, true);
               args.order.set(
                 'documentType',
                 OB.UTIL.isCrossStoreReceipt(args.order)
@@ -11356,8 +11351,7 @@
           'orderType',
           OB.MobileApp.model.get('terminal').terminalType.layawayorder ? 2 : 0
         ); // 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
-        order.set('generateInvoice', false);
-        order.set('fullInvoice', false);
+        order.setFullInvoice(false, false);
         order.set('isQuotation', false);
         order.set('oldId', null);
         order.set('session', OB.MobileApp.model.get('session'));
@@ -11918,11 +11912,7 @@
         _.each(
           this.get('multiOrdersList').models,
           function(order) {
-            order.set(
-              'generateInvoice',
-              OB.MobileApp.model.get('terminal').terminalType.generateInvoice
-            );
-            order.set('fullInvoice', false);
+            order.setFullInvoice(false, true);
           },
           this
         );
@@ -11932,8 +11922,7 @@
       _.each(
         this.get('multiOrdersList').models,
         function(order) {
-          order.set('generateInvoice', true);
-          order.set('fullInvoice', true);
+          order.setFullInvoice(true, true);
         },
         this
       );
