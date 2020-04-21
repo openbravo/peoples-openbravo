@@ -213,6 +213,14 @@ class TranslationHandler extends DefaultHandler {
       } catch (Exception e) {
         log4j.error("Failed query importing translation: {} with parameters {}. Exception: {}",
             m_sql, parameters, e.getMessage());
+        try {
+          // Rollback last query so next queries can be executed
+          if (con != null && !con.isClosed()) {
+            con.rollback();
+          }
+        } catch (SQLException ex) {
+          log4j.error("Failed to rollback transaction.");
+        }
       } finally {
         try {
           DB.releaseTransactionalPreparedStatement(st);
