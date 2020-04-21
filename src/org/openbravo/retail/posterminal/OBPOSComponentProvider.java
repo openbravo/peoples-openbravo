@@ -250,10 +250,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "taxesengine/pos/pos-taxes",
 
         // Discounts
-        "discountsengine/pos/pos-discounts",
-
-        // state models
-        "../app/model/business-object/ticket/Ticket" };
+        "discountsengine/pos/pos-discounts" };
 
     // Unlink onLoad in the ERP
     globalResources.add(createComponentResource(ComponentResourceType.Static,
@@ -309,6 +306,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("taxesengine/common/tax-rules");
     appDependency.add("taxesengine/common/rules/priceincluding-tax");
     appDependency.add("taxesengine/common/rules/priceexcluding-tax");
+
+    // ticket model
+    appDependency.add("model/business-object/ticket/Ticket");
 
     for (final String resource : appDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,
