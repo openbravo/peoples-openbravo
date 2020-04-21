@@ -27,7 +27,7 @@
       return (
         sequencePrefix +
         (includeSeparator ? '/' : '') +
-        OB.UTIL.padNumber(sequenceNumber, documentNumberPadding)
+        sequenceNumber.toString().padStart(documentNumberPadding, '0')
       );
     }
   });
