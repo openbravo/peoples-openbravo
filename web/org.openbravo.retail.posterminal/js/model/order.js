@@ -9905,7 +9905,6 @@
         invoice.unset('calculateReceiptCallbacks');
         invoice.unset('calculatedInvoice');
         invoice.unset('canceledorder');
-        invoice.get('payments').reset();
         invoice.unset('json');
         invoice.unset('undo');
         invoice.set('posTerminal', OB.MobileApp.model.get('terminal').id);
