@@ -43,6 +43,7 @@ public class DiscountFilterProductCategory extends Discount {
 
     hql += " and exists (select 1 " + getPromotionsHQL(jsonsent, false);
     hql += "              and pc.priceAdjustment = p) ";
+    hql += "and pc.$paginationByIdCriteria ";
     hql += "order by pc.id asc";
 
     return Arrays.asList(hql);

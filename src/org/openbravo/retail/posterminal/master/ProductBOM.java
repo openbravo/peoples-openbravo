@@ -43,7 +43,7 @@ public class ProductBOM extends MasterDataProcessHQLQuery {
     hqlQueries.add("select" + productBOMProperties.getHqlSelect() //
         + "from ProductBOM bom "
         + "where bom.$readableSimpleClientCriteria and bom.$naturalOrgCriteria and (bom.$incrementalUpdateCriteria) "
-        + "order by bom.id asc");
+        + "and bom.$paginationByIdCriteria order by bom.id asc");
 
     return hqlQueries;
   }

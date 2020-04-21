@@ -67,6 +67,7 @@ public class BPSetLine extends MasterDataProcessHQLQuery {
       hql += " and (" + BusinessPartnerSetLine.PROPERTY_ENDINGDATE + " is null or "
           + BusinessPartnerSetLine.PROPERTY_ENDINGDATE + ">=NOW()) ";
     }
+    hql += " and c.$paginationByIdCriteria ";
     hql += " order by c.id asc";
 
     return Arrays.asList(hql);

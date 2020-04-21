@@ -40,6 +40,7 @@ public class DiscountFilterBusinessPartnerGroup extends Discount {
         + jsonsent.get("operator") + " (bpg.priceAdjustment.$incrementalUpdateCriteria)) ";
     hql += " and exists (select 1 " + getPromotionsHQL(jsonsent, false);
     hql += "              and bpg.priceAdjustment = p) ";
+    hql += "and bpg.$paginationByIdCriteria ";
     hql += "order by bpg.priceAdjustment.id asc";
 
     return Arrays.asList(hql);

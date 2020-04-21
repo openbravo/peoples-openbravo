@@ -87,11 +87,10 @@ enyo.kind({
       this.doShowPopup({
         popup: 'modalcustomeraddress',
         args: {
-          presetCustomerLocation: bp.get('locId'),
+          locationButton: true,
           target: 'order',
           clean: true,
-          manageAddress:
-            bp.get(this.locId) === bp.get(OB.UI.BPLocationShip.prototype.locId),
+          manageAddress: bp.get('locId') === bp.get('shipLocId'),
           navigationPath: []
         }
       });
@@ -132,7 +131,7 @@ enyo.kind({
       me = this;
 
     function successLocations(dataBps) {
-      if (bp.get(me.locId) === bp.get(OB.UI.BPLocation.prototype.locId)) {
+      if (bp.get('shipLocId') === bp.get('locId')) {
         me.changeStyle(false);
       } else if (dataBps && dataBps.length > 1) {
         me.changeStyle(true);
@@ -875,16 +874,6 @@ enyo.kind({
     this.bpsList.reset();
     return true;
   },
-  loadPresetCustomerLocation: function(bpLocation) {
-    var me = this;
-    OB.Dal.get(OB.Model.BPLocation, bpLocation, function(bplocation) {
-      bplocation.set('bplocationId', bpLocation, {
-        silent: true
-      });
-      me.bpsList.reset([bplocation]);
-      me.$.bpsloclistitemprinter.$.tbody.show();
-    });
-  },
   searchAction: function(inSender, inEvent) {
     var execution = OB.UTIL.ProcessController.start('searchCustomerAddress');
     var me = this,
@@ -1111,7 +1100,7 @@ enyo.kind({
       this.$.body.$.listBpsLoc.setBPartner(this.bPartner);
       this.$.body.$.listBpsLoc.setTarget(this.args.target);
       this.$.body.$.listBpsLoc.setInitialLoad(true);
-      if (this.args.businessPartner) {
+      if (this.bPartner) {
         this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.searchAction();
       } else {
         this.$.body.$.listBpsLoc.bpsList.reset([]);
@@ -1122,11 +1111,6 @@ enyo.kind({
           true
         )
       );
-      if (this.args.presetCustomerLocation) {
-        this.$.body.$.listBpsLoc.loadPresetCustomerLocation(
-          this.args.presetCustomerLocation
-        );
-      }
     } else if (this.args.makeSearch) {
       this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.searchAction();
     }
@@ -1159,7 +1143,7 @@ enyo.kind({
   },
   changedTitle: function(bp) {
     if (this.args.manageAddress) {
-      if (this.args.presetCustomerLocation) {
+      if (this.args.locationButton) {
         this.$.header.setContent(
           OB.I18N.getLabel('OBPOS_LblAssignCustomerAddress')
         );

@@ -43,6 +43,7 @@ public class DiscountFilterRole extends Discount {
 
     hql += " and exists (select 1 " + getPromotionsHQL(jsonsent, false);
     hql += "              and r.priceAdjustment = p) ";
+    hql += "and r.$paginationByIdCriteria ";
     hql += "order by r.id asc";
 
     return Arrays.asList(hql);

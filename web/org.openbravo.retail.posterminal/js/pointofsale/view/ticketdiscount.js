@@ -397,27 +397,29 @@ enyo.kind({
   getMaxNoOrder: function(receipt) {
     let maxNoOrder = 0;
 
-    receipt.get('lines').models.forEach(line => {
-      if (line.get('promotions') && line.get('promotions').length > 0) {
-        line.get('promotions').forEach(promo => {
-          if (promo.manual) {
-            let noOrder = promo.noOrder || 0;
-            if (noOrder > maxNoOrder) {
-              maxNoOrder = noOrder;
-            }
+    if (receipt.get('discountsFromUser')) {
+      if (receipt.get('discountsFromUser').manualPromotions) {
+        const manualPromotions = receipt.get('discountsFromUser')
+          .manualPromotions;
+        manualPromotions.forEach(manualPromotion => {
+          const noOrder = manualPromotion.noOrder || 0;
+          if (noOrder > maxNoOrder) {
+            maxNoOrder = noOrder;
           }
         });
       }
-    });
 
-    receipt
-      .get('orderManualPromotions')
-      .models.forEach(orderManualPromotion => {
-        let noOrder = orderManualPromotion.get('rule').noOrder || 0;
-        if (noOrder > maxNoOrder) {
-          maxNoOrder = noOrder;
-        }
-      });
+      if (receipt.get('discountsFromUser').bytotalManualPromotions) {
+        const bytotalManualPromotions = receipt.get('discountsFromUser')
+          .bytotalManualPromotions;
+        bytotalManualPromotions.forEach(bytotalManualPromotion => {
+          const noOrder = bytotalManualPromotion.noOrder || 0;
+          if (noOrder > maxNoOrder) {
+            maxNoOrder = noOrder;
+          }
+        });
+      }
+    }
 
     return maxNoOrder;
   },

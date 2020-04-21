@@ -79,7 +79,7 @@ public class PriceList extends MasterDataProcessHQLQuery {
           + "where pl.id in (select distinct priceList.id from BusinessPartner where customer = 'Y') "
           + "and pl.id <> (:priceList) "
           + "and $naturalOrgCriteria and $readableClientCriteria and ($incrementalUpdateCriteria) "
-          + "order by pl.id asc");
+          + "and pl.$paginationByIdCriteria order by pl.id asc");
     }
 
     return hqlQueries;

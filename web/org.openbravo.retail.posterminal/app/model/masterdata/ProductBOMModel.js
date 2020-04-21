@@ -17,6 +17,7 @@
           properties: [{ property: 'product' }]
         })
       ];
+      this.setPaginationById(true);
     }
   }
 

@@ -44,6 +44,7 @@ public class DiscountFilterCharacteristic extends Discount {
     hql += "   and m_isparent_ch_value(cvl.id, c.chValue.id, c.characteristic.id) != -1 ";
     hql += "   and exists (select 1 " + getPromotionsHQL(jsonsent, false);
     hql += "                and c.offer = p) ";
+    hql += "and c.$paginationByIdCriteria ";
     hql += "order by c.characteristic.id asc";
 
     return Arrays.asList(hql);

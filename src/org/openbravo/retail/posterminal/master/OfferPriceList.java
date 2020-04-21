@@ -41,6 +41,7 @@ public class OfferPriceList extends Discount {
 
     hql += " and exists (select 1 " + getPromotionsHQL(jsonsent, false);
     hql += "              and pl.priceAdjustment = p) ";
+    hql += "and pl.$paginationByIdCriteria ";
     hql += "order by pl.id asc";
 
     return Arrays.asList(hql);

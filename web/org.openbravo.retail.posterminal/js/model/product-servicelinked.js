@@ -17,6 +17,7 @@
     source: 'org.openbravo.retail.posterminal.master.ProductServiceLinked',
     dataLimit: 100,
     includeTerminalDate: true,
+    paginationById: true,
     remote: 'OBPOS_remote.product',
     indexDBModel: OB.App.MasterdataModels.ProductServiceLinked.getName(),
     legacyModel: true

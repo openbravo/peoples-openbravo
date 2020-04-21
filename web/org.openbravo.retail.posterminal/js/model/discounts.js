@@ -252,66 +252,173 @@
       }
     },
 
+    _addManualPromotionToLine: function(
+      manualPromotions,
+      line,
+      promotionRule,
+      promotionDefinition
+    ) {
+      if (line.get('qty') < 0 && !promotionRule.obdiscAllowinnegativelines) {
+        OB.UTIL.showWarning(
+          OB.I18N.getLabel('OBPOS_AvoidApplyManualPromotions')
+        );
+        return manualPromotions;
+      }
+
+      // look for the same m_offer_id with the same instanceid
+      const manualPromoDefined = manualPromotions.find(manualPromo => {
+        return (
+          manualPromo.ruleId === promotionRule.id &&
+          manualPromo.discountinstance ===
+            promotionDefinition.discountinstance &&
+          manualPromo.splitAmt === promotionDefinition.splitAmt
+        );
+      });
+
+      if (
+        manualPromoDefined &&
+        manualPromoDefined.linesToApply.indexOf(line.get('id')) !== -1
+      ) {
+        return manualPromotions;
+      }
+
+      if (
+        manualPromoDefined &&
+        manualPromoDefined.linesToApply.indexOf(line.get('id')) === -1 &&
+        manualPromoDefined.userAmt === promotionDefinition.userAmt
+      ) {
+        manualPromoDefined.linesToApply.push(line.get('id'));
+        return manualPromotions;
+      }
+
+      if (
+        !manualPromoDefined ||
+        (manualPromoDefined &&
+          manualPromoDefined.linesToApply.indexOf(line.get('id')) === -1 &&
+          manualPromoDefined.userAmt !== promotionDefinition.userAmt)
+      ) {
+        let manualPromoObj = {};
+
+        // Create an instance of current promotion
+        for (let key in promotionRule) {
+          if (key === 'creationDate') {
+            continue;
+          }
+          manualPromoObj[key] = promotionRule[key];
+        }
+        manualPromoObj.discountinstance = promotionDefinition.discountinstance;
+
+        // Add this line as applicable line
+        manualPromoObj.linesToApply = [line.get('id')];
+
+        // Override some configuration from manualPromotions
+        if (
+          manualPromoObj.discountType === '7B49D8CC4E084A75B7CB4D85A6A3A578' ||
+          manualPromoObj.discountType === 'D1D193305A6443B09B299259493B272A'
+        ) {
+          manualPromoObj.obdiscAmt = promotionDefinition.splitAmt
+            ? promotionDefinition.splitAmt
+            : promotionDefinition.userAmt;
+        } else if (
+          manualPromoObj.discountType === '8338556C0FBF45249512DB343FEFD280' ||
+          manualPromoObj.discountType === '20E4EC27397344309A2185097392D964'
+        ) {
+          manualPromoObj.obdiscPercentage = promotionDefinition.splitAmt
+            ? promotionDefinition.splitAmt
+            : promotionDefinition.userAmt;
+          if (
+            manualPromoObj.discountType === '20E4EC27397344309A2185097392D964'
+          ) {
+            manualPromoObj.identifier = `${promotionDefinition.name ||
+              promotionRule.printName ||
+              promotionRule.name} - ${promotionDefinition.userAmt} %`;
+          }
+        } else if (
+          manualPromoObj.discountType === 'F3B0FB45297844549D9E6B5F03B23A82'
+        ) {
+          manualPromoObj.obdiscLineFinalgross = promotionDefinition.splitAmt
+            ? promotionDefinition.splitAmt
+            : promotionDefinition.userAmt;
+        }
+        manualPromoObj.ruleId = manualPromoObj.id;
+        manualPromoObj.noOrder = promotionDefinition.noOrder;
+        manualPromoObj.userAmt = promotionDefinition.userAmt;
+        manualPromoObj.splitAmt = promotionDefinition.splitAmt;
+        manualPromoObj.products = [];
+        manualPromoObj.includedProducts = 'Y';
+        manualPromoObj.productCategories = [];
+        manualPromoObj.includedProductCategories = 'Y';
+        manualPromoObj.productCharacteristics = [];
+        manualPromoObj.includedCharacteristics = 'Y';
+        manualPromoObj.allweekdays = true;
+        manualPromoObj.rule = promotionRule;
+
+        manualPromotions.push(manualPromoObj);
+
+        manualPromotions = manualPromotions.sort((a, b) => {
+          return a.noOrder - b.noOrder;
+        });
+
+        return manualPromotions;
+      }
+    },
+
     addManualPromotion: function(receipt, lines, promotion) {
-      var rule =
-        OB.Model.Discounts.discountRules[
-          promotion.rule.get
-            ? promotion.rule.get('discountType')
-            : promotion.rule.discountType
-        ];
+      const promotionRule = promotion.rule.get
+          ? promotion.rule.attributes
+          : promotion.rule,
+        promotionDefinition = promotion.definition,
+        linesToApply = lines.at ? [...lines.models] : [...lines],
+        rule = OB.Model.Discounts.discountRules[promotionRule.discountType];
       if (!rule || !rule.addManual) {
         OB.warn('No manual implemetation for rule ' + promotion.discountType);
         return;
       }
 
-      if (promotion.rule.get('obdiscAllowmultipleinstan')) {
-        promotion.definition.discountinstance = OB.UTIL.get_UUID();
+      if (promotionRule.obdiscAllowmultipleinstan) {
+        promotionDefinition.discountinstance = OB.UTIL.get_UUID();
       }
 
-      lines.forEach(function(line) {
-        if (line.get('promotions')) {
-          line.get('promotions').forEach(function(promotion) {
-            promotion.lastApplied = undefined;
-          });
-        }
-        line.unset('noDiscountCandidates', {
-          silent: true
-        });
-        if (
-          line.get('qty') > 0 ||
-          (line.get('qty') < 0 &&
-            promotion.rule.get('obdiscAllowinnegativelines'))
-        ) {
-          rule.addManual(receipt, line, promotion);
-          line.set('singleManualPromotionApplied', true);
-        } else {
-          OB.UTIL.showWarning(
-            OB.I18N.getLabel('OBPOS_AvoidApplyManualPromotions')
-          );
-        }
+      linesToApply.forEach(line => {
+        const discountsFromUser = { ...receipt.get('discountsFromUser') } || {};
+        let manualPromotions =
+          discountsFromUser && discountsFromUser.manualPromotions
+            ? [...discountsFromUser.manualPromotions]
+            : [];
+        discountsFromUser.manualPromotions = this._addManualPromotionToLine(
+          manualPromotions,
+          line,
+          promotionRule,
+          promotionDefinition
+        );
+        receipt.set('discountsFromUser', discountsFromUser);
       });
 
       receipt.setUndo('AddDiscount', {
-        text: OB.I18N.getLabel('OBPOS_AddedDiscount', [
-          promotion.rule.get('name')
-        ]),
+        text: OB.I18N.getLabel('OBPOS_AddedDiscount', [promotionRule.name]),
         undo: function() {
-          receipt.get('lines').forEach(function(line) {
-            receipt.removePromotion(line, {
-              id: promotion.rule.get('id'),
-              discountinstance: promotion.definition.discountinstance
-            });
+          let manualPromotions = receipt.get('discountsFromUser')
+            .manualPromotions;
+          let promotionToDelete = manualPromotions.find(manualPromotion => {
+            return (
+              manualPromotion.id === promotionRule.id &&
+              manualPromotion.discountinstance ===
+                promotionRule.discountinstance
+            );
           });
+          if (promotionToDelete) {
+            manualPromotions.splice(
+              manualPromotions.indexOf(promotionToDelete),
+              1
+            );
+          }
           receipt.calculateReceipt();
           receipt.set('undo', null);
           receipt.set('multipleUndo', null);
         }
       });
 
-      if (!promotion.alreadyCalculated) {
-        // Recalculate all promotions again
-        receipt.calculateReceipt();
-      }
+      receipt.calculateReceipt();
     }
   };
 
