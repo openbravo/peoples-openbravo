@@ -76,6 +76,35 @@ describe('Ticket.setPrice action', () => {
     );
   });
 
+  it('can define a reson', () => {
+    const newTicket = OB.App.StateAPI.Ticket.setPrice(basicTicket, {
+      lineIds: ['1'],
+      price: 5,
+      reason: 'reasonId'
+    });
+
+    expect(newTicket.lines[0]).toMatchObject({
+      oBPOSPriceModificationReason: 'reasonId'
+    });
+  });
+
+  it('resets reson', () => {
+    const ticket1 = OB.App.StateAPI.Ticket.setPrice(basicTicket, {
+      lineIds: ['1'],
+      price: 5,
+      reason: 'reasonId'
+    });
+
+    const newTicket = OB.App.StateAPI.Ticket.setPrice(ticket1, {
+      lineIds: ['1'],
+      price: 5
+    });
+
+    expect(
+      newTicket.lines[0].hasOwnProperty('oBPOSPriceModificationReason')
+    ).toBe(false);
+  });
+
   it('does not mutate lines', () => {
     const newTicket = OB.App.StateAPI.Ticket.setPrice(basicTicket, {
       lineIds: ['1'],

@@ -12,13 +12,22 @@
 (function SetQuantityDefinition() {
   OB.App.StateAPI.Ticket.registerAction('setPrice', (state, payload) => {
     const ticket = { ...state };
-    const { price, lineIds } = payload;
+    const { lineIds, price, reason } = payload;
 
     ticket.lines = ticket.lines.map(l => {
       if (!lineIds.includes(l.id)) {
         return l;
       }
-      return { ...l, price };
+
+      const newLine = { ...l, price };
+
+      if (reason) {
+        newLine.oBPOSPriceModificationReason = reason;
+      } else {
+        delete newLine.oBPOSPriceModificationReason;
+      }
+
+      return newLine;
     });
 
     return ticket;
