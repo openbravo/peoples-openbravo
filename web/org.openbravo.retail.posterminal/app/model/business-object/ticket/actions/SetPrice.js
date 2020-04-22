@@ -64,6 +64,20 @@
       );
     }
 
+    if (
+      lines.some(
+        l =>
+          !l.product.obposEditablePrice || l.product.isEditablePrice === false
+      )
+    ) {
+      throw new OB.App.Class.ActionCanceled(
+        'Setting price not editable ticket',
+        {
+          errorConfirmation: 'OBPOS_modalNoEditableLineBody'
+        }
+      );
+    }
+
     if (lines.some(l => l.replacedorderline && l.qty < 0)) {
       throw new OB.App.Class.ActionCanceled(
         'Setting price to replaced return lines',

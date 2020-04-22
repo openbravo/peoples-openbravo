@@ -42,7 +42,7 @@ describe('Ticket.setQuantity action preparation', () => {
           price: 10,
           priceList: 10,
           isEditable: true,
-          product: { listPrice: 10 }
+          product: { listPrice: 10, obposEditablePrice: true }
         },
         {
           id: '2',
@@ -50,7 +50,7 @@ describe('Ticket.setQuantity action preparation', () => {
           price: 20,
           priceList: 20,
           isEditable: true,
-          product: { listPrice: 20 }
+          product: { listPrice: 20, obposEditablePrice: true }
         },
         {
           id: '3',
@@ -58,7 +58,7 @@ describe('Ticket.setQuantity action preparation', () => {
           price: 30,
           priceList: 30,
           isEditable: true,
-          product: { listPrice: 30 }
+          product: { listPrice: 30, obposEditablePrice: true }
         }
       ]
     }
@@ -75,7 +75,7 @@ describe('Ticket.setQuantity action preparation', () => {
           priceList: 10,
           isEditable: false,
           originalDocumentNo: '0001',
-          product: { listPrice: 10 }
+          product: { listPrice: 10, obposEditablePrice: true }
         }
       ]
     }
@@ -148,7 +148,7 @@ describe('Ticket.setQuantity action preparation', () => {
               replacedorderline: true,
               price: 10,
               priceList: 10,
-              product: { listPrice: 10 }
+              product: { listPrice: 10, obposEditablePrice: true }
             }
           ]
         }
@@ -178,6 +178,64 @@ describe('Ticket.setQuantity action preparation', () => {
       }
       expect(error).toMatchObject({
         info: { errorConfirmation: 'OBPOS_modalNoEditableBody' }
+      });
+    });
+
+    it('cannot set price if product price is not editable 1', async () => {
+      persistence.getState.mockReturnValue({
+        Ticket: {
+          lines: [
+            {
+              id: '1',
+              qty: 1,
+              price: 10,
+              priceList: 10,
+              isEditable: true,
+              product: { listPrice: 10, obposEditablePrice: false }
+            }
+          ]
+        }
+      });
+
+      let error;
+      try {
+        await state.Ticket.setPrice({ lineIds: ['1'], price: 5 });
+      } catch (e) {
+        error = e;
+      }
+      expect(error).toMatchObject({
+        info: { errorConfirmation: 'OBPOS_modalNoEditableLineBody' }
+      });
+    });
+
+    it('cannot set price if product price is not editable 2', async () => {
+      persistence.getState.mockReturnValue({
+        Ticket: {
+          lines: [
+            {
+              id: '1',
+              qty: 1,
+              price: 10,
+              priceList: 10,
+              isEditable: true,
+              product: {
+                listPrice: 10,
+                obposEditablePrice: true,
+                isEditablePrice: false
+              }
+            }
+          ]
+        }
+      });
+
+      let error;
+      try {
+        await state.Ticket.setPrice({ lineIds: ['1'], price: 5 });
+      } catch (e) {
+        error = e;
+      }
+      expect(error).toMatchObject({
+        info: { errorConfirmation: 'OBPOS_modalNoEditableLineBody' }
       });
     });
 

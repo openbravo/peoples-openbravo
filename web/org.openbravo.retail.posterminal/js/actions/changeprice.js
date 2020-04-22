@@ -103,20 +103,6 @@
           return;
         }
 
-        if (
-          !selectedReceiptLines.every(function(l) {
-            return (
-              l.get('product').get('obposEditablePrice') &&
-              l.get('product').get('isEditablePrice') !== false
-            );
-          })
-        ) {
-          view.doShowPopup({
-            popup: 'modalNotEditableLine'
-          });
-          return;
-        }
-
         validatePrice()
           .then(function() {
             var callback = function() {
