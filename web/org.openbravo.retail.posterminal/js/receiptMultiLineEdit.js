@@ -510,7 +510,7 @@ enyo.kind({
     var dateSelected = diff.obrdmDeliveryDate.getValue();
     var today = new Date();
     if (diff.obrdmDeliveryDate.owner.owner.getShowing()) {
-      if (dateSelected !== null) {
+      if (dateSelected !== null && dateSelected !== '') {
         if (
           new Date(dateSelected.toDateString()) < new Date(today.toDateString())
         ) {

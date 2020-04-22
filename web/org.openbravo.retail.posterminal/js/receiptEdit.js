@@ -249,7 +249,7 @@ OB.UI.ModalReceiptPropertiesImpl.prototype.newAttributes.push(
         var dateSelected = dateComponent.getValue(),
           today = new Date();
 
-        if (dateSelected !== null) {
+        if (dateSelected !== null && dateSelected !== '') {
           if (
             new Date(dateSelected.toDateString()) <
             new Date(today.toDateString())
