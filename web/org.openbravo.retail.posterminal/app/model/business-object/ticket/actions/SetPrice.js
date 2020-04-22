@@ -18,7 +18,7 @@
       if (!lineIds.includes(l.id)) {
         return l;
       }
-      return { ...l, price, priceList: l.product.listPrice };
+      return { ...l, price };
     });
 
     return ticket;
