@@ -25,7 +25,9 @@
           receipt &&
           !receipt.get('isQuotation') &&
           !receipt.get('fullInvoice') &&
-          receipt.getInvoiceTerms() === 'I'
+          (receipt.getInvoiceTerms() === 'I' ||
+            receipt.getInvoiceTerms() === 'D' ||
+            receipt.getInvoiceTerms() === 'O')
         );
       },
       command: function(view) {
