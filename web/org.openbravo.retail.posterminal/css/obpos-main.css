@@ -5370,17 +5370,17 @@ li.selected > .obUiRenderOrderLine_edit {
   width: 100%;
   position: relative;
   border: none;
-  margin: 0px;
   padding: 8px 10px 8px 10px;
   text-decoration: none;
   text-align: left;
   color: black;
   border-bottom: var(--separator-slim);
-  height: 63px;
   line-height: 23px;
   font-size: var(--font-medium);
+  vertical-align: middle;
 }
-.obUiOpenedReceiptsList-conteiner1-container1-obUiButton {
+
+.obUiOpenedReceiptsList-conteiner1-container1-obUiButton.selected {
   background-color: var(--color-quaternary-variant);
 }
 
@@ -5434,7 +5434,7 @@ li.selected > .obUiRenderOrderLine_edit {
   font-size: var(--font-medium);
 }
 
-.obUiOpenedReceiptsListLine_disabled {
+.obUiOpenedReceiptsListLine.selected {
   background-color: var(--color-quaternary-variant);
 }
 
