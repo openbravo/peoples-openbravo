@@ -15,8 +15,11 @@
  **/
 
 OB = {
-  App: { StateBackwardCompatibility: { setProperties: jest.fn() }, Class: {} },
-  MobileApp: { model: { hasPermission: jest.fn().mockReturnValue(false) } },
+  App: {
+    StateBackwardCompatibility: { setProperties: jest.fn() },
+    Class: {},
+    Security: { hasPermission: jest.fn().mockReturnValue(false) }
+  },
   UTIL: {
     HookManager: { registerHook: jest.fn() }
   }
@@ -270,7 +273,7 @@ describe('Ticket.setQuantity action preparation', () => {
 
       it('can decrease price with permission', async () => {
         persistence.getState.mockReturnValue(basicReturn);
-        OB.MobileApp.model.hasPermission.mockReturnValue(true);
+        OB.App.Security.hasPermission.mockReturnValue(true);
 
         await expect(
           state.Ticket.setPrice({ lineIds: ['1'], price: 5 })
@@ -279,7 +282,7 @@ describe('Ticket.setQuantity action preparation', () => {
 
       it('cannot increse price even with permission', async () => {
         persistence.getState.mockReturnValue(basicReturn);
-        OB.MobileApp.model.hasPermission.mockReturnValue(true);
+        OB.App.Security.hasPermission.mockReturnValue(true);
 
         let error;
         try {

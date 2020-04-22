@@ -100,10 +100,7 @@
     // and even with permissions only to decrease the price
     const canModifyVerifiedReturn =
       !ticket.isPaid &&
-      OB.MobileApp.model.hasPermission(
-        'OBPOS_ModifyPriceVerifiedReturns',
-        true
-      );
+      OB.App.Security.hasPermission('OBPOS_ModifyPriceVerifiedReturns');
     if (
       lines.some(
         l =>
