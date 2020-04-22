@@ -72,7 +72,7 @@
 
               receipt.trigger('scan');
             })
-            .catch(OB.App.Class.ActionCanceledUIHandler.handle);
+            .catch(OB.App.View.ActionCanceledUIHandler.handle);
         };
         var validatePrice = function() {
           if (
