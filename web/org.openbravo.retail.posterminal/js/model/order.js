@@ -6028,7 +6028,7 @@
       // Remove all lines and insert again with new prices
       addProductsOfLines = async function(receipt, lines, index, callback) {
         var success = function(product) {
-          var attrs;
+          var attrs, lineQty;
           if (!OB.UTIL.isNullOrUndefined(lines[index].get('splitline'))) {
             attrs = {
               splitline: lines[index].get('splitline'),
@@ -6038,72 +6038,73 @@
           attrs = attrs || {};
           attrs.organization = lines[index].get('organization');
           attrs.warehouse = lines[index].get('warehouse');
-          me.addProduct(
-            product,
-            lines[index].get('qty'),
-            undefined,
-            attrs,
-            function(isInPriceList) {
-              const oldLineId = lines[index].get('id');
-              if (isInPriceList) {
-                const newLineId = me
-                  .get('lines')
-                  .at(index)
-                  .get('id');
-                if (
-                  me.get('discountsFromUser') &&
-                  me.get('discountsFromUser').manualPromotions
-                ) {
-                  me.get('discountsFromUser').manualPromotions.forEach(
-                    manualPromotion => {
-                      if (
-                        manualPromotion.linesToApply.indexOf(oldLineId) !== -1
-                      ) {
-                        manualPromotion.linesToApply.splice(
-                          manualPromotion.linesToApply.indexOf(oldLineId),
-                          1,
-                          newLineId
-                        );
-                      }
+          lineQty = lines[index].get('qty');
+          // Issue 43710: Convert quantity to positive as sign conversion handled in addProduct
+          if (lineQty < 0) {
+            lineQty = lineQty * -1;
+          }
+          me.addProduct(product, lineQty, undefined, attrs, function(
+            isInPriceList
+          ) {
+            const oldLineId = lines[index].get('id');
+            if (isInPriceList) {
+              const newLineId = me
+                .get('lines')
+                .at(index)
+                .get('id');
+              if (
+                me.get('discountsFromUser') &&
+                me.get('discountsFromUser').manualPromotions
+              ) {
+                me.get('discountsFromUser').manualPromotions.forEach(
+                  manualPromotion => {
+                    if (
+                      manualPromotion.linesToApply.indexOf(oldLineId) !== -1
+                    ) {
+                      manualPromotion.linesToApply.splice(
+                        manualPromotion.linesToApply.indexOf(oldLineId),
+                        1,
+                        newLineId
+                      );
                     }
-                  );
-                }
+                  }
+                );
+              }
 
-                me.get('lines')
-                  .at(index)
-                  .calculateGross();
-                addProductsOfLines(receipt, lines, index + 1, callback);
-              } else {
-                if (
-                  me.get('discountsFromUser') &&
-                  me.get('discountsFromUser').manualPromotions
-                ) {
-                  me.get('discountsFromUser').manualPromotions.forEach(
-                    manualPromotion => {
-                      if (
-                        manualPromotion.linesToApply.indexOf(oldLineId) !== -1
-                      ) {
-                        manualPromotion.linesToApply.splice(
-                          manualPromotion.linesToApply.indexOf(oldLineId),
+              me.get('lines')
+                .at(index)
+                .calculateGross();
+              addProductsOfLines(receipt, lines, index + 1, callback);
+            } else {
+              if (
+                me.get('discountsFromUser') &&
+                me.get('discountsFromUser').manualPromotions
+              ) {
+                me.get('discountsFromUser').manualPromotions.forEach(
+                  manualPromotion => {
+                    if (
+                      manualPromotion.linesToApply.indexOf(oldLineId) !== -1
+                    ) {
+                      manualPromotion.linesToApply.splice(
+                        manualPromotion.linesToApply.indexOf(oldLineId),
+                        1
+                      );
+                      if (manualPromotion.linesToApply.length === 0) {
+                        me.get('discountsFromUser').manualPromotions.splice(
+                          me
+                            .get('discountsFromUser')
+                            .manualPromotions.indexOf(manualPromotion),
                           1
                         );
-                        if (manualPromotion.linesToApply.length === 0) {
-                          me.get('discountsFromUser').manualPromotions.splice(
-                            me
-                              .get('discountsFromUser')
-                              .manualPromotions.indexOf(manualPromotion),
-                            1
-                          );
-                        }
                       }
                     }
-                  );
-                }
-                lines.splice(index, 1);
-                addProductsOfLines(receipt, lines, index, callback);
+                  }
+                );
               }
+              lines.splice(index, 1);
+              addProductsOfLines(receipt, lines, index, callback);
             }
-          );
+          });
         };
         if (index === lines.length) {
           me.set('skipCalculateReceipt', false);
