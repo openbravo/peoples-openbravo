@@ -31,6 +31,7 @@
         lineNetAmount,
         rules
       );
+      const lineTaxRate = OB.Taxes.Tax.calculateLineTaxRate(lineTaxes);
 
       return {
         id: line.id,
@@ -40,6 +41,7 @@
         netPrice: lineNetPrice,
         qty: line.qty,
         tax: parentTaxId,
+        taxRate: lineTaxRate,
         taxes: lineTaxes
       };
     }

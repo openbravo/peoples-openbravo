@@ -42,7 +42,7 @@
     };
     const checkIsCashVAT = rule => {
       return (
-        equals(rule.isCashVAT, ticket.isCashVat) ||
+        equals(rule.isCashVAT, ticket.cashVAT) ||
         (!rule.isCashVAT && (rule.withholdingTax || equals(rule.rate, 0)))
       );
     };

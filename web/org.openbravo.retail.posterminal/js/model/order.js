@@ -1229,6 +1229,12 @@
 
     isNegative: function() {
       var isNegative;
+      if (this.get('cancelAndReplaceChangePending')) {
+        this.set('isNegative', true, {
+          silent: true
+        });
+        return true;
+      }
       if (OB.UTIL.isNullOrUndefined(this.get('isNegative'))) {
         var processedPaymentsAmount = OB.DEC.Zero,
           loadedFromBackend = this.get('isLayaway') || this.get('isPaid');
@@ -1345,6 +1351,9 @@
         processedPaymentsAmount = OB.DEC.Zero,
         paymentsAmount = OB.DEC.Zero,
         isNegative = this.isNegative(),
+        cancelAndReplaceChangePending = this.get(
+          'cancelAndReplaceChangePending'
+        ),
         remainingToPay,
         done,
         pending,
@@ -1366,9 +1375,10 @@
           );
         } else {
           if (
-            loadedFromBackend ||
-            !isNegative ||
-            payment.get('isReversePayment')
+            !cancelAndReplaceChangePending &&
+            (loadedFromBackend ||
+              !isNegative ||
+              payment.get('isReversePayment'))
           ) {
             paymentsAmount = OB.DEC.add(
               paymentsAmount,
@@ -2852,6 +2862,25 @@
         return;
       }
 
+      // Check if it is necessary to restore the tax category of related products
+      if (lineToDelete.get('product').has('productServiceLinked')) {
+        lineToDelete.get('relatedLines').forEach(relatedProduct => {
+          const relatedLine = this.get('lines').find(
+            line => line.id === relatedProduct.orderlineId
+          );
+          if (relatedLine && relatedLine.get('product').has('oldTaxCategory')) {
+            relatedLine
+              .get('product')
+              .set(
+                'taxCategory',
+                relatedLine.get('product').get('oldTaxCategory')
+              );
+            relatedLine.get('product').unset('oldTaxCategory');
+            relatedLine.set('recalculateTax', true);
+          }
+        });
+      }
+
       if (
         OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) &&
         lineToDelete.get('obposQtyDeleted')
@@ -4258,7 +4287,6 @@
       cancelCallback
     ) {
       var executeAddProduct,
-        addProductBOMToProduct,
         addProdCharsToProduct,
         finalCallback,
         me = this,
@@ -4316,12 +4344,80 @@
         return;
       }
 
-      addProductBOMToProduct = async function() {
+      const addProductBOMToProduct = async function() {
         const productBOM = await OB.App.MasterdataModels.ProductBOM.find(
           new OB.App.Class.Criteria().criterion('product', p.id).build()
         );
-        if (productBOM.length > 0) {
-          p.set('productBOM', productBOM);
+
+        if (productBOM.length === 0) {
+          return;
+        }
+
+        if (productBOM.find(bomLine => !bomLine.bomprice)) {
+          const title = OB.I18N.getLabel('OBPOS_TaxNotFound_Header');
+          const error = OB.I18N.getLabel('OBPOS_BOM_NoPrice');
+          OB.error(title + ':' + error);
+          OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
+            popup: 'OB_UI_MessageDialog',
+            args: {
+              header: title,
+              message: error
+            }
+          });
+          finalCallback(false, null);
+          throw error;
+        }
+
+        p.set(
+          'productBOM',
+          productBOM.map(bomLine => {
+            return {
+              amount: OB.DEC.mul(bomLine.bomprice, bomLine.bomquantity),
+              qty: bomLine.bomquantity,
+              product: {
+                id: bomLine.bomproduct,
+                taxCategory: bomLine.bomtaxcategory
+              }
+            };
+          })
+        );
+      };
+
+      const addProductServiceLinkedToProduct = async function() {
+        if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+          OB.Dal.find(
+            OB.Model.ProductServiceLinked,
+            {
+              product: p.id,
+              remoteFilters: [
+                {
+                  columns: ['product'],
+                  operator: 'equals',
+                  value: p.id
+                }
+              ]
+            },
+            function(productServiceLinked) {
+              if (productServiceLinked.length > 0) {
+                p.set('productServiceLinked', productServiceLinked);
+              }
+            }
+          );
+        } else {
+          const productServiceLinked = await OB.App.MasterdataModels.ProductServiceLinked.find(
+            new OB.App.Class.Criteria().criterion('product', p.id).build()
+          );
+          if (productServiceLinked.length > 0) {
+            p.set(
+              'productServiceLinked',
+              productServiceLinked.map(productServiceLink =>
+                OB.Dal.transform(
+                  OB.Model.ProductServiceLinked,
+                  productServiceLink
+                )
+              )
+            );
+          }
         }
       };
 
@@ -4359,12 +4455,17 @@
 
       // In case product is BOM and it doesn't have BOM information yet, add it
       if (
-        !p.has('productBOM') &&
         OB.Taxes.Pos.taxCategoryBOM.find(
           taxCategory => taxCategory.id === p.get('taxCategory')
-        )
+        ) &&
+        !p.has('productBOM')
       ) {
         await addProductBOMToProduct();
+      }
+
+      // In case product is Service with modify tax enabled and it doesn't have ProductServiceLinked information yet, add it
+      if (p.get('modifyTax') && !p.has('productServiceLinked')) {
+        await addProductServiceLinkedToProduct();
       }
 
       var productWithChars = OB.UTIL.clone(p);
@@ -4893,7 +4994,9 @@
         disc.extraProperties = {};
         var key;
         for (key in discount.extraProperties) {
-          if (discount.extraProperties.hasOwnProperty(key)) {
+          if (
+            Object.prototype.hasOwnProperty.call(discount.extraProperties, key)
+          ) {
             disc[key] = discount.extraProperties[key];
             disc.extraProperties[key] = discount.extraProperties[key];
           }
@@ -5039,6 +5142,75 @@
       }
 
       function createLineAux(p, units, options, attrs, me) {
+        const setDeliveryMode = line => {
+          if (
+            line.get('product').get('productType') !== 'S' &&
+            !line.get('obrdmDeliveryMode')
+          ) {
+            var defaultDeliveryModeInProduct,
+              defaultDeliveryMode,
+              deliveryDateInProduct,
+              deliveryTimeInProduct;
+            if (
+              OB.MobileApp.model.receipt.get('isLayaway') ||
+              OB.MobileApp.model.receipt.get('orderType') === 2
+            ) {
+              defaultDeliveryModeInProduct = line
+                .get('product')
+                .get('obrdmDeliveryModeLyw');
+              defaultDeliveryMode = defaultDeliveryModeInProduct
+                ? defaultDeliveryModeInProduct
+                : OB.MobileApp.model.receipt.get('obrdmDeliveryModeProperty')
+                ? OB.MobileApp.model.receipt.get('obrdmDeliveryModeProperty')
+                : 'PickAndCarry';
+            } else {
+              defaultDeliveryModeInProduct = line
+                .get('product')
+                .get('obrdmDeliveryMode');
+              deliveryDateInProduct = line
+                .get('product')
+                .get('obrdmDeliveryDate');
+              deliveryTimeInProduct = line
+                .get('product')
+                .get('obrdmDeliveryTime');
+              defaultDeliveryMode = defaultDeliveryModeInProduct
+                ? defaultDeliveryModeInProduct
+                : OB.MobileApp.model.receipt.get('obrdmDeliveryModeProperty')
+                ? OB.MobileApp.model.receipt.get('obrdmDeliveryModeProperty')
+                : 'PickAndCarry';
+            }
+            line.set('obrdmDeliveryMode', defaultDeliveryMode);
+            if (
+              line.get('obrdmDeliveryMode') === 'PickupInStoreDate' ||
+              line.get('obrdmDeliveryMode') === 'HomeDelivery'
+            ) {
+              var currentDate = new Date();
+              currentDate.setHours(0);
+              currentDate.setMinutes(0);
+              currentDate.setSeconds(0);
+              line.set(
+                'obrdmDeliveryDate',
+                defaultDeliveryModeInProduct
+                  ? deliveryDateInProduct
+                    ? deliveryDateInProduct
+                    : currentDate
+                  : OB.MobileApp.model.receipt.get('obrdmDeliveryDateProperty')
+              );
+            }
+            if (line.get('obrdmDeliveryMode') === 'HomeDelivery') {
+              var currentTime = new Date();
+              currentTime.setSeconds(0);
+              line.set(
+                'obrdmDeliveryTime',
+                defaultDeliveryModeInProduct
+                  ? deliveryTimeInProduct
+                    ? deliveryTimeInProduct
+                    : currentTime
+                  : OB.MobileApp.model.receipt.get('obrdmDeliveryTimeProperty')
+              );
+            }
+          }
+        };
         if (
           me.validateAllowSalesWithReturn(
             units,
@@ -5080,11 +5252,13 @@
                 : attrs.originalLine.get('warehouse').warehousename
           },
           isEditable:
-            options && options.hasOwnProperty('isEditable')
+            options &&
+            Object.prototype.hasOwnProperty.call(options, 'isEditable')
               ? options.isEditable
               : true,
           isDeletable:
-            options && options.hasOwnProperty('isDeletable')
+            options &&
+            Object.prototype.hasOwnProperty.call(options, 'isDeletable')
               ? options.isDeletable
               : true
         });
@@ -5105,7 +5279,49 @@
           if (!me.get('hasServices')) {
             me.set('hasServices', true);
           }
+
+          // Check if it is necessary to modify the tax category of related products
+          if (newline.get('product').has('productServiceLinked')) {
+            newline
+              .get('product')
+              .get('productServiceLinked')
+              .forEach(productServiceLinked => {
+                newline
+                  .get('relatedLines')
+                  .filter(
+                    relatedProduct =>
+                      relatedProduct.productCategory ===
+                      productServiceLinked.get('productCategory')
+                  )
+                  .forEach(relatedProduct => {
+                    const relatedLine = OB.MobileApp.model.receipt
+                      .get('lines')
+                      .find(line => line.id === relatedProduct.orderlineId);
+                    if (relatedLine) {
+                      relatedLine
+                        .get('product')
+                        .set(
+                          'oldTaxCategory',
+                          relatedLine.get('product').get('taxCategory')
+                        );
+                      relatedLine
+                        .get('product')
+                        .set(
+                          'taxCategory',
+                          productServiceLinked.get('taxCategory')
+                        );
+                      relatedLine.set(
+                        'previousLineRate',
+                        relatedLine.get('lineRate')
+                      );
+                      relatedLine.set('recalculateTax', true);
+                    }
+                  });
+              });
+          }
         }
+
+        setDeliveryMode(newline);
 
         //issue 25448: Show stock screen is just shown when a new line is created.
         if (newline.get('product').get('showstock') === true) {
@@ -5812,7 +6028,7 @@
       // Remove all lines and insert again with new prices
       addProductsOfLines = async function(receipt, lines, index, callback) {
         var success = function(product) {
-          var attrs;
+          var attrs, lineQty;
           if (!OB.UTIL.isNullOrUndefined(lines[index].get('splitline'))) {
             attrs = {
               splitline: lines[index].get('splitline'),
@@ -5822,72 +6038,73 @@
           attrs = attrs || {};
           attrs.organization = lines[index].get('organization');
           attrs.warehouse = lines[index].get('warehouse');
-          me.addProduct(
-            product,
-            lines[index].get('qty'),
-            undefined,
-            attrs,
-            function(isInPriceList) {
-              const oldLineId = lines[index].get('id');
-              if (isInPriceList) {
-                const newLineId = me
-                  .get('lines')
-                  .at(index)
-                  .get('id');
-                if (
-                  me.get('discountsFromUser') &&
-                  me.get('discountsFromUser').manualPromotions
-                ) {
-                  me.get('discountsFromUser').manualPromotions.forEach(
-                    manualPromotion => {
-                      if (
-                        manualPromotion.linesToApply.indexOf(oldLineId) !== -1
-                      ) {
-                        manualPromotion.linesToApply.splice(
-                          manualPromotion.linesToApply.indexOf(oldLineId),
-                          1,
-                          newLineId
-                        );
-                      }
+          lineQty = lines[index].get('qty');
+          // Issue 43710: Convert quantity to positive as sign conversion handled in addProduct
+          if (lineQty < 0) {
+            lineQty = lineQty * -1;
+          }
+          me.addProduct(product, lineQty, undefined, attrs, function(
+            isInPriceList
+          ) {
+            const oldLineId = lines[index].get('id');
+            if (isInPriceList) {
+              const newLineId = me
+                .get('lines')
+                .at(index)
+                .get('id');
+              if (
+                me.get('discountsFromUser') &&
+                me.get('discountsFromUser').manualPromotions
+              ) {
+                me.get('discountsFromUser').manualPromotions.forEach(
+                  manualPromotion => {
+                    if (
+                      manualPromotion.linesToApply.indexOf(oldLineId) !== -1
+                    ) {
+                      manualPromotion.linesToApply.splice(
+                        manualPromotion.linesToApply.indexOf(oldLineId),
+                        1,
+                        newLineId
+                      );
                     }
-                  );
-                }
+                  }
+                );
+              }
 
-                me.get('lines')
-                  .at(index)
-                  .calculateGross();
-                addProductsOfLines(receipt, lines, index + 1, callback);
-              } else {
-                if (
-                  me.get('discountsFromUser') &&
-                  me.get('discountsFromUser').manualPromotions
-                ) {
-                  me.get('discountsFromUser').manualPromotions.forEach(
-                    manualPromotion => {
-                      if (
-                        manualPromotion.linesToApply.indexOf(oldLineId) !== -1
-                      ) {
-                        manualPromotion.linesToApply.splice(
-                          manualPromotion.linesToApply.indexOf(oldLineId),
+              me.get('lines')
+                .at(index)
+                .calculateGross();
+              addProductsOfLines(receipt, lines, index + 1, callback);
+            } else {
+              if (
+                me.get('discountsFromUser') &&
+                me.get('discountsFromUser').manualPromotions
+              ) {
+                me.get('discountsFromUser').manualPromotions.forEach(
+                  manualPromotion => {
+                    if (
+                      manualPromotion.linesToApply.indexOf(oldLineId) !== -1
+                    ) {
+                      manualPromotion.linesToApply.splice(
+                        manualPromotion.linesToApply.indexOf(oldLineId),
+                        1
+                      );
+                      if (manualPromotion.linesToApply.length === 0) {
+                        me.get('discountsFromUser').manualPromotions.splice(
+                          me
+                            .get('discountsFromUser')
+                            .manualPromotions.indexOf(manualPromotion),
                           1
                         );
-                        if (manualPromotion.linesToApply.length === 0) {
-                          me.get('discountsFromUser').manualPromotions.splice(
-                            me
-                              .get('discountsFromUser')
-                              .manualPromotions.indexOf(manualPromotion),
-                            1
-                          );
-                        }
                       }
                     }
-                  );
-                }
-                lines.splice(index, 1);
-                addProductsOfLines(receipt, lines, index, callback);
+                  }
+                );
               }
+              lines.splice(index, 1);
+              addProductsOfLines(receipt, lines, index, callback);
             }
-          );
+          });
         };
         if (index === lines.length) {
           me.set('skipCalculateReceipt', false);
@@ -7382,13 +7599,17 @@
       );
 
       // Set the 'isNegative' value
-      if (loadedFromBackend) {
-        isNegative = OB.DEC.compare(this.getGross()) === -1;
+      if (this.get('cancelAndReplaceChangePending')) {
+        isNegative = true;
       } else {
-        if (OB.DEC.compare(this.getGross()) === -1) {
-          isNegative = processedPaymentsAmount >= this.getGross();
+        if (loadedFromBackend) {
+          isNegative = OB.DEC.compare(this.getGross()) === -1;
         } else {
-          isNegative = processedPaymentsAmount > this.getGross();
+          if (OB.DEC.compare(this.getGross()) === -1) {
+            isNegative = processedPaymentsAmount >= this.getGross();
+          } else {
+            isNegative = processedPaymentsAmount > this.getGross();
+          }
         }
       }
       if (
@@ -7438,6 +7659,7 @@
         // This doesn't affect to reversal payments but to the payments introduced to add the quantity reversed
         if (
           isNegative &&
+          !this.get('cancelAndReplaceChangePending') &&
           loadedFromBackend &&
           !p.get('reversedPaymentId') &&
           !p.get('signChanged')
@@ -7779,6 +8001,8 @@
                   'cancelAndReplace',
                   order.get('doCancelAndReplace')
                 );
+              } else if (order.get('cancelAndReplaceChangePending')) {
+                payment.set('cancelAndReplace', true);
               }
 
               payments.add(payment, {
@@ -9298,7 +9522,7 @@
       desc += '], Taxes: [';
       i = 0;
       for (propt in this.get('taxes')) {
-        if (this.get('taxes').hasOwnProperty(propt)) {
+        if (Object.prototype.hasOwnProperty.call(this.get('taxes'), propt)) {
           var obj = this.get('taxes')[propt];
           if (i !== 0) {
             desc += ',';
@@ -10722,6 +10946,7 @@
           }
         );
       },
+
       newDynamicOrder: function(model, callback) {
         var order = new OB.Model.Order(),
           undf;

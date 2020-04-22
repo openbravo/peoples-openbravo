@@ -11,78 +11,115 @@
 (function() {
   OB.Taxes = OB.Taxes || {};
   OB.Taxes.Pos = {
-    translateTicket: function(receipt) {
-      const newTicket = {};
-      newTicket.id = receipt.get('id');
-      newTicket.date = new Date();
-      newTicket.priceIncludesTax = receipt.get('priceIncludesTax');
-      newTicket.isCashVat = OB.MobileApp.model.get('terminal').cashVat;
-      newTicket.businessPartner = {};
-      newTicket.businessPartner.id = receipt.get('bp').id;
-      newTicket.businessPartner.businessPartnerTaxCategory = receipt
-        .get('bp')
-        .get('taxCategory');
-      newTicket.businessPartner.taxExempt = receipt.get('bp').get('taxExempt');
+    isTaxRecalculationNecessary: function(ticket) {
+      return (
+        ticket.priceIncludesTax &&
+        ticket.lines.find(line => line.recalculateTax)
+      );
+    },
 
-      newTicket.lines = [];
-      receipt.get('lines').forEach(line => {
-        const newLine = {};
-        newLine.id = line.get('id');
+    getTicketForTaxRecalculation: function(ticket, taxes) {
+      const newTicket = { ...ticket };
+      newTicket.lines = newTicket.lines.map(line => {
+        const lineTax = taxes.lines.find(lineTax => lineTax.id === line.id);
+        line.amount =
+          line.recalculateTax && line.lineRate
+            ? OB.DEC.mul(
+                OB.DEC.mul(
+                  OB.DEC.div(lineTax.grossPrice, line.lineRate),
+                  lineTax.taxRate
+                ),
+                line.qty
+              )
+            : line.amount;
+        return line;
+      });
+      return newTicket;
+    },
+
+    translateReceipt: function(receipt) {
+      return {
+        id: receipt.get('id'),
+        orderDate: receipt.get('orderDate'),
+        priceIncludesTax: receipt.get('priceIncludesTax'),
+        cashVAT: receipt.get('cashVAT'),
+        businessPartner: {
+          id: receipt.get('bp').id,
+          taxCategory: receipt.get('bp').get('taxCategory'),
+          taxExempt: receipt.get('bp').get('taxExempt'),
+          shipCountryId: receipt.get('bp').get('shipCountryId'),
+          shipRegionId: receipt.get('bp').get('shipRegionId'),
+          shipLocId: receipt.get('bp').get('shipLocId'),
+          locationModel: {
+            countryId: receipt
+              .get('bp')
+              .get('locationModel')
+              .get('countryId'),
+            regionId: receipt
+              .get('bp')
+              .get('locationModel')
+              .get('regionId')
+          }
+        },
+        lines: receipt.get('lines').map(line => {
+          return {
+            id: line.get('id'),
+            recalculateTax: line.get('recalculateTax'),
+            lineRate: line.get('lineRate'),
+            obrdmDeliveryMode: line.get('obrdmDeliveryMode'),
+            discountedGross: line.get('discountedGross'),
+            gross: line.get('gross'),
+            discountedNet: line.get('discountedNet'),
+            net: line.get('net'),
+            qty: line.get('qty'),
+            originalTaxCategory: line.get('originalTaxCategory'),
+            originalTaxExempt: line.get('originalTaxExempt'),
+            organization: {
+              country: line.get('organization').country,
+              region: line.get('organization').region
+            },
+            product: {
+              id: line.get('product').id,
+              taxCategory: line.get('product').get('taxCategory')
+            },
+            bomLines: line.get('product').get('productBOM')
+          };
+        })
+      };
+    },
+
+    translateTicket: function(ticket) {
+      const newTicket = { ...ticket };
+      newTicket.date = newTicket.orderDate;
+      newTicket.businessPartner.businessPartnerTaxCategory =
+        newTicket.businessPartner.taxCategory;
+
+      newTicket.lines.forEach(newLine => {
         newLine.country =
-          line.get('obrdmDeliveryMode') === 'HomeDelivery'
-            ? receipt.get('bp').get('shipCountryId') ||
-              receipt.get('bp').get('shipLocId')
-              ? receipt
-                  .get('bp')
-                  .get('locationModel')
-                  .get('countryId')
+          newLine.obrdmDeliveryMode === 'HomeDelivery'
+            ? newTicket.businessPartner.shipCountryId ||
+              newTicket.businessPartner.shipLocId
+              ? newTicket.businessPartner.locationModel.countryId
               : null
-            : line.get('organization').country;
+            : newLine.organization.country;
         newLine.region =
-          line.get('obrdmDeliveryMode') === 'HomeDelivery'
-            ? receipt.get('bp').get('shipRegionId') ||
-              receipt.get('bp').get('shipLocId')
-              ? receipt
-                  .get('bp')
-                  .get('locationModel')
-                  .get('regionId')
+          newLine.obrdmDeliveryMode === 'HomeDelivery'
+            ? newTicket.businessPartner.shipRegionId ||
+              newTicket.businessPartner.shipLocId
+              ? newTicket.businessPartner.locationModel.regionId
               : null
-            : line.get('organization').region;
+            : newLine.organization.region;
         newLine.amount = newTicket.priceIncludesTax
-          ? line.has('discountedGross')
-            ? line.get('discountedGross')
-            : line.get('gross')
-          : line.has('discountedNet')
-          ? line.get('discountedNet')
-          : line.get('net');
-        newLine.qty = line.get('qty');
-        newLine.taxExempt = line.get('originalTaxExempt');
-        newLine.product = {};
-        newLine.product.id = line.get('product').id;
-        newLine.product.taxCategory = line.has('originalTaxCategory')
-          ? line.get('originalTaxCategory')
-          : line.get('product').has('modifiedTaxCategory')
-          ? line.get('product').get('modifiedTaxCategory')
-          : line.get('product').get('taxCategory');
-
-        if (line.get('product').has('productBOM')) {
-          newLine.bomLines = [];
-          line
-            .get('product')
-            .get('productBOM')
-            .forEach(bomLine => {
-              const newBomLine = {};
-              newBomLine.id = bomLine.id;
-              newBomLine.amount = bomLine.bomamount;
-              newBomLine.qty = bomLine.bomquantity;
-              newBomLine.product = {};
-              newBomLine.product.id = bomLine.bomproduct;
-              newBomLine.product.taxCategory = bomLine.bomtaxcategory;
-              newLine.bomLines.push(newBomLine);
-            });
-        }
-
-        newTicket.lines.push(newLine);
+          ? newLine.discountedGross || newLine.discountedGross === 0
+            ? newLine.discountedGross
+            : newLine.gross
+          : newLine.discountedNet || newLine.discountedNet === 0
+          ? newLine.discountedNet
+          : newLine.net;
+        newLine.taxExempt = newLine.originalTaxExempt;
+        newLine.product.taxCategory = newLine.originalTaxCategory
+          ? newLine.originalTaxCategory
+          : newLine.product.taxCategory;
       });
 
       return newTicket;
@@ -108,51 +145,44 @@
           }))
           .reduce((obj, item) => ((obj[[item['id']]] = item), obj), {});
       };
-      const calculateLineRate = taxArray => {
-        if (!taxArray) {
-          return null;
-        }
-
-        return OB.DEC.toNumber(
-          taxArray.reduce(
-            (total, tax) =>
-              total.multiply(
-                BigDecimal.prototype.ONE.add(
-                  new BigDecimal(String(tax.tax.rate)).divide(
-                    new BigDecimal('100'),
-                    20,
-                    BigDecimal.prototype.ROUND_HALF_UP
-                  )
-                )
-              ),
-            BigDecimal.prototype.ONE
-          )
-        );
-      };
 
       taxes.header.taxes = translateTaxes(taxes.header.taxes);
       taxes.lines.forEach(line => {
-        line.lineRate = calculateLineRate(line.taxes);
         line.taxes = translateTaxes(line.taxes);
       });
       return taxes;
     },
 
     /**
-     * Finds the list of taxes that apply to given receipt, line and tax category.
-     * The list will be sorted by applicable region, country, date and default.
+     * Finds the list of taxes that apply to given receipt.
      * @param {Object} receipt - The receipt that taxes will apply to.
-     * @param {Object} line - The receipt line that taxes will apply to.
-     * @param {string} taxCategory - The tax category that must apply to given receipt line.
      */
     calculateTaxes(receipt) {
       if (!OB.Taxes.Pos.ruleImpls) {
         throw 'Local tax cache is not yet initialized, execute: OB.Taxes.Pos.initCache()';
       }
 
-      const ticket = OB.Taxes.Pos.translateTicket(receipt);
-      const result = OB.Taxes.applyTaxes(ticket, OB.Taxes.Pos.ruleImpls);
-      const taxes = OB.Taxes.Pos.translateTaxes(result);
+      const ticket = this.translateReceipt(receipt);
+      const result = this.applyTaxes(ticket, this.ruleImpls);
+      return this.translateTaxes(result);
+    },
+
+    /**
+     * Finds the list of given tax rules that apply to given ticket.
+     * @param {Object} ticket - The ticket that taxes will apply to.
+     * @param {Object[]} rules - Array with TaxRate model including TaxZone information.
+     */
+    applyTaxes(ticket, rules) {
+      const ticketForTaxEngine = this.translateTicket(ticket);
+      let taxes = OB.Taxes.applyTaxes(ticketForTaxEngine, rules);
+
+      if (this.isTaxRecalculationNecessary(ticketForTaxEngine)) {
+        const ticketForTaxRecalculation = this.getTicketForTaxRecalculation(
+          ticketForTaxEngine,
+          taxes
+        );
+        taxes = OB.Taxes.applyTaxes(ticketForTaxRecalculation, rules);
+      }
 
       return taxes;
     },

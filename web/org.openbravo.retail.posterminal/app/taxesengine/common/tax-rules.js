@@ -22,11 +22,8 @@
       // Calculate taxes for each ticket line
       taxes.lines = this.ticket.lines.map(line => this.applyLineTaxes(line));
 
-      // Calculate taxes for ticket header in case there was no error calculating taxes for ticket lines
-      const lineWithError = taxes.lines.find(line => line.error);
-      if (!lineWithError) {
-        taxes.header = this.applyHeaderTaxes(taxes.lines);
-      }
+      // Calculate taxes for ticket header
+      taxes.header = this.applyHeaderTaxes(taxes.lines);
 
       return taxes;
     }
@@ -47,10 +44,7 @@
       );
 
       if (rulesFilteredByLine.length === 0) {
-        return {
-          id: line.id,
-          error: 'No tax found'
-        };
+        throw new Error(`No tax found for line: ${line.id}`);
       }
 
       return this.getLineTaxes(line, rulesFilteredByLine);
@@ -109,13 +103,6 @@
       const lineBomTaxes = bomGroups.flatMap(bomGroup => {
         return this.calculateLineTaxes(bomGroup);
       });
-
-      const bomLineWithError = lineBomTaxes.find(bomLine => bomLine.error);
-      lineTaxes.error =
-        lineTaxes.error || bomLineWithError ? bomLineWithError.error : null;
-      if (lineTaxes.error) {
-        return lineTaxes;
-      }
 
       lineTaxes.taxes = lineBomTaxes.flatMap(lineBomTax => lineBomTax.taxes);
       lineTaxes.bomLines = lineBomTaxes;
@@ -319,6 +306,23 @@
       }
 
       return OB.DEC.div(amount, qty);
+    }
+
+    /**
+     * lineTaxRate = 1 + mul(rate / 100) for each rule
+     */
+    static calculateLineTaxRate(taxes) {
+      return OB.DEC.toNumber(
+        taxes.reduce(
+          (total, tax) =>
+            total.multiply(
+              BigDecimal.prototype.ONE.add(
+                OB.Taxes.Tax.getTaxRate(tax.tax.rate)
+              )
+            ),
+          BigDecimal.prototype.ONE
+        )
+      );
     }
 
     /**

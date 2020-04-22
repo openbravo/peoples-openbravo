@@ -8,19 +8,18 @@
  */
 
 (function() {
-  const calculateTaxes = async function(receipt) {
-    // If receipt is not editable, we regenerate taxes info instead of recalculate it
+  const calculateTaxes = function(receipt) {
     if (!receipt.get('isEditable') && !receipt.get('forceCalculateTaxes')) {
       return regenerateTaxes(receipt);
     }
 
-    // We calculate taxes info
-    initializeTaxes(receipt);
-    calculateBOMLineAmount(receipt);
-    await modifyProductTaxCategoryByService(receipt);
-    const taxes = OB.Taxes.Pos.calculateTaxes(receipt);
-    setTaxes(receipt, taxes);
-    recalculateTaxesIfNecessary(receipt);
+    try {
+      initializeTaxes(receipt);
+      const taxes = OB.Taxes.Pos.calculateTaxes(receipt);
+      setTaxes(receipt, taxes);
+    } catch (error) {
+      showLineTaxError(receipt, error);
+    }
   };
 
   const regenerateTaxes = function(receipt) {
@@ -131,180 +130,73 @@
     );
   };
 
-  const calculateBOMLineAmount = function(receipt) {
-    // We use Promise.reject to show async message in case of error
-    new Promise((resolve, reject) => {
-      receipt.get('lines').forEach(line => {
-        if (line.get('product').has('productBOM')) {
-          line
-            .get('product')
-            .get('productBOM')
-            .forEach(bomLine => {
-              if (!bomLine.bomprice) {
-                return reject(line);
-              }
-
-              bomLine.bomamount = OB.DEC.mul(
-                bomLine.bomprice,
-                bomLine.bomquantity
-              );
-            });
-        }
-      });
-    }).catch(function(line) {
-      const error = OB.I18N.getLabel('OBPOS_BOM_NoPrice');
-      showLineTaxError(receipt, line, error);
-    });
-  };
-
-  function modifyProductTaxCategoryByService(receipt) {
-    // For each service with modifyTax flag activated, look in linked product category table
-    // and check if it is necessary to modify the tax category of service related lines
-    return new Promise(async function(resolve, reject) {
-      receipt.get('lines').forEach(line => {
-        line.set('previousLineRate', line.get('lineRate'));
-        line
-          .get('product')
-          .set('modifiedTax', line.get('product').has('modifiedTaxCategory'));
-        line.get('product').unset('modifiedTaxCategory');
-      });
-      const serviceLines = receipt
-        .get('lines')
-        .filter(
-          serviceLine =>
-            serviceLine.get('product').get('modifyTax') &&
-            serviceLine.get('relatedLines') &&
-            !serviceLine.get('obposIsDeleted')
-        );
-      var updateLineTax = function(relatedProductCategories, serviceLine) {
-        relatedProductCategories.forEach(function(relatedProductCategory) {
-          var model;
-          if (relatedProductCategory instanceof Backbone.Model) {
-            model = relatedProductCategory;
-          } else {
-            model = OB.Dal.transform(
-              OB.Model.ProductServiceLinked,
-              relatedProductCategory
-            );
-          }
-          serviceLine
-            .get('relatedLines')
-            .filter(
-              relatedProduct =>
-                relatedProduct.productCategory === model.get('productCategory')
-            )
-            .forEach(relatedProduct => {
-              const relatedLine = receipt
-                .get('lines')
-                .find(line => line.id === relatedProduct.orderlineId);
-              if (relatedLine) {
-                relatedLine.get('product').set('modifiedTax', true);
-                relatedLine
-                  .get('product')
-                  .set('modifiedTaxCategory', model.get('taxCategory'));
-              }
-            });
-        });
-      };
-      for (let i = 0; i < serviceLines.length; i++) {
-        const serviceLine = serviceLines[i];
-        const serviceId = serviceLine.get('product').get('id');
-        if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-          const criteria = {
-            product: serviceId,
-            remoteFilters: [
-              {
-                columns: ['product'],
-                operator: 'equals',
-                value: serviceId
-              }
-            ]
-          };
-          OB.Dal.find(
-            OB.Model.ProductServiceLinked,
-            criteria,
-            function(relatedProductCategories) {
-              updateLineTax(relatedProductCategories.models, serviceLine);
-              resolve();
-            },
-            reject
-          );
-        } else {
-          const criteria = new OB.App.Class.Criteria().criterion(
-            'product',
-            serviceId
-          );
-          try {
-            const relatedProductCategories = await OB.App.MasterdataModels.ProductServiceLinked.find(
-              criteria.build()
-            );
-            if (relatedProductCategories) {
-              updateLineTax(relatedProductCategories, serviceLine);
-            }
-            resolve();
-          } catch (error) {
-            OB.error(error.message);
-            reject();
-          }
-        }
-        return;
-      }
-      resolve();
-    });
-  }
-
   const setTaxes = function(receipt, taxes) {
-    // We use Promise.reject to show async message in case of error
-    new Promise((resolve, reject) => {
-      const lineTaxError = taxes.lines.find(lineTax => lineTax.error);
-      if (lineTaxError) {
-        const line = receipt
-          .get('lines')
-          .find(line => line.id === lineTaxError.id);
-        return reject(line);
+    receipt.set(
+      {
+        gross: taxes.header.grossAmount,
+        net: taxes.header.netAmount,
+        taxes: taxes.header.taxes
+      },
+      {
+        silent: true
       }
-
-      receipt.set(
-        {
-          gross: taxes.header.grossAmount,
-          net: taxes.header.netAmount,
-          taxes: taxes.header.taxes
-        },
-        {
-          silent: true
-        }
-      );
-      receipt.get('lines').forEach(line => {
-        const lineTax = taxes.lines.find(lineTax => lineTax.id === line.id);
-        if (receipt.get('priceIncludesTax')) {
-          line.set(
-            {
-              net: lineTax.netAmount,
-              discountedNet: lineTax.netAmount,
-              pricenet: lineTax.netPrice,
-              lineRate: lineTax.lineRate,
-              tax: lineTax.tax,
-              taxLines: lineTax.taxes
-            },
-            {
-              silent: true
-            }
-          );
-        } else {
+    );
+    receipt.get('lines').forEach(line => {
+      const lineTax = taxes.lines.find(lineTax => lineTax.id === line.id);
+      if (receipt.get('priceIncludesTax')) {
+        if (line.get('recalculateTax')) {
           line.set(
             {
               gross: lineTax.grossAmount,
               discountedGross: lineTax.grossAmount,
-              lineRate: lineTax.lineRate,
-              tax: lineTax.tax,
-              taxLines: lineTax.taxes
+              price: lineTax.grossPrice,
+              recalculateTax: false
             },
             {
               silent: true
             }
           );
         }
-      });
+        line.set(
+          {
+            net: lineTax.netAmount,
+            discountedNet: lineTax.netAmount,
+            pricenet: lineTax.netPrice,
+            lineRate: lineTax.taxRate,
+            tax: lineTax.tax,
+            taxLines: lineTax.taxes
+          },
+          {
+            silent: true
+          }
+        );
+      } else {
+        line.set(
+          {
+            gross: lineTax.grossAmount,
+            discountedGross: lineTax.grossAmount,
+            lineRate: lineTax.taxRate,
+            tax: lineTax.tax,
+            taxLines: lineTax.taxes
+          },
+          {
+            silent: true
+          }
+        );
+      }
+    });
+  };
+
+  const showLineTaxError = function(receipt, error) {
+    // We use Promise.reject to show async message in case of error
+    new Promise((resolve, reject) => {
+      const lineIdWithError = error.message.substring(
+        error.message.length - 32
+      );
+      const line =
+        receipt.get('lines').find(line => line.id === lineIdWithError) ||
+        receipt.get('lines').models[receipt.get('lines').length - 1];
+      return reject(line);
     }).catch(function(line) {
       const taxCategoryName = OB.Taxes.Pos.taxCategory
         .concat(OB.Taxes.Pos.taxCategoryBOM)
@@ -312,67 +204,44 @@
           taxCategory =>
             taxCategory.id === line.get('product').get('taxCategory')
         ).name;
-      const error = OB.I18N.getLabel('OBPOS_TaxWithCategoryNotFound_Message', [
-        receipt.get('bp').get('name') ||
-          OB.I18N.getLabel('OBPOS_LblEmptyAddress'),
-        receipt.get('bp').get('shipLocName') ||
-          OB.I18N.getLabel('OBPOS_LblEmptyAddress'),
-        taxCategoryName
-      ]);
-      showLineTaxError(receipt, line, error);
-    });
-  };
 
-  const recalculateTaxesIfNecessary = function(receipt) {
-    // In case of services with modifyTax flag activated in price including taxes,
-    // we need to recalculate taxes info
-    if (
-      receipt.get('priceIncludesTax') &&
-      receipt
-        .get('lines')
-        .filter(line => line.get('product').get('modifiedTax'))
-        .map(line => {
-          line.set(
-            'price',
-            OB.DEC.mul(
-              OB.DEC.div(line.get('price'), line.get('previousLineRate')),
-              line.get('lineRate')
-            )
-          );
-          line.set('gross', OB.DEC.mul(line.get('price'), line.get('qty')));
-        }).length > 0
-    ) {
-      const recalculatedTaxes = OB.Taxes.Pos.calculateTaxes(receipt);
-      setTaxes(receipt, recalculatedTaxes);
-    }
-  };
+      const errorTitle = OB.I18N.getLabel('OBPOS_TaxNotFound_Header');
+      const errorMessage = OB.I18N.getLabel(
+        'OBPOS_TaxWithCategoryNotFound_Message',
+        [
+          receipt.get('bp').get('name') ||
+            OB.I18N.getLabel('OBPOS_LblEmptyAddress'),
+          receipt.get('bp').get('shipLocName') ||
+            OB.I18N.getLabel('OBPOS_LblEmptyAddress'),
+          taxCategoryName
+        ]
+      );
+      OB.error(errorTitle + ':' + errorMessage);
 
-  const showLineTaxError = function(receipt, line, error) {
-    const title = OB.I18N.getLabel('OBPOS_TaxNotFound_Header');
-    OB.error(title + ':' + error);
-    line.set('hasTaxError', true, {
-      silent: true
-    });
-    receipt.deleteLinesFromOrder([line], function() {
-      OB.MobileApp.view.$.containerWindow
-        .getRoot()
-        .bubble('onErrorCalcLineTax', {
-          line: line,
-          reason: error
+      line.set('hasTaxError', true, {
+        silent: true
+      });
+      receipt.deleteLinesFromOrder([line], function() {
+        OB.MobileApp.view.$.containerWindow
+          .getRoot()
+          .bubble('onErrorCalcLineTax', {
+            line: line,
+            reason: errorMessage
+          });
+        OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
+          popup: 'OB_UI_MessageDialog',
+          args: {
+            header: errorTitle,
+            message: errorMessage
+          }
         });
-      OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
-        popup: 'OB_UI_MessageDialog',
-        args: {
-          header: title,
-          message: error
-        }
       });
     });
   };
 
   OB.DATA.OrderTaxes = function(modelOfAnOrder) {
-    modelOfAnOrder.calculateTaxes = async function(callback) {
-      await calculateTaxes(this);
+    modelOfAnOrder.calculateTaxes = function(callback) {
+      calculateTaxes(this);
       this.trigger('paintTaxes');
       callback();
     };
