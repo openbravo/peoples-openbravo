@@ -4385,24 +4385,26 @@
 
       const addProductServiceLinkedToProduct = async function() {
         if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-          OB.Dal.find(
-            OB.Model.ProductServiceLinked,
-            {
-              product: p.id,
-              remoteFilters: [
-                {
-                  columns: ['product'],
-                  operator: 'equals',
-                  value: p.id
-                }
-              ]
-            },
-            function(productServiceLinked) {
-              if (productServiceLinked.length > 0) {
-                p.set('productServiceLinked', productServiceLinked);
-              }
-            }
-          );
+          const promise = new Promise((resolve, reject) => {
+            OB.Dal.find(
+              OB.Model.ProductServiceLinked,
+              {
+                product: p.id,
+                remoteFilters: [
+                  {
+                    columns: ['product'],
+                    operator: 'equals',
+                    value: p.id
+                  }
+                ]
+              },
+              resolve
+            );
+          });
+          const productServiceLinked = await promise;
+          if (productServiceLinked.length > 0) {
+            p.set('productServiceLinked', productServiceLinked.models);
+          }
         } else {
           const productServiceLinked = await OB.App.MasterdataModels.ProductServiceLinked.find(
             new OB.App.Class.Criteria().criterion('product', p.id).build()
