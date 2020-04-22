@@ -63,9 +63,13 @@
         });
         var price = OB.I18N.parseNumber(editboxvalue);
         var receipt = view.model.get('order');
-        var setPrices = function() {
-          const lineIds = selectedReceiptLines.map(l => l.id);
-          OB.App.State.Ticket.setPrice({ lineIds, price })
+        const lineIds = selectedReceiptLines.map(l => l.id);
+        var setPrices = function(options = {}) {
+          OB.App.State.Ticket.setPrice({
+            lineIds,
+            price,
+            reason: options.reason
+          })
             .then(() => {
               //TODO: remove this once implemented at ticket level
               receipt.calculateReceipt();
@@ -113,9 +117,7 @@
                     popup: 'modalPriceModification',
                     args: {
                       callback: setPrices,
-                      selectedModels: selectedReceiptLines,
-                      receipt: receipt,
-                      line: selectedReceiptLine
+                      lineIds
                     }
                   });
                 } else {
