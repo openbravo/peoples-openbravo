@@ -55,6 +55,15 @@
   }
 
   function checkRestrictions(ticket, lines, price) {
+    if (ticket.isEditable === false) {
+      throw new OB.App.Class.ActionCanceled(
+        'Setting price not editable ticket',
+        {
+          errorConfirmation: 'OBPOS_modalNoEditableBody'
+        }
+      );
+    }
+
     if (lines.some(l => l.replacedorderline && l.qty < 0)) {
       throw new OB.App.Class.ActionCanceled(
         'Setting price to replaced return lines',

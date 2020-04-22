@@ -165,6 +165,22 @@ describe('Ticket.setQuantity action preparation', () => {
       });
     });
 
+    it('cannot set price to not editable ticket', async () => {
+      persistence.getState.mockReturnValue({
+        Ticket: { ...basicTicket.Ticket, isEditable: false }
+      });
+
+      let error;
+      try {
+        await state.Ticket.setPrice({ lineIds: ['1'], price: 5 });
+      } catch (e) {
+        error = e;
+      }
+      expect(error).toMatchObject({
+        info: { errorConfirmation: 'OBPOS_modalNoEditableBody' }
+      });
+    });
+
     describe('verified return', () => {
       it('cannot increase price without permission', async () => {
         persistence.getState.mockReturnValue(basicReturn);
