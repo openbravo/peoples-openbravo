@@ -18,7 +18,7 @@ OB = {
   App: {
     StateBackwardCompatibility: { setProperties: jest.fn() },
     Class: {},
-    Security: { hasPermission: jest.fn(), requestApproval: jest.fn() }
+    Security: { hasPermission: jest.fn(), requestApprovalForAction: jest.fn() }
   },
   UTIL: {
     HookManager: { registerHook: jest.fn() }
@@ -248,23 +248,8 @@ describe('Ticket.setQuantity action preparation', () => {
         p => p !== 'OBPOS_ChangeServicePriceNeedApproval'
       );
 
-      try {
-        await state.Ticket.setPrice({ lineIds: ['1'], price: 15 });
-      } catch (e) {
-        // ignore
-      }
-
-      expect(OB.App.Security.requestApproval).toHaveBeenCalled();
-    });
-
-    it('cannot set price if approval not granted', async () => {
-      OB.App.Security.hasPermission = jest.fn(
-        p => p !== 'OBPOS_ChangeServicePriceNeedApproval'
-      );
-
-      await expect(
-        state.Ticket.setPrice({ lineIds: ['1'], price: 15 })
-      ).rejects.toThrow();
+      await state.Ticket.setPrice({ lineIds: ['1'], price: 15 });
+      expect(OB.App.Security.requestApprovalForAction).toHaveBeenCalled();
     });
 
     describe('verified return', () => {
