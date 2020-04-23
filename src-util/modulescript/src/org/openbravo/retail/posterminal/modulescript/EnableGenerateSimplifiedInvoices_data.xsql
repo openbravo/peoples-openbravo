@@ -26,7 +26,7 @@
           UPDATE obpos_terminaltype
           SET groupingorders = 'N', separateinvoiceforreturns = 'N', generateinvoice = 'Y'
           WHERE (groupingorders = 'N' AND generateinvoice = 'N')
-          OR (groupingorders = 'Y' AND generateinvoice = 'Y');
+          OR (groupingorders = 'Y' AND generateinvoice = 'Y')
         ]]>
       </Sql>
   </SqlMethod>
