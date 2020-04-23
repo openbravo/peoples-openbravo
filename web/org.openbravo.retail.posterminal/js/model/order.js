@@ -1502,6 +1502,16 @@
       );
     },
 
+    // returns true if the order is a processed ticket, otherwise false
+    isProcessedTicket: function() {
+      return (
+        this.get('isPaid') ||
+        this.get('isLayaway') ||
+        (this.get('isQuotation') && this.get('hasbeenpaid') === 'Y') ||
+        this.get('isModified')
+      );
+    },
+
     clear: function() {
       this.clearOrderAttributes();
       this.trigger('change');
