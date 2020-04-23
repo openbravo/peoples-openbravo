@@ -140,7 +140,7 @@
       const lines = ticket.lines.filter(l => lineIds.includes(l.id));
       checkRestrictions(ticket, lines, price);
 
-      const payloadWithApprovals = checkApprovals(payload, lines);
+      const payloadWithApprovals = await checkApprovals(payload, lines);
       return payloadWithApprovals;
     }
   );
