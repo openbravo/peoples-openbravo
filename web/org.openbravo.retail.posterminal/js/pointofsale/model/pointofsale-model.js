@@ -1107,17 +1107,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
         OB.UTIL.clone(receipt, auxReceipt);
         auxReceipt.set('voidLayaway', true);
-        if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-          OB.UTIL.rebuildCashupFromServer(function() {
-            auxReceipt.set(
-              'obposAppCashup',
-              OB.App.State.Cashup.Utils.getCashupId()
-            );
-            updateCashup();
-          });
-        } else {
-          updateCashup();
-        }
+        updateCashup();
       },
       this
     );
@@ -1534,20 +1524,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 OB.UTIL.ProcessController.finish('cancelLayaway', execution);
                 return;
               } else {
-                if (
-                  OB.MobileApp.model.hasPermission(
-                    'OBMOBC_SynchronizedMode',
-                    true
-                  )
-                ) {
-                  OB.UTIL.rebuildCashupFromServer(function() {
-                    OB.MobileApp.model.setSynchronizedCheckpoint(function() {
-                      processCancelLayaway();
-                    });
-                  });
-                } else {
-                  processCancelLayaway();
-                }
+                processCancelLayaway();
               }
             },
             function() {

@@ -9818,14 +9818,7 @@
           }
         }
 
-        if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-          OB.UTIL.rebuildCashupFromServer(function() {
-            OB.UTIL.showLoading(false);
-            validateRemoveOrder();
-          });
-        } else {
-          validateRemoveOrder();
-        }
+        validateRemoveOrder();
       }
 
       OB.MobileApp.view.setOriginalScanMode(OB.MobileApp.view.scanMode);

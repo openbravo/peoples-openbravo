@@ -604,20 +604,7 @@
       'closed',
       function(eventParams) {
         var context = this;
-        if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-          OB.UTIL.rebuildCashupFromServer(
-            function() {
-              OB.UTIL.showLoading(false);
-              mainReceiptCloseFunction(eventParams, context);
-            },
-            function() {
-              OB.MobileApp.model.resetCheckpointData();
-              restoreReceiptOnError(eventParams, model.get('order'));
-            }
-          );
-        } else {
-          mainReceiptCloseFunction(eventParams, context);
-        }
+        mainReceiptCloseFunction(eventParams, context);
       },
       this
     );
@@ -1124,21 +1111,7 @@
             });
           };
 
-          if (
-            OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)
-          ) {
-            OB.UTIL.rebuildCashupFromServer(
-              function() {
-                OB.UTIL.showLoading(false);
-                validateMultiOrder();
-              },
-              function() {
-                restoreMultiOrderOnError();
-              }
-            );
-          } else {
-            validateMultiOrder();
-          }
+          validateMultiOrder();
         });
       },
       this

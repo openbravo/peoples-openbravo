@@ -457,13 +457,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
       new Backbone.Collection(OB.MobileApp.model.get('cashMgmtDepositEvents'))
     );
 
-    if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-      OB.UTIL.rebuildCashupFromServer(function() {
-        initModelsCallback();
-      });
-    } else {
-      initModelsCallback();
-    }
+    initModelsCallback();
   },
   loadModels: function(loadModelsCallback) {
     var me = this;
