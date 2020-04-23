@@ -25,7 +25,6 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -1845,14 +1844,9 @@ public class OrderLoader extends POSDataSynchronizationProcess
     }
   }
 
-  private void updateTerminalDocumentSequence(final OBPOSApplications terminal, JSONObject json)
-      throws JSONException {
-    if (terminal.getEntity().hasProperty(json.optString("obposSequencename"))) {
-      terminal.set(json.getString("obposSequencename"), Long.max(
-          (Long) ObjectUtils.defaultIfNull(terminal.get(json.getString("obposSequencename")), 0L),
-          json.optLong("obposSequencenumber")));
-      OBDal.getInstance().save(terminal);
-    }
+  private void updateTerminalDocumentSequence(final OBPOSApplications terminal, JSONObject json) {
+    POSUtils.updateTerminalDocumentSequence(terminal, json.optString("obposSequencename"),
+        json.optLong("obposSequencenumber"));
   }
 
   protected String getDocumentNo(Entity entity, DocumentType doctypeTarget, DocumentType doctype) {

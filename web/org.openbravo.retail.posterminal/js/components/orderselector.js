@@ -647,6 +647,17 @@ enyo.kind({
       obposPrepaymentlimitamt,
       payment;
 
+    const isInvoiceCreated = order => {
+      if (order.bp.invoiceTerms === 'O') {
+        // After Order Delivered -> invoice will be generated if full order is delivered
+        return !order.lines.find(line => line.qtyPending !== line.toPrepare);
+      } else if (order.bp.invoiceTerms === 'D') {
+        // After Delivery -> invoice will be generated for delivered lines
+        return true;
+      }
+      return false;
+    };
+
     function continueExecution(model) {
       var me = model,
         lines = [],
@@ -865,6 +876,21 @@ enyo.kind({
                 }
               });
 
+              groupedLinesToPrepare.forEach(async order => {
+                if (isInvoiceCreated(order)) {
+                  const {
+                    sequenceName,
+                    sequenceNumber,
+                    documentNo
+                  } = await OB.MobileApp.model.getDocumentNo(
+                    'fullinvoiceslastassignednum'
+                  );
+                  order.invoiceSequenceName = sequenceName;
+                  order.invoiceSequenceNumber = sequenceNumber;
+                  order.invoiceDocumentNo = documentNo;
+                }
+              });
+
               OB.Dal.transaction(function(tx) {
                 OB.UTIL.HookManager.executeHooks(
                   'OBPOS_PreIssueSalesOrder',
@@ -1068,7 +1094,8 @@ enyo.kind({
               bpLocId: iter.bpLocId,
               obposPrepaymentamt: iter.obposPrepaymentamt,
               obposPrepaymentlimitamt: iter.obposPrepaymentlimitamt,
-              payment: iter.payment
+              payment: iter.payment,
+              invoiceTerms: iter.bpInvoiceTerms
             };
             order = new OB.Model.OBRDM_OrderToSelectorIssue({
               id: iter.orderId,

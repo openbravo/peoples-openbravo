@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2017-2019 Openbravo S.L.U.
+ * Copyright (C) 2017-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -19,6 +19,7 @@ import org.openbravo.mobile.core.model.ModelExtension;
 @Qualifier(PendingOrderLines.PENDINGORDERLINESPROPERTYEXTENSION)
 public class PendingOrderLinesProperties extends ModelExtension {
 
+  @Override
   public List<HQLProperty> getHQLProperties(Object params) {
 
     return Arrays.asList(new HQLProperty("salesOrder.id", "orderId"), //
@@ -30,6 +31,7 @@ public class PendingOrderLinesProperties extends ModelExtension {
         new HQLProperty("bp.id", "bpId"), //
         new HQLProperty("bp.name", "bpName"), //
         new HQLProperty("bp.searchKey", "bpSearchKey"), //
+        new HQLProperty("bp.invoiceTerms", "bpInvoiceTerms"), //
         new HQLProperty("locAddress.id", "bpLocId"), //
         new HQLProperty("locAddress.addressLine1", "bpLocName"), //
         new HQLProperty("locAddress.addressLine2", "addressLine2"),

@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -1002,4 +1003,15 @@ public class POSUtils {
     return false;
   }
 
+  /**
+   * Updates the last number of the terminal sequence defined with the given name.
+   */
+  public static void updateTerminalDocumentSequence(final OBPOSApplications posTerminal,
+      final String sequenceName, final long sequenceNumber) {
+    if (posTerminal.getEntity().hasProperty(sequenceName)) {
+      posTerminal.set(sequenceName, Long.max(
+          (Long) ObjectUtils.defaultIfNull(posTerminal.get(sequenceName), 0L), sequenceNumber));
+      OBDal.getInstance().save(posTerminal);
+    }
+  }
 }

@@ -1580,53 +1580,10 @@
     // This global action will increase sequence in DocumentSequence model
     // and set documentno in Ticket model based on the increased sequence
     setTicketDocumentNo: async function(ticket) {
-      await this.setOrderDocumentNo(ticket);
+      await this.setDocumentNo(ticket);
       if (ticket.has('calculatedInvoice')) {
-        await this.setInvoiceDocumentNo(ticket.get('calculatedInvoice'));
+        await this.setDocumentNo(ticket.get('calculatedInvoice'));
       }
-    },
-
-    setOrderDocumentNo: async function(order) {
-      if (
-        order.get('isQuotation') &&
-        OB.MobileApp.model.get('terminal').quotationDocNoPrefix
-      ) {
-        order.set('obposSequencename', 'quotationslastassignednum');
-      } else if (
-        this.isReturn(order) &&
-        OB.MobileApp.model.get('terminal').returnDocNoPrefix
-      ) {
-        order.set('obposSequencename', 'returnslastassignednum');
-      } else {
-        order.set('obposSequencename', 'lastassignednum');
-      }
-
-      await this.setDocumentNo(order);
-    },
-
-    setInvoiceDocumentNo: async function(invoice) {
-      if (
-        !invoice.get('fullInvoice') &&
-        this.isReturn(invoice) &&
-        OB.MobileApp.model.get('terminal').simplifiedReturnInvoiceDocNoPrefix
-      ) {
-        invoice.set(
-          'obposSequencename',
-          'simplifiedreturninvoiceslastassignednum'
-        );
-      } else if (
-        invoice.get('fullInvoice') &&
-        this.isReturn(invoice) &&
-        OB.MobileApp.model.get('terminal').fullReturnInvoiceDocNoPrefix
-      ) {
-        invoice.set('obposSequencename', 'fullreturninvoiceslastassignednum');
-      } else if (!invoice.get('fullInvoice')) {
-        invoice.set('obposSequencename', 'simplifiedinvoiceslastassignednum');
-      } else {
-        invoice.set('obposSequencename', 'fullinvoiceslastassignednum');
-      }
-
-      await this.setDocumentNo(invoice);
     },
 
     setDocumentNo: async function(document) {
@@ -1634,27 +1591,84 @@
         return;
       }
 
-      await OB.App.State.DocumentSequence.increaseSequence({
-        sequenceName: document.get('obposSequencename')
+      const {
+        sequenceName,
+        sequenceNumber,
+        documentNo
+      } = await this.getDocumentNo(this.getDocumentSequenceName(document));
+
+      document.set({
+        obposSequencename: sequenceName,
+        obposSequencenumber: sequenceNumber,
+        documentNo: documentNo
       });
+    },
+
+    getDocumentSequenceName: function(document) {
+      if (document.get('isInvoice')) {
+        return this.getInvoiceSequenceName(document);
+      } else {
+        return this.getOrderSequenceName(document);
+      }
+    },
+
+    getOrderSequenceName: function(order) {
+      if (
+        order.get('isQuotation') &&
+        OB.MobileApp.model.get('terminal').quotationDocNoPrefix
+      ) {
+        return 'quotationslastassignednum';
+      } else if (
+        this.isReturn(order) &&
+        OB.MobileApp.model.get('terminal').returnDocNoPrefix
+      ) {
+        return 'returnslastassignednum';
+      }
+      return 'lastassignednum';
+    },
+
+    getInvoiceSequenceName: function(invoice) {
+      if (
+        !invoice.get('fullInvoice') &&
+        this.isReturn(invoice) &&
+        OB.MobileApp.model.get('terminal').simplifiedReturnInvoiceDocNoPrefix
+      ) {
+        return 'simplifiedreturninvoiceslastassignednum';
+      } else if (
+        invoice.get('fullInvoice') &&
+        this.isReturn(invoice) &&
+        OB.MobileApp.document.get('terminal').fullReturnInvoiceDocNoPrefix
+      ) {
+        return 'fullreturninvoiceslastassignednum';
+      } else if (!invoice.get('fullInvoice')) {
+        return 'simplifiedinvoiceslastassignednum';
+      }
+      return 'fullinvoiceslastassignednum';
+    },
+
+    getDocumentNo: async function(sequenceName) {
+      await OB.App.State.DocumentSequence.increaseSequence({
+        sequenceName: sequenceName
+      });
+
       const {
         sequencePrefix,
         sequenceNumber
-      } = OB.App.State.getState().DocumentSequence[
-        document.get('obposSequencename')
-      ];
+      } = OB.App.State.getState().DocumentSequence[sequenceName];
       const documentNumberPadding = OB.MobileApp.model.get('terminal')
         .documentnoPadding;
+      const documentNo = OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
+        sequencePrefix,
+        OB.Model.Order.prototype.includeDocNoSeperator,
+        documentNumberPadding,
+        sequenceNumber
+      );
 
-      document.set({
-        obposSequencenumber: sequenceNumber,
-        documentNo: OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
-          sequencePrefix,
-          OB.Model.Order.prototype.includeDocNoSeperator,
-          documentNumberPadding,
-          sequenceNumber
-        )
-      });
+      return {
+        sequenceName: sequenceName,
+        sequenceNumber: sequenceNumber,
+        documentNo: documentNo
+      };
     },
 
     isReturn: function(document) {
