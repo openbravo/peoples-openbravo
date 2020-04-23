@@ -40,9 +40,9 @@ import org.openbravo.scheduling.ProcessBundle;
 
 public class SequenceProductCreate implements Process {
 
-  private static final String lotSearchKey = "LOT";
-  private static final String serialNoSearchKey = "SNO";
-  private static final String expirationDateSearchKey = "EXD";
+  private static final String LOT_SEARCHKEY = "LOT";
+  private static final String SERIAL_NO_SEARCHKEY = "SNO";
+  private static final String EXPIRATION_DATES_EARCHKEY = "EXD";
   private static final Logger log4j = LogManager.getLogger();
 
   @Override
@@ -82,10 +82,10 @@ public class SequenceProductCreate implements Process {
       // Delete Purchasing Tab
       newProduct.setApprovedVendorList(null);
 
-      // Delete Transactions
+      // Delete Transactions Tab
       newProduct.setMaterialMgmtMaterialTransactionList(null);
 
-      // Delete Costing
+      // Delete Costing Tab
       newProduct.setMaterialMgmtCostingList(null);
 
       // Product Category
@@ -123,13 +123,13 @@ public class SequenceProductCreate implements Process {
           && productionType.equals("+") && opProduct.getProductionType().equals("-")) {
         // Special Attribute
         if (newProduct.getAttributeSet().isLot()) {
-          copyAtt(newOpProduct, opProduct, true, lotSearchKey, null);
+          copyAtt(newOpProduct, opProduct, true, LOT_SEARCHKEY, null);
         }
         if (newProduct.getAttributeSet().isSerialNo()) {
-          copyAtt(newOpProduct, opProduct, true, serialNoSearchKey, null);
+          copyAtt(newOpProduct, opProduct, true, SERIAL_NO_SEARCHKEY, null);
         }
         if (newProduct.getAttributeSet().isExpirationDate()) {
-          copyAtt(newOpProduct, opProduct, true, expirationDateSearchKey, null);
+          copyAtt(newOpProduct, opProduct, true, EXPIRATION_DATES_EARCHKEY, null);
         }
         // Normal Attribute
         for (AttributeUse attributeuse : newProduct.getAttributeSet().getAttributeUseList()) {
@@ -179,7 +179,7 @@ public class SequenceProductCreate implements Process {
   }
 
   private void copyAtt(OperationProduct newOpProduct, OperationProduct fromOpProduct,
-      boolean isSpecial, String specialValue, AttributeUse attributeuse) throws Exception {
+      boolean isSpecial, String specialValue, AttributeUse attributeuse) {
 
     OperationProductAttribute opProductAtt = OBProvider.getInstance()
         .get(OperationProductAttribute.class);
@@ -202,9 +202,9 @@ public class SequenceProductCreate implements Process {
   private static Long getLineNum(String sequenceId) {
     //@formatter:off
     final String hql = 
-                  "SELECT COALESCE(MAX(l.lineNo),0)+10 AS DefaultValue" +
-                  "  FROM ManufacturingOperationProduct l" +
-                  " WHERE l.mASequence.id= :sequenceId";
+                  "select coalesce(max(l.lineNo),0)+10 as DefaultValue" +
+                  "  from ManufacturingOperationProduct l" +
+                  " where l.mASequence.id= :sequenceId";
     //@formatter:on
 
     final Query<Long> q = OBDal.getInstance()
