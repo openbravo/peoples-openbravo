@@ -267,7 +267,7 @@
         const cashupPayment = cashup.cashPaymentMethodInfo.filter(
           cashupPaymentForFilter => {
             return (
-              cashupPaymentForFilter.paymentmethod_id ===
+              cashupPaymentForFilter.paymentMethodId ===
               terminalPayment.payment.id
             );
           }
