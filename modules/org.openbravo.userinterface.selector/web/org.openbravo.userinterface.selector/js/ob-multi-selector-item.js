@@ -222,6 +222,10 @@ isc.OBMultiSelectorItem.addProperties({
     var i;
     this.storeValue([]);
     this.selectionLayout.removeMembers(this.selectionLayout.getMembers());
+    if (records.length === 0) {
+      // Also handle form change when no record has been selected
+      this.handleSelectorItemsChange();
+    }
     for (i = 0; i < records.length; i++) {
       this.setValueFromRecord(records[i]);
     }
@@ -262,17 +266,24 @@ isc.OBMultiSelectorItem.addProperties({
         var currentValues = me.getValue();
         currentValues.remove(this.value);
         me.selectionLayout.removeMember(this);
+        // Refresh form after each item removal, important when there are dependant grids/fields
+        me.handleSelectorItemsChange();
       }
     });
     this.selectionLayout.addMember(selectedElement);
 
-    if (this.form && this.form.handleItemChange) {
-      this._hasChanged = true;
-      this.form.handleItemChange(this);
-    }
+    this.handleSelectorItemsChange();
 
     if (this.form.focusInNextItem && isc.EH.getKeyName() !== 'Tab') {
       this.form.focusInNextItem(this.name);
+    }
+  },
+
+  // Refreshes form when there is an onChange handle on the form of the selector
+  handleSelectorItemsChange: function() {
+    if (this.form && this.form.handleItemChange) {
+      this._hasChanged = true;
+      this.form.handleItemChange(this);
     }
   },
 
