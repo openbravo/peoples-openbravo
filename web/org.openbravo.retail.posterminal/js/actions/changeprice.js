@@ -108,77 +108,17 @@
         }
 
         validatePrice()
-          .then(function() {
-            var callback = function() {
-                if (
-                  OB.MobileApp.model.get('priceModificationReasons').length > 0
-                ) {
-                  view.doShowPopup({
-                    popup: 'modalPriceModification',
-                    args: {
-                      callback: setPrices,
-                      lineIds
-                    }
-                  });
-                } else {
-                  setPrices();
+          .then(() => {
+            if (OB.MobileApp.model.get('priceModificationReasons').length > 0) {
+              view.doShowPopup({
+                popup: 'modalPriceModification',
+                args: {
+                  callback: setPrices,
+                  lineIds
                 }
-              },
-              needToLookForServices = false,
-              i = 0;
-
-            if (
-              !OB.MobileApp.model.hasPermission(
-                'OBPOS_ChangeServicePriceNeedApproval',
-                true
-              )
-            ) {
-              // Iterate Selected Lines to look for services
-              for (i; i < selectedReceiptLines.length; i++) {
-                needToLookForServices = true;
-                if (
-                  selectedReceiptLines[i].get('product').get('productType') ===
-                  'I'
-                ) {
-                  needToLookForServices = false;
-                  break;
-                }
-              }
-            }
-
-            if (!needToLookForServices) {
-              // Finally price is editable...
-              OB.UTIL.Approval.requestApproval(
-                view.model,
-                'OBPOS_approval.setPrice',
-                function(approved, supervisor, approvalType) {
-                  if (approved) {
-                    var approvals = receipt.get('approvals') || [],
-                      approval = _.find(approvals, function(approval) {
-                        return (
-                          approval.approvalType === 'OBPOS_approval.setPrice'
-                        );
-                      });
-                    if (approval) {
-                      approval.approvalType = {
-                        approval: 'OBPOS_approval.setPrice',
-                        message: 'OBPOS_approval.setPriceMessage',
-                        params: [
-                          selectedReceiptLine.get('product').get('_identifier'),
-                          OB.I18N.formatCurrency(
-                            selectedReceiptLine.getGross()
-                          ),
-                          OB.I18N.formatCurrency(price)
-                        ]
-                      };
-                      receipt.set('approvals', approvals);
-                    }
-                    callback();
-                  }
-                }
-              );
+              });
             } else {
-              callback();
+              setPrices();
             }
           })
           .catch(function() {

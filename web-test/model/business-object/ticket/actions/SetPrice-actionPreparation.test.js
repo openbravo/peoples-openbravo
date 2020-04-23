@@ -18,7 +18,7 @@ OB = {
   App: {
     StateBackwardCompatibility: { setProperties: jest.fn() },
     Class: {},
-    Security: { hasPermission: jest.fn().mockReturnValue(false) }
+    Security: { hasPermission: jest.fn(), requestApproval: jest.fn() }
   },
   UTIL: {
     HookManager: { registerHook: jest.fn() }
@@ -45,7 +45,7 @@ describe('Ticket.setQuantity action preparation', () => {
           price: 10,
           priceList: 10,
           isEditable: true,
-          product: { listPrice: 10, obposEditablePrice: true }
+          product: { listPrice: 10, obposEditablePrice: true, productType: 'I' }
         },
         {
           id: '2',
@@ -53,7 +53,7 @@ describe('Ticket.setQuantity action preparation', () => {
           price: 20,
           priceList: 20,
           isEditable: true,
-          product: { listPrice: 20, obposEditablePrice: true }
+          product: { listPrice: 20, obposEditablePrice: true, productType: 'I' }
         },
         {
           id: '3',
@@ -61,7 +61,7 @@ describe('Ticket.setQuantity action preparation', () => {
           price: 30,
           priceList: 30,
           isEditable: true,
-          product: { listPrice: 30, obposEditablePrice: true }
+          product: { listPrice: 30, obposEditablePrice: true, productType: 'I' }
         }
       ]
     }
@@ -92,8 +92,9 @@ describe('Ticket.setQuantity action preparation', () => {
   const state = new OB.App.Class.State(persistence);
 
   beforeEach(() => {
-    persistence.getState = jest.fn(() => basicTicket);
     jest.clearAllMocks();
+    persistence.getState = jest.fn(() => basicTicket);
+    OB.App.Security.hasPermission.mockReturnValue(true);
   });
 
   describe('parameter validation', () => {
@@ -133,7 +134,7 @@ describe('Ticket.setQuantity action preparation', () => {
       ).rejects.toThrow();
     });
 
-    it('cat set price=0', async () => {
+    it('can set price=0', async () => {
       await expect(
         state.Ticket.setPrice({ lineIds: ['1'], price: 0 })
       ).resolves.not.toThrow();
@@ -242,6 +243,30 @@ describe('Ticket.setQuantity action preparation', () => {
       });
     });
 
+    it('approval is requested if ChangeServicePriceNeedApproval is not granted', async () => {
+      OB.App.Security.hasPermission = jest.fn(
+        p => p !== 'OBPOS_ChangeServicePriceNeedApproval'
+      );
+
+      try {
+        await state.Ticket.setPrice({ lineIds: ['1'], price: 15 });
+      } catch (e) {
+        // ignore
+      }
+
+      expect(OB.App.Security.requestApproval).toHaveBeenCalled();
+    });
+
+    it('cannot set price if approval not granted', async () => {
+      OB.App.Security.hasPermission = jest.fn(
+        p => p !== 'OBPOS_ChangeServicePriceNeedApproval'
+      );
+
+      await expect(
+        state.Ticket.setPrice({ lineIds: ['1'], price: 15 })
+      ).rejects.toThrow();
+    });
+
     describe('verified return', () => {
       it('cannot increase price without permission', async () => {
         persistence.getState.mockReturnValue(basicReturn);
@@ -259,6 +284,9 @@ describe('Ticket.setQuantity action preparation', () => {
 
       it('cannot decrease price without permission', async () => {
         persistence.getState.mockReturnValue(basicReturn);
+        OB.App.Security.hasPermission = jest.fn(
+          p => p !== 'OBPOS_ModifyPriceVerifiedReturns'
+        );
 
         let error;
         try {

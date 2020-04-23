@@ -63,7 +63,7 @@
     }
   }
 
-  function checkRestrictions(ticket, lines, price) {
+  async function checkRestrictions(ticket, lines, price) {
     if (ticket.isEditable === false) {
       throw new OB.App.Class.ActionCanceled(
         'Setting price not editable ticket',
@@ -112,6 +112,21 @@
         errorMsg: 'OBPOS_CannotChangePrice'
       });
     }
+
+    // TODO: check if this logic is correct (moved from old implementation):
+    // request approval if there is at least one Item product, what has services to do with this?
+    if (
+      !OB.App.Security.hasPermission('OBPOS_ChangeServicePriceNeedApproval') &&
+      lines.some(l => l.product.productType === 'I')
+    ) {
+      const { approved } = await OB.App.Security.requestApproval(
+        'OBPOS_approval.setPrice'
+      );
+
+      if (!approved) {
+        throw new OB.App.Class.ActionCanceled('Cannot change price');
+      }
+    }
   }
 
   OB.App.StateAPI.Ticket.setPrice.addActionPreparation(
@@ -122,7 +137,7 @@
       checkParameters(ticket, lineIds, price);
 
       const lines = ticket.lines.filter(l => lineIds.includes(l.id));
-      checkRestrictions(ticket, lines, price);
+      await checkRestrictions(ticket, lines, price);
 
       return payload;
     }
