@@ -240,10 +240,37 @@ enyo.kind({
         }
         keyboard.receipt.set('undo', null);
         keyboard.receipt.set('multipleUndo', true);
-        var discount = OB.I18N.parseNumber(txt);
-        _.each(me.selectedModels, function(model) {
-          keyboard.receipt.trigger('discount', model, discount);
-        });
+
+        const percentage = OB.I18N.parseNumber(txt);
+        if (
+          OB.DEC.compare(percentage) > 0 &&
+          OB.DEC.compare(OB.DEC.sub(percentage, OB.DEC.number(100))) <= 0
+        ) {
+          me.selectedModels.forEach(line => {
+            const lineIds = [line.get('id')];
+            const price = OB.DEC.toNumber(
+              new BigDecimal(String(line.get('price')))
+                .multiply(
+                  new BigDecimal(
+                    String(OB.DEC.sub(OB.DEC.number(100), percentage))
+                  )
+                )
+                .divide(
+                  new BigDecimal('100'),
+                  OB.DEC.getScale(),
+                  OB.DEC.getRoundingMode()
+                )
+            );
+
+            OB.App.State.Ticket.setLinePrice({ lineIds, price })
+              .then(() => {
+                //TODO: remove this once implemented at ticket level
+                keyboard.receipt.calculateReceipt();
+              })
+              .catch(OB.App.View.ActionCanceledUIHandler.handle);
+          });
+        }
+
         keyboard.receipt.set('multipleUndo', null);
         keyboard.lastStatus = '';
         keyboard.setStatus('');
