@@ -33,7 +33,7 @@ require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.co
 require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/ActionSilentlyCanceled');
 
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/Ticket');
-require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/SetPrice');
+require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/SetLinePrice');
 
 describe('Ticket.setQuantity action preparation', () => {
   const basicTicket = {
@@ -99,44 +99,46 @@ describe('Ticket.setQuantity action preparation', () => {
 
   describe('parameter validation', () => {
     it('checks line ids parameter is present', async () => {
-      await expect(state.Ticket.setPrice({ price: 5 })).rejects.toThrow();
+      await expect(state.Ticket.setLinePrice({ price: 5 })).rejects.toThrow();
     });
 
     it('checks line ids is an array', async () => {
       await expect(
-        state.Ticket.setPrice({ lineIds: '1', price: 5 })
+        state.Ticket.setLinePrice({ lineIds: '1', price: 5 })
       ).rejects.toThrow();
 
       await expect(
-        state.Ticket.setPrice({ lineIds: ['1'], price: 5 })
+        state.Ticket.setLinePrice({ lineIds: ['1'], price: 5 })
       ).resolves.not.toThrow();
     });
 
     it('line ids exists', async () => {
       await expect(
-        state.Ticket.setPrice({ lineIds: ['1', 'dummy'], price: 5 })
+        state.Ticket.setLinePrice({ lineIds: ['1', 'dummy'], price: 5 })
       ).rejects.toThrow();
     });
 
     it('checks price parameter is present', async () => {
-      await expect(state.Ticket.setPrice({ lineIds: ['1'] })).rejects.toThrow();
+      await expect(
+        state.Ticket.setLinePrice({ lineIds: ['1'] })
+      ).rejects.toThrow();
     });
 
     it('checks price is a numeric value', async () => {
       await expect(
-        state.Ticket.setPrice({ lineIds: ['1'], price: 'dummy' })
+        state.Ticket.setLinePrice({ lineIds: ['1'], price: 'dummy' })
       ).rejects.toThrow();
     });
 
     it('checks price is >= 0', async () => {
       await expect(
-        state.Ticket.setPrice({ lineIds: ['1'], price: -1 })
+        state.Ticket.setLinePrice({ lineIds: ['1'], price: -1 })
       ).rejects.toThrow();
     });
 
     it('can set price=0', async () => {
       await expect(
-        state.Ticket.setPrice({ lineIds: ['1'], price: 0 })
+        state.Ticket.setLinePrice({ lineIds: ['1'], price: 0 })
       ).resolves.not.toThrow();
     });
   });
@@ -160,7 +162,7 @@ describe('Ticket.setQuantity action preparation', () => {
 
       let error;
       try {
-        await state.Ticket.setPrice({ lineIds: ['1'], price: 5 });
+        await state.Ticket.setLinePrice({ lineIds: ['1'], price: 5 });
       } catch (e) {
         error = e;
       }
@@ -176,7 +178,7 @@ describe('Ticket.setQuantity action preparation', () => {
 
       let error;
       try {
-        await state.Ticket.setPrice({ lineIds: ['1'], price: 5 });
+        await state.Ticket.setLinePrice({ lineIds: ['1'], price: 5 });
       } catch (e) {
         error = e;
       }
@@ -203,7 +205,7 @@ describe('Ticket.setQuantity action preparation', () => {
 
       let error;
       try {
-        await state.Ticket.setPrice({ lineIds: ['1'], price: 5 });
+        await state.Ticket.setLinePrice({ lineIds: ['1'], price: 5 });
       } catch (e) {
         error = e;
       }
@@ -234,7 +236,7 @@ describe('Ticket.setQuantity action preparation', () => {
 
       let error;
       try {
-        await state.Ticket.setPrice({ lineIds: ['1'], price: 5 });
+        await state.Ticket.setLinePrice({ lineIds: ['1'], price: 5 });
       } catch (e) {
         error = e;
       }
@@ -248,7 +250,7 @@ describe('Ticket.setQuantity action preparation', () => {
         p => p !== 'OBPOS_ChangeServicePriceNeedApproval'
       );
 
-      await state.Ticket.setPrice({ lineIds: ['1'], price: 15 });
+      await state.Ticket.setLinePrice({ lineIds: ['1'], price: 15 });
       expect(OB.App.Security.requestApprovalForAction).toHaveBeenCalled();
     });
 
@@ -258,7 +260,7 @@ describe('Ticket.setQuantity action preparation', () => {
 
         let error;
         try {
-          await state.Ticket.setPrice({ lineIds: ['1'], price: 15 });
+          await state.Ticket.setLinePrice({ lineIds: ['1'], price: 15 });
         } catch (e) {
           error = e;
         }
@@ -275,7 +277,7 @@ describe('Ticket.setQuantity action preparation', () => {
 
         let error;
         try {
-          await state.Ticket.setPrice({ lineIds: ['1'], price: 5 });
+          await state.Ticket.setLinePrice({ lineIds: ['1'], price: 5 });
         } catch (e) {
           error = e;
         }
@@ -289,7 +291,7 @@ describe('Ticket.setQuantity action preparation', () => {
         OB.App.Security.hasPermission.mockReturnValue(true);
 
         await expect(
-          state.Ticket.setPrice({ lineIds: ['1'], price: 5 })
+          state.Ticket.setLinePrice({ lineIds: ['1'], price: 5 })
         ).resolves.not.toThrow();
       });
 
@@ -299,7 +301,7 @@ describe('Ticket.setQuantity action preparation', () => {
 
         let error;
         try {
-          await state.Ticket.setPrice({ lineIds: ['1'], price: 15 });
+          await state.Ticket.setLinePrice({ lineIds: ['1'], price: 15 });
         } catch (e) {
           error = e;
         }

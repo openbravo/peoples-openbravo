@@ -23,7 +23,7 @@ global.lodash = require('../../../../../../org.openbravo.mobile.core/web/org.ope
 
 require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/StateAPI');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/Ticket');
-require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/SetPrice');
+require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/SetLinePrice');
 
 describe('Ticket.setPrice action', () => {
   const basicTicket = {
@@ -35,7 +35,7 @@ describe('Ticket.setPrice action', () => {
   };
 
   it('sets price to a single line', () => {
-    const newTicket = OB.App.StateAPI.Ticket.setPrice(basicTicket, {
+    const newTicket = OB.App.StateAPI.Ticket.setLinePrice(basicTicket, {
       lineIds: ['1'],
       price: 5
     });
@@ -52,7 +52,7 @@ describe('Ticket.setPrice action', () => {
 
   it('sets price to multiple lines', () => {
     const lineIds = ['1', '2'];
-    const newTicket = OB.App.StateAPI.Ticket.setPrice(basicTicket, {
+    const newTicket = OB.App.StateAPI.Ticket.setLinePrice(basicTicket, {
       lineIds,
       price: 5
     });
@@ -65,7 +65,7 @@ describe('Ticket.setPrice action', () => {
   });
 
   it('keeps other lines untouched', () => {
-    const newTicket = OB.App.StateAPI.Ticket.setPrice(basicTicket, {
+    const newTicket = OB.App.StateAPI.Ticket.setLinePrice(basicTicket, {
       lineIds: ['1'],
       price: 5
     });
@@ -77,7 +77,7 @@ describe('Ticket.setPrice action', () => {
   });
 
   it('can define a reson', () => {
-    const newTicket = OB.App.StateAPI.Ticket.setPrice(basicTicket, {
+    const newTicket = OB.App.StateAPI.Ticket.setLinePrice(basicTicket, {
       lineIds: ['1'],
       price: 5,
       reason: 'reasonId'
@@ -89,13 +89,13 @@ describe('Ticket.setPrice action', () => {
   });
 
   it('resets reson', () => {
-    const ticket1 = OB.App.StateAPI.Ticket.setPrice(basicTicket, {
+    const ticket1 = OB.App.StateAPI.Ticket.setLinePrice(basicTicket, {
       lineIds: ['1'],
       price: 5,
       reason: 'reasonId'
     });
 
-    const newTicket = OB.App.StateAPI.Ticket.setPrice(ticket1, {
+    const newTicket = OB.App.StateAPI.Ticket.setLinePrice(ticket1, {
       lineIds: ['1'],
       price: 5
     });
@@ -106,7 +106,7 @@ describe('Ticket.setPrice action', () => {
   });
 
   it('does not mutate lines', () => {
-    const newTicket = OB.App.StateAPI.Ticket.setPrice(basicTicket, {
+    const newTicket = OB.App.StateAPI.Ticket.setLinePrice(basicTicket, {
       lineIds: ['1'],
       price: 5
     });

@@ -65,7 +65,7 @@
         var receipt = view.model.get('order');
         const lineIds = selectedReceiptLines.map(l => l.id);
         var setPrices = function(options = {}) {
-          OB.App.State.Ticket.setPrice({
+          OB.App.State.Ticket.setLinePrice({
             lineIds,
             price,
             reason: options.reason

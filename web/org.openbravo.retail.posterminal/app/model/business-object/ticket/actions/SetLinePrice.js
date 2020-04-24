@@ -9,8 +9,8 @@
 
 /* global lodash */
 
-(function SetQuantityDefinition() {
-  OB.App.StateAPI.Ticket.registerAction('setPrice', (state, payload) => {
+(function SetLinePriceDefinition() {
+  OB.App.StateAPI.Ticket.registerAction('setLinePrice', (state, payload) => {
     const ticket = { ...state };
     const { lineIds, price, reason } = payload;
 
@@ -121,7 +121,7 @@
     return payload;
   }
 
-  OB.App.StateAPI.Ticket.setPrice.addActionPreparation(
+  OB.App.StateAPI.Ticket.setLinePrice.addActionPreparation(
     async (state, payload) => {
       const ticket = state.Ticket;
       const { price, lineIds } = payload;
