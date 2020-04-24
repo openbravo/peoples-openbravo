@@ -124,12 +124,13 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
           .getOrganizationStructureProvider(terminalObj.getClient().getId())
           .getNaturalTree(terminalObj.getOrganization().getId()));
 
-      final boolean filterUserOnlyByTerminalAccess = doFilterUserOnlyByTerminalAccessPreference();
+      final String extraFilter = !doFilterUserOnlyByTerminalAccessPreference()
+          ? "(not exists(from OBPOS_TerminalAccess ta2 where ta2.userContact = user)) or "
+          : "";
 
       String hqlUser = "select distinct user.name, user.username, user.id, user.firstName, user.lastName "
-          + "from ADUser user, ADUserRoles userRoles, ADRole role, "
-          + "ADFormAccess formAccess, OBPOS_Applications terminal, ADRoleOrganization ro "
-          + (filterUserOnlyByTerminalAccess ? ", OBPOS_TerminalAccess ta " : "")
+          + "from ADUser user, ADUserRoles userRoles, ADRole role, ADFormAccess formAccess, "
+          + "OBPOS_Applications terminal, ADRoleOrganization ro, OBPOS_TerminalAccess ta "
           + (approvalType.length() > 0 ? ", ADPreference p " : "")
           + "where user.active = true and user.username is not null and user.password is not null and "
           + "userRoles.active = true and role.active = true and formAccess.active = true and "
@@ -138,10 +139,8 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
           + "role.id = formAccess.role.id and role.forPortalUsers = false and "
           + "ro.role = role and ro.organization = terminal.organization and "
           + "formAccess.specialForm.id = :webPOSFormId and "
-          + "((user.organization.id in (:orgList)) or (terminal.organization.id in (:orgList))) "
-          + (filterUserOnlyByTerminalAccess
-              ? "and ta.userContact = user and ta.pOSTerminal=terminal "
-              : "");
+          + "((user.organization.id in (:orgList)) or (terminal.organization.id in (:orgList))) and "
+          + "(" + extraFilter + " (ta.userContact = user and ta.pOSTerminal=terminal)) ";
 
       // checking supervisor users for sent approval type
       Map<String, String> iterParameter = new HashMap<>();
