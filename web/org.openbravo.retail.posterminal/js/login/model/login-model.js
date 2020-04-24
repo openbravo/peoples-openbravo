@@ -1637,7 +1637,7 @@
       } else if (
         this.isFullInvoice(invoice) &&
         this.isReturn(invoice) &&
-        OB.MobileApp.document.get('terminal').fullReturnInvoiceDocNoPrefix
+        OB.MobileApp.model.get('terminal').fullReturnInvoiceDocNoPrefix
       ) {
         return 'fullreturninvoiceslastassignednum';
       } else if (!this.isFullInvoice(invoice)) {
