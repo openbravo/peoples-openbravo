@@ -65,12 +65,9 @@
 
   function checkRestrictions(ticket, lines, price) {
     if (ticket.isEditable === false) {
-      throw new OB.App.Class.ActionCanceled(
-        'Setting price not editable ticket',
-        {
-          errorConfirmation: 'OBPOS_modalNoEditableBody'
-        }
-      );
+      throw new OB.App.Class.ActionCanceled({
+        errorConfirmation: 'OBPOS_modalNoEditableBody'
+      });
     }
 
     if (
@@ -79,21 +76,15 @@
           !l.product.obposEditablePrice || l.product.isEditablePrice === false
       )
     ) {
-      throw new OB.App.Class.ActionCanceled(
-        'Setting price not editable ticket',
-        {
-          errorConfirmation: 'OBPOS_modalNoEditableLineBody'
-        }
-      );
+      throw new OB.App.Class.ActionCanceled({
+        errorConfirmation: 'OBPOS_modalNoEditableLineBody'
+      });
     }
 
     if (lines.some(l => l.replacedorderline && l.qty < 0)) {
-      throw new OB.App.Class.ActionCanceled(
-        'Setting price to replaced return lines',
-        {
-          errorConfirmation: 'OBPOS_CancelReplaceReturnPriceChange'
-        }
-      );
+      throw new OB.App.Class.ActionCanceled({
+        errorConfirmation: 'OBPOS_CancelReplaceReturnPriceChange'
+      });
     }
 
     // in a verified return it's only allowed to change price with permissions
@@ -108,7 +99,7 @@
           !(canModifyVerifiedReturn && l.originalDocumentNo && price < l.price)
       )
     ) {
-      throw new OB.App.Class.ActionCanceled('Cannot change price', {
+      throw new OB.App.Class.ActionCanceled({
         errorMsg: 'OBPOS_CannotChangePrice'
       });
     }
