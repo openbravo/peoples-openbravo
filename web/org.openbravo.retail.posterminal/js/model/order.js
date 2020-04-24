@@ -6051,8 +6051,8 @@
           attrs.organization = lines[index].get('organization');
           attrs.warehouse = lines[index].get('warehouse');
           lineQty = lines[index].get('qty');
-          // Issue 43710: Convert quantity to positive as sign conversion handled in addProduct
-          if (lineQty < 0) {
+          // Issue 43710: For return receipt convert qty sign as sign conversion handled again in addProduct
+          if (me.get('orderType') === 1) {
             lineQty = lineQty * -1;
           }
           me.addProduct(product, lineQty, undefined, attrs, function(
