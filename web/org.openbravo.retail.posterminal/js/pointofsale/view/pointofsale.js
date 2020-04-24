@@ -1565,7 +1565,7 @@ enyo.kind({
     var selectedModels = inEvent.selectedReceiptLines,
       receipt = this.model.get('order');
 
-    receipt.deleteLinesFromOrder(selectedModels);
+    receipt.deleteLinesFromOrder(selectedModels, inEvent.callback);
   },
   editLine: function(inSender, inEvent) {
     var receipt = this.model.get('order');

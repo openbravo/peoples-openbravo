@@ -49,6 +49,7 @@
       return active;
     };
     this.command = function(view) {
+      var me = this;
       var cancelQtyChange = false;
       var cancelQtyChangeReturn = false;
 
@@ -87,8 +88,33 @@
         }
       };
 
-      if (!selectedReceiptLine) {
+      if (
+        !selectedReceiptLine ||
+        !receipt.get('lines').models.find(function(l) {
+          return selectedReceiptLine.get('id') === l.get('id');
+        })
+      ) {
         return;
+      }
+
+      if (!selectedReceiptLines || selectedReceiptLines.length === 0) {
+        return;
+      } else {
+        var selectedLines = [];
+        selectedReceiptLines.forEach(function(selectedLine) {
+          if (
+            receipt.get('lines').models.find(function(l) {
+              return selectedLine.get('id') === l.get('id');
+            })
+          ) {
+            selectedLines.push(selectedLine);
+          }
+        });
+        if (selectedLines.length > 0) {
+          selectedReceiptLines = selectedLines;
+        } else {
+          return;
+        }
       }
 
       if (!isFinite(value)) {
@@ -175,17 +201,29 @@
               deletedlines = [],
               finalCallback;
 
+            if (me.pendingProcess) {
+              return;
+            }
+            me.pendingProcess = true;
+
             finalCallback = _.after(selectedReceiptLines.length, function() {
               if (deletedlines.length > 0) {
                 view.deleteLine(view, {
-                  selectedReceiptLines: deletedlines
+                  selectedReceiptLines: deletedlines,
+                  callback: function() {
+                    me.pendingProcess = false;
+                  }
                 });
+              } else {
+                me.pendingProcess = false;
               }
               receipt.set('multipleUndo', null);
               receipt.trigger('scan');
-              view.setMultiSelectionItems(view, {
-                selection: selection
-              });
+              if (selection.length > 0) {
+                view.setMultiSelectionItems(view, {
+                  selection: selection
+                });
+              }
             });
             receipt.set('undo', null);
             if (selectedReceiptLines && selectedReceiptLines.length > 1) {
@@ -198,6 +236,7 @@
                 var newqty = line.get('qty') + toadd;
                 if (newqty === 0) {
                   // If final quantity will be 0 then request approval
+                  selection.pop();
                   deletedlines.push(line);
                   finalCallback();
                 } else if (newqty > 0) {
