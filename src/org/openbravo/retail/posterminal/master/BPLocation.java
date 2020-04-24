@@ -23,6 +23,7 @@ import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
+import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
 public class BPLocation extends ProcessHQLQuery {
@@ -46,6 +47,7 @@ public class BPLocation extends ProcessHQLQuery {
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
+    final boolean isRemote = POSUtils.getPreference("OBPOS_remote.customer");
     Long lastUpdated = jsonsent.has("lastUpdated")
         && !jsonsent.get("lastUpdated").equals("undefined")
         && !jsonsent.get("lastUpdated").equals("null") ? jsonsent.getLong("lastUpdated") : null;
@@ -67,13 +69,16 @@ public class BPLocation extends ProcessHQLQuery {
     }
     hql += ") and bploc.$readableSimpleClientCriteria AND " + "bploc.$naturalOrgCriteria "
         + " and bploc.$paginationByIdCriteria ";
-    
-    if (jsonsent.has("orderByClause") && jsonsent.get("orderByClause") != JSONObject.NULL) {
-      hql = hql + "$orderByCriteria";
+    if (isRemote) {
+      if (jsonsent.has("orderByClause") && jsonsent.get("orderByClause") != JSONObject.NULL) {
+        hql = hql + "$orderByCriteria";
+      } else {
+        hql = hql + "ORDER BY bploc.updated desc";
+      }
     } else {
-      hql = hql + "ORDER BY bploc.updated desc"; 
+      hql = hql + "ORDER BY bploc.id";
     }
-    
+
     hqlQueries.add(hql);
     return hqlQueries;
   }
