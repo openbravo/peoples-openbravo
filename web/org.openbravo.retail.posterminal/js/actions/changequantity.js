@@ -255,7 +255,11 @@
                   receipt.checkReturnableProducts(
                     selectedReceiptLines,
                     line,
-                    function() {
+                    function(success) {
+                      if (!success) {
+                        finalCallback();
+                        return;
+                      }
                       view.addProductToOrder(view, {
                         product: line.get('product'),
                         qty: toadd,

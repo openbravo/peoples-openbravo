@@ -5485,11 +5485,10 @@
               notReturnableLine.get('product').get('_identifier')
             ])
           );
+          callback(false);
           return;
         }
-        if (callback) {
-          callback();
-        }
+        callback(true);
       }
     },
 
@@ -5620,6 +5619,7 @@
       });
 
       if (notReturnableProducts) {
+        callback(false);
         return;
       }
 
@@ -5636,13 +5636,15 @@
           function(approved, supervisor, approvalType) {
             if (approved) {
               me.set('notApprove', true);
-              callback();
+              callback(true);
               me.unset('notApprove');
+            } else {
+              callback(false);
             }
           }
         );
       } else {
-        callback();
+        callback(true);
       }
     },
 
