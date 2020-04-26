@@ -9629,7 +9629,7 @@
         }
       }
 
-      function markOrderAsDeleted(model, orderList, callback) {
+      async function markOrderAsDeleted(model, orderList, callback) {
         var creationDate;
         if (model.get('creationDate')) {
           creationDate = new Date(model.get('creationDate'));
@@ -9684,6 +9684,7 @@
             approval.approvalType = approval.approvalType.approval;
           }
         });
+        await OB.MobileApp.model.setTicketDocumentNo(model);
         OB.Dal.transaction(function(tx) {
           OB.UTIL.HookManager.executeHooks(
             'OBPOS_PreSyncReceipt',
@@ -9692,8 +9693,7 @@
               model: model,
               tx: tx
             },
-            async function(args) {
-              await OB.MobileApp.model.setTicketDocumentNo(model);
+            function(args) {
               model.set('json', JSON.stringify(model.serializeToSaveJSON()));
               model.set('hasbeenpaid', 'Y');
               OB.Dal.saveInTransaction(tx, model, function() {
