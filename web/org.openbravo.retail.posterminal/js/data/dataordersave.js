@@ -752,11 +752,12 @@
           OB.UTIL.calculateCurrentCash(null, tx);
           OB.UTIL.cashUpReport(
             currentReceipt,
-            function(cashUp) {
+            async function(cashUp) {
               currentReceipt.set(
                 'cashUpReportInformation',
                 JSON.parse(cashUp.models[0].get('objToSend'))
               );
+              await OB.MobileApp.model.setTicketDocumentNo(currentReceipt);
               OB.UTIL.HookManager.executeHooks(
                 'OBPOS_PreSyncReceipt',
                 {
@@ -765,8 +766,7 @@
                   tx: tx,
                   isMultiOrder: true
                 },
-                async function(args) {
-                  await OB.MobileApp.model.setTicketDocumentNo(currentReceipt);
+                function(args) {
                   currentReceipt.set(
                     'json',
                     JSON.stringify(currentReceipt.serializeToSaveJSON())
