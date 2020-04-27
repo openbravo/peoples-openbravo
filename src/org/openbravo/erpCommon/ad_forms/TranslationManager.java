@@ -634,7 +634,7 @@ public class TranslationManager {
     } finally {
       try {
         if (st != null) {
-          cp.releaseStatement(st);
+          cp.releasePreparedStatement(st);
         }
       } catch (final Exception ignored) {
       }
