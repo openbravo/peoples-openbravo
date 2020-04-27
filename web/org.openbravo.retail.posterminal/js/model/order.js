@@ -6220,13 +6220,20 @@
 
     setFullInvoice: function(active, applyDefaultConfiguration) {
       this.set(
-        'generateInvoice',
+        'fullInvoice',
         active ||
           (applyDefaultConfiguration
-            ? OB.MobileApp.model.get('terminal').terminalType.generateInvoice
+            ? this.get('invoiceTerms') === 'D' ||
+              this.get('invoiceTerms') === 'O'
             : active)
       );
-      this.set('fullInvoice', active);
+      this.set(
+        'generateInvoice',
+        this.get('fullInvoice') ||
+          (applyDefaultConfiguration
+            ? OB.MobileApp.model.get('terminal').terminalType.generateInvoice
+            : this.get('fullInvoice'))
+      );
     },
 
     setOrderInvoice: function() {

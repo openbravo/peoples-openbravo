@@ -1632,18 +1632,18 @@
 
     getInvoiceSequenceName: function(invoice) {
       if (
-        !this.isFullInvoice(invoice) &&
+        !invoice.get('fullInvoice') &&
         this.isReturn(invoice) &&
         OB.MobileApp.model.get('terminal').simplifiedReturnInvoiceDocNoPrefix
       ) {
         return 'simplifiedreturninvoiceslastassignednum';
       } else if (
-        this.isFullInvoice(invoice) &&
+        invoice.get('fullInvoice') &&
         this.isReturn(invoice) &&
         OB.MobileApp.model.get('terminal').fullReturnInvoiceDocNoPrefix
       ) {
         return 'fullreturninvoiceslastassignednum';
-      } else if (!this.isFullInvoice(invoice)) {
+      } else if (!invoice.get('fullInvoice')) {
         return 'simplifiedinvoiceslastassignednum';
       }
       return 'fullinvoiceslastassignednum';
@@ -1683,14 +1683,6 @@
         (negativeLines > 0 &&
           OB.MobileApp.model.get('permissions')
             .OBPOS_SalesWithOneLineNegativeAsReturns)
-      );
-    },
-
-    isFullInvoice: function(invoice) {
-      return (
-        invoice.get('fullInvoice') ||
-        invoice.get('invoiceTerms') === 'D' ||
-        invoice.get('invoiceTerms') === 'O'
       );
     },
 

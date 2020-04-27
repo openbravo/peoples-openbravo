@@ -991,9 +991,26 @@ enyo.kind({
       this
     );
     this.order.on(
+      'change:invoiceTerms',
+      function(model) {
+        model.setFullInvoice(false, true);
+        if (
+          model.get('invoiceTerms') === 'D' ||
+          model.get('invoiceTerms') === 'O'
+        ) {
+          this.$.divbtninvoice.hide();
+        }
+      },
+      this
+    );
+    this.order.on(
       'change:fullInvoice',
       function(model) {
-        if (model.get('fullInvoice')) {
+        if (
+          model.get('fullInvoice') &&
+          model.get('invoiceTerms') !== 'D' &&
+          model.get('invoiceTerms') !== 'O'
+        ) {
           this.$.divbtninvoice.show();
         } else {
           this.$.divbtninvoice.hide();
