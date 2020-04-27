@@ -90,10 +90,7 @@ enyo.kind({
       'change:bp',
       function(model) {
         if (model.get('bp')) {
-          model.setFullInvoice(
-            model.get('fullInvoice') && model.checkFullInvoice(false),
-            true
-          );
+          model.setFullInvoice(model.get('fullInvoice'), true);
 
           if (
             model.get('isEditable') &&

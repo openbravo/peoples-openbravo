@@ -75,10 +75,7 @@ enyo.kind({
       'change:bp',
       function(model) {
         if (model.get('bp')) {
-          model.setFullInvoice(
-            model.get('fullInvoice') && model.checkFullInvoice(false),
-            true
-          );
+          model.setFullInvoice(model.get('fullInvoice'), true);
           this.renderCustomer(model.get('bp').get('_identifier'));
         } else {
           this.renderCustomer('');

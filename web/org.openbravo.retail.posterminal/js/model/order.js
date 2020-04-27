@@ -1473,7 +1473,7 @@
       this.set('updatedBy', null);
       this.set('documentType', null);
       this.set('orderType', 0); // 0: Sales order, 1: Return order
-      this.setFullInvoice(false, false);
+      this.setFullInvoice(false);
       this.set('isQuotation', false);
       this.set('oldId', null);
       this.set('priceList', null);
@@ -6200,45 +6200,44 @@
       });
     },
 
-    checkFullInvoice: function(showError) {
-      if (showError) {
-        if (!OB.MobileApp.model.get('terminal').fullInvoiceDocNoPrefix) {
-          OB.UTIL.showError(
-            OB.I18N.getLabel('OBPOS_FullInvoiceSequencePrefixNotConfigured')
-          );
-        } else if (!this.get('bp').get('taxID')) {
-          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
+    setFullInvoice: function(active, applyDefaultConfiguration, showError) {
+      const checkFullInvoice = () => {
+        if (showError) {
+          if (!OB.MobileApp.model.get('terminal').fullInvoiceDocNoPrefix) {
+            OB.UTIL.showError(
+              OB.I18N.getLabel('OBPOS_FullInvoiceSequencePrefixNotConfigured')
+            );
+          } else if (!this.get('bp').get('taxID')) {
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
+          }
         }
-      }
 
-      return (
-        OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice') &&
-        OB.MobileApp.model.get('terminal').fullInvoiceDocNoPrefix &&
-        this.get('bp').has('taxID')
-      );
-    },
-
-    setFullInvoice: function(active, applyDefaultConfiguration) {
-      this.set(
-        'fullInvoice',
-        active ||
+        return (
+          OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice') &&
+          OB.MobileApp.model.get('terminal').fullInvoiceDocNoPrefix &&
+          this.get('bp').has('taxID')
+        );
+      };
+      const fullInvoice =
+        (active ||
           (applyDefaultConfiguration
             ? this.get('invoiceTerms') === 'D' ||
               this.get('invoiceTerms') === 'O'
-            : active)
-      );
-      this.set(
-        'generateInvoice',
-        this.get('fullInvoice') ||
-          (applyDefaultConfiguration
-            ? OB.MobileApp.model.get('terminal').terminalType.generateInvoice
-            : this.get('fullInvoice'))
-      );
+            : active)) &&
+        checkFullInvoice();
+      const generateInvoice =
+        fullInvoice ||
+        (applyDefaultConfiguration
+          ? OB.MobileApp.model.get('terminal').terminalType.generateInvoice
+          : fullInvoice);
+      this.set('fullInvoice', fullInvoice);
+      this.set('generateInvoice', generateInvoice);
+      return fullInvoice;
     },
 
     setOrderInvoice: function() {
       var me = this;
-      this.setFullInvoice(true, true);
+      this.setFullInvoice(true, true, true);
       this.save(function() {
         me.trigger('saveCurrent');
       });
@@ -6246,7 +6245,7 @@
 
     resetOrderInvoice: function() {
       var me = this;
-      this.setFullInvoice(false, true);
+      this.setFullInvoice(false, true, true);
       this.save(function() {
         me.trigger('saveCurrent');
       });
@@ -7063,7 +7062,7 @@
     createQuotation: function() {
       if (OB.MobileApp.model.hasPermission('OBPOS_receipt.quotation')) {
         this.set('isQuotation', true);
-        this.setFullInvoice(false, false);
+        this.setFullInvoice(false);
         this.set(
           'documentType',
           OB.MobileApp.model.get('terminal').terminalType
@@ -7075,7 +7074,7 @@
 
     setQuotationProperties: function() {
       this.set('isQuotation', true);
-      this.setFullInvoice(false, false);
+      this.setFullInvoice(false);
       this.set('orderType', 0);
       this.set(
         'documentType',
@@ -11356,7 +11355,7 @@
           'orderType',
           OB.MobileApp.model.get('terminal').terminalType.layawayorder ? 2 : 0
         ); // 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
-        order.setFullInvoice(false, false);
+        order.setFullInvoice(false);
         order.set('isQuotation', false);
         order.set('oldId', null);
         order.set('session', OB.MobileApp.model.get('session'));

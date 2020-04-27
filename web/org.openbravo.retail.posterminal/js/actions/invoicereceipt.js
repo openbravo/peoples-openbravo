@@ -29,12 +29,7 @@
         );
       },
       command: function(view) {
-        const receipt = view.model.get('order');
-        if (receipt.checkFullInvoice(true)) {
-          view.receiptToInvoice();
-        } else {
-          view.cancelReceiptToInvoice();
-        }
+        view.receiptToInvoice();
       }
     })
   );
