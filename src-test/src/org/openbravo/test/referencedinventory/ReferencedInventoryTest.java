@@ -19,8 +19,10 @@
 
 package org.openbravo.test.referencedinventory;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assume.assumeThat;
 
 import java.math.BigDecimal;
 
@@ -32,6 +34,7 @@ import org.junit.Rule;
 import org.junit.rules.ExpectedException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.weld.test.WeldBaseTest;
+import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -58,8 +61,20 @@ public abstract class ReferencedInventoryTest extends WeldBaseTest {
   @Rule
   public ExpectedException thrown = ExpectedException.none();
 
+  private boolean isAwoInstalled() {
+    try {
+      OBContext.setAdminMode(true);
+      return KernelUtils.getInstance().isModulePresent("org.openbravo.warehouse.advancedwarehouseoperations");
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
   @Before
   public void initialize() {
+    boolean awoIsInstalled = isAwoInstalled();
+    assumeThat("Auto-Disabled test case as incompatible with AWO (found to be installed) ", awoIsInstalled, is(false));
+
     setUserContext(QA_TEST_ADMIN_USER_ID);
     VariablesSecureApp vsa = new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
         OBContext.getOBContext().getCurrentClient().getId(),
