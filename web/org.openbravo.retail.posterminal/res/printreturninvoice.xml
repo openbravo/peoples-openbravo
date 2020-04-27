@@ -22,7 +22,7 @@
     </line>
     <line></line>
     <line>
-      <text align="left" length="22"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_ticket')) %></text>
+      <text align="left" length="22"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_ToInvoice')) %></text>
       <text><%= OB.UTIL.encodeXMLComponent(order.get('documentNo')) %></text>
     </line>
     <line>
@@ -242,9 +242,7 @@
     </line>
 
     <line>
-      <% if(order.getScannableDocumentNo() !== ''){ %>
-        <barcode type="CODE128" position="left"><%= OB.UTIL.encodeXMLComponent(order.getScannableDocumentNo()) %></barcode>
-      <% } %>
+      <barcode type="CODE128" position="left"><%= OB.UTIL.encodeXMLComponent(order.get('orderDocumentNo')) %></barcode>
     </line>
 
   </ticket>

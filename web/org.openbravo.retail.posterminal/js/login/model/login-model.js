@@ -1583,6 +1583,9 @@
       await this.setDocumentNo(ticket);
       if (ticket.has('calculatedInvoice')) {
         await this.setDocumentNo(ticket.get('calculatedInvoice'));
+        ticket
+          .get('calculatedInvoice')
+          .set('orderDocumentNo', ticket.get('documentNo'));
       }
     },
 
