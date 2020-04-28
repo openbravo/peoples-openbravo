@@ -67,10 +67,14 @@
             recalculateTax: line.get('recalculateTax'),
             lineRate: line.get('lineRate'),
             obrdmDeliveryMode: line.get('obrdmDeliveryMode'),
-            discountedGross: line.get('discountedGross'),
-            gross: line.get('gross'),
-            discountedNet: line.get('discountedNet'),
-            net: line.get('net'),
+            discountedGrossAmount:
+              line.get('discountedGross') || line.get('discountedGross') === 0
+                ? line.get('discountedGross')
+                : line.get('gross'),
+            discountedNetAmount:
+              line.get('discountedNet') || line.get('discountedNet') === 0
+                ? line.get('discountedNet')
+                : line.get('net'),
             qty: line.get('qty'),
             originalTaxCategory: line.get('originalTaxCategory'),
             originalTaxExempt: line.get('originalTaxExempt'),
@@ -110,12 +114,8 @@
               : null
             : newLine.organization.region;
         newLine.amount = newTicket.priceIncludesTax
-          ? newLine.discountedGross || newLine.discountedGross === 0
-            ? newLine.discountedGross
-            : newLine.gross
-          : newLine.discountedNet || newLine.discountedNet === 0
-          ? newLine.discountedNet
-          : newLine.net;
+          ? newLine.discountedGrossAmount
+          : newLine.discountedNetAmount;
         newLine.taxExempt = newLine.originalTaxExempt;
         newLine.product.taxCategory = newLine.originalTaxCategory
           ? newLine.originalTaxCategory
