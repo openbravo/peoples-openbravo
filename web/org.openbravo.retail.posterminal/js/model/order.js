@@ -1642,6 +1642,7 @@
       this.set('isLayaway', _order.get('isLayaway'));
       this.set('isPartiallyDelivered', _order.get('isPartiallyDelivered'));
       this.set('isModified', _order.get('isModified'));
+      this.set('payment', _order.get('payment'));
       if (!_order.get('isEditable')) {
         // keeping it no editable as much as possible, to prevent
         // modifications to trigger editable events incorrectly
