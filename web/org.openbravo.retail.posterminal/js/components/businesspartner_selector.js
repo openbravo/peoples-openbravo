@@ -124,7 +124,9 @@ enyo.kind({
             );
           }
 
-          model.set('invoiceTerms', model.get('bp').get('invoiceTerms'));
+          model.set('invoiceTerms', model.get('bp').get('invoiceTerms'), {
+            silent: true
+          });
           this.renderCustomer(
             model.get('bp').get('id'),
             model.get('bp').get('_identifier')
