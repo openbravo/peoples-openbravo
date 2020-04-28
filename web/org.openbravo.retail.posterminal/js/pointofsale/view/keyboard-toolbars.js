@@ -1072,7 +1072,10 @@ enyo.kind({
           classes:
             'obUiActionButton obObposPointOfSaleUiButtonMore-container1-btn',
           name: 'btn',
-          i18nLabel: 'OBPOS_MorePayments'
+          i18nLabel: 'OBPOS_MorePayments',
+          tap: function() {
+            this.owner.doShowAllButtons();
+          }
         }
       ]
     }
@@ -1080,11 +1083,6 @@ enyo.kind({
   initComponents: function() {
     this.inherited(arguments);
     this.activated = false;
-  },
-  tap: function() {
-    if (!this.$.btn.getDisabled()) {
-      this.doShowAllButtons();
-    }
   },
   buttonStatusChanged: function(inSender, inEvent) {
     var status = inEvent.value.status;
@@ -1140,18 +1138,16 @@ enyo.kind({
           kind: 'OB.UI.Button',
           classes:
             'obObposPointOfSaleUiButtonSwitch-container1-btn obUiActionButton',
-          name: 'btn'
+          name: 'btn',
+          tap: function() {
+            this.owner.keyboard.showNextKeypad();
+          }
         }
       ]
     }
   ],
   setLabel: function(lbl) {
     this.$.btn.setContent(lbl);
-  },
-  tap: function() {
-    if (!this.$.btn.getDisabled()) {
-      this.keyboard.showNextKeypad();
-    }
   },
   buttonStatusChanged: function(inSender, inEvent) {
     if (
