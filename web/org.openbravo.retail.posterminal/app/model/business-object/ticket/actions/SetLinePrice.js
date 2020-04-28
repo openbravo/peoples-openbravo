@@ -21,6 +21,14 @@
 
       const newLine = { ...l, price };
 
+      if (
+        ticket.deliveryPaymentMode === 'PD' &&
+        newLine.product.obrdmIsdeliveryservice
+      ) {
+        newLine.obrdmAmttopayindelivery = OB.DEC.mul(price, newLine.qty);
+        newLine.price = 0;
+      }
+
       if (reason) {
         newLine.oBPOSPriceModificationReason = reason;
       } else {

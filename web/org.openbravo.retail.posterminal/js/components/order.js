@@ -1618,8 +1618,6 @@ enyo.kind({
       'calculatedReceipt updateServicePrices',
       function() {
         var me = this,
-          setPriceCallback,
-          changePriceCallback,
           handleError,
           serviceLines,
           i;
@@ -1636,26 +1634,8 @@ enyo.kind({
           return;
         }
 
-        setPriceCallback = function(line, newprice, priceChanged) {
-          OB.UTIL.HookManager.executeHooks(
-            'OBPOS_ServicePriceRules_PreSetPriceToLine',
-            {
-              newprice: newprice,
-              line: line,
-              priceChanged: priceChanged
-            },
-            function(args) {
-              if (args.newprice !== line.get('price')) {
-                me.order.setPrice(args.line, args.newprice, {
-                  setUndo: false
-                });
-              }
-            }
-          );
-        };
-
-        changePriceCallback = function(line, newprice) {
-          setPriceCallback(line, newprice, true);
+        const setPriceCallback = function(line, price) {
+          OB.App.State.Ticket.setLinePrice({ lineIds: [line.id], price });
         };
 
         handleError = function(line, message) {
@@ -1694,11 +1674,11 @@ enyo.kind({
               line.get('product'),
               line.get('relatedLines'),
               line.get('qty'),
-              changePriceCallback,
+              setPriceCallback,
               handleError
             );
           } else {
-            setPriceCallback(line, line.get('price'), false);
+            setPriceCallback(line, line.get('price'));
           }
         }
       },

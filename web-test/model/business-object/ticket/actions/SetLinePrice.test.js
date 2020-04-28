@@ -20,6 +20,9 @@ OB = {
 };
 
 global.lodash = require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/lodash-4.17.15');
+require('../../../../../../org.openbravo.client.kernel/web/org.openbravo.client.kernel/js/BigDecimal-all-1.0.3');
+
+require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/source/utils/ob-arithmetic');
 
 require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/StateAPI');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/Ticket');
@@ -112,5 +115,49 @@ describe('Ticket.setPrice action', () => {
     });
 
     expect(newTicket.lines[0]).not.toBe(basicTicket.lines[0]);
+  });
+
+  describe('Payment delivery', () => {
+    const pdTicket = {
+      deliveryPaymentMode: 'PD',
+      lines: [
+        {
+          id: '1',
+          qty: 1,
+          price: 10,
+          priceList: 10,
+          baseAmountToPayInDeliver: 5,
+          product: { listPrice: 10, obrdmIsdeliveryservice: true }
+        },
+        {
+          id: '2',
+          qty: 1,
+          price: 30,
+          priceList: 30,
+          product: { listPrice: 30 }
+        }
+      ]
+    };
+
+    it('delivery services reset price to 0 setting it in amt to pay in delivery', () => {
+      const newTicket = OB.App.StateAPI.Ticket.setLinePrice(pdTicket, {
+        lineIds: ['1'],
+        price: 500
+      });
+
+      expect(newTicket.lines[0]).toMatchObject({
+        price: 0,
+        obrdmAmttopayindelivery: 500
+      });
+    });
+
+    it('standard products do not get affected', () => {
+      const newTicket = OB.App.StateAPI.Ticket.setLinePrice(pdTicket, {
+        lineIds: ['2'],
+        price: 500
+      });
+
+      expect(newTicket.lines[1]).toMatchObject({ price: 500 });
+    });
   });
 });

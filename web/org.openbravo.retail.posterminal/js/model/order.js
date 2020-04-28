@@ -11420,6 +11420,10 @@
           'posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           OB.MobileApp.model.get('terminal')._identifier
         );
+        order.set(
+          'deliveryPaymentMode',
+          OB.MobileApp.model.get('deliveryPaymentMode')
+        );
         order.set('orderDate', OB.I18N.normalizeDate(new Date()));
         order.set('creationDate', null);
         order.set('isPaid', false);
