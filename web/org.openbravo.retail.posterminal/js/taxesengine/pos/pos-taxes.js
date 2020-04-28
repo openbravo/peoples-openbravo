@@ -163,8 +163,7 @@
       }
 
       const ticket = this.translateReceipt(receipt);
-      const result = this.applyTaxes(ticket, this.ruleImpls);
-      return this.translateTaxes(result);
+      return this.applyTaxes(ticket, this.ruleImpls);
     },
 
     /**
@@ -184,7 +183,7 @@
         taxes = OB.Taxes.applyTaxes(ticketForTaxRecalculation, rules);
       }
 
-      return taxes;
+      return this.translateTaxes(taxes);
     },
 
     /**
