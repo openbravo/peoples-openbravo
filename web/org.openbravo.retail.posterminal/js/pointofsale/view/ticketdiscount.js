@@ -598,7 +598,7 @@ enyo.kind({
       ].getAmountProperty();
     }
     this.setValue(this.model.get('id'));
-    this.originalText = this.model.get('_identifier');
+    this.originalText = this.model.get('printName') || this.model.get('name');
     // TODO: this shouldn't be hardcoded but defined in each promotion
     if (
       !OB.Model.Discounts.discountRules[this.model.get('discountType')].isFixed
