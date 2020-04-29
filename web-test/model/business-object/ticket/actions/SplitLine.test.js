@@ -32,7 +32,7 @@ describe('Ticket.splitLine action', () => {
   it('generates lines with correct quantities', () => {
     const { lines } = OB.App.StateAPI.Ticket.splitLine(basicTicket, {
       lineId: '1',
-      quantities: [10, 20]
+      quantities: [70, 10, 20]
     });
 
     expect(lines).toHaveLength(4);
@@ -46,7 +46,7 @@ describe('Ticket.splitLine action', () => {
   it('new lines have different ids', () => {
     const { lines } = OB.App.StateAPI.Ticket.splitLine(basicTicket, {
       lineId: '1',
-      quantities: [10, 20]
+      quantities: [70, 10, 20]
     });
 
     expect(lines).toHaveLength(4);

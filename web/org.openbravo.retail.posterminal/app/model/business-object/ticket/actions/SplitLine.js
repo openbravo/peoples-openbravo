@@ -16,7 +16,8 @@
 
     const editingLine = ticket.lines.find(l => l.id === lineId);
 
-    const qtyToKeep = editingLine.qty - quantities.reduce((q0, q) => q0 + q);
+    // keep 1st quantity and generate new lines for the rest
+    const [qtyToKeep] = quantities.splice(0, 1);
 
     ticket.lines = ticket.lines.map(l => {
       if (l.id !== lineId) {
