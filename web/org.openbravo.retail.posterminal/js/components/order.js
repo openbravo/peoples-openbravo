@@ -993,10 +993,10 @@ enyo.kind({
     this.order.on(
       'change:invoiceTerms',
       function(model) {
-        if (
-          model.setFullInvoice(model.get('fullInvoice'), true, true) &&
-          model.get('invoiceTerms') === 'I'
-        ) {
+        if (model.get('invoiceTerms') !== model.get('bp').get('invoiceTerms')) {
+          model.setFullInvoice(false, true, true);
+        }
+        if (model.get('fullInvoice') && model.get('invoiceTerms') === 'I') {
           this.$.divbtninvoice.show();
         } else {
           this.$.divbtninvoice.hide();

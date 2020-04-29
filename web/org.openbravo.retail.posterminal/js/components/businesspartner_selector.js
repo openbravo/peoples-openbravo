@@ -90,6 +90,7 @@ enyo.kind({
       'change:bp',
       function(model) {
         if (model.get('bp')) {
+          model.set('invoiceTerms', model.get('bp').get('invoiceTerms'));
           model.setFullInvoice(model.get('fullInvoice'), true);
 
           if (
@@ -124,9 +125,6 @@ enyo.kind({
             );
           }
 
-          model.set('invoiceTerms', model.get('bp').get('invoiceTerms'), {
-            silent: true
-          });
           this.renderCustomer(
             model.get('bp').get('id'),
             model.get('bp').get('_identifier')
