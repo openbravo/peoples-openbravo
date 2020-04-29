@@ -28,6 +28,7 @@
     const newLines = quantities.map(qty => {
       const newLine = lodash.cloneDeep(editingLine);
       newLine.qty = qty;
+      newLine.id = OB.App.UUID.generate();
       return newLine;
     });
 

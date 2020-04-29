@@ -15,6 +15,7 @@ OB = {
 };
 
 global.lodash = require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/lodash-4.17.15');
+require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/util/UUID');
 
 require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/StateAPI');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/Ticket');
@@ -28,7 +29,7 @@ const basicTicket = {
 };
 
 describe('Ticket.splitLine action', () => {
-  it('generates lines with correct qunatities', () => {
+  it('generates lines with correct quantities', () => {
     const { lines } = OB.App.StateAPI.Ticket.splitLine(basicTicket, {
       lineId: '1',
       quantities: [10, 20]
@@ -40,5 +41,19 @@ describe('Ticket.splitLine action', () => {
       .filter(l => l.product.id === 'p1')
       .map(l => l.qty);
     expect(p1Quantities).toMatchObject([70, 10, 20]);
+  });
+
+  it('new lines have different ids', () => {
+    const { lines } = OB.App.StateAPI.Ticket.splitLine(basicTicket, {
+      lineId: '1',
+      quantities: [10, 20]
+    });
+
+    expect(lines).toHaveLength(4);
+
+    const differentNewIDs = [
+      ...new Set(lines.filter(l => l.product.id === 'p1').map(l => l.id))
+    ];
+    expect(differentNewIDs).toHaveLength(3);
   });
 });
