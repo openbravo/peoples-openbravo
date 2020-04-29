@@ -242,7 +242,7 @@ enyo.kind({
       .set('organization', OB.MobileApp.model.get('terminal').organization);
 
     // deletion without warning is allowed if the ticket has been processed
-    if (this.hasClass('paidticket')) {
+    if (this.model.get('order').isProcessedTicket()) {
       this.doDeleteOrder();
     } else {
       if (
@@ -294,13 +294,7 @@ enyo.kind({
       'order',
       function() {
         this.removePaidTicketClass();
-        if (
-          this.model.get('order').get('isPaid') ||
-          this.model.get('order').get('isLayaway') ||
-          (this.model.get('order').get('isQuotation') &&
-            this.model.get('order').get('hasbeenpaid') === 'Y') ||
-          this.model.get('order').get('isModified')
-        ) {
+        if (this.model.get('order').isProcessedTicket()) {
           this.addPaidTicketClass();
         }
         this.bubble('onChangeTotal', {
@@ -319,15 +313,9 @@ enyo.kind({
     //      return true;
     //    }, this);
     this.model.get('order').on(
-      'change:isPaid change:isQuotation change:isLayaway change:hasbeenpaid change:isModified',
+      'change:isPaid change:isQuotation change:isLayaway change:hasbeenpaid change:isModified change:isEditable',
       function(changedModel) {
-        if (
-          changedModel.get('isPaid') ||
-          changedModel.get('isLayaway') ||
-          (changedModel.get('isQuotation') &&
-            changedModel.get('hasbeenpaid') === 'Y') ||
-          changedModel.get('isModified')
-        ) {
+        if (changedModel.isProcessedTicket()) {
           this.addPaidTicketClass();
           return;
         }

@@ -124,12 +124,14 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
           .getOrganizationStructureProvider(terminalObj.getClient().getId())
           .getNaturalTree(terminalObj.getOrganization().getId()));
 
-      final boolean filterUserOnlyByTerminalAccess = doFilterUserOnlyByTerminalAccessPreference();
+      final String extraFilter = !doFilterUserOnlyByTerminalAccessPreference(
+          approvalType.length() > 0 ? true : false)
+              ? "(not exists(from OBPOS_TerminalAccess ta2 where ta2.userContact = user)) or "
+              : "";
 
       String hqlUser = "select distinct user.name, user.username, user.id, user.firstName, user.lastName "
-          + "from ADUser user, ADUserRoles userRoles, ADRole role, "
-          + "ADFormAccess formAccess, OBPOS_Applications terminal, ADRoleOrganization ro "
-          + (filterUserOnlyByTerminalAccess ? ", OBPOS_TerminalAccess ta " : "")
+          + "from ADUser user, ADUserRoles userRoles, ADRole role, ADFormAccess formAccess, "
+          + "OBPOS_Applications terminal, ADRoleOrganization ro, OBPOS_TerminalAccess ta "
           + (approvalType.length() > 0 ? ", ADPreference p " : "")
           + "where user.active = true and user.username is not null and user.password is not null and "
           + "userRoles.active = true and role.active = true and formAccess.active = true and "
@@ -138,10 +140,8 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
           + "role.id = formAccess.role.id and role.forPortalUsers = false and "
           + "ro.role = role and ro.organization = terminal.organization and "
           + "formAccess.specialForm.id = :webPOSFormId and "
-          + "((user.organization.id in (:orgList)) or (terminal.organization.id in (:orgList))) "
-          + (filterUserOnlyByTerminalAccess
-              ? "and ta.userContact = user and ta.pOSTerminal=terminal "
-              : "");
+          + "((user.organization.id in (:orgList)) or (terminal.organization.id in (:orgList))) and "
+          + "(" + extraFilter + " (ta.userContact = user and ta.pOSTerminal=terminal)) ";
 
       // checking supervisor users for sent approval type
       Map<String, String> iterParameter = new HashMap<>();
@@ -201,13 +201,26 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
   }
 
   public static boolean doFilterUserOnlyByTerminalAccessPreference() {
+    return doFilterUserOnlyByTerminalAccessPreference(true);
+  }
+
+  public static boolean doFilterUserOnlyByTerminalAccessPreference(boolean checkContext) {
     try {
       OBContext.setAdminMode(false);
-      final String value = Preferences.getPreferenceValue(
-          "OBPOS_FILTER_USER_ONLY_BY_TERMINAL_ACCESS", true,
-          OBContext.getOBContext().getCurrentClient(),
-          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
-          OBContext.getOBContext().getRole(), null);
+      String value;
+      if (checkContext) {
+        value = Preferences.getPreferenceValue("OBPOS_FILTER_USER_ONLY_BY_TERMINAL_ACCESS", true,
+            OBContext.getOBContext().getCurrentClient(),
+            OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+            OBContext.getOBContext().getRole(), null);
+      } else {
+        Map<QueryFilter, Boolean> terminalAccessQueryFilters = new HashMap<>();
+        terminalAccessQueryFilters.put(QueryFilter.ACTIVE, true);
+        terminalAccessQueryFilters.put(QueryFilter.CLIENT, false);
+        terminalAccessQueryFilters.put(QueryFilter.ORGANIZATION, false);
+        value = Preferences.getPreferenceValue("OBPOS_FILTER_USER_ONLY_BY_TERMINAL_ACCESS", true,
+            null, null, null, null, (String) null, terminalAccessQueryFilters);
+      }
       return "Y".equals(value);
     } catch (Exception e) {
       return false;

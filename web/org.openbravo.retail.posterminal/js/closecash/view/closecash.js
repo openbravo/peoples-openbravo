@@ -295,6 +295,13 @@ enyo.kind({
               'obObPosCashupUiCashUp-cashupMultiColumn-cashupRightPanel-cashUpKeyboard'
           }
         ]
+      },
+      resizeHandler: function() {
+        // see issue https://issues.openbravo.com/view.php?id=43360
+        var me = this;
+        setTimeout(function() {
+          me.render();
+        }, 1);
       }
     },
     {

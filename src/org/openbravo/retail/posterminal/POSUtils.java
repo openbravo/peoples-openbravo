@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2019 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -935,6 +935,22 @@ public class POSUtils {
     }
 
     return false;
+  }
+
+  public static boolean getPreference(final String preference) {
+    OBContext.setAdminMode(false);
+    boolean value;
+    try {
+      value = StringUtils.equals(Preferences.getPreferenceValue(preference, true,
+          OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), null), "Y");
+    } catch (PropertyException e) {
+      value = false;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return value;
   }
 
   public static boolean isSynchronizedModeEnabled() {

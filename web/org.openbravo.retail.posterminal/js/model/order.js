@@ -1502,6 +1502,16 @@
       );
     },
 
+    // returns true if the order is a processed ticket, otherwise false
+    isProcessedTicket: function() {
+      return (
+        this.get('isPaid') ||
+        this.get('isLayaway') ||
+        (this.get('isQuotation') && this.get('hasbeenpaid') === 'Y') ||
+        this.get('isModified')
+      );
+    },
+
     clear: function() {
       this.clearOrderAttributes();
       this.trigger('change');
@@ -1632,6 +1642,7 @@
       this.set('isLayaway', _order.get('isLayaway'));
       this.set('isPartiallyDelivered', _order.get('isPartiallyDelivered'));
       this.set('isModified', _order.get('isModified'));
+      this.set('payment', _order.get('payment'));
       if (!_order.get('isEditable')) {
         // keeping it no editable as much as possible, to prevent
         // modifications to trigger editable events incorrectly
@@ -5475,11 +5486,10 @@
               notReturnableLine.get('product').get('_identifier')
             ])
           );
+          callback(false);
           return;
         }
-        if (callback) {
-          callback();
-        }
+        callback(true);
       }
     },
 
@@ -5610,6 +5620,7 @@
       });
 
       if (notReturnableProducts) {
+        callback(false);
         return;
       }
 
@@ -5626,13 +5637,15 @@
           function(approved, supervisor, approvalType) {
             if (approved) {
               me.set('notApprove', true);
-              callback();
+              callback(true);
               me.unset('notApprove');
+            } else {
+              callback(false);
             }
           }
         );
       } else {
-        callback();
+        callback(true);
       }
     },
 
@@ -6041,8 +6054,8 @@
           attrs.organization = lines[index].get('organization');
           attrs.warehouse = lines[index].get('warehouse');
           lineQty = lines[index].get('qty');
-          // Issue 43710: Convert quantity to positive as sign conversion handled in addProduct
-          if (lineQty < 0) {
+          // Issue 43710: For return receipt convert qty sign as sign conversion handled again in addProduct
+          if (me.get('orderType') === 1) {
             lineQty = lineQty * -1;
           }
           me.addProduct(product, lineQty, undefined, attrs, function(
