@@ -200,6 +200,10 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     return result;
   }
 
+  public static boolean doFilterUserOnlyByTerminalAccessPreference() {
+    return doFilterUserOnlyByTerminalAccessPreference(true);
+  }
+
   public static boolean doFilterUserOnlyByTerminalAccessPreference(boolean checkContext) {
     try {
       OBContext.setAdminMode(false);
