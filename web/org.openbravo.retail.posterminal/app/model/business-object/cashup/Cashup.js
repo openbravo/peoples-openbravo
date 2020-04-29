@@ -21,7 +21,6 @@
     userId: null,
     cashTaxInfo: [], // taxCashupId, name, amount, orderType
     cashPaymentMethodInfo: [], // paymentMethodCashupId, paymentMethodId, searchKey, name, startingCash, totalSales, totalReturns, totalDeposits, totalDrops, rate, isocode, newPaymentMethod
-    cashManagements: [],
     isprocessed: null,
     statistics: {
       lastcashupeportdate: null,

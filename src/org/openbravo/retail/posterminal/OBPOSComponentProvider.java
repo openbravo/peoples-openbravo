@@ -319,6 +319,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/business-object/cashup/initCashup");
     appDependency.add("model/business-object/cashup/updateCashup");
     appDependency.add("model/business-object/cashup/completeCashupAndCreateNew");
+    // Cash Management
+    appDependency.add("model/business-object/cash-management/actions/createCashManagement");
 
     for (final String resource : appDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,

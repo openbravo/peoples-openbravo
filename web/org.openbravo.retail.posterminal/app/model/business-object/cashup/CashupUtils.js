@@ -135,7 +135,8 @@
             rate: terminalPayment.rate,
             isocode: terminalPayment.isocode,
             lineNo: terminalPayment.lineNo,
-            newPaymentMethod: true
+            newPaymentMethod: true,
+            cashManagements: []
           });
         }
       });
@@ -170,7 +171,8 @@
         rate: paymentMethodCashUpModel.rate,
         isocode: paymentMethodCashUpModel.isocode,
         lineNo: paymentMethodCashUpModel.lineNo,
-        newPaymentMethod: false
+        newPaymentMethod: false,
+        cashManagements: []
       };
     },
 
@@ -213,7 +215,7 @@
         currentCashupFromBackend.cashTaxInfo
       );
       newCashup.cashCloseInfo = currentCashupFromBackend.cashCloseInfo;
-      newCashup.cashManagements = currentCashupFromBackend.cashMgmInfo;
+      // newCashup.cashManagements = currentCashupFromBackend.cashMgmInfo;
 
       return newCashup;
     },
@@ -291,7 +293,8 @@
             rate: terminalPayment.rate,
             isocode: terminalPayment.isocode,
             lineNo: terminalPayment.lineNo,
-            newPaymentMethod: true
+            newPaymentMethod: true,
+            cashManagements: []
           });
           // eslint-disable-next-line no-underscore-dangle
         } else if (cashupPayment.name !== terminalPayment.payment._identifier) {
@@ -334,6 +337,49 @@
       newCashup.set('objToSend', JSON.stringify(filteredObjToSend));
 
       return newCashup;
+    },
+
+    getCashManagementsInDraft() {
+      let cashManagementsInDraft = [];
+      OB.App.State.getState().Cashup.cashPaymentMethodInfo.forEach(
+        function getCashManagementsInDraft(paymentMethod) {
+          const cashManagementInDraftByPayment = paymentMethod.cashManagements.filter(
+            cashManagement => cashManagement.isDraft
+          );
+          cashManagementsInDraft = [
+            ...cashManagementsInDraft,
+            ...cashManagementInDraftByPayment
+          ];
+        }
+      );
+      return cashManagementsInDraft;
+    },
+    getCashManagements() {
+      let cashManagements = [];
+      OB.App.State.getState().Cashup.cashPaymentMethodInfo.forEach(
+        function getCashManagementsInDraft(paymentMethod) {
+          cashManagements = [
+            ...cashManagements,
+            ...paymentMethod.cashManagements
+          ];
+        }
+      );
+      return cashManagements;
+    },
+
+    getCashManagementsByPaymentMethodId(paymentMethodId) {
+      let cashManagements = [];
+      OB.App.State.getState().Cashup.cashPaymentMethodInfo.forEach(
+        function getCashManagementsInDraft(paymentMethod) {
+          if (paymentMethodId === paymentMethod.paymentMethodId) {
+            cashManagements = [
+              ...cashManagements,
+              ...paymentMethod.cashManagements
+            ];
+          }
+        }
+      );
+      return cashManagements;
     }
   });
 })();

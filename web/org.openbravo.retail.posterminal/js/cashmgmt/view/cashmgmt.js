@@ -47,9 +47,15 @@ enyo.kind({
       disabled: false,
       i18nLabel: 'OBMOBC_LblCancel',
       stepCount: 0,
+      init: function(model) {
+        this.model = model;
+      },
       tap: function() {
+        var me = this;
         OB.POS.hwserver.checkDrawer(function() {
-          OB.POS.navigate('retail.pointofsale');
+          me.model.cancelDeposits(function() {
+            OB.POS.navigate('retail.pointofsale');
+          });
         });
       }
     },

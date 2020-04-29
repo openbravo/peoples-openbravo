@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, Backbone, _, enyo */
+/*global OB,  _, enyo */
 
 // Renders lines of deposits/drops
 enyo.kind({
@@ -235,9 +235,16 @@ enyo.kind({
     }
   ],
   create: function() {
-    var transactionsArray = this.model.get('listdepositsdrops'),
-      transactionsCollection = new Backbone.Collection(transactionsArray),
-      total;
+    const transactionsCollection = new OB.Collection.CashManagementList();
+    OB.App.State.Cashup.Utils.getCashManagementsByPaymentMethodId(
+      this.model.get('paymentmethod_id')
+    ).forEach(cashManagement =>
+      transactionsCollection.add(
+        OB.Dal.transform(OB.Model.CashManagement, cashManagement)
+      )
+    );
+
+    var total;
 
     var fromCurrencyId =
       OB.MobileApp.model.paymentnames[this.model.attributes.searchKey]
@@ -249,7 +256,7 @@ enyo.kind({
     total = OB.DEC.add(total, this.model.get('totalSales'));
     total = OB.DEC.sub(total, OB.DEC.abs(this.model.get('totalReturns')));
     var totalDeposits = _.reduce(
-      transactionsArray,
+      transactionsCollection.models,
       function(accum, trx) {
         if (trx.get('type') === 'deposit') {
           return OB.DEC.add(accum, trx.get('amount'));
@@ -264,6 +271,7 @@ enyo.kind({
     this.$.availableLbl.setContent(
       OB.I18N.getLabel('OBPOS_LblNewAvailableIn') + ' ' + this.model.get('name')
     );
+
     if (OB.UTIL.currency.isDefaultCurrencyId(fromCurrencyId)) {
       this.model.set('total', total, {
         silent: true // prevents triggering change event
