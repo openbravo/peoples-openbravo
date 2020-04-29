@@ -994,10 +994,11 @@ enyo.kind({
       'change:invoiceTerms',
       function(model) {
         if (
-          model.setFullInvoice(false, true, true) &&
-          (model.get('invoiceTerms') === 'D' ||
-            model.get('invoiceTerms') === 'O')
+          model.setFullInvoice(model.get('fullInvoice'), true, true) &&
+          model.get('invoiceTerms') === 'I'
         ) {
+          this.$.divbtninvoice.show();
+        } else {
           this.$.divbtninvoice.hide();
         }
       },
@@ -1006,11 +1007,7 @@ enyo.kind({
     this.order.on(
       'change:fullInvoice',
       function(model) {
-        if (
-          model.get('fullInvoice') &&
-          model.get('invoiceTerms') !== 'D' &&
-          model.get('invoiceTerms') !== 'O'
-        ) {
+        if (model.get('fullInvoice') && model.get('invoiceTerms') === 'I') {
           this.$.divbtninvoice.show();
         } else {
           this.$.divbtninvoice.hide();
