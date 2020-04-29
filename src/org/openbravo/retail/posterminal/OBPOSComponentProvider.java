@@ -314,6 +314,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/business-object/ticket/AddApprovalsModelHook");
     appDependency.add("model/business-object/ticket/ApplyDiscountsAndTaxesModelHook");
 
+    // Synchronization Buffer
+    appDependency.add("model/synchronization-buffer/HardwareManagerEndpoint");
+
     for (final String resource : appDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,
           prefix + "/app/" + resource + ".js", POSUtils.APP_NAME));
