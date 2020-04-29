@@ -124,9 +124,10 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
           .getOrganizationStructureProvider(terminalObj.getClient().getId())
           .getNaturalTree(terminalObj.getOrganization().getId()));
 
-      final String extraFilter = !doFilterUserOnlyByTerminalAccessPreference()
-          ? "(not exists(from OBPOS_TerminalAccess ta2 where ta2.userContact = user)) or "
-          : "";
+      final String extraFilter = !doFilterUserOnlyByTerminalAccessPreference(
+          approvalType.length() > 0 ? true : false)
+              ? "(not exists(from OBPOS_TerminalAccess ta2 where ta2.userContact = user)) or "
+              : "";
 
       String hqlUser = "select distinct user.name, user.username, user.id, user.firstName, user.lastName "
           + "from ADUser user, ADUserRoles userRoles, ADRole role, ADFormAccess formAccess, "
@@ -199,14 +200,23 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     return result;
   }
 
-  public static boolean doFilterUserOnlyByTerminalAccessPreference() {
+  public static boolean doFilterUserOnlyByTerminalAccessPreference(boolean checkContext) {
     try {
       OBContext.setAdminMode(false);
-      final String value = Preferences.getPreferenceValue(
-          "OBPOS_FILTER_USER_ONLY_BY_TERMINAL_ACCESS", true,
-          OBContext.getOBContext().getCurrentClient(),
-          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
-          OBContext.getOBContext().getRole(), null);
+      String value;
+      if (checkContext) {
+        value = Preferences.getPreferenceValue("OBPOS_FILTER_USER_ONLY_BY_TERMINAL_ACCESS", true,
+            OBContext.getOBContext().getCurrentClient(),
+            OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+            OBContext.getOBContext().getRole(), null);
+      } else {
+        Map<QueryFilter, Boolean> terminalAccessQueryFilters = new HashMap<>();
+        terminalAccessQueryFilters.put(QueryFilter.ACTIVE, true);
+        terminalAccessQueryFilters.put(QueryFilter.CLIENT, false);
+        terminalAccessQueryFilters.put(QueryFilter.ORGANIZATION, false);
+        value = Preferences.getPreferenceValue("OBPOS_FILTER_USER_ONLY_BY_TERMINAL_ACCESS", true,
+            null, null, null, null, (String) null, terminalAccessQueryFilters);
+      }
       return "Y".equals(value);
     } catch (Exception e) {
       return false;
