@@ -27,13 +27,18 @@ const basicTicket = {
   ]
 };
 
-describe('Ticket.setPrice action', () => {
-  it('works', () => {
-    const newTicket = OB.App.StateAPI.Ticket.splitLine(basicTicket, {
+describe('Ticket.splitLine action', () => {
+  it('generates lines with correct qunatities', () => {
+    const { lines } = OB.App.StateAPI.Ticket.splitLine(basicTicket, {
       lineId: '1',
-      qtyToKeep: 5
+      quantities: [10, 20]
     });
 
-    expect(newTicket).toMatchObject({ a: 1 });
+    expect(lines).toHaveLength(4);
+
+    const p1Quantities = lines
+      .filter(l => l.product.id === 'p1')
+      .map(l => l.qty);
+    expect(p1Quantities).toMatchObject([70, 10, 20]);
   });
 });

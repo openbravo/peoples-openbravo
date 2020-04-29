@@ -12,15 +12,11 @@
 (function SplitLineDefinition() {
   OB.App.StateAPI.Ticket.registerAction('splitLine', (state, payload) => {
     const ticket = { ...state };
-    const { lineId, qtyToKeep } = payload;
+    const { lineId, quantities } = payload;
 
     const editingLine = ticket.lines.find(l => l.id === lineId);
 
-    const originalQty = editingLine.qty;
-
-    if (originalQty === qtyToKeep) {
-      return ticket;
-    }
+    const qtyToKeep = editingLine.qty - quantities.reduce((q0, q) => q0 + q);
 
     ticket.lines = ticket.lines.map(l => {
       if (l.id !== lineId) {
@@ -29,10 +25,14 @@
       return { ...editingLine, qty: qtyToKeep };
     });
 
-    const newLine = lodash.cloneDeep(editingLine);
-    newLine.qty = originalQty - qtyToKeep;
+    const newLines = quantities.map(qty => {
+      const newLine = lodash.cloneDeep(editingLine);
+      newLine.qty = qty;
+      return newLine;
+    });
 
-    ticket.lines.push(newLine);
+    ticket.lines = ticket.lines.concat(newLines);
+
     return ticket;
   });
 })();
