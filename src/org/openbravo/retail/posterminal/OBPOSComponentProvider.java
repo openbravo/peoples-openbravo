@@ -35,8 +35,10 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
   static {
     // Set dependency on Mobile Core app
-    BaseComponentProvider.setAppDependencies(POSUtils.APP_NAME, Arrays.asList(
-        MobileCoreConstants.RETAIL_CORE, DiscountsEngineAppComponentProvider.DISCOUNTS_APP));
+    BaseComponentProvider.setAppDependencies(POSUtils.APP_NAME,
+        Arrays.asList(MobileCoreConstants.RETAIL_CORE,
+            DiscountsEngineAppComponentProvider.DISCOUNTS_APP,
+            TaxesEngineAppComponentProvider.TAXES_APP));
   }
 
   public static final String QUALIFIER = "OBPOS_Main";
@@ -300,12 +302,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/masterdata/discount/DiscountFilterProductModel");
     appDependency.add("model/masterdata/discount/DiscountFilterRoleModel");
     appDependency.add("model/masterdata/discount/DiscountModel");
-    // Tax
-    appDependency.add("model/businessLogic/taxesengine/interface/tax-posinterface");
-    appDependency.add("model/businessLogic/taxesengine/engine/tax-engine");
-    appDependency.add("model/businessLogic/taxesengine/engine/tax-rules");
-    appDependency.add("model/businessLogic/taxesengine/engine/rules/priceincluding-tax");
-    appDependency.add("model/businessLogic/taxesengine/engine/rules/priceexcluding-tax");
 
     for (final String resource : appDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,
