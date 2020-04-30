@@ -56,4 +56,17 @@ describe('Ticket.splitLine action', () => {
     ];
     expect(differentNewIDs).toHaveLength(3);
   });
+
+  it('inserts new lines after the original one', () => {
+    const { lines } = OB.App.StateAPI.Ticket.splitLine(basicTicket, {
+      lineId: '1',
+      quantities: [50, 50]
+    });
+
+    expect(lines).toMatchObject([
+      { product: { id: 'p1' } },
+      { product: { id: 'p1' } },
+      { product: { id: 'p2' } }
+    ]);
+  });
 });

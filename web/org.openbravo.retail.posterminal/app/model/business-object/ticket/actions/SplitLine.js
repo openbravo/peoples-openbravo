@@ -33,7 +33,8 @@
       return newLine;
     });
 
-    ticket.lines = ticket.lines.concat(newLines);
+    const lineIdx = ticket.lines.map(l => l.id).indexOf(lineId);
+    ticket.lines.splice(lineIdx - 1, 0, ...newLines);
 
     return ticket;
   });
