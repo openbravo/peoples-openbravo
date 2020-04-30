@@ -1802,9 +1802,9 @@
       // TODO: remove this method
       OB.error('setPrice should not be invoked in old order model!');
       const lineIds = [line.get('id')];
-      OB.App.State.Ticket.setLinePrice({ lineIds, price }).then(
-        OB.MobileApp.model.receipt.calculateReceipt
-      );
+      OB.App.State.Ticket.setLinePrice({ lineIds, price }).then(() => {
+        OB.MobileApp.model.receipt.calculateReceipt();
+      });
     },
 
     setLineProperty: function(line, property, value) {
