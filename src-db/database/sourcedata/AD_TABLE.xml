@@ -12582,6 +12582,7 @@ group by  coalesce(lcm.id, lcc.id), lcc, lct.name, lcc.amount, lcc.currency.iSOC
 iol.uOM as uOM, iol.id as goodsShipmentLine, iol.movementQuantity as movementQuantity,
 io.businessPartner as businessPartner, io.documentNo as shipmentNumber,
 io.movementDate as movementDate,  attributeSetValue as attributeSetValue,
+(select ol.id from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine.id = iol.id) as salesOrderLine,
 @rmAUM@ as aum,
 @rmAUMQty@ as aumqty,
 @rmAUMId@ as aumId,
@@ -12664,7 +12665,8 @@ ol.uOM as uOM, '' as goodsShipmentLine, '' as movementQuantity,
 ol.salesOrder.businessPartner as businessPartner, '' as shipmentNumber,
 '' as movementDate,  '' as attributeSetValue,'' as returnQtyOtherRM,
 'Y' as obSelected, coalesce(ol.orderedQuantity,0)*(-1) as returned, 
- (select oli.returnReason from OrderLine as oli where oli.salesOrder.id = :salesOrderId  and oli.id=ol.id) as returnReason, coalesce (ol.tax, '') as tax, ol.@unitPriceProperty@  as unitPrice, 
+ (select oli.returnReason from OrderLine as oli where oli.salesOrder.id = :salesOrderId  and oli.id=ol.id) as returnReason, coalesce (ol.tax, '') as tax, ol.@unitPriceProperty@  as unitPrice,
+ol.id as salesOrderLine, 
 '' as orderNo
 from OrderLine ol  
 where ol.goodsShipmentLine is null
