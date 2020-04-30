@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2019 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -423,6 +423,7 @@ enyo.kind({
 
     return maxNoOrder;
   },
+
   applyDiscounts: function(inSender, inEvent) {
     var promotionToApply = {},
       formElementDiscountsList = this.$.formElementDiscountsList,
@@ -453,8 +454,12 @@ enyo.kind({
         let maxNoOrder = me.getMaxNoOrder(me.order);
         promotionToApply.definition.noOrder = maxNoOrder + 1;
 
-        if (!promotionToApply.definition.applyNext) {
-          OB.Discounts.Pos.removeManualPromotionFromLines(me.order);
+        if (
+          !promotionToApply.definition.applyNext &&
+          me.order.get('discountsFromUser') &&
+          me.order.get('discountsFromUser').manualPromotions
+        ) {
+          me.order.get('discountsFromUser').manualPromotions = [];
         }
 
         if (
