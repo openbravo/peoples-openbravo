@@ -120,7 +120,7 @@
                 }
               }
 
-              if (!OB.UTIL.isNullOrUndefined(taxAmount)) {
+              if (taxAmount != null) {
                 newCashupTaxes.push({
                   taxName: taxLine.name,
                   taxAmount,

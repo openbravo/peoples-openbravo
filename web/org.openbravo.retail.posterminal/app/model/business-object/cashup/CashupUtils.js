@@ -12,7 +12,7 @@
 (function CashupUtilsDefinition() {
   OB.App.StateAPI.Cashup.registerUtilityFunctions({
     isValidTheLocalCashup(cashup) {
-      return !OB.UTIL.isNullOrUndefined(cashup.id);
+      return cashup.id != null;
     },
 
     async requestNoProcessedCashupFromBackend() {
@@ -89,7 +89,7 @@
               terminalPayment.payment.id
             );
           })[0];
-          if (!OB.UTIL.isNullOrUndefined(lastCashUpPayment)) {
+          if (lastCashUpPayment != null) {
             // if the last cashup payments are read locally then their structure
             // is different from when reading from the server
             if (_.isObject(lastCashUpPayment.paymentMethod)) {
@@ -274,10 +274,7 @@
             );
           }
         )[0];
-        if (
-          OB.UTIL.isNullOrUndefined(cashupPayment) &&
-          terminalPayment.payment.active === true
-        ) {
+        if (cashupPayment == null && terminalPayment.payment.active === true) {
           // a new payment methods was added in the backend, add it to the pos cashup
           newCashup.cashPaymentMethodInfo.push({
             id: OB.App.UUID.generate(),
