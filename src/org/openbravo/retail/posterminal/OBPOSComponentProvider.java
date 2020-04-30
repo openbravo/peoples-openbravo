@@ -301,10 +301,11 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/masterdata/discount/DiscountFilterRoleModel");
     appDependency.add("model/masterdata/discount/DiscountModel");
     // Tax
-    appDependency.add("taxesengine/common/tax-engine");
-    appDependency.add("taxesengine/common/tax-rules");
-    appDependency.add("taxesengine/common/rules/priceincluding-tax");
-    appDependency.add("taxesengine/common/rules/priceexcluding-tax");
+    appDependency.add("model/businessLogic/taxesengine/interface/tax-posinterface");
+    appDependency.add("model/businessLogic/taxesengine/engine/tax-engine");
+    appDependency.add("model/businessLogic/taxesengine/engine/tax-rules");
+    appDependency.add("model/businessLogic/taxesengine/engine/rules/priceincluding-tax");
+    appDependency.add("model/businessLogic/taxesengine/engine/rules/priceexcluding-tax");
 
     for (final String resource : appDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,
