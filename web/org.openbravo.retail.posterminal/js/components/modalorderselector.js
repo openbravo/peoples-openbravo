@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2017-2019 Openbravo S.L.U.
+ * Copyright (C) 2017-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -783,8 +783,8 @@ enyo.kind({
       'click',
       function(model) {
         this.$.openreceiptslistitemprinter.selectedModel = model;
-        me.doHideSelector();
         if (!this.$.openreceiptslistitemprinter.multiselect) {
+          me.doHideSelector();
           if (model.crossStoreInfo && OB.UTIL.isCrossStoreReceipt(model)) {
             OB.UTIL.showConfirmation.display(
               OB.I18N.getLabel('OBPOS_LblCrossStorePayment'),
