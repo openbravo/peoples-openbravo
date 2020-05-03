@@ -459,22 +459,15 @@ enyo.kind({
         bpartner.get('bpartnerId'),
         function(bp) {
           me.doShowPopup({
-            popup: 'modalReceiptSelector',
+            popup: 'modalReceiptSelectorCustomerView',
             args: {
               multiselect: true,
-              clean: true,
-              advancedFilters: {
-                orderby: null,
-                filters: [
-                  {
-                    caption: bp.get('_identifier'),
-                    column: 'businessPartner',
-                    isId: true,
-                    operator: '=',
-                    value: bp.get('id')
-                  }
-                ]
-              }
+              target: dialog.target,
+              businessPartner: bp,
+              navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(
+                dialog.owner.owner.args.navigationPath,
+                'modalcustomer'
+              )
             }
           });
         },

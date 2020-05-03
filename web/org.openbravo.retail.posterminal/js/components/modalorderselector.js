@@ -52,6 +52,7 @@ enyo.kind({
         return r.get('receiptSelected');
       }
     );
+    this.receiptSelected = selected.length > 0 ? true : false;
     _.each(
       selected,
       function(receipt) {
@@ -89,6 +90,7 @@ enyo.kind({
       this.$.footer.$.modalReceiptsFooter.$.btnOpenSelected.setShowing(
         isMultiselect
       );
+      this.receiptSelected = false;
       if (this.args.advancedFilters) {
         var me = this;
         this.waterfall('onOpenSelectedActive', {
@@ -214,6 +216,9 @@ enyo.kind({
   ],
   changeCheck: function(inSender, inEvent) {
     if (inEvent.id === this.model.get('id')) {
+      this.model.set('receiptSelected', !this.model.get('receiptSelected'), {
+        silent: true
+      });
       if (this.model.get('receiptSelected')) {
         this.$.iconCheck.removeClass(
           'obUiReceiptSelectorRender-line-iconCheck_disactive'
@@ -229,9 +234,6 @@ enyo.kind({
           'obUiReceiptSelectorRender-line-iconCheck_disactive'
         );
       }
-      this.model.set('receiptSelected', !this.model.get('receiptSelected'), {
-        silent: true
-      });
       this.doActiveOpenSelectedBtn();
     }
   },
@@ -269,9 +271,7 @@ enyo.kind({
     this.$.time.setContent(OB.I18N.formatHour(orderDate));
     this.$.customer.setContent(this.model.get('businessPartnerName'));
     if (this.owner.owner.owner.hideBusinessPartnerColumn === true) {
-      this.$.customer.addClass('hide');
-    } else {
-      this.$.customer.removeClass('hide');
+      this.$.customer.addClass('u-hideFromUI');
     }
 
     if (me.model.get('iscancelled')) {
@@ -306,6 +306,9 @@ enyo.kind({
     }
     if (this.model.get('multiselect')) {
       this.$.lineInfo.addClass('obUiReceiptSelectorRender-line-lineInfo_check');
+      this.$.iconCheck.addClass(
+        'obUiReceiptSelectorRender-line-iconCheck_disactive'
+      );
       this.$.iconCheck.setShowing(true);
     }
 
@@ -782,7 +785,6 @@ enyo.kind({
     this.receiptList.on(
       'click',
       function(model) {
-        this.$.openreceiptslistitemprinter.selectedModel = model;
         if (!this.$.openreceiptslistitemprinter.multiselect) {
           me.doHideSelector();
           if (model.crossStoreInfo && OB.UTIL.isCrossStoreReceipt(model)) {
@@ -827,7 +829,6 @@ enyo.kind({
             id: model.get('id')
           });
         }
-        this.$.openreceiptslistitemprinter.selectedModel = model;
       },
       this
     );
