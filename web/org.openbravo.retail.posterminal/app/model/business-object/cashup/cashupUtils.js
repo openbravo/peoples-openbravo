@@ -12,7 +12,7 @@
 (function CashupUtilsDefinition() {
   OB.App.StateAPI.Cashup.registerUtilityFunctions({
     isValidTheLocalCashup(cashup) {
-      return !OB.UTIL.isNullOrUndefined(cashup.id);
+      return cashup.id != null;
     },
 
     async requestNoProcessedCashupFromBackend() {
