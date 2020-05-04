@@ -125,7 +125,7 @@ enyo.kind({
     this.$.bpsloclistitemprinter.setCollection(this.bpsList);
     this.bpsList.on(
       'click',
-      function(model) {
+      async function(model) {
         var me = this;
 
         function errorCallback(tx, error) {
@@ -167,12 +167,29 @@ enyo.kind({
           }
         }
         if (!model.get('ignoreSetBPLoc')) {
-          OB.Dal.get(
-            OB.Model.BusinessPartner,
-            this.bPartner.get('id'),
-            successCallbackBPs,
-            errorCallback
-          );
+          try {
+            let businessPartner = await OB.App.MasterdataModels.BusinessPartner.withId(
+              this.model
+                .get('order')
+                .get('bp')
+                .get('id')
+            );
+            successCallbackBPs(
+              OB.Dal.transform(OB.Model.BusinessPartner, businessPartner)
+            );
+          } catch (error) {
+            errorCallback(error);
+          }
+          try {
+            let businessPartner = await OB.App.MasterdataModels.BusinessPartner.withId(
+              this.bPartner.get('id')
+            );
+            successCallbackBPs(
+              OB.Dal.transform(OB.Model.BusinessPartner, businessPartner)
+            );
+          } catch (error) {
+            errorCallback(error);
+          }
         }
       },
       this

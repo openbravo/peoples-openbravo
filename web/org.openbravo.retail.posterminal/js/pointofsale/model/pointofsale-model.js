@@ -1618,7 +1618,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     this.set('filter', []);
     this.set('brandFilter', []);
 
-    function searchCurrentBP(callback) {
+    async function searchCurrentBP(callback) {
       var errorCallback = function() {
         OB.error(
           OB.I18N.getLabel('OBPOS_BPInfoErrorTitle') +
@@ -1744,24 +1744,33 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           });
         }
       }
-      var checkBPInLocal = function() {
-        OB.Dal.get(
-          OB.Model.BusinessPartner,
-          OB.MobileApp.model.get('businesspartner'),
-          successCallbackBPs,
-          errorCallback,
-          errorCallback,
-          null,
-          true
-        );
+      var checkBPInLocal = async function() {
+        try {
+          let businessPartner = await OB.App.MasterdataModels.BusinessPartner.withId(
+            OB.MobileApp.model.get('businesspartner')
+          );
+          successCallbackBPs(
+            OB.Dal.transform(OB.Model.BusinessPartner, businessPartner)
+          );
+        } catch (error) {
+          errorCallback(error);
+        }
       };
-      OB.Dal.get(
-        OB.Model.BusinessPartner,
-        OB.MobileApp.model.get('businesspartner'),
-        successCallbackBPs,
-        checkBPInLocal,
-        errorCallback
-      );
+
+      try {
+        let businessPartner = await OB.App.MasterdataModels.BusinessPartner.withId(
+          OB.MobileApp.model.get('businesspartner')
+        );
+        if (businessPartner !== undefined) {
+          successCallbackBPs(
+            OB.Dal.transform(OB.Model.BusinessPartner, businessPartner)
+          );
+        } else {
+          checkBPInLocal();
+        }
+      } catch (error) {
+        errorCallback(error);
+      }
     }
 
     //Because in terminal we've the BP id and we want to have the BP model.

@@ -284,6 +284,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     // Masterdata
     appDependency.add("model/masterdata/BPCategoryModel");
     appDependency.add("model/masterdata/BPSetLineModel");
+    appDependency.add("model/masterdata/BusinessPartnerModel");
+    appDependency.add("model/masterdata/BusinessPartnerLocationModel");
     appDependency.add("model/masterdata/CountryModel");
     appDependency.add("model/masterdata/PriceListModel");
     appDependency.add("model/masterdata/ProductModel");

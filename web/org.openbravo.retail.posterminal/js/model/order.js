@@ -10457,15 +10457,12 @@
             }
           }
         };
-        OB.Dal.get(
-          OB.Model.BusinessPartner,
-          bpId,
-          function(bp) {
+        try {
+          let bp = await OB.App.MasterdataModels.BusinessPartner.withId(bpId);
+          bp = OB.Dal.transform(OB.Model.BusinessPartner, bp);
+          if (bp !== undefined) {
             loadLocations(bp);
-          },
-          null,
-          function() {
-            //Empty
+          } else {
             loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(data) {
               bpLoc = data.bpLoc;
               if (bpLocId !== bpBillLocId) {
@@ -10474,7 +10471,9 @@
               loadLocations(data.bpartner);
             });
           }
-        );
+        } catch (error) {
+          OB.error(error);
+        }
       },
 
       newPaidReceipt: async function(model, callback) {

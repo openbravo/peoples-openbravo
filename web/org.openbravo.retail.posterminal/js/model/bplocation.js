@@ -21,6 +21,8 @@
     local: false,
     remote: 'OBPOS_remote.customer',
     paginationById: true,
+    // indexDBModel: OB.App.MasterdataModels.BusinessPartnerLocation.getName(),
+    //  legacyModel: true,
     saveCustomerAddr: function(callback, callbackError) {
       if (!this.get('isBillTo') && !this.get('isShipTo')) {
         OB.UTIL.showError(

@@ -332,18 +332,20 @@ enyo.kind({
   kind: 'OB.UI.ListContextMenuItem',
   classes: 'obUiBpDetailsContextMenuItem',
   i18NLabel: 'OBPOS_BPViewDetails',
-  selectItem: function(bpartner) {
+  selectItem: async function(bpartner) {
     bpartner.set('ignoreSetBP', true, {
       silent: true
     });
     var dialog = this.owner.owner.dialog;
-    OB.Dal.get(OB.Model.BusinessPartner, bpartner.get('bpartnerId'), function(
-      bp
-    ) {
+
+    try {
+      let bp = await OB.App.MasterdataModels.BusinessPartner.withId(
+        bpartner.get('bpartnerId')
+      );
       dialog.bubble('onShowPopup', {
         popup: 'customerView',
         args: {
-          businessPartner: bp,
+          businessPartner: OB.Dal.transform(OB.Model.BusinessPartner, bp),
           target: dialog.target,
           navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(
             dialog.owner.owner.args.navigationPath,
@@ -351,7 +353,9 @@ enyo.kind({
           )
         }
       });
-    });
+    } catch (error) {
+      OB.error(error);
+    }
     return true;
   },
   create: function() {
@@ -365,7 +369,7 @@ enyo.kind({
   kind: 'OB.UI.ListContextMenuItem',
   classes: 'obUiBpEditContextMenuItem',
   i18NLabel: 'OBPOS_BPEdit',
-  selectItem: function(bpartner) {
+  selectItem: async function(bpartner) {
     bpartner.set('ignoreSetBP', true, {
       silent: true
     });
@@ -376,13 +380,14 @@ enyo.kind({
         'modalcustomer'
       );
 
-    OB.Dal.get(OB.Model.BusinessPartner, bpartner.get('bpartnerId'), function(
-      bp
-    ) {
+    try {
+      let bp = await OB.App.MasterdataModels.BusinessPartner.withId(
+        bpartner.get('bpartnerId')
+      );
       dialog.bubble('onShowPopup', {
         popup: 'customerCreateAndEdit',
         args: {
-          businessPartner: bp,
+          businessPartner: OB.Dal.transform(OB.Model.BusinessPartner, bp),
           target: dialog.target,
           navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(
             navigationPath,
@@ -391,7 +396,10 @@ enyo.kind({
           cancelNavigationPath: navigationPath
         }
       });
-    });
+    } catch (error) {
+      OB.error(error);
+    }
+
     return true;
   },
   create: function() {
@@ -405,19 +413,20 @@ enyo.kind({
   kind: 'OB.UI.ListContextMenuItem',
   classes: 'obUiBpAddressContextMenuItem',
   i18NLabel: 'OBPOS_BPAddress',
-  selectItem: function(bpartner) {
+  selectItem: async function(bpartner) {
     var dialog = this.owner.owner.dialog;
     bpartner.set('ignoreSetBP', true, {
       silent: true
     });
-    OB.Dal.get(OB.Model.BusinessPartner, bpartner.get('bpartnerId'), function(
-      bp
-    ) {
+    try {
+      let bp = await OB.App.MasterdataModels.BusinessPartner.withId(
+        bpartner.get('bpartnerId')
+      );
       OB.MobileApp.view.$.containerWindow.getRoot().bubble('onShowPopup', {
         popup: 'modalcustomeraddress',
         args: {
           target: 'order',
-          businessPartner: bp,
+          businessPartner: OB.Dal.transform(OB.Model.BusinessPartner, bp),
           manageAddress: true,
           clean: true,
           navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(
@@ -426,7 +435,9 @@ enyo.kind({
           )
         }
       });
-    });
+    } catch (error) {
+      OB.error(error);
+    }
     return true;
   },
   create: function() {
@@ -443,7 +454,7 @@ enyo.kind({
   events: {
     onShowPopup: ''
   },
-  selectItem: function(bpartner) {
+  selectItem: async function(bpartner) {
     if (OB.MobileApp.model.get('connectedToERP')) {
       var me = this,
         dialog = this.owner.owner.dialog;
@@ -451,22 +462,28 @@ enyo.kind({
         silent: true
       });
       dialog.owner.owner.hide();
-      OB.Dal.get(
-        OB.Model.BusinessPartner,
-        bpartner.get('bpartnerId'),
-        function(bp) {
-          me.doShowPopup({
-            popup: 'modalReceiptSelectorCustomerView',
-            args: {
-              multiselect: true,
-              target: dialog.target,
-              businessPartner: bp,
+
+      try {
+        let bp = await OB.App.MasterdataModels.BusinessPartner.withId(
+          bpartner.get('bpartnerId')
+        );
+        me.doShowPopup({
+          popup: 'modalReceiptSelectorCustomerView',
+          args: {
+            multiselect: true,
+             target: dialog.target,
+              businessPartner:  OB.Dal.transform(OB.Model.BusinessPartner, bp),
               navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(
                 dialog.owner.owner.args.navigationPath,
                 'modalcustomer'
-              )
-            }
+	    )}
           });
+  	} catch (error) {
+        OB.UTIL.showConfirmation.display(
+          OB.I18N.getLabel('OBMOBC_Error'),
+          OB.I18N.getLabel('OBPOS_CustomerNotFound')
+        );
+      
         },
         function() {
           OB.UTIL.showConfirmation.display(
@@ -480,7 +497,7 @@ enyo.kind({
             OB.I18N.getLabel('OBPOS_CustomerNotFound')
           );
         }
-      );
+
     } else {
       OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
     }
@@ -691,15 +708,20 @@ enyo.kind({
   setBusinessPartnerTarget: function(inSender, inEvent) {
     this.target = inEvent.target;
   },
-  loadPresetCustomer: function(bpartnerId) {
+  loadPresetCustomer: async function(bpartnerId) {
     var me = this;
-    OB.Dal.get(OB.Model.BusinessPartner, bpartnerId, function(bp) {
+
+    try {
+      let bp = await OB.App.MasterdataModels.BusinessPartner.withId(bpartnerId);
+      bp = OB.Dal.transform(OB.Model.BusinessPartner, bp);
       bp.set('bpartnerId', bpartnerId, {
         silent: true
       });
       me.bpsList.reset([bp]);
       me.$.stBPAssignToReceipt.$.tbody.show();
-    });
+    } catch (error) {
+      OB.error(error);
+    }
   },
   clearAction: function(inSender, inEvent) {
     this.bpsList.reset();
@@ -1052,7 +1074,7 @@ enyo.kind({
       });
     }
   },
-  setBPLocation: function(bpartner, shipping, billing, locations) {
+  setBPLocation: async function(bpartner, shipping, billing, locations) {
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
       if (!shipping) {
         OB.UTIL.showError(
@@ -1072,9 +1094,11 @@ enyo.kind({
       }
     }
     var me = this;
-    OB.Dal.get(OB.Model.BusinessPartner, bpartner.get('bpartnerId'), function(
-      bp
-    ) {
+    try {
+      let bp = await OB.App.MasterdataModels.BusinessPartner.withId(
+        bpartner.get('bpartnerId')
+      );
+      bp = OB.Dal.transform(OB.Model.BusinessPartner, bp);
       bp.setBPLocations(
         shipping,
         billing,
@@ -1096,7 +1120,9 @@ enyo.kind({
           target: me.target
         });
       }
-    });
+    } catch (error) {
+      OB.error(error);
+    }
   }
 });
 

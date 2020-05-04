@@ -173,20 +173,22 @@ enyo.kind({
     onShowPopup: '',
     onPressedButton: ''
   },
-  tap: function() {
+  tap: async function() {
     if (this.disabled) {
       return true;
     }
     this.doPressedButton();
     var me = this;
-    OB.Dal.get(OB.Model.BusinessPartner, me.parent.customer.get('id'), function(
-      bp
-    ) {
+
+    try {
+      let bp = await OB.App.MasterdataModels.BusinessPartner.withId(
+        me.parent.customer.get('id')
+      );
       me.doShowPopup({
         popup: 'modalcustomeraddress',
         args: {
           target: 'order',
-          businessPartner: bp,
+          businessPartner: OB.Dal.transform(OB.Model.BusinessPartner, bp),
           navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(
             me.parent.navigationPath,
             'customerView'
@@ -194,7 +196,9 @@ enyo.kind({
           manageAddress: true
         }
       });
-    });
+    } catch (error) {
+      OB.error(error);
+    }
   },
   init: function(model) {
     this.model = model;

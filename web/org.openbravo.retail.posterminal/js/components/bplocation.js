@@ -228,7 +228,7 @@ enyo.kind({
     this.bPartner = inEvent.bPartner;
     return true;
   },
-  tap: function(model) {
+  tap: async function(model) {
     if (this.disabled) {
       return true;
     }
@@ -272,15 +272,19 @@ enyo.kind({
     if (this.bPartner) {
       successCallbackBPs(this.bPartner);
     } else {
-      OB.Dal.get(
-        OB.Model.BusinessPartner,
-        this.model
-          .get('order')
-          .get('bp')
-          .get('id'),
-        successCallbackBPs,
-        errorCallback
-      );
+      try {
+        let businessPartner = await OB.App.MasterdataModels.BusinessPartner.withId(
+          this.model
+            .get('order')
+            .get('bp')
+            .get('id')
+        );
+        successCallbackBPs(
+          OB.Dal.transform(OB.Model.BusinessPartner, businessPartner)
+        );
+      } catch (error) {
+        errorCallback(error);
+      }
     }
   }
 });
@@ -496,7 +500,7 @@ enyo.kind({
   name: 'OB.UI.BPLocAssignToReceiptContextMenuItem',
   i18NLabel: 'OBPOS_BPLocAssignToReceipt',
   classes: 'obUiBPLocAssignToReceiptContextMenuItem',
-  selectItem: function(bploc) {
+  selectItem: async function(bploc) {
     var contextMenu = this.owner.owner;
     contextMenu.dialog.menuSelected = true;
     if (contextMenu.dialog.owner) {
@@ -532,12 +536,16 @@ enyo.kind({
         target: 'order'
       });
     }
-    OB.Dal.get(
-      OB.Model.BusinessPartner,
-      contextMenu.bPartner.get('id'),
-      successCallbackBPs,
-      errorCallback
-    );
+    try {
+      let businessPartner = await OB.App.MasterdataModels.BusinessPartner.withId(
+        contextMenu.bPartner.get('id')
+      );
+      successCallbackBPs(
+        OB.Dal.transform(OB.Model.BusinessPartner, businessPartner)
+      );
+    } catch (error) {
+      errorCallback(error);
+    }
     return true;
   },
   create: function() {
@@ -551,7 +559,7 @@ enyo.kind({
   name: 'OB.UI.BPLocAssignToReceiptShippingContextMenuItem',
   i18NLabel: 'OBPOS_BPLocAssignToReceiptShipping',
   classes: 'obUiBPLocAssignToReceiptShippingContextMenuItem',
-  selectItem: function(bploc) {
+  selectItem: async function(bploc) {
     var contextMenu = this.owner.owner;
     contextMenu.dialog.menuSelected = true;
     if (contextMenu.dialog.owner) {
@@ -600,12 +608,17 @@ enyo.kind({
       });
     }
 
-    OB.Dal.get(
-      OB.Model.BusinessPartner,
-      contextMenu.bPartner.get('id'),
-      successCallbackBPs,
-      errorCallback
-    );
+    try {
+      let businessPartner = await OB.App.MasterdataModels.BusinessPartner.withId(
+        contextMenu.bPartner.get('id')
+      );
+      successCallbackBPs(
+        OB.Dal.transform(OB.Model.BusinessPartner, businessPartner)
+      );
+    } catch (error) {
+      errorCallback(error);
+    }
+
     return true;
   },
   create: function() {
@@ -619,7 +632,7 @@ enyo.kind({
   name: 'OB.UI.BPLocAssignToReceiptInvoicingContextMenuItem',
   classes: 'obUiBPLocAssignToReceiptInvoicingContextMenuItem',
   i18NLabel: 'OBPOS_BPLocAssignToReceiptInvoicing',
-  selectItem: function(bploc) {
+  selectItem: async function(bploc) {
     var contextMenu = this.owner.owner;
     contextMenu.dialog.menuSelected = true;
     if (contextMenu.dialog.owner) {
@@ -672,12 +685,18 @@ enyo.kind({
         target: 'order'
       });
     }
-    OB.Dal.get(
-      OB.Model.BusinessPartner,
-      contextMenu.bPartner.get('id'),
-      successCallbackBPs,
-      errorCallback
-    );
+
+    try {
+      let businessPartner = await OB.App.MasterdataModels.BusinessPartner.withId(
+        contextMenu.bPartner.get('id')
+      );
+      successCallbackBPs(
+        OB.Dal.transform(OB.Model.BusinessPartner, businessPartner)
+      );
+    } catch (error) {
+      errorCallback(error);
+    }
+
     return true;
   },
   create: function() {
@@ -955,7 +974,7 @@ enyo.kind({
     this.$.bpsloclistitemprinter.setCollection(this.bpsList);
     this.bpsList.on(
       'click',
-      function(model) {
+      async function(model) {
         var me = this;
         me.owner.owner.selectorHide = true;
 
@@ -1055,12 +1074,16 @@ enyo.kind({
           }
         }
         if (!model.get('ignoreSetBPLoc')) {
-          OB.Dal.get(
-            OB.Model.BusinessPartner,
-            this.bPartner.get('id'),
-            successCallbackBPs,
-            errorCallback
-          );
+          try {
+            let businessPartner = await OB.App.MasterdataModels.BusinessPartner.withId(
+              this.bPartner.get('id')
+            );
+            successCallbackBPs(
+              OB.Dal.transform(OB.Model.BusinessPartner, businessPartner)
+            );
+          } catch (error) {
+            errorCallback(error);
+          }
         }
       },
       this

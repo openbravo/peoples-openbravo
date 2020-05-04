@@ -18,6 +18,8 @@
     dataLimit: OB.Dal.DATALIMIT,
     remoteDataLimit: OB.Dal.REMOTE_DATALIMIT,
     remote: 'OBPOS_remote.customer',
+    indexDBModel: OB.App.MasterdataModels.BusinessPartner.getName(),
+    legacyModel: true,
     saveCustomer: function(callback) {
       var nameLength,
         newSk,
@@ -128,11 +130,14 @@
       }
       return true;
     },
-    loadById: function(CusId, userCallback) {
+    loadById: async function(CusId, userCallback) {
       //search data in local DB and load it to this
       var me = this;
-      OB.Dal.get(OB.Model.BusinessPartner, CusId, function(customerCol) {
-        //OB.Dal.get success
+      try {
+        let customerCol = await OB.App.MasterdataModels.BusinessPartner.withId(
+          CusId
+        );
+        customerCol = OB.Dal.transform(OB.Model.BusinessPartner, customerCol);
         if (!customerCol || customerCol.length === 0) {
           me.clearModelWith(null);
           userCallback(me);
@@ -151,7 +156,9 @@
           me.clearModelWith(customerCol);
           userCallback(me);
         }
-      });
+      } catch (error) {
+        OB.error(error);
+      }
     },
     loadModel: function(customerCol, userCallback) {
       //search data in local DB and load it to this
