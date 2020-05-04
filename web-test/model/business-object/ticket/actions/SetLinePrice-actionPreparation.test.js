@@ -29,12 +29,68 @@ OB = {
 global.lodash = require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/lodash-4.17.15');
 
 require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/StateAPI');
-require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/State');
+const {
+  executeActionPreparations
+} = require('../../../../../../org.openbravo.mobile.core/web-test/base/state-utils');
+
 require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/ActionCanceled');
 require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/ActionSilentlyCanceled');
 
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/Ticket');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/SetLinePrice');
+
+const basicTicket = {
+  lines: [
+    {
+      id: '1',
+      qty: 1,
+      price: 10,
+      priceList: 10,
+      isEditable: true,
+      product: { listPrice: 10, obposEditablePrice: true, productType: 'I' }
+    },
+    {
+      id: '2',
+      qty: 1,
+      price: 20,
+      priceList: 20,
+      isEditable: true,
+      product: { listPrice: 20, obposEditablePrice: true, productType: 'I' }
+    },
+    {
+      id: '3',
+      qty: 1,
+      price: 30,
+      priceList: 30,
+      isEditable: true,
+      product: { listPrice: 30, obposEditablePrice: true, productType: 'I' }
+    }
+  ]
+};
+
+const basicReturn = {
+  isPaid: false,
+  lines: [
+    {
+      id: '1',
+      qty: 1,
+      price: 10,
+      priceList: 10,
+      isEditable: false,
+      originalDocumentNo: '0001',
+      product: { listPrice: 10, obposEditablePrice: true }
+    }
+  ]
+};
+
+const prepareAction = async (payload, ticket = basicTicket) => {
+  const newPayload = await executeActionPreparations(
+    OB.App.StateAPI.Ticket.setLinePrice,
+    { Ticket: ticket },
+    payload
+  );
+  return newPayload;
+};
 
 const expectError = async (action, expectedError) => {
   let error;
@@ -47,192 +103,140 @@ const expectError = async (action, expectedError) => {
 };
 
 describe('Ticket.setQuantity action preparation', () => {
-  const basicTicket = {
-    Ticket: {
-      lines: [
-        {
-          id: '1',
-          qty: 1,
-          price: 10,
-          priceList: 10,
-          isEditable: true,
-          product: { listPrice: 10, obposEditablePrice: true, productType: 'I' }
-        },
-        {
-          id: '2',
-          qty: 1,
-          price: 20,
-          priceList: 20,
-          isEditable: true,
-          product: { listPrice: 20, obposEditablePrice: true, productType: 'I' }
-        },
-        {
-          id: '3',
-          qty: 1,
-          price: 30,
-          priceList: 30,
-          isEditable: true,
-          product: { listPrice: 30, obposEditablePrice: true, productType: 'I' }
-        }
-      ]
-    }
-  };
-
-  const basicReturn = {
-    Ticket: {
-      isPaid: false,
-      lines: [
-        {
-          id: '1',
-          qty: 1,
-          price: 10,
-          priceList: 10,
-          isEditable: false,
-          originalDocumentNo: '0001',
-          product: { listPrice: 10, obposEditablePrice: true }
-        }
-      ]
-    }
-  };
-
-  const persistence = {
-    initialize: jest.fn(),
-    getState: jest.fn(() => basicTicket),
-    dispatch: jest.fn()
-  };
-  const state = new OB.App.Class.State(persistence);
-
   beforeEach(() => {
     jest.clearAllMocks();
-    persistence.getState = jest.fn(() => basicTicket);
     OB.App.Security.hasPermission.mockReturnValue(true);
   });
 
   describe('parameter validation', () => {
     it('checks line ids parameter is present', async () => {
-      await expect(state.Ticket.setLinePrice({ price: 5 })).rejects.toThrow();
+      await expect(prepareAction({ price: 5 })).rejects.toThrow();
     });
 
     it('checks line ids is an array', async () => {
-      await expect(
-        state.Ticket.setLinePrice({ lineIds: '1', price: 5 })
-      ).rejects.toThrow();
+      await expect(prepareAction({ lineIds: '1', price: 5 })).rejects.toThrow();
 
       await expect(
-        state.Ticket.setLinePrice({ lineIds: ['1'], price: 5 })
+        prepareAction({ lineIds: ['1'], price: 5 })
       ).resolves.not.toThrow();
     });
 
     it('line ids exists', async () => {
       await expect(
-        state.Ticket.setLinePrice({ lineIds: ['1', 'dummy'], price: 5 })
+        prepareAction({ lineIds: ['1', 'dummy'], price: 5 })
       ).rejects.toThrow();
     });
 
     it('checks price parameter is present', async () => {
-      await expect(
-        state.Ticket.setLinePrice({ lineIds: ['1'] })
-      ).rejects.toThrow();
+      await expect(prepareAction({ lineIds: ['1'] })).rejects.toThrow();
     });
 
     it('checks price is a numeric value', async () => {
       await expect(
-        state.Ticket.setLinePrice({ lineIds: ['1'], price: 'dummy' })
+        prepareAction({ lineIds: ['1'], price: 'dummy' })
       ).rejects.toThrow();
     });
 
     it('checks price is >= 0', async () => {
       await expect(
-        state.Ticket.setLinePrice({ lineIds: ['1'], price: -1 })
+        prepareAction({ lineIds: ['1'], price: -1 })
       ).rejects.toThrow();
     });
 
     it('can set price=0', async () => {
       await expect(
-        state.Ticket.setLinePrice({ lineIds: ['1'], price: 0 })
+        prepareAction({ lineIds: ['1'], price: 0 })
       ).resolves.not.toThrow();
     });
   });
 
   describe('restrictions', () => {
     it('cannot set price to replaced return lines', async () => {
-      persistence.getState.mockReturnValue({
-        Ticket: {
-          lines: [
-            {
-              id: '1',
-              qty: -1,
-              replacedorderline: true,
-              price: 10,
-              priceList: 10,
-              product: { listPrice: 10, obposEditablePrice: true }
-            }
-          ]
-        }
-      });
-
       await expectError(
-        () => state.Ticket.setLinePrice({ lineIds: ['1'], price: 5 }),
-        { errorConfirmation: 'OBPOS_CancelReplaceReturnPriceChange' }
+        () =>
+          prepareAction(
+            { lineIds: ['1'], price: 5 },
+            {
+              lines: [
+                {
+                  id: '1',
+                  qty: -1,
+                  replacedorderline: true,
+                  price: 10,
+                  priceList: 10,
+                  product: { listPrice: 10, obposEditablePrice: true }
+                }
+              ]
+            }
+          ),
+        {
+          errorConfirmation: 'OBPOS_CancelReplaceReturnPriceChange'
+        }
       );
     });
 
     it('cannot set price to not editable ticket', async () => {
-      persistence.getState.mockReturnValue({
-        Ticket: { ...basicTicket.Ticket, isEditable: false }
-      });
-
       await expectError(
-        () => state.Ticket.setLinePrice({ lineIds: ['1'], price: 5 }),
-        { errorConfirmation: 'OBPOS_modalNoEditableBody' }
+        () =>
+          prepareAction(
+            { lineIds: ['1'], price: 5 },
+            { ...basicTicket, isEditable: false }
+          ),
+        {
+          errorConfirmation: 'OBPOS_modalNoEditableBody'
+        }
       );
     });
 
     it('cannot set price if product price is not editable 1', async () => {
-      persistence.getState.mockReturnValue({
-        Ticket: {
-          lines: [
-            {
-              id: '1',
-              qty: 1,
-              price: 10,
-              priceList: 10,
-              isEditable: true,
-              product: { listPrice: 10, obposEditablePrice: false }
-            }
-          ]
-        }
-      });
-
       await expectError(
-        () => state.Ticket.setLinePrice({ lineIds: ['1'], price: 5 }),
-        { errorConfirmation: 'OBPOS_modalNoEditableLineBody' }
+        () =>
+          prepareAction(
+            { lineIds: ['1'], price: 5 },
+            {
+              lines: [
+                {
+                  id: '1',
+                  qty: 1,
+                  price: 10,
+                  priceList: 10,
+                  isEditable: true,
+                  product: { listPrice: 10, obposEditablePrice: false }
+                }
+              ]
+            }
+          ),
+        {
+          errorConfirmation: 'OBPOS_modalNoEditableLineBody'
+        }
       );
     });
 
     it('cannot set price if product price is not editable 2', async () => {
-      persistence.getState.mockReturnValue({
-        Ticket: {
-          lines: [
-            {
-              id: '1',
-              qty: 1,
-              price: 10,
-              priceList: 10,
-              isEditable: true,
-              product: {
-                listPrice: 10,
-                obposEditablePrice: true,
-                isEditablePrice: false
-              }
-            }
-          ]
-        }
-      });
-
       await expectError(
-        () => state.Ticket.setLinePrice({ lineIds: ['1'], price: 5 }),
-        { errorConfirmation: 'OBPOS_modalNoEditableLineBody' }
+        () =>
+          prepareAction(
+            { lineIds: ['1'], price: 5 },
+            {
+              lines: [
+                {
+                  id: '1',
+                  qty: 1,
+                  price: 10,
+                  priceList: 10,
+                  isEditable: true,
+                  product: {
+                    listPrice: 10,
+                    obposEditablePrice: true,
+                    isEditablePrice: false
+                  }
+                }
+              ]
+            }
+          ),
+        {
+          errorConfirmation: 'OBPOS_modalNoEditableLineBody'
+        }
       );
     });
 
@@ -241,47 +245,44 @@ describe('Ticket.setQuantity action preparation', () => {
         p => p !== 'OBPOS_ChangeServicePriceNeedApproval'
       );
 
-      await state.Ticket.setLinePrice({ lineIds: ['1'], price: 15 });
+      await prepareAction({ lineIds: ['1'], price: 15 });
       expect(OB.App.Security.requestApprovalForAction).toHaveBeenCalled();
     });
 
     describe('verified return', () => {
       it('cannot increase price without permission', async () => {
-        persistence.getState.mockReturnValue(basicReturn);
-
         await expectError(
-          () => state.Ticket.setLinePrice({ lineIds: ['1'], price: 15 }),
+          () => prepareAction({ lineIds: ['1'], price: 15 }, basicReturn),
           { errorMsg: 'OBPOS_CannotChangePrice' }
         );
       });
 
       it('cannot decrease price without permission', async () => {
-        persistence.getState.mockReturnValue(basicReturn);
         OB.App.Security.hasPermission = jest.fn(
           p => p !== 'OBPOS_ModifyPriceVerifiedReturns'
         );
 
         await expectError(
-          () => state.Ticket.setLinePrice({ lineIds: ['1'], price: 5 }),
-          { errorMsg: 'OBPOS_CannotChangePrice' }
+          () => prepareAction({ lineIds: ['1'], price: 5 }, basicReturn),
+          {
+            errorMsg: 'OBPOS_CannotChangePrice'
+          }
         );
       });
 
       it('can decrease price with permission', async () => {
-        persistence.getState.mockReturnValue(basicReturn);
         OB.App.Security.hasPermission.mockReturnValue(true);
 
         await expect(
-          state.Ticket.setLinePrice({ lineIds: ['1'], price: 5 })
+          prepareAction({ lineIds: ['1'], price: 5 }, basicReturn)
         ).resolves.not.toThrow();
       });
 
       it('cannot increse price even with permission', async () => {
-        persistence.getState.mockReturnValue(basicReturn);
         OB.App.Security.hasPermission.mockReturnValue(true);
 
         await expectError(
-          () => state.Ticket.setLinePrice({ lineIds: ['1'], price: 15 }),
+          () => prepareAction({ lineIds: ['1'], price: 15 }, basicReturn),
           { errorMsg: 'OBPOS_CannotChangePrice' }
         );
       });
