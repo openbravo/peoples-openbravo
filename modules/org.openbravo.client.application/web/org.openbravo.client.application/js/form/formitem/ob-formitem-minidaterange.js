@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2019 Openbravo SLU
+ * All portions are Copyright (C) 2011-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -825,7 +825,8 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
 
   keyPress: function(item, form, keyName, characterValue) {
     var enterOnEmptyItem,
-      sourceGrid = this.getSourceGrid();
+      sourceGrid = this.getSourceGrid(),
+      dateBeforeFormatting = item.getEnteredValue();
     if (keyName === 'Enter') {
       if (this.singleDateMode) {
         enterOnEmptyItem = !item.getValue() && !item.getEnteredValue();
@@ -841,6 +842,10 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
             sourceGrid.filterHasChanged = true;
             sourceGrid.sorter.enable();
             item.previousLazyFilterValue = item.mapValueToDisplay();
+            // If date is already formatted correctly in expandSingleValue, filter with current value on enter
+            if (dateBeforeFormatting === item.mapValueToDisplay()) {
+              this.form.grid.performAction();
+            }
             return false;
           } else if (!enterOnEmptyItem || item.previousLazyFilterValue !== '') {
             // filter has not changed: let grid decide if filtering should be performed
