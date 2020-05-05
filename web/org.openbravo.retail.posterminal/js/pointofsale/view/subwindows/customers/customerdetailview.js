@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2019 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -265,7 +265,7 @@ enyo.kind({
       this.doShowPopup({
         popup: 'modalReceiptSelectorCustomerView',
         args: {
-          multiselect: false,
+          multiselect: true,
           clean: true,
           target: parent.target,
           businessPartner: parent.customer,
@@ -732,8 +732,12 @@ enyo.kind({
     var isMultiselect = this.args.multiselect === true;
     this.$.body.$.receiptsList.$.openreceiptslistitemprinter.multiselect = isMultiselect;
     this.$.body.$.receiptsList.$.openreceiptslistitemprinter.$.theader.$.modalReceiptsScrollableHeader.$.filterSelector.setShowing(
-      isMultiselect
+      false
     );
+    this.receiptSelected = false;
+    this.waterfall('onOpenSelectedActive', {
+      active: false
+    });
     if (this.args.customHeaderContent) {
       this.$.header.setContent(this.args.customHeaderContent);
     } else {
@@ -742,38 +746,34 @@ enyo.kind({
     this.$.body.$.receiptsList.$.openreceiptslistitemprinter.hideBusinessPartnerColumn = this.args.hideBusinessPartnerColumn;
   },
   executeOnHide: function() {
+    var column = _.find(
+      OB.Model.OrderFilter.getProperties(),
+      function(prop) {
+        return prop.name === 'businessPartner';
+      },
+      this
+    );
+    if (column) {
+      column.preset.id = '';
+      column.preset.name = '';
+    }
     if (
-      !this.pressedBtn &&
+      !this.receiptSelected &&
+      !this.selectorHide &&
       this.args.navigationPath &&
       this.args.navigationPath.length > 0
     ) {
-      var column = _.find(
-        OB.Model.OrderFilter.getProperties(),
-        function(prop) {
-          return prop.name === 'businessPartner';
-        },
-        this
-      );
-      column.preset.id = '';
-      column.preset.name = '';
-      if (
-        OB.UTIL.isNullOrUndefined(
-          this.$.body.$.receiptsList.$.openreceiptslistitemprinter.selectedModel
-        )
-      ) {
-        this.doShowPopup({
-          popup: this.args.navigationPath[this.args.navigationPath.length - 1],
-          args: {
-            businessPartner: this.args.businessPartner,
-            target: this.args.target,
-            navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPop(
-              this.args.navigationPath
-            )
-          }
-        });
-      } else {
-        this.$.body.$.receiptsList.$.openreceiptslistitemprinter.selectedModel = null;
-      }
+      this.doShowPopup({
+        popup: this.args.navigationPath[this.args.navigationPath.length - 1],
+        args: {
+          businessPartner: this.args.businessPartner,
+          target: this.args.target,
+          makeSearch: false,
+          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPop(
+            this.args.navigationPath
+          )
+        }
+      });
     }
   }
 });
