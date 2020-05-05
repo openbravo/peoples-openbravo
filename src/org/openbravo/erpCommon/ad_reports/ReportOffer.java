@@ -84,59 +84,87 @@ public class ReportOffer extends HttpSecureAppServlet {
         false, "ad_reports", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
 
-    ReportOfferData[] data = ReportOfferData.select(readOnlyCP,
-        Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportOffer"),
-        Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportOffer"), strDateFrom,
-        strDateTo, strcBpartnerId);
+    int limit = 0;
+    int numberOfRecordsFound = 0;
+    limit = Integer.parseInt(Utility.getPreference(vars, "ReportsLimit", ""));
+    if (limit > 0) {
+      try {
+        numberOfRecordsFound = Integer.parseInt(ReportOfferData.selectCount(readOnlyCP,
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportOffer"),
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportOffer"), strDateFrom,
+            strDateTo, strcBpartnerId));
 
-    xmlDocument.setParameter("toolbar", toolbar.toString());
-    try {
-      WindowTabs tabs = new WindowTabs(readOnlyCP, vars,
-          "org.openbravo.erpCommon.ad_reports.ReportOffer");
-      xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
-      xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
-      xmlDocument.setParameter("childTabContainer", tabs.childTabs());
-      xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(readOnlyCP, vars.getLanguage(), "ReportOffer.html",
-          classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
-      xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(readOnlyCP, vars.getLanguage(), "ReportOffer.html",
-          strReplaceWith);
-      xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
-    {
-      OBError myMessage = vars.getMessage("ReportOffer");
-      vars.removeMessage("ReportOffer");
-      if (myMessage != null) {
+      } catch (NumberFormatException e) {
+      }
+      if (numberOfRecordsFound > limit) {
+        OBError myMessage = new OBError();
+        myMessage.setType("Warning");
+        myMessage.setTitle("");
+        String msgbody = Utility.messageBD(readOnlyCP, "ReportsLimit", vars.getLanguage());
+        msgbody = msgbody.replace("@limit@", String.valueOf(limit + 1));
+        myMessage.setMessage(msgbody);
+
         xmlDocument.setParameter("messageType", myMessage.getType());
         xmlDocument.setParameter("messageTitle", myMessage.getTitle());
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
+      } else {
+        ReportOfferData[] data = ReportOfferData.select(readOnlyCP,
+            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportOffer"),
+            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportOffer"), strDateFrom,
+            strDateTo, strcBpartnerId);
+
+        xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
+            SelectorUtilityData.selectBpartner(readOnlyCP,
+                Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportOffer"),
+                Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportOffer"),
+                strcBpartnerId));
+        xmlDocument.setData("structure1", data);
       }
+
+      xmlDocument.setParameter("toolbar", toolbar.toString());
+      try {
+        WindowTabs tabs = new WindowTabs(readOnlyCP, vars,
+            "org.openbravo.erpCommon.ad_reports.ReportOffer");
+        xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
+        xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
+        xmlDocument.setParameter("childTabContainer", tabs.childTabs());
+        xmlDocument.setParameter("theme", vars.getTheme());
+        NavigationBar nav = new NavigationBar(readOnlyCP, vars.getLanguage(), "ReportOffer.html",
+            classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
+        xmlDocument.setParameter("navigationBar", nav.toString());
+        LeftTabsBar lBar = new LeftTabsBar(readOnlyCP, vars.getLanguage(), "ReportOffer.html",
+            strReplaceWith);
+        xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
+      } catch (Exception ex) {
+        throw new ServletException(ex);
+      }
+      {
+        OBError myMessage = vars.getMessage("ReportOffer");
+        vars.removeMessage("ReportOffer");
+        if (myMessage != null) {
+          xmlDocument.setParameter("messageType", myMessage.getType());
+          xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+          xmlDocument.setParameter("messageMessage", myMessage.getMessage());
+        }
+      }
+
+      xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));
+      xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("dateFrom", strDateFrom);
+      xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+      xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+      xmlDocument.setParameter("dateTo", strDateTo);
+      xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+      xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+      xmlDocument.setParameter("today", DateTimeData.today(readOnlyCP));
+
+      response.setContentType("text/html; charset=UTF-8");
+      PrintWriter out = response.getWriter();
+      out.println(xmlDocument.print());
+      out.close();
+
     }
-
-    xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));
-    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("dateFrom", strDateFrom);
-    xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("dateTo", strDateTo);
-    xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("today", DateTimeData.today(readOnlyCP));
-
-    xmlDocument.setData("reportCBPartnerId_IN", "liststructure",
-        SelectorUtilityData.selectBpartner(readOnlyCP,
-            Utility.getContext(readOnlyCP, vars, "#AccessibleOrgTree", "ReportOffer"),
-            Utility.getContext(readOnlyCP, vars, "#User_Client", "ReportOffer"), strcBpartnerId));
-    xmlDocument.setData("structure1", data);
-
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
   }
 
   private void printPageAjaxDocumentResponse(HttpServletResponse response, VariablesSecureApp vars,

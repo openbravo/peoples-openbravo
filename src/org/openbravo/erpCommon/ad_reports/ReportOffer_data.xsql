@@ -58,6 +58,40 @@
     <Parameter name="dateto"/>    
     <Parameter name="parBPartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND A.C_BPARTNER_ID IN]]></Parameter>
   </SqlMethod>
+  
+  <SqlMethod name="selectCount" type="preparedStatement" return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+        SELECT COUNT(1) AS COUNT
+        FROM(SELECT M_OFFER_BPARTNER.C_BPARTNER_ID, M_OFFER.M_OFFER_ID, M_OFFER.NAME AS M_OFFER_NAME,
+             C_BPARTNER.NAME AS C_BPARTNER_NAME, M_OFFER.DATEFROM, M_OFFER.DATETO,
+             M_OFFER.AD_CLIENT_ID, M_OFFER.AD_ORG_ID, M_OFFER.ADDAMT,
+             M_OFFER.DISCOUNT, M_OFFER.FIXED
+             FROM M_OFFER, M_OFFER_BPARTNER, C_BPARTNER
+             WHERE M_OFFER.BPARTNER_SELECTION = 'N'
+             AND M_OFFER.M_OFFER_ID = M_OFFER_BPARTNER.M_OFFER_ID
+             AND M_OFFER_BPARTNER.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
+             UNION
+             SELECT C_BPARTNER.C_BPARTNER_ID, M_OFFER.M_OFFER_ID, M_OFFER.NAME AS M_OFFER_NAME,
+             C_BPARTNER.NAME AS C_BPARTNER_NAME, M_OFFER.DATEFROM, M_OFFER.DATETO,
+             M_OFFER.AD_CLIENT_ID, M_OFFER.AD_ORG_ID, M_OFFER.ADDAMT,
+             M_OFFER.DISCOUNT, M_OFFER.FIXED
+             FROM M_OFFER, C_BPARTNER
+             WHERE M_OFFER.BPARTNER_SELECTION = 'Y'
+             AND C_BPARTNER.C_BPARTNER_ID NOT IN (SELECT C_BPARTNER_ID FROM M_OFFER_BPARTNER WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID)) A
+        WHERE A.AD_CLIENT_ID IN ('1')
+        AND A.AD_ORG_ID IN ('1')
+        AND DATEFROM >= TO_DATE(?)
+        AND (DATETO IS NULL OR DATETO <= TO_DATE(?))
+        AND 1=1
+      ]]></Sql>
+    <Parameter name="adUserClient" type="replace" optional="true" after="A.AD_CLIENT_ID IN (" text="'1'"/>
+    <Parameter name="adUserOrg" type="replace" optional="true" after="A.AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="datefrom"/>
+    <Parameter name="dateto"/>    
+    <Parameter name="parBPartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND A.C_BPARTNER_ID IN]]></Parameter>
+  </SqlMethod>
 </SqlClass>
 
 
