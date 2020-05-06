@@ -544,14 +544,14 @@
                         frozenReceipt.get('id')
                     );
                     OB.Dal.transaction(
-                      function(tx) {
+                      async function(tx) {
+                        await OB.MobileApp.model.setTicketDocumentNo(
+                          frozenReceipt
+                        );
                         OB.trace('Calculationg cashup information.');
                         OB.UTIL.cashUpReport(
                           frozenReceipt,
-                          async function(cashUp) {
-                            await OB.MobileApp.model.setTicketDocumentNo(
-                              frozenReceipt
-                            );
+                          function(cashUp) {
                             frozenReceipt.set(
                               'cashUpReportInformation',
                               JSON.parse(cashUp.models[0].get('objToSend'))
@@ -736,28 +736,28 @@
     };
 
     var saveAndSyncMultiOrder = function(me, closedReceipts, tx, syncCallback) {
-      var recursiveSaveFn,
-        currentReceipt,
-        execution = OB.UTIL.ProcessController.start('saveAndSyncMultiOrder');
-      recursiveSaveFn = function(receiptIndex) {
+      const execution = OB.UTIL.ProcessController.start(
+        'saveAndSyncMultiOrder'
+      );
+      const recursiveSaveFn = async function(receiptIndex) {
         if (receiptIndex < closedReceipts.length) {
-          currentReceipt = closedReceipts[receiptIndex];
+          const currentReceipt = closedReceipts[receiptIndex];
 
           if (!_.isUndefined(currentReceipt)) {
             me.receipt = currentReceipt;
           }
 
           me.context.get('multiOrders').trigger('integrityOk', currentReceipt);
+          await OB.MobileApp.model.setTicketDocumentNo(currentReceipt);
 
           OB.UTIL.calculateCurrentCash(null, tx);
           OB.UTIL.cashUpReport(
             currentReceipt,
-            async function(cashUp) {
+            function(cashUp) {
               currentReceipt.set(
                 'cashUpReportInformation',
                 JSON.parse(cashUp.models[0].get('objToSend'))
               );
-              await OB.MobileApp.model.setTicketDocumentNo(currentReceipt);
               OB.UTIL.HookManager.executeHooks(
                 'OBPOS_PreSyncReceipt',
                 {

@@ -9635,7 +9635,7 @@
         }
       }
 
-      async function markOrderAsDeleted(model, orderList, callback) {
+      function markOrderAsDeleted(model, orderList, callback) {
         var creationDate;
         if (model.get('creationDate')) {
           creationDate = new Date(model.get('creationDate'));
@@ -9690,8 +9690,8 @@
             approval.approvalType = approval.approvalType.approval;
           }
         });
-        await OB.MobileApp.model.setTicketDocumentNo(model);
-        OB.Dal.transaction(function(tx) {
+        OB.Dal.transaction(async function(tx) {
+          await OB.MobileApp.model.setTicketDocumentNo(model);
           OB.UTIL.HookManager.executeHooks(
             'OBPOS_PreSyncReceipt',
             {
