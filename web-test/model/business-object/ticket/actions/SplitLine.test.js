@@ -10,13 +10,16 @@
 /* global global */
 
 OB = {
-  App: { StateBackwardCompatibility: { setProperties: jest.fn() }, Class: {} },
+  App: {
+    StateBackwardCompatibility: { setProperties: jest.fn() },
+    Class: {},
+    UUID: { generate: jest.fn() }
+  },
   UTIL: { HookManager: { registerHook: jest.fn() } }
 };
 
 global.lodash = require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/lodash-4.17.15');
 const deepfreeze = require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/deepfreeze-2.0.0');
-require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/util/UUID');
 
 require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/StateAPI');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/Ticket');
@@ -30,6 +33,10 @@ const basicTicket = deepfreeze({
 });
 
 describe('Ticket.splitLine action', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('generates lines with correct quantities', () => {
     const { lines } = OB.App.StateAPI.Ticket.splitLine(basicTicket, {
       lineId: '1',
@@ -51,11 +58,7 @@ describe('Ticket.splitLine action', () => {
     });
 
     expect(lines).toHaveLength(4);
-
-    const differentNewIDs = [
-      ...new Set(lines.filter(l => l.product.id === 'p1').map(l => l.id))
-    ];
-    expect(differentNewIDs).toHaveLength(3);
+    expect(OB.App.UUID.generate).toHaveBeenCalledTimes(2);
   });
 
   it('inserts new lines after the original one', () => {
