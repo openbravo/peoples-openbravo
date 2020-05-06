@@ -183,6 +183,14 @@
   PrintReceipt.prototype.print = function(order, printargs) {
     printargs = printargs || {};
 
+    // Orders with simplified invoice will print only the invoice
+    if (
+      order.get('calculatedInvoice') &&
+      !order.get('calculatedInvoice').get('fullInvoice')
+    ) {
+      return;
+    }
+
     // Clone the receipt
     var receipt = new OB.Model.Order(),
       me = this,
