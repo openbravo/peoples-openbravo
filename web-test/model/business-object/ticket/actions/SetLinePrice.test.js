@@ -20,6 +20,7 @@ OB = {
 };
 
 global.lodash = require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/lodash-4.17.15');
+const deepfreeze = require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/deepfreeze-2.0.0');
 require('../../../../../../org.openbravo.client.kernel/web/org.openbravo.client.kernel/js/BigDecimal-all-1.0.3');
 
 require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/source/utils/ob-arithmetic');
@@ -29,13 +30,13 @@ require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/SetLinePrice');
 
 describe('Ticket.setPrice action', () => {
-  const basicTicket = {
+  const basicTicket = deepfreeze({
     lines: [
       { id: '1', qty: 1, price: 10, priceList: 10, product: { listPrice: 10 } },
       { id: '2', qty: 1, price: 20, priceList: 20, product: { listPrice: 20 } },
       { id: '3', qty: 1, price: 30, priceList: 30, product: { listPrice: 30 } }
     ]
-  };
+  });
 
   it('sets price to a single line', () => {
     const newTicket = OB.App.StateAPI.Ticket.setLinePrice(basicTicket, {
@@ -98,7 +99,7 @@ describe('Ticket.setPrice action', () => {
       reason: 'reasonId'
     });
 
-    const newTicket = OB.App.StateAPI.Ticket.setLinePrice(ticket1, {
+    const newTicket = OB.App.StateAPI.Ticket.setLinePrice(deepfreeze(ticket1), {
       lineIds: ['1'],
       price: 5
     });
@@ -118,7 +119,7 @@ describe('Ticket.setPrice action', () => {
   });
 
   describe('Payment delivery', () => {
-    const pdTicket = {
+    const pdTicket = deepfreeze({
       deliveryPaymentMode: 'PD',
       lines: [
         {
@@ -137,7 +138,7 @@ describe('Ticket.setPrice action', () => {
           product: { listPrice: 30 }
         }
       ]
-    };
+    });
 
     it('delivery services reset price to 0 setting it in amt to pay in delivery', () => {
       const newTicket = OB.App.StateAPI.Ticket.setLinePrice(pdTicket, {

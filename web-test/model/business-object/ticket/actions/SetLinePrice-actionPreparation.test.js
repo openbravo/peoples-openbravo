@@ -27,6 +27,7 @@ OB = {
 };
 
 global.lodash = require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/lodash-4.17.15');
+const deepfreeze = require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/deepfreeze-2.0.0');
 
 require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/StateAPI');
 const {
@@ -86,7 +87,7 @@ const basicReturn = {
 const prepareAction = async (payload, ticket = basicTicket) => {
   const newPayload = await executeActionPreparations(
     OB.App.StateAPI.Ticket.setLinePrice,
-    { Ticket: ticket },
+    deepfreeze({ Ticket: ticket }),
     payload
   );
   return newPayload;
