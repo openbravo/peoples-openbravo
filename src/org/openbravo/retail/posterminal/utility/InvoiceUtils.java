@@ -98,7 +98,7 @@ public class InvoiceUtils {
   private DocumentType getInvoiceDocumentType(String orderDocTypeId, boolean isFullInvoice) {
     final DocumentType orderDocType = OBDal.getInstance().get(DocumentType.class, orderDocTypeId);
     final DocumentType invoiceDocType = isFullInvoice ? orderDocType.getDocumentTypeForInvoice()
-        : orderDocType.getObposDoctypesimpinvoice();
+        : orderDocType.getDoctypesimpinvoice();
 
     if (invoiceDocType == null) {
       throw new OBException(
