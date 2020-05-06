@@ -21,6 +21,9 @@ OB = {
 global.lodash = require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/lodash-4.17.15');
 const deepfreeze = require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/deepfreeze-2.0.0');
 
+require('../../../../../../org.openbravo.client.kernel/web/org.openbravo.client.kernel/js/BigDecimal-all-1.0.3');
+require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/source/utils/ob-arithmetic');
+
 require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/StateAPI');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/Ticket');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/SplitLine');
@@ -37,40 +40,67 @@ describe('Ticket.splitLine action', () => {
     jest.clearAllMocks();
   });
 
-  it('generates lines with correct quantities', () => {
-    const { lines } = OB.App.StateAPI.Ticket.splitLine(basicTicket, {
-      lineId: '1',
-      quantities: [70, 10, 20]
+  describe('basics', () => {
+    it('generates lines with correct quantities', () => {
+      const { lines } = OB.App.StateAPI.Ticket.splitLine(basicTicket, {
+        lineId: '1',
+        quantities: [70, 10, 20]
+      });
+
+      expect(lines).toHaveLength(4);
+
+      const p1Quantities = lines
+        .filter(l => l.product.id === 'p1')
+        .map(l => l.qty);
+      expect(p1Quantities).toMatchObject([70, 10, 20]);
     });
 
-    expect(lines).toHaveLength(4);
+    it('new lines have different ids', () => {
+      const { lines } = OB.App.StateAPI.Ticket.splitLine(basicTicket, {
+        lineId: '1',
+        quantities: [70, 10, 20]
+      });
 
-    const p1Quantities = lines
-      .filter(l => l.product.id === 'p1')
-      .map(l => l.qty);
-    expect(p1Quantities).toMatchObject([70, 10, 20]);
+      expect(lines).toHaveLength(4);
+      expect(OB.App.UUID.generate).toHaveBeenCalledTimes(2);
+    });
+
+    it('inserts new lines after the original one', () => {
+      const { lines } = OB.App.StateAPI.Ticket.splitLine(basicTicket, {
+        lineId: '1',
+        quantities: [50, 50]
+      });
+
+      expect(lines).toMatchObject([
+        { product: { id: 'p1' } },
+        { product: { id: 'p1' } },
+        { product: { id: 'p2' } }
+      ]);
+    });
   });
 
-  it('new lines have different ids', () => {
-    const { lines } = OB.App.StateAPI.Ticket.splitLine(basicTicket, {
-      lineId: '1',
-      quantities: [70, 10, 20]
+  describe('manual promotions', () => {
+    const basicDiscountTicket = deepfreeze({
+      ...basicTicket,
+      discountsFromUser: {
+        manualPromotions: [{ obdiscAmt: 10, linesToApply: ['1'] }]
+      }
     });
 
-    expect(lines).toHaveLength(4);
-    expect(OB.App.UUID.generate).toHaveBeenCalledTimes(2);
-  });
+    it('proportionally distributes amount discounts', () => {
+      const { discountsFromUser } = OB.App.StateAPI.Ticket.splitLine(
+        basicDiscountTicket,
+        {
+          lineId: '1',
+          quantities: [70, 10, 20]
+        }
+      );
 
-  it('inserts new lines after the original one', () => {
-    const { lines } = OB.App.StateAPI.Ticket.splitLine(basicTicket, {
-      lineId: '1',
-      quantities: [50, 50]
+      expect(discountsFromUser.manualPromotions).toMatchObject([
+        { obdiscAmt: 7 },
+        { obdiscAmt: 1 },
+        { obdiscAmt: 2 }
+      ]);
     });
-
-    expect(lines).toMatchObject([
-      { product: { id: 'p1' } },
-      { product: { id: 'p1' } },
-      { product: { id: 'p2' } }
-    ]);
   });
 });

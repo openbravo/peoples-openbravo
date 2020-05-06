@@ -10,6 +10,26 @@
 /* global lodash */
 
 (function SplitLineDefinition() {
+  function recalculateManualPromotions(
+    editingLine,
+    manualPromotions,
+    splitLines
+  ) {
+    const newPromos = manualPromotions.flatMap(promo => {
+      if (!promo.linesToApply.includes(editingLine.id)) {
+        return promo;
+      }
+      const originalAmt = promo.obdiscAmt;
+      return splitLines.map(l => {
+        const amt = OB.DEC.toNumber(
+          OB.BIGDEC.mul(OB.BIGDEC.div(originalAmt, editingLine.qty), l.qty)
+        );
+        return { ...promo, obdiscAmt: amt, linesToApply: [l.id] };
+      });
+    });
+    return newPromos;
+  }
+
   OB.App.StateAPI.Ticket.registerAction('splitLine', (state, payload) => {
     const ticket = { ...state };
     const { lineId, quantities } = payload;
@@ -36,6 +56,16 @@
     const lineIdx = ticket.lines.map(l => l.id).indexOf(lineId);
     ticket.lines.splice(lineIdx - 1, 0, ...newLines);
 
+    if (ticket.discountsFromUser && ticket.discountsFromUser.manualPromotions) {
+      ticket.discountsFromUser = {
+        ...ticket.discountsFromUser,
+        manualPromotions: recalculateManualPromotions(
+          editingLine,
+          ticket.discountsFromUser.manualPromotions,
+          [ticket.lines.find(l => l.id === lineId), ...newLines]
+        )
+      };
+    }
     return ticket;
   });
 })();
