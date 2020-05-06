@@ -55,7 +55,6 @@
       },
       this
     );
-
     this.receipt.on('displayTotal', this.displayTotal, this);
     this.multiOrders.on(
       'displayTotal',
@@ -184,14 +183,19 @@
     printargs = printargs || {};
 
     // Clone the receipt
-    var receipt = new OB.Model.Order(),
+    var receipt,
       me = this,
       template;
 
-    if (!OB.UTIL.isNullOrUndefined(order)) {
-      OB.UTIL.clone(order, receipt);
+    if (!printargs.skipClone) {
+      receipt = new OB.Model.Order();
+      if (!OB.UTIL.isNullOrUndefined(order)) {
+        OB.UTIL.clone(order, receipt);
+      } else {
+        OB.UTIL.clone(me.receipt, receipt);
+      }
     } else {
-      OB.UTIL.clone(me.receipt, receipt);
+      receipt = order;
     }
 
     // Orders with simplified invoice will print only the invoice
@@ -597,10 +601,13 @@
     );
   };
 
-  PrintReceipt.prototype.displayTotal = function() {
-    // Clone the receipt
-    var receipt = new OB.Model.Order();
-    OB.UTIL.clone(this.receipt, receipt);
+  PrintReceipt.prototype.displayTotal = function(order) {
+    var receipt = order;
+    if (!receipt) {
+      // Clone the receipt
+      receipt = new OB.Model.Order();
+      OB.UTIL.clone(this.receipt, receipt);
+    }
     OB.POS.hwserver.print(
       this.templatetotal,
       {
