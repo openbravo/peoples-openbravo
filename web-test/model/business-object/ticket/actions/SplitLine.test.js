@@ -15,18 +15,19 @@ OB = {
 };
 
 global.lodash = require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/lodash-4.17.15');
+const deepfreeze = require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/deepfreeze-2.0.0');
 require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/util/UUID');
 
 require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/StateAPI');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/Ticket');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/SplitLine');
 
-const basicTicket = {
+const basicTicket = deepfreeze({
   lines: [
     { id: '1', qty: 100, product: { id: 'p1' } },
     { id: '2', qty: 100, product: { id: 'p2' } }
   ]
-};
+});
 
 describe('Ticket.splitLine action', () => {
   it('generates lines with correct quantities', () => {
