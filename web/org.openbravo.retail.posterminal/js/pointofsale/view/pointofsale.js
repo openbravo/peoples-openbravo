@@ -2418,8 +2418,6 @@ enyo.kind({
     this.$.multiColumn.$.rightPanel.$.toolbarpane.setModel(this.model);
     this.$.multiColumn.$.rightPanel.$.keyboard.setReceipt(receipt);
     this.$.multiColumn.$.rightToolbar.$.rightToolbar.setReceipt(receipt);
-
-    OB.MobileApp.currentWindowView = this;
   },
   switchBottomRightLayout: function(newTab) {
     this.$.multiColumn.$.rightPanel.$.rightBottomPanel.tabChanged(newTab);

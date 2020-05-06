@@ -497,6 +497,7 @@ OB.DS.HWServer.prototype._status = function(callback) {
       timeout: 5000,
       contentType: 'application/json;charset=utf-8',
       success: function(inSender, inResponse) {
+        OB.App.SynchronizationBuffer.goOnline('HardwareManager');
         if (callback) {
           callback(inResponse);
         }
@@ -507,6 +508,7 @@ OB.DS.HWServer.prototype._status = function(callback) {
           return;
         }
         this.failed = true;
+        OB.App.SynchronizationBuffer.goOffline('HardwareManager');
         if (callback) {
           callback({
             exception: {
@@ -571,6 +573,7 @@ OB.DS.HWServer.prototype._sendHWMPrinter = function(sendurl) {
           contentType: 'application/xml;charset=utf-8',
           data: data,
           success: function(inSender, inResponse) {
+            OB.App.SynchronizationBuffer.goOnline('HardwareManager');
             resolve(inResponse);
           },
           fail: function(inSender, inResponse) {
@@ -579,6 +582,7 @@ OB.DS.HWServer.prototype._sendHWMPrinter = function(sendurl) {
               return;
             }
             this.failed = true;
+            OB.App.SynchronizationBuffer.goOffline('HardwareManager');
             reject();
           }
         });
@@ -587,6 +591,7 @@ OB.DS.HWServer.prototype._sendHWMPrinter = function(sendurl) {
           .response('success')
           .error('fail');
       } else {
+        OB.App.SynchronizationBuffer.goOnline('HardwareManager');
         resolve();
       }
     });

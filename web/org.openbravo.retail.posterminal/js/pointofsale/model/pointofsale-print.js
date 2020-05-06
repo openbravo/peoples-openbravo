@@ -179,24 +179,21 @@
     this.isRetry = false;
   };
 
-  PrintReceipt.prototype.print = function(order, printargs) {
+  PrintReceipt.prototype.print = function(receipt, printargs) {
+    const payload = { printSettings: printargs };
+    if (!OB.UTIL.isNullOrUndefined(receipt)) {
+      payload.ticket = OB.App.StateBackwardCompatibility.getInstance(
+        'Ticket'
+      ).toStateObject(receipt);
+    }
+    OB.App.State.Global.printTicket(payload);
+  };
+
+  PrintReceipt.prototype.doPrint = function(receipt, printargs) {
     printargs = printargs || {};
 
-    // Clone the receipt
-    var receipt,
-      me = this,
+    var me = this,
       template;
-
-    if (!printargs.skipClone) {
-      receipt = new OB.Model.Order();
-      if (!OB.UTIL.isNullOrUndefined(order)) {
-        OB.UTIL.clone(order, receipt);
-      } else {
-        OB.UTIL.clone(me.receipt, receipt);
-      }
-    } else {
-      receipt = order;
-    }
 
     // Orders with simplified invoice will print only the invoice
     if (
@@ -601,13 +598,11 @@
     );
   };
 
-  PrintReceipt.prototype.displayTotal = function(order) {
-    var receipt = order;
-    if (!receipt) {
-      // Clone the receipt
-      receipt = new OB.Model.Order();
-      OB.UTIL.clone(this.receipt, receipt);
-    }
+  PrintReceipt.prototype.displayTotal = function() {
+    OB.App.State.Global.displayTotal();
+  };
+
+  PrintReceipt.prototype.doDisplayTotal = function(receipt) {
     OB.POS.hwserver.print(
       this.templatetotal,
       {
@@ -655,6 +650,12 @@
   };
 
   PrintReceiptLine.prototype.print = function(line) {
+    OB.App.State.Global.printTicketLine({
+      line: OB.App.StateBackwardCompatibility.toPlainObject(line)
+    });
+  };
+
+  PrintReceiptLine.prototype.doPrint = function(line) {
     OB.POS.hwserver.print(
       this.templateline,
       {

@@ -13,42 +13,81 @@
  */
 
 (function HardwareManagerEndpointDefinition() {
+  // Turns an state ticket into a backbone order
+  const toOrder = ticket => {
+    return OB.App.StateBackwardCompatibility.getInstance(
+      'Ticket'
+    ).toBackboneObject(ticket);
+  };
+
+  // Turns an state ticket line into a backbone order line
+  const toOrderLine = line => {
+    return new OB.Model.OrderLine(line);
+  };
+
   /**
-   * A synchronization endpoint in charge of synchronizing the messages for communicating with the Hardware Manager.
+   * A synchronization endpoint in charge of the messages for communicating with the Hardware Manager.
    */
   class HardwareManagerEndpoint extends OB.App.Class.SynchronizationEndpoint {
-    constructor() {
-      super();
-      this.name = 'HardwareManager';
-      this.online = true;
+    constructor(name) {
+      super(name || 'HardwareManager');
+      this.messageTypes.push('displayTotal', 'printTicket', 'printTicketLine');
     }
 
-    // eslint-disable-next-line class-methods-use-this
+    // Sets the main printer
+    setPrinter(printer) {
+      this.printer = printer;
+    }
+
+    // Sets the lines printer
+    setLinePrinter(linePrinter) {
+      this.linePrinter = linePrinter;
+    }
+
     async synchronizeMessage(message) {
-      //TODO
-    }
-
-    async isOnline() {
-      if (!this.online) {
-        return this.online;
+      switch (message.type) {
+        case 'displayTotal':
+          this.displayTotal(message.messageObj);
+          break;
+        case 'printTicket':
+          this.printTicket(message.messageObj);
+          break;
+        case 'printTicketLine':
+          this.printTicketLine(message.messageObj);
+          break;
+        default:
+          throw new Error(
+            `Unkwnown Hardware Manager operation: ${message.type}`
+          );
       }
-      // check HW Manager status only if the endpoint has not been set as offline
-      const status = await this.hardwareManagerStatus().catch(() => false);
-      return status && !status.exception;
     }
 
-    // eslint-disable-next-line class-methods-use-this
-    async hardwareManagerStatus() {
-      const status = await new Promise((resolve, reject) => {
-        OB.POS.hwserver.status(data => {
-          if (data && data.exception) {
-            reject(new Error(data.exception.message));
-          }
-          resolve(data);
-        });
+    displayTotal(messageData) {
+      if (!this.printer) {
+        throw new Error(`The endpoint has no printer assigned`);
+      }
+      const order = toOrder(messageData.data.ticket);
+      this.printer.doDisplayTotal(order);
+    }
+
+    printTicket(messageData) {
+      if (!this.printer) {
+        throw new Error(`The endpoint has no printer assigned`);
+      }
+      const order = toOrder(messageData.data.ticket);
+      this.printer.doPrint(order, {
+        ...messageData.data.printSettings
       });
-      return status;
+    }
+
+    printTicketLine(messageData) {
+      if (!this.linePrinter) {
+        throw new Error(`The endpoint has no line printer assigned`);
+      }
+      const line = toOrderLine(messageData.data.line);
+      this.linePrinter.doPrint(line);
     }
   }
-  OB.App.SynchronizationBuffer.registerEndpoint(HardwareManagerEndpoint);
+
+  OB.App.Class.HardwareManagerEndpoint = HardwareManagerEndpoint;
 })();
