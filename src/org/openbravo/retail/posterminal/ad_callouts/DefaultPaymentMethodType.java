@@ -62,10 +62,11 @@ public class DefaultPaymentMethodType extends SimpleCallout {
       return undefinedid;
     }
 
-    Query<String> firstpaymentmethodtype = session.createQuery(
-        "SELECT id FROM OBPOS_PAYMENTMETHOD_TYPE\n"
-            + "WHERE provider = (SELECT pg.provider FROM OBPOS_PAYMENTGROUP as pg WHERE pg.id = :paymentgroup)",
-        String.class).setMaxResults(1);
+    Query<String> firstpaymentmethodtype = session
+        .createQuery("SELECT id FROM OBPOS_PAYMENTMETHOD_TYPE\n"
+            + "WHERE provider = (SELECT pg.provider FROM OBPOS_PAYMENTGROUP as pg WHERE pg.id = :paymentgroup)\n"
+            + "ORDER BY name", String.class)
+        .setMaxResults(1);
     firstpaymentmethodtype.setParameter("paymentgroup", paymentgroup);
     return firstpaymentmethodtype.uniqueResult();
   }
