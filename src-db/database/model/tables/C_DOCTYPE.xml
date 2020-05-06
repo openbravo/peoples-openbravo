@@ -117,6 +117,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="C_DOCTYPESIMPINVOICE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="C_DOCTYPEAGGRINVOICE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_SEQUENCE" name="AD_SEQUENCE_DOCTYPEDOC">
         <reference local="DOCNOSEQUENCE_ID" foreign="AD_SEQUENCE_ID"/>
       </foreign-key>
@@ -143,6 +151,12 @@
       </foreign-key>
       <foreign-key foreignTable="GL_CATEGORY" name="C_DOCTYPE_GL_CATEGORY">
         <reference local="GL_CATEGORY_ID" foreign="GL_CATEGORY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_DOCTYPE" name="C_DOCTYPEAGGRINVOICE">
+        <reference local="C_DOCTYPEAGGRINVOICE_ID" foreign="C_DOCTYPE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_DOCTYPE" name="C_DOCTYPESIMPINVOICE">
+        <reference local="C_DOCTYPESIMPINVOICE_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>
       <unique name="C_DOCTYPE_NAME">
         <unique-column name="AD_CLIENT_ID"/>
