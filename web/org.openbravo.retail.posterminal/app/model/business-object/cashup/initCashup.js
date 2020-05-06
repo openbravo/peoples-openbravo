@@ -41,7 +41,8 @@
         } else {
           newCashup.cashPaymentMethodInfo = OB.App.State.Cashup.Utils.initializePaymentMethodCashup(
             {
-              terminalPayments
+              terminalPayments,
+              newCashup
             }
           );
         }
@@ -60,7 +61,8 @@
           {
             terminalPayments,
             lastCashUpPayments,
-            terminalIsSlave
+            terminalIsSlave,
+            newCashup
           }
         );
       }

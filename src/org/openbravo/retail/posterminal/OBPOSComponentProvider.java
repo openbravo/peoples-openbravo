@@ -112,10 +112,10 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
         // Web POS window
         "utils/eventbus", "utils/attributeUtils", "utils/cashUpReportUtils",
-        "utils/ticketCloseUtils", "utils/prepaymentUtils", "utils/servicesUtils",
-        "utils/remoteUtils", "components/keypadcoins", "data/dataordersave", "data/dataordertaxes",
-        "data/datacustomersave", "data/datacustomeraddrsave", "data/dataorderdiscount",
-        "components/modalreceipts", "components/modalorderselector",
+        "utils/cashManagementUtils", "utils/ticketCloseUtils", "utils/prepaymentUtils",
+        "utils/servicesUtils", "utils/remoteUtils", "components/keypadcoins", "data/dataordersave",
+        "data/dataordertaxes", "data/datacustomersave", "data/datacustomeraddrsave",
+        "data/dataorderdiscount", "components/modalreceipts", "components/modalorderselector",
         "components/modalcrossstoreselector", "components/storeinformation",
         "components/modalmultiorderslayaway", "components/modalcategorytree",
         "components/rendercategory", "components/renderproduct", "components/renderproductch",

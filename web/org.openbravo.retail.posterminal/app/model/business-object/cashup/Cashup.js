@@ -17,6 +17,7 @@
     netReturns: null,
     grossReturns: null,
     totalRetailTransactions: null,
+    totalStartings: null,
     creationDate: null,
     userId: null,
     cashTaxInfo: [], // taxCashupId, name, amount, orderType

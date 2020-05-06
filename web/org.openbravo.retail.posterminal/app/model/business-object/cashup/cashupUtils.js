@@ -95,6 +95,7 @@
       newCashup.netReturns = OB.DEC.Zero;
       newCashup.grossReturns = OB.DEC.Zero;
       newCashup.totalRetailTransactions = OB.DEC.Zero;
+      newCashup.totalStartings = OB.DEC.Zero;
       newCashup.creationDate = payload.payload.currentDate.toISOString();
       newCashup.userId = payload.payload.userId;
       newCashup.posterminal = payload.payload.posterminal;

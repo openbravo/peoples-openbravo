@@ -12,7 +12,12 @@
 (function PaymentMethodUtilsDefinition() {
   OB.App.StateAPI.Cashup.registerUtilityFunctions({
     initializePaymentMethodCashup(payload) {
-      const { terminalPayments, lastCashUpPayments, terminalIsSlave } = payload;
+      const {
+        terminalPayments,
+        lastCashUpPayments,
+        terminalIsSlave,
+        newCashup
+      } = payload;
       const paymentMethods = [];
       terminalPayments.forEach(terminalPayment => {
         let startingCash = terminalPayment.currentBalance;
@@ -36,6 +41,11 @@
             } else {
               startingCash = lastCashUpPayment.amountToKeep;
             }
+
+            newCashup.totalStartings = OB.DEC.add(
+              newCashup.totalStartings,
+              startingCash
+            );
           }
         }
 

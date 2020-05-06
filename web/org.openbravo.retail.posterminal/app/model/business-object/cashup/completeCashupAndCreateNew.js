@@ -70,7 +70,8 @@
         {
           terminalPayments,
           lastCashUpPayments,
-          terminalIsSlave
+          terminalIsSlave,
+          newCashup
         }
       );
 

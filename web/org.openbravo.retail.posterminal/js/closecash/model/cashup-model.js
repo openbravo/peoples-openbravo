@@ -351,7 +351,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         })
       ).models
     );
-
     //OB.Dal.find success
     cashUpReport.set(
       'totalStartings',

@@ -12,60 +12,6 @@
 (function() {
   OB.UTIL = window.OB.UTIL || {};
 
-  OB.UTIL.sumCashManagementToCashup = function(payment, callback, tx) {
-    if (!OB.UTIL.isNullOrUndefined(payment)) {
-      var cashupId = payment.get('cashup_id'),
-        criteria = {
-          cashup_id: cashupId,
-          paymentmethod_id: payment.get('paymentMethodId')
-        };
-
-      OB.Dal.findInTransaction(
-        tx,
-        OB.Model.PaymentMethodCashUp,
-        criteria,
-        function(paymentMethods) {
-          var paymentMethod = paymentMethods.at(0),
-            totalDeposits = paymentMethod.get('totalDeposits'),
-            totalDrops = paymentMethod.get('totalDrops');
-          totalDeposits = OB.DEC.add(
-            totalDeposits,
-            payment.get('totalDeposits')
-          );
-          paymentMethod.set('totalDeposits', totalDeposits);
-          totalDrops = OB.DEC.add(totalDrops, payment.get('totalDrops'));
-          paymentMethod.set('totalDrops', totalDrops);
-          //set used in transaction payment methods to true
-          paymentMethod.set('usedInCurrentTrx', true);
-          OB.Dal.saveInTransaction(
-            tx,
-            paymentMethod,
-            function(success) {
-              // Success
-              OB.Dal.findInTransaction(
-                tx,
-                OB.Model.CashUp,
-                {
-                  id: cashupId
-                },
-                function(cashUpObj) {
-                  OB.UTIL.composeCashupInfo(cashUpObj, null, callback, tx);
-                }
-              );
-            },
-            function(error) {
-              // Error
-            }
-          );
-        }
-      );
-    } else {
-      if (callback) {
-        callback();
-      }
-    }
-  };
-
   OB.UTIL.getPaymethodCashUp = function(payMthds, objToSend, cashUp, tx) {
     _.each(
       OB.MobileApp.model.get('payments'),
@@ -255,6 +201,19 @@
             OB.UTIL.saveComposeInfo(me, callback, objToSend, cashUp, tx);
           }
         );
+      }
+    );
+  };
+
+  OB.UTIL.updateCashupCreationDate = function() {
+    OB.Dal.get(
+      OB.Model.CashUp,
+      OB.MobileApp.model.get('terminal').cashUpId,
+      function(cashup) {
+        if (cashup) {
+          cashup.set('creationDate', OB.I18N.normalizeDate(new Date()));
+          OB.Dal.save(cashup);
+        }
       }
     );
   };
