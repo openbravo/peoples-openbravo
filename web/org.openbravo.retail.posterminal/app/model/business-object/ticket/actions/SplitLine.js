@@ -10,6 +10,12 @@
 /* global lodash */
 
 (function SplitLineDefinition() {
+  const AMT_DISCOUNTS = {
+    '7B49D8CC4E084A75B7CB4D85A6A3A578': 'Fixed',
+    D1D193305A6443B09B299259493B272A: 'User defined',
+    F3B0FB45297844549D9E6B5F03B23A82: 'Line amt'
+  };
+
   function recalculateManualPromotions(
     editingLine,
     manualPromotions,
@@ -21,21 +27,36 @@
       }
 
       let accumDisc = 0;
-      const originalAmt = promo.obdiscAmt;
+
+      const amtDiscountType = AMT_DISCOUNTS[promo.discountType];
 
       return splitLines.map((l, i) => {
         let amt;
 
-        if (i === splitLines.length - 1) {
-          amt = originalAmt - accumDisc;
-        } else {
-          amt = OB.DEC.toNumber(
-            OB.BIGDEC.mul(OB.BIGDEC.div(originalAmt, editingLine.qty), l.qty)
-          );
-        }
+        const newPromo = { ...promo, linesToApply: [l.id] };
 
-        accumDisc = OB.DEC.add(accumDisc, amt);
-        return { ...promo, obdiscAmt: amt, linesToApply: [l.id] };
+        if (amtDiscountType) {
+          let discProperty;
+          if (amtDiscountType === 'Line amt') {
+            discProperty = 'obdiscLineFinalgross';
+          } else {
+            discProperty = 'obdiscAmt';
+          }
+
+          const originalAmt = promo[discProperty];
+          if (i === splitLines.length - 1) {
+            amt = originalAmt - accumDisc;
+          } else {
+            amt = OB.DEC.toNumber(
+              OB.BIGDEC.mul(OB.BIGDEC.div(originalAmt, editingLine.qty), l.qty)
+            );
+          }
+
+          newPromo[discProperty] = amt;
+
+          accumDisc = OB.DEC.add(accumDisc, amt);
+        }
+        return newPromo;
       });
     });
     return newPromos;

@@ -83,14 +83,39 @@ describe('Ticket.splitLine action', () => {
     const basicDiscountTicket = deepfreeze({
       ...basicTicket,
       discountsFromUser: {
-        manualPromotions: [{ obdiscAmt: 10, linesToApply: ['1'] }]
+        manualPromotions: [
+          {
+            discountType: '7B49D8CC4E084A75B7CB4D85A6A3A578', // fixed
+            obdiscAmt: 10,
+            linesToApply: ['1']
+          }
+        ]
       }
     });
 
     const basicDiscountTicket2 = deepfreeze({
       lines: [{ id: '1', qty: 3, product: { id: 'p1' } }],
       discountsFromUser: {
-        manualPromotions: [{ obdiscAmt: 10, linesToApply: ['1'] }]
+        manualPromotions: [
+          {
+            discountType: 'D1D193305A6443B09B299259493B272A', // user defined
+            obdiscAmt: 10,
+            linesToApply: ['1']
+          }
+        ]
+      }
+    });
+
+    const setLineAmtTicket = deepfreeze({
+      lines: [{ id: '1', qty: 2, product: { id: 'p1' } }],
+      discountsFromUser: {
+        manualPromotions: [
+          {
+            discountType: 'F3B0FB45297844549D9E6B5F03B23A82', // set line amount
+            obdiscLineFinalgross: 100,
+            linesToApply: ['1']
+          }
+        ]
       }
     });
 
@@ -114,7 +139,6 @@ describe('Ticket.splitLine action', () => {
       const { discountsFromUser } = OB.App.StateAPI.Ticket.splitLine(
         basicDiscountTicket2,
         {
-          discountType: 'D1D193305A6443B09B299259493B272A',
           lineId: '1',
           quantities: [1, 1, 1]
         }
@@ -124,6 +148,21 @@ describe('Ticket.splitLine action', () => {
         { obdiscAmt: 3.33 },
         { obdiscAmt: 3.33 },
         { obdiscAmt: 3.34 }
+      ]);
+    });
+
+    it('splits amount of set line amount discounts', () => {
+      const { discountsFromUser } = OB.App.StateAPI.Ticket.splitLine(
+        setLineAmtTicket,
+        {
+          lineId: '1',
+          quantities: [1, 1]
+        }
+      );
+
+      expect(discountsFromUser.manualPromotions).toMatchObject([
+        { obdiscLineFinalgross: 50 },
+        { obdiscLineFinalgross: 50 }
       ]);
     });
   });
