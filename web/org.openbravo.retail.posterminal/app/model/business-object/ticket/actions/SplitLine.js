@@ -36,6 +36,8 @@
         const newPromo = { ...promo, linesToApply: [l.id] };
 
         if (amtDiscountType) {
+          // take into account propportional split for discounts setting amounts
+          // percentual discounts are already correctly set
           let discProperty;
           if (amtDiscountType === 'Line amt') {
             discProperty = 'obdiscLineFinalgross';

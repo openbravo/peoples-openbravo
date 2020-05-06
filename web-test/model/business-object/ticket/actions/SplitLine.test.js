@@ -119,6 +119,19 @@ describe('Ticket.splitLine action', () => {
       }
     });
 
+    const percentageDiscountTicket = deepfreeze({
+      lines: [{ id: '1', qty: 2, product: { id: 'p1' } }],
+      discountsFromUser: {
+        manualPromotions: [
+          {
+            discountType: '20E4EC27397344309A2185097392D964', // percentage
+            obdiscPercentage: 10,
+            linesToApply: ['1']
+          }
+        ]
+      }
+    });
+
     it('proportionally distributes amount discounts', () => {
       const { discountsFromUser } = OB.App.StateAPI.Ticket.splitLine(
         basicDiscountTicket,
@@ -163,6 +176,21 @@ describe('Ticket.splitLine action', () => {
       expect(discountsFromUser.manualPromotions).toMatchObject([
         { obdiscLineFinalgross: 50 },
         { obdiscLineFinalgross: 50 }
+      ]);
+    });
+
+    it('keeps percentage in percental discounts', () => {
+      const { discountsFromUser } = OB.App.StateAPI.Ticket.splitLine(
+        percentageDiscountTicket,
+        {
+          lineId: '1',
+          quantities: [1, 1]
+        }
+      );
+
+      expect(discountsFromUser.manualPromotions).toMatchObject([
+        { obdiscPercentage: 10 },
+        { obdiscPercentage: 10 }
       ]);
     });
   });
