@@ -1014,4 +1014,41 @@ public class POSUtils {
       OBDal.getInstance().save(posTerminal);
     }
   }
+
+  /**
+   * Reads the last number of the terminal sequence defined with the given name. This number will be
+   * compared against the maximum number in the failed orders.
+   */
+  public static Long getLastTerminalDocumentSequence(final OBPOSApplications posTerminal,
+      final String sequenceName, final boolean isInvoiceSequence) {
+
+    final long maxNumberInTerminal = posTerminal.getEntity().hasProperty(sequenceName)
+        ? (Long) ObjectUtils.defaultIfNull(posTerminal.get(sequenceName), 0L)
+        : 0;
+
+    final List<OBPOSErrors> errors = OBDal.getInstance()
+        .createCriteria(OBPOSErrors.class)
+        .add(Restrictions.eq(OBPOSErrors.PROPERTY_OBPOSAPPLICATIONS, posTerminal))
+        .add(Restrictions.eq(OBPOSErrors.PROPERTY_TYPEOFDATA, "Order"))
+        .add(Restrictions.eq(OBPOSErrors.PROPERTY_ORDERSTATUS, "N"))
+        .list();
+
+    long maxNumberInErrors = errors.stream().mapToLong(error -> {
+      try {
+        JSONObject jsonError = new JSONObject(error.getJsoninfo());
+        if (isInvoiceSequence && jsonError.has("calculatedInvoice")) {
+          jsonError = jsonError.getJSONObject("calculatedInvoice");
+        }
+        if (jsonError.has("obposSequencename") && jsonError.has("obposSequencenumber")
+            && jsonError.getString("obposSequencename").equals(sequenceName)) {
+          return jsonError.getLong("obposSequencenumber");
+        }
+        return 0;
+      } catch (Exception e) {
+        return 0;
+      }
+    }).max().orElse(0);
+
+    return Math.max(maxNumberInTerminal, maxNumberInErrors);
+  }
 }
