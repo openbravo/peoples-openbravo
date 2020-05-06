@@ -12,23 +12,20 @@
  */
 
 (() => {
-  // FIXME: Move to global complete ticket action.
-  // It should read information from Terminal (sequence prefix and padding), Ticket (sequenceName) and DocumentSequence (sequenceNumber) models
-  // It should update Ticket (sequenceNumber and documentNo) and DocumentSequence (sequenceNumber) models
   OB.App.StateAPI.DocumentSequence.registerAction(
     'increaseSequence',
-    (state, payload) => {
-      const newState = { ...state };
+    (documentSequence, payload) => {
+      const newDocumentSequence = { ...documentSequence };
       const { sequenceName } = payload;
 
-      if (newState[sequenceName]) {
-        const newStateSequence = { ...newState[sequenceName] };
+      if (newDocumentSequence[sequenceName]) {
+        const newStateSequence = { ...newDocumentSequence[sequenceName] };
         newStateSequence.sequenceNumber =
-          newState[sequenceName].sequenceNumber + 1;
-        newState[sequenceName] = newStateSequence;
+          newDocumentSequence[sequenceName].sequenceNumber + 1;
+        newDocumentSequence[sequenceName] = newStateSequence;
       }
 
-      return newState;
+      return newDocumentSequence;
     }
   );
 })();

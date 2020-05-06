@@ -16,26 +16,28 @@
 (() => {
   OB.App.StateAPI.DocumentSequence.registerAction(
     'initializeSequence',
-    (state, payload) => {
-      const newState = { ...state };
+    (documentSequence, payload) => {
+      const newDocumentSequence = { ...documentSequence };
       const { sequences } = payload;
 
       sequences.forEach(sequence => {
-        const newStateSequence = { ...newState[sequence.sequenceName] };
+        const newStateSequence = {
+          ...newDocumentSequence[sequence.sequenceName]
+        };
         newStateSequence.sequencePrefix = sequence.sequencePrefix;
         newStateSequence.sequenceNumber =
-          newState[sequence.sequenceName] &&
-          newState[sequence.sequenceName].sequencePrefix ===
+          newDocumentSequence[sequence.sequenceName] &&
+          newDocumentSequence[sequence.sequenceName].sequencePrefix ===
             sequence.sequencePrefix
             ? Math.max(
-                newState[sequence.sequenceName].sequenceNumber || 0,
+                newDocumentSequence[sequence.sequenceName].sequenceNumber || 0,
                 sequence.sequenceNumber || 0
               )
             : sequence.sequenceNumber || 0;
-        newState[sequence.sequenceName] = newStateSequence;
+        newDocumentSequence[sequence.sequenceName] = newStateSequence;
       });
 
-      return newState;
+      return newDocumentSequence;
     }
   );
 })();
