@@ -19,11 +19,22 @@
       if (!promo.linesToApply.includes(editingLine.id)) {
         return promo;
       }
+
+      let accumDisc = 0;
       const originalAmt = promo.obdiscAmt;
-      return splitLines.map(l => {
-        const amt = OB.DEC.toNumber(
-          OB.BIGDEC.mul(OB.BIGDEC.div(originalAmt, editingLine.qty), l.qty)
-        );
+
+      return splitLines.map((l, i) => {
+        let amt;
+
+        if (i === splitLines.length - 1) {
+          amt = originalAmt - accumDisc;
+        } else {
+          amt = OB.DEC.toNumber(
+            OB.BIGDEC.mul(OB.BIGDEC.div(originalAmt, editingLine.qty), l.qty)
+          );
+        }
+
+        accumDisc = OB.DEC.add(accumDisc, amt);
         return { ...promo, obdiscAmt: amt, linesToApply: [l.id] };
       });
     });

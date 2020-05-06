@@ -87,6 +87,13 @@ describe('Ticket.splitLine action', () => {
       }
     });
 
+    const basicDiscountTicket2 = deepfreeze({
+      lines: [{ id: '1', qty: 3, product: { id: 'p1' } }],
+      discountsFromUser: {
+        manualPromotions: [{ obdiscAmt: 10, linesToApply: ['1'] }]
+      }
+    });
+
     it('proportionally distributes amount discounts', () => {
       const { discountsFromUser } = OB.App.StateAPI.Ticket.splitLine(
         basicDiscountTicket,
@@ -100,6 +107,23 @@ describe('Ticket.splitLine action', () => {
         { obdiscAmt: 7 },
         { obdiscAmt: 1 },
         { obdiscAmt: 2 }
+      ]);
+    });
+
+    it('last line includes pending amount', () => {
+      const { discountsFromUser } = OB.App.StateAPI.Ticket.splitLine(
+        basicDiscountTicket2,
+        {
+          discountType: 'D1D193305A6443B09B299259493B272A',
+          lineId: '1',
+          quantities: [1, 1, 1]
+        }
+      );
+
+      expect(discountsFromUser.manualPromotions).toMatchObject([
+        { obdiscAmt: 3.33 },
+        { obdiscAmt: 3.33 },
+        { obdiscAmt: 3.34 }
       ]);
     });
   });
