@@ -273,14 +273,7 @@ enyo.kind({
                         'obObposCashupUiCashPayments-wrapper-components-body-list-paymentsList',
                       renderLine: 'OB.OBPOSCashUp.UI.RenderCashPaymentsLine',
                       renderEmpty: 'OB.UI.RenderEmpty',
-                      listStyle: 'list',
-                      resizeHandler: function() {
-                        // see issue https://issues.openbravo.com/view.php?id=42968
-                        var me = this;
-                        setTimeout(function() {
-                          me.render();
-                        }, 1);
-                      }
+                      listStyle: 'list'
                     },
                     {
                       name: 'renderLoading',
