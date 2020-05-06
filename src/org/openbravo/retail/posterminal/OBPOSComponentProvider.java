@@ -35,8 +35,10 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
   static {
     // Set dependency on Mobile Core app
-    BaseComponentProvider.setAppDependencies(POSUtils.APP_NAME, Arrays.asList(
-        MobileCoreConstants.RETAIL_CORE, DiscountsEngineAppComponentProvider.DISCOUNTS_APP));
+    BaseComponentProvider.setAppDependencies(POSUtils.APP_NAME,
+        Arrays.asList(MobileCoreConstants.RETAIL_CORE,
+            DiscountsEngineAppComponentProvider.DISCOUNTS_APP,
+            TaxesEngineAppComponentProvider.TAXES_APP));
   }
 
   public static final String QUALIFIER = "OBPOS_Main";
@@ -300,11 +302,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/masterdata/discount/DiscountFilterProductModel");
     appDependency.add("model/masterdata/discount/DiscountFilterRoleModel");
     appDependency.add("model/masterdata/discount/DiscountModel");
-    // Tax
-    appDependency.add("taxesengine/common/tax-engine");
-    appDependency.add("taxesengine/common/tax-rules");
-    appDependency.add("taxesengine/common/rules/priceincluding-tax");
-    appDependency.add("taxesengine/common/rules/priceexcluding-tax");
 
     // ticket model
     appDependency.add("model/business-object/ticket/Ticket");

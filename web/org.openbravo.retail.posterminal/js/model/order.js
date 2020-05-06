@@ -11019,8 +11019,6 @@
 
         if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
           this.doRemoteBPSettings(model.get('bp'));
-        } else {
-          OB.UTIL.showLoading(false);
         }
 
         this.saveCurrent();
