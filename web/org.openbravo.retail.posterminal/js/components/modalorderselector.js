@@ -621,7 +621,13 @@ enyo.kind({
       'click',
       function(model) {
         function loadOrder(model) {
-          OB.UTIL.showLoading(true);
+          me.execution = OB.UTIL.ProcessController.start('openVerifiedReturn');
+          function executionCallback() {
+            OB.UTIL.ProcessController.finish(
+              'openVerifiedReturn',
+              me.execution
+            );
+          }
           process.exec(
             {
               orderid: model.get('id'),
@@ -638,7 +644,7 @@ enyo.kind({
                   me.model.get('leftColumnViewManager').setOrderMode();
                 }
                 if (data[0].recordInImportEntry) {
-                  OB.UTIL.showLoading(false);
+                  executionCallback();
                   OB.UTIL.showConfirmation.display(
                     OB.I18N.getLabel('OBMOBC_Error'),
                     OB.I18N.getLabel('OBPOS_ReceiptNotSynced', [
@@ -665,8 +671,10 @@ enyo.kind({
                       }
                     }
                   );
+                  executionCallback();
                 }
               } else {
+                executionCallback();
                 OB.UTIL.showError(OB.I18N.getLabel('OBMOBC_Error'));
               }
             }
