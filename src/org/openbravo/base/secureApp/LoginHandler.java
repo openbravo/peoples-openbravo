@@ -605,7 +605,7 @@ public class LoginHandler extends HttpBaseServlet {
           .uniqueResult();
 
       if (PasswordHash.matches(newPassword, user.getPassword())) {
-        throwChangePasswordException("CPDifferentPassword", "CPSamePasswordThanOld", language);
+        throwChangePasswordException("CPSamePasswordThanOld", "CPDifferentPassword", language);
       } else if (!passwordStrengthChecker.isStrongPassword(newPassword)) {
         throwChangePasswordException("CPWeakPasswordTitle", "CPPasswordNotStrongEnough", language);
       } else {
