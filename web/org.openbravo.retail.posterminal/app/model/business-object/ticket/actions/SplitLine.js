@@ -77,13 +77,14 @@
       if (l.id !== lineId) {
         return l;
       }
-      return { ...editingLine, qty: qtyToKeep };
+      return { ...editingLine, qty: qtyToKeep, splitline: true };
     });
 
     const newLines = quantities.map(qty => {
       const newLine = lodash.cloneDeep(editingLine);
-      newLine.qty = qty;
       newLine.id = OB.App.UUID.generate();
+      newLine.qty = qty;
+      newLine.splitline = true;
       return newLine;
     });
 

@@ -91,6 +91,20 @@ describe('Ticket.splitLine action', () => {
 
       expect(lines).toMatchObject([{ qty: 2 }, { qty: 1 }]);
     });
+
+    it('split lines are marked as such', () => {
+      const { lines } = OB.App.StateAPI.Ticket.splitLine(basicTicket, {
+        lineId: '1',
+        quantities: [50, 50]
+      });
+
+      expect(lines).toMatchObject([
+        { splitline: true, product: { id: 'p1' } },
+        { splitline: true, product: { id: 'p1' } },
+        { product: { id: 'p2' } }
+      ]);
+      expect(lines[2].splitline).toBeFalsy();
+    });
   });
 
   describe('manual promotions', () => {
