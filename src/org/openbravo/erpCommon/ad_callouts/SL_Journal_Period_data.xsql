@@ -51,7 +51,7 @@
   <SqlMethod name="getCurrencyRate" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      SELECT C_CURRENCY_RATE(?, ?, TO_DATE(?, 'DD-MM-YYYY'),
+      SELECT C_CURRENCY_RATE(?, ?, TO_DATE(?),
         ?, ?, ?) 
       FROM c_acctschema 
       WHERE c_acctschema.c_acctschema_id = ?
