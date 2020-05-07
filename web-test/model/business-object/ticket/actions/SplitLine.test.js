@@ -77,6 +77,20 @@ describe('Ticket.splitLine action', () => {
         { product: { id: 'p2' } }
       ]);
     });
+
+    it('keeps selected quantity order', () => {
+      const { lines } = OB.App.StateAPI.Ticket.splitLine(
+        deepfreeze({
+          lines: [{ id: '1', qty: 3, product: { id: 'p1' } }]
+        }),
+        {
+          lineId: '1',
+          quantities: [2, 1]
+        }
+      );
+
+      expect(lines).toMatchObject([{ qty: 2 }, { qty: 1 }]);
+    });
   });
 
   describe('manual promotions', () => {

@@ -88,7 +88,7 @@
     });
 
     const lineIdx = ticket.lines.map(l => l.id).indexOf(lineId);
-    ticket.lines.splice(lineIdx - 1, 0, ...newLines);
+    ticket.lines.splice(lineIdx + 1, 0, ...newLines);
 
     if (ticket.discountsFromUser && ticket.discountsFromUser.manualPromotions) {
       ticket.discountsFromUser = {
