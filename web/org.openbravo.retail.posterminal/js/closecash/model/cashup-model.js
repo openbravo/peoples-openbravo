@@ -447,7 +447,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       payMthds.models,
       function(p) {
         var auxPay = OB.MobileApp.model.get('payments').filter(function(pay) {
-          return pay.payment.id === p.get('paymentmethod_id');
+          return pay.payment.id === p.get('id');
         })[0];
         if (!auxPay) {
           //We cannot find this payment in local database, it must be a new payment method, we skip it.
@@ -525,7 +525,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
               currency: fromCurrencyId,
               isocode: auxPay.isocode,
               rate: p.get('rate'),
-              paymentId: p.get('paymentmethod_id'),
+              paymentId: p.get('id'),
               countInCashup: auxPay.paymentMethod.countpaymentincashup
             })
           );
