@@ -11,7 +11,14 @@
     constructor() {
       super();
       this.indices = [];
-      this.searchProperties = [];
+      this.searchProperties = [
+        'name',
+        'searchKey',
+        'businessPartnerCategory_name',
+        'taxID',
+        'phone',
+        'email'
+      ];
     }
   }
   OB.App.MasterdataController.registerModel(BusinessPartner);

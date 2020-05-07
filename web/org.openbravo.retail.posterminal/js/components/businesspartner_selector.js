@@ -727,7 +727,7 @@ enyo.kind({
     this.bpsList.reset();
     return true;
   },
-  searchAction: function(inSender, inEvent) {
+  searchAction: async function(inSender, inEvent) {
     var execution = OB.UTIL.ProcessController.start('searchCustomer');
     var me = this;
 
@@ -826,9 +826,57 @@ enyo.kind({
       );
     }
 
+    function createBPartnerFilter(bp, bploc) {
+      return new OB.Model.BPartnerFilter({
+        id: bp.id,
+        bpartnerId: bp.id,
+        _identifier: bp._identifier,
+        customerBlocking: bp.customerBlocking,
+        salesOrderBlocking: bp.salesOrderBlocking,
+        bpName: bp.name,
+        searchKey: bp.searchKey,
+        bpCategory: bp.businessPartnerCategory_name,
+        taxID: bp.taxID,
+        postalCode: bploc.postalCode,
+        cityName: bploc.cityName,
+        locName: bploc.name,
+        phone: bp.phone,
+        email: bp.email,
+        bpLocactionId: bploc.id,
+        isBillTo: bploc.isBillTo,
+        isShipTo: bploc.isShipTo
+      });
+    }
+    function createBPartnerFilterResult(bp, bploc, dataBps) {
+      for (let i = 0; i < bp.length; i++) {
+        for (let j = 0; j < bploc.length; j++) {
+          if (bp[i].id === bploc[j].bpartner) {
+            dataBps.push(createBPartnerFilter(bp[i], bploc[j]));
+          }
+        }
+      }
+    }
+    function applySorting(array, prop) {
+      array.sort((a, b) => a.get(prop).localeCompare(b.get(prop)));
+    }
+    function applyLimit(dataBps) {
+      const DEFAULT_QUERY_LIMIT = 300;
+      let limit;
+      if (OB.MobileApp.model.hasPermission('OBPOS_customerLimit', true)) {
+        limit = OB.DEC.abs(
+          OB.MobileApp.model.hasPermission('OBPOS_customerLimit', true)
+        );
+      } else {
+        limit = DEFAULT_QUERY_LIMIT;
+      }
+      dataBps.slice(0, limit);
+    }
     function successCallbackBPs(dataBps) {
       me.$.renderLoading.hide();
       if (dataBps && dataBps.length > 0) {
+        if (!OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+          dataBps.models = dataBps;
+        }
         _.each(dataBps.models, function(bp) {
           var filter = '',
             filterObj;
@@ -938,78 +986,147 @@ enyo.kind({
         this
       );
     } else {
-      var limit,
-        index = 0,
-        params = [],
-        select = 'select ',
-        orderby =
-          ' order by ' +
-          (inEvent.advanced && inEvent.orderby
-            ? inEvent.orderby.column + ' ' + inEvent.orderby.direction
-            : 'bp.name');
-
-      _.each(OB.Model.BPartnerFilter.getProperties(), function(prop) {
-        if (
-          prop.column !== '_filter' &&
-          prop.column !== '_idx' &&
-          prop.column !== '_identifier'
-        ) {
-          if (index !== 0) {
-            select += ', ';
-          }
-          if (prop.column === 'id') {
-            select +=
-              (location ? 'loc.c_bpartner_location_id' : 'bp.c_bpartner_id') +
-              ' as ' +
-              prop.name;
-          } else {
-            if (!location && prop.location) {
-              select += "'' as " + prop.name;
-            } else {
-              select += prop.column + ' as ' + prop.name;
-            }
-          }
-          index++;
-        }
-      });
-      select +=
-        ' from c_bpartner bp left join c_bpartner_location loc on bp.c_bpartner_id = loc.c_bpartner_id ';
-
+      let dataBps = [];
       if (inEvent.advanced) {
-        if (inEvent.filters.length > 0) {
-          select += 'where ';
-          _.each(inEvent.filters, function(flt, index) {
-            if (index !== 0) {
-              select += ' and ';
-            }
-            select += flt.column + ' like ? ';
-            params.push('%' + flt.value + '%');
-            if (!inEvent.advanced && flt.orderby) {
-              orderby = ' order by ' + flt.column;
-            }
-          });
+        let advancedBP, advancedBPLoc;
+        let criteriaAdvancedBP = new OB.App.Class.Criteria();
+        let criteriaAdvancedBPLoc = new OB.App.Class.Criteria();
+        //default orderby
+        if (inEvent.orderby === null && inEvent.filters.length === 0) {
+          inEvent.orderby = {
+            column: 'name',
+            direction: 'asc',
+            entity: 'BusinessPartner'
+          };
         }
+        if (inEvent.filters.length > 0) {
+          for (const filter of inEvent.filters) {
+            if (filter.entity === 'BusinessPartner') {
+              criteriaAdvancedBP.criterion(
+                filter.column,
+                filter.value,
+                'includes'
+              );
+            } else if (filter.entity === 'BusinessPartnerLocation') {
+              criteriaAdvancedBPLoc.criterion(
+                filter.column,
+                filter.value,
+                'includes'
+              );
+            }
+          }
+        }
+        if (inEvent.orderby && inEvent.orderby.entity === 'BusinessPartner') {
+          criteriaAdvancedBP.orderBy(
+            inEvent.orderby.column,
+            inEvent.orderby.direction
+          );
+        } else if (
+          inEvent.orderby &&
+          inEvent.orderby.entity === 'BusinessPartnerLocation'
+        ) {
+          criteriaAdvancedBPLoc.orderBy(
+            inEvent.orderby.column,
+            inEvent.orderby.direction
+          );
+        }
+
+        if (
+          criteriaAdvancedBP.properties.length > 0 ||
+          criteriaAdvancedBP.order.properties.length > 0
+        ) {
+          advancedBP = await OB.App.MasterdataModels.BusinessPartner.find(
+            criteriaAdvancedBP.build()
+          );
+        }
+        if (
+          criteriaAdvancedBPLoc.properties.length > 0 ||
+          criteriaAdvancedBPLoc.order.properties.length > 0
+        ) {
+          advancedBPLoc = await OB.App.MasterdataModels.BusinessPartnerLocation.find(
+            criteriaAdvancedBPLoc.build()
+          );
+        }
+        if (
+          advancedBP &&
+          advancedBP.length > 0 &&
+          (advancedBPLoc && advancedBPLoc.length > 0)
+        ) {
+          createBPartnerFilterResult(advancedBP, advancedBPLoc, dataBps);
+        } else {
+          if (advancedBP && advancedBP.length > 0) {
+            //related bplocations
+            const criteriaRelatedBPLoc = new OB.App.Class.Criteria().criterion(
+              'bpartner',
+              advancedBP.map(c => c.id),
+              'in'
+            );
+            const relatedBPLoc = await OB.App.MasterdataModels.BusinessPartnerLocation.find(
+              criteriaRelatedBPLoc.build()
+            );
+            createBPartnerFilterResult(advancedBP, relatedBPLoc, dataBps);
+          } else if (advancedBPLoc && advancedBPLoc.length > 0) {
+            //related bp
+            const criteriaRelatedBP = new OB.App.Class.Criteria().criterion(
+              'id',
+              advancedBPLoc.map(c => c.bpartner),
+              'in'
+            );
+            const relatedBP = await OB.App.MasterdataModels.BusinessPartner.find(
+              criteriaRelatedBP.build()
+            );
+            createBPartnerFilterResult(relatedBP, advancedBPLoc, dataBps);
+          }
+        }
+        successCallbackBPs(dataBps);
       } else if (inEvent.filters.length > 0) {
-        select += 'where bp._filter like ? or loc._filter like ?';
-        var text = OB.UTIL.unAccent(inEvent.filters[0].value);
-        params.push('%' + text + '%');
-        params.push('%' + text + '%');
+        let text = OB.UTIL.unAccent(inEvent.filters[0].value);
+        try {
+          //filter by bpName
+          let criteriaBP = new OB.App.Class.Criteria();
+          criteriaBP.criterion('name', text, 'includes');
+          criteriaBP.orderBy('id');
+          const bp = await OB.App.MasterdataModels.BusinessPartner.find(
+            criteriaBP.build()
+          );
+          if (bp.length > 0) {
+            //related bplocations
+            const criteriaRelatedBPLoc = new OB.App.Class.Criteria().criterion(
+              'bpartner',
+              bp.map(c => c.id),
+              'in'
+            );
+            const relatedBPLoc = await OB.App.MasterdataModels.BusinessPartnerLocation.find(
+              criteriaRelatedBPLoc.build()
+            );
+            createBPartnerFilterResult(bp, relatedBPLoc, dataBps);
+          }
+          //filter by bplocation name
+          let criteriaBpLoc = new OB.App.Class.Criteria();
+          criteriaBpLoc.criterion('name', text, 'includes');
+          criteriaBpLoc.orderBy('bpartner');
+          const bPLoc = await OB.App.MasterdataModels.BusinessPartnerLocation.find(
+            criteriaBpLoc.build()
+          );
+          if (bPLoc.length > 0) {
+            //related bp
+            const criteriaRelatedBP = new OB.App.Class.Criteria().criterion(
+              'id',
+              bPLoc.map(c => c.bpartner),
+              'in'
+            );
+            const relatedBP = await OB.App.MasterdataModels.BusinessPartner.find(
+              criteriaRelatedBP.build()
+            );
+            createBPartnerFilterResult(relatedBP, bPLoc, dataBps);
+          }
+          applySorting(dataBps, 'bpName');
+          applyLimit(dataBps);
+          successCallbackBPs(dataBps);
+        } catch (error) {
+          errorCallback(error);
+        }
       }
-      if (OB.MobileApp.model.hasPermission('OBPOS_customerLimit', true)) {
-        limit = OB.DEC.abs(
-          OB.MobileApp.model.hasPermission('OBPOS_customerLimit', true)
-        );
-      }
-      OB.Dal.query(
-        OB.Model.BPartnerFilter,
-        select + orderby,
-        params,
-        successCallbackBPs,
-        errorCallback,
-        null,
-        null,
-        limit
-      );
     }
     OB.UTIL.ProcessController.finish('searchCustomer', execution);
     return true;

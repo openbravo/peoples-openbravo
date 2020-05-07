@@ -11,7 +11,7 @@
     constructor() {
       super();
       this.indices = [];
-      this.searchProperties = [];
+      this.searchProperties = ['postalCode', 'cityName', 'name'];
     }
   }
   OB.App.MasterdataController.registerModel(BusinessPartnerLocation);

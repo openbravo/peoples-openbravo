@@ -26,10 +26,11 @@
     },
     {
       name: 'bpartnerId',
-      column: 'bp.c_bpartner_id',
+      column: 'id',
       filter: false,
       type: 'TEXT',
-      location: false
+      location: false,
+      entity: 'BusinessPartner'
     },
     {
       name: '_identifier',
@@ -40,119 +41,133 @@
     },
     {
       name: 'customerBlocking',
-      column: 'bp.customerBlocking',
+      column: 'customerBlocking',
       filter: false,
       type: 'TEXT',
-      location: false
+      location: false,
+      entity: 'BusinessPartner'
     },
     {
       name: 'salesOrderBlocking',
-      column: 'bp.salesOrderBlocking',
+      column: 'salesOrderBlocking',
       filter: false,
       type: 'TEXT',
-      location: false
+      location: false,
+      entity: 'BusinessPartner'
     },
     {
       name: 'bpName',
-      column: 'bp.name',
+      column: 'name',
       serverColumn: 'bp.name',
       filter: true,
       type: 'TEXT',
       caption: 'OBPOS_LblFullName',
-      location: false
+      location: false,
+      entity: 'BusinessPartner'
     },
     {
       name: 'searchKey',
-      column: 'bp.value',
+      column: 'searchKey',
       serverColumn: 'bp.searchKey',
       filter: true,
       type: 'TEXT',
       caption: 'OBPOS_LblSearchKey',
-      location: false
+      location: false,
+      entity: 'BusinessPartner'
     },
     {
       name: 'bpCategory',
-      column: 'bp.c_bp_group_name',
+      column: 'businessPartnerCategory_name',
       serverColumn: 'bp.businessPartnerCategory.name',
       filter: true,
       type: 'TEXT',
       caption: 'OBPOS_BPCategory',
-      location: false
+      location: false,
+      entity: 'BusinessPartner'
     },
     {
       name: 'taxID',
-      column: 'bp.taxID',
+      column: 'taxID',
       serverColumn: 'bp.taxID',
       filter: true,
       type: 'TEXT',
       caption: 'OBPOS_LblTaxId',
-      location: false
+      location: false,
+      entity: 'BusinessPartner'
     },
     {
       name: 'postalCode',
-      column: 'loc.postalCode',
+      column: 'postalCode',
       serverColumn: 'bpl.locationAddress.postalCode',
       filter: true,
       type: 'TEXT',
       caption: 'OBPOS_LblPostalCode',
-      location: true
+      location: true,
+      entity: 'BusinessPartnerLocation'
     },
     {
       name: 'cityName',
-      column: 'loc.cityName',
+      column: 'cityName',
       serverColumn: 'bpl.locationAddress.cityName',
       filter: true,
       type: 'TEXT',
       caption: 'OBPOS_LblCity',
-      location: true
+      location: true,
+      entity: 'BusinessPartnerLocation'
     },
     {
       name: 'locName',
-      column: 'loc.name',
+      column: 'name',
       serverColumn: 'bpl.name',
       filter: true,
       type: 'TEXT',
       caption: 'OBPOS_LblAddress',
-      location: true
+      location: true,
+      entity: 'BusinessPartnerLocation'
     },
     {
       name: 'phone',
-      column: 'bp.phone',
+      column: 'phone',
       serverColumn: 'ulist.phone',
       filter: true,
       type: 'TEXT',
       caption: 'OBPOS_LblPhone',
-      location: false
+      location: false,
+      entity: 'BusinessPartner'
     },
     {
       name: 'email',
-      column: 'bp.email',
+      column: 'email',
       serverColumn: 'ulist.email',
       filter: true,
       type: 'TEXT',
       caption: 'OBPOS_LblEmail',
-      location: false
+      location: false,
+      entity: 'BusinessPartner'
     },
     {
       name: 'bpLocactionId',
-      column: 'loc.c_bpartner_location_id',
+      column: 'id',
       filter: false,
       type: 'TEXT',
-      location: true
+      location: true,
+      entity: 'BusinessPartnerLocation'
     },
     {
       name: 'isBillTo',
-      column: 'loc.isBillTo',
+      column: 'isBillTo',
       filter: false,
       type: 'TEXT',
-      location: true
+      location: true,
+      entity: 'BusinessPartnerLocation'
     },
     {
       name: 'isShipTo',
-      column: 'loc.isShipTo',
+      column: 'isShipTo',
       filter: false,
       type: 'TEXT',
-      location: true
+      location: true,
+      entity: 'BusinessPartnerLocation'
     }
   ]);
 })();
