@@ -1017,7 +1017,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                   const cashUpReportSuccessCallback = function() {
                     auxReceipt.set(
                       'cashUpReportInformation',
-                      OB.App.State.Cashup.Utils.getCashup()
+                      OB.App.State.Cashup.Utils.getCashupFilteredForSendToBackendInEachTicket()
                     );
                     OB.UTIL.HookManager.executeHooks(
                       'OBPOS_PreSyncReceipt',
@@ -1182,7 +1182,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
                                 receipt.set(
                                   'cashUpReportInformation',
-                                  OB.App.State.Cashup.Utils.getCashup()
+                                  OB.App.State.Cashup.Utils.getCashupFilteredForSendToBackendInEachTicket()
                                 );
                                 receipt.set('created', new Date().getTime());
                                 receipt.set(

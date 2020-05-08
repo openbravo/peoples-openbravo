@@ -529,7 +529,7 @@
                         const cashUpReportSuccessCallback = function() {
                           frozenReceipt.set(
                             'cashUpReportInformation',
-                            OB.App.State.Cashup.Utils.getCashup()
+                            OB.App.State.Cashup.Utils.getCashupFilteredForSendToBackendInEachTicket()
                           );
                           frozenReceipt.set(
                             'json',
@@ -718,7 +718,7 @@
           const cashUpReportSuccessCallback = function() {
             currentReceipt.set(
               'cashUpReportInformation',
-              OB.App.State.Cashup.Utils.getCashup()
+              OB.App.State.Cashup.Utils.getCashupFilteredForSendToBackendInEachTicket()
             );
             OB.UTIL.HookManager.executeHooks(
               'OBPOS_PreSyncReceipt',

@@ -133,6 +133,15 @@
       return OB.App.State.getState().Cashup;
     },
 
+    getCashupFilteredForSendToBackendInEachTicket() {
+      const cashupToSend = OB.App.State.getState().Cashup;
+      const allPayments = cashupToSend.cashPaymentMethodInfo;
+      cashupToSend.cashPaymentMethodInfo = allPayments.filter(payment => {
+        return payment.usedInCurrentTrx;
+      });
+      return cashupToSend;
+    },
+
     // TODO : this function is for compatibility with old code,
     // when all models that used it are moved to indexeddb,
     // this function should be deleted
