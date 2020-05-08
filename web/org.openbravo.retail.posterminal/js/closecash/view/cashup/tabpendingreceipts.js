@@ -129,7 +129,6 @@ enyo.kind({
   ],
   create: function() {
     this.inherited(arguments);
-    var me = this;
     this.$.orderDate.setContent(
       OB.I18N.formatHour(this.model.get('orderDate'))
     );
@@ -145,26 +144,20 @@ enyo.kind({
     if (this.model.get('session') === OB.MobileApp.model.get('session')) {
       this.$.buttonBringContainer.addClass('u-hideFromUI');
     } else {
-      OB.Dal.find(
-        OB.Model.User,
-        {
-          id: this.model.get('updatedBy')
-        },
-        function(user) {
-          if (
-            user.models.length > 0 &&
-            !_.isUndefined(me.$.infoPendingReceipt) &&
-            !_.isUndefined(me.$.infoPendingReceipt.$.grossSessionUser) &&
-            !_.isUndefined(
-              me.$.infoPendingReceipt.$.grossSessionUser.$.sessionUser
-            )
-          ) {
-            me.$.infoPendingReceipt.$.grossSessionUser.$.sessionUser.setContent(
-              user.models[0].get('name')
-            );
-          }
+      OB.App.OfflineSession.withId(this.model.get('updatedBy')).then(user => {
+        if (
+          user &&
+          !_.isUndefined(this.$.infoPendingReceipt) &&
+          !_.isUndefined(this.$.infoPendingReceipt.$.grossSessionUser) &&
+          !_.isUndefined(
+            this.$.infoPendingReceipt.$.grossSessionUser.$.sessionUser
+          )
+        ) {
+          this.$.infoPendingReceipt.$.grossSessionUser.$.sessionUser.setContent(
+            user.name
+          );
         }
-      );
+      });
     }
   },
   voidOrder: function(inSender, inEvent) {
