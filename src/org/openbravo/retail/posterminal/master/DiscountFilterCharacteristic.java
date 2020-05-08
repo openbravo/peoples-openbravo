@@ -1,12 +1,11 @@
 /*
  ************************************************************************************
- * Copyright (C) 2014-2017 Openbravo S.L.U.
+ * Copyright (C) 2014-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
-
 package org.openbravo.retail.posterminal.master;
 
 import java.util.Arrays;
@@ -19,12 +18,15 @@ import javax.inject.Inject;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
+import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery.MasterDataModel;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
 
+@MasterDataModel("DiscountFilterCharacteristic")
 public class DiscountFilterCharacteristic extends Discount {
   public static final String discFilterCharPropertyExtension = "PricingAdjustmentCharacteristic";
+
   @Inject
   @Any
   @Qualifier(discFilterCharPropertyExtension)
@@ -42,8 +44,15 @@ public class DiscountFilterCharacteristic extends Discount {
     hql += "   and m_isparent_ch_value(cvl.id, c.chValue.id, c.characteristic.id) != -1 ";
     hql += "   and exists (select 1 " + getPromotionsHQL(jsonsent, false);
     hql += "                and c.offer = p) ";
+    hql += "and c.$paginationByIdCriteria ";
     hql += "order by c.characteristic.id asc";
 
-    return Arrays.asList(new String[] { hql });
+    return Arrays.asList(hql);
+  }
+
+  @Override
+  public List<String> getMasterDataModelProperties() {
+    return getPropertiesFrom(extensions);
+
   }
 }

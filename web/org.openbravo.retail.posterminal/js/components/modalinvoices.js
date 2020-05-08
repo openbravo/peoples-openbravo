@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018-2019 Openbravo S.L.U.
+ * Copyright (C) 2018-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -52,52 +52,71 @@ enyo.kind({
 /*items of collection*/
 enyo.kind({
   name: 'OB.UI.ListInvoicesLine',
-  kind: 'OB.UI.CheckboxButton',
+  kind: 'OB.UI.Button',
   classes: 'obUiListInvoicesLine',
   tap: function() {
     this.inherited(arguments);
     this.model.set('checked', !this.model.get('checked'));
     this.model.trigger('verifyDoneButton', this.model);
   },
-  components: [
-    {
-      name: 'line',
-      classes: 'obUiListInvoicesLine-line',
-      components: [
-        {
-          name: 'topLine',
-          classes: 'obUiListInvoicesLine-line-topLine'
-        },
-        {
-          name: 'bottonLine',
-          classes: 'obUiListInvoicesLine-line-bottonLine'
-        },
-        {
-          classes: 'obUiListInvoicesLine-line-element1'
-        }
-      ]
+  labelComponents: {
+    name: 'line',
+    classes: 'obUiListInvoicesLine-line',
+    components: [
+      {
+        name: 'topLine',
+        classes: 'obUiListInvoicesLine-line-topLine'
+      },
+      {
+        name: 'bottonLine',
+        classes: 'obUiListInvoicesLine-line-bottonLine'
+      },
+      {
+        classes: 'obUiListInvoicesLine-line-element1'
+      }
+    ]
+  },
+  toggle: function() {
+    this.setChecked(!this.getChecked());
+  },
+  setChecked: function(value) {
+    if (value) {
+      this.check();
+    } else {
+      this.unCheck();
     }
-  ],
+  },
+  getChecked: function(value) {
+    return this.checked;
+  },
+  check: function() {
+    this.addClass('active');
+    this.checked = true;
+  },
+  unCheck: function() {
+    this.removeClass('active');
+    this.checked = false;
+  },
+  initComponents: function() {
+    this.inherited(arguments);
+    this.$.label.createComponent(this.labelComponents);
+  },
   create: function() {
     this.inherited(arguments);
-    this.$.topLine.setContent(
+    this.$.label.$.topLine.setContent(
       this.model.get('documentNo') +
         ' - ' +
         (this.model.get('bp')
           ? this.model.get('bp').get('_identifier')
           : this.model.get('businessPartner'))
     );
-    this.$.bottonLine.setContent(
+    this.$.label.$.bottonLine.setContent(
       this.model.get('totalamount') +
         ' (' +
         OB.I18N.formatDate(new Date(this.model.get('orderDate'))) +
         ') '
     );
-    if (this.model.get('checked')) {
-      this.addClass('active');
-    } else {
-      this.removeClass('active');
-    }
+    this.setChecked(this.model.get('checked'));
     this.render();
   }
 });
@@ -220,15 +239,16 @@ enyo.kind({
     {
       classes: 'obUiModalInvoicesFooter-printReceipt',
       name: 'printReceipt',
-      kind: 'OB.UI.SmallButton',
+      kind: 'OB.UI.ModalDialogButton',
       ontap: 'printReceiptAction',
       i18nContent: 'OBPOS_LblPrintOneReceipt',
-      position: 10
+      isDefaultAction: true,
+      position: 30
     },
     {
       classes: 'obUiModalInvoicesFooter-printInvoices',
       name: 'printInvoices',
-      kind: 'OB.UI.SmallButton',
+      kind: 'OB.UI.ModalDialogButton',
       ontap: 'printInvoiceAction',
       i18nContent: 'OBPOS_LblPrintInvoices',
       position: 20
@@ -236,7 +256,7 @@ enyo.kind({
   ],
   components: [
     {
-      classes: 'obUiModalInvoicesFooter-buttonsContainer',
+      classes: 'obUiModal-footer-mainButtons',
       name: 'modalInvoicesFooter__buttonsContainer'
     }
   ],
@@ -245,15 +265,13 @@ enyo.kind({
     var cancelButton = {
       classes: 'obUiModalInvoicesFooter-cancelButton',
       name: 'cancelButton',
-      kind: 'OB.UI.SmallButton',
+      kind: 'OB.UI.ModalDialogButton',
       ontap: 'cancelAction',
-      i18nContent: 'OBMOBC_LblCancel'
+      i18nContent: 'OBMOBC_LblCancel',
+      position: 10
     };
     // Sort buttons by positions
     if (this.buttons && _.isArray(this.buttons)) {
-      this.buttons.sort(function(a, b) {
-        return a.position - b.position;
-      });
       // Add cancel button
       var cancel = _.find(this.buttons, function(b) {
         return b.name === 'cancelButton';
@@ -261,6 +279,9 @@ enyo.kind({
       if (!cancel) {
         this.buttons.push(cancelButton);
       }
+      this.buttons.sort(function(a, b) {
+        return a.position - b.position;
+      });
     }
     // Create components
     if (

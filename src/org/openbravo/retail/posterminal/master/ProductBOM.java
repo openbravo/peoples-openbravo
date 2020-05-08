@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2014-2019 Openbravo S.L.U.
+ * Copyright (C) 2014-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -18,12 +18,14 @@ import javax.inject.Inject;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
+import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery;
+import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery.MasterDataModel;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
-import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
-public class ProductBOM extends ProcessHQLQuery {
+@MasterDataModel("ProductBOM")
+public class ProductBOM extends MasterDataProcessHQLQuery {
 
   public static final String ProductBOMPropertyExtension = "OBPOS_ProductBOMExtension";
 
@@ -35,13 +37,13 @@ public class ProductBOM extends ProcessHQLQuery {
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
 
-    List<String> hqlQueries = new ArrayList<String>();
+    List<String> hqlQueries = new ArrayList<>();
     HQLPropertyList productBOMProperties = ModelExtensionUtils.getPropertyExtensions(extensions);
 
     hqlQueries.add("select" + productBOMProperties.getHqlSelect() //
         + "from ProductBOM bom "
         + "where bom.$readableSimpleClientCriteria and bom.$naturalOrgCriteria and (bom.$incrementalUpdateCriteria) "
-        + "order by bom.id asc");
+        + "and bom.$paginationByIdCriteria order by bom.id asc");
 
     return hqlQueries;
   }
@@ -49,5 +51,10 @@ public class ProductBOM extends ProcessHQLQuery {
   @Override
   protected boolean bypassPreferenceCheck() {
     return true;
+  }
+
+  @Override
+  public List<String> getMasterDataModelProperties() {
+    return getPropertiesFrom(extensions);
   }
 }

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2019 Openbravo S.L.U.
+ * Copyright (C) 2013-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -130,7 +130,9 @@ enyo.kind({
         id: OB.MobileApp.model.get('terminal').organization,
         name: OB.I18N.getLabel('OBPOS_LblThisStore', [
           OB.MobileApp.model.get('terminal').organization$_identifier
-        ])
+        ]),
+        country: OB.MobileApp.model.get('terminal').organizationCountryId,
+        region: OB.MobileApp.model.get('terminal').organizationRegionId
       };
       me.leftSubWindow.organization = null;
       attrs.warehouse = {
@@ -322,7 +324,9 @@ enyo.kind({
             ? data.organization
             : {
                 id: data.orgId,
-                name: data.orgName
+                name: data.orgName,
+                country: data.countryId,
+                region: data.regionId
               };
         me.$.stockHere.removeClass('error');
         me.$.stockHere.setContent(
@@ -395,7 +399,9 @@ enyo.kind({
               id: OB.MobileApp.model.get('terminal').organization,
               name: OB.I18N.getLabel('OBPOS_LblThisStore', [
                 OB.MobileApp.model.get('terminal').organization$_identifier
-              ])
+              ]),
+              country: OB.MobileApp.model.get('terminal').organizationCountryId,
+              region: OB.MobileApp.model.get('terminal').organizationRegionId
             }
           };
           selectedStoreCallBack(data);

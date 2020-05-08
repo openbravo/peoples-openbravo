@@ -186,14 +186,14 @@
         args: {
           models: models,
           callback: function(selectedModels) {
+            me.listOfExecution.push(
+              OB.UTIL.ProcessController.start('loadPaidReceipts')
+            );
             if (selectedModels.length === 1) {
               loadOrder(models[0]);
             } else {
               var process = new OB.DS.Process(
                 'org.openbravo.retail.posterminal.process.OpenRelatedReceipts'
-              );
-              me.listOfExecution.push(
-                OB.UTIL.ProcessController.start('loadPaidReceipts')
               );
               process.exec(
                 {

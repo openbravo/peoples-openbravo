@@ -46,25 +46,17 @@ enyo.kind({
   classes: 'obObposPointOfSaleUiLinePropertyDiv',
   components: [
     {
-      classes:
-        'obObposPointOfSaleUiLinePropertyDiv-container1 row-fluid u-clearBoth',
+      name: 'propertyLabel',
+      classes: 'obObposPointOfSaleUiLinePropertyDiv-propertyLabel'
+    },
+    {
+      classes: 'obObposPointOfSaleUiLinePropertyDiv-propertyValueWrapper',
       components: [
         {
-          name: 'propertyLabel',
+          tag: 'span',
+          name: 'propertyValue',
           classes:
-            'obObposPointOfSaleUiLinePropertyDiv-container1-propertyLabel span4'
-        },
-        {
-          classes:
-            'obObposPointOfSaleUiLinePropertyDiv-container1-container2 span8',
-          components: [
-            {
-              tag: 'div',
-              name: 'propertyValue',
-              classes:
-                'obObposPointOfSaleUiLinePropertyDiv-container1-container2-propertyValue'
-            }
-          ]
+            'obObposPointOfSaleUiLinePropertyDiv-propertyValueWrapper-propertyValue'
         }
       ]
     }
@@ -439,11 +431,12 @@ enyo.kind({
           lineModel,
           selectedLines,
           checkFilter,
-          linesWithPromotionsLength = 0,
-          manualPromotions = OB.Model.Discounts.getManualPromotions();
+          linesWithPromotionsLength = 0;
 
         checkFilter = function(prom) {
-          return manualPromotions.indexOf(prom.discountType) !== -1;
+          return OB.Discounts.Pos.getManualPromotions().includes(
+            prom.discountType
+          );
         };
 
         selectedLines = _.filter(
@@ -793,8 +786,9 @@ enyo.kind({
                 var filtered = _.filter(
                   lineModel.get('promotions'),
                   function(prom) {
-                    return OB.Model.Discounts.discountRules[prom.discountType]
-                      .isManual;
+                    return OB.Discounts.Pos.getManualPromotions().includes(
+                      prom.discountType
+                    );
                   },
                   this
                 );
@@ -1351,7 +1345,7 @@ enyo.kind({
   },
   init: function(model) {
     this.model = model;
-    this.reasons = new OB.Collection.ReturnReasonList();
+    this.reasons = new Backbone.Collection();
     this.$.formElementReturnreason.coreElement.setCollection(this.reasons);
 
     this.model.get('order').on(
@@ -1362,27 +1356,19 @@ enyo.kind({
       this
     );
 
-    function errorCallback(tx, error) {
-      OB.UTIL.showError(error);
-    }
-
-    function successCallbackReasons(dataReasons, me) {
-      if (me.destroyed) {
+    try {
+      const dataReasons = OB.MobileApp.view.terminal.get('returnreasons');
+      if (this.destroyed) {
         return;
       }
       if (dataReasons && dataReasons.length > 0) {
-        me.reasons.reset(dataReasons.models);
+        this.reasons.reset(dataReasons);
       } else {
-        me.reasons.reset();
+        this.reasons.reset();
       }
+    } catch (err) {
+      OB.UTIL.showError(err);
     }
-    OB.Dal.find(
-      OB.Model.ReturnReason,
-      null,
-      successCallbackReasons,
-      errorCallback,
-      this
-    );
   }
 });
 
@@ -1454,7 +1440,7 @@ enyo.kind({
       initComponents: function() {
         this.inherited(arguments);
         this.setValue(this.model.get('id'));
-        this.setContent(this.model.get('_identifier'));
+        this.setContent(this.model.get('name'));
       }
     }),
     renderEmpty: 'enyo.Control'

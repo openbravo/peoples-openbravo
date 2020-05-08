@@ -213,7 +213,7 @@ enyo.kind({
     this.srsList.reset();
     return true;
   },
-  searchAction: function(inSender, inEvent) {
+  searchAction: async function(inSender, inEvent) {
     var me = this,
       filter = inEvent.srName;
 
@@ -228,29 +228,24 @@ enyo.kind({
           _identifier: null,
           name: OB.I18N.getLabel('OBPOS_None')
         });
-        me.srsList.reset(dataSrs.models);
+        me.srsList.reset(dataSrs);
       } else {
         me.srsList.reset();
       }
     }
-
-    var criteria = {};
-    if (filter && filter !== '') {
-      criteria._identifier = {
-        operator: OB.Dal.CONTAINS,
-        value: filter
-      };
+    const criteria = new OB.App.Class.Criteria()
+      .orderBy('_identifier')
+      .criterion('_identifier', filter, 'includes')
+      .build();
+    try {
+      const dataSalesRepresentative = await OB.App.MasterdataModels.SalesRepresentative.find(
+        criteria
+      );
+      successCallbackBPs(dataSalesRepresentative);
+    } catch (err) {
+      errorCallback(undefined, err.message);
     }
 
-    OB.Dal.find(
-      OB.Model.SalesRepresentative,
-      criteria,
-      successCallbackBPs,
-      errorCallback,
-      null,
-      null,
-      true
-    );
     return true;
   },
   srsList: null,

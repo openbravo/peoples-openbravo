@@ -177,7 +177,7 @@ OB.UTIL.HookManager.registerHook('OBPOS_RenderOrderLine', function(
 enyo.kind({
   kind: 'OB.UI.ShowServicesButton',
   name: 'OBRDM.UI.ShowDeliveryServicesButton',
-  classes: 'obRdmUiShowDeliveryServicesButton',
+  classes: 'obRdmUiShowDeliveryServicesButton obUiButton-hideLabel',
   extraParams: {
     isDeliveryService: true
   },

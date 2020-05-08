@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2016 Openbravo S.L.U.
+ * Copyright (C) 2015-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -55,7 +55,7 @@ public class POSImportEntryProcessor extends EntityPersistenceEventObserver {
 
   private static List<String> POSTTYPEOFDATA = Arrays.asList("Order", "BusinessPartner",
       "BusinessPartnerLocation", "OBPOS_App_Cashup", "FIN_Finacc_Transaction",
-      "OBPOS_RejectQuotation", "OBPOS_VoidLayaway", "OBPOS_Invoice",
+      "OBPOS_RejectQuotation", "OBPOS_CancelLayaway", "OBPOS_VoidLayaway", "OBPOS_Invoice",
       SynchronizedServerProcessCaller.SYNCHRONIZED_DATA_TYPE);
 
   @Override

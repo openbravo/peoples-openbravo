@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019 Openbravo S.L.U.
+ * Copyright (C) 2019-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -25,16 +25,19 @@ public class Store extends QueryTerminalProperty {
   @Override
   protected List<String> getQuery(final JSONObject jsonsent) throws JSONException {
     final StringBuilder hql = new StringBuilder();
-    hql.append(" select id as id,");
-    hql.append(" name as name");
-    hql.append(" from Organization organization");
-    hql.append(" where $readableSimpleClientCriteria");
-    hql.append(" and $activeCriteria");
-    hql.append(" and oBRETCORetailOrgType = 'S'");
-    hql.append(" and oBRETCOCrossStoreOrganization is not null");
-    hql.append(" and oBRETCOCrossStoreOrganization.id = :corssStoreId");
-    hql.append(" and id <> :orgId");
-    hql.append(" order by name");
+    hql.append(" select org.id as id,");
+    hql.append("   org.name as name,");
+    hql.append("   orgInfo.locationAddress.country.id as country,");
+    hql.append("   orgInfo.locationAddress.region.id as region");
+    hql.append(" from Organization org");
+    hql.append("   left join org.organizationInformationList orgInfo");
+    hql.append(" where org.$readableSimpleClientCriteria");
+    hql.append(" and org.$activeCriteria");
+    hql.append(" and org.oBRETCORetailOrgType = 'S'");
+    hql.append(" and org.oBRETCOCrossStoreOrganization is not null");
+    hql.append(" and org.oBRETCOCrossStoreOrganization.id = :crossStoreId");
+    hql.append(" and org.id <> :orgId");
+    hql.append(" order by org.name");
 
     return Arrays.asList(hql.toString());
   }
@@ -48,7 +51,7 @@ public class Store extends QueryTerminalProperty {
         : "";
 
     Map<String, Object> paramValues = new HashMap<>();
-    paramValues.put("corssStoreId", crossStoreId);
+    paramValues.put("crossStoreId", crossStoreId);
     paramValues.put("orgId", org.getId());
 
     return paramValues;

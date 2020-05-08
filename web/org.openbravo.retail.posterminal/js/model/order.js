@@ -10,36 +10,6 @@
 /*global OB, _, moment, Backbone, enyo, BigDecimal*/
 
 (function() {
-  var cachedData = null;
-
-  var findDiscountFilterBusinessPartner = function(criteria, success, fail) {
-    if (
-      criteria.remoteFilters[0].value ===
-      OB.MobileApp.model.get('businessPartner').id
-    ) {
-      if (cachedData) {
-        success(cachedData);
-      } else {
-        OB.Dal.find(
-          OB.Model.DiscountFilterBusinessPartner,
-          criteria,
-          function(discountsBP) {
-            cachedData = discountsBP;
-            success(cachedData);
-          },
-          fail
-        );
-      }
-    } else {
-      OB.Dal.find(
-        OB.Model.DiscountFilterBusinessPartner,
-        criteria,
-        success,
-        fail
-      );
-    }
-  };
-
   // Sales.OrderLine Model
   var OrderLine = Backbone.Model.extend({
     modelName: 'OrderLine',
@@ -194,12 +164,36 @@
         this.set('net', null, {
           silent: true
         });
-        this.set('gross', OB.DEC.mul(this.get('qty'), this.get('price')));
+        this.set('gross', OB.DEC.mul(this.getQty(), this.get('price')));
+        this.set(
+          'discountedGross',
+          OB.DEC.compare(this.get('gross')) === 0
+            ? this.get('gross')
+            : OB.DEC.sub(this.get('gross'), this.getDiscount())
+        );
+        this.set(
+          'discountedPrice',
+          this.getQty() === 0
+            ? 0
+            : OB.DEC.div(this.get('discountedGross'), this.getQty())
+        );
       } else {
         this.set('gross', null, {
           silent: true
         });
-        this.set('net', OB.DEC.mul(this.get('qty'), this.get('price')));
+        this.set('net', OB.DEC.mul(this.getQty(), this.get('price')));
+        this.set(
+          'discountedNet',
+          OB.DEC.compare(this.get('net')) === 0
+            ? this.get('net')
+            : OB.DEC.sub(this.get('net'), this.getDiscount())
+        );
+        this.set(
+          'discountedNetPrice',
+          this.getQty() === 0
+            ? 0
+            : OB.DEC.div(this.get('discountedNet'), this.getQty())
+        );
       }
     },
 
@@ -341,6 +335,16 @@
       // amount - change...
       date: null
     },
+    getAmount: function() {
+      if (this.get('rate')) {
+        return (
+          this.get('origAmount') ||
+          OB.DEC.div(this.get('amount'), this.get('mulrate'))
+        );
+      } else {
+        return this.get('amount');
+      }
+    },
     printAmount: function() {
       if (this.get('rate')) {
         return OB.I18N.formatCurrency(
@@ -367,9 +371,9 @@
         order.isNegative();
       // if the ticket is a paid return, new payments must be displayed in negative
       if (paidReturn) {
-        return OB.I18N.formatCurrency(OB.DEC.mul(this.printAmount(), -1));
+        return OB.I18N.formatCurrency(OB.DEC.mul(this.getAmount(), -1));
       } else {
-        return OB.I18N.formatCurrency(this.printAmount());
+        return OB.I18N.formatCurrency(this.getAmount());
       }
     }
   });
@@ -748,19 +752,10 @@
         if (this.get('priceIncludesTax')) {
           line.set(
             {
-              net: OB.UTIL.getFirstValidValue([
-                OB.DEC.toNumber(line.get('discountedNet')),
-                line.get('net'),
-                OB.DEC.div(gross, line.get('linerate'))
-              ]),
+              net: OB.DEC.toNumber(line.get('discountedNet')),
               pricenet:
                 line.get('qty') !== 0
-                  ? line.get('discountedNet')
-                    ? OB.DEC.div(line.get('discountedNet'), line.get('qty'))
-                    : OB.DEC.div(
-                        OB.DEC.div(gross, line.get('linerate')),
-                        line.get('qty')
-                      )
+                  ? OB.DEC.div(line.get('discountedNet'), line.get('qty'))
                   : 0,
               listPrice: 0,
               standardPrice: 0,
@@ -930,7 +925,11 @@
         }
       };
 
-      if (this.get('isEditable') || this.get('isCancelling')) {
+      if (
+        this.get('isEditable') ||
+        this.get('forceCalculateTaxes') ||
+        this.get('isCancelling')
+      ) {
         this.get('lines').forEach(function(line) {
           line.calculateGross();
         });
@@ -1090,29 +1089,16 @@
       this.addToListOfCallbacks(callback);
       var me = this;
 
-      if (OB.MobileApp.model.hasPermission('OBPOS_NewDiscounts', true)) {
-        if (
-          this.get('skipApplyPromotions') ||
-          this.get('cloningReceipt') ||
-          me.preventApplyPromotions
-        ) {
-          calculateGrossThenCallbacks();
-        } else {
-          OB.Discounts.Pos.calculateDiscounts(this, () =>
-            calculateGrossThenCallbacks()
-          );
-        }
+      if (
+        this.get('skipApplyPromotions') ||
+        this.get('cloningReceipt') ||
+        me.preventApplyPromotions
+      ) {
+        calculateGrossThenCallbacks();
       } else {
-        this.on('applyPromotionsFinished', function() {
-          me.off('applyPromotionsFinished');
-          calculateGrossThenCallbacks();
-        });
-        // If line is null or undefined, we calculate the Promotions of the receipt
-        if (OB.UTIL.isNullOrUndefined(line) || line.get('splitline')) {
-          OB.Model.Discounts.applyPromotions(this);
-        } else {
-          OB.Model.Discounts.applyPromotions(this, line);
-        }
+        OB.Discounts.Pos.calculateDiscounts(this, () =>
+          calculateGrossThenCallbacks()
+        );
       }
     },
 
@@ -1243,6 +1229,12 @@
 
     isNegative: function() {
       var isNegative;
+      if (this.get('cancelAndReplaceChangePending')) {
+        this.set('isNegative', true, {
+          silent: true
+        });
+        return true;
+      }
       if (OB.UTIL.isNullOrUndefined(this.get('isNegative'))) {
         var processedPaymentsAmount = OB.DEC.Zero,
           loadedFromBackend = this.get('isLayaway') || this.get('isPaid');
@@ -1359,6 +1351,9 @@
         processedPaymentsAmount = OB.DEC.Zero,
         paymentsAmount = OB.DEC.Zero,
         isNegative = this.isNegative(),
+        cancelAndReplaceChangePending = this.get(
+          'cancelAndReplaceChangePending'
+        ),
         remainingToPay,
         done,
         pending,
@@ -1380,9 +1375,10 @@
           );
         } else {
           if (
-            loadedFromBackend ||
-            !isNegative ||
-            payment.get('isReversePayment')
+            !cancelAndReplaceChangePending &&
+            (loadedFromBackend ||
+              !isNegative ||
+              payment.get('isReversePayment'))
           ) {
             paymentsAmount = OB.DEC.add(
               paymentsAmount,
@@ -1503,6 +1499,16 @@
         this.getOrderType() === 2 ||
         this.getOrderType() === 3 ||
         this.get('isLayaway')
+      );
+    },
+
+    // returns true if the order is a processed ticket, otherwise false
+    isProcessedTicket: function() {
+      return (
+        this.get('isPaid') ||
+        this.get('isLayaway') ||
+        (this.get('isQuotation') && this.get('hasbeenpaid') === 'Y') ||
+        this.get('isModified')
       );
     },
 
@@ -1636,6 +1642,7 @@
       this.set('isLayaway', _order.get('isLayaway'));
       this.set('isPartiallyDelivered', _order.get('isPartiallyDelivered'));
       this.set('isModified', _order.get('isModified'));
+      this.set('payment', _order.get('payment'));
       if (!_order.get('isEditable')) {
         // keeping it no editable as much as possible, to prevent
         // modifications to trigger editable events incorrectly
@@ -2866,6 +2873,25 @@
         return;
       }
 
+      // Check if it is necessary to restore the tax category of related products
+      if (lineToDelete.get('product').has('productServiceLinked')) {
+        lineToDelete.get('relatedLines').forEach(relatedProduct => {
+          const relatedLine = this.get('lines').find(
+            line => line.id === relatedProduct.orderlineId
+          );
+          if (relatedLine && relatedLine.get('product').has('oldTaxCategory')) {
+            relatedLine
+              .get('product')
+              .set(
+                'taxCategory',
+                relatedLine.get('product').get('oldTaxCategory')
+              );
+            relatedLine.get('product').unset('oldTaxCategory');
+            relatedLine.set('recalculateTax', true);
+          }
+        });
+      }
+
       if (
         OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) &&
         lineToDelete.get('obposQtyDeleted')
@@ -3405,9 +3431,11 @@
         }
       }
       if (p.get('ispack')) {
-        OB.Model.Discounts.discountRules[
-          p.get('productCategory')
-        ].addProductToOrder(this, p, attrs);
+        OB.Data.PackDiscount[p.get('productCategory')].addPackToOrder(
+          this,
+          p,
+          attrs
+        );
         if (callback) {
           callback(true);
         }
@@ -3652,9 +3680,12 @@
                   ? -data.result
                   : data.result,
                 options,
-                attrs
+                attrs,
+                callback
               );
-              execPostAddProductToOrderHook();
+              if (line !== false) {
+                execPostAddProductToOrderHook();
+              }
             }
           });
         } else {
@@ -3800,18 +3831,22 @@
                         args.p,
                         args.attrs.relatedLines[0].qty,
                         args.options,
-                        args.attrs
+                        args.attrs,
+                        callback
                       );
                     } else {
                       line = args.receipt.createLine(
                         args.p,
                         args.qty,
                         args.options,
-                        args.attrs
+                        args.attrs,
+                        callback
                       );
                     }
                   }
-                  execPostAddProductToOrderHook();
+                  if (line !== false) {
+                    execPostAddProductToOrderHook();
+                  }
                 }
               );
             });
@@ -3855,88 +3890,26 @@
                 newLine = false;
               } else {
                 if (p.get('avoidSplitProduct')) {
-                  line = me.createLine(p, qty, options, attrs);
+                  line = me.createLine(p, qty, options, attrs, callback);
                 } else {
                   if (qty >= 0) {
                     for (count = 0; count < qty; count++) {
-                      line = me.createLine(p, 1, options, attrs);
+                      line = me.createLine(p, 1, options, attrs, callback);
                     }
                   } else {
                     for (count = 0; count > qty; count--) {
-                      line = me.createLine(p, -1, options, attrs);
+                      line = me.createLine(p, -1, options, attrs, callback);
                     }
                   }
                 }
               }
-              execPostAddProductToOrderHook();
+              if (line !== false) {
+                execPostAddProductToOrderHook();
+              }
             });
           }
         }
       } // End addProductToOrder
-
-      function saveRemoteProduct(p) {
-        if (
-          OB.MobileApp.model.hasPermission('OBPOS_remote.product', true) ||
-          p.get('crossStore')
-        ) {
-          var success = function() {
-            var productcriteria = {
-              columns: ['product'],
-              operator: 'equals',
-              value: p.id,
-              isId: true
-            };
-            var remoteCriteria = [productcriteria];
-            var criteriaFilter = {};
-            criteriaFilter.remoteFilters = remoteCriteria;
-            criteriaFilter.forceRemote = true;
-            criteriaFilter.remoteParams = {};
-            criteriaFilter.remoteParams.crossStoreSearch = p.get('crossStore');
-            if (p.get('crossStore')) {
-              criteriaFilter.remoteParams.productId = p.get('id');
-            }
-            OB.Dal.find(
-              OB.Model.ProductCharacteristicValue,
-              criteriaFilter,
-              function(productcharacteristic) {
-                function saveCharacteristics(characteristics, i) {
-                  if (i === characteristics.length) {
-                    addProductToOrder();
-                  } else {
-                    OB.Dal.saveOrUpdate(
-                      characteristics[i],
-                      function() {
-                        saveCharacteristics(characteristics, i + 1);
-                      },
-                      function() {
-                        addProductToOrder();
-                      }
-                    );
-                  }
-                }
-                if (productcharacteristic.models.length !== 0) {
-                  saveCharacteristics(productcharacteristic.models, 0);
-                } else {
-                  addProductToOrder();
-                }
-              },
-              function() {
-                addProductToOrder();
-              }
-            );
-          };
-
-          if (!p.get('crossStore')) {
-            OB.Dal.saveOrUpdate(p, success, function() {
-              addProductToOrder();
-            });
-          } else {
-            success();
-          }
-        } else {
-          addProductToOrder();
-        }
-      }
 
       if (
         (options && options.line ? options.line.get('qty') + qty : qty) < 0 &&
@@ -3954,7 +3927,7 @@
               OB.UTIL.showLoading(true);
             }
             if (approved) {
-              saveRemoteProduct(p);
+              addProductToOrder();
             } else {
               if (callback) {
                 callback(true);
@@ -3963,7 +3936,7 @@
           }
         );
       } else {
-        saveRemoteProduct(p);
+        addProductToOrder();
       }
     },
 
@@ -4005,7 +3978,7 @@
       return true;
     },
 
-    _loadRelatedServices: function(
+    _loadRelatedServices: async function(
       productType,
       productId,
       productCategory,
@@ -4014,107 +3987,75 @@
     ) {
       if (productType !== 'S' && (!line || !line.get('originalOrderLineId'))) {
         if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-          var process = new OB.DS.Process(
-            'org.openbravo.retail.posterminal.process.HasServices'
-          );
           var params = {},
             date = new Date();
           params.terminalTime = date;
           params.terminalTimeOffset = date.getTimezoneOffset();
-          process.exec(
-            {
-              product: productId,
-              productCategory: productCategory,
-              parameters: params,
-              remoteFilters: [
-                {
-                  columns: [],
-                  operator: 'filter',
-                  value: 'OBRDM_DeliveryServiceFilter',
-                  params: [false]
-                }
-              ]
-            },
-            function(data, message) {
-              if (data && data.exception) {
-                //ERROR or no connection
-                OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
-                callback(null);
-              } else if (data) {
-                callback(data);
-              } else {
-                callback(null);
+
+          const body = {
+            product: productId,
+            productCategory: productCategory,
+            parameters: params,
+            remoteFilters: [
+              {
+                columns: [],
+                operator: 'filter',
+                value: 'OBRDM_DeliveryServiceFilter',
+                params: [false]
               }
-            },
-            function(error) {
+            ]
+          };
+          try {
+            let data = await OB.App.Request.mobileServiceRequest(
+              'org.openbravo.retail.posterminal.process.HasServices',
+              body
+            );
+            data = data.response.data;
+
+            if (data && data.exception) {
+              //ERROR or no connection
               OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
               callback(null);
+            } else if (data) {
+              callback(data);
+            } else {
+              callback(null);
             }
-          );
+          } catch (error) {
+            OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
+            callback(null);
+          }
         } else {
-          //non-high volumes: websql
-          var criteria = {};
-
-          criteria._whereClause = '';
-          criteria.params = [];
-
-          criteria._whereClause =
-            " as product where product.productType = 'S' and (product.isLinkedToProduct = 'true' and ";
-
-          //including/excluding products
-          criteria._whereClause +=
-            "((product.includeProducts = 'Y' and not exists (select 1 from m_product_service sp where product.m_product_id = sp.m_product_id and sp.m_related_product_id = ? ))";
-          criteria._whereClause +=
-            "or (product.includeProducts = 'N' and exists (select 1 from m_product_service sp where product.m_product_id = sp.m_product_id and sp.m_related_product_id = ? ))";
-          criteria._whereClause += 'or product.includeProducts is null) ';
-
-          //including/excluding product categories
-          criteria._whereClause +=
-            "and ((product.includeProductCategories = 'Y' and not exists (select 1 from m_product_category_service spc where product.m_product_id = spc.m_product_id and spc.m_product_category_id =  ? )) ";
-          criteria._whereClause +=
-            "or (product.includeProductCategories = 'N' and exists (select 1 from m_product_category_service spc where product.m_product_id = spc.m_product_id and spc.m_product_category_id  = ? )) ";
-          criteria._whereClause +=
-            'or product.includeProductCategories is null)) ';
-
-          criteria.params.push(productId);
-          criteria.params.push(productId);
-          criteria.params.push(productCategory);
-          criteria.params.push(productCategory);
-          OB.UTIL.HookManager.executeHooks(
-            'OBPOS_LoadRelatedServices_ExtendCriteria',
-            {
-              criteria: criteria
-            },
-            function(args) {
-              OB.Dal.findUsingCache(
-                'productServiceCache',
-                OB.Model.Product,
-                args.criteria,
-                function(data) {
-                  if (data) {
-                    data.hasservices = data.length > 0;
-                    data.hasmandatoryservices = _.find(data.models, function(
-                      model
-                    ) {
-                      return model.get('proposalType') === 'MP';
-                    });
-                    callback(data);
-                  } else {
-                    callback(null);
-                  }
-                },
-                function(trx, error) {
-                  OB.error(
-                    OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices')
-                  );
-                  callback(null);
-                },
-                {
-                  modelsAffectedByCache: ['Product']
-                }
-              );
-            }
+          //non-high volumes: indexedDB
+          let criteria = new OB.App.Class.Criteria();
+          criteria = await OB.UTIL.servicesFilter(
+            criteria,
+            productId,
+            productCategory
           );
+          criteria.criterion('obrdmIsdeliveryservice', false);
+          try {
+            const products = await OB.App.MasterdataModels.Product.find(
+              criteria.build()
+            );
+            let data = [];
+            for (let i = 0; i < products.length; i++) {
+              data.push(OB.Dal.transform(OB.Model.Product, products[i]));
+            }
+
+            if (data) {
+              data.hasservices = data.length > 0;
+              data.hasmandatoryservices = _.find(data[0], function(model) {
+                return model.proposalType === 'MP';
+              });
+              callback(data);
+            } else {
+              callback(null);
+            }
+          } catch (error) {
+            OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
+            callback(null);
+          }
         }
       } else {
         callback(null);
@@ -4173,7 +4114,42 @@
     },
 
     //Attrs is an object of attributes that will be set in order
-    addProduct: function(p, qty, options, attrs, callback) {
+    addProduct: async function(p, qty, options, attrs, callback) {
+      function successCallback(productPrices) {
+        if (productPrices.length > 0) {
+          p = p.clone();
+          if (
+            OB.UTIL.isNullOrUndefined(p.get('updatePriceFromPricelist')) ||
+            p.get('updatePriceFromPricelist')
+          ) {
+            p.set('standardPrice', productPrices[0].get('pricestd'));
+            p.set('listPrice', productPrices[0].get('pricelist'));
+          }
+          me.addProductToOrder(p, qty, options, attrs, function(
+            success,
+            orderline
+          ) {
+            OB.UTIL.ProcessController.finish('addProduct', execution);
+            if (callback) {
+              callback(success, orderline);
+            }
+          });
+        } else {
+          OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
+          OB.UTIL.ProcessController.finish('addProduct', execution);
+          if (callback) {
+            callback(false, null);
+          }
+        }
+      }
+      function errorCallback() {
+        OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
+        OB.UTIL.ProcessController.finish('addProduct', execution);
+        if (callback) {
+          callback(false, null);
+        }
+      }
+
       var execution = OB.UTIL.ProcessController.start('addProduct');
       OB.debug('_addProduct');
       var me = this;
@@ -4235,10 +4211,24 @@
       ) {
         var criteria = {};
         if (!OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-          criteria = {
-            m_pricelist_id: this.get('priceList'),
-            m_product_id: p.id
-          };
+          criteria = new OB.App.Class.Criteria()
+            .criterion('m_pricelist_id', this.get('priceList'))
+            .criterion('m_product_id', p.id)
+            .build();
+          try {
+            let productPriceResult = await OB.App.MasterdataModels.ProductPrice.find(
+              criteria
+            );
+            let productPrices = [];
+            for (let i = 0; i < productPriceResult.length; i++) {
+              productPrices.push(
+                OB.Dal.transform(OB.Model.ProductPrice, productPriceResult[i])
+              );
+            }
+            successCallback(productPrices);
+          } catch (error) {
+            errorCallback();
+          }
         } else {
           var remoteCriteria = [];
           var productId = {
@@ -4256,49 +4246,16 @@
           remoteCriteria.push(productId);
           remoteCriteria.push(pricelistId);
           criteria.remoteFilters = remoteCriteria;
+
+          OB.Dal.find(
+            OB.Model.ProductPrice,
+            criteria,
+            function(productPrices) {
+              successCallback(productPrices.models);
+            },
+            errorCallback
+          );
         }
-        OB.Dal.findUsingCache(
-          'productPrice',
-          OB.Model.ProductPrice,
-          criteria,
-          function(productPrices) {
-            if (productPrices.length > 0) {
-              p = p.clone();
-              if (
-                OB.UTIL.isNullOrUndefined(p.get('updatePriceFromPricelist')) ||
-                p.get('updatePriceFromPricelist')
-              ) {
-                p.set('standardPrice', productPrices.at(0).get('pricestd'));
-                p.set('listPrice', productPrices.at(0).get('pricelist'));
-              }
-              me.addProductToOrder(p, qty, options, attrs, function(
-                success,
-                orderline
-              ) {
-                OB.UTIL.ProcessController.finish('addProduct', execution);
-                if (callback) {
-                  callback(success, orderline);
-                }
-              });
-            } else {
-              OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
-              OB.UTIL.ProcessController.finish('addProduct', execution);
-              if (callback) {
-                callback(false, null);
-              }
-            }
-          },
-          function() {
-            OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
-            OB.UTIL.ProcessController.finish('addProduct', execution);
-            if (callback) {
-              callback(false, null);
-            }
-          },
-          {
-            modelsAffectedByCache: ['ProductPrice']
-          }
-        );
       } else {
         // With the preference OBPOS_allowProductsNoPriceInMainPricelist
         // it is possible to add product without price in the terminal's main list
@@ -4332,7 +4289,7 @@
       }
     },
 
-    addProductToOrder: function(
+    addProductToOrder: async function(
       p,
       qty,
       options,
@@ -4398,29 +4355,132 @@
         return;
       }
 
-      addProdCharsToProduct = function(productWithChars, addProdCharCallback) {
+      const addProductBOMToProduct = async function() {
+        const productBOM = await OB.App.MasterdataModels.ProductBOM.find(
+          new OB.App.Class.Criteria().criterion('product', p.id).build()
+        );
+
+        if (productBOM.length === 0) {
+          return;
+        }
+
+        if (productBOM.find(bomLine => !bomLine.bomprice)) {
+          const title = OB.I18N.getLabel('OBPOS_TaxNotFound_Header');
+          const error = OB.I18N.getLabel('OBPOS_BOM_NoPrice');
+          OB.error(title + ':' + error);
+          OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
+            popup: 'OB_UI_MessageDialog',
+            args: {
+              header: title,
+              message: error
+            }
+          });
+          finalCallback(false, null);
+          throw error;
+        }
+
+        p.set(
+          'productBOM',
+          productBOM.map(bomLine => {
+            return {
+              amount: OB.DEC.mul(bomLine.bomprice, bomLine.bomquantity),
+              qty: bomLine.bomquantity,
+              product: {
+                id: bomLine.bomproduct,
+                taxCategory: bomLine.bomtaxcategory
+              }
+            };
+          })
+        );
+      };
+
+      const addProductServiceLinkedToProduct = async function() {
+        if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+          const promise = new Promise((resolve, reject) => {
+            OB.Dal.find(
+              OB.Model.ProductServiceLinked,
+              {
+                product: p.id,
+                remoteFilters: [
+                  {
+                    columns: ['product'],
+                    operator: 'equals',
+                    value: p.id
+                  }
+                ]
+              },
+              resolve
+            );
+          });
+          const productServiceLinked = await promise;
+          if (productServiceLinked.length > 0) {
+            p.set('productServiceLinked', productServiceLinked.models);
+          }
+        } else {
+          const productServiceLinked = await OB.App.MasterdataModels.ProductServiceLinked.find(
+            new OB.App.Class.Criteria().criterion('product', p.id).build()
+          );
+          if (productServiceLinked.length > 0) {
+            p.set(
+              'productServiceLinked',
+              productServiceLinked.map(productServiceLink =>
+                OB.Dal.transform(
+                  OB.Model.ProductServiceLinked,
+                  productServiceLink
+                )
+              )
+            );
+          }
+        }
+      };
+
+      addProdCharsToProduct = async function(
+        productWithChars,
+        addProdCharCallback
+      ) {
         //Add prod char information to product object
         if (
           !productWithChars.get('productCharacteristics') &&
           productWithChars.get('characteristicDescription') &&
           !OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)
         ) {
-          OB.Dal.find(
-            OB.Model.ProductCharacteristicValue,
-            { product: productWithChars.get('id') },
-            function(productcharacteristics) {
-              productWithChars.set(
-                'productCharacteristics',
-                productcharacteristics.toJSON()
-              );
-              addProdCharCallback();
-            }
-          );
+          const criteria = new OB.App.Class.Criteria()
+            .criterion('product', productWithChars.get('id'))
+            .build();
+          try {
+            const productCharacteristics = await OB.App.MasterdataModels.ProductCharacteristicValue.find(
+              criteria
+            );
+            productWithChars.set(
+              'productCharacteristics',
+              productCharacteristics
+            );
+            addProdCharCallback();
+          } catch (error) {
+            OB.UTIL.showError(error);
+          }
         } else {
           addProdCharCallback();
         }
       };
+
       var context = this;
+
+      // In case product is BOM and it doesn't have BOM information yet, add it
+      if (
+        OB.Taxes.Pos.taxCategoryBOM.find(
+          taxCategory => taxCategory.id === p.get('taxCategory')
+        ) &&
+        !p.has('productBOM')
+      ) {
+        await addProductBOMToProduct();
+      }
+
+      // In case product is Service with modify tax enabled and it doesn't have ProductServiceLinked information yet, add it
+      if (p.get('modifyTax') && !p.has('productServiceLinked')) {
+        await addProductServiceLinkedToProduct();
+      }
+
       var productWithChars = OB.UTIL.clone(p);
       addProdCharsToProduct(productWithChars, function() {
         OB.UTIL.HookManager.executeHooks(
@@ -4732,35 +4792,36 @@
     },
 
     addManualPromotionToList: function(promotionToApply) {
-      var me = this;
-      var singlePromotionsList = [];
-      var rule = promotionToApply.rule;
-      if (!this.get('orderManualPromotions')) {
-        this.set(
-          'orderManualPromotions',
-          new OB.Collection.OrderManualPromotionsList()
-        );
-      }
+      const discountsFromUser = { ...this.get('discountsFromUser') } || {},
+        rule = promotionToApply.rule,
+        discountRule = promotionToApply.discountRule;
+      let bytotalManualPromotions =
+        discountsFromUser && discountsFromUser.bytotalManualPromotions
+          ? [...discountsFromUser.bytotalManualPromotions]
+          : [];
+
       if (
         !rule.obdiscAllowmultipleinstan ||
-        this.get('orderManualPromotions').length <= 0
+        bytotalManualPromotions.length <= 0
       ) {
         // Check there is no other manual promotion with the same ruleId and hasMultiDiscount set as false or undefined
-        singlePromotionsList = _.filter(
-          this.get('orderManualPromotions').models,
-          function(promotion) {
-            return (
-              promotion.get('rule').obdiscAllowmultipleinstan ===
-                rule.obdiscAllowmultipleinstan &&
-              promotion.get('rule').id === rule.id
-            );
-          }
-        );
+        const singlePromotionsList = _.filter(bytotalManualPromotions, function(
+          bytotalManualPromotion
+        ) {
+          return (
+            bytotalManualPromotion.obdiscAllowmultipleinstan ===
+              rule.obdiscAllowmultipleinstan &&
+            bytotalManualPromotion.id === rule.id
+          );
+        });
 
         if (singlePromotionsList.length > 0) {
           //  There should be only one rule in the list with previous conditions in manual promotions list
           _.forEach(singlePromotionsList, function(singlePromotion) {
-            me.get('orderManualPromotions').remove(singlePromotion);
+            bytotalManualPromotions.splice(
+              bytotalManualPromotions.indexOf(singlePromotion),
+              1
+            );
           });
         }
       }
@@ -4770,7 +4831,50 @@
       ) {
         rule.discountinstance = OB.UTIL.get_UUID();
       }
-      this.get('orderManualPromotions').push(promotionToApply);
+
+      let bytotalManualPromotionObj = {};
+
+      for (let key in discountRule.attributes) {
+        bytotalManualPromotionObj[key] = discountRule.attributes[key];
+      }
+
+      // Override some configuration from manualPromotions
+      if (bytotalManualPromotionObj.disctTotalamountdisc) {
+        bytotalManualPromotionObj.disctTotalamountdisc = rule.userAmt;
+      } else if (bytotalManualPromotionObj.disctTotalpercdisc) {
+        bytotalManualPromotionObj.disctTotalpercdisc = rule.userAmt;
+      }
+      bytotalManualPromotionObj.noOrder = rule.noOrder;
+      bytotalManualPromotionObj.discountinstance = rule.discountinstance;
+      if (
+        OB.Model.Discounts.discountRules[
+          bytotalManualPromotionObj.discountType
+        ] &&
+        OB.Model.Discounts.discountRules[bytotalManualPromotionObj.discountType]
+          .getIdentifier
+      ) {
+        let promotionName = OB.Model.Discounts.discountRules[
+          bytotalManualPromotionObj.discountType
+        ].getIdentifier(discountRule, bytotalManualPromotionObj);
+        bytotalManualPromotionObj.name = promotionName;
+        bytotalManualPromotionObj._identifier = promotionName;
+      }
+      bytotalManualPromotionObj.products = [];
+      bytotalManualPromotionObj.includedProducts = 'Y';
+      bytotalManualPromotionObj.productCategories = [];
+      bytotalManualPromotionObj.includedProductCategories = 'Y';
+      bytotalManualPromotionObj.productCharacteristics = [];
+      bytotalManualPromotionObj.includedCharacteristics = 'Y';
+      bytotalManualPromotionObj.allweekdays = true;
+
+      bytotalManualPromotions.push(bytotalManualPromotionObj);
+
+      bytotalManualPromotions = bytotalManualPromotions.sort((a, b) => {
+        return a.noOrder - b.noOrder;
+      });
+
+      discountsFromUser.bytotalManualPromotions = bytotalManualPromotions;
+      this.set('discountsFromUser', discountsFromUser);
     },
 
     getCurrentDiscountedLinePrice: function(line, ignoreExecutedAtTheEndPromo) {
@@ -4830,7 +4934,7 @@
         unitsConsumedByTheSameRule = 0,
         discountRule =
           OB.Model.Discounts.discountRules[rule.attributes.discountType];
-      if (discountRule.getIdentifier) {
+      if (discountRule && discountRule.getIdentifier) {
         disc.identifier = discountRule.getIdentifier(rule, discount);
       }
       disc.name = rule.get('printName') || discount.name || rule.get('name');
@@ -4903,7 +5007,9 @@
         disc.extraProperties = {};
         var key;
         for (key in discount.extraProperties) {
-          if (discount.extraProperties.hasOwnProperty(key)) {
+          if (
+            Object.prototype.hasOwnProperty.call(discount.extraProperties, key)
+          ) {
             disc[key] = discount.extraProperties[key];
             disc.extraProperties[key] = discount.extraProperties[key];
           }
@@ -5013,10 +5119,12 @@
     },
 
     //Attrs is an object of attributes that will be set in order line
-    createLine: function(p, units, options, attrs) {
+    createLine: function(p, units, options, attrs, callback) {
       var me = this,
         orgId,
-        orgName;
+        orgName,
+        country,
+        region;
       if (
         OB.UTIL.isNullOrUndefined(attrs) ||
         OB.UTIL.isNullOrUndefined(attrs.organization)
@@ -5026,11 +5134,15 @@
           orgName = OB.I18N.getLabel('OBPOS_LblThisStore', [
             OB.MobileApp.model.get('terminal').organization$_identifier
           ]);
+          country = OB.MobileApp.model.get('terminal').organizationCountryId;
+          region = OB.MobileApp.model.get('terminal').organizationRegionId;
         } else {
           orgId = me.get('organization');
           _.each(OB.MobileApp.model.get('store'), function(s) {
             if (s.id === orgId) {
               orgName = s.name;
+              country = s.country;
+              region = s.region;
               return;
             }
           });
@@ -5038,16 +5150,90 @@
       } else {
         orgId = attrs.organization.id;
         orgName = attrs.organization.name;
+        country = attrs.organization.country;
+        region = attrs.organization.region;
       }
 
       function createLineAux(p, units, options, attrs, me) {
+        const setDeliveryMode = line => {
+          if (
+            line.get('product').get('productType') !== 'S' &&
+            !line.get('obrdmDeliveryMode')
+          ) {
+            var defaultDeliveryModeInProduct,
+              defaultDeliveryMode,
+              deliveryDateInProduct,
+              deliveryTimeInProduct;
+            if (
+              OB.MobileApp.model.receipt.get('isLayaway') ||
+              OB.MobileApp.model.receipt.get('orderType') === 2
+            ) {
+              defaultDeliveryModeInProduct = line
+                .get('product')
+                .get('obrdmDeliveryModeLyw');
+              defaultDeliveryMode = defaultDeliveryModeInProduct
+                ? defaultDeliveryModeInProduct
+                : OB.MobileApp.model.receipt.get('obrdmDeliveryModeProperty')
+                ? OB.MobileApp.model.receipt.get('obrdmDeliveryModeProperty')
+                : 'PickAndCarry';
+            } else {
+              defaultDeliveryModeInProduct = line
+                .get('product')
+                .get('obrdmDeliveryMode');
+              deliveryDateInProduct = line
+                .get('product')
+                .get('obrdmDeliveryDate');
+              deliveryTimeInProduct = line
+                .get('product')
+                .get('obrdmDeliveryTime');
+              defaultDeliveryMode = defaultDeliveryModeInProduct
+                ? defaultDeliveryModeInProduct
+                : OB.MobileApp.model.receipt.get('obrdmDeliveryModeProperty')
+                ? OB.MobileApp.model.receipt.get('obrdmDeliveryModeProperty')
+                : 'PickAndCarry';
+            }
+            line.set('obrdmDeliveryMode', defaultDeliveryMode);
+            if (
+              line.get('obrdmDeliveryMode') === 'PickupInStoreDate' ||
+              line.get('obrdmDeliveryMode') === 'HomeDelivery'
+            ) {
+              var currentDate = new Date();
+              currentDate.setHours(0);
+              currentDate.setMinutes(0);
+              currentDate.setSeconds(0);
+              line.set(
+                'obrdmDeliveryDate',
+                defaultDeliveryModeInProduct
+                  ? deliveryDateInProduct
+                    ? deliveryDateInProduct
+                    : currentDate
+                  : OB.MobileApp.model.receipt.get('obrdmDeliveryDateProperty')
+              );
+            }
+            if (line.get('obrdmDeliveryMode') === 'HomeDelivery') {
+              var currentTime = new Date();
+              currentTime.setSeconds(0);
+              line.set(
+                'obrdmDeliveryTime',
+                defaultDeliveryModeInProduct
+                  ? deliveryTimeInProduct
+                    ? deliveryTimeInProduct
+                    : currentTime
+                  : OB.MobileApp.model.receipt.get('obrdmDeliveryTimeProperty')
+              );
+            }
+          }
+        };
         if (
           me.validateAllowSalesWithReturn(
             units,
             (options && options.allowLayawayWithReturn) || false
           )
         ) {
-          return;
+          if (callback) {
+            callback(false);
+          }
+          return false;
         }
         // Get prices from BP pricelist
         var newline = new OrderLine({
@@ -5060,7 +5246,9 @@
           priceIncludesTax: me.get('priceIncludesTax'),
           organization: {
             id: orgId,
-            name: orgName
+            name: orgName,
+            country: country,
+            region: region
           },
           warehouse: {
             id:
@@ -5077,11 +5265,13 @@
                 : attrs.originalLine.get('warehouse').warehousename
           },
           isEditable:
-            options && options.hasOwnProperty('isEditable')
+            options &&
+            Object.prototype.hasOwnProperty.call(options, 'isEditable')
               ? options.isEditable
               : true,
           isDeletable:
-            options && options.hasOwnProperty('isDeletable')
+            options &&
+            Object.prototype.hasOwnProperty.call(options, 'isDeletable')
               ? options.isDeletable
               : true
         });
@@ -5102,7 +5292,49 @@
           if (!me.get('hasServices')) {
             me.set('hasServices', true);
           }
+
+          // Check if it is necessary to modify the tax category of related products
+          if (newline.get('product').has('productServiceLinked')) {
+            newline
+              .get('product')
+              .get('productServiceLinked')
+              .forEach(productServiceLinked => {
+                newline
+                  .get('relatedLines')
+                  .filter(
+                    relatedProduct =>
+                      relatedProduct.productCategory ===
+                      productServiceLinked.get('productCategory')
+                  )
+                  .forEach(relatedProduct => {
+                    const relatedLine = OB.MobileApp.model.receipt
+                      .get('lines')
+                      .find(line => line.id === relatedProduct.orderlineId);
+                    if (relatedLine) {
+                      relatedLine
+                        .get('product')
+                        .set(
+                          'oldTaxCategory',
+                          relatedLine.get('product').get('taxCategory')
+                        );
+                      relatedLine
+                        .get('product')
+                        .set(
+                          'taxCategory',
+                          productServiceLinked.get('taxCategory')
+                        );
+                      relatedLine.set(
+                        'previousLineRate',
+                        relatedLine.get('lineRate')
+                      );
+                      relatedLine.set('recalculateTax', true);
+                    }
+                  });
+              });
+          }
         }
+
+        setDeliveryMode(newline);
 
         //issue 25448: Show stock screen is just shown when a new line is created.
         if (newline.get('product').get('showstock') === true) {
@@ -5254,11 +5486,10 @@
               notReturnableLine.get('product').get('_identifier')
             ])
           );
+          callback(false);
           return;
         }
-        if (callback) {
-          callback();
-        }
+        callback(true);
       }
     },
 
@@ -5389,6 +5620,7 @@
       });
 
       if (notReturnableProducts) {
+        callback(false);
         return;
       }
 
@@ -5405,17 +5637,24 @@
           function(approved, supervisor, approvalType) {
             if (approved) {
               me.set('notApprove', true);
-              callback();
+              callback(true);
               me.unset('notApprove');
+            } else {
+              callback(false);
             }
           }
         );
       } else {
-        callback();
+        callback(true);
       }
     },
 
-    setBPandBPLoc: function(businessPartner, showNotif, saveChange, callback) {
+    setBPandBPLoc: async function(
+      businessPartner,
+      showNotif,
+      saveChange,
+      callback
+    ) {
       var me = this,
         undef,
         i,
@@ -5586,32 +5825,11 @@
           if (
             OB.MobileApp.model.hasPermission('OBPOS_remote.discount.bp', true)
           ) {
-            var bp = {
-              columns: ['businessPartner'],
-              operator: 'equals',
-              value: businessPartner.id,
-              isId: true
-            };
-            var remoteCriteria = [bp];
-            var criteriaFilter = {};
-            criteriaFilter.remoteFilters = remoteCriteria;
-            OB.Dal.find(
-              OB.Model.DiscountFilterBusinessPartner,
-              criteriaFilter,
-              function(discountsBP) {
-                _.each(discountsBP.models, function(dsc) {
-                  OB.Dal.saveOrUpdate(
-                    dsc,
-                    function() {},
-                    function() {
-                      OB.error(arguments);
-                    }
-                  );
-                });
-              },
-              function() {
-                OB.error(arguments);
-              }
+            OB.Discounts.Pos.manualRuleImpls = await OB.Discounts.Pos.addDiscountsByBusinessPartnerFilter(
+              OB.Discounts.Pos.manualRuleImpls
+            );
+            OB.Discounts.Pos.ruleImpls = await OB.Discounts.Pos.addDiscountsByBusinessPartnerFilter(
+              OB.Discounts.Pos.ruleImpls
             );
           }
         }
@@ -5820,19 +6038,12 @@
     removeAndInsertLines: function(callback) {
       var me = this,
         orderlines = [],
-        promotionlines = [],
         addProductsOfLines = null;
 
       // Remove all lines and insert again with new prices
-      addProductsOfLines = function(
-        receipt,
-        lines,
-        index,
-        callback,
-        promotionLines
-      ) {
+      addProductsOfLines = async function(receipt, lines, index, callback) {
         var success = function(product) {
-          var attrs;
+          var attrs, lineQty;
           if (!OB.UTIL.isNullOrUndefined(lines[index].get('splitline'))) {
             attrs = {
               splitline: lines[index].get('splitline'),
@@ -5842,39 +6053,73 @@
           attrs = attrs || {};
           attrs.organization = lines[index].get('organization');
           attrs.warehouse = lines[index].get('warehouse');
-          me.addProduct(
-            product,
-            lines[index].get('qty'),
-            undefined,
-            attrs,
-            function(isInPriceList) {
-              if (isInPriceList) {
-                me.get('lines')
-                  .at(index)
-                  .set('promotions', promotionLines[index]);
-                me.get('lines')
-                  .at(index)
-                  .calculateGross();
-                addProductsOfLines(
-                  receipt,
-                  lines,
-                  index + 1,
-                  callback,
-                  promotionLines
-                );
-              } else {
-                promotionLines.splice(index, 1);
-                lines.splice(index, 1);
-                addProductsOfLines(
-                  receipt,
-                  lines,
-                  index,
-                  callback,
-                  promotionLines
+          lineQty = lines[index].get('qty');
+          // Issue 43710: For return receipt convert qty sign as sign conversion handled again in addProduct
+          if (me.get('orderType') === 1) {
+            lineQty = lineQty * -1;
+          }
+          me.addProduct(product, lineQty, undefined, attrs, function(
+            isInPriceList
+          ) {
+            const oldLineId = lines[index].get('id');
+            if (isInPriceList) {
+              const newLineId = me
+                .get('lines')
+                .at(index)
+                .get('id');
+              if (
+                me.get('discountsFromUser') &&
+                me.get('discountsFromUser').manualPromotions
+              ) {
+                me.get('discountsFromUser').manualPromotions.forEach(
+                  manualPromotion => {
+                    if (
+                      manualPromotion.linesToApply.indexOf(oldLineId) !== -1
+                    ) {
+                      manualPromotion.linesToApply.splice(
+                        manualPromotion.linesToApply.indexOf(oldLineId),
+                        1,
+                        newLineId
+                      );
+                    }
+                  }
                 );
               }
+
+              me.get('lines')
+                .at(index)
+                .calculateGross();
+              addProductsOfLines(receipt, lines, index + 1, callback);
+            } else {
+              if (
+                me.get('discountsFromUser') &&
+                me.get('discountsFromUser').manualPromotions
+              ) {
+                me.get('discountsFromUser').manualPromotions.forEach(
+                  manualPromotion => {
+                    if (
+                      manualPromotion.linesToApply.indexOf(oldLineId) !== -1
+                    ) {
+                      manualPromotion.linesToApply.splice(
+                        manualPromotion.linesToApply.indexOf(oldLineId),
+                        1
+                      );
+                      if (manualPromotion.linesToApply.length === 0) {
+                        me.get('discountsFromUser').manualPromotions.splice(
+                          me
+                            .get('discountsFromUser')
+                            .manualPromotions.indexOf(manualPromotion),
+                          1
+                        );
+                      }
+                    }
+                  }
+                );
+              }
+              lines.splice(index, 1);
+              addProductsOfLines(receipt, lines, index, callback);
             }
-          );
+          });
         };
         if (index === lines.length) {
           me.set('skipCalculateReceipt', false);
@@ -5886,34 +6131,29 @@
         if (OB.UTIL.isCrossStoreProduct(lines[index].get('product'))) {
           success(lines[index].get('product'));
         } else {
-          OB.Dal.get(
-            OB.Model.Product,
-            lines[index].get('product').id,
-            success,
-            null,
-            function() {
+          try {
+            const product = await OB.App.MasterdataModels.Product.withId(
+              lines[index].get('product').id
+            );
+            if (product) {
+              success(OB.Dal.transform(OB.Model.Product, product));
+            } else {
               // Product doesn't exists, execute the same code as it was not included in pricelist
-              promotionLines.splice(index, 1);
               lines.splice(index, 1);
-              addProductsOfLines(
-                receipt,
-                lines,
-                index,
-                callback,
-                promotionLines
-              );
+              addProductsOfLines(receipt, lines, index, callback);
             }
-          );
+          } catch (error) {
+            OB.error(error.message);
+          }
         }
       };
       _.each(this.get('lines').models, function(line) {
         orderlines.push(line);
-        promotionlines.push(line.get('promotions'));
       });
       me.set('skipCalculateReceipt', true);
       this.deleteLinesFromOrder(orderlines, function(deleted) {
         if (deleted) {
-          addProductsOfLines(me, orderlines, 0, callback, promotionlines);
+          addProductsOfLines(me, orderlines, 0, callback);
         } else {
           me.set('skipCalculateReceipt', false);
           callback(false);
@@ -5940,16 +6180,6 @@
           ) {
             me.save();
           }
-        }
-        // remove promotions
-        if (
-          !(
-            options &&
-            !OB.UTIL.isNullOrUndefined(options.applyPromotions) &&
-            options.applyPromotions === false
-          )
-        ) {
-          OB.Model.Discounts.applyPromotions(me);
         }
       }
 
@@ -6071,17 +6301,43 @@
         allLinesCalculated
       );
 
-      this.get('lines').each(function(line) {
+      this.get('lines').each(async function(line) {
         //remove promotions
         line.unset('promotions');
 
-        var successCallbackPrices,
-          criteria = {};
+        let criteria = {},
+          successCallbackPrices = function(dataPrices) {
+            if (
+              !OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)
+            ) {
+              order.setPrice(
+                line,
+                dataPrices.get('standardPrice', {
+                  setUndo: false
+                })
+              );
+            } else {
+              dataPrices.each(function(price) {
+                order.setPrice(
+                  line,
+                  price.get('standardPrice', {
+                    setUndo: false
+                  })
+                );
+              });
+            }
 
-        if (!OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-          criteria = {
-            id: line.get('product').get('id')
+            newAllLinesCalculated();
           };
+        if (!OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+          try {
+            const product = await OB.App.MasterdataModels.Product.withId(
+              line.get('product').get('id')
+            );
+            successCallbackPrices(OB.Dal.transform(OB.Model.Product, product));
+          } catch (error) {
+            OB.error(error.message);
+          }
         } else {
           criteria = {};
           var remoteCriteria = [];
@@ -6093,6 +6349,16 @@
           };
           remoteCriteria.push(productId);
           criteria.remoteFilters = remoteCriteria;
+
+          OB.Dal.find(
+            OB.Model.Product,
+            criteria,
+            successCallbackPrices,
+            function() {
+              // TODO: Report error properly.
+            },
+            line
+          );
         }
 
         successCallbackPrices = function(dataPrices) {
@@ -6103,16 +6369,6 @@
           });
           newAllLinesCalculated();
         };
-
-        OB.Dal.find(
-          OB.Model.Product,
-          criteria,
-          successCallbackPrices,
-          function() {
-            // TODO: Report error properly.
-          },
-          line
-        );
       });
     },
 
@@ -7358,13 +7614,17 @@
       );
 
       // Set the 'isNegative' value
-      if (loadedFromBackend) {
-        isNegative = OB.DEC.compare(this.getGross()) === -1;
+      if (this.get('cancelAndReplaceChangePending')) {
+        isNegative = true;
       } else {
-        if (OB.DEC.compare(this.getGross()) === -1) {
-          isNegative = processedPaymentsAmount >= this.getGross();
+        if (loadedFromBackend) {
+          isNegative = OB.DEC.compare(this.getGross()) === -1;
         } else {
-          isNegative = processedPaymentsAmount > this.getGross();
+          if (OB.DEC.compare(this.getGross()) === -1) {
+            isNegative = processedPaymentsAmount >= this.getGross();
+          } else {
+            isNegative = processedPaymentsAmount > this.getGross();
+          }
         }
       }
       if (
@@ -7414,6 +7674,7 @@
         // This doesn't affect to reversal payments but to the payments introduced to add the quantity reversed
         if (
           isNegative &&
+          !this.get('cancelAndReplaceChangePending') &&
           loadedFromBackend &&
           !p.get('reversedPaymentId') &&
           !p.get('signChanged')
@@ -7755,6 +8016,8 @@
                   'cancelAndReplace',
                   order.get('doCancelAndReplace')
                 );
+              } else if (order.get('cancelAndReplaceChangePending')) {
+                payment.set('cancelAndReplace', true);
               }
 
               payments.add(payment, {
@@ -8184,9 +8447,9 @@
       }
 
       function stopReverse() {
-        sender.deleting = false;
-        sender.removeClass('btn-icon-loading');
-        sender.addClass('btn-icon-reversePayment');
+        if (reverseCallback) {
+          reverseCallback();
+        }
       }
 
       usedPayment = _.filter(OB.MobileApp.model.get('payments'), function(
@@ -9097,7 +9360,11 @@
             }
           });
         }
-        qtyPending = OB.DEC.sub(l.get('qty'), qtyReserved);
+        qtyPending = OB.DEC.sub(
+          l.get('qty'),
+          qtyReserved,
+          OB.DEC.getRoundingMode()
+        );
         l.set('qty', qtyPending);
         l.set('promotions', promotionsApplyNext);
         l.set('promotionsCascadeApplied', promotionsCascadeApplied);
@@ -9270,7 +9537,7 @@
       desc += '], Taxes: [';
       i = 0;
       for (propt in this.get('taxes')) {
-        if (this.get('taxes').hasOwnProperty(propt)) {
+        if (Object.prototype.hasOwnProperty.call(this.get('taxes'), propt)) {
           var obj = this.get('taxes')[propt];
           if (i !== 0) {
             desc += ',';
@@ -9912,9 +10179,7 @@
       return false;
     },
     getScannableDocumentNo: function() {
-      return this.get('documentNo')
-        .replace(/-/g, '\\-')
-        .replace(/\+/g, '\\+');
+      return this.get('documentNo');
     },
     turnEditable: function(callback) {
       if (
@@ -10025,7 +10290,7 @@
         return OB.Collection.OrderList.newOrder(bp, propertiesToReset);
       },
 
-      loadCustomer: function(model, callback) {
+      loadCustomer: async function(model, callback) {
         var bpId,
           bpLocId,
           bpBillLocId,
@@ -10216,7 +10481,7 @@
         );
       },
 
-      newPaidReceipt: function(model, callback) {
+      newPaidReceipt: async function(model, callback) {
         var order = new Order(),
           lines,
           newline,
@@ -10328,13 +10593,113 @@
             order.set('orderType', 1);
           }
         }
-        var loadProducts = function() {
+        let loadProducts = async function() {
           var linepos = 0,
             hasDeliveredProducts = false,
             hasNotDeliveredProducts = false,
             i,
             sortedPayments = false;
-          _.each(model.receiptLines, function(iter) {
+
+          function getReverserPayment(payment, Payments) {
+            return _.filter(model.receiptPayments, function(receiptPayment) {
+              return receiptPayment.paymentId === payment.reversedPaymentId;
+            })[0];
+          }
+          i = 0;
+          // Sort payments array, puting reverser payments inmediatly after their reversed payment
+          while (i < model.receiptPayments.length) {
+            var payment = model.receiptPayments[i];
+            if (payment.reversedPaymentId && !payment.isSorted) {
+              var reversed_index = model.receiptPayments.indexOf(
+                getReverserPayment(payment, model.receiptPayments)
+              );
+              payment.isSorted = true;
+              if (i < reversed_index) {
+                model.receiptPayments.splice(i, 1);
+                model.receiptPayments.splice(reversed_index, 0, payment);
+                sortedPayments = true;
+              } else if (i > reversed_index + 1) {
+                model.receiptPayments.splice(i, 1);
+                model.receiptPayments.splice(reversed_index + 1, 0, payment);
+                sortedPayments = true;
+              }
+            } else {
+              i++;
+            }
+          }
+          if (sortedPayments) {
+            model.receiptPayments.forEach(function(receitPayment) {
+              if (receitPayment.isSorted) {
+                delete receitPayment.isSorted;
+              }
+            });
+          }
+          //order.set('payments', model.receiptPayments);
+          payments = new PaymentLineList();
+          _.each(model.receiptPayments, function(iter) {
+            var paymentProp;
+            curPayment = new PaymentLine();
+            for (paymentProp in iter) {
+              if (iter.hasOwnProperty(paymentProp)) {
+                if (paymentProp === 'paymentDate') {
+                  if (
+                    !OB.UTIL.isNullOrUndefined(iter[paymentProp]) &&
+                    moment(iter[paymentProp]).isValid()
+                  ) {
+                    curPayment.set(
+                      paymentProp,
+                      OB.I18N.normalizeDate(new Date(iter[paymentProp]))
+                    );
+                  } else {
+                    curPayment.set(paymentProp, null);
+                  }
+                } else {
+                  curPayment.set(paymentProp, iter[paymentProp]);
+                }
+              }
+            }
+            curPayment.set('orderGross', order.get('gross'));
+            curPayment.set('isPaid', order.get('isPaid'));
+            curPayment.set('date', new Date(iter.paymentDate));
+            payments.add(curPayment);
+          });
+          order.set('payments', payments);
+          order.adjustPayment();
+
+          taxes = {};
+          _.each(model.receiptTaxes, function(iter) {
+            var taxProp;
+            taxes[iter.taxid] = {};
+            for (taxProp in iter) {
+              if (iter.hasOwnProperty(taxProp)) {
+                taxes[iter.taxid][taxProp] = iter[taxProp];
+              }
+            }
+          });
+          order.set('taxes', taxes);
+
+          if (!model.isLayaway && !model.isQuotation) {
+            if (
+              model.totalamount > 0 &&
+              order.get('payment') < model.totalamount
+            ) {
+              order.set('paidOnCredit', true);
+            } else if (
+              model.totalamount < 0 &&
+              (order.get('payment') === 0 ||
+                OB.DEC.abs(model.totalamount) > order.get('payment'))
+            ) {
+              order.set('paidOnCredit', true);
+            }
+          }
+          if (model.receiptLines.length === 0) {
+            order.set('json', JSON.stringify(order.toJSON()));
+            callback(order);
+            OB.UTIL.ProcessController.finish('newPaidReceipt', execution);
+          }
+
+          for (let i = 0; i < model.receiptLines.length; i++) {
+            let iter = model.receiptLines[i];
             var price = OB.DEC.number(iter.unitPrice),
               lineNet = order.get('priceIncludesTax')
                 ? null
@@ -10343,109 +10708,50 @@
                 ? OB.DEC.number(iter.lineGrossAmount)
                 : null;
             iter.linepos = linepos;
-            var addLineForProduct = function(prod) {
-              if (
-                OB.MobileApp.model.hasPermission(
-                  'OBPOS_remote.product',
-                  true
-                ) ||
-                OB.UTIL.isCrossStoreReceipt(order)
-              ) {
-                var success = function() {
-                  var productcriteria = {
-                    columns: ['product'],
-                    operator: 'equals',
-                    value: prod.id,
-                    isId: true
-                  };
-                  var remoteCriteria = [productcriteria];
-                  var criteriaFilter = {};
-                  criteriaFilter.remoteFilters = remoteCriteria;
-                  criteriaFilter.forceRemote = true;
-                  criteriaFilter.remoteParams = {};
-                  criteriaFilter.remoteParams.crossStoreSearch = OB.UTIL.isCrossStoreReceipt(
-                    order
-                  );
-                  if (OB.UTIL.isCrossStoreReceipt(order)) {
-                    criteriaFilter.remoteParams.productId = prod.get('id');
-                  }
-                  OB.Dal.find(
-                    OB.Model.ProductCharacteristicValue,
-                    criteriaFilter,
-                    function(productcharacteristic) {
-                      _.each(productcharacteristic.models, function(pchv) {
-                        OB.Dal.saveOrUpdate(
-                          pchv,
-                          function() {},
-                          function() {
-                            OB.error(arguments);
-                          }
-                        );
-                      });
-                    },
-                    function() {
-                      OB.error(arguments);
-                    }
-                  );
-                };
-
-                if (!OB.UTIL.isCrossStoreReceipt(order)) {
-                  OB.Dal.saveOrUpdate(prod, success, function() {
-                    OB.error(arguments);
-                  });
-                } else {
-                  success();
-                }
-              }
+            var addLineForProduct = async function(prod) {
               // Set product services
-              order._loadRelatedServices(
+              await order._loadRelatedServices(
                 prod.get('productType'),
                 prod.get('id'),
                 prod.get('productCategory'),
-                function(data) {
-                  var hasservices;
+                async function(data) {
+                  let hasservices;
                   if (
                     !OB.UTIL.isNullOrUndefined(data) &&
                     OB.DEC.number(iter.quantity) > 0
                   ) {
                     hasservices = data.hasservices;
                   }
-                  _.each(iter.promotions, function(promotion) {
-                    OB.Dal.get(
-                      OB.Model.Discount,
-                      promotion.ruleId,
-                      function(discount) {
-                        if (
-                          discount &&
-                          OB.Model.Discounts.discountRules[
-                            discount.get('discountType')
-                          ].addManual
-                        ) {
-                          var percentage;
-                          if (
-                            (discount.get('discountType') ===
-                              '8338556C0FBF45249512DB343FEFD280' ||
-                              discount.get('discountType') ===
-                                '20E4EC27397344309A2185097392D964') &&
-                            discount.get('obdiscPercentage')
-                          ) {
-                            percentage = OB.DEC.mul(
-                              OB.DEC.div(promotion.amt, iter.lineGrossAmount),
-                              new BigDecimal('100')
-                            );
-                          }
-                          promotion.userAmt = percentage
-                            ? percentage
-                            : promotion.amt;
-                          promotion.discountType = discount.get('discountType');
-                          promotion.manual = true;
+
+                  for (let promotion of iter.promotions) {
+                    try {
+                      const discount = OB.Discounts.Pos.manualRuleImpls.find(
+                        discount => discount.id === promotion.ruleId
+                      );
+                      if (
+                        discount &&
+                        OB.Discounts.Pos.getManualPromotions().includes(
+                          discount.discountType
+                        )
+                      ) {
+                        var percentage;
+                        if (discount.obdiscPercentage) {
+                          percentage = OB.DEC.mul(
+                            OB.DEC.div(promotion.amt, iter.lineGrossAmount),
+                            new BigDecimal('100')
+                          );
                         }
-                      },
-                      function(tx, error) {
-                        OB.UTIL.showError(error);
+                        promotion.userAmt = percentage
+                          ? percentage
+                          : promotion.amt;
+                        promotion.discountType = discount.discountType;
+                        promotion.manual = true;
                       }
-                    );
-                  });
+                    } catch (error) {
+                      OB.UTIL.showError(error);
+                    }
+                  }
+
                   if (
                     OB.MobileApp.model.hasPermission(
                       'OBPOS_EnableSupportForProductAttributes',
@@ -10535,6 +10841,42 @@
                     );
                     order.set('lines', lines);
                     order.set('qty', orderQty);
+                    order.set(
+                      'isPartiallyDelivered',
+                      hasDeliveredProducts && hasNotDeliveredProducts
+                        ? true
+                        : false
+                    );
+                    if (hasDeliveredProducts && !hasNotDeliveredProducts) {
+                      order.set('isFullyDelivered', true);
+                    }
+                    if (order.get('isPartiallyDelivered')) {
+                      var partiallyPaid = 0;
+                      _.each(
+                        _.filter(order.get('receiptLines'), function(
+                          reciptLine
+                        ) {
+                          return reciptLine.deliveredQuantity;
+                        }),
+                        function(deliveredLine) {
+                          partiallyPaid = OB.DEC.add(
+                            partiallyPaid,
+                            OB.DEC.mul(
+                              deliveredLine.deliveredQuantity,
+                              deliveredLine.grossUnitPrice
+                            )
+                          );
+                        }
+                      );
+                      order.set('deliveredQuantityAmount', partiallyPaid);
+                      if (
+                        order.get('deliveredQuantityAmount') &&
+                        order.get('deliveredQuantityAmount') >
+                          order.get('payment')
+                      ) {
+                        order.set('isDeliveredGreaterThanGross', true);
+                      }
+                    }
                     order.set('json', JSON.stringify(order.toJSON()));
                     callback(order);
                     OB.UTIL.ProcessController.finish(
@@ -10558,195 +10900,68 @@
             if (iter.relatedLines && !order.get('hasServices')) {
               order.set('hasServices', true);
             }
-
-            OB.Dal.get(
-              OB.Model.Product,
-              iter.id,
-              function(product) {
-                addLineForProduct(product);
-              },
-              null,
-              function() {
-                //Empty
-                new OB.DS.Request(
-                  'org.openbravo.retail.posterminal.master.LoadedProduct'
-                ).exec(
-                  {
-                    productId: iter.id,
-                    salesOrderLineId: iter.lineId
-                  },
-                  function(data) {
-                    addLineForProduct(
-                      OB.Dal.transform(OB.Model.Product, data[0])
-                    );
-                  },
-                  function() {
-                    if (NoFoundProduct) {
-                      NoFoundProduct = false;
-                      OB.UTIL.showConfirmation.display(
-                        OB.I18N.getLabel('OBPOS_InformationTitle'),
-                        OB.I18N.getLabel('OBPOS_NoReceiptLoadedText'),
-                        [
-                          {
-                            label: OB.I18N.getLabel('OBPOS_LblOk'),
-                            isConfirmButton: true
-                          }
-                        ]
-                      );
-                    }
-                  }
-                );
-              }
-            );
-            linepos++;
-          });
-
-          function getReverserPayment(payment, Payments) {
-            return _.filter(model.receiptPayments, function(receiptPayment) {
-              return receiptPayment.paymentId === payment.reversedPaymentId;
-            })[0];
-          }
-          i = 0;
-          // Sort payments array, puting reverser payments inmediatly after their reversed payment
-          while (i < model.receiptPayments.length) {
-            var payment = model.receiptPayments[i];
-            if (payment.reversedPaymentId && !payment.isSorted) {
-              var reversed_index = model.receiptPayments.indexOf(
-                getReverserPayment(payment, model.receiptPayments)
+            try {
+              const product = await OB.App.MasterdataModels.Product.withId(
+                iter.id
               );
-              payment.isSorted = true;
-              if (i < reversed_index) {
-                model.receiptPayments.splice(i, 1);
-                model.receiptPayments.splice(reversed_index, 0, payment);
-                sortedPayments = true;
-              } else if (i > reversed_index + 1) {
-                model.receiptPayments.splice(i, 1);
-                model.receiptPayments.splice(reversed_index + 1, 0, payment);
-                sortedPayments = true;
-              }
-            } else {
-              i++;
-            }
-          }
-          if (sortedPayments) {
-            model.receiptPayments.forEach(function(receitPayment) {
-              if (receitPayment.isSorted) {
-                delete receitPayment.isSorted;
-              }
-            });
-          }
-          //order.set('payments', model.receiptPayments);
-          payments = new PaymentLineList();
-          _.each(model.receiptPayments, function(iter) {
-            var paymentProp;
-            curPayment = new PaymentLine();
-            for (paymentProp in iter) {
-              if (iter.hasOwnProperty(paymentProp)) {
-                if (paymentProp === 'paymentDate') {
-                  if (
-                    !OB.UTIL.isNullOrUndefined(iter[paymentProp]) &&
-                    moment(iter[paymentProp]).isValid()
-                  ) {
-                    curPayment.set(
-                      paymentProp,
-                      OB.I18N.normalizeDate(new Date(iter[paymentProp]))
+              if (product) {
+                await addLineForProduct(
+                  OB.Dal.transform(OB.Model.Product, product)
+                );
+              } else {
+                //Empty
+                const body = {
+                  productId: iter.id,
+                  salesOrderLineId: iter.lineId
+                };
+                try {
+                  let data = await OB.App.Request.mobileServiceRequest(
+                    'org.openbravo.retail.posterminal.master.LoadedProduct',
+                    body
+                  );
+                  data = data.response.data;
+                  await addLineForProduct(
+                    OB.Dal.transform(OB.Model.Product, data[0])
+                  );
+                } catch (error) {
+                  if (NoFoundProduct) {
+                    NoFoundProduct = false;
+                    OB.UTIL.showConfirmation.display(
+                      OB.I18N.getLabel('OBPOS_InformationTitle'),
+                      OB.I18N.getLabel('OBPOS_NoReceiptLoadedText'),
+                      [
+                        {
+                          label: OB.I18N.getLabel('OBPOS_LblOk'),
+                          isConfirmButton: true
+                        }
+                      ]
                     );
-                  } else {
-                    curPayment.set(paymentProp, null);
                   }
-                } else {
-                  curPayment.set(paymentProp, iter[paymentProp]);
                 }
               }
+            } catch (error) {
+              OB.error(error.message);
             }
-            curPayment.set('orderGross', order.get('gross'));
-            curPayment.set('isPaid', order.get('isPaid'));
-            curPayment.set('date', new Date(iter.paymentDate));
-            payments.add(curPayment);
-          });
-          order.set('payments', payments);
-          order.adjustPayment();
-
-          order.set(
-            'isPartiallyDelivered',
-            hasDeliveredProducts && hasNotDeliveredProducts ? true : false
-          );
-          if (hasDeliveredProducts && !hasNotDeliveredProducts) {
-            order.set('isFullyDelivered', true);
-          }
-          if (order.get('isPartiallyDelivered')) {
-            var partiallyPaid = 0;
-            _.each(
-              _.filter(order.get('receiptLines'), function(reciptLine) {
-                return reciptLine.deliveredQuantity;
-              }),
-              function(deliveredLine) {
-                partiallyPaid = OB.DEC.add(
-                  partiallyPaid,
-                  OB.DEC.mul(
-                    deliveredLine.deliveredQuantity,
-                    deliveredLine.grossUnitPrice
-                  )
-                );
-              }
-            );
-            order.set('deliveredQuantityAmount', partiallyPaid);
-            if (
-              order.get('deliveredQuantityAmount') &&
-              order.get('deliveredQuantityAmount') > order.get('payment')
-            ) {
-              order.set('isDeliveredGreaterThanGross', true);
-            }
-          }
-
-          taxes = {};
-          _.each(model.receiptTaxes, function(iter) {
-            var taxProp;
-            taxes[iter.taxid] = {};
-            for (taxProp in iter) {
-              if (iter.hasOwnProperty(taxProp)) {
-                taxes[iter.taxid][taxProp] = iter[taxProp];
-              }
-            }
-          });
-          order.set('taxes', taxes);
-
-          if (!model.isLayaway && !model.isQuotation) {
-            if (
-              model.totalamount > 0 &&
-              order.get('payment') < model.totalamount
-            ) {
-              order.set('paidOnCredit', true);
-            } else if (
-              model.totalamount < 0 &&
-              (order.get('payment') === 0 ||
-                OB.DEC.abs(model.totalamount) > order.get('payment'))
-            ) {
-              order.set('paidOnCredit', true);
-            }
-          }
-          if (model.receiptLines.length === 0) {
-            order.set('json', JSON.stringify(order.toJSON()));
-            callback(order);
-            OB.UTIL.ProcessController.finish('newPaidReceipt', execution);
+            linepos++;
           }
         };
 
-        this.loadCustomer(
+        await this.loadCustomer(
           {
             bpId: model.bp,
             bpLocId: model.bpLocId,
             bpBillLocId: model.bpBillLocId || model.bpLocId
           },
-          function(bp, loc, billLoc) {
+          async function(bp, loc, billLoc) {
             order.set('bp', bp);
             order.set('gross', model.totalamount);
             order.set('net', model.totalNetAmount);
             order.trigger('change:bp', order);
-            loadProducts();
+            await loadProducts();
           }
         );
       },
+
       newDynamicOrder: function(model, callback) {
         var order = new OB.Model.Order(),
           undf;
@@ -10804,8 +11019,6 @@
 
         if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
           this.doRemoteBPSettings(model.get('bp'));
-        } else {
-          OB.UTIL.showLoading(false);
         }
 
         this.saveCurrent();
@@ -10860,40 +11073,7 @@
             OB.error(arguments);
           }
         );
-        if (
-          OB.MobileApp.model.hasPermission('OBPOS_remote.discount.bp', true)
-        ) {
-          var bp = {
-            columns: ['businessPartner'],
-            operator: 'equals',
-            value: businessPartner.id,
-            isId: true
-          };
-          var remoteCriteria = [bp];
-          var criteria = {};
-          criteria.remoteFilters = remoteCriteria;
-
-          findDiscountFilterBusinessPartner(
-            criteria,
-            function(discountsBP) {
-              _.each(discountsBP.models, function(dsc) {
-                OB.Dal.saveOrUpdate(
-                  dsc,
-                  function() {},
-                  function() {
-                    OB.error(arguments);
-                  }
-                );
-              });
-              OB.UTIL.showLoading(false);
-            },
-            function() {
-              OB.error(arguments);
-            }
-          );
-        } else {
-          OB.UTIL.showLoading(false);
-        }
+        OB.UTIL.showLoading(false);
       },
 
       addNewQuotation: function() {
@@ -11163,69 +11343,64 @@
                   orderTypeMsg = OB.I18N.getLabel('OBPOS_Quotation');
                 }
                 // Getting Other Session User's username
-                OB.Dal.find(
-                  OB.Model.Session,
-                  {
-                    id: existingOrder.get('session')
-                  },
-                  function(sessions) {
-                    if (sessions.length > 0) {
-                      OB.Dal.find(
-                        OB.Model.User,
+
+                OB.App.OfflineSession.sessionWithId(
+                  existingOrder.get('session')
+                )
+                  .then(session => {
+                    if (!session) {
+                      return null;
+                    }
+                    return OB.App.OfflineSession.withId(
+                      this.model.get('updatedBy')
+                    );
+                  })
+                  .then(user => {
+                    if (!user) {
+                      return;
+                    }
+                    OB.UTIL.showConfirmation.display(
+                      enyo.format(
+                        OB.I18N.getLabel('OBPOS_ticketAlreadyOpenedInSession'),
+                        orderTypeMsg,
+                        existingOrder.get('documentNo'),
+                        user.name
+                      ),
+                      enyo.format(
+                        OB.I18N.getLabel(
+                          'OBPOS_MsgConfirmSaveInCurrentSession'
+                        ),
+                        user.name
+                      ),
+                      [
                         {
-                          id: sessions.models[0].get('user')
-                        },
-                        function(users) {
-                          if (users.length > 0) {
-                            OB.UTIL.showConfirmation.display(
-                              enyo.format(
-                                OB.I18N.getLabel(
-                                  'OBPOS_ticketAlreadyOpenedInSession'
-                                ),
-                                orderTypeMsg,
-                                existingOrder.get('documentNo'),
-                                users.models[0].get('name')
-                              ),
-                              enyo.format(
-                                OB.I18N.getLabel(
-                                  'OBPOS_MsgConfirmSaveInCurrentSession'
-                                ),
-                                users.models[0].get('name')
-                              ),
-                              [
-                                {
-                                  label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                                  action: function() {
-                                    OB.Dal.remove(
-                                      existingOrder,
-                                      function() {
-                                        callback(model);
-                                      },
-                                      OB.UTIL.showError
-                                    );
-                                  }
-                                },
-                                {
-                                  label: OB.I18N.getLabel('OBMOBC_LblCancel'),
-                                  action: function() {
-                                    if (errorCallback) {
-                                      errorCallback();
-                                    }
-                                  }
-                                }
-                              ],
-                              {
-                                onHideFunction: function(dialog) {
-                                  return true;
-                                }
-                              }
+                          label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                          action: function() {
+                            OB.Dal.remove(
+                              existingOrder,
+                              function() {
+                                callback(model);
+                              },
+                              OB.UTIL.showError
                             );
                           }
+                        },
+                        {
+                          label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+                          action: function() {
+                            if (errorCallback) {
+                              errorCallback();
+                            }
+                          }
                         }
-                      );
-                    }
-                  }
-                );
+                      ],
+                      {
+                        onHideFunction: function(dialog) {
+                          return true;
+                        }
+                      }
+                    );
+                  });
               } else {
                 return callback(model);
               }
@@ -11956,14 +12131,91 @@
       },
       initialize: function(attributes) {
         if (attributes && attributes.discountRule) {
-          this.set(
-            'discountRule',
-            new OB.Model.Discount(attributes.discountRule)
-          );
+          this.set('discountRule', new Backbone.Model(attributes.discountRule));
         }
       }
     })
   });
+
+  OB.Data.PackDiscount = {};
+  OB.Data.PackDiscount['BE5D42E554644B6AA262CCB097753951'] = {
+    addPackToOrder: function(order, pack, attrs) {
+      try {
+        const discount = OB.Discounts.Pos.ruleImpls.find(
+          discount => discount.id === pack.get('id')
+        );
+
+        if (discount.endingDate && discount.endingDate.length > 0) {
+          var objDate = new Date(discount.endingDate);
+          var now = new Date();
+          var nowWithoutTime = new Date(now.toISOString().split('T')[0]);
+          if (nowWithoutTime > objDate) {
+            OB.UTIL.showConfirmation.display(
+              OB.I18N.getLabel('OBPOS_PackExpired_header'),
+              OB.I18N.getLabel('OBPOS_PackExpired_body', [
+                discount._identifier,
+                objDate.toLocaleDateString()
+              ])
+            );
+            return;
+          }
+        }
+
+        var addProductsAndCalculateDiscounts = async function(
+          products,
+          index,
+          callback,
+          errorCallback
+        ) {
+          if (index === products.length) {
+            return callback();
+          }
+          try {
+            const productResult = await OB.App.MasterdataModels.Product.withId(
+              products[index].product.id
+            );
+            let product = OB.Dal.transform(OB.Model.Product, productResult);
+            if (product) {
+              order.addProduct(
+                product,
+                products[index].obdiscQty,
+                {
+                  belongsToPack: true,
+                  blockAddProduct: true
+                },
+                attrs,
+                function() {
+                  addProductsAndCalculateDiscounts(
+                    products,
+                    index + 1,
+                    callback,
+                    errorCallback
+                  );
+                }
+              );
+            }
+          } catch (error) {
+            errorCallback();
+          }
+        };
+        var errorCallback = function(error) {
+          OB.error('OBDAL error: ' + error, arguments);
+        };
+        order.set('skipApplyPromotions', true);
+        addProductsAndCalculateDiscounts(
+          discount.products,
+          0,
+          function() {
+            order.set('skipApplyPromotions', false);
+            order.calculateReceipt();
+          },
+          errorCallback
+        );
+      } finally {
+        /* continue regardless of error */
+      }
+    }
+  };
 
   // order model is not registered using standard Registry method because list is
   // because collection is specific

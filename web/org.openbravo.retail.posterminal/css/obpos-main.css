@@ -985,7 +985,7 @@
   background-position: left center;
   background-color: transparent;
   background-size: 34px 27px;
-  margin-top: 8px;
+  margin: 8px 6px 0px 0px;
   float: left;
 }
 
@@ -5330,7 +5330,7 @@ li.selected > .obUiRenderOrderLine_edit {
   background-repeat: no-repeat;
   background-color: transparent;
 
-  background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-off.svg');
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconCheck.svg');
   background-size: 34px 27px;
 }
 
@@ -5370,17 +5370,17 @@ li.selected > .obUiRenderOrderLine_edit {
   width: 100%;
   position: relative;
   border: none;
-  margin: 0px;
   padding: 8px 10px 8px 10px;
   text-decoration: none;
   text-align: left;
   color: black;
   border-bottom: var(--separator-slim);
-  height: 63px;
   line-height: 23px;
   font-size: var(--font-medium);
+  vertical-align: middle;
 }
-.obUiOpenedReceiptsList-conteiner1-container1-obUiButton {
+
+.obUiOpenedReceiptsList-conteiner1-container1-obUiButton.selected {
   background-color: var(--color-quaternary-variant);
 }
 
@@ -5434,7 +5434,7 @@ li.selected > .obUiRenderOrderLine_edit {
   font-size: var(--font-medium);
 }
 
-.obUiOpenedReceiptsListLine_disabled {
+.obUiOpenedReceiptsListLine.selected {
   background-color: var(--color-quaternary-variant);
 }
 
@@ -6695,18 +6695,43 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Inherits: [OB.UI.CheckboxButton]
 */
 .obUiListInvoicesLine {
-  height: 38px;
-  background-position: 10px center;
   vertical-align: middle;
   width: 100%;
-  border-bottom: 1px solid #cccccc;
+  border-bottom: var(--separator-slim);
   text-align: left;
-  padding-left: 70px;
-  height: 58px;
+  padding-left: 10px;
+  height: 90px;
 }
 
+.obUiListInvoicesLine .obUiButton-components {
+  grid-auto-flow: column;
+  grid-template-columns: 50px 1fr;
+}
+
+.obUiListInvoicesLine .obUiButton-components-icon {
+  width: 100%;
+  height: 100%;;
+  border: none;
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-color: transparent;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconCheck.svg');
+  background-size: 34px 27px;
+  filter: var(--color-quaternary_img);
+}
+
+.obUiListInvoicesLine.active .obUiButton-components-icon {
+  filter: var(--color-secondary_img);
+}
+
+.obUiListInvoicesLine .obUiButton-components-label {
+  color: var(--color-on-surface-variant);
+}
+
+.obUiListInvoicesLine:focus {}
+
 .obUiListInvoicesLine-line {
-  line-height: 23px;
+  line-height: 30px;
   display: inline;
 }
 
@@ -6721,7 +6746,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obUiListInvoicesLine-line-element1 {
   clear: both;
 }
-
 
 /*
 # Component: OB.UI.ListInvoices
@@ -9209,7 +9233,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   grid-template-columns: auto 1fr;
 }
 
-
 .obObposPointOfSaleUiLineProperty-propertyLabel {
   width: 95px;
   text-align: right;
@@ -9227,16 +9250,24 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /*
 # Component: OB.OBPOSPointOfSale.UI.LinePropertyDiv
 */
-.obObposPointOfSaleUiLinePropertyDiv {}
+.obObposPointOfSaleUiLinePropertyDiv {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: auto 1fr;
+}
 
-.obObposPointOfSaleUiLinePropertyDiv-container1 {}
+.obObposPointOfSaleUiLinePropertyDiv-propertyLabel {
+  width: 95px;
+  text-align: right;
+  color: var(--color-secondary);
+  font-weight: bold;
+}
 
-.obObposPointOfSaleUiLinePropertyDiv-container1-propertyLabel {}
+.obObposPointOfSaleUiLinePropertyDiv-propertyValueWrapper {
+  padding-left: 12px;
+}
 
-.obObposPointOfSaleUiLinePropertyDiv-container1-container2 {}
-
-.obObposPointOfSaleUiLinePropertyDiv-container1-container2-propertyValue {}
-
+.obObposPointOfSaleUiLinePropertyDiv-propertyValueWrapper-propertyValue {}
 
 /*
 # Component: OB.OBPOSPointOfSale.UI.EditLine
@@ -15613,7 +15644,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   background-image: url('../../web/org.openbravo.retail.posterminal/img/deliveryServiceUnreviewed.svg');
   background-repeat: no-repeat;
   background-size: 26px 26px;
-  background-position: 0px 1px;
+  background-position: 2px 1px;
   width: 31px;
   height: 26px;
 }
@@ -15622,7 +15653,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   background-image: url('../../web/org.openbravo.retail.posterminal/img/deliveryServiceReviewed.svg');
   background-repeat: no-repeat;
   background-size: 26px 26px;
-  background-position: 0px 1px;
+  background-position: 2px 1px;
   width: 31px;
   height: 26px;
 }

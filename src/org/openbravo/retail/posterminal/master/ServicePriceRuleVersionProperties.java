@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2019 Openbravo S.L.U.
+ * Copyright (C) 2015-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -27,7 +27,7 @@ public class ServicePriceRuleVersionProperties extends ModelExtension {
         add(new HQLProperty("sprv.id", "id"));
         add(new HQLProperty("sprv.active", "active"));
         add(new HQLProperty("sprv.product.id", "product"));
-        add(new HQLProperty("to_char(sprv.validFromDate,'yyyy-mm-dd')", "validFromDate"));
+        add(new HQLProperty("sprv.validFromDate", "validFromDate"));
         add(new HQLProperty("sprv.servicePriceRule.id", "servicePriceRule"));
         add(new HQLProperty("sprv.obposMinimum", "minimum"));
         add(new HQLProperty("sprv.obposMaximum", "maximum"));

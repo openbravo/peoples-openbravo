@@ -47,6 +47,8 @@ import org.openbravo.mobile.core.servercontroller.MobileServerController;
 import org.openbravo.mobile.core.servercontroller.MobileServerRequestExecutor;
 import org.openbravo.mobile.core.servercontroller.MobileServerUtils;
 import org.openbravo.model.ad.access.OrderLineTax;
+import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.enterprise.OrganizationInformation;
 import org.openbravo.model.common.order.OrderLineOffer;
 import org.openbravo.service.json.JsonConstants;
 
@@ -188,6 +190,16 @@ public class PaidReceipts extends JSONProcessSimple {
               new String[] { paidReceipt.get("organization$_identifier").toString() });
         }
         orderOrganization.put("name", organizationIdentifier);
+
+        final Organization org = OBDal.getInstance()
+            .get(Organization.class, orderOrganization.getString("id"));
+        final OrganizationInformation orgInfo = org.getOrganizationInformationList().get(0);
+        if (orgInfo.getLocationAddress().getCountry() != null) {
+          orderOrganization.put("country", orgInfo.getLocationAddress().getCountry().getId());
+        }
+        if (orgInfo.getLocationAddress().getRegion() != null) {
+          orderOrganization.put("region", orgInfo.getLocationAddress().getRegion().getId());
+        }
 
         JSONArray paidReceiptsLines = hqlPropertiesLines.getJSONArray(paidReceiptsLinesQuery);
 
@@ -380,6 +392,7 @@ public class PaidReceipts extends JSONProcessSimple {
 
         JSONArray listpaidReceiptsPayments = new JSONArray();
         JSONArray listPaymentsType = new JSONArray();
+        BigDecimal totalPaids = BigDecimal.ZERO;
 
         // TODO: make this extensible
         String hqlPaymentsType = "select p.commercialName as name, p.financialAccount.id as account, p.searchKey as searchKey, "
@@ -503,6 +516,7 @@ public class PaidReceipts extends JSONProcessSimple {
                   (String) objectIn.get("paymentId"));
               added = true;
               listpaidReceiptsPayments.put(paidReceiptPayment);
+              totalPaids = totalPaids.add(objPaymentTrx);
             }
           }
           if (!added) {
@@ -586,9 +600,18 @@ public class PaidReceipts extends JSONProcessSimple {
                       : null);
               added = true;
               listpaidReceiptsPayments.put(paidReceiptPayment);
+              totalPaids = totalPaids.add(objPaymentTrx);
             }
 
           }
+        }
+
+        boolean cancelAndReplaceChangePending = (!paidReceipt.optString("replacedorder", "")
+            .isEmpty()
+            && totalPaids
+                .compareTo(BigDecimal.valueOf(paidReceipt.optDouble("totalamount", 0))) > 0);
+        if (cancelAndReplaceChangePending) {
+          paidReceipt.put("cancelAndReplaceChangePending", true);
         }
 
         paidReceipt.put("receiptPayments", listpaidReceiptsPayments);
@@ -666,9 +689,11 @@ public class PaidReceipts extends JSONProcessSimple {
     queryOrder.add(
         Restrictions.eq(org.openbravo.model.common.order.Order.PROPERTY_DOCUMENTNO, documentNo));
     queryOrder.setMaxResults(1);
-    org.openbravo.model.common.order.Order order = (org.openbravo.model.common.order.Order) queryOrder.uniqueResult();
-    if(order == null) {
-      throw new OBException("Can not be found any order with the provided document No: " + documentNo);
+    org.openbravo.model.common.order.Order order = (org.openbravo.model.common.order.Order) queryOrder
+        .uniqueResult();
+    if (order == null) {
+      throw new OBException(
+          "Can not be found any order with the provided document No: " + documentNo);
     }
     return order.getId();
   }

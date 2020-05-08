@@ -418,28 +418,18 @@ enyo.kind({
       retrievedPropertyForText: '_identifier',
       //property of the retrieved model to get the text of the combo item
       //function to retrieve the data
-      fetchDataFunction: function(args) {
-        var me = this,
-          criteria;
-        criteria = {
-          _orderByClause: '_identifier asc'
-        };
-        OB.Dal.find(
-          OB.Model.BPCategory,
-          criteria,
-          function(data, args) {
-            //This function must be called when the data is ready
-            me.dataReadyFunction(data, args);
-          },
-          function(error) {
-            OB.UTIL.showError(
-              OB.I18N.getLabel('OBPOS_ErrorGettingBPCategories')
-            );
-            //This function must be called when the data is ready
-            me.dataReadyFunction(null, args);
-          },
-          args
-        );
+      fetchDataFunction: async function(args) {
+        var me = this;
+
+        try {
+          const dataBPCategory = await OB.App.MasterdataModels.BPCategory.orderedBy(
+            'name'
+          );
+          me.dataReadyFunction(dataBPCategory, args);
+        } catch (err) {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_ErrorGettingBPCategories'));
+          me.dataReadyFunction(null, args);
+        }
       },
       i18nLabel: 'OBPOS_BPCategory',
       fgSection: 'OBPOS_FG_OthersInformation',
@@ -635,44 +625,49 @@ enyo.kind({
         return OB.MobileApp.model.get('pricelist').id;
       },
       //Default value for new lines
-      retrievedPropertyForValue: 'm_pricelist_id',
+      retrievedPropertyForValue: 'id',
       //property of the retrieved model to get the value of the combo item
       retrievedPropertyForText: 'name',
       //property of the retrieved model to get the text of the combo item
       //function to retrieve the data
       fetchDataFunction: function(args) {
         var me = this,
-          criteria;
-        criteria = {
-          _orderByClause: 'name asc'
+          getPriceList;
+
+        getPriceList = async function(callback) {
+          let priceListData = new Backbone.Collection();
+          try {
+            const criteria = new OB.App.Class.Criteria().orderBy('name', 'asc');
+            const priceList = await OB.App.MasterdataModels.PriceList.find(
+              criteria.build()
+            );
+            if (priceList && priceList.length > 0) {
+              priceList.forEach(function(p) {
+                priceListData.add(OB.Dal.transform(OB.Model.PriceList, p));
+              });
+            }
+            callback(priceListData);
+          } catch (error) {
+            OB.UTIL.showError(error);
+            callback(priceListData);
+          }
         };
-        OB.Dal.find(
-          OB.Model.PriceList,
-          criteria,
-          function(data, args) {
-            //This function must be called when the data is ready
-            data.add(
-              [
-                {
-                  m_pricelist_id: OB.MobileApp.model.get('pricelist').id,
-                  name: OB.MobileApp.model.get('pricelist').name
-                }
-              ],
-              {
-                at: 0
-              }
-            );
-            me.dataReadyFunction(data, args);
-          },
-          function(error) {
-            OB.UTIL.showError(
-              OB.I18N.getLabel('OBPOS_ErrorGettingBPPriceList')
-            );
-            //This function must be called when the data is ready
-            me.dataReadyFunction(null, args);
-          },
-          args
-        );
+
+        getPriceList(function(data) {
+          data.add(
+            OB.Dal.transform(OB.Model.PriceList, {
+              id: OB.MobileApp.model.get('pricelist').id,
+              name: OB.MobileApp.model.get('pricelist').name,
+              priceIncludesTax: OB.MobileApp.model.get('pricelist')
+                .priceIncludesTax,
+              c_currency_id: OB.MobileApp.model.get('pricelist').currency
+            }),
+            {
+              at: 0
+            }
+          );
+          me.dataReadyFunction(data, args);
+        });
       },
       i18nLabel: 'OBPOS_PriceList',
       fgSection: 'OBPOS_FG_OthersInformation',
@@ -753,26 +748,17 @@ enyo.kind({
       retrievedPropertyForText: '_identifier',
       //property of the retrieved model to get the text of the combo item
       //function to retrieve the data
-      fetchDataFunction: function(args) {
-        var me = this,
-          criteria;
-        criteria = {
-          _orderByClause: '_identifier asc'
-        };
-        OB.Dal.find(
-          OB.Model.Country,
-          criteria,
-          function(data, args) {
-            //This function must be called when the data is ready
-            me.dataReadyFunction(data, args);
-          },
-          function(error) {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_ErrorGettingCountries'));
-            //This function must be called when the data is ready
-            me.dataReadyFunction(null, args);
-          },
-          args
-        );
+      fetchDataFunction: async function(args) {
+        var me = this;
+        try {
+          const dataCountry = await OB.App.MasterdataModels.Country.orderedBy(
+            '_identifier'
+          );
+          me.dataReadyFunction(dataCountry, args);
+        } catch (err) {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_ErrorGettingCountries'));
+          me.dataReadyFunction(null, args);
+        }
       },
       hideShow: function(inSender, inEvent) {
         if (inEvent.checked) {
@@ -853,26 +839,17 @@ enyo.kind({
       retrievedPropertyForText: '_identifier',
       //property of the retrieved model to get the text of the combo item
       //function to retrieve the data
-      fetchDataFunction: function(args) {
-        var me = this,
-          criteria;
-        criteria = {
-          _orderByClause: '_identifier asc'
-        };
-        OB.Dal.find(
-          OB.Model.Country,
-          criteria,
-          function(data, args) {
-            //This function must be called when the data is ready
-            me.dataReadyFunction(data, args);
-          },
-          function(error) {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_ErrorGettingCountries'));
-            //This function must be called when the data is ready
-            me.dataReadyFunction(null, args);
-          },
-          args
-        );
+      fetchDataFunction: async function(args) {
+        var me = this;
+        try {
+          const dataCountry = await OB.App.MasterdataModels.Country.orderedBy(
+            '_identifier'
+          );
+          me.dataReadyFunction(dataCountry, args);
+        } catch (err) {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_ErrorGettingCountries'));
+          me.dataReadyFunction(null, args);
+        }
       }
     },
     {

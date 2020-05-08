@@ -39,7 +39,12 @@ OB.OBPOSPointOfSale.UI.ToolbarDiscounts = {
     var keyboard = this.owner.owner;
     keyboard.showKeypad('basic');
     keyboard.showSidepad('sideenabled');
-    keyboard.defaultcommand = 'line:dto';
+    keyboard.defaultcommand = OB.MobileApp.model.hasPermission(
+      'OBPOS_retail.discountkeyboard',
+      true
+    )
+      ? 'ticket:discount'
+      : 'line:dto';
     keyboard.disableCommandKey(this, {
       disabled: true,
       commands: ['%']
@@ -1104,7 +1109,10 @@ enyo.kind({
           classes:
             'obUiActionButton obObposPointOfSaleUiButtonMore-container1-btn',
           name: 'btn',
-          i18nLabel: 'OBPOS_MorePayments'
+          i18nLabel: 'OBPOS_MorePayments',
+          tap: function() {
+            this.owner.doShowAllButtons();
+          }
         }
       ]
     }
@@ -1112,11 +1120,6 @@ enyo.kind({
   initComponents: function() {
     this.inherited(arguments);
     this.activated = false;
-  },
-  tap: function() {
-    if (!this.$.btn.getDisabled()) {
-      this.doShowAllButtons();
-    }
   },
   buttonStatusChanged: function(inSender, inEvent) {
     var status = inEvent.value.status;
@@ -1172,18 +1175,16 @@ enyo.kind({
           kind: 'OB.UI.Button',
           classes:
             'obObposPointOfSaleUiButtonSwitch-container1-btn obUiActionButton',
-          name: 'btn'
+          name: 'btn',
+          tap: function() {
+            this.owner.keyboard.showNextKeypad();
+          }
         }
       ]
     }
   ],
   setLabel: function(lbl) {
     this.$.btn.setContent(lbl);
-  },
-  tap: function() {
-    if (!this.$.btn.getDisabled()) {
-      this.keyboard.showNextKeypad();
-    }
   },
   buttonStatusChanged: function(inSender, inEvent) {
     if (

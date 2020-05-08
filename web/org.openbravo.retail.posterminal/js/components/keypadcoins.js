@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2019 Openbravo S.L.U.
+ * Copyright (C) 2013-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -261,11 +261,14 @@ enyo.kind({
     {
       kind: 'OB.UI.Button',
       classes: 'obUiPaymentButton-btn',
-      name: 'btn'
+      avoidDoubleClick: false,
+      name: 'btn',
+      tap: function() {
+        this.owner.addPayment();
+      }
     }
   ],
   coinClass: 'obUiPaymentButton-generic',
-  avoidDoubleClick: false,
   initComponents: function() {
     var btn;
     this.inherited(arguments);
@@ -282,7 +285,7 @@ enyo.kind({
       btn.addClass(this.coinClass);
     }
   },
-  tap: function() {
+  addPayment: function() {
     if (OB.MobileApp.model.hasPermission(this.paymenttype)) {
       var me = this,
         myWindowModel = this.owner.owner.owner.owner.owner.owner.owner.model;

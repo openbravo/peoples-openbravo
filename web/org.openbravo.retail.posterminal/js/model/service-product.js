@@ -15,7 +15,9 @@
     source: 'org.openbravo.retail.posterminal.master.ServiceProduct',
     dataLimit: 100,
     includeTerminalDate: true,
-    remote: 'OBPOS_remote.product'
+    remote: 'OBPOS_remote.product',
+    indexDBModel: OB.App.MasterdataModels.ServiceProduct.getName(),
+    legacyModel: true
   });
 
   ServiceProduct.addProperties([

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -18,12 +18,15 @@ import javax.inject.Inject;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
+import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery.MasterDataModel;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
 
+@MasterDataModel("DiscountFilterProductCategory")
 public class DiscountFilterProductCategory extends Discount {
   public static final String discFilterProductCategoryPropertyExtension = "PricingAdjustmentProductCategory";
+
   @Inject
   @Any
   @Qualifier(discFilterProductCategoryPropertyExtension)
@@ -40,8 +43,15 @@ public class DiscountFilterProductCategory extends Discount {
 
     hql += " and exists (select 1 " + getPromotionsHQL(jsonsent, false);
     hql += "              and pc.priceAdjustment = p) ";
+    hql += "and pc.$paginationByIdCriteria ";
     hql += "order by pc.id asc";
 
-    return Arrays.asList(new String[] { hql });
+    return Arrays.asList(hql);
+  }
+
+  @Override
+  public List<String> getMasterDataModelProperties() {
+    return getPropertiesFrom(extensions);
+
   }
 }

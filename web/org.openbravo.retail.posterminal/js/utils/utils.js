@@ -81,12 +81,3 @@ OB.UTIL.HookManager.registerHook(
     OB.UTIL.HookManager.callbackExecutor(args, callback);
   }
 );
-
-OB.UTIL.HookManager.registerHook(
-  'OBPOS_LoadRelatedServices_ExtendCriteria',
-  function(args, callback) {
-    args.criteria._whereClause +=
-      " and product.obrdmIsdeliveryservice =  'false' ";
-    OB.UTIL.HookManager.callbackExecutor(args, callback);
-  }
-);

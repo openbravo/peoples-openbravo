@@ -14,20 +14,16 @@ String toServiceWorker="";
 String toAppCache="";
 boolean useServiceWorkers = false; 
 String browserType = request.getHeader("User-Agent");
-if((browserType.contains("Safari") && browserType.contains("Version")) || (browserType.contains("iPhone")) || (browserType.contains("iPad")) ){
-  useServiceWorkers=false;
-}else{
-  try{
-    Map<QueryFilter, Boolean> queryFilters = new HashMap<QueryFilter, Boolean>();
-    queryFilters.put(QueryFilter.ACTIVE, true);
-    queryFilters.put(QueryFilter.CLIENT, false);
-    queryFilters.put(QueryFilter.ORGANIZATION, false);
-    useServiceWorkers=Preferences.getPreferenceValue("OBPOS_UseServiceWorkersForOffline", true, null, null,
-    null, null, (String) null, queryFilters).equals("Y");
-  }catch(PropertyNotFoundException e) {
-    //If preference is not set, we will use ServiceWorkers
-    useServiceWorkers=true;
-  }
+try {
+  Map<QueryFilter, Boolean> queryFilters = new HashMap<QueryFilter, Boolean>();
+  queryFilters.put(QueryFilter.ACTIVE, true);
+  queryFilters.put(QueryFilter.CLIENT, false);
+  queryFilters.put(QueryFilter.ORGANIZATION, false);
+  useServiceWorkers=Preferences.getPreferenceValue("OBPOS_UseServiceWorkersForOffline", true, null, null,
+  null, null, (String) null, queryFilters).equals("Y");
+} catch (PropertyNotFoundException e) {
+  //If preference is not set, we will use ServiceWorkers
+  useServiceWorkers=true;
 }
 
 if (useServiceWorkers) {

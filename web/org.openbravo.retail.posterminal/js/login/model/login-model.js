@@ -226,7 +226,11 @@
                       id: organization,
                       name: OB.I18N.getLabel('OBPOS_LblThisStore', [
                         terminalModel.get('terminal').organization$_identifier
-                      ])
+                      ]),
+                      country: OB.MobileApp.model.get('terminal')
+                        .organizationCountryId,
+                      region: OB.MobileApp.model.get('terminal')
+                        .organizationRegionId
                     });
                     terminalModel.get('store').splice(1, 0, {
                       id: 'all_' + organization,
@@ -972,7 +976,7 @@
       this.postSyncProcessActions();
     },
 
-    postSyncProcessActions: function() {
+    postSyncProcessActions: async function() {
       if (
         OB.MobileApp.model.get('context') &&
         OB.MobileApp.model.get('context').user &&
@@ -980,27 +984,20 @@
           OB.MobileApp.model.get('context').user.isSalesRepresentative
         )
       ) {
-        OB.Dal.get(
-          OB.Model.SalesRepresentative,
-          OB.MobileApp.model.get('context').user.id,
-          function(salesrepresentative) {
-            if (!salesrepresentative) {
-              OB.MobileApp.model.get(
-                'context'
-              ).user.isSalesRepresentative = false;
-            } else {
-              OB.MobileApp.model.get(
-                'context'
-              ).user.isSalesRepresentative = true;
-            }
-          },
-          function() {},
-          function() {
+        try {
+          const salesrepresentative = await OB.App.MasterdataModels.SalesRepresentative.withId(
+            OB.MobileApp.model.get('context').user.id
+          );
+          if (!salesrepresentative) {
             OB.MobileApp.model.get(
               'context'
             ).user.isSalesRepresentative = false;
+          } else {
+            OB.MobileApp.model.get('context').user.isSalesRepresentative = true;
           }
-        );
+        } catch (err) {
+          OB.error(err.message);
+        }
       }
     },
 
@@ -1013,7 +1010,7 @@
               OB.MobileApp.model.off('change:isLoggingIn', null, this);
               this.runSyncProcess(function() {
                 OB.UTIL.sendLastTerminalStatusValues();
-                OB.App.SynchronizationBuffer.start();
+                OB.App.SynchronizationBuffer.goOnline('Backend');
               });
             }
           },
@@ -1024,7 +1021,7 @@
         //but we will attempt to send all pending orders automatically
         this.runSyncProcess(function() {
           OB.UTIL.sendLastTerminalStatusValues();
-          OB.App.SynchronizationBuffer.start();
+          OB.App.SynchronizationBuffer.goOnline('Backend');
         });
       }
     },
@@ -1483,11 +1480,16 @@
     },
 
     cleanSessionInfo: function() {
-      this.cleanTerminalData();
+      return new Promise(resolve => {
+        OB.UTIL.HookManager.executeHooks('OBPOS_PreLogoutAction', {}, () => {
+          this.cleanTerminalData();
+          resolve();
+        });
+      });
     },
 
     preLoginActions: function() {
-      this.cleanSessionInfo();
+      this.cleanTerminalData();
     },
 
     preLogoutActions: function(finalCallback) {
@@ -1497,8 +1499,7 @@
       function removeOneModel(model, collection, callback) {
         if (collection.length === 0) {
           if (callback && callback instanceof Function) {
-            me.cleanSessionInfo();
-            callback();
+            me.cleanSessionInfo().then(() => callback());
           }
           return;
         }
@@ -1517,8 +1518,7 @@
           removeOneModel(collection.at(0), collection, finalCallback);
         } else {
           if (finalCallback && finalCallback instanceof Function) {
-            me.cleanSessionInfo();
-            finalCallback();
+            me.cleanSessionInfo().then(() => finalCallback());
           }
         }
       }

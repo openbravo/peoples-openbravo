@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2019 Openbravo S.L.U.
+ * Copyright (C) 2013-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -110,34 +110,21 @@ enyo.kind({
       ]
     }
   ],
-  productCharacteristicValueFilterQualifier: 'ProductCH_Filter',
   clearAction: function(inSender, inEvent) {
     this.valuesList.reset();
     this.initialValuesList = null;
     return true;
   },
-  searchAction: function(inSender, inEvent) {
-    var me = this,
-      i,
-      j,
-      params = [],
+  searchAction: async function(inSender, inEvent) {
+    let me = this,
       productCharacteristic =
         inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$
           .searchCharacteristic.$.searchCharacteristicTabContent.$
           .searchProductCharacteristicHeader.parent,
-      forceRemote = false;
-    var productFilterText,
-      productCategory,
-      productCharacteristicModel,
+      forceRemote = false,
       resetValueList,
-      characteristic = [],
       crossStoreSearch;
 
-    productFilterText = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.formElementProductFilterText.coreElement.getValue();
-    productCharacteristicModel =
-      inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$
-        .searchCharacteristic.$.searchCharacteristicTabContent.$
-        .searchProductCharacteristicHeader.parent.model;
     crossStoreSearch =
       inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$
         .searchCharacteristic.$.searchCharacteristicTabContent.$
@@ -163,8 +150,15 @@ enyo.kind({
 
     resetValueList = function(dataValues) {
       if (dataValues && dataValues.length > 0) {
-        var modelsList,
+        let modelsList, initialModelsList;
+        if (
+          OB.MobileApp.model.hasPermission('OBPOS_remote.product', true) ||
+          forceRemote
+        ) {
           initialModelsList = dataValues.models;
+        } else {
+          initialModelsList = dataValues;
+        }
         // Remove Characteristic Parent with No Child
         me.validateChildrenTree(initialModelsList, '0');
         initialModelsList = _.filter(initialModelsList, function(model) {
@@ -211,241 +205,41 @@ enyo.kind({
       }
     };
 
-    productCategory = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.getProductCategoryFilter(
-      forceRemote
-    );
     if (
       !OB.MobileApp.model.hasPermission('OBPOS_remote.product', true) &&
       !forceRemote
     ) {
-      var sql, num, brandStr;
-      sql =
-        'select distinct(id), name, characteristic_id, parent, summaryLevel from m_ch_value chv where  chv.characteristic_id = ?';
-      sql +=
-        " and ((chv.summaryLevel = 'false' and (exists (select 1 from M_Product_Ch_Value mpchv, M_Product p where mpchv.M_Product_ID = p.M_Product_ID and chv.id = mpchv.m_ch_value_id";
-      params.push(this.parent.parent.characteristic.get('id'));
-      // brand filter
-      if (productCharacteristicModel.get('brandFilter').length > 0) {
-        num = 0;
-        brandStr = '';
-        for (
-          i = 0;
-          i < productCharacteristicModel.get('brandFilter').length;
-          i++
-        ) {
-          if (num >= 1) {
-            brandStr += ',';
-          }
-          brandStr +=
-            "'" + productCharacteristicModel.get('brandFilter')[i].id + "'";
-          num++;
+      try {
+        const criteria = new OB.App.Class.Criteria()
+          .orderBy('name', 'asc')
+          .criterion(
+            'characteristic_id',
+            this.parent.parent.characteristic.get('id')
+          )
+          .build();
+        const characteristics = await OB.App.MasterdataModels.CharacteristicValue.find(
+          criteria
+        );
+        let dataValues = [];
+        for (let i = 0; i < characteristics.length; i++) {
+          dataValues.push(
+            OB.Dal.transform(OB.Model.CharacteristicValue, characteristics[i])
+          );
         }
-        sql += ' and (p.brand in (' + brandStr + '))';
+        resetValueList(dataValues);
+      } catch (error) {
+        OB.UTIL.showError(error);
       }
-      // product name and category filter
-      if (productFilterText !== undefined && productCategory !== undefined) {
-        if (
-          productFilterText !== '' ||
-          productCategory !== '__all__' ||
-          productCategory !== "'__all__'"
-        ) {
-          params.push('%' + productFilterText + '%');
-          if (productCategory === 'OBPOS_bestsellercategory') {
-            sql +=
-              " AND p.bestseller = 'true' AND ( Upper(p._filter) LIKE Upper(?) )";
-          } else if (
-            productCategory === '__all__' ||
-            productCategory === "'__all__'" ||
-            productCategory === ''
-          ) {
-            sql += ' AND (Upper(p._filter) LIKE Upper(?))';
-          } else {
-            sql +=
-              ' AND (Upper(p._filter) LIKE Upper(?)) AND(p.m_product_category_id IN (' +
-              productCategory +
-              '))';
-          }
-        }
-      }
-      // characteristics filter
-      if (me.parent.parent.model.get('filter').length > 0) {
-        for (i = 0; i < me.parent.parent.model.get('filter').length; i++) {
-          if (
-            !characteristic.includes(
-              me.parent.parent.model.get('filter')[i].characteristic_id
-            )
-          ) {
-            characteristic.push(
-              me.parent.parent.model.get('filter')[i].characteristic_id
-            );
-          }
-        }
-
-        for (i = 0; i < characteristic.length; i++) {
-          num = 0;
-          var characteristicsValuesStr = '';
-          for (j = 0; j < me.parent.parent.model.get('filter').length; j++) {
-            if (
-              characteristic[i] ===
-              me.parent.parent.model.get('filter')[j].characteristic_id
-            ) {
-              if (num > 0) {
-                characteristicsValuesStr += ',';
-              }
-              characteristicsValuesStr +=
-                "'" + me.parent.parent.model.get('filter')[j].id + "'";
-              num++;
-            }
-          }
-          sql +=
-            ' and (exists (select 1 from M_Product_Ch_Value mpcharv where mpcharv.M_Product_ID = mpchv.M_Product_ID and mpcharv.m_ch_value_id in (' +
-            characteristicsValuesStr +
-            '))) ';
-        }
-      }
-      sql += "))) or chv.summaryLevel = 'true')";
-      //external modules filter
-      var sqlCriteriaFilter = '';
-      productCharacteristic.customFilters.forEach(function(sqlFilter) {
-        if (!_.isUndefined(sqlFilter.sqlFilterQueryCharacteristics)) {
-          var criteriaFilter = sqlFilter.sqlFilterQueryCharacteristicsValue();
-          if (criteriaFilter.query !== null) {
-            params = params.concat(criteriaFilter.filters);
-            sqlCriteriaFilter += criteriaFilter.query;
-          }
-        }
-      });
-      sql = sql + sqlCriteriaFilter;
-      sql = sql + ' order by UPPER(name) asc';
-      OB.Dal.query(
-        OB.Model.CharacteristicValue,
-        sql,
-        params,
-        function(dataValues, me) {
-          resetValueList(dataValues);
-        },
-        function(tx, error) {
-          OB.UTIL.showError(error);
-        },
-        this
-      );
       return true;
     } else {
-      var remoteCriteria = [],
-        characteristicParams = '',
-        brandparams = [],
-        characteristicValue = [];
-      var productFilter = {},
+      let remoteCriteria = [],
         criteria = {},
-        brandfilter = {},
-        productText,
         characteristicfilter = {
           columns: ['characteristic_id'],
           operator: 'equals',
           value: this.parent.parent.characteristic.get('id'),
           isId: true
         };
-      // brand filter
-      if (productCharacteristicModel.get('brandFilter').length > 0) {
-        for (
-          i = 0;
-          i < productCharacteristicModel.get('brandFilter').length;
-          i++
-        ) {
-          brandparams.push(productCharacteristicModel.get('brandFilter')[i].id);
-        }
-        if (brandparams.length > 0) {
-          brandfilter = {
-            columns: [],
-            operator: OB.Dal.FILTER,
-            value: 'BChV_Filter',
-            params: [brandparams]
-          };
-          remoteCriteria.push(brandfilter);
-        }
-      }
-      // product name and category filter
-      if (productFilterText !== undefined || productCategory !== undefined) {
-        // characteristic filter
-        if (me.parent.parent.model.get('filter').length > 0) {
-          for (i = 0; i < me.parent.parent.model.get('filter').length; i++) {
-            if (
-              !characteristic.includes(
-                me.parent.parent.model.get('filter')[i].characteristic_id
-              )
-            ) {
-              characteristic.push(
-                me.parent.parent.model.get('filter')[i].characteristic_id
-              );
-            }
-          }
-          for (i = 0; i < characteristic.length; i++) {
-            for (j = 0; j < me.parent.parent.model.get('filter').length; j++) {
-              if (
-                characteristic[i] ===
-                me.parent.parent.model.get('filter')[j].characteristic_id
-              ) {
-                characteristicValue.push(
-                  me.parent.parent.model.get('filter')[j].id
-                );
-              }
-            }
-            if (i > 0) {
-              characteristicParams += ';';
-            }
-            characteristicParams += characteristicValue;
-            characteristicValue = [];
-          }
-        }
-        var productCat = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.getSelectedCategories(),
-          category =
-            productCat.indexOf('OBPOS_bestsellercategory') >= 0
-              ? 'OBPOS_bestsellercategory'
-              : productCat.indexOf('__all__') >= 0
-              ? '__all__'
-              : [productCategory.value];
-        productFilter.columns = [];
-        productFilter.operator = OB.Dal.FILTER;
-        productFilter.value = this.productCharacteristicValueFilterQualifier;
-        if (
-          OB.MobileApp.model.hasPermission('OBPOS_remote.product', true) ||
-          (crossStoreSearch && crossStoreSearch.checked)
-        ) {
-          productText =
-            (OB.MobileApp.model.hasPermission(
-              'OBPOS_remote.product' + OB.Dal.USESCONTAINS,
-              true
-            )
-              ? '%'
-              : '') +
-            productFilterText +
-            '%';
-        } else {
-          productText = '%' + productFilterText + '%';
-        }
-        productFilter.params = [
-          productText,
-          productCategory.filter ? productCategory.params[0] : category,
-          characteristicParams,
-          brandparams.join(','),
-          OB.MobileApp.model.get('terminal').id
-        ];
-        remoteCriteria.push(productFilter);
-      }
-      // external modules filter
-      criteria.hqlCriteria = [];
-      productCharacteristic.customFilters.forEach(function(hqlFilter) {
-        if (!_.isUndefined(hqlFilter.hqlCriteriaCharacteristicsValue)) {
-          var hqlCriteriaFilter = hqlFilter.hqlCriteriaCharacteristicsValue();
-          if (!_.isUndefined(hqlCriteriaFilter)) {
-            hqlCriteriaFilter.forEach(function(filter) {
-              if (filter) {
-                remoteCriteria.push(filter);
-              }
-            });
-          }
-        }
-      });
       remoteCriteria.push(characteristicfilter);
       criteria.remoteFilters = remoteCriteria;
       criteria.forceRemote = forceRemote;

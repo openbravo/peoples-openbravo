@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+/*
+ ************************************************************************************
+ * Copyright (C) 2020 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+ */
+-->
+<SqlClass name="ConvertBrandIntoCharacteristicData" package="org.openbravo.retail.posterminal.modulescript">
+  <SqlClassComment></SqlClassComment>
+  <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        <![CDATA[
+	       select '' as m_brand_id, '' as ad_client_id, '' as ad_org_id, '' as name , '' as numbrands, '' as m_product_id FROM DUAL
+        ]]>
+      </Sql>
+  </SqlMethod>
+    <SqlMethod name="selectBrands" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        <![CDATA[
+           select m_brand_id, ad_client_id, ad_org_id, name from m_brand where ad_client_id= ?
+        ]]>
+      </Sql>
+    <Parameter name="adClientId"/>
+  </SqlMethod>      
+   <SqlMethod name="selectBrandByClient" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        <![CDATA[
+          select ad_client_id , count(*) as numbrands from m_brand group by ad_client_id
+        ]]>
+      </Sql>
+  </SqlMethod>
+  <SqlMethod name="insertCharacteristic" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        <![CDATA[
+        INSERT INTO m_characteristic(
+		m_characteristic_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, name, 
+		description, ad_tree_id, isvariant, isexplodeconf, em_obpos_filteronwebpos, em_obpos_useonwebpos)
+		VALUES (?, ?,'0', 'Y', now(), '100', now(), '100', 'Brand', null, '899D83A7B7E24F57911A91AE82DCA496','N', 'Y', 'Y', 'Y')
+        ]]>
+      </Sql>
+      <Parameter name="id"/>
+      <Parameter name="adClientId"/>
+  </SqlMethod>
+  <SqlMethod name="insertCharacteristicValues" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        <![CDATA[
+        INSERT INTO m_ch_value(
+		m_ch_value_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, 
+		m_characteristic_id, name, issummary, skcode, description, add_products)
+		VALUES (?, ?, ?,'Y', now(), '100', now(), '100', ?, ?, 'N', null, null, 'N')
+        ]]>
+      </Sql>
+      <Parameter name="brandId"/>
+      <Parameter name="adClientId"/>
+      <Parameter name="adOrgId"/>
+      <Parameter name="id"/>
+      <Parameter name="name"/>
+  </SqlMethod>
+    <SqlMethod name="insertTreeNode" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        <![CDATA[
+        INSERT INTO ad_treenode(
+		ad_treenode_id, ad_tree_id, node_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, parent_id, seqno)
+		VALUES (get_uuid(), '899D83A7B7E24F57911A91AE82DCA496', ?, ?, ?,'Y', now(), '100', now(), '100', '0', '999')
+        ]]>
+      </Sql>
+      <Parameter name="brandId"/>
+      <Parameter name="adClientId"/>
+      <Parameter name="adOrgId"/>
+  </SqlMethod>
+     <SqlMethod name="selectProductBrands" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        <![CDATA[
+	      select p.m_product_id, p.m_brand_id , p.ad_client_id , p.ad_org_id , b.name from m_product p, m_brand b  where p.m_brand_id=b.m_brand_id and p.ad_client_id=?
+        ]]>
+      </Sql>
+      <Parameter name="adClientId"/>
+  </SqlMethod>
+   <SqlMethod name="insertProductCharacteristic" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        <![CDATA[
+        INSERT INTO m_product_ch(
+		m_product_ch_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, m_product_id, m_characteristic_id, seqno, 
+		isvariant, m_ch_subset_id, define_price, define_image, pricelist_type, isexplodeconf)
+		VALUES (get_uuid(), ?, ?, 'Y', now(), '100', now(), '100', ?, ?,'90', 'N', null, 'N', 'N', 'SALES', 'N')
+        ]]>
+      </Sql>
+      <Parameter name="adClientId"/>
+      <Parameter name="adOrgId"/>
+      <Parameter name="mProductId"/>
+      <Parameter name="id"/>
+  </SqlMethod>
+     <SqlMethod name="insertProductCharacteristicValue" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        <![CDATA[
+        INSERT INTO m_product_ch_value(
+		m_product_ch_value_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, m_product_id, m_characteristic_id, m_ch_value_id)
+		VALUES (get_uuid(), ?, ?, 'Y', now(), '100', now(), '100',?,?,?)
+        ]]>
+      </Sql>
+      <Parameter name="adClientId"/>
+      <Parameter name="adOrgId"/>
+      <Parameter name="mProductId"/>
+      <Parameter name="mCharacteristicId"/>
+      <Parameter name="mBrandId"/>
+  </SqlMethod>
+  <SqlMethod name="updateCharacteristicDesc" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        <![CDATA[
+        update m_product set characteristic_desc = (coalesce((characteristic_desc||', '|| 'Brand: ' || ?  ), 'Brand: ' || ? )) where m_product_id= ? 
+        ]]>
+      </Sql>
+      <Parameter name="name"/>
+	  <Parameter name="name"/>
+      <Parameter name="mProductId"/>
+  </SqlMethod>
+  <SqlMethod name="createPreference" type="preparedStatement" return="rowcount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        INSERT INTO ad_preference (
+          ad_preference_id, ad_client_id, ad_org_id, isactive,
+          createdby, created, updatedby, updated,
+          attribute
+        ) VALUES (
+          get_uuid(), '0', '0', 'Y',
+          '0', NOW(), '0', NOW(),
+          'ConvertBrandIntoCharacteristic'
+        )
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="existBrand" type="preparedStatement" return="boolean">
+    <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        <![CDATA[
+          select count(*) as existbrand from m_characteristic where name ='Brand'
+        ]]>
+      </Sql>
+  </SqlMethod>
+  <SqlMethod name="hasPreference" type="preparedStatement" return="boolean">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT count(*) as existpreference
+        FROM ad_preference
+        WHERE attribute = 'ConvertBrandIntoCharacteristic'        
+      ]]>
+    </Sql>
+  </SqlMethod>
+</SqlClass>

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2019-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -223,7 +223,6 @@ enyo.kind({
     onRemoveMultiOrders: 'removeMultiOrders',
     onRightToolDisabled: 'rightToolbarDisabled',
     onSelectCharacteristicValue: 'selectCharacteristicValue',
-    onSelectBrand: 'selectBrand',
     onSelectFilter: 'selectFilter',
     onSelectCategoryTreeItem: 'selectCategoryTreeItem',
     onShowLeftHeader: 'doShowLeftHeader',
@@ -542,12 +541,6 @@ enyo.kind({
           name: 'modalproductcharacteristic',
           classes:
             'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalproductcharacteristic'
-        },
-        {
-          kind: 'OB.UI.ModalProductBrand',
-          name: 'modalproductbrand',
-          classes:
-            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalproductbrand'
         },
         {
           kind: 'OB.UI.ModalCategoryTree',
@@ -920,9 +913,16 @@ enyo.kind({
     var targetOrder,
       me = this,
       attrs,
+      finalCallback,
       negativeLines;
+    finalCallback = function(success, orderline) {
+      if (inEvent.callback) {
+        inEvent.callback.call(inEvent.context, success || false, orderline);
+      }
+    };
     if (inEvent.product.get('ignoreAddProduct')) {
       inEvent.product.unset('ignoreAddProduct');
+      finalCallback(false);
       return;
     }
     if (inEvent && inEvent.targetOrder) {
@@ -1019,17 +1019,13 @@ enyo.kind({
                 }
               }
             } else {
-              if (inEvent.callback) {
-                inEvent.callback.call(inEvent.context, false);
-              }
+              finalCallback(false);
             }
           } else {
             this.doShowPopup({
               popup: 'modalNotEditableOrder'
             });
-            if (inEvent.callback) {
-              inEvent.callback.call(inEvent.context, false);
-            }
+            finalCallback(false);
           }
         },
         this
@@ -1103,9 +1099,7 @@ enyo.kind({
       },
       function(args) {
         if (args.cancelOperation && args.cancelOperation === true) {
-          if (inEvent.callback) {
-            inEvent.callback.call(inEvent.context, false);
-          }
+          finalCallback(false);
           return true;
         }
         args.receipt.addProcess = {};
@@ -1119,6 +1113,8 @@ enyo.kind({
           args.attrs,
           function(success, orderline) {
             args.receipt.addProcess.pending = false;
+            args.context.model.get('orderList').saveCurrent();
+            finalCallback(success, orderline);
             if (success && orderline) {
               if (
                 orderline.get('hasMandatoryServices') === false &&
@@ -1128,10 +1124,6 @@ enyo.kind({
                   me.addProductToOrder(product.inSender, product.inEvent);
                 });
               }
-            }
-            args.context.model.get('orderList').saveCurrent();
-            if (inEvent.callback) {
-              inEvent.callback.call(inEvent.context, success, orderline);
             }
           }
         );
@@ -1579,7 +1571,7 @@ enyo.kind({
     var selectedModels = inEvent.selectedReceiptLines,
       receipt = this.model.get('order');
 
-    receipt.deleteLinesFromOrder(selectedModels);
+    receipt.deleteLinesFromOrder(selectedModels, inEvent.callback);
   },
   editLine: function(inSender, inEvent) {
     var receipt = this.model.get('order');
@@ -2029,11 +2021,6 @@ enyo.kind({
   maxLimitAmountError: function(inSender, inEvent) {
     this.waterfallDown('onMaxLimitAmountError', inEvent);
     return true;
-  },
-  selectBrand: function(inSender, inEvent) {
-    this.waterfall('onUpdateBrandFilter', {
-      value: inEvent
-    });
   },
   selectCategoryTreeItem: function(inSender, inEvent) {
     this.waterfall('onSelectCategoryItem', inEvent);

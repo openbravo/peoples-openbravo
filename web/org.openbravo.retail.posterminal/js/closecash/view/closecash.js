@@ -288,6 +288,13 @@ enyo.kind({
               'obObPosCloseCashUiCloseCash-closeCashMultiColumn-closeCashRightPanel-closeCashKeyboard'
           }
         ]
+      },
+      resizeHandler: function() {
+        // see issue https://issues.openbravo.com/view.php?id=43360
+        var me = this;
+        setTimeout(function() {
+          me.render();
+        }, 1);
       }
     }
   ],

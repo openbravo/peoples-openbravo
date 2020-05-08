@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019 Openbravo S.L.U.
+ * Copyright (C) 2019-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -49,6 +49,7 @@
       return active;
     };
     this.command = function(view) {
+      var me = this;
       var cancelQtyChange = false;
       var cancelQtyChangeReturn = false;
 
@@ -87,8 +88,33 @@
         }
       };
 
-      if (!selectedReceiptLine) {
+      if (
+        !selectedReceiptLine ||
+        !receipt.get('lines').models.find(function(l) {
+          return selectedReceiptLine.get('id') === l.get('id');
+        })
+      ) {
         return;
+      }
+
+      if (!selectedReceiptLines || selectedReceiptLines.length === 0) {
+        return;
+      } else {
+        var selectedLines = [];
+        selectedReceiptLines.forEach(function(selectedLine) {
+          if (
+            receipt.get('lines').models.find(function(l) {
+              return selectedLine.get('id') === l.get('id');
+            })
+          ) {
+            selectedLines.push(selectedLine);
+          }
+        });
+        if (selectedLines.length > 0) {
+          selectedReceiptLines = selectedLines;
+        } else {
+          return;
+        }
       }
 
       if (!isFinite(value)) {
@@ -171,8 +197,34 @@
       validateQuantity()
         .then(
           function() {
-            var selection = [];
-            var deletedlines = [];
+            var selection = [],
+              deletedlines = [],
+              finalCallback;
+
+            if (me.pendingProcess) {
+              return;
+            }
+            me.pendingProcess = true;
+
+            finalCallback = _.after(selectedReceiptLines.length, function() {
+              if (deletedlines.length > 0) {
+                view.deleteLine(view, {
+                  selectedReceiptLines: deletedlines,
+                  callback: function() {
+                    me.pendingProcess = false;
+                  }
+                });
+              } else {
+                me.pendingProcess = false;
+              }
+              receipt.set('multipleUndo', null);
+              receipt.trigger('scan');
+              if (selection.length > 0) {
+                view.setMultiSelectionItems(view, {
+                  selection: selection
+                });
+              }
+            });
             receipt.set('undo', null);
             if (selectedReceiptLines && selectedReceiptLines.length > 1) {
               receipt.set('multipleUndo', true);
@@ -184,7 +236,9 @@
                 var newqty = line.get('qty') + toadd;
                 if (newqty === 0) {
                   // If final quantity will be 0 then request approval
+                  selection.pop();
                   deletedlines.push(line);
+                  finalCallback();
                 } else if (newqty > 0) {
                   view.addProductToOrder(view, {
                     product: line.get('product'),
@@ -192,36 +246,38 @@
                     options: {
                       line: line,
                       blockAddProduct: true
+                    },
+                    callback: function() {
+                      finalCallback();
                     }
                   });
                 } else {
                   receipt.checkReturnableProducts(
                     selectedReceiptLines,
                     line,
-                    function() {
+                    function(success) {
+                      if (!success) {
+                        finalCallback();
+                        return;
+                      }
                       view.addProductToOrder(view, {
                         product: line.get('product'),
                         qty: toadd,
                         options: {
                           line: line,
                           blockAddProduct: true
+                        },
+                        callback: function() {
+                          finalCallback();
                         }
                       });
                     }
                   );
                 }
+              } else {
+                finalCallback();
               }
             }, this);
-            if (deletedlines.length > 0) {
-              view.deleteLine(view, {
-                selectedReceiptLines: deletedlines
-              });
-            }
-            receipt.set('multipleUndo', null);
-            receipt.trigger('scan');
-            view.setMultiSelectionItems(view, {
-              selection: selection
-            });
           }.bind(this)
         )
         .catch(function(error) {

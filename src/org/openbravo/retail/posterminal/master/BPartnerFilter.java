@@ -105,7 +105,7 @@ public class BPartnerFilter extends ProcessHQLQueryValidated {
         + "bp.$naturalOrgCriteria AND bp.active = true AND $hqlCriteria ";
 
     if (isLocation) {
-      return new StringBuilder(whereClause).append(" AND bpl.active = true ").toString();
+      return whereClause + " AND bpl.active = true ";
     }
     return whereClause;
   }

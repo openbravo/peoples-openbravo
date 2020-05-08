@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2019 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -407,36 +407,41 @@ OB.UTIL.Math.sign = function(x) {
   return x > 0 ? 1 : -1;
 };
 
-OB.UTIL.getPriceListName = function(priceListId, callback) {
+OB.UTIL.getPriceList = async function(priceListId, callback) {
   if (priceListId) {
     if (OB.MobileApp.model.get('pricelist').id === priceListId) {
-      callback(OB.MobileApp.model.get('pricelist').name);
-    } else {
-      OB.Dal.findUsingCache(
-        'PriceListName',
-        OB.Model.PriceList,
-        { m_pricelist_id: priceListId },
-        function(pList) {
-          if (pList.length > 0) {
-            callback(pList.at(0).get('name'));
-          } else {
-            callback();
-          }
-        },
-        function() {
-          callback();
-        },
-        { modelsAffectedByCache: ['PriceList'] }
+      callback(
+        OB.Dal.transform(OB.Model.PriceList, {
+          id: priceListId,
+          name: OB.MobileApp.model.get('pricelist').name,
+          priceIncludesTax: OB.MobileApp.model.get('pricelist')
+            .priceIncludesTax,
+          c_currency_id: OB.MobileApp.model.get('pricelist').currency
+        })
       );
+    } else {
+      try {
+        const priceList = await OB.App.MasterdataModels.PriceList.withId(
+          priceListId
+        );
+        if (priceList) {
+          callback(OB.Dal.transform(OB.Model.PriceList, priceList));
+        } else {
+          callback();
+        }
+      } catch (error) {
+        OB.UTIL.showError(error);
+        callback();
+      }
     }
   } else {
-    callback('');
+    callback();
   }
 };
 
 /**
  * Generic approval checker. It validates user/password can approve the approvalType.
- * It can work online in case that user has done at least once the same approvalType
+ * It can work offline in case that user has done at least once the same approvalType
  * in this same browser. Data regarding privileged users is stored in supervisor table
  */
 OB.UTIL.checkApproval = function(
@@ -447,7 +452,6 @@ OB.UTIL.checkApproval = function(
   windowModel,
   attrs
 ) {
-  OB.Dal.initCache(OB.Model.Supervisor, [], null, null);
   var approvalList = [];
   approvalType.forEach(function(approvalType) {
     approvalList.push(
@@ -470,7 +474,7 @@ OB.UTIL.checkApproval = function(
         approvalType: JSON.stringify(approvalList),
         attributes: JSON.stringify(attrs)
       },
-      success: function(inSender, inResponse) {
+      success: async function(inSender, inResponse) {
         OB.UTIL.ProcessController.finish('checkApproval', execution);
         var approved = false;
         if (inResponse.error) {
@@ -486,226 +490,70 @@ OB.UTIL.checkApproval = function(
               OB.I18N.getLabel('OBPOS_UserCannotApprove', [username])
             );
           }
+
           // saving supervisor in local so next time it is possible to approve offline
-          OB.Dal.find(
-            OB.Model.Supervisor,
+          const supervisor = await OB.App.OfflineSession.upsertSupervisor(
             {
-              id: inResponse.data.userId
+              id: inResponse.data.userId,
+              name: username
             },
-            enyo.bind(this, function(users) {
-              var supervisor,
-                permissions = [];
-              if (users.models.length === 0) {
-                // new user
-                if (inResponse.data.canApprove) {
-                  // insert in local db only in case it is supervisor for current type
-                  supervisor = new OB.Model.Supervisor();
-                  supervisor.set('id', inResponse.data.userId);
-                  supervisor.set('name', username);
-                  OB.Model.PasswordHash.updatePasswordIfNeeded(
-                    supervisor,
-                    password
-                  );
-                  supervisor.set('created', new Date().toString());
-                  // Set all permissions
-                  if (inResponse.data.preference) {
-                    _.each(
-                      inResponse.data.preference,
-                      function(perm) {
-                        permissions.push(perm);
-                      },
-                      this
-                    );
-                    supervisor.set('permissions', JSON.stringify(permissions));
-                  } else {
-                    supervisor.set('permissions', JSON.stringify(approvalType));
-                  }
-                  OB.Dal.save(supervisor, null, null, true);
-                }
-              } else {
-                // update existent user granting or revoking permission
-                supervisor = users.models[0];
-                OB.Model.PasswordHash.updatePasswordIfNeeded(
-                  supervisor,
-                  password
-                );
-                if (supervisor.get('permissions')) {
-                  permissions = JSON.parse(supervisor.get('permissions'));
-                }
-                if (inResponse.data.canApprove) {
-                  // grant permission if it does not exist
-                  _.each(
-                    approvalType,
-                    function(perm) {
-                      if (!_.contains(permissions, perm)) {
-                        permissions.push(perm);
-                      }
-                    },
-                    this
-                  );
-                } else {
-                  // revoke permission if it exists
-                  _.each(
-                    approvalType,
-                    function(perm) {
-                      if (_.contains(permissions, perm)) {
-                        permissions = _.without(permissions, perm);
-                      }
-                    },
-                    this
-                  );
-                }
-                supervisor.set('permissions', JSON.stringify(permissions));
-                OB.Dal.save(supervisor);
-              }
-              callback(approved, supervisor, approvalType, true, null);
-            })
+            password,
+            approvalType,
+            inResponse.data.approvableTypes
           );
+
+          // TODO: using backbone model to keep compatibilty in callbacks
+          supervisor.permissions = JSON.stringify(
+            supervisor.approvePermissions
+          );
+          delete supervisor.approvePermissions;
+          const backboneSupervisor = new OB.Model.Supervisor(supervisor);
+
+          callback(approved, backboneSupervisor, approvalType, true, null);
         }
       },
-      fail: function(inSender, inResponse) {
+      fail: async function(inSender, inResponse) {
         // offline
         OB.UTIL.ProcessController.finish('checkApproval', execution);
-        OB.Dal.find(
-          OB.Model.Supervisor,
-          {
-            name: username
-          },
-          enyo.bind(this, function(users) {
-            var supervisor,
-              countApprovals = 0,
-              approved = false;
-            if (users.models.length === 0) {
-              countApprovals = 0;
-              OB.Dal.find(
-                OB.Model.User,
-                null,
-                enyo.bind(this, function(users) {
-                  _.each(users.models, function(user) {
-                    if (
-                      username === user.get('name') &&
-                      OB.Model.PasswordHash.checkPassword(user, password)
-                    ) {
-                      _.each(
-                        approvalType,
-                        function(perm) {
-                          var approvalToCheck =
-                            typeof perm === 'object' ? perm.approval : perm;
-                          if (
-                            JSON.parse(user.get('terminalinfo')).permissions[
-                              approvalToCheck
-                            ]
-                          ) {
-                            countApprovals += 1;
-                            supervisor = user;
-                          }
-                        },
-                        this
-                      );
-                    }
-                  });
-                  if (countApprovals === approvalType.length) {
-                    approved = true;
-                    callback(approved, supervisor, approvalType, true, null);
-                  } else {
-                    callback(
-                      false,
-                      null,
-                      null,
-                      false,
-                      OB.I18N.getLabel('OBPOS_UserCannotApprove', [username])
-                    );
-                  }
-                }),
-                function() {}
-              );
-            } else {
-              supervisor = users.models[0];
-              if (OB.Model.PasswordHash.checkPassword(supervisor, password)) {
-                _.each(
-                  approvalType,
-                  function(perm) {
-                    var approvalToCheck =
-                      typeof perm === 'object' ? perm.approval : perm;
-                    if (
-                      _.contains(
-                        JSON.parse(supervisor.get('permissions')),
-                        approvalToCheck
-                      )
-                    ) {
-                      countApprovals += 1;
-                    }
-                  },
-                  this
-                );
-                if (countApprovals === approvalType.length) {
-                  approved = true;
-                  callback(approved, supervisor, approvalType, true, null);
-                } else {
-                  countApprovals = 0;
-                  OB.Dal.find(
-                    OB.Model.User,
-                    null,
-                    enyo.bind(this, function(users) {
-                      _.each(users.models, function(user) {
-                        if (
-                          username === user.get('name') &&
-                          OB.Model.PasswordHash.checkPassword(user, password)
-                        ) {
-                          _.each(
-                            approvalType,
-                            function(perm) {
-                              var approvalToCheck =
-                                typeof perm === 'object' ? perm.approval : perm;
-                              if (
-                                JSON.parse(user.get('terminalinfo'))
-                                  .permissions[approvalToCheck]
-                              ) {
-                                countApprovals += 1;
-                                supervisor = user;
-                              }
-                            },
-                            this
-                          );
-                        }
-                      });
-                      if (countApprovals === approvalType.length) {
-                        approved = true;
-                        callback(
-                          approved,
-                          supervisor,
-                          approvalType,
-                          true,
-                          null
-                        );
-                      } else {
-                        callback(
-                          false,
-                          null,
-                          null,
-                          false,
-                          OB.I18N.getLabel('OBPOS_UserCannotApprove', [
-                            username
-                          ])
-                        );
-                      }
-                    }),
-                    function() {}
-                  );
-                }
-              } else {
-                callback(
-                  false,
-                  null,
-                  null,
-                  false,
-                  OB.I18N.getLabel('OBPOS_InvalidUserPassword')
-                );
-              }
-            }
-          }),
-          function() {}
+
+        const supervisor = await OB.App.OfflineSession.login(
+          username,
+          password
         );
+        if (!supervisor) {
+          callback(
+            false,
+            null,
+            null,
+            false,
+            OB.I18N.getLabel('OBPOS_InvalidUserPassword')
+          );
+          return;
+        }
+
+        const approved = OB.App.OfflineSession.canApprove(
+          supervisor,
+          approvalType
+        );
+
+        if (approved) {
+          // TODO: using backbone model to keep compatibilty in callbacks
+          supervisor.permissions = JSON.stringify(
+            supervisor.approvePermissions
+          );
+          delete supervisor.approvePermissions;
+          const backboneSupervisor = new OB.Model.Supervisor(supervisor);
+
+          callback(approved, backboneSupervisor, approvalType, true, null);
+        } else {
+          callback(
+            false,
+            null,
+            null,
+            false,
+            OB.I18N.getLabel('OBPOS_UserCannotApprove', [username])
+          );
+        }
       }
     });
 
@@ -749,7 +597,11 @@ OB.UTIL.checkRefreshMasterData = function() {
         );
       } else {
         OB.UTIL.clearFlagAndTimersRefreshMasterData();
-        if (OB.DS.masterdataBackgroundModels.totalLength > 0) {
+        if (
+          OB.DS.masterdataBackgroundModels.totalLength +
+            OB.App.MasterdataController.modifiedMasterdataModels.length >
+          0
+        ) {
           OB.UTIL.refreshMasterDataInBackgroundSave();
         } else {
           OB.info('No updates in the masterdata.');
@@ -805,8 +657,12 @@ OB.UTIL.refreshMasterDataInBackgroundRequest = function(callback) {
     null,
     true,
     function() {
-      OB.UTIL.masterdataRefreshStatus = 'background-request-finished';
-      callback();
+      OB.App.MasterdataController.requestIncrementalMasterdata().then(
+        function() {
+          OB.UTIL.masterdataRefreshStatus = 'background-request-finished';
+          callback();
+        }
+      );
     },
     'background-request'
   );
@@ -824,12 +680,16 @@ OB.UTIL.refreshMasterDataInBackgroundSave = function() {
     null,
     true,
     function() {
-      OB.Discounts.Pos.initCache({}, function() {
-        OB.UTIL.masterdataRefreshStatus = '';
-        OB.DS.masterdataBackgroundModels = {};
-        OB.UTIL.showLoading(false);
-        OB.MobileApp.view.scanningFocus(true);
-        OB.MobileApp.model.set('isLoggingIn', false);
+      OB.App.MasterdataController.putIncrementalMasterdata().then(function() {
+        OB.Taxes.Pos.initCache(function() {
+          OB.Discounts.Pos.initCache(function() {
+            OB.UTIL.masterdataRefreshStatus = '';
+            OB.DS.masterdataBackgroundModels = {};
+            OB.UTIL.showLoading(false);
+            OB.MobileApp.view.scanningFocus(true);
+            OB.MobileApp.model.set('isLoggingIn', false);
+          });
+        });
       });
     },
     'background-save'
@@ -856,11 +716,17 @@ OB.UTIL.refreshMasterDataForeground = function() {
       OB.MobileApp.model.set('isLoggingIn', true);
       OB.UTIL.showLoading(true);
       OB.MobileApp.model.loadModels(null, true, function() {
-        OB.UTIL.showLoading(false);
-        OB.MobileApp.view.scanningFocus(true);
-        OB.MobileApp.model.set('isLoggingIn', false);
-        OB.UTIL.localStorage.removeItem('neededForeGroundMasterDataRefresh');
-        OB.UTIL.masterdataRefreshStatus = '';
+        OB.App.MasterdataController.incrementalMasterdataRefresh().then(
+          function() {
+            OB.UTIL.showLoading(false);
+            OB.MobileApp.view.scanningFocus(true);
+            OB.MobileApp.model.set('isLoggingIn', false);
+            OB.UTIL.localStorage.removeItem(
+              'neededForeGroundMasterDataRefresh'
+            );
+            OB.UTIL.masterdataRefreshStatus = '';
+          }
+        );
       });
     }
   }, 1000);
@@ -1025,6 +891,65 @@ OB.UTIL.getCalculatedPriceForService = function(
     finishExecution();
   }
 
+  async function getPriceRuleVersionByValidDate(
+    product,
+    relatedLineMap,
+    callback
+  ) {
+    let includedProducts = product.get('includeProducts'),
+      includedProductCategories = product.get('includeProductCategories'),
+      getColumnCriteria = function(column, value) {
+        let columnCriteria = new OB.App.Class.Criteria().multiCriterion(
+          [
+            new OB.App.Class.Criterion(column, value),
+            new OB.App.Class.Criterion(column, null, '')
+          ],
+          'or'
+        );
+        return columnCriteria;
+      };
+    const criteria = new OB.App.Class.Criteria()
+      .criterion('product', product.get('id'))
+      .criterion(
+        'validFromDate',
+        OB.I18N.normalizeDate(new Date()),
+        'lowerOrEqualThan'
+      )
+      .orderBy('validFromDate', 'desc')
+      .limit(1);
+    if (includedProducts === 'N') {
+      criteria.innerCriteria(
+        getColumnCriteria('relatedProduct', relatedLineMap.product)
+      );
+    }
+    if (includedProductCategories === 'N') {
+      criteria.innerCriteria(
+        getColumnCriteria(
+          'relatedProductCategory',
+          relatedLineMap.productCategory
+        )
+      );
+    }
+    try {
+      const priceRuleVersion = await OB.App.MasterdataModels.ServicePriceRuleVersion.find(
+        criteria.build()
+      );
+      if (priceRuleVersion && priceRuleVersion.length > 0) {
+        callback(
+          OB.Dal.transform(
+            OB.Model.ServicePriceRuleVersion,
+            priceRuleVersion[0]
+          )
+        );
+      } else {
+        callback(null);
+      }
+    } catch (error) {
+      OB.error(error.message);
+      callback(null);
+    }
+  }
+
   function getPriceRuleVersion(
     product,
     relatedLine,
@@ -1070,123 +995,194 @@ OB.UTIL.getCalculatedPriceForService = function(
           params: []
         });
       }
+      OB.Dal.find(
+        OB.Model.ServicePriceRuleVersion,
+        criteria,
+        function(sprvs) {
+          if (sprvs && sprvs.length > 0) {
+            sprvs.comparator = function(a, b) {
+              if (
+                a.get('relatedProduct') ||
+                (a.get('relatedProductCategory') && !b.get('relatedProduct')) ||
+                (!a.get('relatedProductCategory') &&
+                  !b.get('relatedProductCategory') &&
+                  !b.get('relatedProduct'))
+              ) {
+                return -1;
+              } else {
+                return 1;
+              }
+            };
+            sprvs.sort();
+            callback(sprvs.at(0));
+          } else {
+            errorCallback('OBPOS_ErrorPriceRuleVersionNotFound');
+          }
+        },
+        function() {
+          errorCallback('OBPOS_ErrorGettingPriceRuleVersion');
+        }
+      );
     } else {
+      const criteria = new OB.App.Class.Criteria()
+        .criterion('product', product.get('id'))
+        .orderBy('validFromDate', 'desc');
+      let getPriceRuleVersionData = async function() {
+        try {
+          const priceRuleVersion = await OB.App.MasterdataModels.ServicePriceRuleVersion.find(
+            criteria.build()
+          );
+          if (priceRuleVersion && priceRuleVersion.length > 0) {
+            priceRuleVersion.sort(function(a, b) {
+              if (
+                a.relatedProduct ||
+                (a.relatedProductCategory && !b.relatedProduct) ||
+                (!a.relatedProductCategory &&
+                  !b.relatedProductCategory &&
+                  !b.relatedProduct)
+              ) {
+                return -1;
+              }
+              return 1;
+            });
+            callback(
+              OB.Dal.transform(
+                OB.Model.ServicePriceRuleVersion,
+                priceRuleVersion[0]
+              )
+            );
+          } else {
+            errorCallback('OBPOS_ErrorPriceRuleVersionNotFound');
+          }
+        } catch (error) {
+          OB.error(error.message);
+          errorCallback('OBPOS_ErrorGettingPriceRuleVersion');
+        }
+      };
       if (relatedLine) {
         relatedLineMap = relatedLinesMap[relatedLine.orderlineId];
         relatedAmt = OB.DEC.div(relatedLineMap.linePrice, relatedLineMap.qty);
-        var includedProducts = product.get('includeProducts'),
-          includedProductCategories = product.get('includeProductCategories');
-        criteria._whereClause = "where product = '" + product.get('id');
-        criteria._whereClause +=
-          "' and validFromDate = (select max(validFromDate)" +
-          ' from m_servicepricerule_version sprv ' +
-          " where sprv.product = '" +
-          product.get('id') +
-          "'";
-        criteria._whereClause += " and sprv.validFromDate <= date('now')";
-        if (includedProducts === 'N') {
-          criteria._whereClause +=
-            " and (sprv.relatedProduct is null or sprv.relatedProduct = '" +
-            relatedLineMap.product +
-            "')";
-        }
-        if (includedProductCategories === 'N') {
-          criteria._whereClause +=
-            " and (sprv.relatedProductCategory is null or sprv.relatedProductCategory = '" +
-            relatedLineMap.productCategory +
-            "')";
-        }
-        criteria._whereClause += ')';
-        if (isUniqueQuantity) {
-          criteria._whereClause +=
-            ' and (minimum is null or minimum <= ' +
-            totalRelatedAmount +
-            ') and (maximum is null or maximum >= ' +
-            totalRelatedAmount +
-            ')';
-        } else {
-          criteria._whereClause +=
-            ' and (minimum is null or minimum <= ' +
-            relatedAmt +
-            ') and (maximum is null or maximum >= ' +
-            relatedAmt +
-            ')';
-        }
-        if (includedProducts === 'N') {
-          criteria._whereClause +=
-            " and (relatedProduct is null or relatedProduct = '" +
-            relatedLineMap.product +
-            "')";
-        }
-        if (includedProductCategories === 'N') {
-          criteria._whereClause +=
-            " and (relatedProductCategory is null or relatedProductCategory = '" +
-            relatedLineMap.productCategory +
-            "')";
-        }
-      } else {
-        criteria._whereClause =
-          "where product = '" +
-          product.get('id') +
-          "' and validFromDate <= date('now')";
-      }
-      criteria._orderByClause = 'validFromDate desc';
-    }
-    OB.Dal.find(
-      OB.Model.ServicePriceRuleVersion,
-      criteria,
-      function(sprvs) {
-        if (sprvs && sprvs.length > 0) {
-          sprvs.comparator = function(a, b) {
-            if (
-              a.get('relatedProduct') ||
-              (a.get('relatedProductCategory') && !b.get('relatedProduct')) ||
-              (!a.get('relatedProductCategory') &&
-                !b.get('relatedProductCategory') &&
-                !b.get('relatedProduct'))
-            ) {
-              return -1;
-            } else {
-              return 1;
-            }
+        let includedProducts = product.get('includeProducts'),
+          includedProductCategories = product.get('includeProductCategories'),
+          getColumnCriteria = function(column, value) {
+            let columnCriteria = new OB.App.Class.Criteria().multiCriterion(
+              [
+                new OB.App.Class.Criterion(column, value),
+                new OB.App.Class.Criterion(column, null, '')
+              ],
+              'or'
+            );
+            return columnCriteria;
           };
-          sprvs.sort();
-          callback(sprvs.at(0));
-        } else {
-          errorCallback('OBPOS_ErrorPriceRuleVersionNotFound');
+
+        getPriceRuleVersionByValidDate(product, relatedLineMap, function(
+          priceRuleVersionByValidDate
+        ) {
+          if (priceRuleVersionByValidDate) {
+            criteria.criterion(
+              'validFromDate',
+              priceRuleVersionByValidDate.get('validFromDate')
+            );
+            let minCriteria = new OB.App.Class.Criteria().multiCriterion(
+              [
+                new OB.App.Class.Criterion('minimum', null),
+                new OB.App.Class.Criterion(
+                  'minimum',
+                  isUniqueQuantity ? totalRelatedAmount : relatedAmt,
+                  'lowerOrEqualThan'
+                )
+              ],
+              'or'
+            );
+            let maxCriteria = new OB.App.Class.Criteria().multiCriterion(
+              [
+                new OB.App.Class.Criterion('maximum', null),
+                new OB.App.Class.Criterion(
+                  'maximum',
+                  isUniqueQuantity ? totalRelatedAmount : relatedAmt,
+                  'greaterOrEqualThan'
+                )
+              ],
+              'or'
+            );
+            criteria.innerCriteria(minCriteria);
+            criteria.innerCriteria(maxCriteria);
+
+            if (includedProducts === false) {
+              criteria.innerCriteria(
+                getColumnCriteria('relatedProduct', relatedLineMap.product)
+              );
+            }
+            if (includedProductCategories === false) {
+              criteria.innerCriteria(
+                getColumnCriteria(
+                  'relatedProductCategory',
+                  relatedLineMap.productCategory
+                )
+              );
+            }
+            getPriceRuleVersionData();
+          } else {
+            errorCallback('OBPOS_ErrorPriceRuleVersionNotFound');
+            return;
+          }
+        });
+      } else {
+        criteria.criterion(
+          'validFromDate',
+          OB.I18N.normalizeDate(new Date()),
+          'lowerOrEqualThan'
+        );
+        getPriceRuleVersionData();
+      }
+    }
+  }
+
+  async function getPriceRule(
+    servicePriceRuleVersion,
+    callback,
+    errorCallback
+  ) {
+    if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+      OB.Dal.get(
+        OB.Model.ServicePriceRule,
+        servicePriceRuleVersion.get('servicePriceRule'),
+        function(spr) {
+          callback(spr);
+        },
+        function() {
+          errorCallback('OBPOS_ErrorGettingPriceRule');
+        },
+        function() {
+          errorCallback('OBPOS_ErrorGettingPriceRule');
         }
-      },
-      function() {
-        errorCallback('OBPOS_ErrorGettingPriceRuleVersion');
-      }
-    );
-  }
-
-  function getPriceRule(servicePriceRuleVersion, callback, errorCallback) {
-    OB.Dal.get(
-      OB.Model.ServicePriceRule,
-      servicePriceRuleVersion.get('servicePriceRule'),
-      function(spr) {
-        callback(spr);
-      },
-      function() {
-        errorCallback('OBPOS_ErrorGettingPriceRule');
-      },
-      function() {
+      );
+    } else {
+      try {
+        const priceRule = await OB.App.MasterdataModels.ServicePriceRule.withId(
+          servicePriceRuleVersion.get('servicePriceRule')
+        );
+        if (priceRule) {
+          callback(OB.Dal.transform(OB.Model.ServicePriceRule, priceRule));
+        } else {
+          errorCallback('OBPOS_ErrorGettingPriceRule');
+        }
+      } catch (error) {
+        OB.error(error.message);
         errorCallback('OBPOS_ErrorGettingPriceRule');
       }
-    );
+    }
   }
 
-  function getPriceRuleRange(
+  async function getPriceRuleRange(
     servicePriceRule,
     rangeAmountBeforeDiscounts,
     rangeAmountAfterDiscounts,
     callback,
     errorCallback
   ) {
-    var rangeCriteria = {};
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+      var rangeCriteria = {};
       rangeCriteria.remoteFilters = [];
       rangeCriteria.remoteFilters.push({
         columns: ['servicepricerule'],
@@ -1204,32 +1200,58 @@ OB.UTIL.getCalculatedPriceForService = function(
             : rangeAmountBeforeDiscounts
         ]
       });
+      OB.Dal.find(
+        OB.Model.ServicePriceRuleRange,
+        rangeCriteria,
+        function(sprr) {
+          if (sprr && sprr.length > 0) {
+            callback(sprr.at(0));
+          } else {
+            errorCallback('OBPOS_ErrorPriceRuleRangeNotFound');
+          }
+        },
+        function() {
+          errorCallback('OBPOS_ErrorGettingPriceRuleRange');
+        }
+      );
     } else {
-      rangeCriteria._whereClause =
-        "where servicepricerule = '" +
-        servicePriceRule.get('id') +
-        "' and (( amountUpTo >= " +
-        (servicePriceRule.get('afterdiscounts')
-          ? rangeAmountAfterDiscounts
-          : rangeAmountBeforeDiscounts) +
-        ') or (amountUpTo is null))';
-      rangeCriteria._orderByClause = 'amountUpTo is null, amountUpTo';
-      rangeCriteria._limit = 1;
-    }
-    OB.Dal.find(
-      OB.Model.ServicePriceRuleRange,
-      rangeCriteria,
-      function(sprr) {
-        if (sprr && sprr.length > 0) {
-          callback(sprr.at(0));
+      const criteria = new OB.App.Class.Criteria()
+        .criterion('servicepricerule', servicePriceRule.get('id'))
+        .orderBy('amountUpTo', 'asc')
+        .limit(1);
+      const amount = servicePriceRule.get('afterdiscounts')
+        ? rangeAmountAfterDiscounts
+        : rangeAmountBeforeDiscounts;
+      const amountCriteria = new OB.App.Class.Criteria()
+        .multiCriterion(
+          [
+            new OB.App.Class.Criterion(
+              'amountUpTo',
+              amount,
+              'greaterOrEqualThan'
+            ),
+            new OB.App.Class.Criterion('amountUpTo', null, '')
+          ],
+          'or'
+        )
+        .operator('and');
+      criteria.innerCriteria(amountCriteria);
+      try {
+        const priceRuleRange = await OB.App.MasterdataModels.ServicePriceRuleRange.find(
+          criteria.build()
+        );
+        if (priceRuleRange && priceRuleRange.length === 1) {
+          callback(
+            OB.Dal.transform(OB.Model.ServicePriceRuleRange, priceRuleRange[0])
+          );
         } else {
           errorCallback('OBPOS_ErrorPriceRuleRangeNotFound');
         }
-      },
-      function() {
+      } catch (error) {
+        OB.error(error.message);
         errorCallback('OBPOS_ErrorGettingPriceRuleRange');
       }
-    );
+    }
   }
 
   function calculatePercentageAmount(
@@ -1253,15 +1275,27 @@ OB.UTIL.getCalculatedPriceForService = function(
     callback(newprice);
   }
 
-  function calculateRangePriceAmount(
+  async function calculateRangePriceAmount(
     product,
     range,
     partialPrice,
     callback,
     errorCallback
   ) {
-    var priceCriteria = {};
+    var finalCallback = function(priceRuleRangePrice) {
+      if (priceRuleRangePrice) {
+        let oldPrice = partialPrice ? 0 : product.get('listPrice'),
+          newPrice = OB.Utilities.Number.roundJSNumber(
+            OB.DEC.add(oldPrice, priceRuleRangePrice.get('listPrice')),
+            2
+          );
+        callback(newPrice);
+      } else {
+        errorCallback('OBPOS_ErrorPriceRuleRangePriceNotFound');
+      }
+    };
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+      var priceCriteria = {};
       priceCriteria.remoteFilters = [];
       priceCriteria.remoteFilters.push({
         columns: ['product'],
@@ -1275,30 +1309,41 @@ OB.UTIL.getCalculatedPriceForService = function(
         value: range.get('priceList'),
         isId: true
       });
-    } else {
-      priceCriteria.product = product.get('id');
-      priceCriteria.priceList = range.get('priceList');
-    }
-    OB.Dal.find(
-      OB.Model.ServicePriceRuleRangePrices,
-      priceCriteria,
-      function(price) {
-        var oldprice = partialPrice ? 0 : product.get('listPrice'),
-          newprice;
-        if (price && price.length > 0) {
-          newprice = OB.Utilities.Number.roundJSNumber(
-            OB.DEC.add(oldprice, price.at(0).get('listPrice')),
-            2
-          );
-          callback(newprice);
-        } else {
-          errorCallback('OBPOS_ErrorPriceRuleRangePriceNotFound');
+      OB.Dal.find(
+        OB.Model.ServicePriceRuleRangePrices,
+        priceCriteria,
+        function(price) {
+          if (price && price.length > 0) {
+            finalCallback(price.at(0));
+          }
+        },
+        function() {
+          errorCallback('OBPOS_ErrorGettingPriceRuleRangePrice');
         }
-      },
-      function() {
+      );
+    } else {
+      const criteria = new OB.App.Class.Criteria()
+        .criterion('product', product.get('id'))
+        .criterion('priceList', range.get('priceList'));
+      try {
+        const priceRuleRangePrice = await OB.App.MasterdataModels.ServicePriceRuleRangePrices.find(
+          criteria.build()
+        );
+        if (priceRuleRangePrice && priceRuleRangePrice.length > 0) {
+          finalCallback(
+            OB.Dal.transform(
+              OB.Model.ServicePriceRuleRangePrices,
+              priceRuleRangePrice[0]
+            )
+          );
+        } else {
+          finalCallback();
+        }
+      } catch (error) {
+        OB.error(error.message);
         errorCallback('OBPOS_ErrorGettingPriceRuleRangePrice');
       }
-    );
+    }
   }
 
   if (

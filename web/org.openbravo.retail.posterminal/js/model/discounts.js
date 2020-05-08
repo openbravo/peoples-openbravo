@@ -7,8 +7,6 @@
  ************************************************************************************
  */
 
-/*global OB, Backbone, _, moment */
-
 (function() {
   // Because of problems with module dependencies, it is possible this object to already
   // be defined with some rules.
@@ -28,7 +26,6 @@
 
   OB.Model.Discounts = {
     discountRules: alreadyDefinedRules,
-    executor: new OB.Model.DiscountsExecutor(),
     preventApplyPromotions: false,
     applyPromotionsTimeout: {},
     applyPromotions: function(receipt, line) {
@@ -255,439 +252,175 @@
       }
     },
 
+    _addManualPromotionToLine: function(
+      manualPromotions,
+      line,
+      promotionRule,
+      promotionDefinition
+    ) {
+      if (line.get('qty') < 0 && !promotionRule.obdiscAllowinnegativelines) {
+        OB.UTIL.showWarning(
+          OB.I18N.getLabel('OBPOS_AvoidApplyManualPromotions')
+        );
+        return manualPromotions;
+      }
+
+      // look for the same m_offer_id with the same instanceid
+      const manualPromoDefined = manualPromotions.find(manualPromo => {
+        return (
+          manualPromo.ruleId === promotionRule.id &&
+          manualPromo.discountinstance ===
+            promotionDefinition.discountinstance &&
+          manualPromo.splitAmt === promotionDefinition.splitAmt
+        );
+      });
+
+      if (
+        manualPromoDefined &&
+        manualPromoDefined.linesToApply.indexOf(line.get('id')) !== -1
+      ) {
+        return manualPromotions;
+      }
+
+      if (
+        manualPromoDefined &&
+        manualPromoDefined.linesToApply.indexOf(line.get('id')) === -1 &&
+        manualPromoDefined.userAmt === promotionDefinition.userAmt
+      ) {
+        manualPromoDefined.linesToApply.push(line.get('id'));
+        return manualPromotions;
+      }
+
+      if (
+        !manualPromoDefined ||
+        (manualPromoDefined &&
+          manualPromoDefined.linesToApply.indexOf(line.get('id')) === -1 &&
+          manualPromoDefined.userAmt !== promotionDefinition.userAmt)
+      ) {
+        let manualPromoObj = {};
+
+        // Create an instance of current promotion
+        for (let key in promotionRule) {
+          if (key === 'creationDate') {
+            continue;
+          }
+          manualPromoObj[key] = promotionRule[key];
+        }
+        manualPromoObj.discountinstance = promotionDefinition.discountinstance;
+
+        // Add this line as applicable line
+        manualPromoObj.linesToApply = [line.get('id')];
+
+        // Override some configuration from manualPromotions
+        if (
+          manualPromoObj.discountType === '7B49D8CC4E084A75B7CB4D85A6A3A578' ||
+          manualPromoObj.discountType === 'D1D193305A6443B09B299259493B272A'
+        ) {
+          manualPromoObj.obdiscAmt = promotionDefinition.splitAmt
+            ? promotionDefinition.splitAmt
+            : promotionDefinition.userAmt;
+        } else if (
+          manualPromoObj.discountType === '8338556C0FBF45249512DB343FEFD280' ||
+          manualPromoObj.discountType === '20E4EC27397344309A2185097392D964'
+        ) {
+          manualPromoObj.obdiscPercentage = promotionDefinition.splitAmt
+            ? promotionDefinition.splitAmt
+            : promotionDefinition.userAmt;
+          if (
+            manualPromoObj.discountType === '20E4EC27397344309A2185097392D964'
+          ) {
+            manualPromoObj.identifier = `${promotionDefinition.name ||
+              promotionRule.printName ||
+              promotionRule.name} - ${promotionDefinition.userAmt} %`;
+          }
+        } else if (
+          manualPromoObj.discountType === 'F3B0FB45297844549D9E6B5F03B23A82'
+        ) {
+          manualPromoObj.obdiscLineFinalgross = promotionDefinition.splitAmt
+            ? promotionDefinition.splitAmt
+            : promotionDefinition.userAmt;
+        }
+        manualPromoObj.ruleId = manualPromoObj.id;
+        manualPromoObj.noOrder = promotionDefinition.noOrder;
+        manualPromoObj.userAmt = promotionDefinition.userAmt;
+        manualPromoObj.splitAmt = promotionDefinition.splitAmt;
+        manualPromoObj.products = [];
+        manualPromoObj.includedProducts = 'Y';
+        manualPromoObj.productCategories = [];
+        manualPromoObj.includedProductCategories = 'Y';
+        manualPromoObj.productCharacteristics = [];
+        manualPromoObj.includedCharacteristics = 'Y';
+        manualPromoObj.allweekdays = true;
+        manualPromoObj.rule = promotionRule;
+
+        manualPromotions.push(manualPromoObj);
+
+        manualPromotions = manualPromotions.sort((a, b) => {
+          return a.noOrder - b.noOrder;
+        });
+
+        return manualPromotions;
+      }
+    },
+
     addManualPromotion: function(receipt, lines, promotion) {
-      var rule =
-        OB.Model.Discounts.discountRules[
-          promotion.rule.get
-            ? promotion.rule.get('discountType')
-            : promotion.rule.discountType
-        ];
+      const promotionRule = promotion.rule.get
+          ? promotion.rule.attributes
+          : promotion.rule,
+        promotionDefinition = promotion.definition,
+        linesToApply = lines.at ? [...lines.models] : [...lines],
+        rule = OB.Model.Discounts.discountRules[promotionRule.discountType];
       if (!rule || !rule.addManual) {
         OB.warn('No manual implemetation for rule ' + promotion.discountType);
         return;
       }
 
-      if (promotion.rule.get('obdiscAllowmultipleinstan')) {
-        promotion.definition.discountinstance = OB.UTIL.get_UUID();
+      if (promotionRule.obdiscAllowmultipleinstan) {
+        promotionDefinition.discountinstance = OB.UTIL.get_UUID();
       }
 
-      lines.forEach(function(line) {
-        if (line.get('promotions')) {
-          line.get('promotions').forEach(function(promotion) {
-            promotion.lastApplied = undefined;
-          });
-        }
-        line.unset('noDiscountCandidates', {
-          silent: true
-        });
-        if (
-          line.get('qty') > 0 ||
-          (line.get('qty') < 0 &&
-            promotion.rule.get('obdiscAllowinnegativelines'))
-        ) {
-          rule.addManual(receipt, line, promotion);
-          line.set('singleManualPromotionApplied', true);
-        } else {
-          OB.UTIL.showWarning(
-            OB.I18N.getLabel('OBPOS_AvoidApplyManualPromotions')
-          );
-        }
+      linesToApply.forEach(line => {
+        const discountsFromUser = { ...receipt.get('discountsFromUser') } || {};
+        let manualPromotions =
+          discountsFromUser && discountsFromUser.manualPromotions
+            ? [...discountsFromUser.manualPromotions]
+            : [];
+        discountsFromUser.manualPromotions = this._addManualPromotionToLine(
+          manualPromotions,
+          line,
+          promotionRule,
+          promotionDefinition
+        );
+        receipt.set('discountsFromUser', discountsFromUser);
       });
 
       receipt.setUndo('AddDiscount', {
-        text: OB.I18N.getLabel('OBPOS_AddedDiscount', [
-          promotion.rule.get('name')
-        ]),
+        text: OB.I18N.getLabel('OBPOS_AddedDiscount', [promotionRule.name]),
         undo: function() {
-          receipt.get('lines').forEach(function(line) {
-            receipt.removePromotion(line, {
-              id: promotion.rule.get('id'),
-              discountinstance: promotion.definition.discountinstance
-            });
+          let manualPromotions = receipt.get('discountsFromUser')
+            .manualPromotions;
+          let promotionToDelete = manualPromotions.find(manualPromotion => {
+            return (
+              manualPromotion.id === promotionRule.id &&
+              manualPromotion.discountinstance ===
+                promotionRule.discountinstance
+            );
           });
+          if (promotionToDelete) {
+            manualPromotions.splice(
+              manualPromotions.indexOf(promotionToDelete),
+              1
+            );
+          }
           receipt.calculateReceipt();
           receipt.set('undo', null);
           receipt.set('multipleUndo', null);
         }
       });
 
-      if (!promotion.alreadyCalculated) {
-        // Recalculate all promotions again
-        receipt.calculateReceipt();
-      }
-    },
-
-    /**
-     * Gets the list of manual promotions. If asList param is true, it is returned
-     * as an list, other case, as a comma separated string to be used in sql statements
-     */
-    getManualPromotions: function(asList) {
-      var p,
-        promos = [],
-        promosSql = '';
-      for (p in this.discountRules) {
-        if (this.discountRules.hasOwnProperty(p)) {
-          if (this.discountRules[p].addManual) {
-            promos.push(p);
-          }
-        }
-      }
-
-      if (asList) {
-        return promos;
-      } else {
-        // generate sql
-        for (p = 0; p < promos.length; p++) {
-          if (promosSql !== '') {
-            promosSql += ', ';
-          }
-          promosSql += "'" + promos[p] + "'";
-        }
-        return promosSql;
-      }
-    },
-
-    /**
-     * Gets the list of promotions which are calculated automatically every time the ticket changes, but which are added manually through the 'Discounts' window
-     * If asList param is true, it is returned
-     * as a list, other case, as a comma separated string to be used in sql statements
-     */
-    getAutoCalculatedPromotions: function(asList) {
-      var p,
-        promos = [],
-        promosSql = '';
-      for (p in this.discountRules) {
-        if (this.discountRules.hasOwnProperty(p)) {
-          if (this.discountRules[p].isAutoCalculated) {
-            promos.push(p);
-          }
-        }
-      }
-
-      if (asList) {
-        return promos;
-      } else {
-        // generate sql
-        for (p = 0; p < promos.length; p++) {
-          if (promosSql !== '') {
-            promosSql += ', ';
-          }
-          promosSql += "'" + promos[p] + "'";
-        }
-        return promosSql;
-      }
-    },
-
-    registerRule: function(name, rule) {
-      this.discountRules[name] = rule;
-    },
-
-    addAvailabilityRule: function() {
-      var mStartTime,
-        mEndTime,
-        receipt = OB.MobileApp.model.receipt;
-      if (receipt.get('discountAvailabilityExtraStartTime')) {
-        mStartTime = moment(receipt.get('discountAvailabilityExtraStartTime'));
-        mEndTime = moment(receipt.get('discountAvailabilityExtraEndTime'));
-      } else {
-        var val = OB.MobileApp.model.get('permissions')
-            .DiscountAvailabilityExtraTime,
-          extraTime = parseInt(val ? val : '1', 10);
-        if (_.isNaN(extraTime) || extraTime < 0) {
-          extraTime = 1;
-        }
-        mStartTime = moment().add(extraTime, 'minutes');
-        receipt.set('discountAvailabilityExtraStartTime', mStartTime.toDate(), {
-          silent: true
-        });
-        mEndTime = moment().add(-extraTime, 'minutes');
-        receipt.set('discountAvailabilityExtraEndTime', mEndTime.toDate(), {
-          silent: true
-        });
-      }
-      var weekday = [
-          'sunday',
-          'monday',
-          'tuesday',
-          'wednesday',
-          'thursday',
-          'friday',
-          'saturday'
-        ],
-        currentStartTime = mStartTime.format('YYYY-MM-DDTHH:mm:ss'),
-        currentEndtime = mEndTime.format('YYYY-MM-DDTHH:mm:ss'),
-        day = weekday[mStartTime.day()],
-        startingtimeday = 'startingtime'.concat(day),
-        endingtimeday = 'endingtime'.concat(day),
-        availabilityRule =
-          " AND ((allweekdays = 'true' AND ((startingtime < '" +
-          currentStartTime +
-          "' AND endingtime > '" +
-          currentEndtime +
-          "') " + //
-          "OR (endingtime is null AND startingtime < '" +
-          currentStartTime +
-          "') " + //
-          "OR (startingtime is null and '" +
-          currentEndtime +
-          "' < endingtime) " + //
-          'OR (startingtime is null AND endingtime is null))) ' + //
-          'OR (' +
-          day +
-          " = 'true' " + //
-          'AND ((' +
-          startingtimeday +
-          " < '" +
-          currentStartTime +
-          "' AND " +
-          endingtimeday +
-          " > '" +
-          currentEndtime +
-          "') " + //
-          'OR (' +
-          endingtimeday +
-          ' is null AND ' +
-          startingtimeday +
-          " < '" +
-          currentStartTime +
-          "') " + //
-          'OR (' +
-          startingtimeday +
-          " is null and '" +
-          currentEndtime +
-          "' < " +
-          endingtimeday +
-          ') ' + //
-          'OR (' +
-          startingtimeday +
-          ' is null AND ' +
-          endingtimeday +
-          ' is null)))) ';
-      return availabilityRule;
-    },
-
-    standardFilter:
-      " date(?) BETWEEN DATEFROM AND COALESCE(date(DATETO), date('9999-12-31'))" + //
-      " AND((BPARTNER_SELECTION = 'Y'" + //
-      ' AND NOT EXISTS' + //
-      ' (SELECT 1' + //
-      ' FROM M_OFFER_BPARTNER' + //
-      ' WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID' + //
-      '   AND C_BPARTNER_ID = ?' + //
-      ' ))' + //
-      " OR(BPARTNER_SELECTION = 'N'" + //
-      ' AND EXISTS' + //
-      ' (SELECT 1' + //
-      ' FROM M_OFFER_BPARTNER' + //
-      ' WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID' + //
-      '   AND C_BPARTNER_ID = ?' + //
-      ' )))' + //
-      " AND((BP_SET_SELECTION = 'Y'" + //
-      ' AND NOT EXISTS' + //
-      ' (SELECT 1' + //
-      ' FROM M_OFFER_BP_SET OBPS, C_BP_SET_LINE BPL' + //
-      ' WHERE OBPS.C_BP_SET_ID = BPL.C_BP_SET_ID' + //
-      '   AND OBPS.M_OFFER_ID = M_OFFER.M_OFFER_ID' + //
-      "   AND BPL.C_BPARTNER_ID = ? AND datetime('now') BETWEEN COALESCE(datetime(BPL.STARTDATE), datetime('2000-12-31T00:00:00')) AND COALESCE(datetime(BPL.ENDDATE), datetime('9999-12-31T23:59:59'))" + //
-      ' ))' + //
-      " OR(BP_SET_SELECTION = 'N'" + //
-      ' AND EXISTS' + //
-      ' (SELECT 1' + //
-      ' FROM M_OFFER_BP_SET OBPS, C_BP_SET_LINE BPL' + //
-      ' WHERE OBPS.C_BP_SET_ID = BPL.C_BP_SET_ID' + //
-      '   AND OBPS.M_OFFER_ID = M_OFFER.M_OFFER_ID' + //
-      "   AND BPL.C_BPARTNER_ID = ? AND datetime('now') BETWEEN COALESCE(datetime(BPL.STARTDATE), datetime('2000-12-31T00:00:00')) AND COALESCE(datetime(BPL.ENDDATE), datetime('9999-12-31T23:59:59'))" + //
-      ' )))' + //
-      " AND((BP_GROUP_SELECTION = 'Y'" + //
-      ' AND NOT EXISTS' + //
-      ' (SELECT 1' + //
-      ' FROM C_BPARTNER B,' + //
-      '   M_OFFER_BP_GROUP OB' + //
-      ' WHERE OB.M_OFFER_ID = M_OFFER.M_OFFER_ID' + //
-      '   AND B.C_BPARTNER_ID = ?' + //
-      '   AND OB.C_BP_GROUP_ID = B.C_BP_GROUP_ID' + //
-      ' ))' + //
-      " OR(BP_GROUP_SELECTION = 'N'" + //
-      ' AND EXISTS' + //
-      ' (SELECT 1' + //
-      ' FROM C_BPARTNER B,' + //
-      '   M_OFFER_BP_GROUP OB' + //
-      ' WHERE OB.M_OFFER_ID = M_OFFER.M_OFFER_ID' + //
-      '   AND B.C_BPARTNER_ID = ?' + //
-      '   AND OB.C_BP_GROUP_ID = B.C_BP_GROUP_ID' + //
-      ' )))' + //
-      " AND((PRODUCT_SELECTION = 'Y'" + //
-      ' AND NOT EXISTS' + //
-      ' (SELECT 1' + //
-      ' FROM M_OFFER_PRODUCT' + //
-      ' WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID' + //
-      '   AND M_PRODUCT_ID = ?' + //
-      ' ))' + //
-      " OR(PRODUCT_SELECTION = 'N'" + //
-      ' AND EXISTS' + //
-      ' (SELECT 1' + //
-      ' FROM M_OFFER_PRODUCT' + //
-      ' WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID' + //
-      '   AND M_PRODUCT_ID = ?' + //
-      ' )))' + //
-      " AND((PROD_CAT_SELECTION = 'Y'" + //
-      ' AND NOT EXISTS' + //
-      ' (SELECT 1' + //
-      ' FROM M_OFFER_PROD_CAT OP' + //
-      ' WHERE OP.M_OFFER_ID = M_OFFER.M_OFFER_ID' + //
-      '   AND OP.M_PRODUCT_CATEGORY_ID = ?' + //
-      ' ))' + //
-      " OR(PROD_CAT_SELECTION = 'N'" + //
-      ' AND EXISTS' + //
-      ' (SELECT 1' + //
-      ' FROM M_OFFER_PROD_CAT OP' + //
-      ' WHERE OP.M_OFFER_ID = M_OFFER.M_OFFER_ID' + //
-      '   AND OP.M_PRODUCT_CATEGORY_ID = ?' + //
-      ' )))' + //
-      " AND ((CHARACTERISTICS_SELECTION = 'Y'" +
-      ' AND NOT EXISTS' +
-      ' (SELECT 1' +
-      '  FROM M_OFFER_CHARACTERISTIC C, M_PRODUCT_CH_VALUE V' +
-      '  WHERE C.M_OFFER_ID = M_OFFER.M_OFFER_ID' +
-      '    AND V.M_PRODUCT_ID = ?' +
-      '    AND V.M_CH_VALUE_ID = C.M_CH_VALUE_ID' +
-      ' ))' +
-      " OR(CHARACTERISTICS_SELECTION = 'N'" +
-      ' AND EXISTS' +
-      ' (SELECT 1' +
-      '  FROM M_OFFER_CHARACTERISTIC C, M_PRODUCT_CH_VALUE V' +
-      '  WHERE C.M_OFFER_ID = M_OFFER.M_OFFER_ID' +
-      '    AND V.M_PRODUCT_ID = ?' +
-      '    AND V.M_CH_VALUE_ID = C.M_CH_VALUE_ID' +
-      ' ))' +
-      ' )' +
-      " AND ((pricelist_selection = 'Y' AND NOT EXISTS" + //
-      '   (SELECT 1 FROM m_offer_pricelist opl WHERE m_offer.m_offer_id = opl.m_offer_id AND opl.m_pricelist_id = ? ))' + //
-      " OR (pricelist_selection = 'N' AND EXISTS" + //
-      '   (SELECT 1 FROM m_offer_pricelist opl WHERE m_offer.m_offer_id = opl.m_offer_id AND opl.m_pricelist_id = ? )))',
-
-    additionalFilters: [],
-    //extensible to add additional filters
-    computeStandardFilter: function(receipt) {
-      var filter = OB.Model.Discounts.standardFilter;
-      var i, additionalFilter;
-      filter += this.addAvailabilityRule();
-      for (i = 0; i < OB.Model.Discounts.additionalFilters.length; i++) {
-        additionalFilter = OB.Model.Discounts.additionalFilters[i];
-        if (additionalFilter.generateFilter) {
-          //generateFilter: must be a  non-empty string starting with the word AND with also a starting space
-          filter += additionalFilter.generateFilter(receipt);
-        }
-      }
-      return filter;
+      receipt.calculateReceipt();
     }
   };
-
-  // Price Adjustment
-  OB.Model.Discounts.registerRule('5D4BAF6BB86D4D2C9ED3D5A6FC051579', {
-    async: false,
-    implementation: function(discountRule, receipt, line) {
-      receipt.get('lines').forEach(function(l) {
-        var clonedDiscountRule = discountRule.clone();
-        var linePrice,
-          discountedLinePrice,
-          discountAmt,
-          chunks,
-          qty = l.get('qty'),
-          promotionCandidates = l.get('promotionCandidates'),
-          minQty = clonedDiscountRule.get('minQuantity'),
-          maxQty = clonedDiscountRule.get('maxQuantity'),
-          isMultiple = clonedDiscountRule.get('ismultiple'),
-          multipleQty = clonedDiscountRule.get('multiple');
-
-        if (
-          OB.UTIL.isNullOrUndefined(promotionCandidates) ||
-          promotionCandidates.indexOf(discountRule.id) === -1
-        ) {
-          // The line is not valid for this discountRule
-          return;
-        }
-
-        if (isMultiple) {
-          if (qty < multipleQty) {
-            return;
-          }
-        } else if ((minQty && qty < minQty) || (maxQty && qty > maxQty)) {
-          return;
-        }
-
-        linePrice = receipt.getCurrentDiscountedLinePrice(l, true);
-        if (
-          linePrice <= 0 ||
-          linePrice < clonedDiscountRule.get('fixedPrice')
-        ) {
-          return;
-        }
-
-        chunks = 1;
-        if (isMultiple) {
-          chunks = parseInt(qty / multipleQty, 10);
-          if (
-            !OB.UTIL.isNullOrUndefined(
-              clonedDiscountRule.get('discountAmount')
-            ) &&
-            clonedDiscountRule.get('discountAmount') > 0 &&
-            clonedDiscountRule.get('discountAmount') < linePrice
-          ) {
-            discountedLinePrice = OB.DEC.sub(
-              linePrice,
-              clonedDiscountRule.get('discountAmount')
-            );
-            discountAmt = OB.DEC.mul(
-              clonedDiscountRule.get('discountAmount'),
-              chunks
-            );
-          } else if (
-            !OB.UTIL.isNullOrUndefined(clonedDiscountRule.get('discount')) &&
-            clonedDiscountRule.get('discount') > 0
-          ) {
-            discountAmt = OB.DEC.mul(
-              linePrice,
-              OB.DEC.div(clonedDiscountRule.get('discount'), 100)
-            );
-            if (discountAmt < linePrice) {
-              discountedLinePrice = OB.DEC.sub(linePrice, discountAmt);
-              discountAmt = OB.DEC.mul(discountAmt, chunks);
-            } else {
-              discountAmt = 0;
-            }
-          }
-        } else {
-          if (
-            !OB.UTIL.isNullOrUndefined(clonedDiscountRule.get('fixedPrice')) &&
-            clonedDiscountRule.get('fixedPrice') >= 0
-          ) {
-            discountedLinePrice = clonedDiscountRule.get('fixedPrice');
-            if (discountedLinePrice > linePrice) {
-              discountedLinePrice = 0;
-            }
-          } else {
-            discountedLinePrice =
-              (linePrice - clonedDiscountRule.get('discountAmount')) *
-              (1 - clonedDiscountRule.get('discount') / 100);
-            if (discountedLinePrice < 0) {
-              discountedLinePrice = 0;
-            }
-          }
-          discountAmt = OB.DEC.toNumber(
-            (linePrice -
-              OB.DEC.toNumber(new BigDecimal(String(discountedLinePrice)))) *
-              qty
-          );
-        }
-        clonedDiscountRule.set('qtyOffer', qty);
-        receipt.addPromotion(l, clonedDiscountRule, {
-          amt: discountAmt,
-          chunks: chunks
-        });
-      });
-    }
-  });
 
   // Because of dependency models cannot be directly registered in promotions module
   if (OB && OB.Model && OB.Model.Discounts && OB.Model.Discounts.extraModels) {

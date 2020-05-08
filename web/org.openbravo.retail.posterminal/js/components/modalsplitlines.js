@@ -398,6 +398,88 @@ enyo.kind({
     });
   },
 
+  getSplitedManualPromotions: function() {
+    let promotionsToAdd = [];
+    const originalQty = this.orderline.get('qty');
+    const lineManualPromotions = this.receipt
+      .get('discountsFromUser')
+      .manualPromotions.filter(manualPromotion => {
+        return (
+          manualPromotion.linesToApply.indexOf(this.orderline.get('id')) !== -1
+        );
+      });
+    let discAccum = 0;
+    lineManualPromotions.forEach(lineManualPromo => {
+      this.qtysToAdd.forEach((qtyToAdd, index) => {
+        let amt, originalAmt;
+        if (
+          lineManualPromo.discountType === 'D1D193305A6443B09B299259493B272A' ||
+          lineManualPromo.discountType === '7B49D8CC4E084A75B7CB4D85A6A3A578'
+        ) {
+          originalAmt = lineManualPromo.obdiscAmt;
+          if (index === this.qtysToAdd.length - 1) {
+            amt = originalAmt - discAccum;
+          } else {
+            amt = OB.DEC.toNumber(
+              OB.BIGDEC.mul(OB.BIGDEC.div(originalAmt, originalQty), qtyToAdd)
+            );
+          }
+          discAccum = OB.DEC.add(discAccum, amt);
+        } else if (
+          lineManualPromo.discountType === 'F3B0FB45297844549D9E6B5F03B23A82'
+        ) {
+          originalAmt = lineManualPromo.obdiscLineFinalgross;
+          if (index === this.qtysToAdd.length - 1) {
+            amt = originalAmt - discAccum;
+          } else {
+            amt = OB.DEC.toNumber(
+              OB.BIGDEC.mul(
+                OB.BIGDEC.div(originalAmt, originalQty),
+                this.qtyToAdd[index]
+              )
+            );
+          }
+          discAccum = OB.DEC.add(discAccum, amt);
+        } else {
+          originalAmt = lineManualPromo.obdiscPercentage;
+          amt = lineManualPromo.obdiscPercentage;
+        }
+        let promotionList = promotionsToAdd[index]
+          ? promotionsToAdd[index]
+          : [];
+        promotionList.push({
+          rule: { ...lineManualPromo.rule },
+          definition: {
+            discountinstance: lineManualPromo.discountinstance,
+            userAmt: originalAmt,
+            splitAmt: amt
+          }
+        });
+        promotionsToAdd[index] = promotionList;
+      });
+    });
+    // Remove the original line of the promotion
+    lineManualPromotions.forEach(lineManualPromotion => {
+      lineManualPromotion.linesToApply.splice(
+        lineManualPromotion.linesToApply.indexOf(this.orderline.get('id')),
+        1
+      );
+      // If the promotion is no longer applicable to other line, delete the promotion
+      if (lineManualPromotion.linesToApply.length === 0) {
+        this.receipt
+          .get('discountsFromUser')
+          .manualPromotions.splice(
+            this.receipt
+              .get('discountsFromUser')
+              .manualPromotions.indexOf(lineManualPromotion),
+            1
+          );
+      }
+    });
+
+    return promotionsToAdd;
+  },
+
   addProductSplit: function(success, addline) {
     if (success && addline && addline.id !== this.orderline.id) {
       if (addline.get('price') !== this.orderline.get('price')) {
@@ -417,13 +499,9 @@ enyo.kind({
     }
     if (this.indexToAdd < this.qtysToAdd.length) {
       if (success) {
-        var originalQty = 0;
-        _.each(this.qtysToAdd, function(qtyToAdd) {
-          originalQty += qtyToAdd;
-        });
         this.doAddProduct({
           product: this.orderline.get('product'),
-          qty: this.qtysToAdd[this.indexToAdd++],
+          qty: this.qtysToAdd[this.indexToAdd],
           attrs: {
             splitline: true,
             originalLine: this.orderline
@@ -437,20 +515,20 @@ enyo.kind({
           callback: function(success, addline) {
             this.splittedLines.push(addline);
             addline.set('promotions', []);
-            var promotionManual = _.filter(
-              this.orderline.get('promotions'),
-              function(promo) {
-                return promo.manual;
-              }
-            );
-            _.forEach(
-              promotionManual,
-              function(promo) {
-                promo.originalQty = originalQty;
-                this.addManualPromotionSplit(addline, promo);
-              },
-              this
-            );
+            if (
+              this.promotionsToAdd &&
+              this.promotionsToAdd[this.indexToAdd] &&
+              this.promotionsToAdd[this.indexToAdd].length > 0
+            ) {
+              this.promotionsToAdd[this.indexToAdd].forEach(promotionToAdd => {
+                OB.Model.Discounts.addManualPromotion(
+                  this.receipt,
+                  [addline],
+                  promotionToAdd
+                );
+              });
+            }
+            this.indexToAdd++;
             this.addProductSplit(success, addline);
           }
         });
@@ -458,61 +536,6 @@ enyo.kind({
         OB.log('error', 'Can not add product to receipt');
       }
     } else {
-      var promotionManual = _.filter(this.orderline.get('promotions'), function(
-        promo
-      ) {
-        return promo.manual;
-      });
-      _.forEach(
-        promotionManual,
-        function(promo, index) {
-          if (
-            promo.discountType === 'D1D193305A6443B09B299259493B272A' ||
-            promo.discountType === '7B49D8CC4E084A75B7CB4D85A6A3A578' ||
-            promo.discountType === 'F3B0FB45297844549D9E6B5F03B23A82'
-          ) {
-            var adjustedPromotion = this.getAdjustedPromotion(
-              promo,
-              this.orderline.get('qty')
-            );
-            var splittedAmount = _.reduce(
-              this.splittedLines,
-              function(sum, line) {
-                var linePromo = _.find(line.get('promotions'), function(lp) {
-                  return lp.discountType === promo.discountType;
-                });
-                if (linePromo) {
-                  return (
-                    sum + OB.DEC.toNumber(OB.DEC.toBigDecimal(linePromo.amt))
-                  );
-                }
-                return sum;
-              },
-              0
-            );
-            var bdSplittedAmount = OB.DEC.toBigDecimal(splittedAmount),
-              bdPromoAmount = OB.DEC.toBigDecimal(promo.amt);
-            if (
-              bdPromoAmount.compareTo(
-                bdSplittedAmount.add(OB.DEC.toBigDecimal(adjustedPromotion.amt))
-              ) !== 0
-            ) {
-              var amount = OB.DEC.toNumber(
-                bdPromoAmount.subtract(bdSplittedAmount)
-              );
-              adjustedPromotion.amt = amount;
-              adjustedPromotion.displayedTotalAmount = amount;
-              adjustedPromotion.fullAmt = amount;
-              adjustedPromotion.userAmt = amount;
-              adjustedPromotion.splitAmt = amount;
-            }
-            this.orderline
-              .get('promotions')
-              .splice(index, 1, adjustedPromotion);
-          }
-        },
-        this
-      );
       var me = this;
       OB.UTIL.HookManager.executeHooks(
         'OBPOS_PostSplitLine',
@@ -530,10 +553,19 @@ enyo.kind({
   },
 
   splitLines: function() {
-    this.indexToAdd = 1;
+    this.indexToAdd = 0;
     this.qtysToAdd = this.$.body.$.qtyLines.getValues();
     this.orderline.set('splitline', true);
     this.receipt.set('skipCalculateReceipt', true);
+    if (
+      this.receipt.get('discountsFromUser') &&
+      this.receipt.get('discountsFromUser').manualPromotions
+    ) {
+      this.promotionsToAdd = this.getSplitedManualPromotions();
+    } else {
+      this.promotionsToAdd = [];
+    }
+
     this.doAddProduct({
       options: {
         line: this.orderline,
@@ -546,6 +578,20 @@ enyo.kind({
       callback: function(success, orderline) {
         if (success) {
           this.splittedLines = [];
+          if (
+            this.promotionsToAdd &&
+            this.promotionsToAdd[this.indexToAdd] &&
+            this.promotionsToAdd[this.indexToAdd].length > 0
+          ) {
+            this.promotionsToAdd[this.indexToAdd].forEach(promotionToAdd => {
+              OB.Model.Discounts.addManualPromotion(
+                this.receipt,
+                [this.orderline],
+                promotionToAdd
+              );
+            });
+          }
+          this.indexToAdd++;
           this.addProductSplit(true, orderline);
         } else {
           this.orderline.set('splitline', false);

@@ -3069,6 +3069,7 @@ enyo.kind({
     }
   ],
   renderPaymentLine: function(inSender, inEvent) {
+    let payment = OB.MobileApp.model.paymentnames[this.model.get('kind')];
     this.addClass('obObposPointOfSaleUiRenderPaymentLine_renderPaymentLine');
     if (this.model.get('reversedPaymentId')) {
       this.$.name.setContent(
@@ -3122,6 +3123,7 @@ enyo.kind({
       );
     }
     if (
+      !payment.paymentMethod.isreversable ||
       this.model.get('isReversed') ||
       (this.model.get('isPrePayment') &&
         (this.model.get('reversedPaymentId') ||

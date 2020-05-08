@@ -91,7 +91,10 @@
         receipt.checkReturnableProducts(
           selectedReceiptLines,
           view.model,
-          function() {
+          function(success) {
+            if (!success) {
+              return;
+            }
             //The value of qty need to be negate because we want to change it
             if (
               receipt.validateAllowSalesWithReturn(

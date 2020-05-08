@@ -68,7 +68,7 @@ enyo.kind({
       },
 
       initComponents: function() {
-        this.collection = new OB.Collection.SalesRepresentativeList();
+        this.collection = new Backbone.Collection();
       },
 
       // override to not load things upfront when not needed
@@ -79,46 +79,44 @@ enyo.kind({
         }
       },
 
-      fetchDataFunction: function(args) {
+      fetchDataFunction: async function(args) {
         var me = this,
           actualUser;
 
         if (this.collection.length === 0) {
-          OB.Dal.find(
-            OB.Model.SalesRepresentative,
-            null,
-            function(data) {
-              if (me.destroyed) {
-                return;
-              }
-              if (data.length > 0) {
-                data.unshift({
-                  id: null,
-                  _identifier: null
-                });
-                me.dataReadyFunction(data, args);
-              } else {
-                actualUser = new OB.Model.SalesRepresentative();
-                actualUser.set(
-                  '_identifier',
-                  me.model.get('order').get('salesRepresentative$_identifier')
-                );
-                actualUser.set(
-                  'id',
-                  me.model.get('order').get('salesRepresentative')
-                );
-                data.models = [actualUser];
-                me.dataReadyFunction(data, args);
-              }
-            },
-            function() {
-              OB.UTIL.showError(
-                OB.I18N.getLabel('OBPOS_ErrorGettingSalesRepresentative')
+          try {
+            const dataSalesRepresentative = await OB.App.MasterdataModels.SalesRepresentative.orderedBy(
+              '_identifier'
+            );
+
+            if (me.destroyed) {
+              return;
+            }
+            if (dataSalesRepresentative && dataSalesRepresentative.length > 0) {
+              dataSalesRepresentative.unshift({
+                id: null,
+                _identifier: null
+              });
+              me.dataReadyFunction(dataSalesRepresentative, args);
+            } else {
+              actualUser = new Backbone.Model();
+              actualUser.set(
+                '_identifier',
+                me.model.get('order').get('salesRepresentative$_identifier')
               );
-              me.dataReadyFunction(null, args);
-            },
-            args
-          );
+              actualUser.set(
+                'id',
+                me.model.get('order').get('salesRepresentative')
+              );
+              dataSalesRepresentative.models = [actualUser];
+              me.dataReadyFunction(dataSalesRepresentative, args);
+            }
+          } catch (err) {
+            OB.UTIL.showError(
+              OB.I18N.getLabel('OBPOS_ErrorGettingSalesRepresentative')
+            );
+            me.dataReadyFunction(null, args);
+          }
         } else {
           me.dataReadyFunction(this.collection, args);
         }
