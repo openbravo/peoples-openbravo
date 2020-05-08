@@ -45,10 +45,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ISINCLUDECHARACTERISTICS" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[Y]]></default>
-        <onCreateDefault><![CDATA['Y']]></onCreateDefault>
-      </column>
       <foreign-key foreignTable="AD_CLIENT" name="M_OFF_CHAR_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -68,6 +64,5 @@
         <index-column name="M_OFFER_ID"/>
       </index>
       <check name="M_OFF_CHAR_ISACTIVE"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="M_OFF_CHAR_ISINCLUDECHARACT"><![CDATA[ISINCLUDECHARACTERISTICS IN ('Y', 'N')]]></check>
     </table>
   </database>
