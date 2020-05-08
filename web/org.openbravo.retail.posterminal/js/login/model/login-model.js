@@ -632,7 +632,11 @@
           isprocessed: 'Y'
         },
         getIdentifier: function(model) {
-          return OB.I18N.formatDateISO(new Date(model.creationDate));
+          return (
+            model.user +
+            ' - ' +
+            OB.I18N.formatDateISO(new Date(model.creationDate))
+          );
         }
       });
 

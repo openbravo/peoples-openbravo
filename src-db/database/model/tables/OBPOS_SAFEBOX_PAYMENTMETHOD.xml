@@ -37,7 +37,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="FIN_FINANCIALACCOUNT" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="FIN_FINANCIALACCOUNT_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -93,7 +93,7 @@
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="FIN_FINANCIAL_ACCOUNT" name="OBPOS_SAFEBOX_PM_FINACCOUNT">
-        <reference local="FIN_FINANCIALACCOUNT" foreign="FIN_FINANCIAL_ACCOUNT_ID"/>
+        <reference local="FIN_FINANCIALACCOUNT_ID" foreign="FIN_FINANCIAL_ACCOUNT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_GLITEM" name="OBPOS_SAFEBOX_PM_GLI_DIFF">
         <reference local="C_GLITEM_DIFF_ID" foreign="C_GLITEM_ID"/>
@@ -111,7 +111,7 @@
         <reference local="OBPOS_SAFEBOX_ID" foreign="OBPOS_SAFEBOX_ID"/>
       </foreign-key>
       <index name="OBPOS_SAFEBOX_PM_FINACCOUNT" unique="false">
-        <index-column name="FIN_FINANCIALACCOUNT"/>
+        <index-column name="FIN_FINANCIALACCOUNT_ID"/>
       </index>
       <index name="OBPOS_SAFEBOX_PM_PAYMETHOS" unique="false">
         <index-column name="FIN_PAYMENTMETHOD_ID"/>
@@ -121,7 +121,7 @@
       </index>
       <unique name="OBPOS_SAFEBOX_PM_UNIQUE">
         <unique-column name="OBPOS_SAFEBOX_ID"/>
-        <unique-column name="FIN_FINANCIALACCOUNT"/>
+        <unique-column name="FIN_FINANCIALACCOUNT_ID"/>
         <unique-column name="FIN_PAYMENTMETHOD_ID"/>
       </unique>
     </table>

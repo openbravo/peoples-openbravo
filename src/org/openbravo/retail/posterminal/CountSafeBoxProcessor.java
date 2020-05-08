@@ -131,7 +131,7 @@ public class CountSafeBoxProcessor {
 
     long t2 = System.currentTimeMillis();
 
-    logger.debug("Cash Up Processor. Total time: " + (t2 - t0) + ". Processing: " + (t1 - t0)
+    logger.debug("Count Safe Box Processor. Total time: " + (t2 - t0) + ". Processing: " + (t1 - t0)
         + ". Flush: " + (t2 - t1));
 
     JSONObject result = new JSONObject();

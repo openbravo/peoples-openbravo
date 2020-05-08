@@ -24,10 +24,8 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
-import org.openbravo.mobile.core.process.PropertyByType;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.service.json.JsonConstants;
-import org.openbravo.service.json.JsonToDataConverter;
 
 @DataSynchronization(entity = "OBPOS_SafeBox")
 public class ProcessCountSafeBox extends POSDataSynchronizationProcess
@@ -101,7 +99,7 @@ public class ProcessCountSafeBox extends POSDataSynchronizationProcess
       for (final FIN_Reconciliation r : recconciliations.list()) {
         // will end up in the pos error window
         throw new OBException(
-            "Count safe box can not proceed, there is a reconcilliation in draft status, payment method: "
+            "Count safe box can not proceed, there is a reconciliation in draft status, payment method: "
                 + payment.getIdentifier() + ", reconcilliation: " + r.getDocumentNo() + " ("
                 + r.getAccount().getName() + ")");
       }
@@ -131,27 +129,6 @@ public class ProcessCountSafeBox extends POSDataSynchronizationProcess
   @Override
   protected boolean bypassPreferenceCheck() {
     return true;
-  }
-
-  @Override
-  protected void additionalProcessForRecordsSavedInErrorsWindow(JSONObject record) {
-    try {
-      String cashUpId = record.getString("id");
-      OBPOSAppCashup cashUp = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
-      if (cashUp != null
-          && (record.has("isprocessed") && record.getString("isprocessed").equals("Y"))) {
-        cashUp.setProcessed(Boolean.TRUE);
-        if (record.has("lastcashupeportdate")) {
-          String lastCashUpReportString = record.getString("lastcashupeportdate");
-          Date lastCashUpReportDate = (Date) JsonToDataConverter.convertJsonToPropertyValue(
-              PropertyByType.DATETIME,
-              (lastCashUpReportString).subSequence(0, (lastCashUpReportString).lastIndexOf(".")));
-          cashUp.setLastcashupreportdate(lastCashUpReportDate);
-        }
-        OBDal.getInstance().save(cashUp);
-      }
-    } catch (Exception e) {
-    }
   }
 
   @Override

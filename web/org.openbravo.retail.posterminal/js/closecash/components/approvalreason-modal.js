@@ -105,9 +105,3 @@ enyo.kind({
     me.$.body.$.approvalReason.getCollection().reset(approvalReasonCollection);
   }
 });
-
-// OB.UI.WindowView.registerPopup('OB.OBPOSCashUp.UI.CashUp', {
-//   kind: 'OB.UI.ModalApprovalReason',
-//   classes: 'obposModalApprovalReason',
-//   name: 'OBPOS_modalApprovalReason'
-// });
