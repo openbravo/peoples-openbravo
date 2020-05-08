@@ -1141,7 +1141,7 @@ enyo.kind({
     this.$.stBPAssignToReceipt.setCollection(this.bpsList);
     this.bpsList.on(
       'click',
-      function(model) {
+      async function(model) {
         if (model.get('customerBlocking') && model.get('salesOrderBlocking')) {
           OB.UTIL.showError(
             OB.I18N.getLabel('OBPOS_BPartnerOnHold', [model.get('_identifier')])
@@ -1149,23 +1149,25 @@ enyo.kind({
         } else if (!model.get('ignoreSetBP')) {
           var me = this;
           if (model.get('bpLocactionId')) {
-            OB.Dal.get(
-              OB.Model.BPLocation,
-              model.get('bpLocactionId'),
-              function(loc) {
-                var shipping = null,
-                  billing = null;
-                if (loc) {
-                  if (!billing && loc.get('isBillTo')) {
-                    billing = loc;
-                  }
-                  if (!shipping && loc.get('isShipTo')) {
-                    shipping = loc;
-                  }
+            try {
+              let bPLocation = await OB.App.MasterdataModels.BusinessPartnerLocation.withId(
+                model.get('bpLocactionId')
+              );
+              let loc = OB.Dal.transform(OB.Model.BPLocation, bPLocation);
+              let shipping = null,
+                billing = null;
+              if (loc) {
+                if (!billing && loc.get('isBillTo')) {
+                  billing = loc;
                 }
-                me.loadBPLocations(model, shipping, billing);
+                if (!shipping && loc.get('isShipTo')) {
+                  shipping = loc;
+                }
               }
-            );
+              me.loadBPLocations(model, shipping, billing);
+            } catch (error) {
+              OB.error(error);
+            }
           } else {
             me.loadBPLocations(model, null, null);
           }

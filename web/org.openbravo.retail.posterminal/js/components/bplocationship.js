@@ -55,7 +55,7 @@ enyo.kind({
     this.bpsList.reset();
     return true;
   },
-  searchAction: function(inSender, inEvent) {
+  searchAction: async function(inSender, inEvent) {
     var execution = OB.UTIL.ProcessController.start('searchCustomerAddress');
     var me = this,
       criteria = {},
@@ -109,13 +109,33 @@ enyo.kind({
         };
       var remoteCriteria = [filterIdentifier, bPartnerId, isShipTo];
       criteria.remoteFilters = remoteCriteria;
+
+      OB.Dal.find(
+        OB.Model.BPLocation,
+        criteria,
+        successCallbackBPsLoc,
+        errorCallback
+      );
+    } else {
+      try {
+        const criteria = new OB.App.Class.Criteria();
+        criteria.criterion('bpartner', this.bPartner.get('id'));
+        criteria.criterion('isShipTo', true);
+        criteria.criterion('name', filter, 'includes');
+        let bPLocations = await OB.App.MasterdataModels.BusinessPartnerLocation.find(
+          criteria.build()
+        );
+        let transformedBPLocations = [];
+        for (let i = 0; i < bPLocations.length; i++) {
+          transformedBPLocations.push(
+            OB.Dal.transform(OB.Model.BPLocation, bPLocations[i])
+          );
+        }
+        successCallbackBPsLoc(transformedBPLocations);
+      } catch (error) {
+        errorCallback(error);
+      }
     }
-    OB.Dal.find(
-      OB.Model.BPLocation,
-      criteria,
-      successCallbackBPsLoc,
-      errorCallback
-    );
     OB.UTIL.ProcessController.finish('searchCustomerAddress', execution);
     return true;
   },
@@ -167,19 +187,6 @@ enyo.kind({
           }
         }
         if (!model.get('ignoreSetBPLoc')) {
-          try {
-            let businessPartner = await OB.App.MasterdataModels.BusinessPartner.withId(
-              this.model
-                .get('order')
-                .get('bp')
-                .get('id')
-            );
-            successCallbackBPs(
-              OB.Dal.transform(OB.Model.BusinessPartner, businessPartner)
-            );
-          } catch (error) {
-            errorCallback(error);
-          }
           try {
             let businessPartner = await OB.App.MasterdataModels.BusinessPartner.withId(
               this.bPartner.get('id')

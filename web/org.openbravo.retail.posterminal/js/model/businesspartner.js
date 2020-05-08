@@ -142,16 +142,17 @@
           me.clearModelWith(null);
           userCallback(me);
         } else if (!_.isNull(customerCol.get('shipLocId'))) {
-          OB.Dal.get(
-            OB.Model.BPLocation,
-            customerCol.get('shipLocId'),
-            function(location) {
-              //OB.Dal.find success
-              customerCol.set('locationModel', location);
-              me.clearModelWith(customerCol);
-              userCallback(me);
-            }
-          );
+          try {
+            let bPLocation = await OB.App.MasterdataModels.BusinessPartnerLocation.withId(
+              customerCol.get('shipLocId')
+            );
+            let location = OB.Dal.transform(OB.Model.BPLocation, bPLocation);
+            customerCol.set('locationModel', location);
+            me.clearModelWith(customerCol);
+            userCallback(me);
+          } catch (error) {
+            OB.error(error);
+          }
         } else {
           me.clearModelWith(customerCol);
           userCallback(me);
@@ -289,26 +290,24 @@
       return JSON.parse(JSON.stringify(this.toJSON()));
     },
     loadBPLocations: function(shipping, billing, callback, bpId) {
-      var getLocation,
+      let getLocation,
         errorCallback,
-        criteria,
-        checkInLocalDB = false;
-      criteria = {
-        bpartner: {
-          operator: OB.Dal.EQ,
-          value: bpId || this.get('id')
-        },
-        _orderByClause: 'creationDate desc'
-      };
+        checkInLocalDB = false,
+        criteria;
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-        var filterBpartnerId = {
+        let filterBpartnerId = {
           columns: ['bpartner'],
           operator: OB.Dal.EQ,
           value: bpId || this.get('id'),
           isId: true
         };
+        criteria = {};
         criteria.remoteFilters = [filterBpartnerId];
         criteria._orderByClause = 'updated desc';
+      } else {
+        criteria = new OB.App.Class.Criteria();
+        criteria.criterion('bpartner', this.get('id'));
+        criteria.orderBy('creationDate', 'desc');
       }
       errorCallback = function() {
         OB.error(
@@ -339,42 +338,66 @@
           }
         );
       };
-      getLocation = function(checkLocal) {
-        OB.Dal.find(
-          OB.Model.BPLocation,
-          criteria,
-          function(collection) {
-            if (!billing) {
-              billing = _.find(collection.models, function(loc) {
-                return loc.get('isBillTo');
-              });
-            }
-            if (!shipping) {
-              shipping = _.find(collection.models, function(loc) {
-                return loc.get('isShipTo');
-              });
-            }
-            if (!shipping && !billing) {
-              OB.UTIL.showError(
-                OB.I18N.getLabel('OBPOS_BPartnerNoShippingAddress', [bpId])
+      getLocation = async function(checkLocal) {
+        function sucessLoadBpLocationsCallback(collection) {
+          if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+            collection.models;
+          } else {
+            collection.models = collection;
+          }
+          if (!billing) {
+            billing = _.find(collection.models, function(loc) {
+              return loc.get('isBillTo');
+            });
+          }
+          if (!shipping) {
+            shipping = _.find(collection.models, function(loc) {
+              return loc.get('isShipTo');
+            });
+          }
+          if (!shipping && !billing) {
+            OB.UTIL.showError(
+              OB.I18N.getLabel('OBPOS_BPartnerNoShippingAddress', [bpId])
+            );
+            return;
+          }
+          callback(shipping, billing, collection.models);
+        }
+        function errorLoadBpLocationsCallback(error) {
+          if (checkInLocalDB) {
+            errorCallback();
+            return;
+          }
+          checkInLocalDB = true;
+          delete criteria.remoteFilters;
+          getLocation(true);
+        }
+        if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+          OB.Dal.find(
+            OB.Model.BPLocation,
+            criteria,
+            sucessLoadBpLocationsCallback,
+            errorLoadBpLocationsCallback,
+            null,
+            null,
+            checkLocal
+          );
+        } else {
+          try {
+            let bPLocations = await OB.App.MasterdataModels.BusinessPartnerLocation.find(
+              criteria.build()
+            );
+            let transformedBPLocations = [];
+            for (let i = 0; i < bPLocations.length; i++) {
+              transformedBPLocations.push(
+                OB.Dal.transform(OB.Model.BPLocation, bPLocations[i])
               );
-              return;
             }
-            callback(shipping, billing, collection.models);
-          },
-          function() {
-            if (checkInLocalDB) {
-              errorCallback();
-              return;
-            }
-            checkInLocalDB = true;
-            delete criteria.remoteFilters;
-            getLocation(true);
-          },
-          null,
-          null,
-          checkLocal
-        );
+            sucessLoadBpLocationsCallback(transformedBPLocations);
+          } catch (error) {
+            errorLoadBpLocationsCallback(error);
+          }
+        }
       };
       getLocation(false);
     },

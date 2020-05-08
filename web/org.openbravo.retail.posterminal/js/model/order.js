@@ -5881,7 +5881,7 @@
           }
         };
 
-        var saveLocModel = function(locModel, lid, callback) {
+        var saveLocModel = async function(locModel, lid, callback) {
           if (businessPartner.get(locModel)) {
             OB.Dal.saveOrUpdate(
               businessPartner.get(locModel),
@@ -5894,34 +5894,28 @@
               callback();
             }
           } else if (businessPartner.get(lid)) {
-            OB.Dal.get(
-              OB.Model.BPLocation,
-              businessPartner.get(lid),
-              function(location) {
-                OB.Dal.saveOrUpdate(
-                  location,
-                  function() {},
-                  function(tx, error) {
-                    OB.UTIL.showError(error);
-                  }
-                );
-                businessPartner.set(locModel, location);
-                if (callback) {
-                  callback();
+            try {
+              let bPLocation = await OB.App.MasterdataModels.BusinessPartnerLocation.withId(
+                businessPartner.get(lid)
+              );
+              let location = OB.Dal.transform(OB.Model.BPLocation, bPLocation);
+              OB.Dal.saveOrUpdate(
+                location,
+                function() {},
+                function(tx, error) {
+                  OB.UTIL.showError(error);
                 }
-              },
-              function() {
-                OB.error(arguments);
-                if (callback) {
-                  callback();
-                }
-              },
-              function() {
-                if (callback) {
-                  callback();
-                }
+              );
+              businessPartner.set(locModel, location);
+              if (callback) {
+                callback();
               }
-            );
+            } catch (error) {
+              OB.error(arguments);
+              if (callback) {
+                callback();
+              }
+            }
           } else {
             if (callback) {
               callback();
@@ -10380,28 +10374,28 @@
           );
         };
 
-        loadLocations = function(bp) {
+        loadLocations = async function(bp) {
           if (bpLocId === bpBillLocId) {
             if (isLoadedPartiallyFromBackend) {
               finalCallback(bp, bpLoc, null);
             } else {
-              OB.Dal.get(
-                OB.Model.BPLocation,
-                bpLocId,
-                function(bpLoc) {
+              try {
+                let bPLocation = await OB.App.MasterdataModels.BusinessPartnerLocation.withId(
+                  bpLocId
+                );
+                if (bPLocation) {
+                  let bpLoc = OB.Dal.transform(OB.Model.BPLocation, bPLocation);
                   finalCallback(bp, bpLoc, null);
-                },
-                function(tx, error) {
-                  OB.UTIL.showError(error);
-                },
-                function() {
+                } else {
                   loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(
                     data
                   ) {
                     finalCallback(bp, data.bpLoc, null);
                   });
                 }
-              );
+              } catch (error) {
+                OB.error(error);
+              }
             }
           } else {
             if (
@@ -10411,7 +10405,7 @@
             ) {
               finalCallback(bp, bpLoc, bpBillLoc);
             } else {
-              var criteria = {};
+              var criteria;
               if (
                 OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)
               ) {
@@ -10422,24 +10416,55 @@
                     value: [bpLocId, bpBillLocId]
                   }
                 ];
+                criteria = {};
                 criteria.remoteFilters = remoteCriteria;
+                OB.Dal.find(
+                  OB.Model.BPLocation,
+                  criteria,
+                  function(locations) {
+                    if (locations.models.length === 2) {
+                      _.each(locations.models, function(l) {
+                        if (l.id === bpLocId) {
+                          bpLoc = l;
+                        } else if (l.id === bpBillLocId) {
+                          bpBillLoc = l;
+                        }
+                      });
+                      finalCallback(bp, bpLoc, bpBillLoc);
+                    } else {
+                      loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(
+                        data
+                      ) {
+                        finalCallback(bp, data.bpLoc, data.bpBillLoc);
+                      });
+                    }
+                  },
+                  function(tx, error) {
+                    OB.UTIL.showError(error);
+                  },
+                  bpLoc
+                );
               } else {
-                criteria._whereClause =
-                  'where c_bpartner_location_id in (?, ?)';
-                criteria.params = [bpLocId, bpBillLocId];
-              }
-              OB.Dal.find(
-                OB.Model.BPLocation,
-                criteria,
-                function(locations) {
-                  if (locations.models.length === 2) {
-                    _.each(locations.models, function(l) {
+                try {
+                  criteria = new OB.App.Class.Criteria();
+                  criteria.criterion('id', [bpLocId, bpBillLocId], 'in');
+                  let bPLocations = await OB.App.MasterdataModels.BusinessPartnerLocation.find(
+                    criteria.build()
+                  );
+                  let locations = [];
+                  for (let i = 0; i < bPLocations.length; i++) {
+                    locations.push(
+                      OB.Dal.transform(OB.Model.BPLocation, bPLocations[i])
+                    );
+                  }
+                  if (locations.length === 2) {
+                    for (const l of locations) {
                       if (l.id === bpLocId) {
                         bpLoc = l;
                       } else if (l.id === bpBillLocId) {
                         bpBillLoc = l;
                       }
-                    });
+                    }
                     finalCallback(bp, bpLoc, bpBillLoc);
                   } else {
                     loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(
@@ -10448,12 +10473,10 @@
                       finalCallback(bp, data.bpLoc, data.bpBillLoc);
                     });
                   }
-                },
-                function(tx, error) {
+                } catch (error) {
                   OB.UTIL.showError(error);
-                },
-                bpLoc
-              );
+                }
+              }
             }
           }
         };

@@ -51,11 +51,15 @@
 
       return true;
     },
-    loadById: function(CusAddrId, userCallback) {
+    loadById: async function(CusAddrId, userCallback) {
       //search data in local DB and load it to this
-      var me = this;
-      OB.Dal.get(OB.Model.BPLocation, CusAddrId, function(customerAddr) {
-        //OB.Dal.find success
+      const me = this;
+      try {
+        let bPLocation = await OB.App.MasterdataModels.BusinessPartnerLocation.withId(
+          CusAddrId
+        );
+        let customerAddr = OB.Dal.transform(OB.Model.BPLocation, bPLocation);
+
         if (!customerAddr || customerAddr.length === 0) {
           me.clearModelWith(null);
           userCallback(me);
@@ -63,7 +67,9 @@
           me.clearModelWith(customerAddr);
           userCallback(me);
         }
-      });
+      } catch (error) {
+        OB.error(error);
+      }
     },
     loadModel: function(customerAddr, userCallback) {
       //search data in local DB and load it to this

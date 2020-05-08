@@ -126,7 +126,7 @@ enyo.kind({
       );
     }
   },
-  buttonShowing: function(bp) {
+  buttonShowing: async function(bp) {
     var criteria = {},
       me = this;
 
@@ -168,17 +168,36 @@ enyo.kind({
           };
           var remoteCriteria = [bPartnerId];
           criteria.remoteFilters = remoteCriteria;
-        }
-        OB.Dal.find(
-          OB.Model.BPLocation,
-          criteria,
-          function(locations) {
-            successLocations(locations.models);
-          },
-          function(tx, error) {
+          OB.Dal.find(
+            OB.Model.BPLocation,
+            criteria,
+            function(locations) {
+              successLocations(locations.models);
+            },
+            function(tx, error) {
+              OB.UTIL.showError(error);
+            }
+          );
+        } else {
+          try {
+            const criteria = new OB.App.Class.Criteria().criterion(
+              'bpartner',
+              bp.get('id')
+            );
+            let bPLocations = await OB.App.MasterdataModels.BusinessPartnerLocation.find(
+              criteria.build()
+            );
+            let transformedBPLocations = [];
+            for (let i = 0; i < bPLocations.length; i++) {
+              transformedBPLocations.push(
+                OB.Dal.transform(OB.Model.BPLocation, bPLocations[i])
+              );
+            }
+            successLocations(transformedBPLocations);
+          } catch (error) {
             OB.UTIL.showError(error);
           }
-        );
+        }
       }
     }
   },
@@ -893,7 +912,7 @@ enyo.kind({
     this.bpsList.reset();
     return true;
   },
-  searchAction: function(inSender, inEvent) {
+  searchAction: async function(inSender, inEvent) {
     var execution = OB.UTIL.ProcessController.start('searchCustomerAddress');
     var me = this,
       criteria = {},
@@ -920,22 +939,22 @@ enyo.kind({
           me.initialLoad = false;
           me.onlyOneAddress = dataBps.length === 1;
         }
-        _.each(dataBps.models, function(bp) {
-          bp.set('onlyOneAddress', me.onlyOneAddress);
-        });
-        me.bpsList.reset(dataBps.models);
+        if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+          _.each(dataBps.models, function(bp) {
+            bp.set('onlyOneAddress', me.onlyOneAddress);
+          });
+          me.bpsList.reset(dataBps.models);
+        } else {
+          for (const bp of dataBps) {
+            bp.set('onlyOneAddress', me.onlyOneAddress);
+          }
+          me.bpsList.reset(dataBps);
+        }
       } else {
         me.bpsList.reset();
       }
     }
-    criteria.name = {
-      operator: OB.Dal.CONTAINS,
-      value: filter
-    };
-    criteria.bpartner = this.bPartner.get('id');
-    if (!this.manageAddress) {
-      criteria.isBillTo = true;
-    }
+
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
       var filterIdentifier = {
           columns: ['_filter'],
@@ -958,13 +977,45 @@ enyo.kind({
         });
       }
       criteria.remoteFilters = remoteCriteria;
+
+      OB.Dal.find(
+        OB.Model.BPLocation,
+        criteria,
+        successCallbackBPsLoc,
+        errorCallback
+      );
+    } else {
+      try {
+        const criteria = new OB.App.Class.Criteria();
+        criteria.criterion('bpartner', this.bPartner.get('id'));
+        if (!this.manageAddress) {
+          criteria.criterion('isBillTo', true);
+        }
+        criteria.criterion('name', filter, 'includes');
+
+        let bPLocations = await OB.App.MasterdataModels.BusinessPartnerLocation.find(
+          criteria.build()
+        );
+        let transformedBPLocations = [];
+        for (let i = 0; i < bPLocations.length; i++) {
+          transformedBPLocations.push(
+            OB.Dal.transform(OB.Model.BPLocation, bPLocations[i])
+          );
+        }
+        successCallbackBPsLoc(transformedBPLocations);
+      } catch (error) {
+        errorCallback(error);
+      }
+
+      criteria.name = {
+        operator: OB.Dal.CONTAINS,
+        value: filter
+      };
+      criteria.bpartner = this.bPartner.get('id');
+      if (!this.manageAddress) {
+        criteria.isBillTo = true;
+      }
     }
-    OB.Dal.find(
-      OB.Model.BPLocation,
-      criteria,
-      successCallbackBPsLoc,
-      errorCallback
-    );
     OB.UTIL.ProcessController.finish('searchCustomerAddress', execution);
     return true;
   },
@@ -1164,7 +1215,7 @@ enyo.kind({
       });
     }
   },
-  changedTitle: function(bp) {
+  changedTitle: async function(bp) {
     if (this.args.manageAddress) {
       if (this.args.locationButton) {
         this.$.header.setContent(
@@ -1229,7 +1280,6 @@ enyo.kind({
     ) {
       successCallbackBPsLoc(bp.get('locations'));
     } else {
-      criteria.bpartner = bp.get('id');
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
         var bPartnerId = {
           columns: ['bpartner'],
@@ -1239,15 +1289,35 @@ enyo.kind({
         };
         var remoteCriteria = [bPartnerId];
         criteria.remoteFilters = remoteCriteria;
+
+        OB.Dal.find(
+          OB.Model.BPLocation,
+          criteria,
+          function(locations) {
+            successCallbackBPsLoc(locations.models);
+          },
+          errorCallback
+        );
+      } else {
+        try {
+          const criteria = new OB.App.Class.Criteria().criterion(
+            'bpartner',
+            bp.get('id')
+          );
+          let bPLocations = await OB.App.MasterdataModels.BusinessPartnerLocation.find(
+            criteria.build()
+          );
+          let transformedBPLocations = [];
+          for (let i = 0; i < bPLocations.length; i++) {
+            transformedBPLocations.push(
+              OB.Dal.transform(OB.Model.BPLocation, bPLocations[i])
+            );
+          }
+          successCallbackBPsLoc(transformedBPLocations);
+        } catch (error) {
+          errorCallback(error);
+        }
       }
-      OB.Dal.find(
-        OB.Model.BPLocation,
-        criteria,
-        function(locations) {
-          successCallbackBPsLoc(locations.models);
-        },
-        errorCallback
-      );
     }
   },
   i18nHeader: '',
