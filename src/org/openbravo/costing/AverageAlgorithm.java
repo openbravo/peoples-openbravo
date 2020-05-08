@@ -20,8 +20,6 @@ package org.openbravo.costing;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -54,7 +52,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
       BigDecimal newCost = null;
       final BigDecimal currentStock = CostingUtils.getCurrentStock(transaction, costOrg,
           costDimensions, costingRule.isBackdatedTransactionsFixed(), costCurrency);
-      BigDecimal currentValuedStock = CostingUtils.getCurrentValuedStock(transaction, costOrg,
+      final BigDecimal currentValuedStock = CostingUtils.getCurrentValuedStock(transaction, costOrg,
           costDimensions, costingRule.isBackdatedTransactionsFixed(), costCurrency);
       if (currentCosting == null) {
         if (transaction.getMovementQuantity().signum() == 0) {
@@ -64,8 +62,8 @@ public class AverageAlgorithm extends CostingAlgorithm {
               costCurrency.getCostingPrecision().intValue(), RoundingMode.HALF_UP);
         }
       } else {
-        BigDecimal newCostAmt = currentValuedStock.add(trxCostWithSign);
-        BigDecimal newStock = currentStock.add(transaction.getMovementQuantity());
+        final BigDecimal newCostAmt = currentValuedStock.add(trxCostWithSign);
+        final BigDecimal newStock = currentStock.add(transaction.getMovementQuantity());
         if (newStock.signum() == 0) {
           // If stock is zero keep current cost.
           newCost = currentCosting.getCost();
@@ -119,7 +117,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
   private void insertCost(final Costing currentCosting, final BigDecimal newCost,
       final BigDecimal currentStock, final BigDecimal currentValuedStock,
       final BigDecimal trxCost) {
-    Date dateTo = getLastDate();
+    Date dateTo = CostingUtils.getLastDate();
     Date startingDate = null;
     if (currentCosting != null) {
       dateTo = currentCosting.getEndingDate();
@@ -131,7 +129,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
         dateTo = startingDate;
       }
     }
-    Costing cost = OBProvider.getInstance().get(Costing.class);
+    final Costing cost = OBProvider.getInstance().get(Costing.class);
     cost.setCost(newCost);
     cost.setCurrency(costCurrency);
     cost.setStartingDate(transaction.getTransactionProcessDate());
@@ -192,7 +190,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
       //@formatter:on
     }
 
-    OBQuery<Costing> costQry = OBDal.getInstance()
+    final OBQuery<Costing> costQry = OBDal.getInstance()
         .createQuery(Costing.class, hql)
         .setFilterOnReadableOrganization(false)
         .setNamedParameter("product", product.getId())
@@ -208,8 +206,8 @@ public class AverageAlgorithm extends CostingAlgorithm {
       costQry.setNamedParameter("org", costOrg.getId());
     }
 
-    List<Costing> costList = costQry.setMaxResult(2).list();
-    int size = costList.size();
+    final List<Costing> costList = costQry.setMaxResult(2).list();
+    final int size = costList.size();
     // If no average cost is found return null.
     if (size == 0) {
       return null;
@@ -261,7 +259,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
       //@formatter:on
     }
 
-    OBQuery<Costing> costQry = OBDal.getInstance()
+    final OBQuery<Costing> costQry = OBDal.getInstance()
         .createQuery(Costing.class, hql)
         .setFilterOnReadableOrganization(false)
         .setNamedParameter("product", product.getId())
@@ -279,8 +277,8 @@ public class AverageAlgorithm extends CostingAlgorithm {
     }
     costQry.setMaxResult(2);
 
-    List<Costing> costList = costQry.list();
-    int size = costList.size();
+    final List<Costing> costList = costQry.list();
+    final int size = costList.size();
     // If no average cost is found return null.
     if (size == 0) {
       return null;
@@ -332,7 +330,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
             "   endingDate desc";
     //@formatter:on
 
-    OBQuery<Costing> costQry = OBDal.getInstance()
+    final OBQuery<Costing> costQry = OBDal.getInstance()
         .createQuery(Costing.class, hql)
         .setFilterOnReadableOrganization(false)
         .setNamedParameter("product", product.getId())
@@ -349,17 +347,6 @@ public class AverageAlgorithm extends CostingAlgorithm {
     }
 
     return costQry.setMaxResult(1).uniqueResult();
-  }
-
-  private Date getLastDate() {
-    SimpleDateFormat outputFormat = new SimpleDateFormat("dd-MM-yyyy");
-    try {
-      return outputFormat.parse("31-12-9999");
-    } catch (ParseException e) {
-      // Error parsing the date.
-      log4j.error("Error parsing the date.", e);
-      return null;
-    }
   }
 
   /**

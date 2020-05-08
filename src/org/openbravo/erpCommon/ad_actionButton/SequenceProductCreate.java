@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -40,9 +40,9 @@ import org.openbravo.scheduling.ProcessBundle;
 
 public class SequenceProductCreate implements Process {
 
-  private static final String lotSearchKey = "LOT";
-  private static final String serialNoSearchKey = "SNO";
-  private static final String expirationDateSearchKey = "EXD";
+  private static final String LOT_SEARCHKEY = "LOT";
+  private static final String SERIAL_NO_SEARCHKEY = "SNO";
+  private static final String EXPIRATION_DATES_EARCHKEY = "EXD";
   private static final Logger log4j = LogManager.getLogger();
 
   @Override
@@ -82,6 +82,12 @@ public class SequenceProductCreate implements Process {
       // Delete Purchasing Tab
       newProduct.setApprovedVendorList(null);
 
+      // Delete Transactions Tab
+      newProduct.setMaterialMgmtMaterialTransactionList(null);
+
+      // Delete Costing Tab
+      newProduct.setMaterialMgmtCostingList(null);
+
       // Product Category
       ProductCategory pcategory = OBDal.getInstance().get(ProductCategory.class, productCategoryId);
       if (pcategory != null) {
@@ -117,13 +123,13 @@ public class SequenceProductCreate implements Process {
           && productionType.equals("+") && opProduct.getProductionType().equals("-")) {
         // Special Attribute
         if (newProduct.getAttributeSet().isLot()) {
-          copyAtt(newOpProduct, opProduct, true, lotSearchKey, null);
+          copyAtt(newOpProduct, opProduct, true, LOT_SEARCHKEY, null);
         }
         if (newProduct.getAttributeSet().isSerialNo()) {
-          copyAtt(newOpProduct, opProduct, true, serialNoSearchKey, null);
+          copyAtt(newOpProduct, opProduct, true, SERIAL_NO_SEARCHKEY, null);
         }
         if (newProduct.getAttributeSet().isExpirationDate()) {
-          copyAtt(newOpProduct, opProduct, true, expirationDateSearchKey, null);
+          copyAtt(newOpProduct, opProduct, true, EXPIRATION_DATES_EARCHKEY, null);
         }
         // Normal Attribute
         for (AttributeUse attributeuse : newProduct.getAttributeSet().getAttributeUseList()) {
@@ -173,7 +179,7 @@ public class SequenceProductCreate implements Process {
   }
 
   private void copyAtt(OperationProduct newOpProduct, OperationProduct fromOpProduct,
-      boolean isSpecial, String specialValue, AttributeUse attributeuse) throws Exception {
+      boolean isSpecial, String specialValue, AttributeUse attributeuse) {
 
     OperationProductAttribute opProductAtt = OBProvider.getInstance()
         .get(OperationProductAttribute.class);
@@ -193,10 +199,18 @@ public class SequenceProductCreate implements Process {
 
   }
 
-  private static Long getLineNum(String SequenceId) throws Exception {
-    String hql = "  SELECT COALESCE(MAX(l.lineNo),0)+10 AS DefaultValue FROM ManufacturingOperationProduct l WHERE l.mASequence.id= :sequenceId";
-    Query<Long> q = OBDal.getInstance().getSession().createQuery(hql, Long.class);
-    q.setParameter("sequenceId", SequenceId);
+  private static Long getLineNum(String sequenceId) {
+    //@formatter:off
+    final String hql = 
+                  "select coalesce(max(l.lineNo),0)+10 as DefaultValue" +
+                  "  from ManufacturingOperationProduct l" +
+                  " where l.mASequence.id= :sequenceId";
+    //@formatter:on
+
+    final Query<Long> q = OBDal.getInstance()
+        .getSession()
+        .createQuery(hql, Long.class)
+        .setParameter("sequenceId", sequenceId);
     try {
       Long result = q.uniqueResult();
       return result == null ? 0L : result;

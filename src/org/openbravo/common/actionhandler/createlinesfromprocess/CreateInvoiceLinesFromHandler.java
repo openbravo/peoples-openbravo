@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,8 +29,10 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.client.application.process.ResponseActionsBuilder.MessageType;
+import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.invoice.Invoice;
+import org.openbravo.service.db.DbUtility;
 
 /**
  * Abstract class to be implemented by any process that creates invoice lines from any Openbravo
@@ -75,9 +77,11 @@ abstract class CreateInvoiceLinesFromHandler<T extends BaseOBObject>
   }
 
   private JSONObject showExceptionInViewAndRetry(Exception e) {
+    final Throwable ex = DbUtility
+        .getUnderlyingSQLException(e.getCause() != null ? e.getCause() : e);
+    final OBError msg = OBMessageUtils.translateError(ex.getMessage());
     return getResponseBuilder()
-        .showMsgInProcessView(MessageType.ERROR, OBMessageUtils.messageBD("error"), e.getMessage(),
-            true)
+        .showMsgInProcessView(MessageType.ERROR, msg.getTitle(), msg.getMessage(), true)
         .retryExecution()
         .build();
   }

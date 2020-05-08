@@ -10602,14 +10602,13 @@ You can also select if transactions are allowed or not for this organization typ
 <!--610C84B81180457FAD4D63DB5F92EC6F-->  <CLASSNAME><![CDATA[Brand]]></CLASSNAME>
 <!--610C84B81180457FAD4D63DB5F92EC6F-->  <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--610C84B81180457FAD4D63DB5F92EC6F-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--610C84B81180457FAD4D63DB5F92EC6F-->  <AD_WINDOW_ID><![CDATA[11A2976F05D841EFAE654A8B83EB4204]]></AD_WINDOW_ID>
 <!--610C84B81180457FAD4D63DB5F92EC6F-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--610C84B81180457FAD4D63DB5F92EC6F-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
 <!--610C84B81180457FAD4D63DB5F92EC6F-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
 <!--610C84B81180457FAD4D63DB5F92EC6F-->  <IMPORTTABLE><![CDATA[N]]></IMPORTTABLE>
 <!--610C84B81180457FAD4D63DB5F92EC6F-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
 <!--610C84B81180457FAD4D63DB5F92EC6F-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
-<!--610C84B81180457FAD4D63DB5F92EC6F-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
+<!--610C84B81180457FAD4D63DB5F92EC6F-->  <DEVELOPMENTSTATUS><![CDATA[DP]]></DEVELOPMENTSTATUS>
 <!--610C84B81180457FAD4D63DB5F92EC6F-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DA4B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--610C84B81180457FAD4D63DB5F92EC6F-->  <DATAORIGINTYPE><![CDATA[Table]]></DATAORIGINTYPE>
 <!--610C84B81180457FAD4D63DB5F92EC6F-->  <ISTREE><![CDATA[N]]></ISTREE>
@@ -12583,6 +12582,7 @@ group by  coalesce(lcm.id, lcc.id), lcc, lct.name, lcc.amount, lcc.currency.iSOC
 iol.uOM as uOM, iol.id as goodsShipmentLine, iol.movementQuantity as movementQuantity,
 io.businessPartner as businessPartner, io.documentNo as shipmentNumber,
 io.movementDate as movementDate,  attributeSetValue as attributeSetValue,
+(select ol.id from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine.id = iol.id) as salesOrderLine,
 @rmAUM@ as aum,
 @rmAUMQty@ as aumqty,
 @rmAUMId@ as aumId,
@@ -12665,7 +12665,8 @@ ol.uOM as uOM, '' as goodsShipmentLine, '' as movementQuantity,
 ol.salesOrder.businessPartner as businessPartner, '' as shipmentNumber,
 '' as movementDate,  '' as attributeSetValue,'' as returnQtyOtherRM,
 'Y' as obSelected, coalesce(ol.orderedQuantity,0)*(-1) as returned, 
- (select oli.returnReason from OrderLine as oli where oli.salesOrder.id = :salesOrderId  and oli.id=ol.id) as returnReason, coalesce (ol.tax, '') as tax, ol.@unitPriceProperty@  as unitPrice, 
+ (select oli.returnReason from OrderLine as oli where oli.salesOrder.id = :salesOrderId  and oli.id=ol.id) as returnReason, coalesce (ol.tax, '') as tax, ol.@unitPriceProperty@  as unitPrice,
+ol.id as salesOrderLine, 
 '' as orderNo
 from OrderLine ol  
 where ol.goodsShipmentLine is null

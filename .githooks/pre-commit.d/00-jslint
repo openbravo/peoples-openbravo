@@ -16,7 +16,6 @@
 # * Contributor(s):  ______________________________________.
 # ************************************************************************
 set -e
-
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source ${SCRIPT_DIR}/../../modules/org.openbravo.client.kernel/jsutils/dir-functions
 
@@ -42,7 +41,7 @@ do
 done
 
 if [[ -n "${FILES[*]}" ]]; then
-    ${OPENBRAVO_ROOT_PATH}/modules/org.openbravo.client.kernel/jslint/jslint ${FILES[*]} || exit 1
+    ${OPENBRAVO_ROOT_PATH}/modules/org.openbravo.client.kernel/jslint/jslint -g ${FILES[*]} || exit 1
 fi
 
 exit 0

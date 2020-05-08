@@ -1069,4 +1069,15 @@ public class CostingUtils {
   private static boolean isStarOrganization(final Organization parentOrg) {
     return StringUtils.equals(parentOrg.getId(), "0");
   }
+
+  public static Date getLastDate() {
+    final SimpleDateFormat outputFormat = new SimpleDateFormat("dd-MM-yyyy");
+    try {
+      return outputFormat.parse("31-12-9999");
+    } catch (final ParseException e) {
+      // Error parsing the date.
+      log4j.error("Error parsing the date.", e);
+      return null;
+    }
+  }
 }

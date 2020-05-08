@@ -36,6 +36,7 @@ it will be executed for each module that has a .prettierignore file in its root.
  Options:
   -h                Display this help and exit
   -w                Write mode. Show formatting issues and overwrites the files with the fixes
+  -g                Git support, use git show and stdin as input for formatter
 
 "
 }
@@ -54,7 +55,16 @@ function formatFiles {
         IGNORE_PATH="--ignore-path $(pwd)/.prettierignore"
     fi
 
-    echo "$@" | xargs -n 250 npm run jsformat --prefix ${OPENBRAVO_ROOT_PATH} -s -- ${FLAGS} ${IGNORE_PATH} || exit 1
+    # If git is specified git show will be used to only show staged changes,
+    # realpath is needed for this to work, hash command is used to check for existence
+    if [[ $1 == "GIT" ]] && hash realpath 2>/dev/null; then
+      for FILE in ${@:2} ; do
+        FILE_RELATIVE=$(realpath --relative-to="$(pwd)" "$FILE")
+        git show :${FILE_RELATIVE} | npm run jsformat --prefix ${OPENBRAVO_ROOT_PATH}  --stdin-filepath ${FILE} --stdin -s -- ${FLAGS} ${IGNORE_PATH} || exit 1
+      done
+    else
+      echo "$@" | xargs -n 250 npm run jsformat --prefix ${OPENBRAVO_ROOT_PATH} -s -- ${FLAGS} ${IGNORE_PATH} || exit 1
+    fi
 }
 
 function getPrettierIgnorePatterns {
@@ -105,7 +115,7 @@ function runFormatterInModule {
 }
 
 #Parse input arguments
-while getopts ":hw" arg; do
+while getopts ":hwg" arg; do
     case ${arg} in
         h )
             usage
@@ -113,6 +123,9 @@ while getopts ":hw" arg; do
         ;;
         w )
             WRITE=true
+        ;;
+        g )
+            GIT=true
         ;;
         \? )
             echo "Invalid option: -$OPTARG" >&2
@@ -132,9 +145,14 @@ else
     FLAGS="--check"
 fi
 
+
 if [[ $# > 0 ]]; then
+  if [[ ${GIT} == true ]]; then
+    formatFiles "GIT" $@
+  else
     files=$(convertPathsToAbsolute $@)
     formatFiles ${files}
+  fi
 else
     formatAllFiles
 fi
