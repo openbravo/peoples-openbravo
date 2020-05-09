@@ -390,7 +390,7 @@ public class InvoiceUtils {
     } else {
       // other case use generic description if present and add relationship to order
       description = OBMessageUtils.getI18NMessage("OBPOS_InvoiceRelatedToOrder", null)
-          + jsoninvoice.getString("orderDocumentNo");
+          + order.getDocumentNo();
       if (jsoninvoice.has("description")
           && !StringUtils.isEmpty(jsoninvoice.getString("description"))) {
         description = StringUtils.substring(jsoninvoice.getString("description"), 0,
