@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+************************************************************************************
+* Copyright (C) 2020 Openbravo S.L.U.
+* Licensed under the Openbravo Commercial License version 1.0
+* You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+* or in the legal folder of this module distribution.
+************************************************************************************
+-->
+
+<SqlClass name="I43919ValidatePaymentProvidersData" package="org.openbravo.retail.posterminal.buildvalidation">
+  <SqlMethod name="existsWrongPaymentMethod" type="preparedStatement" return="boolean">
+    <Sql><![CDATA[
+        SELECT COUNT(*)
+        FROM OBPOS_APP_PAYMENT_TYPE
+        WHERE NOT(OBPOS_PAYMENTGROUP_ID IS NULL OR OBPOS_PAYMENTGROUP_ID = '0' OR OBPOS_PAYMENTMETHOD_TYPE_ID IS NOT NULL)
+      ]]>
+    </Sql>
+  </SqlMethod>
+</SqlClass>
