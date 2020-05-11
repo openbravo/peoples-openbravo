@@ -258,6 +258,26 @@ OB.OBPOSCloseCash.Model.CloseCash = OB.Model.TerminalWindowModel.extend({
   },
   // Step 4:
   getCountCashSummary: function() {
+    //First we fix the qty to keep for non-automated payment methods
+    _.each(this.get('paymentList').models, function(model) {
+      var counted = model.get('foreignCounted');
+      if (OB.UTIL.isNullOrUndefined(model.get('qtyToKeep'))) {
+        model.set('qtyToKeep', counted);
+      }
+      if (counted < 0) {
+        model.set('qtyToKeep', 0);
+        return;
+      }
+      if (
+        !model.get('isCashToKeepSelected') &&
+        model.get('paymentMethod').keepfixedamount
+      ) {
+        model.set('qtyToKeep', model.get('paymentMethod').amount);
+      }
+      if (model.get('qtyToKeep') > counted) {
+        model.set('qtyToKeep', counted);
+      }
+    });
     // Calculate total quantity to keep and deposit for all the payment methods
     const totalQtyToKeep = this.get('paymentList').models.reduce(
         (total, model) => {
@@ -305,27 +325,6 @@ OB.OBPOSCloseCash.Model.CloseCash = OB.Model.TerminalWindowModel.extend({
       totalQtyToKeep: totalQtyToKeep,
       totalQtyToDepo: totalQtyToDepo
     };
-    //First we fix the qty to keep for non-automated payment methods
-    _.each(this.get('paymentList').models, function(model) {
-      var counted = model.get('foreignCounted');
-      if (
-        !model.get('paymentMethod').keepfixedamount ||
-        OB.UTIL.isNullOrUndefined(counted)
-      ) {
-        model.set('qtyToKeep', 0);
-        return;
-      }
-      if (OB.UTIL.isNullOrUndefined(model.get('qtyToKeep'))) {
-        model.set('qtyToKeep', counted);
-      }
-      if (!model.get('paymentMethod').allowdontmove) {
-        if (counted > model.get('paymentMethod').amount) {
-          model.set('qtyToKeep', model.get('paymentMethod').amount);
-        } else {
-          model.set('qtyToKeep', counted);
-        }
-      }
-    });
 
     const enumSummarys = [
       'expectedSummary',
