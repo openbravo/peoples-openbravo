@@ -77,6 +77,11 @@
                   );
                 }
 
+                // Optimization: don't send all payments, only the one used in the cash management
+                newCashManagement.cashUpReportInformation.cashPaymentMethodInfo = [
+                  { ...newPaymentMethod }
+                ];
+
                 // Create a Message to synchronize the Cash Management
                 const { terminalName, cacheSessionId } = payload.parameters;
                 const newMessagePayload = {
