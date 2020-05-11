@@ -107,7 +107,7 @@
   OB.App.StateAPI.Ticket.splitLine.addActionPreparation(
     async (state, payload) => {
       const ticket = state.Ticket;
-      const { lineId } = payload;
+      const { lineId, quantities } = payload;
 
       if (lineId === undefined) {
         throw new Error('lineId parameter is mandatory');
@@ -115,6 +115,10 @@
 
       if (!ticket.lines.some(l => l.id === lineId)) {
         throw new Error(`lineId ${lineId} not found in ticket`);
+      }
+
+      if (quantities === undefined) {
+        throw new Error('quantities parameter is mandatory');
       }
     }
   );

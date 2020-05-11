@@ -62,4 +62,10 @@ describe('Ticket.splitLine action preparation', () => {
       prepareAction({ lineId: '0', quantities: [50, 50] })
     ).rejects.toThrow('lineId 0 not found in ticket');
   });
+
+  it('quantities parameter is present', async () => {
+    await expect(prepareAction({ lineId: '1' })).rejects.toThrow(
+      'quantities parameter is mandatory'
+    );
+  });
 });
