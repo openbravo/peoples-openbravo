@@ -871,7 +871,10 @@ enyo.kind({
       var paymentMethod = OB.MobileApp.model.paymentnames[itemchange.key];
       if (
         OB.App.State.Cashup.Utils.getPaymentMethodCurrentCash(
-          paymentMethod.payment.id
+          paymentMethod.payment.id,
+          OB.MobileApp.model.paymentnames,
+          OB.UTIL.currency.webPOSDefaultCurrencyId(),
+          OB.UTIL.currency.conversions
         ).foreignCurrentCash < itemchange.amountRounded
       ) {
         failedPaymentMethods.push(paymentMethod.payment._identifier);
@@ -1603,7 +1606,10 @@ enyo.kind({
                 OB.DEC.compare(
                   OB.DEC.sub(
                     OB.App.State.Cashup.Utils.getPaymentMethodCurrentCash(
-                      paymentmethod.paymentMethodId
+                      paymentmethod.payment.id,
+                      OB.MobileApp.model.paymentnames,
+                      OB.UTIL.currency.webPOSDefaultCurrencyId(),
+                      OB.UTIL.currency.conversions
                     ).currentCash,
                     reversedCash
                   )
@@ -1649,7 +1655,10 @@ enyo.kind({
                   paymentmethod &&
                   payment.get('amount') >
                     OB.App.State.Cashup.Utils.getPaymentMethodCurrentCash(
-                      paymentmethod.paymentMethodId
+                      paymentmethod.payment.id,
+                      OB.MobileApp.model.paymentnames,
+                      OB.UTIL.currency.webPOSDefaultCurrencyId(),
+                      OB.UTIL.currency.conversions
                     ).foreignCurrentCash &&
                   payment.get('isCash')
                 ) {
@@ -2214,7 +2223,10 @@ enyo.kind({
     if (selectedPayment && selectedPayment.paymentMethod.iscash) {
       currentCash =
         OB.App.State.Cashup.Utils.getPaymentMethodCurrentCash(
-          selectedPayment.payment.id
+          selectedPayment.payment.id,
+          OB.MobileApp.model.paymentnames,
+          OB.UTIL.currency.webPOSDefaultCurrencyId(),
+          OB.UTIL.currency.conversions
         ).currentCash || OB.DEC.Zero;
     }
     if (

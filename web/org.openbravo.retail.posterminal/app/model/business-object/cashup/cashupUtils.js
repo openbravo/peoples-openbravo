@@ -117,6 +117,7 @@
       newCashup.grossReturns = currentCashupFromBackend.grossReturns;
       newCashup.totalRetailTransactions =
         currentCashupFromBackend.totalRetailTransactions;
+      newCashup.totalStartings = OB.DEC.Zero;
       newCashup.creationDate = currentCashupFromBackend.creationDate;
       newCashup.userId = currentCashupFromBackend.userId;
       newCashup.posterminal = currentCashupFromBackend.posterminal;
@@ -165,6 +166,39 @@
       newCashup.set('objToSend', JSON.stringify(filteredObjToSend));
 
       return newCashup;
+    },
+
+    /**
+     * converts an amount to the WebPOS amount currency
+     * @param  {currencyId} fromCurrencyId    the currencyId of the amount to be converted
+     * @param  {float}      amount            the amount to be converted
+     * @param  {currencyId} defaultCurrencyId the currencyId of the default payment method
+     * @param  {Object[]}   conversions       array of converters availables
+     * @return {float}                        the converted amount
+     */
+    toDefaultCurrency(fromCurrencyId, amount, defaultCurrencyId, conversions) {
+      if (
+        fromCurrencyId === defaultCurrencyId &&
+        fromCurrencyId != null &&
+        defaultCurrencyId != null
+      ) {
+        return amount;
+      }
+
+      const converter = conversions.find(function getConverter(c) {
+        return (
+          c.fromCurrencyId === fromCurrencyId &&
+          c.toCurrencyId === defaultCurrencyId
+        );
+      });
+
+      if (!converter.length === 0) {
+        OB.error(
+          `Currency converter not added: ${fromCurrencyId} -> ${defaultCurrencyId}`
+        );
+      }
+
+      return OB.DEC.mul(amount, converter.rate);
     }
   });
 })();

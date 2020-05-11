@@ -138,10 +138,13 @@
               paymentMethodCashUp.totalDepostis !== 0 &&
               paymentMethodCashUp.totalDrops !== 0)
           ) {
-            paymentMethods.push(
-              OB.App.State.Cashup.Utils.getPaymentMethodFromBackendObject(
-                paymentMethodCashUp
-              )
+            const paymentFromBackend = OB.App.State.Cashup.Utils.getPaymentMethodFromBackendObject(
+              paymentMethodCashUp
+            );
+            paymentMethods.push(paymentFromBackend);
+            currentCashupFromBackend.totalStartings = OB.DEC.add(
+              currentCashupFromBackend.totalStartings,
+              paymentFromBackend.startingCash
             );
           }
         }
@@ -202,9 +205,17 @@
     /**
      * Retrieves current cash (also foreign currency) of a given paymentMethod
      * @param {string} paymentMethodId - The id of the paymentMethod
+     * @param {Object[]}   payments - payments available in the terminal
+     * @param  {currencyId} defaultCurrencyId - the currencyId of the default payment method
+     * @param  {Object[]}   conversions - array of converters availables
      * @return {Object} A JS Object with the currentCash and foreignCurrentCash
      */
-    getPaymentMethodCurrentCash(paymentMethodId) {
+    getPaymentMethodCurrentCash(
+      paymentMethodId,
+      payments,
+      defaultCurrencyId,
+      conversions
+    ) {
       const paymentMethod = OB.App.State.getState().Cashup.cashPaymentMethodInfo.find(
         payment => payment.paymentMethodId === paymentMethodId
       );
@@ -216,15 +227,17 @@
           OB.DEC.sub(paymentMethod.totalSales, paymentMethod.totalReturns)
         )
       );
-      const currentCash = OB.UTIL.currency.toDefaultCurrency(
-        OB.MobileApp.model.paymentnames[paymentMethod.searchKey].paymentMethod
-          .currency,
-        cash
+      const currentCash = OB.App.State.Cashup.Utils.toDefaultCurrency(
+        payments[paymentMethod.searchKey].paymentMethod.currency,
+        cash,
+        defaultCurrencyId,
+        conversions
       );
-      const foreignCurrentCash = OB.UTIL.currency.toDefaultCurrency(
-        OB.MobileApp.model.paymentnames[paymentMethod.searchKey].paymentMethod
-          .currency,
-        currentCash
+      const foreignCurrentCash = OB.App.State.Cashup.Utils.toDefaultCurrency(
+        payments[paymentMethod.searchKey].paymentMethod.currency,
+        currentCash,
+        defaultCurrencyId,
+        conversions
       );
       return { currentCash, foreignCurrentCash };
     }
