@@ -28,7 +28,18 @@ OB.UTIL.HookManager.registerHook(
         ],
         resetEvents: ['paintTaxes'],
         mapProperties: {
-          bp: 'businessPartner'
+          bp: 'businessPartner',
+          gross: 'grossAmount',
+          net: 'netAmount',
+          'lines[*].gross': 'grossAmount',
+          'lines[*].discountedGross': 'discountedGrossAmount',
+          'lines[*].price': 'grossPrice',
+          'lines[*].discountedPrice': 'discountedGrossPrice',
+          'lines[*].net': 'netAmount',
+          'lines[*].discountedNet': 'discountedNetAmount',
+          'lines[*].pricenet': 'netPrice',
+          'lines[*].lineRate': 'taxRate',
+          'lines[*].taxLines': 'taxes'
         }
       }
     );
