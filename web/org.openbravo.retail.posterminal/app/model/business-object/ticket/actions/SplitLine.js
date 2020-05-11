@@ -103,4 +103,14 @@
     }
     return ticket;
   });
+
+  OB.App.StateAPI.Ticket.splitLine.addActionPreparation(
+    async (state, payload) => {
+      const { lineId } = payload;
+
+      if (lineId === undefined) {
+        throw new Error('lineId parameter is mandatory');
+      }
+    }
+  );
 })();
