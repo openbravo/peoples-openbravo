@@ -63,9 +63,21 @@ describe('Ticket.splitLine action preparation', () => {
     ).rejects.toThrow('lineId 0 not found in ticket');
   });
 
-  it('quantities parameter is present', async () => {
+  it('checks quantities parameter is present', async () => {
     await expect(prepareAction({ lineId: '1' })).rejects.toThrow(
       'quantities parameter is mandatory'
     );
+  });
+
+  it('checks quantities parameter is an array', async () => {
+    await expect(prepareAction({ lineId: '1', quantities: 1 })).rejects.toThrow(
+      'quantities must be an array'
+    );
+  });
+
+  it('checks quantities is an array of numbers', async () => {
+    await expect(
+      prepareAction({ lineId: '1', quantities: ['1', 2] })
+    ).rejects.toThrow('quantities must be an array of numbers');
   });
 });

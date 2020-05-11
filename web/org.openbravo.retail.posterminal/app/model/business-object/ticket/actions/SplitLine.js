@@ -120,6 +120,13 @@
       if (quantities === undefined) {
         throw new Error('quantities parameter is mandatory');
       }
+
+      if (
+        !(quantities instanceof Array) ||
+        quantities.some(q => typeof q !== 'number')
+      ) {
+        throw new Error('quantities must be an array of numbers ');
+      }
     }
   );
 })();
