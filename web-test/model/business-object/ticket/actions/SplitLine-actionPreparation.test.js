@@ -92,4 +92,10 @@ describe('Ticket.splitLine action preparation', () => {
       prepareAction({ lineId: '1', quantities: [] })
     ).rejects.toThrow('quantities must sum 100 but they are 0');
   });
+
+  it('passes validations with correct params', async () => {
+    await expect(
+      prepareAction({ lineId: '1', quantities: [50, 30, 20] })
+    ).resolves.not.toThrow();
+  });
 });
