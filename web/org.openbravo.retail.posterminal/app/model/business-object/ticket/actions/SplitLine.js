@@ -113,7 +113,9 @@
         throw new Error('lineId parameter is mandatory');
       }
 
-      if (!ticket.lines.some(l => l.id === lineId)) {
+      const line = ticket.lines.find(l => l.id === lineId);
+
+      if (!line) {
         throw new Error(`lineId ${lineId} not found in ticket`);
       }
 
@@ -125,7 +127,14 @@
         !(quantities instanceof Array) ||
         quantities.some(q => typeof q !== 'number')
       ) {
-        throw new Error('quantities must be an array of numbers ');
+        throw new Error('quantities must be an array of numbers');
+      }
+
+      const qtySum = quantities.reduce((a, b) => a + b, 0);
+      if (qtySum !== line.qty) {
+        throw new Error(
+          `quantities must sum ${line.qty} but they are ${qtySum}`
+        );
       }
     }
   );

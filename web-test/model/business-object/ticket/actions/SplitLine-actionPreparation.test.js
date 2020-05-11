@@ -80,4 +80,16 @@ describe('Ticket.splitLine action preparation', () => {
       prepareAction({ lineId: '1', quantities: ['1', 2] })
     ).rejects.toThrow('quantities must be an array of numbers');
   });
+
+  it('checks quantities sum correctly', async () => {
+    await expect(
+      prepareAction({ lineId: '1', quantities: [50, 40] })
+    ).rejects.toThrow('quantities must sum 100 but they are 90');
+  });
+
+  it('empty quantities array is correctly handled', async () => {
+    await expect(
+      prepareAction({ lineId: '1', quantities: [] })
+    ).rejects.toThrow('quantities must sum 100 but they are 0');
+  });
 });
