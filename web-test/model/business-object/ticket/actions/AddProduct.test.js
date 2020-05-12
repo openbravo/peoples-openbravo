@@ -33,15 +33,15 @@ const emptyTicket = deepfreeze({ priceIncludesTax: true, lines: [] });
 const productA = deepfreeze({
   id: 'pA',
   uOMstandardPrecision: 2,
-  grossPrice: 5,
-  priceList: 5
+  standardPrice: 5,
+  listPrice: 5
 });
 
 const productB = deepfreeze({
   id: 'pB',
   uOMstandardPrecision: 3,
-  grossPrice: 10,
-  priceList: 11
+  standardPrice: 10,
+  listPrice: 11
 });
 
 describe('addProduct', () => {
@@ -49,10 +49,21 @@ describe('addProduct', () => {
     const newTicket = OB.App.StateAPI.Ticket.addProduct(emptyTicket, {
       products: [{ product: productA, qty: 1 }, { product: productB, qty: 2 }]
     });
-
     expect(newTicket.lines).toMatchObject([
-      { product: { id: 'pA' } },
-      { product: { id: 'pB' } }
+      {
+        qty: 1,
+        grossPrice: 5,
+        priceList: 5,
+        priceIncludesTax: true,
+        product: { id: 'pA' }
+      },
+      {
+        qty: 2,
+        grossPrice: 10,
+        priceList: 11,
+        priceIncludesTax: true,
+        product: { id: 'pB' }
+      }
     ]);
   });
 });
