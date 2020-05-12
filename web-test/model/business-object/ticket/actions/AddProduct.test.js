@@ -44,47 +44,142 @@ const productB = deepfreeze({
   listPrice: 11
 });
 
+const serviceProduct = deepfreeze({
+  id: 'pS',
+  productType: 'S',
+  uOMstandardPrecision: 3,
+  standardPrice: 10,
+  listPrice: 11
+});
+
 describe('addProduct', () => {
-  it('adds new lines if product not present', () => {
-    const newTicket = OB.App.StateAPI.Ticket.addProduct(emptyTicket, {
-      products: [{ product: productA, qty: 1 }, { product: productB, qty: 2 }]
+  describe('basics', () => {
+    it('adds new lines if product not present', () => {
+      const newTicket = OB.App.StateAPI.Ticket.addProduct(emptyTicket, {
+        products: [{ product: productA, qty: 1 }, { product: productB, qty: 2 }]
+      });
+      expect(newTicket.lines).toMatchObject([
+        {
+          qty: 1,
+          grossPrice: 5,
+          priceList: 5,
+          priceIncludesTax: true,
+          product: { id: 'pA' }
+        },
+        {
+          qty: 2,
+          grossPrice: 10,
+          priceList: 11,
+          priceIncludesTax: true,
+          product: { id: 'pB' }
+        }
+      ]);
     });
-    expect(newTicket.lines).toMatchObject([
-      {
-        qty: 1,
-        grossPrice: 5,
-        priceList: 5,
-        priceIncludesTax: true,
-        product: { id: 'pA' }
-      },
-      {
-        qty: 2,
-        grossPrice: 10,
-        priceList: 11,
-        priceIncludesTax: true,
-        product: { id: 'pB' }
-      }
-    ]);
+
+    it('adds units to existing lines with same product', () => {
+      const baseTicket = OB.App.StateAPI.Ticket.addProduct(emptyTicket, {
+        products: [{ product: productA, qty: 1 }, { product: productB, qty: 2 }]
+      });
+
+      const newTicket = OB.App.StateAPI.Ticket.addProduct(baseTicket, {
+        products: [{ product: productA, qty: 10 }]
+      });
+
+      expect(newTicket.lines).toMatchObject([
+        {
+          qty: 11,
+          product: { id: 'pA' }
+        },
+        {
+          qty: 2,
+          product: { id: 'pB' }
+        }
+      ]);
+    });
   });
 
-  it('adds units to existing lines with same product', () => {
-    const baseTicket = OB.App.StateAPI.Ticket.addProduct(emptyTicket, {
-      products: [{ product: productA, qty: 1 }, { product: productB, qty: 2 }]
+  describe('delivery mode', () => {
+    it('is not set for service products', () => {
+      const newTicket = OB.App.StateAPI.Ticket.addProduct(emptyTicket, {
+        products: [{ product: serviceProduct, qty: 1 }]
+      });
+
+      expect(newTicket.lines[0]).not.toHaveProperty('obrdmDeliveryMode');
     });
 
-    const newTicket = OB.App.StateAPI.Ticket.addProduct(baseTicket, {
-      products: [{ product: productA, qty: 10 }]
+    it('is set to PickAndCarry by default', () => {
+      const newTicket = OB.App.StateAPI.Ticket.addProduct(emptyTicket, {
+        products: [{ product: productA, qty: 1 }]
+      });
+
+      expect(newTicket.lines[0]).toHaveProperty(
+        'obrdmDeliveryMode',
+        'PickAndCarry'
+      );
     });
 
-    expect(newTicket.lines).toMatchObject([
-      {
-        qty: 11,
-        product: { id: 'pA' }
-      },
-      {
-        qty: 2,
-        product: { id: 'pB' }
-      }
-    ]);
+    it('is set to ticket mode if it has', () => {
+      const newTicket = OB.App.StateAPI.Ticket.addProduct(
+        { ...emptyTicket, obrdmDeliveryModeProperty: 'testMode' },
+        {
+          products: [{ product: productA, qty: 1 }]
+        }
+      );
+
+      expect(newTicket.lines[0]).toHaveProperty(
+        'obrdmDeliveryMode',
+        'testMode'
+      );
+    });
+
+    it('is set to product mode if it has', () => {
+      const newTicket = OB.App.StateAPI.Ticket.addProduct(
+        { ...emptyTicket, obrdmDeliveryModeProperty: 'testMode' },
+        {
+          products: [
+            {
+              product: {
+                ...productA,
+                obrdmDeliveryMode: 'prodDeliveryMode',
+                obrdmDeliveryModeLyw: 'lywDeliveryMode'
+              },
+              qty: 1
+            }
+          ]
+        }
+      );
+
+      expect(newTicket.lines[0]).toHaveProperty(
+        'obrdmDeliveryMode',
+        'prodDeliveryMode'
+      );
+    });
+
+    it('is set to layaway product mode if it has', () => {
+      const newTicket = OB.App.StateAPI.Ticket.addProduct(
+        {
+          ...emptyTicket,
+          isLayaway: true,
+          obrdmDeliveryModeProperty: 'testMode'
+        },
+        {
+          products: [
+            {
+              product: {
+                ...productA,
+                obrdmDeliveryMode: 'prodDeliveryMode',
+                obrdmDeliveryModeLyw: 'lywDeliveryMode'
+              },
+              qty: 1
+            }
+          ]
+        }
+      );
+
+      expect(newTicket.lines[0]).toHaveProperty(
+        'obrdmDeliveryMode',
+        'lywDeliveryMode'
+      );
+    });
   });
 });

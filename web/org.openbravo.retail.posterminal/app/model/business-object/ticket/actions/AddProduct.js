@@ -57,7 +57,30 @@
       isDeletable: true // TODO: calculate
     };
 
+    setDeliveryMode(newLine, ticket);
     return newLine;
+  }
+
+  function setDeliveryMode(line, ticket) {
+    if (
+      line.product.productType === 'S' ||
+      line.obrdmDeliveryMode // TODO: can line have it already set?
+    ) {
+      return;
+    }
+
+    const defaultDeliveryProp =
+      ticket.isLayaway || ticket.orderType === 2
+        ? 'obrdmDeliveryModeLyw'
+        : 'obrdmDeliveryMode';
+
+    const deliveryMode =
+      line.product[defaultDeliveryProp] ||
+      ticket.obrdmDeliveryModeProperty ||
+      'PickAndCarry';
+
+    // eslint-disable-next-line no-param-reassign
+    line.obrdmDeliveryMode = deliveryMode;
   }
 
   OB.App.StateAPI.Ticket.addProduct.addActionPreparation(
