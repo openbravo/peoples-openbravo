@@ -1129,6 +1129,18 @@ enyo.kind({
           finalCallback(false);
           return true;
         }
+        //TODO: testing code - remove it!
+        if (window.newAddProduct) {
+          OB.App.State.Ticket.addProduct({
+            products: [
+              { qty: args.qtyToAdd, product: args.productToAdd.toJSON() }
+            ]
+          }).then(() => {
+            args.receipt.calculateReceipt();
+          });
+          return;
+        }
+
         args.receipt.addProcess = {};
         args.receipt.addProcess.pending = true;
         args.receipt.addProcess.hasProduct = false;
