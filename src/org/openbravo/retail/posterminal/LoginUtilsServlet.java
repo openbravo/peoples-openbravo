@@ -131,8 +131,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
 
       String hqlUser = "select distinct user.name, user.username, user.id, user.firstName, user.lastName "
           + "from ADUser user, ADUserRoles userRoles, ADRole role, ADFormAccess formAccess, "
-          + "OBPOS_Applications terminal, ADRoleOrganization ro, OBPOS_TerminalAccess ta "
-          + (approvalType.length() > 0 ? ", ADPreference p " : "")
+          + "OBPOS_Applications terminal, ADRoleOrganization ro "
           + "where user.active = true and user.username is not null and user.password is not null and "
           + "userRoles.active = true and role.active = true and formAccess.active = true and "
           + "terminal.searchKey = :theTerminalSearchKey and "
@@ -141,22 +140,21 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
           + "ro.role = role and ro.organization = terminal.organization and "
           + "formAccess.specialForm.id = :webPOSFormId and "
           + "((user.organization.id in (:orgList)) or (terminal.organization.id in (:orgList))) and "
-          + "(" + extraFilter + " (ta.userContact = user and ta.pOSTerminal=terminal)) ";
+          + "(" + extraFilter
+          + " exists(from OBPOS_TerminalAccess ta where ta.userContact = user and ta.pOSTerminal=terminal)) ";
 
       // checking supervisor users for sent approval type
       Map<String, String> iterParameter = new HashMap<>();
       if (approvalType.length() > 0) {
-        hqlUser += "and (";
         for (int i = 0; i < approvalType.length(); i++) {
-          hqlUser += "(p.property = :iter" + i + " "
+          hqlUser += "and exists (from ADPreference as p where p.property = :iter" + i + " "
               + "and p.active = true and to_char(p.searchKey) = 'Y' "
               + "and (p.userContact = user or p.visibleAtRole = role) "
               + "and (p.visibleAtOrganization = terminal.organization "
               + "or p.visibleAtOrganization.id in (:orgList) "
-              + "or p.visibleAtOrganization is null)) or ";
+              + "or p.visibleAtOrganization is null)) ";
           iterParameter.put("iter" + i, approvalType.getString(i));
         }
-        hqlUser += "(1 = 0)) ";
       }
       hqlUser += "order by user.name";
 
