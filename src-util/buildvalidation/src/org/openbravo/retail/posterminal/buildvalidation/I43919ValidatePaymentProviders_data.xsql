@@ -11,7 +11,7 @@
 <SqlClass name="I43919ValidatePaymentProvidersData" package="org.openbravo.retail.posterminal.buildvalidation">
   <SqlMethod name="existsWrongPaymentMethod" type="preparedStatement" return="boolean">
     <Sql><![CDATA[
-        SELECT COUNT(*)
+        SELECT COUNT(*) AS EXISTING
         FROM OBPOS_APP_PAYMENT_TYPE
         WHERE NOT(OBPOS_PAYMENTGROUP_ID IS NULL OR OBPOS_PAYMENTGROUP_ID = '0' OR OBPOS_PAYMENTMETHOD_TYPE_ID IS NOT NULL)
       ]]>
