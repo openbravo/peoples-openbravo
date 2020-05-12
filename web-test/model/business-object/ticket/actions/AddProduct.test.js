@@ -45,7 +45,7 @@ const productB = deepfreeze({
 });
 
 describe('addProduct', () => {
-  it('adds new lines', () => {
+  it('adds new lines if product not present', () => {
     const newTicket = OB.App.StateAPI.Ticket.addProduct(emptyTicket, {
       products: [{ product: productA, qty: 1 }, { product: productB, qty: 2 }]
     });
@@ -62,6 +62,27 @@ describe('addProduct', () => {
         grossPrice: 10,
         priceList: 11,
         priceIncludesTax: true,
+        product: { id: 'pB' }
+      }
+    ]);
+  });
+
+  it('adds units to existing lines with same product', () => {
+    const baseTicket = OB.App.StateAPI.Ticket.addProduct(emptyTicket, {
+      products: [{ product: productA, qty: 1 }, { product: productB, qty: 2 }]
+    });
+
+    const newTicket = OB.App.StateAPI.Ticket.addProduct(baseTicket, {
+      products: [{ product: productA, qty: 10 }]
+    });
+
+    expect(newTicket.lines).toMatchObject([
+      {
+        qty: 11,
+        product: { id: 'pA' }
+      },
+      {
+        qty: 2,
         product: { id: 'pB' }
       }
     ]);

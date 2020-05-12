@@ -7,6 +7,8 @@
  ************************************************************************************
  */
 
+/* eslint-disable no-use-before-define */
+
 (function AddProductDefinition() {
   window.newAddProduct = true; // TODO: remove this testing code
 
@@ -16,17 +18,26 @@
 
     ticket.lines = [...ticket.lines];
     products.forEach(productInfo => {
-      // eslint-disable-next-line no-use-before-define
-      const newLine = createLine(productInfo, ticket);
-      ticket.lines.push(newLine);
+      const lineToEdit = getLineToEdit(productInfo.product, ticket);
+      if (lineToEdit) {
+        lineToEdit.qty += productInfo.qty;
+      } else {
+        const newLine = createLine(productInfo, ticket);
+        ticket.lines.push(newLine);
+      }
     });
 
     return ticket;
   });
 
+  function getLineToEdit(product, ticket) {
+    return ticket.lines.find(l => l.product.id === product.id);
+  }
+
   function createLine(productInfo, ticket) {
     const { product, qty } = productInfo;
 
+    // TODO: properly calculate organization
     const organization = {
       id: ticket.organization,
       country: OB.MobileApp.model.get('terminal').organizationCountryId,
@@ -41,7 +52,9 @@
       qty: OB.DEC.number(qty, product.uOMstandardPrecision),
       grossPrice: OB.DEC.number(product.standardPrice),
       priceList: OB.DEC.number(product.listPrice),
-      priceIncludesTax: ticket.priceIncludesTax
+      priceIncludesTax: ticket.priceIncludesTax,
+      isEditable: true, // TODO: calculate
+      isDeletable: true // TODO: calculate
     };
 
     return newLine;
