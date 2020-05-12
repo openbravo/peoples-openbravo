@@ -14,6 +14,7 @@
     const ticket = { ...state };
     const { products } = payload;
 
+    ticket.lines = [...ticket.lines];
     products.forEach(productInfo => {
       // eslint-disable-next-line no-use-before-define
       const newLine = createLine(productInfo, ticket);

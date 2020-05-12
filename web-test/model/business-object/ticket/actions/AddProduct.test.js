@@ -20,7 +20,7 @@ OB = {
 };
 
 global.lodash = require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/lodash-4.17.15');
-
+const deepfreeze = require('deepfreeze');
 require('../../../../../../org.openbravo.client.kernel/web/org.openbravo.client.kernel/js/BigDecimal-all-1.0.3');
 require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/source/utils/ob-arithmetic');
 
@@ -28,21 +28,21 @@ require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.co
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/Ticket');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/AddProduct');
 
-const emptyTicket = { priceIncludesTax: true, lines: [] };
+const emptyTicket = deepfreeze({ priceIncludesTax: true, lines: [] });
 
-const productA = {
+const productA = deepfreeze({
   id: 'pA',
   uOMstandardPrecision: 2,
   grossPrice: 5,
   priceList: 5
-};
+});
 
-const productB = {
+const productB = deepfreeze({
   id: 'pB',
   uOMstandardPrecision: 3,
   grossPrice: 10,
   priceList: 11
-};
+});
 
 describe('addProduct', () => {
   it('adds new lines', () => {
