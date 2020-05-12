@@ -912,7 +912,7 @@
                     closeOnEscKey: false,
                     execHideFunction: true,
                     onHideFunction: function() {
-                      OB.UTIL.localStorage.clear();
+                      OB.UTIL.localStorage.clearNoConfirmation();
                       OB.UTIL.showLoading(true);
                       OB.MobileApp.model.logout();
                     }
@@ -953,7 +953,7 @@
                   closeOnEscKey: false,
                   execHideFunction: true,
                   onHideFunction: function() {
-                    OB.UTIL.localStorage.clear();
+                    OB.UTIL.localStorage.clearNoConfirmation();
                     OB.UTIL.showLoading(true);
                     OB.MobileApp.model.logout();
                   }
@@ -1197,7 +1197,7 @@
                     closeOnEscKey: false,
                     execHideFunction: true,
                     onHideFunction: function() {
-                      OB.UTIL.localStorage.clear();
+                      OB.UTIL.localStorage.clearNoConfirmation();
                       OB.UTIL.showLoading(true);
                       OB.MobileApp.model.logout();
                     }
