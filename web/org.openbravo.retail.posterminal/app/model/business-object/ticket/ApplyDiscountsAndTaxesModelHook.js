@@ -62,23 +62,23 @@ OB.App.StateAPI.Ticket.addModelHook({
     const taxesResult = OB.Taxes.Pos.applyTaxes(newTicket, payload.taxRules);
 
     // set the tax calculation result into the ticket
-    newTicket.gross = taxesResult.header.grossAmount;
-    newTicket.net = taxesResult.header.netAmount;
+    newTicket.grossAmount = taxesResult.header.grossAmount;
+    newTicket.netAmount = taxesResult.header.netAmount;
     newTicket.taxes = taxesResult.header.taxes;
     taxesResult.lines.forEach(taxLine => {
       const line = newTicket.lines.find(l => l.id === taxLine.id);
       if (priceIncludesTax) {
-        line.net = taxLine.netAmount;
+        line.netAmount = taxLine.netAmount;
         line.discountedNetAmount = taxLine.netAmount;
-        line.pricenet = taxLine.netPrice;
+        line.netPrice = taxLine.netPrice;
       } else {
-        line.gross = taxLine.grossAmount;
+        line.grossAmount = taxLine.grossAmount;
         line.discountedGrossAmount = taxLine.grossAmount;
-        line.price = taxLine.grossPrice;
+        line.grossPrice = taxLine.grossPrice;
       }
-      line.lineRate = taxLine.taxRate;
+      line.taxRate = taxLine.taxRate;
       line.tax = taxLine.tax;
-      line.taxLines = taxLine.taxes;
+      line.taxes = taxLine.taxes;
     });
 
     return newTicket;
