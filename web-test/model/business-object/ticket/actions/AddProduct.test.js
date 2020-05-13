@@ -153,6 +153,19 @@ describe('addProduct', () => {
       }
     );
 
+    it('creates new lines if adding product with not editable line', () => {
+      const baseTicket = addProduct(emptyTicket, {
+        products: [{ product: productA, qty: 1 }],
+        options: { isEditable: false }
+      });
+
+      const newTicket = addProduct(baseTicket, {
+        products: [{ product: productA, qty: 1 }]
+      });
+
+      expect(newTicket.lines).toHaveLength(2);
+    });
+
     it('new lines are editable by default', () => {
       const newTicket = addProduct(emptyTicket, {
         products: [{ product: productA, qty: 1 }]

@@ -37,7 +37,7 @@
     if (product.obposScale || !product.groupProduct) {
       return undefined;
     }
-    return ticket.lines.find(l => l.product.id === product.id);
+    return ticket.lines.find(l => l.product.id === product.id && l.isEditable);
   }
 
   function createLine(productInfo, ticket, options = {}) {
