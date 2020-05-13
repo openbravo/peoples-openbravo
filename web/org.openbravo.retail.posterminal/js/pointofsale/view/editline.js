@@ -1337,6 +1337,7 @@ enyo.kind({
           !compToCreate.permission ||
           OB.MobileApp.model.hasPermission(compToCreate.permission, false)
         ) {
+          compToCreate.allowTapEventPropagation = true;
           this.$.actionButtonsContainer.createComponent(compToCreate);
         }
       },

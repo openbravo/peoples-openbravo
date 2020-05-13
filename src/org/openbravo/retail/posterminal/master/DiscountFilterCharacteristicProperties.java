@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2014-2019 Openbravo S.L.U.
+ * Copyright (C) 2014-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -40,6 +40,7 @@ public class DiscountFilterCharacteristicProperties extends ModelExtension {
         add(new HQLProperty(
             "(case when c.active = 'Y' and c.offer.active = 'Y' then true else false end)",
             "active"));
+        add(new HQLProperty("c.isincludecharacteristics", "isincludecharacteristics"));
       }
     };
     return list;
