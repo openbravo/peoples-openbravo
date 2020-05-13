@@ -32,6 +32,8 @@ public class PaidReceiptProperties extends ModelExtension {
       private static final long serialVersionUID = 1L;
       {
         add(new HQLProperty("ord.documentNo", "documentNo"));
+        add(new HQLProperty("ord.obposSequencename", "obposSequencename"));
+        add(new HQLProperty("ord.obposSequencenumber", "obposSequencenumber"));
         add(new HQLProperty("ord.orderDate", "orderDate"));
         add(new HQLProperty("ord.creationDate", "creationDate"));
         add(new HQLProperty("ord.createdBy.id", "createdBy"));

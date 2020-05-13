@@ -80,22 +80,6 @@ OB.UTIL.getMinimizedImageURL = function(id) {
   return this.getImageURL(id) + '_min';
 };
 
-OB.UTIL.getNumberOfSequence = function(documentNo, isQuotation) {
-  if (
-    !OB.UTIL.isNullOrUndefined(OB.MobileApp.model.get('terminal')) &&
-    !OB.UTIL.isNullOrUndefined(OB.MobileApp.model.get('terminal')).docNoPrefix
-  ) {
-    var posDocumentNoPrefix = OB.MobileApp.model.get('terminal').docNoPrefix;
-    if (isQuotation) {
-      posDocumentNoPrefix = OB.MobileApp.model.get('terminal')
-        .quotationDocNoPrefix;
-    }
-    return parseInt(documentNo.substr(posDocumentNoPrefix.length + 1), 10);
-  } else {
-    return null;
-  }
-};
-
 OB.UTIL.getPaymentByKey = function(key) {
   var i;
   var terminalPayments = OB.MobileApp.model.get('payments');

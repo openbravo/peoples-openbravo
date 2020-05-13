@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018 Openbravo S.L.U.
+ * Copyright (C) 2018-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -39,6 +39,9 @@ public class InvoiceProperties extends ModelExtension {
         add(new HQLProperty("inv.client.id", "client"));
         add(new HQLProperty("inv.summedLineAmount", "totalNetAmount"));
         add(new HQLProperty("inv.priceList.priceIncludesTax", "priceIncludesTax"));
+        add(new HQLProperty(
+            "(case when inv.obposSequencename in ('fullinvoiceslastassignednum', 'fullreturninvoiceslastassignednum') then true else false end)",
+            "fullInvoice"));
 
         add(new HQLProperty("salesRepresentative.id", "salesRepresentative"));
         add(new HQLProperty("salesRepresentative.name", "salesRepresentative$_identifier"));

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018-2019 Openbravo S.L.U.
+ * Copyright (C) 2018-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -26,7 +26,7 @@ public class InvoicesHeader extends ProcessHQLQuery {
   @Override
   protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
     JSONObject filters = jsonsent.getJSONObject("filters");
-    Map<String, Object> paramValues = new HashMap<String, Object>();
+    Map<String, Object> paramValues = new HashMap<>();
     paramValues.put("client", filters.getString("client"));
     paramValues.put("orderId", filters.getString("orderId"));
     return paramValues;
@@ -38,11 +38,11 @@ public class InvoicesHeader extends ProcessHQLQuery {
     String hqlInvoices = "select i.id as id, i.documentNo as documentNo, i.invoiceDate as orderDate, "
         + " i.businessPartner.name as businessPartner, i.grandTotalAmount as totalamount "
         + " from InvoiceLine il join il.salesOrderLine ol join ol.salesOrder ord  join il.invoice i  "
-        + " where ord.client.id=:client and ord.id =:orderId "
+        + " where ord.client.id=:client and ord.id =:orderId and i.salesOrder.id = :orderId"
         + " group by i.id, i.documentNo, i.invoiceDate, i.businessPartner.name, i.grandTotalAmount "
         + " order by i.documentNo asc";
 
-    return Arrays.asList(new String[] { hqlInvoices });
+    return Arrays.asList(hqlInvoices);
   }
 
   @Override

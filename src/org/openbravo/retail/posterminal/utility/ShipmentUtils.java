@@ -82,8 +82,7 @@ public class ShipmentUtils {
   private Instance<OrderLoaderPreAddShipmentLineHook> preAddShipmentLine;
 
   public ShipmentInOut createNewShipment(Order order, JSONObject jsonorder,
-      ArrayList<OrderLine> lineReferences, boolean useOrderDocumentNoForRelatedDocs,
-      List<DocumentNoHandler> docNoHandlers) {
+      ArrayList<OrderLine> lineReferences, List<DocumentNoHandler> docNoHandlers) {
     List<Locator> locatorList = getLocatorList(order.getWarehouse());
 
     if (locatorList.isEmpty()) {
@@ -95,7 +94,7 @@ public class ShipmentUtils {
     try {
       final JSONArray orderlines = jsonorder.getJSONArray("lines");
       createShipmentAndLines(jsonorder, shipment, order, orderlines, lineReferences, locatorList,
-          useOrderDocumentNoForRelatedDocs, docNoHandlers);
+          docNoHandlers);
 
       // Stock manipulation
       org.openbravo.database.ConnectionProvider cp = new DalConnectionProvider(false);
@@ -130,9 +129,9 @@ public class ShipmentUtils {
 
   private void createShipmentAndLines(final JSONObject jsonorder, final ShipmentInOut shipment,
       final Order order, final JSONArray orderlines, final ArrayList<OrderLine> lineReferences,
-      final List<Locator> locatorList, final boolean useOrderDocumentNoForRelatedDocs,
-      final List<DocumentNoHandler> docNoHandlers) throws JSONException {
-    createShipment(shipment, order, jsonorder, useOrderDocumentNoForRelatedDocs, docNoHandlers);
+      final List<Locator> locatorList, final List<DocumentNoHandler> docNoHandlers)
+      throws JSONException {
+    createShipment(shipment, order, jsonorder, docNoHandlers);
     OBDal.getInstance().save(shipment);
     createShipmentLines(shipment, order, jsonorder, orderlines, lineReferences, locatorList);
 
@@ -147,8 +146,7 @@ public class ShipmentUtils {
   }
 
   private void createShipment(ShipmentInOut shipment, Order order, JSONObject jsonorder,
-      boolean useOrderDocumentNoForRelatedDocs, List<DocumentNoHandler> docNoHandlers)
-      throws JSONException {
+      List<DocumentNoHandler> docNoHandlers) throws JSONException {
     Entity shpEntity = ModelProvider.getInstance().getEntity(ShipmentInOut.class);
     JSONPropertyToEntity.fillBobFromJSON(shpEntity, shipment, jsonorder,
         jsonorder.getLong("timezoneOffset"));
@@ -166,15 +164,7 @@ public class ShipmentUtils {
     shipment.setTrxOrganization(order.getTrxOrganization());
     shipment.setDocumentType(getShipmentDocumentType(order.getDocumentType().getId()));
 
-    if (useOrderDocumentNoForRelatedDocs) {
-      String docNum = order.getDocumentNo();
-      if (order.getMaterialMgmtShipmentInOutList().size() > 0) {
-        docNum += "-" + order.getMaterialMgmtShipmentInOutList().size();
-      }
-      shipment.setDocumentNo(docNum);
-    } else {
-      addDocumentNoHandler(shipment, shpEntity, null, shipment.getDocumentType(), docNoHandlers);
-    }
+    addDocumentNoHandler(shipment, shpEntity, null, shipment.getDocumentType(), docNoHandlers);
 
     if (shipment.getMovementDate() == null) {
       shipment.setMovementDate(order.getOrderDate());

@@ -3602,7 +3602,7 @@ enyo.kind({
         }
         if (receipt.get('generateInvoice')) {
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
-          receipt.set('generateInvoice', false);
+          receipt.setFullInvoice(false, false);
         }
       }
       receipt.trigger('paymentDone', me.allowOpenDrawer);

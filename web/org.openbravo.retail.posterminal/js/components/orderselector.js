@@ -641,48 +641,22 @@ enyo.kind({
     return true;
   },
 
-  getNextOrderPreNoSuffixInPinckinglist: function(tx, callback) {
-    var criteria = {
-        posSearchKey: OB.MobileApp.model.get('terminalName')
-      },
-      suffixNext;
-    OB.Dal.findInTransaction(tx, OB.Model.DocumentSequence, criteria, function(
-      documentSequenceList
-    ) {
-      if (documentSequenceList && documentSequenceList.length !== 0) {
-        suffixNext =
-          documentSequenceList.at(0).get('orderPreDocumentSequence') + 1;
-        callback({
-          orderprenoPreffix: OB.MobileApp.model.get('terminal')
-            .orderPreDocNoPrefix,
-          orderprenoSuffix: suffixNext
-        });
-      }
-    });
-  },
-
-  updateOrderPreDocSequence: function(suffix, tx) {
-    var newValue = suffix - 1,
-      criteria = {
-        posSearchKey: OB.MobileApp.model.get('terminalName')
-      },
-      docSeqModel;
-    OB.Dal.findInTransaction(tx, OB.Model.DocumentSequence, criteria, function(
-      documentSequenceList
-    ) {
-      if (documentSequenceList && documentSequenceList.length !== 0) {
-        docSeqModel = documentSequenceList.at(0);
-        docSeqModel.set('orderPreDocumentSequence', newValue);
-      }
-      OB.Dal.saveInTransaction(tx, docSeqModel, null, null);
-    });
-  },
-
   prepareSelected: function(inSender, inEvent) {
     var showApproval = false,
       me = this,
       obposPrepaymentlimitamt,
       payment;
+
+    const isInvoiceCreated = order => {
+      if (order.bp.invoiceTerms === 'O') {
+        // After Order Delivered -> invoice will be generated if full order is delivered
+        return !order.lines.find(line => line.qtyPending !== line.toPrepare);
+      } else if (order.bp.invoiceTerms === 'D') {
+        // After Delivery -> invoice will be generated for delivered lines
+        return true;
+      }
+      return false;
+    };
 
     function continueExecution(model) {
       var me = model,
@@ -902,6 +876,21 @@ enyo.kind({
                 }
               });
 
+              groupedLinesToPrepare.forEach(async order => {
+                if (isInvoiceCreated(order)) {
+                  const {
+                    sequenceName,
+                    sequenceNumber,
+                    documentNo
+                  } = await OB.MobileApp.model.getDocumentNo(
+                    'fullinvoiceslastassignednum'
+                  );
+                  order.invoiceSequenceName = sequenceName;
+                  order.invoiceSequenceNumber = sequenceNumber;
+                  order.invoiceDocumentNo = documentNo;
+                }
+              });
+
               OB.Dal.transaction(function(tx) {
                 OB.UTIL.HookManager.executeHooks(
                   'OBPOS_PreIssueSalesOrder',
@@ -1105,7 +1094,8 @@ enyo.kind({
               bpLocId: iter.bpLocId,
               obposPrepaymentamt: iter.obposPrepaymentamt,
               obposPrepaymentlimitamt: iter.obposPrepaymentlimitamt,
-              payment: iter.payment
+              payment: iter.payment,
+              invoiceTerms: iter.bpInvoiceTerms
             };
             order = new OB.Model.OBRDM_OrderToSelectorIssue({
               id: iter.orderId,

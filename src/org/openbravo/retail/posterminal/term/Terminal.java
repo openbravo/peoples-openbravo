@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2019 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -9,10 +9,8 @@
 package org.openbravo.retail.posterminal.term;
 
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.List;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -77,37 +75,33 @@ public class Terminal extends JSONProcessSimple {
 
       // INITIAL VALIDATIONS
       InitialValidations.validateTerminal(pOSTerminal, jsonsent);
-      Organization organization = pOSTerminal.getOrganization();
 
       // TO use terminalId in QueryTerminalProperty
       jsonsent.put("pos", pOSTerminal.getId());
 
-      // saving quotations doc id to prevent session to be lost in
-      // getLastDocumentNumberForPOS
-      String quotationsDocTypeId = organization.getObposCDoctypequot() == null ? null
-          : organization.getObposCDoctypequot().getId();
-      // saving returns doc id to prevent session to be lost in
-      // getLastDocumentNumberForPOS
-      String returnsDocTypeId = organization.getObposCDoctyperet().getId();
-      List<String> doctypeIds = new ArrayList<String>();
+      final int lastDocumentNumber = POSUtils
+          .getLastTerminalDocumentSequence(pOSTerminal, "lastassignednum", false)
+          .intValue();
+      final int lastQuotationDocumentNumber = POSUtils
+          .getLastTerminalDocumentSequence(pOSTerminal, "quotationslastassignednum", false)
+          .intValue();
+      final int lastReturnDocumentNumber = POSUtils
+          .getLastTerminalDocumentSequence(pOSTerminal, "returnslastassignednum", false)
+          .intValue();
+      final int lastFullInvoiceDocumentNumber = POSUtils
+          .getLastTerminalDocumentSequence(pOSTerminal, "fullinvoiceslastassignednum", true)
+          .intValue();
+      final int lastFullReturnInvoiceDocumentNumber = POSUtils
+          .getLastTerminalDocumentSequence(pOSTerminal, "fullreturninvoiceslastassignednum", true)
+          .intValue();
+      final int lastSimplifiedInvoiceDocumentNumber = POSUtils
+          .getLastTerminalDocumentSequence(pOSTerminal, "simplifiedinvoiceslastassignednum", true)
+          .intValue();
+      final int lastSimplifiedReturnInvoiceDocumentNumber = POSUtils
+          .getLastTerminalDocumentSequence(pOSTerminal, "simplifiedreturninvoiceslastassignednum",
+              true)
+          .intValue();
 
-      doctypeIds.add(organization.getObposCDoctype().getId());
-      if (pOSTerminal.getReturndocnoPrefix() == null) {
-        doctypeIds.add(organization.getObposCDoctyperet().getId());
-      }
-
-      int lastDocumentNumber = POSUtils.getLastDocumentNumberForPOS(pOSTerminal.getSearchKey(),
-          doctypeIds);
-      int lastQuotationDocumentNumber = 0;
-      if (quotationsDocTypeId != null) {
-        lastQuotationDocumentNumber = POSUtils
-            .getLastDocumentNumberQuotationForPOS(pOSTerminal.getSearchKey(), quotationsDocTypeId);
-      }
-      int lastReturnDocumentNumber = 0;
-      if (returnsDocTypeId != null) {
-        lastReturnDocumentNumber = POSUtils
-            .getLastDocumentNumberReturnForPOS(pOSTerminal.getSearchKey(), returnsDocTypeId);
-      }
       String warehouseId = POSUtils.getWarehouseForTerminal(pOSTerminal).getId();
       final org.openbravo.model.pricing.pricelist.PriceList priceList = POSUtils
           .getPriceListByTerminal(pOSTerminal.getSearchKey());
@@ -192,8 +186,13 @@ public class Terminal extends JSONProcessSimple {
           + "pricelist.currency.symbol as symbol, " + "'" + warehouseId + "' as warehouse, "
           + lastDocumentNumber + " as lastDocumentNumber, " + lastQuotationDocumentNumber
           + " as lastQuotationDocumentNumber, " + lastReturnDocumentNumber
-          + " as lastReturnDocumentNumber, " + "'" + regionId + "'" + " as organizationRegionId, "
-          + "'" + countryId + "'" + " as organizationCountryId, orginfo.cashVAT as cashVat, '"
+          + " as lastReturnDocumentNumber, " + lastSimplifiedInvoiceDocumentNumber
+          + " as lastSimplifiedInvoiceDocumentNumber, " + lastFullInvoiceDocumentNumber
+          + " as lastFullInvoiceDocumentNumber, " + lastSimplifiedReturnInvoiceDocumentNumber
+          + " as lastSimplifiedReturnInvoiceDocumentNumber, " + lastFullReturnInvoiceDocumentNumber
+          + " as lastFullReturnInvoiceDocumentNumber, " + "'" + regionId + "'"
+          + " as organizationRegionId, " + "'" + countryId + "'"
+          + " as organizationCountryId, orginfo.cashVAT as cashVat, '"
           + ProcessHQLQuery.escape(storeAddress) + "' as organizationAddressIdentifier, "
           + sessionTimeout + " as sessionTimeout, " + selectOrgImage
           + regularTerminalHQLProperties.getHqlSelect()

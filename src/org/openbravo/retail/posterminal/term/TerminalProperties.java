@@ -33,7 +33,7 @@ public class TerminalProperties extends ModelExtension {
   @Override
   public List<HQLProperty> getHQLProperties(final Object params) {
 
-    final ArrayList<HQLProperty> list = new ArrayList<HQLProperty>();
+    final ArrayList<HQLProperty> list = new ArrayList<>();
     list.add(new HQLProperty("pos.id", "id"));
     list.add(new HQLProperty("(COALESCE(pos.defaultCustomer.id, org.obretcoCBpartner.id))",
         "businessPartner"));
@@ -66,9 +66,12 @@ public class TerminalProperties extends ModelExtension {
     list.add(new HQLProperty("org.obretcoShowtaxid", "bp_showtaxid"));
     list.add(new HQLProperty("org.obretcoShowbpcategory", "bp_showcategoryselector"));
     list.add(new HQLProperty("pos.orderdocnoPrefix", "docNoPrefix"));
-    list.add(new HQLProperty("coalesce(pos.quotationdocnoPrefix, concat(pos.searchKey, 'QT'))",
-        "quotationDocNoPrefix"));
     list.add(new HQLProperty("pos.returndocnoPrefix", "returnDocNoPrefix"));
+    list.add(new HQLProperty("pos.quotationdocnoPrefix", "quotationDocNoPrefix"));
+    list.add(new HQLProperty("pos.fullinvdocnoPrefix", "fullInvoiceDocNoPrefix"));
+    list.add(new HQLProperty("pos.fullretinvdocnoPrefix", "fullReturnInvoiceDocNoPrefix"));
+    list.add(new HQLProperty("pos.simpinvdocnoPrefix", "simplifiedInvoiceDocNoPrefix"));
+    list.add(new HQLProperty("pos.simpretinvdocnoPrefix", "simplifiedReturnInvoiceDocNoPrefix"));
     list.add(new HQLProperty("pos.obposTerminaltype.allowpayoncredit", "allowpayoncredit"));
     list.add(new HQLProperty("pos.obposTerminaltype.multiChange", "multiChange"));
     list.add(new HQLProperty("org.obposCountDiffLimit", "organizationCountDiffLimit"));
@@ -96,14 +99,20 @@ public class TerminalProperties extends ModelExtension {
     addTemplateProperty(Organization.PROPERTY_OBPOSTICKETTEMPLATE, "printTicketTemplate", list);
     addTemplateProperty(Organization.PROPERTY_OBPOSRETURNTEMPLATE, "printReturnTemplate", list);
     addTemplateProperty(Organization.PROPERTY_OBPOSINVOICETEMPLATE, "printInvoiceTemplate", list);
+    addTemplateProperty(Organization.PROPERTY_OBPOSSINVTEMPLATE, "printSimplifiedInvoiceTemplate",
+        list);
     addTemplateProperty(Organization.PROPERTY_OBPOSRETINVTEMPLATE, "printReturnInvoiceTemplate",
         list);
+    addTemplateProperty(Organization.PROPERTY_OBPOSRETSINVTEMPLATE,
+        "printSimplifiedReturnInvoiceTemplate", list);
     addTemplateProperty(Organization.PROPERTY_OBPOSLAYAWAYTEMPLATE, "printLayawayTemplate", list);
     addTemplateProperty(Organization.PROPERTY_OBPOSCLOSEDRECEIPTTEMPLATE,
         "printClosedReceiptTemplate", list);
     addTemplateProperty(Organization.PROPERTY_OBPOSQUOTTEMPLATE, "printQuotationTemplate", list);
     addTemplateProperty(Organization.PROPERTY_OBPOSCLOINVTEMPLATE, "printClosedInvoiceTemplate",
         list);
+    addTemplateProperty(Organization.PROPERTY_OBPOSCLOSINVTEMPLATE,
+        "printSimplifiedClosedInvoiceTemplate", list);
     addTemplateProperty(Organization.PROPERTY_OBPOSCANCRPTTEMPLATE, "printCanceledReceiptTemplate",
         list);
     addTemplateProperty(Organization.PROPERTY_OBPOSCANCLAYAWAYTMPLT, "printCanceledLayawayTemplate",
