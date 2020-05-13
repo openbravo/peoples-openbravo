@@ -28,34 +28,41 @@ require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.co
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/Ticket');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/AddProduct');
 
-const emptyTicket = deepfreeze({ priceIncludesTax: true, lines: [] });
+const emptyTicket = { priceIncludesTax: true, lines: [] };
 
-const productA = deepfreeze({
+const productA = {
   id: 'pA',
   uOMstandardPrecision: 2,
   standardPrice: 5,
   listPrice: 5
-});
+};
 
-const productB = deepfreeze({
+const productB = {
   id: 'pB',
   uOMstandardPrecision: 3,
   standardPrice: 10,
   listPrice: 11
-});
+};
 
-const serviceProduct = deepfreeze({
+const serviceProduct = {
   id: 'pS',
   productType: 'S',
   uOMstandardPrecision: 3,
   standardPrice: 10,
   listPrice: 11
-});
+};
+
+const addProduct = (ticket, payload) => {
+  return OB.App.StateAPI.Ticket.addProduct(
+    deepfreeze(ticket),
+    deepfreeze(payload)
+  );
+};
 
 describe('addProduct', () => {
   describe('basics', () => {
     it('adds new lines if product not present', () => {
-      const newTicket = OB.App.StateAPI.Ticket.addProduct(emptyTicket, {
+      const newTicket = addProduct(emptyTicket, {
         products: [{ product: productA, qty: 1 }, { product: productB, qty: 2 }]
       });
       expect(newTicket.lines).toMatchObject([
@@ -77,11 +84,11 @@ describe('addProduct', () => {
     });
 
     it('adds units to existing lines with same product', () => {
-      const baseTicket = OB.App.StateAPI.Ticket.addProduct(emptyTicket, {
+      const baseTicket = addProduct(emptyTicket, {
         products: [{ product: productA, qty: 1 }, { product: productB, qty: 2 }]
       });
 
-      const newTicket = OB.App.StateAPI.Ticket.addProduct(baseTicket, {
+      const newTicket = addProduct(baseTicket, {
         products: [{ product: productA, qty: 10 }]
       });
 
@@ -100,7 +107,7 @@ describe('addProduct', () => {
 
   describe('delivery mode', () => {
     it('is not set for service products', () => {
-      const newTicket = OB.App.StateAPI.Ticket.addProduct(emptyTicket, {
+      const newTicket = addProduct(emptyTicket, {
         products: [{ product: serviceProduct, qty: 1 }]
       });
 
@@ -108,7 +115,7 @@ describe('addProduct', () => {
     });
 
     it('is set to PickAndCarry by default', () => {
-      const newTicket = OB.App.StateAPI.Ticket.addProduct(emptyTicket, {
+      const newTicket = addProduct(emptyTicket, {
         products: [{ product: productA, qty: 1 }]
       });
 
@@ -119,7 +126,7 @@ describe('addProduct', () => {
     });
 
     it('is set to ticket mode if it has', () => {
-      const newTicket = OB.App.StateAPI.Ticket.addProduct(
+      const newTicket = addProduct(
         { ...emptyTicket, obrdmDeliveryModeProperty: 'testMode' },
         {
           products: [{ product: productA, qty: 1 }]
@@ -133,7 +140,7 @@ describe('addProduct', () => {
     });
 
     it('is set to product mode if it has', () => {
-      const newTicket = OB.App.StateAPI.Ticket.addProduct(
+      const newTicket = addProduct(
         { ...emptyTicket, obrdmDeliveryModeProperty: 'testMode' },
         {
           products: [
@@ -156,7 +163,7 @@ describe('addProduct', () => {
     });
 
     it('is set to layaway product mode if it has', () => {
-      const newTicket = OB.App.StateAPI.Ticket.addProduct(
+      const newTicket = addProduct(
         {
           ...emptyTicket,
           isLayaway: true,
@@ -192,7 +199,7 @@ describe('addProduct', () => {
     `(
       'sets delivery date: $deliveryMode - $productDeliveryDate ',
       ({ deliveryMode, productDeliveryDate, expectedDate, expectedTime }) => {
-        const newTicket = OB.App.StateAPI.Ticket.addProduct(
+        const newTicket = addProduct(
           {
             ...emptyTicket,
             obrdmDeliveryModeProperty: 'HomeDelivery',
