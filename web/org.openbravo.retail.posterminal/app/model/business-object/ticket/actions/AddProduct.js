@@ -21,7 +21,7 @@
       return { ...l };
     });
     products.forEach(productInfo => {
-      const lineToEdit = getLineToEdit(productInfo, ticket);
+      const lineToEdit = getLineToEdit(productInfo, ticket, options);
       if (lineToEdit) {
         lineToEdit.qty += productInfo.qty;
       } else {
@@ -33,11 +33,16 @@
     return ticket;
   });
 
-  function getLineToEdit(productInfo, ticket) {
+  function getLineToEdit(productInfo, ticket, options = {}) {
     const { product, qty } = productInfo;
     if (product.obposScale || !product.groupProduct) {
       return undefined;
     }
+
+    if (options.line) {
+      return ticket.lines.find(l => l.id === options.line);
+    }
+
     return ticket.lines.find(
       l =>
         l.product.id === product.id &&

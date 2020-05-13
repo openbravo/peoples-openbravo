@@ -178,6 +178,22 @@ describe('addProduct', () => {
       expect(newTicket.lines).toHaveLength(2);
     });
 
+    it('can select the line to work with', () => {
+      const newTicket = addProduct(
+        {
+          lines: [
+            { id: 'l1', qty: 1, product: productA },
+            { id: 'l2', qty: 1, product: productA }
+          ]
+        },
+        { products: [{ qty: 1, product: productA }], options: { line: 'l1' } }
+      );
+      expect(newTicket.lines).toMatchObject([
+        { id: 'l1', qty: 2 },
+        { id: 'l2', qty: 1 }
+      ]);
+    });
+
     it('new lines are editable by default', () => {
       const newTicket = addProduct(emptyTicket, {
         products: [{ product: productA, qty: 1 }]

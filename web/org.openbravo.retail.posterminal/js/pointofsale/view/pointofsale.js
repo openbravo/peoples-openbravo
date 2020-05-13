@@ -1131,10 +1131,18 @@ enyo.kind({
         }
         //TODO: testing code - remove it!
         if (window.newAddProduct) {
+          const options = { ...args.options } || {};
+          if (options.line) {
+            options.line = args.options.line.id;
+          }
           OB.App.State.Ticket.addProduct({
             products: [
-              { qty: args.qtyToAdd, product: args.productToAdd.toJSON() }
-            ]
+              {
+                qty: args.qtyToAdd,
+                product: args.productToAdd.toJSON()
+              }
+            ],
+            options
           }).then(() => {
             args.receipt.calculateReceipt();
           });
