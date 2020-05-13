@@ -7,6 +7,7 @@
  ************************************************************************************
  */
 
+/* global lodash */
 /* eslint-disable no-use-before-define */
 
 (function AddProductDefinition() {
@@ -14,7 +15,7 @@
 
   OB.App.StateAPI.Ticket.registerAction('addProduct', (state, payload) => {
     const ticket = { ...state };
-    const { products } = payload;
+    const { products, options } = payload;
 
     ticket.lines = ticket.lines.map(l => {
       return { ...l };
@@ -24,7 +25,7 @@
       if (lineToEdit) {
         lineToEdit.qty += productInfo.qty;
       } else {
-        const newLine = createLine(productInfo, ticket);
+        const newLine = createLine(productInfo, ticket, options);
         ticket.lines.push(newLine);
       }
     });
@@ -39,7 +40,7 @@
     return ticket.lines.find(l => l.product.id === product.id);
   }
 
-  function createLine(productInfo, ticket) {
+  function createLine(productInfo, ticket, options = {}) {
     const { product, qty } = productInfo;
 
     // TODO: properly calculate organization
@@ -60,8 +61,10 @@
       grossPrice: OB.DEC.number(product.standardPrice),
       priceList: OB.DEC.number(product.listPrice),
       priceIncludesTax: ticket.priceIncludesTax,
-      isEditable: true, // TODO: calculate
-      isDeletable: true // TODO: calculate
+      isEditable: lodash.has(options, 'isEditable') ? options.isEditable : true,
+      isDeletable: lodash.has(options, 'isDeletable')
+        ? options.isDeletable
+        : true
     };
 
     setDeliveryMode(newLine, ticket);
@@ -100,6 +103,7 @@
       deliveryMode === 'PickupInStoreDate' ||
       deliveryMode === 'HomeDelivery'
     ) {
+      // TODO: review
       const currentDate = new Date();
       currentDate.setHours(0);
       currentDate.setMinutes(0);

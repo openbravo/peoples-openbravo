@@ -152,6 +152,29 @@ describe('addProduct', () => {
         expect(newTicket.lines).toHaveLength(expectNewLine ? 2 : 1);
       }
     );
+
+    it('new lines are editable by default', () => {
+      const newTicket = addProduct(emptyTicket, {
+        products: [{ product: productA, qty: 1 }]
+      });
+
+      expect(newTicket.lines[0]).toMatchObject({
+        isEditable: true,
+        isDeletable: true
+      });
+    });
+
+    it('can make new lines not editable', () => {
+      const newTicket = addProduct(emptyTicket, {
+        products: [{ product: productA, qty: 1 }],
+        options: { isEditable: false, isDeletable: false }
+      });
+
+      expect(newTicket.lines[0]).toMatchObject({
+        isEditable: false,
+        isDeletable: false
+      });
+    });
   });
 
   describe('delivery mode', () => {
