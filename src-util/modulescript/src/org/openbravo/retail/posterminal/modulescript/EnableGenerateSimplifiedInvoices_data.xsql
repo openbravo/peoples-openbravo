@@ -19,7 +19,7 @@
         ]]>
       </Sql>
   </SqlMethod>
-  <SqlMethod name="enableGenerateSimplifiedInvoices" type="preparedStatement" connection="true" return="rowCount">
+  <SqlMethod name="enableGenerateSimplifiedInvoices" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
       <Sql>
         <![CDATA[

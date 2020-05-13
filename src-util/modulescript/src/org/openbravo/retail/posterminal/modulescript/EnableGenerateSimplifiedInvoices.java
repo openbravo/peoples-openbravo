@@ -9,8 +9,6 @@
 
 package org.openbravo.retail.posterminal.modulescript;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.ModuleScript;
 import org.openbravo.modulescript.ModuleScriptExecutionLimits;
@@ -24,7 +22,7 @@ public class EnableGenerateSimplifiedInvoices extends ModuleScript {
   public void execute() {
     try {
       ConnectionProvider cp = getConnectionProvider();
-      EnableGenerateSimplifiedInvoicesData.enableGenerateSimplifiedInvoices(cp.getConnection(), cp);
+      EnableGenerateSimplifiedInvoicesData.enableGenerateSimplifiedInvoices(cp);
     } catch (Exception e) {
       handleError(e);
     }
