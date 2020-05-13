@@ -45,4 +45,20 @@
       terminalLasthwmjavainfo: null
     }
   });
+
+  OB.App.StateAPI.Cashup.registerActions({
+    resetNewPayments(cashup) {
+      const newCashup = { ...cashup };
+      newCashup.cashPaymentMethodInfo = [];
+
+      cashup.cashPaymentMethodInfo.forEach(payment => {
+        newCashup.cashPaymentMethodInfo.push({
+          ...payment,
+          newPaymentMethod: false
+        });
+      });
+
+      return newCashup;
+    }
+  });
 })();

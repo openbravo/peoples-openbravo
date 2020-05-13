@@ -531,6 +531,7 @@
                             'cashUpReportInformation',
                             OB.App.State.Cashup.Utils.getCashupFilteredForSendToBackendInEachTicket()
                           );
+                          OB.App.State.Cashup.resetNewPayments();
                           frozenReceipt.set(
                             'json',
                             JSON.stringify(frozenReceipt.serializeToJSON())
@@ -720,6 +721,7 @@
               'cashUpReportInformation',
               OB.App.State.Cashup.Utils.getCashupFilteredForSendToBackendInEachTicket()
             );
+            OB.App.State.Cashup.resetNewPayments();
             OB.UTIL.HookManager.executeHooks(
               'OBPOS_PreSyncReceipt',
               {

@@ -1019,6 +1019,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                       'cashUpReportInformation',
                       OB.App.State.Cashup.Utils.getCashupFilteredForSendToBackendInEachTicket()
                     );
+                    OB.App.State.Cashup.resetNewPayments();
                     OB.UTIL.HookManager.executeHooks(
                       'OBPOS_PreSyncReceipt',
                       {
@@ -1184,6 +1185,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                                   'cashUpReportInformation',
                                   OB.App.State.Cashup.Utils.getCashupFilteredForSendToBackendInEachTicket()
                                 );
+                                OB.App.State.Cashup.resetNewPayments();
                                 receipt.set('created', new Date().getTime());
                                 receipt.set(
                                   'json',

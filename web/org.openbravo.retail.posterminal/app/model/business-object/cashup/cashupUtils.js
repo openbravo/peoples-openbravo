@@ -136,10 +136,10 @@
 
     getCashupFilteredForSendToBackendInEachTicket() {
       const cashupToSend = OB.App.State.getState().Cashup;
-      const allPayments = cashupToSend.cashPaymentMethodInfo;
-      cashupToSend.cashPaymentMethodInfo = allPayments.filter(payment => {
-        return payment.usedInCurrentTrx;
-      });
+      // const allPayments = cashupToSend.cashPaymentMethodInfo;
+      // cashupToSend.cashPaymentMethodInfo = allPayments.filter(payment => {
+      //   return payment.usedInCurrentTrx;
+      // });
       return cashupToSend;
     },
 
