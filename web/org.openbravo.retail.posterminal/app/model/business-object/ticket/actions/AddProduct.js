@@ -44,6 +44,8 @@
       region: OB.MobileApp.model.get('terminal').organizationRegionId
     };
 
+    // TODO: validateAllowSalesWithReturn
+
     const newLine = {
       id: OB.App.UUID.generate(),
       product,
@@ -58,6 +60,7 @@
     };
 
     setDeliveryMode(newLine, ticket);
+    // TODO: related lines
     return newLine;
   }
 
