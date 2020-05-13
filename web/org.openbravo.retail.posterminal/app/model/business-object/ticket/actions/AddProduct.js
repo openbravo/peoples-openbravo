@@ -21,7 +21,7 @@
       return { ...l };
     });
     products.forEach(productInfo => {
-      const lineToEdit = getLineToEdit(productInfo.product, ticket);
+      const lineToEdit = getLineToEdit(productInfo, ticket);
       if (lineToEdit) {
         lineToEdit.qty += productInfo.qty;
       } else {
@@ -33,11 +33,17 @@
     return ticket;
   });
 
-  function getLineToEdit(product, ticket) {
+  function getLineToEdit(productInfo, ticket) {
+    const { product, qty } = productInfo;
     if (product.obposScale || !product.groupProduct) {
       return undefined;
     }
-    return ticket.lines.find(l => l.product.id === product.id && l.isEditable);
+    return ticket.lines.find(
+      l =>
+        l.product.id === product.id &&
+        l.isEditable &&
+        Math.sign(l.qty) === Math.sign(qty)
+    );
   }
 
   function createLine(productInfo, ticket, options = {}) {

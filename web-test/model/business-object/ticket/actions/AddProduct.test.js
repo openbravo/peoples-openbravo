@@ -166,6 +166,18 @@ describe('addProduct', () => {
       expect(newTicket.lines).toHaveLength(2);
     });
 
+    it('creates new lines if adding product to a return line', () => {
+      const baseTicket = addProduct(emptyTicket, {
+        products: [{ product: productA, qty: -2 }]
+      });
+
+      const newTicket = addProduct(baseTicket, {
+        products: [{ product: productA, qty: 1 }]
+      });
+
+      expect(newTicket.lines).toHaveLength(2);
+    });
+
     it('new lines are editable by default', () => {
       const newTicket = addProduct(emptyTicket, {
         products: [{ product: productA, qty: 1 }]
