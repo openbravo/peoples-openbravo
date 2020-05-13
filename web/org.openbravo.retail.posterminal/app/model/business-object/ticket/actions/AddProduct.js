@@ -71,6 +71,7 @@
 
     let productDeliveryMode;
     let productDeliveryDate;
+    let productDeliveryTime;
 
     if (ticket.isLayaway || ticket.orderType === 2) {
       productDeliveryMode = line.product.obrdmDeliveryModeLyw;
@@ -78,6 +79,7 @@
       productDeliveryMode = line.product.obrdmDeliveryMode;
 
       productDeliveryDate = line.product.obrdmDeliveryDate;
+      productDeliveryTime = line.product.obrdmDeliveryTime;
     }
 
     const deliveryMode =
@@ -100,6 +102,17 @@
       line.obrdmDeliveryDate = productDeliveryMode
         ? productDeliveryDate || currentDate
         : ticket.obrdmDeliveryDateProperty;
+    }
+
+    if (deliveryMode === 'HomeDelivery') {
+      const currentTime = new Date();
+      currentTime.setSeconds(0);
+      currentTime.setMilliseconds(0);
+
+      // eslint-disable-next-line no-param-reassign
+      line.obrdmDeliveryTime = productDeliveryMode
+        ? productDeliveryTime || currentTime
+        : ticket.obrdmDeliveryTimeProperty;
     }
   }
 })();

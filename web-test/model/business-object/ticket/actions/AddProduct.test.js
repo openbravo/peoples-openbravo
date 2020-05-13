@@ -183,20 +183,21 @@ describe('addProduct', () => {
     });
 
     it.each`
-      deliveryMode           | productDeliveryDate | expectedDate
-      ${'PickupInStoreDate'} | ${'productDate'}    | ${'productDate'}
-      ${'HomeDelivery'}      | ${'productDate'}    | ${'productDate'}
-      ${'Other'}             | ${'productDate'}    | ${undefined}
-      ${'HomeDelivery'}      | ${undefined}        | ${'currentDate'}
-      ${undefined}           | ${undefined}        | ${'ticketDeliveryDate'}
+      deliveryMode           | productDeliveryDate | expectedDate            | expectedTime
+      ${'PickupInStoreDate'} | ${'productDate'}    | ${'productDate'}        | ${undefined}
+      ${'HomeDelivery'}      | ${'productDate'}    | ${'productDate'}        | ${'currentTime'}
+      ${'Other'}             | ${'productDate'}    | ${undefined}            | ${undefined}
+      ${'HomeDelivery'}      | ${undefined}        | ${'currentDate'}        | ${'currentTime'}
+      ${undefined}           | ${undefined}        | ${'ticketDeliveryDate'} | ${'ticketDeliveryTime'}
     `(
       'sets delivery date: $deliveryMode - $productDeliveryDate ',
-      ({ deliveryMode, productDeliveryDate, expectedDate }) => {
+      ({ deliveryMode, productDeliveryDate, expectedDate, expectedTime }) => {
         const newTicket = OB.App.StateAPI.Ticket.addProduct(
           {
             ...emptyTicket,
             obrdmDeliveryModeProperty: 'HomeDelivery',
-            obrdmDeliveryDateProperty: 'ticketDeliveryDate'
+            obrdmDeliveryDateProperty: 'ticketDeliveryDate',
+            obrdmDeliveryTimeProperty: 'ticketDeliveryTime'
           },
           {
             products: [
@@ -204,7 +205,8 @@ describe('addProduct', () => {
                 product: {
                   ...productA,
                   obrdmDeliveryMode: deliveryMode,
-                  obrdmDeliveryDate: productDeliveryDate
+                  obrdmDeliveryDate: productDeliveryDate,
+                  productDeliveryTime: 'productDeliveryTime'
                 },
                 qty: 1
               }
@@ -216,12 +218,21 @@ describe('addProduct', () => {
         currentDate.setMinutes(0);
         currentDate.setSeconds(0);
         currentDate.setMilliseconds(0);
-
         const dateToExpect =
           expectedDate === 'currentDate' ? currentDate : expectedDate;
 
         expect(newTicket.lines[0].obrdmDeliveryDate).toStrictEqual(
           dateToExpect
+        );
+
+        const currentTime = new Date();
+        currentTime.setSeconds(0);
+        currentTime.setMilliseconds(0);
+        const timeToExpect =
+          expectedTime === 'currentTime' ? currentTime : expectedTime;
+
+        expect(newTicket.lines[0].obrdmDeliveryTime).toStrictEqual(
+          timeToExpect
         );
       }
     );
