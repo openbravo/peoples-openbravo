@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2018-2019 Openbravo SLU
+ * All portions are Copyright (C) 2018-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -77,6 +77,7 @@ public class InvoiceGeneratorFromGoodsShipment {
   private Invoice invoice;
   private CreateInvoiceLinesFromProcess createInvoiceLineProcess;
   private Date invoiceDate;
+  private String invoiceDocumentNo;
   private String priceListId;
   private final Set<String> ordersWithAfterOrderDeliveryAlreadyInvoiced = new HashSet<>();
   private boolean allowInvoicePOSOrder = false;
@@ -138,10 +139,28 @@ public class InvoiceGeneratorFromGoodsShipment {
    */
   public InvoiceGeneratorFromGoodsShipment(final String shipmentId, final Date invoiceDate,
       final PriceList priceList) {
+    this(shipmentId, invoiceDate, priceList, null);
+  }
+
+  /**
+   * Creates an {@link InvoiceGeneratorFromGoodsShipment} based on shipment Id
+   * 
+   * @param shipmentId
+   *          The shipment Id
+   * @param invoiceDate
+   *          The invoice date. If null it takes the from the shipment movement date.
+   * @param priceList
+   *          The invoice price list. If null it takes the business partner default
+   * @param invoiceDocumentNo
+   *          The invoice document number.
+   */
+  public InvoiceGeneratorFromGoodsShipment(final String shipmentId, final Date invoiceDate,
+      final PriceList priceList, final String invoiceDocumentNo) {
     Check.isNotNull(shipmentId, "Parameter shipmentId can't be null");
     this.shipmentId = shipmentId;
     setInvoiceDate(invoiceDate);
     setPriceListId(priceList);
+    this.invoiceDocumentNo = invoiceDocumentNo;
     this.createInvoiceLineProcess = WeldUtils
         .getInstanceFromStaticBeanManager(CreateInvoiceLinesFromProcess.class);
   }
@@ -370,7 +389,7 @@ public class InvoiceGeneratorFromGoodsShipment {
   }
 
   private Invoice createInvoiceHeader() {
-    final Entity invoiceEntity = ModelProvider.getInstance().getEntity(Invoice.class);
+
     final Invoice newInvoice = OBProvider.getInstance().get(Invoice.class);
     final ShipmentInOut shipment = getShipment();
 
@@ -379,14 +398,8 @@ public class InvoiceGeneratorFromGoodsShipment {
     final DocumentType invoiceDocumentType = getDocumentTypeForARI(getShipment().getOrganization());
     newInvoice.setDocumentType(invoiceDocumentType);
     newInvoice.setTransactionDocument(invoiceDocumentType);
-    String documentNo = Utility.getDocumentNo(OBDal.getInstance().getConnection(false),
-        new DalConnectionProvider(false), RequestContext.get().getVariablesSecureApp(), "",
-        invoiceEntity.getTableName(),
-        newInvoice.getTransactionDocument() == null ? ""
-            : newInvoice.getTransactionDocument().getId(),
-        newInvoice.getDocumentType() == null ? "" : newInvoice.getDocumentType().getId(), false,
-        true);
-    newInvoice.setDocumentNo(documentNo);
+    newInvoice.setDocumentNo(
+        invoiceDocumentNo != null ? invoiceDocumentNo : generateInvoiceDocumentNo(newInvoice));
     newInvoice.setDocumentAction("CO");
     newInvoice.setDocumentStatus("DR");
     newInvoice.setAccountingDate(getInvoiceDate());
@@ -421,6 +434,17 @@ public class InvoiceGeneratorFromGoodsShipment {
     } catch (Exception e) {
       throw new OBException("There is no Document type for Sales Invoice defined");
     }
+  }
+
+  private String generateInvoiceDocumentNo(final Invoice newInvoice) {
+    final Entity invoiceEntity = ModelProvider.getInstance().getEntity(Invoice.class);
+    return Utility.getDocumentNo(OBDal.getInstance().getConnection(false),
+        new DalConnectionProvider(false), RequestContext.get().getVariablesSecureApp(), "",
+        invoiceEntity.getTableName(),
+        newInvoice.getTransactionDocument() == null ? ""
+            : newInvoice.getTransactionDocument().getId(),
+        newInvoice.getDocumentType() == null ? "" : newInvoice.getDocumentType().getId(), false,
+        true);
   }
 
   private Currency getCurrency() {
