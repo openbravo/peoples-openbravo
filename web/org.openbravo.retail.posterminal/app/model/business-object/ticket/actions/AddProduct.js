@@ -16,7 +16,9 @@
     const ticket = { ...state };
     const { products } = payload;
 
-    ticket.lines = [...ticket.lines];
+    ticket.lines = ticket.lines.map(l => {
+      return { ...l };
+    });
     products.forEach(productInfo => {
       const lineToEdit = getLineToEdit(productInfo.product, ticket);
       if (lineToEdit) {
