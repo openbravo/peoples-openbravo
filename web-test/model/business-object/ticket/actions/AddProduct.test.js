@@ -181,5 +181,49 @@ describe('addProduct', () => {
         'lywDeliveryMode'
       );
     });
+
+    it.each`
+      deliveryMode           | productDeliveryDate | expectedDate
+      ${'PickupInStoreDate'} | ${'productDate'}    | ${'productDate'}
+      ${'HomeDelivery'}      | ${'productDate'}    | ${'productDate'}
+      ${'Other'}             | ${'productDate'}    | ${undefined}
+      ${'HomeDelivery'}      | ${undefined}        | ${'currentDate'}
+      ${undefined}           | ${undefined}        | ${'ticketDeliveryDate'}
+    `(
+      'sets delivery date: $deliveryMode - $productDeliveryDate ',
+      ({ deliveryMode, productDeliveryDate, expectedDate }) => {
+        const newTicket = OB.App.StateAPI.Ticket.addProduct(
+          {
+            ...emptyTicket,
+            obrdmDeliveryModeProperty: 'HomeDelivery',
+            obrdmDeliveryDateProperty: 'ticketDeliveryDate'
+          },
+          {
+            products: [
+              {
+                product: {
+                  ...productA,
+                  obrdmDeliveryMode: deliveryMode,
+                  obrdmDeliveryDate: productDeliveryDate
+                },
+                qty: 1
+              }
+            ]
+          }
+        );
+        const currentDate = new Date();
+        currentDate.setHours(0);
+        currentDate.setMinutes(0);
+        currentDate.setSeconds(0);
+        currentDate.setMilliseconds(0);
+
+        const dateToExpect =
+          expectedDate === 'currentDate' ? currentDate : expectedDate;
+
+        expect(newTicket.lines[0].obrdmDeliveryDate).toStrictEqual(
+          dateToExpect
+        );
+      }
+    );
   });
 });

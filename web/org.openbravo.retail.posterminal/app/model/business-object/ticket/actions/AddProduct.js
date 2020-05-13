@@ -69,23 +69,37 @@
       return;
     }
 
-    const defaultDeliveryProp =
-      ticket.isLayaway || ticket.orderType === 2
-        ? 'obrdmDeliveryModeLyw'
-        : 'obrdmDeliveryMode';
+    let productDeliveryMode;
+    let productDeliveryDate;
+
+    if (ticket.isLayaway || ticket.orderType === 2) {
+      productDeliveryMode = line.product.obrdmDeliveryModeLyw;
+    } else {
+      productDeliveryMode = line.product.obrdmDeliveryMode;
+
+      productDeliveryDate = line.product.obrdmDeliveryDate;
+    }
 
     const deliveryMode =
-      line.product[defaultDeliveryProp] ||
-      ticket.obrdmDeliveryModeProperty ||
-      'PickAndCarry';
+      productDeliveryMode || ticket.obrdmDeliveryModeProperty || 'PickAndCarry';
 
     // eslint-disable-next-line no-param-reassign
     line.obrdmDeliveryMode = deliveryMode;
-  }
 
-  OB.App.StateAPI.Ticket.addProduct.addActionPreparation(
-    async (state, payload) => {
-      return payload;
+    if (
+      deliveryMode === 'PickupInStoreDate' ||
+      deliveryMode === 'HomeDelivery'
+    ) {
+      const currentDate = new Date();
+      currentDate.setHours(0);
+      currentDate.setMinutes(0);
+      currentDate.setSeconds(0);
+      currentDate.setMilliseconds(0);
+
+      // eslint-disable-next-line no-param-reassign
+      line.obrdmDeliveryDate = productDeliveryMode
+        ? productDeliveryDate || currentDate
+        : ticket.obrdmDeliveryDateProperty;
     }
-  );
+  }
 })();
