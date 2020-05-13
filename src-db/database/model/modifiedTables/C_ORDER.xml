@@ -53,6 +53,14 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
+      <column name="EM_OBPOS_SEQUENCENAME" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="EM_OBPOS_SEQUENCENUMBER" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="OBPOS_APPLICATIONS" name="EM_OBPOS_APP_ID">
         <reference local="EM_OBPOS_APPLICATIONS_ID" foreign="OBPOS_APPLICATIONS_ID"/>
       </foreign-key>

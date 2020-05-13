@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018-2019 Openbravo S.L.U.
+ * Copyright (C) 2018-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -61,17 +61,15 @@ import org.openbravo.service.db.CallStoredProcedure;
 
 public class InvoiceUtils {
 
-  HashMap<String, DocumentType> paymentDocTypes = new HashMap<String, DocumentType>();
-  HashMap<String, DocumentType> invoiceDocTypes = new HashMap<String, DocumentType>();
-  HashMap<String, DocumentType> shipmentDocTypes = new HashMap<String, DocumentType>();
+  HashMap<String, DocumentType> paymentDocTypes = new HashMap<>();
+  HashMap<String, DocumentType> shipmentDocTypes = new HashMap<>();
   HashMap<String, JSONArray> invoicelineserviceList;
 
-  public Invoice createNewInvoice(JSONObject jsoninvoice, Order order,
-      boolean useOrderDocumentNoForRelatedDocs, List<DocumentNoHandler> docNoHandlers) {
+  public Invoice createNewInvoice(JSONObject jsoninvoice, Order order) {
     final Invoice invoice = OBProvider.getInstance().get(Invoice.class);
     try {
 
-      final ArrayList<OrderLine> invoicelineReferences = new ArrayList<OrderLine>();
+      final ArrayList<OrderLine> invoicelineReferences = new ArrayList<>();
       JSONArray invoicelines = jsoninvoice.getJSONArray("lines");
 
       for (int i = 0; i < invoicelines.length(); i++) {
@@ -84,8 +82,7 @@ public class InvoiceUtils {
         invoicelineReferences.add(OBDal.getInstance().get(OrderLine.class, invoiceLineId));
       }
 
-      createInvoiceAndLines(jsoninvoice, invoice, order, invoicelines, invoicelineReferences,
-          useOrderDocumentNoForRelatedDocs, docNoHandlers);
+      createInvoiceAndLines(jsoninvoice, invoice, order, invoicelines, invoicelineReferences);
     } catch (JSONException e) {
       // won't happen
     }
@@ -93,37 +90,29 @@ public class InvoiceUtils {
     return invoice;
   }
 
-  private void addDocumentNoHandler(BaseOBObject bob, Entity entity, DocumentType docTypeTarget,
-      DocumentType docType, List<DocumentNoHandler> documentNoHandlers) {
-    documentNoHandlers.add(new DocumentNoHandler(bob, entity, docTypeTarget, docType));
-  }
-
   private void updateAuditInfo(Invoice invoice, JSONObject jsoninvoice) throws JSONException {
     Long value = jsoninvoice.getLong("created");
     invoice.set("creationDate", new Date(value));
   }
 
-  private DocumentType getInvoiceDocumentType(String documentTypeId) {
-    if (invoiceDocTypes.get(documentTypeId) != null) {
-      return invoiceDocTypes.get(documentTypeId);
-    }
-    DocumentType orderDocType = OBDal.getInstance().get(DocumentType.class, documentTypeId);
-    final DocumentType docType = orderDocType.getDocumentTypeForInvoice();
-    invoiceDocTypes.put(documentTypeId, docType);
-    if (docType == null) {
+  private DocumentType getInvoiceDocumentType(String orderDocTypeId, boolean isFullInvoice) {
+    final DocumentType orderDocType = OBDal.getInstance().get(DocumentType.class, orderDocTypeId);
+    final DocumentType invoiceDocType = isFullInvoice ? orderDocType.getDocumentTypeForInvoice()
+        : orderDocType.getDoctypesimpinvoice();
+
+    if (invoiceDocType == null) {
       throw new OBException(
-          "There is no 'Document type for Invoice' defined for the specified Document Type. The document type for invoices can be configured in the Document Type window, and it should be configured for the document type: "
-              + orderDocType.getName());
+          String.format(OBMessageUtils.messageBD(isFullInvoice ? "OBPOS_DocTypeInvoiceNotConfigured"
+              : "OBPOS_DocTypeSimplifiedInvoiceNotConfigured"), orderDocType.getName()));
     }
-    return docType;
+
+    return invoiceDocType;
   }
 
   private void createInvoiceAndLines(final JSONObject jsoninvoice, final Invoice invoice,
       final Order order, final JSONArray invoicelines,
-      final ArrayList<OrderLine> invoicelineReferences,
-      final boolean useOrderDocumentNoForRelatedDocs, final List<DocumentNoHandler> docNoHandlers)
-      throws JSONException {
-    createInvoice(invoice, order, jsoninvoice, useOrderDocumentNoForRelatedDocs, docNoHandlers);
+      final ArrayList<OrderLine> invoicelineReferences) throws JSONException {
+    createInvoice(invoice, order, jsoninvoice);
     OBDal.getInstance().save(invoice);
     createInvoiceLines(invoice, order, jsoninvoice, invoicelines, invoicelineReferences);
     updateAuditInfo(invoice, jsoninvoice);
@@ -381,8 +370,7 @@ public class InvoiceUtils {
     }
   }
 
-  private void createInvoice(Invoice invoice, Order order, JSONObject jsoninvoice,
-      boolean useOrderDocumentNoForRelatedDocs, List<DocumentNoHandler> docNoHandlers)
+  private void createInvoice(Invoice invoice, Order order, JSONObject jsoninvoice)
       throws JSONException {
     Entity invoiceEntity = ModelProvider.getInstance().getEntity(Invoice.class);
     JSONPropertyToEntity.fillBobFromJSON(invoiceEntity, invoice, jsoninvoice,
@@ -402,7 +390,7 @@ public class InvoiceUtils {
     } else {
       // other case use generic description if present and add relationship to order
       description = OBMessageUtils.getI18NMessage("OBPOS_InvoiceRelatedToOrder", null)
-          + jsoninvoice.getString("documentNo");
+          + order.getDocumentNo();
       if (jsoninvoice.has("description")
           && !StringUtils.isEmpty(jsoninvoice.getString("description"))) {
         description = StringUtils.substring(jsoninvoice.getString("description"), 0,
@@ -413,16 +401,11 @@ public class InvoiceUtils {
     invoice.setOrganization(order.getOrganization());
     invoice.setTrxOrganization(order.getTrxOrganization());
     invoice.setDescription(description);
-    invoice.setDocumentType(getInvoiceDocumentType(order.getDocumentType().getId()));
-    invoice.setTransactionDocument(getInvoiceDocumentType(order.getDocumentType().getId()));
+    final DocumentType docType = getInvoiceDocumentType(order.getDocumentType().getId(),
+        jsoninvoice.optBoolean("fullInvoice"));
+    invoice.setDocumentType(docType);
+    invoice.setTransactionDocument(docType);
 
-    if (useOrderDocumentNoForRelatedDocs) {
-      invoice.setDocumentNo(order.getDocumentNo());
-    } else {
-      invoice.setDocumentNo(getDummyDocumentNo());
-      addDocumentNoHandler(invoice, invoiceEntity, invoice.getTransactionDocument(),
-          invoice.getDocumentType(), docNoHandlers);
-    }
     final Date orderDate = OBMOBCUtils.calculateServerDatetime(jsoninvoice.getString("orderDate"),
         Long.parseLong(jsoninvoice.getString("timezoneOffset")));
     Date now = new Date();
@@ -1007,10 +990,6 @@ public class InvoiceUtils {
       }
     }
     return calculatedDueDate.getTime();
-  }
-
-  private String getDummyDocumentNo() {
-    return "DOCNO" + System.currentTimeMillis();
   }
 
   /**

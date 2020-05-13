@@ -86,7 +86,7 @@ public class IssueSalesOrderLines extends JSONProcessSimple {
                                      // further processing
         ServiceDeliverUtility.deliverServices(shipment);
         shipmentGenerator.processShipment();
-        final Invoice invoice = shipmentGenerator.invoiceShipmentIfPossible();
+        final Invoice invoice = shipmentGenerator.invoiceShipmentIfPossible(orderFromJson);
 
         executeHooks(invoiceShipmentHook, orderFromJson, shipment, invoice);
         final JSONObject jsonOrder = new JSONObject();

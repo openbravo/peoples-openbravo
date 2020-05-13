@@ -49,9 +49,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.businessUtility.CancelAndReplaceUtils;
-import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
@@ -148,7 +146,6 @@ public class OrderLoader extends POSDataSynchronizationProcess
   @Any
   private Instance<OrderLoaderPreProcessPaymentHook> preProcessPayment;
 
-  private boolean useOrderDocumentNoForRelatedDocs = false;
   private int paymentCount = 0;
 
   @Override
@@ -164,18 +161,6 @@ public class OrderLoader extends POSDataSynchronizationProcess
    *          Web POS
    */
   public void initializeVariables(JSONObject jsonorder) throws JSONException {
-    try {
-      useOrderDocumentNoForRelatedDocs = "Y"
-          .equals(Preferences.getPreferenceValue("OBPOS_UseOrderDocumentNoForRelatedDocs", true,
-              OBContext.getOBContext().getCurrentClient(),
-              OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
-              OBContext.getOBContext().getRole(), null));
-    } catch (PropertyException e1) {
-      log.error(
-          "Error getting OBPOS_UseOrderDocumentNoForRelatedDocs preference: " + e1.getMessage(),
-          e1);
-    }
-
     documentNoHandlers.set(new ArrayList<DocumentNoHandler>());
 
     isNegative = jsonorder.optBoolean("isNegative", jsonorder.getDouble("gross") < 0);
@@ -414,7 +399,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
 
         if (createShipment) {
           shipment = su.createNewShipment(order, jsonorder, lineReferences,
-              useOrderDocumentNoForRelatedDocs, documentNoHandlers.get());
+              documentNoHandlers.get());
         }
 
         if (log.isDebugEnabled()) {
@@ -445,8 +430,8 @@ public class OrderLoader extends POSDataSynchronizationProcess
             jsoninvoice = jsonorder;
           }
 
-          invoice = iu.createNewInvoice(jsoninvoice, order, useOrderDocumentNoForRelatedDocs,
-              documentNoHandlers.get());
+          invoice = iu.createNewInvoice(jsoninvoice, order);
+          updateTerminalDocumentSequence(order.getObposApplications(), jsoninvoice);
         }
 
         if (log.isDebugEnabled()) {
@@ -468,9 +453,6 @@ public class OrderLoader extends POSDataSynchronizationProcess
         }
       }
 
-      if (useOrderDocumentNoForRelatedDocs) {
-        paymentCount = countPayments(order);
-      }
       if (log.isDebugEnabled()) {
         t5 = System.currentTimeMillis();
       }
@@ -517,7 +499,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
             final Organization paymentOrganization = getPaymentOrganization(posTerminal,
                 POSUtils.isCrossStore(order.getReplacedorder(), posTerminal));
             CancelAndReplaceUtils.cancelAndReplaceOrder(order.getId(), paymentOrganization.getId(),
-                jsonorder, useOrderDocumentNoForRelatedDocs);
+                jsonorder, false);
           } catch (Exception ex) {
             OBDal.getInstance().rollbackAndClose();
             throw new OBException("CancelAndReplaceUtils.cancelAndReplaceOrder: ", ex);
@@ -1170,72 +1152,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
     order.setDelivered(deliver);
 
     if (!doCancelAndReplace && !doCancelLayaway) {
-      if (order.getDocumentNo().indexOf("/") > -1) {
-        long documentno = Long
-            .parseLong(order.getDocumentNo().substring(order.getDocumentNo().lastIndexOf("/") + 1));
-
-        if (isQuotation) {
-          if (order.getObposApplications().getQuotationslastassignednum() == null
-              || documentno > order.getObposApplications().getQuotationslastassignednum()) {
-            OBPOSApplications terminal = order.getObposApplications();
-            terminal.setQuotationslastassignednum(documentno);
-            OBDal.getInstance().save(terminal);
-          }
-        } else if (jsonorder.optLong("returnnoSuffix", -1L) > -1L) {
-          if (order.getObposApplications().getReturnslastassignednum() == null
-              || documentno > order.getObposApplications().getReturnslastassignednum()) {
-            OBPOSApplications terminal = order.getObposApplications();
-            terminal.setReturnslastassignednum(documentno);
-            OBDal.getInstance().save(terminal);
-          }
-        } else {
-          if (order.getObposApplications().getLastassignednum() == null
-              || documentno > order.getObposApplications().getLastassignednum()) {
-            OBPOSApplications terminal = order.getObposApplications();
-            terminal.setLastassignednum(documentno);
-            OBDal.getInstance().save(terminal);
-          }
-        }
-      } else {
-        long documentno;
-        if (isQuotation) {
-          if (jsonorder.has("quotationnoPrefix")) {
-            documentno = Long.parseLong(
-                order.getDocumentNo().replace(jsonorder.getString("quotationnoPrefix"), ""));
-
-            if (order.getObposApplications().getQuotationslastassignednum() == null
-                || documentno > order.getObposApplications().getQuotationslastassignednum()) {
-              OBPOSApplications terminal = order.getObposApplications();
-              terminal.setQuotationslastassignednum(documentno);
-              OBDal.getInstance().save(terminal);
-            }
-          }
-        } else if (jsonorder.optLong("returnnoSuffix", -1L) > -1L) {
-          if (jsonorder.has("returnnoPrefix")) {
-            documentno = Long.parseLong(
-                order.getDocumentNo().replace(jsonorder.getString("returnnoPrefix"), ""));
-
-            if (order.getObposApplications().getReturnslastassignednum() == null
-                || documentno > order.getObposApplications().getReturnslastassignednum()) {
-              OBPOSApplications terminal = order.getObposApplications();
-              terminal.setReturnslastassignednum(documentno);
-              OBDal.getInstance().save(terminal);
-            }
-          }
-        } else {
-          if (jsonorder.has("documentnoPrefix")) {
-            documentno = Long.parseLong(
-                order.getDocumentNo().replace(jsonorder.getString("documentnoPrefix"), ""));
-
-            if (order.getObposApplications().getLastassignednum() == null
-                || documentno > order.getObposApplications().getLastassignednum()) {
-              OBPOSApplications terminal = order.getObposApplications();
-              terminal.setLastassignednum(documentno);
-              OBDal.getInstance().save(terminal);
-            }
-          }
-        }
-      }
+      updateTerminalDocumentSequence(order.getObposApplications(), jsonorder);
     }
 
     String userHqlWhereClause = " usr where usr.businessPartner = :bp and usr.organization.id in (:orgs) order by username";
@@ -1435,9 +1352,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
           // because the payment cannot be 0 (It wouldn't be created)
           tempWriteoffAmt = amount.abs().subtract(BigDecimal.ONE);
         }
-        if (useOrderDocumentNoForRelatedDocs) {
-          paymentCount++;
-        }
+
         processPayments(paymentSchedule, order, invoice, posTerminal, paymentType, payment,
             tempWriteoffAmt, jsonorder, account);
         if (!payment.has("reversedPaymentId")) {
@@ -1691,16 +1606,14 @@ public class OrderLoader extends POSDataSynchronizationProcess
                   : mulrate,
           amount, true, payment.has("id") ? payment.getString("id") : null);
 
-      if (!useOrderDocumentNoForRelatedDocs) {
-        String documentNoPrefix = null;
-        if (payment.has("reversedPaymentId") && payment.getString("reversedPaymentId") != null) {
-          documentNoPrefix = "*R*";
-        }
-        documentNoHandlers.get()
-            .add(new DocumentNoHandler(finPayment,
-                ModelProvider.getInstance().getEntity(FIN_Payment.class), null, paymentDocType,
-                documentNoPrefix));
+      String documentNoPrefix = null;
+      if (payment.has("reversedPaymentId") && payment.getString("reversedPaymentId") != null) {
+        documentNoPrefix = "*R*";
       }
+      documentNoHandlers.get()
+          .add(new DocumentNoHandler(finPayment,
+              ModelProvider.getInstance().getEntity(FIN_Payment.class), null, paymentDocType,
+              documentNoPrefix));
 
       boolean doFlush = false;
 
@@ -1871,16 +1784,6 @@ public class OrderLoader extends POSDataSynchronizationProcess
     }
   }
 
-  private int countPayments(Order order) {
-    final String countHql = "select count(*) from FIN_Payment_ScheduleDetail where "
-        + FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE + "."
-        + FIN_PaymentSchedule.PROPERTY_ORDER + "=:order" + " and "
-        + FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS + " is not null ";
-    final Query<Number> qry = OBDal.getInstance().getSession().createQuery(countHql, Number.class);
-    qry.setParameter("order", order);
-    return qry.uniqueResult().intValue();
-  }
-
   private void verifyCashupStatus(JSONObject jsonorder) throws JSONException, OBException {
     OBContext.setAdminMode(false);
     try {
@@ -1939,6 +1842,11 @@ public class OrderLoader extends POSDataSynchronizationProcess
     } catch (JSONException e) {
       log.error("Error creating approvals for order" + order, e);
     }
+  }
+
+  private void updateTerminalDocumentSequence(final OBPOSApplications terminal, JSONObject json) {
+    POSUtils.updateTerminalDocumentSequence(terminal, json.optString("obposSequencename"),
+        json.optLong("obposSequencenumber"));
   }
 
   protected String getDocumentNo(Entity entity, DocumentType doctypeTarget, DocumentType doctype) {

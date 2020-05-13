@@ -49,6 +49,7 @@ import org.openbravo.mobile.core.servercontroller.MobileServerUtils;
 import org.openbravo.model.ad.access.OrderLineTax;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.OrganizationInformation;
+import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.order.OrderLineOffer;
 import org.openbravo.service.json.JsonConstants;
 
@@ -152,14 +153,18 @@ public class PaidReceipts extends JSONProcessSimple {
         paidReceipt.put("trxOrganization", jsonsent.optString("organization"));
 
         // get the Invoice for the Order
-        String hqlPaidReceiptsInvoice = "select inv.id from Invoice as inv where inv.salesOrder.id = :orderId";
-        Query<String> PaidReceiptsInvoiceQuery = OBDal.getInstance()
-            .getSession()
-            .createQuery(hqlPaidReceiptsInvoice, String.class);
-        PaidReceiptsInvoiceQuery.setParameter("orderId", orderid);
-        if (!PaidReceiptsInvoiceQuery.list().isEmpty()) {
+        final Invoice invoice = OBDal.getInstance()
+            .createQuery(Invoice.class, "salesOrder.id = :orderId")
+            .setNamedParameter("orderId", orderid)
+            .setMaxResult(1)
+            .uniqueResult();
+        if (invoice != null) {
           paidReceipt.put("invoiceCreated", true);
           paidReceipt.put("generateInvoice", true);
+          paidReceipt.put("fullInvoice",
+              StringUtils.equals(invoice.getObposSequencename(), "fullinvoiceslastassignednum")
+                  || StringUtils.equals(invoice.getObposSequencename(),
+                      "fullreturninvoiceslastassignednum"));
         }
 
         JSONArray listpaidReceiptsLines = new JSONArray();

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+/*
+ ************************************************************************************
+ * Copyright (C) 2020 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+ */
+-->
+<SqlClass name="EnableGenerateSimplifiedInvoicesData" package="org.openbravo.retail.posterminal.modulescript">
+  <SqlClassComment></SqlClassComment>
+  <SqlMethod name="dummy" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        <![CDATA[
+          SELECT 1 AS dummy FROM DUAL
+        ]]>
+      </Sql>
+  </SqlMethod>
+  <SqlMethod name="enableGenerateSimplifiedInvoices" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        <![CDATA[
+          UPDATE obpos_terminaltype
+          SET groupingorders = 'N', separateinvoiceforreturns = 'N', generateinvoice = 'Y'
+          WHERE (groupingorders = 'N' AND generateinvoice = 'N')
+          OR (groupingorders = 'Y' AND generateinvoice = 'Y')
+        ]]>
+      </Sql>
+  </SqlMethod>
+</SqlClass>

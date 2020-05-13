@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019-2020 Openbravo S.L.U.
+ * Copyright (C) 2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -373,6 +373,12 @@ enyo.kind({
         {
           kind: 'OB.UI.ModalAdvancedFilterReceipts',
           name: 'OB_UI_ModalAdvancedFilterReceipts',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-ObUiModalAdvancedFilterReceipts'
+        },
+        {
+          kind: 'OB.UI.ModalAdvancedFilterPayOpenTickets',
+          name: 'OB_UI_ModalAdvancedFilterPayOpenTickets',
           classes:
             'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-ObUiModalAdvancedFilterReceipts'
         },
@@ -2403,20 +2409,6 @@ enyo.kind({
       'change:isEditable',
       function(model) {
         this.enableKeyboardButton(true);
-      },
-      this
-    );
-
-    receipt.on(
-      'change:bp',
-      function(model) {
-        // if the receip is cloning, then the called to taxIdValidation is not done because this function does a save
-        if (model.get('generateInvoice') && !model.get('cloningReceipt')) {
-          OB.MobileApp.actionsRegistry.execute({
-            window: 'retail.pointofsale',
-            name: 'invoiceReceipt'
-          });
-        }
       },
       this
     );

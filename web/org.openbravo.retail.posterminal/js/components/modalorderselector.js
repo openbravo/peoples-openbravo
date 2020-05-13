@@ -219,22 +219,25 @@ enyo.kind({
       this.model.set('receiptSelected', !this.model.get('receiptSelected'), {
         silent: true
       });
-      if (this.model.get('receiptSelected')) {
-        this.$.iconCheck.removeClass(
-          'obUiReceiptSelectorRender-line-iconCheck_disactive'
-        );
-        this.$.iconCheck.addClass(
-          'obUiReceiptSelectorRender-line-iconCheck_active'
-        );
-      } else {
-        this.$.iconCheck.removeClass(
-          'obUiReceiptSelectorRender-line-iconCheck_active'
-        );
-        this.$.iconCheck.addClass(
-          'obUiReceiptSelectorRender-line-iconCheck_disactive'
-        );
-      }
+      this.setCheckState();
       this.doActiveOpenSelectedBtn();
+    }
+  },
+  setCheckState: function() {
+    if (this.model.get('receiptSelected')) {
+      this.$.iconCheck.removeClass(
+        'obUiReceiptSelectorRender-line-iconCheck_disactive'
+      );
+      this.$.iconCheck.addClass(
+        'obUiReceiptSelectorRender-line-iconCheck_active'
+      );
+    } else {
+      this.$.iconCheck.removeClass(
+        'obUiReceiptSelectorRender-line-iconCheck_active'
+      );
+      this.$.iconCheck.addClass(
+        'obUiReceiptSelectorRender-line-iconCheck_disactive'
+      );
     }
   },
   canHidePopup: function() {
@@ -259,8 +262,14 @@ enyo.kind({
               OB.MobileApp.model.get('terminal').organization$_identifier
             ])
       );
+      this.$.iconCheck.addClass(
+        'obUiReceiptSelectorRender-line-center-iconCheck'
+      );
     } else {
       this.$.store.setContent('');
+      this.$.iconCheck.removeClass(
+        'obUiReceiptSelectorRender-line-center-iconCheck'
+      );
     }
 
     this.$.date.setContent(OB.I18N.formatDate(orderDate));
@@ -297,6 +306,11 @@ enyo.kind({
             'obUiReceiptSelectorRender-lineInfoContainerSecondRow-orderType_ret'
           );
           break;
+        case 'DR':
+          this.$.orderType.addClass(
+            'obUiReceiptSelectorRender-lineInfoContainerSecondRow-orderType_dr'
+          );
+          break;
         default:
           this.$.orderType.addClass(
             'obUiReceiptSelectorRender-lineInfoContainerSecondRow-orderType_default'
@@ -310,6 +324,7 @@ enyo.kind({
         'obUiReceiptSelectorRender-line-iconCheck_disactive'
       );
       this.$.iconCheck.setShowing(true);
+      this.setCheckState();
     }
 
     OB.UTIL.HookManager.executeHooks(

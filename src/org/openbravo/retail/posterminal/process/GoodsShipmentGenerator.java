@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019 Openbravo S.L.U.
+ * Copyright (C) 2019-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -17,6 +17,8 @@ import java.util.List;
 import javax.enterprise.context.Dependent;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ScrollableResults;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
@@ -39,6 +41,8 @@ import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.onhandquantity.StockProposed;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
+import org.openbravo.retail.posterminal.OBPOSApplications;
+import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.service.db.CallProcess;
 
 /**
@@ -183,13 +187,31 @@ class GoodsShipmentGenerator {
 
   /**
    * Automatically generate invoice from Goods Shipment, if possible
+   * 
+   * @throws JSONException
    */
-  Invoice invoiceShipmentIfPossible() {
+  Invoice invoiceShipmentIfPossible(final JSONObject json) throws JSONException {
+    final String invoiceSequenceName = json.optString("invoiceSequenceName");
+    final Long invoiceSequenceNumber = json.optLong("invoiceSequenceNumber");
+    final String invoiceDocumentNo = json.has("invoiceDocumentNo")
+        ? json.getString("invoiceDocumentNo")
+        : null;
+
     OBDal.getInstance().refresh(this.shipment);
     InvoiceGeneratorFromGoodsShipment invoiceGenerator = new InvoiceGeneratorFromGoodsShipment(
-        this.shipment.getId());
+        this.shipment.getId(), null, null, invoiceDocumentNo);
     invoiceGenerator.setAllowInvoicePOSOrder(true);
-    return invoiceGenerator.createInvoiceConsideringInvoiceTerms(true);
+    final Invoice invoice = invoiceGenerator.createInvoiceConsideringInvoiceTerms(true);
+
+    if (invoice != null && invoiceDocumentNo != null) {
+      invoice.setObposSequencename(invoiceSequenceName);
+      invoice.setObposSequencenumber(invoiceSequenceNumber);
+      final OBPOSApplications terminal = OBDal.getInstance()
+          .get(OBPOSApplications.class, json.getString("posTerminal"));
+      POSUtils.updateTerminalDocumentSequence(terminal, invoiceSequenceName, invoiceSequenceNumber);
+    }
+
+    return invoice;
   }
 
   /**

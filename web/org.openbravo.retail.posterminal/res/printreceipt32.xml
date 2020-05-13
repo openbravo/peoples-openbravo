@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -180,7 +180,9 @@
     </line>
     <line></line>
     <line size="1">
-      <% if (order.get('payments').length > 0) { %>
+      <% if (order.get('hasbeenpaid') === 'N') { %>
+        <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_draft')) %></text>
+      <% } else if (order.get('payments').length > 0) { %>
         <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_paid')) %></text>
       <% } else { %>
         <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_notPaid'))  %></text>
@@ -224,7 +226,9 @@
     </line>
 
     <line>
-      <barcode type="CODE128" position="left"><%= OB.UTIL.encodeXMLComponent(order.getScannableDocumentNo()) %></barcode>
+      <% if(order.getScannableDocumentNo() !== ''){ %>
+        <barcode type="CODE128" position="left"><%= OB.UTIL.encodeXMLComponent(order.getScannableDocumentNo()) %></barcode>
+      <% } %>
     </line>
 
   </ticket>

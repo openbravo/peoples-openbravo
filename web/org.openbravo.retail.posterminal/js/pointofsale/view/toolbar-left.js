@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2019 Openbravo S.L.U.
+ * Copyright (C) 2013-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -389,8 +389,6 @@ enyo.kind({
         isReceipt: undefined,
         isMultiOrder: undefined,
         receiptId: undefined,
-        receiptDocno: undefined,
-        isReceiptDocnoLengthGreaterThanThree: undefined,
         isReceiptBp: undefined,
         receiptBpId: undefined,
         isReceiptLines: undefined,
@@ -427,22 +425,18 @@ enyo.kind({
         return true;
       }
       requirements.receiptId = receipt.get('id');
-      requirements.receiptDocno = receipt.get('documentNo');
       requirements.isReceiptBp = !OB.UTIL.isNullOrUndefined(receipt.get('bp'));
       requirements.isReceiptLines = !OB.UTIL.isNullOrUndefined(
         receipt.get('lines')
       );
       if (
         OB.UTIL.isNullOrUndefined(requirements.receiptId) ||
-        OB.UTIL.isNullOrUndefined(requirements.receiptDocno) ||
         !requirements.isReceiptBp ||
         !requirements.isReceiptLines
       ) {
         return false;
       }
       requirements.receiptBpId = receipt.get('bp').get('id');
-      requirements.isReceiptDocnoLengthGreaterThanThree =
-        receipt.get('documentNo').length > 3;
       requirements.isReceiptLinesLengthGreaterThanZero =
         receipt.get('lines').length > 0;
       requirements.isReceiptHasbeenpaidEqualToN =
@@ -460,7 +454,6 @@ enyo.kind({
       );
       if (
         OB.UTIL.isNullOrUndefined(requirements.receiptBpId) ||
-        !requirements.isReceiptDocnoLengthGreaterThanThree ||
         (!requirements.isReceiptLinesLengthGreaterThanZero &&
           !requirements.isLocallyGeneratedPayments) ||
         !requirements.isReceiptHasbeenpaidEqualToN
