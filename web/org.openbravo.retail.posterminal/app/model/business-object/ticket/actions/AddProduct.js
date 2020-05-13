@@ -33,6 +33,9 @@
   });
 
   function getLineToEdit(product, ticket) {
+    if (product.obposScale || !product.groupProduct) {
+      return undefined;
+    }
     return ticket.lines.find(l => l.product.id === product.id);
   }
 

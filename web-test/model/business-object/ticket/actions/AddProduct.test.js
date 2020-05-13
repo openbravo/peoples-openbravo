@@ -31,7 +31,8 @@ require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-
 const emptyTicket = { priceIncludesTax: true, lines: [] };
 
 const productA = {
-  id: 'pA',
+  id: 'stdProduct',
+  groupProduct: true,
   uOMstandardPrecision: 2,
   standardPrice: 5,
   listPrice: 5
@@ -39,18 +40,44 @@ const productA = {
 
 const productB = {
   id: 'pB',
+  groupProduct: true,
   uOMstandardPrecision: 3,
   standardPrice: 10,
   listPrice: 11
 };
 
 const serviceProduct = {
-  id: 'pS',
+  id: 'serviceProduct',
   productType: 'S',
   uOMstandardPrecision: 3,
   standardPrice: 10,
   listPrice: 11
 };
+
+const scaleProduct = {
+  id: 'scaleProduct',
+  obposScale: true,
+  productType: 'S',
+  uOMstandardPrecision: 3,
+  standardPrice: 10,
+  listPrice: 11
+};
+
+const ungroupProduct = {
+  id: 'ungroupProduct',
+  groupProduct: false,
+  uOMstandardPrecision: 2,
+  standardPrice: 5,
+  listPrice: 5
+};
+
+const products = [
+  productA,
+  productB,
+  serviceProduct,
+  scaleProduct,
+  ungroupProduct
+];
 
 const addProduct = (ticket, payload) => {
   return OB.App.StateAPI.Ticket.addProduct(
@@ -65,13 +92,14 @@ describe('addProduct', () => {
       const newTicket = addProduct(emptyTicket, {
         products: [{ product: productA, qty: 1 }, { product: productB, qty: 2 }]
       });
+
       expect(newTicket.lines).toMatchObject([
         {
           qty: 1,
           grossPrice: 5,
           priceList: 5,
           priceIncludesTax: true,
-          product: { id: 'pA' }
+          product: { id: 'stdProduct' }
         },
         {
           qty: 2,
@@ -95,7 +123,7 @@ describe('addProduct', () => {
       expect(newTicket.lines).toMatchObject([
         {
           qty: 11,
-          product: { id: 'pA' }
+          product: { id: 'stdProduct' }
         },
         {
           qty: 2,
@@ -103,6 +131,27 @@ describe('addProduct', () => {
         }
       ]);
     });
+
+    it.each`
+      productType         | expectNewLine
+      ${'stdProduct'}     | ${false}
+      ${'scaleProduct'}   | ${true}
+      ${'ungroupProduct'} | ${true}
+    `(
+      'adds or edits line depending on product: $productType',
+      ({ productType, expectNewLine }) => {
+        const product = products.find(p => p.id === productType);
+        const baseTicket = addProduct(emptyTicket, {
+          products: [{ product: product, qty: 1 }]
+        });
+
+        const newTicket = addProduct(baseTicket, {
+          products: [{ product: product, qty: 1 }]
+        });
+
+        expect(newTicket.lines).toHaveLength(expectNewLine ? 2 : 1);
+      }
+    );
   });
 
   describe('delivery mode', () => {
