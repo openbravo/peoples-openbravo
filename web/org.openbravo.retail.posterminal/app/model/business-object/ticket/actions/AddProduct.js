@@ -33,6 +33,15 @@
     return ticket;
   });
 
+  OB.App.StateAPI.Ticket.addProduct.addActionPreparation(
+    async (state, payload) => {
+      const newPayload = { ...payload };
+
+      prepareScaleProducts(newPayload);
+      return newPayload;
+    }
+  );
+
   function getLineToEdit(productInfo, ticket, options = {}) {
     const { product, qty } = productInfo;
     if (product.obposScale || !product.groupProduct) {
@@ -48,6 +57,7 @@
         l.product.id === product.id &&
         l.isEditable &&
         Math.sign(l.qty) === Math.sign(qty)
+      // TODO: attributeSearchAllowed
     );
   }
 
@@ -137,5 +147,19 @@
         ? productDeliveryTime || currentTime
         : ticket.obrdmDeliveryTimeProperty;
     }
+  }
+
+  function prepareScaleProducts(payload) {
+    const { products } = payload;
+    if (!products.some(pi => pi.product.obposScale)) {
+      return payload;
+    }
+
+    if (products.length > 1) {
+      throw new Error('Cannot handle more than one scale product');
+    }
+
+    const newPayload = { ...payload };
+    return newPayload;
   }
 })();
