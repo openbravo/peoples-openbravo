@@ -236,6 +236,8 @@ isc.OBMultiSelectorItem.addProperties({
   setValue: function(value) {
     if (value) {
       if (isc.isA.String(value)) {
+        // Reset value, because it's not an array anymore but a string
+        this.storeValue([]);
         value = value.split(',');
       }
       this.storeValue(value);
