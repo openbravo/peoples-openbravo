@@ -27,8 +27,8 @@ public class InitializeInvoiceDocumentTypes extends ModuleScript {
   public void execute() {
     try {
       ConnectionProvider cp = getConnectionProvider();
-      InitializeInvoiceDocumentTypesData.initializeSimplifiedInvoiceDocumentType(cp.getConnection(), cp);
-      InitializeInvoiceDocumentTypesData.initializeAggregatedInvoiceDocumentType(cp.getConnection(), cp);
+      InitializeInvoiceDocumentTypesData.initializeSimplifiedInvoiceDocumentType(cp);
+      InitializeInvoiceDocumentTypesData.initializeAggregatedInvoiceDocumentType(cp);
     } catch (Exception e) {
       handleError(e);
     }
