@@ -50,8 +50,8 @@
 
       cashup.cashPaymentMethodInfo = cashup.cashPaymentMethodInfo.map(
         paymentMethod => {
+          const newPaymentMethod = { ...paymentMethod };
           if (paymentMethod.cashManagements.length > 0) {
-            const newPaymentMethod = { ...paymentMethod };
             newPaymentMethod.cashManagements = paymentMethod.cashManagements.map(
               cashManagement => {
                 // Cash management already processed
@@ -108,9 +108,9 @@
                 return newCashManagement;
               }
             );
-            return newPaymentMethod;
           }
-          return paymentMethod;
+          newPaymentMethod.newPaymentMethod = false;
+          return newPaymentMethod;
         }
       );
 
