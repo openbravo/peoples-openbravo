@@ -63,8 +63,6 @@
                 const newCashManagement = { ...cashManagement };
                 delete newCashManagement.isDraft;
 
-                // Update the Cashup information with cash management to process
-                newCashManagement.cashUpReportInformation = { ...cashup };
                 if (newCashManagement.type === 'deposit') {
                   newPaymentMethod.totalDeposits = OB.DEC.add(
                     newPaymentMethod.totalDeposits,
@@ -77,10 +75,20 @@
                   );
                 }
 
-                // Optimization: don't send all payments, only the one used in the cash management
-                newCashManagement.cashUpReportInformation.cashPaymentMethodInfo = [
-                  { ...newPaymentMethod }
-                ];
+                // Update the Cashup information with cash management to process
+                const cashupToSend = { ...cashup };
+                const newPaymentsArray = [];
+                cashupToSend.cashPaymentMethodInfo.forEach(payment => {
+                  if (payment.id === newPaymentMethod.id) {
+                    const newPaymentMethodToSend = { ...newPaymentMethod };
+                    newPaymentMethodToSend.usedInCurrentTrx = true;
+                    newPaymentsArray.push(newPaymentMethodToSend);
+                  } else {
+                    newPaymentsArray.push(payment);
+                  }
+                });
+                cashupToSend.cashPaymentMethodInfo = newPaymentsArray;
+                newCashManagement.cashUpReportInformation = cashupToSend;
 
                 // Create a Message to synchronize the Cash Management
                 const { terminalName, cacheSessionId } = payload.parameters;
