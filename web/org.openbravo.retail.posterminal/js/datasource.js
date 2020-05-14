@@ -172,6 +172,13 @@ OB.DS.HWServer.prototype.setActivePDFURL = function(hardwareId) {
   }
 };
 
+// TODO: to check the proper way to do it
+OB.DS.HWServer.prototype.getAsyncWeight = async function() {
+  const response = await new Promise(resolve => this.getWeight(resolve));
+  return response;
+};
+
+// TODO: to remove
 OB.DS.HWServer.prototype.getWeight = function(callback) {
   if (this.scaleurl) {
     var me = this;

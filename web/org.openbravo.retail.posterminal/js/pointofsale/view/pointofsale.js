@@ -1143,9 +1143,11 @@ enyo.kind({
               }
             ],
             options
-          }).then(() => {
-            args.receipt.calculateReceipt();
-          });
+          })
+            .then(() => {
+              args.receipt.calculateReceipt();
+            })
+            .catch(OB.App.View.ActionCanceledUIHandler.handle);
           return;
         }
 

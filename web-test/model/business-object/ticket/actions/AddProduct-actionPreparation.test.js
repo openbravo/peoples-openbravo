@@ -16,8 +16,17 @@ OB = {
     Class: {},
     Security: { hasPermission: jest.fn(), requestApprovalForAction: jest.fn() }
   },
+
   UTIL: {
     HookManager: { registerHook: jest.fn() }
+  },
+
+  POS: {
+    hwserver: {
+      getAsyncWeight: jest
+        .fn()
+        .mockImplementation(() => Promise.resolve({ result: 10 }))
+    }
   }
 };
 
@@ -54,12 +63,58 @@ const prepareAction = async (payload, ticket = emptyTicket) => {
   return newPayload;
 };
 
+const expectError = async (action, expectedError) => {
+  let error;
+  try {
+    debugger;
+    await action();
+  } catch (e) {
+    error = e;
+  }
+
+  expect(error).toMatchObject({ info: expectedError });
+};
+
 describe('addProduct preparation', () => {
-  it('does not allow multiple scale products', async () => {
-    await expect(
-      prepareAction({
-        products: [{ product: scaleProduct }, { product: scaleProduct }]
-      })
-    ).rejects.toThrow('Cannot handle more than one scale product');
+  describe('scale products', () => {
+    it('more than one is not allowed', async () => {
+      await expect(
+        prepareAction({
+          products: [{ product: scaleProduct }, { product: scaleProduct }]
+        })
+      ).rejects.toThrow('Cannot handle more than one scale product');
+    });
+
+    it('calls scale once', async () => {
+      await prepareAction({
+        products: [{ product: scaleProduct }]
+      });
+
+      expect(OB.POS.hwserver.getAsyncWeight).toHaveBeenCalledTimes(1);
+    });
+
+    it('scale value is used as qty', async () => {
+      const newPayload = await prepareAction({
+        products: [{ product: scaleProduct }]
+      });
+
+      expect(newPayload).toMatchObject({ products: [{ qty: 10 }] });
+    });
+
+    it('fails when scale returns 0', async () => {
+      OB.POS.hwserver.getAsyncWeight.mockImplementation(() =>
+        Promise.resolve({ result: 0 })
+      );
+
+      await expectError(
+        () =>
+          prepareAction({
+            products: [{ product: scaleProduct }]
+          }),
+        {
+          errorConfirmation: 'OBPOS_WeightZero'
+        }
+      );
+    });
   });
 });

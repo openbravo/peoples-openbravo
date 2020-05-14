@@ -35,9 +35,9 @@
 
   OB.App.StateAPI.Ticket.addProduct.addActionPreparation(
     async (state, payload) => {
-      const newPayload = { ...payload };
+      let newPayload = { ...payload };
 
-      prepareScaleProducts(newPayload);
+      newPayload = await prepareScaleProducts(newPayload);
       return newPayload;
     }
   );
@@ -149,7 +149,7 @@
     }
   }
 
-  function prepareScaleProducts(payload) {
+  async function prepareScaleProducts(payload) {
     const { products } = payload;
     if (!products.some(pi => pi.product.obposScale)) {
       return payload;
@@ -160,6 +160,18 @@
     }
 
     const newPayload = { ...payload };
+
+    const weightResponse = await OB.POS.hwserver.getAsyncWeight();
+
+    const weight = weightResponse.result;
+
+    if (weight === 0) {
+      throw new OB.App.Class.ActionCanceled({
+        errorConfirmation: 'OBPOS_WeightZero'
+      });
+    }
+
+    newPayload.products = [{ ...newPayload.products[0], qty: weight }];
     return newPayload;
   }
 })();
