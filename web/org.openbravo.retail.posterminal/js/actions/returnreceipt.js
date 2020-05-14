@@ -61,7 +61,6 @@
         return active;
       },
       command: function(view) {
-        view.model.get('order').setDocumentNo(true, false);
         view.showDivText(this, {
           permission: this.permission,
           orderType: 1

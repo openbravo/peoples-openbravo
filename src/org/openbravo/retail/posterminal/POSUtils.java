@@ -9,7 +9,6 @@
 
 package org.openbravo.retail.posterminal;
 
-import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -20,17 +19,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
@@ -412,299 +410,6 @@ public class POSUtils {
     return Collections.emptySet();
   }
 
-  public static int getLastDocumentNumberForPOS(String searchKey, List<String> documentTypeIds) {
-    OBCriteria<OBPOSApplications> termCrit = OBDal.getInstance()
-        .createCriteria(OBPOSApplications.class);
-    termCrit.add(Restrictions.eq(OBPOSApplications.PROPERTY_SEARCHKEY, searchKey));
-    // obpos_applications.value has unique constraint
-    OBPOSApplications terminal = (OBPOSApplications) termCrit.uniqueResult();
-    if (terminal == null) {
-      throw new OBException("Error while loading the terminal " + searchKey);
-    }
-
-    String curDbms = OBPropertiesProvider.getInstance()
-        .getOpenbravoProperties()
-        .getProperty("bbdd.rdbms");
-    String sqlToExecute;
-    String doctypeIds = "";
-    for (String doctypeId : documentTypeIds) {
-      if (!doctypeIds.equals("")) {
-        doctypeIds += ",";
-      }
-      doctypeIds += "'" + doctypeId + "'";
-    }
-
-    int maxDocNo;
-
-    Long lastDocNum = terminal.getLastassignednum();
-    if (lastDocNum == null) {
-      if (curDbms.equals("POSTGRE")) {
-        sqlToExecute = "select max(a.docno) from (select to_number(substring(replace(co.documentno, app.orderdocno_prefix, ''), '^/{0,1}([0-9]+)$')) docno from c_order co "
-            + "inner join obpos_applications app on app.obpos_applications_id = co.em_obpos_applications_id and app.value = :appValue "
-            + "where co.c_doctype_id in (:doctypeIds)) a";
-      } else if (curDbms.equals("ORACLE")) {
-        sqlToExecute = "select max(a.docno) from (select to_number(substr(REGEXP_SUBSTR(REPLACE(co.documentno, app.orderdocno_prefix), '^/{0,1}([0-9]+)$'), 2)) docno from c_order co "
-            + "inner join obpos_applications app on app.obpos_applications_id = co.em_obpos_applications_id and app.value = :appValue "
-            + "where co.c_doctype_id in (:doctypeIds)) a";
-      } else {
-        // unknow DBMS
-        // shouldn't happen
-        log.error("Error getting max documentNo because the DBMS is unknown.");
-        return 0;
-      }
-      @SuppressWarnings("rawtypes")
-      NativeQuery query = OBDal.getInstance().getSession().createNativeQuery(sqlToExecute);
-      query.setParameter("appValue", searchKey);
-      query.setParameter("doctypeIds", doctypeIds);
-
-      Object result = query.uniqueResult();
-      if (result == null) {
-        maxDocNo = 0;
-      } else if (curDbms.equals("POSTGRE")) {
-        maxDocNo = ((BigDecimal) result).intValue();
-      } else if (curDbms.equals("ORACLE")) {
-        maxDocNo = ((Long) result).intValue();
-      } else {
-        maxDocNo = 0;
-      }
-    } else {
-      maxDocNo = lastDocNum.intValue();
-    }
-
-    // This number will be compared against the maximum number of the failed orders
-    OBCriteria<OBPOSErrors> errorCrit = OBDal.getInstance().createCriteria(OBPOSErrors.class);
-    errorCrit.add(Restrictions.eq(OBPOSErrors.PROPERTY_OBPOSAPPLICATIONS, terminal));
-    errorCrit.add(Restrictions.eq(OBPOSErrors.PROPERTY_TYPEOFDATA, "Order"));
-    errorCrit.add(Restrictions.eq(OBPOSErrors.PROPERTY_ORDERSTATUS, "N"));
-    List<OBPOSErrors> errors = errorCrit.list();
-    for (OBPOSErrors error : errors) {
-      try {
-        JSONObject jsonError = new JSONObject(error.getJsoninfo());
-        if (jsonError.has("documentNo") && jsonError.has("isQuotation")
-            && !jsonError.getBoolean("isQuotation")) {
-          String number = "0", documentNo = jsonError.getString("documentNo");
-          if (documentNo.indexOf("/") > -1) {
-            number = documentNo.substring(documentNo.lastIndexOf("/") + 1);
-          } else if (jsonError.has("documentnoPrefix")) {
-            number = documentNo.replace(jsonError.getString("documentnoPrefix"), "");
-          }
-          if (number.indexOf("-") > -1) {
-            number = number.substring(0, number.indexOf("-"));
-          }
-          int errorNumber = Integer.parseInt(number);
-          if (errorNumber > maxDocNo) {
-            maxDocNo = errorNumber;
-          }
-        }
-      } catch (Exception e) {
-        log.error("Error while parsing jsonData", e);
-        // If not parseable, we continue
-      }
-    }
-    return maxDocNo;
-  }
-
-  public static int getLastDocumentNumberQuotationForPOS(String searchKey,
-      List<String> documentTypeIds) {
-    OBCriteria<OBPOSApplications> termCrit = OBDal.getInstance()
-        .createCriteria(OBPOSApplications.class);
-    termCrit.add(Restrictions.eq(OBPOSApplications.PROPERTY_SEARCHKEY, searchKey));
-    // obpos_applications.value has unique constraint
-    OBPOSApplications terminal = (OBPOSApplications) termCrit.uniqueResult();
-    if (terminal == null) {
-      throw new OBException("Error while loading the terminal " + searchKey);
-    }
-
-    String curDbms = OBPropertiesProvider.getInstance()
-        .getOpenbravoProperties()
-        .getProperty("bbdd.rdbms");
-    String sqlToExecute;
-    String doctypeIds = "";
-    for (String doctypeId : documentTypeIds) {
-      if (!doctypeIds.equals("")) {
-        doctypeIds += ",";
-      }
-      doctypeIds += "'" + doctypeId + "'";
-    }
-    int maxDocNo;
-    Long quotationlastDocNum = terminal.getQuotationslastassignednum();
-    if (quotationlastDocNum == null) {
-      if (curDbms.equals("POSTGRE")) {
-        sqlToExecute = "select max(a.docno) from (select to_number(substring(replace(co.documentno, app.quotationdocno_prefix, ''), '^/{0,1}([0-9]+)$')) docno from c_order co "
-            + "inner join obpos_applications app on app.obpos_applications_id = co.em_obpos_applications_id and app.value = :appValue "
-            + "where co.c_doctype_id in (:doctypeIds)) a";
-      } else if (curDbms.equals("ORACLE")) {
-        sqlToExecute = "select max(a.docno) from (select to_number(substr(REGEXP_SUBSTR(REPLACE(co.documentno, app.quotationdocno_prefix), '^/{0,1}([0-9]+)$'), 2)) docno from c_order co "
-            + "inner join obpos_applications app on app.obpos_applications_id = co.em_obpos_applications_id and app.value = :appValue "
-            + "where co.c_doctype_id in (:doctypeIds)) a";
-      } else {
-        // unknow DBMS
-        // shouldn't happen
-        log.error("Error getting max documentNo because the DBMS is unknown.");
-        return 0;
-      }
-      @SuppressWarnings("rawtypes")
-      NativeQuery query = OBDal.getInstance().getSession().createNativeQuery(sqlToExecute);
-      query.setParameter("appValue", searchKey);
-      query.setParameter("doctypeIds", doctypeIds);
-
-      Object result = query.uniqueResult();
-      if (result == null) {
-        maxDocNo = 0;
-      } else if (curDbms.equals("POSTGRE")) {
-        maxDocNo = ((BigDecimal) result).intValue();
-      } else if (curDbms.equals("ORACLE")) {
-        maxDocNo = ((Long) result).intValue();
-      } else {
-        maxDocNo = 0;
-      }
-    } else {
-      maxDocNo = quotationlastDocNum.intValue();
-    }
-
-    // This number will be compared against the maximum number of the failed orders
-    OBCriteria<OBPOSErrors> errorCrit = OBDal.getInstance().createCriteria(OBPOSErrors.class);
-    errorCrit.add(Restrictions.eq(OBPOSErrors.PROPERTY_OBPOSAPPLICATIONS, terminal));
-    errorCrit.add(Restrictions.eq(OBPOSErrors.PROPERTY_TYPEOFDATA, "Order"));
-    errorCrit.add(Restrictions.eq(OBPOSErrors.PROPERTY_ORDERSTATUS, "N"));
-    List<OBPOSErrors> errors = errorCrit.list();
-    for (OBPOSErrors error : errors) {
-      try {
-        JSONObject jsonError = new JSONObject(error.getJsoninfo());
-        if (jsonError.has("documentNo") && jsonError.has("isQuotation")
-            && jsonError.getBoolean("isQuotation")) {
-          String number = "0", documentNo = jsonError.getString("documentNo");
-          if (documentNo.indexOf("/") > -1) {
-            number = documentNo.substring(documentNo.lastIndexOf("/") + 1);
-          } else if (jsonError.has("quotationnoPrefix")) {
-            number = documentNo.replace(jsonError.getString("quotationnoPrefix"), "");
-          }
-          if (number.indexOf("-") > -1) {
-            number = number.substring(0, number.indexOf("-"));
-          }
-          int errorNumber = Integer.parseInt(number);
-          if (errorNumber > maxDocNo) {
-            maxDocNo = errorNumber;
-          }
-        }
-      } catch (Exception e) {
-        log.error("Error while parsing jsonData", e);
-        // If not parseable, we continue
-      }
-    }
-    return maxDocNo;
-  }
-
-  public static int getLastDocumentNumberReturnForPOS(String searchKey,
-      List<String> documentTypeIds) {
-    OBCriteria<OBPOSApplications> termCrit = OBDal.getInstance()
-        .createCriteria(OBPOSApplications.class);
-    termCrit.add(Restrictions.eq(OBPOSApplications.PROPERTY_SEARCHKEY, searchKey));
-    // obpos_applications.value has unique constraint
-    OBPOSApplications terminal = (OBPOSApplications) termCrit.uniqueResult();
-    if (terminal == null) {
-      throw new OBException("Error while loading the terminal " + searchKey);
-    }
-
-    String curDbms = OBPropertiesProvider.getInstance()
-        .getOpenbravoProperties()
-        .getProperty("bbdd.rdbms");
-    String sqlToExecute;
-    String doctypeIds = "";
-    for (String doctypeId : documentTypeIds) {
-      if (!doctypeIds.equals("")) {
-        doctypeIds += ",";
-      }
-      doctypeIds += "'" + doctypeId + "'";
-    }
-    int maxDocNo;
-    Long returnlastDocNum = terminal.getReturnslastassignednum();
-    if (returnlastDocNum == null) {
-      if (curDbms.equals("POSTGRE")) {
-        sqlToExecute = "select max(a.docno) from (select to_number(substring(replace(co.documentno, app.returndocno_prefix, ''), '^/{0,1}([0-9]+)$')) docno from c_order co "
-            + "inner join obpos_applications app on app.obpos_applications_id = co.em_obpos_applications_id and app.value = :appValue "
-            + "where co.c_doctype_id in (:doctypeIds)) a";
-      } else if (curDbms.equals("ORACLE")) {
-        sqlToExecute = "select max(a.docno) from (select to_number(substr(REGEXP_SUBSTR(REPLACE(co.documentno, app.returndocno_prefix), '^/{0,1}([0-9]+)$'), 2)) docno from c_order co "
-            + "inner join obpos_applications app on app.obpos_applications_id = co.em_obpos_applications_id and app.value = :appValue "
-            + "where co.c_doctype_id in (:doctypeIds)) a";
-      } else {
-        // unknow DBMS
-        // shouldn't happen
-        log.error("Error getting max documentNo because the DBMS is unknown.");
-        return 0;
-      }
-      @SuppressWarnings("rawtypes")
-      NativeQuery query = OBDal.getInstance().getSession().createNativeQuery(sqlToExecute);
-      query.setParameter("appValue", searchKey);
-      query.setParameter("doctypeIds", doctypeIds);
-      Object result = query.uniqueResult();
-      if (result == null) {
-        maxDocNo = 0;
-      } else if (curDbms.equals("POSTGRE")) {
-        maxDocNo = ((BigDecimal) result).intValue();
-      } else if (curDbms.equals("ORACLE")) {
-        maxDocNo = ((Long) result).intValue();
-      } else {
-        maxDocNo = 0;
-      }
-    } else {
-      maxDocNo = returnlastDocNum.intValue();
-    }
-
-    // This number will be compared against the maximum number of the failed orders
-    OBCriteria<OBPOSErrors> errorCrit = OBDal.getInstance().createCriteria(OBPOSErrors.class);
-    errorCrit.add(Restrictions.eq(OBPOSErrors.PROPERTY_OBPOSAPPLICATIONS, terminal));
-    errorCrit.add(Restrictions.eq(OBPOSErrors.PROPERTY_TYPEOFDATA, "Order"));
-    errorCrit.add(Restrictions.eq(OBPOSErrors.PROPERTY_ORDERSTATUS, "N"));
-    List<OBPOSErrors> errors = errorCrit.list();
-    for (OBPOSErrors error : errors) {
-      try {
-        JSONObject jsonError = new JSONObject(error.getJsoninfo());
-        if (jsonError.has("documentNo") && (jsonError.optLong("returnnoSuffix", -1L) > -1L)) {
-          String number = "0", documentNo = jsonError.getString("documentNo");
-          if (documentNo.indexOf("/") > -1) {
-            number = documentNo.substring(documentNo.lastIndexOf("/") + 1);
-          } else if (jsonError.has("returnnoPrefix")) {
-            number = documentNo.replace(jsonError.getString("returnnoPrefix"), "");
-          }
-          if (number.indexOf("-") > -1) {
-            number = number.substring(0, number.indexOf("-"));
-          }
-          int errorNumber = Integer.parseInt(number);
-          if (errorNumber > maxDocNo) {
-            maxDocNo = errorNumber;
-          }
-        }
-      } catch (Exception e) {
-        log.error("Error while parsing jsonData", e);
-        // If not parseable, we continue
-      }
-    }
-    return maxDocNo;
-  }
-
-  public static int getLastDocumentNumberForPOS(String searchKey, String documentTypeId) {
-    ArrayList<String> doctypeId = new ArrayList<String>();
-    doctypeId.add(documentTypeId);
-    return getLastDocumentNumberForPOS(searchKey, doctypeId);
-
-  }
-
-  public static int getLastDocumentNumberQuotationForPOS(String searchKey, String documentTypeId) {
-    ArrayList<String> doctypeId = new ArrayList<String>();
-    doctypeId.add(documentTypeId);
-    return getLastDocumentNumberQuotationForPOS(searchKey, doctypeId);
-
-  }
-
-  public static int getLastDocumentNumberReturnForPOS(String searchKey, String documentTypeId) {
-    ArrayList<String> doctypeId = new ArrayList<String>();
-    doctypeId.add(documentTypeId);
-    return getLastDocumentNumberReturnForPOS(searchKey, doctypeId);
-
-  }
-
   public static void getRetailDependantModules(Module module, List<Module> moduleList,
       List<ModuleDependency> list) {
     for (ModuleDependency depModule : list) {
@@ -1002,4 +707,52 @@ public class POSUtils {
     return false;
   }
 
+  /**
+   * Updates the last number of the terminal sequence defined with the given name.
+   */
+  public static void updateTerminalDocumentSequence(final OBPOSApplications posTerminal,
+      final String sequenceName, final long sequenceNumber) {
+    if (posTerminal.getEntity().hasProperty(sequenceName)) {
+      posTerminal.set(sequenceName, Long.max(
+          (Long) ObjectUtils.defaultIfNull(posTerminal.get(sequenceName), 0L), sequenceNumber));
+      OBDal.getInstance().save(posTerminal);
+    }
+  }
+
+  /**
+   * Reads the last number of the terminal sequence defined with the given name. This number will be
+   * compared against the maximum number in the failed orders.
+   */
+  public static Long getLastTerminalDocumentSequence(final OBPOSApplications posTerminal,
+      final String sequenceName, final boolean isInvoiceSequence) {
+
+    final long maxNumberInTerminal = posTerminal.getEntity().hasProperty(sequenceName)
+        ? (Long) ObjectUtils.defaultIfNull(posTerminal.get(sequenceName), 0L)
+        : 0;
+
+    final List<OBPOSErrors> errors = OBDal.getInstance()
+        .createCriteria(OBPOSErrors.class)
+        .add(Restrictions.eq(OBPOSErrors.PROPERTY_OBPOSAPPLICATIONS, posTerminal))
+        .add(Restrictions.eq(OBPOSErrors.PROPERTY_TYPEOFDATA, "Order"))
+        .add(Restrictions.eq(OBPOSErrors.PROPERTY_ORDERSTATUS, "N"))
+        .list();
+
+    long maxNumberInErrors = errors.stream().mapToLong(error -> {
+      try {
+        JSONObject jsonError = new JSONObject(error.getJsoninfo());
+        if (isInvoiceSequence && jsonError.has("calculatedInvoice")) {
+          jsonError = jsonError.getJSONObject("calculatedInvoice");
+        }
+        if (jsonError.has("obposSequencename") && jsonError.has("obposSequencenumber")
+            && jsonError.getString("obposSequencename").equals(sequenceName)) {
+          return jsonError.getLong("obposSequencenumber");
+        }
+        return 0;
+      } catch (Exception e) {
+        return 0;
+      }
+    }).max().orElse(0);
+
+    return Math.max(maxNumberInTerminal, maxNumberInErrors);
+  }
 }

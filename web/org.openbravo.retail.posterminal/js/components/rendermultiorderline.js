@@ -51,11 +51,13 @@ enyo.kind({
               classes:
                 'obUiRenderMultiOrdersLineValues-multiTopLine-documentNo',
               initComponents: function() {
-                this.setContent(
-                  this.owner.owner.model.get('documentNo') +
-                    ' - ' +
-                    this.owner.owner.model.get('bp').get('_identifier')
-                );
+                const docNo = this.owner.owner.model.get('documentNo');
+                const bp = this.owner.owner.model.get('bp').get('_identifier');
+                if (docNo) {
+                  this.setContent(docNo + ' - ' + bp);
+                } else {
+                  this.setContent(bp);
+                }
               }
             },
             {

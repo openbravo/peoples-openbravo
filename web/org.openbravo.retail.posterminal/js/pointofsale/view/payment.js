@@ -3065,7 +3065,8 @@ enyo.kind({
     }
   ],
   renderPaymentLine: function(inSender, inEvent) {
-    let payment = OB.MobileApp.model.paymentnames[this.model.get('kind')];
+    const payment = OB.MobileApp.model.paymentnames[this.model.get('kind')],
+      receipt = this.owner.owner.owner.owner.owner.owner.model.get('order');
     this.addClass('obObposPointOfSaleUiRenderPaymentLine_renderPaymentLine');
     if (this.model.get('reversedPaymentId')) {
       this.$.name.setContent(
@@ -3089,7 +3090,6 @@ enyo.kind({
             this.model.get('name')
         );
       }
-      var receipt = this.owner.owner.owner.owner.owner.owner.model.get('order');
       this.$.amount.setContent(this.model.printAmountWithSignum(receipt));
     }
     if (this.model.get('rate') && this.model.get('rate') !== '1') {
@@ -3119,7 +3119,7 @@ enyo.kind({
       );
     }
     if (
-      !payment.paymentMethod.isreversable ||
+      (!receipt.get('isEditable') && !payment.paymentMethod.isreversable) ||
       this.model.get('isReversed') ||
       (this.model.get('isPrePayment') &&
         (this.model.get('reversedPaymentId') ||
@@ -3598,7 +3598,7 @@ enyo.kind({
         }
         if (receipt.get('generateInvoice')) {
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
-          receipt.set('generateInvoice', false);
+          receipt.setFullInvoice(false, false);
         }
       }
       receipt.trigger('paymentDone', me.allowOpenDrawer);

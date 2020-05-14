@@ -989,6 +989,10 @@
   float: left;
 }
 
+.obUiReceiptSelectorRender-line-center-iconCheck { 
+  margin-top: 18px;  
+}
+
 .obUiReceiptSelectorRender-line-iconCheck_disactive {
   background-image: url('./../../org.openbravo.mobile.core/assets/img/checkbox-off.svg');
 }
@@ -998,7 +1002,7 @@
 }
 
 .obUiReceiptSelectorRender-line-lineInfo {
-  float: left;
+  float: right;
   box-sizing: border-box;
   width: 100%;
   padding: 5px;
@@ -1079,6 +1083,10 @@
 
 .obUiReceiptSelectorRender-lineInfoContainerSecondRow-orderType_ret {
   color: rgb(248, 148, 29);
+}
+
+.obUiReceiptSelectorRender-lineInfoContainerSecondRow-orderType_dr {
+  color: rgb(0, 120, 215);
 }
 
 .obUiReceiptSelectorRender-lineInfoContainerSecondRow-orderType_default {
@@ -6562,7 +6570,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   border-bottom: var(--separator-slim);
   text-align: left;
   padding-left: 10px;
-  height: 90px;
 }
 
 .obUiListMultiOrdersLine .obUiButton-components {

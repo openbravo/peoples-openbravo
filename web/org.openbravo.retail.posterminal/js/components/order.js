@@ -991,9 +991,23 @@ enyo.kind({
       this
     );
     this.order.on(
-      'change:generateInvoice',
+      'change:invoiceTerms',
       function(model) {
-        if (model.get('generateInvoice')) {
+        if (model.get('invoiceTerms') !== model.get('bp').get('invoiceTerms')) {
+          model.setFullInvoice(false, true, true);
+        }
+        if (model.get('fullInvoice') && model.get('invoiceTerms') === 'I') {
+          this.$.divbtninvoice.show();
+        } else {
+          this.$.divbtninvoice.hide();
+        }
+      },
+      this
+    );
+    this.order.on(
+      'change:fullInvoice',
+      function(model) {
+        if (model.get('fullInvoice') && model.get('invoiceTerms') === 'I') {
           this.$.divbtninvoice.show();
         } else {
           this.$.divbtninvoice.hide();
@@ -1079,41 +1093,6 @@ enyo.kind({
       'updatedView',
       function() {
         this.$.listOrderLines.setScrollAfterAdd();
-      },
-      this
-    );
-    // Change Document No based on return lines
-    this.order.get('lines').on(
-      'add change:qty change:relatedLines updateRelations',
-      function() {
-        if (
-          this.order.get('isEditable') &&
-          !this.order.get('isModified') &&
-          !this.order.get('isLayaway') &&
-          !this.order.get('isQuotation') &&
-          !this.order.get('doCancelAndReplace') &&
-          !this.order.get('cancelLayaway')
-        ) {
-          var negativeLinesLength = _.filter(
-            this.order.get('lines').models,
-            function(line) {
-              return line.get('qty') < 0;
-            }
-          ).length;
-          if (
-            (negativeLinesLength > 0 &&
-              negativeLinesLength === this.order.get('lines').models.length) ||
-            (negativeLinesLength > 0 &&
-              OB.MobileApp.model.get('permissions')
-                .OBPOS_SalesWithOneLineNegativeAsReturns)
-          ) {
-            //isReturn
-            this.order.setDocumentNo(true, false);
-          } else {
-            //isOrder
-            this.order.setDocumentNo(false, true);
-          }
-        }
       },
       this
     );

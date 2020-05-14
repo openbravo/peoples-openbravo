@@ -423,7 +423,7 @@
         attributes.id = orderId;
       }
       var bpModel;
-      if (attributes && attributes.documentNo) {
+      if (attributes && attributes.id) {
         this.set('id', attributes.id);
         this.set('client', attributes.client);
         this.set('organization', attributes.organization);
@@ -432,6 +432,7 @@
         this.set('updatedBy', attributes.updatedBy);
         this.set('orderType', attributes.orderType); // 0: Sales order, 1: Return order
         this.set('generateInvoice', attributes.generateInvoice);
+        this.set('fullInvoice', attributes.fullInvoice);
         this.set('isQuotation', attributes.isQuotation);
         this.set('oldId', attributes.oldId);
         this.set('priceList', attributes.priceList);
@@ -470,13 +471,6 @@
           'creationDate',
           OB.I18N.normalizeDate(attributes.creationDate)
         );
-        this.set('documentnoPrefix', attributes.documentnoPrefix);
-        this.set('quotationnoPrefix', attributes.quotationnoPrefix);
-        this.set('returnnoPrefix', attributes.returnnoPrefix);
-        this.set('documentnoSuffix', attributes.documentnoSuffix);
-        this.set('quotationnoSuffix', attributes.quotationnoSuffix);
-        this.set('returnnoSuffix', attributes.returnnoSuffix);
-        this.set('documentNo', attributes.documentNo);
         this.setUndo('InitializeAttr', attributes.undo);
         bpModel = new OB.Model.BusinessPartner(attributes.bp);
         bpModel.set(
@@ -1102,53 +1096,6 @@
       }
     },
 
-    setDocumentNo: function(isReturn, isOrder) {
-      var order = this,
-        nextDocumentNo;
-      if (order.get('isModified')) {
-        return;
-      }
-      if (
-        isOrder &&
-        order.get('documentnoPrefix') !==
-          OB.MobileApp.model.get('terminal').docNoPrefix
-      ) {
-        nextDocumentNo = OB.MobileApp.model.getNextDocumentno();
-        order.set('returnnoPrefix', -1);
-        order.set('returnnoSuffix', -1);
-        order.set(
-          'documentnoPrefix',
-          OB.MobileApp.model.get('terminal').docNoPrefix
-        );
-        order.set('documentnoSuffix', nextDocumentNo.documentnoSuffix);
-        order.set('quotationnoPrefix', -1);
-        order.set('quotationnoSuffix', -1);
-        order.set('documentNo', nextDocumentNo.documentNo);
-        order.trigger('saveCurrent');
-      } else if (
-        OB.MobileApp.model.get('terminal').returnDocNoPrefix &&
-        isReturn
-      ) {
-        if (
-          order.get('returnnoPrefix') !==
-          OB.MobileApp.model.get('terminal').returnDocNoPrefix
-        ) {
-          nextDocumentNo = OB.MobileApp.model.getNextReturnno();
-          order.set(
-            'returnnoPrefix',
-            OB.MobileApp.model.get('terminal').returnDocNoPrefix
-          );
-          order.set('returnnoSuffix', nextDocumentNo.documentnoSuffix);
-          order.set('documentnoPrefix', -1);
-          order.set('documentnoSuffix', -1);
-          order.set('quotationnoPrefix', -1);
-          order.set('quotationnoSuffix', -1);
-          order.set('documentNo', nextDocumentNo.documentNo);
-          order.trigger('saveCurrent');
-        }
-      }
-    },
-
     getAttributeValue: function() {
       return this.get('attributeValue');
     },
@@ -1526,7 +1473,7 @@
       this.set('updatedBy', null);
       this.set('documentType', null);
       this.set('orderType', 0); // 0: Sales order, 1: Return order
-      this.set('generateInvoice', false);
+      this.setFullInvoice(false);
       this.set('isQuotation', false);
       this.set('oldId', null);
       this.set('priceList', null);
@@ -1552,12 +1499,6 @@
       );
       this.set('orderDate', OB.I18N.normalizeDate(new Date()));
       this.set('creationDate', null);
-      this.set('documentnoPrefix', -1);
-      this.set('quotationnoPrefix', -1);
-      this.set('returnnoPrefix', -1);
-      this.set('documentnoSuffix', -1);
-      this.set('quotationnoSuffix', -1);
-      this.set('returnnoSuffix', -1);
       this.set('documentNo', '');
       this.set('undo', null);
       this.set('bp', null);
@@ -1647,25 +1588,6 @@
         // keeping it no editable as much as possible, to prevent
         // modifications to trigger editable events incorrectly
         this.set('isEditable', _order.get('isEditable'));
-      }
-
-      if (_order.get('isLayaway')) {
-        if (
-          OB.MobileApp.model.get('terminal').terminalType.generateInvoice &&
-          OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice', true)
-        ) {
-          if (
-            OB.MobileApp.model.hasPermission(
-              'OBPOS_retail.restricttaxidinvoice',
-              true
-            ) &&
-            !_order.get('bp').get('taxID')
-          ) {
-            _order.set('generateInvoice', false);
-          } else {
-            _order.set('generateInvoice', true);
-          }
-        }
       }
 
       if (_order.get('replacedorder_documentNo')) {
@@ -6278,14 +6200,55 @@
       });
     },
 
+    setFullInvoice: function(active, applyDefaultConfiguration, showError) {
+      const checkFullInvoice = () => {
+        if (showError) {
+          if (!OB.MobileApp.model.get('terminal').fullInvoiceDocNoPrefix) {
+            OB.UTIL.showError(
+              OB.I18N.getLabel('OBPOS_FullInvoiceSequencePrefixNotConfigured')
+            );
+          } else if (!this.get('bp').get('taxID')) {
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
+          }
+        }
+
+        return (
+          OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice') &&
+          OB.MobileApp.model.get('terminal').fullInvoiceDocNoPrefix &&
+          this.get('bp').has('taxID')
+        );
+      };
+      const fullInvoice =
+        (active ||
+          (applyDefaultConfiguration
+            ? this.get('invoiceTerms') === 'D' ||
+              this.get('invoiceTerms') === 'O'
+            : active)) &&
+        checkFullInvoice();
+      const generateInvoice =
+        fullInvoice ||
+        (applyDefaultConfiguration
+          ? OB.MobileApp.model.get('terminal').terminalType.generateInvoice
+          : fullInvoice);
+      this.set('fullInvoice', fullInvoice);
+      this.set('generateInvoice', generateInvoice);
+      return fullInvoice;
+    },
+
     setOrderInvoice: function() {
       var me = this;
-      if (OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice')) {
-        this.set('generateInvoice', true);
-        this.save(function() {
-          me.trigger('saveCurrent');
-        });
-      }
+      this.setFullInvoice(true, true, true);
+      this.save(function() {
+        me.trigger('saveCurrent');
+      });
+    },
+
+    resetOrderInvoice: function() {
+      var me = this;
+      this.setFullInvoice(false, true, true);
+      this.save(function() {
+        me.trigger('saveCurrent');
+      });
     },
 
     updatePrices: function(callback) {
@@ -6674,10 +6637,6 @@
 
           me.unset('invoiceCreated');
           me.set(
-            'generateInvoice',
-            OB.MobileApp.model.get('terminal').terminalType.generateInvoice
-          );
-          me.set(
             'documentType',
             OB.MobileApp.model.get('terminal').terminalType.documentType
           );
@@ -7037,7 +6996,6 @@
                       me.set('canceledorder', clonedReceipt);
                       me.set('orderDate', new Date());
                       me.set('documentNo', me.get('documentNo') + '*R*');
-                      me.unset('generateInvoice');
                       me.set(
                         'nettingPayment',
                         OB.DEC.sub(me.getPayment(), me.getGross())
@@ -7104,7 +7062,7 @@
     createQuotation: function() {
       if (OB.MobileApp.model.hasPermission('OBPOS_receipt.quotation')) {
         this.set('isQuotation', true);
-        this.set('generateInvoice', false);
+        this.setFullInvoice(false);
         this.set(
           'documentType',
           OB.MobileApp.model.get('terminal').terminalType
@@ -7116,20 +7074,13 @@
 
     setQuotationProperties: function() {
       this.set('isQuotation', true);
-      this.set('generateInvoice', false);
+      this.setFullInvoice(false);
       this.set('orderType', 0);
       this.set(
         'documentType',
         OB.MobileApp.model.get('terminal').terminalType
           .documentTypeForQuotations
       );
-      var nextQuotationno = OB.MobileApp.model.getNextQuotationno();
-      this.set(
-        'quotationnoPrefix',
-        OB.MobileApp.model.get('terminal').quotationDocNoPrefix
-      );
-      this.set('quotationnoSuffix', nextQuotationno.quotationnoSuffix);
-      this.set('documentNo', nextQuotationno.documentNo);
     },
 
     createQuotationFromOrder: function() {
@@ -7223,6 +7174,7 @@
 
               args.order.set('oldId', args.order.get('id'));
               args.order.set('id', null);
+              args.order.set('documentNo', '');
               args.order.set('isQuotation', false);
               args.order.set(
                 'orderType',
@@ -7230,10 +7182,7 @@
                   ? 2
                   : 0
               );
-              args.order.set(
-                'generateInvoice',
-                OB.MobileApp.model.get('terminal').terminalType.generateInvoice
-              );
+              args.order.setFullInvoice(false, true);
               args.order.set(
                 'documentType',
                 OB.UTIL.isCrossStoreReceipt(args.order)
@@ -7257,20 +7206,6 @@
               args.order.set('isEditable', true);
               args.order.set('orderDate', OB.I18N.normalizeDate(new Date()));
               args.order.set('creationDate', null);
-              var nextDocumentno = OB.MobileApp.model.getNextDocumentno();
-              args.order.set(
-                'documentnoPrefix',
-                OB.MobileApp.model.get('terminal').docNoPrefix
-              );
-              args.order.set(
-                'documentnoSuffix',
-                nextDocumentno.documentnoSuffix
-              );
-              args.order.set('quotationnoPrefix', -1);
-              args.order.set('quotationnoSuffix', -1);
-              args.order.set('returnnoPrefix', -1);
-              args.order.set('returnnoSuffix', -1);
-              args.order.set('documentNo', nextDocumentno.documentNo);
               args.order.set(
                 'posTerminal',
                 OB.MobileApp.model.get('terminal').id
@@ -7354,8 +7289,7 @@
     },
 
     reactivateQuotation: function() {
-      var nextQuotationno,
-        idMap = {},
+      var idMap = {},
         oldIdMap = {},
         oldId,
         me = this;
@@ -7389,13 +7323,7 @@
       //Sometimes the Id of Quotation is null.
       if (this.get('id') && !_.isNull(this.get('id'))) {
         this.set('oldId', this.get('id'));
-        nextQuotationno = OB.MobileApp.model.getNextQuotationno();
-        this.set(
-          'quotationnoPrefix',
-          OB.MobileApp.model.get('terminal').quotationDocNoPrefix
-        );
-        this.set('quotationnoSuffix', nextQuotationno.quotationnoSuffix);
-        this.set('documentNo', nextQuotationno.documentNo);
+        this.set('documentNo', '');
       } else {
         //this shouldn't happen.
         OB.UTIL.showConfirmation.display(
@@ -7451,15 +7379,6 @@
           }
         }
       );
-    },
-    resetOrderInvoice: function() {
-      var me = this;
-      if (OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice')) {
-        this.set('generateInvoice', false);
-        this.save(function() {
-          me.trigger('saveCurrent');
-        });
-      }
     },
     getPrecision: function(payment) {
       var terminalpayment =
@@ -9771,7 +9690,8 @@
             approval.approvalType = approval.approvalType.approval;
           }
         });
-        OB.Dal.transaction(function(tx) {
+        OB.Dal.transaction(async function(tx) {
+          await OB.MobileApp.model.setTicketDocumentNo(model);
           OB.UTIL.HookManager.executeHooks(
             'OBPOS_PreSyncReceipt',
             {
@@ -9782,36 +9702,26 @@
             function(args) {
               model.set('json', JSON.stringify(model.serializeToSaveJSON()));
               model.set('hasbeenpaid', 'Y');
-              OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(
-                model.get('documentnoSuffix'),
-                model.get('quotationnoSuffix'),
-                model.get('returnnoSuffix'),
-                function() {
-                  OB.Dal.saveInTransaction(tx, model, function() {
-                    if (
-                      orderList &&
-                      model.get('session') === OB.MobileApp.model.get('session')
-                    ) {
-                      var orderListModel = _.find(orderList.models, function(
-                        m
-                      ) {
-                        return m.get('id') === model.get('id');
-                      });
-                      if (orderListModel) {
-                        orderList.saveCurrent();
-                        orderList.load(orderListModel);
-                      }
-                      orderList.deleteCurrent();
-                      orderList.synchronizeCurrentOrder();
-                    }
-                    model.setIsCalculateGrossLockState(false);
-                    if (callback && callback instanceof Function) {
-                      callback();
-                    }
+              OB.Dal.saveInTransaction(tx, model, function() {
+                if (
+                  orderList &&
+                  model.get('session') === OB.MobileApp.model.get('session')
+                ) {
+                  var orderListModel = _.find(orderList.models, function(m) {
+                    return m.get('id') === model.get('id');
                   });
-                },
-                tx
-              );
+                  if (orderListModel) {
+                    orderList.saveCurrent();
+                    orderList.load(orderListModel);
+                  }
+                  orderList.deleteCurrent();
+                  orderList.synchronizeCurrentOrder();
+                }
+                model.setIsCalculateGrossLockState(false);
+                if (callback && callback instanceof Function) {
+                  callback();
+                }
+              });
             }
           );
         });
@@ -9886,10 +9796,7 @@
           ) {
             if (
               OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) &&
-              receipt.get('id') !== null &&
-              (receipt.get('documentnoSuffix') <=
-                OB.MobileApp.model.documentnoThreshold ||
-                OB.MobileApp.model.documentnoThreshold === 0)
+              receipt.get('id') !== null
             ) {
               receipt.setIsCalculateReceiptLockState(true);
               receipt.setIsCalculateGrossLockState(true);
@@ -10004,13 +9911,14 @@
         invoice.unset('calculateReceiptCallbacks');
         invoice.unset('calculatedInvoice');
         invoice.unset('canceledorder');
-        invoice.get('payments').reset();
         invoice.unset('json');
         invoice.unset('undo');
         invoice.set('posTerminal', OB.MobileApp.model.get('terminal').id);
         invoice.set('isInvoice', true);
         invoice.unset('isBeingClosed');
         invoice.get('lines').reset();
+        invoice.set('documentNo', '');
+        invoice.set('fullInvoice', this.get('fullInvoice'));
 
         this.get('lines').forEach(function(ol) {
           var originalQty = ol.get('qty'),
@@ -10538,10 +10446,6 @@
         order.set('paidOnCredit', false);
         order.set('session', OB.MobileApp.model.get('session'));
         order.set('skipApplyPromotions', true);
-        order.set(
-          'documentnoPrefix',
-          OB.MobileApp.model.get('terminal').docNoPrefix
-        ); // hack to prevent change number
         if (model.isQuotation) {
           order.set('isQuotation', true);
           order.set('oldId', model.orderid);
@@ -11122,7 +11026,7 @@
         if (
           model &&
           this.current &&
-          model.get('documentNo') === this.current.get('documentNo')
+          model.get('id') === this.current.get('id')
         ) {
           return;
         }
@@ -11145,9 +11049,7 @@
         }
       },
       loadCurrent: function(isNew) {
-        OB.App.State.TerminalLog.setContext({
-          context: this.current.get('documentNo')
-        });
+        OB.MobileApp.model.set('terminalLogContext', this.current.get('id'));
         // Check if the current order to be loaded should be deleted
         if (this.current.get('obposIsDeleted') && this.current.get('id')) {
           var deletedOrderDocNo = this.current.get('documentNo');
@@ -11453,7 +11355,7 @@
           'orderType',
           OB.MobileApp.model.get('terminal').terminalType.layawayorder ? 2 : 0
         ); // 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
-        order.set('generateInvoice', false);
+        order.setFullInvoice(false);
         order.set('isQuotation', false);
         order.set('oldId', null);
         order.set('session', OB.MobileApp.model.get('session'));
@@ -11475,31 +11377,6 @@
             'priceIncludesTax',
             OB.MobileApp.model.get('pricelist').priceIncludesTax
           );
-        }
-        if (OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice')) {
-          if (
-            OB.MobileApp.model.hasPermission(
-              'OBPOS_retail.restricttaxidinvoice',
-              true
-            ) &&
-            !bp.get('taxID')
-          ) {
-            if (
-              OB.MobileApp.model.get('terminal').terminalType.generateInvoice
-            ) {
-              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
-            } else {
-              OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
-            }
-            order.set('generateInvoice', false);
-          } else {
-            order.set(
-              'generateInvoice',
-              OB.MobileApp.model.get('terminal').terminalType.generateInvoice
-            );
-          }
-        } else {
-          order.set('generateInvoice', false);
         }
         order.set('currency', OB.MobileApp.model.get('terminal').currency);
         order.set(
@@ -11543,14 +11420,6 @@
         order.set('isLayaway', false);
         order.set('isPartiallyDelivered', false);
         order.set('taxes', {});
-
-        var nextDocumentno = OB.MobileApp.model.getNextDocumentno();
-        order.set(
-          'documentnoPrefix',
-          OB.MobileApp.model.get('terminal').docNoPrefix
-        );
-        order.set('documentnoSuffix', nextDocumentno.documentnoSuffix);
-        order.set('documentNo', nextDocumentno.documentNo);
         order.set('print', true);
         order.set('sendEmail', false);
         order.set('openDrawer', false);
@@ -12047,7 +11916,7 @@
         _.each(
           this.get('multiOrdersList').models,
           function(order) {
-            order.unset('generateInvoice');
+            order.setFullInvoice(false, true);
           },
           this
         );
@@ -12057,7 +11926,7 @@
       _.each(
         this.get('multiOrdersList').models,
         function(order) {
-          order.set('generateInvoice', true);
+          order.setFullInvoice(true, true);
         },
         this
       );

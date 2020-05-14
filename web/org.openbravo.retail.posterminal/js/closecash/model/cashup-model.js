@@ -930,6 +930,28 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       model,
       value = OB.DEC.Zero,
       second = OB.DEC.Zero;
+
+    //First we fix the qty to keep for non-automated payment methods
+    _.each(this.get('paymentList').models, function(model) {
+      var counted = model.get('foreignCounted');
+      if (OB.UTIL.isNullOrUndefined(model.get('qtyToKeep'))) {
+        model.set('qtyToKeep', counted);
+      }
+      if (counted < 0) {
+        model.set('qtyToKeep', 0);
+        return;
+      }
+      if (
+        !model.get('isCashToKeepSelected') &&
+        model.get('paymentMethod').keepfixedamount
+      ) {
+        model.set('qtyToKeep', model.get('paymentMethod').amount);
+      }
+      if (model.get('qtyToKeep') > counted) {
+        model.set('qtyToKeep', counted);
+      }
+    });
+
     countCashSummary = {
       expectedSummary: [],
       countedSummary: [],
@@ -977,27 +999,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         0
       )
     };
-    //First we fix the qty to keep for non-automated payment methods
-    _.each(this.get('paymentList').models, function(model) {
-      var counted = model.get('foreignCounted');
-      if (
-        !model.get('paymentMethod').keepfixedamount ||
-        OB.UTIL.isNullOrUndefined(counted)
-      ) {
-        model.set('qtyToKeep', 0);
-        return;
-      }
-      if (OB.UTIL.isNullOrUndefined(model.get('qtyToKeep'))) {
-        model.set('qtyToKeep', counted);
-      }
-      if (!model.get('paymentMethod').allowdontmove) {
-        if (counted > model.get('paymentMethod').amount) {
-          model.set('qtyToKeep', model.get('paymentMethod').amount);
-        } else {
-          model.set('qtyToKeep', counted);
-        }
-      }
-    });
 
     enumSummarys = [
       'expectedSummary',
