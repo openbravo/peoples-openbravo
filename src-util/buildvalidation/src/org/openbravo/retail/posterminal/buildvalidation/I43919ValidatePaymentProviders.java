@@ -27,7 +27,7 @@ public class I43919ValidatePaymentProviders extends BuildValidation {
   public List<String> execute() {
     try {
       ConnectionProvider cp = getConnectionProvider();
-      Collection errors;
+      Collection<String> errors;
       if (I43919ValidatePaymentProvidersData.existsWrongPaymentMethod(cp)) {
         errors = Arrays.asList("There are Payment Methods in the Channel - Touchpoint Type with a Payment Provider but no Payment Method Type. "
             + "All Payment Methods with a Payment Provider must have defined a corresponding Payment Method Type. "
@@ -37,7 +37,7 @@ public class I43919ValidatePaymentProviders extends BuildValidation {
         errors = Collections.emptyList();
       }
       
-      return new ArrayList(errors); // 
+      return new ArrayList<String>(errors);
     } catch (Exception e) {
       return handleError(e);
     }
