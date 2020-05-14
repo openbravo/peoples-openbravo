@@ -115,5 +115,21 @@ describe('addProduct preparation', () => {
         }
       );
     });
+
+    it('handles with error offline scale', async () => {
+      OB.POS.hwserver.getAsyncWeight.mockImplementation(() =>
+        Promise.resolve({ exception: 1 })
+      );
+
+      await expectError(
+        () =>
+          prepareAction({
+            products: [{ product: scaleProduct }]
+          }),
+        {
+          errorConfirmation: 'OBPOS_MsgScaleServerNotAvailable'
+        }
+      );
+    });
   });
 });

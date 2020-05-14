@@ -159,16 +159,22 @@
       throw new Error('Cannot handle more than one scale product');
     }
 
-    const newPayload = { ...payload };
     const weightResponse = await OB.POS.hwserver.getAsyncWeight();
-    const weight = weightResponse.result;
 
+    if (weightResponse.exception) {
+      throw new OB.App.Class.ActionCanceled({
+        errorConfirmation: 'OBPOS_MsgScaleServerNotAvailable'
+      });
+    }
+
+    const weight = weightResponse.result;
     if (weight === 0) {
       throw new OB.App.Class.ActionCanceled({
         errorConfirmation: 'OBPOS_WeightZero'
       });
     }
 
+    const newPayload = { ...payload };
     newPayload.products = [{ ...newPayload.products[0], qty: weight }];
     return newPayload;
   }
