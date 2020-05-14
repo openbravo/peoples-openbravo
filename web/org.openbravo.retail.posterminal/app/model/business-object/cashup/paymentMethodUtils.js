@@ -240,6 +240,24 @@
         conversions
       );
       return { currentCash, foreignCurrentCash };
+    },
+
+    /**
+     *   Only send to backend the payments that we have in the terminal.
+     *
+     *   Could happen that in the cashup we have payments that are not longer
+     *   in the backend and if we send them it will fail in the backend
+     */
+    getCashupPaymentsThatAreAlsoInTerminalPayments(
+      cashupPayments,
+      terminalPayments
+    ) {
+      return cashupPayments.filter(cashupPayment =>
+        terminalPayments.find(
+          terminalPayment =>
+            cashupPayment.paymentMethodId === terminalPayment.payment.id
+        )
+      );
     }
   });
 })();

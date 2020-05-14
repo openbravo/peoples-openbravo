@@ -192,7 +192,8 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
         parameters: {
           terminalName: OB.MobileApp.model.get('logConfiguration')
             .deviceIdentifier,
-          cacheSessionId: OB.UTIL.localStorage.getItem('cacheSessionId')
+          cacheSessionId: OB.UTIL.localStorage.getItem('cacheSessionId'),
+          terminalPayments: OB.MobileApp.model.get('payments')
         }
       }).then(function() {
         OB.UTIL.showLoading(false);

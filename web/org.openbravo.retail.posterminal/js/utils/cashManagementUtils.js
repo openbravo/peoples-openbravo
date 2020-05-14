@@ -178,7 +178,8 @@
           parameters: {
             terminalName: OB.MobileApp.model.get('logConfiguration')
               .deviceIdentifier,
-            cacheSessionId: OB.UTIL.localStorage.getItem('cacheSessionId')
+            cacheSessionId: OB.UTIL.localStorage.getItem('cacheSessionId'),
+            terminalPayments: OB.MobileApp.model.get('payments')
           }
         })
           .then(function() {

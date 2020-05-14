@@ -1017,7 +1017,11 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                   const cashUpReportSuccessCallback = function() {
                     auxReceipt.set(
                       'cashUpReportInformation',
-                      OB.App.State.Cashup.Utils.getCashupFilteredForSendToBackendInEachTicket()
+                      OB.App.State.Cashup.Utils.getCashupFilteredForSendToBackendInEachTicket(
+                        {
+                          terminalPayments: OB.MobileApp.model.get('payments')
+                        }
+                      )
                     );
                     OB.App.State.Cashup.resetNewPayments();
                     OB.UTIL.HookManager.executeHooks(
@@ -1183,7 +1187,13 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
                                 receipt.set(
                                   'cashUpReportInformation',
-                                  OB.App.State.Cashup.Utils.getCashupFilteredForSendToBackendInEachTicket()
+                                  OB.App.State.Cashup.Utils.getCashupFilteredForSendToBackendInEachTicket(
+                                    {
+                                      terminalPayments: OB.MobileApp.model.get(
+                                        'payments'
+                                      )
+                                    }
+                                  )
                                 );
                                 OB.App.State.Cashup.resetNewPayments();
                                 receipt.set('created', new Date().getTime());

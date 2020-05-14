@@ -47,6 +47,7 @@
     processCashManagements(state, payload) {
       const newState = { ...state };
       const cashup = { ...newState.Cashup };
+      const { terminalPayments } = payload.parameters;
 
       cashup.cashPaymentMethodInfo = cashup.cashPaymentMethodInfo.map(
         paymentMethod => {
@@ -89,6 +90,12 @@
                 });
                 cashupToSend.cashPaymentMethodInfo = newPaymentsArray;
                 newCashManagement.cashUpReportInformation = cashupToSend;
+
+                const cashupPayments = cashupToSend.cashPaymentMethodInfo;
+                cashupToSend.cashPaymentMethodInfo = OB.App.State.Cashup.Utils.getCashupPaymentsThatAreAlsoInTerminalPayments(
+                  cashupPayments,
+                  terminalPayments
+                );
 
                 // Create a Message to synchronize the Cash Management
                 const { terminalName, cacheSessionId } = payload.parameters;

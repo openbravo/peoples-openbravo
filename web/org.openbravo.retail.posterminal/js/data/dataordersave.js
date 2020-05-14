@@ -529,7 +529,13 @@
                         const cashUpReportSuccessCallback = function() {
                           frozenReceipt.set(
                             'cashUpReportInformation',
-                            OB.App.State.Cashup.Utils.getCashupFilteredForSendToBackendInEachTicket()
+                            OB.App.State.Cashup.Utils.getCashupFilteredForSendToBackendInEachTicket(
+                              {
+                                terminalPayments: OB.MobileApp.model.get(
+                                  'payments'
+                                )
+                              }
+                            )
                           );
                           OB.App.State.Cashup.resetNewPayments();
                           frozenReceipt.set(
@@ -719,7 +725,11 @@
           const cashUpReportSuccessCallback = function() {
             currentReceipt.set(
               'cashUpReportInformation',
-              OB.App.State.Cashup.Utils.getCashupFilteredForSendToBackendInEachTicket()
+              OB.App.State.Cashup.Utils.getCashupFilteredForSendToBackendInEachTicket(
+                {
+                  terminalPayments: OB.MobileApp.model.get('payments')
+                }
+              )
             );
             OB.App.State.Cashup.resetNewPayments();
             OB.UTIL.HookManager.executeHooks(

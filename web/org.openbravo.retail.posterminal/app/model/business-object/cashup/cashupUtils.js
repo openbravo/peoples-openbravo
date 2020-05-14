@@ -134,12 +134,16 @@
       return OB.App.State.getState().Cashup;
     },
 
-    getCashupFilteredForSendToBackendInEachTicket() {
+    getCashupFilteredForSendToBackendInEachTicket(payload) {
       const cashupToSend = OB.App.State.getState().Cashup;
-      // const allPayments = cashupToSend.cashPaymentMethodInfo;
-      // cashupToSend.cashPaymentMethodInfo = allPayments.filter(payment => {
-      //   return payment.usedInCurrentTrx;
-      // });
+      const cashupPayments = cashupToSend.cashPaymentMethodInfo;
+      const { terminalPayments } = payload;
+
+      cashupToSend.cashPaymentMethodInfo = OB.App.State.Cashup.Utils.getCashupPaymentsThatAreAlsoInTerminalPayments(
+        cashupPayments,
+        terminalPayments
+      );
+
       return cashupToSend;
     },
 
