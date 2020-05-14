@@ -159,6 +159,8 @@
       throw new Error('Cannot handle more than one scale product');
     }
 
+    // TODO: should we allow it if options.isVerifiedReturn?
+
     const weightResponse = await OB.POS.hwserver.getAsyncWeight();
 
     if (weightResponse.exception) {
