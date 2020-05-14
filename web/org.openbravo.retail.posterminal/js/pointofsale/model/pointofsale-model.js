@@ -16,11 +16,7 @@ OB.OBPOSPointOfSale.UI = OB.OBPOSPointOfSale.UI || {};
 //Window model
 OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
   models: [
-    OB.Model.BusinessPartner,
-    OB.Model.BPLocation,
     OB.Model.Order,
-    OB.Model.ChangedBusinessPartners,
-    OB.Model.ChangedBPlocation,
     OB.Model.CancelLayaway,
     OB.Model.CurrencyPanel,
     OB.Model.CashUp,
@@ -1653,7 +1649,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         if (dataBps) {
           var partnerAddressId = OB.MobileApp.model.get('terminal')
             .partnerAddress;
-          dataBps.loadBPLocations(null, null, function(
+          dataBps.loadBPLocations(null, null, async function(
             shipping,
             billing,
             locations
@@ -1672,13 +1668,13 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             dataBps.setBPLocations(shipping, billing, true);
             dataBps.set('locations', locations);
             OB.MobileApp.model.set('businessPartner', dataBps);
-            OB.Dal.save(
-              dataBps,
-              function() {},
-              function() {
-                OB.error(arguments);
-              }
-            );
+            try {
+              await OB.App.State.Global.synchronizeBusinessPartner(
+                dataBps.attributes
+              );
+            } catch (error) {
+              OB.error(arguments);
+            }
             me.loadUnpaidOrders(function() {
               OB.Taxes.Pos.initCache(function() {
                 OB.Discounts.Pos.initCache(function() {

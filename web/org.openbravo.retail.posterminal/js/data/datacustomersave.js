@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2019 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -25,12 +25,10 @@
       this
     );
 
-    OB.DATA.executeCustomerSave = function(customer, callback) {
+    OB.DATA.executeCustomerSave = async function(customer, callback) {
       var customerId = customer.get('id'),
         isNew = false,
-        bpToSave = new OB.Model.ChangedBusinessPartners(),
         bpLocToSave = new OB.Model.BPLocation(),
-        updateLocally,
         finalCallback;
 
       var setBPLocationProperty = function(location, customer, sucesscallback) {
@@ -107,11 +105,9 @@
         }
       };
 
-      bpToSave.set('isbeingprocessed', 'N');
       customer.set('createdBy', OB.MobileApp.model.get('orgUserId'));
-      bpToSave.set('createdBy', OB.MobileApp.model.get('orgUserId'));
+      customer.set('posTerminal', OB.MobileApp.model.get('terminal').id);
       if (customerId) {
-        customer.set('posTerminal', OB.MobileApp.model.get('terminal').id);
         var now = new Date();
         customer.set('timezoneOffset', now.getTimezoneOffset());
         if (OB.UTIL.isNullOrUndefined(customer.get('loaded'))) {
@@ -122,14 +118,14 @@
             OB.I18N.normalizeDate(new Date(customer.get('loaded')))
           );
         }
-
-        bpToSave.set('json', JSON.stringify(customer.serializeEditedToJSON()));
-        bpToSave.set('c_bpartner_id', customer.get('id'));
       } else {
         isNew = true;
         var shipping,
           billing,
-          locations = [];
+          locations = [],
+          uuid = OB.UTIL.get_UUID();
+        customer.set('id', uuid);
+        customer.id = uuid;
         billing = new OB.Model.BPLocation();
         billing.set('id', customer.get('locId'));
         billing.set('bpartner', customer.get('id'));
@@ -169,229 +165,111 @@
         customer.setBPLocations(shipping, billing, shipping);
       }
       // if the bp is already used in one of the orders then update locally also
-      updateLocally =
+      let updateLocally =
         !OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true) ||
         (!isNew &&
           OB.MobileApp.model.orderList &&
           _.filter(OB.MobileApp.model.orderList.models, function(order) {
             return order.get('bp').get('id') === customerId;
           }).length > 0);
-
-      if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-        //With high volume we only save locally when it is assigned to the order
-        if (isNew) {
-          customer.set('posTerminal', OB.MobileApp.model.get('terminal').id);
-          var uuid = OB.UTIL.get_UUID();
-          customer.set('id', uuid);
-          customer.id = uuid;
-          bpToSave.set('json', JSON.stringify(customer.serializeToJSON()));
-          bpToSave.set('id', customer.get('id'));
-        }
-
-        bpToSave.set('isbeingprocessed', 'Y');
-
-        if (!updateLocally) {
-          OB.UTIL.HookManager.executeHooks(
-            'OBPOS_PostCustomerSave',
-            {
-              customer: customer,
-              bpToSave: bpToSave
-            },
-            function(args) {
-              bpToSave.set('json', JSON.stringify(customer.serializeToJSON()));
-              OB.Dal.save(
-                bpToSave,
-                function() {
-                  var successCallback = function() {
-                    OB.UTIL.showSuccess(
-                      OB.I18N.getLabel('OBPOS_customerSaved', [
-                        customer.get('_identifier')
-                      ])
-                    );
-                    finalCallback(true);
-                  };
-                  OB.MobileApp.model.runSyncProcess(
-                    successCallback,
-                    function() {
-                      finalCallback(false);
-                    }
-                  );
-                },
-                function() {
-                  //error saving BP changes with changes in changedbusinesspartners
-                  OB.UTIL.showError(
-                    OB.I18N.getLabel('OBPOS_errorSavingCustomerChanges', [
-                      customer.get('_identifier')
-                    ])
-                  );
-                  finalCallback(false);
-                },
-                isNew
-              );
-            }
-          );
-        }
-      }
-
       if (updateLocally) {
         //save that the customer is being processed by server
         customer.set('loaded', OB.I18N.normalizeDate(new Date()));
-        OB.Dal.save(
-          customer,
-          function() {
-            //OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerSavedSuccessfullyLocally',[customer.get('_identifier')]));
-            // Saving Customer Address locally
-            if (isNew) {
-              //create bploc from scratch and set all properties
-              bpLocToSave.set('id', customer.get('locId'));
-              setBPLocationProperty(bpLocToSave, customer, function() {
-                OB.Dal.save(
-                  bpLocToSave,
-                  function() {
-                    //check if shipping address is different
-                    if (customer.get('locId') !== customer.get('shipLocId')) {
-                      bpLocToSave.set('id', customer.get('shipLocId'));
-                      setBPLocationProperty(bpLocToSave, customer, function() {
-                        OB.Dal.save(
-                          bpLocToSave,
-                          function() {},
-                          function() {
-                            OB.error(arguments);
-                          },
-                          isNew
-                        );
-                      });
-                    }
-                  },
-                  function() {
-                    OB.error(arguments);
-                  },
-                  isNew
-                );
-              });
-            }
+        try {
+          await OB.App.State.Global.synchronizeBusinessPartner(
+            customer.attributes
+          );
 
-            if (isNew) {
-              customer.set(
-                'posTerminal',
-                OB.MobileApp.model.get('terminal').id
+          //OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerSavedSuccessfullyLocally',[customer.get('_identifier')]));
+          // Saving Customer Address locally
+          if (isNew) {
+            //create bploc from scratch and set all properties
+            bpLocToSave.set('id', customer.get('locId'));
+            setBPLocationProperty(bpLocToSave, customer, async function() {
+              await OB.App.State.Global.synchronizeBusinessPartnerLocation(
+                bpLocToSave.attributes
               );
-              bpToSave.set('json', JSON.stringify(customer.serializeToJSON()));
-              bpToSave.set('c_bpartner_id', customer.get('id'));
-            }
-            bpToSave.set('isbeingprocessed', 'Y');
-            OB.UTIL.HookManager.executeHooks(
-              'OBPOS_PostCustomerSave',
-              {
-                customer: customer,
-                bpToSave: bpToSave
-              },
-              function(args) {
-                OB.Dal.save(
-                  bpToSave,
-                  function() {
-                    // update each order also so that new name is shown and the bp
-                    // in the order is the same as what got saved
-                    if (OB.MobileApp.model.orderList) {
-                      _.forEach(OB.MobileApp.model.orderList.models, function(
-                        order
-                      ) {
-                        if (order.get('bp').get('id') === customerId) {
-                          var clonedBP = new OB.Model.BusinessPartner();
-                          OB.UTIL.clone(customer, clonedBP);
-                          var bp = order.get('bp');
-                          if (
-                            order.get('bp').get('locId') !==
-                            customer.get('locId')
-                          ) {
-                            // if the order has a different address but same BP than the bp
-                            // then copy over the address data
-                            clonedBP.set('locId', bp.get('locId'));
-                            clonedBP.set('locName', bp.get('locName'));
-                            clonedBP.set('postalCode', bp.get('postalCode'));
-                            clonedBP.set('cityName', bp.get('cityName'));
-                            clonedBP.set('countryName', bp.get('countryName'));
-                            clonedBP.set(
-                              'locationModel',
-                              bp.get('locationModel')
-                            );
-                          }
-                          if (
-                            order.get('bp').get('shipLocId') !==
-                            customer.get('shipLocId')
-                          ) {
-                            clonedBP.set('shipLocId', bp.get('shipLocId'));
-                            clonedBP.set('shipLocName', bp.get('shipLocName'));
-                            clonedBP.set(
-                              'shipPostalCode',
-                              bp.get('shipPostalCode')
-                            );
-                            clonedBP.set(
-                              'shipCityName',
-                              bp.get('shipCityName')
-                            );
-                            clonedBP.set(
-                              'shipCountryName',
-                              bp.get('shipCountryName')
-                            );
-                          }
-                          order.set('bp', clonedBP);
-                          order.save();
-                          if (
-                            OB.MobileApp.model.orderList.modelorder &&
-                            OB.MobileApp.model.orderList.modelorder.get(
-                              'id'
-                            ) === order.get('id')
-                          ) {
-                            OB.MobileApp.model.orderList.modelorder.setBPandBPLoc(
-                              clonedBP,
-                              false,
-                              true
-                            );
-                          }
-                        }
-                      });
-                    }
-
-                    var successCallback;
-                    successCallback = function() {
-                      OB.UTIL.showSuccess(
-                        OB.I18N.getLabel('OBPOS_customerSaved', [
-                          customer.get('_identifier')
-                        ])
-                      );
-                      finalCallback(true);
-                    };
-                    OB.MobileApp.model.runSyncProcess(
-                      successCallback,
-                      function() {
-                        finalCallback(false);
-                      }
-                    );
-                  },
-                  function() {
-                    //error saving BP changes with changes in changedbusinesspartners
-                    OB.UTIL.showError(
-                      OB.I18N.getLabel('OBPOS_errorSavingCustomerChanges', [
-                        customer.get('_identifier')
-                      ])
-                    );
-                    finalCallback(false);
-                  }
+              //check if shipping address is different
+              if (customer.get('locId') !== customer.get('shipLocId')) {
+                bpLocToSave.set('id', customer.get('shipLocId'));
+                await OB.App.State.Global.synchronizeBusinessPartnerLocation(
+                  bpLocToSave.attributes
                 );
               }
-            );
-          },
-          function() {
-            //error saving BP with new values in c_bpartner
-            OB.UTIL.showError(
-              OB.I18N.getLabel('OBPOS_errorSavingCustomerLocally', [
-                customer.get('_identifier')
-              ])
-            );
-            finalCallback(false);
+            });
           }
-        );
+          OB.UTIL.HookManager.executeHooks(
+            'OBPOS_PostCustomerSave',
+            {
+              customer: customer
+            },
+            function(args) {
+              // update each order also so that new name is shown and the bp
+              // in the order is the same as what got saved
+              if (OB.MobileApp.model.orderList) {
+                for (const order of OB.MobileApp.model.orderList.models) {
+                  if (order.get('bp').get('id') === customerId) {
+                    var clonedBP = new OB.Model.BusinessPartner();
+                    OB.UTIL.clone(customer, clonedBP);
+                    var bp = order.get('bp');
+                    if (
+                      order.get('bp').get('locId') !== customer.get('locId')
+                    ) {
+                      // if the order has a different address but same BP than the bp
+                      // then copy over the address data
+                      clonedBP.set('locId', bp.get('locId'));
+                      clonedBP.set('locName', bp.get('locName'));
+                      clonedBP.set('postalCode', bp.get('postalCode'));
+                      clonedBP.set('cityName', bp.get('cityName'));
+                      clonedBP.set('countryName', bp.get('countryName'));
+                      clonedBP.set('locationModel', bp.get('locationModel'));
+                    }
+                    if (
+                      order.get('bp').get('shipLocId') !==
+                      customer.get('shipLocId')
+                    ) {
+                      clonedBP.set('shipLocId', bp.get('shipLocId'));
+                      clonedBP.set('shipLocName', bp.get('shipLocName'));
+                      clonedBP.set('shipPostalCode', bp.get('shipPostalCode'));
+                      clonedBP.set('shipCityName', bp.get('shipCityName'));
+                      clonedBP.set(
+                        'shipCountryName',
+                        bp.get('shipCountryName')
+                      );
+                    }
+                    order.set('bp', clonedBP);
+                    order.save();
+                    if (
+                      OB.MobileApp.model.orderList.modelorder &&
+                      OB.MobileApp.model.orderList.modelorder.get('id') ===
+                        order.get('id')
+                    ) {
+                      OB.MobileApp.model.orderList.modelorder.setBPandBPLoc(
+                        clonedBP,
+                        false,
+                        true
+                      );
+                    }
+                  }
+                }
+              }
+            }
+          );
+          OB.UTIL.showSuccess(
+            OB.I18N.getLabel('OBPOS_customerSaved', [
+              customer.get('_identifier')
+            ])
+          );
+          finalCallback(true);
+        } catch (error) {
+          //error saving BP changes with changes in changedbusinesspartners
+          OB.UTIL.showError(
+            OB.I18N.getLabel('OBPOS_errorSavingCustomerChanges', [
+              customer.get('_identifier')
+            ])
+          );
+          finalCallback(false);
+        }
       }
     };
   };

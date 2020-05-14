@@ -323,6 +323,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/business-object/document-sequence/actions/IncreaseSequence");
     appDependency.add("model/business-object/document-sequence/actions/DecreaseSequence");
 
+    appDependency.add("model/business-object/business-partner/SynchronizeBusinessPartner");
+    appDependency.add("model/business-object/business-partner/SynchronizeBusinessPartnerLocation");
+
     for (final String resource : appDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,
           prefix + "/app/" + resource + ".js", POSUtils.APP_NAME));

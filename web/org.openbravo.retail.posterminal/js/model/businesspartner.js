@@ -306,7 +306,7 @@
         criteria._orderByClause = 'updated desc';
       } else {
         criteria = new OB.App.Class.Criteria();
-        criteria.criterion('bpartner', this.get('id'));
+        criteria.criterion('bpartner', bpId || this.get('id'));
         criteria.orderBy('creationDate', 'desc');
       }
       errorCallback = function() {
