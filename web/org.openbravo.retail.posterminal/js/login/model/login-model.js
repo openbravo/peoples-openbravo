@@ -504,26 +504,6 @@
         isPersistent: false
       });
 
-      this.get('dataSyncModels').push({
-        name: 'Cash Management',
-        model: OB.Model.CashManagement,
-        modelFunc: 'OB.Model.CashManagement',
-        isPersistent: true,
-        className: 'org.openbravo.retail.posterminal.ProcessCashMgmt',
-        criteria: {
-          isbeingprocessed: 'N'
-        },
-        getIdentifier: function(model) {
-          return (
-            model.type +
-            ': ' +
-            model.user +
-            ' - ' +
-            OB.I18N.formatDateISO(new Date(model.creationDate))
-          );
-        }
-      });
-
       this.on('ready', function() {
         OB.debug("next process: 'retail.pointofsale' window");
         if (this.get('terminal').currencyFormat) {

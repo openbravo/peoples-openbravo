@@ -16,29 +16,21 @@
   OB.App.StateAPI.Global.registerActions({
     completeCashupAndCreateNew(state, payload) {
       const newState = { ...state };
-
-      // read cashup from cashup window,
-      const { cashupWindowCashup } = payload.completedCashupParams;
-
       const oldCashup = { ...newState.Cashup };
-
-      const objToSend = JSON.parse(cashupWindowCashup.get('objToSend'));
-      oldCashup.cashCloseInfo = objToSend.cashCloseInfo;
-      oldCashup.cashMgmtIds = objToSend.cashMgmtIds;
-      oldCashup.cashUpDate = objToSend.cashUpDate;
-      oldCashup.timezoneOffset = objToSend.timezoneOffset;
-      oldCashup.lastcashupeportdate = objToSend.lastcashupeportdate;
-      oldCashup.approvals = objToSend.approvals;
 
       oldCashup.isprocessed = 'Y';
 
       // create new message with current cashup
-      const { terminalName, cacheSessionId } = payload.completedCashupParams;
+      const {
+        closeCashupInfo,
+        terminalName,
+        cacheSessionId
+      } = payload.completedCashupParams;
       const newMessagePayload = {
         id: OB.App.UUID.generate(),
         terminal: terminalName,
         cacheSessionId,
-        data: [oldCashup]
+        data: [{ ...oldCashup, ...closeCashupInfo }]
       };
       const newMessage = OB.App.State.Messages.Utils.createNewMessage(
         'Cash Up',
@@ -64,7 +56,7 @@
         payload: { currentDate, userId, posterminal: terminalId }
       });
 
-      const lastCashUpPayments = oldCashup.cashCloseInfo;
+      const lastCashUpPayments = closeCashupInfo.cashCloseInfo;
 
       newCashup.cashPaymentMethodInfo = OB.App.State.Cashup.Utils.initializePaymentMethodCashup(
         {

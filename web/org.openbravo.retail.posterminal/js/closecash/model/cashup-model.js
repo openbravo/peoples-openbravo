@@ -1173,12 +1173,9 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           cashupModel: me
         },
         function(args) {
-          const filteredCashup = OB.App.State.Cashup.Utils.filterOnlyNeededDataForCompleteCashup(
-            cashUp.at(0)
-          );
           OB.App.State.Global.completeCashupAndCreateNew({
             completedCashupParams: {
-              cashupWindowCashup: filteredCashup,
+              closeCashupInfo: JSON.parse(cashUp.at(0).get('objToSend')),
               terminalName: OB.MobileApp.model.get('logConfiguration')
                 .deviceIdentifier,
               cacheSessionId: OB.UTIL.localStorage.getItem('cacheSessionId')

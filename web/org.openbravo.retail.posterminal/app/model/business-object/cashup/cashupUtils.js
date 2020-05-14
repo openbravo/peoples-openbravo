@@ -154,24 +154,6 @@
       return OB.App.State.persistence.getState().Cashup.id;
     },
 
-    filterOnlyNeededDataForCompleteCashup(cashup) {
-      const unFilteredObjToSend = JSON.parse(cashup.get('objToSend'));
-      const filteredObjToSend = {};
-
-      filteredObjToSend.cashCloseInfo = unFilteredObjToSend.cashCloseInfo;
-      filteredObjToSend.cashMgmtIds = unFilteredObjToSend.cashMgmtIds;
-      filteredObjToSend.cashUpDate = unFilteredObjToSend.cashUpDate;
-      filteredObjToSend.timezoneOffset = unFilteredObjToSend.timezoneOffset;
-      filteredObjToSend.lastcashupeportdate =
-        unFilteredObjToSend.lastcashupeportdate;
-      filteredObjToSend.approvals = unFilteredObjToSend.approvals;
-
-      const newCashup = new Backbone.Model();
-      newCashup.set('objToSend', JSON.stringify(filteredObjToSend));
-
-      return newCashup;
-    },
-
     /**
      * converts an amount to the WebPOS amount currency
      * @param  {currencyId} fromCurrencyId    the currencyId of the amount to be converted
