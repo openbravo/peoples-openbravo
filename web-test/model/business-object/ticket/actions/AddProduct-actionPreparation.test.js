@@ -66,7 +66,6 @@ const prepareAction = async (payload, ticket = emptyTicket) => {
 const expectError = async (action, expectedError) => {
   let error;
   try {
-    debugger;
     await action();
   } catch (e) {
     error = e;

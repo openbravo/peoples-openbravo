@@ -160,9 +160,7 @@
     }
 
     const newPayload = { ...payload };
-
     const weightResponse = await OB.POS.hwserver.getAsyncWeight();
-
     const weight = weightResponse.result;
 
     if (weight === 0) {
