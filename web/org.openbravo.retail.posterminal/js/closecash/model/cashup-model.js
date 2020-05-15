@@ -339,7 +339,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       'salesTaxes',
       new Backbone.Collection(
         cashup.cashTaxInfo.filter(tax => {
-          return tax.orderType !== 1;
+          return tax.orderType !== '1';
         })
       ).models
     );
@@ -347,7 +347,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       'returnsTaxes',
       new Backbone.Collection(
         cashup.cashTaxInfo.filter(tax => {
-          return tax.orderType === 1;
+          return tax.orderType === '1';
         })
       ).models
     );
