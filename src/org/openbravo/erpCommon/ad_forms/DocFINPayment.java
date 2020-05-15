@@ -788,19 +788,11 @@ public class DocFINPayment extends AcctServer {
   public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
     // Checks if this step is configured to generate accounting for the selected financial account
     boolean confirmation = false;
-    final String PAYMENT_RECEIVED = "RPR";
-    final String PAYMENT_MADE = "PPM";
-    final String DEPOSITED_NOT_CLEARED = "RDNC";
-    final String WITHDRAWN_NOT_CLEARED = "PWNC";
-    final String PAYMENT_CLEARED = "RPPC";
     OBContext.setAdminMode();
     try {
       FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, strRecordId);
       // Posting can just happen if payment is in the right status
-      if (payment.getStatus().equals(PAYMENT_RECEIVED) || payment.getStatus().equals(PAYMENT_MADE)
-          || payment.getStatus().equals(DEPOSITED_NOT_CLEARED)
-          || payment.getStatus().equals(WITHDRAWN_NOT_CLEARED)
-          || payment.getStatus().equals(PAYMENT_CLEARED)) {
+      if (FIN_Utility.isPaymentConfirmed(payment.getStatus(), null)) {
         OBCriteria<FinAccPaymentMethod> obCriteria = OBDal.getInstance()
             .createCriteria(FinAccPaymentMethod.class);
         obCriteria.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT, payment.getAccount()));

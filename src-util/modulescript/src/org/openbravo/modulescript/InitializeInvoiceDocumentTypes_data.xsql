@@ -29,7 +29,7 @@
         ]]>
       </Sql>
   </SqlMethod>
-  <SqlMethod name="initializeSimplifiedInvoiceDocumentType" type="preparedStatement" connection="true" return="rowCount">
+  <SqlMethod name="initializeSimplifiedInvoiceDocumentType" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
       <Sql>
         <![CDATA[
@@ -39,7 +39,7 @@
         ]]>
       </Sql>
   </SqlMethod>
-  <SqlMethod name="initializeAggregatedInvoiceDocumentType" type="preparedStatement" connection="true" return="rowCount">
+  <SqlMethod name="initializeAggregatedInvoiceDocumentType" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
       <Sql>
         <![CDATA[
