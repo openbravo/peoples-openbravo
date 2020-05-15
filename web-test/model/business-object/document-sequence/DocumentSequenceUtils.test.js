@@ -14,7 +14,7 @@ describe('Document Sequence Utils calculateDocumentNumber method', () => {
   it('should generate correct documentNo for 0 sequenceNumber', () => {
     const documentNumber = OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
       'PREFIX',
-      true,
+      '/',
       5,
       0
     );
@@ -24,7 +24,7 @@ describe('Document Sequence Utils calculateDocumentNumber method', () => {
   it('should generate correct documentNo for 1 sequenceNumber', () => {
     const documentNumber = OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
       'PREFIX',
-      true,
+      '/',
       5,
       1
     );
@@ -34,7 +34,7 @@ describe('Document Sequence Utils calculateDocumentNumber method', () => {
   it('should generate correct documentNo for 10 sequenceNumber', () => {
     const documentNumber = OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
       'PREFIX',
-      true,
+      '/',
       5,
       10
     );
@@ -44,7 +44,7 @@ describe('Document Sequence Utils calculateDocumentNumber method', () => {
   it('should generate correct documentNo for 100 sequenceNumber', () => {
     const documentNumber = OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
       'PREFIX',
-      true,
+      '/',
       5,
       100
     );
@@ -54,7 +54,7 @@ describe('Document Sequence Utils calculateDocumentNumber method', () => {
   it('should generate correct documentNo for 1000 sequenceNumber', () => {
     const documentNumber = OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
       'PREFIX',
-      true,
+      '/',
       5,
       1000
     );
@@ -64,7 +64,7 @@ describe('Document Sequence Utils calculateDocumentNumber method', () => {
   it('should generate correct documentNo for 10000 sequenceNumber', () => {
     const documentNumber = OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
       'PREFIX',
-      true,
+      '/',
       5,
       10000
     );
@@ -74,7 +74,7 @@ describe('Document Sequence Utils calculateDocumentNumber method', () => {
   it('should generate correct documentNo for 100000 sequenceNumber', () => {
     const documentNumber = OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
       'PREFIX',
-      true,
+      '/',
       5,
       100000
     );
@@ -84,7 +84,7 @@ describe('Document Sequence Utils calculateDocumentNumber method', () => {
   it('should generate correct documentNo when not using separator', () => {
     const documentNumber = OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
       'PREFIX',
-      false,
+      '',
       5,
       10000
     );

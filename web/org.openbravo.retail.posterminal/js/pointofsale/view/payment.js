@@ -2474,7 +2474,7 @@ enyo.kind({
     );
   },
   blocked: false,
-  tap: function() {
+  tap: async function() {
     var myModel = this.owner.model,
       me = this,
       payments,
@@ -2523,6 +2523,26 @@ enyo.kind({
     }
 
     execution = OB.UTIL.ProcessController.start('tapDoneButton');
+
+    if (!isMultiOrder) {
+      await OB.App.State.Global.completeTicket({
+        cashUpId: OB.MobileApp.model.get('terminal').cashUpId,
+        returnSequencePrefix: OB.MobileApp.model.get('terminal')
+          .returnDocNoPrefix,
+        quotationSequencePrefix: OB.MobileApp.model.get('terminal')
+          .quotationDocNoPrefix,
+        documentNumberSeperator: OB.Model.Order.prototype.includeDocNoSeperator
+          ? '/'
+          : '',
+        documentNumberPadding: OB.MobileApp.model.get('terminal')
+          .documentnoPadding,
+        salesWithOneLineNegativeAsReturns: OB.MobileApp.model.get('permissions')
+          .OBPOS_SalesWithOneLineNegativeAsReturns
+      });
+      OB.MobileApp.model.orderList.deleteCurrent();
+      OB.UTIL.ProcessController.finish('tapDoneButton', execution);
+      return;
+    }
 
     if (!OB.MobileApp.model.get('terminal').returns_anonymouscustomer) {
       if (isMultiOrder) {

@@ -870,6 +870,19 @@
         );
       }
       return newLine;
+    },
+
+    /**
+     * Checks whether a ticket is a return or a sale.
+     *
+     * @returns {boolean} true in case the ticket is a return, false in case it is a sale.
+     */
+    isReturnTicket(ticket, salesWithOneLineNegativeAsReturns) {
+      const negativeLines = ticket.lines.filter(line => line.qty < 0).length;
+      return (
+        negativeLines === ticket.lines.length ||
+        (negativeLines > 0 && salesWithOneLineNegativeAsReturns)
+      );
     }
   });
 })();
