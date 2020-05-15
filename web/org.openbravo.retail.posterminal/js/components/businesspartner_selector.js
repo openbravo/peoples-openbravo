@@ -471,33 +471,20 @@ enyo.kind({
           popup: 'modalReceiptSelectorCustomerView',
           args: {
             multiselect: true,
-             target: dialog.target,
-              businessPartner:  OB.Dal.transform(OB.Model.BusinessPartner, bp),
-              navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(
-                dialog.owner.owner.args.navigationPath,
-                'modalcustomer'
-	    )}
-          });
-  	} catch (error) {
+            target: dialog.target,
+            businessPartner: OB.Dal.transform(OB.Model.BusinessPartner, bp),
+            navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(
+              dialog.owner.owner.args.navigationPath,
+              'modalcustomer'
+            )
+          }
+        });
+      } catch (error) {
         OB.UTIL.showConfirmation.display(
           OB.I18N.getLabel('OBMOBC_Error'),
           OB.I18N.getLabel('OBPOS_CustomerNotFound')
         );
-      
-        },
-        function() {
-          OB.UTIL.showConfirmation.display(
-            OB.I18N.getLabel('OBMOBC_Error'),
-            OB.I18N.getLabel('OBPOS_CustomerNotFound')
-          );
-        },
-        function() {
-          OB.UTIL.showConfirmation.display(
-            OB.I18N.getLabel('OBMOBC_Error'),
-            OB.I18N.getLabel('OBPOS_CustomerNotFound')
-          );
-        }
-
+      }
     } else {
       OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
     }
