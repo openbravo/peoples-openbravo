@@ -167,7 +167,7 @@
               'org.openbravo.retail.posterminal.term.Terminal'
             ).exec(
               params,
-              function(data) {
+              async function(data) {
                 if (data.exception) {
                   handleError(data);
                 } else if (data[0]) {
@@ -245,8 +245,20 @@
                     terminalName: terminalModel.get('terminalName')
                   };
 
+                  // FIXME: remove once completeTicket action is migrated to state.
+                  const documentSequence = JSON.parse(
+                    OB.UTIL.localStorage.getItem('DocumentSequence')
+                  );
+                  if (documentSequence) {
+                    await OB.App.State.DocumentSequence.initializeSequence({
+                      sequences: Object.keys(documentSequence).map(key => {
+                        return { sequenceName: key, ...documentSequence[key] };
+                      })
+                    });
+                  }
+
                   // Save in state Document Sequence values read from backend
-                  OB.App.State.DocumentSequence.initializeSequence({
+                  await OB.App.State.DocumentSequence.initializeSequence({
                     sequences: [
                       {
                         sequenceName: 'lastassignednum',
@@ -976,7 +988,7 @@
                     closeOnEscKey: false,
                     execHideFunction: true,
                     onHideFunction: function() {
-                      OB.UTIL.localStorage.clear();
+                      OB.UTIL.localStorage.clearNoConfirmation();
                       OB.UTIL.showLoading(true);
                       OB.MobileApp.model.logout();
                     }
@@ -1017,7 +1029,7 @@
                   closeOnEscKey: false,
                   execHideFunction: true,
                   onHideFunction: function() {
-                    OB.UTIL.localStorage.clear();
+                    OB.UTIL.localStorage.clearNoConfirmation();
                     OB.UTIL.showLoading(true);
                     OB.MobileApp.model.logout();
                   }
@@ -1261,7 +1273,7 @@
                     closeOnEscKey: false,
                     execHideFunction: true,
                     onHideFunction: function() {
-                      OB.UTIL.localStorage.clear();
+                      OB.UTIL.localStorage.clearNoConfirmation();
                       OB.UTIL.showLoading(true);
                       OB.MobileApp.model.logout();
                     }
@@ -1718,10 +1730,8 @@
         sequenceName: sequenceName
       });
 
-      const {
-        sequencePrefix,
-        sequenceNumber
-      } = OB.App.State.getState().DocumentSequence[sequenceName];
+      const documentSequence = OB.App.State.getState().DocumentSequence;
+      const { sequencePrefix, sequenceNumber } = documentSequence[sequenceName];
       const documentNumberPadding = OB.MobileApp.model.get('terminal')
         .documentnoPadding;
       const documentNo = OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
@@ -1729,6 +1739,12 @@
         OB.Model.Order.prototype.includeDocNoSeperator,
         documentNumberPadding,
         sequenceNumber
+      );
+
+      // FIXME: remove once completeTicket action is migrated to state.
+      OB.UTIL.localStorage.setItem(
+        'DocumentSequence',
+        JSON.stringify(documentSequence)
       );
 
       return {
