@@ -78,164 +78,163 @@
               grossReturns = OB.DEC.add(grossReturns, -gross);
             }
           });
-          newCashup.netSales = OB.DEC.add(newCashup.netSales, netSales);
-          newCashup.grossSales = OB.DEC.add(newCashup.grossSales, grossSales);
-          newCashup.netReturns = OB.DEC.add(newCashup.netReturns, netReturns);
-          newCashup.grossReturns = OB.DEC.add(
-            newCashup.grossReturns,
-            grossReturns
-          );
-          newCashup.totalRetailTransactions = OB.DEC.sub(
-            newCashup.grossSales,
-            newCashup.grossReturns
-          );
+        }
+        newCashup.netSales = OB.DEC.add(newCashup.netSales, netSales);
+        newCashup.grossSales = OB.DEC.add(newCashup.grossSales, grossSales);
+        newCashup.netReturns = OB.DEC.add(newCashup.netReturns, netReturns);
+        newCashup.grossReturns = OB.DEC.add(
+          newCashup.grossReturns,
+          grossReturns
+        );
+        newCashup.totalRetailTransactions = OB.DEC.sub(
+          newCashup.grossSales,
+          newCashup.grossReturns
+        );
 
-          // group and sum the taxes
-          const newCashupTaxes = [];
-          order.get('lines').each(function perLine(line) {
-            const taxLines = line.get('taxLines');
-            if (
-              orderType === 1 ||
-              (line.get('qty') < 0 &&
-                !order.get('cancelLayaway') &&
-                !order.get('voidLayaway'))
-            ) {
-              taxOrderType = '1';
-            } else {
-              taxOrderType = '0';
-            }
-
-            Object.values(taxLines).forEach(taxLine => {
-              if (!(order.has('isQuotation') && order.get('isQuotation'))) {
-                if (
-                  order.get('cancelLayaway') ||
-                  (line.get('qty') > 0 && !order.get('isLayaway'))
-                ) {
-                  taxAmount = taxLine.amount;
-                } else if (
-                  order.get('voidLayaway') ||
-                  (line.get('qty') < 0 && !order.get('isLayaway'))
-                ) {
-                  taxAmount = -taxLine.amount;
-                }
-              }
-
-              if (taxAmount != null) {
-                newCashupTaxes.push({
-                  taxName: taxLine.name,
-                  taxAmount,
-                  taxOrderType
-                });
-              }
-            });
-          });
-
-          // Calculate adjustment taxes
-          newCashupTaxes.forEach(t => {
-            if (t.taxOrderType === '0') {
-              // sale
-              taxSales = OB.DEC.add(taxSales, t.taxAmount);
-              if (t.taxAmount > maxtaxSales) {
-                ctaxSales = t;
-              }
-            } else {
-              // return
-              taxReturns = OB.DEC.add(taxReturns, t.taxAmount);
-              if (t.taxAmount > maxtaxReturns) {
-                ctaxReturns = t;
-              }
-            }
-          });
-
-          // Do the adjustment
-          if (ctaxSales) {
-            ctaxSales.taxAmount = OB.DEC.add(
-              ctaxSales.taxAmount,
-              OB.DEC.sub(OB.DEC.sub(grossSales, netSales), taxSales)
-            );
-          }
-          if (ctaxReturns) {
-            ctaxReturns.taxAmount = OB.DEC.add(
-              ctaxReturns.taxAmount,
-              OB.DEC.sub(OB.DEC.sub(grossReturns, netReturns), taxReturns)
-            );
+        // group and sum the taxes
+        const newCashupTaxes = [];
+        order.get('lines').each(function perLine(line) {
+          const taxLines = line.get('taxLines');
+          if (
+            orderType === 1 ||
+            (line.get('qty') < 0 &&
+              !order.get('cancelLayaway') &&
+              !order.get('voidLayaway'))
+          ) {
+            taxOrderType = '1';
+          } else {
+            taxOrderType = '0';
           }
 
-          // save the calculated taxes into the cashup
-          newCashupTaxes.forEach(newCashupTax => {
-            const cashupTax = newCashup.cashTaxInfo.filter(function filter(
-              cashupTaxFilter
-            ) {
-              return (
-                cashupTaxFilter.name === newCashupTax.taxName &&
-                cashupTaxFilter.orderType === newCashupTax.taxOrderType
-              );
-            })[0];
-            if (cashupTax) {
-              cashupTax.amount = OB.DEC.add(
-                cashupTax.amount,
-                newCashupTax.taxAmount
-              );
-            } else {
-              newCashup.cashTaxInfo.push({
-                id: OB.App.UUID.generate(),
-                name: newCashupTax.taxName,
-                amount: newCashupTax.taxAmount,
-                orderType: newCashupTax.taxOrderType
+          Object.values(taxLines).forEach(taxLine => {
+            if (!(order.has('isQuotation') && order.get('isQuotation'))) {
+              if (
+                order.get('cancelLayaway') ||
+                (line.get('qty') > 0 && !order.get('isLayaway'))
+              ) {
+                taxAmount = taxLine.amount;
+              } else if (
+                order.get('voidLayaway') ||
+                (line.get('qty') < 0 && !order.get('isLayaway'))
+              ) {
+                taxAmount = -taxLine.amount;
+              }
+            }
+
+            if (taxAmount != null) {
+              newCashupTaxes.push({
+                taxName: taxLine.name,
+                taxAmount,
+                taxOrderType
               });
             }
           });
+        });
 
-          // set all payment methods to not used in the trx
-          newCashup.cashPaymentMethodInfo.forEach(paymentMethod => {
-            if (paymentMethod.usedInCurrentTrx !== false) {
-              // eslint-disable-next-line no-param-reassign
-              paymentMethod.usedInCurrentTrx = false;
+        // Calculate adjustment taxes
+        newCashupTaxes.forEach(t => {
+          if (t.taxOrderType === '0') {
+            // sale
+            taxSales = OB.DEC.add(taxSales, t.taxAmount);
+            if (t.taxAmount > maxtaxSales) {
+              ctaxSales = t;
             }
-          });
+          } else {
+            // return
+            taxReturns = OB.DEC.add(taxReturns, t.taxAmount);
+            if (t.taxAmount > maxtaxReturns) {
+              ctaxReturns = t;
+            }
+          }
+        });
 
-          order.get('payments').models.forEach(orderPayment => {
-            const cashupPayment = newCashup.cashPaymentMethodInfo.filter(
-              function filter(cashupPaymentMethodFilter) {
-                return (
-                  cashupPaymentMethodFilter.searchKey ===
-                    orderPayment.get('kind') &&
-                  !orderPayment.get('isPrePayment')
-                );
-              }
-            )[0];
-            if (!cashupPayment) {
-              // We cannot find this payment in local database, it must be a new payment method, we skip it.
-              return;
-            }
-            precision =
-              OB.MobileApp.model.paymentnames[cashupPayment.searchKey]
-                .obposPosprecision;
-            amount = _.isNumber(orderPayment.get('amountRounded'))
-              ? orderPayment.get('amountRounded')
-              : orderPayment.get('amount');
-            if (
-              amount < 0 ||
-              (orderPayment.has('paymentRounding') &&
-                orderPayment.get('paymentRounding') &&
-                orderPayment.get('isReturnOrder'))
-            ) {
-              cashupPayment.totalReturns = OB.DEC.sub(
-                cashupPayment.totalReturns,
-                amount,
-                precision
-              );
-            } else {
-              cashupPayment.totalSales = OB.DEC.add(
-                cashupPayment.totalSales,
-                amount,
-                precision
-              );
-            }
-            // set used in transaction payment methods to true
-            cashupPayment.usedInCurrentTrx = true;
-          });
+        // Do the adjustment
+        if (ctaxSales) {
+          ctaxSales.taxAmount = OB.DEC.add(
+            ctaxSales.taxAmount,
+            OB.DEC.sub(OB.DEC.sub(grossSales, netSales), taxSales)
+          );
         }
+        if (ctaxReturns) {
+          ctaxReturns.taxAmount = OB.DEC.add(
+            ctaxReturns.taxAmount,
+            OB.DEC.sub(OB.DEC.sub(grossReturns, netReturns), taxReturns)
+          );
+        }
+
+        // save the calculated taxes into the cashup
+        newCashupTaxes.forEach(newCashupTax => {
+          const cashupTax = newCashup.cashTaxInfo.filter(function filter(
+            cashupTaxFilter
+          ) {
+            return (
+              cashupTaxFilter.name === newCashupTax.taxName &&
+              cashupTaxFilter.orderType === newCashupTax.taxOrderType
+            );
+          })[0];
+          if (cashupTax) {
+            cashupTax.amount = OB.DEC.add(
+              cashupTax.amount,
+              newCashupTax.taxAmount
+            );
+          } else {
+            newCashup.cashTaxInfo.push({
+              id: OB.App.UUID.generate(),
+              name: newCashupTax.taxName,
+              amount: newCashupTax.taxAmount,
+              orderType: newCashupTax.taxOrderType
+            });
+          }
+        });
+
+        // set all payment methods to not used in the trx
+        newCashup.cashPaymentMethodInfo.forEach(paymentMethod => {
+          if (paymentMethod.usedInCurrentTrx !== false) {
+            // eslint-disable-next-line no-param-reassign
+            paymentMethod.usedInCurrentTrx = false;
+          }
+        });
+
+        order.get('payments').models.forEach(orderPayment => {
+          const cashupPayment = newCashup.cashPaymentMethodInfo.filter(
+            function filter(cashupPaymentMethodFilter) {
+              return (
+                cashupPaymentMethodFilter.searchKey ===
+                  orderPayment.get('kind') && !orderPayment.get('isPrePayment')
+              );
+            }
+          )[0];
+          if (!cashupPayment) {
+            // We cannot find this payment in local database, it must be a new payment method, we skip it.
+            return;
+          }
+          precision =
+            OB.MobileApp.model.paymentnames[cashupPayment.searchKey]
+              .obposPosprecision;
+          amount = _.isNumber(orderPayment.get('amountRounded'))
+            ? orderPayment.get('amountRounded')
+            : orderPayment.get('amount');
+          if (
+            amount < 0 ||
+            (orderPayment.has('paymentRounding') &&
+              orderPayment.get('paymentRounding') &&
+              orderPayment.get('isReturnOrder'))
+          ) {
+            cashupPayment.totalReturns = OB.DEC.sub(
+              cashupPayment.totalReturns,
+              amount,
+              precision
+            );
+          } else {
+            cashupPayment.totalSales = OB.DEC.add(
+              cashupPayment.totalSales,
+              amount,
+              precision
+            );
+          }
+          // set used in transaction payment methods to true
+          cashupPayment.usedInCurrentTrx = true;
+        });
       });
 
       return newCashup;
