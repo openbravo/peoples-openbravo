@@ -219,7 +219,7 @@
       const paymentMethod = OB.App.State.getState().Cashup.cashPaymentMethodInfo.find(
         payment => payment.paymentMethodId === paymentMethodId
       );
-      // (totalDeposits - totalDrops) + startingCash + (totalSales - totalReturns)
+      // (totalDeposits - totalDrops) + startingCash + (totalSales - totalReturns) - Deposits or Drops in Draft
       const cash = OB.DEC.add(
         OB.DEC.sub(paymentMethod.totalDeposits, paymentMethod.totalDrops),
         OB.DEC.add(
@@ -227,9 +227,20 @@
           OB.DEC.sub(paymentMethod.totalSales, paymentMethod.totalReturns)
         )
       );
+      const cashInDraft = paymentMethod.cashManagements.reduce(
+        function getCashInDraft(total, cashManagement) {
+          if (cashManagement.isDraft) {
+            return cashManagement.type === 'deposit'
+              ? total + cashManagement.amount
+              : total - cashManagement.amount;
+          }
+          return 0;
+        },
+        0
+      );
       const currentCash = OB.App.State.Cashup.Utils.toDefaultCurrency(
         payments[paymentMethod.searchKey].paymentMethod.currency,
-        cash,
+        OB.DEC.add(cash, cashInDraft),
         defaultCurrencyId,
         conversions
       );
