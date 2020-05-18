@@ -22,7 +22,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2019 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2020 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -116,6 +116,7 @@
     v_R_Reservedqty NUMBER;
     v_RS_Quantity NUMBER;
     v_RS_Releasedqty NUMBER;
+    v_bpartnerExtref C_Order.bpartner_extref%TYPE:=null;
 
   BEGIN
   
@@ -321,6 +322,22 @@
 
       IF(v_bp_isactive = 'N') THEN
         RAISE_APPLICATION_ERROR(-20000, '@InActiveBusinessPartner@');
+      END IF;
+
+      -- Check no more than one bpartner_extref is included
+      v_count:=0;
+      FOR Cur_Order IN (
+          SELECT distinct(o.bpartner_extref) as bpartner_extref
+          FROM C_Order o
+          JOIN C_OrderLine ol on (o.c_order_id=ol.c_order_id)
+          JOIN M_InoutLine ml on (ol.c_orderline_id = ml.c_orderline_id)
+          WHERE ml.m_inout_id = v_Record_ID)
+      LOOP
+        v_count:=v_count+1;
+        v_bpartnerExtref:=Cur_Order.bpartner_extref;
+      END LOOP;
+      IF (v_count > 1) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@MoreThanOneExtBPReferences@');
       END IF;
 
       SELECT CASE WHEN (m.ISSOTRX='Y') THEN customer_blocking ELSE vendor_blocking END, CASE WHEN (m.ISSOTRX='Y') 
@@ -1014,7 +1031,8 @@
             DocAction='--',
             Process_Goods_Java='--',
             Updated=now(),
-            UpdatedBy=v_User
+            UpdatedBy=v_User,
+            bpartner_extref=v_bpartnerExtref
           WHERE M_INOUT.M_INOUT_ID=Cur_InOut.M_INOUT_ID;
           --
           

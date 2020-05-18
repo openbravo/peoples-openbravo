@@ -60,6 +60,7 @@
   Cur_lineqty RECORD;
   Cur_InvoiceTax RECORD;
   Cur_Offer RECORD;
+  Cur_Order RECORD;
 
   -- Record Info
   v_Client_ID VARCHAR2(32);
@@ -172,6 +173,7 @@
   v_prepaymentamt NUMBER;
   v_hasTaxes NUMBER;
   v_calendarId C_CALENDAR.C_CALENDAR_ID%TYPE;
+  v_bpartnerExtref C_Order.bpartner_extref%TYPE:=null;
    
 BEGIN
   IF (p_PInstance_ID IS NOT NULL) THEN
@@ -335,6 +337,22 @@ BEGIN --BODY
 
     IF(v_bp_isactive = 'N') THEN
       RAISE_APPLICATION_ERROR(-20000, '@InActiveBusinessPartner@');
+    END IF;
+
+    -- Check no more than one bpartner_extref is included
+    v_count:=0;
+    FOR Cur_Order IN (
+          SELECT distinct(o.bpartner_extref) as bpartner_extref
+          FROM C_Order o
+          JOIN C_OrderLine ol on (o.c_order_id=ol.c_order_id)
+          JOIN C_InvoiceLine il on (ol.c_orderline_id = il.c_orderline_id)
+          WHERE il.c_invoice_id = v_Record_ID)
+    LOOP
+      v_count:=v_count+1;
+      v_bpartnerExtref:=Cur_Order.bpartner_extref;
+    END LOOP;
+    IF (v_count > 1) THEN
+      RAISE_APPLICATION_ERROR(-20000, '@MoreThanOneExtBPReferences@');
     END IF;
 
     /*
@@ -1788,7 +1806,8 @@ IF (NOT FINISH_PROCESS) THEN
         Processed='Y',
         DocAction='RE',
         Updated=now(),
-        UpdatedBy=v_UpdatedBy
+        UpdatedBy=v_UpdatedBy,
+        bpartner_extref=v_bpartnerExtref
     WHERE C_Invoice_ID=v_Record_ID;
     -- Update M_Inout isCompletelyInvoiced flag as Yes when m_inoutline
     -- associated with invoice line is completely invoiced. This flag is
