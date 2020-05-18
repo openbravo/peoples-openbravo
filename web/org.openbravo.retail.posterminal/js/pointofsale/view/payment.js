@@ -2531,6 +2531,11 @@ enyo.kind({
           .returnDocNoPrefix,
         quotationSequencePrefix: OB.MobileApp.model.get('terminal')
           .quotationDocNoPrefix,
+        fullReturnInvoiceSequencePrefix: OB.MobileApp.model.get('terminal')
+          .fullReturnInvoiceDocNoPrefix,
+        simplifiedReturnInvoiceSequencePrefix: OB.MobileApp.model.get(
+          'terminal'
+        ).simplifiedReturnInvoiceDocNoPrefix,
         documentNumberSeperator: OB.Model.Order.prototype.includeDocNoSeperator
           ? '/'
           : '',
@@ -2539,6 +2544,12 @@ enyo.kind({
         salesWithOneLineNegativeAsReturns: OB.MobileApp.model.get('permissions')
           .OBPOS_SalesWithOneLineNegativeAsReturns
       });
+      if (OB.UTIL.RfidController.isRfidConfigured()) {
+        OB.UTIL.RfidController.processRemainingCodes(
+          OB.MobileApp.model.receipt
+        );
+        OB.UTIL.RfidController.updateEpcBuffers();
+      }
       OB.MobileApp.model.orderList.deleteCurrent();
       OB.UTIL.ProcessController.finish('tapDoneButton', execution);
       return;

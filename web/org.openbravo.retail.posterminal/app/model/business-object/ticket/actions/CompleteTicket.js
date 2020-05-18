@@ -16,55 +16,59 @@
     'completeTicket',
     (globalState, payload) => {
       const newGlobalState = { ...globalState };
-      const newTicket = { ...newGlobalState.Ticket };
+      let ticket = { ...newGlobalState.Ticket };
+      let documentSequence = { ...newGlobalState.DocumentSequence };
 
       const {
         cashUpId,
         returnSequencePrefix,
         quotationSequencePrefix,
+        fullReturnInvoiceSequencePrefix,
+        simplifiedReturnInvoiceSequencePrefix,
         documentNumberSeperator,
         documentNumberPadding,
         salesWithOneLineNegativeAsReturns
       } = payload;
 
-      newTicket.created = new Date().getTime();
-      newTicket.obposAppCashup = cashUpId;
+      ticket.created = new Date().getTime();
+      ticket.obposAppCashup = cashUpId;
 
       // Document Sequence calculation
-      const sequenceName = OB.App.State.DocumentSequence.Utils.getOrderSequenceName(
-        newTicket,
+      ({
+        ticket,
+        documentSequence
+      } = OB.App.State.DocumentSequence.Utils.generateTicketDocumentSequence(
+        ticket,
+        documentSequence,
         returnSequencePrefix,
         quotationSequencePrefix,
-        salesWithOneLineNegativeAsReturns
-      );
-      const newDocumentSequence = OB.App.State.DocumentSequence.Utils.increaseSequence(
-        newGlobalState.DocumentSequence,
-        sequenceName
-      );
-      const { sequencePrefix, sequenceNumber } = newDocumentSequence[
-        sequenceName
-      ];
-      newTicket.sequenceName = sequenceName;
-      newTicket.sequenceNumber = sequenceNumber;
-      newTicket.documentNo = OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
-        sequencePrefix,
+        fullReturnInvoiceSequencePrefix,
+        simplifiedReturnInvoiceSequencePrefix,
         documentNumberSeperator,
         documentNumberPadding,
-        sequenceNumber
-      );
+        salesWithOneLineNegativeAsReturns
+      ));
 
       // FIXME: Remove once properties are mapped
-      newTicket.gross = newTicket.grossAmount;
-      newTicket.net = newTicket.netAmount;
-      newTicket.bp = newTicket.businessPartner;
+      ticket.bp = ticket.businessPartner;
+      ticket.gross = ticket.grossAmount;
+      ticket.net = ticket.netAmount;
+      ticket.lines = ticket.lines.map(line => {
+        return {
+          ...line,
+          gross: line.gross || line.grossAmount,
+          net: line.net || line.netAmount,
+          taxLines: line.taxLines || line.taxes
+        };
+      });
 
       const newMessage = OB.App.State.Messages.Utils.createNewMessage(
         'Order',
         'org.openbravo.retail.posterminal.OrderLoader',
-        newTicket
+        ticket
       );
 
-      newGlobalState.DocumentSequence = newDocumentSequence;
+      newGlobalState.DocumentSequence = documentSequence;
       newGlobalState.Messages = [...newGlobalState.Messages, newMessage];
 
       return newGlobalState;

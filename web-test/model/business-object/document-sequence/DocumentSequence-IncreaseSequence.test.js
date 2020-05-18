@@ -8,9 +8,9 @@
  */
 
 require('./SetupDocumentSequence');
-const deepfreeze = require('deepfreeze');
 require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/document-sequence/actions/IncreaseSequence');
 require('./SetupDocumentSequenceUtils');
+const deepfreeze = require('deepfreeze');
 
 describe('Document Sequence Increment Sequence action', () => {
   it('should keep same state if empty state and null sequenceName in payload', () => {

@@ -14,6 +14,23 @@
 (() => {
   OB.App.StateAPI.DocumentSequence.registerUtilityFunctions({
     /**
+     * FIXME: Move to TicketUtils
+     * Checks whether a ticket is a return or a sale.
+     *
+     * @returns {boolean} true in case the ticket is a return, false in case it is a sale.
+     */
+    isReturnTicket(ticket, salesWithOneLineNegativeAsReturns) {
+      if (!ticket.lines) {
+        return false;
+      }
+
+      const negativeLines = ticket.lines.filter(line => line.qty < 0).length;
+      return (
+        negativeLines === ticket.lines.length ||
+        (negativeLines > 0 && salesWithOneLineNegativeAsReturns)
+      );
+    },
+    /**
      * Increases in one the sequence defined with the given sequence name.
      *
      * @returns {number} The new document sequence.
@@ -60,7 +77,7 @@
       quotationSequencePrefix,
       salesWithOneLineNegativeAsReturns
     ) {
-      const isReturnTicket = OB.App.State.Ticket.Utils.isReturnTicket(
+      const isReturnTicket = OB.App.State.DocumentSequence.Utils.isReturnTicket(
         ticket,
         salesWithOneLineNegativeAsReturns
       );
@@ -84,7 +101,7 @@
       simplifiedReturnInvoiceSequencePrefix,
       salesWithOneLineNegativeAsReturns
     ) {
-      const isReturnTicket = OB.App.State.Ticket.Utils.isReturnTicket(
+      const isReturnTicket = OB.App.State.DocumentSequence.Utils.isReturnTicket(
         ticket,
         salesWithOneLineNegativeAsReturns
       );
@@ -106,6 +123,59 @@
         return 'simplifiedinvoiceslastassignednum';
       }
       return 'fullinvoiceslastassignednum';
+    },
+
+    /**
+     * Generates a document number for given ticket increasing the corresponding sequence.
+     *
+     * @returns {object} The new state of Ticket and DocumentSequence after document number generation.
+     */
+    generateTicketDocumentSequence(
+      ticket,
+      documentSequence,
+      returnSequencePrefix,
+      quotationSequencePrefix,
+      fullReturnInvoiceSequencePrefix,
+      simplifiedReturnInvoiceSequencePrefix,
+      documentNumberSeperator,
+      documentNumberPadding,
+      salesWithOneLineNegativeAsReturns
+    ) {
+      if (ticket.documentNo) {
+        return { ticket, documentSequence };
+      }
+
+      const sequenceName = ticket.isInvoice
+        ? OB.App.State.DocumentSequence.Utils.getInvoiceSequenceName(
+            ticket,
+            fullReturnInvoiceSequencePrefix,
+            simplifiedReturnInvoiceSequencePrefix,
+            salesWithOneLineNegativeAsReturns
+          )
+        : OB.App.State.DocumentSequence.Utils.getOrderSequenceName(
+            ticket,
+            returnSequencePrefix,
+            quotationSequencePrefix,
+            salesWithOneLineNegativeAsReturns
+          );
+      const newDocumentSequence = OB.App.State.DocumentSequence.Utils.increaseSequence(
+        documentSequence,
+        sequenceName
+      );
+      const { sequencePrefix, sequenceNumber } = newDocumentSequence[
+        sequenceName
+      ];
+      const newTicket = { ...ticket };
+      newTicket.obposSequencename = sequenceName;
+      newTicket.obposSequencenumber = sequenceNumber;
+      newTicket.documentNo = OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
+        sequencePrefix,
+        documentNumberSeperator,
+        documentNumberPadding,
+        sequenceNumber
+      );
+
+      return { ticket: newTicket, documentSequence: newDocumentSequence };
     }
   });
 })();
