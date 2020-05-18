@@ -46,8 +46,7 @@
           ((countLayawayAsSales &&
             !(order.get('isLayaway') && !order.get('voidLayaway'))) ||
             (!countLayawayAsSales &&
-              order.isFullyPaid() &&
-              (order.get('isLayaway') && !order.get('voidLayaway'))))
+              (order.get('payOnCredit') || order.get('completeTicket'))))
         ) {
           order.get('lines').models.forEach(line => {
             if (order.get('priceIncludesTax')) {
