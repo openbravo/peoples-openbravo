@@ -69,46 +69,49 @@
         return;
       }
       // Create new instances of original definitions for manual promotions
-      discountInfoForLine.forEach(promotion => {
-        if (promotion.manual) {
-          let promotionRuleId = promotion.ruleId,
-            promotionDiscountInstance = promotion.discountinstance,
-            promotionNoOrder = promotion.noOrder,
-            promotionSplitAmt = promotion.splitAmt;
-
-          let discountInstance = ticketManualPromos.find(ticketManualPromo => {
-            return (
-              ticketManualPromo.ruleId === promotionRuleId &&
-              ticketManualPromo.discountinstance ===
-                promotionDiscountInstance &&
-              ticketManualPromo.noOrder === promotionNoOrder &&
-              ticketManualPromo.splitAmt === promotionSplitAmt
-            );
-          });
-
-          let newPromoInstance = {};
-
-          for (let key in discountInstance) {
-            newPromoInstance[key] = discountInstance[key];
-          }
-
-          for (let key in promotion) {
-            newPromoInstance[key] = promotion[key];
-          }
-
-          delete newPromoInstance.linesToApply;
-
-          for (let key in newPromoInstance) {
-            promotion[key] = newPromoInstance[key];
-          }
-        }
-        promotion.calculatedOnDiscountEngine = true;
-        promotion.obdiscQtyoffer = promotion.qtyOffer;
-        promotion.displayedTotalAmount = promotion.amt;
-        promotion.fullAmt = promotion.amt;
-        promotion.actualAmt = promotion.amt;
-      });
+      discountInfoForLine.forEach(promotion =>
+        toNewEngineManualPromotion(promotion, ticketManualPromos)
+      );
     });
+  };
+
+  const toNewEngineManualPromotion = (promotion, ticketManualPromos) => {
+    if (promotion.manual) {
+      let promotionRuleId = promotion.ruleId,
+        promotionDiscountInstance = promotion.discountinstance,
+        promotionNoOrder = promotion.noOrder,
+        promotionSplitAmt = promotion.splitAmt;
+
+      let discountInstance = ticketManualPromos.find(ticketManualPromo => {
+        return (
+          ticketManualPromo.ruleId === promotionRuleId &&
+          ticketManualPromo.discountinstance === promotionDiscountInstance &&
+          ticketManualPromo.noOrder === promotionNoOrder &&
+          ticketManualPromo.splitAmt === promotionSplitAmt
+        );
+      });
+
+      let newPromoInstance = {};
+
+      for (let key in discountInstance) {
+        newPromoInstance[key] = discountInstance[key];
+      }
+
+      for (let key in promotion) {
+        newPromoInstance[key] = promotion[key];
+      }
+
+      delete newPromoInstance.linesToApply;
+
+      for (let key in newPromoInstance) {
+        promotion[key] = newPromoInstance[key];
+      }
+    }
+    promotion.calculatedOnDiscountEngine = true;
+    promotion.obdiscQtyoffer = promotion.qtyOffer;
+    promotion.displayedTotalAmount = promotion.amt;
+    promotion.fullAmt = promotion.amt;
+    promotion.actualAmt = promotion.amt;
   };
 
   const translateTicket = receipt => {
@@ -144,6 +147,23 @@
       };
     }
     return newTicket;
+  };
+
+  OB.Discounts.Pos.applyDiscounts = (ticket, rules, bpSets) => {
+    const result = OB.Discounts.applyDiscounts(ticket, rules, bpSets);
+    ticket.lines.forEach(line => {
+      const promotions =
+        result.lines[line.id] && result.lines[line.id].discounts.promotions;
+      if (!promotions || promotions.length === 0) {
+        return;
+      }
+      promotions.forEach(promotion =>
+        toNewEngineManualPromotion(
+          promotion,
+          ticket.discountsFromUser.manualPromotions
+        )
+      );
+    });
   };
 
   OB.Discounts.Pos.calculateDiscounts = (receipt, callback) => {

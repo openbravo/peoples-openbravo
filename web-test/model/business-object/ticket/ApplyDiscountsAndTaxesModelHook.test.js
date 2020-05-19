@@ -27,9 +27,12 @@ OB = {
 };
 
 global.lodash = require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/lodash-4.17.15');
-const deepfreeze = require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/deepfreeze-2.0.0');
+const deepfreeze = require('deepfreeze');
 require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/StateAPI');
+require('../../../../../org.openbravo.client.kernel/web/org.openbravo.client.kernel/js/BigDecimal-all-1.0.3.min.js');
+require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/source/utils/ob-arithmetic.js');
 OB.App.StateAPI.registerModel('Ticket');
+require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/TicketUtils');
 require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/ApplyDiscountsAndTaxesModelHook');
 
 describe('Apply Discounts and Taxes Model Hook', () => {
@@ -41,7 +44,8 @@ describe('Apply Discounts and Taxes Model Hook', () => {
       {
         id: 'BB66D8D151964A8A39586FCD7D9A394D',
         qty: 1,
-        price: 300
+        price: 300,
+        pricenet: 223.14
       }
     ]
   };
@@ -114,7 +118,7 @@ describe('Apply Discounts and Taxes Model Hook', () => {
   };
 
   const setDiscountsEngineResultAs = obj => {
-    OB.Discounts.applyDiscounts = jest.fn().mockReturnValue(obj);
+    OB.Discounts.Pos.applyDiscounts = jest.fn().mockReturnValue(obj);
   };
 
   const setTaxesEngineResultAs = obj => {
@@ -137,23 +141,22 @@ describe('Apply Discounts and Taxes Model Hook', () => {
 
     const result = hook(deepfreeze(ticket), payload());
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       id: '6FD3CDDDBB2A3805895853BB22F2E9F7',
-      gross: 270,
-      net: 223.14,
+      grossAmount: 270,
+      netAmount: 223.14,
       priceIncludesTax: true,
       qty: 1,
       lines: [
         {
           id: 'BB66D8D151964A8A39586FCD7D9A394D',
           qty: 1,
-          gross: 300,
           discountedGrossAmount: 270,
           discountedNetAmount: 223.14,
-          lineRate: 1.21,
-          net: 223.14,
+          taxRate: 1.21,
+          netAmount: 223.14,
           price: 300,
-          pricenet: 223.14,
+          netPrice: 223.14,
           promotions: [
             {
               ruleId: 'C26B841C84B14FE2AB1A334DD3672E87',
@@ -161,12 +164,11 @@ describe('Apply Discounts and Taxes Model Hook', () => {
               discountType: '697A7AB9FD9C4EE0A3E891D3D3CCA0A7',
               name: 'GPS_10_per',
               qtyOffer: 1,
-              applyNext: true,
-              calculatedOnDiscountEngine: true
+              applyNext: true
             }
           ],
           tax: '5235D8E99A2749EFA17A5C92A52AEFC6',
-          taxLines: {
+          taxes: {
             '5235D8E99A2749EFA17A5C92A52AEFC6': {
               id: '5235D8E99A2749EFA17A5C92A52AEFC6',
               amount: 46.86,

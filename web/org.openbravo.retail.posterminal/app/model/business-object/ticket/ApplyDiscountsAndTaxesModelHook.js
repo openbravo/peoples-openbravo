@@ -15,9 +15,9 @@
 OB.App.StateAPI.Ticket.addModelHook({
   generatePayload: () => {
     return {
-      discountRules: [...OB.Discounts.Pos.ruleImpls],
-      taxRules: [...OB.Taxes.Pos.ruleImpls],
-      bpSets: { ...OB.Discounts.Pos.bpSets }
+      discountRules: OB.Discounts.Pos.ruleImpls,
+      taxRules: OB.Taxes.Pos.ruleImpls,
+      bpSets: OB.Discounts.Pos.bpSets
     };
   },
 
@@ -26,7 +26,7 @@ OB.App.StateAPI.Ticket.addModelHook({
     const { priceIncludesTax } = newTicket;
 
     // calculate discounts
-    const discountsResult = OB.Discounts.applyDiscounts(
+    const discountsResult = OB.Discounts.Pos.applyDiscounts(
       newTicket,
       payload.discountRules,
       payload.bpSets
@@ -39,22 +39,16 @@ OB.App.StateAPI.Ticket.addModelHook({
         discountsResult.lines[line.id].discounts;
       const newLine = {
         ...line,
-        gross: line.qty * line.price,
-        discountedGrossAmount: line.qty * line.price,
-        net: line.qty * line.pricenet,
-        discountedNetAmount: line.qty * line.pricenet
+        discountedGrossAmount:
+          discounts && priceIncludesTax
+            ? discounts.finalLinePrice
+            : OB.DEC.mul(line.qty, line.price),
+        discountedNetAmount:
+          discounts && !priceIncludesTax
+            ? discounts.finalLinePrice
+            : OB.DEC.mul(line.qty, line.pricenet)
       };
-      if (discounts) {
-        if (priceIncludesTax) {
-          newLine.discountedGrossAmount = discounts.finalLinePrice;
-        } else {
-          newLine.discountedNetAmount = discounts.finalLinePrice;
-        }
-        newLine.promotions = discounts.promotions.map(promotion => ({
-          ...promotion,
-          calculatedOnDiscountEngine: true
-        }));
-      }
+      newLine.promotions = discounts.promotions;
       return newLine;
     });
 
