@@ -333,19 +333,11 @@ enyo.kind({
   classes: 'obUiBpDetailsContextMenuItem',
   i18NLabel: 'OBPOS_BPViewDetails',
   selectItem: async function(bpartner) {
-    bpartner.set('ignoreSetBP', true, {
-      silent: true
-    });
-    var dialog = this.owner.owner.dialog;
-
-    try {
-      let bp = await OB.App.MasterdataModels.BusinessPartner.withId(
-        bpartner.get('bpartnerId')
-      );
+    function successCallback(bp) {
       dialog.bubble('onShowPopup', {
         popup: 'customerView',
         args: {
-          businessPartner: OB.Dal.transform(OB.Model.BusinessPartner, bp),
+          businessPartner: bp,
           target: dialog.target,
           navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(
             dialog.owner.owner.args.navigationPath,
@@ -353,8 +345,26 @@ enyo.kind({
           )
         }
       });
-    } catch (error) {
-      OB.error(error);
+    }
+    bpartner.set('ignoreSetBP', true, {
+      silent: true
+    });
+    var dialog = this.owner.owner.dialog;
+    if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+      OB.Dal.get(
+        OB.Model.BusinessPartner,
+        bpartner.get('bpartnerId'),
+        successCallback
+      );
+    } else {
+      try {
+        let bp = await OB.App.MasterdataModels.BusinessPartner.withId(
+          bpartner.get('bpartnerId')
+        );
+        successCallback(OB.Dal.transform(OB.Model.BusinessPartner, bp));
+      } catch (error) {
+        OB.error(error);
+      }
     }
     return true;
   },
@@ -374,20 +384,11 @@ enyo.kind({
       silent: true
     });
 
-    var dialog = this.owner.owner.dialog,
-      navigationPath = OB.UTIL.BusinessPartnerSelector.cloneAndPush(
-        dialog.owner.owner.args.navigationPath,
-        'modalcustomer'
-      );
-
-    try {
-      let bp = await OB.App.MasterdataModels.BusinessPartner.withId(
-        bpartner.get('bpartnerId')
-      );
+    function successCallback(bp) {
       dialog.bubble('onShowPopup', {
         popup: 'customerCreateAndEdit',
         args: {
-          businessPartner: OB.Dal.transform(OB.Model.BusinessPartner, bp),
+          businessPartner: bp,
           target: dialog.target,
           navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(
             navigationPath,
@@ -396,8 +397,27 @@ enyo.kind({
           cancelNavigationPath: navigationPath
         }
       });
-    } catch (error) {
-      OB.error(error);
+    }
+    var dialog = this.owner.owner.dialog,
+      navigationPath = OB.UTIL.BusinessPartnerSelector.cloneAndPush(
+        dialog.owner.owner.args.navigationPath,
+        'modalcustomer'
+      );
+    if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+      OB.Dal.get(
+        OB.Model.BusinessPartner,
+        bpartner.get('bpartnerId'),
+        successCallback
+      );
+    } else {
+      try {
+        let bp = await OB.App.MasterdataModels.BusinessPartner.withId(
+          bpartner.get('bpartnerId')
+        );
+        successCallback(OB.Dal.transform(OB.Model.BusinessPartner, bp));
+      } catch (error) {
+        OB.error(error);
+      }
     }
 
     return true;
@@ -414,19 +434,12 @@ enyo.kind({
   classes: 'obUiBpAddressContextMenuItem',
   i18NLabel: 'OBPOS_BPAddress',
   selectItem: async function(bpartner) {
-    var dialog = this.owner.owner.dialog;
-    bpartner.set('ignoreSetBP', true, {
-      silent: true
-    });
-    try {
-      let bp = await OB.App.MasterdataModels.BusinessPartner.withId(
-        bpartner.get('bpartnerId')
-      );
+    function successCallback(bp) {
       OB.MobileApp.view.$.containerWindow.getRoot().bubble('onShowPopup', {
         popup: 'modalcustomeraddress',
         args: {
           target: 'order',
-          businessPartner: OB.Dal.transform(OB.Model.BusinessPartner, bp),
+          businessPartner: bp,
           manageAddress: true,
           clean: true,
           navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(
@@ -435,9 +448,30 @@ enyo.kind({
           )
         }
       });
-    } catch (error) {
-      OB.error(error);
     }
+
+    var dialog = this.owner.owner.dialog;
+    bpartner.set('ignoreSetBP', true, {
+      silent: true
+    });
+
+    if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+      OB.Dal.get(
+        OB.Model.BusinessPartner,
+        bpartner.get('bpartnerId'),
+        successCallback
+      );
+    } else {
+      try {
+        let bp = await OB.App.MasterdataModels.BusinessPartner.withId(
+          bpartner.get('bpartnerId')
+        );
+        successCallback(OB.Dal.transform(OB.Model.BusinessPartner, bp));
+      } catch (error) {
+        OB.error(error);
+      }
+    }
+
     return true;
   },
   create: function() {
@@ -455,6 +489,20 @@ enyo.kind({
     onShowPopup: ''
   },
   selectItem: async function(bpartner) {
+    function successCallback(bp) {
+      me.doShowPopup({
+        popup: 'modalReceiptSelectorCustomerView',
+        args: {
+          multiselect: true,
+          target: dialog.target,
+          businessPartner: bp,
+          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(
+            dialog.owner.owner.args.navigationPath,
+            'modalcustomer'
+          )
+        }
+      });
+    }
     if (OB.MobileApp.model.get('connectedToERP')) {
       var me = this,
         dialog = this.owner.owner.dialog;
@@ -463,27 +511,36 @@ enyo.kind({
       });
       dialog.owner.owner.hide();
 
-      try {
-        let bp = await OB.App.MasterdataModels.BusinessPartner.withId(
-          bpartner.get('bpartnerId')
-        );
-        me.doShowPopup({
-          popup: 'modalReceiptSelectorCustomerView',
-          args: {
-            multiselect: true,
-            target: dialog.target,
-            businessPartner: OB.Dal.transform(OB.Model.BusinessPartner, bp),
-            navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(
-              dialog.owner.owner.args.navigationPath,
-              'modalcustomer'
-            )
+      if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+        OB.Dal.get(
+          OB.Model.BusinessPartner,
+          bpartner.get('bpartnerId'),
+          successCallback,
+          function() {
+            OB.UTIL.showConfirmation.display(
+              OB.I18N.getLabel('OBMOBC_Error'),
+              OB.I18N.getLabel('OBPOS_CustomerNotFound')
+            );
+          },
+          function() {
+            OB.UTIL.showConfirmation.display(
+              OB.I18N.getLabel('OBMOBC_Error'),
+              OB.I18N.getLabel('OBPOS_CustomerNotFound')
+            );
           }
-        });
-      } catch (error) {
-        OB.UTIL.showConfirmation.display(
-          OB.I18N.getLabel('OBMOBC_Error'),
-          OB.I18N.getLabel('OBPOS_CustomerNotFound')
         );
+      } else {
+        try {
+          let bp = await OB.App.MasterdataModels.BusinessPartner.withId(
+            bpartner.get('bpartnerId')
+          );
+          successCallback(OB.Dal.transform(OB.Model.BusinessPartner, bp));
+        } catch (error) {
+          OB.UTIL.showConfirmation.display(
+            OB.I18N.getLabel('OBMOBC_Error'),
+            OB.I18N.getLabel('OBPOS_CustomerNotFound')
+          );
+        }
       }
     } else {
       OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
@@ -697,17 +754,28 @@ enyo.kind({
   },
   loadPresetCustomer: async function(bpartnerId) {
     var me = this;
-
-    try {
-      let bp = await OB.App.MasterdataModels.BusinessPartner.withId(bpartnerId);
-      bp = OB.Dal.transform(OB.Model.BusinessPartner, bp);
-      bp.set('bpartnerId', bpartnerId, {
-        silent: true
+    if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+      OB.Dal.get(OB.Model.BusinessPartner, bpartnerId, function(bp) {
+        bp.set('bpartnerId', bpartnerId, {
+          silent: true
+        });
+        me.bpsList.reset([bp]);
+        me.$.stBPAssignToReceipt.$.tbody.show();
       });
-      me.bpsList.reset([bp]);
-      me.$.stBPAssignToReceipt.$.tbody.show();
-    } catch (error) {
-      OB.error(error);
+    } else {
+      try {
+        let bp = await OB.App.MasterdataModels.BusinessPartner.withId(
+          bpartnerId
+        );
+        bp = OB.Dal.transform(OB.Model.BusinessPartner, bp);
+        bp.set('bpartnerId', bpartnerId, {
+          silent: true
+        });
+        me.bpsList.reset([bp]);
+        me.$.stBPAssignToReceipt.$.tbody.show();
+      } catch (error) {
+        OB.error(error);
+      }
     }
   },
   clearAction: function(inSender, inEvent) {
@@ -844,7 +912,7 @@ enyo.kind({
       }
     }
     function applySorting(array, prop) {
-      array.sort((a, b) => a.get(prop).localeCompare(b.get(prop)));
+      return array.sort((a, b) => a.get(prop).localeCompare(b.get(prop)));
     }
     function applyLimit(dataBps) {
       const DEFAULT_QUERY_LIMIT = 300;
@@ -856,7 +924,7 @@ enyo.kind({
       } else {
         limit = DEFAULT_QUERY_LIMIT;
       }
-      dataBps.slice(0, limit);
+      return dataBps.slice(0, limit);
     }
     function successCallbackBPs(dataBps) {
       me.$.renderLoading.hide();
@@ -907,7 +975,7 @@ enyo.kind({
       }
     }
 
-    if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+    if (OB.UTIL.remoteSearch(OB.Model.BusinessPartner)) {
       var criteria = {
         _orderByClause: ''
       };
@@ -990,13 +1058,13 @@ enyo.kind({
           for (const filter of inEvent.filters) {
             if (filter.entity === 'BusinessPartner') {
               criteriaAdvancedBP.criterion(
-                filter.column,
+                filter.entityColumn,
                 filter.value,
                 'includes'
               );
             } else if (filter.entity === 'BusinessPartnerLocation') {
               criteriaAdvancedBPLoc.criterion(
-                filter.column,
+                filter.entityColumn,
                 filter.value,
                 'includes'
               );
@@ -1005,7 +1073,7 @@ enyo.kind({
         }
         if (inEvent.orderby && inEvent.orderby.entity === 'BusinessPartner') {
           criteriaAdvancedBP.orderBy(
-            inEvent.orderby.column,
+            inEvent.orderby.entityColumn,
             inEvent.orderby.direction
           );
         } else if (
@@ -1013,7 +1081,7 @@ enyo.kind({
           inEvent.orderby.entity === 'BusinessPartnerLocation'
         ) {
           criteriaAdvancedBPLoc.orderBy(
-            inEvent.orderby.column,
+            inEvent.orderby.entityColumn,
             inEvent.orderby.direction
           );
         }
@@ -1107,8 +1175,8 @@ enyo.kind({
             );
             createBPartnerFilterResult(relatedBP, bPLoc, dataBps);
           }
-          applySorting(dataBps, 'bpName');
-          applyLimit(dataBps);
+          dataBps = applySorting(dataBps, 'bpName');
+          dataBps = applyLimit(dataBps);
           successCallbackBPs(dataBps);
         } catch (error) {
           errorCallback(error);
@@ -1124,6 +1192,20 @@ enyo.kind({
     this.inherited(arguments);
   },
   init: function(model) {
+    function successCallback(loc, me, model) {
+      var shipping = null,
+        billing = null;
+      if (loc) {
+        if (!billing && loc.get('isBillTo')) {
+          billing = loc;
+        }
+        if (!shipping && loc.get('isShipTo')) {
+          shipping = loc;
+        }
+      }
+      me.loadBPLocations(model, shipping, billing);
+    }
+
     this.bpsList = new Backbone.Collection();
     this.$.stBPAssignToReceipt.setCollection(this.bpsList);
     this.bpsList.on(
@@ -1136,24 +1218,26 @@ enyo.kind({
         } else if (!model.get('ignoreSetBP')) {
           var me = this;
           if (model.get('bpLocactionId')) {
-            try {
-              let bPLocation = await OB.App.MasterdataModels.BusinessPartnerLocation.withId(
-                model.get('bpLocactionId')
+            if (
+              OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)
+            ) {
+              OB.Dal.get(
+                OB.Model.BPLocation,
+                model.get('bpLocactionId'),
+                function(loc) {
+                  successCallback(loc, me, model);
+                }
               );
-              let loc = OB.Dal.transform(OB.Model.BPLocation, bPLocation);
-              let shipping = null,
-                billing = null;
-              if (loc) {
-                if (!billing && loc.get('isBillTo')) {
-                  billing = loc;
-                }
-                if (!shipping && loc.get('isShipTo')) {
-                  shipping = loc;
-                }
+            } else {
+              try {
+                let bPLocation = await OB.App.MasterdataModels.BusinessPartnerLocation.withId(
+                  model.get('bpLocactionId')
+                );
+                let loc = OB.Dal.transform(OB.Model.BPLocation, bPLocation);
+                successCallback(loc, me, model);
+              } catch (error) {
+                OB.error(error);
               }
-              me.loadBPLocations(model, shipping, billing);
-            } catch (error) {
-              OB.error(error);
             }
           } else {
             me.loadBPLocations(model, null, null);
@@ -1181,30 +1265,7 @@ enyo.kind({
     }
   },
   setBPLocation: async function(bpartner, shipping, billing, locations) {
-    if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-      if (!shipping) {
-        OB.UTIL.showError(
-          OB.I18N.getLabel('OBPOS_BPartnerNoShippingAddress', [
-            bpartner.get('_identifier')
-          ])
-        );
-        return;
-      }
-      if (!billing) {
-        OB.UTIL.showError(
-          OB.I18N.getLabel('OBPOS_BPartnerNoInvoiceAddress', [
-            bpartner.get('_identifier')
-          ])
-        );
-        return;
-      }
-    }
-    var me = this;
-    try {
-      let bp = await OB.App.MasterdataModels.BusinessPartner.withId(
-        bpartner.get('bpartnerId')
-      );
-      bp = OB.Dal.transform(OB.Model.BusinessPartner, bp);
+    function successCallback(bp) {
       bp.setBPLocations(
         shipping,
         billing,
@@ -1226,8 +1287,43 @@ enyo.kind({
           target: me.target
         });
       }
-    } catch (error) {
-      OB.error(error);
+    }
+
+    if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+      if (!shipping) {
+        OB.UTIL.showError(
+          OB.I18N.getLabel('OBPOS_BPartnerNoShippingAddress', [
+            bpartner.get('_identifier')
+          ])
+        );
+        return;
+      }
+      if (!billing) {
+        OB.UTIL.showError(
+          OB.I18N.getLabel('OBPOS_BPartnerNoInvoiceAddress', [
+            bpartner.get('_identifier')
+          ])
+        );
+        return;
+      }
+    }
+    var me = this;
+    if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+      OB.Dal.get(
+        OB.Model.BusinessPartner,
+        bpartner.get('bpartnerId'),
+        successCallback
+      );
+    } else {
+      try {
+        let bp = await OB.App.MasterdataModels.BusinessPartner.withId(
+          bpartner.get('bpartnerId')
+        );
+        bp = OB.Dal.transform(OB.Model.BusinessPartner, bp);
+        successCallback(bp);
+      } catch (error) {
+        OB.error(error);
+      }
     }
   }
 });

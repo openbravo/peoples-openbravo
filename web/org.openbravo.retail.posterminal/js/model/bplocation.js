@@ -53,13 +53,8 @@
     },
     loadById: async function(CusAddrId, userCallback) {
       //search data in local DB and load it to this
-      const me = this;
-      try {
-        let bPLocation = await OB.App.MasterdataModels.BusinessPartnerLocation.withId(
-          CusAddrId
-        );
-        let customerAddr = OB.Dal.transform(OB.Model.BPLocation, bPLocation);
 
+      function successCallback(customerAddr) {
         if (!customerAddr || customerAddr.length === 0) {
           me.clearModelWith(null);
           userCallback(me);
@@ -67,8 +62,21 @@
           me.clearModelWith(customerAddr);
           userCallback(me);
         }
-      } catch (error) {
-        OB.error(error);
+      }
+      const me = this;
+
+      if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+        OB.Dal.get(OB.Model.BPLocation, CusAddrId, successCallback);
+      } else {
+        try {
+          let bPLocation = await OB.App.MasterdataModels.BusinessPartnerLocation.withId(
+            CusAddrId
+          );
+          let customerAddr = OB.Dal.transform(OB.Model.BPLocation, bPLocation);
+          successCallback(customerAddr);
+        } catch (error) {
+          OB.error(error);
+        }
       }
     },
     loadModel: function(customerAddr, userCallback) {

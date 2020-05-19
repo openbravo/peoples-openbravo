@@ -5815,13 +5815,13 @@
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
         if (oldbp.id !== businessPartner.id) {
           //Business Partner have changed
-          OB.Dal.saveOrUpdate(
-            businessPartner,
-            function() {},
-            function() {
-              OB.error(arguments);
-            }
-          );
+//          OB.Dal.saveOrUpdate(
+//            businessPartner,
+//            function() {},
+//            function() {
+//              OB.error(arguments);
+//            }
+//          );
           if (
             OB.MobileApp.model.hasPermission('OBPOS_remote.discount.bp', true)
           ) {
@@ -5883,37 +5883,53 @@
 
         var saveLocModel = async function(locModel, lid, callback) {
           if (businessPartner.get(locModel)) {
-            OB.Dal.saveOrUpdate(
-              businessPartner.get(locModel),
-              function() {},
-              function(tx, error) {
-                OB.UTIL.showError(error);
-              }
-            );
             if (callback) {
               callback();
             }
           } else if (businessPartner.get(lid)) {
-            try {
-              let bPLocation = await OB.App.MasterdataModels.BusinessPartnerLocation.withId(
-                businessPartner.get(lid)
-              );
-              let location = OB.Dal.transform(OB.Model.BPLocation, bPLocation);
-              OB.Dal.saveOrUpdate(
-                location,
-                function() {},
-                function(tx, error) {
-                  OB.UTIL.showError(error);
+            if (
+              OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)
+            ) {
+              OB.Dal.get(
+                OB.Model.BPLocation,
+                businessPartner.get(lid),
+                function(location) {
+                  businessPartner.set(locModel, location);
+                  if (callback) {
+                    callback();
+                  }
+                },
+                function() {
+                  OB.error(arguments);
+                  if (callback) {
+                    callback();
+                  }
+                },
+                function() {
+                  if (callback) {
+                    callback();
+                  }
                 }
               );
-              businessPartner.set(locModel, location);
-              if (callback) {
-                callback();
-              }
-            } catch (error) {
-              OB.error(arguments);
-              if (callback) {
-                callback();
+            } else {
+              try {
+                let bPLocation = await OB.App.MasterdataModels.BusinessPartnerLocation.withId(
+                  businessPartner.get(lid)
+                );
+                let location = OB.Dal.transform(
+                  OB.Model.BPLocation,
+                  bPLocation
+                );
+
+                businessPartner.set(locModel, location);
+                if (callback) {
+                  callback();
+                }
+              } catch (error) {
+                OB.error(arguments);
+                if (callback) {
+                  callback();
+                }
               }
             }
           } else {
@@ -10379,22 +10395,47 @@
             if (isLoadedPartiallyFromBackend) {
               finalCallback(bp, bpLoc, null);
             } else {
-              try {
-                let bPLocation = await OB.App.MasterdataModels.BusinessPartnerLocation.withId(
-                  bpLocId
+              if (
+                OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)
+              ) {
+                OB.Dal.get(
+                  OB.Model.BPLocation,
+                  bpLocId,
+                  function(bpLoc) {
+                    finalCallback(bp, bpLoc, null);
+                  },
+                  function(tx, error) {
+                    OB.UTIL.showError(error);
+                  },
+                  function() {
+                    loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(
+                      data
+                    ) {
+                      finalCallback(bp, data.bpLoc, null);
+                    });
+                  }
                 );
-                if (bPLocation) {
-                  let bpLoc = OB.Dal.transform(OB.Model.BPLocation, bPLocation);
-                  finalCallback(bp, bpLoc, null);
-                } else {
-                  loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(
-                    data
-                  ) {
-                    finalCallback(bp, data.bpLoc, null);
-                  });
+              } else {
+                try {
+                  let bPLocation = await OB.App.MasterdataModels.BusinessPartnerLocation.withId(
+                    bpLocId
+                  );
+                  if (bPLocation) {
+                    let bpLoc = OB.Dal.transform(
+                      OB.Model.BPLocation,
+                      bPLocation
+                    );
+                    finalCallback(bp, bpLoc, null);
+                  } else {
+                    loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(
+                      data
+                    ) {
+                      finalCallback(bp, data.bpLoc, null);
+                    });
+                  }
+                } catch (error) {
+                  OB.error(error);
                 }
-              } catch (error) {
-                OB.error(error);
               }
             }
           } else {
@@ -10480,22 +10521,43 @@
             }
           }
         };
-        try {
-          let bp = await OB.App.MasterdataModels.BusinessPartner.withId(bpId);
-          bp = OB.Dal.transform(OB.Model.BusinessPartner, bp);
-          if (bp !== undefined) {
-            loadLocations(bp);
-          } else {
-            loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(data) {
-              bpLoc = data.bpLoc;
-              if (bpLocId !== bpBillLocId) {
-                bpBillLoc = data.bpBillLoc;
-              }
-              loadLocations(data.bpartner);
-            });
+        if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+          OB.Dal.get(
+            OB.Model.BusinessPartner,
+            bpId,
+            function(bp) {
+              loadLocations(bp);
+            },
+            null,
+            function() {
+              //Empty
+              loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(data) {
+                bpLoc = data.bpLoc;
+                if (bpLocId !== bpBillLocId) {
+                  bpBillLoc = data.bpBillLoc;
+                }
+                loadLocations(data.bpartner);
+              });
+            }
+          );
+        } else {
+          try {
+            let bp = await OB.App.MasterdataModels.BusinessPartner.withId(bpId);
+            bp = OB.Dal.transform(OB.Model.BusinessPartner, bp);
+            if (bp !== undefined) {
+              loadLocations(bp);
+            } else {
+              loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(data) {
+                bpLoc = data.bpLoc;
+                if (bpLocId !== bpBillLocId) {
+                  bpBillLoc = data.bpBillLoc;
+                }
+                loadLocations(data.bpartner);
+              });
+            }
+          } catch (error) {
+            OB.error(error);
           }
-        } catch (error) {
-          OB.error(error);
         }
       },
 
@@ -11097,20 +11159,20 @@
       },
 
       doRemoteBPSettings: function(businessPartner) {
-        OB.Dal.saveOrUpdate(
-          businessPartner,
-          function() {},
-          function() {
-            OB.error(arguments);
-          }
-        );
-        OB.Dal.saveOrUpdate(
-          businessPartner.get('locationModel'),
-          function() {},
-          function() {
-            OB.error(arguments);
-          }
-        );
+        // OB.Dal.saveOrUpdate(
+        //   businessPartner,
+        //   function() {},
+        //   function() {
+        //     OB.error(arguments);
+        //   }
+        // );
+        // OB.Dal.saveOrUpdate(
+        //   businessPartner.get('locationModel'),
+        //   function() {},
+        //   function() {
+        //     OB.error(arguments);
+        //   }
+        // );
         OB.UTIL.showLoading(false);
       },
 

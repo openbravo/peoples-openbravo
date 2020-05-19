@@ -291,18 +291,30 @@ enyo.kind({
     if (this.bPartner) {
       successCallbackBPs(this.bPartner);
     } else {
-      try {
-        let businessPartner = await OB.App.MasterdataModels.BusinessPartner.withId(
+      if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+        OB.Dal.get(
+          OB.Model.BusinessPartner,
           this.model
             .get('order')
             .get('bp')
-            .get('id')
+            .get('id'),
+          successCallbackBPs,
+          errorCallback
         );
-        successCallbackBPs(
-          OB.Dal.transform(OB.Model.BusinessPartner, businessPartner)
-        );
-      } catch (error) {
-        errorCallback(error);
+      } else {
+        try {
+          let businessPartner = await OB.App.MasterdataModels.BusinessPartner.withId(
+            this.model
+              .get('order')
+              .get('bp')
+              .get('id')
+          );
+          successCallbackBPs(
+            OB.Dal.transform(OB.Model.BusinessPartner, businessPartner)
+          );
+        } catch (error) {
+          errorCallback(error);
+        }
       }
     }
   }
@@ -555,16 +567,27 @@ enyo.kind({
         target: 'order'
       });
     }
-    try {
-      let businessPartner = await OB.App.MasterdataModels.BusinessPartner.withId(
-        contextMenu.bPartner.get('id')
+
+    if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+      OB.Dal.get(
+        OB.Model.BusinessPartner,
+        contextMenu.bPartner.get('id'),
+        successCallbackBPs,
+        errorCallback
       );
-      successCallbackBPs(
-        OB.Dal.transform(OB.Model.BusinessPartner, businessPartner)
-      );
-    } catch (error) {
-      errorCallback(error);
+    } else {
+      try {
+        let businessPartner = await OB.App.MasterdataModels.BusinessPartner.withId(
+          contextMenu.bPartner.get('id')
+        );
+        successCallbackBPs(
+          OB.Dal.transform(OB.Model.BusinessPartner, businessPartner)
+        );
+      } catch (error) {
+        errorCallback(error);
+      }
     }
+
     return true;
   },
   create: function() {
@@ -626,18 +649,25 @@ enyo.kind({
         target: 'order'
       });
     }
-
-    try {
-      let businessPartner = await OB.App.MasterdataModels.BusinessPartner.withId(
-        contextMenu.bPartner.get('id')
+    if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+      OB.Dal.get(
+        OB.Model.BusinessPartner,
+        contextMenu.bPartner.get('id'),
+        successCallbackBPs,
+        errorCallback
       );
-      successCallbackBPs(
-        OB.Dal.transform(OB.Model.BusinessPartner, businessPartner)
-      );
-    } catch (error) {
-      errorCallback(error);
+    } else {
+      try {
+        let businessPartner = await OB.App.MasterdataModels.BusinessPartner.withId(
+          contextMenu.bPartner.get('id')
+        );
+        successCallbackBPs(
+          OB.Dal.transform(OB.Model.BusinessPartner, businessPartner)
+        );
+      } catch (error) {
+        errorCallback(error);
+      }
     }
-
     return true;
   },
   create: function() {
@@ -705,15 +735,24 @@ enyo.kind({
       });
     }
 
-    try {
-      let businessPartner = await OB.App.MasterdataModels.BusinessPartner.withId(
-        contextMenu.bPartner.get('id')
+    if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+      OB.Dal.get(
+        OB.Model.BusinessPartner,
+        contextMenu.bPartner.get('id'),
+        successCallbackBPs,
+        errorCallback
       );
-      successCallbackBPs(
-        OB.Dal.transform(OB.Model.BusinessPartner, businessPartner)
-      );
-    } catch (error) {
-      errorCallback(error);
+    } else {
+      try {
+        let businessPartner = await OB.App.MasterdataModels.BusinessPartner.withId(
+          contextMenu.bPartner.get('id')
+        );
+        successCallbackBPs(
+          OB.Dal.transform(OB.Model.BusinessPartner, businessPartner)
+        );
+      } catch (error) {
+        errorCallback(error);
+      }
     }
 
     return true;
@@ -1125,15 +1164,24 @@ enyo.kind({
           }
         }
         if (!model.get('ignoreSetBPLoc')) {
-          try {
-            let businessPartner = await OB.App.MasterdataModels.BusinessPartner.withId(
-              this.bPartner.get('id')
+          if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+            OB.Dal.get(
+              OB.Model.BusinessPartner,
+              this.bPartner.get('id'),
+              successCallbackBPs,
+              errorCallback
             );
-            successCallbackBPs(
-              OB.Dal.transform(OB.Model.BusinessPartner, businessPartner)
-            );
-          } catch (error) {
-            errorCallback(error);
+          } else {
+            try {
+              let businessPartner = await OB.App.MasterdataModels.BusinessPartner.withId(
+                this.bPartner.get('id')
+              );
+              successCallbackBPs(
+                OB.Dal.transform(OB.Model.BusinessPartner, businessPartner)
+              );
+            } catch (error) {
+              errorCallback(error);
+            }
           }
         }
       },

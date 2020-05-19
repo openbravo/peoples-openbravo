@@ -30,6 +30,7 @@
       filter: false,
       type: 'TEXT',
       location: false,
+      entityColumn: 'id',
       entity: 'BusinessPartner'
     },
     {
@@ -45,6 +46,7 @@
       filter: false,
       type: 'TEXT',
       location: false,
+      entityColumn: 'customerBlocking',
       entity: 'BusinessPartner'
     },
     {
@@ -53,16 +55,18 @@
       filter: false,
       type: 'TEXT',
       location: false,
+      entityColumn: 'salesOrderBlocking',
       entity: 'BusinessPartner'
     },
     {
       name: 'bpName',
-      column: 'name',
+      column: 'bpName',
       serverColumn: 'bp.name',
       filter: true,
       type: 'TEXT',
       caption: 'OBPOS_LblFullName',
       location: false,
+      entityColumn: 'name',
       entity: 'BusinessPartner'
     },
     {
@@ -73,16 +77,18 @@
       type: 'TEXT',
       caption: 'OBPOS_LblSearchKey',
       location: false,
+      entityColumn: 'searchKey',
       entity: 'BusinessPartner'
     },
     {
       name: 'bpCategory',
-      column: 'businessPartnerCategory_name',
+      column: 'bpCategory',
       serverColumn: 'bp.businessPartnerCategory.name',
       filter: true,
       type: 'TEXT',
       caption: 'OBPOS_BPCategory',
       location: false,
+      entityColumn: 'businessPartnerCategory_name',
       entity: 'BusinessPartner'
     },
     {
@@ -93,6 +99,7 @@
       type: 'TEXT',
       caption: 'OBPOS_LblTaxId',
       location: false,
+      entityColumn: 'taxID',
       entity: 'BusinessPartner'
     },
     {
@@ -103,6 +110,7 @@
       type: 'TEXT',
       caption: 'OBPOS_LblPostalCode',
       location: true,
+      entityColumn: 'postalCode',
       entity: 'BusinessPartnerLocation'
     },
     {
@@ -113,16 +121,18 @@
       type: 'TEXT',
       caption: 'OBPOS_LblCity',
       location: true,
+      entityColumn: 'cityName',
       entity: 'BusinessPartnerLocation'
     },
     {
       name: 'locName',
-      column: 'name',
+      column: 'locName',
       serverColumn: 'bpl.name',
       filter: true,
       type: 'TEXT',
       caption: 'OBPOS_LblAddress',
       location: true,
+      entityColumn: 'name',
       entity: 'BusinessPartnerLocation'
     },
     {
@@ -133,6 +143,7 @@
       type: 'TEXT',
       caption: 'OBPOS_LblPhone',
       location: false,
+      entityColumn: 'phone',
       entity: 'BusinessPartner'
     },
     {
@@ -143,14 +154,16 @@
       type: 'TEXT',
       caption: 'OBPOS_LblEmail',
       location: false,
+      entityColumn: 'email',
       entity: 'BusinessPartner'
     },
     {
       name: 'bpLocactionId',
-      column: 'id',
+      column: 'bpLocationId',
       filter: false,
       type: 'TEXT',
       location: true,
+      entityColumn: 'id',
       entity: 'BusinessPartnerLocation'
     },
     {
@@ -159,6 +172,7 @@
       filter: false,
       type: 'TEXT',
       location: true,
+      entityColumn: 'isBillTo',
       entity: 'BusinessPartnerLocation'
     },
     {
@@ -167,6 +181,7 @@
       filter: false,
       type: 'TEXT',
       location: true,
+      entityColumn: 'isShipTo',
       entity: 'BusinessPartnerLocation'
     }
   ]);

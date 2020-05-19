@@ -187,15 +187,24 @@ enyo.kind({
           }
         }
         if (!model.get('ignoreSetBPLoc')) {
-          try {
-            let businessPartner = await OB.App.MasterdataModels.BusinessPartner.withId(
-              this.bPartner.get('id')
+          if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+            OB.Dal.get(
+              OB.Model.BusinessPartner,
+              this.bPartner.get('id'),
+              successCallbackBPs,
+              errorCallback
             );
-            successCallbackBPs(
-              OB.Dal.transform(OB.Model.BusinessPartner, businessPartner)
-            );
-          } catch (error) {
-            errorCallback(error);
+          } else {
+            try {
+              let businessPartner = await OB.App.MasterdataModels.BusinessPartner.withId(
+                this.bPartner.get('id')
+              );
+              successCallbackBPs(
+                OB.Dal.transform(OB.Model.BusinessPartner, businessPartner)
+              );
+            } catch (error) {
+              errorCallback(error);
+            }
           }
         }
       },

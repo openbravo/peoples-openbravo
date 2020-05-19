@@ -174,21 +174,12 @@ enyo.kind({
     onPressedButton: ''
   },
   tap: async function() {
-    if (this.disabled) {
-      return true;
-    }
-    this.doPressedButton();
-    var me = this;
-
-    try {
-      let bp = await OB.App.MasterdataModels.BusinessPartner.withId(
-        me.parent.customer.get('id')
-      );
+    function sucessCallBack(bp, me) {
       me.doShowPopup({
         popup: 'modalcustomeraddress',
         args: {
           target: 'order',
-          businessPartner: OB.Dal.transform(OB.Model.BusinessPartner, bp),
+          businessPartner: bp,
           navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(
             me.parent.navigationPath,
             'customerView'
@@ -196,8 +187,29 @@ enyo.kind({
           manageAddress: true
         }
       });
-    } catch (error) {
-      OB.error(error);
+    }
+    if (this.disabled) {
+      return true;
+    }
+    this.doPressedButton();
+    var me = this;
+    if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+      OB.Dal.get(
+        OB.Model.BusinessPartner,
+        me.parent.customer.get('id'),
+        function(bp, me) {
+          sucessCallBack(bp, me);
+        }
+      );
+    } else {
+      try {
+        let bp = await OB.App.MasterdataModels.BusinessPartner.withId(
+          me.parent.customer.get('id')
+        );
+        sucessCallBack(OB.Dal.transform(OB.Model.BusinessPartner, bp), me);
+      } catch (error) {
+        OB.error(error);
+      }
     }
   },
   init: function(model) {

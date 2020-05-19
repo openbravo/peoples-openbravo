@@ -132,33 +132,57 @@
     },
     loadById: async function(CusId, userCallback) {
       //search data in local DB and load it to this
-      var me = this;
-      try {
-        let customerCol = await OB.App.MasterdataModels.BusinessPartner.withId(
-          CusId
-        );
-        customerCol = OB.Dal.transform(OB.Model.BusinessPartner, customerCol);
-        if (!customerCol || customerCol.length === 0) {
-          me.clearModelWith(null);
-          userCallback(me);
-        } else if (!_.isNull(customerCol.get('shipLocId'))) {
-          try {
-            let bPLocation = await OB.App.MasterdataModels.BusinessPartnerLocation.withId(
-              customerCol.get('shipLocId')
+      let me = this;
+      if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+        OB.Dal.get(OB.Model.BusinessPartner, CusId, function(customerCol) {
+          //OB.Dal.get success
+          if (!customerCol || customerCol.length === 0) {
+            me.clearModelWith(null);
+            userCallback(me);
+          } else if (!_.isNull(customerCol.get('shipLocId'))) {
+            OB.Dal.get(
+              OB.Model.BPLocation,
+              customerCol.get('shipLocId'),
+              function(location) {
+                //OB.Dal.find success
+                customerCol.set('locationModel', location);
+                me.clearModelWith(customerCol);
+                userCallback(me);
+              }
             );
-            let location = OB.Dal.transform(OB.Model.BPLocation, bPLocation);
-            customerCol.set('locationModel', location);
+          } else {
             me.clearModelWith(customerCol);
             userCallback(me);
-          } catch (error) {
-            OB.error(error);
           }
-        } else {
-          me.clearModelWith(customerCol);
-          userCallback(me);
+        });
+      } else {
+        try {
+          let customerCol = await OB.App.MasterdataModels.BusinessPartner.withId(
+            CusId
+          );
+          customerCol = OB.Dal.transform(OB.Model.BusinessPartner, customerCol);
+          if (!customerCol || customerCol.length === 0) {
+            me.clearModelWith(null);
+            userCallback(me);
+          } else if (!_.isNull(customerCol.get('shipLocId'))) {
+            try {
+              let bPLocation = await OB.App.MasterdataModels.BusinessPartnerLocation.withId(
+                customerCol.get('shipLocId')
+              );
+              let location = OB.Dal.transform(OB.Model.BPLocation, bPLocation);
+              customerCol.set('locationModel', location);
+              me.clearModelWith(customerCol);
+              userCallback(me);
+            } catch (error) {
+              OB.error(error);
+            }
+          } else {
+            me.clearModelWith(customerCol);
+            userCallback(me);
+          }
+        } catch (error) {
+          OB.error(error);
         }
-      } catch (error) {
-        OB.error(error);
       }
     },
     loadModel: function(customerCol, userCallback) {

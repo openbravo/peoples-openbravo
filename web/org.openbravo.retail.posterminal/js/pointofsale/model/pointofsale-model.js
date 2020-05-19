@@ -1668,13 +1668,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             dataBps.setBPLocations(shipping, billing, true);
             dataBps.set('locations', locations);
             OB.MobileApp.model.set('businessPartner', dataBps);
-            try {
-              await OB.App.State.Global.synchronizeBusinessPartner(
-                dataBps.attributes
-              );
-            } catch (error) {
-              OB.error(arguments);
-            }
             me.loadUnpaidOrders(function() {
               OB.Taxes.Pos.initCache(function() {
                 OB.Discounts.Pos.initCache(function() {
@@ -1740,32 +1733,53 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           });
         }
       }
-      var checkBPInLocal = async function() {
+      let checkBPInLocal;
+      if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+        checkBPInLocal = function() {
+          OB.Dal.get(
+            OB.Model.BusinessPartner,
+            OB.MobileApp.model.get('businesspartner'),
+            successCallbackBPs,
+            errorCallback,
+            errorCallback,
+            null,
+            true
+          );
+        };
+        OB.Dal.get(
+          OB.Model.BusinessPartner,
+          OB.MobileApp.model.get('businesspartner'),
+          successCallbackBPs,
+          checkBPInLocal,
+          errorCallback
+        );
+      } else {
+        checkBPInLocal = async function() {
+          try {
+            let businessPartner = await OB.App.MasterdataModels.BusinessPartner.withId(
+              OB.MobileApp.model.get('businesspartner')
+            );
+            successCallbackBPs(
+              OB.Dal.transform(OB.Model.BusinessPartner, businessPartner)
+            );
+          } catch (error) {
+            errorCallback(error);
+          }
+        };
         try {
           let businessPartner = await OB.App.MasterdataModels.BusinessPartner.withId(
             OB.MobileApp.model.get('businesspartner')
           );
-          successCallbackBPs(
-            OB.Dal.transform(OB.Model.BusinessPartner, businessPartner)
-          );
+          if (businessPartner !== undefined) {
+            successCallbackBPs(
+              OB.Dal.transform(OB.Model.BusinessPartner, businessPartner)
+            );
+          } else {
+            checkBPInLocal();
+          }
         } catch (error) {
           errorCallback(error);
         }
-      };
-
-      try {
-        let businessPartner = await OB.App.MasterdataModels.BusinessPartner.withId(
-          OB.MobileApp.model.get('businesspartner')
-        );
-        if (businessPartner !== undefined) {
-          successCallbackBPs(
-            OB.Dal.transform(OB.Model.BusinessPartner, businessPartner)
-          );
-        } else {
-          checkBPInLocal();
-        }
-      } catch (error) {
-        errorCallback(error);
       }
     }
 
