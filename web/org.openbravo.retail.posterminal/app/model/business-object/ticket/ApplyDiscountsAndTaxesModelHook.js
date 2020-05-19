@@ -22,59 +22,6 @@ OB.App.StateAPI.Ticket.addModelHook({
   },
 
   hook: (ticket, payload) => {
-    const newTicket = { ...ticket };
-    const { priceIncludesTax } = newTicket;
-
-    // calculate discounts
-    const discountsResult = OB.Discounts.Pos.applyDiscounts(
-      newTicket,
-      payload.discountRules,
-      payload.bpSets
-    );
-
-    // set the discount calculation result into the ticket
-    newTicket.lines = newTicket.lines.map(line => {
-      const discounts =
-        discountsResult.lines[line.id] &&
-        discountsResult.lines[line.id].discounts;
-      const newLine = {
-        ...line,
-        discountedGrossAmount:
-          discounts && priceIncludesTax
-            ? discounts.finalLinePrice
-            : OB.DEC.mul(line.qty, line.price),
-        discountedNetAmount:
-          discounts && !priceIncludesTax
-            ? discounts.finalLinePrice
-            : OB.DEC.mul(line.qty, line.pricenet)
-      };
-      newLine.promotions = discounts.promotions;
-      return newLine;
-    });
-
-    // recalculate taxes
-    const taxesResult = OB.Taxes.Pos.applyTaxes(newTicket, payload.taxRules);
-
-    // set the tax calculation result into the ticket
-    newTicket.grossAmount = taxesResult.header.grossAmount;
-    newTicket.netAmount = taxesResult.header.netAmount;
-    newTicket.taxes = taxesResult.header.taxes;
-    taxesResult.lines.forEach(taxLine => {
-      const line = newTicket.lines.find(l => l.id === taxLine.id);
-      if (priceIncludesTax) {
-        line.netAmount = taxLine.netAmount;
-        line.discountedNetAmount = taxLine.netAmount;
-        line.netPrice = taxLine.netPrice;
-      } else {
-        line.grossAmount = taxLine.grossAmount;
-        line.discountedGrossAmount = taxLine.grossAmount;
-        line.grossPrice = taxLine.grossPrice;
-      }
-      line.taxRate = taxLine.taxRate;
-      line.tax = taxLine.tax;
-      line.taxes = taxLine.taxes;
-    });
-
-    return newTicket;
+    return OB.App.State.Ticket.Utils.applyDiscountsAndTaxes(ticket, payload);
   }
 });
