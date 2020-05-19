@@ -805,4 +805,31 @@
     '../org.openbravo.retail.posterminal/res/printcanceledreceipt.xml';
   OB.OBPOSPointOfSale.Print.CanceledLayawayTemplate =
     '../org.openbravo.retail.posterminal/res/printcanceledlayaway.xml';
+
+  OB.OBPOSPointOfSale.Print.printWelcome = function(callback) {
+    // Print Welcome message (Hardware Manager)
+    const templatewelcome = new OB.DS.HWResource(
+      OB.MobileApp.model.get('terminal').printWelcomeTemplate ||
+        OB.OBPOSPointOfSale.Print.WelcomeTemplate
+    );
+    OB.POS.hwserver.print(
+      templatewelcome,
+      {},
+      function(data) {
+        if (data && data.exception) {
+          OB.UTIL.showError(
+            OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable')
+          );
+          if (callback) {
+            callback(false);
+          }
+        } else {
+          if (callback) {
+            callback(true);
+          }
+        }
+      },
+      OB.DS.HWServer.DISPLAY
+    );
+  };
 })();
