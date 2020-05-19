@@ -84,8 +84,18 @@
                     const newPaymentMethodToSend = { ...newPaymentMethod };
                     newPaymentMethodToSend.usedInCurrentTrx = true;
                     newPaymentsArray.push(newPaymentMethodToSend);
-                  } else {
-                    newPaymentsArray.push(payment);
+                    if (newCashManagement.modifiedPaymentMethod) {
+                      // if another paymentMethod is modified by this cash management, it must be included in the cashUpReportInformation
+                      const newModifiedPaymentMethod = {
+                        ...cashupToSend.cashPaymentMethodInfo.find(
+                          modifiedPayment =>
+                            modifiedPayment.searchKey ===
+                            newCashManagement.modifiedPaymentMethod
+                        )
+                      };
+                      newModifiedPaymentMethod.usedInCurrentTrx = true;
+                      newPaymentsArray.push(newModifiedPaymentMethod);
+                    }
                   }
                 });
                 cashupToSend.cashPaymentMethodInfo = newPaymentsArray;
