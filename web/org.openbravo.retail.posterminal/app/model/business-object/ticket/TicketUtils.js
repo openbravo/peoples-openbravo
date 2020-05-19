@@ -883,6 +883,185 @@
         negativeLines === ticket.lines.length ||
         (negativeLines > 0 && salesWithOneLineNegativeAsReturns)
       );
+    },
+
+    /**
+     * Generates the corresponding invoice for the given ticket.
+     *
+     * @returns {object} The new state of Ticket and DocumentSequence after invoice generation.
+     */
+    generateInvoice(
+      ticket,
+      documentSequence,
+      fullReturnInvoiceSequencePrefix,
+      simplifiedReturnInvoiceSequencePrefix,
+      documentNumberSeperator,
+      documentNumberPadding,
+      salesWithOneLineNegativeAsReturns
+    ) {
+      const generateInvoice =
+        !ticket.obposIsDeleted &&
+        (ticket.payOnCredit ||
+          (ticket.invoiceTerms === 'I' && ticket.generateInvoice) ||
+          (ticket.invoiceTerms === 'O' && ticket.deliver) ||
+          (ticket.invoiceTerms === 'D' &&
+            (ticket.generateShipment ||
+              ticket.lines.find(
+                line => line.deliveredQuantity !== line.invoicedQuantity
+              ))));
+
+      if (!generateInvoice) {
+        return { ticket, documentSequence };
+      }
+
+      const invoiceLines = ticket.lines.flatMap(line => {
+        const originalQty = line.qty;
+        const qtyAlreadyInvoiced = line.invoicedQuantity || OB.DEC.Zero;
+        const qtyPendingToBeInvoiced = OB.DEC.sub(line.qty, qtyAlreadyInvoiced);
+        const qtyToDeliver = line.obposQtytodeliver
+          ? line.obposQtytodeliver
+          : line.qty;
+
+        let qtyToInvoice;
+        if (ticket.invoiceTerms === 'D') {
+          qtyToInvoice = OB.DEC.sub(qtyToDeliver, qtyAlreadyInvoiced);
+        } else if (ticket.invoiceTerms === 'I' || ticket.invoiceTerms === 'O') {
+          qtyToInvoice = qtyPendingToBeInvoiced;
+        } else {
+          qtyToInvoice = OB.DEC.Zero;
+        }
+
+        if (
+          !qtyToInvoice ||
+          (ticket.invoiceTerms !== 'I' &&
+            !line.obposCanbedelivered &&
+            !line.obposIspaid)
+        ) {
+          return [];
+        }
+
+        const invoiceLine = { ...line };
+        invoiceLine.id = OB.App.UUID.generate();
+        invoiceLine.qty = qtyToInvoice;
+        invoiceLine.orderLineId = line.id;
+        invoiceLine.product.ignorePromotions = true;
+        invoiceLine.product.img = undefined;
+
+        if (OB.DEC.abs(qtyAlreadyInvoiced) > 0) {
+          invoiceLine.promotions = line.promotions.map(promotion => {
+            const invoiceLinePromotion = { ...promotion };
+            if (OB.DEC.abs(qtyToInvoice) < OB.DEC.abs(qtyPendingToBeInvoiced)) {
+              invoiceLinePromotion.amt = OB.DEC.mul(
+                invoiceLinePromotion.amt,
+                OB.DEC.div(qtyToInvoice, originalQty)
+              );
+              invoiceLinePromotion.obdiscQtyoffer = qtyToInvoice;
+              if (invoiceLinePromotion.actualAmt) {
+                invoiceLinePromotion.actualAmt = OB.DEC.mul(
+                  invoiceLinePromotion.actualAmt,
+                  OB.DEC.div(qtyToInvoice, originalQty)
+                );
+              }
+              if (invoiceLinePromotion.displayedTotalAmount) {
+                invoiceLinePromotion.displayedTotalAmount = OB.DEC.mul(
+                  invoiceLinePromotion.displayedTotalAmount,
+                  OB.DEC.div(qtyToInvoice, originalQty)
+                );
+              }
+              if (invoiceLinePromotion.fullAmt) {
+                invoiceLinePromotion.fullAmt = OB.DEC.mul(
+                  invoiceLinePromotion.fullAmt,
+                  OB.DEC.div(qtyToInvoice, originalQty)
+                );
+              }
+              if (invoiceLinePromotion.qtyOffer) {
+                invoiceLinePromotion.qtyOffer = qtyToInvoice;
+              }
+              if (invoiceLinePromotion.pendingQtyOffer) {
+                invoiceLinePromotion.pendingQtyOffer = qtyToInvoice;
+              }
+            } else {
+              invoiceLinePromotion.amt = OB.DEC.sub(
+                invoiceLinePromotion.amt,
+                OB.DEC.mul(
+                  invoiceLinePromotion.amt,
+                  OB.DEC.div(qtyAlreadyInvoiced, originalQty)
+                )
+              );
+              invoiceLinePromotion.obdiscQtyoffer = qtyToInvoice;
+              if (invoiceLinePromotion.actualAmt) {
+                invoiceLinePromotion.actualAmt = OB.DEC.sub(
+                  invoiceLinePromotion.actualAmt,
+                  OB.DEC.mul(
+                    invoiceLinePromotion.actualAmt,
+                    OB.DEC.div(qtyAlreadyInvoiced, originalQty)
+                  )
+                );
+              }
+              if (invoiceLinePromotion.displayedTotalAmount) {
+                invoiceLinePromotion.displayedTotalAmount = OB.DEC.sub(
+                  invoiceLinePromotion.displayedTotalAmount,
+                  OB.DEC.mul(
+                    invoiceLinePromotion.displayedTotalAmount,
+                    OB.DEC.div(qtyAlreadyInvoiced, originalQty)
+                  )
+                );
+              }
+              if (invoiceLinePromotion.fullAmt) {
+                invoiceLinePromotion.fullAmt = OB.DEC.sub(
+                  invoiceLinePromotion.fullAmt,
+                  OB.DEC.mul(
+                    invoiceLinePromotion.fullAmt,
+                    OB.DEC.div(qtyAlreadyInvoiced, originalQty)
+                  )
+                );
+              }
+              if (invoiceLinePromotion.qtyOffer) {
+                invoiceLinePromotion.qtyOffer = qtyToInvoice;
+              }
+              if (invoiceLinePromotion.pendingQtyOffer) {
+                invoiceLinePromotion.pendingQtyOffer = qtyToInvoice;
+              }
+            }
+
+            return invoiceLinePromotion;
+          });
+        }
+
+        return [invoiceLine];
+      });
+
+      if (!invoiceLines) {
+        return { ticket, documentSequence };
+      }
+
+      const newTicket = { ...ticket };
+      let newDocumentSequence = { ...documentSequence };
+      let invoice = { ...ticket };
+      invoice.orderId = ticket.id;
+      invoice.id = OB.App.UUID.generate();
+      invoice.isInvoice = true;
+      invoice.documentNo = null;
+      invoice.lines = invoiceLines;
+
+      ({
+        invoice,
+        newDocumentSequence
+      } = OB.App.State.DocumentSequence.Utils.generateTicketDocumentSequence(
+        ticket,
+        documentSequence,
+        null,
+        null,
+        fullReturnInvoiceSequencePrefix,
+        simplifiedReturnInvoiceSequencePrefix,
+        documentNumberSeperator,
+        documentNumberPadding,
+        salesWithOneLineNegativeAsReturns
+      ));
+
+      // FIXME: calculate invoice totals after run discount and tax engine
+      newTicket.generatedInvoice = invoice;
+      return { ticket: newTicket, documentSequence: newDocumentSequence };
     }
   });
 })();

@@ -1329,6 +1329,24 @@
     },
 
     setDocumentNo: async function(document) {
+      // FIXME: Replace by OB.App.State.DocumentSequence.Utils.generateTicketDocumentSequence
+      // let documentSequence = OB.App.State.getState().DocumentSequence;
+      // ({
+      //   document,
+      //   documentSequence
+      // } = OB.App.State.DocumentSequence.Utils.generateTicketDocumentSequence(
+      //   document,
+      //   documentSequence,
+      //   OB.MobileApp.model.get('terminal').returnDocNoPrefix,
+      //   OB.MobileApp.model.get('terminal').quotationDocNoPrefix,
+      //   OB.MobileApp.model.get('terminal').fullReturnInvoiceDocNoPrefix,
+      //   OB.MobileApp.model.get('terminal').simplifiedReturnInvoiceDocNoPrefix,
+      //   OB.Model.Order.prototype.includeDocNoSeperator ? '/' : '',
+      //   OB.MobileApp.model.get('terminal').documentnoPadding,
+      //   OB.MobileApp.model.get('permissions')
+      //     .OBPOS_SalesWithOneLineNegativeAsReturns
+      // ));
+
       if (document.get('documentNo')) {
         return;
       }

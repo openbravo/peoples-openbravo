@@ -33,7 +33,7 @@
       ticket.created = new Date().getTime();
       ticket.obposAppCashup = cashUpId;
 
-      // Document Sequence calculation
+      // Document number generation
       ({
         ticket,
         documentSequence
@@ -42,6 +42,17 @@
         documentSequence,
         returnSequencePrefix,
         quotationSequencePrefix,
+        null,
+        null,
+        documentNumberSeperator,
+        documentNumberPadding,
+        salesWithOneLineNegativeAsReturns
+      ));
+
+      // Invoice generation
+      ({ ticket, documentSequence } = OB.App.State.Ticket.Utils.generateInvoice(
+        ticket,
+        documentSequence,
         fullReturnInvoiceSequencePrefix,
         simplifiedReturnInvoiceSequencePrefix,
         documentNumberSeperator,
