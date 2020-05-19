@@ -2544,13 +2544,27 @@ enyo.kind({
         salesWithOneLineNegativeAsReturns: OB.MobileApp.model.get('permissions')
           .OBPOS_SalesWithOneLineNegativeAsReturns
       });
+
       if (OB.UTIL.RfidController.isRfidConfigured()) {
         OB.UTIL.RfidController.processRemainingCodes(
           OB.MobileApp.model.receipt
         );
         OB.UTIL.RfidController.updateEpcBuffers();
       }
-      OB.MobileApp.model.orderList.deleteCurrent();
+
+      OB.MobileApp.model.orderList.deleteCurrentFromDatabase(
+        OB.MobileApp.model.receipt
+      );
+      if (
+        OB.MobileApp.model.hasPermission(
+          'OBPOS_alwaysCreateNewReceiptAfterPayReceipt',
+          true
+        )
+      ) {
+        OB.MobileApp.model.orderList.deleteCurrent(true);
+      } else {
+        OB.MobileApp.model.orderList.deleteCurrent();
+      }
       OB.UTIL.ProcessController.finish('tapDoneButton', execution);
       return;
     }
