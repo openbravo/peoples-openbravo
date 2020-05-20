@@ -71,9 +71,6 @@
             reason: options.reason
           })
             .then(() => {
-              //TODO: remove this once implemented at ticket level
-              receipt.calculateReceipt();
-
               receipt.trigger('scan');
             })
             .catch(OB.App.View.ActionCanceledUIHandler.handle);
