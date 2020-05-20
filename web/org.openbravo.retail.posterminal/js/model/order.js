@@ -10900,7 +10900,7 @@
           }
         };
 
-        function callToLoadCustomer() {
+        async function callToLoadCustomer() {
           await this.loadCustomer(
             {
               bpId: model.bp,
@@ -10931,7 +10931,7 @@
           );
         } else {
           callToLoadCustomer();
-        }   
+        }
       },
 
       newDynamicOrder: function(model, callback) {
