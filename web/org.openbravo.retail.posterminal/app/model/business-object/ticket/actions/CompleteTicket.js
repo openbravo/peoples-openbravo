@@ -20,6 +20,7 @@
       let documentSequence = { ...newGlobalState.DocumentSequence };
 
       const {
+        organization,
         cashUpId,
         returnSequencePrefix,
         quotationSequencePrefix,
@@ -31,7 +32,9 @@
       } = payload;
 
       ticket.created = new Date().getTime();
-      ticket.obposAppCashup = cashUpId;
+      ticket.completeTicket = true;
+      // FIXME: set cashup info once Cashup is migrated to state
+      // ticket.obposAppCashup = cashUpId;
 
       // Document number generation
       ({
@@ -47,6 +50,12 @@
         documentNumberSeperator,
         documentNumberPadding,
         salesWithOneLineNegativeAsReturns
+      ));
+
+      // Shipment generation
+      ({ ticket } = OB.App.State.Ticket.Utils.generateShipment(
+        ticket,
+        organization
       ));
 
       // Invoice generation

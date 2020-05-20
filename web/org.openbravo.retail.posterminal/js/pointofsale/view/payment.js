@@ -2526,6 +2526,7 @@ enyo.kind({
 
     if (!isMultiOrder) {
       await OB.App.State.Global.completeTicket({
+        organization: OB.MobileApp.model.get('terminal').organization,
         cashUpId: OB.MobileApp.model.get('terminal').cashUpId,
         returnSequencePrefix: OB.MobileApp.model.get('terminal')
           .returnDocNoPrefix,

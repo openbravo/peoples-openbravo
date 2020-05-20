@@ -886,6 +886,88 @@
     },
 
     /**
+     * Generates the corresponding shipment for the given ticket.
+     *
+     * @returns {object} The new state of Ticket after shipment generation.
+     */
+    generateShipment(ticket, organization) {
+      const newTicket = { ...ticket };
+      const isFullyPaid =
+        ticket.payment >= OB.DEC.abs(ticket.grossAmount) || ticket.payOnCredit;
+      const isCrossStore = newTicket.organization !== organization;
+
+      newTicket.lines = ticket.lines.map(line => {
+        const newLine = { ...line };
+
+        if (isFullyPaid) {
+          newLine.obposCanbedelivered = true;
+          newLine.obposIspaid = true;
+        } else if (line.obposCanbedelivered) {
+          newLine.obposIspaid = true;
+        }
+
+        if (isCrossStore && !line.originalOrderLineId) {
+          newLine.obposQtytodeliver = line.deliveredQuantity;
+        } else if (!line.obposQtytodeliver) {
+          if (
+            line.product.productType === 'S' &&
+            line.product.isLinkedToProduct
+          ) {
+            if (line.qty > 0) {
+              const qtyToDeliver =
+                line.product.quantityRule === 'UQ'
+                  ? OB.DEC.One
+                  : line.relatedLines.reduce((accumulator, relatedLine) => {
+                      const orderLine = ticket.lines.find(
+                        l => l.id === relatedLine.orderlineId
+                      );
+                      if (orderLine && orderLine.obposIspaid) {
+                        return OB.DEC.add(accumulator, orderLine.qty);
+                      }
+                      if (relatedLine.obposIspaid) {
+                        return OB.DEC.add(
+                          accumulator,
+                          relatedLine.deliveredQuantity
+                        );
+                      }
+                      return accumulator;
+                    }, OB.DEC.Zero);
+
+              newLine.obposQtytodeliver = qtyToDeliver;
+              if (qtyToDeliver) {
+                newLine.obposCanbedelivered = true;
+              }
+            } else if (line.qty < 0) {
+              newLine.obposQtytodeliver = line.qty;
+              newLine.obposCanbedelivered = true;
+            }
+          } else if (line.obposCanbedelivered) {
+            newLine.obposQtytodeliver = line.qty;
+          } else {
+            newLine.obposQtytodeliver = line.deliveredQuantity;
+          }
+        }
+
+        return newLine;
+      });
+
+      newTicket.generateShipment = newTicket.lines.some(line => {
+        const qtyToDeliver = line.obposQtytodeliver
+          ? line.obposQtytodeliver
+          : line.qty;
+        return qtyToDeliver !== line.deliveredQuantity;
+      });
+      newTicket.deliver = !newTicket.lines.some(line => {
+        const qtyToDeliver = line.obposQtytodeliver
+          ? line.obposQtytodeliver
+          : line.qty;
+        return qtyToDeliver !== line.qty;
+      });
+
+      return { ticket: newTicket };
+    },
+
+    /**
      * Generates the corresponding invoice for the given ticket.
      *
      * @returns {object} The new state of Ticket and DocumentSequence after invoice generation.
