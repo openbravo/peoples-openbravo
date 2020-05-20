@@ -102,6 +102,7 @@
           me.receipt.get('bp').set('moreaddress', true); // For to show two address buttons in receipt
         }
       }
+      customerAddr.unset('creationDate');
       try {
         await OB.App.State.Global.synchronizeBusinessPartnerLocation(
           customerAddr.attributes
