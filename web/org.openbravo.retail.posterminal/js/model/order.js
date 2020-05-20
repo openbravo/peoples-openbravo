@@ -431,6 +431,12 @@
         this.set('createdBy', attributes.createdBy);
         this.set('updatedBy', attributes.updatedBy);
         this.set('orderType', attributes.orderType); // 0: Sales order, 1: Return order
+        if (attributes.calculatedInvoice) {
+          this.set(
+            'calculatedInvoice',
+            new OB.Model.Order(attributes.calculatedInvoice)
+          );
+        }
         this.set('generateInvoice', attributes.generateInvoice);
         this.set('fullInvoice', attributes.fullInvoice);
         this.set('isQuotation', attributes.isQuotation);

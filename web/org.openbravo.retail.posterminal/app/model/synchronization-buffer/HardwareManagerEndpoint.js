@@ -15,6 +15,11 @@
 (function HardwareManagerEndpointDefinition() {
   // Turns an state ticket into a backbone order
   const toOrder = ticket => {
+    if (!ticket.id) {
+      // force to have a ticket id: if no id is provided an empty backbone order is created
+      // eslint-disable-next-line no-param-reassign
+      ticket.id = OB.App.UUID.generate();
+    }
     return OB.App.StateBackwardCompatibility.getInstance(
       'Ticket'
     ).toBackboneObject(ticket);
@@ -66,26 +71,38 @@
       if (!this.printer) {
         throw new Error(`The endpoint has no printer assigned`);
       }
-      const order = toOrder(messageData.data.ticket);
-      this.printer.doDisplayTotal(order);
+      try {
+        const order = toOrder(messageData.data.ticket);
+        this.printer.doDisplayTotal(order);
+      } catch (error) {
+        OB.error(`Error displaying total: ${error}`);
+      }
     }
 
     printTicket(messageData) {
       if (!this.printer) {
         throw new Error(`The endpoint has no printer assigned`);
       }
-      const order = toOrder(messageData.data.ticket);
-      this.printer.doPrint(order, {
-        ...messageData.data.printSettings
-      });
+      try {
+        const order = toOrder(messageData.data.ticket);
+        this.printer.doPrint(order, {
+          ...messageData.data.printSettings
+        });
+      } catch (error) {
+        OB.error(`Error printing ticket: ${error}`);
+      }
     }
 
     printTicketLine(messageData) {
       if (!this.linePrinter) {
         throw new Error(`The endpoint has no line printer assigned`);
       }
-      const line = toOrderLine(messageData.data.line);
-      this.linePrinter.doPrint(line);
+      try {
+        const line = toOrderLine(messageData.data.line);
+        this.linePrinter.doPrint(line);
+      } catch (error) {
+        OB.error(`Error printing ticket line: ${error}`);
+      }
     }
   }
 
