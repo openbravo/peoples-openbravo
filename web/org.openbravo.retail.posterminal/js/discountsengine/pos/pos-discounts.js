@@ -151,6 +151,9 @@
 
   OB.Discounts.Pos.applyDiscounts = (ticket, rules, bpSets) => {
     const result = OB.Discounts.applyDiscounts(ticket, rules, bpSets);
+    const manualPromotions = ticket.discountsFromUser
+      ? ticket.discountsFromUser.manualPromotions
+      : [];
     ticket.lines.forEach(line => {
       const promotions =
         result.lines[line.id] && result.lines[line.id].discounts.promotions;
@@ -158,10 +161,7 @@
         return;
       }
       promotions.forEach(promotion =>
-        toNewEngineManualPromotion(
-          promotion,
-          ticket.discountsFromUser.manualPromotions
-        )
+        toNewEngineManualPromotion(promotion, manualPromotions)
       );
     });
     return result;
