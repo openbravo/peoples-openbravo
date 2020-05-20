@@ -7525,6 +7525,10 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   /* Inherits: [OB.UI.ModalAdvancedFilterBP] */
 }
 
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalExternalBusinessPartner {
+  /* Inherits: [OB.UI.ModalSelectorBusinessPartners] */
+}
+
 .obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalcustomeraddress {
   /* Inherits: [OB.UI.ModalBPLocation] */
 }
@@ -16304,6 +16308,76 @@ div.obrdmUiListOrdersLine-orderLine-container2-container3:nth-child(odd) {
   display: table-cell;
   width: 80%;
   padding: 2px;
+}
+
+/***********************   *****************************/
+/*       File: externalbusinesspartner_selector.js     */
+/*            Folder: js/components/                   */
+/***********************   *****************************/
+
+/*
+# Component: OB.UI.ListExternalBpsSelectorLine
+*/
+
+.obUiListExternalBpsSelectorLine-line {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.obUiListExternalBpsSelectorLine-line-textInfo {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.obUiListExternalBpsSelectorLine-line-textInfo span:not(:last-child)::after {
+  content: " ";
+  padding-right: 0.3em;
+}
+
+
+/***********************   *****************************/
+/*       File: externalbusinesspartner_viewedit.js     */
+/*            Folder: js/components/                   */
+/***********************   *****************************/
+
+/*
+# Component: OB.OBPOSPointOfSale.ModalExternalBusinessPartnerViewEditBody
+*/
+
+.obObposPointOfSaleUiModalExternalBusinessPartnerViewEditBody {
+  position: relative;
+}
+
+.obObposPointOfSaleUiModalExternalBusinessPartnerViewEditBody-customerAttributes-section-container, .obObposPointOfSaleUiModalExternalBusinessPartnerViewEditBodyLoading_loadingSection .obUiFormSectionLoadingSection_loadingSectionItemsContainer  {
+  display: grid;
+  grid-auto-flow: row;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+@media (max-aspect-ratio: 9/8) {
+  .obObposPointOfSaleUiModalExternalBusinessPartnerViewEditBody-customerAttributes-section-container, .obObposPointOfSaleUiModalExternalBusinessPartnerViewEditBodyLoading_loadingSection .obUiFormSectionLoadingSection_loadingSectionItemsContainer {
+    grid-template-columns: 1fr;
+  }
+}
+
+.view .obUiFormElement_dataEntry.obUiFormElement.obObposPointOfSaleUiModalExternalBusinessPartnerViewEditBody-property .obUiFormElement-messageArea {
+  display: none;
+}
+.obObposPointOfSaleUiModalExternalBusinessPartnerViewEditBody-property .obUiFormElement-icon {
+  width: 40px;
+}
+
+.obObposPointOfSaleUiModalExternalBusinessPartnerViewEditBody-scrim {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.2);
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
 }
 
 /*****************/

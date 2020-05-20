@@ -60,9 +60,15 @@ enyo.kind({
 
     if (!this.disabled) {
       this.doShowPopup({
-        popup: 'modalcustomer',
+        popup: OB.UTIL.modalCustomer(),
         args: {
           presetCustomerId: OB.MobileApp.model.receipt.get('bp').id,
+          presetExternalBpId: OB.MobileApp.model.receipt.get(
+            'externalBusinessPartnerReference'
+          ),
+          presetExternalBp: OB.MobileApp.model.receipt.get(
+            'externalBusinessPartner'
+          ),
           target: 'order',
           clean: true,
           navigationPath: []
@@ -86,6 +92,18 @@ enyo.kind({
       this.renderCustomer(null, '');
     }
 
+    this.order.on(
+      'change:externalBusinessPartner',
+      function(model) {
+        if (model.get('externalBusinessPartner')) {
+          const bp = new OB.App.Class.ExternalBusinessPartner(
+            model.get('externalBusinessPartner')
+          );
+          this.renderCustomer(bp.getKey(), bp.getIdentifier());
+        }
+      },
+      this
+    );
     this.order.on(
       'change:bp',
       function(model) {

@@ -52,7 +52,7 @@ enyo.kind({
         }
       });
       this.doShowPopup({
-        popup: 'modalcustomer',
+        popup: OB.UTIL.modalCustomer(),
         args: {
           target: this.target
         }

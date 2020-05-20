@@ -439,7 +439,7 @@ enyo.kind({
     }
     this.inherited(arguments); // Manual dropdown menu closure
     this.doShowPopup({
-      popup: 'modalcustomer',
+      popup: OB.UTIL.modalCustomer(),
       args: {
         target: 'order'
       }

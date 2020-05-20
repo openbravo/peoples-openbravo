@@ -532,6 +532,10 @@
           'obposPrepaymentlaylimitamt',
           attributes.obposPrepaymentlaylimitamt || OB.DEC.Zero
         );
+        this.set(
+          'externalBusinessPartnerReference',
+          attributes.externalBusinessPartnerReference
+        );
         _.each(
           _.keys(attributes),
           function(key) {
@@ -1544,6 +1548,7 @@
       this.set('obposPrepaymentamt', OB.DEC.Zero);
       this.set('obposPrepaymentlimitamt', OB.DEC.Zero);
       this.set('obposPrepaymentlaylimitamt', OB.DEC.Zero);
+      this.set('externalBusinessPartnerReference', null);
       this.set(
         'cashVAT',
         OB.MobileApp.model.get('terminal')
@@ -1584,6 +1589,14 @@
       this.set('isPartiallyDelivered', _order.get('isPartiallyDelivered'));
       this.set('isModified', _order.get('isModified'));
       this.set('payment', _order.get('payment'));
+      this.set(
+        'externalBusinessPartner',
+        _order.get('externalBusinessPartner')
+      );
+      this.set(
+        'externalBusinessPartnerReference',
+        _order.get('externalBusinessPartnerReference')
+      );
       if (!_order.get('isEditable')) {
         // keeping it no editable as much as possible, to prevent
         // modifications to trigger editable events incorrectly
@@ -5569,6 +5582,37 @@
       } else {
         callback(true);
       }
+    },
+
+    setAndSaveExternalBP: function(bp) {
+      let order = this;
+      return new Promise((resolve, reject) => {
+        let execution = OB.UTIL.ProcessController.start(
+          'setExternalBusinessPartner'
+        );
+        execution.businessPartner = bp;
+        OB.App.ExternalBusinessPartnerAPI.onBusinessPartnerSelected(bp, order)
+          .then(() => {
+            order.set('externalBusinessPartnerReference', bp.getKey());
+            order.set('externalBusinessPartner', bp.getPlainObject());
+            order.save(function() {
+              OB.MobileApp.model.orderList.saveCurrent();
+              OB.UTIL.ProcessController.finish(
+                'setExternalBusinessPartner',
+                execution
+              );
+              resolve();
+            });
+          })
+          .catch(objError => {
+            execution.businessPartner = null;
+            OB.UTIL.ProcessController.finish(
+              'setExternalBusinessPartner',
+              execution
+            );
+            reject(objError);
+          });
+      });
     },
 
     setBPandBPLoc: async function(
@@ -10197,7 +10241,13 @@
         }
         return OB.Collection.OrderList.newOrder(bp, propertiesToReset);
       },
-
+      loadExternalCustomer: function(externalBpReference, callback) {
+        OB.App.ExternalBusinessPartnerAPI.getBusinessPartner(
+          externalBpReference
+        ).then(bp => {
+          callback(bp);
+        });
+      },
       loadCustomer: async function(model, callback) {
         var bpId,
           bpLocId,
@@ -10850,20 +10900,38 @@
           }
         };
 
-        await this.loadCustomer(
-          {
-            bpId: model.bp,
-            bpLocId: model.bpLocId,
-            bpBillLocId: model.bpBillLocId || model.bpLocId
-          },
-          async function(bp, loc, billLoc) {
-            order.set('bp', bp);
-            order.set('gross', model.totalamount);
-            order.set('net', model.totalNetAmount);
-            order.trigger('change:bp', order);
-            await loadProducts();
-          }
-        );
+        function callToLoadCustomer() {
+          await this.loadCustomer(
+            {
+              bpId: model.bp,
+              bpLocId: model.bpLocId,
+              bpBillLocId: model.bpBillLocId || model.bpLocId
+            },
+            async function(bp, loc, billLoc) {
+              order.set('bp', bp);
+              order.set('gross', model.totalamount);
+              order.set('net', model.totalNetAmount);
+              order.trigger('change:bp', order);
+              await loadProducts();
+            }
+          );
+        }
+        if (OB.UTIL.isNotEmptyString(model.externalBusinessPartnerReference)) {
+          var me = this;
+          this.loadExternalCustomer(
+            model.externalBusinessPartnerReference,
+            function(extBp) {
+              order.set('externalBusinessPartner', extBp.getPlainObject());
+              order.set(
+                'externalBusinessPartnerReference',
+                model.externalBusinessPartnerReference
+              );
+              callToLoadCustomer.call(me);
+            }
+          );
+        } else {
+          callToLoadCustomer();
+        }   
       },
 
       newDynamicOrder: function(model, callback) {
@@ -11361,6 +11429,8 @@
         order.set('session', OB.MobileApp.model.get('session'));
         order.set('cashVAT', OB.MobileApp.model.get('terminal').cashVat);
         order.set('bp', bp);
+        order.set('externalBusinessPartner', null);
+        order.set('externalBusinessPartnerReference', null);
         order.set('invoiceTerms', bp.get('invoiceTerms'));
         if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
           // Set price list for order

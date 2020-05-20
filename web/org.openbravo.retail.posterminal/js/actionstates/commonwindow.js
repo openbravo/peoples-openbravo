@@ -19,3 +19,25 @@ OB.MobileApp.statesRegistry.register(
     property: 'currentView'
   })
 );
+
+OB.MobileApp.statesRegistry.register(
+  new OB.State.BackboneProperty({
+    window: 'retail.pointofsale',
+    name: 'window.currentExternalBpOpenedData',
+    object: function(view) {
+      return view.model;
+    },
+    property: 'externalBpOpenedData'
+  })
+);
+
+OB.MobileApp.statesRegistry.register(
+  new OB.State.BackboneProperty({
+    window: 'retail.pointofsale',
+    name: 'window.currentExternalBpOpenedDialog',
+    object: function(view) {
+      return view.model;
+    },
+    property: 'externalBpOpenedDialog'
+  })
+);

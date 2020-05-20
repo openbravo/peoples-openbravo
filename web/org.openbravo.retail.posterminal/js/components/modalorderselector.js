@@ -278,7 +278,9 @@ enyo.kind({
       OB.I18N.formatCurrency(this.model.get('totalamount'))
     );
     this.$.time.setContent(OB.I18N.formatHour(orderDate));
-    this.$.customer.setContent(this.model.get('businessPartnerName'));
+    if (!OB.UTIL.externalBp()) {
+      this.$.customer.setContent(this.model.get('businessPartnerName'));
+    }
     if (this.owner.owner.owner.hideBusinessPartnerColumn === true) {
       this.$.customer.addClass('u-hideFromUI');
     }
@@ -435,7 +437,9 @@ enyo.kind({
               var property = getProperty(tokens[i]);
               if (property) {
                 message.push({
-                  content: OB.I18N.getLabel(property.caption),
+                  content: property.caption
+                    ? OB.I18N.getLabel(property.caption)
+                    : property.noTranslatableText,
                   classes: 'u-textalign-default',
                   tag: 'li'
                 });
@@ -519,14 +523,14 @@ enyo.kind({
         if (flt.hqlFilter) {
           criteria.remoteFilters.push({
             value: flt.hqlFilter,
-            columns: [fullFlt.name],
+            columns: [OB.UTIL.filterColumn(fullFlt)],
             operator: OB.Dal.FILTER,
             params: [flt.value]
           });
         } else {
           criteria.remoteFilters.push({
             value: flt.value,
-            columns: [fullFlt.name],
+            columns: [OB.UTIL.filterColumn(fullFlt)],
             operator: flt.operator || OB.Dal.STARTSWITH,
             isId: flt.column === 'orderType' || flt.isId
           });

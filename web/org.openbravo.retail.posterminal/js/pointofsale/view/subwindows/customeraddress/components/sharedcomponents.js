@@ -64,9 +64,7 @@ enyo.kind({
     );
     if (provider) {
       let me = this,
-        result = provider.validate(me.modelProperty, me.getValue(), function(
-          r
-        ) {});
+        result = provider.validate(me.modelProperty, me.getValue());
       if (result && result.status) {
         me.formElement.setMessage();
       } else {

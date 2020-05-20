@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019 Openbravo S.L.U.
+ * Copyright (C) 2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -305,10 +305,28 @@ enyo.kind({
             'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalcustomer'
         },
         {
+          kind: 'OB.UI.ModalSelectorExternalBusinessPartners',
+          name: 'modalExternalBusinessPartner',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalExternalBusinessPartner'
+        },
+        {
+          kind: 'OB.OBPOSPointOfSale.UI.ModalExternalBusinessPartnerViewEdit',
+          name: 'modalExternalBusinessPartnerViewEdit',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalExternalBusinessPartnerViewEdit'
+        },
+        {
           kind: 'OB.UI.ModalAdvancedFilterBP',
           name: 'modalAdvancedFilterBP',
           classes:
             'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalAdvancedFilterBP'
+        },
+        {
+          kind: 'OB.UI.ModalAdvancedFiltersExternalBp',
+          name: 'modalAdvancedFiltersExternalBp',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalAdvancedFiltersExternalBp'
         },
         {
           kind: 'OB.UI.ModalBPLocation',
