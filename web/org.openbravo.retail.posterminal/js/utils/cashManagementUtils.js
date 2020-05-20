@@ -171,7 +171,9 @@
           errorCallback(args.errorMessage);
         }
         await OB.App.State.Cashup.createCashManagement({
-          cashManagement: cashManagementTransactionToAdd
+          cashManagement: JSON.parse(
+            JSON.stringify(cashManagementTransactionToAdd)
+          )
         });
 
         OB.App.State.Global.processCashManagements({

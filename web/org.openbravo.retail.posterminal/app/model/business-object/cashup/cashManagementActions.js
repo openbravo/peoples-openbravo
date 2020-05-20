@@ -18,7 +18,7 @@
     createCashManagement(state, payload) {
       const cashup = { ...state };
 
-      const cashManagement = JSON.parse(JSON.stringify(payload.cashManagement));
+      const cashManagement = { ...payload.cashManagement };
       cashManagement.isDraft = true;
 
       cashup.cashPaymentMethodInfo = cashup.cashPaymentMethodInfo.map(
@@ -48,6 +48,7 @@
       const newState = { ...state };
       const cashup = { ...newState.Cashup };
       const { terminalPayments } = payload.parameters;
+      const cashManagementsToProcess = [];
 
       cashup.cashPaymentMethodInfo = cashup.cashPaymentMethodInfo.map(
         paymentMethod => {
@@ -106,22 +107,7 @@
                   cashupPayments,
                   terminalPayments
                 );
-
-                // Create a Message to synchronize the Cash Management
-                const { terminalName, cacheSessionId } = payload.parameters;
-                const newMessagePayload = {
-                  id: OB.App.UUID.generate(),
-                  terminal: terminalName,
-                  cacheSessionId,
-                  data: [newCashManagement]
-                };
-                const newMessage = OB.App.State.Messages.Utils.createNewMessage(
-                  'Cash Management',
-                  'org.openbravo.retail.posterminal.ProcessCashMgmt',
-                  newMessagePayload
-                );
-                newState.Messages = [...newState.Messages, newMessage];
-
+                cashManagementsToProcess.push(newCashManagement);
                 return newCashManagement;
               }
             );
@@ -130,6 +116,25 @@
           return newPaymentMethod;
         }
       );
+
+      // Create a Message to synchronize the Cash Management
+      const { terminalName, cacheSessionId } = payload.parameters;
+      cashManagementsToProcess
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .forEach(function createMessage(cashManagementToProcess) {
+          const newMessagePayload = {
+            id: OB.App.UUID.generate(),
+            terminal: terminalName,
+            cacheSessionId,
+            data: [cashManagementToProcess]
+          };
+          const newMessage = OB.App.State.Messages.Utils.createNewMessage(
+            'Cash Management',
+            'org.openbravo.retail.posterminal.ProcessCashMgmt',
+            newMessagePayload
+          );
+          newState.Messages = [...newState.Messages, newMessage];
+        });
 
       newState.Cashup = cashup;
 

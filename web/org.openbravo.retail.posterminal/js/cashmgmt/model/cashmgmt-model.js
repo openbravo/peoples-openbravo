@@ -116,7 +116,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
           }
 
           await OB.App.State.Cashup.createCashManagement({
-            cashManagement: addedCashMgmt
+            cashManagement: JSON.parse(JSON.stringify(addedCashMgmt))
           });
 
           var selectedPayment = me.payments.filter(function(payment) {
