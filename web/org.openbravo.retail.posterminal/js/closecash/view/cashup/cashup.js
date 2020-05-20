@@ -179,9 +179,7 @@ OB.POS.registerWindow({
   route: 'retail.cashup',
   online: false,
   menuPosition: 20,
-  menuI18NLabel: JSON.parse(OB.UTIL.localStorage.getItem('isSafeBox'))
-    ? 'OBPOS_LblRemoveSafeBox'
-    : 'OBPOS_LblCloseCash',
+  menuI18NLabel: 'OBPOS_LblCloseCash',
   permission: 'OBPOS_retail.cashup',
   approvalType: 'OBPOS_approval.cashup',
   rfidState: false,
@@ -219,6 +217,12 @@ OB.POS.registerWindow({
     }
   },
   menuItemDisplayLogic: function() {
+    // Update here the label of CashUp in case Safe Box configuration is active
+    if (OB.MobileApp.model.get('terminal').terminalType.safebox) {
+      this.$.lbl.setContent(OB.I18N.getLabel('OBPOS_LblRemoveSafeBox'));
+    } else {
+      this.$.lbl.setContent(OB.I18N.getLabel('OBPOS_LblCloseCash'));
+    }
     return OB.MobileApp.model.get('hasPaymentsForCashup');
   }
 });
