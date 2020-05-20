@@ -20,14 +20,8 @@
       let newDocumentSequence = { ...newGlobalState.DocumentSequence };
 
       const {
-        terminalOrganization,
-        cashUpId,
-        returnSequencePrefix,
-        quotationSequencePrefix,
-        fullReturnInvoiceSequencePrefix,
-        simplifiedReturnInvoiceSequencePrefix,
+        terminal,
         documentNumberSeperator,
-        documentNumberPadding,
         salesWithOneLineNegativeAsReturns,
         discountRules,
         bpSets,
@@ -36,8 +30,13 @@
 
       newTicket.created = new Date().getTime();
       newTicket.completeTicket = true;
+      newTicket = OB.App.State.Ticket.Utils.updateTicketType(newTicket, {
+        terminalOrganization: terminal.organization,
+        documentTypeForSales: terminal.terminalType.documentType,
+        documentTypeForReturns: terminal.terminalType.documentTypeForReturns
+      });
       // FIXME: set cashup info once Cashup is migrated to state
-      // ticket.obposAppCashup = cashUpId;
+      // ticket.obposAppCashup = terminal.cashUpId;
 
       // Document number generation
       ({
@@ -46,18 +45,18 @@
       } = OB.App.State.DocumentSequence.Utils.generateTicketDocumentSequence(
         newTicket,
         newDocumentSequence,
-        returnSequencePrefix,
-        quotationSequencePrefix,
-        fullReturnInvoiceSequencePrefix,
-        simplifiedReturnInvoiceSequencePrefix,
+        terminal.returnDocNoPrefix,
+        terminal.quotationDocNoPrefix,
+        terminal.fullReturnInvoiceDocNoPrefix,
+        terminal.simplifiedReturnInvoiceDocNoPrefix,
         documentNumberSeperator,
-        documentNumberPadding,
+        terminal.documentnoPadding,
         salesWithOneLineNegativeAsReturns
       ));
 
       // Shipment generation
       newTicket = OB.App.State.Ticket.Utils.generateShipment(newTicket, {
-        terminalOrganization
+        terminalOrganization: terminal.organization
       });
 
       // Invoice generation
@@ -73,12 +72,12 @@
         } = OB.App.State.DocumentSequence.Utils.generateTicketDocumentSequence(
           newTicket.calculatedInvoice,
           newDocumentSequence,
-          returnSequencePrefix,
-          quotationSequencePrefix,
-          fullReturnInvoiceSequencePrefix,
-          simplifiedReturnInvoiceSequencePrefix,
+          terminal.returnDocNoPrefix,
+          terminal.quotationDocNoPrefix,
+          terminal.fullReturnInvoiceDocNoPrefix,
+          terminal.simplifiedReturnInvoiceDocNoPrefix,
           documentNumberSeperator,
-          documentNumberPadding,
+          terminal.documentnoPadding,
           salesWithOneLineNegativeAsReturns
         ));
       }

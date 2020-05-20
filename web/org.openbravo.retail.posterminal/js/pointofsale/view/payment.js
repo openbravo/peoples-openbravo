@@ -2526,22 +2526,10 @@ enyo.kind({
 
     if (!isMultiOrder) {
       await OB.App.State.Global.completeTicket({
-        terminalOrganization: OB.MobileApp.model.get('terminal').organization,
-        cashUpId: OB.MobileApp.model.get('terminal').cashUpId,
-        returnSequencePrefix: OB.MobileApp.model.get('terminal')
-          .returnDocNoPrefix,
-        quotationSequencePrefix: OB.MobileApp.model.get('terminal')
-          .quotationDocNoPrefix,
-        fullReturnInvoiceSequencePrefix: OB.MobileApp.model.get('terminal')
-          .fullReturnInvoiceDocNoPrefix,
-        simplifiedReturnInvoiceSequencePrefix: OB.MobileApp.model.get(
-          'terminal'
-        ).simplifiedReturnInvoiceDocNoPrefix,
+        terminal: OB.MobileApp.model.get('terminal'),
         documentNumberSeperator: OB.Model.Order.prototype.includeDocNoSeperator
           ? '/'
           : '',
-        documentNumberPadding: OB.MobileApp.model.get('terminal')
-          .documentnoPadding,
         salesWithOneLineNegativeAsReturns: OB.MobileApp.model.get('permissions')
           .OBPOS_SalesWithOneLineNegativeAsReturns,
         discountRules: OB.Discounts.Pos.ruleImpls,

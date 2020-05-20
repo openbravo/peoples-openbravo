@@ -701,6 +701,25 @@
 
   OB.App.StateAPI.Ticket.registerUtilityFunctions({
     /**
+     * Checks whether a ticket is a return or a sale.
+     * @param {object} settings - The calculation settings, which include:
+     *             * salesWithOneLineNegativeAsReturns - SalesWithOneLineNegativeAsReturns preference value
+     *
+     * @returns {boolean} true in case the ticket is a return, false in case it is a sale.
+     */
+    isReturnTicket(ticket, settings) {
+      if (!ticket.lines) {
+        return false;
+      }
+
+      const negativeLines = ticket.lines.filter(line => line.qty < 0).length;
+      return (
+        negativeLines === ticket.lines.length ||
+        (negativeLines > 0 && settings.salesWithOneLineNegativeAsReturns)
+      );
+    },
+
+    /**
      * Computes the totals of a given ticket which include: discounts, taxes and other calculated fields.
      *
      * @param {object} ticket - The ticket whose totals will be calculated
@@ -873,28 +892,20 @@
     },
 
     /**
-     * Checks whether a ticket is a return or a sale.
-     *
-     * @returns {boolean} true in case the ticket is a return, false in case it is a sale.
-     */
-    isReturnTicket(ticket, salesWithOneLineNegativeAsReturns) {
-      const negativeLines = ticket.lines.filter(line => line.qty < 0).length;
-      return (
-        negativeLines === ticket.lines.length ||
-        (negativeLines > 0 && salesWithOneLineNegativeAsReturns)
-      );
-    },
-
-    /**
      * Generates the corresponding shipment for the given ticket.
      *
-     * @returns {object} The new state of Ticket after shipment generation.
+     * @param {object} ticket - The ticket whose shipment will be generated
+     * @param {object} settings - The calculation settings, which include:
+     *             * organization - The terminal organization.
+     *
+     * @returns {object} The ticket with the result of the shipment generation
      */
-    generateShipment(ticket, organization) {
+    generateShipment(ticket, settings) {
       const newTicket = { ...ticket };
       const isFullyPaid =
         ticket.payment >= OB.DEC.abs(ticket.grossAmount) || ticket.payOnCredit;
-      const isCrossStore = newTicket.organization !== organization;
+      const isCrossStore =
+        newTicket.organization !== settings.terminalOrganization;
 
       newTicket.lines = ticket.lines.map(line => {
         const newLine = { ...line };
@@ -964,23 +975,21 @@
         return qtyToDeliver !== line.qty;
       });
 
-      return { ticket: newTicket };
+      return newTicket;
     },
 
     /**
      * Generates the corresponding invoice for the given ticket.
      *
+     * @param {object} ticket - The ticket whose invoice will be generated
+     * @param {object} settings - The calculation settings, which include:
+     *             * discountRules - The discount rules to be considered for discount calculation
+     *             * bpSets - The businessPartner sets for discount calculation
+     *             * taxRules - The tax rules to be considered for tax calculation
+     *
      * @returns {object} The new state of Ticket and DocumentSequence after invoice generation.
      */
-    generateInvoice(
-      ticket,
-      documentSequence,
-      fullReturnInvoiceSequencePrefix,
-      simplifiedReturnInvoiceSequencePrefix,
-      documentNumberSeperator,
-      documentNumberPadding,
-      salesWithOneLineNegativeAsReturns
-    ) {
+    generateInvoice(ticket, settings) {
       const generateInvoice =
         !ticket.obposIsDeleted &&
         (ticket.payOnCredit ||
@@ -993,7 +1002,7 @@
               ))));
 
       if (!generateInvoice) {
-        return { ticket, documentSequence };
+        return ticket;
       }
 
       const invoiceLines = ticket.lines.flatMap(line => {
@@ -1114,36 +1123,23 @@
       });
 
       if (!invoiceLines) {
-        return { ticket, documentSequence };
+        return ticket;
       }
 
       const newTicket = { ...ticket };
-      let newDocumentSequence = { ...documentSequence };
       let invoice = { ...ticket };
       invoice.orderId = ticket.id;
       invoice.id = OB.App.UUID.generate();
       invoice.isInvoice = true;
       invoice.documentNo = null;
       invoice.lines = invoiceLines;
-
-      ({
+      invoice = OB.App.State.Ticket.Utils.applyDiscountsAndTaxes(
         invoice,
-        newDocumentSequence
-      } = OB.App.State.DocumentSequence.Utils.generateTicketDocumentSequence(
-        ticket,
-        documentSequence,
-        null,
-        null,
-        fullReturnInvoiceSequencePrefix,
-        simplifiedReturnInvoiceSequencePrefix,
-        documentNumberSeperator,
-        documentNumberPadding,
-        salesWithOneLineNegativeAsReturns
-      ));
+        settings
+      );
+      newTicket.calculatedInvoice = invoice;
 
-      // FIXME: calculate invoice totals after run discount and tax engine
-      newTicket.generatedInvoice = invoice;
-      return { ticket: newTicket, documentSequence: newDocumentSequence };
+      return newTicket;
     }
   });
 })();
