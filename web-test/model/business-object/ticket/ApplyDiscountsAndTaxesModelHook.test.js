@@ -57,8 +57,8 @@ const tickets = [
       {
         id: 'BB66D8D151964A8A39586FCD7D9A394D',
         qty: 1,
-        price: 300,
-        pricenet: 223.14
+        grossPrice: 300,
+        netPrice: 223.14
       }
     ]
   },
@@ -70,8 +70,8 @@ const tickets = [
       {
         id: 'BB66D8D151964A8A39586FCD7D9A394D',
         qty: 1,
-        price: 200,
-        pricenet: 165.29
+        grossPrice: 200,
+        netPrice: 165.29
       }
     ]
   }
@@ -229,7 +229,7 @@ const results = [
         discountedNetAmount: 223.14,
         taxRate: 1.21,
         netAmount: 223.14,
-        price: 300,
+        grossPrice: 300,
         netPrice: 223.14,
         promotions: [
           {
@@ -285,7 +285,7 @@ const results = [
         discountedNetAmount: 157.02,
         taxRate: 1.21,
         netAmount: 157.02,
-        price: 200,
+        grossPrice: 200,
         netPrice: 157.02,
         promotions: [
           {
@@ -357,6 +357,6 @@ describe('Apply Discounts and Taxes Model Hook', () => {
     setDiscountsEngineResultAs(discountResults[index]);
     setTaxesEngineResultAs(taxesResults[index]);
     const result = hook(deepfreeze(tickets[index]), payload());
-    expect(result).toMatchObject(results[index]);
+    expect(result).toEqual(results[index]);
   });
 });
