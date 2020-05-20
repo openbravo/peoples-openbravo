@@ -112,10 +112,10 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
         // Web POS window
         "utils/eventbus", "utils/attributeUtils", "utils/cashUpReportUtils",
-        "utils/cashManagementUtils", "utils/ticketCloseUtils", "utils/prepaymentUtils",
-        "utils/servicesUtils", "utils/remoteUtils", "components/keypadcoins", "data/dataordersave",
-        "data/dataordertaxes", "data/datacustomersave", "data/datacustomeraddrsave",
-        "data/dataorderdiscount", "components/modalreceipts", "components/modalorderselector",
+        "utils/ticketCloseUtils", "utils/prepaymentUtils", "utils/servicesUtils",
+        "utils/remoteUtils", "components/keypadcoins", "data/dataordersave", "data/dataordertaxes",
+        "data/datacustomersave", "data/datacustomeraddrsave", "data/dataorderdiscount",
+        "components/modalreceipts", "components/modalorderselector",
         "components/modalcrossstoreselector", "components/storeinformation",
         "components/modalmultiorderslayaway", "components/modalcategorytree",
         "components/rendercategory", "components/renderproduct", "components/renderproductch",
@@ -315,12 +315,13 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/business-object/ticket/ApplyDiscountsAndTaxesModelHook");
     // Cashup
     appDependency.add("model/business-object/cashup/Cashup");
-    appDependency.add("model/business-object/cashup/CashupUtils");
+    appDependency.add("model/business-object/cashup/cashupUtils");
+    appDependency.add("model/business-object/cashup/paymentMethodUtils");
+    appDependency.add("model/business-object/cashup/cashManagementUtils");
     appDependency.add("model/business-object/cashup/initCashup");
     appDependency.add("model/business-object/cashup/updateCashup");
     appDependency.add("model/business-object/cashup/completeCashupAndCreateNew");
-    // Cash Management
-    appDependency.add("model/business-object/cash-management/actions/createCashManagement");
+    appDependency.add("model/business-object/cashup/cashManagementActions");
 
     for (final String resource : appDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,

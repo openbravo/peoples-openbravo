@@ -536,24 +536,22 @@
 
         const onInitCashupSucess = function() {
           function finishAndNavigate() {
-            OB.UTIL.calculateCurrentCash(function() {
-              OB.UTIL.HookManager.executeHooks(
-                'OBPOS_LoadPOSWindow',
-                {},
-                function(args) {
-                  if (args && args.cancellation && args.cancellation === true) {
-                    return;
-                  }
-                  var nextWindow = OB.MobileApp.model.get('nextWindow');
-                  if (nextWindow) {
-                    OB.POS.navigate(nextWindow);
-                    OB.MobileApp.model.unset('nextWindow');
-                  } else {
-                    OB.POS.navigate(OB.MobileApp.model.get('defaultWindow'));
-                  }
+            OB.UTIL.HookManager.executeHooks(
+              'OBPOS_LoadPOSWindow',
+              {},
+              function(args) {
+                if (args && args.cancellation && args.cancellation === true) {
+                  return;
                 }
-              );
-            }, null);
+                var nextWindow = OB.MobileApp.model.get('nextWindow');
+                if (nextWindow) {
+                  OB.POS.navigate(nextWindow);
+                  OB.MobileApp.model.unset('nextWindow');
+                } else {
+                  OB.POS.navigate(OB.MobileApp.model.get('defaultWindow'));
+                }
+              }
+            );
           }
           if (
             !OB.MobileApp.model.get('terminal').ismaster &&

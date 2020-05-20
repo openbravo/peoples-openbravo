@@ -7,11 +7,12 @@
  ************************************************************************************
  */
 /**
- * @fileoverview Defines the action of creating a cash management, adding it in Messages and inside the corresponding Cashup Payment method
+ * @fileoverview Defines actions for cash managements.
+ * @author Miguel de Juana <miguel.dejuana@openbravo.com>
  */
-(function createCashManagementDefinition() {
+(function cashManagementActionsDefinition() {
   /**
-   * Create a cash management,  add it in Messages and inside the corresponding Cashup Payment method
+   * Create a cash management: add it in draft mode inside the corresponding Cashup Payment method of the Cashup(State)
    */
   OB.App.StateAPI.Cashup.registerActions({
     createCashManagement(state, payload) {
@@ -20,7 +21,6 @@
       const cashManagement = JSON.parse(JSON.stringify(payload.cashManagement));
       cashManagement.isDraft = true;
 
-      // Save the cash management in the Cashup
       cashup.cashPaymentMethodInfo = cashup.cashPaymentMethodInfo.map(
         paymentMethod => {
           if (
@@ -41,25 +41,29 @@
   });
 
   /**
-   * Create a cash management,  add it in Messages and inside the corresponding Cashup Payment method
+   * Process cash managemets: Set as processed cash managements in draft and move to Messages(State)
    */
   OB.App.StateAPI.Global.registerActions({
     processCashManagements(state, payload) {
       const newState = { ...state };
       const cashup = { ...newState.Cashup };
 
-      // Save the cash management in the Cashup
       cashup.cashPaymentMethodInfo = cashup.cashPaymentMethodInfo.map(
         paymentMethod => {
           if (paymentMethod.cashManagements.length > 0) {
             const newPaymentMethod = { ...paymentMethod };
             newPaymentMethod.cashManagements = paymentMethod.cashManagements.map(
               cashManagement => {
+                // Cash management already processed
                 if (!cashManagement.isDraft) {
                   return cashManagement;
                 }
+
+                // Remove isDraft to set the cash management as processed
                 const newCashManagement = { ...cashManagement };
                 delete newCashManagement.isDraft;
+
+                // Update the Cashup information with cash management to process
                 newCashManagement.cashUpReportInformation = { ...cashup };
                 if (newCashManagement.type === 'deposit') {
                   newPaymentMethod.totalDeposits = OB.DEC.add(
@@ -87,6 +91,7 @@
                   newMessagePayload
                 );
                 newState.Messages = [...newState.Messages, newMessage];
+
                 return newCashManagement;
               }
             );
@@ -103,18 +108,19 @@
   });
 
   /**
-   * Create a cash management,  add it in Messages and inside the corresponding Cashup Payment method
+   * Cancel cash managements in Draft: Remove cash managements not processed yet
    */
   OB.App.StateAPI.Cashup.registerActions({
     cancelCashManagements(state) {
       const cashup = { ...state };
 
-      // Save the cash management in the Cashup
       cashup.cashPaymentMethodInfo = cashup.cashPaymentMethodInfo.map(
         paymentMethod => {
           if (paymentMethod.cashManagements.length === 0) {
             return paymentMethod;
           }
+
+          // Get only processed cash managements
           const cashManagements = paymentMethod.cashManagements.filter(
             cashManagement => !cashManagement.isDraft
           );

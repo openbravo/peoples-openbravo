@@ -127,8 +127,6 @@
           OB.Dal.save(
             receipt,
             function() {
-              OB.UTIL.calculateCurrentCash();
-
               if (eventParams && eventParams.callback) {
                 eventParams.callback({
                   frozenReceipt: frozenReceipt,
@@ -469,7 +467,6 @@
                           )
                         ) {
                           OB.Dal.transaction(function(tx) {
-                            OB.UTIL.calculateCurrentCash(null, tx);
                             // the trigger is fired on the receipt object, as there is only 1 that is being updated
                             receipt.trigger('integrityOk', frozenReceipt); // Is important for module print last receipt. This module listen trigger.
                             syncSuccessCallback(function() {
@@ -553,7 +550,6 @@
                               }
                             );
                           } else {
-                            OB.UTIL.calculateCurrentCash(null, tx);
                             OB.trace('Saving receipt.');
                             OB.Dal.saveInTransaction(
                               tx,
@@ -693,7 +689,6 @@
         );
       }
       Promise.all(promises).then(function() {
-        OB.UTIL.calculateCurrentCash();
         if (callback instanceof Function) {
           callback(false);
         }
@@ -720,7 +715,6 @@
           me.context.get('multiOrders').trigger('integrityOk', currentReceipt);
           await OB.MobileApp.model.setTicketDocumentNo(currentReceipt);
 
-          OB.UTIL.calculateCurrentCash(null, tx);
           const cashUpReportSuccessCallback = function() {
             currentReceipt.set(
               'cashUpReportInformation',
@@ -808,7 +802,6 @@
                 },
                 function(args) {
                   OB.Dal.transaction(function(tx) {
-                    OB.UTIL.calculateCurrentCash(null, tx);
                     _.each(
                       model.get('multiOrders').get('multiOrdersList').models,
                       function(theReceipt) {

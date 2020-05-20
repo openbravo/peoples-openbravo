@@ -869,7 +869,11 @@ enyo.kind({
 
     activeModel.get('changePayments').forEach(function(itemchange) {
       var paymentMethod = OB.MobileApp.model.paymentnames[itemchange.key];
-      if (paymentMethod.foreignCash < itemchange.amountRounded) {
+      if (
+        OB.App.State.Cashup.Utils.getPaymentMethodCurrentCash(
+          paymentMethod.payment.id
+        ).foreignCurrentCash < itemchange.amountRounded
+      ) {
         failedPaymentMethods.push(paymentMethod.payment._identifier);
       }
     });
@@ -1597,7 +1601,12 @@ enyo.kind({
               if (
                 selectedPayment !== paymentmethod &&
                 OB.DEC.compare(
-                  OB.DEC.sub(paymentmethod.currentCash, reversedCash)
+                  OB.DEC.sub(
+                    OB.App.State.Cashup.Utils.getPaymentMethodCurrentCash(
+                      paymentmethod.paymentMethodId
+                    ).currentCash,
+                    reversedCash
+                  )
                 ) < 0
               ) {
                 hasEnoughCash = false;
@@ -1635,11 +1644,13 @@ enyo.kind({
                   payment.get('origAmount')
                 );
               } else {
-                paymentmethod =
-                  OB.POS.terminal.terminal.paymentnames[payment.get('kind')];
+                OB.POS.terminal.terminal.paymentnames[payment.get('kind')];
                 if (
                   paymentmethod &&
-                  payment.get('amount') > paymentmethod.foreignCash &&
+                  payment.get('amount') >
+                    OB.App.State.Cashup.Utils.getPaymentMethodCurrentCash(
+                      paymentmethod.paymentMethodId
+                    ).foreignCurrentCash &&
                   payment.get('isCash')
                 ) {
                   hasAllEnoughCash = false;
@@ -2201,7 +2212,10 @@ enyo.kind({
 
     var currentCash = OB.DEC.Zero;
     if (selectedPayment && selectedPayment.paymentMethod.iscash) {
-      currentCash = selectedPayment.currentCash || OB.DEC.Zero;
+      currentCash =
+        OB.App.State.Cashup.Utils.getPaymentMethodCurrentCash(
+          selectedPayment.payment.id
+        ).currentCash || OB.DEC.Zero;
     }
     if (
       (OB.POS.modelterminal.get('terminal').ismaster ||

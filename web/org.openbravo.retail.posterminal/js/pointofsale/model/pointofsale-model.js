@@ -1418,7 +1418,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                                   )
                                 );
                                 orderList.deleteCurrent();
-                                OB.UTIL.calculateCurrentCash();
                                 OB.UTIL.ProcessController.finish(
                                   'cancelLayaway',
                                   execution
@@ -1464,13 +1463,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                                         OB.Dal.save(
                                           receipt,
                                           function() {
-                                            OB.UTIL.calculateCurrentCash(
-                                              function() {
-                                                OB.UTIL.ProcessController.finish(
-                                                  'cancelLayaway',
-                                                  execution
-                                                );
-                                              }
+                                            OB.UTIL.ProcessController.finish(
+                                              'cancelLayaway',
+                                              execution
                                             );
                                           },
                                           null,

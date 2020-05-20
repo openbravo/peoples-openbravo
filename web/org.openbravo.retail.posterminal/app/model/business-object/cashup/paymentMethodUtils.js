@@ -7,71 +7,10 @@
  ************************************************************************************
  */
 /**
- * @fileoverview Define utility functions for the Cashup Model
+ * @fileoverview Define utility functions for the Payment methos
  */
-(function CashupUtilsDefinition() {
+(function PaymentMethodUtilsDefinition() {
   OB.App.StateAPI.Cashup.registerUtilityFunctions({
-    isValidTheLocalCashup(cashup) {
-      return cashup.id != null;
-    },
-
-    async requestNoProcessedCashupFromBackend() {
-      const response = await OB.App.Request.mobileServiceRequest(
-        'org.openbravo.retail.posterminal.master.Cashup',
-        { isprocessed: 'N', isprocessedbo: 'N' }
-      );
-      return response.response.data;
-    },
-
-    isValidTheBackendCashup(data) {
-      if (data && data.exception) {
-        throw new Error(data.exception);
-      } else if (data && _.isArray(data) && data.length > 0 && data[0]) {
-        return true;
-      } else {
-        return false;
-      }
-    },
-
-    async requestProcessedCashupFromBackend() {
-      const response = await OB.App.Request.mobileServiceRequest(
-        'org.openbravo.retail.posterminal.master.Cashup',
-        { isprocessed: 'Y' }
-      );
-      return response.response.data;
-    },
-
-    showPopupNotEnoughDataInCache() {
-      OB.UTIL.showConfirmation.display(
-        OB.I18N.getLabel('OBMOBC_Error'),
-        OB.I18N.getLabel('OBMOBC_NotEnoughDataInCache') +
-          OB.I18N.getLabel('OBMOBC_LoadingErrorBody'),
-        [
-          {
-            label: OB.I18N.getLabel('OBMOBC_Reload'),
-            action() {
-              window.location.reload();
-            }
-          }
-        ],
-        {
-          onShowFunction(popup) {
-            popup.$.headerCloseButton.hide();
-          },
-          autoDismiss: false
-        }
-      );
-    },
-
-    resetStatistics() {
-      // TODO: modify state instead run methods
-      // TODO !!!!!!!!!!!
-      // OB.UTIL.localStorage.setItem('transitionsToOnline', 0);
-      // OB.UTIL.resetNetworkInformation();
-      // OB.UTIL.resetNumberOfLogClientErrors();
-      // TODO !!!!!!!!!!!
-    },
-
     initializePaymentMethodCashup(payload) {
       const { terminalPayments, lastCashUpPayments, terminalIsSlave } = payload;
       const paymentMethods = [];
@@ -143,19 +82,6 @@
       return paymentMethods;
     },
 
-    getTaxesFromBackendObject(backendTaxes) {
-      const taxes = [];
-      backendTaxes.forEach(backendTax => {
-        taxes.push({
-          id: backendTax.id,
-          orderType: backendTax.orderType,
-          name: backendTax.name,
-          amount: backendTax.amount
-        });
-      });
-      return taxes;
-    },
-
     getPaymentMethodFromBackendObject(paymentMethodCashUpModel) {
       return {
         id: paymentMethodCashUpModel.id,
@@ -174,50 +100,6 @@
         newPaymentMethod: false,
         cashManagements: []
       };
-    },
-
-    createNewCashupFromScratch(payload) {
-      const { cashup } = payload;
-      const newCashup = { ...cashup };
-
-      newCashup.id = OB.App.UUID.generate();
-      newCashup.netSales = OB.DEC.Zero;
-      newCashup.grossSales = OB.DEC.Zero;
-      newCashup.netReturns = OB.DEC.Zero;
-      newCashup.grossReturns = OB.DEC.Zero;
-      newCashup.totalRetailTransactions = OB.DEC.Zero;
-      newCashup.creationDate = payload.payload.currentDate.toISOString();
-      newCashup.userId = payload.payload.userId;
-      newCashup.posterminal = payload.payload.posterminal;
-      newCashup.isprocessed = false;
-      newCashup.cashTaxInfo = [];
-      newCashup.cashCloseInfo = [];
-
-      return newCashup;
-    },
-
-    createNewCashupFromBackend(payload) {
-      const { cashup, currentCashupFromBackend } = payload;
-      const newCashup = { ...cashup };
-
-      newCashup.id = currentCashupFromBackend.id;
-      newCashup.netSales = currentCashupFromBackend.netSales;
-      newCashup.grossSales = currentCashupFromBackend.grossSales;
-      newCashup.netReturns = currentCashupFromBackend.netReturns;
-      newCashup.grossReturns = currentCashupFromBackend.grossReturns;
-      newCashup.totalRetailTransactions =
-        currentCashupFromBackend.totalRetailTransactions;
-      newCashup.creationDate = currentCashupFromBackend.creationDate;
-      newCashup.userId = currentCashupFromBackend.userId;
-      newCashup.posterminal = currentCashupFromBackend.posterminal;
-      newCashup.isprocessed = currentCashupFromBackend.isprocessed;
-      newCashup.cashTaxInfo = OB.App.State.Cashup.Utils.getTaxesFromBackendObject(
-        currentCashupFromBackend.cashTaxInfo
-      );
-      newCashup.cashCloseInfo = currentCashupFromBackend.cashCloseInfo;
-      // newCashup.cashManagements = currentCashupFromBackend.cashMgmInfo;
-
-      return newCashup;
     },
 
     addPaymentsFromBackendCashup(payload) {
@@ -307,76 +189,34 @@
       return OB.App.State.getState().Cashup.cashPaymentMethodInfo;
     },
 
-    getCashup() {
-      return OB.App.State.getState().Cashup;
-    },
-
-    // TODO : this function is for compatibility with old code,
-    // when all models that used it are moved to indexeddb,
-    // this function should be deleted
-    getCashupId() {
-      return OB.App.State.persistence.getState().Cashup.id;
-    },
-
-    filterOnlyNeededDataForCompleteCashup(cashup) {
-      const unFilteredObjToSend = JSON.parse(cashup.get('objToSend'));
-      const filteredObjToSend = {};
-
-      filteredObjToSend.cashCloseInfo = unFilteredObjToSend.cashCloseInfo;
-      filteredObjToSend.cashMgmtIds = unFilteredObjToSend.cashMgmtIds;
-      filteredObjToSend.cashUpDate = unFilteredObjToSend.cashUpDate;
-      filteredObjToSend.timezoneOffset = unFilteredObjToSend.timezoneOffset;
-      filteredObjToSend.lastcashupeportdate =
-        unFilteredObjToSend.lastcashupeportdate;
-      filteredObjToSend.approvals = unFilteredObjToSend.approvals;
-
-      const newCashup = new Backbone.Model();
-      newCashup.set('objToSend', JSON.stringify(filteredObjToSend));
-
-      return newCashup;
-    },
-
-    getCashManagementsInDraft() {
-      let cashManagementsInDraft = [];
-      OB.App.State.getState().Cashup.cashPaymentMethodInfo.forEach(
-        function getCashManagementsInDraft(paymentMethod) {
-          const cashManagementInDraftByPayment = paymentMethod.cashManagements.filter(
-            cashManagement => cashManagement.isDraft
-          );
-          cashManagementsInDraft = [
-            ...cashManagementsInDraft,
-            ...cashManagementInDraftByPayment
-          ];
-        }
+    /**
+     * Retrieves current cash (also foreign currency) of a given paymentMethod
+     * @param {string} paymentMethodId - The id of the paymentMethod
+     * @return {Object} A JS Object with the currentCash and foreignCurrentCash
+     */
+    getPaymentMethodCurrentCash(paymentMethodId) {
+      const paymentMethod = OB.App.State.getState().Cashup.cashPaymentMethodInfo.find(
+        payment => payment.paymentMethodId === paymentMethodId
       );
-      return cashManagementsInDraft;
-    },
-    getCashManagements() {
-      let cashManagements = [];
-      OB.App.State.getState().Cashup.cashPaymentMethodInfo.forEach(
-        function getCashManagementsInDraft(paymentMethod) {
-          cashManagements = [
-            ...cashManagements,
-            ...paymentMethod.cashManagements
-          ];
-        }
+      // (totalDeposits - totalDrops) + startingCash + (totalSales - totalReturns)
+      const cash = OB.DEC.add(
+        OB.DEC.sub(paymentMethod.totalDeposits, paymentMethod.totalDrops),
+        OB.DEC.add(
+          paymentMethod.startingCash,
+          OB.DEC.sub(paymentMethod.totalSales, paymentMethod.totalReturns)
+        )
       );
-      return cashManagements;
-    },
-
-    getCashManagementsByPaymentMethodId(paymentMethodId) {
-      let cashManagements = [];
-      OB.App.State.getState().Cashup.cashPaymentMethodInfo.forEach(
-        function getCashManagementsInDraft(paymentMethod) {
-          if (paymentMethodId === paymentMethod.paymentMethodId) {
-            cashManagements = [
-              ...cashManagements,
-              ...paymentMethod.cashManagements
-            ];
-          }
-        }
+      const currentCash = OB.UTIL.currency.toDefaultCurrency(
+        OB.MobileApp.model.paymentnames[paymentMethod.searchKey].paymentMethod
+          .currency,
+        cash
       );
-      return cashManagements;
+      const foreignCurrentCash = OB.UTIL.currency.toDefaultCurrency(
+        OB.MobileApp.model.paymentnames[paymentMethod.searchKey].paymentMethod
+          .currency,
+        currentCash
+      );
+      return { currentCash, foreignCurrentCash };
     }
   });
 })();

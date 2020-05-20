@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -81,15 +81,19 @@ enyo.kind({
           var hasProvider = false,
             payment = null,
             currentDrop = null;
-          this.model.depsdropstosave.each(function(drop) {
-            payment = _.find(OB.POS.modelterminal.get('payments'), function(p) {
-              return p.payment.id === drop.get('paymentMethodId');
-            });
-            if (payment && payment.paymentMethod.cashManagementProvider) {
-              hasProvider = true;
-              currentDrop = drop;
+          OB.App.State.Cashup.Utils.getCashManagementsInDraft().forEach(
+            function(drop) {
+              payment = _.find(OB.POS.modelterminal.get('payments'), function(
+                p
+              ) {
+                return p.payment.id === drop.paymentMethodId;
+              });
+              if (payment && payment.paymentMethod.cashManagementProvider) {
+                hasProvider = true;
+                currentDrop = drop;
+              }
             }
-          });
+          );
           if (hasProvider) {
             this.bubble('onShowPopup', {
               popup: 'modalpayment',
@@ -100,14 +104,14 @@ enyo.kind({
                 key: payment.paymentMethod.searchKey,
                 name: payment.paymentMethod._identifier,
                 paymentMethod: payment.paymentMethod,
-                amount: currentDrop.get('amount'),
+                amount: currentDrop.amount,
                 rate: payment.rate,
                 mulrate: payment.mulrate,
                 isocode: payment.isocode
               }
             });
           } else {
-            this.model.depsdropstosave.trigger('makeDeposits');
+            this.model.trigger('makeDeposits');
           }
         }, this);
       }
@@ -284,7 +288,7 @@ enyo.kind({
       'click',
       function(model) {
         var me = this;
-        this.model.depsdropstosave.trigger(
+        this.model.trigger(
           'paymentDone',
           model,
           this.currentPayment,
@@ -292,9 +296,14 @@ enyo.kind({
             OB.info(
               '[CashMgmntEvent] Item Added. Current Cash Mgmnt items: ' +
                 JSON.stringify(
-                  me.model.depsdropstosave.models.map(function(item) {
-                    return item.getRelevantInformationString();
-                  })
+                  OB.App.State.Cashup.Utils.getCashManagementsInDraft().map(
+                    function(item) {
+                      return OB.Dal.transform(
+                        OB.Model.CashManagement,
+                        item
+                      ).getRelevantInformationString();
+                    }
+                  )
                 )
             );
             delete me.currentPayment;
@@ -312,7 +321,7 @@ enyo.kind({
       'click',
       function(model) {
         var me = this;
-        this.model.depsdropstosave.trigger(
+        this.model.trigger(
           'paymentDone',
           model,
           this.currentPayment,
@@ -320,9 +329,14 @@ enyo.kind({
             OB.info(
               '[CashMgmntEvent] Item Added. Current Cash Mgmnt items: ' +
                 JSON.stringify(
-                  me.model.depsdropstosave.models.map(function(item) {
-                    return item.getRelevantInformationString();
-                  })
+                  OB.App.State.Cashup.Utils.getCashManagementsInDraft().map(
+                    function(item) {
+                      return OB.Dal.transform(
+                        OB.Model.CashManagement,
+                        item
+                      ).getRelevantInformationString();
+                    }
+                  )
                 )
             );
             delete me.currentPayment;

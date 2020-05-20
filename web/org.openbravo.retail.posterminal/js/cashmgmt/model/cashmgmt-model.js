@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2019 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -26,14 +26,16 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
   },
   pendingToSaveHaveCashManagementProvider: function() {
     var hasPayment = false;
-    _.each(this.depsdropstosave.models, function(drop) {
+    _.each(OB.App.State.Cashup.Utils.getCashManagementsInDraft(), function(
+      drop
+    ) {
       var payment = _.find(OB.POS.modelterminal.get('payments'), function(p) {
         return (
-          p.payment.id === drop.get('paymentMethodId') &&
+          p.payment.id === drop.paymentMethodId &&
           p.paymentMethod.cashManagementProvider
         );
       });
-      if (!OB.UTIL.isNullOrUndefined(payment) || drop.get('allowOnlyOne')) {
+      if (!OB.UTIL.isNullOrUndefined(payment) || drop.allowOnlyOne) {
         hasPayment = true;
       }
     });
@@ -42,8 +44,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
   initModels: function(initModelsCallback) {
     var me = this;
 
-    this.depsdropstosave = new Backbone.Collection();
-    this.depsdropstosave.on(
+    this.on(
       'paymentDone',
       function(model, p, callback, errorCallback) {
         var execution = OB.UTIL.ProcessController.start('cashMngPaymentDone');
@@ -114,21 +115,9 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
             });
           }
 
-          try {
-            await OB.App.State.Cashup.createCashManagement({
-              parameters: {
-                terminalName: OB.MobileApp.model.get('logConfiguration')
-                  .deviceIdentifier,
-                cacheSessionId: OB.UTIL.localStorage.getItem('cacheSessionId')
-              },
-              cashManagement: addedCashMgmt
-            });
-          } catch (error) {
-            //FIXME
-            OB.error(error);
-          }
-
-          me.depsdropstosave.add(addedCashMgmt);
+          await OB.App.State.Cashup.createCashManagement({
+            cashManagement: addedCashMgmt
+          });
 
           var selectedPayment = me.payments.filter(function(payment) {
             return payment.get('paymentmethod_id') === p.id;
@@ -174,9 +163,10 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
     );
 
     var makeDepositsFunction = function(me) {
+      const cashManagementsInDraft = OB.App.State.Cashup.Utils.getCashManagementsInDraft();
       OB.info(
         '[CashMgmntSync][1] Cash management synchronization started. ' +
-          (me.depsdropstosave.size ? me.depsdropstosave.size() : 0) +
+          cashManagementsInDraft.length +
           ' To be synched'
       );
       TestRegistry.CashMgmt = TestRegistry.CashMgmt || {};
@@ -184,7 +174,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
 
       OB.UTIL.showLoading(true);
 
-      if (me.depsdropstosave.length === 0) {
+      if (cashManagementsInDraft.length === 0) {
         // Nothing to do go to main window
         OB.info(
           '[CashMgmntSync] Cash managment synchronization exited. Nothing to sync'
@@ -197,231 +187,6 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
 
       TestRegistry.CashMgmt.isCashDepositPrinted = true;
 
-      // function runSync() {
-      //   if (OB.MobileApp.model.get('connectedToERP')) {
-      //     OB.info('[CashMgmntSync][11][RunSync] Started ONLINE');
-      //     OB.MobileApp.model.runSyncProcess(
-      //       function() {
-      //         OB.UTIL.showLoading(false);
-      //         me.set('finished', true);
-      //         if (
-      //           OB.MobileApp.model.hasPermission('OBPOS_print.cashmanagement')
-      //         ) {
-      //           OB.info('[CashMgmntSync][12][RunSync] Online -> PRINT');
-      //           me.printCashMgmt.print(me.depsdropstosave.toJSON());
-      //         }
-      //         OB.info('[CashMgmntSync][13][RunSync] Finished ONLINE');
-      //       },
-      //       function() {
-      //         if (
-      //           OB.MobileApp.model.hasPermission(
-      //             'OBMOBC_SynchronizedMode',
-      //             true
-      //           )
-      //         ) {
-      //           OB.info(
-      //             '[CashMgmntSync][RunSync] continues ONLINE. OBMOBC_SynchronizedMode is ACTIVE'
-      //           );
-      //           // fail, remove everything and go away
-      //           OB.Dal.removeAll(OB.Model.CashManagement, null, function() {
-      //             OB.info(
-      //               '[CashMgmntSync][RunSync][removeAll] RemoveAll because OBMOBC_SynchronizedMode is ACTIVE'
-      //             );
-      //             OB.UTIL.calculateCurrentCash();
-      //             me.depsdropstosave = new Backbone.Collection();
-      //             OB.info(
-      //               '[CashMgmntSync][RunSync] Finished ONLINE with OBMOBC_SynchronizedMode is ACTIVE'
-      //             );
-      //           });
-      //           return;
-      //         }
-      //         OB.error('[CashMgmntSync][RunSync] Failed ONLINE');
-      //       }
-      //     );
-      //   } else {
-      //     OB.info('[CashMgmntSync][RunSync] Started OFFLINE');
-      //     OB.UTIL.showLoading(false);
-      //     me.set('finished', true);
-      //     if (OB.MobileApp.model.hasPermission('OBPOS_print.cashmanagement')) {
-      //       OB.info('[CashMgmntSync][RunSync] Offline -> PRINT');
-      //       me.printCashMgmt.print(me.depsdropstosave.toJSON());
-      //       OB.info('[CashMgmntSync][RunSync] Finished OFFLINE');
-      //     }
-      //   }
-      // }
-
-      var paymentList = new Backbone.Collection(),
-        found = false,
-        i;
-
-      function addAttributes(depdrop) {
-        var payment = new OB.Model.PaymentMethodCashUp();
-        if (depdrop.get('type') === 'deposit') {
-          payment.set('paymentMethodId', depdrop.get('paymentMethodId'));
-          payment.set('cashup_id', depdrop.get('cashup_id'));
-          payment.set('totalDeposits', depdrop.get('amount'));
-          payment.set('totalDrops', 0);
-        } else {
-          payment.set('paymentMethodId', depdrop.get('paymentMethodId'));
-          payment.set('cashup_id', depdrop.get('cashup_id'));
-          payment.set('totalDrops', depdrop.get('amount'));
-          payment.set('totalDeposits', 0);
-        }
-        payment.set('newPaymentMethod', true);
-        return payment;
-      }
-      _.each(
-        me.depsdropstosave.models,
-        function(depdrop) {
-          if (paymentList.length > 0) {
-            for (i = 0; i < paymentList.length; i++) {
-              found = false;
-              if (
-                paymentList.models[i].get('paymentMethodId') ===
-                depdrop.get('paymentMethodId')
-              ) {
-                var paymentMethod = paymentList.models[i],
-                  totalDeposits = 0,
-                  totalDrops = 0,
-                  depos = paymentMethod.get('totalDeposits'),
-                  drop = paymentMethod.get('totalDrops');
-                if (depdrop.get('type') === 'deposit') {
-                  totalDeposits = OB.DEC.add(depos, depdrop.get('amount'));
-                  paymentMethod.set('totalDeposits', totalDeposits);
-                } else {
-                  totalDrops = OB.DEC.add(drop, depdrop.get('amount'));
-                  paymentMethod.set('totalDrops', totalDrops);
-                }
-                found = true;
-                break;
-              }
-            }
-            if (!found) {
-              paymentList.add(addAttributes(depdrop));
-            }
-          } else {
-            paymentList.add(addAttributes(depdrop));
-          }
-        },
-        this
-      );
-
-      OB.info(
-        '[CashMgmntSync][2] grouped info before sync: ' +
-          JSON.stringify(
-            paymentList.models.map(function(item) {
-              return item;
-            })
-          )
-      );
-
-      // Sending drops/deposits to backend
-      var updateCashupInfo = null;
-      var setCashupObjectInCashMgmt;
-
-      setCashupObjectInCashMgmt = function(depdrops, cashUp, index, tx) {
-        if (index === depdrops.length) {
-          OB.info(
-            '[CashMgmntSync][9][setCashupObjectInCashMgmt] Finished. Execute CalculateCurrentCash'
-          );
-          OB.UTIL.calculateCurrentCash(function() {
-            OB.info(
-              '[CashMgmntSync][10][setCashupObjectInCashMgmt][calculateCurrentCash] Executed. Run Sync'
-            );
-          }, tx);
-        } else {
-          var depdrop = depdrops[index];
-          var depDropJson;
-          depdrop.set(
-            'cashUpReportInformation',
-            JSON.parse(cashUp.models[0].get('objToSend'))
-          );
-          depDropJson = JSON.stringify(depdrop.serializeToJSON());
-          depdrop.set('json', depDropJson);
-          OB.info(
-            '[CashMgmntSync][7][setCashupObjectInCashMgmt][saveCashMgmnt] execute save for deposit/drop in local DB:' +
-              depDropJson
-          );
-          OB.Dal.saveInTransaction(
-            tx,
-            depdrop,
-            function() {
-              OB.info(
-                '[CashMgmntSync][8][saveCashMgmnt] Successfully saved deposit/drop in local DB:' +
-                  depdrop.id
-              );
-              setCashupObjectInCashMgmt(depdrops, cashUp, index + 1, tx);
-            },
-            function() {
-              OB.UTIL.showLoading(false);
-              me.set('finishedWrongly', true);
-              OB.error(
-                '[CashMgmntSync][setCashupObjectInCashMgmt][saveCashMgmnt] Error saving deposit/drop in local DB:' +
-                  depdrop.id
-              );
-              return;
-            },
-            true
-          );
-        }
-      };
-
-      updateCashupInfo = function(
-        paymentList,
-        index,
-        cashUpReport,
-        tx,
-        callback
-      ) {
-        if (index === paymentList.length && callback) {
-          callback(cashUpReport);
-        } else {
-          OB.info(
-            '[CashMgmntSync][3][preSumCashManagementToCashup] for payment: ' +
-              JSON.stringify(paymentList[index])
-          );
-          OB.UTIL.sumCashManagementToCashup(
-            paymentList[index],
-            function(cashUp) {
-              OB.info(
-                '[CashMgmntSync][4][preUpdateCashupInfo][postSumCashManagementToCashup] for paymentList:' +
-                  JSON.stringify(paymentList[index])
-              );
-              updateCashupInfo(paymentList, index + 1, cashUp, tx, callback);
-            },
-            tx
-          );
-        }
-      };
-
-      // OB.Dal.transaction(function(tx) {
-      //   updateCashupInfo(paymentList.models, 0, null, tx, function(
-      //     cashUpReport
-      //   ) {
-      //     if (cashUpReport && cashUpReport.size && cashUpReport.size() === 1) {
-      //       OB.info(
-      //         '[CashMgmntSync][5][postUpdateCashupInfo]: ' +
-      //           cashUpReport.at(0).get('objToSend')
-      //       );
-      //     }
-      //     OB.info(
-      //       '[CashMgmntSync][6][setCashupObjectInCashMgmt]: Call to setCashupObjectInCashMgmt for ' +
-      //         me.depsdropstosave.size() +
-      //         ' models'
-      //     );
-      //     setCashupObjectInCashMgmt(
-      //       me.depsdropstosave.models,
-      //       cashUpReport,
-      //       0,
-      //       tx
-      //     );
-      //   });
-      // });
-
-      // for (i = 0; i < paymentList.length; i++) {
-      //   paymentList.at(i).set('newPaymentMethod', false);
-      // }
-
       const cashManagementsToPrint = OB.App.State.Cashup.Utils.getCashManagementsInDraft();
       OB.App.State.Global.processCashManagements({
         parameters: {
@@ -429,22 +194,18 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
             .deviceIdentifier,
           cacheSessionId: OB.UTIL.localStorage.getItem('cacheSessionId')
         }
-      })
-        .then(function() {
-          OB.UTIL.showLoading(false);
-          me.set('finished', true);
-          if (OB.MobileApp.model.hasPermission('OBPOS_print.cashmanagement')) {
-            me.printCashMgmt.print(cashManagementsToPrint);
-          }
-        })
-        .catch(function(error) {
-          OB.error(error);
-        });
+      }).then(function() {
+        OB.UTIL.showLoading(false);
+        me.set('finished', true);
+        if (OB.MobileApp.model.hasPermission('OBPOS_print.cashmanagement')) {
+          me.printCashMgmt.print(cashManagementsToPrint);
+        }
+      });
     };
     this.cancelDeposits = function(callback) {
       OB.App.State.Cashup.cancelCashManagements().then(callback);
     };
-    this.depsdropstosave.on(
+    this.on(
       'makeDeposits',
       function(receipt) {
         var me = this;
@@ -453,7 +214,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
             OB.UTIL.HookManager.executeHooks(
               'OBPOS_PreSaveCashManagements',
               {
-                dropsdeps: me.depsdropstosave
+                dropsdeps: OB.App.State.Cashup.Utils.getCashManagementsInDraft()
               },
               function(args) {
                 makeDepositsFunction(me);
@@ -464,7 +225,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
           OB.UTIL.HookManager.executeHooks(
             'OBPOS_PreSaveCashManagements',
             {
-              dropsdeps: me.depsdropstosave
+              dropsdeps: OB.App.State.Cashup.Utils.getCashManagementsInDraft()
             },
             function(args) {
               makeDepositsFunction(me);
@@ -665,8 +426,8 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
             updateCashMgmEvents(me.get('listpaymentmethodid'));
             resolve();
           },
-          function(a, b, c, d) {
-            OB.error("Could not load the payment method's information");
+          function(error) {
+            OB.error(error.stack);
             reject();
           }
         );
@@ -677,8 +438,8 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
           finishSynch();
           callback();
         },
-        function() {
-          OB.error('Could not load cashup related information');
+        function(error) {
+          OB.error(error.stack);
           OB.UTIL.ProcessController.finish('cashMgmtLoadCashup', execution);
         }
       );
