@@ -441,16 +441,9 @@ enyo.kind({
                             printInvoice(++indx);
                             return;
                           }
-                          me.model.printReceipt.print(invoice, {
-                            callback: function(options) {
-                              finishPrintInvoices();
-                              if (options && options.failed) {
-                                printInvoice(indx);
-                              } else {
-                                printInvoice(++indx);
-                              }
-                            }
-                          });
+                          me.model.printReceipt.print(invoice);
+                          finishPrintInvoices();
+                          printInvoice(++indx);
                         }
                       );
                     } catch (e) {

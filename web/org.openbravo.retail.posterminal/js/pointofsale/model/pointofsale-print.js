@@ -180,7 +180,14 @@
   };
 
   PrintReceipt.prototype.print = function(receipt, printargs) {
-    const payload = { printSettings: printargs };
+    const payload = {};
+    if (printargs) {
+      payload.printSettings = {
+        forcePrint: printargs.forcePrint,
+        offline: printargs.offline,
+        forcedtemplate: printargs.forcedtemplate
+      };
+    }
     if (!OB.UTIL.isNullOrUndefined(receipt)) {
       payload.ticket = OB.App.StateBackwardCompatibility.getInstance(
         'Ticket'
@@ -211,8 +218,7 @@
         order: receipt,
         template: template,
         forcedtemplate: printargs.forcedtemplate,
-        model: me.model,
-        callback: printargs.callback
+        model: me.model
       },
       function(args) {
         function printPDF(receipt, args) {
@@ -228,9 +234,6 @@
                 var successfunc = function() {
                   me.isRetry = true;
                   me.print(receipt, printargs);
-                  if (args.callback) {
-                    args.callback({ failed: true });
-                  }
                   return true;
                 };
                 var hidefunc = function() {
@@ -245,9 +248,6 @@
                         sendfunction: '_sendPDF'
                       })
                     );
-                  }
-                  if (args.callback) {
-                    args.callback({ failed: true });
                   }
                 };
                 var cancelfunc = function() {
@@ -271,9 +271,6 @@
                   },
                   function() {
                     OB.debug('Executed hooks of OBPRINT_PostPrint');
-                    if (args.callback) {
-                      args.callback();
-                    }
                   }
                 );
               }
@@ -282,9 +279,6 @@
         }
 
         if (args.cancelOperation && args.cancelOperation === true) {
-          if (args.callback) {
-            args.callback();
-          }
           return true;
         }
 
@@ -387,9 +381,6 @@
         }
         var cancelSelectPrinter = function() {
           me.isRetry = false;
-          if (args.callback) {
-            args.callback();
-          }
         };
         if (args.template.ispdf) {
           var printPdfProcess = function() {
@@ -444,9 +435,6 @@
                     };
                     var cancelfunc = function() {
                       me.isRetry = false;
-                      if (args.callback) {
-                        args.callback();
-                      }
                       return true;
                     };
                     var hidefunc = function() {
@@ -461,9 +449,6 @@
                             sendfunction: '_send'
                           })
                         );
-                      }
-                      if (args.callback) {
-                        args.callback();
                       }
                     };
                     OB.OBPOS.showSelectPrinterDialog(
@@ -485,18 +470,11 @@
                       },
                       function() {
                         OB.debug('Executed hooks of OBPRINT_PostPrint');
-                        if (args.callback) {
-                          args.callback();
-                        }
                       }
                     );
                   }
                 }
               );
-            } else {
-              if (args.callback) {
-                args.callback();
-              }
             } // order property.
             //Print again when it is a return and the preference is 'Y' or when one of the payments method has the print twice checked
             if (receipt.get('print')) {
@@ -540,9 +518,6 @@
                               sendfunction: '_send'
                             })
                           );
-                        }
-                        if (args.callback) {
-                          args.callback();
                         }
                       };
                       var cancelfunc = function() {

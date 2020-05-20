@@ -1435,14 +1435,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                                   'cancelLayaway',
                                   execution
                                 );
-                                receipt.trigger(
-                                  'print',
-                                  cloneOrderForPrinting,
-                                  {
-                                    callback: cancelAndNew,
-                                    forceCallback: true
-                                  }
-                                );
+                                receipt.trigger('print', cloneOrderForPrinting);
+                                cancelAndNew();
                               }
 
                               OB.MobileApp.model.runSyncProcess(
