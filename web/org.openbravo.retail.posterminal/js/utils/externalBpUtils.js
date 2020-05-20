@@ -12,7 +12,7 @@
 // Returns true if extbpEnabled is enabled
 OB.UTIL.externalBp = function() {
   let isexternalBp = false;
-  if (OB.MobileApp.model.attributes.terminal.extbpEnabled) {
+  if (OB.MobileApp.model.get('externalBpIntegration')) {
     isexternalBp = true;
   }
   return isexternalBp;
