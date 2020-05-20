@@ -16,11 +16,11 @@
     'completeTicket',
     (globalState, payload) => {
       const newGlobalState = { ...globalState };
-      let ticket = { ...newGlobalState.Ticket };
-      let documentSequence = { ...newGlobalState.DocumentSequence };
+      let newTicket = { ...newGlobalState.Ticket };
+      let newDocumentSequence = { ...newGlobalState.DocumentSequence };
 
       const {
-        organization,
+        terminalOrganization,
         cashUpId,
         returnSequencePrefix,
         quotationSequencePrefix,
@@ -28,40 +28,26 @@
         simplifiedReturnInvoiceSequencePrefix,
         documentNumberSeperator,
         documentNumberPadding,
-        salesWithOneLineNegativeAsReturns
+        salesWithOneLineNegativeAsReturns,
+        discountRules,
+        bpSets,
+        taxRules
       } = payload;
 
-      ticket.created = new Date().getTime();
-      ticket.completeTicket = true;
+      newTicket.created = new Date().getTime();
+      newTicket.completeTicket = true;
       // FIXME: set cashup info once Cashup is migrated to state
       // ticket.obposAppCashup = cashUpId;
 
       // Document number generation
       ({
-        ticket,
-        documentSequence
+        ticket: newTicket,
+        documentSequence: newDocumentSequence
       } = OB.App.State.DocumentSequence.Utils.generateTicketDocumentSequence(
-        ticket,
-        documentSequence,
+        newTicket,
+        newDocumentSequence,
         returnSequencePrefix,
         quotationSequencePrefix,
-        null,
-        null,
-        documentNumberSeperator,
-        documentNumberPadding,
-        salesWithOneLineNegativeAsReturns
-      ));
-
-      // Shipment generation
-      ({ ticket } = OB.App.State.Ticket.Utils.generateShipment(
-        ticket,
-        organization
-      ));
-
-      // Invoice generation
-      ({ ticket, documentSequence } = OB.App.State.Ticket.Utils.generateInvoice(
-        ticket,
-        documentSequence,
         fullReturnInvoiceSequencePrefix,
         simplifiedReturnInvoiceSequencePrefix,
         documentNumberSeperator,
@@ -69,11 +55,39 @@
         salesWithOneLineNegativeAsReturns
       ));
 
+      // Shipment generation
+      newTicket = OB.App.State.Ticket.Utils.generateShipment(newTicket, {
+        terminalOrganization
+      });
+
+      // Invoice generation
+      newTicket = OB.App.State.Ticket.Utils.generateInvoice(newTicket, {
+        discountRules,
+        bpSets,
+        taxRules
+      });
+      if (newTicket.calculatedInvoice) {
+        ({
+          ticket: newTicket.calculatedInvoice,
+          documentSequence: newDocumentSequence
+        } = OB.App.State.DocumentSequence.Utils.generateTicketDocumentSequence(
+          newTicket.calculatedInvoice,
+          newDocumentSequence,
+          returnSequencePrefix,
+          quotationSequencePrefix,
+          fullReturnInvoiceSequencePrefix,
+          simplifiedReturnInvoiceSequencePrefix,
+          documentNumberSeperator,
+          documentNumberPadding,
+          salesWithOneLineNegativeAsReturns
+        ));
+      }
+
       // FIXME: Remove once properties are mapped
-      ticket.bp = ticket.businessPartner;
-      ticket.gross = ticket.grossAmount;
-      ticket.net = ticket.netAmount;
-      ticket.lines = ticket.lines.map(line => {
+      newTicket.bp = newTicket.businessPartner;
+      newTicket.gross = newTicket.grossAmount;
+      newTicket.net = newTicket.netAmount;
+      newTicket.lines = newTicket.lines.map(line => {
         return {
           ...line,
           gross: line.gross || line.grossAmount,
@@ -85,10 +99,10 @@
       const newMessage = OB.App.State.Messages.Utils.createNewMessage(
         'Order',
         'org.openbravo.retail.posterminal.OrderLoader',
-        ticket
+        newTicket
       );
 
-      newGlobalState.DocumentSequence = documentSequence;
+      newGlobalState.DocumentSequence = newDocumentSequence;
       newGlobalState.Messages = [...newGlobalState.Messages, newMessage];
 
       return newGlobalState;

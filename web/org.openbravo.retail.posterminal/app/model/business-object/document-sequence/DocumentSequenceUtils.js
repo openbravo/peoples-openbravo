@@ -14,23 +14,6 @@
 (() => {
   OB.App.StateAPI.DocumentSequence.registerUtilityFunctions({
     /**
-     * FIXME: Move to TicketUtils
-     * Checks whether a ticket is a return or a sale.
-     *
-     * @returns {boolean} true in case the ticket is a return, false in case it is a sale.
-     */
-    isReturnTicket(ticket, salesWithOneLineNegativeAsReturns) {
-      if (!ticket.lines) {
-        return false;
-      }
-
-      const negativeLines = ticket.lines.filter(line => line.qty < 0).length;
-      return (
-        negativeLines === ticket.lines.length ||
-        (negativeLines > 0 && salesWithOneLineNegativeAsReturns)
-      );
-    },
-    /**
      * Increases in one the sequence defined with the given sequence name.
      *
      * @returns {number} The new document sequence.
@@ -77,10 +60,9 @@
       quotationSequencePrefix,
       salesWithOneLineNegativeAsReturns
     ) {
-      const isReturnTicket = OB.App.State.DocumentSequence.Utils.isReturnTicket(
-        ticket,
+      const isReturnTicket = OB.App.State.Ticket.Utils.isReturnTicket(ticket, {
         salesWithOneLineNegativeAsReturns
-      );
+      });
       if (ticket.isQuotation && quotationSequencePrefix) {
         return 'quotationslastassignednum';
       }
@@ -101,10 +83,9 @@
       simplifiedReturnInvoiceSequencePrefix,
       salesWithOneLineNegativeAsReturns
     ) {
-      const isReturnTicket = OB.App.State.DocumentSequence.Utils.isReturnTicket(
-        ticket,
+      const isReturnTicket = OB.App.State.Ticket.Utils.isReturnTicket(ticket, {
         salesWithOneLineNegativeAsReturns
-      );
+      });
       if (
         !ticket.fullInvoice &&
         isReturnTicket &&

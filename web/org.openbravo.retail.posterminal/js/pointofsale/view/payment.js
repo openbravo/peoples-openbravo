@@ -2526,7 +2526,7 @@ enyo.kind({
 
     if (!isMultiOrder) {
       await OB.App.State.Global.completeTicket({
-        organization: OB.MobileApp.model.get('terminal').organization,
+        terminalOrganization: OB.MobileApp.model.get('terminal').organization,
         cashUpId: OB.MobileApp.model.get('terminal').cashUpId,
         returnSequencePrefix: OB.MobileApp.model.get('terminal')
           .returnDocNoPrefix,
@@ -2543,7 +2543,10 @@ enyo.kind({
         documentNumberPadding: OB.MobileApp.model.get('terminal')
           .documentnoPadding,
         salesWithOneLineNegativeAsReturns: OB.MobileApp.model.get('permissions')
-          .OBPOS_SalesWithOneLineNegativeAsReturns
+          .OBPOS_SalesWithOneLineNegativeAsReturns,
+        discountRules: OB.Discounts.Pos.ruleImpls,
+        bpSets: OB.Discounts.Pos.bpSets,
+        taxRules: OB.Taxes.Pos.ruleImpls
       });
 
       if (OB.UTIL.RfidController.isRfidConfigured()) {
