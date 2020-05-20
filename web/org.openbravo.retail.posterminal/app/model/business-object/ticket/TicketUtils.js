@@ -42,11 +42,11 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
         discountedGrossAmount:
           discounts && priceIncludesTax
             ? discounts.finalLinePrice
-            : OB.DEC.mul(line.qty, line.price),
+            : OB.DEC.mul(line.qty, line.grossPrice),
         discountedNetAmount:
           discounts && !priceIncludesTax
             ? discounts.finalLinePrice
-            : OB.DEC.mul(line.qty, line.pricenet),
+            : OB.DEC.mul(line.qty, line.netPrice),
         promotions: discounts ? discounts.promotions : []
       };
       return newLine;

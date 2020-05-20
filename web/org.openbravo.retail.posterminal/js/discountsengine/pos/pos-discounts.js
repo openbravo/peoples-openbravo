@@ -164,6 +164,7 @@
         )
       );
     });
+    return result;
   };
 
   OB.Discounts.Pos.calculateDiscounts = (receipt, callback) => {
