@@ -19,14 +19,14 @@
         return l;
       }
 
-      const newLine = { ...l, price };
+      const newLine = { ...l, grossPrice: price };
 
       if (
         ticket.deliveryPaymentMode === 'PD' &&
         newLine.product.obrdmIsdeliveryservice
       ) {
         newLine.obrdmAmttopayindelivery = OB.DEC.mul(price, newLine.qty);
-        newLine.price = 0;
+        newLine.grossPrice = 0;
       }
 
       if (reason) {

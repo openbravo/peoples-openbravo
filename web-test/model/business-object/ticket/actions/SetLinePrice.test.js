@@ -32,9 +32,27 @@ require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-
 describe('Ticket.setPrice action', () => {
   const basicTicket = deepfreeze({
     lines: [
-      { id: '1', qty: 1, price: 10, priceList: 10, product: { listPrice: 10 } },
-      { id: '2', qty: 1, price: 20, priceList: 20, product: { listPrice: 20 } },
-      { id: '3', qty: 1, price: 30, priceList: 30, product: { listPrice: 30 } }
+      {
+        id: '1',
+        qty: 1,
+        grossPrice: 10,
+        priceList: 10,
+        product: { listPrice: 10 }
+      },
+      {
+        id: '2',
+        qty: 1,
+        grossPrice: 20,
+        priceList: 20,
+        product: { listPrice: 20 }
+      },
+      {
+        id: '3',
+        qty: 1,
+        grossPrice: 30,
+        priceList: 30,
+        product: { listPrice: 30 }
+      }
     ]
   });
 
@@ -48,7 +66,7 @@ describe('Ticket.setPrice action', () => {
     expect(modifiedLine).toMatchObject({
       id: '1',
       qty: 1,
-      price: 5,
+      grossPrice: 5,
       priceList: 10,
       product: { listPrice: 10 }
     });
@@ -63,8 +81,20 @@ describe('Ticket.setPrice action', () => {
 
     const modifiedLine = newTicket.lines.filter(l => lineIds.includes(l.id));
     expect(modifiedLine).toMatchObject([
-      { id: '1', qty: 1, price: 5, priceList: 10, product: { listPrice: 10 } },
-      { id: '2', qty: 1, price: 5, priceList: 20, product: { listPrice: 20 } }
+      {
+        id: '1',
+        qty: 1,
+        grossPrice: 5,
+        priceList: 10,
+        product: { listPrice: 10 }
+      },
+      {
+        id: '2',
+        qty: 1,
+        grossPrice: 5,
+        priceList: 20,
+        product: { listPrice: 20 }
+      }
     ]);
   });
 
@@ -125,7 +155,7 @@ describe('Ticket.setPrice action', () => {
         {
           id: '1',
           qty: 1,
-          price: 10,
+          grossPrice: 10,
           priceList: 10,
           baseAmountToPayInDeliver: 5,
           product: { listPrice: 10, obrdmIsdeliveryservice: true }
@@ -133,7 +163,7 @@ describe('Ticket.setPrice action', () => {
         {
           id: '2',
           qty: 1,
-          price: 30,
+          grossPrice: 30,
           priceList: 30,
           product: { listPrice: 30 }
         }
@@ -147,7 +177,7 @@ describe('Ticket.setPrice action', () => {
       });
 
       expect(newTicket.lines[0]).toMatchObject({
-        price: 0,
+        grossPrice: 0,
         obrdmAmttopayindelivery: 500
       });
     });
@@ -158,7 +188,7 @@ describe('Ticket.setPrice action', () => {
         price: 500
       });
 
-      expect(newTicket.lines[1]).toMatchObject({ price: 500 });
+      expect(newTicket.lines[1]).toMatchObject({ grossPrice: 500 });
     });
   });
 });
