@@ -7,8 +7,7 @@
  ************************************************************************************
  */
 
-require('./SetupDocumentSequence');
-require('./SetupDocumentSequenceUtils');
+require('./SetupDocumentSequenceAndTicket');
 const deepfreeze = require('deepfreeze');
 
 describe('Document Sequence Utils getOrderSequenceName method', () => {
