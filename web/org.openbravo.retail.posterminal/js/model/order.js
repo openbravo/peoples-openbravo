@@ -5815,13 +5815,13 @@
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
         if (oldbp.id !== businessPartner.id) {
           //Business Partner have changed
-//          OB.Dal.saveOrUpdate(
-//            businessPartner,
-//            function() {},
-//            function() {
-//              OB.error(arguments);
-//            }
-//          );
+          //          OB.Dal.saveOrUpdate(
+          //            businessPartner,
+          //            function() {},
+          //            function() {
+          //              OB.error(arguments);
+          //            }
+          //          );
           if (
             OB.MobileApp.model.hasPermission('OBPOS_remote.discount.bp', true)
           ) {
@@ -11078,10 +11078,6 @@
       },
 
       addNewOrder: function(isFirstOrder) {
-        var me = this;
-        if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-          me.doRemoteBPSettings(OB.MobileApp.model.get('businessPartner'));
-        }
         this.saveCurrent();
         this.current = this.newOrder();
         this.unshift(this.current);
@@ -11115,10 +11111,6 @@
               }
             }
           );
-        }
-
-        if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-          this.doRemoteBPSettings(model.get('bp'));
         }
 
         this.saveCurrent();
@@ -11158,24 +11150,6 @@
         );
       },
 
-      doRemoteBPSettings: function(businessPartner) {
-        // OB.Dal.saveOrUpdate(
-        //   businessPartner,
-        //   function() {},
-        //   function() {
-        //     OB.error(arguments);
-        //   }
-        // );
-        // OB.Dal.saveOrUpdate(
-        //   businessPartner.get('locationModel'),
-        //   function() {},
-        //   function() {
-        //     OB.error(arguments);
-        //   }
-        // );
-        OB.UTIL.showLoading(false);
-      },
-
       addNewQuotation: function() {
         this.saveCurrent();
         this.current = this.newOrder();
@@ -11205,9 +11179,6 @@
           var order = this.newOrder();
 
           this.unshift(order);
-          if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-            this.doRemoteBPSettings(OB.MobileApp.model.get('businessPartner'));
-          }
         }
         this.current = this.at(0);
         this.loadCurrent(createNew);

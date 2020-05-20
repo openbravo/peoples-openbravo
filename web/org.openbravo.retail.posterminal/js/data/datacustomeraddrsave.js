@@ -9,7 +9,7 @@
  ************************************************************************************
  */
 
-/*global OB, _ */
+/*global OB*/
 
 (function() {
   OB.DATA = window.OB.DATA || {};
@@ -60,8 +60,9 @@
       callback,
       callbackError
     ) {
-      var customerAddrId = customerAddr.get('id'),
-        isNew = false;
+      let customerAddrId = customerAddr.get('id'),
+        isNew = false,
+        me = this;
       customerAddr.set('createdBy', OB.MobileApp.model.get('orgUserId'));
       if (customerAddrId) {
         customerAddr.set('posTerminal', OB.MobileApp.model.get('terminal').id);
@@ -78,25 +79,33 @@
       } else {
         isNew = true;
       }
+
+      // if the bp is already used in one of the orders then update locally also
+      let updateLocally =
+        !OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true) ||
+        (!isNew &&
+          OB.MobileApp.model.orderList &&
+          _.filter(OB.MobileApp.model.orderList.models, function(order) {
+            return order.get('bp').get('locId') === customerAddr.get('id');
+          }).length > 0);
+
       //save that the customer address is being processed by server
-      customerAddr.set('loaded', OB.I18N.normalizeDate(new Date()));
+      if (updateLocally) {
+        customerAddr.set('loaded', OB.I18N.normalizeDate(new Date()));
+      }
       if (isNew) {
         customerAddr.set('posTerminal', OB.MobileApp.model.get('terminal').id);
         var uuid = OB.UTIL.get_UUID();
         customerAddr.set('id', uuid);
         customerAddr.id = uuid;
+        if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+          me.receipt.get('bp').set('moreaddress', true); // For to show two address buttons in receipt
+        }
       }
       try {
         await OB.App.State.Global.synchronizeBusinessPartnerLocation(
           customerAddr.attributes
         );
-
-        if (isNew) {
-          customerAddr.set(
-            'posTerminal',
-            OB.MobileApp.model.get('terminal').id
-          );
-        }
         if (callback) {
           callback();
         }

@@ -903,10 +903,31 @@ enyo.kind({
       });
     }
     function createBPartnerFilterResult(bp, bploc, dataBps) {
-      for (let i = 0; i < bp.length; i++) {
-        for (let j = 0; j < bploc.length; j++) {
-          if (bp[i].id === bploc[j].bpartner) {
-            dataBps.push(createBPartnerFilter(bp[i], bploc[j]));
+      if (dataBps.length > 0) {
+        for (let i = 0; i < bp.length; i++) {
+          for (let j = 0; j < bploc.length; j++) {
+            if (bp[i].id === bploc[j].bpartner) {
+              if (
+                !(
+                  dataBps.find(
+                    bpresult => bpresult.get('bpartnerId') === bp[i].id
+                  ) &&
+                  dataBps.find(
+                    bpresult => bpresult.get('bpLocactionId') === bploc[j].id
+                  )
+                )
+              ) {
+                dataBps.push(createBPartnerFilter(bp[i], bploc[j]));
+              }
+            }
+          }
+        }
+      } else {
+        for (let i = 0; i < bp.length; i++) {
+          for (let j = 0; j < bploc.length; j++) {
+            if (bp[i].id === bploc[j].bpartner) {
+              dataBps.push(createBPartnerFilter(bp[i], bploc[j]));
+            }
           }
         }
       }

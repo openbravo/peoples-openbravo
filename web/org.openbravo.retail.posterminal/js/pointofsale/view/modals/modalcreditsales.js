@@ -81,10 +81,6 @@ enyo.kind({
     this.model = model;
   },
   tap: function() {
-    function error(tx) {
-      OB.UTIL.showError(tx);
-    }
-
     this.owner.owner.actionCancel = false;
     this.doHideThisPopup();
     this.model.get('order').set('payOnCredit', true);

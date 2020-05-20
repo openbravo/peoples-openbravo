@@ -164,14 +164,24 @@
         customer.set('locations', locations);
         customer.setBPLocations(shipping, billing, shipping);
       }
+
+      // if the bp is already used in one of the orders then update locally also
+      let updateLocally =
+        !OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true) ||
+        (!isNew &&
+          OB.MobileApp.model.orderList &&
+          _.filter(OB.MobileApp.model.orderList.models, function(order) {
+            return order.get('bp').get('id') === customerId;
+          }).length > 0);
+
       //save that the customer is being processed by server
-      customer.set('loaded', OB.I18N.normalizeDate(new Date()));
+      if (updateLocally) {
+        customer.set('loaded', OB.I18N.normalizeDate(new Date()));
+      }
       try {
         await OB.App.State.Global.synchronizeBusinessPartner(
           customer.attributes
         );
-
-        //OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerSavedSuccessfullyLocally',[customer.get('_identifier')]));
         // Saving Customer Address locally
         if (isNew) {
           //create bploc from scratch and set all properties
