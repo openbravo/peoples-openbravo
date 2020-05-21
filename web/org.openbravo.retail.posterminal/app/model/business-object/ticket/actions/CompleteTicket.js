@@ -46,10 +46,13 @@
 
       newTicket.created = new Date().getTime();
       newTicket.completeTicket = true;
+      newTicket.obposAppCashup = terminal.cashUpId;
       newTicket = OB.App.State.Ticket.Utils.updateTicketType(
         newTicket,
         settings
       );
+
+      // FIXME: Move to add payment action?
       if (OB.App.State.Ticket.Utils.isReturnTicket(newTicket, settings)) {
         newTicket.payments = newTicket.payments.map(payment => {
           const newPayment = { ...payment };
@@ -75,9 +78,6 @@
           return newPayment;
         });
       }
-
-      // FIXME: set cashup info once Cashup is migrated to state
-      // ticket.obposAppCashup = terminal.cashUpId;
 
       // Document number generation
       ({
