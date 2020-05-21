@@ -11,7 +11,7 @@ require('./SetupCashup');
 const {
   executeActionPreparations
 } = require('../../../../../org.openbravo.mobile.core/web-test/base/state-utils');
-const deepfreeze = require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/deepfreeze-2.0.0');
+const deepfreeze = require('deepfreeze');
 require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/cashup/initCashup');
 require('./SetupCashupUtils');
 
