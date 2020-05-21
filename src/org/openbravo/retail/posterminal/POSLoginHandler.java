@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2019 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -215,14 +215,17 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
   // 8. Distance between store orgnization and organizations allowed for that role is the smallest
   // one
   public static Role getNearestRoleValidToLoginInWebPosTerminalForCertainUser(User currentUser,
-      OBPOSApplications terminal) {
+      OBPOSApplications terminal, boolean isWebService) {
+    String formAccessFilter = "";
+    if (!isWebService) {
+      formAccessFilter = " and exists (SELECT 1 FROM ADFormAccess frmacc WHERE rolOrg.role.id = frmacc.role.id "
+          + " and frmacc.active = true and frmacc.specialForm.id = :formId) ";
+    }
     String hqlQueryStr = "SELECT rolOrg.role.id, to_number(ad_isorgincluded(:stOrgId, rolOrg.organization.id, :clientId)) as distance "
         + " FROM ADRoleOrganization rolOrg WHERE rolOrg.active = true "
         + " and rolOrg.role.active = true and rolOrg.role.forPortalUsers = false "
         + " and rolOrg.role.id in (SELECT usrol.role.id FROM ADUserRoles usrol "
-        + " WHERE usrol.userContact.id = :userId and usrol.active = true) "
-        + " and exists (SELECT 1 FROM ADFormAccess frmacc WHERE rolOrg.role.id = frmacc.role.id "
-        + " and frmacc.active = true and frmacc.specialForm.id = :formId) "
+        + " WHERE usrol.userContact.id = :userId and usrol.active = true) " + formAccessFilter
         + " and to_number(ad_isorgincluded(:stOrgId, rolOrg.organization.id, :clientId)) > 0 "
         + " ORDER BY to_number(ad_isorgincluded(:stOrgId, rolOrg.organization.id, :clientId)) ASC, rolOrg.role.name ASC";
     final org.hibernate.Session hibernateSession = OBDal.getInstance().getSession();
@@ -230,7 +233,9 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
     query.setParameter("stOrgId", terminal.getOrganization().getId());
     query.setParameter("clientId", terminal.getClient().getId());
     query.setParameter("userId", currentUser.getId());
-    query.setParameter("formId", POSUtils.WEB_POS_FORM_ID);
+    if (!isWebService) {
+      query.setParameter("formId", POSUtils.WEB_POS_FORM_ID);
+    }
     query.setMaxResults(1);
 
     List<Object[]> listResults = query.list();
@@ -244,6 +249,11 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
     } else {
       return null;
     }
+  }
+
+  public static Role getNearestRoleValidToLoginInWebPosTerminalForCertainUser(User currentUser,
+      OBPOSApplications terminal) {
+    return getNearestRoleValidToLoginInWebPosTerminalForCertainUser(currentUser, terminal, false);
   }
 
   private int getDistanceToStoreOrganizationForCertainRole(Role currentRole,

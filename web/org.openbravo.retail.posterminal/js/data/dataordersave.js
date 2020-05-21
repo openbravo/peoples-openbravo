@@ -153,26 +153,6 @@
       }
     };
 
-    var printWelcome = function() {
-      // Print Welcome message (Hardware Manager)
-      var templatewelcome = new OB.DS.HWResource(
-        OB.MobileApp.model.get('terminal').printWelcomeTemplate ||
-          OB.OBPOSPointOfSale.Print.WelcomeTemplate
-      );
-      OB.POS.hwserver.print(
-        templatewelcome,
-        {},
-        function(data) {
-          if (data && data.exception) {
-            OB.UTIL.showError(
-              OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable')
-            );
-          }
-        },
-        OB.DS.HWServer.DISPLAY
-      );
-    };
-
     // finished receipt verifications
     var mainReceiptCloseFunction = function(eventParams, context) {
       context.receipt = model.get('order');
@@ -369,10 +349,8 @@
                     // create a clone of the receipt to be used when executing the final callback
                     receipt.clearWith(frozenReceipt);
                     OB.UTIL.clone(receipt, diffReceipt);
-                    if (OB.UTIL.HookManager.get('OBPOS_PostSyncReceipt')) {
-                      receiptForPostSyncReceipt = new OB.Model.Order();
-                      OB.UTIL.clone(frozenReceipt, receiptForPostSyncReceipt);
-                    }
+                    receiptForPostSyncReceipt = new OB.Model.Order();
+                    OB.UTIL.clone(frozenReceipt, receiptForPostSyncReceipt);
 
                     serverMessageForQuotation = function(frozenReceipt) {
                       var isLayaway =
@@ -419,9 +397,8 @@
 
                     syncSuccessCallback = function(callback, eventParams) {
                       if (
-                        OB.UTIL.HookManager.get('OBPOS_PostSyncReceipt') &&
-                        (!eventParams ||
-                          (eventParams && !eventParams.ignoreSyncProcess))
+                        !eventParams ||
+                        (eventParams && !eventParams.ignoreSyncProcess)
                       ) {
                         OB.UTIL.HookManager.executeHooks(
                           'OBPOS_PostSyncReceipt',
@@ -429,13 +406,20 @@
                             receipt: receiptForPostSyncReceipt,
                             syncSuccess: true
                           },
-                          function() {
-                            printWelcome();
+                          function(args) {
+                            if (
+                              OB.UTIL.isNullOrUndefined(
+                                args.showWelcomeMessage
+                              ) ||
+                              args.showWelcomeMessage
+                            ) {
+                              OB.OBPOSPointOfSale.Print.printWelcome();
+                            }
                             callback();
                           }
                         );
                       } else {
-                        printWelcome();
+                        OB.OBPOSPointOfSale.Print.printWelcome();
                         callback();
                       }
                     };
@@ -449,18 +433,14 @@
                     };
 
                     syncErrorCallback = function() {
-                      if (OB.UTIL.HookManager.get('OBPOS_PostSyncReceipt')) {
-                        OB.UTIL.HookManager.executeHooks(
-                          'OBPOS_PostSyncReceipt',
-                          {
-                            receipt: receiptForPostSyncReceipt,
-                            syncSuccess: false
-                          },
-                          restoreReceiptCallback
-                        );
-                      } else {
-                        restoreReceiptCallback();
-                      }
+                      OB.UTIL.HookManager.executeHooks(
+                        'OBPOS_PostSyncReceipt',
+                        {
+                          receipt: receiptForPostSyncReceipt,
+                          syncSuccess: false
+                        },
+                        restoreReceiptCallback
+                      );
                       OB.UTIL.ProcessController.finish(
                         'tapTotalButton',
                         execution
@@ -900,7 +880,7 @@
                       'saveAndSyncMultiOrder',
                       execution
                     );
-                    printWelcome();
+                    OB.OBPOSPointOfSale.Print.printWelcome();
                   });
                 }
               );

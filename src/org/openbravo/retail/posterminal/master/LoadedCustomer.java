@@ -102,7 +102,8 @@ public class LoadedCustomer extends ProcessHQLQuery {
     bpartnerHQLQuery.append("   and bpls.$readableSimpleClientCriteria");
     bpartnerHQLQuery.append("   group by bpls.businessPartner.id");
     bpartnerHQLQuery.append(" )");
-    bpartnerHQLQuery.append(" and (ulist.id in (");
+    bpartnerHQLQuery.append(" and (ulist is null");
+    bpartnerHQLQuery.append(" or ulist.id in (");
     bpartnerHQLQuery.append("   select max(ulist2.id)");
     bpartnerHQLQuery.append("   from ADUser as ulist2");
     bpartnerHQLQuery.append("   where ulist2.businessPartner = bp");

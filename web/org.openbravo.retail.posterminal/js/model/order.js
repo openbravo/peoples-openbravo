@@ -7802,6 +7802,7 @@
                       order.save();
                       order.trigger('saveCurrent');
                     }
+                    OB.UTIL.ProcessController.finish('addPayment', execution);
                     finalCallback();
                   }
                 );
@@ -7813,7 +7814,6 @@
                   reverseCallback();
                 }
                 executeFinalCallback(false);
-                OB.UTIL.ProcessController.finish('addPayment', execution);
                 return;
               }
               // search for an existing payment only if is not a reverser payment.
@@ -7865,7 +7865,6 @@
                       }
                       payment.set('date', new Date());
                       executeFinalCallback(true);
-                      OB.UTIL.ProcessController.finish('addPayment', execution);
                       return;
                     }
                   }
@@ -7905,7 +7904,6 @@
                       }
                       payment.set('date', new Date());
                       executeFinalCallback(true);
-                      OB.UTIL.ProcessController.finish('addPayment', execution);
                       return;
                     }
                   }

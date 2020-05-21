@@ -12,6 +12,7 @@
     modelName: 'OrderToSelectorIssue',
     entityName: 'OrderToSelectorIssue',
     local: false,
+    legacyModel: true,
     source: ''
   });
 

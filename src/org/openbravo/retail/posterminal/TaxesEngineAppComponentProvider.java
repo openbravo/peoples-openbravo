@@ -30,7 +30,7 @@ public class TaxesEngineAppComponentProvider extends BaseComponentProvider {
   public static final String QUALIFIER = "OBPOS_TaxesComponent";
   public static final String TAXES_APP = "TaxesEngine";
 
-  private static final String JS_BASE = "web/org.openbravo.retail.posterminal/app/model/businessLogic/taxesengine/";
+  private static final String JS_BASE = "web/org.openbravo.retail.posterminal/app/model/business-logic/taxes-engine/";
 
   @Override
   public Component getComponent(String componentId, Map<String, Object> parameters) {
