@@ -5814,14 +5814,6 @@
       }
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
         if (oldbp.id !== businessPartner.id) {
-          //Business Partner have changed
-          //          OB.Dal.saveOrUpdate(
-          //            businessPartner,
-          //            function() {},
-          //            function() {
-          //              OB.error(arguments);
-          //            }
-          //          );
           if (
             OB.MobileApp.model.hasPermission('OBPOS_remote.discount.bp', true)
           ) {

@@ -28,76 +28,7 @@
     OB.DATA.executeCustomerSave = async function(customer, callback) {
       var customerId = customer.get('id'),
         isNew = false,
-        bpLocToSave = new OB.Model.BPLocation(),
         finalCallback;
-
-      var setBPLocationProperty = function(location, customer, sucesscallback) {
-        if (
-          !OB.UTIL.isNullOrUndefined(location) &&
-          !OB.UTIL.isNullOrUndefined(customer)
-        ) {
-          var locName =
-              customer.get('locId') === location.get('id')
-                ? 'locName'
-                : 'shipLocName',
-            cityName =
-              customer.get('locId') === location.get('id')
-                ? 'cityName'
-                : 'shipCityName',
-            postalCode =
-              customer.get('locId') === location.get('id')
-                ? 'postalCode'
-                : 'shipPostalCode',
-            countryId =
-              customer.get('locId') === location.get('id')
-                ? 'countryId'
-                : 'shipCountryId',
-            countryName =
-              customer.get('locId') === location.get('id')
-                ? 'countryName'
-                : 'shipCountryName';
-          _.each(OB.Model.BPLocation.getPropertiesForUpdate(), function(
-            property
-          ) {
-            var key = property.name;
-            if (!OB.UTIL.isNullOrUndefined(key)) {
-              if (key === '_identifier') {
-                location.set(key, customer.get(locName));
-              } else if (key === 'bpartner') {
-                location.set(key, customer.get('id'));
-              } else if (key === 'name') {
-                location.set(key, customer.get(locName));
-              } else if (key === 'cityName') {
-                location.set(key, customer.get(cityName));
-              } else if (key === 'postalCode') {
-                location.set(key, customer.get(postalCode));
-              } else if (key === 'countryName') {
-                var countryNameValue = customer.get(countryName)
-                  ? customer.get(countryName)
-                  : OB.MobileApp.model.get('terminal').defaultbp_bpcountry_name;
-                location.set(key, countryNameValue);
-              } else if (key === 'countryId') {
-                var countryIdValue = customer.get(countryId)
-                  ? customer.get(countryId)
-                  : OB.MobileApp.model.get('terminal').defaultbp_bpcountry;
-                location.set(key, countryIdValue);
-              } else if (key === 'isBillTo') {
-                location.set(key, customer.get('locId') === location.get('id'));
-              } else if (key === 'isShipTo') {
-                location.set(
-                  key,
-                  customer.get('shipLocId') === location.get('id')
-                );
-              } else {
-                location.set(key, customer.get(key));
-              }
-            }
-          });
-          if (sucesscallback) {
-            sucesscallback();
-          }
-        }
-      };
 
       finalCallback = function(result) {
         if (callback) {
@@ -137,6 +68,7 @@
         billing.set('countryId', customer.get('countryId'));
         billing.set('regionId', customer.get('regionId'));
         billing.set('regionName', customer.get('regionName'));
+
         if (customer.get('useSameAddrForShipAndInv')) {
           billing.set('isBillTo', true);
           billing.set('isShipTo', true);
@@ -158,6 +90,7 @@
           shipping.set('regionName', customer.get('shipRegionName'));
           shipping.set('isBillTo', false);
           shipping.set('isShipTo', true);
+
           locations.push(billing);
           locations.push(shipping);
         }
@@ -184,20 +117,15 @@
         );
         // Saving Customer Address locally
         if (isNew) {
-          //create bploc from scratch and set all properties
-          bpLocToSave.set('id', customer.get('locId'));
-          setBPLocationProperty(bpLocToSave, customer, async function() {
+          await OB.App.State.Global.synchronizeBusinessPartnerLocation(
+            billing.attributes
+          );
+          //check if shipping address is different
+          if (customer.get('locId') !== customer.get('shipLocId')) {
             await OB.App.State.Global.synchronizeBusinessPartnerLocation(
-              bpLocToSave.attributes
+              shipping.attributes
             );
-            //check if shipping address is different
-            if (customer.get('locId') !== customer.get('shipLocId')) {
-              bpLocToSave.set('id', customer.get('shipLocId'));
-              await OB.App.State.Global.synchronizeBusinessPartnerLocation(
-                bpLocToSave.attributes
-              );
-            }
-          });
+          }
         }
         OB.UTIL.HookManager.executeHooks(
           'OBPOS_PostCustomerSave',
