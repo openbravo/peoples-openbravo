@@ -1131,7 +1131,9 @@ enyo.kind({
         }
         //TODO: testing code - remove it!
         if (window.newAddProduct) {
+          //TODO: join options and args?
           const options = { ...args.options } || {};
+          const attrs = { ...args.attrs } || {};
           if (options.line) {
             options.line = args.options.line.id;
           }
@@ -1142,7 +1144,8 @@ enyo.kind({
                 product: args.productToAdd.toJSON()
               }
             ],
-            options
+            options,
+            attrs
           })
             .then(() => {
               //args.receipt.calculateReceipt();

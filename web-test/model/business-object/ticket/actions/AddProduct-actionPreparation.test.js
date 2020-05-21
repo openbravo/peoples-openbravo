@@ -23,9 +23,7 @@ OB = {
 
   POS: {
     hwserver: {
-      getAsyncWeight: jest
-        .fn()
-        .mockImplementation(() => Promise.resolve({ result: 10 }))
+      getAsyncWeight: jest.fn()
     }
   }
 };
@@ -41,6 +39,7 @@ const {
 require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/ActionCanceled');
 require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/ActionSilentlyCanceled');
 
+require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-logic/stock/StockChecker');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/Ticket');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/AddProduct');
 
@@ -71,10 +70,24 @@ const expectError = async (action, expectedError) => {
     error = e;
   }
 
-  expect(error).toMatchObject({ info: expectedError });
+  if (expectedError instanceof OB.App.Class.ActionSilentlyCanceled) {
+    expect(error).toBeInstanceOf(OB.App.Class.ActionSilentlyCanceled);
+    expect(error.message).toEqual(expectedError.message);
+  } else {
+    expect(error).toMatchObject({ info: expectedError });
+  }
 };
 
 describe('addProduct preparation', () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
+    // default mocks
+    OB.POS.hwserver.getAsyncWeight.mockImplementation(() =>
+      Promise.resolve({ result: 10 })
+    );
+    OB.App.StockChecker.hasStock = jest.fn().mockResolvedValue(true);
+  });
+
   describe('scale products', () => {
     it('more than one is not allowed', async () => {
       await expect(
@@ -129,6 +142,20 @@ describe('addProduct preparation', () => {
         {
           errorConfirmation: 'OBPOS_MsgScaleServerNotAvailable'
         }
+      );
+    });
+
+    it('handles no stock ', async () => {
+      OB.App.StockChecker.hasStock.mockResolvedValueOnce(false);
+
+      await expectError(
+        () =>
+          prepareAction({
+            products: [{ product: scaleProduct }]
+          }),
+        new OB.App.Class.ActionSilentlyCanceled(
+          `Add product canceled: there is no stock of product ${scaleProduct.id}`
+        )
       );
     });
   });

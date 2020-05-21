@@ -47,6 +47,13 @@
     }
   );
 
+  OB.App.StateAPI.Ticket.addProduct.addActionPreparation(
+    async (state, payload) => {
+      await checkStock(state, payload);
+      return payload;
+    }
+  );
+
   function getLineToEdit(productInfo, ticket, options = {}) {
     const { product, qty } = productInfo;
     if (product.obposScale || !product.groupProduct) {
@@ -189,5 +196,26 @@
     const newPayload = { ...payload };
     newPayload.products = [{ ...newPayload.products[0], qty: weight }];
     return newPayload;
+  }
+
+  async function checkStock(ticket, payload) {
+    const { products, options, attrs } = payload;
+
+    if (products.length > 1) {
+      throw new Error('Cannot check stock for more than one product');
+    }
+
+    const { product } = products[0];
+    const { qty } = products[0];
+    // TODO: a line can also be passed when attributeSearchAllowed && productHasAttribute
+    // note that also a line can be passed through options.line and is used for a different check
+    const settings = { ticket, options, attrs };
+
+    const hasStock = await OB.App.StockChecker.hasStock(product, qty, settings);
+    if (!hasStock) {
+      throw new OB.App.Class.ActionSilentlyCanceled(
+        `Add product canceled: there is no stock of product ${product.id}`
+      );
+    }
   }
 })();
