@@ -27,14 +27,55 @@
         bpSets,
         taxRules
       } = payload;
+      const settings = {
+        discountRules,
+        bpSets,
+        taxRules,
+        terminalOrganization: terminal.organization,
+        documentTypeForSales: terminal.terminalType.documentType,
+        documentTypeForReturns: terminal.terminalType.documentTypeForReturns,
+        returnSequencePrefix: terminal.returnDocNoPrefix,
+        quotationSequencePrefix: terminal.quotationDocNoPrefix,
+        fullReturnInvoiceSequencePrefix: terminal.fullReturnInvoiceDocNoPrefix,
+        simplifiedReturnInvoiceSequencePrefix:
+          terminal.simplifiedReturnInvoiceDocNoPrefix,
+        documentNumberSeparator,
+        documentNumberPadding: terminal.documentnoPadding,
+        salesWithOneLineNegativeAsReturns
+      };
 
       newTicket.created = new Date().getTime();
       newTicket.completeTicket = true;
-      newTicket = OB.App.State.Ticket.Utils.updateTicketType(newTicket, {
-        terminalOrganization: terminal.organization,
-        documentTypeForSales: terminal.terminalType.documentType,
-        documentTypeForReturns: terminal.terminalType.documentTypeForReturns
-      });
+      newTicket = OB.App.State.Ticket.Utils.updateTicketType(
+        newTicket,
+        settings
+      );
+      if (OB.App.State.Ticket.Utils.isReturnTicket(newTicket, settings)) {
+        newTicket.payments = newTicket.payments.map(payment => {
+          const newPayment = { ...payment };
+
+          if (
+            !payment.isPrePayment &&
+            !payment.reversedPaymentId &&
+            !newTicket.isPaid
+          ) {
+            newPayment.amount = -payment.amount;
+            if (payment.amountRounded) {
+              newPayment.amountRounded = -payment.amountRounded;
+            }
+            newPayment.origAmount = -payment.origAmount;
+            if (payment.origAmountRounded) {
+              newPayment.origAmountRounded = -payment.origAmountRounded;
+            }
+            newPayment.paid = -payment.paid;
+          } else {
+            newPayment.paid = payment.amount;
+          }
+
+          return newPayment;
+        });
+      }
+
       // FIXME: set cashup info once Cashup is migrated to state
       // ticket.obposAppCashup = terminal.cashUpId;
 
@@ -45,26 +86,20 @@
       } = OB.App.State.DocumentSequence.Utils.generateTicketDocumentSequence(
         newTicket,
         newDocumentSequence,
-        {
-          returnSequencePrefix: terminal.returnDocNoPrefix,
-          quotationSequencePrefix: terminal.quotationDocNoPrefix,
-          documentNumberSeparator,
-          documentNumberPadding: terminal.documentnoPadding,
-          salesWithOneLineNegativeAsReturns
-        }
+        settings
       ));
 
       // Shipment generation
-      newTicket = OB.App.State.Ticket.Utils.generateShipment(newTicket, {
-        terminalOrganization: terminal.organization
-      });
+      newTicket = OB.App.State.Ticket.Utils.generateShipment(
+        newTicket,
+        settings
+      );
 
       // Invoice generation
-      newTicket = OB.App.State.Ticket.Utils.generateInvoice(newTicket, {
-        discountRules,
-        bpSets,
-        taxRules
-      });
+      newTicket = OB.App.State.Ticket.Utils.generateInvoice(
+        newTicket,
+        settings
+      );
       if (newTicket.calculatedInvoice) {
         ({
           ticket: newTicket.calculatedInvoice,
@@ -72,15 +107,7 @@
         } = OB.App.State.DocumentSequence.Utils.generateTicketDocumentSequence(
           newTicket.calculatedInvoice,
           newDocumentSequence,
-          {
-            fullReturnInvoiceSequencePrefix:
-              terminal.fullReturnInvoiceDocNoPrefix,
-            simplifiedReturnInvoiceSequencePrefix:
-              terminal.simplifiedReturnInvoiceDocNoPrefix,
-            documentNumberSeparator,
-            documentNumberPadding: terminal.documentnoPadding,
-            salesWithOneLineNegativeAsReturns
-          }
+          settings
         ));
       }
 
