@@ -1145,7 +1145,7 @@ enyo.kind({
             options
           })
             .then(() => {
-              args.receipt.calculateReceipt();
+              //args.receipt.calculateReceipt();
             })
             .catch(OB.App.View.ActionCanceledUIHandler.handle);
           return;

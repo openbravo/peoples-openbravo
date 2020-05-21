@@ -17,6 +17,11 @@
     const ticket = { ...state };
     const { products, options } = payload;
 
+    if (!ticket.id) {
+      // need to set the ticket ID to avoid an error when initializing the backbone order
+      ticket.id = OB.App.UUID.generate();
+    }
+
     ticket.lines = ticket.lines.map(l => {
       return { ...l };
     });
@@ -79,7 +84,6 @@
       organization,
       uOM: product.uOM,
       qty: OB.DEC.number(qty, product.uOMstandardPrecision),
-      grossPrice: OB.DEC.number(product.standardPrice),
       priceList: OB.DEC.number(product.listPrice),
       priceIncludesTax: ticket.priceIncludesTax,
       isEditable: lodash.has(options, 'isEditable') ? options.isEditable : true,
@@ -87,6 +91,12 @@
         ? options.isDeletable
         : true
     };
+
+    if (newLine.priceIncludesTax) {
+      newLine.grossPrice = OB.DEC.number(product.standardPrice);
+    } else {
+      newLine.netPrice = OB.DEC.number(product.standardPrice);
+    }
 
     setDeliveryMode(newLine, ticket);
     // TODO: related lines
