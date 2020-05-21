@@ -2525,39 +2525,69 @@ enyo.kind({
     execution = OB.UTIL.ProcessController.start('tapDoneButton');
 
     if (!isMultiOrder) {
-      await OB.App.State.Global.completeTicket({
-        terminal: OB.MobileApp.model.get('terminal'),
-        documentNumberSeparator: OB.Model.Order.prototype.includeDocNoSeperator
-          ? '/'
-          : '',
-        salesWithOneLineNegativeAsReturns: OB.MobileApp.model.get('permissions')
-          .OBPOS_SalesWithOneLineNegativeAsReturns,
-        discountRules: OB.Discounts.Pos.ruleImpls,
-        bpSets: OB.Discounts.Pos.bpSets,
-        taxRules: OB.Taxes.Pos.ruleImpls
-      });
+      // FIXME: Move to TicketUtils.applyDiscountsAndTaxes()
+      OB.MobileApp.model.receipt.adjustPrices();
+      OB.Dal.transaction(
+        function(tx) {
+          // FIXME: Use CashupUtils
+          OB.UTIL.cashUpReport(
+            OB.MobileApp.model.receipt,
+            function(cashUp) {
+              OB.MobileApp.model.receipt.set(
+                'cashUpReportInformation',
+                JSON.parse(cashUp.models[0].get('objToSend'))
+              );
+              // FIXME: Use CashupUtils
+              OB.UTIL.calculateCurrentCash(null, tx);
+              OB.Dal.saveInTransaction(
+                tx,
+                OB.MobileApp.model.receipt,
+                async function() {
+                  // Complete Ticket action
+                  await OB.App.State.Global.completeTicket({
+                    terminal: OB.MobileApp.model.get('terminal'),
+                    documentNumberSeparator: OB.Model.Order.prototype
+                      .includeDocNoSeperator
+                      ? '/'
+                      : '',
+                    salesWithOneLineNegativeAsReturns: OB.MobileApp.model.get(
+                      'permissions'
+                    ).OBPOS_SalesWithOneLineNegativeAsReturns,
+                    discountRules: OB.Discounts.Pos.ruleImpls,
+                    bpSets: OB.Discounts.Pos.bpSets,
+                    taxRules: OB.Taxes.Pos.ruleImpls
+                  });
 
-      if (OB.UTIL.RfidController.isRfidConfigured()) {
-        OB.UTIL.RfidController.processRemainingCodes(
-          OB.MobileApp.model.receipt
-        );
-        OB.UTIL.RfidController.updateEpcBuffers();
-      }
+                  if (OB.UTIL.RfidController.isRfidConfigured()) {
+                    OB.UTIL.RfidController.processRemainingCodes(
+                      OB.MobileApp.model.receipt
+                    );
+                    OB.UTIL.RfidController.updateEpcBuffers();
+                  }
 
-      OB.MobileApp.model.orderList.deleteCurrentFromDatabase(
-        OB.MobileApp.model.receipt
+                  OB.MobileApp.model.orderList.deleteCurrentFromDatabase(
+                    OB.MobileApp.model.receipt
+                  );
+                  if (
+                    OB.MobileApp.model.hasPermission(
+                      'OBPOS_alwaysCreateNewReceiptAfterPayReceipt',
+                      true
+                    )
+                  ) {
+                    OB.MobileApp.model.orderList.deleteCurrent(true);
+                  } else {
+                    OB.MobileApp.model.orderList.deleteCurrent();
+                  }
+                  OB.UTIL.ProcessController.finish('tapDoneButton', execution);
+                }
+              );
+            },
+            tx
+          );
+        },
+        function() {},
+        null
       );
-      if (
-        OB.MobileApp.model.hasPermission(
-          'OBPOS_alwaysCreateNewReceiptAfterPayReceipt',
-          true
-        )
-      ) {
-        OB.MobileApp.model.orderList.deleteCurrent(true);
-      } else {
-        OB.MobileApp.model.orderList.deleteCurrent();
-      }
-      OB.UTIL.ProcessController.finish('tapDoneButton', execution);
 
       return;
     }
