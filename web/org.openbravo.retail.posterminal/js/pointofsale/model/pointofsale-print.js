@@ -626,7 +626,8 @@
 
   PrintReceiptLine.prototype.print = function(line) {
     OB.App.State.Global.printTicketLine({
-      line: OB.App.StateBackwardCompatibility.toPlainObject(line)
+      // parse the backbone order line into JSON so we can include it in a message
+      line: JSON.parse(JSON.stringify(line.toJSON()))
     });
   };
 

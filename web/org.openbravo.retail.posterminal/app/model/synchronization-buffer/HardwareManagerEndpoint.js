@@ -25,7 +25,7 @@
     ).toBackboneObject(ticket);
   };
 
-  // Turns an state ticket line into a backbone order line
+  // Turns a JSON representation of a backbone order line into a backbone order line
   const toOrderLine = line => {
     return new OB.Model.OrderLine(line);
   };
