@@ -23,9 +23,10 @@ describe('Document Sequence Utils getOrderSequenceName method', () => {
     const ticket = deepfreeze({ isQuotation: false, lines: [{ qty: 1 }] });
     const sequenceName = OB.App.State.DocumentSequence.Utils.getOrderSequenceName(
       ticket,
-      'R',
-      'Q',
-      false
+      {
+        returnSequencePrefix: 'R',
+        quotationSequencePrefix: 'Q'
+      }
     );
     expect(sequenceName).toEqual('lastassignednum');
   });
@@ -34,9 +35,10 @@ describe('Document Sequence Utils getOrderSequenceName method', () => {
     const ticket = deepfreeze({ isQuotation: false, lines: [{ qty: -1 }] });
     const sequenceName = OB.App.State.DocumentSequence.Utils.getOrderSequenceName(
       ticket,
-      'R',
-      'Q',
-      false
+      {
+        returnSequencePrefix: 'R',
+        quotationSequencePrefix: 'Q'
+      }
     );
     expect(sequenceName).toEqual('returnslastassignednum');
   });
@@ -45,9 +47,10 @@ describe('Document Sequence Utils getOrderSequenceName method', () => {
     const ticket = deepfreeze({ isQuotation: true, lines: [{ qty: 1 }] });
     const sequenceName = OB.App.State.DocumentSequence.Utils.getOrderSequenceName(
       ticket,
-      'R',
-      'Q',
-      false
+      {
+        returnSequencePrefix: 'R',
+        quotationSequencePrefix: 'Q'
+      }
     );
     expect(sequenceName).toEqual('quotationslastassignednum');
   });
@@ -56,9 +59,9 @@ describe('Document Sequence Utils getOrderSequenceName method', () => {
     const ticket = deepfreeze({ isQuotation: false, lines: [{ qty: -1 }] });
     const sequenceName = OB.App.State.DocumentSequence.Utils.getOrderSequenceName(
       ticket,
-      null,
-      'Q',
-      false
+      {
+        quotationSequencePrefix: 'Q'
+      }
     );
     expect(sequenceName).toEqual('lastassignednum');
   });
@@ -67,9 +70,9 @@ describe('Document Sequence Utils getOrderSequenceName method', () => {
     const ticket = deepfreeze({ isQuotation: true, lines: [{ qty: 1 }] });
     const sequenceName = OB.App.State.DocumentSequence.Utils.getOrderSequenceName(
       ticket,
-      'R',
-      null,
-      false
+      {
+        returnSequencePrefix: 'R'
+      }
     );
     expect(sequenceName).toEqual('lastassignednum');
   });
@@ -78,9 +81,11 @@ describe('Document Sequence Utils getOrderSequenceName method', () => {
     const ticket = deepfreeze({ lines: [{ qty: 1 }, { qty: -1 }] });
     const sequenceName = OB.App.State.DocumentSequence.Utils.getOrderSequenceName(
       ticket,
-      'R',
-      'Q',
-      false
+      {
+        returnSequencePrefix: 'R',
+        quotationSequencePrefix: 'Q',
+        salesWithOneLineNegativeAsReturns: false
+      }
     );
     expect(sequenceName).toEqual('lastassignednum');
   });
@@ -89,9 +94,11 @@ describe('Document Sequence Utils getOrderSequenceName method', () => {
     const ticket = deepfreeze({ lines: [{ qty: 1 }, { qty: -1 }] });
     const sequenceName = OB.App.State.DocumentSequence.Utils.getOrderSequenceName(
       ticket,
-      'R',
-      'Q',
-      true
+      {
+        returnSequencePrefix: 'R',
+        quotationSequencePrefix: 'Q',
+        salesWithOneLineNegativeAsReturns: true
+      }
     );
     expect(sequenceName).toEqual('returnslastassignednum');
   });

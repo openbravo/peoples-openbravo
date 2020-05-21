@@ -19,7 +19,7 @@
 
       return OB.App.State.DocumentSequence.Utils.increaseSequence(
         documentSequence,
-        sequenceName
+        { sequenceName }
       );
     }
   );

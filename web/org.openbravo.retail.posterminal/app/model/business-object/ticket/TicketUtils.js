@@ -720,6 +720,53 @@
     },
 
     /**
+     * Checks whether a ticket belongs to a different store.
+     * @param {object} settings - The calculation settings, which include:
+     *             * terminalOrganization - Organization of the current terminal.
+     *
+     * @returns {boolean} true in case the ticket is cross store, false otherwise.
+     */
+    isCrossStoreTicket(ticket, settings) {
+      if (!ticket.organization || !settings.terminalOrganization) {
+        return false;
+      }
+
+      return ticket.organization !== settings.terminalOrganization;
+    },
+
+    /**
+     * Updates the type of the given ticket.
+     *
+     * @param {object} ticket - The ticket whose type will be updated
+     * @param {object} settings - The calculation settings, which include:
+     *             * documentTypeForSales - Terminal document type for sales
+     *             * documentTypeForReturns - Terminal document type for returns
+     *
+     * @returns {object} The new state of Ticket after type update.
+     */
+    updateTicketType(ticket, settings) {
+      const isCrossStoreTicket = OB.App.State.Ticket.Utils.isCrossStoreTicket(
+        ticket,
+        settings
+      );
+      if (isCrossStoreTicket) {
+        return ticket;
+      }
+
+      const newTicket = { ...ticket };
+      const isReturnTicket = OB.App.State.Ticket.Utils.isReturnTicket(
+        ticket,
+        settings
+      );
+      newTicket.orderType = isReturnTicket ? 1 : 0;
+      newTicket.documentType = isReturnTicket
+        ? OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns
+        : OB.MobileApp.model.get('terminal').terminalType.documentTypeForSales;
+
+      return newTicket;
+    },
+
+    /**
      * Computes the totals of a given ticket which include: discounts, taxes and other calculated fields.
      *
      * @param {object} ticket - The ticket whose totals will be calculated
@@ -896,7 +943,7 @@
      *
      * @param {object} ticket - The ticket whose shipment will be generated
      * @param {object} settings - The calculation settings, which include:
-     *             * organization - The terminal organization.
+     *             * terminalOrganization - The terminal organization.
      *
      * @returns {object} The ticket with the result of the shipment generation
      */
@@ -904,8 +951,10 @@
       const newTicket = { ...ticket };
       const isFullyPaid =
         ticket.payment >= OB.DEC.abs(ticket.grossAmount) || ticket.payOnCredit;
-      const isCrossStore =
-        newTicket.organization !== settings.terminalOrganization;
+      const isCrossStoreTicket = OB.App.State.Ticket.Utils.isCrossStoreTicket(
+        ticket,
+        settings
+      );
 
       newTicket.lines = ticket.lines.map(line => {
         const newLine = { ...line };
@@ -917,7 +966,7 @@
           newLine.obposIspaid = true;
         }
 
-        if (isCrossStore && !line.originalOrderLineId) {
+        if (isCrossStoreTicket && !line.originalOrderLineId) {
           newLine.obposQtytodeliver = line.deliveredQuantity;
         } else if (!line.obposQtytodeliver) {
           if (
@@ -989,7 +1038,7 @@
      *
      * @returns {object} The new state of Ticket and DocumentSequence after invoice generation.
      */
-    generateInvoice(ticket, settings) {
+    generateInvoice(ticket) {
       const generateInvoice =
         !ticket.obposIsDeleted &&
         (ticket.payOnCredit ||
@@ -1127,16 +1176,18 @@
       }
 
       const newTicket = { ...ticket };
-      let invoice = { ...ticket };
+      const invoice = { ...ticket };
       invoice.orderId = ticket.id;
       invoice.id = OB.App.UUID.generate();
       invoice.isInvoice = true;
       invoice.documentNo = null;
       invoice.lines = invoiceLines;
-      invoice = OB.App.State.Ticket.Utils.applyDiscountsAndTaxes(
-        invoice,
-        settings
-      );
+
+      // FIXME: wait CAR fix
+      // invoice = OB.App.State.Ticket.Utils.applyDiscountsAndTaxes(
+      //   invoice,
+      //   settings
+      // );
       newTicket.calculatedInvoice = invoice;
 
       return newTicket;

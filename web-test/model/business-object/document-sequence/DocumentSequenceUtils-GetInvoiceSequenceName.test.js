@@ -23,9 +23,10 @@ describe('Document Sequence Utils getInvoiceSequenceName method', () => {
     const ticket = deepfreeze({ fullInvoice: true, lines: [{ qty: 1 }] });
     const sequenceName = OB.App.State.DocumentSequence.Utils.getInvoiceSequenceName(
       ticket,
-      'FRI',
-      'SRI',
-      false
+      {
+        fullReturnInvoiceSequencePrefix: 'FRI',
+        simplifiedReturnInvoiceSequencePrefix: 'SRI'
+      }
     );
     expect(sequenceName).toEqual('fullinvoiceslastassignednum');
   });
@@ -34,9 +35,10 @@ describe('Document Sequence Utils getInvoiceSequenceName method', () => {
     const ticket = deepfreeze({ fullInvoice: true, lines: [{ qty: -1 }] });
     const sequenceName = OB.App.State.DocumentSequence.Utils.getInvoiceSequenceName(
       ticket,
-      'FRI',
-      'SRI',
-      false
+      {
+        fullReturnInvoiceSequencePrefix: 'FRI',
+        simplifiedReturnInvoiceSequencePrefix: 'SRI'
+      }
     );
     expect(sequenceName).toEqual('fullreturninvoiceslastassignednum');
   });
@@ -45,9 +47,10 @@ describe('Document Sequence Utils getInvoiceSequenceName method', () => {
     const ticket = deepfreeze({ fullInvoice: false, lines: [{ qty: 1 }] });
     const sequenceName = OB.App.State.DocumentSequence.Utils.getInvoiceSequenceName(
       ticket,
-      'FRI',
-      'SRI',
-      false
+      {
+        fullReturnInvoiceSequencePrefix: 'FRI',
+        simplifiedReturnInvoiceSequencePrefix: 'SRI'
+      }
     );
     expect(sequenceName).toEqual('simplifiedinvoiceslastassignednum');
   });
@@ -56,9 +59,10 @@ describe('Document Sequence Utils getInvoiceSequenceName method', () => {
     const ticket = deepfreeze({ fullInvoice: false, lines: [{ qty: -1 }] });
     const sequenceName = OB.App.State.DocumentSequence.Utils.getInvoiceSequenceName(
       ticket,
-      'FRI',
-      'SRI',
-      false
+      {
+        fullReturnInvoiceSequencePrefix: 'FRI',
+        simplifiedReturnInvoiceSequencePrefix: 'SRI'
+      }
     );
     expect(sequenceName).toEqual('simplifiedreturninvoiceslastassignednum');
   });
@@ -67,9 +71,9 @@ describe('Document Sequence Utils getInvoiceSequenceName method', () => {
     const ticket = deepfreeze({ fullInvoice: true, lines: [{ qty: -1 }] });
     const sequenceName = OB.App.State.DocumentSequence.Utils.getInvoiceSequenceName(
       ticket,
-      null,
-      'SRI',
-      false
+      {
+        simplifiedReturnInvoiceSequencePrefix: 'SRI'
+      }
     );
     expect(sequenceName).toEqual('fullinvoiceslastassignednum');
   });
@@ -78,9 +82,9 @@ describe('Document Sequence Utils getInvoiceSequenceName method', () => {
     const ticket = deepfreeze({ fullInvoice: false, lines: [{ qty: -1 }] });
     const sequenceName = OB.App.State.DocumentSequence.Utils.getInvoiceSequenceName(
       ticket,
-      'FRI',
-      null,
-      false
+      {
+        fullReturnInvoiceSequencePrefix: 'FRI'
+      }
     );
     expect(sequenceName).toEqual('simplifiedinvoiceslastassignednum');
   });
@@ -92,9 +96,11 @@ describe('Document Sequence Utils getInvoiceSequenceName method', () => {
     });
     const sequenceName = OB.App.State.DocumentSequence.Utils.getInvoiceSequenceName(
       ticket,
-      'FRI',
-      'SRI',
-      false
+      {
+        fullReturnInvoiceSequencePrefix: 'FRI',
+        simplifiedReturnInvoiceSequencePrefix: 'SRI',
+        salesWithOneLineNegativeAsReturns: false
+      }
     );
     expect(sequenceName).toEqual('fullinvoiceslastassignednum');
   });
@@ -106,9 +112,11 @@ describe('Document Sequence Utils getInvoiceSequenceName method', () => {
     });
     const sequenceName = OB.App.State.DocumentSequence.Utils.getInvoiceSequenceName(
       ticket,
-      'FRI',
-      'SRI',
-      true
+      {
+        fullReturnInvoiceSequencePrefix: 'FRI',
+        simplifiedReturnInvoiceSequencePrefix: 'SRI',
+        salesWithOneLineNegativeAsReturns: true
+      }
     );
     expect(sequenceName).toEqual('fullreturninvoiceslastassignednum');
   });
@@ -120,9 +128,11 @@ describe('Document Sequence Utils getInvoiceSequenceName method', () => {
     });
     const sequenceName = OB.App.State.DocumentSequence.Utils.getInvoiceSequenceName(
       ticket,
-      'FRI',
-      'SRI',
-      false
+      {
+        fullReturnInvoiceSequencePrefix: 'FRI',
+        simplifiedReturnInvoiceSequencePrefix: 'SRI',
+        salesWithOneLineNegativeAsReturns: false
+      }
     );
     expect(sequenceName).toEqual('simplifiedinvoiceslastassignednum');
   });
@@ -134,9 +144,11 @@ describe('Document Sequence Utils getInvoiceSequenceName method', () => {
     });
     const sequenceName = OB.App.State.DocumentSequence.Utils.getInvoiceSequenceName(
       ticket,
-      'FRI',
-      'SRI',
-      true
+      {
+        fullReturnInvoiceSequencePrefix: 'FRI',
+        simplifiedReturnInvoiceSequencePrefix: 'SRI',
+        salesWithOneLineNegativeAsReturns: true
+      }
     );
     expect(sequenceName).toEqual('simplifiedreturninvoiceslastassignednum');
   });

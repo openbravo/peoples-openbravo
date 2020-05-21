@@ -13,80 +13,96 @@ require('./SetupDocumentSequenceUtils');
 describe('Document Sequence Utils calculateDocumentNumber method', () => {
   it('should generate correct documentNo for 0 sequenceNumber', () => {
     const documentNumber = OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
-      'PREFIX',
-      '/',
-      5,
-      0
+      {
+        sequencePrefix: 'PREFIX',
+        documentNumberSeparator: '/',
+        documentNumberPadding: 5,
+        sequenceNumber: 0
+      }
     );
     expect(documentNumber).toEqual('PREFIX/00000');
   });
 
   it('should generate correct documentNo for 1 sequenceNumber', () => {
     const documentNumber = OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
-      'PREFIX',
-      '/',
-      5,
-      1
+      {
+        sequencePrefix: 'PREFIX',
+        documentNumberSeparator: '/',
+        documentNumberPadding: 5,
+        sequenceNumber: 1
+      }
     );
     expect(documentNumber).toEqual('PREFIX/00001');
   });
 
   it('should generate correct documentNo for 10 sequenceNumber', () => {
     const documentNumber = OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
-      'PREFIX',
-      '/',
-      5,
-      10
+      {
+        sequencePrefix: 'PREFIX',
+        documentNumberSeparator: '/',
+        documentNumberPadding: 5,
+        sequenceNumber: 10
+      }
     );
     expect(documentNumber).toEqual('PREFIX/00010');
   });
 
   it('should generate correct documentNo for 100 sequenceNumber', () => {
     const documentNumber = OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
-      'PREFIX',
-      '/',
-      5,
-      100
+      {
+        sequencePrefix: 'PREFIX',
+        documentNumberSeparator: '/',
+        documentNumberPadding: 5,
+        sequenceNumber: 100
+      }
     );
     expect(documentNumber).toEqual('PREFIX/00100');
   });
 
   it('should generate correct documentNo for 1000 sequenceNumber', () => {
     const documentNumber = OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
-      'PREFIX',
-      '/',
-      5,
-      1000
+      {
+        sequencePrefix: 'PREFIX',
+        documentNumberSeparator: '/',
+        documentNumberPadding: 5,
+        sequenceNumber: 1000
+      }
     );
     expect(documentNumber).toEqual('PREFIX/01000');
   });
 
   it('should generate correct documentNo for 10000 sequenceNumber', () => {
     const documentNumber = OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
-      'PREFIX',
-      '/',
-      5,
-      10000
+      {
+        sequencePrefix: 'PREFIX',
+        documentNumberSeparator: '/',
+        documentNumberPadding: 5,
+        sequenceNumber: 10000
+      }
     );
     expect(documentNumber).toEqual('PREFIX/10000');
   });
 
   it('should generate correct documentNo for 100000 sequenceNumber', () => {
     const documentNumber = OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
-      'PREFIX',
-      '/',
-      5,
-      100000
+      {
+        sequencePrefix: 'PREFIX',
+        documentNumberSeparator: '/',
+        documentNumberPadding: 5,
+        sequenceNumber: 100000
+      }
     );
     expect(documentNumber).toEqual('PREFIX/100000');
   });
 
   it('should generate correct documentNo when not using separator', () => {
     const documentNumber = OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
-      'PREFIX',
-      '',
-      5,
-      10000
+      {
+        sequencePrefix: 'PREFIX',
+        documentNumberSeparator: '',
+        documentNumberPadding: 5,
+        sequenceNumber: 10000
+      }
     );
     expect(documentNumber).toEqual('PREFIX10000');
   });

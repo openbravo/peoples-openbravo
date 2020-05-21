@@ -27,13 +27,10 @@ describe('Document Sequence Utils generateTicketDocumentSequence method', () => 
     const newTicketAndDocumentSequence = OB.App.State.DocumentSequence.Utils.generateTicketDocumentSequence(
       ticket,
       documentSequence,
-      null,
-      null,
-      null,
-      null,
-      '/',
-      5,
-      null
+      {
+        documentNumberSeparator: '/',
+        documentNumberPadding: 5
+      }
     );
     expect(newTicketAndDocumentSequence).toEqual({
       ticket: {
@@ -58,13 +55,10 @@ describe('Document Sequence Utils generateTicketDocumentSequence method', () => 
     const newTicketAndDocumentSequence = OB.App.State.DocumentSequence.Utils.generateTicketDocumentSequence(
       ticket,
       documentSequence,
-      null,
-      null,
-      null,
-      null,
-      '/',
-      5,
-      null
+      {
+        documentNumberSeparator: '/',
+        documentNumberPadding: 5
+      }
     );
     expect(newTicketAndDocumentSequence).toEqual({
       ticket: {

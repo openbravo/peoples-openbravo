@@ -2527,7 +2527,7 @@ enyo.kind({
     if (!isMultiOrder) {
       await OB.App.State.Global.completeTicket({
         terminal: OB.MobileApp.model.get('terminal'),
-        documentNumberSeperator: OB.Model.Order.prototype.includeDocNoSeperator
+        documentNumberSeparator: OB.Model.Order.prototype.includeDocNoSeperator
           ? '/'
           : '',
         salesWithOneLineNegativeAsReturns: OB.MobileApp.model.get('permissions')
@@ -2558,6 +2558,7 @@ enyo.kind({
         OB.MobileApp.model.orderList.deleteCurrent();
       }
       OB.UTIL.ProcessController.finish('tapDoneButton', execution);
+
       return;
     }
 

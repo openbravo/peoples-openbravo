@@ -21,7 +21,7 @@
 
       const {
         terminal,
-        documentNumberSeperator,
+        documentNumberSeparator,
         salesWithOneLineNegativeAsReturns,
         discountRules,
         bpSets,
@@ -45,13 +45,13 @@
       } = OB.App.State.DocumentSequence.Utils.generateTicketDocumentSequence(
         newTicket,
         newDocumentSequence,
-        terminal.returnDocNoPrefix,
-        terminal.quotationDocNoPrefix,
-        terminal.fullReturnInvoiceDocNoPrefix,
-        terminal.simplifiedReturnInvoiceDocNoPrefix,
-        documentNumberSeperator,
-        terminal.documentnoPadding,
-        salesWithOneLineNegativeAsReturns
+        {
+          returnSequencePrefix: terminal.returnDocNoPrefix,
+          quotationSequencePrefix: terminal.quotationDocNoPrefix,
+          documentNumberSeparator,
+          documentNumberPadding: terminal.documentnoPadding,
+          salesWithOneLineNegativeAsReturns
+        }
       ));
 
       // Shipment generation
@@ -72,13 +72,15 @@
         } = OB.App.State.DocumentSequence.Utils.generateTicketDocumentSequence(
           newTicket.calculatedInvoice,
           newDocumentSequence,
-          terminal.returnDocNoPrefix,
-          terminal.quotationDocNoPrefix,
-          terminal.fullReturnInvoiceDocNoPrefix,
-          terminal.simplifiedReturnInvoiceDocNoPrefix,
-          documentNumberSeperator,
-          terminal.documentnoPadding,
-          salesWithOneLineNegativeAsReturns
+          {
+            fullReturnInvoiceSequencePrefix:
+              terminal.fullReturnInvoiceDocNoPrefix,
+            simplifiedReturnInvoiceSequencePrefix:
+              terminal.simplifiedReturnInvoiceDocNoPrefix,
+            documentNumberSeparator,
+            documentNumberPadding: terminal.documentnoPadding,
+            salesWithOneLineNegativeAsReturns
+          }
         ));
       }
 
