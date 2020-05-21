@@ -39,16 +39,17 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
         discountsResult.lines[line.id].discounts;
       const newLine = {
         ...line,
-        discountedGrossAmount:
-          discounts && priceIncludesTax
-            ? discounts.finalLinePrice
-            : OB.DEC.mul(line.qty, line.grossPrice),
-        discountedNetAmount:
-          discounts && !priceIncludesTax
-            ? discounts.finalLinePrice
-            : OB.DEC.mul(line.qty, line.netPrice),
         promotions: discounts ? discounts.promotions : []
       };
+      if (priceIncludesTax) {
+        newLine.discountedGrossAmount = discounts
+          ? discounts.finalLinePrice
+          : OB.DEC.mul(line.qty, line.grossPrice);
+      } else {
+        newLine.discountedNetAmount = discounts
+          ? discounts.finalLinePrice
+          : OB.DEC.mul(line.qty, line.netPrice);
+      }
       return newLine;
     });
 

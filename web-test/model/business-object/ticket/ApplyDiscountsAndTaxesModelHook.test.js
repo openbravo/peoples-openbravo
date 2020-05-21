@@ -57,21 +57,19 @@ const tickets = [
       {
         id: 'BB66D8D151964A8A39586FCD7D9A394D',
         qty: 1,
-        grossPrice: 300,
-        netPrice: 223.14
+        grossPrice: 300
       }
     ]
   },
   {
     id: '6FD3CDDDBB2A3805895853BB22F2E9F7',
     qty: 1,
-    priceIncludesTax: true,
+    priceIncludesTax: false,
     lines: [
       {
         id: 'BB66D8D151964A8A39586FCD7D9A394D',
         qty: 1,
-        grossPrice: 200,
-        netPrice: 165.29
+        netPrice: 200
       }
     ]
   }
@@ -170,13 +168,13 @@ const taxesResults = [
   {
     header: {
       id: '6FD3CDDDBB2A3805895853BB22F2E9F7',
-      grossAmount: 190,
-      netAmount: 157.02,
+      grossAmount: 229.9,
+      netAmount: 190,
       taxes: {
         '5235D8E99A2749EFA17A5C92A52AEFC6': {
           id: '5235D8E99A2749EFA17A5C92A52AEFC6',
-          net: 157.02,
-          amount: 32.98,
+          net: 190,
+          amount: 39.9,
           name: 'Entregas IVA 21%',
           docTaxAmount: 'D',
           rate: 21,
@@ -189,18 +187,18 @@ const taxesResults = [
     lines: [
       {
         id: 'BB66D8D151964A8A39586FCD7D9A394D',
-        grossAmount: 190,
-        netAmount: 157.02,
-        grossPrice: 190,
-        netPrice: 157.02,
+        grossAmount: 229.9,
+        netAmount: 190,
+        grossPrice: 229.9,
+        netPrice: 190,
         qty: 1,
         tax: '5235D8E99A2749EFA17A5C92A52AEFC6',
         taxRate: 1.21,
         taxes: {
           '5235D8E99A2749EFA17A5C92A52AEFC6': {
             id: '5235D8E99A2749EFA17A5C92A52AEFC6',
-            net: 157.02,
-            amount: 32.98,
+            net: 190,
+            amount: 39.9,
             name: 'Entregas IVA 21%',
             docTaxAmount: 'D',
             rate: 21,
@@ -273,20 +271,20 @@ const results = [
   },
   {
     id: '6FD3CDDDBB2A3805895853BB22F2E9F7',
-    grossAmount: 190,
-    netAmount: 157.02,
-    priceIncludesTax: true,
+    grossAmount: 229.9,
+    netAmount: 190,
+    priceIncludesTax: false,
     qty: 1,
     lines: [
       {
         id: 'BB66D8D151964A8A39586FCD7D9A394D',
         qty: 1,
-        discountedGrossAmount: 190,
-        discountedNetAmount: 157.02,
+        discountedGrossAmount: 229.9,
+        discountedNetAmount: 190,
         taxRate: 1.21,
-        netAmount: 157.02,
-        grossPrice: 200,
-        netPrice: 157.02,
+        grossAmount: 229.9,
+        grossPrice: 229.9,
+        netPrice: 200,
         promotions: [
           {
             ruleId: '08C2C89DB15443478B659A8645828F63',
@@ -302,12 +300,12 @@ const results = [
         taxes: {
           '5235D8E99A2749EFA17A5C92A52AEFC6': {
             id: '5235D8E99A2749EFA17A5C92A52AEFC6',
-            amount: 32.98,
+            amount: 39.9,
             cascade: false,
             docTaxAmount: 'D',
             lineNo: 10,
             name: 'Entregas IVA 21%',
-            net: 157.02,
+            net: 190,
             rate: 21,
             taxBase: null
           }
@@ -317,12 +315,12 @@ const results = [
     taxes: {
       '5235D8E99A2749EFA17A5C92A52AEFC6': {
         id: '5235D8E99A2749EFA17A5C92A52AEFC6',
-        amount: 32.98,
+        amount: 39.9,
         cascade: false,
         docTaxAmount: 'D',
         lineNo: 10,
         name: 'Entregas IVA 21%',
-        net: 157.02,
+        net: 190,
         rate: 21,
         taxBase: null
       }
