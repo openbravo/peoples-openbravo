@@ -91,10 +91,36 @@ enyo.kind({
     name: 'listExternalBpsSelector'
   },
   footer: { kind: 'OB.UI.ModalExternalBpSelectorFooter' },
+  setSearchPerformed: function(executed) {
+    this.oneSearchWasPerformed = executed;
+    this.allowCreate = true;
+    if (
+      !this.oneSearchWasPerformed &&
+      OB.MobileApp.model.hasPermission('OBPOS_retail.disableNewBPButton', true)
+    ) {
+      this.allowCreate = false;
+    }
+    this.$.footer.$.modalExternalBpSelectorFooter.setAllowCreate(
+      this.allowCreate
+    );
+  },
   executeOnShow: function() {
     this.detailViewActive = false;
+    this.allowCreate = true;
     if (!this.isInitialized()) {
       this.inherited(arguments);
+      this.oneSearchWasPerformed = false;
+      if (
+        OB.MobileApp.model.hasPermission(
+          'OBPOS_retail.disableNewBPButton',
+          true
+        )
+      ) {
+        this.allowCreate = false;
+      }
+      this.$.footer.$.modalExternalBpSelectorFooter.setAllowCreate(
+        this.allowCreate
+      );
       if (OB.UTIL.isNullOrUndefined(this.args.target)) {
         this.args.target = 'order';
       }
@@ -430,6 +456,7 @@ enyo.kind({
       });
     let me = this;
     function successCallbackBPs(dataBps) {
+      me.dialog.setSearchPerformed(true);
       me.$.renderLoading.hide();
       if (dataBps && dataBps.length > 0) {
         me.bpsList.reset(dataBps);
@@ -440,6 +467,7 @@ enyo.kind({
       }
     }
     function errorCallbackBPs(error) {
+      me.dialog.setSearchPerformed(true);
       OB.UTIL.showConfirmation.display(
         OB.I18N.getLabel('OBMOBC_Error'),
         error.message,
@@ -476,13 +504,6 @@ enyo.kind({
     {
       classes: 'obUiModalExternalBpSelectorFooter-container1',
       showing: true,
-      handlers: {
-        onSetShow: 'setShow'
-      },
-      setShow: function(inSender, inEvent) {
-        this.setShowing(inEvent.visibility);
-        return true;
-      },
       components: [
         {
           classes:
@@ -521,6 +542,9 @@ enyo.kind({
       ]
     }
   ],
+  setAllowCreate: function(allowCreate) {
+    this.$.newAction.setDisabled(!allowCreate);
+  },
   initComponents: function() {
     this.inherited(arguments);
   }
