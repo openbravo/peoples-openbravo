@@ -612,7 +612,7 @@ enyo.kind({
           'org.openbravo.retail.posterminal.ProcessCashCloseSlave'
         ).exec(
           {
-            cashUpId: OB.POS.modelterminal.get('terminal').cashUpId
+            cashUpId: OB.App.State.Cashup.Utils.getCashupId()
           },
           function(data) {
             if (data && data.exception) {

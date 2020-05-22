@@ -137,7 +137,7 @@ enyo.kind({
       ).exec(
         {
           masterterminal: OB.POS.modelterminal.get('terminal').id,
-          cashUpId: OB.POS.modelterminal.get('terminal').cashUpId
+          cashUpId: OB.App.State.Cashup.Utils.getCashupId()
         },
         function(data) {
           if (data && data.exception) {

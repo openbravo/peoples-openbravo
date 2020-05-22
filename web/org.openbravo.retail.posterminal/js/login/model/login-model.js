@@ -533,23 +533,8 @@
               }
             );
           }
-          if (
-            !OB.MobileApp.model.get('terminal').ismaster &&
-            !OB.MobileApp.model.get('terminal').isslave
-          ) {
-            finishAndNavigate();
-          } else {
-            // TODO - shared payments
-            // OB.Dal.find(
-            //   OB.Model.CashUp,
-            //   {
-            //     isprocessed: 'N'
-            //   },
-            //   function(cashUps) {
-            //     OB.UTIL.composeCashupInfo(cashUps, null, finishAndNavigate);
-            //   }
-            // );
-          }
+
+          finishAndNavigate();
         };
 
         const onInitCashupError = function() {

@@ -452,7 +452,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
         'org.openbravo.retail.posterminal.ProcessCashMgmtMaster'
       ).exec(
         {
-          cashUpId: OB.POS.modelterminal.get('terminal').cashUpId,
+          cashUpId: OB.App.State.Cashup.Utils.getCashupId(),
           terminalSlave: OB.POS.modelterminal.get('terminal').isslave
         },
         function(data) {
