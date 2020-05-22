@@ -70,13 +70,4 @@
     </Sql>
     <Parameter name="mProductId"/>
   </SqlMethod>
-  <SqlMethod name="attribute" type="preparedStatement" return="String" default="">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      SELECT description 
-      FROM M_AttributeSetInstance 
-      WHERE M_AttributeSetInstance_ID = ? 
-    </Sql>
-    <Parameter name="mAttributesetinstanceId"/>
-  </SqlMethod>
 </SqlClass>

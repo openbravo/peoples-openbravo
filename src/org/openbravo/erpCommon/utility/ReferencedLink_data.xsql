@@ -39,17 +39,6 @@
     <Parameter name="adWindowId"/>
     <Parameter name="adTableId"/>
   </SqlMethod>
-   <SqlMethod name="selectWindows" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        SELECT AD_WINDOW_ID, PO_WINDOW_ID
-        FROM AD_TABLE 
-        WHERE AD_TABLE_ID = ?
-      ]]>
-    </Sql>
-    <Parameter name="adTableId"/>
-  </SqlMethod>
   <SqlMethod name="selectParent" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

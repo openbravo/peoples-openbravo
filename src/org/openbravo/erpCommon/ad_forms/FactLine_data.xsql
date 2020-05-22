@@ -157,18 +157,6 @@
      </Sql>
      <Parameter name="recordID2" optional="false" type="replace" after="Record_ID2 IN (" text="'1'"/>
    </SqlMethod>
-  <SqlMethod name="updateFactAcct" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        UPDATE Fact_Acct SET FACTACCTTYPE = 'O'
-        WHERE AD_TABLE_ID = ?
-        AND RECORD_ID = ?
-     ]]>
-     </Sql>
-     <Parameter name="table"/>
-     <Parameter name="record"/>
-   </SqlMethod>
   <SqlMethod name="selectLocationFromLocator" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

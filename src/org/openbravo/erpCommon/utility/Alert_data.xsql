@@ -25,19 +25,6 @@
    		<![CDATA[
 	       SELECT AD_Alert_ID, AD_Client_ID, AD_Org_ID, IsActive, 
 	              Created, CreatedBy, Updated, UpdatedBy, Description, AD_AlertRule_ID,
-                  AD_Role_ID, AD_User_ID, Record_Id, Referencekey_ID
-      		 FROM AD_Alert
-      		WHERE AD_AlertRule_ID = ?
-      ]]>
-   	</Sql>
-   	<Parameter name="adAlertId" />
-   </SqlMethod>
-   <SqlMethod name="select" type="preparedStatement" return="multiple">
-   	<SqlMethodComment></SqlMethodComment>
-   	<Sql>
-   		<![CDATA[
-	       SELECT AD_Alert_ID, AD_Client_ID, AD_Org_ID, IsActive, 
-	              Created, CreatedBy, Updated, UpdatedBy, Description, AD_AlertRule_ID,
                   AD_Role_ID, AD_User_ID, Record_Id
       		 FROM AD_Alert
       		WHERE AD_AlertRule_ID = ? AND Record_Id = ?
