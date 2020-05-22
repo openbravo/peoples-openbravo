@@ -994,7 +994,7 @@ enyo.kind({
       }
     }
 
-    if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+    if (OB.UTIL.remoteSearch(OB.Model.BusinessPartner)) {
       var filterIdentifier = {
           columns: ['_filter'],
           operator: 'startsWith',

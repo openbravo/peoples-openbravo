@@ -67,7 +67,11 @@ enyo.kind({
 
     function successCallbackBPsLoc(dataBps) {
       if (dataBps && dataBps.length > 0) {
-        me.bpsList.reset(dataBps.models);
+        if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+          me.bpsList.reset(dataBps.models);
+        } else {
+          me.bpsList.reset(dataBps);
+        }
       } else {
         me.bpsList.reset();
       }
@@ -89,7 +93,7 @@ enyo.kind({
     criteria.bpartner = this.bPartner.get('id');
     criteria.isShipTo = true;
 
-    if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+    if (OB.UTIL.remoteSearch(OB.Model.BusinessPartner)) {
       var filterIdentifier = {
           columns: ['_filter'],
           operator: 'startsWith',
