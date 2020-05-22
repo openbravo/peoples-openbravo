@@ -176,8 +176,4 @@
     <Parameter name="financialAccountId" optional="true" after="AND 3=3"><![CDATA[ AND fa.fin_financial_account_id = ? ]]></Parameter>
     <Parameter name="datePlanned" optional="true" after="and 4=4"><![CDATA[ AND fat.statementdate <= TO_DATE(?) ]]></Parameter>
   </SqlMethod>
-  <SqlMethod name="set" type="constant" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql></Sql>
-  </SqlMethod>
 </SqlClass>

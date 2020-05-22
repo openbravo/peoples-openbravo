@@ -273,9 +273,6 @@ public class SystemInfo {
         case REJECTED_LOGINS_DUE_CONC_USERS:
           systemInfo.put(i, Integer.toString(numberOfRejectedLoginsDueConcUsersThisMonth));
           break;
-        case CUSTOM_QUERY_ENABLED:
-          systemInfo.put(i, sysInfo.isEnableCustomQueries() ? "Y" : "N");
-          break;
       }
     } finally {
       OBContext.restorePreviousMode();
@@ -885,7 +882,6 @@ public class SystemInfo {
     INSTANCE_PURPOSE("instancePurpose", false),
     REJECTED_LOGINS_DUE_CONC_USERS("rejectedLoginsDueConcUsers", false),
     INSTANCE_NUMBER("instanceNo", false),
-    CUSTOM_QUERY_ENABLED("enabledCustomQuery", false),
     WS_CALLS_MAX("wsCallsMax", false),
     WS_CALLS_AVG("wsCallsAvg", false),
     WSC_CALLS_MAX("wscCallsMax", false),

@@ -118,10 +118,6 @@
     <Parameter name="sales" optional="true" type="none" after="2=2" text="AND I2.ISSOTRX = 'Y'"/>
     <Parameter name="purchase" optional="true" type="none" after="2=2" text="AND I2.ISSOTRX = 'N'"/>
   </SqlMethod>
-  <SqlMethod name="set" type="constant" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql></Sql>
-  </SqlMethod>
   <SqlMethod name="bPartnerDescription" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

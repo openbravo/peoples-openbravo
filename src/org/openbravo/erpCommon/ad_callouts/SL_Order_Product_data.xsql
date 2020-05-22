@@ -30,16 +30,6 @@
     </Sql>
     <Parameter name="cOrderId"/>
   </SqlMethod>
-  <SqlMethod name="selectInvoice" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-      SELECT C_INVOICE_ID AS ID, DATEINVOICED, C_BPARTNER_ID, M_PRICELIST_ID
-      	FROM C_INVOICE WHERE C_INVOICE_ID = ?
-      ]]>
-    </Sql>
-    <Parameter name="cInvoiceId"/>
-  </SqlMethod>
   <!--SqlMethod name="strMProductUOMID" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

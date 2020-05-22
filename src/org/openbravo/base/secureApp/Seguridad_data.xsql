@@ -32,18 +32,6 @@
       <Parameter name="adRoleId"/>
       <Parameter name="adUserId"/>
    </SqlMethod>
-   <SqlMethod name="valido" type="preparedStatement" return="String" default="-1">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-        SELECT AD_USER_ID 
-        FROM AD_USER 
-        WHERE ISACTIVE = 'Y' 
-        AND USERNAME = ? 
-        AND PASSWORD = ?
-      </Sql>
-      <Parameter name="user"/>
-      <Parameter name="passwd"/>
-   </SqlMethod>
    <SqlMethod name="loggedOK" type="preparedStatement" return="boolean">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
