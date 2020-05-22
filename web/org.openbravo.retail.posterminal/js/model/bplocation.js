@@ -46,7 +46,7 @@
         OB.DATA.executeCustomerAddressSave(this, callback, callbackError);
       } else {
         this.trigger('customerAddrSaved');
-        callback();
+        setTimeout(callback, 100);
       }
 
       return true;
