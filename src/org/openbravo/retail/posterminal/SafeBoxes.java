@@ -63,6 +63,9 @@ public class SafeBoxes extends JSONProcessSimple {
         hqlSafeBoxes += " AND sf.searchKey = :safeBoxSearchKey";
       }
 
+      // Set always the same order
+      hqlSafeBoxes += " ORDER BY sf.searchKey ";
+
       @SuppressWarnings("rawtypes")
       Query safeBoxesQuery = OBDal.getInstance().getSession().createQuery(hqlSafeBoxes);
 
