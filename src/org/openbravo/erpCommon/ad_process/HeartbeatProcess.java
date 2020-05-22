@@ -37,18 +37,13 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.persistence.Tuple;
-import javax.persistence.TupleElement;
 import javax.servlet.ServletException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.query.Query;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
@@ -60,9 +55,7 @@ import org.openbravo.erpCommon.utility.Alert;
 import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.SystemInfo;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.model.ad.access.HeartbeatLogCustomQueryRow;
 import org.openbravo.model.ad.system.HeartbeatLog;
-import org.openbravo.model.ad.system.HeartbeatLogCustomQuery;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.ad.ui.ProcessRequest;
 import org.openbravo.scheduling.Process;
@@ -82,7 +75,6 @@ public class HeartbeatProcess implements Process {
   private static final String DISABLING_BEAT = "D";
   private static final String DECLINING_BEAT = "DEC";
   private static final String DEFERRING_BEAT = "DEF";
-  private static final String CUSTOMQUERY_BEAT = "CQ";
 
   private static final String UNKNOWN_BEAT = "U";
   public static final String HB_PROCESS_ID = "1005800000";
@@ -468,17 +460,10 @@ public class HeartbeatProcess implements Process {
     OBContext.setAdminMode();
     try {
       JSONObject json = new JSONObject(response);
-      String beatId = (String) json.get("beatId");
 
       // Get alerts from JSONOBject and process them
       String alertsResponse = (String) json.get("alerts");
       parseAlerts(alertsResponse);
-
-      // Get Custom Queries from JSONObject and process them
-      SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
-      if (sysInfo != null && sysInfo.isEnableCustomQueries()) {
-        processCustomQueries((JSONArray) json.get("customQueries"), beatId);
-      }
     } catch (JSONException e) {
       log.error(e.getMessage(), e);
     } finally {
@@ -519,155 +504,6 @@ public class HeartbeatProcess implements Process {
     for (Alert update : updates) {
       update.save(connection);
     }
-  }
-
-  /**
-   * Gets a JSON Array with the custom queries and sends back to the heartbeat server the results.
-   * The results of the queries are also stored on the heartbeat local log.
-   * </p>
-   * 
-   * The result that is sent to the heartbeat server is a JSON Object that contains the beat type,
-   * the beat id and another JSON Object with the results of the queries.
-   * </p>
-   * 
-   * The JSON Object with the results contains one JSON Object for each executed query identified by
-   * the Query Id. This JSON Object is formed by 2 JSON Arrays. The first one, identified by
-   * "properties" contains a String array with the header of each returned property. The second one
-   * identified by "values" contains a JSON Array for each returned row, each row is a JSON Array
-   * with the value of each returned property.
-   * </p>
-   * 
-   * Example of a returned JSON Object string:
-   * </p>
-   * 
-   * <code>
-   * {<br>
-   * &nbsp;beatType:CUSTOMQUERY_BEAT,<br>
-   * &nbsp;beatId:1234-5678-90,<br>
-   * &nbsp;customQueries:{<br>
-   * &nbsp;&nbsp;queryId1:{<br>
-   * &nbsp;&nbsp;&nbsp;properties:{"QId1property1","QId1property2"},<br>
-   * &nbsp;&nbsp;&nbsp;values:[[row1value1,row1value2],[row2value1, row2value2],[row3value1, row3value2]]<br>
-   * &nbsp;&nbsp;},<br>
-   * &nbsp;&nbsp;queryId2:{<br>
-   * &nbsp;&nbsp;&nbsp;properties:{"QId2property1","QId2property2"},<br>
-   * &nbsp;&nbsp;&nbsp;values:[[row1value1,row1value2],[row2value1, row2value2],[row3value1, row3value2]]<br>
-   * &nbsp;&nbsp;}<br>
-   * &nbsp;}<br>
-   * }<br></code>
-   * </p>
-   * 
-   * @param jsonArrayCQueries
-   *          An array of JSON Objects with all the custom queries to be executed. Each JSON Object
-   *          contains the query Id, the query name, the query type and depending of the type the
-   *          corresponding code.
-   * @param beatId
-   *          The identifier of the beat on the heartbeat server.
-   * @throws JSONException
-   */
-  private void processCustomQueries(JSONArray jsonArrayCQueries, String beatId)
-      throws JSONException {
-    if ("null".equals(jsonArrayCQueries.get(0))) {
-      return;
-    }
-    JSONObject jsonObjectCQReturn = new JSONObject();
-    for (int i = 0; i < jsonArrayCQueries.length(); i++) {
-      JSONObject jsonCustomQuery = (JSONObject) jsonArrayCQueries.get(i);
-      String strQId = jsonCustomQuery.getString("QId");
-      String strQName = jsonCustomQuery.getString("QName");
-      logger.logln("Processing custom query: " + strQName);
-      try {
-        String strQType = jsonCustomQuery.getString("QType");
-        if ("HQL".equals(strQType)) {
-          String strHQL = jsonCustomQuery.getString("QCode");
-          HeartbeatLogCustomQuery hbLogCQ = logCustomQuery(strQName, strQType, strHQL);
-
-          Session obSession = OBDal.getInstance().getSession();
-          Query<Tuple> customQuery = obSession.createQuery(strHQL, Tuple.class);
-          JSONArray jsonArrayResultRows = new JSONArray();
-          int row = 0;
-          List<Tuple> tupleList = customQuery.list();
-          List<String> properties = null;
-          boolean initProperties = true;
-          for (Tuple tuple : tupleList) {
-            row += 1;
-            JSONArray jsonArrayResultRowValues = new JSONArray();
-            properties = new ArrayList<>();
-            int j = 0;
-            for (TupleElement<?> tupleElement : tuple.getElements()) {
-              jsonArrayResultRowValues.put(tuple.get(j));
-              String alias = tupleElement.getAlias();
-              if (initProperties) {
-                properties.add(alias);
-              }
-              String fieldName = alias != null ? alias : "??";
-              logCustomQueryResult(hbLogCQ, row, fieldName, tuple.get(j).toString());
-            }
-            jsonArrayResultRows.put(jsonArrayResultRowValues);
-            initProperties = false;
-          }
-
-          if (tupleList.isEmpty()) {
-            jsonArrayResultRows.put("null");
-          }
-
-          JSONObject jsonResult = new JSONObject();
-          jsonResult.put("properties", properties == null ? null : properties);
-          jsonResult.put("values", jsonArrayResultRows);
-          jsonObjectCQReturn.put(strQId, jsonResult);
-        } else {
-          log.warn("unknown Query Type: " + strQType);
-          jsonObjectCQReturn.put(strQId, "unknown query type: " + strQType);
-        }
-      } catch (Exception e) {
-        // ignore exception
-        jsonObjectCQReturn.put(strQId, "exeption executing query: " + e.getMessage());
-        log.warn("Error processing custom query: " + strQName);
-      }
-
-    }
-    JSONObject jsonObjectReturn = new JSONObject();
-    jsonObjectReturn.put("beatId", beatId);
-    jsonObjectReturn.put("customQueries", jsonObjectCQReturn);
-
-    try {
-      String info = "beatType=" + CUSTOMQUERY_BEAT + "&q=" + jsonObjectReturn.toString();
-      sendInfo(info);
-    } catch (Exception e) {
-      log.error(e.getMessage(), e);
-    }
-
-  }
-
-  private HeartbeatLogCustomQuery logCustomQuery(String strQName, String strQType, String strHQL) {
-    HeartbeatLogCustomQuery hbLogCQ = OBProvider.getInstance().get(HeartbeatLogCustomQuery.class);
-    hbLogCQ.setHeartbeatLog(hbLog);
-    hbLogCQ.setName(strQName);
-    hbLogCQ.setType(strQType);
-    hbLogCQ.setValidationCode(strHQL);
-
-    List<HeartbeatLogCustomQuery> hbLogCQs = hbLog.getADHeartbeatLogCustomQueryList();
-    hbLogCQs.add(hbLogCQ);
-    hbLog.setADHeartbeatLogCustomQueryList(hbLogCQs);
-    OBDal.getInstance().save(hbLogCQ);
-
-    return hbLogCQ;
-  }
-
-  private void logCustomQueryResult(HeartbeatLogCustomQuery hbLogCQ, int row, String strProperty,
-      String strValue) {
-    HeartbeatLogCustomQueryRow hbLogCQRow = OBProvider.getInstance()
-        .get(HeartbeatLogCustomQueryRow.class);
-    hbLogCQRow.setExecutedCustomQuery(hbLogCQ);
-    hbLogCQRow.setPropertyname(strProperty);
-    hbLogCQRow.setPropertyvalue(strValue);
-    hbLogCQRow.setRowno(new BigDecimal(row));
-
-    List<HeartbeatLogCustomQueryRow> hbLogCQRows = hbLogCQ.getADHeartbeatLogCustomQueryRowList();
-    hbLogCQRows.add(hbLogCQRow);
-    hbLogCQ.setADHeartbeatLogCustomQueryRowList(hbLogCQRows);
-
-    OBDal.getInstance().save(hbLogCQRow);
   }
 
   public enum HeartBeatOrRegistration {
