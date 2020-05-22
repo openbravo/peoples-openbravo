@@ -150,6 +150,12 @@ enyo.kind({
         } else {
           this.renderCustomer(null, '');
         }
+        if (model.get('externalBusinessPartner')) {
+          const bp = new OB.App.Class.ExternalBusinessPartner(
+            model.get('externalBusinessPartner')
+          );
+          this.renderCustomer(bp.getKey(), bp.getIdentifier());
+        }
       },
       this
     );

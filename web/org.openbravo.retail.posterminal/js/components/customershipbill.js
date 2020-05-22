@@ -87,6 +87,24 @@ enyo.kind({
         } else {
           this.renderCustomer(null, '');
         }
+        if (model.get('externalBusinessPartner')) {
+          const bp = new OB.App.Class.ExternalBusinessPartner(
+            model.get('externalBusinessPartner')
+          );
+          this.renderCustomer(bp.getKey(), bp.getIdentifier());
+        }
+      },
+      this
+    );
+    this.order.on(
+      'change:externalBusinessPartner',
+      function(model) {
+        if (model.get('externalBusinessPartner')) {
+          const bp = new OB.App.Class.ExternalBusinessPartner(
+            model.get('externalBusinessPartner')
+          );
+          this.renderCustomer(bp.getKey(), bp.getIdentifier());
+        }
       },
       this
     );
@@ -129,6 +147,9 @@ enyo.kind({
     this.setValue(newAddrId, newAddrName);
   },
   orderChanged: function(oldValue) {
+    if (OB.UTIL.externalBp()) {
+      return;
+    }
     if (this.order.get('bp')) {
       this.renderAddrShip(
         this.order.get('bp').get('shipLocId'),
@@ -190,6 +211,9 @@ enyo.kind({
     this.setValue(newAddrId, newAddrName);
   },
   orderChanged: function(oldValue) {
+    if (OB.UTIL.externalBp()) {
+      return;
+    }
     if (this.order.get('bp')) {
       this.renderAddrBill(
         this.order.get('bp').get('locId'),

@@ -32,6 +32,9 @@ enyo.kind({
     this.setValue(newLocationId, newLocationName);
   },
   orderChanged: function(oldValue) {
+    if (OB.UTIL.externalBp()) {
+      return;
+    }
     if (this.order.get('bp')) {
       this.renderBPLocation(
         _.isNull(this.order.get('bp').get(this.locName))

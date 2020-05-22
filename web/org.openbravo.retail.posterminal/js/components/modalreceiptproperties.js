@@ -253,6 +253,10 @@ enyo.kind({
         this.loadValue(this.newAttributes[p].modelProperty);
       }
     }
+    if (OB.UTIL.externalBp()) {
+      this.$.body.$.attributes.$.line_addressshipbutton.hide();
+      this.$.body.$.attributes.$.line_addressbillbutton.hide();
+    }
   },
   init: function(model) {
     this.model = model.get('order');
