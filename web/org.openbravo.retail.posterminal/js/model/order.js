@@ -5912,7 +5912,6 @@
                   OB.Model.BPLocation,
                   bPLocation
                 );
-
                 businessPartner.set(locModel, location);
                 if (callback) {
                   callback();
@@ -10535,9 +10534,8 @@
         } else {
           try {
             let bp = await OB.App.MasterdataModels.BusinessPartner.withId(bpId);
-            bp = OB.Dal.transform(OB.Model.BusinessPartner, bp);
             if (bp !== undefined) {
-              loadLocations(bp);
+              loadLocations(OB.Dal.transform(OB.Model.BusinessPartner, bp));
             } else {
               loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(data) {
                 bpLoc = data.bpLoc;

@@ -1254,8 +1254,11 @@ enyo.kind({
                 let bPLocation = await OB.App.MasterdataModels.BusinessPartnerLocation.withId(
                   model.get('bpLocactionId')
                 );
-                let loc = OB.Dal.transform(OB.Model.BPLocation, bPLocation);
-                successCallback(loc, me, model);
+                successCallback(
+                  OB.Dal.transform(OB.Model.BPLocation, bPLocation),
+                  me,
+                  model
+                );
               } catch (error) {
                 OB.error(error);
               }
@@ -1340,8 +1343,7 @@ enyo.kind({
         let bp = await OB.App.MasterdataModels.BusinessPartner.withId(
           bpartner.get('bpartnerId')
         );
-        bp = OB.Dal.transform(OB.Model.BusinessPartner, bp);
-        successCallback(bp);
+        successCallback(OB.Dal.transform(OB.Model.BusinessPartner, bp));
       } catch (error) {
         OB.error(error);
       }

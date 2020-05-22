@@ -169,8 +169,10 @@
               let bPLocation = await OB.App.MasterdataModels.BusinessPartnerLocation.withId(
                 customerCol.get('shipLocId')
               );
-              let location = OB.Dal.transform(OB.Model.BPLocation, bPLocation);
-              customerCol.set('locationModel', location);
+              customerCol.set(
+                'locationModel',
+                OB.Dal.transform(OB.Model.BPLocation, bPLocation)
+              );
               me.clearModelWith(customerCol);
               userCallback(me);
             } catch (error) {

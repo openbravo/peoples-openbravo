@@ -72,8 +72,7 @@
           let bPLocation = await OB.App.MasterdataModels.BusinessPartnerLocation.withId(
             CusAddrId
           );
-          let customerAddr = OB.Dal.transform(OB.Model.BPLocation, bPLocation);
-          successCallback(customerAddr);
+          successCallback(OB.Dal.transform(OB.Model.BPLocation, bPLocation));
         } catch (error) {
           OB.error(error);
         }
