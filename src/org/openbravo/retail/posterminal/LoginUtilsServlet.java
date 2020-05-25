@@ -253,6 +253,28 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
   }
 
   @Override
+  protected String getLanguage(HttpServletRequest request) {
+    final String terminalName = request.getParameter("terminalName");
+    if (StringUtils.isBlank(terminalName)) {
+      return null;
+    }
+    OBQuery<OBPOSApplications> obq = OBDal.getInstance()
+        .createQuery(OBPOSApplications.class, "where searchKey = :terminalName");
+    obq.setNamedParameter("terminalName", terminalName);
+    obq.setFilterOnReadableClients(false);
+    obq.setFilterOnReadableOrganization(false);
+    List<OBPOSApplications> posApps = obq.list();
+    if (posApps.isEmpty()) {
+      return null;
+    }
+    OBPOSApplications obposApplications = posApps.get(0);
+    if (obposApplications != null && obposApplications.getClient().getLanguage() != null) {
+      return obposApplications.getClient().getLanguage().getId();
+    }
+    return null;
+  }
+
+  @Override
   protected JSONObject preLogin(HttpServletRequest request) throws JSONException {
     String userId = "";
     boolean success = false;
