@@ -131,6 +131,7 @@ enyo.kind({
             : 'OBPOS_LblAssignCustomer'
         )
       );
+      this.getFilterSelectorTableHeader().clearFilter();
       this.$.body.$.listExternalBpsSelector.dialog = this;
     }
 
