@@ -17,7 +17,8 @@
         'businessPartnerCategory_name',
         'taxID',
         'phone',
-        'email'
+        'email',
+        'id'
       ];
     }
   }

@@ -30,7 +30,7 @@
           properties: [{ property: 'bpartner' }]
         })
       ];
-      this.searchProperties = ['postalCode', 'cityName', 'name', 'bpartner'];
+      this.searchProperties = ['name', 'postalCode', 'cityName', 'bpartner'];
     }
   }
   OB.App.MasterdataController.registerModel(BusinessPartnerLocation);
