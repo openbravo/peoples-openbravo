@@ -663,6 +663,12 @@ enyo.kind({
             'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-OBPOSModalAdvancedFilterOrders'
         },
         {
+          kind: 'OB.UI.ModalSafeBox',
+          name: 'OBPOS_modalSafeBox',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-OBPOSModalSafeBox'
+        },
+        {
           kind: 'OBPOS.UI.CrossStoreSelector',
           name: 'OBPOS_modalCrossStoreSelector',
           classes:

@@ -939,7 +939,9 @@ enyo.kind({
     });
 
     if (OB.MobileApp.model.get('payments').length) {
-      // Enable/Disable Payment method based on refundable flag
+      const isTerminalSafeBox =
+        JSON.parse(OB.UTIL.localStorage.getItem('isSafeBox')) || false;
+
       _.each(
         OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons,
         function(sideButton) {
@@ -954,8 +956,43 @@ enyo.kind({
           payment.providerGroup && payment.providerGroup.id !== '0'
             ? payment.providerGroup.id
             : payment.payment.searchKey;
+
+        let disableSafeBoxPayment = false;
+        // Enable/Disable Payment method based on safe box
+        if (isTerminalSafeBox) {
+          if (payment.paymentMethod.issafebox) {
+            if (
+              !OB.UTIL.isNullOrUndefined(
+                OB.UTIL.localStorage.getItem('currentSafeBox')
+              )
+            ) {
+              const currentSafeBox = JSON.parse(
+                  OB.UTIL.localStorage.getItem('currentSafeBox')
+                ),
+                paymentMethods = currentSafeBox.paymentMethods;
+              const existsSafeBoxPaymentMethod = paymentMethods.find(
+                paymentMethod => {
+                  return (
+                    paymentMethod.paymentMethodId ===
+                    payment.paymentMethod.paymentMethod
+                  );
+                }
+              );
+              if (OB.UTIL.isNullOrUndefined(existsSafeBoxPaymentMethod)) {
+                disableSafeBoxPayment = true;
+              }
+            } else {
+              disableSafeBoxPayment = true;
+            }
+          }
+        }
+
+        // Enable/Disable Payment method based on refundable flag
+        const disableRefundablePayment = isReturnReceipt
+          ? !payment.paymentMethod.refundable
+          : false;
         keyboard.disableCommandKey(me, {
-          disabled: isReturnReceipt ? !payment.paymentMethod.refundable : false,
+          disabled: disableSafeBoxPayment || disableRefundablePayment,
           commands: [paymentCommand]
         });
 

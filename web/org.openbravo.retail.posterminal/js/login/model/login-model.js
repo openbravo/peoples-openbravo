@@ -451,6 +451,36 @@
             );
           };
 
+          // If a safe box is defined in this terminal and that safe box is assign to
+          // a user, check the current logged user before continue login process
+          // except if the user is a Safe Box Manager
+          if (
+            !OB.UTIL.isNullOrUndefined(
+              OB.UTIL.localStorage.getItem('currentSafeBox')
+            )
+          ) {
+            const currentSafeBox = JSON.parse(
+              OB.UTIL.localStorage.getItem('currentSafeBox')
+            );
+            if (
+              !OB.UTIL.isNullOrUndefined(currentSafeBox.userId) &&
+              currentSafeBox.userId !==
+                OB.MobileApp.model.usermodel.get('id') &&
+              !OB.MobileApp.model.hasPermission(
+                'OBPOS_approval.manager.safebox',
+                true
+              )
+            ) {
+              handleError({
+                exception: {
+                  message: 'OBPOS_DifferCurrentAssignedSafeBox',
+                  params: [currentSafeBox.userName]
+                }
+              });
+              return;
+            }
+          }
+
           OB.Dal.find(
             OB.Model.CashUp,
             {
@@ -656,6 +686,40 @@
           );
         }
       });
+
+      this.get('dataSyncModels').push({
+        name: 'Count Safe Box',
+        model: OB.Model.CountSafeBox,
+        modelFunc: 'OB.Model.CountSafeBox',
+        className: 'org.openbravo.retail.posterminal.ProcessCountSafeBox',
+        timeout: 600000,
+        timePerRecord: 10000,
+        isPersistent: false,
+        criteria: {
+          isprocessed: 'Y'
+        },
+        getIdentifier: function(model) {
+          return (
+            model.user +
+            ' - ' +
+            OB.I18N.formatDateISO(new Date(model.creationDate))
+          );
+        }
+      });
+
+      // move terminal log model to the end of models to sync since has less priority
+      var i,
+        indexTerminalLogModel = -1;
+      for (i = 0; i < this.get('dataSyncModels').length; i++) {
+        if (this.get('dataSyncModels')[i].name === 'OBMOBC_TerminalLog') {
+          indexTerminalLogModel = i;
+        }
+      }
+      if (indexTerminalLogModel !== -1) {
+        this.get('dataSyncModels').push(
+          this.get('dataSyncModels').splice(indexTerminalLogModel, 1)[0]
+        );
+      }
 
       this.on('ready', function() {
         OB.debug("next process: 'retail.pointofsale' window");
@@ -1766,6 +1830,23 @@
         callback();
       }
     },
+    manageTerminalSafeBoxes: function(safeBoxInfo) {
+      if (safeBoxInfo && safeBoxInfo.isSafeBox) {
+        OB.UTIL.localStorage.setItem('isSafeBox', safeBoxInfo.isSafeBox);
+        if (safeBoxInfo.safeBoxes && safeBoxInfo.safeBoxes.length > 0) {
+          // Replace safe boxes list only if we have some safebox comming from the server
+          OB.UTIL.localStorage.setItem(
+            'safeBoxes',
+            JSON.stringify(safeBoxInfo.safeBoxes)
+          );
+        }
+      } else {
+        // The terminal is no longer a safe box, delete the previous safeBoxe information
+        OB.UTIL.localStorage.removeItem('isSafeBox');
+        OB.UTIL.localStorage.removeItem('safeBoxes');
+        OB.UTIL.localStorage.removeItem('currentSafeBox');
+      }
+    },
     linkTerminal: function(terminalData, callback) {
       var params = this.get('loginUtilsParams') || {},
         me = this,
@@ -1866,6 +1947,7 @@
                 parsedTerminalData.cacheSessionId +
                 '"'
             );
+            me.manageTerminalSafeBoxes(inResponse.safeBoxInfo);
             callback();
           }
         })
@@ -1934,6 +2016,9 @@
             'offlineSessionTimeExpiration',
             inResponse.offlineSessionTimeExpiration
           );
+
+          me.manageTerminalSafeBoxes(inResponse.safeBoxInfo);
+
           if (
             !(
               OB.UTIL.localStorage.getItem('cacheSessionId') &&

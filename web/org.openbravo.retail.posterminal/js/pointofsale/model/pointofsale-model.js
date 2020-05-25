@@ -69,38 +69,55 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               'window:ready',
               function() {
                 OB.MobileApp.model.off('window:ready', null, model);
-                if (!args.ordersNotPaid || args.ordersNotPaid.length === 0) {
-                  // If there are no pending orders,
-                  //  add an initial empty order
-                  orderlist.addFirstOrder();
-                } else {
-                  // The order object is stored in the json property of the row fetched from the database
-                  orderlist.reset(args.ordersNotPaid.models);
-                  // At this point it is sure that there exists at least one order
-                  // Function to continue of there is some error
-                  currentOrder = args.ordersNotPaid.models[0];
-                  //removing Orders lines without mandatory fields filled
-                  OB.UTIL.HookManager.executeHooks(
-                    'OBPOS_CheckReceiptMandatoryFields',
-                    {
-                      orders: orderlist.models
-                    },
-                    function(args) {
-                      reCalculateReceipt = args.reCalculateReceipt;
-                      orderlist.load(currentOrder);
-                      if (reCalculateReceipt) {
-                        OB.MobileApp.model.receipt.calculateGrossAndSave();
+                const addNewOrderCallback = () => {
+                  if (!args.ordersNotPaid || args.ordersNotPaid.length === 0) {
+                    // If there are no pending orders,
+                    //  add an initial empty order
+                    orderlist.addFirstOrder();
+                  } else {
+                    // The order object is stored in the json property of the row fetched from the database
+                    orderlist.reset(args.ordersNotPaid.models);
+                    // At this point it is sure that there exists at least one order
+                    // Function to continue of there is some error
+                    currentOrder = args.ordersNotPaid.models[0];
+                    //removing Orders lines without mandatory fields filled
+                    OB.UTIL.HookManager.executeHooks(
+                      'OBPOS_CheckReceiptMandatoryFields',
+                      {
+                        orders: orderlist.models
+                      },
+                      function(args) {
+                        reCalculateReceipt = args.reCalculateReceipt;
+                        orderlist.load(currentOrder);
+                        if (reCalculateReceipt) {
+                          OB.MobileApp.model.receipt.calculateGrossAndSave();
+                        }
+                        loadOrderStr =
+                          OB.I18N.getLabel('OBPOS_Order') +
+                          currentOrder.get('documentNo') +
+                          OB.I18N.getLabel('OBPOS_Loaded');
+                        OB.UTIL.showAlert.display(
+                          loadOrderStr,
+                          OB.I18N.getLabel('OBPOS_Info')
+                        );
                       }
-                      loadOrderStr =
-                        OB.I18N.getLabel('OBPOS_Order') +
-                        currentOrder.get('documentNo') +
-                        OB.I18N.getLabel('OBPOS_Loaded');
-                      OB.UTIL.showAlert.display(
-                        loadOrderStr,
-                        OB.I18N.getLabel('OBPOS_Info')
-                      );
+                    );
+                  }
+                };
+                if (
+                  OB.MobileApp.model.get('terminal').terminalType.safebox &&
+                  OB.UTIL.isNullOrUndefined(
+                    OB.UTIL.localStorage.getItem('currentSafeBox')
+                  )
+                ) {
+                  OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
+                    popup: 'OBPOS_modalSafeBox',
+                    args: {
+                      callback: addNewOrderCallback
                     }
-                  );
+                  });
+                } else {
+                  addNewOrderCallback();
                 }
               },
               model

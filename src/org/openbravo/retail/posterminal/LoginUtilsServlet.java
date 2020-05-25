@@ -253,6 +253,28 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
   }
 
   @Override
+  protected String getLanguage(HttpServletRequest request) {
+    final String terminalName = request.getParameter("terminalName");
+    if (StringUtils.isBlank(terminalName)) {
+      return null;
+    }
+    OBQuery<OBPOSApplications> obq = OBDal.getInstance()
+        .createQuery(OBPOSApplications.class, "where searchKey = :terminalName");
+    obq.setNamedParameter("terminalName", terminalName);
+    obq.setFilterOnReadableClients(false);
+    obq.setFilterOnReadableOrganization(false);
+    List<OBPOSApplications> posApps = obq.list();
+    if (posApps.isEmpty()) {
+      return null;
+    }
+    OBPOSApplications obposApplications = posApps.get(0);
+    if (obposApplications != null && obposApplications.getClient().getLanguage() != null) {
+      return obposApplications.getClient().getLanguage().getId();
+    }
+    return null;
+  }
+
+  @Override
   protected JSONObject preLogin(HttpServletRequest request) throws JSONException {
     String userId = "";
     boolean success = false;
@@ -371,6 +393,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
           result.put("appCaption",
               terminal.getIdentifier() + " - " + terminal.getOrganization().getIdentifier());
           result.put("servers", getServers(terminal));
+          result.put("safeBoxInfo", getTerminalSafeBoxes(terminal));
           result.put("services", getServices());
           result.put("processes", getProcesses());
           terminal.setLinked(true);
@@ -408,14 +431,76 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     return result;
   }
 
+  private JSONObject getTerminalSafeBoxes(OBPOSApplications terminal) throws JSONException {
+    JSONObject result = new JSONObject();
+
+    if (terminal.getObposTerminaltype().isSafebox()) {
+      result.put("isSafeBox", true);
+      // Get all safeBoxes defined and their payment methods
+      OBCriteria<OBPOSSafeBox> safeBoxCrt = OBDal.getInstance().createCriteria(OBPOSSafeBox.class);
+      safeBoxCrt.setFilterOnReadableOrganization(false);
+      safeBoxCrt.setFilterOnReadableClients(false);
+      if (safeBoxCrt.count() > 0) {
+        JSONArray safeBoxArray = new JSONArray();
+        for (OBPOSSafeBox safeBox : safeBoxCrt.list()) {
+          final JSONObject jsonSafeBoxObject = new JSONObject();
+          jsonSafeBoxObject.put("name", safeBox.getCommercialName());
+          jsonSafeBoxObject.put("searchKey", safeBox.getSearchKey());
+          if (safeBox.getUser() != null) {
+            jsonSafeBoxObject.put("userId", safeBox.getUser().getId());
+            jsonSafeBoxObject.put("userName", safeBox.getUser().getName());
+          }
+          JSONArray safeBoxPaymentMethodsArray = new JSONArray();
+          for (OBPOSSafeBoxPaymentMethod safeBoxPaymentMethod : safeBox
+              .getOBPOSSafeBoxPaymentMethodList()) {
+            // Get SafeBoxes payment methods
+            final JSONObject jsonSafeBoxPaymentMethodObject = new JSONObject();
+            jsonSafeBoxPaymentMethodObject.put("paymentMethodId",
+                safeBoxPaymentMethod.getPaymentMethod().getId());
+            jsonSafeBoxPaymentMethodObject.put("paymentMethodName",
+                safeBoxPaymentMethod.getPaymentMethod().getName());
+            jsonSafeBoxPaymentMethodObject.put("financialAccountId",
+                safeBoxPaymentMethod.getFINFinancialaccount().getId());
+            jsonSafeBoxPaymentMethodObject.put("financialAccountName",
+                safeBoxPaymentMethod.getFINFinancialaccount().getName());
+            jsonSafeBoxPaymentMethodObject.put("keepFixedAmount",
+                safeBoxPaymentMethod.isKeepFixedAmount());
+            if (safeBoxPaymentMethod.isKeepFixedAmount()) {
+              jsonSafeBoxPaymentMethodObject.put("amountToKeep", safeBoxPaymentMethod.getAmount());
+            }
+            jsonSafeBoxPaymentMethodObject.put("allowVariableAmount",
+                safeBoxPaymentMethod.isAllowVariableAmount());
+            jsonSafeBoxPaymentMethodObject.put("allowNotToMove",
+                safeBoxPaymentMethod.isAllowNotToMove());
+            jsonSafeBoxPaymentMethodObject.put("allowMoveEverything",
+                safeBoxPaymentMethod.isAllowMoveEverything());
+            jsonSafeBoxPaymentMethodObject.put("countDifferenceLimit",
+                safeBoxPaymentMethod.getCountDifferenceLimit());
+            safeBoxPaymentMethodsArray.put(jsonSafeBoxPaymentMethodObject);
+          }
+          jsonSafeBoxObject.put("paymentMethods", safeBoxPaymentMethodsArray);
+          safeBoxArray.put(jsonSafeBoxObject);
+        }
+        result.put("safeBoxes", safeBoxArray);
+      } else {
+        result.put("exception", "OBPOS_NoSafeBoxesDefined");
+        return result;
+      }
+    } else {
+      result.put("isSafeBox", false);
+    }
+
+    return result;
+  }
+
   @Override
   protected JSONObject initActions(HttpServletRequest request) throws JSONException {
     JSONObject result = super.initActions(request);
 
     final String terminalName = request.getParameter("terminalName");
     JSONObject properties = (JSONObject) result.get("properties");
+    OBPOSApplications terminal = null;
     if (terminalName != null) {
-      OBPOSApplications terminal = null;
       OBCriteria<OBPOSApplications> qApp = OBDal.getInstance()
           .createCriteria(OBPOSApplications.class);
       qApp.add(Restrictions.eq(OBPOSApplications.PROPERTY_SEARCHKEY, terminalName));
@@ -425,6 +510,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
       if (apps.size() == 1) {
         terminal = ((OBPOSApplications) apps.get(0));
         properties.put("servers", getServers(terminal));
+        result.put("safeBoxInfo", getTerminalSafeBoxes(terminal));
       }
     }
     properties.put("templateVersion",
@@ -434,6 +520,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     String maxAllowedTimeInOfflineValue = "";
     String offlineSessionTimeExpirationValue = "";
     String currentPropertyToLaunchError = "";
+
     try {
       // Get terminal terminalAuthentication
       currentPropertyToLaunchError = "errorReadingTerminalAuthentication";
@@ -481,6 +568,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
       result.put(currentPropertyToLaunchError, OBMessageUtils
           .messageBD("OBPOS_errorWhileReadingOfflineSessionTimeExpirationPreference"));
     }
+
     return result;
   }
 

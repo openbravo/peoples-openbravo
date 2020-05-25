@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2019 Openbravo S.L.U.
+ * Copyright (C) 2013-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -10,60 +10,9 @@
 /*global enyo, _ */
 
 enyo.kind({
-  name: 'OB.CashUp.StepPendingOrders',
+  name: 'OB.CloseCash.CashPayments',
   kind: enyo.Object,
-  classes: 'obCashUpStepPendingOrders',
-  getStepComponent: function(leftpanel$) {
-    return leftpanel$.listPendingReceipts;
-  },
-  getToolbarName: function() {
-    return 'toolbarempty';
-  },
-  nextFinishButton: function() {
-    return false;
-  },
-  allowNext: function() {
-    return (
-      this.model.get('orderlist').length === 0 &&
-      !this.model.get('pendingOrdersToProcess')
-    );
-  },
-  getSubstepsLength: function(model) {
-    return 1;
-  },
-  isSubstepAvailable: function(model, substep) {
-    return true;
-  }
-});
-
-enyo.kind({
-  name: 'OB.CashUp.Master',
-  kind: enyo.Object,
-  classes: 'obCashUpMaster',
-  getStepComponent: function(leftpanel$) {
-    return leftpanel$.cashMaster;
-  },
-  getToolbarName: function() {
-    return 'toolbarempty';
-  },
-  nextFinishButton: function() {
-    return false;
-  },
-  allowNext: function() {
-    return this.model.get('slavesCashupCompleted');
-  },
-  getSubstepsLength: function(model) {
-    return 1;
-  },
-  isSubstepAvailable: function(model, substep) {
-    return true;
-  }
-});
-
-enyo.kind({
-  name: 'OB.CashUp.CashPayments',
-  kind: enyo.Object,
-  classes: 'obCashUpCashPayments',
+  classes: 'obCloseCashCashPayments',
   getStepComponent: function(leftpanel$) {
     return leftpanel$.cashPayments;
   },
@@ -80,16 +29,16 @@ enyo.kind({
     return model.get('paymentList').length;
   },
   isSubstepAvailable: function(model, substep) {
-    var payment = model.get('paymentList').at(substep);
-    var paymentMethod = payment.get('paymentMethod');
+    const payment = model.get('paymentList').at(substep),
+      paymentMethod = payment.get('paymentMethod');
     return paymentMethod.iscash && paymentMethod.countcash;
   }
 });
 
 enyo.kind({
-  name: 'OB.CashUp.PaymentMethods',
+  name: 'OB.CloseCash.PaymentMethods',
   kind: enyo.Object,
-  classes: 'obCashUpPaymentMethods',
+  classes: 'obCloseCashPaymentMethods',
   getStepComponent: function(leftpanel$) {
     return leftpanel$.listPaymentMethods;
   },
@@ -100,7 +49,7 @@ enyo.kind({
     return false;
   },
   allowNext: function() {
-    var paymentList = this.model.get(
+    const paymentList = this.model.get(
       OB.MobileApp.model.hasPermission(
         'OBPOS_retail.cashupGroupExpectedPayment',
         true
@@ -108,17 +57,13 @@ enyo.kind({
         ? 'paymentExpectedList'
         : 'paymentList'
     );
-    return _.reduce(
-      paymentList.models,
-      function(allCounted, model) {
-        return (
-          allCounted &&
-          model.get('counted') !== null &&
-          model.get('counted') !== undefined
-        );
-      },
-      true
-    );
+    return paymentList.models.reduce((allCounted, model) => {
+      return (
+        allCounted &&
+        model.get('counted') !== null &&
+        model.get('counted') !== undefined
+      );
+    }, true);
   },
   getSubstepsLength: function(model) {
     // Do not show this step if there are no payments defined
@@ -130,9 +75,9 @@ enyo.kind({
 });
 
 enyo.kind({
-  name: 'OB.CashUp.CashToKeep',
+  name: 'OB.CloseCash.CashToKeep',
   kind: enyo.Object,
-  classes: 'obCashUpCashToKeep',
+  classes: 'obCloseCashCashToKeep',
   getStepComponent: function(leftpanel$) {
     return leftpanel$.cashToKeep;
   },
@@ -151,7 +96,7 @@ enyo.kind({
     return false;
   },
   allowNext: function() {
-    var paymentMethod = this.model
+    const paymentMethod = this.model
         .get('paymentList')
         .at(this.model.get('substep')),
       cashToKeepSelected = paymentMethod.get('isCashToKeepSelected') || false,
@@ -165,9 +110,9 @@ enyo.kind({
     return model.get('paymentList').length;
   },
   isSubstepAvailable: function(model, substep) {
-    var payment = model.get('paymentList').at(substep);
-    var paymentMethod = payment.get('paymentMethod');
-    var options = 0;
+    const payment = model.get('paymentList').at(substep),
+      paymentMethod = payment.get('paymentMethod');
+    let options = 0;
 
     payment.set('isCashToKeepSelected', false);
     if (paymentMethod.automatemovementtoother) {
@@ -204,9 +149,9 @@ enyo.kind({
 });
 
 enyo.kind({
-  name: 'OB.CashUp.PostPrintAndClose',
+  name: 'OB.CloseCash.PostPrintAndClose',
   kind: enyo.Object,
-  classes: 'obCashUpPostPrintAndClose',
+  classes: 'obCloseCashPostPrintAndClose',
   getStepComponent: function(leftpanel$) {
     return leftpanel$.postPrintClose;
   },

@@ -73,8 +73,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     final String prefix = "web/" + POSUtils.MODULE_JAVA_PACKAGE;
 
     final String[] resourceDependency = { "main", "model/changedbusinesspartners",
-        "model/changedbplocation", "model/order", "model/cashup", "model/cashmanagement",
-        "model/cancelLayaway", "login/model/login-model",
+        "model/changedbplocation", "model/order", "model/cashup", "model/countsafebox",
+        "model/cashmanagement", "model/cancelLayaway", "login/model/login-model",
         // Common components
         "datasource",
         // "data/dal",
@@ -130,9 +130,10 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/bplocationship", "components/customershipbill",
         "components/listreceiptscounter", "components/menu", "components/salesrepresentative",
         "components/modalselectterminal", "components/popupdraweropened",
-        "components/servicesfilter", "components/modalselectopenreceipts",
-        "components/modalsplitlines", "components/modalassociatetickets",
-        "components/modalremoveassociatedtickets", "components/openRelatedReceiptsModal",
+        "components/servicesfilter", "components/modalsafebox",
+        "components/modalselectopenreceipts", "components/modalsplitlines",
+        "components/modalassociatetickets", "components/modalremoveassociatedtickets",
+        "components/openRelatedReceiptsModal",
 
         // externalBP UI components
         "components/externalbusinesspartner_viewedit",
@@ -201,16 +202,27 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
         "cashmgmt/components/cashmgmt-modals",
 
-        // Cash Up window
-        "closecash/model/cashup-steps", "closecash/model/cashup-print",
-        "closecash/model/cashup-model", "closecash/view/closecash", "closecash/view/closekeyboard",
-        "closecash/view/closeinfo", "closecash/view/tabpendingreceipts",
-        "closecash/view/tabcashmaster", "closecash/view/tabcashpayments",
-        "closecash/view/tabcountcash", "closecash/view/tabcashtokeep",
-        "closecash/view/tabpostprintclose", "closecash/components/cashup-modals",
+        // Close Cash Common
+        "closecash/model/closecash-steps", "closecash/model/closecash-print",
+        "closecash/model/closecash-model", "closecash/view/closecash",
+        "closecash/view/closekeyboard", "closecash/view/closeinfo",
+        "closecash/view/tabcashpayments", "closecash/view/tabcountcash",
+        "closecash/view/tabcashtokeep", "closecash/view/tabpostprintclose",
         "closecash/components/approvalreason-modal",
 
-        "closecash/model/daycash",
+        // Cash Up window
+        "closecash/model/cashup/cashup-steps", "closecash/model/cashup/cashup-model",
+        "closecash/view/cashup/cashup", "closecash/view/cashup/tabpendingreceipts",
+        "closecash/view/cashup/tabcashmaster", "closecash/view/cashup/cashuppostprintclose",
+        "closecash/components/cashup/cashup-modals", "closecash/components/cashup/cashup-popups",
+
+        // Safe Box window
+        "closecash/model/countsafebox/countsafebox-steps",
+        "closecash/model/countsafebox/countsafebox-model",
+        "closecash/view/countsafebox/countsafebox", "closecash/view/countsafebox/tabsafeboxlist",
+        "closecash/view/countsafebox/countsafeboxpostprintclose",
+        "closecash/components/countsafebox/countsafebox-popups",
+
         // Core resources
         "../../org.openbravo.client.application/js/utilities/ob-utilities-number",
         "../../org.openbravo.client.application/js/utilities/ob-utilities-date",
