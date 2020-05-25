@@ -12,7 +12,8 @@
     remote: 'OBPOS_remote.customer',
     source: 'org.openbravo.retail.posterminal.master.BPartnerFilter',
     dataLimit: OB.Dal.DATALIMIT,
-    _modelName: 'BPartnerFilter'
+    _modelName: 'BPartnerFilter',
+    equivalentModel: 'BusinessPartner'
   });
 
   OB.Model.BPartnerFilter.addProperties([

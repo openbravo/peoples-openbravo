@@ -950,7 +950,7 @@ enyo.kind({
     function successCallbackBPs(dataBps) {
       me.$.renderLoading.hide();
       if (dataBps && dataBps.length > 0) {
-        if (!OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+        if (!OB.UTIL.remoteSearch(OB.Model.BusinessPartner)) {
           dataBps.models = dataBps;
         }
         _.each(dataBps.models, function(bp) {
@@ -958,7 +958,7 @@ enyo.kind({
             filterObj;
           if (
             hasLocationInFilter() ||
-            !OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)
+            !OB.UTIL.remoteSearch(OB.Model.BusinessPartner)
           ) {
             filter = ' / ' + bp.get('locName');
           }
