@@ -312,16 +312,4 @@
     </Sql>
     <Parameter name="key"/>
   </SqlMethod>
-  
-   <SqlMethod name="selectColumnName" type="preparedStatement" return="string">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        SELECT COLUMNNAME as ID
-        FROM AD_COLUMN
-        WHERE AD_column_ID = ?
-      ]]>
-    </Sql>
-    <Parameter name="key"/>
-  </SqlMethod>
 </SqlClass>

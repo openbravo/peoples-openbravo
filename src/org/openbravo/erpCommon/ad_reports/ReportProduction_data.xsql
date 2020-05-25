@@ -57,29 +57,4 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql></Sql>
   </SqlMethod>
-  <SqlMethod name="selectSummering" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-    <![CDATA[
-      SELECT M_PRODUCT.NAME AS PRODUCT_NAME, SUM(ROUND(M_PRODUCTIONLINE.MOVEMENTQTY,2)) AS MOVEMENTQTY, C_UOM.NAME AS UOM_NAME
-      FROM M_PRODUCTION, M_PRODUCTIONPLAN, M_PRODUCTIONLINE, M_PRODUCT, C_UOM
-      WHERE M_PRODUCTION.M_PRODUCTION_ID = M_PRODUCTIONPLAN.M_PRODUCTION_ID
-      AND M_PRODUCTIONPLAN.M_PRODUCTIONPLAN_ID = M_PRODUCTIONLINE.M_PRODUCTIONPLAN_ID
-      AND M_PRODUCTIONLINE.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
-      AND M_PRODUCTIONLINE.C_UOM_ID = C_UOM.C_UOM_ID
-      AND M_PRODUCTION.AD_CLIENT_ID IN ('1')
-      AND M_PRODUCTION.AD_ORG_ID IN ('1')
-      AND M_PRODUCTION.PROCESSED = 'Y'
-      AND M_PRODUCTIONLINE.MOVEMENTQTY > 0
-      AND M_PRODUCTION.MOVEMENTDATE >= to_date(?)
-      AND M_PRODUCTION.MOVEMENTDATE < to_date(?)
-      AND M_PRODUCTION.ISSOTRX = 'Y'
-      GROUP BY M_PRODUCT.NAME, C_UOM.NAME
-      HAVING SUM(ROUND(M_PRODUCTIONLINE.MOVEMENTQTY,2)) > 0
-     ]]></Sql>
-      <Parameter name="adUserClient" type="replace" optional="true" after="M_PRODUCTION.AD_CLIENT_ID IN (" text="'1'"/>
-      <Parameter name="adUserOrg" type="replace" optional="true" after="M_PRODUCTION.AD_ORG_ID IN (" text="'1'"/>
-      <Parameter name="dateFrom"/>
-      <Parameter name="dateTo"/>
-  </SqlMethod>
 </SqlClass>

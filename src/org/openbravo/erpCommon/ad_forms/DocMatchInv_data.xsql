@@ -65,14 +65,6 @@
     <Parameter name="client"/>
     <Parameter name="id"/>
     </SqlMethod>
-  <SqlMethod name="selectProductAverageCost" type="preparedStatement" return="string">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      SELECT COALESCE(M_GET_PRODUCT_COST(?, TO_DATE(?), TO_CHAR(NULL)),0) FROM DUAL
-    </Sql>
-    <Parameter name="mProductID"/>
-    <Parameter name="date"/>
-  </SqlMethod>
   <SqlMethod name="selectInvoiceData" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

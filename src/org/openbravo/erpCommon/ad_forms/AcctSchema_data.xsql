@@ -46,23 +46,6 @@
       </Sql>
     <Parameter name="C_AcctSchema_ID"/>
    </SqlMethod>
-   <SqlMethod name="selectAcctSchemas" type="preparedStatement" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql>
-      <![CDATA[
-		SELECT distinct ad_org_acctschema.C_AcctSchema_ID
-		FROM ad_org_acctschema, c_acctschema
-		WHERE ad_org_acctschema.c_acctschema_id = c_acctschema.c_acctschema_id
-		 and ad_org_acctschema.AD_Client_ID=?
-		 and (ad_isorgincluded(?, ad_org_acctschema.AD_org_ID, ad_org_acctschema.AD_Client_ID) <> -1 OR ? = '0')
-		 and c_acctschema.isactive = 'Y'
-		 and ad_org_acctschema.isactive = 'Y'
-      ]]>
-      </Sql>
-    <Parameter name="AD_Client_ID"/>
-    <Parameter name="AD_Org_ID"/>
-    <Parameter name="AD_Org_ID"/>
-   </SqlMethod>
   <SqlMethod name="selectAcctSchemaTable" type="preparedStatement" return="boolean" default="false">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

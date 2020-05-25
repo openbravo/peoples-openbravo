@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -12,6 +12,7 @@
 package org.openbravo.buildvalidation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.openbravo.base.ExecutionLimitBaseProcess;
@@ -48,7 +49,7 @@ public abstract class BuildValidation extends ExecutionLimitBaseProcess {
   @Override
   protected void doExecute() {
     log4j.info("Executing buildValidation: " + this.getClass().getName());
-    errors = (ArrayList<String>) execute();
+    errors = execute();
   }
 
   /**
@@ -82,13 +83,13 @@ public abstract class BuildValidation extends ExecutionLimitBaseProcess {
    */
   public List<String> getErrors() {
     if (errors == null) {
-      errors = new ArrayList<String>();
+      errors = Collections.emptyList();
     }
     return errors;
   }
 
   protected List<String> handleError(Throwable t) {
-    ArrayList<String> exceptionErrors = new ArrayList<String>();
+    ArrayList<String> exceptionErrors = new ArrayList<>();
     exceptionErrors.add(
         "Error executing build-validation " + this.getClass().getName() + ": " + t.getMessage());
     exceptionErrors.add("The build validation couldn't be properly executed");

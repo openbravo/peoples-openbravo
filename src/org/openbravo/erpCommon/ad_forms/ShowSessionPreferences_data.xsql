@@ -32,19 +32,6 @@
     ]]></Sql>
     <Parameter name="windows" optional="true" type="argument" after="WHERE ISACTIVE='Y' " text="AND AD_WINDOW.AD_WINDOW_ID IN "/>
   </SqlMethod>
-  <SqlMethod name="selectTrl" type="preparedStatement" return="multiple">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql><![CDATA[
-      SELECT AD_WINDOW.AD_WINDOW_ID AS ID, (CASE WHEN AD_WINDOW_TRL.NAME IS NULL THEN AD_WINDOW.NAME ELSE AD_WINDOW_TRL.NAME END) AS NAME 
-      FROM AD_WINDOW, AD_WINDOW_TRL 
-      WHERE AD_WINDOW.ISACTIVE='Y' 
-      AND AD_WINDOW.AD_WINDOW_ID = AD_WINDOW_TRL.AD_WINDOW_ID
-      AND AD_WINDOW_TRL.AD_LANGUAGE = ? 
-      ORDER BY 2
-    ]]></Sql>
-    <Parameter name="windows" optional="true" type="argument" after="WHERE AD_WINDOW.ISACTIVE='Y' " text="AND AD_WINDOW.AD_WINDOW_ID IN "/>
-    <Parameter name="adLanguage"/>
-  </SqlMethod>
   <SqlMethod name="usuario" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[

@@ -177,6 +177,8 @@ function repaint() {
   document.getElementById('paramTxtDifferenceToClear').innerHTML = frm.inpCalcDifferenceToClear.value;
   document.getElementById('paramTxtCurrentlyCleared').innerHTML = frm.inpCalcCurrentlyCleared.value;
   document.getElementById('paramTxtDifference').innerHTML = frm.inpCalcDifference.value;
+  document.getElementById('paramGlDifference').value = frm.inpCalcDifference.value; //GL Item Difference
+  
   document.getElementById('paramTotalPayAmount').innerHTML = frm.inpCalcTotalPayment.value;
   document.getElementById('paramTotalDepositAmount').innerHTML = frm.inpCalcTotalDeposit.value;
 }
@@ -189,6 +191,8 @@ function updateWhenAjaxResponse() {
 
   document.getElementById('paramTxtCurrentlyCleared').innerHTML = frm.inpCalcCurrentlyCleared.value;
   document.getElementById('paramTxtDifference').innerHTML = frm.inpCalcDifference.value;
+  document.getElementById('paramGlDifference').value = frm.inpCalcDifference.value; //GL Item Difference
+
   document.getElementById('paramTotalPayAmount').innerHTML = frm.inpCalcTotalPayment.value;
   document.getElementById('paramTotalDepositAmount').innerHTML = frm.inpCalcTotalDeposit.value;
       
@@ -244,6 +248,8 @@ function updateAmounts(transactionId, isChecked) {
 
   frm.inpCalcDifference.value = subtract(differenceToClear, frm.inpCalcCurrentlyCleared.value);
   document.getElementById('paramTxtDifference').innerHTML = frm.inpCalcDifference.value;
+  document.getElementById('paramGlDifference').value = frm.inpCalcDifference.value; //GL Item Difference
+
   
   return true;
 }
@@ -258,6 +264,8 @@ function updateEndingBalance() {
 
   frm.inpCalcDifference.value = subtract(frm.inpCalcDifferenceToClear.value, frm.inpCalcCurrentlyCleared.value);
   document.getElementById('paramTxtDifference').innerHTML = frm.inpCalcDifference.value;
+  document.getElementById('paramGlDifference').value = frm.inpCalcDifference.value; //GL Item Difference
+
 }
 </script>
 <script language="JavaScript" type="text/javascript">
@@ -662,6 +670,45 @@ function enable(){
               <td class="TitleCell"></td>
               <td class="TitleCell"></td>
               <td class="TitleCell"></td>
+            </tr>
+            
+            <!-- GL Item Differences -->
+             <tr>
+              <td class="TitleCell"><span class="LabelText">GL Item Differences</span></td>
+              <td class="TextBox_btn_ContentCell">
+                <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
+                  <tr>
+                    <td class="Textbox_ContentCell">
+                      <table style="border: 0px none; border-collapse: collapse;">
+                        <tr><td style="padding-top: 0px;">
+                          <input type="text"  outputformat="euroEdition" name="inpGlDifference" maxlength="22" value="" required="false" class="dojoValidateValid TextBox_btn_OneCell_width number" id="paramGlDifference"/>
+                        </td></tr>
+                      </table>
+                      <span id="paramGlDifferenceinvalidSpan" style="display: none;" class="TextBox_MsgContainer_span">
+                        <table class="TextBox_MsgContainer_table">
+                          <tbody><tr class="TextBox_MsgContainer_tr">
+                            <td class="TextBox_MsgContainer_td"><div class="TextBox_MsgContainer_div"></div></td><td></td>
+                          </tr>
+                          <tr>
+                            <td class="invalid" colspan="2"><div name="invalidText" id="paramGlDifferenceinvalidSpanText" class="TextBox_MsgContainer_div2">* The value entered is not valid.</div></td>
+                          </tr>
+                        </tbody></table>
+                      </span>
+                    </td>
+                    <td class="FieldButton_ContentCell">
+                      <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Ending Balance'; return true;" onblur=" window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="calculator('frmMain.inpEndBalance', document.frmMain.inpEndBalance.value, false);return false;">
+                      <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;" id="NoPackageslinkCalc">
+                        <tr>
+                          <td class="FieldButton_bg">
+                            <img alt="Calculator" class="FieldButton_Icon FieldButton_Icon_Calc" title="Amount" src="../../../../../web/images/blank.gif" border="0" id="buttonCalc"></img>
+                          </td>
+                        </tr>
+                      </table>
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+              </td>              
             </tr>
             
             <tr>

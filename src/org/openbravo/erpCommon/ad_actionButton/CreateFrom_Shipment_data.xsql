@@ -888,11 +888,4 @@
     <Field name="rownum" value="count"/>
     <Parameter name="mInoutId"/>
     </SqlMethod>
-    <SqlMethod name="hasSecondaryUOM" type="preparedStatement" return="string">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql><![CDATA[
-        SELECT (CASE WHEN (SELECT 1 FROM DUAL WHERE EXISTS (SELECT 1 FROM M_PRODUCT_UOM WHERE M_PRODUCT_ID = ? AND ISACTIVE = 'Y')) IS NULL THEN 0 ELSE 1 END) FROM DUAL
-      ]]></Sql>
-      <Parameter name="mProductId"></Parameter>
-   </SqlMethod>
 </SqlClass>

@@ -54,12 +54,4 @@
     <Parameter name="cUOMId"/>
     <Parameter name="MAttributesetinstanceID"/>
   </SqlMethod>
-  <SqlMethod name="isSotrx" type="preparedStatement" return="string" default="Y">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      SELECT ISSOTRX FROM C_ORDER
-      WHERE C_ORDER_ID = ?
-    </Sql>
-    <Parameter name="cOrderId"/>
-  </SqlMethod>
 </SqlClass>

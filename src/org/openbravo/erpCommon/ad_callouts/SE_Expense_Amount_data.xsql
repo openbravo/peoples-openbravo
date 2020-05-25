@@ -31,20 +31,6 @@
       ]]>
     </Sql>
   </SqlMethod>
-  <SqlMethod name="selectConvertedAmt" type="preparedStatement" return="String" default="">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        select c_currency_convert(TO_NUMBER(?),?,?,TO_DATE(?),null, ?,?) from dual
-      ]]>
-    </Sql>
-    <Parameter name="expenseAmount"/>
-    <Parameter name="currencyFrom"/>
-    <Parameter name="currencyTo"/>
-    <Parameter name="dateExpense"/>
-    <Parameter name="client"/>
-    <Parameter name="org"/>
-  </SqlMethod>
   <SqlMethod name="selectPrecision" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

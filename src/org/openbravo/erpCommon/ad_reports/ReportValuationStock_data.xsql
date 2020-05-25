@@ -468,10 +468,6 @@
       <Parameter name="categoryProduct" optional="true" after="WHERE 3 = 3"><![CDATA[ AND pc.M_PRODUCT_CATEGORY_ID= ? ]]></Parameter>
   </SqlMethod>
   
-  <SqlMethod name="set" type="constant" return="multiple">
-      <SqlMethodComment></SqlMethodComment>
-      <Sql></Sql>
-  </SqlMethod>
   <SqlMethod name="getCostingMigrationDate" type="preparedStatement" return="date">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
