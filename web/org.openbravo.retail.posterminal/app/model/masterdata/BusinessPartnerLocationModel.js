@@ -24,9 +24,13 @@
             { property: 'bpartner' },
             { property: 'isShipTo', isBoolean: true }
           ]
+        }),
+        new OB.App.Class.Index({
+          name: 'bPartnerLocation_bpartner',
+          properties: [{ property: 'bpartner' }]
         })
       ];
-      this.searchProperties = ['postalCode', 'cityName', 'name'];
+      this.searchProperties = ['postalCode', 'cityName', 'name', 'bpartner'];
     }
   }
   OB.App.MasterdataController.registerModel(BusinessPartnerLocation);

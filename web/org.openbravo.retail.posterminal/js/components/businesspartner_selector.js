@@ -1397,7 +1397,7 @@ enyo.kind({
           true
         )
       );
-      if (!OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+      if (!OB.UTIL.remoteSearch(OB.Model.BusinessPartner)) {
         this.$.body.$.listBpsSelector.$.stBPAssignToReceipt.$.theader.$.modalBpSelectorScrollableHeader.$.filterSelector.hideFilterCombo();
       }
       if (
@@ -1489,7 +1489,7 @@ enyo.kind({
     this.waterfall('onSetModel', {
       model: this.model
     });
-    if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+    if (OB.UTIL.remoteSearch(OB.Model.BusinessPartner)) {
       this.$.body.$.listBpsSelector.$.stBPAssignToReceipt.$.theader.$.modalBpSelectorScrollableHeader.$.filterSelector.$.formElementEntityFilterText.coreElement.skipAutoFilterPref = true;
     }
   }
