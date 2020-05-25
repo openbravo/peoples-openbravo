@@ -6251,7 +6251,12 @@
             OB.UTIL.showError(
               OB.I18N.getLabel('OBPOS_FullInvoiceSequencePrefixNotConfigured')
             );
-          } else if (!this.get('bp').get('taxID')) {
+          } else if (
+            !this.get('bp').get('taxID') &&
+            OB.UTIL.isNullOrUndefined(
+              this.get('externalBusinessPartnerReference')
+            )
+          ) {
             OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
           }
         }
@@ -6259,7 +6264,8 @@
         return (
           OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice') &&
           OB.MobileApp.model.get('terminal').fullInvoiceDocNoPrefix &&
-          this.get('bp').has('taxID')
+          (this.get('bp').has('taxID') ||
+            this.get('externalBusinessPartnerReference'))
         );
       };
       const fullInvoice =
