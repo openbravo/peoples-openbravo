@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2019 Openbravo SLU
+ * All portions are Copyright (C) 2015-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -99,5 +99,21 @@ isc.OBComboBoxItem.addProperties({
       requestProperties,
       dropCache
     ]);
+  },
+  // Override mapDisplayToValue to handle combo data when changing records
+  mapDisplayToValue: function(value) {
+    const displayedValue = this.Super('mapDisplayToValue', arguments);
+    // Uses getValueMap() instead of this.valueMap because the latter is not always updated when changing records
+    const valueMap = this.getValueMap();
+    if (valueMap && !(displayedValue in valueMap)) {
+      // displayedValue has not been found in valueMap, check if value is an element of valueMap, return id if so
+      for (let id in valueMap) {
+        if (value === valueMap[id]) {
+          return id;
+        }
+      }
+    }
+    // Element not present in valueMap either, returning Super value
+    return displayedValue;
   }
 });
