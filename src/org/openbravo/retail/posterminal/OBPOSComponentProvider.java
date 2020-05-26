@@ -318,6 +318,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/masterdata/discount/DiscountFilterProductCategoryModel");
     appDependency.add("model/masterdata/discount/DiscountFilterProductModel");
     appDependency.add("model/masterdata/discount/DiscountFilterRoleModel");
+    appDependency.add("model/masterdata/discount/DiscountFilterBusinessPartnerExtRef");
     appDependency.add("model/masterdata/discount/DiscountModel");
     // Business-Object
     appDependency.add("model/business-object/document-sequence/DocumentSequence");
