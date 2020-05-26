@@ -118,6 +118,9 @@
     newTicket.businessPartner.businessPartnerCategory = receipt
       .get('bp')
       .get('businessPartnerCategory');
+    newTicket.externalBusinessPartnerReference = receipt.get(
+      'externalBusinessPartnerReference'
+    );
     newTicket.businessPartner._identifier = receipt.get('bp')._identifier;
     if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
       newTicket.pricelist = receipt.get('bp').get('priceList');
