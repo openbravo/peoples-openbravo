@@ -68,6 +68,7 @@
         billing.set('countryId', customer.get('countryId'));
         billing.set('regionId', customer.get('regionId'));
         billing.set('regionName', customer.get('regionName'));
+        billing.set('posTerminal', OB.MobileApp.model.get('terminal').id);
 
         if (customer.get('useSameAddrForShipAndInv')) {
           billing.set('isBillTo', true);
@@ -90,6 +91,7 @@
           shipping.set('regionName', customer.get('shipRegionName'));
           shipping.set('isBillTo', false);
           shipping.set('isShipTo', true);
+          shipping.set('posTerminal', OB.MobileApp.model.get('terminal').id);
 
           locations.push(billing);
           locations.push(shipping);
