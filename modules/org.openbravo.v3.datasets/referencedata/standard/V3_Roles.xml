@@ -1739,18 +1739,6 @@
     <editableField>true</editableField>
     <inheritedFrom xsi:nil="true"/>
   </ADProcessAccess>
-  <ADProcessAccess id="FF808181259DADEB01259DDDA4E70252" identifier="Reset Accounting Old - Finance">
-    <id>FF808181259DADEB01259DDDA4E70252</id>
-    <process id="176" entity-name="ADProcess" identifier="Reset Accounting Old"/>
-    <role id="FF8081812250326E012250353BDE0005" entity-name="ADRole" identifier="Finance"/>
-    <active>true</active>
-    <creationDate transient="true">2019-04-23T08:34:13.451Z</creationDate>
-    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-    <updated transient="true">2019-04-23T08:34:13.451Z</updated>
-    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-    <editableField>true</editableField>
-    <inheritedFrom xsi:nil="true"/>
-  </ADProcessAccess>
   <ADProcessAccess id="FF808181259DADEB01259DDDA4E70253" identifier="Asset report for depreciation schedule - Finance">
     <id>FF808181259DADEB01259DDDA4E70253</id>
     <process id="462033447A1548F09BBFB0683FA976CC" entity-name="ADProcess" identifier="Asset report for depreciation schedule"/>
