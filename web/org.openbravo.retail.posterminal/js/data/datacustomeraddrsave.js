@@ -64,8 +64,8 @@
         isNew = false,
         me = this;
       customerAddr.set('createdBy', OB.MobileApp.model.get('orgUserId'));
+      customerAddr.set('posTerminal', OB.MobileApp.model.get('terminal').id);
       if (customerAddrId) {
-        customerAddr.set('posTerminal', OB.MobileApp.model.get('terminal').id);
         var now = new Date();
         customerAddr.set('timezoneOffset', now.getTimezoneOffset());
         if (OB.UTIL.isNullOrUndefined(customerAddr.get('loaded'))) {
@@ -94,7 +94,6 @@
         customerAddr.set('loaded', OB.I18N.normalizeDate(new Date()));
       }
       if (isNew) {
-        customerAddr.set('posTerminal', OB.MobileApp.model.get('terminal').id);
         var uuid = OB.UTIL.get_UUID();
         customerAddr.set('id', uuid);
         customerAddr.id = uuid;
