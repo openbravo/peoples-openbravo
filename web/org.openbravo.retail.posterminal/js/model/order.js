@@ -107,6 +107,12 @@
         : OB.DEC.Zero;
     },
 
+    getInvoicedQuantity: function() {
+      return this.has('invoicedQuantity')
+        ? this.get('invoicedQuantity')
+        : OB.DEC.Zero;
+    },
+
     printQty: function() {
       return OB.DEC.toNumber(
         OB.DEC.toBigDecimal(this.get('qty')),
@@ -9966,10 +9972,22 @@
           deliveredNotInvoicedLine = _.find(this.get('lines').models, function(
             line
           ) {
-            return line.getDeliveredQuantity() !== line.get('invoicedQuantity');
+            return line.getDeliveredQuantity() !== line.getInvoicedQuantity();
           });
           receiptShouldBeInvoiced = !_.isUndefined(deliveredNotInvoicedLine);
         }
+      }
+
+      if (
+        receiptShouldBeInvoiced &&
+        (this.get('fullInvoice') ||
+          this.getInvoiceTerms() === 'D' ||
+          this.getInvoiceTerms() === 'O') &&
+        !this.get('bp').get('taxID')
+      ) {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
+        finalCallback();
+        return;
       }
 
       if (receiptShouldBeInvoiced) {
@@ -9992,7 +10010,7 @@
 
         this.get('lines').forEach(function(ol) {
           var originalQty = ol.get('qty'),
-            qtyAlreadyInvoiced = ol.get('invoicedQuantity') || OB.DEC.Zero,
+            qtyAlreadyInvoiced = ol.getInvoicedQuantity(),
             qtyPendingToBeInvoiced = OB.DEC.sub(
               ol.get('qty'),
               qtyAlreadyInvoiced
