@@ -125,6 +125,30 @@ enyo.kind({
             );
           }
 
+          model
+            .get('lines')
+            .filter(line => line.get('obrdmDeliveryMode') === 'HomeDelivery')
+            .forEach(line => {
+              line.set(
+                'country',
+                model.get('bp').get('shipLocId')
+                  ? model
+                      .get('bp')
+                      .get('locationModel')
+                      .get('countryId')
+                  : null
+              );
+              line.set(
+                'region',
+                model.get('bp').get('shipLocId')
+                  ? model
+                      .get('bp')
+                      .get('locationModel')
+                      .get('regionId')
+                  : null
+              );
+            });
+
           this.renderCustomer(
             model.get('bp').get('id'),
             model.get('bp').get('_identifier')

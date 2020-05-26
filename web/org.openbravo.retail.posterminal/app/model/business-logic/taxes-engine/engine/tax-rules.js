@@ -29,11 +29,23 @@
     }
 
     applyLineTaxes(line) {
-      if (line.bomLines) {
-        return this.calculateLineBOMTaxes(line);
+      const newLine = { ...line };
+      newLine.amount = this.ticket.priceIncludesTax
+        ? line.grossAmount
+        : line.netAmount;
+
+      if (newLine.bomLines) {
+        newLine.bomLines = line.bomLines.map(bomLine => {
+          const newBomLine = { ...bomLine };
+          newBomLine.amount = this.ticket.priceIncludesTax
+            ? bomLine.grossAmount
+            : bomLine.netAmount;
+          return newBomLine;
+        });
+        return this.calculateLineBOMTaxes(newLine);
       }
 
-      return this.calculateLineTaxes(line);
+      return this.calculateLineTaxes(newLine);
     }
 
     calculateLineTaxes(line) {
@@ -114,11 +126,11 @@
         (total, bomLine) => OB.DEC.add(total, bomLine.netAmount),
         OB.DEC.Zero
       );
-      lineTaxes.grossPrice = OB.Taxes.Tax.calculatePriceFromAmount(
+      lineTaxes.grossUnitPrice = OB.Taxes.Tax.calculatePriceFromAmount(
         lineTaxes.grossAmount,
         lineTaxes.qty
       );
-      lineTaxes.netPrice = OB.Taxes.Tax.calculatePriceFromAmount(
+      lineTaxes.netUnitPrice = OB.Taxes.Tax.calculatePriceFromAmount(
         lineTaxes.netAmount,
         lineTaxes.qty
       );
