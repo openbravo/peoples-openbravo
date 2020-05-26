@@ -816,6 +816,7 @@
                 },
                 function(args) {
                   OB.Dal.transaction(function(tx) {
+                    let idx = 0;
                     OB.UTIL.calculateCurrentCash(null, tx);
                     _.each(
                       model.get('multiOrders').get('multiOrdersList').models,
@@ -825,8 +826,11 @@
                         me.context
                           .get('multiOrders')
                           .trigger('print', theReceipt, {
-                            offline: true
+                            offline: true,
+                            skipSelectPrinters: idx > 0
                           });
+
+                        idx += 1;
 
                         if (invoice && invoice.get('id')) {
                           var invoiceToPrint = OB.UTIL.clone(invoice);

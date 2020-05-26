@@ -1435,14 +1435,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                                   'cancelLayaway',
                                   execution
                                 );
-                                receipt.trigger(
-                                  'print',
-                                  cloneOrderForPrinting,
-                                  {
-                                    callback: cancelAndNew,
-                                    forceCallback: true
-                                  }
-                                );
+                                receipt.trigger('print', cloneOrderForPrinting);
+                                cancelAndNew();
                               }
 
                               OB.MobileApp.model.runSyncProcess(
@@ -1667,6 +1661,12 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               OB.Taxes.Pos.initCache(function() {
                 OB.Discounts.Pos.initCache(function() {
                   me.printReceipt = new OB.OBPOSPointOfSale.Print.Receipt(me);
+                  var hardwareManagerEnpoint = new OB.App.Class.HardwareManagerEndpoint();
+                  hardwareManagerEnpoint.setPrinter(me.printReceipt);
+                  hardwareManagerEnpoint.setLinePrinter(me.printLine);
+                  OB.App.SynchronizationBuffer.registerEndpoint(
+                    hardwareManagerEnpoint
+                  );
                   // Now, get the hardware manager status
                   OB.POS.hwserver.status(function(data) {
                     if (data && data.exception) {

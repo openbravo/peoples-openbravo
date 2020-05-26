@@ -818,18 +818,22 @@ enyo.kind({
                 return;
               }
               receipt.trigger('print', receipt, {
-                forcePrint: true,
-                callback: inEvent.callback
+                forcePrint: true
               });
+              if (inEvent.callback && inEvent.callback instanceof Function) {
+                inEvent.callback();
+              }
             }
           );
 
           return;
         }
         receipt.trigger('print', receipt, {
-          forcePrint: true,
-          callback: inEvent.callback
+          forcePrint: true
         });
+        if (inEvent.callback && inEvent.callback instanceof Function) {
+          inEvent.callback();
+        }
         return;
       }
       if (this.model.get('leftColumnViewManager').isMultiOrder()) {
@@ -837,9 +841,11 @@ enyo.kind({
           this.model.get('multiOrders').get('multiOrdersList').models,
           function(order) {
             this.model.get('multiOrders').trigger('print', order, {
-              forcePrint: true,
-              callback: inEvent.callback
+              forcePrint: true
             });
+            if (inEvent.callback && inEvent.callback instanceof Function) {
+              inEvent.callback();
+            }
           },
           this
         );
