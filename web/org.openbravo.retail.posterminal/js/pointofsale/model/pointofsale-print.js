@@ -185,7 +185,8 @@
       payload.printSettings = {
         forcePrint: printargs.forcePrint,
         offline: printargs.offline,
-        forcedtemplate: printargs.forcedtemplate
+        forcedtemplate: printargs.forcedtemplate,
+        skipSelectPrinters: printargs.skipSelectPrinters
       };
     }
     if (!OB.UTIL.isNullOrUndefined(receipt)) {
@@ -413,7 +414,8 @@
             };
             if (
               OB.MobileApp.model.get('terminal').terminalType
-                .selectprinteralways
+                .selectprinteralways &&
+              !printargs.skipSelectPrinters
             ) {
               OB.OBPOS.showSelectPrintersWindow(
                 printPdfProcess,
@@ -561,7 +563,8 @@
             };
             if (
               OB.MobileApp.model.get('terminal').terminalType
-                .selectprinteralways
+                .selectprinteralways &&
+              !printargs.skipSelectPrinters
             ) {
               OB.OBPOS.showSelectPrintersWindow(
                 printProcess,
