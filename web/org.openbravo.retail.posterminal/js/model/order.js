@@ -10934,7 +10934,7 @@
             }
           );
         } else {
-          callToLoadCustomer();
+          callToLoadCustomer.call(this);
         }
       },
 
