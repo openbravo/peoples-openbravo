@@ -155,7 +155,7 @@
           result = calculateLocal(ticketForEngine, args.rules);
           transformNewEngineManualPromotions(
             receipt,
-            (ticketForEngine.discountsFromUser || {}).manualPromotions,
+            ticketForEngine.discountsFromUser.manualPromotions,
             result
           );
           applyDiscounts(receipt, result);
