@@ -18,9 +18,9 @@
           properties: [
             { property: 'priceAdjustment' },
             { property: '_identifier' },
-            { property: 'id' },
-          ],
-        }),
+            { property: 'id' }
+          ]
+        })
       ];
       this.setPaginationById(true);
     }
