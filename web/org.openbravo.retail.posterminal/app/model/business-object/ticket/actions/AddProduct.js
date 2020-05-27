@@ -49,6 +49,8 @@
 
       newPayload = await prepareScaleProducts(newPayload);
 
+      newPayload = await prepareBOMProducts(newPayload);
+
       await checkStock(ticket, payload);
 
       return newPayload;
@@ -235,6 +237,72 @@
 
     const newPayload = { ...payload };
     newPayload.products = [{ ...newPayload.products[0], qty: weight }];
+    return newPayload;
+  }
+
+  async function prepareBOMProducts(payload) {
+    const getProductBOM = async productId => {
+      const productBOM = await OB.App.MasterdataModels.ProductBOM.find(
+        new OB.App.Class.Criteria().criterion('product', productId).build()
+      );
+
+      if (productBOM.length === 0) {
+        return undefined;
+      }
+
+      if (productBOM.find(bomLine => !bomLine.bomprice)) {
+        OB.error(
+          `A BOM product related with product ${productId} has no price`
+        );
+        throw new OB.App.Class.ActionCanceled({
+          errorConfirmation: 'OBPOS_BOM_NoPrice'
+        });
+      }
+
+      return productBOM.map(bomLine => {
+        return {
+          amount: OB.DEC.mul(bomLine.bomprice, bomLine.bomquantity),
+          qty: bomLine.bomquantity,
+          product: {
+            id: bomLine.bomproduct,
+            taxCategory: bomLine.bomtaxcategory
+          }
+        };
+      });
+    };
+
+    const isBOM = product => {
+      return (
+        OB.Taxes.Pos.taxCategoryBOM.find(
+          taxCategory => taxCategory.id === product.taxCategory
+        ) && !product.productBOM
+      );
+    };
+
+    const toProductWithBOM = async productInfo => {
+      const { product } = productInfo;
+      const productBOM = await getProductBOM(product.id);
+      if (productBOM) {
+        return {
+          ...productInfo,
+          product: { ...product, productBOM }
+        };
+      }
+      return productInfo;
+    };
+
+    const newPayload = { ...payload };
+
+    const productBOMAddings = newPayload.products.map(async p => {
+      if (isBOM(p.product)) {
+        const withBOM = await toProductWithBOM(p);
+        return withBOM;
+      }
+      return p;
+    });
+
+    newPayload.products = await Promise.all(productBOMAddings);
+
     return newPayload;
   }
 
