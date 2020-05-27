@@ -29,6 +29,7 @@
 
     OB.DATA.updateDefaultCustomerLocations = function(customerAddr) {
       var i, foundAddress, locations, addToLocations;
+
       addToLocations = function(bp) {
         foundAddress = false;
         locations = bp.get('locations');
@@ -63,6 +64,21 @@
       let customerAddrId = customerAddr.get('id'),
         isNew = false,
         me = this;
+      const finalCallback = function() {
+        if (callback) {
+          callback();
+        }
+      };
+      const finalActions = function() {
+        OB.MobileApp.model.runSyncProcess(
+          function() {
+            finalCallback();
+          },
+          function() {
+            finalCallback();
+          }
+        );
+      };
       customerAddr.set('createdBy', OB.MobileApp.model.get('orgUserId'));
       customerAddr.set('posTerminal', OB.MobileApp.model.get('terminal').id);
       if (customerAddrId) {
@@ -106,9 +122,7 @@
         await OB.App.State.Global.synchronizeBusinessPartnerLocation(
           customerAddr.attributes
         );
-        if (callback) {
-          callback();
-        }
+        finalActions();
         // update each order also so that new name is shown
         OB.DATA.updateDefaultCustomerLocations(customerAddr);
         OB.UTIL.showSuccess(
