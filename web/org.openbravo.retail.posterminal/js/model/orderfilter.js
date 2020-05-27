@@ -87,6 +87,13 @@
       }
     },
     {
+      name: 'externalBusinessPartnerReference',
+      column: 'externalBusinessPartnerReference',
+      filter: false,
+      type: 'TEXT',
+      caption: 'OBPOS_LblCustomer'
+    },
+    {
       name: 'orderDateFrom',
       column: 'orderDate',
       filter: true,
