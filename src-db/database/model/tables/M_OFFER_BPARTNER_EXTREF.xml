@@ -37,7 +37,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="BPARTNER_EXTREF" primaryKey="false" required="true" type="NVARCHAR" size="256" autoIncrement="false">
+      <column name="BPARTNER_EXTCAT" primaryKey="false" required="true" type="NVARCHAR" size="256" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -52,14 +52,14 @@
       </foreign-key>
       <index name="M_OFFER_BP_EXTREF_BP_ID" unique="false">
         <index-column name="M_OFFER_ID"/>
-        <index-column name="BPARTNER_EXTREF"/>
+        <index-column name="BPARTNER_EXTCAT"/>
         <index-column name="M_OFFER_BPARTNER_EXTREF_ID"/>
       </index>
       <index name="M_OFFER_BP_EXTREF_OFFER_IDX" unique="false">
         <index-column name="M_OFFER_ID"/>
       </index>
       <unique name="M_OFFER_BP_EXTREF_UNIQUE">
-        <unique-column name="BPARTNER_EXTREF"/>
+        <unique-column name="BPARTNER_EXTCAT"/>
         <unique-column name="M_OFFER_ID"/>
       </unique>
       <check name="M_OFFER_BP_EXTREF_ISACTIVE"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
