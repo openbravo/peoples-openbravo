@@ -31,6 +31,21 @@
       .then(disc => OB.info(disc));
   };
 
+  function getExternalBusinessPartnerCategory(externalBusinessPartner) {
+    const extbpint = OB.MobileApp.model.get('externalBpIntegration');
+    if (!extbpint) {
+      return null;
+    }
+    return extbpint.properties
+      .filter(p => p.categoryKey)
+      .sort(
+        (a, b) =>
+          (a.categoryKeySequenceNumber || 0) -
+          (b.categoryKeySequenceNumber || 0)
+      )
+      .reduce((key, p) => key + externalBusinessPartner[p.apiKey], '');
+  }
+
   const applyDiscounts = (ticket, result) => {
     ticket.get('lines').forEach(line => {
       const discountInfoForLine =
@@ -118,8 +133,8 @@
     newTicket.businessPartner.businessPartnerCategory = receipt
       .get('bp')
       .get('businessPartnerCategory');
-    newTicket.externalBusinessPartnerReference = receipt.get(
-      'externalBusinessPartnerReference'
+    newTicket.externalBusinessPartnerCategory = getExternalBusinessPartnerCategory(
+      receipt.get('externalBusinessPartner')
     );
     newTicket.businessPartner._identifier = receipt.get('bp')._identifier;
     if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {

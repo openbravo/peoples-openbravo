@@ -976,7 +976,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     });
 
     receipt.on(
-      'change:bp change:externalBusinessPartnerReference',
+      'change:bp change:externalBusinessPartner',
       function() {
         if (!receipt.get('isEditable') || receipt.get('lines').length === 0) {
           return;

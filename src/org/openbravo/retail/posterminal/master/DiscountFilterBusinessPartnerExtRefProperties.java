@@ -28,10 +28,10 @@ public class DiscountFilterBusinessPartnerExtRefProperties extends ModelExtensio
     return Arrays.asList( //
         new HQLProperty("bpextref.id", "id"), //
         new HQLProperty("bpextref.promotionDiscount.id", "priceAdjustment"), //
-        new HQLProperty("bpextref.externalBusinessPartnerReference",
-            "externalBusinessPartnerReference"), //
+        new HQLProperty("bpextref.externalBusinessPartnerCategory",
+            "externalBusinessPartnerCategory"), //
         new HQLProperty(
-            "concat(bpextref.promotionDiscount.name, ' - ', bpextref.externalBusinessPartnerReference)",
+            "concat(bpextref.promotionDiscount.name, ' - ', bpextref.externalBusinessPartnerCategory)",
             "_identifier"), //
         new HQLProperty(
             "(case when bpextref.active = 'Y' and bpextref.promotionDiscount.active = 'Y' then true else false end)",
