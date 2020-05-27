@@ -26,16 +26,24 @@
     );
 
     OB.DATA.executeCustomerSave = async function(customer, callback) {
-      var customerId = customer.get('id'),
+      let customerId = customer.get('id'),
         isNew = false,
         finalCallback;
-
       finalCallback = function(result) {
         if (callback) {
           callback(result);
         }
       };
-
+      const finalActions = function(result) {
+        OB.MobileApp.model.runSyncProcess(
+          function() {
+            finalCallback(result);
+          },
+          function() {
+            finalCallback(false);
+          }
+        );
+      };
       function sleep(x) {
         return new Promise(resolve => {
           setTimeout(() => {
@@ -122,16 +130,8 @@
         customer.set('loaded', OB.I18N.normalizeDate(new Date()));
       }
       try {
-        OB.info(
-          'Before synchronizeBusinessPartner: ' +
-            OB.I18N.normalizeDate(new Date())
-        );
         await OB.App.State.Global.synchronizeBusinessPartner(
           customer.attributes
-        );
-        OB.info(
-          'After synchronizeBusinessPartner: ' +
-            OB.I18N.normalizeDate(new Date())
         );
         await sleep(100);
         if (isNew) {
@@ -201,7 +201,7 @@
         OB.UTIL.showSuccess(
           OB.I18N.getLabel('OBPOS_customerSaved', [customer.get('_identifier')])
         );
-        finalCallback(true);
+        finalActions(true);
       } catch (error) {
         //error saving BP changes with changes in changedbusinesspartners
         OB.UTIL.showError(
@@ -209,7 +209,7 @@
             customer.get('_identifier')
           ])
         );
-        finalCallback(false);
+        finalActions(false);
       }
     };
   };
