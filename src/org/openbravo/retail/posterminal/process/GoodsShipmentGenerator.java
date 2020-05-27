@@ -191,19 +191,19 @@ class GoodsShipmentGenerator {
    * @throws JSONException
    */
   Invoice invoiceShipmentIfPossible(final JSONObject json) throws JSONException {
-    final String invoiceSequenceName = json.optString("invoiceSequenceName");
-    final Long invoiceSequenceNumber = json.optLong("invoiceSequenceNumber");
-    final String invoiceDocumentNo = json.has("invoiceDocumentNo")
-        ? json.getString("invoiceDocumentNo")
-        : null;
+    if (!json.has("invoiceDocumentNo")) {
+      return null;
+    }
 
     OBDal.getInstance().refresh(this.shipment);
     InvoiceGeneratorFromGoodsShipment invoiceGenerator = new InvoiceGeneratorFromGoodsShipment(
-        this.shipment.getId(), null, null, invoiceDocumentNo);
+        this.shipment.getId(), null, null, json.getString("invoiceDocumentNo"));
     invoiceGenerator.setAllowInvoicePOSOrder(true);
     final Invoice invoice = invoiceGenerator.createInvoiceConsideringInvoiceTerms(true);
 
-    if (invoice != null && invoiceDocumentNo != null) {
+    if (invoice != null) {
+      final String invoiceSequenceName = json.optString("invoiceSequenceName");
+      final Long invoiceSequenceNumber = json.optLong("invoiceSequenceNumber");
       invoice.setObposSequencename(invoiceSequenceName);
       invoice.setObposSequencenumber(invoiceSequenceNumber);
       final OBPOSApplications terminal = OBDal.getInstance()

@@ -319,6 +319,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/business-object/document-sequence/DocumentSequenceUtils");
     appDependency.add("model/business-object/document-sequence/actions/InitializeSequence");
     appDependency.add("model/business-object/document-sequence/actions/IncreaseSequence");
+    appDependency.add("model/business-object/document-sequence/actions/DecreaseSequence");
 
     for (final String resource : appDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,
