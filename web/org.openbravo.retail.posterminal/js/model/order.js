@@ -4327,10 +4327,10 @@
           'productBOM',
           productBOM.map(bomLine => {
             return {
-              grossAmount: me.get('priceIncludesTax')
+              grossUnitAmount: me.get('priceIncludesTax')
                 ? OB.DEC.mul(bomLine.bomprice, bomLine.bomquantity)
                 : undefined,
-              netAmount: me.get('priceIncludesTax')
+              netUnitAmount: me.get('priceIncludesTax')
                 ? undefined
                 : OB.DEC.mul(bomLine.bomprice, bomLine.bomquantity),
               qty: bomLine.bomquantity,
