@@ -487,10 +487,10 @@ enyo.kind({
     if (this.bpProperty.valueLabel) {
       return this.bpProperty.valueLabel;
     }
-    let selectedOption = this.bpProperty.options.find(option =>
-      option.searchKey === this.bpProperty.value
-        ? this.bpProperty.value.toString()
-        : null
+    let selectedOption = this.bpProperty.options.find(
+      option =>
+        option.searchKey ===
+        (this.bpProperty.value ? this.bpProperty.value.toString() : null)
     );
     if (selectedOption) {
       if (selectedOption.istranslatable && selectedOption.message) {
