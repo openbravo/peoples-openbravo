@@ -53,6 +53,7 @@ public class CompressionTest extends OBBaseTest {
     assertTrue(sb.length() > (2 * compressed.length()));
     System.err.println(sb.length());
     System.err.println(compressed.length());
+    reader.close();
     is.close();
   }
 }
