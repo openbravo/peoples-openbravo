@@ -36,20 +36,18 @@
   OB.App.StateAPI.Ticket.addProduct.addActionPreparation(
     async (state, payload) => {
       const ticket = state.Ticket;
-      const { products, options } = payload;
 
       if (!ticket.id) {
         // need to set the ticket ID to avoid an error when initializing the backbone order
         ticket.id = OB.App.UUID.generate();
       }
 
-      checkRestrictions(ticket, products, options);
+      checkRestrictions(ticket, payload);
 
       let newPayload = { ...payload };
-
       newPayload = await prepareScaleProducts(newPayload);
-
       newPayload = await prepareBOMProducts(newPayload);
+      newPayload = await prepareProductCharacteristics(newPayload);
 
       await checkStock(ticket, payload);
 
@@ -169,7 +167,8 @@
     }
   }
 
-  function checkRestrictions(ticket, products, options) {
+  function checkRestrictions(ticket, payload) {
+    const { products, options } = payload;
     const productWithoutPrice = products.find(
       p => !p.product.listPrice && !p.product.ispack
     );
@@ -302,6 +301,50 @@
     });
 
     newPayload.products = await Promise.all(productBOMAddings);
+
+    return newPayload;
+  }
+
+  async function prepareProductCharacteristics(payload) {
+    const hasCharacteristics = product => {
+      return (
+        !product.productCharacteristics &&
+        product.characteristicDescription &&
+        !OB.App.Security.hasPermission('OBPOS_remote.product')
+      );
+    };
+
+    const toProductWithCharacteristics = async productInfo => {
+      const { product } = productInfo;
+      const criteria = new OB.App.Class.Criteria()
+        .criterion('product', product.id)
+        .build();
+      try {
+        const productCharacteristics = await OB.App.MasterdataModels.ProductCharacteristicValue.find(
+          criteria
+        );
+        return {
+          ...productInfo,
+          product: { ...product, productCharacteristics }
+        };
+      } catch (error) {
+        throw new OB.App.Class.ActionCanceled({
+          errorConfirmation: 'OBMOBC_Error'
+        });
+      }
+    };
+
+    const newPayload = { ...payload };
+
+    const productCharacteristicsAddings = newPayload.products.map(async p => {
+      if (hasCharacteristics(p.product)) {
+        const withCharacteristics = await toProductWithCharacteristics(p);
+        return withCharacteristics;
+      }
+      return p;
+    });
+
+    newPayload.products = await Promise.all(productCharacteristicsAddings);
 
     return newPayload;
   }
