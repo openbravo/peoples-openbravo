@@ -17,11 +17,6 @@
     const ticket = { ...state };
     const { products, options } = payload;
 
-    if (!ticket.id) {
-      // need to set the ticket ID to avoid an error when initializing the backbone order
-      ticket.id = OB.App.UUID.generate();
-    }
-
     ticket.lines = ticket.lines.map(l => {
       return { ...l };
     });
@@ -40,17 +35,23 @@
 
   OB.App.StateAPI.Ticket.addProduct.addActionPreparation(
     async (state, payload) => {
+      const ticket = state.Ticket;
+      const { products, options } = payload;
+
+      if (!ticket.id) {
+        // need to set the ticket ID to avoid an error when initializing the backbone order
+        ticket.id = OB.App.UUID.generate();
+      }
+
+      checkRestrictions(ticket, products, options);
+
       let newPayload = { ...payload };
 
       newPayload = await prepareScaleProducts(newPayload);
-      return newPayload;
-    }
-  );
 
-  OB.App.StateAPI.Ticket.addProduct.addActionPreparation(
-    async (state, payload) => {
-      await checkStock(state, payload);
-      return payload;
+      await checkStock(ticket, payload);
+
+      return newPayload;
     }
   );
 
@@ -163,6 +164,45 @@
       line.obrdmDeliveryTime = productDeliveryMode
         ? productDeliveryTime || currentTime
         : ticket.obrdmDeliveryTimeProperty;
+    }
+  }
+
+  function checkRestrictions(ticket, products, options) {
+    const productWithoutPrice = products.find(
+      p => !p.product.listPrice && !p.product.ispack
+    );
+    if (productWithoutPrice) {
+      throw new OB.App.Class.ActionCanceled({
+        warningMsg: 'OBPOS_productWithoutPriceInPriceList',
+        // eslint-disable-next-line no-underscore-dangle
+        messageParams: [productWithoutPrice.product._identifier]
+      });
+    }
+
+    const someGeneric = products.some(p => p.product.isGeneric);
+    if (someGeneric) {
+      throw new OB.App.Class.ActionCanceled({
+        warningMsg: 'OBPOS_GenericNotAllowed'
+      });
+    }
+
+    if (options.line && ticket.lines) {
+      const line = ticket.lines.find(l => l.id === options.line);
+      if (line && line.replacedorderline && line.qty < 0) {
+        throw new OB.App.Class.ActionCanceled({
+          errorConfirmation: 'OBPOS_CancelReplaceQtyEditReturn'
+        });
+      }
+    }
+
+    const anonymousNotAllowed =
+      options.businessPartner === ticket.businessPartner.id &&
+      products.some(p => p.product.oBPOSAllowAnonymousSale === false);
+
+    if (anonymousNotAllowed) {
+      throw new OB.App.Class.ActionCanceled({
+        errorConfirmation: 'OBPOS_AnonymousSaleNotAllowed'
+      });
     }
   }
 

@@ -1137,6 +1137,10 @@ enyo.kind({
           if (options.line) {
             options.line = args.options.line.id;
           }
+          options.businessPartner = OB.MobileApp.model.get(
+            'terminal'
+          ).businessPartner;
+
           OB.App.State.Ticket.addProduct({
             products: [
               {
