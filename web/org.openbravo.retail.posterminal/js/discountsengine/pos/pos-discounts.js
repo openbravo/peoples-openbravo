@@ -33,7 +33,7 @@
 
   function getExternalBusinessPartnerCategory(externalBusinessPartner) {
     const extbpint = OB.MobileApp.model.get('externalBpIntegration');
-    if (!extbpint) {
+    if (!extbpint || !externalBusinessPartner) {
       return null;
     }
     return extbpint.properties
