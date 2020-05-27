@@ -280,6 +280,30 @@ enyo.kind({
     this.$.time.setContent(OB.I18N.formatHour(orderDate));
     if (!OB.UTIL.externalBp()) {
       this.$.customer.setContent(this.model.get('businessPartnerName'));
+    } else {
+      let extBpLabelToShow = '';
+      if (this.model.get('externalBusinessPartner')) {
+        extBpLabelToShow = new OB.App.Class.ExternalBusinessPartner(
+          this.model.get('externalBusinessPartner')
+        ).getIdentifier();
+      } else if (this.model.get('externalBusinessPartnerReference')) {
+        //Async
+        OB.App.ExternalBusinessPartnerAPI.getBusinessPartner(
+          this.model.get('externalBusinessPartnerReference')
+        ).then(extBpFromApi => {
+          me.model.set(
+            'externalBusinessPartner',
+            extBpFromApi.getPlainObject(),
+            {
+              silent: true
+            }
+          );
+          me.$.customer.setContent(extBpFromApi.getIdentifier());
+        });
+        //Show dots until info is retrieved
+        extBpLabelToShow = '...';
+      }
+      this.$.customer.setContent(extBpLabelToShow);
     }
     if (this.owner.owner.owner.hideBusinessPartnerColumn === true) {
       this.$.customer.addClass('u-hideFromUI');
