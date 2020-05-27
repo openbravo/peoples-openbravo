@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2020 Openbravo S.L.U.
+ * Copyright (C) 2015-2019 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -49,7 +49,6 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
-import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Location;
@@ -1244,15 +1243,12 @@ public class ExternalOrderLoader extends OrderLoader {
       throw new OBException("No pos terminal found using id " + posId + " json " + jsonObject);
     }
 
-    Role role = POSLoginHandler.getNearestRoleValidToLoginInWebPosTerminalForCertainUser(
-        OBContext.getOBContext().getUser(), result, true);
-    if (role == null) {
-      throw new OBException(
-          "No Role found for the user " + OBContext.getOBContext().getUser().getName());
-    }
-
     // Context will be set according to the terminal
-    OBContext.setOBContext(OBContext.getOBContext().getUser().getId(), role.getId(),
+    OBContext.setOBContext(OBContext.getOBContext().getUser().getId(),
+        POSLoginHandler
+            .getNearestRoleValidToLoginInWebPosTerminalForCertainUser(
+                OBContext.getOBContext().getUser(), result)
+            .getId(),
         result.getClient().getId(), result.getOrganization().getId());
     return result;
   }
