@@ -48,6 +48,7 @@
       newPayload = await prepareScaleProducts(newPayload);
       newPayload = await prepareBOMProducts(newPayload);
       newPayload = await prepareProductCharacteristics(newPayload);
+      newPayload = await prepareProductAttributes(ticket, newPayload);
 
       await checkStock(ticket, payload);
 
@@ -329,7 +330,7 @@
         };
       } catch (error) {
         throw new OB.App.Class.ActionCanceled({
-          errorConfirmation: 'OBMOBC_Error'
+          errorConfirmation: 'OBMOBC_Error' // TODO: create AD_Message for this
         });
       }
     };
@@ -349,6 +350,86 @@
     return newPayload;
   }
 
+  async function prepareProductAttributes(ticket, payload) {
+    const { options, attrs } = payload;
+    const attributeSearchAllowed = OB.App.Security.hasPermission(
+      'OBPOS_EnableSupportForProductAttributes'
+    );
+    const isQuotationAndAttributeAllowed =
+      ticket.isQuotation &&
+      OB.App.Security.hasPermission(
+        'OBPOS_AskForAttributesWhenCreatingQuotation'
+      );
+    const hasAttributes = productInfo => {
+      return (
+        !options.line &&
+        attributeSearchAllowed &&
+        productInfo.product.hasAttributes &&
+        productInfo.qty >= 1 &&
+        (!ticket.isQuotation || isQuotationAndAttributeAllowed)
+      );
+    };
+
+    const checkSerialAttribute = (product, attributeValue) => {
+      if (!attributeValue || !product.isSerialNo) {
+        return true;
+      }
+      return ticket.lines.some(
+        l =>
+          (l.attSetInstanceDesc === attributeValue ||
+            l.attributeValue === attributeValue) &&
+          product.id === l.product.id
+      );
+    };
+
+    const { products } = payload;
+    if (!products.some(p => hasAttributes(p))) {
+      return payload;
+    }
+
+    if (products.length > 1) {
+      throw new Error('Cannot handle attributes for more than one product');
+    }
+
+    const newPayload = { ...payload };
+    const { product } = products[0];
+
+    const attributeValue = await OB.App.View.User.requestData({
+      popup: 'modalProductAttribute',
+      options: newPayload.options
+    });
+
+    if (OB.UTIL.isNullOrUndefined(attributeValue)) {
+      throw new OB.App.Class.ActionSilentlyCanceled(
+        `No attribute provided for product ${product.id}`
+      );
+    }
+
+    // the attributes for layaways accepts empty values, but for manage later easy to be null instead ""
+    newPayload.attrs.attributeValue = attributeValue || null;
+
+    if (options && options.line) {
+      newPayload.attrs.productHavingSameAttribute = true;
+    } else {
+      if (attrs && !checkSerialAttribute(product, attrs.attributeValue)) {
+        throw new OB.App.Class.ActionCanceled({
+          errorConfirmation: 'OBPOS_ProductDefinedAsSerialNo'
+        });
+      }
+      const lineWithAttributeValue = ticket.lines.find(
+        l =>
+          attributeValue &&
+          l.attributeValue === attributeValue &&
+          product.id === l.product.id
+      );
+      if (lineWithAttributeValue) {
+        newPayload.attrs.productHavingSameAttribute = true;
+        newPayload.line = lineWithAttributeValue;
+      }
+    }
+    return newPayload;
+  }
+
   async function checkStock(ticket, payload) {
     const { products, options, attrs } = payload;
 
@@ -358,8 +439,6 @@
 
     const { product } = products[0];
     const { qty } = products[0];
-    // TODO: a line can also be passed when attributeSearchAllowed && productHasAttribute
-    // note that also a line can be passed through options.line and is used for a different check
     const settings = { ticket, options, attrs };
 
     const hasStock = await OB.App.StockChecker.hasStock(product, qty, settings);
