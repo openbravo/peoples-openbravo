@@ -36,6 +36,14 @@
         }
       };
 
+      function sleep(x) {
+        return new Promise(resolve => {
+          setTimeout(() => {
+            resolve();
+          }, x);
+        });
+      }
+
       customer.set('createdBy', OB.MobileApp.model.get('orgUserId'));
       customer.set('posTerminal', OB.MobileApp.model.get('terminal').id);
       if (customerId) {
@@ -114,11 +122,20 @@
         customer.set('loaded', OB.I18N.normalizeDate(new Date()));
       }
       try {
+        OB.info(
+          'Before synchronizeBusinessPartner: ' +
+            OB.I18N.normalizeDate(new Date())
+        );
         await OB.App.State.Global.synchronizeBusinessPartner(
           customer.attributes
         );
-        // Saving Customer Address locally
+        OB.info(
+          'After synchronizeBusinessPartner: ' +
+            OB.I18N.normalizeDate(new Date())
+        );
+        await sleep(100);
         if (isNew) {
+          // Saving Customer Address locally
           await OB.App.State.Global.synchronizeBusinessPartnerLocation(
             billing.attributes
           );
