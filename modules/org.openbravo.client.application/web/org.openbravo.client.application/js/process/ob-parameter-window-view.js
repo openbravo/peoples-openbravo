@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2019 Openbravo SLU
+ * All portions are Copyright (C) 2012-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -463,11 +463,11 @@ isc.OBParameterWindowView.addProperties({
 
     allProperties._params = this.getContextInfo();
 
-    // allow to add external parameters
-    isc.addProperties(allProperties._params, this.externalParams);
-
     actionHandlerCall = function() {
       view.showProcessing(true);
+
+      // allow to add external parameters
+      isc.addProperties(allProperties._params, view.externalParams);
       OB.RemoteCallManager.call(
         view.actionHandler,
         allProperties,
