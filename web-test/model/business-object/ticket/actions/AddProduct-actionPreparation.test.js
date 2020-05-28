@@ -63,6 +63,15 @@ const Product = {
     oBPOSAllowAnonymousSale: false
   },
 
+  service: {
+    id: 'service',
+    uOMstandardPrecision: 3,
+    standardPrice: 10,
+    listPrice: 11,
+    productType: 'S',
+    returnable: true
+  },
+
   scale: {
     id: 'scaleProduct',
     obposScale: true,
@@ -336,6 +345,37 @@ describe('addProduct preparation', () => {
 
     it('product locked', async () => {
       // TODO once finished to implemented
+    });
+  });
+
+  describe('approvals', () => {
+    it('return service accepted approval', async () => {
+      const expected = {
+        products: [{ product: Product.service }],
+        approvals: ['OBPOS_approval.returnService']
+      };
+      OB.App.Security.requestApprovalForAction.mockResolvedValue(expected);
+      const newPayload = await prepareAction(
+        { products: [{ product: Product.service }] },
+        Ticket.emptyReturn
+      );
+      expect(newPayload).toEqual(expected);
+    });
+
+    it('return service rejected approval', async () => {
+      OB.App.Security.requestApprovalForAction.mockRejectedValue(
+        new OB.App.Class.ActionCanceled('Approval required', {
+          approvalRequired: 'OBPOS_approval.returnService'
+        })
+      );
+      await expect(
+        prepareAction(
+          {
+            products: [{ product: Product.service }]
+          },
+          Ticket.emptyReturn
+        )
+      ).rejects.toThrow(`Approval required`);
     });
   });
 });
