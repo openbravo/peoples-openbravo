@@ -170,6 +170,17 @@
 
   function checkRestrictions(ticket, payload) {
     const { products, options } = payload;
+
+    checkProductWithoutPrice(products);
+    checkGenericProduct(products);
+    checkCancelAndReplaceQty(ticket, options);
+    checkAnonymousBusinessPartner(ticket, products, options);
+    checkNotReturnable(products, options);
+    checkClosedQuotation(ticket);
+    checkProductLocked(products);
+  }
+
+  function checkProductWithoutPrice(products) {
     const productWithoutPrice = products.find(
       p => !p.product.listPrice && !p.product.ispack
     );
@@ -180,14 +191,18 @@
         messageParams: [productWithoutPrice.product._identifier]
       });
     }
+  }
 
+  function checkGenericProduct(products) {
     const someGeneric = products.some(p => p.product.isGeneric);
     if (someGeneric) {
       throw new OB.App.Class.ActionCanceled({
         warningMsg: 'OBPOS_GenericNotAllowed'
       });
     }
+  }
 
+  function checkCancelAndReplaceQty(ticket, options) {
     if (options.line && ticket.lines) {
       const line = ticket.lines.find(l => l.id === options.line);
       if (line && line.replacedorderline && line.qty < 0) {
@@ -196,7 +211,9 @@
         });
       }
     }
+  }
 
+  function checkAnonymousBusinessPartner(ticket, products, options) {
     const anonymousNotAllowed =
       options.businessPartner === ticket.businessPartner.id &&
       products.some(p => p.product.oBPOSAllowAnonymousSale === false);
@@ -206,7 +223,9 @@
         errorConfirmation: 'OBPOS_AnonymousSaleNotAllowed'
       });
     }
+  }
 
+  function checkNotReturnable(products, options) {
     const notReturnable = products.find(
       p =>
         (options.line ? options.line.qty + p.qty : p.qty) < 0 &&
@@ -220,13 +239,17 @@
         messageParams: [notReturnable.product._identifier]
       });
     }
+  }
 
+  function checkClosedQuotation(ticket) {
     if (ticket.isQuotation && ticket.hasbeenpaid === 'Y') {
       throw new OB.App.Class.ActionCanceled({
         errorMsg: 'OBPOS_QuotationClosed'
       });
     }
+  }
 
+  function checkProductLocked(products) {
     const productLocked = products
       .filter(p => OB.DEC.compare(p.qty) === 1)
       .map(p => {
