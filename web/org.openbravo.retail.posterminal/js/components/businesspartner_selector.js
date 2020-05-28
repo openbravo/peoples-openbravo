@@ -1156,7 +1156,7 @@ enyo.kind({
         }
         successCallbackBPs(dataBps);
       } else if (inEvent.filters.length > 0) {
-        let text = OB.UTIL.unAccent(inEvent.filters[0].value);
+        let text = inEvent.filters[0].value;
         try {
           //filter by bpName
           let criteriaBP = new OB.App.Class.Criteria();
