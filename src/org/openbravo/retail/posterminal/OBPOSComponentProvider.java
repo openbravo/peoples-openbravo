@@ -72,9 +72,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
     final String prefix = "web/" + POSUtils.MODULE_JAVA_PACKAGE;
 
-    final String[] resourceDependency = { "main", "model/changedbusinesspartners",
-        "model/changedbplocation", "model/order", "model/cashup", "model/countsafebox",
-        "model/cashmanagement", "model/cancelLayaway", "login/model/login-model",
+    final String[] resourceDependency = { "main", "model/order", "model/cashup",
+        "model/countsafebox", "model/cashmanagement", "model/cancelLayaway",
+        "login/model/login-model",
         // Common components
         "datasource",
         // "data/dal",
@@ -284,6 +284,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     // Masterdata
     appDependency.add("model/masterdata/BPCategoryModel");
     appDependency.add("model/masterdata/BPSetLineModel");
+    appDependency.add("model/masterdata/BusinessPartnerModel");
+    appDependency.add("model/masterdata/BusinessPartnerLocationModel");
     appDependency.add("model/masterdata/CountryModel");
     appDependency.add("model/masterdata/PriceListModel");
     appDependency.add("model/masterdata/ProductModel");
@@ -320,6 +322,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/business-object/document-sequence/actions/InitializeSequence");
     appDependency.add("model/business-object/document-sequence/actions/IncreaseSequence");
     appDependency.add("model/business-object/document-sequence/actions/DecreaseSequence");
+
+    appDependency.add("model/business-object/business-partner/SynchronizeBusinessPartner");
+    appDependency.add("model/business-object/business-partner/SynchronizeBusinessPartnerLocation");
 
     for (final String resource : appDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,

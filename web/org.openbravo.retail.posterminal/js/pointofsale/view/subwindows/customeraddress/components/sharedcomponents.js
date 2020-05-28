@@ -453,20 +453,11 @@ enyo.kind({
                       }
                     }
                   }
-                  OB.Dal.save(
-                    me.customer,
-                    function success(tx) {
-                      me.doChangeBusinessPartner({
-                        businessPartner: me.customer,
-                        target: 'order'
-                      });
-                      enableButtonsCallback();
-                    },
-                    function error(tx) {
-                      OB.error(tx);
-                      enableButtonsCallback();
-                    }
-                  );
+                  me.doChangeBusinessPartner({
+                    businessPartner: me.customer,
+                    target: 'order'
+                  });
+                  enableButtonsCallback();
                 } else {
                   enableButtonsCallback();
                 }

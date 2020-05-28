@@ -499,28 +499,6 @@
       });
 
       this.get('dataSyncModels').push({
-        name: 'Customer',
-        model: OB.Model.ChangedBusinessPartners,
-        modelFunc: 'OB.Model.ChangedBusinessPartners',
-        className: 'org.openbravo.retail.posterminal.CustomerLoader',
-        criteria: {},
-        getIdentifier: function(model) {
-          return model.businessPartnerCategory_name + ' : ' + model._identifier;
-        }
-      });
-
-      this.get('dataSyncModels').push({
-        name: 'Customer Address',
-        model: OB.Model.ChangedBPlocation,
-        modelFunc: 'OB.Model.ChangedBPlocation',
-        className: 'org.openbravo.retail.posterminal.CustomerAddrLoader',
-        criteria: {},
-        getIdentifier: function(model) {
-          return model.customerName + ' : ' + model.name;
-        }
-      });
-
-      this.get('dataSyncModels').push({
         name: 'Order',
         model: OB.Model.Order,
         modelFunc: 'OB.Model.Order',
