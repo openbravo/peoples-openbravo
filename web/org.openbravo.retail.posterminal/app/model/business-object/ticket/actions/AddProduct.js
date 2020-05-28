@@ -20,15 +20,21 @@
     ticket.lines = ticket.lines.map(l => {
       return { ...l };
     });
-    products.forEach(productInfo => {
-      const lineToEdit = getLineToEdit(productInfo, ticket, options);
-      if (lineToEdit) {
-        lineToEdit.qty += productInfo.qty;
-      } else {
-        const newLine = createLine(productInfo, ticket, options);
-        ticket.lines.push(newLine);
-      }
-    });
+    products
+      .map(productInfo => {
+        const qty = productInfo.qty || 1;
+        const obj = { ...productInfo, qty: isAReturn(ticket) ? -qty : qty };
+        return obj;
+      })
+      .forEach(productInfo => {
+        const lineToEdit = getLineToEdit(productInfo, ticket, options);
+        if (lineToEdit) {
+          lineToEdit.qty += productInfo.qty;
+        } else {
+          const newLine = createLine(productInfo, ticket, options);
+          ticket.lines.push(newLine);
+        }
+      });
 
     return ticket;
   });
@@ -52,11 +58,15 @@
 
       await checkStock(ticket, payload);
 
-      const payloadWithApprovals = await checkApprovals(newPayload);
+      const payloadWithApprovals = await checkApprovals(ticket, newPayload);
 
       return payloadWithApprovals;
     }
   );
+
+  function isAReturn(ticket) {
+    return ticket.orderType === 1;
+  }
 
   function getLineToEdit(productInfo, ticket, options = {}) {
     const { product, qty } = productInfo;
@@ -177,9 +187,9 @@
     checkGenericProduct(products);
     checkCancelAndReplaceQty(ticket, options);
     checkAnonymousBusinessPartner(ticket, products, options);
-    checkNotReturnable(products, options);
+    checkNotReturnable(ticket, products, options);
     checkClosedQuotation(ticket);
-    checkProductLocked(products);
+    checkProductLocked(ticket, products);
   }
 
   function checkProductWithoutPrice(products) {
@@ -227,10 +237,11 @@
     }
   }
 
-  function checkNotReturnable(products, options) {
+  function checkNotReturnable(ticket, products, options) {
     const notReturnable = products.find(
       p =>
-        (options.line ? options.line.qty + p.qty : p.qty) < 0 &&
+        (isAReturn(ticket) ||
+          (options.line ? options.line.qty + p.qty : p.qty) < 0) &&
         !p.product.returnable
     );
     if (notReturnable) {
@@ -251,7 +262,7 @@
     }
   }
 
-  function checkProductLocked(products) {
+  function checkProductLocked(ticket, products) {
     const getProductStatus = product => {
       const status = product.productAssortmentStatus || product.productStatus;
       if (status) {
@@ -264,6 +275,10 @@
       }
       return {};
     };
+
+    if (isAReturn(ticket)) {
+      return;
+    }
 
     const productLocked = products
       .filter(p => OB.DEC.compare(p.qty) === 1)
@@ -280,7 +295,6 @@
     if (productLocked) {
       throw new OB.App.Class.ActionCanceled({
         errorConfirmation: 'OBPOS_ErrorProductLocked',
-        // eslint-disable-next-line no-underscore-dangle
         messageParams: [
           productLocked.identifier,
           productLocked.productStatus.name
@@ -289,11 +303,12 @@
     }
   }
 
-  async function checkApprovals(payload) {
+  async function checkApprovals(ticket, payload) {
     const { products, options } = payload;
     const requireServiceReturnApproval = products.some(
       p =>
-        (options.line ? options.line.qty + p.qty : p.qty) < 0 &&
+        (isAReturn(ticket) ||
+          (options.line ? options.line.qty + p.qty : p.qty) < 0) &&
         p.product.productType === 'S' &&
         !p.product.ignoreReturnApproval
     );
