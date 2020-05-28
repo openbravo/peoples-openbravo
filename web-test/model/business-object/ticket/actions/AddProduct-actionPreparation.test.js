@@ -25,11 +25,19 @@ OB = {
     hwserver: {
       getAsyncWeight: jest.fn()
     }
+  },
+
+  Taxes: {
+    Pos: {
+      taxCategoryBOM: []
+    }
   }
 };
 
 global.lodash = require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/lodash-4.17.15');
 const deepfreeze = require('deepfreeze');
+require('../../../../../../org.openbravo.client.kernel/web/org.openbravo.client.kernel/js/BigDecimal-all-1.0.3');
+require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/source/utils/ob-arithmetic');
 
 require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/StateAPI');
 const {
@@ -43,7 +51,13 @@ require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/Ticket');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/AddProduct');
 
-const emptyTicket = { priceIncludesTax: true, lines: [] };
+require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/util/UUID');
+
+const emptyTicket = {
+  priceIncludesTax: true,
+  lines: [],
+  businessPartner: { id: 'dummy' }
+};
 
 const scaleProduct = {
   id: 'scaleProduct',
