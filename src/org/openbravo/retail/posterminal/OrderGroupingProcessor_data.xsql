@@ -109,13 +109,20 @@
          taxbaseamt, line_gross_amount, gross_unit_price,
          c_bpartner_id, grosspricestd, grosspricelist,
          a_asset_id, c_project_id, user1_id, user2_id, c_costcenter_id)
-        select get_uuid(), i.ad_client_id, i.ad_org_id, 'Y', i.created, i.createdby, i.updated, i.updatedby,
-        i.c_invoice_id, ol.c_orderline_id, max(iol.m_inoutline_id), row_number() over (partition by i.c_invoice_id order by o.documentno, ol.line) * 10 as line,
+        select get_uuid(), ad_client_id, ad_org_id, 'Y', created, createdby, updated, updatedby,
+        c_invoice_id, c_orderline_id, maxminoutlineid, line,
+        description, m_product_id, qtyordered, pricelist, priceactual, pricelimit, linenetamt,
+        c_uom_id, c_tax_id, m_attributesetinstance_id, pricestd,
+        taxbaseamt, line_gross_amount, gross_unit_price,
+        c_bpartner_id, grosspricestd, grosspricelist,
+        a_asset_id, c_project_id, user1_id, user2_id, c_costcenter_id from (
+        select i.ad_client_id, i.ad_org_id, 'Y', i.created, i.createdby, i.updated, i.updatedby,
+        i.c_invoice_id, ol.c_orderline_id, max(iol.m_inoutline_id) as maxminoutlineid, row_number() over (partition by i.c_invoice_id order by o.documentno, ol.line) * 10 as line,
         ol.description, ol.m_product_id, ol.qtyordered, ol.pricelist, ol.priceactual, ol.pricelimit, ol.linenetamt,
         ol.c_uom_id, ol.c_tax_id, ol.m_attributesetinstance_id, ol.pricestd,
-        ol.linenetamt , (case when pl.istaxincluded = 'Y' then ol.line_gross_amount else 0 end), ol.gross_unit_price,
+        ol.linenetamt as taxbaseamt, (case when pl.istaxincluded = 'Y' then ol.line_gross_amount else 0 end) as line_gross_amount, ol.gross_unit_price,
         ol.c_bpartner_id, ol.grosspricestd, ol.grosspricelist,
-        ol.a_asset_id, ol.c_project_id, ol.user1_id, ol.user2_id, ol.c_costcenter_id
+        ol.a_asset_id, ol.c_project_id, ol.user1_id, ol.user2_id, ol.c_costcenter_id, o.bpartner_extref
         from c_order o, m_pricelist pl, obpos_applications ap, ad_org org, c_doctype dt, c_invoice i,
         c_orderline ol left join m_inoutline iol on ol.c_orderline_id = iol.c_orderline_id
         where ol.c_order_id = o.c_order_id
@@ -133,7 +140,7 @@
         and o.em_obpos_notinvoiceoncashup = 'N'
         and o.iscashvat = i.iscashvat
         and i.documentno = ?
-        and i.c_bpartner_id = o.c_bpartner_id and coalesce(i.bpartner_extref, '1')=coalesce(o.bpartner_extref, '1') and i.c_bpartner_location_id = coalesce(o.billto_id, o.c_bpartner_location_id)
+        and i.c_bpartner_id = o.c_bpartner_id and coalesce(i.bpartner_extref, '1') = coalesce(o.bpartner_extref, '1') and i.c_bpartner_location_id = coalesce(o.billto_id, o.c_bpartner_location_id)
         and coalesce(i.ad_user_id, '1') = coalesce(o.ad_user_id, '1')
         group by i.ad_client_id, i.ad_org_id, i.created, i.createdby, i.updated, i.updatedby,
         i.c_invoice_id, ol.c_orderline_id, ol.description, ol.m_product_id,
@@ -143,7 +150,7 @@
         ol.c_bpartner_id, ol.grosspricestd, ol.grosspricelist,
         ol.a_asset_id, ol.c_project_id, ol.user1_id, ol.user2_id, ol.c_costcenter_id, pl.istaxincluded,
         o.documentno, ol.line, o.c_order_id, o.ad_user_id, o.bpartner_extref
-        order by o.documentno, ol.line
+        order by o.documentno, ol.line) a
       ]]>
     </Sql>
     <Parameter name="cashupId"/>
