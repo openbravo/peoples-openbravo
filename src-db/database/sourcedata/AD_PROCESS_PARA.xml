@@ -1131,47 +1131,6 @@ Usually, company's internal identifiers for various records (products, customers
 <!--209-->  <AD_ELEMENT_ID><![CDATA[574]]></AD_ELEMENT_ID>
 <!--209--></AD_PROCESS_PARA>
 
-<!--223--><AD_PROCESS_PARA>
-<!--223-->  <AD_PROCESS_PARA_ID><![CDATA[223]]></AD_PROCESS_PARA_ID>
-<!--223-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--223-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--223-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--223-->  <NAME><![CDATA[Client]]></NAME>
-<!--223-->  <DESCRIPTION><![CDATA[Client for this installation.]]></DESCRIPTION>
-<!--223-->  <HELP><![CDATA[A Client is a company or a legal entity. You cannot share data between Clients.]]></HELP>
-<!--223-->  <AD_PROCESS_ID><![CDATA[175]]></AD_PROCESS_ID>
-<!--223-->  <SEQNO><![CDATA[10]]></SEQNO>
-<!--223-->  <AD_REFERENCE_ID><![CDATA[19]]></AD_REFERENCE_ID>
-<!--223-->  <AD_VAL_RULE_ID><![CDATA[103]]></AD_VAL_RULE_ID>
-<!--223-->  <COLUMNNAME><![CDATA[AD_Client_ID]]></COLUMNNAME>
-<!--223-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--223-->  <FIELDLENGTH><![CDATA[0]]></FIELDLENGTH>
-<!--223-->  <ISMANDATORY><![CDATA[Y]]></ISMANDATORY>
-<!--223-->  <ISRANGE><![CDATA[N]]></ISRANGE>
-<!--223-->  <DEFAULTVALUE><![CDATA[@AD_Client_ID@]]></DEFAULTVALUE>
-<!--223-->  <AD_ELEMENT_ID><![CDATA[102]]></AD_ELEMENT_ID>
-<!--223--></AD_PROCESS_PARA>
-
-<!--224--><AD_PROCESS_PARA>
-<!--224-->  <AD_PROCESS_PARA_ID><![CDATA[224]]></AD_PROCESS_PARA_ID>
-<!--224-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--224-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--224-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--224-->  <NAME><![CDATA[Table]]></NAME>
-<!--224-->  <DESCRIPTION><![CDATA[A dictionary table used for this tab that points to the database table.]]></DESCRIPTION>
-<!--224-->  <HELP><![CDATA[The Table indicates the table in which a field or fields reside.]]></HELP>
-<!--224-->  <AD_PROCESS_ID><![CDATA[175]]></AD_PROCESS_ID>
-<!--224-->  <SEQNO><![CDATA[20]]></SEQNO>
-<!--224-->  <AD_REFERENCE_ID><![CDATA[18]]></AD_REFERENCE_ID>
-<!--224-->  <AD_REFERENCE_VALUE_ID><![CDATA[800022]]></AD_REFERENCE_VALUE_ID>
-<!--224-->  <COLUMNNAME><![CDATA[AD_Table_ID]]></COLUMNNAME>
-<!--224-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--224-->  <FIELDLENGTH><![CDATA[0]]></FIELDLENGTH>
-<!--224-->  <ISMANDATORY><![CDATA[N]]></ISMANDATORY>
-<!--224-->  <ISRANGE><![CDATA[N]]></ISRANGE>
-<!--224-->  <AD_ELEMENT_ID><![CDATA[126]]></AD_ELEMENT_ID>
-<!--224--></AD_PROCESS_PARA>
-
 <!--228--><AD_PROCESS_PARA>
 <!--228-->  <AD_PROCESS_PARA_ID><![CDATA[228]]></AD_PROCESS_PARA_ID>
 <!--228-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

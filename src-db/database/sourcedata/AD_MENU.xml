@@ -1464,20 +1464,6 @@
 <!--303-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
 <!--303--></AD_MENU>
 
-<!--306--><AD_MENU>
-<!--306-->  <AD_MENU_ID><![CDATA[306]]></AD_MENU_ID>
-<!--306-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--306-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--306-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--306-->  <NAME><![CDATA[Resubmit Posting]]></NAME>
-<!--306-->  <DESCRIPTION><![CDATA[Resubmit posting of documents with posting errors]]></DESCRIPTION>
-<!--306-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--306-->  <ACTION><![CDATA[P]]></ACTION>
-<!--306-->  <AD_PROCESS_ID><![CDATA[175]]></AD_PROCESS_ID>
-<!--306-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--306-->  <OPENLINKINBROWSER><![CDATA[N]]></OPENLINKINBROWSER>
-<!--306--></AD_MENU>
-
 <!--310--><AD_MENU>
 <!--310-->  <AD_MENU_ID><![CDATA[310]]></AD_MENU_ID>
 <!--310-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
