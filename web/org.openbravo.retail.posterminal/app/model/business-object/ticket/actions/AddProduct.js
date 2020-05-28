@@ -252,13 +252,26 @@
   }
 
   function checkProductLocked(products) {
+    const getProductStatus = product => {
+      const status = product.productAssortmentStatus || product.productStatus;
+      if (status) {
+        return _.find(
+          OB.MobileApp.model.get('productStatusList'),
+          productStatus => {
+            return status === productStatus.id;
+          }
+        );
+      }
+      return {};
+    };
+
     const productLocked = products
       .filter(p => OB.DEC.compare(p.qty) === 1)
       .map(p => {
         const obj = {
           // eslint-disable-next-line no-underscore-dangle
           identifier: p.product._identifier,
-          productStatus: OB.UTIL.ProductStatusUtils.getProductStatus(p.product)
+          productStatus: getProductStatus(p.product)
         };
         return obj;
       })
