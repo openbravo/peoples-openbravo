@@ -59,6 +59,7 @@
 
       newPayload = await prepareScaleProducts(newPayload);
       newPayload = await prepareBOMProducts(newPayload);
+      newPayload = await prepareProductService(newPayload);
       newPayload = await prepareProductCharacteristics(newPayload);
       newPayload = await prepareProductAttributes(ticket, newPayload);
 
@@ -422,6 +423,64 @@
     });
 
     newPayload.products = await Promise.all(productBOMAddings);
+
+    return newPayload;
+  }
+
+  async function prepareProductService(payload) {
+    const shouldLinkService = product => {
+      return product.modifyTax && !product.productServiceLinked;
+    };
+
+    const toProductWithService = async productInfo => {
+      const { product } = productInfo;
+      let productServiceLinked;
+      if (OB.App.Security.hasPermission('OBPOS_remote.product')) {
+        productServiceLinked = await OB.App.DAL.find('ProductServiceLinked', {
+          product: product.id,
+          remoteFilters: [
+            {
+              columns: ['product'],
+              operator: 'equals',
+              value: product.id
+            }
+          ]
+        });
+        if (productServiceLinked.length > 0) {
+          productServiceLinked = productServiceLinked.models;
+        }
+      } else {
+        productServiceLinked = await OB.App.MasterdataModels.ProductServiceLinked.find(
+          new OB.App.Class.Criteria().criterion('product', product.id).build()
+        );
+        if (productServiceLinked.length > 0) {
+          productServiceLinked = productServiceLinked.map(productServiceLink =>
+            OB.Dal.transform(OB.Model.ProductServiceLinked, productServiceLink)
+          );
+        }
+      }
+
+      if (productServiceLinked) {
+        return {
+          ...productInfo,
+          product: { ...product, productServiceLinked }
+        };
+      }
+      return productInfo;
+    };
+
+    const newPayload = { ...payload };
+
+    const productServiceLinkings = newPayload.products.map(async p => {
+      // In case product is Service with modify tax enabled and it doesn't have ProductServiceLinked information yet, add it
+      if (shouldLinkService(p.product)) {
+        const withService = await toProductWithService(p);
+        return withService;
+      }
+      return p;
+    });
+
+    newPayload.products = await Promise.all(productServiceLinkings);
 
     return newPayload;
   }
