@@ -15,7 +15,7 @@
 
   OB.App.StateAPI.Ticket.registerAction('addProduct', (state, payload) => {
     const ticket = { ...state };
-    const { products, options } = payload;
+    const { products, options, attrs } = payload;
 
     ticket.lines = ticket.lines.map(l => {
       return { ...l };
@@ -28,7 +28,7 @@
         };
       })
       .forEach(productInfo => {
-        const lineToEdit = getLineToEdit(productInfo, ticket, options);
+        const lineToEdit = getLineToEdit(productInfo, ticket, options, attrs);
         if (lineToEdit) {
           lineToEdit.qty += productInfo.qty;
         } else {
@@ -75,7 +75,7 @@
     return ticket.orderType === 1;
   }
 
-  function getLineToEdit(productInfo, ticket, options = {}) {
+  function getLineToEdit(productInfo, ticket, options = {}, attrs = {}) {
     const { product, qty } = productInfo;
     if (product.obposScale || !product.groupProduct) {
       return undefined;
@@ -85,12 +85,14 @@
       return ticket.lines.find(l => l.id === options.line);
     }
 
+    const attributeValue = attrs.attributeSearchAllowed && attrs.attributeValue;
+
     return ticket.lines.find(
       l =>
         l.product.id === product.id &&
         l.isEditable &&
-        Math.sign(l.qty) === Math.sign(qty)
-      // TODO: attributeSearchAllowed
+        Math.sign(l.qty) === Math.sign(qty) &&
+        (!attributeValue || l.attributeValue === attributeValue)
     );
   }
 
@@ -584,13 +586,14 @@
       );
     }
 
+    newPayload.attrs.attributeSearchAllowed = attributeSearchAllowed;
     // the attributes for layaways accepts empty values, but for manage later easy to be null instead ""
     newPayload.attrs.attributeValue = attributeValue || null;
 
     if (options && options.line) {
       newPayload.attrs.productHavingSameAttribute = true;
     } else {
-      if (attrs && !checkSerialAttribute(product, attrs.attributeValue)) {
+      if (!checkSerialAttribute(product, attrs.attributeValue)) {
         throw new OB.App.Class.ActionCanceled({
           errorConfirmation: 'OBPOS_ProductDefinedAsSerialNo'
         });
