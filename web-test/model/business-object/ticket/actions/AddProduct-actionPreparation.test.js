@@ -54,21 +54,81 @@ require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-
 
 require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/util/UUID');
 
-const emptyTicket = {
-  priceIncludesTax: true,
-  lines: [],
-  businessPartner: { id: 'dummy' }
+const Product = {
+  regular: {
+    id: 'regularProduct',
+    uOMstandardPrecision: 3,
+    standardPrice: 10,
+    listPrice: 11,
+    oBPOSAllowAnonymousSale: false
+  },
+
+  scale: {
+    id: 'scaleProduct',
+    obposScale: true,
+    uOMstandardPrecision: 3,
+    standardPrice: 10,
+    listPrice: 11
+  },
+
+  noprice: {
+    id: 'noPriceProduct',
+    _identifier: 'noPriceProduct'
+  },
+
+  generic: {
+    id: 'genericProduct',
+    uOMstandardPrecision: 3,
+    standardPrice: 10,
+    listPrice: 11,
+    isGeneric: true
+  }
 };
 
-const scaleProduct = {
-  id: 'scaleProduct',
-  obposScale: true,
-  uOMstandardPrecision: 3,
-  standardPrice: 10,
-  listPrice: 11
+const Ticket = {
+  empty: {
+    priceIncludesTax: true,
+    lines: [],
+    businessPartner: { id: '1' },
+    orderType: 0
+  },
+  emptyReturn: {
+    priceIncludesTax: true,
+    lines: [],
+    businessPartner: { id: '1' },
+    orderType: 1
+  },
+  singleLine: {
+    priceIncludesTax: true,
+    lines: [{ id: '1', product: Product.regular, qty: 1 }],
+    businessPartner: { id: '1' },
+    orderType: 0
+  },
+  returnedLine: {
+    priceIncludesTax: true,
+    lines: [{ id: '1', product: Product.regular, qty: -2 }],
+    businessPartner: { id: '1' },
+    orderType: 0
+  },
+  cancelAndReplace: {
+    priceIncludesTax: true,
+    lines: [
+      { id: '1', product: Product.regular, qty: -1, replacedorderline: true }
+    ],
+    businessPartner: { id: '1' },
+    orderType: 0
+  },
+  closedQuotation: {
+    priceIncludesTax: true,
+    lines: [{ id: '1', product: Product.regular, qty: 1 }],
+    businessPartner: { id: '1' },
+    orderType: 0,
+    isQuotation: true,
+    hasbeenpaid: 'Y'
+  }
 };
 
-const prepareAction = async (payload, ticket = emptyTicket) => {
+const prepareAction = async (payload, ticket = Ticket.empty) => {
   const newPayload = await executeActionPreparations(
     OB.App.StateAPI.Ticket.addProduct,
     deepfreeze({ Ticket: ticket }),
@@ -84,13 +144,7 @@ const expectError = async (action, expectedError) => {
   } catch (e) {
     error = e;
   }
-
-  if (expectedError instanceof OB.App.Class.ActionSilentlyCanceled) {
-    expect(error).toBeInstanceOf(OB.App.Class.ActionSilentlyCanceled);
-    expect(error.message).toEqual(expectedError.message);
-  } else {
-    expect(error).toMatchObject({ info: expectedError });
-  }
+  expect(error).toMatchObject({ info: expectedError });
 };
 
 describe('addProduct preparation', () => {
@@ -107,14 +161,14 @@ describe('addProduct preparation', () => {
     it('more than one is not allowed', async () => {
       await expect(
         prepareAction({
-          products: [{ product: scaleProduct }, { product: scaleProduct }]
+          products: [{ product: Product.scale }, { product: Product.scale }]
         })
       ).rejects.toThrow('Cannot handle more than one scale product');
     });
 
     it('calls scale once', async () => {
       await prepareAction({
-        products: [{ product: scaleProduct }]
+        products: [{ product: Product.scale }]
       });
 
       expect(OB.POS.hwserver.getAsyncWeight).toHaveBeenCalledTimes(1);
@@ -122,7 +176,7 @@ describe('addProduct preparation', () => {
 
     it('scale value is used as qty', async () => {
       const newPayload = await prepareAction({
-        products: [{ product: scaleProduct }]
+        products: [{ product: Product.scale }]
       });
 
       expect(newPayload).toMatchObject({ products: [{ qty: 10 }] });
@@ -136,7 +190,7 @@ describe('addProduct preparation', () => {
       await expectError(
         () =>
           prepareAction({
-            products: [{ product: scaleProduct }]
+            products: [{ product: Product.scale }]
           }),
         {
           errorConfirmation: 'OBPOS_WeightZero'
@@ -152,26 +206,136 @@ describe('addProduct preparation', () => {
       await expectError(
         () =>
           prepareAction({
-            products: [{ product: scaleProduct }]
+            products: [{ product: Product.scale }]
           }),
         {
           errorConfirmation: 'OBPOS_MsgScaleServerNotAvailable'
         }
       );
     });
+  });
 
-    it('handles no stock ', async () => {
+  describe('stock check', () => {
+    it('handles no stock', async () => {
       OB.App.StockChecker.hasStock.mockResolvedValueOnce(false);
+      await expect(
+        prepareAction({
+          products: [{ product: Product.regular }]
+        })
+      ).rejects.toThrow(
+        `Add product canceled: there is no stock of product ${Product.regular.id}`
+      );
+    });
+  });
 
+  describe('check restrictions', () => {
+    it('product without price check', async () => {
       await expectError(
         () =>
           prepareAction({
-            products: [{ product: scaleProduct }]
+            products: [{ product: Product.noprice }]
           }),
-        new OB.App.Class.ActionSilentlyCanceled(
-          `Add product canceled: there is no stock of product ${scaleProduct.id}`
-        )
+        {
+          warningMsg: 'OBPOS_productWithoutPriceInPriceList',
+          messageParams: ['noPriceProduct']
+        }
       );
+    });
+
+    it('generic product check', async () => {
+      await expectError(
+        () =>
+          prepareAction({
+            products: [{ product: Product.generic }]
+          }),
+        {
+          warningMsg: 'OBPOS_GenericNotAllowed'
+        }
+      );
+    });
+
+    it('cancel and replace qty check', async () => {
+      await expectError(
+        () =>
+          prepareAction(
+            {
+              products: [{ product: Product.regular }],
+              options: { line: '1' }
+            },
+            Ticket.cancelAndReplace
+          ),
+        {
+          errorConfirmation: 'OBPOS_CancelReplaceQtyEditReturn'
+        }
+      );
+    });
+
+    it('anonymous business partner check', async () => {
+      await expectError(
+        () =>
+          prepareAction(
+            {
+              products: [{ product: Product.regular }],
+              options: { businessPartner: '1' }
+            },
+            Ticket.empty
+          ),
+        {
+          errorConfirmation: 'OBPOS_AnonymousSaleNotAllowed'
+        }
+      );
+    });
+
+    it('not returnable check (1)', async () => {
+      await expectError(
+        () =>
+          prepareAction(
+            {
+              products: [{ product: { ...Product.regular, returnable: false } }]
+            },
+            Ticket.emptyReturn
+          ),
+        {
+          errorConfirmation: 'OBPOS_UnreturnableProductMessage'
+        }
+      );
+    });
+
+    it('not returnable check (2)', async () => {
+      await expectError(
+        () =>
+          prepareAction(
+            {
+              products: [
+                { product: { ...Product.regular, returnable: false }, qty: 1 }
+              ],
+              options: { line: '1' }
+            },
+            Ticket.returnedLine
+          ),
+        {
+          errorConfirmation: 'OBPOS_UnreturnableProductMessage'
+        }
+      );
+    });
+
+    it('closed quotation check', async () => {
+      await expectError(
+        () =>
+          prepareAction(
+            {
+              products: [{ product: Product.regular, qty: 1 }]
+            },
+            Ticket.closedQuotation
+          ),
+        {
+          errorMsg: 'OBPOS_QuotationClosed'
+        }
+      );
+    });
+
+    it('product locked', async () => {
+      // TODO once finished to implemented
     });
   });
 });
