@@ -22,9 +22,10 @@
     });
     products
       .map(productInfo => {
-        const qty = productInfo.qty || 1;
-        const obj = { ...productInfo, qty: isAReturn(ticket) ? -qty : qty };
-        return obj;
+        return {
+          ...productInfo,
+          qty: isAReturn(ticket) ? -productInfo.qty : productInfo.qty
+        };
       })
       .forEach(productInfo => {
         const lineToEdit = getLineToEdit(productInfo, ticket, options);
@@ -48,9 +49,14 @@
         ticket.id = OB.App.UUID.generate();
       }
 
-      checkRestrictions(ticket, payload);
+      let newPayload = { options: {}, attrs: {}, ...payload };
 
-      let newPayload = { ...payload };
+      newPayload.products = newPayload.products.map(productInfo => {
+        return { ...productInfo, qty: productInfo.qty || 1 };
+      });
+
+      checkRestrictions(ticket, newPayload);
+
       newPayload = await prepareScaleProducts(newPayload);
       newPayload = await prepareBOMProducts(newPayload);
       newPayload = await prepareProductCharacteristics(newPayload);
