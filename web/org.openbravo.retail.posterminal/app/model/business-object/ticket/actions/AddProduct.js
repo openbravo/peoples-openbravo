@@ -52,7 +52,9 @@
 
       await checkStock(ticket, payload);
 
-      return newPayload;
+      const payloadWithApprovals = await checkApprovals(newPayload);
+
+      return payloadWithApprovals;
     }
   );
 
@@ -272,6 +274,24 @@
         ]
       });
     }
+  }
+
+  async function checkApprovals(payload) {
+    const { products, options } = payload;
+    const requireServiceReturnApproval = products.some(
+      p =>
+        (options.line ? options.line.qty + p.qty : p.qty) < 0 &&
+        p.product.productType === 'S' &&
+        !p.product.ignoreReturnApproval
+    );
+    if (requireServiceReturnApproval) {
+      const newPayload = await OB.App.Security.requestApprovalForAction(
+        'OBPOS_approval.returnService',
+        payload
+      );
+      return newPayload;
+    }
+    return payload;
   }
 
   async function prepareScaleProducts(payload) {
