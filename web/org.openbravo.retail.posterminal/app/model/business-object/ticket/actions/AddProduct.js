@@ -206,6 +206,49 @@
         errorConfirmation: 'OBPOS_AnonymousSaleNotAllowed'
       });
     }
+
+    const notReturnable = products.find(
+      p =>
+        (options.line ? options.line.qty + p.qty : p.qty) < 0 &&
+        !p.product.returnable
+    );
+    if (notReturnable) {
+      throw new OB.App.Class.ActionCanceled({
+        title: 'OBPOS_UnreturnableProduct',
+        errorConfirmation: 'OBPOS_UnreturnableProductMessage',
+        // eslint-disable-next-line no-underscore-dangle
+        messageParams: [notReturnable.product._identifier]
+      });
+    }
+
+    if (ticket.isQuotation && ticket.hasbeenpaid === 'Y') {
+      throw new OB.App.Class.ActionCanceled({
+        errorMsg: 'OBPOS_QuotationClosed'
+      });
+    }
+
+    const productLocked = products
+      .filter(p => OB.DEC.compare(p.qty) === 1)
+      .map(p => {
+        const obj = {
+          // eslint-disable-next-line no-underscore-dangle
+          identifier: p.product._identifier,
+          productStatus: OB.UTIL.ProductStatusUtils.getProductStatus(p.product)
+        };
+        return obj;
+      })
+      .find(o => o.productStatus && o.productStatus.restrictsalefrompos);
+
+    if (productLocked) {
+      throw new OB.App.Class.ActionCanceled({
+        errorConfirmation: 'OBPOS_ErrorProductLocked',
+        // eslint-disable-next-line no-underscore-dangle
+        messageParams: [
+          productLocked.identifier,
+          productLocked.productStatus.name
+        ]
+      });
+    }
   }
 
   async function prepareScaleProducts(payload) {
