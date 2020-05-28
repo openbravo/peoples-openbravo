@@ -14,7 +14,8 @@ OB = {
   App: {
     StateBackwardCompatibility: { setProperties: jest.fn() },
     Class: {},
-    Security: { hasPermission: jest.fn(), requestApprovalForAction: jest.fn() }
+    Security: { hasPermission: jest.fn(), requestApprovalForAction: jest.fn() },
+    View: { DialogUIHandler: { inputData: jest.fn() } }
   },
 
   UTIL: {

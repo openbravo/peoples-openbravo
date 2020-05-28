@@ -575,12 +575,12 @@
     const newPayload = { ...payload };
     const { product } = products[0];
 
-    const attributeValue = await OB.App.View.User.requestData({
-      popup: 'modalProductAttribute',
-      options: newPayload.options
-    });
+    const attributeValue = await OB.App.View.DialogUIHandler.inputData(
+      'modalProductAttribute',
+      newPayload.options
+    );
 
-    if (OB.UTIL.isNullOrUndefined(attributeValue)) {
+    if (attributeValue === null || attributeValue === undefined) {
       throw new OB.App.Class.ActionSilentlyCanceled(
         `No attribute provided for product ${product.id}`
       );
