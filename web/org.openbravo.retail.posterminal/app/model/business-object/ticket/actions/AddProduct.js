@@ -247,10 +247,12 @@
   }
 
   function checkNotReturnable(ticket, products, options) {
+    const line = options.line
+      ? ticket.lines.find(l => l.id === options.line)
+      : null;
     const notReturnable = products.find(
       p =>
-        (isAReturn(ticket) ||
-          (options.line ? options.line.qty + p.qty : p.qty) < 0) &&
+        (isAReturn(ticket) || (line ? line.qty + p.qty : p.qty) < 0) &&
         !p.product.returnable
     );
     if (notReturnable) {
@@ -275,6 +277,7 @@
     const getProductStatus = product => {
       const status = product.productAssortmentStatus || product.productStatus;
       if (status) {
+        // TODO: replace this
         return _.find(
           OB.MobileApp.model.get('productStatusList'),
           productStatus => {
@@ -314,10 +317,12 @@
 
   async function checkApprovals(ticket, payload) {
     const { products, options } = payload;
+    const line = options.line
+      ? ticket.lines.find(l => l.id === options.line)
+      : null;
     const requireServiceReturnApproval = products.some(
       p =>
-        (isAReturn(ticket) ||
-          (options.line ? options.line.qty + p.qty : p.qty) < 0) &&
+        (isAReturn(ticket) || (line ? line.qty + p.qty : p.qty) < 0) &&
         p.product.productType === 'S' &&
         !p.product.ignoreReturnApproval
     );
@@ -590,7 +595,7 @@
     // the attributes for layaways accepts empty values, but for manage later easy to be null instead ""
     newPayload.attrs.attributeValue = attributeValue || null;
 
-    if (options && options.line) {
+    if (options.line) {
       newPayload.attrs.productHavingSameAttribute = true;
     } else {
       if (!checkSerialAttribute(product, attrs.attributeValue)) {
