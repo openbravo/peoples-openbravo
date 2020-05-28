@@ -16,11 +16,7 @@ OB.OBPOSPointOfSale.UI = OB.OBPOSPointOfSale.UI || {};
 //Window model
 OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
   models: [
-    OB.Model.BusinessPartner,
-    OB.Model.BPLocation,
     OB.Model.Order,
-    OB.Model.ChangedBusinessPartners,
-    OB.Model.ChangedBPlocation,
     OB.Model.CancelLayaway,
     OB.Model.CurrencyPanel,
     OB.Model.CashUp,
@@ -1618,7 +1614,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     this.set('filter', []);
     this.set('brandFilter', []);
 
-    function searchCurrentBP(callback) {
+    async function searchCurrentBP(callback) {
       var errorCallback = function() {
         OB.error(
           OB.I18N.getLabel('OBPOS_BPInfoErrorTitle') +
@@ -1653,7 +1649,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         if (dataBps) {
           var partnerAddressId = OB.MobileApp.model.get('terminal')
             .partnerAddress;
-          dataBps.loadBPLocations(null, null, function(
+          dataBps.loadBPLocations(null, null, async function(
             shipping,
             billing,
             locations
@@ -1672,13 +1668,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             dataBps.setBPLocations(shipping, billing, true);
             dataBps.set('locations', locations);
             OB.MobileApp.model.set('businessPartner', dataBps);
-            OB.Dal.save(
-              dataBps,
-              function() {},
-              function() {
-                OB.error(arguments);
-              }
-            );
             me.loadUnpaidOrders(function() {
               OB.Taxes.Pos.initCache(function() {
                 OB.Discounts.Pos.initCache(function() {
@@ -1744,24 +1733,54 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           });
         }
       }
-      var checkBPInLocal = function() {
+      let checkBPInLocal;
+      if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+        checkBPInLocal = function() {
+          OB.Dal.get(
+            OB.Model.BusinessPartner,
+            OB.MobileApp.model.get('businesspartner'),
+            successCallbackBPs,
+            errorCallback,
+            errorCallback,
+            null,
+            true
+          );
+        };
         OB.Dal.get(
           OB.Model.BusinessPartner,
           OB.MobileApp.model.get('businesspartner'),
           successCallbackBPs,
-          errorCallback,
-          errorCallback,
-          null,
-          true
+          checkBPInLocal,
+          errorCallback
         );
-      };
-      OB.Dal.get(
-        OB.Model.BusinessPartner,
-        OB.MobileApp.model.get('businesspartner'),
-        successCallbackBPs,
-        checkBPInLocal,
-        errorCallback
-      );
+      } else {
+        checkBPInLocal = async function() {
+          try {
+            let businessPartner = await OB.App.MasterdataModels.BusinessPartner.withId(
+              OB.MobileApp.model.get('businesspartner')
+            );
+            successCallbackBPs(
+              OB.Dal.transform(OB.Model.BusinessPartner, businessPartner)
+            );
+          } catch (error) {
+            errorCallback(error);
+          }
+        };
+        try {
+          let businessPartner = await OB.App.MasterdataModels.BusinessPartner.withId(
+            OB.MobileApp.model.get('businesspartner')
+          );
+          if (businessPartner !== undefined) {
+            successCallbackBPs(
+              OB.Dal.transform(OB.Model.BusinessPartner, businessPartner)
+            );
+          } else {
+            checkBPInLocal();
+          }
+        } catch (error) {
+          errorCallback(error);
+        }
+      }
     }
 
     //Because in terminal we've the BP id and we want to have the BP model.

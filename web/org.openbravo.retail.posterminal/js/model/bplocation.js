@@ -21,6 +21,8 @@
     local: false,
     remote: 'OBPOS_remote.customer',
     paginationById: true,
+    indexDBModel: OB.App.MasterdataModels.BusinessPartnerLocation.getName(),
+    legacyModel: true,
     saveCustomerAddr: function(callback, callbackError) {
       if (!this.get('isBillTo') && !this.get('isShipTo')) {
         OB.UTIL.showError(
@@ -44,16 +46,15 @@
         OB.DATA.executeCustomerAddressSave(this, callback, callbackError);
       } else {
         this.trigger('customerAddrSaved');
-        callback();
+        setTimeout(callback, 100);
       }
 
       return true;
     },
-    loadById: function(CusAddrId, userCallback) {
+    loadById: async function(CusAddrId, userCallback) {
       //search data in local DB and load it to this
-      var me = this;
-      OB.Dal.get(OB.Model.BPLocation, CusAddrId, function(customerAddr) {
-        //OB.Dal.find success
+
+      function successCallback(customerAddr) {
         if (!customerAddr || customerAddr.length === 0) {
           me.clearModelWith(null);
           userCallback(me);
@@ -61,7 +62,21 @@
           me.clearModelWith(customerAddr);
           userCallback(me);
         }
-      });
+      }
+      const me = this;
+
+      if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+        OB.Dal.get(OB.Model.BPLocation, CusAddrId, successCallback);
+      } else {
+        try {
+          let bPLocation = await OB.App.MasterdataModels.BusinessPartnerLocation.withId(
+            CusAddrId
+          );
+          successCallback(OB.Dal.transform(OB.Model.BPLocation, bPLocation));
+        } catch (error) {
+          OB.error(error);
+        }
+      }
     },
     loadModel: function(customerAddr, userCallback) {
       //search data in local DB and load it to this
