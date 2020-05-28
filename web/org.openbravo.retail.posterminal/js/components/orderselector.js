@@ -647,11 +647,11 @@ enyo.kind({
       obposPrepaymentlimitamt,
       payment;
 
-    const isInvoiceCreated = order => {
+    const isInvoiceCreated = (order, orderLines) => {
       let invoiceCreated = false;
       if (order.invoiceTerms === 'O') {
         // After Order Delivered -> invoice will be generated if full order is delivered
-        invoiceCreated = !order.lines.find(
+        invoiceCreated = !orderLines.find(
           line => line.qtyPending !== line.toPrepare
         );
       } else if (order.invoiceTerms === 'D') {
@@ -886,8 +886,16 @@ enyo.kind({
                 }
               });
 
-              groupedLinesToPrepare.forEach(async order => {
-                if (isInvoiceCreated(order)) {
+              Object.keys(
+                _.groupBy(groupedLinesToPrepare, l => l.order)
+              ).forEach(async key => {
+                const order = _.last(
+                  groupedLinesToPrepare.filter(l => l.order === key)
+                );
+                const orderLines = groupedLinesToPrepare
+                  .filter(l => l.order === key)
+                  .flatMap(l => l.lines);
+                if (isInvoiceCreated(order, orderLines)) {
                   const {
                     sequenceName,
                     sequenceNumber,
