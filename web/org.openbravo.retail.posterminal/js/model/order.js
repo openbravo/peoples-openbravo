@@ -107,6 +107,12 @@
         : OB.DEC.Zero;
     },
 
+    getInvoicedQuantity: function() {
+      return this.has('invoicedQuantity')
+        ? this.get('invoicedQuantity')
+        : OB.DEC.Zero;
+    },
+
     printQty: function() {
       return OB.DEC.toNumber(
         OB.DEC.toBigDecimal(this.get('qty')),
@@ -2814,15 +2820,31 @@
           const relatedLine = this.get('lines').find(
             line => line.id === relatedProduct.orderlineId
           );
-          if (relatedLine && relatedLine.get('product').has('oldTaxCategory')) {
-            relatedLine
-              .get('product')
-              .set(
-                'taxCategory',
-                relatedLine.get('product').get('oldTaxCategory')
-              );
-            relatedLine.get('product').unset('oldTaxCategory');
-            relatedLine.set('recalculateTax', true);
+          if (
+            relatedLine &&
+            relatedLine.get('previousPrice') &&
+            relatedLine.get('product').has('previousTaxCategory')
+          ) {
+            relatedLine.set(
+              {
+                price: relatedLine.get('previousPrice'),
+                previousPrice: null
+              },
+              {
+                silent: true
+              }
+            );
+            relatedLine.get('product').set(
+              {
+                taxCategory: relatedLine
+                  .get('product')
+                  .get('previousTaxCategory'),
+                previousTaxCategory: null
+              },
+              {
+                silent: true
+              }
+            );
           }
         });
       }
@@ -4318,7 +4340,12 @@
           'productBOM',
           productBOM.map(bomLine => {
             return {
-              amount: OB.DEC.mul(bomLine.bomprice, bomLine.bomquantity),
+              grossAmount: me.get('priceIncludesTax')
+                ? OB.DEC.mul(bomLine.bomprice, bomLine.bomquantity)
+                : undefined,
+              netAmount: me.get('priceIncludesTax')
+                ? undefined
+                : OB.DEC.mul(bomLine.bomprice, bomLine.bomquantity),
               qty: bomLine.bomquantity,
               product: {
                 id: bomLine.bomproduct,
@@ -5158,6 +5185,29 @@
               );
             }
           }
+          if (line.get('obrdmDeliveryMode') === 'HomeDelivery') {
+            line.set(
+              'country',
+              OB.MobileApp.model.receipt.get('bp').get('shipLocId')
+                ? OB.MobileApp.model.receipt
+                    .get('bp')
+                    .get('locationModel')
+                    .get('countryId')
+                : null
+            );
+            line.set(
+              'region',
+              OB.MobileApp.model.receipt.get('bp').get('shipLocId')
+                ? OB.MobileApp.model.receipt
+                    .get('bp')
+                    .get('locationModel')
+                    .get('regionId')
+                : null
+            );
+          } else {
+            line.set('country', line.get('organization').country);
+            line.set('region', line.get('organization').region);
+          }
         };
         if (
           me.validateAllowSalesWithReturn(
@@ -5249,23 +5299,51 @@
                       relatedLine
                         .get('product')
                         .set(
-                          'oldTaxCategory',
+                          'previousTaxCategory',
                           relatedLine.get('product').get('taxCategory')
                         );
+                      relatedLine.set(
+                        'previousPrice',
+                        relatedLine.get('price')
+                      );
                       relatedLine
                         .get('product')
                         .set(
                           'taxCategory',
                           productServiceLinked.get('taxCategory')
                         );
-                      relatedLine.set(
-                        'previousLineRate',
-                        relatedLine.get('lineRate')
-                      );
-                      relatedLine.set('recalculateTax', true);
                     }
                   });
               });
+
+            if (
+              me.get('priceIncludesTax') &&
+              me
+                .get('lines')
+                .find(line => line.get('previousPrice') && line.get('lineRate'))
+            ) {
+              const taxes = OB.Taxes.Pos.calculateTaxes(me);
+              me.get('lines')
+                .filter(
+                  line => line.get('previousPrice') && line.get('lineRate')
+                )
+                .forEach(line => {
+                  const lineTax = taxes.lines.find(lt => lt.id === line.id);
+                  line.set(
+                    'price',
+                    OB.DEC.mul(
+                      OB.DEC.div(
+                        line.get('previousPrice'),
+                        line.get('lineRate')
+                      ),
+                      lineTax.taxRate
+                    ),
+                    {
+                      silent: true
+                    }
+                  );
+                });
+            }
           }
         }
 
@@ -9944,10 +10022,22 @@
           deliveredNotInvoicedLine = _.find(this.get('lines').models, function(
             line
           ) {
-            return line.getDeliveredQuantity() !== line.get('invoicedQuantity');
+            return line.getDeliveredQuantity() !== line.getInvoicedQuantity();
           });
           receiptShouldBeInvoiced = !_.isUndefined(deliveredNotInvoicedLine);
         }
+      }
+
+      if (
+        receiptShouldBeInvoiced &&
+        (this.get('fullInvoice') ||
+          this.getInvoiceTerms() === 'D' ||
+          this.getInvoiceTerms() === 'O') &&
+        !this.get('bp').get('taxID')
+      ) {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
+        finalCallback();
+        return;
       }
 
       if (receiptShouldBeInvoiced) {
@@ -9970,7 +10060,7 @@
 
         this.get('lines').forEach(function(ol) {
           var originalQty = ol.get('qty'),
-            qtyAlreadyInvoiced = ol.get('invoicedQuantity') || OB.DEC.Zero,
+            qtyAlreadyInvoiced = ol.getInvoicedQuantity(),
             qtyPendingToBeInvoiced = OB.DEC.sub(
               ol.get('qty'),
               qtyAlreadyInvoiced
@@ -10766,7 +10856,31 @@
                     attSetInstanceDesc: iter.attSetInstanceDesc
                       ? iter.attSetInstanceDesc
                       : null,
-                    lineGrossAmount: iter.lineGrossAmount
+                    lineGrossAmount: iter.lineGrossAmount,
+                    country:
+                      iter.obrdmDeliveryMode === 'HomeDelivery'
+                        ? order.get('bp').get('shipLocId')
+                          ? order
+                              .get('bp')
+                              .get('locationModel')
+                              .get('countryId')
+                          : null
+                        : iter.organization
+                        ? iter.organization.country
+                        : OB.MobileApp.model.get('terminal')
+                            .organizationCountryId,
+                    region:
+                      iter.obrdmDeliveryMode === 'HomeDelivery'
+                        ? order.get('bp').get('shipLocId')
+                          ? order
+                              .get('bp')
+                              .get('locationModel')
+                              .get('regionId')
+                          : null
+                        : iter.organization
+                        ? iter.organization.region
+                        : OB.MobileApp.model.get('terminal')
+                            .organizationRegionId
                   });
 
                   if (!order.get('isQuotation')) {
@@ -11501,6 +11615,12 @@
           'orderManualPromotions',
           new OB.Collection.OrderManualPromotionsList()
         );
+        if (
+          OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)
+        ) {
+          order.set('obrdmDeliveryModeProperty', 'PickAndCarry');
+        }
+
         OB.UTIL.HookManager.executeHooks('OBPOS_NewReceipt', {
           newOrder: order
         });

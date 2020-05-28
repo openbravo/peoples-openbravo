@@ -103,9 +103,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
         "model/currencypanel", "model/productcharacteristicvalue", "model/characteristicvalue",
         "model/characteristic", "model/terminal-model", "model/paymentmethodcashup",
-        "model/taxcashup", "model/offlineprinter", "model/orderassociationsfilter",
-        "model/product-servicelinked", "model/prepaymentrules", "components/modalcancel",
-        "components/subwindow", "components/leftsubwindow", "components/modalreceiptproperties",
+        "model/taxcashup", "model/orderassociationsfilter", "model/product-servicelinked",
+        "model/prepaymentrules", "components/modalcancel", "components/subwindow",
+        "components/leftsubwindow", "components/modalreceiptproperties",
         "components/modalreceiptlineproperties", "components/modalnoteditableorder",
         "components/modalnoteditableline", "components/modalmodulesindev",
         "components/modalselectprinters", "components/modalmorepaymentmethods",
@@ -256,9 +256,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
         // Delivery Mode
         "utils/deliveryModeUtils", "hookPreOrderSave", "hookPreDeleteLine",
-        "hookPostUndo_DeleteLine", "receiptEdit", "receiptMultiLineEdit", "hookNewReceipt",
-        "hookRenderOrderLine", "hookPrePayment", "hookPreSetPaymentsToReceipt",
-        "components/menuissue", "model/dmorderfilter", "model/ordertoissue", "utils/utils",
+        "hookPostUndo_DeleteLine", "receiptEdit", "receiptMultiLineEdit", "hookRenderOrderLine",
+        "hookPrePayment", "hookPreSetPaymentsToReceipt", "components/menuissue",
+        "model/dmorderfilter", "model/ordertoissue", "utils/utils",
 
         "model/ordertoselectorissue", "components/orderselector",
         "components/modalwarehouseselector", "components/orderlineinfopopup",
@@ -325,6 +325,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/business-object/document-sequence/DocumentSequenceUtils");
     appDependency.add("model/business-object/document-sequence/actions/InitializeSequence");
     appDependency.add("model/business-object/document-sequence/actions/IncreaseSequence");
+    appDependency.add("model/business-object/document-sequence/actions/DecreaseSequence");
 
     for (final String resource : appDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,

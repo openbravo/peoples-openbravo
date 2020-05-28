@@ -648,14 +648,23 @@ enyo.kind({
       payment;
 
     const isInvoiceCreated = order => {
-      if (order.bp.invoiceTerms === 'O') {
+      let invoiceCreated = false;
+      if (order.invoiceTerms === 'O') {
         // After Order Delivered -> invoice will be generated if full order is delivered
-        return !order.lines.find(line => line.qtyPending !== line.toPrepare);
-      } else if (order.bp.invoiceTerms === 'D') {
+        invoiceCreated = !order.lines.find(
+          line => line.qtyPending !== line.toPrepare
+        );
+      } else if (order.invoiceTerms === 'D') {
         // After Delivery -> invoice will be generated for delivered lines
-        return true;
+        invoiceCreated = true;
       }
-      return false;
+
+      if (invoiceCreated && !order.bp.taxID) {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
+        return false;
+      }
+
+      return invoiceCreated;
     };
 
     function continueExecution(model) {
@@ -855,6 +864,7 @@ enyo.kind({
                     printDate: OB.I18N.formatDate(new Date()),
                     headerDescription: line.headerDescription,
                     orderTotal: line.orderTotal,
+                    invoiceTerms: line.invoiceTerms,
                     lines: [],
                     order: null
                   };
@@ -907,12 +917,21 @@ enyo.kind({
                         orders: groupedLinesToPrepare
                       },
                       function(data) {
-                        var message;
                         if (data && data.exception) {
-                          message = data.exception.status.errorMessage;
+                          if (data.exception.inSender !== 'timeout') {
+                            groupedLinesToPrepare.forEach(async order => {
+                              if (order.invoiceDocumentNo) {
+                                await OB.App.State.DocumentSequence.decreaseSequence(
+                                  {
+                                    sequenceName: 'fullinvoiceslastassignednum'
+                                  }
+                                );
+                              }
+                            });
+                          }
                           OB.UTIL.showConfirmation.display(
                             OB.I18N.getLabel('OBMOBC_Error'),
-                            message,
+                            data.exception.status.errorMessage,
                             [
                               {
                                 label: OB.I18N.getLabel('OBMOBC_LblOk'),
@@ -1095,7 +1114,7 @@ enyo.kind({
               obposPrepaymentamt: iter.obposPrepaymentamt,
               obposPrepaymentlimitamt: iter.obposPrepaymentlimitamt,
               payment: iter.payment,
-              invoiceTerms: iter.bpInvoiceTerms
+              taxID: iter.bpTaxID
             };
             order = new OB.Model.OBRDM_OrderToSelectorIssue({
               id: iter.orderId,

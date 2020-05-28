@@ -14,7 +14,7 @@
     getLineTaxes(line, rules) {
       const parentTaxId = OB.Taxes.Tax.getParentTaxId(rules[0]);
       const lineGrossAmount = line.amount;
-      const lineGrossPrice = OB.Taxes.Tax.calculatePriceFromAmount(
+      const lineGrossUnitPrice = OB.Taxes.Tax.calculatePriceFromAmount(
         lineGrossAmount,
         line.qty
       );
@@ -22,7 +22,7 @@
         lineGrossAmount,
         rules
       );
-      const lineNetPrice = OB.Taxes.Tax.calculatePriceFromAmount(
+      const lineNetUnitPrice = OB.Taxes.Tax.calculatePriceFromAmount(
         lineNetAmount,
         line.qty
       );
@@ -37,8 +37,8 @@
         id: line.id,
         grossAmount: lineGrossAmount,
         netAmount: lineNetAmount,
-        grossPrice: lineGrossPrice,
-        netPrice: lineNetPrice,
+        grossUnitPrice: lineGrossUnitPrice,
+        netUnitPrice: lineNetUnitPrice,
         qty: line.qty,
         tax: parentTaxId,
         taxRate: lineTaxRate,
@@ -117,7 +117,7 @@
             : line2;
         });
         line.netAmount = OB.DEC.add(line.netAmount, adjustment);
-        line.netPrice = OB.Taxes.Tax.calculatePriceFromAmount(
+        line.netUnitPrice = OB.Taxes.Tax.calculatePriceFromAmount(
           line.netAmount,
           line.qty
         );

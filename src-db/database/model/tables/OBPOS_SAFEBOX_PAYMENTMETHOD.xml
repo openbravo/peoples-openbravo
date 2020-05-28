@@ -124,5 +124,13 @@
         <unique-column name="FIN_FINANCIAL_ACCOUNT_ID"/>
         <unique-column name="FIN_PAYMENTMETHOD_ID"/>
       </unique>
+      <check name="OBPOS_SB_PM_ALLOWDONTMOVE_CHK"><![CDATA[ALLOWDONTMOVE IN ('Y', 'N')]]></check>
+      <check name="OBPOS_SB_PM_ALLOWMOVEEVER_CHK"><![CDATA[ALLOWMOVEEVERYTHING IN ('Y', 'N')]]></check>
+      <check name="OBPOS_SB_PM_ALLOWVARAMT_CHK"><![CDATA[ALLOWVARIABLEAMOUNT IN ('Y', 'N')]]></check>
+      <check name="OBPOS_SB_PM_AUTOMATEMOVE_CHK"><![CDATA[AUTOMATEMOVEMENTTOOTHER IN ('Y', 'N')]]></check>
+      <check name="OBPOS_SB_PM_COUNTCASH_CHK"><![CDATA[COUNTCASH IN ('Y', 'N')]]></check>
+      <check name="OBPOS_SB_PM_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="OBPOS_SB_PM_ISCASH_CHK"><![CDATA[ISCASH IN ('Y', 'N')]]></check>
+      <check name="OBPOS_SB_PM_KEEPFIXAMT_CHK"><![CDATA[KEEPFIXEDAMOUNT IN ('Y', 'N')]]></check>
     </table>
   </database>

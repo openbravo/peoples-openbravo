@@ -24,7 +24,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     OB.Model.CancelLayaway,
     OB.Model.CurrencyPanel,
     OB.Model.CashUp,
-    OB.Model.OfflinePrinter,
     OB.Model.PaymentMethodCashUp,
     OB.Model.TaxCashUp
   ],

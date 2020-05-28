@@ -164,7 +164,9 @@ public class IssueSalesOrderLines extends JSONProcessSimple {
   }
 
   private BigDecimal getQtyDeliveredByOrderLine(final String orderLineId) {
-    return OBDal.getInstance().getProxy(OrderLine.class, orderLineId).getDeliveredQuantity();
+    final OrderLine orderLine = OBDal.getInstance().get(OrderLine.class, orderLineId);
+    OBDal.getInstance().refresh(orderLine);
+    return orderLine.getDeliveredQuantity();
   }
 
   /**

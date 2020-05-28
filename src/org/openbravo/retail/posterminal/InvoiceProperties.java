@@ -25,6 +25,7 @@ public class InvoiceProperties extends ModelExtension {
       private static final long serialVersionUID = 1L;
       {
         add(new HQLProperty("inv.documentNo", "documentNo"));
+        add(new HQLProperty("ord.documentNo", "orderDocumentNo"));
         add(new HQLProperty("inv.invoiceDate", "orderDate"));
         add(new HQLProperty("inv.creationDate", "creationDate"));
         add(new HQLProperty("inv.businessPartner.id", "bp"));
