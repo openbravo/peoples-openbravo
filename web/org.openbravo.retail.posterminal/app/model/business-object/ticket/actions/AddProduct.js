@@ -503,12 +503,9 @@
 
     const toProductWithCharacteristics = async productInfo => {
       const { product } = productInfo;
-      const criteria = new OB.App.Class.Criteria()
-        .criterion('product', product.id)
-        .build();
       try {
         const productCharacteristics = await OB.App.MasterdataModels.ProductCharacteristicValue.find(
-          criteria
+          new OB.App.Class.Criteria().criterion('product', product.id).build()
         );
         return {
           ...productInfo,
@@ -516,7 +513,9 @@
         };
       } catch (error) {
         throw new OB.App.Class.ActionCanceled({
-          errorConfirmation: 'OBMOBC_Error' // TODO: create AD_Message for this
+          errorConfirmation: 'OBPOS_CouldNotFindCharacteristics',
+          // eslint-disable-next-line no-underscore-dangle
+          messageParams: [product._identifier]
         });
       }
     };
