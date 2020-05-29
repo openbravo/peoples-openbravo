@@ -133,7 +133,7 @@
         and o.em_obpos_notinvoiceoncashup = 'N'
         and o.iscashvat = i.iscashvat
         and i.documentno = ?
-        and i.c_bpartner_id = o.c_bpartner_id and coalesce(i.bpartner_extref, '1')=coalesce(o.bpartner_extref, '1') and i.c_bpartner_location_id = coalesce(o.billto_id, o.c_bpartner_location_id)
+        and i.c_bpartner_id = o.c_bpartner_id and coalesce(i.bpartner_extref, n'1') = coalesce(o.bpartner_extref, n'1') and i.c_bpartner_location_id = coalesce(o.billto_id, o.c_bpartner_location_id)
         and coalesce(i.ad_user_id, '1') = coalesce(o.ad_user_id, '1')
         group by i.ad_client_id, i.ad_org_id, i.created, i.createdby, i.updated, i.updatedby,
         i.c_invoice_id, ol.c_orderline_id, ol.description, ol.m_product_id,
