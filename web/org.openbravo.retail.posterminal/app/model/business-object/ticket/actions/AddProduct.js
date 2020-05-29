@@ -313,29 +313,6 @@
     }
   }
 
-  async function checkApprovals(ticket, payload) {
-    const { products, options } = payload;
-    const line = options.line
-      ? ticket.lines.find(l => l.id === options.line)
-      : null;
-    const requireServiceReturnApproval = products.some(p => {
-      const qty = isAReturn(ticket) ? -p.qty : p.qty;
-      return (
-        (line ? line.qty + qty : qty) < 0 &&
-        p.product.productType === 'S' &&
-        !p.product.ignoreReturnApproval
-      );
-    });
-    if (requireServiceReturnApproval) {
-      const newPayload = await OB.App.Security.requestApprovalForAction(
-        'OBPOS_approval.returnService',
-        payload
-      );
-      return newPayload;
-    }
-    return payload;
-  }
-
   async function prepareScaleProducts(payload) {
     const { products } = payload;
     if (!products.some(pi => pi.product.obposScale)) {
@@ -617,6 +594,29 @@
       }
     }
     return newPayload;
+  }
+
+  async function checkApprovals(ticket, payload) {
+    const { products, options } = payload;
+    const line = options.line
+      ? ticket.lines.find(l => l.id === options.line)
+      : null;
+    const requireServiceReturnApproval = products.some(p => {
+      const qty = isAReturn(ticket) ? -p.qty : p.qty;
+      return (
+        (line ? line.qty + qty : qty) < 0 &&
+        p.product.productType === 'S' &&
+        !p.product.ignoreReturnApproval
+      );
+    });
+    if (requireServiceReturnApproval) {
+      const newPayload = await OB.App.Security.requestApprovalForAction(
+        'OBPOS_approval.returnService',
+        payload
+      );
+      return newPayload;
+    }
+    return payload;
   }
 
   async function checkStock(ticket, payload) {
