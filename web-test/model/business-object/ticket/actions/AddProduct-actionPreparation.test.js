@@ -14,6 +14,7 @@ OB = {
   App: {
     StateBackwardCompatibility: { setProperties: jest.fn() },
     Class: {},
+    MasterdataModels: { ProductBOM: { find: jest.fn() } },
     Security: { hasPermission: jest.fn(), requestApprovalForAction: jest.fn() },
     View: { DialogUIHandler: { inputData: jest.fn() } }
   },
@@ -30,9 +31,11 @@ OB = {
 
   Taxes: {
     Pos: {
-      taxCategoryBOM: []
+      taxCategoryBOM: [{ id: 'FF80818123B7FC160123B804AB8C0019' }]
     }
-  }
+  },
+
+  error: jest.fn()
 };
 
 global.lodash = require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/lodash-4.17.15');
@@ -53,6 +56,12 @@ require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/AddProduct');
 
 require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/util/UUID');
+
+OB.App.Class.Criteria = class MockedCriteria {
+  criterion() {
+    return { build: jest.fn() };
+  }
+};
 
 const Product = {
   regular: {
@@ -225,11 +234,12 @@ describe('addProduct preparation', () => {
     });
 
     it('not returnable check (1)', async () => {
+      const unReturnableProduct = { ...Product.regular, returnable: false };
       await expectError(
         () =>
           prepareAction(
             {
-              products: [{ product: { ...Product.regular, returnable: false } }]
+              products: [{ product: unReturnableProduct, qty: 1 }]
             },
             Ticket.emptyReturn
           ),
@@ -240,13 +250,12 @@ describe('addProduct preparation', () => {
     });
 
     it('not returnable check (2)', async () => {
+      const unReturnableProduct = { ...Product.regular, returnable: false };
       await expectError(
         () =>
           prepareAction(
             {
-              products: [
-                { product: { ...Product.regular, returnable: false }, qty: 1 }
-              ],
+              products: [{ product: unReturnableProduct, qty: 1 }],
               options: { line: '1' }
             },
             Ticket.returnedLine
@@ -348,18 +357,99 @@ describe('addProduct preparation', () => {
     });
   });
 
+  describe('prepare BOM', () => {
+    it('product has BOM', async () => {
+      OB.App.MasterdataModels.ProductBOM.find.mockResolvedValueOnce([
+        {
+          active: true,
+          bomprice: 15,
+          bomproduct: 'F0659DF0BC634D38855D4D86082B7AA1',
+          bomquantity: 2,
+          bomtaxcategory: 'FF80818123B7FC160123B804AB8C0019',
+          id: '32182CDA9D544392A092A913A68AFEC1',
+          product: Product.regular.id
+        }
+      ]);
+      const productWithBOM = {
+        ...Product.regular,
+        taxCategory: 'FF80818123B7FC160123B804AB8C0019'
+      };
+      const payload = {
+        products: [{ product: productWithBOM, qty: 1 }]
+      };
+      const newPayload = await prepareAction(payload, Ticket.empty);
+      expect(newPayload.products[0]).toEqual({
+        product: {
+          ...payload.products[0].product,
+          productBOM: [
+            {
+              amount: 30,
+              qty: 2,
+              product: {
+                id: 'F0659DF0BC634D38855D4D86082B7AA1',
+                taxCategory: 'FF80818123B7FC160123B804AB8C0019'
+              }
+            }
+          ]
+        },
+        qty: 1
+      });
+    });
+
+    it('product has no BOM', async () => {
+      OB.App.MasterdataModels.ProductBOM.find.mockResolvedValueOnce([]);
+      const productWithBOM = {
+        ...Product.regular,
+        taxCategory: 'FF80818123B7FC160123B804AB8C0019'
+      };
+      const payload = {
+        products: [{ product: productWithBOM, qty: 1 }]
+      };
+      const newPayload = await prepareAction(payload, Ticket.empty);
+      expect(newPayload.products).toEqual(payload.products);
+    });
+
+    it('product BOM nas no price', async () => {
+      OB.App.MasterdataModels.ProductBOM.find.mockResolvedValueOnce([
+        {
+          active: true,
+          bomproduct: 'F0659DF0BC634D38855D4D86082B7AA1',
+          bomquantity: 2,
+          bomtaxcategory: 'FF80818123B7FC160123B804AB8C0019',
+          id: '32182CDA9D544392A092A913A68AFEC1',
+          product: Product.regular.id
+        }
+      ]);
+      const productWithBOM = {
+        ...Product.regular,
+        taxCategory: 'FF80818123B7FC160123B804AB8C0019'
+      };
+      await expectError(
+        () =>
+          prepareAction({
+            products: [{ product: productWithBOM }]
+          }),
+        {
+          errorConfirmation: 'OBPOS_BOM_NoPrice'
+        }
+      );
+    });
+  });
+
   describe('approvals', () => {
     it('return service accepted approval', async () => {
-      const expected = {
+      const payloadWithApproval = {
         products: [{ product: Product.service }],
         approvals: ['OBPOS_approval.returnService']
       };
-      OB.App.Security.requestApprovalForAction.mockResolvedValue(expected);
+      OB.App.Security.requestApprovalForAction.mockResolvedValue(
+        payloadWithApproval
+      );
       const newPayload = await prepareAction(
         { products: [{ product: Product.service }] },
         Ticket.emptyReturn
       );
-      expect(newPayload).toEqual(expected);
+      expect(newPayload).toEqual(payloadWithApproval);
     });
 
     it('return service rejected approval', async () => {
