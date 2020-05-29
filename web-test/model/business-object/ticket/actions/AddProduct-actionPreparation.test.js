@@ -14,7 +14,10 @@ OB = {
   App: {
     StateBackwardCompatibility: { setProperties: jest.fn() },
     Class: {},
-    MasterdataModels: { ProductBOM: { find: jest.fn() } },
+    MasterdataModels: {
+      ProductBOM: { find: jest.fn() },
+      ProductCharacteristicValue: { find: jest.fn() }
+    },
     Security: { hasPermission: jest.fn(), requestApprovalForAction: jest.fn() },
     View: { DialogUIHandler: { inputData: jest.fn() } }
   },
@@ -431,6 +434,62 @@ describe('addProduct preparation', () => {
           }),
         {
           errorConfirmation: 'OBPOS_BOM_NoPrice'
+        }
+      );
+    });
+  });
+
+  describe('prepare product characteristics', () => {
+    it('product has characteristics', async () => {
+      const characteristics = [
+        {
+          active: true,
+          characteristic: '015D6C6072AC4A13B7573A261B2011BC',
+          characteristicValue: 'C6A9CF2813DC49C1BE5A9A6094DD967E',
+          id: '1983C55A254D41A7AD2E17E84CA5F70A',
+          obposFilteronwebpos: true,
+          product: Product.regular.id,
+          _identifier: 'Color'
+        }
+      ];
+      OB.App.MasterdataModels.ProductCharacteristicValue.find.mockResolvedValueOnce(
+        characteristics
+      );
+      const productWithCharacteritics = {
+        ...Product.regular,
+        _identifier: 'productWithCharacteristics',
+        characteristicDescription: 'Color: Black/Silver'
+      };
+      const payload = {
+        products: [{ product: productWithCharacteritics, qty: 1 }]
+      };
+      const newPayload = await prepareAction(payload, Ticket.empty);
+      expect(newPayload.products[0]).toEqual({
+        product: {
+          ...payload.products[0].product,
+          productCharacteristics: characteristics
+        },
+        qty: 1
+      });
+    });
+
+    it('could not get characteristics', async () => {
+      OB.App.MasterdataModels.ProductCharacteristicValue.find.mockRejectedValueOnce(
+        new Error()
+      );
+      const productWithCharacteritics = {
+        ...Product.regular,
+        _identifier: 'productWithCharacteristics',
+        characteristicDescription: 'Color: Black/Silver'
+      };
+      await expectError(
+        () =>
+          prepareAction({
+            products: [{ product: productWithCharacteritics }]
+          }),
+        {
+          errorConfirmation: 'OBPOS_CouldNotFindCharacteristics',
+          messageParams: ['productWithCharacteristics']
         }
       );
     });
