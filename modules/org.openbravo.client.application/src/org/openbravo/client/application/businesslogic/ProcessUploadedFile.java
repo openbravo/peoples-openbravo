@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2019 Openbravo SLU 
+ * All portions are Copyright (C) 2019-2020 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):
  ************************************************************************
@@ -42,7 +42,9 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.service.db.DbUtility;
 
 /**
  * Generic base class to be extended to implement an import by uploading a file. The actual
@@ -89,7 +91,10 @@ public abstract class ProcessUploadedFile extends HttpSecureAppServlet {
     } catch (Exception e) {
       log.error("Error uploading file", e);
       try {
-        printResponse(response, paramValues, null, e.getMessage());
+        final Throwable ex = DbUtility
+                .getUnderlyingSQLException(e.getCause() != null ? e.getCause() : e);
+        final OBError errMsg = OBMessageUtils.translateError(ex.getMessage());
+        printResponse(response, paramValues, new JSONObject(), errMsg.getMessage());
       } catch (Exception e2) {
         log.error("Error sending error message", e2);
         throw new OBException(
