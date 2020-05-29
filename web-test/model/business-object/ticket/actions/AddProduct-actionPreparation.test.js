@@ -166,77 +166,6 @@ describe('addProduct preparation', () => {
     OB.App.StockChecker.hasStock = jest.fn().mockResolvedValue(true);
   });
 
-  describe('scale products', () => {
-    it('more than one is not allowed', async () => {
-      await expect(
-        prepareAction({
-          products: [{ product: Product.scale }, { product: Product.scale }]
-        })
-      ).rejects.toThrow('Cannot handle more than one scale product');
-    });
-
-    it('calls scale once', async () => {
-      await prepareAction({
-        products: [{ product: Product.scale }]
-      });
-
-      expect(OB.POS.hwserver.getAsyncWeight).toHaveBeenCalledTimes(1);
-    });
-
-    it('scale value is used as qty', async () => {
-      const newPayload = await prepareAction({
-        products: [{ product: Product.scale }]
-      });
-
-      expect(newPayload).toMatchObject({ products: [{ qty: 10 }] });
-    });
-
-    it('fails when scale returns 0', async () => {
-      OB.POS.hwserver.getAsyncWeight.mockImplementation(() =>
-        Promise.resolve({ result: 0 })
-      );
-
-      await expectError(
-        () =>
-          prepareAction({
-            products: [{ product: Product.scale }]
-          }),
-        {
-          errorConfirmation: 'OBPOS_WeightZero'
-        }
-      );
-    });
-
-    it('handles with error offline scale', async () => {
-      OB.POS.hwserver.getAsyncWeight.mockImplementation(() =>
-        Promise.resolve({ exception: 1 })
-      );
-
-      await expectError(
-        () =>
-          prepareAction({
-            products: [{ product: Product.scale }]
-          }),
-        {
-          errorConfirmation: 'OBPOS_MsgScaleServerNotAvailable'
-        }
-      );
-    });
-  });
-
-  describe('stock check', () => {
-    it('handles no stock', async () => {
-      OB.App.StockChecker.hasStock.mockResolvedValueOnce(false);
-      await expect(
-        prepareAction({
-          products: [{ product: Product.regular }]
-        })
-      ).rejects.toThrow(
-        `Add product canceled: there is no stock of product ${Product.regular.id}`
-      );
-    });
-  });
-
   describe('check restrictions', () => {
     it('product without price check', async () => {
       await expectError(
@@ -345,6 +274,77 @@ describe('addProduct preparation', () => {
 
     it('product locked', async () => {
       // TODO once finished to implemented
+    });
+  });
+
+  describe('scale products', () => {
+    it('more than one is not allowed', async () => {
+      await expect(
+        prepareAction({
+          products: [{ product: Product.scale }, { product: Product.scale }]
+        })
+      ).rejects.toThrow('Cannot handle more than one scale product');
+    });
+
+    it('calls scale once', async () => {
+      await prepareAction({
+        products: [{ product: Product.scale }]
+      });
+
+      expect(OB.POS.hwserver.getAsyncWeight).toHaveBeenCalledTimes(1);
+    });
+
+    it('scale value is used as qty', async () => {
+      const newPayload = await prepareAction({
+        products: [{ product: Product.scale }]
+      });
+
+      expect(newPayload).toMatchObject({ products: [{ qty: 10 }] });
+    });
+
+    it('fails when scale returns 0', async () => {
+      OB.POS.hwserver.getAsyncWeight.mockImplementation(() =>
+        Promise.resolve({ result: 0 })
+      );
+
+      await expectError(
+        () =>
+          prepareAction({
+            products: [{ product: Product.scale }]
+          }),
+        {
+          errorConfirmation: 'OBPOS_WeightZero'
+        }
+      );
+    });
+
+    it('handles with error offline scale', async () => {
+      OB.POS.hwserver.getAsyncWeight.mockImplementation(() =>
+        Promise.resolve({ exception: 1 })
+      );
+
+      await expectError(
+        () =>
+          prepareAction({
+            products: [{ product: Product.scale }]
+          }),
+        {
+          errorConfirmation: 'OBPOS_MsgScaleServerNotAvailable'
+        }
+      );
+    });
+  });
+
+  describe('stock check', () => {
+    it('handles no stock', async () => {
+      OB.App.StockChecker.hasStock.mockResolvedValueOnce(false);
+      await expect(
+        prepareAction({
+          products: [{ product: Product.regular }]
+        })
+      ).rejects.toThrow(
+        `Add product canceled: there is no stock of product ${Product.regular.id}`
+      );
     });
   });
 
