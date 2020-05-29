@@ -536,23 +536,12 @@
   }
 
   async function prepareProductAttributes(ticket, payload) {
-    const { options, attrs } = payload;
+    const { options } = payload;
     const attributeSearchAllowed = OB.App.Security.hasPermission(
       'OBPOS_EnableSupportForProductAttributes'
     );
-    const isQuotationAndAttributeAllowed =
-      ticket.isQuotation &&
-      OB.App.Security.hasPermission(
-        'OBPOS_AskForAttributesWhenCreatingQuotation'
-      );
     const hasAttributes = productInfo => {
-      return (
-        !options.line &&
-        attributeSearchAllowed &&
-        productInfo.product.hasAttributes &&
-        productInfo.qty >= 1 &&
-        (!ticket.isQuotation || isQuotationAndAttributeAllowed)
-      );
+      return attributeSearchAllowed && productInfo.product.hasAttributes;
     };
 
     const checkSerialAttribute = (product, attributeValue) => {
@@ -577,27 +566,39 @@
     }
 
     const newPayload = { ...payload };
-    const { product } = products[0];
+    const { product, qty } = products[0];
 
-    const attributeValue = await OB.App.View.DialogUIHandler.inputData(
-      'modalProductAttribute',
-      newPayload.options
+    let attributeValue = null;
+    const isQuotationAndAttributeAllowed = OB.App.Security.hasPermission(
+      'OBPOS_AskForAttributesWhenCreatingQuotation'
     );
-
-    if (attributeValue === null || attributeValue === undefined) {
-      throw new OB.App.Class.ActionSilentlyCanceled(
-        `No attribute provided for product ${product.id}`
+    if (
+      !options.line &&
+      product.hasAttributes &&
+      qty >= 1 &&
+      (!ticket.isQuotation || isQuotationAndAttributeAllowed)
+    ) {
+      attributeValue = await OB.App.View.DialogUIHandler.inputData(
+        'modalProductAttribute',
+        newPayload.options
       );
+      if (attributeValue === null || attributeValue === undefined) {
+        throw new OB.App.Class.ActionSilentlyCanceled(
+          `No attribute provided for product ${product.id}`
+        );
+      }
+      if (lodash.isEmpty(attributeValue)) {
+        // the attributes for layaways accepts empty values, but for manage later easy to be null instead ""
+        attributeValue = null;
+      }
+      newPayload.attrs.attributeValue = attributeValue;
     }
 
     newPayload.attrs.attributeSearchAllowed = attributeSearchAllowed;
-    // the attributes for layaways accepts empty values, but for manage later easy to be null instead ""
-    newPayload.attrs.attributeValue = attributeValue || null;
-
     if (options.line) {
       newPayload.attrs.productHavingSameAttribute = true;
     } else {
-      if (!checkSerialAttribute(product, attrs.attributeValue)) {
+      if (!checkSerialAttribute(product, attributeValue)) {
         throw new OB.App.Class.ActionCanceled({
           errorConfirmation: 'OBPOS_ProductDefinedAsSerialNo'
         });
@@ -610,7 +611,9 @@
       );
       if (lineWithAttributeValue) {
         newPayload.attrs.productHavingSameAttribute = true;
-        newPayload.line = lineWithAttributeValue;
+        newPayload.line = lineWithAttributeValue.id;
+      } else {
+        newPayload.attrs.productHavingSameAttribute = false;
       }
     }
     return newPayload;
