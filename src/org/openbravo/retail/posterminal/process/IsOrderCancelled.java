@@ -23,13 +23,17 @@ import org.openbravo.mobile.core.servercontroller.MultiServerJSONProcess;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
+import org.openbravo.retail.posterminal.term.TerminalProperties;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IsOrderCancelled extends MultiServerJSONProcess {
   @Override
   public JSONObject execute(JSONObject jsonData) {
     JSONObject result = new JSONObject();
+    final Logger log = LoggerFactory.getLogger(TerminalProperties.class);
 
     OBContext.setAdminMode(true);
     try {
@@ -68,6 +72,7 @@ public class IsOrderCancelled extends MultiServerJSONProcess {
             }
           }
 
+          log.info("[IsOrderCancelled] Import Errors");
           final Query<Integer> importErrorQuery = OBDal.getInstance()
               .getSession()
               .createQuery("select 1 from OBPOS_Errors where client.id = :clientId "
@@ -81,6 +86,7 @@ public class IsOrderCancelled extends MultiServerJSONProcess {
                 OBMessageUtils.getI18NMessage("OBPOS_OrderPresentInImportErrorList", null));
           }
 
+          log.info("[IsOrderCancelled] checkNotEditableLines");
           if (jsonData.has("checkNotEditableLines")
               && jsonData.getBoolean("checkNotEditableLines")) {
             // Find the deferred services or the products that have related deferred services in the
@@ -94,6 +100,7 @@ public class IsOrderCancelled extends MultiServerJSONProcess {
             query.setParameter("orderId", orderId);
             result.put("deferredLines", query.list());
           }
+          log.info("[IsOrderCancelled] checkNotDeliveredDeferredServices");
           if (jsonData.has("checkNotDeliveredDeferredServices")
               && jsonData.getBoolean("checkNotDeliveredDeferredServices")) {
             // Find if there's any line in the ticket which is not delivered and has deferred
@@ -116,10 +123,13 @@ public class IsOrderCancelled extends MultiServerJSONProcess {
         throw new OBException(
             OBMessageUtils.getI18NMessage("OBPOS_OrderNotFound", new String[] { documentNo }));
       }
+      log.info("[IsOrderCancelled] Success");
       result.put("status", JsonConstants.RPCREQUEST_STATUS_SUCCESS);
     } catch (JSONException e) {
+      log.info("[IsOrderCancelled] Exception");
       throw new OBException("Error while canceling and order", e);
     } finally {
+      log.info("[IsOrderCancelled] Final");
       OBContext.restorePreviousMode();
     }
     return result;
