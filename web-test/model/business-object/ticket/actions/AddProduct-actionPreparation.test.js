@@ -67,42 +67,12 @@ OB.App.Class.Criteria = class MockedCriteria {
 };
 
 const Product = {
-  regular: {
-    id: 'regularProduct',
-    uOMstandardPrecision: 3,
-    standardPrice: 10,
-    listPrice: 11,
-    oBPOSAllowAnonymousSale: false
-  },
-
-  service: {
-    id: 'service',
-    uOMstandardPrecision: 3,
-    standardPrice: 10,
-    listPrice: 11,
-    productType: 'S',
-    returnable: true
-  },
-
-  scale: {
-    id: 'scaleProduct',
-    obposScale: true,
+  base: {
+    id: '0',
+    _identifier: 'test product',
     uOMstandardPrecision: 3,
     standardPrice: 10,
     listPrice: 11
-  },
-
-  noprice: {
-    id: 'noPriceProduct',
-    _identifier: 'noPriceProduct'
-  },
-
-  generic: {
-    id: 'genericProduct',
-    uOMstandardPrecision: 3,
-    standardPrice: 10,
-    listPrice: 11,
-    isGeneric: true
   }
 };
 
@@ -121,39 +91,29 @@ const Ticket = {
   },
   singleLine: {
     priceIncludesTax: true,
-    lines: [{ id: '1', product: Product.regular, qty: 1 }],
+    lines: [{ id: '1', product: Product.base, qty: 1 }],
     businessPartner: { id: '1' },
     orderType: 0
   },
   returnedLine: {
     priceIncludesTax: true,
-    lines: [{ id: '1', product: Product.regular, qty: -2 }],
+    lines: [{ id: '1', product: Product.base, qty: -2 }],
     businessPartner: { id: '1' },
     orderType: 0
   },
   attributeLine: {
     priceIncludesTax: true,
-    lines: [
-      { id: '1', product: Product.regular, qty: 1, attributeValue: '1234' }
-    ],
+    lines: [{ id: '1', product: Product.base, qty: 1, attributeValue: '1234' }],
     businessPartner: { id: '1' },
     orderType: 0
   },
   cancelAndReplace: {
     priceIncludesTax: true,
     lines: [
-      { id: '1', product: Product.regular, qty: -1, replacedorderline: true }
+      { id: '1', product: Product.base, qty: -1, replacedorderline: true }
     ],
     businessPartner: { id: '1' },
     orderType: 0
-  },
-  closedQuotation: {
-    priceIncludesTax: true,
-    lines: [{ id: '1', product: Product.regular, qty: 1 }],
-    businessPartner: { id: '1' },
-    orderType: 0,
-    isQuotation: true,
-    hasbeenpaid: 'Y'
   }
 };
 
@@ -191,11 +151,11 @@ describe('addProduct preparation', () => {
       await expectError(
         () =>
           prepareAction({
-            products: [{ product: Product.noprice }]
+            products: [{ product: { ...Product.base, listPrice: undefined } }]
           }),
         {
           warningMsg: 'OBPOS_productWithoutPriceInPriceList',
-          messageParams: ['noPriceProduct']
+          messageParams: ['test product']
         }
       );
     });
@@ -204,7 +164,7 @@ describe('addProduct preparation', () => {
       await expectError(
         () =>
           prepareAction({
-            products: [{ product: Product.generic }]
+            products: [{ product: { ...Product.base, isGeneric: true } }]
           }),
         {
           warningMsg: 'OBPOS_GenericNotAllowed'
@@ -217,7 +177,7 @@ describe('addProduct preparation', () => {
         () =>
           prepareAction(
             {
-              products: [{ product: Product.regular }],
+              products: [{ product: Product.base }],
               options: { line: '1' }
             },
             Ticket.cancelAndReplace
@@ -233,7 +193,14 @@ describe('addProduct preparation', () => {
         () =>
           prepareAction(
             {
-              products: [{ product: Product.regular }],
+              products: [
+                {
+                  product: {
+                    ...Product.base,
+                    oBPOSAllowAnonymousSale: false
+                  }
+                }
+              ],
               options: { businessPartner: '1' }
             },
             Ticket.empty
@@ -245,7 +212,7 @@ describe('addProduct preparation', () => {
     });
 
     it('not returnable check (1)', async () => {
-      const unReturnableProduct = { ...Product.regular, returnable: false };
+      const unReturnableProduct = { ...Product.base, returnable: false };
       await expectError(
         () =>
           prepareAction(
@@ -261,7 +228,7 @@ describe('addProduct preparation', () => {
     });
 
     it('not returnable check (2)', async () => {
-      const unReturnableProduct = { ...Product.regular, returnable: false };
+      const unReturnableProduct = { ...Product.base, returnable: false };
       await expectError(
         () =>
           prepareAction(
@@ -278,13 +245,18 @@ describe('addProduct preparation', () => {
     });
 
     it('closed quotation check', async () => {
+      const closedQuotation = {
+        ...Ticket.singleLine,
+        isQuotation: true,
+        hasbeenpaid: 'Y'
+      };
       await expectError(
         () =>
           prepareAction(
             {
-              products: [{ product: Product.regular, qty: 1 }]
+              products: [{ product: Product.base, qty: 1 }]
             },
-            Ticket.closedQuotation
+            closedQuotation
           ),
         {
           errorMsg: 'OBPOS_QuotationClosed'
@@ -298,17 +270,18 @@ describe('addProduct preparation', () => {
   });
 
   describe('scale products', () => {
+    const scaleProduct = { ...Product.base, obposScale: true };
     it('more than one is not allowed', async () => {
       await expect(
         prepareAction({
-          products: [{ product: Product.scale }, { product: Product.scale }]
+          products: [{ product: scaleProduct }, { product: scaleProduct }]
         })
       ).rejects.toThrow('Cannot handle more than one scale product');
     });
 
     it('calls scale once', async () => {
       await prepareAction({
-        products: [{ product: Product.scale }]
+        products: [{ product: scaleProduct }]
       });
 
       expect(OB.POS.hwserver.getAsyncWeight).toHaveBeenCalledTimes(1);
@@ -316,7 +289,7 @@ describe('addProduct preparation', () => {
 
     it('scale value is used as qty', async () => {
       const newPayload = await prepareAction({
-        products: [{ product: Product.scale }]
+        products: [{ product: scaleProduct }]
       });
 
       expect(newPayload).toMatchObject({ products: [{ qty: 10 }] });
@@ -330,7 +303,7 @@ describe('addProduct preparation', () => {
       await expectError(
         () =>
           prepareAction({
-            products: [{ product: Product.scale }]
+            products: [{ product: scaleProduct }]
           }),
         {
           errorConfirmation: 'OBPOS_WeightZero'
@@ -346,7 +319,7 @@ describe('addProduct preparation', () => {
       await expectError(
         () =>
           prepareAction({
-            products: [{ product: Product.scale }]
+            products: [{ product: scaleProduct }]
           }),
         {
           errorConfirmation: 'OBPOS_MsgScaleServerNotAvailable'
@@ -360,10 +333,10 @@ describe('addProduct preparation', () => {
       OB.App.StockChecker.hasStock.mockResolvedValueOnce(false);
       await expect(
         prepareAction({
-          products: [{ product: Product.regular }]
+          products: [{ product: Product.base }]
         })
       ).rejects.toThrow(
-        `Add product canceled: there is no stock of product ${Product.regular.id}`
+        `Add product canceled: there is no stock of product ${Product.base.id}`
       );
     });
   });
@@ -378,11 +351,11 @@ describe('addProduct preparation', () => {
           bomquantity: 2,
           bomtaxcategory: 'FF80818123B7FC160123B804AB8C0019',
           id: '32182CDA9D544392A092A913A68AFEC1',
-          product: Product.regular.id
+          product: Product.base.id
         }
       ]);
       const productWithBOM = {
-        ...Product.regular,
+        ...Product.base,
         taxCategory: 'FF80818123B7FC160123B804AB8C0019'
       };
       const payload = {
@@ -410,7 +383,7 @@ describe('addProduct preparation', () => {
     it('product has no BOM', async () => {
       OB.App.MasterdataModels.ProductBOM.find.mockResolvedValueOnce([]);
       const productWithBOM = {
-        ...Product.regular,
+        ...Product.base,
         taxCategory: 'FF80818123B7FC160123B804AB8C0019'
       };
       const payload = {
@@ -428,11 +401,11 @@ describe('addProduct preparation', () => {
           bomquantity: 2,
           bomtaxcategory: 'FF80818123B7FC160123B804AB8C0019',
           id: '32182CDA9D544392A092A913A68AFEC1',
-          product: Product.regular.id
+          product: Product.base.id
         }
       ]);
       const productWithBOM = {
-        ...Product.regular,
+        ...Product.base,
         taxCategory: 'FF80818123B7FC160123B804AB8C0019'
       };
       await expectError(
@@ -456,7 +429,7 @@ describe('addProduct preparation', () => {
           characteristicValue: 'C6A9CF2813DC49C1BE5A9A6094DD967E',
           id: '1983C55A254D41A7AD2E17E84CA5F70A',
           obposFilteronwebpos: true,
-          product: Product.regular.id,
+          product: Product.base.id,
           _identifier: 'Color'
         }
       ];
@@ -464,7 +437,7 @@ describe('addProduct preparation', () => {
         characteristics
       );
       const productWithCharacteritics = {
-        ...Product.regular,
+        ...Product.base,
         _identifier: 'productWithCharacteristics',
         characteristicDescription: 'Color: Black/Silver'
       };
@@ -486,7 +459,7 @@ describe('addProduct preparation', () => {
         new Error()
       );
       const productWithCharacteritics = {
-        ...Product.regular,
+        ...Product.base,
         _identifier: 'productWithCharacteristics',
         characteristicDescription: 'Color: Black/Silver'
       };
@@ -508,7 +481,7 @@ describe('addProduct preparation', () => {
       OB.App.Security.hasPermission.mockReturnValue(true);
       OB.App.View.DialogUIHandler.inputData.mockResolvedValueOnce('1234');
       const productWithAttributes = {
-        ...Product.regular,
+        ...Product.base,
         hasAttributes: true
       };
       const payload = {
@@ -531,7 +504,7 @@ describe('addProduct preparation', () => {
       OB.App.Security.hasPermission.mockReturnValue(true);
       OB.App.View.DialogUIHandler.inputData.mockResolvedValueOnce('1234');
       const productWithAttributes = {
-        ...Product.regular,
+        ...Product.base,
         hasAttributes: true
       };
       const payload = {
@@ -552,7 +525,7 @@ describe('addProduct preparation', () => {
       OB.App.Security.hasPermission.mockReturnValue(true);
       OB.App.View.DialogUIHandler.inputData.mockResolvedValueOnce('5678');
       const productWithAttributes = {
-        ...Product.regular,
+        ...Product.base,
         hasAttributes: true
       };
       const payload = {
@@ -574,7 +547,7 @@ describe('addProduct preparation', () => {
       OB.App.Security.hasPermission.mockReturnValue(true);
       OB.App.View.DialogUIHandler.inputData.mockResolvedValueOnce('1234');
       const productWithAttributes = {
-        ...Product.regular,
+        ...Product.base,
         hasAttributes: true
       };
       const payload = {
@@ -596,7 +569,7 @@ describe('addProduct preparation', () => {
       OB.App.Security.hasPermission.mockReturnValue(true);
       OB.App.View.DialogUIHandler.inputData.mockResolvedValueOnce('1234');
       const productWithAttributes = {
-        ...Product.regular,
+        ...Product.base,
         hasAttributes: true
       };
       const payload = {
@@ -622,7 +595,7 @@ describe('addProduct preparation', () => {
       );
       OB.App.View.DialogUIHandler.inputData.mockResolvedValueOnce('1234');
       const productWithAttributes = {
-        ...Product.regular,
+        ...Product.base,
         hasAttributes: true
       };
       const payload = {
@@ -644,7 +617,7 @@ describe('addProduct preparation', () => {
       OB.App.Security.hasPermission.mockReturnValue(true);
       OB.App.View.DialogUIHandler.inputData.mockResolvedValueOnce(null);
       const productWithAttributes = {
-        ...Product.regular,
+        ...Product.base,
         hasAttributes: true
       };
       await expect(
@@ -660,7 +633,7 @@ describe('addProduct preparation', () => {
       OB.App.Security.hasPermission.mockReturnValue(true);
       OB.App.View.DialogUIHandler.inputData.mockResolvedValueOnce('5678');
       const productWithSerialAttributes = {
-        ...Product.regular,
+        ...Product.base,
         hasAttributes: true,
         isSerialNo: true
       };
@@ -681,7 +654,7 @@ describe('addProduct preparation', () => {
     it('more than one is not allowed', async () => {
       OB.App.Security.hasPermission.mockReturnValue(true);
       const productWithAttributes = {
-        ...Product.regular,
+        ...Product.base,
         hasAttributes: true
       };
       await expect(
@@ -696,16 +669,17 @@ describe('addProduct preparation', () => {
   });
 
   describe('approvals', () => {
+    const service = { ...Product.base, productType: 'S', returnable: true };
     it('return service accepted approval', async () => {
       const payloadWithApproval = {
-        products: [{ product: Product.service }],
+        products: [{ product: service }],
         approvals: ['OBPOS_approval.returnService']
       };
       OB.App.Security.requestApprovalForAction.mockResolvedValue(
         payloadWithApproval
       );
       const newPayload = await prepareAction(
-        { products: [{ product: Product.service }] },
+        { products: [{ product: service }] },
         Ticket.emptyReturn
       );
       expect(newPayload).toEqual(payloadWithApproval);
@@ -720,7 +694,7 @@ describe('addProduct preparation', () => {
       await expect(
         prepareAction(
           {
-            products: [{ product: Product.service }]
+            products: [{ product: service }]
           },
           Ticket.emptyReturn
         )
