@@ -131,6 +131,14 @@ const Ticket = {
     businessPartner: { id: '1' },
     orderType: 0
   },
+  attributeLine: {
+    priceIncludesTax: true,
+    lines: [
+      { id: '1', product: Product.regular, qty: 1, attributeValue: '1234' }
+    ],
+    businessPartner: { id: '1' },
+    orderType: 0
+  },
   cancelAndReplace: {
     priceIncludesTax: true,
     lines: [
@@ -492,6 +500,198 @@ describe('addProduct preparation', () => {
           messageParams: ['productWithCharacteristics']
         }
       );
+    });
+  });
+
+  describe('prepare product attributes', () => {
+    it('product with attribute', async () => {
+      OB.App.Security.hasPermission.mockReturnValue(true);
+      OB.App.View.DialogUIHandler.inputData.mockResolvedValueOnce('1234');
+      const productWithAttributes = {
+        ...Product.regular,
+        hasAttributes: true
+      };
+      const payload = {
+        products: [{ product: productWithAttributes, qty: 1 }],
+        options: {}
+      };
+      const newPayload = await prepareAction(payload, Ticket.attributeLine);
+      expect(newPayload).toEqual({
+        ...payload,
+        line: '1',
+        attrs: {
+          attributeSearchAllowed: true,
+          attributeValue: '1234',
+          productHavingSameAttribute: true
+        }
+      });
+    });
+
+    it('product with attribute and option line', async () => {
+      OB.App.Security.hasPermission.mockReturnValue(true);
+      OB.App.View.DialogUIHandler.inputData.mockResolvedValueOnce('1234');
+      const productWithAttributes = {
+        ...Product.regular,
+        hasAttributes: true
+      };
+      const payload = {
+        products: [{ product: productWithAttributes, qty: 1 }],
+        options: { line: '1' }
+      };
+      const newPayload = await prepareAction(payload, Ticket.attributeLine);
+      expect(newPayload).toEqual({
+        ...payload,
+        attrs: {
+          attributeSearchAllowed: true,
+          productHavingSameAttribute: true
+        }
+      });
+    });
+
+    it('product with attribute and different attribute', async () => {
+      OB.App.Security.hasPermission.mockReturnValue(true);
+      OB.App.View.DialogUIHandler.inputData.mockResolvedValueOnce('5678');
+      const productWithAttributes = {
+        ...Product.regular,
+        hasAttributes: true
+      };
+      const payload = {
+        products: [{ product: productWithAttributes, qty: 1 }],
+        options: {}
+      };
+      const newPayload = await prepareAction(payload, Ticket.attributeLine);
+      expect(newPayload).toEqual({
+        ...payload,
+        attrs: {
+          attributeSearchAllowed: true,
+          attributeValue: '5678',
+          productHavingSameAttribute: false
+        }
+      });
+    });
+
+    it('product with attribute and different attribute in line', async () => {
+      OB.App.Security.hasPermission.mockReturnValue(true);
+      OB.App.View.DialogUIHandler.inputData.mockResolvedValueOnce('1234');
+      const productWithAttributes = {
+        ...Product.regular,
+        hasAttributes: true
+      };
+      const payload = {
+        products: [{ product: productWithAttributes, qty: 1 }],
+        options: {}
+      };
+      const newPayload = await prepareAction(payload, Ticket.singleLine);
+      expect(newPayload).toEqual({
+        ...payload,
+        attrs: {
+          attributeSearchAllowed: true,
+          attributeValue: '1234',
+          productHavingSameAttribute: false
+        }
+      });
+    });
+
+    it('product with attribute in quotation (allowed)', async () => {
+      OB.App.Security.hasPermission.mockReturnValue(true);
+      OB.App.View.DialogUIHandler.inputData.mockResolvedValueOnce('1234');
+      const productWithAttributes = {
+        ...Product.regular,
+        hasAttributes: true
+      };
+      const payload = {
+        products: [{ product: productWithAttributes, qty: 1 }],
+        options: {}
+      };
+      const quotation = { ...Ticket.attributeLine, isQuotation: true };
+      const newPayload = await prepareAction(payload, quotation);
+      expect(newPayload).toEqual({
+        ...payload,
+        line: '1',
+        attrs: {
+          attributeSearchAllowed: true,
+          attributeValue: '1234',
+          productHavingSameAttribute: true
+        }
+      });
+    });
+
+    it('product with attribute in quotation (not allowed)', async () => {
+      OB.App.Security.hasPermission.mockImplementation(
+        p => p !== 'OBPOS_AskForAttributesWhenCreatingQuotation'
+      );
+      OB.App.View.DialogUIHandler.inputData.mockResolvedValueOnce('1234');
+      const productWithAttributes = {
+        ...Product.regular,
+        hasAttributes: true
+      };
+      const payload = {
+        products: [{ product: productWithAttributes, qty: 1 }],
+        options: {}
+      };
+      const quotation = { ...Ticket.attributeLine, isQuotation: true };
+      const newPayload = await prepareAction(payload, quotation);
+      expect(newPayload).toEqual({
+        ...payload,
+        attrs: {
+          attributeSearchAllowed: true,
+          productHavingSameAttribute: false
+        }
+      });
+    });
+
+    it('no attribute value provided by user', async () => {
+      OB.App.Security.hasPermission.mockReturnValue(true);
+      OB.App.View.DialogUIHandler.inputData.mockResolvedValueOnce(null);
+      const productWithAttributes = {
+        ...Product.regular,
+        hasAttributes: true
+      };
+      await expect(
+        prepareAction({
+          products: [{ product: productWithAttributes, qty: 1 }]
+        })
+      ).rejects.toThrow(
+        `No attribute provided for product ${productWithAttributes.id}`
+      );
+    });
+
+    it('check serial attribute', async () => {
+      OB.App.Security.hasPermission.mockReturnValue(true);
+      OB.App.View.DialogUIHandler.inputData.mockResolvedValueOnce('5678');
+      const productWithSerialAttributes = {
+        ...Product.regular,
+        hasAttributes: true,
+        isSerialNo: true
+      };
+      await expectError(
+        () =>
+          prepareAction(
+            {
+              products: [{ product: productWithSerialAttributes, qty: 1 }]
+            },
+            Ticket.attributeLine
+          ),
+        {
+          errorConfirmation: 'OBPOS_ProductDefinedAsSerialNo'
+        }
+      );
+    });
+
+    it('more than one is not allowed', async () => {
+      OB.App.Security.hasPermission.mockReturnValue(true);
+      const productWithAttributes = {
+        ...Product.regular,
+        hasAttributes: true
+      };
+      await expect(
+        prepareAction({
+          products: [
+            { product: productWithAttributes },
+            { product: productWithAttributes }
+          ]
+        })
+      ).rejects.toThrow('Cannot handle attributes for more than one product');
     });
   });
 
