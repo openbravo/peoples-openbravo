@@ -250,11 +250,10 @@
     const line = options.line
       ? ticket.lines.find(l => l.id === options.line)
       : null;
-    const notReturnable = products.find(
-      p =>
-        (isAReturn(ticket) || (line ? line.qty + p.qty : p.qty) < 0) &&
-        !p.product.returnable
-    );
+    const notReturnable = products.find(p => {
+      const qty = isAReturn(ticket) ? -p.qty : p.qty;
+      return (line ? line.qty + qty : qty) < 0 && !p.product.returnable;
+    });
     if (notReturnable) {
       throw new OB.App.Class.ActionCanceled({
         title: 'OBPOS_UnreturnableProduct',
@@ -288,12 +287,11 @@
       return {};
     };
 
-    if (isAReturn(ticket)) {
-      return;
-    }
-
     const productLocked = products
-      .filter(p => OB.DEC.compare(p.qty) === 1)
+      .filter(p => {
+        const qty = isAReturn(ticket) ? -p.qty : p.qty;
+        return OB.DEC.compare(qty) === 1;
+      })
       .map(p => {
         const obj = {
           // eslint-disable-next-line no-underscore-dangle
@@ -320,12 +318,14 @@
     const line = options.line
       ? ticket.lines.find(l => l.id === options.line)
       : null;
-    const requireServiceReturnApproval = products.some(
-      p =>
-        (isAReturn(ticket) || (line ? line.qty + p.qty : p.qty) < 0) &&
+    const requireServiceReturnApproval = products.some(p => {
+      const qty = isAReturn(ticket) ? -p.qty : p.qty;
+      return (
+        (line ? line.qty + qty : qty) < 0 &&
         p.product.productType === 'S' &&
         !p.product.ignoreReturnApproval
-    );
+      );
+    });
     if (requireServiceReturnApproval) {
       const newPayload = await OB.App.Security.requestApprovalForAction(
         'OBPOS_approval.returnService',

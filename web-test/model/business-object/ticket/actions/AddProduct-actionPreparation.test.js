@@ -95,12 +95,6 @@ const Ticket = {
     businessPartner: { id: '1' },
     orderType: 0
   },
-  returnedLine: {
-    priceIncludesTax: true,
-    lines: [{ id: '1', product: Product.base, qty: -2 }],
-    businessPartner: { id: '1' },
-    orderType: 0
-  },
   attributeLine: {
     priceIncludesTax: true,
     lines: [{ id: '1', product: Product.base, qty: 1, attributeValue: '1234' }],
@@ -233,10 +227,26 @@ describe('addProduct preparation', () => {
         () =>
           prepareAction(
             {
-              products: [{ product: unReturnableProduct, qty: 1 }],
+              products: [{ product: unReturnableProduct, qty: -1 }]
+            },
+            Ticket.empty
+          ),
+        {
+          errorConfirmation: 'OBPOS_UnreturnableProductMessage'
+        }
+      );
+    });
+
+    it('not returnable check (3)', async () => {
+      const unReturnableProduct = { ...Product.base, returnable: false };
+      await expectError(
+        () =>
+          prepareAction(
+            {
+              products: [{ product: unReturnableProduct, qty: -2 }],
               options: { line: '1' }
             },
-            Ticket.returnedLine
+            Ticket.singleLine
           ),
         {
           errorConfirmation: 'OBPOS_UnreturnableProductMessage'
