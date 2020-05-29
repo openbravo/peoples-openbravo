@@ -244,7 +244,7 @@
         defaultCurrencyId,
         conversions
       );
-      const foreignCurrentCash = OB.App.State.Cashup.Utils.toDefaultCurrency(
+      const foreignCurrentCash = OB.App.State.Cashup.Utils.toForeignCurrency(
         payments[paymentMethod.searchKey].paymentMethod.currency,
         currentCash,
         defaultCurrencyId,

@@ -185,6 +185,39 @@
       }
 
       return OB.DEC.mul(amount, converter.rate);
+    },
+
+    /**
+     * converts an amount from the WebPOS currency to the toCurrencyId currency
+     * @param  {currencyId} toCurrencyId      the currencyId of the final amount
+     * @param  {float}      amount            the amount to be converted
+     * @param  {currencyId} defaultCurrencyId the currencyId of the default payment method
+     * @param  {Object[]}   conversions       array of converters availables
+     * @return {float}                        the converted amount
+     */
+    toForeignCurrency(toCurrencyId, amount, defaultCurrencyId, conversions) {
+      if (
+        toCurrencyId === defaultCurrencyId &&
+        toCurrencyId != null &&
+        defaultCurrencyId != null
+      ) {
+        return amount;
+      }
+
+      const converter = conversions.find(function getConverter(c) {
+        return (
+          c.fromCurrencyId === defaultCurrencyId &&
+          c.toCurrencyId === toCurrencyId
+        );
+      });
+
+      if (!converter.length === 0) {
+        OB.error(
+          `Currency converter not added: ${toCurrencyId} -> ${defaultCurrencyId}`
+        );
+      }
+
+      return OB.DEC.mul(amount, converter.rate);
     }
   });
 })();
