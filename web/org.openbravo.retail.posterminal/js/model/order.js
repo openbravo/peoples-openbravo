@@ -6851,7 +6851,9 @@
       notPrePayments = _.filter(this.get('payments').models, function(payment) {
         return !payment.get('isPrePayment');
       });
-      OB.info('[checkNotProcessedPayments] Non Prepayments '+notPrePayments.length);
+      OB.info(
+        '[checkNotProcessedPayments] Non Prepayments ' + notPrePayments.length
+      );
       if (notPrePayments.length) {
         var paymentList = [OB.I18N.getLabel('OBPOS_C&RDeletePaymentsBodyInit')];
         var symbol = OB.MobileApp.model.get('terminal').symbol;
@@ -6954,7 +6956,7 @@
                       OB.info('[OBPOS_PreCancelLayaway] Error');
                       return;
                     }
-                    
+
                     OB.info('[OBPOS_PreCancelLayaway] Callback');
                     //Cloning order to be canceled
                     var clonedReceipt = new OB.Model.Order();
