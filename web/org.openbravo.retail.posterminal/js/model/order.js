@@ -489,7 +489,12 @@
             new OB.Model.BPLocation(attributes.bp.locationBillModel)
           );
         }
-        this.set('bp', bpModel);
+        this.set({
+          bp: bpModel,
+          externalBusinessPartnerReference:
+            attributes.externalBusinessPartnerReference,
+          externalBusinessPartner: attributes.externalBusinessPartner
+        });
         this.set('lines', new OrderLineList().reset(attributes.lines));
         this.set(
           'orderManualPromotions',
@@ -537,10 +542,6 @@
         this.set(
           'obposPrepaymentlaylimitamt',
           attributes.obposPrepaymentlaylimitamt || OB.DEC.Zero
-        );
-        this.set(
-          'externalBusinessPartnerReference',
-          attributes.externalBusinessPartnerReference
         );
         _.each(
           _.keys(attributes),
@@ -1511,7 +1512,11 @@
       this.set('creationDate', null);
       this.set('documentNo', '');
       this.set('undo', null);
-      this.set('bp', null);
+      this.set({
+        bp: null,
+        externalBusinessPartnerReference: null,
+        externalBusinessPartner: null
+      });
       this.set(
         'lines',
         this.get('lines') ? this.get('lines').reset() : new OrderLineList()
@@ -1554,7 +1559,6 @@
       this.set('obposPrepaymentamt', OB.DEC.Zero);
       this.set('obposPrepaymentlimitamt', OB.DEC.Zero);
       this.set('obposPrepaymentlaylimitamt', OB.DEC.Zero);
-      this.set('externalBusinessPartnerReference', null);
       this.set(
         'cashVAT',
         OB.MobileApp.model.get('terminal')
@@ -1595,14 +1599,6 @@
       this.set('isPartiallyDelivered', _order.get('isPartiallyDelivered'));
       this.set('isModified', _order.get('isModified'));
       this.set('payment', _order.get('payment'));
-      this.set(
-        'externalBusinessPartner',
-        _order.get('externalBusinessPartner')
-      );
-      this.set(
-        'externalBusinessPartnerReference',
-        _order.get('externalBusinessPartnerReference')
-      );
       if (!_order.get('isEditable')) {
         // keeping it no editable as much as possible, to prevent
         // modifications to trigger editable events incorrectly
@@ -5708,7 +5704,11 @@
         finishSaveData;
 
       setAndSaveBP = function(bp, saveBPCallback) {
-        me.set('bp', bp);
+        me.set({
+          bp: bp,
+          externalBusinessPartnerReference: null,
+          externalBusinessPartner: null
+        });
         me.save(function() {
           OB.MobileApp.model.orderList.saveCurrent();
           if (saveBPCallback) {
@@ -11100,7 +11100,11 @@
               bpBillLocId: model.bpBillLocId || model.bpLocId
             },
             async function(bp, loc, billLoc) {
-              order.set('bp', bp);
+              order.set({
+                bp: bp,
+                externalBusinessPartnerReference: null,
+                externalBusinessPartner: null
+              });
               order.set('gross', model.totalamount);
               order.set('net', model.totalNetAmount);
               order.trigger('change:bp', order);
