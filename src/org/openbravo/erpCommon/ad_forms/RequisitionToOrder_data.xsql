@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -568,12 +568,13 @@
      <SqlMethodComment></SqlMethodComment>
      <Sql>
        <![CDATA[
-         SELECT M_GET_DEFAULT_AUM_FOR_DOCUMENT(?, 'FF8080812C2ABFC6012C2B3BDF51006E') AS C_AUM, 
-           (SELECT NAME FROM C_UOM WHERE C_UOM_ID = M_GET_DEFAULT_AUM_FOR_DOCUMENT(?, 'FF8080812C2ABFC6012C2B3BDF51006E')) AS AUMNAME
-         FROM DUAL
+         SELECT C_UOM_ID AS C_AUM, NAME AS AUMNAME
+         FROM C_UOM
+         WHERE C_UOM_ID = M_GET_DEFAULT_AUM_FOR_DOCUMENT(?, AD_GET_DOCTYPE(?, ?, 'POO', null))
        ]]>
      </Sql>
      <Parameter name="mProductId"/>
-     <Parameter name="mProductId"/>
+     <Parameter name="adClientId"/>
+     <Parameter name="adOrgId"/>
    </SqlMethod>
 </SqlClass>
