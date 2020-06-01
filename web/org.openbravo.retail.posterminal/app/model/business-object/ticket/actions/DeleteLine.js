@@ -39,19 +39,24 @@
       return payload;
     }
 
-    const newPayload = { ...payload };
+    let newPayload = { ...payload };
 
     // TODO: Check if it is necessary to restore the tax category of related products
 
-    newPayload.lineIds = newPayload.lineIds.concat(
-      ticket.lines
-        .filter(
-          l =>
-            l.relatedLines &&
-            l.relatedLines.some(rl => payload.lineIds.includes(rl.orderlineId))
-        )
-        .map(l => l.id)
-    );
+    const relatedLinesToRemove = ticket.lines
+      .filter(
+        l =>
+          l.relatedLines &&
+          !newPayload.lineIds.includes(l.id) &&
+          l.relatedLines.some(rl => newPayload.lineIds.includes(rl.orderlineId))
+      )
+      .map(l => l.id);
+    newPayload.lineIds = newPayload.lineIds.concat(relatedLinesToRemove);
+
+    if (relatedLinesToRemove.length > 0) {
+      // check again for related lines of the related just added
+      newPayload = removeRelatedServices(ticket, newPayload);
+    }
     // TODO: handle lines related to serveral
 
     return newPayload;
