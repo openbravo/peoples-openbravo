@@ -446,43 +446,41 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
       );
     }
 
-    function loadSlaveCashup(callback) {
+    async function loadSlaveCashup(callback) {
       // Load current cashup info from slaves
-      new OB.DS.Process(
-        'org.openbravo.retail.posterminal.ProcessCashMgmtMaster'
-      ).exec(
+      const response = await OB.App.Request.mobileServiceRequest(
+        'org.openbravo.retail.posterminal.ProcessCashMgmtMaster',
         {
           cashUpId: OB.App.State.Cashup.Utils.getCashupId(),
           terminalSlave: OB.POS.modelterminal.get('terminal').isslave
-        },
-        function(data) {
-          if (data && data.exception) {
-            // Error handler
-            OB.log('error', data.exception.message);
-            OB.UTIL.showConfirmation.display(
-              OB.I18N.getLabel('OBPOS_CashMgmtError'),
-              OB.I18N.getLabel('OBPOS_ErrorServerGeneric') +
-                data.exception.message,
-              [
-                {
-                  label: OB.I18N.getLabel('OBPOS_LblRetry'),
-                  action: function() {
-                    loadSlaveCashup(callback);
-                  }
-                }
-              ],
-              {
-                autoDismiss: false,
-                onHideFunction: function() {
-                  OB.POS.navigate('retail.pointofsale');
-                }
-              }
-            );
-          } else {
-            callback(data);
-          }
         }
       );
+
+      if (response && response.response && response.response.error) {
+        // Error handler
+        OB.log('error', response.response.error.message);
+        OB.UTIL.showConfirmation.display(
+          OB.I18N.getLabel('OBPOS_CashMgmtError'),
+          OB.I18N.getLabel('OBPOS_ErrorServerGeneric') +
+            response.response.error.message,
+          [
+            {
+              label: OB.I18N.getLabel('OBPOS_LblRetry'),
+              action: function() {
+                loadSlaveCashup(callback);
+              }
+            }
+          ],
+          {
+            autoDismiss: false,
+            onHideFunction: function() {
+              OB.POS.navigate('retail.pointofsale');
+            }
+          }
+        );
+      } else {
+        callback(response.response.data);
+      }
     }
 
     if (OB.POS.modelterminal.get('terminal').ismaster) {

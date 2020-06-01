@@ -2181,42 +2181,39 @@ enyo.kind({
   },
 
   checkSlaveCashAvailable: function(selectedPayment, scope, callback) {
-    function processCashMgmtMaster(cashMgntCallback) {
-      new OB.DS.Process(
-        'org.openbravo.retail.posterminal.ProcessCashMgmtMaster'
-      ).exec(
+    async function processCashMgmtMaster(cashMgntCallback) {
+      const response = await OB.App.Request.mobileServiceRequest(
+        'org.openbravo.retail.posterminal.ProcessCashMgmtMaster',
         {
           cashUpId: OB.App.State.Cashup.Utils.getCashupId(),
           terminalSlave: OB.POS.modelterminal.get('terminal').isslave
-        },
-        function(data) {
-          if (data && data.exception) {
-            // Error handler
-            OB.log('error', data.exception.message);
-            OB.UTIL.showConfirmation.display(
-              OB.I18N.getLabel('OBPOS_CashMgmtError'),
-              OB.I18N.getLabel('OBPOS_ErrorServerGeneric') +
-                data.exception.message,
-              [
-                {
-                  label: OB.I18N.getLabel('OBPOS_LblRetry'),
-                  action: function() {
-                    processCashMgmtMaster(cashMgntCallback);
-                  }
-                }
-              ],
-              {
-                autoDismiss: false,
-                onHideFunction: function() {
-                  cashMgntCallback(false, null);
-                }
-              }
-            );
-          } else {
-            cashMgntCallback(true, data);
-          }
         }
       );
+      if (response && response.response && response.response.error) {
+        // Error handler
+        OB.log('error', response.response.error.message);
+        OB.UTIL.showConfirmation.display(
+          OB.I18N.getLabel('OBPOS_CashMgmtError'),
+          OB.I18N.getLabel('OBPOS_ErrorServerGeneric') +
+            response.response.error.message,
+          [
+            {
+              label: OB.I18N.getLabel('OBPOS_LblRetry'),
+              action: function() {
+                processCashMgmtMaster(cashMgntCallback);
+              }
+            }
+          ],
+          {
+            autoDismiss: false,
+            onHideFunction: function() {
+              cashMgntCallback(false, null);
+            }
+          }
+        );
+      } else {
+        cashMgntCallback(true, response.response.data);
+      }
     }
 
     var currentCash = OB.DEC.Zero;

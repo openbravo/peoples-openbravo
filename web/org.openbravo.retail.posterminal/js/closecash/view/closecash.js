@@ -607,41 +607,39 @@ enyo.kind({
     this.refreshButtons();
 
     this.model.on('change:loadFinished', function(model) {
-      function processCashCloseSlave(callback) {
-        new OB.DS.Process(
-          'org.openbravo.retail.posterminal.ProcessCashCloseSlave'
-        ).exec(
+      async function processCashCloseSlave(callback) {
+        const response = await OB.App.Request.mobileServiceRequest(
+          'org.openbravo.retail.posterminal.ProcessCashCloseSlave',
           {
             cashUpId: OB.App.State.Cashup.Utils.getCashupId()
-          },
-          function(data) {
-            if (data && data.exception) {
-              // Error handler
-              OB.log('error', data.exception.message);
-              OB.UTIL.showConfirmation.display(
-                OB.I18N.getLabel('OBPOS_CashMgmtError'),
-                OB.I18N.getLabel('OBPOS_ErrorServerGeneric') +
-                  data.exception.message,
-                [
-                  {
-                    label: OB.I18N.getLabel('OBPOS_LblRetry'),
-                    action: function() {
-                      processCashCloseSlave(callback);
-                    }
-                  }
-                ],
-                {
-                  autoDismiss: false,
-                  onHideFunction: function() {
-                    OB.POS.navigate('retail.pointofsale');
-                  }
-                }
-              );
-            } else {
-              callback(data);
-            }
           }
         );
+
+        if (response && response.response && response.response.error) {
+          // Error handler
+          OB.log('error', response.response.error.message);
+          OB.UTIL.showConfirmation.display(
+            OB.I18N.getLabel('OBPOS_CashMgmtError'),
+            OB.I18N.getLabel('OBPOS_ErrorServerGeneric') +
+              response.response.error.message,
+            [
+              {
+                label: OB.I18N.getLabel('OBPOS_LblRetry'),
+                action: function() {
+                  processCashCloseSlave(callback);
+                }
+              }
+            ],
+            {
+              autoDismiss: false,
+              onHideFunction: function() {
+                OB.POS.navigate('retail.pointofsale');
+              }
+            }
+          );
+        } else {
+          callback(response.response.data);
+        }
       }
 
       if (model.get('loadFinished')) {

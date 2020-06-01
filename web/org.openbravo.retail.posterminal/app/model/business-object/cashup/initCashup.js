@@ -13,11 +13,21 @@
   /**
    * Initialize the cashup
    */
-  OB.App.StateAPI.Cashup.registerActions({
-    initCashup(cashup, payload) {
+  OB.App.StateAPI.Global.registerActions({
+    initCashup(state, payload) {
+      const newState = { ...state };
+      const cashup = { ...newState.Cashup };
       let newCashup;
 
-      const { initCashupFrom, terminalPayments, lastCashUpPayments } = payload;
+      const {
+        terminalIsSlave,
+        terminalIsMaster,
+        initCashupFrom,
+        terminalPayments,
+        lastCashUpPayments,
+        terminalName,
+        cacheSessionId
+      } = payload;
       if (initCashupFrom === 'local') {
         // init from local
         newCashup = OB.App.State.Cashup.Utils.addNewPaymentMethodsToCurrentCashup(
@@ -48,7 +58,7 @@
         }
       } else if (initCashupFrom === 'scratch') {
         // init from scratch
-        const { terminalIsSlave, currentDate, userId, terminalId } = payload;
+        const { currentDate, userId, terminalId } = payload;
 
         OB.App.State.Cashup.Utils.resetStatistics();
 
@@ -66,11 +76,26 @@
           }
         );
       }
-      return newCashup;
+      newState.Cashup = newCashup;
+      if (terminalIsSlave || terminalIsMaster) {
+        const newMessagePayload = {
+          id: OB.App.UUID.generate(),
+          terminal: terminalName,
+          cacheSessionId,
+          data: [newCashup]
+        };
+        const newMessage = OB.App.State.Messages.Utils.createNewMessage(
+          'Cash Up',
+          'org.openbravo.retail.posterminal.ProcessCashClose',
+          newMessagePayload
+        );
+        newState.Messages = [...newState.Messages, newMessage];
+      }
+      return newState;
     }
   });
 
-  OB.App.StateAPI.Cashup.initCashup.addActionPreparation(
+  OB.App.StateAPI.Global.initCashup.addActionPreparation(
     async (state, payload) => {
       const newPayload = { ...payload };
 

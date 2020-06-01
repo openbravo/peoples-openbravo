@@ -1733,6 +1733,18 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     //Because in terminal we've the BP id and we want to have the BP model.
     //In this moment we can ensure data is already loaded in the local database
     searchCurrentBP(loadModelsCallback);
+
+    // Refresh or initialize the cashup whe the pointofsale window is loaded
+    OB.App.State.Global.initCashup({
+      currentDate: new Date(),
+      userId: OB.MobileApp.model.get('context').user.id,
+      terminalId: OB.MobileApp.model.get('terminal').id,
+      terminalIsSlave: OB.POS.modelterminal.get('terminal').isslave,
+      terminalIsMaster: OB.POS.modelterminal.get('terminal').ismaster,
+      terminalPayments: OB.MobileApp.model.get('payments'),
+      terminalName: OB.POS.modelterminal.get('terminal').searchKey,
+      cacheSessionId: OB.UTIL.localStorage.getItem('cacheSessionId')
+    });
   },
 
   /**

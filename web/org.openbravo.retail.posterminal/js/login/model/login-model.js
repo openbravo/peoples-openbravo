@@ -564,12 +564,15 @@
           );
         };
 
-        OB.App.State.Cashup.initCashup({
+        OB.App.State.Global.initCashup({
           currentDate: new Date(),
           userId: OB.MobileApp.model.get('context').user.id,
           terminalId: OB.MobileApp.model.get('terminal').id,
           terminalIsSlave: OB.POS.modelterminal.get('terminal').isslave,
-          terminalPayments: OB.MobileApp.model.get('payments')
+          terminalIsMaster: OB.POS.modelterminal.get('terminal').ismaster,
+          terminalPayments: OB.MobileApp.model.get('payments'),
+          terminalName: OB.POS.modelterminal.get('terminal').searchKey,
+          cacheSessionId: OB.UTIL.localStorage.getItem('cacheSessionId')
         })
           .then(() => {
             onInitCashupSucess();
