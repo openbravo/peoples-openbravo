@@ -562,7 +562,6 @@
     const hasAttributes = productInfo => {
       return attributeSearchAllowed && productInfo.product.hasAttributes;
     };
-
     const checkSerialAttribute = (product, attributeValue) => {
       if (!attributeValue || !product.isSerialNo) {
         return true;
@@ -669,8 +668,10 @@
     }
 
     const { product } = products[0];
-    const { qty } = products[0];
-    const settings = { ticket, options, attrs };
+    const qty = isAReturn(ticket) ? -products[0].qty : products[0].qty;
+    const line = getLineToEdit(products[0], ticket, options, attrs);
+    const lineId = line ? line.id : payload.line;
+    const settings = { ticket, lineId, options, attrs };
 
     const hasStock = await OB.App.StockChecker.hasStock(product, qty, settings);
     if (!hasStock) {
