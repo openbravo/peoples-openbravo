@@ -22,4 +22,38 @@
 
     return newTicket;
   });
+
+  OB.App.StateAPI.Ticket.deleteLine.addActionPreparation(
+    async (state, payload) => {
+      const ticket = state.Ticket;
+      let newPayload = { ...payload };
+
+      newPayload = removeRelatedServices(ticket, newPayload);
+      return newPayload;
+    }
+  );
+
+  function removeRelatedServices(ticket, payload) {
+    if (!ticket.hasServices) {
+      // TODO: is this check necessary?
+      return payload;
+    }
+
+    const newPayload = { ...payload };
+
+    // TODO: Check if it is necessary to restore the tax category of related products
+
+    newPayload.lineIds = newPayload.lineIds.concat(
+      ticket.lines
+        .filter(
+          l =>
+            l.relatedLines &&
+            l.relatedLines.some(rl => payload.lineIds.includes(rl.orderlineId))
+        )
+        .map(l => l.id)
+    );
+    // TODO: handle lines related to serveral
+
+    return newPayload;
+  }
 })();
