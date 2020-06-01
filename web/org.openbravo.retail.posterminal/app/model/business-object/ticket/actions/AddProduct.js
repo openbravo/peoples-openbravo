@@ -64,7 +64,7 @@
       checkRestrictions(ticket, newPayload);
 
       newPayload = await prepareScaleProducts(newPayload);
-      newPayload = await prepareBOMProducts(newPayload);
+      newPayload = await prepareBOMProducts(ticket, newPayload);
       newPayload = await prepareProductService(newPayload);
       newPayload = await prepareProductCharacteristics(newPayload);
       newPayload = await prepareProductAttributes(ticket, newPayload);
@@ -391,7 +391,7 @@
     return newPayload;
   }
 
-  async function prepareBOMProducts(payload) {
+  async function prepareBOMProducts(ticket, payload) {
     const getProductBOM = async productId => {
       const productBOM = await OB.App.MasterdataModels.ProductBOM.find(
         new OB.App.Class.Criteria().criterion('product', productId).build()
@@ -412,7 +412,12 @@
 
       return productBOM.map(bomLine => {
         return {
-          amount: OB.DEC.mul(bomLine.bomprice, bomLine.bomquantity),
+          grossUnitAmount: ticket.priceIncludesTax
+            ? OB.DEC.mul(bomLine.bomprice, bomLine.bomquantity)
+            : undefined,
+          netUnitAmount: ticket.priceIncludesTax
+            ? undefined
+            : OB.DEC.mul(bomLine.bomprice, bomLine.bomquantity),
           qty: bomLine.bomquantity,
           product: {
             id: bomLine.bomproduct,

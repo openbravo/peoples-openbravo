@@ -379,7 +379,8 @@ describe('addProduct preparation', () => {
           ...payload.products[0].product,
           productBOM: [
             {
-              amount: 30,
+              grossUnitAmount: 30,
+              netUnitAmount: undefined,
               qty: 2,
               product: {
                 id: 'F0659DF0BC634D38855D4D86082B7AA1',
