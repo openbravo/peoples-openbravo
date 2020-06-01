@@ -12,13 +12,15 @@
 
 OB = {
   App: {
-    StateBackwardCompatibility: { setProperties: jest.fn() },
     Class: {},
+    DAL: { find: jest.fn() },
     MasterdataModels: {
       ProductBOM: { find: jest.fn() },
-      ProductCharacteristicValue: { find: jest.fn() }
+      ProductCharacteristicValue: { find: jest.fn() },
+      ProductServiceLinked: { find: jest.fn() }
     },
     Security: { hasPermission: jest.fn(), requestApprovalForAction: jest.fn() },
+    StateBackwardCompatibility: { setProperties: jest.fn() },
     View: { DialogUIHandler: { inputData: jest.fn() } }
   },
 
@@ -427,6 +429,66 @@ describe('addProduct preparation', () => {
           errorConfirmation: 'OBPOS_BOM_NoPrice'
         }
       );
+    });
+  });
+
+  describe('prepare product service', () => {
+    it('add ProductServiceLinked information (local)', async () => {
+      const productServiceLinked = {
+        ...Product.base,
+        modifyTax: true
+      };
+      const serviceLinked = [
+        {
+          id: '0BF2B3F4F7B843B6B777CA7A2AEFB1C3',
+          product: Product.base.id,
+          productCategory: '5E0287DDDBB9432B9CA00CCCE9296BEC',
+          taxCategory: 'FF80818123B7FC160123B804AB880008'
+        }
+      ];
+      const payload = {
+        products: [{ product: productServiceLinked, qty: 1 }]
+      };
+      OB.App.Security.hasPermission.mockReturnValue(false);
+      OB.App.MasterdataModels.ProductServiceLinked.find.mockResolvedValueOnce(
+        serviceLinked
+      );
+      const newPayload = await prepareAction(payload, Ticket.empty);
+      expect(newPayload.products[0]).toEqual({
+        product: {
+          ...payload.products[0].product,
+          productServiceLinked: serviceLinked
+        },
+        qty: 1
+      });
+    });
+
+    it('add ProductServiceLinked information (remote)', async () => {
+      const productServiceLinked = {
+        ...Product.base,
+        modifyTax: true
+      };
+      const serviceLinked = [
+        {
+          id: '0BF2B3F4F7B843B6B777CA7A2AEFB1C3',
+          product: Product.base.id,
+          productCategory: '5E0287DDDBB9432B9CA00CCCE9296BEC',
+          taxCategory: 'FF80818123B7FC160123B804AB880008'
+        }
+      ];
+      const payload = {
+        products: [{ product: productServiceLinked, qty: 1 }]
+      };
+      OB.App.Security.hasPermission.mockReturnValue(true);
+      OB.App.DAL.find.mockResolvedValueOnce(serviceLinked);
+      const newPayload = await prepareAction(payload, Ticket.empty);
+      expect(newPayload.products[0]).toEqual({
+        product: {
+          ...payload.products[0].product,
+          productServiceLinked: serviceLinked
+        },
+        qty: 1
+      });
     });
   });
 

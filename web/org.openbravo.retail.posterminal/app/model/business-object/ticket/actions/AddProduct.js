@@ -430,21 +430,12 @@
             }
           ]
         });
-        if (productServiceLinked.length > 0) {
-          productServiceLinked = productServiceLinked.models;
-        }
       } else {
         productServiceLinked = await OB.App.MasterdataModels.ProductServiceLinked.find(
           new OB.App.Class.Criteria().criterion('product', product.id).build()
         );
-        if (productServiceLinked.length > 0) {
-          productServiceLinked = productServiceLinked.map(productServiceLink =>
-            OB.Dal.transform(OB.Model.ProductServiceLinked, productServiceLink)
-          );
-        }
       }
-
-      if (productServiceLinked) {
+      if (productServiceLinked.length > 0) {
         return {
           ...productInfo,
           product: { ...product, productServiceLinked }
