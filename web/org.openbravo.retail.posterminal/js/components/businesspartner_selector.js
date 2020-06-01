@@ -79,110 +79,93 @@ enyo.kind({
   initComponents: function() {
     return this;
   },
-  renderCustomer: function(newCustomerId, newCustomerName) {
-    this.setValue(newCustomerId, newCustomerName);
-  },
-  orderChanged: function(oldValue) {
+  renderCustomer: function() {
+    // Business Partner if available
     if (this.order.get('bp')) {
-      this.renderCustomer(
+      this.setValue(
         this.order.get('bp').get('id'),
         this.order.get('bp').get('_identifier')
       );
     } else {
-      this.renderCustomer(null, '');
+      this.setValue(null, '');
     }
+    // External Business Partner if available
+    if (this.order.get('externalBusinessPartner')) {
+      const bp = new OB.App.Class.ExternalBusinessPartner(
+        this.order.get('externalBusinessPartner')
+      );
+      this.setValue(bp.getKey(), bp.getIdentifier());
+    }
+  },
+  orderChanged: function(oldValue) {
+    this.renderCustomer();
+    this.order.on('change:externalBusinessPartner', () => {
+      this.renderCustomer();
+    });
+    this.order.on('change:bp', () => {
+      const model = this.order;
+      if (model.get('bp')) {
+        model.set('invoiceTerms', model.get('bp').get('invoiceTerms'));
+        model.setFullInvoice(model.get('fullInvoice'), true);
 
-    this.order.on(
-      'change:externalBusinessPartner',
-      function(model) {
-        if (model.get('externalBusinessPartner')) {
-          const bp = new OB.App.Class.ExternalBusinessPartner(
-            model.get('externalBusinessPartner')
+        if (
+          model.get('isEditable') &&
+          !model.get('cloningReceipt') &&
+          OB.MobileApp.model.hasPermission('EnableMultiPriceList', true) &&
+          (model.get('priceIncludesTax') !==
+            OB.MobileApp.model.get('pricelist').priceIncludesTax ||
+            model.get('bp').get('priceListCurrency') !==
+              OB.MobileApp.model.get('pricelist').currency)
+        ) {
+          model.set('priceList', OB.MobileApp.model.get('pricelist').id, {
+            silent: true
+          });
+          model.set(
+            'priceIncludesTax',
+            OB.MobileApp.model.get('pricelist').priceIncludesTax
           );
-          this.renderCustomer(bp.getKey(), bp.getIdentifier());
-        }
-      },
-      this
-    );
-    this.order.on(
-      'change:bp',
-      function(model) {
-        if (model.get('bp')) {
-          model.set('invoiceTerms', model.get('bp').get('invoiceTerms'));
-          model.setFullInvoice(model.get('fullInvoice'), true);
-
-          if (
-            model.get('isEditable') &&
-            !model.get('cloningReceipt') &&
-            OB.MobileApp.model.hasPermission('EnableMultiPriceList', true) &&
-            (model.get('priceIncludesTax') !==
-              OB.MobileApp.model.get('pricelist').priceIncludesTax ||
-              model.get('bp').get('priceListCurrency') !==
-                OB.MobileApp.model.get('pricelist').currency)
-          ) {
-            model.set('priceList', OB.MobileApp.model.get('pricelist').id, {
-              silent: true
-            });
-            model.set(
-              'priceIncludesTax',
-              OB.MobileApp.model.get('pricelist').priceIncludesTax
-            );
-            model.set('currency', OB.MobileApp.model.get('pricelist').currency);
-            OB.UTIL.showConfirmation.display(
-              OB.I18N.getLabel('OBPOS_ChangeOfPriceList'),
-              OB.I18N.getLabel('OBPOS_ChangeOfPriceListConfig', [
-                model.get('bp').get('priceListName'),
-                OB.MobileApp.model.get('pricelist')._identifier
-              ]),
-              null,
-              {
-                onHideFunction: function() {
-                  model.trigger('change:documentNo', model);
-                }
+          model.set('currency', OB.MobileApp.model.get('pricelist').currency);
+          OB.UTIL.showConfirmation.display(
+            OB.I18N.getLabel('OBPOS_ChangeOfPriceList'),
+            OB.I18N.getLabel('OBPOS_ChangeOfPriceListConfig', [
+              model.get('bp').get('priceListName'),
+              OB.MobileApp.model.get('pricelist')._identifier
+            ]),
+            null,
+            {
+              onHideFunction: function() {
+                model.trigger('change:documentNo', model);
               }
+            }
+          );
+        }
+
+        model
+          .get('lines')
+          .filter(line => line.get('obrdmDeliveryMode') === 'HomeDelivery')
+          .forEach(line => {
+            line.set(
+              'country',
+              model.get('bp').get('shipLocId')
+                ? model
+                    .get('bp')
+                    .get('locationModel')
+                    .get('countryId')
+                : null
             );
-          }
-
-          model
-            .get('lines')
-            .filter(line => line.get('obrdmDeliveryMode') === 'HomeDelivery')
-            .forEach(line => {
-              line.set(
-                'country',
-                model.get('bp').get('shipLocId')
-                  ? model
-                      .get('bp')
-                      .get('locationModel')
-                      .get('countryId')
-                  : null
-              );
-              line.set(
-                'region',
-                model.get('bp').get('shipLocId')
-                  ? model
-                      .get('bp')
-                      .get('locationModel')
-                      .get('regionId')
-                  : null
-              );
-            });
-
-          this.renderCustomer(
-            model.get('bp').get('id'),
-            model.get('bp').get('_identifier')
-          );
-        } else {
-          this.renderCustomer(null, '');
-        }
-        if (model.get('externalBusinessPartner')) {
-          const bp = new OB.App.Class.ExternalBusinessPartner(
-            model.get('externalBusinessPartner')
-          );
-          this.renderCustomer(bp.getKey(), bp.getIdentifier());
-        }
-      },
-      this
-    );
+            line.set(
+              'region',
+              model.get('bp').get('shipLocId')
+                ? model
+                    .get('bp')
+                    .get('locationModel')
+                    .get('regionId')
+                : null
+            );
+          });
+      }
+      this.renderCustomer();
+    });
   }
 });
 

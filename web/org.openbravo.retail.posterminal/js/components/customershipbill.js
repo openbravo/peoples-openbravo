@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2016-2019 Openbravo S.L.U.
+ * Copyright (C) 2016-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -63,51 +63,29 @@ enyo.kind({
     this.setOrder(model.get('order'));
     this.hiddenPopup = false;
   },
-  renderCustomer: function(newCustomerId, newCustomerName) {
-    this.setValue(newCustomerId, newCustomerName);
-  },
-  orderChanged: function(oldValue) {
+  renderCustomer: function() {
+    // Business Partner if available
     if (this.order.get('bp')) {
-      this.renderCustomer(
+      this.setValue(
         this.order.get('bp').get('id'),
         this.order.get('bp').get('_identifier')
       );
     } else {
-      this.renderCustomer(null, '');
+      this.setValue(null, '');
     }
-
-    this.order.on(
-      'change:bp',
-      function(model) {
-        if (model.get('bp')) {
-          this.renderCustomer(
-            this.order.get('bp').get('id'),
-            this.order.get('bp').get('_identifier')
-          );
-        } else {
-          this.renderCustomer(null, '');
-        }
-        if (model.get('externalBusinessPartner')) {
-          const bp = new OB.App.Class.ExternalBusinessPartner(
-            model.get('externalBusinessPartner')
-          );
-          this.renderCustomer(bp.getKey(), bp.getIdentifier());
-        }
-      },
-      this
-    );
-    this.order.on(
-      'change:externalBusinessPartner',
-      function(model) {
-        if (model.get('externalBusinessPartner')) {
-          const bp = new OB.App.Class.ExternalBusinessPartner(
-            model.get('externalBusinessPartner')
-          );
-          this.renderCustomer(bp.getKey(), bp.getIdentifier());
-        }
-      },
-      this
-    );
+    // External Business Partner if available
+    if (this.order.get('externalBusinessPartner')) {
+      const bp = new OB.App.Class.ExternalBusinessPartner(
+        this.order.get('externalBusinessPartner')
+      );
+      this.setValue(bp.getKey(), bp.getIdentifier());
+    }
+  },
+  orderChanged: function(oldValue) {
+    this.renderCustomer();
+    this.order.on('change:bp change:externalBusinessPartner', () => {
+      this.renderCustomer();
+    });
   }
 });
 
