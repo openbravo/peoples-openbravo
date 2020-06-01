@@ -567,7 +567,9 @@ describe('addProduct preparation', () => {
         attrs: {
           attributeSearchAllowed: true,
           attributeValue: '1234',
-          productHavingSameAttribute: true
+          productHavingSameAttribute: true,
+          hasMandatoryServices: false,
+          hasRelatedServices: false
         }
       });
     });
@@ -588,7 +590,9 @@ describe('addProduct preparation', () => {
         ...payload,
         attrs: {
           attributeSearchAllowed: true,
-          productHavingSameAttribute: true
+          productHavingSameAttribute: true,
+          hasMandatoryServices: false,
+          hasRelatedServices: false
         }
       });
     });
@@ -610,7 +614,9 @@ describe('addProduct preparation', () => {
         attrs: {
           attributeSearchAllowed: true,
           attributeValue: '5678',
-          productHavingSameAttribute: false
+          productHavingSameAttribute: false,
+          hasMandatoryServices: false,
+          hasRelatedServices: false
         }
       });
     });
@@ -632,7 +638,9 @@ describe('addProduct preparation', () => {
         attrs: {
           attributeSearchAllowed: true,
           attributeValue: '1234',
-          productHavingSameAttribute: false
+          productHavingSameAttribute: false,
+          hasMandatoryServices: false,
+          hasRelatedServices: false
         }
       });
     });
@@ -656,7 +664,9 @@ describe('addProduct preparation', () => {
         attrs: {
           attributeSearchAllowed: true,
           attributeValue: '1234',
-          productHavingSameAttribute: true
+          productHavingSameAttribute: true,
+          hasMandatoryServices: false,
+          hasRelatedServices: false
         }
       });
     });
@@ -680,7 +690,9 @@ describe('addProduct preparation', () => {
         ...payload,
         attrs: {
           attributeSearchAllowed: true,
-          productHavingSameAttribute: false
+          productHavingSameAttribute: false,
+          hasMandatoryServices: false,
+          hasRelatedServices: false
         }
       });
     });

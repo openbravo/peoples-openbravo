@@ -31,9 +31,13 @@
         const lineToEdit = getLineToEdit(productInfo, ticket, options, attrs);
         if (lineToEdit) {
           lineToEdit.qty += productInfo.qty;
+          setLineAttributes(lineToEdit, attrs, productInfo);
         } else {
-          const newLine = createLine(productInfo, ticket, options);
-          ticket.lines.push(newLine);
+          const newLines = createLines(productInfo, ticket, options, attrs);
+          newLines.forEach(newLine => {
+            setLineAttributes(newLine, attrs, productInfo);
+            ticket.lines.push(newLine);
+          });
         }
       });
 
@@ -50,6 +54,8 @@
       }
 
       let newPayload = { options: {}, attrs: {}, ...payload };
+      newPayload.attrs.hasMandatoryServices = false;
+      newPayload.attrs.hasRelatedServices = false;
 
       newPayload.products = newPayload.products.map(productInfo => {
         return { ...productInfo, qty: productInfo.qty || 1 };
@@ -75,6 +81,21 @@
     return ticket.orderType === 1;
   }
 
+  function setLineAttributes(line, attrs, productInfo) {
+    const lineAttrs = { ...attrs };
+    if (
+      productInfo.product.productType === 'S' &&
+      lineAttrs.relatedLines &&
+      line.relatedLines
+    ) {
+      lineAttrs.relatedLines = OB.UTIL.mergeArrays(
+        line.relatedLines,
+        lineAttrs.relatedLines
+      );
+    }
+    Object.assign(line, attrs);
+  }
+
   function getLineToEdit(productInfo, ticket, options = {}, attrs = {}) {
     const { product, qty } = productInfo;
     if (product.obposScale || !product.groupProduct) {
@@ -86,19 +107,44 @@
     }
 
     const attributeValue = attrs.attributeSearchAllowed && attrs.attributeValue;
+    const serviceProduct =
+      product.productType !== 'S' ||
+      (product.productType === 'S' && !product.isLinkedToProduct);
 
     return ticket.lines.find(
       l =>
         l.product.id === product.id &&
         l.isEditable &&
         Math.sign(l.qty) === Math.sign(qty) &&
-        (!attributeValue || l.attributeValue === attributeValue)
+        (!attributeValue || l.attributeValue === attributeValue) &&
+        !l.splitline &&
+        (l.qty > 0 || !l.replacedorderline) &&
+        (qty !== 1 || l.qty !== -1 || serviceProduct)
     );
   }
 
-  function createLine(productInfo, ticket, options = {}) {
+  function createLines(productInfo, ticket, options = {}, attrs = {}) {
     const { product, qty } = productInfo;
 
+    if (product.groupProduct || product.avoidSplitProduct) {
+      const lineQty =
+        attrs.relatedLines &&
+        attrs.relatedLines[0].deferred &&
+        product.quantityRule === 'PP' &&
+        qty > 0
+          ? attrs.relatedLines[0].qty
+          : qty;
+      return [createNewLine(product, lineQty, ticket, options)];
+    }
+
+    const newLines = [];
+    for (let count = 0; count < Math.abs(qty); count += 1) {
+      newLines.push(createNewLine(product, Math.sign(qty), ticket, options));
+    }
+    return newLines;
+  }
+
+  function createNewLine(product, qty, ticket, options) {
     // TODO: properly calculate organization
     const organization = {
       id: ticket.organization,
@@ -128,8 +174,8 @@
       newLine.netPrice = OB.DEC.number(product.standardPrice);
     }
 
-    setDeliveryMode(newLine, ticket);
     // TODO: related lines
+    setDeliveryMode(newLine, ticket);
     return newLine;
   }
 
