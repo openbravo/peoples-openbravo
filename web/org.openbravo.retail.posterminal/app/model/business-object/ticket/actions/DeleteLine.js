@@ -10,6 +10,8 @@
 /* eslint-disable no-use-before-define */
 
 (function DeleteLineDefinition() {
+  window.newDeleteLine = true; // TODO: remove this testing code
+
   OB.App.StateAPI.Ticket.registerAction('deleteLine', (ticket, payload) => {
     const { lineIds } = payload;
 

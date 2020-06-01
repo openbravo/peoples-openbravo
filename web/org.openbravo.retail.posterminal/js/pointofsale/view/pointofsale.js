@@ -1672,10 +1672,16 @@ enyo.kind({
     this.tabChange(inSender, inEvent);
   },
   deleteLine: function(inSender, inEvent) {
-    var selectedModels = inEvent.selectedReceiptLines,
-      receipt = this.model.get('order');
-
-    receipt.deleteLinesFromOrder(selectedModels, inEvent.callback);
+    const selectedModels = inEvent.selectedReceiptLines;
+    if (window.newDeleteLine) {
+      const lineIds = selectedModels.map(m => m.id);
+      OB.App.State.Ticket.deleteLine({ lineIds }).catch(
+        OB.App.View.ActionCanceledUIHandler.handle
+      );
+    } else {
+      const receipt = this.model.get('order');
+      receipt.deleteLinesFromOrder(selectedModels, inEvent.callback);
+    }
   },
   editLine: function(inSender, inEvent) {
     var receipt = this.model.get('order');
