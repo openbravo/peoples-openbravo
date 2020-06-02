@@ -20,6 +20,7 @@
     ticket.lines = ticket.lines.map(l => {
       return { ...l };
     });
+
     products
       .map(productInfo => {
         return {
@@ -32,12 +33,15 @@
         if (lineToEdit) {
           lineToEdit.qty += productInfo.qty;
           setLineAttributes(lineToEdit, attrs, productInfo);
+        } else if (
+          productInfo.product.groupProduct ||
+          productInfo.product.avoidSplitProduct
+        ) {
+          const newLine = createLine(productInfo, ticket, options, attrs);
+          ticket.lines.push(newLine);
         } else {
           const newLines = createLines(productInfo, ticket, options, attrs);
-          newLines.forEach(newLine => {
-            setLineAttributes(newLine, attrs, productInfo);
-            ticket.lines.push(newLine);
-          });
+          newLines.forEach(newLine => ticket.lines.push(newLine));
         }
       });
 
@@ -93,7 +97,7 @@
         lineAttrs.relatedLines
       );
     }
-    Object.assign(line, attrs);
+    Object.assign(line, lineAttrs);
   }
 
   function getLineToEdit(productInfo, ticket, options = {}, attrs = {}) {
@@ -124,27 +128,18 @@
   }
 
   function createLines(productInfo, ticket, options = {}, attrs = {}) {
-    const { product, qty } = productInfo;
-
-    if (product.groupProduct || product.avoidSplitProduct) {
-      const lineQty =
-        attrs.relatedLines &&
-        attrs.relatedLines[0].deferred &&
-        product.quantityRule === 'PP' &&
-        qty > 0
-          ? attrs.relatedLines[0].qty
-          : qty;
-      return [createNewLine(product, lineQty, ticket, options)];
-    }
+    const { qty } = productInfo;
 
     const newLines = [];
     for (let count = 0; count < Math.abs(qty); count += 1) {
-      newLines.push(createNewLine(product, Math.sign(qty), ticket, options));
+      newLines.push(createLine(productInfo, ticket, options, attrs));
     }
     return newLines;
   }
 
-  function createNewLine(product, qty, ticket, options) {
+  function createLine(productInfo, ticket, options = {}, attrs = {}) {
+    const { product, qty } = productInfo;
+
     // TODO: properly calculate organization
     const organization = {
       id: ticket.organization,
@@ -154,12 +149,20 @@
 
     // TODO: validateAllowSalesWithReturn
 
+    const lineQty =
+      attrs.relatedLines &&
+      attrs.relatedLines[0].deferred &&
+      product.quantityRule === 'PP' &&
+      qty > 0
+        ? attrs.relatedLines[0].qty
+        : qty;
+
     const newLine = {
       id: OB.App.UUID.generate(),
       product,
       organization,
       uOM: product.uOM,
-      qty: OB.DEC.number(qty, product.uOMstandardPrecision),
+      qty: OB.DEC.number(lineQty, product.uOMstandardPrecision),
       priceList: OB.DEC.number(product.listPrice),
       priceIncludesTax: ticket.priceIncludesTax,
       isEditable: lodash.has(options, 'isEditable') ? options.isEditable : true,
@@ -176,6 +179,7 @@
 
     // TODO: related lines
     setDeliveryMode(newLine, ticket);
+    setLineAttributes(newLine, attrs, productInfo);
     return newLine;
   }
 
