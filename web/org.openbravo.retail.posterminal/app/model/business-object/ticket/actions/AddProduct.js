@@ -146,6 +146,17 @@
       region: OB.MobileApp.model.get('terminal').organizationRegionId
     };
 
+    const warehouse = {
+      id:
+        attrs.splitline == null
+          ? OB.App.TerminalProperty.get('warehouses')[0].warehouseid
+          : attrs.originalLine.warehouse.id,
+      warehousename:
+        attrs.splitline == null
+          ? OB.App.TerminalProperty.get('warehouses')[0].warehousename
+          : attrs.originalLine.warehouse.warehousename
+    };
+
     // TODO: validateAllowSalesWithReturn
 
     const lineQty =
@@ -160,6 +171,7 @@
       id: OB.App.UUID.generate(),
       product,
       organization,
+      warehouse,
       uOM: product.uOM,
       qty: OB.DEC.number(lineQty, product.uOMstandardPrecision),
       priceList: OB.DEC.number(product.listPrice),
