@@ -684,7 +684,9 @@
               ? line.get('grossUnitAmount')
               : OB.DEC.Zero,
             lineNetAmount: line.get('netUnitAmount'),
-            grossUnitPrice: line.get('grossUnitPrice'),
+            grossUnitPrice: this.get('priceIncludesTax')
+              ? line.get('grossUnitPrice')
+              : OB.DEC.Zero,
             pricenet: line.get('netUnitPrice'),
             baseGrossUnitPrice: this.get('priceIncludesTax')
               ? line.get('price')
