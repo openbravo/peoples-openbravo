@@ -132,8 +132,9 @@
       });
     },
 
-    removeManualPromotionFromLines(receipt) {
-      receipt.get('lines').models.forEach(line => {
+    removeManualPromotionFromLines(receipt, lines) {
+      const receiptLines = lines || receipt.get('lines').models;
+      receiptLines.forEach(line => {
         if (line.get('promotions') && line.get('promotions').length > 0) {
           let exludeManualPromotions = line.get('promotions').filter(promo => {
             return !promo.manual;
