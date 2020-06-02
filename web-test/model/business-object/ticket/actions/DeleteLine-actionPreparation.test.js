@@ -134,4 +134,26 @@ describe('deleteLine preparation', () => {
       );
     });
   });
+
+  describe('config preparation', () => {
+    it.each`
+      preference               | property
+      ${'OBPOS_remove_ticket'} | ${'saveRemoval'}
+    `('prepares config for $property', async ({ preference, property }) => {
+      const assertConfig = async set => {
+        OB.App.Security.hasPermission.mockImplementation(p =>
+          p === preference ? set : undefined
+        );
+
+        const payload = await prepareAction({
+          lineIds: ['l2']
+        });
+
+        expect(payload.config[property]).toBe(set);
+      };
+
+      await assertConfig(true);
+      await assertConfig(false);
+    });
+  });
 });

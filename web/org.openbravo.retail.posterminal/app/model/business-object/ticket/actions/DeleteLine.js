@@ -28,11 +28,21 @@
       const ticket = state.Ticket;
       let newPayload = { ...payload };
 
+      newPayload = prepareConfiguration(newPayload);
       newPayload = removeRelatedServices(ticket, newPayload);
       return newPayload;
     }
   );
 
+  function prepareConfiguration(payload) {
+    const newPayload = {
+      ...payload,
+      config: {
+        saveRemoval: OB.App.Security.hasPermission('OBPOS_remove_ticket')
+      }
+    };
+    return newPayload;
+  }
   function removeRelatedServices(ticket, payload) {
     // TODO: consider doing this in action. Note this calculations were done in trigger updateRelations in order.js (component)
     if (!ticket.hasServices) {
