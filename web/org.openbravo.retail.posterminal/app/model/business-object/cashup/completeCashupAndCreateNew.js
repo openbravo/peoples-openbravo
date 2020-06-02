@@ -43,6 +43,7 @@
       let newCashup = {};
       const {
         terminalIsSlave,
+        terminalIsMaster,
         terminalPayments,
         currentDate,
         userId,
@@ -68,6 +69,20 @@
       );
 
       newState.Cashup = newCashup;
+      if (terminalIsSlave || terminalIsMaster) {
+        const newMessagePayloadCashup = {
+          id: OB.App.UUID.generate(),
+          terminal: terminalName,
+          cacheSessionId,
+          data: [newCashup]
+        };
+        const newMessageCashup = OB.App.State.Messages.Utils.createNewMessage(
+          'Cash Up',
+          'org.openbravo.retail.posterminal.ProcessCashClose',
+          newMessagePayloadCashup
+        );
+        newState.Messages = [...newState.Messages, newMessageCashup];
+      }
 
       return newState;
     }

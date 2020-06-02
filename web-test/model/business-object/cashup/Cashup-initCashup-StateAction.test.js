@@ -16,7 +16,7 @@ describe('Cashup - init cashup State Action', () => {
   let initCashup;
 
   beforeAll(() => {
-    initCashup = OB.App.StateAPI.Cashup.initCashup;
+    initCashup = OB.App.StateAPI.Global.initCashup;
   });
 
   it('initialize cashup from local', () => {

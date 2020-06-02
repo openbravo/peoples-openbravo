@@ -1185,6 +1185,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
               userId: OB.MobileApp.model.get('context').user.id,
               terminalId: OB.MobileApp.model.get('terminal').id,
               terminalIsSlave: OB.POS.modelterminal.get('terminal').isslave,
+              terminalIsMaster: OB.POS.modelterminal.get('terminal').ismaster,
               terminalPayments: OB.MobileApp.model.get('payments')
             }
           })

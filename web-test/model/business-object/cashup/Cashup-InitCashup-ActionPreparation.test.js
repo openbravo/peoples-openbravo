@@ -29,7 +29,7 @@ describe('init cashup Action Preparation', () => {
 
     deepfreeze(currentState);
     const result = await executeActionPreparations(
-      OB.App.StateAPI.Cashup.initCashup,
+      OB.App.StateAPI.Global.initCashup,
       currentState,
       {}
     );
