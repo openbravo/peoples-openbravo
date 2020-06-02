@@ -93,6 +93,7 @@ enyo.kind({
   show: function() {
     var me = this;
     me.$.btnApply.setDisabled(true);
+    me.$.formElementCheckOverride.coreElement.setChecked(false);
     me.discounts.reset();
     me.order.trigger('showDiscount');
     //uncheck lines
@@ -481,7 +482,10 @@ enyo.kind({
         promotionToApply.definition.noOrder = maxNoOrder + 1;
 
         if (!promotionToApply.definition.applyNext) {
-          OB.Discounts.Pos.removeManualPromotionFromLines(me.order);
+          OB.Discounts.Pos.removeManualPromotionFromLines(
+            me.order,
+            me.checkedLines
+          );
         }
 
         if (
