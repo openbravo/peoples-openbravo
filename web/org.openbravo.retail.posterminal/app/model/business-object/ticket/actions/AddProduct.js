@@ -29,14 +29,12 @@
         };
       })
       .forEach(productInfo => {
+        const { product } = productInfo;
         const lineToEdit = getLineToEdit(productInfo, ticket, options, attrs);
         if (lineToEdit) {
           lineToEdit.qty += productInfo.qty;
           setLineAttributes(lineToEdit, attrs, productInfo);
-        } else if (
-          productInfo.product.groupProduct ||
-          productInfo.product.avoidSplitProduct
-        ) {
+        } else if (product.groupProduct || product.avoidSplitProduct) {
           const newLine = createLine(productInfo, ticket, options, attrs);
           ticket.lines.push(newLine);
         } else {
@@ -67,13 +65,14 @@
 
       checkRestrictions(ticket, newPayload);
 
+      newPayload = await preparePacks(newPayload);
       newPayload = await prepareScaleProducts(newPayload);
       newPayload = await prepareBOMProducts(ticket, newPayload);
       newPayload = await prepareProductService(newPayload);
       newPayload = await prepareProductCharacteristics(newPayload);
       newPayload = await prepareProductAttributes(ticket, newPayload);
 
-      await checkStock(ticket, payload);
+      await checkStock(ticket, newPayload);
 
       const payloadWithApprovals = await checkApprovals(ticket, newPayload);
 
@@ -357,6 +356,63 @@
         ]
       });
     }
+  }
+
+  async function preparePacks(payload) {
+    if (
+      !payload.products.some(
+        p =>
+          p.product.ispack &&
+          p.product.productCategory === 'BE5D42E554644B6AA262CCB097753951'
+      )
+    ) {
+      return payload;
+    }
+
+    const newPayload = { ...payload };
+    newPayload.products = [];
+
+    for (let i = 0; i < payload.products.length; i += 1) {
+      const p = payload.products[i];
+      if (
+        p.product.ispack &&
+        p.product.productCategory === 'BE5D42E554644B6AA262CCB097753951'
+      ) {
+        const discount = OB.Discounts.Pos.ruleImpls.find(
+          d => d.id === p.product.id
+        );
+        if (discount.endingDate && discount.endingDate.length > 0) {
+          const objDate = new Date(discount.endingDate);
+          const now = new Date();
+          const nowWithoutTime = new Date(now.toISOString().split('T')[0]);
+          if (nowWithoutTime > objDate) {
+            throw new OB.App.Class.ActionCanceled({
+              title: 'OBPOS_PackExpired_header',
+              errorConfirmation: 'OBPOS_PackExpired_body',
+              messageParams: [
+                // eslint-disable-next-line no-underscore-dangle
+                discount._identifier,
+                objDate.toLocaleDateString()
+              ]
+            });
+          }
+        }
+        for (let j = 0; j < discount.products.length; j += 1) {
+          // eslint-disable-next-line no-await-in-loop
+          const product = await OB.App.MasterdataModels.Product.withId(
+            discount.products[j].product.id
+          );
+          newPayload.products.push({
+            product,
+            qty: discount.products[j].obdiscQty,
+            belongsToPack: true
+          });
+        }
+      } else {
+        newPayload.products.push(p);
+      }
+    }
+    return newPayload;
   }
 
   async function prepareScaleProducts(payload) {
@@ -663,7 +719,7 @@
   async function checkStock(ticket, payload) {
     const { products, options, attrs } = payload;
 
-    if (products.length > 1) {
+    if (products.length > 1 && !products.every(p => p.belongsToPack)) {
       throw new Error('Cannot check stock for more than one product');
     }
 
