@@ -34,6 +34,7 @@
   );
 
   function removeRelatedServices(ticket, payload) {
+    // TODO: consider doing this in action. Note this calculations were done in trigger updateRelations in order.js (component)
     if (!ticket.hasServices) {
       // TODO: is this check necessary?
       return payload;
