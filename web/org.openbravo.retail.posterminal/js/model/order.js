@@ -11101,9 +11101,7 @@
             },
             async function(bp, loc, billLoc) {
               order.set({
-                bp: bp,
-                externalBusinessPartnerReference: null,
-                externalBusinessPartner: null
+                bp: bp
               });
               order.set('gross', model.totalamount);
               order.set('net', model.totalNetAmount);
