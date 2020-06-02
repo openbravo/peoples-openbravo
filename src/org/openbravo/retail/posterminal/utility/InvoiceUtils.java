@@ -57,9 +57,10 @@ import org.openbravo.model.financialmgmt.payment.PaymentTermLine;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.retail.posterminal.POSUtils;
+import org.openbravo.retail.posterminal.TicketPropertyMapping;
 import org.openbravo.service.db.CallStoredProcedure;
 
-public class InvoiceUtils {
+public class InvoiceUtils implements TicketPropertyMapping {
 
   HashMap<String, DocumentType> paymentDocTypes = new HashMap<>();
   HashMap<String, DocumentType> shipmentDocTypes = new HashMap<>();
@@ -419,7 +420,7 @@ public class InvoiceUtils {
     invoice.setAPRMProcessinvoice("RE");
     invoice.setSalesOrder(order);
     invoice.setPartnerAddress(OBDal.getInstance()
-        .getProxy(Location.class, jsoninvoice.getJSONObject("bp").getString("locId")));
+        .getProxy(Location.class, getBusinessPartnerJson(jsoninvoice).getString("locId")));
     invoice.setProcessed(true);
     invoice.setPaymentMethod(order.getPaymentMethod());
     invoice.setPaymentTerms(order.getPaymentTerms());

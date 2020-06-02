@@ -112,7 +112,6 @@
       }
 
       // FIXME: Remove once properties are mapped
-      newTicket.bp = newTicket.businessPartner;
       newTicket.gross = newTicket.grossAmount;
       newTicket.net = newTicket.netAmount;
       newTicket.lines = newTicket.lines.map(line => {

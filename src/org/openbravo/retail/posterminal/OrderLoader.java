@@ -89,7 +89,7 @@ import org.openbravo.service.json.JsonConstants;
 
 @DataSynchronization(entity = "Order")
 public class OrderLoader extends POSDataSynchronizationProcess
-    implements DataSynchronizationImportProcess {
+    implements DataSynchronizationImportProcess, TicketPropertyMapping {
 
   private static final Logger log = LogManager.getLogger();
 
@@ -1036,9 +1036,9 @@ public class OrderLoader extends POSDataSynchronizationProcess
     order.setAccountingDate(order.getOrderDate());
     order.setScheduledDeliveryDate(order.getOrderDate());
     order.setPartnerAddress(OBDal.getInstance()
-        .getProxy(Location.class, jsonorder.getJSONObject("bp").getString("shipLocId")));
+        .getProxy(Location.class, getBusinessPartnerJson(jsonorder).getString("shipLocId")));
     order.setInvoiceAddress(OBDal.getInstance()
-        .getProxy(Location.class, jsonorder.getJSONObject("bp").getString("locId")));
+        .getProxy(Location.class, getBusinessPartnerJson(jsonorder).getString("locId")));
 
     Boolean paymenthMethod = false;
     if (!jsonorder.isNull("paymentMethodKind")
@@ -1059,11 +1059,11 @@ public class OrderLoader extends POSDataSynchronizationProcess
     }
 
     if (!paymenthMethod) {
-      if (!jsonorder.getJSONObject("bp").isNull("paymentMethod")
-          && !jsonorder.getJSONObject("bp").getString("paymentMethod").equals("null")) {
+      if (!getBusinessPartnerJson(jsonorder).isNull("paymentMethod")
+          && !getBusinessPartnerJson(jsonorder).getString("paymentMethod").equals("null")) {
         order.setPaymentMethod((FIN_PaymentMethod) OBDal.getInstance()
             .getProxy("FIN_PaymentMethod",
-                jsonorder.getJSONObject("bp").getString("paymentMethod")));
+                getBusinessPartnerJson(jsonorder).getString("paymentMethod")));
       } else if (bp.getPaymentMethod() != null) {
         order.setPaymentMethod(bp.getPaymentMethod());
       } else if (order.getOrganization().getObretcoDbpPmethodid() != null) {
@@ -1081,11 +1081,11 @@ public class OrderLoader extends POSDataSynchronizationProcess
         }
       }
     }
-    if (!jsonorder.getJSONObject("bp").isNull("paymentTerms")
-        && !jsonorder.getJSONObject("bp").getString("paymentTerms").equals("null")) {
+    if (!getBusinessPartnerJson(jsonorder).isNull("paymentTerms")
+        && !getBusinessPartnerJson(jsonorder).getString("paymentTerms").equals("null")) {
       order.setPaymentTerms((PaymentTerm) OBDal.getInstance()
           .getProxy("FinancialMgmtPaymentTerm",
-              jsonorder.getJSONObject("bp").getString("paymentTerms")));
+              getBusinessPartnerJson(jsonorder).getString("paymentTerms")));
     } else if (bp.getPaymentTerms() != null) {
       order.setPaymentTerms(bp.getPaymentTerms());
     } else if (order.getOrganization().getObretcoDbpPmethodid() != null) {
@@ -1104,9 +1104,9 @@ public class OrderLoader extends POSDataSynchronizationProcess
     if (!jsonorder.isNull("invoiceTerms") && !jsonorder.getString("invoiceTerms").equals("null")
         && StringUtils.isNotBlank(jsonorder.getString("invoiceTerms"))) {
       order.setInvoiceTerms(jsonorder.getString("invoiceTerms"));
-    } else if (!jsonorder.getJSONObject("bp").isNull("invoiceTerms")
-        && !jsonorder.getJSONObject("bp").getString("invoiceTerms").equals("null")) {
-      order.setInvoiceTerms(jsonorder.getJSONObject("bp").getString("invoiceTerms"));
+    } else if (!getBusinessPartnerJson(jsonorder).isNull("invoiceTerms")
+        && !getBusinessPartnerJson(jsonorder).getString("invoiceTerms").equals("null")) {
+      order.setInvoiceTerms(getBusinessPartnerJson(jsonorder).getString("invoiceTerms"));
     } else if (bp.getInvoiceTerms() != null) {
       order.setInvoiceTerms(bp.getInvoiceTerms());
     } else if (order.getOrganization().getObretcoDbpIrulesid() != null) {
