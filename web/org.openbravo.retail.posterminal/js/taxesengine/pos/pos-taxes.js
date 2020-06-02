@@ -100,7 +100,11 @@
     }
 
     const ticket = translateReceipt(receipt);
-    const taxes = OB.Taxes.applyTaxes(ticket, OB.Taxes.Pos.ruleImpls);
+    return OB.Taxes.Pos.applyTaxes(ticket, OB.Taxes.Pos.ruleImpls);
+  };
+
+  OB.Taxes.Pos.applyTaxes = (ticket, rules) => {
+    const taxes = OB.Taxes.applyTaxes(ticket, rules);
     return translateTaxes(taxes);
   };
 
