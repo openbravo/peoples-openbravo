@@ -47,7 +47,6 @@
       priceIncludesTax: true,
       gross: true,
       lineGrossAmount: true,
-      grossListPrice: true,
       description: true,
       promotions: true,
       shipmentlines: true,
@@ -121,11 +120,7 @@
     },
 
     printPrice: function() {
-      return OB.I18N.formatCurrency(
-        this.get('_price') ||
-          this.get('nondiscountedprice') ||
-          this.get('price')
-      );
+      return OB.I18N.formatCurrency(this.get('price'));
     },
 
     isPrintableService: function() {
@@ -171,35 +166,11 @@
           silent: true
         });
         this.set('gross', OB.DEC.mul(this.getQty(), this.get('price')));
-        this.set(
-          'discountedGross',
-          OB.DEC.compare(this.get('gross')) === 0
-            ? this.get('gross')
-            : OB.DEC.sub(this.get('gross'), this.getDiscount())
-        );
-        this.set(
-          'discountedPrice',
-          this.getQty() === 0
-            ? 0
-            : OB.DEC.div(this.get('discountedGross'), this.getQty())
-        );
       } else {
         this.set('gross', null, {
           silent: true
         });
         this.set('net', OB.DEC.mul(this.getQty(), this.get('price')));
-        this.set(
-          'discountedNet',
-          OB.DEC.compare(this.get('net')) === 0
-            ? this.get('net')
-            : OB.DEC.sub(this.get('net'), this.getDiscount())
-        );
-        this.set(
-          'discountedNetPrice',
-          this.getQty() === 0
-            ? 0
-            : OB.DEC.div(this.get('discountedNet'), this.getQty())
-        );
       }
     },
 
@@ -224,9 +195,7 @@
     },
 
     printNet: function() {
-      return OB.I18N.formatCurrency(
-        this.get('nondiscountednet') || this.getNet()
-      );
+      return OB.I18N.formatCurrency(this.getNet());
     },
 
     printTotalLine: function() {
@@ -676,37 +645,21 @@
       // Apply calculated discounts and promotions to price and gross prices
       // so ERP saves them in the proper place
       this.get('lines').each(function(line) {
-        var price = line.get('price'),
-          gross = line.get('gross'),
-          totalDiscount = 0,
-          grossListPrice = line.get('grossListPrice') || line.get('priceList'),
-          creationPriceList =
-            line.get('creationListPrice') ||
-            line.get('grossListPrice') ||
-            line.get('priceList'),
-          grossUnitPrice,
-          discountPercentage,
-          base;
-
         // Calculate inline discount: discount applied before promotions
+        const listPrice = line.get('grossListPrice') || line.get('priceList');
+        let discountPercentage;
         if (
-          (line.get('product').get('standardPrice') &&
-            line.get('product').get('standardPrice') !== price) ||
-          (_.isNumber(line.get('discountedLinePrice')) &&
-            line.get('discountedLinePrice') !==
-              line.get('product').get('standardPrice')) ||
-          (OB.UTIL.isNullOrUndefined(line.get('discountedLinePrice')) &&
-            line.get('grossListPrice') !== line.get('grossUnitPrice'))
+          line.get('product').get('standardPrice') !== line.get('price') ||
+          line.get('grossListPrice') !== line.get('grossUnitPrice')
         ) {
-          grossUnitPrice = new BigDecimal(price.toString());
-          if (OB.DEC.compare(grossListPrice) === 0) {
+          if (OB.DEC.compare(listPrice) === 0) {
             discountPercentage = OB.DEC.Zero;
           } else {
-            discountPercentage = OB.DEC.toBigDecimal(creationPriceList)
-              .subtract(grossUnitPrice)
+            discountPercentage = OB.DEC.toBigDecimal(listPrice)
+              .subtract(new BigDecimal(line.get('price').toString()))
               .multiply(new BigDecimal('100'))
               .divide(
-                OB.DEC.toBigDecimal(creationPriceList),
+                OB.DEC.toBigDecimal(listPrice),
                 2,
                 BigDecimal.prototype.ROUND_HALF_UP
               );
@@ -718,13 +671,33 @@
             );
           }
         } else {
-          discountPercentage = line.get('discountPercentage')
-            ? line.get('discountPercentage')
-            : OB.DEC.Zero;
+          discountPercentage = line.get('discountPercentage') || OB.DEC.Zero;
         }
         line.set(
           {
-            discountPercentage: discountPercentage
+            discountPercentage: discountPercentage,
+            gross: this.get('priceIncludesTax')
+              ? line.get('grossUnitAmount')
+              : OB.DEC.Zero,
+            net: line.get('netUnitAmount'),
+            lineGrossAmount: this.get('priceIncludesTax')
+              ? line.get('grossUnitAmount')
+              : OB.DEC.Zero,
+            lineNetAmount: line.get('netUnitAmount'),
+            grossUnitPrice: line.get('grossUnitPrice'),
+            pricenet: line.get('netUnitPrice'),
+            baseGrossUnitPrice: this.get('priceIncludesTax')
+              ? line.get('price')
+              : undefined,
+            standardPrice: this.get('priceIncludesTax')
+              ? OB.DEC.Zero
+              : line.get('price'),
+            grossListPrice: this.get('priceIncludesTax')
+              ? line.get('grossListPrice')
+              : OB.DEC.Zero,
+            listPrice: this.get('priceIncludesTax')
+              ? OB.DEC.Zero
+              : line.get('priceList')
           },
           {
             silent: true
@@ -732,7 +705,8 @@
         );
 
         // Calculate prices after promotions
-        base = line.get('price');
+        let base = line.get('price');
+        let totalDiscount = OB.DEC.Zero;
         _.forEach(
           line.get('promotions') || [],
           function(discount) {
@@ -747,49 +721,6 @@
           },
           this
         );
-
-        gross = OB.DEC.sub(gross, totalDiscount);
-        price = line.get('qty') !== 0 ? OB.DEC.div(gross, line.get('qty')) : 0;
-
-        if (grossListPrice === undefined) {
-          grossListPrice = price;
-        }
-
-        if (this.get('priceIncludesTax')) {
-          line.set(
-            {
-              net: OB.DEC.toNumber(line.get('discountedNet')),
-              pricenet:
-                line.get('qty') !== 0
-                  ? OB.DEC.div(line.get('discountedNet'), line.get('qty'))
-                  : 0,
-              listPrice: 0,
-              standardPrice: 0,
-              grossListPrice: grossListPrice,
-              grossUnitPrice: price,
-              lineGrossAmount: gross
-            },
-            {
-              silent: true
-            }
-          );
-        } else {
-          line.set(
-            {
-              nondiscountedprice: line.get('price'),
-              nondiscountednet: line.get('net'),
-              standardPrice: line.get('price'),
-              net: line.get('discountedNet'),
-              pricenet: OB.DEC.toNumber(line.get('discountedNetPrice')),
-              listPrice: line.get('priceList'),
-              grossListPrice: 0,
-              lineGrossAmount: 0
-            },
-            {
-              silent: true
-            }
-          );
-        }
       }, this);
     },
     getTotal: function() {
@@ -963,10 +894,10 @@
         } else {
           // If the price doesn't include tax, the discounted gross has already been calculated
           gross = me.get('lines').reduce(function(memo, e) {
-            if (_.isUndefined(e.get('discountedGross'))) {
+            if (_.isUndefined(e.get('grossUnitAmount'))) {
               return memo;
             }
-            grossLine = e.get('discountedGross');
+            grossLine = e.get('grossUnitAmount');
             if (grossLine) {
               return OB.DEC.add(memo, grossLine);
             } else {
@@ -7240,25 +7171,7 @@
               args.order.get('lines').each(function(line) {
                 oldId = line.get('id');
                 line.set('id', OB.UTIL.get_UUID());
-                //issue 25055 -> If we don't do the following prices and taxes are calculated
-                //wrongly because the calculation starts with discountedNet instead of
-                //the real net.
-                //It only happens if the order is created from quotation just after save the quotation
-                //(without load the quotation from quotations window)
-                if (!this.get('priceIncludesTax')) {
-                  line.set('net', line.get('nondiscountednet'));
-                }
-
-                //issues 24994 & 24993
-                //if the order is created from quotation just after save the quotation
-                //(without load the quotation from quotations window). The order has the fields added
-                //by adjust prices. We need to work without these values
-                //price not including taxes
-                line.unset('nondiscountedprice');
-                line.unset('nondiscountednet');
-                //price including taxes
                 line.unset('netFull');
-                line.unset('grossListPrice');
                 line.unset('grossUnitPrice');
                 line.unset('lineGrossAmount');
                 line.unset('obposQtytodeliver');
@@ -7393,13 +7306,7 @@
       this.get('lines').each(function(line) {
         oldId = line.get('id');
         line.set('id', OB.UTIL.get_UUID());
-        if (!this.get('priceIncludesTax')) {
-          line.set('net', line.get('nondiscountednet'));
-        }
-        line.unset('nondiscountedprice');
-        line.unset('nondiscountednet');
         line.unset('netFull');
-        line.unset('grossListPrice');
         line.unset('grossUnitPrice');
         line.unset('lineGrossAmount');
         line.unset('promotions');
@@ -9513,14 +9420,12 @@
           l.get('gross') +
           "', LineGrossAmount: '" +
           l.get('lineGrossAmount') +
-          "', DiscountedGross: '" +
-          l.get('discountedGross') +
+          "', GrossUnitAmount: '" +
+          l.get('grossUnitAmount') +
           "', Net: '" +
           l.get('net') +
-          "', DiscountedNet: '" +
-          l.get('discountedNet') +
-          "', NonDiscountedNet: '" +
-          l.get('nondiscountednet') +
+          "', NetUnitAmount: '" +
+          l.get('netUnitAmount') +
           "', TaxAmount: '" +
           l.get('taxAmount') +
           "', GrossUnitPrice: '" +
@@ -9762,7 +9667,15 @@
           model
             .get('lines')
             .at(i)
-            .set('listPrice', 0);
+            .set('grossUnitPrice', 0);
+          model
+            .get('lines')
+            .at(i)
+            .set('pricenet', 0);
+          model
+            .get('lines')
+            .at(i)
+            .set('price', 0);
           model
             .get('lines')
             .at(i)
@@ -9770,11 +9683,11 @@
           model
             .get('lines')
             .at(i)
-            .set('grossUnitPrice', 0);
+            .set('lineGrossAmount', 0);
           model
             .get('lines')
             .at(i)
-            .set('lineGrossAmount', 0);
+            .set('lineNetAmount', 0);
         }
         model.get('approvals').forEach(function(approval) {
           if (typeof approval.approvalType === 'object') {
@@ -10785,12 +10698,12 @@
           for (let i = 0; i < model.receiptLines.length; i++) {
             let iter = model.receiptLines[i];
             var price = OB.DEC.number(iter.unitPrice),
-              lineNet = order.get('priceIncludesTax')
-                ? null
-                : OB.DEC.number(iter.lineGrossAmount || iter.linenetamount),
               lineGross = order.get('priceIncludesTax')
                 ? OB.DEC.number(iter.lineGrossAmount)
-                : null;
+                : null,
+              lineNet = order.get('priceIncludesTax')
+                ? null
+                : OB.DEC.number(iter.lineGrossAmount || iter.lineNetAmount);
             iter.linepos = linepos;
             var addLineForProduct = async function(prod) {
               // Set product services
@@ -10873,7 +10786,6 @@
                       prod.get('listPrice') !== price
                         ? price
                         : prod.get('listPrice'),
-                    grossListPrice: iter.grossListPrice,
                     net: lineNet,
                     gross: lineGross,
                     promotions: iter.promotions,
@@ -10918,15 +10830,6 @@
                         : OB.MobileApp.model.get('terminal')
                             .organizationRegionId
                   });
-
-                  if (!order.get('isQuotation')) {
-                    newline.set(
-                      'creationListPrice',
-                      iter.priceIncludesTax
-                        ? iter.grossListPrice
-                        : iter.listPrice
-                    );
-                  }
 
                   // copy verbatim not owned properties -> modular properties.
                   _.each(iter, function(value, key) {

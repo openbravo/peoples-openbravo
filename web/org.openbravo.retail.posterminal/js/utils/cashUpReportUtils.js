@@ -146,11 +146,7 @@
               (order.get('payOnCredit') || order.get('completeTicket'))))
         ) {
           _.each(order.get('lines').models, function(line) {
-            if (order.get('priceIncludesTax')) {
-              gross = line.get('lineGrossAmount');
-            } else {
-              gross = line.get('discountedGross');
-            }
+            gross = line.get('grossUnitAmount');
             if (order.get('doCancelAndReplace')) {
               if (!line.get('replacedorderline')) {
                 netSales = OB.DEC.add(netSales, line.get('net'));

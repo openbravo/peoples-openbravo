@@ -225,7 +225,7 @@ enyo.kind({
             this.$.propertyValue.setContent(line.printTotalLine());
           } else {
             this.$.propertyValue.setContent(
-              OB.I18N.formatCurrency(line.get('discountedNet'))
+              OB.I18N.formatCurrency(line.get('netUnitAmount'))
             );
           }
         } else {
@@ -1217,7 +1217,7 @@ enyo.kind({
           : '',
         editlinetotal = this.selectedModels[0].get('priceIncludesTax')
           ? this.selectedModels[0].getTotalLine()
-          : this.selectedModels[0].get('discountedNet'),
+          : this.selectedModels[0].get('netUnitAmount'),
         orderLine = this.selectedModels[0].clone();
       for (i = 1; i < this.selectedModels.length; i++) {
         if (price && price !== this.selectedModels[i].get('price')) {
@@ -1252,7 +1252,7 @@ enyo.kind({
           editlinetotal,
           this.selectedModels[i].get('priceIncludesTax')
             ? this.selectedModels[i].getTotalLine()
-            : this.selectedModels[i].get('discountedNet')
+            : this.selectedModels[i].get('netUnitAmount')
         );
       }
       orderLine

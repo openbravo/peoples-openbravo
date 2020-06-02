@@ -31,14 +31,16 @@
           lineRate: line.get('lineRate'),
           country: line.get('country'),
           region: line.get('region'),
-          grossUnitAmount:
-            line.get('discountedGross') || line.get('discountedGross') === 0
-              ? line.get('discountedGross')
-              : line.get('gross'),
-          netUnitAmount:
-            line.get('discountedNet') || line.get('discountedNet') === 0
-              ? line.get('discountedNet')
-              : line.get('net'),
+          grossUnitAmount: receipt.get('priceIncludesTax')
+            ? OB.DEC.compare(line.get('gross')) === 0
+              ? line.get('gross')
+              : OB.DEC.sub(line.get('gross'), line.getDiscount())
+            : undefined,
+          netUnitAmount: receipt.get('priceIncludesTax')
+            ? undefined
+            : OB.DEC.compare(line.get('net')) === 0
+            ? line.get('net')
+            : OB.DEC.sub(line.get('net'), line.getDiscount()),
           qty: line.get('qty'),
           taxExempt: line.get('taxExempt'),
           product: {
