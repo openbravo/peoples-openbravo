@@ -21,6 +21,7 @@ OB = {
     },
     Security: { hasPermission: jest.fn(), requestApprovalForAction: jest.fn() },
     StateBackwardCompatibility: { setProperties: jest.fn() },
+    TerminalProperty: { get: jest.fn() },
     View: { DialogUIHandler: { inputData: jest.fn() } }
   },
 
@@ -277,7 +278,34 @@ describe('addProduct preparation', () => {
     });
 
     it('product locked', async () => {
-      // TODO once finished to implemented
+      OB.App.TerminalProperty.get.mockReturnValueOnce([
+        {
+          id: '1A62CC9E44364EA6881A0A86417D61AF',
+          name: 'Ramp-Up',
+          restrictsalefrompos: false,
+          restrictsaleoutofstock: false
+        },
+        {
+          id: '7E4B33B5FB6444409E45D61668269FA3',
+          name: 'Obsolete',
+          restrictsalefrompos: true,
+          restrictsaleoutofstock: true
+        }
+      ]);
+      const lockedProduct = {
+        ...Product.base,
+        productStatus: '7E4B33B5FB6444409E45D61668269FA3'
+      };
+      await expectError(
+        () =>
+          prepareAction({
+            products: [{ product: lockedProduct, qty: 1 }]
+          }),
+        {
+          errorConfirmation: 'OBPOS_ErrorProductLocked',
+          messageParams: ['test product', 'Obsolete']
+        }
+      );
     });
   });
 

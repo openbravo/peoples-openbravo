@@ -322,12 +322,8 @@
     const getProductStatus = product => {
       const status = product.productAssortmentStatus || product.productStatus;
       if (status) {
-        // TODO: replace this
-        return _.find(
-          OB.MobileApp.model.get('productStatusList'),
-          productStatus => {
-            return status === productStatus.id;
-          }
+        return OB.App.TerminalProperty.get('productStatusList').find(
+          productStatus => status === productStatus.id
         );
       }
       return {};

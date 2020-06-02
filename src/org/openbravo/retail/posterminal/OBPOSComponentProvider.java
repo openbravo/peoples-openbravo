@@ -341,7 +341,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/business-object/ticket/TicketUtils");
     appDependency.add("model/business-object/ticket/AddApprovalsModelHook");
     appDependency.add("model/business-object/ticket/CalculateTotalsModelHook");
-    appDependency.add("model/business-object/ticket/actions/AddProduct");    
+    appDependency.add("model/business-object/ticket/actions/AddProduct");
     appDependency.add("model/business-object/ticket/actions/DisplayTotal");
     appDependency.add("model/business-object/ticket/actions/Print");
     appDependency.add("model/business-object/ticket/actions/PrintLine");
@@ -366,6 +366,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
     // Synchronization Buffer
     appDependency.add("model/synchronization-buffer/HardwareManagerEndpoint");
+
+    // Terminal
+    appDependency.add("model/terminal/TerminalProperty");
 
     for (final String resource : appDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,
