@@ -20,6 +20,23 @@
       lines: ticket.lines.filter(l => !lineIds.includes(l.id))
     };
 
+    const conf = payload.config || {};
+
+    if (conf.saveRemoval) {
+      newTicket.deletedLines = ticket.lines
+        .filter(l => lineIds.includes(l.id))
+        .map(l => {
+          // TODO: check the correct properties to reset
+          return {
+            ...l,
+            obposQtyDeleted: l.qty,
+            qty: 0,
+            grossAmount: 0,
+            netAmount: 0
+          };
+        });
+    }
+
     return newTicket;
   });
 

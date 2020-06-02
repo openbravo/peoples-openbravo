@@ -38,12 +38,12 @@ const basicTicket = deepfreeze({
     },
     {
       id: '2',
-      qty: 1,
+      qty: 2,
       product: { id: 'p2' }
     },
     {
       id: '3',
-      qty: 1,
+      qty: 3,
       product: { id: 'p3' }
     }
   ]
@@ -56,5 +56,32 @@ describe('Ticket.deleteLine action', () => {
     });
 
     expect(newTicket.lines).toMatchObject([{ id: '2', product: { id: 'p2' } }]);
+  });
+
+  it('does not track deleted lines if save removal not configured', () => {
+    const newTicket = OB.App.StateAPI.Ticket.deleteLine(basicTicket, {
+      lineIds: ['2']
+    });
+
+    expect(newTicket).not.toHaveProperty('deletedLines');
+  });
+
+  it('tracks deleted lines if save removal configured', () => {
+    const newTicket = OB.App.StateAPI.Ticket.deleteLine(basicTicket, {
+      lineIds: ['2'],
+      config: { saveRemoval: true }
+    });
+
+    expect(newTicket.deletedLines).toBeInstanceOf(Array);
+    expect(newTicket.deletedLines).toHaveLength(1);
+    expect(newTicket.deletedLines).toMatchObject([
+      {
+        obposQtyDeleted: 2,
+        qty: 0,
+        grossAmount: 0,
+        netAmount: 0,
+        product: { id: 'p2' }
+      }
+    ]);
   });
 });
