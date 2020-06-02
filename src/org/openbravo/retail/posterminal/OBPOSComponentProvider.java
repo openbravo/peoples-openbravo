@@ -72,9 +72,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
     final String prefix = "web/" + POSUtils.MODULE_JAVA_PACKAGE;
 
-    final String[] resourceDependency = { "main", "model/changedbusinesspartners",
-        "model/changedbplocation", "model/order", "model/cashup", "model/cashmanagement",
-        "model/cancelLayaway", "login/model/login-model",
+    final String[] resourceDependency = { "main", "model/order", "model/cashup",
+        "model/countsafebox", "model/cashmanagement", "model/cancelLayaway",
+        "login/model/login-model",
         // Common components
         "datasource",
         // "data/dal",
@@ -102,9 +102,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
         "model/currencypanel", "model/productcharacteristicvalue", "model/characteristicvalue",
         "model/characteristic", "model/terminal-model", "model/paymentmethodcashup",
-        "model/taxcashup", "model/offlineprinter", "model/orderassociationsfilter",
-        "model/product-servicelinked", "model/prepaymentrules", "components/modalcancel",
-        "components/subwindow", "components/leftsubwindow", "components/modalreceiptproperties",
+        "model/taxcashup", "model/orderassociationsfilter", "model/product-servicelinked",
+        "model/prepaymentrules", "components/modalcancel", "components/subwindow",
+        "components/leftsubwindow", "components/modalreceiptproperties",
         "components/modalreceiptlineproperties", "components/modalnoteditableorder",
         "components/modalnoteditableline", "components/modalmodulesindev",
         "components/modalselectprinters", "components/modalmorepaymentmethods",
@@ -129,9 +129,10 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/bplocationship", "components/customershipbill",
         "components/listreceiptscounter", "components/menu", "components/salesrepresentative",
         "components/modalselectterminal", "components/popupdraweropened",
-        "components/servicesfilter", "components/modalselectopenreceipts",
-        "components/modalsplitlines", "components/modalassociatetickets",
-        "components/modalremoveassociatedtickets", "components/openRelatedReceiptsModal",
+        "components/servicesfilter", "components/modalsafebox",
+        "components/modalselectopenreceipts", "components/modalsplitlines",
+        "components/modalassociatetickets", "components/modalremoveassociatedtickets",
+        "components/openRelatedReceiptsModal",
 
         // Old Tickets
         "components/modalpaidreceipts", "components/modal-pay-open-tickets",
@@ -196,16 +197,27 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
         "cashmgmt/components/cashmgmt-modals",
 
-        // Cash Up window
-        "closecash/model/cashup-steps", "closecash/model/cashup-print",
-        "closecash/model/cashup-model", "closecash/view/closecash", "closecash/view/closekeyboard",
-        "closecash/view/closeinfo", "closecash/view/tabpendingreceipts",
-        "closecash/view/tabcashmaster", "closecash/view/tabcashpayments",
-        "closecash/view/tabcountcash", "closecash/view/tabcashtokeep",
-        "closecash/view/tabpostprintclose", "closecash/components/cashup-modals",
+        // Close Cash Common
+        "closecash/model/closecash-steps", "closecash/model/closecash-print",
+        "closecash/model/closecash-model", "closecash/view/closecash",
+        "closecash/view/closekeyboard", "closecash/view/closeinfo",
+        "closecash/view/tabcashpayments", "closecash/view/tabcountcash",
+        "closecash/view/tabcashtokeep", "closecash/view/tabpostprintclose",
         "closecash/components/approvalreason-modal",
 
-        "closecash/model/daycash",
+        // Cash Up window
+        "closecash/model/cashup/cashup-steps", "closecash/model/cashup/cashup-model",
+        "closecash/view/cashup/cashup", "closecash/view/cashup/tabpendingreceipts",
+        "closecash/view/cashup/tabcashmaster", "closecash/view/cashup/cashuppostprintclose",
+        "closecash/components/cashup/cashup-modals", "closecash/components/cashup/cashup-popups",
+
+        // Safe Box window
+        "closecash/model/countsafebox/countsafebox-steps",
+        "closecash/model/countsafebox/countsafebox-model",
+        "closecash/view/countsafebox/countsafebox", "closecash/view/countsafebox/tabsafeboxlist",
+        "closecash/view/countsafebox/countsafeboxpostprintclose",
+        "closecash/components/countsafebox/countsafebox-popups",
+
         // Core resources
         "../../org.openbravo.client.application/js/utilities/ob-utilities-number",
         "../../org.openbravo.client.application/js/utilities/ob-utilities-date",
@@ -239,9 +251,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
         // Delivery Mode
         "utils/deliveryModeUtils", "hookPreOrderSave", "hookPreDeleteLine",
-        "hookPostUndo_DeleteLine", "receiptEdit", "receiptMultiLineEdit", "hookNewReceipt",
-        "hookRenderOrderLine", "hookPrePayment", "hookPreSetPaymentsToReceipt",
-        "components/menuissue", "model/dmorderfilter", "model/ordertoissue", "utils/utils",
+        "hookPostUndo_DeleteLine", "receiptEdit", "receiptMultiLineEdit", "hookRenderOrderLine",
+        "hookPrePayment", "hookPreSetPaymentsToReceipt", "components/menuissue",
+        "model/dmorderfilter", "model/ordertoissue", "utils/utils",
 
         "model/ordertoselectorissue", "components/orderselector",
         "components/modalwarehouseselector", "components/orderlineinfopopup",
@@ -272,6 +284,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     // Masterdata
     appDependency.add("model/masterdata/BPCategoryModel");
     appDependency.add("model/masterdata/BPSetLineModel");
+    appDependency.add("model/masterdata/BusinessPartnerModel");
+    appDependency.add("model/masterdata/BusinessPartnerLocationModel");
     appDependency.add("model/masterdata/CountryModel");
     appDependency.add("model/masterdata/PriceListModel");
     appDependency.add("model/masterdata/ProductModel");
@@ -307,6 +321,10 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/business-object/document-sequence/DocumentSequenceUtils");
     appDependency.add("model/business-object/document-sequence/actions/InitializeSequence");
     appDependency.add("model/business-object/document-sequence/actions/IncreaseSequence");
+    appDependency.add("model/business-object/document-sequence/actions/DecreaseSequence");
+
+    appDependency.add("model/business-object/business-partner/SynchronizeBusinessPartner");
+    appDependency.add("model/business-object/business-partner/SynchronizeBusinessPartnerLocation");
 
     // ticket model
     appDependency.add("model/business-object/ticket/Ticket");

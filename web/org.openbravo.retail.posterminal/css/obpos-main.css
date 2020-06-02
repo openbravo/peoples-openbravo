@@ -5693,7 +5693,7 @@ li.selected > .obUiRenderOrderLine_edit {
 /* Inherits: [OB.UI.FormElement.IntegerEditor] */
 }
 
-.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent .obUiFormElement,
+.obObposCloseCashUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent .obUiFormElement,
 .obUiModalSplitLine-body-header-numberlinesSetter .obUiFormElement,
 .obUiModalSplitLine-body-qtyLines .obUiFormElement {
   display: inline-grid;
@@ -5703,7 +5703,7 @@ li.selected > .obUiRenderOrderLine_edit {
     "obUiFormElement-mainArea";
 }
 
-.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent .obUiFormElement-mainArea,
+.obObposCloseCashUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent .obUiFormElement-mainArea,
 .obUiModalSplitLine-body-header-numberlinesSetter .obUiFormElement-mainArea,
 .obUiModalSplitLine-body-qtyLines .obUiFormElement-mainArea {
   display: inline-grid;
@@ -5714,7 +5714,7 @@ li.selected > .obUiRenderOrderLine_edit {
   justify-items: left;
 }
 
-.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent .obUiFormElement-mainArea {
+.obObposCloseCashUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent .obUiFormElement-mainArea {
   grid-template-columns: 0 170px;
   justify-content: center;
 }
@@ -5727,7 +5727,7 @@ li.selected > .obUiRenderOrderLine_edit {
   grid-template-columns: 45% 55%;
 }
 
-.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent .obUiFormElement-mainArea-label,
+.obObposCloseCashUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent .obUiFormElement-mainArea-label,
 .obUiModalSplitLine-body-header-numberlinesSetter .obUiFormElement-mainArea-label,
 .obUiModalSplitLine-body-qtyLines .obUiFormElement-mainArea-label {
   display: grid;
@@ -5743,7 +5743,7 @@ li.selected > .obUiRenderOrderLine_edit {
   box-sizing: border-box;
 }
 
-.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent .obUiFormElement-mainArea-coreElementArea,
+.obObposCloseCashUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent .obUiFormElement-mainArea-coreElementArea,
 .obUiModalSplitLine-body-header-numberlinesSetter .obUiFormElement-mainArea-coreElementArea,
 .obUiModalSplitLine-body-qtyLines .obUiFormElement-mainArea-coreElementArea {
   display: grid;
@@ -5753,16 +5753,16 @@ li.selected > .obUiRenderOrderLine_edit {
   text-align: center;
 }
 
-.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent .obUiFormElementIntegerEditor,
+.obObposCloseCashUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent .obUiFormElementIntegerEditor,
 .obUiModalSplitLine-body-header-numberlinesSetter .obUiFormElementIntegerEditor,
 .obUiModalSplitLine-body-qtyLines .obUiFormElementIntegerEditor {
   width: 100%;
 }
 
-.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent .obUiFormElement-icon,
-.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent .obUiFormElement-mainArea-label,
-.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent .obUiFormElement-mainArea-coreElementArea-eraser,
-.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent .obUiFormElement-messageArea,
+.obObposCloseCashUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent .obUiFormElement-icon,
+.obObposCloseCashUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent .obUiFormElement-mainArea-label,
+.obObposCloseCashUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent .obUiFormElement-mainArea-coreElementArea-eraser,
+.obObposCloseCashUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent .obUiFormElement-messageArea,
 .obUiModalSplitLine-body-header-numberlinesSetter .obUiFormElement-icon,
 .obUiModalSplitLine-body-header-numberlinesSetter .obUiFormElement-mainArea-label-icon,
 .obUiModalSplitLine-body-header-numberlinesSetter .obUiFormElement-mainArea-coreElementArea-eraser,
@@ -6311,6 +6311,49 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obUiModalRemoveAssociatedTickets-footer-obUiModalRemoveAssociationsBtnCancel {
 /* # Inherits: [OB.UI.ModalRemoveAssociations_btnCancel] */
+}
+
+
+
+/***********************   ***********************/
+/*             File: modalsafebox.js             */
+/*             Folder: js/components             */
+/***********************   ***********************/
+/*
+# Component: OB.UI.ModalSafeBox_buttonCheck
+# Inherits: OB.UI.ModalDialogButton
+*/
+.obUiModalSafeBoxButtonCheck {}
+
+
+/*
+# Component: OB.UI.ModalSafeBox_buttonSkip
+# Inherits: OB.UI.ModalDialogButton
+*/
+.obUiModalSafeBoxSkipButton {}
+
+
+/*
+# Component: OB.UI.ModalSafeBox
+# Inherits: OB.UI.Modal
+*/
+.obUiModalSafeBox {}
+
+.obUiModalSafeBox-body {}
+
+.obUiModalSafeBox-body-safeBoxInput {
+/* # Inherits: [enyo.Input] */
+  width: 100%;
+}
+
+.obUiModalSafeBox-footer {}
+
+.obUiModalSafeBox-footer-checkButton {
+/* # Inherits: [OB.UI.ModalSafeBox_buttonCheck] */
+}
+
+.obUiModalSafeBox-footer-skipButton {
+/* # Inherits: [OB.UI.ModalSafeBox_buttonSkip] */
 }
 
 
@@ -7731,6 +7774,10 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-OBPOSModalAdvancedFilterOrders {
   /* Inherits: [OB.UI.ModalAdvancedFilterOrders] */
+}
+
+.obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-OBPOSModalSafeBox {
+  /* Inherits: [OB.UI.ModalSafeBox] */
 }
 
 .obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-OBPOSModalCrossStoreSelector {
@@ -13168,28 +13215,28 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.CashUp.CashPayments
 # Inherits: [enyo.Object]
 */
-.obCashUpCashPayments {}
+.obCloseCashCashPayments {}
 
 
 /*
 # Component: OB.CashUp.PaymentMethods
 # Inherits: [enyo.Object]
 */
-.obCashUpPaymentMethods {}
+.obCloseCashPaymentMethods {}
 
 
 /*
 # Component: OB.CashUp.CashToKeep
 # Inherits: [enyo.Object]
 */
-.obCashUpCashToKeep {}
+.obCloseCashCashToKeep {}
 
 
 /*
 # Component: OB.CashUp.PostPrintAndClose
 # Inherits: [enyo.Object]
 */
-.obCashUpPostPrintAndClose {}
+.obCloseCashPostPrintAndClose {}
 
 
 
@@ -13222,72 +13269,72 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSCashUp.UI.Button
 # Inherits: [OB.UI.ToolbarButton]
 */
-.obObPosCashUpUiButton {}
+.obObPosCloseCashUiButton {}
 
 
 /*
 # Component: OB.OBPOSCashUp.UI.CancelButton
 # Inherits: [OB.UI.ToolbarButton]
 */
-.obObPosCashUpUiCancelButton {}
+.obObPosCloseCashUiCancelButton {}
 
 
 /*
 # Component: OB.OBPOSCashUp.UI.LeftToolbarImpl
 # Inherits: [OB.UI.MultiColumn.Toolbar]
 */
-.obObPosCashUpUiLeftToolbarImpl {}
+.obObPosCloseCashUiLeftToolbarImpl {}
 
-.obObPosCashUpUiLeftToolbarImpl-btnToggleView {
+.obObPosCloseCashUiLeftToolbarImpl-btnToggleView {
   /*Inherits: [OB.UI.ToolbarButton]*/
   display: none; /* To be displayed only in portrait mode */
-  grid-area: obObPosCashUpUiLeftToolbarImpl-btnToggleView;
+  grid-area: obObPosCloseCashUiLeftToolbarImpl-btnToggleView;
 }
 
 @media all and (max-aspect-ratio: 9/8) {
-  .obObPosCashUpUiLeftToolbarImpl-btnToggleView {
+  .obObPosCloseCashUiLeftToolbarImpl-btnToggleView {
     display: block;
   }
 }
 
-.obObPosCashUpUiLeftToolbarImpl-btnToggleView  .obUiButton-components-icon {
+.obObPosCloseCashUiLeftToolbarImpl-btnToggleView  .obUiButton-components-icon {
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabSwitch.svg');
   background-size: 24px;
 }
 
-.obObPosCashUpUiLeftToolbarImpl-btnToggleView.disabled {}
+.obObPosCloseCashUiLeftToolbarImpl-btnToggleView.disabled {}
 
-.obObPosCashUpUiLeftToolbarImpl-btnToggleView .obUiButton-components-icon {}
+.obObPosCloseCashUiLeftToolbarImpl-btnToggleView .obUiButton-components-icon {}
 
-.obObPosCashUpUiLeftToolbarImpl-btnToggleView .obUiButton-components-label {}
+.obObPosCloseCashUiLeftToolbarImpl-btnToggleView .obUiButton-components-label {}
 
 
-.obObPosCashUpUiLeftToolbarImpl-btnPrevious {
+.obObPosCloseCashUiLeftToolbarImpl-btnPrevious {
   /* Inherits: [OB.OBPOSCashUp.UI.Button] */
-  grid-area: obObPosCashUpUiLeftToolbarImpl-btnPrevious;
+  grid-area: obObPosCloseCashUiLeftToolbarImpl-btnPrevious;
 }
 
-.obObPosCashUpUiLeftToolbarImpl-btnPrevious .obUiButton-components-icon {
+.obObPosCloseCashUiLeftToolbarImpl-btnPrevious .obUiButton-components-icon {
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabPreviousStep.svg');
   background-size: auto 20px;
 }
 
-.obObPosCashUpUiLeftToolbarImpl-btnCancel {
+.obObPosCloseCashUiLeftToolbarImpl-btnCancel {
   /* Inherits: [OB.OBPOSCashUp.UI.CancelButton] */
-  grid-area: obObPosCashUpUiLeftToolbarImpl-btnCancel;
+  grid-area: obObPosCloseCashUiLeftToolbarImpl-btnCancel;
 }
 
-.obObPosCashUpUiLeftToolbarImpl-btnCancel  .obUiButton-components-icon {
+.obObPosCloseCashUiLeftToolbarImpl-btnCancel  .obUiButton-components-icon {
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabCancel.svg');
   background-size: 20px;
 }
 
-.obObPosCashUpUiLeftToolbarImpl-btnNext {
+.obObPosCloseCashUiLeftToolbarImpl-btnNext {
   /* Inherits: [OB.OBPOSCashUp.UI.Button] */
-  grid-area: obObPosCashUpUiLeftToolbarImpl-btnNext;
+  grid-area: obObPosCloseCashUiLeftToolbarImpl-btnNext;
 }
 
-.obObPosCashUpUiLeftToolbarImpl-btnNext  .obUiButton-components-icon {
+.obObPosCloseCashUiLeftToolbarImpl-btnNext  .obUiButton-components-icon {
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconTabNextStep.svg');
   background-size: auto 20px;
 }
@@ -13299,97 +13346,97 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 */
 .obObPosCashupUiCashUp {}
 
-.obObPosCashupUiCashUp-cashupMultiColumn {
+.obObPosCloseCashUiCloseCash-closeCashMultiColumn {
   /* Inherits: [OB.UI.MultiColumn] */
 }
 
-.obObPosCashupUiCashUp-cashupMultiColumn-leftToolbar {
+.obObPosCloseCashUiCloseCash-closeCashMultiColumn-leftToolbar {
   /* Inherits: [OB.OBPOSCashUp.UI.LeftToolbarImpl] */
 }
 
-.obObPosCashupUiCashUp-cashupMultiColumn-rightToolbar {
+.obObPosCloseCashUiCloseCash-closeCashMultiColumn-rightToolbar {
   /* Inherits:[OB.UI.MultiColumn.Toolbar] */
 }
 
-.obObPosCashupUiCashUp-rightToolbar-btnCashUp {
+.obObPosCloseCashUiCloseCash-rightToolbar-btnCloseCash {
   /* Inherits:[OB.OBPOSCashUp.UI.Button] */
-  grid-area: obObPosCashupUiCashUp-rightToolbar-btnCashUp;
+  grid-area: obObPosCloseCashUiCloseCash-rightToolbar-btnCloseCash;
 }
 
-.obObPosCashupUiCashUp-cashupMultiColumn-leftToolbar .obObPosCashupUiCashUp-rightToolbar-btnCashUp {
+.obObPosCloseCashUiCloseCash-closeCashMultiColumn-leftToolbar .obObPosCloseCashUiCloseCash-rightToolbar-btnCloseCash {
   display: none; /* To be displayed only in portrait mode */
 }
 
-.obObPosCashupUiCashUp-cashupMultiColumn-rightToolbar .obObPosCashupUiCashUp-rightToolbar-btnCashUp {
+.obObPosCloseCashUiCloseCash-closeCashMultiColumn-rightToolbar .obObPosCloseCashUiCloseCash-rightToolbar-btnCloseCash {
   display: block;
 }
 
 @media all and (max-aspect-ratio: 9/8) {
-  .obObPosCashupUiCashUp-cashupMultiColumn-leftToolbar .obObPosCashupUiCashUp-rightToolbar-btnCashUp {
+  .obObPosCloseCashUiCloseCash-closeCashMultiColumn-leftToolbar .obObPosCloseCashUiCloseCash-rightToolbar-btnCloseCash {
     display: block; /* To be displayed only in portrait mode */
   }
 
-  .obObPosCashupUiCashUp-cashupMultiColumn-rightToolbar .obObPosCashupUiCashUp-rightToolbar-btnCashUp {
+  .obObPosCloseCashUiCloseCash-closeCashMultiColumn-rightToolbar .obObPosCloseCashUiCloseCash-rightToolbar-btnCloseCash {
     display: none; /* To be displayed only in landscape mode */
   }
 }
 
-.obObPosCashupUiCashUp-rightToolbar-btnCashUp .obUiButton-components {
+.obObPosCloseCashUiCloseCash-rightToolbar-btnCloseCash .obUiButton-components {
   grid-template-rows: auto 1fr;
 }
 
-.obObPosCashupUiCashUp-rightToolbar-btnCashUp .obUiButton-components-label {
+.obObPosCloseCashUiCloseCash-rightToolbar-btnCloseCash .obUiButton-components-label {
   align-self: center;
   font-size: var(--font-medium);
   line-height: 20px;
   padding: 0px;
 }
 
-.obObPosCashupUiCashUp-rightToolbar-btnCashUp.disabled .obUiButton-components-label {
+.obObPosCloseCashUiCloseCash-rightToolbar-btnCloseCash.disabled .obUiButton-components-label {
   color: #e8e8e8;
 }
 
-.obObPosCashupUiCashUp-cashupMultiColumn-cashupLeftPanel {
+.obObPosCloseCashUiCloseCash-closeCashMultiColumn-closeCashLeftPanel {
   height: 100%;
 }
 
-.obObPosCashupUiCashUp-cashupMultiColumn-cashupLeftPanel-listPendingReceipts {
+.obObPosCashupUiCashUp-closeCashMultiColumn-closeCashLeftPanel-listPendingReceipts {
   /* Inherits: [OB.OBPOSCashUp.UI.ListPendingReceipts] */
   width: 100%;
   touch-action: none;
 }
 
-.obObPosCashupUiCashUp-cashupMultiColumn-cashupLeftPanel-cashMaster {
+.obObPosCashupUiCashUp-closeCashMultiColumn-closeCashLeftPanel-cashMaster {
   /* Inherits: [OB.OBPOSCashUp.UI.CashMaster] */
   width: 100%;
   touch-action: none;
 }
 
-.obObPosCashupUiCashUp-cashupMultiColumn-cashupLeftPanel-cashPayments {
+.obObPosCloseCashUiCloseCash-closeCashMultiColumn-closeCashLeftPanel-cashPayments {
   /* Inherits: [OB.OBPOSCashUp.UI.CashPayments] */
   width: 100%;
   touch-action: none;
 }
 
-.obObPosCashupUiCashUp-cashupMultiColumn-cashupLeftPanel-listPaymentMethods {
+.obObPosCloseCashUiCloseCash-closeCashMultiColumn-closeCashLeftPanel-listPaymentMethods {
   /* Inherits: [OB.OBPOSCashUp.UI.ListPaymentMethods] */
   width: 100%;
   touch-action: none;
 }
 
-.obObPosCashupUiCashUp-cashupMultiColumn-cashupLeftPanel-cashToKeep {
+.obObPosCloseCashUiCloseCash-closeCashMultiColumn-closeCashLeftPanel-cashToKeep {
   /* Inherits: [OB.OBPOSCashUp.UI.CashToKeep] */
   width: 100%;
   touch-action: none;
 }
 
-.obObPosCashupUiCashUp-cashupMultiColumn-cashupLeftPanel-postPrintClose {
+.obObPosCloseCashUiCloseCash-closeCashMultiColumn-closeCashLeftPanel-postPrintClose {
   /* Inherits: [OB.OBPOSCashUp.UI.PostPrintClose] */
   width: 100%;
   touch-action: none;
 }
 
-.obObPosCashupUiCashUp-cashupMultiColumn-cashupRightPanel {
+.obObPosCloseCashUiCloseCash-closeCashMultiColumn-closeCashRightPanel {
   display: grid;
   grid-auto-flow: row;
   grid-auto-columns: 100%;
@@ -13401,11 +13448,11 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   touch-action: none;
 }
 
-.obObPosCashupUiCashUp-cashupMultiColumn-cashupRightPanel-cashUpInfo {}
+.obObPosCloseCashUiCloseCash-closeCashMultiColumn-closeCashRightPanel-closeCashInfo {}
 
-.obObPosCashupUiCashUp-cashupMultiColumn-cashupRightPanel-cashUpKeyboard {}
+.obObPosCloseCashUiCloseCash-closeCashMultiColumn-closeCashRightPanel-closeCashKeyboard {}
 
-.obObPosCashupUiCashUp-modalCancel {
+.obObPosCloseCashUiCloseCash-modalCancel {
   /* Inherits: [OB.UI.ModalCancel] */
 }
 
@@ -13413,26 +13460,26 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   /* Inherits: [OB.OBPOSCashUp.UI.modalPendingToProcess] */
 }
 
-.obObPosCashupUiCashUp-modalSelectPrinters {
+.obObPosCloseCashUiCloseCash-modalSelectPrinters {
   /* Inherits: [OB.UI.ModalSelectPrinters] */
 }
 
 /* Implementation: WebPOS CashUp LeftToolbar */
-.obObPosCashupUiCashUp-cashupMultiColumn .obUiMultiColumn-leftToolbar .obUiMultiColumnToolbar-standardToolbar-toolbar {
-  grid-template-areas: "obObPosCashUpUiLeftToolbarImpl-btnPrevious obObPosCashUpUiLeftToolbarImpl-btnCancel obObPosCashUpUiLeftToolbarImpl-btnNext";
+.obObPosCloseCashUiCloseCash-closeCashMultiColumn .obUiMultiColumn-leftToolbar .obUiMultiColumnToolbar-standardToolbar-toolbar {
+  grid-template-areas: "obObPosCloseCashUiLeftToolbarImpl-btnPrevious obObPosCloseCashUiLeftToolbarImpl-btnCancel obObPosCloseCashUiLeftToolbarImpl-btnNext";
   grid-template-rows: 100%;
   grid-template-columns: repeat(3, calc(100% / 3));
 }
 
 /* Implementation: WebPOS CashUp RightToolbar */
-.obObPosCashupUiCashUp-cashupMultiColumn .obUiMultiColumn-rightToolbar .obUiMultiColumnToolbar-standardToolbar-toolbar {
-  grid-template-areas: "obObPosCashupUiCashUp-rightToolbar-btnCashUp";
+.obObPosCloseCashUiCloseCash-closeCashMultiColumn .obUiMultiColumn-rightToolbar .obUiMultiColumnToolbar-standardToolbar-toolbar {
+  grid-template-areas: "obObPosCloseCashUiCloseCash-rightToolbar-btnCloseCash";
   grid-template-columns: repeat(1, calc(100% / 1));
 }
 
 @media all and (max-aspect-ratio: 9/8) {
   /* Implementation: WebPOS CashUp Multicolumn */
-  .obObPosCashupUiCashUp-cashupMultiColumn .obUiMultiColumn-panels {
+  .obObPosCloseCashUiCloseCash-closeCashMultiColumn .obUiMultiColumn-panels {
     grid-template-areas:
       "obUiMultiColumn-leftToolbar"
       "obUiMultiColumn-leftPanel";
@@ -13441,7 +13488,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   }
 
   /* Implementation: WebPOS CashUp Multicolumn */
-  .obObPosCashupUiCashUp-cashupMultiColumn .obUiMultiColumn-panels.obUiMultiColumn-panels-showKeypad {
+  .obObPosCloseCashUiCloseCash-closeCashMultiColumn .obUiMultiColumn-panels.obUiMultiColumn-panels-showKeypad {
     grid-template-areas:
       "obUiMultiColumn-leftToolbar"
       "obUiMultiColumn-rightPanel";
@@ -13450,20 +13497,20 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   }
 
   /* Implementation: WebPOS CashUp LeftToolbar */
-  .obObPosCashupUiCashUp-cashupMultiColumn .obUiMultiColumn-leftToolbar .obUiMultiColumnToolbar-standardToolbar-toolbar {
-    grid-template-areas: "obObPosCashupUiCashUp-rightToolbar-btnCashUp obObPosCashUpUiLeftToolbarImpl-btnPrevious obObPosCashUpUiLeftToolbarImpl-btnCancel obObPosCashUpUiLeftToolbarImpl-btnNext obObPosCashUpUiLeftToolbarImpl-btnToggleView";
+  .obObPosCloseCashUiCloseCash-closeCashMultiColumn .obUiMultiColumn-leftToolbar .obUiMultiColumnToolbar-standardToolbar-toolbar {
+    grid-template-areas: "obObPosCloseCashUiCloseCash-rightToolbar-btnCloseCash obObPosCloseCashUiLeftToolbarImpl-btnPrevious obObPosCloseCashUiLeftToolbarImpl-btnCancel obObPosCloseCashUiLeftToolbarImpl-btnNext obObPosCloseCashUiLeftToolbarImpl-btnToggleView";
     grid-template-columns: repeat(5, calc(100% / 5));
   }
 
-  .obObPosCashupUiCashUp-cashupMultiColumn-rightToolbar {
+  .obObPosCloseCashUiCloseCash-closeCashMultiColumn-rightToolbar {
     display: none;
   }
 
-  .obUiMultiColumn-panels.obUiMultiColumn-panels-showKeypad .obObPosCashupUiCashUp-cashupMultiColumn-cashupLeftPanel {
+  .obUiMultiColumn-panels.obUiMultiColumn-panels-showKeypad .obObPosCloseCashUiCloseCash-closeCashMultiColumn-closeCashLeftPanel {
     display: none;
   }
 
-  .obUiMultiColumn-panels:not(.obUiMultiColumn-panels-showKeypad) .obObPosCashupUiCashUp-cashupMultiColumn-cashupRightPanel {
+  .obUiMultiColumn-panels:not(.obUiMultiColumn-panels-showKeypad) .obObPosCloseCashUiCloseCash-closeCashMultiColumn-closeCashRightPanel {
     display: none;
   }
 }
@@ -13485,7 +13532,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /*
 # Component: OB.OBPOSCashUp.UI.CashUpKeyboard
 */
-.obObposCashupUiCashUpKeyboard {
+.obObposCloseCashUiCloseCashKeyboard {
   display: grid;
   grid-auto-flow: column;
   grid-template-columns: calc(25% - var(--panel-components-separation)) calc(75% - var(--panel-components-separation));
@@ -13505,45 +13552,45 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /*
 # Component: OB.OBPOSCashUp.UI.CashUpInfo
 */
-.obObposCashupUiCashupInfo {}
+.obObposCloseCashUiCloseCashInfo {}
 
-.obObposCashupUiCashupInfo-wrapper {
+.obObposCloseCashUiCloseCashInfo-wrapper {
   box-sizing: border-box;
   padding: var(--panel-top-padding) var(--panel-outer-side-padding) var(--panel-components-separation) var(--panel-inner-side-padding);
   height: 100%;
 }
 
-.obObposCashupUiCashupInfo-wrapper-components {
+.obObposCloseCashUiCloseCashInfo-wrapper-components {
   position: relative;
   color: var(--color-secondary);
   height: 100%;
   box-sizing: border-box;
 }
 
-.obObposCashupUiCashupInfo-wrapper-components-obUiClock {
+.obObposCloseCashUiCloseCashInfo-wrapper-components-obUiClock {
   position: absolute;
   bottom: 0px;
   right: 0px;
   text-align: center;
 }
 
-.obObposCashupUiCashupInfo-wrapper-components-element1 {
+.obObposCloseCashUiCloseCashInfo-wrapper-components-element1 {
   padding: 5px;
 }
 
-.obObposCashupUiCashupInfo-wrapper-components-element2 {
+.obObposCloseCashUiCloseCashInfo-wrapper-components-element2 {
   padding: 3px;
 }
 
-.obObposCashupUiCashupInfo-wrapper-components-element3 {
+.obObposCloseCashUiCloseCashInfo-wrapper-components-element3 {
   padding: 3px;
 }
 
-.obObposCashupUiCashupInfo-wrapper-components-element4 {
+.obObposCloseCashUiCloseCashInfo-wrapper-components-element4 {
   padding: 3px;
 }
 
-.obObposCashupUiCashupInfo-wrapper-components-element5 {
+.obObposCloseCashUiCloseCashInfo-wrapper-components-element5 {
   padding: 3px;
 }
 
@@ -13955,9 +14002,9 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /*
 # Component: OB.OBPOSCashUp.UI.RenderCashPaymentsLine
 */
-.obObposCashUpUiRenderCashPaymentsLine {}
+.obObposCloseCashUiRenderCashPaymentsLine {}
 
-.obObposCashUpUiRenderCashPaymentsLine-listItem {
+.obObposCloseCashUiRenderCashPaymentsLine-listItem {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -13966,12 +14013,12 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   padding: 5px 15px;
 }
 
-.obObposCashUpUiRenderCashPaymentsLine-listItem-coinComponent {
+.obObposCloseCashUiRenderCashPaymentsLine-listItem-coinComponent {
   width: 22%;
   text-align: left;
 }
 
-.obObposCashUpUiRenderCashPaymentsLine-listItem-coinComponent-coin {
+.obObposCloseCashUiRenderCashPaymentsLine-listItem-coinComponent-coin {
   /*Inherits: [OB.UI.Button]*/
   color: var(--color-on-teriary);
   text-align: center;
@@ -13988,25 +14035,25 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 @media (hover: hover) {
-  .obObposCashUpUiRenderCashPaymentsLine-listItem-coinComponent-coin:hover {
+  .obObposCloseCashUiRenderCashPaymentsLine-listItem-coinComponent-coin:hover {
     filter: brightness(1.02);
   }
 }
 
-.obObposCashUpUiRenderCashPaymentsLine-listItem-coinComponent-coin:active {
+.obObposCloseCashUiRenderCashPaymentsLine-listItem-coinComponent-coin:active {
   filter: saturate(250%) contrast(0.9);
 }
 
-.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent {
+.obObposCloseCashUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent {
   width: 55%;
   text-align: center;
 }
 
-.obObposCashUpUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-formElementNumberlinesQty_activeInKeypad .obUiFormElementInput {
+.obObposCloseCashUiRenderCashPaymentsLine-listItem-numberOfCoinsComponent-formElementNumberlinesQty_activeInKeypad .obUiFormElementInput {
   background-color: var(--color-on-tertiary_focus);
 }
 
-.obObposCashUpUiRenderCashPaymentsLine-listItem-total {
+.obObposCloseCashUiRenderCashPaymentsLine-listItem-total {
   display: inline-block;
   margin-left: 5px;
   padding: 10px 0px 10px 0px;
@@ -14018,29 +14065,29 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /*
 # Component: OB.OBPOSCashUp.UI.RenderTotal
 */
-.obObposCashupUiRenderTotal {}
+.obObposCloseCashUiRenderTotal {}
 
-.obObposCashupUiRenderTotal_negative {
+.obObposCloseCashUiRenderTotal_negative {
   color: yellow;
 }
 
-.obObposCashupUiRenderTotal_positive {}
+.obObposCloseCashUiRenderTotal_positive {}
 
 
 /*
 # Component: OB.OBPOSCashUp.UI.CashPayments
 */
-.obObposCashupUiCashPayments {
+.obObposCloseCashUiCashPayments {
   height: 100%;
 }
 
-.obObposCashupUiCashPayments-wrapper {
+.obObposCloseCashUiCashPayments-wrapper {
   padding: var(--panel-top-padding) var(--panel-inner-side-padding) var(--panel-bottom-padding) var(--panel-outer-side-padding);
   height: 100%;
   box-sizing: border-box;
 }
 
-.obObposCashupUiCashPayments-wrapper-components {
+.obObposCloseCashUiCashPayments-wrapper-components {
   display: grid;
   grid-template-rows: auto 1fr;
   border-bottom: var(--separator-slim);
@@ -14051,7 +14098,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   height: calc(100% - 1px);
 }
 
-.obObposCashupUiCashPayments-wrapper-components-title {
+.obObposCloseCashUiCashPayments-wrapper-components-title {
   padding: 12px;
   border-bottom: var(--separator-slim);
   text-align: center;
@@ -14060,14 +14107,14 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   color: var(--color-secondary);
 }
 
-.obObposCashupUiCashPayments-wrapper-components-body {
+.obObposCloseCashUiCashPayments-wrapper-components-body {
   display: grid;
   grid-template-rows: auto 1fr auto;
 
   overflow-y: auto;
 }
 
-.obObposCashupUiCashPayments-wrapper-components-body-header {
+.obObposCloseCashUiCashPayments-wrapper-components-body-header {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -14079,32 +14126,32 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   color: var(--color-secondary);
 }
 
-.obObposCashupUiCashPayments-wrapper-components-body-header-element1 {
+.obObposCloseCashUiCashPayments-wrapper-components-body-header-element1 {
   width: 22%;
   text-align: left;
 }
 
-.obObposCashupUiCashPayments-wrapper-components-body-header-element2 {
+.obObposCloseCashUiCashPayments-wrapper-components-body-header-element2 {
   width: 55%;
   text-align: center;
 }
 
-.obObposCashupUiCashPayments-wrapper-components-body-header-element3 {
+.obObposCloseCashUiCashPayments-wrapper-components-body-header-element3 {
   width: 23%;
   text-align: right;
 }
 
-.obObposCashupUiCashPayments-wrapper-components-body-list {
+.obObposCloseCashUiCashPayments-wrapper-components-body-list {
   width: 100%;
   overflow-y: auto;
 }
 
-.obObposCashupUiCashPayments-wrapper-components-body-list-paymentsList {
+.obObposCloseCashUiCashPayments-wrapper-components-body-list-paymentsList {
   /*Inherits: [OB.UI.ScrollableTable]*/
   height: 100%;
 }
 
-.obObposCashupUiCashPayments-wrapper-components-body-list-renderLoading {
+.obObposCloseCashUiCashPayments-wrapper-components-body-list-renderLoading {
   border-bottom: var(--separator-slim);
   padding: 20px;
   text-align: center;
@@ -14113,10 +14160,10 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   color: var(--color-quaternary-variant);
 }
 
-.obObposCashupUiCashPayments-wrapper-components-body-footer {
+.obObposCloseCashUiCashPayments-wrapper-components-body-footer {
   display: grid;
-  grid-template-areas: 'obObposCashupUiCashPayments-wrapper-components-body-footer-container1 obObposCashupUiCashPayments-wrapper-components-body-footer-container2'
-                       'obObposCashupUiCashPayments-wrapper-components-body-footer-container4 obObposCashupUiCashPayments-wrapper-components-body-footer-container3';
+  grid-template-areas: 'obObposCloseCashUiCashPayments-wrapper-components-body-footer-container1 obObposCloseCashUiCashPayments-wrapper-components-body-footer-container2'
+                       'obObposCloseCashUiCashPayments-wrapper-components-body-footer-container4 obObposCloseCashUiCashPayments-wrapper-components-body-footer-container3';
   grid-gap: 10px;
   grid-template-columns: 1fr 1fr;
 
@@ -14128,8 +14175,8 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   color: white;
 }
 
-.obObposCashupUiCashPayments-wrapper-components-body-footer-container1 {
-  grid-area: obObposCashupUiCashPayments-wrapper-components-body-footer-container1;
+.obObposCloseCashUiCashPayments-wrapper-components-body-footer-container1 {
+  grid-area: obObposCloseCashUiCashPayments-wrapper-components-body-footer-container1;
   line-height: 100%;
   display: flex;
   flex-direction: row;
@@ -14138,17 +14185,17 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   overflow: auto;
 }
 
-.obObposCashupUiCashPayments-wrapper-components-body-footer-container1-totalLbl {
+.obObposCloseCashUiCashPayments-wrapper-components-body-footer-container1-totalLbl {
   overflow: hidden;
 }
 
-.obObposCashupUiCashPayments-wrapper-components-body-footer-container1-total {
+.obObposCloseCashUiCashPayments-wrapper-components-body-footer-container1-total {
   /*Inherits: [OB.OBPOSCashUp.UI.RenderTotal]*/
   overflow: hidden;
 }
 
-.obObposCashupUiCashPayments-wrapper-components-body-footer-container2 {
-  grid-area: obObposCashupUiCashPayments-wrapper-components-body-footer-container2;
+.obObposCloseCashUiCashPayments-wrapper-components-body-footer-container2 {
+  grid-area: obObposCloseCashUiCashPayments-wrapper-components-body-footer-container2;
   text-align: right;
   line-height: 100%;
   display: flex;
@@ -14158,23 +14205,23 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   overflow: auto;
 }
 
-.obObposCashupUiCashPayments-wrapper-components-body-footer-container2-countedLbl {
+.obObposCloseCashUiCashPayments-wrapper-components-body-footer-container2-countedLbl {
   overflow: hidden;
 }
 
-.obObposCashupUiCashPayments-wrapper-components-body-footer-container2-counted {
+.obObposCloseCashUiCashPayments-wrapper-components-body-footer-container2-counted {
   /*Inherits: [OB.OBPOSCashUp.UI.RenderTotal]*/
   overflow: hidden;
   padding-left: 5px;
   flex-grow: 1;
 }
 
-.obObposCashupUiCashPayments-wrapper-components-body-footer-container4 {
-  grid-area: obObposCashupUiCashPayments-wrapper-components-body-footer-container4;
+.obObposCloseCashUiCashPayments-wrapper-components-body-footer-container4 {
+  grid-area: obObposCloseCashUiCashPayments-wrapper-components-body-footer-container4;
 }
 
-.obObposCashupUiCashPayments-wrapper-components-body-footer-container3 {
-  grid-area: obObposCashupUiCashPayments-wrapper-components-body-footer-container3;
+.obObposCloseCashUiCashPayments-wrapper-components-body-footer-container3 {
+  grid-area: obObposCloseCashUiCashPayments-wrapper-components-body-footer-container3;
   text-align: right;
   line-height: 100%;
   display: flex;
@@ -14184,11 +14231,11 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   overflow: auto;
 }
 
-.obObposCashupUiCashPayments-wrapper-components-body-footer-container3-differenceLbl {
+.obObposCloseCashUiCashPayments-wrapper-components-body-footer-container3-differenceLbl {
   overflow: hidden;
 }
 
-.obObposCashupUiCashPayments-wrapper-components-body-footer-container3-difference {
+.obObposCloseCashUiCashPayments-wrapper-components-body-footer-container3-difference {
   /*Inherits: [OB.OBPOSCashUp.UI.RenderTotal]*/
   overflow: hidden;
   padding-left: 5px;
@@ -14204,9 +14251,9 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /*
 # Component: OB.OBPOSCashUp.UI.RenderPaymentsLine
 */
-.obObposCashupUiRenderPaymentsLine {}
+.obObposCloseCashUiRenderPaymentsLine {}
 
-.obObposCashupUiRenderPaymentsLine-listItem {
+.obObposCloseCashUiRenderPaymentsLine-listItem {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -14215,18 +14262,18 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   padding: 5px 15px;
 }
 
-.obObposCashupUiRenderPaymentsLine-listItem-nameContainer {
+.obObposCloseCashUiRenderPaymentsLine-listItem-nameContainer {
   display: inline-block;
   width: 90px;
   padding: 0px 5px 0px 0px;
   text-align: left;
 }
 
-.obObposCashupUiRenderPaymentsLine-listItem-nameContainer-name {
+.obObposCloseCashUiRenderPaymentsLine-listItem-nameContainer-name {
   display: inline-block;
 }
 
-.obObposCashupUiRenderPaymentsLine-listItem-expectedContainer {
+.obObposCloseCashUiRenderPaymentsLine-listItem-expectedContainer {
   display: grid;
   grid-auto-flow: row;
   align-items: center;
@@ -14236,15 +14283,15 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   padding: 0px 5px 0px 0px;
 }
 
-.obObposCashupUiRenderPaymentsLine-listItem-expectedContainer-foreignExpected {
+.obObposCloseCashUiRenderPaymentsLine-listItem-expectedContainer-foreignExpected {
   display: inline-block;
 }
 
-.obObposCashupUiRenderPaymentsLine-listItem-expectedContainer-expected {
+.obObposCloseCashUiRenderPaymentsLine-listItem-expectedContainer-expected {
   display: inline-block;
 }
 
-.obObposCashupUiRenderPaymentsLine-listItem-countedContainer {
+.obObposCloseCashUiRenderPaymentsLine-listItem-countedContainer {
   display: grid;
   grid-auto-flow: column;
   grid-template-columns: auto 1fr;
@@ -14254,7 +14301,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   box-sizing: border-box;
 }
 
-.obObposCashupUiRenderPaymentsLine-listItem-countedContainer-buttonOk {
+.obObposCloseCashUiRenderPaymentsLine-listItem-countedContainer-buttonOk {
   background-color: var(--color-primary);
   color: var(--color-on-primary);
   height: 50px;
@@ -14262,11 +14309,11 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   border-radius: var(--component-border-radius) 0 0 var(--component-border-radius);
 }
 
-.obObposCashupUiRenderPaymentsLine-listItem-countedContainer-buttonOk .obUiButton-components {
+.obObposCloseCashUiRenderPaymentsLine-listItem-countedContainer-buttonOk .obUiButton-components {
   grid-template-columns: 1fr 0;
 }
 
-.obObposCashupUiRenderPaymentsLine-listItem-countedContainer-buttonOk .obUiButton-components-icon {
+.obObposCloseCashUiRenderPaymentsLine-listItem-countedContainer-buttonOk .obUiButton-components-icon {
   background-size: 21px 17px;
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconCountOk.svg');
   background-repeat: no-repeat;
@@ -14277,24 +14324,24 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 @media (hover: hover) {
-  .obObposCashupUiRenderPaymentsLine-listItem-countedContainer-buttonOk:hover {
+  .obObposCloseCashUiRenderPaymentsLine-listItem-countedContainer-buttonOk:hover {
     background-color: var(--color-primary_hover);
     opacity: 1;
   }
 }
 
-.obObposCashupUiRenderPaymentsLine-listItem-countedContainer-buttonOk:active {
+.obObposCloseCashUiRenderPaymentsLine-listItem-countedContainer-buttonOk:active {
   background-color: var(--color-primary_active);
   opacity: 1;
 }
 
-.obObposCashupUiRenderPaymentsLine-listItem-countedContainer-buttonOk.disabled {
+.obObposCloseCashUiRenderPaymentsLine-listItem-countedContainer-buttonOk.disabled {
   background-color: var(--color-primary_disabled);
   opacity: 1;
   color: var(--color-on-primary_disabled);
 }
 
-.obObposCashupUiRenderPaymentsLine-listItem-countedContainer-buttonEdit {
+.obObposCloseCashUiRenderPaymentsLine-listItem-countedContainer-buttonEdit {
   -webkit-appearance: none;
   padding: 0;
   background-color: transparent;
@@ -14307,11 +14354,11 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   box-shadow: 0px 0px 4px -1px var(--color-box-shadow);
 }
 
-.obObposCashupUiRenderPaymentsLine-listItem-countedContainer-buttonEdit_selected {
+.obObposCloseCashUiRenderPaymentsLine-listItem-countedContainer-buttonEdit_selected {
   background-color: var(--color-teriary);
 }
 
-.obObposCashupUiRenderPaymentsLine-listItem-countedContainer-buttonEdit-components {
+.obObposCloseCashUiRenderPaymentsLine-listItem-countedContainer-buttonEdit-components {
   /*Inherits: [OB.UI.BaseButton]*/
   display: flex;
   flex-direction: column;
@@ -14324,39 +14371,39 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   box-sizing: border-box;
 }
 
-.obObposCashupUiRenderPaymentsLine-listItem-countedContainer-buttonEdit.disabled {
+.obObposCloseCashUiRenderPaymentsLine-listItem-countedContainer-buttonEdit.disabled {
   border: 0px;
   box-shadow: 0px 0px 0px 0px;
 }
 
-.obObposCashupUiRenderPaymentsLine-listItem-countedContainer-buttonEdit:not(.disabled):focus {
+.obObposCloseCashUiRenderPaymentsLine-listItem-countedContainer-buttonEdit:not(.disabled):focus {
   background-color: var(--color-teriary);
 }
 
 
-.obObposCashupUiRenderPaymentsLine-listItem-countedContainer-buttonEdit-components-foreignCounted {
+.obObposCloseCashUiRenderPaymentsLine-listItem-countedContainer-buttonEdit-components-foreignCounted {
   display: inline-block;
   text-align: right;
   width: 100%;
 }
 
-.obObposCashupUiRenderPaymentsLine-listItem-countedContainer-buttonEdit-components-counted {
+.obObposCloseCashUiRenderPaymentsLine-listItem-countedContainer-buttonEdit-components-counted {
   display: inline-block;
   text-align: right;
   width: 100%;
 }
 
-.obObposCashupUiRenderPaymentsLine-listItem-countedContainer-buttonOk_notCounted {}
+.obObposCloseCashUiRenderPaymentsLine-listItem-countedContainer-buttonOk_notCounted {}
 
-.obObposCashupUiRenderPaymentsLine_alreadyCounted .obObposCashupUiRenderPaymentsLine-listItem-countedContainer {
+.obObposCloseCashUiRenderPaymentsLine_alreadyCounted .obObposCloseCashUiRenderPaymentsLine-listItem-countedContainer {
   grid-template-columns: 1fr;
 }
 
-.obObposCashupUiRenderPaymentsLine_alreadyCounted .obObposCashupUiRenderPaymentsLine-listItem-countedContainer-buttonOk {
+.obObposCloseCashUiRenderPaymentsLine_alreadyCounted .obObposCloseCashUiRenderPaymentsLine-listItem-countedContainer-buttonOk {
   display: none;
 }
 
-.obObposCashupUiRenderPaymentsLine_alreadyCounted .obObposCashupUiRenderPaymentsLine-listItem-countedContainer-buttonEdit {
+.obObposCloseCashUiRenderPaymentsLine_alreadyCounted .obObposCloseCashUiRenderPaymentsLine-listItem-countedContainer-buttonEdit {
   border-radius: var(--component-border-radius);
 }
 
@@ -14364,17 +14411,17 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /*
 # Component: OB.OBPOSCashUp.UI.ListPaymentMethods
 */
-.obObposCashupUiListPaymentMethods {
+.obObposCloseCashUiListPaymentMethods {
   height: 100%;
 }
 
-.obObposCashupUiListPaymentMethods-wrapper {
+.obObposCloseCashUiListPaymentMethods-wrapper {
   padding: var(--panel-top-padding) var(--panel-inner-side-padding) var(--panel-bottom-padding) var(--panel-outer-side-padding);
   height: 100%;
   box-sizing: border-box;
 }
 
-.obObposCashupUiListPaymentMethods-wrapper-components {
+.obObposCloseCashUiListPaymentMethods-wrapper-components {
   display: grid;
   grid-template-rows: auto 1fr;
   border-bottom: var(--separator-slim);
@@ -14385,7 +14432,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   height: calc(100% - 1px);
 }
 
-.obObposCashupUiListPaymentMethods-wrapper-components-title {
+.obObposCloseCashUiListPaymentMethods-wrapper-components-title {
   padding: 12px;
   border-bottom: var(--separator-slim);
   text-align: center;
@@ -14394,7 +14441,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   color: var(--color-secondary);
 }
 
-.obObposCashupUiListPaymentMethods-wrapper-components-body {
+.obObposCloseCashUiListPaymentMethods-wrapper-components-body {
   display: grid;
   grid-template-rows: auto 1fr auto;
 
@@ -14402,7 +14449,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   overflow-y: auto;
 }
 
-.obObposCashupUiListPaymentMethods-wrapper-components-body-header {
+.obObposCloseCashUiListPaymentMethods-wrapper-components-body-header {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -14414,36 +14461,36 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   color: var(--color-secondary);
 }
 
-.obObposCashupUiListPaymentMethods-wrapper-components-body-header-element1 {
+.obObposCloseCashUiListPaymentMethods-wrapper-components-body-header-element1 {
   width: 140px;
   text-align: left;
 }
 
-.obObposCashupUiListPaymentMethods-wrapper-components-body-header-element2 {
+.obObposCloseCashUiListPaymentMethods-wrapper-components-body-header-element2 {
   width: calc(66% - 140px);
   text-align: right;
 }
 
-.obObposCashupUiListPaymentMethods-wrapper-components-body-header-element3 {
+.obObposCloseCashUiListPaymentMethods-wrapper-components-body-header-element3 {
   width: 44%;
   text-align: right;
 }
 
-.obObposCashupUiListPaymentMethods-wrapper-components-body-list {
+.obObposCloseCashUiListPaymentMethods-wrapper-components-body-list {
   height: 100%;
   width: 100%;
   overflow-y: auto;
 }
 
-.obObposCashupUiListPaymentMethods-wrapper-components-body-list-paymentsList {
+.obObposCloseCashUiListPaymentMethods-wrapper-components-body-list-paymentsList {
   /*Inherits: [OB.UI.ScrollableTable]*/
   height: 100%;
 }
 
-.obObposCashupUiListPaymentMethods-wrapper-components-body-footer {
+.obObposCloseCashUiListPaymentMethods-wrapper-components-body-footer {
   display: grid;
-  grid-template-areas: 'obObposCashupUiListPaymentMethods-wrapper-components-body-footer-container1 obObposCashupUiListPaymentMethods-wrapper-components-body-footer-container2'
-                       'obObposCashupUiListPaymentMethods-wrapper-components-body-footer-container3 obObposCashupUiListPaymentMethods-wrapper-components-body-footer-container3';
+  grid-template-areas: 'obObposCloseCashUiListPaymentMethods-wrapper-components-body-footer-container1 obObposCloseCashUiListPaymentMethods-wrapper-components-body-footer-container2'
+                       'obObposCloseCashUiListPaymentMethods-wrapper-components-body-footer-container3 obObposCloseCashUiListPaymentMethods-wrapper-components-body-footer-container3';
   grid-gap: 10px;
   grid-template-columns: 1fr 1fr;
 
@@ -14455,16 +14502,16 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   color: white;
 }
 
-.obObposCashupUiListPaymentMethods-wrapper-components-body-footer-container1 {
-  grid-area: obObposCashupUiListPaymentMethods-wrapper-components-body-footer-container1;
+.obObposCloseCashUiListPaymentMethods-wrapper-components-body-footer-container1 {
+  grid-area: obObposCloseCashUiListPaymentMethods-wrapper-components-body-footer-container1;
   line-height: 100%;
 }
 
-.obObposCashupUiListPaymentMethods-wrapper-components-body-footer-container1-totalLbl {
+.obObposCloseCashUiListPaymentMethods-wrapper-components-body-footer-container1-totalLbl {
   display: inline-block;
 }
 
-.obObposCashupUiListPaymentMethods-wrapper-components-body-footer-container1-total {
+.obObposCloseCashUiListPaymentMethods-wrapper-components-body-footer-container1-total {
   /*Inherits: [OB.OBPOSCashUp.UI.RenderTotal]*/
   display: inline-block;
   padding: 0px 0px 0px 5px;
@@ -14472,34 +14519,34 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   text-align: right;
 }
 
-.obObposCashupUiListPaymentMethods-wrapper-components-body-footer-container2 {
-  grid-area: obObposCashupUiListPaymentMethods-wrapper-components-body-footer-container2;
+.obObposCloseCashUiListPaymentMethods-wrapper-components-body-footer-container2 {
+  grid-area: obObposCloseCashUiListPaymentMethods-wrapper-components-body-footer-container2;
   text-align: right;
   line-height: 100%;
 }
 
-.obObposCashupUiListPaymentMethods-wrapper-components-body-footer-container2-countedLbl {
+.obObposCloseCashUiListPaymentMethods-wrapper-components-body-footer-container2-countedLbl {
   display: inline-block;
 }
 
-.obObposCashupUiListPaymentMethods-wrapper-components-body-footer-container2-counted {
+.obObposCloseCashUiListPaymentMethods-wrapper-components-body-footer-container2-counted {
   /*Inherits: [OB.OBPOSCashUp.UI.RenderTotal]*/
   display: inline-block;
   padding: 0px 0px 0px 5px;
   min-width: 40%;
 }
 
-.obObposCashupUiListPaymentMethods-wrapper-components-body-footer-container3 {
-  grid-area: obObposCashupUiListPaymentMethods-wrapper-components-body-footer-container3;
+.obObposCloseCashUiListPaymentMethods-wrapper-components-body-footer-container3 {
+  grid-area: obObposCloseCashUiListPaymentMethods-wrapper-components-body-footer-container3;
   text-align: right;
   line-height: 100%;
 }
 
-.obObposCashupUiListPaymentMethods-wrapper-components-body-footer-container3-differenceLbl {
+.obObposCloseCashUiListPaymentMethods-wrapper-components-body-footer-container3-differenceLbl {
   display: inline-block;
 }
 
-.obObposCashupUiListPaymentMethods-wrapper-components-body-footer-container3-difference {
+.obObposCloseCashUiListPaymentMethods-wrapper-components-body-footer-container3-difference {
   /*Inherits: [OB.OBPOSCashUp.UI.RenderTotal]*/
   display: inline-block;
   padding: 0px 0px 0px 5px;
@@ -14515,7 +14562,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSCashUp.UI.CashToKeepRadioButton
 # Inherits: [OB.UI.RadioButton]
 */
-.obObposCashupUiCashToKeepRadioButton {
+.obObposCloseCashUiCashToKeepRadioButton {
   padding-top: 0px;
   padding-right: 0px;
   padding-bottom: 0px;
@@ -14528,7 +14575,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   background-position: left center !important;
 }
 
-.obObposCashupUiCashToKeepRadioButton-lbl {
+.obObposCloseCashUiCashToKeepRadioButton-lbl {
   padding: 5px 0px 0px 0px;
 }
 
@@ -14537,25 +14584,25 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /*
 # Component: OB.OBPOSCashUp.UI.KeepDetails
 */
-.obObposCashupUiKeepDetails {}
+.obObposCloseCashUiKeepDetails {}
 
-.obObposCashupUiKeepDetails-RadioGroup {
+.obObposCloseCashUiKeepDetails-RadioGroup {
   /*Inherits: [Group]*/
 }
 
-.obObposCashupUiKeepDetails-RadioGroup-keepfixedamount {
+.obObposCloseCashUiKeepDetails-RadioGroup-keepfixedamount {
   /*Inherits: [OB.OBPOSCashUp.UI.CashToKeepRadioButton]*/
 }
 
-.obObposCashupUiKeepDetails-RadioGroup-allowmoveeverything {
+.obObposCloseCashUiKeepDetails-RadioGroup-allowmoveeverything {
   /*Inherits: [OB.OBPOSCashUp.UI.CashToKeepRadioButton]*/
 }
 
-.obObposCashupUiKeepDetails-RadioGroup-allowdontmove {
+.obObposCloseCashUiKeepDetails-RadioGroup-allowdontmove {
   /*Inherits: [OB.OBPOSCashUp.UI.CashToKeepRadioButton]*/
 }
 
-.obObposCashupUiKeepDetails-RadioGroup-allowvariableamount {
+.obObposCloseCashUiKeepDetails-RadioGroup-allowvariableamount {
   /*Inherits: [OB.OBPOSCashUp.UI.CashToKeepRadioButton]*/
   padding-top: 0px;
   padding-right: 0px;
@@ -14567,16 +14614,16 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   margin-left: 10px;
 }
 
-.obObposCashupUiKeepDetails-RadioGroup-allowvariableamount-container1 {
+.obObposCloseCashUiKeepDetails-RadioGroup-allowvariableamount-container1 {
   display: table-row;
 }
 
-.obObposCashupUiKeepDetails-RadioGroup-allowvariableamount-container1-variableamount {
+.obObposCloseCashUiKeepDetails-RadioGroup-allowvariableamount-container1-variableamount {
   vertical-align: middle;
   display: table-cell;
 }
 
-.obObposCashupUiKeepDetails-RadioGroup-allowvariableamount-container1-variableInput {
+.obObposCloseCashUiKeepDetails-RadioGroup-allowvariableamount-container1-variableInput {
   padding-left: 20px;
   display: table-cell;
 }
@@ -14585,17 +14632,17 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /*
 # Component: OB.OBPOSCashUp.UI.CashToKeep
 */
-.obObposCashupUiCashToKeep {
+.obObposCloseCashUiCashToKeep {
   height: 100%;
 }
 
-.obObposCashupUiCashToKeep-wrapper {
+.obObposCloseCashUiCashToKeep-wrapper {
   padding: var(--panel-top-padding) var(--panel-inner-side-padding) var(--panel-bottom-padding) var(--panel-outer-side-padding);
   height: 100%;
   box-sizing: border-box;
 }
 
-.obObposCashupUiCashToKeep-wrapper-components {
+.obObposCloseCashUiCashToKeep-wrapper-components {
   display: grid;
   grid-template-rows: auto 1fr;
   border-bottom: var(--separator-slim);
@@ -14606,7 +14653,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   height: calc(100% - 1px);
 }
 
-.obObposCashupUiCashToKeep-wrapper-components-title {
+.obObposCloseCashUiCashToKeep-wrapper-components-title {
   padding: 12px;
   border-bottom: var(--separator-slim);
   text-align: center;
@@ -14615,14 +14662,14 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   color: var(--color-secondary);
 }
 
-.obObposCashupUiCashToKeep-wrapper-components-body {
+.obObposCloseCashUiCashToKeep-wrapper-components-body {
   height: 100%;
   overflow-y: auto;
   padding: 10px;
   box-sizing: border-box;
 }
 
-.obObposCashupUiCashToKeep-wrapper-components-body-formkeep {}
+.obObposCloseCashUiCashToKeep-wrapper-components-body-formkeep {}
 
 
 /***********************   ***********************/
@@ -14632,33 +14679,33 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /*
 # Component: OB.OBPOSCashUp.UI.ppc_lineSeparator
 */
-.obObPosCashUpUiPpcLineSeparator {}
+.obObPosCloseCashUiPpcLineSeparator {}
 
-.obObPosCashUpUiPpcLineSeparator-container1 {
+.obObPosCloseCashUiPpcLineSeparator-container1 {
   float: left;
   width: 100%;
   touch-action: none;
 }
 
-.obObPosCashUpUiPpcLineSeparator-container1-container1 {
+.obObPosCloseCashUiPpcLineSeparator-container1-container1 {
   width: 10%;
   float: left;
 }
 
-.obObPosCashUpUiPpcLineSeparator-container1-container1-element1 {}
+.obObPosCloseCashUiPpcLineSeparator-container1-container1-element1 {}
 
-.obObPosCashUpUiPpcLineSeparator-container1-container2 {
+.obObPosCloseCashUiPpcLineSeparator-container1-container2 {
   padding: 5px 0px 0px 5px;
   float: left;
   width: 60%;
   font-weight: bold;
 }
 
-.obObPosCashUpUiPpcLineSeparator-container1-container2-element1 {
+.obObPosCloseCashUiPpcLineSeparator-container1-container2-element1 {
   clear: both;
 }
 
-.obObPosCashUpUiPpcLineSeparator-container1-element1 {
+.obObPosCloseCashUiPpcLineSeparator-container1-element1 {
   clear: both;
 }
 
@@ -14666,22 +14713,22 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /*
 # Component: OB.OBPOSCashUp.UI.ppc_totalsLine
 */
-.obObPosCashUpUiPpcTotalsLine {}
+.obObPosCloseCashUiPpcTotalsLine {}
 
-.obObPosCashUpUiPpcTotalsLine-container1 {
+.obObPosCloseCashUiPpcTotalsLine-container1 {
   float: left;
   width: 100%;
   touch-action: none;
 }
 
-.obObPosCashUpUiPpcTotalsLine-container1-container1 {
+.obObPosCloseCashUiPpcTotalsLine-container1-container1 {
   width: 10%;
   float: left;
 }
 
-.obObPosCashUpUiPpcTotalsLine-container1-container1-element1 {}
+.obObPosCloseCashUiPpcTotalsLine-container1-container1-element1 {}
 
-.obObPosCashUpUiPpcTotalsLine-container1-totalLbl {
+.obObPosCloseCashUiPpcTotalsLine-container1-totalLbl {
   padding: 5px 0px 0px 5px;
   border-bottom: 1px solid #cccccc;
   border-top: 1px solid #cccccc;
@@ -14691,7 +14738,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   font-weight: bold;
 }
 
-.obObPosCashUpUiPpcTotalsLine-container1-totalQty {
+.obObPosCloseCashUiPpcTotalsLine-container1-totalQty {
   padding: 5px 0px 0px 5px;
   border-bottom: 1px solid #cccccc;
   border-top: 1px solid #cccccc;
@@ -14701,14 +14748,14 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   font-weight: bold;
 }
 
-.obObPosCashUpUiPpcTotalsLine-container1-totalQty-container2 {
+.obObPosCloseCashUiPpcTotalsLine-container1-totalQty-container2 {
   width: 10%;
   float: left;
 }
 
-.obObPosCashUpUiPpcTotalsLine-container1-totalQty-container2-element1 {}
+.obObPosCloseCashUiPpcTotalsLine-container1-totalQty-container2-element1 {}
 
-.obObPosCashUpUiPpcTotalsLine-element1 {
+.obObPosCloseCashUiPpcTotalsLine-element1 {
   clear: both;
 }
 
@@ -14716,29 +14763,29 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /*
 # Component: OB.OBPOSCashUp.UI.ppc_itemLine
 */
-.obObPosCashUpUiPpcItemLine {}
+.obObPosCloseCashUiPpcItemLine {}
 
-.obObPosCashUpUiPpcItemLine-container1 {
+.obObPosCloseCashUiPpcItemLine-container1 {
   float: left;
   width: 100%;
   touch-action: none;
 }
 
-.obObPosCashUpUiPpcItemLine-container1-container1 {
+.obObPosCloseCashUiPpcItemLine-container1-container1 {
   width: 10%;
   float: left;
 }
 
-.obObPosCashUpUiPpcItemLine-container1-container1-element1 {}
+.obObPosCloseCashUiPpcItemLine-container1-container1-element1 {}
 
-.obObPosCashUpUiPpcItemLine-container1-itemLbl {
+.obObPosCloseCashUiPpcItemLine-container1-itemLbl {
   padding: 5px 0px 0px 5px;
   border-top: 1px solid #cccccc;
   float: left;
   width: 35%;
 }
 
-.obObPosCashUpUiPpcItemLine-container1-foreignItemQty {
+.obObPosCloseCashUiPpcItemLine-container1-foreignItemQty {
   padding: 5px 0px 0px 0px;
   border-top: 1px solid #cccccc;
   float: left;
@@ -14746,7 +14793,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   text-align: right;
 }
 
-.obObPosCashUpUiPpcItemLine-container1-itemQty {
+.obObPosCloseCashUiPpcItemLine-container1-itemQty {
   padding: 5px 0px 0px 5px;
   border-top: 1px solid #cccccc;
   border-left: 1px solid #cccccc;
@@ -14755,14 +14802,14 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   text-align: right;
 }
 
-.obObPosCashUpUiPpcItemLine-container1-container2 {
+.obObPosCloseCashUiPpcItemLine-container1-container2 {
   width: 10%;
   float: left;
 }
 
-.obObPosCashUpUiPpcItemLine-container1-container2-element1 {}
+.obObPosCloseCashUiPpcItemLine-container1-container2-element1 {}
 
-.obObPosCashUpUiPpcItemLine-element1 {
+.obObPosCloseCashUiPpcItemLine-element1 {
   clear: both;
 }
 
@@ -14771,35 +14818,35 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSCashUp.UI.ppc_collectionLines
 # Inherits: OB.UI.iterateArray
 */
-.obObPosCashUpUiPpcCollectionLines {}
+.obObPosCloseCashUiPpcCollectionLines {}
 
 
 /*
 # Component: OB.OBPOSCashUp.UI.ppc_table
 */
-.obObPosCashUpUiPpcTable {}
+.obObPosCloseCashUiPpcTable {}
 
 
 /*
 # Component: OB.OBPOSCashUp.UI.ppc_salesTable
 # Inherits: [OB.OBPOSCashUp.UI.ppc_table]
 */
-.obObPosCashUpUiPpcSalesTable {
+.obObPosCloseCashUiPpcSalesTable {
 }
 
-.obObPosCashUpUiPpcSalesTable-netsales {
+.obObPosCloseCashUiPpcSalesTable-netsales {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_itemLine] */
 }
 
-.obObPosCashUpUiPpcSalesTable-salestaxes {
+.obObPosCloseCashUiPpcSalesTable-salestaxes {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_collectionLines] */
 }
 
-.obObPosCashUpUiPpcSalesTable-totalsales {
+.obObPosCloseCashUiPpcSalesTable-totalsales {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_totalsLine] */
 }
 
-.obObPosCashUpUiPpcSalesTable-separator {
+.obObPosCloseCashUiPpcSalesTable-separator {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_lineSeparator] */
 }
 
@@ -14808,22 +14855,22 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSCashUp.UI.ppc_returnsTable
 # Inherits: [OB.OBPOSCashUp.UI.ppc_table]
 */
-.obObPosCashUpUiPpcReturnsTable {
+.obObPosCloseCashUiPpcReturnsTable {
 }
 
-.obObPosCashUpUiPpcReturnsTable-netreturns {
+.obObPosCloseCashUiPpcReturnsTable-netreturns {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_itemLine] */
 }
 
-.obObPosCashUpUiPpcReturnsTable-returnstaxes {
+.obObPosCloseCashUiPpcReturnsTable-returnstaxes {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_collectionLines] */
 }
 
-.obObPosCashUpUiPpcReturnsTable-totalreturns {
+.obObPosCloseCashUiPpcReturnsTable-totalreturns {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_totalsLine] */
 }
 
-.obObPosCashUpUiPpcReturnsTable-separator {
+.obObPosCloseCashUiPpcReturnsTable-separator {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_lineSeparator] */
 }
 
@@ -14832,14 +14879,14 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSCashUp.UI.ppc_totalTransactionsTable
 # Inherits: [OB.OBPOSCashUp.UI.ppc_table]
 */
-.obObPosCashUpUiPpcTotalTransactionsTable {
+.obObPosCloseCashUiPpcTotalTransactionsTable {
 }
 
-.obObPosCashUpUiPpcTotalTransactionsTable-totaltransactionsline {
+.obObPosCloseCashUiPpcTotalTransactionsTable-totaltransactionsline {
  /* Inherits: [OB.OBPOSCashUp.UI.ppc_totalsLine] */
 }
 
-.obObPosCashUpUiPpcTotalTransactionsTable-separator {
+.obObPosCloseCashUiPpcTotalTransactionsTable-separator {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_lineSeparator] */
 }
 
@@ -14848,17 +14895,17 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSCashUp.UI.ppc_cashDropsTable
 # Inherits: [OB.OBPOSCashUp.UI.ppc_table]
 */
-.obObPosCashUpUiPpcCashDropsTable {}
+.obObPosCloseCashUiPpcCashDropsTable {}
 
-.obObPosCashUpUiPpcCashDropsTable-drops {
+.obObPosCloseCashUiPpcCashDropsTable-drops {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_collectionLines] */
 }
 
-.obObPosCashUpUiPpcCashDropsTable-totaldrops {
+.obObPosCloseCashUiPpcCashDropsTable-totaldrops {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_totalsLine] */
 }
 
-.obObPosCashUpUiPpcCashDropsTable-separator {
+.obObPosCloseCashUiPpcCashDropsTable-separator {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_lineSeparator] */
 }
 
@@ -14867,17 +14914,17 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSCashUp.UI.ppc_cashDepositsTable
 # Inherits: [OB.OBPOSCashUp.UI.ppc_table]
 */
-.obObPosCashUpUiPpcCashDepositsTable {}
+.obObPosCloseCashUiPpcCashDepositsTable {}
 
-.obObPosCashUpUiPpcCashDepositsTable-description {
+.obObPosCloseCashUiPpcCashDepositsTable-description {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_collectionLines] */
 }
 
-.obObPosCashUpUiPpcCashDepositsTable-totaldeposits {
+.obObPosCloseCashUiPpcCashDepositsTable-totaldeposits {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_totalsLine] */
 }
 
-.obObPosCashUpUiPpcCashDepositsTable-separator {
+.obObPosCloseCashUiPpcCashDepositsTable-separator {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_lineSeparator] */
 }
 
@@ -14905,17 +14952,17 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSCashUp.UI.ppc_startingsTable
 # Inherits: [OB.OBPOSCashUp.UI.ppc_table]
 */
-.obObPosCashUpUiPpcStartingsTable {}
+.obObPosCloseCashUiPpcStartingsTable {}
 
-.obObPosCashUpUiPpcCashDepositsTable-startings {
+.obObPosloseCashUiPpcCashDepositsTable-startings {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_collectionLines] */
 }
 
-.obObPosCashUpUiPpcStartingsTable-totalstartings {
+.obObPosCloseCashUiPpcStartingsTable-totalstartings {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_totalsLine] */
 }
 
-.obObPosCashUpUiPpcStartingsTable-separator {
+.obObPosCloseCashUiPpcStartingsTable-separator {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_lineSeparator] */
 }
 
@@ -14924,17 +14971,17 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSCashUp.UI.ppc_cashExpectedTable
 # Inherits: [OB.OBPOSCashUp.UI.ppc_table]
 */
-.obObPosCashUpUiPpcCashExpectedTable {}
+.obObPosCloseCashUiPpcCashExpectedTable {}
 
-.obObPosCashUpUiPpcCashExpectedTable-expectedPerPayment {
+.obObPosCloseCashUiPpcCashExpectedTable-expectedPerPayment {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_collectionLines] */
 }
 
-.obObPosCashUpUiPpcCashExpectedTable-totalexpected {
+.obObPosCloseCashUiPpcCashExpectedTable-totalexpected {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_totalsLine] */
 }
 
-.obObPosCashUpUiPpcCashExpectedTable-separator {
+.obObPosCloseCashUiPpcCashExpectedTable-separator {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_lineSeparator] */
 }
 
@@ -14943,17 +14990,17 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSCashUp.UI.ppc_cashDifferenceTable
 # Inherits: [OB.OBPOSCashUp.UI.ppc_table]
 */
-.obObPosCashUpUiPpcCashDifferenceTable {}
+.obObPosCloseCashUiPpcCashDifferenceTable {}
 
-.obObPosCashUpUiPpcCashDifferenceTable-differencePerPayment {
+.obObPosCloseCashUiPpcCashDifferenceTable-differencePerPayment {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_collectionLines] */
 }
 
-.obObPosCashUpUiPpcCashDifferenceTable-totaldifference {
+.obObPosCloseCashUiPpcCashDifferenceTable-totaldifference {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_totalsLine] */
 }
 
-.obObPosCashUpUiPpcCashDifferenceTable-separator {
+.obObPosCloseCashUiPpcCashDifferenceTable-separator {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_lineSeparator] */
 }
 
@@ -14962,17 +15009,17 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSCashUp.UI.ppc_cashQtyToKeepTable
 # Inherits: [OB.OBPOSCashUp.UI.ppc_table]
 */
-.obObPosCashUpUiPpcCashQtyToKeepTable {}
+.obObPosCloseCashUiPpcCashQtyToKeepTable {}
 
-.obObPosCashUpUiPpcCashQtyToKeepTable-qtyToKeepPerPayment {
+.obObPosCloseCashUiPpcCashQtyToKeepTable-qtyToKeepPerPayment {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_collectionLines] */
 }
 
-.obObPosCashUpUiPpcCashQtyToKeepTable-totalqtyToKeep {
+.obObPosCloseCashUiPpcCashQtyToKeepTable-totalqtyToKeep {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_totalsLine] */
 }
 
-.obObPosCashUpUiPpcCashQtyToKeepTable-separator {
+.obObPosCloseCashUiPpcCashQtyToKeepTable-separator {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_lineSeparator] */
 }
 
@@ -14981,17 +15028,17 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSCashUp.UI.ppc_cashQtyToDepoTable
 # Inherits: [OB.OBPOSCashUp.UI.ppc_table]
 */
-.obObPosCashUpUiPpcCashQtyToDepoTable {}
+.obObPosCloseCashUiPpcCashQtyToDepoTable {}
 
-.obObPosCashUpUiPpcCashQtyToDepoTable-qtyToDepoPerPayment {
+.obObPosCloseCashUiPpcCashQtyToDepoTable-qtyToDepoPerPayment {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_collectionLines] */
 }
 
-.obObPosCashUpUiPpcCashQtyToDepoTable-totalqtyToDepo {
+.obObPosCloseCashUiPpcCashQtyToDepoTable-totalqtyToDepo {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_totalsLine] */
 }
 
-.obObPosCashUpUiPpcCashQtyToDepoTable-separator {
+.obObPosCloseCashUiPpcCashQtyToDepoTable-separator {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_lineSeparator] */
 }
 
@@ -14999,21 +15046,21 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 /*
 # Component: OB.OBPOSCashUp.UI.PostPrintClose
 */
-.obObPosCashUpUiPostPrintClose {
+.obObPosCloseCashUiPostPrintClose {
   height: 100%;
 }
 
-.obObPosCashUpUiPostPrintClose.active {
+.obObPosCloseCashUiPostPrintClose.active {
   display: block;
 }
 
-.obObPosCashUpUiPostPrintClose-wrapper {
+.obObPosCloseCashUiPostPrintClose-wrapper {
   padding: var(--panel-top-padding) var(--panel-inner-side-padding) var(--panel-bottom-padding) var(--panel-outer-side-padding);
   height: 100%;
   box-sizing: border-box;
 }
 
-.obObPosCashUpUiPostPrintClose-wrapper-components {
+.obObPosCloseCashUiPostPrintClose-wrapper-components {
   display: grid;
   grid-template-rows: auto 1fr;
   border-bottom: var(--separator-slim);
@@ -15024,7 +15071,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   height: calc(100% - 1px);
 }
 
-.obObPosCashUpUiPostPrintClose-wrapper-components-title {
+.obObPosCloseCashUiPostPrintClose-wrapper-components-title {
   padding: 12px;
   border-bottom: var(--separator-slim);
   text-align: center;
@@ -15033,80 +15080,85 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   color: var(--color-secondary);
 }
 
-.obObPosCashUpUiPostPrintClose-wrapper-components-body {
+.obObPosCloseCashUiPostPrintClose-wrapper-components-body {
   max-height: 100%;
 }
 
-.obObPosCashUpUiPostPrintClose-wrapper-components-body-container1 {}
+.obObPosCloseCashUiPostPrintClose-wrapper-components-body-container1 {}
 
-.obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1 {
+.obObPosCloseCashUiPostPrintClose-wrapper-components-body-container1-container1 {
   float: left;
   width: 100%;
   touch-action: none;
 }
 
-.obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1 {
+.obObPosCloseCashUiPostPrintClose-wrapper-components-body-container1-container1-headerContainer {
   padding: 10px;
   text-align: center;
 }
 
-.obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1-img {
+.obObPosCloseCashUiPostPrintClose-headerContainer-img {
   padding: 20px;
 }
 
-.obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1-store {
+.obObPosCloseCashUiPostPrintClose-headerContainer-store {
   padding: 5px;
   text-align: center;
 }
 
-.obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1-terminal {
+.obObPosCloseCashUiPostPrintClose-headerContainer-terminal {
   padding: 5px;
   text-align: center;
 }
 
-.obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1-user {
+.obObPosCloseCashUiPostPrintClose-headerContainer-user {
   padding: 5px;
   text-align: center;
 }
 
-.obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1-openingtime {
+.obObPosCloseCashUiPostPrintClose-headerContainer-openingtime {
   padding: 5px;
   text-align: center;
 }
 
-.obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1-time {
+.obObPosCloseCashUiPostPrintClose-headerContainer-time {
   padding: 5px;
   text-align: center;
 }
 
-.obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-container1-element1 {
+.obObPosCloseCashUiPostPrintClose-headerContainer-safebox {
+  padding: 5px;
+  text-align: center;
+}
+
+.obObPosCloseCashUiPostPrintClose-headerContainer-element1 {
   padding: 0px 0px 10px 0px;
 }
 
-.obObPosCashUpUiPostPrintClose-wrapper-components-body-container1-container1-element1 {
+.obObPosCloseCashUiPostPrintClose-wrapper-components-body-container1-container1-element1 {
   clear: both;
 }
 
-.obObPosCashUpUiPostPrintClose-wrapper-components-body-container2-container1 {
+.obObPosCloseCashUiPostPrintClose-wrapper-components-body-container2-container1 {
   display: block;
 }
 
-.obObPosCashUpUiPostPrintClose-wrapper-components-body-container2-container1-container1 {
+.obObPosCloseCashUiPostPrintClose-wrapper-components-body-container2-container1-container1 {
 }
 
-.obObPosCashUpUiPostPrintClose-wrapper-components-body-container2-container1-container1-sales {
+.obObPosCloseCashUiPostPrintClose-wrapper-components-body-container2-container1-container1-sales {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_salesTable] */
 }
 
-.obObPosCashUpUiPostPrintClose-wrapper-components-body-container2-container1-container1-returns {
+.obObPosCloseCashUiPostPrintClose-wrapper-components-body-container2-container1-container1-returns {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_returnsTable] */
 }
 
-.obObPosCashUpUiPostPrintClose-wrapper-components-body-container2-container1-container1-totaltransactions {
+.obObPosCloseCashUiPostPrintClose-wrapper-components-body-container2-container1-container1-totaltransactions {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_totalTransactionsTable] */
 }
 
-.obObPosCashUpUiPostPrintClose-wrapper-components-body-container2-element1 {
+.obObPosCloseCashUiPostPrintClose-wrapper-components-body-container2-element1 {
   border-bottom-width: 1px;
   border-bottom-style: solid;
   border-bottom-color: rgb(204, 204, 204);
@@ -15116,40 +15168,141 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   display: none;
 }
 
-.obObPosCashUpUiPostPrintClose-wrapper-components-body-container2-element2 {
+.obObPosCloseCashUiPostPrintClose-wrapper-components-body-container2-element2 {
   display: none;
 }
 
-.obObPosCashUpUiPostPrintClose-wrapper-components-body-container3 {
+.obObPosCloseCashUiPostPrintClose-wrapper-components-body-container3 {
 }
 
-.obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-startingsTable {
+.obObPosCloseCashUiPostPrintClose-wrapper-components-body-container3-startingsTable {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_startingsTable] */
 }
 
-.obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-dropsTable {
+.obObPosCloseCashUiPostPrintClose-wrapper-components-body-container3-dropsTable {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_cashDropsTable] */
 }
 
-.obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-depositsTable {
+.obObPosCloseCashUiPostPrintClose-wrapper-components-body-container3-depositsTable {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_cashDepositsTable] */
 }
 
-.obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-expectedTable {
+.obObPosCloseCashUiPostPrintClose-wrapper-components-body-container3-expectedTable {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_cashExpectedTable] */
 }
-.obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-countedTable {
+.obObPosCloseCashUiPostPrintClose-wrapper-components-body-container3-countedTable {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_cashCountedTable] */
 }
-.obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-differenceTable {
+.obObPosCloseCashUiPostPrintClose-wrapper-components-body-container3-differenceTable {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_cashDifferenceTable] */
 }
-.obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-qtyToKeepTable {
+.obObPosCloseCashUiPostPrintClose-wrapper-components-body-container3-qtyToKeepTable {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_cashQtyToKeepTable] */
 }
-.obObPosCashUpUiPostPrintClose-wrapper-components-body-container3-qtyToDepoTable {
+.obObPosCloseCashUiPostPrintClose-wrapper-components-body-container3-qtyToDepoTable {
   /* Inherits: [OB.OBPOSCashUp.UI.ppc_cashQtyToDepoTable] */
 }
+
+
+
+/***********************   ***********************/
+/*          File: tabpostprintclose.js           */
+/*    Folder: js/closecash/view/countsafebox/    */
+/***********************   ***********************/
+/*
+# Component: OB.OBPOSCountSafeBox.UI.ButtonCountSafeBox
+# Inherits: [OB.UI.RadioButton]
+*/
+.obObposCountSafeBoxUiButtonCountSafeBox {
+  padding-top: 0px;
+  padding-right: 0px;
+  padding-bottom: 0px;
+  padding-left: 40px;
+  margin-top: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  margin-left: 10px;
+  display: block;
+  background-position: left center !important;
+}
+
+
+/*
+# Component: OB.OBPOSCountSafeBox.UI.SafeBoxHeader
+*/
+.obObposCountSafeBoxUiSafeBoxHeader {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  padding: 0px 20px 0px 0px;
+}
+
+.obObposCountSafeBoxUiSafeBoxHeader-name {}
+
+.obObposCountSafeBoxUiSafeBoxHeader-user {}
+
+
+/*
+# Component: OB.OBPOSCountSafeBox.UI.RenderSafeBoxLine
+*/
+.obObposCountSafeBoxUiRenderSafeBoxLine {
+  display: flex;
+  align-items: center;
+  height: 42px;
+  width: 100%;
+  border-bottom: 1px solid #cccccc;
+}
+
+.obObposCountSafeBoxUiRenderSafeBoxLine-countSafeBox {
+  /* Inherits: OB.OBPOSCountSafeBox.UI.ButtonCountSafeBox */
+}
+
+.obObposCountSafeBoxUiRenderSafeBoxLine-safeBoxHeader {
+  /* Inherits: OB.OBPOSCountSafeBox.UI.ButtonCountSafeBox */
+}
+
+
+/*
+# Component: OB.OBPOSCountSafeBox.UI.ListSafeBoxes
+*/
+.obObposCountSafeBoxUiListSafeBoxes {
+  height: 100%;
+}
+
+.obObposCountSafeBoxUiListSafeBoxes-wrapper {
+  padding: var(--panel-top-padding) var(--panel-inner-side-padding) var(--panel-bottom-padding) var(--panel-outer-side-padding);
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.obObposCountSafeBoxUiListSafeBoxes-wrapper-components {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  border-bottom: var(--separator-slim);
+  overflow-y: auto;
+  background-color: var(--color-surface);
+  box-shadow: var(--box-shadow-surface);
+  border-radius: var(--component-border-radius);
+  height: calc(100% - 1px);
+}
+
+.obObposCountSafeBoxUiListSafeBoxes-wrapper-components-title {
+  padding: 12px;
+  border-bottom: var(--separator-slim);
+  text-align: center;
+  font-weight: bold;
+  font-size: var(--font-large);
+  color: var(--color-secondary);
+}
+
+.obObposCountSafeBoxUiListSafeBoxes-wrapper-components-body {
+  height: 100%;
+  overflow-y: auto;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.obObposCountSafeBoxUiListSafeBoxes-wrapper-components-body-formkeep {}
 
 
 
@@ -15238,7 +15391,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obUiModalApprovalReason-footer-obUiModalsBtnModalApprovalReasonAccept {}
 
-.obposModaApprovalReasonl {}
+.obposModalApprovalReason {}
 
 
 

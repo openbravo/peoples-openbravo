@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019 Openbravo S.L.U.
+ * Copyright (C) 2019-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -643,6 +643,12 @@ enyo.kind({
           name: 'OBPOS_modalAdvancedFilterOrders',
           classes:
             'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-OBPOSModalAdvancedFilterOrders'
+        },
+        {
+          kind: 'OB.UI.ModalSafeBox',
+          name: 'OBPOS_modalSafeBox',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-OBPOSModalSafeBox'
         },
         {
           kind: 'OBPOS.UI.CrossStoreSelector',
@@ -2242,7 +2248,7 @@ enyo.kind({
     this.waterfall('onPointOfSaleLoad');
 
     // Try to print the pending receipts.
-    OB.Model.OfflinePrinter.printPendingJobs();
+    OB.OBPOSPointOfSale.OfflinePrinter.printPendingJobs();
 
     this.model.get('leftColumnViewManager').on(
       'change:currentView',

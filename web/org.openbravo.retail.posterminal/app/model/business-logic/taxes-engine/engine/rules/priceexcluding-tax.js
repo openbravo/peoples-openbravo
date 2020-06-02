@@ -12,88 +12,86 @@
     /* @Override */
     // eslint-disable-next-line class-methods-use-this
     getLineTaxes(line, rules) {
-      const parentTaxId = OB.Taxes.Tax.getParentTaxId(rules[0]);
-      const lineNetAmount = line.amount;
-      const lineNetPrice = OB.Taxes.Tax.calculatePriceFromAmount(
-        lineNetAmount,
+      const tax = OB.Taxes.Tax.getParentTaxId(rules[0]);
+      const netUnitAmount = line.amount;
+      const netUnitPrice = OB.Taxes.Tax.calculatePriceFromAmount(
+        netUnitAmount,
         line.qty
       );
-      const lineGrossAmount = OB.Taxes.PriceExcludingTax.calculateGrossAmountFromNetAmount(
-        lineNetAmount,
+      const grossUnitAmount = OB.Taxes.PriceExcludingTax.calculateGrossAmountFromNetAmount(
+        netUnitAmount,
         rules
       );
-      const lineGrossPrice = OB.Taxes.Tax.calculatePriceFromAmount(
-        lineGrossAmount,
+      const grossUnitPrice = OB.Taxes.Tax.calculatePriceFromAmount(
+        grossUnitAmount,
         line.qty
       );
-      const lineTaxes = OB.Taxes.Tax.calculateTaxes(
-        lineGrossAmount,
-        lineNetAmount,
+      const taxes = OB.Taxes.Tax.calculateTaxes(
+        grossUnitAmount,
+        netUnitAmount,
         rules
       );
-      const lineTaxRate = OB.Taxes.Tax.calculateLineTaxRate(lineTaxes);
+      const taxRate = OB.Taxes.Tax.calculateLineTaxRate(taxes);
 
       return {
         id: line.id,
-        grossAmount: lineGrossAmount,
-        netAmount: lineNetAmount,
-        grossPrice: lineGrossPrice,
-        netPrice: lineNetPrice,
+        grossUnitAmount,
+        netUnitAmount,
+        grossUnitPrice,
+        netUnitPrice,
         qty: line.qty,
-        tax: parentTaxId,
-        taxRate: lineTaxRate,
-        taxes: lineTaxes
+        tax,
+        taxRate,
+        taxes
       };
     }
 
     /* @Override */
     getHeaderTaxes(lines) {
       const linesByParentTaxId = OB.Taxes.Tax.groupLinesByTax(lines);
-      const headerTaxes = Object.values(linesByParentTaxId).flatMap(
-        groupLines => {
-          const rules = groupLines[0].taxes.map(lineTax => lineTax.tax);
-          if (rules[0].docTaxAmount !== 'D') {
-            return OB.Taxes.Tax.calculateTaxesFromLinesTaxes(groupLines, rules);
-          }
-
-          const groupNetAmount = groupLines.reduce(
-            (total, line) => OB.DEC.add(total, line.netAmount),
-            OB.DEC.Zero
-          );
-          const groupGrossAmount = OB.Taxes.PriceExcludingTax.calculateGrossAmountFromNetAmount(
-            groupNetAmount,
-            rules
-          );
-
-          const groupTaxes = OB.Taxes.Tax.calculateTaxes(
-            groupGrossAmount,
-            groupNetAmount,
-            rules
-          );
-
-          OB.Taxes.PriceExcludingTax.adjustLineGrossAmount(
-            groupGrossAmount,
-            groupLines
-          );
-
-          return groupTaxes;
+      const taxes = Object.values(linesByParentTaxId).flatMap(groupLines => {
+        const rules = groupLines[0].taxes.map(lineTax => lineTax.tax);
+        if (rules[0].docTaxAmount !== 'D') {
+          return OB.Taxes.Tax.calculateTaxesFromLinesTaxes(groupLines, rules);
         }
-      );
 
-      const headerNetAmount = lines.reduce(
-        (total, line) => OB.DEC.add(total, line.netAmount),
+        const groupNetAmount = groupLines.reduce(
+          (total, line) => OB.DEC.add(total, line.netUnitAmount),
+          OB.DEC.Zero
+        );
+        const groupGrossAmount = OB.Taxes.PriceExcludingTax.calculateGrossAmountFromNetAmount(
+          groupNetAmount,
+          rules
+        );
+
+        const groupTaxes = OB.Taxes.Tax.calculateTaxes(
+          groupGrossAmount,
+          groupNetAmount,
+          rules
+        );
+
+        OB.Taxes.PriceExcludingTax.adjustLineGrossAmount(
+          groupGrossAmount,
+          groupLines
+        );
+
+        return groupTaxes;
+      });
+
+      const netAmount = lines.reduce(
+        (total, line) => OB.DEC.add(total, line.netUnitAmount),
         OB.DEC.Zero
       );
-      const headerGrossAmount = headerTaxes.reduce(
+      const grossAmount = taxes.reduce(
         (total, headerTax) => OB.DEC.add(total, headerTax.amount),
-        headerNetAmount
+        netAmount
       );
 
       return {
         id: this.ticket.id,
-        grossAmount: headerGrossAmount,
-        netAmount: headerNetAmount,
-        taxes: headerTaxes
+        grossAmount,
+        netAmount,
+        taxes
       };
     }
 
@@ -105,20 +103,21 @@
       const adjustment = OB.DEC.sub(
         grossAmount,
         lines.reduce(
-          (line1, line2) => OB.DEC.add(line1, line2.grossAmount),
+          (line1, line2) => OB.DEC.add(line1, line2.grossUnitAmount),
           OB.DEC.Zero
         )
       );
 
       if (OB.DEC.compare(adjustment) !== 0) {
         const line = lines.reduce((line1, line2) => {
-          return OB.DEC.abs(line1.grossAmount) > OB.DEC.abs(line2.grossAmount)
+          return OB.DEC.abs(line1.grossUnitAmount) >
+            OB.DEC.abs(line2.grossUnitAmount)
             ? line1
             : line2;
         });
-        line.grossAmount = OB.DEC.add(line.grossAmount, adjustment);
-        line.grossPrice = OB.Taxes.Tax.calculatePriceFromAmount(
-          line.grossAmount,
+        line.grossUnitAmount = OB.DEC.add(line.grossUnitAmount, adjustment);
+        line.grossUnitPrice = OB.Taxes.Tax.calculatePriceFromAmount(
+          line.grossUnitAmount,
           line.qty
         );
         const adjustedTax = line.taxes.reduce((tax1, tax2) => {

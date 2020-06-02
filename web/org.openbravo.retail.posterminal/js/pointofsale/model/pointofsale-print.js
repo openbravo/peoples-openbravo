@@ -244,12 +244,10 @@
                       printargs.offline &&
                       OB.MobileApp.model.get('terminal').printoffline
                     ) {
-                      OB.Dal.save(
-                        new OB.Model.OfflinePrinter({
-                          data: result.data,
-                          sendfunction: '_sendPDF'
-                        })
-                      );
+                      OB.OBPOSPointOfSale.OfflinePrinter.addData({
+                        data: result.data,
+                        sendfunction: '_sendPDF'
+                      });
                     }
                     resolve();
                   };
@@ -267,7 +265,7 @@
                 } else {
                   // Success. Try to print the pending receipts.
                   me.isRetry = false;
-                  OB.Model.OfflinePrinter.printPendingJobs();
+                  OB.OBPOSPointOfSale.OfflinePrinter.printPendingJobs();
                   OB.UTIL.HookManager.executeHooks(
                     'OBPRINT_PostPrint',
                     {
@@ -455,12 +453,10 @@
                           printargs.offline &&
                           OB.MobileApp.model.get('terminal').printoffline
                         ) {
-                          OB.Dal.save(
-                            new OB.Model.OfflinePrinter({
-                              data: result.data,
-                              sendfunction: '_send'
-                            })
-                          );
+                          OB.OBPOSPointOfSale.OfflinePrinter.addData({
+                            data: result.data,
+                            sendfunction: '_send'
+                          });
                         }
                         resolve();
                       };
@@ -474,7 +470,7 @@
                     } else {
                       // Success. Try to print the pending receipts.
                       me.isRetry = false;
-                      OB.Model.OfflinePrinter.printPendingJobs();
+                      OB.OBPOSPointOfSale.OfflinePrinter.printPendingJobs();
                       OB.UTIL.HookManager.executeHooks(
                         'OBPRINT_PostPrint',
                         {
@@ -530,12 +526,10 @@
                             printargs.offline &&
                             OB.MobileApp.model.get('terminal').printoffline
                           ) {
-                            OB.Dal.save(
-                              new OB.Model.OfflinePrinter({
-                                data: result.data,
-                                sendfunction: '_send'
-                              })
-                            );
+                            OB.OBPOSPointOfSale.OfflinePrinter.addData({
+                              data: result.data,
+                              sendfunction: '_send'
+                            });
                           }
                           resolve();
                         };
@@ -553,7 +547,7 @@
                       } else {
                         // Success. Try to print the pending receipts.
                         me.isRetry = false;
-                        OB.Model.OfflinePrinter.printPendingJobs();
+                        OB.OBPOSPointOfSale.OfflinePrinter.printPendingJobs();
                         resolve();
                       }
                     }
@@ -773,6 +767,53 @@
     }
   };
 
+  var offlinePrinter = {
+    addData: function(data) {
+      var offlineData =
+        JSON.parse(OB.UTIL.localStorage.getItem('OBPOS_OfflinePrinterData')) ||
+        [];
+      data.session = OB.MobileApp.model.get('session');
+      offlineData.push(data);
+      OB.UTIL.localStorage.setItem(
+        'OBPOS_OfflinePrinterData',
+        JSON.stringify(offlineData)
+      );
+    },
+    printPendingJobs: function(callback) {
+      var offlineData =
+        JSON.parse(OB.UTIL.localStorage.getItem('OBPOS_OfflinePrinterData')) ||
+        [];
+
+      var printData = function() {
+        if (offlineData.length === 0) {
+          OB.UTIL.localStorage.removeItem('OBPOS_OfflinePrinterData');
+          if (callback) {
+            callback(true);
+          }
+        } else {
+          var job = offlineData[0];
+          if (job.session === OB.MobileApp.model.get('session')) {
+            OB.POS.hwserver[job['sendfunction']](job['data'], function(result) {
+              if (result && result.exception) {
+                OB.UTIL.showError(result.exception.message);
+                if (callback) {
+                  callback(false);
+                }
+              } else {
+                offlineData.shift();
+                printData();
+              }
+            });
+          } else {
+            offlineData.shift();
+            printData();
+          }
+        }
+      };
+      printData();
+    }
+  };
+
   // Public object definition
   OB.OBPOSPointOfSale = OB.OBPOSPointOfSale || {};
   OB.OBPOSPointOfSale.Print = OB.OBPOSPointOfSale.Print || {};
@@ -819,6 +860,8 @@
     '../org.openbravo.retail.posterminal/res/printcanceledreceipt.xml';
   OB.OBPOSPointOfSale.Print.CanceledLayawayTemplate =
     '../org.openbravo.retail.posterminal/res/printcanceledlayaway.xml';
+
+  OB.OBPOSPointOfSale.OfflinePrinter = offlinePrinter;
 
   OB.OBPOSPointOfSale.Print.printWelcome = function(callback) {
     // Print Welcome message (Hardware Manager)

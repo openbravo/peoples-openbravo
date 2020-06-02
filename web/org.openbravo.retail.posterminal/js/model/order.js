@@ -107,6 +107,12 @@
         : OB.DEC.Zero;
     },
 
+    getInvoicedQuantity: function() {
+      return this.has('invoicedQuantity')
+        ? this.get('invoicedQuantity')
+        : OB.DEC.Zero;
+    },
+
     printQty: function() {
       return OB.DEC.toNumber(
         OB.DEC.toBigDecimal(this.get('qty')),
@@ -2807,15 +2813,31 @@
           const relatedLine = this.get('lines').find(
             line => line.id === relatedProduct.orderlineId
           );
-          if (relatedLine && relatedLine.get('product').has('oldTaxCategory')) {
-            relatedLine
-              .get('product')
-              .set(
-                'taxCategory',
-                relatedLine.get('product').get('oldTaxCategory')
-              );
-            relatedLine.get('product').unset('oldTaxCategory');
-            relatedLine.set('recalculateTax', true);
+          if (
+            relatedLine &&
+            relatedLine.get('previousPrice') &&
+            relatedLine.get('product').has('previousTaxCategory')
+          ) {
+            relatedLine.set(
+              {
+                price: relatedLine.get('previousPrice'),
+                previousPrice: null
+              },
+              {
+                silent: true
+              }
+            );
+            relatedLine.get('product').set(
+              {
+                taxCategory: relatedLine
+                  .get('product')
+                  .get('previousTaxCategory'),
+                previousTaxCategory: null
+              },
+              {
+                silent: true
+              }
+            );
           }
         });
       }
@@ -4311,7 +4333,12 @@
           'productBOM',
           productBOM.map(bomLine => {
             return {
-              amount: OB.DEC.mul(bomLine.bomprice, bomLine.bomquantity),
+              grossUnitAmount: me.get('priceIncludesTax')
+                ? OB.DEC.mul(bomLine.bomprice, bomLine.bomquantity)
+                : undefined,
+              netUnitAmount: me.get('priceIncludesTax')
+                ? undefined
+                : OB.DEC.mul(bomLine.bomprice, bomLine.bomquantity),
               qty: bomLine.bomquantity,
               product: {
                 id: bomLine.bomproduct,
@@ -5151,6 +5178,29 @@
               );
             }
           }
+          if (line.get('obrdmDeliveryMode') === 'HomeDelivery') {
+            line.set(
+              'country',
+              OB.MobileApp.model.receipt.get('bp').get('shipLocId')
+                ? OB.MobileApp.model.receipt
+                    .get('bp')
+                    .get('locationModel')
+                    .get('countryId')
+                : null
+            );
+            line.set(
+              'region',
+              OB.MobileApp.model.receipt.get('bp').get('shipLocId')
+                ? OB.MobileApp.model.receipt
+                    .get('bp')
+                    .get('locationModel')
+                    .get('regionId')
+                : null
+            );
+          } else {
+            line.set('country', line.get('organization').country);
+            line.set('region', line.get('organization').region);
+          }
         };
         if (
           me.validateAllowSalesWithReturn(
@@ -5242,23 +5292,51 @@
                       relatedLine
                         .get('product')
                         .set(
-                          'oldTaxCategory',
+                          'previousTaxCategory',
                           relatedLine.get('product').get('taxCategory')
                         );
+                      relatedLine.set(
+                        'previousPrice',
+                        relatedLine.get('price')
+                      );
                       relatedLine
                         .get('product')
                         .set(
                           'taxCategory',
                           productServiceLinked.get('taxCategory')
                         );
-                      relatedLine.set(
-                        'previousLineRate',
-                        relatedLine.get('lineRate')
-                      );
-                      relatedLine.set('recalculateTax', true);
                     }
                   });
               });
+
+            if (
+              me.get('priceIncludesTax') &&
+              me
+                .get('lines')
+                .find(line => line.get('previousPrice') && line.get('lineRate'))
+            ) {
+              const taxes = OB.Taxes.Pos.calculateTaxes(me);
+              me.get('lines')
+                .filter(
+                  line => line.get('previousPrice') && line.get('lineRate')
+                )
+                .forEach(line => {
+                  const lineTax = taxes.lines.find(lt => lt.id === line.id);
+                  line.set(
+                    'price',
+                    OB.DEC.mul(
+                      OB.DEC.div(
+                        line.get('previousPrice'),
+                        line.get('lineRate')
+                      ),
+                      lineTax.taxRate
+                    ),
+                    {
+                      silent: true
+                    }
+                  );
+                });
+            }
           }
         }
 
@@ -5742,14 +5820,6 @@
       }
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
         if (oldbp.id !== businessPartner.id) {
-          //Business Partner have changed
-          OB.Dal.saveOrUpdate(
-            businessPartner,
-            function() {},
-            function() {
-              OB.error(arguments);
-            }
-          );
           if (
             OB.MobileApp.model.hasPermission('OBPOS_remote.discount.bp', true)
           ) {
@@ -5809,47 +5879,56 @@
           }
         };
 
-        var saveLocModel = function(locModel, lid, callback) {
+        var saveLocModel = async function(locModel, lid, callback) {
           if (businessPartner.get(locModel)) {
-            OB.Dal.saveOrUpdate(
-              businessPartner.get(locModel),
-              function() {},
-              function(tx, error) {
-                OB.UTIL.showError(error);
-              }
-            );
             if (callback) {
               callback();
             }
           } else if (businessPartner.get(lid)) {
-            OB.Dal.get(
-              OB.Model.BPLocation,
-              businessPartner.get(lid),
-              function(location) {
-                OB.Dal.saveOrUpdate(
-                  location,
-                  function() {},
-                  function(tx, error) {
-                    OB.UTIL.showError(error);
+            if (
+              OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)
+            ) {
+              OB.Dal.get(
+                OB.Model.BPLocation,
+                businessPartner.get(lid),
+                function(location) {
+                  businessPartner.set(locModel, location);
+                  if (callback) {
+                    callback();
                   }
+                },
+                function() {
+                  OB.error(arguments);
+                  if (callback) {
+                    callback();
+                  }
+                },
+                function() {
+                  if (callback) {
+                    callback();
+                  }
+                }
+              );
+            } else {
+              try {
+                let bPLocation = await OB.App.MasterdataModels.BusinessPartnerLocation.withId(
+                  businessPartner.get(lid)
+                );
+                let location = OB.Dal.transform(
+                  OB.Model.BPLocation,
+                  bPLocation
                 );
                 businessPartner.set(locModel, location);
                 if (callback) {
                   callback();
                 }
-              },
-              function() {
+              } catch (error) {
                 OB.error(arguments);
                 if (callback) {
                   callback();
                 }
-              },
-              function() {
-                if (callback) {
-                  callback();
-                }
               }
-            );
+            }
           } else {
             if (callback) {
               callback();
@@ -6778,6 +6857,9 @@
       notPrePayments = _.filter(this.get('payments').models, function(payment) {
         return !payment.get('isPrePayment');
       });
+      OB.info(
+        '[checkNotProcessedPayments] Non Prepayments ' + notPrePayments.length
+      );
       if (notPrePayments.length) {
         var paymentList = [OB.I18N.getLabel('OBPOS_C&RDeletePaymentsBodyInit')];
         var symbol = OB.MobileApp.model.get('terminal').symbol;
@@ -6817,6 +6899,7 @@
           },
           function(data) {
             if (data && data.exception) {
+              OB.info('[CanCancelOrder] Exception');
               if (data.exception.message) {
                 OB.UTIL.showConfirmation.display(
                   OB.I18N.getLabel('OBMOBC_Error'),
@@ -6830,6 +6913,7 @@
               );
               return;
             } else if (data && data.orderCancelled) {
+              OB.info('[CanCancelOrder] Order Cancelled');
               OB.UTIL.showConfirmation.display(
                 OB.I18N.getLabel('OBMOBC_Error'),
                 OB.I18N.getLabel('OBPOS_OrderCanceledError')
@@ -6840,6 +6924,7 @@
               data.notDeliveredDeferredServices &&
               data.notDeliveredDeferredServices.length
             ) {
+              OB.info('[CanCancelOrder] notDeliveredDeferredServices');
               var components = [];
               components.push({
                 content: OB.I18N.getLabel('OBPOS_CannotCancelLayWithDeferred'),
@@ -6865,6 +6950,7 @@
               );
               return;
             } else {
+              OB.info('[CanCancelOrder] cancelLayawayOrder');
               var cancelLayawayOrder = function() {
                 OB.UTIL.HookManager.executeHooks(
                   'OBPOS_PreCancelLayaway',
@@ -6873,8 +6959,11 @@
                   },
                   function(args) {
                     if (args && args.cancelOperation) {
+                      OB.info('[OBPOS_PreCancelLayaway] Error');
                       return;
                     }
+
+                    OB.info('[OBPOS_PreCancelLayaway] Callback');
                     //Cloning order to be canceled
                     var clonedReceipt = new OB.Model.Order();
                     OB.UTIL.clone(me, clonedReceipt);
@@ -6961,6 +7050,7 @@
                       if (linesToDelete.length) {
                         me.get('lines').remove(linesToDelete);
                       }
+                      OB.info('[OBPOS_PreCancelLayaway] update lines');
                       // Remove or update the related lines id
                       _.each(me.get('lines').models, function(line) {
                         if (
@@ -7010,6 +7100,7 @@
                       me.set('forceCalculateTaxes', true);
                       me.unset('id');
                       me.unset('skipCalculateReceipt');
+                      OB.info('[OBPOS_PreCancelLayaway] calculateReceipt');
                       me.calculateReceipt(function() {
                         me.getPrepaymentAmount(function() {
                           me.set('isEditable', false);
@@ -9900,10 +9991,22 @@
           deliveredNotInvoicedLine = _.find(this.get('lines').models, function(
             line
           ) {
-            return line.getDeliveredQuantity() !== line.get('invoicedQuantity');
+            return line.getDeliveredQuantity() !== line.getInvoicedQuantity();
           });
           receiptShouldBeInvoiced = !_.isUndefined(deliveredNotInvoicedLine);
         }
+      }
+
+      if (
+        receiptShouldBeInvoiced &&
+        (this.get('fullInvoice') ||
+          this.getInvoiceTerms() === 'D' ||
+          this.getInvoiceTerms() === 'O') &&
+        !this.get('bp').get('taxID')
+      ) {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
+        finalCallback();
+        return;
       }
 
       if (receiptShouldBeInvoiced) {
@@ -9926,7 +10029,7 @@
 
         this.get('lines').forEach(function(ol) {
           var originalQty = ol.get('qty'),
-            qtyAlreadyInvoiced = ol.get('invoicedQuantity') || OB.DEC.Zero,
+            qtyAlreadyInvoiced = ol.getInvoicedQuantity(),
             qtyPendingToBeInvoiced = OB.DEC.sub(
               ol.get('qty'),
               qtyAlreadyInvoiced
@@ -10296,28 +10399,53 @@
           );
         };
 
-        loadLocations = function(bp) {
+        loadLocations = async function(bp) {
           if (bpLocId === bpBillLocId) {
             if (isLoadedPartiallyFromBackend) {
               finalCallback(bp, bpLoc, null);
             } else {
-              OB.Dal.get(
-                OB.Model.BPLocation,
-                bpLocId,
-                function(bpLoc) {
-                  finalCallback(bp, bpLoc, null);
-                },
-                function(tx, error) {
-                  OB.UTIL.showError(error);
-                },
-                function() {
-                  loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(
-                    data
-                  ) {
-                    finalCallback(bp, data.bpLoc, null);
-                  });
+              if (
+                OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)
+              ) {
+                OB.Dal.get(
+                  OB.Model.BPLocation,
+                  bpLocId,
+                  function(bpLoc) {
+                    finalCallback(bp, bpLoc, null);
+                  },
+                  function(tx, error) {
+                    OB.UTIL.showError(error);
+                  },
+                  function() {
+                    loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(
+                      data
+                    ) {
+                      finalCallback(bp, data.bpLoc, null);
+                    });
+                  }
+                );
+              } else {
+                try {
+                  let bPLocation = await OB.App.MasterdataModels.BusinessPartnerLocation.withId(
+                    bpLocId
+                  );
+                  if (bPLocation) {
+                    let bpLoc = OB.Dal.transform(
+                      OB.Model.BPLocation,
+                      bPLocation
+                    );
+                    finalCallback(bp, bpLoc, null);
+                  } else {
+                    loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(
+                      data
+                    ) {
+                      finalCallback(bp, data.bpLoc, null);
+                    });
+                  }
+                } catch (error) {
+                  OB.error(error);
                 }
-              );
+              }
             }
           } else {
             if (
@@ -10327,7 +10455,7 @@
             ) {
               finalCallback(bp, bpLoc, bpBillLoc);
             } else {
-              var criteria = {};
+              var criteria;
               if (
                 OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)
               ) {
@@ -10338,24 +10466,55 @@
                     value: [bpLocId, bpBillLocId]
                   }
                 ];
+                criteria = {};
                 criteria.remoteFilters = remoteCriteria;
+                OB.Dal.find(
+                  OB.Model.BPLocation,
+                  criteria,
+                  function(locations) {
+                    if (locations.models.length === 2) {
+                      _.each(locations.models, function(l) {
+                        if (l.id === bpLocId) {
+                          bpLoc = l;
+                        } else if (l.id === bpBillLocId) {
+                          bpBillLoc = l;
+                        }
+                      });
+                      finalCallback(bp, bpLoc, bpBillLoc);
+                    } else {
+                      loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(
+                        data
+                      ) {
+                        finalCallback(bp, data.bpLoc, data.bpBillLoc);
+                      });
+                    }
+                  },
+                  function(tx, error) {
+                    OB.UTIL.showError(error);
+                  },
+                  bpLoc
+                );
               } else {
-                criteria._whereClause =
-                  'where c_bpartner_location_id in (?, ?)';
-                criteria.params = [bpLocId, bpBillLocId];
-              }
-              OB.Dal.find(
-                OB.Model.BPLocation,
-                criteria,
-                function(locations) {
-                  if (locations.models.length === 2) {
-                    _.each(locations.models, function(l) {
+                try {
+                  criteria = new OB.App.Class.Criteria();
+                  criteria.criterion('id', [bpLocId, bpBillLocId], 'in');
+                  let bPLocations = await OB.App.MasterdataModels.BusinessPartnerLocation.find(
+                    criteria.build()
+                  );
+                  let locations = [];
+                  for (let i = 0; i < bPLocations.length; i++) {
+                    locations.push(
+                      OB.Dal.transform(OB.Model.BPLocation, bPLocations[i])
+                    );
+                  }
+                  if (locations.length === 2) {
+                    for (const l of locations) {
                       if (l.id === bpLocId) {
                         bpLoc = l;
                       } else if (l.id === bpBillLocId) {
                         bpBillLoc = l;
                       }
-                    });
+                    }
                     finalCallback(bp, bpLoc, bpBillLoc);
                   } else {
                     loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(
@@ -10364,33 +10523,50 @@
                       finalCallback(bp, data.bpLoc, data.bpBillLoc);
                     });
                   }
-                },
-                function(tx, error) {
+                } catch (error) {
                   OB.UTIL.showError(error);
-                },
-                bpLoc
-              );
+                }
+              }
             }
           }
         };
-        OB.Dal.get(
-          OB.Model.BusinessPartner,
-          bpId,
-          function(bp) {
-            loadLocations(bp);
-          },
-          null,
-          function() {
-            //Empty
-            loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(data) {
-              bpLoc = data.bpLoc;
-              if (bpLocId !== bpBillLocId) {
-                bpBillLoc = data.bpBillLoc;
-              }
-              loadLocations(data.bpartner);
-            });
+        if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+          OB.Dal.get(
+            OB.Model.BusinessPartner,
+            bpId,
+            function(bp) {
+              loadLocations(bp);
+            },
+            null,
+            function() {
+              //Empty
+              loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(data) {
+                bpLoc = data.bpLoc;
+                if (bpLocId !== bpBillLocId) {
+                  bpBillLoc = data.bpBillLoc;
+                }
+                loadLocations(data.bpartner);
+              });
+            }
+          );
+        } else {
+          try {
+            let bp = await OB.App.MasterdataModels.BusinessPartner.withId(bpId);
+            if (bp !== undefined) {
+              loadLocations(OB.Dal.transform(OB.Model.BusinessPartner, bp));
+            } else {
+              loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(data) {
+                bpLoc = data.bpLoc;
+                if (bpLocId !== bpBillLocId) {
+                  bpBillLoc = data.bpBillLoc;
+                }
+                loadLocations(data.bpartner);
+              });
+            }
+          } catch (error) {
+            OB.error(error);
           }
-        );
+        }
       },
 
       newPaidReceipt: async function(model, callback) {
@@ -10716,7 +10892,31 @@
                     attSetInstanceDesc: iter.attSetInstanceDesc
                       ? iter.attSetInstanceDesc
                       : null,
-                    lineGrossAmount: iter.lineGrossAmount
+                    lineGrossAmount: iter.lineGrossAmount,
+                    country:
+                      iter.obrdmDeliveryMode === 'HomeDelivery'
+                        ? order.get('bp').get('shipLocId')
+                          ? order
+                              .get('bp')
+                              .get('locationModel')
+                              .get('countryId')
+                          : null
+                        : iter.organization
+                        ? iter.organization.country
+                        : OB.MobileApp.model.get('terminal')
+                            .organizationCountryId,
+                    region:
+                      iter.obrdmDeliveryMode === 'HomeDelivery'
+                        ? order.get('bp').get('shipLocId')
+                          ? order
+                              .get('bp')
+                              .get('locationModel')
+                              .get('regionId')
+                          : null
+                        : iter.organization
+                        ? iter.organization.region
+                        : OB.MobileApp.model.get('terminal')
+                            .organizationRegionId
                   });
 
                   if (!order.get('isQuotation')) {
@@ -10886,10 +11086,6 @@
       },
 
       addNewOrder: function(isFirstOrder) {
-        var me = this;
-        if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-          me.doRemoteBPSettings(OB.MobileApp.model.get('businessPartner'));
-        }
         this.saveCurrent();
         this.current = this.newOrder();
         this.unshift(this.current);
@@ -10923,10 +11119,6 @@
               }
             }
           );
-        }
-
-        if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-          this.doRemoteBPSettings(model.get('bp'));
         }
 
         this.saveCurrent();
@@ -10966,24 +11158,6 @@
         );
       },
 
-      doRemoteBPSettings: function(businessPartner) {
-        OB.Dal.saveOrUpdate(
-          businessPartner,
-          function() {},
-          function() {
-            OB.error(arguments);
-          }
-        );
-        OB.Dal.saveOrUpdate(
-          businessPartner.get('locationModel'),
-          function() {},
-          function() {
-            OB.error(arguments);
-          }
-        );
-        OB.UTIL.showLoading(false);
-      },
-
       addNewQuotation: function() {
         this.saveCurrent();
         this.current = this.newOrder();
@@ -11013,9 +11187,6 @@
           var order = this.newOrder();
 
           this.unshift(order);
-          if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-            this.doRemoteBPSettings(OB.MobileApp.model.get('businessPartner'));
-          }
         }
         this.current = this.at(0);
         this.loadCurrent(createNew);
@@ -11431,6 +11602,12 @@
           'orderManualPromotions',
           new OB.Collection.OrderManualPromotionsList()
         );
+        if (
+          OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)
+        ) {
+          order.set('obrdmDeliveryModeProperty', 'PickAndCarry');
+        }
+
         OB.UTIL.HookManager.executeHooks('OBPOS_NewReceipt', {
           newOrder: order
         });

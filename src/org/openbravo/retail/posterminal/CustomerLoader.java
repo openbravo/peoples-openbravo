@@ -110,6 +110,7 @@ public class CustomerLoader extends POSDataSynchronizationProcess
     } finally {
       OBContext.restorePreviousMode();
     }
+
     final JSONObject jsonResponse = new JSONObject();
     jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
     jsonResponse.put("result", "0");

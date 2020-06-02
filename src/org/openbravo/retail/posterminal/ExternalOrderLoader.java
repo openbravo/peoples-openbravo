@@ -137,6 +137,11 @@ public class ExternalOrderLoader extends OrderLoader {
   }
 
   @Override
+  protected boolean bypassSecurity() {
+    return true;
+  }
+
+  @Override
   public void executeCreateImportEntry(Writer w, JSONObject jsonObject) {
     JSONObject message = null;
     try {
@@ -1244,16 +1249,16 @@ public class ExternalOrderLoader extends OrderLoader {
       throw new OBException("No pos terminal found using id " + posId + " json " + jsonObject);
     }
 
-    Role role = POSLoginHandler.getNearestRoleValidToLoginInWebPosTerminalForCertainUser(
-        OBContext.getOBContext().getUser(), result, true);
-    if (role == null) {
-      throw new OBException(
-          "No Role found for the user " + OBContext.getOBContext().getUser().getName());
-    }
+    OBContext.setOBContext(OBContext.getOBContext().getUser().getId(),
+        OBContext.getOBContext().getRole().getId(), result.getClient().getId(),
+        result.getOrganization().getId());
 
-    // Context will be set according to the terminal
-    OBContext.setOBContext(OBContext.getOBContext().getUser().getId(), role.getId(),
-        result.getClient().getId(), result.getOrganization().getId());
+    final Role role = OBDal.getInstance()
+        .get(Role.class, OBContext.getOBContext().getRole().getId());
+    if (!role.isWebServiceEnabled()) {
+      throw new OBException(
+          "Webservice is not enabled for the user " + OBContext.getOBContext().getUser().getName());
+    }
     return result;
   }
 

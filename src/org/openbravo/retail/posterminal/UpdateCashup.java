@@ -203,6 +203,7 @@ public class UpdateCashup {
       Date cashUpDate, Date cashUpReportDate, Date lastCashUpReportDate)
       throws JSONException, OBException {
     OBPOSAppCashup cashup = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
+
     // Update cashup info
     updateCashUpInfo(cashup, jsonCashup, cashUpDate, cashUpReportDate, lastCashUpReportDate);
 
@@ -255,9 +256,11 @@ public class UpdateCashup {
             }
           }
         }
+
         if (createPaymentMethods) {
           createPaymentMethodCashUp(cashup, payment);
         }
+
       }
     }
   }

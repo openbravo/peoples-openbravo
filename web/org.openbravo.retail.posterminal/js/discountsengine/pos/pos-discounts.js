@@ -114,39 +114,30 @@
     promotion.actualAmt = promotion.amt;
   };
 
-  const translateTicket = receipt => {
-    let newTicket = {};
-    newTicket.businessPartner = {};
-    newTicket.businessPartner.id = receipt.get('bp').id;
-    newTicket.businessPartner.businessPartnerCategory = receipt
-      .get('bp')
-      .get('businessPartnerCategory');
-    newTicket.businessPartner._identifier = receipt.get('bp')._identifier;
-    if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
-      newTicket.pricelist = receipt.get('bp').get('priceList');
-    } else {
-      newTicket.pricelist = OB.MobileApp.model.get('pricelist').id;
-    }
-    newTicket.id = receipt.get('id');
-    newTicket.date = receipt.get('orderDate');
-    newTicket.discountsFromUser = {};
-    newTicket.lines = [];
-    receipt.get('lines').forEach(line => {
-      let newLine = {};
-
-      newLine.id = line.get('id');
-      newLine.product = line.get('product').toJSON();
-      newLine.qty = line.get('qty');
-      newLine.price = line.get('price');
-      newLine.promotions = [];
-      newTicket.lines.push(newLine);
-    });
-    if (receipt.get('discountsFromUser')) {
-      newTicket.discountsFromUser = {
-        ...receipt.get('discountsFromUser')
-      };
-    }
-    return newTicket;
+  const translateReceipt = receipt => {
+    return {
+      id: receipt.get('id'),
+      orderDate: receipt.get('orderDate'),
+      priceList: receipt.get('priceList'),
+      priceIncludesTax: receipt.get('priceIncludesTax'),
+      businessPartner: {
+        id: receipt.get('bp').id,
+        businessPartnerCategory: receipt
+          .get('bp')
+          .get('businessPartnerCategory'),
+        _identifier: receipt.get('bp')._identifier
+      },
+      discountsFromUser: receipt.get('discountsFromUser') || {},
+      lines: receipt.get('lines').map(line => {
+        return {
+          id: line.get('id'),
+          product: line.get('product').toJSON(),
+          qty: line.get('qty'),
+          baseGrossUnitPrice: line.get('price'),
+          baseNetUnitPrice: line.get('price')
+        };
+      })
+    };
   };
 
   OB.Discounts.Pos.applyDiscounts = (ticket, rules, bpSets) => {
@@ -168,7 +159,7 @@
   };
 
   OB.Discounts.Pos.calculateDiscounts = (receipt, callback) => {
-    const ticketForEngine = translateTicket(receipt);
+    const ticketForEngine = translateReceipt(receipt);
     let result;
     if (OB.Discounts.Pos.local) {
       if (!OB.Discounts.Pos.ruleImpls) {

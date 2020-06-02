@@ -473,12 +473,14 @@ OB.DS.HWServer.prototype._print = function(
     }
   } catch (ex) {
     OB.error('Error computing the template to print.', ex);
-    callback({
-      data: templatedata,
-      exception: {
-        message: OB.I18N.getLabel('OBPOS_MsgPrintError')
-      }
-    });
+    if (callback) {
+      callback({
+        data: templatedata,
+        exception: {
+          message: OB.I18N.getLabel('OBPOS_MsgPrintError')
+        }
+      });
+    }
   }
 };
 

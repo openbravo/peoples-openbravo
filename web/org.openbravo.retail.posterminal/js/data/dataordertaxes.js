@@ -144,24 +144,11 @@
     receipt.get('lines').forEach(line => {
       const lineTax = taxes.lines.find(lineTax => lineTax.id === line.id);
       if (receipt.get('priceIncludesTax')) {
-        if (line.get('recalculateTax')) {
-          line.set(
-            {
-              gross: lineTax.grossAmount,
-              discountedGross: lineTax.grossAmount,
-              price: lineTax.grossPrice,
-              recalculateTax: false
-            },
-            {
-              silent: true
-            }
-          );
-        }
         line.set(
           {
-            net: lineTax.netAmount,
-            discountedNet: lineTax.netAmount,
-            pricenet: lineTax.netPrice,
+            net: lineTax.netUnitAmount,
+            discountedNet: lineTax.netUnitAmount,
+            pricenet: lineTax.netUnitPrice,
             lineRate: lineTax.taxRate,
             tax: lineTax.tax,
             taxLines: lineTax.taxes
@@ -173,8 +160,8 @@
       } else {
         line.set(
           {
-            gross: lineTax.grossAmount,
-            discountedGross: lineTax.grossAmount,
+            gross: lineTax.grossUnitAmount,
+            discountedGross: lineTax.grossUnitAmount,
             lineRate: lineTax.taxRate,
             tax: lineTax.tax,
             taxLines: lineTax.taxes

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2019 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -148,6 +148,14 @@ enyo.kind({
         if (
           OB.POS.modelterminal.get('terminal').isslave &&
           paymentMethod.paymentMethod.isshared
+        ) {
+          return true;
+        }
+        if (
+          paymentMethod.paymentMethod.issafebox &&
+          OB.UTIL.isNullOrUndefined(
+            OB.UTIL.localStorage.getItem('currentSafeBox')
+          )
         ) {
           return true;
         }

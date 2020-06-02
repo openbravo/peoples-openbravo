@@ -16,15 +16,10 @@ OB.OBPOSPointOfSale.UI = OB.OBPOSPointOfSale.UI || {};
 //Window model
 OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
   models: [
-    OB.Model.BusinessPartner,
-    OB.Model.BPLocation,
     OB.Model.Order,
-    OB.Model.ChangedBusinessPartners,
-    OB.Model.ChangedBPlocation,
     OB.Model.CancelLayaway,
     OB.Model.CurrencyPanel,
     OB.Model.CashUp,
-    OB.Model.OfflinePrinter,
     OB.Model.PaymentMethodCashUp,
     OB.Model.TaxCashUp
   ],
@@ -69,38 +64,55 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               'window:ready',
               function() {
                 OB.MobileApp.model.off('window:ready', null, model);
-                if (!args.ordersNotPaid || args.ordersNotPaid.length === 0) {
-                  // If there are no pending orders,
-                  //  add an initial empty order
-                  orderlist.addFirstOrder();
-                } else {
-                  // The order object is stored in the json property of the row fetched from the database
-                  orderlist.reset(args.ordersNotPaid.models);
-                  // At this point it is sure that there exists at least one order
-                  // Function to continue of there is some error
-                  currentOrder = args.ordersNotPaid.models[0];
-                  //removing Orders lines without mandatory fields filled
-                  OB.UTIL.HookManager.executeHooks(
-                    'OBPOS_CheckReceiptMandatoryFields',
-                    {
-                      orders: orderlist.models
-                    },
-                    function(args) {
-                      reCalculateReceipt = args.reCalculateReceipt;
-                      orderlist.load(currentOrder);
-                      if (reCalculateReceipt) {
-                        OB.MobileApp.model.receipt.calculateGrossAndSave();
+                const addNewOrderCallback = () => {
+                  if (!args.ordersNotPaid || args.ordersNotPaid.length === 0) {
+                    // If there are no pending orders,
+                    //  add an initial empty order
+                    orderlist.addFirstOrder();
+                  } else {
+                    // The order object is stored in the json property of the row fetched from the database
+                    orderlist.reset(args.ordersNotPaid.models);
+                    // At this point it is sure that there exists at least one order
+                    // Function to continue of there is some error
+                    currentOrder = args.ordersNotPaid.models[0];
+                    //removing Orders lines without mandatory fields filled
+                    OB.UTIL.HookManager.executeHooks(
+                      'OBPOS_CheckReceiptMandatoryFields',
+                      {
+                        orders: orderlist.models
+                      },
+                      function(args) {
+                        reCalculateReceipt = args.reCalculateReceipt;
+                        orderlist.load(currentOrder);
+                        if (reCalculateReceipt) {
+                          OB.MobileApp.model.receipt.calculateGrossAndSave();
+                        }
+                        loadOrderStr =
+                          OB.I18N.getLabel('OBPOS_Order') +
+                          currentOrder.get('documentNo') +
+                          OB.I18N.getLabel('OBPOS_Loaded');
+                        OB.UTIL.showAlert.display(
+                          loadOrderStr,
+                          OB.I18N.getLabel('OBPOS_Info')
+                        );
                       }
-                      loadOrderStr =
-                        OB.I18N.getLabel('OBPOS_Order') +
-                        currentOrder.get('documentNo') +
-                        OB.I18N.getLabel('OBPOS_Loaded');
-                      OB.UTIL.showAlert.display(
-                        loadOrderStr,
-                        OB.I18N.getLabel('OBPOS_Info')
-                      );
+                    );
+                  }
+                };
+                if (
+                  OB.MobileApp.model.get('terminal').terminalType.safebox &&
+                  OB.UTIL.isNullOrUndefined(
+                    OB.UTIL.localStorage.getItem('currentSafeBox')
+                  )
+                ) {
+                  OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
+                    popup: 'OBPOS_modalSafeBox',
+                    args: {
+                      callback: addNewOrderCallback
                     }
-                  );
+                  });
+                } else {
+                  addNewOrderCallback();
                 }
               },
               model
@@ -1596,7 +1608,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     this.set('filter', []);
     this.set('brandFilter', []);
 
-    function searchCurrentBP(callback) {
+    async function searchCurrentBP(callback) {
       var errorCallback = function() {
         OB.error(
           OB.I18N.getLabel('OBPOS_BPInfoErrorTitle') +
@@ -1631,7 +1643,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         if (dataBps) {
           var partnerAddressId = OB.MobileApp.model.get('terminal')
             .partnerAddress;
-          dataBps.loadBPLocations(null, null, function(
+          dataBps.loadBPLocations(null, null, async function(
             shipping,
             billing,
             locations
@@ -1650,13 +1662,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             dataBps.setBPLocations(shipping, billing, true);
             dataBps.set('locations', locations);
             OB.MobileApp.model.set('businessPartner', dataBps);
-            OB.Dal.save(
-              dataBps,
-              function() {},
-              function() {
-                OB.error(arguments);
-              }
-            );
             me.loadUnpaidOrders(function() {
               OB.Taxes.Pos.initCache(function() {
                 OB.Discounts.Pos.initCache(function() {
@@ -1728,24 +1733,54 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           });
         }
       }
-      var checkBPInLocal = function() {
+      let checkBPInLocal;
+      if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+        checkBPInLocal = function() {
+          OB.Dal.get(
+            OB.Model.BusinessPartner,
+            OB.MobileApp.model.get('businesspartner'),
+            successCallbackBPs,
+            errorCallback,
+            errorCallback,
+            null,
+            true
+          );
+        };
         OB.Dal.get(
           OB.Model.BusinessPartner,
           OB.MobileApp.model.get('businesspartner'),
           successCallbackBPs,
-          errorCallback,
-          errorCallback,
-          null,
-          true
+          checkBPInLocal,
+          errorCallback
         );
-      };
-      OB.Dal.get(
-        OB.Model.BusinessPartner,
-        OB.MobileApp.model.get('businesspartner'),
-        successCallbackBPs,
-        checkBPInLocal,
-        errorCallback
-      );
+      } else {
+        checkBPInLocal = async function() {
+          try {
+            let businessPartner = await OB.App.MasterdataModels.BusinessPartner.withId(
+              OB.MobileApp.model.get('businesspartner')
+            );
+            successCallbackBPs(
+              OB.Dal.transform(OB.Model.BusinessPartner, businessPartner)
+            );
+          } catch (error) {
+            errorCallback(error);
+          }
+        };
+        try {
+          let businessPartner = await OB.App.MasterdataModels.BusinessPartner.withId(
+            OB.MobileApp.model.get('businesspartner')
+          );
+          if (businessPartner !== undefined) {
+            successCallbackBPs(
+              OB.Dal.transform(OB.Model.BusinessPartner, businessPartner)
+            );
+          } else {
+            checkBPInLocal();
+          }
+        } catch (error) {
+          errorCallback(error);
+        }
+      }
     }
 
     //Because in terminal we've the BP id and we want to have the BP model.
