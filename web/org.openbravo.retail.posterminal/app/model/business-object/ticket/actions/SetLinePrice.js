@@ -19,14 +19,19 @@
         return l;
       }
 
-      const newLine = { ...l, grossPrice: price };
+      const newLine = {
+        ...l,
+        baseGrossUnitPrice: ticket.priceIncludesTax ? price : undefined,
+        baseNetUnitPrice: ticket.priceIncludesTax ? undefined : price
+      };
 
       if (
         ticket.deliveryPaymentMode === 'PD' &&
         newLine.product.obrdmIsdeliveryservice
       ) {
         newLine.obrdmAmttopayindelivery = OB.DEC.mul(price, newLine.qty);
-        newLine.grossPrice = 0;
+        newLine.baseGrossUnitPrice = ticket.priceIncludesTax ? 0 : undefined;
+        newLine.baseNetUnitPrice = ticket.priceIncludesTax ? undefined : 0;
       }
 
       if (reason) {
