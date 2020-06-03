@@ -213,7 +213,7 @@ public abstract class ProcessUploadedFile extends HttpSecureAppServlet {
    */
   protected abstract UploadResult doProcessFile(JSONObject paramValues, File file) throws Exception;
 
-  protected static class UploadResult {
+  public static class UploadResult {
     private int lineCount = 0;
     private int errorCount = 0;
     private StringBuilder errorMessages = new StringBuilder();
