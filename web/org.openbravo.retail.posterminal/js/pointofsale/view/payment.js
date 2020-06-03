@@ -2525,8 +2525,6 @@ enyo.kind({
     execution = OB.UTIL.ProcessController.start('tapDoneButton');
 
     if (!isMultiOrder) {
-      // FIXME: Move to TicketUtils.applyDiscountsAndTaxes()
-      OB.MobileApp.model.receipt.adjustPrices();
       OB.Dal.transaction(
         function(tx) {
           // FIXME: Use CashupUtils
