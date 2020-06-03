@@ -135,8 +135,8 @@ public class InvoiceUtils implements TicketPropertyMapping {
     final OrderLine orderLine = lineReferences.get(numIter);
     final JSONObject jsonInvoiceLine = invoicelines.getJSONObject(numIter);
     final BigDecimal qtyToInvoice = BigDecimal.valueOf(jsonInvoiceLine.getDouble("qty"));
-    final BigDecimal lineGrossAmount = getGrossUnitAmount(jsonInvoiceLine);
-    final BigDecimal lineNetAmount = getNetUnitAmount(jsonInvoiceLine);
+    BigDecimal lineGrossAmount = getGrossUnitAmount(jsonInvoiceLine);
+    BigDecimal lineNetAmount = getNetUnitAmount(jsonInvoiceLine);
 
     if (orderLine.getObposQtyDeleted() != null
         && orderLine.getObposQtyDeleted().compareTo(BigDecimal.ZERO) != 0) {
@@ -184,11 +184,8 @@ public class InvoiceUtils implements TicketPropertyMapping {
       // if there are several shipments line to the same orderline, in the last line of the invoice
       // of this sales order line, the line net amt will be the pending line net amount
       if (numLines > actualLine || (numLines == actualLine && !deliveredQtyEqualsToMovementQty)) {
-        invoiceLine.setLineNetAmount(
-            orderLine.getUnitPrice().multiply(qty).setScale(pricePrecision, RoundingMode.HALF_UP));
-        invoiceLine.setGrossAmount(orderLine.getGrossUnitPrice()
-            .multiply(qty)
-            .setScale(pricePrecision, RoundingMode.HALF_UP));
+        lineNetAmount = orderLine.getUnitPrice().multiply(qty);
+        lineGrossAmount = orderLine.getGrossUnitPrice().multiply(qty);
       } else {
         BigDecimal partialGrossAmount = BigDecimal.ZERO;
         BigDecimal partialLineNetAmount = BigDecimal.ZERO;
@@ -199,15 +196,11 @@ public class InvoiceUtils implements TicketPropertyMapping {
             partialLineNetAmount = partialLineNetAmount.add(il.getLineNetAmount());
           }
         }
-        invoiceLine.setLineNetAmount(lineNetAmount.subtract(partialLineNetAmount)
-            .setScale(pricePrecision, RoundingMode.HALF_UP));
-        invoiceLine.setGrossAmount(lineGrossAmount.subtract(partialGrossAmount)
-            .setScale(pricePrecision, RoundingMode.HALF_UP));
+        lineNetAmount = lineNetAmount.subtract(partialLineNetAmount);
+        lineGrossAmount = lineGrossAmount.subtract(partialGrossAmount);
       }
-    } else {
-      invoiceLine.setLineNetAmount(lineNetAmount.setScale(pricePrecision, RoundingMode.HALF_UP));
-      invoiceLine.setGrossAmount(lineGrossAmount.setScale(pricePrecision, RoundingMode.HALF_UP));
     }
+
     invoiceLine.setGrossListPrice(
         getGrossListPrice(jsonInvoiceLine).setScale(pricePrecision, RoundingMode.HALF_UP));
     invoiceLine.setListPrice(
@@ -216,10 +209,16 @@ public class InvoiceUtils implements TicketPropertyMapping {
         getBaseGrossUnitPrice(jsonInvoiceLine).setScale(pricePrecision, RoundingMode.HALF_UP));
     invoiceLine.setStandardPrice(
         getBaseNetUnitPrice(jsonInvoiceLine).setScale(pricePrecision, RoundingMode.HALF_UP));
-    invoiceLine.setGrossUnitPrice(
-        getGrossUnitPrice(jsonInvoiceLine).setScale(pricePrecision, RoundingMode.HALF_UP));
+    invoiceLine.setGrossUnitPrice(jsoninvoice.getBoolean("priceIncludesTax")
+        ? getGrossUnitPrice(jsonInvoiceLine).setScale(pricePrecision, RoundingMode.HALF_UP)
+        : BigDecimal.ZERO);
     invoiceLine.setUnitPrice(
         getNetUnitPrice(jsonInvoiceLine).setScale(pricePrecision, RoundingMode.HALF_UP));
+    invoiceLine.setGrossAmount(jsoninvoice.getBoolean("priceIncludesTax")
+        ? lineGrossAmount.setScale(pricePrecision, RoundingMode.HALF_UP)
+        : BigDecimal.ZERO);
+    invoiceLine.setLineNetAmount(lineNetAmount.setScale(pricePrecision, RoundingMode.HALF_UP));
+
     invoiceLine.setInvoicedQuantity(qty);
     orderLine.setInvoicedQuantity(
         (orderLine.getInvoicedQuantity() != null ? orderLine.getInvoicedQuantity().add(qty) : qty));
