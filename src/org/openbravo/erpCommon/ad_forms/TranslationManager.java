@@ -10,14 +10,12 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2019 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2020 Openbravo S.L.U.
  ******************************************************************************/
 package org.openbravo.erpCommon.ad_forms;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.OutputStreamWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -36,22 +34,16 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.commons.betwixt.io.BeanReader;
-import org.apache.commons.betwixt.io.BeanWriter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.xml.XMLUtil;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.ad_process.buildStructure.Build;
-import org.openbravo.erpCommon.ad_process.buildStructure.BuildTranslation;
 import org.openbravo.erpCommon.utility.BasicUtility;
 import org.openbravo.erpCommon.utility.OBError;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
 
 /**
  * Class for import/export languages.
@@ -159,8 +151,6 @@ public class TranslationManager {
       exportReferenceData(conn, rootDirectory, AD_Language);
 
       exportContibutors(conn, directory, AD_Language);
-
-      exportBuildFile(directory, AD_Language);
     } catch (final Exception e) {
       log4j.error(e);
       myMessage.setType("Error");
@@ -170,49 +160,6 @@ public class TranslationManager {
     myMessage.setType("Success");
     myMessage.setMessage(BasicUtility.messageBD(conn, "Success", uiLanguage));
     return myMessage;
-  }
-
-  private static void exportBuildFile(String directory, String language) {
-
-    String source = OBPropertiesProvider.getInstance()
-        .getOpenbravoProperties()
-        .get("source.path")
-        .toString();
-
-    try {
-      FileReader xmlReader = new FileReader(
-          source + "/src/org/openbravo/erpCommon/ad_process/buildStructure/buildStructure.xml");
-
-      BeanReader beanReader = new BeanReader();
-
-      beanReader.getBindingConfiguration().setMapIDs(false);
-
-      beanReader.getXMLIntrospector()
-          .register(new InputSource(new FileReader(new File(source,
-              "/src/org/openbravo/erpCommon/ad_process/buildStructure/mapping.xml"))));
-
-      beanReader.registerBeanClass("Build", Build.class);
-
-      Build build = (Build) beanReader.parse(xmlReader);
-
-      FileWriter outputWriterT = new FileWriter(directory + "/" + BUILD_FILENAME + ".xml");
-      outputWriterT.write("<?xml version='1.0' ?>\n");
-
-      BeanWriter beanWriterT = new BeanWriter(outputWriterT);
-      beanWriterT.getXMLIntrospector().getConfiguration().setAttributesForPrimitives(false);
-      beanWriterT.getXMLIntrospector()
-          .register(new InputSource(new FileReader(new File(source,
-              "/src/org/openbravo/erpCommon/ad_process/buildStructure/mapping.xml"))));
-      beanWriterT.getBindingConfiguration().setMapIDs(false);
-      beanWriterT.enablePrettyPrint();
-
-      BuildTranslation trl = build.generateBuildTranslation(language);
-      beanWriterT.write("BuildTranslation", trl);
-      outputWriterT.flush();
-      outputWriterT.close();
-    } catch (Exception e) {
-      log4j.error("Error while generating build structure file", e);
-    }
   }
 
   /**
