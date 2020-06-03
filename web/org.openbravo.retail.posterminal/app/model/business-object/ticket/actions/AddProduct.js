@@ -728,21 +728,25 @@
   async function checkStock(ticket, payload) {
     const { products, options, attrs } = payload;
 
-    if (products.length > 1 && !products.every(p => p.belongsToPack)) {
-      throw new Error('Cannot check stock for more than one product');
-    }
+    for (let i = 0; i < products.length; i += 1) {
+      const { product } = products[i];
+      const qty = isAReturn(ticket) ? -products[i].qty : products[i].qty;
+      const line = getLineToEdit(products[i], ticket, options, attrs);
+      const lineId = line ? line.id : payload.line;
+      const settings = { ticket, lineId, options, attrs };
 
-    const { product } = products[0];
-    const qty = isAReturn(ticket) ? -products[0].qty : products[0].qty;
-    const line = getLineToEdit(products[0], ticket, options, attrs);
-    const lineId = line ? line.id : payload.line;
-    const settings = { ticket, lineId, options, attrs };
-
-    const hasStock = await OB.App.StockChecker.hasStock(product, qty, settings);
-    if (!hasStock) {
-      throw new OB.App.Class.ActionSilentlyCanceled(
-        `Add product canceled: there is no stock of product ${product.id}`
+      // eslint-disable-next-line no-await-in-loop
+      const hasStock = await OB.App.StockChecker.hasStock(
+        product,
+        qty,
+        settings
       );
+
+      if (!hasStock) {
+        throw new OB.App.Class.ActionSilentlyCanceled(
+          `Add product canceled: there is no stock of product ${product.id}`
+        );
+      }
     }
   }
 })();
