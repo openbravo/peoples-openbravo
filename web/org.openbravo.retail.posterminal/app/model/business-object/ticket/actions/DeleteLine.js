@@ -23,7 +23,7 @@
     const conf = payload.config || {};
 
     if (conf.saveRemoval) {
-      newTicket.deletedLines = ticket.lines
+      const newDeletedLines = ticket.lines
         .filter(l => lineIds.includes(l.id))
         .map(l => {
           // TODO: check the correct properties to reset
@@ -45,6 +45,10 @@
           });
           return deletedLine;
         });
+
+      newTicket.deletedLines = (newTicket.deletedLines || []).concat(
+        newDeletedLines
+      );
     }
 
     return newTicket;

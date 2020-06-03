@@ -87,4 +87,27 @@ describe('Ticket.deleteLine action', () => {
       }
     ]);
   });
+
+  it('tracks multiple deletions at once', () => {
+    const newTicket = OB.App.StateAPI.Ticket.deleteLine(basicTicket, {
+      lineIds: ['1', '2'],
+      config: { saveRemoval: true }
+    });
+
+    expect(newTicket.deletedLines).toHaveLength(2);
+  });
+
+  it('tracks multiple consecutive deletions', () => {
+    let newTicket = OB.App.StateAPI.Ticket.deleteLine(basicTicket, {
+      lineIds: ['1'],
+      config: { saveRemoval: true }
+    });
+
+    newTicket = OB.App.StateAPI.Ticket.deleteLine(newTicket, {
+      lineIds: ['2'],
+      config: { saveRemoval: true }
+    });
+
+    expect(newTicket.deletedLines).toHaveLength(2);
+  });
 });
