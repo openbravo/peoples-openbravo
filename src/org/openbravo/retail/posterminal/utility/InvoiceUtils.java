@@ -208,6 +208,14 @@ public class InvoiceUtils implements TicketPropertyMapping {
       invoiceLine.setLineNetAmount(lineNetAmount.setScale(pricePrecision, RoundingMode.HALF_UP));
       invoiceLine.setGrossAmount(lineGrossAmount.setScale(pricePrecision, RoundingMode.HALF_UP));
     }
+    invoiceLine.setGrossListPrice(BigDecimal.valueOf(getGrossListPrice(jsonInvoiceLine))
+        .setScale(pricePrecision, RoundingMode.HALF_UP));
+    invoiceLine.setListPrice(BigDecimal.valueOf(getNetListPrice(jsonInvoiceLine))
+        .setScale(pricePrecision, RoundingMode.HALF_UP));
+    invoiceLine.setBaseGrossUnitPrice(BigDecimal.valueOf(getBaseGrossUnitPrice(jsonInvoiceLine))
+        .setScale(pricePrecision, RoundingMode.HALF_UP));
+    invoiceLine.setStandardPrice(BigDecimal.valueOf(getBaseNetUnitPrice(jsonInvoiceLine))
+        .setScale(pricePrecision, RoundingMode.HALF_UP));
     invoiceLine.setGrossUnitPrice(BigDecimal.valueOf(getGrossUnitPrice(jsonInvoiceLine))
         .setScale(pricePrecision, RoundingMode.HALF_UP));
     invoiceLine.setUnitPrice(BigDecimal.valueOf(getNetUnitPrice(jsonInvoiceLine))

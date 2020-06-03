@@ -25,21 +25,64 @@ public interface TicketPropertyMapping {
   }
 
   /**
-   * Returns grossAmount property from json if exists. Otherwise returns gross property.
+   * Returns grossListPrice property from json.
    * 
    * @throws JSONException
    */
-  default double getGrossAmount(JSONObject json) throws JSONException {
-    return json.has("grossAmount") ? json.getDouble("grossAmount") : json.getDouble("gross");
+  default double getGrossListPrice(JSONObject json) throws JSONException {
+    return json.optDouble("grossListPrice");
   }
 
   /**
-   * Returns netAmount property from json if exists. Otherwise returns net property.
+   * Returns netListPrice property from json if exists. Otherwise returns listPrice property.
    * 
    * @throws JSONException
    */
-  default double getNetAmount(JSONObject json) throws JSONException {
-    return json.has("netAmount") ? json.getDouble("netAmount") : json.getDouble("net");
+  default double getNetListPrice(JSONObject json) throws JSONException {
+    return json.has("netListPrice") ? json.getDouble("netListPrice") : json.optDouble("listPrice");
+  }
+
+  /**
+   * Returns baseGrossUnitPrice property from json if exists. Otherwise returns price property.
+   * 
+   * @throws JSONException
+   */
+  default double getBaseGrossUnitPrice(JSONObject json) throws JSONException {
+    return json.has("baseGrossUnitPrice") ? json.getDouble("baseGrossUnitPrice")
+        : json.optDouble("price");
+  }
+
+  /**
+   * Returns baseNetUnitPrice property from json if exists. Otherwise returns standardPrice
+   * property.
+   * 
+   * @throws JSONException
+   */
+  default double getBaseNetUnitPrice(JSONObject json) throws JSONException {
+    return json.has("baseNetUnitPrice") ? json.getDouble("baseNetUnitPrice")
+        : json.optDouble("standardPrice");
+  }
+
+  /**
+   * Returns getGrossUnitAmount property from json.
+   * 
+   * @throws JSONException
+   */
+  default double getGrossUnitPrice(JSONObject json) throws JSONException {
+    return json.optDouble("grossUnitPrice");
+  }
+
+  /**
+   * Returns netUnitAmount property from json if exists. Otherwise returns unitPrice property if
+   * exists. Otherwise returns pricenet property.
+   * 
+   * @throws JSONException
+   */
+  default double getNetUnitPrice(JSONObject json) throws JSONException {
+    if (json.has("netUnitPrice")) {
+      return json.getDouble("netUnitPrice");
+    }
+    return json.has("unitPrice") ? json.getDouble("unitPrice") : json.optDouble("pricenet");
   }
 
   /**
@@ -63,25 +106,21 @@ public interface TicketPropertyMapping {
   }
 
   /**
-   * Returns getGrossUnitAmount property from json.
+   * Returns grossAmount property from json if exists. Otherwise returns gross property.
    * 
    * @throws JSONException
    */
-  default double getGrossUnitPrice(JSONObject json) throws JSONException {
-    return json.getDouble("grossUnitPrice");
+  default double getGrossAmount(JSONObject json) throws JSONException {
+    return json.has("grossAmount") ? json.getDouble("grossAmount") : json.getDouble("gross");
   }
 
   /**
-   * Returns netUnitAmount property from json if exists. Otherwise returns unitPrice property if
-   * exists. Otherwise returns pricenet property.
+   * Returns netAmount property from json if exists. Otherwise returns net property.
    * 
    * @throws JSONException
    */
-  default double getNetUnitPrice(JSONObject json) throws JSONException {
-    if (json.has("netUnitPrice")) {
-      return json.getDouble("netUnitPrice");
-    }
-    return json.has("unitPrice") ? json.getDouble("unitPrice") : json.getDouble("pricenet");
+  default double getNetAmount(JSONObject json) throws JSONException {
+    return json.has("netAmount") ? json.getDouble("netAmount") : json.getDouble("net");
   }
 
   /**
