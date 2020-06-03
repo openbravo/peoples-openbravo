@@ -79,28 +79,31 @@ enyo.kind({
   initComponents: function() {
     return this;
   },
-  renderCustomer: function() {
-    // Business Partner if available
-    if (this.order.get('bp')) {
-      this.setValue(
+  renderCustomer: function(newCustomerId, newCustomerName) {
+    this.setValue(newCustomerId, newCustomerName);
+  },
+  renderCurrentCustomer: function() {
+    if (this.order.get('externalBusinessPartner')) {
+      // External Business Partner if available
+      const bp = new OB.App.Class.ExternalBusinessPartner(
+        this.order.get('externalBusinessPartner')
+      );
+      this.renderCustomer(bp.getKey(), bp.getIdentifier());
+    } else if (this.order.get('bp')) {
+      // Business Partner if available
+      this.renderCustomer(
         this.order.get('bp').get('id'),
         this.order.get('bp').get('_identifier')
       );
     } else {
-      this.setValue(null, '');
-    }
-    // External Business Partner if available
-    if (this.order.get('externalBusinessPartner')) {
-      const bp = new OB.App.Class.ExternalBusinessPartner(
-        this.order.get('externalBusinessPartner')
-      );
-      this.setValue(bp.getKey(), bp.getIdentifier());
+      // No Business Partner available
+      this.renderCustomer(null, '');
     }
   },
   orderChanged: function(oldValue) {
-    this.renderCustomer();
+    this.renderCurrentCustomer();
     this.order.on('change:externalBusinessPartner', () => {
-      this.renderCustomer();
+      this.renderCurrentCustomer();
     });
     this.order.on('change:bp', () => {
       const model = this.order;
@@ -164,7 +167,7 @@ enyo.kind({
             );
           });
       }
-      this.renderCustomer();
+      this.renderCurrentCustomer();
     });
   }
 });
