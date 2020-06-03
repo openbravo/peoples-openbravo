@@ -175,7 +175,7 @@ public class ShipmentUtils implements TicketPropertyMapping {
     }
 
     shipment.setPartnerAddress(OBDal.getInstance()
-        .getProxy(Location.class, getBusinessPartnerJson(jsonorder).getString("shipLocId")));
+        .getProxy(Location.class, getBusinessPartner(jsonorder).getString("shipLocId")));
     shipment.setSalesTransaction(true);
     shipment.setDocumentStatus("CO");
     shipment.setDocumentAction("--");

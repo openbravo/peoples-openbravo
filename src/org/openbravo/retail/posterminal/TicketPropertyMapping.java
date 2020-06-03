@@ -19,8 +19,26 @@ public interface TicketPropertyMapping {
    * 
    * @throws JSONException
    */
-  default JSONObject getBusinessPartnerJson(JSONObject json) throws JSONException {
+  default JSONObject getBusinessPartner(JSONObject json) throws JSONException {
     return json.has("businessPartner") ? json.getJSONObject("businessPartner")
         : json.getJSONObject("bp");
+  }
+
+  /**
+   * Returns grossAmount property from json if exists. Otherwise returns gross property.
+   * 
+   * @throws JSONException
+   */
+  default double getGrossAmount(JSONObject json) throws JSONException {
+    return json.has("grossAmount") ? json.getDouble("grossAmount") : json.getDouble("gross");
+  }
+
+  /**
+   * Returns netAmount property from json if exists. Otherwise returns net property.
+   * 
+   * @throws JSONException
+   */
+  default double getNetAmount(JSONObject json) throws JSONException {
+    return json.has("netAmount") ? json.getDouble("netAmount") : json.getDouble("net");
   }
 }

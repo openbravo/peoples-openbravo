@@ -420,19 +420,19 @@ public class InvoiceUtils implements TicketPropertyMapping {
     invoice.setAPRMProcessinvoice("RE");
     invoice.setSalesOrder(order);
     invoice.setPartnerAddress(OBDal.getInstance()
-        .getProxy(Location.class, getBusinessPartnerJson(jsoninvoice).getString("locId")));
+        .getProxy(Location.class, getBusinessPartner(jsoninvoice).getString("locId")));
     invoice.setProcessed(true);
     invoice.setPaymentMethod(order.getPaymentMethod());
     invoice.setPaymentTerms(order.getPaymentTerms());
-    invoice.setGrandTotalAmount(BigDecimal.valueOf(jsoninvoice.getDouble("gross"))
+    invoice.setGrandTotalAmount(BigDecimal.valueOf(getGrossAmount(jsoninvoice))
         .setScale(pricePrecision, RoundingMode.HALF_UP));
-    invoice.setSummedLineAmount(BigDecimal.valueOf(jsoninvoice.getDouble("net"))
+    invoice.setSummedLineAmount(BigDecimal.valueOf(getNetAmount(jsoninvoice))
         .setScale(pricePrecision, RoundingMode.HALF_UP));
     invoice.setTotalPaid(BigDecimal.ZERO);
-    invoice.setOutstandingAmount((BigDecimal.valueOf(jsoninvoice.getDouble("gross")))
+    invoice.setOutstandingAmount((BigDecimal.valueOf(getGrossAmount(jsoninvoice)))
         .setScale(pricePrecision, RoundingMode.HALF_UP));
-    invoice.setDueAmount((BigDecimal.valueOf(jsoninvoice.getDouble("gross")))
-        .setScale(pricePrecision, RoundingMode.HALF_UP));
+    invoice.setDueAmount((BigDecimal.valueOf(getGrossAmount(jsoninvoice))).setScale(pricePrecision,
+        RoundingMode.HALF_UP));
     invoice.setUserContact(order.getUserContact());
 
     // Create invoice tax lines

@@ -164,7 +164,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
   public void initializeVariables(JSONObject jsonorder) throws JSONException {
     documentNoHandlers.set(new ArrayList<DocumentNoHandler>());
 
-    isNegative = jsonorder.optBoolean("isNegative", jsonorder.getDouble("gross") < 0);
+    isNegative = jsonorder.optBoolean("isNegative", getGrossAmount(jsonorder) < 0);
 
     isNewReceipt = !jsonorder.optBoolean("isLayaway", false)
         && !jsonorder.optBoolean("isPaid", false);
@@ -743,6 +743,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
     OBContext.setAdminMode(false);
     try {
       if ((!jsonorder.has("obposIsDeleted") || !jsonorder.getBoolean("obposIsDeleted"))
+          && (!jsonorder.has("grossAmount") || jsonorder.getString("grossAmount").equals("0"))
           && (!jsonorder.has("gross") || jsonorder.getString("gross").equals("0"))
           && (jsonorder.isNull("lines") || (jsonorder.getJSONArray("lines") != null
               && jsonorder.getJSONArray("lines").length() == 0))) {
@@ -1036,9 +1037,9 @@ public class OrderLoader extends POSDataSynchronizationProcess
     order.setAccountingDate(order.getOrderDate());
     order.setScheduledDeliveryDate(order.getOrderDate());
     order.setPartnerAddress(OBDal.getInstance()
-        .getProxy(Location.class, getBusinessPartnerJson(jsonorder).getString("shipLocId")));
+        .getProxy(Location.class, getBusinessPartner(jsonorder).getString("shipLocId")));
     order.setInvoiceAddress(OBDal.getInstance()
-        .getProxy(Location.class, getBusinessPartnerJson(jsonorder).getString("locId")));
+        .getProxy(Location.class, getBusinessPartner(jsonorder).getString("locId")));
 
     Boolean paymenthMethod = false;
     if (!jsonorder.isNull("paymentMethodKind")
@@ -1059,11 +1060,11 @@ public class OrderLoader extends POSDataSynchronizationProcess
     }
 
     if (!paymenthMethod) {
-      if (!getBusinessPartnerJson(jsonorder).isNull("paymentMethod")
-          && !getBusinessPartnerJson(jsonorder).getString("paymentMethod").equals("null")) {
+      if (!getBusinessPartner(jsonorder).isNull("paymentMethod")
+          && !getBusinessPartner(jsonorder).getString("paymentMethod").equals("null")) {
         order.setPaymentMethod((FIN_PaymentMethod) OBDal.getInstance()
             .getProxy("FIN_PaymentMethod",
-                getBusinessPartnerJson(jsonorder).getString("paymentMethod")));
+                getBusinessPartner(jsonorder).getString("paymentMethod")));
       } else if (bp.getPaymentMethod() != null) {
         order.setPaymentMethod(bp.getPaymentMethod());
       } else if (order.getOrganization().getObretcoDbpPmethodid() != null) {
@@ -1081,11 +1082,11 @@ public class OrderLoader extends POSDataSynchronizationProcess
         }
       }
     }
-    if (!getBusinessPartnerJson(jsonorder).isNull("paymentTerms")
-        && !getBusinessPartnerJson(jsonorder).getString("paymentTerms").equals("null")) {
+    if (!getBusinessPartner(jsonorder).isNull("paymentTerms")
+        && !getBusinessPartner(jsonorder).getString("paymentTerms").equals("null")) {
       order.setPaymentTerms((PaymentTerm) OBDal.getInstance()
           .getProxy("FinancialMgmtPaymentTerm",
-              getBusinessPartnerJson(jsonorder).getString("paymentTerms")));
+              getBusinessPartner(jsonorder).getString("paymentTerms")));
     } else if (bp.getPaymentTerms() != null) {
       order.setPaymentTerms(bp.getPaymentTerms());
     } else if (order.getOrganization().getObretcoDbpPmethodid() != null) {
@@ -1104,9 +1105,9 @@ public class OrderLoader extends POSDataSynchronizationProcess
     if (!jsonorder.isNull("invoiceTerms") && !jsonorder.getString("invoiceTerms").equals("null")
         && StringUtils.isNotBlank(jsonorder.getString("invoiceTerms"))) {
       order.setInvoiceTerms(jsonorder.getString("invoiceTerms"));
-    } else if (!getBusinessPartnerJson(jsonorder).isNull("invoiceTerms")
-        && !getBusinessPartnerJson(jsonorder).getString("invoiceTerms").equals("null")) {
-      order.setInvoiceTerms(getBusinessPartnerJson(jsonorder).getString("invoiceTerms"));
+    } else if (!getBusinessPartner(jsonorder).isNull("invoiceTerms")
+        && !getBusinessPartner(jsonorder).getString("invoiceTerms").equals("null")) {
+      order.setInvoiceTerms(getBusinessPartner(jsonorder).getString("invoiceTerms"));
     } else if (bp.getInvoiceTerms() != null) {
       order.setInvoiceTerms(bp.getInvoiceTerms());
     } else if (order.getOrganization().getObretcoDbpIrulesid() != null) {
@@ -1125,10 +1126,10 @@ public class OrderLoader extends POSDataSynchronizationProcess
       }
     }
 
-    order.setGrandTotalAmount(BigDecimal.valueOf(jsonorder.getDouble("gross"))
+    order.setGrandTotalAmount(BigDecimal.valueOf(getGrossAmount(jsonorder))
         .setScale(pricePrecision, RoundingMode.HALF_UP));
-    order.setSummedLineAmount(BigDecimal.valueOf(jsonorder.getDouble("net"))
-        .setScale(pricePrecision, RoundingMode.HALF_UP));
+    order.setSummedLineAmount(
+        BigDecimal.valueOf(getNetAmount(jsonorder)).setScale(pricePrecision, RoundingMode.HALF_UP));
 
     order.setSalesTransaction(true);
     if (!jsonorder.has("documentStatus")) {
@@ -1220,7 +1221,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
         ? order.getCurrency().getPricePrecision().intValue()
         : order.getCurrency().getObposPosprecision().intValue();
 
-    final BigDecimal gross = BigDecimal.valueOf(jsonorder.getDouble("gross"));
+    final BigDecimal gross = BigDecimal.valueOf(getGrossAmount(jsonorder));
     if (payments.length() == 0 && gross.compareTo(BigDecimal.ZERO) == 0) {
       jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
       return jsonResponse;
