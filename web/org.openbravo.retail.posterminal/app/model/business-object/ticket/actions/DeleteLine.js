@@ -15,16 +15,18 @@
   OB.App.StateAPI.Ticket.registerAction('deleteLine', (ticket, payload) => {
     const { lineIds } = payload;
 
+    const linesToDelete = [...lineIds, ...getRelatedServices(ticket, lineIds)];
+
     const newTicket = {
       ...ticket,
-      lines: ticket.lines.filter(l => !lineIds.includes(l.id))
+      lines: ticket.lines.filter(l => !linesToDelete.includes(l.id))
     };
 
     const conf = payload.config || {};
 
     if (conf.saveRemoval) {
       newTicket.deletedLines = (newTicket.deletedLines || []).concat(
-        getDeletedLinesToSave(ticket, lineIds)
+        getDeletedLinesToSave(ticket, linesToDelete)
       );
     }
 
@@ -36,7 +38,6 @@
       let newPayload = { ...payload };
 
       newPayload = prepareConfiguration(newPayload);
-      newPayload = removeRelatedServices(ticket, newPayload);
       return newPayload;
     }
   );
@@ -50,34 +51,33 @@
     };
     return newPayload;
   }
-  function removeRelatedServices(ticket, payload) {
-    // TODO: consider doing this in action. Note this calculations were done in trigger updateRelations in order.js (component)
+
+  function getRelatedServices(ticket, lineIds) {
     if (!ticket.hasServices) {
       // TODO: is this check necessary?
-      return payload;
+      return [];
     }
-
-    let newPayload = { ...payload };
 
     // TODO: Check if it is necessary to restore the tax category of related products
 
-    const relatedLinesToRemove = ticket.lines
+    let relatedLinesToRemove = ticket.lines
       .filter(
         l =>
           l.relatedLines &&
-          !newPayload.lineIds.includes(l.id) &&
-          l.relatedLines.some(rl => newPayload.lineIds.includes(rl.orderlineId))
+          !lineIds.includes(l.id) &&
+          l.relatedLines.some(rl => lineIds.includes(rl.orderlineId))
       )
       .map(l => l.id);
-    newPayload.lineIds = newPayload.lineIds.concat(relatedLinesToRemove);
 
     if (relatedLinesToRemove.length > 0) {
       // check again for related lines of the related just added
-      newPayload = removeRelatedServices(ticket, newPayload);
+      relatedLinesToRemove = relatedLinesToRemove.concat(
+        getRelatedServices(ticket, [...lineIds, ...relatedLinesToRemove])
+      );
     }
     // TODO: handle lines related to serveral
 
-    return newPayload;
+    return relatedLinesToRemove;
   }
 
   function getDeletedLinesToSave(ticket, removedLineIds) {

@@ -70,21 +70,13 @@ let Ticket = {
 Ticket = {
   ...Ticket,
 
-  services: {
+  simple: {
     ...Ticket.empty,
-    hasServices: true,
-    lines: [
-      { id: 'l1' },
-      { id: 's1', relatedLines: [{ orderlineId: 'l1' }] },
-      { id: 'l2' },
-      { id: 's2', relatedLines: [{ orderlineId: 'l2' }] },
-      { id: 's2.1', relatedLines: [{ orderlineId: 's2' }] },
-      { id: 's2.1.1', relatedLines: [{ orderlineId: 's2.1' }] }
-    ]
+    lines: [{ id: 'l1' }]
   }
 };
 
-const prepareAction = async (payload, ticket = Ticket.empty) => {
+const prepareAction = async (payload, ticket = Ticket.simple) => {
   const newPayload = await executeActionPreparations(
     OB.App.StateAPI.Ticket.deleteLine,
     deepfreeze(ticket),
@@ -109,32 +101,6 @@ describe('deleteLine preparation', () => {
     jest.resetAllMocks();
   });
 
-  describe('related services lines', () => {
-    it('deletes 1 level', async () => {
-      const payload = await prepareAction(
-        {
-          lineIds: ['l1']
-        },
-        Ticket.services
-      );
-
-      expect(payload.lineIds).toEqual(expect.arrayContaining(['l1', 's1']));
-    });
-
-    it('deletes multi level', async () => {
-      const payload = await prepareAction(
-        {
-          lineIds: ['l2']
-        },
-        Ticket.services
-      );
-
-      expect(payload.lineIds).toEqual(
-        expect.arrayContaining(['l2', 's2', 's2.1', 's2.1.1'])
-      );
-    });
-  });
-
   describe('config preparation', () => {
     it.each`
       preference               | property
@@ -146,7 +112,7 @@ describe('deleteLine preparation', () => {
         );
 
         const payload = await prepareAction({
-          lineIds: ['l2']
+          lineIds: ['l1']
         });
 
         expect(payload.config[property]).toBe(set);

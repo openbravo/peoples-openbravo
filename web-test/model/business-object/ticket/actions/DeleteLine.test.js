@@ -142,4 +142,33 @@ describe('Ticket.deleteLine action', () => {
       expect(newTicket.deletedLines).toHaveLength(2);
     });
   });
+
+  function deletedLineIds(oldTicket, newTicket) {
+    return global.lodash.difference(
+      oldTicket.lines.map(l => l.id),
+      newTicket.lines.map(l => l.id)
+    );
+  }
+
+  describe('related services lines', () => {
+    it('deletes 1 level', () => {
+      const newTicket = OB.App.StateAPI.Ticket.deleteLine(Ticket.services, {
+        lineIds: ['l1']
+      });
+
+      expect(deletedLineIds(Ticket.services, newTicket)).toEqual(
+        expect.arrayContaining(['l1', 's1'])
+      );
+    });
+
+    it('deletes multi level', () => {
+      const newTicket = OB.App.StateAPI.Ticket.deleteLine(Ticket.services, {
+        lineIds: ['l2']
+      });
+
+      expect(deletedLineIds(Ticket.services, newTicket)).toEqual(
+        expect.arrayContaining(['l2', 's2', 's2.1', 's2.1.1'])
+      );
+    });
+  });
 });
