@@ -804,7 +804,9 @@ public class OrderLoader extends POSDataSynchronizationProcess
       orderline.setActive(true);
       orderline.setOrganization(order.getOrganization());
       orderline.setSalesOrder(order);
-      orderline.setLineNetAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("net"))
+      orderline.setLineGrossAmount(BigDecimal.valueOf(getGrossUnitAmount(jsonOrderLine))
+          .setScale(pricePrecision, RoundingMode.HALF_UP));
+      orderline.setLineNetAmount(BigDecimal.valueOf(getNetUnitAmount(jsonOrderLine))
           .setScale(pricePrecision, RoundingMode.HALF_UP));
       BigDecimal orderedQuantity = BigDecimal.valueOf(jsonOrderLine.getDouble("qty"));
       if (orderedQuantity.compareTo(BigDecimal.ZERO) < 0) {

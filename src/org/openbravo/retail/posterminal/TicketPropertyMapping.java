@@ -41,4 +41,25 @@ public interface TicketPropertyMapping {
   default double getNetAmount(JSONObject json) throws JSONException {
     return json.has("netAmount") ? json.getDouble("netAmount") : json.getDouble("net");
   }
+
+  /**
+   * Returns getGrossUnitAmount property from json if exists. Otherwise returns lineGrossAmount
+   * property.
+   * 
+   * @throws JSONException
+   */
+  default double getGrossUnitAmount(JSONObject json) throws JSONException {
+    return json.has("grossUnitAmount") ? json.getDouble("grossUnitAmount")
+        : json.getDouble("lineGrossAmount");
+  }
+
+  /**
+   * Returns netUnitAmount property from json if exists. Otherwise returns net property.
+   * 
+   * @throws JSONException
+   */
+  default double getNetUnitAmount(JSONObject json) throws JSONException {
+    return json.has("netUnitAmount") ? json.getDouble("netUnitAmount") : json.getDouble("net");
+  }
+
 }

@@ -135,9 +135,8 @@ public class InvoiceUtils implements TicketPropertyMapping {
     final OrderLine orderLine = lineReferences.get(numIter);
     final JSONObject jsonInvoiceLine = invoicelines.getJSONObject(numIter);
     final BigDecimal qtyToInvoice = BigDecimal.valueOf(jsonInvoiceLine.getDouble("qty"));
-    final BigDecimal lineGrossAmount = BigDecimal
-        .valueOf(jsonInvoiceLine.getDouble("lineGrossAmount"));
-    final BigDecimal lineNetAmount = BigDecimal.valueOf(jsonInvoiceLine.getDouble("net"));
+    final BigDecimal lineGrossAmount = BigDecimal.valueOf(getGrossUnitAmount(jsonInvoiceLine));
+    final BigDecimal lineNetAmount = BigDecimal.valueOf(getNetUnitAmount(jsonInvoiceLine));
 
     if (orderLine.getObposQtyDeleted() != null
         && orderLine.getObposQtyDeleted().compareTo(BigDecimal.ZERO) != 0) {
