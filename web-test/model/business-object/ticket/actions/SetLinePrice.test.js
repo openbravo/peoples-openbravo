@@ -149,6 +149,21 @@ describe('Ticket.setPrice action', () => {
     expect(newTicket.lines[0]).not.toBe(basicTicket.lines[0]);
   });
 
+  it('sets prices with not included taxes', () => {
+    const newTicket = OB.App.StateAPI.Ticket.setLinePrice(
+      { ...basicTicket, priceIncludesTax: false },
+      {
+        lineIds: ['1'],
+        price: 5
+      }
+    );
+
+    expect(newTicket.lines[0]).toMatchObject({
+      id: '1',
+      baseNetUnitPrice: 5
+    });
+  });
+
   describe('Payment delivery', () => {
     const pdTicket = deepfreeze({
       priceIncludesTax: true,
