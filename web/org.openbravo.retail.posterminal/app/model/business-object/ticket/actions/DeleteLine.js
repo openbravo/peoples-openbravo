@@ -23,32 +23,8 @@
     const conf = payload.config || {};
 
     if (conf.saveRemoval) {
-      const newDeletedLines = ticket.lines
-        .filter(l => lineIds.includes(l.id))
-        .map(l => {
-          // TODO: check the correct properties to reset
-          const deletedLine = {
-            ...l,
-            obposQtyDeleted: l.qty,
-            qty: 0,
-            grossAmount: 0,
-            netAmount: 0,
-            taxes: { ...l.taxes },
-            promotions: []
-          };
-
-          Object.keys(deletedLine.taxes).forEach(k => {
-            deletedLine.taxes[k] = {
-              ...deletedLine.taxes[k],
-              amount: 0,
-              net: 0
-            };
-          });
-          return deletedLine;
-        });
-
       newTicket.deletedLines = (newTicket.deletedLines || []).concat(
-        newDeletedLines
+        getDeletedLinesToSave(ticket, lineIds)
       );
     }
 
@@ -102,5 +78,31 @@
     // TODO: handle lines related to serveral
 
     return newPayload;
+  }
+
+  function getDeletedLinesToSave(ticket, removedLineIds) {
+    return ticket.lines
+      .filter(l => removedLineIds.includes(l.id))
+      .map(l => {
+        // TODO: check the correct properties to reset
+        const deletedLine = {
+          ...l,
+          obposQtyDeleted: l.qty,
+          qty: 0,
+          grossAmount: 0,
+          netAmount: 0,
+          taxes: { ...l.taxes },
+          promotions: []
+        };
+
+        Object.keys(deletedLine.taxes).forEach(k => {
+          deletedLine.taxes[k] = {
+            ...deletedLine.taxes[k],
+            amount: 0,
+            net: 0
+          };
+        });
+        return deletedLine;
+      });
   }
 })();
