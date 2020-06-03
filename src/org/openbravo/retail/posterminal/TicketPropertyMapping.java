@@ -9,6 +9,8 @@
 
 package org.openbravo.retail.posterminal;
 
+import java.math.BigDecimal;
+
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
@@ -29,8 +31,8 @@ public interface TicketPropertyMapping {
    * 
    * @throws JSONException
    */
-  default double getGrossListPrice(JSONObject json) throws JSONException {
-    return json.optDouble("grossListPrice");
+  default BigDecimal getGrossListPrice(JSONObject json) throws JSONException {
+    return BigDecimal.valueOf(json.optDouble("grossListPrice", 0));
   }
 
   /**
@@ -38,8 +40,9 @@ public interface TicketPropertyMapping {
    * 
    * @throws JSONException
    */
-  default double getNetListPrice(JSONObject json) throws JSONException {
-    return json.has("netListPrice") ? json.getDouble("netListPrice") : json.optDouble("listPrice");
+  default BigDecimal getNetListPrice(JSONObject json) throws JSONException {
+    return BigDecimal.valueOf(
+        json.has("netListPrice") ? json.getDouble("netListPrice") : json.optDouble("listPrice", 0));
   }
 
   /**
@@ -47,9 +50,9 @@ public interface TicketPropertyMapping {
    * 
    * @throws JSONException
    */
-  default double getBaseGrossUnitPrice(JSONObject json) throws JSONException {
-    return json.has("baseGrossUnitPrice") ? json.getDouble("baseGrossUnitPrice")
-        : json.optDouble("price");
+  default BigDecimal getBaseGrossUnitPrice(JSONObject json) throws JSONException {
+    return BigDecimal.valueOf(json.has("baseGrossUnitPrice") ? json.getDouble("baseGrossUnitPrice")
+        : json.optDouble("price", 0));
   }
 
   /**
@@ -58,9 +61,9 @@ public interface TicketPropertyMapping {
    * 
    * @throws JSONException
    */
-  default double getBaseNetUnitPrice(JSONObject json) throws JSONException {
-    return json.has("baseNetUnitPrice") ? json.getDouble("baseNetUnitPrice")
-        : json.optDouble("standardPrice");
+  default BigDecimal getBaseNetUnitPrice(JSONObject json) throws JSONException {
+    return BigDecimal.valueOf(json.has("baseNetUnitPrice") ? json.getDouble("baseNetUnitPrice")
+        : json.optDouble("standardPrice", 0));
   }
 
   /**
@@ -68,8 +71,8 @@ public interface TicketPropertyMapping {
    * 
    * @throws JSONException
    */
-  default double getGrossUnitPrice(JSONObject json) throws JSONException {
-    return json.optDouble("grossUnitPrice");
+  default BigDecimal getGrossUnitPrice(JSONObject json) throws JSONException {
+    return BigDecimal.valueOf(json.optDouble("grossUnitPrice", 0));
   }
 
   /**
@@ -78,11 +81,12 @@ public interface TicketPropertyMapping {
    * 
    * @throws JSONException
    */
-  default double getNetUnitPrice(JSONObject json) throws JSONException {
+  default BigDecimal getNetUnitPrice(JSONObject json) throws JSONException {
     if (json.has("netUnitPrice")) {
-      return json.getDouble("netUnitPrice");
+      return BigDecimal.valueOf(json.getDouble("netUnitPrice"));
     }
-    return json.has("unitPrice") ? json.getDouble("unitPrice") : json.optDouble("pricenet");
+    return BigDecimal.valueOf(
+        json.has("unitPrice") ? json.getDouble("unitPrice") : json.optDouble("pricenet", 0));
   }
 
   /**
@@ -91,9 +95,9 @@ public interface TicketPropertyMapping {
    * 
    * @throws JSONException
    */
-  default double getGrossUnitAmount(JSONObject json) throws JSONException {
-    return json.has("grossUnitAmount") ? json.getDouble("grossUnitAmount")
-        : json.getDouble("lineGrossAmount");
+  default BigDecimal getGrossUnitAmount(JSONObject json) throws JSONException {
+    return BigDecimal.valueOf(json.has("grossUnitAmount") ? json.getDouble("grossUnitAmount")
+        : json.getDouble("lineGrossAmount"));
   }
 
   /**
@@ -101,8 +105,9 @@ public interface TicketPropertyMapping {
    * 
    * @throws JSONException
    */
-  default double getNetUnitAmount(JSONObject json) throws JSONException {
-    return json.has("netUnitAmount") ? json.getDouble("netUnitAmount") : json.getDouble("net");
+  default BigDecimal getNetUnitAmount(JSONObject json) throws JSONException {
+    return BigDecimal.valueOf(
+        json.has("netUnitAmount") ? json.getDouble("netUnitAmount") : json.getDouble("net"));
   }
 
   /**
@@ -110,8 +115,9 @@ public interface TicketPropertyMapping {
    * 
    * @throws JSONException
    */
-  default double getGrossAmount(JSONObject json) throws JSONException {
-    return json.has("grossAmount") ? json.getDouble("grossAmount") : json.getDouble("gross");
+  default BigDecimal getGrossAmount(JSONObject json) throws JSONException {
+    return BigDecimal
+        .valueOf(json.has("grossAmount") ? json.getDouble("grossAmount") : json.getDouble("gross"));
   }
 
   /**
@@ -119,8 +125,9 @@ public interface TicketPropertyMapping {
    * 
    * @throws JSONException
    */
-  default double getNetAmount(JSONObject json) throws JSONException {
-    return json.has("netAmount") ? json.getDouble("netAmount") : json.getDouble("net");
+  default BigDecimal getNetAmount(JSONObject json) throws JSONException {
+    return BigDecimal
+        .valueOf(json.has("netAmount") ? json.getDouble("netAmount") : json.getDouble("net"));
   }
 
   /**

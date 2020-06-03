@@ -135,8 +135,8 @@ public class InvoiceUtils implements TicketPropertyMapping {
     final OrderLine orderLine = lineReferences.get(numIter);
     final JSONObject jsonInvoiceLine = invoicelines.getJSONObject(numIter);
     final BigDecimal qtyToInvoice = BigDecimal.valueOf(jsonInvoiceLine.getDouble("qty"));
-    final BigDecimal lineGrossAmount = BigDecimal.valueOf(getGrossUnitAmount(jsonInvoiceLine));
-    final BigDecimal lineNetAmount = BigDecimal.valueOf(getNetUnitAmount(jsonInvoiceLine));
+    final BigDecimal lineGrossAmount = getGrossUnitAmount(jsonInvoiceLine);
+    final BigDecimal lineNetAmount = getNetUnitAmount(jsonInvoiceLine);
 
     if (orderLine.getObposQtyDeleted() != null
         && orderLine.getObposQtyDeleted().compareTo(BigDecimal.ZERO) != 0) {
@@ -208,18 +208,18 @@ public class InvoiceUtils implements TicketPropertyMapping {
       invoiceLine.setLineNetAmount(lineNetAmount.setScale(pricePrecision, RoundingMode.HALF_UP));
       invoiceLine.setGrossAmount(lineGrossAmount.setScale(pricePrecision, RoundingMode.HALF_UP));
     }
-    invoiceLine.setGrossListPrice(BigDecimal.valueOf(getGrossListPrice(jsonInvoiceLine))
-        .setScale(pricePrecision, RoundingMode.HALF_UP));
-    invoiceLine.setListPrice(BigDecimal.valueOf(getNetListPrice(jsonInvoiceLine))
-        .setScale(pricePrecision, RoundingMode.HALF_UP));
-    invoiceLine.setBaseGrossUnitPrice(BigDecimal.valueOf(getBaseGrossUnitPrice(jsonInvoiceLine))
-        .setScale(pricePrecision, RoundingMode.HALF_UP));
-    invoiceLine.setStandardPrice(BigDecimal.valueOf(getBaseNetUnitPrice(jsonInvoiceLine))
-        .setScale(pricePrecision, RoundingMode.HALF_UP));
-    invoiceLine.setGrossUnitPrice(BigDecimal.valueOf(getGrossUnitPrice(jsonInvoiceLine))
-        .setScale(pricePrecision, RoundingMode.HALF_UP));
-    invoiceLine.setUnitPrice(BigDecimal.valueOf(getNetUnitPrice(jsonInvoiceLine))
-        .setScale(pricePrecision, RoundingMode.HALF_UP));
+    invoiceLine.setGrossListPrice(
+        getGrossListPrice(jsonInvoiceLine).setScale(pricePrecision, RoundingMode.HALF_UP));
+    invoiceLine.setListPrice(
+        getNetListPrice(jsonInvoiceLine).setScale(pricePrecision, RoundingMode.HALF_UP));
+    invoiceLine.setBaseGrossUnitPrice(
+        getBaseGrossUnitPrice(jsonInvoiceLine).setScale(pricePrecision, RoundingMode.HALF_UP));
+    invoiceLine.setStandardPrice(
+        getBaseNetUnitPrice(jsonInvoiceLine).setScale(pricePrecision, RoundingMode.HALF_UP));
+    invoiceLine.setGrossUnitPrice(
+        getGrossUnitPrice(jsonInvoiceLine).setScale(pricePrecision, RoundingMode.HALF_UP));
+    invoiceLine.setUnitPrice(
+        getNetUnitPrice(jsonInvoiceLine).setScale(pricePrecision, RoundingMode.HALF_UP));
     invoiceLine.setInvoicedQuantity(qty);
     orderLine.setInvoicedQuantity(
         (orderLine.getInvoicedQuantity() != null ? orderLine.getInvoicedQuantity().add(qty) : qty));
@@ -435,15 +435,15 @@ public class InvoiceUtils implements TicketPropertyMapping {
     invoice.setProcessed(true);
     invoice.setPaymentMethod(order.getPaymentMethod());
     invoice.setPaymentTerms(order.getPaymentTerms());
-    invoice.setGrandTotalAmount(BigDecimal.valueOf(getGrossAmount(jsoninvoice))
-        .setScale(pricePrecision, RoundingMode.HALF_UP));
-    invoice.setSummedLineAmount(BigDecimal.valueOf(getNetAmount(jsoninvoice))
-        .setScale(pricePrecision, RoundingMode.HALF_UP));
+    invoice.setGrandTotalAmount(
+        getGrossAmount(jsoninvoice).setScale(pricePrecision, RoundingMode.HALF_UP));
+    invoice.setSummedLineAmount(
+        getNetAmount(jsoninvoice).setScale(pricePrecision, RoundingMode.HALF_UP));
     invoice.setTotalPaid(BigDecimal.ZERO);
-    invoice.setOutstandingAmount((BigDecimal.valueOf(getGrossAmount(jsoninvoice)))
-        .setScale(pricePrecision, RoundingMode.HALF_UP));
-    invoice.setDueAmount((BigDecimal.valueOf(getGrossAmount(jsoninvoice))).setScale(pricePrecision,
-        RoundingMode.HALF_UP));
+    invoice.setOutstandingAmount(
+        (getGrossAmount(jsoninvoice)).setScale(pricePrecision, RoundingMode.HALF_UP));
+    invoice
+        .setDueAmount((getGrossAmount(jsoninvoice)).setScale(pricePrecision, RoundingMode.HALF_UP));
     invoice.setUserContact(order.getUserContact());
 
     // Create invoice tax lines

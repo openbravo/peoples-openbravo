@@ -164,7 +164,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
   public void initializeVariables(JSONObject jsonorder) throws JSONException {
     documentNoHandlers.set(new ArrayList<DocumentNoHandler>());
 
-    isNegative = jsonorder.optBoolean("isNegative", getGrossAmount(jsonorder) < 0);
+    isNegative = jsonorder.optBoolean("isNegative", getGrossAmount(jsonorder).signum() < 0);
 
     isNewReceipt = !jsonorder.optBoolean("isLayaway", false)
         && !jsonorder.optBoolean("isPaid", false);
@@ -805,22 +805,22 @@ public class OrderLoader extends POSDataSynchronizationProcess
       orderline.setOrganization(order.getOrganization());
       orderline.setSalesOrder(order);
 
-      orderline.setGrossListPrice(BigDecimal.valueOf(getGrossListPrice(jsonOrderLine))
-          .setScale(pricePrecision, RoundingMode.HALF_UP));
-      orderline.setListPrice(BigDecimal.valueOf(getNetListPrice(jsonOrderLine))
-          .setScale(pricePrecision, RoundingMode.HALF_UP));
-      orderline.setBaseGrossUnitPrice(BigDecimal.valueOf(getBaseGrossUnitPrice(jsonOrderLine))
-          .setScale(pricePrecision, RoundingMode.HALF_UP));
-      orderline.setStandardPrice(BigDecimal.valueOf(getBaseNetUnitPrice(jsonOrderLine))
-          .setScale(pricePrecision, RoundingMode.HALF_UP));
-      orderline.setGrossUnitPrice(BigDecimal.valueOf(getGrossUnitPrice(jsonOrderLine))
-          .setScale(pricePrecision, RoundingMode.HALF_UP));
-      orderline.setUnitPrice(BigDecimal.valueOf(getNetUnitPrice(jsonOrderLine))
-          .setScale(pricePrecision, RoundingMode.HALF_UP));
-      orderline.setLineGrossAmount(BigDecimal.valueOf(getGrossUnitAmount(jsonOrderLine))
-          .setScale(pricePrecision, RoundingMode.HALF_UP));
-      orderline.setLineNetAmount(BigDecimal.valueOf(getNetUnitAmount(jsonOrderLine))
-          .setScale(pricePrecision, RoundingMode.HALF_UP));
+      orderline.setGrossListPrice(
+          getGrossListPrice(jsonOrderLine).setScale(pricePrecision, RoundingMode.HALF_UP));
+      orderline.setListPrice(
+          getNetListPrice(jsonOrderLine).setScale(pricePrecision, RoundingMode.HALF_UP));
+      orderline.setBaseGrossUnitPrice(
+          getBaseGrossUnitPrice(jsonOrderLine).setScale(pricePrecision, RoundingMode.HALF_UP));
+      orderline.setStandardPrice(
+          getBaseNetUnitPrice(jsonOrderLine).setScale(pricePrecision, RoundingMode.HALF_UP));
+      orderline.setGrossUnitPrice(
+          getGrossUnitPrice(jsonOrderLine).setScale(pricePrecision, RoundingMode.HALF_UP));
+      orderline.setUnitPrice(
+          getNetUnitPrice(jsonOrderLine).setScale(pricePrecision, RoundingMode.HALF_UP));
+      orderline.setLineGrossAmount(
+          getGrossUnitAmount(jsonOrderLine).setScale(pricePrecision, RoundingMode.HALF_UP));
+      orderline.setLineNetAmount(
+          getNetUnitAmount(jsonOrderLine).setScale(pricePrecision, RoundingMode.HALF_UP));
 
       BigDecimal orderedQuantity = BigDecimal.valueOf(jsonOrderLine.getDouble("qty"));
       if (orderedQuantity.compareTo(BigDecimal.ZERO) < 0) {
@@ -1142,10 +1142,10 @@ public class OrderLoader extends POSDataSynchronizationProcess
       }
     }
 
-    order.setGrandTotalAmount(BigDecimal.valueOf(getGrossAmount(jsonorder))
-        .setScale(pricePrecision, RoundingMode.HALF_UP));
+    order.setGrandTotalAmount(
+        getGrossAmount(jsonorder).setScale(pricePrecision, RoundingMode.HALF_UP));
     order.setSummedLineAmount(
-        BigDecimal.valueOf(getNetAmount(jsonorder)).setScale(pricePrecision, RoundingMode.HALF_UP));
+        getNetAmount(jsonorder).setScale(pricePrecision, RoundingMode.HALF_UP));
 
     order.setSalesTransaction(true);
     if (!jsonorder.has("documentStatus")) {
@@ -1237,7 +1237,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
         ? order.getCurrency().getPricePrecision().intValue()
         : order.getCurrency().getObposPosprecision().intValue();
 
-    final BigDecimal gross = BigDecimal.valueOf(getGrossAmount(jsonorder));
+    final BigDecimal gross = getGrossAmount(jsonorder);
     if (payments.length() == 0 && gross.compareTo(BigDecimal.ZERO) == 0) {
       jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
       return jsonResponse;
