@@ -38,7 +38,7 @@ const prepareAction = async (payload, ticket = basicTicket) => {
   const newPayload = await executeActionPreparations(
     OB.App.StateAPI.Ticket.splitLine,
     deepfreeze(ticket),
-    payload
+    deepfreeze(payload)
   );
   return newPayload;
 };
