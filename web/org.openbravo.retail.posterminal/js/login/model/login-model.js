@@ -1416,10 +1416,15 @@
       const documentNumberPadding = OB.MobileApp.model.get('terminal')
         .documentnoPadding;
       const documentNo = OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
-        sequencePrefix,
-        OB.Model.Order.prototype.includeDocNoSeperator,
-        documentNumberPadding,
-        sequenceNumber
+        {
+          sequencePrefix,
+          documentNumberSeparator: OB.Model.Order.prototype
+            .includeDocNoSeperator
+            ? '/'
+            : '',
+          documentNumberPadding,
+          sequenceNumber
+        }
       );
 
       // FIXME: remove once completeTicket action is migrated to state.
