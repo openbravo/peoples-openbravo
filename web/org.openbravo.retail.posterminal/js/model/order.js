@@ -10520,6 +10520,7 @@
                       prod.get('uOMstandardPrecision')
                     ),
                     price: price,
+                    unitPrice: iter.unitPrice,
                     priceList:
                       prod.get('listPrice') !== price
                         ? price
