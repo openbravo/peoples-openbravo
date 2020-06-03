@@ -73,7 +73,7 @@
 
       const payloadWithApprovals = await checkApprovals(ticket, newPayload);
 
-      ticket.deferredOrder = undefined;
+      delete ticket.deferredOrder;
 
       return payloadWithApprovals;
     }
@@ -302,7 +302,7 @@
     if (anonymousNotAllowed) {
       if (ticket.deferredOrder) {
         // eslint-disable-next-line no-param-reassign
-        ticket.deferredOrder = undefined;
+        delete ticket.deferredOrder;
         throw new OB.App.Class.ActionCanceled({
           errorConfirmation: 'OBPOS_AnonymousSaleNotAllowedDeferredSale'
         });
