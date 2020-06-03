@@ -39,7 +39,9 @@ const basicTicket = deepfreeze({
     {
       id: '2',
       qty: 2,
-      product: { id: 'p2' }
+      grossAmount: 20,
+      product: { id: 'p2' },
+      taxes: { t1: { net: 2, amount: 20, rate: 10 } }
     },
     {
       id: '3',
@@ -80,7 +82,8 @@ describe('Ticket.deleteLine action', () => {
         qty: 0,
         grossAmount: 0,
         netAmount: 0,
-        product: { id: 'p2' }
+        product: { id: 'p2' },
+        taxes: { t1: { net: 0, amount: 0, rate: 10 } }
       }
     ]);
   });
