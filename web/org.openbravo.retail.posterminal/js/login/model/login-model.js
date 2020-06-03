@@ -1329,24 +1329,6 @@
     },
 
     setDocumentNo: async function(document) {
-      // FIXME: Replace by OB.App.State.DocumentSequence.Utils.generateTicketDocumentSequence
-      // let documentSequence = OB.App.State.getState().DocumentSequence;
-      // ({
-      //   document,
-      //   documentSequence
-      // } = OB.App.State.DocumentSequence.Utils.generateTicketDocumentSequence(
-      //   document,
-      //   documentSequence,
-      //   OB.MobileApp.model.get('terminal').returnDocNoPrefix,
-      //   OB.MobileApp.model.get('terminal').quotationDocNoPrefix,
-      //   OB.MobileApp.model.get('terminal').fullReturnInvoiceDocNoPrefix,
-      //   OB.MobileApp.model.get('terminal').simplifiedReturnInvoiceDocNoPrefix,
-      //   OB.Model.Order.prototype.includeDocNoSeperator ? '/' : '',
-      //   OB.MobileApp.model.get('terminal').documentnoPadding,
-      //   OB.MobileApp.model.get('permissions')
-      //     .OBPOS_SalesWithOneLineNegativeAsReturns
-      // ));
-
       if (document.get('documentNo')) {
         return;
       }
@@ -1366,44 +1348,33 @@
 
     getDocumentSequenceName: function(document) {
       if (document.get('isInvoice')) {
-        return this.getInvoiceSequenceName(document);
+        return OB.App.State.DocumentSequence.Utils.getInvoiceSequenceName(
+          document.toJSON(),
+          {
+            fullReturnInvoiceSequencePrefix: OB.MobileApp.model.get('terminal')
+              .fullReturnInvoiceDocNoPrefix,
+            simplifiedReturnInvoiceSequencePrefix: OB.MobileApp.model.get(
+              'terminal'
+            ).simplifiedReturnInvoiceDocNoPrefix,
+            salesWithOneLineNegativeAsReturns: OB.MobileApp.model.get(
+              'permissions'
+            ).OBPOS_SalesWithOneLineNegativeAsReturns
+          }
+        );
       } else {
-        return this.getOrderSequenceName(document);
+        return OB.App.State.DocumentSequence.Utils.getOrderSequenceName(
+          document.toJSON(),
+          {
+            returnSequencePrefix: OB.MobileApp.model.get('terminal')
+              .returnDocNoPrefix,
+            quotationSequencePrefix: OB.MobileApp.model.get('terminal')
+              .quotationDocNoPrefix,
+            salesWithOneLineNegativeAsReturns: OB.MobileApp.model.get(
+              'permissions'
+            ).OBPOS_SalesWithOneLineNegativeAsReturns
+          }
+        );
       }
-    },
-
-    getOrderSequenceName: function(order) {
-      if (
-        order.get('isQuotation') &&
-        OB.MobileApp.model.get('terminal').quotationDocNoPrefix
-      ) {
-        return 'quotationslastassignednum';
-      } else if (
-        this.isReturn(order) &&
-        OB.MobileApp.model.get('terminal').returnDocNoPrefix
-      ) {
-        return 'returnslastassignednum';
-      }
-      return 'lastassignednum';
-    },
-
-    getInvoiceSequenceName: function(invoice) {
-      if (
-        !invoice.get('fullInvoice') &&
-        this.isReturn(invoice) &&
-        OB.MobileApp.model.get('terminal').simplifiedReturnInvoiceDocNoPrefix
-      ) {
-        return 'simplifiedreturninvoiceslastassignednum';
-      } else if (
-        invoice.get('fullInvoice') &&
-        this.isReturn(invoice) &&
-        OB.MobileApp.model.get('terminal').fullReturnInvoiceDocNoPrefix
-      ) {
-        return 'fullreturninvoiceslastassignednum';
-      } else if (!invoice.get('fullInvoice')) {
-        return 'simplifiedinvoiceslastassignednum';
-      }
-      return 'fullinvoiceslastassignednum';
     },
 
     getDocumentNo: async function(sequenceName) {
@@ -1438,18 +1409,6 @@
         sequenceNumber: sequenceNumber,
         documentNo: documentNo
       };
-    },
-
-    isReturn: function(document) {
-      const negativeLines = document
-        .get('lines')
-        .filter(line => line.get('qty') < 0).length;
-      return (
-        negativeLines === document.get('lines').length ||
-        (negativeLines > 0 &&
-          OB.MobileApp.model.get('permissions')
-            .OBPOS_SalesWithOneLineNegativeAsReturns)
-      );
     },
 
     getPaymentName: function(key) {
