@@ -1152,7 +1152,14 @@ enyo.kind({
             attrs
           })
             .then(() => {
-              //args.receipt.calculateReceipt();
+              if (OB.UI.MultiColumn.isSingleColumn()) {
+                OB.UTIL.showSuccess(
+                  OB.I18N.getLabel('OBPOS_AddLine', [
+                    args.qtyToAdd,
+                    args.productToAdd.toJSON()._identifier
+                  ])
+                );
+              }
             })
             .catch(OB.App.View.ActionCanceledUIHandler.handle);
           return;
