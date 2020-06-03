@@ -875,27 +875,6 @@ export.database: exports database structure and data to xml files.
     <ant dir="${base.src}" target="wadvalidation" inheritAll="true" inheritRefs="true" />
   </target>
   
-  <target name="UIrebuild" depends="core.lib">
-    <java classname="org.openbravo.base.BuildTask" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-      <arg line="'${base.config}/Openbravo.properties' ${logFileName}" />
-      <classpath>
-        <pathelement path="${base.config}"/>
-        <pathelement path="${build.core.lib}/openbravo-core.jar" />
-        <pathelement path="${base.lib}/runtime/log4j-1.2-api-2.11.1.jar" />
-        <pathelement path="${base.lib}/runtime/log4j-api-2.11.1.jar" />
-        <pathelement path="${base.lib}/runtime/log4j-core-2.11.1.jar" />
-        <pathelement path="${base.lib}/runtime/commons-pool-1.5.6.jar" />
-        <pathelement path="${base.lib}/runtime/commons-dbcp-1.4.jar" />
-        <pathelement path="${base.lib}/runtime/postgresql-42.2.16.jar" />
-        <pathelement path="${base.lib}/runtime/ojdbc8-19.3.0.0.jar" />
-        <pathelement path="${base.lib}/runtime/ant-1.9.2.jar" />
-        <pathelement path="${base.lib}/runtime/ant-launcher-1.9.2.jar" />
-        <pathelement path="${base.lib}/runtime/ant-apache-log4j-1.9.2.jar" />
-        <pathelement path="${base.lib}/runtime/ant-nodeps.jar" />
-      </classpath>
-    </java>
-  </target>
-  
   <target name="check.module.consistency">
     <taskdef name="checkConsistency" classname="org.openbravo.erpCommon.modules.CheckLocalConsistency">
       <classpath refid="project.class.path" />
