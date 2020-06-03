@@ -367,9 +367,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     // Synchronization Buffer
     appDependency.add("model/synchronization-buffer/HardwareManagerEndpoint");
 
-    // Terminal
-    appDependency.add("model/terminal/TerminalProperty");
-
     for (final String resource : appDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,
           prefix + "/app/" + resource + ".js", POSUtils.APP_NAME));
