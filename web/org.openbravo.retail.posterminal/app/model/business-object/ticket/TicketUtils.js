@@ -981,7 +981,10 @@
                       const orderLine = ticket.lines.find(
                         l => l.id === relatedLine.orderlineId
                       );
-                      if (orderLine && orderLine.obposIspaid) {
+                      if (
+                        orderLine &&
+                        (isFullyPaid || orderLine.obposCanbedelivered)
+                      ) {
                         return OB.DEC.add(accumulator, orderLine.qty);
                       }
                       if (relatedLine.obposIspaid) {
