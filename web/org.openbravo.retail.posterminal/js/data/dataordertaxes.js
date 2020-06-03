@@ -127,6 +127,9 @@
         netUnitAmount: values.netUnitAmount,
         grossUnitPrice: values.grossUnitPrice,
         unitPrice: values.netUnitPrice,
+        grossListPrice: receipt.get('priceIncludesTax')
+          ? line.get('priceList')
+          : 0,
         listPrice: receipt.get('priceIncludesTax')
           ? 0
           : line.get('priceList') || line.get('listPrice'),

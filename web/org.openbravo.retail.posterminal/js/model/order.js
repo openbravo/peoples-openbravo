@@ -10433,13 +10433,15 @@
 
           for (let i = 0; i < model.receiptLines.length; i++) {
             let iter = model.receiptLines[i];
-            var price = OB.DEC.number(iter.unitPrice),
+            var price = order.get('priceIncludesTax')
+                ? OB.DEC.number(iter.baseGrossUnitPrice)
+                : OB.DEC.number(iter.baseNetUnitPrice),
               lineGross = order.get('priceIncludesTax')
                 ? OB.DEC.number(iter.lineGrossAmount)
                 : null,
               lineNet = order.get('priceIncludesTax')
                 ? null
-                : OB.DEC.number(iter.lineGrossAmount || iter.lineNetAmount);
+                : OB.DEC.number(iter.lineNetAmount);
             iter.linepos = linepos;
             var addLineForProduct = async function(prod) {
               // Set product services

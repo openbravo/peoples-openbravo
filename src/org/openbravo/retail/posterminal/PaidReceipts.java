@@ -310,15 +310,20 @@ public class PaidReceipts extends JSONProcessSimple {
             hasPromotions = true;
           }
 
-          BigDecimal lineAmount;
+          BigDecimal lineGrossAmount;
+          BigDecimal lineNetAmount;
           if (hasPromotions) {
             // When it has promotions, show line amount without them as they are shown after it
-            lineAmount = (new BigDecimal(paidReceiptLine.optString("quantity"))
-                .multiply(new BigDecimal(paidReceiptLine.optString("unitPrice"))));
+            lineGrossAmount = (new BigDecimal(paidReceiptLine.optString("quantity"))
+                .multiply(new BigDecimal(paidReceiptLine.optString("baseGrossUnitPrice"))));
+            lineNetAmount = (new BigDecimal(paidReceiptLine.optString("quantity"))
+                .multiply(new BigDecimal(paidReceiptLine.optString("baseNetUnitPrice"))));
           } else {
-            lineAmount = new BigDecimal(paidReceiptLine.optString("lineGrossAmount"));
+            lineGrossAmount = new BigDecimal(paidReceiptLine.optString("lineGrossAmount"));
+            lineNetAmount = new BigDecimal(paidReceiptLine.optString("lineNetAmount"));
           }
-          paidReceiptLine.put("lineGrossAmount", lineAmount);
+          paidReceiptLine.put("lineGrossAmount", lineGrossAmount);
+          paidReceiptLine.put("lineNetAmount", lineNetAmount);
 
           paidReceiptLine.put("promotions", promotions);
 
