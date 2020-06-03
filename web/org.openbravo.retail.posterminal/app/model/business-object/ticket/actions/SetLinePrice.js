@@ -135,8 +135,7 @@
   }
 
   OB.App.StateAPI.Ticket.setLinePrice.addActionPreparation(
-    async (state, payload) => {
-      const ticket = state.Ticket;
+    async (ticket, payload) => {
       const { price, lineIds } = payload;
 
       checkParameters(ticket, lineIds, price);

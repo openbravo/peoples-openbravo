@@ -87,7 +87,7 @@ const basicReturn = {
 const prepareAction = async (payload, ticket = basicTicket) => {
   const newPayload = await executeActionPreparations(
     OB.App.StateAPI.Ticket.setLinePrice,
-    deepfreeze({ Ticket: ticket }),
+    deepfreeze(ticket),
     payload
   );
   return newPayload;
