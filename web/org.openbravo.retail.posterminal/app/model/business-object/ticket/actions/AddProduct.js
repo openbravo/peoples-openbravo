@@ -88,7 +88,7 @@
       lineAttrs.relatedLines &&
       line.relatedLines
     ) {
-      lineAttrs.relatedLines = OB.UTIL.mergeArrays(
+      lineAttrs.relatedLines = OB.App.ArrayUtils.union(
         line.relatedLines,
         lineAttrs.relatedLines
       );
