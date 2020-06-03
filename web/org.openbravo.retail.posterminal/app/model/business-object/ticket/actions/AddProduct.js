@@ -51,11 +51,6 @@
     async (state, payload) => {
       const ticket = state.Ticket;
 
-      if (!ticket.id) {
-        // need to set the ticket ID to avoid an error when initializing the backbone order
-        ticket.id = OB.App.UUID.generate();
-      }
-
       let newPayload = { options: {}, attrs: {}, ...payload };
       newPayload.attrs.hasMandatoryServices = false;
       newPayload.attrs.hasRelatedServices = false;
