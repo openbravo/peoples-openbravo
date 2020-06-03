@@ -41,8 +41,7 @@
   });
 
   OB.App.StateAPI.Ticket.deleteLine.addActionPreparation(
-    async (state, payload) => {
-      const ticket = state.Ticket;
+    async (ticket, payload) => {
       let newPayload = { ...payload };
 
       newPayload = prepareConfiguration(newPayload);

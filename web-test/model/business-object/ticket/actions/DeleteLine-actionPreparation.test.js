@@ -87,7 +87,7 @@ Ticket = {
 const prepareAction = async (payload, ticket = Ticket.empty) => {
   const newPayload = await executeActionPreparations(
     OB.App.StateAPI.Ticket.deleteLine,
-    deepfreeze({ Ticket: ticket }),
+    deepfreeze(ticket),
     deepfreeze(payload)
   );
   return newPayload;
