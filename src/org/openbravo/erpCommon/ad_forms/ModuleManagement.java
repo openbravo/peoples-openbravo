@@ -343,18 +343,14 @@ public class ModuleManagement extends HttpSecureAppServlet {
       // but dont show the restart tomcat message is a rebuild need to be done
       if (!restartTomcat.equals("0") && totalToBeRebuilt.equals("0")) {
         updatesRebuildHTML = "<a class=\"LabelLink_noicon\" href=\"#\" onclick=\"openServletNewWindow('TOMCAT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 650, 900, null, null, null, null, true);return false;\">"
-            + Utility.messageBD(this, canRebuildFromMMC() ? "Restart_Tomcat" : "RestartRequired",
-                lang)
-            + "</a>";
+            + Utility.messageBD(this, "RestartRequired", lang) + "</a>";
       } else {
         // Check for rebuild system
         if (!totalToBeRebuilt.equals("0") || lastBuildFailed) {
           updatesRebuildHTML = totalToBeRebuilt + "&nbsp;"
               + Utility.messageBD(this, "ApplyModules", lang)
               + ", <a id=\"rebuildNow\" class=\"LabelLink_noicon\" href=\"#\" onclick=\"openServletNewWindow('DEFAULT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 700, 900, null, null, null, null, true);return false;\">"
-              + Utility.messageBD(this, canRebuildFromMMC() ? "RebuildNow" : "RebuildRequired",
-                  lang)
-              + "</a>";
+              + Utility.messageBD(this, "RebuildRequired", lang) + "</a>";
         }
 
         // Check for updates
@@ -406,11 +402,6 @@ public class ModuleManagement extends HttpSecureAppServlet {
       log4j.error("Error genrating updates notifications", e);
     }
     return rt;
-  }
-
-  /** Returns {@code true} in case System can be rebuilt from MMC's UI. */
-  public static boolean canRebuildFromMMC() {
-    return false;
   }
 
   /**

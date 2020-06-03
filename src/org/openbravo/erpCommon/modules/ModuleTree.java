@@ -24,7 +24,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.data.FieldProvider;
-import org.openbravo.erpCommon.ad_forms.ModuleManagement;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.GenericTree;
 import org.openbravo.erpCommon.utility.Utility;
@@ -160,9 +159,7 @@ public class ModuleTree extends GenericTree {
       return;
     }
 
-    String rebuildMsg = ModuleManagement.canRebuildFromMMC()
-        ? Utility.messageBD(conn, "RebuildNow", lang)
-        : Utility.messageBD(conn, "RebuildRequired", lang);
+    String rebuildMsg = Utility.messageBD(conn, "RebuildRequired", lang);
 
     for (int i = 0; i < modules.length; i++) {
       if (!modules[i].updateAvailable.equals("")) {
