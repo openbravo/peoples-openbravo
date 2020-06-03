@@ -112,13 +112,9 @@
       }
 
       // FIXME: Remove once properties are mapped
-      newTicket.gross = newTicket.grossAmount;
-      newTicket.net = newTicket.netAmount;
       newTicket.lines = newTicket.lines.map(line => {
         return {
           ...line,
-          gross: line.gross || line.grossAmount,
-          net: line.net || line.netAmount,
           taxLines: line.taxLines || line.taxes
         };
       });

@@ -62,4 +62,25 @@ public interface TicketPropertyMapping {
     return json.has("netUnitAmount") ? json.getDouble("netUnitAmount") : json.getDouble("net");
   }
 
+  /**
+   * Returns getGrossUnitAmount property from json.
+   * 
+   * @throws JSONException
+   */
+  default double getGrossUnitPrice(JSONObject json) throws JSONException {
+    return json.getDouble("grossUnitPrice");
+  }
+
+  /**
+   * Returns netUnitAmount property from json if exists. Otherwise returns net property.
+   * 
+   * @throws JSONException
+   */
+  default double getNetUnitPrice(JSONObject json) throws JSONException {
+    if (json.has("netUnitPrice")) {
+      return json.getDouble("netUnitPrice");
+    }
+    return json.has("unitPrice") ? json.getDouble("unitPrice") : json.getDouble("pricenet");
+  }
+
 }
