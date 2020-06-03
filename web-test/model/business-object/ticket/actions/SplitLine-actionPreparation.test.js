@@ -37,7 +37,7 @@ require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-
 const prepareAction = async (payload, ticket = basicTicket) => {
   const newPayload = await executeActionPreparations(
     OB.App.StateAPI.Ticket.splitLine,
-    deepfreeze({ Ticket: ticket }),
+    deepfreeze(ticket),
     payload
   );
   return newPayload;

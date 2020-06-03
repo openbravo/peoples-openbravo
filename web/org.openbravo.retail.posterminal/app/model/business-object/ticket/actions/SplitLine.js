@@ -105,8 +105,7 @@
   });
 
   OB.App.StateAPI.Ticket.splitLine.addActionPreparation(
-    async (state, payload) => {
-      const ticket = state.Ticket;
+    async (ticket, payload) => {
       const { lineId, quantities } = payload;
 
       if (lineId === undefined) {
