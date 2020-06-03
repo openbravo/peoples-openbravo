@@ -72,7 +72,8 @@ public interface TicketPropertyMapping {
   }
 
   /**
-   * Returns netUnitAmount property from json if exists. Otherwise returns net property.
+   * Returns netUnitAmount property from json if exists. Otherwise returns unitPrice property if
+   * exists. Otherwise returns pricenet property.
    * 
    * @throws JSONException
    */
@@ -81,6 +82,15 @@ public interface TicketPropertyMapping {
       return json.getDouble("netUnitPrice");
     }
     return json.has("unitPrice") ? json.getDouble("unitPrice") : json.getDouble("pricenet");
+  }
+
+  /**
+   * Returns taxes property from json if exists. Otherwise returns taxLines property.
+   * 
+   * @throws JSONException
+   */
+  default JSONObject getTaxes(JSONObject json) throws JSONException {
+    return json.has("taxes") ? json.getJSONObject("taxes") : json.getJSONObject("taxLines");
   }
 
 }

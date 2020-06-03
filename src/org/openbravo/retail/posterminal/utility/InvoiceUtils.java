@@ -222,7 +222,7 @@ public class InvoiceUtils implements TicketPropertyMapping {
     invoice.getInvoiceLineList().add(invoiceLine);
     OBDal.getInstance().save(invoiceLine);
 
-    JSONObject taxes = jsonInvoiceLine.getJSONObject("taxLines");
+    JSONObject taxes = getTaxes(jsonInvoiceLine);
     @SuppressWarnings("unchecked")
     Iterator<String> itKeys = taxes.keys();
     BigDecimal totalTaxAmount = BigDecimal.ZERO;
@@ -439,7 +439,7 @@ public class InvoiceUtils implements TicketPropertyMapping {
     invoice.setUserContact(order.getUserContact());
 
     // Create invoice tax lines
-    JSONObject taxes = jsoninvoice.getJSONObject("taxes");
+    JSONObject taxes = getTaxes(jsoninvoice);
     @SuppressWarnings("unchecked")
     Iterator<String> itKeys = taxes.keys();
     int i = 0;

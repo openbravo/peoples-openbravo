@@ -845,7 +845,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
         deleteQuery.setParameter("id", orderline.getId());
         deleteQuery.executeUpdate();
       }
-      JSONObject taxes = jsonOrderLine.getJSONObject("taxLines");
+      JSONObject taxes = getTaxes(jsonOrderLine);
       @SuppressWarnings("unchecked")
       Iterator<String> itKeys = taxes.keys();
       int ind = 0;
@@ -1186,7 +1186,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
       deleteQuery.setParameter("id", order.getId());
       deleteQuery.executeUpdate();
     }
-    JSONObject taxes = jsonorder.getJSONObject("taxes");
+    JSONObject taxes = getTaxes(jsonorder);
     @SuppressWarnings("unchecked")
     Iterator<String> itKeys = taxes.keys();
     int i = 0;

@@ -111,14 +111,6 @@
         ));
       }
 
-      // FIXME: Remove once properties are mapped
-      newTicket.lines = newTicket.lines.map(line => {
-        return {
-          ...line,
-          taxLines: line.taxLines || line.taxes
-        };
-      });
-
       const newMessage = OB.App.State.Messages.Utils.createNewMessage(
         'Order',
         'org.openbravo.retail.posterminal.OrderLoader',
