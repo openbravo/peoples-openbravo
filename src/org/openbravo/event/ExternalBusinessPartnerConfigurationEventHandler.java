@@ -41,14 +41,16 @@ public class ExternalBusinessPartnerConfigurationEventHandler
       { ExternalBusinessPartnerConfigProperty.PROPERTY_DISPLAYINLIST,
           ExternalBusinessPartnerConfigProperty.PROPERTY_LISTSEQUENCENUMBER },
       { ExternalBusinessPartnerConfigProperty.PROPERTY_KEYCOLUMN,
-          ExternalBusinessPartnerConfigProperty.PROPERTY_KEYSEQUENCENUMBER } };
+          ExternalBusinessPartnerConfigProperty.PROPERTY_KEYSEQUENCENUMBER },
+      { ExternalBusinessPartnerConfigProperty.PROPERTY_CATEGORYKEY,
+          ExternalBusinessPartnerConfigProperty.PROPERTY_CATEGORYKEYSEQUENCENUMBER } };
 
   private static final String[][] CHECK_IN_FILTER = {
       { ExternalBusinessPartnerConfigFilter.PROPERTY_ISADVANCEDFILTER,
           ExternalBusinessPartnerConfigFilter.PROPERTY_ADVANCEDFILTERSEQNO } };
 
-  private static final String[][] CHECK_IN_CLIENTINFO = { {
-      ClientInformation.PROPERTY_EXTBPENABLED, ClientInformation.PROPERTY_EXTBPCONFIG } };
+  private static final String[][] CHECK_IN_CLIENTINFO = {
+      { ClientInformation.PROPERTY_EXTBPENABLED, ClientInformation.PROPERTY_EXTBPCONFIG } };
 
   @Override
   protected Entity[] getObservedEntities() {
