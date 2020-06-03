@@ -73,6 +73,8 @@
 
       const payloadWithApprovals = await checkApprovals(ticket, newPayload);
 
+      ticket.deferredOrder = undefined;
+
       return payloadWithApprovals;
     }
   );
@@ -298,6 +300,13 @@
       products.some(p => p.product.oBPOSAllowAnonymousSale === false);
 
     if (anonymousNotAllowed) {
+      if (ticket.deferredOrder) {
+        // eslint-disable-next-line no-param-reassign
+        ticket.deferredOrder = undefined;
+        throw new OB.App.Class.ActionCanceled({
+          errorConfirmation: 'OBPOS_AnonymousSaleNotAllowedDeferredSale'
+        });
+      }
       throw new OB.App.Class.ActionCanceled({
         errorConfirmation: 'OBPOS_AnonymousSaleNotAllowed'
       });

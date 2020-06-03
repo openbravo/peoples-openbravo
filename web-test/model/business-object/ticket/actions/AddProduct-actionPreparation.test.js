@@ -208,6 +208,29 @@ describe('addProduct preparation', () => {
       );
     });
 
+    it('anonymous business partner check (deferred)', async () => {
+      await expectError(
+        () =>
+          prepareAction(
+            {
+              products: [
+                {
+                  product: {
+                    ...Product.base,
+                    oBPOSAllowAnonymousSale: false
+                  }
+                }
+              ],
+              options: { businessPartner: '1' }
+            },
+            { ...Ticket.empty, deferredOrder: true }
+          ),
+        {
+          errorConfirmation: 'OBPOS_AnonymousSaleNotAllowedDeferredSale'
+        }
+      );
+    });
+
     it('not returnable check (1)', async () => {
       const unReturnableProduct = { ...Product.base, returnable: false };
       await expectError(
