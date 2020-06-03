@@ -29,87 +29,117 @@ require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.co
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/Ticket');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/DeleteLine');
 
-const basicTicket = deepfreeze({
-  lines: [
-    {
-      id: '1',
-      qty: 1,
-      product: { id: 'p1' }
-    },
-    {
-      id: '2',
-      qty: 2,
-      grossAmount: 20,
-      product: { id: 'p2' },
-      taxes: { t1: { net: 2, amount: 20, rate: 10 } },
-      promotions: ['pr1']
-    },
-    {
-      id: '3',
-      qty: 3,
-      product: { id: 'p3' }
-    }
-  ]
+let Ticket = {
+  empty: {
+    lines: [],
+    businessPartner: { id: '1' },
+    orderType: 0
+  }
+};
+
+Ticket = deepfreeze({
+  basic: {
+    ...Ticket.empty,
+    lines: [
+      {
+        id: '1',
+        qty: 1,
+        product: { id: 'p1' }
+      },
+      {
+        id: '2',
+        qty: 2,
+        grossAmount: 20,
+        product: { id: 'p2' },
+        taxes: { t1: { net: 2, amount: 20, rate: 10 } },
+        promotions: ['pr1']
+      },
+      {
+        id: '3',
+        qty: 3,
+        product: { id: 'p3' }
+      }
+    ]
+  },
+
+  services: {
+    ...Ticket.empty,
+    hasServices: true,
+    lines: [
+      { id: 'l1' },
+      { id: 's1', relatedLines: [{ orderlineId: 'l1' }] },
+      { id: 'l2' },
+      { id: 's2', relatedLines: [{ orderlineId: 'l2' }] },
+      { id: 's2.1', relatedLines: [{ orderlineId: 's2' }] },
+      { id: 's2.1.1', relatedLines: [{ orderlineId: 's2.1' }] }
+    ]
+  }
 });
 
 describe('Ticket.deleteLine action', () => {
-  it('deletes lines', () => {
-    const newTicket = OB.App.StateAPI.Ticket.deleteLine(basicTicket, {
-      lineIds: ['1', '3']
-    });
+  describe('basics', () => {
+    it('deletes lines', () => {
+      const newTicket = OB.App.StateAPI.Ticket.deleteLine(Ticket.basic, {
+        lineIds: ['1', '3']
+      });
 
-    expect(newTicket.lines).toMatchObject([{ id: '2', product: { id: 'p2' } }]);
+      expect(newTicket.lines).toMatchObject([
+        { id: '2', product: { id: 'p2' } }
+      ]);
+    });
   });
 
-  it('does not track deleted lines if save removal not configured', () => {
-    const newTicket = OB.App.StateAPI.Ticket.deleteLine(basicTicket, {
-      lineIds: ['2']
+  describe('save removal', () => {
+    it('does not track deleted lines if save removal not configured', () => {
+      const newTicket = OB.App.StateAPI.Ticket.deleteLine(Ticket.basic, {
+        lineIds: ['2']
+      });
+
+      expect(newTicket).not.toHaveProperty('deletedLines');
     });
 
-    expect(newTicket).not.toHaveProperty('deletedLines');
-  });
+    it('tracks deleted lines if save removal configured', () => {
+      const newTicket = OB.App.StateAPI.Ticket.deleteLine(Ticket.basic, {
+        lineIds: ['2'],
+        config: { saveRemoval: true }
+      });
 
-  it('tracks deleted lines if save removal configured', () => {
-    const newTicket = OB.App.StateAPI.Ticket.deleteLine(basicTicket, {
-      lineIds: ['2'],
-      config: { saveRemoval: true }
+      expect(newTicket.deletedLines).toBeInstanceOf(Array);
+      expect(newTicket.deletedLines).toHaveLength(1);
+      expect(newTicket.deletedLines).toMatchObject([
+        {
+          obposQtyDeleted: 2,
+          qty: 0,
+          grossAmount: 0,
+          netAmount: 0,
+          product: { id: 'p2' },
+          taxes: { t1: { net: 0, amount: 0, rate: 10 } },
+          promotions: []
+        }
+      ]);
     });
 
-    expect(newTicket.deletedLines).toBeInstanceOf(Array);
-    expect(newTicket.deletedLines).toHaveLength(1);
-    expect(newTicket.deletedLines).toMatchObject([
-      {
-        obposQtyDeleted: 2,
-        qty: 0,
-        grossAmount: 0,
-        netAmount: 0,
-        product: { id: 'p2' },
-        taxes: { t1: { net: 0, amount: 0, rate: 10 } },
-        promotions: []
-      }
-    ]);
-  });
+    it('tracks multiple deletions at once', () => {
+      const newTicket = OB.App.StateAPI.Ticket.deleteLine(Ticket.basic, {
+        lineIds: ['1', '2'],
+        config: { saveRemoval: true }
+      });
 
-  it('tracks multiple deletions at once', () => {
-    const newTicket = OB.App.StateAPI.Ticket.deleteLine(basicTicket, {
-      lineIds: ['1', '2'],
-      config: { saveRemoval: true }
+      expect(newTicket.deletedLines).toHaveLength(2);
     });
 
-    expect(newTicket.deletedLines).toHaveLength(2);
-  });
+    it('tracks multiple consecutive deletions', () => {
+      let newTicket = OB.App.StateAPI.Ticket.deleteLine(Ticket.basic, {
+        lineIds: ['1'],
+        config: { saveRemoval: true }
+      });
 
-  it('tracks multiple consecutive deletions', () => {
-    let newTicket = OB.App.StateAPI.Ticket.deleteLine(basicTicket, {
-      lineIds: ['1'],
-      config: { saveRemoval: true }
+      newTicket = OB.App.StateAPI.Ticket.deleteLine(newTicket, {
+        lineIds: ['2'],
+        config: { saveRemoval: true }
+      });
+
+      expect(newTicket.deletedLines).toHaveLength(2);
     });
-
-    newTicket = OB.App.StateAPI.Ticket.deleteLine(newTicket, {
-      lineIds: ['2'],
-      config: { saveRemoval: true }
-    });
-
-    expect(newTicket.deletedLines).toHaveLength(2);
   });
 });
