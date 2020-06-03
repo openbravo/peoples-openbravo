@@ -38,8 +38,9 @@
           const newLine = createLine(productInfo, ticket, options, attrs);
           ticket.lines.push(newLine);
         } else {
-          const newLines = createLines(productInfo, ticket, options, attrs);
-          newLines.forEach(newLine => ticket.lines.push(newLine));
+          ticket.lines = ticket.lines.concat(
+            createLines(productInfo, ticket, options, attrs)
+          );
         }
       });
 
