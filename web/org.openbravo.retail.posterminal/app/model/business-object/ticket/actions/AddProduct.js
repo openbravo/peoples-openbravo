@@ -52,8 +52,6 @@
       const ticket = state.Ticket;
 
       let newPayload = { options: {}, attrs: {}, ...payload };
-      newPayload.attrs.hasMandatoryServices = false;
-      newPayload.attrs.hasRelatedServices = false;
 
       newPayload.products = newPayload.products.map(productInfo => {
         return { ...productInfo, qty: productInfo.qty || 1 };
@@ -65,9 +63,10 @@
 
       newPayload = await prepareScaleProducts(newPayload);
       newPayload = await prepareBOMProducts(ticket, newPayload);
-      newPayload = await prepareProductService(newPayload);
+      newPayload = await prepareServiceLinkedToProduct(newPayload);
       newPayload = await prepareProductCharacteristics(newPayload);
       newPayload = await prepareProductAttributes(ticket, newPayload);
+      newPayload = await prepareRelatedServices(newPayload);
 
       await checkStock(ticket, newPayload);
 
@@ -84,7 +83,11 @@
   }
 
   function setLineAttributes(line, attrs, productInfo) {
-    const lineAttrs = { ...attrs };
+    const lineAttrs = {
+      ...attrs,
+      hasRelatedServices: productInfo.hasRelatedServices,
+      hasMandatoryServices: productInfo.hasMandatoryServices
+    };
     if (
       productInfo.product.productType === 'S' &&
       lineAttrs.relatedLines &&
@@ -536,7 +539,7 @@
     return newPayload;
   }
 
-  async function prepareProductService(payload) {
+  async function prepareServiceLinkedToProduct(payload) {
     const shouldLinkService = product => {
       return product.modifyTax && !product.productServiceLinked;
     };
@@ -709,6 +712,99 @@
       }
     }
     return newPayload;
+  }
+
+  async function prepareRelatedServices(payload) {
+    const { products, options, attrs } = payload;
+    if (options.isSilentAddProduct || attrs.originalOrderLineId) {
+      return payload;
+    }
+    const newPayload = { ...payload };
+    const productsWithRelatedServicesInfo = products.map(async pi => {
+      if (pi.product.productType === 'S') {
+        return pi;
+      }
+      const productId =
+        pi.product.isNew &&
+        OB.App.Security.hasPermission('OBPOS_remote.product')
+          ? null
+          : pi.product.forceFilterId || pi.product.id;
+      const data = await loadRelatedServices(
+        pi.product.productType,
+        productId,
+        pi.product.productCategory
+      );
+      if (data.exception) {
+        OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
+        return pi;
+      }
+      return {
+        ...pi,
+        hasRelatedServices: data.hasservices,
+        hasMandatoryServices: data.hasmandatoryservices
+      };
+    });
+    newPayload.products = await Promise.all(productsWithRelatedServicesInfo);
+    return newPayload;
+  }
+
+  async function loadRelatedServices(productType, productId, productCategory) {
+    const result = { hasservices: false, hasMandatoryServices: false };
+    if (productType === 'S') {
+      return result;
+    }
+    if (OB.App.Security.hasPermission('OBPOS_remote.product')) {
+      const params = {};
+      const date = new Date();
+      params.terminalTime = date;
+      params.terminalTimeOffset = date.getTimezoneOffset();
+
+      const body = {
+        product: productId,
+        productCategory,
+        parameters: params,
+        remoteFilters: [
+          {
+            columns: [],
+            operator: 'filter',
+            value: 'OBRDM_DeliveryServiceFilter',
+            params: [false]
+          }
+        ]
+      };
+      try {
+        const data = await OB.App.Request.mobileServiceRequest(
+          'org.openbravo.retail.posterminal.process.HasServices',
+          body
+        );
+        return data.response.data || result;
+      } catch (error) {
+        return { exception: error };
+      }
+    } else {
+      // non-high volumes: indexedDB
+      let criteria = new OB.App.Class.Criteria();
+      criteria = await OB.UTIL.servicesFilter(
+        criteria,
+        productId,
+        productCategory
+      );
+      criteria.criterion('obrdmIsdeliveryservice', false);
+      try {
+        const products = await OB.App.MasterdataModels.Product.find(
+          criteria.build()
+        );
+        if (products) {
+          result.hasservices = products.length > 0;
+          result.hasmandatoryservices = products.some(
+            product => product.proposalType === 'MP'
+          );
+        }
+        return result;
+      } catch (error) {
+        return { exception: error };
+      }
+    }
   }
 
   async function checkApprovals(ticket, payload) {
