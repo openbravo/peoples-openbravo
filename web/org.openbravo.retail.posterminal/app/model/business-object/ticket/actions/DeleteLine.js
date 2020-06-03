@@ -33,7 +33,8 @@
             qty: 0,
             grossAmount: 0,
             netAmount: 0,
-            taxes: { ...l.taxes }
+            taxes: { ...l.taxes },
+            promotions: []
           };
 
           Object.keys(deletedLine.taxes).forEach(k => {
