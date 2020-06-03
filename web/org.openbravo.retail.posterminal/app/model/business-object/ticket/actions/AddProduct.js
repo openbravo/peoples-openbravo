@@ -63,9 +63,10 @@
         return { ...productInfo, qty: productInfo.qty || 1 };
       });
 
+      newPayload = await preparePacks(newPayload);
+
       checkRestrictions(ticket, newPayload);
 
-      newPayload = await preparePacks(newPayload);
       newPayload = await prepareScaleProducts(newPayload);
       newPayload = await prepareBOMProducts(ticket, newPayload);
       newPayload = await prepareProductService(newPayload);
