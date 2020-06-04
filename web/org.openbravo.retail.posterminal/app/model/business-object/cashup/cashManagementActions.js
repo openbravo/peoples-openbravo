@@ -79,27 +79,19 @@
 
                 // Update the Cashup information with cash management to process
                 const cashupToSend = { ...cashup };
-                const newPaymentsArray = [];
-                cashupToSend.cashPaymentMethodInfo.forEach(payment => {
-                  if (payment.id === newPaymentMethod.id) {
-                    const newPaymentMethodToSend = { ...newPaymentMethod };
-                    newPaymentMethodToSend.usedInCurrentTrx = true;
-                    newPaymentsArray.push(newPaymentMethodToSend);
-                    if (newCashManagement.modifiedPaymentMethod) {
-                      // if another paymentMethod is modified by this cash management, it must be included in the cashUpReportInformation
-                      const newModifiedPaymentMethod = {
-                        ...cashupToSend.cashPaymentMethodInfo.find(
-                          modifiedPayment =>
-                            modifiedPayment.searchKey ===
-                            newCashManagement.modifiedPaymentMethod
-                        )
+                cashupToSend.cashPaymentMethodInfo = cashupToSend.cashPaymentMethodInfo.map(
+                  cashupReportPaymentMethod => {
+                    if (cashupReportPaymentMethod.id === newPaymentMethod.id) {
+                      const cashupReportNewPaymentMethod = {
+                        ...newPaymentMethod
                       };
-                      newModifiedPaymentMethod.usedInCurrentTrx = true;
-                      newPaymentsArray.push(newModifiedPaymentMethod);
+                      cashupReportNewPaymentMethod.usedInCurrentTrx = true;
+                      return cashupReportNewPaymentMethod;
                     }
+                    return cashupReportPaymentMethod;
                   }
-                });
-                cashupToSend.cashPaymentMethodInfo = newPaymentsArray;
+                );
+
                 newCashManagement.cashUpReportInformation = cashupToSend;
 
                 const cashupPayments = cashupToSend.cashPaymentMethodInfo;
@@ -112,7 +104,8 @@
               }
             );
           }
-          newPaymentMethod.newPaymentMethod = false;
+          delete newPaymentMethod.newPaymentMethod;
+          delete newPaymentMethod.usedInCurrentTrx;
           return newPaymentMethod;
         }
       );
