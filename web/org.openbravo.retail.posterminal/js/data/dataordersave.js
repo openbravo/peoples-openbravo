@@ -40,7 +40,7 @@
         var linesGross = 0;
         var isFieldUndefined = false;
         _.each(this.get('lines').models, function(line) {
-          var fieldValue = line.get('discountedNet');
+          var fieldValue = line.get('netUnitAmount');
           if (!fieldValue) {
             isFieldUndefined = true;
             return;
