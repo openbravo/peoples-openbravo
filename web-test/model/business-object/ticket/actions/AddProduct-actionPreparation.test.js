@@ -25,8 +25,11 @@ OB = {
     View: { DialogUIHandler: { inputData: jest.fn() } }
   },
 
+  I18N: { getLabel: jest.fn() },
+
   UTIL: {
-    HookManager: { registerHook: jest.fn() }
+    HookManager: { registerHook: jest.fn() },
+    servicesFilter: jest.fn()
   },
 
   POS: {
@@ -141,6 +144,7 @@ describe('addProduct preparation', () => {
       Promise.resolve({ result: 10 })
     );
     OB.App.StockChecker.hasStock = jest.fn().mockResolvedValue(true);
+    OB.UTIL.servicesFilter.mockResolvedValue(new OB.App.Class.Criteria());
   });
 
   describe('check restrictions', () => {
@@ -208,7 +212,7 @@ describe('addProduct preparation', () => {
       );
     });
 
-    it('anonymous business partner check (deferred)', async () => {
+    it('anonymous business partner check (deferred order)', async () => {
       await expectError(
         () =>
           prepareAction(
@@ -619,9 +623,7 @@ describe('addProduct preparation', () => {
         attrs: {
           attributeSearchAllowed: true,
           attributeValue: '1234',
-          productHavingSameAttribute: true,
-          hasMandatoryServices: false,
-          hasRelatedServices: false
+          productHavingSameAttribute: true
         }
       });
     });
@@ -642,9 +644,7 @@ describe('addProduct preparation', () => {
         ...payload,
         attrs: {
           attributeSearchAllowed: true,
-          productHavingSameAttribute: true,
-          hasMandatoryServices: false,
-          hasRelatedServices: false
+          productHavingSameAttribute: true
         }
       });
     });
@@ -666,9 +666,7 @@ describe('addProduct preparation', () => {
         attrs: {
           attributeSearchAllowed: true,
           attributeValue: '5678',
-          productHavingSameAttribute: false,
-          hasMandatoryServices: false,
-          hasRelatedServices: false
+          productHavingSameAttribute: false
         }
       });
     });
@@ -690,9 +688,7 @@ describe('addProduct preparation', () => {
         attrs: {
           attributeSearchAllowed: true,
           attributeValue: '1234',
-          productHavingSameAttribute: false,
-          hasMandatoryServices: false,
-          hasRelatedServices: false
+          productHavingSameAttribute: false
         }
       });
     });
@@ -716,9 +712,7 @@ describe('addProduct preparation', () => {
         attrs: {
           attributeSearchAllowed: true,
           attributeValue: '1234',
-          productHavingSameAttribute: true,
-          hasMandatoryServices: false,
-          hasRelatedServices: false
+          productHavingSameAttribute: true
         }
       });
     });
@@ -742,9 +736,7 @@ describe('addProduct preparation', () => {
         ...payload,
         attrs: {
           attributeSearchAllowed: true,
-          productHavingSameAttribute: false,
-          hasMandatoryServices: false,
-          hasRelatedServices: false
+          productHavingSameAttribute: false
         }
       });
     });

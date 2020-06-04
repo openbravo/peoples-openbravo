@@ -11,8 +11,9 @@
 
 OB = {
   App: {
-    StateBackwardCompatibility: { setProperties: jest.fn() },
     Class: {},
+    StateBackwardCompatibility: { setProperties: jest.fn() },
+    TerminalProperty: { get: jest.fn() },
     UUID: { generate: jest.fn() }
   },
   UTIL: { HookManager: { registerHook: jest.fn() } },
@@ -27,6 +28,19 @@ require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.co
 require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/StateAPI');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/Ticket');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/AddProduct');
+
+OB.App.TerminalProperty.get.mockImplementation(property => {
+  if (property === 'warehouses') {
+    return [
+      {
+        priority: 10,
+        warehouseid: 'A154EC30A296479BB078B0AFFD74CA22',
+        warehousename: 'Vall Blanca Store Warehouse'
+      }
+    ];
+  }
+  return {};
+});
 
 const emptyTicket = { priceIncludesTax: true, lines: [] };
 
