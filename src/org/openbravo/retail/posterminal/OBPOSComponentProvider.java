@@ -254,7 +254,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "utils/deliveryModeUtils", "hookPreOrderSave", "hookPreDeleteLine",
         "hookPostUndo_DeleteLine", "receiptEdit", "receiptMultiLineEdit", "hookRenderOrderLine",
         "hookPrePayment", "hookPreSetPaymentsToReceipt", "components/menuissue",
-        "model/dmorderfilter", "model/ordertoissue", "utils/utils",
+        "model/dmorderfilter", "utils/utils",
 
         "model/ordertoselectorissue", "components/orderselector",
         "components/modalwarehouseselector", "components/orderlineinfopopup",
