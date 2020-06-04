@@ -145,7 +145,7 @@
           : line.get('priceList') || line.get('listPrice'),
         lineRate: values.taxRate ? values.taxRate : line.get('lineRate'),
         tax: values.tax ? values.tax : line.get('tax'),
-        taxLines: values.taxes
+        taxes: values.taxes
       },
       {
         silent: true

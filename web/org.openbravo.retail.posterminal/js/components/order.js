@@ -923,8 +923,8 @@ enyo.kind({
         remainingTaxesIds = [];
 
       _.each(this.order.get('lines').models, function(line) {
-        if (!line.get('obposIsDeleted') && line.get('taxLines')) {
-          remainingTaxesIds.push(...Object.keys(line.get('taxLines')));
+        if (!line.get('obposIsDeleted') && line.get('taxes')) {
+          remainingTaxesIds.push(...Object.keys(line.get('taxes')));
         }
       });
       Object.keys(taxes).forEach(function(id) {
