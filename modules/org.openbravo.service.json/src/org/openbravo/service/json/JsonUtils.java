@@ -269,7 +269,7 @@ public class JsonUtils {
     }
   }
 
-  private static boolean isQueryTimeout(Throwable localThrowable) {
+  public static boolean isQueryTimeout(Throwable localThrowable) {
     // In case of query timeout in Hibernate, Oracle throws javax.persistence.QueryTimeoutException
     // but PostgreSQL javax.persistence.PersistenceException, in PG the only way to get the root
     // cause is to get the cause's cause and check SQL state.
@@ -279,10 +279,13 @@ public class JsonUtils {
     }
 
     Throwable cause = localThrowable.getCause();
-    cause = cause != null ? cause.getCause() : cause;
 
-    return cause instanceof PSQLException
+    boolean isTimeout = cause instanceof PSQLException
         && PG_QUERY_CANCELED.equals(((PSQLException) cause).getSQLState());
+    if (isTimeout || cause == null) {
+      return isTimeout;
+    }
+    return isQueryTimeout(cause);
   }
 
   /**
