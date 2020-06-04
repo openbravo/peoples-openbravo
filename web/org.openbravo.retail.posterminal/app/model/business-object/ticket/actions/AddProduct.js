@@ -67,6 +67,7 @@
       newPayload = await prepareProductCharacteristics(newPayload);
       newPayload = await prepareProductAttributes(ticket, newPayload);
       newPayload = await prepareRelatedServices(newPayload);
+      newPayload = await prepareProductPrices(ticket, newPayload);
 
       await checkStock(ticket, newPayload);
 
@@ -805,6 +806,95 @@
         return { exception: error };
       }
     }
+  }
+
+  async function prepareProductPrices(ticket, payload) {
+    if (!OB.App.Security.hasPermission('EnableMultiPriceList')) {
+      return payload;
+    }
+    const newPayload = { ...payload };
+    const productPriceUpdates = payload.products.map(async pi => {
+      const result = { ...pi };
+      if (pi.product.ispack || pi.product.updatePriceFromPricelist === false) {
+        return result;
+      }
+      let productPrice;
+      try {
+        productPrice = await getProductPrice(ticket, pi);
+      } catch (error) {
+        throw new OB.App.Class.ActionCanceled({
+          warningMsg: 'OBPOS_ProductNotFoundInPriceList'
+        });
+      }
+      if (!productPrice) {
+        throw new OB.App.Class.ActionCanceled({
+          warningMsg: 'OBPOS_ProductNotFoundInPriceList'
+        });
+      }
+      result.product = { ...result.product, ...productPrice };
+      return result;
+    });
+    newPayload.products = await Promise.all(productPriceUpdates);
+    return newPayload;
+  }
+
+  async function getProductPrice(ticket, productInfo) {
+    const { product } = productInfo;
+    let result = {
+      standardPrice: product.standardPrice,
+      listPrice: product.listPrice
+    };
+    if (product.crossStore) {
+      let productPrice;
+      if (product.productPrices) {
+        productPrice = product.productPrices.find(
+          pp => pp.priceListId === ticket.businessPartner.priceList
+        );
+      }
+      result = productPrice
+        ? {
+            standardPrice: productPrice.price,
+            listPrice: productPrice.price,
+            currentPrice: productPrice
+          }
+        : undefined;
+    } else if (
+      ticket.priceList !== OB.App.TerminalProperty.get('terminal').priceList
+    ) {
+      let productPrices;
+      if (OB.App.Security.hasPermission('OBPOS_remote.product')) {
+        const productId = {
+          columns: ['m_product_id'],
+          operator: 'equals',
+          value: product.id,
+          isId: true
+        };
+        const pricelistId = {
+          columns: ['m_pricelist_id'],
+          operator: 'equals',
+          value: ticket.priceList,
+          isId: true
+        };
+        productPrices = await OB.App.DAL.find('ProductPrice', {
+          remoteFilters: [productId, pricelistId]
+        });
+      } else {
+        productPrices = await OB.App.MasterdataModels.ProductPrice.find(
+          new OB.App.Class.Criteria()
+            .criterion('m_pricelist_id', ticket.priceList)
+            .criterion('m_product_id', product.id)
+            .build()
+        );
+      }
+      result =
+        productPrices && productPrices.length > 0
+          ? {
+              standardPrice: productPrices[0].pricestd,
+              listPrice: productPrices[0].pricelist
+            }
+          : undefined;
+    }
+    return result;
   }
 
   async function checkApprovals(ticket, payload) {

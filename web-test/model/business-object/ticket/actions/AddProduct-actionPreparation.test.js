@@ -17,7 +17,8 @@ OB = {
     MasterdataModels: {
       ProductBOM: { find: jest.fn() },
       ProductCharacteristicValue: { find: jest.fn() },
-      ProductServiceLinked: { find: jest.fn() }
+      ProductServiceLinked: { find: jest.fn() },
+      ProductPrice: { find: jest.fn() }
     },
     Security: { hasPermission: jest.fn(), requestApprovalForAction: jest.fn() },
     StateBackwardCompatibility: { setProperties: jest.fn() },
@@ -68,7 +69,12 @@ require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.co
 
 OB.App.Class.Criteria = class MockedCriteria {
   criterion() {
-    return { build: jest.fn() };
+    return {
+      build: jest.fn(),
+      criterion: () => {
+        return { build: jest.fn };
+      }
+    };
   }
 };
 
@@ -85,34 +91,39 @@ const Product = {
 const Ticket = {
   empty: {
     priceIncludesTax: true,
+    priceList: '5D47B13F42A44352B09C97A72EE42ED8',
     lines: [],
-    businessPartner: { id: '1' },
+    businessPartner: { id: '1', priceList: '5D47B13F42A44352B09C97A72EE42ED8' },
     orderType: 0
   },
   emptyReturn: {
     priceIncludesTax: true,
+    priceList: '5D47B13F42A44352B09C97A72EE42ED8',
     lines: [],
-    businessPartner: { id: '1' },
+    businessPartner: { id: '1', priceList: '5D47B13F42A44352B09C97A72EE42ED8' },
     orderType: 1
   },
   singleLine: {
     priceIncludesTax: true,
+    priceList: '5D47B13F42A44352B09C97A72EE42ED8',
     lines: [{ id: '1', product: Product.base, qty: 1 }],
-    businessPartner: { id: '1' },
+    businessPartner: { id: '1', priceList: '5D47B13F42A44352B09C97A72EE42ED8' },
     orderType: 0
   },
   attributeLine: {
     priceIncludesTax: true,
+    priceList: '5D47B13F42A44352B09C97A72EE42ED8',
     lines: [{ id: '1', product: Product.base, qty: 1, attributeValue: '1234' }],
-    businessPartner: { id: '1' },
+    businessPartner: { id: '1', priceList: '5D47B13F42A44352B09C97A72EE42ED8' },
     orderType: 0
   },
   cancelAndReplace: {
     priceIncludesTax: true,
+    priceList: '5D47B13F42A44352B09C97A72EE42ED8',
     lines: [
       { id: '1', product: Product.base, qty: -1, replacedorderline: true }
     ],
-    businessPartner: { id: '1' },
+    businessPartner: { id: '1', priceList: '5D47B13F42A44352B09C97A72EE42ED8' },
     orderType: 0
   }
 };
@@ -137,14 +148,39 @@ const expectError = async (action, expectedError) => {
 };
 
 describe('addProduct preparation', () => {
-  beforeEach(() => {
-    jest.resetAllMocks();
-    // default mocks
+  const setDefaultMocks = () => {
     OB.POS.hwserver.getAsyncWeight.mockImplementation(() =>
       Promise.resolve({ result: 10 })
     );
     OB.App.StockChecker.hasStock = jest.fn().mockResolvedValue(true);
     OB.UTIL.servicesFilter.mockResolvedValue(new OB.App.Class.Criteria());
+    OB.App.TerminalProperty.get.mockImplementation(property => {
+      if (property === 'productStatusList') {
+        return [
+          {
+            id: '1A62CC9E44364EA6881A0A86417D61AF',
+            name: 'Ramp-Up',
+            restrictsalefrompos: false,
+            restrictsaleoutofstock: false
+          },
+          {
+            id: '7E4B33B5FB6444409E45D61668269FA3',
+            name: 'Obsolete',
+            restrictsalefrompos: true,
+            restrictsaleoutofstock: true
+          }
+        ];
+      }
+      if (property === 'terminal') {
+        return { priceList: '5D47B13F42A44352B09C97A72EE42ED8' };
+      }
+      return {};
+    });
+  };
+
+  beforeEach(() => {
+    jest.resetAllMocks();
+    setDefaultMocks();
   });
 
   describe('check restrictions', () => {
@@ -305,20 +341,6 @@ describe('addProduct preparation', () => {
     });
 
     it('product locked', async () => {
-      OB.App.TerminalProperty.get.mockReturnValueOnce([
-        {
-          id: '1A62CC9E44364EA6881A0A86417D61AF',
-          name: 'Ramp-Up',
-          restrictsalefrompos: false,
-          restrictsaleoutofstock: false
-        },
-        {
-          id: '7E4B33B5FB6444409E45D61668269FA3',
-          name: 'Obsolete',
-          restrictsalefrompos: true,
-          restrictsaleoutofstock: true
-        }
-      ]);
       const lockedProduct = {
         ...Product.base,
         productStatus: '7E4B33B5FB6444409E45D61668269FA3'
@@ -793,6 +815,212 @@ describe('addProduct preparation', () => {
           ]
         })
       ).rejects.toThrow('Cannot handle attributes for more than one product');
+    });
+
+    describe('prepare product price (multi pricelist)', () => {
+      it('multi pricelist disabled', async () => {
+        OB.App.Security.hasPermission.mockImplementation(
+          property => property !== 'EnableMultiPriceList'
+        );
+        const crossStoreProduct = {
+          ...Product.base,
+          crossStore: true
+        };
+        const payload = {
+          products: [{ product: crossStoreProduct, qty: 1 }],
+          options: {},
+          attrs: {}
+        };
+        const newPayload = await prepareAction(payload);
+        expect(newPayload).toEqual(payload);
+      });
+
+      it('product update price from pricelist disabled', async () => {
+        OB.App.Security.hasPermission.mockReturnValue(true);
+        const crossStoreProduct = {
+          ...Product.base,
+          crossStore: true,
+          updatePriceFromPricelist: false
+        };
+        const payload = {
+          products: [{ product: crossStoreProduct, qty: 1 }],
+          options: {},
+          attrs: {}
+        };
+        const newPayload = await prepareAction(payload);
+        expect(newPayload).toEqual(payload);
+      });
+
+      it('packs are ignored', async () => {
+        OB.App.Security.hasPermission.mockReturnValue(true);
+        const crossStoreProduct = {
+          ...Product.base,
+          ispack: true
+        };
+        const payload = {
+          products: [{ product: crossStoreProduct, qty: 1 }],
+          options: {},
+          attrs: {}
+        };
+        const newPayload = await prepareAction(payload);
+        expect(newPayload).toEqual(payload);
+      });
+
+      it('cross store product without price', async () => {
+        OB.App.Security.hasPermission.mockReturnValue(true);
+        const crossStoreProduct = {
+          ...Product.base,
+          crossStore: true,
+          productPrices: []
+        };
+        await expectError(
+          () =>
+            prepareAction({
+              products: [{ product: crossStoreProduct, qty: 1 }]
+            }),
+          {
+            warningMsg: 'OBPOS_ProductNotFoundInPriceList'
+          }
+        );
+      });
+
+      it('change price of cross store product', async () => {
+        OB.App.Security.hasPermission.mockReturnValue(true);
+        const productPrice = {
+          priceListId: '5D47B13F42A44352B09C97A72EE42ED8',
+          price: 23
+        };
+        const crossStoreProduct = {
+          ...Product.base,
+          crossStore: true,
+          productPrices: [productPrice]
+        };
+        const payload = {
+          products: [{ product: crossStoreProduct, qty: 1 }]
+        };
+        const newPayload = await prepareAction(payload);
+        expect(newPayload).toEqual({
+          products: [
+            {
+              product: {
+                ...crossStoreProduct,
+                standardPrice: productPrice.price,
+                listPrice: productPrice.price,
+                currentPrice: productPrice
+              },
+              qty: 1
+            }
+          ],
+          options: {},
+          attrs: {}
+        });
+      });
+
+      it('no price for product in pricelist', async () => {
+        OB.App.Security.hasPermission.mockImplementation(
+          property => property !== 'OBPOS_remote.product'
+        );
+        OB.App.MasterdataModels.ProductPrice.find.mockResolvedValueOnce([]);
+        const otherPriceList = 'C7F693B202DE472EA7CF3AD23CCBAD89';
+        const ticket = {
+          ...Ticket.empty,
+          priceList: otherPriceList
+        };
+        await expectError(
+          () =>
+            prepareAction(
+              {
+                products: [{ product: Product.base, qty: 1 }]
+              },
+              ticket
+            ),
+          {
+            warningMsg: 'OBPOS_ProductNotFoundInPriceList'
+          }
+        );
+      });
+
+      it('no price for product in pricelist (remote)', async () => {
+        OB.App.Security.hasPermission.mockReturnValue(true);
+        OB.App.DAL.find.mockResolvedValue([]);
+        const otherPriceList = 'C7F693B202DE472EA7CF3AD23CCBAD89';
+        const ticket = {
+          ...Ticket.empty,
+          priceList: otherPriceList
+        };
+        await expectError(
+          () =>
+            prepareAction(
+              {
+                products: [{ product: Product.base, qty: 1 }]
+              },
+              ticket
+            ),
+          {
+            warningMsg: 'OBPOS_ProductNotFoundInPriceList'
+          }
+        );
+      });
+
+      it('change price of product', async () => {
+        OB.App.Security.hasPermission.mockImplementation(
+          property => property !== 'OBPOS_remote.product'
+        );
+        OB.App.MasterdataModels.ProductPrice.find.mockResolvedValueOnce([
+          { pricestd: 23, pricelist: 29 }
+        ]);
+        const otherPriceList = 'C7F693B202DE472EA7CF3AD23CCBAD89';
+        const ticket = {
+          ...Ticket.empty,
+          priceList: otherPriceList
+        };
+        const payload = {
+          products: [{ product: Product.base, qty: 1 }]
+        };
+        const newPayload = await prepareAction(payload, ticket);
+        expect(newPayload).toEqual({
+          products: [
+            {
+              product: {
+                ...Product.base,
+                standardPrice: 23,
+                listPrice: 29
+              },
+              qty: 1
+            }
+          ],
+          options: {},
+          attrs: {}
+        });
+      });
+
+      it('change price of product (remote)', async () => {
+        OB.App.Security.hasPermission.mockReturnValue(true);
+        OB.App.DAL.find.mockResolvedValue([{ pricestd: 23, pricelist: 29 }]);
+        const otherPriceList = 'C7F693B202DE472EA7CF3AD23CCBAD89';
+        const ticket = {
+          ...Ticket.empty,
+          priceList: otherPriceList
+        };
+        const payload = {
+          products: [{ product: Product.base, qty: 1 }]
+        };
+        const newPayload = await prepareAction(payload, ticket);
+        expect(newPayload).toEqual({
+          products: [
+            {
+              product: {
+                ...Product.base,
+                standardPrice: 23,
+                listPrice: 29
+              },
+              qty: 1
+            }
+          ],
+          options: {},
+          attrs: {}
+        });
+      });
     });
   });
 
