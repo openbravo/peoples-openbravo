@@ -12,12 +12,6 @@ const deepfreeze = require('deepfreeze');
 require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/cashup/cashManagementActions');
 
 describe('Cashup - create Cash Management State Action', () => {
-  // let initCashup;
-
-  // beforeAll(() => {
-  //   initCashup = OB.App.StateAPI.Cashup.initCashup;
-  // });
-
   it('create a cash management', () => {
     const initialState = {
       id: 'C74BF4B09DD827502AABA8DF4882DEDC',
