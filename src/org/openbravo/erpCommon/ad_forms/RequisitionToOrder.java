@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -295,7 +295,7 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
             && datalines[i].quantityorder.isEmpty()
             && StringUtils.equals(datalines[i].secuomname, "**")) {
           RequisitionToOrderData[] defaultAumData = RequisitionToOrderData.selectAUMDefault(this,
-              datalines[i].mProductId);
+              datalines[i].mProductId, vars.getClient(), strOrgId);
           String defaultAum = (defaultAumData.length > 0) ? defaultAumData[0].cAum
               : datalines[i].cUomId;
           datalines[i].aumqty = datalines[i].qtytoorder;
@@ -317,7 +317,7 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
         xmlDocument.setParameter("havesecuom", "display:none;");
         if (datalines[i].cAum.isEmpty() && datalines[i].aumqty.isEmpty()) {
           RequisitionToOrderData[] defaultAumData = RequisitionToOrderData.selectAUMDefault(this,
-              datalines[i].mProductId);
+              datalines[i].mProductId, vars.getClient(), strOrgId);
           String defaultAum = (defaultAumData.length > 0) ? defaultAumData[0].cAum
               : datalines[i].cUomId;
           datalines[i].aumqty = datalines[i].qtytoorder;
@@ -369,7 +369,7 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
             && dataselected[i].quantityorder.isEmpty()
             && StringUtils.equals(dataselected[i].secuomname, "**")) {
           RequisitionToOrderData[] defaultAumData = RequisitionToOrderData.selectAUMDefault(this,
-              dataselected[i].mProductId);
+              dataselected[i].mProductId, vars.getClient(), strOrgId);
           String defaultAum = (defaultAumData.length > 0) ? defaultAumData[0].cAum
               : dataselected[i].cUomId;
           dataselected[i].aumqty = dataselected[i].lockqty;
@@ -391,7 +391,7 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
         xmlDocument.setParameter("havesecuomsel", "display:none;");
         if (dataselected[i].cAum.isEmpty() && dataselected[i].aumqty.isEmpty()) {
           RequisitionToOrderData[] defaultAumData = RequisitionToOrderData.selectAUMDefault(this,
-              dataselected[i].mProductId);
+              dataselected[i].mProductId, vars.getClient(), strOrgId);
           String defaultAum = (defaultAumData.length > 0) ? defaultAumData[0].cAum
               : dataselected[i].cUomId;
           dataselected[i].aumqty = dataselected[i].lockqty;
@@ -704,7 +704,7 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
           try {
             if (lines[i].cAum.isEmpty()) {
               RequisitionToOrderData[] defaultAumData = RequisitionToOrderData
-                  .selectAUMDefault(this, lines[i].mProductId);
+                  .selectAUMDefault(this, lines[i].mProductId, vars.getClient(), strOrg);
               lines[i].cAum = (defaultAumData.length > 0) ? defaultAumData[0].cAum
                   : lines[i].cUomId;
             }
