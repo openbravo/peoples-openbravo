@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -9,6 +9,7 @@
 package org.openbravo.retail.posterminal;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -93,18 +94,7 @@ public class SaveDataActionHandler extends BaseActionHandler {
             .equals(JsonConstants.RPCREQUEST_STATUS_FAILURE)) {
           errorb = true;
 
-          OBContext.setAdminMode(true);
-          try {
-            error = OBDal.getInstance().get(OBPOSErrors.class, errorId);
-            error.setProcessNow(false);
-            OBDal.getInstance().save(error);
-            OBDal.getInstance().flush();
-            // The process may have changed the error information, we need to commit and close the
-            // transaction
-            OBDal.getInstance().commitAndClose();
-          } finally {
-            OBContext.restorePreviousMode();
-          }
+          updateErrorStatus(Arrays.asList(error), false);
         } else {
           // Execute post process hooks.
           for (ImportEntryPostProcessor importEntryPostProcessor : importEntryPostProcessors
@@ -112,17 +102,7 @@ public class SaveDataActionHandler extends BaseActionHandler {
             importEntryPostProcessor.afterProcessing(entry);
           }
 
-          OBContext.setAdminMode(true);
-          try {
-            error = OBDal.getInstance().get(OBPOSErrors.class, errorId);
-            error.setOrderstatus("Y");
-            error.setProcessNow(false);
-            OBDal.getInstance().save(error);
-            OBDal.getInstance().flush();
-            OBDal.getInstance().commitAndClose();
-          } finally {
-            OBContext.restorePreviousMode();
-          }
+          updateErrorStatus(Arrays.asList(error), true);
         }
       }
 
@@ -149,6 +129,12 @@ public class SaveDataActionHandler extends BaseActionHandler {
       }
     } catch (Exception e) {// won't' happen
       log.error("Error while processing the record", e);
+      // Rollback
+      OBDal.getInstance().rollbackAndClose();
+
+      // Update OBPOSErrors Processing status
+      updateErrorStatus(errors, false);
+
       JSONObject result = new JSONObject();
       try {
         result.put("message", Utility.messageBD(new DalConnectionProvider(false),
@@ -157,6 +143,24 @@ public class SaveDataActionHandler extends BaseActionHandler {
         // won't happen
       }
       return result;
+    }
+  }
+
+  private void updateErrorStatus(final List<OBPOSErrors> errors, final boolean orderStatus) {
+    OBContext.setAdminMode(true);
+    try {
+      for (OBPOSErrors error : errors) {
+        OBPOSErrors obposErrors = OBDal.getInstance().get(OBPOSErrors.class, error.getId());
+        if (orderStatus) {
+          obposErrors.setOrderstatus("Y");
+        }
+        obposErrors.setProcessNow(false);
+        OBDal.getInstance().save(obposErrors);
+      }
+      OBDal.getInstance().flush();
+      OBDal.getInstance().commitAndClose();
+    } finally {
+      OBContext.restorePreviousMode();
     }
   }
 }

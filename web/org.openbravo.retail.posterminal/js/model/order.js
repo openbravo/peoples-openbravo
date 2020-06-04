@@ -4336,10 +4336,10 @@
           'productBOM',
           productBOM.map(bomLine => {
             return {
-              grossAmount: me.get('priceIncludesTax')
+              grossUnitAmount: me.get('priceIncludesTax')
                 ? OB.DEC.mul(bomLine.bomprice, bomLine.bomquantity)
                 : undefined,
-              netAmount: me.get('priceIncludesTax')
+              netUnitAmount: me.get('priceIncludesTax')
                 ? undefined
                 : OB.DEC.mul(bomLine.bomprice, bomLine.bomquantity),
               qty: bomLine.bomquantity,
@@ -6901,6 +6901,9 @@
       notPrePayments = _.filter(this.get('payments').models, function(payment) {
         return !payment.get('isPrePayment');
       });
+      OB.info(
+        '[checkNotProcessedPayments] Non Prepayments ' + notPrePayments.length
+      );
       if (notPrePayments.length) {
         var paymentList = [OB.I18N.getLabel('OBPOS_C&RDeletePaymentsBodyInit')];
         var symbol = OB.MobileApp.model.get('terminal').symbol;
@@ -6940,6 +6943,7 @@
           },
           function(data) {
             if (data && data.exception) {
+              OB.info('[CanCancelOrder] Exception');
               if (data.exception.message) {
                 OB.UTIL.showConfirmation.display(
                   OB.I18N.getLabel('OBMOBC_Error'),
@@ -6953,6 +6957,7 @@
               );
               return;
             } else if (data && data.orderCancelled) {
+              OB.info('[CanCancelOrder] Order Cancelled');
               OB.UTIL.showConfirmation.display(
                 OB.I18N.getLabel('OBMOBC_Error'),
                 OB.I18N.getLabel('OBPOS_OrderCanceledError')
@@ -6963,6 +6968,7 @@
               data.notDeliveredDeferredServices &&
               data.notDeliveredDeferredServices.length
             ) {
+              OB.info('[CanCancelOrder] notDeliveredDeferredServices');
               var components = [];
               components.push({
                 content: OB.I18N.getLabel('OBPOS_CannotCancelLayWithDeferred'),
@@ -6988,6 +6994,7 @@
               );
               return;
             } else {
+              OB.info('[CanCancelOrder] cancelLayawayOrder');
               var cancelLayawayOrder = function() {
                 OB.UTIL.HookManager.executeHooks(
                   'OBPOS_PreCancelLayaway',
@@ -6996,8 +7003,11 @@
                   },
                   function(args) {
                     if (args && args.cancelOperation) {
+                      OB.info('[OBPOS_PreCancelLayaway] Error');
                       return;
                     }
+
+                    OB.info('[OBPOS_PreCancelLayaway] Callback');
                     //Cloning order to be canceled
                     var clonedReceipt = new OB.Model.Order();
                     OB.UTIL.clone(me, clonedReceipt);
@@ -7084,6 +7094,7 @@
                       if (linesToDelete.length) {
                         me.get('lines').remove(linesToDelete);
                       }
+                      OB.info('[OBPOS_PreCancelLayaway] update lines');
                       // Remove or update the related lines id
                       _.each(me.get('lines').models, function(line) {
                         if (
@@ -7133,6 +7144,7 @@
                       me.set('forceCalculateTaxes', true);
                       me.unset('id');
                       me.unset('skipCalculateReceipt');
+                      OB.info('[OBPOS_PreCancelLayaway] calculateReceipt');
                       me.calculateReceipt(function() {
                         me.getPrepaymentAmount(function() {
                           me.set('isEditable', false);

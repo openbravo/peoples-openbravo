@@ -537,52 +537,43 @@ enyo.kind({
 
       // Call to draw currencies.
       const currencyId = payment.get('paymentMethod').currency;
-      OB.Dal.find(
-        OB.Model.CurrencyPanel,
-        {
-          currency: currencyId,
-          _orderByClause: 'line'
-        },
-        coins => {
-          let coinCol = new Backbone.Collection();
+      let coins = OB.MobileApp.model
+          .get('currencyPanel')
+          .filter(m => m.currency === currencyId),
+        coinCol = new Backbone.Collection();
 
-          if (
-            coins.length === 0 &&
-            payment.get('paymentMethod').currency === '102'
-          ) {
-            coins = OB.OBPOSCloseCash.UI.RenderCashPaymentsLine.getLegacyCoins();
-          }
+      if (
+        coins.length === 0 &&
+        payment.get('paymentMethod').currency === '102'
+      ) {
+        coins = OB.OBPOSCloseCash.UI.RenderCashPaymentsLine.getLegacyCoins()
+          .models;
+      }
 
-          coins.forEach(coin => {
-            let coinModel = new Backbone.Model();
-            coinModel.set('numberOfCoins', 0);
-            coinModel.set('totalAmount', 0);
-            coinModel.set('coinValue', coin.get('amount'));
-            coinModel.set('backcolor', coin.get('backcolor'));
-            coinModel.set('bordercolor', coin.get('bordercolor'));
-            coinCol.add(coinModel);
-          });
+      coins.forEach(function(coin) {
+        const isModel = coin instanceof Backbone.Model,
+          coinModel = new Backbone.Model(isModel ? coin.attributes : coin);
+        coinModel.set('numberOfCoins', 0);
+        coinModel.set('totalAmount', 0);
+        coinModel.set('coinValue', isModel ? coin.get('amount') : coin.amount);
+        coinCol.add(coinModel);
+      });
 
-          this.payment.set('coinsCollection', coinCol);
-          this.$.paymentsList.setCollection(coinCol);
-          this.payment.set('foreignCounted', 0);
-          this.payment.set('counted', 0);
-          this.payment.set(
-            'foreignDifference',
-            OB.DEC.sub(0, this.payment.get('foreignExpected'))
-          );
-          this.printTotals();
-
-          this.setCoinsStatus(null);
-
-          this.$.renderLoading.hide();
-          this.$.paymentsList.show();
-        }
+      this.payment.set('coinsCollection', coinCol);
+      this.$.paymentsList.setCollection(coinCol);
+      this.payment.set('foreignCounted', 0);
+      this.payment.set('counted', 0);
+      this.payment.set(
+        'foreignDifference',
+        OB.DEC.sub(0, this.payment.get('foreignExpected'))
       );
+      this.printTotals();
+      this.setCoinsStatus(null);
+      this.$.renderLoading.hide();
+      this.$.paymentsList.show();
     } else {
       this.$.paymentsList.setCollection(this.payment.get('coinsCollection'));
       this.printTotals();
-
       this.setCoinsStatus(null);
     }
   },

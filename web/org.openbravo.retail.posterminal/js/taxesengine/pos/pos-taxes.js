@@ -31,11 +31,11 @@
           lineRate: line.get('lineRate'),
           country: line.get('country'),
           region: line.get('region'),
-          grossAmount:
+          grossUnitAmount:
             line.get('discountedGross') || line.get('discountedGross') === 0
               ? line.get('discountedGross')
               : line.get('gross'),
-          netAmount:
+          netUnitAmount:
             line.get('discountedNet') || line.get('discountedNet') === 0
               ? line.get('discountedNet')
               : line.get('net'),

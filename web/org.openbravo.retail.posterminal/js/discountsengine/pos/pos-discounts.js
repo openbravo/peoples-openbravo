@@ -148,8 +148,8 @@
           id: line.get('id'),
           product: line.get('product').toJSON(),
           qty: line.get('qty'),
-          grossUnitPrice: line.get('price'),
-          netUnitPrice: line.get('price')
+          baseGrossUnitPrice: line.get('price'),
+          baseNetUnitPrice: line.get('price')
         };
       })
     };

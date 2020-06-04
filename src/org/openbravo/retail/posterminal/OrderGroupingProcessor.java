@@ -150,7 +150,7 @@ public class OrderGroupingProcessor {
           .isSeparateinvoiceforreturns() ? "and o.c_doctype_id = dt.c_doctype_id" : "";
       final String strSeparateInvoiceForReturnsLines = posTerminal.getObposTerminaltype()
           .isSeparateinvoiceforreturns()
-              ? "and o.c_doctype_id = dt.c_doctype_id and dt.c_doctypeinvoice_id = i.c_doctype_id"
+              ? "and o.c_doctype_id = dt.c_doctype_id and dt.c_doctypeaggrinvoice_id = i.c_doctype_id"
               : "and org.em_obpos_c_doctype_id = dt.c_doctype_id";
 
       // insert invoice headers

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2019 Openbravo S.L.U.
+ * Copyright (C) 2015-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -49,6 +49,7 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
+import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Location;
@@ -133,6 +134,11 @@ public class ExternalOrderLoader extends OrderLoader {
   @Override
   public Entity getEntity() {
     return ModelProvider.getInstance().getEntity(Order.ENTITY_NAME);
+  }
+
+  @Override
+  protected boolean bypassSecurity() {
+    return true;
   }
 
   @Override
@@ -1243,13 +1249,16 @@ public class ExternalOrderLoader extends OrderLoader {
       throw new OBException("No pos terminal found using id " + posId + " json " + jsonObject);
     }
 
-    // Context will be set according to the terminal
     OBContext.setOBContext(OBContext.getOBContext().getUser().getId(),
-        POSLoginHandler
-            .getNearestRoleValidToLoginInWebPosTerminalForCertainUser(
-                OBContext.getOBContext().getUser(), result)
-            .getId(),
-        result.getClient().getId(), result.getOrganization().getId());
+        OBContext.getOBContext().getRole().getId(), result.getClient().getId(),
+        result.getOrganization().getId());
+
+    final Role role = OBDal.getInstance()
+        .get(Role.class, OBContext.getOBContext().getRole().getId());
+    if (!role.isWebServiceEnabled()) {
+      throw new OBException(
+          "Webservice is not enabled for the user " + OBContext.getOBContext().getUser().getName());
+    }
     return result;
   }
 

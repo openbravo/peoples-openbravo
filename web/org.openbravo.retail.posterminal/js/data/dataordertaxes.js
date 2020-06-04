@@ -146,8 +146,8 @@
       if (receipt.get('priceIncludesTax')) {
         line.set(
           {
-            net: lineTax.netAmount,
-            discountedNet: lineTax.netAmount,
+            net: lineTax.netUnitAmount,
+            discountedNet: lineTax.netUnitAmount,
             pricenet: lineTax.netUnitPrice,
             lineRate: lineTax.taxRate,
             tax: lineTax.tax,
@@ -160,8 +160,8 @@
       } else {
         line.set(
           {
-            gross: lineTax.grossAmount,
-            discountedGross: lineTax.grossAmount,
+            gross: lineTax.grossUnitAmount,
+            discountedGross: lineTax.grossUnitAmount,
             lineRate: lineTax.taxRate,
             tax: lineTax.tax,
             taxLines: lineTax.taxes
