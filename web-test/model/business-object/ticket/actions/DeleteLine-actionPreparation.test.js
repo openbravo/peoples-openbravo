@@ -73,6 +73,12 @@ Ticket = {
   simple: {
     ...Ticket.empty,
     lines: [{ id: 'l1' }]
+  },
+
+  cancelAndReplace: {
+    ...Ticket.empty,
+    replacedorder: true,
+    lines: [{ id: 'l1', qty: 10, deliveredQuantity: 5 }]
   }
 };
 
@@ -124,7 +130,7 @@ describe('deleteLine preparation', () => {
   });
 
   describe('restrictions', () => {
-    it('cannot delete lines in a non editable ticket', async () => {
+    it('prevents non editable ticket', async () => {
       await expectError(
         () =>
           prepareAction(
@@ -133,6 +139,15 @@ describe('deleteLine preparation', () => {
           ),
         {
           errorConfirmation: 'OBPOS_modalNoEditableBody'
+        }
+      );
+    });
+
+    it('prevents cancel&replace with delivered quantity', async () => {
+      await expectError(
+        () => prepareAction({ lineIds: ['l1'] }, Ticket.cancelAndReplace),
+        {
+          errorConfirmation: 'OBPOS_CancelReplaceDeleteLine'
         }
       );
     });

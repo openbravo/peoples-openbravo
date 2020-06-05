@@ -59,6 +59,12 @@
         errorConfirmation: 'OBPOS_modalNoEditableBody'
       });
     }
+
+    if (ticket.replacedorder && ticket.lines.some(l => l.deliveredQuantity)) {
+      throw new OB.App.Class.ActionCanceled({
+        errorConfirmation: 'OBPOS_CancelReplaceDeleteLine'
+      });
+    }
   }
 
   function getRelatedServices(ticket, lineIds) {
