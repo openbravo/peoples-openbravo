@@ -1213,7 +1213,7 @@ enyo.kind({
               OB.MobileApp.model.get('OBRDM_storeDocumentTypes'),
               'id'
             ),
-            _limit: OB.Model.OrderToIssue.prototype.dataLimit,
+            _limit: OB.Dal.REMOTE_DATALIMIT,
             remoteFilters: filters,
             orderby: inEvent.advanced
               ? inEvent.orderby

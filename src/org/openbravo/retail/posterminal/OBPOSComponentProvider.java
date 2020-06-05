@@ -100,15 +100,16 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "webprinter/usbprinters/startsp100", "webprinter/usbprinters/wincorth230",
         "webprinter/btprinters/genericBTPrinter", "webprinter/btprinters/zebraZQ320",
 
-        "model/currencypanel", "model/productcharacteristicvalue", "model/characteristicvalue",
-        "model/characteristic", "model/terminal-model", "model/paymentmethodcashup",
-        "model/taxcashup", "model/orderassociationsfilter", "model/product-servicelinked",
-        "model/prepaymentrules", "components/modalcancel", "components/subwindow",
-        "components/leftsubwindow", "components/modalreceiptproperties",
-        "components/modalreceiptlineproperties", "components/modalnoteditableorder",
-        "components/modalnoteditableline", "components/modalmodulesindev",
-        "components/modalselectprinters", "components/modalmorepaymentmethods",
-        "components/modalDeliveryChange", "components/obpos-gridkeyboard",
+        "model/productcharacteristicvalue", "model/characteristicvalue", "model/characteristic",
+        "model/terminal-model", "model/paymentmethodcashup", "model/taxcashup",
+        "model/orderassociationsfilter", "model/product-servicelinked", "model/prepaymentrules",
+
+        "components/modalcancel", "components/subwindow", "components/leftsubwindow",
+        "components/modalreceiptproperties", "components/modalreceiptlineproperties",
+        "components/modalnoteditableorder", "components/modalnoteditableline",
+        "components/modalmodulesindev", "components/modalselectprinters",
+        "components/modalmorepaymentmethods", "components/modalDeliveryChange",
+        "components/obpos-gridkeyboard",
 
         // Web POS window
         "utils/eventbus", "utils/attributeUtils", "utils/cashUpReportUtils",
@@ -253,7 +254,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "utils/deliveryModeUtils", "hookPreOrderSave", "hookPreDeleteLine",
         "hookPostUndo_DeleteLine", "receiptEdit", "receiptMultiLineEdit", "hookRenderOrderLine",
         "hookPrePayment", "hookPreSetPaymentsToReceipt", "components/menuissue",
-        "model/dmorderfilter", "model/ordertoissue", "utils/utils",
+        "model/dmorderfilter", "utils/utils",
 
         "model/ordertoselectorissue", "components/orderselector",
         "components/modalwarehouseselector", "components/orderlineinfopopup",

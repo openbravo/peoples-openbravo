@@ -143,6 +143,7 @@
           ((OB.MobileApp.model.get('terminal').countLayawayAsSales &&
             !(order.get('isLayaway') && !order.get('voidLayaway'))) ||
             (!OB.MobileApp.model.get('terminal').countLayawayAsSales &&
+              !order.get('cancelLayaway') &&
               (order.get('payOnCredit') || order.get('completeTicket'))))
         ) {
           _.each(order.get('lines').models, function(line) {

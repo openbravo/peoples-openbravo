@@ -582,7 +582,7 @@ OB.UTIL.checkRefreshMasterData = function() {
       } else {
         OB.UTIL.clearFlagAndTimersRefreshMasterData();
         if (
-          OB.DS.masterdataBackgroundModels.totalLength +
+          (OB.DS.masterdataBackgroundModels.totalLength || 0) +
             OB.App.MasterdataController.modifiedMasterdataModels.length >
           0
         ) {
