@@ -138,6 +138,7 @@
           `quantities must sum ${line.qty} but they are ${qtySum}`
         );
       }
+      return payload;
     }
   );
 })();

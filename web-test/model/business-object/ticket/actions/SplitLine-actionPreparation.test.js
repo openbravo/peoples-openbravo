@@ -94,8 +94,12 @@ describe('Ticket.splitLine action preparation', () => {
   });
 
   it('passes validations with correct params', async () => {
-    await expect(
-      prepareAction({ lineId: '1', quantities: [50, 30, 20] })
-    ).resolves.not.toThrow();
+    const payload = {
+      lineId: '1',
+      quantities: [50, 30, 20]
+    };
+    const newPayload = await prepareAction(payload);
+
+    expect(newPayload).toStrictEqual(payload);
   });
 });
