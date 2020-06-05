@@ -10,28 +10,28 @@
 /* global lodash */
 
 (function SetLinePriceDefinition() {
-  OB.App.StateAPI.Ticket.registerAction('setLinePrice', (state, payload) => {
-    const ticket = { ...state };
+  OB.App.StateAPI.Ticket.registerAction('setLinePrice', (ticket, payload) => {
+    const newTicket = { ...ticket };
     const { lineIds, price, reason } = payload;
 
-    ticket.lines = ticket.lines.map(l => {
+    newTicket.lines = newTicket.lines.map(l => {
       if (!lineIds.includes(l.id)) {
         return l;
       }
 
       const newLine = {
         ...l,
-        baseGrossUnitPrice: ticket.priceIncludesTax ? price : undefined,
-        baseNetUnitPrice: ticket.priceIncludesTax ? undefined : price
+        baseGrossUnitPrice: newTicket.priceIncludesTax ? price : undefined,
+        baseNetUnitPrice: newTicket.priceIncludesTax ? undefined : price
       };
 
       if (
-        ticket.deliveryPaymentMode === 'PD' &&
+        newTicket.deliveryPaymentMode === 'PD' &&
         newLine.product.obrdmIsdeliveryservice
       ) {
         newLine.obrdmAmttopayindelivery = OB.DEC.mul(price, newLine.qty);
-        newLine.baseGrossUnitPrice = ticket.priceIncludesTax ? 0 : undefined;
-        newLine.baseNetUnitPrice = ticket.priceIncludesTax ? undefined : 0;
+        newLine.baseGrossUnitPrice = newTicket.priceIncludesTax ? 0 : undefined;
+        newLine.baseNetUnitPrice = newTicket.priceIncludesTax ? undefined : 0;
       }
 
       if (reason) {
@@ -43,7 +43,7 @@
       return newLine;
     });
 
-    return ticket;
+    return newTicket;
   });
 
   function checkParameters(ticket, lineIds, price) {
