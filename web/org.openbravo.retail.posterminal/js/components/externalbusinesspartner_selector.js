@@ -355,7 +355,7 @@ enyo.kind({
   ],
   create: function() {
     this.inherited(arguments);
-    this.bpObj = this.params.dialog.externalBPListViewData.getBusinessParterFromList(
+    this.bpObj = this.params.dialog.externalBPListViewData.getBusinessPartnerFromList(
       this.model.get('mixedBp')
     );
     let components = this.bpObj.getPropertiesForList().map(bpProperty => {
