@@ -16,8 +16,10 @@ OB = {
     TerminalProperty: { get: jest.fn() },
     UUID: { generate: jest.fn() }
   },
-  UTIL: { HookManager: { registerHook: jest.fn() } },
-  MobileApp: { model: { get: jest.fn(() => jest.fn()) } }
+  I18N: { getLabel: jest.fn() },
+  MobileApp: { model: { get: jest.fn(() => jest.fn()) } },
+  TerminalProperty: { get: jest.fn() },
+  UTIL: { HookManager: { registerHook: jest.fn() } }
 };
 
 global.lodash = require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/lodash-4.17.15');
@@ -38,6 +40,13 @@ OB.App.TerminalProperty.get.mockImplementation(property => {
         warehousename: 'Vall Blanca Store Warehouse'
       }
     ];
+  } else if (property === 'terminal') {
+    return {
+      organization: 'D270A5AC50874F8BA67A88EE977F8E3B',
+      organization$_identifier: 'Vall Blanca Store',
+      country: '106',
+      region: 'AF310D01B53B461283EB40DB21DCA6B5'
+    };
   }
   return {};
 });

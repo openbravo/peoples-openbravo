@@ -142,23 +142,8 @@
   function createLine(productInfo, ticket, options = {}, attrs = {}) {
     const { product, qty } = productInfo;
 
-    // TODO: properly calculate organization
-    const organization = {
-      id: ticket.organization,
-      country: OB.MobileApp.model.get('terminal').organizationCountryId,
-      region: OB.MobileApp.model.get('terminal').organizationRegionId
-    };
-
-    const warehouse = {
-      id:
-        attrs.splitline == null
-          ? OB.App.TerminalProperty.get('warehouses')[0].warehouseid
-          : attrs.originalLine.warehouse.id,
-      warehousename:
-        attrs.splitline == null
-          ? OB.App.TerminalProperty.get('warehouses')[0].warehousename
-          : attrs.originalLine.warehouse.warehousename
-    };
+    const organization = getOrganization(ticket, product, attrs);
+    const warehouse = getWarehouse(attrs);
 
     // TODO: validateAllowSalesWithReturn
 
@@ -195,6 +180,48 @@
     setDeliveryMode(newLine, ticket);
     setLineAttributes(newLine, attrs, productInfo);
     return newLine;
+  }
+
+  function getOrganization(ticket, product, attrs) {
+    if (attrs.organization) {
+      return {
+        id: attrs.organization.id,
+        orgName: attrs.organization.name,
+        country: attrs.organization.country,
+        region: attrs.organization.region
+      };
+    }
+    if (product.crossStore) {
+      const store = OB.App.TerminalProperty.get('store').find(
+        s => s.id === ticket.organization
+      );
+      return {
+        id: store.id,
+        orgName: store.name,
+        country: store.country,
+        region: store.region
+      };
+    }
+    return {
+      id: OB.App.TerminalProperty.get('terminal').organization,
+      orgName: OB.I18N.getLabel('OBPOS_LblThisStore', [
+        OB.App.TerminalProperty.get('terminal').organization$_identifier
+      ]),
+      country: OB.App.TerminalProperty.get('terminal').organizationCountryId,
+      region: OB.App.TerminalProperty.get('terminal').organizationRegionId
+    };
+  }
+
+  function getWarehouse(attrs) {
+    const splitLine = attrs.splitline == null;
+    return {
+      id: splitLine
+        ? OB.App.TerminalProperty.get('warehouses')[0].warehouseid
+        : attrs.originalLine.warehouse.id,
+      warehousename: splitLine
+        ? OB.App.TerminalProperty.get('warehouses')[0].warehousename
+        : attrs.originalLine.warehouse.warehousename
+    };
   }
 
   function setDeliveryMode(line, ticket) {
