@@ -38,6 +38,7 @@
       let newPayload = { ...payload };
 
       newPayload = prepareConfiguration(newPayload);
+      checkRestrictions(ticket, newPayload);
       return newPayload;
     }
   );
@@ -50,6 +51,14 @@
       }
     };
     return newPayload;
+  }
+
+  function checkRestrictions(ticket) {
+    if (ticket.isEditable === false) {
+      throw new OB.App.Class.ActionCanceled({
+        errorConfirmation: 'OBPOS_modalNoEditableBody'
+      });
+    }
   }
 
   function getRelatedServices(ticket, lineIds) {

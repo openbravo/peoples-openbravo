@@ -122,4 +122,19 @@ describe('deleteLine preparation', () => {
       await assertConfig(false);
     });
   });
+
+  describe('restrictions', () => {
+    it('cannot delete lines in a non editable ticket', async () => {
+      await expectError(
+        () =>
+          prepareAction(
+            { lineIds: ['l1'] },
+            { ...Ticket.simple, isEditable: false }
+          ),
+        {
+          errorConfirmation: 'OBPOS_modalNoEditableBody'
+        }
+      );
+    });
+  });
 });
