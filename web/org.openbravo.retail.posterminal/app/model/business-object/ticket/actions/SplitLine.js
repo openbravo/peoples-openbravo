@@ -64,16 +64,16 @@
     return newPromos;
   }
 
-  OB.App.StateAPI.Ticket.registerAction('splitLine', (state, payload) => {
-    const ticket = { ...state };
+  OB.App.StateAPI.Ticket.registerAction('splitLine', (ticket, payload) => {
+    const newTicket = { ...ticket };
     const { lineId, quantities } = payload;
 
-    const editingLine = ticket.lines.find(l => l.id === lineId);
+    const editingLine = newTicket.lines.find(l => l.id === lineId);
 
     // keep 1st quantity and generate new lines for the rest
     const [qtyToKeep] = quantities.splice(0, 1);
 
-    ticket.lines = ticket.lines.map(l => {
+    newTicket.lines = newTicket.lines.map(l => {
       if (l.id !== lineId) {
         return l;
       }
@@ -88,20 +88,23 @@
       return newLine;
     });
 
-    const lineIdx = ticket.lines.map(l => l.id).indexOf(lineId);
-    ticket.lines.splice(lineIdx + 1, 0, ...newLines);
+    const lineIdx = newTicket.lines.map(l => l.id).indexOf(lineId);
+    newTicket.lines.splice(lineIdx + 1, 0, ...newLines);
 
-    if (ticket.discountsFromUser && ticket.discountsFromUser.manualPromotions) {
-      ticket.discountsFromUser = {
-        ...ticket.discountsFromUser,
+    if (
+      newTicket.discountsFromUser &&
+      newTicket.discountsFromUser.manualPromotions
+    ) {
+      newTicket.discountsFromUser = {
+        ...newTicket.discountsFromUser,
         manualPromotions: recalculateManualPromotions(
           editingLine,
-          ticket.discountsFromUser.manualPromotions,
-          [ticket.lines.find(l => l.id === lineId), ...newLines]
+          newTicket.discountsFromUser.manualPromotions,
+          [newTicket.lines.find(l => l.id === lineId), ...newLines]
         )
       };
     }
-    return ticket;
+    return newTicket;
   });
 
   OB.App.StateAPI.Ticket.splitLine.addActionPreparation(
