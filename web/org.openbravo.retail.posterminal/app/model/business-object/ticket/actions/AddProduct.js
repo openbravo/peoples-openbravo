@@ -204,9 +204,7 @@
     }
     return {
       id: OB.App.TerminalProperty.get('terminal').organization,
-      orgName: OB.I18N.getLabel('OBPOS_LblThisStore', [
-        OB.App.TerminalProperty.get('terminal').organization$_identifier
-      ]),
+      orgName: OB.App.TerminalProperty.get('terminal').organization$_identifier,
       country: OB.App.TerminalProperty.get('terminal').organizationCountryId,
       region: OB.App.TerminalProperty.get('terminal').organizationRegionId
     };
@@ -763,7 +761,7 @@
         pi.product.productCategory
       );
       if (data.exception) {
-        OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
+        OB.error('Error getting related services information');
         return pi;
       }
       return {

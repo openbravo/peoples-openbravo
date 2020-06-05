@@ -26,8 +26,6 @@ OB = {
     View: { DialogUIHandler: { inputData: jest.fn() } }
   },
 
-  I18N: { getLabel: jest.fn() },
-
   UTIL: {
     HookManager: { registerHook: jest.fn() },
     servicesFilter: jest.fn()

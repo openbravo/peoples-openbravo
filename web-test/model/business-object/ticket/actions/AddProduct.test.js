@@ -16,7 +16,6 @@ OB = {
     TerminalProperty: { get: jest.fn() },
     UUID: { generate: jest.fn() }
   },
-  I18N: { getLabel: jest.fn() },
   MobileApp: { model: { get: jest.fn(() => jest.fn()) } },
   TerminalProperty: { get: jest.fn() },
   UTIL: { HookManager: { registerHook: jest.fn() } }
