@@ -376,12 +376,7 @@ enyo.kind({
     OB.App.State.Ticket.splitLine({
       lineId: this.orderline.get('id'),
       quantities: this.$.body.$.qtyLines.getValues()
-    })
-      .then(() => {
-        // TODO: remove this when ticket totals get auto-calculated
-        this.receipt.calculateReceipt();
-      })
-      .catch(e => OB.App.View.ActionCanceledUIHandler.handle);
+    }).catch(e => OB.App.View.ActionCanceledUIHandler.handle);
   },
 
   getSplitProposal: function() {
