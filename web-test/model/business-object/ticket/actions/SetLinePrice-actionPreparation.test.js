@@ -41,11 +41,12 @@ require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/SetLinePrice');
 
 const basicTicket = {
+  priceIncludesTax: true,
   lines: [
     {
       id: '1',
       qty: 1,
-      price: 10,
+      baseGrossUnitPrice: 10,
       priceList: 10,
       isEditable: true,
       product: { listPrice: 10, obposEditablePrice: true, productType: 'I' }
@@ -53,7 +54,7 @@ const basicTicket = {
     {
       id: '2',
       qty: 1,
-      price: 20,
+      baseGrossUnitPrice: 20,
       priceList: 20,
       isEditable: true,
       product: { listPrice: 20, obposEditablePrice: true, productType: 'I' }
@@ -61,7 +62,7 @@ const basicTicket = {
     {
       id: '3',
       qty: 1,
-      price: 30,
+      baseGrossUnitPrice: 30,
       priceList: 30,
       isEditable: true,
       product: { listPrice: 30, obposEditablePrice: true, productType: 'I' }
@@ -70,12 +71,13 @@ const basicTicket = {
 };
 
 const basicReturn = {
+  priceIncludesTax: true,
   isPaid: false,
   lines: [
     {
       id: '1',
       qty: 1,
-      price: 10,
+      baseGrossUnitPrice: 10,
       priceList: 10,
       isEditable: false,
       originalDocumentNo: '0001',

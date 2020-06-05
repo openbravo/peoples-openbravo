@@ -105,11 +105,19 @@
     const canModifyVerifiedReturn =
       !ticket.isPaid &&
       OB.App.Security.hasPermission('OBPOS_ModifyPriceVerifiedReturns');
+
+    const priceProperty = ticket.priceIncludesTax
+      ? 'baseGrossUnitPrice'
+      : 'baseNetUnitPrice';
     if (
       lines.some(
         l =>
           !l.isEditable &&
-          !(canModifyVerifiedReturn && l.originalDocumentNo && price < l.price)
+          !(
+            canModifyVerifiedReturn &&
+            l.originalDocumentNo &&
+            price < l[priceProperty]
+          )
       )
     ) {
       throw new OB.App.Class.ActionCanceled({
