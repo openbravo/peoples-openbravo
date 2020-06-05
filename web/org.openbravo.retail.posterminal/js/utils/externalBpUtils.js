@@ -30,10 +30,10 @@ OB.UTIL.modalCustomer = function() {
 };
 
 OB.UTIL.filterColumn = function(fullFlt) {
-  if (OB.UTIL.externalBp()) {
+  if (fullFlt.column === 'businessPartner' && OB.UTIL.externalBp()) {
     return 'externalBusinessPartnerReference';
   } else {
-    return fullFlt.name;
+    return fullFlt.column;
   }
 };
 
