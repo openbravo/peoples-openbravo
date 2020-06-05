@@ -83,25 +83,6 @@
     return ticket.orderType === 1;
   }
 
-  function setLineAttributes(line, attrs, productInfo) {
-    const lineAttrs = {
-      ...attrs,
-      hasRelatedServices: productInfo.hasRelatedServices,
-      hasMandatoryServices: productInfo.hasMandatoryServices
-    };
-    if (
-      productInfo.product.productType === 'S' &&
-      lineAttrs.relatedLines &&
-      line.relatedLines
-    ) {
-      lineAttrs.relatedLines = OB.App.ArrayUtils.union(
-        line.relatedLines,
-        lineAttrs.relatedLines
-      );
-    }
-    Object.assign(line, lineAttrs);
-  }
-
   function getLineToEdit(productInfo, ticket, options = {}, attrs = {}) {
     const { product, qty } = productInfo;
     if (product.obposScale || !product.groupProduct) {
@@ -176,9 +157,9 @@
       newLine.netPrice = OB.DEC.number(product.standardPrice);
     }
 
-    // TODO: related lines
-    setDeliveryMode(newLine, ticket);
     setLineAttributes(newLine, attrs, productInfo);
+    setRelatedLines(newLine, ticket);
+    setDeliveryMode(newLine, ticket);
     return newLine;
   }
 
@@ -220,6 +201,67 @@
         ? OB.App.TerminalProperty.get('warehouses')[0].warehousename
         : attrs.originalLine.warehouse.warehousename
     };
+  }
+
+  function setLineAttributes(line, attrs, productInfo) {
+    const lineAttrs = {
+      ...attrs,
+      hasRelatedServices: productInfo.hasRelatedServices,
+      hasMandatoryServices: productInfo.hasMandatoryServices
+    };
+    if (
+      productInfo.product.productType === 'S' &&
+      lineAttrs.relatedLines &&
+      line.relatedLines
+    ) {
+      lineAttrs.relatedLines = OB.App.ArrayUtils.union(
+        line.relatedLines,
+        lineAttrs.relatedLines
+      );
+    }
+    Object.assign(line, lineAttrs);
+  }
+
+  function setRelatedLines(line, ticket) {
+    if (!line.relatedLines) {
+      return;
+    }
+    // eslint-disable-next-line no-param-reassign
+    line.groupService = line.product.groupProduct;
+    // Set the 'hasServices' property if the new line is adding a service related to a product to the order
+    // Without the 'hasServices' property the quantity rules for services are not executed
+    // TODO: do we need this?
+    if (!ticket.hasServices) {
+      // eslint-disable-next-line no-param-reassign
+      ticket.hasServices = true;
+    }
+
+    // Check if it is necessary to modify the tax category of related products
+    if (!line.product.productServiceLinked) {
+      return;
+    }
+
+    ticket.product.productServiceLinked.forEach(productServiceLinked => {
+      ticket.relatedLines
+        .filter(
+          relatedProduct =>
+            relatedProduct.productCategory ===
+            productServiceLinked.productCategory
+        )
+        .forEach(relatedProduct => {
+          const relatedLine = ticket.lines.find(
+            l => l.id === relatedProduct.orderlineId
+          );
+          if (relatedLine) {
+            relatedLine.product.oldTaxCategory =
+              relatedLine.product.taxCategory;
+            relatedLine.product.taxCategory = productServiceLinked.taxCategory;
+            relatedLine.previousLineRate = relatedLine.lineRate;
+            // TODO: do we need this?
+            relatedLine.recalculateTax = true;
+          }
+        });
+    });
   }
 
   function setDeliveryMode(line, ticket) {
