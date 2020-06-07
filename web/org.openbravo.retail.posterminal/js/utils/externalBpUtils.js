@@ -33,7 +33,7 @@ OB.UTIL.filterColumn = function(fullFlt) {
   if (fullFlt.column === 'businessPartner' && OB.UTIL.externalBp()) {
     return 'externalBusinessPartnerReference';
   } else {
-    return fullFlt.column;
+    return fullFlt.name;
   }
 };
 
