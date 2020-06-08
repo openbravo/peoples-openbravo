@@ -22091,10 +22091,10 @@ Advanced features are only granted to the automatic roles defined as advanced.]]
 <!--218CE870950D4BFEA1BF3BB11147B66C-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--218CE870950D4BFEA1BF3BB11147B66C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--218CE870950D4BFEA1BF3BB11147B66C-->  <COLUMNNAME><![CDATA[C_Extbp_Enabled]]></COLUMNNAME>
-<!--218CE870950D4BFEA1BF3BB11147B66C-->  <NAME><![CDATA[External Business Partner Integration]]></NAME>
-<!--218CE870950D4BFEA1BF3BB11147B66C-->  <PRINTNAME><![CDATA[External Business Partner Integration]]></PRINTNAME>
-<!--218CE870950D4BFEA1BF3BB11147B66C-->  <DESCRIPTION><![CDATA[It allows to configure an integration with an external business partner management system]]></DESCRIPTION>
-<!--218CE870950D4BFEA1BF3BB11147B66C-->  <HELP><![CDATA[It allows to configure an integration with an external business partner management system]]></HELP>
+<!--218CE870950D4BFEA1BF3BB11147B66C-->  <NAME><![CDATA[Enable CRM Connector]]></NAME>
+<!--218CE870950D4BFEA1BF3BB11147B66C-->  <PRINTNAME><![CDATA[Enable CRM Connector]]></PRINTNAME>
+<!--218CE870950D4BFEA1BF3BB11147B66C-->  <DESCRIPTION><![CDATA[It allows to configure an integration with an external CRM system]]></DESCRIPTION>
+<!--218CE870950D4BFEA1BF3BB11147B66C-->  <HELP><![CDATA[It allows to configure an integration with an external CRM system]]></HELP>
 <!--218CE870950D4BFEA1BF3BB11147B66C-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--218CE870950D4BFEA1BF3BB11147B66C-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--218CE870950D4BFEA1BF3BB11147B66C--></AD_ELEMENT>
@@ -22822,11 +22822,11 @@ When this flag is enabled, this default behavior can be overridden allowing to r
 <!--3744A225D628454699F1304C9918015C-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--3744A225D628454699F1304C9918015C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--3744A225D628454699F1304C9918015C-->  <COLUMNNAME><![CDATA[C_Extbp_Config_Prop_Opt_ID]]></COLUMNNAME>
-<!--3744A225D628454699F1304C9918015C-->  <NAME><![CDATA[External Business Partner Property Option]]></NAME>
-<!--3744A225D628454699F1304C9918015C-->  <PRINTNAME><![CDATA[External Business Partner Property Option]]></PRINTNAME>
-<!--3744A225D628454699F1304C9918015C-->  <DESCRIPTION><![CDATA[Allows to define accepted values for parent external business partner property]]></DESCRIPTION>
-<!--3744A225D628454699F1304C9918015C-->  <HELP><![CDATA[If a external business partner property is defined as a combo, here accepted values for this combo can be defined]]></HELP>
-<!--3744A225D628454699F1304C9918015C-->  <PO_HELP><![CDATA[If a external business partner property is defined as a combo, here accepted values for this combo can be defined]]></PO_HELP>
+<!--3744A225D628454699F1304C9918015C-->  <NAME><![CDATA[CRM Connector Property Option]]></NAME>
+<!--3744A225D628454699F1304C9918015C-->  <PRINTNAME><![CDATA[CRM Connector Property Option]]></PRINTNAME>
+<!--3744A225D628454699F1304C9918015C-->  <DESCRIPTION><![CDATA[Allows to define accepted values for parent CRM connector property]]></DESCRIPTION>
+<!--3744A225D628454699F1304C9918015C-->  <HELP><![CDATA[If a CRM Connector Property is defined as a combo, here accepted values for this combo can be defined]]></HELP>
+<!--3744A225D628454699F1304C9918015C-->  <PO_HELP><![CDATA[If a CRM Connector Property is defined as a combo, here accepted values for this combo can be defined]]></PO_HELP>
 <!--3744A225D628454699F1304C9918015C-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--3744A225D628454699F1304C9918015C-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--3744A225D628454699F1304C9918015C--></AD_ELEMENT>
@@ -26864,10 +26864,10 @@ This field will display only when the base document type is Sales Order.]]></HEL
 <!--64E8693DB0D541B186AB495C7B8DA4A8-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--64E8693DB0D541B186AB495C7B8DA4A8-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--64E8693DB0D541B186AB495C7B8DA4A8-->  <COLUMNNAME><![CDATA[C_Extbp_Config_Filter_ID]]></COLUMNNAME>
-<!--64E8693DB0D541B186AB495C7B8DA4A8-->  <NAME><![CDATA[External Business Partner Integration Filter]]></NAME>
-<!--64E8693DB0D541B186AB495C7B8DA4A8-->  <PRINTNAME><![CDATA[External Business Partner Integration Filter]]></PRINTNAME>
-<!--64E8693DB0D541B186AB495C7B8DA4A8-->  <DESCRIPTION><![CDATA[Filters for external business partner integration]]></DESCRIPTION>
-<!--64E8693DB0D541B186AB495C7B8DA4A8-->  <HELP><![CDATA[Filters for external business partner integration. The filter has a defined type and it's linked to one or many properties]]></HELP>
+<!--64E8693DB0D541B186AB495C7B8DA4A8-->  <NAME><![CDATA[CRM Connector Filter]]></NAME>
+<!--64E8693DB0D541B186AB495C7B8DA4A8-->  <PRINTNAME><![CDATA[CRM Connector Filter]]></PRINTNAME>
+<!--64E8693DB0D541B186AB495C7B8DA4A8-->  <DESCRIPTION><![CDATA[Filters for CRM Connector integration]]></DESCRIPTION>
+<!--64E8693DB0D541B186AB495C7B8DA4A8-->  <HELP><![CDATA[Filters for CRM Connector. The filter has a defined type and it's linked to one or many properties]]></HELP>
 <!--64E8693DB0D541B186AB495C7B8DA4A8-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--64E8693DB0D541B186AB495C7B8DA4A8-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--64E8693DB0D541B186AB495C7B8DA4A8--></AD_ELEMENT>
@@ -31196,10 +31196,10 @@ There is an example image on the Login folder of the Default skin.]]></HELP>
 <!--962A69302B054A669C26C2A5DA661396-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--962A69302B054A669C26C2A5DA661396-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--962A69302B054A669C26C2A5DA661396-->  <COLUMNNAME><![CDATA[BPartner_ExtRef]]></COLUMNNAME>
-<!--962A69302B054A669C26C2A5DA661396-->  <NAME><![CDATA[External Business Partner Reference]]></NAME>
-<!--962A69302B054A669C26C2A5DA661396-->  <PRINTNAME><![CDATA[External Business Partner Reference]]></PRINTNAME>
-<!--962A69302B054A669C26C2A5DA661396-->  <DESCRIPTION><![CDATA[This field stores the business partner reference to an external system]]></DESCRIPTION>
-<!--962A69302B054A669C26C2A5DA661396-->  <HELP><![CDATA[This field stores the business partner reference to an external system. This is useful only when the business partner management is done outside Openbravo. In this case Openbravo will internally use the anonymous customer but it will track the real customer in the external system through this field.]]></HELP>
+<!--962A69302B054A669C26C2A5DA661396-->  <NAME><![CDATA[CRM Reference]]></NAME>
+<!--962A69302B054A669C26C2A5DA661396-->  <PRINTNAME><![CDATA[CRM Reference]]></PRINTNAME>
+<!--962A69302B054A669C26C2A5DA661396-->  <DESCRIPTION><![CDATA[This field stores the business partner reference to an external CRM system]]></DESCRIPTION>
+<!--962A69302B054A669C26C2A5DA661396-->  <HELP><![CDATA[This field stores the business partner reference to an external CRM system. This is useful only when the business partner management is done outside Openbravo. In this case Openbravo will internally use the anonymous customer but it will track the real customer in the external system through this field.]]></HELP>
 <!--962A69302B054A669C26C2A5DA661396-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--962A69302B054A669C26C2A5DA661396-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--962A69302B054A669C26C2A5DA661396--></AD_ELEMENT>
@@ -34515,10 +34515,10 @@ If this flag is checked the creation and deletion of tree nodes will be handled 
 <!--D0B3FCFFABD94F6BA71E45C0AD1BB1EC-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--D0B3FCFFABD94F6BA71E45C0AD1BB1EC-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--D0B3FCFFABD94F6BA71E45C0AD1BB1EC-->  <COLUMNNAME><![CDATA[C_Extbp_Config_Property_ID]]></COLUMNNAME>
-<!--D0B3FCFFABD94F6BA71E45C0AD1BB1EC-->  <NAME><![CDATA[External BP Integration property]]></NAME>
-<!--D0B3FCFFABD94F6BA71E45C0AD1BB1EC-->  <PRINTNAME><![CDATA[External BP Integration property]]></PRINTNAME>
-<!--D0B3FCFFABD94F6BA71E45C0AD1BB1EC-->  <DESCRIPTION><![CDATA[External BP Integration property]]></DESCRIPTION>
-<!--D0B3FCFFABD94F6BA71E45C0AD1BB1EC-->  <HELP><![CDATA[External BP Integration property]]></HELP>
+<!--D0B3FCFFABD94F6BA71E45C0AD1BB1EC-->  <NAME><![CDATA[CRM Connector Property]]></NAME>
+<!--D0B3FCFFABD94F6BA71E45C0AD1BB1EC-->  <PRINTNAME><![CDATA[CRM Connector Property]]></PRINTNAME>
+<!--D0B3FCFFABD94F6BA71E45C0AD1BB1EC-->  <DESCRIPTION><![CDATA[CRM Connector Property]]></DESCRIPTION>
+<!--D0B3FCFFABD94F6BA71E45C0AD1BB1EC-->  <HELP><![CDATA[CRM Connector Property]]></HELP>
 <!--D0B3FCFFABD94F6BA71E45C0AD1BB1EC-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--D0B3FCFFABD94F6BA71E45C0AD1BB1EC-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--D0B3FCFFABD94F6BA71E45C0AD1BB1EC--></AD_ELEMENT>
@@ -35557,10 +35557,10 @@ For details - http://wiki.openbravo.com/wiki/Role#Permissions_Inheritance]]></HE
 <!--E05E82908B7847AFAD7E490D8689E4BC-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--E05E82908B7847AFAD7E490D8689E4BC-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--E05E82908B7847AFAD7E490D8689E4BC-->  <COLUMNNAME><![CDATA[C_Extbp_Config_ID]]></COLUMNNAME>
-<!--E05E82908B7847AFAD7E490D8689E4BC-->  <NAME><![CDATA[External Business Partner Integration Configuration]]></NAME>
-<!--E05E82908B7847AFAD7E490D8689E4BC-->  <PRINTNAME><![CDATA[External Business Partner Integration Configuration]]></PRINTNAME>
-<!--E05E82908B7847AFAD7E490D8689E4BC-->  <DESCRIPTION><![CDATA[Configuration for External Business Partner integrations]]></DESCRIPTION>
-<!--E05E82908B7847AFAD7E490D8689E4BC-->  <HELP><![CDATA[Configuration to connect to the external business partner management system API, and which also defines the properties and filters used by Openbravo to map with the external system information.]]></HELP>
+<!--E05E82908B7847AFAD7E490D8689E4BC-->  <NAME><![CDATA[CRM Connector Configuration]]></NAME>
+<!--E05E82908B7847AFAD7E490D8689E4BC-->  <PRINTNAME><![CDATA[CRM Connector Configuration]]></PRINTNAME>
+<!--E05E82908B7847AFAD7E490D8689E4BC-->  <DESCRIPTION><![CDATA[Configuration for CRM integrations]]></DESCRIPTION>
+<!--E05E82908B7847AFAD7E490D8689E4BC-->  <HELP><![CDATA[Configuration to connect to the CRM system API, and which also defines the properties and filters used by Openbravo to map with the external system information.]]></HELP>
 <!--E05E82908B7847AFAD7E490D8689E4BC-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--E05E82908B7847AFAD7E490D8689E4BC-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--E05E82908B7847AFAD7E490D8689E4BC--></AD_ELEMENT>

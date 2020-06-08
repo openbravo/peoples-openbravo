@@ -3499,9 +3499,9 @@ You can also select if transactions are allowed or not for this organization typ
 <!--B282F5FA893E4339A548F2E224B15162-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--B282F5FA893E4339A548F2E224B15162-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--B282F5FA893E4339A548F2E224B15162-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--B282F5FA893E4339A548F2E224B15162-->  <NAME><![CDATA[External Business Partner Integration Configuration]]></NAME>
-<!--B282F5FA893E4339A548F2E224B15162-->  <DESCRIPTION><![CDATA[Configuration for External Business Partner integrations]]></DESCRIPTION>
-<!--B282F5FA893E4339A548F2E224B15162-->  <HELP><![CDATA[The concrete External Business Partner integration must add a configuration in this window to allow to connect to the external system and to define the properties and filters used by Openbravo to map with the external system information.]]></HELP>
+<!--B282F5FA893E4339A548F2E224B15162-->  <NAME><![CDATA[CRM Connector Configuration]]></NAME>
+<!--B282F5FA893E4339A548F2E224B15162-->  <DESCRIPTION><![CDATA[Configuration for CRM connectors]]></DESCRIPTION>
+<!--B282F5FA893E4339A548F2E224B15162-->  <HELP><![CDATA[The concrete CRM connector must add a configuration in this window to allow to connect to the external system and to define the properties and filters used by Openbravo to map with the external system information.]]></HELP>
 <!--B282F5FA893E4339A548F2E224B15162-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--B282F5FA893E4339A548F2E224B15162-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--B282F5FA893E4339A548F2E224B15162-->  <PROCESSING><![CDATA[N]]></PROCESSING>

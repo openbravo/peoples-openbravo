@@ -16127,9 +16127,9 @@ You can also select if transactions are allowed or not for this organization typ
 <!--64B041991B3C48EB9F0E85D35DD40825-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--64B041991B3C48EB9F0E85D35DD40825-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--64B041991B3C48EB9F0E85D35DD40825-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--64B041991B3C48EB9F0E85D35DD40825-->  <NAME><![CDATA[External Business Partner Integration Configuration]]></NAME>
-<!--64B041991B3C48EB9F0E85D35DD40825-->  <DESCRIPTION><![CDATA[Configuration for External Business Partner integrations]]></DESCRIPTION>
-<!--64B041991B3C48EB9F0E85D35DD40825-->  <HELP><![CDATA[The concrete External Business Partner integration must add a configuration in this window to allow to connect to the external system and to define the properties and filters used by Openbravo to map with the external system information.]]></HELP>
+<!--64B041991B3C48EB9F0E85D35DD40825-->  <NAME><![CDATA[CRM Connector Configuration]]></NAME>
+<!--64B041991B3C48EB9F0E85D35DD40825-->  <DESCRIPTION><![CDATA[Configuration for CRM connectors]]></DESCRIPTION>
+<!--64B041991B3C48EB9F0E85D35DD40825-->  <HELP><![CDATA[The concrete CRM connector must add a configuration in this window to allow to connect to the external system and to define the properties and filters used by Openbravo to map with the external system information.]]></HELP>
 <!--64B041991B3C48EB9F0E85D35DD40825-->  <AD_TABLE_ID><![CDATA[58540479F8224F14A905ADE723F2B6AE]]></AD_TABLE_ID>
 <!--64B041991B3C48EB9F0E85D35DD40825-->  <AD_WINDOW_ID><![CDATA[B282F5FA893E4339A548F2E224B15162]]></AD_WINDOW_ID>
 <!--64B041991B3C48EB9F0E85D35DD40825-->  <SEQNO><![CDATA[10]]></SEQNO>
