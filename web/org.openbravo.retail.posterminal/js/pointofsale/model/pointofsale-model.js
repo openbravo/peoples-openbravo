@@ -15,12 +15,7 @@ OB.OBPOSPointOfSale.UI = OB.OBPOSPointOfSale.UI || {};
 
 //Window model
 OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
-  models: [
-    OB.Model.Order,
-    OB.Model.CancelLayaway,
-    OB.Model.CurrencyPanel,
-    OB.Model.OfflinePrinter
-  ],
+  models: [OB.Model.Order, OB.Model.CancelLayaway],
 
   loadUnpaidOrders: function(loadUnpaidOrdersCallback) {
     // Shows a modal window with the orders pending to be paid
