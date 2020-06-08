@@ -36,8 +36,7 @@ if (!OB.App.StateBackwardCompatibility) {
           : 'baseNetUnitPrice',
       'lines[*].pricenet': bbTicket =>
         bbTicket.get('priceIncludesTax') ? 'baseNetUnitPrice' : undefined,
-      'lines[*].lineRate': 'taxRate',
-      'lines[*].taxLines': 'taxes'
+      'lines[*].lineRate': 'taxRate'
     },
     mapStateBackboneProperties: {
       'lines[*].baseGrossUnitPrice': ticket =>
