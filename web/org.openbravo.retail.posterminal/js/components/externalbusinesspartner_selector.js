@@ -253,7 +253,6 @@ enyo.kind({
         let reasonDetail = objError.reasonDetail
           ? objError.reasonDetail
           : OB.I18N.getLabel('OBPOS_BusinessPartnerAssignCanceledDetail');
-        objError;
         OB.UTIL.showConfirmation.display(reasonTitle, reasonDetail);
       });
   }
