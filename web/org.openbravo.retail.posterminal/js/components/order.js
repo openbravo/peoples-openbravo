@@ -1635,7 +1635,9 @@ enyo.kind({
         }
 
         const setPriceCallback = function(line, price) {
-          OB.App.State.Ticket.setLinePrice({ lineIds: [line.id], price });
+          OB.App.State.Ticket.setLinePrice({ lineIds: [line.id], price }).catch(
+            OB.App.View.ActionCanceledUIHandler.handle
+          );
         };
 
         handleError = function(line, message) {
