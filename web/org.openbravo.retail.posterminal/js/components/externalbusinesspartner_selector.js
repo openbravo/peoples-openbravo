@@ -37,9 +37,6 @@ enyo.kind({
   },
   doDisableNewBP: function(inSender, inEvent) {
     this.setDisabled(inEvent.status);
-  },
-  initComponents: function() {
-    this.inherited(arguments);
   }
 });
 
@@ -156,9 +153,7 @@ enyo.kind({
       }
       this.$.body.$.listExternalBpsSelector.drawResultsInList();
     }
-    if (OB.UTIL.isNullOrUndefined(this.args.target)) {
-      this.args.target = 'order';
-    }
+    this.args.target = this.args.target || 'order';
     this.bubble('onSetBusinessPartnerTarget', {
       target: this.args.target
     });
@@ -173,7 +168,6 @@ enyo.kind({
     return true;
   },
   executeOnHide: function() {
-    let selectorHide = this.selectorHide;
     if (this.keepFiltersOnClose) {
       this.advancedFilterShowing = this.$.body.$.listExternalBpsSelector.$.stBPAssignToReceipt.$.theader.$.modalExternalBpSelectorScrollableHeader.$.filterExternalBpSelector.$.advancedFilterInfo.showing;
     }
@@ -182,7 +176,7 @@ enyo.kind({
       this.externalBPListViewData.reset();
     }
     if (
-      !selectorHide &&
+      !this.selectorHide &&
       this.args.navigationPath &&
       this.args.navigationPath.length > 0
     ) {
@@ -212,22 +206,19 @@ enyo.kind({
   getAdvancedFilterDialog: function() {
     return 'modalAdvancedFiltersExternalBp';
   },
-  init: function(model) {
-    this.inherited(arguments);
-  },
   initComponents: function() {
     this.externalBPListViewData = new OB.App.Class.ExternalBusinessPartnerListViewData();
     this.inherited(arguments);
   },
   viewEditExternalBp: function(inSender, inEvent) {
-    this.bubble('onShowPopup', {
+    this.doShowPopup({
       popup: 'modalExternalBusinessPartnerViewEdit',
       args: {
         businessPartnerIdentifier: inEvent.bp
           ? inEvent.bp.getIdentifier()
           : null,
         businessPartnerId: inEvent.bp ? inEvent.bp.getKey() : null,
-        businessPartner: inEvent.bp ? inEvent.bp : null,
+        businessPartner: inEvent.bp || null,
         mode: inEvent.mode,
         target: this.args.target,
         navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(
@@ -434,6 +425,7 @@ enyo.kind({
             'obUiListBpsSobUiListExternalBpsSelectorelector-container1-renderLoading',
           showing: false,
           initComponents: function() {
+            this.inherited();
             this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
           }
         }
@@ -545,8 +537,5 @@ enyo.kind({
   ],
   setAllowCreate: function(allowCreate) {
     this.$.newAction.setDisabled(!allowCreate);
-  },
-  initComponents: function() {
-    this.inherited(arguments);
   }
 });
