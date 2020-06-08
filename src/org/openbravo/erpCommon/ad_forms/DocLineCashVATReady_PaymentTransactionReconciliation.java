@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2019 Openbravo SLU
+ * All portions are Copyright (C) 2013-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -99,16 +99,21 @@ public class DocLineCashVATReady_PaymentTransactionReconciliation extends DocLin
     if (StringUtils.isNotBlank(finPaymentDetailID)) {
       try {
         OBContext.setAdminMode(true);
-        final StringBuffer hql = new StringBuffer();
-        hql.append(" select distinct " + InvoiceTaxCashVAT_V.PROPERTY_ID);
-        hql.append(" from " + InvoiceTaxCashVAT_V.ENTITY_NAME + " as itcv ");
-        hql.append(" where itcv." + InvoiceTaxCashVAT_V.PROPERTY_PAYMENTDETAILS
-            + ".id = :finPaymentDetailID ");
-        hql.append(" and itcv." + InvoiceTaxCashVAT_V.PROPERTY_CANCELED + " = false");
-        hql.append(" and itcv." + InvoiceTaxCashVAT_V.PROPERTY_ACTIVE + " = true");
-        hql.append(" and itcv." + InvoiceTaxCashVAT_V.PROPERTY_ISPAIDATINVOICING + " = false");
-        Query<String> obq = OBDal.getInstance().getSession().createQuery(hql.toString());
-        obq.setParameter("finPaymentDetailID", finPaymentDetailID);
+        //@formatter:off
+        final String hql =
+                      "select distinct id" +
+                      "  from C_InvoiceTax_CashVAT_V as itcv" +
+                      " where itcv.paymentDetails.id = :finPaymentDetailID" +
+                      "   and itcv.canceled = false" +
+                      "   and itcv.active = true" +
+                      "   and (itcv.isPaidAtInvoicing = false" +
+                      "        or itcv.isPaidAtInvoicing is NULL)";
+        //@formatter:on
+
+        final Query<String> obq = OBDal.getInstance()
+            .getSession()
+            .createQuery(hql)
+            .setParameter("finPaymentDetailID", finPaymentDetailID);
         this.invoiceTaxCashVAT_V.addAll(obq.list());
       } finally {
         OBContext.restorePreviousMode();
