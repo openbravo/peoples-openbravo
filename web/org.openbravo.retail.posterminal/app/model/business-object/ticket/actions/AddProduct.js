@@ -255,8 +255,6 @@
               relatedLine.product.taxCategory;
             relatedLine.product.taxCategory = productServiceLinked.taxCategory;
             relatedLine.previousLineRate = relatedLine.lineRate;
-            // TODO: do we need this?
-            relatedLine.recalculateTax = true;
           }
         });
     });
