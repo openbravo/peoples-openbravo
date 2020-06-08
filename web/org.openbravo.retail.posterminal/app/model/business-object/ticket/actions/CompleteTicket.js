@@ -46,6 +46,7 @@
 
       newTicket.created = new Date().getTime();
       newTicket.completeTicket = true;
+      newTicket.hasbeenpaid = 'Y';
       newTicket.obposAppCashup = terminal.cashUpId;
       newTicket = OB.App.State.Ticket.Utils.updateTicketType(
         newTicket,
@@ -117,6 +118,7 @@
         newTicket
       );
 
+      newGlobalState.Ticket = newTicket;
       newGlobalState.DocumentSequence = newDocumentSequence;
       newGlobalState.Messages = [...newGlobalState.Messages, newMessage];
 

@@ -2522,9 +2522,11 @@ enyo.kind({
       return true;
     }
 
-    execution = OB.UTIL.ProcessController.start('tapDoneButton');
-
     if (!isMultiOrder) {
+      const completeReceiptExecution = OB.UTIL.ProcessController.start(
+        'completeReceipt'
+      );
+
       OB.Dal.transaction(
         function(tx) {
           // FIXME: Use CashupUtils
@@ -2556,6 +2558,10 @@ enyo.kind({
                     taxRules: OB.Taxes.Pos.ruleImpls
                   });
 
+                  // Open drawer
+                  OB.MobileApp.model.receipt.trigger('checkOpenDrawer');
+
+                  // RFID
                   if (OB.UTIL.RfidController.isRfidConfigured()) {
                     OB.UTIL.RfidController.processRemainingCodes(
                       OB.MobileApp.model.receipt
@@ -2563,6 +2569,44 @@ enyo.kind({
                     OB.UTIL.RfidController.updateEpcBuffers();
                   }
 
+                  // Focus on scanning window
+                  OB.UTIL.setScanningFocus(true);
+
+                  // Print welcome message
+                  OB.OBPOSPointOfSale.Print.printWelcome();
+
+                  // Show ticket saved message
+                  OB.UTIL.showSuccess(
+                    OB.I18N.getLabel(
+                      OB.MobileApp.model.receipt.get('isQuotation')
+                        ? 'OBPOS_QuotationSaved'
+                        : OB.MobileApp.model.receipt.get('orderType') === 2 ||
+                          OB.MobileApp.model.receipt.get('isLayaway')
+                        ? 'OBPOS_MsgLayawaySaved'
+                        : 'OBPOS_MsgReceiptSaved',
+                      [OB.MobileApp.model.receipt.get('documentNo')]
+                    )
+                  );
+
+                  // Print ticket
+                  OB.MobileApp.model.receipt.trigger(
+                    'print',
+                    OB.MobileApp.model.receipt,
+                    {
+                      offline: true
+                    }
+                  );
+                  if (OB.MobileApp.model.receipt.has('calculatedInvoice')) {
+                    OB.MobileApp.model.receipt.trigger(
+                      'print',
+                      OB.MobileApp.model.receipt.get('calculatedInvoice'),
+                      {
+                        offline: true
+                      }
+                    );
+                  }
+
+                  // Remove completed ticket
                   OB.MobileApp.model.orderList.deleteCurrentFromDatabase(
                     OB.MobileApp.model.receipt
                   );
@@ -2576,7 +2620,11 @@ enyo.kind({
                   } else {
                     OB.MobileApp.model.orderList.deleteCurrent();
                   }
-                  OB.UTIL.ProcessController.finish('tapDoneButton', execution);
+
+                  OB.UTIL.ProcessController.finish(
+                    'completeReceipt',
+                    completeReceiptExecution
+                  );
                 }
               );
             },
@@ -2589,6 +2637,8 @@ enyo.kind({
 
       return;
     }
+
+    execution = OB.UTIL.ProcessController.start('tapDoneButton');
 
     if (!OB.MobileApp.model.get('terminal').returns_anonymouscustomer) {
       if (isMultiOrder) {
