@@ -266,10 +266,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
       cashMgmts.add(OB.Dal.transform(OB.Model.CashManagement, cashManagement))
     );
 
-    _.forEach(cashMgmts.models, function(cashMgmt, index) {
-      const payment = _.filter(OB.MobileApp.model.get('payments'), function(
-        pay
-      ) {
+    cashMgmts.models.forEach((cashMgmt, index) => {
+      const payment = OB.MobileApp.model.get('payments').filter(pay => {
         return (
           pay.payment.id === cashMgmt.get('paymentMethodId') &&
           !pay.paymentMethod.issafebox
