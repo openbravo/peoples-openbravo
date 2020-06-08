@@ -6205,24 +6205,26 @@
             if (
               !OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)
             ) {
-              order.setPrice(
-                line,
-                dataPrices.get('standardPrice', {
+              OB.App.State.Ticket.setLinePrice({
+                lineIds: [line.id],
+                price: dataPrices.get('standardPrice', {
                   setUndo: false
                 })
-              );
+              })
+                .then(() => newAllLinesCalculated())
+                .catch(OB.App.View.ActionCanceledUIHandler.handle);
             } else {
               dataPrices.each(function(price) {
-                order.setPrice(
-                  line,
-                  price.get('standardPrice', {
+                OB.App.State.Ticket.setLinePrice({
+                  lineIds: [line.id],
+                  price: price.get('standardPrice', {
                     setUndo: false
                   })
-                );
+                })
+                  .then(() => newAllLinesCalculated())
+                  .catch(OB.App.View.ActionCanceledUIHandler.handle);
               });
             }
-
-            newAllLinesCalculated();
           };
         if (!OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
           try {
