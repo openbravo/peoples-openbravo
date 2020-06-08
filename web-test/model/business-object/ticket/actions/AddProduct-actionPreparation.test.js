@@ -60,6 +60,9 @@ require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.co
 require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/ActionSilentlyCanceled');
 
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-logic/stock/StockChecker');
+require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-logic/pack/ProductPack');
+require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-logic/pack/ProductPackProvider');
+require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-logic/pack/Pack');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/Ticket');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/AddProduct');
 

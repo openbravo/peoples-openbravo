@@ -448,53 +448,25 @@
   }
 
   async function preparePacks(payload) {
-    if (
-      !payload.products.some(
-        p =>
-          p.product.ispack &&
-          p.product.productCategory === 'BE5D42E554644B6AA262CCB097753951'
-      )
-    ) {
+    if (!payload.products.some(p => p.product.ispack)) {
       return payload;
     }
 
     const newPayload = { ...payload };
     newPayload.products = [];
-
     for (let i = 0; i < payload.products.length; i += 1) {
       const p = payload.products[i];
-      if (
-        p.product.ispack &&
-        p.product.productCategory === 'BE5D42E554644B6AA262CCB097753951'
-      ) {
-        const discount = OB.Discounts.Pos.ruleImpls.find(
-          d => d.id === p.product.id
-        );
-        if (discount.endingDate && discount.endingDate.length > 0) {
-          const objDate = new Date(discount.endingDate);
-          const now = new Date();
-          const nowWithoutTime = new Date(now.toISOString().split('T')[0]);
-          if (nowWithoutTime > objDate) {
-            throw new OB.App.Class.ActionCanceled({
-              title: 'OBPOS_PackExpired_header',
-              errorConfirmation: 'OBPOS_PackExpired_body',
-              messageParams: [
-                // eslint-disable-next-line no-underscore-dangle
-                discount._identifier,
-                objDate.toLocaleDateString()
-              ]
-            });
-          }
-        }
-        for (let j = 0; j < discount.products.length; j += 1) {
+      const pack = OB.App.ProductPackProvider.getPack(p.product);
+      if (pack) {
+        try {
           // eslint-disable-next-line no-await-in-loop
-          const product = await OB.App.MasterdataModels.Product.withId(
-            discount.products[j].product.id
-          );
-          newPayload.products.push({
-            product,
-            qty: discount.products[j].obdiscQty,
-            belongsToPack: true
+          const packProducts = await pack.getProducts();
+          newPayload.products = newPayload.products.concat(packProducts);
+        } catch (error) {
+          throw new OB.App.Class.ActionCanceled({
+            title: error.title,
+            errorConfirmation: error.message || 'OBMOBC_Error',
+            messageParams: error.messageParams
           });
         }
       } else {
