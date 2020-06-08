@@ -6257,15 +6257,6 @@
             line
           );
         }
-
-        successCallbackPrices = function(dataPrices) {
-          dataPrices.each(function(price) {
-            order.setPrice(line, price.get('standardPrice'), {
-              setUndo: false
-            });
-          });
-          newAllLinesCalculated();
-        };
       });
     },
 
