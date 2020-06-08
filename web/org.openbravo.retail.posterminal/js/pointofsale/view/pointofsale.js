@@ -1131,9 +1131,7 @@ enyo.kind({
         }
         //TODO: testing code - remove it!
         if (window.newAddProduct) {
-          //TODO: join options and args?
           const options = args.options ? { ...args.options } : {};
-          const attrs = args.attrs ? { ...args.attrs } : {};
           if (options.line) {
             options.line = args.options.line.id;
           }
@@ -1149,7 +1147,7 @@ enyo.kind({
               }
             ],
             options,
-            attrs
+            attrs: args.attrs || {}
           })
             .then(() => {
               if (OB.UI.MultiColumn.isSingleColumn()) {
